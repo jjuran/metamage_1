@@ -49,7 +49,8 @@ namespace Genie
 	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum >  refNum,
 	                              OpenFlags                     flags )
 	: itsRefNum   ( refNum ),
-	  itsOpenFlags( flags  )
+	  itsOpenFlags( flags  ),
+	  itsMark     ( 0      )
 	{
 	}
 	
@@ -59,12 +60,16 @@ namespace Genie
 	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return FSRead( itsRefNum,
-		               N::fsAtMark,
-		               0,
-		               byteCount,
-		               data,
-		               ThrowEOF_Never() );
+		ssize_t advance = FSRead( itsRefNum,
+		                          N::fsFromStart,
+		                          itsMark,
+		                          byteCount,
+		                          data,
+		                          ThrowEOF_Never() );
+		
+		itsMark += advance;
+		
+		return advance;
 	}
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
@@ -74,39 +79,41 @@ namespace Genie
 			N::SetEOF( itsRefNum, 0 );
 		}
 		
-		return FSWrite( itsRefNum,
-		                N::fsAtMark,
-		                0,
-		                byteCount,
-		                data );
+		ssize_t advance =  FSWrite( itsRefNum,
+		                            N::fsFromStart,
+		                            itsMark,
+		                            byteCount,
+		                            data );
+		
+		itsMark += advance;
+		
+		return advance;
 	}
 	
 	off_t MacFileHandle::Seek( off_t offset, int whence )
 	{
-		N::FSIOPosMode mode;
+		off_t base = 0;
 		
 		switch ( whence )
 		{
 			case SEEK_SET:
-				mode = N::fsFromStart;
+				base = 0;
 				break;
 			
 			case SEEK_CUR:
-				mode = N::fsFromMark;
+				base = itsMark;
 				break;
 			
 			case SEEK_END:
-				mode = N::fsFromLEOF;
+				base = GetEOF();
 				break;
 			
 			default:
-				//P7::ThrowErrno( EINVAL );
+				//p7::throw_errno( EINVAL );
 				throw N::ParamErr();
 		}
 		
-		N::SetFPos( itsRefNum, mode, offset );
-		
-		return N::GetFPos( itsRefNum );
+		return itsMark = base + offset;
 	}
 	
 	FSSpec MacFileHandle::GetFSSpec( bool forCreation ) const
