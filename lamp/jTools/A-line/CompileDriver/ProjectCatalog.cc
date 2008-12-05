@@ -193,6 +193,18 @@ namespace tool
 			return;
 		}
 		
+		std::string dirName = io::get_filename( dirPath );
+		
+		if ( dirName.c_str()[0] == '('  &&  *dirName.rbegin() == ')' )
+		{
+			return;  // skip "(Guarded)" directories
+		}
+		
+		if ( dirName == "CVS" )
+		{
+			return;
+		}
+		
 		std::string conf = dirPath / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
