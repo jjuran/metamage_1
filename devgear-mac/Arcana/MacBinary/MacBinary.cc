@@ -571,7 +571,7 @@ namespace MacBinary
 		
 		std::vector< char > buffer( paddedCount );
 		
-		UInt32 bytesRead = N::FSRead( file, byteCount, &buffer[0] );
+		UInt32 bytesRead = N::FSRead( file, byteCount, &buffer[0], N::ThrowEOF_Never() );
 		
 		std::fill( buffer.begin() + bytesRead, buffer.end(), '\0' );
 		
