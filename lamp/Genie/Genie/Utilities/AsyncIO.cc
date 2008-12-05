@@ -67,7 +67,12 @@ namespace Genie
 	               Async            async,
 	               ThrowEOF_OnZero  policy )
 	{
-		return N::FSRead( file, requestCount, buffer, CALLBACK, gWakeUp, policy );
+		return N::FSRead( file,
+		                  requestCount,
+		                  buffer,
+		                  CALLBACK,
+		                  gWakeUp,
+		                  policy );
 	}
 	
 	// Async read, returns zero
@@ -77,7 +82,12 @@ namespace Genie
 	               Async            async,
 	               ThrowEOF_Never   policy )
 	{
-		return N::FSRead( file, requestCount, buffer, CALLBACK, gWakeUp, policy );
+		return N::FSRead( file,
+		                  requestCount,
+		                  buffer,
+		                  CALLBACK,
+		                  gWakeUp,
+		                  policy );
 	}
 	
 	
@@ -87,7 +97,11 @@ namespace Genie
 	                const void *     buffer,
 	                Async            async )
 	{
-		return N::FSWrite( file, requestCount, buffer, CALLBACK, gWakeUp );
+		return N::FSWrite( file,
+		                   requestCount,
+		                   buffer,
+		                   CALLBACK,
+		                   gWakeUp );
 	}
 	
 	
@@ -117,7 +131,11 @@ namespace Genie
 		}
 		else
 		{
-			N::FSpGetCatInfo( item, pb, CALLBACK, gWakeUp, policy );
+			N::FSpGetCatInfo( item,
+			                  pb,
+			                  CALLBACK,
+			                  gWakeUp,
+			                  policy );
 		}
 	}
 	
@@ -127,7 +145,11 @@ namespace Genie
 	                    Async          async,
 	                    FNF_Returns    policy )
 	{
-		return N::FSpGetCatInfo( item, pb, CALLBACK, gWakeUp, FNF_Returns() );
+		return N::FSpGetCatInfo( item,
+		                         pb,
+		                         CALLBACK,
+		                         gWakeUp,
+		                         FNF_Returns() );
 	}
 	
 }
