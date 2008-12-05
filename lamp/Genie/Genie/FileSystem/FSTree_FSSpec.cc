@@ -904,9 +904,25 @@ namespace Genie
 		
 		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
 		
-		for ( UInt16 i = 1;  i <= n_items;  ++i )
+		for ( UInt16 i = 1;  ;  ++i )
 		{
-			N::FSpGetCatInfo( dir, i, pb, name );
+			try
+			{
+				N::FSpGetCatInfo( dir, i, pb, name );
+			}
+			catch ( const N::FNFErr& err )
+			{
+			#ifdef __MWERKS__
+				
+				if ( err != fnfErr )
+				{
+					throw;
+				}
+				
+			#endif
+				
+				return;
+			}
 			
 			ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
 			
