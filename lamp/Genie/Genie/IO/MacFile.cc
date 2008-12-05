@@ -74,9 +74,9 @@ namespace Genie
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  N::GetFPos( itsRefNum ) == 0 )
+		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  itsMark == 0 )
 		{
-			N::SetEOF( itsRefNum, 0 );
+			SetEOF( 0 );
 		}
 		
 		const bool appending = itsOpenFlags & O_APPEND;
