@@ -35,8 +35,6 @@ namespace Genie
 			int SysRead( char* data, std::size_t byteCount );
 			
 			int SysWrite( const char* data, std::size_t byteCount );
-			
-			off_t Seek( off_t offset, int whence );
 	};
 	
 	template < class Property >
@@ -71,12 +69,6 @@ namespace Genie
 		itsProperty.Set( value );
 		
 		return byteCount;
-	}
-	
-	template < class Property >
-	off_t PseudoFileHandle< Property >::Seek( off_t offset, int whence )
-	{
-		throw poseven::errno_t( EPERM );
 	}
 	
 }

@@ -11,14 +11,9 @@
 // Io
 #include "io/io.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
-
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
 	
 	QueryFileHandle::~QueryFileHandle()
 	{
@@ -26,56 +21,29 @@ namespace Genie
 	
 	int QueryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		ASSERT( itsMark <= itsData.size() );
+		ASSERT( GetFileMark() <= itsData.size() );
 		
-		byteCount = std::min( byteCount, itsData.size() - itsMark );
+		byteCount = std::min( byteCount, itsData.size() - GetFileMark() );
 		
-		std::copy( itsData.begin() + itsMark,
-		           itsData.begin() + itsMark + byteCount,
+		std::copy( itsData.begin() + GetFileMark(),
+		           itsData.begin() + GetFileMark() + byteCount,
 		           data );
 		
-		itsMark += byteCount;
-		
-		return byteCount;
+		return Advance( byteCount );
 	}
 	
 	int QueryFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( itsMark + byteCount > itsData.size() )
+		if ( GetFileMark() + byteCount > itsData.size() )
 		{
-			itsData.resize( itsMark + byteCount );
+			itsData.resize( GetFileMark() + byteCount );
 		}
 		
 		std::copy( data,
 		           data + byteCount,
-		           itsData.begin() + itsMark );
+		           itsData.begin() + GetFileMark() );
 		
-		itsMark += byteCount;
-		
-		return byteCount;
-	}
-	
-	off_t QueryFileHandle::Seek( off_t offset, int whence )
-	{
-		switch ( whence )
-		{
-			case SEEK_SET:
-				itsMark = offset;
-				break;
-			
-			case SEEK_CUR:
-				itsMark += offset;
-				break;
-			
-			case SEEK_END:
-				itsMark = itsData.size() + offset;
-				break;
-			
-			default:
-				p7::throw_errno( EINVAL );
-		}
-		
-		return itsMark;
+		return Advance( byteCount );
 	}
 	
 }

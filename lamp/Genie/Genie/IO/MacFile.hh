@@ -28,8 +28,6 @@ namespace Genie
 			Nucleus::Owned< Nitrogen::FSFileRefNum > itsRefNum;
 			
 			OpenFlags  itsOpenFlags;
-			
-			off_t      itsMark;
 		
 		public:
 			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
@@ -42,8 +40,6 @@ namespace Genie
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			off_t Seek( off_t offset, int whence );
 			
 			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
 			

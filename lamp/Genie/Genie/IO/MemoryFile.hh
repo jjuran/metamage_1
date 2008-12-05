@@ -25,15 +25,13 @@ namespace Genie
 			FSTreePtr    itsFile;
 			::Ptr        itsBase;  // base address
 			std::size_t  itsSize;
-			std::size_t  itsMark;
 		
 		public:
 			MemoryFileHandle( const FSTreePtr&  file,
 			                  ::Ptr             base,
 			                  std::size_t       size ) : itsFile( file ),
 			                                             itsBase( base ),
-			                                             itsSize( size ),
-			                                             itsMark(      )
+			                                             itsSize( size )
 			{
 			}
 			
@@ -46,8 +44,6 @@ namespace Genie
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			off_t Seek( off_t offset, int whence );
 			
 			off_t GetEOF() const  { return itsSize; }
 	};

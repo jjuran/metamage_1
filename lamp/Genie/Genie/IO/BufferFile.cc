@@ -27,12 +27,10 @@ namespace Genie
 	class BufferView : public Ped::TEView
 	{
 		private:
-			std::size_t  itsMark;
-			bool         itHasReceivedEOF;
+			bool itHasReceivedEOF;
 		
 		public:
 			BufferView( const Rect& bounds ) : Ped::TEView( bounds ),
-			                                   itsMark(),
 			                                   itHasReceivedEOF()
 			{
 			}
@@ -41,11 +39,9 @@ namespace Genie
 			
 			bool ReceivedEOF() const  { return itHasReceivedEOF; }
 			
-			int SysRead( char* data, std::size_t byteCount );
+			ssize_t ReadFrom( char* buffer, std::size_t n, SInt16 mark );
 			
-			int SysWrite( const char* data, std::size_t byteCount );
-			
-			off_t Seek( off_t offset, int whence );
+			ssize_t WriteTo( const char* buffer, std::size_t n, SInt16 mark );
 			
 			off_t GetEOF() const  { return TextLength(); }
 			
@@ -84,9 +80,9 @@ namespace Genie
 		return Ped::TEView::KeyDown( event );
 	}
 	
-	int BufferView::SysRead( char* data, std::size_t byteCount )
+	ssize_t BufferView::ReadFrom( char* buffer, std::size_t n, SInt16 mark )
 	{
-		if ( byteCount == 0 )
+		if ( n == 0 )
 		{
 			return 0;
 		}
@@ -99,7 +95,7 @@ namespace Genie
 		
 		ASSERT( teLength == hLength );
 		
-		if ( itsMark >= teLength )
+		if ( mark >= teLength )
 		{
 			return 0;
 		}
@@ -108,56 +104,29 @@ namespace Genie
 		const char* begin = *hText;
 		const char* end   = begin + hLength;
 		
-		std::size_t readableBytes = end - begin - itsMark;  // may be zero
+		std::size_t readableBytes = end - begin - mark;  // may be zero
 		
-		byteCount = std::min( byteCount, readableBytes );
+		n = std::min( n, readableBytes );
 		
-		const char* marked = begin + itsMark;
+		const char* marked = begin + mark;
 		
-		std::copy( marked, marked + byteCount, data );
+		std::copy( marked, marked + n, buffer );
 		
 		// CR -> LF
-		std::replace( data, data + byteCount, '\r', '\n' );
+		std::replace( buffer, buffer + n, '\r', '\n' );
 		
-		itsMark += byteCount;
-		
-		return byteCount;
+		return n;
 	}
 	
-	int BufferView::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t BufferView::WriteTo( const char* buffer, std::size_t n, SInt16 mark )
 	{
-		SetEOF( itsMark );
+		SetEOF( mark );
 		
-		int result = AppendChars( data, byteCount, true );
+		ssize_t written = AppendChars( buffer, n, true );
 		
-		itsMark += result;
-		
-		return result;
+		return written;
 	}
 	
-	
-	off_t BufferView::Seek( off_t offset, int whence )
-	{
-		switch ( whence )
-		{
-			case SEEK_SET:
-				itsMark = offset;
-				break;
-			
-			case SEEK_CUR:
-				itsMark += offset;
-				break;
-			
-			case SEEK_END:
-				itsMark = GetEOF() + offset;
-				break;
-			
-			default:
-				p7::throw_errno( EINVAL );
-		}
-		
-		return itsMark;
-	}
 	
 	void BufferView::SetEOF( off_t length )
 	{
@@ -277,7 +246,7 @@ namespace Genie
 		
 		// Zero-byte read handled by view
 		
-		return view.SysRead( data, byteCount );
+		return Advance( view.ReadFrom( data, byteCount, GetFileMark() ) );
 	}
 	
 	int BufferFileHandle::SysWrite( const char* data, std::size_t byteCount )
@@ -290,17 +259,12 @@ namespace Genie
 		
 		window.Show();
 		
-		int result = view.SysWrite( data, byteCount );
+		ssize_t written = view.WriteTo( data, byteCount, GetFileMark() );
 		
 		scroller.UpdateScrollbars( N::SetPt( 0, 0 ),
 		                           N::SetPt( 0, 0 ) );
 		
-		return result;
-	}
-	
-	off_t BufferFileHandle::Seek( off_t offset, int whence )
-	{
-		return GetBuffer( itsWindow ).Seek( offset, whence );
+		return Advance( written );
 	}
 	
 	off_t BufferFileHandle::GetEOF() const

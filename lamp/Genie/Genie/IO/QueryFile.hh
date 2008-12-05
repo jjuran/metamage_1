@@ -24,13 +24,13 @@ namespace Genie
 		private:
 			FSTreePtr    itsFile;
 			std::string  itsData;
-			std::size_t  itsMark;
 		
 		public:
 			QueryFileHandle( const FSTreePtr&    file,
 			                 const std::string&  data ) : itsFile( file ),
-			                                              itsData( data ),
-			                                              itsMark(      )  {}
+			                                              itsData( data )
+			{
+			}
 			
 			~QueryFileHandle();
 			
@@ -41,8 +41,6 @@ namespace Genie
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			off_t Seek( off_t offset, int whence );
 			
 			off_t GetEOF() const  { return itsData.size(); }
 	};

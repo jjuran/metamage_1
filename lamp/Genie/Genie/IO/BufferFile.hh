@@ -47,8 +47,6 @@ namespace Genie
 			
 			int SysWrite( const char* data, std::size_t byteCount );
 			
-			off_t Seek( off_t offset, int whence );
-			
 			off_t GetEOF() const;
 			
 			void SetEOF( off_t length );

@@ -15,18 +15,29 @@ namespace Genie
 	
 	class RegularFileHandle : public FileHandle
 	{
+		private:
+			off_t itsMark;
+		
 		public:
+			RegularFileHandle();
+			
 			virtual ~RegularFileHandle();
 			
 			bool IsRegularFile() const  { return true; }
 			
 			virtual unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
-			virtual off_t Seek( off_t offset, int whence ) = 0;
+			off_t Seek( off_t offset, int whence );
 			
 			virtual off_t GetEOF() const;
 			
 			virtual void SetEOF( off_t length );
+			
+			off_t GetFileMark() const  { return itsMark; }
+			
+			void SetFileMark( off_t offset )  { itsMark = offset; }
+			
+			ssize_t Advance( ssize_t step )  { itsMark += step;  return step; }
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< RegularFileHandle >

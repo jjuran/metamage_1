@@ -49,8 +49,7 @@ namespace Genie
 	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum >  refNum,
 	                              OpenFlags                     flags )
 	: itsRefNum   ( refNum ),
-	  itsOpenFlags( flags  ),
-	  itsMark     ( 0      )
+	  itsOpenFlags( flags  )
 	{
 	}
 	
@@ -60,21 +59,19 @@ namespace Genie
 	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		ssize_t advance = FSRead( itsRefNum,
-		                          N::fsFromStart,
-		                          itsMark,
-		                          byteCount,
-		                          data,
-		                          ThrowEOF_Never() );
+		ssize_t read = FSRead( itsRefNum,
+		                       N::fsFromStart,
+		                       GetFileMark(),
+		                       byteCount,
+		                       data,
+		                       ThrowEOF_Never() );
 		
-		itsMark += advance;
-		
-		return advance;
+		return Advance( read );
 	}
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  itsMark == 0 )
+		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  GetFileMark() == 0 )
 		{
 			SetEOF( 0 );
 		}
@@ -82,43 +79,15 @@ namespace Genie
 		const bool appending = itsOpenFlags & O_APPEND;
 		
 		const N::FSIOPosMode  mode   = appending ? N::fsFromLEOF : N::fsFromStart;
-		const SInt32          offset = appending ? 0             : itsMark;
+		const SInt32          offset = appending ? 0             : GetFileMark();
 		
-		ssize_t advance =  FSWrite( itsRefNum,
-		                            mode,
-		                            offset,
-		                            byteCount,
-		                            data );
+		ssize_t written = FSWrite( itsRefNum,
+		                           mode,
+		                           offset,
+		                           byteCount,
+		                           data );
 		
-		itsMark += advance;
-		
-		return advance;
-	}
-	
-	off_t MacFileHandle::Seek( off_t offset, int whence )
-	{
-		off_t base = 0;
-		
-		switch ( whence )
-		{
-			case SEEK_SET:
-				base = 0;
-				break;
-			
-			case SEEK_CUR:
-				base = itsMark;
-				break;
-			
-			case SEEK_END:
-				base = GetEOF();
-				break;
-			
-			default:
-				//p7::throw_errno( EINVAL );
-				throw N::ParamErr();
-		}
-		
-		return itsMark = base + offset;
+		return Advance( written );
 	}
 	
 	FSSpec MacFileHandle::GetFSSpec( bool forCreation ) const
