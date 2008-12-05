@@ -10,36 +10,27 @@
 #include <string>
 
 // Genie
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
 	template < class Property >
-	class PseudoFileHandle : public RegularFileHandle
+	class PseudoFileHandle : public VirtualFileHandle
 	{
 		private:
-			FSTreePtr  itsFile;
-			Property   itsProperty;
+			Property itsProperty;
 		
 		public:
 			PseudoFileHandle( const FSTreePtr&  file,
-			                  const Property&   property ) : itsFile    ( file     ),
+			                  const Property&   property ) : VirtualFileHandle( file ),
 			                                                 itsProperty( property )
 			{
 			}
 			
-			FSTreePtr GetFile() const;
-			
 			int SysWrite( const char* data, std::size_t byteCount );
 	};
-	
-	template < class Property >
-	FSTreePtr PseudoFileHandle< Property >::GetFile() const
-	{
-		return itsFile;
-	}
 	
 	template < class Property >
 	int PseudoFileHandle< Property >::SysWrite( const char* data, std::size_t byteCount )

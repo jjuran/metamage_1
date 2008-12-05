@@ -13,31 +13,28 @@
 #include "sys/types.h"
 
 // Genie
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class MemoryFileHandle : public RegularFileHandle
+	class MemoryFileHandle : public VirtualFileHandle
 	{
 		private:
-			FSTreePtr    itsFile;
 			::Ptr        itsBase;  // base address
 			std::size_t  itsSize;
 		
 		public:
 			MemoryFileHandle( const FSTreePtr&  file,
 			                  ::Ptr             base,
-			                  std::size_t       size ) : itsFile( file ),
+			                  std::size_t       size ) : VirtualFileHandle( file ),
 			                                             itsBase( base ),
 			                                             itsSize( size )
 			{
 			}
 			
 			~MemoryFileHandle();
-			
-			FSTreePtr GetFile() const  { return itsFile; }
 			
 			int SysRead( char* data, std::size_t byteCount );
 			
