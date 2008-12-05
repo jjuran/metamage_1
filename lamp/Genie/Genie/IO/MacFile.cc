@@ -79,9 +79,14 @@ namespace Genie
 			N::SetEOF( itsRefNum, 0 );
 		}
 		
+		const bool appending = itsOpenFlags & O_APPEND;
+		
+		const N::FSIOPosMode  mode   = appending ? N::fsFromLEOF : N::fsFromStart;
+		const SInt32          offset = appending ? 0             : itsMark;
+		
 		ssize_t advance =  FSWrite( itsRefNum,
-		                            N::fsFromStart,
-		                            itsMark,
+		                            mode,
+		                            offset,
 		                            byteCount,
 		                            data );
 		

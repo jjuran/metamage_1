@@ -39,10 +39,6 @@ namespace Genie
 		{
 			N::SetEOF( fileHandle, 0 );
 		}
-		else if ( appending )
-		{
-			N::SetFPos( fileHandle, N::fsFromLEOF, 0 );
-		}
 		
 		return NewFileHandle( fileHandle, flags );
 	}
