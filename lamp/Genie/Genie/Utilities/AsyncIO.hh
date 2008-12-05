@@ -29,22 +29,25 @@ namespace Genie
 	
 	// Async read
 	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
+	               Nitrogen::FSIOPosMode   positionMode,
+	               SInt32                  positionOffset,
 	               SInt32                  requestCount,
 	               void *                  buffer,
-	               Async                   async,
 	               ThrowEOF_OnZero         policy );
 	
 	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
+	               Nitrogen::FSIOPosMode   positionMode,
+	               SInt32                  positionOffset,
 	               SInt32                  requestCount,
 	               void *                  buffer,
-	               Async                   async,
 	               ThrowEOF_Never          policy );
 	
 	// Async write
 	SInt32 FSWrite( Nitrogen::FSFileRefNum  file,
+	                Nitrogen::FSIOPosMode   positionMode,
+	                SInt32                  positionOffset,
 	                SInt32                  requestCount,
-	                const void *            buffer,
-	                Async                   async );
+	                const void *            buffer );
 	
 	
 	// Asynchronous, throws FNFErr

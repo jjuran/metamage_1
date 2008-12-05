@@ -63,12 +63,15 @@ namespace Genie
 	
 	// Async read, throws eofErr
 	SInt32 FSRead( N::FSFileRefNum  file,
+	               N::FSIOPosMode   positionMode,
+	               SInt32           positionOffset,
 	               SInt32           requestCount,
 	               void *           buffer,
-	               Async            async,
 	               ThrowEOF_OnZero  policy )
 	{
 		return N::FSRead( file,
+		                  positionMode,
+		                  positionOffset,
 		                  requestCount,
 		                  buffer,
 		                  CALLBACK,
@@ -78,12 +81,15 @@ namespace Genie
 	
 	// Async read, returns zero
 	SInt32 FSRead( N::FSFileRefNum  file,
+	               N::FSIOPosMode   positionMode,
+	               SInt32           positionOffset,
 	               SInt32           requestCount,
 	               void *           buffer,
-	               Async            async,
 	               ThrowEOF_Never   policy )
 	{
 		return N::FSRead( file,
+		                  positionMode,
+		                  positionOffset,
 		                  requestCount,
 		                  buffer,
 		                  CALLBACK,
@@ -94,11 +100,14 @@ namespace Genie
 	
 	// Async write
 	SInt32 FSWrite( N::FSFileRefNum  file,
+	                N::FSIOPosMode   positionMode,
+	                SInt32           positionOffset,
 	                SInt32           requestCount,
-	                const void *     buffer,
-	                Async            async )
+	                const void *     buffer )
 	{
 		return N::FSWrite( file,
+		                   positionMode,
+		                   positionOffset,
 		                   requestCount,
 		                   buffer,
 		                   CALLBACK,

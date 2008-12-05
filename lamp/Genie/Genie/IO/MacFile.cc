@@ -60,9 +60,10 @@ namespace Genie
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return FSRead( itsRefNum,
+		               N::fsAtMark,
+		               0,
 		               byteCount,
 		               data,
-		               Async(),
 		               ThrowEOF_Never() );
 	}
 	
@@ -74,9 +75,10 @@ namespace Genie
 		}
 		
 		return FSWrite( itsRefNum,
+		                N::fsAtMark,
+		                0,
 		                byteCount,
-		                data,
-		                Async() );
+		                data );
 	}
 	
 	off_t MacFileHandle::Seek( off_t offset, int whence )
