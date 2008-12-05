@@ -152,5 +152,22 @@ namespace Genie
 		                         FNF_Returns() );
 	}
 	
+	
+	NN::Owned< N::FSFileRefNum >
+	//
+	FSpOpenDF( const FSSpec&   spec,
+	           N::FSIOPermssn  permissions )
+	{
+		return N::FSpOpenDF( spec, permissions, CALLBACK, gWakeUp );
+	}
+	
+	NN::Owned< N::FSFileRefNum >
+	//
+	FSpOpenRF( const FSSpec&   spec,
+	           N::FSIOPermssn  permissions )
+	{
+		return N::FSpOpenRF( spec, permissions, CALLBACK, gWakeUp );
+	}
+	
 }
 

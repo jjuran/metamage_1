@@ -59,6 +59,17 @@ namespace Genie
 	                    Async          async,
 	                    FNF_Returns    policy );
 	
+	Nucleus::Owned< Nitrogen::FSFileRefNum >
+	//
+	FSpOpenDF( const FSSpec&          spec,
+	           Nitrogen::FSIOPermssn  permissions );
+	
+	
+	Nucleus::Owned< Nitrogen::FSFileRefNum >
+	//
+	FSpOpenRF( const FSSpec&          spec,
+	           Nitrogen::FSIOPermssn  permissions );
+	
 }
 
 #endif

@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/IO/Base.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -31,7 +32,7 @@ namespace Genie
 		public:
 			Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const
 			{
-				return Nitrogen::FSpOpenDF( fileSpec, perm );
+				return Genie::FSpOpenDF( fileSpec, perm );
 			}
 			
 			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
@@ -42,7 +43,7 @@ namespace Genie
 		public:
 			Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const
 			{
-				return Nitrogen::FSpOpenRF( fileSpec, perm );
+				return Genie::FSpOpenRF( fileSpec, perm );
 			}
 			
 			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
