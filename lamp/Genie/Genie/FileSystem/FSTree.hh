@@ -144,7 +144,7 @@ namespace Genie
 			
 			// Directory methods
 			
-			boost::shared_ptr< IOHandle > OpenDirectory() const;
+			virtual boost::shared_ptr< IOHandle > OpenDirectory() const;
 			
 			virtual void CreateDirectory( mode_t mode ) const;
 			
