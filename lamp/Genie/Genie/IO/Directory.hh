@@ -21,9 +21,11 @@ namespace Genie
 	class DirHandle : public IOHandle
 	{
 		private:
-			dirent fLastEntry;
 			FSTreePtr      itsDir;
-			FSIteratorPtr iterator;
+			FSIteratorPtr  itsIterator;
+		
+		private:
+			const FSIteratorPtr& Iterator();
 		
 		public:
 			DirHandle( const FSTreePtr& tree );

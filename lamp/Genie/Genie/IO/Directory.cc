@@ -21,7 +21,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree ), iterator( tree->Iterate() )
+	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree )
 	{
 	}
 	
@@ -29,6 +29,15 @@ namespace Genie
 	{
 	}
 	
+	const FSIteratorPtr& DirHandle::Iterator()
+	{
+		if ( itsIterator == NULL )
+		{
+			itsIterator = itsDir->Iterate();
+		}
+		
+		return itsIterator;
+	}
 	
 	static void SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
 	{
@@ -39,6 +48,8 @@ namespace Genie
 	
 	off_t DirHandle::Seek( off_t offset, int whence )
 	{
+		FSIteratorPtr iterator = Iterator();
+		
 		off_t position = 0;
 		
 		switch ( whence )
@@ -65,14 +76,14 @@ namespace Genie
 	
 	int DirHandle::ReadDir( dirent& entry )
 	{
-		FSNode node = iterator->Get();
+		FSNode node = Iterator()->Get();
 		
 		if ( node.name.empty() )
 		{
 			return 0;
 		}
 		
-		iterator->Advance();
+		itsIterator->Advance();
 		
 		SetDirEntry( entry, node.inode, node.name );
 		
