@@ -566,6 +566,7 @@ namespace Genie
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
+		// For code fragments, static initilization occurs here.
 		itsMainEntry = itsProgramFile->GetMainEntry();
 		
 		Main3 mainPtr = itsMainEntry->GetMainPtr();
@@ -587,9 +588,10 @@ namespace Genie
 			
 			itsCleanupHandler( destroying_globals );
 			
-			itsCleanupHandler = false;
+			itsCleanupHandler = NULL;
 		}
 		
+		// For code fragments, static destruction occurs here.
 		itsMainEntry.reset();
 		
 		return exit_status;
