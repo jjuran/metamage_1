@@ -101,7 +101,7 @@ namespace Genie
 	
 	struct PrinterPort_Traits
 	{
-		static const char* Name()  { return "A"; }
+		static const char* Name()  { return "B"; }
 	};
 	
 	template < class Mode, class Port >
