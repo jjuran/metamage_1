@@ -177,9 +177,9 @@ namespace Genie
 	const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[] =
 	{
 		{ "flags", &Query_Factory< GetDriverFlags > },
-		{ "name",  &Query_Factory< GetDriverName > },
-		{ "slot",  &Query_Factory< GetDriverSlot > },
-		{ "base",  &Query_Factory< GetDriverBase > },
+		{ "name",  &Query_Factory< GetDriverName  > },
+		{ "slot",  &Query_Factory< GetDriverSlot  >, true },
+		{ "base",  &Query_Factory< GetDriverBase  >, true },
 		
 		{ NULL, NULL }
 	};
