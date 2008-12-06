@@ -818,6 +818,7 @@ namespace Genie
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
+		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( FSRoot() ),
 		itsCleanupHandler     ()
 	{
@@ -850,6 +851,7 @@ namespace Genie
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
+		itsAsyncOpCount       ( 0 ),
 		itsMainEntry          ( parent.itsMainEntry ),
 		itsCleanupHandler     ()
 	{
@@ -1579,6 +1581,15 @@ namespace Genie
 		Pause( kProcessSleeping );
 	}
 	
+	void Process::AsyncYield()
+	{
+		++itsAsyncOpCount;
+		
+		Yield();
+		
+		--itsAsyncOpCount;
+	}
+	
 	// This function doesn't return if we received a fatal signal.
 	bool Yield( Interruptibility interrupting )
 	{
@@ -1599,7 +1610,7 @@ namespace Genie
 		}
 		else
 		{
-			gCurrentProcess->Yield();
+			gCurrentProcess->AsyncYield();
 		}
 	}
 	

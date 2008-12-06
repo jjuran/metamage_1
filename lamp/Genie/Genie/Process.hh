@@ -127,6 +127,8 @@ namespace Genie
 			ProcessSchedule         itsSchedule;
 			
 			int itsResult;
+			
+			unsigned itsAsyncOpCount;
 		
 		private:
 			FSTreePtr itsProgramFile;
@@ -187,9 +189,12 @@ namespace Genie
 			
 			int Result() const  { return itsResult; }
 			
+			unsigned CountAsyncOps() const  { return itsAsyncOpCount; }
+			
 			void Release();
 			
 			void Yield();
+			void AsyncYield();
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			

@@ -290,6 +290,10 @@ namespace Genie
 				{
 					state_code = 'X';
 				}
+				else if ( process.CountAsyncOps() > 0 )
+				{
+					state_code = 'D';
+				}
 				
 				pid_t ppid = process.GetPPID();
 				pid_t pgid = process.GetPGID();
