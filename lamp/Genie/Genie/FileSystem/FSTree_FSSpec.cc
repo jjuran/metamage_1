@@ -360,8 +360,6 @@ namespace Genie
 	{
 		typedef N::Volume_Container Sequence;
 		
-		typedef FSTree_Volumes_Link ChildNode;
-		
 		static FSTreePtr Parent()  { return FSRoot(); }
 		
 		static Sequence ItemSequence()  { return N::Volumes(); }

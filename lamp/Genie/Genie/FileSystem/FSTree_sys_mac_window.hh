@@ -19,14 +19,9 @@ namespace Genie
 	struct WindowRef_KeyName_Traits : public Pointer_KeyName_Traits< Nitrogen::WindowRef >  {};
 	
 	
-	class FSTree_sys_mac_window_REF;
-	
-	
 	struct sys_mac_window_Details : public WindowRef_KeyName_Traits
 	{
 		typedef Nitrogen::WindowList_Container Sequence;
-		
-		typedef FSTree_sys_mac_window_REF ChildNode;
 		
 		static Sequence ItemSequence()  { return Nitrogen::WindowList(); }
 		
