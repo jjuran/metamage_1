@@ -18,6 +18,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// BitsAndBytes
+#include "HexStrings.hh"
+
 // TimeOff
 #include "TimeOff.hh"
 
@@ -44,9 +47,15 @@ namespace Genie
 	{
 	}
 	
+	inline std::string NameFromPtr( const FSTree* ptr )
+	{
+		return BitsAndBytes::EncodeAsHex( ptr );
+	}
+	
 	FSTree::FSTree( const FSTreePtr&    parent,
 	                const std::string&  name ) : itsParent( parent ),
-	                                             itsName  ( name   )
+	                                             itsName  ( name.empty() ? NameFromPtr( this )
+	                                                                     : name )
 	{
 	}
 	
