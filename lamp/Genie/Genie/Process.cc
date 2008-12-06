@@ -52,6 +52,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/Base.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
@@ -814,7 +815,7 @@ namespace Genie
 		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		itsCWD                ( FSRoot() ),
+		itsCWD                ( FSRoot()->OpenDirectory() ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -847,7 +848,7 @@ namespace Genie
 		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
-		itsCWD                ( parent.GetCWD() ),
+		itsCWD                ( parent.itsCWD ),
 		itsFileDescriptors    ( parent.FileDescriptors() ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessForked ),
@@ -1066,6 +1067,11 @@ namespace Genie
 		return errorNumber == 0 ? 0 : -1;
 	}
 	
+	FSTreePtr Process::GetCWD() const
+	{
+		return itsCWD->GetFile();
+	}
+	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
 		if ( !newCWD->IsDirectory() )
@@ -1073,7 +1079,7 @@ namespace Genie
 			p7::throw_errno( newCWD->Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		itsCWD = newCWD;
+		itsCWD = newCWD->OpenDirectory();
 	}
 	
 	void Process::SuspendForFork( pid_t childPID )

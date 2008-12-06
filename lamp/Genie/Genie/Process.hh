@@ -118,7 +118,7 @@ namespace Genie
 			
 			std::string itsName;
 			
-			FSTreePtr itsCWD;
+			boost::shared_ptr< IOHandle > itsCWD;
 			
 			FileDescriptorMap itsFileDescriptors;
 			
@@ -198,7 +198,7 @@ namespace Genie
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
-			const FSTreePtr& GetCWD() const  { return itsCWD; }
+			FSTreePtr GetCWD() const;
 			
 			void ChangeDirectory( const FSTreePtr& newCWD );
 			
