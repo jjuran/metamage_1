@@ -268,7 +268,7 @@ namespace Genie
 			typedef typename Details::Function  Function;
 			typedef typename Details::Mapping   Mapping;
 			
-			typedef std::map< std::string, Function > Mappings;
+			typedef std::map< std::string, const Mapping* > Mappings;
 			
 			Mappings itsMappings;
 		
@@ -286,7 +286,7 @@ namespace Genie
 			{
 			}
 			
-			void Map( const std::string& name, Function f );
+			void Map( const Mapping& mapping );
 			
 			void AddMappings( const Mapping* begin );
 			void AddMappings( const Mapping* begin, const Mapping* end );
@@ -297,9 +297,9 @@ namespace Genie
 	};
 	
 	template < class Key >
-	void FSTree_Functional< Key >::Map( const std::string& name, Function f )
+	void FSTree_Functional< Key >::Map( const Mapping& mapping )
 	{
-		itsMappings[ name ] = f;
+		itsMappings[ mapping.name ] = &mapping;
 	}
 	
 	template < class Key >
@@ -307,7 +307,7 @@ namespace Genie
 	{
 		while ( array->name != NULL )
 		{
-			Map( array->name, array->f );
+			Map( *array );
 			
 			++array;
 		}
@@ -319,7 +319,7 @@ namespace Genie
 	{
 		for ( const Mapping* it = begin;  it != end;  ++it )
 		{
-			Map( it->name, it->f );
+			Map( *it );
 		}
 	}
 	
@@ -333,7 +333,7 @@ namespace Genie
 			return FSNull();
 		}
 		
-		const Function& f = it->second;
+		const Function& f = it->second->f;
 		
 		return Details::Invoke( f, shared_from_this(), name );
 	}
@@ -347,7 +347,7 @@ namespace Genie
 		{
 			const std::string& name = it->first;
 			
-			const Function& f = it->second;
+			const Function& f = it->second->f;
 			
 			try
 			{
