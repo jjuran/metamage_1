@@ -230,6 +230,7 @@ namespace Genie
 		{
 			const char*  name;
 			Function     f;
+			bool         needs_check;
 		};
 	};
 	
@@ -351,6 +352,11 @@ namespace Genie
 			
 			try
 			{
+				if ( it->second->needs_check )
+				{
+					Details::Invoke( f, shared_from_this(), name );
+				}
+				
 				ino_t inode = 0;
 				
 				cache.push_back( FSNode( inode, name ) );
