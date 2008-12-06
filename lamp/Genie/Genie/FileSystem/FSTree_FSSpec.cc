@@ -45,6 +45,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Proc.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
+#include "Genie/FileSystem/FSTree_new.hh"
 #include "Genie/FileSystem/FSTree_sys.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -488,6 +489,7 @@ namespace Genie
 			tree->Map( FSTreePtr( new FSTree_proc   ( result, "proc"    ) ) );
 			
 			tree->Map( Premapped_Factory< dev_Mappings >( result, "dev" ) );
+			tree->Map( Premapped_Factory< new_Mappings >( result, "new" ) );
 			tree->Map( Premapped_Factory< sys_Mappings >( result, "sys" ) );
 		}
 		
