@@ -297,6 +297,11 @@ namespace Genie
 			
 			std::string Get() const
 			{
+				if ( !sys_mac_window_Details::KeyIsValid( itsKey ) )
+				{
+					p7::throw_errno( EIO );
+				}
+				
 				std::string output = NN::Convert< std::string >( Accessor().Get( itsKey ) ) + "\n";
 				
 				return output;
@@ -304,6 +309,11 @@ namespace Genie
 			
 			void Set( const std::string& value )
 			{
+				if ( !sys_mac_window_Details::KeyIsValid( itsKey ) )
+				{
+					p7::throw_errno( EIO );
+				}
+				
 				Accessor().Set( itsKey, value );
 			}
 	};
