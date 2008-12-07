@@ -16,6 +16,7 @@
 #include "Genie/FileSystem/FSTree_sys_cpu.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 #include "Genie/FileSystem/FSTree_sys_set.hh"
+#include "Genie/FileSystem/FSTree_sys_window.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -173,6 +174,8 @@ namespace Genie
 		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
 		{ "set",    &Premapped_Factory< sys_set_Mappings    > },
+		
+		{ "window", &Singleton_Factory< FSTree_sys_window > },
 		
 		{ NULL, NULL }
 	};
