@@ -88,7 +88,7 @@ namespace Pedestal
 	
 	void DrawWindow( Nitrogen::WindowRef window );
 	
-	void InvalidateGrowBox( Nitrogen::WindowRef window );
+	void InvalidateWindowGrowBox( Nitrogen::WindowRef window );
 	
 	
 	enum
@@ -207,17 +207,7 @@ namespace Pedestal
 				itsResizeHandler = handler;
 			}
 			
-			void Resize( Nitrogen::WindowRef window, short h, short v )
-			{
-				if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
-				{
-					(*handler)( window, h, v );
-				}
-				else
-				{
-					Nitrogen::SizeWindow( window, h, v, true );
-				}
-			}
+			void Resize( Nitrogen::WindowRef window, short h, short v );
 	};
 	
 	class Quasimode;
@@ -267,10 +257,18 @@ namespace Pedestal
 			Type const& SubView() const  { return itsSubView; }
 			Type      & SubView()        { return itsSubView; }
 			
+			void InvalidateGrowBox() const
+			{
+				if ( itsDefProcID.HasGrowIcon() )
+				{
+					InvalidateWindowGrowBox( Get() );
+				}
+			}
+			
 			void Idle       ( const EventRecord& event  )  { SubView().Idle( event );              }
 			bool KeyDown    ( const EventRecord& event  )  { return SubView().KeyDown( event );    }
-			void Activate   ( bool activating           )  { SubView().Activate( activating    );  InvalidateGrowBox( Get() ); }
-			void Resized    ( short width, short height )  { SubView().Resize  ( width, height );  InvalidateGrowBox( Get() ); }
+			void Activate   ( bool activating           )  { SubView().Activate( activating    );  InvalidateGrowBox(); }
+			void Resized    ( short width, short height )  { SubView().Resize  ( width, height );  InvalidateGrowBox(); }
 			bool UserCommand( MenuItemCode code         )  { return SubView().UserCommand( code ); }
 			
 			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
@@ -287,7 +285,6 @@ namespace Pedestal
 			void MouseDown( const EventRecord& event );
 			
 			void Update();
-			
 	};
 	
 	template < class Type, class DefProcID >

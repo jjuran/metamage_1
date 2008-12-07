@@ -102,7 +102,7 @@ namespace Pedestal
 		N::DrawGrowIcon( window );
 	}
 	
-	void InvalidateGrowBox( N::WindowRef window )
+	void InvalidateWindowGrowBox( N::WindowRef window )
 	{
 		N::InvalRect( GrowBoxBounds( window ) );
 	}
@@ -114,6 +114,20 @@ namespace Pedestal
 	
 	ResizableWindow::~ResizableWindow()
 	{
+	}
+	
+	void ResizableWindow::Resize( Nitrogen::WindowRef window, short h, short v )
+	{
+		InvalidateWindowGrowBox( window );  // assume grow box present on resize
+		
+		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
+		{
+			(*handler)( window, h, v );
+		}
+		else
+		{
+			Nitrogen::SizeWindow( window, h, v, true );
+		}
 	}
 	
 	
