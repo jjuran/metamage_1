@@ -271,21 +271,30 @@ namespace Genie
 			
 			typedef std::map< std::string, const Mapping* > Mappings;
 			
-			Mappings itsMappings;
+			typedef void (*Destructor)( const FSTree* );
+			
+			Destructor  itsDestructor;
+			Mappings    itsMappings;
 		
 		public:
 			FSTree_Functional( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree_Directory( parent, name )
+			                   const std::string&  name,
+			                   Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
+			                                                       itsDestructor( dtor )
 			{
 			}
 			
 			template < class Key >
 			FSTree_Functional( const FSTreePtr&    parent,
 			                   const std::string&  name,
-			                   const Key&          key ) : FSTree_Directory( parent, name ),
-			                                               Details( key )
+			                   const Key&          key,
+			                   Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
+			                                                       Details( key ),
+			                                                       itsDestructor( dtor )
 			{
 			}
+			
+			~FSTree_Functional();
 			
 			void Map( const Mapping& mapping );
 			
@@ -296,6 +305,15 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	template < class Key >
+	FSTree_Functional< Key >::~FSTree_Functional()
+	{
+		if ( itsDestructor )
+		{
+			itsDestructor( static_cast< FSTree* >( this ) );
+		}
+	}
 	
 	template < class Key >
 	void FSTree_Functional< Key >::Map( const Mapping& mapping )
@@ -388,10 +406,34 @@ namespace Genie
 		return result;
 	}
 	
+	template < const Singleton_Mapping mappings[], void (*dtor)(const FSTree*) >
+	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	{
+		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name, dtor );
+		
+		FSTreePtr result( raw_ptr );
+		
+		raw_ptr->AddMappings( mappings );
+		
+		return result;
+	}
+	
 	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[] >
 	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name, Key key )
 	{
 		FSTree_Functional< Key >* raw_ptr = new FSTree_Functional< Key >( parent, name, key );
+		
+		FSTreePtr result( raw_ptr );
+		
+		raw_ptr->AddMappings( mappings );
+		
+		return result;
+	}
+	
+	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[], void (*dtor)(const FSTree*) >
+	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name, Key key )
+	{
+		FSTree_Functional< Key >* raw_ptr = new FSTree_Functional< Key >( parent, name, key, dtor );
 		
 		FSTreePtr result( raw_ptr );
 		
