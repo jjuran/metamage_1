@@ -80,6 +80,17 @@ namespace Genie
 		return gWindowMap.find( key );
 	}
 	
+	class EmptyView : public Ped::View
+	{
+		public:
+			void Update();
+	};
+	
+	void EmptyView::Update()
+	{
+		N::EraseRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+	}
+	
 	static void CreateUserWindow( const FSTree* key )
 	{
 		WindowTitleMap::const_iterator the_title = gWindowTitleMap.find( key );
@@ -106,7 +117,7 @@ namespace Genie
 		
 		window->SetCloseHandler( closeHandler );
 		
-		window->SetView( std::auto_ptr< Ped::View >( new Ped::View() ) );
+		window->SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
 		
 		gWindowMap[ key ] = window;
 	}

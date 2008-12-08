@@ -15,6 +15,9 @@
 #include "Nucleus/Convert.h"
 #include "Nucleus/Saved.h"
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/Window.hh"
 
@@ -279,6 +282,8 @@ namespace Genie
 			N::SetPortWindowPort( window );
 			
 			SetColor( color );
+			
+			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 		}
 	};
 	
