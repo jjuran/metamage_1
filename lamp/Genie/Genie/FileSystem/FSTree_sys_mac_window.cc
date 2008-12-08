@@ -262,7 +262,7 @@ namespace Genie
 	}
 	
 	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
-	struct Access_WindowBackColor
+	struct Access_WindowColor
 	{
 		typedef std::string Result;
 		
@@ -341,8 +341,8 @@ namespace Genie
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
 		{ "size",  &Property_Factory< Access_WindowSize     > },
 		
-		{ "back-color", &Property_Factory< Access_WindowBackColor< N::GetPortBackColor, N::RGBBackColor > > },
-		{ "fore-color", &Property_Factory< Access_WindowBackColor< N::GetPortForeColor, N::RGBForeColor > > },
+		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
+		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
 		
 		{ NULL, NULL }
 	};
