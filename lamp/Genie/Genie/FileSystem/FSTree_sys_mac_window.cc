@@ -141,6 +141,26 @@ namespace Genie
 		}
 	};
 	
+	struct Access_WindowZOrder
+	{
+		typedef unsigned Result;
+		
+		unsigned Get( N::WindowRef window ) const
+		{
+			unsigned z = 0;
+			
+			for ( N::WindowRef it = N::GetWindowList();  it != window;  ++z, it = N::GetNextWindow( it ) )
+			{
+				if ( it == NULL )
+				{
+					p7::throw_errno( ENOENT );
+				}
+			}
+			
+			return z;
+		}
+	};
+	
 	inline unsigned char nibble_from_ascii( char c )
 	{
 		return c & 0x10 ?  c         - '0'
@@ -324,6 +344,18 @@ namespace Genie
 	};
 	
 	template < class Accessor >
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&                parent,
+	                                         const std::string&              name,
+	                                         WindowRef_KeyName_Traits::Key   key )
+	{
+		typedef sys_mac_window_REF_Property< Accessor > Property;
+		
+		typedef FSTree_QueryFile< Property > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Property( key ) ) );
+	}
+	
+	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&                parent,
 	                                   const std::string&              name,
 	                                   WindowRef_KeyName_Traits::Key   key )
@@ -343,6 +375,8 @@ namespace Genie
 		
 		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
 		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
+		
+		{ "z", &Const_Property_Factory< Access_WindowZOrder > },
 		
 		{ NULL, NULL }
 	};
