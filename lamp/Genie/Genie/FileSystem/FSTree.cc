@@ -261,6 +261,11 @@ namespace Genie
 		return FSTreePtr();
 	}
 	
+	void FSTree::SymLink( const std::string& target ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;

@@ -137,6 +137,8 @@ namespace Genie
 			virtual std::string ReadLink() const;
 			virtual FSTreePtr ResolveLink() const;
 			
+			virtual void SymLink( const std::string& target ) const;
+			
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			

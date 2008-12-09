@@ -25,6 +25,7 @@
 // Nitrogen
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/Files.h"
+#include "Nitrogen/Resources.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -265,6 +266,8 @@ namespace Genie
 			
 			std::string ReadLink() const;
 			FSTreePtr ResolveLink() const;
+			
+			void SymLink( const std::string& target ) const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
@@ -785,6 +788,56 @@ namespace Genie
 		FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 		
 		return FSTreePtr( new FSTree_FSSpec( target ) );
+	}
+	
+	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
+	{
+		if ( io::directory_exists( item ) )
+		{
+			return N::FileSignature( N::OSType( 'MACS'                    ),
+			                         N::OSType( kContainerFolderAliasType ) );
+		}
+		
+		FInfo fInfo = N::FSpGetFInfo( item );
+		
+		return N::FileSignature( fInfo );
+	}
+	
+	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
+	{
+		FSSpec linkSpec = linkFile->GetFSSpec( true );
+		
+		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
+		
+		FSSpec linkParentSpec = NN::Convert< FSSpec >( linkParent );
+		
+		// Target pathname is resolved relative to the location of the link file
+		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSSpec( linkParentSpec ) );
+		
+		// Do not resolve links -- if the target of this link is another symlink, so be it
+		
+		FSSpec targetSpec = target->GetFSSpec( false );
+		
+		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
+		
+		N::FSpCreateResFile( linkSpec, signature );
+		
+		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
+		
+		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
+		
+		linkFInfo.fdFlags |= kIsAlias;
+		
+		N::FSpSetFInfo( linkSpec, linkFInfo );
+		
+		NN::Owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
+		
+		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
+	}
+	
+	void FSTree_HFS::SymLink( const std::string& target ) const
+	{
+		CreateSymLink( shared_from_this(), target );
 	}
 	
 	void FSTree_FSSpec::CreateFile() const

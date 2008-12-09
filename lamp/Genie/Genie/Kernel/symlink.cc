@@ -11,19 +11,14 @@
 #include "unistd.h"
 
 // Nitrogen
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/MacErrors.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
 
-// OSErrno
-#include "OSErrno/OSErrno.hh"
-
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/FileSystem/ResolvePathAt.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -32,71 +27,8 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	
-	static const char* Basename( const char* pathname )
-	{
-		std::size_t length = std::strlen( pathname );
-		
-		const char* end = pathname + length;
-		
-		for ( const char* p = end - 1;  p >= pathname;  --p )
-		{
-			if ( *p == '/' )
-			{
-				return p + 1;
-			}
-		}
-		
-		return pathname;
-	}
-	
-	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
-	{
-		if ( io::directory_exists( item ) )
-		{
-			return N::FileSignature( N::OSType( 'MACS'                    ),
-			                         N::OSType( kContainerFolderAliasType ) );
-		}
-		
-		FInfo fInfo = N::FSpGetFInfo( item );
-		
-		return N::FileSignature( fInfo );
-	}
-	
-	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
-	{
-		FSSpec linkSpec = linkFile->GetFSSpec( true );
-		
-		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
-		
-		FSSpec linkParentSpec = NN::Convert< FSSpec >( linkParent );
-		
-		// Target pathname is resolved relative to the location of the link file
-		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSSpec( linkParentSpec ) );
-		
-		// Do not resolve links -- if the target of this link is another symlink, so be it
-		
-		FSSpec targetSpec = target->GetFSSpec( false );
-		
-		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
-		
-		N::FSpCreateResFile( linkSpec, signature );
-		
-		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
-		
-		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
-		
-		linkFInfo.fdFlags |= kIsAlias;
-		
-		N::FSpSetFInfo( linkSpec, linkFInfo );
-		
-		NN::Owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
-		
-		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
-	}
 	
 	static int symlinkat( const char* target_path, int newdirfd, const char* newpath )
 	{
@@ -136,7 +68,7 @@ namespace Genie
 			
 			// If we got here, link is a valid location.
 			
-			CreateSymLink( link, target_path );
+			link->SymLink( target_path );
 		}
 		catch ( ... )
 		{
