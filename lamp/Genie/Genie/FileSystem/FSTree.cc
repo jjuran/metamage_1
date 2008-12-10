@@ -305,7 +305,7 @@ namespace Genie
 	{
 		if ( !IsDirectory() )
 		{
-			p7::throw_errno( ENOTDIR );
+			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
 		}
 		
 		return boost::shared_ptr< IOHandle >( new DirHandle( shared_from_this() ) );
