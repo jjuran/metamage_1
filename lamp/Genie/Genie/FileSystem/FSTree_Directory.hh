@@ -372,7 +372,12 @@ namespace Genie
 			{
 				if ( it->second->needs_check )
 				{
-					Details::Invoke( f, shared_from_this(), name );
+					FSTreePtr file = Details::Invoke( f, shared_from_this(), name );
+					
+					if ( !file->Exists() )
+					{
+						continue;
+					}
 				}
 				
 				ino_t inode = 0;
