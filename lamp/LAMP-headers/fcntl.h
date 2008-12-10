@@ -44,6 +44,8 @@ extern "C" {
 	
 	#define O_DIRECTORY	0x4000  // matches m68k and powerpc Linux
 	
+	#define O_BINARY	0x8000  // matches WinCE
+	
 	#define O_LAZY  0x00010000
 	
 	#define O_TRUNC_LAZY  (O_TRUNC | O_LAZY)  // truncate at initial write(), not open()
