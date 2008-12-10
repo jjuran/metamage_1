@@ -229,7 +229,7 @@ namespace Genie
 		return readability | kPollWrite;
 	}
 	
-	int BufferFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t BufferFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		
@@ -249,7 +249,7 @@ namespace Genie
 		return Advance( view.ReadFrom( data, byteCount, GetFileMark() ) );
 	}
 	
-	int BufferFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t BufferFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		

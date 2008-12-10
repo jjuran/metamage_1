@@ -16,8 +16,8 @@
 namespace Genie
 {
 	
-	typedef int (*Reader)( char      *, std::size_t );
-	typedef int (*Writer)( char const*, std::size_t );
+	typedef ssize_t (*Reader)( char      *, std::size_t );
+	typedef ssize_t (*Writer)( char const*, std::size_t );
 	
 	struct DeviceIOSpec
 	{
@@ -38,9 +38,9 @@ namespace Genie
 			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
-			int SysRead( char* data, std::size_t byteCount );
+			ssize_t SysRead( char* data, std::size_t byteCount );
 			
-			int SysWrite( const char* data, std::size_t byteCount );
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 }

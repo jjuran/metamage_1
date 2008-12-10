@@ -26,19 +26,19 @@ namespace Genie
 	
 	// General
 	
-	static int ReadNull( char*, std::size_t )
+	static ssize_t ReadNull( char*, std::size_t )
 	{
 		return 0;
 	}
 	
-	static int WriteVoid( const char*, std::size_t byteCount )
+	static ssize_t WriteVoid( const char*, std::size_t byteCount )
 	{
 		return byteCount;
 	}
 	
 	// Zero
 	
-	static int ReadZero( char* data, std::size_t byteCount )
+	static ssize_t ReadZero( char* data, std::size_t byteCount )
 	{
 		std::fill( data,
 		           data + byteCount,
@@ -49,14 +49,14 @@ namespace Genie
 	
 	// Console
 	
-	static int WriteConsole( const char* data, std::size_t byteCount )
+	static ssize_t WriteConsole( const char* data, std::size_t byteCount )
 	{
 		return WriteToSystemConsole( data, byteCount );
 	}
 	
 	
-	typedef int (*Reader)( char*, std::size_t );
-	typedef int (*Writer)( const char*, std::size_t );
+	typedef ssize_t (*Reader)( char      *, std::size_t );
+	typedef ssize_t (*Writer)( char const*, std::size_t );
 	
 	static DeviceIOSpec gDeviceIOSpecs[] =
 	{

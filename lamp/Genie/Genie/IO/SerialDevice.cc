@@ -65,9 +65,9 @@ namespace Genie
 			
 			unsigned int SysPoll() const;
 			
-			int SysRead( char* data, std::size_t byteCount );
+			ssize_t SysRead( char* data, std::size_t byteCount );
 			
-			int SysWrite( const char* data, std::size_t byteCount );
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 	class ActiveSerialDeviceHandle : public SerialDeviceHandle
@@ -229,7 +229,7 @@ namespace Genie
 		return readability | writability;
 	}
 	
-	int SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		while ( true )
 		{
@@ -254,7 +254,7 @@ namespace Genie
 		return N::Read( itsInputRefNum, data, byteCount );
 	}
 	
-	int SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		while ( Preempted() )
 		{

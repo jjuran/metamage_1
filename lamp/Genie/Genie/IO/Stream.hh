@@ -31,9 +31,9 @@ namespace Genie
 			
 			virtual unsigned int SysPoll() const = 0;
 			
-			virtual int SysRead( char* data, std::size_t byteCount );
+			virtual ssize_t SysRead( char* data, std::size_t byteCount );
 			
-			virtual int SysWrite( const char* data, std::size_t byteCount );
+			virtual ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
@@ -50,9 +50,9 @@ namespace Genie
 			
 			unsigned int Poll() const;
 			
-			int Read( char* data, std::size_t byteCount );
+			ssize_t Read( char* data, std::size_t byteCount );
 			
-			int Write( const char* data, std::size_t byteCount );
+			ssize_t Write( const char* data, std::size_t byteCount );
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< StreamHandle >

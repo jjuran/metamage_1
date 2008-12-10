@@ -82,12 +82,12 @@ namespace Genie
 		return (itsInput->IsReadable() ? kPollRead : 0) | kPollWrite;
 	}
 	
-	int PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return itsInput->Read( data, byteCount, IsNonblocking() );
 	}
 	
-	int PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return itsOutput->Write( data, byteCount, IsNonblocking() );
 	}

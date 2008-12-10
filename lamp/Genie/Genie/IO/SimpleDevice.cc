@@ -21,12 +21,12 @@ namespace Genie
 		return ResolvePathname( deviceName );
 	}
 	
-	int SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return io.reader( data, byteCount );
 	}
 	
-	int SimpleDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t SimpleDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return io.writer( data, byteCount );
 	}

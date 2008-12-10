@@ -19,7 +19,7 @@ namespace Genie
 	{
 	}
 	
-	int QueryFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t QueryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		ASSERT( GetFileMark() <= itsData.size() );
 		
@@ -32,7 +32,7 @@ namespace Genie
 		return Advance( byteCount );
 	}
 	
-	int QueryFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t QueryFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		if ( GetFileMark() + byteCount > itsData.size() )
 		{

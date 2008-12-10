@@ -57,7 +57,7 @@ namespace Genie
 	{
 	}
 	
-	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		ssize_t read = FSRead( itsRefNum,
 		                       N::fsFromStart,
@@ -69,7 +69,7 @@ namespace Genie
 		return Advance( read );
 	}
 	
-	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  GetFileMark() == 0 )
 		{

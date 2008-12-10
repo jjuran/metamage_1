@@ -39,12 +39,12 @@ namespace Genie
 				       | kPollWrite * itsOutput->IsWritable();
 			}
 			
-			int SysRead( char* data, std::size_t byteCount )
+			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
 				return itsInput->Read( data, byteCount, IsNonblocking() );
 			}
 			
-			int SysWrite( const char* data, std::size_t byteCount )
+			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
 				return itsOutput->Write( data, byteCount, IsNonblocking() );
 			}

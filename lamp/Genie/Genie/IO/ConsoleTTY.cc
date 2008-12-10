@@ -51,7 +51,7 @@ namespace Genie
 		return readability | kPollWrite;
 	}
 	
-	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result
 		if ( byteCount == 0 )
@@ -105,7 +105,7 @@ namespace Genie
 		}
 	}
 	
-	int ConsoleTTYHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t ConsoleTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return static_cast< ConsoleWindow* >( itsWindow.get() )->Write( data, byteCount );
 	}

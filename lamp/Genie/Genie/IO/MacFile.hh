@@ -35,9 +35,9 @@ namespace Genie
 			
 			~MacFileHandle();
 			
-			int SysRead( char* data, std::size_t byteCount );
+			ssize_t SysRead( char* data, std::size_t byteCount );
 			
-			int SysWrite( const char* data, std::size_t byteCount );
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
 			

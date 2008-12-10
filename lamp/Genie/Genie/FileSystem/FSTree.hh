@@ -129,7 +129,13 @@ namespace Genie
 			
 			virtual void Delete() const;
 			
+			virtual void Rename( const FSTreePtr& destination ) const;
+			
+			virtual void HardLink( const FSTreePtr& destination ) const;
+			
 			// File methods
+			
+			virtual void CopyFile( const FSTreePtr& destination ) const;
 			
 			virtual off_t GetEOF() const;
 			virtual void  SetEOF( off_t length ) const;
@@ -138,8 +144,6 @@ namespace Genie
 			virtual FSTreePtr ResolveLink() const;
 			
 			virtual void SymLink( const std::string& target ) const;
-			
-			virtual void HardLink( const FSTreePtr& target ) const;
 			
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;

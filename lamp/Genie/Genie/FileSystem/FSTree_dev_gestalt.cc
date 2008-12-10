@@ -26,9 +26,9 @@ namespace Genie
 			
 			unsigned int SysPoll() const  { return 0; }
 			
-			int SysRead( char* data, std::size_t byteCount )  { return 0; }
+			ssize_t SysRead( char* data, std::size_t byteCount )  { return 0; }
 			
-			int SysWrite( const char* data, std::size_t byteCount )  { return byteCount; }
+			ssize_t SysWrite( const char* data, std::size_t byteCount )  { return byteCount; }
 			
 			void IOCtl( unsigned long request, int* argp );
 	};

@@ -217,6 +217,21 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
+	void FSTree::Rename( const FSTreePtr& destination ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
+	void FSTree::HardLink( const FSTreePtr& destination ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
+	void FSTree::CopyFile( const FSTreePtr& destination ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
 	off_t FSTree::GetEOF() const
 	{
 		// This confuses MWCPPC when optimizing:
@@ -262,11 +277,6 @@ namespace Genie
 	}
 	
 	void FSTree::SymLink( const std::string& target ) const
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
-	void FSTree::HardLink( const FSTreePtr& target ) const
 	{
 		p7::throw_errno( EINVAL );
 	}

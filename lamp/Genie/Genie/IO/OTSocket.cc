@@ -131,7 +131,7 @@ namespace Genie
 		return (canRead ? kPollRead : 0) | kPollWrite;
 	}
 	
-	int OTSocket::SysRead( char* data, std::size_t byteCount )
+	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )
 	{
 		if ( itHasReceivedFIN )
 		{
@@ -204,7 +204,7 @@ namespace Genie
 		return 0;
 	}
 	
-	int OTSocket::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
 	{
 		retry:
 		

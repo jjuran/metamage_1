@@ -29,11 +29,11 @@ namespace Genie
 			{
 			}
 			
-			int SysWrite( const char* data, std::size_t byteCount );
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 	template < class Property >
-	int PseudoFileHandle< Property >::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t PseudoFileHandle< Property >::SysWrite( const char* data, std::size_t byteCount )
 	{
 		if ( byteCount == 0 )
 		{

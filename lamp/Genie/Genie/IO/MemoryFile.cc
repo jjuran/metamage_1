@@ -19,7 +19,7 @@ namespace Genie
 	{
 	}
 	
-	int MemoryFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t MemoryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		ASSERT( GetFileMark() <= itsSize );
 		
@@ -32,7 +32,7 @@ namespace Genie
 		return Advance( byteCount );
 	}
 	
-	int MemoryFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t MemoryFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		std::copy( data,
 		           data + byteCount,

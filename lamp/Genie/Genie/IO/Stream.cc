@@ -31,14 +31,14 @@ namespace Genie
 	{
 	}
 	
-	int StreamHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t StreamHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		p7::throw_errno( EPERM );
 		
 		return 0;
 	}
 	
-	int StreamHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t StreamHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		p7::throw_errno( EPERM );
 		
@@ -67,7 +67,7 @@ namespace Genie
 			
 			char data[ kBufferLength ];
 			
-			int bytes = SysRead( data, kBufferLength );  // will block, throw, or return non-negative
+			ssize_t bytes = SysRead( data, kBufferLength );  // will block, throw, or return non-negative
 			
 			if ( bytes == 0 )
 			{
@@ -90,7 +90,7 @@ namespace Genie
 		return SysPoll() | (itsPeekBuffer.empty() ? 0 : kPollRead);
 	}
 	
-	int StreamHandle::Read( char* data, std::size_t byteCount )
+	ssize_t StreamHandle::Read( char* data, std::size_t byteCount )
 	{
 		if ( IsDisconnected() )
 		{
@@ -135,7 +135,7 @@ namespace Genie
 		
 		try
 		{
-			int result = SysRead( data, byteCount );
+			ssize_t result = SysRead( data, byteCount );
 			
 			bytesRead += result;
 		}
@@ -150,7 +150,7 @@ namespace Genie
 		return bytesRead;
 	}
 	
-	int StreamHandle::Write( const char* data, std::size_t byteCount )
+	ssize_t StreamHandle::Write( const char* data, std::size_t byteCount )
 	{
 		if ( IsDisconnected() )
 		{
