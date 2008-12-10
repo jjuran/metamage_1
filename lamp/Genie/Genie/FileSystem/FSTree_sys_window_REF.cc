@@ -330,6 +330,8 @@ namespace Genie
 			{
 			}
 			
+			bool Exists() const;
+			
 			bool IsLink() const  { return FindWindow( this ) != gWindowMap.end(); }
 			
 			void SetTimes() const;
@@ -341,6 +343,11 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
+	
+	bool FSTree_sys_window_REF_ref::Exists() const
+	{
+		return FindWindow( this ) != gWindowMap.end();
+	}
 	
 	void FSTree_sys_window_REF_ref::SetTimes() const
 	{
@@ -389,7 +396,7 @@ namespace Genie
 	
 	const Functional_Traits< void >::Mapping sys_window_REF_Mappings[] =
 	{
-		{ "ref",   &Factory< FSTree_sys_window_REF_ref > },
+		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
 		
 		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title > > > },
 		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size  > > > },
