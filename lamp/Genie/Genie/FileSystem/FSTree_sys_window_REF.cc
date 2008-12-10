@@ -80,6 +80,11 @@ namespace Genie
 		return gWindowMap.find( key );
 	}
 	
+	static inline bool HasWindow( const FSTree* that )
+	{
+		return FindWindow( that ) != gWindowMap.end();
+	}
+	
 	class EmptyView : public Ped::View
 	{
 		public:
@@ -251,37 +256,63 @@ namespace Genie
 	};
 	
 	
-	template < class Property >
-	class FSTree_sys_window_REF_Property : public FSTree
+	class FSTree_sys_window_REF_Property_Base : public FSTree
 	{
-		private:
-			Property itsProperty;
-		
 		public:
-			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
-			                                const std::string&  name ) : FSTree( parent, name ),
-			                                                             itsProperty( parent.get() )
+			FSTree_sys_window_REF_Property_Base( const FSTreePtr&    parent,
+			                                     const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
-			bool IsLink() const  { return FindWindow( this ) != gWindowMap.end(); }
+			bool IsLink() const  { return HasWindow( this ); }
 			
 			mode_t FilePermMode() const;
-			
-			off_t GetEOF() const  { return itsProperty.Get().size(); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 			
 			std::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
 	};
 	
-	template < class Property >
-	mode_t FSTree_sys_window_REF_Property< Property >::FilePermMode() const
+	mode_t FSTree_sys_window_REF_Property_Base::FilePermMode() const
 	{
 		return IsLink() ? S_IRUSR | S_IWUSR | S_IXUSR : S_IRUSR | S_IWUSR;
 	}
+	
+	std::string FSTree_sys_window_REF_Property_Base::ReadLink() const
+	{
+		if ( !IsLink() )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		return "ref/" + Name();
+	}
+	
+	FSTreePtr FSTree_sys_window_REF_Property_Base::ResolveLink() const
+	{
+		return ResolvePathname( ReadLink(), Parent() );
+	}
+	
+	
+	template < class Property >
+	class FSTree_sys_window_REF_Property : public FSTree_sys_window_REF_Property_Base
+	{
+		private:
+			typedef FSTree_sys_window_REF_Property_Base Base;
+			
+			Property itsProperty;
+		
+		public:
+			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
+			                                const std::string&  name ) : Base( parent, name ),
+			                                                             itsProperty( parent.get() )
+			{
+			}
+			
+			off_t GetEOF() const  { return itsProperty.Get().size(); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
 	
 	template < class Property >
 	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property< Property >::Open( OpenFlags flags ) const
@@ -304,23 +335,6 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( result );
 	}
 	
-	template < class Property >
-	std::string FSTree_sys_window_REF_Property< Property >::ReadLink() const
-	{
-		if ( !IsLink() )
-		{
-			p7::throw_errno( EINVAL );
-		}
-		
-		return "ref/" + Name();
-	}
-	
-	template < class Property >
-	FSTreePtr FSTree_sys_window_REF_Property< Property >::ResolveLink() const
-	{
-		return ResolvePathname( ReadLink(), Parent() );
-	}
-	
 	
 	class FSTree_sys_window_REF_ref : public FSTree
 	{
@@ -330,9 +344,11 @@ namespace Genie
 			{
 			}
 			
-			bool Exists() const;
+			const FSTree* WindowKey() const  { return Parent().get(); }
 			
-			bool IsLink() const  { return FindWindow( this ) != gWindowMap.end(); }
+			bool Exists() const  { return HasWindow( this ); }
+			
+			bool IsLink() const  { return Exists(); }
 			
 			void SetTimes() const;
 			
@@ -344,21 +360,16 @@ namespace Genie
 	};
 	
 	
-	bool FSTree_sys_window_REF_ref::Exists() const
-	{
-		return FindWindow( this ) != gWindowMap.end();
-	}
-	
 	void FSTree_sys_window_REF_ref::SetTimes() const
 	{
-		const FSTree* key = Parent().get();
+		const FSTree* key = WindowKey();
 		
 		CreateUserWindow( key );
 	}
 	
 	void FSTree_sys_window_REF_ref::Delete() const
 	{
-		const FSTree* key = Parent().get();
+		const FSTree* key = WindowKey();
 		
 		CloseUserWindow( key );
 	}
