@@ -1079,7 +1079,7 @@ namespace Genie
 			p7::throw_errno( newCWD->Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		itsCWD = newCWD->OpenDirectory();
+		itsCWD = newCWD->ChangeToDirectory();
 	}
 	
 	void Process::SuspendForFork( pid_t childPID )
