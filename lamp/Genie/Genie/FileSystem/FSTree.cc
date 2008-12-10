@@ -266,6 +266,11 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
+	void FSTree::HardLink( const std::string& target ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;
@@ -304,6 +309,11 @@ namespace Genie
 		}
 		
 		return boost::shared_ptr< IOHandle >( new DirHandle( shared_from_this() ) );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree::ChangeToDirectory() const
+	{
+		return OpenDirectory();
 	}
 	
 	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
