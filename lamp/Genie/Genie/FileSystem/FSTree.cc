@@ -266,7 +266,7 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	void FSTree::HardLink( const std::string& target ) const
+	void FSTree::HardLink( const FSTreePtr& target ) const
 	{
 		p7::throw_errno( EINVAL );
 	}
