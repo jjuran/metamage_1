@@ -1074,11 +1074,6 @@ namespace Genie
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		if ( !newCWD->IsDirectory() )
-		{
-			p7::throw_errno( newCWD->Exists() ? ENOTDIR : ENOENT );
-		}
-		
 		itsCWD = newCWD->ChangeToDirectory();
 	}
 	
