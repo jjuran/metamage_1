@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle > FSTree_new_window::OpenDirectory() const
+	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
 	{
 		FSTreePtr dir = NewWindow();
 		

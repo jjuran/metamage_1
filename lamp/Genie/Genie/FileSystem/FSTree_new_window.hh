@@ -23,7 +23,7 @@ namespace Genie
 			
 			bool IsDirectory() const  { return true; }
 			
-			boost::shared_ptr< IOHandle > OpenDirectory() const;
+			boost::shared_ptr< IOHandle > ChangeToDirectory() const;
 	};
 	
 }
