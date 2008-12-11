@@ -27,17 +27,27 @@ namespace Genie
 	extern const Functional_Traits< void >::Mapping Caption_view_Mappings[];
 	
 	
+	class Caption : public Ped::Caption
+	{
+		public:
+			struct Initializer {};
+			
+			Caption( Initializer = Initializer() )
+			{
+			}
+			
+			std::string Text() const  { return "Hello world"; }
+	};
+	
 	struct CaptionFactory : ViewFactory
 	{
-		typedef Ped::GraphicView< Ped::Caption > View;
+		typedef Ped::GraphicView< Caption > View;
 		
 		void operator()( Ped::UserWindow& window ) const
 		{
 			Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
 			
-			std::string caption = "Hello world";
-			
-			std::auto_ptr< Ped::View > view( new View( bounds, caption ) );
+			std::auto_ptr< Ped::View > view( new View( bounds ) );
 			
 			window.SetView( view );
 			
