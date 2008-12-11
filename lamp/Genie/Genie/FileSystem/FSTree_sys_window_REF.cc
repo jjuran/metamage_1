@@ -5,6 +5,12 @@
 
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -14,6 +20,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_PseudoFile.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Genie
@@ -96,14 +103,14 @@ namespace Genie
 		N::EraseRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
-	static void CreateUserWindow( const FSTree* key )
+	static const boost::shared_ptr< Ped::UserWindow >& CreateUserWindow( const FSTree* key )
 	{
 		WindowTitleMap::const_iterator the_title = gWindowTitleMap.find( key );
 		WindowSizeMap ::const_iterator the_size  = gWindowSizeMap .find( key );
 		
 		if ( the_title == gWindowTitleMap.end()  ||  the_size == gWindowSizeMap.end() )
 		{
-			return;
+			p7::throw_errno( EPERM );
 		}
 		
 		ConstStr255Param title = the_title->second;
@@ -124,7 +131,7 @@ namespace Genie
 		
 		window->SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
 		
-		gWindowMap[ key ] = window;
+		return gWindowMap[ key ] = window;
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
@@ -336,6 +343,31 @@ namespace Genie
 	}
 	
 	
+	static void ConstructViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
+	{
+		N::WindowRef windowRef = window.Get();
+		
+		NN::Saved< N::Port_Value > savePort;
+		
+		N::SetPortWindowPort( windowRef );
+		
+		factory( window );
+	}
+	
+	static void DestroyViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
+	{
+		N::WindowRef windowRef = window.Get();
+		
+		NN::Saved< N::Port_Value > savePort;
+		
+		N::SetPortWindowPort( windowRef );
+		
+		window.SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
+		
+		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+	}
+	
+	
 	class FSTree_sys_window_REF_ref : public FSTree
 	{
 		public:
@@ -364,7 +396,12 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		CreateUserWindow( key );
+		const boost::shared_ptr< Ped::UserWindow >& window = CreateUserWindow( key );
+		
+		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		{
+			ConstructViewInWindow( *factory, *window );
+		}
 	}
 	
 	void FSTree_sys_window_REF_ref::Delete() const
@@ -398,6 +435,97 @@ namespace Genie
 	}
 	
 	
+	class FSTree_sys_window_REF_view : public FSTree
+	{
+		public:
+			FSTree_sys_window_REF_view( const FSTreePtr&    parent,
+			                            const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			const FSTree* WindowKey() const  { return Parent().get(); }
+			
+			bool IsDirectory() const  { return Exists(); }
+			
+			bool Exists() const  { return GetViewDelegate( WindowKey() ) != NULL; }
+			
+			void SetTimes() const;
+			
+			void Delete() const;
+			
+			FSTreePtr Lookup( const std::string& name ) const;
+			
+			FSIteratorPtr Iterate() const;
+	};
+	
+	void FSTree_sys_window_REF_view::SetTimes() const
+	{
+		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		{
+			WindowMap::const_iterator it = FindWindow( this );
+			
+			if ( it != gWindowMap.end() )
+			{
+				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
+				
+				ConstructViewInWindow( *factory, *window );
+			}
+		}
+		else
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
+	void FSTree_sys_window_REF_view::Delete() const
+	{
+		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		{
+			const FSTree* key = WindowKey();
+			
+			RemoveViewFactory ( key );
+			RemoveViewDelegate( key );
+			
+			WindowMap::const_iterator it = FindWindow( this );
+			
+			if ( it != gWindowMap.end() )
+			{
+				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
+				
+				DestroyViewInWindow( *factory, *window );
+			}
+		}
+		else
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
+	FSTreePtr FSTree_sys_window_REF_view::Lookup( const std::string& name ) const
+	{
+		const FSTreePtr& delegate = GetViewDelegate( WindowKey() );
+		
+		if ( delegate == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return delegate->Lookup( name );
+	}
+	
+	FSIteratorPtr FSTree_sys_window_REF_view::Iterate() const
+	{
+		const FSTreePtr& delegate = GetViewDelegate( WindowKey() );
+		
+		if ( delegate == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return delegate->Iterate();
+	}
+	
+	
 	template < class FSTree_Type >
 	static FSTreePtr Factory( const FSTreePtr&    parent,
 	                          const std::string&  name )
@@ -408,6 +536,8 @@ namespace Genie
 	const Functional_Traits< void >::Mapping sys_window_REF_Mappings[] =
 	{
 		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
+		
+		{ "view",   &Factory< FSTree_sys_window_REF_view >, true },
 		
 		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title > > > },
 		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size  > > > },
