@@ -30,10 +30,7 @@ namespace Pedestal
 	
 	Point GetWindowSize( Nitrogen::WindowRef window );
 	
-	inline void SetWindowSize( Nitrogen::WindowRef window, Point size )
-	{
-		ResizeWindow( window, size );
-	}
+	void SetWindowSize( Nitrogen::WindowRef window, Point size );
 	
 	Point GetWindowPosition( Nitrogen::WindowRef window );
 	

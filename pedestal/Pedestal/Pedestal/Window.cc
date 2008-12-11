@@ -34,6 +34,15 @@ namespace Pedestal
 		}
 	}
 	
+	void SetWindowSize( Nitrogen::WindowRef window, Point size )
+	{
+		NN::Saved< N::Port_Value > savePort;
+		
+		N::SetPortWindowPort( window );
+		
+		ResizeWindow( window, size );
+	}
+	
 	
 	Point GetWindowSize( N::WindowRef window )
 	{
