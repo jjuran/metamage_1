@@ -550,9 +550,9 @@
 		return fchownat( AT_FDCWD, path, owner, group, 0 );
 	}
 	
-	int link( const char* target_path, const char* link_location )
+	int link( const char* oldpath, const char* newpath )
 	{
-		return linkat( target_path, AT_FDCWD, link_location, 0 );
+		return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );
 	}
 	
 	int readlink( const char *path, char *buffer, size_t buffer_size )
