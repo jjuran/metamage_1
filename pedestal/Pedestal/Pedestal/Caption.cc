@@ -16,7 +16,7 @@ namespace Pedestal
 	
 	void Caption::Plot( const Rect& area )
 	{
-		N::TETextBox( text, area );
+		N::TETextBox( Text(), area );
 	}
 	
 }

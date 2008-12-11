@@ -23,7 +23,7 @@ namespace Pedestal
 		public:
 			typedef typename Graphic::Initializer Initializer;
 			
-			GraphicView( const Rect& bounds, Initializer init )
+			GraphicView( const Rect& bounds, Initializer init = Initializer() )
 			:
 				bounds ( bounds ),
 				graphic( init   )

@@ -18,17 +18,8 @@ namespace Pedestal
 	
 	class Caption : public Graphic
 	{
-		private:
-			std::string text;
-		
 		public:
-			typedef std::string Initializer;
-			
-			Caption( const std::string& text ) : text( text )  {}
-			
-			std::string Text() const  { return text; }
-			
-			void SetText( const std::string& newText )  { text = newText; }
+			virtual std::string Text() const = 0;
 			
 			void Plot( const Rect& area );
 	};
