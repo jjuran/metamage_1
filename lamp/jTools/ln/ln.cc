@@ -55,21 +55,17 @@ namespace tool
 		// Check for sufficient number of args
 		if ( argc < 3 )
 		{
-			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln -s target [link]\n" ) );
+			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln [-s] target [link]\n" ) );
 			
 			return 2;
 		}
 		
-		if ( std::strcmp( argv[ 1 ], "-s" ) != 0 )
-		{
-			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln -s target [link]\n"
-			                                       "(Sorry, symlinks only)\n" ) );
-			
-			return 2;
-		}
+		const bool symbolic = std::strcmp( argv[ 1 ], "-s" ) == 0;
 		
-		const char* target   = argv[ 2 ];
-		std::string location = argv[ 3 ] != NULL ? argv[ 3 ] : ".";
+		const char* target = argv[ 1 + symbolic ];
+		const char* loc    = argv[ 2 + symbolic ];
+		
+		std::string location = loc != NULL ? loc : ".";
 		
 		struct stat target_status = p7::stat( target );
 		
@@ -94,11 +90,12 @@ namespace tool
 			}
 		}
 		
-		int linked = symlink( target, location.c_str() );
+		int linked = symbolic ? symlink( target, location.c_str() )
+		                      :    link( target, location.c_str() );
 		
 		if ( linked < 0 )
 		{
-			std::perror( "symlink()" );
+			std::perror( "ln" );
 			
 			return EXIT_FAILURE;
 		}
