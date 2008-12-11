@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.18  2008-09-13 01:54:19  jax
+Revision 1.19  2008-12-11 00:01:18  jax
+Define HAS_LINK since link() is available (even if it doesn't work with the File Manager).
+
+Revision 1.18  2008/09/13 01:54:19  jax
 Including vfork.h is unnecessary.
 
 Revision 1.17  2008/09/12 09:29:44  jax
@@ -343,7 +346,7 @@ First build released to public
  *	This symbol, if defined, indicates that the link routine is
  *	available to create hard links.
  */
-#undef HAS_LINK	/**/
+#define HAS_LINK	/**/
 
 /* HAS_LOCALECONV:
  *	This symbol, if defined, indicates that the localeconv routine is
