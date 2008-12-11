@@ -6,6 +6,9 @@
 #ifndef PEDESTAL_GRAPHICVIEW_HH
 #define PEDESTAL_GRAPHICVIEW_HH
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/View.hh"
 
@@ -33,6 +36,14 @@ namespace Pedestal
 			Graphic      & Get()        { return graphic; }
 			
 			const Rect& Bounds() const  { return bounds; }
+			
+			void Resize( short width, short height )
+			{
+				bounds.right  = width;
+				bounds.bottom = height;
+				
+				Nitrogen::InvalRect( bounds );
+			}
 			
 			void Update()  { graphic.Plot( bounds ); }
 	};
