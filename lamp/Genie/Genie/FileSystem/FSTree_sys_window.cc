@@ -66,16 +66,11 @@ namespace Genie
 		gWindowMap[ member.get() ] = member;
 	}
 	
-	namespace
+	void RemoveWindow( const FSTree* window )
 	{
+		RemoveUserWindow( window );
 		
-		void RemoveWindow( const FSTree* member )
-		{
-			RemoveUserWindow( member );
-			
-			gWindowMap.erase( member );
-		}
-		
+		gWindowMap.erase( window );
 	}
 	
 	static const FSTreePtr& SysWindow()

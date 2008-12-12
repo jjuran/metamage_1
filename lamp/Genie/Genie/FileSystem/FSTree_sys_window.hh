@@ -31,6 +31,8 @@ namespace Genie
 	
 	FSTreePtr NewWindow();
 	
+	void RemoveWindow( const FSTree* window );
+	
 }
 
 #endif
