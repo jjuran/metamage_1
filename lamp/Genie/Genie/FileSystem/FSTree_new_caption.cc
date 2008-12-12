@@ -67,7 +67,7 @@ namespace Genie
 		
 		AddViewFactory( key, factory );
 		
-		target->SetTimes();
+		target->CreateDirectory( 0 );  // mode is ignored
 	}
 	
 	

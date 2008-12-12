@@ -453,12 +453,14 @@ namespace Genie
 			
 			void Delete() const;
 			
+			void CreateDirectory( mode_t mode ) const;
+			
 			FSTreePtr Lookup( const std::string& name ) const;
 			
 			FSIteratorPtr Iterate() const;
 	};
 	
-	void FSTree_sys_window_REF_view::SetTimes() const
+	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
 	{
 		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
 		{
