@@ -375,6 +375,18 @@ namespace Genie
 		return it != gWindowMap.end() ? it->second->Get() : NULL;
 	}
 	
+	static void InvalidateWindow( const FSTree* key )
+	{
+		if ( N::WindowRef window = GetWindowRef( key ) )
+		{
+			InvalidateWindowRef( window );
+		}
+		else
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
 	static void DestroyViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
 	{
 		N::WindowRef windowRef = window.Get();
@@ -470,6 +482,8 @@ namespace Genie
 			
 			bool Exists() const  { return GetViewDelegate( WindowKey() ) != NULL; }
 			
+			void SetTimes() const;
+			
 			void Delete() const;
 			
 			void CreateDirectory( mode_t mode ) const;
@@ -478,6 +492,11 @@ namespace Genie
 			
 			FSIteratorPtr Iterate() const;
 	};
+	
+	void FSTree_sys_window_REF_view::SetTimes() const
+	{
+		InvalidateWindow( WindowKey() );
+	}
 	
 	void FSTree_sys_window_REF_view::Delete() const
 	{
