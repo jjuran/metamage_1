@@ -13,15 +13,7 @@
 namespace Genie
 {
 	
-	class FileHandle : public StreamHandle
-	{
-		public:
-			FileHandle( OpenFlags flags ) : StreamHandle( flags )
-			{
-			}
-			
-			virtual ~FileHandle()  {}
-	};
+	typedef StreamHandle FileHandle;
 	
 }
 

@@ -22,13 +22,13 @@ namespace Genie
 	class GestaltDeviceHandle : public DeviceHandle
 	{
 		public:
+			GestaltDeviceHandle( OpenFlags flags ) : DeviceHandle( flags )
+			{
+			}
+			
 			FSTreePtr GetFile() const  { return ResolvePathname( "/dev/gestalt" ); }
 			
 			unsigned int SysPoll() const  { return 0; }
-			
-			ssize_t SysRead( char* data, std::size_t byteCount )  { return 0; }
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount )  { return byteCount; }
 			
 			void IOCtl( unsigned long request, int* argp );
 	};
@@ -48,7 +48,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_gestalt::Open( OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
+		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle( flags ) );
 	}
 	
 }

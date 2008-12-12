@@ -25,6 +25,8 @@ namespace Genie
 			{
 			}
 			
+			~VirtualFileHandle();
+			
 			FSTreePtr GetFile() const  { return itsFile; }
 	};
 	

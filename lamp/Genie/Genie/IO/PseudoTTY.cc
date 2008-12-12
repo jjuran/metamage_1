@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/IO/DynamicGroup.hh"
+#include "Genie/IO/Terminal.hh"
 
 
 namespace Genie
@@ -57,7 +58,8 @@ namespace Genie
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                   id,
 			                          boost::shared_ptr< Conduit >  input,
 			                          boost::shared_ptr< Conduit >  output )
-	: itsID( id ),
+	: TTYHandle( O_RDWR ),
+	  itsID( id ),
 	  itsTerminal( NewTerminal( "/dev/pts/" + NN::Convert< std::string >( id ) ) ),
 	  itsInput( input ),
 	  itsOutput( output )

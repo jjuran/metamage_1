@@ -101,19 +101,21 @@ namespace Genie
 			{
 			}
 			
-			void operator()( Ped::UserWindow& window ) const
-			{
-				Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
-				
-				typedef Ped::GraphicView< Caption > View;
-				
-				std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
-				
-				window.SetView( view );
-				
-				N::InvalRect( bounds );
-			}
+			void operator()( Ped::UserWindow& window ) const;
 	};
+	
+	void CaptionFactory::operator()( Ped::UserWindow& window ) const
+	{
+		Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
+		
+		typedef Ped::GraphicView< Caption > View;
+		
+		std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
+		
+		window.SetView( view );
+		
+		N::InvalRect( bounds );
+	}
 	
 	namespace
 	{
@@ -159,7 +161,7 @@ namespace Genie
 			{
 			}
 			
-			const FSTree* ViewKey() const  { return GetFile()->Parent().get(); }
+			const FSTree* ViewKey() const;
 			
 			std::string& String() const  { return gCaptionTextMap[ ViewKey() ]; }
 			
@@ -171,6 +173,11 @@ namespace Genie
 			
 			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
 	};
+	
+	const FSTree* CaptionTextFileHandle::ViewKey() const
+	{
+		return GetFile()->Parent().get();
+	}
 	
 	ssize_t CaptionTextFileHandle::SysRead( char* buffer, std::size_t byteCount )
 	{

@@ -6,6 +6,9 @@
 #ifndef GENIE_IO_SIMPLEDEVICE_HH
 #define GENIE_IO_SIMPLEDEVICE_HH
 
+// POSIX
+#include <fcntl.h>
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
@@ -32,7 +35,7 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const DeviceIOSpec& io ) : io( io )
+			SimpleDeviceHandle( const DeviceIOSpec& io ) : DeviceHandle( O_RDWR ), io( io )
 			{
 			}
 			

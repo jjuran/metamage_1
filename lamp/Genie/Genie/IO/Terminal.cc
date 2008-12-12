@@ -16,6 +16,7 @@
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 
 

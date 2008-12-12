@@ -8,6 +8,9 @@
 // Standard C++
 #include <map>
 
+// POSIX
+#include <fcntl.h>
+
 // Boost
 #include "boost/shared_ptr.hpp"
 
@@ -201,7 +204,8 @@ namespace Genie
 		return N::OpenDriver( driverName );
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName ) : itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, "Out" ) ) ),
+	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName ) : DeviceHandle( O_RDWR ),
+	                                                                        itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, "Out" ) ) ),
 	                                                                        itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, "In"  ) ) )
 	{
 		

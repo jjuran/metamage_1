@@ -13,7 +13,8 @@ namespace Genie
 {
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( TerminalID          id,
-	                                    const std::string&  name ) : itsID( id ),
+	                                    const std::string&  name ) : TTYHandle( O_RDWR ),
+	                                                                 itsID( id ),
 	                                                                 itsWindow( new ConsoleWindow( id, name ) )
 	{
 	}
