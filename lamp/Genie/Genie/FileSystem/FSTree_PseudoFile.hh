@@ -65,11 +65,15 @@ namespace Genie
 		
 		if ( flags == O_RDONLY )
 		{
-			result = new QueryFileHandle( shared_from_this(), itsProperty.Get() );
+			result = new QueryFileHandle( shared_from_this(),
+			                              flags,
+			                              itsProperty.Get() );
 		}
 		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
-			result = new PseudoFileHandle< Property >( shared_from_this(), itsProperty );
+			result = new PseudoFileHandle< Property >( shared_from_this(),
+			                                           flags,
+			                                           itsProperty );
 		}
 		else
 		{

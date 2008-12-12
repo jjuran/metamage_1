@@ -24,10 +24,13 @@ namespace Genie
 		
 		public:
 			PseudoFileHandle( const FSTreePtr&  file,
-			                  const Property&   property ) : VirtualFileHandle( file ),
+			                  OpenFlags         flags,
+			                  const Property&   property ) : VirtualFileHandle( file, flags ),
 			                                                 itsProperty( property )
 			{
 			}
+			
+			void SetEOF( off_t length )  {}  // FIXME
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};

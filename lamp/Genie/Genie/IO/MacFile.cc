@@ -48,8 +48,8 @@ namespace Genie
 	
 	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum >  refNum,
 	                              OpenFlags                     flags )
-	: itsRefNum   ( refNum ),
-	  itsOpenFlags( flags  )
+	: RegularFileHandle( flags  ),
+	  itsRefNum        ( refNum )
 	{
 	}
 	
@@ -71,12 +71,7 @@ namespace Genie
 	
 	ssize_t MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  GetFileMark() == 0 )
-		{
-			SetEOF( 0 );
-		}
-		
-		const bool appending = itsOpenFlags & O_APPEND;
+		const bool appending = GetFlags() & O_APPEND;
 		
 		const N::FSIOPosMode  mode   = appending ? N::fsFromLEOF : N::fsFromStart;
 		const SInt32          offset = appending ? 0             : GetFileMark();

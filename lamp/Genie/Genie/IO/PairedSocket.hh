@@ -14,14 +14,13 @@
 
 // Genie
 #include "Genie/IO/Conduit.hh"
-#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/SocketStream.hh"
 
 
 namespace Genie
 {
 	
-	class PairedSocket : public InternallyNonblocking< SocketHandle >
+	class PairedSocket : public SocketHandle
 	{
 		private:
 			boost::shared_ptr< Conduit >  itsInput;

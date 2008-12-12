@@ -14,14 +14,13 @@
 
 // Genie
 #include "Genie/IO/Conduit.hh"
-#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/TTY.hh"
 
 
 namespace Genie
 {
 	
-	class PseudoTTYHandle : public InternallyNonblocking< TTYHandle >
+	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
 			TerminalID                     itsID;

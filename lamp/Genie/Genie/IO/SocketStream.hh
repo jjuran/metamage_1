@@ -11,6 +11,7 @@
 
 // POSIX
 #include "errno.h"
+#include <fcntl.h>
 #include <sys/socket.h>
 
 // Genie
@@ -43,6 +44,10 @@ namespace Genie
 	class SocketHandle : public StreamHandle
 	{
 		public:
+			SocketHandle() : StreamHandle( O_RDWR )
+			{
+			}
+			
 			virtual ~SocketHandle()  {}
 			
 			bool IsSocket() const  { return true; }

@@ -43,6 +43,7 @@ namespace Genie
 	#else
 		
 		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( shared_from_this(),
+		                                                            flags,
 		                                                            LMGetROMBase(),
 		                                                            GetEOF() ) );
 		

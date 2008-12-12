@@ -7,16 +7,19 @@
 #define GENIE_IO_FILE_HH
 
 // Genie
-#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class FileHandle : public InternallyNonblocking< StreamHandle >
+	class FileHandle : public StreamHandle
 	{
 		public:
+			FileHandle( OpenFlags flags ) : StreamHandle( flags )
+			{
+			}
+			
 			virtual ~FileHandle()  {}
 	};
 	

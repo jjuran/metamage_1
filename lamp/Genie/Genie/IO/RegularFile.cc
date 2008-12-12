@@ -5,6 +5,9 @@
 
 #include "Genie/IO/RegularFile.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -15,7 +18,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	RegularFileHandle::RegularFileHandle() : itsMark()
+	RegularFileHandle::RegularFileHandle( OpenFlags flags ) : FileHandle( flags ), itsMark()
 	{
 	}
 	
@@ -58,6 +61,16 @@ namespace Genie
 	void RegularFileHandle::SetEOF( off_t length )
 	{
 		GetFile()->SetEOF( length );
+	}
+	
+	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
+	{
+		if ( (GetFlags() & O_TRUNC_LAZY)  &&  GetFileMark() == 0 )
+		{
+			SetEOF( 0 );
+		}
+		
+		return SysWrite( buffer, byteCount );
 	}
 	
 }

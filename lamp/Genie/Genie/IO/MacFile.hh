@@ -26,8 +26,6 @@ namespace Genie
 	{
 		private:
 			Nucleus::Owned< Nitrogen::FSFileRefNum > itsRefNum;
-			
-			OpenFlags  itsOpenFlags;
 		
 		public:
 			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,

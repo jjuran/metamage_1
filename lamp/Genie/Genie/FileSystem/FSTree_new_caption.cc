@@ -143,10 +143,19 @@ namespace Genie
 	}
 	
 	
+	static void CaptionText_SetEOF( const FSTree* text, off_t length )
+	{
+		const FSTree* view = text->Parent().get();
+		
+		gCaptionTextMap[ view ].resize( length );
+		
+		InvalidateWindowRef( GetWindowRef( view->Parent().get() ) );
+	}
+	
 	class CaptionTextFileHandle : public VirtualFileHandle
 	{
 		public:
-			CaptionTextFileHandle( const FSTreePtr& file ) : VirtualFileHandle( file )
+			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
 			{
 			}
 			
@@ -160,7 +169,7 @@ namespace Genie
 			
 			off_t GetEOF() const  { return String().size(); }
 			
-			void SetEOF( off_t eof )  { String().resize( eof ); }
+			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
 	};
 	
 	ssize_t CaptionTextFileHandle::SysRead( char* buffer, std::size_t byteCount )
@@ -210,21 +219,14 @@ namespace Genie
 			
 			off_t GetEOF() const  { return String().size(); }
 			
-			void SetEOF( off_t eof ) const  { String().resize( eof ); }
+			void SetEOF( off_t length ) const  { CaptionText_SetEOF( this, length ); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	boost::shared_ptr< IOHandle > FSTree_Caption_text::Open( OpenFlags flags ) const
 	{
-		if ( const bool truncating  = flags & O_TRUNC )
-		{
-			SetEOF( 0 );
-			
-			InvalidateWindowRef( GetWindowRef( Parent()->Parent().get() ) );
-		}
-		
-		IOHandle* result = new CaptionTextFileHandle( shared_from_this() );
+		IOHandle* result = new CaptionTextFileHandle( shared_from_this(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}

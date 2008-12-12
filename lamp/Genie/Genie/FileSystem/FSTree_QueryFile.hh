@@ -47,9 +47,13 @@ namespace Genie
 	}
 	
 	template < class Query >
-	boost::shared_ptr< IOHandle > FSTree_QueryFile< Query >::Open( OpenFlags /*flags*/ ) const
+	boost::shared_ptr< IOHandle > FSTree_QueryFile< Query >::Open( OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new QueryFileHandle( shared_from_this(), itsQuery.Get() ) );
+		IOHandle* result = new QueryFileHandle( shared_from_this(),
+		                                        flags,
+		                                        itsQuery.Get() );
+		
+		return boost::shared_ptr< IOHandle >( result );
 	}
 	
 }

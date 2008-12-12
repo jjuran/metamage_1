@@ -11,6 +11,7 @@
 
 // POSIX
 #include "errno.h"
+#include <fcntl.h>
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -22,12 +23,19 @@ namespace Genie
 	class StreamHandle : public IOHandle
 	{
 		private:
-			std::string itsPeekBuffer;
+			OpenFlags    itsOpenFlags;
+			std::string  itsPeekBuffer;
 		
 		public:
+			StreamHandle( OpenFlags flags );
+			
 			virtual ~StreamHandle();
 			
 			bool IsStream() const  { return true; }
+			
+			OpenFlags GetFlags() const  { return itsOpenFlags; }
+			
+			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
 			
 			virtual unsigned int SysPoll() const = 0;
 			
@@ -39,10 +47,10 @@ namespace Genie
 			
 			virtual bool IsDisconnected() const  { return false; }
 			
-			virtual bool IsNonblocking() const = 0;
+			virtual bool IsNonblocking() const  { return itsOpenFlags & O_NONBLOCK; }
 			
-			virtual void SetNonblocking  () = 0;
-			virtual void ClearNonblocking() = 0;
+			virtual void SetNonblocking  ()  { itsOpenFlags |=  O_NONBLOCK; }
+			virtual void ClearNonblocking()  { itsOpenFlags &= ~O_NONBLOCK; }
 			
 			void TryAgainLater() const;
 			
@@ -52,7 +60,7 @@ namespace Genie
 			
 			ssize_t Read( char* data, std::size_t byteCount );
 			
-			ssize_t Write( const char* data, std::size_t byteCount );
+			virtual ssize_t Write( const char* data, std::size_t byteCount );
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< StreamHandle >

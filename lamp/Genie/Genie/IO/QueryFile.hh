@@ -26,7 +26,8 @@ namespace Genie
 		
 		public:
 			QueryFileHandle( const FSTreePtr&    file,
-			                 const std::string&  data ) : VirtualFileHandle( file ),
+			                 OpenFlags           flags,
+			                 const std::string&  data ) : VirtualFileHandle( file, flags ),
 			                                              itsData( data )
 			{
 			}

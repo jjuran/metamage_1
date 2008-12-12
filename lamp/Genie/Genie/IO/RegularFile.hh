@@ -19,7 +19,7 @@ namespace Genie
 			off_t itsMark;
 		
 		public:
-			RegularFileHandle();
+			RegularFileHandle( OpenFlags flags );
 			
 			virtual ~RegularFileHandle();
 			
@@ -36,6 +36,8 @@ namespace Genie
 			off_t GetFileMark() const  { return itsMark; }
 			
 			ssize_t Advance( ssize_t step )  { itsMark += step;  return step; }
+			
+			ssize_t Write( const char* buffer, std::size_t byteCount );
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< RegularFileHandle >

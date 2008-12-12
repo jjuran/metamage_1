@@ -19,7 +19,9 @@ namespace Genie
 			FSTreePtr itsFile;
 		
 		public:
-			VirtualFileHandle( const FSTreePtr& file ) : itsFile( file )
+			VirtualFileHandle( const FSTreePtr&  file,
+			                   OpenFlags         flags ) : RegularFileHandle( flags ),
+			                                               itsFile( file )
 			{
 			}
 			

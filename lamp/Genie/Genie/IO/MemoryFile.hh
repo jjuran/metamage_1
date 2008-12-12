@@ -27,8 +27,9 @@ namespace Genie
 		
 		public:
 			MemoryFileHandle( const FSTreePtr&  file,
+			                  OpenFlags         flags,
 			                  ::Ptr             base,
-			                  std::size_t       size ) : VirtualFileHandle( file ),
+			                  std::size_t       size ) : VirtualFileHandle( file, flags ),
 			                                             itsBase( base ),
 			                                             itsSize( size )
 			{

@@ -6,25 +6,28 @@
 #ifndef GENIE_IO_PIPE_HH
 #define GENIE_IO_PIPE_HH
 
+// POSIX
+#include <fcntl.h>
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
 // Genie
 #include "Genie/IO/Conduit.hh"
-#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class PipeInHandle : public InternallyNonblocking< StreamHandle >
+	class PipeInHandle : public StreamHandle
 	{
 		private:
 			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit( conduit )
+			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : StreamHandle( O_WRONLY ),
+			                                                       itsConduit( conduit )
 			{
 			}
 			
@@ -44,13 +47,14 @@ namespace Genie
 			//void IOCtl( unsigned long request, int* argp );
 	};
 	
-	class PipeOutHandle : public InternallyNonblocking< StreamHandle >
+	class PipeOutHandle : public StreamHandle
 	{
 		private:
 			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit( conduit )
+			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : StreamHandle( O_RDONLY ),
+			                                                        itsConduit( conduit )
 			{
 			}
 			

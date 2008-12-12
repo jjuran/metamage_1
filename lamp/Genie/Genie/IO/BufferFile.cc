@@ -5,6 +5,9 @@
 
 #include "Genie/IO/BufferFile.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // Io
 #include "io/io.hh"
 
@@ -195,7 +198,7 @@ namespace Genie
 	}
 	
 	BufferFileHandle::BufferFileHandle( TerminalID          id,
-	                                    const std::string&  name )
+	                                    const std::string&  name ) : RegularFileHandle( O_RDWR )
 	{
 		Rect bounds = MakeWindowRect();
 		
