@@ -354,6 +354,11 @@ namespace Genie
 		factory( window );
 	}
 	
+	static void InvalidateCurrentWindow()
+	{
+		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+	}
+	
 	static void DestroyViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
 	{
 		N::WindowRef windowRef = window.Get();
@@ -364,7 +369,7 @@ namespace Genie
 		
 		window.SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
 		
-		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		InvalidateCurrentWindow();
 	}
 	
 	
@@ -448,8 +453,6 @@ namespace Genie
 			bool IsDirectory() const  { return Exists(); }
 			
 			bool Exists() const  { return GetViewDelegate( WindowKey() ) != NULL; }
-			
-			void SetTimes() const;
 			
 			void Delete() const;
 			
