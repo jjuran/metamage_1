@@ -35,11 +35,6 @@ namespace Genie
 		
 		NN::Owned< N::FSFileRefNum > fileHandle = OpenFork( fileSpec, rdPerm | wrPerm );
 		
-		if ( truncating  && !lazy )
-		{
-			N::SetEOF( fileHandle, 0 );
-		}
-		
 		return NewFileHandle( fileHandle, flags );
 	}
 	
