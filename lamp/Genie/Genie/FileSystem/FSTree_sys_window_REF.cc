@@ -359,6 +359,22 @@ namespace Genie
 		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
+	static void InvalidateWindowRef( N::WindowRef window )
+	{
+		NN::Saved< N::Port_Value > savePort;
+		
+		N::SetPortWindowPort( window );
+		
+		InvalidateCurrentWindow();
+	}
+	
+	N::WindowRef GetWindowRef( const FSTree* key )
+	{
+		WindowMap::const_iterator it = gWindowMap.find( key );
+		
+		return it != gWindowMap.end() ? it->second->Get() : NULL;
+	}
+	
 	static void DestroyViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
 	{
 		N::WindowRef windowRef = window.Get();
