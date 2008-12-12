@@ -460,25 +460,6 @@ namespace Genie
 			FSIteratorPtr Iterate() const;
 	};
 	
-	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
-	{
-		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
-		{
-			WindowMap::const_iterator it = FindWindow( this );
-			
-			if ( it != gWindowMap.end() )
-			{
-				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
-				
-				ConstructViewInWindow( *factory, *window );
-			}
-		}
-		else
-		{
-			p7::throw_errno( ENOENT );
-		}
-	}
-	
 	void FSTree_sys_window_REF_view::Delete() const
 	{
 		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
@@ -495,6 +476,25 @@ namespace Genie
 				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
 				
 				DestroyViewInWindow( *factory, *window );
+			}
+		}
+		else
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
+	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
+	{
+		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		{
+			WindowMap::const_iterator it = FindWindow( this );
+			
+			if ( it != gWindowMap.end() )
+			{
+				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
+				
+				ConstructViewInWindow( *factory, *window );
 			}
 		}
 		else
