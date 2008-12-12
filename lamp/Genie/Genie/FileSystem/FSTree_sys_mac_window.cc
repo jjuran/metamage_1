@@ -26,6 +26,32 @@
 #include "Genie/FileSystem/FSTree_PseudoFile.hh"
 
 
+namespace Nitrogen
+{
+	
+	inline void TextFont( FontID font )
+	{
+		::TextFont( font );
+	}
+	
+	using ::TextSize;
+	
+	inline FontID GetPortTextFont( CGrafPtr port )
+	{
+		return FontID( ::GetPortTextFont( port ) );
+	}
+	
+	using ::GetPortTextSize;
+	
+	inline void SetPortTextFont( CGrafPtr port, FontID font )
+	{
+		::SetPortTextFont( port, font );
+	}
+	
+	using ::SetPortTextSize;
+	
+}
+
 namespace Genie
 {
 	
@@ -307,6 +333,52 @@ namespace Genie
 		}
 	};
 	
+	struct Access_WindowTextFont
+	{
+		typedef short Result;
+		
+		short Get( N::WindowRef window ) const
+		{
+			return N::GetPortTextFont( N::GetWindowPort( window ) );
+		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			short fontID = std::atoi( value.c_str() );
+			
+			NN::Saved< N::Port_Value > savePort;
+			
+			N::SetPortWindowPort( window );
+			
+			::TextFont( fontID );
+			
+			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+		}
+	};
+	
+	struct Access_WindowTextSize
+	{
+		typedef short Result;
+		
+		short Get( N::WindowRef window ) const
+		{
+			return N::GetPortTextSize( N::GetWindowPort( window ) );
+		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			short size = std::atoi( value.c_str() );
+			
+			NN::Saved< N::Port_Value > savePort;
+			
+			N::SetPortWindowPort( window );
+			
+			::TextSize( size );
+			
+			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+		}
+	};
+	
 	template < class Accessor >
 	class sys_mac_window_REF_Property
 	{
@@ -372,6 +444,9 @@ namespace Genie
 		{ "title", &Property_Factory< Access_WindowTitle    > },
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
 		{ "size",  &Property_Factory< Access_WindowSize     > },
+		
+		{ "text-font",  &Property_Factory< Access_WindowTextFont > },
+		{ "text-size",  &Property_Factory< Access_WindowTextSize > },
 		
 		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
 		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
