@@ -197,8 +197,6 @@ namespace Genie
 	{
 		typedef N::Str255 Value;
 		
-		typedef std::map< const FSTree*, Value > Map;
-		
 		static Value const& GetRef( WindowParameters const& params )  { return params.itsTitle; }
 		static Value      & GetRef( WindowParameters      & params )  { return params.itsTitle; }
 		
@@ -216,8 +214,6 @@ namespace Genie
 	struct Access_Size
 	{
 		typedef Point Value;
-		
-		typedef std::map< const FSTree*, Value > Map;
 		
 		static Value const& GetRef( WindowParameters const& params )  { return params.itsSize; }
 		static Value      & GetRef( WindowParameters      & params )  { return params.itsSize; }
@@ -238,8 +234,6 @@ namespace Genie
 	class sys_window_REF_Property
 	{
 		private:
-			typedef typename Accessor::Map Map;
-			
 			typedef const FSTree* Key;
 			
 			Key itsKey;
@@ -251,8 +245,6 @@ namespace Genie
 			
 			std::string Get() const
 			{
-				//const Map& map = Accessor::GetMap();
-				
 				WindowParametersMap::const_iterator it = gWindowParametersMap.find( itsKey );
 				
 				if ( it == gWindowParametersMap.end() )
