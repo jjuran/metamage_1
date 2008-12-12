@@ -13,11 +13,28 @@
 namespace Genie
 {
 	
+	class OpenWindowHandle : public DirHandle
+	{
+		public:
+			OpenWindowHandle( const FSTreePtr& tree );
+			
+			~OpenWindowHandle();
+	};
+	
+	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : DirHandle( tree )
+	{
+	}
+	
+	OpenWindowHandle::~OpenWindowHandle()
+	{
+		RemoveWindow( GetFile().get() );
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
 	{
 		FSTreePtr dir = NewWindow();
 		
-		return boost::shared_ptr< IOHandle >( new DirHandle( dir ) );
+		return boost::shared_ptr< IOHandle >( new OpenWindowHandle( dir ) );
 	}
 	
 }
