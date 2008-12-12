@@ -9,7 +9,7 @@
 namespace Genie
 {
 	
-	typedef std::map< const FSTree*, const ViewFactory* > ViewFactoryMap;
+	typedef std::map< const FSTree*, boost::shared_ptr< ViewFactory > > ViewFactoryMap;
 	
 	typedef std::map< const FSTree*, FSTreePtr > ViewDelegateMap;
 	
@@ -17,9 +17,9 @@ namespace Genie
 	static ViewDelegateMap  gViewDelegateMap;
 	
 	
-	void AddViewFactory( const FSTree* key, const ViewFactory& factory )
+	void AddViewFactory( const FSTree* key, const boost::shared_ptr< ViewFactory >& factory )
 	{
-		gViewFactoryMap[ key ] = &factory;
+		gViewFactoryMap[ key ] = factory;
 	}
 	
 	void RemoveViewFactory( const FSTree* key )
@@ -27,13 +27,15 @@ namespace Genie
 		gViewFactoryMap.erase( key );
 	}
 	
-	const ViewFactory* GetViewFactory( const FSTree* key )
+	boost::shared_ptr< ViewFactory > gEmptyFactory;
+	
+	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* key )
 	{
 		ViewFactoryMap::const_iterator it = gViewFactoryMap.find( key );
 		
 		if ( it == gViewFactoryMap.end() )
 		{
-			return NULL;
+			return gEmptyFactory;
 		}
 		
 		return it->second;

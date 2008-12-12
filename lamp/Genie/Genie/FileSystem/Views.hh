@@ -24,11 +24,11 @@ namespace Genie
 	};
 	
 	
-	void AddViewFactory( const FSTree* key, const ViewFactory& factory );
+	void AddViewFactory( const FSTree* key, const boost::shared_ptr< ViewFactory >& factory );
 	
 	void RemoveViewFactory( const FSTree* key );
 	
-	const ViewFactory* GetViewFactory( const FSTree* key );
+	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* key );
 	
 	
 	void AddViewDelegate( const FSTree* key, const FSTreePtr& delegate );

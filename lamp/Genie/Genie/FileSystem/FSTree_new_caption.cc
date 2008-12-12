@@ -26,42 +26,90 @@ namespace Genie
 	
 	extern const Functional_Traits< void >::Mapping Caption_view_Mappings[];
 	
+	typedef std::map< const FSTree*, std::string > CaptionTextMap;
+	
+	static CaptionTextMap gCaptionTextMap;
+	
 	
 	class Caption : public Ped::Caption
 	{
-		public:
-			struct Initializer {};
+		private:
+			typedef const FSTree* Key;
 			
-			Caption( Initializer = Initializer() )
+			Key itsKey;
+		
+		public:
+			typedef Key Initializer;
+			
+			Caption( Key key ) : itsKey( key )
 			{
 			}
 			
-			std::string Text() const  { return "Hello world"; }
+			std::string Text() const;
 	};
 	
-	struct CaptionFactory : ViewFactory
+	std::string Caption::Text() const
 	{
-		typedef Ped::GraphicView< Caption > View;
+		std::string result;
 		
-		void operator()( Ped::UserWindow& window ) const
+		CaptionTextMap::const_iterator it = gCaptionTextMap.find( itsKey );
+		
+		if ( it != gCaptionTextMap.end() )
 		{
-			Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
-			
-			std::auto_ptr< Ped::View > view( new View( bounds ) );
-			
-			window.SetView( view );
-			
-			N::InvalRect( bounds );
+			result = it->second;
 		}
+		
+		std::replace( result.begin(), result.end(), '\n', '\r' );
+		
+		return result;
+	}
+	
+	
+	class CaptionFactory : public ViewFactory
+	{
+		private:
+			typedef const FSTree* Key;
+			
+			Key itsKey;
+		
+		public:
+			CaptionFactory( Key key ) : itsKey( key )
+			{
+			}
+			
+			void operator()( Ped::UserWindow& window ) const
+			{
+				Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
+				
+				typedef Ped::GraphicView< Caption > View;
+				
+				std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
+				
+				window.SetView( view );
+				
+				N::InvalRect( bounds );
+			}
 	};
+	
+	namespace
+	{
+		
+		void DestroyDelegate( const FSTree* delegate )
+		{
+			gCaptionTextMap.erase( delegate );
+		}
+		
+	}
 	
 	void FSTree_new_caption::HardLink( const FSTreePtr& target ) const
 	{
-		static CaptionFactory factory;
+		const FSTreePtr& parent = target->Parent();
 		
-		const FSTree* key = target->Parent().get();
+		const FSTree* key = parent.get();
 		
-		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings >( target, "view" );
+		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, "view" );
+		
+		boost::shared_ptr< ViewFactory > factory( new CaptionFactory( delegate.get() ) );
 		
 		AddViewDelegate( key, delegate );
 		

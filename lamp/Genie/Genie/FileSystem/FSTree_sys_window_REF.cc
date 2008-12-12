@@ -419,7 +419,7 @@ namespace Genie
 		
 		const boost::shared_ptr< Ped::UserWindow >& window = CreateUserWindow( key );
 		
-		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key ) )
 		{
 			ConstructViewInWindow( *factory, *window );
 		}
@@ -481,7 +481,7 @@ namespace Genie
 	
 	void FSTree_sys_window_REF_view::Delete() const
 	{
-		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( WindowKey() ) )
 		{
 			const FSTree* key = WindowKey();
 			
@@ -505,7 +505,7 @@ namespace Genie
 	
 	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
 	{
-		if ( const ViewFactory* factory = GetViewFactory( WindowKey() ) )
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( WindowKey() ) )
 		{
 			WindowMap::const_iterator it = FindWindow( this );
 			
