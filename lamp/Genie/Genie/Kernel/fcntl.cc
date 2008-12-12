@@ -13,6 +13,7 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -47,8 +48,21 @@ namespace Genie
 				return frame.SetErrno( EISDIR );
 			}
 			
-			AssignFileDescriptor( fd, directory ? file->OpenDirectory()
-			                                    : file->Open( flags, mode ) );
+			boost::shared_ptr< IOHandle > opened = directory ? file->OpenDirectory()
+			                                                 : file->Open( flags, mode );
+			
+			const bool truncating = flags & O_TRUNC;
+			const bool lazy       = flags & O_LAZY;
+			
+			if ( truncating  && !lazy )
+			{
+				if ( RegularFileHandle* file_handle = IOHandle_Cast< RegularFileHandle >( opened.get() ) )
+				{
+					file_handle->SetEOF( 0 );
+				}
+			}
+			
+			AssignFileDescriptor( fd, opened );
 			
 			return fd;
 		}
