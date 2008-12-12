@@ -32,16 +32,25 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, N::Str255 > WindowTitleMap;
+	static const Point gZeroPoint = { 0 };
 	
-	typedef std::map< const FSTree*, Point > WindowSizeMap;
+	struct WindowParameters
+	{
+		N::Str255  itsTitle;
+		Point      itsSize;
+		
+		boost::shared_ptr< Ped::UserWindow >  itsWindow;
+		
+		WindowParameters() : itsSize( gZeroPoint )
+		{
+		}
+		
+		bool Ready() const  { return itsSize.h && itsSize.v; }
+	};
 	
-	typedef std::map< const FSTree*, boost::shared_ptr< Ped::UserWindow > > WindowMap;
+	typedef std::map< const FSTree*, WindowParameters > WindowParametersMap;
 	
-	static WindowTitleMap  gWindowTitleMap;
-	static WindowSizeMap   gWindowSizeMap;
-	
-	static WindowMap gWindowMap;
+	static WindowParametersMap gWindowParametersMap;
 	
 	
 	static void CenterWindowRect( Rect& bounds )
@@ -63,7 +72,12 @@ namespace Genie
 	
 	static void CloseUserWindow( const FSTree* key )
 	{
-		gWindowMap.erase( key );
+		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
+		
+		if ( it != gWindowParametersMap.end() )
+		{
+			it->second.itsWindow.reset();
+		}
 	}
 	
 	class UserWindowCloseHandler : public Ped::WindowCloseHandler
@@ -80,16 +94,11 @@ namespace Genie
 	};
 	
 	
-	static WindowMap::const_iterator FindWindow( const FSTree* that )
+	static bool HasWindow( const FSTree* that )
 	{
 		const FSTree* key = that->Parent().get();
 		
-		return gWindowMap.find( key );
-	}
-	
-	static inline bool HasWindow( const FSTree* that )
-	{
-		return FindWindow( that ) != gWindowMap.end();
+		return gWindowParametersMap[ key ].itsWindow != NULL;
 	}
 	
 	class EmptyView : public Ped::View
@@ -105,19 +114,18 @@ namespace Genie
 	
 	static const boost::shared_ptr< Ped::UserWindow >& CreateUserWindow( const FSTree* key )
 	{
-		WindowTitleMap::const_iterator the_title = gWindowTitleMap.find( key );
-		WindowSizeMap ::const_iterator the_size  = gWindowSizeMap .find( key );
+		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
-		if ( the_title == gWindowTitleMap.end()  ||  the_size == gWindowSizeMap.end() )
+		if ( it == gWindowParametersMap.end() )
 		{
 			p7::throw_errno( EPERM );
 		}
 		
-		ConstStr255Param title = the_title->second;
+		ConstStr255Param title = it->second.itsTitle;
 		
 		Rect bounds = { 0 };
 		
-		reinterpret_cast< Point* >( &bounds )[1] = the_size->second;
+		reinterpret_cast< Point* >( &bounds )[1] = it->second.itsSize;
 		
 		CenterWindowRect( bounds );
 		
@@ -131,15 +139,16 @@ namespace Genie
 		
 		window->SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
 		
-		return gWindowMap[ key ] = window;
+		return gWindowParametersMap[ key ].itsWindow = window;
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
 	{
 		CloseUserWindow( key );
 		
-		gWindowTitleMap.erase( key );
-		gWindowSizeMap .erase( key );
+		gWindowParametersMap.erase( key );
+		
+		RemoveViewParameters( key );
 	}
 	
 	
@@ -190,7 +199,8 @@ namespace Genie
 		
 		typedef std::map< const FSTree*, Value > Map;
 		
-		static Map& GetMap()  { return gWindowTitleMap; }
+		static Value const& GetRef( WindowParameters const& params )  { return params.itsTitle; }
+		static Value      & GetRef( WindowParameters      & params )  { return params.itsTitle; }
 		
 		static std::string StringFromValue( const Value& v )
 		{
@@ -209,7 +219,8 @@ namespace Genie
 		
 		typedef std::map< const FSTree*, Value > Map;
 		
-		static Map& GetMap()  { return gWindowSizeMap; }
+		static Value const& GetRef( WindowParameters const& params )  { return params.itsSize; }
+		static Value      & GetRef( WindowParameters      & params )  { return params.itsSize; }
 		
 		static std::string StringFromValue( const Value& size )
 		{
@@ -240,16 +251,16 @@ namespace Genie
 			
 			std::string Get() const
 			{
-				const Map& map = Accessor::GetMap();
+				//const Map& map = Accessor::GetMap();
 				
-				Map::const_iterator it = map.find( itsKey );
+				WindowParametersMap::const_iterator it = gWindowParametersMap.find( itsKey );
 				
-				if ( it == map.end() )
+				if ( it == gWindowParametersMap.end() )
 				{
 					return "";  // empty file
 				}
 				
-				std::string output = Accessor::StringFromValue( it->second );
+				std::string output = Accessor::StringFromValue( Accessor::GetRef( it->second ) );
 				
 				output += "\n";
 				
@@ -258,7 +269,7 @@ namespace Genie
 			
 			void Set( const std::string& s )
 			{
-				Accessor::GetMap()[ itsKey ] = Accessor::ValueFromString( s );
+				Accessor::GetRef( gWindowParametersMap[ itsKey ] ) = Accessor::ValueFromString( s );
 			}
 	};
 	
@@ -374,9 +385,9 @@ namespace Genie
 	
 	N::WindowRef GetWindowRef( const FSTree* key )
 	{
-		WindowMap::const_iterator it = gWindowMap.find( key );
+		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
-		return it != gWindowMap.end() ? it->second->Get() : NULL;
+		return it != gWindowParametersMap.end() ? it->second.itsWindow->Get() : NULL;
 	}
 	
 	static void InvalidateWindow( const FSTree* key )
@@ -391,7 +402,7 @@ namespace Genie
 		}
 	}
 	
-	static void DestroyViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
+	static void DestroyViewInWindow( Ped::UserWindow& window )
 	{
 		N::WindowRef windowRef = window.Get();
 		
@@ -450,14 +461,12 @@ namespace Genie
 	
 	std::string FSTree_sys_window_REF_ref::ReadLink() const
 	{
-		WindowMap::const_iterator it = FindWindow( this );
+		N::WindowRef windowPtr = GetWindowRef( WindowKey() );
 		
-		if ( it == gWindowMap.end() )
+		if ( windowPtr == NULL )
 		{
 			p7::throw_errno( EINVAL );
 		}
-		
-		N::WindowRef windowPtr = it->second->Get();
 		
 		std::string result = "/sys/app/window/";
 		
@@ -504,20 +513,15 @@ namespace Genie
 	
 	void FSTree_sys_window_REF_view::Delete() const
 	{
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( WindowKey() ) )
+		const FSTree* key = WindowKey();
+		
+		if ( ViewExists( key ) )
 		{
-			const FSTree* key = WindowKey();
+			RemoveViewParameters( key );
 			
-			RemoveViewFactory ( key );
-			RemoveViewDelegate( key );
-			
-			WindowMap::const_iterator it = FindWindow( this );
-			
-			if ( it != gWindowMap.end() )
+			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
 			{
-				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
-				
-				DestroyViewInWindow( *factory, *window );
+				DestroyViewInWindow( *window );
 			}
 		}
 		else
@@ -528,14 +532,14 @@ namespace Genie
 	
 	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
 	{
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( WindowKey() ) )
+		const FSTree* key = WindowKey();
+		
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key ) )
 		{
-			WindowMap::const_iterator it = FindWindow( this );
+			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 			
-			if ( it != gWindowMap.end() )
+			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
 			{
-				const boost::shared_ptr< Ped::UserWindow >& window = it->second;
-				
 				ConstructViewInWindow( *factory, *window );
 			}
 		}

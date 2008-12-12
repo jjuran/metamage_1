@@ -18,6 +18,10 @@ namespace Genie
 	
 	class FSTree;
 	
+	bool ViewExists( const FSTree* key );
+	
+	void RemoveViewParameters( const FSTree* key );
+	
 	struct ViewFactory
 	{
 		virtual void operator()( Pedestal::UserWindow& window ) const = 0;
@@ -26,14 +30,10 @@ namespace Genie
 	
 	void AddViewFactory( const FSTree* key, const boost::shared_ptr< ViewFactory >& factory );
 	
-	void RemoveViewFactory( const FSTree* key );
-	
 	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* key );
 	
 	
 	void AddViewDelegate( const FSTree* key, const FSTreePtr& delegate );
-	
-	void RemoveViewDelegate( const FSTree* key );
 	
 	const FSTreePtr& GetViewDelegate( const FSTree* key );
 	
