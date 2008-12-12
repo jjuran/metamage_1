@@ -32,7 +32,9 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const DeviceIOSpec& io ) : io( io )  {}
+			SimpleDeviceHandle( const DeviceIOSpec& io ) : io( io )
+			{
+			}
 			
 			FSTreePtr GetFile() const;
 			
