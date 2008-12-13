@@ -135,9 +135,7 @@ namespace Genie
 		
 		boost::shared_ptr< ViewFactory > factory( new CaptionFactory( delegate.get() ) );
 		
-		AddViewDelegate( key, name, delegate );
-		
-		AddViewFactory( key, name, factory );
+		AddViewParameters( key, name, factory, delegate );
 		
 		target->CreateDirectory( 0 );  // mode is ignored
 	}
@@ -149,7 +147,11 @@ namespace Genie
 		
 		gCaptionTextMap[ view ].resize( length );
 		
-		InvalidateWindowRef( GetWindowRef( view->Parent().get() ) );
+		const FSTree* parentKey = view->Parent().get();
+		
+		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
+		
+		InvalidateWindowRef( GetWindowRef( windowKey ) );
 	}
 	
 	class CaptionTextFileHandle : public VirtualFileHandle
@@ -205,7 +207,13 @@ namespace Genie
 		           buffer + byteCount,
 		           s.begin() + GetFileMark() );
 		
-		InvalidateWindowRef( GetWindowRef( ViewKey()->Parent().get() ) );
+		const FSTree* view = ViewKey();
+		
+		const FSTree* parentKey = view->Parent().get();
+		
+		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
+		
+		InvalidateWindowRef( GetWindowRef( windowKey ) );
 		
 		return Advance( byteCount );
 	}

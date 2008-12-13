@@ -12,8 +12,12 @@ namespace Genie
 	struct ViewParameters
 	{
 		boost::shared_ptr< ViewFactory >  itsFactory;
+		FSTreePtr                         itsDelegate;
+		const FSTree*                     itsWindowKey;
 		
-		FSTreePtr  itsDelegate;
+		ViewParameters() : itsWindowKey()
+		{
+		}
 	};
 	
 	typedef std::map< std::string, ViewParameters > ViewParametersSubMap;
@@ -35,6 +39,22 @@ namespace Genie
 		}
 		
 		return false;
+	}
+	
+	void AddViewParameters( const FSTree*                            parent,
+	                        const std::string&                       name,
+	                        const boost::shared_ptr< ViewFactory >&  factory,
+	                        const FSTreePtr&                         delegate )
+	{
+		ViewParameters& params = gViewParametersMap[ parent ][ name ];
+		
+		params.itsFactory  = factory;
+		params.itsDelegate = delegate;
+	}
+	
+	void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey )
+	{
+		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
 	void RemoveViewParameters( const FSTree* parent, const std::string& name )
@@ -59,26 +79,19 @@ namespace Genie
 		gViewParametersMap.erase( parent );
 	}
 	
-	
-	void AddViewFactory( const FSTree* parent, const std::string& name, const boost::shared_ptr< ViewFactory >& factory )
-	{
-		gViewParametersMap[ parent ][ name ].itsFactory = factory;
-	}
-	
 	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name )
 	{
 		return gViewParametersMap[ parent ][ name ].itsFactory;
 	}
 	
-	
-	void AddViewDelegate( const FSTree* parent, const std::string& name, const FSTreePtr& delegate )
-	{
-		gViewParametersMap[ parent ][ name ].itsDelegate = delegate;
-	}
-	
 	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
 	{
 		return gViewParametersMap[ parent ][ name ].itsDelegate;
+	}
+	
+	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
+	{
+		return gViewParametersMap[ parent ][ name ].itsWindowKey;
 	}
 	
 }

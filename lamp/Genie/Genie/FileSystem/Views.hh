@@ -38,8 +38,14 @@ namespace Genie
 		virtual std::auto_ptr< Pedestal::View > operator()( const Rect& bounds ) const = 0;
 	};
 	
+	void AddViewParameters( const FSTree*                            parent,
+	                        const std::string&                       name,
+	                        const boost::shared_ptr< ViewFactory >&  factory,
+	                        const FSTreePtr&                         delegate );
 	
 	void AddViewFactory( const FSTree* parent, const std::string& name, const boost::shared_ptr< ViewFactory >& factory );
+	
+	void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey );
 	
 	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name );
 	
@@ -47,6 +53,8 @@ namespace Genie
 	void AddViewDelegate( const FSTree* parent, const std::string& name, const FSTreePtr& delegate );
 	
 	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name );
+	
+	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name );
 	
 }
 

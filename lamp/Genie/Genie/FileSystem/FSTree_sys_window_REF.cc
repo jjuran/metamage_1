@@ -553,8 +553,12 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, Name() ) )
+		const std::string& name = Name();
+		
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, name ) )
 		{
+			AddViewWindowKey( key, name, key );
+			
 			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 			
 			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
