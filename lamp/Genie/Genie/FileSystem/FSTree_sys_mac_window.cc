@@ -167,6 +167,32 @@ namespace Genie
 		}
 	};
 	
+	struct Access_WindowVisible
+	{
+		typedef std::string Result;
+		
+		Result Get( N::WindowRef window ) const
+		{
+			const bool visible = N::IsWindowVisible( window );
+			
+			return visible ? "1" : "0";
+		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			const bool visible = value.c_str()[ 0 ] != '0';
+			
+			if ( visible )
+			{
+				N::ShowWindow( window );
+			}
+			else
+			{
+				N::HideWindow( window );
+			}
+		}
+	};
+	
 	struct Access_WindowZOrder
 	{
 		typedef unsigned Result;
@@ -444,6 +470,7 @@ namespace Genie
 		{ "title", &Property_Factory< Access_WindowTitle    > },
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
 		{ "size",  &Property_Factory< Access_WindowSize     > },
+		{ "vis",   &Property_Factory< Access_WindowVisible  > },
 		
 		{ "text-font",  &Property_Factory< Access_WindowTextFont > },
 		{ "text-size",  &Property_Factory< Access_WindowTextSize > },

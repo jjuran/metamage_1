@@ -38,10 +38,11 @@ namespace Genie
 	{
 		N::Str255  itsTitle;
 		Point      itsSize;
+		bool       itIsVisible;
 		
 		boost::shared_ptr< Ped::UserWindow >  itsWindow;
 		
-		WindowParameters() : itsSize( gZeroPoint )
+		WindowParameters() : itsSize( gZeroPoint ), itIsVisible( true )
 		{
 		}
 		
@@ -121,15 +122,17 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
-		ConstStr255Param title = it->second.itsTitle;
+		const WindowParameters& params = it->second;
+		
+		ConstStr255Param title = params.itsTitle;
 		
 		Rect bounds = { 0 };
 		
-		reinterpret_cast< Point* >( &bounds )[1] = it->second.itsSize;
+		reinterpret_cast< Point* >( &bounds )[1] = params.itsSize;
 		
 		CenterWindowRect( bounds );
 		
-		Ped::NewWindowContext context( bounds, title );
+		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
 		
 		boost::shared_ptr< Ped::UserWindow > window( new Ped::UserWindow( context, N::documentProc ) );
 		
@@ -226,6 +229,24 @@ namespace Genie
 		static Value ValueFromString( const std::string& s )
 		{
 			return ReadPoint( s );
+		}
+	};
+	
+	struct Access_Visible
+	{
+		typedef bool Value;
+		
+		static Value const& GetRef( WindowParameters const& params )  { return params.itIsVisible; }
+		static Value      & GetRef( WindowParameters      & params )  { return params.itIsVisible; }
+		
+		static std::string StringFromValue( const Value& vis )
+		{
+			return vis ? "1" : "0";
+		}
+		
+		static Value ValueFromString( const std::string& s )
+		{
+			return s.c_str()[ 0 ] != '0';
 		}
 	};
 	
@@ -579,8 +600,9 @@ namespace Genie
 		
 		{ "view",   &Factory< FSTree_sys_window_REF_view >, true },
 		
-		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title > > > },
-		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size  > > > },
+		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title   > > > },
+		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size    > > > },
+		{ "vis",   &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Visible > > > },
 		
 		{ NULL, NULL }
 	};
