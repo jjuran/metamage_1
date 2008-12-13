@@ -379,7 +379,11 @@ namespace Genie
 		
 		N::SetPortWindowPort( windowRef );
 		
-		factory( window );
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( windowRef ) );
+		
+		window.SetView( factory( bounds ) );
+		
+		N::InvalRect( bounds );
 	}
 	
 	static void InvalidateCurrentWindow()

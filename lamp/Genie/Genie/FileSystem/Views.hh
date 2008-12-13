@@ -6,12 +6,21 @@
 #ifndef GENIE_FILESYSTEM_VIEWS_HH
 #define GENIE_FILESYSTEM_VIEWS_HH
 
-// Pedestal
-#include "Pedestal/UserWindow.hh"
+// Standard C++
+#include <memory>
 
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 
+
+struct Rect;
+
+namespace Pedestal
+{
+	
+	class View;
+	
+}
 
 namespace Genie
 {
@@ -24,7 +33,7 @@ namespace Genie
 	
 	struct ViewFactory
 	{
-		virtual void operator()( Pedestal::UserWindow& window ) const = 0;
+		virtual std::auto_ptr< Pedestal::View > operator()( const Rect& bounds ) const = 0;
 	};
 	
 	

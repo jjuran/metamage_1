@@ -101,20 +101,16 @@ namespace Genie
 			{
 			}
 			
-			void operator()( Ped::UserWindow& window ) const;
+			std::auto_ptr< Ped::View > operator()( const Rect& bounds ) const;
 	};
 	
-	void CaptionFactory::operator()( Ped::UserWindow& window ) const
+	std::auto_ptr< Ped::View > CaptionFactory::operator()( const Rect& bounds ) const
 	{
-		Rect bounds = N::GetPortBounds( N::GetQDGlobalsThePort() );
-		
 		typedef Ped::GraphicView< Caption > View;
 		
 		std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
 		
-		window.SetView( view );
-		
-		N::InvalRect( bounds );
+		return view;
 	}
 	
 	namespace
@@ -133,7 +129,7 @@ namespace Genie
 		
 		const FSTree* key = parent.get();
 		
-		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, "view" );
+		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, target->Name() );
 		
 		boost::shared_ptr< ViewFactory > factory( new CaptionFactory( delegate.get() ) );
 		
