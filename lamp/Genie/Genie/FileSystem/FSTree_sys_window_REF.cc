@@ -564,7 +564,7 @@ namespace Genie
 		}
 		else
 		{
-			p7::throw_errno( ENOENT );
+			p7::throw_errno( EPERM );
 		}
 	}
 	
