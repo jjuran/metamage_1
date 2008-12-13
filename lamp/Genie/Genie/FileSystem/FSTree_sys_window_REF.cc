@@ -151,7 +151,7 @@ namespace Genie
 		
 		gWindowParametersMap.erase( key );
 		
-		RemoveViewParameters( key );
+		RemoveAllViewParameters( key );
 	}
 	
 	
@@ -463,7 +463,7 @@ namespace Genie
 		
 		const boost::shared_ptr< Ped::UserWindow >& window = CreateUserWindow( key );
 		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key ) )
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, "view" ) )
 		{
 			ConstructViewInWindow( *factory, *window );
 		}
@@ -510,7 +510,7 @@ namespace Genie
 			
 			bool IsDirectory() const  { return Exists(); }
 			
-			bool Exists() const  { return GetViewDelegate( WindowKey() ) != NULL; }
+			bool Exists() const  { return GetViewDelegate( WindowKey(), Name() ) != NULL; }
 			
 			void SetTimes() const;
 			
@@ -532,9 +532,11 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		if ( ViewExists( key ) )
+		const std::string& name = Name();
+		
+		if ( ViewExists( key, name ) )
 		{
-			RemoveViewParameters( key );
+			RemoveViewParameters( key, name );
 			
 			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
 			{
@@ -551,7 +553,7 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key ) )
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, Name() ) )
 		{
 			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 			
@@ -568,7 +570,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_window_REF_view::Lookup( const std::string& name ) const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( WindowKey() );
+		const FSTreePtr& delegate = GetViewDelegate( WindowKey(), Name() );
 		
 		if ( delegate == NULL )
 		{
@@ -580,7 +582,7 @@ namespace Genie
 	
 	FSIteratorPtr FSTree_sys_window_REF_view::Iterate() const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( WindowKey() );
+		const FSTreePtr& delegate = GetViewDelegate( WindowKey(), Name() );
 		
 		if ( delegate == NULL )
 		{

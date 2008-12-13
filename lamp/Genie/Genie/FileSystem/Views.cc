@@ -16,41 +16,69 @@ namespace Genie
 		FSTreePtr  itsDelegate;
 	};
 	
-	typedef std::map< const FSTree*, ViewParameters > ViewParametersMap;
+	typedef std::map< std::string, ViewParameters > ViewParametersSubMap;
+	
+	typedef std::map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	
 	
-	bool ViewExists( const FSTree* key )
+	bool ViewExists( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap.find( key ) != gViewParametersMap.end();
+		ViewParametersMap::const_iterator it = gViewParametersMap.find( parent );
+		
+		if ( it != gViewParametersMap.end() )
+		{
+			const ViewParametersSubMap& submap = it->second;
+			
+			return submap.find( name ) != submap.end();
+		}
+		
+		return false;
 	}
 	
-	void RemoveViewParameters( const FSTree* key )
+	void RemoveViewParameters( const FSTree* parent, const std::string& name )
 	{
-		gViewParametersMap.erase( key );
+		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
+		
+		if ( it != gViewParametersMap.end() )
+		{
+			ViewParametersSubMap& submap = it->second;
+			
+			submap.erase( name );
+			
+			if ( submap.empty() )
+			{
+				gViewParametersMap.erase( it );
+			}
+		}
+	}
+	
+	void RemoveAllViewParameters( const FSTree* parent )
+	{
+		gViewParametersMap.erase( parent );
 	}
 	
 	
-	void AddViewFactory( const FSTree* key, const boost::shared_ptr< ViewFactory >& factory )
+	void AddViewFactory( const FSTree* parent, const std::string& name, const boost::shared_ptr< ViewFactory >& factory )
 	{
-		gViewParametersMap[ key ].itsFactory = factory;
+		gViewParametersMap[ parent ][ name ].itsFactory = factory;
 	}
 	
-	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* key )
+	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap[ key ].itsFactory;
+		return gViewParametersMap[ parent ][ name ].itsFactory;
 	}
 	
 	
-	void AddViewDelegate( const FSTree* key, const FSTreePtr& delegate )
+	void AddViewDelegate( const FSTree* parent, const std::string& name, const FSTreePtr& delegate )
 	{
-		gViewParametersMap[ key ].itsDelegate = delegate;
+		gViewParametersMap[ parent ][ name ].itsDelegate = delegate;
 	}
 	
-	const FSTreePtr& GetViewDelegate( const FSTree* key )
+	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap[ key ].itsDelegate;
+		return gViewParametersMap[ parent ][ name ].itsDelegate;
 	}
 	
 }

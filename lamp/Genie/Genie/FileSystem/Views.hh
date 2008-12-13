@@ -27,9 +27,11 @@ namespace Genie
 	
 	class FSTree;
 	
-	bool ViewExists( const FSTree* key );
+	bool ViewExists( const FSTree* parent, const std::string& name );
 	
-	void RemoveViewParameters( const FSTree* key );
+	void RemoveViewParameters( const FSTree* parent, const std::string& name );
+	
+	void RemoveAllViewParameters( const FSTree* parent );
 	
 	struct ViewFactory
 	{
@@ -37,14 +39,14 @@ namespace Genie
 	};
 	
 	
-	void AddViewFactory( const FSTree* key, const boost::shared_ptr< ViewFactory >& factory );
+	void AddViewFactory( const FSTree* parent, const std::string& name, const boost::shared_ptr< ViewFactory >& factory );
 	
-	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* key );
+	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name );
 	
 	
-	void AddViewDelegate( const FSTree* key, const FSTreePtr& delegate );
+	void AddViewDelegate( const FSTree* parent, const std::string& name, const FSTreePtr& delegate );
 	
-	const FSTreePtr& GetViewDelegate( const FSTree* key );
+	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name );
 	
 }
 

@@ -129,13 +129,15 @@ namespace Genie
 		
 		const FSTree* key = parent.get();
 		
-		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, target->Name() );
+		const std::string& name = target->Name();
+		
+		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
 		
 		boost::shared_ptr< ViewFactory > factory( new CaptionFactory( delegate.get() ) );
 		
-		AddViewDelegate( key, delegate );
+		AddViewDelegate( key, name, delegate );
 		
-		AddViewFactory( key, factory );
+		AddViewFactory( key, name, factory );
 		
 		target->CreateDirectory( 0 );  // mode is ignored
 	}
