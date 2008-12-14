@@ -544,6 +544,8 @@ namespace Backtrace
 		throw Unmangle_Failed();
 	}
 	
+	struct NotSpecial {};
+	
 	std::string Unmangler::ReadSpecialName( const char*& p )
 	{
 		const char* q = p;
@@ -586,7 +588,7 @@ namespace Backtrace
 			return ReadOperator( p, double_underscore );
 		}
 		
-		throw Unmangle_Failed();
+		throw NotSpecial();
 	}
 	
 	std::string Unmangler::ReadIdentifier( const char*& p )
@@ -620,7 +622,14 @@ namespace Backtrace
 	{
 		if ( *p == '_' )
 		{
-			return ReadSpecialName( p );
+			try
+			{
+				return ReadSpecialName( p );
+			}
+			catch ( const NotSpecial& )
+			{
+				// This happens e.g. with _exit
+			}
 		}
 		
 		return ReadIdentifier( p );
