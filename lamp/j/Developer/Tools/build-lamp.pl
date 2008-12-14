@@ -97,7 +97,9 @@ my @programs = qw
 	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
-	tcpcat tcpclient th tlsrvr touch true tty ttyd
+	tcpcat tcpclient
+	test-longjmp-past-vfork test-read-intr test-time test-write-locked
+	th tlsrvr touch true tty ttyd
 	uncaught_exception
 	which window
 );
@@ -109,10 +111,13 @@ my %fsmap =
 	{
 		Tests =>
 		{
-			jtest => [ qw( ok.t oknot.t todo.t ) ],
-			perl  => [ qw( print.t ) ],
-			proc  => [ qw( exe.t   ) ],
-			sh    => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
+			jtest  => [ qw( ok.t oknot.t todo.t ) ],
+			perl   => [ qw( print.t ) ],
+			proc   => [ qw( exe.t   ) ],
+			sh     => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
+			perm   => [ qw( test-write-locked ) ],
+			signal => [ qw( test-longjmp-past-vfork test-read-intr ) ],
+			time   => [ qw( test-time ) ],
 		},
 		Tools =>
 		[
