@@ -141,8 +141,6 @@ namespace Genie
 			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
-			
-			std::string itsLastEnv;
 		
 		private:
 			void Suspend();
