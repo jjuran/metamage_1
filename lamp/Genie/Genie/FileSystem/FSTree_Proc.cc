@@ -397,6 +397,43 @@ namespace Genie
 		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	class FSTree_proc_PID_core : public FSTree
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			FSTree_proc_PID_core( const FSTreePtr&    parent,
+			                      const std::string&  name,
+			                      pid_t               key ) : FSTree( parent, name ),
+			                                                  itsPID( key )
+			{
+			}
+			
+			void ChangeMode( mode_t mode ) const;
+	};
+	
+	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
+	{
+		Process& process = GetProcess( itsPID );
+		
+		if ( mode == 0 )
+		{
+			process.SuppressCoreDump();
+		}
+		else
+		{
+			process.AllowCoreDump();
+		}
+	}
+	
+	static FSTreePtr core_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name,
+	                               pid_t               key )
+	{
+		return FSTreePtr( new FSTree_proc_PID_core( parent, name, key ) );
+	}
+	
 	const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
@@ -408,6 +445,8 @@ namespace Genie
 		{ "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > },
 		{ "stat",      &Query_Factory< proc_PID_stat_Query      > },
 		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > },
+		
+		{ "core", &core_Factory },
 		
 		{ NULL, NULL }
 	};

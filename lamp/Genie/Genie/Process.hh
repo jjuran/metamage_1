@@ -141,6 +141,8 @@ namespace Genie
 			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
+			
+			bool itMayDumpCore;
 		
 		private:
 			void Suspend();
@@ -165,6 +167,11 @@ namespace Genie
 			const std::string& GetCmdLine() const  { return itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
+			
+			bool MayDumpCore() const  { return itMayDumpCore; }
+			
+			void SuppressCoreDump()  { itMayDumpCore = false; }
+			void AllowCoreDump   ()  { itMayDumpCore = true;  }
 			
 			void SetErrnoPtr( int* address )  { itsErrno = address; }
 			

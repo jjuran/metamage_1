@@ -823,7 +823,8 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( FSRoot() ),
-		itsCleanupHandler     ()
+		itsCleanupHandler     (),
+		itMayDumpCore         ()
 	{
 		char const *const argv[] = { "init", NULL };
 		
@@ -857,7 +858,8 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsMainEntry          ( parent.itsMainEntry ),
-		itsCleanupHandler     ()
+		itsCleanupHandler     (),
+		itMayDumpCore         ( true )
 	{
 		parent.SuspendForFork( itsPID );
 		
@@ -1418,7 +1420,7 @@ namespace Genie
 		if ( itsResult != 0 )
 		{
 			// Fatal signal received.  Terminate.
-			if ( WCOREDUMP( itsResult ) )
+			if ( itMayDumpCore && WCOREDUMP( itsResult ) )
 			{
 				DumpBacktrace( itsStackBottomPtr );
 			}
