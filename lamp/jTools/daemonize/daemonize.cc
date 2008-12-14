@@ -23,14 +23,38 @@
 #include "fork_and_exit.hh"
 
 
+static int usage()
+{
+	(void) write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
+	
+	return 2;
+}
+
 int main( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
-		
-		return 1;
+		return usage();
 	}
+	
+	char const *const *args = argv + 1;
+	
+	bool keep_cwd = false;
+	
+	if ( std::strcmp( argv[1], "--cwd" ) == 0 )
+	{
+		if ( argc < 3 )
+		{
+			return usage();
+		}
+		
+		keep_cwd = true;
+		
+		++args;
+	}
+	
+	// Ignore SIGHUP
+	signal( SIGHUP, SIG_IGN );
 	
 	// Ensure we are not a process group leader
 	fork_and_exit( 0 );
@@ -38,13 +62,13 @@ int main( int argc, iota::argv_t argv )
 	// Start a new session with no controlling terminal
 	setsid();
 	
-	// Ignore SIGHUP
-	signal( SIGHUP, SIG_IGN );
-	
 	// Ensure we can't acquire a controlling terminal by being session leader
 	fork_and_exit( 0 );
 	
-	chdir( "/" );
+	if ( !keep_cwd )
+	{
+		chdir( "/" );
+	}
 	
 	int devnull = open( "/dev/null", O_RDWR, 0 );
 	
@@ -54,7 +78,7 @@ int main( int argc, iota::argv_t argv )
 	
 	close( devnull );
 	
-	(void) execvp( argv[ 1 ], argv + 1 );
+	(void) execvp( *args, args );
 	
 	bool noSuchFile = errno == ENOENT;
 	
