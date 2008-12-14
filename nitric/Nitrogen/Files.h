@@ -267,6 +267,36 @@ namespace Nucleus
 namespace Nitrogen
   {
 	
+	// Trivial PBFoo() wrappers
+	
+	inline void PBHOpenDFSync( HParamBlockRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		ThrowOSStatus( ::PBHOpenDFSync( &pb ) );
+	}
+	
+	inline void PBHOpenDFAsync( HParamBlockRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		ThrowOSStatus( ::PBHOpenDFAsync( &pb ) );
+	}
+	
+	inline void PBHOpenRFSync( HParamBlockRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		ThrowOSStatus( ::PBHOpenRFSync( &pb ) );
+	}
+	
+	inline void PBHOpenRFAsync( HParamBlockRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		ThrowOSStatus( ::PBHOpenRFAsync( &pb ) );
+	}
+	
 	void UnmountVol( ConstStr63Param volName = NULL );
 	
 	void UnmountVol( FSVolumeRefNum vRefNum );
@@ -317,6 +347,8 @@ namespace Nitrogen
 	// Async read
 	template < class Callback, class EOF_Policy >
 	SInt32 FSRead( FSFileRefNum       file,
+	               FSIOPosMode        positionMode,
+	               SInt32             positionOffset,
 	               SInt32             requestCount,
 	               void *             buffer,
 	               Callback           callback,
@@ -332,7 +364,8 @@ namespace Nitrogen
 		io.ioRefNum   = file;
 		io.ioBuffer   = (char*) buffer;
 		io.ioReqCount = requestCount;
-		io.ioPosMode  = fsAtMark;
+		io.ioPosMode   = positionMode;
+		io.ioPosOffset = positionOffset;
 		
 		PBReadAsync( pb, policy );
 		
@@ -346,6 +379,45 @@ namespace Nitrogen
 		return io.ioActCount;
 	}
 	
+	// Async read, default position mode
+	template < class Callback, class EOF_Policy >
+	inline SInt32 FSRead( FSFileRefNum       file,
+	                      SInt32             requestCount,
+	                      void *             buffer,
+	                      Callback           callback,
+	                      ::IOCompletionUPP  completion,
+	                      EOF_Policy         policy )
+	{
+		return FSRead( file,
+		               fsAtMark,
+		               0,
+		               requestCount,
+		               buffer,
+		               callback,
+		               completion );
+	}
+	
+	// Async read, no completion routine
+	template < class Callback, class EOF_Policy >
+	inline SInt32 FSRead( FSFileRefNum  file,
+	                      SInt32        requestCount,
+	                      FSIOPosMode   positionMode,
+	                      SInt32        positionOffset,
+	                      void *        buffer,
+	                      Callback      callback,
+	                      EOF_Policy    policy )
+	{
+		return FSRead( file,
+		               positionMode,
+		               positionOffset,
+		               requestCount,
+		               buffer,
+		               callback,
+		               NULL,
+		               policy );
+	}
+	
+	// Async read, default position mode, no completion routine
 	template < class Callback, class EOF_Policy >
 	inline SInt32 FSRead( FSFileRefNum  file,
 	                      SInt32        requestCount,
@@ -371,6 +443,8 @@ namespace Nitrogen
 	// Async write
 	template < class Callback >
 	SInt32 FSWrite( FSFileRefNum       file,
+	                FSIOPosMode        positionMode,
+	                SInt32             positionOffset,
 	                SInt32             requestCount,
 	                const void *       buffer,
 	                Callback           callback,
@@ -382,10 +456,11 @@ namespace Nitrogen
 		
 		io.ioCompletion = completion;
 		
-		io.ioRefNum   = file;
-		io.ioBuffer   = (char*) buffer;
-		io.ioReqCount = requestCount;
-		io.ioPosMode  = fsAtMark;
+		io.ioRefNum    = file;
+		io.ioBuffer    = (char*) buffer;
+		io.ioReqCount  = requestCount;
+		io.ioPosMode   = positionMode;
+		io.ioPosOffset = positionOffset;
 		
 		PBWriteAsync( pb );
 		
@@ -397,6 +472,23 @@ namespace Nitrogen
 		ThrowOSStatus( io.ioResult );
 		
 		return io.ioActCount;
+	}
+	
+	// Async write, default position mode
+	template < class Callback >
+	inline SInt32 FSWrite( FSFileRefNum       file,
+	                       SInt32             requestCount,
+	                       const void *       buffer,
+	                       Callback           callback,
+	                       ::IOCompletionUPP  completion = NULL )
+	{
+		return FSWrite( file,
+		                fsAtMark,
+		                0,
+		                requestCount,
+		                buffer,
+		                callback,
+		                completion );
 	}
 	
 	
@@ -1024,11 +1116,78 @@ namespace Nitrogen
 	
 	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b );
 	
+	
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
 	
+	template < class Callback >
+	Nucleus::Owned< FSFileRefNum >
+	
+	FSpOpenDF( const FSSpec&      spec,
+	           FSIOPermssn        permissions,
+	           Callback           callback,
+	           ::IOCompletionUPP  completion = NULL )
+	{
+		HParamBlockRec pb;
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioCompletion = completion;
+		
+		io.ioNamePtr  = const_cast< StringPtr >( spec.name );
+		io.ioVRefNum  = spec.vRefNum;
+		io.ioPermssn  = permissions;
+		
+		pb.fileParam.ioDirID = spec.parID;
+		
+		PBHOpenDFAsync( pb );
+		
+		while ( io.ioResult == 1 )
+		{
+			callback();
+		}
+		
+		ThrowOSStatus( io.ioResult );
+		
+		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( io.ioRefNum ) );
+	}
+	
+	
 	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
+	
+	template < class Callback >
+	Nucleus::Owned< FSFileRefNum >
+	
+	FSpOpenRF( const FSSpec&      spec,
+	           FSIOPermssn        permissions,
+	           Callback           callback,
+	           ::IOCompletionUPP  completion = NULL )
+	{
+		HParamBlockRec pb;
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioCompletion = completion;
+		
+		io.ioNamePtr  = const_cast< StringPtr >( spec.name );
+		io.ioVRefNum  = spec.vRefNum;
+		io.ioPermssn  = permissions;
+		
+		pb.fileParam.ioDirID = spec.parID;
+		
+		PBHOpenRFAsync( pb );
+		
+		while ( io.ioResult == 1 )
+		{
+			callback();
+		}
+		
+		ThrowOSStatus( io.ioResult );
+		
+		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( io.ioRefNum ) );
+	}
+	
 	
 	FSSpec FSpCreate( const FSSpec&  file, 
 	                  OSType         creator, 
