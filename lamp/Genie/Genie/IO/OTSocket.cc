@@ -79,10 +79,10 @@ namespace Genie
 		// The new endpoint is synchronous and (by default) nonblocking.
 		// New Berkeley sockets are blocking.
 		
-		if ( isBlocking )
-		{
-			N::OTSetBlocking( itsEndpoint );
-		}
+		// The underlying endpoint is always nonblocking for send and recv
+		// and blocking for connect and listen (until we add support)
+		
+		N::OTSetBlocking( itsEndpoint );
 		
 		N::OTInstallNotifier( itsEndpoint, gNotifyUPP, NULL );
 		
@@ -138,8 +138,6 @@ namespace Genie
 			return 0;
 		}
 		
-		const bool socket_is_nonblocking = IsNonblocking();
-		
 		::OTByteCount n_readable_bytes;
 		
 		OSStatus err_count;
@@ -153,7 +151,7 @@ namespace Genie
 				break;
 			}
 			
-			if ( socket_is_nonblocking )
+			if ( IsNonblocking() )
 			{
 				break;
 			}
@@ -210,7 +208,20 @@ namespace Genie
 		
 		try
 		{
-			return N::OTSnd( itsEndpoint, data, byteCount );
+			ssize_t sent = N::OTSnd( itsEndpoint, data, byteCount );
+			
+			if ( sent < byteCount  &&  !IsNonblocking() )
+			{
+				data += sent;
+				
+				byteCount -= sent;
+				
+				Yield( kInterruptNever );
+				
+				goto retry;
+			}
+			
+			return sent;
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -332,6 +343,8 @@ namespace Genie
 			throw;
 		}
 		
+		N::OTSetNonBlocking( handle->itsEndpoint );
+		
 		return newSocket;
 	}
 	
@@ -382,6 +395,8 @@ namespace Genie
 			
 			throw;
 		}
+		
+		N::OTSetNonBlocking( itsEndpoint );
 	}
 	
 	void OTSocket::ShutdownWriting()

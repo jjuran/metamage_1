@@ -41,8 +41,6 @@ namespace Genie
 			
 			~OTSocket();
 			
-			bool IsNonblocking() const  { return !Nitrogen::OTIsBlocking( itsEndpoint ); }
-			
 			void ReceiveDisconnect();
 			void ReceiveOrderlyDisconnect();
 			
@@ -53,9 +51,6 @@ namespace Genie
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			void SetNonblocking  ()  { Nitrogen::OTSetNonBlocking( itsEndpoint ); }
-			void ClearNonblocking()  { Nitrogen::OTSetBlocking   ( itsEndpoint ); }
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			
