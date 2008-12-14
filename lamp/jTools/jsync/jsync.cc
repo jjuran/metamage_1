@@ -3,6 +3,9 @@
  *	========
  */
 
+// Convergence
+#include "at.h"
+
 // Standard C++
 #include <functional>
 #include <vector>
@@ -158,7 +161,9 @@ namespace tool
 	
 	static void recursively_copy( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
 	{
-		if ( io::file_exists( olddirfd, name ) )
+		struct ::stat stat_buffer = p7::fstatat( olddirfd, name );
+		
+		if ( S_ISREG( stat_buffer.st_mode ) )
 		{
 			if ( !filter_file( name ) )
 			{
@@ -179,16 +184,18 @@ namespace tool
 		recursively_copy( dirs.first, name, dirs.second );
 	}
 	
-	static void recursively_copy_directory_contents( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
+	static void recursively_copy_directory_contents( NN::Owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		directory_container contents = p7::directory_contents( p7::fdopendir( open_dir( olddirfd, name ) ) );
+		NN::Shared< p7::dir_t > olddir = p7::fdopendir( olddirfd );
+		
+		directory_container contents = p7::directory_contents( olddir );
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind2nd( more::ptr_fun( recursively_copy_into ),
-		                             std::make_pair( olddirfd, newdirfd ) ) );
+		                             std::make_pair( p7::dirfd( olddir ), newdirfd ) ) );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
@@ -200,7 +207,8 @@ namespace tool
 		
 		p7::mkdirat( newdirfd, name );
 		
-		recursively_copy_directory_contents( olddirfd, name, newdirfd );
+		recursively_copy_directory_contents( open_dir( olddirfd, name ),
+		                                     open_dir( newdirfd, name ) );
 	}
 	
 	static void compare_3_files( p7::fd_t  a,
