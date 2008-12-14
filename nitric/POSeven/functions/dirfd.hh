@@ -19,7 +19,24 @@
 
 // POSeven
 #include "POSeven/types/dir_t.hh"
+#include "POSeven/types/fd_t.hh"
 
+
+#ifdef dirfd
+
+inline int dirfd_function( DIR* dir )
+{
+	return dirfd( dir );
+}
+
+#undef dirfd
+
+inline int dirfd( DIR* dir )
+{
+	return dirfd_function( dir );
+}
+
+#endif
 
 namespace poseven
 {
@@ -28,7 +45,7 @@ namespace poseven
 	{
 		ASSERT( dir != NULL );
 		
-		return fd_t( dir->fd );
+		return fd_t( ::dirfd( dir ) );
 	}
 	
 }
