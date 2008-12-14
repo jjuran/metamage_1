@@ -47,10 +47,10 @@ namespace Genie
 			
 			virtual bool IsDisconnected() const  { return false; }
 			
-			virtual bool IsNonblocking() const  { return itsOpenFlags & O_NONBLOCK; }
+			bool IsNonblocking() const  { return itsOpenFlags & O_NONBLOCK; }
 			
-			virtual void SetNonblocking  ()  { itsOpenFlags |=  O_NONBLOCK; }
-			virtual void ClearNonblocking()  { itsOpenFlags &= ~O_NONBLOCK; }
+			void SetNonblocking  ()  { itsOpenFlags |=  O_NONBLOCK; }
+			void ClearNonblocking()  { itsOpenFlags &= ~O_NONBLOCK; }
 			
 			void TryAgainLater() const;
 			
