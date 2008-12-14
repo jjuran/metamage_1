@@ -34,6 +34,14 @@ namespace Genie
 		std::memset( itsActions, 0, sizeof itsActions );
 	}
 	
+	SignalReceiver::SignalReceiver( const SignalReceiver& other )
+	: TimeKeeper(),  // Reset resource utilization on fork
+	  itsPendingSignals(),  // Reset pending signals on fork
+	  itsBlockedSignals( other.itsBlockedSignals )
+	{
+		std::memcpy( itsActions, other.itsActions, sizeof itsActions );
+	}
+	
 	static void ResetSignalHandler( struct sigaction& action )
 	{
 		if ( action.sa_handler != SIG_IGN )

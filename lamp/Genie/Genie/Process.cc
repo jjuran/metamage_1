@@ -859,8 +859,6 @@ namespace Genie
 		itsMainEntry          ( parent.itsMainEntry ),
 		itsCleanupHandler     ()
 	{
-		ClearPendingSignals();
-		
 		parent.SuspendForFork( itsPID );
 		
 		gCurrentProcess = this;

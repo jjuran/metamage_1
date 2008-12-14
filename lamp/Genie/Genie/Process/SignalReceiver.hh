@@ -39,6 +39,8 @@ namespace Genie
 		public:
 			SignalReceiver();
 			
+			SignalReceiver( const SignalReceiver& other );
+			
 			void ClearPendingSignals()  { itsPendingSignals = 0; }
 			
 			void ResetSignalHandlers();
