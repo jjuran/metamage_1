@@ -82,7 +82,7 @@ my @programs = qw
 	abort aevt ar argv0
 	beep buffer buserror
 	cat cds chain console cp cpres cr2lf
-	divide
+	daemonize divide
 	echo env err2text
 	false
 	gzip
@@ -152,7 +152,7 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( buffer console icon idle pause setwindow window ),
+			qw( buffer console daemonize icon idle pause setwindow window ),
 			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
 			qw( beep cds drvr err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
