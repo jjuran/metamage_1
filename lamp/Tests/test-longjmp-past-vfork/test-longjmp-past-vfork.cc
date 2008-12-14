@@ -8,6 +8,7 @@
 #include <setjmp.h>
 #include <signal.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 
 // Iota
@@ -151,7 +152,12 @@ int main( int argc, const char *const *argv )
 	
 	fatal_subtest = argc >= 2  &&  std::strcmp( argv[1], "--fatal" ) == 0;
 	
-	if ( !fatal_subtest )
+	if ( fatal_subtest )
+	{
+		// Don't dump backtrace to console
+		chmod( "/proc/self/core", 0 );
+	}
+	else
 	{
 		// If this is not the fatal test run, everything is business as usual.
 		
