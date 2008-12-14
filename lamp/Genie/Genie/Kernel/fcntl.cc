@@ -80,7 +80,7 @@ namespace Genie
 		{
 			if ( cmd == F_DUPFD )
 			{
-				return DuplicateFileDescriptor( filedes );
+				return DuplicateFileDescriptor( filedes, LowestUnusedFileDescriptor( param ) );
 			}
 			
 			FileDescriptor& descriptor = GetFileDescriptor( filedes );
