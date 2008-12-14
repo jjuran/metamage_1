@@ -94,11 +94,25 @@ namespace Genie
 					descriptor.closeOnExec = param;
 					return 0;
 				
-				/*
-				case F_GETFL:
-				case F_SETFL:
+				default:
 					break;
-				*/
+			}
+			
+			IOHandle& handle = *descriptor.handle;
+			
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
+			
+			const OpenFlags mask = O_APPEND | O_NONBLOCK | O_LAZY;  // settable flags
+			
+			switch ( cmd )
+			{
+				case F_GETFL:
+					return stream.GetFlags();
+					
+				case F_SETFL:
+					// Current unsettable flags plus new settable flags
+					stream.SetFlags( stream.GetFlags() & ~mask | param & mask );
+					break;
 				
 				default:
 					break;
