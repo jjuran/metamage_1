@@ -65,9 +65,13 @@ namespace Genie
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
 	{
-		if ( (GetFlags() & O_TRUNC_LAZY)  &&  GetFileMark() == 0 )
+		OpenFlags flags = GetFlags();
+		
+		if ( flags & O_TRUNC_LAZY )
 		{
-			SetEOF( 0 );
+			SetEOF( GetFileMark() );
+			
+			SetFlags( flags & ~O_LAZY );
 		}
 		
 		return SysWrite( buffer, byteCount );
