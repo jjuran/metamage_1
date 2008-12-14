@@ -127,7 +127,7 @@ namespace Genie
 	{
 		std::string unit = NN::Convert< std::string >( ~key[0]->gdRefNum );
 		
-		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
+		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
 	}
 	
 	template < class Accessor >
@@ -139,7 +139,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	const Functional_Traits< GDHandle_KeyName_Traits::Key >::Mapping sys_mac_gdev_H_Mappings[] =

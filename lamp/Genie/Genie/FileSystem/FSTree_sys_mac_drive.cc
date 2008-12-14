@@ -132,7 +132,7 @@ namespace Genie
 		
 		N::DriverRefNum refNum = N::DriverRefNum( el->dQRefNum );
 		
-		return MakeFSTree( new FSTree_Driver_Link( parent, refNum, name ) );
+		return FSTreePtr( new FSTree_Driver_Link( parent, refNum, name ) );
 	}
 	
 	struct GetDriveFlags
@@ -216,7 +216,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	template < class Stamp >
@@ -224,7 +224,7 @@ namespace Genie
 	                                const std::string&               name,
 	                                DriveNumber_KeyName_Traits::Key  key )
 	{
-		return MakeFSTree( new Stamp( parent, name, key ) );
+		return FSTreePtr( new Stamp( parent, name, key ) );
 	}
 	
 	const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[] =

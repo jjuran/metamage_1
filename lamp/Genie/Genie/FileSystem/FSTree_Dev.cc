@@ -180,7 +180,7 @@ namespace Genie
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
 	                                       const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_SimpleDevice( parent, name ) );
+		return FSTreePtr( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
 	const Singleton_Mapping dev_Mappings[] =

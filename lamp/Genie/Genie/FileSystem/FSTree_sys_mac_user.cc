@@ -19,7 +19,7 @@ namespace Genie
 	{
 		typedef FSTree_QueryFile< sys_mac_user_name_Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name ) );
+		return FSTreePtr( new QueryFile( parent, name ) );
 	}
 	
 	const Singleton_Mapping sys_mac_user_Mappings[] =

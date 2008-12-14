@@ -171,7 +171,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[] =

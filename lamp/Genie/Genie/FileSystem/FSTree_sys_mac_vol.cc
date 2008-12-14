@@ -388,7 +388,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	template < class Stamp >
@@ -396,7 +396,7 @@ namespace Genie
 	                                const std::string&           name,
 	                                VRefNum_KeyName_Traits::Key  key )
 	{
-		return MakeFSTree( new Stamp( parent, name, key ) );
+		return FSTreePtr( new Stamp( parent, name, key ) );
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
@@ -418,7 +418,7 @@ namespace Genie
 		
 		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
 		
-		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive ) );
+		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive ) );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&             parent,
@@ -431,7 +431,7 @@ namespace Genie
 		
 		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
 		
-		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
+		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
 	}
 	
 	template < N::FolderType type >
@@ -439,7 +439,7 @@ namespace Genie
 	                                      const std::string&           name,
 	                                      VRefNum_KeyName_Traits::Key  key )
 	{
-		return MakeFSTree( new FSTree_Folder_Link( parent, key, type, name ) );
+		return FSTreePtr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
 	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =

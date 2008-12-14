@@ -155,7 +155,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	static FSTreePtr Origin_Factory( const FSTreePtr&                parent,
@@ -166,7 +166,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	static FSTreePtr Registers_Factory( const FSTreePtr&                parent,
@@ -177,7 +177,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	const Functional_Traits< ADBAddress_KeyName_Traits::Key >::Mapping sys_mac_adb_N_Mappings[] =

@@ -110,7 +110,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name ) );
+		return FSTreePtr( new QueryFile( parent, name ) );
 	}
 	
 	const Singleton_Mapping sys_mac_desktop_Mappings[] =

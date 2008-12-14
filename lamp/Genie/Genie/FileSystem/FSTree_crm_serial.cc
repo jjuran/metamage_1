@@ -131,7 +131,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key, member ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key, member ) ) );
 	}
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&                 parent,
@@ -163,7 +163,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	const Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[] =

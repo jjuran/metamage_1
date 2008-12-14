@@ -450,7 +450,7 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Property > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Property( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Property( key ) ) );
 	}
 	
 	template < class Accessor >
@@ -462,7 +462,7 @@ namespace Genie
 		
 		typedef FSTree_PseudoFile< Property > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Property( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Property( key ) ) );
 	}
 	
 	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =

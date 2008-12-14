@@ -163,14 +163,6 @@ namespace Genie
 			virtual FSIteratorPtr Iterate() const;
 	};
 	
-	template < class Tree >
-	inline FSTreePtr MakeFSTree( Tree* tree )
-	{
-		FSTreePtr result( tree );
-		
-		return result;
-	}
-	
 }
 
 #endif

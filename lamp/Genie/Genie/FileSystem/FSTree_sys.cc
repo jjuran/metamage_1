@@ -140,7 +140,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
+		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
 	extern const Singleton_Mapping sys_kernel_bin_Mappings[];
@@ -185,7 +185,7 @@ namespace Genie
 	                                                    const std::string&  name,
 	                                                    const Key&          key ) const
 	{
-		return MakeFSTree( new FSTree_Functional< Key >( parent, name, key ) );
+		return FSTreePtr( new FSTree_Functional< Key >( parent, name, key ) );
 	}
 	
 }

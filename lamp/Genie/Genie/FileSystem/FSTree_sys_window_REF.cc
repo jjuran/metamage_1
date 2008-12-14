@@ -601,7 +601,7 @@ namespace Genie
 	static FSTreePtr Factory( const FSTreePtr&    parent,
 	                          const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_Type( parent, name ) );
+		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
 	const Functional_Traits< void >::Mapping sys_window_REF_Mappings[] =

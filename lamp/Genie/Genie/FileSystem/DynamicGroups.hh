@@ -75,7 +75,7 @@ namespace Genie
 		                               const std::string&  name,
 		                               const Key&          key )
 		{
-			return MakeFSTree( new ChildNode( parent, name, key ) );
+			return FSTreePtr( new ChildNode( parent, name, key ) );
 		}
 		
 		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }

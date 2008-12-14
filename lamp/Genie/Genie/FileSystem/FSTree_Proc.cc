@@ -167,7 +167,7 @@ namespace Genie
 	{
 		if ( key == 0 )
 		{
-			return MakeFSTree( new FSTree_proc_self( parent ) );
+			return FSTreePtr( new FSTree_proc_self( parent ) );
 		}
 		
 		return Premapped_Factory< Key, proc_PID_Mappings >( parent, name, key );
@@ -376,7 +376,7 @@ namespace Genie
 	                             const std::string&  name,
 	                             pid_t               key )
 	{
-		return MakeFSTree( new FSTree_PID_fd( parent, name, key ) );
+		return FSTreePtr( new FSTree_PID_fd( parent, name, key ) );
 	}
 	
 	template < class LinkResolver >
@@ -384,7 +384,7 @@ namespace Genie
 	                        const std::string&  name,
 	                        pid_t               key )
 	{
-		return MakeFSTree( new FSTree_PID_Link< LinkResolver >( parent, name, key ) );
+		return FSTreePtr( new FSTree_PID_Link< LinkResolver >( parent, name, key ) );
 	}
 	
 	template < class Query >
@@ -394,7 +394,7 @@ namespace Genie
 	{
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[] =
@@ -416,7 +416,7 @@ namespace Genie
 		                                    const std::string&  name,
 		                                    const Key&          key ) const
 	{
-		return MakeFSTree( new FSTree_PID_fd_N( parent, name, itsPID, key ) );
+		return FSTreePtr( new FSTree_PID_fd_N( parent, name, itsPID, key ) );
 	}
 	
 	

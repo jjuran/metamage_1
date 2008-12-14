@@ -145,14 +145,14 @@ namespace Genie
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
 	static FSTreePtr Executable_Factory( const FSTreePtr&                          parent,
 	                                     const std::string&                        name,
 	                                     ProcessSerialNumber_KeyName_Traits::Key   key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_proc_PSN_exe( parent, name, key ) );
+		return FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( parent, name, key ) );
 	}
 	
 	const Functional_Traits< ProcessSerialNumber_KeyName_Traits::Key >::Mapping sys_mac_proc_PSN_Mappings[] =

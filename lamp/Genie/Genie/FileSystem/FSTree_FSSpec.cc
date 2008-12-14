@@ -1011,7 +1011,7 @@ namespace Genie
 		                                     const std::string&  name,
 		                                     const Key&          key ) const
 	{
-		return MakeFSTree( new FSTree_Volumes_Link( parent, name, key ) );
+		return FSTreePtr( new FSTree_Volumes_Link( parent, name, key ) );
 	}
 	
 	ino_t FSTree_Volumes::Inode() const
