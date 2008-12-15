@@ -225,6 +225,20 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
+			if ( err == kOTFlowErr )
+			{
+				if ( IsNonblocking() )
+				{
+					p7::throw_errno( EAGAIN );
+				}
+				else
+				{
+					Yield( kInterruptNever );
+					
+					goto retry;
+				}
+			}
+			
 			if ( err == kOTLookErr )
 			{
 				OTResult look = N::OTLook( itsEndpoint );
