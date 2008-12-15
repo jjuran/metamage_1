@@ -19,6 +19,8 @@
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/functions/ftruncate.hh"
+#include "POSeven/functions/lseek.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -203,7 +205,27 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
+		bool monitor = false;
+		
+		if ( argc > 1  &&  std::strcmp( argv[1], "--monitor" ) == 0 )
+		{
+			monitor = true;
+		}
+		
+	again:
+		
 		ps();
+		
+		if ( monitor )
+		{
+			p7::ftruncate( p7::stdout_fileno, p7::lseek( p7::stdout_fileno ) );
+			
+			sleep( 1 );
+			
+			p7::lseek( p7::stdout_fileno, 0 );
+			
+			goto again;
+		}
 		
 		return 0;
 	}
