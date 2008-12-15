@@ -37,16 +37,17 @@ namespace Genie
 	struct WindowParameters
 	{
 		N::Str255  itsTitle;
+		Point      itsOrigin;
 		Point      itsSize;
 		bool       itIsVisible;
 		
 		boost::shared_ptr< Ped::UserWindow >  itsWindow;
 		
-		WindowParameters() : itsSize( gZeroPoint ), itIsVisible( true )
+		WindowParameters() : itsOrigin( gZeroPoint ),
+		                     itsSize  ( gZeroPoint ),
+		                     itIsVisible( true )
 		{
 		}
-		
-		bool Ready() const  { return itsSize.h && itsSize.v; }
 	};
 	
 	typedef std::map< const FSTree*, WindowParameters > WindowParametersMap;
@@ -133,7 +134,14 @@ namespace Genie
 			reinterpret_cast< Point* >( &bounds )[1] = params.itsSize;
 		}
 		
-		CenterWindowRect( bounds );
+		if ( params.itsOrigin.h || params.itsOrigin.v )
+		{
+			::OffsetRect( &bounds, params.itsOrigin.h, params.itsOrigin.v );
+		}
+		else
+		{
+			CenterWindowRect( bounds );
+		}
 		
 		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
 		
@@ -214,6 +222,24 @@ namespace Genie
 		static Value ValueFromString( const std::string& s )
 		{
 			return N::Str255( s );
+		}
+	};
+	
+	struct Access_Origin
+	{
+		typedef Point Value;
+		
+		static Value const& GetRef( WindowParameters const& params )  { return params.itsOrigin; }
+		static Value      & GetRef( WindowParameters      & params )  { return params.itsOrigin; }
+		
+		static std::string StringFromValue( const Value& origin )
+		{
+			return WritePoint( origin, "," );
+		}
+		
+		static Value ValueFromString( const std::string& s )
+		{
+			return ReadPoint( s );
 		}
 	};
 	
@@ -614,6 +640,7 @@ namespace Genie
 		{ "view",   &Factory< FSTree_sys_window_REF_view >, true },
 		
 		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title   > > > },
+		{ "pos",   &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Origin  > > > },
 		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size    > > > },
 		{ "vis",   &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Visible > > > },
 		
