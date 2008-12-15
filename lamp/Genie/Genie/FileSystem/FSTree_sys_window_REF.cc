@@ -15,6 +15,7 @@
 #include "POSeven/Errno.hh"
 
 // Pedestal
+#include "Pedestal/EmptyView.hh"
 #include "Pedestal/UserWindow.hh"
 
 // Genie
@@ -103,17 +104,6 @@ namespace Genie
 		return gWindowParametersMap[ key ].itsWindow != NULL;
 	}
 	
-	class EmptyView : public Ped::View
-	{
-		public:
-			void Update();
-	};
-	
-	void EmptyView::Update()
-	{
-		N::EraseRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
 	static const boost::shared_ptr< Ped::UserWindow >& CreateUserWindow( const FSTree* key )
 	{
 		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
@@ -151,7 +141,7 @@ namespace Genie
 		
 		window->SetCloseHandler( closeHandler );
 		
-		window->SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
+		window->SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView() ) );
 		
 		return gWindowParametersMap[ key ].itsWindow = window;
 	}
@@ -456,7 +446,7 @@ namespace Genie
 		
 		N::SetPortWindowPort( windowRef );
 		
-		window.SetView( std::auto_ptr< Ped::View >( new EmptyView() ) );
+		window.SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView() ) );
 		
 		InvalidateCurrentWindow();
 	}
