@@ -86,7 +86,7 @@ namespace Pedestal
 			
 			void Activate( bool activating );
 			
-			void Update();
+			void Draw( const Rect& bounds );
 			
 			void Resize( short width, short height )  { Pedestal::Resize( Get(), width, height ); }
 			

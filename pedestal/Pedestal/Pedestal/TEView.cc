@@ -261,7 +261,6 @@ namespace Pedestal
 		te.destRect = destRect;
 		
 		N::TECalText( hTE );
-		N::InvalRect( newBounds );
 	}
 	
 	void Resize( TEHandle hTE, short width, short height )
@@ -671,10 +670,8 @@ namespace Pedestal
 		gArrowKeyMayBeChorded = false;
 	}
 	
-	void TEView::Update()
+	void TEView::Draw( const Rect& bounds )
 	{
-		Rect bounds = Pedestal::Bounds( itsTE.Get() );
-		
 		Rect top = bounds;
 		top.bottom = top.top + 4;
 		
@@ -797,7 +794,9 @@ namespace Pedestal
 			
 			N::SetPort( port );
 			
-			Update();
+			Rect bounds = Pedestal::Bounds( itsTE.Get() );
+			
+			Draw( bounds );
 		}
 		
 		return byteCount;

@@ -161,14 +161,16 @@ namespace Pedestal
 		}
 	}
 	
-	void ScrollerBase::Update()
+	void ScrollerBase::Draw( const Rect& bounds )
 	{
+		const Rect& subviewBounds = GetSubView().Bounds();
+		
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
 		Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
-		                                                                     Nitrogen::RectRgn( GetSubView().Bounds() ) ) );
+		                                                                     Nitrogen::RectRgn( subviewBounds ) ) );
 		
-		GetSubView().Update();
+		GetSubView().Draw( subviewBounds );
 	}
 	
 	bool ScrollerBase::SetCursor( Point location, RgnHandle mouseRgn )

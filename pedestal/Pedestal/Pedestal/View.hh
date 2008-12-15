@@ -39,7 +39,7 @@ namespace Pedestal
 			
 			virtual void Resize( short width, short height )  {}
 			
-			virtual void Update()  {}
+			virtual void Draw( const Rect& bounds )  {}
 			
 			virtual void Activate( bool activating )  {}
 			

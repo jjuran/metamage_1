@@ -20,8 +20,6 @@ namespace Pedestal
 	class FrontBackView : public View
 	{
 		private:
-			Rect bounds;
-			
 			Front front;
 			Back  back;
 		
@@ -38,12 +36,10 @@ namespace Pedestal
 			Front& GetFront() const  { return front; }
 			Back & GetBack () const  { return back;  }
 			
-			const Rect& Bounds() const  { return bounds; }
-			
-			void Update()
+			void Draw( const Rect& bounds )
 			{
-				back .Update();
-				front.Update();
+				back .Draw( bounds );
+				front.Draw( bounds );
 			}
 	};
 	

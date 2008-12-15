@@ -115,17 +115,17 @@ namespace Pedestal
 				return SubView().KeyDown( event );
 			}
 			
-			void Update()
+			void Draw( const Rect& bounds )
 			{
 				// FIXME:  This (perhaps unnecessarily) erases the subview content.
-				//Nitrogen::EraseRect( Bounds() );
+				//Nitrogen::EraseRect( bounds );
 				
 				Rect subviewBounds = SubView().Bounds();
 				
-				Rect bottom = Bounds();
+				Rect bottom = bounds;
 				bottom.top = subviewBounds.bottom - scrollPosition.v;
 				
-				Rect right = Bounds();
+				Rect right = bounds;
 				right.left = subviewBounds.right - scrollPosition.h;
 				
 				Nitrogen::EraseRect( bottom );
@@ -133,7 +133,7 @@ namespace Pedestal
 				
 				ScopedOrigin scopedOrigin( ScrollPosition() );
 				
-				SubView().Update();
+				SubView().Draw( subviewBounds );
 			}
 			
 			void Activate( bool activating )
@@ -189,7 +189,8 @@ namespace Pedestal
 			Nucleus::Saved< Nitrogen::Clip_Value > savedClip( updateRegion );
 			
 			Nitrogen::EraseRgn( updateRegion );
-			Update();
+			
+			Draw( Bounds() );
 		}
 		else
 		{

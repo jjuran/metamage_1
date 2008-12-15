@@ -42,7 +42,7 @@ namespace Pedestal
 		Erase( itsBounds );
 	}
 	
-	void GWorldView::Update()
+	void GWorldView::Draw( const Rect& bounds )
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( itsGWorld );
@@ -54,7 +54,7 @@ namespace Pedestal
 		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld                 ),
 		             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
 		             N::GetPortBounds( itsGWorld ),
-		             itsBounds,
+		             bounds,
 		             N::srcCopy );
 		
 		// Unlock pixels

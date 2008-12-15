@@ -52,7 +52,7 @@ namespace Pedestal
 			
 			void Resize( short width, short height )  { itsView->Resize( width, height ); }
 			
-			void Update()  { itsView->Update(); }
+			void Draw( const Rect& bounds )  { itsView->Draw( bounds ); }
 			
 			void Activate( bool activating )  { itsView->Activate( activating ); }
 			

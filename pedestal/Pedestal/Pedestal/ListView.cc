@@ -109,7 +109,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	void ListView::Update()
+	void ListView::Draw( const Rect& bounds )
 	{
 		//Rect bounds = Bounds( list );
 		//N::EraseRect( bounds );

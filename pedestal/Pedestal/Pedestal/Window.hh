@@ -326,7 +326,7 @@ namespace Pedestal
 	template < class Type, class DefProcID >
 	inline void Window< Type, DefProcID >::Update()
 	{
-		SubView().Update();
+		SubView().Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
 		
 		if ( itsDefProcID.HasGrowIcon() )
 		{

@@ -15,9 +15,9 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	void EmptyView::Update()
+	void EmptyView::Draw( const Rect& bounds )
 	{
-		N::EraseRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		N::EraseRect( bounds );
 	}
 	
 }

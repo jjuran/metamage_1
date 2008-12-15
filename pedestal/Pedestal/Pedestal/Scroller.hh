@@ -227,7 +227,7 @@ namespace Pedestal
 				return GetSubView().EnterShiftSpaceQuasimode( event );
 			}
 			
-			void Update();
+			void Draw( const Rect& bounds );
 			
 			bool SetCursor( Point location, RgnHandle mouseRgn );
 			

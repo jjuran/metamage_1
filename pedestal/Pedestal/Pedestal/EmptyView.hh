@@ -16,7 +16,7 @@ namespace Pedestal
 	class EmptyView : public View
 	{
 		public:
-			void Update();
+			void Draw( const Rect& bounds );
 	};
 	
 }
