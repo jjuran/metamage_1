@@ -73,6 +73,10 @@ namespace Genie
 			
 			SetFlags( flags & ~O_LAZY );
 		}
+		else if ( const bool appending = GetFlags() & O_APPEND )
+		{
+			itsMark = GetEOF();
+		}
 		
 		return SysWrite( buffer, byteCount );
 	}
