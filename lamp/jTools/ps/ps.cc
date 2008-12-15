@@ -160,11 +160,12 @@ namespace tool
 		
 		char* cmdline_end = buffer + p7::read( io::open_for_reading( pid_dir / "cmdline" ), buffer, 4096 );
 		
-		ASSERT( cmdline_end > buffer );
-		
-		std::replace( buffer, cmdline_end - 1, '\0', ' ' );  // replace NUL with space except last
-		
-		report.append( buffer, cmdline_end - 1 );
+		if ( cmdline_end > buffer )
+		{
+			std::replace( buffer, cmdline_end - 1, '\0', ' ' );  // replace NUL with space except last
+			
+			report.append( buffer, cmdline_end - 1 );
+		}
 		
 		if ( report.size() > 80 )
 		{
