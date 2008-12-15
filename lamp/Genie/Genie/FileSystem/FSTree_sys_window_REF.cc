@@ -126,9 +126,12 @@ namespace Genie
 		
 		ConstStr255Param title = params.itsTitle;
 		
-		Rect bounds = { 0 };
+		Rect bounds = { 0, 0, 90, 120 };
 		
-		reinterpret_cast< Point* >( &bounds )[1] = params.itsSize;
+		if ( params.itsSize.h || params.itsSize.v )
+		{
+			reinterpret_cast< Point* >( &bounds )[1] = params.itsSize;
+		}
 		
 		CenterWindowRect( bounds );
 		
