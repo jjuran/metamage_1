@@ -74,7 +74,7 @@ namespace Genie
 	
 	typedef CleanupHandlerProc CleanupHandler;
 	
-	class CmdLine
+	class FlatArgVector
 	{
 		private:
 			std::string itsStorage;
@@ -83,6 +83,15 @@ namespace Genie
 			void Assign( char const *const *argv );
 			
 			const std::string& Data() const  { return itsStorage; }
+	};
+	
+	struct Parameters
+	{
+			FlatArgVector itsCmdLine;
+			FlatArgVector itsEnviron;
+			
+			std::vector< const char* > itsArgV;
+			std::vector< const char* > itsEnvP;
 	};
 	
 	class Process : public SignalReceiver,
@@ -104,9 +113,6 @@ namespace Genie
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
 			int* itsErrno;
-			
-			std::string itsEnvStorage;
-			std::vector< char* > itsEnvP;
 			
 			Backtrace::StackFramePtr itsStackBottomPtr;
 			Backtrace::StackFramePtr itsStackFramePtr;
@@ -136,7 +142,7 @@ namespace Genie
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
-			CmdLine itsCmdLine;
+			boost::shared_ptr< Parameters > itsParameters;
 			
 			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
@@ -164,7 +170,7 @@ namespace Genie
 			
 			int Run();
 			
-			const std::string& GetCmdLine() const  { return itsCmdLine.Data(); }
+			const std::string& GetCmdLine() const  { return itsParameters->itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			

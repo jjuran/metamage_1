@@ -116,17 +116,22 @@ namespace Genie
 	}
 	
 	
-	void CmdLine::Assign( char const *const *argv )
+	void FlatArgVector::Assign( char const *const *argv )
 	{
 		itsStorage.clear();
 		
+		// Check for NULL environ
+		
+		if ( argv == NULL )
+		{
+			return;
+		}
+		
 		while ( *argv )
 		{
-			//itsStorage += *argv++;  // This fails to copy **argv using MSL
+			const char* p = *argv++;
 			
-			itsStorage += std::string( *argv++ );
-			
-			itsStorage += '\0';
+			itsStorage.append( p, std::strlen( p ) + 1 );  // include trailing NUL
 		}
 	}
 	
@@ -529,12 +534,12 @@ namespace Genie
 		return *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
 	}
 	
-	static std::vector< const char* > ArgVectorFromCmdLine( const std::string& cmdLine )
+	static std::vector< const char* > UnflattenedArgVector( const std::string& flat )
 	{
 		std::vector< const char* > result;
 		
-		const char* begin = &*cmdLine.begin();
-		const char* end   = &*cmdLine.end();
+		const char* begin = &*flat.begin();
+		const char* end   = &*flat.end();
 		
 		while ( begin < end )
 		{
@@ -554,11 +559,14 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		std::vector< const char* > argVector = ArgVectorFromCmdLine( itsCmdLine.Data() );
+		Parameters& params = *itsParameters;
 		
-		int          argc = argVector.size() - 1;  // don't count trailing NULL
-		iota::argp_t argv = &argVector.front();
-		iota::envp_t envp = &itsEnvP.front();
+		params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
+		params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
+		
+		int          argc = params.itsArgV.size() - 1;  // don't count trailing NULL
+		iota::argp_t argv = &params.itsArgV[0];
+		iota::envp_t envp = &params.itsEnvP[0];
 		
 		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 		// Pass envp in ToolScratch + 4 to initialize environ
@@ -803,6 +811,17 @@ namespace Genie
 		return pgrp;
 	}
 	
+	static inline boost::shared_ptr< Parameters > RootProcessParameters()
+	{
+		boost::shared_ptr< Parameters > result( new Parameters );
+		
+		char const *const argv[] = { "init", NULL };
+		
+		result->itsCmdLine.Assign( argv );
+		
+		return result;
+	}
+	
 	Process::Process( RootProcess ) 
 	:
 		itsPPID               ( 0 ),
@@ -823,13 +842,10 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( FSRoot() ),
+		itsParameters         ( RootProcessParameters() ),
 		itsCleanupHandler     (),
 		itMayDumpCore         ()
 	{
-		char const *const argv[] = { "init", NULL };
-		
-		itsCmdLine.Assign( argv );
-		
 		itsFileDescriptors[ 0 ] =
 		itsFileDescriptors[ 1 ] =
 		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
@@ -858,6 +874,7 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsMainEntry          ( parent.itsMainEntry ),
+		itsParameters         ( parent.itsParameters ),
 		itsCleanupHandler     (),
 		itMayDumpCore         ( true )
 	{
@@ -942,9 +959,9 @@ namespace Genie
 		}
 	}
 	
-	static void StoreEnviron( const char* const*     envp,
-	                          std::string&           storage,
-	                          std::vector< char* >&  result )
+	static void StoreVector( const char* const*     envp,
+	                         std::string&           storage,
+	                         std::vector< char* >&  result )
 	{
 		result.clear();
 		storage.clear();
@@ -1014,15 +1031,20 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		itsCmdLine.Assign( &context.argVector.front() );
+		// Members of argv and envp could be living in itsParameters
+		boost::shared_ptr< Parameters > newParameters( new Parameters );
+		
+		newParameters->itsCmdLine.Assign( &context.argVector.front() );
+		
+		newParameters->itsEnviron.Assign( envp );
+		
+		std::swap( itsParameters, newParameters );
 		
 		itsProgramFile = context.executable;
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
 		itsOldMainEntry = itsMainEntry;
-		
-		StoreEnviron( envp, itsEnvStorage, itsEnvP );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -1153,6 +1175,10 @@ namespace Genie
 		itsPPID = 1;  // temporary hack to avoid improper SIGHUP
 		
 		itsThread = parent.itsThread;
+		
+		ASSERT( itsCleanupHandler == NULL );
+		
+		std::swap( itsCleanupHandler, parent.itsCleanupHandler );
 		
 		parent.Exit( exit_status );
 	}
