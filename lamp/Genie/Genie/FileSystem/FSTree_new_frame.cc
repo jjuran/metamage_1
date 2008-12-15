@@ -261,7 +261,7 @@ namespace Genie
 				
 				const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
 				
-				InvalidateWindowRef( GetWindowRef( windowKey ) );
+				InvalidateWindow( windowKey );
 			}
 	};
 	
@@ -351,21 +351,12 @@ namespace Genie
 			FSIteratorPtr Iterate() const;
 	};
 	
-	static void InvalidateWindow( const FSTree* key )
+	void FSTree_Frame_view::SetTimes() const
 	{
-		if ( N::WindowRef window = GetWindowRef( key ) )
-		{
-			InvalidateWindowRef( window );
-		}
-		else
+		if ( !InvalidateWindow( WindowKey() ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
-	}
-	
-	void FSTree_Frame_view::SetTimes() const
-	{
-		InvalidateWindow( WindowKey() );
 	}
 	
 	void FSTree_Frame_view::Delete() const

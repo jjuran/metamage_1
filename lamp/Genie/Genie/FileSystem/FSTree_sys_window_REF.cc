@@ -423,19 +423,29 @@ namespace Genie
 	{
 		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
-		return it != gWindowParametersMap.end() ? it->second.itsWindow->Get() : NULL;
+		if ( it != gWindowParametersMap.end() )
+		{
+			const boost::shared_ptr< Ped::UserWindow >& window = it->second.itsWindow;
+			
+			if ( window.get() != NULL )
+			{
+				return window->Get();
+			}
+		}
+		
+		return NULL;
 	}
 	
-	static void InvalidateWindow( const FSTree* key )
+	bool InvalidateWindow( const FSTree* key )
 	{
 		if ( N::WindowRef window = GetWindowRef( key ) )
 		{
 			InvalidateWindowRef( window );
+			
+			return true;
 		}
-		else
-		{
-			p7::throw_errno( ENOENT );
-		}
+		
+		return false;
 	}
 	
 	static void DestroyViewInWindow( Ped::UserWindow& window )
@@ -544,7 +554,10 @@ namespace Genie
 	
 	void FSTree_sys_window_REF_view::SetTimes() const
 	{
-		InvalidateWindow( WindowKey() );
+		if ( !InvalidateWindow( WindowKey() ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
 	}
 	
 	void FSTree_sys_window_REF_view::Delete() const

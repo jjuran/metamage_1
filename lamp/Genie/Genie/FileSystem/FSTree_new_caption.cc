@@ -33,21 +33,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static void InvalidateCurrentWindow()
-	{
-		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
-	static void InvalidateWindowRef( N::WindowRef window )
-	{
-		NN::Saved< N::Port_Value > savePort;
-		
-		N::SetPortWindowPort( window );
-		
-		InvalidateCurrentWindow();
-	}
-	
-	
 	extern const Functional_Traits< void >::Mapping Caption_view_Mappings[];
 	
 	typedef std::map< const FSTree*, std::string > CaptionTextMap;
@@ -151,7 +136,7 @@ namespace Genie
 		
 		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
 		
-		InvalidateWindowRef( GetWindowRef( windowKey ) );
+		InvalidateWindow( windowKey );
 	}
 	
 	class CaptionTextFileHandle : public VirtualFileHandle
@@ -213,7 +198,7 @@ namespace Genie
 		
 		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
 		
-		InvalidateWindowRef( GetWindowRef( windowKey ) );
+		InvalidateWindow( windowKey );
 		
 		return Advance( byteCount );
 	}

@@ -22,6 +22,8 @@ namespace Genie
 	
 	Nitrogen::WindowRef GetWindowRef( const FSTree* key );
 	
+	bool InvalidateWindow( const FSTree* key );
+	
 }
 
 #endif
