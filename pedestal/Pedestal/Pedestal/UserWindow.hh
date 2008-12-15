@@ -29,7 +29,8 @@ namespace Pedestal
 			
 			~UserView();
 			
-			void Set( std::auto_ptr< View > view )  { itsView = view; }
+			void Set( boost::shared_ptr< View > const& view )  { itsView = view; }
+			void Set( std::auto_ptr    < View >        view )  { itsView = view; }
 			
 			View      & Get()        { return *itsView; }
 			View const& Get() const  { return *itsView; }
@@ -68,7 +69,8 @@ namespace Pedestal
 			UserWindow( const NewWindowContext&    context,
 			            Nitrogen::WindowDefProcID  procID );
 			
-			void SetView( std::auto_ptr< View > view )  { SubView().Set( view ); }
+			void SetView( boost::shared_ptr< View > const& view )  { SubView().Set( view ); }
+			void SetView( std::auto_ptr    < View >        view )  { SubView().Set( view ); }
 	};
 	
 }
