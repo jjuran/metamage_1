@@ -168,6 +168,11 @@ namespace Genie
 		{
 			const FSTree* windowKey = GetViewWindowKey( parent );
 			
+			if ( windowKey == NULL )
+			{
+				windowKey = parent;
+			}
+			
 			AddViewWindowKey( parent, name, windowKey );
 			
 			AddCustomParameters( (*factory)() );
