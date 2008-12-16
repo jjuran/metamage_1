@@ -502,7 +502,7 @@ namespace Genie
 	{
 		FSTree_FSSpec* tree = NULL;
 		
-		static FSTreePtr result = FSTreePtr( tree = new FSTree_FSSpec( FindJDirectory() ) );
+		static FSTreePtr result = FSTreePtr( tree = new FSTree_FSSpec( GetJDirectory() ) );
 		
 		if ( tree != NULL )
 		{
