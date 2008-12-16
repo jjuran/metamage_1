@@ -285,6 +285,22 @@ namespace Genie
 	};
 	
 	
+	static std::string MakeName( const FSSpec& fileSpec )
+	{
+		if ( fileSpec.parID == fsRtParID )
+		{
+			return "mnt";
+		}
+		
+		if ( IsRootDirectory( fileSpec ) )
+		{
+			return "";
+		}
+		
+		return GetUnixName( fileSpec );
+	}
+	
+	
 	class FSTree_HFS : public FSTree_Mappable
 	{
 		public:
@@ -598,17 +614,7 @@ namespace Genie
 	
 	std::string FSTree_FSSpec::Name() const
 	{
-		if ( itsFileSpec.parID == fsRtParID )
-		{
-			return "mnt";
-		}
-		
-		if ( IsRootDirectory( itsFileSpec ) )
-		{
-			return "";
-		}
-		
-		return GetUnixName( itsFileSpec );
+		return MakeName( itsFileSpec );
 	}
 	
 	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
