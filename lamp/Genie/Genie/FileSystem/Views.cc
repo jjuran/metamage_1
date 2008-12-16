@@ -96,20 +96,38 @@ namespace Genie
 		return gViewParametersMap[ parent ][ name ].itsFactory;
 	}
 	
-	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
+	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
 	{
 		return gViewParametersMap[ parent ][ name ].itsDelegate;
 	}
 	
-	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
+	static const FSTreePtr& GetViewDelegate( const FSTree* view )
+	{
+		return GetViewDelegate( view->Parent().get(), view->Name() );
+	}
+	
+	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
 	{
 		return gViewParametersMap[ parent ][ name ].itsWindowKey;
+	}
+	
+	static const FSTree* GetViewWindowKey( const FSTree* view )
+	{
+		return GetViewWindowKey( view->Parent().get(), view->Name() );
+	}
+	
+	
+	bool InvalidateWindowForView( const FSTree* view )
+	{
+		const FSTree* windowKey = GetViewWindowKey( view );
+		
+		return InvalidateWindow( windowKey );
 	}
 	
 	
 	bool FSTree_View::Exists() const
 	{
-		return GetViewDelegate( ParentKey(), Name() ) != NULL;
+		return GetViewDelegate( this ) != NULL;
 	}
 	
 	void FSTree_View::SetTimes() const
@@ -148,13 +166,13 @@ namespace Genie
 		
 		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( parent, name ) )
 		{
-			const FSTree* windowKey = GetViewWindowKey( parent->Parent().get(), parent->Name() );
+			const FSTree* windowKey = GetViewWindowKey( parent );
 			
 			AddViewWindowKey( parent, name, windowKey );
 			
 			AddCustomParameters( (*factory)() );
 			
-			InvalidateWindowForView( this );
+			InvalidateWindow( windowKey );
 		}
 		else
 		{
@@ -164,7 +182,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_View::Lookup( const std::string& name ) const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
+		const FSTreePtr& delegate = GetViewDelegate( this );
 		
 		if ( delegate == NULL )
 		{
@@ -176,7 +194,7 @@ namespace Genie
 	
 	FSIteratorPtr FSTree_View::Iterate() const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
+		const FSTreePtr& delegate = GetViewDelegate( this );
 		
 		if ( delegate == NULL )
 		{

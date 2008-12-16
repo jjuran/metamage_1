@@ -48,9 +48,8 @@ namespace Genie
 	
 	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name );
 	
-	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name );
 	
-	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name );
+	bool InvalidateWindowForView( const FSTree* view );
 	
 	
 	class FSTree_View : public FSTree

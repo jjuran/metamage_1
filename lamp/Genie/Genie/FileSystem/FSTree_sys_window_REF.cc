@@ -421,7 +421,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static bool InvalidateWindow( const FSTree* key )
+	bool InvalidateWindow( const FSTree* key )
 	{
 		if ( N::WindowRef window = GetWindowRef( key ) )
 		{
@@ -431,15 +431,6 @@ namespace Genie
 		}
 		
 		return false;
-	}
-	
-	bool InvalidateWindowForView( const FSTree* view )
-	{
-		const FSTree* parentKey = view->Parent().get();
-		
-		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
-		
-		return InvalidateWindow( windowKey );
 	}
 	
 	

@@ -17,7 +17,7 @@ namespace Genie
 	
 	void RemoveUserWindow( const FSTree* key );
 	
-	bool InvalidateWindowForView( const FSTree* view );
+	bool InvalidateWindow( const FSTree* key );
 	
 }
 
