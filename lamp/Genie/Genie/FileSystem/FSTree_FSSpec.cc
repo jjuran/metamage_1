@@ -521,7 +521,7 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr FSRoot()
+	const FSTreePtr& FSRoot()
 	{
 		static const FSTreePtr& root = MakeFSRoot();
 		

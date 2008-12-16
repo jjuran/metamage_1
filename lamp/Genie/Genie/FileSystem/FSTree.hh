@@ -40,7 +40,7 @@ namespace Genie
 	typedef boost::shared_ptr< FSIterator   > FSIteratorPtr;
 	
 	
-	FSTreePtr FSRoot();
+	const FSTreePtr& FSRoot();
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
