@@ -79,7 +79,7 @@ namespace Genie
 		public:
 			typedef Key Initializer;
 			
-			Frame( const Rect& bounds, Key key ) : Ped::Frame( bounds ), itsKey( key )
+			Frame( const Rect& bounds, Key key ) : itsKey( key )
 			{
 			}
 			
