@@ -436,7 +436,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	bool InvalidateWindow( const FSTree* key )
+	static bool InvalidateWindow( const FSTree* key )
 	{
 		if ( N::WindowRef window = GetWindowRef( key ) )
 		{
@@ -446,6 +446,15 @@ namespace Genie
 		}
 		
 		return false;
+	}
+	
+	bool InvalidateWindowForView( const FSTree* view )
+	{
+		const FSTree* parentKey = view->Parent().get();
+		
+		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
+		
+		return InvalidateWindow( windowKey );
 	}
 	
 	static void DestroyViewInWindow( Ped::UserWindow& window )

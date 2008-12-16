@@ -257,11 +257,7 @@ namespace Genie
 				
 				const FSTree* view = itsKey;
 				
-				const FSTree* parentKey = view->Parent().get();
-				
-				const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
-				
-				InvalidateWindow( windowKey );
+				InvalidateWindowForView( view );
 			}
 	};
 	
@@ -334,8 +330,6 @@ namespace Genie
 			
 			const FSTree* ParentKey() const  { return Parent().get(); }
 			
-			const FSTree* WindowKey() const  { return GetViewWindowKey( ParentKey(), Name() ); }
-			
 			bool IsDirectory() const  { return Exists(); }
 			
 			bool Exists() const  { return GetViewDelegate( ParentKey(), Name() ) != NULL; }
@@ -353,7 +347,7 @@ namespace Genie
 	
 	void FSTree_Frame_view::SetTimes() const
 	{
-		if ( !InvalidateWindow( WindowKey() ) )
+		if ( !InvalidateWindowForView( this ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -369,7 +363,7 @@ namespace Genie
 		{
 			gFrameParametersMap[ parent ].itsSubview.reset();
 			
-			InvalidateWindow( WindowKey() );
+			InvalidateWindowForView( this );
 			
 			RemoveViewParameters( parent, name );
 		}
@@ -405,7 +399,7 @@ namespace Genie
 			
 			params.itsSubview = subview;
 			
-			InvalidateWindow( WindowKey() );
+			InvalidateWindowForView( this );
 		}
 		else
 		{

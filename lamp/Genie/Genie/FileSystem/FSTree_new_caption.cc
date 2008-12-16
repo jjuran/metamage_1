@@ -132,11 +132,7 @@ namespace Genie
 		
 		gCaptionTextMap[ view ].resize( length );
 		
-		const FSTree* parentKey = view->Parent().get();
-		
-		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
-		
-		InvalidateWindow( windowKey );
+		InvalidateWindowForView( view );
 	}
 	
 	class CaptionTextFileHandle : public VirtualFileHandle
@@ -194,11 +190,7 @@ namespace Genie
 		
 		const FSTree* view = ViewKey();
 		
-		const FSTree* parentKey = view->Parent().get();
-		
-		const FSTree* windowKey = GetViewWindowKey( parentKey, view->Name() );
-		
-		InvalidateWindow( windowKey );
+		InvalidateWindowForView( view );
 		
 		return Advance( byteCount );
 	}
