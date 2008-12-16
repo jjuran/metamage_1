@@ -25,8 +25,6 @@ namespace Pedestal
 namespace Genie
 {
 	
-	class FSTree;
-	
 	bool ViewExists( const FSTree* parent, const std::string& name );
 	
 	void RemoveViewParameters( const FSTree* parent, const std::string& name );
@@ -55,6 +53,36 @@ namespace Genie
 	const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name );
 	
 	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name );
+	
+	
+	class FSTree_View : public FSTree
+	{
+		public:
+			FSTree_View( const FSTreePtr&    parent,
+			             const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			const FSTree* ParentKey() const  { return Parent().get(); }
+			
+			bool IsDirectory() const  { return Exists(); }
+			
+			bool Exists() const  { return GetViewDelegate( ParentKey(), Name() ) != NULL; }
+			
+			void SetTimes() const;
+			
+			void Delete() const;
+			
+			void CreateDirectory( mode_t mode ) const;
+			
+			FSTreePtr Lookup( const std::string& name ) const;
+			
+			FSIteratorPtr Iterate() const;
+			
+			virtual void DeleteCustomParameters() const  {}
+			
+			virtual void AddCustomParameters( std::auto_ptr< Pedestal::View > view ) const  {}
+	};
 	
 }
 

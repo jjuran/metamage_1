@@ -5,9 +5,21 @@
 
 #include "Genie/FileSystem/Views.hh"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
+// PEdestal
+#include "Pedestal/View.hh"
+
+// Genie
+#include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	struct ViewParameters
 	{
@@ -92,6 +104,81 @@ namespace Genie
 	const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
 	{
 		return gViewParametersMap[ parent ][ name ].itsWindowKey;
+	}
+	
+	
+	void FSTree_View::SetTimes() const
+	{
+		if ( !InvalidateWindowForView( this ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
+	void FSTree_View::Delete() const
+	{
+		const FSTree* parent = ParentKey();
+		
+		const std::string& name = Name();
+		
+		if ( ViewExists( parent, name ) )
+		{
+			DeleteCustomParameters();
+			
+			InvalidateWindowForView( this );
+			
+			RemoveViewParameters( parent, name );
+		}
+		else
+		{
+			p7::throw_errno( ENOENT );
+		}
+	}
+	
+	void FSTree_View::CreateDirectory( mode_t mode ) const
+	{
+		const FSTree* parent = Parent().get();
+		
+		const std::string& name = Name();
+		
+		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( parent, name ) )
+		{
+			const FSTree* windowKey = GetViewWindowKey( parent->Parent().get(), parent->Name() );
+			
+			AddViewWindowKey( parent, name, windowKey );
+			
+			AddCustomParameters( (*factory)() );
+			
+			InvalidateWindowForView( this );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
+	}
+	
+	FSTreePtr FSTree_View::Lookup( const std::string& name ) const
+	{
+		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
+		
+		if ( delegate == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return delegate->Lookup( name );
+	}
+	
+	FSIteratorPtr FSTree_View::Iterate() const
+	{
+		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
+		
+		if ( delegate == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return delegate->Iterate();
 	}
 	
 }

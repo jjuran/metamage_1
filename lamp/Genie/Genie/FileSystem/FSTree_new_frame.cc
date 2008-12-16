@@ -251,107 +251,28 @@ namespace Genie
 	typedef FSTree_Generic_REF_Property< Frame_margin_Property > FSTree_Frame_margin;
 	
 	
-	class FSTree_Frame_view : public FSTree
+	
+	class FSTree_Frame_view : public FSTree_View
 	{
 		public:
 			FSTree_Frame_view( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree( parent, name )
+			                   const std::string&  name ) : FSTree_View( parent, name )
 			{
 			}
 			
-			const FSTree* ParentKey() const  { return Parent().get(); }
+			void DeleteCustomParameters() const;
 			
-			bool IsDirectory() const  { return Exists(); }
-			
-			bool Exists() const  { return GetViewDelegate( ParentKey(), Name() ) != NULL; }
-			
-			void SetTimes() const;
-			
-			void Delete() const;
-			
-			void CreateDirectory( mode_t mode ) const;
-			
-			FSTreePtr Lookup( const std::string& name ) const;
-			
-			FSIteratorPtr Iterate() const;
+			void AddCustomParameters( std::auto_ptr< Ped::View > view ) const;
 	};
 	
-	void FSTree_Frame_view::SetTimes() const
+	void FSTree_Frame_view::DeleteCustomParameters() const
 	{
-		if ( !InvalidateWindowForView( this ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		gFrameParametersMap[ ParentKey() ].itsSubview.reset();
 	}
 	
-	void FSTree_Frame_view::Delete() const
+	void FSTree_Frame_view::AddCustomParameters( std::auto_ptr< Ped::View > view ) const
 	{
-		const FSTree* parent = Parent().get();
-		
-		const std::string& name = Name();
-		
-		if ( ViewExists( parent, name ) )
-		{
-			gFrameParametersMap[ parent ].itsSubview.reset();
-			
-			InvalidateWindowForView( this );
-			
-			RemoveViewParameters( parent, name );
-		}
-		else
-		{
-			p7::throw_errno( ENOENT );
-		}
-	}
-	
-	void FSTree_Frame_view::CreateDirectory( mode_t mode ) const
-	{
-		const FSTree* parent = Parent().get();
-		
-		const std::string& name = Name();
-		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( parent, name ) )
-		{
-			const FSTree* windowKey = GetViewWindowKey( parent->Parent().get(), parent->Name() );
-			
-			AddViewWindowKey( parent, name, windowKey );
-			
-			FrameParameters& params = gFrameParametersMap[ parent ];
-			
-			std::auto_ptr< Ped::View > subview( (*factory)() );
-			
-			params.itsSubview = subview;
-			
-			InvalidateWindowForView( this );
-		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
-	}
-	
-	FSTreePtr FSTree_Frame_view::Lookup( const std::string& name ) const
-	{
-		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Lookup( name );
-	}
-	
-	FSIteratorPtr FSTree_Frame_view::Iterate() const
-	{
-		const FSTreePtr& delegate = GetViewDelegate( ParentKey(), Name() );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Iterate();
+		gFrameParametersMap[ ParentKey() ].itsSubview = view;
 	}
 	
 	

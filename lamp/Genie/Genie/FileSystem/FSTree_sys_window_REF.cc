@@ -390,21 +390,6 @@ namespace Genie
 	}
 	
 	
-	static void ConstructViewInWindow( const ViewFactory& factory, Ped::UserWindow& window )
-	{
-		N::WindowRef windowRef = window.Get();
-		
-		NN::Saved< N::Port_Value > savePort;
-		
-		N::SetPortWindowPort( windowRef );
-		
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( windowRef ) );
-		
-		window.SetView( factory() );
-		
-		N::InvalRect( bounds );
-	}
-	
 	static void InvalidateCurrentWindow()
 	{
 		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
@@ -457,13 +442,6 @@ namespace Genie
 		return InvalidateWindow( windowKey );
 	}
 	
-	static void DestroyViewInWindow( Ped::UserWindow& window )
-	{
-		window.SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView() ) );
-		
-		InvalidateWindowRef( window.Get() );
-	}
-	
 	
 	class FSTree_sys_window_REF_ref : public FSTree
 	{
@@ -497,7 +475,9 @@ namespace Genie
 		
 		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, "view" ) )
 		{
-			ConstructViewInWindow( *factory, *window );
+			window->SetView( (*factory)() );
+			
+			InvalidateWindowRef( window->Get() );
 		}
 	}
 	
@@ -530,105 +510,37 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_view : public FSTree
+	class FSTree_sys_window_REF_view : public FSTree_View
 	{
 		public:
 			FSTree_sys_window_REF_view( const FSTreePtr&    parent,
-			                            const std::string&  name ) : FSTree( parent, name )
+			                            const std::string&  name ) : FSTree_View( parent, name )
 			{
 			}
 			
-			const FSTree* WindowKey() const  { return Parent().get(); }
+			void SetView( std::auto_ptr< Ped::View > view ) const;
 			
-			bool IsDirectory() const  { return Exists(); }
+			void AddCustomParameters( std::auto_ptr< Ped::View > view ) const
+			{
+				SetView( view );
+			}
 			
-			bool Exists() const  { return GetViewDelegate( WindowKey(), Name() ) != NULL; }
-			
-			void SetTimes() const;
-			
-			void Delete() const;
-			
-			void CreateDirectory( mode_t mode ) const;
-			
-			FSTreePtr Lookup( const std::string& name ) const;
-			
-			FSIteratorPtr Iterate() const;
+			void DeleteCustomParameters() const;
 	};
 	
-	void FSTree_sys_window_REF_view::SetTimes() const
+	void FSTree_sys_window_REF_view::SetView( std::auto_ptr< Ped::View > view ) const
 	{
-		if ( !InvalidateWindow( WindowKey() ) )
+		const FSTree* parent = ParentKey();
+		
+		if ( Ped::UserWindow* window = gWindowParametersMap[ parent ].itsWindow.get() )
 		{
-			p7::throw_errno( ENOENT );
+			window->SetView( view );
 		}
 	}
 	
-	void FSTree_sys_window_REF_view::Delete() const
+	void FSTree_sys_window_REF_view::DeleteCustomParameters() const
 	{
-		const FSTree* key = WindowKey();
-		
-		const std::string& name = Name();
-		
-		if ( ViewExists( key, name ) )
-		{
-			RemoveViewParameters( key, name );
-			
-			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
-			{
-				DestroyViewInWindow( *window );
-			}
-		}
-		else
-		{
-			p7::throw_errno( ENOENT );
-		}
-	}
-	
-	void FSTree_sys_window_REF_view::CreateDirectory( mode_t mode ) const
-	{
-		const FSTree* key = WindowKey();
-		
-		const std::string& name = Name();
-		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, name ) )
-		{
-			AddViewWindowKey( key, name, key );
-			
-			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
-			
-			if ( Ped::UserWindow* window = gWindowParametersMap[ key ].itsWindow.get() )
-			{
-				ConstructViewInWindow( *factory, *window );
-			}
-		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
-	}
-	
-	FSTreePtr FSTree_sys_window_REF_view::Lookup( const std::string& name ) const
-	{
-		const FSTreePtr& delegate = GetViewDelegate( WindowKey(), Name() );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Lookup( name );
-	}
-	
-	FSIteratorPtr FSTree_sys_window_REF_view::Iterate() const
-	{
-		const FSTreePtr& delegate = GetViewDelegate( WindowKey(), Name() );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Iterate();
+		SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView ) );
 	}
 	
 	
