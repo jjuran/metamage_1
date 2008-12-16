@@ -104,7 +104,7 @@ namespace Genie
 		return gWindowParametersMap[ key ].itsWindow != NULL;
 	}
 	
-	static const boost::shared_ptr< Ped::UserWindow >& CreateUserWindow( const FSTree* key )
+	static void CreateUserWindow( const FSTree* key, std::auto_ptr< Ped::View > view )
 	{
 		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
@@ -141,9 +141,9 @@ namespace Genie
 		
 		window->SetCloseHandler( closeHandler );
 		
-		window->SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView() ) );
+		window->SetView( view );
 		
-		return gWindowParametersMap[ key ].itsWindow = window;
+		gWindowParametersMap[ key ].itsWindow = window;
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
@@ -471,14 +471,12 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		const boost::shared_ptr< Ped::UserWindow >& window = CreateUserWindow( key );
+		const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, "view" );
 		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, "view" ) )
-		{
-			window->SetView( (*factory)() );
-			
-			InvalidateWindowRef( window->Get() );
-		}
+		std::auto_ptr< Ped::View > view( factory ? (*factory)()
+		                                         : std::auto_ptr< Ped::View >( new Ped::EmptyView ) );
+		
+		CreateUserWindow( key, view );
 	}
 	
 	void FSTree_sys_window_REF_ref::Delete() const
