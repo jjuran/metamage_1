@@ -84,7 +84,7 @@ namespace Genie
 	{
 		const FSTreePtr& parent = SysWindow();
 		
-		FSTreePtr window = Premapped_Factory< sys_window_REF_Mappings, &RemoveWindow >( parent, "" );
+		FSTreePtr window = Premapped_Factory< sys_window_REF_Mappings, &RemoveWindow >( parent, "/" );
 		
 		AddWindow( window );
 		

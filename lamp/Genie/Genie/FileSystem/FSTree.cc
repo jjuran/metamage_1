@@ -54,8 +54,8 @@ namespace Genie
 	
 	FSTree::FSTree( const FSTreePtr&    parent,
 	                const std::string&  name ) : itsParent( parent ),
-	                                             itsName  ( name.empty() ? NameFromPtr( this )
-	                                                                     : name )
+	                                             itsName  ( name[0] == '/' ? NameFromPtr( this )
+	                                                                       : name )
 	{
 	}
 	
