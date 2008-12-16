@@ -16,7 +16,6 @@
 
 // Pedestal
 #include "Pedestal/Caption.hh"
-#include "Pedestal/GraphicView.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -91,11 +90,7 @@ namespace Genie
 	
 	std::auto_ptr< Ped::View > CaptionFactory::operator()( const Rect& bounds ) const
 	{
-		typedef Ped::GraphicView< Caption > View;
-		
-		std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
-		
-		return view;
+		return std::auto_ptr< Ped::View >( new Caption( itsKey ) );
 	}
 	
 	namespace
