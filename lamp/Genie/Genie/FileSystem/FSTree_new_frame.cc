@@ -35,21 +35,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static void InvalidateCurrentWindow()
-	{
-		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
-	static void InvalidateWindowRef( N::WindowRef window )
-	{
-		NN::Saved< N::Port_Value > savePort;
-		
-		N::SetPortWindowPort( window );
-		
-		InvalidateCurrentWindow();
-	}
-	
-	
 	struct FrameParameters
 	{
 		short  itsMargin;
