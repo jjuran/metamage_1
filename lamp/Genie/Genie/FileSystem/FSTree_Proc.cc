@@ -233,14 +233,14 @@ namespace Genie
 				
 	*/
 	
-	static char ProcessStateCode( ProcessSchedule schedule )
+	static char ProcessRunStateCode( ProcessSchedule schedule )
 	{
 		switch ( schedule )
 		{
 			case kProcessRunning:      return 'R';  // [1]
 			case kProcessSleeping:     return 'S';  // [2]
 			case kProcessStopped:      return 'T';  // set in Process::Stop()
-			case kProcessFrozen:       return 'F';  // set in SpawnVFork() prior to new Process()
+			case kProcessFrozen:       return 'V';  // set in SpawnVFork() prior to new Process()
 			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
 			
 			// [1] set on parent in execve() after child.Exec()
@@ -254,6 +254,26 @@ namespace Genie
 			default:
 				return '?';
 		}
+	}
+	
+	static char ProcessStateCode( const Process& process )
+	{
+		ProcessSchedule schedule = process.GetSchedule();
+		
+		ProcessLifeStage lifestage = process.GetLifeStage();
+		
+		char runState = ProcessRunStateCode( schedule );
+		
+		if ( lifestage == kProcessReleased )
+		{
+			runState = '*';
+		}
+		else if ( process.CountAsyncOps() > 0 )
+		{
+			runState = 'D';
+		}
+		
+		return runState;
 	}
 	
 	class proc_PID_cmdline_Query
@@ -284,17 +304,6 @@ namespace Genie
 			{
 				const Process& process = GetProcess( itsPID );
 				
-				char state_code = ProcessStateCode( process.GetSchedule() );
-				
-				if ( process.GetLifeStage() == kProcessReleased )
-				{
-					state_code = 'X';
-				}
-				else if ( process.CountAsyncOps() > 0 )
-				{
-					state_code = 'D';
-				}
-				
 				pid_t ppid = process.GetPPID();
 				pid_t pgid = process.GetPGID();
 				pid_t sid  = process.GetSID();
@@ -323,7 +332,7 @@ namespace Genie
 				
 				return NN::Convert< std::string >( itsPID ) + " "
 				       "(" + process.ProgramName() + ")"      " " +
-				       state_code                           + " " +
+				       ProcessStateCode( process )          + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
 				       NN::Convert< std::string >( pgid   ) + " " +
 				       NN::Convert< std::string >( sid    ) + " " +
