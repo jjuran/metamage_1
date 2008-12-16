@@ -64,7 +64,7 @@ namespace Genie
 		public:
 			typedef Key Initializer;
 			
-			Frame( const Rect& bounds, Key key ) : itsKey( key )
+			Frame( Key key ) : itsKey( key )
 			{
 			}
 			
@@ -117,7 +117,7 @@ namespace Genie
 	{
 		typedef Frame View;
 		
-		std::auto_ptr< Ped::View > view( new View( bounds, itsKey ) );
+		std::auto_ptr< Ped::View > view( new View( itsKey ) );
 		
 		return view;
 	}
