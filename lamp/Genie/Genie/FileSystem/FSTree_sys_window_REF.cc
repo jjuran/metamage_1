@@ -400,7 +400,7 @@ namespace Genie
 		
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( windowRef ) );
 		
-		window.SetView( factory( bounds ) );
+		window.SetView( factory() );
 		
 		N::InvalRect( bounds );
 	}
@@ -419,7 +419,7 @@ namespace Genie
 		InvalidateCurrentWindow();
 	}
 	
-	N::WindowRef GetWindowRef( const FSTree* key )
+	static N::WindowRef GetWindowRef( const FSTree* key )
 	{
 		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
@@ -459,15 +459,9 @@ namespace Genie
 	
 	static void DestroyViewInWindow( Ped::UserWindow& window )
 	{
-		N::WindowRef windowRef = window.Get();
-		
-		NN::Saved< N::Port_Value > savePort;
-		
-		N::SetPortWindowPort( windowRef );
-		
 		window.SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView() ) );
 		
-		InvalidateCurrentWindow();
+		InvalidateWindowRef( window.Get() );
 	}
 	
 	

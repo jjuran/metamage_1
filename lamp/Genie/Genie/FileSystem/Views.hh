@@ -35,7 +35,7 @@ namespace Genie
 	
 	struct ViewFactory
 	{
-		virtual std::auto_ptr< Pedestal::View > operator()( const Rect& bounds ) const = 0;
+		virtual std::auto_ptr< Pedestal::View > operator()() const = 0;
 	};
 	
 	void AddViewParameters( const FSTree*                            parent,

@@ -110,16 +110,12 @@ namespace Genie
 			{
 			}
 			
-			std::auto_ptr< Ped::View > operator()( const Rect& bounds ) const;
+			std::auto_ptr< Ped::View > operator()() const;
 	};
 	
-	std::auto_ptr< Ped::View > FrameFactory::operator()( const Rect& bounds ) const
+	std::auto_ptr< Ped::View > FrameFactory::operator()() const
 	{
-		typedef Frame View;
-		
-		std::auto_ptr< Ped::View > view( new View( itsKey ) );
-		
-		return view;
+		return std::auto_ptr< Ped::View >( new Frame( itsKey ) );
 	}
 	
 	namespace
@@ -320,17 +316,9 @@ namespace Genie
 			
 			AddViewWindowKey( parent, name, windowKey );
 			
-			N::WindowRef windowRef = GetWindowRef( windowKey );
-			
-			Rect bounds = N::GetPortBounds( N::GetWindowPort( windowRef ) );
-			
 			FrameParameters& params = gFrameParametersMap[ parent ];
 			
-			const short margin = params.itsMargin;
-			
-			::InsetRect( &bounds, margin, margin );
-			
-			std::auto_ptr< Ped::View > subview( (*factory)( bounds ) );
+			std::auto_ptr< Ped::View > subview( (*factory)() );
 			
 			params.itsSubview = subview;
 			

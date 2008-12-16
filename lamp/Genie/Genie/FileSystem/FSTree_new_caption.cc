@@ -85,10 +85,10 @@ namespace Genie
 			{
 			}
 			
-			std::auto_ptr< Ped::View > operator()( const Rect& bounds ) const;
+			std::auto_ptr< Ped::View > operator()() const;
 	};
 	
-	std::auto_ptr< Ped::View > CaptionFactory::operator()( const Rect& bounds ) const
+	std::auto_ptr< Ped::View > CaptionFactory::operator()() const
 	{
 		return std::auto_ptr< Ped::View >( new Caption( itsKey ) );
 	}
