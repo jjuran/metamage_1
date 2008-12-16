@@ -10,18 +10,18 @@
 #include <string>
 
 // Pedestal
-#include "Pedestal/Graphic.hh"
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
 {
 	
-	class Caption : public Graphic
+	class Caption : public View
 	{
 		public:
 			virtual std::string Text() const = 0;
 			
-			void Plot( const Rect& area );
+			void Draw( const Rect& bounds );
 	};
 	
 }

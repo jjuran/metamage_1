@@ -14,9 +14,9 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
-	void Caption::Plot( const Rect& area )
+	void Caption::Draw( const Rect& bounds )
 	{
-		N::TETextBox( Text(), area );
+		N::TETextBox( Text(), bounds );
 	}
 	
 }
