@@ -303,15 +303,23 @@ namespace Genie
 	
 	class FSTree_HFS : public FSTree_Mappable
 	{
+		private:
+			FSSpec itsFileSpec;
+		
 		public:
-			FSTree_HFS( const std::string& name = std::string() ) : FSTree_Mappable( FSTreePtr(), name )
-			{
-				// we override Parent()
-			}
+			FSTree_HFS( const FSSpec&       file,
+			            const std::string&  name = std::string() );
 			
+			bool Exists() const;
+			bool IsFile() const;
+			bool IsDirectory() const;
 			bool IsLink() const;
 			
-			ino_t Inode() const;
+			FSTreePtr Parent() const;
+			
+			FSSpec GetFSSpec( bool forCreation = false ) const;
+			
+			ino_t ParentInode() const;
 			
 			void Stat( struct ::stat& sb ) const;
 			
@@ -326,6 +334,8 @@ namespace Genie
 			
 			void Delete() const;
 			
+			ino_t Inode() const;
+			
 			off_t GetEOF() const;
 			void  SetEOF( off_t length ) const;
 			
@@ -339,43 +349,37 @@ namespace Genie
 			
 			MainEntry GetMainEntry() const;
 			
+			void CreateDirectory( mode_t mode ) const;
+			
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 		
 		private:
-			virtual void CreateFile() const = 0;
+			virtual void CreateFile() const;
 	};
+	
+	FSTree_HFS::FSTree_HFS( const FSSpec&       file,
+	                        const std::string&  name )
+	:
+		FSTree_Mappable( FSTreePtr(), name.empty() ? MakeName( file )
+		                                           : name ),
+		itsFileSpec    ( file                             )
+	{
+		// we override Parent()
+	}
+	
 	
 	class FSTree_FSSpec : public FSTree_HFS
 	{
-		private:
-			FSSpec itsFileSpec;
-		
 		public:
-			FSTree_FSSpec( const FSSpec& file ) : itsFileSpec( file )
+			FSTree_FSSpec( const FSSpec& file ) : FSTree_HFS( file )
 			{
 			}
 			
-			FSTree_FSSpec( const N::FSDirSpec& dir ) : itsFileSpec( NN::Convert< FSSpec >( dir ) )
+			FSTree_FSSpec( const N::FSDirSpec& dir ) : FSTree_HFS ( NN::Convert< FSSpec >( dir ) )
 			{
 			}
-			
-			bool Exists() const;
-			bool IsFile() const;
-			bool IsDirectory() const;
-			
-			std::string Name() const;
-			
-			FSTreePtr Parent() const;
-			
-			FSSpec GetFSSpec( bool forCreation ) const;
-			
-			ino_t ParentInode() const;
-			
-			void CreateFile() const;
-			
-			void CreateDirectory( mode_t mode ) const;
 	};
 	
 	class FSTree_ConflictingName : public FSTree_FSSpec
@@ -403,8 +407,10 @@ namespace Genie
 		
 		public:
 			FSTree_LongName( const N::FSDirSpec&  parent,
-			                 const std::string&   name ) : FSTree_HFS ( name   ),
-			                                               itsParent  ( parent )
+			                 const std::string&   name )
+			:
+				FSTree_HFS( FSSpecForLongUnixName( parent, name ), name ),
+				itsParent ( parent )
 			{
 			}
 			
@@ -523,17 +529,17 @@ namespace Genie
 	}
 	
 	
-	bool FSTree_FSSpec::Exists() const
+	bool FSTree_HFS::Exists() const
 	{
 		return io::item_exists( itsFileSpec );
 	}
 	
-	bool FSTree_FSSpec::IsFile() const
+	bool FSTree_HFS::IsFile() const
 	{
 		return io::file_exists( itsFileSpec );
 	}
 	
-	bool FSTree_FSSpec::IsDirectory() const
+	bool FSTree_HFS::IsDirectory() const
 	{
 		return io::directory_exists( itsFileSpec );
 	}
@@ -612,11 +618,6 @@ namespace Genie
 		return false;
 	}
 	
-	std::string FSTree_FSSpec::Name() const
-	{
-		return MakeName( itsFileSpec );
-	}
-	
 	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
 		return sys_mac_vol_Details::GetChildNode( ResolvePathname( "/sys/mac/vol" ),
@@ -624,7 +625,7 @@ namespace Genie
 		                                          vRefNum );
 	}
 	
-	FSTreePtr FSTree_FSSpec::Parent() const
+	FSTreePtr FSTree_HFS::Parent() const
 	{
 		if ( itsFileSpec.parID == fsRtParID )
 		{
@@ -644,12 +645,12 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( itsParent ) );
 	}
 	
-	FSSpec FSTree_FSSpec::GetFSSpec( bool forCreation ) const
+	FSSpec FSTree_HFS::GetFSSpec( bool forCreation ) const
 	{
 		return itsFileSpec;
 	}
 	
-	ino_t FSTree_FSSpec::ParentInode() const
+	ino_t FSTree_HFS::ParentInode() const
 	{
 		return itsFileSpec.parID;
 	}
@@ -846,7 +847,7 @@ namespace Genie
 		CreateSymLink( shared_from_this(), target );
 	}
 	
-	void FSTree_FSSpec::CreateFile() const
+	void FSTree_HFS::CreateFile() const
 	{
 		// No need to convert name -- for examination only
 		std::string name = io::get_filename_string( itsFileSpec );
@@ -907,7 +908,7 @@ namespace Genie
 		return GetMainEntryFromFile( GetFSSpec() );
 	}
 	
-	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const
+	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		N::FSpDirCreate( itsFileSpec );
 	}
