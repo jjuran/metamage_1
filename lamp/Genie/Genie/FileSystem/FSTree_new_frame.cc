@@ -16,6 +16,7 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
+#include "Pedestal/Frame.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -24,57 +25,6 @@
 #include "Genie/IO/PseudoFile.hh"
 #include "Genie/IO/QueryFile.hh"
 
-
-namespace Pedestal
-{
-	
-	class Frame : public View
-	{
-		public:
-			Frame( const Rect& bounds )
-			{
-			}
-			
-			virtual short Margin() const = 0;
-			
-			virtual View& Subview() = 0;
-			
-			void Draw( const Rect& bounds );
-	};
-	
-}
-
-namespace Pedestal
-{
-	
-	namespace N = Nitrogen;
-	
-	
-	void Frame::Draw( const Rect& bounds )
-	{
-		short margin = Margin();
-		
-		Rect top    = bounds;
-		Rect bottom = bounds;
-		
-		Rect left  = bounds;
-		Rect right = bounds;
-		
-		top.bottom = top.top   + margin;
-		left.right = left.left + margin;
-		
-		bottom.top = bottom.bottom - margin;
-		right.left = right.right   - margin;
-		
-		N::EraseRect( top    );
-		N::EraseRect( left   );
-		N::EraseRect( right  );
-		N::EraseRect( bottom );
-		
-		Subview().Draw( N::InsetRect( bounds, margin, margin ) );
-	}
-	
-}
 
 namespace Genie
 {
