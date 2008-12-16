@@ -213,6 +213,55 @@ namespace Genie
 	}
 	
 	
+	static const char* const_j_directory_name = "j";
+	
+	static FSSpec FindJDirectory()
+	{
+		// Try current directory first
+		FSSpec j =  N::FSDirSpec() / const_j_directory_name;
+		
+		if ( !io::directory_exists( j ) )
+		{
+			// Then root, or bust
+			j = io::system_root< N::FSDirSpec >() / const_j_directory_name;
+			
+			(void) N::FSDirSpec( j );  // throws if not a dir
+		}
+		
+		return j;
+	}
+	
+	static const FSSpec& GetJDirectory()
+	{
+		static FSSpec j = FindJDirectory();
+		
+		return j;
+	}
+	
+	inline bool IsRootDirectory( const FSSpec& fileSpec )
+	{
+		return fileSpec == GetJDirectory();
+	}
+	
+	static FSSpec FindUsersDirectory()
+	{
+		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
+		
+		FSSpec users = root / "Users";
+		
+		(void) N::FSDirSpec( users );  // throws if not a dir
+		
+		return users;
+	}
+	
+	static const FSSpec& GetUsersDirectory()
+	{
+		static FSSpec users = FindUsersDirectory();
+		
+		return users;
+	}
+	
+	
 	struct Volume_KeyName_Traits
 	{
 		typedef N::FSVolumeRefNum Key;
@@ -395,50 +444,6 @@ namespace Genie
 	};
 	
 	
-	static const char* const_j_directory_name = "j";
-	
-	static FSSpec FindJDirectory()
-	{
-		// Try current directory first
-		FSSpec j =  N::FSDirSpec() / const_j_directory_name;
-		
-		if ( !io::directory_exists( j ) )
-		{
-			// Then root, or bust
-			j = io::system_root< N::FSDirSpec >() / const_j_directory_name;
-			
-			(void) N::FSDirSpec( j );  // throws if not a dir
-		}
-		
-		return j;
-	}
-	
-	static const FSSpec& GetJDirectory()
-	{
-		static FSSpec j = FindJDirectory();
-		
-		return j;
-	}
-	
-	static FSSpec FindUsersDirectory()
-	{
-		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
-		
-		FSSpec users = root / "Users";
-		
-		(void) N::FSDirSpec( users );  // throws if not a dir
-		
-		return users;
-	}
-	
-	static const FSSpec& GetUsersDirectory()
-	{
-		static FSSpec users = FindUsersDirectory();
-		
-		return users;
-	}
-	
-	
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
@@ -452,11 +457,6 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const  { return FSRoot(); }
 	};
-	
-	inline bool IsRootDirectory( const FSSpec& fileSpec )
-	{
-		return fileSpec == GetJDirectory();
-	}
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
