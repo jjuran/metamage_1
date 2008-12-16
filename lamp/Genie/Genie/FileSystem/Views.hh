@@ -67,7 +67,7 @@ namespace Genie
 			
 			bool IsDirectory() const  { return Exists(); }
 			
-			bool Exists() const  { return GetViewDelegate( ParentKey(), Name() ) != NULL; }
+			bool Exists() const;
 			
 			void SetTimes() const;
 			

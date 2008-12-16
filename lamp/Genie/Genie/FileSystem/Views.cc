@@ -107,6 +107,11 @@ namespace Genie
 	}
 	
 	
+	bool FSTree_View::Exists() const
+	{
+		return GetViewDelegate( ParentKey(), Name() ) != NULL;
+	}
+	
 	void FSTree_View::SetTimes() const
 	{
 		if ( !InvalidateWindowForView( this ) )
