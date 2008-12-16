@@ -16,10 +16,6 @@ namespace Pedestal
 	class Frame : public View
 	{
 		public:
-			Frame( const Rect& bounds )
-			{
-			}
-			
 			virtual short Margin() const = 0;
 			
 			virtual View& Subview() = 0;
