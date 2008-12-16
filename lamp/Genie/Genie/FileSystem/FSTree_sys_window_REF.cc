@@ -390,18 +390,15 @@ namespace Genie
 	}
 	
 	
-	static void InvalidateCurrentWindow()
-	{
-		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
 	static void InvalidateWindowRef( N::WindowRef window )
 	{
+		ASSERT( window != NULL );
+		
 		NN::Saved< N::Port_Value > savePort;
 		
 		N::SetPortWindowPort( window );
 		
-		InvalidateCurrentWindow();
+		N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 	}
 	
 	static N::WindowRef GetWindowRef( const FSTree* key )
