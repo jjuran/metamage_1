@@ -834,7 +834,7 @@ namespace Genie
 		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		itsCWD                ( FSRoot()->OpenDirectory() ),
+		itsCWD                ( FSRoot()->ChangeToDirectory() ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
