@@ -40,8 +40,6 @@ namespace Genie
 	                        const FSTreePtr&    delegate,
 	                        ViewFactory         factory );
 	
-	void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey );
-	
 	
 	std::auto_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name );
 	

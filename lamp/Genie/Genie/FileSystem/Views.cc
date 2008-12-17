@@ -69,14 +69,20 @@ namespace Genie
 	                        const FSTreePtr&    delegate,
 	                        ViewFactory         factory )
 	{
+		ASSERT( delegate.get() != NULL );
+		
 		ViewParameters& params = gViewParametersMap[ parent ][ name ];
 		
 		params.itsFactory  = factory;
 		params.itsDelegate = delegate;
 	}
 	
-	void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey )
+	static void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey )
 	{
+		ASSERT( FindView( parent, name ) != NULL );
+		
+		ASSERT( FindView( parent, name )->itsDelegate.get() != NULL );
+		
 		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
@@ -126,7 +132,14 @@ namespace Genie
 	
 	static const FSTreePtr& GetViewDelegate( const FSTree* view )
 	{
-		return GetViewDelegate( view->Parent().get(), view->Name() );
+		const FSTreePtr& delegate = GetViewDelegate( view->Parent().get(), view->Name() );
+		
+		if ( delegate.get() == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return delegate;
 	}
 	
 	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
@@ -166,7 +179,7 @@ namespace Genie
 	
 	bool FSTree_View::Exists() const
 	{
-		return GetViewDelegate( this ) != NULL;
+		return FindView( Parent().get(), Name() ) != NULL;
 	}
 	
 	void FSTree_View::SetTimes() const
@@ -228,26 +241,12 @@ namespace Genie
 	
 	FSTreePtr FSTree_View::Lookup( const std::string& name ) const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( this );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Lookup( name );
+		return GetViewDelegate( this )->Lookup( name );
 	}
 	
 	FSIteratorPtr FSTree_View::Iterate() const
 	{
-		const FSTreePtr& delegate = GetViewDelegate( this );
-		
-		if ( delegate == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return delegate->Iterate();
+		return GetViewDelegate( this )->Iterate();
 	}
 	
 }
