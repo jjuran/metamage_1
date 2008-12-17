@@ -125,6 +125,24 @@ namespace Genie
 	}
 	
 	
+	void FSTree_new_View::HardLink( const FSTreePtr& target ) const
+	{
+		const FSTreePtr& parent = target->Parent();
+		
+		const FSTree* key = parent.get();
+		
+		const std::string& name = target->Name();
+		
+		FSTreePtr delegate = MakeDelegate( parent, name );
+		
+		boost::shared_ptr< ViewFactory > factory = MakeViewFactory( delegate.get() );
+		
+		AddViewParameters( key, name, factory, delegate );
+		
+		target->CreateDirectory( 0 );  // mode is ignored
+	}
+	
+	
 	bool FSTree_View::Exists() const
 	{
 		return GetViewDelegate( this ) != NULL;

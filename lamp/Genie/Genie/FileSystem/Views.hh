@@ -52,6 +52,21 @@ namespace Genie
 	bool InvalidateWindowForView( const FSTree* view );
 	
 	
+	class FSTree_new_View : public FSTree
+	{
+		public:
+			FSTree_new_View( const FSTreePtr&    parent,
+			                 const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			void HardLink( const FSTreePtr& target ) const;
+			
+			virtual FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const = 0;
+			
+			virtual boost::shared_ptr< ViewFactory > MakeViewFactory( const FSTree* delegate ) const = 0;
+	};
+	
 	class FSTree_View : public FSTree
 	{
 		public:

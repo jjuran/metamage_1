@@ -14,7 +14,6 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
-#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -97,21 +96,14 @@ namespace Genie
 		
 	}
 	
-	void FSTree_new_caption::HardLink( const FSTreePtr& target ) const
+	FSTreePtr FSTree_new_caption::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
 	{
-		const FSTreePtr& parent = target->Parent();
-		
-		const FSTree* key = parent.get();
-		
-		const std::string& name = target->Name();
-		
-		FSTreePtr delegate = Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
-		
-		boost::shared_ptr< ViewFactory > factory( new CaptionFactory( delegate.get() ) );
-		
-		AddViewParameters( key, name, factory, delegate );
-		
-		target->CreateDirectory( 0 );  // mode is ignored
+		return Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
+	}
+	
+	boost::shared_ptr< ViewFactory > FSTree_new_caption::MakeViewFactory( const FSTree* delegate ) const
+	{
+		return boost::shared_ptr< ViewFactory >( new CaptionFactory( delegate ) );
 	}
 	
 	
