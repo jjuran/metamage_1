@@ -90,7 +90,7 @@ namespace Genie
 		return *subview;
 	}
 	
-	static std::auto_ptr< Ped::View > FrameFactory( const FSTree* delegate )
+	std::auto_ptr< Ped::View > FrameFactory( const FSTree* delegate )
 	{
 		return std::auto_ptr< Ped::View >( new Frame( delegate ) );
 	}
@@ -108,11 +108,6 @@ namespace Genie
 	FSTreePtr FSTree_new_frame::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
 	{
 		return Premapped_Factory< Frame_view_Mappings, &DestroyDelegate >( parent, name );
-	}
-	
-	ViewFactory FSTree_new_frame::GetViewFactory() const
-	{
-		return &FrameFactory;
 	}
 	
 	

@@ -51,17 +51,20 @@ namespace Genie
 	
 	class FSTree_new_View : public FSTree
 	{
+		private:
+			ViewFactory  itsFactory;
+		
 		public:
 			FSTree_new_View( const FSTreePtr&    parent,
-			                 const std::string&  name ) : FSTree( parent, name )
+			                 const std::string&  name,
+			                 ViewFactory         factory ) : FSTree( parent, name ),
+			                                                 itsFactory( factory )
 			{
 			}
 			
 			void HardLink( const FSTreePtr& target ) const;
 			
 			virtual FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const = 0;
-			
-			virtual ViewFactory GetViewFactory() const = 0;
 	};
 	
 	class FSTree_View : public FSTree

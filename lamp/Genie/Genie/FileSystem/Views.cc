@@ -158,9 +158,7 @@ namespace Genie
 		
 		FSTreePtr delegate = MakeDelegate( parent, name );
 		
-		ViewFactory factory = GetViewFactory();
-		
-		AddViewParameters( key, name, delegate, factory );
+		AddViewParameters( key, name, delegate, itsFactory );
 		
 		target->CreateDirectory( 0 );  // mode is ignored
 	}

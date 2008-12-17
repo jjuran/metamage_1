@@ -65,7 +65,7 @@ namespace Genie
 		return result;
 	}
 	
-	static std::auto_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
+	std::auto_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
 	{
 		return std::auto_ptr< Ped::View >( new Caption( delegate ) );
 	}
@@ -83,11 +83,6 @@ namespace Genie
 	FSTreePtr FSTree_new_caption::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
 	{
 		return Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
-	}
-	
-	ViewFactory FSTree_new_caption::GetViewFactory() const
-	{
-		return &CaptionFactory;
 	}
 	
 	
