@@ -70,19 +70,15 @@ namespace Genie
 		return std::auto_ptr< Ped::View >( new Caption( delegate ) );
 	}
 	
-	namespace
-	{
-		
-		void DestroyDelegate( const FSTree* delegate )
-		{
-			gCaptionTextMap.erase( delegate );
-		}
-		
-	}
 	
 	FSTreePtr FSTree_new_caption::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
 	{
 		return Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
+	}
+	
+	void FSTree_new_caption::DestroyDelegate( const FSTree* delegate )
+	{
+		gCaptionTextMap.erase( delegate );
 	}
 	
 	

@@ -27,6 +27,8 @@ namespace Genie
 			}
 			
 			FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const;
+			
+			static void DestroyDelegate( const FSTree* delegate );
 	};
 	
 }

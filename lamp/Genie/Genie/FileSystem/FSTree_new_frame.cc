@@ -95,19 +95,15 @@ namespace Genie
 		return std::auto_ptr< Ped::View >( new Frame( delegate ) );
 	}
 	
-	namespace
-	{
-		
-		void DestroyDelegate( const FSTree* delegate )
-		{
-			gFrameParametersMap.erase( delegate );
-		}
-		
-	}
 	
 	FSTreePtr FSTree_new_frame::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
 	{
 		return Premapped_Factory< Frame_view_Mappings, &DestroyDelegate >( parent, name );
+	}
+	
+	void FSTree_new_frame::DestroyDelegate( const FSTree* delegate )
+	{
+		gFrameParametersMap.erase( delegate );
 	}
 	
 	
