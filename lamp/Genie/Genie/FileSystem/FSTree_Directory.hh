@@ -399,28 +399,21 @@ namespace Genie
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
+	FSTreePtr Premapped_Factory( const FSTreePtr&           parent,
+	                             const std::string&         name,
+	                             const Singleton_Mapping    mappings[],
+	                             void                     (*dtor)(const FSTree*) = NULL );
+	
 	template < const Singleton_Mapping mappings[] >
-	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name );
-		
-		FSTreePtr result( raw_ptr );
-		
-		raw_ptr->AddMappings( mappings );
-		
-		return result;
+		return Premapped_Factory( parent, name, mappings );
 	}
 	
 	template < const Singleton_Mapping mappings[], void (*dtor)(const FSTree*) >
-	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name, dtor );
-		
-		FSTreePtr result( raw_ptr );
-		
-		raw_ptr->AddMappings( mappings );
-		
-		return result;
+		return Premapped_Factory( parent, name, mappings, dtor );
 	}
 	
 	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[] >

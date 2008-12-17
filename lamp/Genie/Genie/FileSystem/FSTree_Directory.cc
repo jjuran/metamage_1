@@ -123,5 +123,19 @@ namespace Genie
 		return found != mappings.end() ? found->second : FSTreePtr();
 	}
 	
+	FSTreePtr Premapped_Factory( const FSTreePtr&           parent,
+	                             const std::string&         name,
+	                             const Singleton_Mapping    mappings[],
+	                             void                     (*dtor)(const FSTree*) )
+	{
+		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name, dtor );
+		
+		FSTreePtr result( raw_ptr );
+		
+		raw_ptr->AddMappings( mappings );
+		
+		return result;
+	}
+	
 }
 
