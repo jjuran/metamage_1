@@ -8,12 +8,6 @@
 // POSIX
 #include <fcntl.h>
 
-// Nucleus
-#include "Nucleus/Saved.h"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
-
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
