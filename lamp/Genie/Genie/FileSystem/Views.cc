@@ -156,7 +156,7 @@ namespace Genie
 		
 		const std::string& name = target->Name();
 		
-		FSTreePtr delegate = MakeDelegate( parent, name );
+		FSTreePtr delegate = Premapped_Factory( parent, name, itsMappings, itsDestructor );
 		
 		AddViewParameters( key, name, delegate, itsFactory );
 		

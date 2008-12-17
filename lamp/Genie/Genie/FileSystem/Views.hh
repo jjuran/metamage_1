@@ -10,7 +10,7 @@
 #include <memory>
 
 // Genie
-#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FileSystem/FSTree_Directory.hh"
 
 
 struct Rect;
@@ -52,19 +52,27 @@ namespace Genie
 	class FSTree_new_View : public FSTree
 	{
 		private:
+			typedef const Singleton_Mapping* Mappings;
+			
+			typedef void (*Destructor)( const FSTree* delegate );
+			
 			ViewFactory  itsFactory;
+			Mappings     itsMappings;
+			Destructor   itsDestructor;
 		
 		public:
 			FSTree_new_View( const FSTreePtr&    parent,
 			                 const std::string&  name,
-			                 ViewFactory         factory ) : FSTree( parent, name ),
-			                                                 itsFactory( factory )
+			                 ViewFactory         factory,
+			                 Mappings            mappings,
+			                 Destructor          dtor ) : FSTree( parent, name ),
+			                                              itsFactory( factory ),
+			                                              itsMappings( mappings ),
+			                                              itsDestructor( dtor )
 			{
 			}
 			
 			void HardLink( const FSTreePtr& target ) const;
-			
-			virtual FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const = 0;
 	};
 	
 	class FSTree_View : public FSTree

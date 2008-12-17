@@ -25,8 +25,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	extern const Functional_Traits< void >::Mapping Caption_view_Mappings[];
-	
 	typedef std::map< const FSTree*, std::string > CaptionTextMap;
 	
 	static CaptionTextMap gCaptionTextMap;
@@ -70,11 +68,6 @@ namespace Genie
 		return std::auto_ptr< Ped::View >( new Caption( delegate ) );
 	}
 	
-	
-	FSTreePtr FSTree_new_caption::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
-	{
-		return Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
-	}
 	
 	void FSTree_new_caption::DestroyDelegate( const FSTree* delegate )
 	{

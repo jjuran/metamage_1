@@ -13,6 +13,8 @@
 namespace Genie
 {
 	
+	extern const Functional_Traits< void >::Mapping Frame_view_Mappings[];
+	
 	std::auto_ptr< Pedestal::View > FrameFactory( const FSTree* delegate );
 	
 	
@@ -22,11 +24,13 @@ namespace Genie
 			FSTree_new_frame( const FSTreePtr&    parent,
 			                  const std::string&  name )
 			:
-				FSTree_new_View( parent, name, &FrameFactory )
+				FSTree_new_View( parent,
+				                 name,
+				                 &FrameFactory,
+				                 Frame_view_Mappings,
+				                 &DestroyDelegate )
 			{
 			}
-			
-			FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const;
 			
 			static void DestroyDelegate( const FSTree* delegate );
 	};

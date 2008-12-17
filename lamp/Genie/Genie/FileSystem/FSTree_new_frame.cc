@@ -40,8 +40,6 @@ namespace Genie
 		}
 	};
 	
-	extern const Functional_Traits< void >::Mapping Frame_view_Mappings[];
-	
 	typedef std::map< const FSTree*, FrameParameters > FrameParametersMap;
 	
 	static FrameParametersMap gFrameParametersMap;
@@ -95,11 +93,6 @@ namespace Genie
 		return std::auto_ptr< Ped::View >( new Frame( delegate ) );
 	}
 	
-	
-	FSTreePtr FSTree_new_frame::MakeDelegate( const FSTreePtr& parent, const std::string& name ) const
-	{
-		return Premapped_Factory< Frame_view_Mappings, &DestroyDelegate >( parent, name );
-	}
 	
 	void FSTree_new_frame::DestroyDelegate( const FSTree* delegate )
 	{
