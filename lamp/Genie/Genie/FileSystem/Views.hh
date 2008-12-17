@@ -32,21 +32,18 @@ namespace Genie
 	void RemoveAllViewParameters( const FSTree* parent );
 	
 	
-	struct ViewFactory
-	{
-		virtual std::auto_ptr< Pedestal::View > operator()() const = 0;
-	};
+	typedef std::auto_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
 	
-	void AddViewParameters( const FSTree*                            parent,
-	                        const std::string&                       name,
-	                        const boost::shared_ptr< ViewFactory >&  factory,
-	                        const FSTreePtr&                         delegate );
+	void AddViewParameters( const FSTree*       parent,
+	                        const std::string&  name,
+	                        const FSTreePtr&    delegate,
+	                        ViewFactory         factory );
 	
 	void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey );
 	
 	
-	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name );
+	std::auto_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name );
 	
 	
 	bool InvalidateWindowForView( const FSTree* view );
@@ -64,7 +61,7 @@ namespace Genie
 			
 			virtual FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const = 0;
 			
-			virtual boost::shared_ptr< ViewFactory > MakeViewFactory( const FSTree* delegate ) const = 0;
+			virtual ViewFactory GetViewFactory() const = 0;
 	};
 	
 	class FSTree_View : public FSTree

@@ -90,25 +90,9 @@ namespace Genie
 		return *subview;
 	}
 	
-	
-	class FrameFactory : public ViewFactory
+	static std::auto_ptr< Ped::View > FrameFactory( const FSTree* delegate )
 	{
-		private:
-			typedef const FSTree* Key;
-			
-			Key itsKey;
-		
-		public:
-			FrameFactory( Key key ) : itsKey( key )
-			{
-			}
-			
-			std::auto_ptr< Ped::View > operator()() const;
-	};
-	
-	std::auto_ptr< Ped::View > FrameFactory::operator()() const
-	{
-		return std::auto_ptr< Ped::View >( new Frame( itsKey ) );
+		return std::auto_ptr< Ped::View >( new Frame( delegate ) );
 	}
 	
 	namespace
@@ -126,9 +110,9 @@ namespace Genie
 		return Premapped_Factory< Frame_view_Mappings, &DestroyDelegate >( parent, name );
 	}
 	
-	boost::shared_ptr< ViewFactory > FSTree_new_frame::MakeViewFactory( const FSTree* delegate ) const
+	ViewFactory FSTree_new_frame::GetViewFactory() const
 	{
-		return boost::shared_ptr< ViewFactory >( new FrameFactory( delegate ) );
+		return &FrameFactory;
 	}
 	
 	

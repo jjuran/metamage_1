@@ -19,15 +19,16 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
 	struct ViewParameters
 	{
-		boost::shared_ptr< ViewFactory >  itsFactory;
-		FSTreePtr                         itsDelegate;
-		const FSTree*                     itsWindowKey;
+		FSTreePtr      itsDelegate;
+		ViewFactory    itsFactory;
+		const FSTree*  itsWindowKey;
 		
-		ViewParameters() : itsWindowKey()
+		ViewParameters() : itsFactory(), itsWindowKey()
 		{
 		}
 	};
@@ -39,24 +40,34 @@ namespace Genie
 	static ViewParametersMap gViewParametersMap;
 	
 	
-	bool ViewExists( const FSTree* parent, const std::string& name )
+	static const ViewParameters* FindView( const FSTree* parent, const std::string& name )
 	{
-		ViewParametersMap::const_iterator it = gViewParametersMap.find( parent );
+		ViewParametersMap::const_iterator the_submap = gViewParametersMap.find( parent );
 		
-		if ( it != gViewParametersMap.end() )
+		if ( the_submap != gViewParametersMap.end() )
 		{
-			const ViewParametersSubMap& submap = it->second;
+			const ViewParametersSubMap& submap = the_submap->second;
 			
-			return submap.find( name ) != submap.end();
+			ViewParametersSubMap::const_iterator it = submap.find( name );
+			
+			if ( it != submap.end() )
+			{
+				return &it->second;
+			}
 		}
 		
-		return false;
+		return NULL;
 	}
 	
-	void AddViewParameters( const FSTree*                            parent,
-	                        const std::string&                       name,
-	                        const boost::shared_ptr< ViewFactory >&  factory,
-	                        const FSTreePtr&                         delegate )
+	bool ViewExists( const FSTree* parent, const std::string& name )
+	{
+		return FindView( parent, name ) != NULL;
+	}
+	
+	void AddViewParameters( const FSTree*       parent,
+	                        const std::string&  name,
+	                        const FSTreePtr&    delegate,
+	                        ViewFactory         factory )
 	{
 		ViewParameters& params = gViewParametersMap[ parent ][ name ];
 		
@@ -91,9 +102,21 @@ namespace Genie
 		gViewParametersMap.erase( parent );
 	}
 	
-	const boost::shared_ptr< ViewFactory >& GetViewFactory( const FSTree* parent, const std::string& name )
+	std::auto_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap[ parent ][ name ].itsFactory;
+		if ( const ViewParameters* params = FindView( parent, name ) )
+		{
+			const FSTree* delegate = params->itsDelegate.get();
+			
+			ViewFactory factory = params->itsFactory;
+			
+			ASSERT( delegate != NULL );
+			ASSERT( factory  != NULL );
+			
+			return factory( delegate );
+		}
+		
+		return std::auto_ptr< Pedestal::View >();
 	}
 	
 	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
@@ -135,9 +158,9 @@ namespace Genie
 		
 		FSTreePtr delegate = MakeDelegate( parent, name );
 		
-		boost::shared_ptr< ViewFactory > factory = MakeViewFactory( delegate.get() );
+		ViewFactory factory = GetViewFactory();
 		
-		AddViewParameters( key, name, factory, delegate );
+		AddViewParameters( key, name, delegate, factory );
 		
 		target->CreateDirectory( 0 );  // mode is ignored
 	}
@@ -182,7 +205,9 @@ namespace Genie
 		
 		const std::string& name = Name();
 		
-		if ( const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( parent, name ) )
+		std::auto_ptr< Ped::View > view = MakeView( parent, name );
+		
+		if ( view.get() != NULL )
 		{
 			const FSTree* windowKey = GetViewWindowKey( parent );
 			
@@ -193,7 +218,7 @@ namespace Genie
 			
 			AddViewWindowKey( parent, name, windowKey );
 			
-			AddCustomParameters( (*factory)() );
+			AddCustomParameters( view );
 			
 			InvalidateWindow( windowKey );
 		}

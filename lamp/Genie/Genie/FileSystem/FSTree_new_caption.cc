@@ -65,25 +65,9 @@ namespace Genie
 		return result;
 	}
 	
-	
-	class CaptionFactory : public ViewFactory
+	static std::auto_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
 	{
-		private:
-			typedef const FSTree* Key;
-			
-			Key itsKey;
-		
-		public:
-			CaptionFactory( Key key ) : itsKey( key )
-			{
-			}
-			
-			std::auto_ptr< Ped::View > operator()() const;
-	};
-	
-	std::auto_ptr< Ped::View > CaptionFactory::operator()() const
-	{
-		return std::auto_ptr< Ped::View >( new Caption( itsKey ) );
+		return std::auto_ptr< Ped::View >( new Caption( delegate ) );
 	}
 	
 	namespace
@@ -101,9 +85,9 @@ namespace Genie
 		return Premapped_Factory< Caption_view_Mappings, &DestroyDelegate >( parent, name );
 	}
 	
-	boost::shared_ptr< ViewFactory > FSTree_new_caption::MakeViewFactory( const FSTree* delegate ) const
+	ViewFactory FSTree_new_caption::GetViewFactory() const
 	{
-		return boost::shared_ptr< ViewFactory >( new CaptionFactory( delegate ) );
+		return &CaptionFactory;
 	}
 	
 	

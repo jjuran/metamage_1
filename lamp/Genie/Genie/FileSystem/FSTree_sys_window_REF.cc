@@ -459,10 +459,12 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		const boost::shared_ptr< ViewFactory >& factory = GetViewFactory( key, "view" );
+		std::auto_ptr< Ped::View > view = MakeView( key, "view" );
 		
-		std::auto_ptr< Ped::View > view( factory ? (*factory)()
-		                                         : std::auto_ptr< Ped::View >( new Ped::EmptyView ) );
+		if ( view.get() == NULL )
+		{
+			view.reset( new Ped::EmptyView );
+		}
 		
 		CreateUserWindow( key, view );
 	}

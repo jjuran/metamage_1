@@ -23,7 +23,7 @@ namespace Genie
 			
 			FSTreePtr MakeDelegate( const FSTreePtr& parent, const std::string& name ) const;
 			
-			boost::shared_ptr< ViewFactory > MakeViewFactory( const FSTree* delegate ) const;
+			ViewFactory GetViewFactory() const;
 	};
 	
 }
