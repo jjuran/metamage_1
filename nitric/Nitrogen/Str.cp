@@ -11,25 +11,28 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
-#endif
 
+// Standard C++
 #include <algorithm>
 
+
 namespace Nitrogen
-  {
-   void CopyToPascalString( const char *source,
-                            std::size_t sourceLength,
-                            unsigned char *destination,
-                            unsigned char destinationLength )
-     {
-      if ( sourceLength > destinationLength )
-         throw StringTooLong();
-      
-      destination[0] = static_cast< unsigned char >( sourceLength );
-      std::copy( source,
-                 source + sourceLength,
-                 reinterpret_cast<char *>( destination + 1 ) );
+{
+	void CopyToPascalString( const char     *source,
+	                         std::size_t     sourceLength,
+	                         unsigned char  *destination,
+	                         unsigned char   destinationLength )
+	{
+		if ( sourceLength > destinationLength )
+		{
+			throw StringTooLong();
+		}
+		
+		destination[ 0 ] = static_cast< unsigned char >( sourceLength );
+		
+		std::copy( source,
+		           source + sourceLength,
+		           reinterpret_cast< char * >( destination + 1 ) );
      }
   }
