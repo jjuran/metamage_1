@@ -53,7 +53,7 @@ namespace Genie
 		
 		try
 		{
-			data = itsReadHook( GetKey() );
+			data = itsReadHook( itsKeyHook( this ) );
 			
 			data += '\n';
 		}
@@ -75,6 +75,7 @@ namespace Genie
 		
 		return new PropertyWriterFileHandle( shared_from_this(),
 		                                     flags,
+		                                     itsKeyHook,
 		                                     itsWriteHook );
 	}
 	

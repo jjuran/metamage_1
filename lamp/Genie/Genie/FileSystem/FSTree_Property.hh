@@ -21,17 +21,49 @@ namespace Genie
 		private:
 			typedef const FSTree* Key;
 			
+			typedef Key (*KeyHook)( const FSTree* that );
+			
 			typedef std::string (*ReadHook)( Key key );
 			
 			typedef void (*WriteHook)( Key          key,
 			                           const char  *begin,
 			                           const char  *end );
 			
+			KeyHook    itsKeyHook;
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;
 		
 		public:
 			struct Undefined {};
+			
+			template < class Key >
+			FSTree_Property( const FSTreePtr&      parent,
+			                 const std::string&    name,
+			                 Key                 (*keyHook  )( const FSTree*    ),
+			                 std::string         (*readHook )( Key          key ),
+			                 void                (*writeHook)( Key          key,
+			                                                   const char  *begin,
+			                                                   const char  *end ) )
+			:
+				FSTree( parent, name ),
+				itsKeyHook  ( (KeyHook  ) keyHook   ),
+				itsReadHook ( (ReadHook ) readHook  ),
+				itsWriteHook( (WriteHook) writeHook )
+			{
+			}
+			
+			template < class Key >
+			FSTree_Property( const FSTreePtr&      parent,
+			                 const std::string&    name,
+			                 Key                 (*keyHook  )( const FSTree*    ),
+			                 std::string         (*readHook )( Key          key ) )
+			:
+				FSTree( parent, name ),
+				itsKeyHook  ( (KeyHook  ) keyHook  ),
+				itsReadHook ( (ReadHook ) readHook ),
+				itsWriteHook( (WriteHook) NULL     )
+			{
+			}
 			
 			FSTree_Property( const FSTreePtr&    parent,
 			                 const std::string&  name,
@@ -39,12 +71,13 @@ namespace Genie
 			                 WriteHook           writeHook )
 			:
 				FSTree( parent, name ),
+				itsKeyHook  ( &GetKey   ),
 				itsReadHook ( readHook  ),
 				itsWriteHook( writeHook )
 			{
 			}
 			
-			Key GetKey() const  { return Parent().get(); }
+			static Key GetKey( const FSTree* that )  { return that->Parent().get(); }
 			
 			mode_t FilePermMode() const
 			{

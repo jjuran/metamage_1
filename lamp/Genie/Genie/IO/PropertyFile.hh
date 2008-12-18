@@ -39,23 +39,26 @@ namespace Genie
 		private:
 			typedef const FSTree* Key;
 			
+			typedef Key (*KeyHook)( const FSTree* that );
+			
 			typedef void (*WriteHook)( Key          key,
 			                           const char  *begin,
 			                           const char  *end );
 			
+			KeyHook    itsKeyHook;
 			WriteHook itsWriteHook;
 		
 		public:
 			PropertyWriterFileHandle( const FSTreePtr&  file,
 			                          OpenFlags         flags,
-			                          WriteHook         hook )
+			                          KeyHook           keyHook,
+			                          WriteHook         writeHook )
 			:
 				VirtualFileHandle( file, flags ),
-				itsWriteHook( hook )
+				itsKeyHook  ( keyHook   ),
+				itsWriteHook( writeHook )
 			{
 			}
-			
-			Key GetKey() const  { return GetFile()->Parent().get(); }
 			
 			void SetEOF( off_t length )  {}  // FIXME
 			
