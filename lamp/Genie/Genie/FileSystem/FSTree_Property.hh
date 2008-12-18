@@ -29,6 +29,8 @@ namespace Genie
 			WriteHook  itsWriteHook;
 		
 		public:
+			struct Undefined {};
+			
 			FSTree_Property( const FSTreePtr&    parent,
 			                 const std::string&  name,
 			                 ReadHook            readHook,

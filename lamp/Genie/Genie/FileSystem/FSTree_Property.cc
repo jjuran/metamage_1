@@ -49,9 +49,21 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
+		std::string data;
+		
+		try
+		{
+			data = Get();
+			
+			data += '\n';
+		}
+		catch ( const Undefined& )
+		{
+		}
+		
 		return new PropertyReaderFileHandle( shared_from_this(),
 		                                     flags,
-		                                     Get() );
+		                                     data );
 	}
 	
 	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const

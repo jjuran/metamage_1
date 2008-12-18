@@ -24,7 +24,7 @@ namespace Genie
 			                          const std::string&  value )
 			:
 				VirtualFileHandle( file, flags ),
-				itsData( value + "\n" )
+				itsData( value )
 			{
 			}
 			
