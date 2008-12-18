@@ -22,13 +22,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
-	{
-		p7::throw_errno( EPERM );
-		
-		return NULL;
-	}
-	
 	boost::shared_ptr< IOHandle > FSTree_Property::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = NULL;
@@ -51,14 +44,23 @@ namespace Genie
 	
 	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
 	{
+		if ( itsReadHook == NULL )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
 		return new PropertyReaderFileHandle( shared_from_this(),
 		                                     flags,
 		                                     Get() );
 	}
 	
-	
-	IOHandle* FSTree_Mutable_Property::OpenForWrite( OpenFlags flags ) const
+	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
 	{
+		if ( itsWriteHook == NULL )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
 		return new PropertyWriterFileHandle( shared_from_this(),
 		                                     flags,
 		                                     itsWriteHook );

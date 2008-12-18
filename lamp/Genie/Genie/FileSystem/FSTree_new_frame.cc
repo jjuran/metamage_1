@@ -149,10 +149,10 @@ namespace Genie
 	static FSTreePtr MarginFactory( const FSTreePtr&    parent,
 	                                const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Mutable_Property( parent,
-		                                               name,
-		                                               &ReadMargin,
-		                                               &WriteMargin ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &ReadMargin,
+		                                       &WriteMargin ) );
 	}
 	
 	const Functional_Traits< void >::Mapping Frame_view_Mappings[] =

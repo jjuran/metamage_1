@@ -122,10 +122,10 @@ namespace Genie
 	static FSTreePtr IDFactory( const FSTreePtr&    parent,
 	                            const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Mutable_Property( parent,
-		                                               name,
-		                                               &ReadIconID,
-		                                               &WriteIconID ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &ReadIconID,
+		                                       &WriteIconID ) );
 	}
 	
 	const Functional_Traits< void >::Mapping IconID_view_Mappings[] =

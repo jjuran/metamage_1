@@ -21,16 +21,29 @@ namespace Genie
 		private:
 			typedef std::string (*ReadHook)( const FSTree* view );
 			
-			ReadHook itsReadHook;
+			typedef void (*WriteHook)( const FSTree  *view,
+			                           const char    *begin,
+			                           const char    *end );
+			
+			ReadHook   itsReadHook;
+			WriteHook  itsWriteHook;
 		
 		public:
 			FSTree_Property( const FSTreePtr&    parent,
 			                 const std::string&  name,
-			                 ReadHook            hook )
+			                 ReadHook            readHook,
+			                 WriteHook           writeHook )
 			:
 				FSTree( parent, name ),
-				itsReadHook( hook )
+				itsReadHook ( readHook  ),
+				itsWriteHook( writeHook )
 			{
+			}
+			
+			mode_t FilePermMode() const
+			{
+				return (itsReadHook  ? S_IRUSR : 0)
+				     | (itsWriteHook ? S_IWUSR : 0);
 			}
 			
 			std::string Get() const
@@ -38,40 +51,13 @@ namespace Genie
 				return itsReadHook( Parent().get() );
 			}
 			
-			off_t GetEOF() const  { return Get().size() + sizeof '\n'; }
+			off_t GetEOF() const  { return itsReadHook ? Get().size() + sizeof '\n' : 0; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 		
 		private:
 			IOHandle* OpenForRead( OpenFlags flags ) const;
 			
-			virtual IOHandle* OpenForWrite( OpenFlags flags ) const;
-	};
-	
-	
-	class FSTree_Mutable_Property : public FSTree_Property
-	{
-		private:
-			typedef void (*WriteHook)( const FSTree  *view,
-			                           const char    *begin,
-			                           const char    *end );
-			
-			WriteHook itsWriteHook;
-		
-		public:
-			FSTree_Mutable_Property( const FSTreePtr&    parent,
-			                         const std::string&  name,
-			                         ReadHook            readHook,
-			                         WriteHook           writeHook )
-			:
-				FSTree_Property( parent, name, readHook ),
-				itsWriteHook( writeHook )
-			{
-			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-		
-		private:
 			IOHandle* OpenForWrite( OpenFlags flags ) const;
 	};
 	
