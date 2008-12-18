@@ -70,7 +70,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( const BitMap& screenBits ) const
+		static Result Get( const BitMap& screenBits )
 		{
 			return PrintableBounds( screenBits.bounds );
 		}
@@ -80,7 +80,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( const BitMap& screenBits ) const
+		static Result Get( const BitMap& screenBits )
 		{
 			return PrintableSize( screenBits.bounds );
 		}
@@ -94,7 +94,7 @@ namespace Genie
 			{
 				const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 				
-				std::string output = Accessor().Get( screenBits );
+				std::string output = Accessor::Get( screenBits );
 				
 				output += "\n";
 				
