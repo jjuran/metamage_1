@@ -121,12 +121,12 @@ namespace Genie
 	{
 		typedef N::Str255 Result;
 		
-		Result Get( N::WindowRef window ) const
+		static Result Get( N::WindowRef window )
 		{
 			return N::GetWTitle( window );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			N::SetWTitle( window, N::Str255( begin, end - begin ) );
 		}
@@ -136,14 +136,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::WindowRef window ) const
+		static Result Get( N::WindowRef window )
 		{
 			Point position = Ped::GetWindowPosition( window );
 			
 			return WritePoint( position, "," );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			Ped::SetWindowPosition( window, ReadPoint( begin ) );
 		}
@@ -153,14 +153,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::WindowRef window ) const
+		static Result Get( N::WindowRef window )
 		{
 			Point size = Ped::GetWindowSize( window );
 			
 			return WritePoint( size, "x" );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			Ped::SetWindowSize( window, ReadPoint( begin ) );
 		}
@@ -170,14 +170,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::WindowRef window ) const
+		static Result Get( N::WindowRef window )
 		{
 			const bool visible = N::IsWindowVisible( window );
 			
 			return visible ? "1" : "0";
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			const bool visible = begin[ 0 ] != '0';
 			
@@ -196,7 +196,7 @@ namespace Genie
 	{
 		typedef unsigned Result;
 		
-		unsigned Get( N::WindowRef window ) const
+		static unsigned Get( N::WindowRef window )
 		{
 			unsigned z = 0;
 			
@@ -336,14 +336,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::WindowRef window ) const
+		static Result Get( N::WindowRef window )
 		{
 			RGBColor color = GetColor( N::GetWindowPort( window ) );
 			
 			return WriteColor( color );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			RGBColor color = ReadColor( begin, end );
 			
@@ -361,12 +361,12 @@ namespace Genie
 	{
 		typedef short Result;
 		
-		short Get( N::WindowRef window ) const
+		static short Get( N::WindowRef window )
 		{
 			return N::GetPortTextFont( N::GetWindowPort( window ) );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			short fontID = std::atoi( begin );
 			
@@ -384,12 +384,12 @@ namespace Genie
 	{
 		typedef short Result;
 		
-		short Get( N::WindowRef window ) const
+		static short Get( N::WindowRef window )
 		{
 			return N::GetPortTextSize( N::GetWindowPort( window ) );
 		}
 		
-		void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end )
 		{
 			short size = std::atoi( begin );
 			
@@ -415,7 +415,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			return NN::Convert< std::string >( Accessor().Get( key ) );
+			return NN::Convert< std::string >( Accessor::Get( key ) );
 		}
 		
 		static void Write( Key key, const char* begin, const char* end )
@@ -425,7 +425,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			Accessor().Set( key, begin, end );
+			Accessor::Set( key, begin, end );
 		}
 	};
 	
