@@ -22,8 +22,7 @@
 #include "Pedestal/Window.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/FSTree_PseudoFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Nitrogen
@@ -68,13 +67,13 @@ namespace Genie
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
 	}
 	
-	extern const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_window_REF_Mappings[];
 	
 	FSTreePtr sys_mac_window_Details::GetChildNode( const FSTreePtr&    parent,
 		                                            const std::string&  name,
 		                                            const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_window_REF_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_window_REF_Mappings >( parent, name );
 	}
 	
 	
@@ -127,9 +126,9 @@ namespace Genie
 			return N::GetWTitle( window );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			N::SetWTitle( window, N::Str255( value ) );
+			N::SetWTitle( window, N::Str255( begin, end - begin ) );
 		}
 	};
 	
@@ -144,9 +143,9 @@ namespace Genie
 			return WritePoint( position, "," );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			Ped::SetWindowPosition( window, ReadPoint( value ) );
+			Ped::SetWindowPosition( window, ReadPoint( begin ) );
 		}
 	};
 	
@@ -161,9 +160,9 @@ namespace Genie
 			return WritePoint( size, "x" );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			Ped::SetWindowSize( window, ReadPoint( value ) );
+			Ped::SetWindowSize( window, ReadPoint( begin ) );
 		}
 	};
 	
@@ -178,9 +177,9 @@ namespace Genie
 			return visible ? "1" : "0";
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			const bool visible = value.c_str()[ 0 ] != '0';
+			const bool visible = begin[ 0 ] != '0';
 			
 			if ( visible )
 			{
@@ -268,17 +267,16 @@ namespace Genie
 		return result;
 	}
 	
-	static RGBColor ReadColor( const std::string& value )
+	static RGBColor ReadColor( const char* begin, const char* end )
 	{
-		const char* p = value.c_str();
+		const char* p = begin;
 		
-		size_t length = value.length();
-		
-		if ( value[0] == '#' )
+		if ( *p == '#' )
 		{
 			++p;
-			--length;
 		}
+		
+		size_t length = end - p;
 		
 		unsigned detail = length / 3;
 		
@@ -345,9 +343,9 @@ namespace Genie
 			return WriteColor( color );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			RGBColor color = ReadColor( value );
+			RGBColor color = ReadColor( begin, end );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -368,9 +366,9 @@ namespace Genie
 			return N::GetPortTextFont( N::GetWindowPort( window ) );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			short fontID = std::atoi( value.c_str() );
+			short fontID = std::atoi( begin );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -391,9 +389,9 @@ namespace Genie
 			return N::GetPortTextSize( N::GetWindowPort( window ) );
 		}
 		
-		void Set( N::WindowRef window, const std::string& value )
+		void Set( N::WindowRef window, const char* begin, const char* end )
 		{
-			short size = std::atoi( value.c_str() );
+			short size = std::atoi( begin );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -406,66 +404,88 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	class sys_mac_window_REF_Property
+	struct sys_mac_window_REF_Property
 	{
-		private:
-			typedef N::WindowRef Key;
-			
-			Key itsKey;
+		typedef N::WindowRef Key;
 		
-		public:
-			sys_mac_window_REF_Property( const Key& key ) : itsKey( key )
+		static std::string Read( Key key )
+		{
+			if ( !sys_mac_window_Details::KeyIsValid( key ) )
 			{
+				p7::throw_errno( EIO );
 			}
 			
-			std::string Get() const
+			return NN::Convert< std::string >( Accessor().Get( key ) );
+		}
+		
+		static void Write( Key key, const char* begin, const char* end )
+		{
+			if ( !sys_mac_window_Details::KeyIsValid( key ) )
 			{
-				if ( !sys_mac_window_Details::KeyIsValid( itsKey ) )
-				{
-					p7::throw_errno( EIO );
-				}
-				
-				std::string output = NN::Convert< std::string >( Accessor().Get( itsKey ) ) + "\n";
-				
-				return output;
+				p7::throw_errno( EIO );
 			}
 			
-			void Set( const std::string& value )
-			{
-				if ( !sys_mac_window_Details::KeyIsValid( itsKey ) )
-				{
-					p7::throw_errno( EIO );
-				}
-				
-				Accessor().Set( itsKey, value );
-			}
+			Accessor().Set( key, begin, end );
+		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Const_Property_Factory( const FSTreePtr&                parent,
-	                                         const std::string&              name,
-	                                         WindowRef_KeyName_Traits::Key   key )
+	
+	static inline UInt32 Read_8_nibbles( const char* p )
 	{
-		typedef sys_mac_window_REF_Property< Accessor > Property;
+		UInt32 result = nibble_from_ascii( p[ 0 ] ) << 28
+		              | nibble_from_ascii( p[ 1 ] ) << 24
+		              | nibble_from_ascii( p[ 2 ] ) << 20
+		              | nibble_from_ascii( p[ 3 ] ) << 16
+		              | nibble_from_ascii( p[ 4 ] ) << 12
+		              | nibble_from_ascii( p[ 5 ] ) <<  8
+		              | nibble_from_ascii( p[ 6 ] ) <<  4
+		              | nibble_from_ascii( p[ 7 ] ) <<  0;
 		
-		typedef FSTree_QueryFile< Property > QueryFile;
+		return result;
+	}
+	
+	
+	static inline void* PtrFromName( const std::string& name )
+	{
+		if ( name.length() != sizeof (void*) * 2 )
+		{
+			return NULL;
+		}
 		
-		return FSTreePtr( new QueryFile( parent, name, Property( key ) ) );
+		return (void*) Read_8_nibbles( name.data() );
+	}
+	
+	static N::WindowRef GetKey( const FSTree* that )
+	{
+		return (N::WindowRef) PtrFromName( that->Parent()->Name() );
 	}
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&                parent,
-	                                   const std::string&              name,
-	                                   WindowRef_KeyName_Traits::Key   key )
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
+	                                         const std::string&  name )
 	{
 		typedef sys_mac_window_REF_Property< Accessor > Property;
 		
-		typedef FSTree_PseudoFile< Property > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Property( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
-	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef sys_mac_window_REF_Property< Accessor > Property;
+		
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read,
+		                                       &Property::Write ) );
+	}
+	
+	const Functional_Traits< void >::Mapping sys_mac_window_REF_Mappings[] =
 	{
 		{ "title", &Property_Factory< Access_WindowTitle    > },
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
