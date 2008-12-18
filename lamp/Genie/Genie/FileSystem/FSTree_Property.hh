@@ -48,13 +48,6 @@ namespace Genie
 				     | (itsWriteHook ? S_IWUSR : 0);
 			}
 			
-			std::string Get() const
-			{
-				return itsReadHook( Parent().get() );
-			}
-			
-			off_t GetEOF() const  { return itsReadHook ? Get().size() + sizeof '\n' : 0; }
-			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 		
 		private:
