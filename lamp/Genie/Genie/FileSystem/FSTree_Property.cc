@@ -1,0 +1,68 @@
+/*	==================
+ *	FSTree_Property.cc
+ *	==================
+ */
+
+#include "Genie/FileSystem/FSTree_Property.hh"
+
+// POSIX
+#include <fcntl.h>
+
+// POSeven
+#include "POSeven/Errno.hh"
+
+// Genie
+#include "Genie/IO/PropertyFile.hh"
+
+
+namespace Genie
+{
+	
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	
+	
+	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
+	{
+		p7::throw_errno( EPERM );
+		
+		return NULL;
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_Property::Open( OpenFlags flags ) const
+	{
+		IOHandle* result = NULL;
+		
+		if ( flags == O_RDONLY )
+		{
+			result = OpenForRead( flags );
+		}
+		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
+		{
+			result = OpenForWrite( flags );
+		}
+		else
+		{
+			throw p7::errno_t( EINVAL );
+		}
+		
+		return boost::shared_ptr< IOHandle >( result );
+	}
+	
+	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
+	{
+		return new PropertyReaderFileHandle( shared_from_this(),
+		                                     flags,
+		                                     Get() );
+	}
+	
+	
+	IOHandle* FSTree_Mutable_Property::OpenForWrite( OpenFlags flags ) const
+	{
+		return new PropertyWriterFileHandle( shared_from_this(),
+		                                     flags,
+		                                     itsWriteHook );
+	}
+	
+}
+
