@@ -14,9 +14,8 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
-#include "Genie/IO/PseudoFile.hh"
-#include "Genie/IO/QueryFile.hh"
 
 
 namespace Genie
@@ -108,104 +107,6 @@ namespace Genie
 	}
 	
 	
-	class Frame_margin_Property
-	{
-		private:
-			typedef const FSTree* Key;
-			
-			Key itsKey;
-		
-		public:
-			Frame_margin_Property( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
-			{
-				FrameParametersMap::const_iterator it = gFrameParametersMap.find( itsKey );
-				
-				if ( it == gFrameParametersMap.end() )
-				{
-					return "";  // empty file
-				}
-				
-				std::string output = NN::Convert< std::string >( it->second.itsMargin );
-				
-				output += "\n";
-				
-				return output;
-			}
-			
-			void Set( const std::string& s )
-			{
-				gFrameParametersMap[ itsKey ].itsMargin = std::atoi( s.c_str() );
-				
-				const FSTree* view = itsKey;
-				
-				InvalidateWindowForView( view );
-			}
-	};
-	
-	class FSTree_Generic_REF_Property_Base : public FSTree
-	{
-		public:
-			FSTree_Generic_REF_Property_Base( const FSTreePtr&    parent,
-			                                  const std::string&  name ) : FSTree( parent, name )
-			{
-			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-	};
-	
-	template < class Property >
-	class FSTree_Generic_REF_Property : public FSTree_Generic_REF_Property_Base
-	{
-		private:
-			typedef FSTree_Generic_REF_Property_Base Base;
-			
-			Property itsProperty;
-		
-		public:
-			FSTree_Generic_REF_Property( const FSTreePtr&    parent,
-			                             const std::string&  name ) : Base( parent, name ),
-			                                                          itsProperty( parent.get() )
-			{
-			}
-			
-			off_t GetEOF() const  { return itsProperty.Get().size(); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	template < class Property >
-	boost::shared_ptr< IOHandle > FSTree_Generic_REF_Property< Property >::Open( OpenFlags flags ) const
-	{
-		IOHandle* result = NULL;
-		
-		if ( flags == O_RDONLY )
-		{
-			result = new QueryFileHandle( shared_from_this(),
-			                              flags,
-			                              itsProperty.Get() );
-		}
-		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
-		{
-			result = new PseudoFileHandle< Property >( shared_from_this(),
-			                                           flags,
-			                                           itsProperty );
-		}
-		else
-		{
-			throw poseven::errno_t( EINVAL );
-		}
-		
-		return boost::shared_ptr< IOHandle >( result );
-	}
-	
-	typedef FSTree_Generic_REF_Property< Frame_margin_Property > FSTree_Frame_margin;
-	
-	
-	
 	class FSTree_Frame_view : public FSTree_View
 	{
 		public:
@@ -230,9 +131,33 @@ namespace Genie
 	}
 	
 	
+	static std::string ReadMargin( const FSTree* view )
+	{
+		return NN::Convert< std::string >( gFrameParametersMap[ view ].itsMargin );
+	}
+	
+	static void WriteMargin( const FSTree* view, const char* begin, const char* end )
+	{
+		// *end == '\n'
+		
+		gFrameParametersMap[ view ].itsMargin = N::ResID( std::atoi( begin ) );
+		
+		InvalidateWindowForView( view );
+	}
+	
+	
+	static FSTreePtr MarginFactory( const FSTreePtr&    parent,
+	                                const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Mutable_Property( parent,
+		                                               name,
+		                                               &ReadMargin,
+		                                               &WriteMargin ) );
+	}
+	
 	const Functional_Traits< void >::Mapping Frame_view_Mappings[] =
 	{
-		{ "margin", &Factory< FSTree_Frame_margin > },
+		{ "margin", &MarginFactory },
 		
 		{ "v", &Factory< FSTree_Frame_view >, true },
 		
