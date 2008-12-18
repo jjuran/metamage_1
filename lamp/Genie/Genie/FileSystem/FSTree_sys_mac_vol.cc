@@ -319,25 +319,25 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_vol_N_Property
 	{
-			typedef N::FSVolumeRefNum Key;
+		typedef N::FSVolumeRefNum Key;
+		
+		static std::string Read( Key key )
+		{
+			XVolumeParam pb;
 			
-			static std::string Read( Key key )
+			Str31 name;
+			
+			if ( Has_PBXGetVolInfo() )
 			{
-				XVolumeParam pb;
-				
-				Str31 name;
-				
-				if ( Has_PBXGetVolInfo() )
-				{
-					PBXGetVolInfoSync( pb, key, Accessor::needsName ? name : NULL );
-				}
-				else
-				{
-					PBHGetVInfoSync( pb, key, Accessor::needsName ? name : NULL );
-				}
-				
-				return NN::Convert< std::string >( Accessor::Get( pb ) );
+				PBXGetVolInfoSync( pb, key, Accessor::needsName ? name : NULL );
 			}
+			else
+			{
+				PBHGetVInfoSync( pb, key, Accessor::needsName ? name : NULL );
+			}
+			
+			return NN::Convert< std::string >( Accessor::Get( pb ) );
+		}
 	};
 	
 	class FSTree_Folder_Link : public FSTree
