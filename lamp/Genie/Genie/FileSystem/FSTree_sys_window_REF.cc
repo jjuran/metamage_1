@@ -20,7 +20,6 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
-//#include "Genie/FileSystem/FSTree_PseudoFile.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/Views.hh"
 
