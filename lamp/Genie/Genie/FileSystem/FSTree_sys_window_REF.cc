@@ -19,7 +19,8 @@
 #include "Pedestal/UserWindow.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_PseudoFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
+//#include "Genie/FileSystem/FSTree_PseudoFile.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/Views.hh"
 
@@ -161,13 +162,13 @@ namespace Genie
 		return std::isdigit( s[ s[0] == '-' ] );
 	}
 	
-	static Point ReadPoint( const std::string& value )
+	static Point ReadPoint( const char* string )
 	{
-		const char* p = value.c_str();
+		const char* p = string;
 		
 		long x = std::strtol( p, (char**) &p, 10 );
 		
-		if ( p != value.c_str()  &&  *p != '\0' )
+		if ( p != string  &&  *p != '\0' )
 		{
 			while ( *++p )
 			{
@@ -209,9 +210,9 @@ namespace Genie
 			return NN::Convert< std::string >( v );
 		}
 		
-		static Value ValueFromString( const std::string& s )
+		static Value ValueFromString( const char* begin, const char* end )
 		{
-			return N::Str255( s );
+			return N::Str255( std::string( begin, end ) );
 		}
 	};
 	
@@ -227,9 +228,9 @@ namespace Genie
 			return WritePoint( origin, "," );
 		}
 		
-		static Value ValueFromString( const std::string& s )
+		static Value ValueFromString( const char* begin, const char* end )
 		{
-			return ReadPoint( s );
+			return ReadPoint( begin );
 		}
 	};
 	
@@ -245,9 +246,9 @@ namespace Genie
 			return WritePoint( size, "x" );
 		}
 		
-		static Value ValueFromString( const std::string& s )
+		static Value ValueFromString( const char* begin, const char* end )
 		{
-			return ReadPoint( s );
+			return ReadPoint( begin );
 		}
 	};
 	
@@ -263,54 +264,44 @@ namespace Genie
 			return vis ? "1" : "0";
 		}
 		
-		static Value ValueFromString( const std::string& s )
+		static Value ValueFromString( const char* begin, const char* end )
 		{
-			return s.c_str()[ 0 ] != '0';
+			return begin[ 0 ] != '0';
 		}
 	};
 	
 	
 	template < class Accessor >
-	class sys_window_REF_Property
+	struct sys_window_REF_Property
 	{
-		private:
-			typedef const FSTree* Key;
+		static std::string Read( const FSTree* key )
+		{
+			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 			
-			Key itsKey;
+			if ( it == gWindowParametersMap.end() )
+			{
+				throw FSTree_Property::Undefined();
+			}
+			
+			return Accessor::StringFromValue( Accessor::GetRef( it->second ) );
+		}
 		
-		public:
-			sys_window_REF_Property( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
-			{
-				WindowParametersMap::const_iterator it = gWindowParametersMap.find( itsKey );
-				
-				if ( it == gWindowParametersMap.end() )
-				{
-					return "";  // empty file
-				}
-				
-				std::string output = Accessor::StringFromValue( Accessor::GetRef( it->second ) );
-				
-				output += "\n";
-				
-				return output;
-			}
-			
-			void Set( const std::string& s )
-			{
-				Accessor::GetRef( gWindowParametersMap[ itsKey ] ) = Accessor::ValueFromString( s );
-			}
+		static void Write( const FSTree* key, const char* begin, const char* end )
+		{
+			Accessor::GetRef( gWindowParametersMap[ key ] ) = Accessor::ValueFromString( begin, end );
+		}
 	};
 	
 	
-	class FSTree_sys_window_REF_Property_Base : public FSTree
+	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
 		public:
-			FSTree_sys_window_REF_Property_Base( const FSTreePtr&    parent,
-			                                     const std::string&  name ) : FSTree( parent, name )
+			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
+			                                const std::string&  name,
+			                                ReadHook            readHook,
+			                                WriteHook           writeHook )
+			:
+				FSTree_Property( parent, name, readHook, writeHook )
 			{
 			}
 			
@@ -323,12 +314,12 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
-	mode_t FSTree_sys_window_REF_Property_Base::FilePermMode() const
+	mode_t FSTree_sys_window_REF_Property::FilePermMode() const
 	{
-		return IsLink() ? S_IRUSR | S_IWUSR | S_IXUSR : S_IRUSR | S_IWUSR;
+		return IsLink() ? S_IRUSR | S_IWUSR | S_IXUSR : FSTree_Property::FilePermMode();
 	}
 	
-	std::string FSTree_sys_window_REF_Property_Base::ReadLink() const
+	std::string FSTree_sys_window_REF_Property::ReadLink() const
 	{
 		if ( !IsLink() )
 		{
@@ -338,55 +329,9 @@ namespace Genie
 		return "ref/" + Name();
 	}
 	
-	FSTreePtr FSTree_sys_window_REF_Property_Base::ResolveLink() const
+	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
 	{
 		return ResolvePathname( ReadLink(), Parent() );
-	}
-	
-	
-	template < class Property >
-	class FSTree_sys_window_REF_Property : public FSTree_sys_window_REF_Property_Base
-	{
-		private:
-			typedef FSTree_sys_window_REF_Property_Base Base;
-			
-			Property itsProperty;
-		
-		public:
-			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
-			                                const std::string&  name ) : Base( parent, name ),
-			                                                             itsProperty( parent.get() )
-			{
-			}
-			
-			off_t GetEOF() const  { return itsProperty.Get().size(); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	template < class Property >
-	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property< Property >::Open( OpenFlags flags ) const
-	{
-		IOHandle* result = NULL;
-		
-		if ( flags == O_RDONLY )
-		{
-			result = new QueryFileHandle( shared_from_this(),
-			                              flags,
-			                              itsProperty.Get() );
-		}
-		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
-		{
-			result = new PseudoFileHandle< Property >( shared_from_this(),
-			                                           flags,
-			                                           itsProperty );
-		}
-		else
-		{
-			throw poseven::errno_t( EINVAL );
-		}
-		
-		return boost::shared_ptr< IOHandle >( result );
 	}
 	
 	
@@ -539,16 +484,28 @@ namespace Genie
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
+	template < class Accessor >
+	static FSTreePtr PropertyFactory( const FSTreePtr&    parent,
+	                                  const std::string&  name )
+	{
+		typedef sys_window_REF_Property< Accessor > Property;
+		
+		return FSTreePtr( new FSTree_sys_window_REF_Property( parent,
+		                                                      name,
+		                                                      &Property::Read,
+		                                                      &Property::Write ) );
+	}
+	
 	const Functional_Traits< void >::Mapping sys_window_REF_Mappings[] =
 	{
 		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
 		
 		{ "view",   &Factory< FSTree_sys_window_REF_view >, true },
 		
-		{ "title", &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Title   > > > },
-		{ "pos",   &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Origin  > > > },
-		{ "size",  &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Size    > > > },
-		{ "vis",   &Factory< FSTree_sys_window_REF_Property< sys_window_REF_Property< Access_Visible > > > },
+		{ "title", &PropertyFactory< Access_Title   > },
+		{ "pos",   &PropertyFactory< Access_Origin  > },
+		{ "size",  &PropertyFactory< Access_Size    > },
+		{ "vis",   &PropertyFactory< Access_Visible > },
 		
 		{ NULL, NULL }
 	};
