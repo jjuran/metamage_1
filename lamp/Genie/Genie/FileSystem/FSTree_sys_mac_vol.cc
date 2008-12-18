@@ -155,7 +155,7 @@ namespace Genie
 		
 		typedef const unsigned char* Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioNamePtr;
 		}
@@ -167,7 +167,7 @@ namespace Genie
 		
 		typedef UInt32 Result;  // will break on 16TB volumes
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes / volume.ioVAlBlkSiz
 			                           : GetTotalBlocks( volume );
@@ -180,7 +180,7 @@ namespace Genie
 		
 		typedef UInt32 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVAlBlkSiz;
 		}
@@ -192,7 +192,7 @@ namespace Genie
 		
 		typedef UInt32 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes / volume.ioVAlBlkSiz
 			                           : GetFreeBlocks( volume );
@@ -205,7 +205,7 @@ namespace Genie
 		
 		typedef UInt64 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes
 			                           : GetTotalBlocks( volume ) * volume.ioVAlBlkSiz;
@@ -218,7 +218,7 @@ namespace Genie
 		
 		typedef UInt64 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes
 			                           : GetFreeBlocks( volume ) * volume.ioVAlBlkSiz;
@@ -231,7 +231,7 @@ namespace Genie
 		
 		typedef const char* Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			static char sigWord[] = "ab";
 			
@@ -248,7 +248,7 @@ namespace Genie
 		
 		typedef SInt16 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFSID;
 		}
@@ -260,7 +260,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVWrCnt;
 		}
@@ -272,7 +272,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFilCnt;
 		}
@@ -284,7 +284,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const XVolumeParam& volume ) const
+		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVDirCnt;
 		}
@@ -344,7 +344,7 @@ namespace Genie
 					PBHGetVInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
 				}
 				
-				std::string output = NN::Convert< std::string >( Accessor().Get( pb ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor::Get( pb ) ) + "\n";
 				
 				return output;
 			}
