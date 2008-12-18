@@ -13,7 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/Drives.hh"
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Stamp_Action.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
 
@@ -317,19 +317,11 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	class sys_mac_vol_N_Query
+	struct sys_mac_vol_N_Property
 	{
-		private:
 			typedef N::FSVolumeRefNum Key;
 			
-			Key itsKey;
-		
-		public:
-			sys_mac_vol_N_Query( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
+			static std::string Read( Key key )
 			{
 				XVolumeParam pb;
 				
@@ -337,16 +329,14 @@ namespace Genie
 				
 				if ( Has_PBXGetVolInfo() )
 				{
-					PBXGetVolInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
+					PBXGetVolInfoSync( pb, key, Accessor::needsName ? name : NULL );
 				}
 				else
 				{
-					PBHGetVInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
+					PBHGetVInfoSync( pb, key, Accessor::needsName ? name : NULL );
 				}
 				
-				std::string output = NN::Convert< std::string >( Accessor::Get( pb ) ) + "\n";
-				
-				return output;
+				return NN::Convert< std::string >( Accessor::Get( pb ) );
 			}
 	};
 	
@@ -379,16 +369,22 @@ namespace Genie
 	};
 	
 	
-	template < class Get >
-	static FSTreePtr Query_Factory( const FSTreePtr&             parent,
-	                                const std::string&           name,
-	                                VRefNum_KeyName_Traits::Key  key )
+	static N::FSVolumeRefNum GetKey( const FSTree* that )
 	{
-		typedef sys_mac_vol_N_Query< Get > Query;
+		return N::FSVolumeRefNum( -std::atoi( that->Parent()->Name().c_str() ) );
+	}
+	
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name,
+	                                   VRefNum_KeyName_Traits::Key  key )
+	{
+		typedef sys_mac_vol_N_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
 	template < class Stamp >
@@ -444,25 +440,25 @@ namespace Genie
 	
 	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =
 	{
-		{ "name", &Query_Factory< GetVolumeName > },
+		{ "name", &Property_Factory< GetVolumeName > },
 		
-		{ "block-size",  &Query_Factory< GetVolumeBlockSize      > },
-		{ "blocks",      &Query_Factory< GetVolumeBlockCount     > },
-		{ "blocks-free", &Query_Factory< GetVolumeFreeBlockCount > },
+		{ "block-size",  &Property_Factory< GetVolumeBlockSize      > },
+		{ "blocks",      &Property_Factory< GetVolumeBlockCount     > },
+		{ "blocks-free", &Property_Factory< GetVolumeFreeBlockCount > },
 		
-		{ "capacity",  &Query_Factory< GetVolumeCapacity  > },
-		{ "freespace", &Query_Factory< GetVolumeFreeSpace > },
+		{ "capacity",  &Property_Factory< GetVolumeCapacity  > },
+		{ "freespace", &Property_Factory< GetVolumeFreeSpace > },
 		
-		{ "sig", &Query_Factory< GetVolumeSignature > },
+		{ "sig", &Property_Factory< GetVolumeSignature > },
 		
 		{ "drive",  &Drive_Link_Factory  },
 		{ "driver", &Driver_Link_Factory },
 		
-		{ "fsid", &Query_Factory< GetVolumeFSID > },
+		{ "fsid", &Property_Factory< GetVolumeFSID > },
 		
-		{ "writes", &Query_Factory< GetVolumeWriteCount > },
-		{ "files",  &Query_Factory< GetVolumeFileCount  > },
-		{ "dirs",   &Query_Factory< GetVolumeDirCount   > },
+		{ "writes", &Property_Factory< GetVolumeWriteCount > },
+		{ "files",  &Property_Factory< GetVolumeFileCount  > },
+		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
