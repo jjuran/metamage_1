@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2004 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2008 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -24,17 +24,40 @@ namespace Nitrogen
   {
    class StringTooLong {};
    
-   void CopyToPascalString( const unsigned char *source,
-                            unsigned char *destination,
-                            unsigned char destinationLength );
-
    void CopyToPascalString( const char *source,
+                            std::size_t sourceLength,
                             unsigned char *destination,
                             unsigned char destinationLength );
-
-   void CopyToPascalString( const std::string& source,
-                            unsigned char *destination,
-                            unsigned char destinationLength );
+	
+	inline void CopyToPascalString( const unsigned char *source,
+	                                unsigned char *destination,
+	                                unsigned char destinationLength )
+	{
+		CopyToPascalString( reinterpret_cast< const char* >( source + 1 ),
+		                    source[ 0 ],
+		                    destination,
+		                    destinationLength );
+	}
+	
+	inline void CopyToPascalString( const char *source,
+	                                unsigned char *destination,
+	                                unsigned char destinationLength )
+	{
+		CopyToPascalString( source,
+		                    std::strlen( source ),
+		                    destination,
+		                    destinationLength );
+	}
+	
+	inline  void CopyToPascalString( const std::string& source,
+	                                 unsigned char *destination,
+	                                 unsigned char destinationLength )
+	{
+		CopyToPascalString( source.data(),
+		                    source.length(),
+		                    destination,
+		                    destinationLength );
+	}
                             
    template< unsigned char length >
    class Str
@@ -46,6 +69,7 @@ namespace Nitrogen
          Str()                                                    { string[0] = 0; }
          Str( const unsigned char* s )                            { CopyToPascalString( s, string, length ); }
          Str( const char* s )                                     { CopyToPascalString( s, string, length ); }
+         Str( const char* s, std::size_t slen )                   { CopyToPascalString( s, slen, string, length ); }
          Str( const std::string& s )                              { CopyToPascalString( s, string, length ); }
          
          Str& operator=( const unsigned char* s )                 { CopyToPascalString( s, string, length ); return *this; } 
