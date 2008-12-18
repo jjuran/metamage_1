@@ -78,7 +78,7 @@ int main( int argc, iota::argv_t argv )
 	
 	close( devnull );
 	
-	(void) execvp( *args, args );
+	(void) execvp( *args, (char**) args );
 	
 	bool noSuchFile = errno == ENOENT;
 	
