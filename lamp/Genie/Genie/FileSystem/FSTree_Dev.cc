@@ -21,7 +21,6 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
-#include "Genie/IO/GraphicsPort.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
@@ -171,7 +170,6 @@ namespace Genie
 	{
 		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
 		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
-		{ "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > },
 		
 		{ NULL, NULL }
 	};
