@@ -212,7 +212,7 @@ namespace Genie
 		
 		static Value ValueFromString( const char* begin, const char* end )
 		{
-			return N::Str255( std::string( begin, end ) );
+			return N::Str255( begin, end - begin );
 		}
 	};
 	
