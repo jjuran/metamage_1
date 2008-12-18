@@ -139,13 +139,13 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_vol_N_Mappings[];
 	
 	FSTreePtr sys_mac_vol_Details::GetChildNode( const FSTreePtr&    parent,
 		                                         const std::string&  name,
 		                                         const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_vol_N_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
 	}
 	
 	
@@ -369,15 +369,19 @@ namespace Genie
 	};
 	
 	
+	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return N::FSVolumeRefNum( -std::atoi( parent->Name().c_str() ) );
+	}
+	
 	static N::FSVolumeRefNum GetKey( const FSTree* that )
 	{
-		return N::FSVolumeRefNum( -std::atoi( that->Parent()->Name().c_str() ) );
+		return GetKeyFromParent( that->Parent() );
 	}
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name,
-	                                   VRefNum_KeyName_Traits::Key  key )
+	                                   const std::string&  name )
 	{
 		typedef sys_mac_vol_N_Property< Accessor > Property;
 		
@@ -388,26 +392,29 @@ namespace Genie
 	}
 	
 	template < class Stamp >
-	static FSTreePtr Stamp_Factory( const FSTreePtr&             parent,
-	                                const std::string&           name,
-	                                VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Stamp_Factory( const FSTreePtr&    parent,
+	                                const std::string&  name )
 	{
+		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		return FSTreePtr( new Stamp( parent, name, key ) );
 	}
 	
-	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
-	                               const std::string&           name,
-	                               VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Root_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
 	{
+		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
 		
 		return FSTreeFromFSSpec( volume );
 	}
 	
-	static FSTreePtr Drive_Link_Factory( const FSTreePtr&             parent,
-	                                     const std::string&           name,
-	                                     VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Drive_Link_Factory( const FSTreePtr&    parent,
+	                                     const std::string&  name )
 	{
+		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		HVolumeParam pb;
 		
 		PBHGetVInfoSync( pb, key );
@@ -417,10 +424,11 @@ namespace Genie
 		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive ) );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&             parent,
-	                                      const std::string&           name,
-	                                      VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
+	                                      const std::string&  name )
 	{
+		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		HVolumeParam pb;
 		
 		PBHGetVInfoSync( pb, key );
@@ -431,14 +439,15 @@ namespace Genie
 	}
 	
 	template < N::FolderType type >
-	static FSTreePtr Folder_Link_Factory( const FSTreePtr&             parent,
-	                                      const std::string&           name,
-	                                      VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Folder_Link_Factory( const FSTreePtr&    parent,
+	                                      const std::string&  name )
 	{
+		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		return FSTreePtr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
-	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ "name", &Property_Factory< GetVolumeName > },
 		
