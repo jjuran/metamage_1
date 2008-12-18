@@ -12,7 +12,7 @@
 #include "Nitrogen/Gestalt.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Genie
@@ -26,7 +26,7 @@ namespace Genie
 	{
 		typedef long Result;
 		
-		Result Get() const
+		static Result Get()
 		{
 			long proc = N::Gestalt( N::Gestalt_Selector( 'proc' ) );
 			
@@ -38,7 +38,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get() const
+		static Result Get()
 		{
 			UInt16 status = 0;
 			
@@ -58,35 +58,38 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	class sys_app_Query
+	struct sys_cpu_Property
 	{
-		public:
-			std::string Get() const
-			{
-				std::string output = NN::Convert< std::string >( Accessor().Get() ) + "\n";
-				
-				return output;
-			}
+		static std::string Read( int )
+		{
+			return NN::Convert< std::string >( Accessor::Get() );
+		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	static int GetKey( const FSTree* )
 	{
-		typedef sys_app_Query< Accessor > Query;
+		return 0;
+	}
+	
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef sys_cpu_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
 	const Singleton_Mapping sys_cpu_Mappings[] =
 	{
-		{ "proc", &Query_Factory< GetCPUProc > },
+		{ "proc", &Property_Factory< GetCPUProc > },
 		
 	#if TARGET_CPU_68K
 		
-		{ "mode", &Query_Factory< GetPrivilegeMode > },
+		{ "mode", &Property_Factory< GetPrivilegeMode > },
 		
 	#endif
 		

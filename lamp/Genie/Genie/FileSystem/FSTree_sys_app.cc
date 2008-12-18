@@ -13,7 +13,7 @@
 #include "Nucleus/Convert.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_window.hh"
 
 
@@ -50,35 +50,38 @@ namespace Genie
 #endif
 	
 	template < class Accessor >
-	class sys_app_Query
+	struct sys_app_Property
 	{
-		public:
-			std::string Get() const
-			{
-				std::string output = NN::Convert< std::string >( Accessor::Get() ) + "\n";
-				
-				return output;
-			}
+		static std::string Read( int )
+		{
+			return NN::Convert< std::string >( Accessor::Get() );
+		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	static int GetKey( const FSTree* )
 	{
-		typedef sys_app_Query< Accessor > Query;
+		return 0;
+	}
+	
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef sys_app_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
 	const Singleton_Mapping sys_app_Mappings[] =
 	{
-		{ "freemem", &Query_Factory< GetFreeMem > },
+		{ "freemem", &Property_Factory< GetFreeMem > },
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "heapsize", &Query_Factory< GetHeapSize > },
+		{ "heapsize", &Property_Factory< GetHeapSize > },
 		
 	#endif
 		
