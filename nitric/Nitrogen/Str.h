@@ -137,7 +137,6 @@ namespace Nucleus
 	};
 	
 }
-
 	
 #endif
 

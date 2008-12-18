@@ -19,6 +19,7 @@
 
 namespace Nitrogen
 {
+	
 	void CopyToPascalString( const char     *source,
 	                         std::size_t     sourceLength,
 	                         unsigned char  *destination,
@@ -35,4 +36,6 @@ namespace Nitrogen
 		           source + sourceLength,
 		           reinterpret_cast< char * >( destination + 1 ) );
      }
-  }
+     
+}
+
