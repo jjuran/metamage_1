@@ -43,7 +43,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		itsWriteHook( GetFile()->Parent().get(), buffer, buffer + length );
+		itsWriteHook( GetKey(), buffer, buffer + length );
 		
 		return byteCount;
 	}

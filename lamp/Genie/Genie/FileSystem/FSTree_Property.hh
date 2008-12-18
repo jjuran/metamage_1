@@ -19,11 +19,13 @@ namespace Genie
 	class FSTree_Property : public FSTree
 	{
 		private:
-			typedef std::string (*ReadHook)( const FSTree* view );
+			typedef const FSTree* Key;
 			
-			typedef void (*WriteHook)( const FSTree  *view,
-			                           const char    *begin,
-			                           const char    *end );
+			typedef std::string (*ReadHook)( Key key );
+			
+			typedef void (*WriteHook)( Key          key,
+			                           const char  *begin,
+			                           const char  *end );
 			
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;
@@ -41,6 +43,8 @@ namespace Genie
 				itsWriteHook( writeHook )
 			{
 			}
+			
+			Key GetKey() const  { return Parent().get(); }
 			
 			mode_t FilePermMode() const
 			{

@@ -37,9 +37,11 @@ namespace Genie
 	class PropertyWriterFileHandle : public VirtualFileHandle
 	{
 		private:
-			typedef void (*WriteHook)( const FSTree  *view,
-			                           const char    *begin,
-			                           const char    *end );
+			typedef const FSTree* Key;
+			
+			typedef void (*WriteHook)( Key          key,
+			                           const char  *begin,
+			                           const char  *end );
 			
 			WriteHook itsWriteHook;
 		
@@ -52,6 +54,8 @@ namespace Genie
 				itsWriteHook( hook )
 			{
 			}
+			
+			Key GetKey() const  { return GetFile()->Parent().get(); }
 			
 			void SetEOF( off_t length )  {}  // FIXME
 			

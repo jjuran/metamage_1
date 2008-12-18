@@ -53,7 +53,7 @@ namespace Genie
 		
 		try
 		{
-			data = itsReadHook( Parent().get() );
+			data = itsReadHook( GetKey() );
 			
 			data += '\n';
 		}
