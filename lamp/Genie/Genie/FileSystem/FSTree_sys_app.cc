@@ -27,7 +27,7 @@ namespace Genie
 	{
 		typedef long Result;
 		
-		Result Get() const
+		static Result Get()
 		{
 			return ::FreeMem();
 		}
@@ -39,7 +39,7 @@ namespace Genie
 	{
 		typedef long Result;
 		
-		Result Get() const
+		static Result Get()
 		{
 			THz zone = ::ApplicationZone();
 			
@@ -55,7 +55,7 @@ namespace Genie
 		public:
 			std::string Get() const
 			{
-				std::string output = NN::Convert< std::string >( Accessor().Get() ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor::Get() ) + "\n";
 				
 				return output;
 			}
