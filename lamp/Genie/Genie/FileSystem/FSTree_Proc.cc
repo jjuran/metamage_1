@@ -18,7 +18,7 @@
 #include "HexStrings.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Generated.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -30,6 +30,17 @@ namespace Genie
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
+	
+	static pid_t GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return pid_t( std::atoi( parent->Name().c_str() ) );
+	}
+	
+	static pid_t GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
 	
 	
 	class FSTree_proc_self : public FSTree
@@ -46,7 +57,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return pid_KeyName_Traits::NameFromKey( getpid() ); }
 			
-			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( Parent(), ReadLink(), getpid() ); }
+			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( ParentRef(), ReadLink(), getpid() ); }
 	};
 	
 	
@@ -102,14 +113,9 @@ namespace Genie
 	
 	class FSTree_PID_Link_Base : public FSTree
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
 			FSTree_PID_Link_Base( const FSTreePtr&    parent,
-			                      const std::string&  name,
-			                      pid_t               pid ) : FSTree( parent, name ),
-			                                                  itsPID( pid )
+			                      const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
@@ -118,25 +124,31 @@ namespace Genie
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 		protected:
-			Process& GetProcess() const  { return Genie::GetProcess( itsPID ); }
+			Process& GetProcess() const;
 	};
+	
+	inline Process& FSTree_PID_Link_Base::GetProcess() const
+	{
+		pid_KeyName_Traits::Key pid = GetKeyFromParent( ParentRef() );
+		
+		return Genie::GetProcess( pid );
+	}
 	
 	template < class LinkResolver >
 	class FSTree_PID_Link : public FSTree_PID_Link_Base
 	{
 		public:
 			FSTree_PID_Link( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 pid_t               pid ) : FSTree_PID_Link_Base( parent, name, pid )
+			                 const std::string&  name ) : FSTree_PID_Link_Base( parent, name )
 			{
 			}
 			
-			FSTreePtr ResolveLink() const  { return LinkResolver()( GetProcess() ); }
+			FSTreePtr ResolveLink() const  { return LinkResolver::Resolve( GetProcess() ); }
 	};
 	
 	struct ResolveLink_cwd
 	{
-		FSTreePtr operator()( Process& process ) const
+		static FSTreePtr Resolve( Process& process )
 		{
 			return process.GetCWD();
 		}
@@ -144,7 +156,7 @@ namespace Genie
 	
 	struct ResolveLink_exe
 	{
-		FSTreePtr operator()( Process& process ) const
+		static const FSTreePtr& Resolve( Process& process )
 		{
 			return process.ProgramFile();
 		}
@@ -152,14 +164,14 @@ namespace Genie
 	
 	struct ResolveLink_root
 	{
-		FSTreePtr operator()( Process& process ) const
+		static const FSTreePtr& Resolve( Process& process )
 		{
 			return FSRoot();
 		}
 	};
 	
 	
-	extern const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[];
+	extern const Functional_Traits< void >::Mapping proc_PID_Mappings[];
 	
 	FSTreePtr proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                  const std::string&  name,
@@ -170,7 +182,7 @@ namespace Genie
 			return FSTreePtr( new FSTree_proc_self( parent ) );
 		}
 		
-		return Premapped_Factory< Key, proc_PID_Mappings >( parent, name, key );
+		return Premapped_Factory< proc_PID_Mappings >( parent, name );
 	}
 	
 	// Process states
@@ -276,34 +288,21 @@ namespace Genie
 		return runState;
 	}
 	
-	class proc_PID_cmdline_Query
+	class proc_PID_cmdline
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
-			proc_PID_cmdline_Query( pid_t pid ) : itsPID( pid )  {}
-			
-			std::string Get() const
+			static std::string Get( const Process& process )
 			{
-				const Process& process = GetProcess( itsPID );
-				
 				return process.GetCmdLine();
 			}
 	};
 	
-	class proc_PID_stat_Query
+	class proc_PID_stat
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
-			proc_PID_stat_Query( pid_t pid ) : itsPID( pid )  {}
-			
-			std::string Get() const
+			static std::string Get( const Process& process )
 			{
-				const Process& process = GetProcess( itsPID );
-				
+				pid_t pid  = process.GetPID();
 				pid_t ppid = process.GetPPID();
 				pid_t pgid = process.GetPGID();
 				pid_t sid  = process.GetSID();
@@ -330,7 +329,7 @@ namespace Genie
 					}
 				}
 				
-				return NN::Convert< std::string >( itsPID ) + " "
+				return NN::Convert< std::string >( pid ) + " "
 				       "(" + process.ProgramName() + ")"      " " +
 				       ProcessStateCode( process )          + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
@@ -342,23 +341,16 @@ namespace Genie
 			}
 	};
 	
-	class proc_PID_backtrace_Query
+	class proc_PID_backtrace
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
-			proc_PID_backtrace_Query( pid_t pid ) : itsPID( pid )  {}
-			
-			std::string Get() const;
+			static std::string Get( const Process& process );
 	};
 	
-	std::string proc_PID_backtrace_Query::Get() const
+	std::string proc_PID_backtrace::Get( const Process& process )
 	{
 		using Backtrace::StackFramePtr;
 		using Backtrace::ReturnAddress;
-		
-		const Process& process = GetProcess( itsPID );
 		
 		StackFramePtr top    = process.GetStackFramePointer();
 		StackFramePtr bottom = process.GetStackBottomPointer();
@@ -381,41 +373,49 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr fd_Factory( const FSTreePtr&    parent,
-	                             const std::string&  name,
-	                             pid_t               key )
+	template < class Accessor >
+	struct proc_PID_Property
 	{
+		typedef pid_KeyName_Traits::Key Key;
+		
+		static std::string Read( Key pid )
+		{
+			return NN::Convert< std::string >( Accessor::Get( GetProcess( pid ) ) );
+		}
+	};
+	
+	template < class Accessor >
+	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef proc_PID_Property< Accessor > Property;
+		
+		return FSTreePtr( new FSTree_Generated( parent,
+		                                        name,
+		                                        &GetKey,
+		                                        &Property::Read ) );
+	}
+	
+	static FSTreePtr fd_Factory( const FSTreePtr&    parent,
+	                             const std::string&  name )
+	{
+		pid_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		return FSTreePtr( new FSTree_PID_fd( parent, name, key ) );
 	}
 	
 	template < class LinkResolver >
 	FSTreePtr Link_Factory( const FSTreePtr&    parent,
-	                        const std::string&  name,
-	                        pid_t               key )
+	                        const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_PID_Link< LinkResolver >( parent, name, key ) );
-	}
-	
-	template < class Query >
-	FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                         const std::string&  name,
-	                         pid_t               key )
-	{
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_PID_Link< LinkResolver >( parent, name ) );
 	}
 	
 	class FSTree_proc_PID_core : public FSTree
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
 			FSTree_proc_PID_core( const FSTreePtr&    parent,
-			                      const std::string&  name,
-			                      pid_t               key ) : FSTree( parent, name ),
-			                                                  itsPID( key )
+			                      const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
@@ -424,7 +424,9 @@ namespace Genie
 	
 	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
 	{
-		Process& process = GetProcess( itsPID );
+		pid_KeyName_Traits::Key pid = GetKeyFromParent( ParentRef() );
+		
+		Process& process = GetProcess( pid );
 		
 		if ( mode == 0 )
 		{
@@ -437,13 +439,12 @@ namespace Genie
 	}
 	
 	static FSTreePtr core_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name,
-	                               pid_t               key )
+	                               const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_proc_PID_core( parent, name, key ) );
+		return FSTreePtr( new FSTree_proc_PID_core( parent, name ) );
 	}
 	
-	const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[] =
+	const Functional_Traits< void >::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
 		
@@ -451,9 +452,9 @@ namespace Genie
 		{ "exe",  &Link_Factory< ResolveLink_exe  > },
 		{ "root", &Link_Factory< ResolveLink_root > },
 		
-		{ "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > },
-		{ "stat",      &Query_Factory< proc_PID_stat_Query      > },
-		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > },
+		{ "cmdline",   &Generated_Factory< proc_PID_cmdline   > },
+		{ "stat",      &Generated_Factory< proc_PID_stat      > },
+		{ "backtrace", &Generated_Factory< proc_PID_backtrace > },
 		
 		{ "core", &core_Factory },
 		

@@ -19,8 +19,9 @@
 
 // Genie
 #include "Genie/FileSystem/Drives.hh"
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Stamp_Action.hh"
+#include "Genie/FileSystem/FSTree_Virtual_Link.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 
 
@@ -74,55 +75,31 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_drive_N_Mappings[];
 	
 	FSTreePtr sys_mac_drive_Details::GetChildNode( const FSTreePtr&    parent,
 		                                           const std::string&  name,
 		                                           const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_drive_N_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_drive_N_Mappings >( parent, name );
 	}
 	
 	
-	class FSTree_Driver_Link : public FSTree
+	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		private:
-			typedef N::DriverRefNum Key;
-			
-			Key itsKey;
-		
-		public:
-			FSTree_Driver_Link( const FSTreePtr&    parent,
-			                    const Key&          key,
-			                    const std::string&  name ) : FSTree( parent, name ),
-			                                                 itsKey ( key )
-			{
-			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const
-			{
-				return ResolvePathname( ReadLink() );
-			}
-	};
-	
-	std::string FSTree_Driver_Link::ReadLink() const
-	{
-		UnitNumber unit = ~itsKey;
-		
-		std::string name = NN::Convert< std::string >( unit );
-		
-		return "/sys/mac/unit/" + name;
+		return N::FSVolumeRefNum( std::atoi( parent->Name().c_str() ) );
 	}
 	
-	
-	static FSTreePtr Link_Factory( const FSTreePtr&                 parent,
-	                               const std::string&               name,
-	                               DriveNumber_KeyName_Traits::Key  key )
+	static N::FSVolumeRefNum GetKey( const FSTree* that )
 	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	static FSTreePtr Link_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
+	{
+		DriveNumber_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		const DrvQEl* el = FindDrive( key );
 		
 		if ( el == NULL )
@@ -132,14 +109,20 @@ namespace Genie
 		
 		N::DriverRefNum refNum = N::DriverRefNum( el->dQRefNum );
 		
-		return FSTreePtr( new FSTree_Driver_Link( parent, refNum, name ) );
+		UnitNumber unit = ~refNum;
+		
+		std::string unitNumber = NN::Convert< std::string >( unit );
+		
+		std::string target = "/sys/mac/unit/" + unitNumber;
+		
+		return FSTreePtr( new FSTree_Virtual_Link( parent, name, target ) );
 	}
 	
 	struct GetDriveFlags
 	{
 		typedef std::string Result;
 		
-		std::string Get( const DrvQEl& drive ) const
+		static std::string Get( const DrvQEl& drive )
 		{
 			const std::size_t sizeof_flags = 4;
 			
@@ -156,7 +139,7 @@ namespace Genie
 	{
 		typedef UInt32 Result;
 		
-		UInt32 Get( const DrvQEl& drive ) const
+		static UInt32 Get( const DrvQEl& drive )
 		{
 			UInt32 size = drive.dQDrvSz;
 			
@@ -173,67 +156,58 @@ namespace Genie
 	{
 		typedef SInt16 Result;
 		
-		SInt16 Get( const DrvQEl& drive ) const
+		static SInt16 Get( const DrvQEl& drive )
 		{
 			return drive.dQFSID;
 		}
 	};
 	
 	template < class Accessor >
-	class sys_mac_drive_N_Query
+	struct sys_mac_drive_N_Property
 	{
-		private:
-			typedef UInt16 Key;
-			
-			Key itsKey;
+		typedef N::FSVolumeRefNum Key;
 		
-		public:
-			sys_mac_drive_N_Query( const Key& key ) : itsKey( key )
+		static std::string Read( Key key )
+		{
+			const DrvQEl* el = FindDrive( key );
+			
+			if ( el == NULL )
 			{
+				throw FSTree_Property::Undefined();
 			}
 			
-			std::string Get() const
-			{
-				const DrvQEl* el = FindDrive( itsKey );
-				
-				if ( el == NULL )
-				{
-					return "";
-				}
-				
-				std::string output = NN::Convert< std::string >( Accessor().Get( *el ) ) + "\n";
-				
-				return output;
-			}
+			return NN::Convert< std::string >( Accessor::Get( *el ) );
+		}
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Query_Factory( const FSTreePtr&                 parent,
-	                                const std::string&               name,
-	                                DriveNumber_KeyName_Traits::Key  key )
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
-		typedef sys_mac_drive_N_Query< Accessor > Query;
+		typedef sys_mac_drive_N_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
 	template < class Stamp >
-	static FSTreePtr Stamp_Factory( const FSTreePtr&                 parent,
-	                                const std::string&               name,
-	                                DriveNumber_KeyName_Traits::Key  key )
+	static FSTreePtr Stamp_Factory( const FSTreePtr&    parent,
+	                                const std::string&  name )
 	{
+		DriveNumber_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		return FSTreePtr( new Stamp( parent, name, key ) );
 	}
 	
-	const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
 		
-		{ "flags", &Query_Factory< GetDriveFlags > },
-		{ "fsid",  &Query_Factory< GetDriveFSID  > },
-		{ "size",  &Query_Factory< GetDriveSize  > },
+		{ "flags", &Property_Factory< GetDriveFlags > },
+		{ "fsid",  &Property_Factory< GetDriveFSID  > },
+		{ "size",  &Property_Factory< GetDriveSize  > },
 		
 		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
 		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },

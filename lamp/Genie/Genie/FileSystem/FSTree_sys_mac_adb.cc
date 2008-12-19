@@ -14,7 +14,8 @@
 #include "ADBProtocol.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Generated.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Genie
@@ -36,65 +37,45 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< ADBAddress_KeyName_Traits::Key >::Mapping sys_mac_adb_N_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_adb_N_Mappings[];
 	
 	FSTreePtr sys_mac_adb_Details::GetChildNode( const FSTreePtr&    parent,
 		                                         const std::string&  name,
 		                                         const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_adb_N_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_adb_N_Mappings >( parent, name );
 	}
 	
 	
-	class sys_mac_adb_N_type_Query
+	class sys_mac_adb_N_type
 	{
 		private:
 			typedef N::ADBAddress Key;
-			
-			Key itsKey;
 		
 		public:
-			sys_mac_adb_N_type_Query( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
+			static std::string Read( Key key )
 			{
 				using BitsAndBytes::ByteAsHex;
 				
-				ADBDataBlock data = N::GetADBInfo( itsKey );
+				ADBDataBlock data = N::GetADBInfo( key );
 				
-				std::string value = ByteAsHex( data.devType );
-				
-				std::string output = value + "\n";
-				
-				return output;
+				return ByteAsHex( data.devType );
 			}
 	};
 	
-	class sys_mac_adb_N_origin_Query
+	class sys_mac_adb_N_origin
 	{
 		private:
 			typedef N::ADBAddress Key;
-			
-			Key itsKey;
 		
 		public:
-			sys_mac_adb_N_origin_Query( const Key& key ) : itsKey( key )
+			static std::string Read( Key key )
 			{
-			}
-			
-			std::string Get() const
-			{
-				using BitsAndBytes::ByteAsHex;
+				ADBDataBlock data = N::GetADBInfo( key );
 				
-				ADBDataBlock data = N::GetADBInfo( itsKey );
+				char c = '0' + data.origADBAddr;
 				
-				std::string output = "0\n";
-				
-				output[0] += data.origADBAddr;
-				
-				return output;
+				return std::string( c, 1 );
 			}
 	};
 	
@@ -119,72 +100,62 @@ namespace Genie
 		result += '\n';
 	}
 	
-	class sys_mac_adb_N_registers_Query
+	class sys_mac_adb_N_registers
 	{
 		private:
 			typedef N::ADBAddress Key;
-			
-			Key itsKey;
 		
 		public:
-			sys_mac_adb_N_registers_Query( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
+			static std::string Read( Key key )
 			{
 				using BitsAndBytes::ByteAsHex;
 				
 				std::string output;
 				
-				WriteADBRegister( itsKey, 0, output );
-				WriteADBRegister( itsKey, 1, output );
-				WriteADBRegister( itsKey, 2, output );
-				WriteADBRegister( itsKey, 3, output );
+				WriteADBRegister( key, 0, output );
+				WriteADBRegister( key, 1, output );
+				WriteADBRegister( key, 2, output );
+				WriteADBRegister( key, 3, output );
 				
 				return output;
 			}
 	};
 	
 	
-	static FSTreePtr Type_Factory( const FSTreePtr&                parent,
-	                               const std::string&              name,
-	                               ADBAddress_KeyName_Traits::Key  key )
+	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
 	{
-		typedef sys_mac_adb_N_type_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return ADBAddress_KeyName_Traits::KeyFromName( parent->Name() );
 	}
 	
-	static FSTreePtr Origin_Factory( const FSTreePtr&                parent,
-	                                 const std::string&              name,
-	                                 ADBAddress_KeyName_Traits::Key  key )
+	static N::ADBAddress GetKey( const FSTree* that )
 	{
-		typedef sys_mac_adb_N_origin_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return GetKeyFromParent( that->ParentRef() );
 	}
 	
-	static FSTreePtr Registers_Factory( const FSTreePtr&                parent,
-	                                    const std::string&              name,
-	                                    ADBAddress_KeyName_Traits::Key  key )
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
-		typedef sys_mac_adb_N_registers_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
-	const Functional_Traits< ADBAddress_KeyName_Traits::Key >::Mapping sys_mac_adb_N_Mappings[] =
+	static FSTreePtr Registers_Factory( const FSTreePtr&    parent,
+	                                    const std::string&  name )
 	{
-		{ "type",      &Type_Factory      },
-		{ "origin",    &Origin_Factory    },
-		{ "registers", &Registers_Factory },
+		return FSTreePtr( new FSTree_Generated( parent,
+		                                        name,
+		                                        &GetKey,
+		                                        &sys_mac_adb_N_registers::Read ) );
+	}
+	
+	const Functional_Traits< void >::Mapping sys_mac_adb_N_Mappings[] =
+	{
+		{ "type",      &Property_Factory< sys_mac_adb_N_type   > },
+		{ "origin",    &Property_Factory< sys_mac_adb_N_origin > },
+		{ "registers", &Registers_Factory                        },
 		
 		{ NULL, NULL }
 	};

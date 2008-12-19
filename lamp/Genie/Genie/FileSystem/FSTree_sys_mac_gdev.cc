@@ -6,7 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_gdev.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
 
 
@@ -70,13 +70,13 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< GDHandle_KeyName_Traits::Key >::Mapping sys_mac_gdev_H_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_gdev_H_Mappings[];
 	
 	FSTreePtr sys_mac_gdev_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
 		                                          const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_gdev_H_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_gdev_H_Mappings >( parent, name );
 	}
 	
 	
@@ -84,7 +84,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::GDHandle gdevice ) const
+		static Result Get( N::GDHandle gdevice )
 		{
 			return PrintableBounds( Rect( gdevice[0]->gdRect ) );
 		}
@@ -94,59 +94,91 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( N::GDHandle gdevice ) const
+		static Result Get( N::GDHandle gdevice )
 		{
 			return PrintableSize( gdevice[0]->gdRect );
 		}
 	};
 	
 	template < class Accessor >
-	class sys_mac_gdev_H_Query
+	struct sys_mac_gdev_N_Property
 	{
-		private:
-			typedef N::GDHandle Key;
-			
-			Key itsKey;
+		typedef N::GDHandle Key;
 		
-		public:
-			sys_mac_gdev_H_Query( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string Get() const
-			{
-				std::string output = NN::Convert< std::string >( Accessor().Get( itsKey ) ) + "\n";
-				
-				return output;
-			}
+		static std::string Read( Key key )
+		{
+			return NN::Convert< std::string >( Accessor::Get( key ) );
+		}
 	};
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&              parent,
-	                                      const std::string&            name,
-	                                      GDHandle_KeyName_Traits::Key  key )
+	inline unsigned char nibble_from_ascii( char c )
 	{
+		return c & 0x10 ?  c         - '0'
+		                : (c | 0x20) - 'a' + 10;
+	}
+	
+	static inline UInt32 Read_8_nibbles( const char* p )
+	{
+		UInt32 result = nibble_from_ascii( p[ 0 ] ) << 28
+		              | nibble_from_ascii( p[ 1 ] ) << 24
+		              | nibble_from_ascii( p[ 2 ] ) << 20
+		              | nibble_from_ascii( p[ 3 ] ) << 16
+		              | nibble_from_ascii( p[ 4 ] ) << 12
+		              | nibble_from_ascii( p[ 5 ] ) <<  8
+		              | nibble_from_ascii( p[ 6 ] ) <<  4
+		              | nibble_from_ascii( p[ 7 ] ) <<  0;
+		
+		return result;
+	}
+	
+	
+	static inline void* PtrFromName( const std::string& name )
+	{
+		if ( name.length() != sizeof (void*) * 2 )
+		{
+			return NULL;
+		}
+		
+		return (void*) Read_8_nibbles( name.data() );
+	}
+	
+	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return (N::GDHandle) PtrFromName( parent->Name() );
+	}
+	
+	static N::GDHandle GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef sys_mac_gdev_N_Property< Accessor > Property;
+		
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
+	}
+	
+	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
+	                                      const std::string&  name )
+	{
+		GDHandle_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		
 		std::string unit = NN::Convert< std::string >( ~key[0]->gdRefNum );
 		
 		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
 	}
 	
-	template < class Accessor >
-	static FSTreePtr Query_Factory( const FSTreePtr&               parent,
-	                                const std::string&             name,
-	                                GDHandle_KeyName_Traits::Key   key )
-	{
-		typedef sys_mac_gdev_H_Query< Accessor > Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
-	}
-	
-	const Functional_Traits< GDHandle_KeyName_Traits::Key >::Mapping sys_mac_gdev_H_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_gdev_H_Mappings[] =
 	{
 		{ "driver", &Driver_Link_Factory },
 		
-		{ "bounds", &Query_Factory< GetGDBounds > },
+		{ "bounds", &Property_Factory< GetGDBounds > },
 		
 		{ NULL, NULL }
 	};
