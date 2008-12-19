@@ -101,6 +101,8 @@ namespace Genie
 			virtual bool IsPipe() const;
 			virtual bool IsAnonymous() const;
 			
+			const FSTreePtr& ParentRef() const  { return itsParent; }
+			
 			const std::string& Name() const  { return itsName; }
 			
 			virtual std::string Pathname() const;
