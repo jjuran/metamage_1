@@ -12,7 +12,7 @@
 #include "Nitrogen/QuickDraw.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Genie
@@ -87,36 +87,37 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	class sys_mac_desktop_Query
+	struct sys_mac_desktop_Property
 	{
-		public:
-			std::string Get() const
-			{
-				const BitMap& screenBits = N::GetQDGlobalsScreenBits();
-				
-				std::string output = Accessor::Get( screenBits );
-				
-				output += "\n";
-				
-				return output;
-			}
+		static std::string Read( int )
+		{
+			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
+			
+			return NN::Convert< std::string >( Accessor::Get( screenBits ) );
+		}
 	};
 	
-	template < class Get >
-	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	static int GetKey( const FSTree* )
 	{
-		typedef sys_mac_desktop_Query< Get > Query;
+		return 0;
+	}
+	
+	template < class Accessor >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		typedef sys_mac_desktop_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
 	const Singleton_Mapping sys_mac_desktop_Mappings[] =
 	{
-		{ "bounds", &Query_Factory< GetScreenBounds > },
-		{ "size",   &Query_Factory< GetScreenSize   > },
+		{ "bounds", &Property_Factory< GetScreenBounds > },
+		{ "size",   &Property_Factory< GetScreenSize   > },
 		
 		{ NULL, NULL }
 	};
