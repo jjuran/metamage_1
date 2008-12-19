@@ -76,6 +76,11 @@ namespace Genie
 		return N::ReadXPRam();
 	}
 	
+	std::string sys_mac_xpram::Read( const FSTree* )
+	{
+		return N::ReadXPRam();
+	}
+	
 }
 
 #endif

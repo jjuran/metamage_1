@@ -13,12 +13,11 @@
 namespace Genie
 {
 	
-	class sys_mac_name_Query
+	class FSTree;
+	
+	struct sys_mac_name
 	{
-		public:
-			sys_mac_name_Query()  {}
-			
-			std::string Get() const;
+		static std::string Read( const FSTree* );
 	};
 	
 }

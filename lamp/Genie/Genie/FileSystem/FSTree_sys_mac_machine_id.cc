@@ -26,9 +26,9 @@ namespace Genie
 		return NN::Convert< std::string >( id );
 	}
 	
-	std::string sys_mac_machine_id_Query::Get() const
+	std::string sys_mac_machine_id::Read( const FSTree* )
 	{
-		return GetMachineID() + "\n";
+		return GetMachineID();
 	}
 	
 }

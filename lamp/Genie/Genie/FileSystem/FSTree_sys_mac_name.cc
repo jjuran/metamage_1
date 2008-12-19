@@ -84,9 +84,9 @@ namespace Genie
 		return "";
 	}
 	
-	std::string sys_mac_name_Query::Get() const
+	std::string sys_mac_name::Read( const FSTree* ) const
 	{
-		return GetMachineName() + "\n";
+		return GetMachineName();
 	}
 	
 }

@@ -36,7 +36,7 @@ namespace Genie
 		}
 	}
 	
-	std::string sys_mac_keys_Query::Get() const
+	std::string sys_mac_keys::Read( const FSTree* )
 	{
 		std::string result;
 		

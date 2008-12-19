@@ -21,6 +21,13 @@ namespace Genie
 			std::string Get() const;
 	};
 	
+	class FSTree;
+	
+	struct sys_mac_xpram
+	{
+		static std::string Read( const FSTree* );
+	};
+	
 }
 
 #endif

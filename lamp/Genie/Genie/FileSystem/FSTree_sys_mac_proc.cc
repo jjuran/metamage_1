@@ -6,7 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Genie
@@ -14,6 +14,17 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	
+	static ProcessSerialNumber GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return ProcessSerialNumber_KeyName_Traits::KeyFromName( parent->Name() );
+	}
+	
+	static ProcessSerialNumber GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
 	
 	
 	std::string ProcessSerialNumber_KeyName_Traits::NameFromKey( const Key& psn )
@@ -74,30 +85,26 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< ProcessSerialNumber_KeyName_Traits::Key >::Mapping sys_mac_proc_PSN_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_proc_PSN_Mappings[];
 	
 	FSTreePtr sys_mac_proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
 		                                          const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_proc_PSN_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_proc_PSN_Mappings >( parent, name );
 	}
 	
 	
-	class sys_mac_proc_PSN_name_Query
+	class sys_mac_proc_PSN_name
 	{
 		private:
 			typedef ProcessSerialNumber Key;
-			
-			Key itsKey;
 		
 		public:
-			sys_mac_proc_PSN_name_Query( const Key& key ) : itsKey( key )
+			static std::string Read( const FSTree* that )
 			{
-			}
-			
-			std::string Get() const
-			{
+				Key key = GetKey( that );
+				
 				Str255 name;
 				
 				ProcessInfoRec processInfo;
@@ -106,26 +113,17 @@ namespace Genie
 				
 				processInfo.processName = name;
 				
-				N::GetProcessInformation( itsKey, processInfo );
+				N::GetProcessInformation( key, processInfo );
 				
-				std::string output = NN::Convert< std::string >( name ) + "\n";
-				
-				return output;
+				return NN::Convert< std::string >( name );
 			}
 	};
 	
 	class FSTree_sys_mac_proc_PSN_exe : public FSTree
 	{
-		private:
-			typedef ProcessSerialNumber Key;
-			
-			Key itsKey;
-		
 		public:
 			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&    parent,
-			                             const std::string&  name,
-			                             const Key&          key ) : FSTree( parent, name ),
-			                                                         itsKey( key    )
+			                             const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
@@ -133,29 +131,30 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::GetProcessAppSpec( itsKey ) ); }
+			FSTreePtr ResolveLink() const
+			{
+				ProcessSerialNumber psn = GetKeyFromParent( ParentRef() );
+				
+				return FSTreeFromFSSpec( N::GetProcessAppSpec( psn ) );
+			}
 	};
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&                          parent,
-	                               const std::string&                        name,
-	                               ProcessSerialNumber_KeyName_Traits::Key   key )
+	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
 	{
-		typedef sys_mac_proc_PSN_name_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &sys_mac_proc_PSN_name::Read ) );
 	}
 	
-	static FSTreePtr Executable_Factory( const FSTreePtr&                          parent,
-	                                     const std::string&                        name,
-	                                     ProcessSerialNumber_KeyName_Traits::Key   key )
+	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
+	                                     const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( parent, name, key ) );
+		return FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
 	
-	const Functional_Traits< ProcessSerialNumber_KeyName_Traits::Key >::Mapping sys_mac_proc_PSN_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ "name", &Name_Factory },
 		

@@ -108,9 +108,9 @@ namespace Genie
 		return "";
 	}
 	
-	std::string sys_mac_user_name_Query::Get() const
+	std::string sys_mac_user_name::Read( const FSTree* )
 	{
-		return GetUserName() + "\n";
+		return GetUserName();
 	}
 	
 }

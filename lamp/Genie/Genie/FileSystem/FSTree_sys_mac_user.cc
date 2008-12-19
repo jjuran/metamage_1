@@ -6,7 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_user_home.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_user_name.hh"
 
@@ -17,9 +17,9 @@ namespace Genie
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		typedef FSTree_QueryFile< sys_mac_user_name_Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &sys_mac_user_name::Read ) );
 	}
 	
 	const Singleton_Mapping sys_mac_user_Mappings[] =

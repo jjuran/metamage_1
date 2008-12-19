@@ -6,7 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_machine.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_machine_id.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_machine_name.hh"
 
@@ -14,19 +14,19 @@
 namespace Genie
 {
 	
-	template < class Query >
-	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Read ) );
 	}
 	
 	const Singleton_Mapping sys_mac_machine_Mappings[] =
 	{
-		{ "id",   &Query_Factory< sys_mac_machine_id_Query > },
-		{ "name", &Query_Factory< sys_mac_machine_name_Query > },
+		{ "id",   &Property_Factory< sys_mac_machine_id   > },
+		{ "name", &Property_Factory< sys_mac_machine_name > },
 		
 		{ NULL, NULL }
 	};

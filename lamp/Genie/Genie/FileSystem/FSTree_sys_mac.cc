@@ -6,7 +6,8 @@
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Generated.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_desktop.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gdev.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
@@ -30,13 +31,22 @@
 namespace Genie
 {
 	
-	template < class Query >
-	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Read ) );
+	}
+	
+	template < class Property >
+	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
+	                                    const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Generated( parent,
+		                                        name,
+		                                        &Property::Read ) );
 	}
 	
 	const Singleton_Mapping sys_mac_Mappings[] =
@@ -54,7 +64,7 @@ namespace Genie
 		{ "drive", &Singleton_Factory< FSTree_sys_mac_drive > },
 		{ "unit",  &Singleton_Factory< FSTree_sys_mac_unit  > },
 		
-		{ "xpram", &Query_Factory< sys_mac_xpram_Query > },
+		{ "xpram", &Generated_Factory< sys_mac_xpram > },
 		
 	#endif
 		
@@ -64,8 +74,8 @@ namespace Genie
 		
 		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
-		{ "name", &Query_Factory< sys_mac_name_Query > },
-		{ "keys", &Query_Factory< sys_mac_keys_Query > },
+		{ "name", &Property_Factory< sys_mac_name > },
+		{ "keys", &Generated_Factory< sys_mac_keys > },
 		
 		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > },
 		
