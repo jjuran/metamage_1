@@ -19,13 +19,13 @@ namespace Genie
 	class FSTree_Property : public FSTree
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const FSTree* FSTreeKey;
 			
-			typedef Key (*KeyHook)( const FSTree* that );
+			typedef FSTreeKey (*KeyHook)( const FSTree* that );
 			
-			typedef std::string (*ReadHook)( Key key );
+			typedef std::string (*ReadHook)( FSTreeKey key );
 			
-			typedef void (*WriteHook)( Key          key,
+			typedef void (*WriteHook)( FSTreeKey    key,
 			                           const char  *begin,
 			                           const char  *end );
 			
@@ -39,11 +39,11 @@ namespace Genie
 			template < class Key >
 			FSTree_Property( const FSTreePtr&      parent,
 			                 const std::string&    name,
-			                 Key                 (*keyHook  )( const FSTree*    ),
-			                 std::string         (*readHook )( Key          key ),
-			                 void                (*writeHook)( Key          key,
-			                                                   const char  *begin,
-			                                                   const char  *end ) )
+			                 Key                 (*keyHook  )( const FSTree*      ),
+			                 std::string         (*readHook )( Key            key ),
+			                 void                (*writeHook)( Key            key,
+			                                                   const char    *begin,
+			                                                   const char    *end ) )
 			:
 				FSTree( parent, name ),
 				itsKeyHook  ( (KeyHook  ) keyHook   ),
@@ -55,8 +55,8 @@ namespace Genie
 			template < class Key >
 			FSTree_Property( const FSTreePtr&      parent,
 			                 const std::string&    name,
-			                 Key                 (*keyHook  )( const FSTree*    ),
-			                 std::string         (*readHook )( Key          key ) )
+			                 Key                 (*keyHook  )( const FSTree*      ),
+			                 std::string         (*readHook )( Key            key ) )
 			:
 				FSTree( parent, name ),
 				itsKeyHook  ( (KeyHook  ) keyHook  ),
@@ -77,7 +77,7 @@ namespace Genie
 			{
 			}
 			
-			static Key GetKey( const FSTree* that )  { return that->ParentRef().get(); }
+			static FSTreeKey GetKey( const FSTree* that )  { return that->ParentRef().get(); }
 			
 			mode_t FilePermMode() const
 			{
