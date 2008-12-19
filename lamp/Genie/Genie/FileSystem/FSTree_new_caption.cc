@@ -77,7 +77,7 @@ namespace Genie
 	
 	static void CaptionText_SetEOF( const FSTree* text, off_t length )
 	{
-		const FSTree* view = text->Parent().get();
+		const FSTree* view = text->ParentRef().get();
 		
 		gCaptionTextMap[ view ].resize( length );
 		
@@ -106,7 +106,7 @@ namespace Genie
 	
 	const FSTree* CaptionTextFileHandle::ViewKey() const
 	{
-		return GetFile()->Parent().get();
+		return GetFile()->ParentRef().get();
 	}
 	
 	ssize_t CaptionTextFileHandle::SysRead( char* buffer, std::size_t byteCount )
@@ -152,7 +152,7 @@ namespace Genie
 			{
 			}
 			
-			std::string& String() const  { return gCaptionTextMap[ Parent().get() ]; }
+			std::string& String() const  { return gCaptionTextMap[ ParentRef().get() ]; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			

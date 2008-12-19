@@ -376,7 +376,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->Parent() );
+		return GetKeyFromParent( that->ParentRef() );
 	}
 	
 	template < class Accessor >

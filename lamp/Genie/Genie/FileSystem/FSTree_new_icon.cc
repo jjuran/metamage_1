@@ -144,7 +144,7 @@ namespace Genie
 	
 	const FSTree* IconDataFileHandle::ViewKey() const
 	{
-		return GetFile()->Parent().get();
+		return GetFile()->ParentRef().get();
 	}
 	
 	ssize_t IconDataFileHandle::SysRead( char* buffer, std::size_t byteCount )
@@ -213,7 +213,7 @@ namespace Genie
 			{
 			}
 			
-			N::Handle Data() const  { return gIconMap[ Parent().get() ]; }
+			N::Handle Data() const  { return gIconMap[ ParentRef().get() ]; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			

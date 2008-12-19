@@ -99,7 +99,7 @@ namespace Genie
 	
 	static bool HasWindow( const FSTree* that )
 	{
-		const FSTree* key = that->Parent().get();
+		const FSTree* key = that->ParentRef().get();
 		
 		return gWindowParametersMap[ key ].itsWindow != NULL;
 	}
@@ -330,7 +330,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
 	{
-		return ResolvePathname( ReadLink(), Parent() );
+		return ResolvePathname( ReadLink(), ParentRef() );
 	}
 	
 	
@@ -383,7 +383,7 @@ namespace Genie
 			{
 			}
 			
-			const FSTree* WindowKey() const  { return Parent().get(); }
+			const FSTree* WindowKey() const  { return ParentRef().get(); }
 			
 			bool Exists() const  { return HasWindow( this ); }
 			

@@ -77,7 +77,7 @@ namespace Genie
 			{
 			}
 			
-			static Key GetKey( const FSTree* that )  { return that->Parent().get(); }
+			static Key GetKey( const FSTree* that )  { return that->ParentRef().get(); }
 			
 			mode_t FilePermMode() const
 			{

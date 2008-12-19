@@ -457,7 +457,7 @@ namespace Genie
 	
 	static N::WindowRef GetKey( const FSTree* that )
 	{
-		return (N::WindowRef) PtrFromName( that->Parent()->Name() );
+		return (N::WindowRef) PtrFromName( that->ParentRef()->Name() );
 	}
 	
 	template < class Accessor >

@@ -132,7 +132,7 @@ namespace Genie
 	
 	static const FSTreePtr& GetViewDelegate( const FSTree* view )
 	{
-		const FSTreePtr& delegate = GetViewDelegate( view->Parent().get(), view->Name() );
+		const FSTreePtr& delegate = GetViewDelegate( view->ParentRef().get(), view->Name() );
 		
 		if ( delegate.get() == NULL )
 		{
@@ -149,7 +149,7 @@ namespace Genie
 	
 	static const FSTree* GetViewWindowKey( const FSTree* view )
 	{
-		return GetViewWindowKey( view->Parent().get(), view->Name() );
+		return GetViewWindowKey( view->ParentRef().get(), view->Name() );
 	}
 	
 	
@@ -163,7 +163,7 @@ namespace Genie
 	
 	void FSTree_new_View::HardLink( const FSTreePtr& target ) const
 	{
-		const FSTreePtr& parent = target->Parent();
+		const FSTreePtr& parent = target->ParentRef();
 		
 		const FSTree* key = parent.get();
 		
@@ -179,7 +179,7 @@ namespace Genie
 	
 	bool FSTree_View::Exists() const
 	{
-		return FindView( Parent().get(), Name() ) != NULL;
+		return FindView( ParentRef().get(), Name() ) != NULL;
 	}
 	
 	void FSTree_View::SetTimes() const
@@ -212,7 +212,7 @@ namespace Genie
 	
 	void FSTree_View::CreateDirectory( mode_t mode ) const
 	{
-		const FSTree* parent = Parent().get();
+		const FSTree* parent = ParentRef().get();
 		
 		const std::string& name = Name();
 		
