@@ -89,18 +89,13 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static std::string Read( int )
+		static std::string Read( const FSTree* )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
 			return NN::Convert< std::string >( Accessor::Get( screenBits ) );
 		}
 	};
-	
-	static int GetKey( const FSTree* )
-	{
-		return 0;
-	}
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
@@ -110,7 +105,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	

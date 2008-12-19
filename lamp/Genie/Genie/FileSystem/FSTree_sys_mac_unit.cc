@@ -21,6 +21,12 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	static UnitNumber GetKey( const FSTree* that )
+	{
+		return UnitNumber_KeyName_Traits::KeyFromName( that->ParentRef()->Name() );
+	}
+	
+	
 	AuxDCEHandle* GetUTableBase()
 	{
 		return (AuxDCEHandle*) LMGetUTableBase();
@@ -121,8 +127,10 @@ namespace Genie
 			typedef UnitNumber Key;
 		
 		public:
-			static std::string Read( Key key )
+			static std::string Read( const FSTree* that )
 			{
+				Key key = GetKey( that );
+				
 				if ( !sys_mac_unit_Details::KeyIsValid( key ) )
 				{
 					throw FSTree_Property::Undefined();
@@ -145,11 +153,6 @@ namespace Genie
 	}
 	
 	
-	static UnitNumber GetKey( const FSTree* that )
-	{
-		return UnitNumber_KeyName_Traits::KeyFromName( that->ParentRef()->Name() );
-	}
-	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -158,7 +161,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	

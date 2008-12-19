@@ -64,8 +64,10 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( Key key )
+			static std::string Read( const FSTree* that )
 			{
+				Key key = GetKey( that );
+				
 				using BitsAndBytes::ByteAsHex;
 				
 				ADBDataBlock data = N::GetADBInfo( key );
@@ -80,8 +82,10 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( Key key )
+			static std::string Read( const FSTree* that )
 			{
+				Key key = GetKey( that );
+				
 				ADBDataBlock data = N::GetADBInfo( key );
 				
 				char c = '0' + data.origADBAddr;
@@ -139,7 +143,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	

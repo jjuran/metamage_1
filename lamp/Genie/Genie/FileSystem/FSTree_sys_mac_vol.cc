@@ -35,6 +35,17 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return N::FSVolumeRefNum( -std::atoi( parent->Name().c_str() ) );
+	}
+	
+	static N::FSVolumeRefNum GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	
 #if TARGET_API_MAC_CARBON
 	
 	static inline bool Has_PBXGetVolInfo()
@@ -321,8 +332,10 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( Key key )
+		static std::string Read( const FSTree* that )
 		{
+			Key key = GetKey( that );
+			
 			XVolumeParam pb;
 			
 			Str31 name;
@@ -369,16 +382,6 @@ namespace Genie
 	};
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return N::FSVolumeRefNum( -std::atoi( parent->Name().c_str() ) );
-	}
-	
-	static N::FSVolumeRefNum GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -387,7 +390,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	

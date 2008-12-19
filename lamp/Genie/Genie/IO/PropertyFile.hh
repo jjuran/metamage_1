@@ -37,25 +37,18 @@ namespace Genie
 	class PropertyWriterFileHandle : public VirtualFileHandle
 	{
 		private:
-			typedef unsigned long OpaqueKey;
+			typedef void (*WriteHook)( const FSTree  *that,
+			                           const char    *begin,
+			                           const char    *end );
 			
-			typedef OpaqueKey (*KeyHook)( const FSTree* that );
-			
-			typedef void (*WriteHook)( OpaqueKey    key,
-			                           const char  *begin,
-			                           const char  *end );
-			
-			KeyHook    itsKeyHook;
 			WriteHook  itsWriteHook;
 		
 		public:
 			PropertyWriterFileHandle( const FSTreePtr&  file,
 			                          OpenFlags         flags,
-			                          KeyHook           keyHook,
 			                          WriteHook         writeHook )
 			:
 				VirtualFileHandle( file, flags ),
-				itsKeyHook  ( keyHook   ),
 				itsWriteHook( writeHook )
 			{
 			}

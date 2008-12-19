@@ -167,8 +167,10 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( Key key )
+		static std::string Read( const FSTree* that )
 		{
+			Key key = GetKey( that );
+			
 			const DrvQEl* el = FindDrive( key );
 			
 			if ( el == NULL )
@@ -188,7 +190,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	

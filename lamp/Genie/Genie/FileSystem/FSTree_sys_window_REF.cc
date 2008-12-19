@@ -273,8 +273,10 @@ namespace Genie
 	template < class Accessor >
 	struct sys_window_REF_Property
 	{
-		static std::string Read( const FSTree* key )
+		static std::string Read( const FSTree* that )
 		{
+			const FSTree* key = GetViewKey( that );
+			
 			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 			
 			if ( it == gWindowParametersMap.end() )
@@ -285,8 +287,10 @@ namespace Genie
 			return Accessor::StringFromValue( Accessor::GetRef( it->second ) );
 		}
 		
-		static void Write( const FSTree* key, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end )
 		{
+			const FSTree* key = GetViewKey( that );
+			
 			Accessor::GetRef( gWindowParametersMap[ key ] ) = Accessor::ValueFromString( begin, end );
 		}
 	};
@@ -295,16 +299,6 @@ namespace Genie
 	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
 		public:
-			typedef const FSTree* FSTreeKey;
-
-			typedef FSTreeKey (*KeyHook)( const FSTree* that );
-			
-			typedef std::string (*ReadHook)( FSTreeKey key );
-			
-			typedef void (*WriteHook)( FSTreeKey    key,
-			                           const char  *begin,
-			                           const char  *end );
-			
 			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
 			                                const std::string&  name,
 			                                ReadHook            readHook,
@@ -312,7 +306,6 @@ namespace Genie
 			:
 				FSTree_Property( parent,
 				                 name,
-				                 &GetViewKey,
 				                 readHook,
 				                 writeHook )
 			{

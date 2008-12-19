@@ -408,8 +408,10 @@ namespace Genie
 	{
 		typedef N::WindowRef Key;
 		
-		static std::string Read( Key key )
+		static std::string Read( const FSTree* that )
 		{
+			Key key = GetKey( that );
+			
 			if ( !sys_mac_window_Details::KeyIsValid( key ) )
 			{
 				p7::throw_errno( EIO );
@@ -418,8 +420,10 @@ namespace Genie
 			return NN::Convert< std::string >( Accessor::Get( key ) );
 		}
 		
-		static void Write( Key key, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end )
 		{
+			Key key = GetKey( that );
+			
 			if ( !sys_mac_window_Details::KeyIsValid( key ) )
 			{
 				p7::throw_errno( EIO );
@@ -468,7 +472,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read ) );
 	}
 	
@@ -480,7 +483,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &Property::Read,
 		                                       &Property::Write ) );
 	}

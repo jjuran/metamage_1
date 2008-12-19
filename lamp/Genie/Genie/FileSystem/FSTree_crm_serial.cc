@@ -20,6 +20,17 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return CRMDeviceID_KeyName_Traits::KeyFromName( parent->Name() );
+	}
+	
+	static N::CRMDeviceID GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	
 	static N::CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
 	{
 		N::CRMResource_Container crmResources = N::CRMResources( N::crmSerialDevice );
@@ -60,8 +71,10 @@ namespace Genie
 	
 	typedef StringHandle CRMSerialRecord::*StringSelector;
 	
-	static std::string GetSelectedString( N::CRMDeviceID key, StringSelector selector )
+	static std::string GetSelectedString( const FSTree* that, StringSelector selector )
 	{
+		N::CRMDeviceID key = GetKey( that );
+		
 		N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 		
 		N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
@@ -75,37 +88,27 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_name
 	{
-		static std::string Read( N::CRMDeviceID key )
+		static std::string Read( const FSTree* that )
 		{
-			return GetSelectedString( key, &CRMSerialRecord::name );
+			return GetSelectedString( that, &CRMSerialRecord::name );
 		}
 	};
 	
 	struct sys_mac_crm_serial_N_input
 	{
-		static std::string Read( N::CRMDeviceID key )
+		static std::string Read( const FSTree* that )
 		{
-			return GetSelectedString( key, &CRMSerialRecord::inputDriverName );
+			return GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
 	};
 	
 	struct sys_mac_crm_serial_N_output
 	{
-		static std::string Read( N::CRMDeviceID key )
+		static std::string Read( const FSTree* that )
 		{
-			return GetSelectedString( key, &CRMSerialRecord::outputDriverName );
+			return GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
 	};
-	
-	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return CRMDeviceID_KeyName_Traits::KeyFromName( parent->Name() );
-	}
-	
-	static N::CRMDeviceID GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
 	
 	
 	class sys_mac_crm_serial_N_icon
@@ -141,7 +144,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &sys_mac_crm_serial_N_name::Read ) );
 	}
 	
@@ -150,7 +152,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &sys_mac_crm_serial_N_input::Read ) );
 	}
 	
@@ -159,7 +160,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetKey,
 		                                       &sys_mac_crm_serial_N_output::Read ) );
 
 	}

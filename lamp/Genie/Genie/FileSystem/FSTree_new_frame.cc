@@ -131,13 +131,17 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadMargin( const FSTree* view )
+	static std::string ReadMargin( const FSTree* that )
 	{
+		const FSTree* view = GetViewKey( that );
+		
 		return NN::Convert< std::string >( gFrameParametersMap[ view ].itsMargin );
 	}
 	
-	static void WriteMargin( const FSTree* view, const char* begin, const char* end )
+	static void WriteMargin( const FSTree* that, const char* begin, const char* end )
 	{
+		const FSTree* view = GetViewKey( that );
+		
 		// *end == '\n'
 		
 		gFrameParametersMap[ view ].itsMargin = N::ResID( std::atoi( begin ) );
@@ -151,7 +155,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetViewKey,
 		                                       &ReadMargin,
 		                                       &WriteMargin ) );
 	}

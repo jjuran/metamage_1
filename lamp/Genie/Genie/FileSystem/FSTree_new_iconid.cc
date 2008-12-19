@@ -104,13 +104,17 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadIconID( const FSTree* view )
+	static std::string ReadIconID( const FSTree* that )
 	{
+		const FSTree* view = GetViewKey( that );
+		
 		return NN::Convert< std::string >( gIconIDMap[ view ] );
 	}
 	
-	static void WriteIconID( const FSTree* view, const char* begin, const char* end )
+	static void WriteIconID( const FSTree* that, const char* begin, const char* end )
 	{
+		const FSTree* view = GetViewKey( that );
+		
 		// *end == '\n'
 		
 		gIconIDMap[ view ] = N::ResID( std::atoi( begin ) );
@@ -124,7 +128,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &GetViewKey,
 		                                       &ReadIconID,
 		                                       &WriteIconID ) );
 	}
