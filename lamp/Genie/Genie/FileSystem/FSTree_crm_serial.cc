@@ -8,7 +8,8 @@
 #include "Genie/FileSystem/FSTree_crm_serial.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Generated.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
 
 
@@ -47,64 +48,77 @@ namespace Genie
 		return GetCRMRecPtrFromID( key ) != NULL;
 	}
 	
-	extern const Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_crm_serial_N_Mappings[];
 	
 	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr&    parent,
 		                                                const std::string&  name,
 		                                                const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_crm_serial_N_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_crm_serial_N_Mappings >( parent, name );
 	}
 	
 	
-	class sys_mac_crm_serial_N_name_Query
+	typedef StringHandle CRMSerialRecord::*StringSelector;
+	
+	static std::string GetSelectedString( N::CRMDeviceID key, StringSelector selector )
 	{
-		private:
-			typedef N::CRMDeviceID            Key;
-			typedef StringHandle              CRMSerialRecord::*Selector;
-			
-			Key itsKey;
-			
-			Selector itsSelector;
+		N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 		
-		public:
-			sys_mac_crm_serial_N_name_Query( const Key&  key,
-			                                 Selector    selector ) : itsKey     ( key      ),
-			                                                          itsSelector( selector )
-			{
-			}
-			
-			std::string Get() const
-			{
-				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( itsKey );
-				
-				N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
-				
-				StringHandle h = serialPtr->*itsSelector;
-				
-				std::string name = NN::Convert< std::string >( N::Str255( *h ) );
-				
-				std::string output = name + "\n";
-				
-				return output;
-			}
+		N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
+		
+		StringHandle h = serialPtr->*selector;
+		
+		return NN::Convert< std::string >( N::Str255( *h ) );
+	}
+	
+	// These are necessary because CW Pro 6 doesn't support pointer-to-member template parameters.
+	
+	struct sys_mac_crm_serial_N_name
+	{
+		static std::string Read( N::CRMDeviceID key )
+		{
+			return GetSelectedString( key, &CRMSerialRecord::name );
+		}
 	};
 	
-	class sys_mac_crm_serial_N_icon_Query
+	struct sys_mac_crm_serial_N_input
+	{
+		static std::string Read( N::CRMDeviceID key )
+		{
+			return GetSelectedString( key, &CRMSerialRecord::inputDriverName );
+		}
+	};
+	
+	struct sys_mac_crm_serial_N_output
+	{
+		static std::string Read( N::CRMDeviceID key )
+		{
+			return GetSelectedString( key, &CRMSerialRecord::outputDriverName );
+		}
+	};
+	
+	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return CRMDeviceID_KeyName_Traits::KeyFromName( parent->Name() );
+	}
+	
+	static N::CRMDeviceID GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	
+	class sys_mac_crm_serial_N_icon
 	{
 		private:
 			typedef N::CRMDeviceID Key;
-			
-			Key itsKey;
 		
 		public:
-			sys_mac_crm_serial_N_icon_Query( const Key& key ) : itsKey( key )
+			static std::string Read( const FSTree* that )
 			{
-			}
-			
-			std::string Get() const
-			{
-				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( itsKey );
+				Key key = GetKey( that );
+				
+				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 				
 				N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
 				
@@ -122,51 +136,43 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr String_Factory( const FSTreePtr&                 parent,
-	                                 const std::string&               name,
-	                                 CRMDeviceID_KeyName_Traits::Key  key,
-	                                 StringHandle CRMSerialRecord::*  member )
+	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
 	{
-		typedef sys_mac_crm_serial_N_name_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key, member ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &sys_mac_crm_serial_N_name::Read ) );
 	}
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&                 parent,
-	                               const std::string&               name,
-	                               CRMDeviceID_KeyName_Traits::Key  key )
+	static FSTreePtr Input_Factory( const FSTreePtr&    parent,
+	                                const std::string&  name )
 	{
-		return String_Factory( parent, name, key, &CRMSerialRecord::name );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &sys_mac_crm_serial_N_input::Read ) );
 	}
 	
-	static FSTreePtr Input_Factory( const FSTreePtr&                 parent,
-	                                const std::string&               name,
-	                                CRMDeviceID_KeyName_Traits::Key  key )
+	static FSTreePtr Output_Factory( const FSTreePtr&    parent,
+	                                 const std::string&  name )
 	{
-		return String_Factory( parent, name, key, &CRMSerialRecord::inputDriverName );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &sys_mac_crm_serial_N_output::Read ) );
+
 	}
 	
-	static FSTreePtr Output_Factory( const FSTreePtr&                 parent,
-	                                 const std::string&               name,
-	                                 CRMDeviceID_KeyName_Traits::Key  key )
+	static FSTreePtr Icon_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
 	{
-		return String_Factory( parent, name, key, &CRMSerialRecord::outputDriverName );
+		return FSTreePtr( new FSTree_Generated( parent,
+		                                        name,
+		                                        &sys_mac_crm_serial_N_icon::Read ) );
 	}
 	
-	static FSTreePtr Icon_Factory( const FSTreePtr&                 parent,
-	                               const std::string&               name,
-	                               CRMDeviceID_KeyName_Traits::Key  key )
-	{
-		typedef sys_mac_crm_serial_N_icon_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
-	}
-	
-	const Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   &Name_Factory   },
 		{ "input",  &Input_Factory  },

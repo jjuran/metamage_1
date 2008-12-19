@@ -11,7 +11,7 @@
 #include "HexStrings.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 
 
 namespace Genie
@@ -41,7 +41,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		std::string Get( AuxDCEHandle dceHandle ) const
+		static std::string Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -55,7 +55,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		std::string Get( AuxDCEHandle dceHandle ) const
+		static std::string Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -82,7 +82,7 @@ namespace Genie
 		// dCtlSlot is defined as 'char', but we want integer conversion
 		typedef UInt16 Result;
 		
-		Result Get( AuxDCEHandle dceHandle ) const
+		static Result Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -99,7 +99,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result Get( AuxDCEHandle dceHandle ) const
+		static Result Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -115,71 +115,59 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	class sys_mac_unit_N_Query
+	struct sys_mac_unit_N_Property
 	{
 		private:
 			typedef UnitNumber Key;
-			
-			Key itsKey;
-			
-			std::string itsValue;
 		
 		public:
-			sys_mac_unit_N_Query( const Key& key ) : itsKey( key ), itsValue( Make() )
+			static std::string Read( Key key )
 			{
-			}
-			
-			const std::string& Get() const
-			{
-				return itsValue;
-			}
-			
-			std::string Make() const
-			{
-				std::string output;
-				
-				if ( sys_mac_unit_Details::KeyIsValid( itsKey ) )
+				if ( !sys_mac_unit_Details::KeyIsValid( key ) )
 				{
-					AuxDCEHandle dceHandle = GetUTableBase()[ itsKey ];
-					
-					output = NN::Convert< std::string >( Accessor().Get( dceHandle ) );
-					
-					output += "\n";
+					throw FSTree_Property::Undefined();
 				}
 				
-				return output;
+				AuxDCEHandle dceHandle = GetUTableBase()[ key ];
+				
+				return NN::Convert< std::string >( Accessor::Get( dceHandle ) );
 			}
 	};
 	
 	
-	extern const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[];
+	extern const Functional_Traits< void >::Mapping sys_mac_unit_N_Mappings[];
 	
 	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
 		                                          const Key&          key )
 	{
-		return Premapped_Factory< Key, sys_mac_unit_N_Mappings >( parent, name, key );
+		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name );
 	}
 	
+	
+	static UnitNumber GetKey( const FSTree* that )
+	{
+		return UnitNumber_KeyName_Traits::KeyFromName( that->ParentRef()->Name() );
+	}
 	
 	template < class Accessor >
-	static FSTreePtr Query_Factory( const FSTreePtr&                parent,
-	                                const std::string&              name,
-	                                UnitNumber_KeyName_Traits::Key  key )
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
-		typedef sys_mac_unit_N_Query< Accessor > Query;
+		typedef sys_mac_unit_N_Property< Accessor > Property;
 		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return FSTreePtr( new QueryFile( parent, name, Query( key ) ) );
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &GetKey,
+		                                       &Property::Read ) );
 	}
 	
-	const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[] =
+	const Functional_Traits< void >::Mapping sys_mac_unit_N_Mappings[] =
 	{
-		{ "flags", &Query_Factory< GetDriverFlags > },
-		{ "name",  &Query_Factory< GetDriverName  > },
-		{ "slot",  &Query_Factory< GetDriverSlot  >, true },
-		{ "base",  &Query_Factory< GetDriverBase  >, true },
+		{ "flags", &Property_Factory< GetDriverFlags > },
+		{ "name",  &Property_Factory< GetDriverName  > },
+		{ "slot",  &Property_Factory< GetDriverSlot  >, true },
+		{ "base",  &Property_Factory< GetDriverBase  >, true },
 		
 		{ NULL, NULL }
 	};
