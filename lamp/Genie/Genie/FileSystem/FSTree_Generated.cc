@@ -33,7 +33,7 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		std::string data = itsReadHook( itsKeyHook( this ) );
+		std::string data = itsReadHook( this );
 		
 		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( shared_from_this(),
 		                                                                    flags,

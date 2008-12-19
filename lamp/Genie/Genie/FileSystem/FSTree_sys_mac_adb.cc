@@ -24,6 +24,17 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return ADBAddress_KeyName_Traits::KeyFromName( parent->Name() );
+	}
+	
+	static N::ADBAddress GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	
 	bool sys_mac_adb_Details::KeyIsValid( const Key& key )
 	{
 		try
@@ -106,9 +117,9 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( Key key )
+			static std::string Read( const FSTree* that )
 			{
-				using BitsAndBytes::ByteAsHex;
+				Key key = GetKey( that );
 				
 				std::string output;
 				
@@ -121,16 +132,6 @@ namespace Genie
 			}
 	};
 	
-	
-	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return ADBAddress_KeyName_Traits::KeyFromName( parent->Name() );
-	}
-	
-	static N::ADBAddress GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
@@ -147,7 +148,6 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Generated( parent,
 		                                        name,
-		                                        &GetKey,
 		                                        &sys_mac_adb_N_registers::Read ) );
 	}
 	

@@ -16,27 +16,17 @@ namespace Genie
 	class FSTree_Generated : public FSTree
 	{
 		private:
-			typedef unsigned long OpaqueKey;
+			typedef std::string (*ReadHook)( const FSTree* that );
 			
-			typedef OpaqueKey (*KeyHook)( const FSTree* that );
-			
-			typedef std::string (*ReadHook)( OpaqueKey key );
-			
-			KeyHook    itsKeyHook;
-			ReadHook   itsReadHook;
+			ReadHook itsReadHook;
 		
 		public:
-			struct Undefined {};
-			
-			template < class Key >
-			FSTree_Generated( const FSTreePtr&      parent,
-			                  const std::string&    name,
-			                  Key                 (*keyHook  )( const FSTree* ),
-			                  std::string         (*readHook )( Key           ) )
+			FSTree_Generated( const FSTreePtr&    parent,
+			                  const std::string&  name,
+			                  ReadHook            readHook )
 			:
 				FSTree( parent, name ),
-				itsKeyHook  ( (KeyHook  ) keyHook  ),
-				itsReadHook ( (ReadHook ) readHook )
+				itsReadHook( readHook )
 			{
 			}
 			

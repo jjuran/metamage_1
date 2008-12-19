@@ -378,8 +378,10 @@ namespace Genie
 	{
 		typedef pid_KeyName_Traits::Key Key;
 		
-		static std::string Read( Key pid )
+		static std::string Read( const FSTree* that )
 		{
+			Key pid = GetKey( that );
+			
 			return NN::Convert< std::string >( Accessor::Get( GetProcess( pid ) ) );
 		}
 	};
@@ -392,7 +394,6 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Generated( parent,
 		                                        name,
-		                                        &GetKey,
 		                                        &Property::Read ) );
 	}
 	
