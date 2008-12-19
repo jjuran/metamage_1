@@ -124,6 +124,7 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
+		                                       &GetViewKey,
 		                                       &ReadIconID,
 		                                       &WriteIconID ) );
 	}

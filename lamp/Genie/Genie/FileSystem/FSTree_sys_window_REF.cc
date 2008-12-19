@@ -295,12 +295,26 @@ namespace Genie
 	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
 		public:
+			typedef const FSTree* FSTreeKey;
+
+			typedef FSTreeKey (*KeyHook)( const FSTree* that );
+			
+			typedef std::string (*ReadHook)( FSTreeKey key );
+			
+			typedef void (*WriteHook)( FSTreeKey    key,
+			                           const char  *begin,
+			                           const char  *end );
+			
 			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
 			                                const std::string&  name,
 			                                ReadHook            readHook,
 			                                WriteHook           writeHook )
 			:
-				FSTree_Property( parent, name, readHook, writeHook )
+				FSTree_Property( parent,
+				                 name,
+				                 &GetViewKey,
+				                 readHook,
+				                 writeHook )
 			{
 			}
 			
@@ -499,7 +513,7 @@ namespace Genie
 	{
 		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
 		
-		{ "view",   &Factory< FSTree_sys_window_REF_view >, true },
+		{ "view",  &Factory< FSTree_sys_window_REF_view >, true },
 		
 		{ "title", &PropertyFactory< Access_Title   > },
 		{ "pos",   &PropertyFactory< Access_Origin  > },
