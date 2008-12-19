@@ -873,6 +873,7 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
+		itsProgramFile        ( parent.itsProgramFile ),
 		itsMainEntry          ( parent.itsMainEntry ),
 		itsParameters         ( parent.itsParameters ),
 		itsCleanupHandler     (),
