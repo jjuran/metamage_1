@@ -73,6 +73,8 @@ namespace Genie
 			void HardLink( const FSTreePtr& target ) const;
 	};
 	
+	inline const FSTree* GetViewKey( const FSTree* that )  { return that->ParentRef().get(); }
+	
 	class FSTree_View : public FSTree
 	{
 		public:
