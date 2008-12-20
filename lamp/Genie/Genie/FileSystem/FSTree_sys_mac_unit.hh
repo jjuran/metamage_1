@@ -84,22 +84,12 @@ namespace Nitrogen
 		
 		class EndOfEnumeration {};  // not used
 		
-		static key_type GetNextKey( key_type key )
-		{
-			const key_type end = end_key();
-			
-			while ( ++key < end  &&  *key == NULL )
-			{
-				continue;
-			}
-			
-			return key;
-		}
+		static key_type GetNextKey( key_type key );
 		
 		static const_pointer GetPointer( key_type ptr )  { return ptr; }
 		
-		static key_type begin_key()  { return (AuxDCEHandle*) LMGetUTableBase(); }
-		static key_type end_key()    { return begin_key() + LMGetUnitTableEntryCount(); }
+		static key_type begin_key()  { return GetNextKey( reinterpret_cast< AuxDCEHandle* >( LMGetUTableBase() ) - 1 ); }
+		static key_type end_key()    { return (AuxDCEHandle*) LMGetUTableBase() + LMGetUnitTableEntryCount(); }
 	};
 	
 	class UnitTableDrivers_Container: public Nucleus::AdvanceUntilFailureContainer< UnitTableDrivers_Container_Specifics >
@@ -123,6 +113,9 @@ namespace Genie
 {
 	
 	AuxDCEHandle* GetUTableBase();
+	
+	std::string GetDriverName( AuxDCEHandle dceHandle );
+	
 	
 	struct UnitNumber_KeyName_Traits : Integer_KeyName_Traits< UnitNumber >
 	{

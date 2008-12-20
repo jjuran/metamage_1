@@ -14,6 +14,25 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 
 
+namespace Nitrogen
+{
+	
+	UnitTableDrivers_Container_Specifics::key_type
+	//
+	UnitTableDrivers_Container_Specifics::GetNextKey( key_type key )
+	{
+		const key_type end = end_key();
+		
+		while ( ++key < end  &&  *key == NULL )
+		{
+			continue;
+		}
+		
+		return key;
+	}
+	
+}
+
 namespace Genie
 {
 	
@@ -57,29 +76,32 @@ namespace Genie
 		}
 	};
 	
-	struct GetDriverName
+	std::string GetDriverName( AuxDCEHandle dceHandle )
 	{
-		typedef std::string Result;
+		ASSERT( dceHandle != NULL );
 		
+		std::string name;
+		
+		if ( dceHandle[0]->dCtlDriver != NULL )
+		{
+			const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
+			
+			// Dereferences a handle if ramBased
+			DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
+			                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+			
+			// Copy Pascal string onto stack before we allocate memory
+			name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
+		}
+		
+		return name;
+	}
+	
+	struct DriverName
+	{
 		static std::string Get( AuxDCEHandle dceHandle )
 		{
-			ASSERT( dceHandle != NULL );
-			
-			std::string name;
-			
-			if ( dceHandle[0]->dCtlDriver != NULL )
-			{
-				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
-				
-				// Dereferences a handle if ramBased
-				DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-				                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
-				
-				// Copy Pascal string onto stack before we allocate memory
-				name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
-			}
-			
-			return name;
+			return GetDriverName( dceHandle );
 		}
 	};
 	
@@ -167,7 +189,7 @@ namespace Genie
 	const Functional_Traits< void >::Mapping sys_mac_unit_N_Mappings[] =
 	{
 		{ "flags", &Property_Factory< GetDriverFlags > },
-		{ "name",  &Property_Factory< GetDriverName  > },
+		{ "name",  &Property_Factory< DriverName  > },
 		{ "slot",  &Property_Factory< GetDriverSlot  >, true },
 		{ "base",  &Property_Factory< GetDriverBase  >, true },
 		
