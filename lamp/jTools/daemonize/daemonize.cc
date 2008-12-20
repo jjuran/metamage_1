@@ -22,68 +22,109 @@
 // Convergence
 #include "fork_and_exit.hh"
 
+// POSeven
+#include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/open.hh"
 
-static int usage()
+// Orion
+#include "Orion/GetOptions.hh"
+#include "Orion/Main.hh"
+
+
+namespace tool
 {
-	(void) write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
 	
-	return 2;
-}
-
-int main( int argc, iota::argv_t argv )
-{
-	if ( argc < 2 )
+	namespace p7 = poseven;
+	namespace O = Orion;
+	
+	
+	static int usage()
 	{
-		return usage();
+		(void) write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
+		
+		return 2;
 	}
 	
-	char const *const *args = argv + 1;
-	
-	bool keep_cwd = false;
-	
-	if ( std::strcmp( argv[1], "--cwd" ) == 0 )
+	int Main( int argc, iota::argv_t argv )
 	{
-		if ( argc < 3 )
+		bool keep_cwd    = false;
+		bool keep_stdin  = false;
+		bool keep_stdout = false;
+		bool keep_stderr = false;
+		
+		const char* ctty = NULL;
+		
+		O::BindOption( "--cwd",    keep_cwd    );
+		O::BindOption( "--stdin",  keep_stdin  );
+		O::BindOption( "--stdout", keep_stdout );
+		O::BindOption( "--stderr", keep_stderr );
+		
+		O::BindOption( "--ctty", ctty );
+		
+		O::GetOptions( argc, argv );
+		
+		char const *const *free_args = O::FreeArguments();
+		
+		std::size_t n_args = O::FreeArgumentCount();
+		
+		if ( n_args < 1 )
 		{
 			return usage();
 		}
 		
-		keep_cwd = true;
+		// Ignore SIGHUP
+		signal( SIGHUP, SIG_IGN );
 		
-		++args;
+		// Ensure we are not a process group leader
+		fork_and_exit( 0 );
+		
+		// Start a new session with no controlling terminal
+		setsid();
+		
+		if ( ctty )
+		{
+			signal( SIGHUP, SIG_DFL );
+			
+			p7::ioctl( p7::open( ctty, p7::o_rdwr ), TIOCSCTTY, NULL );
+		}
+		else
+		{
+			// Ensure we can't acquire a controlling terminal by being session leader
+			fork_and_exit( 0 );
+		}
+		
+		if ( !keep_cwd )
+		{
+			chdir( "/" );
+		}
+		
+		int devnull = open( "/dev/null", O_RDWR, 0 );
+		
+		if ( !keep_stdin )
+		{
+			dup2( devnull, STDIN_FILENO  );
+		}
+		
+		if ( !keep_stdout )
+		{
+			dup2( devnull, STDOUT_FILENO  );
+		}
+		
+		if ( !keep_stderr )
+		{
+			dup2( devnull, STDERR_FILENO  );
+		}
+		
+		close( devnull );
+		
+		(void) execvp( *free_args, (char**) free_args );
+		
+		bool noSuchFile = errno == ENOENT;
+		
+		std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
+		
+		return noSuchFile ? 127 : 126;
 	}
 	
-	// Ignore SIGHUP
-	signal( SIGHUP, SIG_IGN );
-	
-	// Ensure we are not a process group leader
-	fork_and_exit( 0 );
-	
-	// Start a new session with no controlling terminal
-	setsid();
-	
-	// Ensure we can't acquire a controlling terminal by being session leader
-	fork_and_exit( 0 );
-	
-	if ( !keep_cwd )
-	{
-		chdir( "/" );
-	}
-	
-	int devnull = open( "/dev/null", O_RDWR, 0 );
-	
-	dup2( devnull, STDIN_FILENO  );
-	dup2( devnull, STDOUT_FILENO );
-	dup2( devnull, STDERR_FILENO );
-	
-	close( devnull );
-	
-	(void) execvp( *args, (char**) args );
-	
-	bool noSuchFile = errno == ENOENT;
-	
-	std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
-	
-	return noSuchFile ? 127 : 126;
 }
 
