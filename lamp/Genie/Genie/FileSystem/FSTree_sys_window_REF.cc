@@ -22,6 +22,8 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/Views.hh"
+#include "Genie/IO/Terminal.hh"
+#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -43,6 +45,8 @@ namespace Genie
 		bool       itIsVisible;
 		
 		boost::shared_ptr< Ped::UserWindow >  itsWindow;
+		
+		boost::weak_ptr< IOHandle >  itsTerminal;
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
@@ -79,7 +83,26 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			it->second.itsWindow.reset();
+			WindowParameters& params = it->second;
+			
+			if ( params.itsTerminal.expired() )
+			{
+				// tty file is not open for this window, just close the window
+				params.itsWindow.reset();
+			}
+			else
+			{
+				const boost::shared_ptr< IOHandle >& handle = params.itsTerminal.lock();
+				
+				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
+				
+				terminal.Disconnect();
+				
+				if ( !terminal.GetProcessGroup().expired() )
+				{
+					SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
+				}
+			}
 		}
 	}
 	
@@ -483,6 +506,34 @@ namespace Genie
 	}
 	
 	
+	class FSTree_sys_window_REF_tty : public FSTree
+	{
+		public:
+			FSTree_sys_window_REF_tty( const FSTreePtr&    parent,
+			                           const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			const FSTree* WindowKey() const  { return ParentRef().get(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	boost::shared_ptr< IOHandle >
+	//
+	FSTree_sys_window_REF_tty::Open( OpenFlags flags ) const
+	{
+		boost::shared_ptr< IOHandle > result( new TerminalHandle( Pathname() ) );
+		
+		gWindowParametersMap[ WindowKey() ].itsTerminal = result;
+		
+		return result;
+	}
+	
+	
 	template < class FSTree_Type >
 	static FSTreePtr Factory( const FSTreePtr&    parent,
 	                          const std::string&  name )
@@ -507,6 +558,8 @@ namespace Genie
 		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
 		
 		{ "view",  &Factory< FSTree_sys_window_REF_view >, true },
+		
+		{ "tty",   &Factory< FSTree_sys_window_REF_tty > },
 		
 		{ "title", &PropertyFactory< Access_Title   > },
 		{ "pos",   &PropertyFactory< Access_Origin  > },
