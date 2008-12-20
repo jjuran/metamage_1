@@ -9,6 +9,7 @@
 #include "Genie/FileSystem/FSTree_Generated.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_desktop.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_errata.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gdev.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_keys.hh"
@@ -69,6 +70,7 @@ namespace Genie
 	#endif
 		
 		{ "desktop", &Premapped_Factory< sys_mac_desktop_Mappings > },
+		{ "errata",  &Premapped_Factory< sys_mac_errata_Mappings  > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
