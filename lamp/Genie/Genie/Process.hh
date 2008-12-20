@@ -204,6 +204,7 @@ namespace Genie
 			
 			void Release();
 			
+			void Breathe();
 			void Yield();
 			void AsyncYield();
 			
@@ -307,8 +308,9 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
-	bool Yield( Interruptibility interrupting );
-	bool Breathe();
+	void Yield( Interruptibility interrupting );
+	
+	void Breathe();
 	
 	void TryAgainLater( bool isNonblocking );
 	

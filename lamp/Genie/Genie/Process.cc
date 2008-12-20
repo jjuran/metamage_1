@@ -1074,7 +1074,7 @@ namespace Genie
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessSleeping;
+		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		Ped::AdjustSleepForActivity();
 		
@@ -1607,6 +1607,11 @@ namespace Genie
 	
 	static const UInt32 gMinimumSleepIntervalTicks = 2;
 	
+	void Process::Breathe()
+	{
+		Pause( kProcessRunning );
+	}
+	
 	void Process::Yield()
 	{
 		Pause( kProcessSleeping );
@@ -1622,14 +1627,14 @@ namespace Genie
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	bool Yield( Interruptibility interrupting )
+	void Yield( Interruptibility interrupting )
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
 		gCurrentProcess->Yield();
 		
 		// Doesn't return if we received a fatal signal.
-		return gCurrentProcess->HandlePendingSignals( interrupting );
+		gCurrentProcess->HandlePendingSignals( interrupting );
 	}
 	
 	// declared in Process/AsyncYield.hh
@@ -1646,7 +1651,7 @@ namespace Genie
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	bool Breathe()
+	void Breathe()
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
@@ -1659,11 +1664,11 @@ namespace Genie
 		{
 			Ped::AdjustSleepForActivity();
 			
-			// Breathers are restartable
-			return Yield( kInterruptNever );
+			gCurrentProcess->Breathe();
+			
+			// Check for fatal signals again
+			gCurrentProcess->HandlePendingSignals( kInterruptNever );
 		}
-		
-		return false;
 	}
 	
 	void TryAgainLater( bool isNonblocking )
