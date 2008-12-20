@@ -11,35 +11,18 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen
-#include "Nitrogen/Gestalt.h"
+// Genie
+#include "Genie/FileSystem/FSTree_sys_mac_errata.hh"
 
 
 #define CALLBACK  more::ptr_fun( AsyncYield )
 
-
-namespace Nitrogen
-{
-	
-	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
-	
-	template <> struct GestaltDefault< gestaltMacOSCompatibilityBoxAttr > : GestaltAttrDefaults {};
-	
-}
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	
-	
-	static bool RunningInClassic()
-	{
-		static bool inClassic = N::Gestalt_Bit< N::gestaltMacOSCompatibilityBoxAttr, gestaltMacOSCompatibilityBoxPresent >();
-		
-		return inClassic;
-	}
 	
 	
 	// Save our PSN so we can wake up at interrupt time.
@@ -135,7 +118,7 @@ namespace Genie
 		// the completion routine only delays the crash instead of avoiding it.
 		// Apparently this is a bug in the .BlueBoxShared driver.
 		
-		if ( RunningInClassic() )
+		if ( RunningInClassic::Test() )
 		{
 			N::FSpGetCatInfo( item, pb, policy );
 		}
