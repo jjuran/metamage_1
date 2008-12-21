@@ -116,10 +116,8 @@ namespace tool
 		{
 			fd_set readfds = listeners;
 			
-			struct timeval timeout = { 5, 0 };
-			
 			// This blocks and yields to other threads
-			int selected = select( maxFD + 1, &readfds, NULL, NULL, &timeout );
+			int selected = select( maxFD + 1, &readfds, NULL, NULL, NULL );
 			
 			if ( selected == -1 && errno != EINTR )
 			{
