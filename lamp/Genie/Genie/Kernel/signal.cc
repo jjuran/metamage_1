@@ -75,7 +75,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "kill" );
 		
-		if ( signo <= 0  ||  signo >= NSIG )
+		if ( signo < 0  ||  signo >= NSIG )
 		{
 			return frame.SetErrno( EINVAL );
 		}
