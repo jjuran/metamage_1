@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -25,9 +26,19 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, std::string > CaptionTextMap;
+	struct CaptionParameters
+	{
+		std::string  itsText;
+		bool         itIsWrapped;
+		
+		CaptionParameters() : itIsWrapped( true )
+		{
+		}
+	};
 	
-	static CaptionTextMap gCaptionTextMap;
+	typedef std::map< const FSTree*, CaptionParameters > CaptionParametersMap;
+	
+	static CaptionParametersMap gCaptionParametersMap;
 	
 	
 	class Caption : public Ped::Caption
@@ -45,22 +56,36 @@ namespace Genie
 			}
 			
 			std::string Text() const;
+			
+			bool Wrapped() const;
 	};
 	
 	std::string Caption::Text() const
 	{
 		std::string result;
 		
-		CaptionTextMap::const_iterator it = gCaptionTextMap.find( itsKey );
+		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
 		
-		if ( it != gCaptionTextMap.end() )
+		if ( it != gCaptionParametersMap.end() )
 		{
-			result = it->second;
+			result = it->second.itsText;
 		}
 		
 		std::replace( result.begin(), result.end(), '\n', '\r' );
 		
 		return result;
+	}
+	
+	bool Caption::Wrapped() const
+	{
+		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
+		
+		if ( it != gCaptionParametersMap.end() )
+		{
+			return it->second.itIsWrapped;
+		}
+		
+		return true;
 	}
 	
 	std::auto_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
@@ -71,7 +96,7 @@ namespace Genie
 	
 	void FSTree_new_caption::DestroyDelegate( const FSTree* delegate )
 	{
-		gCaptionTextMap.erase( delegate );
+		gCaptionParametersMap.erase( delegate );
 	}
 	
 	
@@ -79,7 +104,7 @@ namespace Genie
 	{
 		const FSTree* view = text->ParentRef().get();
 		
-		gCaptionTextMap[ view ].resize( length );
+		gCaptionParametersMap[ view ].itsText.resize( length );
 		
 		InvalidateWindowForView( view );
 	}
@@ -93,7 +118,7 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			std::string& String() const  { return gCaptionTextMap[ ViewKey() ]; }
+			std::string& String() const  { return gCaptionParametersMap[ ViewKey() ].itsText; }
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
@@ -152,7 +177,7 @@ namespace Genie
 			{
 			}
 			
-			std::string& String() const  { return gCaptionTextMap[ ParentRef().get() ]; }
+			std::string& String() const  { return gCaptionParametersMap[ ParentRef().get() ].itsText; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -171,6 +196,30 @@ namespace Genie
 	}
 	
 	
+	struct Caption_wrapped
+	{
+		static std::string Read( const FSTree* that )
+		{
+			const FSTree* view = that->ParentRef().get();
+			
+			const bool wrapped = gCaptionParametersMap[ view ].itIsWrapped;
+			
+			return wrapped ? "1" : "0";
+		}
+		
+		static void Write( const FSTree* that, const char* begin, const char* end )
+		{
+			const FSTree* view = that->ParentRef().get();
+			
+			const bool wrapped = begin[ 0 ] != '0';
+			
+			gCaptionParametersMap[ view ].itIsWrapped = wrapped;
+			
+			InvalidateWindowForView( view );
+		}
+	};
+	
+	
 	template < class FSTree_Type >
 	static FSTreePtr Factory( const FSTreePtr&    parent,
 	                          const std::string&  name )
@@ -178,9 +227,21 @@ namespace Genie
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Read,
+		                                       &Property::Write ) );
+	}
+	
 	const Functional_Traits< void >::Mapping Caption_view_Mappings[] =
 	{
 		{ "text", &Factory< FSTree_Caption_text > },
+		
+		{ "wrapped", &Property_Factory< Caption_wrapped > },
 		
 		{ NULL, NULL }
 	};
