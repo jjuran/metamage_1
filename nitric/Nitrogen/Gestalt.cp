@@ -41,34 +41,39 @@ namespace Nitrogen
 	
 #pragma force_active reset
 	
+	long Gestalt( Gestalt_Selector selector )
+	{
+		long result;
+		
+		ThrowOSStatus( ::Gestalt( selector, &result ) );
+		
+		return result;
+	}
+
+	long Gestalt( Gestalt_Selector selector, long defaultValue )
+	{
+		try
+		{
+			return Gestalt( selector );
+		}
+		catch ( const Nucleus::ErrorCode< OSStatus, gestaltUndefSelectorErr >& )
+		{
+		}
+		
+		return defaultValue;
+	}
+
+	void RegisterGestaltManagerErrors()
+	{
+		RegisterOSStatus< memFullErr              >();
+		RegisterOSStatus< envNotPresent           >();
+		RegisterOSStatus< envBadVers              >();
+		RegisterOSStatus< envVersTooBig           >();
+		RegisterOSStatus< gestaltUnknownErr       >();
+		RegisterOSStatus< gestaltUndefSelectorErr >();
+		RegisterOSStatus< gestaltDupSelectorErr   >();
+		RegisterOSStatus< gestaltLocationErr      >();
+	}
 	
-   long Gestalt( Gestalt_Selector selector )
-     {
-      long result;
-      ThrowOSStatus( ::Gestalt( selector, &result ) );
-      return result;
-     }
+}
 
-   long Gestalt( Gestalt_Selector selector, long defaultValue )
-     {
-      try
-        {
-         return Gestalt( selector );
-        }
-      catch ( const Nucleus::ErrorCode< OSStatus, gestaltUndefSelectorErr >& )
-        {}
-	  return defaultValue;
-     }
-
-   void RegisterGestaltManagerErrors()
-     {
-      RegisterOSStatus< memFullErr              >();
-      RegisterOSStatus< envNotPresent           >();
-      RegisterOSStatus< envBadVers              >();
-      RegisterOSStatus< envVersTooBig           >();
-      RegisterOSStatus< gestaltUnknownErr       >();
-      RegisterOSStatus< gestaltUndefSelectorErr >();
-      RegisterOSStatus< gestaltDupSelectorErr   >();
-      RegisterOSStatus< gestaltLocationErr      >();
-     }
-  }
