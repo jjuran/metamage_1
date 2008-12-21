@@ -23,7 +23,6 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -97,11 +96,6 @@ namespace Genie
 				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 				
 				terminal.Disconnect();
-				
-				if ( !terminal.GetProcessGroup().expired() )
-				{
-					SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
-				}
 			}
 		}
 	}

@@ -49,7 +49,7 @@ namespace Genie
 			
 			bool IsDisconnected() const  { return itIsDisconnected; }
 			
-			void Disconnect()  { itIsDisconnected = true; }
+			void Disconnect();
 			
 			const std::string& TTYName() const  { return itsTTYName; }
 	};

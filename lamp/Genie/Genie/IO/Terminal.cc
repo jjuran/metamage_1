@@ -129,5 +129,15 @@ namespace Genie
 		};
 	}
 	
+	void TerminalHandle::Disconnect()
+	{
+		itIsDisconnected = true;
+		
+		if ( !GetProcessGroup().expired() )
+		{
+			SendSignalToProcessGroup( SIGHUP, *GetProcessGroup().lock() );
+		}
+	}
+	
 }
 
