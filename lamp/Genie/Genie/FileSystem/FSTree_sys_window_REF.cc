@@ -368,6 +368,15 @@ namespace Genie
 	{
 		ASSERT( window != NULL );
 		
+	#if !OPAQUE_TOOLBOX_STRUCTS
+		
+		if ( N::EmptyRgn( window->visRgn ) )
+		{
+			return;
+		}
+		
+	#endif
+		
 		NN::Saved< N::Port_Value > savePort;
 		
 		N::SetPortWindowPort( window );
