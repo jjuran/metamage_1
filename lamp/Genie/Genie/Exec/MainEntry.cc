@@ -10,7 +10,7 @@
 #include "Nitrogen/Files.h"
 
 // Genie
-#include "Genie/SystemCallRegistry.hh"
+#include "Genie/Process/Entry.hh"
 
 
 namespace Genie
@@ -48,6 +48,8 @@ namespace Genie
 	
 	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
 	{
+		// Set up dispatcher and envp
+		
 		return N::GetMemFragment< N::kPrivateCFragCopy >( *image.Get(),
 		                                                  N::GetHandleSize( image ) );
 	}
@@ -118,7 +120,20 @@ namespace Genie
 	
 	MainEntry GetMainEntryFromFile( const FSSpec& file )
 	{
-		return GetMainEntryFromBinaryImage( GetBinaryImage( file ) );
+		// Save and restore ToolScratch since GetBinaryImage() does async I/O,
+		// which may yield, possibly resulting in a call to WaitNextEvent(),
+		// after which ToolScratch may be overwritten.
+		
+		ToolScratchGlobals globals = GetToolScratchGlobals();
+		
+		BinaryImage image = GetBinaryImage( file );
+		
+		// It's okay if an exception is thrown here.  We just have to make sure
+		// ToolScratch is valid before connecting to the fragment.
+		
+		SetToolScratchGlobals( globals );
+		
+		return GetMainEntryFromBinaryImage( image );
 	}
 	
 }

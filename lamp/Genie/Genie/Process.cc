@@ -54,6 +54,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process/AsyncYield.hh"
+#include "Genie/Process/Entry.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 
@@ -515,26 +516,6 @@ namespace Genie
 	
 #endif
 	
-	typedef void (*Dispatcher)( unsigned );
-	
-	struct ToolScratchGlobals
-	{
-		Dispatcher    dispatcher;
-		iota::envp_t  envp;
-	};
-	
-	struct ApplScratchGlobals
-	{
-		void*            reserved1;
-		void*            reserved2;
-		void*            reserved3;
-	};
-	
-	inline ToolScratchGlobals& GetToolScratchGlobals()
-	{
-		return *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
-	}
-	
 	static std::vector< const char* > UnflattenedArgVector( const std::string& flat )
 	{
 		std::vector< const char* > result;
@@ -588,8 +569,7 @@ namespace Genie
 		
 		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 		// Pass envp in ToolScratch + 4 to initialize environ
-		GetToolScratchGlobals().dispatcher = DispatchSystemCall;
-		GetToolScratchGlobals().envp       = envp;
+		SetUpToolScratch( &DispatchSystemCall, envp );
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
