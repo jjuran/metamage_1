@@ -557,6 +557,23 @@ namespace Genie
 		return result;
 	}
 	
+	class TemporaryStackBottomLimit
+	{
+		private:
+			TemporaryStackBottomLimit( const TemporaryStackBottomLimit& );
+		
+		public:
+			TemporaryStackBottomLimit( const void* limit )
+			{
+				Backtrace::SetStackBottomLimit( limit );
+			}
+			
+			~TemporaryStackBottomLimit()
+			{
+				Backtrace::SetStackBottomLimit( (const void*) 0xffffffff );
+			}
+	};
+	
 	int Process::Run()
 	{
 		Parameters& params = *itsParameters;
@@ -575,10 +592,16 @@ namespace Genie
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
-		// For code fragments, static initilization occurs here.
-		itsMainEntry = itsProgramFile->GetMainEntry();
+		Main3 mainPtr = NULL;
 		
-		Main3 mainPtr = itsMainEntry->GetMainPtr();
+		{
+			TemporaryStackBottomLimit limit( itsStackBottomPtr );
+			
+			// For code fragments, static initialization occurs here.
+			itsMainEntry = itsProgramFile->GetMainEntry();
+			
+			mainPtr = itsMainEntry->GetMainPtr();
+		}
 		
 		ASSERT( mainPtr != NULL );
 		
