@@ -75,14 +75,20 @@ namespace Genie
 	{
 		SystemCallFrame frame( "kill" );
 		
+		// kill() is a guaranteed preemption point, so breathe here.
+		// Also, it's only fair to check for pending signals before sending any.
+		Breathe();
+		
+		if ( pid == 1  &&  signo == 0 )
+		{
+			// Optimize for canonical 'yield' idiom.
+			return 0;
+		}
+		
 		if ( signo < 0  ||  signo >= NSIG )
 		{
 			return frame.SetErrno( EINVAL );
 		}
-		
-		// kill() is a guaranteed preemption point, so breathe here.
-		// Also, it's only fair to check for pending signals before sending any.
-		Breathe();
 		
 		Process& current = CurrentProcess();
 		
