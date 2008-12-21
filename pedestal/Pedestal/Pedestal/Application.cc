@@ -535,6 +535,15 @@ namespace Pedestal
 		
 		ASSERT( window != NULL );
 		
+	#if !OPAQUE_TOOLBOX_STRUCTS
+		
+		if ( N::EmptyRgn( window->visRgn ) )
+		{
+			return;
+		}
+		
+	#endif
+		
 		N::SetPortWindowPort( window );
 		
 		N::Update_Scope update( window );
