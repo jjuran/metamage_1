@@ -396,7 +396,7 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	                                    const std::string&  name )
 	{
 		typedef proc_PID_Property< Accessor > Property;
 		
