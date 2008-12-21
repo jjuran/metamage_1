@@ -857,7 +857,6 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
-		itsLastActivity       ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot()->ChangeToDirectory() ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
@@ -890,7 +889,6 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
-		itsLastActivity       ( N::Microseconds() ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.itsCWD ),
 		itsFileDescriptors    ( parent.FileDescriptors() ),
@@ -1635,8 +1633,6 @@ namespace Genie
 	
 	void Process::Breathe()
 	{
-		itsLastActivity = N::Microseconds();
-		
 		Pause( kProcessRunning );
 	}
 	

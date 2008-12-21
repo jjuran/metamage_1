@@ -39,6 +39,8 @@ namespace Genie
 	void TimeKeeper::EnterSystemCall( const char* name )
 	{
 		UpdateClock( itsTimes.user, itsLastTimerCheckpoint );
+		
+		itsLastActivity = itsLastTimerCheckpoint;
 	}
 	
 	void TimeKeeper::LeaveSystemCall()
