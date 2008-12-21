@@ -14,9 +14,17 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
+	
 	void Caption::Draw( const Rect& bounds )
 	{
-		N::TETextBox( Text(), bounds );
+		Rect newBounds = bounds;
+		
+		if ( !Wrapped() )
+		{
+			newBounds.right = 30000;
+		}
+		
+		N::TETextBox( Text(), newBounds );
 	}
 	
 }

@@ -21,6 +21,8 @@ namespace Pedestal
 		public:
 			virtual std::string Text() const = 0;
 			
+			virtual bool Wrapped() const  { return true; }
+			
 			void Draw( const Rect& bounds );
 	};
 	
