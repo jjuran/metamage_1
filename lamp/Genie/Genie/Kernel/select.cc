@@ -10,6 +10,9 @@
 // Nitrogen
 #include "Nitrogen/Timer.h"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
@@ -21,6 +24,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace Ped = Pedestal;
 	
 	
 	static int select( int n, fd_set*  readfds,
@@ -29,9 +33,16 @@ namespace Genie
 	{
 		SystemCallFrame frame( "select" );
 		
-		UInt64 timeToBail = timeout == NULL ? UInt64( -1 )
-		                                    : N::Microseconds() + timeout->tv_sec * 1000000
-		                                                        + timeout->tv_usec;
+		SInt64 remaining_microseconds;
+		UInt64 end_microseconds;
+		
+		if ( timeout != NULL )
+		{
+			remaining_microseconds = timeout->tv_sec * 1000000
+			                       + timeout->tv_usec;
+			
+			end_microseconds = N::Microseconds() + remaining_microseconds;
+		}
 		
 		try
 		{
@@ -54,7 +65,17 @@ namespace Genie
 			
 			do
 			{
+				if ( timeout )
+				{
+					Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
+				}
+				
 				Yield( kInterruptUnlessRestarting );
+				
+				if ( timeout )
+				{
+					remaining_microseconds = end_microseconds - N::Microseconds();
+				}
 				
 				for ( int i = 0;  i != n;  ++i )
 				{
@@ -96,7 +117,7 @@ namespace Genie
 					}
 				}
 			}
-			while ( result == 0  &&  N::Microseconds() < timeToBail );
+			while ( result == 0  &&  remaining_microseconds > 0 );
 			
 			if ( n > 0 )
 			{
