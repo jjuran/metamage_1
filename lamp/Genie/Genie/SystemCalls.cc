@@ -84,6 +84,8 @@ namespace Genie
 	                                                       itsErrno ( 0 )
 	{
 		itsCaller.EnterSystemCall( name );
+		
+		Breathe();
 	}
 	
 	SystemCallFrame::~SystemCallFrame()
@@ -475,8 +477,6 @@ namespace Genie
 	{
 		SystemCallFrame frame( "read" );
 		
-		Breathe();
-		
 		try
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
@@ -661,8 +661,6 @@ namespace Genie
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
 		SystemCallFrame frame( "write" );
-		
-		Breathe();
 		
 		try
 		{

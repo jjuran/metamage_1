@@ -26,8 +26,6 @@ namespace Genie
 	{
 		SystemCallFrame frame( "openat" );
 		
-		Breathe();
-		
 		try
 		{
 			int fd = LowestUnusedFileDescriptor();

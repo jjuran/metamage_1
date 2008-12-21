@@ -30,8 +30,6 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getdents" );
 		
-		Breathe();
-		
 		try
 		{
 			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );

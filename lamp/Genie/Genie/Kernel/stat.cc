@@ -100,8 +100,6 @@ namespace Genie
 	{
 		SystemCallFrame frame( "fstatat" );
 		
-		Breathe();
-		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
