@@ -328,6 +328,7 @@ namespace Genie
 			
 			case kAccessException:
 			case kUnmappedMemoryException:
+			case kUnresolvablePageFaultException:
 				handler = (const TVector*) BusError;
 				
 				break;
