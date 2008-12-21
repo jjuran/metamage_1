@@ -80,6 +80,10 @@ namespace Genie
 			return frame.SetErrno( EINVAL );
 		}
 		
+		// kill() is a guaranteed preemption point, so breathe here.
+		// Also, it's only fair to check for pending signals before sending any.
+		Breathe();
+		
 		Process& current = CurrentProcess();
 		
 		int result = pid >   0 ? kill_pid ( pid,               signo )
