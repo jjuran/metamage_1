@@ -75,6 +75,7 @@ namespace Backtrace
 		{
 			case kAccessException:
 			case kUnmappedMemoryException:
+			case kUnresolvablePageFaultException:
 				longjmp( gStackCrawlJmpBuf, exception->theKind );
 				// not reached
 			
@@ -379,6 +380,7 @@ namespace Backtrace
 			{
 				case kAccessException:
 				case kUnmappedMemoryException:
+				case kUnresolvablePageFaultException:
 					// nothing
 					break;
 				
