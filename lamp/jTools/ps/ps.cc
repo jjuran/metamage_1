@@ -23,6 +23,7 @@
 #include "POSeven/functions/lseek.hh"
 
 // Orion
+#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
 
@@ -30,6 +31,10 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
+	namespace O = Orion;
+	
+	
+	static bool globally_wide = false;
 	
 	
 	static std::string left_padded( const char* begin, const char* end, unsigned length )
@@ -178,7 +183,7 @@ namespace tool
 			report.append( buffer, cmdline_end - 1 );
 		}
 		
-		if ( report.size() > 80 )
+		if ( !globally_wide  &&  report.size() > 80 )
 		{
 			report.resize( 80 );
 		}
@@ -218,10 +223,11 @@ namespace tool
 	{
 		bool monitor = false;
 		
-		if ( argc > 1  &&  std::strcmp( argv[1], "--monitor" ) == 0 )
-		{
-			monitor = true;
-		}
+		O::BindOption( "--monitor", monitor );
+		
+		O::BindOption( "--wide", globally_wide );
+		
+		O::GetOptions( argc, argv );
 		
 		std::string output;
 		std::string previous;
