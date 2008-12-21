@@ -64,7 +64,7 @@ namespace tool
 		return right_padded( &*word.begin(), &*word.end(), length );
 	}
 	
-	static void report_process( const std::string& pid_name )
+	static std::string report_process( const std::string& pid_name )
 	{
 		using namespace io::path_descent_operators;
 		
@@ -185,12 +185,12 @@ namespace tool
 		
 		report += "\n";
 		
-		p7::write( p7::stdout_fileno, report.data(), report.size() );
+		return report;
 	}
 	
 	static void ps()
 	{
-		p7::write( p7::stdout_fileno, STR_LEN( "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n" ) );
+		std::string output = "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n";
 		
 		DIR* iter = opendir( "/proc" );
 		
@@ -201,7 +201,7 @@ namespace tool
 				// A process could exit while we're examining it
 				try
 				{
-					report_process( ent->d_name );
+					output += report_process( ent->d_name );
 				}
 				catch ( ... )
 				{
@@ -210,6 +210,8 @@ namespace tool
 		}
 		
 		closedir( iter );
+		
+		p7::write( p7::stdout_fileno, output );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
