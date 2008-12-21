@@ -188,7 +188,7 @@ namespace tool
 		return report;
 	}
 	
-	static void ps()
+	static std::string ps()
 	{
 		std::string output = "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n";
 		
@@ -211,7 +211,7 @@ namespace tool
 		
 		closedir( iter );
 		
-		p7::write( p7::stdout_fileno, output );
+		return output;
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -223,17 +223,30 @@ namespace tool
 			monitor = true;
 		}
 		
+		std::string output;
+		std::string previous;
+		
 	again:
 		
-		ps();
+		output = ps();
+		
+		if ( output != previous )
+		{
+			p7::write( p7::stdout_fileno, output );
+			
+			if ( monitor )
+			{
+				std::swap( output, previous );
+				
+				p7::ftruncate( p7::stdout_fileno, p7::lseek( p7::stdout_fileno ) );
+				
+				p7::lseek( p7::stdout_fileno, 0 );
+			}
+		}
 		
 		if ( monitor )
 		{
-			p7::ftruncate( p7::stdout_fileno, p7::lseek( p7::stdout_fileno ) );
-			
 			sleep( 1 );
-			
-			p7::lseek( p7::stdout_fileno, 0 );
 			
 			goto again;
 		}
