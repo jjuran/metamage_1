@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2008 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -49,20 +49,23 @@ namespace Nitrogen
 		
 		return result;
 	}
-
+	
 	long Gestalt( Gestalt_Selector selector, long defaultValue )
 	{
-		try
+		long result;
+		
+		OSErr err = ::Gestalt( selector, &result );
+		
+		if ( err == gestaltUndefSelectorErr )
 		{
-			return Gestalt( selector );
-		}
-		catch ( const Nucleus::ErrorCode< OSStatus, gestaltUndefSelectorErr >& )
-		{
+			return defaultValue;
 		}
 		
-		return defaultValue;
+		ThrowOSStatus( err );
+		
+		return result;
 	}
-
+	
 	void RegisterGestaltManagerErrors()
 	{
 		RegisterOSStatus< memFullErr              >();
