@@ -11,6 +11,9 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
+// Nitrogen
+#include "Nitrogen/Timer.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -28,6 +31,7 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
@@ -278,11 +282,15 @@ namespace Genie
 		
 		if ( lifestage == kProcessReleased )
 		{
-			runState = '*';
+			runState = 'X';
 		}
 		else if ( process.CountAsyncOps() > 0 )
 		{
 			runState = 'D';
+		}
+		else if ( runState == 'S'  &&  N::Microseconds() - process.GetTimeOfLastActivity() > 20 * 1000 * 1000 )
+		{
+			runState = 'I';  // idle
 		}
 		
 		return runState;

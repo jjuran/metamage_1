@@ -121,6 +121,7 @@ namespace Genie
 			SavedRegisters itsSavedRegisters;
 			
 			UInt64 itsAlarmClock;
+			UInt64 itsLastActivity;
 			
 			std::string itsName;
 			
@@ -201,6 +202,8 @@ namespace Genie
 			int Result() const  { return itsResult; }
 			
 			unsigned CountAsyncOps() const  { return itsAsyncOpCount; }
+			
+			const UInt64& GetTimeOfLastActivity() const  { return itsLastActivity; }
 			
 			void Release();
 			
