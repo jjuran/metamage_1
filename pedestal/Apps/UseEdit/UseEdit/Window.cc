@@ -51,13 +51,10 @@ namespace UseEdit
 	}
 	
 	
-	Window::Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
-			        ConstStr255Param                                     title )
+	Window::Window( ConstStr255Param title )
 	: Base( Ped::NewWindowContext( MakeWindowRect(), title ),
 	  N::documentProc )
 	{
-		SetCloseHandler( handler );
-		
 		SetView( MakeView() );
 	}
 	

@@ -25,8 +25,7 @@ namespace UseEdit
 		public:
 			typedef Pedestal::Window Base;
 			
-			Window( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler,
-			        ConstStr255Param                                          title = "\p" "UseEdit" );
+			Window( ConstStr255Param title = "\p" "UseEdit" );
 			
 			std::string GetName() const;
 			
