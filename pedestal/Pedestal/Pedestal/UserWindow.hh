@@ -23,10 +23,6 @@ namespace Pedestal
 			boost::shared_ptr< View > itsView;
 		
 		public:
-			UserView( const Rect& = Rect(), Initializer = Initializer() )
-			{
-			}
-			
 			~UserView();
 			
 			void Set( boost::shared_ptr< View > const& view )  { itsView = view; }
@@ -63,14 +59,11 @@ namespace Pedestal
 	};
 	
 	
-	class UserWindow : public Window< UserView, Variable_DefProcID >
+	class UserWindow : public Window
 	{
 		public:
 			UserWindow( const NewWindowContext&    context,
 			            Nitrogen::WindowDefProcID  procID );
-			
-			void SetView( boost::shared_ptr< View > const& view )  { SubView().Set( view ); }
-			void SetView( std::auto_ptr    < View >        view )  { SubView().Set( view ); }
 	};
 	
 }

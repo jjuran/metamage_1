@@ -6,20 +6,17 @@
 #ifndef PEDESTAL_ABOUTBOX_HH
 #define PEDESTAL_ABOUTBOX_HH
 
-// Standard C++
-#include <memory>
-
 // Pedestal
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace Pedestal
 {
 	
-	class AboutBox : public UserWindow
+	class AboutBox : public Window
 	{
 		public:
-			typedef UserWindow Base;
+			typedef Window Base;
 			
 			AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler );
 			~AboutBox();

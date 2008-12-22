@@ -20,6 +20,7 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
@@ -233,26 +234,31 @@ namespace Pedestal
 			}
 	};
 	
-	template < class Type, class DefProcID = Static_DefProcID< Nitrogen::documentProc > >
 	class Window : public WindowCore
 	{
 		private:
-			DefProcID  itsDefProcID;
-			Type       itsSubView;
+			typedef Variable_DefProcID DefProcID;
+			
+			Variable_DefProcID         itsDefProcID;
+			boost::shared_ptr< View >  itsView;
 		
 		public:
-			typedef Type SubViewType;
-			typedef typename Type::Initializer Initializer;
-			
 			Window( const NewWindowContext&  context,
-			        DefProcID                defProcID = DefProcID(),
-			        Initializer              init      = Initializer() );
+			        DefProcID                defProcID = DefProcID() );
 			
-			Window( const NewWindowContext&  context,
-			        Initializer              init );
+			Window( const NewWindowContext& context );
 			
-			Type const& SubView() const  { return itsSubView; }
-			Type      & SubView()        { return itsSubView; }
+			View const& SubView() const  { return *itsView; }
+			View      & SubView()        { return *itsView; }
+			
+			template < class ViewType >
+			ViewType& SubView()  { return static_cast< ViewType& >( *itsView ); }
+			
+			template < class ViewType >
+			const ViewType& SubView() const  { return static_cast< const ViewType& >( *itsView ); }
+			
+			void SetView( boost::shared_ptr< View > const& view )  { itsView = view; }
+			void SetView( std::auto_ptr    < View >        view )  { itsView = view; }
 			
 			void InvalidateGrowBox() const
 			{
@@ -284,33 +290,28 @@ namespace Pedestal
 			void Update();
 	};
 	
-	template < class Type, class DefProcID >
-	inline Window< Type, DefProcID >::Window( const NewWindowContext&  context,
-	                                          DefProcID                defProcID,
-	                                          Initializer              init )
+	inline Window::Window( const NewWindowContext&  context,
+	                       DefProcID                defProcID )
 	:
 		WindowCore( CreateWindow( context,
 		                          defProcID.Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( defProcID ),
-		itsSubView  ( Nitrogen::GlobalToLocal( context.bounds ), init )
+		itsView()
 	{
 	}
 	
-	template < class Type, class DefProcID >
-	inline Window< Type, DefProcID >::Window( const NewWindowContext&  context,
-	                                          Initializer              init )
+	inline Window::Window( const NewWindowContext& context )
 	:
 		WindowCore( CreateWindow( context,
 		                          DefProcID().Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( DefProcID() ),
-		itsSubView  ( Nitrogen::GlobalToLocal( context.bounds ), init )
+		itsView()
 	{
 	}
 	
-	template < class Type, class DefProcID >
-	inline void Window< Type, DefProcID >::MouseDown( const EventRecord& event )
+	inline void Window::MouseDown( const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
 		if ( Get() != Nitrogen::FrontWindow() )
@@ -323,8 +324,7 @@ namespace Pedestal
 		}
 	}
 	
-	template < class Type, class DefProcID >
-	inline void Window< Type, DefProcID >::Update()
+	inline void Window::Update()
 	{
 		SubView().Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
 		
