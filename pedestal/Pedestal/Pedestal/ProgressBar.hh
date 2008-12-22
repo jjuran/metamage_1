@@ -19,7 +19,7 @@ namespace Pedestal
 			//double  itsProgress;
 		
 		public:
-			ProgressBar( const Rect& bounds, View::Initializer init = View::Initializer() );
+			ProgressBar( const Rect& bounds );
 			
 			virtual double Progress() = 0;
 			

@@ -18,9 +18,8 @@ namespace Pedestal
 			bool itHasPendingCR;
 		
 		public:
-			Console( const Rect&         bounds,
-			         const Initializer&  init ) : TEView        ( bounds, init ),
-			                                      itHasPendingCR( false        )
+			Console( const Rect& bounds ) : TEView        ( bounds ),
+			                                itHasPendingCR( false  )
 			{
 			}
 			

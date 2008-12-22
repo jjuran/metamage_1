@@ -15,7 +15,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	GWorldView::GWorldView( const Rect& bounds, Initializer )
+	GWorldView::GWorldView( const Rect& bounds )
 	:
 		itsBounds( bounds ),
 	  	itsGWorld( N::NewGWorld( 0, N::LocalToGlobal( bounds ) ) )

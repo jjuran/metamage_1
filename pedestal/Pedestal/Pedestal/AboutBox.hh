@@ -14,20 +14,10 @@
 namespace Pedestal
 {
 	
-	class AboutBox : public Window
-	{
-		public:
-			typedef Window Base;
-			
-			AboutBox();
-			~AboutBox();
-	};
-	
-	
 	class AboutBoxOwner : public UniqueWindowOwner
 	{
 		private:
-			static Window* New()  { return new AboutBox; }
+			static std::auto_ptr< Window > New();
 		
 		public:
 			AboutBoxOwner() : UniqueWindowOwner( &New )

@@ -388,7 +388,7 @@ namespace Pedestal
 			HorizontalScrollbarType  myScrollH;
 		
 		public:
-			Scroller( const Rect& bounds, Initializer init = Initializer() );
+			Scroller( const Rect& bounds );
 			
 			static bool ScrollsVertically()    { return VerticalTraits  ::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
@@ -446,7 +446,7 @@ namespace Pedestal
 	
 	
 	template < bool vertical, bool horizontal >
-	Scroller< vertical, horizontal >::Scroller( const Rect& bounds, Initializer )
+	Scroller< vertical, horizontal >::Scroller( const Rect& bounds )
 	: 
 		ScrollerBase( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),

@@ -21,11 +21,11 @@ namespace Pedestal
 		{
 			N::SelectWindow( window->Get() );
 		}
-		else if ( Window* created = itsFactory() )
+		else
 		{
-			itsWindow.reset( created );
+			itsWindow = itsFactory();
 			
-			created->SetCloseHandler( itsCloseHandler );
+			itsWindow->SetCloseHandler( itsCloseHandler );
 		}
 	}
 	

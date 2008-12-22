@@ -23,7 +23,7 @@ namespace Pedestal
 			Nucleus::Owned< Nitrogen::GWorldPtr >  itsGWorld;
 		
 		public:
-			GWorldView( const Rect& bounds, Initializer );
+			GWorldView( const Rect& bounds );
 			
 			Nitrogen::GWorldPtr Get() const  { return itsGWorld.Get(); }
 			

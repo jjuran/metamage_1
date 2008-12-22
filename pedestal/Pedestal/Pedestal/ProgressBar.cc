@@ -60,7 +60,7 @@ namespace Pedestal
 		N::RGBForeColor( gBlack );
 	}
 	
-	ProgressBar::ProgressBar( const Rect& bounds, View::Initializer init )
+	ProgressBar::ProgressBar( const Rect& bounds )
 	/*
 	:
 		itsBounds( CalcCenteredProgressBarRect( bounds ) ), 

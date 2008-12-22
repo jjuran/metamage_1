@@ -22,7 +22,7 @@ namespace Pedestal
 	// A unique window such as a modeless about box that's sometimes open and sometimes not.
 	class UniqueWindowOwner
 	{
-		typedef Window* (*Factory)();
+		typedef std::auto_ptr< Window > (*Factory)();
 		
 		class CloseHandler : public WindowCloseHandler
 		{

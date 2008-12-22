@@ -28,8 +28,6 @@ namespace Pedestal
 			Value value;
 		
 		public:
-			typedef Parameter Initializer;
-			
 			PlainIcon( Parameter v ) : value( v )  {}
 			
 			GetResult Get() const  { return value; }
@@ -49,8 +47,6 @@ namespace Pedestal
 			Value value;
 		
 		public:
-			typedef Parameter Initializer;
-			
 			MaskedIcon( Parameter v ) : value( v )  {}
 			
 			GetResult Get() const  { return value; }
@@ -68,8 +64,6 @@ namespace Pedestal
 			Value value;
 		
 		public:
-			typedef Parameter Initializer;
-			
 			IconID( Parameter v ) : value( v )  {}
 			
 			GetResult Get() const  { return value; }

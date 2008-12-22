@@ -298,11 +298,10 @@ namespace Pedestal
 	}
 	
 	
-	TEView::TEView( const Rect&  bounds,
-	                Initializer  /**/ ) : itsTE( ( SetTextAttributes(),
-	                                               N::TENew( ViewRectFromBounds( bounds ) ) ) ),
-	                                      itsSelectionPriorToSearch(),
-	                                      itsSelectionPriorToArrow ()
+	TEView::TEView( const Rect&  bounds ) : itsTE( ( SetTextAttributes(),
+	                                                 N::TENew( ViewRectFromBounds( bounds ) ) ) ),
+	                                        itsSelectionPriorToSearch(),
+	                                        itsSelectionPriorToArrow ()
 	{
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		

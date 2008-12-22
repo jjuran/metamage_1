@@ -64,9 +64,7 @@ namespace Pedestal
 			SubViewType mySubView;
 		
 		public:
-			typedef typename SubViewType::Initializer Initializer;
-			
-			ScrollingView( const Rect& bounds, Initializer init = Initializer() )
+			ScrollingView( const Rect& bounds )
 			: 
 				bounds( bounds ), 
 				scrollPosition( Nitrogen::SetPt( 0, 0 ) ), 
