@@ -27,8 +27,9 @@ namespace Pedestal
 			WindowStorage itsWindow;
 		
 		public:
-			SingleWindowOwner( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsWindow( new Window( handler ) )
+			SingleWindowOwner( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsWindow( new Window )
 			{
+				itsWindow->SetCloseHandler( handler );
 			}
 			
 			Window const& Get() const  { return *itsWindow.get(); }

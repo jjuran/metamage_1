@@ -57,9 +57,11 @@ namespace Pedestal
 			
 			void NewWindow()
 			{
-				Window* raw_ptr = new Window( itsCloseHandler );
+				Window* raw_ptr = new Window;
 				
 				boost::shared_ptr< Window > window( raw_ptr );
+				
+				raw_ptr->SetCloseHandler( itsCloseHandler );
 				
 				itsWindows[ raw_ptr->Get() ] = window;
 			}
