@@ -552,7 +552,7 @@ namespace Genie
 		                                                      &Property::Write ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_window_REF_Mappings[] =
+	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
 		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
 		

@@ -237,7 +237,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
-	const Functional_Traits< void >::Mapping Icon_view_Mappings[] =
+	const FSTree_Premapped::Mapping Icon_view_Mappings[] =
 	{
 		{ "data", &Factory< FSTree_Icon_data > },
 		

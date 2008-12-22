@@ -16,7 +16,7 @@ namespace Genie
 	typedef FSTree_Sequence< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
 	
 	
-	const Singleton_Mapping sys_set_Mappings[] =
+	const FSTree_Premapped::Mapping sys_set_Mappings[] =
 	{
 		{ "txt", &Singleton_Factory< FSTree_sys_set_txt  > },
 		

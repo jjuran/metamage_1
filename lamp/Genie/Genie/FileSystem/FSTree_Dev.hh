@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const Singleton_Mapping dev_Mappings[];
+	extern const FSTree_Premapped::Mapping dev_Mappings[];
 	
 }
 

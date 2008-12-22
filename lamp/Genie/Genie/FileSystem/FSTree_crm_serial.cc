@@ -59,7 +59,7 @@ namespace Genie
 		return GetCRMRecPtrFromID( key ) != NULL;
 	}
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_crm_serial_N_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[];
 	
 	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr&    parent,
 		                                                const std::string&  name,
@@ -172,7 +172,7 @@ namespace Genie
 		                                        &sys_mac_crm_serial_N_icon::Read ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_crm_serial_N_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   &Name_Factory   },
 		{ "input",  &Input_Factory  },

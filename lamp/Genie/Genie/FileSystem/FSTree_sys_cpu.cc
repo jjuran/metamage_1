@@ -77,7 +77,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_cpu_Mappings[] =
+	const FSTree_Premapped::Mapping sys_cpu_Mappings[] =
 	{
 		{ "proc", &Property_Factory< GetCPUProc > },
 		

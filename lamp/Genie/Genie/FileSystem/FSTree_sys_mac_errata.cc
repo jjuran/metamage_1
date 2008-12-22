@@ -129,7 +129,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_mac_errata_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_errata_Mappings[] =
 	{
 		{ "text-on-black-freakout",   &Property_Factory< FlakeyRadeonChip      > },
 		{ "async-io-race",            &Property_Factory< RunningInClassic      > },

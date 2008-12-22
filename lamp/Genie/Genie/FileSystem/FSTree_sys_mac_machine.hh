@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const Singleton_Mapping sys_mac_machine_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_machine_Mappings[];
 	
 }
 

@@ -50,7 +50,7 @@ namespace Genie
 	class FSTree_new_View : public FSTree
 	{
 		private:
-			typedef const Singleton_Mapping* Mappings;
+			typedef const FSTree_Premapped::Mapping* Mappings;
 			
 			typedef void (*Destructor)( const FSTree* delegate );
 			

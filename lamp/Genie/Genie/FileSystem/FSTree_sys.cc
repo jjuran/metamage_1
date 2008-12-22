@@ -143,9 +143,9 @@ namespace Genie
 		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
-	extern const Singleton_Mapping sys_kernel_bin_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];
 	
-	const Singleton_Mapping sys_kernel_bin_Mappings[] =
+	const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[] =
 	{
 		{ "true",  &Executable_Factory< main_true  > },
 		{ "false", &Executable_Factory< main_false > },
@@ -156,9 +156,9 @@ namespace Genie
 	};
 	
 	
-	extern const Singleton_Mapping sys_kernel_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_kernel_Mappings[];
 	
-	const Singleton_Mapping sys_kernel_Mappings[] =
+	const FSTree_Premapped::Mapping sys_kernel_Mappings[] =
 	{
 		{ "bin",     &Premapped_Factory< sys_kernel_bin_Mappings > },
 		
@@ -167,7 +167,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	const Singleton_Mapping sys_Mappings[] =
+	const FSTree_Premapped::Mapping sys_Mappings[] =
 	{
 		{ "app",    &Premapped_Factory< sys_app_Mappings    > },
 		{ "cpu",    &Premapped_Factory< sys_cpu_Mappings    > },
@@ -185,7 +185,7 @@ namespace Genie
 	                                                    const std::string&  name,
 	                                                    const Key&          key ) const
 	{
-		return FSTreePtr( new FSTree_Functional< Key >( parent, name, key ) );
+		return FSTreePtr( new FSTree_Premapped( parent, name ) );
 	}
 	
 }

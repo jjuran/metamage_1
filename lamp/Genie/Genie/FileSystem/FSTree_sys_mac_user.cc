@@ -22,7 +22,7 @@ namespace Genie
 		                                       &sys_mac_user_name::Read ) );
 	}
 	
-	const Singleton_Mapping sys_mac_user_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_user_Mappings[] =
 	{
 		{ "home", &Singleton_Factory< FSTree_sys_mac_user_home  > },
 		

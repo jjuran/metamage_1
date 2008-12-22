@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const Functional_Traits< void >::Mapping Caption_view_Mappings[];
+	extern const FSTree_Premapped::Mapping Caption_view_Mappings[];
 	
 	std::auto_ptr< Pedestal::View > CaptionFactory( const FSTree* delegate );
 	

@@ -75,7 +75,7 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_drive_N_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[];
 	
 	FSTreePtr sys_mac_drive_Details::GetChildNode( const FSTreePtr&    parent,
 		                                           const std::string&  name,
@@ -202,7 +202,7 @@ namespace Genie
 		return FSTreePtr( new Stamp( parent, name, key ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_drive_N_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
 		

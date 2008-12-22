@@ -209,65 +209,17 @@ namespace Genie
 	};
 	
 	
-	template < class Key >
-	struct Keyed_Function_Traits
-	{
-		typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
-	};
-	
-	template <>
-	struct Keyed_Function_Traits< void >
-	{
-		typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
-	};
-	
-	template < class Key >
-	struct Functional_Traits : Keyed_Function_Traits< Key >
-	{
-		typedef typename Keyed_Function_Traits< Key >::Function Function;
-		
-		struct Mapping
-		{
-			const char*  name;
-			Function     f;
-			bool         needs_check;
-		};
-	};
-	
-	template < class Key >
-	struct Keyed_Invoker_Details : Functional_Traits< Key >
-	{
-		typedef typename Functional_Traits< Key >::Function Function;
-		
-		Key itsKey;
-		
-		Keyed_Invoker_Details( Key key ) : itsKey( key )
-		{
-		}
-		
-		FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
-		{
-			return f( parent, name, itsKey );
-		}
-	};
-	
-	template <>
-	struct Keyed_Invoker_Details< void > : Functional_Traits< void >
-	{
-		FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
-		{
-			return f( parent, name );
-		}
-	};
-	
-	template < class Key >
-	class FSTree_Functional : public FSTree_Directory, public Keyed_Invoker_Details< Key >
+	class FSTree_Premapped : public FSTree_Directory
 	{
 		private:
-			typedef Keyed_Invoker_Details< Key > Details;
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
 			
-			typedef typename Details::Function  Function;
-			typedef typename Details::Mapping   Mapping;
+			struct Mapping
+			{
+				const char*  name;
+				Function     f;
+				bool         needs_check;
+			};
 			
 			typedef std::map< std::string, const Mapping* > Mappings;
 			
@@ -277,24 +229,14 @@ namespace Genie
 			Mappings    itsMappings;
 		
 		public:
-			FSTree_Functional( const FSTreePtr&    parent,
-			                   const std::string&  name,
-			                   Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
-			                                                       itsDestructor( dtor )
+			FSTree_Premapped( const FSTreePtr&    parent,
+			                  const std::string&  name,
+			                  Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
+			                                                      itsDestructor( dtor )
 			{
 			}
 			
-			template < class Key >
-			FSTree_Functional( const FSTreePtr&    parent,
-			                   const std::string&  name,
-			                   const Key&          key,
-			                   Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
-			                                                       Details( key ),
-			                                                       itsDestructor( dtor )
-			{
-			}
-			
-			~FSTree_Functional();
+			~FSTree_Premapped();
 			
 			void Map( const Mapping& mapping );
 			
@@ -306,92 +248,6 @@ namespace Genie
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	template < class Key >
-	FSTree_Functional< Key >::~FSTree_Functional()
-	{
-		if ( itsDestructor )
-		{
-			itsDestructor( static_cast< FSTree* >( this ) );
-		}
-	}
-	
-	template < class Key >
-	void FSTree_Functional< Key >::Map( const Mapping& mapping )
-	{
-		itsMappings[ mapping.name ] = &mapping;
-	}
-	
-	template < class Key >
-	void FSTree_Functional< Key >::AddMappings( const Mapping* array )
-	{
-		while ( array->name != NULL )
-		{
-			Map( *array );
-			
-			++array;
-		}
-	}
-	
-	template < class Key >
-	void FSTree_Functional< Key >::AddMappings( const Mapping* begin,
-	                                            const Mapping* end )
-	{
-		for ( const Mapping* it = begin;  it != end;  ++it )
-		{
-			Map( *it );
-		}
-	}
-	
-	template < class Key >
-	FSTreePtr FSTree_Functional< Key >::Lookup_Child( const std::string& name ) const
-	{
-		Mappings::const_iterator it = itsMappings.find( name );
-		
-		if ( it == itsMappings.end() )
-		{
-			return FSNull();
-		}
-		
-		const Function& f = it->second->f;
-		
-		return Details::Invoke( f, shared_from_this(), name );
-	}
-	
-	template < class Key >
-	void FSTree_Functional< Key >::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		typedef Mappings::const_iterator Iter;
-		
-		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
-		{
-			const std::string& name = it->first;
-			
-			const Function& f = it->second->f;
-			
-			try
-			{
-				if ( it->second->needs_check )
-				{
-					FSTreePtr file = Details::Invoke( f, shared_from_this(), name );
-					
-					if ( !file->Exists() )
-					{
-						continue;
-					}
-				}
-				
-				ino_t inode = 0;
-				
-				cache.push_back( FSNode( inode, name ) );
-			}
-			catch ( ... )
-			{
-			}
-		}
-	}
-	
-	
-	typedef FSTree_Functional< void >::Mapping Singleton_Mapping;
 	
 	template < class FSTree_Type >
 	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
@@ -399,45 +255,21 @@ namespace Genie
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&           parent,
-	                             const std::string&         name,
-	                             const Singleton_Mapping    mappings[],
-	                             void                     (*dtor)(const FSTree*) = NULL );
+	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
+	                             const std::string&                 name,
+	                             const FSTree_Premapped::Mapping    mappings[],
+	                             void                             (*dtor)(const FSTree*) = NULL );
 	
-	template < const Singleton_Mapping mappings[] >
+	template < const FSTree_Premapped::Mapping mappings[] >
 	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
 	{
 		return Premapped_Factory( parent, name, mappings );
 	}
 	
-	template < const Singleton_Mapping mappings[], void (*dtor)(const FSTree*) >
+	template < const FSTree_Premapped::Mapping mappings[], void (*dtor)(const FSTree*) >
 	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
 	{
 		return Premapped_Factory( parent, name, mappings, dtor );
-	}
-	
-	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[] >
-	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name, Key key )
-	{
-		FSTree_Functional< Key >* raw_ptr = new FSTree_Functional< Key >( parent, name, key );
-		
-		FSTreePtr result( raw_ptr );
-		
-		raw_ptr->AddMappings( mappings );
-		
-		return result;
-	}
-	
-	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[], void (*dtor)(const FSTree*) >
-	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name, Key key )
-	{
-		FSTree_Functional< Key >* raw_ptr = new FSTree_Functional< Key >( parent, name, key, dtor );
-		
-		FSTreePtr result( raw_ptr );
-		
-		raw_ptr->AddMappings( mappings );
-		
-		return result;
 	}
 	
 	

@@ -175,7 +175,7 @@ namespace Genie
 	};
 	
 	
-	extern const Functional_Traits< void >::Mapping proc_PID_Mappings[];
+	extern const FSTree_Premapped::Mapping proc_PID_Mappings[];
 	
 	FSTreePtr proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                  const std::string&  name,
@@ -453,7 +453,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_proc_PID_core( parent, name ) );
 	}
 	
-	const Functional_Traits< void >::Mapping proc_PID_Mappings[] =
+	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
 		

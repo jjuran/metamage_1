@@ -150,7 +150,7 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_vol_N_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[];
 	
 	FSTreePtr sys_mac_vol_Details::GetChildNode( const FSTreePtr&    parent,
 		                                         const std::string&  name,
@@ -449,7 +449,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_vol_N_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ "name", &Property_Factory< GetVolumeName > },
 		

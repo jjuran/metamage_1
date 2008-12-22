@@ -14,7 +14,7 @@
 namespace Genie
 {
 	
-	const Singleton_Mapping sys_mac_crm_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_crm_Mappings[] =
 	{
 		{ "serial", &Singleton_Factory< FSTree_sys_mac_crm_serial > },
 		

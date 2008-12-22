@@ -237,7 +237,7 @@ namespace Genie
 		                                       &Property::Write ) );
 	}
 	
-	const Functional_Traits< void >::Mapping Caption_view_Mappings[] =
+	const FSTree_Premapped::Mapping Caption_view_Mappings[] =
 	{
 		{ "text", &Factory< FSTree_Caption_text > },
 		

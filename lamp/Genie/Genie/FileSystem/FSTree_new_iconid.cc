@@ -132,7 +132,7 @@ namespace Genie
 		                                       &WriteIconID ) );
 	}
 	
-	const Functional_Traits< void >::Mapping IconID_view_Mappings[] =
+	const FSTree_Premapped::Mapping IconID_view_Mappings[] =
 	{
 		{ "id", &IDFactory },
 		

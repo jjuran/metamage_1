@@ -138,7 +138,7 @@ namespace Genie
 		                                             const std::string&  name,
 		                                             const Key&          key )
 	{
-		return FSTreePtr( new FSTree_Functional< Gestalt_KeyName_Traits::Key >( parent, name, key ) );
+		return FSTreePtr( new FSTree_Premapped( parent, name ) );
 	}
 	
 }

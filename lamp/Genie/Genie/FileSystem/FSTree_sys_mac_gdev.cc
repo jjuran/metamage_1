@@ -112,7 +112,7 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_gdev_H_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_gdev_H_Mappings[];
 	
 	FSTreePtr sys_mac_gdev_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
@@ -176,7 +176,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_gdev_H_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_gdev_H_Mappings[] =
 	{
 		{ "driver", &Driver_Link_Factory },
 		

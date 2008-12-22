@@ -50,7 +50,7 @@ namespace Genie
 		                                        &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_mac_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
 		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
 		{ "gdev",   &Singleton_Factory< FSTree_sys_mac_gdev   > },

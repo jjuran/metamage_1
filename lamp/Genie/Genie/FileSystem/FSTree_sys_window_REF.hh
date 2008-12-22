@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const Functional_Traits< void >::Mapping sys_window_REF_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_window_REF_Mappings[];
 	
 	void RemoveUserWindow( const FSTree* key );
 	

@@ -23,7 +23,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_mac_machine_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_machine_Mappings[] =
 	{
 		{ "id",   &Property_Factory< sys_mac_machine_id   > },
 		{ "name", &Property_Factory< sys_mac_machine_name > },

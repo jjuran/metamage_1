@@ -123,12 +123,92 @@ namespace Genie
 		return found != mappings.end() ? found->second : FSTreePtr();
 	}
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&           parent,
-	                             const std::string&         name,
-	                             const Singleton_Mapping    mappings[],
-	                             void                     (*dtor)(const FSTree*) )
+	
+	FSTree_Premapped::~FSTree_Premapped()
 	{
-		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name, dtor );
+		if ( itsDestructor )
+		{
+			itsDestructor( static_cast< FSTree* >( this ) );
+		}
+	}
+	
+	void FSTree_Premapped::Map( const Mapping& mapping )
+	{
+		itsMappings[ mapping.name ] = &mapping;
+	}
+	
+	void FSTree_Premapped::AddMappings( const Mapping* array )
+	{
+		while ( array->name != NULL )
+		{
+			Map( *array );
+			
+			++array;
+		}
+	}
+	
+	void FSTree_Premapped::AddMappings( const Mapping*  begin,
+	                                    const Mapping*  end )
+	{
+		for ( const Mapping* it = begin;  it != end;  ++it )
+		{
+			Map( *it );
+		}
+	}
+	
+	FSTreePtr FSTree_Premapped::Lookup_Child( const std::string& name ) const
+	{
+		Mappings::const_iterator it = itsMappings.find( name );
+		
+		if ( it == itsMappings.end() )
+		{
+			return FSNull();
+		}
+		
+		const Function& f = it->second->f;
+		
+		return f( shared_from_this(), name );
+	}
+	
+	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		typedef Mappings::const_iterator Iter;
+		
+		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
+		{
+			const std::string& name = it->first;
+			
+			const Function& f = it->second->f;
+			
+			try
+			{
+				if ( it->second->needs_check )
+				{
+					FSTreePtr file = f( shared_from_this(), name );
+					
+					if ( !file->Exists() )
+					{
+						continue;
+					}
+				}
+				
+				ino_t inode = 0;
+				
+				cache.push_back( FSNode( inode, name ) );
+			}
+			catch ( ... )
+			{
+			}
+		}
+	}
+	
+	
+	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
+	                             const std::string&                 name,
+	                             const FSTree_Premapped::Mapping    mappings[],
+	                             void                             (*dtor)(const FSTree*) )
+	{
+		FSTree_Premapped* raw_ptr = new FSTree_Premapped( parent, name, dtor );
 		
 		FSTreePtr result( raw_ptr );
 		

@@ -69,7 +69,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_app_Mappings[] =
+	const FSTree_Premapped::Mapping sys_app_Mappings[] =
 	{
 		{ "freemem", &Property_Factory< GetFreeMem > },
 		

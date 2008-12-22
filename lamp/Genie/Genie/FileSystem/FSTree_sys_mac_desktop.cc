@@ -108,7 +108,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Singleton_Mapping sys_mac_desktop_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_desktop_Mappings[] =
 	{
 		{ "bounds", &Property_Factory< GetScreenBounds > },
 		{ "size",   &Property_Factory< GetScreenSize   > },

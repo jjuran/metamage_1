@@ -165,7 +165,7 @@ namespace Genie
 	};
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_unit_N_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_unit_N_Mappings[];
 	
 	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
@@ -186,7 +186,7 @@ namespace Genie
 		                                       &Property::Read ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_unit_N_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_unit_N_Mappings[] =
 	{
 		{ "flags", &Property_Factory< GetDriverFlags > },
 		{ "name",  &Property_Factory< DriverName  > },

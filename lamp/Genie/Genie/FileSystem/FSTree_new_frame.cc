@@ -159,7 +159,7 @@ namespace Genie
 		                                       &WriteMargin ) );
 	}
 	
-	const Functional_Traits< void >::Mapping Frame_view_Mappings[] =
+	const FSTree_Premapped::Mapping Frame_view_Mappings[] =
 	{
 		{ "margin", &MarginFactory },
 		

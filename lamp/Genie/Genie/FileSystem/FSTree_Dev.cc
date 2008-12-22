@@ -164,9 +164,9 @@ namespace Genie
 	}
 	
 	
-	extern const Singleton_Mapping dev_new_Mappings[];
+	extern const FSTree_Premapped::Mapping dev_new_Mappings[];
 	
-	const Singleton_Mapping dev_new_Mappings[] =
+	const FSTree_Premapped::Mapping dev_new_Mappings[] =
 	{
 		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
 		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
@@ -181,7 +181,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
-	const Singleton_Mapping dev_Mappings[] =
+	const FSTree_Premapped::Mapping dev_Mappings[] =
 	{
 		{ "null",    &SimpleDevice_Factory },
 		{ "zero",    &SimpleDevice_Factory },

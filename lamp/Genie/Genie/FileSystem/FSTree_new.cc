@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	const Singleton_Mapping new_Mappings[] =
+	const FSTree_Premapped::Mapping new_Mappings[] =
 	{
 		{ "caption", &Singleton_Factory< FSTree_new_caption > },
 		{ "frame",   &Singleton_Factory< FSTree_new_frame   > },

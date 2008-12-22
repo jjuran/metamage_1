@@ -85,7 +85,7 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_proc_PSN_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[];
 	
 	FSTreePtr sys_mac_proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
@@ -154,7 +154,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_proc_PSN_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ "name", &Name_Factory },
 		

@@ -48,7 +48,7 @@ namespace Genie
 	}
 	
 	
-	extern const Functional_Traits< void >::Mapping sys_mac_adb_N_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[];
 	
 	FSTreePtr sys_mac_adb_Details::GetChildNode( const FSTreePtr&    parent,
 		                                         const std::string&  name,
@@ -154,7 +154,7 @@ namespace Genie
 		                                        &sys_mac_adb_N_registers::Read ) );
 	}
 	
-	const Functional_Traits< void >::Mapping sys_mac_adb_N_Mappings[] =
+	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =
 	{
 		{ "type",      &Property_Factory< sys_mac_adb_N_type   > },
 		{ "origin",    &Property_Factory< sys_mac_adb_N_origin > },

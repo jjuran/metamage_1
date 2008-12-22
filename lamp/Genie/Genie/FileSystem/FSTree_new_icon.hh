@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const Functional_Traits< void >::Mapping Icon_view_Mappings[];
+	extern const FSTree_Premapped::Mapping Icon_view_Mappings[];
 	
 	std::auto_ptr< Pedestal::View > IconFactory( const FSTree* delegate );
 	
