@@ -20,7 +20,6 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
-#include "Pedestal/View.hh"
 
 
 namespace Pedestal
@@ -208,33 +207,10 @@ namespace Pedestal
 			void Resize( Nitrogen::WindowRef window, short h, short v );
 	};
 	
-	class Quasimode;
+	class View;
 	
-	class WindowBase : public ClosableWindow, public ResizableWindow
-	{
-		public:
-			virtual void Idle       ( const EventRecord& event           ) = 0;
-			virtual void MouseDown  ( const EventRecord& event           ) = 0;
-			virtual bool KeyDown    ( const EventRecord& event           ) = 0;
-			virtual void Update     (                                    ) = 0;
-			virtual void Activate   ( bool activating                    ) = 0;
-			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
-			virtual void Resized    ( short width, short height          ) = 0;
-			virtual bool UserCommand( MenuItemCode code                  ) = 0;
-			
-			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
-	};
-	
-	class WindowCore : public WindowBase,
-	                   public WindowRefOwner
-	{
-		public:
-			WindowCore( Nucleus::Owned< Nitrogen::WindowRef > window ) : WindowRefOwner( window  )
-			{
-			}
-	};
-	
-	class Window : public WindowCore
+	class Window : public ClosableWindow, public ResizableWindow,
+	               public WindowRefOwner
 	{
 		private:
 			typedef Variable_DefProcID DefProcID;
@@ -246,10 +222,8 @@ namespace Pedestal
 			Window( const NewWindowContext&  context,
 			        DefProcID                defProcID = DefProcID() );
 			
-			Window( const NewWindowContext& context );
-			
-			View const& SubView() const  { return *itsView; }
-			View      & SubView()        { return *itsView; }
+			View const& GetView() const  { return *itsView; }
+			View      & GetView()        { return *itsView; }
 			
 			template < class ViewType >
 			ViewType& SubView()  { return static_cast< ViewType& >( *itsView ); }
@@ -268,71 +242,13 @@ namespace Pedestal
 				}
 			}
 			
-			void Idle       ( const EventRecord& event  )  { SubView().Idle( event );              }
-			bool KeyDown    ( const EventRecord& event  )  { return SubView().KeyDown( event );    }
-			void Activate   ( bool activating           )  { SubView().Activate( activating    );  InvalidateGrowBox(); }
-			void Resized    ( short width, short height )  { SubView().Resize  ( width, height );  InvalidateGrowBox(); }
-			bool UserCommand( MenuItemCode code         )  { return SubView().UserCommand( code ); }
-			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
-			{
-				return SubView().EnterShiftSpaceQuasimode( event );
-			}
-			
-			bool SetCursor( Point      location,
-			                RgnHandle  mouseRgn )
-			{
-				return SubView().SetCursor( location, mouseRgn );
-			}
+			void Activate( bool activating           );
+			void Resized ( short width, short height );
 			
 			void MouseDown( const EventRecord& event );
 			
 			void Update();
 	};
-	
-	inline Window::Window( const NewWindowContext&  context,
-	                       DefProcID                defProcID )
-	:
-		WindowCore( CreateWindow( context,
-		                          defProcID.Get(),
-		                          static_cast< WindowBase* >( this ) ) ),
-		itsDefProcID( defProcID ),
-		itsView()
-	{
-	}
-	
-	inline Window::Window( const NewWindowContext& context )
-	:
-		WindowCore( CreateWindow( context,
-		                          DefProcID().Get(),
-		                          static_cast< WindowBase* >( this ) ) ),
-		itsDefProcID( DefProcID() ),
-		itsView()
-	{
-	}
-	
-	inline void Window::MouseDown( const EventRecord& event )
-	{
-		// FIXME:  The window may want clicks even if it's not in front.
-		if ( Get() != Nitrogen::FrontWindow() )
-		{
-			Nitrogen::SelectWindow( Get() );
-		}
-		else
-		{
-			SubView().MouseDown( event );
-		}
-	}
-	
-	inline void Window::Update()
-	{
-		SubView().Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
-		
-		if ( itsDefProcID.HasGrowIcon() )
-		{
-			DrawWindow( Get() );
-		}
-	}
 	
 	
 	// A single window that exists for the duration of the owner.

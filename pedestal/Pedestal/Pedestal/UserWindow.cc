@@ -13,11 +13,5 @@ namespace Pedestal
 	{
 	}
 	
-	UserWindow::UserWindow( const NewWindowContext&    context,
-			                Nitrogen::WindowDefProcID  procID )
-	: Window( context, procID )
-	{
-	}
-	
 }
 

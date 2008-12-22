@@ -176,9 +176,9 @@ namespace Pedestal
 		{
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
-				if ( WindowBase* base = N::GetWRefCon( window ) )
+				if ( Window* base = N::GetWRefCon( window ) )
 				{
-					handled = base->UserCommand( code );
+					handled = base->GetView().UserCommand( code );
 				}
 			}
 		}
@@ -221,10 +221,11 @@ namespace Pedestal
 		
 		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				N::SetPortWindowPort( window );
-				return base->Activate( false );
+				
+				return base->GetView().Activate( false );
 			}
 		}
 	}
@@ -237,10 +238,11 @@ namespace Pedestal
 		
 		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				N::SetPortWindowPort( window );
-				return base->Activate( true );
+				
+				return base->GetView().Activate( true );
 			}
 		}
 	}
@@ -258,10 +260,11 @@ namespace Pedestal
 		
 		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				N::SetPortWindowPort( window );
-				return base->SetCursor( N::GlobalToLocal( event.where ), NULL );
+				
+				return base->GetView().SetCursor( N::GlobalToLocal( event.where ), NULL );
 			}
 		}
 		
@@ -321,7 +324,7 @@ namespace Pedestal
 		}
 		else if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				base->MouseDown( event );
 			}
@@ -347,7 +350,7 @@ namespace Pedestal
 	{
 		if ( N::TrackGoAway( window, event.where ) )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				base->Close( window );
 			}
@@ -443,9 +446,9 @@ namespace Pedestal
 		{
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
-				if ( WindowBase* base = N::GetWRefCon( window ) )
+				if ( Window* base = N::GetWRefCon( window ) )
 				{
-					if ( gQuasimode = base->EnterShiftSpaceQuasimode( event ) )
+					if ( gQuasimode = base->GetView().EnterShiftSpaceQuasimode( event ) )
 					{
 						gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 						
@@ -502,9 +505,9 @@ namespace Pedestal
 		{
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
-				if ( WindowBase* base = N::GetWRefCon( window ) )
+				if ( Window* base = N::GetWRefCon( window ) )
 				{
-					base->KeyDown( event );
+					base->GetView().KeyDown( event );
 				}
 			}
 		}
@@ -522,9 +525,9 @@ namespace Pedestal
 		
 		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
-				base->Activate( event.modifiers & activeFlag );
+				base->GetView().Activate( event.modifiers & activeFlag );
 			}
 		}
 	}
@@ -546,7 +549,7 @@ namespace Pedestal
 		
 		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
 				base->Update();
 			}
@@ -639,9 +642,9 @@ namespace Pedestal
 	{
 		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
-			if ( WindowBase* base = N::GetWRefCon( window ) )
+			if ( Window* base = N::GetWRefCon( window ) )
 			{
-				base->Idle( event );
+				base->GetView().Idle( event );
 			}
 		}
 	}
@@ -904,7 +907,7 @@ namespace Pedestal
 			case 'clos':
 				if ( N::WindowRef window = N::FrontWindow() )
 				{
-					if ( WindowBase* base = N::GetWRefCon( window ) )
+					if ( Window* base = N::GetWRefCon( window ) )
 					{
 						base->Close( window );
 					}

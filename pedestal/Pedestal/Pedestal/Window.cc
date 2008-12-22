@@ -11,6 +11,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
+// Pedestal
+#include "Pedestal/View.hh"
+
 
 namespace Pedestal
 {
@@ -21,7 +24,7 @@ namespace Pedestal
 	
 	void ResizeWindow( N::WindowRef window, Point newSize )
 	{
-		if ( WindowBase* base = N::GetWRefCon( window ) )
+		if ( Window* base = N::GetWRefCon( window ) )
 		{
 			// Resize the window
 			base->Resize( window, newSize.h, newSize.v );
@@ -140,6 +143,55 @@ namespace Pedestal
 		else
 		{
 			Nitrogen::SizeWindow( window, h, v, true );
+		}
+	}
+	
+	
+	Window::Window( const NewWindowContext&  context,
+	                DefProcID                defProcID )
+	:
+		WindowRefOwner( CreateWindow( context,
+		                              defProcID.Get(),
+		                              this ) ),
+		itsDefProcID( defProcID ),
+		itsView()
+	{
+	}
+	
+	void Window::Activate( bool activating )
+	{
+		GetView().Activate( activating );
+		
+		InvalidateGrowBox();
+	}
+	
+	void Window::Resized( short width, short height )
+	{
+		GetView().Resize( width, height );
+		
+		InvalidateGrowBox();
+	}
+	
+	void Window::MouseDown( const EventRecord& event )
+	{
+		// FIXME:  The window may want clicks even if it's not in front.
+		if ( Get() != Nitrogen::FrontWindow() )
+		{
+			Nitrogen::SelectWindow( Get() );
+		}
+		else
+		{
+			GetView().MouseDown( event );
+		}
+	}
+	
+	void Window::Update()
+	{
+		GetView().Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
+		
+		if ( itsDefProcID.HasGrowIcon() )
+		{
+			DrawWindow( Get() );
 		}
 	}
 	
