@@ -533,13 +533,6 @@ namespace Genie
 	}
 	
 	
-	template < class FSTree_Type >
-	static FSTreePtr Factory( const FSTreePtr&    parent,
-	                          const std::string&  name )
-	{
-		return FSTreePtr( new FSTree_Type( parent, name ) );
-	}
-	
 	template < class Accessor >
 	static FSTreePtr PropertyFactory( const FSTreePtr&    parent,
 	                                  const std::string&  name )
@@ -554,11 +547,11 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
-		{ "ref",   &Factory< FSTree_sys_window_REF_ref >, true },
+		{ "ref",   &Basic_Factory< FSTree_sys_window_REF_ref >, true },
 		
-		{ "view",  &Factory< FSTree_sys_window_REF_view >, true },
+		{ "view",  &Basic_Factory< FSTree_sys_window_REF_view >, true },
 		
-		{ "tty",   &Factory< FSTree_sys_window_REF_tty > },
+		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
 		{ "title", &PropertyFactory< Access_Title   > },
 		{ "pos",   &PropertyFactory< Access_Origin  > },

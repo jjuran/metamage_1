@@ -230,16 +230,9 @@ namespace Genie
 	}
 	
 	
-	template < class FSTree_Type >
-	static FSTreePtr Factory( const FSTreePtr&    parent,
-	                          const std::string&  name )
-	{
-		return FSTreePtr( new FSTree_Type( parent, name ) );
-	}
-	
 	const FSTree_Premapped::Mapping Icon_view_Mappings[] =
 	{
-		{ "data", &Factory< FSTree_Icon_data > },
+		{ "data", &Basic_Factory< FSTree_Icon_data > },
 		
 		{ NULL, NULL }
 	};

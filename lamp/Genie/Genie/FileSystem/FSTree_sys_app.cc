@@ -79,7 +79,7 @@ namespace Genie
 		
 	#endif
 		
-		{ "window", &Singleton_Factory< FSTree_sys_mac_window > },
+		{ "window", &Basic_Factory< FSTree_sys_mac_window > },
 		
 		{ NULL, NULL }
 		

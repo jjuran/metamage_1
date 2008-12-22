@@ -168,8 +168,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping dev_new_Mappings[] =
 	{
-		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
-		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
+		{ "buffer",  &Basic_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
+		{ "console", &Basic_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
 		
 		{ NULL, NULL }
 	};
@@ -187,20 +187,20 @@ namespace Genie
 		{ "zero",    &SimpleDevice_Factory },
 		{ "console", &SimpleDevice_Factory },
 		
-		{ "tty", &Singleton_Factory< FSTree_dev_tty > },
+		{ "tty", &Basic_Factory< FSTree_dev_tty > },
 		
-		{ "cu.modem",    &Singleton_Factory< FSTree_dev_cumodem    > },
-		{ "cu.printer",  &Singleton_Factory< FSTree_dev_cuprinter  > },
-		{ "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > },
-		{ "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > },
+		{ "cu.modem",    &Basic_Factory< FSTree_dev_cumodem    > },
+		{ "cu.printer",  &Basic_Factory< FSTree_dev_cuprinter  > },
+		{ "tty.modem",   &Basic_Factory< FSTree_dev_ttymodem   > },
+		{ "tty.printer", &Basic_Factory< FSTree_dev_ttyprinter > },
 		
-		{ "gestalt", &Singleton_Factory< FSTree_dev_gestalt > },
+		{ "gestalt", &Basic_Factory< FSTree_dev_gestalt > },
 		
 		{ "new", &Premapped_Factory< dev_new_Mappings > },
 		
-		{ "con", &Singleton_Factory< FSTree_dev_con > },
-		{ "pts", &Singleton_Factory< FSTree_dev_pts > },
-		{ "fd",  &Singleton_Factory< FSTree_dev_fd  > },
+		{ "con", &Basic_Factory< FSTree_dev_con > },
+		{ "pts", &Basic_Factory< FSTree_dev_pts > },
+		{ "fd",  &Basic_Factory< FSTree_dev_fd  > },
 		
 		{ NULL, NULL }
 	};

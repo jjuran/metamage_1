@@ -52,18 +52,18 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
-		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
-		{ "gdev",   &Singleton_Factory< FSTree_sys_mac_gdev   > },
-		{ "proc",   &Singleton_Factory< FSTree_sys_mac_proc   > },
-		//{ "window", &Singleton_Factory< FSTree_sys_mac_window > },
+		{ "vol",    &Basic_Factory< FSTree_sys_mac_vol    > },
+		{ "gdev",   &Basic_Factory< FSTree_sys_mac_gdev   > },
+		{ "proc",   &Basic_Factory< FSTree_sys_mac_proc   > },
+		//{ "window", &Basic_Factory< FSTree_sys_mac_window > },
 		
 	#if !TARGET_API_MAC_CARBON
 		
 		{ "crm",  &Premapped_Factory< sys_mac_crm_Mappings > },
 		
-		{ "adb",   &Singleton_Factory< FSTree_sys_mac_adb   > },
-		{ "drive", &Singleton_Factory< FSTree_sys_mac_drive > },
-		{ "unit",  &Singleton_Factory< FSTree_sys_mac_unit  > },
+		{ "adb",   &Basic_Factory< FSTree_sys_mac_adb   > },
+		{ "drive", &Basic_Factory< FSTree_sys_mac_drive > },
+		{ "unit",  &Basic_Factory< FSTree_sys_mac_unit  > },
 		
 		{ "xpram", &Generated_Factory< sys_mac_xpram > },
 		
@@ -74,12 +74,12 @@ namespace Genie
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
-		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
+		{ "gestalt", &Basic_Factory< FSTree_sys_mac_gestalt > },
 		
 		{ "name", &Property_Factory< sys_mac_name > },
 		{ "keys", &Generated_Factory< sys_mac_keys > },
 		
-		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > },
+		{ "rom", &Basic_Factory< FSTree_sys_mac_rom > },
 		
 		{ NULL, NULL }
 		

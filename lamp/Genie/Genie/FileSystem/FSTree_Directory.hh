@@ -250,7 +250,7 @@ namespace Genie
 	
 	
 	template < class FSTree_Type >
-	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr Basic_Factory( const FSTreePtr& parent, const std::string& name )
 	{
 		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}

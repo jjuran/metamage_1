@@ -162,7 +162,7 @@ namespace Genie
 	{
 		{ "bin",     &Premapped_Factory< sys_kernel_bin_Mappings > },
 		
-		{ "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > },
+		{ "syscall", &Basic_Factory< FSTree_sys_kernel_syscall > },
 		
 		{ NULL, NULL }
 	};
@@ -175,7 +175,7 @@ namespace Genie
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
 		{ "set",    &Premapped_Factory< sys_set_Mappings    > },
 		
-		{ "window", &Singleton_Factory< FSTree_sys_window > },
+		{ "window", &Basic_Factory< FSTree_sys_window > },
 		
 		{ NULL, NULL }
 	};

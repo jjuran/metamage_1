@@ -18,11 +18,11 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping new_Mappings[] =
 	{
-		{ "caption", &Singleton_Factory< FSTree_new_caption > },
-		{ "frame",   &Singleton_Factory< FSTree_new_frame   > },
-		{ "icon",    &Singleton_Factory< FSTree_new_icon    > },
-		{ "iconid",  &Singleton_Factory< FSTree_new_iconid  > },
-		{ "window",  &Singleton_Factory< FSTree_new_window  > },
+		{ "caption", &Basic_Factory< FSTree_new_caption > },
+		{ "frame",   &Basic_Factory< FSTree_new_frame   > },
+		{ "icon",    &Basic_Factory< FSTree_new_icon    > },
+		{ "iconid",  &Basic_Factory< FSTree_new_iconid  > },
+		{ "window",  &Basic_Factory< FSTree_new_window  > },
 		
 		{ NULL, NULL }
 	};

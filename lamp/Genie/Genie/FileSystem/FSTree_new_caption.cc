@@ -220,13 +220,6 @@ namespace Genie
 	};
 	
 	
-	template < class FSTree_Type >
-	static FSTreePtr Factory( const FSTreePtr&    parent,
-	                          const std::string&  name )
-	{
-		return FSTreePtr( new FSTree_Type( parent, name ) );
-	}
-	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -239,7 +232,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping Caption_view_Mappings[] =
 	{
-		{ "text", &Factory< FSTree_Caption_text > },
+		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
 		{ "wrapped", &Property_Factory< Caption_wrapped > },
 		

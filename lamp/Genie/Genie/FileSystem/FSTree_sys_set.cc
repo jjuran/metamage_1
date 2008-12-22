@@ -18,7 +18,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_set_Mappings[] =
 	{
-		{ "txt", &Singleton_Factory< FSTree_sys_set_txt  > },
+		{ "txt", &Basic_Factory< FSTree_sys_set_txt  > },
 		
 		{ NULL, NULL }
 	};

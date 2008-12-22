@@ -99,14 +99,6 @@ namespace Genie
 	}
 	
 	
-	template < class FSTree_Type >
-	static FSTreePtr Factory( const FSTreePtr&    parent,
-	                          const std::string&  name )
-	{
-		return FSTreePtr( new FSTree_Type( parent, name ) );
-	}
-	
-	
 	class FSTree_Frame_view : public FSTree_View
 	{
 		public:
@@ -163,7 +155,7 @@ namespace Genie
 	{
 		{ "margin", &MarginFactory },
 		
-		{ "v", &Factory< FSTree_Frame_view >, true },
+		{ "v", &Basic_Factory< FSTree_Frame_view >, true },
 		
 		{ NULL, NULL }
 	};
