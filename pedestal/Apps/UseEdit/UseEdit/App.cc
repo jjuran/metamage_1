@@ -296,7 +296,9 @@ namespace UseEdit
 	
 	void DocumentContainer::StoreNewElement( Document* doc )
 	{
-		itsMap[ doc->GetWindowRef() ] = boost::shared_ptr< Document >( doc );
+		boost::shared_ptr< Document > document( doc );
+		
+		itsMap[ doc->GetWindowRef() ] = document;
 	}
 	
 	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
