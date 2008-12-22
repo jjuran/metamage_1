@@ -5,6 +5,7 @@
 // Pedestal
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
+#include "Pedestal/UniqueWindowOwner.hh"
 #include "Pedestal/Window.hh"
 
 
