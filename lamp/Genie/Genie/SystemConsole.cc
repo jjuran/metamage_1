@@ -22,13 +22,18 @@ namespace Genie
 		public:
 			typedef Ped::Window Base;
 			
-			SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler );
+			SystemConsole();
 	};
 	
-	class SystemConsoleOwner : public Ped::UniqueWindowOwner< SystemConsole >
+	class SystemConsoleOwner : public Ped::UniqueWindowOwner
 	{
+		private:
+			static Ped::Window* New()  { return new SystemConsole; }
+		
 		public:
-			SystemConsoleOwner()  {}
+			SystemConsoleOwner() : Ped::UniqueWindowOwner( &New )
+			{
+			}
 			
 			static int WriteToSystemConsole( const char* data, std::size_t byteCount );
 	};
@@ -65,13 +70,11 @@ namespace Genie
 		return view;
 	}
 	
-	SystemConsole::SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler )
+	SystemConsole::SystemConsole()
 	: Base( Ped::NewWindowContext( MakeWindowRect(),
 	                               "\p" "System Console" ),
 	        N::documentProc )
 	{
-		SetCloseHandler( handler );
-		
 		SetView( MakeView() );
 	}
 	
@@ -81,7 +84,7 @@ namespace Genie
 		
 		gSystemConsoleOwner.Show();
 		
-		SystemConsoleView& view = gSystemConsoleOwner.itsWindow->SubView< SystemConsoleView >();
+		SystemConsoleView& view = gSystemConsoleOwner.Get().SubView< SystemConsoleView >();
 		
 		view.GetSubView< Ped::Console >().WriteChars( data, byteCount );
 		
