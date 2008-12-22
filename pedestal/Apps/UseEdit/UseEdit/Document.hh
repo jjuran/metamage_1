@@ -9,9 +9,6 @@
 // Standard C++
 #include <string>
 
-// Pedestal
-#include "Pedestal/SingleWindowOwner.hh"
-
 // UseEdit
 #include "UseEdit/Window.hh"
 
@@ -22,17 +19,17 @@ namespace UseEdit
 	class Document
 	{
 		private:
-			Pedestal::SingleWindowOwner< Window >  itsWindow;
-			bool                                   itHasFile;
-			bool                                   itIsDirty;
+			std::auto_ptr< Window >  itsWindow;
+			bool                     itHasFile;
+			bool                     itIsDirty;
 		
 		public:
 			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler );
 			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSSpec& file );
 			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSRef & file );
 			
-			Window const& GetWindow() const  { return itsWindow.Get(); }
-			Window      & GetWindow()        { return itsWindow.Get(); }
+			Window const& GetWindow() const  { return *itsWindow.get(); }
+			Window      & GetWindow()        { return *itsWindow.get(); }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			

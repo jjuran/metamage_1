@@ -52,9 +52,11 @@ namespace Vertice
 	
 	void DocumentsOwner::OpenDocument( const FSSpec& file )
 	{
-		Window* doc = new Window( itsCloseHandler, file.name );
+		Window* doc = new Window( file.name );
 		
 		boost::shared_ptr< Window > document( doc );
+		
+		doc->SetCloseHandler( itsCloseHandler );
 		
 		itsWindows[ doc->Get() ] = document;
 		

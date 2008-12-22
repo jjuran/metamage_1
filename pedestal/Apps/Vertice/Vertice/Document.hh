@@ -19,8 +19,7 @@ namespace Vertice
 	class Window : public Pedestal::Window
 	{
 		public:
-			Window( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler,
-			        ConstStr255Param                                          title );
+			Window( ConstStr255Param title );
 			
 			Scene& ItsScene()  { return SubView< PortView >().ItsScene(); }
 			

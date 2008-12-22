@@ -52,12 +52,14 @@ namespace UseEdit
 		return N::Str255( string );
 	}
 	
+	
 	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler )
 	: 
-		itsWindow( handler ),
-		itHasFile( false   ),
-		itIsDirty( false   )   // A new document is never dirty, even if not saved
+		itsWindow( new Window ),
+		itHasFile( false      ),
+		itIsDirty( false      )   // A new document is never dirty, even if not saved
 	{
+		itsWindow->SetCloseHandler( handler );
 	}
 	
 	static void LoadText( View& scroller, const std::string& text )
@@ -73,24 +75,28 @@ namespace UseEdit
 	
 	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSSpec& file )
 	: 
-		itsWindow( handler ),
-		itHasFile( true    ),
-		itIsDirty( false   )
+		itsWindow( new Window ),
+		itHasFile( true       ),
+		itIsDirty( false      )
 	{
-		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
+		itsWindow->SetCloseHandler( handler );
 		
-		LoadText( itsWindow.Get().SubView< View >(), ReadFileData( file ) );
+		itsWindow->SetName( GetFilenameAsPascalString( file ) );
+		
+		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
 	}
 	
 	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef& file )
 	: 
-		itsWindow( handler ),
-		itHasFile( true    ),
-		itIsDirty( false   )
+		itsWindow( new Window ),
+		itHasFile( true       ),
+		itIsDirty( false      )
 	{
-		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
+		itsWindow->SetCloseHandler( handler );
 		
-		LoadText( itsWindow.Get().SubView< View >(), ReadFileData( file ) );
+		itsWindow->SetName( GetFilenameAsPascalString( file ) );
+		
+		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
 	}
 	
 }
