@@ -23,7 +23,7 @@ namespace Vertice
 	namespace Ped = Pedestal;
 	
 	
-	class DocumentsOwner : public Ped::WindowsOwner< Window >
+	class DocumentsOwner : public Ped::WindowsOwner
 	{
 		public:
 			void OpenDocument( const FSSpec& file );
@@ -54,11 +54,9 @@ namespace Vertice
 	{
 		Window* doc = new Window( file.name );
 		
-		boost::shared_ptr< Window > document( doc );
+		boost::shared_ptr< Ped::Window > document( doc );
 		
-		doc->SetCloseHandler( itsCloseHandler );
-		
-		itsWindows[ doc->Get() ] = document;
+		AddWindow( document );
 		
 		doc->Load( file );
 	}
