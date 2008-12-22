@@ -7,6 +7,7 @@
 #define PEDESTAL_ABOUTBOX_HH
 
 // Pedestal
+#include "Pedestal/UniqueWindowOwner.hh"
 #include "Pedestal/Window.hh"
 
 
