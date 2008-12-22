@@ -67,7 +67,7 @@ namespace Genie
 			bool            itHasReceivedEOF;
 		
 		public:
-			struct Initializer : public Pedestal::Console::Initializer
+			struct Initializer
 			{
 				ConsoleID id;
 				
@@ -78,7 +78,7 @@ namespace Genie
 		
 		public:
 			ConsolePane( const Rect&         bounds,
-			             const Initializer&  init   ) : Pedestal::Console( bounds, init ),
+			             const Initializer&  init   ) : Pedestal::Console( bounds       ),
 			                                            itsConsoleID     ( init.id      ),
 			                                            itsStartOfInput  ( TextLength() ),
 			                                            itHasReceivedEOF ( false        )

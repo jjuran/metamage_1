@@ -18,18 +18,11 @@ namespace Genie
 	
 	typedef Ped::Scroller< true > SystemConsoleView;
 	
-	class SystemConsole : public Ped::Window
-	{
-		public:
-			typedef Ped::Window Base;
-			
-			SystemConsole();
-	};
 	
 	class SystemConsoleOwner : public Ped::UniqueWindowOwner
 	{
 		private:
-			static Ped::Window* New()  { return new SystemConsole; }
+			static std::auto_ptr< Ped::Window > New();
 		
 		public:
 			SystemConsoleOwner() : Ped::UniqueWindowOwner( &New )
@@ -64,19 +57,24 @@ namespace Genie
 		
 		std::auto_ptr< Ped::View > view( scroller = new SystemConsoleView( scroller_bounds ) );
 		
-		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::Console( subview_bounds, Ped::Console::Initializer() ) );
+		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::Console( subview_bounds ) );
 		
 		scroller->SetSubView( subview );
 		
 		return view;
 	}
 	
-	SystemConsole::SystemConsole()
-	: Base( Ped::NewWindowContext( MakeWindowRect(),
-	                               "\p" "System Console" ),
-	        N::documentProc )
+	std::auto_ptr< Ped::Window > SystemConsoleOwner::New()
 	{
-		SetView( MakeView() );
+		Rect bounds = MakeWindowRect();
+		
+		Ped::NewWindowContext context( bounds, "\p" "System Console" );
+		
+		std::auto_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
+		
+		window->SetView( MakeView() );
+		
+		return window;
 	}
 	
 	int SystemConsoleOwner::WriteToSystemConsole( const char* data, std::size_t byteCount )

@@ -43,7 +43,7 @@ namespace Genie
 	
 	static inline std::auto_ptr< Ped::View > MakeView()
 	{
-		return std::auto_ptr< Ped::View >( new Ped::GWorldView( MakeWindowRect(), Ped::GWorldView::Initializer() ) );
+		return std::auto_ptr< Ped::View >( new Ped::GWorldView( MakeWindowRect() ) );
 	}
 	
 	GraphicsWindow::GraphicsWindow( TerminalID          id,
