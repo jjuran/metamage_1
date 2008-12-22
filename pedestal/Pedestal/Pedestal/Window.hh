@@ -151,15 +151,14 @@ namespace Pedestal
 	class WindowRefOwner
 	{
 		private:
-			Nucleus::Owned< Nitrogen::WindowRef > windowRef;
+			Nucleus::Owned< Nitrogen::WindowRef > itsWindowRef;
 		
 		public:
-			WindowRefOwner( Nucleus::Owned< Nitrogen::WindowRef > windowRef ) : windowRef( windowRef )
+			WindowRefOwner( Nucleus::Owned< Nitrogen::WindowRef > windowRef ) : itsWindowRef( windowRef )
 			{
 			}
 			
-			Nitrogen::WindowRef Get()      const  { return windowRef; }
-			operator Nitrogen::WindowRef() const  { return Get();     }
+			Nitrogen::WindowRef Get() const  { return itsWindowRef; }
 			
 	};
 	
@@ -279,17 +278,19 @@ namespace Pedestal
 		class CloseHandler : public WindowCloseHandler
 		{
 			private:
-				WindowStorage& storage;
+				WindowStorage& itsStorage;
 			
 			public:
-				CloseHandler( WindowStorage& storage ) : storage( storage )  {}
+				CloseHandler( WindowStorage& storage ) : itsStorage( storage )
+				{
+				}
 				
 				void operator()( Nitrogen::WindowRef /*window*/ ) const
 				{
-					// assert( storage.get() );
-					// assert( storage->Get() == window );
+					// assert( itsStorage.get() );
+					// assert( itsStorage->Get() == window );
 					
-					storage.reset( NULL );
+					itsStorage.reset( NULL );
 				}
 		};
 		
@@ -298,7 +299,9 @@ namespace Pedestal
 			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
-			UniqueWindowOwner() : itsCloseHandler( new CloseHandler( itsWindow ) )  {}
+			UniqueWindowOwner() : itsCloseHandler( new CloseHandler( itsWindow ) )
+			{
+			}
 			
 			Window& Get()  { return *itsWindow.get(); }
 			
@@ -330,7 +333,9 @@ namespace Pedestal
 				WindowStorage& itsWindows;
 			
 			public:
-				CloseHandler( WindowStorage& windows ) : itsWindows( windows  )  {}
+				CloseHandler( WindowStorage& windows ) : itsWindows( windows  )
+				{
+				}
 				
 				void operator()( Nitrogen::WindowRef window ) const
 				{
@@ -348,15 +353,17 @@ namespace Pedestal
 			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
-			WindowsOwner() : itsCloseHandler( new CloseHandler( itsWindows ) )  {}
+			WindowsOwner() : itsCloseHandler( new CloseHandler( itsWindows ) )
+			{
+			}
 			
 			void NewWindow()
 			{
-				Window* w = new Window( itsCloseHandler );
+				Window* raw_ptr = new Window( itsCloseHandler );
 				
-				boost::shared_ptr< Window > window( w );
+				boost::shared_ptr< Window > window( raw_ptr );
 				
-				itsWindows[ w->Get() ] = window;
+				itsWindows[ raw_ptr->Get() ] = window;
 			}
 	};
 	
