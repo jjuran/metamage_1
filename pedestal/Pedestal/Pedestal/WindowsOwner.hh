@@ -7,7 +7,7 @@
 #define PEDESTAL_WINDOWSOWNER_HH
 
 // Standard C++
-#include <memory>
+#include <map>
 
 // Boost
 #include <boost/shared_ptr.hpp>
@@ -20,7 +20,6 @@ namespace Pedestal
 {
 	
 	// A collection of windows of the same type.  Requests to close are always accepted.
-	template < class Window >
 	class WindowsOwner
 	{
 		typedef std::map< ::WindowRef, boost::shared_ptr< Window > > WindowStorage;
@@ -46,7 +45,7 @@ namespace Pedestal
 				}
 		};
 		
-		protected:
+		private:
 			WindowStorage                            itsWindows;
 			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
 		
@@ -55,15 +54,11 @@ namespace Pedestal
 			{
 			}
 			
-			void NewWindow()
+			void AddWindow( const boost::shared_ptr< Window >& window )
 			{
-				Window* raw_ptr = new Window;
+				window->SetCloseHandler( itsCloseHandler );
 				
-				boost::shared_ptr< Window > window( raw_ptr );
-				
-				raw_ptr->SetCloseHandler( itsCloseHandler );
-				
-				itsWindows[ raw_ptr->Get() ] = window;
+				itsWindows[ window->Get() ] = window;
 			}
 	};
 	
