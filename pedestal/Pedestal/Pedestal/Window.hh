@@ -270,10 +270,11 @@ namespace Pedestal
 	};
 	
 	// A unique window such as a modeless about box that's sometimes open and sometimes not.
-	template < class Window >
 	class UniqueWindowOwner
 	{
 		typedef std::auto_ptr< Window > WindowStorage;
+		
+		typedef Window* (*Factory)();
 		
 		class CloseHandler : public WindowCloseHandler
 		{
@@ -285,7 +286,7 @@ namespace Pedestal
 				{
 				}
 				
-				void operator()( Nitrogen::WindowRef /*window*/ ) const
+				void operator()( Nitrogen::WindowRef window ) const
 				{
 					// assert( itsStorage.get() );
 					// assert( itsStorage->Get() == window );
@@ -294,12 +295,16 @@ namespace Pedestal
 				}
 		};
 		
-		protected:
+		private:
 			WindowStorage                            itsWindow;
 			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
+			Factory                                  itsFactory;
 		
 		public:
-			UniqueWindowOwner() : itsCloseHandler( new CloseHandler( itsWindow ) )
+			UniqueWindowOwner( Factory f )
+			:
+				itsCloseHandler( new CloseHandler( itsWindow ) ),
+				itsFactory( f )
 			{
 			}
 			
@@ -308,16 +313,17 @@ namespace Pedestal
 			void Show();
 	};
 	
-	template < class Window >
-	inline void UniqueWindowOwner< Window >::Show()
+	inline void UniqueWindowOwner::Show()
 	{
-		if ( itsWindow.get() )
+		if ( Window* window = itsWindow.get() )
 		{
-			Nitrogen::SelectWindow( itsWindow->Get() );
+			Nitrogen::SelectWindow( window->Get() );
 		}
-		else
+		else if ( Window* created = itsFactory() )
 		{
-			itsWindow.reset( new Window( itsCloseHandler ) );
+			itsWindow.reset( created );
+			
+			created->SetCloseHandler( itsCloseHandler );
 		}
 	}
 	

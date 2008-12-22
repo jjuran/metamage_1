@@ -94,7 +94,7 @@ namespace Pedestal
 		return std::auto_ptr< View >( new AboutBoxView( MakeBounds(), MakeInit() ) );
 	}
 	
-	AboutBox::AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler )
+	AboutBox::AboutBox()
 	: 
 		Base( NewWindowContext( N::OffsetRect( MakeBounds(),
 		                                       300,
@@ -103,8 +103,6 @@ namespace Pedestal
 		      N::noGrowDocProc
 		      )
 	{
-		SetCloseHandler( handler );
-		
 		SetView( MakeView() );
 	}
 	

@@ -18,14 +18,21 @@ namespace Pedestal
 		public:
 			typedef Window Base;
 			
-			AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler );
+			AboutBox();
 			~AboutBox();
 	};
 	
-	class AboutBoxOwner : public UniqueWindowOwner< AboutBox >
+	
+	class AboutBoxOwner : public UniqueWindowOwner
 	{
+		private:
+			static Window* New()  { return new AboutBox; }
+		
 		public:
-			AboutBoxOwner()  {}
+			AboutBoxOwner() : UniqueWindowOwner( &New )
+			{
+			}
+			
 			~AboutBoxOwner();
 			
 			void ShowAboutBox()  { Show(); }
