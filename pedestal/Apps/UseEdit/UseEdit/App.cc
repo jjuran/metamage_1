@@ -294,11 +294,9 @@ namespace UseEdit
 		return *it->second.get();
 	}
 	
-	void DocumentContainer::StoreNewElement( Document* doc )
+	void DocumentContainer::StoreNewElement( const boost::shared_ptr< Document >& document )
 	{
-		boost::shared_ptr< Document > document( doc );
-		
-		itsMap[ doc->GetWindowRef() ] = document;
+		itsMap[ document->GetWindowRef() ] = document;
 	}
 	
 	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
@@ -364,18 +362,23 @@ namespace UseEdit
 		itsDocuments.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
 	}
 	
+	void DocumentsOwner::StoreNewDocument( Document* doc )
+	{
+		boost::shared_ptr< Document > document( doc );
+		
+		document->GetWindow().SetCloseHandler( itsCloseHandler );
+		
+		itsDocuments.StoreNewElement( document );
+	}
+	
 	void DocumentsOwner::NewWindow()
 	{
-		Document* doc = new Document( itsCloseHandler );
-		
-		itsDocuments.StoreNewElement( doc );
+		StoreNewDocument( new Document );
 	}
 	
 	void DocumentsOwner::OpenDocument( const Io_Details::file_spec& file )
 	{
-		Document* doc = new Document( itsCloseHandler, file );
-		
-		itsDocuments.StoreNewElement( doc );
+		StoreNewDocument( new Document( file ) );
 	}
 	
 	App& App::Get()

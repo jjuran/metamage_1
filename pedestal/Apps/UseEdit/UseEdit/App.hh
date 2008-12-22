@@ -64,7 +64,7 @@ namespace UseEdit
 			const Document& GetDocumentByIndex( std::size_t index ) const;
 			const Document& GetDocumentByID   ( UInt32      id    ) const;
 			
-			void StoreNewElement( Document* doc );
+			void StoreNewElement( const boost::shared_ptr< Document >& document );
 			
 			size_t CountElements() const  { return itsMap.size(); }
 			
@@ -84,6 +84,8 @@ namespace UseEdit
 		private:
 			DocumentContainer                                  itsDocuments;
 			boost::shared_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
+			
+			void StoreNewDocument( Document* doc );
 		
 		public:
 			DocumentsOwner();

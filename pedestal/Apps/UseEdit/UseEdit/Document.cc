@@ -53,13 +53,12 @@ namespace UseEdit
 	}
 	
 	
-	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler )
+	Document::Document()
 	: 
 		itsWindow( new Window ),
 		itHasFile( false      ),
 		itIsDirty( false      )   // A new document is never dirty, even if not saved
 	{
-		itsWindow->SetCloseHandler( handler );
 	}
 	
 	static void LoadText( View& scroller, const std::string& text )
@@ -73,27 +72,23 @@ namespace UseEdit
 		scroller.Calibrate();
 	}
 	
-	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSSpec& file )
+	Document::Document( const FSSpec& file )
 	: 
 		itsWindow( new Window ),
 		itHasFile( true       ),
 		itIsDirty( false      )
 	{
-		itsWindow->SetCloseHandler( handler );
-		
 		itsWindow->SetName( GetFilenameAsPascalString( file ) );
 		
 		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
 	}
 	
-	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef& file )
+	Document::Document( const FSRef& file )
 	: 
 		itsWindow( new Window ),
 		itHasFile( true       ),
 		itIsDirty( false      )
 	{
-		itsWindow->SetCloseHandler( handler );
-		
 		itsWindow->SetName( GetFilenameAsPascalString( file ) );
 		
 		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );

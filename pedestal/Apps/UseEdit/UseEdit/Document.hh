@@ -24,9 +24,9 @@ namespace UseEdit
 			bool                     itIsDirty;
 		
 		public:
-			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler );
-			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSSpec& file );
-			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSRef & file );
+			Document();
+			Document( const FSSpec& file );
+			Document( const FSRef & file );
 			
 			Window const& GetWindow() const  { return *itsWindow.get(); }
 			Window      & GetWindow()        { return *itsWindow.get(); }
