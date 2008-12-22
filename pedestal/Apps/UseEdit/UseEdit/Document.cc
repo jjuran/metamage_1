@@ -74,23 +74,19 @@ namespace UseEdit
 	
 	Document::Document( const FSSpec& file )
 	: 
-		itsWindow( new Window ),
-		itHasFile( true       ),
-		itIsDirty( false      )
+		itsWindow( new Window( GetFilenameAsPascalString( file ) ) ),
+		itHasFile( true  ),
+		itIsDirty( false )
 	{
-		itsWindow->SetName( GetFilenameAsPascalString( file ) );
-		
 		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
 	}
 	
 	Document::Document( const FSRef& file )
 	: 
-		itsWindow( new Window ),
-		itHasFile( true       ),
-		itIsDirty( false      )
+		itsWindow( new Window( GetFilenameAsPascalString( file ) ) ),
+		itHasFile( true  ),
+		itIsDirty( false )
 	{
-		itsWindow->SetName( GetFilenameAsPascalString( file ) );
-		
 		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
 	}
 	

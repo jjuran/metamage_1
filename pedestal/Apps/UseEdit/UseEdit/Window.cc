@@ -58,20 +58,5 @@ namespace UseEdit
 		SetView( MakeView() );
 	}
 	
-	std::string Window::GetName() const
-	{
-		return NN::Convert< std::string >( N::GetWTitle( Get() ) );
-	}
-	
-	void Window::SetName( ConstStr255Param name )
-	{
-		N::SetWTitle( Get(), name );
-	}
-	
-	void Window::SetName( const std::string& name )
-	{
-		SetName( N::Str255( name ) );
-	}
-	
 }
 

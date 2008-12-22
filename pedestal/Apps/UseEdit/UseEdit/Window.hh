@@ -26,11 +26,6 @@ namespace UseEdit
 			typedef Pedestal::Window Base;
 			
 			Window( ConstStr255Param title = "\p" "UseEdit" );
-			
-			std::string GetName() const;
-			
-			void SetName( ConstStr255Param   name );
-			void SetName( const std::string& name );
 	};
 	
 }

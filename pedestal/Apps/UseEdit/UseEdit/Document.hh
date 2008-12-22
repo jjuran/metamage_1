@@ -33,7 +33,10 @@ namespace UseEdit
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
-			std::string GetName() const  { return GetWindow().GetName(); }
+			std::string GetName() const
+			{
+				return Nucleus::Convert< std::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
+			}
 	};
 	
 }
