@@ -527,7 +527,7 @@ namespace Pedestal
 		{
 			if ( Window* base = N::GetWRefCon( window ) )
 			{
-				base->GetView().Activate( event.modifiers & activeFlag );
+				base->Activate( event.modifiers & activeFlag );
 			}
 		}
 	}
