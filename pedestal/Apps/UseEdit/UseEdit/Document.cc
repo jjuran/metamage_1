@@ -55,9 +55,9 @@ namespace UseEdit
 	
 	Document::Document()
 	: 
-		itsWindow( new Window ),
-		itHasFile( false      ),
-		itIsDirty( false      )   // A new document is never dirty, even if not saved
+		itsWindow( NewWindow() ),
+		itHasFile( false ),
+		itIsDirty( false )   // A new document is never dirty, even if not saved
 	{
 	}
 	
@@ -74,7 +74,7 @@ namespace UseEdit
 	
 	Document::Document( const FSSpec& file )
 	: 
-		itsWindow( new Window( GetFilenameAsPascalString( file ) ) ),
+		itsWindow( NewWindow( GetFilenameAsPascalString( file ) ) ),
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
@@ -83,7 +83,7 @@ namespace UseEdit
 	
 	Document::Document( const FSRef& file )
 	: 
-		itsWindow( new Window( GetFilenameAsPascalString( file ) ) ),
+		itsWindow( NewWindow( GetFilenameAsPascalString( file ) ) ),
 		itHasFile( true  ),
 		itIsDirty( false )
 	{

@@ -19,17 +19,17 @@ namespace UseEdit
 	class Document
 	{
 		private:
-			std::auto_ptr< Window >  itsWindow;
-			bool                     itHasFile;
-			bool                     itIsDirty;
+			std::auto_ptr< Pedestal::Window >  itsWindow;
+			bool                               itHasFile;
+			bool                               itIsDirty;
 		
 		public:
 			Document();
 			Document( const FSSpec& file );
 			Document( const FSRef & file );
 			
-			Window const& GetWindow() const  { return *itsWindow.get(); }
-			Window      & GetWindow()        { return *itsWindow.get(); }
+			Pedestal::Window const& GetWindow() const  { return *itsWindow.get(); }
+			Pedestal::Window      & GetWindow()        { return *itsWindow.get(); }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			

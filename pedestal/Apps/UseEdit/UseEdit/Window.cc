@@ -16,7 +16,6 @@ namespace UseEdit
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -50,12 +49,15 @@ namespace UseEdit
 		return view;
 	}
 	
-	
-	Window::Window( ConstStr255Param title )
-	: Base( Ped::NewWindowContext( MakeWindowRect(), title ),
-	  N::documentProc )
+	std::auto_ptr< Ped::Window > NewWindow( ConstStr255Param title )
 	{
-		SetView( MakeView() );
+		Ped::NewWindowContext context( MakeWindowRect(), title );
+		
+		std::auto_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
+		
+		window->SetView( MakeView() );
+		
+		return window;
 	}
 	
 }
