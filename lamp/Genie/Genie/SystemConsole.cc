@@ -5,7 +5,7 @@
 // Pedestal
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace Genie
@@ -17,10 +17,10 @@ namespace Genie
 	
 	typedef Ped::Scroller< true > SystemConsoleView;
 	
-	class SystemConsole : public Ped::UserWindow
+	class SystemConsole : public Ped::Window
 	{
 		public:
-			typedef Ped::UserWindow Base;
+			typedef Ped::Window Base;
 			
 			SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler );
 	};
@@ -81,7 +81,7 @@ namespace Genie
 		
 		gSystemConsoleOwner.Show();
 		
-		SystemConsoleView& view = gSystemConsoleOwner.itsWindow->SubView().Get< SystemConsoleView >();
+		SystemConsoleView& view = gSystemConsoleOwner.itsWindow->SubView< SystemConsoleView >();
 		
 		view.GetSubView< Ped::Console >().WriteChars( data, byteCount );
 		

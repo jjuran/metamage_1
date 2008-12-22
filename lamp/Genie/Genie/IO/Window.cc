@@ -111,7 +111,7 @@ namespace Genie
 	
 	WindowHandle::WindowHandle( const Ped::NewWindowContext&  context,
 			                    Nitrogen::WindowDefProcID     procID,
-			                    const std::string&            name ) : Ped::UserWindow( context, procID ),
+			                    const std::string&            name ) : Ped::Window( context, procID ),
 			                                                           TerminalHandle( name )
 	{
 	}

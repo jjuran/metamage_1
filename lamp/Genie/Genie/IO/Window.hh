@@ -14,7 +14,7 @@
 #include "Nitrogen/Str.h"
 
 // Pedestal
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 // Genie
 #include "Genie/IO/DynamicGroup.hh"
@@ -32,7 +32,7 @@ namespace Pedestal
 namespace Genie
 {
 	
-	class WindowHandle : public Pedestal::UserWindow,
+	class WindowHandle : public Pedestal::Window,
 	                     public TerminalHandle
 	{
 		public:

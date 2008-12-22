@@ -428,10 +428,8 @@ namespace Genie
 	}
 	
 	
-	static ConsolePane& GetConsole( Ped::UserView& view )
+	static ConsolePane& GetConsole( Scroller& scroller )
 	{
-		Scroller& scroller = view.Get< Scroller >();
-		
 		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
 		
 		return pane;
@@ -473,7 +471,7 @@ namespace Genie
 			case WIOCGDIM:
 				if ( result != NULL )
 				{
-					*result = GetConsole( SubView() ).ViewableRange();
+					*result = GetConsole( SubView< Scroller >() ).ViewableRange();
 				}
 				
 				break;
@@ -490,17 +488,17 @@ namespace Genie
 	
 	bool ConsoleWindow::IsReadyForInput()
 	{
-		return GetConsole( SubView() ).IsReadyForInput();
+		return GetConsole( SubView< Scroller >() ).IsReadyForInput();
 	}
 	
 	std::string ConsoleWindow::ReadInput()
 	{
-		return GetConsole( SubView() ).ReadLine();
+		return GetConsole( SubView< Scroller >() ).ReadLine();
 	}
 	
 	int ConsoleWindow::Write( const char* data, std::size_t byteCount )
 	{
-		Scroller& scroller = SubView().Get< Scroller >();
+		Scroller& scroller = SubView< Scroller >();
 		
 		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
 		

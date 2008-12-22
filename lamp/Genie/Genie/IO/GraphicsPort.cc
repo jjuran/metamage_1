@@ -65,7 +65,7 @@ namespace Genie
 	
 	void GraphicsWindow::IOCtl( unsigned long request, int* argp )
 	{
-		N::GWorldPtr gworld = SubView().Get< Ped::GWorldView >().Get();
+		N::GWorldPtr gworld = SubView< Ped::GWorldView >().Get();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		

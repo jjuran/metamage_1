@@ -16,7 +16,7 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
@@ -43,7 +43,7 @@ namespace Genie
 		Point      itsSize;
 		bool       itIsVisible;
 		
-		boost::shared_ptr< Ped::UserWindow >  itsWindow;
+		boost::shared_ptr< Ped::Window >  itsWindow;
 		
 		boost::weak_ptr< IOHandle >  itsTerminal;
 		
@@ -152,7 +152,7 @@ namespace Genie
 		
 		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
 		
-		boost::shared_ptr< Ped::UserWindow > window( new Ped::UserWindow( context, N::documentProc ) );
+		boost::shared_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
 		
 		boost::shared_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
@@ -380,7 +380,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			const boost::shared_ptr< Ped::UserWindow >& window = it->second.itsWindow;
+			const boost::shared_ptr< Ped::Window >& window = it->second.itsWindow;
 			
 			if ( window.get() != NULL )
 			{
@@ -493,7 +493,7 @@ namespace Genie
 	{
 		const FSTree* parent = ParentKey();
 		
-		if ( Ped::UserWindow* window = gWindowParametersMap[ parent ].itsWindow.get() )
+		if ( Ped::Window* window = gWindowParametersMap[ parent ].itsWindow.get() )
 		{
 			window->SetView( view );
 		}

@@ -190,7 +190,7 @@ namespace Genie
 	{
 		WindowHandle& window = *static_cast< WindowHandle* >( h.get() );
 		
-		Scroller& scroller = window.SubView().Get< Scroller >();
+		Scroller& scroller = window.SubView< Scroller >();
 		
 		BufferView& view = scroller.GetSubView< BufferView >();
 		
@@ -236,7 +236,7 @@ namespace Genie
 	{
 		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		
-		Scroller& scroller = window.SubView().Get< Scroller >();
+		Scroller& scroller = window.SubView< Scroller >();
 		
 		BufferView& view = scroller.GetSubView< BufferView >();
 		
@@ -256,7 +256,7 @@ namespace Genie
 	{
 		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		
-		Scroller& scroller = window.SubView().Get< Scroller >();
+		Scroller& scroller = window.SubView< Scroller >();
 		
 		BufferView& view = scroller.GetSubView< BufferView >();
 		
