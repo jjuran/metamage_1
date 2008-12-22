@@ -79,10 +79,14 @@ namespace Vertice
 	
 	Window::Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, ConstStr255Param title )
 	: 
-		Ped::Window< PortView >( Ped::NewWindowContext( MakeWindowRect(),
-		                                                title ) )
+		Ped::Window( Ped::NewWindowContext( MakeWindowRect(),
+		                                    title ) )
 	{
 		SetCloseHandler( handler );
+		
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
+		
+		SetView( std::auto_ptr< Ped::View >( new PortView( bounds ) ) );
 	}
 	
 	class Parser

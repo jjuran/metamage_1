@@ -48,7 +48,7 @@ namespace Vertice
 			AnaglyphMode                           itsAnaglyphMode;
 		
 		public:
-			PortView( const Rect& bounds, Initializer );
+			PortView( const Rect& bounds );
 			~PortView()  {}
 			
 			Scene& ItsScene()  { return itsScene; }
@@ -65,11 +65,9 @@ namespace Vertice
 			void Resize( short width, short height );
 			void Paint();
 			void Redraw();
-			void Draw();
+			void Draw( const Rect& bounds );
 			void DrawAnaglyphic();
 			void DrawBetter( bool per_scanline ) const;
-			
-			void Update()  { Draw(); }
 	};
 	
 }

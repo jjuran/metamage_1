@@ -58,7 +58,7 @@ namespace UseEdit
 				case typeDocument:
 					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
 					{
-						if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
+						if ( Ped::Window* base = N::GetWRefCon( window ) )
 						{
 							base->Close( window );
 						}

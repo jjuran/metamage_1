@@ -9,6 +9,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/WindowsOwner.hh"
 
 // Vertice
 #include "Vertice/Document.hh"

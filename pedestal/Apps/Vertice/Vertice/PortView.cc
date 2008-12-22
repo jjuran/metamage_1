@@ -579,10 +579,10 @@ namespace Vertice
 		gPort2Clip = V::MakePortToClipTransform( n, f, e, a );
 	}
 	
-	PortView::PortView( const Rect& bounds, Initializer ) : itsBounds         ( bounds      ),
-	                                                        itsPort           ( itsScene    ),
-	                                                        itsSelectedContext(             ),
-	                                                        itsAnaglyphMode   ( kNoAnaglyph )
+	PortView::PortView( const Rect& bounds ) : itsBounds         ( bounds      ),
+	                                           itsPort           ( itsScene    ),
+	                                           itsSelectedContext(             ),
+	                                           itsAnaglyphMode   ( kNoAnaglyph )
 	{
 		Resize( bounds.right - bounds.left,
 		        bounds.bottom - bounds.top );
@@ -977,7 +977,7 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::Draw()
+	void PortView::Draw( const Rect& bounds )
 	{
 		if ( itsAnaglyphMode )
 		{
@@ -1710,7 +1710,7 @@ namespace Vertice
 		
 		itsPort.SendCameraCommand( itsSelectedContext, cmd );
 		
-		Draw();
+		Draw( Rect() );
 		
 		return true;
 	}

@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// Pedestal
+#include "Pedestal/SingleWindowOwner.hh"
+
 // UseEdit
 #include "UseEdit/Window.hh"
 

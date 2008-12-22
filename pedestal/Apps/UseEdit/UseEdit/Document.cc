@@ -60,10 +60,8 @@ namespace UseEdit
 	{
 	}
 	
-	static void LoadText( Window::Base::SubViewType& subview, const std::string& text )
+	static void LoadText( View& scroller, const std::string& text )
 	{
-		View& scroller = subview.Get< View >();
-		
 		Ped::TEView& editor( scroller.GetSubView< Ped::TEView >() );
 		
 		editor.AppendChars( text.data(), text.size(), false );
@@ -81,7 +79,7 @@ namespace UseEdit
 	{
 		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
 		
-		LoadText( itsWindow.Get().SubView(), ReadFileData( file ) );
+		LoadText( itsWindow.Get().SubView< View >(), ReadFileData( file ) );
 	}
 	
 	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef& file )
@@ -92,7 +90,7 @@ namespace UseEdit
 	{
 		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
 		
-		LoadText( itsWindow.Get().SubView(), ReadFileData( file ) );
+		LoadText( itsWindow.Get().SubView< View >(), ReadFileData( file ) );
 	}
 	
 }

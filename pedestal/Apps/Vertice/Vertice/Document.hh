@@ -16,13 +16,13 @@
 namespace Vertice
 {
 	
-	class Window : public Pedestal::Window< PortView >
+	class Window : public Pedestal::Window
 	{
 		public:
 			Window( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler,
 			        ConstStr255Param                                          title );
 			
-			Scene& ItsScene()  { return SubView().ItsScene(); }
+			Scene& ItsScene()  { return SubView< PortView >().ItsScene(); }
 			
 			void Load( const FSSpec& file );
 			void Store();
