@@ -33,11 +33,12 @@ namespace Pedestal
 	
 	struct Control_Hooks
 	{
-		void* data;
-		ControlTracker trackHook;
+		ControlTracker  trackHook;
+		void*           data;
 		
-		Control_Hooks()	: data( NULL ), trackHook( NULL )  {}
-
+		Control_Hooks()	: trackHook(), data()
+		{
+		}
 	};
 	
 	class Control_InvariantDetails
