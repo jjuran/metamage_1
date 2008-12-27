@@ -6,15 +6,11 @@
 #ifndef CLASSICTOOLBOX_MACWINDOWS_H
 #define CLASSICTOOLBOX_MACWINDOWS_H
 
-// Nitrogen Nucleus
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
+// Nostalgia
+#include "Nostalgia/MacWindows.hh"
 
-// Nitrogen Carbon support
-#ifndef NITROGEN_MACWINDOWS_H
+// Nitrogen
 #include "Nitrogen/MacWindows.h"
-#endif
 
 
 namespace Nitrogen
@@ -32,23 +28,13 @@ namespace Nitrogen
 	
 	inline void MacCloseWindow( Nucleus::Owned< WindowRef, WindowCloser > )  {}
 	
+#endif  // CALL_NOT_IN_CARBON
+	
 	inline void InvalRect( const Rect& r )  { ::InvalRect( &r ); }
+	inline void ValidRect( const Rect& r )  { ::ValidRect( &r ); }
 	
 	using ::InvalRgn;
-	
-#else
-	
-	inline void InvalRect( const Rect& r )
-	{
-		::InvalWindowRect( ::GetWindowFromPort( ::GetQDGlobalsThePort() ), &r );
-	}
-	
-	inline void InvalRgn( RgnHandle rgn )
-	{
-		::InvalWindowRgn( ::GetWindowFromPort( ::GetQDGlobalsThePort() ), rgn );
-	}
-	
-#endif  // CALL_NOT_IN_CARBON
+	using ::ValidRgn;
 	
 }
 
