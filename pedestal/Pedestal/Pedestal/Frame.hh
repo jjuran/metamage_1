@@ -7,18 +7,16 @@
 #define PEDESTAL_FRAME_HH
 
 // Pedestal
-#include "Pedestal/View.hh"
+#include "Pedestal/Superview.hh"
 
 
 namespace Pedestal
 {
 	
-	class Frame : public View
+	class Frame : public Superview
 	{
 		public:
 			virtual short Margin() const = 0;
-			
-			virtual View& Subview() = 0;
 			
 			void Draw( const Rect& bounds );
 	};
