@@ -17,6 +17,8 @@ namespace Pedestal
 	{
 		public:
 			void Draw( const Rect& bounds );
+			
+			static const boost::shared_ptr< View >& Get();
 	};
 	
 }

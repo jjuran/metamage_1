@@ -6,7 +6,7 @@
 #include "Pedestal/EmptyView.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/QuickDraw.h"
 
 
 namespace Pedestal
@@ -18,6 +18,13 @@ namespace Pedestal
 	void EmptyView::Draw( const Rect& bounds )
 	{
 		N::EraseRect( bounds );
+	}
+	
+	const boost::shared_ptr< View >& EmptyView::Get()
+	{
+		static boost::shared_ptr< View > empty = boost::shared_ptr< View >( new EmptyView );
+		
+		return empty;
 	}
 	
 }
