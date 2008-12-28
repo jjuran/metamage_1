@@ -3,7 +3,7 @@
  *	===============
  */
 
-#include "Pedestal/Scrollbar.hh"
+#include "Pedestal/ScrollBar.hh"
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"
