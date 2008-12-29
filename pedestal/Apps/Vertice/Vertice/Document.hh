@@ -7,7 +7,7 @@
 #define VERTICE_DOCUMENT_HH
 
 // Pedestal
-#include "Pedestal/Window.hh"
+#include "Pedestal/UserWindow.hh"
 
 // Vertice
 #include "Vertice/PortView.hh"
@@ -16,7 +16,7 @@
 namespace Vertice
 {
 	
-	class Window : public Pedestal::Window
+	class Window : public Pedestal::UserWindow
 	{
 		public:
 			Window( ConstStr255Param title );

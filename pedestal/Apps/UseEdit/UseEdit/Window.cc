@@ -10,6 +10,7 @@
 
 // Pedestal
 #include "Pedestal/TEView.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace UseEdit
@@ -53,7 +54,7 @@ namespace UseEdit
 	{
 		Ped::NewWindowContext context( MakeWindowRect(), title );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
+		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context, N::documentProc ) );
 		
 		window->SetView( MakeView() );
 		
