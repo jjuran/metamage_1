@@ -51,6 +51,11 @@ namespace Genie
 			
 			IOHandle* GetBaseForCast( Test test );
 			
+			virtual boost::shared_ptr< IOHandle > Clone()
+			{
+				return shared_from_this();
+			}
+			
 			virtual FSTreePtr GetFile() const;
 			
 			virtual void IOCtl( unsigned long request, int* argp );
