@@ -178,6 +178,8 @@ namespace Pedestal
 			{
 				if ( Window* base = N::GetWRefCon( window ) )
 				{
+					N::SetPortWindowPort( window );
+					
 					handled = base->GetView().UserCommand( code );
 				}
 			}
