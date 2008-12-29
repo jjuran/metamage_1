@@ -52,8 +52,11 @@ namespace Pedestal
 			
 			void Activate( bool activating )  { itsView->Activate( activating ); }
 			
-			bool SetCursor( Point      location,
-			                RgnHandle  mouseRgn  )  { return itsView->SetCursor( location, mouseRgn ); }
+			bool SetCursor( const EventRecord&  event,
+			                RgnHandle           mouseRgn  )
+			{
+				return itsView->SetCursor( event, mouseRgn );
+			}
 			
 			bool UserCommand( MenuItemCode code  )  { return itsView->UserCommand( code ); }
 	};

@@ -228,7 +228,7 @@ namespace Pedestal
 			
 			void Draw( const Rect& bounds );
 			
-			bool SetCursor( Point location, RgnHandle mouseRgn );
+			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
 			
 	};
 	

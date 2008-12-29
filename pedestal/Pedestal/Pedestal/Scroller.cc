@@ -173,11 +173,11 @@ namespace Pedestal
 		GetSubView().Draw( subviewBounds );
 	}
 	
-	bool ScrollerBase::SetCursor( Point location, RgnHandle mouseRgn )
+	bool ScrollerBase::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
 	{
-		if ( Nitrogen::PtInRect( location, GetSubView().Bounds() ) )
+		if ( Nitrogen::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
 		{
-			return GetSubView().SetCursor( location, mouseRgn );
+			return GetSubView().SetCursor( event, mouseRgn );
 		}
 		
 		return false;

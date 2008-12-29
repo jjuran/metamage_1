@@ -90,7 +90,7 @@ namespace Pedestal
 			
 			void Resize( short width, short height )  { Pedestal::Resize( Get(), width, height ); }
 			
-			bool SetCursor( Point location, RgnHandle mouseRgn );
+			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
 			
 			bool UserCommand( MenuItemCode code );
 	};

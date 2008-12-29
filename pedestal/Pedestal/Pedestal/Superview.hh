@@ -31,9 +31,9 @@ namespace Pedestal
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
 			
-			bool SetCursor( Point location, RgnHandle mouseRgn )
+			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )
 			{
-				return Subview().SetCursor( location, mouseRgn );
+				return Subview().SetCursor( event, mouseRgn );
 			}
 			
 			bool UserCommand( MenuItemCode code )  { return Subview().UserCommand( code ); }

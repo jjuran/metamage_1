@@ -47,8 +47,8 @@ namespace Pedestal
 			
 			virtual void Activate( bool activating )  {}
 			
-			virtual bool SetCursor( Point      location,
-			                        RgnHandle  mouseRgn  )  { return false; }
+			virtual bool SetCursor( const EventRecord&  event,
+			                        RgnHandle           mouseRgn  )  { return false; }
 			
 			virtual bool UserCommand( MenuItemCode code  )  { return false; }
 	};

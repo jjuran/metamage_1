@@ -266,7 +266,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView()->SetCursor( N::GlobalToLocal( event.where ), NULL );
+				return base->GetView()->SetCursor( event, NULL );
 			}
 		}
 		
