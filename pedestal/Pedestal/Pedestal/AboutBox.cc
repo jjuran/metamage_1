@@ -8,6 +8,7 @@
 // Pedestal
 #include "Pedestal/GeneratedGraphic.hh"
 #include "Pedestal/GraphicView.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Pedestal
@@ -41,7 +42,7 @@ namespace Pedestal
 		
 		NewWindowContext context( bounds, "\p" "Pedestal" );
 		
-		std::auto_ptr< Window > window( new Window( context, N::noGrowDocProc ) );
+		std::auto_ptr< Window > window( new UserWindow( context, N::noGrowDocProc ) );
 		
 		window->SetView( std::auto_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
 		
