@@ -36,7 +36,7 @@ namespace Pedestal
 				
 				void operator()( Nitrogen::WindowRef window ) const
 				{
-					typename WindowStorage::iterator found = itsWindows.find( window );
+					WindowStorage::iterator found = itsWindows.find( window );
 					
 					if ( found != itsWindows.end() )
 					{
