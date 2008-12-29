@@ -11,6 +11,7 @@
 
 // Pedestal
 #include "Pedestal/View.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace Pedestal
@@ -55,6 +56,17 @@ namespace Pedestal
 			                RgnHandle  mouseRgn  )  { return itsView->SetCursor( location, mouseRgn ); }
 			
 			bool UserCommand( MenuItemCode code  )  { return itsView->UserCommand( code ); }
+	};
+	
+	class UserWindow : public Window
+	{
+		public:
+			UserWindow( const NewWindowContext&  context,
+			            DefProcID                defProcID = DefProcID() )
+			:
+				Window( context, defProcID )
+			{
+			}
 	};
 	
 }

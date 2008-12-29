@@ -210,9 +210,10 @@ namespace Pedestal
 	class Window : public ClosableWindow, public ResizableWindow,
 	               public WindowRefOwner
 	{
-		private:
+		public:
 			typedef Variable_DefProcID DefProcID;
-			
+		
+		private:
 			Variable_DefProcID         itsDefProcID;
 			boost::shared_ptr< View >  itsView;
 		
