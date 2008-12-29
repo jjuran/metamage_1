@@ -1149,7 +1149,7 @@ namespace Vertice
 		return true;
 	}
 	
-	MeshModel* PortView::HitTest( double x, double y )
+	MeshModel* PortView::Mesh_HitTest( double x, double y )
 	{
 		int width  = NX::RectWidth ( itsBounds );
 		int height = NX::RectHeight( itsBounds );
@@ -1525,7 +1525,7 @@ namespace Vertice
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		MeshModel* model = HitTest( macPt.h, macPt.v );
+		MeshModel* model = Mesh_HitTest( macPt.h, macPt.v );
 		
 		if ( model != NULL )
 		{
