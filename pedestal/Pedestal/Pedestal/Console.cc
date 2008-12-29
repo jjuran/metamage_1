@@ -93,10 +93,20 @@ namespace Pedestal
 			text += "\r";
 		}
 		
-		if ( TextLength() + text.size() >= 32000 )
+		TEHandle hTE = Get();
+		
+		TERec& te = **hTE;
+		
+		if ( te.teLength + text.size() >= 32000 )
 		{
-			SelectAll();
-			Clear();
+			te.selStart = 0;
+			te.selEnd   = 0;
+			
+			te.teLength = 0;
+			
+			N::SetHandleSize( te.hText, 0 );
+			
+			N::TECalText( hTE );
 		}
 		
 		AppendChars( text.c_str(), text.size(), true );
