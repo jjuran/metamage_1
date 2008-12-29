@@ -42,7 +42,7 @@ namespace UseEdit
 		
 		std::auto_ptr< Ped::View > view( scroller = new View( scroller_bounds ) );
 		
-		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::TEView( subview_bounds ) );
+		std::auto_ptr< Ped::View > subview( new Ped::TEView( subview_bounds ) );
 		
 		scroller->SetSubView( subview );
 		
