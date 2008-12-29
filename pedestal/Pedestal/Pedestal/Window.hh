@@ -221,13 +221,13 @@ namespace Pedestal
 			Window( const NewWindowContext&  context,
 			        DefProcID                defProcID = DefProcID() );
 			
-			View& GetView()  { return *itsView; }
+			boost::shared_ptr< View >& GetView()  { return itsView; }
 			
 			template < class ViewType >
-			ViewType& SubView()  { return static_cast< ViewType& >( *itsView ); }
+			ViewType& SubView()  { return static_cast< ViewType& >( *GetView() ); }
 			
-			void SetView( boost::shared_ptr< View > const& view )  { itsView = view; }
-			void SetView( std::auto_ptr    < View >        view )  { itsView = view; }
+			void SetView( boost::shared_ptr< View > const& view )  { GetView() = view; }
+			void SetView( std::auto_ptr    < View >        view )  { GetView() = view; }
 			
 			void InvalidateGrowBox() const
 			{

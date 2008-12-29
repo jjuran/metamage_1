@@ -180,7 +180,7 @@ namespace Pedestal
 				{
 					N::SetPortWindowPort( window );
 					
-					handled = base->GetView().UserCommand( code );
+					handled = base->GetView()->UserCommand( code );
 				}
 			}
 		}
@@ -227,7 +227,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView().Activate( false );
+				return base->GetView()->Activate( false );
 			}
 		}
 	}
@@ -244,7 +244,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView().Activate( true );
+				return base->GetView()->Activate( true );
 			}
 		}
 	}
@@ -266,7 +266,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView().SetCursor( N::GlobalToLocal( event.where ), NULL );
+				return base->GetView()->SetCursor( N::GlobalToLocal( event.where ), NULL );
 			}
 		}
 		
@@ -452,7 +452,7 @@ namespace Pedestal
 				{
 					N::SetPortWindowPort( window );
 					
-					if ( gQuasimode = base->GetView().EnterShiftSpaceQuasimode( event ) )
+					if ( gQuasimode = base->GetView()->EnterShiftSpaceQuasimode( event ) )
 					{
 						gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 						
@@ -513,7 +513,7 @@ namespace Pedestal
 				{
 					N::SetPortWindowPort( window );
 					
-					base->GetView().KeyDown( event );
+					base->GetView()->KeyDown( event );
 				}
 			}
 		}
@@ -650,7 +650,7 @@ namespace Pedestal
 		{
 			if ( Window* base = N::GetWRefCon( window ) )
 			{
-				base->GetView().Idle( event );
+				base->GetView()->Idle( event );
 			}
 		}
 	}

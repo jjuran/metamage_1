@@ -160,14 +160,14 @@ namespace Pedestal
 	
 	void Window::Activate( bool activating )
 	{
-		GetView().Activate( activating );
+		GetView()->Activate( activating );
 		
 		InvalidateGrowBox();
 	}
 	
 	void Window::Resized( short width, short height )
 	{
-		GetView().Resize( width, height );
+		GetView()->Resize( width, height );
 		
 		InvalidateGrowBox();
 	}
@@ -181,13 +181,13 @@ namespace Pedestal
 		}
 		else
 		{
-			GetView().MouseDown( event );
+			GetView()->MouseDown( event );
 		}
 	}
 	
 	void Window::Update()
 	{
-		GetView().Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
+		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
 		
 		if ( itsDefProcID.HasGrowIcon() )
 		{
