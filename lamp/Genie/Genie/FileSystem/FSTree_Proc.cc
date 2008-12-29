@@ -499,7 +499,7 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags /*flags*/ ) const
 			{
-				return itsHandle;
+				return itsHandle->Clone();
 			}
 			
 			off_t GetEOF() const;
