@@ -450,6 +450,8 @@ namespace Pedestal
 			{
 				if ( Window* base = N::GetWRefCon( window ) )
 				{
+					N::SetPortWindowPort( window );
+					
 					if ( gQuasimode = base->GetView().EnterShiftSpaceQuasimode( event ) )
 					{
 						gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
@@ -509,6 +511,8 @@ namespace Pedestal
 			{
 				if ( Window* base = N::GetWRefCon( window ) )
 				{
+					N::SetPortWindowPort( window );
+					
 					base->GetView().KeyDown( event );
 				}
 			}
