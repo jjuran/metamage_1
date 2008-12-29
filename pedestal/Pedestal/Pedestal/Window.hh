@@ -20,6 +20,7 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
@@ -205,8 +206,6 @@ namespace Pedestal
 			
 			void Resize( Nitrogen::WindowRef window, short h, short v );
 	};
-	
-	class View;
 	
 	class Window : public ClosableWindow, public ResizableWindow,
 	               public WindowRefOwner
