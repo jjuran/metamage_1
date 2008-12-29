@@ -207,7 +207,7 @@ namespace Pedestal
 			{
 			}
 			
-			void SetSubView( std::auto_ptr< ScrollableBase > subview )  { itsScrollableView.Set( subview ); }
+			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
 			
 			ScrollableBase const& GetSubView() const  { return itsScrollableView.Get< ScrollableBase >(); }
 			ScrollableBase      & GetSubView()        { return itsScrollableView.Get< ScrollableBase >(); }
@@ -396,7 +396,7 @@ namespace Pedestal
 			VerticalScrollbarType&   VerticalScrollbar()    { return myScrollV; }
 			HorizontalScrollbarType& HorizontalScrollbar()  { return myScrollH; }
 			
-			void SetSubView( std::auto_ptr< ScrollableBase > subview )
+			void SetSubView( std::auto_ptr< View > subview )
 			{
 				ScrollerBase::SetSubView( subview );
 				
