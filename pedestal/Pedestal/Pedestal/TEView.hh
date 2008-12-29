@@ -11,7 +11,7 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
-#include "Pedestal/ScrollableBase.hh"
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
@@ -33,7 +33,7 @@ namespace Pedestal
 	
 	class TESearchQuasimode;
 	
-	class TEView : public ScrollableBase
+	class TEView : public View
 	{
 		friend class TESearchQuasimode;
 		

@@ -23,9 +23,8 @@
 #include "Utilities/RectangleMath.h"
 
 // Pedestal
-#include "Pedestal/View.hh"
 #include "Pedestal/Scrollbar.hh"
-#include "Pedestal/ScrollingView.hh"
+#include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
 
@@ -172,7 +171,7 @@ namespace Pedestal
 		return ( axis == kVertical ) ? point.v : point.h;
 	}
 	
-	Point ComputeScrollbarMaxima( const ScrollableBase& scrolledView );
+	Point ComputeScrollbarMaxima( const TEView& scrolledView );
 	
 	template < class Vertical, class Horizontal >
 	inline void SetScrollbarMaxima( const Vertical&    verticalScrollbar,
@@ -209,8 +208,8 @@ namespace Pedestal
 			
 			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
 			
-			ScrollableBase const& GetSubView() const  { return itsScrollableView.Get< ScrollableBase >(); }
-			ScrollableBase      & GetSubView()        { return itsScrollableView.Get< ScrollableBase >(); }
+			TEView const& GetSubView() const  { return itsScrollableView.Get< TEView >(); }
+			TEView      & GetSubView()        { return itsScrollableView.Get< TEView >(); }
 			
 			template < class ViewType >
 			ViewType& GetSubView()  { return itsScrollableView.Get< ViewType >(); }
@@ -234,7 +233,7 @@ namespace Pedestal
 	};
 	
 	
-	inline ScrollableBase& RecoverScrolledViewFromScrollbar( ControlRef control )
+	inline TEView& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = Nitrogen::GetControlReference( control );
 		
@@ -248,7 +247,7 @@ namespace Pedestal
 	
 	
 	template < ScrollbarAxis axis >
-	inline void ScrollByDelta( ScrollableBase& scrolledView, ControlRef control, short delta, bool updateNow )
+	inline void ScrollByDelta( TEView& scrolledView, ControlRef control, short delta, bool updateNow )
 	{
 		if ( delta != 0 )
 		{
@@ -263,7 +262,7 @@ namespace Pedestal
 	template < ScrollbarAxis axis >
 	inline void ScrollByDelta( ControlRef control, short delta, bool updateNow )
 	{
-		ScrollableBase& scrolledView = RecoverScrolledViewFromScrollbar( control );
+		TEView& scrolledView = RecoverScrolledViewFromScrollbar( control );
 		
 		ScrollByDelta< axis >( scrolledView, control, delta, updateNow );
 	}
@@ -271,7 +270,7 @@ namespace Pedestal
 	template < ScrollbarAxis axis >
 	void ScrollbarAction( ControlRef control, Nitrogen::ControlPartCode part )
 	{
-		ScrollableBase& scrolledView = RecoverScrolledViewFromScrollbar( control );
+		TEView& scrolledView = RecoverScrolledViewFromScrollbar( control );
 		
 		short jump = VHSelect< axis >( scrolledView.ViewableRange() ) - 1;
 		short scrollDistance = FigureScrollDistance( part, jump );
