@@ -68,7 +68,7 @@ namespace Pedestal
 			: 
 				bounds( bounds ), 
 				scrollPosition( Nitrogen::SetPt( 0, 0 ) ), 
-				mySubView( bounds, init )
+				mySubView( bounds )
 			{}
 			
 			SubViewType const& SubView() const  { return mySubView; }
