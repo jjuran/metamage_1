@@ -214,14 +214,13 @@ namespace Pedestal
 			typedef Variable_DefProcID DefProcID;
 		
 		private:
-			Variable_DefProcID         itsDefProcID;
-			boost::shared_ptr< View >  itsView;
+			Variable_DefProcID itsDefProcID;
 		
 		public:
 			Window( const NewWindowContext&  context,
 			        DefProcID                defProcID = DefProcID() );
 			
-			boost::shared_ptr< View >& GetView()  { return itsView; }
+			virtual boost::shared_ptr< View >& GetView() = 0;
 			
 			template < class ViewType >
 			ViewType& SubView()  { return static_cast< ViewType& >( *GetView() ); }

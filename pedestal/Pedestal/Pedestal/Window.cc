@@ -153,8 +153,7 @@ namespace Pedestal
 		WindowRefOwner( CreateWindow( context,
 		                              defProcID.Get(),
 		                              this ) ),
-		itsDefProcID( defProcID ),
-		itsView()
+		itsDefProcID( defProcID )
 	{
 	}
 	

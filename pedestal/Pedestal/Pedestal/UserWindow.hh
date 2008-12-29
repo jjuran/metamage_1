@@ -60,6 +60,9 @@ namespace Pedestal
 	
 	class UserWindow : public Window
 	{
+		private:
+			boost::shared_ptr< View > itsView;
+		
 		public:
 			UserWindow( const NewWindowContext&  context,
 			            DefProcID                defProcID = DefProcID() )
@@ -67,6 +70,8 @@ namespace Pedestal
 				Window( context, defProcID )
 			{
 			}
+			
+			boost::shared_ptr< View >& GetView()  { return itsView; }
 	};
 	
 }
