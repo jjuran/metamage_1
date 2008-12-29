@@ -46,8 +46,8 @@ namespace Genie
 		return result;
 	}
 	
-	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum >  refNum,
-	                              OpenFlags                     flags )
+	MacFileHandle::MacFileHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
+	                              OpenFlags                             flags )
 	: RegularFileHandle( flags  ),
 	  itsRefNum        ( refNum )
 	{
@@ -91,9 +91,20 @@ namespace Genie
 	}
 	
 	
+	boost::shared_ptr< IOHandle > MacDataForkHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( Get(), GetFlags() ) );
+	}
+	
 	FSTreePtr MacDataForkHandle::GetFile() const
 	{
 		return FSTreeFromFSSpec( GetFSSpec() );
+	}
+	
+	
+	boost::shared_ptr< IOHandle > MacRsrcForkHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( Get(), GetFlags() ) );
 	}
 	
 	FSTreePtr MacRsrcForkHandle::GetFile() const

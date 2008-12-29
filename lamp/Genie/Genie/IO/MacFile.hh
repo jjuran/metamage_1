@@ -10,7 +10,7 @@
 #include "sys/types.h"
 
 // Nucleus
-#include "Nucleus/Owned.h"
+#include "Nucleus/Shared.h"
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -25,11 +25,17 @@ namespace Genie
 	class MacFileHandle : public RegularFileHandle
 	{
 		private:
-			Nucleus::Owned< Nitrogen::FSFileRefNum > itsRefNum;
+			Nucleus::Shared< Nitrogen::FSFileRefNum > itsRefNum;
+		
+		protected:
+			const Nucleus::Shared< Nitrogen::FSFileRefNum >& Get() const
+			{
+				return itsRefNum;
+			}
 		
 		public:
-			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
-			               OpenFlags                                 flags );
+			MacFileHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+			               OpenFlags                                         flags );
 			
 			~MacFileHandle();
 			
@@ -49,10 +55,12 @@ namespace Genie
 	class MacDataForkHandle : public MacFileHandle
 	{
 		public:
-			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
-			                   OpenFlags                                 flags ) : MacFileHandle( refNum, flags )
+			MacDataForkHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+			                   OpenFlags                                         flags ) : MacFileHandle( refNum, flags )
 			{
 			}
+			
+			boost::shared_ptr< IOHandle > Clone();
 			
 			FSTreePtr GetFile() const;
 	};
@@ -60,10 +68,12 @@ namespace Genie
 	class MacRsrcForkHandle : public MacFileHandle
 	{
 		public:
-			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
-			                   OpenFlags                                 flags ) : MacFileHandle( refNum, flags )
+			MacRsrcForkHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+			                   OpenFlags                                         flags ) : MacFileHandle( refNum, flags )
 			{
 			}
+			
+			boost::shared_ptr< IOHandle > Clone();
 			
 			FSTreePtr GetFile() const;
 	};
