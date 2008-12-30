@@ -20,9 +20,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Pedestal
-#include "Pedestal/Window.hh"
-
 // Genie
 #include "Genie/Process.hh"
 
@@ -111,7 +108,7 @@ namespace Genie
 	
 	WindowHandle::WindowHandle( const Ped::NewWindowContext&  context,
 			                    Nitrogen::WindowDefProcID     procID,
-			                    const std::string&            name ) : Ped::Window( context, procID ),
+			                    const std::string&            name ) : Ped::UserWindow( context, procID ),
 			                                                           TerminalHandle( name )
 	{
 	}
