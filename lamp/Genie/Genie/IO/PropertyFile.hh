@@ -28,6 +28,8 @@ namespace Genie
 			{
 			}
 			
+			boost::shared_ptr< IOHandle > Clone();
+			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
 			off_t GetEOF() const  { return itsData.size(); }
@@ -52,6 +54,8 @@ namespace Genie
 				itsWriteHook( writeHook )
 			{
 			}
+			
+			boost::shared_ptr< IOHandle > Clone();
 			
 			void SetEOF( off_t length )  {}  // FIXME
 			

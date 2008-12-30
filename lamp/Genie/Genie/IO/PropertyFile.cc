@@ -15,6 +15,11 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	boost::shared_ptr< IOHandle > PropertyReaderFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData ) );
+	}
+	
 	ssize_t PropertyReaderFileHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
 		ASSERT( GetFileMark() <= itsData.size() );
@@ -28,6 +33,11 @@ namespace Genie
 		return Advance( byteCount );
 	}
 	
+	
+	boost::shared_ptr< IOHandle > PropertyWriterFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new PropertyWriterFileHandle( GetFile(), GetFlags(), itsWriteHook ) );
+	}
 	
 	ssize_t PropertyWriterFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{

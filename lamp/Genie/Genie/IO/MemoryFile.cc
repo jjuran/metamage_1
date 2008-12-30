@@ -19,6 +19,14 @@ namespace Genie
 	{
 	}
 	
+	boost::shared_ptr< IOHandle > MemoryFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( GetFile(),
+		                                                            GetFlags(),
+		                                                            itsBase,
+		                                                            itsSize ) );
+	}
+	
 	ssize_t MemoryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		ASSERT( GetFileMark() <= itsSize );

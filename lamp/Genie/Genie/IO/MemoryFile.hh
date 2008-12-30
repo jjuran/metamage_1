@@ -37,6 +37,8 @@ namespace Genie
 			
 			~MemoryFileHandle();
 			
+			boost::shared_ptr< IOHandle > Clone();
+			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
