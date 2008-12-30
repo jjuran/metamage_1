@@ -20,9 +20,28 @@ namespace Pedestal
 			void Install  ()  { Subview().Install  (); }
 			void Uninstall()  { Subview().Uninstall(); }
 			
-			void Idle     ( const EventRecord& event )  {        Subview().Idle     ( event ); }
-			void MouseDown( const EventRecord& event )  {        Subview().MouseDown( event ); }
-			bool KeyDown  ( const EventRecord& event )  { return Subview().KeyDown  ( event ); }
+			void Idle( const EventRecord& event )
+			{
+				Subview().Idle( event );
+			}
+			
+			void MouseDown( const EventRecord& event )
+			{
+				if ( HitTest( event ) )
+				{
+					Subview().MouseDown( event );
+				}
+			}
+			
+			bool KeyDown( const EventRecord& event )
+			{
+				return Subview().KeyDown( event );
+			}
+			
+			bool HitTest( const EventRecord& event )
+			{
+				return Subview().HitTest( event );
+			}
 			
 			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
 			{
@@ -33,7 +52,12 @@ namespace Pedestal
 			
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )
 			{
-				return Subview().SetCursor( event, mouseRgn );
+				if ( HitTest( event ) )
+				{
+					return Subview().SetCursor( event, mouseRgn );
+				}
+				
+				return false;
 			}
 			
 			bool UserCommand( MenuItemCode code )  { return Subview().UserCommand( code ); }
