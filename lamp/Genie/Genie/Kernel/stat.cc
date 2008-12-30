@@ -18,7 +18,7 @@
 #include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
-#include "Genie/IO/File.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -102,6 +102,8 @@ namespace Genie
 		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
+		sb->st_size = off_t( -1 );
+		
 		try
 		{
 			FSTreePtr file = ResolvePathAt( dirfd, path );
@@ -112,6 +114,11 @@ namespace Genie
 			}
 			
 			file->Stat( *sb );
+			
+			if ( sb->st_size == off_t( -1 ) )
+			{
+				sb->st_size = file->GetEOF();
+			}
 		}
 		catch ( ... )
 		{
@@ -128,9 +135,25 @@ namespace Genie
 		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
+		sb->st_size = off_t( -1 );
+		
 		try
 		{
-			GetFileHandle( fd )->GetFile()->Stat( *sb );
+			IOHandle& handle = *GetFileHandle( fd );
+			
+			handle.GetFile()->Stat( *sb );
+			
+			if ( sb->st_size == off_t( -1 ) )
+			{
+				try
+				{
+					sb->st_size = IOHandle_Cast< RegularFileHandle >( handle ).GetEOF();
+				}
+				catch ( ... )
+				{
+					sb->st_size = 0;
+				}
+			}
 		}
 		catch ( ... )
 		{
