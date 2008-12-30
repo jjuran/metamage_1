@@ -666,6 +666,7 @@ namespace Pedestal
 		      window = ::GetNextWindow( window ) )
 		{
 			N::SetPortWindowPort( window );
+			
 			GiveIdleTimeToWindow( window, event );
 		}
 	}
