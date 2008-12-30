@@ -27,7 +27,6 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
-#include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Scroller.hh"
 

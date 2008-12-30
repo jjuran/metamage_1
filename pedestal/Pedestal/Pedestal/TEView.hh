@@ -10,6 +10,7 @@
 #include "Nitrogen/TextEdit.h"
 
 // Pedestal
+#include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/View.hh"
 
@@ -33,7 +34,7 @@ namespace Pedestal
 	
 	class TESearchQuasimode;
 	
-	class TEView : public View
+	class TEView : public View, public TEClickLoop_Subject
 	{
 		friend class TESearchQuasimode;
 		
