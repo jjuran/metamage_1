@@ -63,7 +63,7 @@ namespace UseEdit
 	
 	static void LoadText( View& scroller, const std::string& text )
 	{
-		Ped::TEView& editor( scroller.GetSubView< Ped::TEView >() );
+		Ped::TEView& editor = scroller.GetSubView();
 		
 		editor.AppendChars( text.data(), text.size(), false );
 		
