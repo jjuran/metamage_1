@@ -23,13 +23,31 @@
 #include "Utilities/RectangleMath.h"
 
 // Pedestal
-#include "Pedestal/Scrollbar.hh"
+#include "Pedestal/Control.hh"
 #include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
 
 namespace Pedestal
 {
+	
+	class ScrollbarView : public View
+	{
+		private:
+			ControlRef     itsControl;
+			Control_Hooks  itsControlHooks;
+		
+		public:
+			ScrollbarView( const Rect&              bounds,
+			               Nitrogen::ControlProcID  procID,
+			               Nitrogen::RefCon         refCon,
+			               ControlTracker           tracker );
+			
+			ControlRef Get() const  { return itsControl; }
+			
+			void Activate( bool activating );
+	};
+	
 	
 	template < bool present >  struct Scrollbar_Traits;
 	
@@ -42,7 +60,7 @@ namespace Pedestal
 		static const bool  present = true;
 		static const short profile = 15;
 		
-		typedef Scrollbar Type;
+		typedef ScrollbarView Type;
 	};
 	
 	template <>  struct Scrollbar_Traits< false >

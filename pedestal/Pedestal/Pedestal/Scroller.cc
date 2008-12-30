@@ -35,6 +35,55 @@ namespace Pedestal
 #endif
 	
 	
+	static inline short ScrollbarThickness()
+	{
+		return 16;
+	}
+	
+	static inline short ScrollbarOverlap()
+	{
+		return 1;
+	}
+	
+	static inline short ScrollbarProfile()
+	{
+		return ScrollbarThickness() - ScrollbarOverlap();
+	}
+	
+	
+	ScrollbarView::ScrollbarView( const Rect&       bounds,
+	                              N::ControlProcID  procID,
+	                              N::RefCon         refCon,
+	                              ControlTracker    tracker )
+	: itsControl( N::NewControl( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+	                             bounds,
+	                             "\p",
+	                             true,
+	                             0,
+	                             0,
+	                             0,
+	                             procID,
+	                             &itsControlHooks ) )
+	{
+		itsControlHooks.data      = refCon;
+		itsControlHooks.trackHook = tracker;
+	}
+	
+	void ScrollbarView::Activate( bool activating )
+	{
+		if ( activating )
+		{
+			//N::ShowControl( itsControl );
+			N::HiliteControl( itsControl, N::kControlNoPart );
+		}
+		else
+		{
+			//N::HideControl( itsControl );
+			N::HiliteControl( itsControl, N::kControlInactivePart );
+		}
+	}
+	
+	
 	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
 	
 	
