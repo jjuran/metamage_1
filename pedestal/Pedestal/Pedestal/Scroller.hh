@@ -211,12 +211,6 @@ namespace Pedestal
 			TEView const& GetSubView() const  { return itsScrollableView.Get< TEView >(); }
 			TEView      & GetSubView()        { return itsScrollableView.Get< TEView >(); }
 			
-			template < class ViewType >
-			ViewType& GetSubView()  { return itsScrollableView.Get< ViewType >(); }
-			
-			template < class ViewType >
-			const ViewType& GetSubView() const  { return itsScrollableView.Get< ViewType >(); }
-			
 			void Idle( const EventRecord& event );
 			
 			void MouseDown( const EventRecord& event );
