@@ -11,17 +11,53 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Pedestal
-//#include "Pedestal/Application.hh"
-#include "Pedestal/Scroller.hh"
-
 
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
+	static TEClickLoop_User   *  gCurrentUser    = NULL;
+	static TEClickLoop_Subject*  gCurrentSubject = NULL;
+	
+	
+	TEClickLoop_User::TEClickLoop_Scope::TEClickLoop_Scope( TEClickLoop_User* user )
+	{
+		ASSERT( gCurrentUser == NULL );
+		
+		gCurrentUser = user;
+	}
+	
+	TEClickLoop_User::TEClickLoop_Scope::~TEClickLoop_Scope()
+	{
+		gCurrentUser = NULL;
+	}
+	
+	TEClickLoop_Subject::TEClickLoop_Scope::TEClickLoop_Scope( TEClickLoop_Subject* subject )
+	{
+		ASSERT( gCurrentSubject == NULL );
+		
+		gCurrentSubject = subject;
+	}
+	
+	TEClickLoop_Subject::TEClickLoop_Scope::~TEClickLoop_Scope()
+	{
+		gCurrentSubject = NULL;
+	}
+	
 	static void CustomClickLoop()
 	{
-		ClickableScroller::ClickLoop();
+		if ( gCurrentSubject )
+		{
+			gCurrentSubject->ClickInLoop();
+		}
+		
+		if ( gCurrentUser )
+		{
+			gCurrentUser->ClickInLoop();
+		}
 	}
 	
 	// This is set the first time we call SetCustomTEClickLoop().
@@ -59,7 +95,7 @@ namespace Pedestal
 	static ::TEClickLoopUPP gMasterClickLoop = ::NewTEClickLoopUPP( MasterTEClickLoop );
 	
 	
-	void InstallCustomTEClickLoop( TEHandle hTE )
+	void TEClickLoop_Subject::InstallCustomTEClickLoop( TEHandle hTE )
 	{
 		static ::TEClickLoopUPP clickLoop = gSystemClickLoop = hTE[0]->clickLoop;
 		
