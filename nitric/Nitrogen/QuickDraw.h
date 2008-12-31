@@ -932,6 +932,30 @@ namespace Nucleus
 		return Nitrogen::MacOffsetRect( r, -pt );
 	}
 	
+	inline bool operator==( const Point& a, const Point& b )
+	{
+		return    a.v == b.v
+		       && a.h == b.h;
+	}
+	
+	inline bool operator!=( const Point& a, const Point& b )
+	{
+		return !( a == b );
+	}
+	
+	inline bool operator==( const Rect& a, const Rect& b )
+	{
+		return    a.top    == b.top
+		       && a.left   == b.left
+		       && a.bottom == b.bottom
+		       && a.right  == b.right;
+	}
+	
+	inline bool operator!=( const Rect& a, const Rect& b )
+	{
+		return !( a == b );
+	}
+	
 }
 
 #include "Nucleus/Operators.h"
