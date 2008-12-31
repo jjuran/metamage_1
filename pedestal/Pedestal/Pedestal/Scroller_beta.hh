@@ -7,6 +7,7 @@
 #define PEDESTAL_SCROLLERBETA_HH
 
 // Pedestal
+#include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/Superview.hh"
 
 
@@ -37,10 +38,20 @@ namespace Pedestal
 			virtual void Scroll( int dh, int dv ) = 0;
 	};
 	
-	class ScrollFrame : public Superview
+	class ScrollFrame : public Superview, public TEClickLoop_User
 	{
 		public:
 			virtual void ApertureHook( Rect& aperture )  {}
+			
+			virtual void UpdateScrollbars()  {}
+			
+			void ClickInLoop();
+			
+			void MouseDown( const EventRecord& event );
+			
+			bool KeyDown( const EventRecord& event );
+			
+			bool UserCommand( MenuItemCode code );
 			
 			void Draw( const Rect& bounds );
 	};

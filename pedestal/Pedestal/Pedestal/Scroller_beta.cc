@@ -72,6 +72,51 @@ namespace Pedestal
 	}
 	
 	
+	void ScrollFrame::ClickInLoop()
+	{
+		NN::Saved< N::Clip_Value > savedClip;
+		
+		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		
+		UpdateScrollbars();
+	}
+	
+	void ScrollFrame::MouseDown( const EventRecord& event )
+	{
+		if ( HitTest( event ) )
+		{
+			TEClickLoop_Scope scope( this );
+			
+			Subview().MouseDown( event );
+			
+			UpdateScrollbars();
+		}
+	}
+	
+	bool ScrollFrame::KeyDown( const EventRecord& event )
+	{
+		const bool result = Subview().KeyDown( event );
+		
+		if ( result )
+		{
+			UpdateScrollbars();
+		}
+		
+		return result;
+	}
+	
+	bool ScrollFrame::UserCommand( MenuItemCode code )
+	{
+		const bool result = Subview().UserCommand( code );
+		
+		if ( result )
+		{
+			UpdateScrollbars();
+		}
+		
+		return result;
+	}
+	
 	void ScrollFrame::Draw( const Rect& bounds )
 	{
 		Rect aperture = bounds;
