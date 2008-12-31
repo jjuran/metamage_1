@@ -34,20 +34,6 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	static inline bool operator==( const Rect& a, const Rect& b )
-	{
-		return    a.top    == b.top
-		       && a.left   == b.left
-		       && a.bottom == b.bottom
-		       && a.right  == b.right;
-	}
-	
-	static inline bool operator!=( const Rect& a, const Rect& b )
-	{
-		return !( a == b );
-	}
-	
-	
 	static bool LeftOrRightArrowsKeyed()
 	{
 		N::GetKeys_Result keys = N::GetKeys();
@@ -205,6 +191,8 @@ namespace Pedestal
 	
 	void TextEdit::Draw( const Rect& bounds )
 	{
+		using Nucleus::Operators::operator!=;
+		
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );

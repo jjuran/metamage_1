@@ -65,24 +65,6 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
-{
-	namespace Operators
-	{
-		
-		inline bool operator==( ::Point a, ::Point b )
-		{
-			return a.v == b.v  &&  a.h == b.h;
-		}
-		
-		inline bool operator!=( ::Point a, ::Point b )
-		{
-			return !( a == b );
-		}
-		
-	}
-}
-
 namespace Pedestal
 {
 	
