@@ -27,6 +27,11 @@
 namespace poseven
 {
 	
+	inline void utime( const char* path )
+	{
+		throw_posix_result( ::utime( path, NULL ) );
+	}
+	
 	inline void utime( const char* path, const utimbuf& time_buffer )
 	{
 		throw_posix_result( ::utime( path, &time_buffer ) );
@@ -37,6 +42,11 @@ namespace poseven
 		utimbuf time_buffer = { 0, mod_time };
 		
 		utime( path, time_buffer );
+	}
+	
+	inline void utime( const std::string& path )
+	{
+		utime( path.c_str() );
 	}
 	
 	inline void utime( const std::string& path, const utimbuf& time_buffer )
