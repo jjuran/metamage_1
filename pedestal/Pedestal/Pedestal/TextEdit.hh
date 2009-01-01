@@ -34,6 +34,8 @@ namespace Pedestal
 			virtual void On_UserSelect()  {}
 			virtual void On_UserEdit()  {}
 			
+			virtual void On_EnterKey()  {}
+			
 			void Activate( bool activating );
 			
 			void Idle     ( const EventRecord& event );

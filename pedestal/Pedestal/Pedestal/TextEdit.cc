@@ -107,7 +107,8 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
-		const char c = event.message & charCodeMask;
+		const char c   =  event.message & charCodeMask;
+		const char key = (event.message & keyCodeMask) >> 8;
 		
 		if ( Try_IgnoreAutoKey( event ) )
 		{
@@ -120,6 +121,10 @@ namespace Pedestal
 		else if ( Try_ArrowKeyChord( *this, c ) )
 		{
 			// already handled
+		}
+		else if ( c == kEnterCharCode  &&  key >= 0x30 )
+		{
+			On_EnterKey();
 		}
 		else if ( !KeyIsAllowedAgainstSelection( c, hTE ) )
 		{
