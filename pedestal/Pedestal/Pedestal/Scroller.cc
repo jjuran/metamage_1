@@ -51,36 +51,14 @@ namespace Pedestal
 	}
 	
 	
-	ScrollbarView::ScrollbarView( const Rect&       bounds,
-	                              N::ControlProcID  procID,
-	                              N::RefCon         refCon,
-	                              ControlTracker    tracker )
-	: itsControl( N::NewControl( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-	                             bounds,
-	                             "\p",
-	                             true,
-	                             0,
-	                             0,
-	                             0,
-	                             procID,
-	                             &itsControlHooks ) )
+	ScrollbarView::ScrollbarView( const Rect&     bounds,
+	                              N::RefCon       refCon,
+	                              ControlTracker  tracker )
 	{
+		Create( bounds, &itsControlHooks );
+		
 		itsControlHooks.data      = refCon;
 		itsControlHooks.trackHook = tracker;
-	}
-	
-	void ScrollbarView::Activate( bool activating )
-	{
-		if ( activating )
-		{
-			//N::ShowControl( itsControl );
-			N::HiliteControl( itsControl, N::kControlNoPart );
-		}
-		else
-		{
-			//N::HideControl( itsControl );
-			N::HiliteControl( itsControl, N::kControlInactivePart );
-		}
 	}
 	
 	

@@ -24,6 +24,7 @@
 
 // Pedestal
 #include "Pedestal/Control.hh"
+#include "Pedestal/Scrollbar.hh"
 #include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
@@ -31,21 +32,15 @@
 namespace Pedestal
 {
 	
-	class ScrollbarView : public View
+	class ScrollbarView : public Scrollbar
 	{
 		private:
-			ControlRef     itsControl;
-			Control_Hooks  itsControlHooks;
+			Control_Hooks itsControlHooks;
 		
 		public:
-			ScrollbarView( const Rect&              bounds,
-			               Nitrogen::ControlProcID  procID,
-			               Nitrogen::RefCon         refCon,
-			               ControlTracker           tracker );
-			
-			ControlRef Get() const  { return itsControl; }
-			
-			void Activate( bool activating );
+			ScrollbarView( const Rect&       bounds,
+			               Nitrogen::RefCon  refCon,
+			               ControlTracker    tracker );
 	};
 	
 	
@@ -70,7 +65,7 @@ namespace Pedestal
 		
 		struct Type
 		{
-			Type( const Rect&, Nitrogen::ControlProcID, Nitrogen::RefCon, ControlTracker )
+			Type( const Rect&, Nitrogen::RefCon, ControlTracker )
 			{
 			}
 			
@@ -151,13 +146,6 @@ namespace Pedestal
 	bool AppearanceManagerExists();
 	
 #endif
-	
-	template < class Existence >
-	inline Nitrogen::ControlProcID GetControlProcIDForAppearenceExistence( Existence exists )
-	{
-		return exists ? Nitrogen::kControlScrollBarLiveProc
-		              : Nitrogen::scrollBarProc;
-	}
 	
 	
 	using Nitrogen::SetControlMaximum;
@@ -463,13 +451,11 @@ namespace Pedestal
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           GetControlProcIDForAppearenceExistence( AppearanceManagerExists() ),
 		           static_cast< ScrollerBase* >( this ),
 		           Track< kVertical > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           GetControlProcIDForAppearenceExistence( AppearanceManagerExists() ),
 		           static_cast< ScrollerBase* >( this ),
 		           Track< kHorizontal > )
 	{
