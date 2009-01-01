@@ -19,7 +19,6 @@
 #include "Genie/FileSystem/DynamicGroups.hh"
 #include "Genie/FileSystem/FSTree_dev_gestalt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
@@ -168,7 +167,6 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping dev_new_Mappings[] =
 	{
-		{ "buffer",  &Basic_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
 		{ "console", &Basic_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
 		
 		{ NULL, NULL }
