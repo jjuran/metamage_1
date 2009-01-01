@@ -3,31 +3,22 @@
  *	=========
  */
 
-// Standard C++
-#include <functional>
-
 // Standard C/C++
 #include <cstddef>
-#include <cstdio>
-
-// POSIX
-#include <fcntl.h>
 
 // Iota
 #include "iota/strings.hh"
 
-// Lamp
-#include "lamp/winio.h"
-
 // POSeven
 #include "POSeven/extras/pump.hh"
+#include "POSeven/extras/spew.hh"
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/openat.hh"
+#include "POSeven/functions/utime.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/write.hh"
-#include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -42,112 +33,29 @@ namespace tool
 	namespace O = Orion;
 	
 	
-	static p7::fd_t global_window_fd = p7::stdin_fileno;
-	
-	
-	class invalid_point {};
-	
-	
-	static Point read_point( const char* string, const char* format )
+	static void make_window( const char* title )
 	{
-		int h, v;
+		p7::throw_posix_result( ::chdir( "/new/window" ) );
 		
-		int scanned = std::sscanf( string, format, &h, &v );
+		std::string title_data = title;
 		
-		if ( scanned != 2 )
-		{
-			throw invalid_point();
-		}
+		title_data += '\n';
 		
-		Point position;
+		p7::spew( "title", title_data );
 		
-		position.h = h;
-		position.v = v;
+		p7::throw_posix_result( ::link( "/new/scrollframe", "view"     ) );
+		p7::throw_posix_result( ::link( "/new/frame",       "view/v"   ) );
+		p7::throw_posix_result( ::link( "/new/textedit",    "view/v/v" ) );
 		
-		return position;
-	}
-	
-	inline Point read_position( const char* string )
-	{
-		return read_point( string, "%d,%d" );
-	}
-	
-	inline Point read_size( const char* string )
-	{
-		return read_point( string, "%dx%d" );
-	}
-	
-	
-	// ioctl() wrappers
-	
-	inline void set_window_title( p7::fd_t window, const char* title )
-	{
-		p7::ioctl( window, WIOCSTITLE, title );
-	}
-	
-	inline void set_window_position( p7::fd_t window, Point position )
-	{
-		p7::ioctl( window, WIOCSPOS, &position );
-	}
-	
-	inline void set_window_size( p7::fd_t window, Point size )
-	{
-		p7::ioctl( window, WIOCSSIZE, &size );
-	}
-	
-	inline void set_window_visibility( p7::fd_t window, int visibility )
-	{
-		p7::ioctl( window, WIOCSVIS, &visibility );
-	}
-	
-	
-	// option handlers
-	
-	static void set_position( const char* position_string )
-	{
-		Point position = read_position( position_string );
+		p7::spew( "view/vertical", "1" "\n" );
+		p7::spew( "view/v/margin", "4" "\n" );
 		
-		set_window_position( global_window_fd, position );
-	}
-	
-	static void set_size( const char* size_string )
-	{
-		Point size = read_size( size_string );
-		
-		set_window_size( global_window_fd, size );
-	}
-	
-	static void set_visibility( const char* visibility_string )
-	{
-		int visibility = std::atoi( visibility_string );
-		
-		set_window_visibility( global_window_fd, visibility );
-	}
-	
-	static void show( const char* )
-	{
-		set_window_visibility( global_window_fd, true );
-	}
-	
-	static void hide( const char* )
-	{
-		set_window_visibility( global_window_fd, false );
+		p7::utime( "ref" );
 	}
 	
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		/*
-		O::BindOptionTrigger( "--pos", std::ptr_fun( set_position ) );
-		
-		O::BindOptionTrigger( "--size", std::ptr_fun( set_size ) );
-		
-		O::BindOptionTrigger( "--vis", std::ptr_fun( set_visibility ) );
-		
-		O::BindOptionTrigger( "--show", std::ptr_fun( show ) );
-		O::BindOptionTrigger( "--hide", std::ptr_fun( hide ) );
-		*/
-		
 		bool should_wait = false;
 		
 		bool in_place = false;
@@ -156,16 +64,12 @@ namespace tool
 		
 		const char* output_file = "/dev/null";
 		
-		const char* device = "/dev/new/buffer";
-		
-		O::BindOption( "-d", device      );
 		O::BindOption( "-o", output_file );
 		O::BindOption( "-t", title       );
 		O::BindOption( "-w", should_wait );
 		
 		O::BindOption( "--in-place", in_place );
 		
-		O::AliasOption( "-d", "--dev"   );
 		O::AliasOption( "-o", "--out"   );
 		O::AliasOption( "-t", "--title" );
 		O::AliasOption( "-w", "--wait"  );
@@ -198,22 +102,21 @@ namespace tool
 			title = input_file;
 		}
 		
+		NN::Owned< p7::fd_t > cwd = p7::open( ".", p7::o_rdonly | p7::o_directory );
+		
 		NN::Owned< p7::fd_t > input = p7::open( input_file, p7::o_rdonly );
 		
-		NN::Owned< p7::fd_t > window = p7::open( device, p7::o_rdwr );
+		make_window( title );
 		
-		if ( title != NULL )
-		{
-			set_window_title( window, title );
-		}
-		
-		p7::pump( input, window );
+		p7::pump( input, p7::open( "view/v/v/text", p7::o_wronly | p7::o_trunc ) );
 		
 		p7::close( input );
 		
-		p7::lseek( window, 0 );
+		p7::utime( "view/v/v/interlock" );
 		
-		NN::Owned< p7::fd_t > output = p7::open( output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
+		NN::Owned< p7::fd_t > buffer = p7::open( "view/v/v/text", p7::o_rdonly );
+		
+		NN::Owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
 		
 		p7::pid_t pid = p7::vfork();
 		
@@ -223,9 +126,9 @@ namespace tool
 			
 			setsid();
 			
-			p7::ioctl( window, TIOCSCTTY, NULL );
+			p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 			
-			dup2( window, 0 );
+			dup2( buffer, 0 );
 			dup2( output, 1 );
 			
 			const char* window_argv[] = { "/bin/cat", NULL };
