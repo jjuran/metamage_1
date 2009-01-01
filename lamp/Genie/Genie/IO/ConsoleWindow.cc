@@ -65,6 +65,10 @@ namespace Genie
 			Io::StringPipe  itsInput;
 			short           itsStartOfInput;
 			bool            itHasReceivedEOF;
+			
+			// Text manipulation
+			SInt16 TextLength() const  { return Get()[0]->teLength; }
+			Handle TextHandle()        { return Get()[0]->hText;    }
 		
 		public:
 			struct Initializer
@@ -97,8 +101,6 @@ namespace Genie
 			bool KeyDown  ( const EventRecord& event );
 			
 			bool UserCommand( Pedestal::MenuItemCode code );
-			
-			void Paste();
 	};
 	
 	
@@ -279,13 +281,13 @@ namespace Genie
 				case 'A':
 					start = end = itsStartOfInput;
 					
-					SetSelection( start, end );
+					Select( start, end );
 					break;
 				
 				case 'E':
 					start = end = TextLength();
 					
-					SetSelection( start, end );
+					Select( start, end );
 					break;
 				
 				case 'C':
@@ -320,7 +322,7 @@ namespace Genie
 			
 			case kReturnCharCode:
 				// Always jump to end of buffer
-				SetSelection( 32767, 32767 );
+				Select( 32767, 32767 );
 				
 				// Insert the return char
 				Ped::TEView::KeyDown( event );
@@ -344,7 +346,7 @@ namespace Genie
 				break;
 			
 			default:
-				SetSelection( start, end );
+				Select( start, end );
 				
 				// Backspace or left arrow on a selection doesn't modify start --
 				// only if there's an insertion point are we really going left.
@@ -371,26 +373,16 @@ namespace Genie
 	{
 		if ( code == 'pste' )
 		{
-			Paste();
-			return true;
+			// copied from DoKey -- refactor
+			TESelection selection = GetTESelection( Get() );
+			
+			selection.start = std::max( itsStartOfInput, selection.start );
+			selection.end   = std::max( selection.start, selection.end );
+			
+			Select( selection.start, selection.end );
 		}
-		else
-		{
-			return Console::UserCommand( code );
-		}
-	}
-	
-	void ConsolePane::Paste()
-	{
-		// copied from DoKey -- refactor
-		TESelection selection = GetTESelection( Get() );
 		
-		selection.start = std::max( itsStartOfInput, selection.start );
-		selection.end   = std::max( selection.start, selection.end );
-		
-		SetSelection( selection.start, selection.end );
-		
-		Console::Paste();
+		return Console::UserCommand( code );
 	}
 	
 	
@@ -408,7 +400,7 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	typedef Ped::Scroller< true > Scroller;
+	typedef Ped::TEScrollFrame< true > TEScrollFrame;
 	
 	static inline std::auto_ptr< Ped::View > MakeView( ConsoleID id )
 	{
@@ -416,21 +408,21 @@ namespace Genie
 		
 		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
 		
-		Scroller* scroller = NULL;
+		TEScrollFrame* scrollframe = NULL;
 		
-		std::auto_ptr< Ped::View > view( scroller = new Scroller( scroller_bounds ) );
+		std::auto_ptr< Ped::View > view( scrollframe = new TEScrollFrame( scroller_bounds ) );
 		
-		std::auto_ptr< Ped::ScrollableBase > subview( new ConsolePane( subview_bounds, ConsolePane::Initializer( id ) ) );
+		std::auto_ptr< Ped::View > subview( new ConsolePane( subview_bounds, ConsolePane::Initializer( id ) ) );
 		
-		scroller->SetSubView( subview );
+		scrollframe->SetSubView( subview );
 		
 		return view;
 	}
 	
 	
-	static ConsolePane& GetConsole( Scroller& scroller )
+	static ConsolePane& GetConsole( TEScrollFrame& scrollframe )
 	{
-		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
+		ConsolePane& pane = static_cast< ConsolePane& >( scrollframe.GetSubView() );
 		
 		return pane;
 	}
@@ -471,7 +463,7 @@ namespace Genie
 			case WIOCGDIM:
 				if ( result != NULL )
 				{
-					*result = GetConsole( SubView< Scroller >() ).ViewableRange();
+					*result = GetConsole( SubView< TEScrollFrame >() ).ViewableRange();
 				}
 				
 				break;
@@ -488,24 +480,23 @@ namespace Genie
 	
 	bool ConsoleWindow::IsReadyForInput()
 	{
-		return GetConsole( SubView< Scroller >() ).IsReadyForInput();
+		return GetConsole( SubView< TEScrollFrame >() ).IsReadyForInput();
 	}
 	
 	std::string ConsoleWindow::ReadInput()
 	{
-		return GetConsole( SubView< Scroller >() ).ReadLine();
+		return GetConsole( SubView< TEScrollFrame >() ).ReadLine();
 	}
 	
 	int ConsoleWindow::Write( const char* data, std::size_t byteCount )
 	{
-		Scroller& scroller = SubView< Scroller >();
+		TEScrollFrame& scrollframe = SubView< TEScrollFrame >();
 		
-		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
+		ConsolePane& pane = static_cast< ConsolePane& >( scrollframe.GetSubView() );
 		
 		int result = pane.WriteChars( data, byteCount );
 		
-		scroller.UpdateScrollbars( N::SetPt( 0, 0 ),
-		                           N::SetPt( 0, 0 ) );
+		scrollframe.UpdateScrollbars();
 		
 		return result;
 	}
