@@ -766,6 +766,16 @@ namespace Pedestal
 		if ( (event.modifiers & gShiftSpaceQuasimodeMask) != gShiftSpaceQuasimodeMask )
 		{
 			gQuasimode.reset();
+			
+			gShiftSpaceQuasimodeMask = 0;
+		}
+		
+		if ( gShiftSpaceQuasimodeMask != 0 )
+		{
+			// Don't sleep long while we're in a quasimode, so we can detect
+			// when the key goes up.
+			
+			AdjustSleepForTimer( 15 );  // needs tuning
 		}
 	}
 	
