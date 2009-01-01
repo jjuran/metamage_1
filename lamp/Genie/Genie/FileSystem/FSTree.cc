@@ -230,24 +230,19 @@ namespace Genie
 	
 	off_t FSTree::GetEOF() const
 	{
-		// This confuses MWCPPC when optimizing:
-		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
-		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
+		// Errors are meaningless here since there's no POSIX call specifically
+		// to get EOF (as there is truncate() for setting EOF).  We only care so
+		// we can populate stat::st_size.  Just return zero.
 		
-		if ( IsDirectory() )
-		{
-			p7::throw_errno( EISDIR );
-		}
-		else
-		{
-			p7::throw_errno( EINVAL );
-		}
-		
-		return 0;  // Not reached
+		return 0;
 	}
 	
 	void FSTree::SetEOF( off_t /*length*/ ) const
 	{
+		// This confuses MWCPPC when optimizing:
+		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
+		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
+		
 		if ( IsDirectory() )
 		{
 			p7::throw_errno( EISDIR );
