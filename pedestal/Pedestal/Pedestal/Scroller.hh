@@ -214,8 +214,8 @@ namespace Pedestal
 			
 			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
 			
-			TEView const& GetSubView() const  { return itsScrollableView.Get< TEView >(); }
-			TEView      & GetSubView()        { return itsScrollableView.Get< TEView >(); }
+			TEView const& GetSubView() const  { return static_cast< const TEView& >( itsScrollableView.Get() ); }
+			TEView      & GetSubView()        { return static_cast<       TEView& >( itsScrollableView.Get() ); }
 			
 			void Idle( const EventRecord& event );
 			
