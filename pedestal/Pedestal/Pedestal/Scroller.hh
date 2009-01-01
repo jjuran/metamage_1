@@ -213,11 +213,9 @@ namespace Pedestal
 			
 			void Idle( const EventRecord& event );
 			
-			void MouseDown( const EventRecord& event );
-			
 			void Draw( const Rect& bounds );
 			
-			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
+			bool HitTest( const EventRecord& event );
 			
 	};
 	

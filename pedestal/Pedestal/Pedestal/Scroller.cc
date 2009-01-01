@@ -176,18 +176,6 @@ namespace Pedestal
 		GetSubView().Idle( event );
 	}
 	
-	void TEScrollFrameBase::MouseDown( const EventRecord& event )
-	{
-		if ( Nitrogen::PtInRect( Nitrogen::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
-		{
-			gCurrentScroller = this;
-			
-			GetSubView().MouseDown( event );
-			
-			gCurrentScroller = NULL;
-		}
-	}
-	
 	void TEScrollFrameBase::Draw( const Rect& bounds )
 	{
 		const Rect& subviewBounds = GetSubView().Bounds();
@@ -200,14 +188,9 @@ namespace Pedestal
 		GetSubView().Draw( subviewBounds );
 	}
 	
-	bool TEScrollFrameBase::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+	bool TEScrollFrameBase::HitTest( const EventRecord& event )
 	{
-		if ( Nitrogen::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
-		{
-			return GetSubView().SetCursor( event, mouseRgn );
-		}
-		
-		return false;
+		return N::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() );
 	}
 	
 }
