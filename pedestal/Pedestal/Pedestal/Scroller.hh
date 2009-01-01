@@ -114,23 +114,6 @@ namespace Pedestal
 	short SetControlValueFromClippedDelta( ControlRef control, short delta );
 	
 	
-	class BoundedView : public View
-	{
-		private:
-			Rect bounds;
-		
-		public:
-			BoundedView(const Rect& bounds) : bounds( bounds )  {}
-			
-			const Rect& Bounds() const  { return bounds; }
-			
-			void Resize( short width, short height )
-			{
-				bounds.right = bounds.left + width;
-				bounds.bottom = bounds.top + height;
-			}
-	};
-	
 	enum ScrollbarAxis
 	{
 		kVertical,
@@ -202,13 +185,14 @@ namespace Pedestal
 			virtual void ClickInLoop() = 0;
 	};
 	
-	class TEScrollFrameBase : public BoundedView, public ClickableScroller
+	class TEScrollFrameBase : public View, public ClickableScroller
 	{
 		private:
-			UserView itsScrollableView;
+			Rect      itsBounds;
+			UserView  itsScrollableView;
 		
 		public:
-			TEScrollFrameBase( const Rect& bounds ) : BoundedView( bounds )
+			TEScrollFrameBase( const Rect& bounds ) : itsBounds( bounds )
 			{
 			}
 			
@@ -216,6 +200,14 @@ namespace Pedestal
 			
 			TEView const& GetSubView() const  { return static_cast< const TEView& >( itsScrollableView.Get() ); }
 			TEView      & GetSubView()        { return static_cast<       TEView& >( itsScrollableView.Get() ); }
+			
+			const Rect& Bounds() const  { return itsBounds; }
+			
+			void Resize( short width, short height )
+			{
+				itsBounds.right = itsBounds.left + width;
+				itsBounds.bottom = itsBounds.top + height;
+			}
 			
 			void Idle( const EventRecord& event );
 			
@@ -555,7 +547,7 @@ namespace Pedestal
 	template < bool vertical, bool horizontal >
 	void TEScrollFrame< vertical, horizontal >::Resize( short width, short height )
 	{
-		BoundedView::Resize( width, height );
+		TEScrollFrameBase::Resize( width, height );
 		
 		Point dimensions = ScrollDimensions( width,
 		                                     height,
