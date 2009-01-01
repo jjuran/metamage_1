@@ -25,6 +25,8 @@ namespace Genie
 			
 			bool IsRegularFile() const  { return true; }
 			
+			virtual boost::shared_ptr< IOHandle > Clone() = 0;
+			
 			virtual unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
 			off_t Seek( off_t offset, int whence );
