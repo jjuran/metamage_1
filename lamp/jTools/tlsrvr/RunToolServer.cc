@@ -340,7 +340,13 @@ namespace tool
 		
 		if ( result == 2 )
 		{
-			if ( errors == "\r" "User break, cancelled..." "\r" )
+			// The magic line we're looking for might be followed by:
+			//
+			//     ### ToolServer - Execution of HD:Path:To:Script terminated.
+			//
+			// So only check the known quantity.
+			
+			if ( std::strncmp( errors.c_str(), STR_LEN( "\r" "User break, cancelled..." "\r" ) ) == 0 )
 			{
 				// User pressed Command-period
 				return 128;
