@@ -14,7 +14,7 @@
 namespace UseEdit
 {
 	
-	typedef Pedestal::Scroller< true > View;
+	typedef Pedestal::TEScrollFrame< true > View;
 	
 	std::auto_ptr< Pedestal::Window >
 	//
