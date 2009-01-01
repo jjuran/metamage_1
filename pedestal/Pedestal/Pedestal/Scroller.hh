@@ -422,7 +422,7 @@ namespace Pedestal
 				Calibrate();
 			}
 			
-			void UpdateScrollbars( Point oldRange, Point oldPosition );
+			void UpdateScrollbars();
 			
 			void ClickInLoop()
 			{
@@ -471,20 +471,14 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	void Scroller< vertical, horizontal >::UpdateScrollbars( Point oldRange, Point oldPosition )
+	void Scroller< vertical, horizontal >::UpdateScrollbars()
 	{
-		using namespace Nucleus::Operators;
+		Point pos = GetSubView().ScrollPosition();
 		
-		Point range = GetSubView().ScrollableRange();
-		Point pos   = GetSubView().ScrollPosition();
-		
-		if ( oldPosition != pos  ||  oldRange != range )
-		{
-			Pedestal::UpdateScrollbars( myScrollV.Get(),
-			                            myScrollH.Get(),
-			                            ComputeScrollbarMaxima( GetSubView() ),
-			                            pos );
-		}
+		Pedestal::UpdateScrollbars( myScrollV.Get(),
+		                            myScrollH.Get(),
+		                            ComputeScrollbarMaxima( GetSubView() ),
+		                            pos );
 	}
 	
 	template < bool vertical, bool horizontal >
@@ -508,12 +502,12 @@ namespace Pedestal
 			{
 				case kHomeCharCode:
 					Scroll( 0, -scrollPosition.v );
-					UpdateScrollbars( scrollableRange, scrollPosition );
+					UpdateScrollbars();
 					return true;
 				
 				case kEndCharCode:
 					Scroll( 0, scrollableRange.v - scrollPosition.v );
-					UpdateScrollbars( scrollableRange, scrollPosition );
+					UpdateScrollbars();
 					return true;
 				
 				case kPageUpCharCode:
@@ -536,7 +530,8 @@ namespace Pedestal
 		
 		if ( GetSubView().KeyDown( event ) )
 		{
-			UpdateScrollbars( scrollableRange, scrollPosition );
+			UpdateScrollbars();
+			
 			return true;
 		}
 		
@@ -588,12 +583,9 @@ namespace Pedestal
 	template < bool vertical, bool horizontal >
 	bool Scroller< vertical, horizontal >::UserCommand( MenuItemCode code )
 	{
-		Point scrollableRange = GetSubView().ScrollableRange();
-		Point scrollPosition  = GetSubView().ScrollPosition();
-		
 		if ( GetSubView().UserCommand( code ) )
 		{
-			UpdateScrollbars( scrollableRange, scrollPosition );
+			UpdateScrollbars();
 			
 			return true;
 		}
