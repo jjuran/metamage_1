@@ -67,8 +67,6 @@ namespace tool
 		
 		std::string location = loc != NULL ? loc : ".";
 		
-		struct stat target_status = p7::stat( target );
-		
 		struct stat location_status;
 		
 		if ( bool location_exists = p7::stat( location, location_status ) )
