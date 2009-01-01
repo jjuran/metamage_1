@@ -54,6 +54,7 @@ namespace io
 		return open_for_reading( pathname.c_str(), overload() );
 	}
 	
+	
 	inline Nucleus::Owned< poseven::fd_t > open_for_writing( const char* pathname, overload = overload() )
 	{
 		return poseven::open( pathname, poseven::o_wronly );
@@ -64,6 +65,7 @@ namespace io
 		return open_for_writing( pathname.c_str(), overload() );
 	}
 	
+	
 	inline Nucleus::Owned< poseven::fd_t > open_for_io( const char* pathname, overload = overload() )
 	{
 		return poseven::open( pathname, poseven::o_rdwr );
@@ -72,6 +74,17 @@ namespace io
 	inline Nucleus::Owned< poseven::fd_t > open_for_io( const std::string& pathname, overload = overload() )
 	{
 		return open_for_io( pathname.c_str(), overload() );
+	}
+	
+	
+	inline Nucleus::Owned< poseven::fd_t > open_truncated( const char* pathname, overload = overload() )
+	{
+		return poseven::open( pathname, poseven::o_wronly | poseven::o_trunc );
+	}
+	
+	inline Nucleus::Owned< poseven::fd_t > open_truncated( const std::string& pathname, overload = overload() )
+	{
+		return open_truncated( pathname.c_str(), overload() );
 	}
 	
 }
