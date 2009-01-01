@@ -185,7 +185,7 @@ namespace Pedestal
 			virtual void ClickInLoop() = 0;
 	};
 	
-	class TEScrollFrameBase : public View, public ClickableScroller
+	class TEScrollFrameBase : public Superview, public ClickableScroller
 	{
 		private:
 			Rect      itsBounds;
@@ -195,6 +195,8 @@ namespace Pedestal
 			TEScrollFrameBase( const Rect& bounds ) : itsBounds( bounds )
 			{
 			}
+			
+			View& Subview()  { return itsScrollableView.Get(); }
 			
 			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
 			
@@ -212,11 +214,6 @@ namespace Pedestal
 			void Idle( const EventRecord& event );
 			
 			void MouseDown( const EventRecord& event );
-			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
-			{
-				return GetSubView().EnterShiftSpaceQuasimode( event );
-			}
 			
 			void Draw( const Rect& bounds );
 			
