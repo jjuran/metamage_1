@@ -202,13 +202,13 @@ namespace Pedestal
 			virtual void ClickInLoop() = 0;
 	};
 	
-	class ScrollerBase : public BoundedView, public ClickableScroller
+	class TEScrollFrameBase : public BoundedView, public ClickableScroller
 	{
 		private:
 			UserView itsScrollableView;
 		
 		public:
-			ScrollerBase( const Rect& bounds ) : BoundedView( bounds )
+			TEScrollFrameBase( const Rect& bounds ) : BoundedView( bounds )
 			{
 			}
 			
@@ -240,7 +240,7 @@ namespace Pedestal
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
 		
-		ScrollerBase& scroller = *static_cast< ScrollerBase* >( controlHooks->data );
+		TEScrollFrameBase& scroller = *static_cast< TEScrollFrameBase* >( controlHooks->data );
 		
 		return scroller.GetSubView();
 	}
@@ -374,7 +374,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal = false >
-	class Scroller : public ScrollerBase
+	class TEScrollFrame : public TEScrollFrameBase
 	{
 		private:
 			typedef Scrollbar_Traits< vertical   > VerticalTraits;
@@ -387,7 +387,7 @@ namespace Pedestal
 			HorizontalScrollbarType  myScrollH;
 		
 		public:
-			Scroller( const Rect& bounds );
+			TEScrollFrame( const Rect& bounds );
 			
 			static bool ScrollsVertically()    { return VerticalTraits  ::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
@@ -397,7 +397,7 @@ namespace Pedestal
 			
 			void SetSubView( std::auto_ptr< View > subview )
 			{
-				ScrollerBase::SetSubView( subview );
+				TEScrollFrameBase::SetSubView( subview );
 				
 				//Point dimensions = ScrollDimensions< true, false >( Bounds() ) );
 				
@@ -445,24 +445,24 @@ namespace Pedestal
 	
 	
 	template < bool vertical, bool horizontal >
-	Scroller< vertical, horizontal >::Scroller( const Rect& bounds )
+	TEScrollFrame< vertical, horizontal >::TEScrollFrame( const Rect& bounds )
 	: 
-		ScrollerBase( bounds ),
+		TEScrollFrameBase( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           static_cast< ScrollerBase* >( this ),
+		           static_cast< TEScrollFrameBase* >( this ),
 		           Track< kVertical > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           static_cast< ScrollerBase* >( this ),
+		           static_cast< TEScrollFrameBase* >( this ),
 		           Track< kHorizontal > )
 	{
 	}
 	
 	template < bool vertical, bool horizontal >
-	void Scroller< vertical, horizontal >::SetControlViewSizes()
+	void TEScrollFrame< vertical, horizontal >::SetControlViewSizes()
 	{
 		Point range = GetSubView().ViewableRange();
 		
@@ -471,7 +471,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	void Scroller< vertical, horizontal >::UpdateScrollbars()
+	void TEScrollFrame< vertical, horizontal >::UpdateScrollbars()
 	{
 		Point pos = GetSubView().ScrollPosition();
 		
@@ -482,7 +482,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	bool Scroller< vertical, horizontal >::KeyDown( const EventRecord& event )
+	bool TEScrollFrame< vertical, horizontal >::KeyDown( const EventRecord& event )
 	{
 		Point scrollableRange = GetSubView().ScrollableRange();
 		Point scrollPosition  = GetSubView().ScrollPosition();
@@ -539,7 +539,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	void Scroller< vertical, horizontal >::Activate( bool activating )
+	void TEScrollFrame< vertical, horizontal >::Activate( bool activating )
 	{
 		GetSubView().Activate( activating );
 		
@@ -553,7 +553,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	void Scroller< vertical, horizontal >::Resize( short width, short height )
+	void TEScrollFrame< vertical, horizontal >::Resize( short width, short height )
 	{
 		BoundedView::Resize( width, height );
 		
@@ -581,7 +581,7 @@ namespace Pedestal
 	}
 	
 	template < bool vertical, bool horizontal >
-	bool Scroller< vertical, horizontal >::UserCommand( MenuItemCode code )
+	bool TEScrollFrame< vertical, horizontal >::UserCommand( MenuItemCode code )
 	{
 		if ( GetSubView().UserCommand( code ) )
 		{

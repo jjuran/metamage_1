@@ -166,7 +166,7 @@ namespace Pedestal
 		return value - oldValue;
 	}
 	
-	void ScrollerBase::Idle( const EventRecord& event )
+	void TEScrollFrameBase::Idle( const EventRecord& event )
 	{
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
@@ -176,7 +176,7 @@ namespace Pedestal
 		GetSubView().Idle( event );
 	}
 	
-	void ScrollerBase::MouseDown( const EventRecord& event )
+	void TEScrollFrameBase::MouseDown( const EventRecord& event )
 	{
 		if ( Nitrogen::PtInRect( Nitrogen::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
 		{
@@ -188,7 +188,7 @@ namespace Pedestal
 		}
 	}
 	
-	void ScrollerBase::Draw( const Rect& bounds )
+	void TEScrollFrameBase::Draw( const Rect& bounds )
 	{
 		const Rect& subviewBounds = GetSubView().Bounds();
 		
@@ -200,7 +200,7 @@ namespace Pedestal
 		GetSubView().Draw( subviewBounds );
 	}
 	
-	bool ScrollerBase::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+	bool TEScrollFrameBase::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
 	{
 		if ( Nitrogen::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
 		{
