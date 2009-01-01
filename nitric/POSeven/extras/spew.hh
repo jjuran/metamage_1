@@ -24,7 +24,8 @@
 #include "Nucleus/Flattener.h"
 
 // POSeven
-#include "POSeven/Open.hh"
+#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/open.hh"
 
 
 namespace poseven
@@ -37,7 +38,7 @@ namespace poseven
 	
 	inline void spew( const char* path, const std::string& stuff )
 	{
-		return io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_wronly ).get(), stuff );
+		return io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_wronly | o_trunc ).get(), stuff );
 	}
 	
 }
