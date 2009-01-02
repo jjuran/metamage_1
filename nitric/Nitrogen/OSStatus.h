@@ -123,15 +123,6 @@ namespace Nucleus
      };
 	
 	template <>
-	class ErrorCode< Nitrogen::OSStatus, ::eofErr > : public Nitrogen::OSStatus,
-	                                                  public io::end_of_input,
-	                                                  public DebuggingContext
-	{
-		public:
-			ErrorCode() : OSStatus( eofErr )  {}
-	};
-	
-	template <>
 	class ErrorCode< Nitrogen::OSStatus, ::kOTNoDataErr > : public Nitrogen::OSStatus,
 	                                                        public io::no_input_pending,
 	                                                        public DebuggingContext
