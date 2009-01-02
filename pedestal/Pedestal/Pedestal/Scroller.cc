@@ -163,6 +163,79 @@ namespace Pedestal
 		return value - oldValue;
 	}
 	
+	template < ScrollbarAxis axis >
+	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	{
+		TEView& scrolledView = RecoverScrolledViewFromScrollbar( control );
+		
+		short jump = VHSelect< axis >( scrolledView.ViewableRange() ) - 1;
+		short scrollDistance = FigureScrollDistance( part, jump );
+		
+		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
+		
+		if ( part == Nitrogen::kControlIndicatorPart )
+		{
+			short oldValue = VHSelect< axis >( scrolledView.ScrollPosition() );
+			
+			delta = Nitrogen::GetControlValue( control ) - oldValue;
+		}
+		
+		ScrollByDelta< axis >( scrolledView, control, delta, true );
+	}
+	
+	template void ScrollbarAction< kVertical   >( ControlRef control, N::ControlPartCode part );
+	template void ScrollbarAction< kHorizontal >( ControlRef control, N::ControlPartCode part );
+	
+	
+	template < ScrollbarAxis axis >
+	void Track( ControlRef control, N::ControlPartCode part, Point point )
+	{
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
+		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
+		
+		switch ( part )
+		{
+			case kControlIndicatorPart:
+				// The user clicked on the indicator
+				
+				if ( !AppearanceManagerExists() )
+				{
+					// Classic scrolling, handled specially.
+					
+					// Get the current scrollbar value.
+					short oldValue = Nitrogen::GetControlValue( control );
+					
+					// Let the system track the drag...
+					part = Nitrogen::TrackControl( control, point );
+					
+					if ( part == Nitrogen::kControlIndicatorPart )
+					{
+						// Drag was successful (i.e. within bounds).  Subtract to get distance.
+						short scrollDistance = Nitrogen::GetControlValue( control ) - oldValue;
+						
+						// Scroll by that amount, but don't update just yet.
+						ScrollByDelta< axis >( control, scrollDistance, false );
+					}
+					
+					// Break here for classic thumb-scrolling (whether sucessful or not).
+					break;
+				}
+				// else fall through for live feedback scrolling
+			case kControlUpButtonPart:
+			case kControlDownButtonPart:
+			case kControlPageUpPart:
+			case kControlPageDownPart:
+				part = TrackScrollBar< axis >( control, point );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	template void Track< kVertical   >( ControlRef control, N::ControlPartCode part, Point point );
+	template void Track< kHorizontal >( ControlRef control, N::ControlPartCode part, Point point );
+	
 	void TEScrollFrameBase::Idle( const EventRecord& event )
 	{
 		// Intersect the clip region with the scrollview bounds,
