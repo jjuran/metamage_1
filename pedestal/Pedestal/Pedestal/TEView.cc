@@ -272,7 +272,7 @@ namespace Pedestal
 		Resize( hTE, bounds );
 	}
 	
-	void TEView::Scroll( short dh, short dv, bool updateNow )
+	void TEView::Scroll( short dh, short dv )
 	{
 		Point scrollStep = ScrollStep( itsTE );
 		

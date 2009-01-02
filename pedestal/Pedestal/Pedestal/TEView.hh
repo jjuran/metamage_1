@@ -77,7 +77,7 @@ namespace Pedestal
 			Point ScrollableRange() const;
 			Point ScrollPosition() const;
 			
-			void Scroll( short dh, short dv, bool updateNow );
+			void Scroll( short dh, short dv );
 			
 			void Idle     ( const EventRecord& event );
 			void MouseDown( const EventRecord& event );

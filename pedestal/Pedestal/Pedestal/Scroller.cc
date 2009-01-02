@@ -210,7 +210,7 @@ namespace Pedestal
 			delta = N::GetControlValue( control ) - oldValue;
 		}
 		
-		ScrollByDelta< axis >( scrolledView, control, delta, true );
+		ScrollByDelta< axis >( scrolledView, control, delta );
 	}
 	
 	template void ScrollbarAction< kVertical   >( ControlRef control, N::ControlPartCode part );
@@ -244,11 +244,11 @@ namespace Pedestal
 						// Drag was successful (i.e. within bounds).  Subtract to get distance.
 						short scrollDistance = N::GetControlValue( control ) - oldValue;
 						
-						// Scroll by that amount, but don't update just yet.
-						ScrollByDelta< axis >( control, scrollDistance, false );
+						// Scroll by that amount.
+						ScrollByDelta< axis >( control, scrollDistance );
 					}
 					
-					// Break here for classic thumb-scrolling (whether sucessful or not).
+					// Break here for classic thumb-scrolling (whether successful or not).
 					break;
 				}
 				// else fall through for live feedback scrolling

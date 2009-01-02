@@ -213,24 +213,23 @@ namespace Pedestal
 	
 	
 	template < ScrollbarAxis axis >
-	inline void ScrollByDelta( TEView& scrolledView, ControlRef control, short delta, bool updateNow )
+	inline void ScrollByDelta( TEView& scrolledView, ControlRef control, short delta )
 	{
 		if ( delta != 0 )
 		{
 			scrolledView.Scroll( ( axis != kVertical ) ? delta : 0,
-			                     ( axis == kVertical ) ? delta : 0,
-			                     updateNow );
+			                     ( axis == kVertical ) ? delta : 0 );
 			
 			SetControlMaximum( control, VHSelect< axis >( ComputeScrollbarMaxima( scrolledView ) ) );
 		}
 	}
 	
 	template < ScrollbarAxis axis >
-	inline void ScrollByDelta( ControlRef control, short delta, bool updateNow )
+	inline void ScrollByDelta( ControlRef control, short delta )
 	{
 		TEView& scrolledView = RecoverScrolledViewFromScrollbar( control );
 		
-		ScrollByDelta< axis >( scrolledView, control, delta, updateNow );
+		ScrollByDelta< axis >( scrolledView, control, delta );
 	}
 	
 	template < ScrollbarAxis axis >
@@ -321,9 +320,9 @@ namespace Pedestal
 				                    ComputeScrollbarMaxima( GetSubView() ) );
 			}
 			
-			void Scroll(short dh, short dv, bool updateNow = 0)
+			void Scroll( short dh, short dv )
 			{
-				GetSubView().Scroll( dh, dv, updateNow );
+				GetSubView().Scroll( dh, dv );
 				
 				Calibrate();
 			}
