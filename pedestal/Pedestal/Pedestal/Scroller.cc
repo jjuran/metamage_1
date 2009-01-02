@@ -173,11 +173,11 @@ namespace Pedestal
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
-		if ( part == Nitrogen::kControlIndicatorPart )
+		if ( part == N::kControlIndicatorPart )
 		{
 			short oldValue = VHSelect< axis >( scrolledView.ScrollPosition() );
 			
-			delta = Nitrogen::GetControlValue( control ) - oldValue;
+			delta = N::GetControlValue( control ) - oldValue;
 		}
 		
 		ScrollByDelta< axis >( scrolledView, control, delta, true );
@@ -190,8 +190,8 @@ namespace Pedestal
 	template < ScrollbarAxis axis >
 	void Track( ControlRef control, N::ControlPartCode part, Point point )
 	{
-		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
-		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
+		Nucleus::Saved< N::Clip_Value > savedClip;
+		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		
 		switch ( part )
 		{
@@ -203,15 +203,15 @@ namespace Pedestal
 					// Classic scrolling, handled specially.
 					
 					// Get the current scrollbar value.
-					short oldValue = Nitrogen::GetControlValue( control );
+					short oldValue = N::GetControlValue( control );
 					
 					// Let the system track the drag...
-					part = Nitrogen::TrackControl( control, point );
+					part = N::TrackControl( control, point );
 					
-					if ( part == Nitrogen::kControlIndicatorPart )
+					if ( part == N::kControlIndicatorPart )
 					{
 						// Drag was successful (i.e. within bounds).  Subtract to get distance.
-						short scrollDistance = Nitrogen::GetControlValue( control ) - oldValue;
+						short scrollDistance = N::GetControlValue( control ) - oldValue;
 						
 						// Scroll by that amount, but don't update just yet.
 						ScrollByDelta< axis >( control, scrollDistance, false );
@@ -240,8 +240,8 @@ namespace Pedestal
 	{
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
-		                                                                     Nitrogen::RectRgn( GetSubView().Bounds() ) ) );
+		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                       N::RectRgn( GetSubView().Bounds() ) ) );
 		
 		GetSubView().Idle( event );
 	}
@@ -252,8 +252,8 @@ namespace Pedestal
 		
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
-		                                                                     Nitrogen::RectRgn( subviewBounds ) ) );
+		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                       N::RectRgn( subviewBounds ) ) );
 		
 		GetSubView().Draw( subviewBounds );
 	}
