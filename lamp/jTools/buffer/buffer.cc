@@ -15,6 +15,7 @@
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/openat.hh"
+#include "POSeven/functions/symlink.hh"
 #include "POSeven/functions/utime.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
@@ -46,6 +47,8 @@ namespace tool
 		p7::throw_posix_result( ::link( "/new/scrollframe", "view"     ) );
 		p7::throw_posix_result( ::link( "/new/frame",       "view/v"   ) );
 		p7::throw_posix_result( ::link( "/new/textedit",    "view/v/v" ) );
+		
+		p7::symlink( "v/v", "view/target" );
 		
 		p7::spew( "view/vertical", "1" "\n" );
 		p7::spew( "view/v/margin", "4" "\n" );
