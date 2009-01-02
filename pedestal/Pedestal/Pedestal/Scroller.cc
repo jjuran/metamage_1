@@ -16,6 +16,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	static inline long Gestalt_AppearanceManager()
@@ -168,8 +169,8 @@ namespace Pedestal
 	{
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-		                                                       N::RectRgn( GetSubView().Bounds() ) ) );
+		NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                  N::RectRgn( GetSubView().Bounds() ) ) );
 		
 		GetSubView().Idle( event );
 	}
@@ -180,8 +181,8 @@ namespace Pedestal
 		
 		// Intersect the clip region with the scrollview bounds,
 		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-		                                                       N::RectRgn( subviewBounds ) ) );
+		NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                  N::RectRgn( subviewBounds ) ) );
 		
 		GetSubView().Draw( subviewBounds );
 	}
@@ -219,7 +220,8 @@ namespace Pedestal
 	template < ScrollbarAxis axis >
 	void Track( ControlRef control, N::ControlPartCode part, Point point )
 	{
-		Nucleus::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip_Value > savedClip;
+		
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		
 		switch ( part )
