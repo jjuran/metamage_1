@@ -67,7 +67,7 @@ namespace UseEdit
 		
 		editor.AppendChars( text.data(), text.size(), false );
 		
-		editor.SetSelection( 0, 0 );
+		editor.Select( 0, 0 );
 		
 		scroller.Calibrate();
 	}
