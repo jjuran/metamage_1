@@ -51,12 +51,26 @@ namespace io
 			}
 	};
 	
+	template < class Stream >
+	void spew_output( const Stream& output, const char* buffer, std::size_t length )
+	{
+		spew_putter< io::iostream_traits< Stream > > putter( output );
+		
+		putter( buffer, buffer + length );
+	}
+	
 	template < class Flattener, class Stream >
 	void spew_output( const Stream& output, typename Flattener::Parameter param )
 	{
 		spew_putter< io::iostream_traits< Stream > > putter( output );
 		
 		Flattener().Put( param, putter );
+	}
+	
+	template < class FileSpec >
+	void spew_file( const FileSpec& file, const char* buffer, std::size_t length )
+	{
+		spew_output( open_truncated( file, overload() ).get(), buffer, length );
 	}
 	
 	template < class Flattener, class FileSpec >
