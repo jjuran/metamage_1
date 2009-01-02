@@ -202,36 +202,4 @@ namespace Nitrogen
      }
   }
 
-namespace io
-{
-	
-	template <> struct system_root_getter< Nitrogen::FSVolumeRefNum >
-	{
-		Nitrogen::FSVolumeRefNum operator()() const
-		{
-			return Nitrogen::FindFolder( Nitrogen::kOnSystemDisk,
-			                             Nitrogen::kSystemFolderType,
-			                             kDontCreateFolder ).vRefNum;
-		}
-	};
-	
-	template <> struct system_root_getter< Nitrogen::FSDirSpec >
-	{
-		Nitrogen::FSDirSpec operator()() const
-		{
-			return Nucleus::Make< Nitrogen::FSDirSpec >( system_root< Nitrogen::FSVolumeRefNum >(),
-			                                             Nitrogen::fsRtDirID );
-		}
-	};
-	
-	template <> struct system_root_getter< FSSpec >
-	{
-		FSSpec operator()() const
-		{
-			return Nucleus::Convert< FSSpec >( system_root< Nitrogen::FSDirSpec >() );
-		}
-	};
-	
-}
-
 #endif

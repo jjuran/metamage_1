@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2003-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -129,7 +129,9 @@ namespace Nucleus
 		Nitrogen::CInfoPBRec cInfo;
 		Nitrogen::FSpGetCatInfo( dir, cInfo );
 		
-		if ( io::item_is_file( cInfo ) )
+		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		if ( !is_dir )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
 			throw Nitrogen::ErrFSNotAFolder();
