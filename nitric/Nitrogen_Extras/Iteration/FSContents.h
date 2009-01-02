@@ -12,6 +12,12 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
+// Io: UnicodeMacFiles
+#include "UnicodeMacFiles.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/IndexedValueContainer.h"
 
