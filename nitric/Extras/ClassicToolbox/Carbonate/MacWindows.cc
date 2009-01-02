@@ -1,9 +1,8 @@
 // Carbonate/MacWindows.cc
 
 
-#ifndef __MACWINDOWS__
+#include <LowMem.h>
 #include <MacWindows.h>
-#endif
 
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
@@ -16,8 +15,7 @@
 
 pascal WindowRef GetWindowList()
 {
-	// Not quite right, but close enough for now
-	return FrontWindow();
+	return LMGetWindowList();
 }
 
 #endif
