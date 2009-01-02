@@ -31,9 +31,20 @@
 namespace poseven
 {
 	
+	inline void spew( const std::string& path, const char* buffer, std::size_t length )
+	{
+		return io::spew_file( path, buffer, length );
+	}
+	
 	inline void spew( const std::string& path, const std::string& stuff )
 	{
 		return io::spew_file< Nucleus::StringFlattener< std::string > >( path, stuff );
+	}
+	
+	
+	inline void spew( const char* path, const char* buffer, std::size_t length )
+	{
+		return io::spew_file( path, buffer, length );
 	}
 	
 	inline void spew( const char* path, const std::string& stuff )
