@@ -717,21 +717,21 @@ namespace Pedestal
 				break;
 			
 			case 'cut ':
-				Cut();
+				Clipboard::TECut( itsTE );
 				break;
 			
 			case 'copy':
-				Copy();
+				Clipboard::TECopy( itsTE );
 				break;
 			
 			case 'past':  // kHICommandPaste
 			case 'pste':
-				Paste();
+				Clipboard::TEPaste( itsTE );
 				break;
 			
 			case 'sall':  // kHICommandSelectAll
 			case 'slct':
-				SelectAll();
+				N::TESetSelect( 0, 32767, itsTE );
 				break;
 			
 			default:
@@ -798,31 +798,6 @@ namespace Pedestal
 		}
 		
 		return byteCount;
-	}
-	
-	void TEView::Cut()
-	{
-		Clipboard::TECut( itsTE );
-	}
-	
-	void TEView::Copy()
-	{
-		Clipboard::TECopy( itsTE );
-	}
-	
-	void TEView::Paste()
-	{
-		Clipboard::TEPaste( itsTE );
-	}
-	
-	void TEView::Clear()
-	{
-		N::TEDelete( itsTE );
-	}
-	
-	void TEView::SelectAll()
-	{
-		N::TESetSelect( 0, 32767, itsTE );
 	}
 	
 }

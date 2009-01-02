@@ -67,12 +67,6 @@ namespace Pedestal
 			
 			int AppendChars( const char* data, unsigned int byteCount, bool updateNow );
 			
-			void Cut();
-			void Copy();
-			void Paste();
-			void Clear();
-			void SelectAll();
-			
 			Point ViewableRange() const;
 			Point ScrollableRange() const;
 			Point ScrollPosition() const;
