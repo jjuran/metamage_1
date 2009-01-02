@@ -25,8 +25,13 @@
 
 CARBONATE_LINKAGE void GetGlobalMouse( Point* globalMouse )
 {
-	GetMouse     ( globalMouse );
-	LocalToGlobal( globalMouse );
+	const EventMask kNoEvents = 0;
+	
+	EventRecord event;
+	
+	(void) OSEventAvail( kNoEvents, &event );
+	
+	*globalMouse = event.where;
 }
 
 #undef CARBONATE_LINKAGE
