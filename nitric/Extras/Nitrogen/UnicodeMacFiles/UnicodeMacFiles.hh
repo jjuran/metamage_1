@@ -1,0 +1,193 @@
+// UnicodeMacFiles.hh
+// ------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2008 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
+
+#ifndef UNICODEMACFILES_HH
+#define UNICODEMACFILES_HH
+
+// Io
+#include "io/io.hh"
+#include "io/files.hh"
+
+// Nitrogen
+#include "Nitrogen/Files.h"
+
+
+namespace Nitrogen
+{
+	
+	struct FSRef_Io_Details
+	{
+		typedef FSRef file_spec;
+		
+		typedef FSRef optimized_directory_spec;
+		
+		typedef const HFSUniStr255& filename_parameter;
+		
+		typedef HFSUniStr255 filename_result;
+		
+		typedef Nitrogen::FSForkRefNum stream;
+		
+		typedef ::ByteCount byte_count;
+		
+		typedef SInt64 position_offset;
+	};
+	
+}
+
+namespace io
+{
+	
+	template <> struct filespec_traits< FSRef  > : public Nitrogen::FSRef_Io_Details {};
+	
+	template <> struct iostream_traits< Nitrogen::FSForkRefNum > : public Nitrogen::FSRef_Io_Details {};
+	
+	// Get file info
+	
+	inline HFSUniStr255 get_filename( const FSRef& file, overload = overload() )
+	{
+		FSCatalogInfo info;
+		
+		HFSUniStr255 name;
+		
+		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, &name, NULL, NULL );
+		
+		return name;
+	}
+	
+	inline FSRef get_preceding_directory( const FSRef& file, overload = overload() )
+	{
+		FSCatalogInfo info;
+		
+		FSRef parent;
+		
+		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, NULL, NULL, &parent );
+		
+		return parent;
+	}
+	
+	inline FSRef get_parent_directory_of_directory( const FSRef& dir, overload = overload() )
+	{
+		return get_preceding_directory( dir );
+	}
+	
+	// Path descent
+	
+	namespace path_descent_operators
+	{
+		
+		inline FSRef operator/( const FSRef& dir, const HFSUniStr255& name )
+		{
+			return Nitrogen::FSMakeFSRefUnicode( dir, name, Nitrogen::TextEncoding( kTextEncodingUnknown ) );
+		}
+		
+	}
+	
+	// Existence
+	
+	inline bool item_exists( const FSRef& item, overload = overload() )  { return true; }
+	
+	inline bool directory_exists( const FSRef& dir, overload = overload() )
+	{
+		FSCatalogInfo info;
+		
+		Nitrogen::FSGetCatalogInfo( dir, kFSCatInfoNodeFlags, &info, NULL, NULL, NULL );
+		
+		return info.nodeFlags & kFSNodeIsDirectoryMask;
+	}
+	
+	inline bool file_exists( const FSRef& file, overload = overload() )
+	{
+		return !directory_exists( file );
+	}
+	
+	// Delete
+	
+	inline void delete_file( const FSRef& file, overload = overload() )
+	{
+		Nitrogen::FSDeleteObject( file );
+	}
+	
+	inline void delete_file_only( const FSRef& file, overload = overload() )
+	{
+		if ( directory_exists( file ) )
+		{
+			throw Nitrogen::NotAFileErr();
+		}
+		
+		delete_file( file );
+	}
+	
+	inline void delete_empty_directory( const FSRef& dir, overload = overload() )
+	{
+		Nitrogen::FSDeleteObject( dir );
+	}
+	
+	inline void delete_empty_directory_only( const FSRef& dir, overload = overload() )
+	{
+		if ( file_exists( dir ) )
+		{
+			throw Nitrogen::DirNFErr();
+		}
+		
+		delete_empty_directory( dir );
+	}
+	
+	// Open
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file, overload = overload() )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_io( const FSRef& file, overload = overload() )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_truncated( const FSRef& file, overload = overload() )
+	{
+		Nucleus::Owned< Nitrogen::FSForkRefNum > result = Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
+		
+		Nitrogen::FSSetForkSize( result, Nitrogen::fsFromStart, 0 );
+		
+		return result;
+	}
+	
+	// Stream operations
+	
+	inline SInt64 get_file_size( Nitrogen::FSForkRefNum stream, overload = overload() )
+	{
+		return Nitrogen::FSGetForkSize( stream );
+	}
+	
+	template < class ByteCount >
+	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount, overload = overload() )
+	{
+		return Nitrogen::FSReadFork( input, byteCount, data, Nitrogen::ThrowEOF_Never() );
+	}
+	
+	template < class ByteCount >
+	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount, overload = overload() )
+	{
+		return Nitrogen::FSWriteFork( output, byteCount, data );
+	}
+	
+}
+
+#endif
+

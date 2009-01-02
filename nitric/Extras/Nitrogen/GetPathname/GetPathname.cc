@@ -12,6 +12,9 @@
 #include "Nitrogen/Folders.h"
 #endif
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 
 static std::string GetMacPathname_Internal( const FSSpec& file )
 {
