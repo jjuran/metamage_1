@@ -38,19 +38,12 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	inline bool operator==( const TESelection& a, const TESelection& b )
-	{
-		return a.start == b.start  &&  a.end == b.end;
-	}
 	
-	inline bool operator!=( const TESelection& a, const TESelection& b )
+	static TextSelection GetSelection( TEHandle hTE )
 	{
-		return !( a == b );
-	}
-	
-	static TESelection Get_TESelection( TEHandle hTE )
-	{
-		struct TESelection result;
+		ASSERT( hTE != NULL );
+		
+		struct TextSelection result;
 		
 		const TERec& te = **hTE;
 		
@@ -58,17 +51,6 @@ namespace Pedestal
 		result.end   = te.selEnd;
 		
 		return result;
-	}
-	
-	
-	static bool gArrowKeyMayBeChorded = false;
-	
-	static std::string gLastSearchPattern;
-	
-	
-	inline bool CharIsHorizontalArrow( char c )
-	{
-		return (c & 0xFE) == 0x1C;
 	}
 	
 	
@@ -88,11 +70,11 @@ namespace Pedestal
 		return true;
 	}
 	
-	static short TESearch( TEHandle            hTE,
-	                       const TESelection&  selection,
-	                       const std::string&  pattern,
-	                       bool                backward,
-	                       bool                matchAtPosition )
+	static short TESearch( TEHandle              hTE,
+	                       const TextSelection&  selection,
+	                       const std::string&    pattern,
+	                       bool                  backward,
+	                       bool                  matchAtPosition )
 	{
 		short increment = backward ? -1 : 1;
 		
@@ -123,33 +105,6 @@ namespace Pedestal
 		return -1;
 	}
 	
-	
-	static bool LeftAndRightArrowsKeyed()
-	{
-		KeyMapByteArray desiredKeys = { 0,  //  0 -  7
-		                                0,  //  8 -  f
-		                                0,  // 10 - 17
-		                                0,  // 18 - 1f
-		                                
-		                                0,  // 20 - 27
-		                                0,  // 28 - 2f
-		                                0,  // 30 - 37
-		                                0,  // 38 - 3f
-		                                
-		                                0,  // 40 - 47
-		                                0,  // 48 - 4f
-		                                0,  // 50 - 57
-		                                0,  // 58 - 5f
-		                                
-		                                0,  // 60 - 67
-		                                0,  // 68 - 6f
-		                                0,  // 70 - 77
-		                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
-		
-		N::GetKeys_Result keys = N::GetKeys();
-		
-		return std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0;
-	}
 	
 	static bool LeftOrRightArrowsKeyed()
 	{
@@ -279,14 +234,6 @@ namespace Pedestal
 		N::TEPinScroll( -dh * scrollStep.h, -dv * scrollStep.v, itsTE );
 	}
 	
-	static void AugmentTESelection( TEHandle hTE, const TESelection& more )
-	{
-		const TERec& te = **hTE;
-		
-		N::TESetSelect( std::min( te.selStart, more.start ),
-		                std::max( te.selEnd,   more.end   ), hTE );
-	}
-	
 	
 	static int SetTextAttributes()
 	{
@@ -298,9 +245,7 @@ namespace Pedestal
 	
 	
 	TEView::TEView( const Rect&  bounds ) : itsTE( ( SetTextAttributes(),
-	                                                 N::TENew( ViewRectFromBounds( bounds ) ) ) ),
-	                                        itsSelectionPriorToSearch(),
-	                                        itsSelectionPriorToArrow ()
+	                                                 N::TENew( ViewRectFromBounds( bounds ) ) ) )
 	{
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		
@@ -315,7 +260,7 @@ namespace Pedestal
 		
 		if ( !LeftOrRightArrowsKeyed() )
 		{
-			gArrowKeyMayBeChorded = false;
+			ResetArrowKeyChordability();
 		}
 	}
 	
@@ -383,97 +328,13 @@ namespace Pedestal
 		
 		UInt16 shifted = event.modifiers & bothShiftKeys;
 		
-		if ( c == ' '  &&  shifted  &&  (event.modifiers & cmdKey) )
+		if ( Try_RepeatSearch( *this, event ) )
 		{
-			if ( shifted == bothShiftKeys )
-			{
-				N::SysBeep();
-				
-				return true;
-			}
-			
-			bool backward = shifted == shiftKey;
-			
-			TESelection selection = Get_TESelection( Get() );
-			
-			short match = TESearch( Get(), selection, gLastSearchPattern, backward, false );
-			
-			if ( match == -1 )
-			{
-				N::SysBeep();
-			}
-			else
-			{
-				SetSelection( match, match + gLastSearchPattern.size() );
-			}
+			// already handled
 		}
-		else if ( event.modifiers & controlKey  &&  CharIsHorizontalArrow( c ) )
+		else if ( Try_ArrowKeyChord( *this, c ) )
 		{
-			KeyMapByteArray desiredKeys = { 0,  //  0 -  7
-			                                0,  //  8 -  f
-			                                0,  // 10 - 17
-			                                0,  // 18 - 1f
-			                                
-			                                0,  // 20 - 27
-			                                0,  // 28 - 2f
-			                                0,  // 30 - 37
-			                                1 << (0x3b & 0x07),
-			                                
-			                                0,  // 40 - 47
-			                                0,  // 48 - 4f
-			                                0,  // 50 - 57
-			                                0,  // 58 - 5f
-			                                
-			                                0,  // 60 - 67
-			                                0,  // 68 - 6f
-			                                0,  // 70 - 77
-			                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
-			
-			N::GetKeys_Result keys = N::GetKeys();
-			
-			if ( std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0 )
-			{
-				AugmentTESelection( itsTE, itsSelectionPriorToSearch );
-			}
-		}
-		else if ( CharIsHorizontalArrow( c ) )
-		{
-			static bool selectionModified;
-			
-			if ( !gArrowKeyMayBeChorded )
-			{
-				// This is an independent arrow key, pressed by itself
-				// (although the user could press the other one to complete the
-				// chord, and this may have already happened).
-				gArrowKeyMayBeChorded = true;
-				
-				// If both arrow keys are already down, then a chord occurs
-				// (to be processed on the next key-down), so don't change the
-				// selection in that case.
-				selectionModified = !LeftAndRightArrowsKeyed();
-				
-				if ( selectionModified )
-				{
-					// Save the selection (which will be changed by the arrow key).
-					// If this turns out to be a chord, we'll restore it.
-					itsSelectionPriorToArrow = Get_TESelection( Get() );
-					
-					N::TEKey( c, itsTE );
-				}
-			}
-			else if ( LeftAndRightArrowsKeyed() )
-			{
-				// gArrowKeyMayBeChorded is true, so we're the second arrow key
-				// to go down, and both arrow keys are still down.  Hit it!
-				
-				if ( selectionModified )
-				{
-					// Restore selection undone by previous arrow key
-					SetSelection( itsSelectionPriorToArrow );
-				}
-				
-				AugmentTESelection( itsTE, itsSelectionPriorToSearch );
-			}
+			// already handled
 		}
 		else if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
@@ -494,162 +355,34 @@ namespace Pedestal
 		return true;
 	}
 	
-	static void DrawQuasimodeFrame( Rect frame )
-	{
-		N::InsetRect( frame, 1, 1 );
-		
-		N::FrameRect( frame );
-	}
-	
-	class TESearchQuasimode : public Quasimode
-	{
-		private:
-			TEView&                     itsView;
-			bool                        itSearchesBackward;
-			UInt16                      itsModifierMask;
-			TESelection                 itsSavedSelection;
-			std::vector< TESelection >  itsMatches;
-			std::string                 itsPattern;
-		
-		public:
-			TESearchQuasimode( TEView& view, bool backward );
-			
-			~TESearchQuasimode();
-			
-			bool KeyDown( const EventRecord& event );
-	};
-	
-	
-	TESearchQuasimode::TESearchQuasimode( TEView&  view,
-	                                      bool     backward ) : itsView           ( view     ),
-	                                                            itSearchesBackward( backward ),
-	                                                            itsModifierMask   ( backward ? shiftKey : rightShiftKey ),
-	                                                            itsSavedSelection ( Get_TESelection( view.Get() ) )
-	{
-		DrawQuasimodeFrame( itsView.Bounds() );
-	}
 	
 	static const RGBColor gRGBBlack = {     0,     0,     0 };
 	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
 	
-	TESearchQuasimode::~TESearchQuasimode()
+	static void DrawQuasimodeFrame( Rect frame )
+	{
+		N::FrameRect( frame );
+	}
+	
+	void TEView::BeginQuasimode()
+	{
+		DrawQuasimodeFrame( Bounds() );
+	}
+	
+	void TEView::EndQuasimode()
 	{
 		N::RGBForeColor( gRGBWhite );
 		
-		DrawQuasimodeFrame( itsView.Bounds() );
+		DrawQuasimodeFrame( Bounds() );
 		
 		N::RGBForeColor( gRGBBlack );
-		
-		if ( Get_TESelection( itsView.Get() ) != itsSavedSelection )
-		{
-			gLastSearchPattern = itsPattern;
-			
-			itsView.itsSelectionPriorToSearch = itsSavedSelection;
-		}
-	}
-	
-	static char GetTranslatedKeyFromEvent( const EventRecord& event, UInt16 ignoredModifierMask )
-	{
-		static UInt32 state = 0;
-		
-		Handle kchr = GetResource( 'KCHR', 0 );
-		
-		N::ResError();
-		
-		ASSERT(  kchr != NULL );
-		ASSERT( *kchr != NULL );
-		
-		UInt16 keyCode = (event.message & keyCodeMask) >> 8;
-		
-		keyCode |= event.modifiers & (0xff00 - ignoredModifierMask);
-		
-		UInt32 key = KeyTranslate( *kchr, keyCode, &state );
-		
-		const char c = key & 0xff;
-		
-		return c;
-	}
-	
-	bool TESearchQuasimode::KeyDown( const EventRecord& event )
-	{
-		if ( event.what == autoKey )
-		{
-			return true;  // eat auto-repeat keys
-		}
-		
-		const UInt16 ignoredModifierMask = itsModifierMask;
-		
-		const char c = GetTranslatedKeyFromEvent( event, ignoredModifierMask );
-		
-		if ( CharIsHorizontalArrow( c ) )
-		{
-			const bool goingToSearchBackward = c == kLeftArrowCharCode;
-			
-			if ( itSearchesBackward != goingToSearchBackward )
-			{
-				itSearchesBackward = goingToSearchBackward;
-				
-				if ( !itsPattern.empty() )
-				{
-					// FIXME:  Rerun the search in the other direction
-					itsPattern.clear();
-					itsMatches.clear();
-					
-					itsView.SetSelection( itsSavedSelection );
-					
-					N::SysBeep( 30 );
-				}
-			}
-		}
-		else if ( c == 0x08 )
-		{
-			if ( itsPattern.empty() )
-			{
-				N::SysBeep();
-			}
-			else
-			{
-				TESelection match = itsMatches.back();
-				
-				itsMatches.pop_back();
-				
-				itsPattern.resize( itsPattern.size() - 1 );  // pop_back() isn't standard
-				
-				itsView.SetSelection( match );
-			}
-		}
-		else
-		{
-			itsPattern += c;
-			
-			short position = itsView.Get()[0]->selStart;
-			
-			TESelection selection = Get_TESelection( itsView.Get() );
-			
-			itsMatches.push_back( selection );
-			
-			short match = TESearch( itsView.Get(), selection, itsPattern, itSearchesBackward, true );
-			
-			if ( match == -1 )
-			{
-				itsView.SetSelection( itsSavedSelection );
-				
-				N::SysBeep();
-			}
-			else
-			{
-				itsView.SetSelection( match, match + itsPattern.size() );
-			}
-		}
-		
-		return true;
 	}
 	
 	boost::shared_ptr< Quasimode > TEView::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
 		bool backward = event.modifiers & shiftKey;
 		
-		boost::shared_ptr< Quasimode > mode( new TESearchQuasimode( *this, backward ) );
+		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
 		
 		return mode;
 	}
@@ -665,7 +398,7 @@ namespace Pedestal
 			N::TEDeactivate( itsTE );
 		}
 		
-		gArrowKeyMayBeChorded = false;
+		ResetArrowKeyChordability();
 	}
 	
 	void TEView::Draw( const Rect& bounds )
@@ -797,6 +530,51 @@ namespace Pedestal
 		}
 		
 		return byteCount;
+	}
+	
+	
+	TextSelection TEView::GetCurrentSelection() const
+	{
+		return GetSelection( Get() );
+	}
+	
+	void TEView::Select( unsigned start, unsigned end )
+	{
+		ASSERT( Get() != NULL );
+		
+		N::TESetSelect( start, end, Get() );
+		
+		//On_UserSelect();
+	}
+	
+	static short TESearch( TEHandle              hTE,
+	                       const std::string&    pattern,
+	                       const TextSelection&  selection,
+	                       bool                  backward,
+	                       bool                  matchAtPosition )
+	{
+		const TERec& te = **hTE;
+		
+		return TextSearch( *te.hText,
+		                   te.teLength,
+		                   pattern,
+		                   selection,
+		                   backward,
+		                   matchAtPosition );
+	}
+	
+	int TEView::Search( const std::string&    pattern,
+	                    const TextSelection&  selection,
+	                    bool                  searchBackwards,
+	                    bool                  matchAtPosition ) const
+	{
+		ASSERT( Get() != NULL );
+		
+		return TESearch( Get(),
+		                 pattern,
+		                 selection,
+		                 searchBackwards,
+		                 matchAtPosition );
 	}
 	
 }

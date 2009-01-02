@@ -11,18 +11,13 @@
 
 // Pedestal
 #include "Pedestal/CustomTEClickLoop.hh"
+#include "Pedestal/IncrementalSearch.hh"
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/View.hh"
 
 
 namespace Pedestal
 {
-	
-	struct TESelection
-	{
-		short start;
-		short end;
-	};
 	
 	Rect Bounds( TEHandle hTE );
 	short CountLinesForDisplay( TEHandle hTE );
@@ -32,17 +27,12 @@ namespace Pedestal
 	void Resize( TEHandle hTE, short width, short height );
 	
 	
-	class TESearchQuasimode;
-	
-	class TEView : public View, public TEClickLoop_Subject
+	class TEView : public View, public TEClickLoop_Subject, public IncrementalSearchEditor
 	{
-		friend class TESearchQuasimode;
-		
 		private:
 			Nucleus::Owned< TEHandle > itsTE;
 			
-			TESelection itsSelectionPriorToSearch;
-			TESelection itsSelectionPriorToArrow;
+			TextSelection itsSelectionPriorToSearch;
 		
 		public:
 			TEView( const Rect& bounds );
@@ -50,16 +40,6 @@ namespace Pedestal
 			TEHandle Get() const  { return itsTE; }
 			
 			Rect Bounds() const  { return Pedestal::Bounds( Get() ); }
-			
-			void SetSelection( short start, short end )
-			{
-				Nitrogen::TESetSelect( start, end, itsTE );
-			}
-			
-			void SetSelection( const TESelection& selection )
-			{
-				SetSelection( selection.start, selection.end );
-			}
 			
 			int AppendChars( const char* data, unsigned int byteCount, bool updateNow );
 			
@@ -84,6 +64,22 @@ namespace Pedestal
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
 			
 			bool UserCommand( MenuItemCode code );
+			
+			void BeginQuasimode();
+			void EndQuasimode();
+			
+			TextSelection GetCurrentSelection() const;
+			
+			void Select( unsigned start, unsigned end );
+			
+			TextSelection GetPriorSelection() const  { return itsSelectionPriorToSearch; }
+			
+			void SetPriorSelection( const TextSelection& selection )  { itsSelectionPriorToSearch = selection; }
+			
+			int Search( const std::string&    pattern,
+			            const TextSelection&  selection,
+			            bool                  searchBackwards,
+			            bool                  matchAtPosition ) const;
 	};
 	
 }
