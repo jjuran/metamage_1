@@ -62,6 +62,16 @@ namespace Pedestal
 	}
 	
 	
+	static Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition )
+	{
+		return N::SetPt
+		(
+			std::max( scrollableRange.h - viewableRange.h, scrollPosition.h - 0 ), 
+			std::max( scrollableRange.v - viewableRange.v, scrollPosition.v - 0 )
+		);
+		
+	}
+	
 	Point ComputeScrollbarMaxima( const TEView& scrolledView )
 	{
 		Point scrollRange = scrolledView.ScrollableRange();
@@ -74,7 +84,7 @@ namespace Pedestal
 		return maxima;
 	}
 	
-	short ActualScrollbarLength( short viewLength, bool shortened )
+	static short ActualScrollbarLength( short viewLength, bool shortened )
 	{
 		return 
 			ScrollbarOverlap() 
@@ -109,17 +119,7 @@ namespace Pedestal
 		                 height - ( horizontal ? ScrollbarProfile() : 0 ) );
 	}
 	
-	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition )
-	{
-		return N::SetPt
-		(
-			std::max( scrollableRange.h - viewableRange.h, scrollPosition.h - 0 ), 
-			std::max( scrollableRange.v - viewableRange.v, scrollPosition.v - 0 )
-		);
-		
-	}
-	
-	short FigureScrollDistance( N::ControlPartCode part, short pageDistance )
+	static short FigureScrollDistance( N::ControlPartCode part, short pageDistance )
 	{
 		short scrollDistance = 0;
 		
@@ -154,7 +154,7 @@ namespace Pedestal
 		return value;
 	}
 	
-	short SetControlValueFromClippedDelta( ControlRef control, short delta )
+	static short SetControlValueFromClippedDelta( ControlRef control, short delta )
 	{
 		short oldValue = N::GetControlValue( control );
 		
@@ -162,6 +162,35 @@ namespace Pedestal
 		
 		return value - oldValue;
 	}
+	
+	
+	void TEScrollFrameBase::Idle( const EventRecord& event )
+	{
+		// Intersect the clip region with the scrollview bounds,
+		// so the scrollview doesn't overpaint the scroll bars.
+		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                       N::RectRgn( GetSubView().Bounds() ) ) );
+		
+		GetSubView().Idle( event );
+	}
+	
+	void TEScrollFrameBase::Draw( const Rect& bounds )
+	{
+		const Rect& subviewBounds = GetSubView().Bounds();
+		
+		// Intersect the clip region with the scrollview bounds,
+		// so the scrollview doesn't overpaint the scroll bars.
+		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+		                                                       N::RectRgn( subviewBounds ) ) );
+		
+		GetSubView().Draw( subviewBounds );
+	}
+	
+	bool TEScrollFrameBase::HitTest( const EventRecord& event )
+	{
+		return N::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() );
+	}
+	
 	
 	template < ScrollbarAxis axis >
 	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
@@ -235,33 +264,6 @@ namespace Pedestal
 	
 	template void Track< kVertical   >( ControlRef control, N::ControlPartCode part, Point point );
 	template void Track< kHorizontal >( ControlRef control, N::ControlPartCode part, Point point );
-	
-	void TEScrollFrameBase::Idle( const EventRecord& event )
-	{
-		// Intersect the clip region with the scrollview bounds,
-		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-		                                                       N::RectRgn( GetSubView().Bounds() ) ) );
-		
-		GetSubView().Idle( event );
-	}
-	
-	void TEScrollFrameBase::Draw( const Rect& bounds )
-	{
-		const Rect& subviewBounds = GetSubView().Bounds();
-		
-		// Intersect the clip region with the scrollview bounds,
-		// so the scrollview doesn't overpaint the scroll bars.
-		Nucleus::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-		                                                       N::RectRgn( subviewBounds ) ) );
-		
-		GetSubView().Draw( subviewBounds );
-	}
-	
-	bool TEScrollFrameBase::HitTest( const EventRecord& event )
-	{
-		return N::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() );
-	}
 	
 }
 

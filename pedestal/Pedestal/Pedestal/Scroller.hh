@@ -75,8 +75,6 @@ namespace Pedestal
 		};
 	};
 	
-	short ActualScrollbarLength( short viewLength, bool shortened );
-	
 	Rect VerticalScrollbarBounds  ( short width, short height, bool shortened );
 	Rect HorizontalScrollbarBounds( short width, short height, bool shortened );
 	
@@ -106,12 +104,6 @@ namespace Pedestal
 		                     Scrollbar_Traits< vertical   >::profile,
 		                     Scrollbar_Traits< horizontal >::profile );
 	}
-	
-	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
-	
-	short FigureScrollDistance( Nitrogen::ControlPartCode part, short pageDistance );
-	
-	short SetControlValueFromClippedDelta( ControlRef control, short delta );
 	
 	
 	enum ScrollbarAxis
