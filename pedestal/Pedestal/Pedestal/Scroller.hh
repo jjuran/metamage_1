@@ -172,20 +172,7 @@ namespace Pedestal
 	}
 	
 	
-	class ClickableScroller
-	{
-		protected:
-			static ClickableScroller* gCurrentScroller;
-		
-		public:
-			//static ClickableScroller& Current();
-			
-			static void ClickLoop()  { if ( gCurrentScroller )  gCurrentScroller->ClickInLoop(); }
-			
-			virtual void ClickInLoop() = 0;
-	};
-	
-	class TEScrollFrameBase : public Superview, public ClickableScroller
+	class TEScrollFrameBase : public Superview
 	{
 		private:
 			Rect      itsBounds;

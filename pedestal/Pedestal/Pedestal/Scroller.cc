@@ -62,9 +62,6 @@ namespace Pedestal
 	}
 	
 	
-	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
-	
-	
 	Point ComputeScrollbarMaxima( const TEView& scrolledView )
 	{
 		Point scrollRange = scrolledView.ScrollableRange();
