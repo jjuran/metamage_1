@@ -44,6 +44,11 @@ namespace tool
 		
 		p7::spew( "title", title_data );
 		
+		p7::utime( "ref" );
+		
+		p7::spew( "ref/text-font", "4" "\n" );
+		p7::spew( "ref/text-size", "9" "\n" );
+		
 		p7::throw_posix_result( ::link( "/new/scrollframe", "view"     ) );
 		p7::throw_posix_result( ::link( "/new/frame",       "view/v"   ) );
 		p7::throw_posix_result( ::link( "/new/textedit",    "view/v/v" ) );
@@ -52,8 +57,6 @@ namespace tool
 		
 		p7::spew( "view/vertical", "1" "\n" );
 		p7::spew( "view/v/margin", "4" "\n" );
-		
-		p7::utime( "ref" );
 	}
 	
 	
