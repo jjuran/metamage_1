@@ -768,12 +768,11 @@ namespace Pedestal
 		
 		N::SetHandleSize( hText, len + byteCount );
 		
-		std::copy( data, data + byteCount, *hText + len );
-		
-		std::replace( *hText + len,
-		              *hText + len + byteCount,
-		              '\n',
-		              '\r' );
+		std::replace_copy( data,
+		                   data + byteCount,
+		                   *hText + len,
+		                   '\n',
+		                   '\r' );
 		
 		itsTE[0]->teLength = len + byteCount;
 		
