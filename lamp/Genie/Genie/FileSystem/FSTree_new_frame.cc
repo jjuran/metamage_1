@@ -136,7 +136,7 @@ namespace Genie
 		
 		// *end == '\n'
 		
-		gFrameParametersMap[ view ].itsMargin = N::ResID( std::atoi( begin ) );
+		gFrameParametersMap[ view ].itsMargin = std::atoi( begin );
 		
 		InvalidateWindowForView( view );
 	}
