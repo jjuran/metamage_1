@@ -185,9 +185,10 @@ namespace Pedestal
 		N::RGBForeColor( gRGBBlack );
 	}
 	
+	
 	boost::shared_ptr< Quasimode > TEView::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		bool backward = event.modifiers & shiftKey;
+		const bool backward = event.modifiers & shiftKey;
 		
 		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
 		
@@ -256,7 +257,7 @@ namespace Pedestal
 		
 		N::TECalText( itsTE );
 		
-		N::TESetSelect( 32767, 32767, itsTE );
+		Select( 32767, 32767 );
 		
 		if ( updateNow )
 		{
