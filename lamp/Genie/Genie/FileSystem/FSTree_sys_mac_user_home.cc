@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 
 namespace Genie
 {

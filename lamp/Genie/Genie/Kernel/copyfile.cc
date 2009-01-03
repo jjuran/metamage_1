@@ -13,6 +13,9 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/OSStatus.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"

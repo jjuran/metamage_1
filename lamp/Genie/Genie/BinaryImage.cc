@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 

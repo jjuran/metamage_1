@@ -27,6 +27,9 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Resources.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 

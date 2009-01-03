@@ -33,6 +33,9 @@
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // Backtrace
 #include "Backtrace/Backtrace.hh"
 
