@@ -1320,7 +1320,8 @@ namespace Genie
 		}
 		else
 		{
-			N::YieldToAnyThread();
+			// Ignore errors so we don't throw in critical sections
+			(void) ::YieldToAnyThread();
 		}
 		
 		Resume();
@@ -1646,7 +1647,8 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			N::YieldToAnyThread();
+			// Ignore errors so we don't throw in critical sections
+			(void) ::YieldToAnyThread();
 		}
 		else
 		{
