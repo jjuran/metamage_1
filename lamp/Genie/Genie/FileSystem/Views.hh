@@ -32,7 +32,7 @@ namespace Genie
 	void RemoveAllViewParameters( const FSTree* parent );
 	
 	
-	typedef std::auto_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
+	typedef boost::shared_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
 	
 	void AddViewParameters( const FSTree*       parent,
@@ -41,7 +41,7 @@ namespace Genie
 	                        ViewFactory         factory );
 	
 	
-	std::auto_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name );
+	boost::shared_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name );
 	
 	
 	bool InvalidateWindowForView( const FSTree* view );
@@ -57,6 +57,9 @@ namespace Genie
 			ViewFactory  itsFactory;
 			Mappings     itsMappings;
 			Destructor   itsDestructor;
+			
+			virtual FSTreePtr CreateDelegate( const FSTreePtr&    parent,
+			                                  const std::string&  name ) const;
 		
 		public:
 			FSTree_new_View( const FSTreePtr&    parent,
@@ -77,13 +80,22 @@ namespace Genie
 	
 	class FSTree_View : public FSTree
 	{
+		private:
+			typedef boost::shared_ptr< Pedestal::View >& (*ViewGetter)( const FSTree* );
+			
+			ViewGetter itsGetter;
+		
 		public:
 			FSTree_View( const FSTreePtr&    parent,
-			             const std::string&  name ) : FSTree( parent, name )
+			             const std::string&  name,
+			             ViewGetter          get = NULL )
+			:
+				FSTree( parent, name ),
+				itsGetter( get )
 			{
 			}
 			
-			const FSTree* ParentKey() const  { return Parent().get(); }
+			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
 			bool IsDirectory() const  { return Exists(); }
 			
@@ -99,9 +111,23 @@ namespace Genie
 			
 			FSIteratorPtr Iterate() const;
 			
-			virtual void DeleteCustomParameters() const  {}
-			
-			virtual void AddCustomParameters( std::auto_ptr< Pedestal::View > view ) const  {}
+			virtual boost::shared_ptr< Pedestal::View >& Get() const
+			{
+				ASSERT( itsGetter != NULL );
+				
+				return itsGetter( ParentKey() );
+			}
+	};
+	
+	
+	template < FSTree_View::ViewGetter getter >
+	class FSTree_X_view : public FSTree_View
+	{
+		public:
+			FSTree_X_view( const FSTreePtr&    parent,
+			               const std::string&  name ) : FSTree_View( parent, name, getter )
+			{
+			}
 	};
 	
 }

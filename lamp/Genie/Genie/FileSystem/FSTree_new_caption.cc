@@ -88,9 +88,9 @@ namespace Genie
 		return true;
 	}
 	
-	std::auto_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
+	boost::shared_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
 	{
-		return std::auto_ptr< Ped::View >( new Caption( delegate ) );
+		return boost::shared_ptr< Ped::View >( new Caption( delegate ) );
 	}
 	
 	
@@ -116,6 +116,8 @@ namespace Genie
 			{
 			}
 			
+			boost::shared_ptr< IOHandle > Clone();
+			
 			const FSTree* ViewKey() const;
 			
 			std::string& String() const  { return gCaptionParametersMap[ ViewKey() ].itsText; }
@@ -128,6 +130,11 @@ namespace Genie
 			
 			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
 	};
+	
+	boost::shared_ptr< IOHandle > CaptionTextFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
+	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey() const
 	{

@@ -104,9 +104,9 @@ namespace Genie
 		return N::Handle();
 	}
 	
-	std::auto_ptr< Ped::View > IconFactory( const FSTree* delegate )
+	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
 	{
-		return std::auto_ptr< Ped::View >( new Icon( delegate ) );
+		return boost::shared_ptr< Ped::View >( new Icon( delegate ) );
 	}
 	
 	
@@ -128,6 +128,8 @@ namespace Genie
 			{
 			}
 			
+			boost::shared_ptr< IOHandle > Clone();
+			
 			const FSTree* ViewKey() const;
 			
 			NN::Shared< N::Handle >& Data()        { return gIconMap[ ViewKey() ]; }
@@ -141,6 +143,11 @@ namespace Genie
 			
 			void SetEOF( off_t length )  {}
 	};
+	
+	boost::shared_ptr< IOHandle > IconDataFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags() ) );
+	}
 	
 	const FSTree* IconDataFileHandle::ViewKey() const
 	{

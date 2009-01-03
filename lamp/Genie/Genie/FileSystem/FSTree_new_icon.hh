@@ -15,7 +15,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping Icon_view_Mappings[];
 	
-	std::auto_ptr< Pedestal::View > IconFactory( const FSTree* delegate );
+	boost::shared_ptr< Pedestal::View > IconFactory( const FSTree* delegate );
 	
 	
 	class FSTree_new_icon : public FSTree_new_View

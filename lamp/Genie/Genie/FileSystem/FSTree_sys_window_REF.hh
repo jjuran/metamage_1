@@ -10,6 +10,13 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 
 
+namespace Pedestal
+{
+	
+	class View;
+	
+}
+
 namespace Genie
 {
 	
@@ -18,6 +25,9 @@ namespace Genie
 	void RemoveUserWindow( const FSTree* key );
 	
 	bool InvalidateWindow( const FSTree* key );
+	
+	void InstallViewInWindow    ( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
+	void UninstallViewFromWindow( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
 	
 }
 

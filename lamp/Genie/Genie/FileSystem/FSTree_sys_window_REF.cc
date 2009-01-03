@@ -44,12 +44,14 @@ namespace Genie
 		bool       itIsVisible;
 		
 		boost::shared_ptr< Ped::Window >  itsWindow;
+		boost::shared_ptr< Ped::View >  itsSubview;
 		
 		boost::weak_ptr< IOHandle >  itsTerminal;
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
-		                     itIsVisible( true )
+		                     itIsVisible( true ),
+		                     itsSubview( Ped::EmptyView::Get() )
 		{
 		}
 	};
@@ -76,6 +78,31 @@ namespace Genie
 		              topMargin + spareHeight / 3 );
 	}
 	
+	
+	class Window : public Ped::Window
+	{
+		private:
+			const FSTree* itsKey;
+		
+		public:
+			Window( const FSTree*                 key,
+			        const Ped::NewWindowContext&  context,
+			        DefProcID                     defProcID = DefProcID() )
+			:
+				Ped::Window( context, defProcID ),
+				itsKey( key )
+			{
+			}
+			
+			boost::shared_ptr< Ped::View >& GetView();
+	};
+	
+	boost::shared_ptr< Ped::View >& Window::GetView()
+	{
+		return gWindowParametersMap[ itsKey ].itsSubview;
+	}
+	
+	
 	static void CloseUserWindow( const FSTree* key )
 	{
 		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
@@ -87,7 +114,13 @@ namespace Genie
 			if ( params.itsTerminal.expired() )
 			{
 				// tty file is not open for this window, just close the window
-				params.itsWindow.reset();
+				
+				if ( params.itsWindow.get() )
+				{
+					params.itsWindow->GetView()->Uninstall();
+					
+					params.itsWindow.reset();
+				}
 			}
 			else
 			{
@@ -121,16 +154,16 @@ namespace Genie
 		return gWindowParametersMap[ key ].itsWindow != NULL;
 	}
 	
-	static void CreateUserWindow( const FSTree* key, std::auto_ptr< Ped::View > view )
+	static void CreateUserWindow( const FSTree* key )
 	{
-		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
+		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
 		
 		if ( it == gWindowParametersMap.end() )
 		{
 			p7::throw_errno( EPERM );
 		}
 		
-		const WindowParameters& params = it->second;
+		WindowParameters& params = it->second;
 		
 		ConstStr255Param title = params.itsTitle;
 		
@@ -152,15 +185,15 @@ namespace Genie
 		
 		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
 		
-		boost::shared_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
+		boost::shared_ptr< Ped::Window > window( new Window( key, context, N::documentProc ) );
 		
 		boost::shared_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
 		window->SetCloseHandler( closeHandler );
 		
-		window->SetView( view );
+		params.itsWindow = window;
 		
-		gWindowParametersMap[ key ].itsWindow = window;
+		params.itsSubview->Install();
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
@@ -358,6 +391,25 @@ namespace Genie
 	}
 	
 	
+	class SetWindowPort_Scope
+	{
+		private:
+			NN::Saved< N::Port_Value > savePort;
+			
+			SetWindowPort_Scope           ( const SetWindowPort_Scope& );
+			SetWindowPort_Scope& operator=( const SetWindowPort_Scope& );
+		
+		public:
+			SetWindowPort_Scope()
+			{
+			}
+			
+			SetWindowPort_Scope( N::WindowRef window )
+			{
+				N::SetPortWindowPort( window );
+			}
+	};
+	
 	static void InvalidateWindowRef( N::WindowRef window )
 	{
 		ASSERT( window != NULL );
@@ -367,9 +419,7 @@ namespace Genie
 			return;
 		}
 		
-		NN::Saved< N::Port_Value > savePort;
-		
-		N::SetPortWindowPort( window );
+		SetWindowPort_Scope scope( window );
 		
 		N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 	}
@@ -403,6 +453,30 @@ namespace Genie
 		return false;
 	}
 	
+	void InstallViewInWindow( const boost::shared_ptr< Ped::View >& view, const FSTree* key )
+	{
+		if ( N::WindowRef window = GetWindowRef( key ) )
+		{
+			SetWindowPort_Scope scope( window );
+			
+			InvalidateWindowRef( window );
+			
+			view->Install();
+		}
+	}
+	
+	void UninstallViewFromWindow( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key )
+	{
+		if ( N::WindowRef window = GetWindowRef( key ) )
+		{
+			SetWindowPort_Scope scope( window );
+			
+			InvalidateWindowRef( window );
+			
+			view->Uninstall();
+		}
+	}
+	
 	
 	class FSTree_sys_window_REF_ref : public FSTree
 	{
@@ -432,14 +506,10 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		std::auto_ptr< Ped::View > view = MakeView( key, "view" );
-		
-		if ( view.get() == NULL )
+		if ( !InvalidateWindow( key ) )
 		{
-			view.reset( new Ped::EmptyView );
+			CreateUserWindow( key );
 		}
-		
-		CreateUserWindow( key, view );
 	}
 	
 	void FSTree_sys_window_REF_ref::Delete() const
@@ -471,40 +541,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_view : public FSTree_View
-	{
-		public:
-			FSTree_sys_window_REF_view( const FSTreePtr&    parent,
-			                            const std::string&  name ) : FSTree_View( parent, name )
-			{
-			}
-			
-			void SetView( std::auto_ptr< Ped::View > view ) const;
-			
-			void AddCustomParameters( std::auto_ptr< Ped::View > view ) const
-			{
-				SetView( view );
-			}
-			
-			void DeleteCustomParameters() const;
-	};
-	
-	void FSTree_sys_window_REF_view::SetView( std::auto_ptr< Ped::View > view ) const
-	{
-		const FSTree* parent = ParentKey();
-		
-		if ( Ped::Window* window = gWindowParametersMap[ parent ].itsWindow.get() )
-		{
-			window->SetView( view );
-		}
-	}
-	
-	void FSTree_sys_window_REF_view::DeleteCustomParameters() const
-	{
-		SetView( std::auto_ptr< Ped::View >( new Ped::EmptyView ) );
-	}
-	
-	
 	class FSTree_sys_window_REF_tty : public FSTree
 	{
 		public:
@@ -533,6 +569,17 @@ namespace Genie
 	}
 	
 	
+	namespace
+	{
+		
+		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		{
+			return gWindowParametersMap[ key ].itsSubview;
+		}
+		
+	}
+	
+	
 	template < class Accessor >
 	static FSTreePtr PropertyFactory( const FSTreePtr&    parent,
 	                                  const std::string&  name )
@@ -549,7 +596,7 @@ namespace Genie
 	{
 		{ "ref",   &Basic_Factory< FSTree_sys_window_REF_ref >, true },
 		
-		{ "view",  &Basic_Factory< FSTree_sys_window_REF_view >, true },
+		{ "view",  &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
 		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
 		

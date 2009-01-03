@@ -15,7 +15,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping Caption_view_Mappings[];
 	
-	std::auto_ptr< Pedestal::View > CaptionFactory( const FSTree* delegate );
+	boost::shared_ptr< Pedestal::View > CaptionFactory( const FSTree* delegate );
 	
 	
 	class FSTree_new_caption : public FSTree_new_View

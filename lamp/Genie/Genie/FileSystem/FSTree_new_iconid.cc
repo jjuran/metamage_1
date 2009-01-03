@@ -92,9 +92,9 @@ namespace Genie
 		return it->second;
 	}
 	
-	std::auto_ptr< Ped::View > IconIDFactory( const FSTree* delegate )
+	boost::shared_ptr< Ped::View > IconIDFactory( const FSTree* delegate )
 	{
-		return std::auto_ptr< Ped::View >( new IconID( delegate ) );
+		return boost::shared_ptr< Ped::View >( new IconID( delegate ) );
 	}
 	
 	

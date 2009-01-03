@@ -9,7 +9,7 @@
 #include "POSeven/Errno.hh"
 
 // PEdestal
-#include "Pedestal/View.hh"
+#include "Pedestal/EmptyView.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
@@ -108,7 +108,7 @@ namespace Genie
 		gViewParametersMap.erase( parent );
 	}
 	
-	std::auto_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name )
+	boost::shared_ptr< Ped::View > MakeView( const FSTree* parent, const std::string& name )
 	{
 		if ( const ViewParameters* params = FindView( parent, name ) )
 		{
@@ -122,7 +122,7 @@ namespace Genie
 			return factory( delegate );
 		}
 		
-		return std::auto_ptr< Pedestal::View >();
+		return boost::shared_ptr< Pedestal::View >();
 	}
 	
 	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
@@ -161,6 +161,14 @@ namespace Genie
 	}
 	
 	
+	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&    parent,
+	                                           const std::string&  name ) const
+	{
+		FSTreePtr delegate = Premapped_Factory( parent, name, itsMappings, itsDestructor );
+		
+		return delegate;
+	}
+	
 	void FSTree_new_View::HardLink( const FSTreePtr& target ) const
 	{
 		const FSTreePtr& parent = target->ParentRef();
@@ -169,7 +177,7 @@ namespace Genie
 		
 		const std::string& name = target->Name();
 		
-		FSTreePtr delegate = Premapped_Factory( parent, name, itsMappings, itsDestructor );
+		FSTreePtr delegate = CreateDelegate( parent, name );
 		
 		AddViewParameters( key, name, delegate, itsFactory );
 		
@@ -179,7 +187,7 @@ namespace Genie
 	
 	bool FSTree_View::Exists() const
 	{
-		return FindView( ParentRef().get(), Name() ) != NULL;
+		return ViewExists( ParentRef().get(), Name() );
 	}
 	
 	void FSTree_View::SetTimes() const
@@ -198,9 +206,11 @@ namespace Genie
 		
 		if ( ViewExists( parent, name ) )
 		{
-			DeleteCustomParameters();
+			const FSTree* windowKey = GetViewWindowKey( this );
 			
-			InvalidateWindowForView( this );
+			UninstallViewFromWindow( Get(), windowKey );
+			
+			Get() = Ped::EmptyView::Get();
 			
 			RemoveViewParameters( parent, name );
 		}
@@ -216,9 +226,7 @@ namespace Genie
 		
 		const std::string& name = Name();
 		
-		std::auto_ptr< Ped::View > view = MakeView( parent, name );
-		
-		if ( view.get() != NULL )
+		if ( ViewExists( parent, name ) )
 		{
 			const FSTree* windowKey = GetViewWindowKey( parent );
 			
@@ -229,9 +237,12 @@ namespace Genie
 			
 			AddViewWindowKey( parent, name, windowKey );
 			
-			AddCustomParameters( view );
+			boost::shared_ptr< Ped::View > view = MakeView( parent, name );
 			
-			InvalidateWindow( windowKey );
+			Get() = view;
+			
+			// Install and invalidate if window exists
+			InstallViewInWindow( view, windowKey );
 		}
 		else
 		{

@@ -15,7 +15,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping Frame_view_Mappings[];
 	
-	std::auto_ptr< Pedestal::View > FrameFactory( const FSTree* delegate );
+	boost::shared_ptr< Pedestal::View > FrameFactory( const FSTree* delegate );
 	
 	
 	class FSTree_new_frame : public FSTree_new_View

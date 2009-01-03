@@ -34,7 +34,7 @@ namespace Genie
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
 		FrameParameters() : itsMargin( 0 ),
-		                    itsSubview( new Ped::EmptyView )
+		                    itsSubview( Ped::EmptyView::Get() )
 		{
 		}
 	};
@@ -81,45 +81,21 @@ namespace Genie
 		
 		if ( subview.get() == NULL )
 		{
-			subview.reset( new Ped::EmptyView );
+			subview = Ped::EmptyView::Get();
 		}
 		
 		return *subview;
 	}
 	
-	std::auto_ptr< Ped::View > FrameFactory( const FSTree* delegate )
+	boost::shared_ptr< Ped::View > FrameFactory( const FSTree* delegate )
 	{
-		return std::auto_ptr< Ped::View >( new Frame( delegate ) );
+		return boost::shared_ptr< Ped::View >( new Frame( delegate ) );
 	}
 	
 	
 	void FSTree_new_frame::DestroyDelegate( const FSTree* delegate )
 	{
 		gFrameParametersMap.erase( delegate );
-	}
-	
-	
-	class FSTree_Frame_view : public FSTree_View
-	{
-		public:
-			FSTree_Frame_view( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree_View( parent, name )
-			{
-			}
-			
-			void DeleteCustomParameters() const;
-			
-			void AddCustomParameters( std::auto_ptr< Ped::View > view ) const;
-	};
-	
-	void FSTree_Frame_view::DeleteCustomParameters() const
-	{
-		gFrameParametersMap[ ParentKey() ].itsSubview.reset();
-	}
-	
-	void FSTree_Frame_view::AddCustomParameters( std::auto_ptr< Ped::View > view ) const
-	{
-		gFrameParametersMap[ ParentKey() ].itsSubview = view;
 	}
 	
 	
@@ -142,6 +118,17 @@ namespace Genie
 	}
 	
 	
+	namespace
+	{
+		
+		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		{
+			return gFrameParametersMap[ key ].itsSubview;
+		}
+		
+	}
+	
+	
 	static FSTreePtr MarginFactory( const FSTreePtr&    parent,
 	                                const std::string&  name )
 	{
@@ -155,7 +142,7 @@ namespace Genie
 	{
 		{ "margin", &MarginFactory },
 		
-		{ "v", &Basic_Factory< FSTree_Frame_view >, true },
+		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
 		{ NULL, NULL }
 	};
