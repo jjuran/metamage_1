@@ -6,7 +6,7 @@
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
 #include "Pedestal/UniqueWindowOwner.hh"
-#include "Pedestal/Window.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Genie
@@ -16,7 +16,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef Ped::Scroller< true > SystemConsoleView;
+	typedef Ped::TEScrollFrame< true > SystemConsoleView;
 	
 	
 	class SystemConsoleOwner : public Ped::UniqueWindowOwner
@@ -53,13 +53,13 @@ namespace Genie
 		
 		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
 		
-		SystemConsoleView* scroller = NULL;
+		SystemConsoleView* scrollframe = NULL;
 		
-		std::auto_ptr< Ped::View > view( scroller = new SystemConsoleView( scroller_bounds ) );
+		std::auto_ptr< Ped::View > view( scrollframe = new SystemConsoleView( scroller_bounds ) );
 		
-		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::Console( subview_bounds ) );
+		std::auto_ptr< Ped::View > subview( new Ped::Console( subview_bounds ) );
 		
-		scroller->SetSubView( subview );
+		scrollframe->SetSubView( subview );
 		
 		return view;
 	}
@@ -70,7 +70,7 @@ namespace Genie
 		
 		Ped::NewWindowContext context( bounds, "\p" "System Console" );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::Window( context, N::documentProc ) );
+		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context, N::documentProc ) );
 		
 		window->SetView( MakeView() );
 		
@@ -85,10 +85,9 @@ namespace Genie
 		
 		SystemConsoleView& view = gSystemConsoleOwner.Get().SubView< SystemConsoleView >();
 		
-		view.GetSubView< Ped::Console >().WriteChars( data, byteCount );
+		static_cast< Ped::Console& >( view.GetSubView() ).WriteChars( data, byteCount );
 		
-		view.UpdateScrollbars( N::SetPt( 0, 0 ),
-		                       N::SetPt( 0, 0 ) );
+		view.UpdateScrollbars();
 		
 		return byteCount;
 	}
