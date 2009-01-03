@@ -112,6 +112,11 @@ namespace Pedestal
 		                         : (dv - 1) / itsTE[0]->lineHeight + 1 );
 	}
 	
+	Point TEView::ScrollUnits() const
+	{
+		return N::SetPt( ::CharWidth( 'M' ), itsTE[0]->lineHeight );
+	}
+	
 	static void Resize( TEHandle hTE, const Rect& newBounds )
 	{
 		int dv = VScrollOffset( hTE );

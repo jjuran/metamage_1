@@ -40,6 +40,7 @@ namespace Pedestal
 			Point ViewableRange() const;
 			Point ScrollableRange() const;
 			Point ScrollPosition() const;
+			Point ScrollUnits() const;
 			
 			void Scroll( int dh, int dv );
 			
