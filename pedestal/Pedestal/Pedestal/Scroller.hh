@@ -25,6 +25,7 @@
 // Pedestal
 #include "Pedestal/Control.hh"
 #include "Pedestal/Scrollbar.hh"
+#include "Pedestal/Scroller_beta.hh"
 #include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
@@ -164,23 +165,102 @@ namespace Pedestal
 	}
 	
 	
-	class TEScrollFrameBase : public Superview
+	class TEScroller : public Scroller
 	{
 		private:
-			Rect      itsBounds;
-			UserView  itsScrollableView;
+			UserView itsScrollableView;
+		
+		public:
+			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
+			
+			TEView const& GetSubView() const  { return static_cast< TEView const& >( itsScrollableView.Get() ); }
+			TEView      & GetSubView()        { return static_cast< TEView      & >( itsScrollableView.Get() ); }
+			
+			View& Subview()  { return itsScrollableView.Get(); }
+			
+			short ViewWidth () const;
+			short ViewHeight() const;
+			
+			int ClientWidth () const;
+			int ClientHeight() const;
+			
+			int GetHOffset() const;
+			int GetVOffset() const;
+			
+			void SetHOffset( int h )  {}
+			void SetVOffset( int v )  {}
+			
+			void Draw( const Rect& bounds );
+			
+			void Scroll( int dh, int dv )  {}
+	};
+	
+	inline short TEScroller::ViewWidth() const
+	{
+		Point range = GetSubView().ViewableRange();
+		Point units = GetSubView().ScrollUnits();
+		
+		return range.h * units.h;
+	}
+	
+	inline short TEScroller::ViewHeight() const
+	{
+		Point range = GetSubView().ViewableRange();
+		Point units = GetSubView().ScrollUnits();
+		
+		return range.v * units.v;
+	}
+	
+	inline int TEScroller::ClientWidth() const
+	{
+		Point range = GetSubView().ScrollableRange();
+		Point units = GetSubView().ScrollUnits();
+		
+		return range.h * units.h;
+	}
+	
+	inline int TEScroller::ClientHeight() const
+	{
+		Point range = GetSubView().ScrollableRange();
+		Point units = GetSubView().ScrollUnits();
+		
+		return range.v * units.v;
+	}
+	
+	inline int TEScroller::GetHOffset() const
+	{
+		Point pos   = GetSubView().ScrollPosition();
+		Point units = GetSubView().ScrollUnits();
+		
+		return pos.h * units.h;
+	}
+	
+	inline int TEScroller::GetVOffset() const
+	{
+		Point pos   = GetSubView().ScrollPosition();
+		Point units = GetSubView().ScrollUnits();
+		
+		return pos.v * units.v;
+	}
+	
+	
+	class TEScrollFrameBase : public ScrollFrame
+	{
+		private:
+			Rect        itsBounds;
+			TEScroller  itsScroller;
 		
 		public:
 			TEScrollFrameBase( const Rect& bounds ) : itsBounds( bounds )
 			{
 			}
 			
-			View& Subview()  { return itsScrollableView.Get(); }
+			View& Subview()  { return itsScroller; }
 			
-			void SetSubView( std::auto_ptr< View > subview )  { itsScrollableView.Set( subview ); }
+			void SetSubView( std::auto_ptr< View > subview )  { itsScroller.SetSubView( subview ); }
 			
-			TEView const& GetSubView() const  { return static_cast< const TEView& >( itsScrollableView.Get() ); }
-			TEView      & GetSubView()        { return static_cast<       TEView& >( itsScrollableView.Get() ); }
+			TEView const& GetSubView() const  { return itsScroller.GetSubView(); }
+			TEView      & GetSubView()        { return itsScroller.GetSubView(); }
 			
 			const Rect& Bounds() const  { return itsBounds; }
 			
@@ -192,21 +272,33 @@ namespace Pedestal
 			
 			void Idle( const EventRecord& event );
 			
-			void Draw( const Rect& bounds );
-			
 			bool HitTest( const EventRecord& event );
 			
 	};
 	
 	
-	inline TEView& RecoverScrolledViewFromScrollbar( ControlRef control )
+	inline TEScrollFrameBase& RecoverScrollFrameFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = Nitrogen::GetControlReference( control );
 		
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
 		
-		TEScrollFrameBase& scroller = *static_cast< TEScrollFrameBase* >( controlHooks->data );
+		TEScrollFrameBase& scrollFrame = *static_cast< TEScrollFrameBase* >( controlHooks->data );
+		
+		return scrollFrame;
+	}
+	
+	inline TEScroller& RecoverScrollerFromScrollbar( ControlRef control )
+	{
+		TEScrollFrameBase& scrollFrame = RecoverScrollFrameFromScrollbar( control );
+		
+		return static_cast< TEScroller& >( scrollFrame.Subview() );
+	}
+	
+	inline TEView& RecoverScrolledViewFromScrollbar( ControlRef control )
+	{
+		TEScroller& scroller = RecoverScrollerFromScrollbar( control );
 		
 		return scroller.GetSubView();
 	}
@@ -299,6 +391,12 @@ namespace Pedestal
 			
 			VerticalScrollbarType&   VerticalScrollbar()    { return myScrollV; }
 			HorizontalScrollbarType& HorizontalScrollbar()  { return myScrollH; }
+			
+			void ApertureHook( Rect& aperture )
+			{
+				aperture.right  -= Scrollbar_Traits< vertical   >::profile;
+				aperture.bottom -= Scrollbar_Traits< horizontal >::profile;
+			}
 			
 			void SetSubView( std::auto_ptr< View > subview )
 			{

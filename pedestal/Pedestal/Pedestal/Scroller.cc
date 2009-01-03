@@ -164,6 +164,16 @@ namespace Pedestal
 		return value - oldValue;
 	}
 	
+	void TEScroller::Draw( const Rect& bounds )
+	{
+		Scroller::Draw( bounds );
+		
+		NN::Saved< N::Clip_Value > savedClip;
+		
+		N::SetClip( N::SectRgn( N::RectRgn( bounds ), N::GetClip() ) );
+		
+		Subview().Draw( bounds );
+	}
 	
 	void TEScrollFrameBase::Idle( const EventRecord& event )
 	{
@@ -175,18 +185,6 @@ namespace Pedestal
 		GetSubView().Idle( event );
 	}
 	
-	void TEScrollFrameBase::Draw( const Rect& bounds )
-	{
-		const Rect& subviewBounds = GetSubView().Bounds();
-		
-		// Intersect the clip region with the scrollview bounds,
-		// so the scrollview doesn't overpaint the scroll bars.
-		NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-		                                                  N::RectRgn( subviewBounds ) ) );
-		
-		GetSubView().Draw( subviewBounds );
-	}
-	
 	bool TEScrollFrameBase::HitTest( const EventRecord& event )
 	{
 		return N::PtInRect( N::GlobalToLocal( event.where ), GetSubView().Bounds() );
@@ -196,21 +194,35 @@ namespace Pedestal
 	template < ScrollbarAxis axis >
 	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
-		TEView& scrolledView = RecoverScrolledViewFromScrollbar( control );
+		TEScroller& scroller = RecoverScrollerFromScrollbar( control );
+		
+		TEView& scrolledView = scroller.GetSubView();
 		
 		short jump = VHSelect< axis >( scrolledView.ViewableRange() ) - 1;
 		short scrollDistance = FigureScrollDistance( part, jump );
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
+		short oldValue = VHSelect< axis >( scrolledView.ScrollPosition() );
+		
 		if ( part == N::kControlIndicatorPart )
 		{
-			short oldValue = VHSelect< axis >( scrolledView.ScrollPosition() );
-			
 			delta = N::GetControlValue( control ) - oldValue;
 		}
 		
 		ScrollByDelta< axis >( scrolledView, control, delta );
+		
+		if ( delta )
+		{
+			if ( axis == kVertical )
+			{
+				scroller.SetVOffset( oldValue + delta );
+			}
+			else
+			{
+				scroller.SetHOffset( oldValue + delta );
+			}
+		}
 	}
 	
 	template void ScrollbarAction< kVertical   >( ControlRef control, N::ControlPartCode part );
