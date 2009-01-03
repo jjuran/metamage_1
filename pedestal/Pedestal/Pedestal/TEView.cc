@@ -17,17 +17,7 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
-// Nitrogen
-#include "Nitrogen/TextEdit.h"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
-#include "ClassicToolbox/Scrap.h"
-
 // Pedestal
-#include "Pedestal/Application.hh"
-#include "Pedestal/Clipboard.hh"
-#include "Pedestal/Quasimode.hh"
 #include "Pedestal/Scroller.hh"
 
 
@@ -36,86 +26,6 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	
-	
-	
-	static TextSelection GetSelection( TEHandle hTE )
-	{
-		ASSERT( hTE != NULL );
-		
-		struct TextSelection result;
-		
-		const TERec& te = **hTE;
-		
-		result.start = te.selStart;
-		result.end   = te.selEnd;
-		
-		return result;
-	}
-	
-	
-	static bool pattern_match( const char* text, const char* pattern, std::size_t length )
-	{
-		for ( const char* end = pattern + length;  pattern != end;  ++pattern,
-		                                                            ++text )
-		{
-			// A lower-case pattern char can match an upper-case text char.
-			
-			if ( *text != *pattern  &&  std::tolower( *text ) != *pattern )
-			{
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	static short TESearch( TEHandle              hTE,
-	                       const TextSelection&  selection,
-	                       const std::string&    pattern,
-	                       bool                  backward,
-	                       bool                  matchAtPosition )
-	{
-		short increment = backward ? -1 : 1;
-		
-		short position = pattern.size() == 1 ? backward ? selection.start - pattern.size()
-		                                                : selection.end
-		               : selection.start + !matchAtPosition * increment;
-		
-		short teLength = hTE[0]->teLength;
-		
-		Handle hText = hTE[0]->hText;
-		
-		short hLength = GetHandleSize( hText );
-		
-		short maxPosition = hLength - pattern.size();
-		
-		short limit = backward ? -1 : maxPosition + 1;
-		
-		while ( position != limit )
-		{
-			if ( pattern_match( hText[0] + position, pattern.data(), pattern.size() ) )
-			{
-				return position;
-			}
-			
-			position += increment;
-		}
-		
-		return -1;
-	}
-	
-	
-	static bool LeftOrRightArrowsKeyed()
-	{
-		N::GetKeys_Result keys = N::GetKeys();
-		
-		const UInt8 high7x = keys.keyMapByteArray[ 0x7b >> 3 ];
-		
-		const UInt8 leftRightArrowBits = 1 << (0x7b & 0x07) | 1 << (0x7c & 0x07);
-		
-		return high7x & leftRightArrowBits;
-	}
 	
 	
 	static Rect ViewRectFromBounds( const Rect& bounds )
@@ -252,109 +162,6 @@ namespace Pedestal
 		InstallCustomTEClickLoop( itsTE );
 	}
 	
-	void TEView::Idle( const EventRecord& )
-	{
-		N::TEIdle( itsTE );
-		
-		AdjustSleepForTimer( ::GetCaretTime() );
-		
-		if ( !LeftOrRightArrowsKeyed() )
-		{
-			ResetArrowKeyChordability();
-		}
-	}
-	
-	void TEView::MouseDown( const EventRecord& event )
-	{
-		N::TEClick( N::GlobalToLocal( event.where ),
-		            event.modifiers & shiftKey,
-		            itsTE );
-	}
-	
-	inline bool NewContentReplacesSelection()
-	{
-		// True in Mac HIG, false in The Humane Interface
-		return false;
-	}
-	
-	inline bool KeyIsAllowedAgainstSelection( char c, TEHandle aTE )
-	{
-		if ( NewContentReplacesSelection() )
-		{
-			return true;
-		}
-		
-		// Allow control keys always (backspace, arrows)
-		// Allow content keys only when selection is empty (insertion point)
-		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
-	}
-	
-	static EventRecord gLastTextEditKeyDownEvent;
-	
-	static unsigned gTextEditKeyCount = 0;
-	
-	inline bool AutoKeyRequiresThreeStrikes()
-	{
-		// False in Mac HIG
-		return true;
-	}
-	
-	bool TEView::KeyDown( const EventRecord& event )
-	{
-		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gTextEditKeyCount < 3 )
-		{
-			// Suppress auto-key until after three consecutive key-downs
-			return true;
-		}
-		
-		if ( event.what == keyDown )
-		{
-			if (    event.message   == gLastTextEditKeyDownEvent.message
-			     && event.modifiers == gLastTextEditKeyDownEvent.modifiers )
-			{
-				++gTextEditKeyCount;
-			}
-			else
-			{
-				gTextEditKeyCount = 1;
-			}
-		}
-		
-		gLastTextEditKeyDownEvent = event;
-		
-		char c = event.message & charCodeMask;
-		
-		const UInt16 bothShiftKeys = shiftKey | rightShiftKey;
-		
-		UInt16 shifted = event.modifiers & bothShiftKeys;
-		
-		if ( Try_RepeatSearch( *this, event ) )
-		{
-			// already handled
-		}
-		else if ( Try_ArrowKeyChord( *this, c ) )
-		{
-			// already handled
-		}
-		else if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
-		{
-			N::TEKey( c, itsTE );
-		}
-		else
-		{
-			static UInt32 lastBeep = 0;
-			
-			if ( event.when - lastBeep > 45 )
-			{
-				lastBeep = event.when;
-				
-				N::SysBeep();
-			}
-		}
-		
-		return true;
-	}
-	
 	
 	static const RGBColor gRGBBlack = {     0,     0,     0 };
 	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
@@ -385,20 +192,6 @@ namespace Pedestal
 		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
 		
 		return mode;
-	}
-	
-	void TEView::Activate( bool activating )
-	{
-		if ( activating )
-		{
-			N::TEActivate( itsTE );
-		}
-		else
-		{
-			N::TEDeactivate( itsTE );
-		}
-		
-		ResetArrowKeyChordability();
 	}
 	
 	void TEView::Draw( const Rect& bounds )
@@ -437,54 +230,6 @@ namespace Pedestal
 			// So we need to erase it ourselves.
 			viewRect.top = destRect.bottom;
 			N::EraseRect( viewRect );
-		}
-	}
-	
-	bool TEView::UserCommand( MenuItemCode code )
-	{
-		switch ( code )
-		{
-			// Edit
-			case 'undo':
-				//Undo();
-				break;
-			
-			case 'cut ':
-				Clipboard::TECut( itsTE );
-				break;
-			
-			case 'copy':
-				Clipboard::TECopy( itsTE );
-				break;
-			
-			case 'past':  // kHICommandPaste
-			case 'pste':
-				Clipboard::TEPaste( itsTE );
-				break;
-			
-			case 'sall':  // kHICommandSelectAll
-			case 'slct':
-				N::TESetSelect( 0, 32767, itsTE );
-				break;
-			
-			default:
-				return false;
-				break;
-		}
-		
-		return true;
-	}
-	
-	bool TEView::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
-	{
-		if ( N::PtInRect( N::GlobalToLocal( event.where ), Bounds() ) )
-		{
-			N::SetCursor( N::GetCursor( N::iBeamCursor ) );
-			return true;
-		}
-		else
-		{
-			return false;
 		}
 	}
 	
@@ -530,51 +275,6 @@ namespace Pedestal
 		}
 		
 		return byteCount;
-	}
-	
-	
-	TextSelection TEView::GetCurrentSelection() const
-	{
-		return GetSelection( Get() );
-	}
-	
-	void TEView::Select( unsigned start, unsigned end )
-	{
-		ASSERT( Get() != NULL );
-		
-		N::TESetSelect( start, end, Get() );
-		
-		//On_UserSelect();
-	}
-	
-	static short TESearch( TEHandle              hTE,
-	                       const std::string&    pattern,
-	                       const TextSelection&  selection,
-	                       bool                  backward,
-	                       bool                  matchAtPosition )
-	{
-		const TERec& te = **hTE;
-		
-		return TextSearch( *te.hText,
-		                   te.teLength,
-		                   pattern,
-		                   selection,
-		                   backward,
-		                   matchAtPosition );
-	}
-	
-	int TEView::Search( const std::string&    pattern,
-	                    const TextSelection&  selection,
-	                    bool                  searchBackwards,
-	                    bool                  matchAtPosition ) const
-	{
-		ASSERT( Get() != NULL );
-		
-		return TESearch( Get(),
-		                 pattern,
-		                 selection,
-		                 searchBackwards,
-		                 matchAtPosition );
 	}
 	
 }
