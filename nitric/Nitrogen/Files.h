@@ -306,12 +306,6 @@ namespace Nitrogen
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
-	// Mac OS semantics, almost certainly not what you want
-	SInt32 FSRead( FSFileRefNum     file,
-	               SInt32           requestCount,
-	               void *           buffer,
-	               ThrowEOF_Always  policy );
-	
 	template < class EOF_Policy >
 	SInt32 FSRead( FSFileRefNum  file,
 	               SInt32        requestCount,
