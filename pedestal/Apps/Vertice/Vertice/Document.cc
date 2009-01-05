@@ -21,6 +21,9 @@
 #include <string>
 #include <vector>
 
+// MacFiles
+#include "MacFiles.hh"
+
 // Io
 #include "Io/TextInput.hh"
 

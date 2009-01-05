@@ -9,6 +9,10 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
+// MacFiles
+#include "MacFiles.hh"
+#include "UnicodeMacFiles.hh"
+
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"

@@ -11,6 +11,10 @@
 // Io
 #include "io/slurp.hh"
 
+// MacFiles
+#include "MacFiles.hh"
+#include "UnicodeMacFiles.hh"
+
 // Pedestal
 #include "Pedestal/TEView.hh"
 
