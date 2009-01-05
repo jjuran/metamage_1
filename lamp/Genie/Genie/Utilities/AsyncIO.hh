@@ -19,7 +19,7 @@ namespace Genie
 	struct Async {};
 	
 	
-	//using Nitrogen::ThrowEOF_Always;
+	using Nitrogen::ThrowEOF_Always;
 	using Nitrogen::ThrowEOF_OnZero;
 	using Nitrogen::ThrowEOF_Never;
 	
