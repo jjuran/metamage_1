@@ -775,7 +775,11 @@ namespace Pedestal
 			// Don't sleep long while we're in a quasimode, so we can detect
 			// when the key goes up.
 			
-			AdjustSleepForTimer( 15 );  // needs tuning
+			// 4 ticks does the trick unless you're deliberately trying to see
+			// it fail, instead of actually trying to work.  And even then it's
+			// only occasionally, and if your finger leaves the key, never.
+			
+			AdjustSleepForTimer( 4 );
 		}
 	}
 	
@@ -804,6 +808,8 @@ namespace Pedestal
 						
 						gTickCountAtLastContextSwitch = ::TickCount();
 						
+						gRunState.maxTicksToSleep = 0x7FFFFFFF;
+						
 						CheckShiftSpaceQuasiMode( event );
 						
 						(void) DispatchCursor( event );
@@ -824,8 +830,6 @@ namespace Pedestal
 						}
 						else
 						{
-							gRunState.maxTicksToSleep = 0x7FFFFFFF;
-							
 							GiveIdleTimeToWindows( event );
 						}
 					}
