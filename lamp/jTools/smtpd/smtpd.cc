@@ -33,6 +33,9 @@
 #include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/Folders.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/types/exit_t.hh"

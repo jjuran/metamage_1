@@ -24,6 +24,9 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/functions/read.hh"

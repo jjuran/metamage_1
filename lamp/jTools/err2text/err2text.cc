@@ -28,6 +28,9 @@ enum { sigMPWShell = 'MPS ' };
 // MoreFunctional
 #include "FunctionalExtensions.hh"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // Orion
 #include "Orion/Main.hh"
 

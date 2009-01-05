@@ -25,6 +25,9 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // Io
 #include "Io/TextInput.hh"
 

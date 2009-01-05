@@ -10,6 +10,9 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // Divergence
 #include "Divergence/Utilities.hh"
 

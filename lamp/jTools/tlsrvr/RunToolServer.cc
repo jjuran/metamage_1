@@ -38,6 +38,9 @@
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/MacErrors.h"
 
+// Io: MacFiles
+#include "MacFiles.hh"
+
 // MoreFunctional
 #include "PointerToFunction.hh"
 
