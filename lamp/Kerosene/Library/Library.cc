@@ -455,7 +455,7 @@
 		int quads      = days_since_epoch / days_per_quad;
 		int extra_days = days_since_epoch % days_per_quad;
 		
-		int extra_years = ( extra_days - (extra_days > 365) ) / 365;
+		int extra_years = ( extra_days - 1 ) / 365;
 		
 		int years = quads * 4 + extra_years;
 		
