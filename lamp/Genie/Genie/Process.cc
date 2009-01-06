@@ -187,17 +187,27 @@ namespace Genie
 	
 	static void DeliverFatalSignal( int signo )
 	{
-		Process& current = CurrentProcess();
+		try
+		{
+			Process& current = CurrentProcess();
+			
+			// first chance -- program can siglongjmp() out of signal handler
+			current.Raise( signo );
+			current.HandlePendingSignals( kInterruptNever );
+			
+			// This should be fatal
+			current.ResetSignalAction( signo );
+			current.Raise( signo );
+			current.HandlePendingSignals( kInterruptNever );
+		}
+		catch ( ... )
+		{
+		}
 		
-		// first chance -- program can siglongjmp() out of signal handler
-		current.Raise( signo );
-		current.HandlePendingSignals( kInterruptNever );
+		// Either we're in the main thread, or signal handling failed.  Bail.
 		
-		// This should be fatal
-		current.ResetSignalAction( signo );
-		current.Raise( signo );
-		current.HandlePendingSignals( kInterruptNever );
-		
+		N::SysBeep();
+		N::SysBeep();
 		N::SysBeep();
 		
 		::ExitToShell();  // not messing around
