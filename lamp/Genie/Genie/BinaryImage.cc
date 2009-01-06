@@ -205,7 +205,8 @@ namespace Genie
 		UInt32 length = member->length;
 		
 		// Handle no longer used here
-		NN::Owned< N::FSFileRefNum > refNum = io::open_for_reading( file );
+		
+		NN::Owned< N::FSFileRefNum > refNum = Genie::FSpOpenDF( file, N::fsRdPerm );
 		
 		if ( length == kCFragGoesToEOF )
 		{
@@ -223,9 +224,7 @@ namespace Genie
 		
 		N::HLockHi( data );
 		
-		N::SetFPos( refNum, N::fsFromStart, offset );
-		
-		io::read( refNum, *data.Get().Get(), length );
+		FSRead( refNum, N::fsFromStart, offset, length, *data.Get().Get(), ThrowEOF_Always() );
 		
 		return data;
 	}
@@ -266,7 +265,7 @@ namespace Genie
 		
 		const BinaryImage& image = cacheEntry.image;
 		
-		if ( image.Sole() && *image.get() )
+		if ( image.Sole() && image.get() && *image.get() )
 		{
 			N::HUnlock( image.get() );
 		}
