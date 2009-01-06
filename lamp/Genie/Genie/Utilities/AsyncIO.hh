@@ -33,6 +33,13 @@ namespace Genie
 	               SInt32                  positionOffset,
 	               SInt32                  requestCount,
 	               void *                  buffer,
+	               ThrowEOF_Always         policy );
+	
+	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
+	               Nitrogen::FSIOPosMode   positionMode,
+	               SInt32                  positionOffset,
+	               SInt32                  requestCount,
+	               void *                  buffer,
 	               ThrowEOF_OnZero         policy );
 	
 	SInt32 FSRead( Nitrogen::FSFileRefNum  file,

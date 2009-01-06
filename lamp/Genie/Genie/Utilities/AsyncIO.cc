@@ -44,7 +44,25 @@ namespace Genie
 	
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
 	
-	// Async read, throws eofErr
+	// Async read, throws eofErr on hitting EOF
+	SInt32 FSRead( N::FSFileRefNum  file,
+	               N::FSIOPosMode   positionMode,
+	               SInt32           positionOffset,
+	               SInt32           requestCount,
+	               void *           buffer,
+	               ThrowEOF_Always  policy )
+	{
+		return N::FSRead( file,
+		                  positionMode,
+		                  positionOffset,
+		                  requestCount,
+		                  buffer,
+		                  CALLBACK,
+		                  gWakeUp,
+		                  policy );
+	}
+	
+	// Async read, throws eofErr if starting at EOF
 	SInt32 FSRead( N::FSFileRefNum  file,
 	               N::FSIOPosMode   positionMode,
 	               SInt32           positionOffset,
