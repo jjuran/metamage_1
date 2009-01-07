@@ -46,6 +46,11 @@ namespace tool
 		
 		p7::spew( "title", title_data );
 		
+		const short width  = 2 * 4 +  6 * 80 + 15;
+		const short height = 2 * 4 + 11 * 24;
+		
+		p7::spew( "size", STR_LEN( "495x272" "\n" ) );
+		
 		p7::utime( "ref" );
 		
 		p7::spew( "ref/text-font", STR_LEN( "4" "\n" ) );
