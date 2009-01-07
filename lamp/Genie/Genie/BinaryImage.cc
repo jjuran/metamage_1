@@ -315,7 +315,23 @@ namespace Genie
 			{
 				const BinaryImage& image = cacheEntry->image;
 				
+			retry:
+				
 				N::Handle h = image.get();
+				
+				if ( h == NULL )
+				{
+					// If the handle is NULL, then another process is loading
+					// the image.
+					
+					const bool simultaneous_load_never_occurs = false;
+					
+					ASSERT( simultaneous_load_never_occurs );
+					
+					AsyncYield();
+					
+					goto retry;
+				}
 				
 				// Is the handle unpurged?
 				if ( *h )
@@ -328,16 +344,21 @@ namespace Genie
 				
 				// Our cached image got purged; load another
 			}
+			
+			// Reset the handle to NULL to indicate that we're loading it.
+			cacheEntry->image.reset();
 		}
 		else
 		{
 			cacheEntry = &gBinaryImageCache[ file ];  // insert null cache entry
 		}
 		
+		// cacheEntry->image is NULL
+		
 		BinaryImageCacheEntry newEntry;
 		
 		newEntry.metadata = metadata;
-		newEntry.image    = ReadImageFromFile( file );
+		newEntry.image    = ReadImageFromFile( file );  // this may async-yield
 		
 		// Mark it purgeable for when we later unlock it
 		N::HPurge( newEntry.image );
