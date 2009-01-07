@@ -12,8 +12,10 @@
 // POSeven
 #include "POSeven/extras/pump.hh"
 #include "POSeven/extras/spew.hh"
+#include "POSeven/functions/chdir.hh"
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/link.hh"
 #include "POSeven/functions/openat.hh"
 #include "POSeven/functions/symlink.hh"
 #include "POSeven/functions/utime.hh"
@@ -36,7 +38,7 @@ namespace tool
 	
 	static void make_window( const char* title )
 	{
-		p7::throw_posix_result( ::chdir( "/new/window" ) );
+		p7::chdir( "/new/window" );
 		
 		std::string title_data = title;
 		
@@ -49,9 +51,9 @@ namespace tool
 		p7::spew( "ref/text-font", "4" "\n" );
 		p7::spew( "ref/text-size", "9" "\n" );
 		
-		p7::throw_posix_result( ::link( "/new/scrollframe", "view"     ) );
-		p7::throw_posix_result( ::link( "/new/frame",       "view/v"   ) );
-		p7::throw_posix_result( ::link( "/new/textedit",    "view/v/v" ) );
+		p7::link( "/new/scrollframe", "view"     );
+		p7::link( "/new/frame",       "view/v"   );
+		p7::link( "/new/textedit",    "view/v/v" );
 		
 		p7::symlink( "v/v", "view/target" );
 		
