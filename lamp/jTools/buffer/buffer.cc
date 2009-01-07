@@ -48,8 +48,8 @@ namespace tool
 		
 		p7::utime( "ref" );
 		
-		p7::spew( "ref/text-font", "4" "\n" );
-		p7::spew( "ref/text-size", "9" "\n" );
+		p7::spew( "ref/text-font", STR_LEN( "4" "\n" ) );
+		p7::spew( "ref/text-size", STR_LEN( "9" "\n" ) );
 		
 		p7::link( "/new/scrollframe", "view"     );
 		p7::link( "/new/frame",       "view/v"   );
@@ -57,8 +57,8 @@ namespace tool
 		
 		p7::symlink( "v/v", "view/target" );
 		
-		p7::spew( "view/vertical", "1" "\n" );
-		p7::spew( "view/v/margin", "4" "\n" );
+		p7::spew( "view/vertical", STR_LEN( "1" "\n" ) );
+		p7::spew( "view/v/margin", STR_LEN( "4" "\n" ) );
 	}
 	
 	
