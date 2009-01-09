@@ -17,6 +17,7 @@
 #include "sys/stat.h"
 
 // MoreFiles
+#include "FileCopy.h"
 #include "MoreFilesExtras.h"
 
 // Nucleus
@@ -339,6 +340,8 @@ namespace Genie
 			
 			ino_t Inode() const;
 			
+			void CopyFile( const FSTreePtr& destination ) const;
+			
 			off_t GetEOF() const;
 			void  SetEOF( off_t length ) const;
 			
@@ -370,6 +373,50 @@ namespace Genie
 		itsFileSpec    ( file                             )
 	{
 		// we override Parent()
+	}
+	
+	static void FSpFileCopy( const FSSpec&         source,
+	                         const FSSpec&         destDir,
+	                         const unsigned char*  copyName       = NULL,
+	                         void*                 copyBufferPtr  = NULL,
+	                         long                  copyBufferSize = 0,
+	                         bool                  preflight      = true )
+	{
+		NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
+		
+		N::ThrowOSStatus( ::FSpFileCopy( &source,
+		                                 &destDir,
+		                                 copyName,
+		                                 copyBufferPtr,
+		                                 copyBufferSize,
+		                                 preflight ) );
+	}
+	
+	void FSTree_HFS::CopyFile( const FSTreePtr& destination ) const
+	{
+		const FSSpec srcFile = GetFSSpec( false );
+		
+		const FSSpec destFile = destination->GetFSSpec( true );
+		
+		// Do not resolve links
+		
+		N::FSDirSpec destDir = io::get_preceding_directory( destFile );
+		
+		const bool renaming = !std::equal( srcFile.name,
+		                                   srcFile.name + 1 + srcFile.name[0],
+		                                   destFile.name );
+		
+		ConstStr255Param name = renaming ? destFile.name : NULL;
+		
+		// FIXME:  This logic should be worked into the file copy routine
+		// Maybe use ExchangeFiles() for safety?
+		
+		if ( io::file_exists( destFile ) )
+		{
+			io::delete_file( destFile );
+		}
+		
+		FSpFileCopy( srcFile, destDir / "", name );
 	}
 	
 	
