@@ -6,16 +6,6 @@
 // POSIX
 #include <unistd.h>
 
-// MoreFiles
-#include "FileCopy.h"
-
-// Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSStatus.h"
-
-// Io: MacFiles
-#include "MacFiles.hh"
-
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
@@ -26,28 +16,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	using namespace io::path_descent_operators;
-	
-	
-	static void FSpFileCopy( const FSSpec&         source,
-	                         const FSSpec&         destDir,
-	                         const unsigned char*  copyName       = NULL,
-	                         void*                 copyBufferPtr  = NULL,
-	                         long                  copyBufferSize = 0,
-	                         bool                  preflight      = true )
-	{
-		NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
-		
-		N::ThrowOSStatus( ::FSpFileCopy( &source,
-		                                 &destDir,
-		                                 copyName,
-		                                 copyBufferPtr,
-		                                 copyBufferSize,
-		                                 preflight ) );
-	}
-	
 	static int copyfile( const char* src, const char* dest )
 	{
 		SystemCallFrame frame( "copyfile" );
@@ -56,28 +24,12 @@ namespace Genie
 		{
 			FSTreePtr cwd = frame.Caller().GetCWD();
 			
-			const FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec( false );
-			const FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec( true  );
+			FSTreePtr srcFile  = ResolvePathname( src,  cwd );
+			FSTreePtr destFile = ResolvePathname( dest, cwd );
 			
 			// Do not resolve links
 			
-			N::FSDirSpec destDir = io::get_preceding_directory( destFile );
-			
-			bool renaming = !std::equal( srcFile.name,
-			                             srcFile.name + 1 + srcFile.name[0],
-			                             destFile.name );
-			
-			ConstStr255Param name = renaming ? destFile.name : NULL;
-			
-			// FIXME:  This logic should be worked into the file copy routine
-			// Maybe use ExchangeFiles() for safety?
-			
-			if ( io::file_exists( destFile ) )
-			{
-				io::delete_file( destFile );
-			}
-			
-			FSpFileCopy( srcFile, destDir / "", name );
+			srcFile->CopyFile( destFile );
 		}
 		catch ( ... )
 		{
