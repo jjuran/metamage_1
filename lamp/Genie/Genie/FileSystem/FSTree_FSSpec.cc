@@ -1110,7 +1110,19 @@ namespace Genie
 		
 		if ( creating )
 		{
-			if ( !Exists() )
+			CInfoPBRec cInfo;
+			
+			N::Str255 actualName = itsFileSpec.name;
+			
+			NN::Initialize< CInfoPBRec >( cInfo,
+			                              N::FSVolumeRefNum( itsFileSpec.vRefNum ),
+			                              N::FSDirID       ( itsFileSpec.parID   ),
+			                              actualName,
+			                              0 );
+			
+			const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() );
+			
+			if ( !exists )
 			{
 				CreateFile();
 				
@@ -1119,6 +1131,21 @@ namespace Genie
 			else if ( excluding )
 			{
 				p7::throw_errno( EEXIST );
+			}
+			else
+			{
+				const std::string& name = Name();
+				
+				const bool equal = std::equal( name.begin(),
+				                               name.end(),
+				                               (const char*) (actualName + 1) );
+				
+				if ( !equal )
+				{
+					std::string new_mac_name = K::MacFilenameFromUnixFilename( name );
+					
+					N::FSpRename( itsFileSpec, new_mac_name );
+				}
 			}
 		}
 		
