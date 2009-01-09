@@ -434,24 +434,6 @@ namespace Genie
 			}
 	};
 	
-	class FSTree_ConflictingName : public FSTree_FSSpec
-	{
-		public:
-			FSTree_ConflictingName( const FSSpec& file ) : FSTree_FSSpec( file )
-			{
-			}
-			
-			bool Exists() const;
-			bool IsFile() const;
-			bool IsDirectory() const;
-			
-			FSSpec GetFSSpec( bool forCreation ) const;
-			
-			void CreateFile() const;
-			
-			void CreateDirectory( mode_t mode ) const;
-	};
-	
 	class FSTree_LongName : public FSTree_HFS
 	{
 		private:
@@ -537,7 +519,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
 	
-	static FSTreePtr FSTreeFromFSSpecRespectingJ( const FSSpec& item )
+	static FSTreePtr FSTreeFromFSSpecRespectingJ( const FSSpec& item, const std::string& name )
 	{
 		if ( IsRootDirectory( item ) )
 		{
@@ -546,7 +528,7 @@ namespace Genie
 			return FSTreePtr( new FSTree_J_Symlink( parent ) );
 		}
 		
-		return FSTreePtr( new FSTree_FSSpec( item ) );
+		return FSTreePtr( new FSTree_HFS( item, name ) );
 	}
 	
 	
@@ -594,21 +576,6 @@ namespace Genie
 	bool FSTree_HFS::IsDirectory() const
 	{
 		return io::directory_exists( itsFileSpec );
-	}
-	
-	bool FSTree_ConflictingName::Exists() const
-	{
-		return false;
-	}
-	
-	bool FSTree_ConflictingName::IsFile() const
-	{
-		return false;
-	}
-	
-	bool FSTree_ConflictingName::IsDirectory() const
-	{
-		return false;
 	}
 	
 	bool FSTree_LongName::Exists() const
@@ -705,13 +672,6 @@ namespace Genie
 	ino_t FSTree_HFS::ParentInode() const
 	{
 		return itsFileSpec.parID;
-	}
-	
-	FSSpec FSTree_ConflictingName::GetFSSpec( bool forCreation ) const
-	{
-		p7::throw_errno( forCreation ? EEXIST : ENOENT );
-		
-		return FSSpec();
 	}
 	
 	FSSpec FSTree_LongName::GetFSSpec( bool forCreation ) const
@@ -925,7 +885,7 @@ namespace Genie
 		}
 	}
 	
-	static FSSpec GetFSSpecForRenameDestination( const FSTreePtr& file )
+	static FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
 	{
 		struct ::stat stat_buffer;
 		
@@ -938,18 +898,12 @@ namespace Genie
 			p7::throw_errno( EXDEV );
 		}
 		
-		FSSpec result;
+		N::FSDirSpec parent;
 		
-		// vRefNum and dir ID from parent
-		result.vRefNum = -stat_buffer.st_dev;
-		result.parID   =  stat_buffer.st_ino;
+		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
+		parent.dirID   = N::FSDirID       (  stat_buffer.st_ino );
 		
-		// The requested name (not the on-disk name, in the event of case conflict)
-		N::CopyToPascalString( UntweakMacFilename( file->Name() ),
-		                       result.name,
-		                       sizeof result.name - 1 );
-		
-		return result;
+		return FSSpecForLongUnixName( parent, file->Name() );
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -972,17 +926,8 @@ namespace Genie
 		}
 		
 		FSSpec srcFileSpec = srcFile->GetFSSpec( false );
-		FSSpec destFileSpec;
 		
-		try
-		{
-			destFileSpec = destFile->GetFSSpec( !destExists );
-		}
-		catch ( ... )
-		{
-			// Case-sensitivity conflict
-			destFileSpec = GetFSSpecForRenameDestination( destFile );
-		}
+		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
 		
 		// Can't move across volumes
 		if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
@@ -992,28 +937,42 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		bool sameName = NamesAreSame( srcFileSpec.name, destFileSpec.name );
+		const std::string& destName = destFile->Name();
+		
+		const bool keeping_name = std::equal( destName.begin(),
+		                                      destName.end(),
+		                                      (const char*) srcFileSpec.name + 1 );
 		
 		if ( srcFileSpec.parID == destFileSpec.parID )
 		{
 			// Same dir.
 			
-			if ( sameName )
+			if ( keeping_name )
 			{
 				// Identical names in the same directory.  Nothing to do.
 				return;
 			}
 			
-			// destExists is false for case changes
 			if ( destExists )
 			{
-				// Delete existing dest file
-				N::FSpDelete( destFileSpec );
+				const bool same_file = NamesAreSame( srcFileSpec.name, destFileSpec.name );
+				
+				if ( !same_file )
+				{
+					// Delete existing dest file
+					N::FSpDelete( destFileSpec );
+				}
+				
+				// Overwrite actual name with requested name
+				
+				std::string requested_name = K::MacFilenameFromUnixFilename( destName );
+				
+				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
 			}
 			
 			RenameItem( srcFileSpec, destFileSpec );
 			
-			SetLongName( destFileSpec, destFile->Name() );
+			SetLongName( destFileSpec, destName );
 			
 			// And we're done
 			return;
@@ -1026,7 +985,7 @@ namespace Genie
 			N::FSpDelete( destFileSpec );
 		}
 		
-		if ( sameName )
+		if ( keeping_name )
 		{
 			// Same name, different dir; move only.
 			N::FSpCatMove( srcFileSpec, N::FSDirID( destFileSpec.parID ) );
@@ -1036,7 +995,7 @@ namespace Genie
 			// Darn, we have to move *and* rename.
 			MoveAndRename( srcFileSpec, destFileSpec );
 			
-			SetLongName( destFileSpec, destFile->Name() );
+			SetLongName( destFileSpec, destName );
 		}
 	}
 	
@@ -1137,11 +1096,6 @@ namespace Genie
 		N::FSpCreate( itsFileSpec, sig );
 	}
 	
-	void FSTree_ConflictingName::CreateFile() const
-	{
-		p7::throw_errno( EEXIST );
-	}
-	
 	void FSTree_LongName::CreateFile() const
 	{
 		CreateFileWithLongName( itsParent, Name() );
@@ -1193,11 +1147,6 @@ namespace Genie
 		N::FSpDirCreate( itsFileSpec );
 	}
 	
-	void FSTree_ConflictingName::CreateDirectory( mode_t /*mode*/ ) const
-	{
-		p7::throw_errno( EEXIST );
-	}
-	
 	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		CreateDirectoryWithLongName( itsParent, Name() );
@@ -1221,13 +1170,7 @@ namespace Genie
 		
 		FSSpec item = thisFSSpec / macName;
 		
-		// The requested name and the returned name may differ in letter case.
-		const bool matchedCase = std::equal( macName.begin(),
-		                                     macName.end(),
-		                                     (const char*) item.name + 1 );
-		
-		return matchedCase ? FSTreeFromFSSpecRespectingJ( item )
-		                   : FSTreePtr( new FSTree_ConflictingName( item ) );
+		return FSTreeFromFSSpecRespectingJ( item, name );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
