@@ -132,6 +132,12 @@ namespace Pedestal
 	
 	void DispatchEvent( const EventRecord& event );
 	
+	UInt32 TickCountAtLastContextSwitch();
+	
+	// Callable at interrupt time.
+	// Call from a completion routine to resume synchronous processing.
+	void WakeUp();
+	
 	void AdjustSleepForTimer( UInt32 ticksToSleep );
 	
 	void AdjustSleepForActivity();

@@ -71,6 +71,13 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	
+	// Save our PSN so we can wake up at interrupt time.
+	static N::ProcessSerialNumber gPSN = N::GetCurrentProcess();
+	
+	static volatile bool gWokenUp = false;
+	
+	
 	using N::kCoreEventClass;
 	using N::kAEQuitApplication;
 	
@@ -806,7 +813,17 @@ namespace Pedestal
 					{
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
-						gTickCountAtLastContextSwitch = ::TickCount();
+						// WakeUpProcess() forces a null event.
+						// If I/O is fast enough, this happens on the first call
+						// to WaitNextEvent(), and real events remain unprocessed
+						// unless we check for this.
+						
+						if ( !gWokenUp )
+						{
+							gTickCountAtLastContextSwitch = ::TickCount();
+						}
+						
+						gWokenUp = false;
 						
 						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
@@ -928,6 +945,18 @@ namespace Pedestal
 		}
 		
 		return true;
+	}
+	
+	UInt32 TickCountAtLastContextSwitch()
+	{
+		return gTickCountAtLastContextSwitch;
+	}
+	
+	void WakeUp()
+	{
+		::WakeUpProcess( &gPSN );
+		
+		gWokenUp = true;
 	}
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
