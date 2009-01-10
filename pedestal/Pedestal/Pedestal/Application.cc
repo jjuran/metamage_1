@@ -813,10 +813,17 @@ namespace Pedestal
 					{
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
+						gRunState.maxTicksToSleep = 0x7FFFFFFF;
+						
 						// WakeUpProcess() forces a null event.
-						// If I/O is fast enough, this happens on the first call
+						// If I/O is fast enough, this happens on every call
 						// to WaitNextEvent(), and real events remain unprocessed
 						// unless we check for this.
+						
+						if ( gWokenUp )
+						{
+							gRunState.maxTicksToSleep = 0;
+						}
 						
 						if ( !gWokenUp )
 						{
@@ -824,8 +831,6 @@ namespace Pedestal
 						}
 						
 						gWokenUp = false;
-						
-						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
 						CheckShiftSpaceQuasiMode( event );
 						
@@ -952,11 +957,20 @@ namespace Pedestal
 		return gTickCountAtLastContextSwitch;
 	}
 	
+	static unsigned gWakeUps = 0;
+	
 	void WakeUp()
 	{
-		::WakeUpProcess( &gPSN );
-		
-		gWokenUp = true;
+		if ( TARGET_API_MAC_CARBON  &&  ++gWakeUps >= 10 )
+		{
+			gWakeUps = 0;
+		}
+		else
+		{
+			::WakeUpProcess( &gPSN );
+			
+			gWokenUp = true;
+		}
 	}
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
