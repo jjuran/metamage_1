@@ -1202,8 +1202,7 @@ namespace Genie
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		CInfoPBRec  pb;
-		::Str255    name;
+		CInfoPBRec pb;
 		
 		N::FSpGetCatInfo( GetFSSpec(), pb );
 		
@@ -1212,13 +1211,19 @@ namespace Genie
 		dir.vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
 		dir.dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
 		
+		std::string unixName;
+		
 		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
 		
 		for ( UInt16 i = 1;  ;  ++i )
 		{
 			try
 			{
+				::Str255 name;
+				
 				N::FSpGetCatInfo( dir, i, pb, name );
+				
+				unixName = GetUnixName( dir / name );
 			}
 			catch ( const N::FNFErr& err )
 			{
@@ -1236,7 +1241,7 @@ namespace Genie
 			
 			ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
 			
-			FSNode node( inode, NN::Convert< std::string >( name ) );
+			FSNode node( inode, unixName );
 			
 			cache.push_back( node );
 		}
