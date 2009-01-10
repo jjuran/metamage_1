@@ -60,6 +60,7 @@
 #include "Genie/Process/Entry.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 #if defined(__MWERKS__) && defined(__csignal__)
@@ -686,12 +687,12 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			NN::Owned< N::FSFileRefNum > script = io::open_for_reading( fileSpec );
-			
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
 			
-			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
+			NN::Owned< N::FSFileRefNum > script = Genie::FSpOpenDF( fileSpec, N::fsRdPerm );
+			
+			size_t bytes = FSRead( script, 1024, data, ThrowEOF_Never() );
 			
 			N::FSClose( script );
 			
