@@ -11,6 +11,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/FileSystem/FSTree_sys_mac_errata.hh"
 
@@ -23,10 +26,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	
-	
-	// Save our PSN so we can wake up at interrupt time.
-	static N::ProcessSerialNumber gPSN = N::GetCurrentProcess();
+	namespace Ped = Pedestal;
 	
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
@@ -39,7 +39,7 @@ namespace Genie
 	
 #endif
 	{
-		::WakeUpProcess( &gPSN );
+		Ped::WakeUp();
 	}
 	
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
