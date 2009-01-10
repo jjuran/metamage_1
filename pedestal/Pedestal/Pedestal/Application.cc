@@ -753,12 +753,7 @@ namespace Pedestal
 		
 		UInt32 now = ::TickCount();
 		
-		bool readyToWait = !gRunState.activelyBusy || now >= timetoWNE;
-		
-		if ( readyToWait && gRunState.activelyBusy )
-		{
-			AdjustSleepForTimer( 1 );  // sleep only this long if busy
-		}
+		bool readyToWait = now >= timetoWNE;
 		
 		return readyToWait;
 	}
@@ -809,7 +804,12 @@ namespace Pedestal
 					
 					N::YieldToAnyThread();
 					
-					if ( ReadyToWaitForEvents() )
+					if ( gRunState.activelyBusy )
+					{
+						AdjustSleepForTimer( 1 );  // sleep only this long if busy
+					}
+					
+					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
