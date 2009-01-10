@@ -1340,7 +1340,7 @@ namespace Genie
 		
 		Resume();
 		
-		gTickCountOfLastSleep = ::TickCount();
+		gTickCountOfLastSleep = Ped::TickCountAtLastContextSwitch();
 	}
 	
 	void Process::DeliverSignal( int signo )
