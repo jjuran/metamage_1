@@ -17,7 +17,11 @@ namespace Genie
 		return Nitrogen::Microseconds();
 	}
 	
-	TimeKeeper::TimeKeeper() : itsLastTimerCheckpoint( GetTimer() )
+	TimeKeeper::TimeKeeper()
+	:
+		itsLastTimerCheckpoint( GetTimer() ),
+		itsLastResume(),
+		itsLastActivity()
 	{
 	}
 	
@@ -56,6 +60,8 @@ namespace Genie
 	void TimeKeeper::ResumeTimer()
 	{
 		UInt64 now = GetTimer();
+		
+		itsLastResume = now;
 		
 		itsLastTimerCheckpoint = now;
 	}
