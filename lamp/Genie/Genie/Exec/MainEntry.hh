@@ -32,20 +32,14 @@ namespace Genie
 	
 	class MainEntryPoint
 	{
-		private:
-			Main3 itsMain;
-		
 		public:
-			MainEntryPoint( Main3 main ) : itsMain( main )
-			{
-			}
-			
 			virtual ~MainEntryPoint();
 			
-			Main3 GetMainPtr() const  { return itsMain; }
+			virtual Main3 GetMainPtr() = 0;
 	};
 	
 	typedef boost::shared_ptr< MainEntryPoint > MainEntry;
+	
 	
 	MainEntry GetMainEntryFromAddress( Main3 address );
 	
@@ -58,6 +52,7 @@ namespace Genie
 	{
 		return GetMainEntryFromAddress( reinterpret_cast< Main3 >( address ) );
 	}
+	
 	
 	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& file );
 	

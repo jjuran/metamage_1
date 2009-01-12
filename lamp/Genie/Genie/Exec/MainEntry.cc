@@ -9,9 +9,6 @@
 #include "Nitrogen/CodeFragments.h"
 #include "Nitrogen/Files.h"
 
-// Genie
-#include "Genie/Process/Entry.hh"
-
 
 namespace Genie
 {
@@ -25,6 +22,20 @@ namespace Genie
 	}
 	
 	
+	class AddressMain : public MainEntryPoint
+	{
+		private:
+			Main3 itsMain;
+		
+		public:
+			AddressMain( Main3 main ) : itsMain( main )
+			{
+			}
+			
+			Main3 GetMainPtr()  { return itsMain; }
+	};
+	
+	
 	class BinaryImageClient
 	{
 		private:
@@ -36,11 +47,11 @@ namespace Genie
 			}
 	};
 	
-	class CodeResourceMain : public BinaryImageClient, public MainEntryPoint
+	class CodeResourceMain : public BinaryImageClient, public AddressMain
 	{
 		public:
 			CodeResourceMain( const BinaryImage& image ) : BinaryImageClient( image ),
-			                                               MainEntryPoint( reinterpret_cast< Main3 >( *image.Get().Get() ) )
+			                                               AddressMain( reinterpret_cast< Main3 >( *image.Get().Get() ) )
 			{
 			}
 	};
@@ -64,37 +75,31 @@ namespace Genie
 		*symbol = value;
 	}
 	
-	class ConnectedFragment
+	class CFMPluginMain : public MainEntryPoint
 	{
 		private:
-			Nucleus::Owned< N::CFragConnectionID > itsFragmentConnection;
+			BinaryImage                        itsBinaryImage;
+			NN::Owned< N::CFragConnectionID >  itsFragmentConnection;
+			Main3                              itsMain;
 		
 		public:
-			ConnectedFragment( const BinaryImage& image ) : itsFragmentConnection( ConnectToFragment( image ) )
+			CFMPluginMain( const BinaryImage& image ) : itsBinaryImage( image )
 			{
 			}
 			
-			Main3 GetMain() const
-			{
-				Main3 mainEntry = NULL;
-				
-				N::FindSymbol( itsFragmentConnection, "\p" "main", &mainEntry );
-				
-				return mainEntry;
-			}
+			Main3 GetMainPtr();
 	};
 	
-	class CFMPluginMain : public BinaryImageClient, public ConnectedFragment, public MainEntryPoint
+	Main3 CFMPluginMain::GetMainPtr()
 	{
-		public:
-			CFMPluginMain( const BinaryImage& image );
-	};
-	
-	
-	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : BinaryImageClient( image     ),
-	                                                           ConnectedFragment( image     ),
-	                                                           MainEntryPoint   ( GetMain() )
-	{
+		if ( itsFragmentConnection.Get() == N::CFragConnectionID() )
+		{
+			itsFragmentConnection = ConnectToFragment( itsBinaryImage );
+			
+			N::FindSymbol( itsFragmentConnection, "\p" "main", &itsMain );
+		}
+		
+		return itsMain;
 	}
 	
 	
@@ -110,7 +115,7 @@ namespace Genie
 	
 	MainEntry GetMainEntryFromAddress( Main3 address )
 	{
-		return MainEntry( new MainEntryPoint( address ) );
+		return MainEntry( new AddressMain( address ) );
 	}
 	
 	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& binary )
@@ -120,18 +125,7 @@ namespace Genie
 	
 	MainEntry GetMainEntryFromFile( const FSSpec& file )
 	{
-		// Save and restore ToolScratch since GetBinaryImage() does async I/O,
-		// which may yield, possibly resulting in a call to WaitNextEvent(),
-		// after which ToolScratch may be overwritten.
-		
-		ToolScratchGlobals globals = GetToolScratchGlobals();
-		
 		BinaryImage image = GetBinaryImage( file );
-		
-		// It's okay if an exception is thrown here.  We just have to make sure
-		// ToolScratch is valid before connecting to the fragment.
-		
-		SetToolScratchGlobals( globals );
 		
 		return GetMainEntryFromBinaryImage( image );
 	}
