@@ -29,9 +29,11 @@ namespace Genie
 		private:
 			OpenTransportShare                       itsOpenTransport;
 			Nucleus::Owned< Nitrogen::EndpointRef >  itsEndpoint;
+			int                                      itsBacklog;
 			SocketAddress                            itsSocketAddress;
 			SocketAddress                            itsPeerAddress;
 			bool                                     itIsBound;
+			bool                                     itIsListener;
 			bool                                     itHasSentFIN;
 			bool                                     itHasReceivedFIN;
 			bool                                     itHasReceivedRST;
@@ -43,6 +45,8 @@ namespace Genie
 			
 			void ReceiveDisconnect();
 			void ReceiveOrderlyDisconnect();
+			
+			bool RepairListener();
 			
 			unsigned int SysPoll();
 			

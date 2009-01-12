@@ -69,7 +69,9 @@ namespace Genie
 	}
 	
 	OTSocket::OTSocket( bool isBlocking ) : itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+	                                        itsBacklog(),
 	                                        itIsBound       ( false ),
+	                                        itIsListener    ( false ),
 	                                        itHasSentFIN    ( false ),
 	                                        itHasReceivedFIN( false ),
 	                                        itHasReceivedRST( false )
@@ -111,8 +113,24 @@ namespace Genie
 		itHasReceivedFIN = true;
 	}
 	
+	bool OTSocket::RepairListener()
+	{
+		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
+		{
+			Yield( kInterruptAlways );
+			
+			Listen( itsBacklog );
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	unsigned int OTSocket::SysPoll()
 	{
+		RepairListener();
+		
 		::OTResult state = ::OTGetEndpointState( itsEndpoint );
 		
 		bool canRead = true;
@@ -295,6 +313,8 @@ namespace Genie
 			throw N::OTOutStateErr();
 		}
 		
+		itsBacklog = backlog;
+		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
 		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
 		
@@ -308,11 +328,14 @@ namespace Genie
 		
 		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
-		itIsBound = true;
+		itIsBound    = true;
+		itIsListener = true;
 	}
 	
 	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
+		RepairListener();
+		
 		TCall call;
 		
 		::OTMemzero( &call, sizeof (TCall) );
