@@ -32,7 +32,7 @@ namespace Genie
 			
 			~PairedSocket();
 			
-			unsigned int SysPoll() const
+			unsigned int SysPoll()
 			{
 				return   kPollRead  * itsInput->IsReadable()
 				       | kPollWrite * itsOutput->IsWritable();

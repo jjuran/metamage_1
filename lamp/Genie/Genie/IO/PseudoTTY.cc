@@ -79,7 +79,7 @@ namespace Genie
 		return itsTerminal.get();
 	}
 	
-	unsigned int PseudoTTYHandle::SysPoll() const
+	unsigned int PseudoTTYHandle::SysPoll()
 	{
 		return (itsInput->IsReadable() ? kPollRead : 0) | kPollWrite;
 	}

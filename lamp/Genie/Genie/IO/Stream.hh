@@ -37,7 +37,7 @@ namespace Genie
 			
 			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
 			
-			virtual unsigned int SysPoll() const = 0;
+			virtual unsigned int SysPoll() = 0;
 			
 			virtual ssize_t SysRead( char* data, std::size_t byteCount );
 			
@@ -56,7 +56,7 @@ namespace Genie
 			
 			const std::string* Peek( ByteCount minBytes );
 			
-			unsigned int Poll() const;
+			unsigned int Poll();
 			
 			ssize_t Read( char* data, std::size_t byteCount );
 			

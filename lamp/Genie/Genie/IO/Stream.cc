@@ -84,7 +84,7 @@ namespace Genie
 		return &itsPeekBuffer;
 	}
 	
-	unsigned int StreamHandle::Poll() const
+	unsigned int StreamHandle::Poll()
 	{
 		if ( IsDisconnected() )
 		{

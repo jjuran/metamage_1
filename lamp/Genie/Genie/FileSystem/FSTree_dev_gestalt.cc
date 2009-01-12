@@ -28,7 +28,7 @@ namespace Genie
 			
 			FSTreePtr GetFile() const  { return ResolvePathname( "/dev/gestalt" ); }
 			
-			unsigned int SysPoll() const  { return 0; }
+			unsigned int SysPoll()  { return 0; }
 			
 			void IOCtl( unsigned long request, int* argp );
 	};

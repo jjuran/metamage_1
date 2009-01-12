@@ -66,7 +66,7 @@ namespace Genie
 			
 			virtual bool Preempted() const  { return false; }
 			
-			unsigned int SysPoll() const;
+			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
@@ -220,7 +220,7 @@ namespace Genie
 		N::SerReset( itsOutputRefNum, baud19200 | data8 | noParity | stop10 );
 	}
 	
-	unsigned int SerialDeviceHandle::SysPoll() const
+	unsigned int SerialDeviceHandle::SysPoll()
 	{
 		bool unblocked = !Preempted();
 		

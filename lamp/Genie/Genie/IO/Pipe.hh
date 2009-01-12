@@ -33,7 +33,7 @@ namespace Genie
 			
 			~PipeInHandle();
 			
-			unsigned int SysPoll() const
+			unsigned int SysPoll()
 			{
 				return   kPollRead
 				       | kPollWrite * itsConduit->IsWritable();
@@ -60,7 +60,7 @@ namespace Genie
 			
 			~PipeOutHandle();
 			
-			unsigned int SysPoll() const
+			unsigned int SysPoll()
 			{
 				return   kPollRead * itsConduit->IsReadable()
 				       | kPollWrite;

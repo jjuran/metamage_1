@@ -34,7 +34,7 @@ namespace Genie
 		return itsWindow.get() && static_cast< ConsoleWindow* >( itsWindow.get() )->IsDisconnected();
 	}
 	
-	unsigned int ConsoleTTYHandle::SysPoll() const
+	unsigned int ConsoleTTYHandle::SysPoll()
 	{
 		bool readable = true;
 		

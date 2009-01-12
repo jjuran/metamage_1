@@ -111,7 +111,7 @@ namespace Genie
 		itHasReceivedFIN = true;
 	}
 	
-	unsigned int OTSocket::SysPoll() const
+	unsigned int OTSocket::SysPoll()
 	{
 		::OTResult state = ::OTGetEndpointState( itsEndpoint );
 		

@@ -36,7 +36,7 @@ namespace Genie
 			
 			bool IsDisconnected() const;
 			
-			unsigned int SysPoll() const;
+			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			

@@ -27,7 +27,7 @@ namespace Genie
 			
 			virtual boost::shared_ptr< IOHandle > Clone() = 0;
 			
-			virtual unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
+			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
 			off_t Seek( off_t offset, int whence );
 			
