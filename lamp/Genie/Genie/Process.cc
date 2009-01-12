@@ -1316,8 +1316,6 @@ namespace Genie
 		ResumeTimer();
 	}
 	
-	static UInt32 gTickCountOfLastSleep = 0;
-	
 	void Process::Pause( ProcessSchedule newSchedule )
 	{
 		itsSchedule = newSchedule;
@@ -1339,8 +1337,6 @@ namespace Genie
 		}
 		
 		Resume();
-		
-		gTickCountOfLastSleep = Ped::TickCountAtLastContextSwitch();
 	}
 	
 	void Process::DeliverSignal( int signo )
@@ -1678,9 +1674,9 @@ namespace Genie
 		// Check for fatal signals; don't throw EINTR
 		gCurrentProcess->HandlePendingSignals( kInterruptNever );
 		
-		UInt32 now = ::TickCount();
+		const UInt64 now = N::Microseconds();
 		
-		if ( now - gTickCountOfLastSleep > gMinimumSleepIntervalTicks )
+		if ( now - gCurrentProcess->GetTimeOfLastResume() > 20000 )
 		{
 			Ped::AdjustSleepForActivity();
 			
