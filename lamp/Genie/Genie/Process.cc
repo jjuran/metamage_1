@@ -589,8 +589,6 @@ namespace Genie
 		{
 			TemporaryStackBottomLimit limit( itsStackBottomPtr );
 			
-			itsMainEntry = itsProgramFile->GetMainEntry();
-			
 			// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 			// Pass envp in ToolScratch + 4 to initialize environ
 			SetUpToolScratch( &DispatchSystemCall, envp );
@@ -1069,9 +1067,8 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		// Save the binary image that we're running from.
-		// We can't use stack storage because we run the risk of the thread terminating.
-		itsOldMainEntry = itsMainEntry;
+		// Really the new main entry.  We'll swap later.
+		itsOldMainEntry = itsProgramFile->GetMainEntry();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -1097,6 +1094,10 @@ namespace Genie
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
+		
+		// Save the binary image that we're running from and set the new one.
+		// We can't use stack storage because we run the risk of the thread terminating.
+		std::swap( itsOldMainEntry, itsMainEntry );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
