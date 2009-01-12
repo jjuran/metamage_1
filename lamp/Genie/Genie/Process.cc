@@ -8,6 +8,7 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
+#include <stdlib.h>
 
 // POSIX
 #include "sys/stat.h"
@@ -629,13 +630,20 @@ namespace Genie
 		
 		void ProcessThreadEntry( Process* process )
 		{
-			process->InitThread();
-			
-			int exit_status = process->Run();
-			
-			process->Exit( exit_status );
-			
-			// Not reached
+			try
+			{
+				process->InitThread();
+				
+				int exit_status = process->Run();
+				
+				process->Exit( exit_status );
+				
+				// Not reached
+			}
+			catch ( ... )
+			{
+				abort();
+			}
 		}
 		
 	}
