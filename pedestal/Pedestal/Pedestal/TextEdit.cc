@@ -34,6 +34,11 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
+	static bool gExtendingSelection = false;
+	
+	static short gSelectionAnchor, gSelectionExtent;
+	
+	
 	static bool LeftOrRightArrowsKeyed()
 	{
 		N::GetKeys_Result keys = N::GetKeys();
@@ -79,6 +84,8 @@ namespace Pedestal
 		            event.modifiers & shiftKey,
 		            Get() );
 		
+		gExtendingSelection = false;
+		
 		On_UserSelect();
 	}
 	
@@ -99,6 +106,26 @@ namespace Pedestal
 		// Allow control keys always (backspace, arrows)
 		// Allow content keys only when selection is empty (insertion point)
 		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
+	}
+	
+	static inline bool char_is_horizontal_arrow( char c )
+	{
+		return (c & 0xFE) == 0x1C;
+	}
+
+	static inline bool char_is_vertical_arrow( char c )
+	{
+		return (c & 0xFE) == 0x1E;
+	}
+	
+	static inline bool char_is_forward_arrow( char c )
+	{
+		return (c & 0xFD) == 0x1D;
+	}
+	
+	static inline bool char_is_arrow( char c )
+	{
+		return (c & 0xFC) == 0x1C;
 	}
 	
 	static inline bool char_is_delete( char c )
@@ -124,6 +151,8 @@ namespace Pedestal
 		short selEnd   = te.selEnd;
 		
 		const bool emptySelection = selStart == selEnd;
+		
+		const bool forward = char_is_forward_arrow( c );
 		
 		const bool deleting = char_is_delete( c );
 		
@@ -167,7 +196,63 @@ namespace Pedestal
 			}
 		}
 		
-		N::TEKey( c, hTE );
+		const bool initializingSelection = char_is_arrow( c )  &&  (!gExtendingSelection || !shiftKeyIsDown);
+		
+		if ( initializingSelection )
+		{
+			// The selection anchor and extent must be initialized when we start or
+			// finish extending the selection.
+			gSelectionAnchor =  forward ? selStart : selEnd;
+			gSelectionExtent = !forward ? selStart : selEnd;
+		}
+		
+		gExtendingSelection = char_is_arrow( c ) && shiftKeyIsDown;
+		
+		if ( gExtendingSelection || char_is_vertical_arrow( c ) )
+		{
+			// Set our extent as the insertion point so we can use TextEdit's arrow
+			// behavior.
+			::TESetSelect( gSelectionExtent, gSelectionExtent, hTE );
+		}
+		
+		if ( !gExtendingSelection  &&  char_is_horizontal_arrow( c )  &&  !emptySelection )
+		{
+			// Workaround TextEdit's bug where left- or right-arrow places the
+			// insertion point past the selection instead of at the edge of it.
+			
+			if ( c == kRightArrowCharCode )
+			{
+				selStart = selEnd;
+			}
+			else
+			{
+				selEnd = selStart;
+			}
+			
+			// Update the real insertion point
+			::TESetSelect( selStart, selEnd, hTE );
+		}
+		else
+		{
+			N::TEKey( c, hTE );
+			
+			// Update the extent
+			gSelectionExtent = hTE[0]->selStart;
+		}
+		
+		if ( gExtendingSelection )
+		{
+			selStart = std::min( gSelectionAnchor, gSelectionExtent );
+			selEnd   = std::max( gSelectionAnchor, gSelectionExtent );
+			
+			// Update the real selection
+			::TESetSelect( selStart, selEnd, hTE );
+			
+			if ( deleting )
+			{
+				::TEDelete( hTE );
+			}
+		}
 	}
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
@@ -233,6 +318,8 @@ namespace Pedestal
 		{
 			N::TEDeactivate( hTE );
 		}
+		
+		gExtendingSelection = false;
 		
 		ResetArrowKeyChordability();
 	}
