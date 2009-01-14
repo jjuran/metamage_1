@@ -1671,6 +1671,8 @@ namespace Genie
 		}
 		else
 		{
+			Ped::AdjustSleepForActivity();
+			
 			gCurrentProcess->AsyncYield();
 		}
 	}
