@@ -101,6 +101,75 @@ namespace Pedestal
 		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
 	}
 	
+	static inline bool char_is_delete( char c )
+	{
+		return c == kBackspaceCharCode  ||  c == kDeleteCharCode;
+	}
+	
+	static void TEKeyEvent( const EventRecord& event, TEHandle hTE )
+	{
+		const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
+		const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
+		const UInt32 kEitherControlKey = controlKey | rightControlKey;
+		
+		char c =  event.message & charCodeMask;
+		
+		bool cmdKeyIsDown    = event.modifiers & cmdKey;
+		bool shiftKeyIsDown  = event.modifiers & kEitherShiftKey;
+		bool optionKeyIsDown = event.modifiers & kEitherOptionKey;
+		
+		TERec& te = **hTE;
+		
+		short selStart = te.selStart;
+		short selEnd   = te.selEnd;
+		
+		const bool emptySelection = selStart == selEnd;
+		
+		const bool deleting = char_is_delete( c );
+		
+		if ( deleting )
+		{
+			// Shift-Backspace is Forward Delete
+			if ( shiftKeyIsDown )
+			{
+				c = kDeleteCharCode;
+				
+				shiftKeyIsDown = false;
+			}
+			
+			if ( (cmdKeyIsDown || optionKeyIsDown) && emptySelection )
+			{
+				// For Option- or Cmd-Delete, pretend we're selecting first
+				c = c == kBackspaceCharCode ? kLeftArrowCharCode
+											: kRightArrowCharCode;
+				
+				shiftKeyIsDown = true;
+			}
+			else if ( !emptySelection )
+			{
+				// On a selection, Cmd- and Option-Delete are the same as Delete.
+				cmdKeyIsDown    = false;
+				optionKeyIsDown = false;
+				
+				// On a selection, Forward Delete is the same as Backspace.
+				c = kBackspaceCharCode;
+			}
+			else if ( c == kDeleteCharCode )
+			{
+				if ( selEnd == te.teLength )
+				{
+					return;
+				}
+				
+				te.selEnd += 1;
+				
+				c = kBackspaceCharCode;
+			}
+		}
+		
+		N::TEKey( c, hTE );
+	}
+	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
 		TEHandle hTE = Get();
@@ -141,7 +210,7 @@ namespace Pedestal
 		}
 		else
 		{
-			N::TEKey( c, hTE );
+			TEKeyEvent( event, hTE );
 			
 			On_UserEdit();
 		}
