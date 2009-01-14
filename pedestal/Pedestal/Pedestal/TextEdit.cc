@@ -133,6 +133,17 @@ namespace Pedestal
 		return c == kBackspaceCharCode  ||  c == kDeleteCharCode;
 	}
 	
+	static bool char_is_word_char( char c )
+	{
+		if ( c == '_' )  return true;
+		
+		if ( c >= '0'  &&  c <= '9' )  return true;
+		
+		c |= 'a' - 'A';
+		
+		return c >= 'a'  &&  c <= 'z';
+	}
+	
 	static void TEKeyEvent( const EventRecord& event, TEHandle hTE )
 	{
 		const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
@@ -145,6 +156,7 @@ namespace Pedestal
 		bool shiftKeyIsDown  = event.modifiers & kEitherShiftKey;
 		bool optionKeyIsDown = event.modifiers & kEitherOptionKey;
 		
+		// Dereferencing hTE
 		TERec& te = **hTE;
 		
 		short selStart = te.selStart;
@@ -215,7 +227,69 @@ namespace Pedestal
 			::TESetSelect( gSelectionExtent, gSelectionExtent, hTE );
 		}
 		
-		if ( !gExtendingSelection  &&  char_is_horizontal_arrow( c )  &&  !emptySelection )
+		if ( char_is_arrow( c )  &&  (cmdKeyIsDown || optionKeyIsDown) )
+		{
+			// Dereferencing hTE
+			const TERec& te = **hTE;
+			
+			// Dereferencing te.hText
+			const char* begin = te.hText[0];
+			const char* end   = begin + te.teLength;
+			
+			const char* p = begin + gSelectionExtent;
+			
+			if ( cmdKeyIsDown )
+			{
+				switch ( c )
+				{
+					case kLeftArrowCharCode:
+						while ( p > begin  &&  p[-1] != '\r' )  --p;
+						break;
+					
+					case kRightArrowCharCode:
+						while ( p < end  &&  p[0] != '\r' )  ++p;
+						break;
+					
+					case kUpArrowCharCode:
+						p = begin;
+						break;
+					
+					case kDownArrowCharCode:
+						p = end;
+						break;
+					
+				}
+			}
+			else if ( optionKeyIsDown )
+			{
+				switch ( c )
+				{
+					case kLeftArrowCharCode:
+						if ( p > begin )
+							while ( --p > begin  &&  char_is_word_char( p[-1] ) )  continue;
+						break;
+					
+					case kRightArrowCharCode:
+						if ( p < end )
+							while ( ++p < end  &&  char_is_word_char( p[0] ) )  continue;
+						break;
+					
+					case kUpArrowCharCode:
+					case kDownArrowCharCode:
+						::SysBeep( 30 );  // May move memory
+						break;
+				}
+			}
+			
+			gSelectionExtent = p - begin;
+			
+			if ( !gExtendingSelection )
+			{
+				// Update the real insertion point
+				::TESetSelect( gSelectionExtent, gSelectionExtent, hTE );
+			}
+		}
+		else if ( !gExtendingSelection  &&  char_is_horizontal_arrow( c )  &&  !emptySelection )
 		{
 			// Workaround TextEdit's bug where left- or right-arrow places the
 			// insertion point past the selection instead of at the edge of it.
