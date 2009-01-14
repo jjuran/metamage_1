@@ -957,20 +957,11 @@ namespace Pedestal
 		return gTickCountAtLastContextSwitch;
 	}
 	
-	static unsigned gWakeUps = 0;
-	
 	void WakeUp()
 	{
-		if ( TARGET_API_MAC_CARBON  &&  ++gWakeUps >= 10 )
-		{
-			gWakeUps = 0;
-		}
-		else
-		{
-			::WakeUpProcess( &gPSN );
-			
-			gWokenUp = true;
-		}
+		::WakeUpProcess( &gPSN );
+		
+		gWokenUp = true;
 	}
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
