@@ -12,6 +12,9 @@
 	#include <ToolUtils.h>
 #endif
 
+// Nostalgia
+#include "Nostalgia/LowMem.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
@@ -154,7 +157,7 @@ namespace Pedestal
 	
 	static void UpdateLastUserEvent()
 	{
-		gTickCountAtLastUserEvent = ::TickCount();
+		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
 	bool MenuItemDispatcher::Run( MenuItemCode code ) const
@@ -751,7 +754,7 @@ namespace Pedestal
 		
 		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
 		
-		UInt32 now = ::TickCount();
+		UInt32 now = ::LMGetTicks();
 		
 		bool readyToWait = now >= timetoWNE;
 		
@@ -829,7 +832,7 @@ namespace Pedestal
 						
 						if ( !gWokenUp )
 						{
-							gTickCountAtLastContextSwitch = ::TickCount();
+							gTickCountAtLastContextSwitch = ::LMGetTicks();
 						}
 						
 						gWokenUp = false;
