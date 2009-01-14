@@ -346,7 +346,7 @@ namespace Pedestal
 		{
 			// already handled
 		}
-		else if ( Try_ArrowKeyChord( *this, c ) )
+		else if ( event.what == keyDown  &&  Try_ArrowKeyChord( *this, c ) )
 		{
 			// already handled
 		}
