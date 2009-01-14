@@ -811,6 +811,8 @@ namespace Pedestal
 					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
+						gWokenUp = false;
+						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gRunState.maxTicksToSleep = 0x7FFFFFFF;
@@ -822,7 +824,7 @@ namespace Pedestal
 						
 						if ( gWokenUp )
 						{
-							gRunState.maxTicksToSleep = 0;
+							gRunState.maxTicksToSleep = 1;
 						}
 						
 						if ( !gWokenUp )
@@ -959,6 +961,24 @@ namespace Pedestal
 	
 	void WakeUp()
 	{
+		ProcessSerialNumber psn;
+		
+		OSErr err = ::GetCurrentProcess( &psn );
+		
+		if ( err == noErr )
+		{
+			Boolean same;
+			
+			err = ::SameProcess( &psn, &gPSN, &same );
+			
+			if ( err == noErr  &&  same )
+			{
+				gRunState.activelyBusy = true;
+				
+				return;
+			}
+		}
+		
 		::WakeUpProcess( &gPSN );
 		
 		gWokenUp = true;
