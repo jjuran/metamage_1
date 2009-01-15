@@ -1030,6 +1030,16 @@ namespace Genie
 		}
 	}
 	
+	static N::Size DefaultThreadStackSize()
+	{
+		::Size size = 0;
+		
+		// Jaguar returns paramErr
+		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
+		
+		return size;
+	}
+	
 	void Process::Exec( const char*         path,
 	                    const char* const   argv[],
 	                    const char* const*  envp )
@@ -1074,7 +1084,7 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const N::Size defaultStackSize = N::GetDefaultThreadStackSize( N::kCooperativeThread );
+		const N::Size defaultStackSize = DefaultThreadStackSize();
 		
 		const N::Size minimumStackSize = 64 * 1024;
 		
