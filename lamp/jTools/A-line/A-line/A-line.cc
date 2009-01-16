@@ -633,7 +633,8 @@ namespace tool
 			}
 			
 			write_catalog_cache( p7::open( catalog_cache_pathname,
-			                               p7::o_wronly | p7::o_creat | p7::o_trunc ) );
+			                               p7::o_wronly | p7::o_creat | p7::o_trunc,
+			                               p7::mode_t( 0666 ) ) );
 			
 			cache_was_written = true;
 			

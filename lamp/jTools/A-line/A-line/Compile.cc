@@ -349,7 +349,8 @@ namespace tool
 					
 					// Write .d file for next time
 					write_dependencies_file( p7::open( dependencies_pathname,
-					                                   p7::o_wronly | p7::o_creat | p7::o_trunc ),
+					                                   p7::o_wronly | p7::o_creat | p7::o_trunc,
+					                                   p7::mode_t( 0666 ) ),
 					                         includes );
 				}
 				
