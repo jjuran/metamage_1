@@ -10,10 +10,10 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
-
-#if defined( __linux__ ) || defined( __LAMP__ )
-
 #include "POSeven/functions/openat.hh"
+
+// Convergence
+#include "at.h"
 
 
 namespace poseven
@@ -29,6 +29,4 @@ namespace poseven
 	}
 	
 }
-
-#endif
 
