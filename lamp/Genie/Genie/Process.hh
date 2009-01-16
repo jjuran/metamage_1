@@ -164,7 +164,7 @@ namespace Genie
 			struct RootProcess {};
 			
 			Process( RootProcess );
-			Process( Process& parent );
+			Process( Process& parent, pid_t pid );
 			
 			~Process();
 			
@@ -266,7 +266,7 @@ namespace Genie
 		
 		private:
 			Map    itsMap;
-			pid_t  itsNextPID;
+			pid_t  itsLastPID;
 		
 		public:
 			ProcessList();
@@ -276,7 +276,8 @@ namespace Genie
 				//ASSERT( itsMap.size() == 1 );
 			}
 			
-			pid_t NewProcess( Process* process );
+			const boost::shared_ptr< Process >& NewProcess( Process::RootProcess );
+			const boost::shared_ptr< Process >& NewProcess( Process& parent );
 			
 			void RemoveProcess( pid_t pid );
 			
@@ -297,6 +298,11 @@ namespace Genie
 	extern ProcessList gProcessTable;
 	
 	ProcessList& GetProcessList();
+	
+	inline const boost::shared_ptr< Process >& NewProcess( Process& parent )
+	{
+		return GetProcessList().NewProcess( parent );
+	}
 	
 	void SendSignalToProcessGroup( int sig, const ProcessGroup& group );
 	

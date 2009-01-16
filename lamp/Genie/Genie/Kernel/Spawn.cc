@@ -17,7 +17,7 @@ namespace Genie
 	
 	inline Process& SpawnFrom( Process& parent )
 	{
-		Process* child = new Process( parent );
+		const boost::shared_ptr< Process >& child = NewProcess( parent );
 		
 		return *child;
 	}

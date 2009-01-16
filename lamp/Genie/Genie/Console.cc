@@ -19,11 +19,18 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		Process* external = new Process( parent );
+		const boost::shared_ptr< Process >& external = NewProcess( parent );
 		
 		char const *const argv[] = { programPath, NULL };
 		
-		(void) external->Exec( programPath, argv, NULL );
+		try
+		{
+			(void) external->Exec( programPath, argv, NULL );
+		}
+		catch ( ... )
+		{
+			GetProcessList().RemoveProcess( external->GetPID() );
+		}
 		
 		parent.ResumeAfterFork();
 	}

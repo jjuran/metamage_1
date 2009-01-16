@@ -256,7 +256,7 @@ namespace Genie
 			case kProcessRunning:      return 'R';  // [1]
 			case kProcessSleeping:     return 'S';  // [2]
 			case kProcessStopped:      return 'T';  // set in Process::Stop()
-			case kProcessFrozen:       return 'V';  // set in SpawnVFork() prior to new Process()
+			case kProcessFrozen:       return 'V';  // set in SpawnVFork() prior to NewProcess()
 			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
 			
 			// [1] set on parent in execve() after child.Exec()

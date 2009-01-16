@@ -199,7 +199,7 @@ namespace Genie
 		
 		Process& parent = GetProcess( 1 );
 		
-		Process* process = new Process( parent );
+		const boost::shared_ptr< Process >& process = NewProcess( parent );
 		
 		FileDescriptorMap& files = process->FileDescriptors();
 		

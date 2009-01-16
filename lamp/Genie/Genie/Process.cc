@@ -157,7 +157,7 @@ namespace Genie
 	
 	Process& GetInitProcess()
 	{
-		static Process* init = new Process( Process::RootProcess() );
+		static const boost::shared_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
 		
 		return *init;
 	}
@@ -849,7 +849,7 @@ namespace Genie
 	Process::Process( RootProcess ) 
 	:
 		itsPPID               ( 0 ),
-		itsPID                ( GetProcessList().NewProcess( this ) ),
+		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
@@ -877,11 +877,11 @@ namespace Genie
 		InstallExceptionHandlers();
 	}
 	
-	Process::Process( Process& parent ) 
+	Process::Process( Process& parent, pid_t pid ) 
 	:
 		SignalReceiver        ( parent ),
 		itsPPID               ( parent.GetPID() ),
-		itsPID                ( GetProcessList().NewProcess( this ) ),
+		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
@@ -1047,6 +1047,7 @@ namespace Genie
 		// Declare this first so it goes out of scope last
 		NN::Owned< N::ThreadID > looseThread;
 		
+		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
 		FSTreePtr programFile = ResolvePathname( path, GetCWD() );
 		
 		ResolveLinks_InPlace( programFile );
@@ -1146,7 +1147,7 @@ namespace Genie
 		itsSchedule        = kProcessFrozen;
 		
 		itsVForkFramePtr =
-		itsStackFramePtr = Backtrace::GetStackFramePointer( 3 );
+		itsStackFramePtr = Backtrace::GetStackFramePointer( 4 );
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1505,7 +1506,7 @@ namespace Genie
 		return DeliverPendingSignals( interrupting );
 	}
 	
-	ProcessList::ProcessList() : itsNextPID( 1 )
+	ProcessList::ProcessList() : itsLastPID( 1 )
 	{
 	}
 	
@@ -1548,13 +1549,24 @@ namespace Genie
 		
 	}
 	
-	pid_t ProcessList::NewProcess( Process* process )
+	const boost::shared_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
 	{
 		static NN::Owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
-		itsMap[ itsNextPID ] = boost::shared_ptr< Process >( process );
+		pid_t pid = 1;
 		
-		return itsNextPID++;
+		boost::shared_ptr< Process > process( new Process( Process::RootProcess() ) );
+		
+		return itsMap[ pid ] = process;
+	}
+	
+	const boost::shared_ptr< Process >& ProcessList::NewProcess( Process& parent )
+	{
+		pid_t pid = ++itsLastPID;
+		
+		boost::shared_ptr< Process > process( new Process( parent, pid ) );
+		
+		return itsMap[ pid ] = process;
 	}
 	
 	void ProcessList::RemoveProcess( pid_t pid )
