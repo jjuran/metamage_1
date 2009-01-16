@@ -15,7 +15,7 @@
 
 #ifndef __LAMP__
 
-ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count )
+ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count, unsigned flags )
 {
 	const std::size_t buffer_size = 4096;
 	
