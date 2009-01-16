@@ -157,7 +157,7 @@ namespace Nitrogen
 		}
 
 	struct SecTrustGetCSSMAnchorCertificates_Result {
-		UInt32 cssmAnchorCount;
+		uint32 cssmAnchorCount;
 	//	This is a 'get' - we're not getting a copy
 		const CSSM_DATA *cssmAnchors;
 		};
