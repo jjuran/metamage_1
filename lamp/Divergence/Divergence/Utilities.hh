@@ -23,6 +23,7 @@
 #if TARGET_RT_MAC_MACHO
 	#include "Nucleus/Convert.h"
 	#include "Nitrogen/Files.h"
+	#include "MacFiles.hh"
 	#include "POSeven/Pathnames.hh"
 #else
 	#include "fsspec_from_path.hh"
