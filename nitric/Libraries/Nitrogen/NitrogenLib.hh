@@ -20,6 +20,8 @@
 
 #ifdef __MACH__
 	
+	#define MAC_OS_X_VERSION_MIN_REQUIRED  MAC_OS_X_VERSION_10_2
+	
 	#include <Carbon/Carbon.h>
 	
 #else
