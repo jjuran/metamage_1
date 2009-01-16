@@ -85,7 +85,7 @@ namespace tool
 		{
 			signal( SIGHUP, SIG_DFL );
 			
-			p7::ioctl( p7::open( ctty, p7::o_rdwr ), TIOCSCTTY, NULL );
+			p7::ioctl( p7::open( ctty, p7::o_rdwr ).get(), TIOCSCTTY, NULL );
 		}
 		else
 		{
