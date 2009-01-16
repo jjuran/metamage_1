@@ -418,7 +418,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
 	{
-		unsigned long id = reinterpret_cast< unsigned long >( display );
+		UInt32 id = (UInt32) display;
 		
 		return Nucleus::Owned< CGrafPtr >::Seize( ::CreateNewPortForCGDisplayID( id ),
 		                                          &::DisposePort );
