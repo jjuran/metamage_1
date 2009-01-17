@@ -14,8 +14,12 @@
 #include "POSeven/FileDescriptor.hh"
 
 
-namespace poseven
+namespace
 {
+	
+	void dummy()
+	{
+	}
 	
 }
 
