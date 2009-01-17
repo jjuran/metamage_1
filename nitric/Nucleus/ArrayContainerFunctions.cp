@@ -8,3 +8,13 @@
 #include "Nucleus/ArrayContainerFunctions.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

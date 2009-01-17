@@ -10,3 +10,13 @@
 #include "Nucleus/Initialize.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

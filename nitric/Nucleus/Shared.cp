@@ -10,3 +10,13 @@
 #include "Nucleus/Shared.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

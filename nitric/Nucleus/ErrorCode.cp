@@ -10,3 +10,13 @@
 #include "Nucleus/ErrorCode.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

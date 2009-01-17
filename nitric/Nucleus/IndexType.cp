@@ -10,3 +10,13 @@
 #include "Nucleus/IndexType.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

@@ -8,3 +8,13 @@
 #include "Nucleus/ResourceTransfer.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

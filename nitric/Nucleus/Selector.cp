@@ -10,3 +10,13 @@
 #include "Nucleus/Selector.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

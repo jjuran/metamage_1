@@ -8,3 +8,13 @@
 #include "Nucleus/Operators.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

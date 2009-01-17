@@ -8,3 +8,13 @@
 #include "Nucleus/Pseudoreference.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

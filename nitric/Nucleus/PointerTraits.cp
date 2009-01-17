@@ -8,3 +8,13 @@
 #include "Nucleus/PointerTraits.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

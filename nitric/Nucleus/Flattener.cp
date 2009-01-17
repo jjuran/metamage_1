@@ -10,3 +10,13 @@
 #include "Nucleus/Flattener.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

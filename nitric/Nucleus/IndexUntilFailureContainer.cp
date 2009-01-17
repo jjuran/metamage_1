@@ -10,3 +10,13 @@
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

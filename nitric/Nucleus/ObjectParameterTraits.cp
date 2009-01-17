@@ -8,3 +8,13 @@
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

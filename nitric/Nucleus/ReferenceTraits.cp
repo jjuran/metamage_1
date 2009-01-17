@@ -8,3 +8,13 @@
 #include "Nucleus/ReferenceTraits.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

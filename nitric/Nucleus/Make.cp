@@ -10,3 +10,13 @@
 #include "Nucleus/Make.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

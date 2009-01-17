@@ -10,8 +10,13 @@
 #include "Nucleus/TransferTraits.h"
 #endif
 
-namespace Nucleus
+
+namespace
 {
+	
+	void dummy()
+	{
+	}
 	
 }
 

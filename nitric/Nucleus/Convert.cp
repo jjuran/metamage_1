@@ -10,3 +10,13 @@
 #include "Nucleus/Convert.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

@@ -9,3 +9,14 @@
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
+
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

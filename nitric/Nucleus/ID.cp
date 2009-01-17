@@ -10,3 +10,13 @@
 #include "Nucleus/ID.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

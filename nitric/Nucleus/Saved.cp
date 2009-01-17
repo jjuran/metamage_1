@@ -10,3 +10,13 @@
 #include "Nucleus/Saved.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

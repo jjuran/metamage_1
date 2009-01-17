@@ -8,3 +8,13 @@
 #include "Nucleus/EnumerationIsPromotable.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

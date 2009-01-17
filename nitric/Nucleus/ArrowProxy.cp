@@ -8,3 +8,13 @@
 #include "Nucleus/ArrowProxy.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

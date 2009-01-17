@@ -8,3 +8,13 @@
 #include "Nucleus/OnlyOnce.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

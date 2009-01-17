@@ -8,3 +8,13 @@
 #include "Nucleus/Overloaded_math.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

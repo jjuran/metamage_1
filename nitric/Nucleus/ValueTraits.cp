@@ -8,3 +8,13 @@
 #include "Nucleus/ValueTraits.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

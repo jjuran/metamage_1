@@ -10,8 +10,13 @@
 #include "Nucleus/IndexedContainer.h"
 #endif
 
-namespace Nucleus
+
+namespace
 {
+	
+	void dummy()
+	{
+	}
 	
 }
 

@@ -8,3 +8,13 @@
 #include "Nucleus/Tentative.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

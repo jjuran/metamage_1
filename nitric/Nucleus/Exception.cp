@@ -10,3 +10,13 @@
 #include "Nucleus/Exception.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

@@ -10,3 +10,13 @@
 #include "Nucleus/Scoped.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

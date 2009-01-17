@@ -10,3 +10,13 @@
 #include "Nucleus/Enumeration.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

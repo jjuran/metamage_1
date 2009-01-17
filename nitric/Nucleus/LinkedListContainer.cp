@@ -10,3 +10,13 @@
 #include "Nucleus/LinkedListContainer.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

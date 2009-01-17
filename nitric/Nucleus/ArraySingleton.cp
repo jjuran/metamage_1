@@ -8,3 +8,13 @@
 #include "Nucleus/ArraySingleton.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

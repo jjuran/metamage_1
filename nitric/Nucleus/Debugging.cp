@@ -16,7 +16,12 @@
 #endif
 
 
-namespace Nucleus
+namespace
 {
+	
+	void dummy()
+	{
+	}
+	
 }
 

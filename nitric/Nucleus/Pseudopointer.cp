@@ -8,3 +8,13 @@
 #include "Nucleus/Pseudopointer.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

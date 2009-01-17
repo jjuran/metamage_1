@@ -40,3 +40,12 @@ namespace Nucleus
 	
 }
 
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

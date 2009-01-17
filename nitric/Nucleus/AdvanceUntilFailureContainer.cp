@@ -10,3 +10,13 @@
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

@@ -8,3 +8,13 @@
 #include "Nucleus/FunctionTraits.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

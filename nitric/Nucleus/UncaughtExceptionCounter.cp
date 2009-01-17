@@ -8,3 +8,13 @@
 #include "Nucleus/UncaughtExceptionCounter.h"
 #endif
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+
