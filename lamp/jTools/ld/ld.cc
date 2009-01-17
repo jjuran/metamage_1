@@ -14,6 +14,7 @@
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/extras/slurp.hh"
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/vfork.hh"
@@ -538,7 +539,38 @@ namespace tool
 				}
 				else if ( filename == "PkgInfo" )
 				{
-					gProductType = kProductApp;  // PkgInfo indicates an app
+					std::string pkgInfo = p7::slurp( arg );
+					
+					if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
+					{
+						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
+						
+						throw N::EOFErr();
+					}
+					
+					::OSType type = 0;
+					
+					// FIXME:  Byte-swap
+					std::copy( pkgInfo.begin(), pkgInfo.begin() + sizeof 'Type', (char*) &type );
+					
+					switch ( type )
+					{
+						case 'APPL':
+							gProductType = kProductApp;
+							break;
+						
+						case 'INIT':
+							gProductType = kProductCodeResource;
+							break;
+						
+						case 'Wish':
+							gProductType = kProductTool;
+							break;
+						
+						default:
+							std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
+					}
+					
 					continue;
 				}
 				
