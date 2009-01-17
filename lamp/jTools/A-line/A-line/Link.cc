@@ -507,7 +507,7 @@ namespace tool
 		
 		std::string creator = project.CreatorCode();
 		
-		if ( creator.length() != sizeof (::OSType) )
+		if ( creator.length() != sizeof 'Ctor' )
 		{
 			creator = "\?\?\?\?";
 		}
