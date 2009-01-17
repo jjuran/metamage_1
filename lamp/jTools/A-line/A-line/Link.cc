@@ -503,11 +503,23 @@ namespace tool
 		
 		std::string driverName;
 		
+		const char* fileType = NULL;
+		
+		std::string creator = project.CreatorCode();
+		
+		if ( creator.length() != sizeof (::OSType) )
+		{
+			creator = "\?\?\?\?";
+		}
+		
 		switch ( project.Product() )
 		{
 			case productToolkit:
-			case productApplication:
 			case productTool:
+				break;
+			
+			case productApplication:
+				fileType = "APPL";
 				break;
 			
 		#if ALINE_LAMP_DEVELOPMENT
@@ -517,21 +529,19 @@ namespace tool
 				break;
 			
 			case productINIT:
-				command.push_back( cmdgen.MWTargetCodeResource() );
+				fileType = "INIT";
 				
 				AugmentCommand( command, cmdgen.ResourceTypeAndID( "INIT=0" ) );
-				AugmentCommand( command, cmdgen.OutputType       ( "INIT"   ) );
 				break;
 			
 			case productDriver:
 				driverName = "." + project.Name();
 				
-				command.push_back( cmdgen.MWTargetCodeResource() );
+				fileType = "DRVR";
+				creator  = "RSED";
 				
 				AugmentCommand( command, cmdgen.ResourceTypeAndID( "DRVR=0" ) );
 				AugmentCommand( command, cmdgen.ResourceName     ( driverName.c_str() ) );
-				AugmentCommand( command, cmdgen.OutputType       ( "INIT"   ) );
-				AugmentCommand( command, cmdgen.OutputCreator    ( "RSED"   ) );
 				
 				command.push_back( cmdgen.CustomDriverHeader() );
 				break;
@@ -606,11 +616,6 @@ namespace tool
 		}
 		
 		
-		if ( lamp  &&  project.CreatorCode().size() > 0 )
-		{
-			AugmentCommand( command, cmdgen.OutputCreator( project.CreatorCode().c_str() ) );
-		}
-		
 		if ( cmdgen.LinkerOptions()[0] )
 		{
 			command.push_back( cmdgen.LinkerOptions() );
@@ -678,16 +683,16 @@ namespace tool
 					
 					pkginfo_dir = contents;
 				}
-				else if ( app )
+				else if ( fileType != NULL )
 				{
 					pkginfo_dir = ProjectMetadataDirPath( project.Name() );
 				}
 				
-				if ( app )
+				if ( fileType != NULL )
 				{
 					std::string pkginfo = pkginfo_dir / "PkgInfo";
 					
-					WritePkgInfo( pkginfo, "APPL" + project.CreatorCode() );
+					WritePkgInfo( pkginfo, fileType + creator );
 					
 					if ( lamp )
 					{

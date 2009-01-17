@@ -185,16 +185,6 @@ namespace tool
 			return result;
 		}
 		
-		Command OutputType( const char* type ) const
-		{
-			return MakeCommand( "-t", type );
-		}
-		
-		Command OutputCreator( const char* creator ) const
-		{
-			return MakeCommand( "-c", creator );
-		}
-		
 		Command ResourceTypeAndID( const char* type_and_id ) const
 		{
 			return MakeCommand( "-rt", type_and_id );
@@ -206,12 +196,6 @@ namespace tool
 		}
 		
 		const char* CustomDriverHeader() const  { return "-custom"; }
-		
-		// CodeWarrior only
-		const char* MWTargetCodeResource() const
-		{
-			return "-object";
-		}
 		
 		// CodeWarrior only
 		const char* MWTargetSharedLibrary() const
