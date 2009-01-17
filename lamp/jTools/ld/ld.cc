@@ -448,14 +448,6 @@ namespace tool
 						
 						break;
 					
-					case 't':
-						gFileType = *++argv;
-						break;
-					
-					case 'c':
-						gFileCreator = *++argv;
-						break;
-					
 					case 'r':
 						if ( arg[2] == 't'  &&  arg[3] == '\0' )
 						{
