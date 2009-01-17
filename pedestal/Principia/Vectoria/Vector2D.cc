@@ -5,3 +5,13 @@
 
 #include "Vectoria/Vector2D.hh"
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

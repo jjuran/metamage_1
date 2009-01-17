@@ -5,3 +5,13 @@
 
 #include "Vectoria/Point3D.hh"
 
+
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+

@@ -97,3 +97,12 @@ namespace Vectoria
 	
 }
 
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+
