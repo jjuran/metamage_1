@@ -37,3 +37,12 @@ namespace Backtrace
 	
 }
 
+namespace
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+
