@@ -205,7 +205,7 @@ namespace tool
 		
 		const char* LinkerOptions() const
 		{
-			return debug ? "" : "-s";
+			return debug || gnu ? "" : "-s";
 		}
 		
 	};
