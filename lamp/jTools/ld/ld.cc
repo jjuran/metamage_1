@@ -279,6 +279,9 @@ namespace tool
 	
 	static ProductType gProductType = kProductTool;
 	
+	static const char* gFileType    = NULL;
+	static const char* gFileCreator = NULL;
+	
 	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name )
 	{
 		FSSpec linkMap = file;
@@ -445,14 +448,12 @@ namespace tool
 						
 						break;
 					
-					case 'c':
 					case 't':
-						if ( arg[2] == '\0' )
-						{
-							command_args.push_back(    arg  );
-							command_args.push_back( *++argv );
-						}
-						
+						gFileType = *++argv;
+						break;
+					
+					case 'c':
+						gFileCreator = *++argv;
 						break;
 					
 					case 'r':
@@ -548,23 +549,23 @@ namespace tool
 						throw N::EOFErr();
 					}
 					
-					::OSType type = 0;
+					std::string type   ( pkgInfo.begin(),     pkgInfo.begin() + 4 );
+					std::string creator( pkgInfo.begin() + 4, pkgInfo.begin() + 8 );
 					
-					// FIXME:  Byte-swap
-					std::copy( pkgInfo.begin(), pkgInfo.begin() + sizeof 'Type', (char*) &type );
+					gFileType    = store_string( type    );
+					gFileCreator = store_string( creator );
 					
-					switch ( type )
+					N::OSType typeCode = NN::Convert< N::OSType >( type );
+					
+					switch ( typeCode )
 					{
 						case 'APPL':
 							gProductType = kProductApp;
 							break;
 						
 						case 'INIT':
+						case 'DRVR':
 							gProductType = kProductCodeResource;
-							break;
-						
-						case 'Wish':
-							gProductType = kProductTool;
 							break;
 						
 						default:
@@ -677,10 +678,8 @@ namespace tool
 					command.push_back( store_string( output_name ) );
 				}
 				
-				command.push_back( "-t"   );
-				command.push_back( "Wish" );
-				command.push_back( "-c"   );
-				command.push_back( "Poof" );
+				gFileType    = "Wish";
+				gFileCreator = "Poof";
 				
 				break;
 			
@@ -703,6 +702,18 @@ namespace tool
 				command.push_back( arch == arch_m68k ? "code" : "off" );
 				
 				break;
+		}
+		
+		if ( gFileType )
+		{
+			command.push_back( "-t"      );
+			command.push_back( gFileType );
+		}
+		
+		if ( gFileCreator )
+		{
+			command.push_back( "-c"         );
+			command.push_back( gFileCreator );
 		}
 		
 		if ( debug )
