@@ -9,6 +9,7 @@
 #endif
 
 // Nucleus
+#include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
@@ -22,7 +23,8 @@
 namespace Nitrogen
 {
 	
-	void RegisterAppleTalkErrors();
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleTalk );
+	
 	
 #if CALL_NOT_IN_CARBON
 	

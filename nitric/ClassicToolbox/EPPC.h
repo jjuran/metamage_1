@@ -8,6 +8,9 @@
 #include <EPPC.h>
 #endif
 
+// Nucleus
+#include "Nucleus/ErrorsRegistered.h"
+
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_PPCTOOLBOX_H
 #include "ClassicToolbox/PPCToolbox.h"
@@ -17,7 +20,8 @@
 namespace Nitrogen
 {
 	
-	void RegisterHighLevelEventManagerErrors();
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( HighLevelEventManager );
+	
 	
 	using ::TargetID;
 	

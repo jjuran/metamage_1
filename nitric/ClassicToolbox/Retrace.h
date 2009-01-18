@@ -11,6 +11,9 @@
 #include <Retrace.h>
 #endif
 
+// Nucleus
+#include "Nucleus/ErrorsRegistered.h"
+
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -23,7 +26,8 @@
 namespace Nitrogen
 {
 	
-	void RegisterVerticalRetraceManagerErrors();
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( VerticalRetraceManager );
+	
 	
 #if CALL_NOT_IN_CARBON
 	

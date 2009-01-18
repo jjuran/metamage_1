@@ -12,6 +12,8 @@
 #endif
 
 // Nucleus
+#include "Nucleus/ErrorsRegistered.h"
+
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
@@ -25,11 +27,8 @@
 namespace Nitrogen
 {
 	
-	class SerialDriverErrorsRegistrationDependency
-	{
-		public:
-			SerialDriverErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( SerialDriver );
+	
 	
 #if CALL_NOT_IN_CARBON
 	

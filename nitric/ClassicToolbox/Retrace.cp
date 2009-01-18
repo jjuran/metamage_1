@@ -9,6 +9,26 @@
 namespace Nitrogen
 {
 	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( VerticalRetraceManager )
+	
+	
+	static void RegisterVerticalRetraceManagerErrors();
+	
+	
+#pragma force_active on
+	
+	class VerticalRetraceManagerErrorsRegistration
+	{
+		public:
+			VerticalRetraceManagerErrorsRegistration()  { RegisterVerticalRetraceManagerErrors(); }
+	};
+	
+	static VerticalRetraceManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
+	
+	
 #if CALL_NOT_IN_CARBON
 	
 	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )

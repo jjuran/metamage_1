@@ -12,6 +12,26 @@
 namespace Nitrogen
 {
 	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( AppleTalk )
+	
+	
+	static void RegisterAppleTalkErrors();
+	
+	
+#pragma force_active on
+	
+	class AppleTalkErrorsRegistration
+	{
+		public:
+			AppleTalkErrorsRegistration()  { RegisterAppleTalkErrors(); }
+	};
+	
+	static AppleTalkErrorsRegistration theRegistration;
+	
+#pragma force_active reset
+	
+	
 	void RegisterAppleTalkErrors()
 	{
 		RegisterOSStatus< paramErr  >();

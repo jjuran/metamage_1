@@ -9,14 +9,14 @@
 namespace Nitrogen
 {
 	
-	SerialDriverErrorsRegistrationDependency::SerialDriverErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( SerialDriver )
 	
 	
 	static void RegisterSerialDriverErrors();
 	
+	
+#pragma force_active on
 	
 	class SerialDriverErrorsRegistration
 	{
@@ -25,6 +25,8 @@ namespace Nitrogen
 	};
 	
 	static SerialDriverErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 #if CALL_NOT_IN_CARBON

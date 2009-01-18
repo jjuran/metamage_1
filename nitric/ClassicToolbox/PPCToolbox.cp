@@ -9,19 +9,36 @@
 #include "ClassicToolbox/PPCToolbox.h"
 
 // Nitrogen
-#include "Nucleus/OnlyOnce.h"
 #include "Nitrogen/OSStatus.h"
 
 
 namespace Nitrogen
 {
 	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( PPCToolbox )
+	
+	
+	static void RegisterPPCToolboxErrors();
+	
+	
+#pragma force_active on
+	
+	class PPCToolboxErrorsRegistration
+	{
+		public:
+			PPCToolboxErrorsRegistration()  { RegisterPPCToolboxErrors(); }
+	};
+	
+	static PPCToolboxErrorsRegistration theRegistration;
+	
+#pragma force_active reset
+	
+	
 #if CALL_NOT_IN_CARBON
 	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )
 	{
-		Nucleus::OnlyOnce< RegisterPPCToolboxErrors >();
-		
 		ThrowOSStatus( ::IPCListPortsSync( &pb ) );
 	}
 	

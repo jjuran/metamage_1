@@ -15,6 +15,7 @@
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_ID_H
 #include "Nucleus/ID.h"
 #endif
@@ -42,7 +43,8 @@ enum
 namespace Nitrogen
 {
 	
-	void RegisterCommunicationResourceManagerErrors();
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CommunicationResourceManager );
+	
 	
 #if CALL_NOT_IN_CARBON
 	

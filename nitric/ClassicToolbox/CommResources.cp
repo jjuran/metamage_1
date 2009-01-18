@@ -9,6 +9,26 @@
 namespace Nitrogen
 {
 	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( CommunicationResourceManager )
+	
+	
+	static void RegisterCommunicationResourceManagerErrors();
+	
+	
+#pragma force_active on
+	
+	class CommunicationResourceManagerErrorsRegistration
+	{
+		public:
+			CommunicationResourceManagerErrorsRegistration()  { RegisterCommunicationResourceManagerErrors(); }
+	};
+	
+	static CommunicationResourceManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
+	
+	
 #if CALL_NOT_IN_CARBON
 	
 	void CRMAttributesDisposer::Dispose( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )

@@ -19,8 +19,6 @@ namespace Nitrogen
 	
 	void ZeroScrap()
 	{
-		(void) ScrapManagerErrorsRegistrationDependency();
-		
 		ThrowOSStatus( ::ZeroScrap() );
 	}
 	

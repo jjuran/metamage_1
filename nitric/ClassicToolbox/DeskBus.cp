@@ -12,14 +12,14 @@
 namespace Nitrogen
 {
 	
-	ADBManagerErrorsRegistrationDependency::ADBManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ADBManager )
 	
 	
 	static void RegisterADBManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ADBManagerErrorsRegistration
 	{
@@ -28,6 +28,8 @@ namespace Nitrogen
 	};
 	
 	static ADBManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum )

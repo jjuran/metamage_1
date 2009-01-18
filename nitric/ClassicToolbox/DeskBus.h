@@ -16,6 +16,7 @@
 #endif
 
 // Nucleus
+#include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_ID_H
 #include "Nucleus/ID.h"
 #endif
@@ -32,11 +33,8 @@
 namespace Nitrogen
 {
 	
-	class ADBManagerErrorsRegistrationDependency
-	{
-		public:
-			ADBManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ADBManager );
+	
 	
 	typedef Nucleus::ID< struct ADBAddress_Tag, ADBAddress >::Type ADBAddress;
 	

@@ -18,7 +18,8 @@
 #include <algorithm>
 #include <string>
 
-// Nucleus
+// NucleusNucleus
+#include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_ID_H
 #include "Nucleus/ID.h"
 #endif
@@ -40,7 +41,8 @@
 namespace Nitrogen
 {
 	
-	void RegisterPPCToolboxErrors();
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( PPCToolbox );
+	
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
