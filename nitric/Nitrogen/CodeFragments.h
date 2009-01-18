@@ -64,61 +64,76 @@ namespace Nitrogen
 	
 	static const ResID kCFragResourceID = ResID( ::kCFragResourceID );
 	
-	typedef Nucleus::Selector< class CFragArchitecture_Tag, ::CFragArchitecture >::Type CFragArchitecture;
-	
-	static const CFragArchitecture kPowerPCCFragArch     = CFragArchitecture( ::kPowerPCCFragArch     );
-	static const CFragArchitecture kMotorola68KCFragArch = CFragArchitecture( ::kMotorola68KCFragArch );
-	static const CFragArchitecture kAnyCFragArch         = CFragArchitecture( ::kAnyCFragArch         );
-	
-#if TARGET_CPU_PPC || TARGET_CPU_68K
-	
-	static const CFragArchitecture kCompiledCFragArch    = CFragArchitecture( ::kCompiledCFragArch    );
-	
-#endif
+	enum CFragArchitecture
+	{
+		kPowerPCCFragArch     = ::kPowerPCCFragArch,
+		kMotorola68KCFragArch = ::kMotorola68KCFragArch,
+		kAnyCFragArch         = ::kAnyCFragArch,
+		
+	#if TARGET_CPU_PPC || TARGET_CPU_68K
+		
+		kCompiledCFragArch    = ::kCompiledCFragArch,
+		
+	#endif
+		
+		kCFragArchitecture_Max = Nucleus::Enumeration_Traits< ::CFragArchitecture >::max
+	};
 	
 	using ::CFragVersionNumber;
 	
-	typedef Nucleus::Selector< class CFragUsage_Tag, ::CFragUsage >::Type CFragUsage;
+	enum CFragUsage
+	{
+		kImportLibraryCFrag   = ::kImportLibraryCFrag,
+		kApplicationCFrag     = ::kApplicationCFrag,
+		kDropInAdditionCFrag  = ::kDropInAdditionCFrag,
+		kStubLibraryCFrag     = ::kStubLibraryCFrag,
+		kWeakStubLibraryCFrag = ::kWeakStubLibraryCFrag,
+		
+		kCFragUsage_Max = Nucleus::Enumeration_Traits< ::CFragUsage >::max
+	};
 	
-	static const CFragUsage kImportLibraryCFrag   = CFragUsage( ::kImportLibraryCFrag   );
-	static const CFragUsage kApplicationCFrag     = CFragUsage( ::kApplicationCFrag     );
-	static const CFragUsage kDropInAdditionCFrag  = CFragUsage( ::kDropInAdditionCFrag  );
-	static const CFragUsage kStubLibraryCFrag     = CFragUsage( ::kStubLibraryCFrag     );
-	static const CFragUsage kWeakStubLibraryCFrag = CFragUsage( ::kWeakStubLibraryCFrag );
-	
-	typedef Nucleus::Selector< class CFragLocatorKind_Tag, ::CFragLocatorKind >::Type CFragLocatorKind;
-	
-	static const CFragLocatorKind kMemoryCFragLocator        = CFragLocatorKind( ::kMemoryCFragLocator        );
-	static const CFragLocatorKind kDataForkCFragLocator      = CFragLocatorKind( ::kDataForkCFragLocator      );
-	static const CFragLocatorKind kResourceCFragLocator      = CFragLocatorKind( ::kResourceCFragLocator      );
-	static const CFragLocatorKind kNamedFragmentCFragLocator = CFragLocatorKind( ::kNamedFragmentCFragLocator );
-	static const CFragLocatorKind kCFBundleCFragLocator      = CFragLocatorKind( ::kCFBundleCFragLocator      );
-	
-#if !TARGET_RT_MAC_MACHO
-	
-	static const CFragLocatorKind kCFBundleIntCFragLocator   = CFragLocatorKind( ::kCFBundleIntCFragLocator   );
-	
-#endif
+	enum CFragLocatorKind
+	{
+		kMemoryCFragLocator        = ::kMemoryCFragLocator,
+		kDataForkCFragLocator      = ::kDataForkCFragLocator,
+		kResourceCFragLocator      = ::kResourceCFragLocator,
+		kNamedFragmentCFragLocator = ::kNamedFragmentCFragLocator,
+		kCFBundleCFragLocator      = ::kCFBundleCFragLocator,
+		
+	#if !TARGET_RT_MAC_MACHO
+		
+		kCFBundleIntCFragLocator   = ::kCFBundleIntCFragLocator,
+		
+	#endif
+		
+		kCFragLocatorKind_Max = Nucleus::Enumeration_Traits< ::CFragLocatorKind >::max
+	};
 	
 	using ::CFragConnectionID;
 	
-	typedef Nucleus::Flag< class CFragLoadOptions_Tag, ::CFragLoadOptions >::Type CFragLoadOptions;
+	enum CFragLoadOptions
+	{
+		kReferenceCFrag   = ::kReferenceCFrag,
+		kFindCFrag        = ::kFindCFrag,
+		kPrivateCFragCopy = ::kPrivateCFragCopy,
+		
+		kCFragLoadOptions_Max = Nucleus::Enumeration_Traits< ::CFragLoadOptions >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( CFragLoadOptions )
 	
-	static const CFragLoadOptions kReferenceCFrag   = CFragLoadOptions( ::kReferenceCFrag   );
-	static const CFragLoadOptions kFindCFrag        = CFragLoadOptions( ::kFindCFrag        );
-	static const CFragLoadOptions kPrivateCFragCopy = CFragLoadOptions( ::kPrivateCFragCopy );
-	
 	static const void* const kUnresolvedCFragSymbolAddress = NULL;
 	
-	typedef Nucleus::Selector< class CFragSymbolClass_Tag, ::CFragSymbolClass >::Type CFragSymbolClass;
-	
-	static const CFragSymbolClass kCodeCFragSymbol    = CFragSymbolClass( ::kCodeCFragSymbol    );
-	static const CFragSymbolClass kDataCFragSymbol    = CFragSymbolClass( ::kDataCFragSymbol    );
-	static const CFragSymbolClass kTVectorCFragSymbol = CFragSymbolClass( ::kTVectorCFragSymbol );
-	static const CFragSymbolClass kTOCCFragSymbol     = CFragSymbolClass( ::kTOCCFragSymbol     );
-	static const CFragSymbolClass kGlueCFragSymbol    = CFragSymbolClass( ::kGlueCFragSymbol    );
+	enum CFragSymbolClass
+	{
+		kCodeCFragSymbol    = ::kCodeCFragSymbol,
+		kDataCFragSymbol    = ::kDataCFragSymbol,
+		kTVectorCFragSymbol = ::kTVectorCFragSymbol,
+		kTOCCFragSymbol     = ::kTOCCFragSymbol,
+		kGlueCFragSymbol    = ::kGlueCFragSymbol,
+		
+		kCFragSymbolClass_Max = Nucleus::Enumeration_Traits< ::CFragSymbolClass >::max
+	};
 	
 }
 
