@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_INDEXTYPE_H
 #include "Nucleus/IndexType.h"
-#endif
 
 
 namespace

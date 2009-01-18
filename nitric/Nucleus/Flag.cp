@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
-#endif
 
 
 namespace Nucleus

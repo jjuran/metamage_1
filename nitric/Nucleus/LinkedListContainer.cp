@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_LINKEDLISTCONTAINER_H
 #include "Nucleus/LinkedListContainer.h"
-#endif
 
 
 namespace

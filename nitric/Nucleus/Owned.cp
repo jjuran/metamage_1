@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
 
 
 namespace

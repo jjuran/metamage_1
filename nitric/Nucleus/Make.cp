@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
-#endif
 
 
 namespace

@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_FLATTENER_H
 #include "Nucleus/Flattener.h"
-#endif
 
 
 namespace

@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
 #include "Nucleus/DestructionExceptionPolicy.h"
-#endif
+
 
 namespace Nucleus
   {

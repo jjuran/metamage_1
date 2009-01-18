@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
-#endif
 
 
 namespace

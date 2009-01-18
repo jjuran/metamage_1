@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_CONVERT_H
 #include "Nucleus/Convert.h"
-#endif
 
 
 namespace

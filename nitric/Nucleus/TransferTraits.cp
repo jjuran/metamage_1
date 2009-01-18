@@ -6,9 +6,7 @@
 // Part of the Nitrogen project.
 
 
-#ifndef NUCLEUS_TRANSFERTRAITS_H
 #include "Nucleus/TransferTraits.h"
-#endif
 
 
 namespace

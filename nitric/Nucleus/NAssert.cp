@@ -11,13 +11,12 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
-#endif
 
 // Standard C/C++
 #include <cstdio>
 #include <cstdlib>
+
 
 namespace Nucleus
 {

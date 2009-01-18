@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_DEBUGGING_H
 #include "Nucleus/Debugging.h"
-#endif
 
 
 namespace
