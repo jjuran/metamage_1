@@ -15,8 +15,6 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	using ::InitGraf;
 	
 	Nucleus::Owned< GrafPtr > OpenPort( GrafPtr port );
@@ -30,8 +28,6 @@ namespace Nitrogen
 	using ::InitCPort;
 	
 	inline void CloseCPort( Nucleus::Owned< CGrafPtr > )  {}
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 }
 

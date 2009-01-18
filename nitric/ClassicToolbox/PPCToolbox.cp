@@ -35,8 +35,6 @@ namespace Nitrogen
 #pragma force_active reset
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )
 	{
 		ThrowOSStatus( ::IPCListPortsSync( &pb ) );
@@ -63,8 +61,6 @@ namespace Nitrogen
 		
 		return portInfo;
 	}
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 	void RegisterPPCToolboxErrors()
 	{

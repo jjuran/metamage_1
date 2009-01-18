@@ -25,8 +25,6 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	typedef Nucleus::Selector< struct CSCode_Tag, SInt16 >::Type ControlStatusCode;
 	
 	typedef ControlStatusCode CSCode;
@@ -104,19 +102,13 @@ namespace Nitrogen
 	int Read ( DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
 	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
 	
-#endif
-	
 }
 
 namespace Io
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	using Nitrogen::Read;
 	using Nitrogen::Write;
-	
-#endif
 	
 }
 

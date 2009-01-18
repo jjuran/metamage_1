@@ -29,8 +29,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( VerticalRetraceManager );
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	using ::VBLTask;
 	using ::VBLTaskPtr;
 	
@@ -184,8 +182,6 @@ namespace Nitrogen
 	};
 	
 #endif  // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 }
 

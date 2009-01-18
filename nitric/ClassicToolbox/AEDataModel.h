@@ -15,21 +15,14 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	// Deprecated addressing modes under Carbon
 	static const DescType typeSessionID    = DescType( ::typeSessionID    );
 	static const DescType typeTargetID     = DescType( ::typeTargetID     );
 	static const DescType typeDispatcherID = DescType( ::typeDispatcherID );
 	
-#endif
-	
-   // TargetID is defined for Carbon, but typeTargetID is not.
-#if CALL_NOT_IN_CARBON
+	// TargetID is defined for Carbon, but typeTargetID is not.
 	
 	template <> struct DescType_Traits< typeTargetID > : Nucleus::PodFlattener< TargetID > {};
-	
-#endif
 	
 }
 

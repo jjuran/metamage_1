@@ -15,14 +15,10 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	void ZeroScrap()
 	{
 		ThrowOSStatus( ::ZeroScrap() );
 	}
-	
-#endif
 	
 }
 

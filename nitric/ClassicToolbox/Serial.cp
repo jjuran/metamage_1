@@ -29,8 +29,6 @@ namespace Nitrogen
 #pragma force_active reset
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	template < class Type >
 	Type* CheckNULL( Type* ptr )
 	{
@@ -89,8 +87,6 @@ namespace Nitrogen
 	{
 		Control< kSERDClearXOffFlag >( outputDriverRefNum );
 	}
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 	void RegisterSerialDriverErrors()
 	{

@@ -55,10 +55,6 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
-#endif
-	
 }
 
 #endif

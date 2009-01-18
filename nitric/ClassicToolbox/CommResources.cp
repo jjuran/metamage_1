@@ -29,8 +29,6 @@ namespace Nitrogen
 #pragma force_active reset
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	void CRMAttributesDisposer::Dispose( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )
 	{
 		Map::const_iterator found = map.find( crmDeviceType );
@@ -109,8 +107,6 @@ namespace Nitrogen
 		
 		return result;
 	}
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 	void RegisterCommunicationResourceManagerErrors()
 	{

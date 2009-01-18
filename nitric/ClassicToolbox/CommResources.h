@@ -46,8 +46,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CommunicationResourceManager );
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
@@ -272,9 +270,6 @@ namespace Nitrogen
 	{
 		return CRMResource_Container( crmDeviceType );
 	}
-	
-
-#endif
 	
 }
 

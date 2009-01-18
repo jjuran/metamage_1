@@ -49,8 +49,6 @@ enum
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	using ::CRMIconRecord;
 	using ::CRMIconPtr;
 	using ::CRMIconHandle;
@@ -154,8 +152,6 @@ namespace Nitrogen
 	{
 		return CRMSerialDevice_Container();
 	}
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 }
 

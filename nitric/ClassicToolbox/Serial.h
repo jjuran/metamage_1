@@ -30,8 +30,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( SerialDriver );
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	enum SerConfig
 	{
 		baud150   = ::baud150,
@@ -146,8 +144,6 @@ namespace Nitrogen
 	
 	int Read ( DriverRefNum inputDriverRefNum,        char* data, std::size_t byteCount );
 	int Write( DriverRefNum outputDriverRefNum, const char* data, std::size_t byteCount );
-	
-#endif
 	
 }
 

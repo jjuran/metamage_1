@@ -13,15 +13,11 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	void Eject( ConstStr63Param volName );
 	
 	void Eject( FSVolumeRefNum vRefNum );
 	
 	void MountVol( FSVolumeRefNum driveNumber );
-	
-#endif
 	
 }
 

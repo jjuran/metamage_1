@@ -26,8 +26,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleTalk );
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	using ::EntityName;
 	
 }
@@ -65,8 +63,6 @@ namespace Nitrogen
 		
 		return entityName;
 	}
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 }
 

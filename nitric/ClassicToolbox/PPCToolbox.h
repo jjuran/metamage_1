@@ -224,14 +224,10 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	void IPCListPortsSync( IPCListPortsPBRec& pb );
 	
 	PortInfoRec IPCListPortsSync( const PPCPortRec& name, const LocationNameRec& location );
 	PortInfoRec IPCListPortsSync( const PPCPortRec& name );
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 }
 

@@ -12,8 +12,6 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	static Nucleus::Owned< StringHandle > NewHandleSys( ConstStr255Param str )
 	{
 		std::size_t size = 1 + str[0];
@@ -42,8 +40,6 @@ namespace Nitrogen
 		
 		return result;
 	}
-	
-#endif  // #if CALL_NOT_IN_CARBON
 	
 }
 

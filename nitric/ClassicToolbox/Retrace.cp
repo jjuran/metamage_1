@@ -29,8 +29,6 @@ namespace Nitrogen
 #pragma force_active reset
 	
 	
-#if CALL_NOT_IN_CARBON
-	
 	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )
 	{
 		ThrowOSStatus( ::SlotVInstall( reinterpret_cast< ::QElemPtr >( &vblTask ), slot ) );
@@ -57,8 +55,6 @@ namespace Nitrogen
 	{
 		ThrowOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTask.Release() ) ) );
 	}
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 	void RegisterVerticalRetraceManagerErrors()
 	{

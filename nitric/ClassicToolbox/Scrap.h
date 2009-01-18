@@ -14,12 +14,8 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	// 170
 	void ZeroScrap();
-	
-#endif
 	
 }
 

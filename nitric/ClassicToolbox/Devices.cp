@@ -14,8 +14,6 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	Nucleus::Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
 		SInt16 result;
@@ -94,8 +92,6 @@ namespace Nitrogen
 		
 		return io.ioActCount;
 	}
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 }
 

@@ -9,8 +9,6 @@
 namespace Nitrogen
 {
 	
-#if CALL_NOT_IN_CARBON
-	
 	void Eject( ConstStr63Param volName )
 	{
 		ThrowOSStatus( ::Eject( volName, 0 ) );
@@ -29,8 +27,6 @@ namespace Nitrogen
 		
 		ThrowOSStatus( ::PBMountVol( &pb ) );
 	}
-	
-#endif  // CALL_NOT_IN_CARBON
 	
 }
 
