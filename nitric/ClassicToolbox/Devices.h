@@ -34,6 +34,8 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
+#if CALL_NOT_IN_CARBON
+	
 	template <> struct Disposer< Nitrogen::DriverRefNum > : public std::unary_function< Nitrogen::DriverRefNum, void >,
 	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
@@ -44,6 +46,8 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::CloseDriver( driverRefNum ) );
 		}
 	};
+	
+#endif
 	
 }
 
