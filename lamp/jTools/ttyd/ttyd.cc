@@ -11,7 +11,13 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/select.hh"
+#include "POSeven/functions/setsid.hh"
 #include "POSeven/functions/signal.hh"
+#include "POSeven/functions/execv.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/_exit.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -28,10 +34,10 @@ namespace tool
 	
 	static void sigchld_handler( int )
 	{
-		_exit( 0 );
+		p7::_exit( p7::exit_success );
 	}
 	
-	static int Spawn()
+	static p7::fd_t Spawn()
 	{
 		int fds[2];
 		
@@ -40,7 +46,7 @@ namespace tool
 		int master = fds[0];
 		int slave  = fds[1];
 		
-		pid_t pid = vfork();
+		p7::pid_t pid = p7::vfork();
 		
 		if ( pid == 0 )
 		{
@@ -55,32 +61,20 @@ namespace tool
 				close( slave );
 			}
 			
-			int sid = setsid();  // New session
+			p7::pid_t sid = p7::setsid();  // New session
 			
-			if ( sid < 0 )
-			{
-				_exit( EXIT_FAILURE );
-			}
-			
-			int result = ioctl( STDIN_FILENO, TIOCSCTTY, NULL );  // Reattach to terminal
-			
-			if ( result < 0 )
-			{
-				_exit( EXIT_FAILURE );
-			}
+			p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
 			
 			const char* login_argv[] = { "/bin/login", NULL };
 			
-			execv( login_argv[0], login_argv );
-			
-			_exit( 127 );
+			p7::execv( login_argv );
 		}
 		
 		close( slave );
 		
 		dup2( STDOUT_FILENO, STDERR_FILENO );
 		
-		return master;
+		return p7::fd_t( master );
 	}
 	
 	static void Serve( p7::fd_t master )
@@ -96,13 +90,13 @@ namespace tool
 		FD_SET( STDIN_FILENO, &fds );
 		FD_SET( master,       &fds );
 		
-		const int max_fd = master;
+		const p7::fd_t max_fd = master;
 		
 		while ( true )
 		{
 			fd_set readfds = fds;
 			
-			int selected = p7::throw_posix_result( select( max_fd + 1, &readfds, NULL, NULL, NULL ) );
+			unsigned selected = p7::select( max_fd + 1, &readfds, NULL, NULL, NULL );
 			
 			if ( FD_ISSET( STDIN_FILENO, &readfds ) )
 			{
@@ -132,20 +126,15 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		int sid = setsid();  // New session
-		
-		if ( sid < 0 )
-		{
-			return 1;
-		}
+		p7::pid_t sid = p7::setsid();  // New session
 		
 		p7::signal( p7::sigchld, sigchld_handler );
 		
-		int master = Spawn();
+		p7::fd_t master = Spawn();
 		
-		Serve( p7::fd_t( master ) );
+		Serve( master );
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
 }
