@@ -123,7 +123,7 @@ namespace tool
 		return result;
 	}
 	
-	static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentInstance >& scriptingComponent )
+	static NN::Owned< N::OSAID > MakeCWDContext( const NN::Shared< N::ComponentInstance >& scriptingComponent )
 	{
 		char stupid_buffer[ 1024 ];
 		char* gotcwd = getcwd( stupid_buffer, 1024 );
@@ -146,7 +146,7 @@ namespace tool
 		               N::kOSAModeCompileIntoContext );
 	}
 	
-	static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source, bool useCWD )
+	static NN::Owned< N::OSAID > CompileSource( const AEDesc& source, bool useCWD )
 	{
 		NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 		
@@ -156,7 +156,7 @@ namespace tool
 		{
 			N::OSAModeFlags mode = N::kOSAModeCompileIntoContext;
 			
-			NN::Owned< N::OSASpec > scriptContext;
+			NN::Owned< N::OSAID > scriptContext;
 			
 			if ( useCWD )
 			{
@@ -189,10 +189,10 @@ namespace tool
 		ReportAndThrowScriptError( scriptingComponent, step );
 		
 		// Not reached
-		return NN::Owned< N::OSASpec >();
+		return NN::Owned< N::OSAID >();
 	}
 	
-	static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
+	static NN::Owned< N::OSAID > LoadCompiledScript( const FSSpec& scriptFile )
 	{
 		using N::fsRdPerm;
 		
@@ -205,7 +205,7 @@ namespace tool
 		                                                     N::ResID( 128 ) ) ) );
 	}
 	
-	static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname, bool useCWD )
+	static NN::Owned< N::OSAID > LoadScriptFile( const char* pathname, bool useCWD )
 	{
 		try
 		{
@@ -291,7 +291,7 @@ namespace tool
 		const_iterator params_begin = freeArgs;
 		const_iterator params_end   = freeArgs + O::FreeArgumentCount();
 		
-		NN::Owned< N::OSASpec > script;
+		NN::Owned< N::OSAID > script;
 		
 		if ( !inlineScriptPieces.empty() )
 		{
@@ -329,9 +329,9 @@ namespace tool
 		
 		try
 		{
-			NN::Owned< N::OSASpec > result = N::OSAExecuteEvent( runEvent, script );
+			NN::Owned< N::OSAID > result = N::OSAExecuteEvent( runEvent, script );
 			
-			if ( result.Get().id != N::kOSANullScript )
+			if ( result.Get() != N::kOSANullScript )
 			{
 				N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 				
@@ -358,7 +358,7 @@ namespace tool
 			
 		#endif
 			
-			ReportAndThrowScriptError( script.Get().component, "execution" );
+			ReportAndThrowScriptError( script.GetDisposer().Component(), "execution" );
 		}
 		
 		return 0;
