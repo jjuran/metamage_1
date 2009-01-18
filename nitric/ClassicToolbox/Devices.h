@@ -12,9 +12,7 @@
 #endif
 
 // Nucleus
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
+#include "Nucleus/Enumeration.h"
 
 // Nitrogen
 #ifndef NITROGEN_FILES_H
@@ -25,7 +23,10 @@
 namespace Nitrogen
 {
 	
-	typedef Nucleus::Selector< struct CSCode_Tag, SInt16 >::Type ControlStatusCode;
+	enum ControlStatusCode
+	{
+		kControlStatusCode_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
 	typedef ControlStatusCode CSCode;
 	

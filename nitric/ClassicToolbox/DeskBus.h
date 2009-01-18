@@ -16,10 +16,8 @@
 #endif
 
 // Nucleus
+#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_INDEXEDCONTAINER_H
 #include "Nucleus/IndexedContainer.h"
 #endif
@@ -36,7 +34,10 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ADBManager );
 	
 	
-	typedef Nucleus::ID< struct ADBAddress_Tag, ADBAddress >::Type ADBAddress;
+	enum ADBAddress
+	{
+		kADBAddress_Max = Nucleus::Enumeration_Traits< ::ADBAddress >::max
+	};
 	
 	// ProcPtrs and UPPs
 	

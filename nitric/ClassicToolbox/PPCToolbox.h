@@ -18,14 +18,9 @@
 #include <algorithm>
 #include <string>
 
-// NucleusNucleus
+// Nucleus
+#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_STR_H
@@ -54,34 +49,61 @@ namespace Nitrogen
 	using ::PortInfoRec;
 	using ::IPCListPortsPBRec;
 	
-	typedef Nucleus::Selector< struct PPCServiceType_Tag,    UInt8  >::Type PPCServiceType;
-	typedef Nucleus::Selector< struct PPCLocationKind_Tag,   SInt16 >::Type PPCLocationKind;
-	typedef Nucleus::Selector< struct PPCPortKinds_Tag,      SInt16 >::Type PPCPortKinds;
-	typedef Nucleus::Selector< struct PPCSessionOrigin_Tag,  UInt8  >::Type PPCSessionOrigin;
-	typedef Nucleus::ID      < struct PPCPortRefNum_Tag,     short  >::Type PPCPortRefNum;
-	typedef Nucleus::ID      < struct PPCSessRefNum_Tag,     long   >::Type PPCSessRefNum;
-	typedef Nucleus::Selector< struct PPCXTIAddressType_Tag, SInt16 >::Type PPCXTIAddressType;
+	enum PPCServiceType
+	{
+		ppcServiceRealTime = ::ppcServiceRealTime,
+		
+		kPPCServiceType_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+	};
 	
-	#pragma mark -
-	#pragma mark ¥ Typed constants ¥
+	enum PPCLocationKind
+	{
+		ppcNoLocation      = ::ppcNoLocation,
+		ppcNBPLocation     = ::ppcNBPLocation,
+		ppcNBPTypeLocation = ::ppcNBPTypeLocation,
+		ppcXTIAddrLocation = ::ppcXTIAddrLocation,
+		
+		kPPCLocationKind_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
-	static const PPCServiceType ppcServiceRealTime = PPCServiceType( ::ppcServiceRealTime );
+	enum PPCPortKinds
+	{
+		ppcByCreatorAndType = ::ppcByCreatorAndType,
+		ppcByString         = ::ppcByString,
+		
+		kPPCPortKinds_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
-	static const PPCLocationKind ppcNoLocation      = PPCLocationKind( ::ppcNoLocation      );
-	static const PPCLocationKind ppcNBPLocation     = PPCLocationKind( ::ppcNBPLocation     );
-	static const PPCLocationKind ppcNBPTypeLocation = PPCLocationKind( ::ppcNBPTypeLocation );
-	static const PPCLocationKind ppcXTIAddrLocation = PPCLocationKind( ::ppcXTIAddrLocation );
+	enum PPCSessionOrigin
+	{
+		ppcLocalOrigin  = ::ppcLocalOrigin,
+		ppcRemoteOrigin = ::ppcRemoteOrigin,
+		
+		kPPCSessionOrigin_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+	};
 	
-	static const PPCPortKinds ppcByCreatorAndType = PPCPortKinds( ::ppcByCreatorAndType );
-	static const PPCPortKinds ppcByString         = PPCPortKinds( ::ppcByString         );
+	enum PPCPortRefNum
+	{
+		kPPCPortRefNum_Max = Nucleus::Enumeration_Traits< short >::max
+	};
 	
-	static const PPCSessionOrigin ppcLocalOrigin  = PPCSessionOrigin( ::ppcLocalOrigin  );
-	static const PPCSessionOrigin ppcRemoteOrigin = PPCSessionOrigin( ::ppcRemoteOrigin );
+	enum PPCSessRefNum
+	{
+		kPPCSessRefNum_Max = Nucleus::Enumeration_Traits< long >::max
+	};
 	
 	static const std::size_t kMaxPPCXTIAddress = ::kMaxPPCXTIAddress;
 	
-	static const PPCXTIAddressType kINETAddrType = PPCXTIAddressType( ::kINETAddrType );
-	static const PPCXTIAddressType kDNSAddrType  = PPCXTIAddressType( ::kDNSAddrType  );
+	enum PPCXTIAddressType
+	{
+		kINETAddrType = ::kINETAddrType,
+		kDNSAddrType  = ::kDNSAddrType,
+		
+		kPPCXTIAddressType_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
+	
+	#pragma mark -
+	#pragma mark ¥ Typed constants ¥
 	
 }
 

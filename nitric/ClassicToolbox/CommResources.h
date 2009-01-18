@@ -15,15 +15,10 @@
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
+#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen
@@ -52,8 +47,15 @@ namespace Nitrogen
 	using ::CRMRec;
 	using ::CRMRecPtr;
 	
-	typedef Nucleus::Selector< struct CRMDeviceType_Tag, long >::Type CRMDeviceType;
-	typedef Nucleus::ID      < struct CRMDeviceID_Tag,   long >::Type CRMDeviceID;
+	enum CRMDeviceType
+	{
+		kCRMDeviceType_Max = Nucleus::Enumeration_Traits< long >::max
+	};
+	
+	enum CRMDeviceID
+	{
+		kCRMDeviceID_Max = Nucleus::Enumeration_Traits< long >::max
+	};
 	
 	typedef struct CRMAttributes_Tag* CRMAttributes;
 	
