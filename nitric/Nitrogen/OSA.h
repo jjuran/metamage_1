@@ -83,7 +83,7 @@ namespace Nitrogen
 		kOSAModeDispatchToDirectObject  = ::kOSAModeDispatchToDirectObject,
 		kOSAModeDontGetDataForArguments = ::kOSAModeDontGetDataForArguments,
 		
-		kOSAModeFlags_Max = Nucleus::Enumeration_Traits< long >::max  // FIXME:  review for 64-bit
+		kOSAModeFlags_Max = Nucleus::Enumeration_Traits< SInt32 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( OSAModeFlags )
