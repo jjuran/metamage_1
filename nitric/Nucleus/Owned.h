@@ -214,8 +214,8 @@ namespace Nucleus
             std::swap( resource,   r.resource   );
            }
 
-         const DisposerType& Disposer() const      { return *this; }
-         DisposerType& Disposer()                  { return *this; }
+         DisposerType const& Disposer() const      { return *this; }
+         DisposerType      & Disposer()            { return *this; }
          
          bool IsLive() const                       { return Tester().IsLive( Get() ); }
          
@@ -280,6 +280,9 @@ namespace Nucleus
          
          const Resource& Get() const                  { return body.Get(); }
          operator const Resource&() const             { return body; }
+         
+         Disposer const& GetDisposer() const          { return body.Disposer(); }
+         Disposer      & GetDisposer()                { return body.Disposer(); }
          
          static Owned Seize( const Body& r )          { return Owned( Seizing(), r ); }
          static Owned Seize( const Resource& r )      { return Owned( Seizing(), r ); }
