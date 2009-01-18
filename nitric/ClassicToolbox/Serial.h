@@ -112,40 +112,6 @@ namespace Nucleus
 	
 }
 
-/*
-namespace Nitrogen
-{
-	
-	struct SerialDevice_Record;
-	
-	typedef SerialDevice_Record* SerialDeviceRef;
-	
-	struct SerialDevice_Record
-	{
-		Nucleus::Owned< DriverRefNum > output;
-		Nucleus::Owned< DriverRefNum > input;
-		
-		SerialDevice_Record()  {}
-		
-		SerialDevice_Record( Nucleus::Owned< DriverRefNum > output,
-		                     Nucleus::Owned< DriverRefNum > input )
-		:
-			output( output ),
-			input ( input  )
-		{}
-		
-	};
-	
-}
-
-namespace Nucleus
-{
-	
-	template <> struct Disposer< Nitrogen::SerialDeviceRef > : public DisposeWithDelete  {};
-	
-}
-*/
-
 namespace Nitrogen
 {
 	
@@ -184,29 +150,9 @@ namespace Nitrogen
 	int Read ( DriverRefNum inputDriverRefNum,        char* data, std::size_t byteCount );
 	int Write( DriverRefNum outputDriverRefNum, const char* data, std::size_t byteCount );
 	
-	/*
-	Nucleus::Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName );
-	
-	void Close_SerialDevice( Nucleus::Owned< SerialDeviceRef > serialDevice );
-	*/
-	
 #endif
 	
 }
-
-/*
-namespace Io
-{
-	
-#if CALL_NOT_IN_CARBON
-	
-	using Nitrogen::Read;
-	using Nitrogen::Write;
-	
-#endif
-	
-}
-*/
 
 #endif
 

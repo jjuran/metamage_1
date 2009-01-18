@@ -90,53 +90,6 @@ namespace Nitrogen
 		Control< kSERDClearXOffFlag >( outputDriverRefNum );
 	}
 	
-	
-	/*
-	static std::string MakeDriverName( const std::string&  portName,
-	                                   const std::string&  directionName )
-	{
-		return std::string( "." ) + portName + directionName;
-	}
-	
-	Nucleus::Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName )
-	{
-		// Open the output driver FIRST, then the input driver.
-		// Open the output driver even if you aren't going to use it.
-		Nucleus::Owned< DriverRefNum > output = OpenDriver( MakeDriverName( portName, "Out" ) );
-		Nucleus::Owned< DriverRefNum > input  = OpenDriver( MakeDriverName( portName, "In"  ) );
-		
-		return Nucleus::Owned< SerialDeviceRef >::Seize( new SerialDevice_Record( output, input ) );
-	}
-	
-	void Close_SerialDevice( Nucleus::Owned< SerialDeviceRef > serialDevice )
-	{
-		// Serial drivers will be closed (and the object deleted) when serialDevice goes out of scope.
-	}
-	
-	int Read( DriverRefNum inputDriverRefNum, char* data, std::size_t byteCount )
-	{
-		CheckNULL( serialDevice );
-		
-		if ( byteCount == 0 )
-		{
-			// Asked to read 0 bytes.  Do nothing and indicate success.
-			return 0;
-		}
-		
-		// Don't try to read more data then is buffered, or we'll hang.
-		byteCount = std::min( byteCount, SerGetBuf( serialDevice ) );
-		
-		if ( byteCount == 0 )
-		{
-			// No data available
-			//throw Io::NoDataPending();  // Io is not available in Nitrogen
-			throw OTNoDataErr();
-		}
-		
-		return Read( serialDevice->input, data, byteCount );
-	}
-	*/
-	
 #endif  // CALL_NOT_IN_CARBON
 	
 	void RegisterSerialDriverErrors()
