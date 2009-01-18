@@ -7,10 +7,8 @@
 #define CLASSICTOOLBOX_DEVICES_H
 
 // Universal Interfaces
-#ifndef __MACH__
 #ifndef __DEVICES__
 #include <Devices.h>
-#endif
 #endif
 
 // Nucleus

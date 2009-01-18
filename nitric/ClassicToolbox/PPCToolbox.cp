@@ -6,10 +6,8 @@
 // *** A-line Processing Instructions ***
 // API: ClassicMacToolbox (not Carbon)
 
-#ifndef __MACH__
 #ifndef CLASSICTOOLBOX_PPCTOOLBOX_H
 #include "ClassicToolbox/PPCToolbox.h"
-#endif
 #endif
 
 // Nitrogen

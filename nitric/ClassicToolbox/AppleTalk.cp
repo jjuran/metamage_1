@@ -3,10 +3,8 @@
 // *** A-line Processing Instructions ***
 // API: ClassicMacToolbox (not Carbon)
 
-#ifndef __MACH__
 #ifndef CLASSICTOOLBOX_APPLETALK_H
 #include "ClassicToolbox/AppleTalk.h"
-#endif
 #endif
 
 // Nitrogen

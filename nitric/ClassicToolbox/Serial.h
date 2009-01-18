@@ -7,10 +7,8 @@
 #define CLASSICTOOLBOX_SERIAL_H
 
 // Universal Interfaces
-#ifndef __MACH__
 #ifndef __SERIAL__
 #include <Serial.h>
-#endif
 #endif
 
 // Nucleus

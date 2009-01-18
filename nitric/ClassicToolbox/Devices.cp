@@ -3,10 +3,8 @@
  *	==========
  */
 
-#ifndef __MACH__
 #ifndef CLASSICTOOLBOX_DEVICES_H
 #include "ClassicToolbox/Devices.h"
-#endif
 #endif
 
 #ifndef NITROGEN_QUICKDRAW_H

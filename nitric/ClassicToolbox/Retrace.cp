@@ -3,10 +3,8 @@
  *	==========
  */
 
-#ifndef __MACH__
 #ifndef CLASSICTOOLBOX_RETRACE_H
 #include "ClassicToolbox/Retrace.h"
-#endif
 #endif
 
 

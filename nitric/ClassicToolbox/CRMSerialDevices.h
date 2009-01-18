@@ -7,10 +7,8 @@
 #define CLASSICTOOLBOX_CRMSERIALDEVICES_HH
 
 // Universal Interfaces
-#ifndef __MACH__
 #ifndef __CRMSERIALDEVICES__
 #include <CRMSerialDevices.h>
-#endif
 #endif
 
 // Standard C++

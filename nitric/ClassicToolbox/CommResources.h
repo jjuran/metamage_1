@@ -7,10 +7,8 @@
 #define CLASSICTOOLBOX_COMMRESOURCES_H
 
 // Universal Interfaces
-#ifndef __MACH__
 #ifndef __COMMRESOURCES__
 #include <CommResources.h>
-#endif
 #endif
 
 // Nucleus
