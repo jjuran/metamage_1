@@ -1217,27 +1217,14 @@ namespace Genie
 		
 		for ( UInt16 i = 1;  ;  ++i )
 		{
-			try
+			::Str255 name;
+			
+			if ( !N::FSpGetCatInfo( dir, i, pb, name, N::FNF_Returns() ) )
 			{
-				::Str255 name;
-				
-				N::FSpGetCatInfo( dir, i, pb, name );
-				
-				unixName = GetUnixName( dir / name );
-			}
-			catch ( const N::FNFErr& err )
-			{
-			#ifdef __MWERKS__
-				
-				if ( err != fnfErr )
-				{
-					throw;
-				}
-				
-			#endif
-				
 				return;
 			}
+			
+			unixName = GetUnixName( dir / name );
 			
 			ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
 			
