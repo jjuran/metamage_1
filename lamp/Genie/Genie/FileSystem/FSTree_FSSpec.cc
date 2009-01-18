@@ -602,10 +602,8 @@ namespace Genie
 			// GetFSSpec() may throw ENOENT for nonexistent long names
 			FSSpec spec = GetFSSpec();
 			
-			try
+			if ( FSpGetCatInfo( spec, paramBlock, Async(), FNF_Returns() ) )
 			{
-				FSpGetCatInfo( spec, paramBlock, Async() );
-				
 				const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 				
 				bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
@@ -613,17 +611,6 @@ namespace Genie
 				bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
 				
 				return isAlias;
-			}
-			catch ( const N::FNFErr& err )
-			{
-			#ifdef __MWERKS__
-				
-				if ( err != fnfErr )
-				{
-					throw;
-				}
-				
-			#endif
 			}
 		}
 		catch ( const p7::errno_t& err )

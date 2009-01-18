@@ -93,7 +93,13 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo( file, paramBlock, Async() );
+		if ( !FSpGetCatInfo( file, paramBlock, Async(), N::FNF_Returns() ) )
+		{
+			// Treating this specially (a) prevents a stack crawl, and
+			// (b) doesn't pass through ThrowOSStatus_Internal(), which
+			// would make life hell if we had set a breakpoint there.
+			throw N::FNFErr();
+		}
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
