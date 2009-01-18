@@ -6,17 +6,12 @@
 // *** A-line Processing Instructions ***
 // API: ClassicMacToolbox (not Carbon)
 
-#ifndef CLASSICTOOLBOX_PPCTOOLBOX_H
 #include "ClassicToolbox/PPCToolbox.h"
-#endif
 
 // Nitrogen
-#ifndef NUCLEUS_ONLYONCE_H
 #include "Nucleus/OnlyOnce.h"
-#endif
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
+
 
 namespace Nitrogen
 {

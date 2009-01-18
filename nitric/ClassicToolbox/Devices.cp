@@ -3,18 +3,12 @@
  *	==========
  */
 
-#ifndef CLASSICTOOLBOX_DEVICES_H
 #include "ClassicToolbox/Devices.h"
-#endif
 
-#ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/QuickDraw.h"
-#endif
 
 // Nucleus
-#ifndef NUCLEUS_SAVED_H
 #include "Nucleus/Saved.h"
-#endif
 
 
 namespace Nitrogen

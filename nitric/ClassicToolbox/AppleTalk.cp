@@ -3,14 +3,11 @@
 // *** A-line Processing Instructions ***
 // API: ClassicMacToolbox (not Carbon)
 
-#ifndef CLASSICTOOLBOX_APPLETALK_H
 #include "ClassicToolbox/AppleTalk.h"
-#endif
 
 // Nitrogen
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
+
 
 namespace Nitrogen
 {

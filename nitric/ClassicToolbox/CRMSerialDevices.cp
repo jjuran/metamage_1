@@ -3,14 +3,10 @@
  *	===================
  */
 
-#ifndef CLASSICTOOLBOX_CRMSERIALDEVICES_HH
 #include "ClassicToolbox/CRMSerialDevices.h"
-#endif
 
 // Nitrogen
-#ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
-#endif
 
 
 namespace Nitrogen

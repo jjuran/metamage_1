@@ -3,9 +3,7 @@
  *	=========
  */
 
-#ifndef CLASSICTOOLBOX_SERIAL_H
 #include "ClassicToolbox/Serial.h"
-#endif
 
 
 namespace Nitrogen

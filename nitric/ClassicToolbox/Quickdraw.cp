@@ -3,9 +3,7 @@
  *	============
  */
 
-#ifndef CLASSICTOOLBOX_QUICKDRAW_H
 #include "ClassicToolbox/Quickdraw.h"
-#endif
 
 
 namespace Nitrogen

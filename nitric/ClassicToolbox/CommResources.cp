@@ -3,9 +3,7 @@
  *	================
  */
 
-#ifndef CLASSICTOOLBOX_COMMRESOURCES_H
 #include "ClassicToolbox/CommResources.h"
-#endif
 
 
 namespace Nitrogen
