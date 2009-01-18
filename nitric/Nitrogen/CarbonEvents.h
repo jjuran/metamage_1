@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -21,9 +21,9 @@
 #include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
 #endif
 
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
+// Nucleus
+#include "Nucleus/Enumeration.h"
+
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
@@ -219,9 +219,11 @@ namespace Nitrogen
    typedef Nucleus::ErrorCode< OSStatus, eventHotKeyExistsErr            > EventHotKeyExistsErr;
    typedef Nucleus::ErrorCode< OSStatus, eventHotKeyInvalidErr           > EventHotKeyInvalidErr;
 
-   typedef Nucleus::Selector< class EventPriority_Tag, ::EventPriority >::Type EventPriority;
-      // EventProrities should be ordered; Selector::Type isn't quite the right choice.
-
+	enum EventPriority
+	{
+		kEventPriority_Max = Nucleus::Enumeration_Traits< ::EventPriority >::max
+	};
+	
    /* To deal with:
    typedef double                          EventTime;
    typedef EventTime                       EventTimeout;
@@ -237,16 +239,25 @@ namespace Nitrogen
    #define kEventDurationForever           ((EventTime)(-1.0))
    */
 
-   typedef Nucleus::Selector< class EventClass_Tag, ::UInt32 >::Type EventClass;    // Doesn't exist in Carbon
-
-   typedef Nucleus::Selector< class CarbonEventKind_Tag, ::UInt32 >::Type CarbonEventKind;
-   
+	enum EventClass
+	{
+		kEventClass_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
+	
+	enum CarbonEventKind
+	{
+		kCarbonEventKind_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
+	
    // This conflicts with Events.h
    //typedef CarbonEventKind     EventKind;
    
    using ::EventTypeSpec;
 
-   typedef Nucleus::Selector< class MouseTrackingResult_Tag, ::MouseTrackingResult >::Type MouseTrackingResult;
+	enum MouseTrackingResult
+	{
+		kMouseTrackingResult_Max = Nucleus::Enumeration_Traits< ::MouseTrackingResult >::max
+	};
 	
 	enum EventParamName
 	{
@@ -288,8 +299,6 @@ namespace Nitrogen
 		kEventParamName_Max = Nucleus::Enumeration_Traits< ::EventParamName >::max
 	};
 
-	//typedef Nucleus::Selector< class EventParamType_Tag, ::EventParamType >::Type EventParamType;
-	
 	typedef DescType EventParamType;
    
    using ::EventLoopRef;

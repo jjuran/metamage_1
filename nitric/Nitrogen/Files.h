@@ -20,9 +20,6 @@
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_INDEXTYPE_H
 #include "Nucleus/IndexType.h"
 #endif
@@ -104,34 +101,59 @@ namespace Nitrogen
 		kFSDirID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
 	};
 	
-   typedef Nucleus::Flag< class FSNodeFlags_Tag, UInt16 >::Type FSNodeFlags;
-   
+	enum FSNodeFlags
+	{
+		kFSNodeFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( FSNodeFlags )
    
-   typedef Nucleus::ID< class FSNodeID_Tag, UInt32 >::Type FSNodeID;
-   
-   typedef Nucleus::ID< class FSVolumeRefNum_Tag, ::FSVolumeRefNum >::Type FSVolumeRefNum;
-
-	typedef Nucleus::Flag< class FSSharingFlags_Tag, UInt8 >::Type FSSharingFlags;
+	enum FSNodeID
+	{
+		kFSNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
+	
+	enum FSVolumeRefNum
+	{
+		kFSVolumeRefNum_Max = Nucleus::Enumeration_Traits< ::FSVolumeRefNum >::max
+	};
+	
+	enum FSSharingFlags
+	{
+		kFSSharingFlags_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSSharingFlags )
 	
    typedef FSSharingFlags FSIOFileAttributes;
    typedef FSSharingFlags FSIOFlAttrib;
    
-	typedef Nucleus::Flag< class FSUserPrivileges_Tag, UInt8 >::Type FSUserPrivileges;
+	enum FSUserPrivileges
+	{
+		kFSUserPrivileges_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSUserPrivileges )
 	
 	typedef FSUserPrivileges FSIOACUser;
 	
-	typedef Nucleus::Flag< class FSIteratorFlags_Tag, ::FSIteratorFlags >::Type FSIteratorFlags;
+	enum FSIteratorFlags
+	{
+		kFSIteratorFlags_Max = Nucleus::Enumeration_Traits< ::FSIteratorFlags >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIteratorFlags )
 	
-	typedef Nucleus::ID< class FSFileRefNum_Tag, SInt16 >::Type FSFileRefNum;
-	typedef Nucleus::ID< class FSForkRefNum_Tag, SInt16 >::Type FSForkRefNum;
-    
+	enum FSFileRefNum
+	{
+		kFSFileRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
+	
+	enum FSForkRefNum
+	{
+		kFSForkRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
+	
 	enum FSIOPermssn
 	{
 		fsCurPerm    = ::fsCurPerm,
@@ -163,13 +185,23 @@ namespace Nitrogen
 	
 	typedef FSIOPosMode FSIOPositioningMode;
 	
-   typedef Nucleus::Flag< class FSAllocationFlags_Tag, ::FSAllocationFlags >::Type FSAllocationFlags;
-  
+	enum FSAllocationFlags
+	{
+		kFSAllocationFlags_Max = Nucleus::Enumeration_Traits< ::FSAllocationFlags >::max
+	};
+	
 	NUCLEUS_DEFINE_FLAG_OPS( FSAllocationFlags )
 	
-   typedef Nucleus::ID< class FSForkIterator_Tag, SInt16 >::Type FSForkIterator;
-
-   typedef Nucleus::Flag< class FSVolumeInfoFlags_Tag, UInt16 >::Type FSVolumeInfoFlags;
+	enum FSForkIterator
+	{
+		kFSForkIterator_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
+	
+	enum FSVolumeInfoFlags
+	{
+		kFSVolumeInfoFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+	};
+	
    typedef FSVolumeInfoFlags FSIOVAtrb;
    typedef FSVolumeInfoFlags FSIOVolumeAttributes;
    
@@ -183,15 +215,25 @@ namespace Nitrogen
 
    typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
    
-   typedef Nucleus::ID< class FSFileSystemID_Tag, UInt16 >::Type FSFileSystemID;
+	enum FSFileSystemID
+	{
+		kFSFileSystemID_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+	};
+	
    typedef FSFileSystemID IOFSID;
    
-	typedef Nucleus::ID< class DriverReferenceNumber_Tag, SInt16 >::Type DriverReferenceNumber;
+	enum DriverReferenceNumber
+	{
+		kDriverReferenceNumber_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
    typedef DriverReferenceNumber DRefNum;
    typedef DriverReferenceNumber DriverRefNum;
 
-   typedef Nucleus::ID< class HFSCatalogNodeID_Tag, UInt32 >::Type HFSCatalogNodeID;
+	enum HFSCatalogNodeID
+	{
+		kHFSCatalogNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
 	
 	using ::HFSUniStr255;
 	using ::CInfoPBRec;

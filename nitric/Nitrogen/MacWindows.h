@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
+// Written 2002-2009 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -14,10 +14,6 @@
 #ifndef NITROGEN_MACWINDOWS_H
 #define NITROGEN_MACWINDOWS_H
 
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
@@ -25,14 +21,14 @@
 #include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
 #endif
 
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
 #ifndef NUCLEUS_LINKEDLISTCONTAINER_H
 #include "Nucleus/LinkedListContainer.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 
 #ifndef NITROGEN_MACTYPES_H
@@ -144,9 +140,15 @@ namespace Nitrogen
 		kWindowPartCode_Max = Nucleus::Enumeration_Traits< ::WindowPartCode >::max
 	};
 	
-	typedef Nucleus::Selector< class PropertyCreator_Tag, ::PropertyCreator >::Type PropertyCreator;
+	enum PropertyCreator
+	{
+		kPropertyCreator_Max = Nucleus::Enumeration_Traits< ::PropertyCreator >::max
+	};
 	
-	typedef Nucleus::Selector< class PropertyTag_Tag, ::PropertyTag >::Type PropertyTag;
+	enum PropertyTag
+	{
+		kPropertyTag_Max = Nucleus::Enumeration_Traits< ::PropertyTag >::max
+	};
 	
 	enum WindowClass
 	{

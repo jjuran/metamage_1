@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2003-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -29,16 +29,23 @@
 #ifndef NITROGEN_MIXEDMODE_H
 #include "Nitrogen/MixedMode.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
+#include "Nucleus/Enumeration.h"
+
 
 namespace Nitrogen
-  {
-   typedef Nucleus::ID< class FMFontFamily_Tag, ::FMFontFamily >::Type FMFontFamily;
-   typedef FMFontFamily FontID;
-    
-   typedef Nucleus::ID< class FMFontStyle_Tag, ::FMFontStyle >::Type FMFontStyle;
-  }
+{
+	
+	enum FMFontFamily
+	{
+		kFMFontFamily_Max = Nucleus::Enumeration_Traits< ::FMFontFamily >::max
+	};
+	
+	enum FMFontStyle
+	{
+		kFMFontStyle_Max = Nucleus::Enumeration_Traits< ::FMFontStyle >::max
+	};
+	
+}
 
 #endif
+

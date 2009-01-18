@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
+// Written 2003-2009 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -52,8 +52,11 @@ namespace Nitrogen
    
 	template <> struct ResType_Traits< rAliasType > : Handle_ResType_Traits< AliasRecord > {};
 	
-   typedef Nucleus::Flag< class MountFlags_Tag, unsigned long >::Type MountFlags;
-   
+	enum MountFlags
+	{
+		kMountFlags_Max = Nucleus::Enumeration_Traits< unsigned long >::max
+	};
+	
 	NUCLEUS_DEFINE_FLAG_OPS( MountFlags )
 	
    using ::AliasHandle;

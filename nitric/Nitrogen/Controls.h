@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -20,6 +20,10 @@
 #ifndef __CONTROLS__
 #include FRAMEWORK_HEADER(HIToolbox,Controls.h)
 #endif
+
+// Nucleus
+#include "Nucleus/Enumeration.h"
+
 #ifndef NITROGEN_MACWINDOWS_H
 #include "Nitrogen/MacWindows.h"
 #endif
@@ -29,9 +33,7 @@
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
+
 
 #ifdef DrawOneControl
    #undef DrawOneControl
@@ -119,7 +121,10 @@ namespace Nitrogen
 		userUPP( theControl, partCode );
 	}
 	
-	typedef Nucleus::Selector< class ControlProcID_Tag, ::SInt16 >::Type ControlProcID;
+	enum ControlProcID
+	{
+		kControlProcID_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
 	// 972
 	ControlRef NewControl( WindowRef         owningWindow,
@@ -224,14 +229,17 @@ namespace Nucleus
   }
 
 namespace Nitrogen
-  {
-   
-	typedef Nucleus::Selector< class ControlDataTag_Tag, ::FourCharCode >::Type ControlDataTag;
+{
 	
-	static const ControlDataTag kControlFontStyleTag = ControlDataTag( ::kControlFontStyleTag );
-	static const ControlDataTag kControlKeyFilterTag = ControlDataTag( ::kControlKeyFilterTag );
-	static const ControlDataTag kControlKindTag      = ControlDataTag( ::kControlKindTag      );
-	static const ControlDataTag kControlSizeTag      = ControlDataTag( ::kControlSizeTag      );
+	enum ControlDataTag
+	{
+		kControlFontStyleTag = ::kControlFontStyleTag,
+		kControlKeyFilterTag = ::kControlKeyFilterTag,
+		kControlKindTag      = ::kControlKindTag,
+		kControlSizeTag      = ::kControlSizeTag,
+		
+		kControlDataTag_Max = Nucleus::Enumeration_Traits< ::FourCharCode >::max
+	};
 	
    template < ::ResType inTagName > struct ControlData_Traits;
 

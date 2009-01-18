@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -25,12 +25,6 @@
 #endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
@@ -76,30 +70,46 @@ inline MenuRef GetMenuRef( MenuID menuID )  { return GetMenuHandle( menuID ); }
 
 #endif
 
+
 namespace Nitrogen
 {
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( MenuManager );
 	
-   typedef Nucleus::Flag< class MenuAttributes_Tag, ::MenuAttributes >::Type MenuAttributes;
-   
-   NUCLEUS_DEFINE_FLAG_OPS( MenuAttributes )
-
-   typedef Nucleus::Flag< class MenuItemAttributes_Tag, ::MenuItemAttributes >::Type MenuItemAttributes;
-   
-   NUCLEUS_DEFINE_FLAG_OPS( MenuItemAttributes )
-   
-   static const MenuItemAttributes kMenuItemAttrIgnoreMeta = MenuItemAttributes( ::kMenuItemAttrIgnoreMeta );
-    
-   typedef Nucleus::Selector< class MenuTrackingMode_Tag, ::MenuTrackingMode >::Type MenuTrackingMode;
-
-   typedef Nucleus::Flag< class MenuEventOptions_Tag, ::MenuEventOptions >::Type MenuEventOptions;
-   
-   NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
-   
-   typedef Nucleus::ID< class MenuID_Tag, ::MenuID >::Type MenuID;
-   
-  }
+	enum MenuAttributes
+	{
+		kMenuAttributes_Max = Nucleus::Enumeration_Traits< ::MenuAttributes >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( MenuAttributes )
+	
+	enum MenuItemAttributes
+	{
+		kMenuItemAttrIgnoreMeta = ::kMenuItemAttrIgnoreMeta,
+		
+		kMenuItemAttributes_Max = Nucleus::Enumeration_Traits< ::MenuItemAttributes >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( MenuItemAttributes )
+	
+	enum MenuTrackingMode
+	{
+		kMenuTrackingMode_Max = Nucleus::Enumeration_Traits< ::MenuTrackingMode >::max
+	};
+	 
+	enum MenuEventOptions
+	{
+		kMenuEventOptions_Max = Nucleus::Enumeration_Traits< ::MenuEventOptions >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
+	
+	enum MenuID
+	{
+		kMenuID_Max = Nucleus::Enumeration_Traits< ::MenuID >::max
+	};
+	
+}
 
 namespace Nucleus
   {
@@ -117,7 +127,10 @@ namespace Nitrogen
 
    using ::MenuItemIndex;
    
-   typedef Nucleus::Selector< class MenuCommand_Tag, ::MenuCommand >::Type MenuCommand;
+	enum MenuCommand
+	{
+		kMenuCommand_Max = Nucleus::Enumeration_Traits< ::MenuCommand >::max
+	};
    
    using ::MenuRef;
   }
@@ -137,15 +150,21 @@ namespace Nitrogen
   {
    /* ... */
    
-   typedef Nucleus::Flag< class MenuItemDataFlags_Tag, ::MenuItemDataFlags >::Type MenuItemDataFlags;
+	enum MenuItemDataFlags
+	{
+		kMenuItemDataFlags_Max = Nucleus::Enumeration_Traits< ::MenuItemDataFlags >::max
+	};
    
    NUCLEUS_DEFINE_FLAG_OPS( MenuItemDataFlags )
    
    using ::MenuItemDataRec;
    using ::MenuItemDataPtr;
    
-   typedef Nucleus::ID< class MenuItemID_Tag, ::MenuItemID >::Type MenuItemID;
-   
+	enum MenuItemID
+	{
+		kMenuItemID_Max = Nucleus::Enumeration_Traits< ::MenuItemID >::max
+	};
+	
    /* ... */
    
    #pragma mark -

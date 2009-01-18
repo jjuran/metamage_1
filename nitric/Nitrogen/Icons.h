@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2004-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -69,9 +69,20 @@ namespace Nitrogen
 	static const ResType kMini8BitData   = ResType( ::kMini8BitData   );
 	
 	
-	typedef Nucleus::Flag< class IconAlignmentType_Tag, ::IconAlignmentType >::Type IconAlignmentType;
-	typedef Nucleus::Flag< class IconTransformType_Tag, ::IconTransformType >::Type IconTransformType;
-	typedef Nucleus::Flag< class IconSelectorValue_Tag, ::IconSelectorValue >::Type IconSelectorValue;
+	enum IconAlignmentType
+	{
+		kIconAlignmentType_Max = Nucleus::Enumeration_Traits< ::IconAlignmentType >::max
+	};
+	
+	enum IconTransformType
+	{
+		kIconTransformType_Max = Nucleus::Enumeration_Traits< ::IconTransformType >::max
+	};
+	
+	enum IconSelectorValue
+	{
+		kIconSelectorValue_Max = Nucleus::Enumeration_Traits< ::IconSelectorValue >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( IconAlignmentType )
 	NUCLEUS_DEFINE_FLAG_OPS( IconTransformType )
@@ -84,7 +95,10 @@ namespace Nitrogen
 	static const IconSelectorValue kSelectorAllAvailableData = IconSelectorValue( ::kSelectorAllAvailableData );
 	
 	
-	typedef Nucleus::ID< class IconLabel_Tag, SInt16 >::Type IconLabel;
+	enum IconLabel
+	{
+		kIconLabel_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
 	// ...
 	
@@ -325,13 +339,19 @@ namespace Nitrogen
 	                      IconTransformType  transform,
 	                      CIconHandle        theCIcon );
 	
-	typedef Nucleus::Flag< class IconServicesUsageFlags_Tag, ::IconServicesUsageFlags >::Type IconServicesUsageFlags;
+	enum IconServicesUsageFlags
+	{
+		kIconServicesNormalUsageFlag = ::kIconServicesNormalUsageFlag,
+		
+		kIconServicesUsageFlags_Max = Nucleus::Enumeration_Traits< ::IconServicesUsageFlags >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( IconServicesUsageFlags )
 	
-	static const IconServicesUsageFlags kIconServicesNormalUsageFlag = IconServicesUsageFlags( ::kIconServicesNormalUsageFlag );
-	
-	typedef Nucleus::Flag< class PlotIconRefFlags_Tag, ::PlotIconRefFlags >::Type PlotIconRefFlags;
+	enum PlotIconRefFlags
+	{
+		kPlotIconRefFlags_Max = Nucleus::Enumeration_Traits< ::PlotIconRefFlags >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( PlotIconRefFlags )
 	

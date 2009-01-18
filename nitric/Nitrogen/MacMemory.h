@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2003-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -375,7 +375,10 @@ namespace Nitrogen
 		return Nitrogen::GetHandleSize( Handle( h ) ) / sizeof (T);
 	}
 	
-	typedef Nucleus::Flag< class HandleFlags_Tag, SInt8 >::Type Handle_Flags;
+	enum Handle_Flags
+	{
+		kHandle_Flags_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+	};
 	
 	// 1253
 	inline Handle_Flags HGetState( Handle h )

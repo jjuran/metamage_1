@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2003-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -33,13 +33,16 @@ namespace Nitrogen
    using ::LongDateTime;
    using ::LongDateRec;
    using ::DateTimeRec;
-
-   typedef Nucleus::Selector< class DateForm_Tag, SInt8 >::Type DateForm;
-   
-   static const DateForm shortDate  = DateForm( ::shortDate  );
-   static const DateForm longDate   = DateForm( ::longDate   );
-   static const DateForm abbrevDate = DateForm( ::abbrevDate );
-   
+	
+	enum DateForm
+	{
+		shortDate  = ::shortDate,
+		longDate   = ::longDate,
+		abbrevDate = ::abbrevDate,
+		
+		kDateForm_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+	};
+	
    typedef UInt32 DateTime;
    
    // 260

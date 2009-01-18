@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -29,9 +29,6 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
@@ -45,18 +42,31 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ResourceManager );
 	
 	
-	typedef Nucleus::ID< class ResFileRefNum_Tag, ::ResFileRefNum >::Type ResFileRefNum;
+	enum ResFileRefNum
+	{
+		kResFileNotOpened = ::kResFileNotOpened,
+		
+		kResFileRefNum_Max = Nucleus::Enumeration_Traits< ::ResFileRefNum >::max
+	};
 	
-	static const ResFileRefNum kResFileNotOpened = ResFileRefNum( ::kResFileNotOpened );
+	enum ResID
+	{
+		kResID_Max = Nucleus::Enumeration_Traits< ::ResID >::max
+	};
 	
-	typedef Nucleus::ID< class ResID_Tag, ::ResID >::Type ResID;
 	typedef ResID ResourceID;
 	
-	typedef Nucleus::Flag< class ResAttributes_Tag, ::ResAttributes >::Type ResAttributes;
+	enum ResAttributes
+	{
+		kResAttributes_Max = Nucleus::Enumeration_Traits< ::ResAttributes >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ResAttributes )
 	
-	typedef Nucleus::Flag< class ResFileAttributes_Tag, ::ResFileAttributes >::Type ResFileAttributes;
+	enum ResFileAttributes
+	{
+		kResFileAttributes_Max = Nucleus::Enumeration_Traits< ::ResFileAttributes >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ResFileAttributes )
 	

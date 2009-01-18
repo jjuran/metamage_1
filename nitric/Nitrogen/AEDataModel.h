@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -27,17 +27,11 @@
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 
 #ifndef NITROGEN_AEKEYWORD_H
@@ -192,10 +186,21 @@ namespace Nitrogen
 		kAETransactionID_Max = Nucleus::Enumeration_Traits< ::AETransactionID >::max
 	};
 	
-	typedef Nucleus::Selector< class AEEventClass_Tag, ::AEEventClass >::Type  AEEventClass;
-	typedef Nucleus::Selector< class AEEventID_Tag,    ::AEEventID    >::Type  AEEventID;
+	enum AEEventClass
+	{
+		kAEEventClass_Max = Nucleus::Enumeration_Traits< ::AEEventClass >::max
+	};
 	
-	typedef Nucleus::Selector< class AEEnumerated_Tag, UInt32 >::Type AEEnumerated;
+	enum AEEventID
+	{
+		kAEEventID_Max = Nucleus::Enumeration_Traits< ::AEEventID >::max
+	};
+	
+	enum AEEnumerated
+	{
+		kAEEnumerated_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
+	
 	typedef AEEnumerated AEEnumeration;
 	typedef AEEnumerated AEKeyForm;
 	

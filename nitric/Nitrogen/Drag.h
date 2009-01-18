@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2004-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -35,14 +35,8 @@
 #ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/Quickdraw.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -58,35 +52,65 @@ namespace Nitrogen
 	
    
    using ::DragRef;
-
-   typedef Nucleus::ID< class DragItemRef_Tag, ::DragItemRef >::Type DragItemRef;
-   
-   typedef Nucleus::Selector< class FlavorType_Tag, ::FlavorType >::Type FlavorType;
-   
-   typedef Nucleus::Flag< class DragAttributes_Tag, ::DragAttributes >::Type DragAttributes;
-   
+	
+	enum DragItemRef
+	{
+		kDragItemRef_Max = Nucleus::Enumeration_Traits< ::DragItemRef >::max
+	};
+	
+	enum FlavorType
+	{
+		kFlavorType_Max = Nucleus::Enumeration_Traits< ::FlavorType >::max
+	};
+	
+	enum DragAttributes
+	{
+		kDragAttributes_Max = Nucleus::Enumeration_Traits< ::DragAttributes >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( DragAttributes )
    
-   typedef Nucleus::Flag< class DragBehaviors_Tag, ::DragBehaviors >::Type DragBehaviors;
-   
+	enum DragBehaviors
+	{
+		kDragBehaviors_Max = Nucleus::Enumeration_Traits< ::DragBehaviors >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( DragBehaviors )
    
-   typedef Nucleus::Flag< class DragImageFlags_Tag, ::DragImageFlags >::Type DragImageFlags;
-   
+	enum DragImageFlags
+	{
+		kDragImageFlags_Max = Nucleus::Enumeration_Traits< ::DragImageFlags >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( DragImageFlags )
     
-   typedef Nucleus::Selector< class DragRegionMessage_Tag, ::DragRegionMessage >::Type DragRegionMessage;
-    
-   typedef Nucleus::Selector< class ZoomAcceleration_Tag, ::ZoomAcceleration >::Type ZoomAcceleration;
-   
-   typedef Nucleus::Flag< class FlavorFlags_Tag, ::FlavorFlags >::Type FlavorFlags;
-   
+	enum DragRegionMessage
+	{
+		kDragRegionMessage_Max = Nucleus::Enumeration_Traits< ::DragRegionMessage >::max
+	};
+	
+	enum ZoomAcceleration
+	{
+		kZoomAcceleration_Max = Nucleus::Enumeration_Traits< ::ZoomAcceleration >::max
+	};
+	
+	enum FlavorFlags
+	{
+		kFlavorFlags_Max = Nucleus::Enumeration_Traits< ::FlavorFlags >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( FlavorFlags )
     
-   typedef Nucleus::Selector< class DragTrackingMessage_Tag, ::DragTrackingMessage >::Type DragTrackingMessage;
-   
-   typedef Nucleus::Flag< class DragActions_Tag, ::DragActions >::Type DragActions;
-   
+	enum DragTrackingMessage
+	{
+		kDragTrackingMessage_Max = Nucleus::Enumeration_Traits< ::DragTrackingMessage >::max
+	};
+	
+	enum DragActions
+	{
+		kDragActions_Max = Nucleus::Enumeration_Traits< ::DragActions >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( DragActions )
    
    using ::HFSFlavor;

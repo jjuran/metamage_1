@@ -26,17 +26,11 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_OVERLOADED_MATH_H
 #include "Nucleus/Overloaded_math.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"

@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -23,9 +23,6 @@
 
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -50,16 +47,25 @@ namespace Nitrogen
 	
 	using ::Movie;
 	
-	typedef Nucleus::ID< class MovieFileRefNum_Tag, SInt16 >::Type MovieFileRefNum;
+	enum MovieFileRefNum
+	{
+		kMovieFileRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
-	typedef Nucleus::Flag< class NewMovieFlags_Tag, SInt16 >::Type NewMovieFlags;
+	enum NewMovieFlags
+	{
+		kNewMovieFlags_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( NewMovieFlags )
 	
 	// Opaque pointer type
 	typedef struct FullScreenContext* FullScreenContextPtr;
 	
-	typedef Nucleus::Flag< class FullScreenFlags_Tag, long >::Type FullScreenFlags;
+	enum FullScreenFlags
+	{
+		kFullScreenFlags_Max = Nucleus::Enumeration_Traits< long >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FullScreenFlags )
 	

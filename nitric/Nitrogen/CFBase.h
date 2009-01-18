@@ -3,7 +3,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -24,17 +24,18 @@
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
 
 namespace Nitrogen
   {
-   typedef Nucleus::ID< class CFTypeID_Tag, ::CFTypeID >::Type CFTypeID;
-
+	
+	enum CFTypeID
+	{
+		kCFTypeID_Max = Nucleus::Enumeration_Traits< ::CFTypeID >::max
+	};
+	
    template < class T > struct CFType_Traits;
    
    template < class CF, ::CFTypeID (*getTypeID)() >
@@ -102,12 +103,18 @@ namespace Nitrogen {
    template < class T > bool operator==( T const *const& a, const CFTypeRef& b )   { return CFTypeRef( a ) == b; }
    template < class T > bool operator!=( T const *const& a, const CFTypeRef& b )   { return CFTypeRef( a ) != b; }
 
-   typedef Nucleus::Flag< class CFOptionFlags_Tag, ::CFOptionFlags >::Type CFOptionFlags;
-   
+	enum CFOptionFlags
+	{
+		kCFOptionFlags_Max = Nucleus::Enumeration_Traits< ::CFOptionFlags >::max
+	};
+	
    NUCLEUS_DEFINE_FLAG_OPS( CFOptionFlags )
    
-   typedef Nucleus::ID< class CFHashCode_Tag, ::CFHashCode >::Type CFHashCode;
-   
+	enum CFHashCode
+	{
+		kCFHashCode_Max = Nucleus::Enumeration_Traits< ::CFHashCode >::max
+	};
+	
    using ::CFStringRef;
    using ::CFAllocatorRef;
    

@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2005-2006 by Joshua Juran.
+// Written 2005-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -20,21 +20,12 @@
 #endif
 
 // Nucleus
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
+#include "Nucleus/Enumeration.h"
+#include "Nucleus/ErrorsRegistered.h"
 
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
-
-#include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_H
@@ -145,19 +136,40 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	typedef Nucleus::ID< class OTSequence_Tag, ::OTSequence >::Type OTSequence;
+	enum OTSequence
+	{
+		kOTSequence_Max = Nucleus::Enumeration_Traits< ::OTSequence >::max
+	};
 	
-	typedef Nucleus::ID< class OTNameID_Tag, ::OTNameID >::Type OTNameID;
+	enum OTNameID
+	{
+		kOTNameID_Max = Nucleus::Enumeration_Traits< ::OTNameID >::max
+	};
 	
-	typedef Nucleus::Selector< class OTReason_Tag, ::OTReason >::Type OTReason;
+	enum OTReason
+	{
+		kOTReason_Max = Nucleus::Enumeration_Traits< ::OTReason >::max
+	};
 	
-	typedef Nucleus::Selector< class OTCommand_Tag, ::OTCommand >::Type OTCommand;
+	enum OTCommand
+	{
+		kOTCommand_Max = Nucleus::Enumeration_Traits< ::OTCommand >::max
+	};
 	
-	typedef Nucleus::Flag< class OTOpenFlags_Tag, ::OTOpenFlags >::Type OTOpenFlags;
+	enum OTOpenFlags
+	{
+		kOTOpenFlags_Max = Nucleus::Enumeration_Traits< ::OTOpenFlags >::max
+	};
 	
-	typedef Nucleus::Selector< class OTUnixErr_Tag, ::OTUnixErr >::Type OTUnixErr;
+	enum OTUnixErr
+	{
+		kOTUnixErr_Max = Nucleus::Enumeration_Traits< ::OTUnixErr >::max
+	};
 	
-	typedef Nucleus::Selector< class OTXTIErr_Tag, ::OTXTIErr >::Type OTXTIErr;
+	enum OTXTIErr
+	{
+		kOTXTIErr_Max = Nucleus::Enumeration_Traits< ::OTXTIErr >::max
+	};
 	
 	// ...
 	

@@ -3,7 +3,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2004-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -21,12 +21,7 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
+#include "Nucleus/Enumeration.h"
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
@@ -48,20 +43,35 @@ namespace Nitrogen
    static const RegionCode kTextRegionDontCare = RegionCode( ::kTextRegionDontCare );
    static const ScriptCode kTextScriptDontCare = ScriptCode( ::kTextScriptDontCare );
    
-   typedef Nucleus::Selector< class TextEncodingBase_Tag, ::TextEncodingBase >::Type TextEncodingBase;
-
-   typedef Nucleus::Selector< class TextEncodingVariant_Tag, ::TextEncodingVariant >::Type TextEncodingVariant;
-   
-   static const TextEncodingVariant kTextEncodingDefaultVariant = TextEncodingVariant( ::kTextEncodingDefaultVariant );
-
-   typedef Nucleus::Selector< class TextEncodingFormat_Tag, ::TextEncodingFormat >::Type TextEncodingFormat;
-
-   typedef Nucleus::ID< class TextEncoding_Tag, ::TextEncoding >::Type TextEncoding;
-   
-   static const TextEncoding kTextEncodingUnknown = TextEncoding( ::kTextEncodingUnknown );
-
-   typedef Nucleus::Selector< class TextEncodingNameSelector_Tag, ::TextEncodingNameSelector >::Type TextEncodingNameSelector;
-
+	enum TextEncodingBase
+	{
+		kTextEncodingBase_Max = Nucleus::Enumeration_Traits< ::TextEncodingBase >::max
+	};
+	
+	enum TextEncodingVariant
+	{
+		kTextEncodingDefaultVariant = ::kTextEncodingDefaultVariant,
+		
+		kTextEncodingVariant_Max = Nucleus::Enumeration_Traits< ::TextEncodingVariant >::max
+	};
+	
+	enum TextEncodingFormat
+	{
+		kTextEncodingFormat_Max = Nucleus::Enumeration_Traits< ::TextEncodingFormat >::max
+	};
+	
+	enum TextEncoding
+	{
+		kTextEncodingUnknown = ::kTextEncodingUnknown,
+		
+		kTextEncoding_Max = Nucleus::Enumeration_Traits< ::TextEncoding >::max
+	};
+	
+	enum TextEncodingNameSelector
+	{
+		kTextEncodingNameSelector_Max = Nucleus::Enumeration_Traits< ::TextEncodingNameSelector >::max
+	};
+	
    using ::TextEncodingRun;
    using ::ScriptCodeRun;
   }
@@ -95,18 +105,33 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-   typedef Nucleus::Selector< class UCCharPropertyType_Tag, ::UCCharPropertyType >::Type UCCharPropertyType;
-
-   typedef Nucleus::Selector< class UCCharPropertyValue_Tag, ::UCCharPropertyValue >::Type UCCharPropertyValue;
-   
+	enum UCCharPropertyType
+	{
+		kUCCharPropertyType_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyType >::max
+	};
+	
+	enum UCCharPropertyValue
+	{
+		kUCCharPropertyValue_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+	};
+	
    // UCCharPropertyValue is really three types overloaded: UCCharGenlCategory, UCCharCombiningClass, and UCCharBidiCategory.
    
-      typedef Nucleus::Selector< class UCCharGenlCategory_Tag, ::UCCharPropertyValue >::Type UCCharGenlCategory;
-      
-      typedef Nucleus::Selector< class UCCharCombiningClass_Tag, ::UCCharPropertyValue >::Type UCCharCombiningClass;
-      
-      typedef Nucleus::Selector< class CCharBidiCategory_Tag, ::UCCharPropertyValue >::Type UCCharBidiCategory;
-
+	enum UCCharGenlCategory
+	{
+		kUCCharGenlCategory_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+	};
+	
+	enum UCCharCombiningClass
+	{
+		kUCCharCombiningClass_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+	};
+	  
+	enum UCCharBidiCategory
+	{
+		kUCCharBidiCategory_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+	};
+	
 
    /* TECInfo... */
    

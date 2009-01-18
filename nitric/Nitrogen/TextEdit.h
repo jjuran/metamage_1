@@ -23,9 +23,7 @@
 #include <string>
 
 // Nucleus
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
+#include "Nucleus/Enumeration.h"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_H

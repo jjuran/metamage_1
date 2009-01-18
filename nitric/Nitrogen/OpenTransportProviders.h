@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2005-2006 by Joshua Juran.
+// Written 2005-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -23,14 +23,9 @@
 #include <vector>
 
 // Nucleus
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
+#include "Nucleus/Enumeration.h"
 #ifndef NUCLEUS_INITIALIZE_H
 #include "Nucleus/Initialize.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen
@@ -81,9 +76,10 @@ inline unsigned char SET_TOS( unsigned char prec, unsigned char tos )
 namespace Nitrogen
 {
 	
-	typedef Nucleus::ID< class InetPort_Tag, ::InetPort >::Type InetPort;
-	
-	//typedef Nucleus::ID< class InetHost_Tag, ::InetHost >::Type InetHost;
+	enum InetPort
+	{
+		kInetPort_Max = Nucleus::Enumeration_Traits< ::InetPort >::max
+	};
 	
 	// Default InetHost is kOTAnyInetAddress (i.e. 0).
 	// Alternative choice is 0xFFFFFFFF (no address).

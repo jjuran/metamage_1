@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -24,6 +24,9 @@
 #include "Nucleus/Pseudoreference.h"
 #endif
 
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -53,13 +56,19 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	typedef Nucleus::Flag< class TransferMode_Tag, ::SInt16 >::Type TransferMode;
-	
-	static const TransferMode srcCopy = TransferMode( ::srcCopy );
+	enum TransferMode
+	{
+		srcCopy = ::srcCopy,
+		
+		kTransferMode_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( TransferMode )
 	
-	typedef Nucleus::Selector< class PixelType_Tag, ::PixelType >::Type PixelType;
+	enum PixelType
+	{
+		kPixelType_Max = Nucleus::Enumeration_Traits< ::PixelType >::max
+	};
 	
 	using ::BitMap;
 	using ::BitMapPtr;
