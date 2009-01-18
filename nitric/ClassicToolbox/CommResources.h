@@ -20,9 +20,6 @@
 #ifndef NUCLEUS_ID_H
 #include "Nucleus/ID.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -176,8 +173,6 @@ namespace Nitrogen
 	{
 		void operator()( CRMRecPtr crmRec ) const
 		{
-			Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
-			
 			HandleDestructionOSStatus( ::CRMRemove( crmRec ) );
 		}
 	};

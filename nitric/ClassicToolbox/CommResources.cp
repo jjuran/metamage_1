@@ -36,8 +36,6 @@ namespace Nitrogen
 	
 	void InitCRM()
 	{
-		Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
-		
 		ThrowOSStatus( ::InitCRM() );
 	}
 	
@@ -50,9 +48,8 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec )
 	{
-		Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
-		
 		ThrowOSStatus( ::CRMRemove( crmRec.Get() ) );
+		
 		return Nucleus::Owned< CRMRecPtr >::Seize( crmRec.Release() );
 	}
 	
