@@ -11,11 +11,11 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_FONTS_H
 #include "Nitrogen/Fonts.h"
-#endif
 
-namespace Nitrogen {
+
+namespace Nitrogen
+{
 	
 	FontID GetFNum( ConstStr255Param name )
 	{

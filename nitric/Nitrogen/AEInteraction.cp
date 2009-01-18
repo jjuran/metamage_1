@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_AEINTERACTION_H
 #include "Nitrogen/AEInteraction.h"
-#endif
+
 
 namespace Nitrogen
 {

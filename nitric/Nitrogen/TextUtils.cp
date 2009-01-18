@@ -11,17 +11,13 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_TEXTUTILS_H
 #include "Nitrogen/TextUtils.h"
-#endif
 
 // Standard C++
 #include <algorithm>
 
 // Nitrogen
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
 
 
 namespace Nitrogen

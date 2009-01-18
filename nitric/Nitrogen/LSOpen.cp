@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_LSOPEN_H
 #include "Nitrogen/LSOpen.h"
-#endif
+
 
 namespace Nitrogen {
 

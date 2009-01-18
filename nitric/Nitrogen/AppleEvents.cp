@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_APPLEEVENTS_H
 #include "Nitrogen/AppleEvents.h"
-#endif
+
 
 namespace Nitrogen
   {

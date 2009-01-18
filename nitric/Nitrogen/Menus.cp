@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_MENUS_H
 #include "Nitrogen/Menus.h"
-#endif
+
 
 namespace Nitrogen
 {

@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_THREADS_H
 #include "Nitrogen/Threads.h"
-#endif
+
 
 namespace Nitrogen
 {

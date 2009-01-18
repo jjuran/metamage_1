@@ -11,16 +11,12 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CODEFRAGMENTS_H
 #include "Nitrogen/CodeFragments.h"
-#endif
 
-#ifndef NITROGEN_MACERRORS_H
+// Nitrogen
 #include "Nitrogen/MacErrors.h"
-#endif
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
+
 
 namespace Nitrogen
 {

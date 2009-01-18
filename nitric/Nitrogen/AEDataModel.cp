@@ -11,16 +11,14 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
-#endif
 
-#ifndef NUCLEUS_SCOPED_H
+// Nucleus
 #include "Nucleus/Scoped.h"
-#endif
-#ifndef NITROGEN_MACERRORS_H
+
+// Nitrogen
 #include "Nitrogen/MacErrors.h"
-#endif
+
 
 namespace Nitrogen
 {

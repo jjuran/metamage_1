@@ -11,13 +11,10 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_MACWINDOWS_H
 #include "Nitrogen/MacWindows.h"
-#endif
 
-#ifndef NUCLEUS_SCOPED_H
+// Nucleus
 #include "Nucleus/Scoped.h"
-#endif
 
 
 namespace Nitrogen

@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFPREFERENCES_H
 #include "Nitrogen/CFPreferences.h"
-#endif
+
 
 namespace Nitrogen
   {

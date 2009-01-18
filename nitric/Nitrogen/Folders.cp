@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_FOLDERS_H
 #include "Nitrogen/Folders.h"
-#endif
 
 
 namespace Nitrogen

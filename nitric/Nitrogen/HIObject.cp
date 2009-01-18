@@ -11,11 +11,11 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_HIOBJECT_H
 #include "Nitrogen/HIObject.h"
-#endif
 
+// Nitrogen
 #include "Nitrogen/MacErrors.h"
+
 
 namespace Nitrogen {
 

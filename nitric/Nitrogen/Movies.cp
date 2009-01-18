@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_MOVIES_H
 #include "Nitrogen/Movies.h"
-#endif
 
 
 namespace Nitrogen

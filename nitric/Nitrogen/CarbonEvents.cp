@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CARBONEVENTS_H
 #include "Nitrogen/CarbonEvents.h"
-#endif
+
 
 namespace Nitrogen
 {

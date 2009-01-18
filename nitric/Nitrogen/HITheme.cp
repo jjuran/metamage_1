@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_THEME_H
 #include "Nitrogen/HITheme.h"
-#endif
+
 
 namespace Nitrogen {
 	

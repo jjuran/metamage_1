@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFUUID_H
 #include "Nitrogen/CFUUID.h"
-#endif
+
 
 namespace Nitrogen
   {

@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_QDOFFSCREEN_H
 #include "Nitrogen/QDOffscreen.h"
-#endif
+
 
 namespace Nitrogen
 {

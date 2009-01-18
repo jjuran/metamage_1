@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFDICTIONARY_H
 #include "Nitrogen/CFDictionary.h"
-#endif
+
 
 namespace Nitrogen {
 	Nucleus::Owned<CFDictionaryRef>

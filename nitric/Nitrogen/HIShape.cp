@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_HISHAPE_H
 #include "Nitrogen/HIShape.h"
-#endif
+
 
 namespace Nitrogen {
 

@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_DRAG_H
 #include "Nitrogen/Drag.h"
-#endif
+
 
 namespace Nitrogen
 {

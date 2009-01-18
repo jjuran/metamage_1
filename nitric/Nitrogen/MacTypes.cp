@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
-#endif
+
 
 //  These are weird ones:
 //  They are some member functions of std::char_traits < UTF16Char > that the linker wants.

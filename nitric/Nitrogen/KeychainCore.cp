@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_KEYCHAINCORE_H
 #include "Nitrogen/KeychainCore.h"
-#endif
+
 
 namespace Nitrogen {
 

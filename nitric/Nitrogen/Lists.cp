@@ -11,13 +11,10 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_LISTS_H
 #include "Nitrogen/Lists.h"
-#endif
 
-#ifndef NITROGEN_CONTROLS_H
+// Nitrogen
 #include "Nitrogen/Controls.h"
-#endif
 
 
 namespace Nitrogen

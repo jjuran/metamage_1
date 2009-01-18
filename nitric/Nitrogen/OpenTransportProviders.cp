@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_OPENTRANSPORTPROVIDERS_H
 #include "Nitrogen/OpenTransportProviders.h"
-#endif
 
 
 namespace Nitrogen

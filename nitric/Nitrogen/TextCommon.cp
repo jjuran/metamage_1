@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
-#endif
+
 
 namespace Nitrogen
   {

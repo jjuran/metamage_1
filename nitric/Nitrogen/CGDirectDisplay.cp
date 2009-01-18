@@ -15,13 +15,11 @@
 
 #if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
 
-#ifndef NITROGEN_CGDIRECTDISPLAY_H
 #include "Nitrogen/CGDirectDisplay.h"
-#endif
 
-#ifndef NITROGEN_OSSTATUS_H
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
-#endif
+
 
 namespace Nitrogen
 {

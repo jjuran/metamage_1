@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFPROPERTYLIST_H
 #include "Nitrogen/CFPropertyList.h"
-#endif
+
 
 namespace Nitrogen
   {

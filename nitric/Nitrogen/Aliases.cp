@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_ALIASES_H
 #include "Nitrogen/Aliases.h"
-#endif
+
 
 namespace Nitrogen
   {

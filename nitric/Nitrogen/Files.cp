@@ -11,15 +11,14 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
-#endif
 
-#ifndef NUCLEUS_NASSERT_H
-#include "Nucleus/NAssert.h"
-#endif
-
+// Standard C++
 #include <limits>
+
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 
 namespace Nitrogen
 {

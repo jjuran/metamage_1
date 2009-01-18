@@ -11,13 +11,10 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_INTERNETCONFIG_H
 #include "Nitrogen/InternetConfig.h"
-#endif
 
-#ifndef NITROGEN_OSSTATUS_H
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
-#endif
 
 
 namespace Nitrogen

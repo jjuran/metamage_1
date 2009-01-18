@@ -11,22 +11,14 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/QuickDraw.h"
-#endif
 
-#ifndef NITROGEN_MACERRORS_H
+// Nitrogen
 #include "Nitrogen/MacErrors.h"
-#endif
-
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
 
 #if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
-#ifndef NITROGEN_CGDIRECTDISPLAY_H
 #include "Nitrogen/CGDirectDisplay.h"
-#endif
 #endif
 
 

@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
-#endif
+
 
 namespace Nitrogen
   {

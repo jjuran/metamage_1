@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_TIMER_H
 #include "Nitrogen/Timer.h"
-#endif
+
 
 namespace Nitrogen
 {

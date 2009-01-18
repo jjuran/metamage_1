@@ -11,13 +11,10 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_UNICODECONVERTER_H
 #include "Nitrogen/UnicodeConverter.h"
-#endif
 
-#ifndef NITROGEN_OSSTATUS_H
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
-#endif
 
 
 namespace Nitrogen {

@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
-#endif
+
 
 namespace Nitrogen
 {

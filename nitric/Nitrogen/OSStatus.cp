@@ -9,9 +9,7 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
 
 
 namespace Nitrogen

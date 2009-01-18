@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_AEOBJECTS_H
 #include "Nitrogen/AEObjects.h"
-#endif
+
 
 namespace Nitrogen
 {

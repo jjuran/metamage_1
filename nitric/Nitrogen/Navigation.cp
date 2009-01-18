@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_NAVIGATION_H
 #include "Nitrogen/Navigation.h"
-#endif
+
 
 namespace Nitrogen {
 

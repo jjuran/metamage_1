@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFBUNDLE_H
 #include "Nitrogen/CFBundle.h"
-#endif
+
 
 namespace Nitrogen
   {

@@ -9,9 +9,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFDATA_H
 #include "Nitrogen/CFData.h"
-#endif
+
 
 namespace Nitrogen
   {

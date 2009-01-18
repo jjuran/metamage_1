@@ -9,12 +9,12 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CFURL_H
 #include "Nitrogen/CFURL.h"
-#endif
+
 #ifndef __FILES__
 #include FRAMEWORK_HEADER(CarbonCore,Files.h)
 #endif
+
 
 namespace Nitrogen
   {

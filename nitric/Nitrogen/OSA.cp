@@ -11,9 +11,7 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_OSA_H
 #include "Nitrogen/OSA.h"
-#endif
 
 
 namespace Nitrogen

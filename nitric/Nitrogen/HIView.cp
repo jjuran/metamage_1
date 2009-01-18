@@ -11,9 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_HIVIEW_H
 #include "Nitrogen/HIView.h"
-#endif
+
 
 namespace Nitrogen {
 

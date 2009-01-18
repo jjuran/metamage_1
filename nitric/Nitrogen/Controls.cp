@@ -11,12 +11,11 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_CONTROLS_H
 #include "Nitrogen/Controls.h"
-#endif
-#ifndef NITROGEN_OSSTATUS_H
+
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
-#endif
+
 
 namespace Nitrogen
 {
