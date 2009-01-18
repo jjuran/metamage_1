@@ -40,6 +40,8 @@ namespace Nitrogen
 		kFMFontFamily_Max = Nucleus::Enumeration_Traits< ::FMFontFamily >::max
 	};
 	
+	typedef FMFontFamily FontID;
+	
 	enum FMFontStyle
 	{
 		kFMFontStyle_Max = Nucleus::Enumeration_Traits< ::FMFontStyle >::max
