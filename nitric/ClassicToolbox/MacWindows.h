@@ -16,6 +16,8 @@
 namespace Nitrogen
 {
 	
+#if CALL_NOT_IN_CARBON
+	
 	struct WindowCloser : public std::unary_function< WindowRef, void >
 	{
 		void operator()( WindowRef window ) const
@@ -25,6 +27,8 @@ namespace Nitrogen
 	};
 	
 	inline void MacCloseWindow( Nucleus::Owned< WindowRef, WindowCloser > )  {}
+	
+#endif
 	
 	inline void InvalRect( const Rect& r )  { ::InvalRect( &r ); }
 	inline void ValidRect( const Rect& r )  { ::ValidRect( &r ); }
