@@ -181,6 +181,9 @@ DEFINE_STUB( readlinkat_k )
 DEFINE_STUB( fchmodat     )
 DEFINE_STUB( faccessat    )
 
+DEFINE_STUB( copyfileat )
+DEFINE_STUB( updateat   )
+
 DEFINE_STUB( socketpair )
 DEFINE_STUB( socket )
 DEFINE_STUB( bind )
