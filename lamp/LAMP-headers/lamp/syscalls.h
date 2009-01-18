@@ -190,6 +190,9 @@
 #define __NR_fchmodat                  251
 #define __NR_faccessat                 252
 
+#define __NR_copyfileat                253
+#define __NR_updateat                  254
+
 #define __NR_socketpair                257
 #define __NR_socket                    258
 #define __NR_bind                      259

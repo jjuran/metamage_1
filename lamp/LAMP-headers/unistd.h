@@ -78,6 +78,7 @@ unsigned int alarm(unsigned int);
 int	 chdir(const char *);
 int	 chown(const char *, uid_t, gid_t);
 int	 close(int);
+int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags );  // jjuran
 int	 dup(int);
 int	 dup2(int, int);
 int	 execl(const char *, const char *, ...) 
@@ -121,6 +122,7 @@ int	 tcsetpgrp(int, pid_t);
 const char	*ttyname(int);
 ssize_t ttyname_k( int, char*, size_t );  // jjuran
 int	 unlink(const char *);
+int updateat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags );  // jjuran
 ssize_t	 write(int, const void *, size_t)
 		__attribute__((__bounded__(__buffer__,2,3)));
 
