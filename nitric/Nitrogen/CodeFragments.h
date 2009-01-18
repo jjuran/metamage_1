@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -138,7 +138,8 @@ namespace Nitrogen
 }
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >,
 	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
@@ -150,11 +151,11 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
-	
+{
 	
 	// Opaque pointer type
 	typedef struct SymbolAddress* SymbolAddressPtr;
@@ -164,7 +165,9 @@ namespace Nitrogen
 	{
 		Str255 errMessage;
 		
-		ErrMessage( ConstStr255Param errMessage ) : errMessage( errMessage )  {}
+		ErrMessage( ConstStr255Param errMessage ) : errMessage( errMessage )
+		{
+		}
 	};
 	
 	// OSStatus wrapper that carries errMessage
@@ -175,7 +178,8 @@ namespace Nitrogen
 		OSStatusErrMessage( ConstStr255Param errMessage )
 		:
 			ErrMessage( errMessage )
-		{}
+		{
+		}
 	};
 	
 	template < CFragLoadOptions options >  struct CFragLoadOptions_Traits;
@@ -222,6 +226,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options, class MainAddrType >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType,
 	                  MainAddrType*       mainAddr )
@@ -247,6 +252,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType )
 	{
@@ -265,6 +271,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options, class MainAddrType >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset,
 	                 std::size_t      length,
@@ -294,6 +301,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset   = 0,
 	                 std::size_t      length   = kCFragGoesToEOF,
@@ -306,6 +314,7 @@ namespace Nitrogen
 		                                                     NULL );
 	}
 	
+	
 	// GetMemFragment
 	
 	void GetMemFragment( const void*         memAddr,
@@ -317,6 +326,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options, class MainAddrType >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,
 	                ConstStr63Param  fragName,
@@ -344,6 +354,7 @@ namespace Nitrogen
 	
 	template < CFragLoadOptions options >
 	inline typename CFragLoadOptions_Traits< options >::Result
+	//
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,
 	                ConstStr63Param  fragName = NULL )
