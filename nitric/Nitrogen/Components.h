@@ -24,35 +24,46 @@
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
+#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
+
 
 namespace Nitrogen
 {
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ComponentManager );
 	
-	typedef Nucleus::Selector< class ComponentType_Tag,         ::OSType >::Type ComponentType;
-	typedef Nucleus::Selector< class ComponentSubType_Tag,      ::OSType >::Type ComponentSubType;
-	typedef Nucleus::Selector< class ComponentManufacturer_Tag, ::OSType >::Type ComponentManufacturer;
+	enum ComponentType
+	{
+		kAnyComponentType = ::kAnyComponentType,
+		
+		kComponentType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
 	
-	static const ComponentManufacturer kAppleManufacturer = ComponentManufacturer( ::kAppleManufacturer );
+	enum ComponentSubType
+	{
+		kAnyComponentSubType = ::kAnyComponentSubType,
+		
+		kComponentSubType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
+	
+	enum ComponentManufacturer
+	{
+		kAppleManufacturer        = ::kAppleManufacturer,
+		kAnyComponentManufacturer = ::kAnyComponentManufacturer,
+		
+		kComponentManufacturer_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
 	
 	static const ResType kComponentResourceType      = ResType( ::kComponentResourceType      );
 	static const ResType kComponentAliasResourceType = ResType( ::kComponentAliasResourceType );
 	
-	static const ComponentType         kAnyComponentType         = ComponentType        ( ::kAnyComponentType         );
-	static const ComponentSubType      kAnyComponentSubType      = ComponentSubType     ( ::kAnyComponentSubType      );
-	static const ComponentManufacturer kAnyComponentManufacturer = ComponentManufacturer( ::kAnyComponentManufacturer );
-	
 	using ::ComponentInstance;
 	
-  }
+}
 
 namespace Nucleus
 {
