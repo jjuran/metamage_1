@@ -23,6 +23,14 @@ extern "C" {
 		CloseOpenTransportInContext( NULL );
 	}
 	
+	inline pascal EndpointRef OTOpenEndpoint( OTConfigurationRef   config,
+	                                          OTOpenFlags          flags,
+	                                          TEndpointInfo       *info,
+	                                          OSStatus            *err )
+	{
+		return OTOpenEndpointInContext( config, flags, info, err, NULL );
+	}
+	
 #endif
 
 #ifdef __cplusplus
