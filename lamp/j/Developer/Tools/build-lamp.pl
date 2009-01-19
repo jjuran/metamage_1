@@ -101,6 +101,7 @@ my @programs = qw
 	test-longjmp-past-vfork test-read-intr test-time test-write-locked
 	th tlsrvr touch true tty ttyd
 	uncaught_exception
+	vols
 	which window
 );
 my %is_program = map { $_ => 1 } @programs;
@@ -159,7 +160,7 @@ my %fsmap =
 			qw( local-edit-client ),
 			qw( buffer console daemonize follower idle pause setwindow window ),
 			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
-			qw( beep cds drvr err2text gestalt keymods macbin ),
+			qw( beep cds drvr err2text gestalt keymods macbin vols ),
 			qw( env grep head printenv strings tee time tr wc ),
 			qw( psmon ),
 		],
