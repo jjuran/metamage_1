@@ -161,6 +161,7 @@ my %fsmap =
 			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
 			qw( beep cds drvr err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
+			qw( psmon ),
 		],
 		lib =>
 		{
