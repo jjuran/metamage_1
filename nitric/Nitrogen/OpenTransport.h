@@ -227,9 +227,6 @@ namespace Nitrogen
 	
 	inline void CloseOpenTransportInContext( Nucleus::Owned< OTClientContextPtr > )  {}
 	
-	void InitOpenTransport();
-	void CloseOpenTransport();
-	
 	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider );
 	
 	// ...
@@ -275,12 +272,6 @@ namespace Nitrogen
 	                                                              OTClientContextPtr                    clientContext )
 	{
 		return OTOpenEndpointInContext( config, NULL, clientContext );
-	}
-	
-	inline Nucleus::Owned< EndpointRef > OTOpenEndpoint( Nucleus::Owned< OTConfigurationRef >  config,
-	                                                     TEndpointInfo*                        info = NULL )
-	{
-		return OTOpenEndpointInContext( config, info );
 	}
 	
 	TEndpointInfo OTGetEndpointInfo( EndpointRef ref );

@@ -60,22 +60,10 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-	#if TARGET_API_MAC_CARBON
-		
 		InetSvcRef result = ::OTOpenInternetServicesInContext( cfig.Release(),
 		                                                       OTOpenFlags( 0 ),
 		                                                       &err,
 		                                                       clientContext );
-		
-	#else
-		
-		InetSvcRef result = ::OTOpenInternetServices( cfig.Release(),
-		                                              OTOpenFlags( 0 ),
-		                                              &err );
-		
-		(void) clientContext;
-		
-	#endif
 		
 		ThrowOSStatus( err );
 		
@@ -87,22 +75,10 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-	#if TARGET_API_MAC_CARBON
-		
 		InetSvcRef result = ::OTOpenInternetServicesInContext( Detail::kDefaultInternetServicesPath,
 		                                                       OTOpenFlags( 0 ),
 		                                                       &err,
 		                                                       clientContext );
-		
-	#else
-		
-		InetSvcRef result = ::OTOpenInternetServices( Detail::kDefaultInternetServicesPath,
-		                                              OTOpenFlags( 0 ),
-		                                              &err );
-		
-		(void) clientContext;
-		
-	#endif
 		
 		ThrowOSStatus( err );
 		

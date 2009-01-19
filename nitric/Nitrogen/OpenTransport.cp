@@ -46,32 +46,6 @@ namespace Nitrogen
 		return Nucleus::Owned< OTClientContextPtr >::Seize( result );
 	}
 	
-	void InitOpenTransport()
-	{
-	#if TARGET_API_MAC_CARBON
-		
-		ThrowOSStatus( ::InitOpenTransportInContext( kInitOTForApplicationMask, NULL ) );
-		
-	#else
-		
-		ThrowOSStatus( ::InitOpenTransport() );
-		
-	#endif
-	}
-	
-	void CloseOpenTransport()
-	{
-	#if TARGET_API_MAC_CARBON
-		
-		::CloseOpenTransportInContext( NULL );
-		
-	#else
-		
-		::CloseOpenTransport();
-		
-	#endif
-	}
-	
 	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider )
 	{
 		ThrowOSStatus( ::OTCloseProvider( provider.Release() ) );
@@ -116,24 +90,11 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-	#if TARGET_API_MAC_CARBON
-		
 		EndpointRef result = ::OTOpenEndpointInContext( config.Release(),
 		                                                OTOpenFlags( 0 ),
 		                                                info,
 		                                                &err,
 		                                                clientContext );
-		
-	#else
-		
-		EndpointRef result = ::OTOpenEndpoint( config.Release(),
-		                                       OTOpenFlags( 0 ),
-		                                       info,
-		                                       &err );
-		
-		(void) clientContext;
-		
-	#endif
 		
 		ThrowOSStatus( err );
 		

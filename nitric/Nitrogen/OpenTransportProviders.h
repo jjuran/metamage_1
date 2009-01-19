@@ -211,16 +211,6 @@ namespace Nitrogen
 	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
 	                                                              OTClientContextPtr           clientContext = NULL );
 	
-	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( Nucleus::Owned< OTConfigurationRef > cfig )
-	{
-		return OTOpenInternetServicesInContext( cfig );
-	}
-	
-	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( DefaultInternetServicesPath /**/ )
-	{
-		return OTOpenInternetServicesInContext( kDefaultInternetServicesPath );
-	}
-	
 	InetHostInfo& OTInetStringToAddress( InetSvcRef     ref,
 	                                     char*          name,
 	                                     InetHostInfo&  hInfo );
