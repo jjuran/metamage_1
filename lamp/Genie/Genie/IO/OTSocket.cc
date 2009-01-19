@@ -14,6 +14,9 @@
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
 
+// ClassicToolbox
+#include "ClassicToolbox/OpenTransport.h"
+
 // Genie
 #include "Genie/Process.hh"
 

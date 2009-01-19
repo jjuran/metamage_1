@@ -6,8 +6,8 @@
 // POSIX
 #include "netdb.h"
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
+// ClassicToolbox
+#include "ClassicToolbox/OpenTransportProviders.h"
 
 // Genie
 #include "Genie/Process.hh"
