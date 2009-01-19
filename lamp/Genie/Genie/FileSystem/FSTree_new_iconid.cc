@@ -104,7 +104,7 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadIconID( const FSTree* that )
+	static std::string ReadIconID( const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		

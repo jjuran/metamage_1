@@ -64,7 +64,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( const FSTree* that )
+			static std::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -82,7 +82,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( const FSTree* that )
+			static std::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				

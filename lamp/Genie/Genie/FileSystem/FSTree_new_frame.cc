@@ -99,7 +99,7 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadMargin( const FSTree* that )
+	static std::string ReadMargin( const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		

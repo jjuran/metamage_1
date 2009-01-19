@@ -101,7 +101,7 @@ namespace Genie
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static std::string Read( const FSTree* that )
+			static std::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				

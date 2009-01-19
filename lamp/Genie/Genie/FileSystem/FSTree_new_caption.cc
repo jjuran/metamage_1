@@ -205,7 +205,7 @@ namespace Genie
 	
 	struct Caption_wrapped
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = that->ParentRef().get();
 			

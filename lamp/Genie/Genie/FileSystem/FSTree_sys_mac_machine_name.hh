@@ -17,7 +17,7 @@ namespace Genie
 	
 	struct sys_mac_machine_name
 	{
-		static std::string Read( const FSTree* );
+		static std::string Read( const FSTree* that, bool binary );
 	};
 	
 }

@@ -26,7 +26,7 @@ namespace Genie
 		return NN::Convert< std::string >( id );
 	}
 	
-	std::string sys_mac_machine_id::Read( const FSTree* )
+	std::string sys_mac_machine_id::Read( const FSTree* that, bool binary )
 	{
 		return GetMachineID();
 	}

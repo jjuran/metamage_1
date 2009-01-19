@@ -604,7 +604,7 @@ namespace Genie
 	
 	struct TextEdit_wrapped
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = that->ParentRef().get();
 			
@@ -627,7 +627,7 @@ namespace Genie
 	
 	struct TextEdit_Width_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -648,7 +648,7 @@ namespace Genie
 	
 	struct TextEdit_Height_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -669,7 +669,7 @@ namespace Genie
 	
 	struct TextEdit_HOffset_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -692,7 +692,7 @@ namespace Genie
 	
 	struct TextEdit_VOffset_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -715,7 +715,7 @@ namespace Genie
 	
 	struct Selection_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			

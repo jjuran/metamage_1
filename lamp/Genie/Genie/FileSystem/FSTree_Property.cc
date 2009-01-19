@@ -26,7 +26,7 @@ namespace Genie
 	{
 		IOHandle* result = NULL;
 		
-		if ( flags == O_RDONLY )
+		if ( (flags & ~O_BINARY) == O_RDONLY )
 		{
 			result = OpenForRead( flags );
 		}
@@ -53,9 +53,14 @@ namespace Genie
 		
 		try
 		{
-			data = itsReadHook( this );
+			const bool binary = flags & O_BINARY;
 			
-			data += '\n';
+			data = itsReadHook( this, binary );
+			
+			if ( !binary )
+			{
+				data += '\n';
+			}
 		}
 		catch ( const Undefined& )
 		{

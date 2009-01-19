@@ -323,7 +323,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_window_REF_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* key = GetViewKey( that );
 			

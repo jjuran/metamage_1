@@ -167,7 +167,7 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			

@@ -84,7 +84,7 @@ namespace Genie
 		return "";
 	}
 	
-	std::string sys_mac_name::Read( const FSTree* ) const
+	std::string sys_mac_name::Read( const FSTree* that, bool binary )
 	{
 		return GetMachineName();
 	}

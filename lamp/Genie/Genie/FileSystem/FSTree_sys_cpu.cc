@@ -60,7 +60,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_cpu_Property
 	{
-		static std::string Read( const FSTree* )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			return NN::Convert< std::string >( Accessor::Get() );
 		}

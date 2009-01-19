@@ -19,7 +19,7 @@ namespace Genie
 	class FSTree_Property : public FSTree
 	{
 		private:
-			typedef std::string (*ReadHook)( const FSTree* that );
+			typedef std::string (*ReadHook)( const FSTree* that, bool binary );
 			
 			typedef void (*WriteHook)( const FSTree  *that,
 			                           const char    *begin,

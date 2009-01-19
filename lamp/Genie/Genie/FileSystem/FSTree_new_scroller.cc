@@ -153,7 +153,7 @@ namespace Genie
 	
 	struct Width_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -174,7 +174,7 @@ namespace Genie
 	
 	struct Height_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -195,7 +195,7 @@ namespace Genie
 	
 	struct HOffset_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -216,7 +216,7 @@ namespace Genie
 	
 	struct VOffset_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			

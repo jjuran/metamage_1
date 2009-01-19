@@ -112,7 +112,7 @@ namespace Genie
 	template < class Erratum >
 	struct sys_mac_errata_Property
 	{
-		static std::string Read( const FSTree* )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			return Erratum::Test() ? "1" : "0";
 		}

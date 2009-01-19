@@ -89,7 +89,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static std::string Read( const FSTree* )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			

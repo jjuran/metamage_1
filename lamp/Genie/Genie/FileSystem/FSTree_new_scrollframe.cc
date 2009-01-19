@@ -305,7 +305,7 @@ namespace Genie
 	
 	struct Vertical_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -326,7 +326,7 @@ namespace Genie
 	
 	struct Horizontal_Property
 	{
-		static std::string Read( const FSTree* that )
+		static std::string Read( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
