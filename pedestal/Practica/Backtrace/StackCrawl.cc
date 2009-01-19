@@ -175,8 +175,19 @@ namespace Backtrace
 	
 	inline const StackFramePPC* MixedModeSwitchFrame( const StackFrame68K* frame )
 	{
-		return *(unsigned long*) frame == 0xffffffff ? (const StackFramePPC*) frame + 1
-		                                             : NULL;
+		const StackFrame68K* next = frame->next;
+		
+		if ( ((unsigned long*) next)[-1] == 0xffffffff )
+		{
+			const void* addr = frame->returnAddr;
+			
+			if ( frame < addr  &&  addr < next )
+			{
+				return (const StackFramePPC*) next;
+			}
+		}
+		
+		return NULL;
 	}
 	
 	inline const StackFrame68K* MixedModeSwitchFrame( const StackFramePPC* frame )
