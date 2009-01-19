@@ -40,6 +40,12 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef O_BINARY
+		
+		o_binary = O_BINARY,
+		
+	#endif
+		
 	#ifdef O_TRUNC_LAZY
 		
 		o_trunc_lazy = O_TRUNC_LAZY,
