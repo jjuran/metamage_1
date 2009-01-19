@@ -55,8 +55,10 @@ my $lamp_source_dir = "$ENV{HOME}/src/tree/jjuran/lamp";
 my $user_builds_dir = "$ENV{HOME}/Developer/Builds";
 my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
+my $tmp_dir = tmpdir();
+
 my $unique_dir_name = "$timestamp.$$";
-my $tmp_subdir = "/tmp/$unique_dir_name";
+my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
 my $source_tree     = "$lamp_source_dir/j";
 my $build_tree      = "$user_builds_dir/$build_area";
@@ -230,7 +232,7 @@ sub verbose_system
 	{
 		my $space = " " x 55;
 		
-		$command =~ s{ \$DIST}{$space \$DIST}o;
+		$command =~ s{ (\$\S+)$}{$space $1}o;
 		
 		$command =~ s[^ (.{55}) \s*][$1]x;
 	}
@@ -347,6 +349,17 @@ sub create_node
 	return;
 }
 
+sub tmpdir
+{
+	my $root = `vols --ram`;
+
+	chomp $root;
+	
+	$root .= "/mnt" if length $root;
+	
+	"$root/tmp";
+}
+
 sub make_macball
 {
 	my ( $tree_path ) = @_;
@@ -356,10 +369,12 @@ sub make_macball
 	verbose_system 'macbin', '--encode', $tree_path, $macbin;
 	
 	verbose_system 'gzip', $macbin;
+	
+	my $gz = "$macbin.gz";
 }
 
 
-want_dir( "/tmp" );
+want_dir( tmpdir() );
 
 mkdir $tmp_subdir;
 
@@ -380,7 +395,9 @@ my $build_area_path = "$lamp_builds_dir/$build_area";
 
 want_dir( $build_area_path );
 
-rename "$tmp_subdir", "$build_area_path/$unique_dir_name" or die "rename $tmp_subdir $build_area_path/$unique_dir_name failed: $!\n";
+verbose_system( "cp", $macball, $build_area_path );
+
+verbose_system( "rm", "-r", $tmp_subdir );
 
 print "Done.\n";
 
