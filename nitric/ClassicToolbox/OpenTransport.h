@@ -23,10 +23,22 @@ namespace Nitrogen
 	
 	using ::CloseOpenTransport;
 	
-	Nucleus::Owned< EndpointRef >
+	inline Nucleus::Owned< EndpointRef >
 	//
 	OTOpenEndpoint( Nucleus::Owned< OTConfigurationRef >  config,
-	                TEndpointInfo*                        info = NULL );
+	                TEndpointInfo*                        info = NULL )
+	{
+		::OSStatus err;
+		
+		EndpointRef result = ::OTOpenEndpoint( config.Release(),
+		                                       OTOpenFlags( 0 ),
+		                                       info,
+		                                       &err );
+		
+		ThrowOSStatus( err );
+		
+		return Nucleus::Owned< EndpointRef >::Seize( result );
+	}
 	
 }
 
