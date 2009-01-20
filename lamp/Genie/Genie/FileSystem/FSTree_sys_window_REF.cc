@@ -87,7 +87,7 @@ namespace Genie
 		public:
 			Window( const FSTree*                 key,
 			        const Ped::NewWindowContext&  context,
-			        DefProcID                     defProcID = DefProcID() )
+			        N::WindowDefProcID            defProcID = Nitrogen::documentProc )
 			:
 				Ped::Window( context, defProcID ),
 				itsKey( key )
