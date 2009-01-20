@@ -148,10 +148,10 @@ namespace Pedestal
 	
 	
 	Window::Window( const NewWindowContext&  context,
-	                DefProcID                defProcID )
+	                N::WindowDefProcID       defProcID )
 	:
 		WindowRefOwner( CreateWindow( context,
-		                              defProcID.Get(),
+		                              defProcID,
 		                              this ) ),
 		itsDefProcID( defProcID )
 	{
@@ -188,7 +188,7 @@ namespace Pedestal
 	{
 		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
 		
-		if ( itsDefProcID.HasGrowIcon() )
+		if ( HasGrowIcon() )
 		{
 			DrawWindow( Get() );
 		}

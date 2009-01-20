@@ -214,11 +214,11 @@ namespace Pedestal
 			typedef Variable_DefProcID DefProcID;
 		
 		private:
-			Variable_DefProcID itsDefProcID;
+			Nitrogen::WindowDefProcID itsDefProcID;
 		
 		public:
-			Window( const NewWindowContext&  context,
-			        DefProcID                defProcID = DefProcID() );
+			Window( const NewWindowContext&    context,
+			        Nitrogen::WindowDefProcID  defProcID = Nitrogen::documentProc );
 			
 			virtual boost::shared_ptr< View >& GetView() = 0;
 			
@@ -228,9 +228,11 @@ namespace Pedestal
 			void SetView( boost::shared_ptr< View > const& view )  { GetView() = view; }
 			void SetView( std::auto_ptr    < View >        view )  { GetView() = view; }
 			
+			bool HasGrowIcon() const  { return itsDefProcID & 0x7; }
+			
 			void InvalidateGrowBox() const
 			{
-				if ( itsDefProcID.HasGrowIcon() )
+				if ( HasGrowIcon() )
 				{
 					InvalidateWindowGrowBox( Get() );
 				}
