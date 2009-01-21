@@ -11,10 +11,6 @@
 #include <errno.h>
 #include <signal.h>
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // iota
 #include "iota/argv.hh"
 #include "iota/strings.hh"
@@ -23,6 +19,7 @@
 #include "fork_and_exit.hh"
 
 // POSeven
+#include "POSeven/functions/close.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/open.hh"
 
@@ -34,6 +31,7 @@
 namespace tool
 {
 	
+	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace O = Orion;
 	
@@ -81,16 +79,22 @@ namespace tool
 		// Start a new session with no controlling terminal
 		setsid();
 		
+		NN::Owned< p7::fd_t > stdio;
+		
 		if ( ctty )
 		{
 			signal( SIGHUP, SIG_DFL );
 			
-			p7::ioctl( p7::open( ctty, p7::o_rdwr ).get(), TIOCSCTTY, NULL );
+			stdio = p7::open( ctty, p7::o_rdwr );
+			
+			p7::ioctl( stdio.get(), TIOCSCTTY, NULL );
 		}
 		else
 		{
 			// Ensure we can't acquire a controlling terminal by being session leader
 			fork_and_exit( 0 );
+			
+			stdio = p7::open( "/dev/null", p7::o_rdonly );
 		}
 		
 		if ( !keep_cwd )
@@ -98,24 +102,22 @@ namespace tool
 			chdir( "/" );
 		}
 		
-		int devnull = open( "/dev/null", O_RDWR, 0 );
-		
 		if ( !keep_stdin )
 		{
-			dup2( devnull, STDIN_FILENO  );
+			dup2( stdio, STDIN_FILENO  );
 		}
 		
 		if ( !keep_stdout )
 		{
-			dup2( devnull, STDOUT_FILENO  );
+			dup2( stdio, STDOUT_FILENO  );
 		}
 		
 		if ( !keep_stderr )
 		{
-			dup2( devnull, STDERR_FILENO  );
+			dup2( stdio, STDERR_FILENO  );
 		}
 		
-		close( devnull );
+		p7::close( stdio );
 		
 		(void) execvp( *free_args, (char**) free_args );
 		
