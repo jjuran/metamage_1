@@ -46,6 +46,7 @@ namespace Genie
 		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
+		FSTreePtr                    itsTTYDelegate;
 		boost::weak_ptr< IOHandle >  itsTerminal;
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
@@ -554,16 +555,38 @@ namespace Genie
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
+			void Attach( const FSTreePtr& target ) const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
+	
+	void FSTree_sys_window_REF_tty::Attach( const FSTreePtr& target ) const
+	{
+		gWindowParametersMap[ WindowKey() ].itsTTYDelegate = target;
+	}
 	
 	boost::shared_ptr< IOHandle >
 	//
 	FSTree_sys_window_REF_tty::Open( OpenFlags flags ) const
 	{
-		boost::shared_ptr< IOHandle > result( new TerminalHandle( Pathname() ) );
+		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
 		
-		gWindowParametersMap[ WindowKey() ].itsTerminal = result;
+		boost::shared_ptr< IOHandle > terminal( new TerminalHandle( Pathname() ) );
+		
+		boost::shared_ptr< IOHandle > result;
+		
+		if ( params.itsTTYDelegate.get() != NULL )
+		{
+			result = params.itsTTYDelegate->Open( flags );
+			
+			result->Attach( terminal );
+		}
+		else
+		{
+			result = terminal;
+		}
+		
+		params.itsTerminal = result;
 		
 		return result;
 	}
