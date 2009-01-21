@@ -228,7 +228,7 @@ namespace Pedestal
 			void SetView( boost::shared_ptr< View > const& view )  { GetView() = view; }
 			void SetView( std::auto_ptr    < View >        view )  { GetView() = view; }
 			
-			bool HasGrowIcon() const  { return itsDefProcID & 0x7; }
+			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
 			
 			void InvalidateGrowBox() const
 			{
