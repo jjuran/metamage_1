@@ -54,8 +54,7 @@ namespace tool
 		
 		N::Handle handle = N::Get1Resource( resType, resID );
 		
-		//N::HNoPurge( handle );  // not taking chances
-		N::HLock   ( handle );
+		N::HLock( handle );
 		
 	#if TARGET_API_MAC_CARBON
 		
@@ -72,24 +71,18 @@ namespace tool
 		ProcInfoType procInfo = kCStackBased
 		                      | RESULT_SIZE( SIZE_CODE( sizeof (int) ) );
 		
-		RoutineDescriptor universalCode = BUILD_ROUTINE_DESCRIPTOR( procInfo, code );
-		
-		universalCode.routineRecords[0].ISA = kM68kISA | kOld68kRTA;
-		
 	#if TARGET_RT_MAC_CFM
 		
 		typedef UniversalProcPtr CodeUPP;
-		
-		CodeUPP upp = &universalCode;
 		
 	#else
 		
 		typedef Code CodeUPP;
 		
-		CodeUPP upp = code;
-		
 	#endif
 		
+		const CodeUPP upp = (CodeUPP) code;
+				
 		int result = CALL_ZERO_PARAMETER_UPP( upp, procInfo );
 		
 		if ( result != 0 )
