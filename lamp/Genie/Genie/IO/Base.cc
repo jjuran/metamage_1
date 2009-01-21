@@ -62,6 +62,11 @@ namespace Genie
 		return shared_from_this();
 	}
 	
+	void IOHandle::Attach( const boost::shared_ptr< IOHandle >& target )
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
 	FSTreePtr IOHandle::GetFile() const
 	{
 		return FSTreePtr( new FSTree_IOHandle( this ) );

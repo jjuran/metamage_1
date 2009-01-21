@@ -53,6 +53,8 @@ namespace Genie
 			
 			virtual boost::shared_ptr< IOHandle > Clone();
 			
+			virtual void Attach( const boost::shared_ptr< IOHandle >& target );
+			
 			virtual FSTreePtr GetFile() const;
 			
 			virtual void IOCtl( unsigned long request, int* argp );
