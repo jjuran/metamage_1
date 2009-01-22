@@ -21,7 +21,7 @@ namespace Vertice
 		public:
 			Window( ConstStr255Param title );
 			
-			Scene& ItsScene()  { return SubView< PortView >().ItsScene(); }
+			Scene& ItsScene();
 			
 			void Load( const FSSpec& file );
 			void Store();

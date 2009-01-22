@@ -513,6 +513,13 @@ namespace Vertice
 		}
 	}
 	
+	Scene& Window::ItsScene()
+	{
+		PortView& view = static_cast< PortView& >( *GetView() );
+		
+		return view.ItsScene();
+	}
+	
 	void Window::Load( const FSSpec& file )
 	{
 		N::SetWTitle( Get(), file.name );

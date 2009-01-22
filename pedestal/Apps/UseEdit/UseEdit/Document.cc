@@ -65,8 +65,10 @@ namespace UseEdit
 	{
 	}
 	
-	static void LoadText( View& scroller, const std::string& text )
+	static void LoadText( Ped::Window& window, const std::string& text )
 	{
+		View& scroller = static_cast< View& >( *window.GetView() );
+		
 		Ped::TEView& editor = scroller.GetSubView();
 		
 		editor.AppendChars( text.data(), text.size(), false );
@@ -82,7 +84,7 @@ namespace UseEdit
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
-		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
+		LoadText( *itsWindow, ReadFileData( file ) );
 	}
 	
 	Document::Document( const FSRef& file )
@@ -91,7 +93,7 @@ namespace UseEdit
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
-		LoadText( itsWindow->SubView< View >(), ReadFileData( file ) );
+		LoadText( *itsWindow, ReadFileData( file ) );
 	}
 	
 }
