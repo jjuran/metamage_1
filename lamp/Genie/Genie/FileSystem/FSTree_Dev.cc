@@ -19,7 +19,6 @@
 #include "Genie/FileSystem/DynamicGroups.hh"
 #include "Genie/FileSystem/FSTree_dev_gestalt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
@@ -125,21 +124,7 @@ namespace Genie
 	typedef FSTree_dev_Serial< DialIn_Traits,  PrinterPort_Traits > FSTree_dev_ttyprinter;
 	
 	
-	template < class Handle >
-	class FSTree_dev_new_Device : public FSTree_Device
-	{
-		public:
-			FSTree_dev_new_Device( const FSTreePtr&    parent,
-			                       const std::string&  name ) : FSTree_Device( parent, name )
-			{
-			}
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
-			{
-				return NewDynamicElement< Handle >();
-			}
-	};
-	
+	class ConsoleTTYHandle;
 	
 	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
 	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
@@ -163,16 +148,6 @@ namespace Genie
 	}
 	
 	
-	extern const FSTree_Premapped::Mapping dev_new_Mappings[];
-	
-	const FSTree_Premapped::Mapping dev_new_Mappings[] =
-	{
-		{ "console", &Basic_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
-		
-		{ NULL, NULL }
-	};
-	
-	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
 	                                       const std::string&  name )
 	{
@@ -193,8 +168,6 @@ namespace Genie
 		{ "tty.printer", &Basic_Factory< FSTree_dev_ttyprinter > },
 		
 		{ "gestalt", &Basic_Factory< FSTree_dev_gestalt > },
-		
-		{ "new", &Premapped_Factory< dev_new_Mappings > },
 		
 		{ "con", &Basic_Factory< FSTree_dev_con > },
 		{ "pts", &Basic_Factory< FSTree_dev_pts > },
