@@ -14,6 +14,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Nitrogen
+#include "Nitrogen/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Window.hh"
@@ -23,6 +26,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/Terminal.hh"
+#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -147,6 +151,43 @@ namespace Genie
 			void operator()( N::WindowRef ) const  { CloseUserWindow( itsKey ); }
 	};
 	
+	class WindowResizeHandler : public Ped::WindowResizeHandler
+	{
+		private:
+			const FSTree* itsKey;
+		
+		public:
+			WindowResizeHandler( const FSTree* key ) : itsKey( key )
+			{
+			}
+			
+			void operator()( N::WindowRef window, short h, short v ) const;
+	};
+	
+	void WindowResizeHandler::operator()( N::WindowRef window, short h, short v ) const
+	{
+		N::SizeWindow( window, h, v, true );
+		
+		WindowParametersMap::iterator it = gWindowParametersMap.find( itsKey );
+		
+		if ( it != gWindowParametersMap.end() )
+		{
+			WindowParameters& params = it->second;
+			
+			if ( !params.itsTerminal.expired() )
+			{
+				const boost::shared_ptr< IOHandle >& handle = params.itsTerminal.lock();
+				
+				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
+				
+				if ( !terminal.GetProcessGroup().expired() )
+				{
+					SendSignalToProcessGroup( SIGWINCH, *terminal.GetProcessGroup().lock() );
+				}
+			}
+		}
+	}
+	
 	
 	static bool HasWindow( const FSTree* that )
 	{
@@ -191,6 +232,10 @@ namespace Genie
 		boost::shared_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
 		window->SetCloseHandler( closeHandler );
+		
+		boost::shared_ptr< Ped::WindowResizeHandler > resizeHandler( new WindowResizeHandler( key ) );
+		
+		window->SetResizeHandler( resizeHandler );
 		
 		params.itsWindow = window;
 		
