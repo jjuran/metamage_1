@@ -23,7 +23,9 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/ScrollerBase.hh"
+#include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -583,6 +585,10 @@ namespace Genie
 				Select( params.itsStartOfInput, params.itsSelection.end );
 			}
 		}
+		else if ( c == kReturnCharCode )
+		{
+			Select( 32767, 32767 );
+		}
 		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == params.itsStartOfInput )
 		{
 			const bool shift = event.modifiers & (shiftKey | rightShiftKey);
@@ -776,24 +782,40 @@ namespace Genie
 	}
 	
 	
+	static FSTreePtr MakeConsoleProxy( unsigned id )
+	{
+		FSTreePtr parent = ResolvePathname( "/dev/con" );
+		
+		std::string name = NN::Convert< std::string >( id );
+		
+		return FSTreePtr( new FSTree( parent, name ) );
+	}
+	
 	class ConsoleTTYHandle : public TTYHandle
 	{
 		private:
-			FSTreePtr  itsFile;
+			FSTreePtr  itsTTYFile;
+			unsigned   itsID;
 			
 			const FSTree* ViewKey() const;
 		
 		public:
-			ConsoleTTYHandle( const FSTreePtr& file, const std::string& name )
+			ConsoleTTYHandle( const FSTreePtr& file, unsigned id )
 			:
 				TTYHandle( 0 ),
-				itsFile( file )
+				itsTTYFile( file ),
+				itsID( id )
 			{
+			}
+			
+			~ConsoleTTYHandle()
+			{
+				GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
 			}
 			
 			void Attach( const boost::shared_ptr< IOHandle >& terminal );
 			
-			FSTreePtr GetFile() const  { return itsFile; }
+			FSTreePtr GetFile() const  { return MakeConsoleProxy( itsID ); }
 			
 			unsigned int SysPoll();
 			
@@ -815,7 +837,7 @@ namespace Genie
 	
 	const FSTree* ConsoleTTYHandle::ViewKey() const
 	{
-		return GetFile()->ParentRef().get();
+		return itsTTYFile->ParentRef().get();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll()
@@ -949,7 +971,13 @@ namespace Genie
 	//
 	FSTree_Console_tty::Open( OpenFlags flags ) const
 	{
-		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( shared_from_this(), Pathname() ) );
+		static unsigned gLastID = 0;
+		
+		unsigned id = ++gLastID;
+		
+		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( shared_from_this(), id ) );
+		
+		GetDynamicGroup< ConsoleTTYHandle >()[ id ] = result;
 		
 		return result;
 	}
