@@ -111,15 +111,5 @@ namespace Genie
 		return static_cast< ConsoleWindow* >( itsWindow.get() )->Write( data, byteCount );
 	}
 	
-	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
-	{
-		switch ( request )
-		{
-			default:
-				TTYHandle::IOCtl( request, argp );
-				break;
-		};
-	}
-	
 }
 
