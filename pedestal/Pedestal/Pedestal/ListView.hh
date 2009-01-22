@@ -32,17 +32,17 @@ namespace Pedestal
 			};
 			
 			TextAttributes textAttributes;
-			Nucleus::Owned< ListHandle > list;
+			Nucleus::Owned< ListHandle > itsList;
 		
 		public:
 			ListView( const Rect& bounds );
 			
-			ListHandle Get() const  { return list; }
+			ListHandle Get() const  { return itsList; }
 			
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			void Activate( bool activating )  { Nitrogen::LActivate( activating, list ); }
+			void Activate( bool activating )  { Nitrogen::LActivate( activating, itsList ); }
 			
 			void Draw( const Rect& bounds );
 			

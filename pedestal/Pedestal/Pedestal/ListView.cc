@@ -82,16 +82,16 @@ namespace Pedestal
 	
 	ListView::ListView( const Rect& bounds )
 	:
-		list( N::LNew( AdjustListBounds( bounds, false, true ),
-		               N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
-		               N::SetPt( 0, 0 ),
-		               N::ResID( 0 ),
-		               N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-		               true,   // drawIt
-		               true,   // hasGrow
-		               false,  // scrollHoriz
-		               true    // scrollVert
-		               ) )
+		itsList( N::LNew( AdjustListBounds( bounds, false, true ),
+		                  N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
+		                  N::SetPt( 0, 0 ),
+		                  N::ResID( 0 ),
+		                  N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		                  true,   // drawIt
+		                  true,   // hasGrow
+		                  false,  // scrollHoriz
+		                  true    // scrollVert
+		                  ) )
 	{
 		
 	}
@@ -100,7 +100,7 @@ namespace Pedestal
 	{
 		N::LClick( N::GlobalToLocal( event.where ),
 		           N::EventModifiers( event.modifiers ),
-		           list );
+		           itsList );
 	}
 	
 	bool ListView::KeyDown( const EventRecord& event )
@@ -111,16 +111,16 @@ namespace Pedestal
 	
 	void ListView::Draw( const Rect& bounds )
 	{
-		//Rect bounds = Bounds( list );
+		//Rect bounds = Bounds( itsList );
 		//N::EraseRect( bounds );
-		N::LUpdate( N::GetPortVisibleRegion( N::GetQDGlobalsThePort() ), list );
+		N::LUpdate( N::GetPortVisibleRegion( N::GetQDGlobalsThePort() ), itsList );
 	}
 	
 	void ListView::Resize( short width, short height )
 	{
 		AdjustListBounds( width, height, false, true );
 		
-		N::LSize( width, height, list );
+		N::LSize( width, height, itsList );
 	}
 	
 }
