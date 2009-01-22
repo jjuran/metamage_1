@@ -222,9 +222,6 @@ namespace Pedestal
 			
 			virtual boost::shared_ptr< View >& GetView() = 0;
 			
-			template < class ViewType >
-			ViewType& SubView()  { return static_cast< ViewType& >( *GetView() ); }
-			
 			void SetView( boost::shared_ptr< View > const& view )  { GetView() = view; }
 			void SetView( std::auto_ptr    < View >        view )  { GetView() = view; }
 			
