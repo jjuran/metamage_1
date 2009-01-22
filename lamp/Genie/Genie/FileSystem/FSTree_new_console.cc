@@ -776,17 +776,15 @@ namespace Genie
 	}
 	
 	
-	class Console_TTYHandle : public TTYHandle
+	class ConsoleTTYHandle : public TTYHandle
 	{
 		private:
 			FSTreePtr  itsFile;
 			
-			const boost::shared_ptr< IOHandle >& GetTerminal() const;
-			
 			const FSTree* ViewKey() const;
 		
 		public:
-			Console_TTYHandle( const FSTreePtr& file, const std::string& name )
+			ConsoleTTYHandle( const FSTreePtr& file, const std::string& name )
 			:
 				TTYHandle( 0 ),
 				itsFile( file )
@@ -806,12 +804,7 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
-	const boost::shared_ptr< IOHandle >& Console_TTYHandle::GetTerminal() const
-	{
-		return gConsoleParametersMap[ ViewKey() ].itsTerminal;
-	}
-	
-	void Console_TTYHandle::Attach( const boost::shared_ptr< IOHandle >& terminal )
+	void ConsoleTTYHandle::Attach( const boost::shared_ptr< IOHandle >& terminal )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -820,12 +813,12 @@ namespace Genie
 		params.itsTerminal = terminal;
 	}
 	
-	const FSTree* Console_TTYHandle::ViewKey() const
+	const FSTree* ConsoleTTYHandle::ViewKey() const
 	{
 		return GetFile()->ParentRef().get();
 	}
 	
-	unsigned int Console_TTYHandle::SysPoll()
+	unsigned int ConsoleTTYHandle::SysPoll()
 	{
 		const FSTree* view = ViewKey();
 		
@@ -840,7 +833,7 @@ namespace Genie
 		return readability | kPollWrite;
 	}
 	
-	ssize_t Console_TTYHandle::SysRead( char* buffer, std::size_t byteCount )
+	ssize_t ConsoleTTYHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -873,7 +866,7 @@ namespace Genie
 		return byteCount;
 	}
 	
-	ssize_t Console_TTYHandle::SysWrite( const char* buffer, std::size_t byteCount )
+	ssize_t ConsoleTTYHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -901,7 +894,7 @@ namespace Genie
 		return byteCount;
 	}
 	
-	void Console_TTYHandle::IOCtl( unsigned long request, int* argp )
+	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -956,7 +949,7 @@ namespace Genie
 	//
 	FSTree_Console_tty::Open( OpenFlags flags ) const
 	{
-		boost::shared_ptr< IOHandle > result( new Console_TTYHandle( shared_from_this(), Pathname() ) );
+		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( shared_from_this(), Pathname() ) );
 		
 		return result;
 	}
