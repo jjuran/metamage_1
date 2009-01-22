@@ -583,10 +583,6 @@ namespace Genie
 				Select( params.itsStartOfInput, params.itsSelection.end );
 			}
 		}
-		else if ( c == kReturnCharCode )
-		{
-			Select( 32767, 32767 );
-		}
 		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == params.itsStartOfInput )
 		{
 			const bool shift = event.modifiers & (shiftKey | rightShiftKey);
