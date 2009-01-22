@@ -26,8 +26,11 @@ namespace Genie
 	{
 		private:
 			const std::string                itsTTYName;
+			boost::shared_ptr< IOHandle >    itsTTY;
 			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
 			bool                             itIsDisconnected;
+			
+			IOHandle* Next() const  { return itsTTY.get(); }
 		
 		public:
 			TerminalHandle( const std::string& ttyName ) : itsTTYName         ( ttyName ),
@@ -38,6 +41,8 @@ namespace Genie
 			virtual ~TerminalHandle();
 			
 			bool IsTerminal() const  { return true; }
+			
+			void Attach( const boost::shared_ptr< IOHandle >& target )  { itsTTY = target; }
 			
 			FSTreePtr GetFile() const;
 			
