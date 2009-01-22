@@ -42,22 +42,6 @@ namespace Genie
 		return GetDynamicElementFromGroupByID( group, id );
 	}
 	
-	template < class Handle >
-	boost::shared_ptr< IOHandle > NewDynamicElement()
-	{
-		static DynamicElementID gLastID = 0;
-		
-		++gLastID;
-		
-		std::string pathname = Handle::PathPrefix() + Nucleus::Convert< std::string >( gLastID );
-		
-		boost::shared_ptr< IOHandle > element( new Handle( gLastID, pathname ) );
-		
-		GetDynamicGroup< Handle >()[ gLastID ] = element;
-		
-		return element;
-	}
-	
 }
 
 #endif
