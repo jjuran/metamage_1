@@ -27,7 +27,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	StreamHandle::StreamHandle( OpenFlags flags ) : itsOpenFlags( flags )
+	StreamHandle::StreamHandle( OpenFlags flags )
+	:
+		itsOpenFlags( flags ),
+		itHasBeenDisconnected()
 	{
 	}
 	

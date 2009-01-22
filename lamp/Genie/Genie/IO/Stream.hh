@@ -25,6 +25,7 @@ namespace Genie
 		private:
 			OpenFlags    itsOpenFlags;
 			std::string  itsPeekBuffer;
+			bool         itHasBeenDisconnected;
 		
 		public:
 			StreamHandle( OpenFlags flags );
@@ -45,7 +46,9 @@ namespace Genie
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual bool IsDisconnected() const  { return false; }
+			void Disconnect()  { itHasBeenDisconnected = true; }
+			
+			virtual bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
 			bool IsNonblocking() const  { return itsOpenFlags & O_NONBLOCK; }
 			
