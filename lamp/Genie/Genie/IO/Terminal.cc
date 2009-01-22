@@ -133,6 +133,11 @@ namespace Genie
 	{
 		itIsDisconnected = true;
 		
+		if ( StreamHandle* tty = IOHandle_Cast< StreamHandle >( Next() ) )
+		{
+			tty->Disconnect();
+		}
+		
 		if ( !GetProcessGroup().expired() )
 		{
 			SendSignalToProcessGroup( SIGHUP, *GetProcessGroup().lock() );
