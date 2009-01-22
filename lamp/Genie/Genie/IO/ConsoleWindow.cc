@@ -18,9 +18,6 @@
 // POSIX
 #include <sys/ttycom.h>
 
-// Lamp
-#include <lamp/winio.h>
-
 // boost
 #include <boost/shared_ptr.hpp>
 
@@ -455,21 +452,10 @@ namespace Genie
 			case TIOCGWINSZ:
 				if ( result != NULL )
 				{
+					result[0] = GetConsole( SubView< TEScrollFrame >() ).ViewableRange();
 					result[1] = ptZero;
 				}
 				
-				// fall through
-			
-			case WIOCGDIM:
-				if ( result != NULL )
-				{
-					*result = GetConsole( SubView< TEScrollFrame >() ).ViewableRange();
-				}
-				
-				break;
-			
-			case WIOCSDIM:
-				p7::throw_errno( EINVAL );
 				break;
 			
 			default:
