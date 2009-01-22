@@ -2,99 +2,87 @@
 
 #include "Genie/SystemConsole.hh"
 
-// Pedestal
-#include "Pedestal/Console.hh"
-#include "Pedestal/Scroller.hh"
-#include "Pedestal/UniqueWindowOwner.hh"
-#include "Pedestal/UserWindow.hh"
+// POSIX
+#include <fcntl.h>
+
+// Iota
+#include "iota/strings.hh"
+
+// Genie
+#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace Ped = Pedestal;
-	
-	
-	typedef Ped::TEScrollFrame< true > SystemConsoleView;
-	
-	
-	class SystemConsoleOwner : public Ped::UniqueWindowOwner
+	static ssize_t Spew( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		private:
-			static std::auto_ptr< Ped::Window > New();
-		
-		public:
-			SystemConsoleOwner() : Ped::UniqueWindowOwner( &New )
-			{
-			}
-			
-			static int WriteToSystemConsole( const char* data, std::size_t byteCount );
-	};
-	
-	
-	static Rect MakeWindowRect()
-	{
-		BitMap screenBits = N::GetQDGlobalsScreenBits();
-		
-		Rect rect = N::SetRect(0, 18, 2*4+6*80+16, 18+2*4+11*25+16);
-		short mbarHeight = ::GetMBarHeight();
-		short vMargin = (screenBits.bounds.bottom - rect.bottom) - mbarHeight;
-		short hMargin = (screenBits.bounds.right  - rect.right);
-		
-		return N::OffsetRect( rect,
-		                      hMargin / 2,
-		                      mbarHeight + vMargin / 3 );
+		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_TRUNC ).get() )->Write( buffer, length );
 	}
 	
-	static inline std::auto_ptr< Ped::View > MakeView()
+	static ssize_t Append( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		Rect scroller_bounds = MakeWindowRect();
-		
-		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
-		
-		SystemConsoleView* scrollframe = NULL;
-		
-		std::auto_ptr< Ped::View > view( scrollframe = new SystemConsoleView( scroller_bounds ) );
-		
-		std::auto_ptr< Ped::View > subview( new Ped::Console( subview_bounds ) );
-		
-		scrollframe->SetSubView( subview );
-		
-		return view;
+		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND ).get() )->Write( buffer, length );
 	}
 	
-	std::auto_ptr< Ped::Window > SystemConsoleOwner::New()
+	static void MakeWindow( const boost::shared_ptr< IOHandle >& window_dir )
 	{
-		Rect bounds = MakeWindowRect();
+		FSTreePtr window = window_dir->GetFile();
 		
-		Ped::NewWindowContext context( bounds, "\p" "System Console" );
+		FSTreePtr ref = ResolvePathname( "ref",  window );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context, N::documentProc ) );
+		if ( ref->Exists() )
+		{
+			return;
+		}
 		
-		window->SetView( MakeView() );
+		FSTreePtr view = ResolvePathname( "view", window );
 		
-		return window;
+		Spew( ResolvePathname( "title", window ), STR_LEN( "System Console" "\n" ) );
+		
+		Spew( ResolvePathname( "size",  window ), STR_LEN( "495x272" "\n" ) );
+		
+		ref->SetTimes();
+		
+		Spew( ResolvePathname( "text-font", ref ), STR_LEN( "4" "\n" ) );
+		Spew( ResolvePathname( "text-size", ref ), STR_LEN( "9" "\n" ) );
+		
+		ResolvePathname( "/new/scrollframe" )->HardLink( view );
+		
+		FSTreePtr subview = ResolvePathname( "v", view );
+		
+		ResolvePathname( "/new/frame" )->HardLink( subview );
+		
+		FSTreePtr subsubview = ResolvePathname( "v", subview );
+		
+		ResolvePathname( "/new/textedit" )->HardLink( subsubview );
+		
+		ResolvePathname( "target", view )->SymLink( "v/v" );
+		
+		Spew( ResolvePathname( "vertical", view    ), STR_LEN( "1" "\n" ) );
+		Spew( ResolvePathname( "margin",   subview ), STR_LEN( "4" "\n" ) );
 	}
 	
-	int SystemConsoleOwner::WriteToSystemConsole( const char* data, std::size_t byteCount )
+	static FSTreePtr GetConsoleWindow()
 	{
-		static SystemConsoleOwner gSystemConsoleOwner;
+		static boost::shared_ptr< IOHandle > gWindow = ResolvePathname( "/new/window" )->ChangeToDirectory();
 		
-		gSystemConsoleOwner.Show();
+		MakeWindow( gWindow );
 		
-		SystemConsoleView& view = gSystemConsoleOwner.Get().SubView< SystemConsoleView >();
+		return gWindow->GetFile();
+	}
+	
+	static FSTreePtr GetConsoleText()
+	{
+		FSTreePtr text = ResolvePathname( "view/v/v/text", GetConsoleWindow() );
 		
-		static_cast< Ped::Console& >( view.GetSubView() ).WriteChars( data, byteCount );
-		
-		view.UpdateScrollbars();
-		
-		return byteCount;
+		return text;
 	}
 	
 	int WriteToSystemConsole( const char* data, std::size_t byteCount )
 	{
-		return SystemConsoleOwner::WriteToSystemConsole( data, byteCount );
+		return Append( GetConsoleText(), data, byteCount );
 	}
 	
 }
