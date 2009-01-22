@@ -230,11 +230,11 @@ sub verbose_system
 	
 	if ( $command =~ m/^cp / )
 	{
-		my $space = " " x 55;
+		my $space = " " x 60;
 		
 		$command =~ s{ (\$\S+)$}{$space $1}o;
 		
-		$command =~ s[^ (.{55}) \s*][$1]x;
+		$command =~ s[^ (.{60}) \s*][$1]x;
 	}
 	
 	print "$command\n";
