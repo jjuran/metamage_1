@@ -225,6 +225,44 @@ namespace Genie
 		return CountLinesForEditing( te ) * te.lineHeight;
 	}
 	
+	static bool Update_TE_From_Model( TEHandle hTE, ConsoleParameters& params )
+	{
+		bool text_modified = false;
+		
+		if ( params.itsValidLength < params.itsText.length() )
+		{
+			text_modified = true;
+			
+			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
+			
+			TERec& te = **hTE;
+			
+			te.teLength = params.itsText.length();
+			
+			std::replace_copy( params.itsText.begin() + params.itsValidLength,
+			                   params.itsText.end(),
+			                   *te.hText + params.itsValidLength,
+			                   '\n',
+			                   '\r' );
+			
+			params.itsValidLength = te.teLength;
+		}
+		else if ( params.itsValidLength < hTE[0]->teLength )
+		{
+			// Text was merely truncated
+			
+			text_modified = true;
+			
+			TERec& te = **hTE;
+			
+			te.teLength = params.itsValidLength;
+			
+			N::SetHandleSize( te.hText, params.itsValidLength );
+		}
+		
+		return text_modified;
+	}
+	
 	void Console_Scroller::Draw( const Rect& bounds )
 	{
 		using Nucleus::operator!=;
@@ -235,44 +273,13 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		bool text_modified = false;
-		
 		const FSTree* key = GetKey();
 		
 		ScrollerParameters& params = GetScrollerParams( key );
 		
 		ConsoleParameters& editParams = gConsoleParametersMap[ key ];
 		
-		if ( editParams.itsValidLength < editParams.itsText.length() )
-		{
-			text_modified = true;
-			
-			N::SetHandleSize( hTE[0]->hText, editParams.itsText.length() );
-			
-			TERec& te = **hTE;
-			
-			te.teLength = editParams.itsText.length();
-			
-			std::replace_copy( editParams.itsText.begin() + editParams.itsValidLength,
-			                   editParams.itsText.end(),
-			                   *te.hText + editParams.itsValidLength,
-			                   '\n',
-			                   '\r' );
-			
-			editParams.itsValidLength = te.teLength;
-		}
-		else if ( editParams.itsValidLength < hTE[0]->teLength )
-		{
-			// Text was merely truncated
-			
-			text_modified = true;
-			
-			TERec& te = **hTE;
-			
-			te.teLength = editParams.itsValidLength;
-			
-			N::SetHandleSize( te.hText, editParams.itsValidLength );
-		}
+		const bool text_modified = Update_TE_From_Model( hTE, editParams );
 		
 		const short viewWidth  = bounds.right - bounds.left;
 		const short viewHeight = bounds.bottom - bounds.top;
@@ -513,16 +520,24 @@ namespace Genie
 		char c   =  event.message & charCodeMask;
 		char key = (event.message & keyCodeMask) >> 8;
 		
+		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
+		
+		Ped::TextSelection& selection = params.itsSelection;
+		
+		if ( Update_TE_From_Model( itsTE, params )  &&  params.itHasChangedAttributes )
+		{
+			TERec& te = **itsTE;
+			
+			te.selStart = selection.start;
+			te.selEnd   = selection.end;
+		}
+		
 		if ( c == kEnterCharCode  &&  key >= 0x30 )
 		{
 			On_EnterKey();
 			
 			return true;
 		}
-		
-		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
-		
-		Ped::TextSelection& selection = params.itsSelection;
 		
 		if ( params.itsSelection.start < params.itsStartOfInput )
 		{
@@ -898,16 +913,34 @@ namespace Genie
 		
 		if ( s.size() + byteCount > 30000 )
 		{
-			s.clear();
+			s.erase( s.begin(), s.begin() + params.itsStartOfInput );
 			
-			params.itsValidLength = 0;
+			params.itsStartOfInput = 0;
+			params.itsValidLength  = 0;
 		}
 		
-		s.append( buffer, byteCount );
+		ASSERT( params.itsStartOfInput <= s.size() );
 		
-		params.itsSelection.start =
-		params.itsSelection.end   =
-		params.itsStartOfInput    = s.length();
+		params.itsValidLength = std::min( params.itsValidLength, params.itsStartOfInput );
+		
+		s.insert( params.itsStartOfInput, buffer, byteCount );
+		
+		if ( params.itsSelection.start >= params.itsStartOfInput )
+		{
+			params.itsSelection.start += byteCount;
+			params.itsSelection.end   += byteCount;
+		}
+		else if ( params.itsSelection.end <= params.itsStartOfInput )
+		{
+			// preserve selection
+		}
+		else
+		{
+			params.itsSelection.start =
+			params.itsSelection.end   = s.length();
+		}
+		
+		params.itsStartOfInput += byteCount;
 		
 		params.itHasChangedAttributes = true;
 		
