@@ -45,14 +45,14 @@ namespace Pedestal
 	{
 	#if !TARGET_API_MAC_CARBON
 		
-		try
+		OSErr err = ::TEFromScrap();
+		
+		// We'll get an error if there's nothing in the clipboard,
+		// but this is perfectly reasonable at startup.
+		
+		if ( err != noTypeErr )
 		{
-			N::TEFromScrap();
-		}
-		catch ( const N::OSStatus& err )
-		{
-			// If there's nothing in the clipboard, which is perfectly reasonable, 
-			// we'll get an error, so ignore it.
+			N::ThrowOSStatus( err );
 		}
 		
 	#endif
