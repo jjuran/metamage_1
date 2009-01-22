@@ -5,20 +5,11 @@
 
 #include "Genie/IO/Window.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <signal.h>
 
-// Lamp
-#include "lamp/winio.h"
-
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/Process.hh"
@@ -28,8 +19,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -115,137 +104,6 @@ namespace Genie
 	
 	WindowHandle::~WindowHandle()
 	{
-	}
-	
-	
-	void WindowHandle::IOCtl( unsigned long request, int* argp )
-	{
-		switch ( request )
-		{
-			case WIOCGTITLE:
-				if ( Byte* buffer = (Byte*) argp )
-				{
-					N::Str255 title = GetTitle();
-					
-					std::copy( title + 1,
-					           title + 1 + title[0],
-					           buffer );
-					
-					buffer[ title[0] ] = '\0';
-				}
-				
-				break;
-			
-			case WIOCSTITLE:
-				SetTitle( argp ? N::Str255( (const char*) argp ) : NULL );
-				
-				break;
-			
-			case WIOCGPOS:
-				if ( argp != NULL )
-				{
-					Point position = GetPosition();
-					
-					*(Point*) argp = position;
-				}
-				
-				break;
-			
-			case WIOCSPOS:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
-				SetPosition( *(Point*) argp );
-				break;
-			
-			case WIOCGSIZE:
-				if ( argp != NULL )
-				{
-					Point size = Ped::GetWindowSize( GetWindowRef() );
-					
-					*(Point*) argp = size;
-				}
-				
-				break;
-			
-			case WIOCSSIZE:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
-				Ped::SetWindowSize( GetWindowRef(), *(Point*) argp );
-				
-				break;
-			
-			case WIOCGVIS:
-				if ( argp != NULL )
-				{
-					bool visible = IsVisible();
-					
-					*argp = visible;
-				}
-				
-				break;
-			
-			case WIOCSVIS:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
-				if ( *argp )
-				{
-					Show();
-				}
-				else
-				{
-					Hide();
-				}
-				
-				break;
-			
-			default:
-				TerminalHandle::IOCtl( request, argp );
-				break;
-		}
-	}
-	
-	Nitrogen::Str255 WindowHandle::GetTitle() const
-	{
-		return N::GetWTitle( GetWindowRef() );
-	}
-	
-	void WindowHandle::SetTitle( ConstStr255Param title )
-	{
-		N::SetWTitle( GetWindowRef(), title );
-	}
-	
-	Point WindowHandle::GetPosition() const
-	{
-		return Ped::GetWindowPosition( GetWindowRef() );
-	}
-	
-	void WindowHandle::SetPosition( Point position )
-	{
-		Ped::SetWindowPosition( GetWindowRef(), position );
-	}
-	
-	bool WindowHandle::IsVisible() const
-	{
-		return N::IsWindowVisible( GetWindowRef() );
-	}
-	
-	void WindowHandle::Show() const
-	{
-		N::ShowWindow( GetWindowRef() );
-	}
-	
-	void WindowHandle::Hide() const
-	{
-		N::HideWindow( GetWindowRef() );
 	}
 	
 }

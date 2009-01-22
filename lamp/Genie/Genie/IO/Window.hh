@@ -41,23 +41,6 @@ namespace Genie
 			              const std::string&                 name );
 			
 			virtual ~WindowHandle();
-			
-			virtual void IOCtl( unsigned long request, int* argp );
-			
-			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
-			
-			Nitrogen::Str255 GetTitle() const;
-			
-			void SetTitle( ConstStr255Param title );
-			
-			Point GetPosition() const;
-			
-			void SetPosition( Point position );
-			
-			bool IsVisible() const;
-			
-			void Show() const;
-			void Hide() const;
 	};
 	
 	
