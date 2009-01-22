@@ -575,7 +575,11 @@ namespace Genie
 		
 		if ( params.itsTTYDelegate.get() != NULL )
 		{
-			terminal->Attach( params.itsTTYDelegate->Open( flags ) );
+			boost::shared_ptr< IOHandle > tty = params.itsTTYDelegate->Open( flags );
+			
+			tty->Attach( terminal );
+			
+			terminal->Attach( tty );
 		}
 		
 		params.itsTerminal = terminal;
