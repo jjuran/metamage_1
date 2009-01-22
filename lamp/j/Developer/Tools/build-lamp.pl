@@ -83,7 +83,7 @@ my @programs = qw
 	SetFile
 	abort aevt ar argv0
 	beep buffer buserror
-	cat cds chain console cp cpres cr2lf
+	cat cds chain cp cpres cr2lf
 	daemonize divide
 	echo env err2text
 	false follower
@@ -98,13 +98,13 @@ my @programs = qw
 	open osascript
 	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
-	setleds setwindow sh sleep stripcr striplf superd
+	setleds sh sleep stripcr striplf superd
 	tcpcat tcpclient
 	test-longjmp-past-vfork test-read-intr test-time test-write-locked
 	th tlsrvr touch true tty ttyd
 	uncaught_exception
 	vols
-	which window
+	which
 );
 my %is_program = map { $_ => 1 } @programs;
 
@@ -160,7 +160,7 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( buffer console daemonize follower idle pause setwindow window ),
+			qw( buffer daemonize follower idle pause ),
 			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
 			qw( beep cds drvr err2text gestalt keymods macbin vols ),
 			qw( env grep head printenv strings tee time tr wc ),
