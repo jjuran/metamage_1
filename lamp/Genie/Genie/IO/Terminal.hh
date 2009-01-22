@@ -38,7 +38,7 @@ namespace Genie
 			{
 			}
 			
-			virtual ~TerminalHandle();
+			~TerminalHandle();
 			
 			bool IsTerminal() const  { return true; }
 			
@@ -50,7 +50,7 @@ namespace Genie
 			
 			void SetProcessGroup( const boost::weak_ptr< ProcessGroup >& pgrp )  { itsForegroundProcessGroup = pgrp; }
 			
-			virtual void IOCtl( unsigned long request, int* argp );
+			void IOCtl( unsigned long request, int* argp );
 			
 			bool IsDisconnected() const  { return itIsDisconnected; }
 			
