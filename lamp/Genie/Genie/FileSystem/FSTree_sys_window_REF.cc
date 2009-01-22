@@ -573,22 +573,14 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > terminal( new TerminalHandle( Pathname() ) );
 		
-		boost::shared_ptr< IOHandle > result;
-		
 		if ( params.itsTTYDelegate.get() != NULL )
 		{
-			result = params.itsTTYDelegate->Open( flags );
-			
-			result->Attach( terminal );
-		}
-		else
-		{
-			result = terminal;
+			terminal->Attach( params.itsTTYDelegate->Open( flags ) );
 		}
 		
-		params.itsTerminal = result;
+		params.itsTerminal = terminal;
 		
-		return result;
+		return terminal;
 	}
 	
 	

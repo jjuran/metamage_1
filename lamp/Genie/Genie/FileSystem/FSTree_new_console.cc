@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_new_console.hh"
 
+// POSIX
+#include <sys/ttycom.h>
+
 // Nucleus
 #include "Nucleus/Saved.h"
 
@@ -67,6 +70,7 @@ namespace Genie
 	struct ConsoleParameters
 	{
 		boost::shared_ptr< IOHandle >  itsTerminal;
+		Point               itsTextDimensions;
 		std::string         itsText;
 		Ped::TextSelection  itsSelection;
 		std::size_t         itsValidLength;
@@ -78,6 +82,7 @@ namespace Genie
 		
 		ConsoleParameters()
 		:
+			itsTextDimensions( N::SetPt( 0, 0 ) ),
 			itsValidLength(),
 			itsStartOfInput(),
 			itHasChangedAttributes(),
@@ -285,6 +290,11 @@ namespace Genie
 			te.destRect = N::OffsetRect( te.viewRect,
 			                             -params.itsHOffset,
 			                             -params.itsVOffset );
+			
+			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
+			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
+			
+			editParams.itsTextDimensions = N::SetPt( cols, rows );
 		}
 		
 		if ( bounds_changed || text_modified )
@@ -770,18 +780,12 @@ namespace Genie
 	{
 		private:
 			FSTreePtr  itsFile;
-			//ConsoleID    itsID;
 			
 			const boost::shared_ptr< IOHandle >& GetTerminal() const;
-			
-			IOHandle* Next() const  { return GetTerminal().get(); }
 			
 			const FSTree* ViewKey() const;
 		
 		public:
-			//static const char* PathPrefix()  { return "/dev/con/"; }
-			
-			//Console_TTYHandle( TerminalID id, const std::string& name );
 			Console_TTYHandle( const FSTreePtr& file, const std::string& name )
 			:
 				TTYHandle( 0 ),
@@ -789,21 +793,15 @@ namespace Genie
 			{
 			}
 			
-			//~Console_TTYHandle();
-			
 			void Attach( const boost::shared_ptr< IOHandle >& terminal );
 			
 			FSTreePtr GetFile() const  { return itsFile; }
-			
-			bool IsDisconnected() const;
 			
 			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			//ConsoleID ID() const  { return itsID; }
 	};
 	
 	const boost::shared_ptr< IOHandle >& Console_TTYHandle::GetTerminal() const
@@ -823,13 +821,6 @@ namespace Genie
 	const FSTree* Console_TTYHandle::ViewKey() const
 	{
 		return GetFile()->ParentRef().get();
-	}
-	
-	bool Console_TTYHandle::IsDisconnected() const
-	{
-		IOHandle* terminal = GetTerminal().get();
-		
-		return terminal && static_cast< TerminalHandle* >( terminal )->IsDisconnected();
 	}
 	
 	unsigned int Console_TTYHandle::SysPoll()
