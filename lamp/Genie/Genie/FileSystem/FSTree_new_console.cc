@@ -802,6 +802,8 @@ namespace Genie
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			
+			void IOCtl( unsigned long request, int* argp );
 	};
 	
 	const boost::shared_ptr< IOHandle >& Console_TTYHandle::GetTerminal() const
@@ -897,6 +899,33 @@ namespace Genie
 		InvalidateWindowForView( view );
 		
 		return byteCount;
+	}
+	
+	void Console_TTYHandle::IOCtl( unsigned long request, int* argp )
+	{
+		const FSTree* view = ViewKey();
+		
+		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		
+		Point* result = (Point*) argp;
+		
+		switch ( request )
+		{
+			case TIOCGWINSZ:
+				if ( result != NULL )
+				{
+					const Rect& bounds = GetScrollerParams( view ).itsLastViewBounds;
+					
+					result[0] = params.itsTextDimensions;
+					result[1] = N::SetPt( bounds.right - bounds.left, bounds.bottom - bounds.top );
+				}
+				
+				break;
+			
+			default:
+				TTYHandle::IOCtl( request, argp );
+				break;
+		};
 	}
 	
 	
