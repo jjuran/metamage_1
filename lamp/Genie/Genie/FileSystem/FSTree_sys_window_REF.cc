@@ -571,12 +571,21 @@ namespace Genie
 	{
 		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
 		
-		boost::shared_ptr< IOHandle > terminal( new TerminalHandle( Pathname() ) );
+		boost::shared_ptr< IOHandle > tty;
 		
-		if ( params.itsTTYDelegate.get() != NULL )
+		const bool has_tty = params.itsTTYDelegate.get() != NULL;
+		
+		if ( has_tty )
 		{
-			boost::shared_ptr< IOHandle > tty = params.itsTTYDelegate->Open( flags );
-			
+			tty = params.itsTTYDelegate->Open( flags );
+		}
+		
+		std::string pathname = ( has_tty ? tty->GetFile().get() : this )->Pathname();
+		
+		boost::shared_ptr< IOHandle > terminal( new TerminalHandle( pathname ) );
+		
+		if ( has_tty )
+		{
 			tty->Attach( terminal );
 			
 			terminal->Attach( tty );
