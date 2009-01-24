@@ -36,7 +36,10 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > PropertyWriterFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new PropertyWriterFileHandle( GetFile(), GetFlags(), itsWriteHook ) );
+		return boost::shared_ptr< IOHandle >( new PropertyWriterFileHandle( GetFile(),
+		                                                                    GetFlags(),
+		                                                                    itsWriteHook,
+		                                                                    itIsBinary ) );
 	}
 	
 	ssize_t PropertyWriterFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
@@ -53,7 +56,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		itsWriteHook( GetFile().get(), buffer, buffer + length );
+		itsWriteHook( GetFile().get(), buffer, buffer + length, itIsBinary );
 		
 		return byteCount;
 	}

@@ -383,7 +383,7 @@ namespace Genie
 			return Accessor::StringFromValue( Accessor::GetRef( it->second ) );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* key = GetViewKey( that );
 			

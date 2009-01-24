@@ -312,7 +312,7 @@ namespace Genie
 			return gScrollFrameParametersMap[ view ].itHasVertical ? "1" : "0";
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -333,7 +333,7 @@ namespace Genie
 			return gScrollFrameParametersMap[ view ].itHasHorizontal ? "1" : "0";
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			

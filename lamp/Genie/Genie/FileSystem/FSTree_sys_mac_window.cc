@@ -420,7 +420,7 @@ namespace Genie
 			return NN::Convert< std::string >( Accessor::Get( key ) );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			Key key = GetKey( that );
 			

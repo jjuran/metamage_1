@@ -214,7 +214,7 @@ namespace Genie
 			return wrapped ? "1" : "0";
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = that->ParentRef().get();
 			

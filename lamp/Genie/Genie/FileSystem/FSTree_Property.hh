@@ -23,7 +23,8 @@ namespace Genie
 			
 			typedef void (*WriteHook)( const FSTree  *that,
 			                           const char    *begin,
-			                           const char    *end );
+			                           const char    *end,
+			                           bool           binary );
 			
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;

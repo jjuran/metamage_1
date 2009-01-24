@@ -160,7 +160,7 @@ namespace Genie
 			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientWidth );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -181,7 +181,7 @@ namespace Genie
 			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientHeight );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -202,7 +202,7 @@ namespace Genie
 			return NN::Convert< std::string >( GetScrollerParams( view ).itsHOffset );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -223,7 +223,7 @@ namespace Genie
 			return NN::Convert< std::string >( GetScrollerParams( view ).itsVOffset );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end )
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			

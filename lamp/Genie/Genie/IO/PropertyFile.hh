@@ -41,17 +41,21 @@ namespace Genie
 		private:
 			typedef void (*WriteHook)( const FSTree  *that,
 			                           const char    *begin,
-			                           const char    *end );
+			                           const char    *end,
+			                           bool           binary );
 			
 			WriteHook  itsWriteHook;
+			bool       itIsBinary;
 		
 		public:
 			PropertyWriterFileHandle( const FSTreePtr&  file,
 			                          OpenFlags         flags,
-			                          WriteHook         writeHook )
+			                          WriteHook         writeHook,
+			                          bool              binary )
 			:
 				VirtualFileHandle( file, flags ),
-				itsWriteHook( writeHook )
+				itsWriteHook( writeHook ),
+				itIsBinary( binary )
 			{
 			}
 			

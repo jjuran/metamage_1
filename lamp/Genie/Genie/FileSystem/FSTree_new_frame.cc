@@ -106,7 +106,7 @@ namespace Genie
 		return NN::Convert< std::string >( gFrameParametersMap[ view ].itsMargin );
 	}
 	
-	static void WriteMargin( const FSTree* that, const char* begin, const char* end )
+	static void WriteMargin( const FSTree* that, const char* begin, const char* end, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		

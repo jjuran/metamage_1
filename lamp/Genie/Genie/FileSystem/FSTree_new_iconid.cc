@@ -111,7 +111,7 @@ namespace Genie
 		return NN::Convert< std::string >( gIconIDMap[ view ] );
 	}
 	
-	static void WriteIconID( const FSTree* that, const char* begin, const char* end )
+	static void WriteIconID( const FSTree* that, const char* begin, const char* end, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		

@@ -78,9 +78,12 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
+		const bool binary = flags & O_BINARY;
+		
 		return new PropertyWriterFileHandle( shared_from_this(),
 		                                     flags,
-		                                     itsWriteHook );
+		                                     itsWriteHook,
+		                                     binary );
 	}
 	
 }
