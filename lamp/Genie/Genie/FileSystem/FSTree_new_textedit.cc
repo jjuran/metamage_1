@@ -602,120 +602,9 @@ namespace Genie
 	}
 	
 	
-	struct TextEdit_wrapped
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = that->ParentRef().get();
-			
-			const bool wrapped = gTextEditParametersMap[ view ].itIsWrapped;
-			
-			return wrapped ? "1" : "0";
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = that->ParentRef().get();
-			
-			const bool wrapped = begin[ 0 ] != '0';
-			
-			gTextEditParametersMap[ view ].itIsWrapped = wrapped;
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct TextEdit_Width_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientWidth );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsClientWidth = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct TextEdit_Height_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientHeight );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsClientHeight = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct TextEdit_HOffset_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsHOffset );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsHOffset = std::atoi( begin );
-			
-			gTextEditParametersMap[ view ].itHasChangedAttributes = true;
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct TextEdit_VOffset_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsVOffset );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsVOffset = std::atoi( begin );
-			
-			gTextEditParametersMap[ view ].itHasChangedAttributes = true;
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
 	struct Selection_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static std::string Get( const FSTree* that, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -733,7 +622,7 @@ namespace Genie
 			return result;
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -783,14 +672,44 @@ namespace Genie
 	};
 	
 	
+	namespace
+	{
+		
+		bool& Wrapped( const FSTree* view )
+		{
+			return gTextEditParametersMap[ view ].itIsWrapped;
+		}
+		
+		int& Width( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsClientWidth;
+		}
+		
+		int& Height( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsClientHeight;
+		}
+		
+		int& HOffset( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsHOffset;
+		}
+		
+		int& VOffset( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsVOffset;
+		}
+		
+	}
+	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		                                       &Property::Get,
+		                                       &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping TextEdit_view_Mappings[] =
@@ -801,15 +720,15 @@ namespace Genie
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
-		//{ "wrapped", &Property_Factory< TextEdit_wrapped > },
+		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
 		
 		// unlocked-text
 		
-		{ "width",  &Property_Factory< TextEdit_Width_Property  > },
-		{ "height", &Property_Factory< TextEdit_Height_Property > },
+		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
+		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
 		
-		{ "x", &Property_Factory< TextEdit_HOffset_Property > },
-		{ "y", &Property_Factory< TextEdit_VOffset_Property > },
+		{ "x", &Property_Factory< View_Property< Integer_Scribe< int >, HOffset > > },
+		{ "y", &Property_Factory< View_Property< Integer_Scribe< int >, VOffset > > },
 		
 		{ NULL, NULL }
 	};

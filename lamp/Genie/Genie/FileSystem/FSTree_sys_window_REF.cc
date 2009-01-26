@@ -252,146 +252,6 @@ namespace Genie
 	}
 	
 	
-	static inline bool is_integer( const char* s )
-	{
-		return std::isdigit( s[ s[0] == '-' ] );
-	}
-	
-	static Point ReadPoint( const char* string )
-	{
-		const char* p = string;
-		
-		long x = std::strtol( p, (char**) &p, 10 );
-		
-		if ( p != string  &&  *p != '\0' )
-		{
-			while ( *++p )
-			{
-				if ( is_integer( p ) )
-				{
-					long y = std::strtol( p, NULL, 10 );
-					
-					Point result = { y, x };
-					
-					return result;
-				}
-			}
-		}
-		
-		throw p7::errno_t( EINVAL );
-	}
-	
-	static std::string WritePoint( Point point, const char* separator )
-	{
-		std::string result = NN::Convert< std::string >( point.h );
-		
-		result += separator;
-		
-		result += NN::Convert< std::string >( point.v );
-		
-		return result;
-	}
-	
-	
-	struct Access_Title
-	{
-		typedef N::Str255 Value;
-		
-		static Value const& GetRef( WindowParameters const& params )  { return params.itsTitle; }
-		static Value      & GetRef( WindowParameters      & params )  { return params.itsTitle; }
-		
-		static std::string StringFromValue( const Value& v )
-		{
-			return NN::Convert< std::string >( v );
-		}
-		
-		static Value ValueFromString( const char* begin, const char* end )
-		{
-			return N::Str255( begin, end - begin );
-		}
-	};
-	
-	struct Access_Origin
-	{
-		typedef Point Value;
-		
-		static Value const& GetRef( WindowParameters const& params )  { return params.itsOrigin; }
-		static Value      & GetRef( WindowParameters      & params )  { return params.itsOrigin; }
-		
-		static std::string StringFromValue( const Value& origin )
-		{
-			return WritePoint( origin, "," );
-		}
-		
-		static Value ValueFromString( const char* begin, const char* end )
-		{
-			return ReadPoint( begin );
-		}
-	};
-	
-	struct Access_Size
-	{
-		typedef Point Value;
-		
-		static Value const& GetRef( WindowParameters const& params )  { return params.itsSize; }
-		static Value      & GetRef( WindowParameters      & params )  { return params.itsSize; }
-		
-		static std::string StringFromValue( const Value& size )
-		{
-			return WritePoint( size, "x" );
-		}
-		
-		static Value ValueFromString( const char* begin, const char* end )
-		{
-			return ReadPoint( begin );
-		}
-	};
-	
-	struct Access_Visible
-	{
-		typedef bool Value;
-		
-		static Value const& GetRef( WindowParameters const& params )  { return params.itIsVisible; }
-		static Value      & GetRef( WindowParameters      & params )  { return params.itIsVisible; }
-		
-		static std::string StringFromValue( const Value& vis )
-		{
-			return vis ? "1" : "0";
-		}
-		
-		static Value ValueFromString( const char* begin, const char* end )
-		{
-			return begin[ 0 ] != '0';
-		}
-	};
-	
-	
-	template < class Accessor >
-	struct sys_window_REF_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* key = GetViewKey( that );
-			
-			WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
-			
-			if ( it == gWindowParametersMap.end() )
-			{
-				throw FSTree_Property::Undefined();
-			}
-			
-			return Accessor::StringFromValue( Accessor::GetRef( it->second ) );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* key = GetViewKey( that );
-			
-			Accessor::GetRef( gWindowParametersMap[ key ] ) = Accessor::ValueFromString( begin, end );
-		}
-	};
-	
-	
 	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
 		public:
@@ -653,16 +513,83 @@ namespace Genie
 	}
 	
 	
-	template < class Accessor >
-	static FSTreePtr PropertyFactory( const FSTreePtr&    parent,
-	                                  const std::string&  name )
+	static WindowParameters& Find( const FSTree* key )
 	{
-		typedef sys_window_REF_Property< Accessor > Property;
+		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
 		
+		if ( it == gWindowParametersMap.end() )
+		{
+			throw FSTree_Property::Undefined();
+		}
+		
+		return it->second;
+	}
+	
+	
+	struct Window_Title
+	{
+		static std::string Get( const FSTree* that, bool binary )
+		{
+			return NN::Convert< std::string >( Find( GetViewKey( that ) ).itsTitle );
+		}
+		
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = GetViewKey( that );
+			
+			WindowParameters& params = gWindowParametersMap[ view ];
+			
+			params.itsTitle = N::Str255( begin, end - begin );
+		}
+	};
+	
+	template < class Scribe, typename Scribe::Value& (*Access)( WindowParameters& ) >
+	struct Window_Property
+	{
+		static std::string Get( const FSTree* that, bool binary )
+		{
+			return Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
+		}
+		
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = GetViewKey( that );
+			
+			WindowParameters& params = gWindowParametersMap[ view ];
+			
+			Access( params ) = Vivify< Scribe >( begin, end, binary );
+		}
+	};
+	
+	
+	namespace
+	{
+		
+		Point& Origin( WindowParameters& params )
+		{
+			return params.itsOrigin;
+		}
+		
+		Point& Size( WindowParameters& params )
+		{
+			return params.itsSize;
+		}
+		
+		bool& Visible( WindowParameters& params )
+		{
+			return params.itIsVisible;
+		}
+		
+	}
+	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
 		return FSTreePtr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,
-		                                                      &Property::Read,
-		                                                      &Property::Write ) );
+		                                                      &Property::Get,
+		                                                      &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
@@ -673,10 +600,10 @@ namespace Genie
 		
 		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
-		{ "title", &PropertyFactory< Access_Title   > },
-		{ "pos",   &PropertyFactory< Access_Origin  > },
-		{ "size",  &PropertyFactory< Access_Size    > },
-		{ "vis",   &PropertyFactory< Access_Visible > },
+		{ "title", &Property_Factory< Window_Title > },
+		{ "pos",   &Property_Factory< Window_Property< Point_Scribe< ',' >, &Origin  > > },
+		{ "size",  &Property_Factory< Window_Property< Point_Scribe< 'x' >, &Size    > > },
+		{ "vis",   &Property_Factory< Window_Property< Boolean_Scribe,      &Visible > > },
 		
 		{ NULL, NULL }
 	};

@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 struct Rect;
@@ -45,6 +46,25 @@ namespace Genie
 	
 	
 	bool InvalidateWindowForView( const FSTree* view );
+	
+	
+	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	struct View_Property
+	{
+		static std::string Get( const FSTree* that, bool binary )
+		{
+			return Freeze< Scribe >( Access( GetViewKey( that ) ), binary );
+		}
+		
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = GetViewKey( that );
+			
+			Access( view ) = Vivify< Scribe >( begin, end, binary );
+			
+			InvalidateWindowForView( view );
+		}
+	};
 	
 	
 	class FSTree_new_View : public FSTree

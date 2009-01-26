@@ -23,6 +23,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 namespace Nitrogen
@@ -77,56 +78,14 @@ namespace Genie
 	}
 	
 	
-	static inline bool is_integer( const char* s )
-	{
-		return std::isdigit( s[ s[0] == '-' ] );
-	}
-	
-	static Point ReadPoint( const std::string& value )
-	{
-		const char* p = value.c_str();
-		
-		long x = std::strtol( p, (char**) &p, 10 );
-		
-		if ( p != value.c_str()  &&  *p != '\0' )
-		{
-			while ( *++p )
-			{
-				if ( is_integer( p ) )
-				{
-					long y = std::strtol( p, NULL, 10 );
-					
-					Point result = { y, x };
-					
-					return result;
-				}
-			}
-		}
-		
-		throw p7::errno_t( EINVAL );
-	}
-	
-	static std::string WritePoint( Point point, const char* separator )
-	{
-		std::string result = NN::Convert< std::string >( point.h );
-		
-		result += separator;
-		
-		result += NN::Convert< std::string >( point.v );
-		
-		return result;
-	}
-	
 	struct Access_WindowTitle
 	{
-		typedef N::Str255 Result;
-		
-		static Result Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
-			return N::GetWTitle( window );
+			return NN::Convert< std::string >( N::GetWTitle( window ) );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
 			N::SetWTitle( window, N::Str255( begin, end - begin ) );
 		}
@@ -134,52 +93,50 @@ namespace Genie
 	
 	struct Access_WindowPosition
 	{
-		typedef std::string Result;
+		typedef Point_Scribe< ',' > Scribe;
 		
-		static Result Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
 			Point position = Ped::GetWindowPosition( window );
 			
-			return WritePoint( position, "," );
+			return Freeze< Scribe >( position, binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			Ped::SetWindowPosition( window, ReadPoint( begin ) );
+			Ped::SetWindowPosition( window, Vivify< Scribe >( begin, end, binary ) );
 		}
 	};
 	
 	struct Access_WindowSize
 	{
-		typedef std::string Result;
+		typedef Point_Scribe< 'x' > Scribe;
 		
-		static Result Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
 			Point size = Ped::GetWindowSize( window );
 			
-			return WritePoint( size, "x" );
+			return Freeze< Scribe >( size, binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			Ped::SetWindowSize( window, ReadPoint( begin ) );
+			Ped::SetWindowSize( window, Vivify< Scribe >( begin, end, binary ) );
 		}
 	};
 	
 	struct Access_WindowVisible
 	{
-		typedef std::string Result;
+		typedef Boolean_Scribe Scribe;
 		
-		static Result Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
-			const bool visible = N::IsWindowVisible( window );
-			
-			return visible ? "1" : "0";
+			return Freeze< Scribe >( N::IsWindowVisible( window ), binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			const bool visible = begin[ 0 ] != '0';
+			const bool visible = Vivify< Scribe >( begin, end, binary );
 			
 			if ( visible )
 			{
@@ -194,9 +151,9 @@ namespace Genie
 	
 	struct Access_WindowZOrder
 	{
-		typedef unsigned Result;
+		typedef Integer_Scribe< unsigned > Scribe;
 		
-		static unsigned Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
 			unsigned z = 0;
 			
@@ -208,7 +165,7 @@ namespace Genie
 				}
 			}
 			
-			return z;
+			return Freeze< Scribe >( z, binary );
 		}
 	};
 	
@@ -331,21 +288,36 @@ namespace Genie
 		return encoded;
 	}
 	
+	struct RGBColor_Scribe
+	{
+		typedef RGBColor Value;
+		
+		static std::string Encode( const RGBColor& value )
+		{
+			return WriteColor( value );
+		}
+		
+		static RGBColor Decode( const char* begin, const char* end )
+		{
+			return ReadColor( begin, end );
+		}
+	};
+	
 	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
 	struct Access_WindowColor
 	{
-		typedef std::string Result;
+		typedef RGBColor_Scribe Scribe;
 		
-		static Result Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
 			RGBColor color = GetColor( N::GetWindowPort( window ) );
 			
-			return WriteColor( color );
+			return Freeze< Scribe >( color, binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			RGBColor color = ReadColor( begin, end );
+			RGBColor color = Vivify< Scribe >( begin, end, binary );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -359,16 +331,18 @@ namespace Genie
 	
 	struct Access_WindowTextFont
 	{
-		typedef short Result;
+		typedef Integer_Scribe< short > Scribe;
 		
-		static short Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
-			return N::GetPortTextFont( N::GetWindowPort( window ) );
+			short fontID = N::GetPortTextFont( N::GetWindowPort( window ) );
+			
+			return Freeze< Scribe >( fontID, binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			short fontID = std::atoi( begin );
+			short fontID = Vivify< Scribe >( begin, end, binary );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -382,16 +356,18 @@ namespace Genie
 	
 	struct Access_WindowTextSize
 	{
-		typedef short Result;
+		typedef Integer_Scribe< short > Scribe;
 		
-		static short Get( N::WindowRef window )
+		static std::string Get( N::WindowRef window, bool binary )
 		{
-			return N::GetPortTextSize( N::GetWindowPort( window ) );
+			short size = N::GetPortTextSize( N::GetWindowPort( window ) );
+			
+			return Freeze< Scribe >( size, binary );
 		}
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end )
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			short size = std::atoi( begin );
+			short size = Vivify< Scribe >( begin, end, binary );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
@@ -417,7 +393,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			return NN::Convert< std::string >( Accessor::Get( key ) );
+			return Accessor::Get( key, binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
@@ -429,7 +405,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			Accessor::Set( key, begin, end );
+			Accessor::Set( key, begin, end, binary );
 		}
 	};
 	

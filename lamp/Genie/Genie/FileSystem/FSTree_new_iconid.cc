@@ -104,37 +104,29 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadIconID( const FSTree* that, bool binary )
+	namespace
 	{
-		const FSTree* view = GetViewKey( that );
 		
-		return NN::Convert< std::string >( gIconIDMap[ view ] );
+		N::ResID& IconID( const FSTree* view )
+		{
+			return gIconIDMap[ view ];
+		}
+		
 	}
 	
-	static void WriteIconID( const FSTree* that, const char* begin, const char* end, bool binary )
-	{
-		const FSTree* view = GetViewKey( that );
-		
-		// *end == '\n'
-		
-		gIconIDMap[ view ] = N::ResID( std::atoi( begin ) );
-		
-		InvalidateWindowForView( view );
-	}
-	
-	
-	static FSTreePtr IDFactory( const FSTreePtr&    parent,
-	                            const std::string&  name )
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &ReadIconID,
-		                                       &WriteIconID ) );
+		                                       &Property::Get,
+		                                       &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping IconID_view_Mappings[] =
 	{
-		{ "id", &IDFactory },
+		{ "id", &Property_Factory< View_Property< Integer_Scribe< N::ResID >, IconID > > },
 		
 		{ NULL, NULL }
 	};

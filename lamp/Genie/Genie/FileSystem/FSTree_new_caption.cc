@@ -15,6 +15,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -203,29 +204,15 @@ namespace Genie
 	}
 	
 	
-	struct Caption_wrapped
+	namespace
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		
+		bool& Wrapped( const FSTree* view )
 		{
-			const FSTree* view = that->ParentRef().get();
-			
-			const bool wrapped = gCaptionParametersMap[ view ].itIsWrapped;
-			
-			return wrapped ? "1" : "0";
+			return gCaptionParametersMap[ view ].itIsWrapped;
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = that->ParentRef().get();
-			
-			const bool wrapped = begin[ 0 ] != '0';
-			
-			gCaptionParametersMap[ view ].itIsWrapped = wrapped;
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
+	}
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
@@ -233,15 +220,15 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		                                       &Property::Get,
+		                                       &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping Caption_view_Mappings[] =
 	{
 		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
-		{ "wrapped", &Property_Factory< Caption_wrapped > },
+		{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
 		
 		{ NULL, NULL }
 	};

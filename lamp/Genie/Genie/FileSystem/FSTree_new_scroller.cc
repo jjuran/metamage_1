@@ -151,93 +151,28 @@ namespace Genie
 	}
 	
 	
-	struct Width_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientWidth );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsClientWidth = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct Height_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsClientHeight );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsClientHeight = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct HOffset_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsHOffset );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsHOffset = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct VOffset_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return NN::Convert< std::string >( GetScrollerParams( view ).itsVOffset );
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			GetScrollerParams( view ).itsVOffset = std::atoi( begin );
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	
 	namespace
 	{
+		
+		int& Width( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsClientWidth;
+		}
+		
+		int& Height( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsClientHeight;
+		}
+		
+		int& HOffset( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsHOffset;
+		}
+		
+		int& VOffset( const FSTree* view )
+		{
+			return GetScrollerParams( view ).itsVOffset;
+		}
 		
 		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
 		{
@@ -253,17 +188,17 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		                                       &Property::Get,
+		                                       &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping Scroller_view_Mappings[] =
 	{
-		{ "width",  &Property_Factory< Width_Property  > },
-		{ "height", &Property_Factory< Height_Property > },
+		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
+		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
 		
-		{ "x", &Property_Factory< HOffset_Property > },
-		{ "y", &Property_Factory< VOffset_Property > },
+		{ "x", &Property_Factory< View_Property< Integer_Scribe< int >, HOffset > > },
+		{ "y", &Property_Factory< View_Property< Integer_Scribe< int >, VOffset > > },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
 		

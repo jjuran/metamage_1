@@ -303,49 +303,6 @@ namespace Genie
 	}
 	
 	
-	struct Vertical_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return gScrollFrameParametersMap[ view ].itHasVertical ? "1" : "0";
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			gScrollFrameParametersMap[ view ].itHasVertical = begin[ 0 ] != '0';
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	struct Horizontal_Property
-	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			return gScrollFrameParametersMap[ view ].itHasHorizontal ? "1" : "0";
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = GetViewKey( that );
-			
-			// *end == '\n'
-			
-			gScrollFrameParametersMap[ view ].itHasHorizontal = begin[ 0 ] != '0';
-			
-			InvalidateWindowForView( view );
-		}
-	};
-	
-	
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
@@ -415,6 +372,16 @@ namespace Genie
 			return gScrollFrameParametersMap[ key ].itsSubview;
 		}
 		
+		bool& Vertical( const FSTree* view )
+		{
+			return gScrollFrameParametersMap[ view ].itHasVertical;
+		}
+		
+		bool& Horizontal( const FSTree* view )
+		{
+			return gScrollFrameParametersMap[ view ].itHasHorizontal;
+		}
+		
 	}
 	
 	
@@ -424,14 +391,14 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		                                       &Property::Get,
+		                                       &Property::Set ) );
 	}
 	
 	const FSTree_Premapped::Mapping ScrollFrame_view_Mappings[] =
 	{
-		{ "horizontal", &Property_Factory< Horizontal_Property > },
-		{ "vertical",   &Property_Factory< Vertical_Property   > },
+		{ "horizontal", &Property_Factory< View_Property< Boolean_Scribe, Horizontal > > },
+		{ "vertical",   &Property_Factory< View_Property< Boolean_Scribe, Vertical   > > },
 		
 		{ "target", &Basic_Factory< FSTree_ScrollFrame_target >, true },
 		
