@@ -55,5 +55,26 @@ namespace Genie
 		return result;
 	}
 	
+	std::string Rect_Scribe::Encode( const Rect& r )
+	{
+		std::string result;
+		
+		result += NN::Convert< std::string >( r.left );
+		
+		result += ",";
+		
+		result += NN::Convert< std::string >( r.top );
+		
+		result += "-";
+		
+		result += NN::Convert< std::string >( r.right );
+		
+		result += ",";
+		
+		result += NN::Convert< std::string >( r.bottom );
+		
+		return result;
+	}
+	
 }
 

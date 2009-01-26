@@ -8,6 +8,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 namespace Genie
@@ -59,51 +60,6 @@ namespace Genie
 	}
 	
 	
-	static std::string PrintableBounds( const Rect& r )
-	{
-		std::string result;
-		
-		result += NN::Convert< std::string >( r.left );
-		
-		result += ",";
-		
-		result += NN::Convert< std::string >( r.top );
-		
-		result += "-";
-		
-		result += NN::Convert< std::string >( r.right );
-		
-		result += ",";
-		
-		result += NN::Convert< std::string >( r.bottom );
-		
-		return result;
-	}
-	
-	static std::string PrintableSize( int x, int y )
-	{
-		std::string result;
-		
-		result += NN::Convert< std::string >( x );
-		
-		result += "x";
-		
-		result += NN::Convert< std::string >( y );
-		
-		return result;
-	}
-	
-	inline std::string PrintableSize( Point size )
-	{
-		return PrintableSize( size.h, size.v );
-	}
-	
-	inline std::string PrintableSize( const Rect& bounds )
-	{
-		return PrintableSize( bounds.right - bounds.left, bounds.bottom - bounds.top );
-	}
-	
-	
 	bool sys_mac_gdev_Details::KeyIsValid( const Key& key )
 	{
 		Sequence sequence = ItemSequence();
@@ -126,9 +82,9 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		static Result Get( N::GDHandle gdevice )
+		static Result Get( N::GDHandle gdevice, bool binary )
 		{
-			return PrintableBounds( Rect( gdevice[0]->gdRect ) );
+			return Freeze< Rect_Scribe >( gdevice[0]->gdRect, binary );
 		}
 	};
 	
@@ -136,9 +92,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		static Result Get( N::GDHandle gdevice )
+		static Result Get( N::GDHandle gdevice, bool binary )
 		{
-			return PrintableSize( gdevice[0]->gdRect );
+			const Rect& bounds = gdevice[0]->gdRect;
+			
+			const Point size = { bounds.bottom - bounds.top,
+			                     bounds.right - bounds.left };
+			
+			return Freeze< Point_Scribe< 'x' > >( size, binary );
 		}
 	};
 	
@@ -151,7 +112,7 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			return NN::Convert< std::string >( Accessor::Get( key ) );
+			return NN::Convert< std::string >( Accessor::Get( key, binary ) );
 		}
 	};
 	

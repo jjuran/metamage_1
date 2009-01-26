@@ -117,6 +117,15 @@ namespace Genie
 		}
 	};
 	
+	struct Rect_Scribe
+	{
+		typedef Rect Value;
+		
+		static std::string Encode( const Rect& value );
+		
+		static Rect Decode( const char* begin, const char* end );
+	};
+	
 }
 
 #endif

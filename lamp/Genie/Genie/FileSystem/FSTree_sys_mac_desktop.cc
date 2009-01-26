@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 namespace Genie
@@ -22,57 +23,13 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	static std::string PrintableBounds( const Rect& r )
-	{
-		std::string result;
-		
-		result += NN::Convert< std::string >( r.left );
-		
-		result += ",";
-		
-		result += NN::Convert< std::string >( r.top );
-		
-		result += "-";
-		
-		result += NN::Convert< std::string >( r.right );
-		
-		result += ",";
-		
-		result += NN::Convert< std::string >( r.bottom );
-		
-		return result;
-	}
-	
-	static std::string PrintableSize( int x, int y )
-	{
-		std::string result;
-		
-		result += NN::Convert< std::string >( x );
-		
-		result += "x";
-		
-		result += NN::Convert< std::string >( y );
-		
-		return result;
-	}
-	
-	inline std::string PrintableSize( Point size )
-	{
-		return PrintableSize( size.h, size.v );
-	}
-	
-	inline std::string PrintableSize( const Rect& bounds )
-	{
-		return PrintableSize( bounds.right - bounds.left, bounds.bottom - bounds.top );
-	}
-	
 	struct GetScreenBounds
 	{
 		typedef std::string Result;
 		
-		static Result Get( const BitMap& screenBits )
+		static Result Get( const BitMap& screenBits, bool binary )
 		{
-			return PrintableBounds( screenBits.bounds );
+			return Freeze< Rect_Scribe >( screenBits.bounds, binary );
 		}
 	};
 	
@@ -80,9 +37,14 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		static Result Get( const BitMap& screenBits )
+		static Result Get( const BitMap& screenBits, bool binary )
 		{
-			return PrintableSize( screenBits.bounds );
+			const Rect& bounds = screenBits.bounds;
+			
+			const Point size = { bounds.bottom - bounds.top,
+			                     bounds.right - bounds.left };
+			
+			return Freeze< Point_Scribe< 'x' > >( size, binary );
 		}
 	};
 	
@@ -93,7 +55,7 @@ namespace Genie
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
-			return NN::Convert< std::string >( Accessor::Get( screenBits ) );
+			return Accessor::Get( screenBits, binary );
 		}
 	};
 	
