@@ -10,6 +10,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 #if !TARGET_API_MAC_CARBON
 	
@@ -114,7 +115,7 @@ namespace Genie
 	{
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			return Erratum::Test() ? "1" : "0";
+			return Freeze< Boolean_Scribe >( Erratum::Test(), binary );
 		}
 	};
 	
