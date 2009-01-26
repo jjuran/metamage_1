@@ -30,7 +30,7 @@ namespace Genie
 		{
 			result = OpenForRead( flags );
 		}
-		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
+		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
 		{
 			result = OpenForWrite( flags );
 		}
