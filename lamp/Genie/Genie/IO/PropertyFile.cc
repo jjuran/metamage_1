@@ -49,9 +49,9 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		std::size_t length = byteCount - 1;
+		std::size_t length = byteCount;
 		
-		if ( buffer[ length ] != '\n' )
+		if ( !itIsBinary  &&  buffer[ --length ] != '\n' )
 		{
 			throw p7::errno_t( EINVAL );
 		}
