@@ -164,6 +164,10 @@ namespace Genie
 			virtual FSTreePtr Lookup( const std::string& name ) const;
 			
 			virtual FSIteratorPtr Iterate() const;
+			
+			// Internal methods
+			
+			virtual void Attach( const FSTreePtr& target ) const;
 	};
 	
 }

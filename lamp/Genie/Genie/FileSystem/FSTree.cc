@@ -338,5 +338,10 @@ namespace Genie
 		return FSIteratorPtr();
 	}
 	
+	void FSTree::Attach( const FSTreePtr& target ) const
+	{
+		p7::throw_errno( EINVAL );
+	}
+	
 }
 
