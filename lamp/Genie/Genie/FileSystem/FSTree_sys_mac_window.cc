@@ -110,18 +110,18 @@ namespace Genie
 	
 	struct Access_WindowSize
 	{
-		typedef Point_Scribe< 'x' > Scribe;
+		//typedef Point_Scribe< 'x' > Scribe;
 		
 		static std::string Get( N::WindowRef window, bool binary )
 		{
 			Point size = Ped::GetWindowSize( window );
 			
-			return Freeze< Scribe >( size, binary );
+			return Freeze< Point_Scribe< 'x' > >( size, binary );
 		}
 		
 		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
 		{
-			Ped::SetWindowSize( window, Vivify< Scribe >( begin, end, binary ) );
+			Ped::SetWindowSize( window, Vivify< Point_Scribe<> >( begin, end, binary ) );
 		}
 	};
 	

@@ -15,6 +15,11 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	std::string Int_Scribe::Encode( int value )
+	{
+		return NN::Convert< std::string >( value );
+	}
+	
 	static inline bool is_integer( const char* s )
 	{
 		return std::isdigit( s[ s[0] == '-' ] );

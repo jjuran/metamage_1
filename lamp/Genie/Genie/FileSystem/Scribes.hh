@@ -16,9 +16,6 @@
 // Mac OS
 #include <Quickdraw.h>
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 
 namespace Genie
 {
@@ -75,33 +72,42 @@ namespace Genie
 		}
 	};
 	
+	struct Int_Scribe
+	{
+		typedef int Value;
+		
+		static std::string Encode( int value );
+		
+		static int Decode( const char* begin, const char* end )
+		{
+			// *end == '\n'
+			
+			return std::atoi( begin );
+		}
+	};
+	
 	template < class Int >
 	struct Integer_Scribe
 	{
 		typedef Int Value;
 		
-		static std::string Encode( Int value );
+		static std::string Encode( Int value )
+		{
+			return Int_Scribe::Encode( value );
+		}
 		
 		static Int Decode( const char* begin, const char* end )
 		{
-			// *end == '\n'
-			
-			return Int( std::atoi( begin ) );
+			return Int( Int_Scribe::Decode( begin, end ) );
 		}
 	};
-	
-	template < class Int >
-	std::string Integer_Scribe< Int >::Encode( Int value )
-	{
-		return NN::Convert< std::string >( value );
-	}
 	
 	
 	Point ReadPoint( const char* begin, const char* end );
 	
 	std::string WritePoint( Point point, char separator );
 	
-	template < char separator >
+	template < char separator = ',' >
 	struct Point_Scribe
 	{
 		typedef Point Value;
