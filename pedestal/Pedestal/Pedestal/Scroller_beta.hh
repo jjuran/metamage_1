@@ -57,6 +57,8 @@ namespace Pedestal
 			
 			Rect GetAperture();
 			
+			void Activate( bool activating );
+			
 			bool HitTest( const EventRecord& event );
 			
 			void MouseDown( const EventRecord& event );

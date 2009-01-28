@@ -84,6 +84,14 @@ namespace Pedestal
 		UpdateScrollbars();
 	}
 	
+	void ScrollFrame::Activate( bool activating )
+	{
+		GetVertical  ().Activate( activating );
+		GetHorizontal().Activate( activating );
+		
+		Subview().Activate( activating );
+	}
+	
 	bool ScrollFrame::HitTest( const EventRecord& event )
 	{
 		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture() );
