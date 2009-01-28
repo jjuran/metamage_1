@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_window.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 namespace Genie
@@ -54,7 +55,7 @@ namespace Genie
 	{
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			return NN::Convert< std::string >( Accessor::Get() );
+			return Freeze< Integer_Scribe< long > >( Accessor::Get(), binary );
 		}
 	};
 	
