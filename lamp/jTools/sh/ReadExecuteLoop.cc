@@ -77,20 +77,16 @@ namespace tool
 	
 	static void SetRowsAndColumns()
 	{
-	#ifdef WIOCGDIM
-		
-		// FIXME:  Use fallback for real Unix
-		
 		try
 		{
-			short dimensions[ 2 ] = { 0 };
+			struct winsize size = { 0 };
 			
 			p7::ioctl( p7::open( "/dev/tty", p7::o_rdonly ),
-			           WIOCGDIM,
-			           &dimensions );
+			           TIOCGWINSZ,
+			           &size );
 			
-			std::string lines   = NN::Convert< std::string >( dimensions[0] );
-			std::string columns = NN::Convert< std::string >( dimensions[1] );
+			std::string lines   = NN::Convert< std::string >( size.ws_row );
+			std::string columns = NN::Convert< std::string >( size.ws_col );
 			
 			AssignShellVariable( "LINES",   lines  .c_str() );
 			AssignShellVariable( "COLUMNS", columns.c_str() );
@@ -98,8 +94,6 @@ namespace tool
 		catch ( ... )
 		{
 		}
-		
-	#endif
 	}
 	
 	p7::wait_t ReadExecuteLoop( p7::fd_t  fd,
