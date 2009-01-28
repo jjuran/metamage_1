@@ -8,6 +8,9 @@
 // Nucleus
 #include "Nucleus/Saved.h"
 
+// Pedestal
+#include "Pedestal/Scrollbar.hh"
+
 
 namespace Pedestal
 {
@@ -129,6 +132,29 @@ namespace Pedestal
 		ApertureHook( aperture );
 		
 		Subview().Draw( aperture );
+	}
+	
+	Rect ScrollFrame::GetAperture()
+	{
+		Rect aperture = Bounds();
+		
+		const short kScrollbarThickness = 16;
+		
+		const short kOverlap = 1;
+		
+		const short kFootprint = kScrollbarThickness - kOverlap;
+		
+		if ( GetVertical().Get() )
+		{
+			aperture.right -= kFootprint;
+		}
+		
+		if ( GetHorizontal().Get() )
+		{
+			aperture.bottom -= kFootprint;
+		}
+		
+		return aperture;
 	}
 	
 }

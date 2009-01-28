@@ -14,6 +14,9 @@
 namespace Pedestal
 {
 	
+	class Scrollbar;
+	
+	
 	class ScrollerAPI
 	{
 		public:
@@ -45,9 +48,14 @@ namespace Pedestal
 			
 			virtual void UpdateScrollbars()  {}
 			
-			virtual Rect GetAperture() const = 0;
+			virtual const Rect& Bounds() const = 0;
+			
+			virtual Scrollbar& GetHorizontal() = 0;
+			virtual Scrollbar& GetVertical  () = 0;
 			
 			void ClickInLoop();
+			
+			Rect GetAperture();
 			
 			bool HitTest( const EventRecord& event );
 			
