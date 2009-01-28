@@ -81,6 +81,11 @@ namespace Pedestal
 		UpdateScrollbars();
 	}
 	
+	bool ScrollFrame::HitTest( const EventRecord& event )
+	{
+		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture() );
+	}
+	
 	void ScrollFrame::MouseDown( const EventRecord& event )
 	{
 		if ( HitTest( event ) )

@@ -45,7 +45,11 @@ namespace Pedestal
 			
 			virtual void UpdateScrollbars()  {}
 			
+			virtual Rect GetAperture() const = 0;
+			
 			void ClickInLoop();
+			
+			bool HitTest( const EventRecord& event );
 			
 			void MouseDown( const EventRecord& event );
 			
