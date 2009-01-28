@@ -89,54 +89,6 @@ namespace Pedestal
 	void InvalidateWindowGrowBox( Nitrogen::WindowRef window );
 	
 	
-	enum
-	{
-		kPedestalWindowKind = 1024
-	};
-	
-	
-	template < bool hasGrowIcon >
-	struct DefProcID_HasGrowIcon
-	{
-		bool HasGrowIcon() const  { return hasGrowIcon; }
-	};
-	
-	template < Nitrogen::WindowDefProcID defProcID >  struct DefProcID_Traits;
-	
-	template <>  struct DefProcID_Traits< Nitrogen::documentProc    > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::dBoxProc        > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::plainDBox       > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::altDBoxProc     > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::noGrowDocProc   > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::movableDBoxProc > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< Nitrogen::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
-	
-	template < Nitrogen::WindowDefProcID defProcID >
-	struct Static_DefProcID : DefProcID_Traits< defProcID >
-	{
-		Nitrogen::WindowDefProcID Get() const  { return defProcID; }
-	};
-	
-	class Variable_DefProcID
-	{
-		private:
-			Nitrogen::WindowDefProcID itsDefProcID;
-		
-		public:
-			Variable_DefProcID() : itsDefProcID()
-			{
-			}
-			
-			Variable_DefProcID( Nitrogen::WindowDefProcID procID ) : itsDefProcID( procID )
-			{
-			}
-			
-			Nitrogen::WindowDefProcID Get() const  { return itsDefProcID; }
-			
-			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
-	};
-	
 	class WindowCloseHandler
 	{
 		public:
@@ -210,9 +162,6 @@ namespace Pedestal
 	class Window : public ClosableWindow, public ResizableWindow,
 	               public WindowRefOwner
 	{
-		public:
-			typedef Variable_DefProcID DefProcID;
-		
 		private:
 			Nitrogen::WindowDefProcID itsDefProcID;
 		
