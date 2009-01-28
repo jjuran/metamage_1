@@ -9,7 +9,6 @@
 #include "Nucleus/Convert.h"
 
 // Pedestal
-#include "Pedestal/Scroller.hh"
 #include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
@@ -19,9 +18,6 @@ namespace UseEdit
 	
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
-	
-	
-	typedef Pedestal::TEScrollFrame< true > View;
 	
 	
 	static Rect MakeWindowRect()
@@ -58,7 +54,7 @@ namespace UseEdit
 	{
 		Ped::NewWindowContext context( MakeWindowRect(), title );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context, N::documentProc ) );
+		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context ) );
 		
 		window->SetView( MakeView() );
 		
