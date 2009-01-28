@@ -42,21 +42,39 @@ namespace Pedestal
 	
 	struct NewWindowContext
 	{
-		const Rect&          bounds;
-		ConstStr255Param     title;
-		bool                 visible;
-		Nitrogen::WindowRef  behind;
-		bool                 goAwayFlag;
+		const Rect&                bounds;
+		ConstStr255Param           title;
+		bool                       visible;
+		Nitrogen::WindowDefProcID  procID;
+		Nitrogen::WindowRef        behind;
+		bool                       goAwayFlag;
+		
+		NewWindowContext( const Rect&                bounds,
+			              ConstStr255Param           title,
+			              bool                       visible    = true,
+			              Nitrogen::WindowDefProcID  procID     = Nitrogen::documentProc,
+			              Nitrogen::WindowRef        behind     = kFirstWindowOfClass,
+			              bool                       goAwayFlag = true )
+		:
+			bounds    ( bounds     ),
+			title     ( title      ),
+			visible   ( visible    ),
+			procID    ( procID     ),
+			behind    ( behind     ),
+			goAwayFlag( goAwayFlag )
+		{
+		}
 		
 		NewWindowContext( const Rect&          bounds,
 			              ConstStr255Param     title,
-			              bool                 visible    = true,
-			              Nitrogen::WindowRef  behind     = kFirstWindowOfClass,
+			              bool                 visible,
+			              Nitrogen::WindowRef  behind,
 			              bool                 goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
 			title     ( title      ),
 			visible   ( visible    ),
+			procID    ( Nitrogen::documentProc ),
 			behind    ( behind     ),
 			goAwayFlag( goAwayFlag )
 		{
@@ -79,6 +97,18 @@ namespace Pedestal
 		                     context.title,
 		                     context.visible,
 		                     procID,
+		                     context.behind,
+		                     context.goAwayFlag,
+		                     refCon );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&  context,
+	                                                           Nitrogen::RefCon         refCon )
+	{
+		return CreateWindow( context.bounds,
+		                     context.title,
+		                     context.visible,
+		                     context.procID,
 		                     context.behind,
 		                     context.goAwayFlag,
 		                     refCon );
