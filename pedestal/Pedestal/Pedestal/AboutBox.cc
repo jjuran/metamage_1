@@ -40,9 +40,9 @@ namespace Pedestal
 		                             300,
 		                             200 );
 		
-		NewWindowContext context( bounds, "\p" "Pedestal" );
+		NewWindowContext context( bounds, "\p" "Pedestal", true, N::noGrowDocProc );
 		
-		std::auto_ptr< Window > window( new UserWindow( context, N::noGrowDocProc ) );
+		std::auto_ptr< Window > window( new UserWindow( context ) );
 		
 		window->SetView( std::auto_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
 		

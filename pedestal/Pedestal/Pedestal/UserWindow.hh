@@ -44,10 +44,7 @@ namespace Pedestal
 			boost::shared_ptr< View > itsView;
 		
 		public:
-			UserWindow( const NewWindowContext&    context,
-			            Nitrogen::WindowDefProcID  defProcID = Nitrogen::documentProc )
-			:
-				Window( context, defProcID )
+			UserWindow( const NewWindowContext& context ) : Window( context )
 			{
 			}
 			
