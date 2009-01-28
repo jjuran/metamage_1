@@ -49,7 +49,7 @@ namespace tool
 		const short width  = 2 * 4 +  6 * 80 + 15;
 		const short height = 2 * 4 + 11 * 24;
 		
-		p7::spew( "size", STR_LEN( "495x272" "\n" ) );
+		p7::spew( "size", STR_LEN( "503x272" "\n" ) );
 		
 		p7::utime( "ref" );
 		
