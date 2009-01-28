@@ -91,10 +91,9 @@ namespace Genie
 		
 		public:
 			Window( const FSTree*                 key,
-			        const Ped::NewWindowContext&  context,
-			        N::WindowDefProcID            defProcID = Nitrogen::documentProc )
+			        const Ped::NewWindowContext&  context )
 			:
-				Ped::Window( context, defProcID ),
+				Ped::Window( context ),
 				itsKey( key )
 			{
 			}
@@ -227,7 +226,7 @@ namespace Genie
 		
 		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
 		
-		boost::shared_ptr< Ped::Window > window( new Window( key, context, N::documentProc ) );
+		boost::shared_ptr< Ped::Window > window( new Window( key, context ) );
 		
 		boost::shared_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
