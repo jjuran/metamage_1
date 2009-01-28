@@ -120,9 +120,6 @@ namespace Genie
 			void Scroll( int dh, int dv );
 			
 			void Draw( const Rect& bounds );
-			
-			bool SetCursor( const EventRecord&  event,
-			                RgnHandle           mouseRgn );
 	};
 	
 	void TextEdit_Scroller::Scroll( int dh, int dv )
@@ -266,14 +263,6 @@ namespace Genie
 		}
 		
 		Subview().Draw( bounds );
-	}
-	
-	bool TextEdit_Scroller::SetCursor( const EventRecord&  event,
-	                                   RgnHandle           mouseRgn )
-	{
-		N::SetCursor( N::GetCursor( N::iBeamCursor ) );
-		
-		return true;
 	}
 	
 	
