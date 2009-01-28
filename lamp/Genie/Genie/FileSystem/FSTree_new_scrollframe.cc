@@ -151,11 +151,12 @@ namespace Genie
 			{
 			}
 			
-			Rect GetAperture() const;
+			const Rect& Bounds() const  { return itsLastBounds; }
+			
+			Scrollbar& GetHorizontal()  { return itsHorizontal; }
+			Scrollbar& GetVertical  ()  { return itsVertical;   }
 			
 			void UpdateScrollbars();
-			
-			bool HitTest( const EventRecord& event );
 			
 			void Activate( bool activating );
 			
@@ -164,29 +165,6 @@ namespace Genie
 			Ped::View& Subview();
 	};
 	
-	
-	Rect ScrollFrame::GetAperture() const
-	{
-		Rect aperture = itsLastBounds;
-		
-		const short kScrollbarThickness = 16;
-		
-		const short kOverlap = 1;
-		
-		const short kFootprint = kScrollbarThickness - kOverlap;
-		
-		if ( itsVertical.Get() )
-		{
-			aperture.right -= kFootprint;
-		}
-		
-		if ( itsHorizontal.Get() )
-		{
-			aperture.bottom -= kFootprint;
-		}
-		
-		return aperture;
-	}
 	
 	void ScrollFrame::UpdateScrollbars()
 	{
@@ -201,11 +179,6 @@ namespace Genie
 		itsVertical.Adjust( GetScrollerClientHeight( target ),
 		                    GetScrollerVOffset     ( target ),
 		                    itsLastBounds.bottom - itsLastBounds.top );
-	}
-	
-	bool ScrollFrame::HitTest( const EventRecord& event )
-	{
-		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture() );
 	}
 	
 	void ScrollFrame::Activate( bool activating )
