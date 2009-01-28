@@ -5,6 +5,7 @@
 
 // Standard C/C++
 #include <cstddef>
+#include <cstring>
 
 // Iota
 #include "iota/strings.hh"
@@ -40,11 +41,9 @@ namespace tool
 	{
 		p7::chdir( "/new/window" );
 		
-		std::string title_data = title;
-		
-		title_data += '\n';
-		
-		p7::spew( "title", title_data );
+		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		          title,
+		          std::strlen( title ) );
 		
 		const short width  = 2 * 4 +  6 * 80 + 15;
 		const short height = 2 * 4 + 11 * 24;

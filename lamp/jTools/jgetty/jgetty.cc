@@ -3,6 +3,9 @@
  *	=========
  */
 
+// Standard C/C++
+#include <cstring>
+
 // Iota
 #include "iota/strings.hh"
 
@@ -67,9 +70,9 @@ int main( int argc, char const *const argv[] )
 	
 	if ( const char* name = ttyname( p7::stdin_fileno ) )
 	{
-		std::string title = name;
-		
-		p7::spew( "title", title + "\n" );
+		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		          name,
+		          std::strlen( name ) );
 	}
 	
 	p7::pid_t pid = p7::vfork();
