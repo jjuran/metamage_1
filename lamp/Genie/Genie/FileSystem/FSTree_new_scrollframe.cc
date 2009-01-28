@@ -158,8 +158,6 @@ namespace Genie
 			
 			void UpdateScrollbars();
 			
-			void Activate( bool activating );
-			
 			void Draw( const Rect& aperture );
 			
 			Ped::View& Subview();
@@ -179,14 +177,6 @@ namespace Genie
 		itsVertical.Adjust( GetScrollerClientHeight( target ),
 		                    GetScrollerVOffset     ( target ),
 		                    itsLastBounds.bottom - itsLastBounds.top );
-	}
-	
-	void ScrollFrame::Activate( bool activating )
-	{
-		itsVertical  .Activate( activating );
-		itsHorizontal.Activate( activating );
-		
-		Subview().Activate( activating );
 	}
 	
 	
