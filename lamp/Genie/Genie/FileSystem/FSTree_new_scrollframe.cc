@@ -151,7 +151,7 @@ namespace Genie
 			{
 			}
 			
-			Rect GetAperture( const Rect& bounds ) const;
+			Rect GetAperture() const;
 			
 			void UpdateScrollbars();
 			
@@ -165,9 +165,9 @@ namespace Genie
 	};
 	
 	
-	Rect ScrollFrame::GetAperture( const Rect& bounds ) const
+	Rect ScrollFrame::GetAperture() const
 	{
-		Rect aperture = bounds;
+		Rect aperture = itsLastBounds;
 		
 		const short kScrollbarThickness = 16;
 		
@@ -205,7 +205,7 @@ namespace Genie
 	
 	bool ScrollFrame::HitTest( const EventRecord& event )
 	{
-		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture( itsLastBounds ) );
+		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture() );
 	}
 	
 	void ScrollFrame::Activate( bool activating )
