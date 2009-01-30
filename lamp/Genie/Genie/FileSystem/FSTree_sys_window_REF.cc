@@ -45,11 +45,12 @@ namespace Genie
 	
 	struct WindowParameters
 	{
-		N::Str255  itsTitle;
-		Point      itsOrigin;
-		Point      itsSize;
-		bool       itIsVisible;
-		bool       itHasCloseBox;
+		N::Str255           itsTitle;
+		Point               itsOrigin;
+		Point               itsSize;
+		N::WindowDefProcID  itsProcID;
+		bool                itIsVisible;
+		bool                itHasCloseBox;
 		
 		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
@@ -59,6 +60,7 @@ namespace Genie
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
+		                     itsProcID( N::documentProc ),
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
 		                     itsSubview( Ped::EmptyView::Get() )
@@ -232,7 +234,7 @@ namespace Genie
 		Ped::NewWindowContext context( bounds,
 		                               title,
 		                               params.itIsVisible,
-		                               N::documentProc,
+		                               params.itsProcID,
 		                               kFirstWindowOfClass,
 		                               params.itHasCloseBox );
 		
@@ -608,6 +610,11 @@ namespace Genie
 			return params.itsSize;
 		}
 		
+		N::WindowDefProcID& ProcID( WindowParameters& params )
+		{
+			return params.itsProcID;
+		}
+		
 		bool& Visible( WindowParameters& params )
 		{
 			return params.itIsVisible;
@@ -637,19 +644,22 @@ namespace Genie
 		                                                      variability ) );
 	}
 	
+	typedef Integer_Scribe< N::WindowDefProcID >  ProcID_Scribe;
+	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
-		{ "ref",   &Basic_Factory< FSTree_sys_window_REF_ref >, true },
+		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref >, true },
 		
-		{ "view",  &Basic_Factory< FSTree_X_view< GetView > >, true },
+		{ "view",   &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
-		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
+		{ "tty",    &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
-		{ "title", &Property_Factory< kAttrVariable, Window_Title > },
-		{ "pos",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin   > > },
-		{ "size",  &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size     > > },
-		{ "vis",   &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible  > > },
-		{ "close", &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
+		{ "title",  &Property_Factory< kAttrVariable, Window_Title > },
+		{ "pos",    &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin   > > },
+		{ "size",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size     > > },
+		{ "vis",    &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible  > > },
+		{ "procid", &Property_Factory< kAttrConstant, Window_Property< ProcID_Scribe,       &ProcID   > > },
+		{ "close",  &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
 		
 		{ NULL, NULL }
 	};
