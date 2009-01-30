@@ -440,6 +440,8 @@ namespace Pedestal
 			
 			te.viewRect = bounds;
 			te.destRect = N::OffsetRect( bounds, 0, -dv );
+			
+			N::TECalText( hTE );
 		}
 		
 		N::TEUpdate( bounds, hTE );
