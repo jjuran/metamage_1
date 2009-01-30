@@ -15,9 +15,6 @@
 #include "MacFiles.hh"
 #include "UnicodeMacFiles.hh"
 
-// Pedestal
-#include "Pedestal/TEView.hh"
-
 
 namespace UseEdit
 {
@@ -67,15 +64,9 @@ namespace UseEdit
 	
 	static void LoadText( Ped::Window& window, const std::string& text )
 	{
-		View& scroller = static_cast< View& >( *window.GetView() );
+		View& scrollframe = reinterpret_cast< View& >( *window.GetView() );
 		
-		Ped::TEView& editor = scroller.GetSubView();
-		
-		editor.AppendChars( text.data(), text.size(), false );
-		
-		editor.Select( 0, 0 );
-		
-		scroller.Calibrate();
+		SetText( scrollframe, text );
 	}
 	
 	Document::Document( const FSSpec& file )
