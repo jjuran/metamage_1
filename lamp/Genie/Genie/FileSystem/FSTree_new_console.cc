@@ -1156,6 +1156,19 @@ namespace Genie
 		
 	}
 	
+	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	struct Console_View_Property : public View_Property< Scribe, Access >
+	{
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = GetViewKey( that );
+			
+			gConsoleParametersMap[ view ].itHasChangedAttributes = true;
+			
+			View_Property::Set( that, begin, end, binary );
+		}
+	};
+	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -1181,8 +1194,8 @@ namespace Genie
 		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
 		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
 		
-		{ "x", &Property_Factory< View_Property< Integer_Scribe< int >, HOffset > > },
-		{ "y", &Property_Factory< View_Property< Integer_Scribe< int >, VOffset > > },
+		{ "x", &Property_Factory< Console_View_Property< Integer_Scribe< int >, HOffset > > },
+		{ "y", &Property_Factory< Console_View_Property< Integer_Scribe< int >, VOffset > > },
 		
 		{ NULL, NULL }
 	};
