@@ -19,6 +19,8 @@ namespace Pedestal
 			virtual short Margin() const = 0;
 			
 			void Draw( const Rect& bounds );
+			
+			void Resize( short width, short height );
 	};
 	
 }

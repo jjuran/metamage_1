@@ -61,6 +61,11 @@ namespace Pedestal
 			}
 			
 			bool UserCommand( MenuItemCode code )  { return Subview().UserCommand( code ); }
+			
+			void Resize( short width, short height )
+			{
+				Subview().Resize( width, height );
+			}
 	};
 	
 }

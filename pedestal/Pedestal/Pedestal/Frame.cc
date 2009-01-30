@@ -36,5 +36,13 @@ namespace Pedestal
 		Subview().Draw( N::InsetRect( bounds, margin, margin ) );
 	}
 	
+	void Frame::Resize( short width, short height )
+	{
+		short margin = Margin();
+		
+		Subview().Resize( width  - 2 * margin,
+		                  height - 2 * margin );
+	}
+	
 }
 
