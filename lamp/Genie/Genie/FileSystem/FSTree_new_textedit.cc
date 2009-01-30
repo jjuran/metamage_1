@@ -89,10 +89,6 @@ namespace Genie
 			
 			TEHandle Get() const  { return itsTE; }
 			
-			boost::shared_ptr< Ped::Quasimode >
-			//
-			EnterShiftSpaceQuasimode( const EventRecord& event );
-			
 			void BeginQuasimode();
 			void EndQuasimode();
 			
@@ -373,17 +369,6 @@ namespace Genie
 		
 		params.itsHOffset = te.viewRect.left - te.destRect.left;
 		params.itsVOffset = te.viewRect.top  - te.destRect.top;
-	}
-	
-	boost::shared_ptr< Ped::Quasimode >
-	//
-	TextEdit::EnterShiftSpaceQuasimode( const EventRecord& event )
-	{
-		const bool backward = event.modifiers & shiftKey;
-		
-		boost::shared_ptr< Ped::Quasimode > mode( new Ped::IncrementalSearchQuasimode( *this, backward ) );
-		
-		return mode;
 	}
 	
 	static void DrawQuasimodeFrame( Rect frame )
