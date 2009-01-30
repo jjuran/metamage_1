@@ -111,8 +111,6 @@ namespace Genie
 				N::SetControlMaximum( control, max_offset );
 			}
 		}
-		
-		
 	}
 	
 	void Scrollbar::Update( const Rect& bounds, const FSTree* viewKey )
