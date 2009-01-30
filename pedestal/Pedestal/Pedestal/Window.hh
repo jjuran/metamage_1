@@ -101,8 +101,6 @@ namespace Pedestal
 		                     refCon );
 	}
 	
-	void DrawWindow( Nitrogen::WindowRef window );
-	
 	void InvalidateWindowGrowBox( Nitrogen::WindowRef window );
 	
 	

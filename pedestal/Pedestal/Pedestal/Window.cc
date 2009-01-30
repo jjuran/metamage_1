@@ -109,7 +109,7 @@ namespace Pedestal
 		return bounds;
 	}
 	
-	void DrawWindow( N::WindowRef window )
+	static void DrawWindow( N::WindowRef window )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		
@@ -185,7 +185,7 @@ namespace Pedestal
 	{
 		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
 		
-		if ( HasGrowIcon() )
+		if ( !TARGET_API_MAC_CARBON && HasGrowIcon() )
 		{
 			DrawWindow( Get() );
 		}
