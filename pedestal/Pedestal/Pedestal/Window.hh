@@ -89,19 +89,6 @@ namespace Pedestal
 	                                                    bool                       goAwayFlag,
 	                                                    Nitrogen::RefCon           refCon );
 	
-	inline Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&    context,
-	                                                           Nitrogen::WindowDefProcID  procID,
-	                                                           Nitrogen::RefCon           refCon )
-	{
-		return CreateWindow( context.bounds,
-		                     context.title,
-		                     context.visible,
-		                     procID,
-		                     context.behind,
-		                     context.goAwayFlag,
-		                     refCon );
-	}
-	
 	inline Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&  context,
 	                                                           Nitrogen::RefCon         refCon )
 	{
@@ -196,8 +183,7 @@ namespace Pedestal
 			Nitrogen::WindowDefProcID itsDefProcID;
 		
 		public:
-			Window( const NewWindowContext&    context,
-			        Nitrogen::WindowDefProcID  defProcID = Nitrogen::documentProc );
+			Window( const NewWindowContext& context );
 			
 			virtual boost::shared_ptr< View >& GetView() = 0;
 			

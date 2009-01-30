@@ -147,13 +147,10 @@ namespace Pedestal
 	}
 	
 	
-	Window::Window( const NewWindowContext&  context,
-	                N::WindowDefProcID       defProcID )
+	Window::Window( const NewWindowContext& context )
 	:
-		WindowRefOwner( CreateWindow( context,
-		                              defProcID,
-		                              this ) ),
-		itsDefProcID( defProcID )
+		WindowRefOwner( CreateWindow( context, this ) ),
+		itsDefProcID( context.procID )
 	{
 	}
 	
