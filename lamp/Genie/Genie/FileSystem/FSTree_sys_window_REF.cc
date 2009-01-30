@@ -49,6 +49,7 @@ namespace Genie
 		Point      itsOrigin;
 		Point      itsSize;
 		bool       itIsVisible;
+		bool       itHasCloseBox;
 		
 		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
@@ -58,7 +59,8 @@ namespace Genie
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
-		                     itIsVisible( true ),
+		                     itIsVisible  ( true ),
+		                     itHasCloseBox( true ),
 		                     itsSubview( Ped::EmptyView::Get() )
 		{
 		}
@@ -227,7 +229,12 @@ namespace Genie
 			CenterWindowRect( bounds );
 		}
 		
-		Ped::NewWindowContext context( bounds, title, params.itIsVisible );
+		Ped::NewWindowContext context( bounds,
+		                               title,
+		                               params.itIsVisible,
+		                               N::documentProc,
+		                               kFirstWindowOfClass,
+		                               params.itHasCloseBox );
 		
 		boost::shared_ptr< Ped::Window > window( new Window( key, context ) );
 		
@@ -606,6 +613,11 @@ namespace Genie
 			return params.itIsVisible;
 		}
 		
+		bool& CloseBox( WindowParameters& params )
+		{
+			return params.itHasCloseBox;
+		}
+		
 	}
 	
 	enum Variability
@@ -634,9 +646,10 @@ namespace Genie
 		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
 		{ "title", &Property_Factory< kAttrVariable, Window_Title > },
-		{ "pos",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin  > > },
-		{ "size",  &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size    > > },
-		{ "vis",   &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible > > },
+		{ "pos",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin   > > },
+		{ "size",  &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size     > > },
+		{ "vis",   &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible  > > },
+		{ "close", &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
 		
 		{ NULL, NULL }
 	};
