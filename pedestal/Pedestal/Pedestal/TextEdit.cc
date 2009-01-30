@@ -377,6 +377,17 @@ namespace Pedestal
 		return true;
 	}
 	
+	boost::shared_ptr< Quasimode >
+	//
+	TextEdit::EnterShiftSpaceQuasimode( const EventRecord& event )
+	{
+		const bool backward = event.modifiers & shiftKey;
+		
+		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
+		
+		return mode;
+	}
+	
 	
 	void TextEdit::Activate( bool activating )
 	{

@@ -42,6 +42,10 @@ namespace Pedestal
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
+			boost::shared_ptr< Quasimode >
+			//
+			EnterShiftSpaceQuasimode( const EventRecord& event );
+			
 			bool SetCursor( const EventRecord&  event,
 			                RgnHandle           mouseRgn );
 			
