@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // Nucleus
 #include "Nucleus/Saved.h"
 
@@ -253,31 +256,42 @@ namespace Genie
 	
 	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
+		private:
+			bool itIsMutable;  // can this be changed after window is created?
+		
 		public:
 			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
 			                                const std::string&  name,
 			                                ReadHook            readHook,
-			                                WriteHook           writeHook )
+			                                WriteHook           writeHook,
+			                                bool                mutability )
 			:
 				FSTree_Property( parent,
 				                 name,
 				                 readHook,
-				                 writeHook )
+				                 writeHook ),
+				itIsMutable( mutability )
 			{
 			}
 			
-			bool IsLink() const  { return HasWindow( this ); }
+			bool IsLink() const  { return itIsMutable && HasWindow( this ); }
 			
 			mode_t FilePermMode() const;
 			
 			std::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	mode_t FSTree_sys_window_REF_Property::FilePermMode() const
 	{
-		return IsLink() ? S_IRUSR | S_IWUSR | S_IXUSR : FSTree_Property::FilePermMode();
+		const bool has_window = HasWindow( this );
+		
+		return   !has_window ? S_IRUSR | S_IWUSR            // params are r/w
+		       : itIsMutable ? S_IRUSR | S_IWUSR | S_IXUSR  // symlink
+		       :               S_IRUSR;                     // fixed attribute
 	}
 	
 	std::string FSTree_sys_window_REF_Property::ReadLink() const
@@ -293,6 +307,19 @@ namespace Genie
 	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
 	{
 		return ResolvePathname( ReadLink(), ParentRef() );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property::Open( OpenFlags flags ) const
+	{
+		const bool writing = (flags & O_ACCMODE) + 1 & FWRITE;
+		
+		if ( writing  &&  !itIsMutable  &&  HasWindow( this ) )
+		{
+			// Attempt to open for writing a fixed attribute, like proc ID
+			p7::throw_errno( EACCES );
+		}
+		
+		return FSTree_Property::Open( flags );
 	}
 	
 	
@@ -581,14 +608,21 @@ namespace Genie
 		
 	}
 	
-	template < class Property >
+	enum Variability
+	{
+		kAttrConstant,
+		kAttrVariable
+	};
+	
+	template < Variability variability, class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
 		return FSTreePtr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,
 		                                                      &Property::Get,
-		                                                      &Property::Set ) );
+		                                                      &Property::Set,
+		                                                      variability ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
@@ -599,10 +633,10 @@ namespace Genie
 		
 		{ "tty",   &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
-		{ "title", &Property_Factory< Window_Title > },
-		{ "pos",   &Property_Factory< Window_Property< Point_Scribe< ',' >, &Origin  > > },
-		{ "size",  &Property_Factory< Window_Property< Point_Scribe< 'x' >, &Size    > > },
-		{ "vis",   &Property_Factory< Window_Property< Boolean_Scribe,      &Visible > > },
+		{ "title", &Property_Factory< kAttrVariable, Window_Title > },
+		{ "pos",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin  > > },
+		{ "size",  &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size    > > },
+		{ "vis",   &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible > > },
 		
 		{ NULL, NULL }
 	};
