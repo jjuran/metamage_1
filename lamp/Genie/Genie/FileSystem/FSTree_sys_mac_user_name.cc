@@ -6,14 +6,19 @@
 #include "Genie/FileSystem/FSTree_sys_mac_user_name.hh"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
 #include "Nitrogen/Resources.h"
+
+// MacFeatures
+#include "MacFeatures/Features.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	
+	
+	using MacFeatures::Is_Running_OSXNative;
 	
 	
 	static std::string GetStringResource( ::ResID id )
@@ -59,13 +64,6 @@ namespace Genie
 		return NULL;
 	}
 	
-	static UInt32 SystemVersion()
-	{
-		static UInt32 sysv = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
-		
-		return sysv;
-	}
-	
 	static std::string CFStringGetStdString( CFStringRef string )
 	{
 		CFIndex length = CFStringGetLength( string );
@@ -95,7 +93,7 @@ namespace Genie
 	
 	static std::string GetUserName()
 	{
-		if ( !TARGET_RT_MAC_MACHO && (!TARGET_API_MAC_CARBON  ||  SystemVersion() < 0x00001000) )
+		if ( !Is_Running_OSXNative() )
 		{
 			return GetStringResource( -16096 );
 		}

@@ -11,8 +11,8 @@
 // Nucleus
 //#include "Nucleus/Convert.h"
 
-// Nitrogen
-#include "Nitrogen/Gestalt.h"
+// MacFeatures
+#include "MacFeatures/Features.hh"
 
 // Genie
 //#include "Genie/Process.hh"
@@ -24,27 +24,13 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	static bool OSXIsRunning()
-	{
-		UInt32 version = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
-		
-		if ( version >= 0x1000 )
-		{
-			return true;
-		}
-		else if ( version < 0x0900 )
-		{
-			return false;
-		}
-		
-		long machine = N::Gestalt( N::GestaltSelector( gestaltMachineType ) );
-		
-		return machine == gestaltMacOSCompatibility;
-	}
+	
+	using MacFeatures::Has_OSXSystem;
+	
 	
 	N::OSType TextFileCreator()
 	{
-		static bool runningOSX = OSXIsRunning();
+		static bool runningOSX = Has_OSXSystem();
 		
 		return N::OSType( runningOSX ? '!Rch' : 'R*ch' );
 		

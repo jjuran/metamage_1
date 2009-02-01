@@ -8,11 +8,17 @@
 // Nitrogen
 #include "Nitrogen/Resources.h"
 
+// MacFeatures
+#include "MacFeatures/Features.hh"
+
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	
+	
+	using MacFeatures::Is_Running_OSXNative;
 	
 	
 	static std::string GetStringResource( ::ResID id )
@@ -30,13 +36,6 @@ namespace Genie
 		std::copy( begin, begin + length, result.begin() );
 		
 		return result;
-	}
-	
-	static UInt32 SystemVersion()
-	{
-		static UInt32 sysv = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
-		
-		return sysv;
 	}
 	
 	static std::string CFStringGetStdString( CFStringRef string )
@@ -68,7 +67,7 @@ namespace Genie
 	
 	static std::string GetMachineName()
 	{
-		if ( !TARGET_API_MAC_CARBON  ||  !TARGET_RT_MAC_MACHO  &&  SystemVersion() < 0x00001000 )
+		if ( !Is_Running_OSXNative() )
 		{
 			return GetStringResource( -16413 );
 		}
