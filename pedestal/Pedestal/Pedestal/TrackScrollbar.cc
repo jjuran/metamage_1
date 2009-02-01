@@ -15,6 +15,9 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
+// MacFeatures
+#include "MacFeatures/Features.hh"
+
 // Pedestal
 #include "Pedestal/Scroller_beta.hh"
 
@@ -26,25 +29,8 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	static inline long Gestalt_AppearanceManager()
-	{
-		return N::Gestalt( N::Gestalt_Selector( gestaltAppearanceAttr ), 0 );
-	}
+	using MacFeatures::Has_AppearanceManager;
 	
-#if TARGET_API_MAC_CARBON
-	
-	static inline bool Has_AppearanceManager()  { return true; }
-	
-#else
-	
-	static bool Has_AppearanceManager()
-	{
-		static bool exists = Gestalt_AppearanceManager() != 0;
-		
-		return exists;
-	}
-	
-#endif
 	
 	static short SetClippedControlValue( ControlRef control, short value )
 	{

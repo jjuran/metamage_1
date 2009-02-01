@@ -13,8 +13,10 @@
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"
-#include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacWindows.h"
+
+// MacFeatures
+#include "MacFeatures/Features.hh"
 
 
 namespace Pedestal
@@ -23,25 +25,8 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static inline long Gestalt_AppearanceManager()
-	{
-		return N::Gestalt( N::Gestalt_Selector( gestaltAppearanceAttr ), 0 );
-	}
+	using MacFeatures::Has_AppearanceManager;
 	
-#if TARGET_API_MAC_CARBON
-	
-	static inline bool Has_AppearanceManager()  { return true; }
-	
-#else
-	
-	static bool Has_AppearanceManager()
-	{
-		static bool exists = Gestalt_AppearanceManager() != 0;
-		
-		return exists;
-	}
-	
-#endif
 	
 	static inline N::ControlProcID GetControlProcIDForScrollbar()
 	{
