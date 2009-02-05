@@ -12,13 +12,13 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/Scroller_beta.hh"
-#include "Pedestal/TextEdit.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/ScrollerBase.hh"
+#include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -30,76 +30,6 @@ namespace Genie
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
-	
-	struct TextEditParameters
-	{
-		Point               itsTextDimensions;
-		std::string         itsText;
-		Ped::TextSelection  itsSelection;
-		std::size_t         itsValidLength;
-		bool                itHasChangedAttributes;
-		bool                itIsInterlocked;
-		bool                itIsWrapped;
-		
-		TextEditParameters()
-		:
-			itsTextDimensions( N::SetPt( 0, 0 ) ),
-			itsValidLength(),
-			itHasChangedAttributes(),
-			itIsInterlocked(),
-			itIsWrapped( true )
-		{
-		}
-	};
-	
-	typedef std::map< const FSTree*, TextEditParameters > TextEditParametersMap;
-	
-	static TextEditParametersMap gTextEditParametersMap;
-	
-	
-	class TextEdit : public Ped::TextEdit
-	{
-		private:
-			typedef const FSTree* Key;
-			
-			Key itsKey;
-			
-			NN::Owned< N::TEHandle >  itsTE;
-			
-			Ped::TextSelection  itsSelectionPriorToSearch;
-			
-			void On_UserSelect();
-			void On_UserEdit();
-			
-			void On_EnterKey();
-			
-			void UpdateText();
-			
-			void UpdateClientHeight();
-			void UpdateScrollOffsets();
-			
-			void ClickInLoop()  { UpdateScrollOffsets(); }
-		
-		public:
-			TextEdit( Key key ) : itsKey( key )
-			{
-				itsSelectionPriorToSearch.start = -1;
-			}
-			
-			void Install();
-			void Uninstall();
-			
-			TEHandle Get() const  { return itsTE; }
-			
-			void BeginQuasimode();
-			void EndQuasimode();
-			
-			Ped::TextSelection GetPriorSelection() const;
-			
-			void SetPriorSelection( const Ped::TextSelection& selection );
-			
-			bool Wrapped() const;
-	};
 	
 	class TextEdit_Scroller : public ScrollerBase
 	{
@@ -173,7 +103,7 @@ namespace Genie
 		
 		ScrollerParameters& params = GetScrollerParams( key );
 		
-		TextEditParameters& editParams = gTextEditParametersMap[ key ];
+		TextEditParameters& editParams = TextEditParameters::Get( key );
 		
 		if ( editParams.itsValidLength < editParams.itsText.length() )
 		{
@@ -297,7 +227,7 @@ namespace Genie
 	
 	void TextEdit::On_UserSelect()
 	{
-		TextEditParameters& params = gTextEditParametersMap[ itsKey ];
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		
 		params.itsSelection = GetCurrentSelection();
 		
@@ -315,7 +245,7 @@ namespace Genie
 	
 	void TextEdit::On_EnterKey()
 	{
-		gTextEditParametersMap[ itsKey ].itIsInterlocked = false;
+		TextEditParameters::Get( itsKey ).itIsInterlocked = false;
 	}
 	
 	void TextEdit::UpdateText()
@@ -332,7 +262,7 @@ namespace Genie
 		
 		std::size_t length = itsTE[0]->teLength;
 		
-		TextEditParameters& params = gTextEditParametersMap[ itsKey ];
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		
 		const Ped::TextSelection& previous = params.itsSelection;
 		
@@ -418,11 +348,9 @@ namespace Genie
 	
 	bool TextEdit::Wrapped() const
 	{
-		TextEditParametersMap::const_iterator it = gTextEditParametersMap.find( itsKey );
-		
-		if ( it != gTextEditParametersMap.end() )
+		if ( TextEditParameters* params = TextEditParameters::Find( itsKey ) )
 		{
-			return it->second.itIsWrapped;
+			return params->itIsWrapped;
 		}
 		
 		return true;
@@ -438,7 +366,7 @@ namespace Genie
 	{
 		RemoveScrollerParams( delegate );
 		
-		gTextEditParametersMap.erase( delegate );
+		TextEditParameters::Erase( delegate );
 	}
 	
 	
@@ -446,7 +374,7 @@ namespace Genie
 	{
 		const FSTree* view = text->ParentRef().get();
 		
-		TextEditParameters& params = gTextEditParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		params.itsValidLength = std::min< size_t >( params.itsText.length(), length );
 		
@@ -466,7 +394,7 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			std::string& String() const  { return gTextEditParametersMap[ ViewKey() ].itsText; }
+			std::string& String() const  { return TextEditParameters::Get( ViewKey() ).itsText; }
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
@@ -491,7 +419,7 @@ namespace Genie
 	{
 		const FSTree* view = ViewKey();
 		
-		TextEditParameters& params = gTextEditParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		while ( params.itIsInterlocked )
 		{
@@ -526,7 +454,7 @@ namespace Genie
 		
 		const FSTree* view = ViewKey();
 		
-		TextEditParameters& params = gTextEditParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		params.itsValidLength = std::min< size_t >( params.itsValidLength, GetFileMark() );
 		
@@ -543,7 +471,7 @@ namespace Genie
 			{
 			}
 			
-			std::string& String() const  { return gTextEditParametersMap[ ParentRef().get() ].itsText; }
+			std::string& String() const  { return TextEditParameters::Get( ParentRef().get() ).itsText; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -579,7 +507,7 @@ namespace Genie
 	{
 		const FSTree* view = ParentRef().get();
 		
-		gTextEditParametersMap[ view ].itIsInterlocked = true;
+		TextEditParameters::Get( view ).itIsInterlocked = true;
 	}
 	
 	
@@ -589,7 +517,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			const Ped::TextSelection& selection = gTextEditParametersMap[ view ].itsSelection;
+			const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
 			
 			std::string result = NN::Convert< std::string >( selection.start );
 			
@@ -607,7 +535,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			TextEditParameters& params = gTextEditParametersMap[ view ];
+			TextEditParameters& params = TextEditParameters::Get( view );
 			
 			std::size_t length = params.itsText.length();
 			
@@ -658,7 +586,7 @@ namespace Genie
 		
 		bool& Wrapped( const FSTree* view )
 		{
-			return gTextEditParametersMap[ view ].itIsWrapped;
+			return TextEditParameters::Get( view ).itIsWrapped;
 		}
 		
 		int& Width( const FSTree* view )
@@ -690,7 +618,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			gTextEditParametersMap[ view ].itHasChangedAttributes = true;
+			TextEditParameters::Get( view ).itHasChangedAttributes = true;
 			
 			View_Property::Set( that, begin, end, binary );
 		}
