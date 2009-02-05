@@ -33,6 +33,7 @@ namespace Genie
 	
 	struct TextEditParameters
 	{
+		Point               itsTextDimensions;
 		std::string         itsText;
 		Ped::TextSelection  itsSelection;
 		std::size_t         itsValidLength;
@@ -42,6 +43,7 @@ namespace Genie
 		
 		TextEditParameters()
 		:
+			itsTextDimensions( N::SetPt( 0, 0 ) ),
 			itsValidLength(),
 			itHasChangedAttributes(),
 			itIsInterlocked(),
@@ -222,6 +224,11 @@ namespace Genie
 			te.destRect = N::OffsetRect( te.viewRect,
 			                             -params.itsHOffset,
 			                             -params.itsVOffset );
+			
+			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
+			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
+			
+			editParams.itsTextDimensions = N::SetPt( cols, rows );
 		}
 		
 		if ( bounds_changed || text_modified )
