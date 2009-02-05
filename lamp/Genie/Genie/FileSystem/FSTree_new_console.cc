@@ -124,9 +124,6 @@ namespace Genie
 			void Draw( const Rect& bounds );
 			
 			bool UserCommand( Ped::MenuItemCode code );
-			
-			bool SetCursor( const EventRecord&  event,
-			                RgnHandle           mouseRgn );
 	};
 	
 	static bool IsAtBottom( const ScrollerParameters& params )
@@ -262,14 +259,6 @@ namespace Genie
 		}
 		
 		return ScrollerBase::UserCommand( code );
-	}
-	
-	bool Console_Scroller::SetCursor( const EventRecord&  event,
-	                                  RgnHandle           mouseRgn )
-	{
-		N::SetCursor( N::GetCursor( N::iBeamCursor ) );
-		
-		return true;
 	}
 	
 	
