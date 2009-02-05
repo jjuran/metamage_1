@@ -140,6 +140,8 @@ namespace Genie
 				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 				
 				terminal.Disconnect();
+				
+				params.itsTerminal.reset();
 			}
 		}
 	}
