@@ -81,7 +81,7 @@ namespace tool
 		{
 			struct winsize size = { 0 };
 			
-			p7::ioctl( p7::open( "/dev/tty", p7::o_rdonly ),
+			p7::ioctl( p7::open( "/dev/tty", p7::o_rdonly ).get(),
 			           TIOCGWINSZ,
 			           &size );
 			
