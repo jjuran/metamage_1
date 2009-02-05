@@ -148,44 +148,6 @@ namespace Genie
 		gConsoleParametersMap[ key ].itIsAtBottom = IsAtBottom( GetScrollerParams( key ) );
 	}
 	
-	static bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params )
-	{
-		bool text_modified = false;
-		
-		if ( params.itsValidLength < params.itsText.length() )
-		{
-			text_modified = true;
-			
-			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
-			
-			TERec& te = **hTE;
-			
-			te.teLength = params.itsText.length();
-			
-			std::replace_copy( params.itsText.begin() + params.itsValidLength,
-			                   params.itsText.end(),
-			                   *te.hText + params.itsValidLength,
-			                   '\n',
-			                   '\r' );
-			
-			params.itsValidLength = te.teLength;
-		}
-		else if ( params.itsValidLength < hTE[0]->teLength )
-		{
-			// Text was merely truncated
-			
-			text_modified = true;
-			
-			TERec& te = **hTE;
-			
-			te.teLength = params.itsValidLength;
-			
-			N::SetHandleSize( te.hText, params.itsValidLength );
-		}
-		
-		return text_modified;
-	}
-	
 	void Console_Scroller::Draw( const Rect& bounds )
 	{
 		using Nucleus::operator!=;

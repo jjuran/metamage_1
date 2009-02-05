@@ -78,5 +78,8 @@ namespace Genie
 			bool Wrapped() const;
 	};
 	
+	
+	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params );
+	
 }
 
