@@ -15,7 +15,6 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/Scroller_beta.hh"
-#include "Pedestal/TextEdit.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -25,6 +24,7 @@
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/ScrollerBase.hh"
+#include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
@@ -72,23 +72,13 @@ namespace Genie
 	struct ConsoleParameters
 	{
 		boost::shared_ptr< IOHandle >  itsTerminal;
-		Point               itsTextDimensions;
-		std::string         itsText;
-		Ped::TextSelection  itsSelection;
-		std::size_t         itsValidLength;
 		std::size_t         itsStartOfInput;
-		bool                itHasChangedAttributes;
-		bool                itIsWrapped;
 		bool                itIsAtBottom;
 		bool                itHasReceivedEOF;
 		
 		ConsoleParameters()
 		:
-			itsTextDimensions( N::SetPt( 0, 0 ) ),
-			itsValidLength(),
 			itsStartOfInput(),
-			itHasChangedAttributes(),
-			itIsWrapped( true ),
 			itIsAtBottom(),
 			itHasReceivedEOF()
 		{
@@ -100,54 +90,19 @@ namespace Genie
 	static ConsoleParametersMap gConsoleParametersMap;
 	
 	
-	class Console : public Ped::TextEdit
+	class Console : public TextEdit
 	{
 		private:
-			typedef const FSTree* Key;
-			
-			Key itsKey;
-			
-			NN::Owned< N::TEHandle >  itsTE;
-			
-			Ped::TextSelection  itsSelectionPriorToSearch;
-			
-			void On_UserSelect();
-			void On_UserEdit();
-			
 			void On_EnterKey();
 			
-			void UpdateText();
-			
-			void UpdateClientHeight();
 			void UpdateScrollOffsets();
-			
-			void ClickInLoop()  { UpdateScrollOffsets(); }
 		
 		public:
-			Console( Key key ) : itsKey( key )
+			Console( Key key ) : TextEdit( key )
 			{
-				itsSelectionPriorToSearch.start = -1;
 			}
 			
-			void Install();
-			void Uninstall();
-			
-			TEHandle Get() const  { return itsTE; }
-			
-			bool KeyDown  ( const EventRecord& event );
-			
-			boost::shared_ptr< Ped::Quasimode >
-			//
-			EnterShiftSpaceQuasimode( const EventRecord& event );
-			
-			void BeginQuasimode();
-			void EndQuasimode();
-			
-			Ped::TextSelection GetPriorSelection() const;
-			
-			void SetPriorSelection( const Ped::TextSelection& selection );
-			
-			bool Wrapped() const;
+			bool KeyDown( const EventRecord& event );
 	};
 	
 	class Console_Scroller : public ScrollerBase
@@ -225,7 +180,7 @@ namespace Genie
 		return CountLinesForEditing( te ) * te.lineHeight;
 	}
 	
-	static bool Update_TE_From_Model( TEHandle hTE, ConsoleParameters& params )
+	static bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params )
 	{
 		bool text_modified = false;
 		
@@ -277,9 +232,11 @@ namespace Genie
 		
 		ScrollerParameters& params = GetScrollerParams( key );
 		
+		TextEditParameters& textParams = TextEditParameters::Get( key );
+		
 		ConsoleParameters& editParams = gConsoleParametersMap[ key ];
 		
-		const bool text_modified = Update_TE_From_Model( hTE, editParams );
+		const bool text_modified = Update_TE_From_Model( hTE, textParams );
 		
 		const short viewWidth  = bounds.right - bounds.left;
 		const short viewHeight = bounds.bottom - bounds.top;
@@ -303,7 +260,7 @@ namespace Genie
 			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
 			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
 			
-			editParams.itsTextDimensions = N::SetPt( cols, rows );
+			textParams.itsTextDimensions = N::SetPt( cols, rows );
 		}
 		
 		if ( bounds_changed || text_modified )
@@ -324,12 +281,12 @@ namespace Genie
 				{
 					params.itsVOffset = max_voffset;
 					
-					editParams.itHasChangedAttributes = true;
+					textParams.itHasChangedAttributes = true;
 				}
 			}
 		}
 		
-		if ( editParams.itHasChangedAttributes )
+		if ( textParams.itHasChangedAttributes )
 		{
 			TERec& te = **hTE;
 			
@@ -338,10 +295,10 @@ namespace Genie
 			                             -params.itsHOffset,
 			                             -params.itsVOffset );
 			
-			te.selStart = editParams.itsSelection.start;
-			te.selEnd   = editParams.itsSelection.end;
+			te.selStart = textParams.itsSelection.start;
+			te.selEnd   = textParams.itsSelection.end;
 			
-			editParams.itHasChangedAttributes = false;
+			textParams.itHasChangedAttributes = false;
 		}
 		
 		Subview().Draw( bounds );
@@ -351,6 +308,8 @@ namespace Genie
 	{
 		const FSTree* key = GetKey();
 		
+		TextEditParameters& textParams = TextEditParameters::Get( key );
+		
 		ConsoleParameters& params = gConsoleParametersMap[ key ];
 		
 		switch ( code )
@@ -359,7 +318,7 @@ namespace Genie
 			case 'past':  // kHICommandPaste
 			case 'pste':
 			case 'clea':
-				if ( params.itsSelection.start < params.itsStartOfInput )
+				if ( textParams.itsSelection.start < params.itsStartOfInput )
 				{
 					::SysBeep( 30 );
 					
@@ -384,53 +343,9 @@ namespace Genie
 	}
 	
 	
-	void Console::Install()
-	{
-		ASSERT( itsTE == NULL );
-		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
-		Rect bounds = N::GetPortBounds( thePort );  // will be fixed in next Draw()
-		
-		itsTE = N::TENew( bounds );
-		
-		N::TEAutoView( true, itsTE );  // enable auto-scrolling
-		
-		InstallCustomTEClickLoop( itsTE );
-		
-		if ( N::GetWindowPort( N::FrontWindow() ) == thePort )
-		{
-			N::TEActivate( itsTE );
-		}
-	}
-	
-	void Console::Uninstall()
-	{
-		itsTE.reset();
-	}
-	
-	
-	void Console::On_UserSelect()
-	{
-		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
-		
-		params.itsSelection = GetCurrentSelection();
-		
-		UpdateScrollOffsets();
-	}
-	
-	void Console::On_UserEdit()
-	{
-		UpdateText();
-		
-		UpdateClientHeight();
-		
-		On_UserSelect();
-	}
-	
 	void Console::On_EnterKey()
 	{
-		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
+		TextEditParameters& params = TextEditParameters::Get( GetKey() );
 		
 		const std::string& s = params.itsText;
 		
@@ -442,66 +357,20 @@ namespace Genie
 		RunShellCommand( command );
 	}
 	
-	void Console::UpdateText()
-	{
-		Ped::TextSelection current = GetCurrentSelection();
-		
-		if ( current.start != current.end )
-		{
-			// Destructive operations don't leave a selection
-			return;
-		}
-		
-		ASSERT( itsTE != NULL );
-		
-		std::size_t length = itsTE[0]->teLength;
-		
-		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
-		
-		const Ped::TextSelection& previous = params.itsSelection;
-		
-		unsigned start = std::min( current.start, previous.start );
-		
-		start = std::min< unsigned >( params.itsText.length(), start );
-		
-		params.itsText.resize( length );
-		
-		const TERec& te = **itsTE;
-		
-		Handle h = te.hText;
-		
-		std::replace_copy( *h + start,
-		                   *h + length,
-		                   params.itsText.begin() + start,
-		                   '\r',
-		                   '\n' );
-		
-		params.itsValidLength = length;
-	}
-	
-	void Console::UpdateClientHeight()
-	{
-		ASSERT( itsTE != NULL );
-		
-		ScrollerParameters& params = GetScrollerParams( itsKey );
-		
-		//const TERec& te = **itsTE;
-		
-		params.itsClientHeight = GetTextEditingHeight( itsTE );
-	}
-	
 	void Console::UpdateScrollOffsets()
 	{
-		ASSERT( itsTE != NULL );
+		TEHandle hTE = Get();
 		
-		ScrollerParameters& params = GetScrollerParams( itsKey );
+		ASSERT( hTE != NULL );
 		
-		const TERec& te = **itsTE;
+		ScrollerParameters& params = GetScrollerParams( GetKey() );
+		
+		const TERec& te = **hTE;
 		
 		params.itsHOffset = te.viewRect.left - te.destRect.left;
 		params.itsVOffset = te.viewRect.top  - te.destRect.top;
 		
-		gConsoleParametersMap[ itsKey ].itIsAtBottom = IsAtBottom( params );
+		gConsoleParametersMap[ GetKey() ].itIsAtBottom = IsAtBottom( params );
 	}
 	
 	static void SendSignalToProcessGroupForKey( int signo, const FSTree* key )
@@ -520,11 +389,13 @@ namespace Genie
 		char c   =  event.message & charCodeMask;
 		char key = (event.message & keyCodeMask) >> 8;
 		
-		ConsoleParameters& params = gConsoleParametersMap[ itsKey ];
+		TextEditParameters& params = TextEditParameters::Get( GetKey() );
+		
+		ConsoleParameters& consoleParams = gConsoleParametersMap[ GetKey() ];
 		
 		Ped::TextSelection& selection = params.itsSelection;
 		
-		if ( Update_TE_From_Model( itsTE, params )  &&  params.itHasChangedAttributes )
+		if ( Update_TE_From_Model( Get(), params )  &&  params.itHasChangedAttributes )
 		{
 			if ( params.itsValidLength > 0 )
 			{
@@ -536,7 +407,7 @@ namespace Genie
 			
 			if ( params.itHasChangedAttributes )
 			{
-				TERec& te = **itsTE;
+				TERec& te = **Get();
 				
 				te.selStart = selection.start;
 				te.selEnd   = selection.end;
@@ -552,7 +423,7 @@ namespace Genie
 			return true;
 		}
 		
-		if ( params.itsSelection.start < params.itsStartOfInput )
+		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
 			Select( 32767, 32767 );
 		}
@@ -566,8 +437,8 @@ namespace Genie
 			switch ( cntrl )
 			{
 				case 'A':
-					Select( params.itsStartOfInput,
-					        params.itsStartOfInput );
+					Select( consoleParams.itsStartOfInput,
+					        consoleParams.itsStartOfInput );
 					break;
 				
 				case 'E':
@@ -576,17 +447,17 @@ namespace Genie
 					break;
 				
 				case 'C':
-					SendSignalToProcessGroupForKey( SIGINT, itsKey );
+					SendSignalToProcessGroupForKey( SIGINT, GetKey() );
 					break;
 				
 				case 'Z':
-					SendSignalToProcessGroupForKey( SIGTSTP, itsKey );
+					SendSignalToProcessGroupForKey( SIGTSTP, GetKey() );
 					break;
 				
 				case 'D':
-					if ( params.itsText.size() - params.itsStartOfInput <= 0 )
+					if ( params.itsText.size() - consoleParams.itsStartOfInput <= 0 )
 					{
-						params.itHasReceivedEOF = true;
+						consoleParams.itHasReceivedEOF = true;
 					}
 					else
 					{
@@ -601,7 +472,7 @@ namespace Genie
 		
 		if ( c == kBackspaceCharCode )
 		{
-			if ( params.itsSelection.end == params.itsStartOfInput )
+			if ( params.itsSelection.end == consoleParams.itsStartOfInput )
 			{
 				// Eat the event -- don't backspace over the prompt.
 				return true;
@@ -610,21 +481,21 @@ namespace Genie
 			if ( event.modifiers & cmdKey )
 			{
 				// Don't delete the prompt.
-				Select( params.itsStartOfInput, params.itsSelection.end );
+				Select( consoleParams.itsStartOfInput, params.itsSelection.end );
 			}
 		}
 		else if ( c == kReturnCharCode )
 		{
 			Select( 32767, 32767 );
 		}
-		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == params.itsStartOfInput )
+		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == consoleParams.itsStartOfInput )
 		{
 			const bool shift = event.modifiers & (shiftKey | rightShiftKey);
 			
 			const short cursor = shift ? params.itsSelection.start
 			                           : params.itsSelection.end;
 			
-			if ( cursor == params.itsStartOfInput )
+			if ( cursor == consoleParams.itsStartOfInput )
 			{
 				// Don't retreat cursor past prompt.
 				return true;
@@ -633,11 +504,11 @@ namespace Genie
 		
 		if ( TextEdit::KeyDown( event ) )
 		{
-			if ( params.itsSelection.start < params.itsStartOfInput )
+			if ( params.itsSelection.start < consoleParams.itsStartOfInput )
 			{
 				// Fudge 
-				Select( params.itsStartOfInput,
-				        params.itsStartOfInput );
+				Select( consoleParams.itsStartOfInput,
+				        consoleParams.itsStartOfInput );
 			}
 			
 			return true;
@@ -646,66 +517,6 @@ namespace Genie
 		return false;
 	}
 	
-	boost::shared_ptr< Ped::Quasimode >
-	//
-	Console::EnterShiftSpaceQuasimode( const EventRecord& event )
-	{
-		const bool backward = event.modifiers & shiftKey;
-		
-		boost::shared_ptr< Ped::Quasimode > mode( new Ped::IncrementalSearchQuasimode( *this, backward ) );
-		
-		return mode;
-	}
-	
-	static void DrawQuasimodeFrame( Rect frame )
-	{
-		N::FrameRect( frame );
-	}
-	
-	static void DrawQuasimodeFrame()
-	{
-		DrawQuasimodeFrame( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
-	static const RGBColor gRGBBlack = {     0,     0,     0 };
-	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
-	
-	void Console::BeginQuasimode()
-	{
-		DrawQuasimodeFrame();
-	}
-	
-	void Console::EndQuasimode()
-	{
-		N::RGBForeColor( gRGBWhite );
-		
-		DrawQuasimodeFrame();
-		
-		N::RGBForeColor( gRGBBlack );
-	}
-	
-	Ped::TextSelection Console::GetPriorSelection() const
-	{
-		return itsSelectionPriorToSearch;
-	}
-	
-	void Console::SetPriorSelection( const Ped::TextSelection& selection )
-	{
-		itsSelectionPriorToSearch = selection;
-	}
-	
-	
-	bool Console::Wrapped() const
-	{
-		ConsoleParametersMap::const_iterator it = gConsoleParametersMap.find( itsKey );
-		
-		if ( it != gConsoleParametersMap.end() )
-		{
-			return it->second.itIsWrapped;
-		}
-		
-		return true;
-	}
 	
 	boost::shared_ptr< Ped::View > ConsoleFactory( const FSTree* delegate )
 	{
@@ -717,6 +528,8 @@ namespace Genie
 	{
 		RemoveScrollerParams( delegate );
 		
+		TextEditParameters::Erase( delegate );
+		
 		gConsoleParametersMap.erase( delegate );
 	}
 	
@@ -725,7 +538,7 @@ namespace Genie
 	{
 		const FSTree* view = text->ParentRef().get();
 		
-		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		params.itsValidLength = std::min< size_t >( params.itsText.length(), length );
 		
@@ -745,7 +558,7 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			std::string& String() const  { return gConsoleParametersMap[ ViewKey() ].itsText; }
+			std::string& String() const  { return TextEditParameters::Get( ViewKey() ).itsText; }
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
@@ -770,7 +583,7 @@ namespace Genie
 	{
 		const FSTree* view = ViewKey();
 		
-		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		std::string& s = params.itsText;
 		
@@ -800,7 +613,7 @@ namespace Genie
 		
 		const FSTree* view = ViewKey();
 		
-		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		params.itsValidLength = std::min< size_t >( params.itsValidLength, GetFileMark() );
 		
@@ -874,7 +687,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		std::string& s = params.itsText;
+		std::string& s = TextEditParameters::Get( view ).itsText;
 		
 		const bool readable = params.itsStartOfInput < s.size()  &&  *s.rbegin() == '\n'  ||  params.itHasReceivedEOF;
 		
@@ -889,7 +702,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		std::string& s = params.itsText;
+		std::string& s = TextEditParameters::Get( view ).itsText;
 		
 		while ( !params.itHasReceivedEOF  &&  ( params.itsStartOfInput == s.size()  ||  *s.rbegin() != '\n' ) )
 		{
@@ -920,30 +733,32 @@ namespace Genie
 	{
 		const FSTree* view = ViewKey();
 		
-		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		ConsoleParameters& consoleParams = gConsoleParametersMap[ view ];
 		
 		std::string& s = params.itsText;
 		
 		if ( s.size() + byteCount > 30000 )
 		{
-			s.erase( s.begin(), s.begin() + params.itsStartOfInput );
+			s.erase( s.begin(), s.begin() + consoleParams.itsStartOfInput );
 			
-			params.itsStartOfInput = 0;
-			params.itsValidLength  = 0;
+			consoleParams.itsStartOfInput = 0;
+			params       .itsValidLength  = 0;
 		}
 		
-		ASSERT( params.itsStartOfInput <= s.size() );
+		ASSERT( consoleParams.itsStartOfInput <= s.size() );
 		
-		params.itsValidLength = std::min( params.itsValidLength, params.itsStartOfInput );
+		params.itsValidLength = std::min( params.itsValidLength, consoleParams.itsStartOfInput );
 		
-		s.insert( params.itsStartOfInput, buffer, byteCount );
+		s.insert( consoleParams.itsStartOfInput, buffer, byteCount );
 		
-		if ( params.itsSelection.start >= params.itsStartOfInput )
+		if ( params.itsSelection.start >= consoleParams.itsStartOfInput )
 		{
 			params.itsSelection.start += byteCount;
 			params.itsSelection.end   += byteCount;
 		}
-		else if ( params.itsSelection.end <= params.itsStartOfInput )
+		else if ( params.itsSelection.end <= consoleParams.itsStartOfInput )
 		{
 			// preserve selection
 		}
@@ -953,7 +768,7 @@ namespace Genie
 			params.itsSelection.end   = s.length();
 		}
 		
-		params.itsStartOfInput += byteCount;
+		consoleParams.itsStartOfInput += byteCount;
 		
 		params.itHasChangedAttributes = true;
 		
@@ -966,7 +781,7 @@ namespace Genie
 	{
 		const FSTree* view = ViewKey();
 		
-		ConsoleParameters& params = gConsoleParametersMap[ view ];
+		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		Point* result = (Point*) argp;
 		
@@ -1037,7 +852,7 @@ namespace Genie
 			{
 			}
 			
-			std::string& String() const  { return gConsoleParametersMap[ ParentRef().get() ].itsText; }
+			std::string& String() const  { return TextEditParameters::Get( ParentRef().get() ).itsText; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -1062,7 +877,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			const Ped::TextSelection& selection = gConsoleParametersMap[ view ].itsSelection;
+			const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
 			
 			std::string result = NN::Convert< std::string >( selection.start );
 			
@@ -1080,7 +895,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			ConsoleParameters& params = gConsoleParametersMap[ view ];
+			TextEditParameters& params = TextEditParameters::Get( view );
 			
 			std::size_t length = params.itsText.length();
 			
@@ -1131,7 +946,7 @@ namespace Genie
 		
 		bool& Wrapped( const FSTree* view )
 		{
-			return gConsoleParametersMap[ view ].itIsWrapped;
+			return TextEditParameters::Get( view ).itIsWrapped;
 		}
 		
 		int& Width( const FSTree* view )
@@ -1163,7 +978,7 @@ namespace Genie
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			gConsoleParametersMap[ view ].itHasChangedAttributes = true;
+			TextEditParameters::Get( view ).itHasChangedAttributes = true;
 			
 			View_Property::Set( that, begin, end, binary );
 		}
