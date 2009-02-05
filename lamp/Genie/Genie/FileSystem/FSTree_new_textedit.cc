@@ -53,6 +53,10 @@ namespace Genie
 	void TextEdit_Scroller::Scroll( int dh, int dv )
 	{
 		N::TEPinScroll( dh, dv, itsSubview.Get() );
+		
+		const FSTree* key = GetKey();
+		
+		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
 	}
 	
 	void TextEdit_Scroller::Draw( const Rect& bounds )
@@ -108,7 +112,11 @@ namespace Genie
 			{
 				const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
 				
-				if ( params.itsVOffset > max_voffset )
+				if ( params.itsVOffset == max_voffset )
+				{
+					// do nothing
+				}
+				else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
 				{
 					params.itsVOffset = max_voffset;
 					

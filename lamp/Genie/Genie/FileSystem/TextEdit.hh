@@ -20,6 +20,7 @@ namespace Genie
 		Pedestal::TextSelection  itsSelection;
 		std::size_t              itsValidLength;
 		bool                     itHasChangedAttributes;
+		bool                     itIsAtBottom;
 		bool                     itIsInterlocked;
 		bool                     itIsWrapped;
 		

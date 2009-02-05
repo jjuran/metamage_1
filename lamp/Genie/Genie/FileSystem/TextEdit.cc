@@ -34,6 +34,7 @@ namespace Genie
 		itsTextDimensions( N::SetPt( 0, 0 ) ),
 		itsValidLength(),
 		itHasChangedAttributes(),
+		itIsAtBottom(),
 		itIsInterlocked(),
 		itIsWrapped( true )
 	{
@@ -167,6 +168,8 @@ namespace Genie
 		
 		params.itsHOffset = te.viewRect.left - te.destRect.left;
 		params.itsVOffset = te.viewRect.top  - te.destRect.top;
+		
+		TextEditParameters::Get( itsKey ).itIsAtBottom = IsScrolledToBottom( params );
 	}
 	
 	static void DrawQuasimodeFrame( Rect frame )

@@ -73,13 +73,11 @@ namespace Genie
 	{
 		boost::shared_ptr< IOHandle >  itsTerminal;
 		std::size_t         itsStartOfInput;
-		bool                itIsAtBottom;
 		bool                itHasReceivedEOF;
 		
 		ConsoleParameters()
 		:
 			itsStartOfInput(),
-			itIsAtBottom(),
 			itHasReceivedEOF()
 		{
 		}
@@ -94,8 +92,6 @@ namespace Genie
 	{
 		private:
 			void On_EnterKey();
-			
-			void UpdateScrollOffsets();
 		
 		public:
 			Console( Key key ) : TextEdit( key )
@@ -126,23 +122,13 @@ namespace Genie
 			bool UserCommand( Ped::MenuItemCode code );
 	};
 	
-	static bool IsAtBottom( const ScrollerParameters& params )
-	{
-		const Rect& bounds = params.itsLastViewBounds;
-		
-		// Not pinned at zero; a negative value works fine below
-		short max_voffset = params.itsClientHeight - (bounds.bottom - bounds.top);
-		
-		return params.itsVOffset >= max_voffset;
-	}
-	
 	void Console_Scroller::Scroll( int dh, int dv )
 	{
 		N::TEPinScroll( dh, dv, itsSubview.Get() );
 		
 		const FSTree* key = GetKey();
 		
-		gConsoleParametersMap[ key ].itIsAtBottom = IsAtBottom( GetScrollerParams( key ) );
+		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
 	}
 	
 	void Console_Scroller::Draw( const Rect& bounds )
@@ -204,7 +190,7 @@ namespace Genie
 				{
 					// do nothing
 				}
-				else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
+				else if ( params.itsVOffset > max_voffset  ||  textParams.itIsAtBottom )
 				{
 					params.itsVOffset = max_voffset;
 					
@@ -274,22 +260,6 @@ namespace Genie
 		//command += '\n';
 		
 		RunShellCommand( command );
-	}
-	
-	void Console::UpdateScrollOffsets()
-	{
-		TEHandle hTE = Get();
-		
-		ASSERT( hTE != NULL );
-		
-		ScrollerParameters& params = GetScrollerParams( GetKey() );
-		
-		const TERec& te = **hTE;
-		
-		params.itsHOffset = te.viewRect.left - te.destRect.left;
-		params.itsVOffset = te.viewRect.top  - te.destRect.top;
-		
-		gConsoleParametersMap[ GetKey() ].itIsAtBottom = IsAtBottom( params );
 	}
 	
 	static void SendSignalToProcessGroupForKey( int signo, const FSTree* key )
