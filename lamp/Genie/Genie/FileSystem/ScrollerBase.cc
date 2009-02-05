@@ -153,6 +153,17 @@ namespace Genie
 	}
 	
 	
+	bool IsScrolledToBottom( const ScrollerParameters& params )
+	{
+		const Rect& bounds = params.itsLastViewBounds;
+		
+		// Not pinned at zero; a negative value works fine below
+		short max_voffset = params.itsClientHeight - (bounds.bottom - bounds.top);
+		
+		return params.itsVOffset >= max_voffset;
+	}
+	
+	
 	short ScrollerProxy::ViewWidth() const
 	{
 		return GetScrollerLastViewWidth( itsKey );

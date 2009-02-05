@@ -56,6 +56,8 @@ namespace Genie
 	
 	Rect GetScrollerLastViewBounds( const FSTree* scroller );
 	
+	bool IsScrolledToBottom( const ScrollerParameters& params );
+	
 	
 	class ScrollerProxy : public Pedestal::ScrollerAPI
 	{
