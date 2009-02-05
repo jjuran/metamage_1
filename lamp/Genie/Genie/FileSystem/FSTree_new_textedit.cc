@@ -133,7 +133,7 @@ namespace Genie
 		{
 			N::TECalText( hTE );
 			
-			params.itsClientHeight = Ped::GetTextEditingHeight( hTE );
+			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
 			
 			if ( text_modified )
 			{
@@ -261,7 +261,7 @@ namespace Genie
 		
 		//const TERec& te = **itsTE;
 		
-		params.itsClientHeight = Ped::GetTextEditingHeight( itsTE );
+		params.itsClientHeight = Ped::GetTextEditingHeight( **itsTE );
 	}
 	
 	void TextEdit::UpdateScrollOffsets()
