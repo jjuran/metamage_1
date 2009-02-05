@@ -148,38 +148,6 @@ namespace Genie
 		gConsoleParametersMap[ key ].itIsAtBottom = IsAtBottom( GetScrollerParams( key ) );
 	}
 	
-	static short CountLinesForEditing( const TERec& te )
-	{
-		short teLength = te.teLength;
-		
-		// An empty buffer counts as one line
-		if ( teLength == 0 )
-		{
-			return 1;
-		}
-		
-		short    nLines = te.nLines;
-		::Handle hText  = te.hText;
-		
-		// Find the last character in the buffer
-		char c = ( *hText )[ teLength - 1 ];
-		
-		// If the last char is a carriage return, add an extra line
-		if ( c == '\r' )
-		{
-			++nLines;
-		}
-		
-		return nLines;
-	}
-	
-	static short GetTextEditingHeight( TEHandle hTE )
-	{
-		const TERec& te = **hTE;
-		
-		return CountLinesForEditing( te ) * te.lineHeight;
-	}
-	
 	static bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params )
 	{
 		bool text_modified = false;
@@ -267,7 +235,7 @@ namespace Genie
 		{
 			N::TECalText( hTE );
 			
-			params.itsClientHeight = GetTextEditingHeight( hTE );
+			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
 			
 			if ( text_modified )
 			{

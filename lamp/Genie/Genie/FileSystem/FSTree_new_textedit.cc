@@ -55,38 +55,6 @@ namespace Genie
 		N::TEPinScroll( dh, dv, itsSubview.Get() );
 	}
 	
-	static short CountLinesForEditing( const TERec& te )
-	{
-		short teLength = te.teLength;
-		
-		// An empty buffer counts as one line
-		if ( teLength == 0 )
-		{
-			return 1;
-		}
-		
-		short    nLines = te.nLines;
-		::Handle hText  = te.hText;
-		
-		// Find the last character in the buffer
-		char c = ( *hText )[ teLength - 1 ];
-		
-		// If the last char is a carriage return, add an extra line
-		if ( c == '\r' )
-		{
-			++nLines;
-		}
-		
-		return nLines;
-	}
-	
-	static short GetTextEditingHeight( TEHandle hTE )
-	{
-		const TERec& te = **hTE;
-		
-		return CountLinesForEditing( te ) * te.lineHeight;
-	}
-	
 	void TextEdit_Scroller::Draw( const Rect& bounds )
 	{
 		using Nucleus::operator!=;
@@ -165,7 +133,7 @@ namespace Genie
 		{
 			N::TECalText( hTE );
 			
-			params.itsClientHeight = GetTextEditingHeight( hTE );
+			params.itsClientHeight = Ped::GetTextEditingHeight( hTE );
 			
 			if ( text_modified )
 			{
@@ -293,7 +261,7 @@ namespace Genie
 		
 		//const TERec& te = **itsTE;
 		
-		params.itsClientHeight = GetTextEditingHeight( itsTE );
+		params.itsClientHeight = Ped::GetTextEditingHeight( itsTE );
 	}
 	
 	void TextEdit::UpdateScrollOffsets()
