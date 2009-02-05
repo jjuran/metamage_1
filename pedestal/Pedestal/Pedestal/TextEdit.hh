@@ -64,6 +64,8 @@ namespace Pedestal
 			
 	};
 	
+	unsigned GetTextEditingHeight( const TERec& te );
+	
 }
 
 #endif

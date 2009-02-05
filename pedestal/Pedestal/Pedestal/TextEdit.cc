@@ -571,5 +571,36 @@ namespace Pedestal
 		                 matchAtPosition );
 	}
 	
+	
+	static short CountLinesForEditing( const TERec& te )
+	{
+		short teLength = te.teLength;
+		
+		// An empty buffer counts as one line
+		if ( teLength == 0 )
+		{
+			return 1;
+		}
+		
+		short    nLines = te.nLines;
+		::Handle hText  = te.hText;
+		
+		// Find the last character in the buffer
+		char c = ( *hText )[ teLength - 1 ];
+		
+		// If the last char is a carriage return, add an extra line
+		if ( c == '\r' )
+		{
+			++nLines;
+		}
+		
+		return nLines;
+	}
+	
+	unsigned GetTextEditingHeight( const TERec& te )
+	{
+		return CountLinesForEditing( te ) * te.lineHeight;
+	}
+	
 }
 
