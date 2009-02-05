@@ -65,44 +65,13 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		bool text_modified = false;
-		
 		const FSTree* key = GetKey();
 		
 		ScrollerParameters& params = GetScrollerParams( key );
 		
 		TextEditParameters& editParams = TextEditParameters::Get( key );
 		
-		if ( editParams.itsValidLength < editParams.itsText.length() )
-		{
-			text_modified = true;
-			
-			N::SetHandleSize( hTE[0]->hText, editParams.itsText.length() );
-			
-			TERec& te = **hTE;
-			
-			te.teLength = editParams.itsText.length();
-			
-			std::replace_copy( editParams.itsText.begin() + editParams.itsValidLength,
-			                   editParams.itsText.end(),
-			                   *te.hText + editParams.itsValidLength,
-			                   '\n',
-			                   '\r' );
-			
-			editParams.itsValidLength = te.teLength;
-		}
-		else if ( editParams.itsValidLength < hTE[0]->teLength )
-		{
-			// Text was merely truncated
-			
-			text_modified = true;
-			
-			TERec& te = **hTE;
-			
-			te.teLength = editParams.itsValidLength;
-			
-			N::SetHandleSize( te.hText, editParams.itsValidLength );
-		}
+		const bool text_modified = Update_TE_From_Model( hTE, editParams );
 		
 		const short viewWidth  = bounds.right - bounds.left;
 		const short viewHeight = bounds.bottom - bounds.top;
