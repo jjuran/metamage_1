@@ -16,6 +16,7 @@
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/TextEdit.hh"
+#include "Genie/FileSystem/TextEdit_text.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
@@ -338,95 +339,6 @@ namespace Genie
 	}
 	
 	
-	static void TextEditText_SetEOF( const FSTree* text, off_t length )
-	{
-		const FSTree* view = text->ParentRef().get();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
-		
-		params.itsValidLength = std::min< size_t >( params.itsText.length(), length );
-		
-		params.itsText.resize( length );
-		
-		InvalidateWindowForView( view );
-	}
-	
-	class ConsoleTextFileHandle : public VirtualFileHandle
-	{
-		public:
-			ConsoleTextFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
-			{
-			}
-			
-			boost::shared_ptr< IOHandle > Clone();
-			
-			const FSTree* ViewKey() const;
-			
-			std::string& String() const  { return TextEditParameters::Get( ViewKey() ).itsText; }
-			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
-			
-			off_t GetEOF() const  { return String().size(); }
-			
-			void SetEOF( off_t length )  { TextEditText_SetEOF( GetFile().get(), length ); }
-	};
-	
-	boost::shared_ptr< IOHandle > ConsoleTextFileHandle::Clone()
-	{
-		return boost::shared_ptr< IOHandle >( new ConsoleTextFileHandle( GetFile(), GetFlags() ) );
-	}
-	
-	const FSTree* ConsoleTextFileHandle::ViewKey() const
-	{
-		return GetFile()->ParentRef().get();
-	}
-	
-	ssize_t ConsoleTextFileHandle::SysRead( char* buffer, std::size_t byteCount )
-	{
-		const FSTree* view = ViewKey();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
-		
-		std::string& s = params.itsText;
-		
-		ASSERT( GetFileMark() <= s.size() );
-		
-		byteCount = std::min( byteCount, s.size() - GetFileMark() );
-		
-		std::copy( s.begin() + GetFileMark(),
-		           s.begin() + GetFileMark() + byteCount,
-		           buffer );
-		
-		return Advance( byteCount );
-	}
-	
-	ssize_t ConsoleTextFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
-	{
-		std::string& s = String();
-		
-		if ( GetFileMark() + byteCount > s.size() )
-		{
-			s.resize( GetFileMark() + byteCount );
-		}
-		
-		std::copy( buffer,
-		           buffer + byteCount,
-		           s.begin() + GetFileMark() );
-		
-		const FSTree* view = ViewKey();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
-		
-		params.itsValidLength = std::min< size_t >( params.itsValidLength, GetFileMark() );
-		
-		InvalidateWindowForView( view );
-		
-		return Advance( byteCount );
-	}
-	
-	
 	static FSTreePtr MakeConsoleProxy( unsigned id )
 	{
 		FSTreePtr parent = ResolvePathname( "/dev/con" );
@@ -648,33 +560,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Console_text : public FSTree
-	{
-		public:
-			FSTree_Console_text( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree( parent, name )
-			{
-			}
-			
-			std::string& String() const  { return TextEditParameters::Get( ParentRef().get() ).itsText; }
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-			
-			off_t GetEOF() const  { return String().size(); }
-			
-			void SetEOF( off_t length ) const  { TextEditText_SetEOF( this, length ); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	boost::shared_ptr< IOHandle > FSTree_Console_text::Open( OpenFlags flags ) const
-	{
-		IOHandle* result = new ConsoleTextFileHandle( shared_from_this(), flags );
-		
-		return boost::shared_ptr< IOHandle >( result );
-	}
-	
-	
 	namespace
 	{
 		
@@ -732,7 +617,7 @@ namespace Genie
 	{
 		{ "tty", &Basic_Factory< FSTree_Console_tty > },
 		
-		{ "text", &Basic_Factory< FSTree_Console_text > },
+		{ "text", &Basic_Factory< FSTree_TextEdit_text > },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
