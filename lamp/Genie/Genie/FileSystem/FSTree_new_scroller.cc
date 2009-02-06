@@ -76,8 +76,6 @@ namespace Genie
 	
 	void BasicScroller::Draw( const Rect& bounds )
 	{
-		ScrollerBase::Draw( bounds );
-		
 		NN::Saved< N::Clip_Value > savedClip;
 		
 		N::SetClip( N::SectRgn( N::RectRgn( bounds ), N::GetClip() ) );
