@@ -245,7 +245,7 @@ namespace Genie
 	}
 	
 	
-	void Console_On_EnterKey( TextEditParameters& params )
+	static void Console_On_EnterKey( TextEditParameters& params )
 	{
 		const std::string& s = params.itsText;
 		
@@ -268,7 +268,7 @@ namespace Genie
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
 	
-	static void Console_Postprocess_Key( const Console& that )
+	static void Console_Postprocess_Key( Console& that )
 	{
 		const FSTree* key = that.GetKey();
 		
