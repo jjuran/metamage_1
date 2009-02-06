@@ -329,31 +329,22 @@ namespace Pedestal
 		}
 	}
 	
-	bool KeyIsPreHandled( TextEdit& that, const EventRecord& event )
+	bool TextEdit::Preprocess_Key( const EventRecord& event )
 	{
 		return    Try_IgnoreAutoKey( event )
-		       || Try_RepeatSearch( that, event )
-		       || event.what == keyDown && Try_ArrowKeyChord( that, event.message & charCodeMask );
+		       || Try_RepeatSearch( *this, event )
+		       || event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask );
 	}
 	
-	bool TextEdit::KeyDown( const EventRecord& event )
+	bool TextEdit::Process_Key( const EventRecord& event )
 	{
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
 		
-		const char c   =  event.message & charCodeMask;
-		const char key = (event.message & keyCodeMask) >> 8;
+		const char c =  event.message & charCodeMask;
 		
-		if ( KeyIsPreHandled( *this, event ) )
-		{
-			// already handled
-		}
-		else if ( c == kEnterCharCode  &&  key >= 0x30 )
-		{
-			On_EnterKey();
-		}
-		else if ( !KeyIsAllowedAgainstSelection( c, hTE ) )
+		if ( !KeyIsAllowedAgainstSelection( c, hTE ) )
 		{
 			static UInt32 lastBeep = 0;
 			
@@ -371,6 +362,31 @@ namespace Pedestal
 			TEKeyEvent( event, hTE );
 			
 			On_UserEdit();
+		}
+		
+		return true;
+	}
+	
+	bool TextEdit::KeyDown( const EventRecord& event )
+	{
+		const char c   =  event.message & charCodeMask;
+		const char key = (event.message & keyCodeMask) >> 8;
+		
+		if ( Preprocess_Key( event ) )
+		{
+			// already handled
+		}
+		else if ( c == kEnterCharCode  &&  key >= 0x30 )
+		{
+			On_EnterKey();
+		}
+		else if ( Process_Key( event ) )
+		{
+			Postprocess_Key( event );
+		}
+		else
+		{
+			return false;
 		}
 		
 		return true;

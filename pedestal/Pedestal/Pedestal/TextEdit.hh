@@ -36,6 +36,10 @@ namespace Pedestal
 			
 			virtual void On_EnterKey()  {}
 			
+			virtual bool Preprocess_Key ( const EventRecord& event );
+			virtual bool Process_Key    ( const EventRecord& event );
+			virtual void Postprocess_Key( const EventRecord& event )  {}
+			
 			void Activate( bool activating );
 			
 			void Idle     ( const EventRecord& event );
