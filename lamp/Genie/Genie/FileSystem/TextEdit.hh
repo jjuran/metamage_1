@@ -38,7 +38,11 @@ namespace Genie
 		private:
 			typedef const FSTree* Key;
 			
+			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
+			
 			Key itsKey;
+			
+			KeyDown_Hook  itsKeyDown;
 			
 			Nucleus::Owned< Nitrogen::TEHandle >  itsTE;
 			
@@ -57,13 +61,18 @@ namespace Genie
 			void ClickInLoop()  { UpdateScrollOffsets(); }
 		
 		public:
-			TextEdit( Key key ) : itsKey( key )
+			TextEdit( Key key, KeyDown_Hook keyDown = NULL )
+			:
+				itsKey( key ),
+				itsKeyDown( keyDown )
 			{
 				itsSelectionPriorToSearch.start = -1;
 			}
 			
 			void Install();
 			void Uninstall();
+			
+			bool KeyDown( const EventRecord& event );
 			
 			const FSTree* GetKey() const  { return itsKey; }
 			

@@ -89,6 +89,12 @@ namespace Genie
 	}
 	
 	
+	bool TextEdit::KeyDown( const EventRecord& event )
+	{
+		return itsKeyDown != NULL ? itsKeyDown( *this, event )
+		                          : Ped::TextEdit::KeyDown( event );
+	}
+	
 	void TextEdit::On_UserSelect()
 	{
 		TextEditParameters& params = TextEditParameters::Get( itsKey );

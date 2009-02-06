@@ -88,25 +88,20 @@ namespace Genie
 	static ConsoleParametersMap gConsoleParametersMap;
 	
 	
-	class Console : public TextEdit
-	{
-		public:
-			Console( Key key ) : TextEdit( key )
-			{
-			}
-			
-			bool KeyDown( const EventRecord& event );
-	};
+	static bool Console_KeyDown( TextEdit& that, const EventRecord& event );
 	
 	class Console_Scroller : public ScrollerBase
 	{
 		private:
-			Console  itsSubview;
+			TextEdit  itsSubview;
 		
 		public:
 			typedef const FSTree* Key;
 			
-			Console_Scroller( Key key ) : ScrollerBase( key ), itsSubview( key )
+			Console_Scroller( Key key )
+			:
+				ScrollerBase( key ),
+				itsSubview( key, Console_KeyDown )
 			{
 			}
 			
@@ -441,11 +436,6 @@ namespace Genie
 		}
 		
 		return false;
-	}
-	
-	bool Console::KeyDown( const EventRecord& event )
-	{
-		return Console_KeyDown( *this, event );
 	}
 	
 	boost::shared_ptr< Ped::View > ConsoleFactory( const FSTree* delegate )
