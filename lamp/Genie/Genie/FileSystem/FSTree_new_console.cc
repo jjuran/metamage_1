@@ -268,7 +268,7 @@ namespace Genie
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
 	
-	static bool Try_Control_Character( Console& that, const EventRecord& event )
+	static bool Try_Control_Character( TextEdit& that, const EventRecord& event )
 	{
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
 		
@@ -325,7 +325,7 @@ namespace Genie
 		return false;
 	}
 	
-	static void Console_Postprocess_Key( Console& that )
+	static void Console_Postprocess_Key( TextEdit& that )
 	{
 		const FSTree* key = that.GetKey();
 		
@@ -341,18 +341,19 @@ namespace Genie
 		}
 	}
 	
-	bool Console::KeyDown( const EventRecord& event )
+	static bool Console_KeyDown( TextEdit& that, const EventRecord& event )
 	{
-		char c   =  event.message & charCodeMask;
-		char key = (event.message & keyCodeMask) >> 8;
+		typedef const FSTree* Key;
 		
-		TextEditParameters& params = TextEditParameters::Get( GetKey() );
+		const Key viewKey = that.GetKey();
 		
-		ConsoleParameters& consoleParams = gConsoleParametersMap[ GetKey() ];
+		TextEditParameters& params = TextEditParameters::Get( viewKey );
+		
+		const ConsoleParameters& consoleParams = gConsoleParametersMap[ viewKey ];
 		
 		Ped::TextSelection& selection = params.itsSelection;
 		
-		if ( Update_TE_From_Model( Get(), params )  &&  params.itHasChangedAttributes )
+		if ( Update_TE_From_Model( that.Get(), params )  &&  params.itHasChangedAttributes )
 		{
 			if ( params.itsValidLength > 0 )
 			{
@@ -364,7 +365,7 @@ namespace Genie
 			
 			if ( params.itHasChangedAttributes )
 			{
-				TERec& te = **Get();
+				TERec& te = **that.Get();
 				
 				te.selStart = selection.start;
 				te.selEnd   = selection.end;
@@ -373,6 +374,9 @@ namespace Genie
 			}
 		}
 		
+		const char c   =  event.message & charCodeMask;
+		const char key = (event.message & keyCodeMask) >> 8;
+		
 		if ( c == kEnterCharCode  &&  key >= 0x30 )
 		{
 			Console_On_EnterKey( params );
@@ -380,19 +384,19 @@ namespace Genie
 			return true;
 		}
 		
-		if ( Preprocess_Key( event ) )
+		if ( that.Preprocess_Key( event ) )
 		{
 			return true;
 		}
 		
 		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
-			Select( 32767, 32767 );
+			that.Select( 32767, 32767 );
 		}
 		
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
 		
-		if ( Try_Control_Character( *this, event ) )
+		if ( Try_Control_Character( that, event ) )
 		{
 			return true;
 		}
@@ -408,12 +412,12 @@ namespace Genie
 			if ( event.modifiers & cmdKey )
 			{
 				// Don't delete the prompt.
-				Select( consoleParams.itsStartOfInput, params.itsSelection.end );
+				that.Select( consoleParams.itsStartOfInput, params.itsSelection.end );
 			}
 		}
 		else if ( c == kReturnCharCode )
 		{
-			Select( 32767, 32767 );
+			that.Select( 32767, 32767 );
 		}
 		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == consoleParams.itsStartOfInput )
 		{
@@ -429,9 +433,9 @@ namespace Genie
 			}
 		}
 		
-		if ( Process_Key( event ) )
+		if ( that.Process_Key( event ) )
 		{
-			Console_Postprocess_Key( *this );
+			Console_Postprocess_Key( that );
 			
 			return true;
 		}
@@ -439,6 +443,10 @@ namespace Genie
 		return false;
 	}
 	
+	bool Console::KeyDown( const EventRecord& event )
+	{
+		return Console_KeyDown( *this, event );
+	}
 	
 	boost::shared_ptr< Ped::View > ConsoleFactory( const FSTree* delegate )
 	{
