@@ -275,11 +275,6 @@ namespace Genie
 	
 	bool Console::KeyDown( const EventRecord& event )
 	{
-		if ( Ped::KeyIsPreHandled( *this, event ) )
-		{
-			return true;
-		}
-		
 		char c   =  event.message & charCodeMask;
 		char key = (event.message & keyCodeMask) >> 8;
 		
