@@ -8,14 +8,6 @@
 // POSIX
 #include <sys/ttycom.h>
 
-// Nucleus
-#include "Nucleus/Saved.h"
-
-// Pedestal
-#include "Pedestal/Application.hh"
-#include "Pedestal/Clipboard.hh"
-#include "Pedestal/Scroller_beta.hh"
-
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/Process.hh"
@@ -23,7 +15,6 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/FileSystem/ScrollerBase.hh"
 #include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
@@ -90,124 +81,17 @@ namespace Genie
 	
 	static bool Console_KeyDown( TextEdit& that, const EventRecord& event );
 	
-	class Console_Scroller : public ScrollerBase
+	class Console_Scroller : public TextEdit_Scroller
 	{
-		private:
-			TextEdit  itsSubview;
-		
 		public:
-			typedef const FSTree* Key;
-			
 			Console_Scroller( Key key )
 			:
-				ScrollerBase( key ),
-				itsSubview( key, Console_KeyDown )
+				TextEdit_Scroller( key, Console_KeyDown )
 			{
 			}
-			
-			Ped::View& Subview()  { return itsSubview; }
-			
-			void Scroll( int dh, int dv );
-			
-			void Draw( const Rect& bounds );
 			
 			bool UserCommand( Ped::MenuItemCode code );
 	};
-	
-	void Console_Scroller::Scroll( int dh, int dv )
-	{
-		N::TEPinScroll( dh, dv, itsSubview.Get() );
-		
-		const FSTree* key = GetKey();
-		
-		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
-	}
-	
-	void Console_Scroller::Draw( const Rect& bounds )
-	{
-		using Nucleus::operator!=;
-		
-		ScrollerBase::Draw( bounds );
-		
-		TEHandle hTE = itsSubview.Get();
-		
-		ASSERT( hTE != NULL );
-		
-		const FSTree* key = GetKey();
-		
-		ScrollerParameters& params = GetScrollerParams( key );
-		
-		TextEditParameters& textParams = TextEditParameters::Get( key );
-		
-		ConsoleParameters& editParams = gConsoleParametersMap[ key ];
-		
-		const bool text_modified = Update_TE_From_Model( hTE, textParams );
-		
-		const short viewWidth  = bounds.right - bounds.left;
-		const short viewHeight = bounds.bottom - bounds.top;
-		
-		const bool bounds_changed = bounds != hTE[0]->viewRect;
-		
-		if ( bounds_changed )
-		{
-			//params.itsLastViewBounds = bounds;
-			
-			params.itsClientWidth = viewWidth;
-			
-			TERec& te = **hTE;
-			
-			te.viewRect = bounds;
-			
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
-			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
-			
-			textParams.itsTextDimensions = N::SetPt( cols, rows );
-		}
-		
-		if ( bounds_changed || text_modified )
-		{
-			N::TECalText( hTE );
-			
-			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
-			
-			if ( text_modified )
-			{
-				const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
-				
-				if ( params.itsVOffset == max_voffset )
-				{
-					// do nothing
-				}
-				else if ( params.itsVOffset > max_voffset  ||  textParams.itIsAtBottom )
-				{
-					params.itsVOffset = max_voffset;
-					
-					textParams.itHasChangedAttributes = true;
-				}
-			}
-		}
-		
-		if ( textParams.itHasChangedAttributes )
-		{
-			TERec& te = **hTE;
-			
-			// Propagate changes made to 'x' and 'y' files
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			te.selStart = textParams.itsSelection.start;
-			te.selEnd   = textParams.itsSelection.end;
-			
-			textParams.itHasChangedAttributes = false;
-		}
-		
-		Subview().Draw( bounds );
-	}
 	
 	bool Console_Scroller::UserCommand( Ped::MenuItemCode code )
 	{
