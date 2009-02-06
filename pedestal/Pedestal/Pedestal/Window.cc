@@ -163,7 +163,9 @@ namespace Pedestal
 	
 	void Window::Resized( short width, short height )
 	{
-		GetView()->Resize( width, height );
+		Rect bounds = { 0, 0, height, width };
+		
+		GetView()->SetBounds( bounds );
 		
 		InvalidateGrowBox();
 	}
