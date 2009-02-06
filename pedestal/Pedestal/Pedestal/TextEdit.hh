@@ -66,6 +66,8 @@ namespace Pedestal
 	
 	unsigned GetTextEditingHeight( const TERec& te );
 	
+	bool KeyIsPreHandled( TextEdit& that, const EventRecord& event );
+	
 }
 
 #endif

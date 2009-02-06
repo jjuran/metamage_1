@@ -329,6 +329,13 @@ namespace Pedestal
 		}
 	}
 	
+	bool KeyIsPreHandled( TextEdit& that, const EventRecord& event )
+	{
+		return    Try_IgnoreAutoKey( event )
+		       || Try_RepeatSearch( that, event )
+		       || event.what == keyDown && Try_ArrowKeyChord( that, event.message & charCodeMask );
+	}
+	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
 		TEHandle hTE = Get();
@@ -338,15 +345,7 @@ namespace Pedestal
 		const char c   =  event.message & charCodeMask;
 		const char key = (event.message & keyCodeMask) >> 8;
 		
-		if ( Try_IgnoreAutoKey( event ) )
-		{
-			// do nothing
-		}
-		else if ( Try_RepeatSearch( *this, event ) )
-		{
-			// already handled
-		}
-		else if ( event.what == keyDown  &&  Try_ArrowKeyChord( *this, c ) )
+		if ( KeyIsPreHandled( *this, event ) )
 		{
 			// already handled
 		}
