@@ -252,7 +252,10 @@ namespace Genie
 		
 		params.itsWindow = window;
 		
-		params.itsSubview->Install();
+		// We could copy from above but the actual bounds could be different
+		bounds = N::GetPortBounds( N::GetWindowPort( window->Get() ) );
+		
+		params.itsSubview->Install( bounds );
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
@@ -404,7 +407,9 @@ namespace Genie
 			
 			InvalidateWindowRef( window );
 			
-			view->Install();
+			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+			
+			view->Install( bounds );
 		}
 	}
 	

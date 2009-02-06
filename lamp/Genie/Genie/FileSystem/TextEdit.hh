@@ -86,7 +86,7 @@ namespace Genie
 				itsSelectionPriorToSearch.start = -1;
 			}
 			
-			void Install();
+			void Install( const Rect& bounds );
 			void Uninstall();
 			
 			bool KeyDown( const EventRecord& event );

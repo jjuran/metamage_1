@@ -136,13 +136,11 @@ namespace Genie
 	}
 	
 	
-	void TextEdit::Install()
+	void TextEdit::Install( const Rect& bounds )
 	{
 		ASSERT( itsTE == NULL );
 		
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
-		Rect bounds = N::GetPortBounds( thePort );  // will be fixed in next Draw()
 		
 		itsTE = N::TENew( bounds );
 		

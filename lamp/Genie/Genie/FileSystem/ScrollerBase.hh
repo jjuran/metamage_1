@@ -105,7 +105,7 @@ namespace Genie
 			{
 			}
 			
-			void Install();
+			void Install( const Rect& bounds );
 			void Uninstall();
 			
 			Key GetKey() const  { return itsKey; }
