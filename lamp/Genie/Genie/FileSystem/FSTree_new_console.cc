@@ -99,6 +99,8 @@ namespace Genie
 			}
 			
 			bool KeyDown( const EventRecord& event );
+			
+			void Postprocess_Key( const EventRecord& event );
 	};
 	
 	class Console_Scroller : public ScrollerBase
@@ -273,6 +275,20 @@ namespace Genie
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
 	
+	void Console::Postprocess_Key( const EventRecord& event )
+	{
+		TextEditParameters& params = TextEditParameters::Get( GetKey() );
+		
+		ConsoleParameters& consoleParams = gConsoleParametersMap[ GetKey() ];
+		
+		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
+		{
+			// Fudge 
+			Select( consoleParams.itsStartOfInput,
+			        consoleParams.itsStartOfInput );
+		}
+	}
+	
 	bool Console::KeyDown( const EventRecord& event )
 	{
 		char c   =  event.message & charCodeMask;
@@ -393,12 +409,7 @@ namespace Genie
 		
 		if ( TextEdit::KeyDown( event ) )
 		{
-			if ( params.itsSelection.start < consoleParams.itsStartOfInput )
-			{
-				// Fudge 
-				Select( consoleParams.itsStartOfInput,
-				        consoleParams.itsStartOfInput );
-			}
+			Postprocess_Key( event );
 			
 			return true;
 		}
