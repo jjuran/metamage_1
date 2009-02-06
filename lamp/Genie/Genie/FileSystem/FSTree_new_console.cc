@@ -58,6 +58,8 @@ namespace Genie
 		{
 			process->Exit( 127 );
 		}
+		
+		parent.ResumeAfterFork();
 	}
 	
 	
