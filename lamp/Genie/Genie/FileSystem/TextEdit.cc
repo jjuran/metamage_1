@@ -168,6 +168,16 @@ namespace Genie
 		                          : Ped::TextEdit::KeyDown( event );
 	}
 	
+	bool TextEdit::UserCommand( Ped::MenuItemCode code )
+	{
+		if ( itsUserCommand != NULL  &&  itsUserCommand( *this, code ) )
+		{
+			return true;
+		}
+		
+		return Ped::TextEdit::UserCommand( code );
+	}
+	
 	void TextEdit::On_UserSelect()
 	{
 		TextEditParameters& params = TextEditParameters::Get( itsKey );

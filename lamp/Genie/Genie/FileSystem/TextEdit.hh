@@ -51,9 +51,12 @@ namespace Genie
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			
+			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::MenuItemCode );
+			
 			Key itsKey;
 			
-			KeyDown_Hook  itsKeyDown;
+			KeyDown_Hook      itsKeyDown;
+			UserCommand_Hook  itsUserCommand;
 			
 			Nucleus::Owned< Nitrogen::TEHandle >  itsTE;
 			
@@ -72,10 +75,13 @@ namespace Genie
 			void ClickInLoop()  { UpdateScrollOffsets(); }
 		
 		public:
-			TextEdit( Key key, KeyDown_Hook keyDown = NULL )
+			TextEdit( Key               key,
+			          KeyDown_Hook      keyDown = NULL,
+			          UserCommand_Hook  cmdHook = NULL )
 			:
 				itsKey( key ),
-				itsKeyDown( keyDown )
+				itsKeyDown( keyDown ),
+				itsUserCommand( cmdHook )
 			{
 				itsSelectionPriorToSearch.start = -1;
 			}
@@ -84,6 +90,8 @@ namespace Genie
 			void Uninstall();
 			
 			bool KeyDown( const EventRecord& event );
+			
+			bool UserCommand( Pedestal::MenuItemCode code );
 			
 			const FSTree* GetKey() const  { return itsKey; }
 			
@@ -110,10 +118,14 @@ namespace Genie
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			
-			TextEdit_Scroller( Key key, KeyDown_Hook keyDown = NULL )
+			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::MenuItemCode );
+			
+			TextEdit_Scroller( Key               key,
+			                   KeyDown_Hook      keyDown = NULL,
+			                   UserCommand_Hook  cmdHook = NULL )
 			:
 				ScrollerBase( key ),
-				itsSubview( key, keyDown )
+				itsSubview( key, keyDown, cmdHook )
 			{
 			}
 			
