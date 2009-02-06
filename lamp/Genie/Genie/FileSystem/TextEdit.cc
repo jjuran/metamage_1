@@ -9,18 +9,24 @@
 #include <algorithm>
 #include <map>
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Nitrogen
 #include "Nitrogen/MacMemory.h"
 #include "Nitrogen/QuickDraw.h"
 
 // Genie
 #include "Genie/FileSystem/ScrollerBase.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -60,6 +66,73 @@ namespace Genie
 	void TextEditParameters::Erase( const FSTree* key )
 	{
 		gTextEditParametersMap.erase( key );
+	}
+	
+	
+	std::string Selection_Property::Get( const FSTree* that, bool binary )
+	{
+		const FSTree* view = GetViewKey( that );
+		
+		const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
+		
+		std::string result = NN::Convert< std::string >( selection.start );
+		
+		if ( selection.end != selection.start )
+		{
+			result += '-';
+			
+			result += NN::Convert< std::string >( selection.end );
+		}
+		
+		return result;
+	}
+	
+	void Selection_Property::Set( const FSTree* that, const char* begin, const char* end, bool binary )
+	{
+		const FSTree* view = GetViewKey( that );
+		
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		std::size_t length = params.itsText.length();
+		
+		int start;
+		int s_end;
+		
+		if ( end - begin == 1  &&  begin[0] == '-' )
+		{
+			// A single hyphen means to select the end of the text.
+			
+			start =
+			s_end = length;
+		}
+		else
+		{
+			start = std::atoi( begin );
+			
+			const char* hyphen = std::find( begin, end, '-' );
+			
+			// If no hyphen is present, select at the given offset.
+			// If no number follows the hyphen, use the text length.
+			// Otherwise, convert the number and use it.
+			
+			s_end = hyphen     == end ? start
+			      : hyphen + 1 == end ? length
+			      :                     std::atoi( hyphen + 1 );
+			
+			// The selection must not be inverted or exceed the text range.
+			
+			if ( 0 > start  ||  start > s_end  ||  s_end > length )
+			{
+				p7::throw_errno( EINVAL );
+			}
+		}
+		
+		params.itsSelection.start = start;
+		params.itsSelection.end   = s_end;
+		
+		params.itHasChangedAttributes = true;
+		
+		InvalidateWindowForView( view );
 	}
 	
 	
