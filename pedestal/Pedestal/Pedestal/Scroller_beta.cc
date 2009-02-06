@@ -135,11 +135,7 @@ namespace Pedestal
 	
 	void ScrollFrame::Draw( const Rect& bounds )
 	{
-		Rect aperture = bounds;
-		
-		ApertureHook( aperture );
-		
-		Subview().Draw( aperture );
+		Subview().Draw( bounds );
 	}
 	
 	Rect ScrollFrame::GetAperture()

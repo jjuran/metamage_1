@@ -44,8 +44,6 @@ namespace Pedestal
 	class ScrollFrame : public Superview, public TEClickLoop_User
 	{
 		public:
-			virtual void ApertureHook( Rect& aperture )  {}
-			
 			virtual void UpdateScrollbars()  {}
 			
 			virtual const Rect& Bounds() const = 0;
