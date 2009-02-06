@@ -268,6 +268,63 @@ namespace Genie
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
 	
+	static bool Try_Control_Character( Console& that, const EventRecord& event )
+	{
+		const UInt32 kEitherControlKey = controlKey | rightControlKey;
+		
+		const char c = event.message & charCodeMask;
+		
+		if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
+		{
+			typedef const FSTree* Key;
+			
+			const Key key = that.GetKey();
+			
+			const TextEditParameters& params = TextEditParameters::Get( key );
+			
+			ConsoleParameters& consoleParams = gConsoleParametersMap[ key ];
+			
+			const char cntrl = c | 0x40;
+			
+			switch ( cntrl )
+			{
+				case 'A':
+					that.Select( consoleParams.itsStartOfInput,
+					             consoleParams.itsStartOfInput );
+					break;
+				
+				case 'E':
+					that.Select( params.itsText.size(),
+					             params.itsText.size() );
+					break;
+				
+				case 'C':
+					SendSignalToProcessGroupForKey( SIGINT, key );
+					break;
+				
+				case 'Z':
+					SendSignalToProcessGroupForKey( SIGTSTP, key );
+					break;
+				
+				case 'D':
+					if ( params.itsText.size() - consoleParams.itsStartOfInput <= 0 )
+					{
+						consoleParams.itHasReceivedEOF = true;
+					}
+					else
+					{
+						N::SysBeep();
+					}
+					
+					break;
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	static void Console_Postprocess_Key( Console& that )
 	{
 		const FSTree* key = that.GetKey();
@@ -335,43 +392,8 @@ namespace Genie
 		
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
 		
-		if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
+		if ( Try_Control_Character( *this, event ) )
 		{
-			char cntrl = c | 0x40;
-			
-			switch ( cntrl )
-			{
-				case 'A':
-					Select( consoleParams.itsStartOfInput,
-					        consoleParams.itsStartOfInput );
-					break;
-				
-				case 'E':
-					Select( params.itsText.size(),
-					        params.itsText.size() );
-					break;
-				
-				case 'C':
-					SendSignalToProcessGroupForKey( SIGINT, GetKey() );
-					break;
-				
-				case 'Z':
-					SendSignalToProcessGroupForKey( SIGTSTP, GetKey() );
-					break;
-				
-				case 'D':
-					if ( params.itsText.size() - consoleParams.itsStartOfInput <= 0 )
-					{
-						consoleParams.itHasReceivedEOF = true;
-					}
-					else
-					{
-						N::SysBeep();
-					}
-					
-					break;
-			}
-			
 			return true;
 		}
 		
