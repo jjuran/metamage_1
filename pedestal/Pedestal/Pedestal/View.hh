@@ -31,8 +31,8 @@ namespace Pedestal
 			
 			virtual ~View()  {}
 			
-			virtual void Install  ()  {}
-			virtual void Uninstall()  {}
+			virtual void Install  ( const Rect& bounds )  {}
+			virtual void Uninstall(                    )  {}
 			
 			virtual void Idle     ( const EventRecord& event )  {}
 			virtual void MouseDown( const EventRecord& event )  {}
