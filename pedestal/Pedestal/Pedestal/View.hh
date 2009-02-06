@@ -34,6 +34,8 @@ namespace Pedestal
 			virtual void Install  ( const Rect& bounds )  {}
 			virtual void Uninstall(                    )  {}
 			
+			virtual void SetBounds( const Rect& bounds )  {}
+			
 			virtual void Idle     ( const EventRecord& event )  {}
 			virtual void MouseDown( const EventRecord& event )  {}
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }

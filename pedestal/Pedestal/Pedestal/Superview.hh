@@ -23,6 +23,10 @@ namespace Pedestal
 			
 			void Uninstall()  { Subview().Uninstall(); }
 			
+			void SetBounds( const Rect& bounds )
+			{
+				Subview().SetBounds( ApertureFromBounds( bounds ) );
+			}
 			void Idle( const EventRecord& event )
 			{
 				Subview().Idle( event );
