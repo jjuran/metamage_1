@@ -94,7 +94,7 @@ namespace Pedestal
 	
 	bool ScrollFrame::HitTest( const EventRecord& event )
 	{
-		return N::PtInRect( N::GlobalToLocal( event.where ), GetAperture() );
+		return N::PtInRect( N::GlobalToLocal( event.where ), ApertureFromBounds( Bounds() ) );
 	}
 	
 	void ScrollFrame::MouseDown( const EventRecord& event )
@@ -133,14 +133,9 @@ namespace Pedestal
 		return result;
 	}
 	
-	void ScrollFrame::Draw( const Rect& bounds )
+	Rect ScrollFrame::ApertureFromBounds( const Rect& bounds )
 	{
-		Subview().Draw( bounds );
-	}
-	
-	Rect ScrollFrame::GetAperture()
-	{
-		Rect aperture = Bounds();
+		Rect aperture = bounds;
 		
 		const short kScrollbarThickness = 16;
 		

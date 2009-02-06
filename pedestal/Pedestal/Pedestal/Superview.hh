@@ -17,6 +17,8 @@ namespace Pedestal
 		public:
 			virtual View& Subview() = 0;
 			
+			virtual Rect ApertureFromBounds( const Rect& bounds )  { return bounds; }
+			
 			void Install  ()  { Subview().Install  (); }
 			void Uninstall()  { Subview().Uninstall(); }
 			
@@ -49,6 +51,11 @@ namespace Pedestal
 			}
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
+			
+			void Draw( const Rect& bounds )
+			{
+				return Subview().Draw( ApertureFromBounds( bounds ) );
+			}
 			
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )
 			{

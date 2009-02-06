@@ -12,6 +12,16 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static inline Rect GetAperture( const Rect& bounds, short margin )
+	{
+		return N::InsetRect( bounds, margin, margin );
+	}
+	
+	Rect Frame::ApertureFromBounds( const Rect& bounds )
+	{
+		return GetAperture( bounds, Margin() );
+	}
+	
 	void Frame::Draw( const Rect& bounds )
 	{
 		short margin = Margin();
@@ -33,7 +43,7 @@ namespace Pedestal
 		N::EraseRect( right  );
 		N::EraseRect( bottom );
 		
-		Subview().Draw( N::InsetRect( bounds, margin, margin ) );
+		Subview().Draw( GetAperture( bounds, margin ) );
 	}
 	
 	void Frame::Resize( short width, short height )

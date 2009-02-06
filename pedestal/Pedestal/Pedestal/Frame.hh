@@ -18,6 +18,8 @@ namespace Pedestal
 		public:
 			virtual short Margin() const = 0;
 			
+			Rect ApertureFromBounds( const Rect& bounds );
+			
 			void Draw( const Rect& bounds );
 			
 			void Resize( short width, short height );

@@ -53,7 +53,7 @@ namespace Pedestal
 			
 			void ClickInLoop();
 			
-			Rect GetAperture();
+			Rect ApertureFromBounds( const Rect& bounds );
 			
 			void Activate( bool activating );
 			
@@ -64,8 +64,6 @@ namespace Pedestal
 			bool KeyDown( const EventRecord& event );
 			
 			bool UserCommand( MenuItemCode code );
-			
-			void Draw( const Rect& bounds );
 	};
 	
 }
