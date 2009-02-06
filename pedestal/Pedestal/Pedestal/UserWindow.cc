@@ -9,9 +9,5 @@
 namespace Pedestal
 {
 	
-	UserView::~UserView()
-	{
-	}
-	
 }
 
