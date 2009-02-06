@@ -46,13 +46,5 @@ namespace Pedestal
 		Subview().Draw( GetAperture( bounds, margin ) );
 	}
 	
-	void Frame::Resize( short width, short height )
-	{
-		short margin = Margin();
-		
-		Subview().Resize( width  - 2 * margin,
-		                  height - 2 * margin );
-	}
-	
 }
 

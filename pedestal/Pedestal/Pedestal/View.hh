@@ -43,8 +43,6 @@ namespace Pedestal
 			
 			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
 			
-			virtual void Resize( short width, short height )  {}
-			
 			virtual void Draw( const Rect& bounds )  {}
 			
 			virtual void Activate( bool activating )  {}

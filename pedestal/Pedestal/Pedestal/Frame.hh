@@ -21,8 +21,6 @@ namespace Pedestal
 			Rect ApertureFromBounds( const Rect& bounds );
 			
 			void Draw( const Rect& bounds );
-			
-			void Resize( short width, short height );
 	};
 	
 }
