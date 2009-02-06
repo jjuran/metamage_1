@@ -90,17 +90,12 @@ namespace Genie
 	
 	class Console : public TextEdit
 	{
-		private:
-			void On_EnterKey();
-		
 		public:
 			Console( Key key ) : TextEdit( key )
 			{
 			}
 			
 			bool KeyDown( const EventRecord& event );
-			
-			void Postprocess_Key( const EventRecord& event );
 	};
 	
 	class Console_Scroller : public ScrollerBase
@@ -250,10 +245,8 @@ namespace Genie
 	}
 	
 	
-	void Console::On_EnterKey()
+	void Console_On_EnterKey( TextEditParameters& params )
 	{
-		TextEditParameters& params = TextEditParameters::Get( GetKey() );
-		
 		const std::string& s = params.itsText;
 		
 		std::string command( s.begin() + params.itsSelection.start,
@@ -275,17 +268,19 @@ namespace Genie
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
 	
-	void Console::Postprocess_Key( const EventRecord& event )
+	static void Console_Postprocess_Key( const Console& that )
 	{
-		TextEditParameters& params = TextEditParameters::Get( GetKey() );
+		const FSTree* key = that.GetKey();
 		
-		ConsoleParameters& consoleParams = gConsoleParametersMap[ GetKey() ];
+		TextEditParameters& params = TextEditParameters::Get( key );
+		
+		ConsoleParameters& consoleParams = gConsoleParametersMap[ key ];
 		
 		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
 			// Fudge 
-			Select( consoleParams.itsStartOfInput,
-			        consoleParams.itsStartOfInput );
+			that.Select( consoleParams.itsStartOfInput,
+			             consoleParams.itsStartOfInput );
 		}
 	}
 	
@@ -323,8 +318,13 @@ namespace Genie
 		
 		if ( c == kEnterCharCode  &&  key >= 0x30 )
 		{
-			On_EnterKey();
+			Console_On_EnterKey( params );
 			
+			return true;
+		}
+		
+		if ( Preprocess_Key( event ) )
+		{
 			return true;
 		}
 		
@@ -407,9 +407,9 @@ namespace Genie
 			}
 		}
 		
-		if ( TextEdit::KeyDown( event ) )
+		if ( Process_Key( event ) )
 		{
-			Postprocess_Key( event );
+			Console_Postprocess_Key( *this );
 			
 			return true;
 		}
