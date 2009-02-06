@@ -80,48 +80,40 @@ namespace Genie
 	static ConsoleParametersMap gConsoleParametersMap;
 	
 	
-	static bool Console_KeyDown( TextEdit& that, const EventRecord& event );
-	
-	class Console_Scroller : public TextEdit_Scroller
+	static bool Console_UserCommand_Hook( TextEdit& that, Ped::MenuItemCode code )
 	{
-		public:
-			Console_Scroller( Key key )
-			:
-				TextEdit_Scroller( key, Console_KeyDown )
-			{
-			}
-			
-			bool UserCommand( Ped::MenuItemCode code );
-	};
-	
-	bool Console_Scroller::UserCommand( Ped::MenuItemCode code )
-	{
-		const FSTree* key = GetKey();
+		bool handled = false;
+		
+		const FSTree* key = that.GetKey();
 		
 		TextEditParameters& textParams = TextEditParameters::Get( key );
 		
 		ConsoleParameters& params = gConsoleParametersMap[ key ];
 		
-		switch ( code )
+		if ( textParams.itsSelection.start < params.itsStartOfInput )
 		{
-			// Edit
-			case 'past':  // kHICommandPaste
-			case 'pste':
-			case 'clea':
-				if ( textParams.itsSelection.start < params.itsStartOfInput )
-				{
+			switch ( code )
+			{
+				// Edit
+				case 'past':  // kHICommandPaste
+				case 'pste':
+					that.Select( 32767, 32767 );
+					
+					break;
+				
+				case 'cut ':
+				case 'clea':
 					::SysBeep( 30 );
 					
-					return true;
-				}
+					handled = true;
+					break;
 				
-				break;
-			
-			default:
-				break;
+				default:
+					break;
+			}
 		}
 		
-		return ScrollerBase::UserCommand( code );
+		return handled;
 	}
 	
 	
@@ -325,7 +317,11 @@ namespace Genie
 	
 	boost::shared_ptr< Ped::View > ConsoleFactory( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new Console_Scroller( delegate ) );
+		typedef TextEdit_Scroller View;
+		
+		return boost::shared_ptr< Ped::View >( new View( delegate,
+		                                                 Console_KeyDown,
+		                                                 Console_UserCommand_Hook ) );
 	}
 	
 	
