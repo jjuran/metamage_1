@@ -6,6 +6,9 @@
 // Pedestal
 #include "Pedestal/TextEdit.hh"
 
+// Genie
+#include "Genie/FileSystem/ScrollerBase.hh"
+
 
 namespace Genie
 {
@@ -86,6 +89,31 @@ namespace Genie
 			void SetPriorSelection( const Pedestal::TextSelection& selection );
 			
 			bool Wrapped() const;
+	};
+	
+	
+	class TextEdit_Scroller : public ScrollerBase
+	{
+		private:
+			TextEdit  itsSubview;
+		
+		public:
+			typedef const FSTree* Key;
+			
+			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
+			
+			TextEdit_Scroller( Key key, KeyDown_Hook keyDown = NULL )
+			:
+				ScrollerBase( key ),
+				itsSubview( key, keyDown )
+			{
+			}
+			
+			Pedestal::View& Subview()  { return itsSubview; }
+			
+			void Scroll( int dh, int dv );
+			
+			void Draw( const Rect& bounds );
 	};
 	
 	

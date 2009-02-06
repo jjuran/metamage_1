@@ -5,19 +5,10 @@
 
 #include "Genie/FileSystem/FSTree_new_textedit.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
-
-// Pedestal
-#include "Pedestal/Application.hh"
-#include "Pedestal/Clipboard.hh"
-#include "Pedestal/Scroller_beta.hh"
-
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
-#include "Genie/FileSystem/ScrollerBase.hh"
 #include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -25,123 +16,9 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
-	
-	
-	class TextEdit_Scroller : public ScrollerBase
-	{
-		private:
-			TextEdit  itsSubview;
-		
-		public:
-			typedef const FSTree* Key;
-			
-			TextEdit_Scroller( Key key ) : ScrollerBase( key ), itsSubview( key )
-			{
-			}
-			
-			Ped::View& Subview()  { return itsSubview; }
-			
-			void Scroll( int dh, int dv );
-			
-			void Draw( const Rect& bounds );
-	};
-	
-	void TextEdit_Scroller::Scroll( int dh, int dv )
-	{
-		N::TEPinScroll( dh, dv, itsSubview.Get() );
-		
-		const FSTree* key = GetKey();
-		
-		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
-	}
-	
-	void TextEdit_Scroller::Draw( const Rect& bounds )
-	{
-		using Nucleus::operator!=;
-		
-		ScrollerBase::Draw( bounds );
-		
-		TEHandle hTE = itsSubview.Get();
-		
-		ASSERT( hTE != NULL );
-		
-		const FSTree* key = GetKey();
-		
-		ScrollerParameters& params = GetScrollerParams( key );
-		
-		TextEditParameters& editParams = TextEditParameters::Get( key );
-		
-		const bool text_modified = Update_TE_From_Model( hTE, editParams );
-		
-		const short viewWidth  = bounds.right - bounds.left;
-		const short viewHeight = bounds.bottom - bounds.top;
-		
-		const bool bounds_changed = bounds != hTE[0]->viewRect;
-		
-		if ( bounds_changed )
-		{
-			//params.itsLastViewBounds = bounds;
-			
-			params.itsClientWidth = viewWidth;
-			
-			TERec& te = **hTE;
-			
-			te.viewRect = bounds;
-			
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
-			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
-			
-			editParams.itsTextDimensions = N::SetPt( cols, rows );
-		}
-		
-		if ( bounds_changed || text_modified )
-		{
-			N::TECalText( hTE );
-			
-			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
-			
-			if ( text_modified )
-			{
-				const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
-				
-				if ( params.itsVOffset == max_voffset )
-				{
-					// do nothing
-				}
-				else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
-				{
-					params.itsVOffset = max_voffset;
-					
-					editParams.itHasChangedAttributes = true;
-				}
-			}
-		}
-		
-		if ( editParams.itHasChangedAttributes )
-		{
-			TERec& te = **hTE;
-			
-			// Propagate changes made to 'x' and 'y' files
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			te.selStart = editParams.itsSelection.start;
-			te.selEnd   = editParams.itsSelection.end;
-			
-			editParams.itHasChangedAttributes = false;
-		}
-		
-		Subview().Draw( bounds );
-	}
 	
 	
 	boost::shared_ptr< Ped::View > TextEditFactory( const FSTree* delegate )
