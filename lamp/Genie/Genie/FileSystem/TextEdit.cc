@@ -308,6 +308,40 @@ namespace Genie
 	}
 	
 	
+	void TextEdit_Scroller::SetBounds( const Rect& bounds )
+	{
+		const FSTree* key = GetKey();
+		
+		ScrollerParameters& params = GetScrollerParams( key );
+		
+		TextEditParameters& editParams = TextEditParameters::Get( key );
+		
+		TEHandle hTE = itsSubview.Get();
+		
+		ASSERT( hTE != NULL );
+		
+		TERec& te = **hTE;
+		
+		te.viewRect = bounds;
+		
+		te.destRect = N::OffsetRect( te.viewRect,
+		                             -params.itsHOffset,
+		                             -params.itsVOffset );
+		
+		const short viewWidth  = bounds.right - bounds.left;
+		const short viewHeight = bounds.bottom - bounds.top;
+		
+		const short rows = viewHeight / te.lineHeight;
+		const short cols = viewWidth  / ::CharWidth( 'M' );
+		
+		editParams.itsTextDimensions = N::SetPt( cols, rows );
+		
+		N::TECalText( hTE );
+		
+		params.itsClientWidth  = viewWidth;
+		params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
+	}
+	
 	void TextEdit_Scroller::Scroll( int dh, int dv )
 	{
 		N::TEPinScroll( dh, dv, itsSubview.Get() );
@@ -319,10 +353,6 @@ namespace Genie
 	
 	void TextEdit_Scroller::Draw( const Rect& bounds )
 	{
-		using Nucleus::operator!=;
-		
-		ScrollerBase::Draw( bounds );
-		
 		TEHandle hTE = itsSubview.Get();
 		
 		ASSERT( hTE != NULL );
@@ -335,51 +365,25 @@ namespace Genie
 		
 		const bool text_modified = Update_TE_From_Model( hTE, editParams );
 		
-		const short viewWidth  = bounds.right - bounds.left;
-		const short viewHeight = bounds.bottom - bounds.top;
-		
-		const bool bounds_changed = bounds != hTE[0]->viewRect;
-		
-		if ( bounds_changed )
-		{
-			//params.itsLastViewBounds = bounds;
-			
-			params.itsClientWidth = viewWidth;
-			
-			TERec& te = **hTE;
-			
-			te.viewRect = bounds;
-			
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			short rows = (bounds.bottom - bounds.top) / te.lineHeight;
-			short cols = (bounds.right - bounds.left) / ::CharWidth( 'M' );
-			
-			editParams.itsTextDimensions = N::SetPt( cols, rows );
-		}
-		
-		if ( bounds_changed || text_modified )
+		if ( text_modified )
 		{
 			N::TECalText( hTE );
 			
 			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
 			
-			if ( text_modified )
+			const short viewHeight = bounds.bottom - bounds.top;
+			
+			const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
+			
+			if ( params.itsVOffset == max_voffset )
 			{
-				const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
+				// do nothing
+			}
+			else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
+			{
+				params.itsVOffset = max_voffset;
 				
-				if ( params.itsVOffset == max_voffset )
-				{
-					// do nothing
-				}
-				else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
-				{
-					params.itsVOffset = max_voffset;
-					
-					editParams.itHasChangedAttributes = true;
-				}
+				editParams.itHasChangedAttributes = true;
 			}
 		}
 		

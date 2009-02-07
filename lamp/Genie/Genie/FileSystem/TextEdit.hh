@@ -131,6 +131,8 @@ namespace Genie
 			
 			Pedestal::View& Subview()  { return itsSubview; }
 			
+			void SetBounds( const Rect& bounds );
+			
 			void Scroll( int dh, int dv );
 			
 			void Draw( const Rect& bounds );
