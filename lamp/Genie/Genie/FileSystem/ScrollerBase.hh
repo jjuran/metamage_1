@@ -97,8 +97,6 @@ namespace Genie
 			typedef const FSTree* Key;
 			
 			Key  itsKey;
-			
-			Rect itsSavedBounds;
 		
 		public:
 			ScrollerBase( Key key ) : itsKey( key )
