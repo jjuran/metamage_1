@@ -197,7 +197,11 @@ namespace Genie
 	
 	void ScrollerBase::Install( const Rect& bounds )
 	{
-		gScrollerParametersMap[ itsKey ].itsView = this;
+		ScrollerParameters& params = gScrollerParametersMap[ itsKey ];
+		
+		params.itsView = this;
+		
+		params.itsLastViewBounds = bounds;
 		
 		Ped::Scroller::Install( bounds );
 	}
