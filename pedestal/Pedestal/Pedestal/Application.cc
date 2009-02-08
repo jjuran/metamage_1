@@ -536,14 +536,14 @@ namespace Pedestal
 		
 		ASSERT( window != NULL );
 		
+		N::SetPortWindowPort( window );
+		
+		N::Update_Scope update( window );
+		
 		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
 		{
 			return;
 		}
-		
-		N::SetPortWindowPort( window );
-		
-		N::Update_Scope update( window );
 		
 		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
