@@ -124,15 +124,7 @@ namespace Pedestal
 	}
 	
 	
-	ClosableWindow::~ClosableWindow()
-	{
-	}
-	
-	ResizableWindow::~ResizableWindow()
-	{
-	}
-	
-	void ResizableWindow::Resize( Nitrogen::WindowRef window, short h, short v )
+	void Window::Resize( Nitrogen::WindowRef window, short h, short v )
 	{
 		InvalidateWindowGrowBox( window );  // assume grow box present on resize
 		
@@ -149,8 +141,12 @@ namespace Pedestal
 	
 	Window::Window( const NewWindowContext& context )
 	:
-		WindowRefOwner( CreateWindow( context, this ) ),
+		itsWindowRef( CreateWindow( context, this ) ),
 		itsDefProcID( context.procID )
+	{
+	}
+	
+	Window::~Window()
 	{
 	}
 	

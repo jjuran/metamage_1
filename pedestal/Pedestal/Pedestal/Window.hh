@@ -116,54 +116,26 @@ namespace Pedestal
 			virtual void operator()( Nitrogen::WindowRef window, short h, short v ) const = 0;
 	};
 	
-	class WindowRefOwner
+	class Window
 	{
 		private:
+			boost::shared_ptr< WindowCloseHandler  > itsCloseHandler;
+			boost::shared_ptr< WindowResizeHandler > itsResizeHandler;
+			
 			Nucleus::Owned< Nitrogen::WindowRef > itsWindowRef;
+			
+			Nitrogen::WindowDefProcID itsDefProcID;
 		
 		public:
-			WindowRefOwner( Nucleus::Owned< Nitrogen::WindowRef > windowRef ) : itsWindowRef( windowRef )
-			{
-			}
+			Window( const NewWindowContext& context );
+			
+			~Window();
 			
 			Nitrogen::WindowRef Get() const  { return itsWindowRef; }
 			
-	};
-	
-	class ClosableWindow
-	{
-		private:
-			boost::shared_ptr< WindowCloseHandler > itsCloseHandler;
-		
-		protected:
-			// Non-sliceable
-			~ClosableWindow();
-		
-		public:
 			void SetCloseHandler( const boost::shared_ptr< WindowCloseHandler >& handler )
 			{
 				itsCloseHandler = handler;
-			}
-			
-			void Close( Nitrogen::WindowRef window )  { return (*itsCloseHandler)( window ); }
-	};
-	
-	class ResizableWindow
-	{
-		private:
-			boost::shared_ptr< WindowResizeHandler > itsResizeHandler;
-		
-		protected:
-			// Non-sliceable
-			~ResizableWindow();
-		
-		public:
-			ResizableWindow()
-			{
-			}
-			
-			ResizableWindow( const boost::shared_ptr< WindowResizeHandler >& handler ) : itsResizeHandler( handler )
-			{
 			}
 			
 			void SetResizeHandler( const boost::shared_ptr< WindowResizeHandler >& handler )
@@ -171,17 +143,9 @@ namespace Pedestal
 				itsResizeHandler = handler;
 			}
 			
+			void Close( Nitrogen::WindowRef window )  { return (*itsCloseHandler)( window ); }
+			
 			void Resize( Nitrogen::WindowRef window, short h, short v );
-	};
-	
-	class Window : public ClosableWindow, public ResizableWindow,
-	               public WindowRefOwner
-	{
-		private:
-			Nitrogen::WindowDefProcID itsDefProcID;
-		
-		public:
-			Window( const NewWindowContext& context );
 			
 			virtual boost::shared_ptr< View >& GetView() = 0;
 			
