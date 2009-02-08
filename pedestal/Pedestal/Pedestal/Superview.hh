@@ -19,7 +19,7 @@ namespace Pedestal
 			
 			virtual Rect ApertureFromBounds( const Rect& bounds )  { return bounds; }
 			
-			void Install( const Rect& bounds )  { Subview().Install( bounds); }
+			void Install( const Rect& bounds )  { Subview().Install( ApertureFromBounds( bounds ) ); }
 			
 			void Uninstall()  { Subview().Uninstall(); }
 			
