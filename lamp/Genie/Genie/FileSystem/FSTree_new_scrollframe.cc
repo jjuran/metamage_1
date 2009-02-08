@@ -151,6 +151,8 @@ namespace Genie
 			
 			const Rect& Bounds() const  { return itsLastBounds; }
 			
+			void SetBounds( const Rect& bounds );
+			
 			Scrollbar& GetHorizontal()  { return itsHorizontal; }
 			Scrollbar& GetVertical  ()  { return itsVertical;   }
 			
@@ -161,6 +163,63 @@ namespace Genie
 			Ped::View& Subview();
 	};
 	
+	
+	void ScrollFrame::SetBounds( const Rect& bounds )
+	{
+		itsLastBounds = bounds;
+		
+		Rect aperture = bounds;
+		
+		const short kScrollbarThickness = 16;
+		
+		const short kOverlap = 1;
+		
+		const short kFootprint = kScrollbarThickness - kOverlap;
+		
+		const ScrollFrameParameters& params = gScrollFrameParametersMap[ itsKey ];
+		
+		if ( params.itHasHorizontal )
+		{
+			aperture.bottom -= kFootprint;
+			
+			Rect scrollbarBounds = itsLastBounds;
+			
+			scrollbarBounds.top = aperture.bottom;
+			
+			scrollbarBounds.left   -= kOverlap;
+			scrollbarBounds.bottom += kOverlap;
+			scrollbarBounds.right  += kOverlap - kFootprint;
+			
+			itsHorizontal.Update( scrollbarBounds, itsKey );
+		}
+		else
+		{
+			itsHorizontal.Clear();
+		}
+		
+		if ( params.itHasVertical )
+		{
+			aperture.right -= kFootprint;
+			
+			Rect scrollbarBounds = itsLastBounds;
+			
+			scrollbarBounds.left = aperture.right;
+			
+			scrollbarBounds.top    -= kOverlap;
+			scrollbarBounds.right  += kOverlap;
+			scrollbarBounds.bottom += kOverlap - kFootprint;
+			
+			itsVertical.Update( scrollbarBounds, itsKey );
+		}
+		else
+		{
+			itsVertical.Clear();
+		}
+		
+		Subview().SetBounds( aperture );
+		
+		UpdateScrollbars();
+	}
 	
 	void ScrollFrame::UpdateScrollbars()
 	{
@@ -180,64 +239,19 @@ namespace Genie
 	
 	void ScrollFrame::Draw( const Rect& bounds )
 	{
-		itsLastBounds = bounds;
+		const ScrollFrameParameters& params = gScrollFrameParametersMap[ itsKey ];
 		
-		Rect aperture = bounds;
+		const bool rebind =    params.itHasHorizontal != !!itsHorizontal.Get()
+		                    || params.itHasVertical   != !!itsVertical  .Get();
 		
-		const short kScrollbarThickness = 16;
-		
-		const short kOverlap = 1;
-		
-		const short kFootprint = kScrollbarThickness - kOverlap;
-		
-		ScrollFrameParametersMap::const_iterator it = gScrollFrameParametersMap.find( itsKey );
-		
-		if ( it != gScrollFrameParametersMap.end() )
+		if ( rebind )
 		{
-			const ScrollFrameParameters& params = it->second;
-			
-			if ( params.itHasHorizontal )
-			{
-				aperture.bottom -= kFootprint;
-				
-				Rect scrollbarBounds = itsLastBounds;
-				
-				scrollbarBounds.top = aperture.bottom;
-				
-				scrollbarBounds.left   -= kOverlap;
-				scrollbarBounds.bottom += kOverlap;
-				scrollbarBounds.right  += kOverlap - kFootprint;
-				
-				itsHorizontal.Update( scrollbarBounds, itsKey );
-			}
-			else
-			{
-				itsHorizontal.Clear();
-			}
-			
-			if ( params.itHasVertical )
-			{
-				aperture.right -= kFootprint;
-				
-				Rect scrollbarBounds = itsLastBounds;
-				
-				scrollbarBounds.left = aperture.right;
-				
-				scrollbarBounds.top    -= kOverlap;
-				scrollbarBounds.right  += kOverlap;
-				scrollbarBounds.bottom += kOverlap - kFootprint;
-				
-				itsVertical.Update( scrollbarBounds, itsKey );
-			}
-			else
-			{
-				itsVertical.Clear();
-			}
-			
-			Subview().Draw( aperture );
-			
-			UpdateScrollbars();
+			SetBounds( bounds );
 		}
+		
+		Subview().Draw( ApertureFromBounds( bounds ) );
+		
+		UpdateScrollbars();
 	}
 	
 	Ped::View& ScrollFrame::Subview()
