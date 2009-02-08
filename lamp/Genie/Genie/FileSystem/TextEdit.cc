@@ -338,6 +338,8 @@ namespace Genie
 		
 		N::TECalText( hTE );
 		
+		params.itsLastViewBounds = bounds;
+		
 		params.itsClientWidth  = viewWidth;
 		params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
 	}
