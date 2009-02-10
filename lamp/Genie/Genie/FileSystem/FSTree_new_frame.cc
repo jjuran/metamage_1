@@ -30,10 +30,12 @@ namespace Genie
 	struct FrameParameters
 	{
 		short  itsMargin;
+		bool   itsMarginChanged;
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
 		FrameParameters() : itsMargin( 0 ),
+		                    itsMarginChanged(),
 		                    itsSubview( Ped::EmptyView::Get() )
 		{
 		}
@@ -58,10 +60,26 @@ namespace Genie
 			{
 			}
 			
+			void Draw( const Rect& bounds );
+			
 			short Margin() const;
 			
 			Ped::View& Subview();
 	};
+	
+	void Frame::Draw( const Rect& bounds )
+	{
+		FrameParameters& params = gFrameParametersMap[ itsKey ];
+		
+		if ( params.itsMarginChanged )
+		{
+			params.itsMarginChanged = false;
+			
+			SetBounds( bounds );
+		}
+		
+		Ped::Frame::Draw( bounds );
+	}
 	
 	short Frame::Margin() const
 	{
@@ -112,7 +130,11 @@ namespace Genie
 		
 		// *end == '\n'
 		
-		gFrameParametersMap[ view ].itsMargin = std::atoi( begin );
+		FrameParameters& params = gFrameParametersMap[ view ];
+		
+		params.itsMargin = std::atoi( begin );
+		
+		params.itsMarginChanged = true;
 		
 		InvalidateWindowForView( view );
 	}
