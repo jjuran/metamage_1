@@ -124,21 +124,6 @@ namespace Pedestal
 	}
 	
 	
-	void Window::Resize( Nitrogen::WindowRef window, short h, short v )
-	{
-		InvalidateWindowGrowBox( window );  // assume grow box present on resize
-		
-		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
-		{
-			(*handler)( window, h, v );
-		}
-		else
-		{
-			Nitrogen::SizeWindow( window, h, v, true );
-		}
-	}
-	
-	
 	Window::Window( const NewWindowContext& context )
 	:
 		itsWindowRef( CreateWindow( context, this ) ),
@@ -149,6 +134,21 @@ namespace Pedestal
 	Window::~Window()
 	{
 	}
+	
+	void Window::Resize( Nitrogen::WindowRef window, short h, short v )
+	{
+		InvalidateWindowGrowBox( window );  // assume grow box present on resize
+		
+		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
+		{
+			(*handler)( window, h, v );
+		}
+		else
+		{
+			N::SizeWindow( window, h, v, true );
+		}
+	}
+	
 	
 	void Window::Activate( bool activating )
 	{
