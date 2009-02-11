@@ -64,6 +64,11 @@ CARBONATE_LINKAGE OptionBits GetListFlags( ListHandle list )
 	return list[0]->listFlags;
 }
 
+CARBONATE_LINKAGE void SetListViewBounds( ListHandle list, const Rect* view )
+{
+	list[0]->rView = *view;
+}
+
 #undef CARBONATE_LINKAGE
 
 #endif
