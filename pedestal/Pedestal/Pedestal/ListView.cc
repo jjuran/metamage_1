@@ -5,58 +5,22 @@
 
 #include "Pedestal/ListView.hh"
 
-// Universal Interfaces
-#ifndef __FONTS__
-#include <Fonts.h>
-#endif
 
-// Standard C++
-#include <algorithm>
-
-// Nitrogen
-#include "Nitrogen/MacWindows.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/RectangleMath.h"
-
+namespace Nitrogen
+{
+	
+	inline void SetListViewBounds( ListHandle list, const Rect& bounds )
+	{
+		::SetListViewBounds( list, &bounds );
+	}
+	
+}
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
 	
-	
-	Rect Bounds( ListHandle list )
-	{
-		return N::GetListViewBounds( list );
-	}
-	
-	Point ViewableRange( ListHandle list )
-	{
-		return NX::RectSize( N::GetListVisibleCells( list ) );
-	}
-	
-	Point ScrollableRange( ListHandle list )
-	{
-		return NX::RectSize( N::GetListDataBounds( list ) );
-	}
-	
-	Point ScrollStep( ListHandle list )
-	{
-		return N::SetPt( 1, 1 );
-	}
-	
-	Point ScrollPosition( ListHandle list )
-	{
-		return NX::RectPosition( N::GetListVisibleCells( list ) );
-	}
-	
-	ListView::TextAttributes::TextAttributes()
-	{
-		::TextFont( kFontIDMonaco );
-		::TextSize( 9 );
-	}
 	
 	static void AdjustListBounds( short& right, short& bottom, bool scrollHoriz, bool scrollVert )
 	{
@@ -80,20 +44,42 @@ namespace Pedestal
 		return result;
 	}
 	
-	ListView::ListView( const Rect& bounds )
-	:
-		itsList( N::LNew( AdjustListBounds( bounds, false, true ),
-		                  N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
-		                  N::SetPt( 0, 0 ),
-		                  N::ResID( 0 ),
-		                  N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-		                  true,   // drawIt
-		                  true,   // hasGrow
-		                  false,  // scrollHoriz
-		                  true    // scrollVert
-		                  ) )
+	void ListView::Install( const Rect& bounds )
 	{
+		const bool drawIt      = true;
+		const bool hasGrow     = true;
+		const bool scrollHoriz = false;
+		const bool scrollVert  = true;
 		
+		itsList = N::LNew( AdjustListBounds( bounds, false, true ),
+		                   N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
+		                   N::SetPt( 0, 0 ),
+		                   N::ResID( 0 ),
+		                   N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		                   drawIt,
+		                   hasGrow,
+		                   scrollHoriz,
+		                   scrollVert );
+	}
+	
+	void ListView::Uninstall()
+	{
+		itsList.reset();
+	}
+	
+	void ListView::SetBounds( const Rect& bounds )
+	{
+		Rect r = bounds;
+		
+		AdjustListBounds( r.right, r.bottom, false, true );
+		
+		N::SetListViewBounds( itsList, r );
+		
+		N::LSize( r.right - r.left,
+		          r.bottom - r.top,
+		          itsList );
+		
+		itsList.Get()[0]->cellSize.h = r.right - r.left;
 	}
 	
 	void ListView::MouseDown( const EventRecord& event )
@@ -116,11 +102,32 @@ namespace Pedestal
 		N::LUpdate( N::GetPortVisibleRegion( N::GetQDGlobalsThePort() ), itsList );
 	}
 	
-	void ListView::Resize( short width, short height )
+	void ListView::SetCell( UInt16 offset, const char* data, std::size_t length )
 	{
-		AdjustListBounds( width, height, false, true );
+		Rect bounds = N::GetListDataBounds( itsList );
 		
-		N::LSize( width, height, itsList );
+		if ( offset >= bounds.bottom )
+		{
+			const UInt16 n_new_rows = offset - bounds.bottom + 1;
+			
+			LAddRow( n_new_rows, bounds.bottom, itsList );
+		}
+		
+		LSetCell( data, length, N::SetPt( 0, offset ), itsList );
+	}
+	
+	void ListView::AppendCell( const char* data, std::size_t length )
+	{
+		Rect bounds = N::GetListDataBounds( itsList );
+		
+		const short i_row = LAddRow( 1, bounds.bottom, itsList );
+		
+		LSetCell( data, length, N::SetPt( 0, i_row ), itsList );
+	}
+	
+	void ListView::DeleteCells()
+	{
+		LDelRow( 0, 0, itsList );
 	}
 	
 }
