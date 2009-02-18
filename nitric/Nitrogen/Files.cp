@@ -50,7 +50,11 @@ namespace Nitrogen
 	
 	void PBHOpenDFAsync( HParamBlockRec& pb )
 	{
-		ThrowOSStatus( ::PBHOpenDFAsync( &pb ) );
+		OSErr err = ::PBHOpenDFAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.ioParam.ioResult );
+		
+		ThrowOSStatus( err );
 	}
 	
 	void PBHOpenRFSync( HParamBlockRec& pb )
@@ -60,7 +64,11 @@ namespace Nitrogen
 	
 	void PBHOpenRFAsync( HParamBlockRec& pb )
 	{
-		ThrowOSStatus( ::PBHOpenRFAsync( &pb ) );
+		OSErr err = ::PBHOpenRFAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.ioParam.ioResult );
+		
+		ThrowOSStatus( err );
 	}
 	
 	
@@ -152,12 +160,20 @@ namespace Nitrogen
 	
 	void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy )
 	{
-		FNF_Throws::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		OSErr err = ::PBGetCatInfoAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.dirInfo.ioResult );
+		
+		policy.HandleOSStatus( err );
 	}
 	
 	bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
 	{
-		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		OSErr err = ::PBGetCatInfoAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.dirInfo.ioResult );
+		
+		return policy.HandleOSStatus( err );
 	}
 	
 	

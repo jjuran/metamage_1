@@ -30,6 +30,29 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DeviceManager );
 	
 	
+	namespace Private
+	{
+		
+		inline void FixAsyncResult( OSErr& err, OSErr result )
+		{
+			// Yes.  This is for real.
+			// Non-debug 68K code in System 7.6 has witnessed a memory address
+			// placed in D0 following a call to PBGetCatInfoAsync().
+			
+		#ifdef __MWERKS__
+			
+			const bool debugging = __option( sym );
+			
+			if ( TARGET_CPU_68K  &&  !debugging )
+			{
+				err = result < 0 ? result : 0;
+			}
+			
+		#endif
+		}
+		
+	}
+	
 	// Mac OS semantics
 	struct ThrowEOF_Always
 	{
@@ -72,6 +95,8 @@ namespace Nitrogen
 		NUCLEUS_REQUIRE_ERRORS( DeviceManager );
 		
 		OSErr err = ::PBReadAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.ioParam.ioResult );
 		
 		if ( err != noErr )
 		{
