@@ -709,7 +709,7 @@ namespace Nitrogen
 	{
 		PBGetCatInfoAsync( pb, Policy() );
 		
-		while ( pb.dirInfo.ioResult == 1 )
+		while ( pb.dirInfo.ioResult > 0 )
 		{
 			callback();
 		}
