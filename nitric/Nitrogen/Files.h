@@ -304,33 +304,10 @@ namespace Nitrogen
 	
 	// Trivial PBFoo() wrappers
 	
-	inline void PBHOpenDFSync( HParamBlockRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBHOpenDFSync( &pb ) );
-	}
-	
-	inline void PBHOpenDFAsync( HParamBlockRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBHOpenDFAsync( &pb ) );
-	}
-	
-	inline void PBHOpenRFSync( HParamBlockRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBHOpenRFSync( &pb ) );
-	}
-	
-	inline void PBHOpenRFAsync( HParamBlockRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBHOpenRFAsync( &pb ) );
-	}
+	void PBHOpenDFSync ( HParamBlockRec& pb );
+	void PBHOpenDFAsync( HParamBlockRec& pb );
+	void PBHOpenRFSync ( HParamBlockRec& pb );
+	void PBHOpenRFAsync( HParamBlockRec& pb );
 	
 	void UnmountVol( ConstStr63Param volName = NULL );
 	
@@ -671,35 +648,20 @@ namespace Nitrogen
 	};
 	
 	
-	// throw FNFErr by default
-	inline void PBGetCatInfoSync( CInfoPBRec& pb, FNF_Throws policy = FNF_Throws() )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		FNF_Throws::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
-	}
-	
-	inline bool PBGetCatInfoSync( CInfoPBRec& pb, FNF_Returns policy )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
-	}
-	
+	void PBGetCatInfoSync ( CInfoPBRec& pb, FNF_Throws  policy );
+	bool PBGetCatInfoSync ( CInfoPBRec& pb, FNF_Returns policy );
+	void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws  policy );
+	bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy );
 	
 	// throw FNFErr by default
-	inline void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy = FNF_Throws() )
+	inline void PBGetCatInfoSync( CInfoPBRec& pb )
 	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		FNF_Throws::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		PBGetCatInfoSync( pb, FNF_Throws() );
 	}
 	
-	inline bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
+	inline void PBGetCatInfoAsync( CInfoPBRec& pb )
 	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		PBGetCatInfoAsync( pb, FNF_Throws() );
 	}
 	
 	
@@ -718,19 +680,8 @@ namespace Nitrogen
 	}
 	
 	
-	inline void PBSetCatInfoSync( CInfoPBRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
-	}
-	
-	inline void PBSetCatInfoAsync( CInfoPBRec& pb )
-	{
-		NUCLEUS_REQUIRE_ERRORS( FileManager );
-		
-		ThrowOSStatus( ::PBSetCatInfoAsync( &pb ) );
-	}
+	void PBSetCatInfoSync ( CInfoPBRec& pb );
+	void PBSetCatInfoAsync( CInfoPBRec& pb );
 	
 	// ...
 	

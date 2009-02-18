@@ -43,6 +43,27 @@ namespace Nitrogen
 #pragma force_active reset
 	
 	
+	void PBHOpenDFSync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHOpenDFSync( &pb ) );
+	}
+	
+	void PBHOpenDFAsync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHOpenDFAsync( &pb ) );
+	}
+	
+	void PBHOpenRFSync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHOpenRFSync( &pb ) );
+	}
+	
+	void PBHOpenRFAsync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHOpenRFAsync( &pb ) );
+	}
+	
+	
 	void UnmountVol( ConstStr63Param volName )
 	{
 		ThrowOSStatus( ::UnmountVol( volName, 0 ) );
@@ -116,6 +137,40 @@ namespace Nitrogen
 	{
 		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode, positionOffset ) );
 	}
+	
+	
+	void PBGetCatInfoSync( CInfoPBRec& pb, FNF_Throws policy )
+	{
+		FNF_Throws::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
+	}
+	
+	bool PBGetCatInfoSync( CInfoPBRec& pb, FNF_Returns policy )
+	{
+		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
+	}
+	
+	
+	void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy )
+	{
+		FNF_Throws::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+	}
+	
+	bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
+	{
+		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+	}
+	
+	
+	void PBSetCatInfoSync( CInfoPBRec& pb )
+	{
+		ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+	}
+	
+	void PBSetCatInfoAsync( CInfoPBRec& pb )
+	{
+		ThrowOSStatus( ::PBSetCatInfoAsync( &pb ) );
+	}
+	
 	
 	using ::FileInfo;
 	
