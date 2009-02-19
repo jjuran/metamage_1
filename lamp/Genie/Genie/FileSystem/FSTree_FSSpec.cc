@@ -540,7 +540,7 @@ namespace Genie
 		
 		if ( tree != NULL )
 		{
-			FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
+			FSTreePtr users( new FSTree_FSSpec( GetUsersDirectory() ) );
 			
 			tree->Map( users );
 			
