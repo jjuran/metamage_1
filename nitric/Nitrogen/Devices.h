@@ -109,7 +109,11 @@ namespace Nitrogen
 	
 	inline void PBWriteAsync( ParamBlockRec& pb )
 	{
-		ThrowOSStatus( ::PBWriteAsync( &pb ) );
+		OSErr err = ::PBWriteAsync( &pb );
+		
+		Private::FixAsyncResult( err, pb.ioParam.ioResult );
+		
+		ThrowOSStatus( err );
 	}
 	
 }
