@@ -3,18 +3,11 @@
  *	===========
  */
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <unistd.h>
-
-// MoreFiles
-#include "FileCopy.h"
-
-// Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSStatus.h"
-
-// Io: MacFiles
-#include "MacFiles.hh"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -25,11 +18,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
-	using namespace io::path_descent_operators;
-	
 	
 	static ssize_t realpath_k( const char* pathname, char* resolved_path, size_t size )
 	{
