@@ -1171,6 +1171,13 @@ namespace Genie
 		return DataForkUser().OpenFileHandle( GetFSSpec(), flags );
 	}
 	
+	static inline MainEntry GetMainEntryFromFile( const FSSpec& file )
+	{
+		BinaryImage image = GetBinaryImage( file );
+		
+		return GetMainEntryFromBinaryImage( image );
+	}
+	
 	MainEntry FSTree_HFS::GetMainEntry() const
 	{
 		return GetMainEntryFromFile( GetFSSpec() );

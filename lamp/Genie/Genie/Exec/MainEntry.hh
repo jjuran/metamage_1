@@ -20,9 +20,6 @@
 #include "Genie/BinaryImage.hh"
 
 
-struct FSSpec;
-
-
 namespace Genie
 {
 	
@@ -55,8 +52,6 @@ namespace Genie
 	
 	
 	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& file );
-	
-	MainEntry GetMainEntryFromFile( const FSSpec& file );
 	
 }
 

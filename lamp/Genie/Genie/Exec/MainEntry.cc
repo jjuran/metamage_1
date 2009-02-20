@@ -7,7 +7,6 @@
 
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
-#include "Nitrogen/Files.h"
 
 
 namespace Genie
@@ -121,13 +120,6 @@ namespace Genie
 	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& binary )
 	{
 		return MainEntry( new ExternalBinaryMain( binary ) );
-	}
-	
-	MainEntry GetMainEntryFromFile( const FSSpec& file )
-	{
-		BinaryImage image = GetBinaryImage( file );
-		
-		return GetMainEntryFromBinaryImage( image );
 	}
 	
 }
