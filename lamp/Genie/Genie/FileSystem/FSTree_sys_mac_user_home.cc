@@ -20,14 +20,13 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static N::FSDirSpec GetAppFolder()
 	{
 		// FIXME:  Assumes that app doesn't call HSetVol().
 		// (We don't, but still...)
-		return N::FSDirSpec( FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum(), N::FSDirID(), "\p" ) );
+		return N::FSDirSpec( Dir_From_FSSpec( FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum(), N::FSDirID(), "\p" ) ) );
 	}
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
@@ -40,7 +39,7 @@ namespace Genie
 		{
 		}
 		
-		return N::FSDirSpec( FSMakeFSSpec< FNF_Throws >( vRefNum, N::fsRtDirID, "\pUsers" ) );
+		return N::FSDirSpec( Dir_From_FSSpec( FSMakeFSSpec< FNF_Throws >( vRefNum, N::fsRtDirID, "\pUsers" ) ) );
 	}
 	
 	static N::FSDirSpec FindUserHomeFolder()
