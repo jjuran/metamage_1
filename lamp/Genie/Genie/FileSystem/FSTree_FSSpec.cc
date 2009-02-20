@@ -393,9 +393,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link;
-	
-	
 	struct Volumes_Details : public Volume_KeyName_Traits
 	{
 		typedef N::Volume_Container Sequence;
@@ -626,25 +623,6 @@ namespace Genie
 		N::ThrowOSStatus( deleteErr );
 	}
 	
-	
-	static const char* Basename( const char* path )
-	{
-		const char* slash = std::strrchr( path, '/' );
-		
-		if ( slash == NULL )
-		{
-			return path;
-		}
-		
-		return slash + 1;
-	}
-	
-	inline std::string UntweakMacFilename( std::string name )
-	{
-		std::replace( name.begin(), name.end(), ':', '/' );
-		
-		return name;
-	}
 	
 	static bool NamesAreSame( ConstStr63Param a, ConstStr63Param b )
 	{
