@@ -39,7 +39,7 @@ namespace Nitrogen
 		{
 			CInfoPBRec pb;
 			
-			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb );
+			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb, NULL );
 			
 			return pb.dirInfo.ioDrNmFls;
 		}
@@ -99,7 +99,7 @@ namespace io
 	
 	inline Nitrogen::FSSpecContents_Container directory_contents( const FSSpec& dir, overload = overload() )
 	{
-		return Nitrogen::FSSpecContents_Container( Nitrogen::FSDirSpec( dir ) );
+		return Nitrogen::FSSpecContents_Container( Nucleus::Convert< Nitrogen::FSDirSpec >( dir ) );
 	}
 	
 	inline Nitrogen::FSRefContents_Container directory_contents( const FSRef& dir, overload = overload() )
