@@ -66,38 +66,22 @@ namespace Genie
 	FSpGetCatInfo( CInfoPBRec&               pb,
 	               Nitrogen::FSVolumeRefNum  vRefNum,
 	               Nitrogen::FSDirID         dirID,
-	               const unsigned char*      name,
-	               SInt16                    index );
+	               unsigned char*            name,
+	               SInt16                    index = 0 );
 	
 	template <>
 	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
 	                                  Nitrogen::FSVolumeRefNum  vRefNum,
 	                                  Nitrogen::FSDirID         dirID,
-	                                  const unsigned char*      name,
+	                                  unsigned char*            name,
 	                                  SInt16                    index );
 	
 	template <>
 	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
 	                                   Nitrogen::FSVolumeRefNum  vRefNum,
 	                                   Nitrogen::FSDirID         dirID,
-	                                   const unsigned char*      name,
+	                                   unsigned char*            name,
 	                                   SInt16                    index );
-	
-	template < class Policy >
-	typename Policy::Result
-	inline 
-	//
-	FSpGetCatInfo( CInfoPBRec&               pb,
-	               Nitrogen::FSVolumeRefNum  vRefNum,
-	               Nitrogen::FSDirID         dirID,
-	               const unsigned char*      name )
-	{
-		return FSpGetCatInfo< Policy >( pb,
-		                                vRefNum,
-		                                dirID,
-		                                name,
-		                                0 );
-	}
 	
 	template < class Policy >
 	typename Policy::Result
@@ -106,10 +90,12 @@ namespace Genie
 	FSpGetCatInfo( CInfoPBRec&    pb,
 	               const FSSpec&  item )
 	{
+		Nitrogen::Str255 name = item.name;
+		
 		return FSpGetCatInfo< Policy >( pb,
 		                                Nitrogen::FSVolumeRefNum( item.vRefNum ),
 		                                Nitrogen::FSDirID       ( item.parID   ),
-		                                item.name );
+		                                name );
 	}
 	
 	template < class Policy >

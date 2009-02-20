@@ -102,19 +102,16 @@ namespace Nitrogen
 	};
 	
 	
-	// Synchronous
 	template < class Policy >
 	inline typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&           pb,
-	               FSVolumeRefNum        vRefNum,
-	               FSDirID               dirID,
-	               const unsigned char*  name = NULL,
-	               SInt16                index = 0 )
+	FSpGetCatInfo( CInfoPBRec&     pb,
+	               FSVolumeRefNum  vRefNum,
+	               FSDirID         dirID,
+	               unsigned char*  name,
+	               SInt16          index )
 	{
-		Str255 nameCopy = name != NULL ? name : "\p";
-	
-		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, nameCopy, index );
+		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		
 		return PBSync< GetCatInfo_Traits, Policy >( pb );
 	}
@@ -123,17 +120,15 @@ namespace Nitrogen
 	template < class Policy, class Callback >
 	inline typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&           pb,
-	               FSVolumeRefNum        vRefNum,
-	               FSDirID               dirID,
-	               const unsigned char*  name,
-	               SInt16                index,
-	               Callback              callback,
-	               ::IOCompletionUPP     completion = NULL )
+	FSpGetCatInfo( CInfoPBRec&        pb,
+	               FSVolumeRefNum     vRefNum,
+	               FSDirID            dirID,
+	               unsigned char*     name,
+	               SInt16             index,
+	               Callback           callback,
+	               ::IOCompletionUPP  completion = NULL )
 	{
-		Str255 nameCopy = name != NULL ? name : "\p";
-		
-		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, nameCopy, index );
+		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		
 		return PBAsync< GetCatInfo_Traits, Policy >( pb,
 		                                             callback,
@@ -289,12 +284,21 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&               pb,
-	               Nitrogen::FSVolumeRefNum  vRefNum,
-	               Nitrogen::FSDirID         dirID,
-	               const unsigned char*      name,
-	               SInt16                    index )
+	FSpGetCatInfo( CInfoPBRec&        pb,
+	               N::FSVolumeRefNum  vRefNum,
+	               N::FSDirID         dirID,
+	               unsigned char*     name,
+	               SInt16             index )
 	{
+		Str255 dummyName = "\p";
+		
+		if ( index == 0  &&  (name == NULL  ||  name[ 0 ] == '\0') )
+		{
+			name = dummyName;
+			
+			index = -1;
+		}
+		
 		// Calling the asynchronous variant of FSpGetCatInfo() reliably elicits
 		// System Error 27 (dsFSErr: file system map has been trashed) in Classic
 		// (eventually), but only when calling StatFile() from CheckProgramFile().
@@ -324,18 +328,18 @@ namespace Genie
 	}
 	
 	template
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
-	                                  Nitrogen::FSVolumeRefNum  vRefNum,
-	                                  Nitrogen::FSDirID         dirID,
-	                                  const unsigned char*      name,
-	                                  SInt16                    index );
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&        pb,
+	                                  N::FSVolumeRefNum  vRefNum,
+	                                  N::FSDirID         dirID,
+	                                  unsigned char*     name,
+	                                  SInt16             index );
 	
 	template
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
-	                                   Nitrogen::FSVolumeRefNum  vRefNum,
-	                                   Nitrogen::FSDirID         dirID,
-	                                   const unsigned char*      name,
-	                                   SInt16                    index );
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&        pb,
+	                                   N::FSVolumeRefNum  vRefNum,
+	                                   N::FSDirID         dirID,
+	                                   unsigned char*     name,
+	                                   SInt16             index );
 	
 	
 	template < class Policy >
