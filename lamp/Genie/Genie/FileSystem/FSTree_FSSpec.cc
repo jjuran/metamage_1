@@ -69,7 +69,32 @@ namespace Genie
 	namespace K = Kerosene;
 	
 	
-	using namespace io::path_descent_operators;
+	namespace path_descent_operators
+	{
+		
+		inline FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
+		{
+			return Genie::FSMakeFSSpec< FNF_Returns >( dir, name );
+		}
+		
+		inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
+		{
+			return Dir_From_FSSpec( dir ) / name;
+		}
+		
+		inline FSSpec operator/( const N::FSDirSpec& dir, const std::string& name )
+		{
+			return dir / N::Str63( name );
+		}
+		
+		inline FSSpec operator/( const FSSpec& dir, const std::string& name )
+		{
+			return dir / N::Str63( name );
+		}
+		
+	}
+	
+	using namespace path_descent_operators;
 	
 	
 	inline bool operator==( const FSSpec& a, const FSSpec& b )
