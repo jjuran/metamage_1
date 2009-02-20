@@ -347,7 +347,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const;
 			
-			FSSpec GetFSSpec( bool forCreation = false ) const;
+			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
 			
 			ino_t ParentInode() const;
 			

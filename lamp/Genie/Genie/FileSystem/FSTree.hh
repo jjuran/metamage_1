@@ -16,9 +16,6 @@
 // Genie
 #include "Genie/Exec/MainEntry.hh"
 
-// Files.h
-struct FSSpec;
-
 // utime.h
 struct utimbuf;
 
@@ -108,8 +105,6 @@ namespace Genie
 			FSTreePtr Self() const  { return shared_from_this(); }
 			
 			virtual FSTreePtr Parent() const;
-			
-			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
 			
 			virtual ino_t Inode() const;
 			virtual ino_t ParentInode() const;

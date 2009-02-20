@@ -13,7 +13,7 @@
 #include "Genie/FileSystem/FSTree.hh"
 
 // Files.h
-//struct FSSpec;
+struct FSSpec;
 
 
 namespace Genie
