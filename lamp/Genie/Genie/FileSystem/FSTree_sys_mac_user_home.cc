@@ -11,6 +11,10 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
+// Genie
+#include "Genie/FileSystem/FSSpec.hh"
+#include "Genie/Utilities/AsyncIO.hh"
+
 
 namespace Genie
 {
@@ -23,7 +27,7 @@ namespace Genie
 	{
 		// FIXME:  Assumes that app doesn't call HSetVol().
 		// (We don't, but still...)
-		return N::FSDirSpec( N::FSMakeFSSpec( N::FSVolumeRefNum(), N::FSDirID(), "\p" ) );
+		return N::FSDirSpec( FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum(), N::FSDirID(), "\p" ) );
 	}
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
@@ -36,7 +40,7 @@ namespace Genie
 		{
 		}
 		
-		return N::FSDirSpec( N::FSMakeFSSpec( vRefNum, N::fsRtDirID, "\pUsers" ) );
+		return N::FSDirSpec( FSMakeFSSpec< FNF_Throws >( vRefNum, N::fsRtDirID, "\pUsers" ) );
 	}
 	
 	static N::FSDirSpec FindUserHomeFolder()
@@ -85,7 +89,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_mac_user_home::ResolveLink() const
 	{
-		return FSTreeFromFSSpec( NN::Convert< FSSpec >( GetUserHomeFolder() ) );
+		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
 	}
 	
 }

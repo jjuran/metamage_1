@@ -13,9 +13,11 @@
 
 // Genie
 #include "Genie/FileSystem/Drives.hh"
+#include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Stamp_Action.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Nitrogen
@@ -130,7 +132,7 @@ namespace Genie
 	{
 		try
 		{
-			(void) N::FSMakeFSSpec( key, N::fsRtDirID, NULL );
+			(void) FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, NULL );
 		}
 		catch ( const N::NSVErr& err )
 		{
@@ -377,7 +379,7 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const
 			{
-				return FSTreeFromFSSpec( NN::Convert< FSSpec >( N::FindFolder( itsKey, itsType, false ) ) );
+				return FSTreeFromFSDirSpec( N::FindFolder( itsKey, itsType, false ) );
 			}
 	};
 	
@@ -407,7 +409,7 @@ namespace Genie
 	{
 		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
 		
-		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+		FSSpec volume = FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		
 		return FSTreeFromFSSpec( volume );
 	}

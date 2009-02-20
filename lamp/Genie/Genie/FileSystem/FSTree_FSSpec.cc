@@ -45,6 +45,7 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
+#include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSSpecForkUser.hh"
 #include "Genie/FileSystem/FSTree_Dev.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -272,7 +273,7 @@ namespace Genie
 		
 		static FSSpec FSSpecFromKey( const Key& key )
 		{
-			return N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+			return FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		}
 		
 		static std::string NameFromKey( const Key& key )
@@ -428,10 +429,6 @@ namespace Genie
 			FSTree_FSSpec( const FSSpec& file ) : FSTree_HFS( file )
 			{
 			}
-			
-			FSTree_FSSpec( const N::FSDirSpec& dir ) : FSTree_HFS ( NN::Convert< FSSpec >( dir ) )
-			{
-			}
 	};
 	
 	class FSTree_LongName : public FSTree_HFS
@@ -523,7 +520,7 @@ namespace Genie
 	{
 		if ( IsRootDirectory( item ) )
 		{
-			FSTreePtr parent( new FSTree_FSSpec( io::get_preceding_directory( item ) ) );
+			FSTreePtr parent( FSTreeFromFSDirSpec( io::get_preceding_directory( item ) ) );
 			
 			return FSTreePtr( new FSTree_J_Symlink( parent ) );
 		}
@@ -643,7 +640,7 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
+		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ) ) );
 	}
 	
 	FSTreePtr FSTree_LongName::Parent() const
@@ -1042,10 +1039,8 @@ namespace Genie
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
-		FSSpec linkParentSpec = NN::Convert< FSSpec >( linkParent );
-		
 		// Target pathname is resolved relative to the location of the link file
-		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSSpec( linkParentSpec ) );
+		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ) );
 		
 		// Do not resolve links -- if the target of this link is another symlink, so be it
 		
