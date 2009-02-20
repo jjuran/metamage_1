@@ -894,7 +894,7 @@ namespace Genie
 		}
 	}
 	
-	static FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
+	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
 	{
 		struct ::stat stat_buffer;
 		
