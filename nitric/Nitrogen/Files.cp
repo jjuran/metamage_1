@@ -35,12 +35,6 @@ namespace Nucleus
 	{
 		DirInfo& dirInfo = pb.dirInfo;
 		
-		if ( index == 0  &&  name == NULL  &&  name[ 0 ] == '\0' )
-		{
-			// work around a File Sharing problem with empty names
-			index = -1;
-		}
-		
 		dirInfo.ioNamePtr = name;
 		dirInfo.ioVRefNum = vRefNum;
 		dirInfo.ioDrDirID = dirID;
