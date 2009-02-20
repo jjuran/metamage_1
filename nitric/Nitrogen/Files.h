@@ -514,40 +514,15 @@ namespace Nitrogen
 	
 	// GetVRefNum
 	
-	namespace Detail
+	struct FSDirSpec
 	{
+		FSVolumeRefNum  vRefNum;
+		FSDirID         dirID;
 		
-		struct FSDirSpec_Storage
+		FSDirSpec() : vRefNum(), dirID()
 		{
-			FSVolumeRefNum  vRefNum;
-			FSDirID         dirID;
-			
-			FSDirSpec_Storage() : vRefNum(), dirID() {}
-		};
-		
-	}
-	
-	struct FSDirSpec : public Detail::FSDirSpec_Storage
-	{
-		FSDirSpec() : FSDirSpec_Storage() {}
-		
-		FSDirSpec( const Detail::FSDirSpec_Storage& storage ) : FSDirSpec_Storage( storage )  {}
-		
-		explicit FSDirSpec( const FSSpec& dir );
-		
-		operator FSSpec() const;
-		
-		FSDirSpec& operator/=( const unsigned char* name );
-		
-		FSDirSpec& operator/=( const std::string& name )
-		{
-			return *this /= Str63( name );
 		}
 	};
-	
-	inline FSDirSpec::FSDirSpec( const FSSpec& dir ) : FSDirSpec_Storage( Nucleus::Convert< FSDirSpec >( dir ) )
-	{
-	}
 	
 	inline bool operator==( const FSDirSpec& a, const FSDirSpec& b )
 	{
@@ -2420,18 +2395,6 @@ namespace Nitrogen
 	inline FSSpec DTGetAPPL( OSType signature )
 	{
 		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
-	}
-	
-	inline FSDirSpec::operator FSSpec() const
-	{
-		return Nucleus::Convert< FSSpec >( *this );
-	}
-	
-	inline FSDirSpec& FSDirSpec::operator/=( const unsigned char* name )
-	{
-		FSDirSpec result( FSMakeFSSpec( *this, name ) );
-		
-		return *this = result;
 	}
 	
 }
