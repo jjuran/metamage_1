@@ -48,8 +48,6 @@ namespace Genie
 			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
 			
 			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
-			
-			FSSpec GetFSSpec( bool forCreation = false ) const;
 	};
 	
 	class MacDataForkHandle : public MacFileHandle

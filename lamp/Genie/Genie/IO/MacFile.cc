@@ -86,11 +86,6 @@ namespace Genie
 		return Advance( written );
 	}
 	
-	FSSpec MacFileHandle::GetFSSpec( bool forCreation ) const
-	{
-		return FSSpecFromFRefNum( itsRefNum );
-	}
-	
 	
 	boost::shared_ptr< IOHandle > MacDataForkHandle::Clone()
 	{
@@ -99,7 +94,7 @@ namespace Genie
 	
 	FSTreePtr MacDataForkHandle::GetFile() const
 	{
-		return FSTreeFromFSSpec( GetFSSpec() );
+		return FSTreeFromFSSpec( FSSpecFromFRefNum( Get() ) );
 	}
 	
 	
@@ -110,7 +105,7 @@ namespace Genie
 	
 	FSTreePtr MacRsrcForkHandle::GetFile() const
 	{
-		return GetRsrcForkFSTree( GetFSSpec() );
+		return GetRsrcForkFSTree( FSSpecFromFRefNum( Get() ) );
 	}
 	
 }
