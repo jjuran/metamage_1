@@ -139,14 +139,6 @@ namespace Genie
 	}
 	
 	
-	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		FSSpec result = parent / K::MacFilenameFromUnixFilename( unixName );
-		
-		return result;
-	}
-	
-	
 	static std::string GetUnixName( const FSSpec& item )
 	{
 		if ( item.name[0] == 31 )
@@ -339,8 +331,10 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 		
-		protected:
-			virtual void CreateFile() const;
+		private:
+			void CreateFile() const;
+			
+			void FinishCreation() const;
 	};
 	
 	FSTree_HFS::FSTree_HFS( const FSSpec&       file,
@@ -352,6 +346,17 @@ namespace Genie
 	{
 		// we override Parent()
 	}
+	
+	void FSTree_HFS::FinishCreation() const
+	{
+		const std::string& name = Name();
+		
+		if ( name.length() > 31 )
+		{
+			N::FSpDTSetComment( itsFileSpec, name );
+		}
+	}
+	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -396,22 +401,6 @@ namespace Genie
 		
 		FSpFileCopy( srcFile, destDir / "", name );
 	}
-	
-	
-	class FSTree_LongName : public FSTree_HFS
-	{
-		public:
-			FSTree_LongName( const N::FSDirSpec&  parent,
-			                 const std::string&   name )
-			:
-				FSTree_HFS( FSSpecForLongUnixName( parent, name ), name )
-			{
-			}
-			
-			void CreateFile() const;
-			
-			void CreateDirectory( mode_t mode ) const;
-	};
 	
 	
 	class FSTree_Volumes_Link;
@@ -765,6 +754,7 @@ namespace Genie
 		}
 	}
 	
+	
 	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
 	{
 		struct ::stat stat_buffer;
@@ -783,7 +773,7 @@ namespace Genie
 		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
 		parent.dirID   = N::FSDirID       (  stat_buffer.st_ino );
 		
-		return FSSpecForLongUnixName( parent, file->Name() );
+		return parent / K::MacFilenameFromUnixFilename( file->Name() );
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -969,13 +959,8 @@ namespace Genie
 		N::FileSignature sig = PickFileSignatureForName( Name() );
 		
 		N::FSpCreate( itsFileSpec, sig );
-	}
-	
-	void FSTree_LongName::CreateFile() const
-	{
-		FSTree_HFS::CreateFile();
 		
-		N::FSpDTSetComment( GetFSSpec(), Name() );
+		FinishCreation();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
@@ -1056,13 +1041,8 @@ namespace Genie
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		N::FSpDirCreate( itsFileSpec );
-	}
-	
-	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
-	{
-		N::FSpDirCreate( GetFSSpec() );
 		
-		N::FSpDTSetComment( GetFSSpec(), Name() );
+		FinishCreation();
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
@@ -1074,21 +1054,18 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
 		
-		if ( name.size() > 31 )
-		{
-			return FSTreePtr( new FSTree_LongName( dir, name ) );
-		}
+		const std::string macName = K::MacFilenameFromUnixFilename( name );
 		
-		std::string macName = MacFromUnixName( name );
+		const FSSpec item = dir / macName;
 		
-		FSSpec item = dir / macName;
+		const bool is_root = IsRootDirectory( item );
 		
-		if ( IsRootDirectory( item ) )
-		{
-			return FSTreePtr( new FSTree_J_Symlink( shared_from_this() ) );
-		}
+		typedef FSTree* Ptr;
 		
-		return FSTreePtr( new FSTree_HFS( item, name ) );
+		Ptr ptr = is_root ? Ptr( new FSTree_J_Symlink( shared_from_this() ) )
+		                  : Ptr( new FSTree_HFS      ( item, name         ) );
+		
+		return FSTreePtr( ptr );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
