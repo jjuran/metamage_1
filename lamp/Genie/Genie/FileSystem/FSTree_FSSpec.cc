@@ -291,7 +291,7 @@ namespace Genie
 			
 			const FSSpec& GetFSSpec() const  { return itsFileSpec; }
 			
-			ino_t ParentInode() const;
+			ino_t ParentInode() const  { return itsFileSpec.parID; }
 			
 			void Stat( struct ::stat& sb ) const;
 			
@@ -427,7 +427,7 @@ namespace Genie
 			{
 			}
 			
-			ino_t Inode() const;
+			ino_t Inode() const  { return fsRtParID; }
 	};
 	
 	
@@ -533,11 +533,6 @@ namespace Genie
 		}
 		
 		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ) ) );
-	}
-	
-	ino_t FSTree_HFS::ParentInode() const
-	{
-		return itsFileSpec.parID;
 	}
 	
 	ino_t FSTree_HFS::Inode() const
@@ -1118,11 +1113,6 @@ namespace Genie
 		                                     const Key&          key ) const
 	{
 		return FSTreePtr( new FSTree_Volumes_Link( parent, name, key ) );
-	}
-	
-	ino_t FSTree_Volumes::Inode() const
-	{
-		return fsRtParID;
 	}
 	
 }
