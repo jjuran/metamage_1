@@ -230,7 +230,7 @@ namespace Genie
 			// Then root, or bust
 			j = io::system_root< N::FSDirSpec >() / const_j_directory_name;
 			
-			(void) N::FSDirSpec( j );  // throws if not a dir
+			(void) Dir_From_FSSpec( j );  // throws if not a dir
 		}
 		
 		return j;
@@ -254,7 +254,7 @@ namespace Genie
 		
 		FSSpec users = root / "Users";
 		
-		(void) N::FSDirSpec( users );  // throws if not a dir
+		(void) Dir_From_FSSpec( users );  // throws if not a dir
 		
 		return users;
 	}
@@ -645,7 +645,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_LongName::Parent() const
 	{
-		return FSTreePtr( new FSTree_FSSpec( itsParent ) );
+		return FSTreePtr( FSTreeFromFSDirSpec( itsParent ) );
 	}
 	
 	FSSpec FSTree_HFS::GetFSSpec( bool forCreation ) const
@@ -1172,7 +1172,9 @@ namespace Genie
 		
 		if ( name.size() > 31 )
 		{
-			return FSTreePtr( new FSTree_LongName( N::FSDirSpec( thisFSSpec ), name ) );
+			N::FSDirSpec dir = Dir_From_FSSpec( thisFSSpec );
+			
+			return FSTreePtr( new FSTree_LongName( dir, name ) );
 		}
 		
 		std::string macName = MacFromUnixName( name );
