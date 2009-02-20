@@ -146,50 +146,6 @@ namespace Genie
 		return result;
 	}
 	
-	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec&  parent,
-	                                     const std::string&   unixName,
-	                                     bool                 forCreation )
-	{
-		FSSpec result = FSSpecForLongUnixName( parent, unixName );
-		
-		if ( io::item_exists( result ) == forCreation )
-		{
-			p7::throw_errno( forCreation ? EEXIST : ENOENT );
-		}
-		
-		return result;
-	}
-	
-	inline FSSpec NewFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		return FSSpecForLongUnixName( parent, unixName, true );
-	}
-	
-	inline FSSpec OldFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		return FSSpecForLongUnixName( parent, unixName, false );
-	}
-	
-	static void CreateFileWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		N::FileSignature sig = PickFileSignatureForName( unixName );
-		
-		FSSpec file = NewFSSpecForLongUnixName( parent, unixName );
-		
-		N::FSpCreate( file, sig );
-		
-		N::FSpDTSetComment( file, unixName );
-	}
-	
-	static void CreateDirectoryWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		FSSpec dir = NewFSSpecForLongUnixName( parent, unixName );
-		
-		N::FSpDirCreate( dir );
-		
-		N::FSpDTSetComment( dir, unixName );
-	}
-	
 	
 	static std::string GetUnixName( const FSSpec& item )
 	{
@@ -201,10 +157,11 @@ namespace Genie
 				
 				if ( comment.size() > 31 )
 				{
-					// throws ENOENT if the encoded name doesn't exist
-					FSSpec hashed = OldFSSpecForLongUnixName( io::get_preceding_directory( item ), comment );
+					std::string hashed = K::MacFilenameFromUnixFilename( comment );
 					
-					if ( hashed == item )
+					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
+					
+					if ( std::memcmp( hashed.data(), &item.name[1], 31 ) == 0 )
 					{
 						// Assume it's a Unix name.  FIXME:  Need better heuristics
 						return comment;
@@ -382,7 +339,7 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 		
-		private:
+		protected:
 			virtual void CreateFile() const;
 	};
 	
@@ -1039,7 +996,9 @@ namespace Genie
 	
 	void FSTree_LongName::CreateFile() const
 	{
-		CreateFileWithLongName( itsParent, Name() );
+		FSTree_HFS::CreateFile();
+		
+		N::FSpDTSetComment( GetFSSpec(), Name() );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
@@ -1124,7 +1083,9 @@ namespace Genie
 	
 	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
 	{
-		CreateDirectoryWithLongName( itsParent, Name() );
+		N::FSpDirCreate( GetFSSpec() );
+		
+		N::FSpDTSetComment( GetFSSpec(), Name() );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
