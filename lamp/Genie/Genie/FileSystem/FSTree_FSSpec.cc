@@ -477,18 +477,6 @@ namespace Genie
 		return FSTreePtr( new FSTree_HFS( item ) );
 	}
 	
-	static FSTreePtr FSTreeFromFSSpecRespectingJ( const FSSpec& item, const std::string& name )
-	{
-		if ( IsRootDirectory( item ) )
-		{
-			FSTreePtr parent( FSTreeFromFSDirSpec( io::get_preceding_directory( item ) ) );
-			
-			return FSTreePtr( new FSTree_J_Symlink( parent ) );
-		}
-		
-		return FSTreePtr( new FSTree_HFS( item, name ) );
-	}
-	
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
@@ -1106,7 +1094,12 @@ namespace Genie
 		
 		FSSpec item = dir / macName;
 		
-		return FSTreeFromFSSpecRespectingJ( item, name );
+		if ( IsRootDirectory( item ) )
+		{
+			return FSTreePtr( new FSTree_J_Symlink( shared_from_this() ) );
+		}
+		
+		return FSTreePtr( new FSTree_HFS( item, name ) );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
