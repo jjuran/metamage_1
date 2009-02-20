@@ -707,7 +707,7 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, GetFSSpec() );
 		
 		paramBlock.hFileInfo.ioNamePtr = filespec.name;
 		paramBlock.hFileInfo.ioDirID   = filespec.parID;
@@ -728,7 +728,7 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, GetFSSpec() );
 		
 		paramBlock.hFileInfo.ioNamePtr = filespec.name;
 		paramBlock.hFileInfo.ioDirID   = filespec.parID;
@@ -803,7 +803,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		N::FSpGetCatInfo( file, cInfo );
+		FSpGetCatInfo< FNF_Throws >( cInfo, file );
 		
 		bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		
@@ -1003,7 +1003,7 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, GetFSSpec() );
 		
 		return paramBlock.hFileInfo.ioFlLgLen;
 	}
@@ -1210,31 +1210,25 @@ namespace Genie
 	{
 		CInfoPBRec pb;
 		
-		N::FSpGetCatInfo( GetFSSpec(), pb );
+		FSpGetCatInfo< FNF_Throws >( pb, GetFSSpec() );
 		
-		N::FSDirSpec dir;
-		
-		dir.vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
-		dir.dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
-		
-		std::string unixName;
+		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
+		N::FSDirID        dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
 		
 		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
 		
 		for ( UInt16 i = 1;  ;  ++i )
 		{
-			::Str255 name;
+			FSSpec item = { vRefNum, dirID, "\p" };
 			
-			if ( !N::FSpGetCatInfo( dir, i, pb, name, N::FNF_Returns() ) )
+			if ( !FSpGetCatInfo< FNF_Returns >( pb, vRefNum, dirID, item.name, i ) )
 			{
 				return;
 			}
 			
-			unixName = GetUnixName( dir / name );
+			const ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
 			
-			ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
-			
-			FSNode node( inode, unixName );
+			const FSNode node( inode, GetUnixName( item ) );
 			
 			cache.push_back( node );
 		}
