@@ -25,7 +25,6 @@ namespace Nucleus
 	
 	namespace N = Nitrogen;
 	
-	//template <>
 	CInfoPBRec&
 	//
 	Initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
