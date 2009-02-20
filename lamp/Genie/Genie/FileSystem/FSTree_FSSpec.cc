@@ -448,14 +448,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_FSSpec : public FSTree_HFS
-	{
-		public:
-			FSTree_FSSpec( const FSSpec& file ) : FSTree_HFS( file )
-			{
-			}
-	};
-	
 	class FSTree_LongName : public FSTree_HFS
 	{
 		private:
@@ -538,7 +530,7 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
-		return FSTreePtr( new FSTree_FSSpec( item ) );
+		return FSTreePtr( new FSTree_HFS( item ) );
 	}
 	
 	static FSTreePtr FSTreeFromFSSpecRespectingJ( const FSSpec& item, const std::string& name )
@@ -556,9 +548,9 @@ namespace Genie
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
-		FSTree_FSSpec* tree = NULL;
+		FSTree_HFS* tree = NULL;
 		
-		static FSTreePtr result = FSTreePtr( tree = new FSTree_FSSpec( GetJDirectory() ) );
+		static FSTreePtr result = FSTreePtr( tree = new FSTree_HFS( GetJDirectory() ) );
 		
 		if ( tree != NULL )
 		{
