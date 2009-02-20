@@ -42,18 +42,6 @@ namespace Nitrogen
 		static volatile ::OSErr& IOResult( PB& pb )  { return pb.dirInfo.ioResult; }
 	};
 	
-	struct GetCatInfo_Traits : CInfoPB_Traits
-	{
-		static OSStatus Async( PB& pb )
-		{
-			return ::PBGetCatInfoAsync( &pb );
-		}
-		
-		static OSStatus Sync( PB& pb )
-		{
-			return ::PBGetCatInfoSync( &pb );
-		}
-	};
 	
 	template < class Call_Traits, class Policy, class Callback >
 	typename Policy::Result
@@ -87,6 +75,19 @@ namespace Nitrogen
 	}
 	
 	
+	struct GetCatInfo_Traits : CInfoPB_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBGetCatInfoAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBGetCatInfoSync( &pb );
+		}
+	};
+	
 	struct MakeFSSpec_Traits : HParamBlock_Traits
 	{
 		static OSStatus Async( PB& pb )
@@ -99,6 +100,45 @@ namespace Nitrogen
 			return ::PBMakeFSSpecSync( &pb );
 		}
 	};
+	
+	
+	// Synchronous
+	template < class Policy >
+	inline typename Policy::Result
+	//
+	FSpGetCatInfo( CInfoPBRec&           pb,
+	               FSVolumeRefNum        vRefNum,
+	               FSDirID               dirID,
+	               const unsigned char*  name = NULL,
+	               SInt16                index = 0 )
+	{
+		Str255 nameCopy = name != NULL ? name : "\p";
+	
+		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, nameCopy, index );
+		
+		return PBSync< GetCatInfo_Traits, Policy >( pb );
+	}
+	
+	// Asynchronous
+	template < class Policy, class Callback >
+	inline typename Policy::Result
+	//
+	FSpGetCatInfo( CInfoPBRec&           pb,
+	               FSVolumeRefNum        vRefNum,
+	               FSDirID               dirID,
+	               const unsigned char*  name,
+	               SInt16                index,
+	               Callback              callback,
+	               ::IOCompletionUPP     completion = NULL )
+	{
+		Str255 nameCopy = name != NULL ? name : "\p";
+		
+		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, nameCopy, index );
+		
+		return PBAsync< GetCatInfo_Traits, Policy >( pb,
+		                                             callback,
+		                                             completion );
+	}
 	
 	
 	static void Init_PB_For_MakeFSSpec( HParamBlockRec&       pb,
@@ -286,11 +326,13 @@ namespace Genie
 	                    Async          async,
 	                    FNF_Returns    policy )
 	{
-		return N::FSpGetCatInfo( item,
-		                         pb,
-		                         CALLBACK,
-		                         gWakeUp,
-		                         FNF_Returns() );
+		return N::FSpGetCatInfo< FNF_Returns >( pb,
+		                                        N::FSVolumeRefNum( item.vRefNum ),
+		                                        N::FSDirID( item.parID ),
+		                                        item.name,
+		                                        0,
+		                                        CALLBACK,
+		                                        gWakeUp );
 	}
 	
 	
