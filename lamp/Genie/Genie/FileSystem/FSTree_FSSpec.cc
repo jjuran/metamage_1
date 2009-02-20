@@ -154,7 +154,7 @@ namespace Genie
 		
 		if ( io::item_exists( result ) == forCreation )
 		{
-			p7::throw_errno( forCreation ? ENAMETOOLONG : ENOENT );
+			p7::throw_errno( forCreation ? EEXIST : ENOENT );
 		}
 		
 		return result;
