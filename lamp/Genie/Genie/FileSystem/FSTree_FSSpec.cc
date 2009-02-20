@@ -562,9 +562,7 @@ namespace Genie
 		
 		if ( tree != NULL )
 		{
-			FSTreePtr users( new FSTree_FSSpec( GetUsersDirectory() ) );
-			
-			tree->Map( users );
+			tree->Map( FSTreeFromFSSpec( GetUsersDirectory() ) );
 			
 			tree->Map( FSTreePtr( new FSTree_Volumes( result, "Volumes" ) ) );
 			tree->Map( FSTreePtr( new FSTree_proc   ( result, "proc"    ) ) );
@@ -1042,7 +1040,7 @@ namespace Genie
 		
 		FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 		
-		return FSTreePtr( new FSTree_FSSpec( target ) );
+		return FSTreeFromFSSpec( target );
 	}
 	
 	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
@@ -1268,7 +1266,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( FSSpecFromKey( itsKey ) ) ); }
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( FSSpecFromKey( itsKey ) ); }
 	};
 	
 	
