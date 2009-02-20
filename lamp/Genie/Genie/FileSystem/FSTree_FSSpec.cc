@@ -1137,16 +1137,16 @@ namespace Genie
 			return GetRsrcForkFSTree( itsFileSpec );
 		}
 		
+		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
+		
 		if ( name.size() > 31 )
 		{
-			N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
-			
 			return FSTreePtr( new FSTree_LongName( dir, name ) );
 		}
 		
 		std::string macName = MacFromUnixName( name );
 		
-		FSSpec item = itsFileSpec / macName;
+		FSSpec item = dir / macName;
 		
 		return FSTreeFromFSSpecRespectingJ( item, name );
 	}
