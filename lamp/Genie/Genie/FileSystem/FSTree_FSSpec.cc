@@ -400,19 +400,13 @@ namespace Genie
 	
 	class FSTree_LongName : public FSTree_HFS
 	{
-		private:
-			N::FSDirSpec  itsParent;
-		
 		public:
 			FSTree_LongName( const N::FSDirSpec&  parent,
 			                 const std::string&   name )
 			:
-				FSTree_HFS( FSSpecForLongUnixName( parent, name ), name ),
-				itsParent ( parent )
+				FSTree_HFS( FSSpecForLongUnixName( parent, name ), name )
 			{
 			}
-			
-			FSTreePtr Parent() const;
 			
 			void CreateFile() const;
 			
@@ -560,11 +554,6 @@ namespace Genie
 		}
 		
 		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ) ) );
-	}
-	
-	FSTreePtr FSTree_LongName::Parent() const
-	{
-		return FSTreePtr( FSTreeFromFSDirSpec( itsParent ) );
 	}
 	
 	ino_t FSTree_HFS::ParentInode() const
