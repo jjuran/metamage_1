@@ -20,7 +20,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		FSpGetCatInfo( dir, cInfo, Async() );
+		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
 		
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		

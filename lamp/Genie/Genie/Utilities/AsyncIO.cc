@@ -286,11 +286,14 @@ namespace Genie
 	}
 	
 	
-	// Asynchronous, throws FNFErr
-	void FSpGetCatInfo( const FSSpec&  item,
-	                    CInfoPBRec&    pb,
-	                    Async          async,
-	                    FNF_Throws     policy )
+	template < class Policy >
+	typename Policy::Result
+	//
+	FSpGetCatInfo( CInfoPBRec&               pb,
+	               Nitrogen::FSVolumeRefNum  vRefNum,
+	               Nitrogen::FSDirID         dirID,
+	               const unsigned char*      name,
+	               SInt16                    index )
 	{
 		// Calling the asynchronous variant of FSpGetCatInfo() reliably elicits
 		// System Error 27 (dsFSErr: file system map has been trashed) in Classic
@@ -298,7 +301,7 @@ namespace Genie
 		
 		// UPDATE
 		// ...until now.  So now we shoot with a shorter barrel and disable
-		// async I/O for FSpGetCatInfo( ..., FNF_Throws ) generally.
+		// async I/O for FSpGetCatInfo() generally.
 		
 		// On infrequent (but not rare) occasion, ioResult is set and control is
 		// returned to the application (allowing it to destroy the parameter block)
@@ -308,32 +311,31 @@ namespace Genie
 		
 		if ( RunningInClassic::Test() )
 		{
-			N::FSpGetCatInfo( item, pb, policy );
+			return N::FSpGetCatInfo< Policy >( pb, vRefNum, dirID, name, index );
 		}
-		else
-		{
-			N::FSpGetCatInfo( item,
-			                  pb,
-			                  CALLBACK,
-			                  gWakeUp,
-			                  policy );
-		}
+		
+		return N::FSpGetCatInfo< Policy >( pb,
+		                                   vRefNum,
+		                                   dirID,
+		                                   name,
+		                                   index,
+		                                   CALLBACK,
+		                                   gWakeUp );
 	}
 	
-	// Asynchronous, returns false on fnfErr
-	bool FSpGetCatInfo( const FSSpec&  item,
-	                    CInfoPBRec&    pb,
-	                    Async          async,
-	                    FNF_Returns    policy )
-	{
-		return N::FSpGetCatInfo< FNF_Returns >( pb,
-		                                        N::FSVolumeRefNum( item.vRefNum ),
-		                                        N::FSDirID( item.parID ),
-		                                        item.name,
-		                                        0,
-		                                        CALLBACK,
-		                                        gWakeUp );
-	}
+	template
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
+	                                  Nitrogen::FSVolumeRefNum  vRefNum,
+	                                  Nitrogen::FSDirID         dirID,
+	                                  const unsigned char*      name,
+	                                  SInt16                    index );
+	
+	template
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
+	                                   Nitrogen::FSVolumeRefNum  vRefNum,
+	                                   Nitrogen::FSDirID         dirID,
+	                                   const unsigned char*      name,
+	                                   SInt16                    index );
 	
 	
 	template < class Policy >

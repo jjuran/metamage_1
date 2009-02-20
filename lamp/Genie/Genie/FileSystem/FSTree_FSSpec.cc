@@ -624,7 +624,7 @@ namespace Genie
 			// GetFSSpec() may throw ENOENT for nonexistent long names
 			FSSpec spec = GetFSSpec();
 			
-			if ( FSpGetCatInfo( spec, paramBlock, Async(), FNF_Returns() ) )
+			if ( FSpGetCatInfo< FNF_Returns >( paramBlock, spec ) )
 			{
 				const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 				

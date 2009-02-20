@@ -114,7 +114,7 @@ namespace Genie
 	{
 		CInfoPBRec pb;
 		
-		FSpGetCatInfo( file, pb, Async() );
+		FSpGetCatInfo< FNF_Throws >( pb, file );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
 	}

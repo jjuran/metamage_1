@@ -57,18 +57,91 @@ namespace Genie
 	                const void *            buffer );
 	
 	
-	// Asynchronous, throws FNFErr
-	void FSpGetCatInfo( const FSSpec&  item,
-	                    CInfoPBRec&    pb,
-	                    Async          async,
-	                    FNF_Throws     policy = FNF_Throws() );
+	// FSpGetCatInfo
+	// -------------
 	
-	// Asynchronous, returns false on fnfErr
-	bool FSpGetCatInfo( const FSSpec&  item,
-	                    CInfoPBRec&    pb,
-	                    Async          async,
-	                    FNF_Returns    policy );
+	template < class Policy >
+	typename Policy::Result
+	//
+	FSpGetCatInfo( CInfoPBRec&               pb,
+	               Nitrogen::FSVolumeRefNum  vRefNum,
+	               Nitrogen::FSDirID         dirID,
+	               const unsigned char*      name,
+	               SInt16                    index );
 	
+	template <>
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
+	                                  Nitrogen::FSVolumeRefNum  vRefNum,
+	                                  Nitrogen::FSDirID         dirID,
+	                                  const unsigned char*      name,
+	                                  SInt16                    index );
+	
+	template <>
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
+	                                   Nitrogen::FSVolumeRefNum  vRefNum,
+	                                   Nitrogen::FSDirID         dirID,
+	                                   const unsigned char*      name,
+	                                   SInt16                    index );
+	
+	template < class Policy >
+	typename Policy::Result
+	inline 
+	//
+	FSpGetCatInfo( CInfoPBRec&               pb,
+	               Nitrogen::FSVolumeRefNum  vRefNum,
+	               Nitrogen::FSDirID         dirID,
+	               const unsigned char*      name )
+	{
+		return FSpGetCatInfo< Policy >( pb,
+		                                vRefNum,
+		                                dirID,
+		                                name,
+		                                0 );
+	}
+	
+	template < class Policy >
+	typename Policy::Result
+	inline 
+	//
+	FSpGetCatInfo( CInfoPBRec&    pb,
+	               const FSSpec&  item )
+	{
+		return FSpGetCatInfo< Policy >( pb,
+		                                Nitrogen::FSVolumeRefNum( item.vRefNum ),
+		                                Nitrogen::FSDirID       ( item.parID   ),
+		                                item.name );
+	}
+	
+	template < class Policy >
+	typename Policy::Result
+	inline 
+	//
+	FSpGetCatInfo( CInfoPBRec&               pb,
+	               Nitrogen::FSVolumeRefNum  vRefNum,
+	               Nitrogen::FSDirID         dirID )
+	{
+		return FSpGetCatInfo< Policy >( pb,
+		                                vRefNum,
+		                                dirID,
+		                                NULL,
+		                                -1 );
+	}
+	
+	template < class Policy >
+	typename Policy::Result
+	inline 
+	//
+	FSpGetCatInfo( CInfoPBRec&                 pb,
+	               const Nitrogen::FSDirSpec&  dir )
+	{
+		return FSpGetCatInfo< Policy >( pb,
+		                                dir.vRefNum,
+		                                dir.dirID );
+	}
+	
+	
+	// FSMakeFSSpec
+	// ------------
 	
 	template < class Policy >
 	FSSpec FSMakeFSSpec( Nitrogen::FSVolumeRefNum  vRefNum,

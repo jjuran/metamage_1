@@ -93,7 +93,7 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		if ( !FSpGetCatInfo( file, paramBlock, Async(), N::FNF_Returns() ) )
+		if ( !FSpGetCatInfo< FNF_Returns >( paramBlock, file ) )
 		{
 			// Treating this specially (a) prevents a stack crawl, and
 			// (b) doesn't pass through ThrowOSStatus_Internal(), which
@@ -157,7 +157,7 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock = { 0 };
 		
-		FSpGetCatInfo( file, paramBlock, Async() );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
 		
 		HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
