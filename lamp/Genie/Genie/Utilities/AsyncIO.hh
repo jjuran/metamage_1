@@ -69,6 +69,30 @@ namespace Genie
 	                    Async          async,
 	                    FNF_Returns    policy );
 	
+	
+	template < class Policy >
+	FSSpec FSMakeFSSpec( Nitrogen::FSVolumeRefNum  vRefNum,
+	                     Nitrogen::FSDirID         dirID,
+	                     const unsigned char*      name );
+	
+	template <>
+	FSSpec FSMakeFSSpec< FNF_Throws >( Nitrogen::FSVolumeRefNum  vRefNum,
+	                                   Nitrogen::FSDirID         dirID,
+	                                   const unsigned char*      name );
+	
+	template <>
+	FSSpec FSMakeFSSpec< FNF_Returns >( Nitrogen::FSVolumeRefNum  vRefNum,
+	                                    Nitrogen::FSDirID         dirID,
+	                                    const unsigned char*      name );
+	
+	template < class Policy >
+	inline FSSpec FSMakeFSSpec( const Nitrogen::FSDirSpec&  dir,
+	                            const unsigned char*        name )
+	{
+		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
+	}
+	
+	
 	Nucleus::Owned< Nitrogen::FSFileRefNum >
 	//
 	FSpOpenDF( const FSSpec&          spec,

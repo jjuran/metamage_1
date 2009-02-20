@@ -21,6 +21,141 @@
 #define CALLBACK  more::ptr_fun( AsyncYield )
 
 
+namespace Nitrogen
+{
+	
+	struct HParamBlock_Traits
+	{
+		typedef HParamBlockRec PB;
+		
+		static ::IOCompletionUPP& IOCompletion( PB& pb )  { return pb.ioParam.ioCompletion; }
+		
+		static volatile ::OSErr& IOResult( PB& pb )  { return pb.ioParam.ioResult; }
+	};
+	
+	struct CInfoPB_Traits
+	{
+		typedef CInfoPBRec PB;
+		
+		static ::IOCompletionUPP& IOCompletion( PB& pb )  { return pb.dirInfo.ioCompletion; }
+		
+		static volatile ::OSErr& IOResult( PB& pb )  { return pb.dirInfo.ioResult; }
+	};
+	
+	struct GetCatInfo_Traits : CInfoPB_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBGetCatInfoAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBGetCatInfoSync( &pb );
+		}
+	};
+	
+	template < class Call_Traits, class Policy, class Callback >
+	typename Policy::Result
+	//
+	PBAsync( typename Call_Traits::PB&  pb,
+	         Callback                   callback,
+	         ::IOCompletionUPP          completion )
+	{
+		Call_Traits::IOCompletion( pb ) = completion;
+		
+		::OSErr err = Call_Traits::Async( pb );
+		
+		Private::FixAsyncResult( err, Call_Traits::IOResult( pb ) );
+		
+		Policy::HandleOSStatus( err );
+		
+		while ( Call_Traits::IOResult( pb ) > 0 )
+		{
+			callback();
+		}
+		
+		return Policy::HandleOSStatus( Call_Traits::IOResult( pb ) );
+	}
+	
+	template < class Call_Traits, class Policy >
+	inline typename Policy::Result
+	//
+	PBSync( typename Call_Traits::PB& pb )
+	{
+		return Policy::HandleOSStatus( Call_Traits::Sync( pb ) );
+	}
+	
+	
+	struct MakeFSSpec_Base_Traits : HParamBlock_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBMakeFSSpecAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBMakeFSSpecSync( &pb );
+		}
+	};
+	
+	template < class Policy >
+	struct MakeFSSpec_Traits : MakeFSSpec_Base_Traits, Policy
+	{
+	};
+	
+	
+	static void Init_PB_For_MakeFSSpec( HParamBlockRec&       pb,
+	                                    FSVolumeRefNum        vRefNum,
+	                                    FSDirID               dirID,
+	                                    const unsigned char*  name,
+	                                    FSSpec&               result )
+	{
+		pb.fileParam.ioVRefNum = vRefNum;
+		pb.fileParam.ioDirID   = dirID;
+		pb.fileParam.ioNamePtr = const_cast< StringPtr >( name );
+		pb.ioParam  .ioMisc    = (char*) &result;
+	}
+	
+	// Synchronous
+	template < class Policy >
+	inline FSSpec FSMakeFSSpec( FSVolumeRefNum        vRefNum,
+	                            FSDirID               dirID,
+	                            const unsigned char*  name )
+	{
+		HParamBlockRec  pb;
+		FSSpec          result;
+		
+		Init_PB_For_MakeFSSpec( pb, vRefNum, dirID, name, result );
+		
+		(void) PBSync< MakeFSSpec_Traits< Policy >, Policy >( pb );
+		
+		return result;
+	}
+	
+	// Asynchronous
+	template < class Policy, class Callback >
+	inline FSSpec FSMakeFSSpec( FSVolumeRefNum        vRefNum,
+	                            FSDirID               dirID,
+	                            const unsigned char*  name,
+	                            Callback              callback,
+	                            ::IOCompletionUPP     completion = NULL )
+	{
+		HParamBlockRec  pb;
+		FSSpec          result;
+		
+		Init_PB_For_MakeFSSpec( pb, vRefNum, dirID, name, result );
+		
+		(void) PBAsync< MakeFSSpec_Traits< Policy >, Policy >( pb,
+		                                                       callback,
+		                                                       completion );
+		
+		return result;
+	}
+	
+}
+
 namespace Genie
 {
 	
@@ -162,6 +297,25 @@ namespace Genie
 		                         gWakeUp,
 		                         FNF_Returns() );
 	}
+	
+	
+	template < class Policy >
+	FSSpec FSMakeFSSpec( N::FSVolumeRefNum     vRefNum,
+	                     N::FSDirID            dirID,
+	                     const unsigned char*  name )
+	{
+		return N::FSMakeFSSpec< Policy >( vRefNum, dirID, name, CALLBACK, gWakeUp );
+	}
+	
+	template
+	FSSpec FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum     vRefNum,
+	                                   N::FSDirID            dirID,
+	                                   const unsigned char*  name );
+	
+	template
+	FSSpec FSMakeFSSpec< FNF_Returns >( N::FSVolumeRefNum     vRefNum,
+	                                    N::FSDirID            dirID,
+	                                    const unsigned char*  name );
 	
 	
 	NN::Owned< N::FSFileRefNum >
