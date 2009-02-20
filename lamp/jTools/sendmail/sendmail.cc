@@ -62,7 +62,7 @@ namespace tool
 	
 	static N::FSDirSpec QueueDirectory()
 	{
-		return N::FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		return NN::Convert< N::FSDirSpec >( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
 	}
 	
 	
@@ -310,12 +310,13 @@ namespace tool
 		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 		
-		directory_spec msgFolder( msgFolderItem );
+		directory_spec msgFolder( NN::Convert< N::FSDirSpec >( msgFolderItem ) );
 		
-		FSSpec       message    = msgFolder / "Message";
-		FSSpec       returnPath = msgFolder / "Return-Path";
+		FSSpec message      = msgFolder / "Message";
+		FSSpec returnPath   = msgFolder / "Return-Path";
+		FSSpec destinations = msgFolder / "Destinations";
 		
-		directory_spec destFolder( msgFolder / "Destinations" );
+		directory_spec destFolder( NN::Convert< N::FSDirSpec >( destinations ) );
 		
 		typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
 		directory_container contents = io::directory_contents( destFolder );
@@ -324,7 +325,7 @@ namespace tool
 		               contents.end(),
 		               Transmitter( ReadOneLinerFromFile( returnPath ),
 		                            message,
-		                            destFolder ) );
+		                            destinations ) );
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
 		io::delete_file           ( returnPath );
