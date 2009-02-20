@@ -20,6 +20,38 @@
 #include "Nucleus/NAssert.h"
 
 
+namespace Nucleus
+{
+	
+	namespace N = Nitrogen;
+	
+	//template <>
+	CInfoPBRec&
+	//
+	Initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
+		                                   N::FSVolumeRefNum  vRefNum,
+		                                   N::FSDirID         dirID,
+		                                   StringPtr          name,
+		                                   SInt16             index )
+	{
+		DirInfo& dirInfo = pb.dirInfo;
+		
+		if ( index == 0  &&  name == NULL  &&  name[ 0 ] == '\0' )
+		{
+			// work around a File Sharing problem with empty names
+			index = -1;
+		}
+		
+		dirInfo.ioNamePtr = name;
+		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioDrDirID = dirID;
+		dirInfo.ioFDirIndex = index;
+		
+		return pb;
+	}
+	
+}
+
 namespace Nitrogen
 {
 	

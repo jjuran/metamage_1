@@ -598,23 +598,7 @@ namespace Nucleus
 		                                  Nitrogen::FSVolumeRefNum  vRefNum,
 		                                  Nitrogen::FSDirID         dirID,
 		                                  StringPtr                 name,
-		                                  SInt16                    index )
-		{
-			Nitrogen::DirInfo& dirInfo = pb.dirInfo;
-			
-			if ( index == 0  &&  name == NULL  &&  name[ 0 ] == '\0' )
-			{
-				// work around a File Sharing problem with empty names
-				index = -1;
-			}
-			
-			dirInfo.ioNamePtr = name;
-			dirInfo.ioVRefNum = vRefNum;
-			dirInfo.ioDrDirID = dirID;
-			dirInfo.ioFDirIndex = index;
-			
-			return pb;
-		}
+		                                  SInt16                    index );
 	};
 	
 }
