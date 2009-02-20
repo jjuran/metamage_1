@@ -16,12 +16,8 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	N::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
+	N::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
-		CInfoPBRec cInfo;
-		
-		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
-		
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
 		if ( !is_dir )
@@ -30,9 +26,19 @@ namespace Genie
 			throw N::ErrFSNotAFolder();
 		}
 		
-		const N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );
+		const N::FSDirID        dirID   = N::FSDirID       ( cInfo.dirInfo.ioDrDirID );
 		
-		return NN::Make< N::FSDirSpec >( N::FSVolumeRefNum( dir.vRefNum ), dirID );
+		return NN::Make< N::FSDirSpec >( vRefNum, dirID );
+	}
+	
+	N::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
+	{
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
+		
+		return Dir_From_CInfo( cInfo );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
