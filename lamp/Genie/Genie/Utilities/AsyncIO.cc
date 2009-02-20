@@ -87,7 +87,7 @@ namespace Nitrogen
 	}
 	
 	
-	struct MakeFSSpec_Base_Traits : HParamBlock_Traits
+	struct MakeFSSpec_Traits : HParamBlock_Traits
 	{
 		static OSStatus Async( PB& pb )
 		{
@@ -98,11 +98,6 @@ namespace Nitrogen
 		{
 			return ::PBMakeFSSpecSync( &pb );
 		}
-	};
-	
-	template < class Policy >
-	struct MakeFSSpec_Traits : MakeFSSpec_Base_Traits, Policy
-	{
 	};
 	
 	
@@ -129,7 +124,7 @@ namespace Nitrogen
 		
 		Init_PB_For_MakeFSSpec( pb, vRefNum, dirID, name, result );
 		
-		(void) PBSync< MakeFSSpec_Traits< Policy >, Policy >( pb );
+		(void) PBSync< MakeFSSpec_Traits, Policy >( pb );
 		
 		return result;
 	}
@@ -147,9 +142,9 @@ namespace Nitrogen
 		
 		Init_PB_For_MakeFSSpec( pb, vRefNum, dirID, name, result );
 		
-		(void) PBAsync< MakeFSSpec_Traits< Policy >, Policy >( pb,
-		                                                       callback,
-		                                                       completion );
+		(void) PBAsync< MakeFSSpec_Traits, Policy >( pb,
+		                                             callback,
+		                                             completion );
 		
 		return result;
 	}
