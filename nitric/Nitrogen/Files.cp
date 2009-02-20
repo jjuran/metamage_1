@@ -266,18 +266,18 @@ namespace Nitrogen
 	
 	void PBDTGetAPPLSync( DTPBRec& pb )
 	{
-		try
-		{
-			ThrowOSStatus( ::PBDTGetAPPLSync( &pb ) );
-		}
-		catch ( FNFErr )
+		OSStatus err = ::PBDTGetAPPLSync( &pb );
+		
+		if ( err == fnfErr )
 		{
 			// PBDTGetAPPLSync() is documented as returning afpItemNotFound, but not fnfErr.
 			// We compensate for the bug here.
 			// If this is actually a documentation bug, then this block should be removed
 			// (although the comments should be left for posterity).
-			throw AFPItemNotFound();
+			err = afpItemNotFound;
 		}
+		
+		ThrowOSStatus( err );
 	}
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum )
