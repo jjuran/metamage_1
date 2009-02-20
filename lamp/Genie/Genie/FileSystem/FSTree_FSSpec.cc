@@ -170,13 +170,6 @@ namespace Genie
 		return FSSpecForLongUnixName( parent, unixName, false );
 	}
 	
-	static bool ItemWithLongNameExists( const N::FSDirSpec& parent, const std::string& unixName )
-	{
-		FSSpec item = FSSpecForLongUnixName( parent, unixName );
-		
-		return io::item_exists( item );
-	}
-	
 	static void CreateFileWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		N::FileSignature sig = PickFileSignatureForName( unixName );
@@ -347,7 +340,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const;
 			
-			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
+			const FSSpec& GetFSSpec() const  { return itsFileSpec; }
 			
 			ino_t ParentInode() const;
 			
@@ -422,7 +415,7 @@ namespace Genie
 	
 	void FSTree_HFS::CopyFile( const FSTreePtr& destination ) const
 	{
-		const FSSpec srcFile = GetFSSpec( false );
+		const FSSpec& srcFile = itsFileSpec;
 		
 		const FSSpec destFile = GetFSSpecFromFSTree( destination );
 		
@@ -462,13 +455,7 @@ namespace Genie
 			{
 			}
 			
-			bool Exists() const;
-			bool IsFile() const;
-			bool IsDirectory() const;
-			
 			FSTreePtr Parent() const;
-			
-			FSSpec GetFSSpec( bool forCreation = false ) const;
 			
 			void CreateFile() const;
 			
@@ -590,47 +577,19 @@ namespace Genie
 		return io::directory_exists( itsFileSpec );
 	}
 	
-	bool FSTree_LongName::Exists() const
-	{
-		return ItemWithLongNameExists( itsParent, Name() );
-	}
-	
-	bool FSTree_LongName::IsFile() const
-	{
-		return Exists() && io::file_exists( GetFSSpec() );
-	}
-	
-	bool FSTree_LongName::IsDirectory() const
-	{
-		return Exists() && io::directory_exists( GetFSSpec() );
-	}
-	
 	bool FSTree_HFS::IsLink() const
 	{
 		CInfoPBRec paramBlock;
 		
-		try
+		if ( FSpGetCatInfo< FNF_Returns >( paramBlock, itsFileSpec ) )
 		{
-			// GetFSSpec() may throw ENOENT for nonexistent long names
-			FSSpec spec = GetFSSpec();
+			const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 			
-			if ( FSpGetCatInfo< FNF_Returns >( paramBlock, spec ) )
-			{
-				const HFileInfo& hFileInfo = paramBlock.hFileInfo;
-				
-				bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-				
-				bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
-				
-				return isAlias;
-			}
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ENOENT )
-			{
-				throw;
-			}
+			const bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+			
+			const bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+			
+			return isAlias;
 		}
 		
 		return false;
@@ -663,19 +622,9 @@ namespace Genie
 		return FSTreePtr( FSTreeFromFSDirSpec( itsParent ) );
 	}
 	
-	FSSpec FSTree_HFS::GetFSSpec( bool forCreation ) const
-	{
-		return itsFileSpec;
-	}
-	
 	ino_t FSTree_HFS::ParentInode() const
 	{
 		return itsFileSpec.parID;
-	}
-	
-	FSSpec FSTree_LongName::GetFSSpec( bool forCreation ) const
-	{
-		return FSSpecForLongUnixName( itsParent, Name(), forCreation );
 	}
 	
 	ino_t FSTree_HFS::Inode() const
@@ -703,14 +652,14 @@ namespace Genie
 		
 		UInt32 modTime = N::GetDateTime();
 		
-		FSSpec filespec = GetFSSpec();
-		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, GetFSSpec() );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, itsFileSpec );
 		
-		paramBlock.hFileInfo.ioNamePtr = filespec.name;
-		paramBlock.hFileInfo.ioDirID   = filespec.parID;
+		N::Str63 name = itsFileSpec.name;
+		
+		paramBlock.hFileInfo.ioNamePtr = name;
+		paramBlock.hFileInfo.ioDirID   = itsFileSpec.parID;
 		
 		paramBlock.hFileInfo.ioFlMdDat = modTime;
 		
@@ -724,14 +673,14 @@ namespace Genie
 	{
 		using namespace TimeOff;
 		
-		FSSpec filespec = GetFSSpec();
-		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, GetFSSpec() );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, itsFileSpec );
 		
-		paramBlock.hFileInfo.ioNamePtr = filespec.name;
-		paramBlock.hFileInfo.ioDirID   = filespec.parID;
+		N::Str63 name = itsFileSpec.name;
+		
+		paramBlock.hFileInfo.ioNamePtr = name;
+		paramBlock.hFileInfo.ioDirID   = itsFileSpec.parID;
 		
 		if ( creat )
 		{
@@ -753,12 +702,10 @@ namespace Genie
 	
 	void FSTree_HFS::Delete() const
 	{
-		FSSpec file = GetFSSpec();
-		
 		// returns fnfErr for directories
-		OSErr unlockErr = ::FSpRstFLock( &file );
+		OSErr unlockErr = ::FSpRstFLock( &itsFileSpec );
 		
-		OSErr deleteErr = ::FSpDelete( &file );
+		OSErr deleteErr = ::FSpDelete( &itsFileSpec );
 		
 		// Unfortunately, fBsyErr can mean different things.
 		// Here we assume it means a directory is not empty.
@@ -924,7 +871,7 @@ namespace Genie
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
 		
-		FSSpec srcFileSpec = srcFile->GetFSSpec( false );
+		const FSSpec& srcFileSpec = itsFileSpec;
 		
 		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
 		
@@ -1185,23 +1132,21 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
 	{
-		FSSpec thisFSSpec = GetFSSpec();
-		
 		if ( name == "rsrc"  &&  IsFile() )
 		{
-			return GetRsrcForkFSTree( thisFSSpec );
+			return GetRsrcForkFSTree( itsFileSpec );
 		}
 		
 		if ( name.size() > 31 )
 		{
-			N::FSDirSpec dir = Dir_From_FSSpec( thisFSSpec );
+			N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
 			
 			return FSTreePtr( new FSTree_LongName( dir, name ) );
 		}
 		
 		std::string macName = MacFromUnixName( name );
 		
-		FSSpec item = thisFSSpec / macName;
+		FSSpec item = itsFileSpec / macName;
 		
 		return FSTreeFromFSSpecRespectingJ( item, name );
 	}
