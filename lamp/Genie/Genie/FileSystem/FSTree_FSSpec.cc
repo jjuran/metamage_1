@@ -424,7 +424,7 @@ namespace Genie
 	{
 		const FSSpec srcFile = GetFSSpec( false );
 		
-		const FSSpec destFile = destination->GetFSSpec( true );
+		const FSSpec destFile = GetFSSpecFromFSTree( destination );
 		
 		// Do not resolve links
 		
@@ -1060,7 +1060,7 @@ namespace Genie
 	
 	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
 	{
-		FSSpec linkSpec = linkFile->GetFSSpec( true );
+		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
@@ -1069,7 +1069,7 @@ namespace Genie
 		
 		// Do not resolve links -- if the target of this link is another symlink, so be it
 		
-		FSSpec targetSpec = target->GetFSSpec( false );
+		FSSpec targetSpec = GetFSSpecFromFSTree( target );
 		
 		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
 		
