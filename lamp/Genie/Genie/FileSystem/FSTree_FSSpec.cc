@@ -347,16 +347,6 @@ namespace Genie
 		// we override Parent()
 	}
 	
-	void FSTree_HFS::FinishCreation() const
-	{
-		const std::string& name = Name();
-		
-		if ( name.length() > 31 )
-		{
-			N::FSpDTSetComment( itsFileSpec, name );
-		}
-	}
-	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -1094,6 +1084,11 @@ namespace Genie
 			
 			cache.push_back( node );
 		}
+	}
+	
+	void FSTree_HFS::FinishCreation() const
+	{
+		SetLongName( itsFileSpec, Name() );
 	}
 	
 	
