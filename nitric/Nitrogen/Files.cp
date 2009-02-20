@@ -296,7 +296,11 @@ namespace Nitrogen
 		
 		PBDTGetAPPLSync( pb );
 		
-		return FSMakeFSSpec( vRefNum, FSDirID( pb.ioAPPLParID ), name );
+		FSSpec result = { vRefNum, pb.ioAPPLParID };
+		
+		CopyToPascalString( name, result.name, sizeof result.name - 1 );
+		
+		return result;
 	}
 	
 	void PBDTSetCommentSync( DTPBRec& pb )
