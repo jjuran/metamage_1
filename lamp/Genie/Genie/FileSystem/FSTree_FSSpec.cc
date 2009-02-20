@@ -1032,10 +1032,7 @@ namespace Genie
 	
 	void FSTree_HFS::CreateFile() const
 	{
-		// No need to convert name -- for examination only
-		std::string name = io::get_filename_string( itsFileSpec );
-		
-		N::FileSignature sig = PickFileSignatureForName( name );
+		N::FileSignature sig = PickFileSignatureForName( Name() );
 		
 		N::FSpCreate( itsFileSpec, sig );
 	}
