@@ -6,6 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 
 // Genie
+#include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 
 

@@ -23,7 +23,7 @@ namespace Genie
 	
 	Nitrogen::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
 	
-	//FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
+	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
 	FSTreePtr FSTreeFromFSDirSpec( const Nitrogen::FSDirSpec& dir );
 	

@@ -42,8 +42,6 @@ namespace Genie
 	
 	const FSTreePtr& FSRoot();
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
-	
 	
 	struct FSNode
 	{

@@ -6,6 +6,7 @@
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 
 // Genie
+#include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSSpecForkUser.hh"
 #include "Genie/FileSystem/StatFile.hh"
 

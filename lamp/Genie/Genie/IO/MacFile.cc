@@ -15,6 +15,7 @@
 #include "Nitrogen/Files.h"
 
 // Genie
+#include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
