@@ -26,7 +26,12 @@ namespace Genie
 	{
 		// FIXME:  Assumes that app doesn't call HSetVol().
 		// (We don't, but still...)
-		return N::FSDirSpec( Dir_From_FSSpec( FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum(), N::FSDirID(), "\p" ) ) );
+		
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, N::FSDirSpec() );
+		
+		return Dir_From_CInfo( cInfo );
 	}
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
@@ -39,7 +44,11 @@ namespace Genie
 		{
 		}
 		
-		return N::FSDirSpec( Dir_From_FSSpec( FSMakeFSSpec< FNF_Throws >( vRefNum, N::fsRtDirID, "\pUsers" ) ) );
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, vRefNum, N::fsRtDirID, "\p" "Users" );
+		
+		return Dir_From_CInfo( cInfo );
 	}
 	
 	static N::FSDirSpec FindUserHomeFolder()
