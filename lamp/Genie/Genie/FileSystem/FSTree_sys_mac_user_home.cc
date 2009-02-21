@@ -7,6 +7,7 @@
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
+#include "Nitrogen/Processes.h"
 
 // Io: MacFiles
 #include "MacFiles.hh"
@@ -20,10 +21,19 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	static N::FSDirSpec GetAppFolder()
 	{
+		FSSpec appFile;
+		
+		ProcessInfoRec info = NN::Make< ProcessInfoRec >( &appFile );
+		
+		N::GetProcessInformation( N::CurrentProcess(), info );
+		
+		return io::get_preceding_directory( appFile );
+		
 		// FIXME:  Assumes that app doesn't call HSetVol().
 		// (We don't, but still...)
 		
@@ -64,7 +74,7 @@ namespace Genie
 		{
 			child = parent;
 			
-			parent = io::get_preceding_directory( child );
+			parent = io::get_preceding_directory( FSMakeFSSpec< FNF_Throws >( child, NULL ) );
 		}
 		while ( parent != users );
 		
