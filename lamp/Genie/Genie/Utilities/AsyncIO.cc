@@ -21,8 +21,39 @@
 #define CALLBACK  more::ptr_fun( AsyncYield )
 
 
+#pragma mark ¥ Nitrogen ¥
+#pragma mark -
+
 namespace Nitrogen
 {
+	
+	typedef FNF_Throws Throw_Errors;
+	
+	struct Return_EOF
+	{
+		typedef bool Result;
+		
+		static bool HandleOSStatus( OSStatus err )
+		{
+			if ( err == eofErr )
+			{
+				return false;
+			}
+			
+			ThrowOSStatus( err );
+			
+			return true;
+		}
+	};
+	
+	struct ParamBlock_Traits
+	{
+		typedef ParamBlockRec PB;
+		
+		static ::IOCompletionUPP& IOCompletion( PB& pb )  { return pb.ioParam.ioCompletion; }
+		
+		static volatile ::OSErr& IOResult( PB& pb )  { return pb.ioParam.ioResult; }
+	};
 	
 	struct HParamBlock_Traits
 	{
@@ -75,6 +106,58 @@ namespace Nitrogen
 	}
 	
 	
+	struct HOpenDF_Traits : HParamBlock_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBHOpenDFAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBHOpenDFSync( &pb );
+		}
+	};
+	
+	struct HOpenRF_Traits : HParamBlock_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBHOpenRFAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBHOpenRFSync( &pb );
+		}
+	};
+	
+	struct Read_Traits : ParamBlock_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBReadAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBReadSync( &pb );
+		}
+	};
+	
+	struct Write_Traits : ParamBlock_Traits
+	{
+		static OSStatus Async( PB& pb )
+		{
+			return ::PBWriteAsync( &pb );
+		}
+		
+		static OSStatus Sync( PB& pb )
+		{
+			return ::PBWriteSync( &pb );
+		}
+	};
+	
 	struct GetCatInfo_Traits : CInfoPB_Traits
 	{
 		static OSStatus Async( PB& pb )
@@ -102,6 +185,170 @@ namespace Nitrogen
 	};
 	
 	
+	static void Init_PB_For_ReadWrite( ParamBlockRec&  pb,
+	                                   FSFileRefNum    file,
+	                                   FSIOPosMode     positionMode,
+	                                   SInt32          positionOffset,
+	                                   SInt32          requestCount,
+	                                   const void *    buffer )
+	{
+		IOParam& io = pb.ioParam;
+		
+		io.ioRefNum    = file;
+		io.ioBuffer    = (char*) buffer;
+		io.ioReqCount  = requestCount;
+		io.ioPosMode   = positionMode;
+		io.ioPosOffset = positionOffset;
+	}
+	
+	enum EOF_Policy
+	{
+		kThrowEOF_Never,
+		kThrowEOF_OnZero,
+		kThrowEOF_Always
+	};
+	
+	// Synchronous
+	template < EOF_Policy policy >
+	inline SInt32 FSRead( FSFileRefNum  file,
+	                      FSIOPosMode   positionMode,
+	                      SInt32        positionOffset,
+	                      SInt32        requestCount,
+	                      void *        buffer )
+	{
+		ParamBlockRec pb;
+		
+		Init_PB_For_ReadWrite( pb,
+		                       file,
+		                       positionMode,
+		                       positionOffset,
+		                       requestCount,
+		                       buffer );
+		
+		const bool ok = PBSync< Read_Traits, Return_EOF >( pb );
+		
+		if ( ok + !!pb.ioParam.ioActCount < policy )
+		{
+			throw EOFErr();
+		}
+		
+		return pb.ioParam.ioActCount;
+	}
+	
+	// Asynchronous
+	template < EOF_Policy policy, class Callback >
+	inline SInt32 FSRead( FSFileRefNum       file,
+	                      FSIOPosMode        positionMode,
+	                      SInt32             positionOffset,
+	                      SInt32             requestCount,
+	                      void *             buffer,
+	                      Callback           callback,
+	                      ::IOCompletionUPP  completion = NULL )
+	{
+		ParamBlockRec pb;
+		
+		Init_PB_For_ReadWrite( pb,
+		                       file,
+		                       positionMode,
+		                       positionOffset,
+		                       requestCount,
+		                       buffer );
+		
+		const bool ok = PBAsync< Read_Traits, Return_EOF >( pb,
+		                                                    callback,
+		                                                    completion );
+		
+		if ( ok + !!pb.ioParam.ioActCount < policy )
+		{
+			throw EOFErr();
+		}
+		
+		return pb.ioParam.ioActCount;
+	}
+	
+	// Async read, default position mode
+	template < EOF_Policy policy, class Callback >
+	inline SInt32 FSRead( FSFileRefNum       file,
+	                      SInt32             requestCount,
+	                      void *             buffer,
+	                      Callback           callback,
+	                      ::IOCompletionUPP  completion = NULL )
+	{
+		return FSRead< policy >( file,
+		                         fsAtMark,
+		                         0,
+		                         requestCount,
+		                         buffer,
+		                         callback,
+		                         completion );
+	}
+	
+	// Synchronous
+	inline SInt32 FSWrite( FSFileRefNum       file,
+	                       FSIOPosMode        positionMode,
+	                       SInt32             positionOffset,
+	                       SInt32             requestCount,
+	                       const void *       buffer )
+	{
+		ParamBlockRec pb;
+		
+		Init_PB_For_ReadWrite( pb,
+		                       file,
+		                       positionMode,
+		                       positionOffset,
+		                       requestCount,
+		                       buffer );
+		
+		PBSync< Write_Traits, Throw_Errors >( pb );
+		
+		return pb.ioParam.ioActCount;
+	}
+	
+	// Asynchronous
+	template < class Callback >
+	inline SInt32 FSWrite( FSFileRefNum       file,
+	                       FSIOPosMode        positionMode,
+	                       SInt32             positionOffset,
+	                       SInt32             requestCount,
+	                       const void *       buffer,
+	                       Callback           callback,
+	                       ::IOCompletionUPP  completion = NULL )
+	{
+		ParamBlockRec pb;
+		
+		Init_PB_For_ReadWrite( pb,
+		                       file,
+		                       positionMode,
+		                       positionOffset,
+		                       requestCount,
+		                       buffer );
+		
+		PBAsync< Write_Traits, Throw_Errors >( pb,
+		                                       callback,
+		                                       completion );
+		
+		return pb.ioParam.ioActCount;
+	}
+	
+	// Async write, default position mode
+	template < class Callback >
+	inline SInt32 FSWrite( FSFileRefNum       file,
+	                       SInt32             requestCount,
+	                       const void *       buffer,
+	                       Callback           callback,
+	                       ::IOCompletionUPP  completion = NULL )
+	{
+		return FSWrite( file,
+		                fsAtMark,
+		                0,
+		                requestCount,
+		                buffer,
+		                callback,
+		                completion );
+	}
+	
+	
+	// Synchronous
 	template < class Policy >
 	inline typename Policy::Result
 	//
@@ -184,7 +431,65 @@ namespace Nitrogen
 		return result;
 	}
 	
+	
+	template < class Traits, class Callback >
+	Nucleus::Owned< FSFileRefNum >
+	//
+	FSpOpen( const FSSpec&      spec,
+	         FSIOPermssn        permissions,
+	         Callback           callback,
+	         ::IOCompletionUPP  completion = NULL )
+	{
+		HParamBlockRec pb;
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioNamePtr  = const_cast< StringPtr >( spec.name );
+		io.ioVRefNum  = spec.vRefNum;
+		io.ioPermssn  = permissions;
+		
+		pb.fileParam.ioDirID = spec.parID;
+		
+		PBAsync< Traits, Throw_Errors >( pb,
+		                                 callback,
+		                                 completion );
+		
+		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( io.ioRefNum ) );
+	}
+	
+	template < class Callback >
+	Nucleus::Owned< FSFileRefNum >
+	//
+	inline FSpOpenDF( const FSSpec&      spec,
+	                  FSIOPermssn        permissions,
+	                  Callback           callback,
+	                  ::IOCompletionUPP  completion = NULL )
+	{
+		return FSpOpen< HOpenDF_Traits >( spec,
+		                                  permissions,
+		                                  callback,
+		                                  completion );
+	}
+	
+	template < class Callback >
+	Nucleus::Owned< FSFileRefNum >
+	//
+	inline FSpOpenRF( const FSSpec&      spec,
+	                  FSIOPermssn        permissions,
+	                  Callback           callback,
+	                  ::IOCompletionUPP  completion = NULL )
+	{
+		return FSpOpen< HOpenRF_Traits >( spec,
+		                                  permissions,
+		                                  callback,
+		                                  completion );
+	}
+	
 }
+
+#pragma mark -
+#pragma mark ¥ Genie ¥
+#pragma mark -
 
 namespace Genie
 {
@@ -217,14 +522,13 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_Always  policy )
 	{
-		return N::FSRead( file,
+		return N::FSRead< N::kThrowEOF_Always >( file,
 		                  positionMode,
 		                  positionOffset,
 		                  requestCount,
 		                  buffer,
 		                  CALLBACK,
-		                  gWakeUp,
-		                  policy );
+		                  gWakeUp );
 	}
 	
 	// Async read, throws eofErr if starting at EOF
@@ -235,14 +539,13 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_OnZero  policy )
 	{
-		return N::FSRead( file,
+		return N::FSRead< N::kThrowEOF_OnZero >( file,
 		                  positionMode,
 		                  positionOffset,
 		                  requestCount,
 		                  buffer,
 		                  CALLBACK,
-		                  gWakeUp,
-		                  policy );
+		                  gWakeUp );
 	}
 	
 	// Async read, returns zero
@@ -253,14 +556,13 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_Never   policy )
 	{
-		return N::FSRead( file,
+		return N::FSRead< N::kThrowEOF_Never >( file,
 		                  positionMode,
 		                  positionOffset,
 		                  requestCount,
 		                  buffer,
 		                  CALLBACK,
-		                  gWakeUp,
-		                  policy );
+		                  gWakeUp );
 	}
 	
 	
