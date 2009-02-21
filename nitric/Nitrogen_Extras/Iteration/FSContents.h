@@ -25,6 +25,27 @@
 namespace Nitrogen
 {
 	
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           SInt16            index,
+	                           CInfoPBRec&       cInfo,
+	                           StringPtr         name )
+	{
+		Nucleus::Initialize< CInfoPBRec >( cInfo,
+		                                   dir.vRefNum,
+		                                   dir.dirID,
+		                                   name,
+		                                   index );
+		
+		PBGetCatInfoSync( cInfo, FNF_Throws() );
+	}
+	
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       cInfo,
+	                           StringPtr         name )
+	{
+		FSpGetCatInfo( dir, -1, cInfo, name );
+	}
+	
 	template < class Specifics >
 	struct FSContents_Specifics
 	{
