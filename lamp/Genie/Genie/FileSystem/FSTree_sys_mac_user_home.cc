@@ -33,15 +33,6 @@ namespace Genie
 		N::GetProcessInformation( N::CurrentProcess(), info );
 		
 		return io::get_preceding_directory( appFile );
-		
-		// FIXME:  Assumes that app doesn't call HSetVol().
-		// (We don't, but still...)
-		
-		CInfoPBRec cInfo;
-		
-		FSpGetCatInfo< FNF_Throws >( cInfo, N::FSDirSpec() );
-		
-		return Dir_From_CInfo( cInfo );
 	}
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
