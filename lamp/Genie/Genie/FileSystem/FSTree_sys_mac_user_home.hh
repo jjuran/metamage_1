@@ -21,8 +21,6 @@
 namespace Genie
 {
 	
-	void CheckForHomeFolder();
-	
 	class FSTree_sys_mac_user_home : public FSTree
 	{
 		public:

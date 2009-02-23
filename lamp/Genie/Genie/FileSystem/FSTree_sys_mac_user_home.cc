@@ -85,11 +85,6 @@ namespace Genie
 		return FindUserHomeFolder();
 	}
 	
-	void CheckForHomeFolder()
-	{
-		GetUserHomeFolder();
-	}
-	
 	
 	std::string FSTree_sys_mac_user_home::ReadLink() const
 	{
