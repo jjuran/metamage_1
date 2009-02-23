@@ -14,7 +14,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Virtual_Link::ResolveLink() const
 	{
-		return ResolvePathname( itsTarget );
+		return ResolveAbsolutePath( itsTarget );
 	}
 	
 }

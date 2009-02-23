@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_window.hh"
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -75,7 +78,7 @@ namespace Genie
 	
 	static const FSTreePtr& SysWindow()
 	{
-		static FSTreePtr sys_window = ResolvePathname( "/sys/window" );
+		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/sys/window" ) );
 		
 		return sys_window;
 	}

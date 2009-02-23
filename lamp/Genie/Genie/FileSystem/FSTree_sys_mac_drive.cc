@@ -22,7 +22,6 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Stamp_Action.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
 
 
 namespace Genie

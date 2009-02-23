@@ -16,9 +16,10 @@ namespace Genie
 	FSTreePtr SimpleDeviceHandle::GetFile() const
 	{
 		std::string deviceName = "/dev/";
+		
 		deviceName += io.name;
 		
-		return ResolvePathname( deviceName );
+		return ResolveAbsolutePath( deviceName );
 	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )

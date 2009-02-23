@@ -11,6 +11,9 @@
 // POSIX
 #include "fcntl.h"
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -43,7 +46,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return "/proc/self/fd"; }
 			
-			FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink() ); }
+			FSTreePtr ResolveLink() const  { return ResolveAbsolutePath( STR_LEN( "/proc/self/fd" ) ); }
 	};
 	
 	class FSTree_Device : public FSTree

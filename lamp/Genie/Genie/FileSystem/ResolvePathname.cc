@@ -114,21 +114,13 @@ namespace Genie
 		return link_count > 0;
 	}
 	
-	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current )
+	FSTreePtr ResolveRelativePath( const char*       begin,
+	                               std::size_t       length,
+	                               const FSTreePtr&  current )
 	{
-		const char* begin = pathname.c_str();
-		const char* end   = begin + pathname.length();
+		FSTreePtr result = current;
 		
-		const bool absolute = *begin == '/';
-		
-		if ( absolute )
-		{
-			++begin;
-		}
-		
-		FSTreePtr result = absolute ? FSRoot() : current;
-		
-		PathnameComponentIterator path( begin, end );
+		PathnameComponentIterator path( begin, begin + length );
 		
 		while ( !path.Done() )
 		{

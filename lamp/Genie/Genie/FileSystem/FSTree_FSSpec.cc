@@ -16,6 +16,9 @@
 #include "utime.h"
 #include "sys/stat.h"
 
+// Iota
+#include "iota/strings.hh"
+
 // MoreFiles
 #include "FileCopy.h"
 #include "MoreFilesExtras.h"
@@ -512,7 +515,7 @@ namespace Genie
 	
 	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		return sys_mac_vol_Details::GetChildNode( ResolvePathname( "/sys/mac/vol" ),
+		return sys_mac_vol_Details::GetChildNode( ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) ),
 		                                          VRefNum_KeyName_Traits::NameFromKey( vRefNum ),
 		                                          vRefNum );
 	}

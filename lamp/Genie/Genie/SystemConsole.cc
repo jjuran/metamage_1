@@ -30,43 +30,43 @@ namespace Genie
 	{
 		FSTreePtr window = window_dir->GetFile();
 		
-		FSTreePtr ref = ResolvePathname( "ref",  window );
+		FSTreePtr ref = ResolveRelativePath( STR_LEN( "ref" ),  window );
 		
 		if ( ref->Exists() )
 		{
 			return;
 		}
 		
-		FSTreePtr view = ResolvePathname( "view", window );
+		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), window );
 		
-		Spew( ResolvePathname( "title", window ), STR_LEN( "System Console" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "title" ), window ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( ResolvePathname( "size",  window ), STR_LEN( "495x272" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "size" ),  window ), STR_LEN( "495x272" "\n" ) );
 		
 		ref->SetTimes();
 		
-		Spew( ResolvePathname( "text-font", ref ), STR_LEN( "4" "\n" ) );
-		Spew( ResolvePathname( "text-size", ref ), STR_LEN( "9" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "text-font" ), ref ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "text-size" ), ref ), STR_LEN( "9" "\n" ) );
 		
-		ResolvePathname( "/new/scrollframe" )->HardLink( view );
+		ResolveAbsolutePath( STR_LEN( "/new/scrollframe" ) )->HardLink( view );
 		
-		FSTreePtr subview = ResolvePathname( "v", view );
+		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v" ), view );
 		
-		ResolvePathname( "/new/frame" )->HardLink( subview );
+		ResolveAbsolutePath( STR_LEN( "/new/frame" ) )->HardLink( subview );
 		
-		FSTreePtr subsubview = ResolvePathname( "v", subview );
+		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v" ), subview );
 		
-		ResolvePathname( "/new/textedit" )->HardLink( subsubview );
+		ResolveAbsolutePath( STR_LEN( "/new/textedit" ) )->HardLink( subsubview );
 		
-		ResolvePathname( "target", view )->SymLink( "v/v" );
+		ResolveRelativePath( STR_LEN( "target" ), view )->SymLink( "v/v" );
 		
-		Spew( ResolvePathname( "vertical", view    ), STR_LEN( "1" "\n" ) );
-		Spew( ResolvePathname( "margin",   subview ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "vertical" ), view    ), STR_LEN( "1" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "margin"   ), subview ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > gWindow = ResolvePathname( "/new/window" )->ChangeToDirectory();
+		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/window" ) )->ChangeToDirectory();
 		
 		MakeWindow( gWindow );
 		
@@ -75,7 +75,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleText()
 	{
-		FSTreePtr text = ResolvePathname( "view/v/v/text", GetConsoleWindow() );
+		FSTreePtr text = ResolveRelativePath( STR_LEN( "view/v/v/text" ), GetConsoleWindow() );
 		
 		return text;
 	}

@@ -320,7 +320,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
 	{
-		return ResolvePathname( ReadLink(), ParentRef() );
+		return ResolveRelativePath( ReadLink(), ParentRef() );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property::Open( OpenFlags flags ) const
@@ -485,7 +485,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_window_REF_ref::ResolveLink() const
 	{
-		return ResolvePathname( ReadLink() );
+		return ResolveAbsolutePath( ReadLink() );
 	}
 	
 	

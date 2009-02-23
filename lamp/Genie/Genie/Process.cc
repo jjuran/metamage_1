@@ -780,7 +780,7 @@ namespace Genie
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolvePathname( "/usr/bin/tlsrvr", cwd );
+			context.executable = ResolveAbsolutePath( STR_LEN( "/usr/bin/tlsrvr" ) );
 		}
 		else
 		{

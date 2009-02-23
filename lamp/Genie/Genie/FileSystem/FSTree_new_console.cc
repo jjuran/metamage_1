@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/ttycom.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/Process.hh"
@@ -339,7 +342,7 @@ namespace Genie
 	
 	static FSTreePtr MakeConsoleProxy( unsigned id )
 	{
-		FSTreePtr parent = ResolvePathname( "/dev/con" );
+		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/dev/con" ) );
 		
 		std::string name = NN::Convert< std::string >( id );
 		

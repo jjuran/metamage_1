@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_dev_gestalt.hh"
 
+// Iota
+#include "iota/strings.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 
@@ -26,7 +29,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr GetFile() const  { return ResolvePathname( "/dev/gestalt" ); }
+			FSTreePtr GetFile() const  { return ResolveAbsolutePath( STR_LEN( "/dev/gestalt" ) ); }
 			
 			unsigned int SysPoll()  { return 0; }
 			
