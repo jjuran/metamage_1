@@ -30,10 +30,12 @@ namespace Genie
 			const char* q;
 		
 		public:
-			PathnameComponentIterator( const std::string& pathname ) : pathname_begin( pathname.c_str() ),
-			                                                           pathname_end  ( pathname_begin + pathname.size() ),
-			                                                           p             ( pathname_begin ),
-			                                                           q             ( p )
+			PathnameComponentIterator( const char* begin, const char* end )
+			:
+				pathname_begin( begin ),
+				pathname_end  ( end   ),
+				p             ( begin ),
+				q             ( begin )
 			{
 				Scan();
 			}
@@ -114,16 +116,19 @@ namespace Genie
 	
 	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current )
 	{
-		PathnameComponentIterator path( pathname );
+		const char* begin = pathname.c_str();
+		const char* end   = begin + pathname.length();
 		
-		FSTreePtr result = current;
+		const bool absolute = *begin == '/';
 		
-		if ( path.Get().empty() )
+		if ( absolute )
 		{
-			result = FSRoot();
-			
-			path.Advance();
+			++begin;
 		}
+		
+		FSTreePtr result = absolute ? FSRoot() : current;
+		
+		PathnameComponentIterator path( begin, end );
 		
 		while ( !path.Done() )
 		{
