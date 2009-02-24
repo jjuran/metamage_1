@@ -193,27 +193,30 @@ namespace Genie
 	}
 	
 	
-	static void SetFileTimes( const FSSpec& file )
+	static void SetFileTimes( N::FSVolumeRefNum     vRefNum,
+	                          N::FSDirID            dirID,
+	                          const unsigned char*  name )
 	{
 		using namespace TimeOff;
 		
 		UInt32 modTime = N::GetDateTime();
 		
+		N::Str63 name_copy = name;
+		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
 		
-		N::Str63 name = file.name;
-		
-		paramBlock.hFileInfo.ioNamePtr = name;
-		paramBlock.hFileInfo.ioDirID   = file.parID;
+		paramBlock.hFileInfo.ioDirID = dirID;
 		
 		paramBlock.hFileInfo.ioFlMdDat = modTime;
 		
 		N::PBSetCatInfoSync( paramBlock );
 	}
 	
-	static void SetFileTimes( const FSSpec&          file,
+	static void SetFileTimes( N::FSVolumeRefNum      vRefNum,
+	                          N::FSDirID             dirID,
+	                          const unsigned char*   name,
 	                          const struct timeval*  access,
 	                          const struct timeval*  mod,
 	                          const struct timeval*  backup,
@@ -221,14 +224,13 @@ namespace Genie
 	{
 		using namespace TimeOff;
 		
+		N::Str63 name_copy = name;
+		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
+		FSpGetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
 		
-		N::Str63 name = file.name;
-		
-		paramBlock.hFileInfo.ioNamePtr = name;
-		paramBlock.hFileInfo.ioDirID   = file.parID;
+		paramBlock.hFileInfo.ioDirID = dirID;
 		
 		if ( creat )
 		{
@@ -388,7 +390,11 @@ namespace Genie
 	
 	void FSTree_Root::SetTimes() const
 	{
-		SetFileTimes( GetJDirectory() );
+		const FSSpec& root = GetJDirectory();
+		
+		SetFileTimes( N::FSVolumeRefNum( root.vRefNum ),
+		              N::FSDirID       ( root.parID   ),
+		              root.name );
 	}
 	
 	void FSTree_Root::SetTimes( const struct timeval* access,
@@ -396,7 +402,15 @@ namespace Genie
 	                            const struct timeval* backup,
 	                            const struct timeval* creat ) const
 	{
-		SetFileTimes( GetJDirectory(), access, mod, backup, creat );
+		const FSSpec& root = GetJDirectory();
+		
+		SetFileTimes( N::FSVolumeRefNum( root.vRefNum ),
+		              N::FSDirID       ( root.parID   ),
+		              root.name,
+		              access,
+		              mod,
+		              backup,
+		              creat );
 	}
 	
 	
@@ -682,7 +696,9 @@ namespace Genie
 	
 	void FSTree_HFS::SetTimes() const
 	{
-		SetFileTimes( itsFileSpec );
+		SetFileTimes( N::FSVolumeRefNum( itsFileSpec.vRefNum ),
+		              N::FSDirID       ( itsFileSpec.parID   ),
+		              itsFileSpec.name );
 	}
 	
 	void FSTree_HFS::SetTimes( const struct timeval* access,
@@ -690,7 +706,13 @@ namespace Genie
 	                           const struct timeval* backup,
 	                           const struct timeval* creat ) const
 	{
-		SetFileTimes( itsFileSpec, access, mod, backup, creat );
+		SetFileTimes( N::FSVolumeRefNum( itsFileSpec.vRefNum ),
+		              N::FSDirID       ( itsFileSpec.parID   ),
+		              itsFileSpec.name,
+		              access,
+		              mod,
+		              backup,
+		              creat );
 	}
 	
 	void FSTree_HFS::Delete() const
