@@ -284,16 +284,16 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	static const FSSpec& GetJDirectory()
+	static const N::FSDirSpec& GetJDirectory()
 	{
-		static FSSpec j = FindJDirectory() / "\p";
+		static N::FSDirSpec j = FindJDirectory();
 		
 		return j;
 	}
 	
 	inline bool IsRootDirectory( const FSSpec& fileSpec )
 	{
-		return fileSpec == GetJDirectory();
+		return fileSpec == GetJDirectory() / "\p";
 	}
 	
 	static FSSpec FindUsersDirectory()
@@ -400,12 +400,12 @@ namespace Genie
 	
 	void FSTree_Root::Stat( struct ::stat& sb ) const
 	{
-		StatFile( GetJDirectory(), &sb, false );
+		StatFile( GetJDirectory() / "\p", &sb, false );
 	}
 	
 	void FSTree_Root::SetTimes() const
 	{
-		const FSSpec& root = GetJDirectory();
+		const FSSpec& root = GetJDirectory() / "\p";
 		
 		SetFileTimes( N::FSVolumeRefNum( root.vRefNum ),
 		              N::FSDirID       ( root.parID   ),
@@ -417,7 +417,7 @@ namespace Genie
 	                            const struct timeval* backup,
 	                            const struct timeval* creat ) const
 	{
-		const FSSpec& root = GetJDirectory();
+		const FSSpec& root = GetJDirectory() / "\p";
 		
 		SetFileTimes( N::FSVolumeRefNum( root.vRefNum ),
 		              N::FSDirID       ( root.parID   ),
@@ -1142,7 +1142,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
 	{
-		N::FSDirSpec dir = Dir_From_FSSpec( GetJDirectory() );
+		const N::FSDirSpec& dir = GetJDirectory();
 		
 		const std::string macName = K::MacFilenameFromUnixFilename( name );
 		
@@ -1201,7 +1201,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, GetJDirectory() );
+		FSpGetCatInfo< FNF_Throws >( cInfo, GetJDirectory() / "\p" );
 		
 		IterateFilesIntoCache( cInfo, cache );
 	}
