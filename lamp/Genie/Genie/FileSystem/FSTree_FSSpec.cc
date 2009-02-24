@@ -251,20 +251,20 @@ namespace Genie
 	}
 	
 	
-	#define ROOT_DIR_NAME "j"
-	
-	static const char* const_j_directory_name = ROOT_DIR_NAME;
+	static const unsigned char* const_root_directory_name = "\p" "j";
 	
 	static N::FSDirSpec FindJDirectory()
 	{
 		CInfoPBRec cInfo;
+		
+		N::Str63 name = const_root_directory_name;  // overkill
 		
 		// Try current directory first
 		
 		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo,
 		                                                  N::FSVolumeRefNum(),
 		                                                  N::FSDirID(),
-		                                                  "\p" ROOT_DIR_NAME );
+		                                                  name );
 		
 		if ( exists )
 		{
@@ -278,7 +278,7 @@ namespace Genie
 			FSpGetCatInfo< FNF_Throws >( cInfo,
 			                             root.vRefNum,
 			                             root.dirID,
-			                             "\p" ROOT_DIR_NAME );
+			                             name );
 		}
 		
 		return Dir_From_CInfo( cInfo );
@@ -289,11 +289,6 @@ namespace Genie
 		static N::FSDirSpec j = FindJDirectory();
 		
 		return j;
-	}
-	
-	inline bool IsRootDirectory( const FSSpec& fileSpec )
-	{
-		return fileSpec == GetJDirectory() / "\p";
 	}
 	
 	static FSSpec FindUsersDirectory()
@@ -580,20 +575,6 @@ namespace Genie
 			ino_t Inode() const  { return fsRtParID; }
 	};
 	
-	
-	class FSTree_J_Symlink : public FSTree
-	{
-		public:
-			FSTree_J_Symlink( const FSTreePtr& parent ) : FSTree( parent, const_j_directory_name )
-			{
-			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return "/"; }
-			
-			FSTreePtr ResolveLink() const  { return FSRoot(); }
-	};
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
@@ -1189,14 +1170,7 @@ namespace Genie
 		
 		const FSSpec item = dir / macName;
 		
-		const bool is_root = IsRootDirectory( item );
-		
-		typedef FSTree* Ptr;
-		
-		Ptr ptr = is_root ? Ptr( new FSTree_J_Symlink( shared_from_this() ) )
-		                  : Ptr( new FSTree_HFS      ( item, name         ) );
-		
-		return FSTreePtr( ptr );
+		return FSTreePtr( new FSTree_HFS( item, name ) );
 	}
 	
 	static void IterateFilesIntoCache( CInfoPBRec&   pb,
