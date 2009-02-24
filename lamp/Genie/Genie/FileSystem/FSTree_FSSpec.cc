@@ -251,27 +251,42 @@ namespace Genie
 	}
 	
 	
-	static const char* const_j_directory_name = "j";
+	#define ROOT_DIR_NAME "j"
 	
-	static FSSpec FindJDirectory()
+	static const char* const_j_directory_name = ROOT_DIR_NAME;
+	
+	static N::FSDirSpec FindJDirectory()
 	{
-		// Try current directory first
-		FSSpec j =  N::FSDirSpec() / const_j_directory_name;
+		CInfoPBRec cInfo;
 		
-		if ( !io::directory_exists( j ) )
+		// Try current directory first
+		
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo,
+		                                                  N::FSVolumeRefNum(),
+		                                                  N::FSDirID(),
+		                                                  "\p" ROOT_DIR_NAME );
+		
+		if ( exists )
+		{
+			cInfo.dirInfo.ioVRefNum = DetermineVRefNum( NULL, N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
+		}
+		else
 		{
 			// Then root, or bust
-			j = io::system_root< N::FSDirSpec >() / const_j_directory_name;
+			N::FSDirSpec root = io::system_root< N::FSDirSpec >();
 			
-			(void) Dir_From_FSSpec( j );  // throws if not a dir
+			FSpGetCatInfo< FNF_Throws >( cInfo,
+			                             root.vRefNum,
+			                             root.dirID,
+			                             "\p" ROOT_DIR_NAME );
 		}
 		
-		return j;
+		return Dir_From_CInfo( cInfo );
 	}
 	
 	static const FSSpec& GetJDirectory()
 	{
-		static FSSpec j = FindJDirectory();
+		static FSSpec j = FindJDirectory() / "\p";
 		
 		return j;
 	}
