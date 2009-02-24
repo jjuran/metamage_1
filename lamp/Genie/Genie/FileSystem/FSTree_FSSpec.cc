@@ -345,11 +345,6 @@ namespace Genie
 			return "mnt";
 		}
 		
-		if ( IsRootDirectory( fileSpec ) )
-		{
-			return "";
-		}
-		
 		return GetUnixName( fileSpec );
 	}
 	
@@ -696,7 +691,7 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( IsRootDirectory( itsFileSpec ) || itsFileSpec == GetUsersDirectory() )
+		if ( itsFileSpec == GetUsersDirectory() )
 		{
 			return FSRoot();
 		}
