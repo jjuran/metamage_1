@@ -1181,10 +1181,14 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
 	{
-		if ( IsRootDirectory( itsFileSpec )  ||  name_is_special( begin, std::find( begin, end, '/' ) ) )
+		if (     IsRootDirectory( itsFileSpec )
+		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
+		     ||  RunningInClassic::Test() )
 		{
-			// Either we're the root dir (which allows mount points) or the name
-			// requires special handling.
+			// Special handling required for
+			// * root directory, which has mapped overlays
+			// * dot, dotdot, colons, and long names
+			// * running in Classic, which has broken PBGetCatInfoAsync()
 			
 			return FSTree::ResolvePath( begin, end );
 		}
