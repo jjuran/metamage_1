@@ -91,15 +91,15 @@ namespace Genie
 	               Nitrogen::FSVolumeRefNum  vRefNum,
 	               Nitrogen::FSDirID         dirID,
 	               const unsigned char*      name,
-	               bool                      wantRsrcFork )
+	               bool                      is_rsrc_fork )
 	{
 		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
 		N::Str255 name_copy = name != NULL ? name : "\p";
 		
-		CInfoPBRec paramBlock;
+		CInfoPBRec cInfo;
 		
-		if ( !FSpGetCatInfo< FNF_Returns >( paramBlock, vRefNum, dirID, name_copy ) )
+		if ( !FSpGetCatInfo< FNF_Returns >( cInfo, vRefNum, dirID, name_copy ) )
 		{
 			// Treating this specially (a) prevents a stack crawl, and
 			// (b) doesn't pass through ThrowOSStatus_Internal(), which
@@ -107,35 +107,35 @@ namespace Genie
 			throw N::FNFErr();
 		}
 		
-		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		
-		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
 		sb->st_dev = -hFileInfo.ioVRefNum;  // inverted vRefNum (positive integer) for device
 		sb->st_ino = hFileInfo.ioDirID;     // file or dir ID for inode
 		sb->st_mode = GetItemMode( hFileInfo );
 		// dirs: # of items (including . and ..)
 		// files: # of hard links (always one, for now)
-		sb->st_nlink = isDir ? paramBlock.dirInfo.ioDrNmFls + 2: 1;
+		sb->st_nlink = is_dir ? cInfo.dirInfo.ioDrNmFls + 2: 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
 		sb->st_rdev = 0;
 		// logical fork length in bytes
-		sb->st_size = isDir ? 0
-		                    : wantRsrcFork ? hFileInfo.ioFlRLgLen
-		                                   : hFileInfo.ioFlLgLen;
+		sb->st_size = is_dir ? 0
+		                     : is_rsrc_fork ? hFileInfo.ioFlRLgLen
+		                                    : hFileInfo.ioFlLgLen;
 		// preferred I/O blocking factor for buffering
 		sb->st_blksize = 4096;
 		// physical fork length in 512-byte blocks
-		sb->st_blocks = isDir ? 0
-		                      : (wantRsrcFork ? hFileInfo.ioFlRPyLen
-		                                      : hFileInfo.ioFlPyLen) / 512;
+		sb->st_blocks = is_dir ? 0
+		                       : (is_rsrc_fork ? hFileInfo.ioFlRPyLen
+		                                       : hFileInfo.ioFlPyLen) / 512;
 		// time of last access:  pretend mod time; provide backup stamp for rsrc.
-		sb->st_atime = (wantRsrcFork ? hFileInfo.ioFlBkDat : hFileInfo.ioFlMdDat) - timeDiff;
+		sb->st_atime = (is_rsrc_fork ? hFileInfo.ioFlBkDat : hFileInfo.ioFlMdDat) - timeDiff;
 		// time of last modification.
 		sb->st_mtime =                                       hFileInfo.ioFlMdDat  - timeDiff;
 		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
-		sb->st_ctime = (wantRsrcFork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
+		sb->st_ctime = (is_rsrc_fork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
 	}
 	
 	
