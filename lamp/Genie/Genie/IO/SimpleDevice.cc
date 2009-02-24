@@ -7,7 +7,6 @@
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/FileSystem/StatFile.hh"
 
 
 namespace Genie
