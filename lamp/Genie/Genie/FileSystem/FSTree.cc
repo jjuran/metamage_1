@@ -331,6 +331,26 @@ namespace Genie
 		return FSIteratorPtr();
 	}
 	
+	FSTreePtr FSTree::ResolvePath( const char*& begin, const char* end ) const
+	{
+		if ( begin == end )
+		{
+			return shared_from_this();
+		}
+		
+		ASSERT( begin < end );
+		
+		const char* slash = std::find( begin, end, '/' );
+		
+		const bool done = slash == end;
+		
+		std::string name( begin, slash );
+		
+		begin = slash + !done;
+		
+		return Lookup( name );
+	}
+	
 	void FSTree::Attach( const FSTreePtr& target ) const
 	{
 		p7::throw_errno( EINVAL );

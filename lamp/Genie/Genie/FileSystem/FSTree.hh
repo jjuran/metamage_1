@@ -160,6 +160,8 @@ namespace Genie
 			
 			// Internal methods
 			
+			virtual FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
+			
 			virtual void Attach( const FSTreePtr& target ) const;
 	};
 	
