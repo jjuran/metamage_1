@@ -773,14 +773,14 @@ namespace Genie
 			
 			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
 			
-			context.argVector[ 0 ] = "/usr/bin/tlsrvr";
+			context.argVector[ 0 ] = "/Developer/Tools/tlsrvr";
 			context.argVector[ 1 ] = "--escape";
 			context.argVector[ 2 ] = "--";
 			context.argVector[ 3 ] = context.scriptPath.c_str();  // Overwrite with full pathname
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolveAbsolutePath( STR_LEN( "/usr/bin/tlsrvr" ) );
+			context.executable = ResolveAbsolutePath( STR_LEN( "/Developer/Tools/tlsrvr" ) );
 		}
 		else
 		{
