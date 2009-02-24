@@ -59,6 +59,7 @@
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 #include "Genie/FileSystem/FSTree_new.hh"
 #include "Genie/FileSystem/FSTree_sys.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_errata.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
