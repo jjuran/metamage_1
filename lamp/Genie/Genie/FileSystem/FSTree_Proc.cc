@@ -486,12 +486,12 @@ namespace Genie
 			Key itsHandle;
 		
 		public:
-			FSTree_MagicFileReference( const Key& io ) : itsHandle( io )
+			FSTree_MagicFileReference( const Key& io )
+			:
+				FSTree( FSTreePtr(), io->GetFile()->Name() ),
+				itsHandle( io )
 			{
 			}
-			
-			std::string Name    () const  { return itsHandle->GetFile()->Name    (); }
-			std::string Pathname() const  { return itsHandle->GetFile()->Pathname(); }
 			
 			FSTreePtr Parent() const  { return itsHandle->GetFile()->Parent(); }
 			
