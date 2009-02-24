@@ -306,7 +306,7 @@ namespace Genie
 			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		return boost::shared_ptr< IOHandle >( new DirHandle( shared_from_this() ) );
+		return boost::shared_ptr< IOHandle >( new DirHandle( Self() ) );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree::ChangeToDirectory() const
@@ -339,7 +339,7 @@ namespace Genie
 	{
 		if ( begin == end )
 		{
-			return shared_from_this();
+			return Self();
 		}
 		
 		ASSERT( begin < end );

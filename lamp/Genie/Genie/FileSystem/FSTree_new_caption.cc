@@ -198,7 +198,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Caption_text::Open( OpenFlags flags ) const
 	{
-		IOHandle* result = new CaptionTextFileHandle( shared_from_this(), flags );
+		IOHandle* result = new CaptionTextFileHandle( Self(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}

@@ -229,12 +229,12 @@ namespace Genie
 		{
 			std::string data = join_strings( gListParameterMap[ ParentRef().get() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( shared_from_this(), flags, data );
+			result = new PropertyReaderFileHandle( Self(), flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( shared_from_this(), flags );
+			result = new List_data_Handle( Self(), flags );
 		}
 		else
 		{

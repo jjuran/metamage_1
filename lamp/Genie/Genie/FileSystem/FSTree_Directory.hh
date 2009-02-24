@@ -139,7 +139,7 @@ namespace Genie
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return itsDetails.GetChildNode( shared_from_this(), name, key );
+				return itsDetails.GetChildNode( Self(), name, key );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -173,7 +173,7 @@ namespace Genie
 	template < class Details >
 	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IteratorConverter< Details > converter( shared_from_this(), itsDetails );
+		IteratorConverter< Details > converter( Self(), itsDetails );
 		
 		typename Details::Sequence sequence = itsDetails.ItemSequence();
 		

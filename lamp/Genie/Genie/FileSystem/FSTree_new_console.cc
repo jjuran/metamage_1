@@ -542,7 +542,7 @@ namespace Genie
 	
 	void FSTree_Console_tty::Rename( const FSTreePtr& destination ) const
 	{
-		destination->Attach( shared_from_this() );
+		destination->Attach( Self() );
 	}
 	
 	boost::shared_ptr< IOHandle >
@@ -553,7 +553,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( shared_from_this(), id ) );
+		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( Self(), id ) );
 		
 		GetDynamicGroup< ConsoleTTYHandle >()[ id ] = result;
 		

@@ -123,7 +123,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_TextEdit_text::Open( OpenFlags flags ) const
 	{
-		IOHandle* result = new TextEdit_text_Handle( shared_from_this(), flags );
+		IOHandle* result = new TextEdit_text_Handle( Self(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}

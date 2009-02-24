@@ -167,7 +167,7 @@ namespace Genie
 		
 		const Function& f = it->second->f;
 		
-		return f( shared_from_this(), name );
+		return f( Self(), name );
 	}
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
@@ -184,7 +184,7 @@ namespace Genie
 			{
 				if ( it->second->needs_check )
 				{
-					FSTreePtr file = f( shared_from_this(), name );
+					FSTreePtr file = f( Self(), name );
 					
 					if ( !file->Exists() )
 					{

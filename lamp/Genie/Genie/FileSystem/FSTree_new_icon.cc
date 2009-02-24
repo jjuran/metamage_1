@@ -231,7 +231,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Icon_data::Open( OpenFlags flags ) const
 	{
-		IOHandle* result = new IconDataFileHandle( shared_from_this(), flags );
+		IOHandle* result = new IconDataFileHandle( Self(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}

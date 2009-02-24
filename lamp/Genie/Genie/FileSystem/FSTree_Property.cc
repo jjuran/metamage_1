@@ -66,7 +66,7 @@ namespace Genie
 		{
 		}
 		
-		return new PropertyReaderFileHandle( shared_from_this(),
+		return new PropertyReaderFileHandle( Self(),
 		                                     flags,
 		                                     data );
 	}
@@ -80,7 +80,7 @@ namespace Genie
 		
 		const bool binary = flags & O_BINARY;
 		
-		return new PropertyWriterFileHandle( shared_from_this(),
+		return new PropertyWriterFileHandle( Self(),
 		                                     flags,
 		                                     itsWriteHook,
 		                                     binary );

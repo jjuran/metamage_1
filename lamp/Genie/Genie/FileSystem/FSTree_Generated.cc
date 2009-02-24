@@ -35,7 +35,7 @@ namespace Genie
 		
 		std::string data = itsReadHook( this );
 		
-		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( shared_from_this(),
+		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( Self(),
 		                                                                    flags,
 		                                                                    data ) );
 	}

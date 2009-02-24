@@ -352,7 +352,7 @@ namespace Genie
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
 			
-			FSTreePtr Parent() const  { return shared_from_this(); }
+			FSTreePtr Parent() const  { return Self(); }
 			
 			ino_t ParentInode() const  { return Inode(); }
 			
@@ -987,7 +987,7 @@ namespace Genie
 		
 		if ( !exists )
 		{
-			//return shared_from_this();
+			//return Self();
 		}
 		else if ( const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
@@ -1007,7 +1007,7 @@ namespace Genie
 			return FSTreeFromFSSpec( target );
 		}
 		
-		return shared_from_this();
+		return Self();
 	}
 	
 	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
@@ -1055,7 +1055,7 @@ namespace Genie
 	
 	void FSTree_HFS::SymLink( const std::string& target ) const
 	{
-		CreateSymLink( shared_from_this(), target );
+		CreateSymLink( Self(), target );
 	}
 	
 	void FSTree_HFS::CreateFile() const
@@ -1346,7 +1346,7 @@ namespace Genie
 		
 		if ( begin == end )
 		{
-			return shared_from_this();
+			return Self();
 		}
 		
 		ASSERT( begin < end );
