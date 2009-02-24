@@ -947,14 +947,22 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
-		if ( !Exists() )
+		CInfoPBRec cInfo;
+		
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, GetFSSpec() );
+		
+		if ( !exists )
 		{
-			return shared_from_this();
+			//return shared_from_this();
+		}
+		else if ( cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias )
+		{
+			FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
+			
+			return FSTreeFromFSSpec( target );
 		}
 		
-		FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
-		
-		return FSTreeFromFSSpec( target );
+		return shared_from_this();
 	}
 	
 	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
