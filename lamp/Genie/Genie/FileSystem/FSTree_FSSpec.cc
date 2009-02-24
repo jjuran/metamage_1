@@ -682,6 +682,13 @@ namespace Genie
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( itsFileSpec.vRefNum ) );
 		}
 		
+		const N::FSDirSpec& root = GetJDirectory();
+		
+		if ( itsFileSpec.vRefNum == root.vRefNum  &&  itsFileSpec.parID == root.dirID )
+		{
+			return FSRoot();
+		}
+		
 		if ( IsRootDirectory( itsFileSpec ) || itsFileSpec == GetUsersDirectory() )
 		{
 			return FSRoot();
@@ -702,6 +709,13 @@ namespace Genie
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
 		StatFile( GetFSSpec(), &sb, false );
+		
+		const N::FSDirSpec& root = GetJDirectory();
+		
+		if ( itsFileSpec.vRefNum == root.vRefNum  &&  sb.st_ino == root.dirID )
+		{
+			sb.st_mode += S_IFLNK - S_IFDIR;
+		}
 	}
 	
 	void FSTree_HFS::ChangeMode( mode_t mode ) const
@@ -991,6 +1005,17 @@ namespace Genie
 		if ( !exists )
 		{
 			//return shared_from_this();
+		}
+		else if ( const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask )
+		{
+			const N::FSDirSpec& root = GetJDirectory();
+			
+			const DirInfo& dirInfo = cInfo.dirInfo;
+			
+			if ( dirInfo.ioVRefNum == root.vRefNum  &&  dirInfo.ioDrDirID == root.dirID )
+			{
+				return FSRoot();
+			}
 		}
 		else if ( cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias )
 		{
