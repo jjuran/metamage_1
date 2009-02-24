@@ -1129,16 +1129,11 @@ namespace Genie
 		return FSTreePtr( ptr );
 	}
 	
-	static void IterateFilesIntoCache( const FSSpec& dir, FSTreeCache& cache )
+	static void IterateFilesIntoCache( CInfoPBRec&   pb,
+	                                   FSTreeCache&  cache )
 	{
-		CInfoPBRec pb;
-		
-		FSpGetCatInfo< FNF_Throws >( pb, dir );
-		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
 		N::FSDirID        dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
-		
-		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
 		
 		for ( UInt16 i = 1;  ;  ++i )
 		{
@@ -1159,12 +1154,20 @@ namespace Genie
 	
 	void FSTree_Root::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IterateFilesIntoCache( GetJDirectory(), cache );
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, GetJDirectory() );
+		
+		IterateFilesIntoCache( cInfo, cache );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IterateFilesIntoCache( GetFSSpec(), cache );
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, GetFSSpec() );
+		
+		IterateFilesIntoCache( cInfo, cache );
 	}
 	
 	struct ResolvePath_CInfoPBRec : CInfoPBRec
