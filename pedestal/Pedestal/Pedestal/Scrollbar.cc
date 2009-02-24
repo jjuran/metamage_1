@@ -39,6 +39,11 @@ namespace Pedestal
 	
 	void Scrollbar::Activate( bool activating )
 	{
+		if ( itsControl == NULL )
+		{
+			return;
+		}
+		
 		if ( activating )
 		{
 			//N::ShowControl( itsControl );
