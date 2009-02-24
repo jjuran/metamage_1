@@ -46,6 +46,9 @@
 // Kerosene
 #include "MacFilenameFromUnixFilename.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/FSSpec.hh"
@@ -70,6 +73,7 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace K = Kerosene;
+	namespace Ped = Pedestal;
 	
 	
 	namespace path_descent_operators
@@ -333,6 +337,8 @@ namespace Genie
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
+			
+			FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
 		
 		private:
 			void CreateFile() const;
@@ -1060,6 +1066,180 @@ namespace Genie
 			
 			cache.push_back( node );
 		}
+	}
+	
+	struct ResolvePath_CInfoPBRec : CInfoPBRec
+	{
+		N::Str63       name;
+		const char*    begin;
+		const char*    end;
+		volatile bool  done;
+	};
+	
+	static bool name_is_special( const char* begin, const char* end )
+	{
+		const unsigned name_length = end - begin;
+		
+		if ( name_length > 31 )
+		{
+			return true;
+		}
+		else if ( const bool dot = begin[0] == '.' )
+		{
+			const bool two_dots = begin[1] == '.';
+			
+			if ( const bool thats_it = 1 + two_dots == name_length )
+			{
+				return true;
+			}
+		}
+		else if ( std::find( begin, end, ':' ) != end )
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	static pascal void ResolvePath_Completion( ParamBlockRec* pb )
+	{
+		ResolvePath_CInfoPBRec& cInfo = *(ResolvePath_CInfoPBRec*) pb;
+		
+		if ( cInfo.dirInfo.ioResult < 0 )
+		{
+			goto done;
+		}
+		
+		const char* begin = cInfo.begin;
+		
+		if ( begin == cInfo.end )
+		{
+			goto done;
+		}
+		
+		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		if ( !is_dir )
+		{
+			const bool is_alias = cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+			
+			if ( !is_alias )
+			{
+				// I wanted a dir but you gave me a file.  You creep.
+				cInfo.dirInfo.ioResult = errFSNotAFolder;
+			}
+			
+			goto done;
+		}
+		
+		const char* slash = std::find( begin, cInfo.end, '/' );
+		
+		if ( name_is_special( begin, slash ) )
+		{
+			goto done;
+		}
+		
+		const unsigned name_length = slash - begin;
+		
+		cInfo.name[ 0 ] = name_length;
+		
+		std::copy( begin, slash, &cInfo.name[1] );
+		
+		cInfo.begin = slash + (slash != cInfo.end);
+		
+		OSErr err = ::PBGetCatInfoAsync( &cInfo );
+		
+		if ( cInfo.dirInfo.ioResult >= 0 )
+		{
+			// Successfully queued
+			return;
+		}
+		
+		// We don't know if this was queued or not, so set done below
+		
+	done:
+		
+		cInfo.done = true;
+		
+		Ped::WakeUp();
+	}
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	static pascal asm void ResolvePath_Completion_68K()
+	{
+		MOVE.L (SP),-(SP)
+		MOVE.L A0,4(SP)
+		BRA    ResolvePath_Completion
+	}
+	
+	static ::IOCompletionUPP gResolvePathCompletion = ResolvePath_Completion_68K;
+	
+#else
+	
+	static ::IOCompletionUPP gResolvePathCompletion = ::NewIOCompletionUPP( ResolvePath_Completion );
+	
+#endif
+	
+	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
+	{
+		if ( IsRootDirectory( itsFileSpec )  ||  name_is_special( begin, std::find( begin, end, '/' ) ) )
+		{
+			// Either we're the root dir (which allows mount points) or the name
+			// requires special handling.
+			
+			return FSTree::ResolvePath( begin, end );
+		}
+		
+		if ( begin == end )
+		{
+			return shared_from_this();
+		}
+		
+		ASSERT( begin < end );
+		
+		ResolvePath_CInfoPBRec cInfo;
+		
+		DirInfo& dirInfo = cInfo.dirInfo;
+		
+		dirInfo.ioCompletion = gResolvePathCompletion;
+		
+		dirInfo.ioNamePtr   = cInfo.name;
+		dirInfo.ioVRefNum   = itsFileSpec.vRefNum;
+		dirInfo.ioDrDirID   = itsFileSpec.parID;
+		dirInfo.ioFDirIndex = 0;
+		
+		cInfo.name = itsFileSpec.name;
+		
+		cInfo.begin = begin;
+		cInfo.end   = end;
+		cInfo.done  = false;
+		
+		N::PBGetCatInfoAsync( cInfo, FNF_Returns() );
+		
+		while ( !cInfo.done )
+		{
+			AsyncYield();
+		}
+		
+		begin = cInfo.begin;
+		
+		ASSERT( dirInfo.ioResult <= 0 );
+		
+		const bool nonexistent = dirInfo.ioResult == fnfErr  && begin == end;
+		
+		if ( !nonexistent )
+		{
+			N::ThrowOSStatus( dirInfo.ioResult );
+		}
+		
+		const SInt32 dirID = nonexistent ? dirInfo.ioDrDirID : dirInfo.ioDrParID;
+		
+		FSSpec result = { dirInfo.ioVRefNum, dirID };
+		
+		N::CopyToPascalString( cInfo.name, result.name, sizeof result.name - 1 );
+		
+		return FSTreeFromFSSpec( result );
 	}
 	
 	void FSTree_HFS::FinishCreation() const
