@@ -87,13 +87,19 @@ namespace Genie
 		return mode;
 	}
 	
-	void StatFile( const FSSpec& file, struct stat* sb, bool wantRsrcFork )
+	void Stat_HFS( struct ::stat*            sb,
+	               Nitrogen::FSVolumeRefNum  vRefNum,
+	               Nitrogen::FSDirID         dirID,
+	               const unsigned char*      name,
+	               bool                      wantRsrcFork )
 	{
 		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
+		N::Str255 name_copy = name != NULL ? name : "\p";
+		
 		CInfoPBRec paramBlock;
 		
-		if ( !FSpGetCatInfo< FNF_Returns >( paramBlock, file ) )
+		if ( !FSpGetCatInfo< FNF_Returns >( paramBlock, vRefNum, dirID, name_copy ) )
 		{
 			// Treating this specially (a) prevents a stack crawl, and
 			// (b) doesn't pass through ThrowOSStatus_Internal(), which
