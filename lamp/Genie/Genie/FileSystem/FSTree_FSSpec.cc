@@ -660,7 +660,14 @@ namespace Genie
 			
 			const bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 			
-			const bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+			if ( isDir )
+			{
+				const N::FSDirSpec& root = GetJDirectory();
+				
+				return hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
+			}
+			
+			const bool isAlias = hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
 			
 			return isAlias;
 		}
