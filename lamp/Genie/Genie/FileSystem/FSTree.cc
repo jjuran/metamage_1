@@ -65,7 +65,7 @@ namespace Genie
 	
 	std::string FSTree::Pathname() const
 	{
-		std::string name = Name();
+		const std::string& name = Name();
 		
 		// Root dir has empty name
 		
