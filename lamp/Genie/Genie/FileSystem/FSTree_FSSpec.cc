@@ -948,13 +948,11 @@ namespace Genie
 			
 			N::Str255 actualName = itsFileSpec.name;
 			
-			NN::Initialize< CInfoPBRec >( cInfo,
-			                              N::FSVolumeRefNum( itsFileSpec.vRefNum ),
-			                              N::FSDirID       ( itsFileSpec.parID   ),
-			                              actualName,
-			                              0 );
-			
-			const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() );
+			const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo,
+			                                                  N::FSVolumeRefNum( itsFileSpec.vRefNum ),
+			                                                  N::FSDirID       ( itsFileSpec.parID   ),
+			                                                  actualName,
+			                                                  0 );
 			
 			if ( !exists )
 			{
