@@ -65,23 +65,27 @@ namespace Genie
 	
 	std::string FSTree::Pathname() const
 	{
-		const std::string& name = Name();
+		std::string pathname = Name();
 		
-		// Root dir has empty name
+		FSTreePtr tree = Parent();
 		
-		if ( name.empty() )
+		while ( true )
 		{
-			return "/";
+			const std::string& name = tree->Name();
+			
+			pathname = name + "/" + pathname;
+			
+			// Root dir has empty name
+			
+			if ( name.empty() )
+			{
+				break;
+			}
+			
+			tree = tree->Parent();
 		}
 		
-		std::string parentPathname = Parent()->Pathname();
-		
-		if ( parentPathname != "/" )
-		{
-			parentPathname += "/";
-		}
-		
-		return parentPathname += name;
+		return pathname;
 	}
 	
 	
