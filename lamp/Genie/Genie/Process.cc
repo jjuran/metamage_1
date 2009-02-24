@@ -40,9 +40,6 @@
 // Backtrace
 #include "Backtrace/Backtrace.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
@@ -646,6 +643,32 @@ namespace Genie
 		}
 		
 	}
+	
+	
+	static std::string GetMacPathname( const N::FSDirSpec& dir );
+	
+	static std::string GetMacPathname_Internal( const FSSpec& file )
+	{
+		std::string filename = NN::Convert< std::string >( file.name );
+		
+		if ( file.parID == fsRtParID )
+		{
+			return filename;
+		}
+		
+		return GetMacPathname( io::get_preceding_directory( file ) ) + filename;
+	}
+
+	static std::string GetMacPathname( const N::FSDirSpec& dir )
+	{
+		return GetMacPathname_Internal( FSMakeFSSpec< FNF_Throws >( dir, "\p" ) ) + ":";
+	}
+
+	static std::string GetMacPathname( const FSSpec& file )
+	{
+		return GetMacPathname_Internal( file );
+	}
+	
 	
 	struct ExecContext
 	{
