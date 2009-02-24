@@ -351,8 +351,6 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			void ChangeMode( mode_t mode ) const;
-			
 			void SetTimes() const;
 			
 			void SetTimes( const struct timeval* access,
@@ -386,11 +384,6 @@ namespace Genie
 	void FSTree_Root::Stat( struct ::stat& sb ) const
 	{
 		StatFile( GetJDirectory(), &sb, false );
-	}
-	
-	void FSTree_Root::ChangeMode( mode_t mode ) const
-	{
-		ChangeFileMode( GetJDirectory(), mode );
 	}
 	
 	void FSTree_Root::SetTimes() const
