@@ -193,6 +193,62 @@ namespace Genie
 	}
 	
 	
+	static void SetFileTimes( const FSSpec& file )
+	{
+		using namespace TimeOff;
+		
+		UInt32 modTime = N::GetDateTime();
+		
+		CInfoPBRec paramBlock;
+		
+		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
+		
+		N::Str63 name = file.name;
+		
+		paramBlock.hFileInfo.ioNamePtr = name;
+		paramBlock.hFileInfo.ioDirID   = file.parID;
+		
+		paramBlock.hFileInfo.ioFlMdDat = modTime;
+		
+		N::PBSetCatInfoSync( paramBlock );
+	}
+	
+	static void SetFileTimes( const FSSpec&          file,
+	                          const struct timeval*  access,
+	                          const struct timeval*  mod,
+	                          const struct timeval*  backup,
+	                          const struct timeval*  creat )
+	{
+		using namespace TimeOff;
+		
+		CInfoPBRec paramBlock;
+		
+		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
+		
+		N::Str63 name = file.name;
+		
+		paramBlock.hFileInfo.ioNamePtr = name;
+		paramBlock.hFileInfo.ioDirID   = file.parID;
+		
+		if ( creat )
+		{
+			paramBlock.hFileInfo.ioFlCrDat = creat->tv_sec + MacToUnixTimeDifference();
+		}
+		
+		if ( mod )
+		{
+			paramBlock.hFileInfo.ioFlMdDat = mod->tv_sec + MacToUnixTimeDifference();
+		}
+		
+		if ( backup )
+		{
+			paramBlock.hFileInfo.ioFlBkDat = backup->tv_sec + MacToUnixTimeDifference();
+		}
+		
+		N::PBSetCatInfoSync( paramBlock );
+	}
+	
+	
 	static const char* const_j_directory_name = "j";
 	
 	static FSSpec FindJDirectory()
@@ -281,7 +337,77 @@ namespace Genie
 	}
 	
 	
-	class FSTree_HFS : public FSTree_Mappable
+	class FSTree_Root : public FSTree_Mappable
+	{
+		public:
+			FSTree_Root();
+			
+			bool IsFile     () const  { return false; }
+			bool IsDirectory() const  { return true;  }
+			
+			FSTreePtr Parent() const  { return shared_from_this(); }
+			
+			ino_t ParentInode() const  { return Inode(); }
+			
+			void Stat( struct ::stat& sb ) const;
+			
+			void ChangeMode( mode_t mode ) const;
+			
+			void SetTimes() const;
+			
+			void SetTimes( const struct timeval* access,
+			               const struct timeval* mod,
+			               const struct timeval* backup,
+			               const struct timeval* creat ) const;
+			
+			ino_t Inode() const;
+			
+			FSTreePtr Lookup_Regular( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
+	
+	FSTree_Root::FSTree_Root()
+	:
+		FSTree_Mappable( FSTreePtr(), "" )
+	{
+		// we override Parent()
+	}
+	
+	ino_t FSTree_Root::Inode() const
+	{
+		struct ::stat sb;
+		
+		Stat( sb );
+		
+		return sb.st_ino;
+	}
+	
+	void FSTree_Root::Stat( struct ::stat& sb ) const
+	{
+		StatFile( GetJDirectory(), &sb, false );
+	}
+	
+	void FSTree_Root::ChangeMode( mode_t mode ) const
+	{
+		ChangeFileMode( GetJDirectory(), mode );
+	}
+	
+	void FSTree_Root::SetTimes() const
+	{
+		SetFileTimes( GetJDirectory() );
+	}
+	
+	void FSTree_Root::SetTimes( const struct timeval* access,
+	                            const struct timeval* mod,
+	                            const struct timeval* backup,
+	                            const struct timeval* creat ) const
+	{
+		SetFileTimes( GetJDirectory(), access, mod, backup, creat );
+	}
+	
+	
+	class FSTree_HFS : public FSTree_Directory
 	{
 		private:
 			FSSpec itsFileSpec;
@@ -335,7 +461,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup_Regular( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -350,9 +476,9 @@ namespace Genie
 	FSTree_HFS::FSTree_HFS( const FSSpec&       file,
 	                        const std::string&  name )
 	:
-		FSTree_Mappable( FSTreePtr(), name.empty() ? MakeName( file )
-		                                           : name ),
-		itsFileSpec    ( file                             )
+		FSTree_Directory( FSTreePtr(), name.empty() ? MakeName( file )
+		                                            : name ),
+		itsFileSpec     ( file                             )
 	{
 		// we override Parent()
 	}
@@ -460,9 +586,9 @@ namespace Genie
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
-		FSTree_HFS* tree = NULL;
+		FSTree_Root* tree = NULL;
 		
-		static FSTreePtr result = FSTreePtr( tree = new FSTree_HFS( GetJDirectory() ) );
+		static FSTreePtr result = FSTreePtr( tree = new FSTree_Root() );
 		
 		if ( tree != NULL )
 		{
@@ -563,22 +689,7 @@ namespace Genie
 	
 	void FSTree_HFS::SetTimes() const
 	{
-		using namespace TimeOff;
-		
-		UInt32 modTime = N::GetDateTime();
-		
-		CInfoPBRec paramBlock;
-		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, itsFileSpec );
-		
-		N::Str63 name = itsFileSpec.name;
-		
-		paramBlock.hFileInfo.ioNamePtr = name;
-		paramBlock.hFileInfo.ioDirID   = itsFileSpec.parID;
-		
-		paramBlock.hFileInfo.ioFlMdDat = modTime;
-		
-		N::PBSetCatInfoSync( paramBlock );
+		SetFileTimes( itsFileSpec );
 	}
 	
 	void FSTree_HFS::SetTimes( const struct timeval* access,
@@ -586,33 +697,7 @@ namespace Genie
 	                           const struct timeval* backup,
 	                           const struct timeval* creat ) const
 	{
-		using namespace TimeOff;
-		
-		CInfoPBRec paramBlock;
-		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, itsFileSpec );
-		
-		N::Str63 name = itsFileSpec.name;
-		
-		paramBlock.hFileInfo.ioNamePtr = name;
-		paramBlock.hFileInfo.ioDirID   = itsFileSpec.parID;
-		
-		if ( creat )
-		{
-			paramBlock.hFileInfo.ioFlCrDat = creat->tv_sec + MacToUnixTimeDifference();
-		}
-		
-		if ( mod )
-		{
-			paramBlock.hFileInfo.ioFlMdDat = mod->tv_sec + MacToUnixTimeDifference();
-		}
-		
-		if ( backup )
-		{
-			paramBlock.hFileInfo.ioFlBkDat = backup->tv_sec + MacToUnixTimeDifference();
-		}
-		
-		N::PBSetCatInfoSync( paramBlock );
+		SetFileTimes( itsFileSpec, access, mod, backup, creat );
 	}
 	
 	void FSTree_HFS::Delete() const
@@ -1016,7 +1101,19 @@ namespace Genie
 		FinishCreation();
 	}
 	
-	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
+	
+	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
+	{
+		N::FSDirSpec dir = Dir_From_FSSpec( GetJDirectory() );
+		
+		const std::string macName = K::MacFilenameFromUnixFilename( name );
+		
+		const FSSpec item = dir / macName;
+		
+		return FSTreePtr( new FSTree_HFS( item, name ) );
+	}
+	
+	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name ) const
 	{
 		if ( name == "rsrc"  &&  IsFile() )
 		{
@@ -1039,11 +1136,11 @@ namespace Genie
 		return FSTreePtr( ptr );
 	}
 	
-	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
+	static void IterateFilesIntoCache( const FSSpec& dir, FSTreeCache& cache )
 	{
 		CInfoPBRec pb;
 		
-		FSpGetCatInfo< FNF_Throws >( pb, GetFSSpec() );
+		FSpGetCatInfo< FNF_Throws >( pb, dir );
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
 		N::FSDirID        dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
@@ -1065,6 +1162,16 @@ namespace Genie
 			
 			cache.push_back( node );
 		}
+	}
+	
+	void FSTree_Root::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		IterateFilesIntoCache( GetJDirectory(), cache );
+	}
+	
+	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		IterateFilesIntoCache( GetFSSpec(), cache );
 	}
 	
 	struct ResolvePath_CInfoPBRec : CInfoPBRec
@@ -1182,12 +1289,10 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
 	{
-		if (     IsRootDirectory( itsFileSpec )
-		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
+		if (     name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  RunningInClassic::Test() )
 		{
 			// Special handling required for
-			// * root directory, which has mapped overlays
 			// * dot, dotdot, colons, and long names
 			// * running in Classic, which has broken PBGetCatInfoAsync()
 			
