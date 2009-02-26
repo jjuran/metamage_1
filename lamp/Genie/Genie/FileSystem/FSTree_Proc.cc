@@ -110,6 +110,8 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const;
@@ -510,9 +512,9 @@ namespace Genie
 		return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF();
 	}
 	
-	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
+	static const boost::shared_ptr< IOHandle >& GetFDHandle( pid_t pid, int fd )
 	{
-		FileDescriptorMap& files = GetProcess( itsPID ).FileDescriptors();
+		FileDescriptorMap& files = GetProcess( pid ).FileDescriptors();
 		
 		FileDescriptorMap::const_iterator it = files.find( fd );
 		
@@ -521,7 +523,22 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_MagicFileReference( it->second.handle ) );
+		return it->second.handle;
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_PID_fd_N::Open( OpenFlags flags, mode_t mode ) const
+	{
+		if ( flags & O_NOFOLLOW )
+		{
+			p7::throw_errno( ELOOP );
+		}
+		
+		return GetFDHandle( itsPID, itsFD )->Clone();
+	}
+	
+	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
+	{
+		return FSTreePtr( new FSTree_MagicFileReference( GetFDHandle( itsPID, itsFD ) ) );
 	}
 	
 }
