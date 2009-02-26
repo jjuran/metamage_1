@@ -69,6 +69,12 @@ namespace Genie
 		
 		FSTreePtr tree = Parent();
 		
+		if ( tree.get() == NULL )
+		{
+			// Anonymous files have null parents.
+			goto name_only;
+		}
+		
 		while ( true )
 		{
 			const std::string& name = tree->Name();
