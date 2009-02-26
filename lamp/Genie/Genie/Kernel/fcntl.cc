@@ -12,7 +12,6 @@
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathAt.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -31,13 +30,6 @@ namespace Genie
 			int fd = LowestUnusedFileDescriptor();
 			
 			FSTreePtr file = ResolvePathAt( dirfd, path );
-			
-			const bool following = (flags & O_NOFOLLOW) == 0;
-			
-			if ( following )
-			{
-				ResolveLinks_InPlace( file );
-			}
 			
 			const bool directory = flags & O_DIRECTORY;
 			
