@@ -91,6 +91,8 @@ namespace Genie
 			tree = tree->Parent();
 		}
 		
+	name_only:
+		
 		return pathname;
 	}
 	
