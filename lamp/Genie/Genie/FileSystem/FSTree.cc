@@ -277,8 +277,15 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t /*mode*/ ) const
+	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
 	{
+		const bool following = (flags & O_NOFOLLOW) == 0;
+		
+		if ( following  &&  IsLink() )
+		{
+			return ResolveLink()->Open( flags, mode );
+		}
+		
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
 		
@@ -309,6 +316,11 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree::OpenDirectory() const
 	{
+		if ( IsLink() )
+		{
+			return ResolveLink()->OpenDirectory();
+		}
+		
 		if ( !IsDirectory() )
 		{
 			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
