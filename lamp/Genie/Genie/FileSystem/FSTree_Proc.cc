@@ -514,12 +514,14 @@ namespace Genie
 	{
 		FileDescriptorMap& files = GetProcess( itsPID ).FileDescriptors();
 		
-		if ( files.find( itsFD ) == files.end() )
+		FileDescriptorMap::const_iterator it = files.find( fd );
+		
+		if ( it == files.end() )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_MagicFileReference( files[ itsFD ].handle ) );
+		return FSTreePtr( new FSTree_MagicFileReference( it->second.handle ) );
 	}
 	
 }
