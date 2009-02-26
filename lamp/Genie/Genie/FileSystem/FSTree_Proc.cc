@@ -480,38 +480,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_MagicFileReference : public FSTree
-	{
-		private:
-			typedef boost::shared_ptr< IOHandle > Key;
-			
-			Key itsHandle;
-		
-		public:
-			FSTree_MagicFileReference( const Key& io )
-			:
-				FSTree( FSTreePtr(), io->GetFile()->Name() ),
-				itsHandle( io )
-			{
-			}
-			
-			FSTreePtr Parent() const  { return itsHandle->GetFile()->Parent(); }
-			
-			void Stat( struct ::stat& sb ) const  { itsHandle->GetFile()->Stat( sb ); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags /*flags*/ ) const
-			{
-				return itsHandle->Clone();
-			}
-			
-			off_t GetEOF() const;
-	};
-	
-	off_t FSTree_MagicFileReference::GetEOF() const
-	{
-		return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF();
-	}
-	
 	static const boost::shared_ptr< IOHandle >& GetFDHandle( pid_t pid, int fd )
 	{
 		FileDescriptorMap& files = GetProcess( pid ).FileDescriptors();
@@ -538,7 +506,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
 	{
-		return FSTreePtr( new FSTree_MagicFileReference( GetFDHandle( itsPID, itsFD ) ) );
+		return GetFDHandle( itsPID, itsFD )->GetFile();
 	}
 	
 }
