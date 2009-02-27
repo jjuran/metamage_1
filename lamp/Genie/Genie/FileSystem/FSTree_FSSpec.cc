@@ -190,19 +190,19 @@ namespace Genie
 		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
 	
-	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
-	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
+	static N::FSVolumeRefNum GetVRefNum( const std::string& name )
 	{
-		::FSVolumeRefNum actualVRefNum;
-		N::ThrowOSStatus( ::DetermineVRefNum( name, vRefNum, &actualVRefNum ) );
+		N::Str255 name_copy = name;
 		
-		return N::FSVolumeRefNum( actualVRefNum );
-	}
-	
-	static N::FSVolumeRefNum DetermineVRefNum( const std::string&  name,
-	                                           N::FSVolumeRefNum   vRefNum = N::FSVolumeRefNum() )
-	{
-		return DetermineVRefNum( N::Str27( name ), vRefNum );
+		HParamBlockRec pb;
+		
+		pb.volumeParam.ioVRefNum  = 0;
+		pb.volumeParam.ioNamePtr  = name_copy;
+		pb.volumeParam.ioVolIndex = -1;  // use use ioNamePtr/ioVRefNum combination
+		
+		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+		
+		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
 	
 	
@@ -339,7 +339,7 @@ namespace Genie
 		
 		static Key KeyFromName( const std::string& name )
 		{
-			Key key = DetermineVRefNum( MacFromUnixName( name ) + ":" );
+			Key key = GetVRefNum( MacFromUnixName( name ) + ":" );
 			
 			return key;
 		}
@@ -566,7 +566,7 @@ namespace Genie
 		
 		static bool KeyIsValid( const Key& key )
 		{
-			return true;  // DetermineVRefNum() only returns valid keys
+			return true;  // GetVRefNum() only returns valid keys
 		}
 		
 		FSTreePtr GetChildNode( const FSTreePtr&    parent,
