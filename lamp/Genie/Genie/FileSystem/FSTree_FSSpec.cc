@@ -740,12 +740,12 @@ namespace Genie
 		              creat );
 	}
 	
-	void FSTree_HFS::Delete() const
+	static void Delete_HFS( const FSSpec& fileSpec )
 	{
 		// returns fnfErr for directories
-		OSErr unlockErr = ::FSpRstFLock( &itsFileSpec );
+		OSErr unlockErr = ::FSpRstFLock( &fileSpec );
 		
-		OSErr deleteErr = ::FSpDelete( &itsFileSpec );
+		OSErr deleteErr = ::FSpDelete( &fileSpec );
 		
 		// Unfortunately, fBsyErr can mean different things.
 		// Here we assume it means a directory is not empty.
@@ -756,6 +756,11 @@ namespace Genie
 		}
 		
 		N::ThrowOSStatus( deleteErr );
+	}
+	
+	void FSTree_HFS::Delete() const
+	{
+		Delete_HFS( itsFileSpec );
 	}
 	
 	
@@ -874,26 +879,22 @@ namespace Genie
 		return parent / K::MacFilenameFromUnixFilename( file->Name() );
 	}
 	
-	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
+	static void Rename_HFS( const FSSpec& srcFileSpec, const FSTreePtr& destFile )
 	{
-		const FSTree_HFS* srcFile = this;
-		
-		if ( !srcFile->Exists() )
+		if ( !io::item_exists( srcFileSpec ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
 		bool destExists = destFile->Exists();
 		
-		bool srcIsDir  = srcFile ->IsDirectory();
+		bool srcIsDir  = io::directory_exists( srcFileSpec );
 		bool destIsDir = destFile->IsDirectory();
 		
 		if ( destExists  &&  srcIsDir != destIsDir )
 		{
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
-		
-		const FSSpec& srcFileSpec = itsFileSpec;
 		
 		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
 		
@@ -965,6 +966,11 @@ namespace Genie
 			
 			SetLongName( destFileSpec, destName );
 		}
+	}
+	
+	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
+	{
+		Rename_HFS( itsFileSpec, destFile );
 	}
 	
 	
@@ -1352,25 +1358,8 @@ namespace Genie
 	
 #endif
 	
-	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
+	static FSTreePtr ResolvePath_HFS( const FSSpec& dirFileSpec, const char*& begin, const char* end )
 	{
-		if (     name_is_special( begin, std::find( begin, end, '/' ) )
-		     ||  RunningInClassic::Test() )
-		{
-			// Special handling required for
-			// * dot, dotdot, colons, and long names
-			// * running in Classic, which has broken PBGetCatInfoAsync()
-			
-			return FSTree::ResolvePath( begin, end );
-		}
-		
-		if ( begin == end )
-		{
-			return Self();
-		}
-		
-		ASSERT( begin < end );
-		
 		ResolvePath_CInfoPBRec cInfo;
 		
 		DirInfo& dirInfo = cInfo.dirInfo;
@@ -1378,11 +1367,11 @@ namespace Genie
 		dirInfo.ioCompletion = gResolvePathCompletion;
 		
 		dirInfo.ioNamePtr   = cInfo.name;
-		dirInfo.ioVRefNum   = itsFileSpec.vRefNum;
-		dirInfo.ioDrDirID   = itsFileSpec.parID;
+		dirInfo.ioVRefNum   = dirFileSpec.vRefNum;
+		dirInfo.ioDrDirID   = dirFileSpec.parID;
 		dirInfo.ioFDirIndex = 0;
 		
-		cInfo.name = itsFileSpec.name;
+		cInfo.name = dirFileSpec.name;
 		
 		cInfo.begin = begin;
 		cInfo.end   = end;
@@ -1413,6 +1402,28 @@ namespace Genie
 		N::CopyToPascalString( cInfo.name, result.name, sizeof result.name - 1 );
 		
 		return FSTreeFromFSSpec( result );
+	}
+	
+	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
+	{
+		if ( begin == end )
+		{
+			return Self();
+		}
+		
+		ASSERT( begin < end );
+		
+		if (     name_is_special( begin, std::find( begin, end, '/' ) )
+		     ||  RunningInClassic::Test() )
+		{
+			// Special handling required for
+			// * dot, dotdot, colons, and long names
+			// * running in Classic, which has broken PBGetCatInfoAsync()
+			
+			return FSTree::ResolvePath( begin, end );
+		}
+		
+		return ResolvePath_HFS( itsFileSpec, begin, end );
 	}
 	
 	void FSTree_HFS::FinishCreation() const
