@@ -41,10 +41,5 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
-	{
-		return FSTreeFromFSSpec( FSMakeFSSpec< FNF_Throws >( dir, NULL ) );
-	}
-	
 }
 

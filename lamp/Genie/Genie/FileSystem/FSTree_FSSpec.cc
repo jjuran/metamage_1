@@ -635,6 +635,11 @@ namespace Genie
 		return FSTreePtr( new FSTree_HFS( item ) );
 	}
 	
+	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
+	{
+		return FSTreeFromFSSpec( FSMakeFSSpec< FNF_Throws >( dir, NULL ) );
+	}
+	
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
