@@ -304,20 +304,18 @@ namespace Genie
 		return j;
 	}
 	
-	static FSSpec FindUsersDirectory()
+	static N::FSDirSpec FindUsersDirectory()
 	{
 		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
 		
 		FSSpec users = root / "Users";
 		
-		(void) Dir_From_FSSpec( users );  // throws if not a dir
-		
-		return users;
+		return Dir_From_FSSpec( users );
 	}
 	
-	static const FSSpec& GetUsersDirectory()
+	static const N::FSDirSpec& GetUsersDirectory()
 	{
-		static FSSpec users = FindUsersDirectory();
+		static N::FSDirSpec users = FindUsersDirectory();
 		
 		return users;
 	}
@@ -646,7 +644,7 @@ namespace Genie
 		
 		if ( tree != NULL )
 		{
-			tree->Map( FSTreeFromFSSpec( GetUsersDirectory() ) );
+			tree->Map( FSTreeFromFSDirSpec( GetUsersDirectory() ) );
 			
 			tree->Map( FSTreePtr( new FSTree_Volumes( result, "Volumes" ) ) );
 			tree->Map( FSTreePtr( new FSTree_proc   ( result, "proc"    ) ) );
@@ -730,7 +728,7 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( fileSpec == GetUsersDirectory() )
+		if ( itsDirSpec == GetUsersDirectory() )
 		{
 			return FSRoot();
 		}
@@ -752,7 +750,7 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( itsFileSpec == GetUsersDirectory() )
+		if ( itsFileSpec == GetUsersDirectory() / "" )
 		{
 			return FSRoot();
 		}
