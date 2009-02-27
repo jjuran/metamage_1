@@ -177,6 +177,19 @@ namespace Genie
 	}
 	
 	
+	static N::FSVolumeRefNum GetVRefNum( N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
+	{
+		HParamBlockRec pb;
+		
+		pb.volumeParam.ioVRefNum  = vRefNum;
+		pb.volumeParam.ioNamePtr  = NULL;
+		pb.volumeParam.ioVolIndex = 0;  // use ioVRefNum only
+		
+		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+		
+		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+	}
+	
 	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
 	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
 	{
@@ -268,7 +281,7 @@ namespace Genie
 		
 		if ( exists )
 		{
-			cInfo.dirInfo.ioVRefNum = DetermineVRefNum( NULL, N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
+			cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
 		}
 		else
 		{
