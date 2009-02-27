@@ -432,6 +432,49 @@ namespace Genie
 	}
 	
 	
+	class FSTree_DirSpec : public FSTree_Directory
+	{
+		private:
+			N::FSDirSpec itsDirSpec;
+		
+		public:
+			FSTree_DirSpec( const N::FSDirSpec& dir, const std::string& name );
+			
+			bool IsFile     () const  { return false; }
+			bool IsDirectory() const  { return true;  }
+			
+			FSTreePtr Parent() const;
+			
+			void Stat( struct ::stat& sb ) const;
+			
+			void SetTimes() const;
+			
+			void SetTimes( const struct timeval* access,
+			               const struct timeval* mod,
+			               const struct timeval* backup,
+			               const struct timeval* creat ) const;
+			
+			void Delete() const;
+			
+			void Rename( const FSTreePtr& destination ) const;
+			
+			ino_t Inode() const  { return itsDirSpec.dirID; }
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
+	
+	FSTree_DirSpec::FSTree_DirSpec( const N::FSDirSpec&  dir,
+	                                const std::string&   name )
+	:
+		FSTree_Directory( FSTreePtr(), name ),
+		itsDirSpec      ( dir               )
+	{
+		// we override Parent()
+	}
+	
+	
 	class FSTree_HFS : public FSTree_Directory
 	{
 		private:
@@ -671,6 +714,30 @@ namespace Genie
 		                                          vRefNum );
 	}
 	
+	FSTreePtr FSTree_DirSpec::Parent() const
+	{
+		if ( itsDirSpec.dirID == fsRtDirID )
+		{
+			return Get_sys_mac_vol_N( itsDirSpec.vRefNum );
+		}
+		
+		FSSpec fileSpec = FSMakeFSSpec< FNF_Throws >( itsDirSpec, NULL );
+		
+		const N::FSDirSpec& root = GetJDirectory();
+		
+		if ( fileSpec.vRefNum == root.vRefNum  &&  fileSpec.parID == root.dirID )
+		{
+			return FSRoot();
+		}
+		
+		if ( fileSpec == GetUsersDirectory() )
+		{
+			return FSRoot();
+		}
+		
+		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( fileSpec ) ) );
+	}
+	
 	FSTreePtr FSTree_HFS::Parent() const
 	{
 		if ( itsFileSpec.parID == fsRtParID )
@@ -702,6 +769,18 @@ namespace Genie
 		return sb.st_ino;
 	}
 	
+	void FSTree_DirSpec::Stat( struct ::stat& sb ) const
+	{
+		Stat_HFS( &sb, itsDirSpec.vRefNum, itsDirSpec.dirID );
+		
+		const N::FSDirSpec& root = GetJDirectory();
+		
+		if ( itsDirSpec.vRefNum == root.vRefNum  &&  sb.st_ino == root.dirID )
+		{
+			sb.st_mode += S_IFLNK - S_IFDIR;
+		}
+	}
+	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
 		StatFile( GetFSSpec(), &sb, false );
@@ -719,11 +798,32 @@ namespace Genie
 		ChangeFileMode( GetFSSpec(), mode );
 	}
 	
+	void FSTree_DirSpec::SetTimes() const
+	{
+		SetFileTimes( itsDirSpec.vRefNum,
+		              itsDirSpec.dirID,
+		              NULL );
+	}
+	
 	void FSTree_HFS::SetTimes() const
 	{
 		SetFileTimes( N::FSVolumeRefNum( itsFileSpec.vRefNum ),
 		              N::FSDirID       ( itsFileSpec.parID   ),
 		              itsFileSpec.name );
+	}
+	
+	void FSTree_DirSpec::SetTimes( const struct timeval* access,
+	                               const struct timeval* mod,
+	                               const struct timeval* backup,
+	                               const struct timeval* creat ) const
+	{
+		SetFileTimes( itsDirSpec.vRefNum,
+		              itsDirSpec.dirID,
+		              NULL,
+		              access,
+		              mod,
+		              backup,
+		              creat );
 	}
 	
 	void FSTree_HFS::SetTimes( const struct timeval* access,
@@ -756,6 +856,13 @@ namespace Genie
 		}
 		
 		N::ThrowOSStatus( deleteErr );
+	}
+	
+	void FSTree_DirSpec::Delete() const
+	{
+		FSSpec fileSpec = FSMakeFSSpec< FNF_Throws >( itsDirSpec, NULL );
+		
+		Delete_HFS( fileSpec );
 	}
 	
 	void FSTree_HFS::Delete() const
@@ -966,6 +1073,13 @@ namespace Genie
 			
 			SetLongName( destFileSpec, destName );
 		}
+	}
+	
+	void FSTree_DirSpec::Rename( const FSTreePtr& destFile ) const
+	{
+		FSSpec srcFileSpec = FSMakeFSSpec< FNF_Throws >( itsDirSpec, NULL );
+		
+		Rename_HFS( srcFileSpec, destFile );
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -1183,6 +1297,15 @@ namespace Genie
 		return FSTreePtr( new FSTree_HFS( item, name ) );
 	}
 	
+	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name ) const
+	{
+		const std::string macName = K::MacFilenameFromUnixFilename( name );
+		
+		const FSSpec item = itsDirSpec / macName;
+		
+		return FSTreePtr( new FSTree_HFS( item, name ) );
+	}
+	
 	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name ) const
 	{
 		if ( name == "rsrc"  &&  IsFile() )
@@ -1232,6 +1355,15 @@ namespace Genie
 		cInfo.dirInfo.ioVRefNum   = root.vRefNum;
 		cInfo.dirInfo.ioDrDirID   = root.dirID;
 		cInfo.dirInfo.ioFDirIndex = -1;
+		
+		IterateFilesIntoCache( cInfo, cache );
+	}
+	
+	void FSTree_DirSpec::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, itsDirSpec );
 		
 		IterateFilesIntoCache( cInfo, cache );
 	}
