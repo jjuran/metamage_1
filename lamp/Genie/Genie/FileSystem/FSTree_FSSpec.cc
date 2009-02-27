@@ -1288,22 +1288,23 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
+	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec& dir, const std::string& name )
 	{
 		const std::string macName = K::MacFilenameFromUnixFilename( name );
 		
-		const FSSpec item = GetJDirectory() / macName;
+		const FSSpec item = dir / macName;
 		
 		return FSTreePtr( new FSTree_HFS( item, name ) );
 	}
 	
+	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
+	{
+		return FSTreePtr_From_Lookup( GetJDirectory(), name );
+	}
+	
 	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name ) const
 	{
-		const std::string macName = K::MacFilenameFromUnixFilename( name );
-		
-		const FSSpec item = itsDirSpec / macName;
-		
-		return FSTreePtr( new FSTree_HFS( item, name ) );
+		return FSTreePtr_From_Lookup( itsDirSpec, name );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name ) const
@@ -1315,11 +1316,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
 		
-		const std::string macName = K::MacFilenameFromUnixFilename( name );
-		
-		const FSSpec item = dir / macName;
-		
-		return FSTreePtr( new FSTree_HFS( item, name ) );
+		return FSTreePtr_From_Lookup( dir, name );
 	}
 	
 	static void IterateFilesIntoCache( CInfoPBRec&   pb,
