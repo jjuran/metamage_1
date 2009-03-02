@@ -1322,32 +1322,154 @@ namespace Genie
 		return FSTreePtr_From_Lookup( dir, name );
 	}
 	
-	static void IterateFilesIntoCache( CInfoPBRec&   pb,
-	                                   FSTreeCache&  cache )
+	
+	const UInt16 kMaxItems = 64;
+	
+	struct NameAndID
 	{
-		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
-		N::FSDirID        dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
+		N::Str31    name;
+		N::FSDirID  id;
+	};
+	
+	struct IterateIntoCache_CInfoPBRec : CInfoPBRec
+	{
+		NameAndID      items[ kMaxItems ];
+		UInt16         n_items;
+		volatile bool  done;
+	};
+	
+	static pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
+	{
+		IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
 		
-		for ( UInt16 i = 1;  ;  ++i )
+		if ( cInfo.dirInfo.ioResult != noErr )
 		{
-			FSSpec item = { vRefNum, dirID, "\p" };
+			goto done;
+		}
+		
+		cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+		
+		++cInfo.n_items;
+		
+		if ( cInfo.n_items == kMaxItems )
+		{
+			goto done;
+		}
+		
+		cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
+		
+		cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
+		
+		cInfo.dirInfo.ioDrDirID = cInfo.dirInfo.ioDrParID;
+		
+		++cInfo.dirInfo.ioFDirIndex;
+		
+		OSErr err = ::PBGetCatInfoAsync( &cInfo );
+		
+		if ( cInfo.dirInfo.ioResult >= 0 )
+		{
+			// Successfully queued
+			return;
+		}
+		
+		// We don't know if this was queued or not, so set done below
+		
+	done:
+		
+		cInfo.done = true;
+		
+		Ped::WakeUp();
+	}
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	static pascal asm void IterateIntoCache_Completion_68K()
+	{
+		MOVE.L (SP),-(SP)
+		MOVE.L A0,4(SP)
+		BRA    IterateIntoCache_Completion
+	}
+	
+	static ::IOCompletionUPP gIterateIntoCacheCompletion = IterateIntoCache_Completion_68K;
+	
+#else
+	
+	static ::IOCompletionUPP gIterateIntoCacheCompletion = ::NewIOCompletionUPP( IterateIntoCache_Completion );
+	
+#endif
+	
+	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
+	                                   FSTreeCache&                  cache )
+	{
+		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
+		
+		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
+		
+		const bool async = !RunningInClassic::Test();
+		
+		if ( async )
+		{
+			pb.dirInfo.ioCompletion = gIterateIntoCacheCompletion;
+		}
+		
+		UInt16 n_items = 0;
+		
+		while ( true )
+		{
+			const UInt16 i = n_items + 1;  // one-based
 			
-			if ( !FSpGetCatInfo< FNF_Returns >( pb, vRefNum, dirID, item.name, i ) )
+			pb.dirInfo.ioNamePtr = pb.items[ 0 ].name;
+			pb.dirInfo.ioDrDirID = dirID;
+			
+			pb.dirInfo.ioFDirIndex = i;
+			
+			pb.done = false;
+			
+			pb.n_items = 0;
+			
+			pb.items[ 0 ].name[ 0 ] = '\0';
+			
+			if ( async )
+			{
+				N::PBGetCatInfoAsync( pb, FNF_Returns() );
+				
+				while ( !pb.done )
+				{
+					AsyncYield();
+				}
+			}
+			else if ( const bool exists = N::PBGetCatInfoSync( pb, FNF_Returns() ) )
+			{
+				pb.items[ 0 ].id = N::FSDirID( pb.dirInfo.ioDrDirID );
+				
+				++pb.n_items;
+			}
+			
+			n_items += pb.n_items;
+			
+			for ( UInt16 j = 0;  j != pb.n_items;  ++j )
+			{
+				const ino_t inode = pb.items[ j ].id;  // file or dir ID for inode
+				
+				N::CopyToPascalString( pb.items[ j ].name, item.name, sizeof item.name - 1 );
+				
+				const FSNode node( inode, GetUnixName( item ) );
+				
+				cache.push_back( node );
+			}
+			
+			if ( pb.dirInfo.ioResult == fnfErr )
 			{
 				return;
 			}
 			
-			const ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
-			
-			const FSNode node( inode, GetUnixName( item ) );
-			
-			cache.push_back( node );
+			N::ThrowOSStatus( pb.dirInfo.ioResult );
 		}
 	}
 	
 	void FSTree_Root::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		CInfoPBRec cInfo;
+		IterateIntoCache_CInfoPBRec cInfo;
 		
 		const N::FSDirSpec& root = GetJDirectory();
 		
@@ -1361,7 +1483,7 @@ namespace Genie
 	
 	void FSTree_DirSpec::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		CInfoPBRec cInfo;
+		IterateIntoCache_CInfoPBRec cInfo;
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, itsDirSpec );
 		
@@ -1370,7 +1492,7 @@ namespace Genie
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		CInfoPBRec cInfo;
+		IterateIntoCache_CInfoPBRec cInfo;
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, GetFSSpec() );
 		
