@@ -342,14 +342,39 @@ namespace Nitrogen
 		UPP( UPPType p )                               : UPP_Details::InvokableUPPType( p )  {}
 		
 		static UPP Make( UPPType p )                   { return UPP( p ); }
+		
+		template < ProcPtr procPtr >
+		static UPP Static()
+		{
+			static const Nucleus::Owned< UPP > upp = procPtr != NULL ? NewUPP< UPP >( procPtr )
+			                                                         : Nucleus::Owned< UPP >();
+			return upp;
+		}
 	};
-	
 	
 	template < class NitrogenUPP >
 	inline Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
 	{
 		return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
 	}
+	
+	
+	template < class UPP_Details >
+	struct GlueUPP : BasicUPP< typename UPP_Details::UPPType >
+	{
+		typedef typename UPP_Details::UPPType UPPType;
+		typedef typename UPP_Details::ProcPtr ProcPtr;
+		typedef UPP_Details Details;
+		
+		GlueUPP()  {}
+		
+		GlueUPP( UPPType upp ) : BasicUPP< UPPType >( upp )
+		{
+		}
+		
+		template < ProcPtr procPtr >
+		static GlueUPP Static()  { return GlueUPP( Details::Glue< procPtr > ); }
+	};
 	
 }
 
@@ -374,9 +399,7 @@ namespace Nitrogen
 	template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
 	NitrogenUPP StaticUPP()
 	{
-		static const Nucleus::Owned<NitrogenUPP> upp = procPtr != NULL ? NewUPP<NitrogenUPP>( procPtr )
-		                                                               : Nucleus::Owned<NitrogenUPP>();
-		return upp;
+		return NitrogenUPP::Static< procPtr >();
 	}
 	
 	// This is a workaround for a CodeWarrior Pro 9 bug: it runs into an internal
