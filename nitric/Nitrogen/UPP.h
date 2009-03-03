@@ -331,6 +331,12 @@ namespace Nitrogen
 		typedef InvokableUPP< UnderlyingUPPType, ProcPtrType, invoke > InvokableUPPType;
 	};
 	
+	template < class NitrogenUPP >
+	inline Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
+	{
+		return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
+	}
+	
 	template < class UPP_Details >
 	struct UPP : public UPP_Details::InvokableUPPType
 	{
@@ -352,12 +358,6 @@ namespace Nitrogen
 		}
 	};
 	
-	template < class NitrogenUPP >
-	inline Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
-	{
-		return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
-	}
-	
 	
 	template < class UPP_Details >
 	struct GlueUPP : BasicUPP< typename UPP_Details::UPPType >
@@ -373,7 +373,7 @@ namespace Nitrogen
 		}
 		
 		template < ProcPtr procPtr >
-		static GlueUPP Static()  { return GlueUPP( Details::Glue< procPtr > ); }
+		static GlueUPP Static()  { return Details::template Glue< procPtr >; }
 	};
 	
 }
@@ -399,7 +399,7 @@ namespace Nitrogen
 	template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
 	NitrogenUPP StaticUPP()
 	{
-		return NitrogenUPP::Static< procPtr >();
+		return NitrogenUPP::template Static< procPtr >();
 	}
 	
 	// This is a workaround for a CodeWarrior Pro 9 bug: it runs into an internal
