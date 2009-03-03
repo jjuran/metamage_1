@@ -14,15 +14,8 @@
 #ifndef NITROGEN_UPP_H
 #define NITROGEN_UPP_H
 
-#ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
-#ifndef __CONDITIONALMACROS__
-#include FRAMEWORK_HEADER(CarbonCore,ConditionalMacros.h)
-#endif
+
 
 namespace Nitrogen
   {
