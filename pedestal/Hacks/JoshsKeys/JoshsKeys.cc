@@ -12,9 +12,6 @@
 #include <Sound.h>
 #include <TextEdit.h>
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C++
 #include <algorithm>
 
@@ -83,7 +80,7 @@ static bool CharIsSpecialForCmdOrOption( char c)
 namespace
 {
 	
-	short PatchedGetNextEvent( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
+	short GetNextEvent_Patch( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
 	{
 		short result = nextHandler( eventMask, theEvent );
 		
@@ -92,21 +89,21 @@ namespace
 		return result;
 	}
 	
-	void PatchedTEActivate( TEHandle hTE, Ag::TEActivateProcPtr nextHandler )
+	void TEActivate_Patch( TEHandle hTE, Ag::TEActivateProcPtr nextHandler )
 	{
 		nextHandler( hTE );
 		
 		gExtendingSelection = false;
 	}
 	
-	void PatchedTEClick( Point pt, short extend, TEHandle hTE, Ag::TEClickProcPtr nextHandler )
+	void TEClick_Patch( Point pt, short extend, TEHandle hTE, Ag::TEClickProcPtr nextHandler )
 	{
 		nextHandler( pt, extend, hTE );
 		
 		gExtendingSelection = false;
 	}
 		
-	void PatchedTEKey( short c, TEHandle hTE, Ag::TEKeyProcPtr nextHandler )
+	void TEKey_Patch( short c, TEHandle hTE, Ag::TEKeyProcPtr nextHandler )
 	{
 		short selStart = hTE[0]->selStart;
 		short selEnd   = hTE[0]->selEnd;
@@ -287,10 +284,10 @@ static OSErr Installer()
 {
 	gExtendingSelection = false;
 	
-	Ag::TrapPatch< _GetNextEvent, PatchedGetNextEvent >::Install();
-	Ag::TrapPatch< _TEActivate,   PatchedTEActivate   >::Install();
-	Ag::TrapPatch< _TEClick,      PatchedTEClick      >::Install();
-	Ag::TrapPatch< _TEKey,        PatchedTEKey        >::Install();
+	Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch >::Install();
+	Ag::TrapPatch< _TEActivate,   TEActivate_Patch   >::Install();
+	Ag::TrapPatch< _TEClick,      TEClick_Patch      >::Install();
+	Ag::TrapPatch< _TEKey,        TEKey_Patch        >::Install();
 	
 	return noErr;
 }
