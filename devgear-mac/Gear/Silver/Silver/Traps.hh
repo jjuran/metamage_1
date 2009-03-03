@@ -69,6 +69,7 @@ namespace Silver
 	DEFINE_TRAP_TRAITS( SystemMenu    );
 	DEFINE_TRAP_TRAITS( TEActivate    );
 	DEFINE_TRAP_TRAITS( TEClick       );
+	DEFINE_TRAP_TRAITS( TEInit        );
 	DEFINE_TRAP_TRAITS( TEKey         );
 	DEFINE_TRAP_TRAITS( TEPaste       );
 	DEFINE_TRAP_TRAITS( TESetSelect   );

@@ -34,6 +34,7 @@ namespace Silver
 		DEFINE_PROCPTR( SystemMenu,    void,    (long                              ) );
 		DEFINE_PROCPTR( TEActivate,    void,    (TEHandle                          ) );
 		DEFINE_PROCPTR( TEClick,       void,    (Point,       short,       TEHandle) );
+		DEFINE_PROCPTR( TEInit,        void,    (                                  ) );
 		DEFINE_PROCPTR( TEKey,         void,    (short,       TEHandle             ) );
 		DEFINE_PROCPTR( TEPaste,       void,    (TEHandle                          ) );
 		DEFINE_PROCPTR( TESetSelect,   void,    (short,       short,       TEHandle) );
