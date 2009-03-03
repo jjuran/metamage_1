@@ -58,20 +58,20 @@ namespace Silver
 	
 	#define DEFINE_TRAP_TRAITS( name )  template <> struct TrapTraits< _ ## name > : public PatchProc_Traits< name ## ProcPtr > {}
 	
+	DEFINE_TRAP_TRAITS( AppendResMenu );
 	DEFINE_TRAP_TRAITS( DrawText      );
+	DEFINE_TRAP_TRAITS( ExitToShell   );
 	DEFINE_TRAP_TRAITS( GetNextEvent  );
 	DEFINE_TRAP_TRAITS( InsertMenu    );
 	DEFINE_TRAP_TRAITS( MenuKey       );
 	DEFINE_TRAP_TRAITS( MenuSelect    );
 	DEFINE_TRAP_TRAITS( StillDown     );
+	DEFINE_TRAP_TRAITS( SystemMenu    );
 	DEFINE_TRAP_TRAITS( TEActivate    );
 	DEFINE_TRAP_TRAITS( TEClick       );
 	DEFINE_TRAP_TRAITS( TEKey         );
 	DEFINE_TRAP_TRAITS( TEPaste       );
-	DEFINE_TRAP_TRAITS( AppendResMenu );
 	DEFINE_TRAP_TRAITS( TESetSelect   );
-	DEFINE_TRAP_TRAITS( SystemMenu    );
-	DEFINE_TRAP_TRAITS( ExitToShell   );
 	
 	#undef DEFINE_TRAP_TRAITS
 	
