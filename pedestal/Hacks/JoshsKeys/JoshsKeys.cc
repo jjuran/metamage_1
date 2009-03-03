@@ -279,10 +279,19 @@ namespace
 	
 	void TEInit_Patch( Ag::TEInitProcPtr nextHandler )
 	{
-		Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch >::Install();
-		Ag::TrapPatch< _TEActivate,   TEActivate_Patch   >::Install();
-		Ag::TrapPatch< _TEClick,      TEClick_Patch      >::Install();
-		Ag::TrapPatch< _TEKey,        TEKey_Patch        >::Install();
+		Handle hack = ::Get1NamedResource( 'Hack', "\p" "JoshsKeys" );
+		
+		if ( hack != NULL )
+		{
+			::ReleaseResource( hack );
+		}
+		else
+		{
+			Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch >::Install();
+			Ag::TrapPatch< _TEActivate,   TEActivate_Patch   >::Install();
+			Ag::TrapPatch< _TEClick,      TEClick_Patch      >::Install();
+			Ag::TrapPatch< _TEKey,        TEKey_Patch        >::Install();
+		}
 		
 		nextHandler();
 	}
