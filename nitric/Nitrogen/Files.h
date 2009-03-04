@@ -58,6 +58,7 @@
 #endif
 
 #include "Nitrogen/Devices.h"
+#include "Nitrogen/UPP.h"
 
 #include <vector>
 
@@ -242,11 +243,44 @@ namespace Nitrogen
 		kHFSCatalogNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
 	};
 	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	struct IOCompletionUPP_Details
+	{
+		typedef ::IOCompletionUPP UPPType;
+		
+		// This is the stack-based function signature
+		typedef pascal void (*ProcPtr)( ::ParamBlockRec* pb );
+		
+		template < ProcPtr procPtr >
+		static pascal void Glue()
+		{
+			Call_With_A0_Glue< ProcPtr, procPtr >();
+		}
+	};
+	
+	typedef GlueUPP< IOCompletionUPP_Details > IOCompletionUPP;
+	
+#else
+	
+	struct IOCompletionUPP_Details : Basic_UPP_Details< ::IOCompletionUPP,
+	                                                    ::IOCompletionProcPtr,
+	                                                    ::NewIOCompletionUPP,
+	                                                    ::DisposeIOCompletionUPP,
+	                                                    ::InvokeIOCompletionUPP >
+	{
+	};
+	
+	typedef UPP< IOCompletionUPP_Details > IOCompletionUPP;
+	
+#endif
+	
 	using ::HFSUniStr255;
 	using ::CInfoPBRec;
 	using ::DirInfo;
 	using ::FSSpec;
 	using ::FSRef;
+	
 }
 
 namespace Nucleus
