@@ -67,6 +67,53 @@
 #include "Genie/Utilities/AsyncIO.hh"
 
 
+namespace Nitrogen
+{
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	template < class ProcPtr, ProcPtr function >
+	inline pascal void Call_With_A0_Glue()
+	{
+		asm
+		{
+			MOVE.L A0,-(SP)  ; // push pb onto the stack
+			JSR    function
+		}
+	}
+	
+	struct IOCompletionUPP_Details
+	{
+		typedef ::IOCompletionUPP UPPType;
+		
+		// This is the stack-based function signature
+		typedef pascal void (*ProcPtr)( ::ParamBlockRec* pb );
+		
+		template < ProcPtr procPtr >
+		static pascal void Glue()
+		{
+			Call_With_A0_Glue< ProcPtr, procPtr >();
+		}
+	};
+	
+	typedef GlueUPP< IOCompletionUPP_Details > IOCompletionUPP;
+	
+#else
+	
+	struct IOCompletionUPP_Details : Basic_UPP_Details< ::IOCompletionUPP,
+	                                                    ::IOCompletionProcPtr,
+	                                                    ::NewIOCompletionUPP,
+	                                                    ::DisposeIOCompletionUPP,
+	                                                    ::InvokeIOCompletionUPP >
+	{
+	};
+	
+	typedef UPP< IOCompletionUPP_Details > IOCompletionUPP;
+	
+#endif
+	
+}
+
 namespace Genie
 {
 	
@@ -1338,65 +1385,53 @@ namespace Genie
 		volatile bool  done;
 	};
 	
-	static pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
+	namespace
 	{
-		IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
 		
-		if ( cInfo.dirInfo.ioResult != noErr )
+		pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
 		{
-			goto done;
+			IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
+			
+			if ( cInfo.dirInfo.ioResult != noErr )
+			{
+				goto done;
+			}
+			
+			cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+			
+			++cInfo.n_items;
+			
+			if ( cInfo.n_items == kMaxItems )
+			{
+				goto done;
+			}
+			
+			cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
+			
+			cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
+			
+			cInfo.dirInfo.ioDrDirID = cInfo.dirInfo.ioDrParID;
+			
+			++cInfo.dirInfo.ioFDirIndex;
+			
+			OSErr err = ::PBGetCatInfoAsync( &cInfo );
+			
+			if ( cInfo.dirInfo.ioResult >= 0 )
+			{
+				// Successfully queued
+				return;
+			}
+			
+			// We don't know if this was queued or not, so set done below
+			
+		done:
+			
+			cInfo.done = true;
+			
+			Ped::WakeUp();
 		}
 		
-		cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
-		
-		++cInfo.n_items;
-		
-		if ( cInfo.n_items == kMaxItems )
-		{
-			goto done;
-		}
-		
-		cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
-		
-		cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
-		
-		cInfo.dirInfo.ioDrDirID = cInfo.dirInfo.ioDrParID;
-		
-		++cInfo.dirInfo.ioFDirIndex;
-		
-		OSErr err = ::PBGetCatInfoAsync( &cInfo );
-		
-		if ( cInfo.dirInfo.ioResult >= 0 )
-		{
-			// Successfully queued
-			return;
-		}
-		
-		// We don't know if this was queued or not, so set done below
-		
-	done:
-		
-		cInfo.done = true;
-		
-		Ped::WakeUp();
 	}
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	static pascal asm void IterateIntoCache_Completion_68K()
-	{
-		MOVE.L (SP),-(SP)
-		MOVE.L A0,4(SP)
-		BRA    IterateIntoCache_Completion
-	}
-	
-	static ::IOCompletionUPP gIterateIntoCacheCompletion = IterateIntoCache_Completion_68K;
-	
-#else
-	
-	static ::IOCompletionUPP gIterateIntoCacheCompletion = ::NewIOCompletionUPP( IterateIntoCache_Completion );
-	
-#endif
 	
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   FSTreeCache&                  cache )
@@ -1409,7 +1444,7 @@ namespace Genie
 		
 		if ( async )
 		{
-			pb.dirInfo.ioCompletion = gIterateIntoCacheCompletion;
+			pb.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
 		}
 		
 		UInt16 n_items = 0;
@@ -1532,85 +1567,73 @@ namespace Genie
 		return false;
 	}
 	
-	static pascal void ResolvePath_Completion( ParamBlockRec* pb )
+	namespace
 	{
-		ResolvePath_CInfoPBRec& cInfo = *(ResolvePath_CInfoPBRec*) pb;
 		
-		if ( cInfo.dirInfo.ioResult < 0 )
+		pascal void ResolvePath_Completion( ParamBlockRec* pb )
 		{
-			goto done;
-		}
-		
-		const char* begin = cInfo.begin;
-		
-		if ( begin == cInfo.end )
-		{
-			goto done;
-		}
-		
-		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-		
-		if ( !is_dir )
-		{
-			const bool is_alias = cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+			ResolvePath_CInfoPBRec& cInfo = *(ResolvePath_CInfoPBRec*) pb;
 			
-			if ( !is_alias )
+			if ( cInfo.dirInfo.ioResult < 0 )
 			{
-				// I wanted a dir but you gave me a file.  You creep.
-				cInfo.dirInfo.ioResult = errFSNotAFolder;
+				goto done;
 			}
 			
-			goto done;
+			const char* begin = cInfo.begin;
+			
+			if ( begin == cInfo.end )
+			{
+				goto done;
+			}
+			
+			const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+			
+			if ( !is_dir )
+			{
+				const bool is_alias = cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+				
+				if ( !is_alias )
+				{
+					// I wanted a dir but you gave me a file.  You creep.
+					cInfo.dirInfo.ioResult = errFSNotAFolder;
+				}
+				
+				goto done;
+			}
+			
+			const char* slash = std::find( begin, cInfo.end, '/' );
+			
+			if ( name_is_special( begin, slash ) )
+			{
+				goto done;
+			}
+			
+			const unsigned name_length = slash - begin;
+			
+			cInfo.name[ 0 ] = name_length;
+			
+			std::copy( begin, slash, &cInfo.name[1] );
+			
+			cInfo.begin = slash + (slash != cInfo.end);
+			
+			OSErr err = ::PBGetCatInfoAsync( &cInfo );
+			
+			if ( cInfo.dirInfo.ioResult >= 0 )
+			{
+				// Successfully queued
+				return;
+			}
+			
+			// We don't know if this was queued or not, so set done below
+			
+		done:
+			
+			cInfo.done = true;
+			
+			Ped::WakeUp();
 		}
 		
-		const char* slash = std::find( begin, cInfo.end, '/' );
-		
-		if ( name_is_special( begin, slash ) )
-		{
-			goto done;
-		}
-		
-		const unsigned name_length = slash - begin;
-		
-		cInfo.name[ 0 ] = name_length;
-		
-		std::copy( begin, slash, &cInfo.name[1] );
-		
-		cInfo.begin = slash + (slash != cInfo.end);
-		
-		OSErr err = ::PBGetCatInfoAsync( &cInfo );
-		
-		if ( cInfo.dirInfo.ioResult >= 0 )
-		{
-			// Successfully queued
-			return;
-		}
-		
-		// We don't know if this was queued or not, so set done below
-		
-	done:
-		
-		cInfo.done = true;
-		
-		Ped::WakeUp();
 	}
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	static pascal asm void ResolvePath_Completion_68K()
-	{
-		MOVE.L (SP),-(SP)
-		MOVE.L A0,4(SP)
-		BRA    ResolvePath_Completion
-	}
-	
-	static ::IOCompletionUPP gResolvePathCompletion = ResolvePath_Completion_68K;
-	
-#else
-	
-	static ::IOCompletionUPP gResolvePathCompletion = ::NewIOCompletionUPP( ResolvePath_Completion );
-	
-#endif
 	
 	static FSTreePtr ResolvePath_HFS( const FSSpec& dirFileSpec, const char*& begin, const char* end )
 	{
@@ -1618,7 +1641,7 @@ namespace Genie
 		
 		DirInfo& dirInfo = cInfo.dirInfo;
 		
-		dirInfo.ioCompletion = gResolvePathCompletion;
+		dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, ResolvePath_Completion >();
 		
 		dirInfo.ioNamePtr   = cInfo.name;
 		dirInfo.ioVRefNum   = dirFileSpec.vRefNum;
