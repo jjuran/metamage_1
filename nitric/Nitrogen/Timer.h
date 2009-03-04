@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2006 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -52,31 +52,41 @@ namespace Nucleus
   }
 
 namespace Nitrogen
-  {
-	namespace Private
+{
+	
+	typedef pascal void (*TimerProcPtr)( TMTaskPtr tmTaskPtr );
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	struct TimerUPP_Details
 	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		typedef ::TimerUPP UPPType;
 		
-		inline void InvokeTimerUPP( TMTaskPtr tmTaskPtr, ::TimerUPP userUPP )
+		// This is the stack-based function signature
+		typedef TimerProcPtr ProcPtr;
+		
+		template < ProcPtr procPtr >
+		static pascal void Glue()
 		{
-			::InvokeTimerUPP( tmTaskPtr, userUPP );
+			Call_With_A0_Glue< ProcPtr, procPtr >();
 		}
-		
-	#else
-		
-		using ::InvokeTimerUPP;
-		
-	#endif
-	}
+	};
+	
+	typedef GlueUPP< TimerUPP_Details > TimerUPP;
+	
+#else
 	
 	struct TimerUPP_Details : Basic_UPP_Details< ::TimerUPP,
 	                                             ::TimerProcPtr,
 	                                             ::NewTimerUPP,
 	                                             ::DisposeTimerUPP,
-	                                             Private::InvokeTimerUPP >
-	{};
+	                                             ::InvokeTimerUPP >
+	{
+	};
 	
 	typedef UPP< TimerUPP_Details > TimerUPP;
+	
+#endif
 	
 	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask );
 	Nucleus::Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask );
@@ -89,22 +99,18 @@ namespace Nitrogen
 	
 	UnsignedWide Microseconds();
 	
-	inline Nucleus::Owned< TimerUPP > NewTimerUPP( ::TimerProcPtr p )
+	inline Nucleus::Owned< TimerUPP > NewTimerUPP( TimerProcPtr p )
 	{
 		return NewUPP< TimerUPP >( p );
 	}
 	
 	inline void DisposeTimerUPP( Nucleus::Owned< TimerUPP > )  {}
 	
-#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
-	
 	inline void InvokeTimerUPP( TMTaskPtr tmTaskPtr,
 	                            TimerUPP  userUPP )
 	{
-		userUPP( tmTaskPtr );
+		::InvokeTimerUPP( tmTaskPtr, userUPP.Get() );
 	}
-	
-#endif
 	
 }
 
