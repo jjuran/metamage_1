@@ -19,6 +19,7 @@
 
 namespace Nitrogen
 {
+	
 	template < class UPP, class ProcPtr > struct UPP_Traits;
 	
 	template < class UPP, class R >
@@ -359,6 +360,20 @@ namespace Nitrogen
 	};
 	
 	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	template < class ProcPtr, ProcPtr procPtr >
+	inline pascal void Call_With_A0_Glue()
+	{
+		asm
+		{
+			MOVE.L  A0,-(SP)  ; // push param onto the stack
+			JSR     procPtr
+		}
+	}
+	
+#endif
+	
 	template < class UPP_Details >
 	struct GlueUPP : BasicUPP< typename UPP_Details::UPPType >
 	{
@@ -388,6 +403,16 @@ namespace Nucleus
 		void operator()( Nitrogen::UPP< UPP_Details > upp ) const
 		{
 			UPP_Details::Dispose( upp );
+		}
+	};
+	
+	template < class UPP_Details >
+	struct Disposer< Nitrogen::GlueUPP< UPP_Details > >
+	         : public std::unary_function< Nitrogen::GlueUPP< UPP_Details >, void >
+	{      
+		void operator()( Nitrogen::GlueUPP< UPP_Details > upp ) const
+		{
+			// Do nothing; glue UPPs aren't dynamically allocated
 		}
 	};
 	
