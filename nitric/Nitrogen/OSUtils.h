@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Joshua Juran and Marshall Clow.
+// Written 2004-2009 by Joshua Juran and Marshall Clow.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -79,47 +79,52 @@ namespace Nitrogen
 	
 	// ...
 	
-	namespace Private
+	typedef pascal void (*DeferredTaskProcPtr)( long dtParam );
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	struct DeferredTaskUPP_Details
 	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		typedef ::DeferredTaskUPP UPPType;
 		
-		inline void InvokeDeferredTaskUPP( long dtParam, ::DeferredTaskUPP userUPP )
+		// This is the stack-based function signature
+		typedef DeferredTaskProcPtr ProcPtr;
+		
+		template < ProcPtr procPtr >
+		static pascal void Glue()
 		{
-			::InvokeDeferredTaskUPP( dtParam, userUPP );
+			Call_With_A0_Glue< ProcPtr, procPtr >();
 		}
-		
-	#else
-		
-		using ::InvokeDeferredTaskUPP;
-		
-	#endif
-	}
+	};
+	
+	typedef GlueUPP< DeferredTaskUPP_Details > DeferredTaskUPP;
+	
+#else
 	
 	struct DeferredTaskUPP_Details : Basic_UPP_Details< ::DeferredTaskUPP,
 	                                                    ::DeferredTaskProcPtr,
 	                                                    ::NewDeferredTaskUPP,
 	                                                    ::DisposeDeferredTaskUPP,
-	                                                    Private::InvokeDeferredTaskUPP >
-	{};
+	                                                    ::InvokeDeferredTaskUPP >
+	{
+	};
 	
 	typedef UPP< DeferredTaskUPP_Details > DeferredTaskUPP;
 	
-	inline Nucleus::Owned< DeferredTaskUPP > NewDeferredTaskUPP( ::DeferredTaskProcPtr p )
+#endif
+	
+	inline Nucleus::Owned< DeferredTaskUPP > NewDeferredTaskUPP( DeferredTaskProcPtr p )
 	{
 		return NewUPP< DeferredTaskUPP >( p );
 	}
 	
 	inline void DisposeDeferredTaskUPP( Nucleus::Owned< DeferredTaskUPP > )  {}
 	
-#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
-	
 	inline void InvokeDeferredTaskUPP( long             dtParam,
 	                                   DeferredTaskUPP  userUPP )
 	{
-		userUPP( dtParam );
+		::InvokeDeferredTaskUPP( dtParam, userUPP );
 	}
-	
-#endif
 	
 	using ::DeferredTask;
 	using ::DeferredTaskPtr;
