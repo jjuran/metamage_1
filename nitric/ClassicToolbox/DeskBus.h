@@ -35,40 +35,52 @@ namespace Nitrogen
 	
 	// ProcPtrs and UPPs
 	
-	namespace Glue
+	typedef pascal void (*ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	template < class ProcPtr, ProcPtr procPtr >
+	inline pascal void ADBCompletion_Glue()
 	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-		
-		typedef pascal void (*ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
-		
-		template < ADBCompletionProcPtr proc >
-		pascal void ADBCompletionProcPtr_Glue()
+		asm
 		{
-			asm
-			{
-				MOVE.L   A0, -(SP) ;  // buffer
-				MOVE.L   A2, -(SP) ;  // refCon
-				MOVE.L   D0, -(SP) ;  // command
-				
-				JSR      proc      ;
-			}
+			MOVE.L  A0, -(SP) ;  // buffer
+			MOVE.L  A2, -(SP) ;  // refCon
+			MOVE.L  D0, -(SP) ;  // command
+			
+			JSR     procPtr
 		}
-		
-	#else
-		
-		using ::ADBCompletionProcPtr;
-		
-	#endif
 	}
+	
+	struct ADBCompletionUPP_Details
+	{
+		typedef ::ADBCompletionUPP UPPType;
+		
+		// This is the stack-based function signature
+		typedef ADBCompletionProcPtr ProcPtr;
+		
+		template < ProcPtr procPtr >
+		static pascal void Glue()
+		{
+			ADBCompletion_Glue< ProcPtr, procPtr >();
+		}
+	};
+	
+	typedef GlueUPP< ADBCompletionUPP_Details > ADBCompletionUPP;
+	
+#else
 	
 	struct ADBCompletionUPP_Details : Basic_UPP_Details< ::ADBCompletionUPP,
 	                                                     ::ADBCompletionProcPtr,
 	                                                     ::NewADBCompletionUPP,
 	                                                     ::DisposeADBCompletionUPP,
 	                                                     ::InvokeADBCompletionUPP >
-	{};
+	{
+	};
 	
 	typedef UPP< ADBCompletionUPP_Details > ADBCompletionUPP;
+	
+#endif
 	
 	using ::ADBDataBlock;
 	using ::ADBSetInfoBlock;
@@ -81,21 +93,11 @@ namespace Nitrogen
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum );
 	
-	template < Glue::ADBCompletionProcPtr proc >
+	template < ADBCompletionProcPtr proc >
 	inline void ADBOp( ::Ptr refCon, ::Ptr buffer, short commandNum )
 	{
-		ADBCompletionUPP upp =
-		
-		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		ADBCompletionUPP upp = StaticUPP< ADBCompletionUPP, proc >();
 			
-			Glue::ADBCompletionProcPtr_Glue< proc >;
-			
-		#else
-			
-			StaticUPP< ADBCompletionUPP, proc >();
-			
-		#endif
-		
 		Nitrogen::ADBOp( refCon, upp, buffer, commandNum );
 	}
 	
@@ -130,7 +132,7 @@ namespace Nitrogen
 	
 	// UPP management
 	
-	inline Nucleus::Owned< ADBCompletionUPP > NewADBCompletionUPP( ::ADBCompletionProcPtr p )
+	inline Nucleus::Owned< ADBCompletionUPP > NewADBCompletionUPP( ADBCompletionProcPtr p )
 	{
 		return NewUPP< ADBCompletionUPP >( p );
 	}
@@ -142,22 +144,7 @@ namespace Nitrogen
 	                                    long              command,
 	                                    ADBCompletionUPP  userUPP )
 	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-		
-		asm
-		{
-			MOVE.L   buffer,  A0 ;
-			MOVE.L   refCon,  A2 ;
-			MOVE.L   command, D0 ;
-		}
-		
-		userUPP();
-		
-	#else
-		
-		userUPP( buffer, refCon, command );
-		
-	#endif
+		::InvokeADBCompletionUPP( buffer, refCon, command, userUPP.Get() );
 	}
 	
 	
