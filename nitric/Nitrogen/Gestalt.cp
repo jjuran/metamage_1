@@ -39,18 +39,18 @@ namespace Nitrogen
 	
 #pragma force_active reset
 	
-	long Gestalt( Gestalt_Selector selector )
+	SInt32 Gestalt( Gestalt_Selector selector )
 	{
-		long result;
+		SInt32 result;
 		
 		ThrowOSStatus( ::Gestalt( selector, &result ) );
 		
 		return result;
 	}
 	
-	long Gestalt( Gestalt_Selector selector, long defaultValue )
+	SInt32 Gestalt( Gestalt_Selector selector, SInt32 defaultValue )
 	{
-		long result;
+		SInt32 result;
 		
 		OSErr err = ::Gestalt( selector, &result );
 		

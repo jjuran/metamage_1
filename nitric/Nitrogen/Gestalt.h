@@ -49,13 +49,13 @@ namespace Nitrogen
 	typedef Gestalt_Selector GestaltSelector;
 	
 	
-   long Gestalt( Gestalt_Selector selector );
-   long Gestalt( Gestalt_Selector selector, long defaultValue );
+   SInt32 Gestalt( Gestalt_Selector selector );
+   SInt32 Gestalt( Gestalt_Selector selector, SInt32 defaultValue );
    
    template < Gestalt_Selector selector > struct GestaltDefault;
    
    template < Gestalt_Selector selector >
-   inline long Gestalt()
+   inline SInt32 Gestalt()
      {
       return Gestalt( selector, GestaltDefault<selector>::defaultValue );
      }
@@ -80,12 +80,12 @@ namespace Nitrogen
 	
    struct GestaltAttrDefaults
      {
-      static const long defaultValue = 0;
+      static const SInt32 defaultValue = 0;
      };
  
     struct GestaltVersionDefaults
      {
-      static const long defaultValue = 0;
+      static const SInt32 defaultValue = 0;
      };
 	
 	template <> struct GestaltDefault< gestaltAliasMgrAttr     >: GestaltAttrDefaults {};  // 263
