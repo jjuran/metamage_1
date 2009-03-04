@@ -82,14 +82,20 @@ namespace Nitrogen
 		OSType creator;
 		OSType type;
 		
-		FileSignature() : creator(), type()  {}
+		FileSignature() : creator(), type()
+		{
+		}
 		
 		FileSignature( OSType creator,
 		               OSType type ) : creator( creator ),
-		                               type   ( type    )  {}
+		                               type   ( type    )
+		{
+		}
 		
 		FileSignature( const FInfo& fInfo ) : creator( OSType( fInfo.fdCreator ) ),
-		                                      type   ( OSType( fInfo.fdType    ) )  {}
+		                                      type   ( OSType( fInfo.fdType    ) )
+		{
+		}
 	};
 	
 	
@@ -106,8 +112,8 @@ namespace Nitrogen
 		kFSNodeFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
 	};
 	
-   NUCLEUS_DEFINE_FLAG_OPS( FSNodeFlags )
-   
+	NUCLEUS_DEFINE_FLAG_OPS( FSNodeFlags )
+	
 	enum FSNodeID
 	{
 		kFSNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
@@ -125,9 +131,9 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSSharingFlags )
 	
-   typedef FSSharingFlags FSIOFileAttributes;
-   typedef FSSharingFlags FSIOFlAttrib;
-   
+	typedef FSSharingFlags FSIOFileAttributes;
+	typedef FSSharingFlags FSIOFlAttrib;
+	
 	enum FSUserPrivileges
 	{
 		kFSUserPrivileges_Max = Nucleus::Enumeration_Traits< UInt8 >::max
@@ -202,34 +208,35 @@ namespace Nitrogen
 		kFSVolumeInfoFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
 	};
 	
-   typedef FSVolumeInfoFlags FSIOVAtrb;
-   typedef FSVolumeInfoFlags FSIOVolumeAttributes;
-   
+	typedef FSVolumeInfoFlags FSIOVAtrb;
+	typedef FSVolumeInfoFlags FSIOVolumeAttributes;
+	
 	NUCLEUS_DEFINE_FLAG_OPS( FSVolumeInfoFlags )
 	
-   struct FSVolumeIndex_Specifics
-     {
-      typedef ::ItemCount UnderlyingType;
-      static const UnderlyingType defaultValue = 0;
-     };
-
-   typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
-   
+	struct FSVolumeIndex_Specifics
+	{
+		typedef ::ItemCount UnderlyingType;
+		
+		static const UnderlyingType defaultValue = 0;
+	};
+	
+	typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
+	
 	enum FSFileSystemID
 	{
 		kFSFileSystemID_Max = Nucleus::Enumeration_Traits< UInt16 >::max
 	};
 	
-   typedef FSFileSystemID IOFSID;
-   
+	typedef FSFileSystemID IOFSID;
+	
 	enum DriverReferenceNumber
 	{
 		kDriverReferenceNumber_Max = Nucleus::Enumeration_Traits< SInt16 >::max
 	};
 	
-   typedef DriverReferenceNumber DRefNum;
-   typedef DriverReferenceNumber DriverRefNum;
-
+	typedef DriverReferenceNumber DRefNum;
+	typedef DriverReferenceNumber DriverRefNum;
+	
 	enum HFSCatalogNodeID
 	{
 		kHFSCatalogNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
