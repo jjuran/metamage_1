@@ -21,11 +21,16 @@
 namespace Nitrogen
 {
 	
-	static CursorDevicePtr CursorDeviceNextDevice( CursorDevicePtr device = NULL )
+	inline CursorDevicePtr CursorDeviceNextDevice( CursorDevicePtr device = NULL )
 	{
 		ThrowOSStatus( ::CursorDeviceNextDevice( &device ) );
 		
 		return device;
+	}
+	
+	inline void CursorDeviceMoveTo( CursorDevicePtr device, long x, long y )
+	{
+		ThrowOSStatus( ::CursorDeviceMoveTo( device, x, y ) );
 	}
 	
 }
@@ -51,12 +56,19 @@ namespace Genie
 			
 			return Freeze< Point_Scribe< ',' > >( data.where, binary );
 		}
+		
+		static void Set( CursorDevicePtr device, const char* begin, const char* end, bool binary )
+		{
+			Point location = Vivify< Point_Scribe<> >( begin, end, binary );
+			
+			N::CursorDeviceMoveTo( device, location.h, location.v );
+		}
 	};
 	
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static CursorDevicePtr GetCursorDevice( const FSTree* that )
 		{
 			CursorDevicePtr device = N::CursorDeviceNextDevice();
 			
@@ -65,7 +77,21 @@ namespace Genie
 				throw FSTree_Property::Undefined();
 			}
 			
+			return device;
+		}
+		
+		static std::string Read( const FSTree* that, bool binary )
+		{
+			CursorDevicePtr device = GetCursorDevice( that );
+			
 			return Accessor::Get( *device, binary );
+		}
+		
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			CursorDevicePtr device = GetCursorDevice( that );
+			
+			Accessor::Set( device, begin, end, binary );
 		}
 	};
 	
@@ -77,7 +103,8 @@ namespace Genie
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &Property::Read ) );
+		                                       &Property::Read,
+		                                       &Property::Write ) );
 	}
 	
 	
