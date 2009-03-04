@@ -67,53 +67,6 @@
 #include "Genie/Utilities/AsyncIO.hh"
 
 
-namespace Nitrogen
-{
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	template < class ProcPtr, ProcPtr function >
-	inline pascal void Call_With_A0_Glue()
-	{
-		asm
-		{
-			MOVE.L A0,-(SP)  ; // push pb onto the stack
-			JSR    function
-		}
-	}
-	
-	struct IOCompletionUPP_Details
-	{
-		typedef ::IOCompletionUPP UPPType;
-		
-		// This is the stack-based function signature
-		typedef pascal void (*ProcPtr)( ::ParamBlockRec* pb );
-		
-		template < ProcPtr procPtr >
-		static pascal void Glue()
-		{
-			Call_With_A0_Glue< ProcPtr, procPtr >();
-		}
-	};
-	
-	typedef GlueUPP< IOCompletionUPP_Details > IOCompletionUPP;
-	
-#else
-	
-	struct IOCompletionUPP_Details : Basic_UPP_Details< ::IOCompletionUPP,
-	                                                    ::IOCompletionProcPtr,
-	                                                    ::NewIOCompletionUPP,
-	                                                    ::DisposeIOCompletionUPP,
-	                                                    ::InvokeIOCompletionUPP >
-	{
-	};
-	
-	typedef UPP< IOCompletionUPP_Details > IOCompletionUPP;
-	
-#endif
-	
-}
-
 namespace Genie
 {
 	
