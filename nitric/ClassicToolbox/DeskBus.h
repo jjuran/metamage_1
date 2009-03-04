@@ -10,22 +10,16 @@
 #error This module is for classic Toolbox only
 #endif
 
-// Mac OS Universal Interfaces
-#ifndef __DESKBUS__
+// Mac OS
 #include <DeskBus.h>
-#endif
 
 // Nucleus
 #include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_INDEXEDCONTAINER_H
 #include "Nucleus/IndexedContainer.h"
-#endif
 
 // Nitrogen
-#ifndef NITROGEN_UPP_H
 #include "Nitrogen/UPP.h"
-#endif
 
 
 namespace Nitrogen
