@@ -111,6 +111,7 @@ namespace tool
 		SHARED_LIB( "WindowsLib"         ),
 		
 		PPC_LIB( "CarbonAccessors.o"        ),
+		PPC_LIB( "CursorDevicesGlue.o"      ),
 		PPC_LIB( "OpenTransportAppPPC.o"    ),
 		PPC_LIB( "OpenTptInetPPC.o"         ),
 		PPC_LIB( "PascalPreCarbonUPPGlue.o" ),
