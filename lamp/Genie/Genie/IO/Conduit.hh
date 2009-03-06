@@ -8,16 +8,44 @@
 
 // Standard C++
 #include <list>
-#include <string>
 
 
 namespace Genie
 {
 	
+	class Page
+	{
+		public:
+			static const std::size_t capacity = 4096;
+		
+		private:
+			std::size_t written;
+			std::size_t read;
+			
+			char data[ capacity ];
+		
+		public:
+			Page() : written(), read()
+			{
+			}
+			
+			Page( const Page& other );
+			
+			std::size_t Writable() const  { return capacity - written; }
+			std::size_t Readable() const  { return written  - read;    }
+			
+			bool Whole() const  { return read == 0  &&  written == capacity; }
+			
+			void Write( const char* buffer, std::size_t n_bytes );
+			
+			std::size_t Read ( char* buffer, std::size_t max_bytes );
+	};
+	
 	class Conduit
 	{
 		private:
-			std::list< std::string > itsStrings;
+			std::list< Page > itsPages;
+			
 			bool itsIngressHasClosed;
 			bool itsEgressHasClosed;
 		

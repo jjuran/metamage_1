@@ -27,75 +27,97 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
+	Page::Page( const Page& other )
+	:
+		written( other.written ),
+		read   ( other.read    )
+	{
+		ASSERT( read    <= written  );
+		ASSERT( written <= capacity );
+		
+		std::copy( &other.data[ read    ],
+		           &other.data[ written ],
+		           &      data[ read    ] );
+	}
+	
+	void Page::Write( const char* buffer, std::size_t n_bytes )
+	{
+		ASSERT( n_bytes <= Writable() );
+		
+		std::copy( buffer, buffer + n_bytes, &data[ written ] );
+		
+		written += n_bytes;
+	}
+	
+	std::size_t Page::Read( char* buffer, std::size_t max_bytes )
+	{
+		max_bytes = std::min( max_bytes, Readable() );
+		
+		const char* start = &data[ read ];
+		
+		std::copy( start, start + max_bytes, buffer );
+		
+		read += max_bytes;
+		
+		return max_bytes;
+	}
+	
+	
 	bool Conduit::IsReadable() const
 	{
-		return itsIngressHasClosed || !itsStrings.empty();
+		return itsIngressHasClosed || !itsPages.empty();
 	}
 	
 	bool Conduit::IsWritable() const
 	{
-		return itsEgressHasClosed || itsStrings.size() < 20;
+		return itsEgressHasClosed || itsPages.size() < 20;
 	}
 	
-	int Conduit::Read( char* data, std::size_t byteCount, bool nonblocking )
+	int Conduit::Read( char* buffer, std::size_t max_bytes, bool nonblocking )
 	{
-		if ( byteCount == 0 )
+		if ( max_bytes == 0 )
 		{
 			return 0;
 		}
 		
 		// Wait until we have some data or the stream is closed
-		while ( itsStrings.empty() && !itsIngressHasClosed )
+		while ( itsPages.empty() && !itsIngressHasClosed )
 		{
 			TryAgainLater( nonblocking );
 		}
 		
-		// Either a string was written, or input was closed,
-		// or possibly both, so check itsStrings rather than itsIngressHasClosed
+		// Either a page was written, or input was closed,
+		// or possibly both, so check itsPages rather than itsIngressHasClosed
 		// so we don't miss data.
 		
-		// If the string queue is still empty then input must have closed.
-		if ( itsStrings.empty() )
+		// If the page queue is still empty then input must have closed.
+		if ( itsPages.empty() )
 		{
 			return 0;
 		}
 		
-		// Only reached if a string is available.
-		std::size_t bytesCopied = 0;
+		// Only reached if a page is available.
 		
-		do
+		const std::size_t readable = itsPages.front().Readable();
+		
+		ASSERT( readable > 0 );
+		
+		const bool consumed = max_bytes >= readable;
+		
+		itsPages.front().Read( buffer, max_bytes );
+		
+		if ( consumed )
 		{
-			std::string& inputChunk = itsStrings.front();
-			//itsStrings.pop_front();
+			itsPages.pop_front();
 			
-			std::size_t bytesToCopy = std::min( inputChunk.size(), byteCount - bytesCopied );
-			
-			// Copy from our input store to the supplied buffer
-			std::copy( inputChunk.begin(),
-			           inputChunk.begin() + bytesToCopy,
-			           data + bytesCopied );
-			
-			// Slide any unused input to the beginning
-			// This would really suck for reading lots of data through a pipe one byte at a time
-			std::copy( inputChunk.begin() + bytesToCopy,
-			           inputChunk.end(),
-			           inputChunk.begin() );
-			
-			bytesCopied += bytesToCopy;
-			
-			inputChunk.resize( inputChunk.size() - bytesToCopy );
-			
-			if ( inputChunk.empty() )
-			{
-				itsStrings.pop_front();
-			}
+			return readable;
 		}
-		while ( !itsStrings.empty()  &&  bytesCopied < byteCount );
 		
-		return bytesCopied;
+		return max_bytes;
 	}
 	
-	int Conduit::Write( const char* data, std::size_t byteCount, bool nonblocking )
+	int Conduit::Write( const char* buffer, std::size_t n_bytes, bool nonblocking )
 	{
 		while ( !IsWritable() )
 		{
@@ -113,12 +135,41 @@ namespace Genie
 			p7::throw_errno( EPIPE );
 		}
 		
-		if ( byteCount != 0 )
+		if ( n_bytes == 0 )
 		{
-			itsStrings.push_back( std::string( data, byteCount ) );
+			return 0;
 		}
 		
-		return byteCount;
+		if ( itsPages.empty() )
+		{
+			itsPages.push_back( Page() );
+		}
+		else if ( n_bytes > itsPages.back().Writable()  &&  n_bytes <= Page::capacity )
+		{
+			itsPages.push_back( Page() );
+			
+			itsPages.back().Write( buffer, n_bytes );
+			
+			return n_bytes;
+		}
+		
+		const char* end = buffer + n_bytes;
+		
+		std::size_t writable = 0;
+		
+		while ( end - buffer > (writable = itsPages.back().Writable()) )
+		{
+			itsPages.back().Write( buffer, writable );
+			
+			buffer += writable;
+			
+			itsPages.push_back( Page() );
+		}
+		
+		itsPages.back().Write( buffer, end - buffer );
+		
+		
+		return n_bytes;
 	}
 	
 }
