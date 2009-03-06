@@ -381,8 +381,6 @@ namespace Genie
 	
 	struct Access_WindowSelect
 	{
-		typedef Integer_Scribe< short > Scribe;
-		
 		static std::string Get( N::WindowRef window, bool binary )
 		{
 			throw FSTree_Property::Undefined();
