@@ -379,6 +379,21 @@ namespace Genie
 		}
 	};
 	
+	struct Access_WindowSelect
+	{
+		typedef Integer_Scribe< short > Scribe;
+		
+		static std::string Get( N::WindowRef window, bool binary )
+		{
+			throw FSTree_Property::Undefined();
+		}
+		
+		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
+		{
+			N::SelectWindow( window );
+		}
+	};
+	
 	template < class Accessor >
 	struct sys_mac_window_REF_Property
 	{
@@ -475,6 +490,8 @@ namespace Genie
 		
 		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
 		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
+		
+		{ "select", &Property_Factory< Access_WindowSelect > },
 		
 		{ "z", &Const_Property_Factory< Access_WindowZOrder > },
 		
