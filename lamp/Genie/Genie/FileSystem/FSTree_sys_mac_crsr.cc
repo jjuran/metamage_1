@@ -66,7 +66,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_desktop_Property
+	struct sys_mac_crsr_Property
 	{
 		static CursorDevicePtr GetCursorDevice( const FSTree* that )
 		{
@@ -99,7 +99,7 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		typedef sys_mac_desktop_Property< Accessor > Property;
+		typedef sys_mac_crsr_Property< Accessor > Property;
 		
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
