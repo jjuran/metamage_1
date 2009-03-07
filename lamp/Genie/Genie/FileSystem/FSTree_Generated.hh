@@ -30,6 +30,8 @@ namespace Genie
 			{
 			}
 			
+			bool Exists() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	

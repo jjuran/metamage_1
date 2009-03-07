@@ -21,6 +21,24 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	bool FSTree_Generated::Exists() const
+	{
+		if ( itsReadHook != NULL )
+		{
+			try
+			{
+				(void) itsReadHook( this );
+				
+				return true;
+			}
+			catch ( ... )
+			{
+			}
+		}
+		
+		return false;
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_Generated::Open( OpenFlags flags ) const
 	{
 		if ( flags != O_RDONLY )
