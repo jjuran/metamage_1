@@ -42,6 +42,9 @@ namespace Genie
 				itsWriteHook( writeHook )
 			{
 			}
+			
+			bool Exists() const;
+			
 			mode_t FilePermMode() const
 			{
 				return (itsReadHook  ? S_IRUSR : 0)

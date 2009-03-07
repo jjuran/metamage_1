@@ -22,6 +22,27 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	bool FSTree_Property::Exists() const
+	{
+		if ( itsReadHook != NULL )
+		{
+			try
+			{
+				// Binary is probably more efficient, but only slightly so
+				const bool binary_vs_text = true;
+				
+				(void) itsReadHook( this, binary_vs_text );
+				
+				return true;
+			}
+			catch ( ... )
+			{
+			}
+		}
+		
+		return false;
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_Property::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = NULL;
