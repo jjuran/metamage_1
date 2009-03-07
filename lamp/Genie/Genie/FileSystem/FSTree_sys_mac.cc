@@ -18,6 +18,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_rom.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_thng.hh"
 #if !TARGET_API_MAC_CARBON
 #include "Genie/FileSystem/FSTree_sys_mac_adb.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
@@ -57,6 +58,7 @@ namespace Genie
 		{ "vol",    &Basic_Factory< FSTree_sys_mac_vol    > },
 		{ "gdev",   &Basic_Factory< FSTree_sys_mac_gdev   > },
 		{ "proc",   &Basic_Factory< FSTree_sys_mac_proc   > },
+		{ "thng",   &Basic_Factory< FSTree_sys_mac_thng   > },
 		//{ "window", &Basic_Factory< FSTree_sys_mac_window > },
 		
 	#if !TARGET_API_MAC_CARBON
