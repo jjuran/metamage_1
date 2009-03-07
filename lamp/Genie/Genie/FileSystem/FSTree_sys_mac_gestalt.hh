@@ -8,6 +8,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/Name_OSType.hh"
 
 
 namespace Nitrogen
@@ -101,17 +102,9 @@ namespace Nitrogen
 namespace Genie
 {
 	
-	struct OSType_KeyName_Traits
-	{
-		typedef Nitrogen::OSType Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
-	};
-	
 	struct Gestalt_KeyName_Traits : OSType_KeyName_Traits
 	{
+		static std::string NameFromKey( const Key& key );
 	};
 	
 	struct sys_mac_gestalt_Details : public Gestalt_KeyName_Traits
