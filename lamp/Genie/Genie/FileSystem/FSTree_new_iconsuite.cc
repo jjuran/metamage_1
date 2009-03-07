@@ -123,7 +123,11 @@ namespace Genie
 	
 	void FSTree_IconSuite_ref::Attach( const FSTreePtr& target ) const
 	{
-		gIconSuiteMap[ ParentRef().get() ] = Fetch_IconSuite();
+		const FSTree* view = ParentRef().get();
+		
+		gIconSuiteMap[ view ] = Fetch_IconSuite();
+		
+		InvalidateWindowForView( view );
 	}
 	
 	
