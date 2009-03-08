@@ -216,6 +216,11 @@ namespace Genie
 			
 			N::Size size = N::GetHandleSize( icon );
 			
+			if ( size == 0 )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
 			std::string result;
 			
 			result.resize( size );
@@ -239,6 +244,11 @@ namespace Genie
 		NN::Shared< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
 		
 		const ::Handle h = iconSuite.Get().Get();
+		
+		if ( h == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
 		
 		const N::Size size = N::GetHandleSize( Handle( h ) );
 		
