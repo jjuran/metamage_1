@@ -26,23 +26,10 @@ namespace Pedestal
 namespace Genie
 {
 	
-	bool ViewExists( const FSTree* parent, const std::string& name );
-	
-	void RemoveViewParameters( const FSTree* parent, const std::string& name );
-	
 	void RemoveAllViewParameters( const FSTree* parent );
 	
 	
 	typedef boost::shared_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
-	
-	
-	void AddViewParameters( const FSTree*       parent,
-	                        const std::string&  name,
-	                        const FSTreePtr&    delegate,
-	                        ViewFactory         factory );
-	
-	
-	boost::shared_ptr< Pedestal::View > MakeView( const FSTree* parent, const std::string& name );
 	
 	
 	bool InvalidateWindowForView( const FSTree* view );

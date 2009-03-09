@@ -59,15 +59,15 @@ namespace Genie
 		return NULL;
 	}
 	
-	bool ViewExists( const FSTree* parent, const std::string& name )
+	static bool ViewExists( const FSTree* parent, const std::string& name )
 	{
 		return FindView( parent, name ) != NULL;
 	}
 	
-	void AddViewParameters( const FSTree*       parent,
-	                        const std::string&  name,
-	                        const FSTreePtr&    delegate,
-	                        ViewFactory         factory )
+	static void AddViewParameters( const FSTree*       parent,
+	                               const std::string&  name,
+	                               const FSTreePtr&    delegate,
+	                               ViewFactory         factory )
 	{
 		ASSERT( delegate.get() != NULL );
 		
@@ -86,7 +86,7 @@ namespace Genie
 		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
-	void RemoveViewParameters( const FSTree* parent, const std::string& name )
+	static void RemoveViewParameters( const FSTree* parent, const std::string& name )
 	{
 		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
 		
@@ -108,7 +108,8 @@ namespace Genie
 		gViewParametersMap.erase( parent );
 	}
 	
-	boost::shared_ptr< Ped::View > MakeView( const FSTree* parent, const std::string& name )
+	static boost::shared_ptr< Ped::View > MakeView( const FSTree*       parent,
+	                                                const std::string&  name )
 	{
 		if ( const ViewParameters* params = FindView( parent, name ) )
 		{
