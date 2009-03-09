@@ -29,7 +29,7 @@ namespace Pedestal
 			
 			void DrawProgress( Rect insetBounds );
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 }

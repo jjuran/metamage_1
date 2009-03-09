@@ -31,7 +31,7 @@ namespace Pedestal
 			Graphic const& Get() const  { return graphic; }
 			Graphic      & Get()        { return graphic; }
 			
-			void Draw( const Rect& bounds )  { graphic.Plot( bounds ); }
+			void Draw( const Rect& bounds, bool erasing )  { graphic.Plot( bounds ); }
 	};
 	
 }

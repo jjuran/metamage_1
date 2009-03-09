@@ -20,7 +20,7 @@ namespace Pedestal
 			
 			Rect ApertureFromBounds( const Rect& bounds );
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 }

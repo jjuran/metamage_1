@@ -181,7 +181,7 @@ namespace Pedestal
 	
 	void Window::Update()
 	{
-		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ) );
+		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ), true );
 		
 		if ( !TARGET_API_MAC_CARBON && HasGrowIcon() )
 		{

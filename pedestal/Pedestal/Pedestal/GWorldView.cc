@@ -42,7 +42,7 @@ namespace Pedestal
 		Erase( itsBounds );
 	}
 	
-	void GWorldView::Draw( const Rect& bounds )
+	void GWorldView::Draw( const Rect& bounds, bool erasing )
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( itsGWorld );

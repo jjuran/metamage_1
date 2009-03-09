@@ -57,9 +57,9 @@ namespace Pedestal
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
 			
-			void Draw( const Rect& bounds )
+			void Draw( const Rect& bounds, bool erasing )
 			{
-				return Subview().Draw( ApertureFromBounds( bounds ) );
+				return Subview().Draw( ApertureFromBounds( bounds ), erasing );
 			}
 			
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )

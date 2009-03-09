@@ -22,28 +22,31 @@ namespace Pedestal
 		return GetAperture( bounds, Margin() );
 	}
 	
-	void Frame::Draw( const Rect& bounds )
+	void Frame::Draw( const Rect& bounds, bool erasing )
 	{
 		short margin = Margin();
 		
-		Rect top    = bounds;
-		Rect bottom = bounds;
+		if ( erasing )
+		{
+			Rect top    = bounds;
+			Rect bottom = bounds;
+			
+			Rect left  = bounds;
+			Rect right = bounds;
+			
+			top.bottom = top.top   + margin;
+			left.right = left.left + margin;
+			
+			bottom.top = bottom.bottom - margin;
+			right.left = right.right   - margin;
+			
+			N::EraseRect( top    );
+			N::EraseRect( left   );
+			N::EraseRect( right  );
+			N::EraseRect( bottom );
+		}
 		
-		Rect left  = bounds;
-		Rect right = bounds;
-		
-		top.bottom = top.top   + margin;
-		left.right = left.left + margin;
-		
-		bottom.top = bottom.bottom - margin;
-		right.left = right.right   - margin;
-		
-		N::EraseRect( top    );
-		N::EraseRect( left   );
-		N::EraseRect( right  );
-		N::EraseRect( bottom );
-		
-		Subview().Draw( GetAperture( bounds, margin ) );
+		Subview().Draw( GetAperture( bounds, margin ), erasing );
 	}
 	
 }

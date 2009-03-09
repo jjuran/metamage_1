@@ -97,7 +97,7 @@ namespace Pedestal
 		PaintProgress( insetBounds );
 	}
 	
-	void ProgressBar::Draw( const Rect& bounds )
+	void ProgressBar::Draw( const Rect& bounds, bool erasing )
 	{
 		N::FrameRect( bounds );
 		

@@ -19,7 +19,7 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	void Caption::Draw( const Rect& bounds )
+	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		

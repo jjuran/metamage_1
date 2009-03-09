@@ -23,7 +23,7 @@ namespace Pedestal
 			
 			virtual bool Wrapped() const  { return true; }
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 }

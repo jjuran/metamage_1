@@ -95,7 +95,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	void ListView::Draw( const Rect& bounds )
+	void ListView::Draw( const Rect& bounds, bool erasing )
 	{
 		//Rect bounds = Bounds( itsList );
 		//N::EraseRect( bounds );

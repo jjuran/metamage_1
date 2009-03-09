@@ -450,7 +450,7 @@ namespace Pedestal
 		}
 	}
 	
-	void TextEdit::Draw( const Rect& bounds )
+	void TextEdit::Draw( const Rect& bounds, bool erasing )
 	{
 		using Nucleus::Operators::operator!=;
 		

@@ -15,9 +15,12 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	void EmptyView::Draw( const Rect& bounds )
+	void EmptyView::Draw( const Rect& bounds, bool erasing )
 	{
-		N::EraseRect( bounds );
+		if ( erasing )
+		{
+			N::EraseRect( bounds );
+		}
 	}
 	
 	const boost::shared_ptr< View >& EmptyView::Get()

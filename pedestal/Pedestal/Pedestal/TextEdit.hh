@@ -53,7 +53,7 @@ namespace Pedestal
 			bool SetCursor( const EventRecord&  event,
 			                RgnHandle           mouseRgn );
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			bool UserCommand( MenuItemCode code );
 			

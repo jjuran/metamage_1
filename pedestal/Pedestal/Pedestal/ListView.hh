@@ -36,7 +36,7 @@ namespace Pedestal
 			
 			void Activate( bool activating )  { Nitrogen::LActivate( activating, itsList ); }
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			void SetCell( UInt16 offset, const char* data, std::size_t length );
 			

@@ -33,7 +33,7 @@ namespace Pedestal
 			
 			void Resize( short width, short height );
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 }
