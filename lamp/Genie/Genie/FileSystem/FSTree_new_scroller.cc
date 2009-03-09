@@ -57,7 +57,7 @@ namespace Genie
 			
 			View& Subview();
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			void Scroll( int dh, int dv );
 	};
@@ -74,7 +74,7 @@ namespace Genie
 		return *subview;
 	}
 	
-	void BasicScroller::Draw( const Rect& bounds )
+	void BasicScroller::Draw( const Rect& bounds, bool erasing )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		
@@ -90,7 +90,7 @@ namespace Genie
 		
 		::OffsetRect( &area, dx, dy );
 		
-		Subview().Draw( area );
+		Subview().Draw( area, erasing );
 	}
 	
 	void BasicScroller::Scroll( int dh, int dv )
@@ -101,7 +101,7 @@ namespace Genie
 		
 		N::SetClip( N::ScrollRect( bounds, dh, dv ) );
 		
-		Draw( bounds );
+		Draw( bounds, true );
 		
 		N::ValidRect( bounds );
 	}

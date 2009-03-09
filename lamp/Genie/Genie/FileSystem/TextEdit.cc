@@ -353,7 +353,7 @@ namespace Genie
 		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
 	}
 	
-	void TextEdit_Scroller::Draw( const Rect& bounds )
+	void TextEdit_Scroller::Draw( const Rect& bounds, bool erasing )
 	{
 		TEHandle hTE = itsSubview.Get();
 		
@@ -404,7 +404,7 @@ namespace Genie
 			editParams.itHasChangedAttributes = false;
 		}
 		
-		Subview().Draw( bounds );
+		Subview().Draw( bounds, erasing );
 	}
 	
 	

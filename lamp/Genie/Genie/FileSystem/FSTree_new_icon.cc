@@ -42,18 +42,21 @@ namespace Pedestal
 	class Icon : public View
 	{
 		public:
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::Handle Data() const = 0;
 	};
 	
 	namespace N = Nitrogen;
 	
-	void Icon::Draw( const Rect& bounds )
+	void Icon::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( N::Handle data = Data() )
 		{
-			N::EraseRect( bounds );
+			if ( erasing )
+			{
+				N::EraseRect( bounds );
+			}
 			
 			N::PlotIconHandle( bounds, N::kAlignNone, N::kTransformNone, data );
 		}

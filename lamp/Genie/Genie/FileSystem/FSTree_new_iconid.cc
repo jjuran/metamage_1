@@ -27,16 +27,19 @@ namespace Pedestal
 		public:
 			struct Undefined {};
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::ResID ID() const = 0;
 	};
 	
 	namespace N = Nitrogen;
 	
-	void IconID::Draw( const Rect& bounds )
+	void IconID::Draw( const Rect& bounds, bool erasing )
 	{
-		N::EraseRect( bounds );
+		if ( erasing )
+		{
+			N::EraseRect( bounds );
+		}
 		
 		try
 		{

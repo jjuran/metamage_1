@@ -120,7 +120,7 @@ namespace Genie
 			void SetHOffset( int h )  { SetScrollerHOffset( itsKey, h ); }
 			void SetVOffset( int v )  { SetScrollerVOffset( itsKey, v ); }
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 }

@@ -60,14 +60,14 @@ namespace Genie
 			{
 			}
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			short Margin() const;
 			
 			Ped::View& Subview();
 	};
 	
-	void Frame::Draw( const Rect& bounds )
+	void Frame::Draw( const Rect& bounds, bool erasing )
 	{
 		FrameParameters& params = gFrameParametersMap[ itsKey ];
 		
@@ -78,7 +78,7 @@ namespace Genie
 			SetBounds( bounds );
 		}
 		
-		Ped::Frame::Draw( bounds );
+		Ped::Frame::Draw( bounds, erasing );
 	}
 	
 	short Frame::Margin() const

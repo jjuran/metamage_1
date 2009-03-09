@@ -29,18 +29,21 @@ namespace Pedestal
 	class IconSuite : public View
 	{
 		public:
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::IconSuiteRef Data() const = 0;
 	};
 	
 	namespace N = Nitrogen;
 	
-	void IconSuite::Draw( const Rect& bounds )
+	void IconSuite::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( N::IconSuiteRef data = Data() )
 		{
-			N::EraseRect( bounds );
+			if ( erasing )
+			{
+				N::EraseRect( bounds );
+			}
 			
 			N::PlotIconSuite( bounds, N::kAlignNone, N::kTransformNone, data );
 		}

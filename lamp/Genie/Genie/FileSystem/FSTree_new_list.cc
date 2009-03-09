@@ -57,10 +57,10 @@ namespace Genie
 			{
 			}
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
-	void ListView::Draw( const Rect& bounds )
+	void ListView::Draw( const Rect& bounds, bool erasing )
 	{
 		ListParameters& params = gListParameterMap[ itsKey ];
 		
@@ -82,7 +82,7 @@ namespace Genie
 			}
 		}
 		
-		Ped::ListView::Draw( bounds );
+		Ped::ListView::Draw( bounds, erasing );
 	}
 	
 	

@@ -158,7 +158,7 @@ namespace Genie
 			
 			void UpdateScrollbars();
 			
-			void Draw( const Rect& aperture );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			Ped::View& Subview();
 	};
@@ -237,7 +237,7 @@ namespace Genie
 	}
 	
 	
-	void ScrollFrame::Draw( const Rect& bounds )
+	void ScrollFrame::Draw( const Rect& bounds, bool erasing )
 	{
 		const ScrollFrameParameters& params = gScrollFrameParametersMap[ itsKey ];
 		
@@ -249,7 +249,7 @@ namespace Genie
 			SetBounds( bounds );
 		}
 		
-		Subview().Draw( ApertureFromBounds( bounds ) );
+		Subview().Draw( ApertureFromBounds( bounds ), erasing );
 		
 		UpdateScrollbars();
 	}

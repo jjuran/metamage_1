@@ -135,7 +135,7 @@ namespace Genie
 			
 			void Scroll( int dh, int dv );
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 	};
 	
 	
