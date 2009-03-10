@@ -40,7 +40,7 @@ namespace Nitrogen
 namespace Pedestal
 {
 	
-	class Icon : public View
+	class PlainIcon : public View
 	{
 		public:
 			struct Undefined {};
@@ -56,7 +56,7 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
-	void Icon::Draw( const Rect& bounds, bool erasing )
+	void PlainIcon::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( N::Handle data = Data() )
 		{
@@ -80,23 +80,23 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct Icon_Parameters
+	struct PlainIcon_Parameters
 	{
 		NN::Shared< N::Handle >  data;
 		N::IconAlignmentType     align;
 		N::IconTransformType     xform;
 		
-		Icon_Parameters() : align(), xform()
+		PlainIcon_Parameters() : align(), xform()
 		{
 		}
 	};
 	
-	typedef std::map< const FSTree*, Icon_Parameters > IconMap;
+	typedef std::map< const FSTree*, PlainIcon_Parameters > PlainIconMap;
 	
-	static IconMap gIconMap;
+	static PlainIconMap gPlainIconMap;
 	
 	
-	class Icon : public Ped::Icon
+	class PlainIcon : public Ped::PlainIcon
 	{
 		private:
 			typedef const FSTree* Key;
@@ -106,7 +106,7 @@ namespace Genie
 		public:
 			typedef Key Initializer;
 			
-			Icon( Key key ) : itsKey( key )
+			PlainIcon( Key key ) : itsKey( key )
 			{
 			}
 			
@@ -117,11 +117,11 @@ namespace Genie
 			Nitrogen::IconTransformType Transform() const;
 	};
 	
-	N::Handle Icon::Data() const
+	N::Handle PlainIcon::Data() const
 	{
-		IconMap::const_iterator it = gIconMap.find( itsKey );
+		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
 		
-		if ( it != gIconMap.end() )
+		if ( it != gPlainIconMap.end() )
 		{
 			return it->second.data;
 		}
@@ -129,11 +129,11 @@ namespace Genie
 		return N::Handle();
 	}
 	
-	N::IconAlignmentType Icon::Alignment() const
+	N::IconAlignmentType PlainIcon::Alignment() const
 	{
-		IconMap::const_iterator it = gIconMap.find( itsKey );
+		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
 		
-		if ( it == gIconMap.end() )
+		if ( it == gPlainIconMap.end() )
 		{
 			throw Undefined();
 		}
@@ -141,11 +141,11 @@ namespace Genie
 		return it->second.align;
 	}
 	
-	N::IconTransformType Icon::Transform() const
+	N::IconTransformType PlainIcon::Transform() const
 	{
-		IconMap::const_iterator it = gIconMap.find( itsKey );
+		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
 		
-		if ( it == gIconMap.end() )
+		if ( it == gPlainIconMap.end() )
 		{
 			throw Undefined();
 		}
@@ -155,13 +155,13 @@ namespace Genie
 	
 	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new Icon( delegate ) );
+		return boost::shared_ptr< Ped::View >( new PlainIcon( delegate ) );
 	}
 	
 	
 	void FSTree_new_icon::DestroyDelegate( const FSTree* delegate )
 	{
-		gIconMap.erase( delegate );
+		gPlainIconMap.erase( delegate );
 	}
 	
 	
@@ -181,8 +181,8 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			NN::Shared< N::Handle >& Data()        { return gIconMap[ ViewKey() ].data; }
-			N::Handle                Data() const  { return gIconMap[ ViewKey() ].data; }
+			NN::Shared< N::Handle >& Data()        { return gPlainIconMap[ ViewKey() ].data; }
+			N::Handle                Data() const  { return gPlainIconMap[ ViewKey() ].data; }
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
@@ -269,7 +269,7 @@ namespace Genie
 			{
 			}
 			
-			N::Handle Data() const  { return gIconMap[ ParentRef().get() ].data; }
+			N::Handle Data() const  { return gPlainIconMap[ ParentRef().get() ].data; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -291,12 +291,12 @@ namespace Genie
 		
 		N::IconAlignmentType& Alignment( const FSTree* view )
 		{
-			return gIconMap[ view ].align;
+			return gPlainIconMap[ view ].align;
 		}
 		
 		N::IconTransformType& Transform( const FSTree* view )
 		{
-			return gIconMap[ view ].xform;
+			return gPlainIconMap[ view ].xform;
 		}
 		
 	}
