@@ -29,13 +29,13 @@ namespace Genie
 	
 	struct FrameParameters
 	{
-		short  itsMargin;
-		bool   itsMarginChanged;
+		short  padding;
+		bool   padding_changed;
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
-		FrameParameters() : itsMargin( 0 ),
-		                    itsMarginChanged(),
+		FrameParameters() : padding( 0 ),
+		                    padding_changed(),
 		                    itsSubview( Ped::EmptyView::Get() )
 		{
 		}
@@ -62,7 +62,7 @@ namespace Genie
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
-			short Margin() const;
+			short Padding() const;
 			
 			Ped::View& Subview();
 	};
@@ -71,9 +71,9 @@ namespace Genie
 	{
 		FrameParameters& params = gFrameParametersMap[ itsKey ];
 		
-		if ( params.itsMarginChanged )
+		if ( params.padding_changed )
 		{
-			params.itsMarginChanged = false;
+			params.padding_changed = false;
 			
 			SetBounds( bounds );
 		}
@@ -81,13 +81,13 @@ namespace Genie
 		Ped::Frame::Draw( bounds, erasing );
 	}
 	
-	short Frame::Margin() const
+	short Frame::Padding() const
 	{
 		FrameParametersMap::const_iterator it = gFrameParametersMap.find( itsKey );
 		
 		if ( it != gFrameParametersMap.end() )
 		{
-			return it->second.itsMargin;
+			return it->second.padding;
 		}
 		
 		return 0;
@@ -117,14 +117,14 @@ namespace Genie
 	}
 	
 	
-	static std::string ReadMargin( const FSTree* that, bool binary )
+	static std::string Read_Padding( const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		
-		return NN::Convert< std::string >( gFrameParametersMap[ view ].itsMargin );
+		return NN::Convert< std::string >( gFrameParametersMap[ view ].padding );
 	}
 	
-	static void WriteMargin( const FSTree* that, const char* begin, const char* end, bool binary )
+	static void Write_Padding( const FSTree* that, const char* begin, const char* end, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		
@@ -132,9 +132,9 @@ namespace Genie
 		
 		FrameParameters& params = gFrameParametersMap[ view ];
 		
-		params.itsMargin = std::atoi( begin );
+		params.padding = std::atoi( begin );
 		
-		params.itsMarginChanged = true;
+		params.padding_changed = true;
 		
 		InvalidateWindowForView( view );
 	}
@@ -151,18 +151,18 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr MarginFactory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	static FSTreePtr Padding_Factory( const FSTreePtr&    parent,
+	                                  const std::string&  name )
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
-		                                       &ReadMargin,
-		                                       &WriteMargin ) );
+		                                       &Read_Padding,
+		                                       &Write_Padding ) );
 	}
 	
 	const FSTree_Premapped::Mapping Frame_view_Mappings[] =
 	{
-		{ "margin", &MarginFactory },
+		{ "padding", &Padding_Factory },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
