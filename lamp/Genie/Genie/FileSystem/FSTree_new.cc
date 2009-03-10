@@ -15,6 +15,7 @@
 #include "Genie/FileSystem/FSTree_new_list.hh"
 #include "Genie/FileSystem/FSTree_new_scroller.hh"
 #include "Genie/FileSystem/FSTree_new_scrollframe.hh"
+#include "Genie/FileSystem/FSTree_new_stack.hh"
 #include "Genie/FileSystem/FSTree_new_textedit.hh"
 #include "Genie/FileSystem/FSTree_new_window.hh"
 
@@ -33,6 +34,7 @@ namespace Genie
 		{ "list",         &Basic_Factory< FSTree_new_list         > },
 		{ "scroller",     &Basic_Factory< FSTree_new_scroller     > },
 		{ "scrollframe",  &Basic_Factory< FSTree_new_scrollframe  > },
+		{ "stack",        &Basic_Factory< FSTree_new_stack        > },
 		{ "textedit",     &Basic_Factory< FSTree_new_textedit     > },
 		{ "window",       &Basic_Factory< FSTree_new_window       > },
 		
