@@ -30,18 +30,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct Icon_Parameters
+	struct IconSuite_Parameters
 	{
 		NN::Shared< N::IconSuiteRef >  ref;
 		N::IconAlignmentType           align;
 		N::IconTransformType           xform;
 		
-		Icon_Parameters() : align(), xform()
+		IconSuite_Parameters() : align(), xform()
 		{
 		}
 	};
 	
-	typedef std::map< const FSTree*, Icon_Parameters > IconSuiteMap;
+	typedef std::map< const FSTree*, IconSuite_Parameters > IconSuiteMap;
 	
 	static IconSuiteMap gIconSuiteMap;
 	
