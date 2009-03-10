@@ -18,6 +18,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+#include "Genie/FileSystem/Icons.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -30,15 +31,9 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct PlainIcon_Parameters
+	struct PlainIcon_Parameters : Icon_Parameters
 	{
 		NN::Shared< N::Handle >  data;
-		N::IconAlignmentType     align;
-		N::IconTransformType     xform;
-		
-		PlainIcon_Parameters() : align(), xform()
-		{
-		}
 	};
 	
 	typedef std::map< const FSTree*, PlainIcon_Parameters > PlainIconMap;

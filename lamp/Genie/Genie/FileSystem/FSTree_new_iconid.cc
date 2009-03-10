@@ -14,6 +14,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Icons.hh"
 
 
 namespace Genie
@@ -25,13 +26,11 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct IconID_Parameters
+	struct IconID_Parameters : Icon_Parameters
 	{
-		N::ResID              id;
-		N::IconAlignmentType  align;
-		N::IconTransformType  xform;
+		N::ResID id;
 		
-		IconID_Parameters() : id(), align(), xform()
+		IconID_Parameters() : id()
 		{
 		}
 	};

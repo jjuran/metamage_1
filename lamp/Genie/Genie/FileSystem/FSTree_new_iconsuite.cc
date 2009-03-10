@@ -19,6 +19,7 @@
 #include "Genie/FileSystem/FSTree_IconSuite.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+#include "Genie/FileSystem/Icons.hh"
 
 
 namespace Genie
@@ -30,15 +31,9 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct IconSuite_Parameters
+	struct IconSuite_Parameters : Icon_Parameters
 	{
 		NN::Shared< N::IconSuiteRef >  ref;
-		N::IconAlignmentType           align;
-		N::IconTransformType           xform;
-		
-		IconSuite_Parameters() : align(), xform()
-		{
-		}
 	};
 	
 	typedef std::map< const FSTree*, IconSuite_Parameters > IconSuiteMap;
