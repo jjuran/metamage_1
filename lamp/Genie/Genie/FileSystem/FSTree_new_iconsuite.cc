@@ -32,7 +32,7 @@ namespace Pedestal
 		public:
 			void Draw( const Rect& bounds, bool erasing );
 			
-			virtual Nitrogen::IconSuiteRef Data() const = 0;
+			virtual Nitrogen::IconSuiteRef Ref() const = 0;
 			
 			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
 			
@@ -43,14 +43,14 @@ namespace Pedestal
 	
 	void IconSuite::Draw( const Rect& bounds, bool erasing )
 	{
-		if ( N::IconSuiteRef data = Data() )
+		if ( N::IconSuiteRef ref = Ref() )
 		{
 			if ( erasing )
 			{
 				N::EraseRect( bounds );
 			}
 			
-			N::PlotIconSuite( bounds, Alignment(), Transform(), data );
+			N::PlotIconSuite( bounds, Alignment(), Transform(), ref );
 		}
 	}
 	
@@ -93,14 +93,14 @@ namespace Genie
 			{
 			}
 			
-			Nitrogen::IconSuiteRef Data() const;
+			Nitrogen::IconSuiteRef Ref() const;
 			
 			Nitrogen::IconAlignmentType Alignment() const;
 			
 			Nitrogen::IconTransformType Transform() const;
 	};
 	
-	N::IconSuiteRef IconSuite::Data() const
+	N::IconSuiteRef IconSuite::Ref() const
 	{
 		return gIconSuiteMap[ itsKey ].ref;
 	}
@@ -140,7 +140,7 @@ namespace Genie
 			{
 			}
 			
-			N::IconSuiteRef Data() const  { return gIconSuiteMap[ ParentRef().get() ].ref; }
+			N::IconSuiteRef Ref() const  { return gIconSuiteMap[ ParentRef().get() ].ref; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
