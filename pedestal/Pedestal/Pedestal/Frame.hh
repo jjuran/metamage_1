@@ -16,7 +16,7 @@ namespace Pedestal
 	class Frame : public Superview
 	{
 		public:
-			virtual short Margin() const = 0;
+			virtual short Padding() const = 0;
 			
 			Rect ApertureFromBounds( const Rect& bounds );
 			

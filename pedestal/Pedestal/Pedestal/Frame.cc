@@ -12,19 +12,19 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static inline Rect GetAperture( const Rect& bounds, short margin )
+	static inline Rect GetAperture( const Rect& bounds, short padding )
 	{
-		return N::InsetRect( bounds, margin, margin );
+		return N::InsetRect( bounds, padding, padding );
 	}
 	
 	Rect Frame::ApertureFromBounds( const Rect& bounds )
 	{
-		return GetAperture( bounds, Margin() );
+		return GetAperture( bounds, Padding() );
 	}
 	
 	void Frame::Draw( const Rect& bounds, bool erasing )
 	{
-		short margin = Margin();
+		short padding = Padding();
 		
 		if ( erasing )
 		{
@@ -34,11 +34,11 @@ namespace Pedestal
 			Rect left  = bounds;
 			Rect right = bounds;
 			
-			top.bottom = top.top   + margin;
-			left.right = left.left + margin;
+			top.bottom = top.top   + padding;
+			left.right = left.left + padding;
 			
-			bottom.top = bottom.bottom - margin;
-			right.left = right.right   - margin;
+			bottom.top = bottom.bottom - padding;
+			right.left = right.right   - padding;
 			
 			N::EraseRect( top    );
 			N::EraseRect( left   );
@@ -46,7 +46,7 @@ namespace Pedestal
 			N::EraseRect( bottom );
 		}
 		
-		Subview().Draw( GetAperture( bounds, margin ), erasing );
+		Subview().Draw( GetAperture( bounds, padding ), erasing );
 	}
 	
 }
