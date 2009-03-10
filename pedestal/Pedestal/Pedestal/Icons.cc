@@ -27,13 +27,13 @@ namespace Pedestal
 	
 	void PlainIcon::Draw( const Rect& bounds, bool erasing )
 	{
+		if ( erasing )
+		{
+			N::EraseRect( bounds );
+		}
+		
 		if ( N::Handle data = Data() )
 		{
-			if ( erasing )
-			{
-				N::EraseRect( bounds );
-			}
-			
 			N::PlotIconHandle( bounds, Alignment(), Transform(), data );
 		}
 	}
@@ -58,13 +58,13 @@ namespace Pedestal
 	
 	void IconSuite::Draw( const Rect& bounds, bool erasing )
 	{
+		if ( erasing )
+		{
+			N::EraseRect( bounds );
+		}
+		
 		if ( N::IconSuiteRef ref = Ref() )
 		{
-			if ( erasing )
-			{
-				N::EraseRect( bounds );
-			}
-			
 			N::PlotIconSuite( bounds, Alignment(), Transform(), ref );
 		}
 	}
