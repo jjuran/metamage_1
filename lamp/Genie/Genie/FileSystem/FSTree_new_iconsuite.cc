@@ -30,8 +30,6 @@ namespace Pedestal
 	class IconSuite : public View
 	{
 		public:
-			struct Undefined {};
-			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::IconSuiteRef Data() const = 0;
@@ -104,38 +102,17 @@ namespace Genie
 	
 	N::IconSuiteRef IconSuite::Data() const
 	{
-		IconSuiteMap::const_iterator it = gIconSuiteMap.find( itsKey );
-		
-		if ( it != gIconSuiteMap.end() )
-		{
-			return it->second.ref;
-		}
-		
-		return N::IconSuiteRef();
+		return gIconSuiteMap[ itsKey ].ref;
 	}
 	
 	N::IconAlignmentType IconSuite::Alignment() const
 	{
-		IconSuiteMap::const_iterator it = gIconSuiteMap.find( itsKey );
-		
-		if ( it == gIconSuiteMap.end() )
-		{
-			throw Undefined();
-		}
-		
-		return it->second.align;
+		return gIconSuiteMap[ itsKey ].align;
 	}
 	
 	N::IconTransformType IconSuite::Transform() const
 	{
-		IconSuiteMap::const_iterator it = gIconSuiteMap.find( itsKey );
-		
-		if ( it == gIconSuiteMap.end() )
-		{
-			throw Undefined();
-		}
-		
-		return it->second.xform;
+		return gIconSuiteMap[ itsKey ].xform;
 	}
 	
 	boost::shared_ptr< Ped::View > IconSuiteFactory( const FSTree* delegate )

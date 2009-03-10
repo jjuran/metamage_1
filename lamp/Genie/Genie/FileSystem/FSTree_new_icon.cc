@@ -43,8 +43,6 @@ namespace Pedestal
 	class PlainIcon : public View
 	{
 		public:
-			struct Undefined {};
-			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::Handle Data() const = 0;
@@ -119,38 +117,17 @@ namespace Genie
 	
 	N::Handle PlainIcon::Data() const
 	{
-		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
-		
-		if ( it != gPlainIconMap.end() )
-		{
-			return it->second.data;
-		}
-		
-		return N::Handle();
+		return gPlainIconMap[ itsKey ].data;
 	}
 	
 	N::IconAlignmentType PlainIcon::Alignment() const
 	{
-		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
-		
-		if ( it == gPlainIconMap.end() )
-		{
-			throw Undefined();
-		}
-		
-		return it->second.align;
+		return gPlainIconMap[ itsKey ].align;
 	}
 	
 	N::IconTransformType PlainIcon::Transform() const
 	{
-		PlainIconMap::const_iterator it = gPlainIconMap.find( itsKey );
-		
-		if ( it == gPlainIconMap.end() )
-		{
-			throw Undefined();
-		}
-		
-		return it->second.xform;
+		return gPlainIconMap[ itsKey ].xform;
 	}
 	
 	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
