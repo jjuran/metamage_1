@@ -8,14 +8,11 @@
 // POSIX
 #include <fcntl.h>
 
-// Nitrogen
-#include "Nitrogen/Icons.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
 // Pedestal
-#include "Pedestal/View.hh"
+#include "Pedestal/Icons.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -23,51 +20,6 @@
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/IO/VirtualFile.hh"
 
-
-namespace Nitrogen
-{
-	
-	static void PlotIconHandle( const Rect&        area,
-	                            IconAlignmentType  align,
-	                            IconTransformType  transform,
-	                            Handle             icon )
-	{
-		ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
-	}
-	
-}
-
-namespace Pedestal
-{
-	
-	class PlainIcon : public View
-	{
-		public:
-			void Draw( const Rect& bounds, bool erasing );
-			
-			virtual Nitrogen::Handle Data() const = 0;
-			
-			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
-			
-			virtual Nitrogen::IconTransformType Transform() const  { return Nitrogen::kTransformNone; }
-	};
-	
-	namespace N = Nitrogen;
-	
-	void PlainIcon::Draw( const Rect& bounds, bool erasing )
-	{
-		if ( N::Handle data = Data() )
-		{
-			if ( erasing )
-			{
-				N::EraseRect( bounds );
-			}
-			
-			N::PlotIconHandle( bounds, Alignment(), Transform(), data );
-		}
-	}
-	
-}
 
 namespace Genie
 {

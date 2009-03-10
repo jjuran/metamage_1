@@ -5,56 +5,16 @@
 
 #include "Genie/FileSystem/FSTree_new_iconid.hh"
 
-// Nitrogen
-#include "Nitrogen/Icons.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
 // Pedestal
-#include "Pedestal/View.hh"
+#include "Pedestal/Icons.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 
-
-namespace Pedestal
-{
-	
-	class IconID : public View
-	{
-		public:
-			struct Undefined {};
-			
-			void Draw( const Rect& bounds, bool erasing );
-			
-			virtual Nitrogen::ResID ID() const = 0;
-			
-			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
-			
-			virtual Nitrogen::IconTransformType Transform() const  { return Nitrogen::kTransformNone; }
-	};
-	
-	namespace N = Nitrogen;
-	
-	void IconID::Draw( const Rect& bounds, bool erasing )
-	{
-		if ( erasing )
-		{
-			N::EraseRect( bounds );
-		}
-		
-		try
-		{
-			N::PlotIconID( bounds, Alignment(), Transform(), ID() );
-		}
-		catch ( const Undefined& )
-		{
-		}
-	}
-	
-}
 
 namespace Genie
 {

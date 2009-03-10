@@ -8,14 +8,11 @@
 // POSIX
 #include <fcntl.h>
 
-// Nitrogen
-#include "Nitrogen/Icons.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
 // Pedestal
-#include "Pedestal/View.hh"
+#include "Pedestal/Icons.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -23,38 +20,6 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 
-
-namespace Pedestal
-{
-	
-	class IconSuite : public View
-	{
-		public:
-			void Draw( const Rect& bounds, bool erasing );
-			
-			virtual Nitrogen::IconSuiteRef Ref() const = 0;
-			
-			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
-			
-			virtual Nitrogen::IconTransformType Transform() const  { return Nitrogen::kTransformNone; }
-	};
-	
-	namespace N = Nitrogen;
-	
-	void IconSuite::Draw( const Rect& bounds, bool erasing )
-	{
-		if ( N::IconSuiteRef ref = Ref() )
-		{
-			if ( erasing )
-			{
-				N::EraseRect( bounds );
-			}
-			
-			N::PlotIconSuite( bounds, Alignment(), Transform(), ref );
-		}
-	}
-	
-}
 
 namespace Genie
 {
