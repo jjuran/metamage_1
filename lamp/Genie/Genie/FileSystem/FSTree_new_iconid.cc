@@ -30,6 +30,10 @@ namespace Pedestal
 			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::ResID ID() const = 0;
+			
+			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
+			
+			virtual Nitrogen::IconTransformType Transform() const  { return Nitrogen::kTransformNone; }
 	};
 	
 	namespace N = Nitrogen;
@@ -43,7 +47,7 @@ namespace Pedestal
 		
 		try
 		{
-			N::PlotIconID( bounds, N::kAlignNone, N::kTransformNone, ID() );
+			N::PlotIconID( bounds, Alignment(), Transform(), ID() );
 		}
 		catch ( const Undefined& )
 		{
@@ -61,7 +65,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, N::ResID > IconIDMap;
+	struct IconID_Parameters
+	{
+		N::ResID              id;
+		N::IconAlignmentType  align;
+		N::IconTransformType  xform;
+		
+		IconID_Parameters() : id(), align(), xform()
+		{
+		}
+	};
+	
+	typedef std::map< const FSTree*, IconID_Parameters > IconIDMap;
 	
 	static IconIDMap gIconIDMap;
 	
@@ -81,6 +96,10 @@ namespace Genie
 			}
 			
 			Nitrogen::ResID ID() const;
+			
+			Nitrogen::IconAlignmentType Alignment() const;
+			
+			Nitrogen::IconTransformType Transform() const;
 	};
 	
 	N::ResID IconID::ID() const
@@ -92,7 +111,31 @@ namespace Genie
 			throw Undefined();
 		}
 		
-		return it->second;
+		return it->second.id;
+	}
+	
+	N::IconAlignmentType IconID::Alignment() const
+	{
+		IconIDMap::const_iterator it = gIconIDMap.find( itsKey );
+		
+		if ( it == gIconIDMap.end() )
+		{
+			throw Undefined();
+		}
+		
+		return it->second.align;
+	}
+	
+	N::IconTransformType IconID::Transform() const
+	{
+		IconIDMap::const_iterator it = gIconIDMap.find( itsKey );
+		
+		if ( it == gIconIDMap.end() )
+		{
+			throw Undefined();
+		}
+		
+		return it->second.xform;
 	}
 	
 	boost::shared_ptr< Ped::View > IconIDFactory( const FSTree* delegate )
@@ -112,7 +155,17 @@ namespace Genie
 		
 		N::ResID& IconID( const FSTree* view )
 		{
-			return gIconIDMap[ view ];
+			return gIconIDMap[ view ].id;
+		}
+		
+		N::IconAlignmentType& Alignment( const FSTree* view )
+		{
+			return gIconIDMap[ view ].align;
+		}
+		
+		N::IconTransformType& Transform( const FSTree* view )
+		{
+			return gIconIDMap[ view ].xform;
 		}
 		
 	}
@@ -130,6 +183,9 @@ namespace Genie
 	const FSTree_Premapped::Mapping IconID_view_Mappings[] =
 	{
 		{ "id", &Property_Factory< View_Property< Integer_Scribe< N::ResID >, IconID > > },
+		
+		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
+		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
 		
 		{ NULL, NULL }
 	};

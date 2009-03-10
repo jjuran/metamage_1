@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_IconSuite.hh"
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 
 
@@ -29,9 +30,15 @@ namespace Pedestal
 	class IconSuite : public View
 	{
 		public:
+			struct Undefined {};
+			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			virtual Nitrogen::IconSuiteRef Data() const = 0;
+			
+			virtual Nitrogen::IconAlignmentType Alignment() const  { return Nitrogen::kAlignNone; }
+			
+			virtual Nitrogen::IconTransformType Transform() const  { return Nitrogen::kTransformNone; }
 	};
 	
 	namespace N = Nitrogen;
@@ -45,7 +52,7 @@ namespace Pedestal
 				N::EraseRect( bounds );
 			}
 			
-			N::PlotIconSuite( bounds, N::kAlignNone, N::kTransformNone, data );
+			N::PlotIconSuite( bounds, Alignment(), Transform(), data );
 		}
 	}
 	
@@ -60,7 +67,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, NN::Shared< N::IconSuiteRef > > IconSuiteMap;
+	struct Icon_Parameters
+	{
+		NN::Shared< N::IconSuiteRef >  ref;
+		N::IconAlignmentType           align;
+		N::IconTransformType           xform;
+		
+		Icon_Parameters() : align(), xform()
+		{
+		}
+	};
+	
+	typedef std::map< const FSTree*, Icon_Parameters > IconSuiteMap;
 	
 	static IconSuiteMap gIconSuiteMap;
 	
@@ -78,6 +96,10 @@ namespace Genie
 			}
 			
 			Nitrogen::IconSuiteRef Data() const;
+			
+			Nitrogen::IconAlignmentType Alignment() const;
+			
+			Nitrogen::IconTransformType Transform() const;
 	};
 	
 	N::IconSuiteRef IconSuite::Data() const
@@ -86,10 +108,34 @@ namespace Genie
 		
 		if ( it != gIconSuiteMap.end() )
 		{
-			return it->second;
+			return it->second.ref;
 		}
 		
 		return N::IconSuiteRef();
+	}
+	
+	N::IconAlignmentType IconSuite::Alignment() const
+	{
+		IconSuiteMap::const_iterator it = gIconSuiteMap.find( itsKey );
+		
+		if ( it == gIconSuiteMap.end() )
+		{
+			throw Undefined();
+		}
+		
+		return it->second.align;
+	}
+	
+	N::IconTransformType IconSuite::Transform() const
+	{
+		IconSuiteMap::const_iterator it = gIconSuiteMap.find( itsKey );
+		
+		if ( it == gIconSuiteMap.end() )
+		{
+			throw Undefined();
+		}
+		
+		return it->second.xform;
 	}
 	
 	boost::shared_ptr< Ped::View > IconSuiteFactory( const FSTree* delegate )
@@ -117,7 +163,7 @@ namespace Genie
 			{
 			}
 			
-			N::IconSuiteRef Data() const  { return gIconSuiteMap[ ParentRef().get() ]; }
+			N::IconSuiteRef Data() const  { return gIconSuiteMap[ ParentRef().get() ].ref; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -128,15 +174,43 @@ namespace Genie
 	{
 		const FSTree* view = ParentRef().get();
 		
-		gIconSuiteMap[ view ] = Fetch_IconSuite();
+		gIconSuiteMap[ view ].ref = Fetch_IconSuite();
 		
 		InvalidateWindowForView( view );
 	}
 	
 	
+	namespace
+	{
+		
+		N::IconAlignmentType& Alignment( const FSTree* view )
+		{
+			return gIconSuiteMap[ view ].align;
+		}
+		
+		N::IconTransformType& Transform( const FSTree* view )
+		{
+			return gIconSuiteMap[ view ].xform;
+		}
+		
+	}
+	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Get,
+		                                       &Property::Set ) );
+	}
+	
 	const FSTree_Premapped::Mapping IconSuite_view_Mappings[] =
 	{
 		{ "ref", &Basic_Factory< FSTree_IconSuite_ref > },
+		
+		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
+		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
 		
 		{ NULL, NULL }
 	};
