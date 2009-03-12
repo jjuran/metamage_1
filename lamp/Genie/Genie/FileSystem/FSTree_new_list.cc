@@ -15,6 +15,7 @@
 #include "Pedestal/ListView.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -34,7 +35,7 @@ namespace Genie
 		bool                        itIntersectsGrowBox;
 		bool                        itHasChanged;
 		
-		ListParameters() : itHasChanged()
+		ListParameters() : itIntersectsGrowBox(), itHasChanged()
 		{
 		}
 	};
@@ -65,7 +66,7 @@ namespace Genie
 	
 	bool ListView::IntersectsGrowBox() const
 	{
-		return true;
+		return gListParameterMap[ itsKey ].itIntersectsGrowBox;
 	}
 	
 	void ListView::Draw( const Rect& bounds, bool erasing )
@@ -253,9 +254,31 @@ namespace Genie
 	}
 	
 	
+	namespace
+	{
+		
+		bool& Overlap( const FSTree* view )
+		{
+			return gListParameterMap[ view ].itIntersectsGrowBox;
+		}
+		
+	}
+	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Get,
+		                                       &Property::Set ) );
+	}
+	
 	const FSTree_Premapped::Mapping List_view_Mappings[] =
 	{
 		{ "data", &Basic_Factory< FSTree_List_data > },
+		
+		{ "overlap", &Property_Factory< View_Property< Boolean_Scribe, Overlap > > },
 		
 		{ NULL, NULL }
 	};
