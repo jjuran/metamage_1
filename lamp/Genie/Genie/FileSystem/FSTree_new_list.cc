@@ -31,6 +31,7 @@ namespace Genie
 	struct ListParameters
 	{
 		std::vector< std::string >  itsStrings;
+		bool                        itIntersectsGrowBox;
 		bool                        itHasChanged;
 		
 		ListParameters() : itHasChanged()
@@ -57,8 +58,15 @@ namespace Genie
 			{
 			}
 			
+			bool IntersectsGrowBox() const;
+			
 			void Draw( const Rect& bounds, bool erasing );
 	};
+	
+	bool ListView::IntersectsGrowBox() const
+	{
+		return true;
+	}
 	
 	void ListView::Draw( const Rect& bounds, bool erasing )
 	{
