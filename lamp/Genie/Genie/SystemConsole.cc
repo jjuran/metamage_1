@@ -61,7 +61,7 @@ namespace Genie
 		ResolveRelativePath( STR_LEN( "target" ), view )->SymLink( "v/v" );
 		
 		Spew( ResolveRelativePath( STR_LEN( "vertical" ), view    ), STR_LEN( "1" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "margin"   ), subview ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "padding"  ), subview ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
