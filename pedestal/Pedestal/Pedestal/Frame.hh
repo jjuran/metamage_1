@@ -18,6 +18,8 @@ namespace Pedestal
 		public:
 			virtual short Padding() const = 0;
 			
+			virtual Rect Margin( const Rect& bounds ) const = 0;
+			
 			Rect ApertureFromBounds( const Rect& bounds );
 			
 			void Draw( const Rect& bounds, bool erasing );
