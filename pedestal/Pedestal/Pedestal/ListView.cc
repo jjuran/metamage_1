@@ -13,6 +13,9 @@
 // Nitrogen
 #include "Nitrogen/Controls.h"
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 
 namespace Nitrogen
 {
@@ -70,27 +73,18 @@ namespace Pedestal
 		{
 			// This hack is only necessary with hasGrow and one scrollbar
 			
-			ControlRef scrollbar = NULL;
-			Rect bounds;
+			ControlRef scrollbar = scrollVert ? ::GetListVerticalScrollBar  ( list )
+			                                  : ::GetListHorizontalScrollBar( list );
 			
-			if ( scrollVert )
-			{
-				scrollbar = ::GetListVerticalScrollBar( list );
-				bounds = N::GetControlBounds( scrollbar );
-				bounds.bottom -= 15;
-				
-			}
-			else //  if ( scrollHoriz )
-			{
-				scrollbar = ::GetListHorizontalScrollBar( list );
-				bounds = N::GetControlBounds( scrollbar );
-				bounds.right -= 15;
-			}
-			
-			N::SetControlBounds( scrollbar, bounds );
-			//N::DrawOneControl( scrollbar );
+			Rect bounds = N::GetControlBounds( scrollbar );
 			
 			N::InvalRect( bounds );
+			
+			(scrollVert ? bounds.bottom : bounds.right) -= 15;
+			
+			N::SetControlBounds( scrollbar, bounds );
+			
+			N::DrawOneControl( scrollbar );
 		}
 	}
 	
