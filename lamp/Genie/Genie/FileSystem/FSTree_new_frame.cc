@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
@@ -16,6 +19,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
+#include "Genie/FileSystem/Scribes.hh"
 
 
 namespace Genie
@@ -27,15 +31,68 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	struct Value
+	{
+		UInt16 flags;
+		SInt16 number;
+		
+		Value() : flags(), number()
+		{
+			// 0,0 -> undefined/auto
+		}
+		
+		Value( UInt16 f, SInt16 n ) : flags( f ), number( n )
+		{
+		}
+	};
+	
+	struct Value_Scribe
+	{
+		typedef Value Value;
+		
+		static std::string Encode( const Value& value );
+		
+		static Value Decode( const char* begin, const char* end );
+	};
+	
+	std::string Value_Scribe::Encode( const Value& value )
+	{
+		if ( value.flags == 0  &&  value.number == 0 )
+		{
+			return "auto";
+		}
+		
+		return Int_Scribe::Encode( value.number );
+	}
+	
+	Value Value_Scribe::Decode( const char* begin, const char* end )
+	{
+		if ( std::memcmp( begin, STR_LEN( "auto" ) + 1 ) == 0 )
+		{
+			return Value();
+		}
+		
+		return Value( 1, Int_Scribe::Decode( begin, end ) );
+	}
+	
+	
 	struct FrameParameters
 	{
+		Value  width;
+		Value  height;
+		
+		Value  margin_top;
+		Value  margin_right;
+		Value  margin_bottom;
+		Value  margin_left;
+		
 		short  padding;
-		bool   padding_changed;
+		bool   bounds_changed;
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
 		FrameParameters() : padding( 0 ),
-		                    padding_changed(),
+		                    bounds_changed(),
 		                    itsSubview( Ped::EmptyView::Get() )
 		{
 		}
@@ -64,6 +121,8 @@ namespace Genie
 			
 			short Padding() const;
 			
+			Rect Margin( const Rect& bounds ) const;
+			
 			Ped::View& Subview();
 	};
 	
@@ -71,9 +130,9 @@ namespace Genie
 	{
 		FrameParameters& params = gFrameParametersMap[ itsKey ];
 		
-		if ( params.padding_changed )
+		if ( params.bounds_changed )
 		{
-			params.padding_changed = false;
+			params.bounds_changed = false;
 			
 			SetBounds( bounds );
 		}
@@ -91,6 +150,86 @@ namespace Genie
 		}
 		
 		return 0;
+	}
+	
+	Rect Frame::Margin( const Rect& bounds ) const
+	{
+		const FrameParameters& params = gFrameParametersMap[ itsKey ];
+		
+		const Value& width  = params.width;
+		const Value& height = params.height;
+		
+		const Value& margin_top    = params.margin_top;
+		const Value& margin_right  = params.margin_right;
+		const Value& margin_bottom = params.margin_bottom;
+		const Value& margin_left   = params.margin_left;
+		
+		const short padding = params.padding;
+		
+		const short outer_width  = (bounds.right - bounds.left) - 2 * padding;
+		const short outer_height = (bounds.bottom - bounds.top) - 2 * padding;
+		
+		Rect margin = N::SetRect( 0, 0, 0, 0 );
+		
+		if ( width.flags  &&  !margin_left.flags )
+		{
+			if ( !margin_right.flags )
+			{
+				const short h_margin = outer_width - width.number;
+				
+				const short left_margin  = h_margin / 2;
+				const short right_margin = h_margin - left_margin;
+				
+				margin.left  = left_margin;
+				margin.right = right_margin;
+			}
+			else
+			{
+				margin.right = margin_right.number;
+				
+				margin.left = outer_width - margin.right - width.number;
+			}
+		}
+		else
+		{
+			margin.left  = margin_left.number;
+			
+			const bool constrained = margin_left.flags && width.flags;
+			
+			margin.right = constrained ? outer_width - margin.left - width.number
+			                           : margin_right.number;
+		}
+		
+		if ( height.flags  &&  !margin_top.flags  &&  !margin_bottom.flags )
+		{
+			if ( !margin_bottom.flags )
+			{
+				const short v_margin = outer_height - height.number;
+				
+				const short top_margin    = v_margin / 2;
+				const short bottom_margin = v_margin - top_margin;
+				
+				margin.top    = top_margin;
+				margin.bottom = bottom_margin;
+			}
+			else
+			{
+				margin.bottom = margin_bottom.number;
+				
+				margin.top = outer_height - margin.bottom - height.number;
+			}
+		}
+		else
+		{
+			margin.top  = margin_top.number;
+			
+			const bool constrained = margin_top.flags && height.flags;
+			
+			margin.bottom = constrained ? outer_height - margin.top - height.number
+			                            : margin_bottom.number;
+		}
+		
+		return margin;
 	}
 	
 	Ped::View& Frame::Subview()
@@ -134,7 +273,7 @@ namespace Genie
 		
 		params.padding = std::atoi( begin );
 		
-		params.padding_changed = true;
+		params.bounds_changed = true;
 		
 		InvalidateWindowForView( view );
 	}
@@ -142,6 +281,36 @@ namespace Genie
 	
 	namespace
 	{
+		
+		Value& Width( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].width;
+		}
+		
+		Value& Height( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].height;
+		}
+		
+		Value& Margin_Top( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].margin_top;
+		}
+		
+		Value& Margin_Right( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].margin_right;
+		}
+		
+		Value& Margin_Bottom( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].margin_bottom;
+		}
+		
+		Value& Margin_Left( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].margin_left;
+		}
 		
 		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
 		{
@@ -160,8 +329,26 @@ namespace Genie
 		                                       &Write_Padding ) );
 	}
 	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
+	                                   const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_Property( parent,
+		                                       name,
+		                                       &Property::Get,
+		                                       &Property::Set ) );
+	}
+	
 	const FSTree_Premapped::Mapping Frame_view_Mappings[] =
 	{
+		{ "width",  &Property_Factory< View_Property< Value_Scribe, Width  > > },
+		{ "height", &Property_Factory< View_Property< Value_Scribe, Height > > },
+		
+		{ ".margin-top",    &Property_Factory< View_Property< Value_Scribe, Margin_Top    > > },
+		{ ".margin-right",  &Property_Factory< View_Property< Value_Scribe, Margin_Right  > > },
+		{ ".margin-bottom", &Property_Factory< View_Property< Value_Scribe, Margin_Bottom > > },
+		{ ".margin-left",   &Property_Factory< View_Property< Value_Scribe, Margin_Left   > > },
+		
 		{ "padding", &Padding_Factory },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
