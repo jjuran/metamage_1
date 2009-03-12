@@ -88,7 +88,9 @@ namespace Pedestal
 			}
 			
 			N::SetControlBounds( scrollbar, bounds );
-			N::DrawOneControl( scrollbar );
+			//N::DrawOneControl( scrollbar );
+			
+			N::InvalRect( bounds );
 		}
 	}
 	
