@@ -256,28 +256,6 @@ namespace Genie
 	}
 	
 	
-	static std::string Read_Padding( const FSTree* that, bool binary )
-	{
-		const FSTree* view = GetViewKey( that );
-		
-		return NN::Convert< std::string >( gFrameParametersMap[ view ].padding );
-	}
-	
-	static void Write_Padding( const FSTree* that, const char* begin, const char* end, bool binary )
-	{
-		const FSTree* view = GetViewKey( that );
-		
-		// *end == '\n'
-		
-		FrameParameters& params = gFrameParametersMap[ view ];
-		
-		params.padding = std::atoi( begin );
-		
-		params.bounds_changed = true;
-		
-		InvalidateWindowForView( view );
-	}
-	
 	
 	namespace
 	{
@@ -312,6 +290,11 @@ namespace Genie
 			return gFrameParametersMap[ view ].margin_left;
 		}
 		
+		short& Padding( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].padding;
+		}
+		
 		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gFrameParametersMap[ key ].itsSubview;
@@ -319,15 +302,6 @@ namespace Genie
 		
 	}
 	
-	
-	static FSTreePtr Padding_Factory( const FSTreePtr&    parent,
-	                                  const std::string&  name )
-	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Read_Padding,
-		                                       &Write_Padding ) );
-	}
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
@@ -362,7 +336,7 @@ namespace Genie
 		{ ".margin-bottom", &Property_Factory< Frame_Property< Value_Scribe, Margin_Bottom > > },
 		{ ".margin-left",   &Property_Factory< Frame_Property< Value_Scribe, Margin_Left   > > },
 		
-		{ "padding", &Padding_Factory },
+		{ "padding", &Property_Factory< Frame_Property< Int_Scribe, Padding > > },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
