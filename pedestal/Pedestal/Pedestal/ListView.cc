@@ -10,6 +10,9 @@
 #include "Carbonate/Lists.hh"
 #endif
 
+// Nitrogen
+#include "Nitrogen/Controls.h"
+
 
 namespace Nitrogen
 {
@@ -27,6 +30,9 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	// Mac OS places the scrollbars outside the bounds.
+	// We adjust the bounds inward so they draw within the original bounds.
+	
 	static void AdjustListBounds( short& right, short& bottom, bool scrollHoriz, bool scrollVert )
 	{
 		if ( scrollHoriz )
@@ -40,7 +46,9 @@ namespace Pedestal
 		}
 	}
 	
-	static Rect AdjustListBounds( const Rect& bounds, bool scrollHoriz, bool scrollVert )
+	static Rect AdjustedListBounds( const Rect&  bounds,
+	                                bool         scrollHoriz,
+	                                bool         scrollVert )
 	{
 		Rect result = bounds;
 		
@@ -49,14 +57,49 @@ namespace Pedestal
 		return result;
 	}
 	
+	static void FixListScrollbarBounds( ListHandle list )
+	{
+		//bool hasGrow     = GetListFlags( list ) & 0x20;
+		const bool hasGrow = true;
+		
+		const bool scrollVert  = ::GetListVerticalScrollBar  ( list );
+		const bool scrollHoriz = ::GetListHorizontalScrollBar( list );
+		
+		// List Manager bug:  LNew() and LSize() ignore hasGrow, so we have to fudge it
+		if ( hasGrow && ( scrollVert != scrollHoriz ) )
+		{
+			// This hack is only necessary with hasGrow and one scrollbar
+			
+			ControlRef scrollbar = NULL;
+			Rect bounds;
+			
+			if ( scrollVert )
+			{
+				scrollbar = ::GetListVerticalScrollBar( list );
+				bounds = N::GetControlBounds( scrollbar );
+				bounds.bottom -= 15;
+				
+			}
+			else //  if ( scrollHoriz )
+			{
+				scrollbar = ::GetListHorizontalScrollBar( list );
+				bounds = N::GetControlBounds( scrollbar );
+				bounds.right -= 15;
+			}
+			
+			N::SetControlBounds( scrollbar, bounds );
+			N::DrawOneControl( scrollbar );
+		}
+	}
+	
 	void ListView::Install( const Rect& bounds )
 	{
 		const bool drawIt      = true;
-		const bool hasGrow     = true;
+		const bool hasGrow     = IntersectsGrowBox();
 		const bool scrollHoriz = false;
 		const bool scrollVert  = true;
 		
-		itsList = N::LNew( AdjustListBounds( bounds, false, true ),
+		itsList = N::LNew( AdjustedListBounds( bounds, scrollHoriz, scrollVert ),
 		                   N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
 		                   N::SetPt( 0, 0 ),
 		                   N::ResID( 0 ),
@@ -65,6 +108,11 @@ namespace Pedestal
 		                   hasGrow,
 		                   scrollHoriz,
 		                   scrollVert );
+		
+		if ( hasGrow )
+		{
+			FixListScrollbarBounds( itsList );
+		}
 	}
 	
 	void ListView::Uninstall()
@@ -74,9 +122,7 @@ namespace Pedestal
 	
 	void ListView::SetBounds( const Rect& bounds )
 	{
-		Rect r = bounds;
-		
-		AdjustListBounds( r.right, r.bottom, false, true );
+		const Rect r = AdjustedListBounds( bounds, false, true );
 		
 		N::SetListViewBounds( itsList, r );
 		
@@ -85,6 +131,11 @@ namespace Pedestal
 		          itsList );
 		
 		itsList.Get()[0]->cellSize.h = r.right - r.left;
+		
+		if ( IntersectsGrowBox() )
+		{
+			FixListScrollbarBounds( itsList );
+		}
 	}
 	
 	void ListView::MouseDown( const EventRecord& event )

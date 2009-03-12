@@ -27,6 +27,8 @@ namespace Pedestal
 			void Uninstall();
 		
 		public:
+			virtual bool IntersectsGrowBox() const = 0;
+			
 			ListHandle Get() const  { return itsList; }
 			
 			void SetBounds( const Rect& bounds );
