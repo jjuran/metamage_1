@@ -339,15 +339,28 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
+	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	struct Frame_Property : View_Property< Scribe, Access >
+	{
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			View_Property< Scribe, Access >::Set( that, begin, end, binary );
+			
+			const FSTree* view = GetViewKey( that );
+			
+			gFrameParametersMap[ view ].bounds_changed = true;
+		}
+	};
+	
 	const FSTree_Premapped::Mapping Frame_view_Mappings[] =
 	{
-		{ "width",  &Property_Factory< View_Property< Value_Scribe, Width  > > },
-		{ "height", &Property_Factory< View_Property< Value_Scribe, Height > > },
+		{ "width",  &Property_Factory< Frame_Property< Value_Scribe, Width  > > },
+		{ "height", &Property_Factory< Frame_Property< Value_Scribe, Height > > },
 		
-		{ ".margin-top",    &Property_Factory< View_Property< Value_Scribe, Margin_Top    > > },
-		{ ".margin-right",  &Property_Factory< View_Property< Value_Scribe, Margin_Right  > > },
-		{ ".margin-bottom", &Property_Factory< View_Property< Value_Scribe, Margin_Bottom > > },
-		{ ".margin-left",   &Property_Factory< View_Property< Value_Scribe, Margin_Left   > > },
+		{ ".margin-top",    &Property_Factory< Frame_Property< Value_Scribe, Margin_Top    > > },
+		{ ".margin-right",  &Property_Factory< Frame_Property< Value_Scribe, Margin_Right  > > },
+		{ ".margin-bottom", &Property_Factory< Frame_Property< Value_Scribe, Margin_Bottom > > },
+		{ ".margin-left",   &Property_Factory< Frame_Property< Value_Scribe, Margin_Left   > > },
 		
 		{ "padding", &Padding_Factory },
 		

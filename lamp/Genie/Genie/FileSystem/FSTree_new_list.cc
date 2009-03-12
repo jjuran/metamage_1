@@ -33,9 +33,12 @@ namespace Genie
 	{
 		std::vector< std::string >  itsStrings;
 		bool                        itIntersectsGrowBox;
-		bool                        itHasChanged;
+		bool                        bounds_changed;
+		bool                        data_changed;
 		
-		ListParameters() : itIntersectsGrowBox(), itHasChanged()
+		ListParameters() : itIntersectsGrowBox(),
+		                   bounds_changed(),
+		                   data_changed()
 		{
 		}
 	};
@@ -73,9 +76,16 @@ namespace Genie
 	{
 		ListParameters& params = gListParameterMap[ itsKey ];
 		
-		if ( params.itHasChanged )
+		if ( params.bounds_changed )
 		{
-			params.itHasChanged = false;
+			params.bounds_changed = false;
+			
+			SetBounds( bounds );
+		}
+		
+		if ( params.data_changed )
+		{
+			params.data_changed = false;
 			
 			DeleteCells();
 			
@@ -153,7 +163,7 @@ namespace Genie
 			
 			p = q + 1;
 			
-			params.itHasChanged = true;
+			params.data_changed = true;
 		}
 		
 		// FIXME:  Ignores the file mark
@@ -212,7 +222,7 @@ namespace Genie
 		
 		params.itsStrings.clear();
 		
-		params.itHasChanged = true;
+		params.data_changed = true;
 	}
 	
 	static std::string join_strings( const std::vector< std::string >& strings )
@@ -274,11 +284,24 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
+	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	struct List_Property : View_Property< Scribe, Access >
+	{
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			View_Property< Scribe, Access >::Set( that, begin, end, binary );
+			
+			const FSTree* view = GetViewKey( that );
+			
+			gListParameterMap[ view ].bounds_changed = true;
+		}
+	};
+	
 	const FSTree_Premapped::Mapping List_view_Mappings[] =
 	{
 		{ "data", &Basic_Factory< FSTree_List_data > },
 		
-		{ "overlap", &Property_Factory< View_Property< Boolean_Scribe, Overlap > > },
+		{ "overlap", &Property_Factory< List_Property< Boolean_Scribe, Overlap > > },
 		
 		{ NULL, NULL }
 	};
