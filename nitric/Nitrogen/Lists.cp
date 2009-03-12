@@ -25,40 +25,6 @@
 namespace Nitrogen
 {
 	
-	static void FixListScrollbarBounds( ListHandle list )
-	{
-		bool hasGrow     = GetListFlags( list ) & 0x20;
-		
-		bool scrollVert  = GetListVerticalScrollBar  ( list );
-		bool scrollHoriz = GetListHorizontalScrollBar( list );
-		
-		// List Manager bug:  LNew() and LSize() ignore hasGrow, so we have to fudge it
-		if ( hasGrow && ( scrollVert != scrollHoriz ) )
-		{
-			// This hack is only necessary with hasGrow and one scrollbar
-			
-			ControlRef scrollbar = NULL;
-			Rect bounds;
-			
-			if ( scrollVert )
-			{
-				scrollbar = GetListVerticalScrollBar( list );
-				bounds = GetControlBounds( scrollbar );
-				bounds.bottom -= 15;
-				
-			}
-			else //  if ( scrollHoriz )
-			{
-				scrollbar = GetListHorizontalScrollBar( list );
-				bounds = GetControlBounds( scrollbar );
-				bounds.right -= 15;
-			}
-			
-			SetControlBounds( scrollbar, bounds );
-			DrawOneControl( scrollbar );
-		}
-	}
-	
 	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
@@ -81,16 +47,12 @@ namespace Nitrogen
 		
 		// FIXME:  Check for null handle
 		
-		FixListScrollbarBounds( list );
-		
 		return Nucleus::Owned< ListHandle >::Seize( list );
 	}
 	
 	void LSize( short width, short height, ListHandle list )
 	{
 		::LSize( width, height, list );
-		
-		FixListScrollbarBounds( list );
 	}
 	
 	std::string LGetCell( Cell cell, ListHandle lHandle )
