@@ -13,14 +13,17 @@
 
 #include "Nitrogen/Lists.h"
 
+// Carbonate
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Lists.hh"
+#endif
+
 // Nitrogen
 #include "Nitrogen/Controls.h"
 
 
 namespace Nitrogen
 {
-	
-#if !TARGET_CPU_68K
 	
 	static void FixListScrollbarBounds( ListHandle list )
 	{
@@ -142,8 +145,6 @@ namespace Nitrogen
 		
 		return result;
 	}
-	
-#endif
 	
 	void RegisterListManagerErrors()
 	{
