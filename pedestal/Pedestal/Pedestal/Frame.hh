@@ -18,6 +18,9 @@ namespace Pedestal
 		public:
 			virtual short Padding() const = 0;
 			
+			virtual short OutlineWidth() const = 0;
+			virtual short OutlineOffset() const = 0;
+			
 			virtual Rect Margin( const Rect& bounds ) const = 0;
 			
 			Rect ApertureFromBounds( const Rect& bounds );

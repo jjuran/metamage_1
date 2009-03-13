@@ -77,6 +77,21 @@ namespace Pedestal
 		}
 		
 		Subview().Draw( aperture, erasing );
+		
+		if ( const short width = OutlineWidth() )
+		{
+			const short offset = OutlineOffset();
+			
+			const short outset = width + offset;
+			
+			const Rect outline_bounds = N::InsetRect( box, -outset, -outset );
+			
+			N::PenSize( width, width );
+			
+			N::FrameRect( outline_bounds );
+			
+			N::PenNormal();
+		}
 	}
 	
 }
