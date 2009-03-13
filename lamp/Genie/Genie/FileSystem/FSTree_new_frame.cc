@@ -225,7 +225,7 @@ namespace Genie
 			                           : margin_right.number;
 		}
 		
-		if ( height.flags  &&  !margin_top.flags  &&  !margin_bottom.flags )
+		if ( height.flags  &&  !margin_top.flags )
 		{
 			if ( !margin_bottom.flags )
 			{
