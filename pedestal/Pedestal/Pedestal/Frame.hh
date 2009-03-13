@@ -20,6 +20,7 @@ namespace Pedestal
 			
 			virtual short OutlineWidth() const = 0;
 			virtual short OutlineOffset() const = 0;
+			virtual short OutlineCurvature() const = 0;
 			
 			virtual Rect Margin( const Rect& bounds ) const = 0;
 			

@@ -88,7 +88,14 @@ namespace Pedestal
 			
 			N::PenSize( width, width );
 			
-			N::FrameRect( outline_bounds );
+			if ( const short diameter = OutlineCurvature() )
+			{
+				::FrameRoundRect( &outline_bounds, diameter, diameter );
+			}
+			else
+			{
+				N::FrameRect( outline_bounds );
+			}
 			
 			N::PenNormal();
 		}
