@@ -87,11 +87,15 @@ namespace Genie
 		Value  margin_left;
 		
 		short  padding;
+		short  outline_width;
+		short  outline_offset;
 		bool   bounds_changed;
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
 		FrameParameters() : padding( 0 ),
+		                    outline_width(),
+		                    outline_offset(),
 		                    bounds_changed(),
 		                    itsSubview( Ped::EmptyView::Get() )
 		{
@@ -120,6 +124,9 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 			
 			short Padding() const;
+			
+			short OutlineWidth() const;
+			short OutlineOffset() const;
 			
 			Rect Margin( const Rect& bounds ) const;
 			
@@ -150,6 +157,16 @@ namespace Genie
 		}
 		
 		return 0;
+	}
+	
+	short Frame::OutlineWidth() const
+	{
+		return gFrameParametersMap[ itsKey ].outline_width;
+	}
+	
+	short Frame::OutlineOffset() const
+	{
+		return gFrameParametersMap[ itsKey ].outline_offset;
 	}
 	
 	Rect Frame::Margin( const Rect& bounds ) const
@@ -295,6 +312,16 @@ namespace Genie
 			return gFrameParametersMap[ view ].padding;
 		}
 		
+		short& Outline_Width( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].outline_width;
+		}
+		
+		short& Outline_Offset( const FSTree* view )
+		{
+			return gFrameParametersMap[ view ].outline_offset;
+		}
+		
 		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gFrameParametersMap[ key ].itsSubview;
@@ -337,6 +364,9 @@ namespace Genie
 		{ ".margin-left",   &Property_Factory< Frame_Property< Value_Scribe, Margin_Left   > > },
 		
 		{ "padding", &Property_Factory< Frame_Property< Int_Scribe, Padding > > },
+		
+		{ ".outline-width",  &Property_Factory< Frame_Property< Int_Scribe, Outline_Width  > > },
+		{ ".outline-offset", &Property_Factory< Frame_Property< Int_Scribe, Outline_Offset > > },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
 		
