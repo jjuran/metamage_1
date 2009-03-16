@@ -89,15 +89,18 @@ namespace Genie
 	}
 	
 	
-	static std::size_t GetHandleSize_Checked( N::Handle h )
-	{
-		return h ? N::GetHandleSize( h ) : 0;
-	}
-	
 	class IconDataFileHandle : public VirtualFileHandle
 	{
+		private:
+			N::Handle itsData;
+		
 		public:
-			IconDataFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			IconDataFileHandle( const FSTreePtr&  file,
+			                    OpenFlags         flags,
+			                    N::Handle         data )
+			:
+				VirtualFileHandle( file, flags ),
+				itsData( data )
 			{
 			}
 			
@@ -105,21 +108,18 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			NN::Shared< N::Handle >& Data()        { return gPlainIconMap[ ViewKey() ].data; }
-			N::Handle                Data() const  { return gPlainIconMap[ ViewKey() ].data; }
-			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
-			off_t GetEOF() const  { return GetHandleSize_Checked( Data() ); }
+			off_t GetEOF() const  { return N::GetHandleSize( itsData ); }
 			
 			void SetEOF( off_t length )  {}
 	};
 	
 	boost::shared_ptr< IOHandle > IconDataFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags() ) );
+		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
 	
 	const FSTree* IconDataFileHandle::ViewKey() const
@@ -129,20 +129,20 @@ namespace Genie
 	
 	ssize_t IconDataFileHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		N::Handle data = Data();
+		ASSERT( itsData != NULL );
 		
-		if ( data == NULL )
+		const std::size_t size = N::GetHandleSize( itsData );
+		
+		if ( size == 0 )
 		{
 			p7::throw_errno( EIO );
 		}
-		
-		const std::size_t size = N::GetHandleSize( data );
 		
 		ASSERT( GetFileMark() <= size );
 		
 		byteCount = std::min( byteCount, size - GetFileMark() );
 		
-		char* p = *data.Get();
+		char* p = *itsData.Get();
 		
 		std::copy( p + GetFileMark(),
 		           p + GetFileMark() + byteCount,
@@ -158,18 +158,11 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		NN::Shared< N::Handle >& data = Data();
+		ASSERT( itsData != NULL );
 		
-		if ( data.Get() == NULL )
-		{
-			data = N::NewHandle( byteCount );
-		}
-		else
-		{
-			N::SetHandleSize( data, byteCount );
-		}
+		N::SetHandleSize( itsData, byteCount );
 		
-		char* p = *data.Get().Get();
+		char* p = *itsData.Get();
 		
 		std::copy( buffer,
 		           buffer + byteCount,
@@ -187,24 +180,30 @@ namespace Genie
 	
 	class FSTree_Icon_data : public FSTree
 	{
+		private:
+			NN::Shared< N::Handle > itsData;
+		
 		public:
-			FSTree_Icon_data( const FSTreePtr&    parent,
-			                  const std::string&  name ) : FSTree( parent, name )
+			FSTree_Icon_data( const FSTreePtr&                parent,
+			                  const std::string&              name,
+			                  const NN::Shared< N::Handle >&  data )
+			:
+				FSTree( parent, name ),
+				itsData( data )
 			{
+				ASSERT( data.Get() != NULL );
 			}
-			
-			N::Handle Data() const  { return gPlainIconMap[ ParentRef().get() ].data; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
-			off_t GetEOF() const  { return GetHandleSize_Checked( Data() ); }
+			off_t GetEOF() const  { return N::GetHandleSize( itsData ); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	boost::shared_ptr< IOHandle > FSTree_Icon_data::Open( OpenFlags flags ) const
 	{
-		IOHandle* result = new IconDataFileHandle( Self(), flags );
+		IOHandle* result = new IconDataFileHandle( Self(), flags, itsData );
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}
@@ -225,6 +224,19 @@ namespace Genie
 		
 	}
 	
+	static FSTreePtr Data_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
+	{
+		NN::Shared< N::Handle >& data = gPlainIconMap[ parent.get() ].data;
+		
+		if ( data.Get() == NULL )
+		{
+			data = N::NewHandle( 0 );  // handle must be allocated
+		}
+		
+		return FSTreePtr( new FSTree_Icon_data( parent, name, data ) );
+	}
+	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -237,7 +249,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping Icon_view_Mappings[] =
 	{
-		{ "data", &Basic_Factory< FSTree_Icon_data > },
+		{ "data", &Data_Factory },
 		
 		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
 		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
