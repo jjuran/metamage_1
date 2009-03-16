@@ -17,11 +17,27 @@ namespace Genie
 	{
 		Nitrogen::IconAlignmentType  align;
 		Nitrogen::IconTransformType  xform;
+		char                         label;
+		bool                         selected;
+		bool                         disabling;
 		
-		Icon_Parameters() : align(), xform()
+		Icon_Parameters() : align(), xform(), label(), selected(), disabling()
 		{
 		}
 	};
+	
+	inline Nitrogen::IconTransformType
+	//
+	CombinedIconTransforms( const Icon_Parameters& params )
+	{
+		typedef Nitrogen::IconTransformType Type;
+		
+		Type state    = Type( params.xform                         );
+		Type label    = Type( params.label    * kTransformLabel1   );
+		Type selected = Type( params.selected * kTransformSelected );
+		
+		return state | label | selected;
+	}
 	
 }
 

@@ -8,6 +8,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/Icons.hh"
 
@@ -16,6 +19,13 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/Icons.hh"
 
+
+namespace Nitrogen
+{
+	
+	static const IconTransformType kTransformDisabled = IconTransformType( ::kTransformDisabled );
+	
+}
 
 namespace Genie
 {
@@ -59,6 +69,8 @@ namespace Genie
 			Nitrogen::IconAlignmentType Alignment() const;
 			
 			Nitrogen::IconTransformType Transform() const;
+			
+			void Activate( bool activating );
 	};
 	
 	N::ResID IconID::ID() const
@@ -94,7 +106,27 @@ namespace Genie
 			throw Undefined();
 		}
 		
-		return it->second.xform;
+		return CombinedIconTransforms( it->second );
+	}
+	
+	void IconID::Activate( bool activating )
+	{
+		IconIDMap::iterator it = gIconIDMap.find( itsKey );
+		
+		if ( it == gIconIDMap.end() )
+		{
+			throw Undefined();
+		}
+		
+		Icon_Parameters& params = it->second;
+		
+		if ( params.disabling )
+		{
+			params.xform = activating ? N::kTransformNone
+			                          : N::kTransformDisabled;
+			
+			N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		}
 	}
 	
 	boost::shared_ptr< Ped::View > IconIDFactory( const FSTree* delegate )
@@ -127,6 +159,21 @@ namespace Genie
 			return gIconIDMap[ view ].xform;
 		}
 		
+		char& Label( const FSTree* view )
+		{
+			return gIconIDMap[ view ].label;
+		}
+		
+		bool& Selected( const FSTree* view )
+		{
+			return gIconIDMap[ view ].selected;
+		}
+		
+		bool& Disabling( const FSTree* view )
+		{
+			return gIconIDMap[ view ].disabling;
+		}
+		
 	}
 	
 	template < class Property >
@@ -145,6 +192,9 @@ namespace Genie
 		
 		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
 		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
+		{ "label", &Property_Factory< View_Property< Integer_Scribe< char >, Label > > },
+		{ "selected",  &Property_Factory< View_Property< Boolean_Scribe, Selected  > > },
+		{ "disabling", &Property_Factory< View_Property< Boolean_Scribe, Disabling > > },
 		
 		{ NULL, NULL }
 	};
