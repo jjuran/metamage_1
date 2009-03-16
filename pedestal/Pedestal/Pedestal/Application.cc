@@ -38,7 +38,7 @@
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/Clipboard.hh"
-#include "Pedestal/Control.hh"
+#include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Window.hh"
 
@@ -337,7 +337,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	static inline bool TrackedControl( const FindControl_Result& found, Point point )
+	static inline bool TrackedControl( const N::FindControl_Result& found, Point point )
 	{
 		return TrackedControl( found.control, found.part, point );
 	}
