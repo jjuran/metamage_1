@@ -310,7 +310,7 @@ namespace Pedestal
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
 	{
 		// Did we actually hit a control?
-		if ( part != kControlNoPart )
+		if ( part != N::kControlNoPart )
 		{
 			// If the control has an action routine, it's not a Pedestal control.
 			// It might (for example) be a List-Manager-owned scrollbar, 
