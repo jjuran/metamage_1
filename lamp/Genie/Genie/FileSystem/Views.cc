@@ -31,7 +31,17 @@ namespace Genie
 		ViewParameters() : itsFactory(), itsWindowKey()
 		{
 		}
+		
+		void swap( ViewParameters& other );
 	};
+	
+	void ViewParameters::swap( ViewParameters& other )
+	{
+		itsDelegate.swap( other.itsDelegate );
+		
+		std::swap( itsFactory,   other.itsFactory   );
+		std::swap( itsWindowKey, other.itsWindowKey );
+	}
 	
 	typedef std::map< std::string, ViewParameters > ViewParametersSubMap;
 	
@@ -94,7 +104,25 @@ namespace Genie
 		{
 			ViewParametersSubMap& submap = it->second;
 			
-			submap.erase( name );
+			ViewParametersSubMap::iterator jt = submap.find( name );
+			
+			ViewParameters temp;
+			
+			if ( jt != submap.end() )
+			{
+				temp.swap( jt->second );
+				
+				submap.erase( jt );
+				
+				try
+				{
+					temp.itsDelegate->Delete();
+				}
+				catch ( ... )
+				{
+					ASSERT( 0 && "Delegate's Delete() method may not throw" );
+				}
+			}
 			
 			if ( submap.empty() )
 			{
@@ -105,7 +133,28 @@ namespace Genie
 	
 	void RemoveAllViewParameters( const FSTree* parent )
 	{
-		gViewParametersMap.erase( parent );
+		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
+		
+		if ( it != gViewParametersMap.end() )
+		{
+			ViewParametersSubMap temp;
+			
+			temp.swap( it->second );
+			
+			gViewParametersMap.erase( it );
+			
+			for ( ViewParametersSubMap::const_iterator jt = temp.begin();  jt != temp.end();  ++jt )
+			{
+				try
+				{
+					jt->second.itsDelegate->Delete();
+				}
+				catch ( ... )
+				{
+					ASSERT( 0 && "Delegate's Delete() method may not throw" );
+				}
+			}
+		}
 	}
 	
 	static boost::shared_ptr< Ped::View > MakeView( const FSTree*       parent,
