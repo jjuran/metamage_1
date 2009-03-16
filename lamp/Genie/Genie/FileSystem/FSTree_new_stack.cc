@@ -212,6 +212,8 @@ namespace Genie
 				FSTree_Sequence< Stack_Details >( parent, name, this )
 			{
 			}
+			
+			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
 	};
 	
 	
@@ -226,6 +228,8 @@ namespace Genie
 	void FSTree_new_stack::DestroyDelegate( const FSTree* delegate )
 	{
 		gStack_Parameters_Map.erase( delegate );
+		
+		RemoveAllViewParameters( delegate );
 	}
 	
 }
