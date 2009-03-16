@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/Icons.hh"
 
@@ -20,8 +23,14 @@
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/Icons.hh"
 #include "Genie/FileSystem/PlainIcon_data.hh"
-#include "Genie/IO/VirtualFile.hh"
 
+
+namespace Nitrogen
+{
+	
+	static const IconTransformType kTransformDisabled = IconTransformType( ::kTransformDisabled );
+	
+}
 
 namespace Genie
 {
@@ -61,6 +70,8 @@ namespace Genie
 			Nitrogen::IconAlignmentType Alignment() const;
 			
 			Nitrogen::IconTransformType Transform() const;
+			
+			void Activate( bool activating );
 	};
 	
 	N::Handle PlainIcon::Data() const
@@ -75,7 +86,20 @@ namespace Genie
 	
 	N::IconTransformType PlainIcon::Transform() const
 	{
-		return gPlainIconMap[ itsKey ].xform;
+		return CombinedIconTransforms( gPlainIconMap[ itsKey ] );
+	}
+	
+	void PlainIcon::Activate( bool activating )
+	{
+		Icon_Parameters& params = gPlainIconMap[ itsKey ];
+		
+		if ( params.disabling )
+		{
+			params.xform = activating ? N::kTransformNone
+			                          : N::kTransformDisabled;
+			
+			N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		}
 	}
 	
 	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
@@ -101,6 +125,21 @@ namespace Genie
 		N::IconTransformType& Transform( const FSTree* view )
 		{
 			return gPlainIconMap[ view ].xform;
+		}
+		
+		char& Label( const FSTree* view )
+		{
+			return gPlainIconMap[ view ].label;
+		}
+		
+		bool& Selected( const FSTree* view )
+		{
+			return gPlainIconMap[ view ].selected;
+		}
+		
+		bool& Disabling( const FSTree* view )
+		{
+			return gPlainIconMap[ view ].disabling;
 		}
 		
 	}
@@ -134,6 +173,9 @@ namespace Genie
 		
 		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
 		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
+		{ "label", &Property_Factory< View_Property< Integer_Scribe< char >, Label > > },
+		{ "selected",  &Property_Factory< View_Property< Boolean_Scribe, Selected  > > },
+		{ "disabling", &Property_Factory< View_Property< Boolean_Scribe, Disabling > > },
 		
 		{ NULL, NULL }
 	};
