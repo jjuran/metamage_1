@@ -91,6 +91,10 @@ namespace Genie
 			typedef boost::shared_ptr< Pedestal::View >& (*ViewGetter)( const FSTree* );
 			
 			ViewGetter itsGetter;
+			
+			// Non-copyable
+			FSTree_View           ( const FSTree_View& );
+			FSTree_View& operator=( const FSTree_View& );
 		
 		public:
 			FSTree_View( const FSTreePtr&    parent,
