@@ -275,6 +275,8 @@ namespace Genie
 	void FSTree_new_scrollframe::DestroyDelegate( const FSTree* delegate )
 	{
 		gScrollFrameParametersMap.erase( delegate );
+		
+		RemoveAllViewParameters( delegate );
 	}
 	
 	

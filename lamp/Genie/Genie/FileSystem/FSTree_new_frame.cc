@@ -278,6 +278,8 @@ namespace Genie
 	void FSTree_new_frame::DestroyDelegate( const FSTree* delegate )
 	{
 		gFrameParametersMap.erase( delegate );
+		
+		RemoveAllViewParameters( delegate );
 	}
 	
 	

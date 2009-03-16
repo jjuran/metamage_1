@@ -146,6 +146,8 @@ namespace Genie
 		RemoveScrollerParams( delegate );
 		
 		gBasicScrollerParametersMap.erase( delegate );
+		
+		RemoveAllViewParameters( delegate );
 	}
 	
 	
