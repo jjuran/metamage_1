@@ -307,14 +307,49 @@ namespace Pedestal
 		}
 	}
 	
+	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
+	{
+		// Did we actually hit a control?
+		if ( part != kControlNoPart )
+		{
+			// If the control has an action routine, it's not a Pedestal control.
+			// It might (for example) be a List-Manager-owned scrollbar, 
+			// which we trigger through LClick().
+			// Return false to indicate that we didn't handle the event.
+			if ( N::GetControlAction( control ) == NULL )
+			{
+				Control_UserData* userData = N::GetControlReference( control );
+				
+				if ( userData != NULL )
+				{
+					ControlTracker trackControl = userData->trackHook;
+					
+					if ( trackControl != NULL )
+					{
+						trackControl( control, part, point );
+					}
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	static inline bool TrackedControl( const FindControl_Result& found, Point point )
+	{
+		return TrackedControl( found.control, found.part, point );
+	}
+	
 	static void RespondToContent( const EventRecord& event, N::WindowRef window )
 	{
 		Point pt = N::GlobalToLocal( event.where );
 		
-		// TrackControl's result indicates whether a control was found.
-		if ( TrackControl( N::FindControl( pt, window ), pt ) )
+		// TrackedControl's result indicates whether a control was found.
+		if ( TrackedControl( N::FindControl( pt, window ), pt ) )
 		{
-			
+			// already handled
 		}
 		else if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
