@@ -1323,7 +1323,7 @@ namespace Genie
 	}
 	
 	
-	const UInt16 kMaxItems = 64;
+	const UInt16 kMaxItems = 4;
 	
 	struct NameAndID
 	{
