@@ -1,12 +1,9 @@
-/*	=================
- *	PlainIcon_data.cc
- *	=================
+/*	============
+ *	Icon_data.cc
+ *	============
  */
 
-#include "Genie/FileSystem/PlainIcon_data.hh"
-
-// POSIX
-#include <fcntl.h>
+#include "Genie/FileSystem/Icon_data.hh"
 
 // POSeven
 #include "POSeven/Errno.hh"

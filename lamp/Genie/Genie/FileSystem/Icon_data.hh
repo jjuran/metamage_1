@@ -1,10 +1,13 @@
-/*	=================
- *	PlainIcon_data.hh
- *	=================
+/*	============
+ *	Icon_data.hh
+ *	============
  */
 
-#ifndef GENIE_FILESYSTEM_PLAINICON_DATA_HH
-#define GENIE_FILESYSTEM_PLAINICON_DATA_HH
+#ifndef GENIE_FILESYSTEM_ICON_DATA_HH
+#define GENIE_FILESYSTEM_ICON_DATA_HH
+
+// POSIX
+#include <fcntl.h>
 
 // Nucleus
 #include "Nucleus/Shared.h"

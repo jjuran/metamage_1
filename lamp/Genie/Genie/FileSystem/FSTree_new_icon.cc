@@ -22,7 +22,7 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/Icons.hh"
-#include "Genie/FileSystem/PlainIcon_data.hh"
+#include "Genie/FileSystem/Icon_data.hh"
 
 
 namespace Nitrogen
