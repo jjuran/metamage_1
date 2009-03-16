@@ -8,36 +8,38 @@
 
 // Nitrogen
 #include "Nitrogen/RefCon.h"
+#include "Nitrogen/Str.h"
 
 // Pedestal
-#include "Pedestal/Control.hh"
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
 {
 	
-	typedef void ( *ButtonAction )( Nitrogen::RefCon refCon );
-	
-	class PushButton : public Control
+	class PushButton : public View
 	{
 		private:
-			ButtonAction action;
-			Nitrogen::RefCon refCon;
+			ControlRef  itsControl;
 		
 		public:
-			struct Initializer
+			PushButton() : itsControl()
 			{
-				Initializer( ConstStr255Param title, ButtonAction action, Nitrogen::RefCon refCon ) 
-				  :	title( title ), action( action ), refCon( refCon )  {}
-				
-				ConstStr255Param title;
-				ButtonAction action;
-				Nitrogen::RefCon refCon;
-			};
+			}
 			
-			PushButton( const Rect& bounds, const Initializer& init );
+			virtual Nitrogen::Str255 Title() const = 0;
 			
-			static void TrackControl( ControlRef control, ControlPartCode part, Point point );
+			virtual Nitrogen::RefCon RefCon() const = 0;
+			
+			ControlRef Get() const  { return itsControl; }
+			
+			void Install( const Rect& bounds );
+			
+			void Uninstall();
+			
+			void SetBounds( const Rect& bounds );
+			
+			void Activate( bool activating );
 	};
 	
 }

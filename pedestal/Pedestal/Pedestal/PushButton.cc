@@ -23,39 +23,10 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	
-	using N::kControlNoPart;
-	
-	
-	void PushButton::TrackControl( ControlRef control, ControlPartCode part, Point point )
-	{
-		if ( part != kControlNoPart )
-		{
-			part = N::ControlPartCode( ::TrackControl( control, point, NULL ) );
-			
-			if ( part != kControlNoPart )
-			{
-				Control_Hooks* controlHooks = reinterpret_cast< Control_Hooks* >( GetControlReference( control ) );
-				
-				// controlHooks shouldn't be NULL if we got here
-				PushButton* button = reinterpret_cast< PushButton* >( controlHooks->data );
-				
-				if ( button != NULL )
-				{
-					ButtonAction action = button->action;
-					
-					if (action != NULL )
-					{
-						action( button->refCon );
-					}
-				}
-			}
-		}
-	}
 	
 	inline ControlRef NewMacPushButton( WindowRef owningWindow,
 	                                    const Rect& boundsRect,
 	                                    ConstStr255Param title,
-	                                    //Control* refCon
 	                                    void* refCon )
 	{
 		return N::NewControl( owningWindow,
@@ -73,7 +44,9 @@ namespace Pedestal
 	static Point CalcButtonSize( ConstStr255Param title )
 	{
 		int width = 1 + 8 + ::StringWidth( title ) + 8 + 1;
+		
 		width = std::max( width, 58 );
+		
 		return N::SetPt( width, 20 );
 	}
 	
@@ -82,19 +55,35 @@ namespace Pedestal
 		return NX::CenteredRect( frame, CalcButtonSize( title ) );
 	}
 	
-	PushButton::PushButton( const Rect& bounds, const Initializer& init )
-	:
-		Control( bounds      ),
-		action ( init.action ),
-		refCon ( init.refCon )
+	
+	void PushButton::Install( const Rect& bounds )
 	{
-		controlHooks.data = this;
-		controlHooks.trackHook = TrackControl;
+		N::Str255 title = Title();
 		
-		macControl = NewMacPushButton( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-		                               CalcCenteredButtonRect( bounds, init.title ),
-		                               init.title,
-		                               &controlHooks );
+		itsControl = NewMacPushButton( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		                               CalcCenteredButtonRect( bounds, title ),
+		                               title,
+		                               RefCon() );
+	}
+	
+	void PushButton::Uninstall()
+	{
+		::DisposeControl( itsControl );
+		
+		itsControl = NULL;
+	}
+	
+	void PushButton::SetBounds( const Rect& bounds )
+	{
+		N::SetControlBounds( itsControl, CalcCenteredButtonRect( bounds, Title() ) );
+	}
+	
+	void PushButton::Activate( bool activating )
+	{
+		N::ControlPartCode code = activating ? N::kControlNoPart
+		                                     : N::kControlInactivePart;
+		
+		N::HiliteControl( itsControl, code );
 	}
 	
 }
