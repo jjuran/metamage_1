@@ -22,7 +22,6 @@ namespace Genie
 		Scrollbar_UserData() : key()
 		{
 		}
-
 	};
 	
 }
