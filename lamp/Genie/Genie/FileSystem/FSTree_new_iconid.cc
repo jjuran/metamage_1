@@ -58,8 +58,6 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			IconID( Key key ) : itsKey( key )
 			{
 			}
