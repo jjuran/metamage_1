@@ -243,6 +243,8 @@ namespace Genie
 			void AddMappings( const Mapping* begin );
 			void AddMappings( const Mapping* begin, const Mapping* end );
 			
+			void Delete() const;
+			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;

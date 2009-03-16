@@ -156,6 +156,14 @@ namespace Genie
 		}
 	}
 	
+	void FSTree_Premapped::Delete() const
+	{
+		if ( itsDestructor )
+		{
+			itsDestructor( static_cast< const FSTree* >( this ) );
+		}
+	}
+	
 	FSTreePtr FSTree_Premapped::Lookup_Child( const std::string& name ) const
 	{
 		Mappings::const_iterator it = itsMappings.find( name );
