@@ -6,6 +6,7 @@
 #include "Genie/FileSystem/FSTree_new.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_new_button.hh"
 #include "Genie/FileSystem/FSTree_new_caption.hh"
 #include "Genie/FileSystem/FSTree_new_console.hh"
 #include "Genie/FileSystem/FSTree_new_frame.hh"
@@ -25,6 +26,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping new_Mappings[] =
 	{
+		{ "button",       &Basic_Factory< FSTree_new_button       > },
 		{ "caption",      &Basic_Factory< FSTree_new_caption      > },
 		{ "console",      &Basic_Factory< FSTree_new_console      > },
 		{ "frame",        &Basic_Factory< FSTree_new_frame        > },
