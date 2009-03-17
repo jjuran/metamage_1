@@ -26,6 +26,7 @@ ln /new/frame view/main
 
 echo 13 > view/main/.margin-top
 echo 13 > view/main/.margin-right
+echo 46 > view/main/.margin-bottom
 echo 78 > view/main/.margin-left
 
 ln /new/caption view/main/v
