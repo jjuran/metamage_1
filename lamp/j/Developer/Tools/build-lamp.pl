@@ -124,18 +124,27 @@ my %fsmap =
 		},
 		Tools =>
 		[
+			# Build tools
 			qw( A-line ar cpres ld mpwrez mwcc ),
+			# Source management
 			qw( jsync ),
+			# Exceptions
 			qw( abort buserror illegal privileged ),
+			# Mac-specific
 			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
+			# aevt wrappers
 			qw( File Line activate quit ),
+			# Misc scripts
 			qw( filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
 		],
 	},
 	bin =>
 	[
+		# Standard
 		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep true ),
+		# Custom
 		qw( jgetty ),
+		# Perl scripts
 		qw( chmod date ls test ),
 	],
 	etc =>
@@ -155,16 +164,28 @@ my %fsmap =
 	{
 		bin =>
 		[
+			# Standard
 			qw( touch ),
+			# Common
 			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			# djb's UCSPI
 			qw( argv0 tcpcat tcpclient ),
+			# Modem-related scripts
 			qw( cidlistener cidmon mcmd ),
+			# Newline translation
+			qw( cr2lf lf2cr lf2crlf mread stripcr striplf ),
+			# Local editor
 			qw( local-edit-client ),
-			qw( buffer daemonize follower idle pause ),
-			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
+			# Apps
+			qw( buffer psmon ),
+			# App utilities
+			qw( daemonize follower idle ),
+			# Misc
+			qw( chain divide jtest pause ptrace th ),
+			# Mac-specific
 			qw( beep cds drvr err2text gestalt keymods macbin vols ),
+			# Perl scripts
 			qw( env grep head printenv strings tee time tr wc ),
-			qw( psmon ),
 		],
 		lib =>
 		{
