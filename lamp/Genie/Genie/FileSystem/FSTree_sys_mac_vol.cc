@@ -5,7 +5,11 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
 
+// Iota
+#include "iota/strings.hh"
+
 // Nitrogen
+#include "Nitrogen/Files.h"
 #include "Nitrogen/Folders.h"
 
 // POSeven
@@ -14,9 +18,11 @@
 // Genie
 #include "Genie/FileSystem/Drives.hh"
 #include "Genie/FileSystem/FSSpec.hh"
+#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_Stamp_Action.hh"
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -35,6 +41,34 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
+	
+	struct VRefNum_KeyName_Traits
+	{
+		typedef N::FSVolumeRefNum Key;
+		
+		static std::string NameFromKey( const Key& key );
+		
+		static Key KeyFromName( const std::string& name );
+		
+		static bool KeyIsValid( const Key& key );
+	};
+	
+	
+	struct sys_mac_vol_Details : public VRefNum_KeyName_Traits
+	{
+		typedef N::Volume_Container Sequence;
+		
+		static Sequence ItemSequence()  { return N::Volumes(); }
+		
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
+		
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
+	};
+	
+	typedef FSTree_Sequence< sys_mac_vol_Details > FSTree_sys_mac_vol;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -491,6 +525,18 @@ namespace Genie
 		{ NULL, NULL }
 		
 	};
+	
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_mac_vol( parent, name ) );
+	}
+	
+	FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
+	{
+		return sys_mac_vol_Details::GetChildNode( ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) ),
+		                                          VRefNum_KeyName_Traits::NameFromKey( vRefNum ),
+		                                          vRefNum );
+	}
 	
 }
 

@@ -710,13 +710,6 @@ namespace Genie
 		return false;
 	}
 	
-	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
-	{
-		return sys_mac_vol_Details::GetChildNode( ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) ),
-		                                          VRefNum_KeyName_Traits::NameFromKey( vRefNum ),
-		                                          vRefNum );
-	}
-	
 	FSTreePtr FSTree_DirSpec::Parent() const
 	{
 		if ( itsDirSpec.dirID == fsRtDirID )

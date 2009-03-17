@@ -10,38 +10,15 @@
 #include "Nitrogen/Files.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/FSTree.hh"
 
 
 namespace Genie
 {
 	
-	struct VRefNum_KeyName_Traits
-	{
-		typedef Nitrogen::FSVolumeRefNum Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
-		
-		static bool KeyIsValid( const Key& key );
-	};
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const std::string& name );
 	
-	
-	struct sys_mac_vol_Details : public VRefNum_KeyName_Traits
-	{
-		typedef Nitrogen::Volume_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::Volumes(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_vol_Details > FSTree_sys_mac_vol;
+	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );
 	
 }
 

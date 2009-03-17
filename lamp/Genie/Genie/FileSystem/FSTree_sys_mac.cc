@@ -55,7 +55,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
-		{ "vol",    &Basic_Factory< FSTree_sys_mac_vol    > },
+		{ "vol",    &New_FSTree_sys_mac_vol                 },
 		{ "gdev",   &Basic_Factory< FSTree_sys_mac_gdev   > },
 		{ "proc",   &Basic_Factory< FSTree_sys_mac_proc   > },
 		{ "thng",   &Basic_Factory< FSTree_sys_mac_thng   > },
