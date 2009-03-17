@@ -5,23 +5,16 @@
 
 #include "Genie/FileSystem/FSTree_new_icon.hh"
 
-// POSIX
-#include <fcntl.h>
-
-// POSeven
-#include "POSeven/Errno.hh"
-
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
 // Pedestal
-#include "Pedestal/Icons.hh"
+#include "Pedestal/View.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
-#include "Genie/FileSystem/Icons.hh"
 #include "Genie/FileSystem/Icon_data.hh"
 
 
@@ -37,21 +30,29 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
-	struct PlainIcon_Parameters : Icon_Parameters
+	struct Icon_Parameters
 	{
 		boost::shared_ptr< IconData >  data;
+		Nitrogen::IconAlignmentType    align;
+		Nitrogen::IconTransformType    xform;
+		char                           label;
+		bool                           selected;
+		bool                           disabling;
+		
+		Icon_Parameters() : align(), xform(), label(), selected(), disabling()
+		{
+		}
 	};
 	
-	typedef std::map< const FSTree*, PlainIcon_Parameters > PlainIconMap;
+	typedef std::map< const FSTree*, Icon_Parameters > IconMap;
 	
-	static PlainIconMap gPlainIconMap;
+	static IconMap gIconMap;
 	
 	
-	class PlainIcon : public Ped::View
+	class Icon : public Ped::View
 	{
 		private:
 			typedef const FSTree* Key;
@@ -59,7 +60,7 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			PlainIcon( Key key ) : itsKey( key )
+			Icon( Key key ) : itsKey( key )
 			{
 			}
 			
@@ -68,14 +69,27 @@ namespace Genie
 			void Activate( bool activating );
 	};
 	
-	void PlainIcon::Draw( const Rect& bounds, bool erasing )
+	static inline Nitrogen::IconTransformType
+	//
+	CombinedIconTransforms( const Icon_Parameters& params )
+	{
+		typedef Nitrogen::IconTransformType Type;
+		
+		Type state    = Type( params.xform                         );
+		Type label    = Type( params.label    * kTransformLabel1   );
+		Type selected = Type( params.selected * kTransformSelected );
+		
+		return state | label | selected;
+	}
+	
+	void Icon::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( erasing )
 		{
 			N::EraseRect( bounds );
 		}
 		
-		PlainIcon_Parameters& params = gPlainIconMap[ itsKey ];
+		Icon_Parameters& params = gIconMap[ itsKey ];
 		
 		if ( params.data.get() )
 		{
@@ -85,9 +99,9 @@ namespace Genie
 		}
 	}
 	
-	void PlainIcon::Activate( bool activating )
+	void Icon::Activate( bool activating )
 	{
-		Icon_Parameters& params = gPlainIconMap[ itsKey ];
+		Icon_Parameters& params = gIconMap[ itsKey ];
 		
 		if ( params.disabling )
 		{
@@ -101,13 +115,13 @@ namespace Genie
 	
 	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new PlainIcon( delegate ) );
+		return boost::shared_ptr< Ped::View >( new Icon( delegate ) );
 	}
 	
 	
 	void FSTree_new_icon::DestroyDelegate( const FSTree* delegate )
 	{
-		gPlainIconMap.erase( delegate );
+		gIconMap.erase( delegate );
 	}
 	
 	
@@ -116,27 +130,27 @@ namespace Genie
 		
 		N::IconAlignmentType& Alignment( const FSTree* view )
 		{
-			return gPlainIconMap[ view ].align;
+			return gIconMap[ view ].align;
 		}
 		
 		N::IconTransformType& Transform( const FSTree* view )
 		{
-			return gPlainIconMap[ view ].xform;
+			return gIconMap[ view ].xform;
 		}
 		
 		char& Label( const FSTree* view )
 		{
-			return gPlainIconMap[ view ].label;
+			return gIconMap[ view ].label;
 		}
 		
 		bool& Selected( const FSTree* view )
 		{
-			return gPlainIconMap[ view ].selected;
+			return gIconMap[ view ].selected;
 		}
 		
 		bool& Disabling( const FSTree* view )
 		{
-			return gPlainIconMap[ view ].disabling;
+			return gIconMap[ view ].disabling;
 		}
 		
 	}
@@ -144,7 +158,7 @@ namespace Genie
 	static FSTreePtr Data_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		boost::shared_ptr< IconData >& data = gPlainIconMap[ parent.get() ].data;
+		boost::shared_ptr< IconData >& data = gIconMap[ parent.get() ].data;
 		
 		if ( data.get() == NULL )
 		{
