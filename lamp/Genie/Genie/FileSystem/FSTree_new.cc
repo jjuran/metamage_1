@@ -11,7 +11,6 @@
 #include "Genie/FileSystem/FSTree_new_console.hh"
 #include "Genie/FileSystem/FSTree_new_frame.hh"
 #include "Genie/FileSystem/FSTree_new_icon.hh"
-#include "Genie/FileSystem/FSTree_new_iconsuite.hh"
 #include "Genie/FileSystem/FSTree_new_list.hh"
 #include "Genie/FileSystem/FSTree_new_scroller.hh"
 #include "Genie/FileSystem/FSTree_new_scrollframe.hh"
@@ -30,7 +29,6 @@ namespace Genie
 		{ "console",      &Basic_Factory< FSTree_new_console      > },
 		{ "frame",        &Basic_Factory< FSTree_new_frame        > },
 		{ "icon",         &Basic_Factory< FSTree_new_icon         > },
-		{ "iconsuite",    &Basic_Factory< FSTree_new_iconsuite    > },
 		{ "list",         &Basic_Factory< FSTree_new_list         > },
 		{ "scroller",     &Basic_Factory< FSTree_new_scroller     > },
 		{ "scrollframe",  &Basic_Factory< FSTree_new_scrollframe  > },
