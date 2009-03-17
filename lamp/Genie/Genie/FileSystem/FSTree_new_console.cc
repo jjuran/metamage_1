@@ -20,6 +20,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/FileSystem/TextEdit_text.hh"
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
@@ -320,7 +321,7 @@ namespace Genie
 		return false;
 	}
 	
-	boost::shared_ptr< Ped::View > ConsoleFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		typedef TextEdit_Scroller View;
 		
@@ -330,7 +331,7 @@ namespace Genie
 	}
 	
 	
-	void FSTree_new_console::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		RemoveScrollerParams( delegate );
 		
@@ -614,7 +615,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping Console_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "tty", &Basic_Factory< FSTree_Console_tty > },
 		
@@ -634,6 +635,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_console( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

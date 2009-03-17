@@ -20,6 +20,7 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/Scribes.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Genie
@@ -269,13 +270,13 @@ namespace Genie
 		return *subview;
 	}
 	
-	boost::shared_ptr< Ped::View > FrameFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new Frame( delegate ) );
 	}
 	
 	
-	void FSTree_new_frame::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gFrameParametersMap.erase( delegate );
 		
@@ -368,7 +369,7 @@ namespace Genie
 		}
 	};
 	
-	const FSTree_Premapped::Mapping Frame_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "width",  &Property_Factory< Frame_Property< Value_Scribe, Width  > > },
 		{ "height", &Property_Factory< Frame_Property< Value_Scribe, Height > > },
@@ -388,6 +389,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_frame( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

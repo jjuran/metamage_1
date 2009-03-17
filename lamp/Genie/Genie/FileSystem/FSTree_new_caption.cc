@@ -104,13 +104,13 @@ namespace Genie
 		return false;
 	}
 	
-	boost::shared_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new Caption( delegate ) );
 	}
 	
 	
-	void FSTree_new_caption::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gCaptionParametersMap.erase( delegate );
 	}
@@ -244,7 +244,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping Caption_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
@@ -253,6 +253,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_caption( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

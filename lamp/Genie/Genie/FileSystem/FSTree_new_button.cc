@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -124,15 +125,13 @@ namespace Genie
 		}
 	}
 	
-	boost::shared_ptr< Ped::View >
-	//
-	FSTree_new_button::Factory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new PushButton( delegate ) );
 	}
 	
 	
-	void FSTree_new_button::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gButtonMap.erase( delegate );
 	}
@@ -277,7 +276,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping Button_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "title", &Property_Factory< Button_Title > },
 		
@@ -285,6 +284,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_button( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

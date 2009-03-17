@@ -16,6 +16,7 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/Icon_data.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Nitrogen
@@ -113,13 +114,13 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new Icon( delegate ) );
 	}
 	
 	
-	void FSTree_new_icon::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gIconMap.erase( delegate );
 	}
@@ -178,7 +179,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping Icon_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "data", &Data_Factory },
 		
@@ -190,6 +191,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_icon( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

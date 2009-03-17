@@ -16,6 +16,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Property.hh"
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -105,13 +106,13 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< Ped::View > ListFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new ListView( delegate ) );
 	}
 	
 	
-	void FSTree_new_list::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gListParameterMap.erase( delegate );
 	}
@@ -297,7 +298,7 @@ namespace Genie
 		}
 	};
 	
-	const FSTree_Premapped::Mapping List_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "data", &Basic_Factory< FSTree_List_data > },
 		
@@ -305,6 +306,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_list( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

@@ -21,6 +21,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/ScrollerBase.hh"
 #include "Genie/FileSystem/TrackScrollbar.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Genie
@@ -266,13 +267,13 @@ namespace Genie
 		return *subview;
 	}
 	
-	boost::shared_ptr< Ped::View > ScrollFrameFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new ScrollFrame( delegate ) );
 	}
 	
 	
-	void FSTree_new_scrollframe::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gScrollFrameParametersMap.erase( delegate );
 		
@@ -372,7 +373,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping ScrollFrame_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "horizontal", &Property_Factory< View_Property< Boolean_Scribe, Horizontal > > },
 		{ "vertical",   &Property_Factory< View_Property< Boolean_Scribe, Vertical   > > },
@@ -383,6 +384,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 

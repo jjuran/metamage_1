@@ -11,6 +11,7 @@
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/FileSystem/TextEdit_text.hh"
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -20,13 +21,13 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	boost::shared_ptr< Ped::View > TextEditFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return boost::shared_ptr< Ped::View >( new TextEdit_Scroller( delegate ) );
 	}
 	
 	
-	void FSTree_new_textedit::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		RemoveScrollerParams( delegate );
 		
@@ -108,7 +109,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping TextEdit_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "text", &Basic_Factory< FSTree_TextEdit_text > },
 		
@@ -128,6 +129,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_textedit( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 
