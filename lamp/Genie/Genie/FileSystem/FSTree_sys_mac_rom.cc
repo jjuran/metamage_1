@@ -5,6 +5,14 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_rom.hh"
 
+// POSIX
+#include "sys/stat.h"
+
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
+
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 
@@ -23,12 +31,29 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	UInt32 GetROMSize()
+	static UInt32 GetROMSize()
 	{
 		static UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
 		
 		return romSize;
 	}
+	
+	class FSTree_sys_mac_rom : public FSTree
+	{
+		public:
+			FSTree_sys_mac_rom( const FSTreePtr&    parent,
+			                    const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			mode_t FileTypeMode() const  { return S_IFREG; }
+			
+			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }
+			
+			off_t GetEOF() const  { return GetROMSize(); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
 	
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
@@ -48,6 +73,11 @@ namespace Genie
 		                                                            GetEOF() ) );
 		
 	#endif
+	}
+	
+	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_mac_rom( parent, name ) );
 	}
 	
 }
