@@ -18,7 +18,7 @@ perl -e 'exit 1 - <>' < /sys/mac/errata/text-on-black-freakout || sh -c 'echo 00
 ln /new/frame   view
 ln /new/caption view/v
 
-echo 4 > view/margin
+echo 4 > view/padding
 echo 0 > view/v/wrapped
 
 daemonize --cwd --stdout --ctty=tty -- ps --wide --monitor > view/v/text
