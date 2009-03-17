@@ -32,8 +32,9 @@ namespace Genie
 		std::size_t  seed;
 		N::Str255    title;
 		bool         title_changed;
+		bool         installed;
 		
-		Button_Parameters() : seed(), title( "\p" "OK" ), title_changed()
+		Button_Parameters() : seed(), title( "\p" "OK" ), title_changed(), installed()
 		{
 		}
 	};
@@ -88,8 +89,26 @@ namespace Genie
 			
 			N::RefCon RefCon() const  { return &itsUserData; }
 			
+			void Install( const Rect& bounds );
+			
+			void Uninstall();
+			
 			void Draw( const Rect& bounds, bool erasing );
 	};
+	
+	void PushButton::Install( const Rect& bounds )
+	{
+		Ped::PushButton::Install( bounds );
+		
+		gButtonMap[ itsUserData.key ].installed = true;
+	}
+	
+	void PushButton::Uninstall()
+	{
+		Ped::PushButton::Uninstall();
+		
+		gButtonMap[ itsUserData.key ].installed = false;
+	}
 	
 	void PushButton::Draw( const Rect& bounds, bool erasing )
 	{
@@ -151,6 +170,8 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
+			unsigned int SysPoll();
+			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 	};
 	
@@ -166,6 +187,19 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new Button_socket_Handle( GetFile(), GetFlags() ) );
 	}
 	
+	unsigned int Button_socket_Handle::SysPoll()
+	{
+		const FSTree* view = GetFile()->ParentRef().get();
+		
+		ButtonMap::const_iterator it = gButtonMap.find( view );
+		
+		const bool readable =    it == gButtonMap.end()
+		                      || !it->second.installed
+		                      || it->second.seed != itsSeed;
+		
+		return readable * kPollRead | kPollWrite;
+	}
+	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
 	{
 		const FSTree* view = GetFile()->ParentRef().get();
@@ -174,7 +208,7 @@ namespace Genie
 		
 		ButtonMap::const_iterator it = gButtonMap.find( view );
 		
-		if ( it == gButtonMap.end() )
+		if ( it == gButtonMap.end()  ||  !it->second.installed )
 		{
 			p7::throw_errno( ECONNRESET );
 		}
@@ -218,6 +252,15 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Button_socket::Open( OpenFlags flags ) const
 	{
+		const FSTree* view = ParentRef().get();
+		
+		ButtonMap::const_iterator it = gButtonMap.find( view );
+		
+		if ( it == gButtonMap.end()  ||  !it->second.installed )
+		{
+			p7::throw_errno( ECONNREFUSED );
+		}
+		
 		IOHandle* result = new Button_socket_Handle( Self(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
