@@ -50,8 +50,6 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			Caption( Key key ) : itsKey( key )
 			{
 			}
