@@ -177,7 +177,7 @@ my %fsmap =
 			# Local editor
 			qw( local-edit-client ),
 			# Apps
-			qw( buffer psmon ),
+			qw( buffer ok psmon ),
 			# App utilities
 			qw( daemonize follower idle ),
 			# Misc
