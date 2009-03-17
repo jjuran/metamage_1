@@ -1,4 +1,27 @@
 #!/bin/sh
 
-window --title=Diagnostics -- chain setwindow --pos=10,50 --size=700x400 ';' cat "$1" ';' idle
+cd /new/window
+
+echo Diagnostics > title
+
+echo 700x400 > size
+echo 10,50 > pos
+
+touch ref
+
+echo 4 > ref/text-font
+echo 9 > ref/text-size
+
+ln /new/scrollframe  view
+ln /new/frame        view/v
+ln /new/console      view/v/v
+
+ln -s v/v view/target
+
+echo 1 > view/vertical
+echo 4 > view/v/padding
+
+mv view/v/v/tty tty
+
+daemonize --cwd --ctty=tty chain cat "$1" ';' idle
 
