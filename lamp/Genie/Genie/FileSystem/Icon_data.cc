@@ -12,8 +12,22 @@
 #include "Nitrogen/Icons.h"
 
 // Genie
+#include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
+
+namespace Nitrogen
+{
+	
+	static void PlotIconHandle( const Rect&        area,
+	                            IconAlignmentType  align,
+	                            IconTransformType  transform,
+	                            Handle             icon )
+	{
+		ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
+	}
+	
+}
 
 namespace Genie
 {
@@ -23,19 +37,284 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static void Plot_Null( const Rect&           area,
+	                       N::IconAlignmentType  align,
+			               N::IconTransformType  transform )
+	{
+		// do nothing
+	}
+	
+	static void dispose_handle( void* h )
+	{
+		if ( h != NULL )
+		{
+			::DisposeHandle( (::Handle) h );
+		}
+	}
+	
+	static void dispose_cicon( void* h )
+	{
+		if ( h != NULL )
+		{
+			::DisposeCIcon( (::CIconHandle) h );
+		}
+	}
+	
+	static void dispose_iconsuite( void* h )
+	{
+		if ( h != NULL )
+		{
+			::DisposeIconSuite( (::Handle) h, true );
+		}
+	}
+	
+	IconData::~IconData()
+	{
+		Destroy();
+	}
+	
+	void IconData::Destroy()
+	{
+		if ( itsDeleter && itsRef )
+		{
+			itsDeleter( itsRef );
+			
+			itsRef = NULL;
+		}
+	}
+	
+	void IconData::SetPlainIcon( NN::Owned< N::Handle > h )
+	{
+		Destroy();
+		
+		itsRef = h.release().Get();
+		
+		itsDeleter = dispose_handle;
+		
+		itIsSet = true;
+		itIsPOD = true;
+	}
+	
+	void IconData::SetIconID( N::ResID id )
+	{
+		Destroy();
+		
+		itsResID = id;
+		
+		itIsSet = true;
+	}
+	
+	void IconData::SetIconSuite( NN::Owned< N::IconSuiteRef > suite )
+	{
+		Destroy();
+		
+		itsRef = suite.release().Get();
+		
+		itsDeleter = dispose_iconsuite;
+		
+		itIsSet = true;
+		itIsPOD = false;
+	}
+	
+	void IconData::Plot( const Rect&           area,
+	                     N::IconAlignmentType  align,
+	                     N::IconTransformType  transform )
+	{
+		if ( !itIsSet )
+		{
+			return;
+		}
+		
+		if ( itsRef == NULL )
+		{
+			N::ResID resID = N::ResID( itsResID );
+			
+			try
+			{
+				N::PlotIconID( area, align, transform, resID );
+				
+				return;
+			}
+			catch ( const N::OSStatus& err )
+			{
+				// No such icon family resource, try a cicn
+			}
+			
+			try
+			{
+				N::PlotCIconHandle( area,
+				                    align,
+				                    transform,
+				                    N::GetCIcon( resID ) );
+				
+				return;
+			}
+			catch ( const N::OSStatus& err )
+			{
+				// No such color icon, try an ICON
+			}
+			
+			try
+			{
+				N::PlotIconHandle( area,
+				                   align,
+				                   transform,
+				                   N::GetIcon( resID ) );
+				
+				return;
+			}
+			catch ( const N::OSStatus& err )
+			{
+				// No such icon, give up
+			}
+			
+			return;
+		}
+		
+		const std::size_t size = N::GetHandleSize( GetHandle() );
+		
+		switch ( size )
+		{
+			case 0:
+				return;
+			
+			case sizeof (N::PlainIcon):
+			case sizeof (N::MaskedIcon):
+				N::PlotIconHandle( area,
+				                   align,
+				                   transform,
+				                   N::Handle( GetHandle() ) );
+				break;
+			
+			case 76:
+				N::PlotIconSuite( area,
+				                  align,
+				                  transform,
+				                  N::IconSuiteRef( GetHandle() ) );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	size_t IconData::GetSize() const
+	{
+		::Handle h = GetHandle();
+		
+		if ( !itIsSet )
+		{
+			return 0;
+		}
+		
+		if ( h == NULL )
+		{
+			return sizeof (::ResID);
+		}
+		
+		return N::GetHandleSize( N::Handle( h ) );
+	}
+	
+	ssize_t IconData::Read( char* buffer, std::size_t n_bytes, off_t mark ) const
+	{
+		::Handle h = GetHandle();
+		
+		if ( !itIsSet )
+		{
+			return 0;
+		}
+		
+		const bool use_handle = h != NULL;
+		
+		if ( use_handle  &&  !itIsPOD )
+		{
+			p7::throw_errno( EPERM );
+		}
+		
+		const std::size_t size = use_handle ? N::GetHandleSize( N::Handle( h ) )
+		                                    : sizeof (::ResID);
+		
+		if ( size == 0 )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		ASSERT( mark <= size );
+		
+		n_bytes = std::min( n_bytes, size - mark );
+		
+		const char* p = use_handle ? *h
+		                           : (const char*) &itsResID;
+		
+		std::memcpy( buffer, p + mark, n_bytes );
+		
+		return n_bytes;
+	}
+	
+	ssize_t IconData::Write( const char* buffer, std::size_t n_bytes )
+	{
+		if ( n_bytes == sizeof (::ResID) )
+		{
+			Destroy();
+			
+			std::memcpy( &itsResID, buffer, sizeof (::ResID) );
+			
+			itIsSet = true;
+			
+			return sizeof (::ResID);
+		}
+		
+		if ( n_bytes != sizeof (N::PlainIcon)  &&  n_bytes != sizeof (N::MaskedIcon) )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		if ( !itIsPOD )
+		{
+			Destroy();
+		}
+		
+		N::Handle h = GetHandle();
+		
+		if ( h == NULL )
+		{
+			h = N::NewHandle( n_bytes ).release();
+			
+			itsRef     = h.Get();
+			itsDeleter = dispose_handle;
+			
+			itIsSet = true;
+			itIsPOD = true;
+		}
+		else
+		{
+			N::SetHandleSize( h, n_bytes );
+		}
+		
+		char* p = *h.Get();
+		
+		std::copy( buffer,
+		           buffer + n_bytes,
+		           p );
+		
+		return n_bytes;
+	}
+	
+	
 	class IconDataFileHandle : public VirtualFileHandle
 	{
 		private:
-			N::Handle itsData;
+			boost::shared_ptr< IconData > itsData;
 		
 		public:
-			IconDataFileHandle( const FSTreePtr&  file,
-			                    OpenFlags         flags,
-			                    N::Handle         data )
+			IconDataFileHandle( const FSTreePtr&                      file,
+			                    OpenFlags                             flags,
+			                    const boost::shared_ptr< IconData >&  data )
 			:
 				VirtualFileHandle( file, flags ),
 				itsData( data )
 			{
+				ASSERT( itsData.get() != NULL );
 			}
 			
 			boost::shared_ptr< IOHandle > Clone();
@@ -46,7 +325,7 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
-			off_t GetEOF() const  { return N::GetHandleSize( itsData ); }
+			off_t GetEOF() const  { return itsData->GetSize(); }
 			
 			void SetEOF( off_t length )  {}
 	};
@@ -63,44 +342,49 @@ namespace Genie
 	
 	ssize_t IconDataFileHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		ASSERT( itsData != NULL );
+		ASSERT( itsData.get() != NULL );
 		
-		const std::size_t size = N::GetHandleSize( itsData );
+		ssize_t bytes_read = itsData->Read( buffer, byteCount, GetFileMark() );
 		
-		if ( size == 0 )
+		if ( bytes_read == sizeof (::ResID)  &&  (GetFlags() & O_BINARY) == 0 )
 		{
-			p7::throw_errno( EIO );
+			short resID = 0;
+			
+			std::memcpy( &resID, buffer, sizeof (::ResID) );
+			
+			std::string result = NN::Convert< std::string >( resID );
+			
+			result += '\n';
+			
+			if ( result.length() > byteCount )
+			{
+				p7::throw_errno( EINVAL );  // here's a nickel, go buy a larger buffer
+			}
+			
+			std::copy( result.begin(), result.end(), buffer );
+			
+			bytes_read = result.length();
 		}
 		
-		ASSERT( GetFileMark() <= size );
-		
-		byteCount = std::min( byteCount, size - GetFileMark() );
-		
-		char* p = *itsData.Get();
-		
-		std::copy( p + GetFileMark(),
-		           p + GetFileMark() + byteCount,
-		           buffer );
-		
-		return Advance( byteCount );
+		return Advance( bytes_read );
 	}
 	
 	ssize_t IconDataFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
-		if ( byteCount != sizeof (N::PlainIcon)  &&  byteCount != sizeof (N::MaskedIcon) )
+		ASSERT( itsData.get() != NULL );
+		
+		SInt16 resID;
+		
+		if ( (GetFlags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
 		{
-			p7::throw_errno( EINVAL );
+			resID = std::atoi( buffer );
+			
+			buffer = (const char*) &resID;
+			
+			byteCount = sizeof (::ResID);
 		}
 		
-		ASSERT( itsData != NULL );
-		
-		N::SetHandleSize( itsData, byteCount );
-		
-		char* p = *itsData.Get();
-		
-		std::copy( buffer,
-		           buffer + byteCount,
-		           p );
+		itsData->Write( buffer, byteCount );
 		
 		const FSTree* view = ViewKey();
 		
@@ -113,19 +397,19 @@ namespace Genie
 	}
 	
 	
-	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                parent,
-	                                    const std::string&              name,
-	                                    const NN::Shared< N::Handle >&  data )
+	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                      parent,
+	                                    const std::string&                    name,
+	                                    const boost::shared_ptr< IconData >&  data )
 	:
 		FSTree( parent, name ),
 		itsData( data )
 	{
-		ASSERT( data.Get() != NULL );
+		ASSERT( data.get() != NULL );
 	}
 	
 	off_t FSTree_Icon_data::GetEOF() const
 	{
-		return N::GetHandleSize( itsData );
+		return itsData->GetSize();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_Icon_data::Open( OpenFlags flags ) const

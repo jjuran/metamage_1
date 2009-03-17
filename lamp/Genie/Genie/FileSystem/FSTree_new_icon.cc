@@ -43,7 +43,7 @@ namespace Genie
 	
 	struct PlainIcon_Parameters : Icon_Parameters
 	{
-		NN::Shared< N::Handle >  data;
+		boost::shared_ptr< IconData >  data;
 	};
 	
 	typedef std::map< const FSTree*, PlainIcon_Parameters > PlainIconMap;
@@ -51,7 +51,7 @@ namespace Genie
 	static PlainIconMap gPlainIconMap;
 	
 	
-	class PlainIcon : public Ped::PlainIcon
+	class PlainIcon : public Ped::View
 	{
 		private:
 			typedef const FSTree* Key;
@@ -59,34 +59,30 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			PlainIcon( Key key ) : itsKey( key )
 			{
 			}
 			
-			Nitrogen::Handle Data() const;
-			
-			Nitrogen::IconAlignmentType Alignment() const;
-			
-			Nitrogen::IconTransformType Transform() const;
+			void Draw( const Rect& bounds, bool erasing );
 			
 			void Activate( bool activating );
 	};
 	
-	N::Handle PlainIcon::Data() const
+	void PlainIcon::Draw( const Rect& bounds, bool erasing )
 	{
-		return gPlainIconMap[ itsKey ].data;
-	}
-	
-	N::IconAlignmentType PlainIcon::Alignment() const
-	{
-		return gPlainIconMap[ itsKey ].align;
-	}
-	
-	N::IconTransformType PlainIcon::Transform() const
-	{
-		return CombinedIconTransforms( gPlainIconMap[ itsKey ] );
+		if ( erasing )
+		{
+			N::EraseRect( bounds );
+		}
+		
+		PlainIcon_Parameters& params = gPlainIconMap[ itsKey ];
+		
+		if ( params.data.get() )
+		{
+			params.data->Plot( bounds,
+			                   params.align,
+			                   CombinedIconTransforms( params ) );
+		}
 	}
 	
 	void PlainIcon::Activate( bool activating )
@@ -101,6 +97,7 @@ namespace Genie
 			N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		}
 	}
+	
 	
 	boost::shared_ptr< Ped::View > IconFactory( const FSTree* delegate )
 	{
@@ -147,11 +144,11 @@ namespace Genie
 	static FSTreePtr Data_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		NN::Shared< N::Handle >& data = gPlainIconMap[ parent.get() ].data;
+		boost::shared_ptr< IconData >& data = gPlainIconMap[ parent.get() ].data;
 		
-		if ( data.Get() == NULL )
+		if ( data.get() == NULL )
 		{
-			data = N::NewHandle( 0 );  // handle must be allocated
+			data = boost::shared_ptr< IconData >( new IconData );
 		}
 		
 		return FSTreePtr( new FSTree_Icon_data( parent, name, data ) );

@@ -7,30 +7,73 @@
 #define GENIE_FILESYSTEM_ICON_DATA_HH
 
 // POSIX
-#include <fcntl.h>
-
-// Nucleus
-#include "Nucleus/Shared.h"
+#include <sys/stat.h>
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
+#include "Nitrogen/Icons.h"
 
 // Genie
-#include "Genie/FileSystem/Views.hh"
+#include "Genie/FileSystem/FSTree.hh"
 
 
 namespace Genie
 {
 	
+	class IconData
+	{
+		private:
+			typedef void (*Deleter)( void* );
+			
+			Deleter  itsDeleter;
+			void*    itsRef;
+			::ResID  itsResID;
+			bool     itIsSet;
+			bool     itIsPOD;
+			
+		private:
+			// Non-copyable
+			IconData           ( const IconData& );
+			IconData& operator=( const IconData& );
+			
+		private:
+			::Handle GetHandle() const  { return (::Handle) itsRef; }
+		
+		public:
+			IconData() : itsDeleter(), itsRef(), itIsSet()
+			{
+			}
+			
+			~IconData();
+			
+			void Destroy();
+			
+			void SetPlainIcon( Nucleus::Owned< Nitrogen::Handle > h );
+			
+			void SetIconID( Nitrogen::ResID id );
+			
+			void SetIconSuite( Nucleus::Owned< Nitrogen::IconSuiteRef > suite );
+			
+			void Plot( const Rect&                  area,
+			           Nitrogen::IconAlignmentType  align,
+			           Nitrogen::IconTransformType  transform );
+			
+			size_t GetSize() const;
+			
+			ssize_t Read( char* buffer, std::size_t n_bytes, off_t mark ) const;
+			
+			ssize_t Write( const char* buffer, std::size_t n_bytes );
+	};
+	
+	
 	class FSTree_Icon_data : public FSTree
 	{
 		private:
-			Nucleus::Shared< Nitrogen::Handle > itsData;
+			boost::shared_ptr< IconData > itsData;
 		
 		public:
-			FSTree_Icon_data( const FSTreePtr&                            parent,
-			                  const std::string&                          name,
-			                  const Nucleus::Shared< Nitrogen::Handle >&  data );
+			FSTree_Icon_data( const FSTreePtr&                      parent,
+			                  const std::string&                    name,
+			                  const boost::shared_ptr< IconData >&  data );
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
