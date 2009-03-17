@@ -62,7 +62,7 @@ namespace tool
 		p7::symlink( "v/v", "view/target" );
 		
 		p7::spew( "view/vertical", STR_LEN( "1" "\n" ) );
-		p7::spew( "view/v/margin", STR_LEN( "4" "\n" ) );
+		p7::spew( "view/v/padding", STR_LEN( "4" "\n" ) );
 	}
 	
 	
