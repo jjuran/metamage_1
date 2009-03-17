@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -e
+
+iconid=128
+text="$1"
+
+cd /new/window
+
+echo 5 > procid
+
+echo 300,100 > size
+
+ln /new/stack view
+ln /new/frame view/icon
+
+echo 32 > view/icon/width
+echo 32 > view/icon/height
+echo 13 > view/icon/.margin-top
+echo 23 > view/icon/.margin-left
+echo 23 > view/icon/.margin-right
+
+ln /new/iconid view/icon/v
+
+ln /new/frame view/main
+
+echo 13 > view/main/.margin-top
+echo 13 > view/main/.margin-right
+echo 78 > view/main/.margin-left
+
+ln /new/caption view/main/v
+
+ln /new/frame view/ok
+
+echo 58 > view/ok/width
+echo 20 > view/ok/height
+echo 13 > view/ok/.margin-right
+echo 13 > view/ok/.margin-bottom
+
+echo 3 > view/ok/.outline-width
+echo 1 > view/ok/.outline-offset
+echo 16 > view/ok/.outline-curvature
+
+ln /new/button view/ok/v
+
+ln /new/frame view/cancel
+
+echo 58 > view/cancel/width
+echo 20 > view/cancel/height
+echo 84 > view/cancel/.margin-right
+echo 13 > view/cancel/.margin-bottom
+
+ln /new/button view/cancel/v
+
+echo $iconid > view/icon/v/id
+echo 1 > view/icon/v/disabling
+
+echo $text > view/main/v/text
+echo 1     > view/main/v/disabling
+
+echo Cancel > view/cancel/v/title
+
+touch ref
+
+echo 0 > ref/text-font
+#echo ddd > ref/back-color
+
+select -1 -rview/{ok,cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1'
+
