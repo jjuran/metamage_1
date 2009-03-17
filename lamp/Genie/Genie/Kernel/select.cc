@@ -33,7 +33,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "select" );
 		
-		SInt64 remaining_microseconds;
+		SInt64 remaining_microseconds = 1;
 		UInt64 end_microseconds;
 		
 		if ( timeout != NULL )
