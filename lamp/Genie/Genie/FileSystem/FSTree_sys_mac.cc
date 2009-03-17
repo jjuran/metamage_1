@@ -80,7 +80,7 @@ namespace Genie
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
-		{ "gestalt", &Basic_Factory< FSTree_sys_mac_gestalt > },
+		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		
 		{ "name", &Property_Factory< sys_mac_name > },
 		{ "keys", &Generated_Factory< sys_mac_keys > },
