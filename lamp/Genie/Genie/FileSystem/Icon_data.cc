@@ -12,6 +12,7 @@
 #include "Nitrogen/Icons.h"
 
 // Genie
+#include "Genie/FileSystem/FSTree_IconSuite.hh"
 #include "Genie/FileSystem/Views.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -417,6 +418,57 @@ namespace Genie
 		IOHandle* result = new IconDataFileHandle( Self(), flags, itsData );
 		
 		return boost::shared_ptr< IOHandle >( result );
+	}
+	
+	static pascal OSErr CopyIconToSuite( ::ResType type, ::Handle* icon, void* userData )
+	{
+		::IconSuiteRef newSuite = (::IconSuiteRef) userData;
+		
+		::Handle copy = *icon;
+		
+		if ( copy == NULL )
+		{
+			return noErr;
+		}
+		
+		OSErr err = ::HandToHand( &copy );
+		
+		if ( err != noErr )
+		{
+			return err;
+		}
+		
+		err = ::AddIconToSuite( copy, newSuite, type );
+		
+		if ( err != noErr )
+		{
+			::DisposeHandle( copy );
+		}
+		
+		return err;
+	}
+	
+	static ::IconActionUPP gCopyIconToSuiteUPP = ::NewIconActionUPP( &CopyIconToSuite );
+	
+	static NN::Owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
+	{
+		NN::Owned< N::IconSuiteRef > copy = N::NewIconSuite();
+		
+		N::ThrowOSStatus( ::ForEachIconDo( iconSuite,
+		                                   kSelectorAllAvailableData,
+		                                   gCopyIconToSuiteUPP,
+		                                   copy.get().Get() ) );
+		
+		return copy;
+	}
+	
+	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
+	{
+		const FSTree* view = ParentRef().get();
+		
+		itsData->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
+		
+		InvalidateWindowForView( view );
 	}
 	
 }
