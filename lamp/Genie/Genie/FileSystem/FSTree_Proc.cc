@@ -21,11 +21,13 @@
 #include "HexStrings.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Generated.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
+#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -34,6 +36,34 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
+	
+	struct pid_KeyName_Traits : Integer_KeyName_Traits< pid_t >
+	{
+	};
+	
+	
+	struct proc_Details : public pid_KeyName_Traits
+	{
+		typedef ProcessList::Map Sequence;
+		
+		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
+		
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
+		
+		static bool KeyIsValid( const Key& key )
+		{
+			const Sequence& sequence = ItemSequence();
+			
+			return key == 0  ||  sequence.find( key ) != sequence.end();
+		}
+		
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
+	};
+	
+	typedef FSTree_Sequence< proc_Details > FSTree_proc;
 	
 	
 	static pid_t GetKeyFromParent( const FSTreePtr& parent )
@@ -507,6 +537,11 @@ namespace Genie
 	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
 	{
 		return GetFDHandle( itsPID, itsFD )->GetFile();
+	}
+	
+	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_proc( parent, name ) );
 	}
 	
 }

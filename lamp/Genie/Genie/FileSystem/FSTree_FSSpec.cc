@@ -652,7 +652,7 @@ namespace Genie
 			tree->Map( FSTreeFromFSDirSpec( GetUsersDirectory() ) );
 			
 			tree->Map( FSTreePtr( new FSTree_Volumes( result, "Volumes" ) ) );
-			tree->Map( FSTreePtr( new FSTree_proc   ( result, "proc"    ) ) );
+			tree->Map(            New_FSTree_proc   ( result, "proc"    )   );
 			
 			tree->Map( Premapped_Factory< dev_Mappings >( result, "dev" ) );
 			tree->Map( Premapped_Factory< new_Mappings >( result, "new" ) );
