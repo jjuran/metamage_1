@@ -55,10 +55,10 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
-		{ "vol",    &New_FSTree_sys_mac_vol                 },
-		{ "gdev",   &New_FSTree_sys_mac_gdev                },
-		{ "proc",   &New_FSTree_sys_mac_proc                },
-		{ "thng",   &Basic_Factory< FSTree_sys_mac_thng   > },
+		{ "vol",    &New_FSTree_sys_mac_vol  },
+		{ "gdev",   &New_FSTree_sys_mac_gdev },
+		{ "proc",   &New_FSTree_sys_mac_proc },
+		{ "thng",   &New_FSTree_sys_mac_thng },
 		//{ "window", &Basic_Factory< FSTree_sys_mac_window > },
 		
 	#if !TARGET_API_MAC_CARBON
