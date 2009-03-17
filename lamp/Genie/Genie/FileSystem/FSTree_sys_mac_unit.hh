@@ -6,72 +6,23 @@
 #ifndef GENIE_FILESYSTEM_FSTREESYSMACUNIT_HH
 #define GENIE_FILESYSTEM_FSTREESYSMACUNIT_HH
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
 
 // Nucleus
 #include "Nucleus/AdvanceUntilFailureContainer.h"
-#include "Nucleus/IndexedContainer.h"
 
 // ClassicToolbox
 #include "ClassicToolbox/Devices.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/FSTree.hh"
 
 
 namespace Nitrogen
 {
-	
-	struct UnitTable_Container_Specifics
-	{
-		typedef UInt16             size_type;
-		typedef SInt16             difference_type;
-		typedef AuxDCEHandle       value_type;
-		typedef const value_type&  const_reference;
-		typedef const value_type*  const_pointer;
-		
-		class Nothing {};
-		
-		typedef Nothing ConstIteratorState;
-		typedef Nothing ConstContainerState;
-		
-		
-		static size_type Size( ConstContainerState )
-		{
-			return LMGetUnitTableEntryCount();
-		}
-		
-		static const_reference GetReference( ConstIteratorState state, size_type position )
-		{
-			AuxDCEHandle* base = (AuxDCEHandle*) LMGetUTableBase();
-			
-			return base[ position ];
-		}
-		
-		static const_pointer GetPointer( ConstIteratorState state, size_type position )
-		{
-			return &GetReference( state, position );
-		}
-	};
-	
-	class UnitTable_Container: public Nucleus::ConstIndexedContainer< UnitTable_Container_Specifics >
-	{
-		friend UnitTable_Container UnitTable();
-		
-		private:
-			UnitTable_Container()
-			: Nucleus::ConstIndexedContainer< UnitTable_Container_Specifics >( UnitTable_Container_Specifics::Nothing() )
-			{}
-	};
-	
-	inline UnitTable_Container UnitTable()
-	{
-		return UnitTable_Container();
-	}
-	
 	
 	struct UnitTableDrivers_Container_Specifics
 	{
@@ -112,31 +63,9 @@ namespace Nitrogen
 namespace Genie
 {
 	
-	AuxDCEHandle* GetUTableBase();
-	
 	std::string GetDriverName( AuxDCEHandle dceHandle );
 	
-	
-	struct UnitNumber_KeyName_Traits : Integer_KeyName_Traits< UnitNumber >
-	{
-	};
-	
-	struct sys_mac_unit_Details : public UnitNumber_KeyName_Traits
-	{
-		typedef Nitrogen::UnitTableDrivers_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
-		
-		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
+	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const std::string& name );
 	
 }
 
