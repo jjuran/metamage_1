@@ -98,7 +98,7 @@ my @programs = qw
 	open osascript
 	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
-	setleds sh sleep stripcr striplf superd
+	select setleds sh sleep stripcr striplf superd
 	tcpcat tcpclient
 	test-longjmp-past-vfork test-read-intr test-time test-write-locked
 	th tlsrvr touch true tty ttyd
@@ -179,7 +179,7 @@ my %fsmap =
 			# Apps
 			qw( buffer ok psmon ),
 			# App utilities
-			qw( daemonize follower idle ),
+			qw( daemonize follower idle select ),
 			# Misc
 			qw( chain divide jtest pause ptrace th ),
 			# Mac-specific
