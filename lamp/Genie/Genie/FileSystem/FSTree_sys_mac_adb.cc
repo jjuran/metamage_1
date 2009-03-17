@@ -7,6 +7,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_adb.hh"
 
+// ClassicToolbox
+#include "ClassicToolbox/DeskBus.h"
+
 // BitsAndBytes
 #include "HexStrings.hh"
 
@@ -14,6 +17,7 @@
 #include "ADBProtocol.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Generated.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
 
@@ -22,6 +26,28 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	
+	
+	struct ADBAddress_KeyName_Traits : Integer_KeyName_Traits< Nitrogen::ADBAddress >
+	{
+	};
+	
+	struct sys_mac_adb_Details : public ADBAddress_KeyName_Traits
+	{
+		typedef Nitrogen::ADBDevice_Container Sequence;
+		
+		static Sequence ItemSequence()  { return Nitrogen::ADBDevice_Container(); }
+		
+		static Key KeyFromValue( Sequence::const_reference ref )  { return ref; }
+		
+		static bool KeyIsValid( const Key& key );
+		
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
+	};
+	
+	typedef FSTree_Sequence< sys_mac_adb_Details > FSTree_sys_mac_adb;
 	
 	
 	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
@@ -162,6 +188,11 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_mac_adb( parent, name ) );
+	}
 	
 }
 

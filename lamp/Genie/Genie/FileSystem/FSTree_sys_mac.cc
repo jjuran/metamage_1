@@ -66,7 +66,7 @@ namespace Genie
 		{ "crm",  &Premapped_Factory< sys_mac_crm_Mappings  > },
 		{ "crsr", &Premapped_Factory< sys_mac_crsr_Mappings > },
 		
-		{ "adb",   &Basic_Factory< FSTree_sys_mac_adb   > },
+		{ "adb",   &New_FSTree_sys_mac_adb   },
 		{ "drive", &Basic_Factory< FSTree_sys_mac_drive > },
 		{ "unit",  &Basic_Factory< FSTree_sys_mac_unit  > },
 		
