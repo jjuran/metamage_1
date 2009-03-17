@@ -31,8 +31,9 @@ namespace Genie
 	{
 		std::string  itsText;
 		bool         itIsWrapped;
+		bool         disabling;
 		
-		CaptionParameters() : itIsWrapped( true )
+		CaptionParameters() : itIsWrapped( true ), disabling()
 		{
 		}
 	};
@@ -48,15 +49,19 @@ namespace Genie
 			typedef const FSTree* Key;
 			
 			Key itsKey;
+			bool  itIsActive;
 		
 		public:
-			Caption( Key key ) : itsKey( key )
+			Caption( Key key ) : itsKey( key ), itIsActive( true )
 			{
 			}
 			
 			std::string Text() const;
 			
 			bool Wrapped() const;
+			bool Disabled() const;
+			
+			void Activate( bool activating )  { itIsActive = activating; }
 	};
 	
 	std::string Caption::Text() const
@@ -85,6 +90,18 @@ namespace Genie
 		}
 		
 		return true;
+	}
+	
+	bool Caption::Disabled() const
+	{
+		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
+		
+		if ( it != gCaptionParametersMap.end() )
+		{
+			return !itIsActive && it->second.disabling;
+		}
+		
+		return false;
 	}
 	
 	boost::shared_ptr< Ped::View > CaptionFactory( const FSTree* delegate )
@@ -210,6 +227,11 @@ namespace Genie
 			return gCaptionParametersMap[ view ].itIsWrapped;
 		}
 		
+		bool& Disabling( const FSTree* view )
+		{
+			return gCaptionParametersMap[ view ].disabling;
+		}
+		
 	}
 	
 	template < class Property >
@@ -226,7 +248,8 @@ namespace Genie
 	{
 		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
-		{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
+		{ "wrapped",   &Property_Factory< View_Property< Boolean_Scribe, Wrapped   > > },
+		{ "disabling", &Property_Factory< View_Property< Boolean_Scribe, Disabling > > },
 		
 		{ NULL, NULL }
 	};
