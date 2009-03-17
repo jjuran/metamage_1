@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2004-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -43,7 +43,17 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID )
 	{
-		return Nucleus::Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
+		CIconHandle h = ::GetCIcon( iconID );
+		
+		if ( h == NULL )
+		{
+			MemError();
+			ResError();
+			
+			ThrowOSStatus( resNotFound );
+		}
+		
+		return Nucleus::Owned< CIconHandle >::Seize( h );
 	}
 	
 	void PlotCIcon( const Rect& rect, CIconHandle icon )
