@@ -20,6 +20,7 @@
 #include "Genie/FileSystem/FSTree_Property.hh"
 #include "Genie/FileSystem/FSTree_sys_window_REF.hh"
 #include "Genie/FileSystem/ScrollerBase.hh"
+#include "Genie/FileSystem/Views.hh"
 
 
 namespace Genie
@@ -107,7 +108,7 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< Ped::View > BasicScrollerFactory( const FSTree* delegate )
+	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		boost::shared_ptr< Ped::View > scroller( new BasicScroller( delegate ) );
 		
@@ -115,33 +116,7 @@ namespace Genie
 	}
 	
 	
-	class Scroller_view_Delegate : public FSTree_Premapped
-	{
-		public:
-			typedef const FSTree_Premapped::Mapping* Mappings;
-			
-			Scroller_view_Delegate( const FSTreePtr&    parent,
-			                        const std::string&  name,
-			                        Mappings            mappings ) : FSTree_Premapped( parent, name )
-			{
-				AddMappings( mappings );
-			}
-			
-			~Scroller_view_Delegate()
-			{
-				FSTree_new_scroller::DestroyDelegate( this );
-			}
-	};
-	
-	FSTreePtr FSTree_new_scroller::CreateDelegate( const FSTreePtr&    parent,
-	                                               const std::string&  name ) const
-	{
-		FSTreePtr delegate( new Scroller_view_Delegate( parent, name, Scroller_view_Mappings ) );
-		
-		return delegate;
-	}
-	
-	void FSTree_new_scroller::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		RemoveScrollerParams( delegate );
 		
@@ -192,7 +167,7 @@ namespace Genie
 		                                       &Property::Set ) );
 	}
 	
-	const FSTree_Premapped::Mapping Scroller_view_Mappings[] =
+	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
 		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
@@ -204,6 +179,15 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_new_scroller( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_new_View( parent,
+		                                       name,
+		                                       &CreateView,
+		                                       local_mappings,
+		                                       &DestroyDelegate ) );
+	}
 	
 }
 
