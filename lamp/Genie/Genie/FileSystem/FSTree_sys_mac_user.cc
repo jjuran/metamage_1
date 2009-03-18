@@ -17,9 +17,9 @@ namespace Genie
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &sys_mac_user_name::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &sys_mac_user_name::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_user_Mappings[] =

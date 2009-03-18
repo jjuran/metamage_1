@@ -142,25 +142,25 @@ namespace Genie
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &sys_mac_crm_serial_N_name::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &sys_mac_crm_serial_N_name::Read );
 	}
 	
 	static FSTreePtr Input_Factory( const FSTreePtr&    parent,
 	                                const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &sys_mac_crm_serial_N_input::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &sys_mac_crm_serial_N_input::Read );
 	}
 	
 	static FSTreePtr Output_Factory( const FSTreePtr&    parent,
 	                                 const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &sys_mac_crm_serial_N_output::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &sys_mac_crm_serial_N_output::Read );
 
 	}
 	

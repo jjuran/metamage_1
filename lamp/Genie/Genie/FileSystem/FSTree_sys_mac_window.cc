@@ -459,9 +459,9 @@ namespace Genie
 	{
 		typedef sys_mac_window_REF_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read );
 	}
 	
 	template < class Accessor >
@@ -470,10 +470,10 @@ namespace Genie
 	{
 		typedef sys_mac_window_REF_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read,
+		                            &Property::Write );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_window_REF_Mappings[] =

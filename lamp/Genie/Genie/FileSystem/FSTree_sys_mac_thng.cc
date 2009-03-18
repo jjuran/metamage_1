@@ -378,9 +378,9 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Get ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[] =

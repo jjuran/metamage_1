@@ -39,9 +39,9 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read );
 	}
 	
 	template < class Property >

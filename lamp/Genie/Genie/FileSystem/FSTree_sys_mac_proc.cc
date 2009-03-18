@@ -175,9 +175,9 @@ namespace Genie
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &sys_mac_proc_PSN_name::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &sys_mac_proc_PSN_name::Read );
 	}
 	
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,

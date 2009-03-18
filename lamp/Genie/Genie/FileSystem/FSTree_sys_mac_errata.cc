@@ -125,9 +125,9 @@ namespace Genie
 	{
 		typedef sys_mac_errata_Property< Erratum > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_errata_Mappings[] =

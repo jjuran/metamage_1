@@ -16,15 +16,18 @@
 namespace Genie
 {
 	
+	typedef std::string (*Property_ReadHook)( const FSTree* that, bool binary );
+	
+	typedef void (*Property_WriteHook)( const FSTree  *that,
+	                                    const char    *begin,
+	                                    const char    *end,
+	                                    bool           binary );
+	
 	class FSTree_Property : public FSTree
 	{
 		private:
-			typedef std::string (*ReadHook)( const FSTree* that, bool binary );
-			
-			typedef void (*WriteHook)( const FSTree  *that,
-			                           const char    *begin,
-			                           const char    *end,
-			                           bool           binary );
+			typedef Property_ReadHook   ReadHook;
+			typedef Property_WriteHook  WriteHook;
 			
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;
@@ -58,6 +61,11 @@ namespace Genie
 			
 			IOHandle* OpenForWrite( OpenFlags flags ) const;
 	};
+	
+	FSTreePtr New_FSTree_Property( const FSTreePtr&    parent,
+	                               const std::string&  name,
+	                               Property_ReadHook   readHook,
+	                               Property_WriteHook  writeHook = NULL );
 	
 }
 

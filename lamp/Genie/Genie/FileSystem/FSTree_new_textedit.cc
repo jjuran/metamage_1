@@ -103,10 +103,10 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Get,
-		                                       &Property::Set ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Get,
+		                            &Property::Set );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =

@@ -69,10 +69,10 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read,
+		                            &Property::Write );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_event_post_Mappings[] =

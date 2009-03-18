@@ -101,10 +101,10 @@ namespace Genie
 	{
 		typedef sys_mac_crsr_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read,
-		                                       &Property::Write ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read,
+		                            &Property::Write );
 	}
 	
 	

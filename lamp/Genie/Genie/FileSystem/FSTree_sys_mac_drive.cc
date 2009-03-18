@@ -281,9 +281,9 @@ namespace Genie
 	{
 		typedef sys_mac_drive_N_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read );
 	}
 	
 	template < class Stamp >

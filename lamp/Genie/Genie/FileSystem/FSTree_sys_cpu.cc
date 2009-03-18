@@ -179,9 +179,9 @@ namespace Genie
 	{
 		typedef sys_cpu_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Property( parent,
-		                                       name,
-		                                       &Property::Read ) );
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_cpu_Mappings[] =
