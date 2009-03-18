@@ -101,7 +101,7 @@ my @programs = qw
 	select setleds sh sleep stripcr striplf superd
 	tcpcat tcpclient
 	test-longjmp-past-vfork test-read-intr test-time test-write-locked
-	th tlsrvr touch true tty ttyd
+	th time tlsrvr touch true tty ttyd
 	uncaught_exception
 	vols
 	which
