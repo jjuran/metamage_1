@@ -24,7 +24,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_user_Mappings[] =
 	{
-		{ "home", &Basic_Factory< FSTree_sys_mac_user_home  > },
+		{ "home", &New_FSTree_sys_mac_user_home },
 		
 		{ "name", &Name_Factory },
 		

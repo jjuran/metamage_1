@@ -24,6 +24,22 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	class FSTree_sys_mac_user_home : public FSTree
+	{
+		public:
+			FSTree_sys_mac_user_home( const FSTreePtr&    parent,
+			                          const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string ReadLink() const;
+			
+			FSTreePtr ResolveLink() const;
+	};
+	
+	
 	static N::FSDirSpec GetAppFolder()
 	{
 		FSSpec appFile;
@@ -94,6 +110,11 @@ namespace Genie
 	FSTreePtr FSTree_sys_mac_user_home::ResolveLink() const
 	{
 		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
+	}
+	
+	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_mac_user_home( parent, name ) );
 	}
 	
 }
