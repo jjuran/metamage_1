@@ -44,9 +44,11 @@ namespace Genie
 	{
 		UInt64 microseconds;
 		UInt32 dateTime;
+		UInt64 diff;
 		
 		StartTime() : microseconds( N::Microseconds() ),
-		              dateTime    ( GlobalDateTime()  )
+		              dateTime    ( GlobalDateTime()  ),
+		              diff        ( dateTime * 1000000 - microseconds )
 		{
 		}
 	};
@@ -58,14 +60,12 @@ namespace Genie
 	{
 		SystemCallFrame frame( "gettimeofday" );
 		
-		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
-		
 		if ( tv != NULL )
 		{
-			UInt32 now = N::GetDateTime() - timeDiff;
+			UInt64 now = N::Microseconds() + gStartTime.diff;
 			
-			tv->tv_sec  = now;
-			tv->tv_usec = (N::Microseconds() - gStartTime.microseconds) % 1000000;
+			tv->tv_sec  = now / 1000000;
+			tv->tv_usec = now % 1000000;
 		}
 		
 		return 0;
