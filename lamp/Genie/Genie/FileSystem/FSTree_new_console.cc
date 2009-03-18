@@ -619,7 +619,7 @@ namespace Genie
 	{
 		{ "tty", &Basic_Factory< FSTree_Console_tty > },
 		
-		{ "text", &Basic_Factory< FSTree_TextEdit_text > },
+		{ "text", &New_FSTree_TextEdit_text },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		

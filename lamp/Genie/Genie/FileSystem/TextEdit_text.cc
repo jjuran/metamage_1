@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/TextEdit_text.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FileSystem/TextEdit.hh"
 #include "Genie/FileSystem/Views.hh"
@@ -15,6 +18,24 @@ namespace Genie
 {
 	
 	namespace Ped = Pedestal;
+	
+	
+	class FSTree_TextEdit_text : public FSTree
+	{
+		public:
+			FSTree_TextEdit_text( const FSTreePtr&    parent,
+			                      const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			off_t GetEOF() const;
+			
+			void SetEOF( off_t length ) const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
 	
 	
 	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
@@ -126,6 +147,11 @@ namespace Genie
 		IOHandle* result = new TextEdit_text_Handle( Self(), flags );
 		
 		return boost::shared_ptr< IOHandle >( result );
+	}
+	
+	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_TextEdit_text( parent, name ) );
 	}
 	
 }

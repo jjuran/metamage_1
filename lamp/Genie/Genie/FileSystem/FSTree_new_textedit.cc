@@ -111,7 +111,7 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "text", &Basic_Factory< FSTree_TextEdit_text > },
+		{ "text", &New_FSTree_TextEdit_text },
 		
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
