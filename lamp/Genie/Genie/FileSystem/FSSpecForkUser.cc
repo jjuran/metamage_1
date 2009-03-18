@@ -40,12 +40,12 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > DataForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( refNum, flags ) );
+		return New_DataForkHandle( refNum, flags );
 	}
 	
 	boost::shared_ptr< IOHandle > ResourceForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( refNum, flags ) );
+		return New_RsrcForkHandle( refNum, flags );
 	}
 	
 }

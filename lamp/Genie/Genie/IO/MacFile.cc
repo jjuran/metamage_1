@@ -5,18 +5,10 @@
 
 #include "Genie/IO/MacFile.hh"
 
-// POSIX
-#include <fcntl.h>
-
-// Nucleus
-#include "Nucleus/NAssert.h"
-
-// Nitrogen
-#include "Nitrogen/Files.h"
-
 // Genie
 #include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -25,6 +17,37 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	
+	class MacFileHandle : public RegularFileHandle
+	{
+		private:
+			typedef FSTreePtr (*FileGetter)( const FSSpec& );
+			
+			Nucleus::Shared< Nitrogen::FSFileRefNum >  itsRefNum;
+			FileGetter                                 itsFileGetter;
+		
+		public:
+			MacFileHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+			               OpenFlags                                         flags,
+			               FileGetter                                        getFile );
+			
+			~MacFileHandle();
+			
+			FSTreePtr GetFile() const;
+			
+			boost::shared_ptr< IOHandle > Clone();
+			
+			ssize_t SysRead( char* data, std::size_t byteCount );
+			
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			
+			//void IOCtl( unsigned long request, int* argp );
+			
+			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
+			
+			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
+	};
 	
 	
 	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
@@ -47,14 +70,28 @@ namespace Genie
 	}
 	
 	MacFileHandle::MacFileHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
-	                              OpenFlags                             flags )
+	                              OpenFlags                             flags,
+	                              FileGetter                            getFile )
 	: RegularFileHandle( flags  ),
-	  itsRefNum        ( refNum )
+	  itsRefNum        ( refNum ),
+	  itsFileGetter    ( getFile )
 	{
 	}
 	
 	MacFileHandle::~MacFileHandle()
 	{
+	}
+	
+	FSTreePtr MacFileHandle::GetFile() const
+	{
+		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
+	}
+	
+	boost::shared_ptr< IOHandle > MacFileHandle::Clone()
+	{
+		return boost::shared_ptr< IOHandle >( new MacFileHandle( itsRefNum,
+		                                                         GetFlags(),
+		                                                         itsFileGetter ) );
 	}
 	
 	ssize_t MacFileHandle::SysRead( char* data, std::size_t byteCount )
@@ -85,26 +122,24 @@ namespace Genie
 		return Advance( written );
 	}
 	
-	
-	boost::shared_ptr< IOHandle > MacDataForkHandle::Clone()
+	boost::shared_ptr< IOHandle >
+	//
+	New_DataForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
+	                    OpenFlags                             flags )
 	{
-		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( Get(), GetFlags() ) );
+		return boost::shared_ptr< IOHandle >( new MacFileHandle( refNum,
+		                                                         flags,
+		                                                         &FSTreeFromFSSpec ) );
 	}
 	
-	FSTreePtr MacDataForkHandle::GetFile() const
+	boost::shared_ptr< IOHandle >
+	//
+	New_RsrcForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
+	                    OpenFlags                             flags )
 	{
-		return FSTreeFromFSSpec( FSSpecFromFRefNum( Get() ) );
-	}
-	
-	
-	boost::shared_ptr< IOHandle > MacRsrcForkHandle::Clone()
-	{
-		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( Get(), GetFlags() ) );
-	}
-	
-	FSTreePtr MacRsrcForkHandle::GetFile() const
-	{
-		return GetRsrcForkFSTree( FSSpecFromFRefNum( Get() ) );
+		return boost::shared_ptr< IOHandle >( new MacFileHandle( refNum,
+		                                                         flags,
+		                                                         &GetRsrcForkFSTree ) );
 	}
 	
 }
