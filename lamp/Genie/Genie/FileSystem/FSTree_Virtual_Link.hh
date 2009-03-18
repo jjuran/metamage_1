@@ -13,25 +13,9 @@
 namespace Genie
 {
 	
-	class FSTree_Virtual_Link : public FSTree
-	{
-		private:
-			std::string itsTarget;
-		
-		public:
-			FSTree_Virtual_Link( const FSTreePtr&    parent,
-			                     const std::string&  name,
-			                     const std::string&  target ) : FSTree( parent, name ),
-			                                                    itsTarget( target )
-			{
-			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return itsTarget; }
-			
-			FSTreePtr ResolveLink() const;
-	};
+	FSTreePtr New_FSTree_Virtual_Link( const FSTreePtr&    parent,
+	                                   const std::string&  name,
+	                                   const std::string&  target );
 	
 }
 

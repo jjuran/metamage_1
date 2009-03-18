@@ -208,7 +208,7 @@ namespace Genie
 		
 		std::string target = "/sys/mac/unit/" + unitNumber;
 		
-		return FSTreePtr( new FSTree_Virtual_Link( parent, name, target ) );
+		return New_FSTree_Virtual_Link( parent, name, target );
 	}
 	
 	struct GetDriveFlags

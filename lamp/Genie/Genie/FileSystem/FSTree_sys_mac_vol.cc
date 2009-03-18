@@ -459,7 +459,7 @@ namespace Genie
 		
 		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
 		
-		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive ) );
+		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
@@ -473,7 +473,7 @@ namespace Genie
 		
 		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
 		
-		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
+		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
 	}
 	
 	template < N::FolderType type >

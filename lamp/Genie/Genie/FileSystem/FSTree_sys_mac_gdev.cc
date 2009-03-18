@@ -197,7 +197,7 @@ namespace Genie
 		
 		std::string unit = NN::Convert< std::string >( ~key[0]->gdRefNum );
 		
-		return FSTreePtr( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
+		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_gdev_H_Mappings[] =
