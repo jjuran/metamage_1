@@ -16,7 +16,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_crm_Mappings[] =
 	{
-		{ "serial", &Basic_Factory< FSTree_sys_mac_crm_serial > },
+		{ "serial", &New_FSTree_sys_mac_crm_serial },
 		
 		{ NULL, NULL }
 	};

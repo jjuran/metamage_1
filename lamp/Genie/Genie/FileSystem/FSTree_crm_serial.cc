@@ -7,10 +7,13 @@
 
 #include "Genie/FileSystem/FSTree_crm_serial.hh"
 
+// ClassicToolbox
+#include "ClassicToolbox/CRMSerialDevices.h"
+
 // Genie
+#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Generated.hh"
 #include "Genie/FileSystem/FSTree_Property.hh"
-#include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
 
 
 namespace Genie
@@ -18,6 +21,28 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	
+	struct CRMDeviceID_KeyName_Traits : Integer_KeyName_Traits< N::CRMDeviceID >
+	{
+	};
+	
+	struct sys_mac_crm_serial_Details : public CRMDeviceID_KeyName_Traits
+	{
+		typedef N::CRMSerialDevice_Container Sequence;
+		
+		static Sequence ItemSequence()  { return N::CRMSerialDevices(); }
+		
+		static Key KeyFromValue( Sequence::const_reference ref )  { return Key( ref->crmDeviceID ); }
+		
+		static bool KeyIsValid( const Key& key );
+		
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
+	};
+	
+	typedef FSTree_Sequence< sys_mac_crm_serial_Details > FSTree_sys_mac_crm_serial;
 	
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
@@ -181,6 +206,11 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
+	
+	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_mac_crm_serial( parent, name ) );
+	}
 	
 }
 
