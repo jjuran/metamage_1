@@ -44,11 +44,13 @@ namespace Genie
 	{
 		UInt64 microseconds;
 		UInt32 dateTime;
+		time_t unixTime;
 		UInt64 diff;
 		
 		StartTime() : microseconds( N::Microseconds() ),
 		              dateTime    ( GlobalDateTime()  ),
-		              diff        ( dateTime * 1000000 - microseconds )
+		              unixTime    ( dateTime - TimeOff::MacUnixEpochOffset() ),
+		              diff        ( unixTime * 1000000ULL - microseconds )
 		{
 		}
 	};
