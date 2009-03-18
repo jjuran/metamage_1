@@ -34,7 +34,7 @@ namespace Genie
 	
 	N::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
 	{
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
 		

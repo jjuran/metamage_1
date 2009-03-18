@@ -112,7 +112,7 @@ namespace Genie
 	
 	static BinaryFileMetadata GetFileMetadata( const FSSpec& file )
 	{
-		CInfoPBRec pb;
+		CInfoPBRec pb = { 0 };
 		
 		FSpGetCatInfo< FNF_Throws >( pb, file );
 		

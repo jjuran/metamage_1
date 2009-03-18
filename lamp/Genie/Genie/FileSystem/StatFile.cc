@@ -97,7 +97,7 @@ namespace Genie
 		
 		N::Str255 name_copy = name != NULL ? name : "\p";
 		
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		if ( !FSpGetCatInfo< FNF_Returns >( cInfo, vRefNum, dirID, name_copy ) )
 		{

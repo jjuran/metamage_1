@@ -268,7 +268,7 @@ namespace Genie
 	
 	static N::FSDirSpec FindJDirectory()
 	{
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		N::Str63 name = const_root_directory_name;  // overkill
 		
@@ -877,7 +877,7 @@ namespace Genie
 	
 	static bool FileIsLocked( const FSSpec& file )
 	{
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, file );
 		
@@ -1110,7 +1110,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, GetFSSpec() );
 		
@@ -1212,7 +1212,7 @@ namespace Genie
 		
 		if ( creating )
 		{
-			CInfoPBRec cInfo;
+			CInfoPBRec cInfo = { 0 };
 			
 			N::Str255 actualName = itsFileSpec.name;
 			

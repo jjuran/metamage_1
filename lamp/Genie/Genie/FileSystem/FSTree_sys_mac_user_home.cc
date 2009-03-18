@@ -61,7 +61,7 @@ namespace Genie
 		{
 		}
 		
-		CInfoPBRec cInfo;
+		CInfoPBRec cInfo = { 0 };
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, vRefNum, N::fsRtDirID, "\p" "Users" );
 		
