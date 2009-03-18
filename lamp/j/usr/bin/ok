@@ -2,8 +2,13 @@
 
 set -e
 
+test -z "$3" || echo usage: ok [icon-id] text
+test -z "$3"
+
 iconid=128
 text="$1"
+test -z "$2" || iconid="$1"
+test -z "$2" || text="$2"
 
 cd /new/window
 
@@ -20,7 +25,7 @@ echo 13 > view/icon/.margin-top
 echo 23 > view/icon/.margin-left
 echo 23 > view/icon/.margin-right
 
-ln /new/iconid view/icon/v
+ln /new/icon view/icon/v
 
 ln /new/frame view/main
 
@@ -53,7 +58,7 @@ echo 13 > view/cancel/.margin-bottom
 
 ln /new/button view/cancel/v
 
-echo $iconid > view/icon/v/id
+echo $iconid > view/icon/v/data
 echo 1 > view/icon/v/disabling
 
 echo $text > view/main/v/text
