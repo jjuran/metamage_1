@@ -21,6 +21,29 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	class FSTree_Generated : public FSTree
+	{
+		private:
+			typedef Generated_ReadHook ReadHook;
+			
+			ReadHook itsReadHook;
+		
+		public:
+			FSTree_Generated( const FSTreePtr&    parent,
+			                  const std::string&  name,
+			                  ReadHook            readHook )
+			:
+				FSTree( parent, name ),
+				itsReadHook( readHook )
+			{
+			}
+			
+			bool Exists() const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	
 	bool FSTree_Generated::Exists() const
 	{
 		if ( itsReadHook != NULL )
@@ -56,6 +79,13 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( Self(),
 		                                                                    flags,
 		                                                                    data ) );
+	}
+	
+	FSTreePtr New_FSTree_Generated( const FSTreePtr&    parent,
+	                                const std::string&  name,
+	                                Generated_ReadHook  readHook )
+	{
+		return FSTreePtr( new FSTree_Generated( parent, name, readHook ) );
 	}
 	
 }

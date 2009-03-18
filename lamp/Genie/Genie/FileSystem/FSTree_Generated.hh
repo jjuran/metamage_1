@@ -13,27 +13,11 @@
 namespace Genie
 {
 	
-	class FSTree_Generated : public FSTree
-	{
-		private:
-			typedef std::string (*ReadHook)( const FSTree* that );
-			
-			ReadHook itsReadHook;
-		
-		public:
-			FSTree_Generated( const FSTreePtr&    parent,
-			                  const std::string&  name,
-			                  ReadHook            readHook )
-			:
-				FSTree( parent, name ),
-				itsReadHook( readHook )
-			{
-			}
-			
-			bool Exists() const;
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
+	typedef std::string (*Generated_ReadHook)( const FSTree* that );
+	
+	FSTreePtr New_FSTree_Generated( const FSTreePtr&    parent,
+	                                const std::string&  name,
+	                                Generated_ReadHook  readHook );
 	
 }
 

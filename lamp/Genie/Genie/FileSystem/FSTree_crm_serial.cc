@@ -192,9 +192,9 @@ namespace Genie
 	static FSTreePtr Icon_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Generated( parent,
-		                                        name,
-		                                        &sys_mac_crm_serial_N_icon::Read ) );
+		return New_FSTree_Generated( parent,
+		                             name,
+		                             &sys_mac_crm_serial_N_icon::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[] =

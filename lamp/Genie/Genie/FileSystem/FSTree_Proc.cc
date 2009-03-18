@@ -432,9 +432,9 @@ namespace Genie
 	{
 		typedef proc_PID_Property< Accessor > Property;
 		
-		return FSTreePtr( new FSTree_Generated( parent,
-		                                        name,
-		                                        &Property::Read ) );
+		return New_FSTree_Generated( parent,
+		                             name,
+		                             &Property::Read );
 	}
 	
 	static FSTreePtr fd_Factory( const FSTreePtr&    parent,

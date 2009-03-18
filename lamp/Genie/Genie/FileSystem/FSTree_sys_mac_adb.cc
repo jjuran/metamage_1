@@ -175,9 +175,9 @@ namespace Genie
 	static FSTreePtr Registers_Factory( const FSTreePtr&    parent,
 	                                    const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Generated( parent,
-		                                        name,
-		                                        &sys_mac_adb_N_registers::Read ) );
+		return New_FSTree_Generated( parent,
+		                             name,
+		                             &sys_mac_adb_N_registers::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =

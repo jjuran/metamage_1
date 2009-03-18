@@ -48,9 +48,9 @@ namespace Genie
 	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
 	                                    const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Generated( parent,
-		                                        name,
-		                                        &Property::Read ) );
+		return New_FSTree_Generated( parent,
+		                             name,
+		                             &Property::Read );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =

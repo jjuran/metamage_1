@@ -369,9 +369,9 @@ namespace Genie
 	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
 	                                    const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_Generated( parent,
-		                                        name,
-		                                        &Property::Get ) );
+		return New_FSTree_Generated( parent,
+		                             name,
+		                             &Property::Get );
 	}
 	
 	template < class Property >
