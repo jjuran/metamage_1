@@ -1261,7 +1261,10 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags ) const
 	{
-		return DataForkUser().OpenFileHandle( GetFSSpec(), flags );
+		return OpenMacFileHandle( GetFSSpec(),
+		                          flags,
+		                          &Genie::FSpOpenDF,
+		                          &New_DataForkHandle );
 	}
 	
 	static inline MainEntry GetMainEntryFromFile( const FSSpec& file )

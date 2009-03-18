@@ -9,6 +9,8 @@
 #include "Genie/FileSystem/FSSpec.hh"
 #include "Genie/FileSystem/FSSpecForkUser.hh"
 #include "Genie/FileSystem/StatFile.hh"
+#include "Genie/IO/MacFile.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -29,7 +31,10 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
-				return ResourceForkUser().OpenFileHandle( itsFileSpec, flags );
+				return OpenMacFileHandle( itsFileSpec,
+				                          flags,
+				                          &Genie::FSpOpenRF,
+				                          &New_RsrcForkHandle );
 			}
 	};
 	

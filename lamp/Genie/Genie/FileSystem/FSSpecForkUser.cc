@@ -8,9 +8,6 @@
 // POSIX
 #include "fcntl.h"
 
-// Genie
-#include "Genie/IO/MacFile.hh"
-
 
 namespace Genie
 {
@@ -19,7 +16,12 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	boost::shared_ptr< IOHandle > FSSpecForkUser::OpenFileHandle( const FSSpec& fileSpec, OpenFlags flags ) const
+	boost::shared_ptr< IOHandle >
+	//
+	OpenMacFileHandle( const FSSpec&  fileSpec,
+	                   OpenFlags      flags,
+	                   ForkOpener     openFork,
+	                   HandleCreator  createHandle )
 	{
 		N::FSIOPermissions rdPerm = N::FSIOPermissions( flags + 1  &  FREAD  );
 		N::FSIOPermissions wrPerm = N::FSIOPermissions( flags + 1  &  FWRITE );
@@ -33,19 +35,9 @@ namespace Genie
 		// ...
 		bool lazy        = flags & O_LAZY;
 		
-		NN::Owned< N::FSFileRefNum > fileHandle = OpenFork( fileSpec, rdPerm | wrPerm );
+		NN::Shared< N::FSFileRefNum > fileHandle = openFork( fileSpec, rdPerm | wrPerm );
 		
-		return NewFileHandle( fileHandle, flags );
-	}
-	
-	boost::shared_ptr< IOHandle > DataForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
-	{
-		return New_DataForkHandle( refNum, flags );
-	}
-	
-	boost::shared_ptr< IOHandle > ResourceForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
-	{
-		return New_RsrcForkHandle( refNum, flags );
+		return createHandle( fileHandle, flags );
 	}
 	
 }

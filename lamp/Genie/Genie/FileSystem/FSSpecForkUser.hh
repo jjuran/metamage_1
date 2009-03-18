@@ -6,48 +6,29 @@
 #ifndef GENIE_FILESYSTEM_FSSPECFORKUSER_HH
 #define GENIE_FILESYSTEM_FSSPECFORKUSER_HH
 
+// Nucleus
+#include "Nucleus/Shared.h"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
 // Genie
 #include "Genie/IO/Base.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
 {
 	
-	class FSSpecForkUser
-	{
-		public:
-			virtual Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const = 0;
-			
-			virtual boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const = 0;
-			
-			boost::shared_ptr< IOHandle > OpenFileHandle( const FSSpec& fileSpec, OpenFlags flags ) const;
-	};
+	typedef Nucleus::Owned< Nitrogen::FSFileRefNum > (*ForkOpener)( const FSSpec&, Nitrogen::FSIOPermissions );
 	
-	class DataForkUser : public FSSpecForkUser
-	{
-		public:
-			Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const
-			{
-				return Genie::FSpOpenDF( fileSpec, perm );
-			}
-			
-			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
-	};
+	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const Nucleus::Shared< Nitrogen::FSFileRefNum >&, OpenFlags );
 	
-	class ResourceForkUser : public FSSpecForkUser
-	{
-		public:
-			Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const
-			{
-				return Genie::FSpOpenRF( fileSpec, perm );
-			}
-			
-			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
-	};
+	boost::shared_ptr< IOHandle >
+	//
+	OpenMacFileHandle( const FSSpec&  fileSpec,
+	                   OpenFlags      flags,
+	                   ForkOpener     openFork,
+	                   HandleCreator  createHandle );
 	
 }
 
