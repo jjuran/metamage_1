@@ -176,7 +176,7 @@ namespace UseEdit
 			{
 			}
 			
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			
 			Ped::View& Subview()  { return itsSubview; }
 			
@@ -216,9 +216,9 @@ namespace UseEdit
 			
 	};
 	
-	void Scroller::Draw( const Rect& bounds )
+	void Scroller::Draw( const Rect& bounds, bool erasing )
 	{
-		Subview().Draw( bounds );
+		Subview().Draw( bounds, erasing );
 	}
 	
 	void Scroller::Scroll( int dh, int dv )
@@ -237,7 +237,13 @@ namespace UseEdit
 				
 			}
 			
-			short Margin() const  { return 4; }
+			short Padding() const  { return 4; }
+			
+			short OutlineWidth    () const  { return 0; }
+			short OutlineOffset   () const  { return 0; }
+			short OutlineCurvature() const  { return 0; }
+			
+			Rect Margin( const Rect& bounds ) const  { return N::SetRect( 0, 0, 0, 0 ); }
 			
 			Ped::View& Subview()  { return itsScroller; }
 	};
