@@ -420,5 +420,7 @@ verbose_system( "cp", $macball, $build_area_path );
 
 verbose_system( "rm", "-r", $tmp_subdir );
 
+rmdir $tmp_dir unless $tmp_dir eq "/tmp";  # Clean up if empty; ignore errors
+
 print "Done.\n";
 
