@@ -1,0 +1,37 @@
+/*	==================
+ *	CFMLateImporter.cc
+ *	==================
+ */
+
+#include "CFMLateImporter.hh"
+
+// CFMLateImport
+#include "CFMLateImport.h"
+
+// CFMLateImporter
+#include "SavedCFragInitBlock.h"
+
+
+namespace CFMLateImporter
+{
+	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
+	void ImportLibrary( ConstStr255Param                weakLinkedLibraryName,
+	                    NN::Owned< CFragConnectionID >  connIDToImport )
+	{
+		const CFragSystem7InitBlock* initBlock = SavedCFragInitBlock();
+		
+		N::ThrowOSStatus( CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
+		                                        (CFragConnectionID) initBlock->closureID,
+		                                        Initialize_SavedCFragInitBlock,
+		                                        weakLinkedLibraryName,
+		                                        connIDToImport ) );
+		
+		connIDToImport.Release();
+	}
+	
+}
+
