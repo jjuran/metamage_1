@@ -69,14 +69,14 @@ namespace UseEdit
 			Ped::TextSelection  itsSelectionPriorToSearch;
 		
 		public:
-			TextEdit()
+			TextEdit( const Rect& bounds )
 			{
 				itsSelectionPriorToSearch.start = -1;
 				
-				Install();
+				Install( bounds );
 			}
 			
-			void Install();
+			void Install( const Rect& bounds );
 			void Uninstall();
 			
 			TEHandle Get() const  { return itsTE; }
@@ -90,13 +90,11 @@ namespace UseEdit
 			
 	};
 	
-	void TextEdit::Install()
+	void TextEdit::Install( const Rect& bounds )
 	{
 		ASSERT( itsTE == NULL );
 		
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
-		Rect bounds = N::GetPortBounds( thePort );  // will be fixed in next Draw()
 		
 		::TextFont( kFontIDMonaco );
 		
@@ -174,7 +172,7 @@ namespace UseEdit
 			TextEdit  itsSubview;
 		
 		public:
-			Scroller()
+			Scroller( const Rect& bounds ) : itsSubview( bounds )
 			{
 			}
 			
@@ -234,6 +232,11 @@ namespace UseEdit
 			Scroller  itsScroller;
 		
 		public:
+			Frame( const Rect& bounds ) : itsScroller( Ped::Frame::ApertureFromBounds( bounds ) )
+			{
+				
+			}
+			
 			short Margin() const  { return 4; }
 			
 			Ped::View& Subview()  { return itsScroller; }
@@ -296,17 +299,20 @@ namespace UseEdit
 	class ScrollFrame : public Ped::ScrollFrame
 	{
 		private:
+			Rect  itsBounds;
+			
 			Frame  itsFrame;
 			
 			Scrollbar  itsVertical;
 			Scrollbar  itsHorizontal;
 			
 			Scrollbar_UserData  itsUserData;
-			
-			Rect  itsBounds;
 		
 		public:
-			ScrollFrame() : itsBounds( N::GetPortBounds( N::GetQDGlobalsThePort() ) )
+			ScrollFrame()
+			:
+				itsBounds( N::GetPortBounds( N::GetQDGlobalsThePort() ) ),
+				itsFrame( itsBounds )
 			{
 				itsUserData.trackHook = &Ped::TrackScrollbar;
 				itsUserData.fetchHook = &RecoverScrollerFromControl;
@@ -319,13 +325,11 @@ namespace UseEdit
 				Resize_Subviews();
 			}
 			
-			void ApertureHook( Rect& aperture );
+			void SetBounds( const Rect& bounds );
 			
 			void UpdateScrollbars();
 			
 			void Resize_Subviews();
-			
-			void Resize( short width, short height );
 			
 			Ped::View& Subview()  { return itsFrame; }
 			
@@ -337,11 +341,6 @@ namespace UseEdit
 			Scrollbar& GetVertical  ()  { return itsVertical;   }
 			
 	};
-	
-	void ScrollFrame::ApertureHook( Rect& aperture )
-	{
-		aperture.right -= 15;
-	}
 	
 	void ScrollFrame::UpdateScrollbars()
 	{
@@ -358,13 +357,12 @@ namespace UseEdit
 		
 		itsVertical.UpdateBounds( v_bounds );
 		
-		itsFrame.Resize( v_bounds.left, itsBounds.bottom );
+		itsFrame.SetBounds( ApertureFromBounds( itsBounds ) );
 	}
 	
-	void ScrollFrame::Resize( short width, short height )
+	void ScrollFrame::SetBounds( const Rect& bounds )
 	{
-		itsBounds.right = itsBounds.left + width;
-		itsBounds.bottom = itsBounds.top + height;
+		itsBounds = bounds;
 		
 		Resize_Subviews();
 	}
