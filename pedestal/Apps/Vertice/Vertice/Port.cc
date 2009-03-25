@@ -192,6 +192,27 @@ namespace Vertice
 	}
 	
 	
+	static V::Plane3D::Type VerticalClippingPlane( double e, double x )
+	{
+		double denom = std::sqrt( e*e + x*x );
+		
+		return V::Plane3D::Make( e / denom,
+		                         0,
+		                         x / denom,
+		                         0 );
+	}
+	
+	static V::Plane3D::Type HorizontalClippingPlane( double e, double a, double y )
+	{
+		double denom = std::sqrt( e*e + a*a * y*y );
+		
+		return V::Plane3D::Make( 0,
+		                         e / denom,
+		                         a*y / denom,
+		                         0 );
+	}
+	
+	
 	void Port::MakeFrame( Frame& outFrame ) const
 	{
 		if ( itsScene.Cameras().empty() )  return;
@@ -252,6 +273,11 @@ namespace Vertice
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
 		{
 			it->Transform( transformer );
+			
+			//it->ClipAgainstPlane( VerticalClippingPlane( sFocalLength, -0.5 ) );
+			//it->ClipAgainstPlane( -VerticalClippingPlane( sFocalLength, 0.8 ) );
+			
+			//it->ClipAgainstPlane( HorizontalClippingPlane( sFocalLength, sAspectRatio, -0.5 ) );
 		}
 		
 		newFrame.SortByDepth();
