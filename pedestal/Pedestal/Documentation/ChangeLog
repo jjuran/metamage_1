@@ -1,0 +1,131 @@
+pedestal (0.1.10) unstable; urgency=low
+
+  * Compatible with OPAQUE_TOOLBOX_STRUCTS.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Fri, 23 Feb 2001 00:00:00 -0500
+
+pedestal (0.1.9) unstable; urgency=medium
+
+  * PedStreamOutput:
+    - Added PedStreamOutputNull for a null device stream.
+    - Fixed infinite loop in PutBytes().  (PedStreamOutputBuffered overrode 
+      this method so the bug wasn't exposed before.)
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Fri, 23 Feb 2001 00:00:00 -0500
+
+pedestal (0.1.8) unstable; urgency=low
+
+  * Added PedAccessRaw methods GetFPos and SetFPos.
+  * s/BaseRefptr/BasePtrRef/g;
+  * New class PedTokenizerWord.  Works, but needs rewriting.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Sun, 11 Feb 2001 15:30:00 -0500
+
+pedestal (0.1.7.0.1) unstable; urgency=low
+
+  * Repackaged from CVS.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Tue, 31 Oct 2000 07:00:00 -0500
+
+pedestal (0.1.7) unstable; urgency=low
+
+  * Miscellaneous fixes.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Thu, 12 Oct 2000 21:00:00 -0400
+
+pedestal (0.1.6) unstable; urgency=low
+
+  * New class PedViewTile.
+  * Fix geometry bugs exposed by using PedViewTile.
+  * Use Telegraph instead of AEA.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Tue, 26 Sep 2000 03:00:00 -0400
+
+pedestal (0.1.5) unstable; urgency=low
+
+  * Stole Debian's changelog format.
+  * PedViewScrollerSimple renamed PedViewScrollerStd.
+  * PedView derives from PedTask:
+    - PedAgent is obsolete.
+    - All subclasses of PedAgent now derive from PedWindow.
+      + PedAgentDoc -> PedWindowDoc
+      + PedAgentAboutBox -> PedWindowAbout
+  * Send an Init() message on a new PedWindow before sending Open().
+  * DoCommand() overhaul:
+    - PedCommandAbout, PedCommandNew, PedCommandOpen, PedCommandQuit, and 
+      PedCommandClose are obsolete.  In fact, the whole mechanism may be 
+      obsolete, but it hasn't been removed yet.
+    - PedWindow tracks which task is 'focused'.
+    - PedApplication::DispatchCommand() dispatches the command to the front 
+      window (if any) or itself.
+    - PedTask::DoCommand() forwards the command to the parent task.
+    - PedTaskRoot::DoCommand() drops commands on the floor.
+    - PedApplication::DoCommand() responds to About, New, Open, and Quit only.
+    - PedWindow::DoCommand() implements Close.
+  * PedObject.cc, XAutoReleasePool.cc, and XAutoReleasePoolObj.cc created (and 
+    function definitions moved there from the headers) to work around issues 
+    with MrC.
+  * PedScrollbar.cc:
+    - #include <ControlDefinitions.h> for Universal Headers 3.3.
+  * Edited Imports.scf for MoreFiles 1.5.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Fri, 15 Sep 2000 13:00:00 -0400
+
+pedestal (0.1.4) unstable; urgency=low
+
+  * PedApplication: support Suspend/Resume events.
+  * PedTask, PedConsole: constructor now requires a parent task.
+  * PedDispenserString: GetStringFromStream now calls Flush() first so 
+    CountAheadThroughChar() doesn't keep returning 0 because there's no buffer 
+    loaded.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Thu, 31 Aug 2000 02:54:00 -0400
+
+pedestal (0.1.3) unstable; urgency=low
+
+  * Requires A-line 2000-07-09 or later.
+  * PedApplication.cc:
+    - No longer behave like a droplet.
+  * PedAppDroplet:
+    - new subclass of PedApplication that implements droplet behavior (quit 
+      after first-event odoc).
+  * PedDocument now derives directly from PedTask, and no longer through 
+    PedAgent.  Its role as an agent is now filled by PedAgentDoc.  This mod 
+    brought to you by MacHack and Jolt.
+  * PedMenuFile and PedMenuEdit are gone, replaced by PedMenuStd.  PedMenu now 
+    has some nifty new code to dynamically map menu item numbers to command 
+    codes. Read the docs on this, once they're written.  If you're really 
+    cool, write them.  :-)
+  * Ped1AppProcess has been renamed to Ped1ContextApp.  In the future, it may 
+    have a new base class Ped1Context, with siblings such as Ped1ContextFBA 
+    (faceless background app).
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Sun, 09 Jul 2000 08:33:00 -0400
+
+pedestal (0.1.2-1) unstable; urgency=low
+
+  * First retry of bad upload.
+  * ChangeLog entry unavailable.  :-(
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Tue, 09 May 2000 01:31:00 -0400
+
+pedestal (0.1.1) unstable; urgency=low
+
+  * PedViewScroll.cc:
+    - Focus() now calls ::ClipRect() with its frame.  Corrects an animation 
+      bug.
+  * PedViewScroller has been split into PedViewScrollerSimple and 
+    PedViewScrollerTE.  PedPaneTE modified accordingly.
+  * PedPaneTE.cc:
+    - After calling ::TEClick(), ::TEKey(), or directly modifying the hText 
+      content, check the destRect to see if it changed.  If so, notify the 
+      superview that scrolling (may have) occurred.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Thu, 27 Apr 2000 01:27:00 -0500
+
+pedestal (0.1) unstable; urgency=low
+
+  * First release on SourceForge.
+
+ -- Joshua Juran <jax@users.sourceforge.net>  Fri, 14 Apr 2000 03:31:00 -0500
+
