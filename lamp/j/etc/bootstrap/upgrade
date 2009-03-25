@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#host=lamp.sourceforge.net
+host=jjuran.dyndns.org/~jjuran
+
+test -z "$LAMP_SITE" && LAMP_SITE="$host"
+
+export LAMP_SITE
+
+list=http://$LAMP_SITE/experimental/
+
+test -n "$1" && export LAMP_PLATFORM="$1"
+
+export MBIN=mBin
+
+echo Checking $LAMP_SITE for latest version...
+
+htget $list | perl -we 'my $pf = $ENV{LAMP_PLATFORM} || substr( `cat /etc/platform`, 0, -1 ); while (<>) { m{ ( lamp-${pf}_[\d-]+ ) \.$ENV{MBIN}\.gz }osx and $last = $1; }; exec "/etc/bootstrap/upgrade-lamp", $last;'
+

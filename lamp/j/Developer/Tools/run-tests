@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd /Developer/Tests
+
+/usr/bin/th jtest/*.t perl/*.t proc/*.t sh/*.t
+

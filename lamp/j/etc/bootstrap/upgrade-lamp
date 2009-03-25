@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+
+test -n "$HOME" || echo "$0: HOME is not set"
+test -n "$HOME" || exit 1
+
+test -d $HOME || echo "$0: HOME doesn't exist"
+test -d $HOME || exit 1
+
+apps="$HOME/Applications"
+lamp="$apps/Lamp"
+dest="$lamp/$1"
+
+test -d $apps || mkdir $apps;
+test -d $lamp || mkdir $lamp;
+
+test -d $dest && echo You already have $1. && exit || true
+
+cd /tmp
+
+echo Downloading $1.$MBIN.gz...
+htget -O http://$LAMP_SITE/experimental/$1.$MBIN.gz
+
+echo Decompressing...
+gzip -d $1.$MBIN.gz
+
+echo Decoding archive...
+macbin --decode $1.$MBIN
+
+mv $1 $dest
+
+echo Done.
+

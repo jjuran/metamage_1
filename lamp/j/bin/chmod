@@ -1,0 +1,6 @@
+#!/usr/bin/perl -w
+
+my $mode = oct shift @ARGV;
+
+chmod $mode, $_ or die "chmod: $_: $!\n" foreach @ARGV;
+

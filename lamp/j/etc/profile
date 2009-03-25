@@ -1,0 +1,18 @@
+# Genie shell profile
+
+# Change to your preference
+export MAC_EDITOR_SIGNATURE='R*ch'  # BBEdit
+
+#export MAC_EDITOR_SIGNATURE='!Rch'  # TextWrangler
+#export MAC_EDITOR_SIGNATURE='CWIE'  # CodeWarrior IDE
+#export MAC_EDITOR_SIGNATURE='ttxt'  # SimpleText
+
+# You don't need these except for development, although some are still useful
+PATH=$PATH:/Developer/Tools
+
+# If you have MPW installed here and want to call tools directly
+#PATH=$PATH:$HOME/Developer/Applications/MPW/Tools
+
+# Advise if the perl lib is missing
+/etc/bootstrap/check-perl-lib.pl
+

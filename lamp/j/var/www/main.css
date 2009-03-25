@@ -1,0 +1,190 @@
+/*	Metamage styles
+	===============  */
+
+
+/*	Google cache banner hack
+	------------------------  */
+
+table[width]
+{
+	width: auto !important;
+}
+
+/*	Basic defaults
+	--------------  */
+
+body
+{
+	/* border-color: #000;  /* Default border color */
+}
+
+div
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+a img
+{
+	border: solid 1px gray;
+	color: inherit;
+	background-color: #ddd;
+	padding: 1px;
+}
+
+a:hover img
+{
+	border-color: black;
+}
+
+h1, h2, h3, h4, h5, h6, label
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+}
+
+li h5,
+li h6
+{
+	display: run-in;
+}
+
+/*	Sea of silver
+	-------------  */
+
+body
+{
+	margin: 0px;
+	color: inherit;
+	background-color: #ddd;
+}
+
+body > *
+{
+	color: inherit;
+	background-color:#fff;
+	
+	border:1px solid #000;
+	
+	margin: 10px;
+	padding: 0px 10px;
+}
+
+body > * > *
+{
+	margin: 10px 0px;
+}
+
+body > hr
+{
+	display: none;
+}
+
+#header > *,
+#footer > *
+{
+	margin: 5px 0px;
+}
+
+#header h1,
+.site-title
+{
+	font-size: 20px;
+}
+
+#header h2,
+.site-slogan
+{
+	font-size: 14px;
+	font-weight: normal;
+	font-style: italic;
+}
+
+.site-logo
+{
+	float: left;
+}
+
+.badges
+{
+	float: right;
+}
+
+.nav-links
+{
+	clear: left;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: smaller;
+}
+
+.page-title
+{
+	font-size: 24px;
+}
+
+span.path-links
+{
+	border: 1px solid gray;
+	padding: 2px;
+	color: inherit;
+	background-color: #eee;
+	
+	font-size: smaller;
+	font-family: sans-serif;
+	/*font-family: monospace;*/
+}
+
+.path-links span,
+.path-links span a,
+.path-links span:hover > .cold-spot:hover
+{
+	color: gray;
+	background-color: #eee;
+}
+
+.path-links span:hover,
+.path-links span:hover > a,
+.path-links span:hover > .cold-spot
+{
+	color: black;
+	background-color: #eee;
+}
+
+.path-links span:active,
+.path-links span:active > a,
+.path-links span:active > .cold-spot
+{
+	color: red;
+	background-color: #eee;
+}
+
+.decorative-icon
+{
+	float: left;
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 10px;
+}
+
+#footer
+{
+	text-align: center;
+}
+
+/*	Vertical table headings
+	-----------------------  */
+
+th.vertical
+{
+	text-align: left;
+}
+
+/*	Parenthetical comments
+	----------------------  */
+
+.parenthetical-comment
+{
+	color: gray;
+	background-color: inherit;
+}
+

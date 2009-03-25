@@ -1,0 +1,6 @@
+#!/bin/sh
+
+test -z "$MODEM" && MODEM=modem
+
+echo "$*" | sh 3<> /dev/cu.$MODEM -c 'lf2cr 1<> /dev/fd/3 && mread 0<> /dev/fd/3'
+

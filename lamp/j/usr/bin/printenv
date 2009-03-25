@@ -1,0 +1,113 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# $Log$
+# Revision 1.1  2007-05-27 11:54:17  jax
+# Initial check-in, copied from ppt.cvs.sourceforge.net.
+#
+# Revision 1.1.1.1  2001/06/06 08:55:03  sdague
+# initial import
+#
+# Revision 1.1  2001/05/14 00:49:39  sdague
+# added more files
+#
+# Revision 1.0  1999/02/26 02:55:05  randy
+# Initial revision
+#
+
+use strict;
+
+my ($VERSION) = '$Revision$' =~ /([.\d]+)/;
+
+if (@ARGV) {
+    if ($ARGV[0] eq '-?') {
+        $0 =~ s{.*/}{};
+        print <<EOF;
+Usage: $0 [name]
+
+Display the environment. If an argument is given, only the value 
+of that variable is displayed.
+
+EOF
+       exit;
+    } elsif (exists $ENV{$ARGV[0]}) {
+	print $ENV{$ARGV[0]}, "\n";
+	exit;
+    } else {
+        exit 1;
+    }
+}
+
+while (my ($key, $value) = each(%ENV)) { print "$key=$value\n"; }
+exit;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+printenv - Display the environment
+
+=head1 SYNOPSIS
+
+printenv I<name>
+
+=head1 DESCRIPTION
+
+printenv displays the current environment. If an argument is supplied, only the
+value of that variable is displayed.
+
+=head2 OPTIONS
+
+I<printenv> accepts the following options:
+
+=over 4
+
+=item -?
+
+Print out a short help message, then exit.
+
+=back
+
+=head1 ENVIRONMENT
+
+The operation of I<printenv> is not influenced by any environment variables.
+(However, the output certainly is.)
+
+=head1 BUGS
+
+I<printenv> has no known bugs.
+
+=head1 REVISION HISTORY
+
+    $Log$
+    Revision 1.1  2007-05-27 11:54:17  jax
+    Initial check-in, copied from ppt.cvs.sourceforge.net.
+
+    Revision 1.1.1.1  2001/06/06 08:55:03  sdague
+    initial import
+
+    Revision 1.1  2001/05/14 00:49:39  sdague
+    added more files
+
+    Revision 1.0  1999/02/26 02:55:05  randy
+    Initial revision
+
+=head1 AUTHOR
+
+The Perl implementation of I<printenv>
+was written by Randy Yarger, I<randy.yarger@nextel.com>.
+
+=head1 COPYRIGHT and LICENSE
+
+This program is copyright by Randy Yarger 1999.
+
+This program is free and open software. You may use, modify, distribute
+and sell this program (and any modified variants) in any way you wish,
+provided you do not restrict others to do the same.
+
+=cut
+
+

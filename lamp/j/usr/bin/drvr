@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+
+my $unit = '/sys/mac/unit';
+
+if ( !-d $unit )
+{
+	warn "$unit doesn't exist (built for Carbon?)\n";
+	
+	exit 1;
+}
+
+chdir $unit or die "chdir: $!\n";
+
+my @units = glob '*';
+
+foreach ( @units )
+{
+	open( my $in, '<', "$_/name" ) or next;
+	
+	my $name = <$in>;
+	
+	$name =~ /\S/ or next;
+	
+	print "$_: $name";
+	
+	close( $in );
+}
+

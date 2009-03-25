@@ -1,0 +1,91 @@
+#!/usr/bin/perl -w
+
+my $device = '/dev/gestalt';
+
+my $default_display = 'x';
+
+sub Version
+{
+	$_ = join '', ($_ >> 12) & 0xF || '',
+	              ($_ >>  8) & 0xF, '.',
+	              ($_ >>  4) & 0xF, '.',
+	               $_        & 0xF;
+	
+	's';
+}
+
+sub NumVersion
+{
+	my @stages = qw( d a b );
+	
+	my $stage = ($_ >> 13) & 0x7;
+	
+	my $v = $_ >> 16;
+	
+	$v = join '', ($v >> 8),       '.',
+	              ($v >> 4) & 0xF, '.',
+	               $v       & 0xF;
+	
+	if ( my $code = $stages[ $stage - 1 ] )
+	{
+		$v .= $code . ($_ & 0xff);
+	}
+	
+	$_ = $v;
+	
+	's';
+}
+
+my %formats =
+(
+	b => '.32b',
+	x => '.8x',
+	d => 'd',
+	k => sub
+	{
+		my @x = qw( K M G );
+		my $x = '';
+		$_ /= 1000, $x = shift @x while $_ >= 1000;
+		".1f ${x}Hz";
+	},
+	t => sub { $_ = pack "L", $_; 's' },
+	v => sub { Version() },
+	V => sub { NumVersion() },
+);
+
+my $display = $default_display;
+
+my $arg = shift;
+
+if ( $arg =~ m/^ - ([bdxktvV]) /x )
+{
+	$display = $1;
+	
+	$arg = shift;
+}
+
+my $selector = $arg;
+
+length $selector == 4 or die "Selector must be length 4";
+
+my $request = unpack "L", $selector;
+
+open my $gestalt, '<', $device or die "Can't open $device ($!)";
+
+my $result = '0000';
+
+if ( not ioctl( $gestalt, $request, $result ) )
+{
+	exit 1 if $! == 22;  # EINVAL, no such Gestalt selector
+	
+	die "Can't ioctl ($!)";
+}
+
+my $output = unpack "L", $result;
+
+my $format = $formats{ $display };
+
+ref $format and $format = $format->() for $output;
+
+printf "\%$format\n", $output;
+

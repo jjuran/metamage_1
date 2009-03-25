@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+test -n "$HOME" || echo "$0: HOME is not defined"
+test -n "$HOME" || exit 1
+test -d "$HOME" || echo "$0: $HOME doesn't exist"
+test -d "$HOME" || exit 1
+
+library="$HOME/Library"
+support="$library/Application Support"
+lamp="$support/Lamp"
+usr="$lamp/usr"
+lib="$usr/lib"
+
+test -d "$lib" || echo "-> mkdir -p $lib"
+
+test -d "$library" || mkdir $library
+test -d "$support" || mkdir $support
+test -d "$lamp"    || mkdir $lamp
+test -d "$usr"     || mkdir $usr
+test -d "$lib"     || mkdir $lib
+
+cd /tmp
+
+experimental="http://lamp.sourceforge.net/experimental/"
+
+archive=usr-lib-perl.mBin
+gzarchive=$archive.gz
+
+url=$experimental$gzarchive
+
+echo "-> htget -O $url"
+htget -O $url
+
+echo "-> gzip -d $gzarchive"
+gzip -d $gzarchive
+
+echo "-> macbin --decode $archive $lib/"
+macbin --decode $archive $lib/
+
+echo "-> ln -s $lib/perl /usr/lib/"
+ln -s $lib/perl /usr/lib/
+
