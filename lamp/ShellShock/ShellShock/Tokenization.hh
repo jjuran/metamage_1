@@ -1,0 +1,149 @@
+// ===============
+// Tokenization.hh
+// ===============
+
+#ifndef SHELLSHOCK_TOKENIZATION_HH
+#define SHELLSHOCK_TOKENIZATION_HH
+
+// Standard C++
+#include <string>
+#include <vector>
+
+
+namespace ShellShock
+{
+	
+	enum ControlOperator
+	{
+		kControlNone,
+		kControlPipe,
+		kControlBackground,
+		kControlSequential,
+		kControlOr,
+		kControlAnd,
+		kControlEndCase,
+		kControlOpenSubshell,
+		kControlCloseSubshell
+	};
+	
+	enum RedirectionOperator
+	{
+		kRedirectNone,
+		kRedirectInput,
+		kRedirectInputHere,
+		kRedirectInputHereStrippingTabs,
+		kRedirectInputDuplicate,
+		kRedirectInputAndOutput,
+		kRedirectOutput,
+		kRedirectOutputClobbering,
+		kRedirectOutputAppending,
+		kRedirectOutputDuplicate,
+		kRedirectOutputAndError
+	};
+	
+	struct ControlInfo
+	{
+		ControlOperator op;
+		unsigned char len;
+		
+		ControlInfo() : op(), len()  {}
+		
+		ControlInfo( ControlOperator op, unsigned char len )
+		:
+			op ( op  ),
+			len( len )
+		{}
+	};
+	
+	struct RedirectInfo
+	{
+		RedirectionOperator op;
+		int fd;
+		
+		RedirectInfo() : op(), fd( -1 )  {}
+		
+		RedirectInfo( RedirectionOperator op, int fd = -1 )
+		:
+			op( op ),
+			fd( fd )
+		{}
+	};
+	
+	struct RedirectInfoWithLength : RedirectInfo
+	{
+		unsigned char len;
+		
+		RedirectInfoWithLength() : len()  {}
+		
+		RedirectInfoWithLength( const RedirectInfo& info, unsigned char len )
+		:
+			RedirectInfo( info ),
+			len         ( len  )
+		{}
+	};
+	
+	struct Redirection : RedirectInfo
+	{
+		std::string param;
+		
+		Redirection()  {}
+		
+		Redirection( const RedirectInfo& info, const std::string& param )
+		:
+			RedirectInfo( info  ),
+			param       ( param )
+		{}
+	};
+	
+	struct Command
+	{
+		std::vector< std::string > args;
+		std::vector< Redirection > redirections;
+		
+		Command()  {}
+		
+		Command( const std::vector< std::string >&  args,
+		         const std::vector< Redirection >&  redirections )
+		:
+			args        ( args         ),
+			redirections( redirections )
+		{}
+	};
+	
+	struct Pipeline
+	{
+		std::vector< Command > commands;
+		ControlOperator op;  // May be kControlOr, kControlAnd, or kControlNone.
+		
+		Pipeline()  {}
+		
+		Pipeline( const std::vector< Command >&  commands,
+		          ControlOperator                op = kControlNone )
+		:
+			commands( commands ),
+			op      ( op       )
+		{}
+	};
+	
+	struct Circuit
+	{
+		std::vector< Pipeline > pipelines;
+		ControlOperator op;  // May be kControlBackground, kControlSequential, or kControlNone.
+		
+		Circuit()  {}
+		Circuit( const std::vector< Pipeline >&  pipelines,
+		         ControlOperator                 op = kControlNone )
+		:
+			pipelines( pipelines ),
+			op       ( op        )
+		{}
+	};
+	
+	typedef std::vector< Circuit > List;
+	
+	List Tokenization( const std::string& cmdLine );
+	
+}
+
+#endif
+
