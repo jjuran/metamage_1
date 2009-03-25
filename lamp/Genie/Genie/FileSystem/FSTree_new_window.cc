@@ -1,0 +1,41 @@
+/*	====================
+ *	FSTree_new_window.cc
+ *	====================
+ */
+
+#include "Genie/FileSystem/FSTree_new_window.hh"
+
+// Genie
+#include "Genie/IO/Directory.hh"
+#include "Genie/FileSystem/FSTree_sys_window.hh"
+
+
+namespace Genie
+{
+	
+	class OpenWindowHandle : public DirHandle
+	{
+		public:
+			OpenWindowHandle( const FSTreePtr& tree );
+			
+			~OpenWindowHandle();
+	};
+	
+	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : DirHandle( tree )
+	{
+	}
+	
+	OpenWindowHandle::~OpenWindowHandle()
+	{
+		RemoveWindow( GetFile().get() );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
+	{
+		FSTreePtr dir = NewWindow();
+		
+		return boost::shared_ptr< IOHandle >( new OpenWindowHandle( dir ) );
+	}
+	
+}
+
