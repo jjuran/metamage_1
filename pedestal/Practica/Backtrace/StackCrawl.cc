@@ -177,7 +177,7 @@ namespace Backtrace
 	{
 		const StackFrame68K* next = frame->next;
 		
-		if ( ((unsigned long*) next)[-1] == 0xffffffff )
+		if ( next != NULL  &&  ((unsigned long*) next)[-1] == 0xffffffff )
 		{
 			const void* addr = frame->returnAddr;
 			
