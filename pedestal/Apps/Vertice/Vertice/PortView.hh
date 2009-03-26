@@ -65,7 +65,7 @@ namespace Vertice
 			void Resize( short width, short height );
 			void Paint();
 			void Redraw();
-			void Draw( const Rect& bounds );
+			void Draw( const Rect& bounds, bool erasing );
 			void DrawAnaglyphic();
 			void DrawBetter( bool per_scanline ) const;
 	};

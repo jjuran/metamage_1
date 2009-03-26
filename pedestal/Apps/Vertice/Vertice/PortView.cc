@@ -977,7 +977,7 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::Draw( const Rect& bounds )
+	void PortView::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( itsAnaglyphMode )
 		{
@@ -1710,7 +1710,7 @@ namespace Vertice
 		
 		itsPort.SendCameraCommand( itsSelectedContext, cmd );
 		
-		Draw( Rect() );
+		Draw( Rect(), true );
 		
 		return true;
 	}
