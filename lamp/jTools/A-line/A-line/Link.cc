@@ -507,10 +507,14 @@ namespace tool
 		
 		std::string creator = project.CreatorCode();
 		
+	#if ALINE_MAC_DEVELOPMENT
+		
 		if ( creator.length() != sizeof 'Ctor' )
 		{
 			creator = "\?\?\?\?";
 		}
+		
+	#endif
 		
 		switch ( project.Product() )
 		{
