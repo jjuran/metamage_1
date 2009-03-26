@@ -125,7 +125,8 @@ namespace tool
 	static bool filter_directory( const std::string& filename )
 	{
 		return filename == "CVS"
-		    || filename == "CVSROOT";
+		    || filename == "CVSROOT"
+		    || filename == ".git";
 	}
 	
 	static bool filter_item( const std::string& filename )
