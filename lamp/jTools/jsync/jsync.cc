@@ -93,6 +93,13 @@ namespace tool
 	static bool globally_locking_files = false;
 	
 	
+	static inline NN::Shared< p7::dir_t > fdopendir_shared( NN::Owned< p7::fd_t > dirfd )
+	{
+		NN::Owned< p7::dir_t > dir = p7::fdopendir( dirfd );
+		
+		return dir;
+	}
+	
 	static inline NN::Owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
 	{
 		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory );
@@ -189,7 +196,7 @@ namespace tool
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		NN::Shared< p7::dir_t > olddir = p7::fdopendir( olddirfd );
+		NN::Shared< p7::dir_t > olddir = fdopendir_shared( olddirfd );
 		
 		directory_container contents = p7::directory_contents( olddir );
 		
@@ -562,9 +569,9 @@ namespace tool
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		NN::Shared< p7::dir_t > a_dir = p7::fdopendir( a_dirfd );
-		NN::Shared< p7::dir_t > b_dir = p7::fdopendir( b_dirfd );
-		NN::Shared< p7::dir_t > c_dir = p7::fdopendir( c_dirfd );
+		NN::Shared< p7::dir_t > a_dir = fdopendir_shared( a_dirfd );
+		NN::Shared< p7::dir_t > b_dir = fdopendir_shared( b_dirfd );
+		NN::Shared< p7::dir_t > c_dir = fdopendir_shared( c_dirfd );
 		
 		directory_container a_contents = p7::directory_contents( a_dir );
 		directory_container b_contents = p7::directory_contents( b_dir );
