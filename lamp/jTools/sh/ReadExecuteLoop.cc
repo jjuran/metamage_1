@@ -10,11 +10,6 @@
 // Standard C
 #include <stdlib.h>
 
-// Lamp
-#ifdef __LAMP__
-#include "lamp/winio.h"
-#endif
-
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/functions/ioctl.hh"
