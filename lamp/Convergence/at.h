@@ -27,6 +27,10 @@ ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_s
 
 #ifndef __linux__
 
+#ifndef AT_SYMLINK_NOFOLLOW
+#define AT_SYMLINK_NOFOLLOW  4096
+#endif
+
 // dirent
 DIR *fdopendir( int fd );
 

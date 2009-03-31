@@ -104,7 +104,7 @@ int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 		}
 	}
 	
-	const bool follow = true;  // FIXME
+	const bool follow = (flags & AT_SYMLINK_NOFOLLOW) == 0;
 	
 	result = follow ? stat( path, sb ) : lstat( path, sb );
 	
