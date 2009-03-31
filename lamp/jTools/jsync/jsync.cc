@@ -169,7 +169,9 @@ namespace tool
 	
 	static void recursively_copy( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
 	{
-		struct ::stat stat_buffer = p7::fstatat( olddirfd, name );
+		struct ::stat stat_buffer = { 0 };
+		
+		p7::throw_posix_result( ::fstatat( olddirfd, name.c_str(), &stat_buffer, AT_SYMLINK_NOFOLLOW ) );
 		
 		if ( S_ISREG( stat_buffer.st_mode ) )
 		{
@@ -178,7 +180,7 @@ namespace tool
 				copy_file( olddirfd, name, newdirfd );
 			}
 		}
-		else
+		else if ( !S_ISLNK( stat_buffer.st_mode ) )
 		{
 			recursively_copy_directory( olddirfd, name, newdirfd );
 		}
