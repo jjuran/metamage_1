@@ -148,7 +148,7 @@ namespace Backtrace
 		
 	#ifdef __MACOS__
 		
-		result.itsArch          = call.isCFM ? "PPC" : "68K";
+		result.itsArch          = call.isCFM ? "ppc" : "68k";
 		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
 		                                     : GetUnmangledSymbolName( call.addrNative );
 		
@@ -156,7 +156,7 @@ namespace Backtrace
 		
 	#else
 		
-		result.itsArch          = TARGET_CPU_PPC ? "PPC" : "X86";
+		result.itsArch          = TARGET_CPU_PPC ? "ppc" : "x86";
 		result.itsUnmangledName = GetUnmangledSymbolName( call.addrNative );
 		
 	#endif
@@ -169,9 +169,9 @@ namespace Backtrace
 	                                      const char*         arch,
 	                                      const std::string&  name )
 	{
-		char buffer[ sizeof "1234567890: 0x12345678 (XYZ) \0" ];
+		char buffer[ sizeof "1234567890: [<0x12345678|xyz>] \0" ];
 		
-		std::sprintf( buffer, "%d: 0x%.8x (%s) \0", offset, addr, arch );
+		std::sprintf( buffer, "%2d: [<%#.8x|%s>] \0", offset, addr, arch );
 		
 		std::string result = buffer;
 		
@@ -197,6 +197,8 @@ namespace Backtrace
 			                                     info.itsArch,
 			                                     info.itsUnmangledName );
 		}
+		
+		result += "\n";
 		
 		return result;
 	}
