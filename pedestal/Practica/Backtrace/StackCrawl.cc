@@ -202,6 +202,8 @@ namespace Backtrace
 	
 	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
+	next:
+		
 		if ( frame == NULL  ||  frame >= limit )
 		{
 			return;
@@ -227,7 +229,10 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStack68K( level + 1, frame->next, limit, result );
+		frame = frame->next;
+		++level;
+		
+		goto next;
 	}
 	
 	inline void CrawlStack( const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
@@ -268,6 +273,8 @@ namespace Backtrace
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
+	next:
+		
 		if ( frame == NULL  ||  frame >= limit )
 		{
 			return;
@@ -303,7 +310,10 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackPPC( level + 1, frame->next, limit, result );
+		frame = frame->next;
+		++level;
+		
+		goto next;
 	}
 	
 	inline void CrawlStack( const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
@@ -317,6 +327,8 @@ namespace Backtrace
 	
 	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
+	next:
+		
 		if ( frame == NULL )
 		{
 			return;
@@ -331,7 +343,11 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackX86( level, frame->next, limit, result );
+		
+		frame = frame->next;
+		++level;
+		
+		goto next;
 	}
 	
 	inline void CrawlStack( const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
