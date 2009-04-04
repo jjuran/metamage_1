@@ -172,8 +172,42 @@ namespace Backtrace
 		return reinterpret_cast< StackFramePtr >( frame );
 	}
 	
+	template < class StackFrame > struct SwitchFrame_Traits
+	{
+		static const bool can_switch = false;
+		
+		typedef const StackFrame *ThisPtr;
+		typedef const StackFrame *NextPtr;
+		
+		static NextPtr Check( ThisPtr frame )  { return NULL; }
+	};
 	
-	inline const StackFramePPC* MixedModeSwitchFrame( const StackFrame68K* frame )
+#ifdef __MACOS__
+	
+	// PPC calls 68K
+	template <> struct SwitchFrame_Traits< StackFrame68K >
+	{
+		static const bool can_switch = true;
+		
+		typedef const StackFrame68K *ThisPtr;
+		typedef const StackFramePPC *NextPtr;
+		
+		static NextPtr Check( ThisPtr frame );
+	};
+	
+	// 68K calls PPC
+	template <> struct SwitchFrame_Traits< StackFramePPC >
+	{
+		static const bool can_switch = true;
+		
+		typedef const StackFramePPC *ThisPtr;
+		typedef const StackFrame68K *NextPtr;
+		
+		static NextPtr Check( ThisPtr frame );
+	};
+	
+	template <>
+	inline const StackFramePPC* SwitchFrame_Traits< StackFrame68K >::Check( ThisPtr frame )
 	{
 		const StackFrame68K* next = frame->next;
 		
@@ -190,54 +224,11 @@ namespace Backtrace
 		return NULL;
 	}
 	
-	inline const StackFrame68K* MixedModeSwitchFrame( const StackFramePPC* frame )
+	template <>
+	inline const StackFrame68K* SwitchFrame_Traits< StackFramePPC >::Check( ThisPtr frame )
 	{
 		return (long) frame & 0x00000001 ? (const StackFrame68K*) ((long) frame - 1)
 		                                 : NULL;
-	}
-	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result );
-	
-#if defined( __MC68K__ )  ||  defined( __MACOS__ )
-	
-	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
-	{
-	next:
-		
-		if ( frame == NULL  ||  frame >= limit )
-		{
-			return;
-		}
-		
-	#ifdef __MACOS__
-		
-		if ( const StackFramePPC* switchFrame = MixedModeSwitchFrame( frame ) )
-		{
-			CrawlStackPPC( level, switchFrame, limit, result );
-			
-			return;
-		}
-		
-	#endif
-		
-		ReturnAddr68K addr = frame->returnAddr;
-		
-		result.push_back( ReturnAddress( addr ) );
-		
-		if ( frame->next < frame )
-		{
-			return;
-		}
-		
-		frame = frame->next;
-		++level;
-		
-		goto next;
-	}
-	
-	inline void CrawlStack( const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
-	{
-		CrawlStack68K( 0, frame, limit, result );
 	}
 	
 #endif
@@ -245,7 +236,7 @@ namespace Backtrace
 	
 #ifdef __MACOS__
 	
-	static bool AddressExceedsMemoryLimit( const StackFramePPC* frame )
+	static bool AddressExceedsMemoryLimit( const void* frame )
 	{
 		static bool visited     = false;
 		static bool shouldCheck = true;
@@ -267,76 +258,45 @@ namespace Backtrace
 		return failed;
 	}
 	
+#else
+	
+	static inline bool AddressExceedsMemoryLimit( const void* frame )
+	{
+		return false;
+	}
+	
 #endif
 	
-#if defined( __POWERPC__ )  ||  defined( __MACOS__ )
-	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
+	template < class StackFrame >
+	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
 	next:
 		
-		if ( frame == NULL  ||  frame >= limit )
+		if ( frame == NULL  ||  frame >= limit  ||  level > 99 )
 		{
 			return;
 		}
-		
-	#ifdef __MACOS__
 		
 		if ( AddressExceedsMemoryLimit( frame ) )
 		{
 			return;
 		}
 		
-		if ( level > 100 )
-		{
-			return;
-		}
-		
-		if ( const StackFrame68K* switchFrame = MixedModeSwitchFrame( frame ) )
-		{
-			CrawlStack68K( level, switchFrame, limit, result );
-			
-			return;
-		}
-		
-	#endif
-		
-		ReturnAddrPPC addr = frame->returnAddr;
-		
-		result.push_back( ReturnAddress( addr ) );
-		
-		if ( frame->next < frame )
-		{
-			return;
-		}
-		
-		frame = frame->next;
 		++level;
 		
-		goto next;
-	}
-	
-	inline void CrawlStack( const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
-	{
-		CrawlStackPPC( 0, frame, limit, result );
-	}
-	
-#endif
-	
-#ifdef __i386__
-	
-	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
-	{
-	next:
+		typedef SwitchFrame_Traits< StackFrame > Traits;
 		
-		if ( frame == NULL )
+		if ( Traits::can_switch )
 		{
-			return;
+			if ( typename Traits::NextPtr next = Traits::Check( frame ) )
+			{
+				CrawlStack( level, next, limit, result );
+				
+				return;
+			}
 		}
 		
-		ReturnAddrX86 addr = frame->returnAddr;
-		
-		result.push_back( ReturnAddress( addr ) );
+		result.push_back( ReturnAddress( frame->returnAddr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -345,17 +305,9 @@ namespace Backtrace
 		
 		
 		frame = frame->next;
-		++level;
 		
 		goto next;
 	}
-	
-	inline void CrawlStack( const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
-	{
-		CrawlStackX86( 0, frame, limit, result );
-	}
-	
-#endif
 	
 #if defined( __MACOS__ ) && defined( __POWERPC__ )
 	
@@ -393,7 +345,7 @@ namespace Backtrace
 			
 		#endif
 			
-			CrawlStack( top, limit, result );
+			CrawlStack( 0, top, limit, result );
 		}
 		
 	#if defined( __MACOS__ ) && defined( __POWERPC__ )
