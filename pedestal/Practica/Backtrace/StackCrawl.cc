@@ -16,9 +16,6 @@
 // Standard C
 #include <setjmp.h>
 
-// Backtrace
-#include "Backtrace/MemoryLimit.hh"
-
 
 namespace Backtrace
 {
@@ -234,50 +231,12 @@ namespace Backtrace
 #endif
 	
 	
-#ifdef __MACOS__
-	
-	static bool AddressExceedsMemoryLimit( const void* frame )
-	{
-		static bool visited     = false;
-		static bool shouldCheck = true;
-		
-		bool failed = shouldCheck  &&  frame >= MemoryLimit();
-		
-		if ( !visited )
-		{
-			visited = true;
-			
-			// If the first return address fails the memory limit check,
-			// then the check is worthless.
-			// Only continue checking if the first check passes.
-			shouldCheck = !failed;
-			
-			return false;
-		}
-		
-		return failed;
-	}
-	
-#else
-	
-	static inline bool AddressExceedsMemoryLimit( const void* frame )
-	{
-		return false;
-	}
-	
-#endif
-	
 	template < class StackFrame >
 	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
 	next:
 		
 		if ( frame == NULL  ||  frame >= limit  ||  level > 99 )
-		{
-			return;
-		}
-		
-		if ( AddressExceedsMemoryLimit( frame ) )
 		{
 			return;
 		}
