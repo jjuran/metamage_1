@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2007 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -217,6 +217,18 @@ namespace Nitrogen
 		}
 	};
 	
+#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
+	
+	void Terminate_ThreadStack();
+	
+#else
+	
+	inline void Terminate_ThreadStack()
+	{
+	}
+	
+#endif
+	
 	template < class Param,
 	           class Result,
 	           typename ThreadEntry_Traits< Param, Result >::ProcPtr threadEntry >
@@ -224,6 +236,11 @@ namespace Nitrogen
 	{
 		static pascal void* Adapter( void* threadParam )
 		{
+			if ( TARGET_CPU_PPC && TARGET_RT_MAC_CFM )
+			{
+				Terminate_ThreadStack();
+			}
+			
 			try
 			{
 				return ThreadEntry_Invoke_Traits< Param, Result >::Invoke( threadEntry, threadParam );

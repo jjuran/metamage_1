@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2006 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -36,6 +36,17 @@ namespace Nitrogen
 	
 #pragma force_active reset
 	
+	
+#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
+	
+	asm void Terminate_ThreadStack()
+	{
+		lwz r3,0(sp)
+		li  r0,0
+		stw r0,0(r3)
+	}
+	
+#endif
 	
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
