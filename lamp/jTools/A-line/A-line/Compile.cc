@@ -643,9 +643,9 @@ namespace tool
 		
 		std::vector< std::string >::const_iterator the_source, the_object, end = sources.end();
 		
-		for ( the_source = sources.begin() + n_tools,
-		      the_object = object_paths.begin();  the_source != end;  ++the_source,
-		                                                              ++the_object )
+		for ( the_source = sources     .begin() + n_tools,
+		      the_object = object_paths.begin() + n_tools;  the_source != end;  ++the_source,
+		                                                                        ++the_object )
 		{
 			// The source file
 			const std::string& source_pathname = *the_source;
