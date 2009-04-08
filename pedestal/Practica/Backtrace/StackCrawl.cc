@@ -5,85 +5,9 @@
 
 #include "Backtrace/StackCrawl.hh"
 
-// Mac OS Universal Interfaces
-#if defined( __MACOS__ ) && defined( __POWERPC__ )
-#include <MachineExceptions.h>
-#endif
-
-// Standard C/C++
-#include <cstdio>
-
-// Standard C
-#include <setjmp.h>
-
 
 namespace Backtrace
 {
-	
-#if defined( __MACOS__ ) && defined( __POWERPC__ )
-	
-	class ScopedExceptionHandler
-	{
-		private:
-			ExceptionHandlerTPP itsSavedHandler;
-		
-		public:
-			static ExceptionHandlerTPP Install( ExceptionHandlerTPP handler );
-			
-			ScopedExceptionHandler( ExceptionHandlerTPP handler ) : itsSavedHandler( Install( handler ) )  {}
-			
-			~ScopedExceptionHandler()  { Install( itsSavedHandler ); }
-	};
-	
-	ExceptionHandlerTPP ScopedExceptionHandler::Install( ExceptionHandlerTPP handler )
-	{
-		return ::InstallExceptionHandler( handler );
-	}
-	
-	class ScopeToTrapBadAddresses
-	{
-		private:
-			ExceptionHandlerUPP     itsUPP;
-			ScopedExceptionHandler  itsScope;
-		
-		public:
-			ScopeToTrapBadAddresses( ExceptionHandlerProcPtr handler ) : itsUPP( ::NewExceptionHandlerUPP( handler ) ),
-			                                                             itsScope( itsUPP )
-			{
-			}
-			
-			~ScopeToTrapBadAddresses()
-			{
-				::DisposeExceptionHandlerUPP( itsUPP );
-			}
-	};
-	
-	
-	static jmp_buf gStackCrawlJmpBuf;
-	
-	static OSStatus BadAddressTrappingHandler( ExceptionInformation* exception )
-	{
-		if ( exception->theKind == kTraceException )
-		{
-			return -1;  // handled by debugger
-		}
-		
-		switch ( exception->theKind )
-		{
-			case kAccessException:
-			case kUnmappedMemoryException:
-			case kUnresolvablePageFaultException:
-				longjmp( gStackCrawlJmpBuf, exception->theKind );
-				// not reached
-			
-			default:
-				break;
-		}
-		
-		return -1;
-	}
-	
-#endif
 	
 	struct StackFrame68K
 	{
@@ -268,65 +192,14 @@ namespace Backtrace
 		goto next;
 	}
 	
-#if defined( __MACOS__ ) && defined( __POWERPC__ )
-	
-	class MachineException
-	{
-		private:
-			::ExceptionKind itsKind;
-		
-		public:
-			MachineException() : itsKind()  {}
-			
-			MachineException( ::ExceptionKind kind ) : itsKind( kind )  {}
-			
-			::ExceptionKind Get() const  { return itsKind; }
-	};
-	
-#endif
-	
 	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top, const void* limit )
 	{
 		std::vector< ReturnAddress > result;
 		
 		try
 		{
-		#if defined( __MACOS__ ) && defined( __POWERPC__ )
-			
-			ScopeToTrapBadAddresses trappingUnmappedMemoryExceptions( BadAddressTrappingHandler );
-			
-			if ( ::ExceptionKind kind = setjmp( gStackCrawlJmpBuf ) )
-			{
-				// exception handler invoked
-				
-				throw MachineException( kind );
-			}
-			
-		#endif
-			
 			CrawlStack( 0, top, limit, result );
 		}
-		
-	#if defined( __MACOS__ ) && defined( __POWERPC__ )
-		
-		catch ( const MachineException& e )
-		{
-			switch ( e.Get() )
-			{
-				case kAccessException:
-				case kUnmappedMemoryException:
-				case kUnresolvablePageFaultException:
-					// nothing
-					break;
-				
-				default:
-					//std::fprintf( stderr, "Machine exception type %d caught during stack crawl\n", e.Get() );
-					break;
-			}
-		}
-		
-	#endif
-		
 		catch ( const std::bad_alloc& )
 		{
 		}
