@@ -10,7 +10,7 @@
 #include <boost/enable_shared_from_this.hpp>
 
 // Genie
-#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie

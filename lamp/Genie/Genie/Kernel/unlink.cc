@@ -10,7 +10,7 @@
 #include "fcntl.h"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathAt.hh"
+#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 

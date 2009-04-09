@@ -33,7 +33,7 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/PseudoTTY.hh"

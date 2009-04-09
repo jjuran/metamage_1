@@ -6,8 +6,8 @@
 #include "Genie/IO/MacFile.hh"
 
 // Genie
-#include "Genie/FileSystem/FSSpec.hh"
-#include "Genie/FileSystem/FSTree_RsrcFile.hh"
+#include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 

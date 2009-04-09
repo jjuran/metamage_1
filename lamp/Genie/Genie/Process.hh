@@ -29,7 +29,7 @@
 #include "Genie/BinaryImage.hh"
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/SignalReceiver.hh"

@@ -15,7 +15,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_sys_mac_errata.hh"
+#include "Genie/FS/FSTree_sys_mac_errata.hh"
 
 
 #define CALLBACK  more::ptr_fun( AsyncYield )

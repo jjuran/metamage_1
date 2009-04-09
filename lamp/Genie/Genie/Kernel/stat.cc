@@ -15,8 +15,8 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FileSystem/ResolvePathAt.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"

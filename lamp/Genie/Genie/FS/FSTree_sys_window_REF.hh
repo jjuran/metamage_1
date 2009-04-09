@@ -1,0 +1,35 @@
+/*	========================
+ *	FSTree_sys_window_REF.hh
+ *	========================
+ */
+
+#ifndef GENIE_FILESYSTEM_FSTREESYSWINDOWREF_HH
+#define GENIE_FILESYSTEM_FSTREESYSWINDOWREF_HH
+
+// Genie
+#include "Genie/FS/FSTree_Directory.hh"
+
+
+namespace Pedestal
+{
+	
+	class View;
+	
+}
+
+namespace Genie
+{
+	
+	extern const FSTree_Premapped::Mapping sys_window_REF_Mappings[];
+	
+	void RemoveUserWindow( const FSTree* key );
+	
+	bool InvalidateWindow( const FSTree* key );
+	
+	void InstallViewInWindow    ( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
+	void UninstallViewFromWindow( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
+	
+}
+
+#endif
+

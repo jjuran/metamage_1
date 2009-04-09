@@ -14,8 +14,8 @@
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree.hh"
-#include "Genie/FileSystem/ResolvePathAt.hh"
+#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 

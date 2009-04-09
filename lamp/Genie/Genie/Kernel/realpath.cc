@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"

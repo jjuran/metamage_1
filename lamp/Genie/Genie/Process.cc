@@ -52,8 +52,8 @@
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/FileSystem/FSSpec.hh"
+#include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/FSSpec.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/Process/Entry.hh"

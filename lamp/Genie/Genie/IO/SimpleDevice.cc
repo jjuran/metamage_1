@@ -6,7 +6,7 @@
 #include "Genie/IO/SimpleDevice.hh"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FS/ResolvePathname.hh"
 
 
 namespace Genie

@@ -11,7 +11,7 @@
 #include "errno.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/Base.hh"
 
 
