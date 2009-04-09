@@ -4,6 +4,7 @@
  */
 
 // Standard C/C++
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
@@ -29,10 +30,12 @@ int main( int argc, char const *const argv[] )
 	
 	if ( int scanned = std::sscanf( argv[1], "%f", &sleep_time ) )
 	{
-		unsigned long seconds     = sleep_time;
-		unsigned long nanoseconds = (sleep_time - seconds) * 1000 * 1000 * 1000;
+		const float int_sleep_time = std::floor( sleep_time );
 		
-		timespec time = { seconds, nanoseconds };
+		const unsigned long seconds     = static_cast< unsigned long >( int_sleep_time );
+		const unsigned long nanoseconds = static_cast< unsigned long >( (sleep_time - int_sleep_time) * 1000 * 1000 * 1000 );
+		
+		const timespec time = { seconds, nanoseconds };
 		
 		nanosleep( &time, NULL );
 	}
