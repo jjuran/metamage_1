@@ -124,7 +124,7 @@ namespace Genie
 		word_32 toc;
 	};
 	
-	inline void push( word_32& address, int offset )
+	static inline void push( word_32& address, int offset )
 	{
 		word_32 updated_address = address + offset;
 		
