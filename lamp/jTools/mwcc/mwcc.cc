@@ -334,6 +334,10 @@ namespace tool
 				break;
 		}
 		
+		command.push_back( is_object_filename( output_pathname ) ? "-o" : "-precompile" );
+		
+		command.push_back( store_mac_path_from_posix_path( output_pathname ) );
+		
 		if ( !rtti )
 		{
 			command.push_back( "-RTTI" );
@@ -378,10 +382,6 @@ namespace tool
 		
 		command.push_back( "-proto" );
 		command.push_back( "strict" );
-		
-		command.push_back( is_object_filename( output_pathname ) ? "-o" : "-precompile" );
-		
-		command.push_back( store_mac_path_from_posix_path( output_pathname ) );
 		
 		command.insert( command.end(), command_args.begin(), command_args.end() );
 		
