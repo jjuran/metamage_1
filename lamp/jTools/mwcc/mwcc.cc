@@ -119,6 +119,36 @@ namespace tool
 		return GetMacPathname( item );
 	}
 	
+	static const std::string& MacPathForCWD()
+	{
+		static std::string mac_path = MacPathFromPOSIXPath( "." );
+		
+		return mac_path;
+	}
+	
+	static std::string ShortMacPathFromPOSIXPath( const char* pathname )
+	{
+		std::string mac_path = MacPathFromPOSIXPath( pathname );
+		
+		const std::string& mac_cwd = MacPathForCWD();
+		
+		const bool within =  mac_path.length() > mac_cwd.length()
+		                  && std::equal( mac_cwd.begin(),
+		                                 mac_cwd.end(),
+		                                 mac_path.begin() );
+		
+		if ( within )
+		{
+			const bool trailing_colon = (*mac_cwd.rbegin() == ':');
+			
+			const std::size_t common = mac_cwd.length() - trailing_colon;
+			
+			mac_path.erase( 0, common );
+		}
+		
+		return mac_path;
+	}
+	
 	static bool extension_begins_with_char( const char* path, char c )
 	{
 		const char* dot   = std::strrchr( path, '.' );
@@ -188,7 +218,7 @@ namespace tool
 	
 	static const char* store_mac_path_from_posix_path( const char* path )
 	{
-		return store_string( MacPathFromPOSIXPath( path ) );
+		return store_string( ShortMacPathFromPOSIXPath( path ) );
 	}
 	
 	
