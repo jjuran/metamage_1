@@ -268,10 +268,7 @@ namespace Genie
 		public:
 			ProcessList();
 			
-			~ProcessList()
-			{
-				//ASSERT( itsMap.size() == 1 );
-			}
+			~ProcessList();
 			
 			const boost::shared_ptr< Process >& NewProcess( Process::RootProcess );
 			const boost::shared_ptr< Process >& NewProcess( Process& parent );

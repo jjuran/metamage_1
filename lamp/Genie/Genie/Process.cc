@@ -1511,6 +1511,10 @@ namespace Genie
 	{
 	}
 	
+	ProcessList::~ProcessList()
+	{
+	}
+	
 	static void ReapProcesses()
 	{
 		std::vector< pid_t > hitlist;
