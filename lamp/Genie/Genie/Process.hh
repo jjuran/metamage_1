@@ -6,9 +6,6 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Universal Interfaces
-#include <AEDataModel.h>
-
 // Standard C++
 #include <map>
 #include <string>
