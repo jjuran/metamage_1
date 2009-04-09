@@ -116,22 +116,24 @@ namespace Genie
 	
 #if TARGET_CPU_PPC
 	
+	typedef unsigned long word_32;
+	
 	struct TVector
 	{
-		unsigned long f;
-		unsigned long toc;
+		word_32 f;
+		word_32 toc;
 	};
 	
-	inline void push( unsigned long& address, int offset )
+	inline void push( word_32& address, int offset )
 	{
-		unsigned long updated_address = address + offset;
+		word_32 updated_address = address + offset;
 		
-		*(unsigned long*) updated_address = address;
+		*(word_32*) updated_address = address;
 		
 		address = updated_address;
 	}
 	
-	static OSStatus GenericExceptionHandler( ExceptionInformation* exception )
+	static OSStatus ExceptionHandler( ExceptionInformation* exception )
 	{
 		if ( exception->theKind == kTraceException )
 		{
@@ -169,26 +171,44 @@ namespace Genie
 		// recovery handler: delivers a fatal signal and doesn't return
 		
 		// Crawl the stack one step.
-		unsigned long previousSP = *(unsigned long*) exception->registerImage->R1.lo;
 		
-		unsigned long previousSavedLR = *(unsigned long*) ( previousSP + 8 );
+		// The last stack frame allocated
+		word_32& stack_pointer = exception->registerImage->R1.lo;
 		
-		bool offenderHasStackFrame = previousSavedLR == exception->machineState->LR.lo;
+		// The LR when an exception was taken (in the offender), points to caller
+		const word_32 link_register = exception->machineState->LR.lo;
 		
-		if ( !offenderHasStackFrame )
+		// The previous stack frame
+		const word_32 prev_stack_pointer = *(word_32*) stack_pointer;
+		
+		// The most recent saved LR
+		const word_32 prev_saved_link = *(word_32*) ( prev_stack_pointer + 8 );
+		
+		// Did the offender build a stack frame?
+		// The offender's LR (link_register) points to the caller.
+		// If the offender built a stack frame, then that's the most recent,
+		// and the previous one was built by the caller.
+		// If that's the case, then the offender would have saved the LR in the
+		// caller's stack frame.
+		// Otherwise, the topmost frame belongs to the caller, and the previous
+		// frame to the caller's caller, and the LR won't match.
+		const bool offender_has_stack_frame = prev_saved_link == link_register;
+		
+		if ( !offender_has_stack_frame )
 		{
 			// Offender doesn't have a stack frame; let's build one
 			
-			unsigned long& savedLR = *(unsigned long*) ( exception->registerImage->R1.lo + 8 );
+			// This is the saved LR slot in the current stack frame
+			word_32& saved_link = *(word_32*) ( stack_pointer + 8 );
 			
 			// store caller's return address in caller's stack frame
-			savedLR = exception->machineState->LR.lo;
+			saved_link = link_register;
 			
 			// push a new stack frame; hope we aren't stomping anything
-			push( exception->registerImage->R1.lo, -32 );
+			push( stack_pointer, -32 );
 		}
 		
-		// place offender's return address in LR for recovery handler
+		// set offender's PC as return address for recovery handler
 		exception->machineState ->LR.lo = exception->machineState->PC.lo;
 		
 		// set new PC and TOC
@@ -200,7 +220,7 @@ namespace Genie
 	
 	void InstallExceptionHandlers()
 	{
-		static ExceptionHandlerUPP upp = ::NewExceptionHandlerUPP( GenericExceptionHandler );
+		static ExceptionHandlerUPP upp = ::NewExceptionHandlerUPP( ExceptionHandler );
 		
 		::InstallExceptionHandler( upp );
 	}
