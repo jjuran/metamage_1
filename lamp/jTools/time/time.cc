@@ -23,6 +23,39 @@
 #include "Orion/Main.hh"
 
 
+namespace poseven
+{
+	
+	inline void gettimeofday( struct timeval& tv )
+	{
+		throw_posix_result( ::gettimeofday( &tv, NULL ) );
+	}
+	
+	inline struct timeval gettimeofday()
+	{
+		struct timeval tv = { 0 };
+		
+		gettimeofday( tv );
+		
+		return tv;
+	}
+	
+	inline void times( struct tms& time_set )
+	{
+		throw_posix_result( ::times( &time_set ) );
+	}
+	
+	inline struct tms times()
+	{
+		struct tms time_set = { 0 };
+		
+		times( time_set );
+		
+		return time_set;
+	}
+	
+}
+
 namespace tool
 {
 	
@@ -38,9 +71,9 @@ namespace tool
 		struct tms tms_a = { 0 };
 		struct tms tms_b = { 0 };
 		
-		p7::throw_posix_result( ::times( &tms_a ) );
+		p7::times( tms_a );
 		
-		p7::throw_posix_result( ::gettimeofday( &tv_a, NULL ) );
+		p7::gettimeofday( tv_a );
 		
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -58,9 +91,9 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::wait();
 		
-		p7::throw_posix_result( ::gettimeofday( &tv_b, NULL ) );
+		p7::gettimeofday( tv_b );
 		
-		p7::throw_posix_result( ::times( &tms_b ) );
+		p7::times( tms_b );
 		
 		unsigned long long a = tv_a.tv_sec * 1000000 + tv_a.tv_usec;
 		unsigned long long b = tv_b.tv_sec * 1000000 + tv_b.tv_usec;
