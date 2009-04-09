@@ -308,6 +308,8 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
+	void DeliverFatalSignal( int signo );
+	
 	void Yield( Interruptibility interrupting );
 	
 	void Breathe();
