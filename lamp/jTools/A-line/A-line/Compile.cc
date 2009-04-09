@@ -424,11 +424,6 @@ namespace tool
 		
 		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
 		
-		if ( options.Target().envType == envLamp )
-		{
-			options.DEFINE_MACRO( "__LAMP__" );
-		}
-		
 		if ( target_info.platform & apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
@@ -443,12 +438,6 @@ namespace tool
 				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
 				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
 			}
-		}
-		
-		if ( options.Target().toolchain == toolchainMetrowerks )
-		{
-			// Assume CW Pro 6
-			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
 		if ( target_info.build == buildDebug )
