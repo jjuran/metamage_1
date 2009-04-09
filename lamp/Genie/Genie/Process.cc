@@ -552,23 +552,6 @@ namespace Genie
 		return result;
 	}
 	
-	class TemporaryStackBottomLimit
-	{
-		private:
-			TemporaryStackBottomLimit( const TemporaryStackBottomLimit& );
-		
-		public:
-			TemporaryStackBottomLimit( const void* limit )
-			{
-				Backtrace::SetStackBottomLimit( limit );
-			}
-			
-			~TemporaryStackBottomLimit()
-			{
-				Backtrace::SetStackBottomLimit( (const void*) 0xffffffff );
-			}
-	};
-	
 	int Process::Run()
 	{
 		Parameters& params = *itsParameters;
@@ -585,8 +568,6 @@ namespace Genie
 		Main3 mainPtr = NULL;
 		
 		{
-			TemporaryStackBottomLimit limit( itsStackBottomPtr );
-			
 			// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 			// Pass envp in ToolScratch + 4 to initialize environ
 			SetUpToolScratch( &DispatchSystemCall, envp );
