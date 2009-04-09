@@ -565,16 +565,12 @@ namespace Genie
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
-		Main3 mainPtr = NULL;
+		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
+		// Pass envp in ToolScratch + 4 to initialize environ
+		SetUpToolScratch( &DispatchSystemCall, envp );
 		
-		{
-			// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
-			// Pass envp in ToolScratch + 4 to initialize environ
-			SetUpToolScratch( &DispatchSystemCall, envp );
-			
-			// For code fragments, static initialization occurs here.
-			mainPtr = itsMainEntry->GetMainPtr();
-		}
+		// For code fragments, static initialization occurs here.
+		Main3 mainPtr = itsMainEntry->GetMainPtr();
 		
 		ASSERT( mainPtr != NULL );
 		
