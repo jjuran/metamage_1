@@ -5,7 +5,7 @@
 #define __NR_InitProc                    0
 //#define __NR_restart_syscall             0
 #define __NR__exit                       1
-#define __NR_vfork_start                 2  // move to 190
+#define __NR_fork                        2
 #define __NR_read                        3
 #define __NR_write                       4
 #define __NR_open                        5
@@ -20,7 +20,7 @@
 #define __NR_mknod                      14
 #define __NR_chmod                      15
 #define __NR_lchown                     16
-#define __NR_fork                       17  // move to 2
+// 17
 #define __NR_getcwd_k                   18
 #define __NR_lseek                      19
 #define __NR_getpid                     20
@@ -31,7 +31,7 @@
 #define __NR_stime                      25
 #define __NR_ptrace                     26
 #define __NR_alarm                      27
-// 28
+#define __NR_vfork_start                28
 #define __NR_pause                      29
 #define __NR_utime                      30
 // 31
@@ -172,6 +172,11 @@
 // 166
 // 167
 #define __NR_poll                      168
+
+// ...
+
+#define __NR_vfork                     190
+
 // ...
 
 #define __NR_openat                    240
