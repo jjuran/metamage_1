@@ -18,17 +18,17 @@ extern "C" {
 	
 	void Kerosene_LongJmp( int result );
 	
-	int SpawnVFork( void (*LongJmp)( int ) );  // Only returns 0 or -1
+	int vfork_start( void (*LongJmp)( int ) );  // Only returns 0 or -1
 	
 	jmp_buf* NewJmpBuf();
 	
 	#ifdef __cplusplus
 		
-		inline pid_t vfork()  { return pid_t( SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ); }
+		inline pid_t vfork()  { return pid_t( vfork_start( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ); }
 		
 	#else
 		
-		#define vfork()  ( (pid_t) (SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ) )
+		#define vfork()  ( (pid_t) (vfork_start( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ) )
 		
 	#endif
 	

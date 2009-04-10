@@ -22,9 +22,9 @@ namespace Genie
 		return *child;
 	}
 	
-	static int SpawnVFork( void (*LongJmp)(int), void* jmpBuf )
+	static int vfork_start( void (*LongJmp)(int) )
 	{
-		SystemCallFrame frame( "SpawnVFork" );
+		SystemCallFrame frame( "vfork_start" );
 		
 		frame.Caller().SetLongJmp( LongJmp );
 		
@@ -61,7 +61,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( SpawnVFork    );
+	REGISTER_SYSTEM_CALL( vfork_start   );
 	REGISTER_SYSTEM_CALL( fork_and_exit );
 	
 	#pragma force_active reset

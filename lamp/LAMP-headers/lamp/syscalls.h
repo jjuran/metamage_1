@@ -5,9 +5,7 @@
 #define __NR_InitProc                    0
 //#define __NR_restart_syscall             0
 #define __NR__exit                       1
-#define __NR_vfork                       2  // move to 190
-#define __NR_vfork_k                     2
-#define __NR_SpawnVFork                  2
+#define __NR_vfork_start                 2  // move to 190
 #define __NR_read                        3
 #define __NR_write                       4
 #define __NR_open                        5

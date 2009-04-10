@@ -80,7 +80,7 @@ void InitializeDispatcher()
 
 DEFINE_STUB( InitProc )
 DEFINE_STUB( _exit )
-DEFINE_STUB( SpawnVFork )
+DEFINE_STUB( vfork_start )
 DEFINE_STUB( read  )
 DEFINE_STUB( write )
 //DEFINE_STUB( open  )
