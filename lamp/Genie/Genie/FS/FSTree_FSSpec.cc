@@ -1011,9 +1011,10 @@ namespace Genie
 		
 		const std::string& destName = destFile->Name();
 		
-		const bool keeping_name = std::equal( destName.begin(),
-		                                      destName.end(),
-		                                      (const char*) srcFileSpec.name + 1 );
+		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
+		                          && std::equal( destName.begin(),
+		                                         destName.end(),
+		                                         (const char*) srcFileSpec.name + 1 );
 		
 		if ( srcFileSpec.parID == destFileSpec.parID )
 		{
