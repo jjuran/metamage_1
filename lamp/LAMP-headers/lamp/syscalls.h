@@ -20,7 +20,7 @@
 #define __NR_mknod                      14
 #define __NR_chmod                      15
 #define __NR_lchown                     16
-// 17
+#define __NR_reexec                     17
 #define __NR_getcwd_k                   18
 #define __NR_lseek                      19
 #define __NR_getpid                     20
