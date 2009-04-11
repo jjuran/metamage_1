@@ -92,7 +92,7 @@
 // 86
 // 87
 // 88
-#define __NR_readdir_k                  89
+// 89
 // 90
 // 91
 #define __NR_truncate                   92
@@ -175,6 +175,11 @@
 
 // ...
 
+#define __NR_pread                     180
+#define __NR_pwrite                    181
+
+// ...
+
 #define __NR_vfork                     190
 
 // ...
@@ -225,6 +230,14 @@
 
 #define __NR_AESendBlocking            277
 #define __NR_OTInetMailExchange_k      278
+
+#define __NR_utimensat                 320
+
+#define __NR_dup3                      330
+#define __NR_pipe2                     331
+
+#define __NR_preadv                    333
+#define __NR_pwritev                   334
 
 #endif
 
