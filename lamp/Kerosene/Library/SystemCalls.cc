@@ -95,6 +95,7 @@ DEFINE_STUB( chdir  )
 //DEFINE_STUB( mknod )
 //DEFINE_STUB( chmod )
 
+DEFINE_STUB( reexec )
 DEFINE_STUB( getcwd_k )
 DEFINE_STUB( lseek )
 DEFINE_STUB( getpid )
