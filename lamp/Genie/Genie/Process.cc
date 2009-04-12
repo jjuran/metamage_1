@@ -385,6 +385,11 @@ namespace Genie
 	
 	int Process::Run()
 	{
+		itsStackBottomPtr = Backtrace::GetStackFramePointer();
+		
+		// Accumulate any system time between start and entry to main()
+		LeaveSystemCall();
+		
 		Parameters& params = *itsParameters;
 		
 		params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
@@ -393,8 +398,6 @@ namespace Genie
 		int          argc = params.itsArgV.size() - 1;  // don't count trailing NULL
 		iota::argp_t argv = &params.itsArgV[0];
 		iota::envp_t envp = &params.itsEnvP[0];
-		
-		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
 		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 		// Pass envp in ToolScratch + 4 to initialize environ
@@ -405,14 +408,8 @@ namespace Genie
 		
 		ASSERT( mainPtr != NULL );
 		
-		// Accumulate any system time between start and entry to main()
-		LeaveSystemCall();
-		
 		// This is a separate function so registers get saved and restored
 		int exit_status = mainPtr( argc, argv, envp );
-		
-		// Accumulate any user time between last system call (if any) and return from main()
-		EnterSystemCall( "*RETURN*" );
 		
 		if ( itsCleanupHandler )
 		{
@@ -422,6 +419,9 @@ namespace Genie
 			
 			itsCleanupHandler = NULL;
 		}
+		
+		// Accumulate any user time between last system call (if any) and return from main()
+		EnterSystemCall( "*RETURN*" );
 		
 		// For code fragments, static destruction occurs here.
 		itsMainEntry.reset();
