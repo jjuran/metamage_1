@@ -71,6 +71,14 @@ namespace Genie
 	
 	typedef CleanupHandlerProc CleanupHandler;
 	
+	typedef int (*Reexec_Function)( void* _1,
+	                                void* _2,
+	                                void* _3,
+	                                void* _4,
+	                                void* _5,
+	                                void* _6,
+	                                void* _7 );
+	
 	class FlatArgVector
 	{
 		private:
@@ -140,6 +148,8 @@ namespace Genie
 			MainEntry itsOldMainEntry;
 			
 			boost::shared_ptr< Parameters > itsParameters;
+			
+			void* itsReexecArgs[8];
 			
 			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
@@ -240,6 +250,14 @@ namespace Genie
 			void Exec( const char*         path,
 			           const char* const   argv[],
 			           const char* const*  envp );
+			
+			void Reexec( Reexec_Function f, void* _1,
+			                                void* _2,
+			                                void* _3,
+			                                void* _4,
+			                                void* _5,
+			                                void* _6,
+			                                void* _7 );
 			
 			void InitThread();
 			

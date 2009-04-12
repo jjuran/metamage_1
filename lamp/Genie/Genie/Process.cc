@@ -390,34 +390,49 @@ namespace Genie
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
 		
-		Parameters& params = *itsParameters;
+		int exit_status = 0;
 		
-		params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
-		params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
-		
-		int          argc = params.itsArgV.size() - 1;  // don't count trailing NULL
-		iota::argp_t argv = &params.itsArgV[0];
-		iota::envp_t envp = &params.itsEnvP[0];
-		
-		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
-		// Pass envp in ToolScratch + 4 to initialize environ
-		SetUpToolScratch( &DispatchSystemCall, envp );
-		
-		// For code fragments, static initialization occurs here.
-		Main3 mainPtr = itsMainEntry->GetMainPtr();
-		
-		ASSERT( mainPtr != NULL );
-		
-		// This is a separate function so registers get saved and restored
-		int exit_status = mainPtr( argc, argv, envp );
-		
-		if ( itsCleanupHandler )
+		if ( Reexec_Function f = (Reexec_Function) itsReexecArgs[ 0 ] )
 		{
-			const bool destroying_globals = true;
+			exit_status = f( itsReexecArgs[ 1 ],
+			                 itsReexecArgs[ 2 ],
+			                 itsReexecArgs[ 3 ],
+			                 itsReexecArgs[ 4 ],
+			                 itsReexecArgs[ 5 ],
+			                 itsReexecArgs[ 6 ],
+			                 itsReexecArgs[ 7 ] );
+		}
+		else
+		{
+			Parameters& params = *itsParameters;
 			
-			itsCleanupHandler( destroying_globals );
+			params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
+			params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
 			
-			itsCleanupHandler = NULL;
+			int          argc = params.itsArgV.size() - 1;  // don't count trailing NULL
+			iota::argp_t argv = &params.itsArgV[0];
+			iota::envp_t envp = &params.itsEnvP[0];
+			
+			// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
+			// Pass envp in ToolScratch + 4 to initialize environ
+			SetUpToolScratch( &DispatchSystemCall, envp );
+			
+			// For code fragments, static initialization occurs here.
+			Main3 mainPtr = itsMainEntry->GetMainPtr();
+			
+			ASSERT( mainPtr != NULL );
+			
+			// This is a separate function so registers get saved and restored
+			exit_status = mainPtr( argc, argv, envp );
+			
+			if ( itsCleanupHandler )
+			{
+				const bool destroying_globals = true;
+				
+				itsCleanupHandler( destroying_globals );
+				
+				itsCleanupHandler = NULL;
+			}
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
@@ -702,6 +717,15 @@ namespace Genie
 		itsCleanupHandler     (),
 		itMayDumpCore         ()
 	{
+		itsReexecArgs[0] =
+		itsReexecArgs[1] =
+		itsReexecArgs[2] =
+		itsReexecArgs[3] =
+		itsReexecArgs[4] =
+		itsReexecArgs[5] =
+		itsReexecArgs[6] =
+		itsReexecArgs[7] = NULL;
+		
 		itsFileDescriptors[ 0 ] =
 		itsFileDescriptors[ 1 ] =
 		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
@@ -735,6 +759,15 @@ namespace Genie
 		itsCleanupHandler     (),
 		itMayDumpCore         ( true )
 	{
+		itsReexecArgs[0] =
+		itsReexecArgs[1] =
+		itsReexecArgs[2] =
+		itsReexecArgs[3] =
+		itsReexecArgs[4] =
+		itsReexecArgs[5] =
+		itsReexecArgs[6] =
+		itsReexecArgs[7] = NULL;
+		
 		parent.SuspendForFork( itsPID );
 		
 		gCurrentProcess = this;
@@ -941,6 +974,59 @@ namespace Genie
 		// Save the binary image that we're running from and set the new one.
 		// We can't use stack storage because we run the risk of the thread terminating.
 		std::swap( itsOldMainEntry, itsMainEntry );
+		
+		itsLifeStage       = kProcessLive;
+		itsInterdependence = kProcessIndependent;
+		itsSchedule        = kProcessRunning;  // a new process is runnable
+		
+		Ped::AdjustSleepForActivity();
+		
+		Suspend();
+	}
+	
+	void Process::Reexec( Reexec_Function f, void* _1,
+	                                         void* _2,
+	                                         void* _3,
+	                                         void* _4,
+	                                         void* _5,
+	                                         void* _6,
+	                                         void* _7 )
+	{
+		itsReexecArgs[0] = f;
+		itsReexecArgs[1] = _1;
+		itsReexecArgs[2] = _2;
+		itsReexecArgs[3] = _3;
+		itsReexecArgs[4] = _4;
+		itsReexecArgs[5] = _5;
+		itsReexecArgs[6] = _6;
+		itsReexecArgs[7] = _7;
+		
+		// Declare this first so it goes out of scope last
+		NN::Owned< N::ThreadID > looseThread;
+		
+		CloseMarkedFileDescriptors( itsFileDescriptors );
+		
+		ClearPendingSignals();
+		
+		ResetSignalHandlers();
+		
+		// We always spawn a new thread for the exec'ed process.
+		// If we've forked, then the thread is null, but if not, it's the
+		// current thread -- be careful!
+		
+		const N::Size defaultStackSize = DefaultThreadStackSize();
+		
+		const N::Size minimumStackSize = 64 * 1024;
+		
+		const N::Size stackSize = std::max( defaultStackSize, minimumStackSize );
+		
+		// Create the new thread
+		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
+		                                                            this,
+		                                                            stackSize );
+		
+		// Make the new thread belong to this process and save the old one
+		itsThread.swap( looseThread );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
