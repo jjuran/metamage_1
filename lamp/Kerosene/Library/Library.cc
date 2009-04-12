@@ -338,6 +338,16 @@
 	#pragma mark -
 	#pragma mark ¥ stdio ¥
 	
+	int fileno( FILE *stream )
+	{
+		return _fileno( stream );
+	}
+	
+	FILE* fdopen( int fd, const char* type )
+	{
+		return _fdopen( fd, (char*) type );
+	}
+	
 	extern "C" int rename( const char* oldpath, const char* newpath );
 	
 	int rename( const char* oldpath, const char* newpath )

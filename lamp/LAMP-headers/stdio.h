@@ -40,8 +40,9 @@
 
 #include <CWANSIIncludes/stdio.h>
 
-__inline int fileno(__std(FILE) *stream ) {return _fileno(stream);}
-__inline __std(FILE)* fdopen(int fildes , const char* type) {return _fdopen(fildes, (char*) type);}
+int fileno( FILE *stream );
+
+FILE* fdopen( int fd, const char* type );
 
 #include <sys/cdefs.h>
 #include <sys/_types.h>
