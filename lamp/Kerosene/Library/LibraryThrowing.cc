@@ -528,6 +528,11 @@
 	
 	static Environ* gEnvironPtr;
 	
+	static Environ& get_envp()
+	{
+		return *gEnvironPtr;
+	}
+	
 	extern "C" const void* InitializeEnviron();
 	
 	const void* InitializeEnviron()
@@ -548,33 +553,33 @@
 	
 	char* getenv( const char* name )
 	{
-		return gEnvironPtr->GetEnv( name );
+		return get_envp().GetEnv( name );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
 	{
-		gEnvironPtr->SetEnv( name, value, overwrite );
+		get_envp().SetEnv( name, value, overwrite );
 		
 		return 0;
 	}
 	
 	int putenv( char* string )
 	{
-		gEnvironPtr->PutEnv( string );
+		get_envp().PutEnv( string );
 		
 		return 0;
 	}
 	
 	void unsetenv( const char* name )
 	{
-		gEnvironPtr->UnsetEnv( name );
+		get_envp().UnsetEnv( name );
 	}
 	
 	extern "C" int clearenv();
 	
 	int clearenv()
 	{
-		gEnvironPtr->ClearEnv();
+		get_envp().ClearEnv();
 		
 		return 0;
 	}
