@@ -286,7 +286,7 @@
 			Environ& operator=( const Environ& );
 		
 		public:
-			Environ();
+			Environ( iota::environ_t envp );
 			
 			~Environ();
 			
@@ -308,9 +308,9 @@
 	};
 	
 	
-	Environ::Environ()
+	Environ::Environ( iota::environ_t envp )
 	{
-		CopyVars( GetEnvironFromKernel(), itsVars );
+		CopyVars( envp, itsVars );
 		
 		UpdateEnvironValue();
 	}
@@ -534,7 +534,7 @@
 	{
 		try
 		{
-			static Environ gEnviron;
+			static Environ gEnviron( GetEnvironFromKernel() );
 			
 			gEnvironPtr = &gEnviron;
 		}
