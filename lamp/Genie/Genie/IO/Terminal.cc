@@ -104,25 +104,6 @@ namespace Genie
 				process_session->SetControllingTerminal( shared_from_this() );
 				break;
 			
-			case TIOCNOTTY:
-				if ( process_session->ID() != current.GetPID() )
-				{
-					// not a session leader
-					//current.GiveUpControllingTerminal();
-				}
-				else
-				{
-					process_session->SetControllingTerminal( boost::shared_ptr< IOHandle >() );
-					
-					const ProcessGroup* group = GetProcessGroup().lock().get();
-					
-					ASSERT( group != NULL );
-					
-					SendSignalToProcessGroup( SIGHUP,  *group );
-					SendSignalToProcessGroup( SIGCONT, *group );
-				}
-				break;
-			
 			default:
 				IOHandle::IOCtl( request, argp );
 				break;
