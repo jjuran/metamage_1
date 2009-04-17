@@ -528,10 +528,22 @@
 	
 	static Environ* gEnvironPtr;
 	
+	static Environ* global_alt_environ;
+	
 	static int global_vfork_level = 0;
 	
 	static Environ& get_envp()
 	{
+		if ( global_vfork_level )
+		{
+			if ( global_alt_environ == NULL )
+			{
+				global_alt_environ = new Environ( environ );
+			}
+			
+			return *global_alt_environ;
+		}
+		
 		return *gEnvironPtr;
 	}
 	
@@ -563,6 +575,12 @@
 	void vfork_pop()
 	{
 		--global_vfork_level;
+		
+		delete global_alt_environ;
+		
+		global_alt_environ = NULL;
+		
+		gEnvironPtr->UpdateEnvironValue();
 	}
 	
 	
