@@ -16,7 +16,7 @@
 #include "setjmp.h"
 #include "signal.h"
 #include <stdarg.h>
-#include <stdio.h>
+#include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 #include "time.h"
@@ -343,9 +343,41 @@
 		return _fileno( stream );
 	}
 	
+	extern "C" FILE* __find_unopened_file();
+	
 	FILE* fdopen( int fd, const char* type )
 	{
-		return _fdopen( fd, (char*) type );
+		int flags = ::fcntl( fd, F_GETFL, 0 );
+		
+		if ( flags == -1 )
+		{
+			return NULL;
+		}
+		
+		switch ( type[0] )
+		{
+			case 'w':
+			case 'a':
+				if ( (flags + 1 & FWRITE) == 0 )
+				{
+					errno = EACCES;
+					
+					return NULL;
+				}
+			case 'r':
+			default:
+				break;
+		}
+		
+		FILE* file = __find_unopened_file();
+		
+		if ( file == NULL )
+		{
+			return NULL;
+		}
+		
+		return __handle_reopen( fd, type, file );
+		
 	}
 	
 	extern "C" int rename( const char* oldpath, const char* newpath );
