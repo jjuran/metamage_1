@@ -279,6 +279,11 @@
 		private:
 			std::vector< char* >     itsVars;
 			std::set< const char* >  itsUserOwnedVars;
+			
+		private:
+			// Non-copyable
+			Environ           ( const Environ& );
+			Environ& operator=( const Environ& );
 		
 		public:
 			Environ();
