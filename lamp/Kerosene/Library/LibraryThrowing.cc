@@ -528,12 +528,17 @@
 	
 	static Environ* gEnvironPtr;
 	
+	static int global_vfork_level = 0;
+	
 	static Environ& get_envp()
 	{
 		return *gEnvironPtr;
 	}
 	
 	extern "C" const void* InitializeEnviron();
+	
+	extern "C" void vfork_push();
+	extern "C" void vfork_pop();
 	
 	const void* InitializeEnviron()
 	{
@@ -548,6 +553,16 @@
 		}
 		
 		return gEnvironPtr;  // NULL if bad_alloc
+	}
+	
+	void vfork_push()
+	{
+		++global_vfork_level;
+	}
+	
+	void vfork_pop()
+	{
+		--global_vfork_level;
 	}
 	
 	

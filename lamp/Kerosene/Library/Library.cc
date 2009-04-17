@@ -870,6 +870,9 @@
 	#pragma mark -
 	#pragma mark ¥ vfork ¥
 	
+	extern "C" void vfork_push();
+	extern "C" void vfork_pop();
+	
 	static struct JmpBufNode* gJmpBufStack = NULL;
 	
 	struct JmpBufNode
@@ -934,6 +937,8 @@
 			node->done = false;
 		}
 		
+		vfork_push();
+		
 		return &node->buf;
 	}
 	
@@ -946,6 +951,8 @@
 		assert( !top->done );
 		
 		top->done = true;
+		
+		vfork_pop();
 		
 		longjmp( top->buf, result );
 	}
