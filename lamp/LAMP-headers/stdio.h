@@ -40,10 +40,6 @@
 
 #include <CWANSIIncludes/stdio.h>
 
-int fileno( FILE *stream );
-
-FILE* fdopen( int fd, const char* type );
-
 #include <sys/cdefs.h>
 #include <sys/_types.h>
 
@@ -99,6 +95,10 @@ extern const char *sys_errlist[];
 #define L_cuserid	9	/* size for cuserid(); UT_NAMESIZE + 1 */
 
 __BEGIN_DECLS
+int fileno( FILE *stream );
+
+FILE* fdopen( int fd, const char* type );
+
 int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath );
 
 char	*ctermid(char *);
