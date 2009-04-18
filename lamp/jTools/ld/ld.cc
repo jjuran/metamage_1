@@ -283,45 +283,50 @@ namespace tool
 	static const char* gFileType    = NULL;
 	static const char* gFileCreator = NULL;
 	
-	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name )
+	#define CODE_LABEL "Code: "
+	#define CODE_FORMAT_68K  CODE_LABEL "0079b2   12345 bytes  "
+	
+	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name, std::size_t name_length )
 	{
 		FSSpec linkMap = file;
 		
-		const char* dotMap = ".map";
-		
-		std::copy( dotMap, dotMap + 4, linkMap.name + 1 + linkMap.name[0] );
+		std::memcpy( linkMap.name + 1 + linkMap.name[0], STR_LEN( ".map" ) );
 		
 		linkMap.name[0] += 4;
 		
+		const char* format = CODE_FORMAT_68K;
+		
+		std::size_t format_length = STRLEN( CODE_FORMAT_68K );
+		
 		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( linkMap ) );
 		
-		std::string code = "Code: ";
+		const std::size_t minimum_line_length = format_length + name_length;
 		
 		while ( input.Ready() )
 		{
 			std::string line = input.Read();
 			
-			if ( line.find( quoted_name ) == line.npos )  continue;
-			
-			if ( std::equal( code.begin(), code.end(), line.begin() ) )
+			if ( line.length() < minimum_line_length )
 			{
-				unsigned long offset = std::strtoul( line.c_str() + code.size(), NULL, 16 );
+				continue;
+			}
+			
+			if ( std::memcmp( line.c_str(), STR_LEN( CODE_LABEL ) ) != 0 )
+			{
+				continue;
+			}
+			
+			if ( std::memcmp( line.c_str() + format_length, quoted_name, name_length ) == 0 )
+			{
+				const char* begin = line.c_str() + STRLEN( CODE_LABEL );
+				
+				const unsigned long offset = std::strtoul( begin, NULL, 16 );
 				
 				return offset;
 			}
 		}
 		
 		return 0;
-	}
-	
-	static unsigned long GetOffsetOfInitTool( const FSSpec& file )
-	{
-		return GetOffsetOfRoutine( file, "\"InitializeTool\"" );
-	}
-	
-	static unsigned long GetOffsetOfInitCode( const FSSpec& file )
-	{
-		return GetOffsetOfRoutine( file, "\"__InitCode__\"" );
 	}
 	
 	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset, UInt32 initCodeOffset )
@@ -344,10 +349,14 @@ namespace tool
 		*restoreRegs   = initCodeOffset ? jsr | (initCodeOffset - 32 - 2) : nopnop;
 	}
 	
+	#define QUOT "\""
+	
+	#define QUOTED( string )  QUOT string QUOT
+	
 	static void Patch68KStartup( const FSSpec& file )
 	{
-		unsigned long inittool = GetOffsetOfInitTool( file );
-		unsigned long initcode = GetOffsetOfInitCode( file );
+		unsigned long inittool = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "InitializeTool" ) ) );
+		unsigned long initcode = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__InitCode__"   ) ) );
 		
 		if ( inittool > 0x7fff )
 		{
