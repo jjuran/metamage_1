@@ -16,6 +16,11 @@ extern const void* InitializeEnviron();
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
 
+// Call main() and exit()
+extern void __lamp_main( int argc, char** argv, char** envp );
+extern int         main( int argc, char** argv, char** envp );
+
+extern void  exit( int );
 extern void _exit( int );
 
 
@@ -31,6 +36,13 @@ void InitializeTool()
 	}
 		
 	InitializeCallbacks();
+}
+
+void __lamp_main( int argc, char** argv, char** envp )
+{
+	const int status = main( argc, argv, envp );
+	
+	exit( status );
 }
 
 #pragma force_active reset
