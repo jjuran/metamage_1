@@ -329,9 +329,12 @@ namespace tool
 		return 0;
 	}
 	
-	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset, UInt32 initCodeOffset )
+	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset,
+	                                                UInt32 initCodeOffset,
+	                                                UInt32 lampMainOffset )
 	{
 		const UInt32 nopnop = 0x4e714e71;
+		const UInt32 jmp    = 0x4efa0000;
 		const UInt32 jsr    = 0x4eba0000;
 		
 		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
@@ -340,6 +343,7 @@ namespace tool
 		UInt32* const moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
 		UInt32* const setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
 		UInt32* const restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
+		UInt32* const jmpToMain     = reinterpret_cast< UInt32* >( *code + 36 );
 		
 		*saveRegisters = *setCurrentA4  + 4;
 		*setCurrentA4  = *loadStartToA0 + 4;
@@ -347,6 +351,7 @@ namespace tool
 		*moveAndStrip  = *setupMainRsrc + 4;
 		*setupMainRsrc = initToolOffset ? jsr | (initToolOffset - 28 - 2) : nopnop;
 		*restoreRegs   = initCodeOffset ? jsr | (initCodeOffset - 32 - 2) : nopnop;
+		*jmpToMain     = lampMainOffset ? jmp | (lampMainOffset - 36 - 2) : *jmpToMain;
 	}
 	
 	#define QUOT "\""
@@ -357,6 +362,7 @@ namespace tool
 	{
 		unsigned long inittool = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "InitializeTool" ) ) );
 		unsigned long initcode = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__InitCode__"   ) ) );
+		unsigned long lampmain = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__lamp_main"    ) ) );
 		
 		if ( inittool > 0x7fff )
 		{
@@ -374,7 +380,7 @@ namespace tool
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
-		Patch68KStartupCode( code.Get(), inittool, initcode );
+		Patch68KStartupCode( code.Get(), inittool, initcode, lampmain );
 		
 		N::ChangedResource( code );
 		
