@@ -1,6 +1,6 @@
-/*	==================
- *	FragmentInitTerm.c
- *	==================
+/*	=============
+ *	InitToolCFM.c
+ *	=============
  */
 
 // FragmentInitTerm
