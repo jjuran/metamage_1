@@ -25,6 +25,12 @@ extern const void* InitializeEnviron();
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
 
+// Call main() and exit()
+extern void __lamp_main( int argc, char** argv, char** envp );
+extern int         main( int argc, char** argv, char** envp );
+
+extern void exit( int );
+
 
 pascal OSErr InitializeLampTool( const CFragInitBlock* )
 {
@@ -38,5 +44,12 @@ pascal OSErr InitializeLampTool( const CFragInitBlock* )
 	InitializeCallbacks();
 	
 	return noErr;
+}
+
+void __lamp_main( int argc, char** argv, char** envp )
+{
+	const int status = main( argc, argv, envp );
+	
+	exit( status );
 }
 
