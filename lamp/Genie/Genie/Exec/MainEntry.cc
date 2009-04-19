@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
 
+// Genie
+#include "Genie/Process.hh"
+
 
 namespace Genie
 {
@@ -21,6 +24,15 @@ namespace Genie
 	}
 	
 	
+	static void invoke_main( Main3 main3, int argc, iota::argv_t argv, iota::environ_t envp )
+	{
+		ASSERT( main3 != NULL );
+		
+		const int exit_status = main3( argc, argv, envp );
+		
+		CurrentProcess().Exit( exit_status );
+	}
+	
 	class AddressMain : public MainEntryPoint
 	{
 		private:
@@ -31,7 +43,10 @@ namespace Genie
 			{
 			}
 			
-			Main3 GetMainPtr()  { return itsMain; }
+			void Invoke( int argc, iota::argv_t argv, iota::environ_t envp )
+			{
+				invoke_main( itsMain, argc, argv, envp );
+			}
 	};
 	
 	
@@ -79,26 +94,44 @@ namespace Genie
 		private:
 			BinaryImage                        itsBinaryImage;
 			NN::Owned< N::CFragConnectionID >  itsFragmentConnection;
-			Main3                              itsMain;
 		
 		public:
 			CFMPluginMain( const BinaryImage& image ) : itsBinaryImage( image )
 			{
 			}
 			
-			Main3 GetMainPtr();
+			void Invoke( int argc, iota::argv_t argv, iota::environ_t envp );
 	};
 	
-	Main3 CFMPluginMain::GetMainPtr()
+	void CFMPluginMain::Invoke( int argc, iota::argv_t argv, iota::environ_t envp )
 	{
+		typedef void (*LampMain)( int, iota::argv_t, iota::environ_t );
+		
+		LampMain lamp_main = NULL;
+		
 		if ( itsFragmentConnection.Get() == N::CFragConnectionID() )
 		{
 			itsFragmentConnection = ConnectToFragment( itsBinaryImage );
 			
-			N::FindSymbol( itsFragmentConnection, "\p" "main", &itsMain );
+			try
+			{
+				N::FindSymbol( itsFragmentConnection, "\p" "__lamp_main", &lamp_main );
+			}
+			catch ( ... )
+			{
+				Main3 main3 = NULL;
+				
+				N::FindSymbol( itsFragmentConnection, "\p" "main", &main3 );
+				
+				ASSERT( main3 != NULL );
+				
+				invoke_main( main3, argc, argv, envp );
+			}
 		}
 		
-		return itsMain;
+		ASSERT( lamp_main != NULL );
+		
+		lamp_main( argc, argv, envp );
 	}
 	
 	

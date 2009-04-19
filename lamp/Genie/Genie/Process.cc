@@ -417,22 +417,9 @@ namespace Genie
 			// Pass envp in ToolScratch + 4 to initialize environ
 			SetUpToolScratch( &DispatchSystemCall, envp );
 			
-			// For code fragments, static initialization occurs here.
-			Main3 mainPtr = itsMainEntry->GetMainPtr();
+			itsMainEntry->Invoke( argc, argv, envp );
 			
-			ASSERT( mainPtr != NULL );
-			
-			// This is a separate function so registers get saved and restored
-			exit_status = mainPtr( argc, argv, envp );
-			
-			if ( itsCleanupHandler )
-			{
-				const bool destroying_globals = true;
-				
-				itsCleanupHandler( destroying_globals );
-				
-				itsCleanupHandler = NULL;
-			}
+			// Not reached
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
