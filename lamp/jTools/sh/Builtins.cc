@@ -354,15 +354,6 @@ namespace tool
 			}
 	};
 	
-	static int exit_from_wait( int stat )
-	{
-		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-		           :                       -1;
-		
-		return result;
-	}
-	
 	static p7::exit_t BuiltinDot( int argc, iota::argv_t argv )
 	{
 		if ( argc < 2 )
