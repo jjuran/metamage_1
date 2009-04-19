@@ -667,7 +667,7 @@ namespace tool
 					command.push_back( "-xm"      );
 					command.push_back( "s"        );
 					command.push_back( "-export"  );
-					command.push_back( "sym=main" );
+					command.push_back( "sym=main,sym=__lamp_main" );
 					
 					// MWLinkPPC gets pissy if a shlb is larger than the default size,
 					// even though the size is meaningless since this isn't an app.
