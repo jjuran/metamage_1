@@ -49,7 +49,7 @@
 #pragma exceptions off
 
 	
-	typedef void (*CleanupHandler)( short destroying_globals );
+	typedef void (*CleanupHandler)();
 	
 	extern "C" void InitProc( CleanupHandler, int* );
 	

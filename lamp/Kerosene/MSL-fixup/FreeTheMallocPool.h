@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-	void FreeTheMallocPool( short destroying_globals );
+	void FreeTheMallocPool();
 
 #ifdef __cplusplus
 }

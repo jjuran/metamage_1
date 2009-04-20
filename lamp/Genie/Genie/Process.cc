@@ -950,9 +950,7 @@ namespace Genie
 		
 		if ( itsCleanupHandler != NULL )
 		{
-			const bool not_destroying_globals = false;
-			
-			itsCleanupHandler( not_destroying_globals );
+			itsCleanupHandler();
 		}
 		
 		// Make the new thread belong to this process and save the old one
@@ -1144,9 +1142,7 @@ namespace Genie
 		
 		if ( itsCleanupHandler != NULL )
 		{
-			const bool not_destroying_globals = false;
-			
-			itsCleanupHandler( not_destroying_globals );
+			itsCleanupHandler();
 		}
 		
 		itsLifeStage = kProcessZombie;

@@ -67,7 +67,7 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
-	typedef void (*CleanupHandlerProc)( short destroying_globals );
+	typedef void (*CleanupHandlerProc)();
 	
 	typedef CleanupHandlerProc CleanupHandler;
 	
