@@ -57,7 +57,7 @@ namespace Kerosene
 			
 			std::size_t shortened_base_length = base_length - replaced_length;
 			
-			MD5::Result hash = MD5::Digest( unixName.data(), unixName.size() );
+			MD5::Result hash = MD5::Digest( unixName.data(), unixName.size() * 8 );
 			
 			macName.assign( unixName.begin(), unixName.begin() + shortened_base_length );
 			
