@@ -98,7 +98,7 @@ my @programs = qw
 	open osascript
 	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
-	select setleds sh sleep stripcr striplf superd
+	select setleds sh sleep stripcr striplf superd sync
 	tcpcat tcpclient
 	test-longjmp-past-vfork test-read-intr test-time test-write-locked
 	th time tlsrvr touch true tty ttyd
@@ -141,7 +141,7 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep true ),
+		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
 		qw( jgetty ),
 		# Perl scripts
