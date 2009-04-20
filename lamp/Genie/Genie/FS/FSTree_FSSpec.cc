@@ -50,6 +50,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/Exec/GetMainEntry.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"

@@ -12,10 +12,12 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/Exec/GetMainEntry.hh"
 #include "Genie/FS/FSTree_sys_app.hh"
 #include "Genie/FS/FSTree_sys_cpu.hh"
 #include "Genie/FS/FSTree_sys_mac.hh"
 #include "Genie/FS/FSTree_sys_window.hh"
+#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -58,30 +60,12 @@ namespace Genie
 	class FSTree_sys_kernel_bin_EXE : public FSTree
 	{
 		private:
-			typedef int (*Main0)();
-			typedef int (*Main2)( int argc, char const *const *argv );
-			typedef int (*Main3)( int argc, char const *const *argv, char const *const *envp );
-			
 			MainEntry itsMainEntry;
 		
 		public:
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
 			                           const std::string&  name,
-			                           Main3               main ) : FSTree( parent, name ),
-			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
-			{
-			}
-			
-			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
-			                           const std::string&  name,
-			                           Main2               main ) : FSTree( parent, name ),
-			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
-			{
-			}
-			
-			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
-			                           const std::string&  name,
-			                           Main0               main ) : FSTree( parent, name ),
+			                           Trivial_Entry       main ) : FSTree( parent, name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
@@ -113,6 +97,12 @@ namespace Genie
 	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
 	
 	
+	template < int (*main)() >
+	static void main_and_exit()
+	{
+		CurrentProcess().Exit( main() );
+	}
+	
 	namespace
 	{
 		
@@ -139,7 +129,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
+		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main_and_exit< main > ) );
 	}
 	
 	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];

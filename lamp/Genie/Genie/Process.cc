@@ -52,6 +52,7 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
