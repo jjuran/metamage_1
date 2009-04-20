@@ -47,9 +47,6 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 
-// ShellShock
-#include "ShellShock/VarArray.hh"
-
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/Exec/MainEntryPoint.hh"
@@ -97,7 +94,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace Sh = ShellShock;
 	namespace Ped = Pedestal;
 	
 	
@@ -481,6 +477,18 @@ namespace Genie
 	}
 	
 	
+	static std::size_t argv_length( char const* const* argv )
+	{
+		std::size_t result = 0;
+		
+		while ( *argv++ )
+		{
+			++result;
+		}
+		
+		return result;
+	}
+	
 	struct ExecContext
 	{
 		FSTreePtr                   executable;
@@ -495,7 +503,7 @@ namespace Genie
 		             char const* const*  argv )
 		:
 			executable( executable ),
-			argVector ( argv, argv + Sh::CountStringArray( argv ) + 1 )
+			argVector ( argv, argv + argv_length( argv ) + 1 )
 		{}
 	};
 	
