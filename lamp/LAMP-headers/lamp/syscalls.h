@@ -151,7 +151,7 @@
 #define __NR_readv                     145
 #define __NR_writev                    146
 #define __NR_getsid                    147
-// 148
+#define __NR_fdatasync                 148
 // 149
 // 150
 // 151

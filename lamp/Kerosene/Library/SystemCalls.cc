@@ -163,6 +163,7 @@ DEFINE_STUB( fchdir )
 DEFINE_STUB( getdents )
 
 DEFINE_STUB( getsid )
+DEFINE_STUB( fdatasync )
 
 DEFINE_STUB( nanosleep )
 
