@@ -18,7 +18,7 @@ extern void InitializeCallbacks();
 
 // Call main() and exit()
 extern void __lamp_main( int argc, char** argv, char** envp );
-extern int         main( int argc, char** argv, char** envp );
+extern int         main( int argc, char** argv );
 
 extern void  exit( int );
 extern void _exit( int );
@@ -40,7 +40,7 @@ void InitializeTool()
 
 void __lamp_main( int argc, char** argv, char** envp )
 {
-	const int status = main( argc, argv, envp );
+	const int status = main( argc, argv );
 	
 	exit( status );
 }
