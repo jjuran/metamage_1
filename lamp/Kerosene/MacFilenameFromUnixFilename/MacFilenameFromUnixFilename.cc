@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -42,20 +45,33 @@ namespace Kerosene
 			
 			const bool has_dot = dot != unixName.npos;
 			
+			const unsigned minimum_remaining_base = 8;
+			
 			const unsigned n_delimiters = 1;
 			
 			const unsigned hash_length = 6;
 			
-			std::size_t base_length = has_dot ? dot : unixName.size();
+			const unsigned inserted_length = n_delimiters + hash_length;  // 7
 			
-			std::size_t replaced_length = unixName.size() - max_length + n_delimiters + hash_length;
+			const unsigned extension_limit =   max_length              // 31
+			                                 - minimum_remaining_base  // -8
+			                                 - inserted_length;        // -7
+			                                                           // == 16
 			
-			if ( replaced_length >= base_length )
+			if ( !has_dot  ||  unixName.size() - dot > extension_limit )
 			{
-				p7::throw_errno( ENAMETOOLONG );  // extension is too long
+				// Set the end of the base to end of string if there's no dot,
+				// or if the extension (including the dot) exceeds the limit.
+				dot = unixName.size();
 			}
 			
-			std::size_t shortened_base_length = base_length - replaced_length;
+			const std::size_t base_length = dot;
+			
+			const std::size_t replaced_length = unixName.size() - max_length + inserted_length;
+			
+			const std::size_t shortened_base_length = base_length - replaced_length;
+			
+			ASSERT( shortened_base_length >= minimum_remaining_base );
 			
 			MD5::Result hash = MD5::Digest( unixName.data(), unixName.size() * 8 );
 			
