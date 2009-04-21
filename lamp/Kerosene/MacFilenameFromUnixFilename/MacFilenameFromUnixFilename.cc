@@ -73,7 +73,7 @@ namespace Kerosene
 			
 			ASSERT( shortened_base_length >= minimum_remaining_base );
 			
-			MD5::Result hash = MD5::Digest( unixName.data(), unixName.size() * 8 );
+			MD5::Result hash = MD5::Digest_Bytes( unixName.data(), unixName.size() );
 			
 			macName.assign( unixName.begin(), unixName.begin() + shortened_base_length );
 			

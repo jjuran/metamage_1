@@ -18,7 +18,12 @@ namespace MD5
 		unsigned char data[ 16 ];
 	};
 	
-	Result Digest( const void* input, const BitCount& bits );
+	Result Digest_Bits( const void* input, const BitCount& bits );
+	
+	inline Result Digest_Bytes( const void* input, std::size_t bytes )
+	{
+		return Digest_Bits( input, BitCount( bytes ) * 8 );
+	}
 	
 	struct Buffer
 	{

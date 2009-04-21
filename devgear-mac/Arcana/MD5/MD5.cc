@@ -299,7 +299,7 @@ namespace MD5
 		return reinterpret_cast< const Result& >( state );
 	}
 	
-	Result Digest( const void* input, const BitCount& bitCount )
+	Result Digest_Bits( const void* input, const BitCount& bitCount )
 	{
 		const Block* inputAsBlocks = reinterpret_cast< const Block* >( input );
 		int blockCount = bitCount / 512;
