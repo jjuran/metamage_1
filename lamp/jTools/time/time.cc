@@ -95,8 +95,8 @@ namespace tool
 		
 		p7::times( tms_b );
 		
-		unsigned long long a = tv_a.tv_sec * 1000000 + tv_a.tv_usec;
-		unsigned long long b = tv_b.tv_sec * 1000000 + tv_b.tv_usec;
+		unsigned long long a = tv_a.tv_sec * 1000000ull + tv_a.tv_usec;
+		unsigned long long b = tv_b.tv_sec * 1000000ull + tv_b.tv_usec;
 		
 		float real_diff = (b - a) / 1000000.0;
 		float user_diff = (tms_b.tms_cutime - tms_a.tms_cutime) * 1.0 / CLOCKS_PER_SEC;
