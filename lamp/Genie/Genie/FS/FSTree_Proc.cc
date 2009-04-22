@@ -381,13 +381,13 @@ namespace Genie
 			}
 	};
 	
-	class proc_PID_backtrace
+	class proc_PID_stack
 	{
 		public:
 			static std::string Get( const Process& process );
 	};
 	
-	std::string proc_PID_backtrace::Get( const Process& process )
+	std::string proc_PID_stack::Get( const Process& process )
 	{
 		using Backtrace::StackFramePtr;
 		using Backtrace::ReturnAddress;
@@ -493,9 +493,9 @@ namespace Genie
 		{ "exe",  &Link_Factory< ResolveLink_exe  > },
 		{ "root", &Link_Factory< ResolveLink_root > },
 		
-		{ "cmdline",   &Generated_Factory< proc_PID_cmdline   > },
-		{ "stat",      &Generated_Factory< proc_PID_stat      > },
-		{ "backtrace", &Generated_Factory< proc_PID_backtrace > },
+		{ "cmdline", &Generated_Factory< proc_PID_cmdline > },
+		{ "stat",    &Generated_Factory< proc_PID_stat    > },
+		{ "stack",   &Generated_Factory< proc_PID_stack   > },
 		
 		{ "core", &core_Factory },
 		
