@@ -369,15 +369,28 @@ namespace Genie
 					}
 				}
 				
-				return NN::Convert< std::string >( pid ) + " "
-				       "(" + process.ProgramName() + ")"      " " +
-				       ProcessStateCode( process )          + " " +
-				       NN::Convert< std::string >( ppid   ) + " " +
-				       NN::Convert< std::string >( pgid   ) + " " +
-				       NN::Convert< std::string >( sid    ) + " " +
-				       terminal_name                        + " " +
-				       NN::Convert< std::string >( tpgid  ) +
-				       "\n";
+				std::string result;
+				
+				result += NN::Convert< std::string >( pid );
+				result += " "
+				          "(";
+				result += process.ProgramName();
+				result += ")"
+				          " ";
+				result += ProcessStateCode( process );
+				result += " ";
+				result += NN::Convert< std::string >( ppid );
+				result += " ";
+				result += NN::Convert< std::string >( pgid );
+				result += " ";
+				result += NN::Convert< std::string >( sid );
+				result += " ";
+				result += terminal_name;
+				result += " ";
+				result += NN::Convert< std::string >( tpgid );
+				result += "\n";
+				
+				return result;
 			}
 	};
 	
