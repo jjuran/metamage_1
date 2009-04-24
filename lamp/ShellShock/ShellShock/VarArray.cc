@@ -42,44 +42,5 @@ namespace ShellShock
 		       && std::equal( var, end, name );
 	}
 	
-	SVector::const_iterator VarArray::Find( const char* name ) const
-	{
-		return std::lower_bound( array.begin(),
-		                         array.end() - 1,
-		                         name,
-		                         std::ptr_fun( CompareStrings ) );
-	}
-	
-	SVector::iterator VarArray::Find( const char* name )
-	{
-		return std::lower_bound( array.begin(),
-		                         array.end() - 1,
-		                         name,
-		                         std::ptr_fun( CompareStrings ) );
-	}
-	
-	void VarArray::SetVar( const char* name, const char* value, bool overwrite )
-	{
-		SVector::iterator it = Find( name );
-		
-		const char* var = *it;
-		
-		// Did we find the right environment variable?
-		bool match = VarMatchesName( var, EndOfVarName( var ), name );
-		
-		bool inserting = !match;
-		
-		if ( inserting )
-		{
-			Insert( it, MakeVar( name, value ) );
-		}
-		else if ( overwrite )
-		{
-			Overwrite( it, MakeVar( name, value ) );
-		}
-		
-		Update();
-	}
-	
 }
 
