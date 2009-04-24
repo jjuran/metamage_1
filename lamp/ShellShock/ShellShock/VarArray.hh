@@ -15,13 +15,11 @@
 namespace ShellShock
 {
 	
-	// Compare two strings for equality.
-	// CompareStrings( a, b ) is equivalent to ( strcmp( a, b ) == 0 ).
+	// C string 'less'
 	
 	inline bool CompareStrings( const char* a, const char* b )
 	{
-		return std::lexicographical_compare( a, a + std::strlen( a ),
-		                                     b, b + std::strlen( b ) );
+		return std::strcmp( a, b ) < 0;
 	}
 	
 	// For input of "name" or "name=value", return a pointer to the byte following name.
