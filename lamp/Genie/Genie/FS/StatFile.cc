@@ -119,7 +119,7 @@ namespace Genie
 		sb->st_nlink = is_dir ? cInfo.dirInfo.ioDrNmFls + 2: 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
-		sb->st_rdev = 0;
+		sb->st_rdev = hFileInfo.ioFlParID;
 		// logical fork length in bytes
 		sb->st_size = is_dir ? 0
 		                     : is_rsrc_fork ? hFileInfo.ioFlRLgLen
