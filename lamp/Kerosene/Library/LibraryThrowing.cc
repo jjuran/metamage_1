@@ -11,6 +11,9 @@
 #include <stdarg.h>
 #include "stdlib.h"
 
+// Standard C/C++
+#include <cstring>
+
 // Standard C++
 #include <set>
 #include <string>
@@ -24,9 +27,6 @@
 
 // Iota
 #include "iota/environ.hh"
-
-// ShellShock
-#include "ShellShock/VarArray.hh"
 
 
 //
@@ -230,14 +230,55 @@
 	}
 	
 	
-	namespace Sh = ShellShock;
+	// C string 'less'
+	
+	static inline bool CompareStrings( const char* a, const char* b )
+	{
+		return std::strcmp( a, b ) < 0;
+	}
+	
+	// For input of "name" or "name=value", return a pointer to the byte following name.
+	// For NULL, return NULL (identity).
+	
+	static const char* EndOfVarName( const char* var )
+	{
+		if ( var == NULL )
+		{
+			return NULL;
+		}
+		
+		const char* end = std::strchr( var, '=' );
+		
+		if ( end == NULL )
+		{
+			end = std::strchr( var, '\0' );
+		}
+		
+		return end;
+	}
+	
+	// True if the sequence (var, end) == (name, name + strlen(name)).
+	// If var is NULL, it returns false.
+	// end and name may be NULL if var is NULL.
+	
+	static bool VarMatchesName( const char* var, const char* end, const char* name )
+	{
+		return    var != NULL
+		       && end - var == std::strlen( name )
+		       && std::equal( var, end, name );
+	}
+	
+	static inline std::string MakeVar( const std::string& name, const char* value )
+	{
+		return value != NULL ? name + "=" + value : name;
+	}
 	
 	static std::vector< char* >::iterator FindVar( std::vector< char* >& vars, const char* name )
 	{
 		return std::lower_bound( vars.begin(),
 		                         vars.end() - 1,
 		                         name,
-		                         std::ptr_fun( Sh::CompareStrings ) );
+		                         std::ptr_fun( CompareStrings ) );
 	}
 	
 	
@@ -414,10 +455,10 @@
 		
 		char* var = *it;
 		
-		const char* end = Sh::EndOfVarName( var );
+		const char* end = EndOfVarName( var );
 		
 		// Did we find the right environment variable?
-		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
+		if ( end != NULL  &&  *end == '='  &&  VarMatchesName( var, end, name ) )
 		{
 			return var + (end - var) + 1;
 		}
@@ -434,7 +475,7 @@
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		bool match = VarMatchesName( var, EndOfVarName( var ), name );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -442,11 +483,11 @@
 		if ( inserting )
 		{
 			// copy_string() may throw, but insert() will not
-			itsVars.insert( it, copy_string( Sh::MakeVar( name, value ) ) );
+			itsVars.insert( it, copy_string( MakeVar( name, value ) ) );
 		}
 		else if ( overwrite )
 		{
-			std::string new_var = Sh::MakeVar( name, value );
+			std::string new_var = MakeVar( name, value );
 			
 			OverwriteVar< false >( it, new_var.c_str(), new_var.length() );
 		}
@@ -467,7 +508,7 @@
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name.c_str() );
+		bool match = VarMatchesName( var, EndOfVarName( var ), name.c_str() );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -491,7 +532,7 @@
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		bool match = VarMatchesName( var, EndOfVarName( var ), name );
 		
 		
 		if ( match )
