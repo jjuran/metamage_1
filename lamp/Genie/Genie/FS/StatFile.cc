@@ -8,6 +8,9 @@
 // Standard C++
 #include <string>
 
+// Standard C/C++
+#include <cstring>
+
 // POSIX
 #include "stdlib.h"
 #include "sys/stat.h"
@@ -136,6 +139,13 @@ namespace Genie
 		sb->st_mtime =                                       hFileInfo.ioFlMdDat  - timeDiff;
 		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
 		sb->st_ctime = (is_rsrc_fork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
+		
+		if ( name_copy[0] > 31 )
+		{
+			throw N::StringTooLong();
+		}
+		
+		std::memcpy( sb->st_name, name_copy, 1 + name_copy[0] );
 	}
 	
 	
