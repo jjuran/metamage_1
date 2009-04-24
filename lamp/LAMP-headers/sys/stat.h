@@ -53,14 +53,18 @@ struct stat {
 	uid_t	st_uid;			/* user ID of the file's owner */
 	gid_t	st_gid;			/* group ID of the file's group */
 	dev_t	st_rdev;		/* device type */
-	time_t	st_atime;		/* time of last access */
-	time_t	st_mtime;		/* time of last data modification */
-	time_t	st_ctime;		/* time of last file status change */
+	struct timespec	st_atim;		/* time of last access */
+	struct timespec	st_mtim;		/* time of last data modification */
+	struct timespec	st_ctim;		/* time of last file status change */
 	off_t	st_size;		/* file size, in bytes */
 	long	st_blocks;		/* blocks allocated for file */
 	unsigned long	st_blksize;	/* optimal blocksize for I/O */
 	unsigned long	st_flags;	/* user defined flags for file */
 };
+
+#define st_atime  st_atim.tv_sec
+#define st_mtime  st_mtim.tv_sec
+#define st_ctime  st_ctim.tv_sec
 
 #define	S_ISUID	0004000			/* set user id on execution */
 #define	S_ISGID	0002000			/* set group id on execution */
