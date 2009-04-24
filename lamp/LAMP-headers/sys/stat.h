@@ -61,6 +61,7 @@ struct stat
 	long             st_blocks;   /* blocks allocated for file */
 	unsigned long    st_blksize;  /* optimal blocksize for I/O */
 	unsigned long    st_flags;    /* user defined flags for file */
+	unsigned char    st_name[32]; /* Mac File Manager name of file */
 };
 
 #define st_atime  st_atim.tv_sec
