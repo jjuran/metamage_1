@@ -178,6 +178,7 @@ namespace kerosene
 	
 	template < bool putting >
 	void environ_store::overwrite( std::vector< char* >::iterator                    it,
+	                               std::size_t                                       old_len,
 	                               typename overwrite_traits< putting >::param_type  string,
 	                               std::size_t                                       new_len )
 	{
@@ -187,8 +188,6 @@ namespace kerosene
 		const bool new_is_user_owned = traits::user_owned;
 		
 		char* var = *it;
-		
-		std::size_t old_len = std::strlen( var );
 		
 		std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( var );
 		
@@ -266,7 +265,7 @@ namespace kerosene
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		const bool match = var_match( var, name );
+		const char* match = var_match( var, name );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -292,7 +291,7 @@ namespace kerosene
 		{
 			std::string new_var = MakeVar( name, value );
 			
-			overwrite< false >( it, new_var.c_str(), new_var.length() );
+			overwrite< false >( it, match - var - 1, new_var.c_str(), new_var.length() );
 		}
 	}
 	
@@ -305,7 +304,7 @@ namespace kerosene
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		const bool match = var_match( var, string );
+		const char* match = var_match( var, string );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -320,7 +319,7 @@ namespace kerosene
 		{
 			std::size_t length = std::strlen( string );
 			
-			overwrite< true >( it, string, length );
+			overwrite< true >( it, match - var - 1, string, length );
 		}
 	}
 	

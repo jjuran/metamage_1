@@ -68,6 +68,7 @@ namespace kerosene
 			
 			template < bool putting >
 			void overwrite( std::vector< char* >::iterator                    it,
+	                        std::size_t                                       old_len,
 	                        typename overwrite_traits< putting >::param_type  string,
 	                        std::size_t                                       new_len );
 			
