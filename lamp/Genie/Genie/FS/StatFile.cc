@@ -122,6 +122,9 @@ namespace Genie
 			// (b) doesn't pass through ThrowOSStatus_Internal(), which
 			// would make life hell if we had set a breakpoint there.
 			// Also it lets us pass partial results back before throwing.
+			
+			sb->st_rdev = dirID;
+			
 			throw N::FNFErr();
 		}
 		
