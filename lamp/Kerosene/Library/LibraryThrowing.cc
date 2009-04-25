@@ -7,6 +7,7 @@
 #include <LowMem.h>
 
 // Standard C
+#include <assert.h>
 #include "errno.h"
 #include <stdarg.h>
 #include "stdlib.h"
@@ -320,6 +321,7 @@
 		private:
 			std::vector< char* >     itsVars;
 			std::set< const char* >  itsUserOwnedVars;
+			Environ*                 itsNext;
 			
 		private:
 			// Non-copyable
@@ -327,7 +329,7 @@
 			Environ& operator=( const Environ& );
 		
 		public:
-			Environ( iota::environ_t envp );
+			Environ( Environ* next, iota::environ_t envp );
 			
 			~Environ();
 			
@@ -346,10 +348,27 @@
 			void PutEnv( char* string );
 			void UnsetEnv( const char* name );
 			void ClearEnv();
+			
+			static Environ* pop( Environ* top );
 	};
 	
 	
-	Environ::Environ( iota::environ_t envp )
+	Environ* Environ::pop( Environ* top )
+	{
+		assert( top != NULL );
+		
+		Environ* next = top->itsNext;
+		
+		assert( next != NULL );
+		
+		next->UpdateEnvironValue();
+		
+		delete top;
+		
+		return next;
+	}
+	
+	Environ::Environ( Environ* next, iota::environ_t envp ) : itsNext( next )
 	{
 		CopyVars( envp, itsVars );
 		
@@ -567,25 +586,21 @@
 	}
 	
 	
-	static Environ* gEnvironPtr;
+	static Environ* global_environ_top = NULL;
 	
-	static Environ* global_alt_environ;
-	
-	static int global_vfork_level = 0;
+	static int global_environ_level = 0;
+	static int global_vfork_level   = 0;
 	
 	static Environ& get_envp()
 	{
-		if ( global_vfork_level )
+		while ( global_vfork_level >= global_environ_level )
 		{
-			if ( global_alt_environ == NULL )
-			{
-				global_alt_environ = new Environ( environ );
-			}
+			global_environ_top = new Environ( global_environ_top, environ );
 			
-			return *global_alt_environ;
+			++global_environ_level;
 		}
 		
-		return *gEnvironPtr;
+		return *global_environ_top;
 	}
 	
 	extern "C" const void* InitializeEnviron();
@@ -597,15 +612,17 @@
 	{
 		try
 		{
-			static Environ gEnviron( GetEnvironFromKernel() );
+			static Environ gEnviron( NULL, GetEnvironFromKernel() );
 			
-			gEnvironPtr = &gEnviron;
+			global_environ_top = &gEnviron;
+			
+			global_environ_level = 1;
 		}
 		catch ( ... )
 		{
 		}
 		
-		return gEnvironPtr;  // NULL if bad_alloc
+		return global_environ_top;  // NULL if bad_alloc
 	}
 	
 	void vfork_push()
@@ -615,13 +632,12 @@
 	
 	void vfork_pop()
 	{
-		--global_vfork_level;
-		
-		delete global_alt_environ;
-		
-		global_alt_environ = NULL;
-		
-		gEnvironPtr->UpdateEnvironValue();
+		if ( global_environ_level > global_vfork_level-- )
+		{
+			global_environ_top = Environ::pop( global_environ_top );
+			
+			--global_environ_level;
+		}
 	}
 	
 	
