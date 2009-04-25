@@ -345,7 +345,7 @@
 			~environ_store();
 			
 			char* get( const char* name );
-			void set( const char* name, const char* value, bool overwrite );
+			void set( const char* name, const char* value, bool overwriting );
 			void put( char* string );
 			void unset( const char* name );
 			void clear();
@@ -488,7 +488,7 @@
 		return NULL;
 	}
 	
-	void environ_store::set( const char* name, const char* value, bool overwrite )
+	void environ_store::set( const char* name, const char* value, bool overwriting )
 	{
 		preallocate();  // make insertion safe
 		
@@ -507,7 +507,7 @@
 			// copy_string() may throw, but insert() will not
 			itsVars.insert( it, copy_string( MakeVar( name, value ) ) );
 		}
-		else if ( overwrite )
+		else if ( overwriting )
 		{
 			std::string new_var = MakeVar( name, value );
 			
@@ -649,9 +649,9 @@
 		return global_environ_top->get( name );
 	}
 	
-	int setenv( const char* name, const char* value, int overwrite )
+	int setenv( const char* name, const char* value, int overwriting )
 	{
-		get_envp().set( name, value, overwrite );
+		get_envp().set( name, value, overwriting );
 		
 		return 0;
 	}
