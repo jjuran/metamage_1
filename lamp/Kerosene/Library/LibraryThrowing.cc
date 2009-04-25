@@ -316,17 +316,17 @@
 	};
 	
 	
-	class Environ
+	class environ_store
 	{
 		private:
 			std::vector< char* >     itsVars;
 			std::set< const char* >  itsUserOwnedVars;
-			Environ*                 itsNext;
+			environ_store*           itsNext;
 			
 		private:
 			// Non-copyable
-			Environ           ( const Environ& );
-			Environ& operator=( const Environ& );
+			environ_store           ( const environ_store& );
+			environ_store& operator=( const environ_store& );
 			
 		private:
 			void update_environ();
@@ -340,9 +340,9 @@
 			void reset_user_owned();
 		
 		public:
-			Environ( Environ* next, iota::environ_t envp );
+			environ_store( environ_store* next, iota::environ_t envp );
 			
-			~Environ();
+			~environ_store();
 			
 			char* get( const char* name );
 			void set( const char* name, const char* value, bool overwrite );
@@ -350,15 +350,15 @@
 			void unset( const char* name );
 			void clear();
 			
-			static Environ* pop( Environ* top );
+			static environ_store* pop( environ_store* top );
 	};
 	
 	
-	Environ* Environ::pop( Environ* top )
+	environ_store* environ_store::pop( environ_store* top )
 	{
 		assert( top != NULL );
 		
-		Environ* next = top->itsNext;
+		environ_store* next = top->itsNext;
 		
 		assert( next != NULL );
 		
@@ -369,24 +369,26 @@
 		return next;
 	}
 	
-	Environ::Environ( Environ* next, iota::environ_t envp ) : itsNext( next )
+	environ_store::environ_store( environ_store* next, iota::environ_t envp )
+	:
+		itsNext( next )
 	{
 		CopyVars( envp, itsVars );
 		
 		update_environ();
 	}
 	
-	Environ::~Environ()
+	environ_store::~environ_store()
 	{
 		clear();
 	}
 	
-	void Environ::update_environ()
+	void environ_store::update_environ()
 	{
 		environ = &itsVars.front();
 	}
 	
-	void Environ::preallocate()
+	void environ_store::preallocate()
 	{
 		// We reserve an extra slot so we can later insert without allocating memory, which
 		// (a) could fail and throw bad_alloc, or
@@ -398,9 +400,9 @@
 	}
 	
 	template < bool putting >
-	void Environ::overwrite( std::vector< char* >::iterator                    it,
-	                         typename overwrite_traits< putting >::param_type  string,
-	                         std::size_t                                       new_len )
+	void environ_store::overwrite( std::vector< char* >::iterator                    it,
+	                               typename overwrite_traits< putting >::param_type  string,
+	                               std::size_t                                       new_len )
 	{
 		typedef overwrite_traits< putting > traits;
 		
@@ -448,7 +450,7 @@
 		}
 	}
 	
-	void Environ::reset_user_owned()
+	void environ_store::reset_user_owned()
 	{
 		// Here we zero out user-owned var string storage.  This is a convenience
 		// that allows us to subsequently call DeleteVars() safely without
@@ -469,7 +471,7 @@
 		itsUserOwnedVars.clear();
 	}
 	
-	char* Environ::get( const char* name )
+	char* environ_store::get( const char* name )
 	{
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
@@ -486,7 +488,7 @@
 		return NULL;
 	}
 	
-	void Environ::set( const char* name, const char* value, bool overwrite )
+	void environ_store::set( const char* name, const char* value, bool overwrite )
 	{
 		preallocate();  // make insertion safe
 		
@@ -513,7 +515,7 @@
 		}
 	}
 	
-	void Environ::put( char* string )
+	void environ_store::put( char* string )
 	{
 		std::string name = string;
 		
@@ -545,7 +547,7 @@
 		}
 	}
 	
-	void Environ::unset( const char* name )
+	void environ_store::unset( const char* name )
 	{
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
@@ -572,7 +574,7 @@
 		}
 	}
 	
-	void Environ::clear()
+	void environ_store::clear()
 	{
 		// Zero out user-owned memory so we don't try to delete it.
 		reset_user_owned();
@@ -587,16 +589,16 @@
 	}
 	
 	
-	static Environ* global_environ_top = NULL;
+	static environ_store *global_environ_top = NULL;
 	
 	static int global_environ_level = 0;
 	static int global_vfork_level   = 0;
 	
-	static Environ& get_envp()
+	static environ_store& get_envp()
 	{
 		while ( global_vfork_level >= global_environ_level )
 		{
-			global_environ_top = new Environ( global_environ_top, environ );
+			global_environ_top = new environ_store( global_environ_top, environ );
 			
 			++global_environ_level;
 		}
@@ -613,7 +615,7 @@
 	{
 		try
 		{
-			static Environ gEnviron( NULL, GetEnvironFromKernel() );
+			static environ_store gEnviron( NULL, GetEnvironFromKernel() );
 			
 			global_environ_top = &gEnviron;
 			
@@ -635,7 +637,7 @@
 	{
 		if ( global_environ_level > global_vfork_level-- )
 		{
-			global_environ_top = Environ::pop( global_environ_top );
+			global_environ_top = environ_store::pop( global_environ_top );
 			
 			--global_environ_level;
 		}
