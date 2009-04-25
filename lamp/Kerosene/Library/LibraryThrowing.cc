@@ -231,42 +231,36 @@
 	}
 	
 	
-	// C string 'less'
+	// var is either NULL or of the form "name=oldvalue"
+	// name may be either "name" or "name=newvalue"
+	// Returns pointer to "oldvalue" on match or NULL otherwise.
 	
-	static inline bool CompareStrings( const char* a, const char* b )
+	static char* var_match( char* var, const char* name )
 	{
-		return std::strcmp( a, b ) < 0;
-	}
-	
-	// For input of "name" or "name=value", return a pointer to the byte following name.
-	// For NULL, return NULL (identity).
-	
-	static const char* EndOfVarName( const char* var )
-	{
-		if ( var == NULL )
+		if ( var )
 		{
-			return NULL;
+			for ( ;  ;  ++var, ++name )
+			{
+				const char c = *name != '\0' ? *name : '=';
+				
+				if ( *var != c )
+				{
+					break;
+				}
+				
+				if ( c == '=' )
+				{
+					return var + 1;
+				}
+			}
 		}
 		
-		const char* end = std::strchr( var, '=' );
-		
-		if ( end == NULL )
-		{
-			end = std::strchr( var, '\0' );
-		}
-		
-		return end;
+		return NULL;
 	}
 	
-	// True if the sequence (var, end) == (name, name + strlen(name)).
-	// If var is NULL, it returns false.
-	// end and name may be NULL if var is NULL.
-	
-	static bool VarMatchesName( const char* var, const char* end, const char* name )
+	static inline const char* var_match( const char* var, const char* name )
 	{
-		return    var != NULL
-		       && end - var == std::strlen( name )
-		       && std::equal( var, end, name );
+		return var_match( (char*) var, name );
 	}
 	
 	static inline std::string MakeVar( const std::string& name, const char* value )
@@ -274,12 +268,31 @@
 		return value != NULL ? name + "=" + value : name;
 	}
 	
+	static bool var_less( const char* var, const char* name )
+	{
+		for ( ;  ;  ++var, ++name )
+		{
+			const char c = *name != '\0' ? *name : '=';
+			
+			if ( c == '=' )
+			{
+				// End of name.  var is longer or equal length, not less.
+				return false;
+			}
+			
+			if ( *var != c )
+			{
+				return *var < c  ||  *var == '=';
+			}
+		}
+	}
+	
 	static std::vector< char* >::iterator FindVar( std::vector< char* >& vars, const char* name )
 	{
 		return std::lower_bound( vars.begin(),
 		                         vars.end() - 1,
 		                         name,
-		                         std::ptr_fun( CompareStrings ) );
+		                         std::ptr_fun( var_less ) );
 	}
 	
 	
@@ -477,15 +490,7 @@
 		
 		char* var = *it;
 		
-		const char* end = EndOfVarName( var );
-		
-		// Did we find the right environment variable?
-		if ( end != NULL  &&  *end == '='  &&  VarMatchesName( var, end, name ) )
-		{
-			return var + (end - var) + 1;
-		}
-		
-		return NULL;
+		return var_match( var, name );
 	}
 	
 	void environ_store::set( const char* name, const char* value, bool overwriting )
@@ -497,7 +502,7 @@
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = VarMatchesName( var, EndOfVarName( var ), name );
+		const bool match = var_match( var, name );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -517,20 +522,14 @@
 	
 	void environ_store::put( char* string )
 	{
-		std::string name = string;
-		
-		std::size_t length = name.length();
-		
-		name.resize( name.find( '=' ) );
-		
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = FindVar( itsVars, name.c_str() );
+		std::vector< char* >::iterator it = FindVar( itsVars, string );
 		
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = VarMatchesName( var, EndOfVarName( var ), name.c_str() );
+		const bool match = var_match( var, string );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		bool inserting = !match;
@@ -543,6 +542,8 @@
 		}
 		else
 		{
+			std::size_t length = std::strlen( string );
+			
 			overwrite< true >( it, string, length );
 		}
 	}
@@ -554,7 +555,7 @@
 		const char* var = *it;
 		
 		// Did we find the right environment variable?
-		bool match = VarMatchesName( var, EndOfVarName( var ), name );
+		const bool match = var_match( var, name );
 		
 		
 		if ( match )
