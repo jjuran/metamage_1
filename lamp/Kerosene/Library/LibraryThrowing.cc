@@ -644,7 +644,7 @@
 	
 	char* getenv( const char* name )
 	{
-		return get_envp().GetEnv( name );
+		return global_environ_top->GetEnv( name );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
