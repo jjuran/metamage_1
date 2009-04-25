@@ -329,15 +329,15 @@
 			Environ& operator=( const Environ& );
 			
 		private:
-			void UpdateEnvironValue();
-			void Preallocate();
+			void update_environ();
+			void preallocate();
 			
 			template < bool putting >
-			void OverwriteVar( std::vector< char* >::iterator                    it,
-	                           typename overwrite_traits< putting >::param_type  string,
-	                           std::size_t                                       new_len );
+			void overwrite( std::vector< char* >::iterator                    it,
+	                        typename overwrite_traits< putting >::param_type  string,
+	                        std::size_t                                       new_len );
 			
-			void RemoveUserOwnedVars();
+			void reset_user_owned();
 		
 		public:
 			Environ( Environ* next, iota::environ_t envp );
@@ -362,7 +362,7 @@
 		
 		assert( next != NULL );
 		
-		next->UpdateEnvironValue();
+		next->update_environ();
 		
 		delete top;
 		
@@ -373,7 +373,7 @@
 	{
 		CopyVars( envp, itsVars );
 		
-		UpdateEnvironValue();
+		update_environ();
 	}
 	
 	Environ::~Environ()
@@ -381,12 +381,12 @@
 		clear();
 	}
 	
-	void Environ::UpdateEnvironValue()
+	void Environ::update_environ()
 	{
 		environ = &itsVars.front();
 	}
 	
-	void Environ::Preallocate()
+	void Environ::preallocate()
 	{
 		// We reserve an extra slot so we can later insert without allocating memory, which
 		// (a) could fail and throw bad_alloc, or
@@ -394,13 +394,13 @@
 		
 		itsVars.reserve( itsVars.size() + 1 );
 		
-		UpdateEnvironValue();
+		update_environ();
 	}
 	
 	template < bool putting >
-	void Environ::OverwriteVar( std::vector< char* >::iterator                    it,
-	                            typename overwrite_traits< putting >::param_type  string,
-	                            std::size_t                                       new_len )
+	void Environ::overwrite( std::vector< char* >::iterator                    it,
+	                         typename overwrite_traits< putting >::param_type  string,
+	                         std::size_t                                       new_len )
 	{
 		typedef overwrite_traits< putting > traits;
 		
@@ -448,7 +448,7 @@
 		}
 	}
 	
-	void Environ::RemoveUserOwnedVars()
+	void Environ::reset_user_owned()
 	{
 		// Here we zero out user-owned var string storage.  This is a convenience
 		// that allows us to subsequently call DeleteVars() safely without
@@ -488,7 +488,7 @@
 	
 	void Environ::set( const char* name, const char* value, bool overwrite )
 	{
-		Preallocate();  // make insertion safe
+		preallocate();  // make insertion safe
 		
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
@@ -509,7 +509,7 @@
 		{
 			std::string new_var = MakeVar( name, value );
 			
-			OverwriteVar< false >( it, new_var.c_str(), new_var.length() );
+			overwrite< false >( it, new_var.c_str(), new_var.length() );
 		}
 	}
 	
@@ -521,7 +521,7 @@
 		
 		name.resize( name.find( '=' ) );
 		
-		Preallocate();  // make insertion safe
+		preallocate();  // make insertion safe
 		
 		std::vector< char* >::iterator it = FindVar( itsVars, name.c_str() );
 		
@@ -541,7 +541,7 @@
 		}
 		else
 		{
-			OverwriteVar< true >( it, string, length );
+			overwrite< true >( it, string, length );
 		}
 	}
 	
@@ -575,7 +575,7 @@
 	void Environ::clear()
 	{
 		// Zero out user-owned memory so we don't try to delete it.
-		RemoveUserOwnedVars();
+		reset_user_owned();
 		
 		DeleteVars( itsVars );
 		
