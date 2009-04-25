@@ -344,11 +344,11 @@
 			
 			~Environ();
 			
-			char* GetEnv( const char* name );
-			void SetEnv( const char* name, const char* value, bool overwrite );
-			void PutEnv( char* string );
-			void UnsetEnv( const char* name );
-			void ClearEnv();
+			char* get( const char* name );
+			void set( const char* name, const char* value, bool overwrite );
+			void put( char* string );
+			void unset( const char* name );
+			void clear();
 			
 			static Environ* pop( Environ* top );
 	};
@@ -378,7 +378,7 @@
 	
 	Environ::~Environ()
 	{
-		ClearEnv();
+		clear();
 	}
 	
 	void Environ::UpdateEnvironValue()
@@ -469,7 +469,7 @@
 		itsUserOwnedVars.clear();
 	}
 	
-	char* Environ::GetEnv( const char* name )
+	char* Environ::get( const char* name )
 	{
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
@@ -486,7 +486,7 @@
 		return NULL;
 	}
 	
-	void Environ::SetEnv( const char* name, const char* value, bool overwrite )
+	void Environ::set( const char* name, const char* value, bool overwrite )
 	{
 		Preallocate();  // make insertion safe
 		
@@ -513,7 +513,7 @@
 		}
 	}
 	
-	void Environ::PutEnv( char* string )
+	void Environ::put( char* string )
 	{
 		std::string name = string;
 		
@@ -545,7 +545,7 @@
 		}
 	}
 	
-	void Environ::UnsetEnv( const char* name )
+	void Environ::unset( const char* name )
 	{
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
@@ -572,7 +572,7 @@
 		}
 	}
 	
-	void Environ::ClearEnv()
+	void Environ::clear()
 	{
 		// Zero out user-owned memory so we don't try to delete it.
 		RemoveUserOwnedVars();
@@ -644,31 +644,31 @@
 	
 	char* getenv( const char* name )
 	{
-		return global_environ_top->GetEnv( name );
+		return global_environ_top->get( name );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
 	{
-		get_envp().SetEnv( name, value, overwrite );
+		get_envp().set( name, value, overwrite );
 		
 		return 0;
 	}
 	
 	int putenv( char* string )
 	{
-		get_envp().PutEnv( string );
+		get_envp().put( string );
 		
 		return 0;
 	}
 	
 	void unsetenv( const char* name )
 	{
-		get_envp().UnsetEnv( name );
+		get_envp().unset( name );
 	}
 	
 	int clearenv()
 	{
-		get_envp().ClearEnv();
+		get_envp().clear();
 		
 		return 0;
 	}
