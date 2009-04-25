@@ -102,19 +102,31 @@ namespace Genie
 		
 		CInfoPBRec cInfo = { 0 };
 		
-		if ( !FSpGetCatInfo< FNF_Returns >( cInfo, vRefNum, dirID, name_copy ) )
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, vRefNum, dirID, name_copy );
+		
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		sb->st_dev = -hFileInfo.ioVRefNum;  // inverted vRefNum (positive integer) for device
+		sb->st_rdev = hFileInfo.ioFlParID;  // dir ID of parent
+		
+		if ( name_copy[0] > 31 )
+		{
+			throw N::StringTooLong();
+		}
+		
+		std::memcpy( sb->st_name, name_copy, 1 + name_copy[0] );
+		
+		if ( !exists )
 		{
 			// Treating this specially (a) prevents a stack crawl, and
 			// (b) doesn't pass through ThrowOSStatus_Internal(), which
 			// would make life hell if we had set a breakpoint there.
+			// Also it lets us pass partial results back before throwing.
 			throw N::FNFErr();
 		}
 		
-		const HFileInfo& hFileInfo = cInfo.hFileInfo;
-		
 		const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
-		sb->st_dev = -hFileInfo.ioVRefNum;  // inverted vRefNum (positive integer) for device
 		sb->st_ino = hFileInfo.ioDirID;     // file or dir ID for inode
 		sb->st_mode = GetItemMode( hFileInfo );
 		// dirs: # of items (including . and ..)
@@ -122,7 +134,6 @@ namespace Genie
 		sb->st_nlink = is_dir ? cInfo.dirInfo.ioDrNmFls + 2: 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
-		sb->st_rdev = hFileInfo.ioFlParID;
 		// logical fork length in bytes
 		sb->st_size = is_dir ? 0
 		                     : is_rsrc_fork ? hFileInfo.ioFlRLgLen
@@ -139,13 +150,6 @@ namespace Genie
 		sb->st_mtime =                                       hFileInfo.ioFlMdDat  - timeDiff;
 		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
 		sb->st_ctime = (is_rsrc_fork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
-		
-		if ( name_copy[0] > 31 )
-		{
-			throw N::StringTooLong();
-		}
-		
-		std::memcpy( sb->st_name, name_copy, 1 + name_copy[0] );
 	}
 	
 	
