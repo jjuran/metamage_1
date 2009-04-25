@@ -172,6 +172,8 @@
 	}
 	
 	
+	using kerosene::environ_store;
+	
 	static environ_store *global_environ_top = NULL;
 	
 	static int global_environ_level = 0;

@@ -14,7 +14,8 @@
 #include "iota/environ.hh"
 
 
-//
+namespace kerosene
+{
 	
 	// This exercise is necessary because we need to pass the string with
 	// different constness depending on whether we're setting or putting.
@@ -86,5 +87,7 @@
 			static environ_store* pop( environ_store* top );
 	};
 	
+}
+
 #endif
 

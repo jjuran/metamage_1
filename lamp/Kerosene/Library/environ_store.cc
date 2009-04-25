@@ -15,10 +15,11 @@
 #include <string>
 
 
-//
+iota::environ_t environ = NULL;
 
-	iota::environ_t environ = NULL;
-	
+
+namespace kerosene
+{
 	
 	inline char* copy_string( const char* s )
 	{
@@ -361,5 +362,5 @@
 		environ = NULL;
 	}
 	
-//
+}
 
