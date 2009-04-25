@@ -215,8 +215,6 @@ namespace kerosene
 			
 			if ( user_ownership != itsUserOwnedVars.end() )
 			{
-				//itsUserOwnedVars.erase( user_ownership );
-				
 				*it = NULL;
 			}
 		}
