@@ -596,7 +596,10 @@ namespace Genie
 		
 		if ( index == 0  &&  (name == NULL  ||  name[ 0 ] == '\0') )
 		{
-			name = dummyName;
+			if ( name == NULL )
+			{
+				name = dummyName;
+			}
 			
 			index = -1;
 		}
