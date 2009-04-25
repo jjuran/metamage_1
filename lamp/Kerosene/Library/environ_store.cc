@@ -11,9 +11,6 @@
 // Standard C/C++
 #include <cstring>
 
-// Standard C++
-#include <string>
-
 
 iota::environ_t environ = NULL;
 
@@ -98,11 +95,6 @@ namespace kerosene
 		return var_match( (char*) var, name );
 	}
 	
-	static inline std::string MakeVar( const std::string& name, const char* value )
-	{
-		return value != NULL ? name + "=" + value : name;
-	}
-	
 	static bool var_less( const char* var, const char* name )
 	{
 		for ( ;  ;  ++var, ++name )
@@ -177,15 +169,12 @@ namespace kerosene
 	}
 	
 	template < bool putting >
-	void environ_store::overwrite( std::vector< char* >::iterator                    it,
-	                               std::size_t                                       old_len,
-	                               typename overwrite_traits< putting >::param_type  string,
-	                               std::size_t                                       new_len )
+	void environ_store::overwrite( std::vector< char* >::iterator  it,
+	                               char                           *string,
+	                               std::size_t                     new_len )
 	{
-		typedef overwrite_traits< putting > traits;
-		
 		// true for putenv(), false for setenv(), known at compile time.
-		const bool new_is_user_owned = traits::user_owned;
+		const bool new_is_user_owned = putting;
 		
 		char* var = *it;
 		
@@ -194,19 +183,16 @@ namespace kerosene
 		// true for putenv(), false for setenv(), known at runtime.
 		bool old_is_user_owned = user_ownership != itsUserOwnedVars.end();
 		
-		// If neither var string is user-owned and the lengths are the same,
-		// it's a straight copy -- no memory management is required.
 		// User-owned var strings don't get allocated or deallocated here,
 		// but instead we have to mark them so we don't delete them later.
 		
-		if ( old_is_user_owned  ||  new_is_user_owned  ||  new_len != old_len )
 		{
 			if ( new_is_user_owned )
 			{
 				itsUserOwnedVars.insert( string );  // may throw
 			}
 			
-			*it = traits::new_storage( string, new_len );
+			*it = string;
 			
 			if ( old_is_user_owned )
 			{
@@ -216,13 +202,6 @@ namespace kerosene
 			{
 				delete [] var;
 			}
-			
-			var = *it;
-		}
-		
-		if ( !new_is_user_owned )
-		{
-			std::copy( string, string + new_len + 1, var );
 		}
 	}
 	
@@ -293,9 +272,14 @@ namespace kerosene
 		}
 		else if ( overwriting )
 		{
-			std::string new_var = MakeVar( name, value );
+			const std::size_t name_length  = match - var - 1;
+			const std::size_t value_length = std::strlen( value );
 			
-			overwrite< false >( it, match - var - 1, new_var.c_str(), new_var.length() );
+			const std::size_t total_length = name_length + 1 + value_length;
+			
+			char* new_var = copy_var( name, name_length, value, value_length );
+			
+			overwrite< false >( it, new_var, total_length );
 		}
 	}
 	
@@ -323,7 +307,7 @@ namespace kerosene
 		{
 			std::size_t length = std::strlen( string );
 			
-			overwrite< true >( it, match - var - 1, string, length );
+			overwrite< true >( it, string, length );
 		}
 	}
 	

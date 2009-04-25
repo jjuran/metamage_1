@@ -17,39 +17,6 @@
 namespace kerosene
 {
 	
-	// This exercise is necessary because we need to pass the string with
-	// different constness depending on whether we're setting or putting.
-	// With setenv(), we construct a new std::string on which we call c_str(),
-	// which returns const char*.  With putenv(), we're using the actual string,
-	// and storing it as char*.  Type-safety for the win.
-	
-	template < bool putting > struct overwrite_traits;
-	
-	template <> struct overwrite_traits< false >
-	{
-		static const bool user_owned = false;
-		
-		typedef const char* param_type;
-		
-		static char* new_storage( param_type, std::size_t length )
-		{
-			return new char[ length + 1 ];
-		}
-	};
-	
-	template <> struct overwrite_traits< true >
-	{
-		static const bool user_owned = true;
-		
-		typedef char* param_type;
-		
-		static char* new_storage( param_type string, std::size_t )
-		{
-			return string;
-		}
-	};
-	
-	
 	class environ_store
 	{
 		private:
@@ -67,10 +34,9 @@ namespace kerosene
 			void preallocate();
 			
 			template < bool putting >
-			void overwrite( std::vector< char* >::iterator                    it,
-	                        std::size_t                                       old_len,
-	                        typename overwrite_traits< putting >::param_type  string,
-	                        std::size_t                                       new_len );
+			void overwrite( std::vector< char* >::iterator  it,
+	                        char                           *string,
+	                        std::size_t                     new_len );
 			
 			void reset_user_owned();
 		
