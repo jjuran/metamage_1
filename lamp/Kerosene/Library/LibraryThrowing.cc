@@ -327,12 +327,8 @@
 			// Non-copyable
 			Environ           ( const Environ& );
 			Environ& operator=( const Environ& );
-		
-		public:
-			Environ( Environ* next, iota::environ_t envp );
 			
-			~Environ();
-			
+		private:
 			void UpdateEnvironValue();
 			void Preallocate();
 			
@@ -342,6 +338,11 @@
 	                           std::size_t                                       new_len );
 			
 			void RemoveUserOwnedVars();
+		
+		public:
+			Environ( Environ* next, iota::environ_t envp );
+			
+			~Environ();
 			
 			char* GetEnv( const char* name );
 			void SetEnv( const char* name, const char* value, bool overwrite );
