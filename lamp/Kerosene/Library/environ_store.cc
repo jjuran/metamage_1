@@ -32,15 +32,6 @@ namespace kerosene
 		return result;
 	}
 	
-	inline char* copy_string( const std::string& s )
-	{
-		char* result = new char[ s.size() + 1 ];
-		
-		std::copy( s.c_str(), s.c_str() + s.size() + 1, result );
-		
-		return result;
-	}
-	
 	static void DeleteVars( std::vector< char* >& result )
 	{
 		for ( int i = result.size() - 1;  i >= 0;  --i )
@@ -282,8 +273,20 @@ namespace kerosene
 		
 		if ( inserting )
 		{
-			// copy_string() may throw, but insert() will not
-			itsVars.insert( it, copy_string( MakeVar( name, value ) ) );
+			std::size_t name_length  = std::strlen( name  );
+			std::size_t value_length = std::strlen( value );
+			
+			std::size_t total_length = name_length + 1 + value_length;
+			
+			char* new_string = new char[ total_length + 1 ];
+			
+			std::memcpy( new_string, name, name_length );
+			
+			new_string[ name_length ] = '=';
+			
+			std::memcpy( new_string + name_length + 1, value, value_length + 1 );
+			
+			itsVars.insert( it, new_string );  // won't throw
 		}
 		else if ( overwriting )
 		{
