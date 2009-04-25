@@ -186,22 +186,20 @@ namespace kerosene
 		// User-owned var strings don't get allocated or deallocated here,
 		// but instead we have to mark them so we don't delete them later.
 		
+		if ( new_is_user_owned )
 		{
-			if ( new_is_user_owned )
-			{
-				itsUserOwnedVars.insert( string );  // may throw
-			}
-			
-			*it = string;
-			
-			if ( old_is_user_owned )
-			{
-				itsUserOwnedVars.erase( user_ownership );
-			}
-			else
-			{
-				delete [] var;
-			}
+			itsUserOwnedVars.insert( string );  // may throw
+		}
+		
+		*it = string;
+		
+		if ( old_is_user_owned )
+		{
+			itsUserOwnedVars.erase( user_ownership );
+		}
+		else
+		{
+			delete [] var;
 		}
 	}
 	
