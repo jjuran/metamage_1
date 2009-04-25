@@ -649,8 +649,6 @@
 		get_envp().UnsetEnv( name );
 	}
 	
-	extern "C" int clearenv();
-	
 	int clearenv()
 	{
 		get_envp().ClearEnv();

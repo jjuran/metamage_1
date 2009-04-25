@@ -117,6 +117,7 @@ long	 atol(const char *);
 void	*bsearch(const void *, const void *, size_t, size_t,
 	    int (*)(const void *, const void *));
 void	*calloc(size_t, size_t);
+int clearenv( void );
 div_t	 div(int, int);
 char	*ecvt(double, int, int *, int *);
 __dead void	 exit(int);
