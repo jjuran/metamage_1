@@ -256,6 +256,21 @@ namespace kerosene
 		return var_match( var, name );
 	}
 	
+	static char* copy_var( const char* name, std::size_t name_length, const char* value, std::size_t value_length )
+	{
+		const std::size_t total_length = name_length + 1 + value_length;
+		
+		char* result = new char[ total_length + 1 ];
+		
+		std::memcpy( result, name, name_length );
+		
+		result[ name_length ] = '=';
+		
+		std::memcpy( result + name_length + 1, value, value_length + 1 );
+		
+		return result;
+	}
+	
 	void environ_store::set( const char* name, const char* value, bool overwriting )
 	{
 		preallocate();  // make insertion safe
@@ -272,20 +287,9 @@ namespace kerosene
 		
 		if ( inserting )
 		{
-			std::size_t name_length  = std::strlen( name  );
-			std::size_t value_length = std::strlen( value );
+			char* new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
 			
-			std::size_t total_length = name_length + 1 + value_length;
-			
-			char* new_string = new char[ total_length + 1 ];
-			
-			std::memcpy( new_string, name, name_length );
-			
-			new_string[ name_length ] = '=';
-			
-			std::memcpy( new_string + name_length + 1, value, value_length + 1 );
-			
-			itsVars.insert( it, new_string );  // won't throw
+			itsVars.insert( it, new_var );  // won't throw
 		}
 		else if ( overwriting )
 		{
