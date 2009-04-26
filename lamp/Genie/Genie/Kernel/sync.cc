@@ -10,8 +10,10 @@
 #include "Nitrogen/Files.h"
 
 // Genie
+#include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -39,12 +41,30 @@ namespace Genie
 	{
 		SystemCallFrame frame( "fdatasync" );
 		
+		try
+		{
+			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( false );
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
 		return 0;
 	}
 	
 	static int fsync( int fd )
 	{
 		SystemCallFrame frame( "fsync" );
+		
+		try
+		{
+			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( true );
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 		
 		return 0;
 	}
