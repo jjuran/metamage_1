@@ -20,9 +20,9 @@ namespace kerosene
 	class environ_store
 	{
 		private:
-			std::vector< char* >     itsVars;
-			std::set< const char* >  itsUserOwnedVars;
-			environ_store*           itsNext;
+			std::vector< char* >     its_vars;
+			std::set< const char* >  its_user_owned_vars;
+			environ_store*           its_next;
 			
 		private:
 			// Non-copyable

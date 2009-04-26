@@ -127,7 +127,7 @@ namespace kerosene
 	{
 		assert( top != NULL );
 		
-		environ_store* next = top->itsNext;
+		environ_store* next = top->its_next;
 		
 		assert( next != NULL );
 		
@@ -140,9 +140,9 @@ namespace kerosene
 	
 	environ_store::environ_store( environ_store* next, iota::environ_t envp )
 	:
-		itsNext( next )
+		its_next( next )
 	{
-		copy_vars( envp, itsVars );
+		copy_vars( envp, its_vars );
 		
 		update_environ();
 	}
@@ -154,7 +154,7 @@ namespace kerosene
 	
 	void environ_store::update_environ()
 	{
-		environ = &itsVars.front();
+		environ = &its_vars.front();
 	}
 	
 	void environ_store::preallocate()
@@ -163,7 +163,7 @@ namespace kerosene
 		// (a) could fail and throw bad_alloc, or
 		// (b) could succeed and invalidate iterators.
 		
-		itsVars.reserve( itsVars.size() + 1 );
+		its_vars.reserve( its_vars.size() + 1 );
 		
 		update_environ();
 	}
@@ -178,24 +178,24 @@ namespace kerosene
 		
 		char* var = *it;
 		
-		std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( var );
+		std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
 		
 		// true for putenv(), false for setenv(), known at runtime.
-		bool old_is_user_owned = user_ownership != itsUserOwnedVars.end();
+		bool old_is_user_owned = user_ownership != its_user_owned_vars.end();
 		
 		// User-owned var strings don't get allocated or deallocated here,
 		// but instead we have to mark them so we don't delete them later.
 		
 		if ( new_is_user_owned )
 		{
-			itsUserOwnedVars.insert( string );  // may throw
+			its_user_owned_vars.insert( string );  // may throw
 		}
 		
 		*it = string;
 		
 		if ( old_is_user_owned )
 		{
-			itsUserOwnedVars.erase( user_ownership );
+			its_user_owned_vars.erase( user_ownership );
 		}
 		else
 		{
@@ -209,22 +209,22 @@ namespace kerosene
 		// that allows us to subsequently call delete_vars() safely without
 		// giving it a dependency on the user ownership structure.
 		
-		for ( std::vector< char* >::iterator it = itsVars.begin();  it != itsVars.end();  ++it )
+		for ( std::vector< char* >::iterator it = its_vars.begin();  it != its_vars.end();  ++it )
 		{
-			std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( *it );
+			std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( *it );
 			
-			if ( user_ownership != itsUserOwnedVars.end() )
+			if ( user_ownership != its_user_owned_vars.end() )
 			{
 				*it = NULL;
 			}
 		}
 		
-		itsUserOwnedVars.clear();
+		its_user_owned_vars.clear();
 	}
 	
 	char* environ_store::get( const char* name )
 	{
-		std::vector< char* >::iterator it = find_var( itsVars, name );
+		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
 		char* var = *it;
 		
@@ -250,7 +250,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = find_var( itsVars, name );
+		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
 		const char* var = *it;
 		
@@ -264,7 +264,7 @@ namespace kerosene
 		{
 			char* new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
 			
-			itsVars.insert( it, new_var );  // won't throw
+			its_vars.insert( it, new_var );  // won't throw
 		}
 		else if ( overwriting )
 		{
@@ -283,7 +283,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = find_var( itsVars, string );
+		std::vector< char* >::iterator it = find_var( its_vars, string );
 		
 		const char* var = *it;
 		
@@ -295,9 +295,9 @@ namespace kerosene
 		
 		if ( inserting )
 		{
-			itsUserOwnedVars.insert( string );  // may throw
+			its_user_owned_vars.insert( string );  // may throw
 			
-			itsVars.insert( it, string );  // memory already reserved
+			its_vars.insert( it, string );  // memory already reserved
 		}
 		else
 		{
@@ -309,7 +309,7 @@ namespace kerosene
 	
 	void environ_store::unset( const char* name )
 	{
-		std::vector< char* >::iterator it = find_var( itsVars, name );
+		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
 		const char* var = *it;
 		
@@ -319,16 +319,16 @@ namespace kerosene
 		
 		if ( match )
 		{
-			std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( var );
+			std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
 			
-			bool user_owned = user_ownership != itsUserOwnedVars.end();
+			bool user_owned = user_ownership != its_user_owned_vars.end();
 			
 			if ( user_owned )
 			{
-				itsUserOwnedVars.erase( user_ownership );
+				its_user_owned_vars.erase( user_ownership );
 			}
 			
-			itsVars.erase( it );
+			its_vars.erase( it );
 			
 			delete [] var;
 		}
@@ -339,11 +339,11 @@ namespace kerosene
 		// Zero out user-owned memory so we don't try to delete it.
 		reset_user_owned();
 		
-		delete_vars( itsVars );
+		delete_vars( its_vars );
 		
-		itsVars.clear();
+		its_vars.clear();
 		
-		itsVars.resize( 1, NULL );
+		its_vars.resize( 1, NULL );
 		
 		environ = NULL;
 	}
