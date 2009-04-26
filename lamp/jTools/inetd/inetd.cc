@@ -16,7 +16,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <netinet/in.h>
 #include <signal.h>
 #include <sys/select.h>
 #include <sys/wait.h>
@@ -30,6 +29,7 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/bundles/inet.hh"
 #include "POSeven/functions/accept.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/listen.hh"
@@ -66,13 +66,6 @@ namespace tool
 	
 	static bool gChildSignalled = false;
 	
-	
-	static void FailedCall( const std::string& name, int error = errno )
-	{
-		std::perror( ("inetd: " + name).c_str() );
-		
-		throw p7::exit_failure;
-	}
 	
 	static void HandleSIGCHLD( int )
 	{
@@ -219,27 +212,13 @@ namespace tool
 			return;  // It's blank or a comment
 		}
 		
-		p7::fd_t listener = p7::socket( p7::pf_inet, p7::sock_stream ).release();
+		Record record = MakeRecord( Split( line ) );
 		
-		if ( listener == -1 )
-		{
-			FailedCall( "socket" );
-		}
+		p7::in_port_t port = p7::in_port_t( record.port );
 		
-		gServers[ listener ] = MakeRecord( Split( line ) );
+		p7::fd_t listener = p7::bind( p7::inaddr_any, port ).release();
 		
-		struct sockaddr_in inetAddress;
-		
-		inetAddress.sin_family = AF_INET;
-		inetAddress.sin_port = gServers[ listener ].port;
-		inetAddress.sin_addr.s_addr = INADDR_ANY;
-		
-		int result = bind( listener, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
-		
-		if ( result == -1 )
-		{
-			FailedCall( "bind" );
-		}
+		gServers[ listener ] = record;
 		
 		p7::listen( listener, 3 );
 	}
