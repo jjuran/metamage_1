@@ -15,6 +15,7 @@
 // POSeven
 #include "POSeven/bundles/inet.hh"
 #include "POSeven/functions/close.hh"
+#include "POSeven/functions/dup2.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/listen.hh"
 #include "POSeven/functions/vfork.hh"
@@ -39,8 +40,8 @@ namespace tool
 		if ( pid == 0 )
 		{
 			// We're the child
-			dup2( client, 0 );  // Input from client
-			dup2( client, 1 );  // Output to client
+			p7::dup2( client, p7::stdin_fileno  );  // Input from client
+			p7::dup2( client, p7::stdout_fileno );  // Output to client
 			//dup2( client, 2 );  // Error inherited
 			
 			int result = close( client );  // Extraneous fd

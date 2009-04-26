@@ -29,6 +29,7 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/execv.hh"
+#include "POSeven/functions/dup2.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/write.hh"
@@ -91,7 +92,7 @@ namespace tool
 		{
 			int closed = close( pipe_ends[0] );
 			
-			int duped = dup2( pipe_ends[1], STDOUT_FILENO );
+			p7::dup2( p7::fd_t( pipe_ends[1] ), p7::stdout_fileno );
 			
 			closed = close( pipe_ends[1] );
 			

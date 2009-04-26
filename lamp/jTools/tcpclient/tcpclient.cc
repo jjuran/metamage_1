@@ -23,6 +23,7 @@
 
 // POSeven
 #include "POSeven/bundles/inet.hh"
+#include "POSeven/functions/dup2.hh"
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/write.hh"
@@ -65,9 +66,12 @@ namespace tool
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		
-		dup2( p7::connect( addr, port ), 6 );
+		const p7::fd_t tcp_in  = p7::fd_t( 6 );
+		const p7::fd_t tcp_out = p7::fd_t( 7 );
 		
-		dup2( 6, 7 );
+		p7::dup2( p7::connect( addr, port ), tcp_in );
+		
+		p7::dup2( tcp_in, tcp_out );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
