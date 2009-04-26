@@ -44,6 +44,8 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
+			void Synchronize( bool metadata );
+			
 			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
 			
 			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
@@ -121,6 +123,24 @@ namespace Genie
 		
 		return Advance( written );
 	}
+	
+	void MacFileHandle::Synchronize( bool metadata )
+	{
+		metadata = true;  // until we implement data-only flush
+		
+		if ( metadata )
+		{
+			FSSpec file = FSSpecFromFRefNum( itsRefNum );
+			
+			// Just flush the whole volume, since we can't be more specific.
+			N::ThrowOSStatus( ::FlushVol( NULL, file.vRefNum ) );
+		}
+		else
+		{
+			// Call PBFlushFile(), or high-level wrapper
+		}
+	}
+	
 	
 	boost::shared_ptr< IOHandle >
 	//
