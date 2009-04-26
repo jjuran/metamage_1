@@ -35,8 +35,7 @@ namespace kerosene
 			
 			template < bool putting >
 			void overwrite( std::vector< char* >::iterator  it,
-	                        char                           *string,
-	                        std::size_t                     new_len );
+	                        char                           *string );
 			
 			void reset_user_owned();
 		
