@@ -20,9 +20,9 @@ namespace kerosene
 	
 	static inline char* copy_string( const char* s )
 	{
-		std::size_t len = std::strlen( s );
+		const std::size_t len = std::strlen( s );
 		
-		char* result = new char[ len + 1 ];
+		char *const result = new char[ len + 1 ];
 		
 		std::copy( s, s + len + 1, result );
 		
@@ -92,7 +92,7 @@ namespace kerosene
 	
 	static inline const char* var_match( const char* var, const char* name )
 	{
-		return var_match( (char*) var, name );
+		return var_match( const_cast< char* >( var ), name );
 	}
 	
 	static bool var_less( const char* var, const char* name )
@@ -127,7 +127,7 @@ namespace kerosene
 	{
 		assert( top != NULL );
 		
-		environ_store* next = top->its_next;
+		environ_store *const next = top->its_next;
 		
 		assert( next != NULL );
 		
@@ -176,12 +176,12 @@ namespace kerosene
 		// true for putenv(), false for setenv(), known at compile time.
 		const bool new_is_user_owned = putting;
 		
-		char* var = *it;
+		char *const var = *it;
 		
 		std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
 		
 		// true for putenv(), false for setenv(), known at runtime.
-		bool old_is_user_owned = user_ownership != its_user_owned_vars.end();
+		const bool old_is_user_owned = user_ownership != its_user_owned_vars.end();
 		
 		// User-owned var strings don't get allocated or deallocated here,
 		// but instead we have to mark them so we don't delete them later.
@@ -226,7 +226,7 @@ namespace kerosene
 	{
 		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
-		char* var = *it;
+		char *const var = *it;
 		
 		return var_match( var, name );
 	}
@@ -235,7 +235,7 @@ namespace kerosene
 	{
 		const std::size_t total_length = name_length + 1 + value_length;
 		
-		char* result = new char[ total_length + 1 ];
+		char *const result = new char[ total_length + 1 ];
 		
 		std::memcpy( result, name, name_length );
 		
@@ -252,17 +252,17 @@ namespace kerosene
 		
 		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
-		const char* var = *it;
+		const char *const var = *it;
 		
 		// Did we find the right environment variable?
-		const char* match = var_match( var, name );
+		const char *const match = var_match( var, name );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
-		bool inserting = !match;
+		const bool inserting = !match;
 		
 		if ( inserting )
 		{
-			char* new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
+			char *const new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
 			
 			its_vars.insert( it, new_var );  // won't throw
 		}
@@ -273,7 +273,7 @@ namespace kerosene
 			
 			const std::size_t total_length = name_length + 1 + value_length;
 			
-			char* new_var = copy_var( name, name_length, value, value_length );
+			char *const new_var = copy_var( name, name_length, value, value_length );
 			
 			overwrite< false >( it, new_var, total_length );
 		}
@@ -285,13 +285,13 @@ namespace kerosene
 		
 		std::vector< char* >::iterator it = find_var( its_vars, string );
 		
-		const char* var = *it;
+		const char *const var = *it;
 		
 		// Did we find the right environment variable?
-		const char* match = var_match( var, string );
+		const char *const match = var_match( var, string );
 		
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
-		bool inserting = !match;
+		const bool inserting = !match;
 		
 		if ( inserting )
 		{
@@ -301,7 +301,7 @@ namespace kerosene
 		}
 		else
 		{
-			std::size_t length = std::strlen( string );
+			const std::size_t length = std::strlen( string );
 			
 			overwrite< true >( it, string, length );
 		}
@@ -311,7 +311,7 @@ namespace kerosene
 	{
 		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
-		const char* var = *it;
+		const char *const var = *it;
 		
 		// Did we find the right environment variable?
 		const bool match = var_match( var, name );
@@ -321,7 +321,7 @@ namespace kerosene
 		{
 			std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
 			
-			bool user_owned = user_ownership != its_user_owned_vars.end();
+			const bool user_owned = user_ownership != its_user_owned_vars.end();
 			
 			if ( user_owned )
 			{
