@@ -18,7 +18,7 @@ iota::environ_t environ = NULL;
 namespace kerosene
 {
 	
-	inline char* copy_string( const char* s )
+	static inline char* copy_string( const char* s )
 	{
 		std::size_t len = std::strlen( s );
 		
