@@ -344,7 +344,7 @@ namespace tool
 					output += "\n";
 				}
 				
-				p7::write( p7::stdout_fileno, output.data(), output.size() );
+				p7::write( p7::stdout_fileno, output );
 			}
 		}
 		catch ( const N::ErrOSAScriptError& err )
