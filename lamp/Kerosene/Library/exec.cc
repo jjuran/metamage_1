@@ -13,7 +13,6 @@
 
 // Standard C++
 #include <string>
-#include <vector>
 
 // POSIX
 #include "sys/stat.h"
@@ -67,74 +66,31 @@
 	
 	int execl( const char* path, const char* arg0, ... )
 	{
-		va_list va;
-		std::vector< const char* > args;
-		
-		args.push_back( arg0 );
-		
-		va_start( va, arg0 );
-		
-		while ( const char* arg = va_arg( va, const char * ) )
-		{
-			args.push_back( arg );
-		}
-		
-		va_end( va );
-		
-		args.push_back( NULL );
-		
-		const char* const* argv = &args[0];
-		
-		return execv( path, argv );
+		return execv( path, &arg0 );
 	}
 	
 	int execle( const char* path, const char* arg0, ... )
 	{
 		va_list va;
-		std::vector< const char* > args;
-		
-		args.push_back( arg0 );
 		
 		va_start( va, arg0 );
 		
 		while ( const char* arg = va_arg( va, const char * ) )
 		{
-			args.push_back( arg );
 		}
-		
-		args.push_back( NULL );
 		
 		const char* const* envp = va_arg( va, const char* const* );
 		
 		va_end( va );
 		
-		const char* const* argv = &args[0];
+		const char* const* argv = &arg0;
 		
 		return execve( path, argv, envp );
 	}
 	
 	int execlp( const char* file, const char* arg0, ... )
 	{
-		
-		va_list va;
-		std::vector< const char* > args;
-		
-		args.push_back( arg0 );
-		
-		va_start( va, arg0 );
-		
-		while ( const char* arg = va_arg( va, const char * ) )
-		{
-			args.push_back( arg );
-		}
-		
-		va_end( va );
-		
-		args.push_back( NULL );
-		
-		const char* const* argv = &args[0];
-		
-		return execvp( file, argv );
+		return execvp( file, &arg0 );
 	}
 	
 	int execvp( const char* file, const char* const argv[] )
