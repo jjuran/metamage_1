@@ -29,7 +29,7 @@ namespace kerosene
 		return result;
 	}
 	
-	static void DeleteVars( std::vector< char* >& result )
+	static void delete_vars( std::vector< char* >& result )
 	{
 		for ( int i = result.size() - 1;  i >= 0;  --i )
 		{
@@ -37,7 +37,7 @@ namespace kerosene
 		}
 	}
 	
-	static void CopyVars( char const *const *vars, std::vector< char* >& result  )
+	static void copy_vars( char const *const *vars, std::vector< char* >& result  )
 	{
 		try
 		{
@@ -56,7 +56,7 @@ namespace kerosene
 		}
 		catch ( ... )
 		{
-			DeleteVars( result );
+			delete_vars( result );
 			
 			throw;
 		}
@@ -114,7 +114,7 @@ namespace kerosene
 		}
 	}
 	
-	static std::vector< char* >::iterator FindVar( std::vector< char* >& vars, const char* name )
+	static std::vector< char* >::iterator find_var( std::vector< char* >& vars, const char* name )
 	{
 		return std::lower_bound( vars.begin(),
 		                         vars.end() - 1,
@@ -142,7 +142,7 @@ namespace kerosene
 	:
 		itsNext( next )
 	{
-		CopyVars( envp, itsVars );
+		copy_vars( envp, itsVars );
 		
 		update_environ();
 	}
@@ -206,7 +206,7 @@ namespace kerosene
 	void environ_store::reset_user_owned()
 	{
 		// Here we zero out user-owned var string storage.  This is a convenience
-		// that allows us to subsequently call DeleteVars() safely without
+		// that allows us to subsequently call delete_vars() safely without
 		// giving it a dependency on the user ownership structure.
 		
 		for ( std::vector< char* >::iterator it = itsVars.begin();  it != itsVars.end();  ++it )
@@ -224,7 +224,7 @@ namespace kerosene
 	
 	char* environ_store::get( const char* name )
 	{
-		std::vector< char* >::iterator it = FindVar( itsVars, name );
+		std::vector< char* >::iterator it = find_var( itsVars, name );
 		
 		char* var = *it;
 		
@@ -250,7 +250,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = FindVar( itsVars, name );
+		std::vector< char* >::iterator it = find_var( itsVars, name );
 		
 		const char* var = *it;
 		
@@ -283,7 +283,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = FindVar( itsVars, string );
+		std::vector< char* >::iterator it = find_var( itsVars, string );
 		
 		const char* var = *it;
 		
@@ -309,7 +309,7 @@ namespace kerosene
 	
 	void environ_store::unset( const char* name )
 	{
-		std::vector< char* >::iterator it = FindVar( itsVars, name );
+		std::vector< char* >::iterator it = find_var( itsVars, name );
 		
 		const char* var = *it;
 		
@@ -339,7 +339,7 @@ namespace kerosene
 		// Zero out user-owned memory so we don't try to delete it.
 		reset_user_owned();
 		
-		DeleteVars( itsVars );
+		delete_vars( itsVars );
 		
 		itsVars.clear();
 		
