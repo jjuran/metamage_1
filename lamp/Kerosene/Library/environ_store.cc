@@ -37,7 +37,7 @@ namespace kerosene
 		}
 	}
 	
-	static void copy_vars( char const *const *vars, std::vector< char* >& result  )
+	static inline void copy_vars( char const *const *vars, std::vector< char* >& result  )
 	{
 		try
 		{
