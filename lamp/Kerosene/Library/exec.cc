@@ -18,6 +18,41 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
+// Iota
+#include "iota/strings.hh"
+
+
+static inline void inscribe_decimal( int x, char* s )
+{
+	char units[] = "9876543210";
+	
+	char* p = units + STRLEN( "9876543210" );
+	
+	if ( x == 0 )
+	{
+		--p;
+	}
+	else
+	{
+		while ( x != 0 )
+		{
+			*--p = '0' + x % 10;
+			
+			x /= 10;
+		}
+	}
+	
+	std::strcpy( s, p );
+}
+
+int fexecve( int fd, const char *const argv[], const char *const envp[] )
+{
+	char path[] = "/dev/fd/9876543210";
+	
+	inscribe_decimal( fd, path + STRLEN( "/dev/fd/" ) );
+	
+	return execve( path, argv, envp );
+}
 
 static std::string LookupPath( const char* filename )
 {
