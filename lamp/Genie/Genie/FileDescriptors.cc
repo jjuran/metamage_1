@@ -61,11 +61,13 @@ namespace Genie
 		return newfd;
 	}
 	
-	void AssignFileDescriptor( int fd, const boost::shared_ptr< IOHandle >& handle )
+	void AssignFileDescriptor( int                                   fd,
+	                           const boost::shared_ptr< IOHandle >&  handle,
+	                           bool                                  close_on_exec )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		files[ fd ] = handle;
+		(files[ fd ] = handle).closeOnExec = close_on_exec;
 	}
 	
 	FileDescriptor& GetFileDescriptor( int fd )

@@ -21,7 +21,9 @@ namespace Genie
 	
 	int DuplicateFileDescriptor( int oldfd, int newfd = LowestUnusedFileDescriptor() );
 	
-	void AssignFileDescriptor( int fd, const boost::shared_ptr< IOHandle >& handle );
+	void AssignFileDescriptor( int                                   fd,
+	                           const boost::shared_ptr< IOHandle >&  handle,
+	                           bool                                  close_on_exec = false );
 	
 	FileDescriptor& GetFileDescriptor( int fd );
 	
