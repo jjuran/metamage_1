@@ -56,6 +56,35 @@ namespace tool
 	static bool gLoginShell = false;
 	
 	
+	static void start_monitoring()
+	{
+		pid_t shell_pgid = getpgrp();
+		
+		// stop until we're fg
+		while ( tcgetpgrp( STDIN_FILENO ) != shell_pgid )
+		{
+			kill( -shell_pgid, SIGTTIN );
+		}
+		
+		p7::signal( p7::sigint,  p7::sig_ign );
+		p7::signal( p7::sigquit, p7::sig_ign );
+		p7::signal( p7::sigtstp, p7::sig_ign );
+		p7::signal( p7::sigttin, p7::sig_ign );
+		p7::signal( p7::sigttou, p7::sig_ign );
+		
+		pid_t pid = getpid();
+		
+		if ( shell_pgid != pid )
+		{
+			setpgid( pid, pid );
+		}
+		
+		// set fg pg
+		tcsetpgrp( STDIN_FILENO, pid );
+		
+		// save terminal attrs
+	}
+	
 	struct OnExit
 	{
 		~OnExit()
@@ -125,31 +154,7 @@ namespace tool
 		
 		if ( monitor )
 		{
-			pid_t shell_pgid = getpgrp();
-			
-			// stop until we're fg
-			while ( tcgetpgrp( STDIN_FILENO ) != shell_pgid )
-			{
-				kill( -shell_pgid, SIGTTIN );
-			}
-			
-			p7::signal( p7::sigint,  p7::sig_ign );
-			p7::signal( p7::sigquit, p7::sig_ign );
-			p7::signal( p7::sigtstp, p7::sig_ign );
-			p7::signal( p7::sigttin, p7::sig_ign );
-			p7::signal( p7::sigttou, p7::sig_ign );
-			
-			pid_t pid = getpid();
-			
-			if ( shell_pgid != pid )
-			{
-				setpgid( pid, pid );
-			}
-			
-			// set fg pg
-			tcsetpgrp( STDIN_FILENO, pid );
-			
-			// save terminal attrs
+			start_monitoring();
 		}
 		
 		if ( *freeArgs != NULL )
