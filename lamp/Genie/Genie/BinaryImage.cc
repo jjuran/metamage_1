@@ -198,7 +198,7 @@ namespace Genie
 		
 		if ( member == NULL )
 		{
-			p7::throw_errno( ENOEXEC );
+			p7::throw_errno( EINVAL );
 		}
 		
 		UInt32 offset = member->offset;

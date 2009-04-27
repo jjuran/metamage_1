@@ -266,7 +266,7 @@ namespace Genie
 		{
 			if ( err.Get() == resNotFound )
 			{
-				return frame.SetErrno( ENOEXEC );
+				return frame.SetErrno( EINVAL );
 			}
 			
 			std::string errMsg = "\n";
