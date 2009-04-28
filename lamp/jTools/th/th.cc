@@ -17,6 +17,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -191,7 +192,17 @@ namespace tool
 		while ( *++test_files != NULL )
 		{
 			const char* test_file = *test_files;
-			const char* test_name =  test_file;
+			
+			struct stat sb;
+			
+			if ( -1 == ::stat( test_file, &sb )  ||  S_ISDIR( sb.st_mode ) && (errno = EISDIR) )
+			{
+				std::fprintf( stderr, "th: %s: %s\n", test_file, std::strerror( errno ) );
+				
+				return EXIT_FAILURE;
+			}
+			
+			const char* test_name = test_file;
 			
 			if ( test_name[0] == 't'  &&  test_name[1] == '/' )
 			{
