@@ -184,13 +184,14 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		const char* const* test_file = argv;
+		const char* const* test_files = argv;
 		
 		TestResults totals;
 		
-		while ( *++test_file != NULL )
+		while ( *++test_files != NULL )
 		{
-			const char* test_name = *test_file;
+			const char* test_file = *test_files;
+			const char* test_name =  test_file;
 			
 			if ( test_name[0] == 't'  &&  test_name[1] == '/' )
 			{
@@ -209,7 +210,7 @@ namespace tool
 			write( STDOUT_FILENO, test_name,                    name_length );
 			write( STDOUT_FILENO, "..................", width - name_length );
 			
-			TestResults results = run_test( *test_file );
+			TestResults results = run_test( test_file );
 			
 			std::string result = "ok";
 			
