@@ -52,9 +52,9 @@ ENTRY(alloca)
 
 #endif  // OPENBSD
 
-#ifdef __MWERKS__
-
 // Translation to Motorola syntax by Joshua Juran
+
+#ifdef __MWERKS__
 
 extern void* alloca();
 
