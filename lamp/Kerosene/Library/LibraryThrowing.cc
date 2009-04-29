@@ -132,6 +132,8 @@
 			result = new DIR;
 			
 			result->fd = fd;
+			
+			int set = fcntl( fd, F_SETFD, FD_CLOEXEC );
 		}
 		catch ( ... )
 		{
@@ -149,7 +151,7 @@
 		{
 			DIR* dir = new DIR;
 			
-			int fd = open( pathname, O_RDONLY | O_DIRECTORY );
+			int fd = open( pathname, O_RDONLY | O_DIRECTORY | O_CLOEXEC );
 			
 			if ( fd == -1 )
 			{
