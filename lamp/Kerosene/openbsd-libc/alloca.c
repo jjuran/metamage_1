@@ -50,15 +50,11 @@ ENTRY(alloca)
 	lea	sp@(-4),sp	/* account for argument pop in caller */
 	jmp 	a0@		/* funny return */
 
-#endif
+#endif  // OPENBSD
 
 #ifdef __MWERKS__
 
 // Translation to Motorola syntax by Joshua Juran
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 extern void* alloca();
 
@@ -73,10 +69,6 @@ asm void* alloca()
 	LEA		-4(SP),SP // account for argument pop in caller
 	JMP		(A0)      // funny return
 }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif  // __MWERKS__
 
