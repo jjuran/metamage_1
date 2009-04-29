@@ -822,7 +822,7 @@ namespace Genie
 		return process->itsThread.Get();
 	}
 	
-	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors )
+	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors, int keep_fd = -1 )
 	{
 		// Close file descriptors with close-on-exec flag.
 		typedef FileDescriptorMap::iterator FDIter;
@@ -831,7 +831,7 @@ namespace Genie
 		
 		for ( FDIter it = fileDescriptors.begin();  it != fileDescriptors.end();  ++it )
 		{
-			if ( it->second.closeOnExec )
+			if ( it->first != keep_fd  &&  it->second.closeOnExec )
 			{
 				toClose.push_back( it->first );
 			}
