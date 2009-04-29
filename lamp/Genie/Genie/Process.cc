@@ -922,7 +922,23 @@ namespace Genie
 		
 		Normalize( path, context, GetCWD() );
 		
-		CloseMarkedFileDescriptors( itsFileDescriptors );
+		int script_fd = -1;
+		
+		if ( !context.interpreterPath.empty() )
+		{
+			const bool has_arg = !context.interpreterArg.empty();
+			
+			const char* script_path = context.argVector[ 1 + has_arg ];
+			
+			if ( std::memcmp( script_path, STR_LEN( "/dev/fd/" ) ) == 0 )
+			{
+				const char* fd_name = script_path + STRLEN( "/dev/fd/" );
+				
+				script_fd = std::atoi( fd_name );
+			}
+		}
+		
+		CloseMarkedFileDescriptors( itsFileDescriptors, script_fd );
 		
 		ClearPendingSignals();
 		
