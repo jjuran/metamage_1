@@ -52,6 +52,8 @@ extern "C" {
 	
 	#define O_EXEC  0x00040000
 	
+	#define O_CLOEXEC  0x00080000
+	
 	#define AT_FDCWD  (-100)
 	
 	#define AT_REMOVEDIR  1
