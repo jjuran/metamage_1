@@ -218,10 +218,8 @@ void	 unsetenv(const char *);
 #if __BSD_VISIBLE
 #if defined(alloca) && (alloca == __builtin_alloca) && (__GNUC__ < 2)
 void  *alloca(int);     /* built-in for gcc */
-#elif defined( __MWERKS__ ) && defined( __POWERPC__ )
-#define alloca( size )  __alloca( size )
-#elif defined( __MWERKS__ ) && defined( __MC68K__ )
-void  *alloca(size_t) : __D0;
+#elif defined(__MWERKS__)
+#include <alloca.h>
 #endif
 
 char	*getbsize(int *, long *);

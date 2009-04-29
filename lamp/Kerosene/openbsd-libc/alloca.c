@@ -52,21 +52,21 @@ ENTRY(alloca)
 
 #endif  // OPENBSD
 
-// Translation to Motorola syntax by Joshua Juran
+// Revision for register-based calling sequence by Joshua Juran, 2009.
+// The following code is derived from the preceding code, and the changes are
+// released into the public domain.
 
 #ifdef __MWERKS__
 
-extern void* alloca();
+#include <alloca.h>
 
-asm void* alloca()
+asm void* __alloca( size_t size : __d0 ) : __d0
 {
-	MOVEA.L	(SP),A0   // save return addr
-	MOVE.L	SP,D0     // get current SP value
-	SUB.L	4(SP),D0  // allocate requested space
+	MOVEA.L	(SP)+,A0  // save return addr
+	SUBA	D0,SP     // extend the stack by subtracting from SP
+	MOVE.L	SP,D0     // get new SP
 	AND.B	#~3,D0    // longword align for efficiency
-	ADDQ.L	#8,D0     // reuse space of call frame
 	MOVEA.L	D0,SP     // set new SP value
-	LEA		-4(SP),SP // account for argument pop in caller
 	JMP		(A0)      // funny return
 }
 
