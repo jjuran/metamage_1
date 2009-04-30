@@ -96,9 +96,11 @@ int putenv( char* string )
 	return 0;
 }
 
-void unsetenv( const char* name )
+int unsetenv( const char* name )
 {
 	get_envp().unset( name );
+	
+	return 0;
 }
 
 int clearenv()

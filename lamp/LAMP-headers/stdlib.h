@@ -212,7 +212,7 @@ unsigned long long
  */
 #if __BSD_VISIBLE || __POSIX_VISIBLE >= 200112 || __XPG_VISIBLE >= 600
 int	 setenv(const char *, const char *, int);
-void	 unsetenv(const char *);
+int	 unsetenv(const char *);
 #endif
 
 #if __BSD_VISIBLE
