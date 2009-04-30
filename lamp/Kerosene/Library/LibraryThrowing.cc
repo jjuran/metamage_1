@@ -84,28 +84,64 @@ char* getenv( const char* name )
 
 int setenv( const char* name, const char* value, int overwriting )
 {
-	get_envp().set( name, value, overwriting );
+	try
+	{
+		get_envp().set( name, value, overwriting );
+	}
+	catch ( ... )
+	{
+		errno = ENOMEM;
+		
+		return -1;
+	}
 	
 	return 0;
 }
 
 int putenv( char* string )
 {
-	get_envp().put( string );
+	try
+	{
+		get_envp().put( string );
+	}
+	catch ( ... )
+	{
+		errno = ENOMEM;
+		
+		return -1;
+	}
 	
 	return 0;
 }
 
 int unsetenv( const char* name )
 {
-	get_envp().unset( name );
+	try
+	{
+		get_envp().unset( name );
+	}
+	catch ( ... )
+	{
+		errno = ENOMEM;
+		
+		return -1;
+	}
 	
 	return 0;
 }
 
 int clearenv()
 {
-	get_envp().clear();
+	try
+	{
+		get_envp().clear();
+	}
+	catch ( ... )
+	{
+		errno = ENOMEM;
+		
+		return -1;
+	}
 	
 	return 0;
 }
