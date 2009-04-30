@@ -48,20 +48,20 @@
 // Exceptions are off here
 #pragma exceptions off
 
-	
-	typedef void (*CleanupHandler)();
-	
-	extern "C" void InitProc( CleanupHandler, int* );
-	
-	extern "C" void InitializeCallbacks();
-	
-	void InitializeCallbacks()
-	{
-		InitProc( &FreeTheMallocPool, &errno );
-	}
-	
-	const char* sys_errlist[] =
-	{
+
+typedef void (*CleanupHandler)();
+
+extern "C" void InitProc( CleanupHandler, int* );
+
+extern "C" void InitializeCallbacks();
+
+void InitializeCallbacks()
+{
+	InitProc( &FreeTheMallocPool, &errno );
+}
+
+const char* sys_errlist[] =
+{
 /*  0 */	"No error",
 /*  1 */	"Operation not permitted",
 /*  2 */	"No such file or directory",
@@ -142,826 +142,826 @@
 /* 77 */	"No locks available",
 /* 78 */	"Function not implemented",
 /* 79 */	"Inappropriate file type or format",
-			NULL
-	};
-	
-	// Length of array (not counting trailing NULL)
-	int sys_nerr = sizeof sys_errlist / sizeof (const char*) - 1;
-	
-	char* std::strerror( int errnum )
+		NULL
+};
+
+// Length of array (not counting trailing NULL)
+int sys_nerr = sizeof sys_errlist / sizeof (const char*) - 1;
+
+char* std::strerror( int errnum )
+{
+	if ( errnum < 0 )
 	{
-		if ( errnum < 0 )
-		{
-			errno = EINVAL;
-			return "strerror: errnum is negative";
-		}
-		
-		if ( errnum >= sys_nerr )
-		{
-			errno = EINVAL;
-			return "strerror: errnum exceeds sys_nerr";
-		}
-		
-		return const_cast< char* >( sys_errlist[ errnum ] );
+		errno = EINVAL;
+		return "strerror: errnum is negative";
 	}
 	
-	void std::perror( const char* s )
+	if ( errnum >= sys_nerr )
 	{
-		if ( s != NULL )
-		{
-			std::fprintf( stderr, "%s: ", s );
-		}
-		
-		std::fprintf( stderr, "%s\n", std::strerror( errno ) );
+		errno = EINVAL;
+		return "strerror: errnum exceeds sys_nerr";
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ stdlib ¥
-	
-	void abort()
+	return const_cast< char* >( sys_errlist[ errnum ] );
+}
+
+void std::perror( const char* s )
+{
+	if ( s != NULL )
 	{
-		(void) signal( SIGABRT, SIG_DFL );
-		(void) raise( SIGABRT );
+		std::fprintf( stderr, "%s: ", s );
 	}
 	
-	/*
-	// already defined in openbsd-libc
+	std::fprintf( stderr, "%s\n", std::strerror( errno ) );
+}
+
+#pragma mark -
+#pragma mark ¥ stdlib ¥
+
+void abort()
+{
+	(void) signal( SIGABRT, SIG_DFL );
+	(void) raise( SIGABRT );
+}
+
+/*
+// already defined in openbsd-libc
+
+int mkstemp( char* name )
+{
+	std::size_t length = std::strlen( name );
 	
-	int mkstemp( char* name )
+	if ( length < 6  ||  std::strcmp( name + length - 6, "XXXXXX" ) != 0 )
 	{
-		std::size_t length = std::strlen( name );
-		
-		if ( length < 6  ||  std::strcmp( name + length - 6, "XXXXXX" ) != 0 )
-		{
-			errno = EINVAL;
-			
-			return -1;
-		}
-		
-		char* x = name + length - 6;
-		
-		std::strcpy( x, "000000" );
-		
-		do
-		{
-			int i = 5;
-			
-			while ( ++x[ i ] > '9' )
-			{
-				x[ i-- ] = '0';
-				
-				if ( i < 0 )
-				{
-					return -1;  // errno is already EEXIST
-				}
-			}
-			
-			int opened = open( name, O_RDWR | O_CREAT | O_EXCL, 0600 );
-			
-			if ( opened >= 0 )
-			{
-				return opened;
-			}
-		}
-		while ( errno == EEXIST );
+		errno = EINVAL;
 		
 		return -1;
 	}
-	*/
 	
-	int raise( int sig )
-	{
-		return kill( getpid(), sig );
-	}
+	char* x = name + length - 6;
 	
-	int system( const char* command )
+	std::strcpy( x, "000000" );
+	
+	do
 	{
-		if ( command == NULL )
+		int i = 5;
+		
+		while ( ++x[ i ] > '9' )
 		{
-			const bool shellExists = true;
+			x[ i-- ] = '0';
 			
-			return shellExists;
+			if ( i < 0 )
+			{
+				return -1;  // errno is already EEXIST
+			}
 		}
 		
-		int pid = vfork();
+		int opened = open( name, O_RDWR | O_CREAT | O_EXCL, 0600 );
 		
-		if ( pid == 0 )
+		if ( opened >= 0 )
 		{
-			const char* argv[] = { "sh", "-c", command, NULL };
-			
-			execv( "/bin/sh", (char**)argv );
-			
-			const int exitStatusForExecFailure = 127;
-			
-			_exit( exitStatusForExecFailure );
+			return opened;
 		}
+	}
+	while ( errno == EEXIST );
+	
+	return -1;
+}
+*/
+
+int raise( int sig )
+{
+	return kill( getpid(), sig );
+}
+
+int system( const char* command )
+{
+	if ( command == NULL )
+	{
+		const bool shellExists = true;
 		
-		int stat = -1;
-		pid_t result = waitpid( pid, &stat, 0 );
+		return shellExists;
+	}
+	
+	int pid = vfork();
+	
+	if ( pid == 0 )
+	{
+		const char* argv[] = { "sh", "-c", command, NULL };
 		
-		//return result == -1 ? -1 : stat;
-		return stat;  // Am I not clever?
+		execv( "/bin/sh", (char**)argv );
+		
+		const int exitStatusForExecFailure = 127;
+		
+		_exit( exitStatusForExecFailure );
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ fcntl ¥
+	int stat = -1;
+	pid_t result = waitpid( pid, &stat, 0 );
 	
-	int creat( const char* path, mode_t mode )
+	//return result == -1 ? -1 : stat;
+	return stat;  // Am I not clever?
+}
+
+#pragma mark -
+#pragma mark ¥ fcntl ¥
+
+int creat( const char* path, mode_t mode )
+{
+	return open( path, O_CREAT | O_TRUNC | O_WRONLY, mode );
+}
+
+int open( const char* path, int flags, mode_t mode )
+{
+	return openat( AT_FDCWD, path, flags, mode );
+}
+
+#pragma mark -
+#pragma mark ¥ pwd ¥
+
+struct passwd* getpwnam( const char* name )
+{
+	errno = ESRCH;
+	
+	return NULL;
+}
+
+struct passwd* getpwuid( uid_t uid )
+{
+	static struct passwd result =
 	{
-		return open( path, O_CREAT | O_TRUNC | O_WRONLY, mode );
+		"jruser",
+		"",
+		0,
+		0,
+		0,
+		"",
+		"J. Random User",
+		"/",
+		"/bin/sh",
+		0
+	};
+	
+	result.pw_uid =
+	result.pw_gid = uid;
+	
+	return &result;
+}
+
+#pragma mark -
+#pragma mark ¥ setjmp ¥
+
+__sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask )
+{
+	sigset_t signals = 0xffffffff;
+	
+	if ( savemask )
+	{
+		int got = sigprocmask( SIG_BLOCK, NULL, &signals );
 	}
 	
-	int open( const char* path, int flags, mode_t mode )
+	env->sigmask = signals;
+	
+	return env;
+}
+
+void siglongjmp( sigjmp_buf env, int val )
+{
+	if ( env->sigmask != 0xffffffff )
 	{
-		return openat( AT_FDCWD, path, flags, mode );
+		int set = sigprocmask( SIG_SETMASK, &env->sigmask, NULL );
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ pwd ¥
+	longjmp( env->jumpbuf, val );
+}
+
+#pragma mark -
+#pragma mark ¥ stdio ¥
+
+int fileno( FILE *stream )
+{
+	return _fileno( stream );
+}
+
+extern "C" FILE* __find_unopened_file();
+
+FILE* fdopen( int fd, const char* type )
+{
+	int flags = ::fcntl( fd, F_GETFL, 0 );
 	
-	struct passwd* getpwnam( const char* name )
+	if ( flags == -1 )
 	{
-		errno = ESRCH;
+		return NULL;
+	}
+	
+	switch ( type[0] )
+	{
+		case 'w':
+		case 'a':
+			if ( (flags + 1 & FWRITE) == 0 )
+			{
+				errno = EACCES;
+				
+				return NULL;
+			}
+		case 'r':
+		default:
+			break;
+	}
+	
+	FILE* file = __find_unopened_file();
+	
+	if ( file == NULL )
+	{
+		return NULL;
+	}
+	
+	return __handle_reopen( fd, type, file );
+	
+}
+
+extern "C" int rename( const char* oldpath, const char* newpath );
+
+int rename( const char* oldpath, const char* newpath )
+{
+	return renameat( AT_FDCWD, oldpath, AT_FDCWD, newpath );
+}
+
+int symlink( const char* oldpath, const char* newpath )
+{
+	return symlinkat( oldpath, AT_FDCWD, newpath );
+}
+
+#pragma mark -
+#pragma mark ¥ sys/stat ¥
+
+int mkfifoat( int dirfd, const char* path, mode_t mode )
+{
+	return mknodat( dirfd, path, S_IFIFO | mode, 0 );
+}
+
+int chmod( const char* path, mode_t mode )
+{
+	return fchmodat( AT_FDCWD, path, mode, 0 );
+}
+
+int lstat( const char* path, struct stat* sb )
+{
+	return fstatat( AT_FDCWD, path, sb, AT_SYMLINK_NOFOLLOW );
+}
+
+
+int stat( const char* path, struct stat* sb )
+{
+	return fstatat( AT_FDCWD, path, sb, 0 );
+}
+
+int mkdir( const char* path, mode_t mode )
+{
+	return mkdirat( AT_FDCWD, path, mode );
+}
+
+int mkfifo( const char* path, mode_t mode )
+{
+	return mkfifoat( AT_FDCWD, path, mode );
+}
+
+int mknod( const char* path, mode_t mode, dev_t dev )
+{
+	return mknodat( AT_FDCWD, path, mode, dev );
+}
+
+int rmdir( const char* path )
+{
+	return unlinkat( AT_FDCWD, path, AT_REMOVEDIR );
+}
+
+#pragma mark -
+#pragma mark ¥ sys/wait ¥
+
+int wait( int* stat )
+{
+	const pid_t any = -1;
+	
+	return waitpid( any, stat, 0 );
+}
+
+#pragma mark -
+#pragma mark ¥ time ¥
+
+/*
+	
+	jan	31	31	31	31
+	feb	28	29	59	60
+	mar	31	31	90	91
+	apr	30	30	120	121
+	may	31	31	151	152
+	jun	30	30	181	182
+	jul	31	31	212	213
+	aug	31	31	243	244
+	sep	30	30	273	274
+	oct	31	31	304	305
+	nov	30	30	334	335
+	dec	31	31	365	366
+	
+*/
+
+struct tm* gmtime_r( const time_t* time_p, struct tm* result )
+{
+	if ( time_p == NULL  ||  result == NULL )
+	{
+		errno = EFAULT;
 		
 		return NULL;
 	}
 	
-	struct passwd* getpwuid( uid_t uid )
+	if ( *time_p < 0 )
 	{
-		static struct passwd result =
-		{
-			"jruser",
-			"",
-			0,
-			0,
-			0,
-			"",
-			"J. Random User",
-			"/",
-			"/bin/sh",
-			0
-		};
+		errno = EINVAL;
 		
-		result.pw_uid =
-		result.pw_gid = uid;
-		
-		return &result;
+		return NULL;
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ setjmp ¥
+	int days_since_epoch       = *time_p / (60 * 60 * 24);
+	int seconds_after_midnight = *time_p % (60 * 60 * 24);
 	
-	__sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask )
+	result->tm_sec  = seconds_after_midnight        % 60;
+	result->tm_min  = seconds_after_midnight /   60 % 60;
+	result->tm_hour = seconds_after_midnight / 3600;
+	
+	days_since_epoch += 2 * 365 + 1;  // epoch is now 1968
+	
+	// Working in quad years is valid until 2099
+	const int days_per_quad = 4 * 365 + 1;
+	
+	int quads      = days_since_epoch / days_per_quad;
+	int extra_days = days_since_epoch % days_per_quad;
+	
+	int extra_years = ( extra_days - 1 ) / 365;
+	
+	int years = quads * 4 + extra_years;
+	
+	years += 68;  // epoch is now 1900
+	
+	result->tm_year = years;
+	
+	if ( extra_years )
 	{
-		sigset_t signals = 0xffffffff;
-		
-		if ( savemask )
-		{
-			int got = sigprocmask( SIG_BLOCK, NULL, &signals );
-		}
-		
-		env->sigmask = signals;
-		
-		return env;
+		extra_days -= 1;
+		extra_days %= 365;
 	}
 	
-	void siglongjmp( sigjmp_buf env, int val )
+	result->tm_yday = extra_days;
+	
+	result->tm_wday = (years + years / 4 + extra_days) % 7;
+	
+	const bool leap_year = extra_years == 0;
+	
+	if ( extra_days < (31 + 28 + leap_year) )
 	{
-		if ( env->sigmask != 0xffffffff )
-		{
-			int set = sigprocmask( SIG_SETMASK, &env->sigmask, NULL );
-		}
+		bool jan = extra_days < 31;
 		
-		longjmp( env->jumpbuf, val );
+		result->tm_mday = 1 + extra_days - (jan ? 0 : 31);
+		result->tm_mon  =                   jan ? 0 :  1;
+	}
+	else
+	{
+		extra_days -= 31 + 28 + leap_year;
+		
+		bool late = extra_days >= 153;  // after July
+		
+		extra_days %= 153;
+		
+		int month_offset = extra_days * 2 / 61;
+		
+		result->tm_mon = 2 + 5 * late + month_offset;
+		
+		result->tm_mday = 1 + extra_days - month_offset * 61 / 2 - month_offset % 2;
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ stdio ¥
+	result->tm_isdst = 0;
 	
-	int fileno( FILE *stream )
+	return result;
+}
+
+struct tm* gmtime( const time_t* time_p )
+{
+	static struct tm static_tm;
+	
+	return gmtime_r( time_p, &static_tm );
+}
+
+struct tm* localtime_r( const time_t* time_p, struct tm* result )
+{
+	if ( time_p == NULL )
 	{
-		return _fileno( stream );
+		return NULL;
 	}
 	
-	extern "C" FILE* __find_unopened_file();
+	long gmtDeltaField = TimeOff::GetGMTDeltaField();
 	
-	FILE* fdopen( int fd, const char* type )
+	time_t adjusted_time = *time_p + TimeOff::GetGMTDeltaFromField( gmtDeltaField );
+	
+	if ( gmtime_r( &adjusted_time, result ) == NULL )
 	{
-		int flags = ::fcntl( fd, F_GETFL, 0 );
-		
-		if ( flags == -1 )
-		{
-			return NULL;
-		}
-		
-		switch ( type[0] )
-		{
-			case 'w':
-			case 'a':
-				if ( (flags + 1 & FWRITE) == 0 )
-				{
-					errno = EACCES;
-					
-					return NULL;
-				}
-			case 'r':
-			default:
-				break;
-		}
-		
-		FILE* file = __find_unopened_file();
-		
-		if ( file == NULL )
-		{
-			return NULL;
-		}
-		
-		return __handle_reopen( fd, type, file );
-		
+		return NULL;
 	}
 	
-	extern "C" int rename( const char* oldpath, const char* newpath );
+	result->tm_isdst = TimeOff::GetDLSFromGMTDeltaField( gmtDeltaField );
 	
-	int rename( const char* oldpath, const char* newpath )
+	return result;
+}
+
+struct tm* localtime( const time_t* time_p )
+{
+	static struct tm static_tm;
+	
+	return localtime_r( time_p, &static_tm );
+}
+
+#pragma mark -
+#pragma mark ¥ unistd ¥
+
+int access( const char* path, int mode )
+{
+	return faccessat( AT_FDCWD, path, mode, 0 );
+}
+
+int chown( const char* path, uid_t owner, gid_t group )
+{
+	return fchownat( AT_FDCWD, path, owner, group, 0 );
+}
+
+int link( const char* oldpath, const char* newpath )
+{
+	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );
+}
+
+int readlink( const char *path, char *buffer, size_t buffer_size )
+{
+	return readlinkat( AT_FDCWD, path, buffer, buffer_size );
+}
+
+ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
+{
+	return readlinkat_k( AT_FDCWD, path, buffer, buffer_size );
+}
+
+int unlink( const char* path )
+{
+	return unlinkat( AT_FDCWD, path, 0 );
+}
+
+int execv( const char* path, const char* const* argv )
+{
+	return execve( path, argv, environ );
+}
+
+pid_t fork()
+{
+	errno = ENOSYS;
+	
+	return -1;
+}
+
+int gethostname( char* result, size_t buffer_length )
+{
+	struct utsname uts;
+	
+	int got = uname( &uts );
+	
+	if ( got < 0 )
 	{
-		return renameat( AT_FDCWD, oldpath, AT_FDCWD, newpath );
+		return got;
 	}
 	
-	int symlink( const char* oldpath, const char* newpath )
+	const char* nodename = uts.nodename;
+	
+	size_t name_length = std::strlen( nodename );
+	
+	if ( name_length > buffer_length )
 	{
-		return symlinkat( oldpath, AT_FDCWD, newpath );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ sys/stat ¥
-	
-	int mkfifoat( int dirfd, const char* path, mode_t mode )
-	{
-		return mknodat( dirfd, path, S_IFIFO | mode, 0 );
-	}
-	
-	int chmod( const char* path, mode_t mode )
-	{
-		return fchmodat( AT_FDCWD, path, mode, 0 );
-	}
-	
-	int lstat( const char* path, struct stat* sb )
-	{
-		return fstatat( AT_FDCWD, path, sb, AT_SYMLINK_NOFOLLOW );
-	}
-	
-	
-	int stat( const char* path, struct stat* sb )
-	{
-		return fstatat( AT_FDCWD, path, sb, 0 );
-	}
-	
-	int mkdir( const char* path, mode_t mode )
-	{
-		return mkdirat( AT_FDCWD, path, mode );
-	}
-	
-	int mkfifo( const char* path, mode_t mode )
-	{
-		return mkfifoat( AT_FDCWD, path, mode );
-	}
-	
-	int mknod( const char* path, mode_t mode, dev_t dev )
-	{
-		return mknodat( AT_FDCWD, path, mode, dev );
-	}
-	
-	int rmdir( const char* path )
-	{
-		return unlinkat( AT_FDCWD, path, AT_REMOVEDIR );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ sys/wait ¥
-	
-	int wait( int* stat )
-	{
-		const pid_t any = -1;
-		
-		return waitpid( any, stat, 0 );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ time ¥
-	
-	/*
-		
-		jan	31	31	31	31
-		feb	28	29	59	60
-		mar	31	31	90	91
-		apr	30	30	120	121
-		may	31	31	151	152
-		jun	30	30	181	182
-		jul	31	31	212	213
-		aug	31	31	243	244
-		sep	30	30	273	274
-		oct	31	31	304	305
-		nov	30	30	334	335
-		dec	31	31	365	366
-		
-	*/
-	
-	struct tm* gmtime_r( const time_t* time_p, struct tm* result )
-	{
-		if ( time_p == NULL  ||  result == NULL )
-		{
-			errno = EFAULT;
-			
-			return NULL;
-		}
-		
-		if ( *time_p < 0 )
-		{
-			errno = EINVAL;
-			
-			return NULL;
-		}
-		
-		int days_since_epoch       = *time_p / (60 * 60 * 24);
-		int seconds_after_midnight = *time_p % (60 * 60 * 24);
-		
-		result->tm_sec  = seconds_after_midnight        % 60;
-		result->tm_min  = seconds_after_midnight /   60 % 60;
-		result->tm_hour = seconds_after_midnight / 3600;
-		
-		days_since_epoch += 2 * 365 + 1;  // epoch is now 1968
-		
-		// Working in quad years is valid until 2099
-		const int days_per_quad = 4 * 365 + 1;
-		
-		int quads      = days_since_epoch / days_per_quad;
-		int extra_days = days_since_epoch % days_per_quad;
-		
-		int extra_years = ( extra_days - 1 ) / 365;
-		
-		int years = quads * 4 + extra_years;
-		
-		years += 68;  // epoch is now 1900
-		
-		result->tm_year = years;
-		
-		if ( extra_years )
-		{
-			extra_days -= 1;
-			extra_days %= 365;
-		}
-		
-		result->tm_yday = extra_days;
-		
-		result->tm_wday = (years + years / 4 + extra_days) % 7;
-		
-		const bool leap_year = extra_years == 0;
-		
-		if ( extra_days < (31 + 28 + leap_year) )
-		{
-			bool jan = extra_days < 31;
-			
-			result->tm_mday = 1 + extra_days - (jan ? 0 : 31);
-			result->tm_mon  =                   jan ? 0 :  1;
-		}
-		else
-		{
-			extra_days -= 31 + 28 + leap_year;
-			
-			bool late = extra_days >= 153;  // after July
-			
-			extra_days %= 153;
-			
-			int month_offset = extra_days * 2 / 61;
-			
-			result->tm_mon = 2 + 5 * late + month_offset;
-			
-			result->tm_mday = 1 + extra_days - month_offset * 61 / 2 - month_offset % 2;
-		}
-		
-		result->tm_isdst = 0;
-		
-		return result;
-	}
-	
-	struct tm* gmtime( const time_t* time_p )
-	{
-		static struct tm static_tm;
-		
-		return gmtime_r( time_p, &static_tm );
-	}
-	
-	struct tm* localtime_r( const time_t* time_p, struct tm* result )
-	{
-		if ( time_p == NULL )
-		{
-			return NULL;
-		}
-		
-		long gmtDeltaField = TimeOff::GetGMTDeltaField();
-		
-		time_t adjusted_time = *time_p + TimeOff::GetGMTDeltaFromField( gmtDeltaField );
-		
-		if ( gmtime_r( &adjusted_time, result ) == NULL )
-		{
-			return NULL;
-		}
-		
-		result->tm_isdst = TimeOff::GetDLSFromGMTDeltaField( gmtDeltaField );
-		
-		return result;
-	}
-	
-	struct tm* localtime( const time_t* time_p )
-	{
-		static struct tm static_tm;
-		
-		return localtime_r( time_p, &static_tm );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ unistd ¥
-	
-	int access( const char* path, int mode )
-	{
-		return faccessat( AT_FDCWD, path, mode, 0 );
-	}
-	
-	int chown( const char* path, uid_t owner, gid_t group )
-	{
-		return fchownat( AT_FDCWD, path, owner, group, 0 );
-	}
-	
-	int link( const char* oldpath, const char* newpath )
-	{
-		return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );
-	}
-	
-	int readlink( const char *path, char *buffer, size_t buffer_size )
-	{
-		return readlinkat( AT_FDCWD, path, buffer, buffer_size );
-	}
-	
-	ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
-	{
-		return readlinkat_k( AT_FDCWD, path, buffer, buffer_size );
-	}
-	
-	int unlink( const char* path )
-	{
-		return unlinkat( AT_FDCWD, path, 0 );
-	}
-	
-	int execv( const char* path, const char* const* argv )
-	{
-		return execve( path, argv, environ );
-	}
-	
-	pid_t fork()
-	{
-		errno = ENOSYS;
+		errno = ENAMETOOLONG;
 		
 		return -1;
 	}
 	
-	int gethostname( char* result, size_t buffer_length )
+	std::copy( nodename, nodename + name_length + 1, result );
+	
+	return 0;
+}
+
+int getpagesize()
+{
+	return 8192;  // Works for now
+}
+
+uid_t getuid()   { return 0; }
+uid_t geteuid()  { return 0; }
+
+uid_t getgid()   { return 0; }
+uid_t getegid()  { return 0; }
+
+pid_t getpgrp()  { return getpgid( 0 ); }
+
+int isatty( int fd )
+{
+	return tcgetpgrp( fd ) >= 0;
+}
+
+unsigned int sleep( unsigned int seconds )
+{
+	struct timespec nanoseconds = { seconds, 0 };
+	
+	nanosleep( &nanoseconds, &nanoseconds );
+	
+	return nanoseconds.tv_sec + ( nanoseconds.tv_nsec > 0 );
+}
+
+pid_t tcgetpgrp( int fd )
+{
+	int pgrp = -1;
+	
+	int io = ioctl( fd, TIOCGPGRP, &pgrp );
+	
+	return pgrp;
+}
+
+int tcsetpgrp( int fd, pid_t pgrp )
+{
+	return ioctl( fd, TIOCSPGRP, (int*) &pgrp );
+}
+
+static int decimal_magnitude( unsigned x )
+{
+	int result = 0;
+	
+	while ( x > 0 )
 	{
-		struct utsname uts;
+		x /= 10;
 		
-		int got = uname( &uts );
-		
-		if ( got < 0 )
-		{
-			return got;
-		}
-		
-		const char* nodename = uts.nodename;
-		
-		size_t name_length = std::strlen( nodename );
-		
-		if ( name_length > buffer_length )
-		{
-			errno = ENAMETOOLONG;
-			
-			return -1;
-		}
-		
-		std::copy( nodename, nodename + name_length + 1, result );
-		
-		return 0;
+		++result;
 	}
 	
-	int getpagesize()
+	return result;
+}
+
+static char* inscribe_decimal_backwards( unsigned x, char* p )
+{
+	while ( x > 0 )
 	{
-		return 8192;  // Works for now
+		*--p = x % 10 + '0';
+		
+		x /= 10;
 	}
 	
-	uid_t getuid()   { return 0; }
-	uid_t geteuid()  { return 0; }
+	return p;
+}
+
+char* getcwd( char* buffer, size_t buffer_size )
+{
+	ssize_t length = getcwd_k( buffer, buffer_size );
 	
-	uid_t getgid()   { return 0; }
-	uid_t getegid()  { return 0; }
-	
-	pid_t getpgrp()  { return getpgid( 0 ); }
-	
-	int isatty( int fd )
+	if ( length < 0 )
 	{
-		return tcgetpgrp( fd ) >= 0;
+		return NULL;
 	}
 	
-	unsigned int sleep( unsigned int seconds )
+	if ( length + 1 > buffer_size )
 	{
-		struct timespec nanoseconds = { seconds, 0 };
+		errno = ERANGE;
 		
-		nanosleep( &nanoseconds, &nanoseconds );
-		
-		return nanoseconds.tv_sec + ( nanoseconds.tv_nsec > 0 );
+		return NULL;
 	}
 	
-	pid_t tcgetpgrp( int fd )
+	buffer[ length ] = '\0';
+	
+	return buffer;
+}
+
+ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
+{
+	off_t saved_offset = lseek( fd, 0, SEEK_CUR );
+	
+	if ( saved_offset < 0 )
 	{
-		int pgrp = -1;
-		
-		int io = ioctl( fd, TIOCGPGRP, &pgrp );
-		
-		return pgrp;
+		return saved_offset;
 	}
 	
-	int tcsetpgrp( int fd, pid_t pgrp )
+	off_t set = lseek( fd, offset, SEEK_SET );
+	
+	if ( set < 0 )
 	{
-		return ioctl( fd, TIOCSPGRP, (int*) &pgrp );
+		return set;
 	}
 	
-	static int decimal_magnitude( unsigned x )
-	{
-		int result = 0;
-		
-		while ( x > 0 )
-		{
-			x /= 10;
-			
-			++result;
-		}
-		
-		return result;
-	}
+	ssize_t bytes_read = read( fd, buffer, count );
 	
-	static char* inscribe_decimal_backwards( unsigned x, char* p )
+	if ( bytes_read < 0 )
 	{
-		while ( x > 0 )
-		{
-			*--p = x % 10 + '0';
-			
-			x /= 10;
-		}
-		
-		return p;
-	}
-	
-	char* getcwd( char* buffer, size_t buffer_size )
-	{
-		ssize_t length = getcwd_k( buffer, buffer_size );
-		
-		if ( length < 0 )
-		{
-			return NULL;
-		}
-		
-		if ( length + 1 > buffer_size )
-		{
-			errno = ERANGE;
-			
-			return NULL;
-		}
-		
-		buffer[ length ] = '\0';
-		
-		return buffer;
-	}
-	
-	ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
-	{
-		off_t saved_offset = lseek( fd, 0, SEEK_CUR );
-		
-		if ( saved_offset < 0 )
-		{
-			return saved_offset;
-		}
-		
-		off_t set = lseek( fd, offset, SEEK_SET );
-		
-		if ( set < 0 )
-		{
-			return set;
-		}
-		
-		ssize_t bytes_read = read( fd, buffer, count );
-		
-		if ( bytes_read < 0 )
-		{
-			return bytes_read;
-		}
-		
-		set = lseek( fd, saved_offset, SEEK_SET );
-		
-		if ( set < 0 )
-		{
-			return set;
-		}
-		
 		return bytes_read;
 	}
 	
-	ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
+	set = lseek( fd, saved_offset, SEEK_SET );
+	
+	if ( set < 0 )
 	{
-		return std::min< ssize_t >( readlinkat_k( dirfd, path, buffer, buffer_size ), buffer_size );
+		return set;
 	}
 	
-	char* realpath( const char *path, char *buffer )
+	return bytes_read;
+}
+
+ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
+{
+	return std::min< ssize_t >( readlinkat_k( dirfd, path, buffer, buffer_size ), buffer_size );
+}
+
+char* realpath( const char *path, char *buffer )
+{
+	const size_t buffer_size = 4096;
+	
+	ssize_t length = realpath_k( path, buffer, buffer_size );
+	
+	if ( length < 0 )
 	{
-		const size_t buffer_size = 4096;
-		
-		ssize_t length = realpath_k( path, buffer, buffer_size );
-		
-		if ( length < 0 )
-		{
-			return NULL;
-		}
-		
-		if ( length + 1 > buffer_size )
-		{
-			errno = ERANGE;
-			
-			return NULL;
-		}
-		
-		buffer[ length ] = '\0';
-		
-		return buffer;
+		return NULL;
 	}
 	
-	ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
+	if ( length + 1 > buffer_size )
 	{
-		if ( !isatty( fd ) )
-		{
-			//errno = ENOTTY;
-			
-			return -1;
-		}
+		errno = ERANGE;
 		
-		char pathname[] = "/dev/fd/123456789";
-		
-		char* begin = pathname + STRLEN( "/dev/fd/" );
-		
-		char* end = begin + decimal_magnitude( fd );
-		
-		if ( begin < end )
-		{
-			inscribe_decimal_backwards( fd, end );
-		}
-		else
-		{
-			*end++ = '0';
-		}
-		
-		*end = '\0';
-		
-		return readlink_k( pathname, buffer, buffer_size );
+		return NULL;
 	}
 	
-	const char* ttyname( int fd )
+	buffer[ length ] = '\0';
+	
+	return buffer;
+}
+
+ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
+{
+	if ( !isatty( fd ) )
 	{
-		static char buffer[ 256 ];  // should be enough for a terminal name
+		//errno = ENOTTY;
 		
-		ssize_t length = ttyname_k( fd, buffer, sizeof buffer );
-		
-		if ( length < 0 )
-		{
-			return NULL;
-		}
-		
-		if ( length + 1 > sizeof buffer )
-		{
-			errno = ERANGE;
-			
-			return NULL;
-		}
-		
-		buffer[ length ] = '\0';
-		
-		return buffer;
+		return -1;
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ utime ¥
+	char pathname[] = "/dev/fd/123456789";
 	
-	int utime( const char* path, const struct utimbuf *time_buffer )
+	char* begin = pathname + STRLEN( "/dev/fd/" );
+	
+	char* end = begin + decimal_magnitude( fd );
+	
+	if ( begin < end )
 	{
-		struct timeval a_tv = { 0 };
-		struct timeval m_tv = { 0 };
-		
-		const timeval* access = NULL;
-		const timeval* mod    = NULL;
-		
-		if ( time_buffer )
-		{
-			a_tv.tv_sec = time_buffer->actime;
-			m_tv.tv_sec = time_buffer->modtime;
-			
-			access = &a_tv;
-			mod    = &m_tv;
-		}
-		
-		return futimesat_k( AT_FDCWD, path, access, mod, NULL, NULL );
+		inscribe_decimal_backwards( fd, end );
+	}
+	else
+	{
+		*end++ = '0';
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ vfork ¥
+	*end = '\0';
 	
-	extern "C" void vfork_push();
-	extern "C" void vfork_pop();
+	return readlink_k( pathname, buffer, buffer_size );
+}
+
+const char* ttyname( int fd )
+{
+	static char buffer[ 256 ];  // should be enough for a terminal name
 	
-	static struct JmpBufNode* gJmpBufStack = NULL;
+	ssize_t length = ttyname_k( fd, buffer, sizeof buffer );
 	
-	struct JmpBufNode
+	if ( length < 0 )
 	{
-		JmpBufNode*  next;
-		bool         done;
-		jmp_buf      buf;
-		
-		JmpBufNode() : next( gJmpBufStack ), done( false )  {}
-	};
+		return NULL;
+	}
 	
-	static JmpBufNode* GetJmpBufTopTrimmed()
+	if ( length + 1 > sizeof buffer )
 	{
-		JmpBufNode* top = gJmpBufStack;
+		errno = ERANGE;
 		
-		while ( top && top->done )
-		{
-			top = top->next;
-			
-			delete gJmpBufStack;
-			
-			gJmpBufStack = top;
-		}
+		return NULL;
+	}
+	
+	buffer[ length ] = '\0';
+	
+	return buffer;
+}
+
+#pragma mark -
+#pragma mark ¥ utime ¥
+
+int utime( const char* path, const struct utimbuf *time_buffer )
+{
+	struct timeval a_tv = { 0 };
+	struct timeval m_tv = { 0 };
+	
+	const timeval* access = NULL;
+	const timeval* mod    = NULL;
+	
+	if ( time_buffer )
+	{
+		a_tv.tv_sec = time_buffer->actime;
+		m_tv.tv_sec = time_buffer->modtime;
 		
+		access = &a_tv;
+		mod    = &m_tv;
+	}
+	
+	return futimesat_k( AT_FDCWD, path, access, mod, NULL, NULL );
+}
+
+#pragma mark -
+#pragma mark ¥ vfork ¥
+
+extern "C" void vfork_push();
+extern "C" void vfork_pop();
+
+static struct JmpBufNode* gJmpBufStack = NULL;
+
+struct JmpBufNode
+{
+	JmpBufNode*  next;
+	bool         done;
+	jmp_buf      buf;
+	
+	JmpBufNode() : next( gJmpBufStack ), done( false )  {}
+};
+
+static JmpBufNode* GetJmpBufTopTrimmed()
+{
+	JmpBufNode* top = gJmpBufStack;
+	
+	while ( top && top->done )
+	{
+		top = top->next;
+		
+		delete gJmpBufStack;
+		
+		gJmpBufStack = top;
+	}
+	
+	return gJmpBufStack;
+}
+
+static JmpBufNode* GetJmpBufTopLeavingOneFree()
+{
+	if ( gJmpBufStack == NULL )
+	{
+		return NULL;
+	}
+	
+	if ( !gJmpBufStack->done )
+	{
 		return gJmpBufStack;
 	}
 	
-	static JmpBufNode* GetJmpBufTopLeavingOneFree()
+	for ( JmpBufNode* top = gJmpBufStack->next;  top && top->done;  top = top->next )
 	{
-		if ( gJmpBufStack == NULL )
-		{
-			return NULL;
-		}
+		delete gJmpBufStack;
 		
-		if ( !gJmpBufStack->done )
-		{
-			return gJmpBufStack;
-		}
-		
-		for ( JmpBufNode* top = gJmpBufStack->next;  top && top->done;  top = top->next )
-		{
-			delete gJmpBufStack;
-			
-			gJmpBufStack = top;
-		}
-		
-		return gJmpBufStack;
+		gJmpBufStack = top;
 	}
 	
-	jmp_buf* NewJmpBuf()
+	return gJmpBufStack;
+}
+
+jmp_buf* NewJmpBuf()
+{
+	JmpBufNode* node = GetJmpBufTopLeavingOneFree();
+	
+	if ( node == NULL  ||  !node->done  )
 	{
-		JmpBufNode* node = GetJmpBufTopLeavingOneFree();
+		node = new JmpBufNode();
 		
-		if ( node == NULL  ||  !node->done  )
-		{
-			node = new JmpBufNode();
-			
-			gJmpBufStack = node;
-		}
-		else
-		{
-			node->done = false;
-		}
-		
-		vfork_push();
-		
-		return &node->buf;
+		gJmpBufStack = node;
+	}
+	else
+	{
+		node->done = false;
 	}
 	
-	void Kerosene_LongJmp( int result )
-	{
-		JmpBufNode* top = GetJmpBufTopTrimmed();
-		
-		assert( top != NULL );
-		
-		assert( !top->done );
-		
-		top->done = true;
-		
-		vfork_pop();
-		
-		longjmp( top->buf, result );
-	}
+	vfork_push();
 	
+	return &node->buf;
+}
+
+void Kerosene_LongJmp( int result )
+{
+	JmpBufNode* top = GetJmpBufTopTrimmed();
+	
+	assert( top != NULL );
+	
+	assert( !top->done );
+	
+	top->done = true;
+	
+	vfork_pop();
+	
+	longjmp( top->buf, result );
+}
+
