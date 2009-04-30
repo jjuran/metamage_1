@@ -13,9 +13,7 @@
 // Standard C
 #include <assert.h>
 #include "errno.h"
-#include "setjmp.h"
 #include "signal.h"
-#include <stdarg.h>
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
@@ -32,10 +30,8 @@
 #include "sys/wait.h"
 #include "unistd.h"
 #include "utime.h"
-#include "vfork.h"
 
 // Iota
-#include "iota/environ.hh"
 #include "iota/strings.hh"
 
 // TimeOff
@@ -610,11 +606,6 @@ ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
 int unlink( const char* path )
 {
 	return unlinkat( AT_FDCWD, path, 0 );
-}
-
-int execv( const char* path, const char* const* argv )
-{
-	return execve( path, argv, environ );
 }
 
 pid_t fork()

@@ -16,6 +16,7 @@
 #include "unistd.h"
 
 // Iota
+#include "iota/environ.hh"
 #include "iota/strings.hh"
 
 
@@ -52,6 +53,11 @@ int fexecve( int fd, const char *const argv[], const char *const envp[] )
 	inscribe_decimal( fd, path + STRLEN( "/dev/fd/" ) );
 	
 	return execve( path, argv, envp );
+}
+
+int execv( const char* path, const char* const* argv )
+{
+	return execve( path, argv, environ );
 }
 
 static inline const char* getpath()
