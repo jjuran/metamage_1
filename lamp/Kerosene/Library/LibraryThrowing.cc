@@ -19,201 +19,197 @@
 #include "environ_store.hh"
 
 
-//
+inline iota::environ_t GetEnvironFromKernel()
+{
+	return reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
+}
 
-	inline iota::environ_t GetEnvironFromKernel()
+
+using kerosene::environ_store;
+
+static environ_store *global_environ_top = NULL;
+
+static int global_environ_level = 0;
+static int global_vfork_level   = 0;
+
+static environ_store& get_envp()
+{
+	while ( global_vfork_level >= global_environ_level )
 	{
-		return reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
-	}
-	
-	
-	using kerosene::environ_store;
-	
-	static environ_store *global_environ_top = NULL;
-	
-	static int global_environ_level = 0;
-	static int global_vfork_level   = 0;
-	
-	static environ_store& get_envp()
-	{
-		while ( global_vfork_level >= global_environ_level )
-		{
-			global_environ_top = new environ_store( global_environ_top, environ );
-			
-			++global_environ_level;
-		}
+		global_environ_top = new environ_store( global_environ_top, environ );
 		
-		return *global_environ_top;
+		++global_environ_level;
 	}
 	
-	extern "C" const void* InitializeEnviron();
-	
-	extern "C" void vfork_push();
-	extern "C" void vfork_pop();
-	
-	const void* InitializeEnviron()
+	return *global_environ_top;
+}
+
+extern "C" const void* InitializeEnviron();
+
+extern "C" void vfork_push();
+extern "C" void vfork_pop();
+
+const void* InitializeEnviron()
+{
+	try
 	{
-		try
-		{
-			static environ_store gEnviron( NULL, GetEnvironFromKernel() );
-			
-			global_environ_top = &gEnviron;
-			
-			global_environ_level = 1;
-		}
-		catch ( ... )
-		{
-		}
+		static environ_store gEnviron( NULL, GetEnvironFromKernel() );
 		
-		return global_environ_top;  // NULL if bad_alloc
-	}
-	
-	void vfork_push()
-	{
-		++global_vfork_level;
-	}
-	
-	void vfork_pop()
-	{
-		if ( global_environ_level > global_vfork_level-- )
-		{
-			global_environ_top = environ_store::pop( global_environ_top );
-			
-			--global_environ_level;
-		}
-	}
-	
-	
-	char* getenv( const char* name )
-	{
-		return global_environ_top->get( name );
-	}
-	
-	int setenv( const char* name, const char* value, int overwriting )
-	{
-		get_envp().set( name, value, overwriting );
+		global_environ_top = &gEnviron;
 		
-		return 0;
+		global_environ_level = 1;
+	}
+	catch ( ... )
+	{
 	}
 	
-	int putenv( char* string )
+	return global_environ_top;  // NULL if bad_alloc
+}
+
+void vfork_push()
+{
+	++global_vfork_level;
+}
+
+void vfork_pop()
+{
+	if ( global_environ_level > global_vfork_level-- )
 	{
-		get_envp().put( string );
+		global_environ_top = environ_store::pop( global_environ_top );
 		
-		return 0;
+		--global_environ_level;
 	}
+}
+
+
+char* getenv( const char* name )
+{
+	return global_environ_top->get( name );
+}
+
+int setenv( const char* name, const char* value, int overwriting )
+{
+	get_envp().set( name, value, overwriting );
 	
-	void unsetenv( const char* name )
+	return 0;
+}
+
+int putenv( char* string )
+{
+	get_envp().put( string );
+	
+	return 0;
+}
+
+void unsetenv( const char* name )
+{
+	get_envp().unset( name );
+}
+
+int clearenv()
+{
+	get_envp().clear();
+	
+	return 0;
+}
+
+
+DIR* fdopendir( int fd )
+{
+	DIR* result = NULL;
+	
+	if ( fd < 0 )
 	{
-		get_envp().unset( name );
-	}
-	
-	int clearenv()
-	{
-		get_envp().clear();
-		
-		return 0;
-	}
-	
-	
-	DIR* fdopendir( int fd )
-	{
-		DIR* result = NULL;
-		
-		if ( fd < 0 )
-		{
-			errno = EBADF;
-			
-			return result;
-		}
-		
-		try
-		{
-			result = new DIR;
-			
-			result->fd = fd;
-			
-			int set = fcntl( fd, F_SETFD, FD_CLOEXEC );
-		}
-		catch ( ... )
-		{
-			errno = ENOMEM;
-		}
+		errno = EBADF;
 		
 		return result;
 	}
 	
-	DIR* opendir( const char* pathname )
+	try
 	{
-		DIR* result = NULL;
+		result = new DIR;
 		
-		try
+		result->fd = fd;
+		
+		int set = fcntl( fd, F_SETFD, FD_CLOEXEC );
+	}
+	catch ( ... )
+	{
+		errno = ENOMEM;
+	}
+	
+	return result;
+}
+
+DIR* opendir( const char* pathname )
+{
+	DIR* result = NULL;
+	
+	try
+	{
+		DIR* dir = new DIR;
+		
+		int fd = open( pathname, O_RDONLY | O_DIRECTORY | O_CLOEXEC );
+		
+		if ( fd == -1 )
 		{
-			DIR* dir = new DIR;
+			delete dir;
+		}
+		else
+		{
+			dir->fd = fd;
 			
-			int fd = open( pathname, O_RDONLY | O_DIRECTORY | O_CLOEXEC );
-			
-			if ( fd == -1 )
-			{
-				delete dir;
-			}
-			else
-			{
-				dir->fd = fd;
-				
-				result = dir;
-			}
+			result = dir;
 		}
-		catch ( ... )
-		{
-			errno = ENOMEM;
-		}
-		
-		return result;
 	}
-	
-	struct dirent* readdir( DIR* dir )
+	catch ( ... )
 	{
-		struct dirent *const entry = &dir->entry;
-		
-		int got = getdents( dirfd( dir ), entry, sizeof (dirent) );
-		
-		if ( got <= 0 )
-		{
-			return NULL;
-		}
-		
-		return entry;
+		errno = ENOMEM;
 	}
 	
-	int closedir( DIR* dir )
+	return result;
+}
+
+struct dirent* readdir( DIR* dir )
+{
+	struct dirent *const entry = &dir->entry;
+	
+	int got = getdents( dirfd( dir ), entry, sizeof (dirent) );
+	
+	if ( got <= 0 )
 	{
-		int fd = dirfd( dir );
-		
-		delete dir;
-		
-		return close( fd );
+		return NULL;
 	}
 	
-	void rewinddir( DIR* dir )
-	{
-		(void) lseek( dirfd( dir ), 0, SEEK_SET );
-	}
+	return entry;
+}
+
+int closedir( DIR* dir )
+{
+	int fd = dirfd( dir );
 	
-	long telldir( DIR* dir )
-	{
-		return lseek( dirfd( dir ), 0, SEEK_CUR );
-	}
+	delete dir;
 	
-	void seekdir( DIR* dir, long offset )
-	{
-		(void) lseek( dirfd( dir ), offset, SEEK_SET );
-	}
-	
-	int dirfd( DIR* dir )
-	{
-		return dir->fd;
-	}
-	
-//
+	return close( fd );
+}
+
+void rewinddir( DIR* dir )
+{
+	(void) lseek( dirfd( dir ), 0, SEEK_SET );
+}
+
+long telldir( DIR* dir )
+{
+	return lseek( dirfd( dir ), 0, SEEK_CUR );
+}
+
+void seekdir( DIR* dir, long offset )
+{
+	(void) lseek( dirfd( dir ), offset, SEEK_SET );
+}
+
+int dirfd( DIR* dir )
+{
+	return dir->fd;
+}
 
