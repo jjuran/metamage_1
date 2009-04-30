@@ -1075,7 +1075,7 @@ namespace Genie
 		itsSchedule        = kProcessFrozen;
 		
 		itsVForkFramePtr =
-		itsStackFramePtr = Backtrace::GetStackFramePointer( 4 );
+		itsStackFramePtr = Backtrace::GetStackFramePointer( 5 );
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1115,13 +1115,9 @@ namespace Genie
 			DeliverFatalSignal( SIGSTKFLT );
 		}
 		
-		LongJmp jump = GetLongJmp();
-		
-		ASSERT( jump != NULL );
-		
 		LeaveSystemCall();
 		
-		jump( child );
+		LongJump( child );
 	}
 	
 	void Process::UsurpParent( int exit_status )

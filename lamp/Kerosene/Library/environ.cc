@@ -1,7 +1,9 @@
-/*	==================
- *	LibraryThrowing.cc
- *	==================
+/*	==========
+ *	environ.cc
+ *	==========
  */
+
+#include "environ.hh"
 
 // Mac OS Universal Interfaces
 #include <LowMem.h>
@@ -40,9 +42,6 @@ static environ_store& get_envp()
 }
 
 extern "C" const void* InitializeEnviron();
-
-extern "C" void vfork_push();
-extern "C" void vfork_pop();
 
 const void* InitializeEnviron()
 {

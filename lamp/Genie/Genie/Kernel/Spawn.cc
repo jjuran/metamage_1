@@ -22,11 +22,11 @@ namespace Genie
 		return *child;
 	}
 	
-	static int vfork_start( void (*LongJmp)(int) )
+	static int vfork_start( Process::long_jump_t long_jump, jmp_buf* buffer )
 	{
 		SystemCallFrame frame( "vfork_start" );
 		
-		frame.Caller().SetLongJmp( LongJmp );
+		frame.Caller().SetLongJmp( long_jump, buffer );
 		
 		try
 		{

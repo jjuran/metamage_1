@@ -6,23 +6,34 @@
 #ifndef GENIE_PROCESS_LONGJUMPER_HH
 #define GENIE_PROCESS_LONGJUMPER_HH
 
+// Standard C
+#include <setjmp.h>
+
 
 namespace Genie
 {
 	
 	class LongJumper
 	{
+		public:
+			typedef void (*long_jump_t)( jmp_buf*, int);
+			
 		private:
-			void (*itsLongJmp)(int);
+			long_jump_t   its_long_jump;
+			jmp_buf      *its_buffer;
 		
 		public:
-			typedef void (*LongJmp)(int);
+			LongJumper() : its_long_jump(), its_buffer()
+			{
+			}
 			
-			LongJumper() : itsLongJmp()  {}
+			void LongJump( int second_result ) const;
 			
-			LongJmp GetLongJmp() const  { return itsLongJmp; }
-			
-			void SetLongJmp( LongJmp f )  { itsLongJmp = f; }
+			void SetLongJmp( long_jump_t f, jmp_buf* buffer )
+			{
+				its_long_jump = f;
+				its_buffer    = buffer;
+			}
 	};
 	
 }

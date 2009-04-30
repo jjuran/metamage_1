@@ -8,6 +8,7 @@
 
 // Standard C
 #include <setjmp.h>
+#include <stdlib.h>
 
 // POSIX
 #include <sys/types.h>
@@ -16,19 +17,29 @@
 extern "C" {
 #endif
 	
-	void Kerosene_LongJmp( int result );
+	static jmp_buf* _kerosene_temp_jmp_buf;
 	
-	int vfork_start( void (*LongJmp)( int ) );  // Only returns 0 or -1
-	
-	jmp_buf* NewJmpBuf();
+	int _vfork_start( jmp_buf* buffer );
 	
 	#ifdef __cplusplus
 		
-		inline pid_t vfork()  { return pid_t( vfork_start( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ); }
+		inline pid_t vfork()
+		{
+			jmp_buf* temp_jmp_buf;
+			
+			return _vfork_start( temp_jmp_buf
+			                     = (jmp_buf*) alloca( sizeof (jmp_buf) ) )
+			       ? pid_t( -1 )
+			       : pid_t( setjmp( *temp_jmp_buf ) );
+		}
 		
 	#else
 		
-		#define vfork()  ( (pid_t) (vfork_start( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) ) )
+		#define vfork()                                                   \
+		        (_vfork_start( _kerosene_temp_jmp_buf                      \
+		                       = (jmp_buf*) alloca( sizeof (jmp_buf) ) )  \
+		         ? (pid_t) -1                                             \
+		         : (pid_t) setjmp( *_kerosene_temp_jmp_buf ) )
 		
 	#endif
 	
