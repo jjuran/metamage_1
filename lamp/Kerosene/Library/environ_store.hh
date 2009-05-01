@@ -37,7 +37,7 @@ namespace kerosene
 			void overwrite( std::vector< char* >::iterator  it,
 	                        char                           *string );
 			
-			void reset_user_owned();
+			void reset();
 		
 		public:
 			environ_store( environ_store* next, iota::environ_t envp );

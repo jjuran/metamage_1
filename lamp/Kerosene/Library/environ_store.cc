@@ -149,7 +149,7 @@ namespace kerosene
 	
 	environ_store::~environ_store()
 	{
-		clear();
+		reset();
 	}
 	
 	void environ_store::update_environ()
@@ -202,7 +202,7 @@ namespace kerosene
 		}
 	}
 	
-	void environ_store::reset_user_owned()
+	void environ_store::reset()
 	{
 		// Here we zero out user-owned var string storage.  This is a convenience
 		// that allows us to subsequently call delete_vars() safely without
@@ -219,6 +219,8 @@ namespace kerosene
 		}
 		
 		its_user_owned_vars.clear();
+		
+		delete_vars( its_vars );
 	}
 	
 	char* environ_store::get( const char* name )
@@ -331,10 +333,7 @@ namespace kerosene
 	
 	void environ_store::clear()
 	{
-		// Zero out user-owned memory so we don't try to delete it.
-		reset_user_owned();
-		
-		delete_vars( its_vars );
+		reset();
 		
 		its_vars.clear();
 		
