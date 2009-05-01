@@ -54,14 +54,19 @@ int fexecve( int fd, const char *const argv[], const char *const envp[] )
 	return execve( path, argv, envp );
 }
 
+static inline const char* getpath()
+{
+	if ( const char* path = getenv( "PATH" ) )
+	{
+		return path;
+	}
+	
+	return ".";
+}
+
 static std::string LookupPath( const char* filename )
 {
-	const char* pathVar = getenv( "PATH" );
-	
-	if ( pathVar == NULL )
-	{
-		return "";
-	}
+	const char* pathVar = getpath();
 	
 	const char* pathEnd = pathVar + std::strlen( pathVar );
 	
