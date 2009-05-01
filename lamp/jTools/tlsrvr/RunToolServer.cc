@@ -334,6 +334,12 @@ namespace tool
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
+		if ( result == -9 )
+		{
+			// Observed from MWLink68K and MWLinkPPC on Command-period
+			return 128;
+		}
+		
 		std::string errors = Slurp( gTempFiles[ kErrorFile ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
