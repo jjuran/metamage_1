@@ -5,11 +5,15 @@
 
 // Standard C
 #include "errno.h"
+#include "stdlib.h"
 
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
 #include "unistd.h"
+
+
+#pragma exceptions off
 
 
 DIR* fdopendir( int fd )
@@ -23,15 +27,13 @@ DIR* fdopendir( int fd )
 		return result;
 	}
 	
-	try
+	if (( result = (DIR*) malloc( sizeof (DIR) ) ))
 	{
-		result = new DIR;
-		
 		result->fd = fd;
 		
 		int set = fcntl( fd, F_SETFD, FD_CLOEXEC );
 	}
-	catch ( ... )
+	else
 	{
 		errno = ENOMEM;
 	}
@@ -43,15 +45,13 @@ DIR* opendir( const char* pathname )
 {
 	DIR* result = NULL;
 	
-	try
+	if ( DIR* dir = (DIR*) malloc( sizeof (DIR) ) )
 	{
-		DIR* dir = new DIR;
-		
 		int fd = open( pathname, O_RDONLY | O_DIRECTORY | O_CLOEXEC );
 		
 		if ( fd == -1 )
 		{
-			delete dir;
+			free( dir );
 		}
 		else
 		{
@@ -60,7 +60,7 @@ DIR* opendir( const char* pathname )
 			result = dir;
 		}
 	}
-	catch ( ... )
+	else
 	{
 		errno = ENOMEM;
 	}
@@ -86,7 +86,7 @@ int closedir( DIR* dir )
 {
 	int fd = dirfd( dir );
 	
-	delete dir;
+	free( dir );
 	
 	return close( fd );
 }
