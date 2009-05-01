@@ -82,20 +82,22 @@ static std::string LookupPath( const char* filename )
 	{
 		const char* separator = find_in_str( pathVar, ':' );
 		
-		// Watch out for empty path elements (e.g. "/bin:/sbin:" -- last is empty)
+		std::string path( pathVar, separator - pathVar );
+		
 		if ( separator != pathVar )
 		{
-			std::string dir( pathVar, separator - pathVar );
-			
-			std::string tryPath = dir + "/" + filename;
-			
-			struct ::stat sb;
-			int status = stat( tryPath.c_str(), &sb );
-			
-			if ( status == 0  &&  sb.st_mode & S_IXUSR )
-			{
-				return tryPath;
-			}
+			path += '/';
+		}
+		
+		// Empty path element means current directory
+		path += filename;
+		
+		struct ::stat sb;
+		int status = stat( path.c_str(), &sb );
+		
+		if ( status == 0  &&  sb.st_mode & S_IXUSR )
+		{
+			return path;
 		}
 		
 		if ( *separator == '\0' )
