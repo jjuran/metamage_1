@@ -64,20 +64,23 @@ static inline const char* getpath()
 	return ".";
 }
 
+static inline const char* find_in_str( const char* s, char c )
+{
+	while ( *s != '\0'  &&  *s != c )
+	{
+		++s;
+	}
+	
+	return s;
+}
+
 static std::string LookupPath( const char* filename )
 {
 	const char* pathVar = getpath();
 	
-	const char* pathEnd = pathVar + std::strlen( pathVar );
-	
-	while ( pathVar < pathEnd )
+	while ( true )
 	{
-		const char* separator = std::strchr( pathVar, ':' );
-		
-		if ( separator == NULL )
-		{
-			separator = pathEnd;
-		}
+		const char* separator = find_in_str( pathVar, ':' );
 		
 		// Watch out for empty path elements (e.g. "/bin:/sbin:" -- last is empty)
 		if ( separator != pathVar )
@@ -95,7 +98,11 @@ static std::string LookupPath( const char* filename )
 			}
 		}
 		
-		// If we're at the end, then this sets pathVar > pathEnd
+		if ( *separator == '\0' )
+		{
+			break;
+		}
+		
 		pathVar = separator + 1;
 	}
 	
