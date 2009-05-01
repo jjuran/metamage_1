@@ -109,9 +109,25 @@ static std::string LookupPath( const char* filename )
 	return "";
 }
 
-int execl( const char* path, const char* arg0, ... )
+int execvp( const char* file, const char* const argv[] )
 {
-	return execv( path, &arg0 );
+	std::string path;
+	
+	if ( std::strchr( file, '/' ) == NULL )
+	{
+		path = LookupPath( file );
+		
+		if ( path == "" )
+		{
+			errno = ENOENT;
+			
+			return -1;
+		}
+		
+		file = path.c_str();
+	}
+	
+	return execv( file, argv );
 }
 
 int execle( const char* path, const char* arg0, ... )
@@ -133,29 +149,13 @@ int execle( const char* path, const char* arg0, ... )
 	return execve( path, argv, envp );
 }
 
+int execl( const char* path, const char* arg0, ... )
+{
+	return execv( path, &arg0 );
+}
+
 int execlp( const char* file, const char* arg0, ... )
 {
 	return execvp( file, &arg0 );
-}
-
-int execvp( const char* file, const char* const argv[] )
-{
-	std::string path;
-	
-	if ( std::strchr( file, '/' ) == NULL )
-	{
-		path = LookupPath( file );
-		
-		if ( path == "" )
-		{
-			errno = ENOENT;
-			
-			return -1;
-		}
-		
-		file = path.c_str();
-	}
-	
-	return execv( file, argv );
 }
 
