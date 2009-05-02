@@ -330,6 +330,74 @@ namespace tool
 		ConvertAndDumpMacText( text, fd );
 	}
 	
+	static inline bool matches_at_end( const char* a_end,
+	                                   size_t a_length,
+	                                   const char* b_begin,
+	                                   size_t b_length )
+	{
+		const char* a_begin = a_end - b_length;
+		
+		return a_length >= b_length  &&  std::equal( a_begin, a_end, b_begin );
+	}
+	
+	static bool find_from_end( const char* begin,
+	                           const char* end,
+	                           const char* pattern,
+	                           size_t length )
+	{
+		const char* pattern_end = pattern + length;
+		
+		for ( const char* p = end - length;  p >= begin;  --p )
+		{
+			if ( std::equal( pattern, pattern_end, p ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static bool strings_equal( const char* a_begin,
+	                           const char* a_end,
+	                           const char* b_begin,
+	                           size_t b_length )
+	{
+		const size_t a_length = a_end - a_begin;
+		
+		return a_length == b_length  &&  std::equal( a_begin, a_end, b_begin );
+	}
+	
+	static bool user_cancelled( const std::string& errors )
+	{
+		const char* begin = &*errors.begin();
+		const char* end   = &*errors.end  ();
+		
+		if ( strings_equal( begin,
+		                    end,
+		                    STR_LEN( "\r" "User break, cancelled...\r" ) ) )
+		{
+			return true;
+		}
+		
+		// The magic line we're looking for is:
+		//
+		//     ### ToolServer - Execution of HD:Path:To:Script terminated.
+		
+		const bool terminated = matches_at_end( end,
+		                                        errors.size(),
+		                                        STR_LEN( " terminated.\r" ) );
+		
+		if ( terminated )
+		{
+			return find_from_end( begin,
+			                      end,
+			                      STR_LEN( "### ToolServer - Execution of" ) );
+		}
+		
+		return false;
+	}
+	
 	int RunCommandInToolServer( const std::string& command )
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
@@ -349,13 +417,7 @@ namespace tool
 		
 		if ( result == 2 )
 		{
-			// The magic line we're looking for might be followed by:
-			//
-			//     ### ToolServer - Execution of HD:Path:To:Script terminated.
-			//
-			// So only check the known quantity.
-			
-			if ( std::strncmp( errors.c_str(), STR_LEN( "\r" "User break, cancelled..." "\r" ) ) == 0 )
+			if ( user_cancelled( errors ) )
 			{
 				// User pressed Command-period
 				return 128;
