@@ -11,6 +11,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/clearenv.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/select.hh"
 #include "POSeven/functions/setsid.hh"
@@ -64,6 +65,8 @@ namespace tool
 			p7::pid_t sid = p7::setsid();  // New session
 			
 			p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
+			
+			p7::clearenv();
 			
 			const char* login_argv[] = { "/bin/login", NULL };
 			
