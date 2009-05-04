@@ -595,7 +595,23 @@ int link( const char* oldpath, const char* newpath )
 
 int readlink( const char *path, char *buffer, size_t buffer_size )
 {
-	return readlinkat( AT_FDCWD, path, buffer, buffer_size );
+	const int saved_errno = errno;
+	
+	const ssize_t size = readlink_k( path, buffer, buffer_size );
+	
+	if ( size == -1 )
+	{
+		return -1;
+	}
+	
+	if ( size < -1 )
+	{
+		errno = saved_errno;  // was ERANGE
+		
+		return buffer_size;
+	}
+	
+	return size;
 }
 
 ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
