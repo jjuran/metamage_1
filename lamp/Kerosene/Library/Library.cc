@@ -727,17 +727,10 @@ static char* inscribe_decimal_backwards( unsigned x, char* p )
 
 char* getcwd( char* buffer, size_t buffer_size )
 {
-	ssize_t length = getcwd_k( buffer, buffer_size );
+	ssize_t length = getcwd_k( buffer, buffer_size - 1 );
 	
 	if ( length < 0 )
 	{
-		return NULL;
-	}
-	
-	if ( length + 1 > buffer_size )
-	{
-		errno = ERANGE;
-		
 		return NULL;
 	}
 	
