@@ -795,18 +795,20 @@ char* realpath( const char *path, char *buffer )
 {
 	const size_t buffer_size = 4096;
 	
-	ssize_t length = realpath_k( path, buffer, buffer_size );
+	const int saved_errno = errno;
 	
-	if ( length < 0 )
+	ssize_t length = realpath_k( path, buffer, buffer_size - 1 );
+	
+	if ( length == -1 )
 	{
 		return NULL;
 	}
 	
-	if ( length + 1 > buffer_size )
+	if ( length < -1 )
 	{
-		errno = ERANGE;
+		errno = saved_errno;  // was ERANGE
 		
-		return NULL;
+		length = buffer_size - 1;
 	}
 	
 	buffer[ length ] = '\0';
