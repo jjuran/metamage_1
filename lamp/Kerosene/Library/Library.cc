@@ -774,7 +774,21 @@ ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
 
 ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
 {
-	return std::min< ssize_t >( readlinkat_k( dirfd, path, buffer, buffer_size ), buffer_size );
+	const int saved_errno = errno;
+	
+	const ssize_t size = readlinkat_k( dirfd, path, buffer, buffer_size );
+	
+	if ( size == -1 )
+	{
+		return -1;
+	}
+	
+	if ( size < -1 )
+	{
+		errno = saved_errno;  // was ERANGE
+	}
+	
+	return 0;
 }
 
 char* realpath( const char *path, char *buffer )
