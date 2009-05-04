@@ -856,13 +856,6 @@ const char* ttyname( int fd )
 		return NULL;
 	}
 	
-	if ( length + 1 > sizeof buffer )
-	{
-		errno = ERANGE;
-		
-		return NULL;
-	}
-	
 	buffer[ length ] = '\0';
 	
 	return buffer;
