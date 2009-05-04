@@ -324,17 +324,25 @@ namespace Genie
 			
 			std::string result = cwd->Pathname();
 			
-			buffer_size = std::min( buffer_size, result.size() );
+			const bool too_big = result.size() > buffer_size;
 			
-			std::copy( result.c_str(),
-			           result.c_str() + result.size(),
-			           buffer );
+			const size_t bytes_copied = std::min( buffer_size, result.size() );
 			
-			return result.size();
+			std::memcpy( buffer, result.data(), bytes_copied );
+			
+			if ( too_big )
+			{
+				errno = ERANGE;
+				
+				// Return the bitwise inverse of the data size.
+				return ~result.size();
+			}
+			
+			return bytes_copied;
 		}
 		catch ( ... )
 		{
-			return NULL;
+			return frame.SetErrnoFromException();
 		}
 	}
 	

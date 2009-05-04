@@ -3,8 +3,8 @@
  *	===========
  */
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <errno.h>
 
 // POSIX
 #include <unistd.h>
@@ -19,7 +19,7 @@
 namespace Genie
 {
 	
-	static ssize_t realpath_k( const char* pathname, char* resolved_path, size_t size )
+	static ssize_t realpath_k( const char* pathname, char* resolved_path, size_t buffer_size )
 	{
 		SystemCallFrame frame( "realpath_k" );
 		
@@ -33,11 +33,21 @@ namespace Genie
 			
 			std::string resolved = file->Pathname();
 			
-			size = std::min( size, resolved.size() );
+			const bool too_big = resolved.size() > buffer_size;
 			
-			std::copy( resolved.begin(), resolved.begin() + size, resolved_path );
+			const size_t bytes_copied = std::min( buffer_size, resolved.size() );
 			
-			return resolved.size();
+			std::memcpy( resolved_path, resolved.data(), bytes_copied );
+			
+			if ( too_big )
+			{
+				errno = ERANGE;
+				
+				// Return the bitwise inverse of the data size.
+				return ~resolved.size();
+			}
+			
+			return bytes_copied;
 		}
 		catch ( ... )
 		{
