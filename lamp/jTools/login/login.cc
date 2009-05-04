@@ -53,17 +53,13 @@ static void SetVariables()
 	
 	setenv( "PATH", path, 0 );
 	
-	char path_buffer[ 1024 ];
+	char path_buffer[ 4096 ];
 	
-	ssize_t size = readlink_k( "/sys/mac/user/home", path_buffer, sizeof path_buffer );
+	ssize_t size = readlink_k( "/sys/mac/user/home", path_buffer, sizeof path_buffer - 1 );
 	
 	if ( size < 0 )
 	{
 		std::perror( "login: /sys/mac/user/home" );
-	}
-	if ( size + 1 > sizeof path_buffer )
-	{
-		// Shouldn't ever happen, but for correctness do nothing
 	}
 	else
 	{
