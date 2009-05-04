@@ -52,7 +52,17 @@ namespace poseven
 		{
 			result.resize( size );
 			
-			size = throw_posix_result( realpath_k( pathname, &result[0], result.size() ) );
+			size = realpath_k( pathname, &result[0], result.size() );
+			
+			if ( size == -1 )
+			{
+				throw_errno( errno );
+			}
+			
+			if ( size < -1 )
+			{
+				size = ~size;
+			}
 		}
 		
 		result.resize( size );
