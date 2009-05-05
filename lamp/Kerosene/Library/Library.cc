@@ -845,7 +845,7 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	return readlink_k( pathname, buffer, buffer_size );
 }
 
-const char* ttyname( int fd )
+char* ttyname( int fd )
 {
 	static char buffer[ 256 ];  // should be enough for a terminal name
 	

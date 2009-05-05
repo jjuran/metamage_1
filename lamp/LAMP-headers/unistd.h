@@ -119,7 +119,7 @@ unsigned int sleep(unsigned int);
 long	 sysconf(int);
 pid_t	 tcgetpgrp(int);
 int	 tcsetpgrp(int, pid_t);
-const char	*ttyname(int);
+char	*ttyname(int);
 ssize_t ttyname_k( int, char*, size_t );  // jjuran
 int	 unlink(const char *);
 int updateat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags );  // jjuran
