@@ -3,11 +3,14 @@
  *	========
  */
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 // POSIX
 #include "sys/utsname.h"
+
+// Iota
+#include "iota/strings.hh"
 
 // Nucleus
 #include "Nucleus/NAssert.h"
@@ -43,24 +46,22 @@ namespace Genie
 	
 #endif
 	
-	static void CopyString( const char* str, char* dest )
+	static void string_copy( char* dest, const char* str, size_t len )
 	{
-		std::size_t len = std::strlen( str );
-		
 		ASSERT( len < kNameLength );
 		
-		std::copy( str, str + len + 1, dest );  // copy length byte too
+		memcpy( dest, str, len + 1 );  // copy length byte too
 	}
 	
 	static int uname( struct utsname *uts )
 	{
 		SystemCallFrame frame( "uname" );
 		
-		CopyString( "Genie", uts->sysname );
-		CopyString( "nodename", uts->nodename );
-		CopyString( "0.7something", uts->release );
-		CopyString( "verbose version string", uts->version );
-		CopyString( HARDWARE_CLASS, uts->machine );
+		string_copy( uts->sysname,  STR_LEN( "Genie" ) );
+		string_copy( uts->nodename, STR_LEN( "nodename" ) );
+		string_copy( uts->release,  STR_LEN( "0.7something" ) );
+		string_copy( uts->version,  STR_LEN( "verbose version string" ) );
+		string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
 		
 		return 0;
 	}
