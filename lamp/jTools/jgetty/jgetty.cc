@@ -6,6 +6,9 @@
 // Standard C/C++
 #include <cstring>
 
+// Standard C
+#include "stdlib.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -28,9 +31,29 @@ namespace NN = Nucleus;
 namespace p7 = poseven;
 
 
+namespace tool
+{
+	
+	static const char* getcwd()
+	{
+		static char buffer[] = "/sys/window/abcd3210";
+		
+		if ( ::getcwd( buffer, sizeof buffer ) == NULL )
+		{
+			p7::throw_errno( errno );
+		}
+		
+		return buffer;
+	}
+	
+}
+
+
 int main( int argc, char const *const argv[] )
 {
 	p7::chdir( "/new/window" );
+	
+	setenv( "WINDOW", tool::getcwd(), true );
 	
 	const short width  = 2 * 4 +  6 * 80 + 15;
 	const short height = 2 * 4 + 11 * 24;
