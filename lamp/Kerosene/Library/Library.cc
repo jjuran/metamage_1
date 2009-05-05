@@ -852,6 +852,22 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	return readlink_k( pathname, buffer, buffer_size );
 }
 
+int ttyname_r( int fd, char* buffer, size_t buffer_size )
+{
+	ssize_t length = ttyname_k( fd, buffer, buffer_size - 1 );
+	
+	if ( length < 0 )
+	{
+		assert( errno != 0 );
+		
+		return errno;
+	}
+	
+	buffer[ length ] = '\0';
+	
+	return 0;
+}
+
 char* ttyname( int fd )
 {
 	static char buffer[ 256 ];  // should be enough for a terminal name
