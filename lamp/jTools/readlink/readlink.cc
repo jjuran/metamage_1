@@ -3,8 +3,9 @@
  *	===========
  */
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <errno.h>
+#include <stdio.h>
 
 // POSIX
 #include <unistd.h>
@@ -26,33 +27,24 @@ int main( int argc, char const *const argv[] )
 		return 1;
 	}
 	
-	int exit_status = EXIT_SUCCESS;
+	char buffer[ 4096 ];
 	
-	char buffer[ 1024 ];
-	
-	ssize_t size = readlink_k( argv[1], buffer, sizeof buffer );
+	ssize_t size = readlink_k( argv[1], buffer, sizeof buffer - 1 );
 	
 	if ( size < 0 )
 	{
-		return 1;  // No error output
-	}
-	else if ( size + 1 > sizeof buffer )
-	{
-		size = sizeof buffer;
+		if ( errno != EINVAL )
+		{
+			fprintf( stderr, "readlink: %s: %s\n", argv[1], strerror( errno ) );
+		}
 		
-		const char* tail = "...\n";
-		
-		std::copy_backward( tail, tail + STRLEN( "...\n" ), buffer + size );
-		
-		exit_status = EXIT_FAILURE;
+		return EXIT_FAILURE;
 	}
-	else
-	{
-		buffer[ size++ ] = '\n';
-	}
+	
+	buffer[ size++ ] = '\n';
 	
 	(void) write( STDOUT_FILENO, buffer, size );
 	
-	return exit_status;
+	return EXIT_SUCCESS;
 }
 
