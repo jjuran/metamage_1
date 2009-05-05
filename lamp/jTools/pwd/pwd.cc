@@ -3,41 +3,42 @@
  *	======
  */
 
-// Standard C++
-#include <string>
+// Standard C
+#include <errno.h>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
+
+#pragma exceptions off
+
 
 int main( int argc, char const *const argv[] )
 {
-	std::string path;
+	char buffer[ 4096 ];
 	
-	ssize_t got = ~256;  // reasonable default
+	ssize_t size = getcwd_k( buffer, sizeof buffer - 1 );
 	
-	// Even though we know the size after one iteration, it's theoretically possible
-	// that the cwd has moved and now has a longer pathname.
-	do
+	if ( size < 0 )
 	{
-		const size_t size = ~got;
+		const char* error = strerror( errno );
 		
-		path.resize( size );
+		write( STDERR_FILENO, STR_LEN( "pwd: " ) );
 		
-		got = getcwd_k( &path[ 0 ], path.size() );
-	}
-	while ( got < -1 );
-	
-	if ( got == -1 )
-	{
+		write( STDERR_FILENO, error, strlen( error ) );
+		
+		write( STDERR_FILENO, STR_LEN( "\n" ) );
+		
 		return EXIT_FAILURE;
 	}
 	
-	path.resize( got );
+	buffer[ size++ ] = '\n';
 	
-	path += "\n";
-	
-	write( STDOUT_FILENO, path.data(), path.size() );
+	write( STDOUT_FILENO, buffer, size );
 	
 	return 0;
 }
