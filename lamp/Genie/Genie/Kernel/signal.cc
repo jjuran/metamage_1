@@ -86,15 +86,22 @@ namespace Genie
 			return frame.SetErrno( EINVAL );
 		}
 		
-		Process& current = CurrentProcess();
+		Process& current = frame.Caller();
 		
-		int result = pid >   0 ? kill_pid ( pid,               signo )
-		           : pid ==  0 ? kill_pgid( current.GetPGID(), signo )
-		           : pid == -1 ? kill_pgid( 0,                 signo )
-		           :             kill_pgid( -pid,              signo );
-		
-		// In case we signalled ourself
-		current.HandlePendingSignals( kInterruptNever );
+		try
+		{
+			int result = pid >   0 ? kill_pid ( pid,               signo )
+			           : pid ==  0 ? kill_pgid( current.GetPGID(), signo )
+			           : pid == -1 ? kill_pgid( 0,                 signo )
+			           :             kill_pgid( -pid,              signo );
+			
+			// In case we signalled ourself
+			current.HandlePendingSignals( kInterruptNever );
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 		
 		return 0;
 	}

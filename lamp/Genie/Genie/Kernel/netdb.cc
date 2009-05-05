@@ -75,10 +75,10 @@ namespace Genie
 		static struct hostent  host_entry;
 		static ::InetHost*     addr_list[10];
 		
-		OpenTransportShare sharedOpenTransport;
-		
 		try
 		{
+			OpenTransportShare sharedOpenTransport;
+			
 			info = N::OTInetStringToAddress( InternetServices(),
 			                                 (char*) name );
 		}
@@ -102,9 +102,19 @@ namespace Genie
 	{
 		SystemCallFrame frame( "OTInetMailExchange" );
 		
-		OpenTransportShare sharedOpenTransport;
-		
-		return ::OTInetMailExchange( InternetServices(), domain, count, result );
+		try
+		{
+			OpenTransportShare sharedOpenTransport;
+			
+			return ::OTInetMailExchange( InternetServices(),
+			                             domain,
+			                             count,
+			                             result );
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 	}
 	
 	#pragma force_active on

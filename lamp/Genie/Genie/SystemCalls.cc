@@ -351,10 +351,17 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getpgid" );
 		
-		Process& proc = pid == 0 ? frame.Caller()
-		                         : GetProcess( pid );
-		
-		return proc.GetPGID();
+		try
+		{
+			Process& proc = pid == 0 ? frame.Caller()
+			                         : GetProcess( pid );
+			
+			return proc.GetPGID();
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 	}
 	
 	
@@ -378,10 +385,17 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getsid" );
 		
-		Process& proc = pid == 0 ? frame.Caller()
-		                         : GetProcess( pid );
-		
-		return proc.GetSID();
+		try
+		{
+			Process& proc = pid == 0 ? frame.Caller()
+			                         : GetProcess( pid );
+			
+			return proc.GetSID();
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 	}
 	
 	
@@ -434,21 +448,28 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pipe" );
 		
-		FileDescriptorMap& files = frame.Caller().FileDescriptors();
-		
-		int reader = LowestUnusedFileDescriptor( 3 );
-		int writer = LowestUnusedFileDescriptor( reader + 1 );
-		
-		boost::shared_ptr< Conduit > conduit( new Conduit );
-		
-		boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit ) );
-		boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit ) );
-		
-		AssignFileDescriptor( reader, pipeOut );
-		AssignFileDescriptor( writer, pipeIn );
-		
-		filedes[ 0 ] = reader;
-		filedes[ 1 ] = writer;
+		try
+		{
+			FileDescriptorMap& files = frame.Caller().FileDescriptors();
+			
+			int reader = LowestUnusedFileDescriptor( 3 );
+			int writer = LowestUnusedFileDescriptor( reader + 1 );
+			
+			boost::shared_ptr< Conduit > conduit( new Conduit );
+			
+			boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit ) );
+			boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit ) );
+			
+			AssignFileDescriptor( reader, pipeOut );
+			AssignFileDescriptor( writer, pipeIn );
+			
+			filedes[ 0 ] = reader;
+			filedes[ 1 ] = writer;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 		
 		return 0;
 	}
