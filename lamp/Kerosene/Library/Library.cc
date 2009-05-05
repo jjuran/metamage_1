@@ -872,7 +872,7 @@ char* ttyname( int fd )
 {
 	static char buffer[ 256 ];  // should be enough for a terminal name
 	
-	ssize_t length = ttyname_k( fd, buffer, sizeof buffer );
+	ssize_t length = ttyname_k( fd, buffer, sizeof buffer - 1 );
 	
 	if ( length < 0 )
 	{
