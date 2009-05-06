@@ -56,7 +56,13 @@ namespace Genie
 	
 	int DuplicateFileDescriptor( int oldfd, int newfd )
 	{
-		AssignFileDescriptor( newfd, GetFileHandle( oldfd ) );  // Clears the closeOnExec flag
+		// Throws EBADF
+		boost::shared_ptr< IOHandle > const& handle = GetFileHandle( oldfd );
+		
+		if ( oldfd != newfd )
+		{
+			AssignFileDescriptor( newfd, handle );
+		}
 		
 		return newfd;
 	}
