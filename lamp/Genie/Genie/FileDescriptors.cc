@@ -65,6 +65,11 @@ namespace Genie
 	                           const boost::shared_ptr< IOHandle >&  handle,
 	                           bool                                  close_on_exec )
 	{
+		if ( fd < 0 )
+		{
+			p7::throw_errno( EBADF );
+		}
+		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		(files[ fd ] = handle).closeOnExec = close_on_exec;
