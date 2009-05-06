@@ -64,6 +64,8 @@
 #define	SOCK_RDM	4		/* reliably-delivered message */
 #define	SOCK_SEQPACKET	5		/* sequenced packet stream */
 
+#define SOCK_CLOEXEC   0x00080000
+
 /*
  * Option flags per-socket.
  */
