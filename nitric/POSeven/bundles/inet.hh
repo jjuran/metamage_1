@@ -35,9 +35,11 @@ namespace poseven
 		bind< af_inet >( fd, sockaddr_traits< af_inet >::make( addr, port ) );
 	}
 	
-	inline Nucleus::Owned< fd_t > bind( in_addr_t addr, in_port_t port )
+	inline Nucleus::Owned< fd_t > bind( in_addr_t    addr,
+	                                    in_port_t    port,
+	                                    socket_type  type = sock_stream )
 	{
-		Nucleus::Owned< fd_t > fd = socket( pf_inet, sock_stream );
+		Nucleus::Owned< fd_t > fd = socket( pf_inet, type );
 		
 		bind( fd, addr, port );
 		
@@ -49,9 +51,11 @@ namespace poseven
 		connect< af_inet >( fd, sockaddr_traits< af_inet >::make( addr, port ) );
 	}
 	
-	inline Nucleus::Owned< fd_t > connect( in_addr_t addr, in_port_t port )
+	inline Nucleus::Owned< fd_t > connect( in_addr_t    addr,
+	                                       in_port_t    port,
+	                                       socket_type  type = sock_stream )
 	{
-		Nucleus::Owned< fd_t > fd = socket( pf_inet, sock_stream );
+		Nucleus::Owned< fd_t > fd = socket( pf_inet, type );
 		
 		connect( fd, addr, port );
 		
