@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2008 by Joshua Juran.
+// Written 2008-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -26,13 +26,33 @@ namespace poseven
 	
 	enum open_flags_t
 	{
-		o_rdonly = O_RDONLY,
-		o_wronly = O_WRONLY,
-		o_rdwr   = O_RDWR,
-		o_creat  = O_CREAT,
-		o_trunc  = O_TRUNC,
-		o_append = O_APPEND,
-		o_excl   = O_EXCL,
+		o_rdonly   = O_RDONLY,
+		o_wronly   = O_WRONLY,
+		o_rdwr     = O_RDWR,
+		o_creat    = O_CREAT,
+		o_trunc    = O_TRUNC,
+		o_append   = O_APPEND,
+		o_excl     = O_EXCL,
+		o_nonblock = O_NONBLOCK,
+		o_noctty   = O_NOCTTY,
+		
+	#ifdef O_NOATIME
+		
+		o_noatime  = O_NOATIME,
+		
+	#endif
+		
+	#ifdef O_NONE
+		
+		o_none = O_NONE,
+		
+	#endif
+		
+	#ifdef O_EXEC
+		
+		o_exec = O_EXEC,
+		
+	#endif
 		
 	#ifdef O_DIRECTORY
 		
@@ -49,6 +69,12 @@ namespace poseven
 	#ifdef O_TRUNC_LAZY
 		
 		o_trunc_lazy = O_TRUNC_LAZY,
+		
+	#endif
+		
+	#ifdef O_CLOEXEC
+		
+		o_cloexec = O_CLOEXEC,
 		
 	#endif
 		
