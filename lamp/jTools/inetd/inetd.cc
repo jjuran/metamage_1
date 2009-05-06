@@ -32,6 +32,7 @@
 #include "POSeven/bundles/inet.hh"
 #include "POSeven/functions/accept.hh"
 #include "POSeven/functions/execv.hh"
+#include "POSeven/functions/fcntl.hh"
 #include "POSeven/functions/listen.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/socket.hh"
@@ -216,7 +217,23 @@ namespace tool
 		
 		p7::in_port_t port = p7::in_port_t( record.port );
 		
-		p7::fd_t listener = p7::bind( p7::inaddr_any, port ).release();
+	#ifdef SOCK_CLOEXEC
+		
+		const p7::socket_type type = p7::sock_stream | p7::sock_cloexec;
+		
+	#else
+		
+		const p7::socket_type type = p7::sock_stream;
+		
+	#endif
+		
+		const p7::fd_t listener = p7::bind( p7::inaddr_any, port, type ).release();
+		
+	#ifndef SOCK_CLOEXEC
+		
+		p7::fcntl< p7::f_setfd >( listener, p7::fd_cloexec );
+		
+	#endif
 		
 		gServers[ listener ] = record;
 		
