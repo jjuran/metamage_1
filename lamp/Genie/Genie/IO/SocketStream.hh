@@ -44,7 +44,10 @@ namespace Genie
 	class SocketHandle : public StreamHandle
 	{
 		public:
-			SocketHandle() : StreamHandle( O_RDWR )
+			SocketHandle( bool nonblocking )
+			:
+				StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
+				                          : O_RDWR )
 			{
 			}
 			

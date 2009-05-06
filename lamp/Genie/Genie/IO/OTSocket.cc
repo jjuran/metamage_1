@@ -71,18 +71,18 @@ namespace Genie
 		}
 	}
 	
-	OTSocket::OTSocket( bool isBlocking ) : itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
-	                                        itsBacklog(),
-	                                        itIsBound       ( false ),
-	                                        itIsListener    ( false ),
-	                                        itHasSentFIN    ( false ),
-	                                        itHasReceivedFIN( false ),
-	                                        itHasReceivedRST( false )
+	OTSocket::OTSocket( bool nonblocking ) : SocketHandle( nonblocking ),
+	                                         itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+	                                         itsBacklog(),
+	                                         itIsBound       ( false ),
+	                                         itIsListener    ( false ),
+	                                         itHasSentFIN    ( false ),
+	                                         itHasReceivedFIN( false ),
+	                                         itHasReceivedRST( false )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
 		// The new endpoint is synchronous and (by default) nonblocking.
-		// New Berkeley sockets are blocking.
 		
 		// The underlying endpoint is always nonblocking for send and recv
 		// and blocking for connect and listen (until we add support)

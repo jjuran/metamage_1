@@ -34,12 +34,13 @@ namespace Genie
 		try
 		{
 			const bool close_on_exec = type & SOCK_CLOEXEC;
+			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
 			boost::shared_ptr< Conduit > east( new Conduit );
 			boost::shared_ptr< Conduit > west( new Conduit );
 			
-			boost::shared_ptr< IOHandle > san_jose( new PairedSocket( west, east ) );
-			boost::shared_ptr< IOHandle > new_york( new PairedSocket( east, west ) );
+			boost::shared_ptr< IOHandle > san_jose( new PairedSocket( west, east, nonblocking ) );
+			boost::shared_ptr< IOHandle > new_york( new PairedSocket( east, west, nonblocking ) );
 			
 			int a = LowestUnusedFileDescriptor( 3 );
 			int b = LowestUnusedFileDescriptor( a + 1 );
@@ -70,9 +71,10 @@ namespace Genie
 		try
 		{
 			const bool close_on_exec = type & SOCK_CLOEXEC;
+			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
 			AssignFileDescriptor( fd,
-			                      boost::shared_ptr< IOHandle >( new OTSocket ),
+			                      boost::shared_ptr< IOHandle >( new OTSocket( nonblocking ) ),
 			                      close_on_exec );
 		}
 		catch ( ... )

@@ -39,7 +39,7 @@ namespace Genie
 			bool                                     itHasReceivedRST;
 		
 		public:
-			OTSocket( bool isBlocking = true );
+			OTSocket( bool nonblocking = false );
 			
 			~OTSocket();
 			
