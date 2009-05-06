@@ -61,6 +61,10 @@
 #endif
 
 __BEGIN_DECLS
+// Linux-specific calls to avoid fork-related race conditions on file descriptors
+int dup3( int oldfd, int newfd, int flags );
+
+// New POSIX calls to avoid path descent race conditions
 int faccessat( int dirfd, const char* path, int mode, int flags );
 int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
 int fchownat( int dirfd, const char* path, uid_t owner, gid_t group, int flags );

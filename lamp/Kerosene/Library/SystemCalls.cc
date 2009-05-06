@@ -215,3 +215,5 @@ DEFINE_STUB( copyfile )
 DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
 
+DEFINE_STUB( dup3 )
+

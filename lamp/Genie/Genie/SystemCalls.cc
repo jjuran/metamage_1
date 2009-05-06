@@ -218,6 +218,35 @@ namespace Genie
 		}
 	}
 	
+	static int dup3( int oldfd, int newfd, int flags )
+	{
+		SystemCallFrame frame( "dup3" );
+		
+		if ( flags & ~O_CLOEXEC )
+		{
+			// Invalid flags
+			return frame.SetErrno( EINVAL );
+		}
+		
+		const bool close_on_exec = flags & O_CLOEXEC;
+		
+		try
+		{
+			DuplicateFileDescriptor( oldfd, newfd, close_on_exec );
+			
+			if ( oldfd == newfd )
+			{
+				return frame.SetErrno( EINVAL );
+			}
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
+		return newfd;
+	}
+	
 	
 	static int execve( const char*        path,
 	                   const char* const  argv[],
@@ -703,6 +732,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( chdir     );
 	REGISTER_SYSTEM_CALL( close     );
 	REGISTER_SYSTEM_CALL( dup2      );
+	REGISTER_SYSTEM_CALL( dup3      );
 	REGISTER_SYSTEM_CALL( execve    );
 	REGISTER_SYSTEM_CALL( _exit     );
 	REGISTER_SYSTEM_CALL( getcwd_k  );
