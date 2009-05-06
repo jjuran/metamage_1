@@ -211,8 +211,6 @@ namespace Genie
 	                          N::FSDirID            dirID,
 	                          const unsigned char*  name )
 	{
-		using namespace TimeOff;
-		
 		UInt32 modTime = N::GetDateTime();
 		
 		N::Str63 name_copy = name;
@@ -228,14 +226,42 @@ namespace Genie
 		N::PBSetCatInfoSync( paramBlock );
 	}
 	
-	static void SetFileTimes( N::FSVolumeRefNum      vRefNum,
-	                          N::FSDirID             dirID,
-	                          const unsigned char*   name,
-	                          const struct timeval*  access,
-	                          const struct timeval*  mod,
-	                          const struct timeval*  backup,
-	                          const struct timeval*  creat )
+	static void update_time( UInt32& date, const timespec& time, UInt32& now )
 	{
+		const long nsec = time.tv_nsec & ~UTIME_ARCHIVE;
+		
+		if ( nsec == UTIME_OMIT )
+		{
+			return;
+		}
+		
+		if ( nsec == UTIME_NOW )
+		{
+			if ( now == 0 )
+			{
+				now = N::GetDateTime();
+			}
+			
+			date = now;
+		}
+		else
+		{
+			using namespace TimeOff;
+			
+			date += time.tv_sec + MacToUnixTimeDifference();
+		}
+	}
+	
+	static void SetFileTimes( N::FSVolumeRefNum       vRefNum,
+	                          N::FSDirID              dirID,
+	                          const unsigned char    *name,
+	                          const struct timespec   times[2] )
+	{
+		const timespec& atime = times[0];
+		const timespec& mtime = times[1];
+		
+		const bool atime_is_backup = atime.tv_nsec & UTIME_ARCHIVE;
+		
 		using namespace TimeOff;
 		
 		N::Str63 name_copy = name;
@@ -246,19 +272,15 @@ namespace Genie
 		
 		paramBlock.hFileInfo.ioDirID = dirID;
 		
-		if ( creat )
-		{
-			paramBlock.hFileInfo.ioFlCrDat = creat->tv_sec + MacToUnixTimeDifference();
-		}
+		UInt32 now = 0;
 		
-		if ( mod )
-		{
-			paramBlock.hFileInfo.ioFlMdDat = mod->tv_sec + MacToUnixTimeDifference();
-		}
+		//paramBlock.hFileInfo.ioFlCrDat
 		
-		if ( backup )
+		update_time( paramBlock.hFileInfo.ioFlMdDat, mtime, now );
+		
+		if ( atime_is_backup )
 		{
-			paramBlock.hFileInfo.ioFlBkDat = backup->tv_sec + MacToUnixTimeDifference();
+			update_time( paramBlock.hFileInfo.ioFlBkDat, atime, now );
 		}
 		
 		N::PBSetCatInfoSync( paramBlock );
@@ -372,10 +394,7 @@ namespace Genie
 			
 			void SetTimes() const;
 			
-			void SetTimes( const struct timeval* access,
-			               const struct timeval* mod,
-			               const struct timeval* backup,
-			               const struct timeval* creat ) const;
+			void SetTimes( const struct timespec times[2] ) const;
 			
 			ino_t Inode() const;
 			
@@ -414,20 +433,14 @@ namespace Genie
 		SetFileTimes( root.vRefNum, root.dirID, NULL );
 	}
 	
-	void FSTree_Root::SetTimes( const struct timeval* access,
-	                            const struct timeval* mod,
-	                            const struct timeval* backup,
-	                            const struct timeval* creat ) const
+	void FSTree_Root::SetTimes( const struct timespec times[2] ) const
 	{
 		const N::FSDirSpec& root = GetJDirectory();
 		
 		SetFileTimes( root.vRefNum,
 		              root.dirID,
 		              NULL,
-		              access,
-		              mod,
-		              backup,
-		              creat );
+		              times );
 	}
 	
 	
@@ -448,10 +461,7 @@ namespace Genie
 			
 			void SetTimes() const;
 			
-			void SetTimes( const struct timeval* access,
-			               const struct timeval* mod,
-			               const struct timeval* backup,
-			               const struct timeval* creat ) const;
+			void SetTimes( const struct timespec times[2] ) const;
 			
 			void Delete() const;
 			
@@ -500,10 +510,7 @@ namespace Genie
 			
 			void SetTimes() const;
 			
-			void SetTimes( const struct timeval* access,
-			               const struct timeval* mod,
-			               const struct timeval* backup,
-			               const struct timeval* creat ) const;
+			void SetTimes( const struct timespec times[2] ) const;
 			
 			void Delete() const;
 			
@@ -809,32 +816,20 @@ namespace Genie
 		              itsFileSpec.name );
 	}
 	
-	void FSTree_DirSpec::SetTimes( const struct timeval* access,
-	                               const struct timeval* mod,
-	                               const struct timeval* backup,
-	                               const struct timeval* creat ) const
+	void FSTree_DirSpec::SetTimes( const struct timespec times[2] ) const
 	{
 		SetFileTimes( itsDirSpec.vRefNum,
 		              itsDirSpec.dirID,
 		              NULL,
-		              access,
-		              mod,
-		              backup,
-		              creat );
+		              times );
 	}
 	
-	void FSTree_HFS::SetTimes( const struct timeval* access,
-	                           const struct timeval* mod,
-	                           const struct timeval* backup,
-	                           const struct timeval* creat ) const
+	void FSTree_HFS::SetTimes( const struct timespec times[2] ) const
 	{
 		SetFileTimes( N::FSVolumeRefNum( itsFileSpec.vRefNum ),
 		              N::FSDirID       ( itsFileSpec.parID   ),
 		              itsFileSpec.name,
-		              access,
-		              mod,
-		              backup,
-		              creat );
+		              times );
 	}
 	
 	static void Delete_HFS( const FSSpec& fileSpec )

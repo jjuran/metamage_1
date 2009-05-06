@@ -175,7 +175,7 @@ DEFINE_STUB( openat       )
 DEFINE_STUB( mkdirat      )
 DEFINE_STUB( mknodat      )
 DEFINE_STUB( fchownat     )
-DEFINE_STUB( futimesat_k  )
+//DEFINE_STUB( futimesat    )
 DEFINE_STUB( fstatat      )
 DEFINE_STUB( unlinkat     )
 DEFINE_STUB( renameat     )
@@ -216,6 +216,8 @@ DEFINE_STUB( copyfile )
 
 DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
+
+DEFINE_STUB( utimensat )
 
 DEFINE_STUB( dup3 )
 DEFINE_STUB( pipe2 )

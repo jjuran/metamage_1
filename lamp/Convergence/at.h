@@ -16,12 +16,6 @@ extern "C" {
 
 #ifndef __LAMP__
 
-// time
-int futimesat_k( int dirfd, const char* path, const struct timeval* access,
-                                              const struct timeval* mod,
-                                              const struct timeval* backup,
-                                              const struct timeval* creat );
-
 // unistd
 ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size );
 

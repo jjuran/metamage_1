@@ -12,64 +12,11 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <utime.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 
 
-#ifndef __LAMP__
-
-int futimesat_k( int dirfd, const char* path, const struct timeval* access,
-                                              const struct timeval* mod,
-                                              const struct timeval* backup,
-                                              const struct timeval* creat )
-{
-	if ( backup  ||  creat  ||  (access == NULL) != (mod == NULL) )
-	{
-		errno = EINVAL;
-		
-		return -1;
-	}
-	
-	int saved_cwd;
-	
-	int result = 0;
-	
-	const bool need_chdir = path[0] != '/';
-	
-	if ( need_chdir )
-	{
-		saved_cwd = open( ".", O_RDONLY );
-		
-		result = fchdir( dirfd );
-		
-		if ( result == -1 )
-		{
-			return result;
-		}
-	}
-	
-	if ( access == NULL  &&  mod == NULL )
-	{
-		result = utime( path, NULL );
-	}
-	else
-	{
-		const struct timeval times[] = { *access, *mod };
-		
-		result = utimes( path, times );
-	}
-	
-	if ( need_chdir )
-	{
-		fchdir( saved_cwd );
-		close ( saved_cwd );
-	}
-	
-	return result;
-}
-
-#ifndef __linux__
+#if !defined( __LAMP__ ) && !defined( __linux__ )
 
 DIR *fdopendir( int fd )
 {
@@ -178,8 +125,6 @@ int openat( int dirfd, const char* path, int flags, mode_t mode )
 	
 	return result;
 }
-
-#endif
 
 #endif
 

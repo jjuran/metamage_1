@@ -16,8 +16,8 @@
 // Genie
 #include "Genie/Exec/MainEntry.hh"
 
-// utime.h
-struct utimbuf;
+// time.h
+struct timespec;
 
 // <sys/stat.h>
 struct stat;
@@ -118,10 +118,7 @@ namespace Genie
 			
 			virtual void SetTimes() const;
 			
-			virtual void SetTimes( const struct timeval* access,
-			                       const struct timeval* mod,
-			                       const struct timeval* backup,
-			                       const struct timeval* creat ) const;
+			virtual void SetTimes( const struct timespec times[2] ) const;
 			
 			virtual void Delete() const;
 			

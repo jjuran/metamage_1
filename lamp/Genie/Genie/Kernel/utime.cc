@@ -3,16 +3,11 @@
  *	========
  */
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
-#include "utime.h"
-
-// Nucleus
-#include "Nucleus/NAssert.h"
+#include "sys/stat.h"
 
 // Genie
+#include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -22,26 +17,36 @@
 namespace Genie
 {
 	
-	static int futimesat_k( int dirfd, const char* path, const timeval* access,
-	                                                     const timeval* mod,
-	                                                     const timeval* backup,
-	                                                     const timeval* creat )
+	static inline bool merely_touch( const timespec* t )
 	{
-		SystemCallFrame frame( "futimesat_k" );
+		const long now = UTIME_NOW;
+		
+		return t == NULL  ||  t[0].tv_nsec == now  &&  t[1].tv_nsec == now;
+	}
+	
+	static int utimensat( int fd, const char* path, const timespec times[2], int flags )
+	{
+		SystemCallFrame frame( "utimensat" );
 		
 		try
 		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
+			FSTreePtr file = path != NULL ? ResolvePathAt( fd, path )
+			                              : GetFileHandle( fd )->GetFile();
 			
-			ResolveLinks_InPlace( file );
+			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
 			
-			if ( access || mod || backup || creat )
+			if ( !nofollow  &&  path != NULL )
 			{
-				file->SetTimes( access, mod, backup, creat );
+				ResolveLinks_InPlace( file );
+			}
+			
+			if ( merely_touch( times ) )
+			{
+				file->SetTimes();
 			}
 			else
 			{
-				file->SetTimes();
+				file->SetTimes( times );
 			}
 		}
 		catch ( ... )
@@ -54,7 +59,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( futimesat_k );
+	REGISTER_SYSTEM_CALL( utimensat );
 	
 	#pragma force_active reset
 	

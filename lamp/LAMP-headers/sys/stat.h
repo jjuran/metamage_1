@@ -108,9 +108,17 @@ struct stat
 #define AT_FDCWD  (-100)
 #define AT_SYMLINK_NOFOLLOW  4096
 
+#define UTIME_ARCHIVE  0x40000000
+
+#define UTIME_NOW   ((1 << 30) - 1)
+#define UTIME_OMIT  ((1 << 30) - 2)
+
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
+int futimens( int fd, const timespec times[2] );
+int utimensat( int fd, const char* path, const timespec times[2], int flags );
+
 int fstatat( int dirfd, const char* path, struct stat* sb, int flags );
 int mkdirat( int dirfd, const char* path, mode_t mode );
 int mkfifoat( int dirfd, const char* path, mode_t mode );

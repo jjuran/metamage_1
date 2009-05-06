@@ -55,14 +55,40 @@
 #include "Orion/Main.hh"
 
 
+#ifdef __APPLE__
+
+static inline int futimens( int fd, const struct timespec times[2] )
+{
+	const struct timespec& mtime = times[1];
+	
+	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
+	
+	struct timeval tvs[2] = { tv, tv };
+	
+	return futimes( fd, tvs );
+}
+
+#define UTIME_OMIT 0
+
+#define st_mtim st_mtimespec
+
+#endif
+
 namespace poseven
 {
 	
-	inline void futimesat_k( fd_t dirfd, const std::string& path, const time_t& modtime )
+	inline void futimens( fd_t fd, const timespec& mod )
 	{
-		struct timeval mod = { modtime, 0 };
+		struct timespec times[2] = { { 0, UTIME_OMIT }, mod };
 		
-		throw_posix_result( ::futimesat_k( dirfd, path.c_str(), NULL, &mod, NULL, NULL ) );
+		throw_posix_result( ::futimens( fd, times ) );
+	}
+	
+	inline void futimens( fd_t fd, const time_t& mod )
+	{
+		struct timespec times[2] = { { 0, UTIME_OMIT }, { mod, 0 } };
+		
+		throw_posix_result( ::futimens( fd, times ) );
 	}
 	
 }
@@ -142,10 +168,19 @@ namespace tool
 	}
 	
 	
-	inline void copy_modification_date( p7::fd_t in, p7::fd_t dirfd, const std::string& out_file )
+	static inline void copy_modification_date( p7::fd_t in, p7::fd_t out )
 	{
 		// Copy the modification date
-		p7::futimesat_k( dirfd, out_file, p7::fstat( in ).st_mtime );
+		
+	#ifdef st_mtime
+		
+		p7::futimens( out, p7::fstat( in ).st_mtim );
+		
+	#else
+		
+		p7::futimens( out, p7::fstat( in ).st_mtime );
+		
+	#endif
 	}
 	
 	static void copy_file( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
@@ -160,9 +195,9 @@ namespace tool
 		
 		p7::pump( in, out );
 		
-		p7::close( out );
+		copy_modification_date( in, out );
 		
-		copy_modification_date( in, newdirfd, name );
+		p7::close( out );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd );
@@ -368,7 +403,7 @@ namespace tool
 			
 			p7::pump( from_fd, to_fd );
 			
-			copy_modification_date( from_fd, to_dirfd, filename );
+			copy_modification_date( from_fd, to_fd );
 		}
 		else
 		{
@@ -396,7 +431,7 @@ namespace tool
 		
 		p7::pump( a_fd, b_fd );
 		
-		copy_modification_date( a_fd, b_dirfd, filename );
+		copy_modification_date( a_fd, b_fd );
 		
 		if ( b_exists )
 		{

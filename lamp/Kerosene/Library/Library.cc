@@ -28,7 +28,6 @@
 #include "sys/utsname.h"
 #include "sys/wait.h"
 #include "unistd.h"
-#include "utime.h"
 
 // Iota
 #include "iota/strings.hh"
@@ -428,6 +427,11 @@ int rmdir( const char* path )
 	return unlinkat( AT_FDCWD, path, AT_REMOVEDIR );
 }
 
+int futimens( int fd, const timespec times[2] )
+{
+	return utimensat( fd, NULL, times, 0 );
+}
+
 #pragma mark -
 #pragma mark ¥ sys/wait ¥
 
@@ -640,28 +644,5 @@ char* realpath( const char *path, char *buffer )
 	buffer[ length ] = '\0';
 	
 	return buffer;
-}
-
-#pragma mark -
-#pragma mark ¥ utime ¥
-
-int utime( const char* path, const struct utimbuf *time_buffer )
-{
-	struct timeval a_tv = { 0 };
-	struct timeval m_tv = { 0 };
-	
-	const timeval* access = NULL;
-	const timeval* mod    = NULL;
-	
-	if ( time_buffer )
-	{
-		a_tv.tv_sec = time_buffer->actime;
-		m_tv.tv_sec = time_buffer->modtime;
-		
-		access = &a_tv;
-		mod    = &m_tv;
-	}
-	
-	return futimesat_k( AT_FDCWD, path, access, mod, NULL, NULL );
 }
 

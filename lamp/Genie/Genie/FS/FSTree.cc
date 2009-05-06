@@ -205,10 +205,7 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
-	void FSTree::SetTimes( const struct timeval* access,
-			               const struct timeval* mod,
-			               const struct timeval* backup,
-			               const struct timeval* creat ) const
+	void FSTree::SetTimes( const struct timespec times[2] ) const
 	{
 		p7::throw_errno( EPERM );
 	}
