@@ -22,6 +22,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/fcntl.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/wait.hh"
@@ -180,7 +181,7 @@ namespace tool
 				
 			#ifndef O_CLOEXEC
 				
-				int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
+				p7::fcntl< p7::f_setfd >( input, p7::fd_cloexec );
 				
 			#endif
 			}

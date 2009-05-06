@@ -26,6 +26,7 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/execv.hh"
+#include "POSeven/functions/fcntl.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 
@@ -469,7 +470,7 @@ namespace tool
 			
 			if ( !O_CLOEXEC )
 			{
-				int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+				p7::fcntl< p7::f_setfd >( p7::fd_t( fd ), p7::fd_cloexec );
 			}
 		}
 		
