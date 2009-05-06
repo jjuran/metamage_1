@@ -17,6 +17,9 @@
 // POSIX
 #include <sys/socket.h>
 
+// Nucleus
+#include "Nucleus/Flag.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/functions/close.hh"
@@ -48,8 +51,22 @@ namespace poseven
 		sock_stream = SOCK_STREAM,
 		sock_dgram  = SOCK_DGRAM,
 		
+	#ifdef SOCK_NONBLOCK
+		
+		sock_nonblock = SOCK_NONBLOCK,
+		
+	#endif
+		
+	#ifdef SOCK_CLOEXEC
+		
+		sock_cloexec = SOCK_CLOEXEC,
+		
+	#endif
+		
 		socket_type_max = Nucleus::Enumeration_Traits< int >::max
 	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( socket_type )
 	
 	inline Nucleus::Owned< fd_t > socket( protocol_family  domain,
 	                                      socket_type      type )
