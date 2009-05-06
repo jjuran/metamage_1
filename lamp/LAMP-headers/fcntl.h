@@ -70,6 +70,8 @@ extern "C" {
 	#define F_SETLK  8
 	#define F_SETLKW 9
 	
+	#define F_DUPFD_CLOEXEC  (F_DUPFD | O_CLOEXEC)
+	
 	#define	FD_CLOEXEC  1
 	
 	#define F_RDLCK  1

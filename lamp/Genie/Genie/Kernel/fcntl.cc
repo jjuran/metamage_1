@@ -70,9 +70,13 @@ namespace Genie
 		
 		try
 		{
-			if ( cmd == F_DUPFD )
+			if ( const bool dup = (cmd | O_CLOEXEC) == F_DUPFD_CLOEXEC )
 			{
-				return DuplicateFileDescriptor( filedes, LowestUnusedFileDescriptor( param ) );
+				const bool close_on_exec = cmd == F_DUPFD_CLOEXEC;
+				
+				return DuplicateFileDescriptor( filedes,
+				                                LowestUnusedFileDescriptor( param ),
+				                                close_on_exec );
 			}
 			
 			FileDescriptor& descriptor = GetFileDescriptor( filedes );
