@@ -3,6 +3,9 @@
  *	======
  */
 
+// Standard C
+#include <errno.h>
+
 // POSIX
 #include <unistd.h>
 
@@ -15,23 +18,27 @@
 
 int main( int argc, char const *const argv[] )
 {
-	char buffer[ 256 ];
-	
-	ssize_t size = ttyname_k( STDIN_FILENO, buffer, sizeof buffer );
-	
-	if ( size < 0 )
+	if ( char* buffer = ttyname( STDIN_FILENO ) )
 	{
-		write( STDOUT_FILENO, STR_LEN( "not a tty\n" ) );
-	}
-	else if ( size + 1 <= sizeof buffer )
-	{
+		size_t size = strlen( buffer );
+		
 		buffer[ size++ ] = '\n';
 		
 		write( STDOUT_FILENO, buffer, size );
 	}
+	else if ( errno == ENOTTY  ||  errno == ENODEV )
+	{
+		write( STDOUT_FILENO, STR_LEN( "not a tty\n" ) );
+	}
 	else
 	{
-		write( STDERR_FILENO, STR_LEN( "tty: terminal name too long\n" ) );
+		const char* error = strerror( errno );
+		
+		write( STDERR_FILENO, STR_LEN( "tty: " ) );
+		
+		write( STDERR_FILENO, error, strlen( error ) );
+		
+		write( STDERR_FILENO, STR_LEN( "\n" ) );
 		
 		return 1;
 	}
