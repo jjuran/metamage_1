@@ -54,14 +54,14 @@ namespace Genie
 		CurrentProcess().FileDescriptors().erase( it );
 	}
 	
-	int DuplicateFileDescriptor( int oldfd, int newfd )
+	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
 	{
 		// Throws EBADF
 		boost::shared_ptr< IOHandle > const& handle = GetFileHandle( oldfd );
 		
 		if ( oldfd != newfd )
 		{
-			AssignFileDescriptor( newfd, handle );
+			AssignFileDescriptor( newfd, handle, close_on_exec );
 		}
 		
 		return newfd;
