@@ -363,9 +363,23 @@ namespace tool
 			return p7::exit_t( 2 );
 		}
 		
-		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], p7::o_rdonly );
+	#ifdef O_CLOEXEC
+		
+		const p7::open_flags_t flags = p7::o_rdonly | p7::o_cloexec;
+		
+	#else
+		
+		const p7::open_flags_t flags = p7::o_rdonly;
+		
+	#endif
+		
+		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], flags );
+		
+	#ifndef O_CLOEXEC
 		
 		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+		
+	#endif
 		
 		ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 		

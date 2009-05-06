@@ -166,9 +166,23 @@ namespace tool
 			
 			if ( command == NULL )
 			{
-				input = p7::open( gArgZero, p7::o_rdonly ).Release();
+			#ifdef O_CLOEXEC
+				
+				const p7::open_flags_t flags = p7::o_rdonly | p7::o_cloexec;
+				
+			#else
+				
+				const p7::open_flags_t flags = p7::o_rdonly;
+				
+			#endif
+				
+				input = p7::open( gArgZero, flags ).Release();
+				
+			#ifndef O_CLOEXEC
 				
 				int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
+				
+			#endif
 			}
 		}
 		else

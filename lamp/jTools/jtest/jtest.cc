@@ -446,6 +446,10 @@ namespace tool
 		p7::write( p7::stdout_fileno, result );
 	}
 	
+	#ifndef O_CLOEXEC
+	#define O_CLOEXEC 0
+	#endif
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		const char* jtest = argv[0];
@@ -454,7 +458,7 @@ namespace tool
 		
 		if ( argc > 1  &&  !PathnameMeansStdIn( argv[1] ) )
 		{
-			fd = open( argv[1], O_RDONLY );
+			fd = open( argv[1], O_RDONLY | O_CLOEXEC );
 			
 			if ( fd == -1 )
 			{
@@ -463,7 +467,10 @@ namespace tool
 				return 1;
 			}
 			
-			int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+			if ( !O_CLOEXEC )
+			{
+				int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+			}
 		}
 		
 		Io::TextInputAdapter< p7::fd_t > input = p7::fd_t( fd );
