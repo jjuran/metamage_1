@@ -159,12 +159,12 @@ char* std::strerror( int errnum )
 
 void std::perror( const char* s )
 {
-	if ( s != NULL )
-	{
-		std::fprintf( stderr, "%s: ", s );
-	}
+	const char* message   = s ? s    : "";
+	const char* separator = s ? ": " : "";
 	
-	std::fprintf( stderr, "%s\n", std::strerror( errno ) );
+	const char* error = std::strerror( errno );
+	
+	std::fprintf( stderr, "%s%s%s\n", message, separator, error );
 }
 
 #pragma mark -
