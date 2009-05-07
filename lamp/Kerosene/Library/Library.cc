@@ -456,6 +456,11 @@ int dup( int oldfd )
 	return fcntl( oldfd, F_DUPFD, 0 );
 }
 
+int dup2( int oldfd, int newfd )
+{
+	return dup3( oldfd, newfd, 0 );
+}
+
 int link( const char* oldpath, const char* newpath )
 {
 	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );

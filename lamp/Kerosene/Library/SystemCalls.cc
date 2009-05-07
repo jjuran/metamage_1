@@ -127,7 +127,7 @@ DEFINE_STUB( setpgid )
 DEFINE_STUB( uname )
 DEFINE_STUB( umask )
 
-DEFINE_STUB( dup2 )
+//DEFINE_STUB( dup2 )
 DEFINE_STUB( getppid )
 
 DEFINE_STUB( setsid )

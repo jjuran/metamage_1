@@ -204,20 +204,6 @@ namespace Genie
 	}
 	
 	
-	static int dup2( int oldfd, int newfd )
-	{
-		SystemCallFrame frame( "dup2" );
-		
-		try
-		{
-			return DuplicateFileDescriptor( oldfd, newfd );
-		}
-		catch ( ... )
-		{
-			return frame.SetErrnoFromException();
-		}
-	}
-	
 	static int dup3( int oldfd, int newfd, int flags )
 	{
 		SystemCallFrame frame( "dup3" );
@@ -731,7 +717,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( alarm     );
 	REGISTER_SYSTEM_CALL( chdir     );
 	REGISTER_SYSTEM_CALL( close     );
-	REGISTER_SYSTEM_CALL( dup2      );
 	REGISTER_SYSTEM_CALL( dup3      );
 	REGISTER_SYSTEM_CALL( execve    );
 	REGISTER_SYSTEM_CALL( _exit     );
