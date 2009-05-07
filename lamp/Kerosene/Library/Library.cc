@@ -451,6 +451,11 @@ int chown( const char* path, uid_t owner, gid_t group )
 	return fchownat( AT_FDCWD, path, owner, group, 0 );
 }
 
+int dup( int oldfd )
+{
+	return fcntl( oldfd, F_DUPFD, 0 );
+}
+
 int link( const char* oldpath, const char* newpath )
 {
 	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );
