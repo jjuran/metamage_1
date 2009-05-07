@@ -63,6 +63,7 @@
 __BEGIN_DECLS
 // Linux-specific calls to avoid fork-related race conditions on file descriptors
 int dup3( int oldfd, int newfd, int flags );
+int pipe2( int pipefd[2], int flags );
 
 // New POSIX calls to avoid path descent race conditions
 int faccessat( int dirfd, const char* path, int mode, int flags );

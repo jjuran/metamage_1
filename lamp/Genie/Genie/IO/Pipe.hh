@@ -26,9 +26,11 @@ namespace Genie
 			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeInHandle( const boost::shared_ptr< Conduit >& conduit )
+			PipeInHandle( const boost::shared_ptr< Conduit >&  conduit,
+			              bool                                 nonblocking )
 			:
-				StreamHandle( O_WRONLY ),
+				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
+				                          : O_WRONLY ),
 				itsConduit( conduit )
 			{
 			}
@@ -55,9 +57,11 @@ namespace Genie
 			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( const boost::shared_ptr< Conduit >& conduit )
+			PipeOutHandle( const boost::shared_ptr< Conduit >&  conduit,
+			               bool                                 nonblocking )
 			:
-				StreamHandle( O_RDONLY ),
+				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
+				                          : O_RDONLY ),
 				itsConduit( conduit )
 			{
 			}

@@ -216,4 +216,5 @@ DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
 
 DEFINE_STUB( dup3 )
+DEFINE_STUB( pipe2 )
 
