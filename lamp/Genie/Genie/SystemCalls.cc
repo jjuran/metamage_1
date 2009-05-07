@@ -446,12 +446,15 @@ namespace Genie
 	}
 	
 	
-	static int pipe( int filedes[ 2 ] )
+	static int pipe2( int pipefd[ 2 ], int flags )
 	{
-		SystemCallFrame frame( "pipe" );
+		SystemCallFrame frame( "pipe2" );
 		
 		try
 		{
+			const bool close_on_exec = flags & O_CLOEXEC;
+			const bool nonblocking   = flags & O_NONBLOCK;
+			
 			FileDescriptorMap& files = frame.Caller().FileDescriptors();
 			
 			int reader = LowestUnusedFileDescriptor( 3 );
@@ -459,14 +462,14 @@ namespace Genie
 			
 			boost::shared_ptr< Conduit > conduit( new Conduit );
 			
-			boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit ) );
-			boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit ) );
+			boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit, nonblocking ) );
+			boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit, nonblocking ) );
 			
-			AssignFileDescriptor( reader, pipeOut );
-			AssignFileDescriptor( writer, pipeIn );
+			AssignFileDescriptor( reader, pipeOut, close_on_exec );
+			AssignFileDescriptor( writer, pipeIn,  close_on_exec );
 			
-			filedes[ 0 ] = reader;
-			filedes[ 1 ] = writer;
+			pipefd[ 0 ] = reader;
+			pipefd[ 1 ] = writer;
 		}
 		catch ( ... )
 		{
@@ -728,7 +731,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( lseek     );
 	REGISTER_SYSTEM_CALL( mknod     );
 	REGISTER_SYSTEM_CALL( pause     );
-	REGISTER_SYSTEM_CALL( pipe      );
+	REGISTER_SYSTEM_CALL( pipe2     );
 	//REGISTER_SYSTEM_CALL( peek );
 	REGISTER_SYSTEM_CALL( read      );
 	REGISTER_SYSTEM_CALL( setpgid   );
