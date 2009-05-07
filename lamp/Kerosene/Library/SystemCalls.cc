@@ -114,7 +114,7 @@ DEFINE_STUB( kill )
 //DEFINE_STUB( mkdir )
 //DEFINE_STUB( rmdir )
 //DEFINE_STUB( dup )
-DEFINE_STUB( pipe )
+//DEFINE_STUB( pipe )
 DEFINE_STUB( times )
 
 DEFINE_STUB( signal )

@@ -493,11 +493,6 @@ namespace Genie
 		return 0;
 	}
 	
-	static int pipe( int filedes[ 2 ] )
-	{
-		return pipe2( filedes, 0 );
-	}
-	
 	
 	static int peek( int fd, const char** buffer, size_t minBytes )
 	{
@@ -751,7 +746,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( lseek     );
 	REGISTER_SYSTEM_CALL( mknod     );
 	REGISTER_SYSTEM_CALL( pause     );
-	REGISTER_SYSTEM_CALL( pipe      );
 	REGISTER_SYSTEM_CALL( pipe2     );
 	//REGISTER_SYSTEM_CALL( peek );
 	REGISTER_SYSTEM_CALL( read      );

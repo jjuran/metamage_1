@@ -588,6 +588,11 @@ char* getcwd( char* buffer, size_t buffer_size )
 	return buffer;
 }
 
+int pipe( int pipefd[2] )
+{
+	return pipe2( pipefd, 0 );
+}
+
 ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
 {
 	off_t saved_offset = lseek( fd, 0, SEEK_CUR );
