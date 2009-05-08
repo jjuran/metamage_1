@@ -80,11 +80,16 @@ namespace Genie
 	void Check_IOHandle_Cast( const void* cast, int errorToThrow );
 	
 	template < class Handle >
-	inline Handle& IOHandle_Cast( IOHandle& handle )
+	inline Handle& IOHandle_Cast( IOHandle& handle, int errnum = 0 )
 	{
 		Handle* cast = IOHandle_Cast< Handle >( &handle );
 		
-		Check_IOHandle_Cast( cast, IOHandle_Downcast_Traits< Handle >::GetError( handle ) );
+		if ( errnum == 0 )
+		{
+			errnum = IOHandle_Downcast_Traits< Handle >::GetError( handle );
+		}
+		
+		Check_IOHandle_Cast( cast, errnum );
 		
 		return *cast;
 	}
