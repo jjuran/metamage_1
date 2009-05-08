@@ -507,6 +507,31 @@ namespace Genie
 	}
 	
 	
+	static ssize_t pread( int fd, void* buf, size_t count, off_t offset )
+	{
+		SystemCallFrame frame( "pread" );
+		
+		try
+		{
+			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
+			
+			off_t saved_offset = file.Seek( 0, SEEK_CUR );
+			
+			file.Seek( offset, SEEK_SET );
+			
+			int get = file.Read( reinterpret_cast< char* >( buf ),
+			                     count );
+			
+			file.Seek( saved_offset, SEEK_SET );
+			
+			return get;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+	}
+	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
 		SystemCallFrame frame( "read" );
@@ -733,6 +758,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( pause     );
 	REGISTER_SYSTEM_CALL( pipe2     );
 	//REGISTER_SYSTEM_CALL( peek );
+	REGISTER_SYSTEM_CALL( pread     );
 	REGISTER_SYSTEM_CALL( read      );
 	REGISTER_SYSTEM_CALL( setpgid   );
 	REGISTER_SYSTEM_CALL( setsid    );
