@@ -598,39 +598,6 @@ int pipe( int pipefd[2] )
 	return pipe2( pipefd, 0 );
 }
 
-ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
-{
-	off_t saved_offset = lseek( fd, 0, SEEK_CUR );
-	
-	if ( saved_offset < 0 )
-	{
-		return saved_offset;
-	}
-	
-	off_t set = lseek( fd, offset, SEEK_SET );
-	
-	if ( set < 0 )
-	{
-		return set;
-	}
-	
-	ssize_t bytes_read = read( fd, buffer, count );
-	
-	if ( bytes_read < 0 )
-	{
-		return bytes_read;
-	}
-	
-	set = lseek( fd, saved_offset, SEEK_SET );
-	
-	if ( set < 0 )
-	{
-		return set;
-	}
-	
-	return bytes_read;
-}
-
 ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
 {
 	const int saved_errno = errno;

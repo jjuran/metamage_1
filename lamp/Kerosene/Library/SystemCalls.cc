@@ -169,6 +169,8 @@ DEFINE_STUB( nanosleep )
 
 DEFINE_STUB( poll )
 
+DEFINE_STUB( pread )
+
 DEFINE_STUB( openat       )
 DEFINE_STUB( mkdirat      )
 DEFINE_STUB( mknodat      )
