@@ -1059,17 +1059,24 @@ namespace Genie
 	
 	pid_t Process::GetPGID() const
 	{
-		return itsProcessGroup->ID();
+		return itsProcessGroup.get() ? itsProcessGroup->ID() : 0;
 	}
 	
 	pid_t Process::GetSID()  const
 	{
-		return itsProcessGroup->GetSID();
+		return itsProcessGroup.get() ? itsProcessGroup->GetSID() : 0;
 	}
 	
 	const boost::shared_ptr< IOHandle >& Process::ControllingTerminal() const
 	{
-		return GetProcessGroup()->GetSession()->GetControllingTerminal();
+		if ( itsProcessGroup.get() )
+		{
+			return GetProcessGroup()->GetSession()->GetControllingTerminal();
+		}
+		
+		static boost::shared_ptr< IOHandle > null;
+		
+		return null;
 	}
 	
 	FSTreePtr Process::GetCWD() const
