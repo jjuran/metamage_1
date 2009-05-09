@@ -16,6 +16,7 @@
 
 // POSIX
 #include <errno.h>
+#include <sys/time.h>
 
 // Iota
 #include "iota/strings.hh"
