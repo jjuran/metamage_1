@@ -7,20 +7,21 @@
 #define GENIE_IO_VIRTUALFILE_HH
 
 // Genie
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Base.hh"
 
 
 namespace Genie
 {
 	
-	class VirtualFileHandle : public RegularFileHandle
+	template < class Base >
+	class VirtualFileHandle : public Base
 	{
 		private:
 			FSTreePtr itsFile;
 		
 		public:
 			VirtualFileHandle( const FSTreePtr&  file,
-			                   OpenFlags         flags ) : RegularFileHandle( flags ),
+			                   OpenFlags         flags ) : Base( flags ),
 			                                               itsFile( file )
 			{
 			}
@@ -29,6 +30,11 @@ namespace Genie
 			
 			FSTreePtr GetFile() const  { return itsFile; }
 	};
+	
+	template < class Base >
+	VirtualFileHandle< Base >::~VirtualFileHandle()
+	{
+	}
 	
 }
 

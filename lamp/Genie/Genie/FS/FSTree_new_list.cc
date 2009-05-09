@@ -18,6 +18,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/PropertyFile.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -118,7 +119,7 @@ namespace Genie
 	}
 	
 	
-	class List_data_Handle : public VirtualFileHandle
+	class List_data_Handle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
 			List_data_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )

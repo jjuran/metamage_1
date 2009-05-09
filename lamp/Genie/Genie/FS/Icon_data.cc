@@ -14,6 +14,7 @@
 // Genie
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -302,7 +303,7 @@ namespace Genie
 	}
 	
 	
-	class IconDataFileHandle : public VirtualFileHandle
+	class IconDataFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
 			boost::shared_ptr< IconData > itsData;

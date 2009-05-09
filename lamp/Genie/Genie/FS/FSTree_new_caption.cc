@@ -16,6 +16,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -125,7 +126,7 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class CaptionTextFileHandle : public VirtualFileHandle
+	class CaptionTextFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
 			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )

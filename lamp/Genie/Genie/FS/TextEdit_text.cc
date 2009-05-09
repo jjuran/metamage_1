@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -51,7 +52,7 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class TextEdit_text_Handle : public VirtualFileHandle
+	class TextEdit_text_Handle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
 			TextEdit_text_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )

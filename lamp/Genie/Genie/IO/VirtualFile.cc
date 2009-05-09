@@ -9,9 +9,5 @@
 namespace Genie
 {
 	
-	VirtualFileHandle::~VirtualFileHandle()
-	{
-	}
-	
 }
 

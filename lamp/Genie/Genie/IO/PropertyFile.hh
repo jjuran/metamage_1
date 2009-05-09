@@ -7,13 +7,14 @@
 #define GENIE_IO_PROPERTYFILE_HH
 
 // Genie
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class PropertyReaderFileHandle : public VirtualFileHandle
+	class PropertyReaderFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
 			std::string itsData;
@@ -36,7 +37,7 @@ namespace Genie
 	};
 	
 	
-	class PropertyWriterFileHandle : public VirtualFileHandle
+	class PropertyWriterFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
 			typedef void (*WriteHook)( const FSTree  *that,

@@ -13,13 +13,14 @@
 #include "sys/types.h"
 
 // Genie
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class MemoryFileHandle : public VirtualFileHandle
+	class MemoryFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
 			::Ptr        itsBase;  // base address

@@ -16,6 +16,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -159,15 +160,13 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public VirtualFileHandle
+	class Button_socket_Handle : public VirtualFileHandle< StreamHandle >
 	{
 		private:
 			std::size_t itsSeed;
 		
 		public:
 			Button_socket_Handle( const FSTreePtr& file, OpenFlags flags );
-			
-			boost::shared_ptr< IOHandle > Clone();
 			
 			unsigned int SysPoll();
 			
@@ -179,11 +178,6 @@ namespace Genie
 		VirtualFileHandle( file, flags ),
 		itsSeed( gButtonMap[ file->ParentRef().get() ].seed )
 	{
-	}
-	
-	boost::shared_ptr< IOHandle > Button_socket_Handle::Clone()
-	{
-		return boost::shared_ptr< IOHandle >( new Button_socket_Handle( GetFile(), GetFlags() ) );
 	}
 	
 	unsigned int Button_socket_Handle::SysPoll()
