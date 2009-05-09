@@ -459,11 +459,18 @@ namespace Genie
 		
 		if ( s.size() + byteCount > 30000 )
 		{
-			size_t n_cut = consoleParams.itsStartOfInput;
+			size_t n_cut = consoleParams.itsStartOfInput / 2;
+			
+			while ( n_cut > 0  &&  s[ n_cut - 1 ] != '\n' )
+			{
+				--n_cut;
+			}
+			
+			const size_t input_length = s.size() - consoleParams.itsStartOfInput;
 			
 			s.erase( s.begin(), s.begin() + n_cut );
 			
-			consoleParams.itsStartOfInput = 0;
+			consoleParams.itsStartOfInput = s.size() - input_length;
 			params       .itsValidLength  = 0;
 			
 			if ( params.itsSelection.start >= n_cut )
