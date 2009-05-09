@@ -128,7 +128,7 @@ namespace Genie
 				
 				if ( params.itsWindow.get() )
 				{
-					params.itsWindow->GetView()->Uninstall();
+					UninstallViewFromWindow( params.itsWindow->GetView(), key );
 					
 					params.itsWindow.reset();
 				}
