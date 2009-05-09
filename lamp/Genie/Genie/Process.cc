@@ -1202,6 +1202,8 @@ namespace Genie
 		{
 			NN::Owned< N::ThreadID > savedThreadID = itsThread;
 			
+			gCurrentProcess = NULL;
+			
 			// Unforked process' thread dies here
 		}
 	}
