@@ -1057,6 +1057,21 @@ namespace Genie
 		return errorNumber == 0 ? 0 : -1;
 	}
 	
+	pid_t Process::GetPGID() const
+	{
+		return itsProcessGroup->ID();
+	}
+	
+	pid_t Process::GetSID()  const
+	{
+		return itsProcessGroup->GetSID();
+	}
+	
+	const boost::shared_ptr< IOHandle >& Process::ControllingTerminal() const
+	{
+		return GetProcessGroup()->GetSession()->GetControllingTerminal();
+	}
+	
 	FSTreePtr Process::GetCWD() const
 	{
 		return itsCWD->GetFile();

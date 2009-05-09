@@ -190,8 +190,9 @@ namespace Genie
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
-			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
-			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
+			
+			pid_t GetPGID() const;
+			pid_t GetSID()  const;
 			
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
@@ -215,7 +216,7 @@ namespace Genie
 			void Yield();
 			void AsyncYield();
 			
-			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
+			const boost::shared_ptr< IOHandle >& ControllingTerminal() const;
 			
 			FSTreePtr GetCWD() const;
 			
