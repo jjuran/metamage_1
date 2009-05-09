@@ -459,10 +459,23 @@ namespace Genie
 		
 		if ( s.size() + byteCount > 30000 )
 		{
-			s.erase( s.begin(), s.begin() + consoleParams.itsStartOfInput );
+			size_t n_cut = consoleParams.itsStartOfInput;
+			
+			s.erase( s.begin(), s.begin() + n_cut );
 			
 			consoleParams.itsStartOfInput = 0;
 			params       .itsValidLength  = 0;
+			
+			if ( params.itsSelection.start >= n_cut )
+			{
+				params.itsSelection.start -= n_cut;
+				params.itsSelection.end   -= n_cut;
+			}
+			else
+			{
+				params.itsSelection.start =
+				params.itsSelection.end   = s.length();
+			}
 		}
 		
 		ASSERT( consoleParams.itsStartOfInput <= s.size() );
