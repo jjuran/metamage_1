@@ -511,6 +511,11 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pread" );
 		
+		if ( offset < 0 )
+		{
+			return frame.SetErrno( EINVAL );
+		}
+		
 		try
 		{
 			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
