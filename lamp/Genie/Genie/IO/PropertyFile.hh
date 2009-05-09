@@ -31,7 +31,7 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			off_t GetEOF() const  { return itsData.size(); }
 	};

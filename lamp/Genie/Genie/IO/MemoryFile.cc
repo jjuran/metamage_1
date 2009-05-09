@@ -27,17 +27,18 @@ namespace Genie
 		                                                            itsSize ) );
 	}
 	
-	ssize_t MemoryFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		ASSERT( GetFileMark() <= itsSize );
+		if ( offset >= itsSize )
+		{
+			return 0;
+		}
 		
-		byteCount = std::min( byteCount, itsSize - GetFileMark() );
+		n_bytes = std::min( n_bytes, itsSize - offset );
 		
-		std::copy( itsBase + GetFileMark(),
-		           itsBase + GetFileMark() + byteCount,
-		           data );
+		memcpy( buffer, itsBase + offset, n_bytes );
 		
-		return Advance( byteCount );
+		return n_bytes;
 	}
 	
 	ssize_t MemoryFileHandle::SysWrite( const char* data, std::size_t byteCount )

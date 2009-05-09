@@ -26,6 +26,22 @@ namespace Genie
 	{
 	}
 	
+	ssize_t RegularFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	{
+		p7::throw_errno( EPERM );
+		
+		return 0;
+	}
+	
+	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
+	{
+		ssize_t read = Positioned_Read( buffer,
+		                                n_bytes,
+		                                GetFileMark() );
+		
+		return Advance( read );
+	}
+	
 	off_t RegularFileHandle::Seek( off_t offset, int whence )
 	{
 		off_t base = 0;

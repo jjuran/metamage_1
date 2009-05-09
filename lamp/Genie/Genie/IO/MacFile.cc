@@ -38,7 +38,7 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
-			ssize_t SysRead( char* data, std::size_t byteCount );
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
@@ -96,16 +96,16 @@ namespace Genie
 		                                                         itsFileGetter ) );
 	}
 	
-	ssize_t MacFileHandle::SysRead( char* data, std::size_t byteCount )
+	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
 	{
 		ssize_t read = FSRead( itsRefNum,
 		                       N::fsFromStart,
-		                       GetFileMark(),
+		                       offset,
 		                       byteCount,
 		                       data,
 		                       ThrowEOF_Never() );
 		
-		return Advance( read );
+		return read;
 	}
 	
 	ssize_t MacFileHandle::SysWrite( const char* data, std::size_t byteCount )

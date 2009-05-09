@@ -20,17 +20,18 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
 	
-	ssize_t PropertyReaderFileHandle::SysRead( char* buffer, std::size_t byteCount )
+	ssize_t PropertyReaderFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		ASSERT( GetFileMark() <= itsData.size() );
+		if ( offset >= itsData.size() )
+		{
+			return 0;
+		}
 		
-		byteCount = std::min( byteCount, itsData.size() - GetFileMark() );
+		n_bytes = std::min( n_bytes, itsData.size() - offset );
 		
-		std::copy( itsData.begin() + GetFileMark(),
-		           itsData.begin() + GetFileMark() + byteCount,
-		           buffer );
+		memcpy( buffer, itsData.begin() + offset, n_bytes );
 		
-		return Advance( byteCount );
+		return n_bytes;
 	}
 	
 	

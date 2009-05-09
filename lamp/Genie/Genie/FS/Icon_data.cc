@@ -241,7 +241,10 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		ASSERT( mark <= size );
+		if ( mark >= size )
+		{
+			return 0;
+		}
 		
 		n_bytes = std::min( n_bytes, size - mark );
 		
@@ -323,7 +326,7 @@ namespace Genie
 			
 			const FSTree* ViewKey() const;
 			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
@@ -342,11 +345,11 @@ namespace Genie
 		return GetFile()->ParentRef().get();
 	}
 	
-	ssize_t IconDataFileHandle::SysRead( char* buffer, std::size_t byteCount )
+	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
 	{
 		ASSERT( itsData.get() != NULL );
 		
-		ssize_t bytes_read = itsData->Read( buffer, byteCount, GetFileMark() );
+		ssize_t bytes_read = itsData->Read( buffer, byteCount, offset );
 		
 		if ( bytes_read == sizeof (::ResID)  &&  (GetFlags() & O_BINARY) == 0 )
 		{
@@ -369,7 +372,7 @@ namespace Genie
 			bytes_read = result.length();
 		}
 		
-		return Advance( bytes_read );
+		return bytes_read;
 	}
 	
 	ssize_t IconDataFileHandle::SysWrite( const char* buffer, std::size_t byteCount )

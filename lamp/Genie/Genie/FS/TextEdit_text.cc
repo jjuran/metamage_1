@@ -65,7 +65,7 @@ namespace Genie
 			
 			std::string& String() const  { return TextEditParameters::Get( ViewKey() ).itsText; }
 			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
@@ -84,7 +84,7 @@ namespace Genie
 		return GetFile()->ParentRef().get();
 	}
 	
-	ssize_t TextEdit_text_Handle::SysRead( char* buffer, std::size_t byteCount )
+	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -97,15 +97,16 @@ namespace Genie
 		
 		std::string& s = params.itsText;
 		
-		ASSERT( GetFileMark() <= s.size() );
+		if ( offset >= s.size() )
+		{
+			return 0;
+		}
 		
-		byteCount = std::min( byteCount, s.size() - GetFileMark() );
+		n_bytes = std::min( n_bytes, s.size() - offset );
 		
-		std::copy( s.begin() + GetFileMark(),
-		           s.begin() + GetFileMark() + byteCount,
-		           buffer );
+		memcpy( buffer, s.begin() + offset, n_bytes );
 		
-		return Advance( byteCount );
+		return n_bytes;
 	}
 	
 	ssize_t TextEdit_text_Handle::SysWrite( const char* buffer, std::size_t byteCount )

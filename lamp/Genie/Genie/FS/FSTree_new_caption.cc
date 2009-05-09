@@ -139,7 +139,7 @@ namespace Genie
 			
 			std::string& String() const  { return gCaptionParametersMap[ ViewKey() ].itsText; }
 			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
@@ -158,19 +158,20 @@ namespace Genie
 		return GetFile()->ParentRef().get();
 	}
 	
-	ssize_t CaptionTextFileHandle::SysRead( char* buffer, std::size_t byteCount )
+	ssize_t CaptionTextFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
 		std::string& s = String();
 		
-		ASSERT( GetFileMark() <= s.size() );
+		if ( offset >= s.size() )
+		{
+			return 0;
+		}
 		
-		byteCount = std::min( byteCount, s.size() - GetFileMark() );
+		n_bytes = std::min( n_bytes, s.size() - offset );
 		
-		std::copy( s.begin() + GetFileMark(),
-		           s.begin() + GetFileMark() + byteCount,
-		           buffer );
+		memcpy( buffer, s.begin() + offset, n_bytes );
 		
-		return Advance( byteCount );
+		return n_bytes;
 	}
 	
 	ssize_t CaptionTextFileHandle::SysWrite( const char* buffer, std::size_t byteCount )

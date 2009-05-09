@@ -29,6 +29,10 @@ namespace Genie
 			
 			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
+			virtual ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
+			
+			ssize_t SysRead( char* buffer, size_t n_bytes );
+			
 			off_t Seek( off_t offset, int whence );
 			
 			virtual off_t GetEOF() const;
