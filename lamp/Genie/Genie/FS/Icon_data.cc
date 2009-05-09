@@ -359,7 +359,8 @@ namespace Genie
 			
 			if ( result.length() > byteCount )
 			{
-				p7::throw_errno( EINVAL );  // here's a nickel, go buy a larger buffer
+				// Here's a nickel, kid.  Get yourself a larger buffer.
+				p7::throw_errno( ERANGE );
 			}
 			
 			std::copy( result.begin(), result.end(), buffer );
