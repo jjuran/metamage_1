@@ -520,14 +520,9 @@ namespace Genie
 		{
 			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
 			
-			off_t saved_offset = file.Seek( 0, SEEK_CUR );
-			
-			file.Seek( offset, SEEK_SET );
-			
-			int get = file.Read( reinterpret_cast< char* >( buf ),
-			                     count );
-			
-			file.Seek( saved_offset, SEEK_SET );
+			int get = file.Positioned_Read( reinterpret_cast< char* >( buf ),
+			                                count,
+			                                offset );
 			
 			return get;
 		}
