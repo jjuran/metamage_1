@@ -114,6 +114,34 @@ namespace Genie
 	}
 	
 	
+	static bool Disconnect_Window_Terminal( boost::weak_ptr< IOHandle >& terminal_weak )
+	{
+		if ( !terminal_weak.expired() )
+		{
+			const boost::shared_ptr< IOHandle >& terminal_shared = terminal_weak.lock();
+			
+			TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *terminal_shared ) );
+			
+			terminal.Disconnect();
+			
+			terminal_weak.reset();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	static void Destroy_Window( boost::shared_ptr< Ped::Window >& window, const FSTree* key )
+	{
+		if ( window.get() )
+		{
+			UninstallViewFromWindow( window->GetView(), key );
+			
+			window.reset();
+		}
+	}
+	
 	static void CloseUserWindow( const FSTree* key )
 	{
 		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
@@ -122,26 +150,11 @@ namespace Genie
 		{
 			WindowParameters& params = it->second;
 			
-			if ( params.itsTerminal.expired() )
+			if ( !Disconnect_Window_Terminal( params.itsTerminal ) )
 			{
 				// tty file is not open for this window, just close the window
 				
-				if ( params.itsWindow.get() )
-				{
-					UninstallViewFromWindow( params.itsWindow->GetView(), key );
-					
-					params.itsWindow.reset();
-				}
-			}
-			else
-			{
-				const boost::shared_ptr< IOHandle >& handle = params.itsTerminal.lock();
-				
-				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
-				
-				terminal.Disconnect();
-				
-				params.itsTerminal.reset();
+				Destroy_Window( params.itsWindow, key );
 			}
 		}
 	}
@@ -260,7 +273,16 @@ namespace Genie
 	
 	void RemoveUserWindow( const FSTree* key )
 	{
-		CloseUserWindow( key );
+		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
+		
+		if ( it != gWindowParametersMap.end() )
+		{
+			WindowParameters& params = it->second;
+			
+			Disconnect_Window_Terminal( params.itsTerminal );
+			
+			Destroy_Window( params.itsWindow, key );
+		}
 		
 		gWindowParametersMap.erase( key );
 		
