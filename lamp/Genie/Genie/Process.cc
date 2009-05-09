@@ -1183,6 +1183,10 @@ namespace Genie
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.clear();
 		
+		itsCWD.reset();
+		
+		itsProcessGroup.reset();
+		
 		if ( itsCleanupHandler != NULL )
 		{
 			itsCleanupHandler();
