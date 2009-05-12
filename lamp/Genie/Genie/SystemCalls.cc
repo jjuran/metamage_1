@@ -220,7 +220,9 @@ namespace Genie
 		{
 			DuplicateFileDescriptor( oldfd, newfd, close_on_exec );
 			
-			if ( oldfd == newfd )
+			const bool dup2_semantics = flags == DUP_DUP2;
+			
+			if ( oldfd == newfd  &&  !dup2_semantics )
 			{
 				return frame.SetErrno( EINVAL );
 			}

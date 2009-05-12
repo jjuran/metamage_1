@@ -462,7 +462,7 @@ int dup( int oldfd )
 
 int dup2( int oldfd, int newfd )
 {
-	return dup3( oldfd, newfd, 0 );
+	return dup3( oldfd, newfd, DUP_DUP2 );
 }
 
 int link( const char* oldpath, const char* newpath )
