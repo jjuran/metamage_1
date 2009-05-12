@@ -100,7 +100,17 @@ namespace tool
 		
 		if ( prompts )
 		{
-			std::printf( "Shell spawned with pid %d\n", getpid() );
+			const char* in = " in ";
+			
+			const char* window = getenv( "WINDOW" );
+			
+			if ( window == NULL )
+			{
+				in     =
+				window = "";
+			}
+			
+			std::printf( "Shell spawned with pid %d%s%s\n", getpid(), in, window );
 			
 			SendPrompt();
 		}
