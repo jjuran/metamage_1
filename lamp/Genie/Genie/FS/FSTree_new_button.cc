@@ -35,8 +35,15 @@ namespace Genie
 		N::Str255    title;
 		bool         title_changed;
 		bool         installed;
+		bool         pseudoclicked;
 		
-		Button_Parameters() : seed(), title( "\p" "OK" ), title_changed(), installed()
+		Button_Parameters()
+		:
+			seed(),
+			title( "\p" "OK" ),
+			title_changed(),
+			installed(),
+			pseudoclicked()
 		{
 		}
 	};
@@ -123,6 +130,19 @@ namespace Genie
 			params.title_changed = false;
 			
 			N::SetControlTitle( Get(), Title() );
+		}
+		
+		if ( params.pseudoclicked )
+		{
+			params.pseudoclicked = false;
+			
+			::HiliteControl( Get(), kControlButtonPart );
+			
+			N::Delay( 8 );
+			
+			::HiliteControl( Get(), false );
+			
+			++params.seed;
 		}
 	}
 	
@@ -260,6 +280,24 @@ namespace Genie
 	}
 	
 	
+	struct Button_click
+	{
+		static std::string Get( const FSTree* that, bool binary )
+		{
+			throw FSTree_Property::Undefined();
+		}
+		
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = that->ParentRef().get();
+			
+			gButtonMap[ view ].pseudoclicked = true;
+			
+			InvalidateWindowForView( view );
+		}
+	};
+	
+	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -273,6 +311,7 @@ namespace Genie
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "title", &Property_Factory< Button_Title > },
+		{ "click", &Property_Factory< Button_click > },
 		
 		{ "socket", &Basic_Factory< FSTree_Button_socket > },
 		
