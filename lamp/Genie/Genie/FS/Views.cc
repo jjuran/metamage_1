@@ -147,7 +147,10 @@ namespace Genie
 			{
 				try
 				{
-					jt->second.itsDelegate->Delete();
+					if ( const FSTree* delegate = jt->second.itsDelegate.get() )
+					{
+						delegate->Delete();
+					}
 				}
 				catch ( ... )
 				{
