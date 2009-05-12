@@ -22,9 +22,6 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
-// Nitrogen Extras / AEFramework
-#include "AEFramework/AEFramework.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -117,37 +114,6 @@ namespace Genie
 		
 		current.SetErrnoPtr( errno_addr );
 	}
-	
-	
-	static OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
-	{
-		SystemCallFrame frame( "AESendBlocking" );
-		
-		try
-		{
-			N::AppleEvent const& appleEvent = static_cast< const N::AppleEvent& >( *appleEventPtr );
-			N::AppleEvent      & reply      = static_cast<       N::AppleEvent& >( *replyPtr      );
-			
-			(void) N::AESend( appleEvent,
-			                  N::kAEQueueReply | N::kAECanInteract );
-			
-			// Now that we've sent the event, retrieve the return ID
-			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( appleEvent );
-			
-			// Subscribe to AEFramework's queued reply delivery and wake-up service
-			N::ExpectReply( returnID, &reply );
-			
-			// Sleep until the reply is delivered
-			frame.Caller().Raise( SIGSTOP );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			return err;
-		}
-		
-		return noErr;
-	}
-	
 	
 	
 	#pragma mark -
@@ -675,8 +641,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( InitProc       );
-	REGISTER_SYSTEM_CALL( AESendBlocking );
+	REGISTER_SYSTEM_CALL( InitProc  );
 	
 	REGISTER_SYSTEM_CALL( alarm     );
 	REGISTER_SYSTEM_CALL( chdir     );
