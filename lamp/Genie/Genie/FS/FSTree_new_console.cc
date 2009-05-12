@@ -414,16 +414,52 @@ namespace Genie
 		return readability | kPollWrite;
 	}
 	
+	static void check_for_truncation( size_t               text_size,
+	                                  size_t&              start_of_input,
+	                                  Ped::TextSelection&  selection )
+	{
+		if ( start_of_input > text_size )
+		{
+			start_of_input = text_size;
+		}
+		
+		if ( selection.end > text_size )
+		{
+			if ( selection.start > text_size )
+			{
+				selection.start = text_size;
+			}
+			
+			selection.end = text_size;
+		}
+	}
+	
 	ssize_t ConsoleTTYHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
 		const FSTree* view = ViewKey();
 		
+		TextEditParameters& text_params = TextEditParameters::Get( view );
+		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		std::string& s = TextEditParameters::Get( view ).itsText;
+		std::string& s = text_params.itsText;
 		
-		while ( !params.itHasReceivedEOF  &&  ( params.itsStartOfInput == s.size()  ||  *s.rbegin() != '\n' ) )
+		while ( true )
 		{
+			if ( params.itHasReceivedEOF )
+			{
+				break;
+			}
+			
+			check_for_truncation( s.size(),
+			                      params.itsStartOfInput,
+			                      text_params.itsSelection );
+			
+			if ( params.itsStartOfInput < s.size()  &&  *s.rbegin() == '\n' )
+			{
+				break;
+			}
+			
 			TryAgainLater();
 		}
 		
@@ -456,6 +492,10 @@ namespace Genie
 		ConsoleParameters& consoleParams = gConsoleParametersMap[ view ];
 		
 		std::string& s = params.itsText;
+		
+		check_for_truncation( s.size(),
+		                      consoleParams.itsStartOfInput,
+		                      params.itsSelection );
 		
 		if ( s.size() + byteCount > 30000 )
 		{
