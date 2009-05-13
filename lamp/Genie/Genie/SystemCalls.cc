@@ -174,6 +174,13 @@ namespace Genie
 	{
 		SystemCallFrame frame( "dup3" );
 		
+		const bool dup2_semantics = flags == DUP_DUP2;
+		
+		if ( dup2_semantics )
+		{
+			flags = 0;
+		}
+		
 		if ( flags & ~O_CLOEXEC )
 		{
 			// Invalid flags
