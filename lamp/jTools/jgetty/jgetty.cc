@@ -15,6 +15,7 @@
 // POSeven
 #include "POSeven/extras/spew.hh"
 #include "POSeven/functions/chdir.hh"
+#include "POSeven/functions/dup2.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/link.hh"
@@ -78,9 +79,9 @@ int main( int argc, char const *const argv[] )
 	
 	NN::Owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
 	
-	dup2( tty, p7::stdin_fileno  );
-	dup2( tty, p7::stdout_fileno );
-	dup2( tty, p7::stderr_fileno );
+	p7::dup2( tty, p7::stdin_fileno  );
+	p7::dup2( tty, p7::stdout_fileno );
+	p7::dup2( tty, p7::stderr_fileno );
 	
 	if ( tty.get() > p7::stderr_fileno )
 	{
