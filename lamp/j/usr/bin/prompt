@@ -1,0 +1,86 @@
+#!/bin/sh
+
+set -e
+
+test -z "$3" || echo usage: prompt [icon-id] text
+test -z "$3"
+
+iconid=128
+text="$1"
+test -z "$2" || iconid="$1"
+test -z "$2" || text="$2"
+
+cd /new/window
+
+echo 5 > procid
+
+echo 300,125 > size
+
+ln /new/stack view
+ln /new/frame view/icon
+
+echo 32 > view/icon/width
+echo 32 > view/icon/height
+echo 13 > view/icon/.margin-top
+echo 23 > view/icon/.margin-left
+echo 23 > view/icon/.margin-right
+
+ln /new/icon view/icon/v
+
+ln /new/frame view/main
+
+echo 13 > view/main/.margin-top
+echo 13 > view/main/.margin-right
+echo 71 > view/main/.margin-bottom
+echo 78 > view/main/.margin-left
+
+ln /new/caption view/main/v
+
+ln /new/frame view/entry
+
+echo 16 > view/entry/height
+echo 13 > view/entry/.margin-right
+echo 49 > view/entry/.margin-bottom
+echo 78 > view/entry/.margin-left
+echo 1 > view/entry/.outline-width
+echo 2 > view/entry/.outline-offset
+
+ln /new/textedit view/entry/v
+
+ln /new/frame view/ok
+
+echo 58 > view/ok/width
+echo 20 > view/ok/height
+echo 13 > view/ok/.margin-right
+echo 13 > view/ok/.margin-bottom
+
+echo 3 > view/ok/.outline-width
+echo 1 > view/ok/.outline-offset
+echo 16 > view/ok/.outline-curvature
+
+ln /new/button view/ok/v
+
+ln /new/frame view/cancel
+
+echo 58 > view/cancel/width
+echo 20 > view/cancel/height
+echo 84 > view/cancel/.margin-right
+echo 13 > view/cancel/.margin-bottom
+
+ln /new/button view/cancel/v
+
+echo $iconid > view/icon/v/data
+echo 1 > view/icon/v/disabling
+
+echo $text > view/main/v/text
+echo 1     > view/main/v/disabling
+
+echo Cancel > view/cancel/v/title
+
+touch ref
+
+echo 0 > ref/text-font
+#echo ddd > ref/back-color
+
+select -1 -rview/{ok,cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat view/entry/v/text && echo
+
