@@ -116,8 +116,8 @@ struct stat
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-int futimens( int fd, const timespec times[2] );
-int utimensat( int fd, const char* path, const timespec times[2], int flags );
+int futimens( int fd, const struct timespec times[2] );
+int utimensat( int fd, const char* path, const struct timespec times[2], int flags );
 
 int fstatat( int dirfd, const char* path, struct stat* sb, int flags );
 int mkdirat( int dirfd, const char* path, mode_t mode );
