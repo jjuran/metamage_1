@@ -21,11 +21,14 @@
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
+#include "POSeven/functions/lstat.hh"
 
 
 namespace tool
 {
+	
+	namespace p7 = poseven;
+	
 	
 	using namespace io::path_descent_operators;
 	
@@ -50,14 +53,16 @@ namespace tool
 	template < class FileSpec, class Filter >
 	DeepFileSearch< FileSpec, Filter >& DeepFileSearch< FileSpec, Filter >::SearchItem( FileSpec item )
 	{
-		if ( io::file_exists( item ) )
+		struct stat sb = p7::lstat( item );
+		
+		if ( S_ISREG( sb.st_mode ) )
 		{
 			if ( filter( item ) )
 			{
 				result.push_back( item );
 			}
 		}
-		else if ( io::directory_exists( item ) )
+		else if ( S_ISDIR( sb.st_mode ) )
 		{
 			SearchDir( ( item ) );
 		}

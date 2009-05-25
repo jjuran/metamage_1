@@ -20,6 +20,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/functions/stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
