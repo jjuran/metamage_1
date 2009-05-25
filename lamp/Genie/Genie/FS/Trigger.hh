@@ -27,6 +27,8 @@ namespace Genie
 			mode_t FilePermMode() const  { return 0200; }
 			
 			void SetTimes() const  { Invoke(); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	template < class Action >
