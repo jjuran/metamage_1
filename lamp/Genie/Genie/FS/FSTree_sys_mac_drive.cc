@@ -24,8 +24,8 @@
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Stamp_Action.hh"
 #include "Genie/FS/FSTree_Virtual_Link.hh"
+#include "Genie/FS/Trigger.hh"
 
 
 namespace Nitrogen
@@ -286,13 +286,13 @@ namespace Genie
 		                            &Property::Read );
 	}
 	
-	template < class Stamp >
-	static FSTreePtr Stamp_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	template < class Trigger >
+	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
+	                                  const std::string&  name )
 	{
 		DriveNumber_KeyName_Traits::Key key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new Stamp( parent, name, key ) );
+		return FSTreePtr( new Trigger( parent, name, key ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[] =
@@ -303,10 +303,10 @@ namespace Genie
 		{ "fsid",  &Property_Factory< GetDriveFSID  > },
 		{ "size",  &Property_Factory< GetDriveSize  > },
 		
-		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
-		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },
-		{ "eject",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Eject   > > },
-		{ "mount",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Mount   > > },
+		{ "flush",  &Trigger_Factory< Trigger< Volume_Flush   > > },
+		{ "umount", &Trigger_Factory< Trigger< Volume_Unmount > > },
+		{ "eject",  &Trigger_Factory< Trigger< Volume_Eject   > > },
+		{ "mount",  &Trigger_Factory< Trigger< Volume_Mount   > > },
 		
 		{ NULL, NULL }
 	};

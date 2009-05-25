@@ -20,9 +20,9 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Stamp_Action.hh"
 #include "Genie/FS/FSTree_Virtual_Link.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/Trigger.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -429,13 +429,13 @@ namespace Genie
 		                            &Property::Read );
 	}
 	
-	template < class Stamp >
-	static FSTreePtr Stamp_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	template < class Trigger >
+	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
+	                                  const std::string&  name )
 	{
 		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new Stamp( parent, name, key ) );
+		return FSTreePtr( new Trigger( parent, name, key ) );
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&    parent,
@@ -510,12 +510,12 @@ namespace Genie
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
 		
-		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
-		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },
+		{ "flush",  &Trigger_Factory< Trigger< Volume_Flush   > > },
+		{ "umount", &Trigger_Factory< Trigger< Volume_Unmount > > },
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "eject",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Eject   > > },
+		{ "eject",  &Trigger_Factory< Trigger< Volume_Eject   > > },
 		
 	#endif
 		
