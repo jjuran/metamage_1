@@ -24,6 +24,7 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Scribes.hh"
+#include "Genie/FS/Trigger.hh"
 
 
 namespace Nitrogen
@@ -379,17 +380,22 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowSelect
+	class Select_Trigger
 	{
-		static std::string Get( N::WindowRef window, bool binary )
-		{
-			throw FSTree_Property::Undefined();
-		}
+		private:
+			typedef N::WindowRef Key;
+			
+			Key itsKey;
 		
-		static void Set( N::WindowRef window, const char* begin, const char* end, bool binary )
-		{
-			N::SelectWindow( window );
-		}
+		public:
+			Select_Trigger( Key key ) : itsKey( key )
+			{
+			}
+			
+			void operator()() const
+			{
+				N::SelectWindow( itsKey );
+			}
 	};
 	
 	template < class Accessor >
@@ -448,9 +454,23 @@ namespace Genie
 		return (void*) Read_8_nibbles( name.data() );
 	}
 	
+	static N::WindowRef GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return (N::WindowRef) PtrFromName( parent->Name() );
+	}
+	
 	static N::WindowRef GetKey( const FSTree* that )
 	{
-		return (N::WindowRef) PtrFromName( that->ParentRef()->Name() );
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	template < class Trigger >
+	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
+	                                  const std::string&  name )
+	{
+		N::WindowRef key = GetKeyFromParent( parent );
+		
+		return FSTreePtr( new Trigger( parent, name, key ) );
 	}
 	
 	template < class Accessor >
@@ -489,7 +509,7 @@ namespace Genie
 		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
 		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
 		
-		{ "select", &Property_Factory< Access_WindowSelect > },
+		{ "select", &Trigger_Factory< Trigger< Select_Trigger > > },
 		
 		{ "z", &Const_Property_Factory< Access_WindowZOrder > },
 		
