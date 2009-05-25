@@ -498,7 +498,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		std::string result = "/sys/app/window/";
+		std::string result = "/sys/app/window/list/";
 		
 		result += Pointer_KeyName_Traits< ::WindowRef >::NameFromKey( windowPtr );
 		

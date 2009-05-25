@@ -14,7 +14,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_sys_mac_window.hh"
+#include "Genie/FS/sys_app_window.hh"
 #include "Genie/FS/Scribes.hh"
 
 
@@ -80,7 +80,7 @@ namespace Genie
 		
 	#endif
 		
-		{ "window", &Basic_Factory< FSTree_sys_mac_window > },
+		{ "window", &Premapped_Factory< sys_app_window_Mappings > },
 		
 		{ NULL, NULL }
 		
