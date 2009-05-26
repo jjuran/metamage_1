@@ -58,7 +58,7 @@ namespace Vertice
 			
 			// Event processing
 			bool DispatchCursor( const EventRecord& event );
-			void MouseDown( const EventRecord& event );
+			bool MouseDown( const EventRecord& event );
 			bool KeyDown( const EventRecord& event );
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::MenuItemCode code )  { return false; }
