@@ -43,6 +43,23 @@ namespace Genie
 		return false;
 	}
 	
+	off_t FSTree_Property::GetEOF() const
+	{
+		std::string data;
+		
+		try
+		{
+			const bool binary = true;  // Return binary length
+			
+			data = itsReadHook( this, binary );
+		}
+		catch ( const Undefined& )
+		{
+		}
+		
+		return data.size();
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_Property::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = NULL;

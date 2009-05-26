@@ -54,6 +54,8 @@ namespace Genie
 				     | (itsWriteHook ? S_IWUSR : 0);
 			}
 			
+			off_t GetEOF() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 		
 		private:
