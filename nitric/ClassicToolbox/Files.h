@@ -23,6 +23,7 @@ namespace Nitrogen
 	
 	void MountVol( FSVolumeRefNum driveNumber );
 	
+#if !TARGET_API_MAC_CARBON
 	
 	class DriveQueue_Sequence
 	{
@@ -80,6 +81,8 @@ namespace Nitrogen
 	{
 		return DriveQueue_Sequence();
 	}
+	
+#endif
 	
 }
 
