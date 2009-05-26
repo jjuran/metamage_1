@@ -189,23 +189,28 @@ namespace Genie
 		}
 	};
 	
+	static const DrvQEl& FindDrive( const FSTree* that )
+	{
+		N::FSVolumeRefNum vRefNum = GetKey( that );
+		
+		const DrvQEl* el = FindDrive( vRefNum );
+		
+		if ( el == NULL )
+		{
+			throw FSTree_Property::Undefined();
+		}
+		
+		return *el;
+	}
+	
 	template < class Accessor >
 	struct sys_mac_drive_N_Property
 	{
-		typedef N::FSVolumeRefNum Key;
-		
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			Key key = GetKey( that );
+			const DrvQEl& el = FindDrive( that );
 			
-			const DrvQEl* el = FindDrive( key );
-			
-			if ( el == NULL )
-			{
-				throw FSTree_Property::Undefined();
-			}
-			
-			return NN::Convert< std::string >( Accessor::Get( *el ) );
+			return NN::Convert< std::string >( Accessor::Get( el ) );
 		}
 	};
 	
