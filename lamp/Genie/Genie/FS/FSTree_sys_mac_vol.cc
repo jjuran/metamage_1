@@ -200,6 +200,8 @@ namespace Genie
 	{
 		static const bool needsName = true;
 		
+		static const bool alwaysStringified = true;
+		
 		typedef const unsigned char* Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -211,6 +213,8 @@ namespace Genie
 	struct GetVolumeBlockCount
 	{
 		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
 		
 		typedef UInt32 Result;  // will break on 16TB volumes
 		
@@ -225,6 +229,8 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
+		static const bool alwaysStringified = false;
+		
 		typedef UInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -236,6 +242,8 @@ namespace Genie
 	struct GetVolumeFreeBlockCount
 	{
 		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
 		
 		typedef UInt32 Result;
 		
@@ -250,6 +258,8 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
+		static const bool alwaysStringified = false;
+		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -263,6 +273,8 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
+		static const bool alwaysStringified = false;
+		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -275,6 +287,8 @@ namespace Genie
 	struct GetVolumeSignature
 	{
 		static const bool needsName = false;
+		
+		static const bool alwaysStringified = true;
 		
 		typedef const char* Result;
 		
@@ -293,6 +307,8 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
+		static const bool alwaysStringified = false;
+		
 		typedef SInt16 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -304,6 +320,8 @@ namespace Genie
 	struct GetVolumeWriteCount
 	{
 		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
 		
 		typedef SInt32 Result;
 		
@@ -317,6 +335,8 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
+		static const bool alwaysStringified = false;
+		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -328,6 +348,8 @@ namespace Genie
 	struct GetVolumeDirCount
 	{
 		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
 		
 		typedef SInt32 Result;
 		
@@ -385,7 +407,14 @@ namespace Genie
 				PBHGetVInfoSync( pb, key, Accessor::needsName ? name : NULL );
 			}
 			
-			return NN::Convert< std::string >( Accessor::Get( pb ) );
+			const typename Accessor::Result data = Accessor::Get( pb );
+			
+			const bool raw = !Accessor::alwaysStringified  &&  binary;
+			
+			std::string result = raw ? std::string( (char*) &data, sizeof data )
+			                   :       NN::Convert< std::string >( data );
+			
+			return result;
 		}
 	};
 	
