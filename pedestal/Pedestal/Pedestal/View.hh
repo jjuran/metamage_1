@@ -37,7 +37,7 @@ namespace Pedestal
 			virtual void SetBounds( const Rect& bounds )  {}
 			
 			virtual void Idle     ( const EventRecord& event )  {}
-			virtual void MouseDown( const EventRecord& event )  {}
+			virtual bool MouseDown( const EventRecord& event )  { return true;  }
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			

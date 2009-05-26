@@ -43,7 +43,7 @@ namespace Pedestal
 			void Activate( bool activating );
 			
 			void Idle     ( const EventRecord& event );
-			void MouseDown( const EventRecord& event );
+			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
 			boost::shared_ptr< Quasimode >

@@ -74,7 +74,7 @@ namespace Pedestal
 		return true;
 	}
 	
-	void TextEdit::MouseDown( const EventRecord& event )
+	bool TextEdit::MouseDown( const EventRecord& event )
 	{
 		ASSERT( Get() != NULL );
 		
@@ -87,6 +87,8 @@ namespace Pedestal
 		gExtendingSelection = false;
 		
 		On_UserSelect();
+		
+		return true;
 	}
 	
 	
