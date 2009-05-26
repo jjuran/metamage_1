@@ -12,7 +12,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/FS/FSTree_sys_mac_window.hh"
+#include "Genie/FS/sys_app_window_list.hh"
 #include "Genie/FS/ResolvePathname.hh"
 
 
@@ -65,7 +65,7 @@ namespace Genie
 	{
 		{ "front", &Basic_Factory< sys_app_window_front >, true },
 		
-		{ "list", &Basic_Factory< FSTree_sys_mac_window > },
+		{ "list", &Basic_Factory< sys_app_window_list > },
 		
 		{ NULL, NULL }
 		

@@ -1,10 +1,10 @@
-/*	========================
- *	FSTree_sys_mac_window.hh
- *	========================
+/*	======================
+ *	sys_app_window_list.hh
+ *	======================
  */
 
-#ifndef GENIE_FILESYSTEM_FSTREE_SYS_MAC_WINDOW_HH
-#define GENIE_FILESYSTEM_FSTREE_SYS_MAC_WINDOW_HH
+#ifndef GENIE_FILESYSTEM_SYS_APP_WINDOW_LIST_HH
+#define GENIE_FILESYSTEM_SYS_APP_WINDOW_LIST_HH
 
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
@@ -19,7 +19,7 @@ namespace Genie
 	struct WindowRef_KeyName_Traits : public Pointer_KeyName_Traits< Nitrogen::WindowRef >  {};
 	
 	
-	struct sys_mac_window_Details : public WindowRef_KeyName_Traits
+	struct sys_app_window_list_Details : public WindowRef_KeyName_Traits
 	{
 		typedef Nitrogen::WindowList_Container Sequence;
 		
@@ -34,7 +34,7 @@ namespace Genie
 		                               const Key&          key );
 	};
 	
-	typedef FSTree_Sequence< sys_mac_window_Details > FSTree_sys_mac_window;
+	typedef FSTree_Sequence< sys_app_window_list_Details > sys_app_window_list;
 	
 }
 

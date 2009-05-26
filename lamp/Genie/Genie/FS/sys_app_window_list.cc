@@ -1,9 +1,9 @@
-/*	========================
- *	FSTree_sys_mac_window.cc
- *	========================
+/*	======================
+ *	sys_app_window_list.cc
+ *	======================
  */
 
-#include "Genie/FS/FSTree_sys_mac_window.hh"
+#include "Genie/FS/sys_app_window_list.hh"
 
 // Standard C++
 #include <algorithm>
@@ -62,20 +62,20 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	bool sys_mac_window_Details::KeyIsValid( const Key& key )
+	bool sys_app_window_list_Details::KeyIsValid( const Key& key )
 	{
 		Sequence sequence = ItemSequence();
 		
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
 	}
 	
-	extern const FSTree_Premapped::Mapping sys_mac_window_REF_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[];
 	
-	FSTreePtr sys_mac_window_Details::GetChildNode( const FSTreePtr&    parent,
-		                                            const std::string&  name,
-		                                            const Key&          key )
+	FSTreePtr sys_app_window_list_Details::GetChildNode( const FSTreePtr&    parent,
+		                                                 const std::string&  name,
+		                                                 const Key&          key )
 	{
-		return Premapped_Factory< sys_mac_window_REF_Mappings >( parent, name );
+		return Premapped_Factory< sys_app_window_list_REF_Mappings >( parent, name );
 	}
 	
 	
@@ -399,7 +399,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_window_REF_Property
+	struct sys_app_window_list_REF_Property
 	{
 		typedef N::WindowRef Key;
 		
@@ -407,7 +407,7 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			if ( !sys_mac_window_Details::KeyIsValid( key ) )
+			if ( !sys_app_window_list_Details::KeyIsValid( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -419,7 +419,7 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			if ( !sys_mac_window_Details::KeyIsValid( key ) )
+			if ( !sys_app_window_list_Details::KeyIsValid( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -477,7 +477,7 @@ namespace Genie
 	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
 	                                         const std::string&  name )
 	{
-		typedef sys_mac_window_REF_Property< Accessor > Property;
+		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		
 		return New_FSTree_Property( parent,
 		                            name,
@@ -488,7 +488,7 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		typedef sys_mac_window_REF_Property< Accessor > Property;
+		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		
 		return New_FSTree_Property( parent,
 		                            name,
@@ -496,7 +496,7 @@ namespace Genie
 		                            &Property::Write );
 	}
 	
-	const FSTree_Premapped::Mapping sys_mac_window_REF_Mappings[] =
+	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =
 	{
 		{ "title", &Property_Factory< Access_WindowTitle    > },
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
