@@ -1519,7 +1519,7 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::MouseDown( const EventRecord& event )
+	bool PortView::MouseDown( const EventRecord& event )
 	{
 		Point macPt = N::GlobalToLocal( event.where );
 		
@@ -1547,6 +1547,8 @@ namespace Vertice
 				::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 			}
 		}
+		
+		return true;
 	}
 	
 	bool PortView::KeyDown( const EventRecord& event )
