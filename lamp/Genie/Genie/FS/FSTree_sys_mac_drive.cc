@@ -31,7 +31,7 @@
 namespace Nitrogen
 {
 	
-	class DriveQueue_Container
+	class DriveQueue_Sequence
 	{
 		public:
 			typedef UInt16 size_type;
@@ -47,12 +47,12 @@ namespace Nitrogen
 			
 			class const_iterator
 			{
-				friend class DriveQueue_Container;
+				friend class DriveQueue_Sequence;
 				
 				public:
-					typedef DriveQueue_Container::size_type  size_type;
-					typedef DriveQueue_Container::reference  reference;
-					typedef DriveQueue_Container::pointer    pointer;
+					typedef DriveQueue_Sequence::size_type  size_type;
+					typedef DriveQueue_Sequence::reference  reference;
+					typedef DriveQueue_Sequence::pointer    pointer;
 					
 					typedef std::forward_iterator_tag iterator_category;
 					
@@ -83,9 +83,9 @@ namespace Nitrogen
 			const_iterator end() const                { return const_iterator( NULL                          ); }
 	};
 	
-	inline DriveQueue_Container DriveQueue()
+	inline DriveQueue_Sequence DriveQueue()
 	{
-		return DriveQueue_Container();
+		return DriveQueue_Sequence();
 	}
 	
 }
@@ -112,7 +112,7 @@ namespace Genie
 	
 	struct sys_mac_drive_Details : public DriveNumber_KeyName_Traits
 	{
-		typedef Nitrogen::DriveQueue_Container Sequence;
+		typedef Nitrogen::DriveQueue_Sequence Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::DriveQueue(); }
 		
@@ -128,9 +128,9 @@ namespace Genie
 	
 	static const DrvQEl* FindDrive( UInt16 driveNumber )
 	{
-		N::DriveQueue_Container drives = N::DriveQueue();
+		const N::DriveQueue_Sequence drives = N::DriveQueue();
 		
-		typedef N::DriveQueue_Container::const_iterator Iter;
+		typedef N::DriveQueue_Sequence::const_iterator Iter;
 		
 		for ( Iter it = drives.begin();  it != drives.end();  ++it )
 		{
