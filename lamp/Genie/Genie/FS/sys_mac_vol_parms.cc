@@ -161,6 +161,24 @@ namespace Genie
 		}
 	};
 	
+	static void GetVolParmsInfo( GetVolParmsInfoBuffer&  parmsInfo,
+	                             const FSTree*           that )
+	{
+		const N::FSVolumeRefNum vRefNum = GetKey( that );
+		
+		memset( &parmsInfo, '\0', sizeof parmsInfo );
+		
+		HParamBlockRec pb = { 0 };
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioVRefNum  = vRefNum;
+		io.ioBuffer   = (char *) &parmsInfo;
+		io.ioReqCount = sizeof parmsInfo;
+		
+		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+	}
+	
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property
 	{
@@ -168,19 +186,9 @@ namespace Genie
 		
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			Key vRefNum = GetKey( that );
+			GetVolParmsInfoBuffer parmsInfo;
 			
-			HParamBlockRec pb = { 0 };
-			
-			HIOParam& io = pb.ioParam;
-			
-			GetVolParmsInfoBuffer parmsInfo = { 0 };
-			
-			io.ioVRefNum  = vRefNum;
-			io.ioBuffer   = (char *) &parmsInfo;
-			io.ioReqCount = sizeof parmsInfo;
-			
-			N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+			GetVolParmsInfo( parmsInfo, that );
 			
 			const typename Accessor::Result data = Accessor::Get( parmsInfo );
 			
