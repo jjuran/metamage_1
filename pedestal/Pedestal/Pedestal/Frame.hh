@@ -15,6 +15,9 @@ namespace Pedestal
 	
 	class Frame : public Superview
 	{
+		private:
+			Rect itsSavedBounds;
+		
 		public:
 			virtual short Padding() const = 0;
 			
@@ -25,6 +28,8 @@ namespace Pedestal
 			virtual Rect Margin( const Rect& bounds ) const = 0;
 			
 			Rect ApertureFromBounds( const Rect& bounds );
+			
+			bool HitTest( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};

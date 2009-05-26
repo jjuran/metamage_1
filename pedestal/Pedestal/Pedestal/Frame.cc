@@ -5,6 +5,9 @@
 
 #include "Pedestal/Frame.hh"
 
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
+
 
 namespace Pedestal
 {
@@ -39,8 +42,19 @@ namespace Pedestal
 		return GetAperture( bounds, Margin( bounds ), Padding() );
 	}
 	
+	bool Frame::HitTest( const EventRecord& event )
+	{
+		const Rect margin = Margin( itsSavedBounds );
+		
+		const Rect box = GetPaddingBox( itsSavedBounds, margin );
+		
+		return N::PtInRect( N::GlobalToLocal( event.where ), box );
+	}
+	
 	void Frame::Draw( const Rect& bounds, bool erasing )
 	{
+		itsSavedBounds = bounds;
+		
 		const Rect margin = Margin( bounds );
 		
 		const short padding = Padding();
