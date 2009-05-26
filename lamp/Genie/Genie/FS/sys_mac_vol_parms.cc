@@ -35,19 +35,25 @@ namespace Genie
 	
 	struct GetVolumeParmsAttrib
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
+		
+		static const bool alwaysStringified = false;
+		
+		typedef UInt32 Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
-			using BitsAndBytes::EncodeAsHex;
-			
-			return EncodeAsHex( &parmsInfo.vMAttrib, sizeof parmsInfo.vMAttrib );
+			return parmsInfo.vMAttrib;
 		}
 	};
 	
 	struct GetVolumeParmsHandle
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
+		
+		static const bool alwaysStringified = false;
+		
+		typedef ::Handle Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -56,15 +62,17 @@ namespace Genie
 				throw FSTree_Property::Undefined();
 			}
 			
-			using BitsAndBytes::EncodeAsHex;
-			
-			return EncodeAsHex( &parmsInfo.vMLocalHand, sizeof parmsInfo.vMLocalHand );
+			return parmsInfo.vMLocalHand;
 		}
 	};
 	
 	struct GetVolumeParmsServer
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
+		
+		static const bool alwaysStringified = false;
+		
+		typedef UInt32 Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -73,14 +81,16 @@ namespace Genie
 				throw FSTree_Property::Undefined();
 			}
 			
-			using BitsAndBytes::EncodeAsHex;
-			
-			return EncodeAsHex( &parmsInfo.vMServerAdr, sizeof parmsInfo.vMServerAdr );
+			return parmsInfo.vMServerAdr;
 		}
 	};
 	
 	struct GetVolumeParmsGrade
 	{
+		static const bool hexEncoded = false;
+		
+		static const bool alwaysStringified = false;
+		
 		typedef SInt32 Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
@@ -96,6 +106,10 @@ namespace Genie
 	
 	struct GetVolumeParmsPrivID
 	{
+		static const bool hexEncoded = false;
+		
+		static const bool alwaysStringified = false;
+		
 		typedef SInt16 Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
@@ -111,7 +125,11 @@ namespace Genie
 	
 	struct GetVolumeParmsExtended
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
+		
+		static const bool alwaysStringified = false;
+		
+		typedef UInt32 Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -120,14 +138,16 @@ namespace Genie
 				throw FSTree_Property::Undefined();
 			}
 			
-			using BitsAndBytes::EncodeAsHex;
-			
-			return EncodeAsHex( &parmsInfo.vMExtendedAttributes, sizeof parmsInfo.vMExtendedAttributes );
+			return parmsInfo.vMExtendedAttributes;
 		}
 	};
 	
 	struct GetVolumeParmsDeviceID
 	{
+		static const bool hexEncoded = false;
+		
+		static const bool alwaysStringified = true;
+		
 		typedef const char* Result;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
@@ -162,7 +182,18 @@ namespace Genie
 			
 			N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 			
-			return NN::Convert< std::string >( Accessor::Get( parmsInfo ) );
+			const typename Accessor::Result data = Accessor::Get( parmsInfo );
+			
+			const bool raw = !Accessor::alwaysStringified  &&  binary;
+			const bool hex =  Accessor::hexEncoded;
+			
+			using BitsAndBytes::EncodeAsHex;
+			
+			std::string result = raw ? std::string( (char*) &data, sizeof data )
+			                   : hex ? EncodeAsHex(         &data, sizeof data )
+			                   :       NN::Convert< std::string >( data );
+			
+			return result;
 		}
 	};
 	
