@@ -140,6 +140,8 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
+			off_t GetEOF() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
@@ -535,6 +537,18 @@ namespace Genie
 		}
 		
 		return it->second.handle;
+	}
+	
+	off_t FSTree_PID_fd_N::GetEOF() const
+	{
+		IOHandle* handle = GetFDHandle( itsPID, itsFD ).get();
+		
+		if ( RegularFileHandle* file = IOHandle_Cast< RegularFileHandle >( handle ) )
+		{
+			return file->GetEOF();
+		}
+		
+		return 0;
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_PID_fd_N::Open( OpenFlags flags, mode_t mode ) const
