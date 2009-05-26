@@ -33,7 +33,7 @@ namespace Pedestal
 			
 			void SetBounds( const Rect& bounds );
 			
-			void MouseDown( const EventRecord& event );
+			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
 			void Activate( bool activating )  { Nitrogen::LActivate( activating, itsList ); }

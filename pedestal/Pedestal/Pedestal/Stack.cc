@@ -71,7 +71,7 @@ namespace Pedestal
 		}
 	}
 	
-	void Stack::MouseDown( const EventRecord& event )
+	bool Stack::MouseDown( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();
 		
@@ -79,13 +79,13 @@ namespace Pedestal
 		{
 			View& view = GetNthView( i );
 			
-			if ( view.HitTest( event ) )
+			if ( view.MouseDown( event ) )
 			{
-				view.MouseDown( event );
-				
-				break;
+				return true;
 			}
 		}
+		
+		return false;
 	}
 	
 	bool Stack::KeyDown( const EventRecord& event )

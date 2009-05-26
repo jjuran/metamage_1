@@ -134,11 +134,13 @@ namespace Pedestal
 		}
 	}
 	
-	void ListView::MouseDown( const EventRecord& event )
+	bool ListView::MouseDown( const EventRecord& event )
 	{
 		N::LClick( N::GlobalToLocal( event.where ),
 		           N::EventModifiers( event.modifiers ),
 		           itsList );
+		
+		return true;
 	}
 	
 	bool ListView::KeyDown( const EventRecord& event )

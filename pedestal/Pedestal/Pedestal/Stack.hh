@@ -27,7 +27,7 @@ namespace Pedestal
 			
 			void Idle( const EventRecord& event );
 			
-			void MouseDown( const EventRecord& event );
+			bool MouseDown( const EventRecord& event );
 			
 			bool KeyDown( const EventRecord& event );
 			

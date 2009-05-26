@@ -97,7 +97,7 @@ namespace Pedestal
 		return N::PtInRect( N::GlobalToLocal( event.where ), ApertureFromBounds( Bounds() ) );
 	}
 	
-	void ScrollFrame::MouseDown( const EventRecord& event )
+	bool ScrollFrame::MouseDown( const EventRecord& event )
 	{
 		if ( HitTest( event ) )
 		{
@@ -106,7 +106,11 @@ namespace Pedestal
 			Subview().MouseDown( event );
 			
 			UpdateScrollbars();
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 	bool ScrollFrame::KeyDown( const EventRecord& event )

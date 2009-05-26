@@ -32,12 +32,9 @@ namespace Pedestal
 				Subview().Idle( event );
 			}
 			
-			void MouseDown( const EventRecord& event )
+			bool MouseDown( const EventRecord& event )
 			{
-				if ( HitTest( event ) )
-				{
-					Subview().MouseDown( event );
-				}
+				return HitTest( event ) && Subview().MouseDown( event );
 			}
 			
 			bool KeyDown( const EventRecord& event )
