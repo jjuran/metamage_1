@@ -43,7 +43,7 @@ echo 13 > view/entry/.margin-right
 echo 49 > view/entry/.margin-bottom
 echo 78 > view/entry/.margin-left
 echo 1 > view/entry/.outline-width
-echo 2 > view/entry/.outline-offset
+echo 2 > view/entry/padding
 
 ln /new/textedit view/entry/v
 
