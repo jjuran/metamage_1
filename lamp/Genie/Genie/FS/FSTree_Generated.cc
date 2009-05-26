@@ -40,6 +40,8 @@ namespace Genie
 			
 			bool Exists() const;
 			
+			off_t GetEOF() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
@@ -60,6 +62,18 @@ namespace Genie
 		}
 		
 		return false;
+	}
+	
+	off_t FSTree_Generated::GetEOF() const
+	{
+		if ( itsReadHook == NULL )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
+		const std::string data = itsReadHook( this );
+		
+		return data.size();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_Generated::Open( OpenFlags flags ) const
