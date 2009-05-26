@@ -23,6 +23,7 @@
 #include "Genie/FS/FSTree_Virtual_Link.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/sys_mac_vol_parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -535,6 +536,8 @@ namespace Genie
 		{ "writes", &Property_Factory< GetVolumeWriteCount > },
 		{ "files",  &Property_Factory< GetVolumeFileCount  > },
 		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
+		
+		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
