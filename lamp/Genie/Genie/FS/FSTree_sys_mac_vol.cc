@@ -385,6 +385,20 @@ namespace Genie
 		N::ThrowOSStatus( ::PBXGetVolInfoSync( &pb ) );
 	}
 	
+	static void GetVolInfo( XVolumeParam& pb, const FSTree* that, StringPtr name )
+	{
+		const N::FSVolumeRefNum vRefNum = GetKey( that );
+		
+		if ( Has_PBXGetVolInfo() )
+		{
+			PBXGetVolInfoSync( pb, vRefNum, name );
+		}
+		else
+		{
+			PBHGetVInfoSync( pb, vRefNum, name );
+		}
+	}
+	
 	template < class Accessor >
 	struct sys_mac_vol_N_Property
 	{
@@ -392,20 +406,11 @@ namespace Genie
 		
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			Key key = GetKey( that );
-			
 			XVolumeParam pb;
 			
 			Str31 name;
 			
-			if ( Has_PBXGetVolInfo() )
-			{
-				PBXGetVolInfoSync( pb, key, Accessor::needsName ? name : NULL );
-			}
-			else
-			{
-				PBHGetVInfoSync( pb, key, Accessor::needsName ? name : NULL );
-			}
+			GetVolInfo( pb, that, Accessor::needsName ? name : NULL );
 			
 			const typename Accessor::Result data = Accessor::Get( pb );
 			
