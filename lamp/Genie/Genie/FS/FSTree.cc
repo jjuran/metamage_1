@@ -181,12 +181,7 @@ namespace Genie
 		
 		sb.st_nlink = 1;
 		
-		// fstatat() or fstat() will fill in size for regular files
-		
-		if ( !S_ISREG( sb.st_mode ) )
-		{
-			sb.st_size = 0;
-		}
+		// fstatat() or fstat() will fill in sb.st_size
 		
 		sb.st_blksize = 4096;
 		
