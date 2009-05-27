@@ -147,23 +147,20 @@ namespace Genie
 	
 	struct GetDriveFlags
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
 		
-		static std::string Get( const DrvQEl& drive )
+		typedef UInt32 Result;
+		
+		static Result Get( const DrvQEl& drive )
 		{
-			const std::size_t sizeof_flags = 4;
-			
-			const UInt8* end   = (UInt8*) &drive;
-			const UInt8* begin = end - sizeof_flags;
-			
-			using BitsAndBytes::EncodeAsHex;
-			
-			return EncodeAsHex( begin, sizeof_flags );
+			return ((const Result*) &drive)[-1];
 		}
 	};
 	
 	struct GetDriveSize
 	{
+		static const bool hexEncoded = false;
+		
 		typedef UInt32 Result;
 		
 		static UInt32 Get( const DrvQEl& drive )
@@ -181,6 +178,8 @@ namespace Genie
 	
 	struct GetDriveFSID
 	{
+		static const bool hexEncoded = false;
+		
 		typedef SInt16 Result;
 		
 		static SInt16 Get( const DrvQEl& drive )
@@ -210,7 +209,18 @@ namespace Genie
 		{
 			const DrvQEl& el = FindDrive( that );
 			
-			return NN::Convert< std::string >( Accessor::Get( el ) );
+			const typename Accessor::Result data = Accessor::Get( el );
+			
+			const bool raw = binary;
+			const bool hex = Accessor::hexEncoded;
+			
+			using BitsAndBytes::EncodeAsHex;
+			
+			std::string result = raw ? std::string( (char*) &data, sizeof data )
+			                   : hex ? EncodeAsHex(         &data, sizeof data )
+			                   :       NN::Convert< std::string >( data );
+			
+			return result;
 		}
 	};
 	
