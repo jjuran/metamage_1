@@ -67,7 +67,7 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	FSTreePtr IOHandle::GetFile() const
+	FSTreePtr IOHandle::GetFile()
 	{
 		return FSTreePtr( new FSTree_IOHandle( this ) );
 	}

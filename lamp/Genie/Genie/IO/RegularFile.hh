@@ -35,7 +35,7 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
-			virtual off_t GetEOF() const;
+			virtual off_t GetEOF();
 			
 			virtual void SetEOF( off_t length );
 			

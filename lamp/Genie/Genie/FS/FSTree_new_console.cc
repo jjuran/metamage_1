@@ -374,7 +374,7 @@ namespace Genie
 			
 			void Attach( const boost::shared_ptr< IOHandle >& terminal );
 			
-			FSTreePtr GetFile() const  { return MakeConsoleProxy( itsID ); }
+			FSTreePtr GetFile()  { return MakeConsoleProxy( itsID ); }
 			
 			unsigned int SysPoll();
 			

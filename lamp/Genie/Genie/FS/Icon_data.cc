@@ -324,13 +324,13 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
-			const FSTree* ViewKey() const;
+			const FSTree* ViewKey();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
-			off_t GetEOF() const  { return itsData->GetSize(); }
+			off_t GetEOF()  { return itsData->GetSize(); }
 			
 			void SetEOF( off_t length )  {}
 	};
@@ -340,7 +340,7 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
 	
-	const FSTree* IconDataFileHandle::ViewKey() const
+	const FSTree* IconDataFileHandle::ViewKey()
 	{
 		return GetFile()->ParentRef().get();
 	}

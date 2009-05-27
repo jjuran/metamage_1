@@ -29,7 +29,7 @@ namespace Genie
 	{
 	}
 	
-	FSTreePtr TerminalHandle::GetFile() const
+	FSTreePtr TerminalHandle::GetFile()
 	{
 		return ResolveAbsolutePath( itsTTYName );
 	}

@@ -61,15 +61,15 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
-			const FSTree* ViewKey() const;
+			const FSTree* ViewKey();
 			
-			std::string& String() const  { return TextEditParameters::Get( ViewKey() ).itsText; }
+			std::string& String()  { return TextEditParameters::Get( ViewKey() ).itsText; }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
-			off_t GetEOF() const  { return String().size(); }
+			off_t GetEOF()  { return String().size(); }
 			
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
@@ -79,7 +79,7 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new TextEdit_text_Handle( GetFile(), GetFlags() ) );
 	}
 	
-	const FSTree* TextEdit_text_Handle::ViewKey() const
+	const FSTree* TextEdit_text_Handle::ViewKey()
 	{
 		return GetFile()->ParentRef().get();
 	}

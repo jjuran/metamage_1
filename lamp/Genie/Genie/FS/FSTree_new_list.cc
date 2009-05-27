@@ -130,7 +130,7 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 			
-			off_t GetEOF() const  { return GetFile()->GetEOF(); }
+			off_t GetEOF()  { return GetFile()->GetEOF(); }
 			
 			void SetEOF( off_t length )  { return GetFile()->SetEOF( length ); }
 	};

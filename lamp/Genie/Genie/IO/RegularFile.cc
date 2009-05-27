@@ -69,7 +69,7 @@ namespace Genie
 		return itsMark;
 	}
 	
-	off_t RegularFileHandle::GetEOF() const
+	off_t RegularFileHandle::GetEOF()
 	{
 		return GetFile()->GetEOF();
 	}

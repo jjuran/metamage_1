@@ -34,7 +34,7 @@ namespace Genie
 			
 			bool IsDirectory() const  { return true; }
 			
-			FSTreePtr GetFile() const  { return itsDir; }
+			FSTreePtr GetFile()  { return itsDir; }
 			
 			off_t Seek( off_t offset, int whence );
 			

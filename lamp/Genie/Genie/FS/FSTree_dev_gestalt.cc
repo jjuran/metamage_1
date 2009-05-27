@@ -29,7 +29,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr GetFile() const  { return ResolveAbsolutePath( STR_LEN( "/dev/gestalt" ) ); }
+			FSTreePtr GetFile()  { return ResolveAbsolutePath( STR_LEN( "/dev/gestalt" ) ); }
 			
 			unsigned int SysPoll()  { return 0; }
 			

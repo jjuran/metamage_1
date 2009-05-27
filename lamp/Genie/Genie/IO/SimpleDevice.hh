@@ -39,7 +39,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr GetFile() const;
+			FSTreePtr GetFile();
 			
 			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			

@@ -44,7 +44,7 @@ namespace Genie
 			
 			void Attach( const boost::shared_ptr< IOHandle >& target )  { itsTTY = target; }
 			
-			FSTreePtr GetFile() const;
+			FSTreePtr GetFile();
 			
 			const boost::weak_ptr< ProcessGroup >& GetProcessGroup() const  { return itsForegroundProcessGroup; }
 			
