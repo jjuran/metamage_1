@@ -27,8 +27,14 @@ namespace Genie
 	
 	class FSTree_IOHandle : public FSTree
 	{
+		private:
+			boost::shared_ptr< IOHandle > itsHandle;
+		
 		public:
-			FSTree_IOHandle( const void* address ) : FSTree( FSTreePtr(), IOName( address, true ) )
+			FSTree_IOHandle( const boost::shared_ptr< IOHandle >& handle )
+			:
+				FSTree( FSTreePtr(), IOName( handle.get(), true ) ),
+				itsHandle( handle )
 			{
 			}
 			
@@ -36,6 +42,11 @@ namespace Genie
 			bool IsAnonymous() const  { return true; }
 			
 			std::string Pathname() const  { return Name(); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			{
+				return itsHandle;
+			}
 	};
 	
 	IOHandle::~IOHandle()
@@ -69,7 +80,7 @@ namespace Genie
 	
 	FSTreePtr IOHandle::GetFile()
 	{
-		return FSTreePtr( new FSTree_IOHandle( this ) );
+		return FSTreePtr( new FSTree_IOHandle( shared_from_this() ) );
 	}
 	
 	void IOHandle::IOCtl( unsigned long request, int* argp )
