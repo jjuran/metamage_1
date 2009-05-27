@@ -1195,13 +1195,6 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
 	{
-		const bool following = (flags & O_NOFOLLOW) == 0;
-		
-		if ( following  &&  IsLink() )
-		{
-			return ResolveLink()->Open( flags, mode );
-		}
-		
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
 		
