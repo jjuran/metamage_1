@@ -12,6 +12,7 @@
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -36,6 +37,15 @@ namespace Genie
 			if ( directory  &&  (flags & O_ACCMODE) != O_RDONLY )
 			{
 				return frame.SetErrno( EISDIR );
+			}
+			
+			if ( const bool following = (flags & O_NOFOLLOW) == 0 )
+			{
+				ResolveLinks_InPlace( file );
+			}
+			else if ( file->IsLink() )
+			{
+				return frame.SetErrno( ELOOP );
 			}
 			
 			boost::shared_ptr< IOHandle > opened = directory ? file->OpenDirectory()
