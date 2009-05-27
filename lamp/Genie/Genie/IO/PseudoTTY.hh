@@ -37,7 +37,7 @@ namespace Genie
 			
 			~PseudoTTYHandle();
 			
-			FSTreePtr GetFile() const  { return itsTerminal->GetFile(); }
+			FSTreePtr GetFile()  { return itsTerminal->GetFile(); }
 			
 			unsigned int SysPoll();
 			

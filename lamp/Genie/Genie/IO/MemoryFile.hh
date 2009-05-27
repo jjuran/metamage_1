@@ -46,7 +46,7 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			off_t GetEOF() const  { return itsSize; }
+			off_t GetEOF()  { return itsSize; }
 	};
 	
 }

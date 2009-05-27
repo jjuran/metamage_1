@@ -34,7 +34,7 @@ namespace Genie
 			
 			~MacFileHandle();
 			
-			FSTreePtr GetFile() const;
+			FSTreePtr GetFile();
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
@@ -46,7 +46,7 @@ namespace Genie
 			
 			void Synchronize( bool metadata );
 			
-			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
+			off_t GetEOF()  { return Nitrogen::GetEOF( itsRefNum ); }
 			
 			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
 	};
@@ -84,7 +84,7 @@ namespace Genie
 	{
 	}
 	
-	FSTreePtr MacFileHandle::GetFile() const
+	FSTreePtr MacFileHandle::GetFile()
 	{
 		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
 	}
