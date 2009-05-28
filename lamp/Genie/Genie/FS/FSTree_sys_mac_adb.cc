@@ -116,7 +116,7 @@ namespace Genie
 				
 				char c = '0' + data.origADBAddr;
 				
-				return std::string( c, 1 );
+				return std::string( 1, c );
 			}
 	};
 	
