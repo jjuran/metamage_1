@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <string>
 
+// Standard C
+#include <string.h>
+
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/functions/read.hh"
