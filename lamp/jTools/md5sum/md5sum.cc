@@ -4,6 +4,7 @@
  */
 
 // Standard C++
+#include <algorithm>
 #include <string>
 
 // POSeven
@@ -27,6 +28,30 @@ namespace tool
 	namespace Bits = BitsAndBytes;
 	
 	
+	static ssize_t buffered_read( p7::fd_t fd, char* small_buffer, size_t n_bytes_requested )
+	{
+		static char big_buffer[ 4096 ];
+		
+		static size_t mark = 0;
+		static size_t n_bytes_available = 0;
+		
+		if ( n_bytes_available == 0 )
+		{
+			n_bytes_available = p7::read( fd, big_buffer, sizeof big_buffer );
+			
+			mark = 0;
+		}
+		
+		const size_t bytes_to_copy = std::min( n_bytes_requested, n_bytes_available );
+		
+		memcpy( small_buffer, big_buffer + mark, bytes_to_copy );
+		
+		n_bytes_available -= bytes_to_copy;
+		mark              += bytes_to_copy;
+		
+		return bytes_to_copy;
+	}
+	
 	static std::string MD5Sum( p7::fd_t input )
 	{
 		const std::size_t blockSize = 64;
@@ -36,7 +61,7 @@ namespace tool
 		MD5::Engine engine;
 		
 		// loop exits on a partial block or at EOF
-		while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
+		while ( ( bytes = buffered_read( input, data, blockSize ) ) == blockSize )
 		{
 			engine.DoBlock( data );
 		}
