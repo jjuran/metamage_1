@@ -21,7 +21,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static const bool gSyncTEScrapOnEdit = TARGET_API_MAC_CARBON;
+	static const bool gSyncTEScrapOnEdit = true;
 	
 	
 	static bool InFront()
