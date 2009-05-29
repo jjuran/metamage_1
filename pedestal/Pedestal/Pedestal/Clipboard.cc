@@ -73,18 +73,16 @@ namespace Pedestal
 	
 	void Clipboard::Suspend()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
-		N::ZeroScrap();
-		N::TEToScrap();
-		
-	#endif
+		if ( !TARGET_API_MAC_CARBON )
+		{
+			FlushScrap();
+		}
 	}
 	
 	void Clipboard::Resume()
 	{
-		#if !TARGET_API_MAC_CARBON
-			
+		if ( !TARGET_API_MAC_CARBON )
+		{
 			OSErr err = ::TEFromScrap();
 			
 			// We'll get an error if there's nothing in the clipboard,
@@ -94,33 +92,21 @@ namespace Pedestal
 			{
 				N::ThrowOSStatus( err );
 			}
-			
-		#endif
+		}
 	}
 	
 	static void PreTECopy()
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		N::ClearCurrentScrap();
-		
-	#endif
+		ClearCarbonScrap();
 	}
 	
 	static void PostTECopy()
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		try
+		if ( TARGET_API_MAC_CARBON )
 		{
-			N::TEToScrap();
+			// Flush the TE scrap immediately
+			FlushScrap();
 		}
-		catch ( const N::OSStatus& )
-		{
-			N::ClearCurrentScrap();
-		}
-		
-	#endif
 	}
 	
 	void Clipboard::TECut( TEHandle hTE )
@@ -145,6 +131,7 @@ namespace Pedestal
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
+			// Update the TE scrap just-in-time
 			N::TEFromScrap();
 		}
 		
