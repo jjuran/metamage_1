@@ -43,6 +43,16 @@
 #include "Pedestal/Window.hh"
 
 
+#if TARGET_API_MAC_CARBON
+
+enum
+{
+	convertClipboardFlag = 0
+};
+
+#endif
+
+
 namespace Nitrogen
 {
 	
@@ -621,14 +631,10 @@ namespace Pedestal
 				
 				if ( gRunState.inForeground )
 				{
-				#if !TARGET_API_MAC_CARBON
-					
 					if ( event.message & convertClipboardFlag )
 					{
 						Clipboard::Resume();
 					}
-					
-				#endif
 					
 					Resume();
 				}
