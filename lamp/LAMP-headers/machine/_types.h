@@ -7,6 +7,7 @@
 #define	_SIZE_T_DEFINED_
 
 #ifdef __cplusplus
+using std::size_t;
 using std::va_list;
 #endif
 typedef va_list __va_list;
