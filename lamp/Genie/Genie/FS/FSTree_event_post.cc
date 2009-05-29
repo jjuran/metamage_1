@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/Trigger.hh"
 
 
 namespace Nitrogen
@@ -32,12 +33,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_click
 	{
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			throw FSTree_Property::Undefined();
-		}
-		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		void operator()() const
 		{
 			N::PostEvent( N::mouseDown, 0 );
 			N::PostEvent( N::mouseUp,   0 );
@@ -77,7 +73,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_event_post_Mappings[] =
 	{
-		{ "click", &Property_Factory< sys_mac_event_post_click > },
+		{ "click", &Basic_Factory< Trigger< sys_mac_event_post_click > > },
+		
 		{ "key",   &Property_Factory< sys_mac_event_post_key   > },
 		
 		{ NULL, NULL }
