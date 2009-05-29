@@ -83,19 +83,19 @@ namespace Pedestal
 	
 	void Clipboard::Resume()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
-		OSErr err = ::TEFromScrap();
-		
-		// We'll get an error if there's nothing in the clipboard,
-		// but this is perfectly reasonable at startup.
-		
-		if ( err != noTypeErr )
-		{
-			N::ThrowOSStatus( err );
-		}
-		
-	#endif
+		#if !TARGET_API_MAC_CARBON
+			
+			OSErr err = ::TEFromScrap();
+			
+			// We'll get an error if there's nothing in the clipboard,
+			// but this is perfectly reasonable at startup.
+			
+			if ( err != noTypeErr )
+			{
+				N::ThrowOSStatus( err );
+			}
+			
+		#endif
 	}
 	
 	static void PreTECopy()
