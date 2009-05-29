@@ -31,7 +31,7 @@ namespace Pedestal
 	
 	Clipboard::Clipboard()
 	{
-		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		if ( !gSyncTEScrapOnEdit  &&  InFront() )
 		{
 			Resume();
 		}
@@ -39,7 +39,7 @@ namespace Pedestal
 	
 	Clipboard::~Clipboard()
 	{
-		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		if ( !gSyncTEScrapOnEdit  &&  InFront() )
 		{
 			Suspend();
 		}
@@ -73,7 +73,7 @@ namespace Pedestal
 	
 	void Clipboard::Suspend()
 	{
-		if ( !TARGET_API_MAC_CARBON )
+		if ( !gSyncTEScrapOnEdit )
 		{
 			FlushScrap();
 		}
@@ -81,7 +81,7 @@ namespace Pedestal
 	
 	void Clipboard::Resume()
 	{
-		if ( !TARGET_API_MAC_CARBON )
+		if ( !gSyncTEScrapOnEdit )
 		{
 			OSErr err = ::TEFromScrap();
 			
@@ -102,7 +102,7 @@ namespace Pedestal
 	
 	static void PostTECopy()
 	{
-		if ( TARGET_API_MAC_CARBON )
+		if ( gSyncTEScrapOnEdit )
 		{
 			// Flush the TE scrap immediately
 			FlushScrap();
@@ -129,7 +129,7 @@ namespace Pedestal
 	
 	void Clipboard::TEPaste( TEHandle hTE )
 	{
-		if ( TARGET_API_MAC_CARBON )
+		if ( gSyncTEScrapOnEdit )
 		{
 			// Update the TE scrap just-in-time
 			N::TEFromScrap();
