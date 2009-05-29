@@ -21,6 +21,9 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static const bool gSyncTEScrapOnEdit = TARGET_API_MAC_CARBON;
+	
+	
 	static bool InFront()
 	{
 		return N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
@@ -39,6 +42,32 @@ namespace Pedestal
 		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
 		{
 			Suspend();
+		}
+	}
+	
+	static void ClearCarbonScrap()
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			N::ClearCurrentScrap();
+		}
+	}
+	
+	static void FlushScrap()
+	{
+		try
+		{
+		#if !TARGET_API_MAC_CARBON
+			
+			N::ZeroScrap();
+			
+		#endif
+			
+			N::TEToScrap();
+		}
+		catch ( const N::OSStatus& err )
+		{
+			ClearCarbonScrap();
 		}
 	}
 	
