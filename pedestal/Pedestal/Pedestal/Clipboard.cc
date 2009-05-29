@@ -21,14 +21,25 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static bool InFront()
+	{
+		return N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
+	}
+	
 	Clipboard::Clipboard()
 	{
-		Resume();
+		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		{
+			Resume();
+		}
 	}
 	
 	Clipboard::~Clipboard()
 	{
-		Suspend();
+		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		{
+			Suspend();
+		}
 	}
 	
 	void Clipboard::Suspend()
