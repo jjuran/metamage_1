@@ -9,8 +9,6 @@
 #ifndef SILVER_PATCHSTUB_HH
 #define SILVER_PATCHSTUB_HH
 
-#include "Silver/CurrentA4.hh"
-
 
 namespace Silver
 {
@@ -33,8 +31,6 @@ namespace Silver
 		public:
 			static pascal R Function()
 			{
-				CurrentA4 a4;
-				
 				return patch( NextHandler() );
 			}
 	};
@@ -55,8 +51,6 @@ namespace Silver
 		public:
 			static pascal R Function( P0 p0 )
 			{
-				CurrentA4 a4;
-				
 				return patch( p0, NextHandler() );
 			}
 	};
@@ -77,8 +71,6 @@ namespace Silver
 		public:
 			static pascal R Function( P0 p0, P1 p1 )
 			{
-				CurrentA4 a4;
-				
 				return patch( p0, p1, NextHandler() );
 			}
 	};
@@ -99,8 +91,6 @@ namespace Silver
 		public:
 			static pascal R Function( P0 p0, P1 p1, P2 p2 )
 			{
-				CurrentA4 a4;
-				
 				return patch( p0, p1, p2, NextHandler() );
 			}
 	};
