@@ -21,9 +21,6 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static const bool gSyncTEScrapOnEdit = true;
-	
-	
 	static void ClearCarbonScrap()
 	{
 		if ( TARGET_API_MAC_CARBON )
@@ -57,11 +54,8 @@ namespace Pedestal
 	
 	static void PostTECopy()
 	{
-		if ( gSyncTEScrapOnEdit )
-		{
-			// Flush the TE scrap immediately
-			FlushScrap();
-		}
+		// Flush the TE scrap immediately
+		FlushScrap();
 	}
 	
 	void Clipboard::TECut( TEHandle hTE )
@@ -84,11 +78,8 @@ namespace Pedestal
 	
 	void Clipboard::TEPaste( TEHandle hTE )
 	{
-		if ( gSyncTEScrapOnEdit )
-		{
-			// Update the TE scrap just-in-time
-			N::TEFromScrap();
-		}
+		// Update the TE scrap just-in-time
+		N::TEFromScrap();
 		
 		N::TEPaste( hTE );
 	}
