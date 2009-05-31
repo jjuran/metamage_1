@@ -67,7 +67,6 @@ namespace Nitrogen
 	ResFileRefNum CurResFile()
 	{
 		ResFileRefNum refNum = ResFileRefNum( ::CurResFile() );
-		ResError();
 		
 		return refNum;
 	}
