@@ -24,27 +24,6 @@ namespace Pedestal
 	static const bool gSyncTEScrapOnEdit = true;
 	
 	
-	static bool InFront()
-	{
-		return N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
-	}
-	
-	Clipboard::Clipboard()
-	{
-		if ( !gSyncTEScrapOnEdit  &&  InFront() )
-		{
-			Resume();
-		}
-	}
-	
-	Clipboard::~Clipboard()
-	{
-		if ( !gSyncTEScrapOnEdit  &&  InFront() )
-		{
-			Suspend();
-		}
-	}
-	
 	static void ClearCarbonScrap()
 	{
 		if ( TARGET_API_MAC_CARBON )
@@ -68,30 +47,6 @@ namespace Pedestal
 		catch ( const N::OSStatus& err )
 		{
 			ClearCarbonScrap();
-		}
-	}
-	
-	void Clipboard::Suspend()
-	{
-		if ( !gSyncTEScrapOnEdit )
-		{
-			FlushScrap();
-		}
-	}
-	
-	void Clipboard::Resume()
-	{
-		if ( !gSyncTEScrapOnEdit )
-		{
-			OSErr err = ::TEFromScrap();
-			
-			// We'll get an error if there's nothing in the clipboard,
-			// but this is perfectly reasonable at startup.
-			
-			if ( err != noTypeErr )
-			{
-				N::ThrowOSStatus( err );
-			}
 		}
 	}
 	

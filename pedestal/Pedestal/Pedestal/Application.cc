@@ -37,20 +37,9 @@
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
-#include "Pedestal/Clipboard.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Window.hh"
-
-
-#if TARGET_API_MAC_CARBON
-
-enum
-{
-	convertClipboardFlag = 0
-};
-
-#endif
 
 
 namespace Nitrogen
@@ -631,17 +620,11 @@ namespace Pedestal
 				
 				if ( gRunState.inForeground )
 				{
-					if ( event.message & convertClipboardFlag )
-					{
-						Clipboard::Resume();
-					}
-					
 					Resume();
 				}
 				else
 				{
 					Suspend();
-					Clipboard::Suspend();
 				}
 				break;
 			
@@ -912,8 +895,6 @@ namespace Pedestal
 	
 	int Application::Run()
 	{
-		Clipboard myClipboard;
-		
 		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
 		
 		gNeedToConfigureKeyboard = gRunState.inForeground;
