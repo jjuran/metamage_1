@@ -248,7 +248,7 @@ namespace Genie
 		{
 			using namespace TimeOff;
 			
-			date += time.tv_sec + MacToUnixTimeDifference();
+			date = time.tv_sec + MacToUnixTimeDifference();
 		}
 	}
 	
