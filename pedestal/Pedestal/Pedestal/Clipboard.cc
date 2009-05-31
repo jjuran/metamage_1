@@ -21,7 +21,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static void ClearCarbonScrap()
+	static inline void ClearCarbonScrap()
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
@@ -47,33 +47,22 @@ namespace Pedestal
 		}
 	}
 	
-	static void PreTECopy()
-	{
-		ClearCarbonScrap();
-	}
-	
-	static void PostTECopy()
-	{
-		// Flush the TE scrap immediately
-		FlushScrap();
-	}
-	
 	void Clipboard::TECut( TEHandle hTE )
 	{
-		PreTECopy();
+		ClearCarbonScrap();
 		
 		N::TECut( hTE );
 		
-		PostTECopy();
+		FlushScrap();
 	}
 	
 	void Clipboard::TECopy( TEHandle hTE )
 	{
-		PreTECopy();
+		ClearCarbonScrap();
 		
 		N::TECopy( hTE );
 		
-		PostTECopy();
+		FlushScrap();
 	}
 	
 	void Clipboard::TEPaste( TEHandle hTE )
