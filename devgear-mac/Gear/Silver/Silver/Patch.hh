@@ -23,14 +23,14 @@ namespace Silver
 		public:
 			static void Install()
 			{
-				NextHandler() = ApplyTrapPatch( trapWord, Function );
+				Next::proc = ApplyTrapPatch( trapWord, Function );
 			}
 			
 			static void Remove()
 			{
-				RemoveTrapPatch( trapWord, NextHandler() );
+				RemoveTrapPatch( trapWord, Next::proc );
 				
-				NextHandler() = NULL;
+				Next::proc = NULL;
 			}
 	};
 	
