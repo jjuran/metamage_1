@@ -21,6 +21,9 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static const bool gSyncTEScrapOnEdit = true;
+	
+	
 	static bool InFront()
 	{
 		return N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
@@ -28,7 +31,7 @@ namespace Pedestal
 	
 	Clipboard::Clipboard()
 	{
-		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		if ( !gSyncTEScrapOnEdit  &&  InFront() )
 		{
 			Resume();
 		}
@@ -36,62 +39,74 @@ namespace Pedestal
 	
 	Clipboard::~Clipboard()
 	{
-		if ( !TARGET_API_MAC_CARBON  &&  InFront() )
+		if ( !gSyncTEScrapOnEdit  &&  InFront() )
 		{
 			Suspend();
 		}
 	}
 	
+	static void ClearCarbonScrap()
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			N::ClearCurrentScrap();
+		}
+	}
+	
+	static void FlushScrap()
+	{
+		try
+		{
+		#if !TARGET_API_MAC_CARBON
+			
+			N::ZeroScrap();
+			
+		#endif
+			
+			N::TEToScrap();
+		}
+		catch ( const N::OSStatus& err )
+		{
+			ClearCarbonScrap();
+		}
+	}
+	
 	void Clipboard::Suspend()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
-		N::ZeroScrap();
-		N::TEToScrap();
-		
-	#endif
+		if ( !gSyncTEScrapOnEdit )
+		{
+			FlushScrap();
+		}
 	}
 	
 	void Clipboard::Resume()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
-		OSErr err = ::TEFromScrap();
-		
-		// We'll get an error if there's nothing in the clipboard,
-		// but this is perfectly reasonable at startup.
-		
-		if ( err != noTypeErr )
+		if ( !gSyncTEScrapOnEdit )
 		{
-			N::ThrowOSStatus( err );
+			OSErr err = ::TEFromScrap();
+			
+			// We'll get an error if there's nothing in the clipboard,
+			// but this is perfectly reasonable at startup.
+			
+			if ( err != noTypeErr )
+			{
+				N::ThrowOSStatus( err );
+			}
 		}
-		
-	#endif
 	}
 	
 	static void PreTECopy()
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		N::ClearCurrentScrap();
-		
-	#endif
+		ClearCarbonScrap();
 	}
 	
 	static void PostTECopy()
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		try
+		if ( gSyncTEScrapOnEdit )
 		{
-			N::TEToScrap();
+			// Flush the TE scrap immediately
+			FlushScrap();
 		}
-		catch ( const N::OSStatus& )
-		{
-			N::ClearCurrentScrap();
-		}
-		
-	#endif
 	}
 	
 	void Clipboard::TECut( TEHandle hTE )
@@ -114,8 +129,9 @@ namespace Pedestal
 	
 	void Clipboard::TEPaste( TEHandle hTE )
 	{
-		if ( TARGET_API_MAC_CARBON )
+		if ( gSyncTEScrapOnEdit )
 		{
+			// Update the TE scrap just-in-time
 			N::TEFromScrap();
 		}
 		
