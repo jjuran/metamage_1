@@ -11,9 +11,6 @@
 // Universal Interfaces
 #include <Resources.h>
 
-// Silver
-#include "Silver/CurrentA4.hh"
-
 
 #pragma exceptions off
 
@@ -83,8 +80,6 @@ namespace Silver
 	
 	OSErr Install( InstallerProcPtr installer )
 	{
-		CurrentA4 a4;
-		
 		Handle initCode = LoadAndLock();
 		
 		if ( initCode == NULL )
