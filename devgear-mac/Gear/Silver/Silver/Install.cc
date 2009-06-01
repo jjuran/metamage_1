@@ -11,9 +11,6 @@
 // Universal Interfaces
 #include <Resources.h>
 
-// Silver
-#include "Silver/CurrentA4.hh"
-
 
 #pragma exceptions off
 
@@ -29,38 +26,34 @@ namespace Silver
 	}
 	
 	
-	OSErr gError = noErr;
-	
-	static Handle GetAndLockResource( OSType resType, short resID )
+	static OSErr GetAndLockResource( OSType resType, short resID )
 	{
 		Handle h = Get1Resource( resType, resID );
 		
-		if ( (gError = MemError()) != noErr )
-		{
-			return NULL;
-		}
-		
 		if ( h == NULL )
 		{
-			gError = resNotFound;
+			if ( const OSErr err = ResError() )
+			{
+				return err;
+			}
 			
-			return NULL;
+			return resNotFound;
 		}
 		
 		DetachResource( h );
 		
-		if ( (gError = MemError()) != noErr )
+		if ( const OSErr err = ResError() )
 		{
-			return NULL;
+			return err;
 		}
 		
 		HLockHi ( h );
 		HNoPurge( h );
 		
-		return h;
+		return noErr;
 	}
 	
-	static Handle LoadAndLock()
+	static OSErr LoadAndLock()
 	{
 		THz oldZone = NULL;
 		
@@ -71,25 +64,23 @@ namespace Silver
 			SetZone( SystemZone() );
 		}
 		
-		Handle initCode = GetAndLockResource( 'INIT', 0 );
+		const OSErr err = GetAndLockResource( 'INIT', 0 );
 		
 		if ( oldZone )
 		{
 			SetZone( oldZone );
 		}
 		
-		return initCode;
+		return err;
 	}
 	
 	OSErr Install( InstallerProcPtr installer )
 	{
-		CurrentA4 a4;
+		OSErr err = LoadAndLock();
 		
-		Handle initCode = LoadAndLock();
-		
-		if ( initCode == NULL )
+		if ( err != noErr )
 		{
-			return gError;
+			return err;
 		}
 		
 		return installer();

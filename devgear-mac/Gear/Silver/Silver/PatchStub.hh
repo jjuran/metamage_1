@@ -9,11 +9,23 @@
 #ifndef SILVER_PATCHSTUB_HH
 #define SILVER_PATCHSTUB_HH
 
-#include "Silver/CurrentA4.hh"
+#include "Silver/Traps.hh"
 
 
 namespace Silver
 {
+	
+	template < class                                               ProcPtr,
+	           typename PatchProc_Traits< ProcPtr >::PatchProcPtr  patch >
+	struct PatchChainLink
+	{
+		static ProcPtr proc;
+	};
+	
+	template < class                                               ProcPtr,
+	           typename PatchProc_Traits< ProcPtr >::PatchProcPtr  patch >
+	//
+	ProcPtr PatchChainLink< ProcPtr, patch >::proc;
 	
 	template < class PatchProcPtr, PatchProcPtr foo > class PatchStub;
 	
@@ -23,19 +35,12 @@ namespace Silver
 		protected:
 			typedef pascal R (*ProcPtr)();
 			
-			static ProcPtr& NextHandler()
-			{
-				static ProcPtr nextHandler = NULL;
-				
-				return nextHandler;
-			}
+			typedef PatchChainLink< ProcPtr, patch > Next;
 		
 		public:
 			static pascal R Function()
 			{
-				CurrentA4 a4;
-				
-				return patch( NextHandler() );
+				return patch( Next::proc );
 			}
 	};
 	
@@ -45,19 +50,12 @@ namespace Silver
 		protected:
 			typedef pascal R (*ProcPtr)( P0 );
 			
-			static ProcPtr& NextHandler()
-			{
-				static ProcPtr nextHandler = NULL;
-				
-				return nextHandler;
-			}
+			typedef PatchChainLink< ProcPtr, patch > Next;
 		
 		public:
 			static pascal R Function( P0 p0 )
 			{
-				CurrentA4 a4;
-				
-				return patch( p0, NextHandler() );
+				return patch( p0, Next::proc );
 			}
 	};
 	
@@ -67,19 +65,12 @@ namespace Silver
 		protected:
 			typedef pascal R (*ProcPtr)( P0, P1 );
 			
-			static ProcPtr& NextHandler()
-			{
-				static ProcPtr nextHandler = NULL;
-				
-				return nextHandler;
-			}
+			typedef PatchChainLink< ProcPtr, patch > Next;
 		
 		public:
 			static pascal R Function( P0 p0, P1 p1 )
 			{
-				CurrentA4 a4;
-				
-				return patch( p0, p1, NextHandler() );
+				return patch( p0, p1, Next::proc );
 			}
 	};
 	
@@ -89,19 +80,12 @@ namespace Silver
 		protected:
 			typedef pascal R (*ProcPtr)( P0, P1, P2 );
 			
-			static ProcPtr& NextHandler()
-			{
-				static ProcPtr nextHandler = NULL;
-				
-				return nextHandler;
-			}
+			typedef PatchChainLink< ProcPtr, patch > Next;
 		
 		public:
 			static pascal R Function( P0 p0, P1 p1, P2 p2 )
 			{
-				CurrentA4 a4;
-				
-				return patch( p0, p1, p2, NextHandler() );
+				return patch( p0, p1, p2, Next::proc );
 			}
 	};
 	
