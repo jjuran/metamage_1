@@ -15,12 +15,6 @@ namespace Pedestal
 	
 	struct Clipboard
 	{
-		Clipboard();
-		~Clipboard();
-		
-		static void Suspend();
-		static void Resume ();
-		
 		static void TECut  ( TEHandle hTE );
 		static void TECopy ( TEHandle hTE );
 		static void TEPaste( TEHandle hTE );
