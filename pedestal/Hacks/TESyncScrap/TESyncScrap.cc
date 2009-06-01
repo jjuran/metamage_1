@@ -46,12 +46,17 @@ namespace
 		FlushScrap();
 	}
 	
+	#define TECopy_Patch TECut_Patch
+	/*
+	// TECopy_Patch is the same as TECut_Patch
+	
 	void TECopy_Patch( TEHandle hTE, Ag::TECopyProcPtr nextHandler )
 	{
 		nextHandler( hTE );
 		
 		FlushScrap();
 	}
+	*/
 	
 	void TEPaste_Patch( TEHandle hTE, Ag::TEPasteProcPtr nextHandler )
 	{
