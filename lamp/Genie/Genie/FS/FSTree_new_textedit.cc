@@ -59,6 +59,11 @@ namespace Genie
 	namespace
 	{
 		
+		bool& Singular( const FSTree* view )
+		{
+			return TextEditParameters::Get( view ).itIsSingular;
+		}
+		
 		bool& Wrapped( const FSTree* view )
 		{
 			return TextEditParameters::Get( view ).itIsWrapped;
@@ -116,6 +121,8 @@ namespace Genie
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
+		
+		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, Singular > > },
 		
 		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
 		

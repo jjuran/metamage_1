@@ -25,6 +25,7 @@ namespace Genie
 		bool                     itHasChangedAttributes;
 		bool                     itIsAtBottom;
 		bool                     itIsInterlocked;
+		bool                     itIsSingular;
 		bool                     itIsWrapped;
 		
 		TextEditParameters();
@@ -61,6 +62,8 @@ namespace Genie
 			Nucleus::Owned< Nitrogen::TEHandle >  itsTE;
 			
 			Pedestal::TextSelection  itsSelectionPriorToSearch;
+			
+			bool IsSingular() const;
 			
 			void On_UserSelect();
 			void On_UserEdit();

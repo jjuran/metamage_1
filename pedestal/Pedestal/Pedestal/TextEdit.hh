@@ -25,6 +25,8 @@ namespace Pedestal
 	{
 		private:
 			virtual TEHandle Get() const = 0;
+			
+			virtual bool IsSingular() const  { return false; }
 		
 		public:
 			virtual void On_UserSelect()  {}
