@@ -382,6 +382,11 @@ namespace Pedestal
 		{
 			On_EnterKey();
 		}
+		else if ( c <= 0x1b  &&  c != 0x08  &&  (c != 0x0d || IsSingular()) )
+		{
+			// Don't process control chars except arrow keys, BS, and maybe CR
+			return false;
+		}
 		else if ( Process_Key( event ) )
 		{
 			Postprocess_Key( event );
