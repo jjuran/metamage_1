@@ -45,6 +45,12 @@ namespace Genie
 			{
 			}
 			
+			Trigger( const FSTreePtr&    parent,
+			         const std::string&  name ) : Trigger_Base( parent, name ),
+			                                      itsAction()
+			{
+			}
+			
 			void Invoke() const;
 	};
 	
