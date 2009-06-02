@@ -24,9 +24,13 @@ namespace Pedestal
 	                 public IncrementalSearchEditor
 	{
 		private:
+			bool itIsActive;
+			
 			virtual TEHandle Get() const = 0;
 		
 		public:
+			TextEdit();
+			
 			virtual void On_UserSelect()  {}
 			virtual void On_UserEdit()  {}
 			

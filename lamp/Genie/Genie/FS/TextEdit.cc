@@ -150,7 +150,7 @@ namespace Genie
 		
 		if ( N::GetWindowPort( N::FrontWindow() ) == thePort )
 		{
-			N::TEActivate( itsTE );
+			Activate( true );
 		}
 	}
 	
