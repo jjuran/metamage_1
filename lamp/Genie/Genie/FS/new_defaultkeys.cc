@@ -35,8 +35,9 @@ namespace Genie
 	
 	static void Update( const FSTree* that, const char* name )
 	{
-		// FIXME:  Assumes that the handler is one level nested, e.g. in a stack
-		const FSTreePtr& window = that->ParentRef()->ParentRef();
+		const FSTree* window = GetViewWindowKey( that );
+		
+		ASSERT( window != NULL );
 		
 		FSTreePtr link = window->Lookup( name );
 		
