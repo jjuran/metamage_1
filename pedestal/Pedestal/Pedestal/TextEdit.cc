@@ -39,6 +39,10 @@ namespace Pedestal
 	static short gSelectionAnchor, gSelectionExtent;
 	
 	
+	TextEdit::TextEdit() : itIsActive()
+	{
+	}
+	
 	static bool LeftOrRightArrowsKeyed()
 	{
 		N::GetKeys_Result keys = N::GetKeys();
@@ -52,6 +56,11 @@ namespace Pedestal
 	
 	void TextEdit::Idle( const EventRecord& )
 	{
+		if ( !itIsActive )
+		{
+			return;
+		}
+		
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
@@ -424,6 +433,8 @@ namespace Pedestal
 		gExtendingSelection = false;
 		
 		ResetArrowKeyChordability();
+		
+		itIsActive = activating;
 	}
 	
 	static void EraseBlankArea( TEHandle hTE )
