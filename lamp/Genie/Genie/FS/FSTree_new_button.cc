@@ -9,6 +9,7 @@
 #include "POSeven/Errno.hh"
 
 // Pedestal
+#include "Pedestal/Application.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/PushButton.hh"
 
@@ -103,6 +104,8 @@ namespace Genie
 			
 			void Uninstall();
 			
+			void Idle( const EventRecord& event );
+			
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
@@ -120,18 +123,11 @@ namespace Genie
 		gButtonMap[ itsUserData.key ].installed = false;
 	}
 	
-	void PushButton::Draw( const Rect& bounds, bool erasing )
+	void PushButton::Idle( const EventRecord& event )
 	{
-		Ped::PushButton::Draw( bounds, erasing );
+		Ped::PushButton::Idle( event );
 		
 		Button_Parameters& params = gButtonMap[ itsUserData.key ];
-		
-		if ( params.title_changed )
-		{
-			params.title_changed = false;
-			
-			N::SetControlTitle( Get(), Title() );
-		}
 		
 		if ( params.pseudoclicked )
 		{
@@ -144,6 +140,20 @@ namespace Genie
 			::HiliteControl( Get(), false );
 			
 			++params.seed;
+		}
+	}
+	
+	void PushButton::Draw( const Rect& bounds, bool erasing )
+	{
+		Ped::PushButton::Draw( bounds, erasing );
+		
+		Button_Parameters& params = gButtonMap[ itsUserData.key ];
+		
+		if ( params.title_changed )
+		{
+			params.title_changed = false;
+			
+			N::SetControlTitle( Get(), Title() );
 		}
 	}
 	
@@ -295,7 +305,7 @@ namespace Genie
 				
 				gButtonMap[ view ].pseudoclicked = true;
 				
-				InvalidateWindowForView( view );
+				Ped::AdjustSleepForTimer( 1 );
 			}
 	};
 	
