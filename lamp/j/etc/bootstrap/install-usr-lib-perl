@@ -23,7 +23,9 @@ test -d "$lib"     || mkdir $lib
 
 cd /tmp
 
-experimental="http://lamp.sourceforge.net/experimental/"
+host=jjuran.dyndns.org/~jjuran
+
+experimental="http://$host/experimental/"
 
 archive=usr-lib-perl.mBin
 gzarchive=$archive.gz
