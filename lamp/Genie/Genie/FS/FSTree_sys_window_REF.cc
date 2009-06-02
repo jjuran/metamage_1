@@ -41,6 +41,14 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	static const char* gGestures[] =
+	{
+		"accept",
+		"cancel"
+	};
+	
+	static const int n_gestures = sizeof gGestures / sizeof gGestures[0];
+	
 	static const Point gZeroPoint = { 0 };
 	
 	struct WindowParameters
@@ -54,6 +62,8 @@ namespace Genie
 		
 		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
+		
+		std::string itsGesturePaths[ n_gestures ];
 		
 		FSTreePtr                    itsTTYDelegate;
 		boost::weak_ptr< IOHandle >  itsTerminal;
@@ -565,6 +575,94 @@ namespace Genie
 		return terminal;
 	}
 	
+	static int LookupGesture( const std::string& name )
+	{
+		for ( int i = 0;  i < n_gestures;  ++i )
+		{
+			const char* p = gGestures[ i ];
+			
+			if ( memcmp( p, name.c_str(), name.size() + 1 ) == 0 )
+			{
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	class FSTree_Window_Gesture : public FSTree
+	{
+		private:
+			int itsIndex;
+		
+		public:
+			FSTree_Window_Gesture( const FSTreePtr&    parent,
+			                       const std::string&  name );
+			
+			bool Exists() const;
+			
+			bool IsLink() const  { return Exists(); }
+			
+			void Delete() const;
+			
+			void SymLink( const std::string& target ) const;
+			
+			std::string ReadLink() const;
+			
+			FSTreePtr ResolveLink() const
+			{
+				return ResolvePathname( ReadLink(), ParentRef() );
+			}
+	};
+	
+	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&    parent,
+	                                              const std::string&  name )
+	:
+		FSTree( parent, name ),
+		itsIndex( LookupGesture( name ) )
+	{
+		ASSERT( itsIndex != -1 );
+	}
+	
+	bool FSTree_Window_Gesture::Exists() const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		return !gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ].empty();
+	}
+	
+	void FSTree_Window_Gesture::Delete() const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		WindowParameters& params = gWindowParametersMap[ view ];
+		
+		params.itsGesturePaths[ itsIndex ].clear();
+	}
+	
+	void FSTree_Window_Gesture::SymLink( const std::string& target_path ) const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		WindowParameters& params = gWindowParametersMap[ view ];
+		
+		params.itsGesturePaths[ itsIndex ] = target_path;
+	}
+	
+	std::string FSTree_Window_Gesture::ReadLink() const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		const std::string& link = gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ];
+		
+		if ( link.empty() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return link;
+	}
+	
 	
 	namespace
 	{
@@ -680,6 +778,9 @@ namespace Genie
 		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref >, true },
 		
 		{ "view",   &Basic_Factory< FSTree_X_view< GetView > >, true },
+		
+		{ "accept", &Basic_Factory< FSTree_Window_Gesture >, true },
+		{ "cancel", &Basic_Factory< FSTree_Window_Gesture >, true },
 		
 		{ "tty",    &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
