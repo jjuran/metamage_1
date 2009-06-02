@@ -75,6 +75,8 @@ echo 1 > view/icon/v/disabling
 echo $text > view/main/v/text
 echo 1     > view/main/v/disabling
 
+echo 1 > view/entry/v/singular
+
 echo Cancel > view/cancel/v/title
 
 touch ref
