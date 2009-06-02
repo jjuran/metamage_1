@@ -27,6 +27,8 @@ namespace Pedestal
 			bool itIsActive;
 			
 			virtual TEHandle Get() const = 0;
+			
+			virtual bool IsSingular() const  { return false; }
 		
 		public:
 			TextEdit();

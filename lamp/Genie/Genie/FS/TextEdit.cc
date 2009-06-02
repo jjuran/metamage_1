@@ -42,6 +42,7 @@ namespace Genie
 		itHasChangedAttributes(),
 		itIsAtBottom(),
 		itIsInterlocked(),
+		itIsSingular(),
 		itIsWrapped( true )
 	{
 	}
@@ -159,6 +160,11 @@ namespace Genie
 		itsTE.reset();
 	}
 	
+	
+	bool TextEdit::IsSingular() const
+	{
+		return TextEditParameters::Get( itsKey ).itIsSingular;
+	}
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
