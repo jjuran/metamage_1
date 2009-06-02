@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -280,17 +281,17 @@ namespace Genie
 	}
 	
 	
-	struct Button_click
+	class Button_click_Trigger : public Trigger_Base
 	{
 		public:
-			static std::string Get( const FSTree* that, bool binary )
+			Button_click_Trigger( const FSTreePtr&     parent,
+			                      const std::string&   name ) : Trigger_Base( parent, name )
 			{
-				throw FSTree_Property::Undefined();
 			}
 			
-			static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+			void Invoke() const
 			{
-				const FSTree* view = that->ParentRef().get();
+				const FSTree* view = ParentRef().get();
 				
 				gButtonMap[ view ].pseudoclicked = true;
 				
@@ -312,7 +313,8 @@ namespace Genie
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "title", &Property_Factory< Button_Title > },
-		{ "click", &Property_Factory< Button_click > },
+		
+		{ "click", &Basic_Factory< Button_click_Trigger > },
 		
 		{ "socket", &Basic_Factory< FSTree_Button_socket > },
 		
