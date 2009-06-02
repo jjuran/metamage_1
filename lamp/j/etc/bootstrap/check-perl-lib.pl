@@ -16,5 +16,5 @@ if ( defined $ENV{HOME} )
 	}
 }
 
-print "Run '/etc/bootstrap/install-usr-lib-perl' to install the perl library.\n\n"
+print "Run '/sbin/install-usr-lib-perl' to install the perl library.\n\n"
 
