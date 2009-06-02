@@ -200,7 +200,7 @@ namespace Genie
 		return gViewParametersMap[ parent ][ name ].itsWindowKey;
 	}
 	
-	static const FSTree* GetViewWindowKey( const FSTree* view )
+	const FSTree* GetViewWindowKey( const FSTree* view )
 	{
 		return GetViewWindowKey( view->ParentRef().get(), view->Name() );
 	}
