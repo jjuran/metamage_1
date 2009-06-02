@@ -282,19 +282,20 @@ namespace Genie
 	
 	struct Button_click
 	{
-		static std::string Get( const FSTree* that, bool binary )
-		{
-			throw FSTree_Property::Undefined();
-		}
-		
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
-		{
-			const FSTree* view = that->ParentRef().get();
+		public:
+			static std::string Get( const FSTree* that, bool binary )
+			{
+				throw FSTree_Property::Undefined();
+			}
 			
-			gButtonMap[ view ].pseudoclicked = true;
-			
-			InvalidateWindowForView( view );
-		}
+			static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+			{
+				const FSTree* view = that->ParentRef().get();
+				
+				gButtonMap[ view ].pseudoclicked = true;
+				
+				InvalidateWindowForView( view );
+			}
 	};
 	
 	
