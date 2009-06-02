@@ -25,10 +25,6 @@ namespace Pedestal
 	{
 		private:
 			virtual TEHandle Get() const = 0;
-			
-			View itsNullView;
-			
-			View& Subview()  { return itsNullView; }
 		
 		public:
 			virtual void On_UserSelect()  {}
