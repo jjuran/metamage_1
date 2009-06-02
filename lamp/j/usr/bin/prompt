@@ -77,6 +77,11 @@ echo 1     > view/main/v/disabling
 
 echo Cancel > view/cancel/v/title
 
+ln -s view/ok/v/click accept
+ln -s view/cancel/v/click cancel
+
+ln /new/defaultkeys view
+
 touch ref
 
 echo 0 > ref/text-font
