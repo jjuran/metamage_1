@@ -32,6 +32,8 @@ namespace Genie
 	typedef boost::shared_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
 	
+	const FSTree* GetViewWindowKey( const FSTree* view );
+	
 	bool InvalidateWindowForView( const FSTree* view );
 	
 	
