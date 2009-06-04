@@ -789,7 +789,7 @@ namespace Genie
 		{ "size",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size     > > },
 		{ "vis",    &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible  > > },
 		{ "procid", &Property_Factory< kAttrConstant, Window_Property< ProcID_Scribe,       &ProcID   > > },
-		{ "close",  &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
+		{ "goaway", &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
 		
 		{ NULL, NULL }
 	};
