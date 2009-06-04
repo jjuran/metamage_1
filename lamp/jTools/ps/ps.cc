@@ -17,10 +17,11 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/functions/ftruncate.hh"
 #include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/open.hh"
+#include "POSeven/functions/openat.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -30,11 +31,14 @@
 namespace tool
 {
 	
+	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace O = Orion;
 	
 	
 	static bool globally_wide = false;
+	
+	static p7::fd_t g_proc = p7::open( "/proc", p7::o_rdonly | p7::o_directory ).release();
 	
 	
 	static std::string left_padded( const char* begin, const char* end, unsigned length )
@@ -73,12 +77,12 @@ namespace tool
 	{
 		using namespace io::path_descent_operators;
 		
-		std::string pid_dir = "/proc" / pid_name;
+		NN::Owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
 		
 		char buffer[ 4096 ];
 		
 		const char* begin = buffer;
-		const char* end   = buffer + p7::read( io::open_for_reading( pid_dir / "stat" ), buffer, 4096 );
+		const char* end   = buffer + p7::read( p7::openat( proc_pid, "stat", p7::o_rdonly ), buffer, 4096 );
 		
 		const char* close_paren = std::find( begin, end, ')' );
 		
@@ -174,7 +178,7 @@ namespace tool
 		
 		report += "  ";
 		
-		char* cmdline_end = buffer + p7::read( io::open_for_reading( pid_dir / "cmdline" ), buffer, 4096 );
+		char* cmdline_end = buffer + p7::read( p7::openat( proc_pid, "cmdline", p7::o_rdonly ), buffer, 4096 );
 		
 		if ( cmdline_end > buffer )
 		{
