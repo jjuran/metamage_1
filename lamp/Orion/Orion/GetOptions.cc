@@ -115,7 +115,7 @@ namespace Orion
 	
 	typedef std::map< std::string, OptionID > OptionMap;
 	
-	typedef std::vector< boost::shared_ptr< OptionBinding > > BindingVector;
+	typedef std::vector< OptionBinding* > BindingVector;
 	
 	
 	static OptionID gNextOptionID = 0;
@@ -141,28 +141,28 @@ namespace Orion
 	}
 	
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::size_t& integer )
+	OptionBinding* NewOptionBinding( std::size_t& integer )
 	{
-		return boost::shared_ptr< OptionBinding >( new IntegerOptionBinding< std::size_t >( integer ) );
+		return new IntegerOptionBinding< std::size_t >( integer );
 	}
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string )
+	OptionBinding* NewOptionBinding( const char*& string )
 	{
-		return boost::shared_ptr< OptionBinding >( new CStringOptionBinding( string ) );
+		return new CStringOptionBinding( string );
 	}
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string )
+	OptionBinding* NewOptionBinding( std::string& string )
 	{
-		return boost::shared_ptr< OptionBinding >( new StringOptionBinding( string ) );
+		return new StringOptionBinding( string );
 	}
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings )
+	OptionBinding* NewOptionBinding( std::vector< std::string >& strings )
 	{
-		return boost::shared_ptr< OptionBinding >( new StringListOptionBinding( strings ) );
+		return new StringListOptionBinding( strings );
 	}
 	
 	
-	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding )
+	void AddBinding( OptionID optionID, OptionBinding* binding )
 	{
 		gBindings[ optionID ] = binding;
 	}
@@ -180,7 +180,7 @@ namespace Orion
 		return it->second;
 	}
 	
-	static const boost::shared_ptr< OptionBinding >& FindOptionBinding( OptionID optionID )
+	static OptionBinding* FindOptionBinding( OptionID optionID )
 	{
 		ASSERT( optionID < gBindings.size() );
 		
@@ -217,6 +217,16 @@ namespace Orion
 		}
 		
 		std::exit( EXIT_SUCCESS );
+	}
+	
+	static void ClearBindings()
+	{
+		for ( int i = 0; i < gBindings.size();  ++i )
+		{
+			delete gBindings[i];
+		}
+		
+		gBindings.clear();
 	}
 	
 	void GetOptions( int argc, iota::argp_t argv )
@@ -313,7 +323,7 @@ namespace Orion
 		}
 		
 		gOptionMap.clear();
-		gBindings.clear();
+		ClearBindings();
 		
 		gFreeArguments.push_back( NULL );
 	}
