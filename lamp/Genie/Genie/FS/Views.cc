@@ -116,7 +116,10 @@ namespace Genie
 				
 				try
 				{
-					temp.itsDelegate->Delete();
+					if ( const FSTree* delegate = temp.itsDelegate.get() )
+					{
+						delegate->Delete();
+					}
 				}
 				catch ( ... )
 				{
