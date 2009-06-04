@@ -961,8 +961,21 @@ namespace Genie
 	{
 		struct ::stat stat_buffer;
 		
-		// Throws ENOENT if parent doesn't exist
-		file->Parent()->Stat( stat_buffer );
+		try
+		{
+			file->Stat( stat_buffer );
+		}
+		catch ( const N::FNFErr& err )
+		{
+		#ifdef __MWERKS__
+			
+			if ( err != fnfErr )
+			{
+				throw;
+			}
+			
+		#endif
+		}
 		
 		if ( stat_buffer.st_dev <= 0 )
 		{
@@ -973,7 +986,7 @@ namespace Genie
 		N::FSDirSpec parent;
 		
 		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
-		parent.dirID   = N::FSDirID       (  stat_buffer.st_ino );
+		parent.dirID   = N::FSDirID       ( stat_buffer.st_rdev );
 		
 		return parent / K::MacFilenameFromUnixFilename( file->Name() );
 	}
