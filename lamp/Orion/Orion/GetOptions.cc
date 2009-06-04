@@ -115,20 +115,24 @@ namespace Orion
 	
 	typedef std::map< std::string, OptionID > OptionMap;
 	
-	typedef std::map< OptionID, boost::shared_ptr< OptionBinding > > BindingMap;
+	typedef std::vector< boost::shared_ptr< OptionBinding > > BindingVector;
 	
 	
-	static OptionID gLastOptionID = 0;
+	static OptionID gNextOptionID = 0;
 	
 	static OptionMap  gOptionMap;
-	static BindingMap gBindingMap;
+	static BindingVector gBindings;
 	
 	static std::vector< iota::arg_t > gFreeArguments;
 	
 	
 	OptionID NewOption( const char* optionSpec )
 	{
-		return gOptionMap[ optionSpec ] = ++gLastOptionID;
+		const unsigned id = gNextOptionID;
+		
+		gBindings.resize( ++gNextOptionID );
+		
+		return gOptionMap[ optionSpec ] = id;
 	}
 	
 	void AliasOption( const char* from, const char* to )
@@ -160,7 +164,7 @@ namespace Orion
 	
 	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding )
 	{
-		gBindingMap[ optionID ] = binding;
+		gBindings[ optionID ] = binding;
 	}
 	
 	
@@ -178,11 +182,9 @@ namespace Orion
 	
 	static const boost::shared_ptr< OptionBinding >& FindOptionBinding( OptionID optionID )
 	{
-		BindingMap::const_iterator it = gBindingMap.find( optionID );
+		ASSERT( optionID < gBindings.size() );
 		
-		ASSERT( it != gBindingMap.end() );
-		
-		return it->second;
+		return gBindings[ optionID ];
 	}
 	
 	static const OptionBinding& FindOption( const std::string& name )
@@ -311,7 +313,7 @@ namespace Orion
 		}
 		
 		gOptionMap.clear();
-		gBindingMap.clear();
+		gBindings.clear();
 		
 		gFreeArguments.push_back( NULL );
 	}
