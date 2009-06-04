@@ -29,9 +29,6 @@
 #include <string>
 #include <vector>
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // Iota
 #include "iota/argv.hh"
 
@@ -131,51 +128,51 @@ namespace Orion
 	
 	
 	template < class Type >
-	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data, Type value )
+	OptionBinding* NewOptionBinding( Type& data, Type value )
 	{
-		return boost::shared_ptr< OptionBinding >( new SelectorOptionBinding< Type >( data, value ) );
+		return new SelectorOptionBinding< Type >( data, value );
 	}
 	
 	template < class Type >
-	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data )
+	OptionBinding* NewOptionBinding( Type& data )
 	{
-		return boost::shared_ptr< OptionBinding >( new ConverterOptionBinding< Type >( data ) );
+		return new ConverterOptionBinding< Type >( data );
 	}
 	
-	inline boost::shared_ptr< OptionBinding > NewOptionBinding( bool& flag )
+	inline OptionBinding* NewOptionBinding( bool& flag )
 	{
 		return NewOptionBinding( flag, true );
 	}
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::size_t& integer );
+	OptionBinding* NewOptionBinding( std::size_t& integer );
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string );
+	OptionBinding* NewOptionBinding( const char*& string );
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string );
+	OptionBinding* NewOptionBinding( std::string& string );
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings );
+	OptionBinding* NewOptionBinding( std::vector< std::string >& strings );
 	
 	template < class Trigger >
-	boost::shared_ptr< OptionBinding > NewTriggerOptionBinding( Trigger trigger )
+	OptionBinding* NewTriggerOptionBinding( Trigger trigger )
 	{
-		return boost::shared_ptr< OptionBinding >( new TriggerOptionBinding< Trigger >( trigger ) );
+		return new TriggerOptionBinding< Trigger >( trigger );
 	}
 	
 	template < class ParamType, class Trigger >
-	boost::shared_ptr< OptionBinding > NewTriggerWithParameterOptionBinding( Trigger trigger )
+	OptionBinding* NewTriggerWithParameterOptionBinding( Trigger trigger )
 	{
-		return boost::shared_ptr< OptionBinding >( new TriggerWithParameterOptionBinding< Trigger, ParamType >( trigger ) );
+		return new TriggerWithParameterOptionBinding< Trigger, ParamType >( trigger );
 	}
 	
 	
-	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding );
+	void AddBinding( OptionID optionID, OptionBinding* binding );
 	
 	template < class Type >
 	void BindOption( const char* optionSpec, Type& data )
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
-		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( data );
+		OptionBinding* binding = NewOptionBinding( data );
 		
 		AddBinding( optionID, binding );
 	}
@@ -185,7 +182,7 @@ namespace Orion
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
-		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( data, value );
+		OptionBinding* binding = NewOptionBinding( data, value );
 		
 		AddBinding( optionID, binding );
 	}
@@ -195,7 +192,7 @@ namespace Orion
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
-		boost::shared_ptr< OptionBinding > binding = NewTriggerOptionBinding( trigger );
+		OptionBinding* binding = NewTriggerOptionBinding( trigger );
 		
 		AddBinding( optionID, binding );
 	}
@@ -205,7 +202,7 @@ namespace Orion
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
-		boost::shared_ptr< OptionBinding > binding = NewTriggerWithParameterOptionBinding< ParamType >( trigger );
+		OptionBinding* binding = NewTriggerWithParameterOptionBinding< ParamType >( trigger );
 		
 		AddBinding( optionID, binding );
 	}
