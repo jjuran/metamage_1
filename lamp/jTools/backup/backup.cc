@@ -38,7 +38,7 @@
 #include "POSeven/types/exit_t.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -47,7 +47,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -410,14 +410,14 @@ namespace tool
 		bool backing_up = false;
 		bool comparing  = false;
 		
-		O::BindOption( "--backup", backing_up );
-		O::BindOption( "--compare", comparing );
+		o::bind_option_to_variable( "--backup", backing_up );
+		o::bind_option_to_variable( "--compare", comparing );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *free_args = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t n_args = O::FreeArgumentCount();
+		std::size_t n_args = o::free_argument_count();
 		
 		const char* default_path = "Default";
 		

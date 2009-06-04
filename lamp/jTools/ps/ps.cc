@@ -25,7 +25,7 @@
 #include "POSeven/functions/write.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -34,7 +34,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static bool globally_wide = false;
@@ -228,11 +228,11 @@ namespace tool
 	{
 		bool monitor = false;
 		
-		O::BindOption( "--monitor", monitor );
+		o::bind_option_to_variable( "--monitor", monitor );
 		
-		O::BindOption( "--wide", globally_wide );
+		o::bind_option_to_variable( "--wide", globally_wide );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
 		std::string output;
 		std::string previous;

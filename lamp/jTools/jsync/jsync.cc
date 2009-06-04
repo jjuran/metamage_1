@@ -50,7 +50,7 @@
 #include "POSeven/types/exit_t.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -100,7 +100,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -858,24 +858,24 @@ namespace tool
 		bool bidirectional = false;
 		bool null          = false;
 		
-		O::BindOption( "-v", globally_verbose );
-		O::BindOption( "-n", global_dry_run   );
-		O::BindOption( "-v", globally_verbose );
+		o::bind_option_to_variable( "-v", globally_verbose );
+		o::bind_option_to_variable( "-n", global_dry_run   );
+		o::bind_option_to_variable( "-v", globally_verbose );
 		
-		O::AliasOption( "-n", "--dry-run" );
-		O::AliasOption( "-v", "--verbose" );
+		o::alias_option( "-n", "--dry-run" );
+		o::alias_option( "-v", "--verbose" );
 		
-		O::BindOption( "--up",   globally_up   );
-		O::BindOption( "--down", globally_down );
+		o::bind_option_to_variable( "--up",   globally_up   );
+		o::bind_option_to_variable( "--down", globally_down );
 		
-		O::BindOption( "--delete", globally_deleting );
+		o::bind_option_to_variable( "--delete", globally_deleting );
 		
-		O::BindOption( "-0", null          );
-		O::BindOption( "-2", bidirectional );
+		o::bind_option_to_variable( "-0", null          );
+		o::bind_option_to_variable( "-2", bidirectional );
 		
-		O::AliasOption( "-2", "--bidi" );
+		o::alias_option( "-2", "--bidi" );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
 		if ( bidirectional )
 		{
@@ -890,9 +890,9 @@ namespace tool
 			return p7::exit_failure;
 		}
 		
-		char const *const *free_args = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t n_args = O::FreeArgumentCount();
+		std::size_t n_args = o::free_argument_count();
 		
 		const char* default_path = "Default";
 		

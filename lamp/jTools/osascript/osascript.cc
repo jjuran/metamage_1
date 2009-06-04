@@ -37,7 +37,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -48,7 +48,7 @@ namespace tool
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
@@ -275,21 +275,21 @@ namespace tool
 		bool humanReadable = true;
 		bool getsCWDProperty = false;
 		
-		O::BindOption( "-e", inlineScriptPieces );
+		o::bind_option_to_variable( "-e", inlineScriptPieces );
 		
-		O::BindOption( "-h", humanReadable, true  );
-		O::BindOption( "-s", humanReadable, false );
+		o::bind_option_to_variable( "-h", humanReadable, true  );
+		o::bind_option_to_variable( "-s", humanReadable, false );
 		
-		O::BindOption( "--cwd", getsCWDProperty );
+		o::bind_option_to_variable( "--cwd", getsCWDProperty );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
 		typedef char const *const *const_iterator;
 		
-		const_iterator params_begin = freeArgs;
-		const_iterator params_end   = freeArgs + O::FreeArgumentCount();
+		const_iterator params_begin = free_args;
+		const_iterator params_end   = free_args + o::free_argument_count();
 		
 		NN::Owned< N::OSAID > script;
 		
@@ -301,9 +301,9 @@ namespace tool
 		{
 			const char* pathname = "/dev/fd/0";
 			
-			if ( *freeArgs != NULL )
+			if ( *free_args != NULL )
 			{
-				pathname = freeArgs[ 0 ];
+				pathname = free_args[ 0 ];
 				
 				++params_begin;
 			}

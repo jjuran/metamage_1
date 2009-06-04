@@ -31,7 +31,7 @@
 #include "iota/strings.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // sh
@@ -46,7 +46,7 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	const char*         gArgZero        = NULL;
@@ -119,24 +119,26 @@ namespace tool
 		bool verboseInput = false;
 		bool verboseExecution = false;
 		
-		O::BindOption( "-c", command );
+		o::bind_option_to_variable( "-c", command );
 		
-		O::BindOption( "-l", gLoginShell );
-		O::BindOption( "-i", interactive );
-		O::BindOption( "-m", monitor );
-		O::BindOption( "-r", restricted );
-		O::BindOption( "-s", readingFromStdin );
-		O::BindOption( "-v", verboseInput );
-		O::BindOption( "-x", verboseExecution );
+		o::bind_option_to_variable( "-l", gLoginShell );
+		o::bind_option_to_variable( "-i", interactive );
+		o::bind_option_to_variable( "-m", monitor );
+		o::bind_option_to_variable( "-r", restricted );
+		o::bind_option_to_variable( "-s", readingFromStdin );
+		o::bind_option_to_variable( "-v", verboseInput );
+		o::bind_option_to_variable( "-x", verboseExecution );
 		
-		O::AliasOption( "-l", "--login"   );
-		O::AliasOption( "-v", "--verbose" );
+		o::alias_option( "-l", "--login"   );
+		o::alias_option( "-v", "--verbose" );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
 		gArgZero = argv[ 0 ];
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
+		
+		const size_t n_args = o::free_argument_count();
 		
 		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
 		gLoginShell = gLoginShell  ||  argv[ 0 ][ 0 ] == '-';
@@ -149,7 +151,7 @@ namespace tool
 		SetOption( kOptionMonitor,     monitor     );
 		
 		gParameters = freeArgs;
-		gParameterCount = O::FreeArgumentCount();
+		gParameterCount = n_args;
 		
 		p7::fd_t input( p7::stdin_fileno );
 		

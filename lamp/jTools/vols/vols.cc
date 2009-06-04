@@ -27,7 +27,7 @@
 #include "POSeven/functions/write.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -36,7 +36,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	int Main( int argc, iota::argv_t argv )
@@ -45,11 +45,11 @@ namespace tool
 		
 		bool ramdisk_only = false;
 		
-		O::BindOption( "--driver", wanted_driver_name );
+		o::bind_option_to_variable( "--driver", wanted_driver_name );
 		
-		O::BindOption( "--ram", ramdisk_only );
+		o::bind_option_to_variable( "--ram", ramdisk_only );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
 		if ( ramdisk_only )
 		{

@@ -15,7 +15,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -25,7 +25,7 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	class InfoMutator
@@ -117,18 +117,16 @@ namespace tool
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		O::BindOptionTrigger< N::OSType >( "-c", std::ptr_fun( CreatorOptor ) );
-		O::BindOptionTrigger< N::OSType >( "-t", std::ptr_fun( TypeOptor    ) );
+		o::bind_option_trigger< N::OSType >( "-c", std::ptr_fun( CreatorOptor ) );
+		o::bind_option_trigger< N::OSType >( "-t", std::ptr_fun( TypeOptor    ) );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t argCount = O::FreeArgumentCount();
-		
-		while ( *freeArgs )
+		while ( *free_args )
 		{
-			const char* pathname = *freeArgs++;
+			const char* pathname = *free_args++;
 			
 			FSSpec file = Div::ResolvePathToFSSpec( pathname );
 			
