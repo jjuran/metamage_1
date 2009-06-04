@@ -3,7 +3,7 @@
 	Orion/GetOptions.cc
 	===================
 	
-	Copyright 2005-2007 Joshua Juran.
+	Copyright 2005-2009 Joshua Juran.
 	
 	This file is part of Orion.
 	
@@ -176,7 +176,7 @@ namespace Orion
 		return it->second;
 	}
 	
-	static boost::shared_ptr< OptionBinding > FindOptionBinding( OptionID optionID )
+	static const boost::shared_ptr< OptionBinding >& FindOptionBinding( OptionID optionID )
 	{
 		BindingMap::const_iterator it = gBindingMap.find( optionID );
 		
