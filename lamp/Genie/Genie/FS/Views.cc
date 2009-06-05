@@ -197,7 +197,9 @@ namespace Genie
 	
 	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap[ parent ][ name ].itsWindowKey;
+		const ViewParameters* params = FindView( parent, name );
+		
+		return params ? params->itsWindowKey : NULL;
 	}
 	
 	const FSTree* GetViewWindowKey( const FSTree* view )
