@@ -96,6 +96,31 @@ namespace Genie
 		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
+	static void DeleteDelegate( FSTreePtr& delegate_ref )
+	{
+		if ( const FSTree* delegate = delegate_ref.get() )
+		{
+			FSTreePtr delegate_copy;
+			
+			delegate_copy.swap( delegate_ref );
+			
+			try
+			{
+				delegate->Delete();
+			}
+			catch ( ... )
+			{
+				if ( TARGET_CONFIG_DEBUGGING )
+				{
+					// This might happen in __destroy_global_chain(),
+					// so don't ASSERT which relies on trashed infrastructure.
+					
+					::DebugStr( "\p" "Delegate's Delete() method may not throw" );
+				}
+			}
+		}
+	}
+	
 	static void RemoveViewParameters( const FSTree* parent, const std::string& name )
 	{
 		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
@@ -114,14 +139,7 @@ namespace Genie
 				
 				submap.erase( jt );
 				
-				try
-				{
-					temp.itsDelegate->Delete();
-				}
-				catch ( ... )
-				{
-					ASSERT( 0 && "Delegate's Delete() method may not throw" );
-				}
+				DeleteDelegate( temp.itsDelegate );
 			}
 			
 			if ( submap.empty() )
@@ -143,19 +161,9 @@ namespace Genie
 			
 			gViewParametersMap.erase( it );
 			
-			for ( ViewParametersSubMap::const_iterator jt = temp.begin();  jt != temp.end();  ++jt )
+			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
-				try
-				{
-					if ( const FSTree* delegate = jt->second.itsDelegate.get() )
-					{
-						delegate->Delete();
-					}
-				}
-				catch ( ... )
-				{
-					ASSERT( 0 && "Delegate's Delete() method may not throw" );
-				}
+				DeleteDelegate( jt->second.itsDelegate );
 			}
 		}
 	}
