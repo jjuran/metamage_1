@@ -96,6 +96,21 @@ namespace Genie
 		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
+	static void DeleteDelegate( const FSTreePtr& delegate_ref )
+	{
+		if ( const FSTree* delegate = delegate_ref.get() )
+		{
+			try
+			{
+				delegate->Delete();
+			}
+			catch ( ... )
+			{
+				ASSERT( 0 && "Delegate's Delete() method may not throw" );
+			}
+		}
+	}
+	
 	static void RemoveViewParameters( const FSTree* parent, const std::string& name )
 	{
 		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
@@ -114,17 +129,7 @@ namespace Genie
 				
 				submap.erase( jt );
 				
-				try
-				{
-					if ( const FSTree* delegate = temp.itsDelegate.get() )
-					{
-						delegate->Delete();
-					}
-				}
-				catch ( ... )
-				{
-					ASSERT( 0 && "Delegate's Delete() method may not throw" );
-				}
+				DeleteDelegate( temp.itsDelegate );
 			}
 			
 			if ( submap.empty() )
@@ -148,17 +153,7 @@ namespace Genie
 			
 			for ( ViewParametersSubMap::const_iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
-				try
-				{
-					if ( const FSTree* delegate = jt->second.itsDelegate.get() )
-					{
-						delegate->Delete();
-					}
-				}
-				catch ( ... )
-				{
-					ASSERT( 0 && "Delegate's Delete() method may not throw" );
-				}
+				DeleteDelegate( jt->second.itsDelegate );
 			}
 		}
 	}
