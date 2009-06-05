@@ -96,10 +96,14 @@ namespace Genie
 		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
 	}
 	
-	static void DeleteDelegate( const FSTreePtr& delegate_ref )
+	static void DeleteDelegate( FSTreePtr& delegate_ref )
 	{
 		if ( const FSTree* delegate = delegate_ref.get() )
 		{
+			FSTreePtr delegate_copy;
+			
+			delegate_copy.swap( delegate_ref );
+			
 			try
 			{
 				delegate->Delete();
@@ -157,7 +161,7 @@ namespace Genie
 			
 			gViewParametersMap.erase( it );
 			
-			for ( ViewParametersSubMap::const_iterator jt = temp.begin();  jt != temp.end();  ++jt )
+			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
 				DeleteDelegate( jt->second.itsDelegate );
 			}
