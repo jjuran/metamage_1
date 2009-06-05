@@ -108,6 +108,8 @@ namespace Genie
 			{
 				ASSERT( 0 && "Delegate's Delete() method may not throw" );
 			}
+			
+			RemoveAllViewParameters( delegate );
 		}
 	}
 	
