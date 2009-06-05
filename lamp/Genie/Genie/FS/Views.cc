@@ -139,12 +139,12 @@ namespace Genie
 				
 				submap.erase( jt );
 				
+				if ( submap.empty() )
+				{
+					gViewParametersMap.erase( it );
+				}
+				
 				DeleteDelegate( temp.itsDelegate );
-			}
-			
-			if ( submap.empty() )
-			{
-				gViewParametersMap.erase( it );
 			}
 		}
 	}
