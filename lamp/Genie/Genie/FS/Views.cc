@@ -190,17 +190,19 @@ namespace Genie
 	
 	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
 	{
-		return gViewParametersMap[ parent ][ name ].itsDelegate;
+		const ViewParameters* params = FindView( parent, name );
+		
+		if ( params == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return params->itsDelegate;
 	}
 	
 	static const FSTreePtr& GetViewDelegate( const FSTree* view )
 	{
 		const FSTreePtr& delegate = GetViewDelegate( view->ParentRef().get(), view->Name() );
-		
-		if ( delegate.get() == NULL )
-		{
-			p7::throw_errno( ENOENT );
-		}
 		
 		return delegate;
 	}
