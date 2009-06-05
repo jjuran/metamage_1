@@ -118,6 +118,8 @@ namespace Genie
 					::DebugStr( "\p" "Delegate's Delete() method may not throw" );
 				}
 			}
+			
+			RemoveAllViewParameters( delegate );
 		}
 	}
 	
