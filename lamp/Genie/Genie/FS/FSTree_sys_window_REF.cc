@@ -314,6 +314,7 @@ namespace Genie
 			:
 				FSTree_Property( parent,
 				                 name,
+				                 0,
 				                 readHook,
 				                 writeHook ),
 				itIsMutable( mutability )
