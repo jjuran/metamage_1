@@ -63,7 +63,7 @@ namespace Nitrogen
 namespace Genie
 {
 	
-	std::string GetDriverName( AuxDCEHandle dceHandle );
+	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle );
 	
 	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const std::string& name );
 	
