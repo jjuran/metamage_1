@@ -163,11 +163,16 @@ namespace Genie
 		{
 			const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
 			
-			// Dereferences a handle if ramBased
-			DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-			                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+			const Ptr drvr = dceHandle[0]->dCtlDriver;
 			
-			return header->drvrName;
+			// Dereferences a handle if ramBased
+			const DRVRHeaderPtr header = ramBased ? *(DRVRHeader **) drvr
+			                                      :  (DRVRHeader * ) drvr;
+			
+			if ( header != NULL )
+			{
+				return header->drvrName;
+			}
 		}
 		
 		return "\p";
