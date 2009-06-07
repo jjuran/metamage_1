@@ -155,11 +155,9 @@ namespace Genie
 		}
 	};
 	
-	std::string GetDriverName( AuxDCEHandle dceHandle )
+	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle )
 	{
 		ASSERT( dceHandle != NULL );
-		
-		std::string name;
 		
 		if ( dceHandle[0]->dCtlDriver != NULL )
 		{
@@ -169,11 +167,18 @@ namespace Genie
 			DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
 			                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
 			
-			// Copy Pascal string onto stack before we allocate memory
-			name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
+			return header->drvrName;
 		}
 		
-		return name;
+		return "\p";
+	}
+	
+	static N::Str255 GetDriverName( AuxDCEHandle dceHandle )
+	{
+		const unsigned char* name = GetDriverName_WithinHandle( dceHandle );
+		
+		// Safely copy Pascal string onto stack
+		return N::Str255( name );
 	}
 	
 	struct DriverName
@@ -182,7 +187,7 @@ namespace Genie
 		
 		static const bool alwaysStringified = true;
 		
-		typedef std::string Result;
+		typedef N::Str255 Result;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
