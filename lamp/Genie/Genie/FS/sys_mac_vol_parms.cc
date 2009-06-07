@@ -212,8 +212,13 @@ namespace Genie
 	{
 		typedef sys_mac_vol_N_Parms_Property< Accessor > Property;
 		
+		const bool fixed = !Accessor::alwaysStringified;
+		
+		const size_t size = fixed ? sizeof (typename Accessor::Result) : 0;
+		
 		return New_FSTree_Property( parent,
 		                            name,
+		                            size,
 		                            &Property::Read );
 	}
 	

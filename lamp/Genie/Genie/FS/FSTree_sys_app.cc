@@ -67,6 +67,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
+		                            sizeof (typename Accessor::Result),
 		                            &Property::Read );
 	}
 	
