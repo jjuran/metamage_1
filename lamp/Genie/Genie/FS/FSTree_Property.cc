@@ -45,6 +45,11 @@ namespace Genie
 	
 	off_t FSTree_Property::GetEOF() const
 	{
+		if ( itsSize != 0 )
+		{
+			return itsSize;
+		}
+		
 		std::string data;
 		
 		try
@@ -126,11 +131,13 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_Property( const FSTreePtr&    parent,
 	                               const std::string&  name,
+	                               size_t              size,
 	                               Property_ReadHook   readHook,
 	                               Property_WriteHook  writeHook )
 	{
 		return FSTreePtr( new FSTree_Property( parent,
 		                                       name,
+		                                       size,
 		                                       readHook,
 		                                       writeHook ) );
 	}

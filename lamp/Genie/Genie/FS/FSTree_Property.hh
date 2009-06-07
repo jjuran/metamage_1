@@ -29,6 +29,7 @@ namespace Genie
 			typedef Property_ReadHook   ReadHook;
 			typedef Property_WriteHook  WriteHook;
 			
+			size_t     itsSize;
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;
 		
@@ -37,10 +38,12 @@ namespace Genie
 			
 			FSTree_Property( const FSTreePtr&    parent,
 			                 const std::string&  name,
+			                 size_t              size,
 			                 ReadHook            readHook,
 			                 WriteHook           writeHook = NULL )
 			:
 				FSTree( parent, name ),
+				itsSize( size ),
 				itsReadHook ( readHook  ),
 				itsWriteHook( writeHook )
 			{
@@ -66,8 +69,17 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_Property( const FSTreePtr&    parent,
 	                               const std::string&  name,
+	                               size_t              size,
 	                               Property_ReadHook   readHook,
 	                               Property_WriteHook  writeHook = NULL );
+	
+	inline FSTreePtr New_FSTree_Property( const FSTreePtr&    parent,
+	                                      const std::string&  name,
+	                                      Property_ReadHook   readHook,
+	                                      Property_WriteHook  writeHook = NULL )
+	{
+		return New_FSTree_Property( parent, name, 0, readHook, writeHook );
+	}
 	
 }
 
