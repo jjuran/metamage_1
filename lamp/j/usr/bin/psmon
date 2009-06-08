@@ -4,7 +4,7 @@ cd /new/window
 
 echo 0 > vis
 echo 10,47 > pos
-echo 500,300 > size
+echo 500,100 > size
 echo Processes > title
 
 touch ref
