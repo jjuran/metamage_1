@@ -11,9 +11,9 @@ touch ref
 
 echo 9 > ref/text-size
 echo 4 > ref/text-font
-echo eee > ref/back-color
 
-perl -e 'exit 1 - <>' < /sys/mac/errata/text-on-black-freakout || sh -c 'echo 000 > ref/back-color; echo 0f0 > ref/fore-color'
+echo 000 > ref/back-color
+echo 0f0 > ref/fore-color
 
 ln /new/frame   view
 ln /new/caption view/v
