@@ -87,7 +87,6 @@
 #include "Templates/DataPointer.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
 #include "Utilities/Threads.h"
 
 // Backtrace
@@ -607,65 +606,6 @@ static int TestOADC( int argc, iota::argv_t argv )
 	return 0;
 }
 
-class HasSignature
-{
-	private:
-		OSType signature;
-		ProcessInfoRec processInfo;
-	
-	public:
-		HasSignature( OSType signature ) : signature( signature )
-		{
-			processInfo.processInfoLength = sizeof processInfo;
-			processInfo.processName = NULL;
-			processInfo.processAppSpec = NULL;
-		}
-		
-		bool operator()( const ProcessSerialNumber& process )
-		{
-			N::GetProcessInformation( process, processInfo );
-			return processInfo.processSignature == signature;
-		}
-};
-
-static int TestProcesses( int argc, iota::argv_t argv )
-{
-	//if (argc < 3)  return 1;
-	
-	ProcessSerialNumber psn = N::NoProcess();
-	ProcessInfoRec info;
-	Str255 name;
-	
-	info.processInfoLength = sizeof info;
-	info.processName = name;
-	info.processAppSpec = NULL;
-	
-	typedef N::Process_Container::const_iterator P_ci;
-	
-	for ( P_ci it = N::Processes().begin();  it != N::Processes().end();  ++it )
-	{
-		N::GetProcessInformation( *it, info );
-		
-		std::string message = "'"
-		                    + NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
-		                    + "' "
-		                    + NN::Convert< std::string, const unsigned char* >( name )
-		                    + "\n";
-		
-		p7::write( p7::stdout_fileno, message.data(), message.size() );
-	}
-	
-	N::Process_Container::const_iterator finder = std::find_if( N::Processes().begin(),
-	                                                            N::Processes().end(),
-	                                                            HasSignature( 'MACS' ) );
-	
-	if ( finder != N::Processes().end() )
-	{
-		std::printf( "%.8x-%.8x\n", finder->highLongOfPSN, finder->lowLongOfPSN );
-	}
-	
-	return 0;
-}
 
 static int TestSoundInput( int argc, iota::argv_t argv )
 {
@@ -1325,7 +1265,6 @@ const SubMain gSubs[] =
 	{ "crc32",     TestCRC32      },
 	{ "md5",       TestMD5        },
 	{ "OADC",      TestOADC       },
-	{ "proc",      TestProcesses  },
 	{ "si",        TestSoundInput },
 	{ "ae",        TestAE         },
 //	{ "svcs",      TestServices   },
