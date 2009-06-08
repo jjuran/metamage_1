@@ -308,13 +308,14 @@ namespace Genie
 		public:
 			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
 			                                const std::string&  name,
+			                                size_t              fixed_size,
 			                                ReadHook            readHook,
 			                                WriteHook           writeHook,
 			                                bool                mutability )
 			:
 				FSTree_Property( parent,
 				                 name,
-				                 0,
+				                 fixed_size,
 				                 readHook,
 				                 writeHook ),
 				itIsMutable( mutability )
@@ -691,6 +692,8 @@ namespace Genie
 	
 	struct Window_Title
 	{
+		static const bool fixed_size = 0;
+		
 		static std::string Get( const FSTree* that, bool binary )
 		{
 			return NN::Convert< std::string >( Find( GetViewKey( that ) ).itsTitle );
@@ -709,6 +712,8 @@ namespace Genie
 	template < class Scribe, typename Scribe::Value& (*Access)( WindowParameters& ) >
 	struct Window_Property
 	{
+		static const bool fixed_size = sizeof (typename Scribe::Value);
+		
 		static std::string Get( const FSTree* that, bool binary )
 		{
 			return Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
@@ -767,6 +772,7 @@ namespace Genie
 	{
 		return FSTreePtr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,
+		                                                      Property::fixed_size,
 		                                                      &Property::Get,
 		                                                      &Property::Set,
 		                                                      variability ) );
