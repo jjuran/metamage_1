@@ -35,11 +35,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Lamp
-#ifdef __MWERKS__
-#include "lamp/winio.h"
-#endif
-
 // Backtrace
 #include "Backtrace/Unmangle.hh"
 
@@ -71,6 +66,8 @@
 
 // POSeven
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/openat.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 
 // Nitrogen Extras / ClassicToolbox
@@ -1016,6 +1013,11 @@ class path_generator
 		}
 };
 
+static inline void MoveWindowTo( p7::fd_t pos_fd, Point point )
+{
+	p7::write( pos_fd, (const char*) &point, sizeof point );
+}
+
 static int TestPath( int argc, iota::argv_t argv )
 {
 	if ( argc < 3 )
@@ -1023,7 +1025,17 @@ static int TestPath( int argc, iota::argv_t argv )
 		return 1;
 	}
 	
-#ifdef __MWERKS__
+#ifdef __LAMP__
+	
+	const char* window_path = getenv( "WINDOW" );
+	
+	if ( !window_path )
+	{
+		return 1;
+	}
+	
+	NN::Owned< p7::fd_t > window = p7::open( window_path,
+	                                         p7::o_rdonly | p7::o_directory );
 	
 	int pix = std::atoi( argv[2] );
 	
@@ -1031,13 +1043,18 @@ static int TestPath( int argc, iota::argv_t argv )
 	
 	int fd = 0;
 	
-	ioctl( fd, WIOCGPOS, &location );
+	p7::read( p7::openat( window, "ref/pos", p7::o_rdonly | p7::o_binary ),
+	          (char*) &location, sizeof location );
 	
 	int start_pos = location.h;
 	
 	int stop_pos = start_pos + pix;
 	
 	UInt64 time_length = 250000;  // quarter second
+	
+	NN::Owned< p7::fd_t > pos = p7::openat( window,
+	                                        "ref/pos",
+	                                        p7::o_wronly | p7::o_trunc | p7::o_binary );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
 	{
@@ -1056,12 +1073,12 @@ static int TestPath( int argc, iota::argv_t argv )
 	{
 		location.h = start_pos + path.sample( elapsed_time ) * pix;
 		
-		ioctl( fd, WIOCSPOS, &location );
+		MoveWindowTo( pos, location );
 	}
 	
 	location.h = stop_pos;
 	
-	ioctl( fd, WIOCSPOS, &location );
+	MoveWindowTo( pos, location );
 	
 #endif
 	
