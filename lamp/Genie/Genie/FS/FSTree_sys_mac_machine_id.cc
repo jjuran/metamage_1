@@ -5,30 +5,31 @@
 
 #include "Genie/FS/FSTree_sys_mac_machine_id.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
+
+// Genie
+#include "Genie/FS/Scribes.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
-	static std::string GetMachineID()
+	static inline UInt32 GetMachineID()
 	{
 		const UInt32 id = N::Gestalt( N::GestaltSelector( gestaltMachineType ) );
 		
-		return NN::Convert< std::string >( id );
+		return id;
 	}
 	
 	std::string sys_mac_machine_id::Read( const FSTree* that, bool binary )
 	{
-		return GetMachineID();
+		const UInt32 id = GetMachineID();
+		
+		return Freeze< Int_Scribe >( id, binary );
 	}
 	
 }
