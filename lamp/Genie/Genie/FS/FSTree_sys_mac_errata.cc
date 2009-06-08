@@ -70,11 +70,11 @@ namespace Genie
 	
 	static bool DriverIsFromSheepShaver( AuxDCEHandle dce )
 	{
-		std::string name = GetDriverName( dce );
+		const unsigned char* name = GetDriverName_WithinHandle( dce );
 		
-		return !name.empty() && std::equal( name.begin() + (name[0] == '.'),
-		                                    name.end(),
-		                                    "Display_Video_Apple_Sheep" );
+		return name[0] != 0 && std::equal( name + 1 + (name[0] == '.'),
+		                                   name + 1 + name[0],
+		                                   "Display_Video_Apple_Sheep" );
 	}
 	
 #endif

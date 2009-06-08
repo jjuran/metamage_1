@@ -49,6 +49,10 @@ namespace Genie
 			}
 	};
 	
+	IOHandle::IOHandle()
+	{
+	}
+	
 	IOHandle::~IOHandle()
 	{
 	}

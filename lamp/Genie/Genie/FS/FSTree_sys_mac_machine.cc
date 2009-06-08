@@ -25,8 +25,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_machine_Mappings[] =
 	{
-		{ "id",   &Property_Factory< sys_mac_machine_id   > },
-		{ "name", &Property_Factory< sys_mac_machine_name > },
+		{ "id",   &Property_Factory< sys_mac_machine_id   >, true },
+		{ "name", &Property_Factory< sys_mac_machine_name >, true },
 		
 		{ NULL, NULL }
 	};

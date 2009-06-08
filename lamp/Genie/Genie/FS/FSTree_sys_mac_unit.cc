@@ -141,42 +141,60 @@ namespace Genie
 	
 	struct GetDriverFlags
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
 		
-		static std::string Get( AuxDCEHandle dceHandle )
+		static const bool alwaysStringified = false;
+		
+		typedef short Result;
+		
+		static Result Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
-			short flags = dceHandle[0]->dCtlFlags;
-			
-			return BitsAndBytes::EncodeAsHex( &flags, sizeof flags );
+			return dceHandle[0]->dCtlFlags;
 		}
 	};
 	
-	std::string GetDriverName( AuxDCEHandle dceHandle )
+	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle )
 	{
 		ASSERT( dceHandle != NULL );
-		
-		std::string name;
 		
 		if ( dceHandle[0]->dCtlDriver != NULL )
 		{
 			const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
 			
-			// Dereferences a handle if ramBased
-			DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-			                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+			const Ptr drvr = dceHandle[0]->dCtlDriver;
 			
-			// Copy Pascal string onto stack before we allocate memory
-			name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
+			// Dereferences a handle if ramBased
+			const DRVRHeaderPtr header = ramBased ? *(DRVRHeader **) drvr
+			                                      :  (DRVRHeader * ) drvr;
+			
+			if ( header != NULL )
+			{
+				return header->drvrName;
+			}
 		}
 		
-		return name;
+		return "\p";
+	}
+	
+	static N::Str255 GetDriverName( AuxDCEHandle dceHandle )
+	{
+		const unsigned char* name = GetDriverName_WithinHandle( dceHandle );
+		
+		// Safely copy Pascal string onto stack
+		return N::Str255( name );
 	}
 	
 	struct DriverName
 	{
-		static std::string Get( AuxDCEHandle dceHandle )
+		static const bool hexEncoded = false;
+		
+		static const bool alwaysStringified = true;
+		
+		typedef N::Str255 Result;
+		
+		static Result Get( AuxDCEHandle dceHandle )
 		{
 			return GetDriverName( dceHandle );
 		}
@@ -184,6 +202,10 @@ namespace Genie
 	
 	struct GetDriverSlot
 	{
+		static const bool hexEncoded = false;
+		
+		static const bool alwaysStringified = false;
+		
 		// dCtlSlot is defined as 'char', but we want integer conversion
 		typedef UInt16 Result;
 		
@@ -202,7 +224,11 @@ namespace Genie
 	
 	struct GetDriverBase
 	{
-		typedef std::string Result;
+		static const bool hexEncoded = true;
+		
+		static const bool alwaysStringified = false;
+		
+		typedef long Result;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
@@ -213,9 +239,7 @@ namespace Genie
 				N::ThrowOSStatus( fnfErr );
 			}
 			
-			long base = dceHandle[0]->dCtlDevBase;
-			
-			return BitsAndBytes::EncodeAsHex( &base, sizeof base );
+			return dceHandle[0]->dCtlDevBase;
 		}
 	};
 	
@@ -237,7 +261,18 @@ namespace Genie
 				
 				AuxDCEHandle dceHandle = GetUTableBase()[ key ];
 				
-				return NN::Convert< std::string >( Accessor::Get( dceHandle ) );
+				const typename Accessor::Result data = Accessor::Get( dceHandle );
+				
+				const bool raw = !Accessor::alwaysStringified  &&  binary;
+				const bool hex =  Accessor::hexEncoded;
+				
+				using BitsAndBytes::EncodeAsHex;
+				
+				std::string result = raw ? std::string( (char*) &data, sizeof data )
+				                   : hex ? EncodeAsHex(         &data, sizeof data )
+				                   :       NN::Convert< std::string >( data );
+				
+				return result;
 			}
 	};
 	
