@@ -69,6 +69,8 @@ namespace Genie
 		
 		typedef typename Scribe::Value value_type;
 		
+		static const size_t fixed_size = sizeof (value_type);
+		
 		static std::string freeze( const value_type& value, bool binary )
 		{
 			return Freeze< Scribe >( value, binary );
@@ -82,6 +84,8 @@ namespace Genie
 	
 	struct serialization_for_Str255
 	{
+		static const size_t fixed_size = 0;
+		
 		static std::string freeze( ConstStr255Param param, bool binary )
 		{
 			return NN::Convert< std::string >( param );
@@ -481,6 +485,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
+		                            Accessor::fixed_size,
 		                            &Property::Read );
 	}
 	
@@ -492,6 +497,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
+		                            Accessor::fixed_size,
 		                            &Property::Read,
 		                            &Property::Write );
 	}
