@@ -37,6 +37,10 @@ namespace Genie
 	{
 		private:
 			virtual IOHandle* Next() const  { return NULL; }
+			
+			// non-copyable
+			IOHandle           ( const IOHandle& );
+			IOHandle& operator=( const IOHandle& );
 		
 		public:
 			typedef bool (IOHandle::*Test)() const;
