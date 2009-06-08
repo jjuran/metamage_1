@@ -994,32 +994,6 @@ static int TestReadLoc( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestKeys( int argc, iota::argv_t argv )
-{
-	KeyMap keys;
-	
-	::GetKeys( keys );
-	
-	for ( unsigned i = 0;  i < 16;  ++i )
-	{
-		const UInt8 byte = reinterpret_cast< const UInt8* >( keys )[i];
-		
-		for ( unsigned j = 0;  j < 8;  ++j )
-		{
-			bool down = byte & (1 << j);
-			
-			if ( down )
-			{
-				UInt8 keyCode = i * 8 + j;
-				
-				std::printf( "0x%x %d\n", keyCode, keyCode );
-			}
-		}
-	}
-	
-	return 0;
-}
-
 inline double get_scaled_linear_motion( double elapsed_time )
 {
 	return elapsed_time;
@@ -1270,7 +1244,6 @@ const SubMain gSubs[] =
 //	{ "svcs",      TestServices   },
 	{ "thread",    TestThread     },
 	{ "null",      TestNull       },
-	{ "keys",      TestKeys       },
 	{ "path",      TestPath       },
 	{ "unmangle",  TestUnmangle   },
 	{ "mangling",  TestMangling   },
