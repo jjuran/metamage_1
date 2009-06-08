@@ -204,6 +204,24 @@ namespace Genie
 		}
 	};
 	
+	struct GetDriverSlotId : plus::serialize_int< char >
+	{
+		// dCtlSlotId is defined as 'char', but int is more debugger-friendly
+		typedef int result_type;
+		
+		static int Get( AuxDCEHandle dceHandle )
+		{
+			ASSERT( dceHandle != NULL );
+			
+			if ( dceHandle[0]->dCtlSlotId == 0 )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
+			return dceHandle[0]->dCtlSlotId;
+		}
+	};
+	
 	struct GetDriverBase : plus::serialize_hex< UInt32 >
 	{
 		static UInt32 Get( AuxDCEHandle dceHandle )
@@ -216,6 +234,39 @@ namespace Genie
 			}
 			
 			return dceHandle[0]->dCtlDevBase;
+		}
+	};
+	
+	struct GetDriverOwner : plus::serialize_pointer
+	{
+		static Ptr Get( AuxDCEHandle dceHandle )
+		{
+			ASSERT( dceHandle != NULL );
+			
+			if ( dceHandle[0]->dCtlOwner == 0 )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
+			return dceHandle[0]->dCtlOwner;
+		}
+	};
+	
+	struct GetDriverExternalDeviceID : plus::serialize_int< char >
+	{
+		// dCtlExtDev is defined as 'char', but int is more debugger-friendly
+		typedef int result_type;
+		
+		static int Get( AuxDCEHandle dceHandle )
+		{
+			ASSERT( dceHandle != NULL );
+			
+			if ( dceHandle[0]->dCtlExtDev == 0 )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
+			return dceHandle[0]->dCtlExtDev;
 		}
 	};
 	
@@ -307,7 +358,10 @@ namespace Genie
 		{ "flags", &Property_Factory< GetDriverFlags > },
 		{ "name",  &Property_Factory< DriverName  > },
 		{ "slot",  &Property_Factory< GetDriverSlot  > },
+		{ "id",    &Property_Factory< GetDriverSlotId  > },
 		{ "base",  &Property_Factory< GetDriverBase  > },
+		{ "owner", &Property_Factory< GetDriverOwner  > },
+		{ "extdev", &Property_Factory< GetDriverExternalDeviceID  > },
 		
 		{ NULL, NULL }
 	};
