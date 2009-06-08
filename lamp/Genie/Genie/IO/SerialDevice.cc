@@ -11,8 +11,8 @@
 // POSIX
 #include <fcntl.h>
 
-// Boost
-#include "boost/shared_ptr.hpp"
+// Iota
+#include "iota/strings.hh"
 
 // Nucleus
 #include "Nucleus/Shared.h"
@@ -153,10 +153,24 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	static std::string MakeDriverName( const std::string&  portName,
-	                                   const std::string&  directionName )
+	static N::Str255 MakeDriverName( const std::string&   port_name,
+	                                 const char          *direction,
+	                                 size_t               direction_length )
 	{
-		return "." + portName + directionName;
+		const size_t total_length = 1 + port_name.length() + direction_length;
+		
+		if ( total_length > 255 )
+		{
+			N::ThrowOSStatus( bdNamErr );
+		}
+		
+		Str255 result = { total_length, '.' };
+		
+		memcpy( &result[ 2 ], port_name.data(), port_name.size() );
+		
+		memcpy( &result[ 2 + port_name.size() ], direction, direction_length );
+		
+		return result;
 	}
 	
 	inline bool SerialPortsAreArbitrated()
@@ -164,10 +178,8 @@ namespace Genie
 		return N::Gestalt_Bit< N::gestaltSerialPortArbitratorAttr, ::gestaltSerialPortArbitratorExists >();
 	}
 	
-	static bool DriverIsOpen( const std::string& driverNameString )
+	static bool DriverIsOpen( const unsigned char* driverName )
 	{
-		N::Str255 driverName = driverNameString;
-		
 		for ( int unit = 0;  unit < LMGetUnitTableEntryCount();  ++unit )
 		{
 			DCtlHandle dceHandle = GetDCtlEntry( -unit );
@@ -191,12 +203,12 @@ namespace Genie
 		return false;
 	}
 	
-	static bool SerialDriverMayBeOpened( const std::string& driverName )
+	static bool SerialDriverMayBeOpened( const unsigned char* driverName )
 	{
 		return SerialPortsAreArbitrated() || !DriverIsOpen( driverName );
 	}
 	
-	static NN::Owned< N::DriverRefNum > OpenSerialDriver( const std::string& driverName )
+	static NN::Owned< N::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
 	{
 		if ( !SerialDriverMayBeOpened( driverName ) )
 		{
@@ -206,9 +218,11 @@ namespace Genie
 		return N::OpenDriver( driverName );
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName ) : DeviceHandle( O_RDWR ),
-	                                                                        itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, "Out" ) ) ),
-	                                                                        itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, "In"  ) ) )
+	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName )
+	:
+		DeviceHandle( O_RDWR ),
+		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
+		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) )
 	{
 		
 		using N::kSERDHandshake;
