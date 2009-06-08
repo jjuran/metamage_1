@@ -25,26 +25,30 @@ namespace Genie
 	
 	struct GetScreenBounds
 	{
-		typedef std::string Result;
+		typedef const Rect& Result;
 		
-		static Result Get( const BitMap& screenBits, bool binary )
+		typedef Rect_Scribe Scribe;
+		
+		static Result Get( const BitMap& screenBits )
 		{
-			return Freeze< Rect_Scribe >( screenBits.bounds, binary );
+			return screenBits.bounds;
 		}
 	};
 	
 	struct GetScreenSize
 	{
-		typedef std::string Result;
+		typedef Point Result;
 		
-		static Result Get( const BitMap& screenBits, bool binary )
+		typedef Point_Scribe< 'x' > Scribe;
+		
+		static Result Get( const BitMap& screenBits )
 		{
 			const Rect& bounds = screenBits.bounds;
 			
 			const Point size = { bounds.bottom - bounds.top,
 			                     bounds.right - bounds.left };
 			
-			return Freeze< Point_Scribe< 'x' > >( size, binary );
+			return size;
 		}
 	};
 	
@@ -55,7 +59,9 @@ namespace Genie
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
-			return Accessor::Get( screenBits, binary );
+			const typename Accessor::Result data = Accessor::Get( screenBits );
+			
+			return Freeze< Accessor::Scribe >( data, binary );
 		}
 	};
 	

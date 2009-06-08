@@ -145,26 +145,30 @@ namespace Genie
 	
 	struct GetGDBounds
 	{
-		typedef std::string Result;
+		typedef const Rect& Result;
 		
-		static Result Get( N::GDHandle gdevice, bool binary )
+		typedef Rect_Scribe Scribe;
+		
+		static Result Get( N::GDHandle gdevice )
 		{
-			return Freeze< Rect_Scribe >( gdevice[0]->gdRect, binary );
+			return gdevice[0]->gdRect;
 		}
 	};
 	
 	struct GetGDSize
 	{
-		typedef std::string Result;
+		typedef Point Result;
 		
-		static Result Get( N::GDHandle gdevice, bool binary )
+		typedef Point_Scribe< 'x' > Scribe;
+		
+		static Result Get( N::GDHandle gdevice )
 		{
 			const Rect& bounds = gdevice[0]->gdRect;
 			
 			const Point size = { bounds.bottom - bounds.top,
 			                     bounds.right - bounds.left };
 			
-			return Freeze< Point_Scribe< 'x' > >( size, binary );
+			return size;
 		}
 	};
 	
@@ -177,7 +181,9 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			return NN::Convert< std::string >( Accessor::Get( key, binary ) );
+			const typename Accessor::Result data = Accessor::Get( key );
+			
+			return Freeze< Accessor::Scribe >( data, binary );
 		}
 	};
 	

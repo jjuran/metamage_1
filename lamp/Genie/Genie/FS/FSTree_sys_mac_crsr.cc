@@ -46,9 +46,13 @@ namespace Genie
 	
 	struct GetCursorLocation
 	{
-		typedef std::string Result;
+		typedef Point Result;
+		typedef Point Value;
+		typedef Point Param;
 		
-		static Result Get( const CursorDevice& device, bool binary )
+		typedef Point_Scribe< ',' > Scribe;
+		
+		static Result Get( const CursorDevice& device )
 		{
 			if ( device.whichCursor == NULL )
 			{
@@ -57,13 +61,11 @@ namespace Genie
 			
 			const CursorData& data = *device.whichCursor;
 			
-			return Freeze< Point_Scribe< ',' > >( data.where, binary );
+			return data.where;
 		}
 		
-		static void Set( CursorDevicePtr device, const char* begin, const char* end, bool binary )
+		static void Set( CursorDevicePtr device, Param location )
 		{
-			Point location = Vivify< Point_Scribe<> >( begin, end, binary );
-			
 			N::CursorDeviceMoveTo( device, location.h, location.v );
 		}
 	};
@@ -87,14 +89,18 @@ namespace Genie
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
-			return Accessor::Get( *device, binary );
+			const typename Accessor::Result data = Accessor::Get( *device );
+			
+			return Freeze< Accessor::Scribe >( data, binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
-			Accessor::Set( device, begin, end, binary );
+			const typename Accessor::Value data = Vivify< Accessor::Scribe >( begin, end, binary );
+			
+			Accessor::Set( device, data );
 		}
 	};
 	
