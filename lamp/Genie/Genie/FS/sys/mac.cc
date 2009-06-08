@@ -19,6 +19,7 @@
 #include "Genie/FS/sys/mac/name.hh"
 #include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/sys/mac/rom.hh"
+#include "Genie/FS/sys/mac/soundin.hh"
 #include "Genie/FS/sys/mac/tempmem.hh"
 #include "Genie/FS/sys/mac/thng.hh"
 #include "Genie/FS/sys/mac/thread.hh"
@@ -55,6 +56,7 @@ namespace Genie
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
 		{ "proc",    &New_FSTree_sys_mac_proc    },
+		{ "soundin", &New_FSTree_sys_mac_soundin },
 		{ "tempmem", &New_FSTree_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng    },
 		
