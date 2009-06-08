@@ -64,6 +64,8 @@ namespace Genie
 		public:
 			SerialDeviceHandle( const std::string& portName );
 			
+			SerialDeviceHandle( const SerialDeviceHandle& other );
+			
 			virtual bool Preempted() const  { return false; }
 			
 			unsigned int SysPoll();
@@ -218,6 +220,14 @@ namespace Genie
 		N::Control< kSERDHandshake >( itsOutputRefNum, NN::Make< N::SerShk >() );
 		
 		N::SerReset( itsOutputRefNum, baud19200 | data8 | noParity | stop10 );
+	}
+	
+	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
+	:
+		DeviceHandle( O_RDWR ),
+		itsOutputRefNum( other.itsOutputRefNum ),
+		itsInputRefNum ( other.itsInputRefNum  )
+	{
 	}
 	
 	unsigned int SerialDeviceHandle::SysPoll()
