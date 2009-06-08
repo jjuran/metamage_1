@@ -553,7 +553,7 @@ static int TestCRC32( int argc, iota::argv_t argv )
 
 static MD5::Result MD5String( const char* text )
 {
-	return MD5::Digest( text, std::strlen( text ) * 8 );
+	return MD5::Digest_Bytes( text, std::strlen( text ) );
 }
 
 static std::string MD5Hex( const char* text )
