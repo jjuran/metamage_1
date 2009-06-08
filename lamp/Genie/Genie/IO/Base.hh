@@ -41,6 +41,8 @@ namespace Genie
 		public:
 			typedef bool (IOHandle::*Test)() const;
 			
+			IOHandle();
+			
 			virtual ~IOHandle();
 			
 			virtual bool IsStream     () const  { return false; }
