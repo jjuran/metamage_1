@@ -972,14 +972,14 @@ namespace Nitrogen
 	template < class T >
 	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType typeCode, T** handle )
 	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+		return AECreateDesc< T, AEDesc_Data >( typeCode, handle );
 	}
 	
 	template < class T >
 	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                                            typeCode,
 	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
 	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+		return AECreateDesc< T, AEDesc_Data >( typeCode, handle );
 	}
 	
 	namespace MetrowerksHack
