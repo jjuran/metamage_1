@@ -22,6 +22,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/Aliases.h"
 #include "Nitrogen/Str.h"
 
 // Io: MacFiles
@@ -74,9 +75,38 @@ namespace tool
 		                   : Div::ResolvePathToFSSpec(            pathname.c_str() );
 	}
 	
-	static NN::Owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
+	static inline NN::Owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
 	{
 		return N::AECoercePtr< N::typeFSS >( item, N::typeAlias );
+	}
+	
+	static NN::Owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			// Don't catch errAECoercionFail; it shouldn't happen
+			return AECoerce_Alias_From_FSSpec( item );
+		}
+		
+		try
+		{
+			return AECoerce_Alias_From_FSSpec( item );
+		}
+		catch ( const N::ErrAECoercionFail& err )
+		{
+		#ifdef __MWERKS__
+			
+			if ( err.Get() != errAECoercionFail )
+			{
+				throw;
+			}
+			
+		#endif
+		}
+		
+		// Older systems don't provide alias->FSSpec coercion, so do it manually.
+		
+		return N::AECreateDesc( N::typeAlias, N::NewAlias( item ) );
 	}
 	
 	static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
