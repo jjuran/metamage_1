@@ -133,11 +133,11 @@ namespace Genie
 		{
 			params.pseudoclicked = false;
 			
-			::HiliteControl( Get(), kControlButtonPart );
+			N::HiliteControl( Get(), N::kControlButtonPart );
 			
 			N::Delay( 8 );
 			
-			::HiliteControl( Get(), false );
+			N::HiliteControl( Get(), N::kControlNoPart );
 			
 			++params.seed;
 		}
