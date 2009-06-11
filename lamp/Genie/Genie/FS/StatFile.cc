@@ -24,6 +24,9 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// MacIO
+#include "MacIO/GetCatInfo_Sync.hh"
+
 // TimeOff
 #include "TimeOff.hh"
 
@@ -183,7 +186,7 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, file );
+		MacIO::GetCatInfo< FNF_Throws >( paramBlock, file );
 		
 		HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		

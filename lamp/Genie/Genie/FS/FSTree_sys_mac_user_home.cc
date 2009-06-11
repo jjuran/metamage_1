@@ -12,6 +12,10 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
+// MacIO
+#include "MacIO/FSMakeFSSpec_Sync.hh"
+#include "MacIO/GetCatInfo_Sync.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -63,7 +67,7 @@ namespace Genie
 		
 		CInfoPBRec cInfo = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, vRefNum, N::fsRtDirID, "\p" "Users" );
+		MacIO::GetCatInfo< FNF_Throws >( cInfo, vRefNum, N::fsRtDirID, "\p" "Users" );
 		
 		return Dir_From_CInfo( cInfo );
 	}
@@ -81,7 +85,7 @@ namespace Genie
 		{
 			child = parent;
 			
-			parent = io::get_preceding_directory( FSMakeFSSpec< FNF_Throws >( child, NULL ) );
+			parent = io::get_preceding_directory( MacIO::FSMakeFSSpec< FNF_Throws >( child, NULL ) );
 		}
 		while ( parent != users );
 		

@@ -12,6 +12,9 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Folders.h"
 
+// MacIO
+#include "MacIO/FSMakeFSSpec_Sync.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -167,7 +170,7 @@ namespace Genie
 	{
 		try
 		{
-			(void) FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, NULL );
+			(void) MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, NULL );
 		}
 		catch ( const N::NSVErr& err )
 		{
@@ -483,7 +486,7 @@ namespace Genie
 	{
 		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
 		
-		FSSpec volume = FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
+		FSSpec volume = MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		
 		return FSTreeFromFSSpec( volume );
 	}

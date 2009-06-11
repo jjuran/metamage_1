@@ -5,8 +5,8 @@
 
 #include "Genie/FS/FSSpec.hh"
 
-// Genie
-#include "Genie/Utilities/AsyncIO.hh"
+// MacIO
+#include "MacIO/GetCatInfo_Sync.hh"
 
 
 namespace Genie
@@ -36,7 +36,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, dir );
 		
 		return Dir_From_CInfo( cInfo );
 	}
