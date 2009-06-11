@@ -16,6 +16,23 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	bool VolumeIsOnServer( N::FSVolumeRefNum vRefNum )
+	{
+		GetVolParmsInfoBuffer parmsInfo = { 0 };
+		
+		HParamBlockRec pb = { 0 };
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioVRefNum  = vRefNum;
+		io.ioBuffer   = (char *) &parmsInfo;
+		io.ioReqCount = sizeof parmsInfo;
+		
+		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+		
+		return parmsInfo.vMServerAdr != 0;
+	}
+	
 	N::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
