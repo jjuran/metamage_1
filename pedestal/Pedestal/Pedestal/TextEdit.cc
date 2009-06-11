@@ -488,9 +488,9 @@ namespace Pedestal
 			N::TECalText( hTE );
 		}
 		
-		N::TEUpdate( bounds, hTE );
-		
 		EraseBlankArea( hTE );
+		
+		N::TEUpdate( bounds, hTE );
 	}
 	
 	bool TextEdit::UserCommand( MenuItemCode code )
