@@ -9,6 +9,9 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// MacIO
+#include "MacIO/ThrowOSStatus.hh"
+
 // Genie
 #include "Genie/Process/AsyncYield.hh"
 
@@ -16,15 +19,12 @@
 namespace Genie
 {
 	
-	struct Async {};
-	
-	
 	using Nitrogen::ThrowEOF_Always;
 	using Nitrogen::ThrowEOF_OnZero;
 	using Nitrogen::ThrowEOF_Never;
 	
-	using Nitrogen::FNF_Throws;
-	using Nitrogen::FNF_Returns;
+	typedef MacIO::Throw_All   FNF_Throws;
+	typedef MacIO::Return_FNF  FNF_Returns;
 	
 	
 	// Async read
