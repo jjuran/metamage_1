@@ -218,7 +218,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView()->Activate( false );
+				return base->Activate( false );
 			}
 		}
 	}
@@ -235,7 +235,7 @@ namespace Pedestal
 			{
 				N::SetPortWindowPort( window );
 				
-				return base->GetView()->Activate( true );
+				return base->Activate( true );
 			}
 		}
 	}
