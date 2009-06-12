@@ -979,11 +979,6 @@ namespace Pedestal
 		return true;
 	}
 	
-	UInt32 TickCountAtLastContextSwitch()
-	{
-		return gTickCountAtLastContextSwitch;
-	}
-	
 	void WakeUp()
 	{
 		ProcessSerialNumber psn;
