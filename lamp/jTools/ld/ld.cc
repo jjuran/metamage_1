@@ -96,6 +96,7 @@ namespace tool
 	
 	static StringPair gSystemLibraries[] =
 	{
+		SHARED_LIB( "AppearanceLib"      ),
 		SHARED_LIB( "AppleScriptLib"     ),
 		SHARED_LIB( "CarbonLib"          ),
 		SHARED_LIB( "ControlsLib"        ),
