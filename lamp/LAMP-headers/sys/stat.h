@@ -57,6 +57,8 @@ struct stat
 	struct timespec  st_atim;     /* time of last access */
 	struct timespec  st_mtim;     /* time of last data modification */
 	struct timespec  st_ctim;     /* time of last file status change */
+	struct timespec  st_birthtim; /* time of creation */
+	struct timespec  st_checktim; /* time of last backup/archive/checkpoint */
 	off_t            st_size;     /* file size, in bytes */
 	long             st_blocks;   /* blocks allocated for file */
 	unsigned long    st_blksize;  /* optimal blocksize for I/O */
@@ -67,6 +69,9 @@ struct stat
 #define st_atime  st_atim.tv_sec
 #define st_mtime  st_mtim.tv_sec
 #define st_ctime  st_ctim.tv_sec
+
+#define st_birthtime  st_birthtim.tv_sec
+#define st_checktime  st_checktim.tv_sec
 
 #define	S_ISUID	0004000			/* set user id on execution */
 #define	S_ISGID	0002000			/* set group id on execution */
