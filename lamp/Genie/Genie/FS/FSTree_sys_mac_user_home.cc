@@ -113,7 +113,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_mac_user_home::ResolveLink() const
 	{
-		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
+		return FSTreeFromFSDirSpec( GetUserHomeFolder(), false );
 	}
 	
 	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr& parent, const std::string& name )

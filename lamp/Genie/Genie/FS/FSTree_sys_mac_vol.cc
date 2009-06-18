@@ -451,7 +451,9 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const
 			{
-				return FSTreeFromFSDirSpec( N::FindFolder( itsKey, itsType, false ) );
+				const bool onServer = VolumeIsOnServer( itsKey );
+				
+				return FSTreeFromFSDirSpec( N::FindFolder( itsKey, itsType, false ), onServer );
 			}
 	};
 	
@@ -488,7 +490,7 @@ namespace Genie
 		
 		FSSpec volume = MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		
-		return FSTreeFromFSSpec( volume );
+		return FSTreeFromFSSpec( volume, VolumeIsOnServer( key ) );
 	}
 	
 	static FSTreePtr Drive_Link_Factory( const FSTreePtr&    parent,
