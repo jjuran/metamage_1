@@ -52,6 +52,24 @@ namespace Genie
 	
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
 	
+	// Async read
+	SInt32 FSRead( MacIO::EOF_Policy  policy,
+	               N::FSFileRefNum    file,
+	               N::FSIOPosMode     positionMode,
+	               SInt32             positionOffset,
+	               SInt32             requestCount,
+	               void              *buffer )
+	{
+		return MacIO::FSRead( policy,
+		                      file,
+		                      positionMode,
+		                      positionOffset,
+		                      requestCount,
+		                      buffer,
+		                      CALLBACK,
+		                      gWakeUp );
+	}
+	
 	// Async read, throws eofErr on hitting EOF
 	SInt32 FSRead( N::FSFileRefNum  file,
 	               N::FSIOPosMode   positionMode,
@@ -60,14 +78,14 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_Always  policy )
 	{
-		return MacIO::FSRead( MacIO::kThrowEOF_Always,
-		                      file,
-		                      positionMode,
-		                      positionOffset,
-		                      requestCount,
-		                      buffer,
-		                      CALLBACK,
-		                      gWakeUp );
+		return FSRead( MacIO::kThrowEOF_Always,
+		               file,
+		               positionMode,
+		               positionOffset,
+		               requestCount,
+		               buffer,
+		               CALLBACK,
+		               gWakeUp );
 	}
 	
 	// Async read, throws eofErr if starting at EOF
@@ -78,14 +96,14 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_OnZero  policy )
 	{
-		return MacIO::FSRead( MacIO::kThrowEOF_OnZero,
-		                      file,
-		                      positionMode,
-		                      positionOffset,
-		                      requestCount,
-		                      buffer,
-		                      CALLBACK,
-		                      gWakeUp );
+		return FSRead( MacIO::kThrowEOF_OnZero,
+		               file,
+		               positionMode,
+		               positionOffset,
+		               requestCount,
+		               buffer,
+		               CALLBACK,
+		               gWakeUp );
 	}
 	
 	// Async read, returns zero
@@ -96,14 +114,14 @@ namespace Genie
 	               void *           buffer,
 	               ThrowEOF_Never   policy )
 	{
-		return MacIO::FSRead( MacIO::kThrowEOF_Never,
-		                      file,
-		                      positionMode,
-		                      positionOffset,
-		                      requestCount,
-		                      buffer,
-		                      CALLBACK,
-		                      gWakeUp );
+		return FSRead( MacIO::kThrowEOF_Never,
+		               file,
+		               positionMode,
+		               positionOffset,
+		               requestCount,
+		               buffer,
+		               CALLBACK,
+		               gWakeUp );
 	}
 	
 	
