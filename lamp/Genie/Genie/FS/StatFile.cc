@@ -153,6 +153,9 @@ namespace Genie
 		sb->st_mtime =                                       hFileInfo.ioFlMdDat  - timeDiff;
 		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
 		sb->st_ctime = (is_rsrc_fork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
+		
+		sb->st_birthtim.tv_sec = hFileInfo.ioFlCrDat - timeDiff;
+		sb->st_checktim.tv_sec = hFileInfo.ioFlBkDat - timeDiff;
 	}
 	
 	
