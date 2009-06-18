@@ -1392,7 +1392,7 @@ namespace Genie
 		
 		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
 		
-		const bool async = !RunningInClassic::Test();
+		const bool async = !TARGET_CPU_68K && !RunningInClassic::Test();
 		
 		if ( async )
 		{
@@ -1644,7 +1644,8 @@ namespace Genie
 		
 		ASSERT( begin < end );
 		
-		if (     name_is_special( begin, std::find( begin, end, '/' ) )
+		if (     TARGET_CPU_68K
+		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  RunningInClassic::Test() )
 		{
 			// Special handling required for

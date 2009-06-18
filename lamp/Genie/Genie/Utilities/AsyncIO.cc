@@ -618,7 +618,7 @@ namespace Genie
 		// the completion routine only delays the crash instead of avoiding it.
 		// Apparently this is a bug in the .BlueBoxShared driver.
 		
-		if ( RunningInClassic::Test() )
+		if ( TARGET_CPU_68K  ||  RunningInClassic::Test() )
 		{
 			return N::FSpGetCatInfo< Policy >( pb, vRefNum, dirID, name, index );
 		}
