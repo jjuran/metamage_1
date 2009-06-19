@@ -140,6 +140,8 @@ namespace Pedestal
 	
 	void AdjustSleepForActivity();
 	
+	void ScheduleImmediateEventCheck();
+	
 }
 
 #endif

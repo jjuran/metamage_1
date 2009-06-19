@@ -772,8 +772,15 @@ namespace Pedestal
 	#endif
 	}
 	
+	static bool gEventCheckNeeded = false;
+	
 	static bool ReadyToWaitForEvents()
 	{
+		if ( gEventCheckNeeded )
+		{
+			return true;
+		}
+		
 		UInt32 minTicksBetweenWNE = 2;
 		
 		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
@@ -841,6 +848,8 @@ namespace Pedestal
 						gWokenUp = false;
 						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
+						
+						gEventCheckNeeded = false;
 						
 						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
@@ -1015,6 +1024,11 @@ namespace Pedestal
 	void AdjustSleepForActivity()
 	{
 		gRunState.activelyBusy = true;
+	}
+	
+	void ScheduleImmediateEventCheck()
+	{
+		gEventCheckNeeded = true;
 	}
 	
 }
