@@ -78,63 +78,6 @@ namespace Genie
 		                              buffer );
 	}
 	
-	// Async read, throws eofErr on hitting EOF
-	SInt32 FSRead( N::FSFileRefNum  file,
-	               N::FSIOPosMode   positionMode,
-	               SInt32           positionOffset,
-	               SInt32           requestCount,
-	               void *           buffer,
-	               ThrowEOF_Always  policy )
-	{
-		return FSRead( MacIO::kThrowEOF_Always,
-		               file,
-		               positionMode,
-		               positionOffset,
-		               requestCount,
-		               buffer,
-		               CALLBACK,
-		               gWakeUp,
-		               true );
-	}
-	
-	// Async read, throws eofErr if starting at EOF
-	SInt32 FSRead( N::FSFileRefNum  file,
-	               N::FSIOPosMode   positionMode,
-	               SInt32           positionOffset,
-	               SInt32           requestCount,
-	               void *           buffer,
-	               ThrowEOF_OnZero  policy )
-	{
-		return FSRead( MacIO::kThrowEOF_OnZero,
-		               file,
-		               positionMode,
-		               positionOffset,
-		               requestCount,
-		               buffer,
-		               CALLBACK,
-		               gWakeUp,
-		               true );
-	}
-	
-	// Async read, returns zero
-	SInt32 FSRead( N::FSFileRefNum  file,
-	               N::FSIOPosMode   positionMode,
-	               SInt32           positionOffset,
-	               SInt32           requestCount,
-	               void *           buffer,
-	               ThrowEOF_Never   policy )
-	{
-		return FSRead( MacIO::kThrowEOF_Never,
-		               file,
-		               positionMode,
-		               positionOffset,
-		               requestCount,
-		               buffer,
-		               CALLBACK,
-		               gWakeUp,
-		               true );
-	}
-	
 	
 	SInt32 FSWrite( N::FSFileRefNum  file,
 	                N::FSIOPosMode   positionMode,
