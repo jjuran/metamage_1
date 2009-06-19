@@ -15,7 +15,9 @@
 #include "MacIO/FSMakeFSSpec_Async.hh"
 #include "MacIO/FSpOpen_Async.hh"
 #include "MacIO/FSRead_Async.hh"
+#include "MacIO/FSRead_Sync.hh"
 #include "MacIO/FSWrite_Async.hh"
+#include "MacIO/FSWrite_Sync.hh"
 #include "MacIO/GetCatInfo_Async.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
@@ -52,22 +54,28 @@ namespace Genie
 	
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
 	
-	// Async read
 	SInt32 FSRead( MacIO::EOF_Policy  policy,
 	               N::FSFileRefNum    file,
 	               N::FSIOPosMode     positionMode,
 	               SInt32             positionOffset,
 	               SInt32             requestCount,
-	               void              *buffer )
+	               void              *buffer,
+	               bool               async )
 	{
-		return MacIO::FSRead( policy,
-		                      file,
-		                      positionMode,
-		                      positionOffset,
-		                      requestCount,
-		                      buffer,
-		                      CALLBACK,
-		                      gWakeUp );
+		return async ? MacIO::FSRead( policy,
+		                              file,
+		                              positionMode,
+		                              positionOffset,
+		                              requestCount,
+		                              buffer,
+		                              CALLBACK,
+		                              gWakeUp )
+		             : MacIO::FSRead( policy,
+		                              file,
+		                              positionMode,
+		                              positionOffset,
+		                              requestCount,
+		                              buffer );
 	}
 	
 	// Async read, throws eofErr on hitting EOF
@@ -85,7 +93,8 @@ namespace Genie
 		               requestCount,
 		               buffer,
 		               CALLBACK,
-		               gWakeUp );
+		               gWakeUp,
+		               true );
 	}
 	
 	// Async read, throws eofErr if starting at EOF
@@ -103,7 +112,8 @@ namespace Genie
 		               requestCount,
 		               buffer,
 		               CALLBACK,
-		               gWakeUp );
+		               gWakeUp,
+		               true );
 	}
 	
 	// Async read, returns zero
@@ -121,24 +131,30 @@ namespace Genie
 		               requestCount,
 		               buffer,
 		               CALLBACK,
-		               gWakeUp );
+		               gWakeUp,
+		               true );
 	}
 	
 	
-	// Async write
 	SInt32 FSWrite( N::FSFileRefNum  file,
 	                N::FSIOPosMode   positionMode,
 	                SInt32           positionOffset,
 	                SInt32           requestCount,
-	                const void *     buffer )
+	                const void *     buffer,
+	                bool             async )
 	{
-		return MacIO::FSWrite( file,
-		                       positionMode,
-		                       positionOffset,
-		                       requestCount,
-		                       buffer,
-		                       CALLBACK,
-		                       gWakeUp );
+		return async ? MacIO::FSWrite( file,
+		                               positionMode,
+		                               positionOffset,
+		                               requestCount,
+		                               buffer,
+		                               CALLBACK,
+		                               gWakeUp )
+		             : MacIO::FSWrite( file,
+		                               positionMode,
+		                               positionOffset,
+		                               requestCount,
+		                               buffer );
 	}
 	
 	
@@ -146,6 +162,7 @@ namespace Genie
 	typename Policy::Result
 	//
 	FSpGetCatInfo( CInfoPBRec&        pb,
+	               bool               async,
 	               N::FSVolumeRefNum  vRefNum,
 	               N::FSDirID         dirID,
 	               unsigned char*     name,
@@ -177,7 +194,7 @@ namespace Genie
 		// the completion routine only delays the crash instead of avoiding it.
 		// Apparently this is a bug in the .BlueBoxShared driver.
 		
-		if ( TARGET_CPU_68K  ||  RunningInClassic::Test() )
+		if ( TARGET_CPU_68K  ||  !async  ||  RunningInClassic::Test() )
 		{
 			return MacIO::GetCatInfo< Policy >( pb, vRefNum, dirID, name, index );
 		}
@@ -193,6 +210,7 @@ namespace Genie
 	
 	template
 	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&        pb,
+	                                  bool               async,
 	                                  N::FSVolumeRefNum  vRefNum,
 	                                  N::FSDirID         dirID,
 	                                  unsigned char*     name,
@@ -200,6 +218,7 @@ namespace Genie
 	
 	template
 	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&        pb,
+	                                   bool               async,
 	                                   N::FSVolumeRefNum  vRefNum,
 	                                   N::FSDirID         dirID,
 	                                   unsigned char*     name,

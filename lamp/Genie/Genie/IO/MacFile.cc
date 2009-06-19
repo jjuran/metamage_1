@@ -22,7 +22,7 @@ namespace Genie
 	class MacFileHandle : public RegularFileHandle
 	{
 		private:
-			typedef FSTreePtr (*FileGetter)( const FSSpec& );
+			typedef FSTreePtr (*FileGetter)( const FSSpec&, bool );
 			
 			Nucleus::Shared< Nitrogen::FSFileRefNum >  itsRefNum;
 			FileGetter                                 itsFileGetter;
@@ -86,7 +86,9 @@ namespace Genie
 	
 	FSTreePtr MacFileHandle::GetFile()
 	{
-		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
+		const bool async = GetFlags() & O_MAC_ASYNC;
+		
+		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ), async );
 	}
 	
 	boost::shared_ptr< IOHandle > MacFileHandle::Clone()
@@ -98,12 +100,15 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
 	{
-		ssize_t read = FSRead( itsRefNum,
+		const bool async = GetFlags() & O_MAC_ASYNC;
+		
+		ssize_t read = FSRead( MacIO::kThrowEOF_Never,
+		                       itsRefNum,
 		                       N::fsFromStart,
 		                       offset,
 		                       byteCount,
 		                       data,
-		                       ThrowEOF_Never() );
+		                       async );
 		
 		return read;
 	}
@@ -111,6 +116,7 @@ namespace Genie
 	ssize_t MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		const bool appending = GetFlags() & O_APPEND;
+		const bool async     = GetFlags() & O_MAC_ASYNC;
 		
 		const N::FSIOPosMode  mode   = appending ? N::fsFromLEOF : N::fsFromStart;
 		const SInt32          offset = appending ? 0             : GetFileMark();
@@ -119,7 +125,8 @@ namespace Genie
 		                           mode,
 		                           offset,
 		                           byteCount,
-		                           data );
+		                           data,
+		                           async );
 		
 		return Advance( written );
 	}

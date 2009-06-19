@@ -93,7 +93,8 @@ namespace Genie
 		return mode;
 	}
 	
-	void Stat_HFS( struct ::stat*            sb,
+	void Stat_HFS( bool                      async,
+	               struct ::stat*            sb,
 	               Nitrogen::FSVolumeRefNum  vRefNum,
 	               Nitrogen::FSDirID         dirID,
 	               const unsigned char*      name,
@@ -105,7 +106,7 @@ namespace Genie
 		
 		CInfoPBRec cInfo = { 0 };
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, vRefNum, dirID, name_copy );
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, async, vRefNum, dirID, name_copy );
 		
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		

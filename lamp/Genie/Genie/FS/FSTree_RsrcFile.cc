@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_RsrcFile.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
@@ -19,11 +22,15 @@ namespace Genie
 	class FSTree_RsrcFile : public FSTree
 	{
 		private:
-			FSSpec itsFileSpec;
+			FSSpec  itsFileSpec;
+			bool    itIsOnServer;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file ) : FSTree( FSTreeFromFSSpec( file ), "rsrc" ),
-			                                        itsFileSpec( file )
+			FSTree_RsrcFile( const FSSpec& file, bool onServer )
+			:
+				FSTree( FSTreeFromFSSpec( file, onServer ), "rsrc" ),
+				itsFileSpec( file ),
+				itIsOnServer( onServer )
 			{
 			}
 			
@@ -31,6 +38,8 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
+				flags |= itIsOnServer ? O_MAC_ASYNC : 0;
+				
 				return OpenMacFileHandle( itsFileSpec,
 				                          flags,
 				                          &Genie::FSpOpenRF,
@@ -39,15 +48,15 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
+	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer )
 	{
-		return FSTreePtr( new FSTree_RsrcFile( file ) );
+		return FSTreePtr( new FSTree_RsrcFile( file, onServer ) );
 	}
 	
 	
 	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
 	{
-		StatFile( itsFileSpec, &sb, true );
+		StatFile( itIsOnServer, itsFileSpec, &sb, true );
 	}
 	
 }

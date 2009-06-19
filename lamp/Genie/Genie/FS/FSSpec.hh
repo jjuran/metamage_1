@@ -32,9 +32,9 @@ namespace Genie
 	
 	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file );
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
+	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer );
 	
-	FSTreePtr FSTreeFromFSDirSpec( const Nitrogen::FSDirSpec& dir );
+	FSTreePtr FSTreeFromFSDirSpec( const Nitrogen::FSDirSpec& dir, bool onServer );
 	
 }
 
