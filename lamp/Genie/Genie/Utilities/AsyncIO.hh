@@ -10,6 +10,7 @@
 #include "Nitrogen/Files.h"
 
 // MacIO
+#include "MacIO/EOF_Policy.hh"
 #include "MacIO/ThrowOSStatus.hh"
 
 // Genie
@@ -28,6 +29,13 @@ namespace Genie
 	
 	
 	// Async read
+	SInt32 FSRead( MacIO::EOF_Policy       policy,
+	               Nitrogen::FSFileRefNum  file,
+	               Nitrogen::FSIOPosMode   positionMode,
+	               SInt32                  positionOffset,
+	               SInt32                  requestCount,
+	               void *                  buffer );
+	
 	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
 	               Nitrogen::FSIOPosMode   positionMode,
 	               SInt32                  positionOffset,
@@ -48,6 +56,7 @@ namespace Genie
 	               SInt32                  requestCount,
 	               void *                  buffer,
 	               ThrowEOF_Never          policy );
+	
 	
 	// Async write
 	SInt32 FSWrite( Nitrogen::FSFileRefNum  file,
