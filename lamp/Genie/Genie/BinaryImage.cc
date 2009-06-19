@@ -11,6 +11,10 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
+// MacIO
+#include "MacIO/FSRead_Sync.hh"
+#include "MacIO/GetCatInfo_Sync.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -114,7 +118,7 @@ namespace Genie
 	{
 		CInfoPBRec pb = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( pb, file );
+		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
@@ -206,7 +210,7 @@ namespace Genie
 		
 		// Handle no longer used here
 		
-		NN::Owned< N::FSFileRefNum > refNum = Genie::FSpOpenDF( file, N::fsRdPerm );
+		NN::Owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		if ( length == kCFragGoesToEOF )
 		{
@@ -224,7 +228,12 @@ namespace Genie
 		
 		N::HLockHi( data );
 		
-		FSRead( refNum, N::fsFromStart, offset, length, *data.Get().Get(), ThrowEOF_Always() );
+		MacIO::FSRead( MacIO::kThrowEOF_Always,
+		               refNum,
+		               N::fsFromStart,
+		               offset,
+		               length,
+		               *data.Get().Get() );
 		
 		return data;
 	}

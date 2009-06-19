@@ -37,6 +37,9 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
+// MacIO
+#include "MacIO/FSMakeFSSpec_Sync.hh"
+
 // Backtrace
 #include "Backtrace/Backtrace.hh"
 
@@ -468,7 +471,7 @@ namespace Genie
 
 	static std::string GetMacPathname( const N::FSDirSpec& dir )
 	{
-		return GetMacPathname_Internal( FSMakeFSSpec< FNF_Throws >( dir, "\p" ) ) + ":";
+		return GetMacPathname_Internal( MacIO::FSMakeFSSpec< FNF_Throws >( dir, "\p" ) ) + ":";
 	}
 
 	static std::string GetMacPathname( const FSSpec& file )
@@ -539,9 +542,9 @@ namespace Genie
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
 			
-			NN::Owned< N::FSFileRefNum > script = Genie::FSpOpenDF( fileSpec, N::fsRdPerm );
+			NN::Owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
 			
-			size_t bytes = FSRead( script, 1024, data, ThrowEOF_Never() );
+			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
 			
 			N::FSClose( script );
 			

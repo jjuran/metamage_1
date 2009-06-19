@@ -34,6 +34,10 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
+// MacIO
+#include "MacIO/FSMakeFSSpec_Sync.hh"
+#include "MacIO/GetCatInfo_Sync.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -83,7 +87,7 @@ namespace Genie
 		
 		inline FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
 		{
-			return Genie::FSMakeFSSpec< FNF_Returns >( dir, name );
+			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
 		}
 		
 		inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
@@ -217,7 +221,7 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
+		MacIO::GetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
 		
 		paramBlock.hFileInfo.ioDirID = dirID;
 		
@@ -268,7 +272,7 @@ namespace Genie
 		
 		CInfoPBRec paramBlock;
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
+		MacIO::GetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
 		
 		paramBlock.hFileInfo.ioDirID = dirID;
 		
@@ -297,10 +301,10 @@ namespace Genie
 		
 		// Try current directory first
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo,
-		                                                  N::FSVolumeRefNum(),
-		                                                  N::FSDirID(),
-		                                                  name );
+		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
+		                                                      N::FSVolumeRefNum(),
+		                                                      N::FSDirID(),
+		                                                      name );
 		
 		if ( exists )
 		{
@@ -311,10 +315,10 @@ namespace Genie
 			// Then root, or bust
 			N::FSDirSpec root = io::system_root< N::FSDirSpec >();
 			
-			FSpGetCatInfo< FNF_Throws >( cInfo,
-			                             root.vRefNum,
-			                             root.dirID,
-			                             name );
+			MacIO::GetCatInfo< FNF_Throws >( cInfo,
+			                                 root.vRefNum,
+			                                 root.dirID,
+			                                 name );
 		}
 		
 		return Dir_From_CInfo( cInfo );
@@ -350,7 +354,7 @@ namespace Genie
 		
 		static FSSpec FSSpecFromKey( const Key& key )
 		{
-			return FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
+			return MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		}
 		
 		static std::string NameFromKey( const Key& key )
@@ -645,7 +649,7 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
 	{
-		return FSTreeFromFSSpec( FSMakeFSSpec< FNF_Throws >( dir, NULL ) );
+		return FSTreeFromFSSpec( MacIO::FSMakeFSSpec< FNF_Throws >( dir, NULL ) );
 	}
 	
 	
@@ -875,7 +879,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, file );
+		MacIO::GetCatInfo< FNF_Throws >( cInfo, file );
 		
 		bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		
@@ -1418,14 +1422,14 @@ namespace Genie
 			
 			if ( async )
 			{
-				N::PBGetCatInfoAsync( pb, FNF_Returns() );
+				N::PBGetCatInfoAsync( pb, N::FNF_Returns() );
 				
 				while ( !pb.done )
 				{
 					AsyncYield();
 				}
 			}
-			else if ( const bool exists = N::PBGetCatInfoSync( pb, FNF_Returns() ) )
+			else if ( const bool exists = N::PBGetCatInfoSync( pb, N::FNF_Returns() ) )
 			{
 				pb.items[ 0 ].id = N::FSDirID( pb.dirInfo.ioDrDirID );
 				
@@ -1608,7 +1612,7 @@ namespace Genie
 		cInfo.end   = end;
 		cInfo.done  = false;
 		
-		N::PBGetCatInfoAsync( cInfo, FNF_Returns() );
+		N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
 		
 		while ( !cInfo.done )
 		{
