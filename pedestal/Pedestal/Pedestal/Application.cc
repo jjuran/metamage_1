@@ -814,6 +814,14 @@ namespace Pedestal
 	{
 		UInt32 ticksToSleep = gRunState.maxTicksToSleep;
 		
+		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
+		// at most one tick.
+		
+		if ( gRunState.activelyBusy )
+		{
+			ticksToSleep = 1;
+		}
+		
 		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
 		
 		return nextEvent;
@@ -837,11 +845,6 @@ namespace Pedestal
 					CheckKeyboard();
 					
 					N::YieldToAnyThread();
-					
-					if ( gRunState.activelyBusy )
-					{
-						AdjustSleepForTimer( 1 );  // sleep only this long if busy
-					}
 					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
