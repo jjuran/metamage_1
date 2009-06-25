@@ -88,7 +88,6 @@ namespace Pedestal
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
-		UInt32 maxTicksToSleep;
 		
 		bool inForeground;     // set to true when the app is frontmost
 		bool startupComplete;  // set to true once the app is ready to respond to events
@@ -98,7 +97,6 @@ namespace Pedestal
 		
 		RunState()
 		:
-			maxTicksToSleep           ( 0 ),
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
 			activelyBusy   ( false ),
@@ -823,7 +821,7 @@ namespace Pedestal
 	{
 		const UInt32 now = ::LMGetTicks();
 		
-		UInt32 ticksToSleep = gRunState.maxTicksToSleep;
+		UInt32 ticksToSleep = 0x7FFFFFFF;
 		
 		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
 		// at most one tick.
@@ -869,7 +867,6 @@ namespace Pedestal
 						
 						gEventCheckNeeded = false;
 						
-						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
 						gTickCountAtLastContextSwitch = ::LMGetTicks();
 						
@@ -881,9 +878,7 @@ namespace Pedestal
 						{
 							DispatchEvent( event );
 							
-							// Always idle after an event, but wait a tick so we
-							// don't idle between auto-key events.
-							gRunState.maxTicksToSleep = 1;
+							gEventCheckNeeded = true;
 						}
 						else if ( gRunState.quitRequested )
 						{
