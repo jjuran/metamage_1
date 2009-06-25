@@ -817,6 +817,15 @@ namespace Pedestal
 		}
 	}
 	
+	static EventRecord GetAnEvent()
+	{
+		UInt32 ticksToSleep = gRunState.maxTicksToSleep;
+		
+		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
+		
+		return nextEvent;
+	}
+	
 	void Application::EventLoop()
 	{
 		// Use two levels of looping.
@@ -843,7 +852,7 @@ namespace Pedestal
 					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
-						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
+						EventRecord event = GetAnEvent();
 						
 						gEventCheckNeeded = false;
 						
