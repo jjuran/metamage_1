@@ -817,8 +817,12 @@ namespace Pedestal
 		}
 	}
 	
+	static UInt32 gTicksAtNextBusiness = 0;
+	
 	static EventRecord GetAnEvent()
 	{
+		const UInt32 now = ::LMGetTicks();
+		
 		UInt32 ticksToSleep = gRunState.maxTicksToSleep;
 		
 		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
@@ -828,6 +832,12 @@ namespace Pedestal
 		{
 			ticksToSleep = 1;
 		}
+		
+		gTicksAtNextBusiness = std::max( gTicksAtNextBusiness, now );
+		
+		ticksToSleep = std::min( ticksToSleep, gTicksAtNextBusiness - now );
+		
+		gTicksAtNextBusiness = 0xffffffff;
 		
 		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
 		
@@ -1006,9 +1016,11 @@ namespace Pedestal
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
 	{
-		if ( ticksToSleep < gRunState.maxTicksToSleep )
+		const UInt32 businessTime = ::LMGetTicks() + ticksToSleep;
+		
+		if ( businessTime < gTicksAtNextBusiness )
 		{
-			gRunState.maxTicksToSleep = ticksToSleep;
+			gTicksAtNextBusiness = businessTime;
 		}
 	}
 	
