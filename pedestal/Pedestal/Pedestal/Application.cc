@@ -77,8 +77,6 @@ namespace Pedestal
 	// Save our PSN so we can wake up at interrupt time.
 	static N::ProcessSerialNumber gPSN = N::GetCurrentProcess();
 	
-	static volatile bool gWokenUp = false;
-	
 	
 	using N::kCoreEventClass;
 	using N::kAEQuitApplication;
@@ -838,28 +836,11 @@ namespace Pedestal
 					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
-						gWokenUp = false;
-						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
-						// WakeUpProcess() forces a null event.
-						// If I/O is fast enough, this happens on every call
-						// to WaitNextEvent(), and real events remain unprocessed
-						// unless we check for this.
-						
-						if ( gWokenUp )
-						{
-							gRunState.maxTicksToSleep = 1;
-						}
-						
-						if ( !gWokenUp )
-						{
-							gTickCountAtLastContextSwitch = ::LMGetTicks();
-						}
-						
-						gWokenUp = false;
+						gTickCountAtLastContextSwitch = ::LMGetTicks();
 						
 						CheckShiftSpaceQuasiMode( event );
 						
@@ -1000,8 +981,6 @@ namespace Pedestal
 		}
 		
 		::WakeUpProcess( &gPSN );
-		
-		gWokenUp = true;
 	}
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
