@@ -817,6 +817,8 @@ namespace Pedestal
 	
 	static UInt32 gTicksAtNextBusiness = 0;
 	
+	static bool gIdleNeeded = false;
+	
 	static EventRecord GetAnEvent()
 	{
 		const UInt32 now = ::LMGetTicks();
@@ -827,6 +829,10 @@ namespace Pedestal
 		// at most one tick.
 		
 		if ( gRunState.activelyBusy )
+		{
+			ticksToSleep = 1;
+		}
+		else if ( gIdleNeeded )
 		{
 			ticksToSleep = 1;
 		}
@@ -879,6 +885,8 @@ namespace Pedestal
 							DispatchEvent( event );
 							
 							gEventCheckNeeded = true;
+							
+							gIdleNeeded = true;
 						}
 						else if ( gRunState.quitRequested )
 						{
@@ -889,6 +897,8 @@ namespace Pedestal
 						else
 						{
 							GiveIdleTimeToWindows( event );
+							
+							gIdleNeeded = false;
 						}
 					}
 				}
