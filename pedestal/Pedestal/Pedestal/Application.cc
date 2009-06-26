@@ -815,6 +815,10 @@ namespace Pedestal
 		}
 	}
 	
+	static const UInt32 gMaxTicksBetweenNonZeroSleeps = 30;
+	
+	static UInt32 gTicksAtLastTrueSleep = 0;
+	
 	static UInt32 gTicksAtNextBusiness = 0;
 	
 	static bool gIdleNeeded = false;
@@ -826,11 +830,13 @@ namespace Pedestal
 		UInt32 ticksToSleep = 0x7FFFFFFF;
 		
 		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
-		// at most one tick.
+		// at most one tick, and that only if it's been a while since.
 		
 		if ( gRunState.activelyBusy )
 		{
-			ticksToSleep = 1;
+			const bool nonzero = now >= gTicksAtLastTrueSleep + gMaxTicksBetweenNonZeroSleeps;
+			
+			ticksToSleep = nonzero ? 1 : 0;  // (little to) no sleep for the busy
 		}
 		else if ( gIdleNeeded )
 		{
@@ -844,6 +850,11 @@ namespace Pedestal
 		gTicksAtNextBusiness = 0xffffffff;
 		
 		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
+		
+		if ( ticksToSleep > 0 )
+		{
+			gTicksAtLastTrueSleep = ::LMGetTicks();
+		}
 		
 		return nextEvent;
 	}
