@@ -78,6 +78,11 @@ static inline int futimens( int fd, const struct timespec times[2] )
 namespace poseven
 {
 	
+	inline void futimens( fd_t fd, const timespec times[2] )
+	{
+		throw_posix_result( ::futimens( fd, times ) );
+	}
+	
 	inline void futimens( fd_t fd, const timespec& mod )
 	{
 		struct timespec times[2] = { { 0, UTIME_OMIT }, mod };
@@ -168,6 +173,20 @@ namespace tool
 		return filter_file( filename ) || filter_directory( filename );
 	}
 	
+	
+	static inline void store_modification_dates( p7::fd_t fd, time_t local, time_t remote )
+	{
+		// Store the modification dates of the local and remote files as the
+		// modification and backup/archive/checkpoint dates of the base file.
+		
+	#ifdef UTIME_ARCHIVE
+		
+		struct timespec times[2] =  { { remote, UTIME_ARCHIVE }, { local, 0 } };
+		
+		p7::futimens( fd, times );
+		
+	#endif
+	}
 	
 	static inline void copy_modification_date( p7::fd_t in, p7::fd_t out )
 	{
