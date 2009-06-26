@@ -215,8 +215,6 @@ namespace tool
 		
 		p7::pump( in, out );
 		
-		copy_modification_date( in, out );
-		
 		p7::close( out );
 	}
 	
@@ -355,13 +353,19 @@ namespace tool
 			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly );
 			
 			time_t a_time = p7::fstat( a_fd ).st_mtime;
-			time_t b_time = p7::fstat( b_fd ).st_mtime;
 			time_t c_time = p7::fstat( c_fd ).st_mtime;
 			
-			if ( a_time == b_time  &&  c_time == b_time )
+			const struct stat b_stat = p7::fstat( b_fd );
+			
+		#ifdef __LAMP__
+			
+			if ( b_stat.st_mtime == a_time  &&  b_stat.st_checktime == c_time )
 			{
 				return;
 			}
+			
+		#endif
+			
 		}
 		
 		bool a_matches_b = b_exists;
@@ -377,6 +381,8 @@ namespace tool
 		
 		if ( a_matches_b && b_matches_c )
 		{
+			store_modification_dates( b_fd, p7::fstat( a_fd ).st_mtime, p7::fstat( c_fd ).st_mtime );
+			
 			return;
 		}
 		
@@ -422,8 +428,6 @@ namespace tool
 			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc );
 			
 			p7::pump( from_fd, to_fd );
-			
-			copy_modification_date( from_fd, to_fd );
 		}
 		else
 		{
@@ -451,7 +455,7 @@ namespace tool
 		
 		p7::pump( a_fd, b_fd );
 		
-		copy_modification_date( a_fd, b_fd );
+		store_modification_dates( b_fd, p7::fstat( a_fd ).st_mtime, p7::fstat( c_fd ).st_mtime );
 		
 		if ( b_exists )
 		{
