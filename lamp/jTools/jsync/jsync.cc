@@ -451,11 +451,15 @@ namespace tool
 	                              const std::string&  subpath,
 	                              const std::string&  filename )
 	{
-		const bool b_exists = io::item_exists( b_dirfd, filename );
+		struct stat a_stat, b_stat, c_stat;
 		
-		bool a_is_dir = io::directory_exists( a_dirfd, filename );
-		bool b_is_dir = io::directory_exists( b_dirfd, filename );
-		bool c_is_dir = io::directory_exists( c_dirfd, filename );
+		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat );
+		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat );
+		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat );
+		
+		const bool a_is_dir = a_exists && S_ISDIR( a_stat.st_mode );
+		const bool b_is_dir = b_exists && S_ISDIR( b_stat.st_mode );
+		const bool c_is_dir = c_exists && S_ISDIR( c_stat.st_mode );
 		
 		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_exists || a_is_dir == b_is_dir) )
 		{
