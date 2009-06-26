@@ -71,8 +71,6 @@ static inline int futimens( int fd, const struct timespec times[2] )
 
 #define UTIME_OMIT 0
 
-#define st_mtim st_mtimespec
-
 #endif
 
 namespace poseven
@@ -184,21 +182,6 @@ namespace tool
 		struct timespec times[2] =  { { remote, UTIME_ARCHIVE }, { local, 0 } };
 		
 		p7::futimens( fd, times );
-		
-	#endif
-	}
-	
-	static inline void copy_modification_date( p7::fd_t in, p7::fd_t out )
-	{
-		// Copy the modification date
-		
-	#ifdef st_mtime
-		
-		p7::futimens( out, p7::fstat( in ).st_mtim );
-		
-	#else
-		
-		p7::futimens( out, p7::fstat( in ).st_mtime );
 		
 	#endif
 	}
