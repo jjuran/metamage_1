@@ -409,13 +409,13 @@ namespace tool
 			
 			struct stat& to_stat = a_matches_b ? a_stat : c_stat;
 			
-			p7::lseek( from_fd, 0 );
-			
 			p7::close( to_fd );
 			
 			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc );
 			
-			p7::pump( from_fd, to_fd );
+			off_t from_offset = 0;
+			
+			p7::pump( from_fd, &from_offset, to_fd );
 			
 			to_stat = p7::fstat( to_fd );
 		}
@@ -432,7 +432,6 @@ namespace tool
 		// A and C match, but B is out of date
 		
 		// copy a to b
-		p7::lseek( a_fd, 0 );
 		
 		if ( b_exists )
 		{
@@ -443,7 +442,9 @@ namespace tool
 		
 		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
 		
-		p7::pump( a_fd, b_fd );
+		off_t from_offset = 0;
+		
+		p7::pump( a_fd, &from_offset, b_fd );
 		
 		store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
 		
