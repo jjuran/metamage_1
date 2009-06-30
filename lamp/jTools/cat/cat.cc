@@ -68,7 +68,7 @@ namespace tool
 			{
 				NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 				
-				p7::pump( fd, NULL, p7::stdout_fileno, NULL, 0 );
+				p7::pump( fd, p7::stdout_fileno );
 			}
 			catch ( const p7::errno_t& error )
 			{
