@@ -132,15 +132,15 @@ namespace tool
 	
 	static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 	{
-		// Start at the beginning of each file
-		p7::lseek( in,  0 );
-		p7::lseek( out, 0 );
-		
 		// Truncate the destinaton so we don't get leftover garbage
 		p7::ftruncate( out, 0 );
 		
+		// Start at the beginning of each file
+		off_t from_offset = 0;
+		off_t to_offset   = 0;
+		
 		// Read/write until EOF
-		p7::pump( in, out );
+		p7::pump( in, &from_offset, out, &to_offset );
 	}
 	
 	static void CommitFileEdits( p7::fd_t  edited_file_stream,
