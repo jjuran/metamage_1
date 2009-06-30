@@ -247,9 +247,9 @@ namespace tool
 			
 			if ( monitor )
 			{
-				std::swap( output, previous );
+				p7::ftruncate( p7::stdout_fileno, output.size() );
 				
-				p7::ftruncate( p7::stdout_fileno, p7::lseek( p7::stdout_fileno ) );
+				std::swap( output, previous );
 				
 				p7::lseek( p7::stdout_fileno, 0 );
 			}
