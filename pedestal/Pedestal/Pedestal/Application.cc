@@ -77,8 +77,6 @@ namespace Pedestal
 	// Save our PSN so we can wake up at interrupt time.
 	static N::ProcessSerialNumber gPSN = N::GetCurrentProcess();
 	
-	static volatile bool gWokenUp = false;
-	
 	
 	using N::kCoreEventClass;
 	using N::kAEQuitApplication;
@@ -90,7 +88,6 @@ namespace Pedestal
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
-		UInt32 maxTicksToSleep;
 		
 		bool inForeground;     // set to true when the app is frontmost
 		bool startupComplete;  // set to true once the app is ready to respond to events
@@ -100,7 +97,6 @@ namespace Pedestal
 		
 		RunState()
 		:
-			maxTicksToSleep           ( 0 ),
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
 			activelyBusy   ( false ),
@@ -772,8 +768,15 @@ namespace Pedestal
 	#endif
 	}
 	
+	static bool gEventCheckNeeded = false;
+	
 	static bool ReadyToWaitForEvents()
 	{
+		if ( gEventCheckNeeded )
+		{
+			return true;
+		}
+		
 		UInt32 minTicksBetweenWNE = 2;
 		
 		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
@@ -812,6 +815,39 @@ namespace Pedestal
 		}
 	}
 	
+	static UInt32 gTicksAtNextBusiness = 0;
+	
+	static bool gIdleNeeded = false;
+	
+	static EventRecord GetAnEvent()
+	{
+		const UInt32 now = ::LMGetTicks();
+		
+		UInt32 ticksToSleep = 0x7FFFFFFF;
+		
+		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
+		// at most one tick.
+		
+		if ( gRunState.activelyBusy )
+		{
+			ticksToSleep = 1;
+		}
+		else if ( gIdleNeeded )
+		{
+			ticksToSleep = 1;
+		}
+		
+		gTicksAtNextBusiness = std::max( gTicksAtNextBusiness, now );
+		
+		ticksToSleep = std::min( ticksToSleep, gTicksAtNextBusiness - now );
+		
+		gTicksAtNextBusiness = 0xffffffff;
+		
+		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
+		
+		return nextEvent;
+	}
+	
 	void Application::EventLoop()
 	{
 		// Use two levels of looping.
@@ -831,35 +867,14 @@ namespace Pedestal
 					
 					N::YieldToAnyThread();
 					
-					if ( gRunState.activelyBusy )
-					{
-						AdjustSleepForTimer( 1 );  // sleep only this long if busy
-					}
-					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
-						gWokenUp = false;
+						EventRecord event = GetAnEvent();
 						
-						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
+						gEventCheckNeeded = false;
 						
-						gRunState.maxTicksToSleep = 0x7FFFFFFF;
 						
-						// WakeUpProcess() forces a null event.
-						// If I/O is fast enough, this happens on every call
-						// to WaitNextEvent(), and real events remain unprocessed
-						// unless we check for this.
-						
-						if ( gWokenUp )
-						{
-							gRunState.maxTicksToSleep = 1;
-						}
-						
-						if ( !gWokenUp )
-						{
-							gTickCountAtLastContextSwitch = ::LMGetTicks();
-						}
-						
-						gWokenUp = false;
+						gTickCountAtLastContextSwitch = ::LMGetTicks();
 						
 						CheckShiftSpaceQuasiMode( event );
 						
@@ -869,9 +884,9 @@ namespace Pedestal
 						{
 							DispatchEvent( event );
 							
-							// Always idle after an event, but wait a tick so we
-							// don't idle between auto-key events.
-							gRunState.maxTicksToSleep = 1;
+							gEventCheckNeeded = true;
+							
+							gIdleNeeded = true;
 						}
 						else if ( gRunState.quitRequested )
 						{
@@ -882,6 +897,8 @@ namespace Pedestal
 						else
 						{
 							GiveIdleTimeToWindows( event );
+							
+							gIdleNeeded = false;
 						}
 					}
 				}
@@ -1000,21 +1017,26 @@ namespace Pedestal
 		}
 		
 		::WakeUpProcess( &gPSN );
-		
-		gWokenUp = true;
 	}
 	
 	void AdjustSleepForTimer( UInt32 ticksToSleep )
 	{
-		if ( ticksToSleep < gRunState.maxTicksToSleep )
+		const UInt32 businessTime = ::LMGetTicks() + ticksToSleep;
+		
+		if ( businessTime < gTicksAtNextBusiness )
 		{
-			gRunState.maxTicksToSleep = ticksToSleep;
+			gTicksAtNextBusiness = businessTime;
 		}
 	}
 	
 	void AdjustSleepForActivity()
 	{
 		gRunState.activelyBusy = true;
+	}
+	
+	void ScheduleImmediateEventCheck()
+	{
+		gEventCheckNeeded = true;
 	}
 	
 }
