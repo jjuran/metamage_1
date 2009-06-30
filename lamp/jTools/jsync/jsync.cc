@@ -71,12 +71,15 @@ static inline int futimens( int fd, const struct timespec times[2] )
 
 #define UTIME_OMIT 0
 
-#define st_mtim st_mtimespec
-
 #endif
 
 namespace poseven
 {
+	
+	inline void futimens( fd_t fd, const timespec times[2] )
+	{
+		throw_posix_result( ::futimens( fd, times ) );
+	}
 	
 	inline void futimens( fd_t fd, const timespec& mod )
 	{
@@ -169,17 +172,16 @@ namespace tool
 	}
 	
 	
-	static inline void copy_modification_date( p7::fd_t in, p7::fd_t out )
+	static inline void store_modification_dates( p7::fd_t fd, time_t local, time_t remote )
 	{
-		// Copy the modification date
+		// Store the modification dates of the local and remote files as the
+		// modification and backup/archive/checkpoint dates of the base file.
 		
-	#ifdef st_mtime
+	#ifdef UTIME_ARCHIVE
 		
-		p7::futimens( out, p7::fstat( in ).st_mtim );
+		struct timespec times[2] =  { { remote, UTIME_ARCHIVE }, { local, 0 } };
 		
-	#else
-		
-		p7::futimens( out, p7::fstat( in ).st_mtime );
+		p7::futimens( fd, times );
 		
 	#endif
 	}
@@ -195,8 +197,6 @@ namespace tool
 		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_creat | p7::o_excl, mode );
 		
 		p7::pump( in, out );
-		
-		copy_modification_date( in, out );
 		
 		p7::close( out );
 	}
@@ -331,18 +331,27 @@ namespace tool
 		
 		NN::Owned< p7::fd_t > b_fd;
 		
+		struct stat a_stat = p7::fstat( a_fd );
+		struct stat c_stat = p7::fstat( c_fd );
+		
 		if ( b_exists )
 		{
 			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly );
 			
-			time_t a_time = p7::fstat( a_fd ).st_mtime;
-			time_t b_time = p7::fstat( b_fd ).st_mtime;
-			time_t c_time = p7::fstat( c_fd ).st_mtime;
+			time_t a_time = a_stat.st_mtime;
+			time_t c_time = c_stat.st_mtime;
 			
-			if ( a_time == b_time  &&  c_time == b_time )
+			const struct stat b_stat = p7::fstat( b_fd );
+			
+		#ifdef __LAMP__
+			
+			if ( b_stat.st_mtime == a_time  &&  b_stat.st_checktime == c_time )
 			{
 				return;
 			}
+			
+		#endif
+			
 		}
 		
 		bool a_matches_b = b_exists;
@@ -358,6 +367,8 @@ namespace tool
 		
 		if ( a_matches_b && b_matches_c )
 		{
+			store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
+			
 			return;
 		}
 		
@@ -396,6 +407,8 @@ namespace tool
 			
 			p7::fd_t to_dirfd = a_matches_b ? a_dirfd : c_dirfd;
 			
+			struct stat& to_stat = a_matches_b ? a_stat : c_stat;
+			
 			p7::lseek( from_fd, 0 );
 			
 			p7::close( to_fd );
@@ -404,7 +417,7 @@ namespace tool
 			
 			p7::pump( from_fd, to_fd );
 			
-			copy_modification_date( from_fd, to_fd );
+			to_stat = p7::fstat( to_fd );
 		}
 		else
 		{
@@ -432,7 +445,7 @@ namespace tool
 		
 		p7::pump( a_fd, b_fd );
 		
-		copy_modification_date( a_fd, b_fd );
+		store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
 		
 		if ( b_exists )
 		{
