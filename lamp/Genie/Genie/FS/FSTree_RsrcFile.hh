@@ -16,7 +16,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file );
+	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer );
 	
 }
 

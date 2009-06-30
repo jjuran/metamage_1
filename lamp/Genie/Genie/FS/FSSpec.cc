@@ -5,8 +5,8 @@
 
 #include "Genie/FS/FSSpec.hh"
 
-// Genie
-#include "Genie/Utilities/AsyncIO.hh"
+// MacIO
+#include "MacIO/GetCatInfo_Sync.hh"
 
 
 namespace Genie
@@ -15,6 +15,23 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	
+	bool VolumeIsOnServer( N::FSVolumeRefNum vRefNum )
+	{
+		GetVolParmsInfoBuffer parmsInfo = { 0 };
+		
+		HParamBlockRec pb = { 0 };
+		
+		HIOParam& io = pb.ioParam;
+		
+		io.ioVRefNum  = vRefNum;
+		io.ioBuffer   = (char *) &parmsInfo;
+		io.ioReqCount = sizeof parmsInfo;
+		
+		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+		
+		return parmsInfo.vMServerAdr != 0;
+	}
 	
 	N::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
@@ -36,7 +53,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = { 0 };
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, dir );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, dir );
 		
 		return Dir_From_CInfo( cInfo );
 	}

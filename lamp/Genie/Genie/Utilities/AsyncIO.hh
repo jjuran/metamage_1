@@ -9,6 +9,10 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// MacIO
+#include "MacIO/EOF_Policy.hh"
+#include "MacIO/ThrowOSStatus.hh"
+
 // Genie
 #include "Genie/Process/AsyncYield.hh"
 
@@ -16,45 +20,25 @@
 namespace Genie
 {
 	
-	struct Async {};
+	typedef MacIO::Throw_All   FNF_Throws;
+	typedef MacIO::Return_FNF  FNF_Returns;
 	
 	
-	using Nitrogen::ThrowEOF_Always;
-	using Nitrogen::ThrowEOF_OnZero;
-	using Nitrogen::ThrowEOF_Never;
-	
-	using Nitrogen::FNF_Throws;
-	using Nitrogen::FNF_Returns;
-	
-	
-	// Async read
-	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
+	SInt32 FSRead( MacIO::EOF_Policy       policy,
+	               Nitrogen::FSFileRefNum  file,
 	               Nitrogen::FSIOPosMode   positionMode,
 	               SInt32                  positionOffset,
 	               SInt32                  requestCount,
 	               void *                  buffer,
-	               ThrowEOF_Always         policy );
+	               bool                    async );
 	
-	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
-	               Nitrogen::FSIOPosMode   positionMode,
-	               SInt32                  positionOffset,
-	               SInt32                  requestCount,
-	               void *                  buffer,
-	               ThrowEOF_OnZero         policy );
 	
-	SInt32 FSRead( Nitrogen::FSFileRefNum  file,
-	               Nitrogen::FSIOPosMode   positionMode,
-	               SInt32                  positionOffset,
-	               SInt32                  requestCount,
-	               void *                  buffer,
-	               ThrowEOF_Never          policy );
-	
-	// Async write
 	SInt32 FSWrite( Nitrogen::FSFileRefNum  file,
 	                Nitrogen::FSIOPosMode   positionMode,
 	                SInt32                  positionOffset,
 	                SInt32                  requestCount,
-	                const void *            buffer );
+	                const void *            buffer,
+	                bool                    async );
 	
 	
 	// FSpGetCatInfo
@@ -64,6 +48,7 @@ namespace Genie
 	typename Policy::Result
 	//
 	FSpGetCatInfo( CInfoPBRec&               pb,
+	               bool                      async,
 	               Nitrogen::FSVolumeRefNum  vRefNum,
 	               Nitrogen::FSDirID         dirID,
 	               unsigned char*            name,
@@ -71,6 +56,7 @@ namespace Genie
 	
 	template <>
 	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
+	                                  bool                      async,
 	                                  Nitrogen::FSVolumeRefNum  vRefNum,
 	                                  Nitrogen::FSDirID         dirID,
 	                                  unsigned char*            name,
@@ -78,6 +64,7 @@ namespace Genie
 	
 	template <>
 	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
+	                                   bool                      async,
 	                                   Nitrogen::FSVolumeRefNum  vRefNum,
 	                                   Nitrogen::FSDirID         dirID,
 	                                   unsigned char*            name,
@@ -88,11 +75,13 @@ namespace Genie
 	inline 
 	//
 	FSpGetCatInfo( CInfoPBRec&    pb,
+	               bool           async,
 	               const FSSpec&  item )
 	{
 		Nitrogen::Str255 name = item.name;
 		
 		return FSpGetCatInfo< Policy >( pb,
+		                                async,
 		                                Nitrogen::FSVolumeRefNum( item.vRefNum ),
 		                                Nitrogen::FSDirID       ( item.parID   ),
 		                                name );
@@ -103,10 +92,12 @@ namespace Genie
 	inline 
 	//
 	FSpGetCatInfo( CInfoPBRec&               pb,
+	               bool                      async,
 	               Nitrogen::FSVolumeRefNum  vRefNum,
 	               Nitrogen::FSDirID         dirID )
 	{
 		return FSpGetCatInfo< Policy >( pb,
+		                                async,
 		                                vRefNum,
 		                                dirID,
 		                                NULL,
@@ -118,9 +109,11 @@ namespace Genie
 	inline 
 	//
 	FSpGetCatInfo( CInfoPBRec&                 pb,
+	               bool                        async,
 	               const Nitrogen::FSDirSpec&  dir )
 	{
 		return FSpGetCatInfo< Policy >( pb,
+		                                async,
 		                                dir.vRefNum,
 		                                dir.dirID );
 	}

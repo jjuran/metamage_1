@@ -22,6 +22,7 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
+#include "Pedestal/Application.hh"
 #include "Pedestal/Window.hh"
 
 // Genie
@@ -402,6 +403,8 @@ namespace Genie
 		SetWindowPort_Scope scope( window );
 		
 		N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+		
+		Ped::ScheduleImmediateEventCheck();
 	}
 	
 	static N::WindowRef GetWindowRef( const FSTree* key )

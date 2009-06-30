@@ -167,7 +167,9 @@ namespace Genie
 			{
 				ProcessSerialNumber psn = GetKeyFromParent( ParentRef() );
 				
-				return FSTreeFromFSSpec( N::GetProcessAppSpec( psn ) );
+				const FSSpec file = N::GetProcessAppSpec( psn );
+				
+				return FSTreeFromFSSpec( file, FileIsOnServer( file ) );
 			}
 	};
 	
