@@ -30,7 +30,7 @@
 #include "io/spew.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Nitrogen
@@ -315,7 +315,7 @@ namespace tool
 	{
 		std::replace( text.begin(), text.end(), '\r', '\n' );
 		
-		io::write( fd, text.data(), text.size() );
+		p7::write( fd, text );
 	}
 	
 	static std::string Slurp( const FSSpec& file )

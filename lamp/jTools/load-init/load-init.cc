@@ -22,7 +22,7 @@
 #include "Nitrogen/Str.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

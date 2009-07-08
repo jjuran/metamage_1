@@ -10,14 +10,15 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/clearenv.hh"
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/functions/select.hh"
 #include "POSeven/functions/setsid.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/functions/_exit.hh"
 
 // Orion

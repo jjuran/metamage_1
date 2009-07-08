@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 
 
 namespace p7 = poseven;
@@ -46,12 +46,12 @@ int main( int argc, const char *const argv[] )
 		
 		while ( (lf = std::find( p, end, '\n' )) != end )
 		{
-			(void) io::write( p7::stdout_fileno, p, lf - p );
+			(void) p7::write( p7::stdout_fileno, p, lf - p );
 			
 			p = lf + 1;
 		}
 		
-		(void) io::write( p7::stdout_fileno, p, end - p );
+		(void) p7::write( p7::stdout_fileno, p, end - p );
 	}
 	
 	return 0;

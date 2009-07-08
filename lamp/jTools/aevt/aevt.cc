@@ -15,7 +15,7 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"

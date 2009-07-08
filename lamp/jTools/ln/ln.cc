@@ -17,9 +17,9 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/functions/stat.hh"
+#include "POSeven/functions/write.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"

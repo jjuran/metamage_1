@@ -16,12 +16,13 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/functions/ftruncate.hh"
 #include "POSeven/functions/lseek.hh"
 #include "POSeven/functions/open.hh"
 #include "POSeven/functions/openat.hh"
+#include "POSeven/functions/read.hh"
+#include "POSeven/functions/write.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"

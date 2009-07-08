@@ -23,7 +23,6 @@
 
 // POSeven
 #include "POSeven/Directory.hh"
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/fchmod.hh"

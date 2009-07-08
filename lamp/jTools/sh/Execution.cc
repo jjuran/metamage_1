@@ -22,10 +22,10 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/functions/_exit.hh"
 
 // ShellShock

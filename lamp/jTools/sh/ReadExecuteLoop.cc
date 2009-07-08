@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 // POSeven
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/open.hh"
 #include "POSeven/functions/write.hh"

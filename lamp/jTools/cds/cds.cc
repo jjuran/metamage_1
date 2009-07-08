@@ -11,7 +11,7 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 
 // Nitrogen Extras / ClassicExtras
 #include "ClassicExtras/CDROMAudio.h"

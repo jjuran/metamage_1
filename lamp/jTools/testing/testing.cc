@@ -69,8 +69,8 @@
 #include "Nitrogen/Str.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/write.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON

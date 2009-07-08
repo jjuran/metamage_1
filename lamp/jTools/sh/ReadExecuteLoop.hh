@@ -5,11 +5,8 @@
 #ifndef READEXECUTELOOP_HH
 #define READEXECUTELOOP_HH
 
-// Standard C++
-#include <vector>
-
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/fd_t.hh"
 #include "POSeven/types/wait_t.hh"
 
 
