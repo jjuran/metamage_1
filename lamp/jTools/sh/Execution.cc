@@ -21,7 +21,6 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"

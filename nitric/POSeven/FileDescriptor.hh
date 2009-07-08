@@ -14,19 +14,16 @@
 #ifndef POSEVEN_FILEDESCRIPTOR_HH
 #define POSEVEN_FILEDESCRIPTOR_HH
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // Io
 #include "io/io.hh"
 
 // POSeven
-#include "POSeven/functions/close.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 
-
-namespace poseven
-{
-	
-}
 
 struct stat;
 

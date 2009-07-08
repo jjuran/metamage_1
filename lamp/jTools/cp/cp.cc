@@ -16,7 +16,6 @@
 #include "copyfile.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/stat.hh"
 
 // Orion
