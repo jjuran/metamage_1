@@ -29,6 +29,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/close.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/dup2.hh"
 #include "POSeven/functions/vfork.hh"

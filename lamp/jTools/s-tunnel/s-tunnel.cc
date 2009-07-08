@@ -35,7 +35,6 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 

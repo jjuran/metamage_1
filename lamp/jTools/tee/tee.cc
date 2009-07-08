@@ -3,15 +3,10 @@
  *	======
  */
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // Iota
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"

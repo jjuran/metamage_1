@@ -18,7 +18,6 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/slurp.hh"
 #include "POSeven/extras/spew.hh"
