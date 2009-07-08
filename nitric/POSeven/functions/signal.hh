@@ -15,7 +15,7 @@
 #define POSEVEN_FUNCTIONS_SIGNAL_HH
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 #include "POSeven/types/signo_t.hh"
 
 

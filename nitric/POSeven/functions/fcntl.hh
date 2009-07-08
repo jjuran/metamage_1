@@ -18,8 +18,8 @@
 #include <fcntl.h>
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/close.hh"
+#include "POSeven/types/errno_t.hh"
 #include "POSeven/types/fcntl_cmd_t.hh"
 #include "POSeven/types/fcntl_fd_flags_t.hh"
 #include "POSeven/types/fd_t.hh"

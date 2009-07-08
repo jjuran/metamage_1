@@ -21,7 +21,7 @@
 #include "copyfile.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 
 
 namespace poseven

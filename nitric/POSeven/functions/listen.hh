@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 #include "POSeven/types/fd_t.hh"
 
 

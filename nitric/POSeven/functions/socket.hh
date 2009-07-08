@@ -21,8 +21,8 @@
 #include "Nucleus/Flag.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/close.hh"
+#include "POSeven/types/errno_t.hh"
 
 
 namespace poseven

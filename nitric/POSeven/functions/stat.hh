@@ -21,7 +21,10 @@
 #include <sys/stat.h>
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
+
+// Io
+#include "io/io.hh"
 
 
 namespace poseven

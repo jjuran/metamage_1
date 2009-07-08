@@ -29,7 +29,7 @@
 #include "MacFiles.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
