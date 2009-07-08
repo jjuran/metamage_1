@@ -14,7 +14,7 @@
 
 // POSeven
 #include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/pread.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/write.hh"
@@ -138,11 +138,12 @@ namespace tool
 	
 	static bool HasSymH( p7::fd_t object_file_stream, const MetrowerksObjectFileHeader& file_header )
 	{
-		p7::lseek( object_file_stream, file_header.objectOffset );
-		
 		ObjectHeader object_header;
 		
-		ssize_t bytes_read = p7::read( object_file_stream, (char*) &object_header, sizeof object_header );
+		const ssize_t bytes_read = p7::pread( object_file_stream,
+		                                      (char*) &object_header,
+		                                      sizeof object_header,
+		                                      file_header.objectOffset );
 		
 		if ( bytes_read != sizeof object_header )
 		{
