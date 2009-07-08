@@ -14,12 +14,12 @@
 
 // POSeven
 #include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/pread.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/functions/wait.hh"
-#include "POSeven/Open.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"

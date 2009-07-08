@@ -11,7 +11,7 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 

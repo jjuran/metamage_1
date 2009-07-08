@@ -29,10 +29,10 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"

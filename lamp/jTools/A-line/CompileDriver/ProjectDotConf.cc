@@ -7,7 +7,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 
 // Io
 #include "Io/TextInput.hh"

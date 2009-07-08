@@ -10,7 +10,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/write.hh"
 
 // Io

@@ -11,8 +11,8 @@
 #include <stdlib.h>
 
 // POSeven
-#include "POSeven/Open.hh"
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/write.hh"
 
 // Io

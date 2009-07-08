@@ -30,10 +30,10 @@
 
 // POSeven
 #include "POSeven/Directory.hh"
-#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/execv.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"

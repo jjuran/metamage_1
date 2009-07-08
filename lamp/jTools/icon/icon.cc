@@ -18,8 +18,8 @@
 
 // POSeven
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
-#include "POSeven/Open.hh"
 
 
 namespace p7 = poseven;

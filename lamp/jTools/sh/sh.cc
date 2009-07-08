@@ -21,8 +21,8 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Open.hh"
 #include "POSeven/functions/fcntl.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/wait.hh"

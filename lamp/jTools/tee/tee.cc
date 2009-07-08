@@ -12,7 +12,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 

@@ -24,12 +24,12 @@
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/fchmod.hh"
 #include "POSeven/functions/fstat.hh"
 #include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/rename.hh"
 #include "POSeven/functions/stat.hh"
