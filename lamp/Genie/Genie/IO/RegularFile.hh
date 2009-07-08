@@ -31,7 +31,13 @@ namespace Genie
 			
 			virtual ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
+			virtual ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
+			
+			virtual ssize_t Append( const char* buffer, size_t n_bytes );
+			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
+			
+			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 			
 			off_t Seek( off_t offset, int whence );
 			

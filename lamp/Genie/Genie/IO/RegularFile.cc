@@ -33,6 +33,20 @@ namespace Genie
 		return 0;
 	}
 	
+	ssize_t RegularFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	{
+		p7::throw_errno( EPERM );
+		
+		return 0;
+	}
+	
+	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
+	{
+		itsMark = GetEOF();
+		
+		return Positioned_Write( buffer, n_bytes, itsMark );
+	}
+	
 	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
 	{
 		ssize_t read = Positioned_Read( buffer,
@@ -40,6 +54,18 @@ namespace Genie
 		                                GetFileMark() );
 		
 		return Advance( read );
+	}
+	
+	ssize_t RegularFileHandle::SysWrite( const char* buffer, size_t n_bytes )
+	{
+		const bool appending = GetFlags() & O_APPEND;
+		
+		ssize_t written = appending ? Append( buffer, n_bytes )
+		                            : Positioned_Write( buffer,
+		                                                n_bytes,
+		                                                GetFileMark() );
+		
+		return Advance( written );
 	}
 	
 	off_t RegularFileHandle::Seek( off_t offset, int whence )
@@ -88,10 +114,6 @@ namespace Genie
 			SetEOF( GetFileMark() );
 			
 			SetFlags( flags & ~O_LAZY );
-		}
-		else if ( const bool appending = GetFlags() & O_APPEND )
-		{
-			itsMark = GetEOF();
 		}
 		
 		return SysWrite( buffer, byteCount );
