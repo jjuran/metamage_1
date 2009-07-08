@@ -37,7 +37,7 @@ namespace Genie
 	};
 	
 	
-	class PropertyWriterFileHandle : public VirtualFileHandle< RegularFileHandle >
+	class PropertyWriterFileHandle : public VirtualFileHandle< StreamHandle >
 	{
 		private:
 			typedef void (*WriteHook)( const FSTree  *that,
@@ -60,9 +60,7 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Clone();
-			
-			void SetEOF( off_t length )  {}  // FIXME
+			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 	};

@@ -35,14 +35,6 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< IOHandle > PropertyWriterFileHandle::Clone()
-	{
-		return boost::shared_ptr< IOHandle >( new PropertyWriterFileHandle( GetFile(),
-		                                                                    GetFlags(),
-		                                                                    itsWriteHook,
-		                                                                    itIsBinary ) );
-	}
-	
 	ssize_t PropertyWriterFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
 		if ( byteCount == 0 )

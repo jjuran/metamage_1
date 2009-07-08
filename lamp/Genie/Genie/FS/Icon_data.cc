@@ -324,25 +324,37 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Clone();
 			
-			const FSTree* ViewKey();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
-			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
-			
 			off_t GetEOF()  { return itsData->GetSize(); }
+	};
+	
+	class IconDataWriterHandle : public VirtualFileHandle< StreamHandle >
+	{
+		private:
+			boost::shared_ptr< IconData > itsData;
+		
+		public:
+			IconDataWriterHandle( const FSTreePtr&                      file,
+			                      OpenFlags                             flags,
+			                      const boost::shared_ptr< IconData >&  data )
+			:
+				VirtualFileHandle( file, flags ),
+				itsData( data )
+			{
+				ASSERT( itsData.get() != NULL );
+			}
 			
-			void SetEOF( off_t length )  {}
+			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
+			
+			const FSTree* ViewKey();
+			
+			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 	};
 	
 	boost::shared_ptr< IOHandle > IconDataFileHandle::Clone()
 	{
 		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
-	}
-	
-	const FSTree* IconDataFileHandle::ViewKey()
-	{
-		return GetFile()->ParentRef().get();
 	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
@@ -375,7 +387,12 @@ namespace Genie
 		return bytes_read;
 	}
 	
-	ssize_t IconDataFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
+	const FSTree* IconDataWriterHandle::ViewKey()
+	{
+		return GetFile()->ParentRef().get();
+	}
+	
+	ssize_t IconDataWriterHandle::SysWrite( const char* buffer, size_t byteCount )
 	{
 		ASSERT( itsData.get() != NULL );
 		
@@ -396,9 +413,6 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		// We ignore the file mark
-		
-		//return Advance( byteCount );
 		return byteCount;
 	}
 	
@@ -420,7 +434,23 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Icon_data::Open( OpenFlags flags ) const
 	{
-		IOHandle* result = new IconDataFileHandle( Self(), flags, itsData );
+		const int mode = flags & O_ACCMODE;
+		
+		IOHandle* result = NULL;
+		
+		switch ( mode )
+		{
+			case O_RDONLY:
+				result = new IconDataFileHandle( Self(), flags, itsData );
+				break;
+			
+			case O_WRONLY:
+				result = new IconDataWriterHandle( Self(), flags, itsData );
+				break;
+			
+			default:
+				p7::throw_errno( EACCES );
+		}
 		
 		return boost::shared_ptr< IOHandle >( result );
 	}
