@@ -8,9 +8,9 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
 #include "POSeven/extras/slurp.hh"
 #include "POSeven/functions/fchmod.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/unlink.hh"
 #include "POSeven/functions/write.hh"

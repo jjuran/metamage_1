@@ -11,7 +11,7 @@
 #include <string.h>
 
 // POSeven
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 
 // BitsAndBytes

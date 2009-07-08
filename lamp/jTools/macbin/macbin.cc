@@ -28,7 +28,7 @@
 #include "MacFiles.hh"
 
 // POSeven
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/write.hh"

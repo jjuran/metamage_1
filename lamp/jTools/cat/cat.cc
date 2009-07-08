@@ -13,8 +13,8 @@
 #include <unistd.h>
 
 // POSeven
-#include "POSeven/Open.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/open.hh"
 
 // Orion
 #include "Orion/Main.hh"

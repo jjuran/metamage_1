@@ -70,7 +70,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
+#include "POSeven/functions/open.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON

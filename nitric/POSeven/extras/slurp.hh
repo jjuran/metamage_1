@@ -25,8 +25,8 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
-#include "POSeven/Open.hh"
 #include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/open.hh"
 
 
 namespace poseven

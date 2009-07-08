@@ -19,10 +19,10 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/ftruncate.hh"
+#include "POSeven/functions/open.hh"
 #include "POSeven/functions/pwrite.hh"
 #include "POSeven/functions/shutdown.hh"
 
