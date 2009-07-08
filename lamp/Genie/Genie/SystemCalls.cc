@@ -626,6 +626,31 @@ namespace Genie
 	}
 	
 	
+	static ssize_t pwrite( int fd, const void* buf, size_t count, off_t offset )
+	{
+		SystemCallFrame frame( "pwrite" );
+		
+		if ( offset < 0 )
+		{
+			return frame.SetErrno( EINVAL );
+		}
+		
+		try
+		{
+			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
+			
+			const char* buffer = reinterpret_cast< const char* >( buf );
+			
+			const ssize_t put = file.Positioned_Write( buffer, count, offset );
+			
+			return put;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+	}
+	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
 		SystemCallFrame frame( "write" );
@@ -673,6 +698,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( ftruncate );
 	REGISTER_SYSTEM_CALL( ttypair   );
 	REGISTER_SYSTEM_CALL( write     );
+	REGISTER_SYSTEM_CALL( pwrite    );
 	
 	#pragma force_active reset
 	
