@@ -9,8 +9,7 @@
 // POSeven
 #include "POSeven/extras/slurp.hh"
 #include "POSeven/functions/ftruncate.hh"
-#include "POSeven/functions/lseek.hh"
-#include "POSeven/functions/write.hh"
+#include "POSeven/functions/pwrite.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -75,13 +74,11 @@ namespace tool
 		
 		if ( output != previous )
 		{
-			p7::write( p7::stdout_fileno, output );
+			p7::pwrite( p7::stdout_fileno, output, 0 );
+			
+			p7::ftruncate( p7::stdout_fileno, output.size() );
 			
 			std::swap( output, previous );
-			
-			p7::ftruncate( p7::stdout_fileno, p7::lseek( p7::stdout_fileno ) );
-			
-			p7::lseek( p7::stdout_fileno, 0 );
 		}
 		
 		nanosleep( &time, NULL );
