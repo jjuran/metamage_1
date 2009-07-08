@@ -28,6 +28,9 @@
 #include "Nucleus/TheExceptionBeingHandled.h"
 #endif
 
+// POSeven
+#include "POSeven/types/errno_t.hh"
+
 // Io
 #ifndef IO_IO_HH
 #include "io/io.hh"
@@ -37,47 +40,10 @@
 namespace poseven
 {
 	
-	class errno_t
-	{
-		private:
-			int itsNumber;
-		
-		public:
-			typedef int ErrorNumber;
-			
-			errno_t(       ) : itsNumber( 0 )  {}
-			errno_t( int n ) : itsNumber( n )  {}
-			
-			static errno_t Make( int n )    { return errno_t( n ); }
-			
-			int Get() const               { return itsNumber; }
-			operator int() const          { return itsNumber; }
-	};
-	
 	template < int number >
 	void register_errno()
 	{
 		Nucleus::RegisterErrorCode< errno_t, number >();
-	}
-	
-	void throw_errno_internal( errno_t number );
-	
-	inline void throw_errno( int error )
-	{
-		if ( error != 0 )
-		{
-			throw_errno_internal( error );
-		}
-	}
-	
-	inline int throw_posix_result( int result )
-	{
-		if ( result < 0 )
-		{
-			throw_errno_internal( errno );
-		}
-		
-		return result;
 	}
 	
 	template < class DestructionExceptionPolicy >
