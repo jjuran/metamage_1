@@ -23,7 +23,7 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/ftruncate.hh"
-#include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/pwrite.hh"
 #include "POSeven/functions/shutdown.hh"
 
 // Arcana
@@ -187,8 +187,6 @@ namespace tool
 		
 		std::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
-		p7::lseek( target_file_stream, 0 );
-		
 		const p7::fd_t socket_in  = p7::fd_t( 6 );
 		const p7::fd_t socket_out = p7::fd_t( 7 );
 		
@@ -215,7 +213,9 @@ namespace tool
 		
 		p7::write( socket_out, message_header );
 		
-		p7::pump( target_file_stream, socket_out );
+		off_t offset = 0;
+		
+		p7::pump( target_file_stream, &offset, socket_out );
 		
 		p7::shutdown( socket_out, p7::shut_wr );
 		
@@ -234,11 +234,13 @@ namespace tool
 		{
 			NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
 			
-			p7::write( edited_file_stream, response.GetPartialContent() );
+			const std::string& partial_content = response.GetPartialContent();
 			
-			p7::pump( socket_in, edited_file_stream );
+			p7::pwrite( edited_file_stream, partial_content, 0 );
 			
-			p7::lseek( edited_file_stream, 0 );
+			offset = partial_content.length();
+			
+			p7::pump( socket_in, edited_file_stream, &offset );
 			
 			digest = MD5DigestFile( edited_file_stream );
 			
