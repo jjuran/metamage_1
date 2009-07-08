@@ -141,7 +141,7 @@ namespace Genie
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
-			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
+			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
 			off_t GetEOF()  { return String().size(); }
 			
@@ -174,24 +174,24 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	ssize_t CaptionTextFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
+	ssize_t CaptionTextFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
 		std::string& s = String();
 		
-		if ( GetFileMark() + byteCount > s.size() )
+		if ( offset + n_bytes > s.size() )
 		{
-			s.resize( GetFileMark() + byteCount );
+			s.resize( offset + n_bytes );
 		}
 		
 		std::copy( buffer,
-		           buffer + byteCount,
-		           s.begin() + GetFileMark() );
+		           buffer + n_bytes,
+		           s.begin() + offset );
 		
 		const FSTree* view = ViewKey();
 		
 		InvalidateWindowForView( view );
 		
-		return Advance( byteCount );
+		return n_bytes;
 	}
 	
 	class FSTree_Caption_text : public FSTree

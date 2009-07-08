@@ -42,7 +42,7 @@ namespace Genie
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
 			//void IOCtl( unsigned long request, int* argp );
 			

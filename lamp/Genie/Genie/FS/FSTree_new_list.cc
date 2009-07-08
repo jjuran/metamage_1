@@ -119,26 +119,17 @@ namespace Genie
 	}
 	
 	
-	class List_data_Handle : public VirtualFileHandle< RegularFileHandle >
+	class List_data_Handle : public VirtualFileHandle< StreamHandle >
 	{
 		public:
 			List_data_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Clone();
+			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
-			
-			off_t GetEOF()  { return GetFile()->GetEOF(); }
-			
-			void SetEOF( off_t length )  { return GetFile()->SetEOF( length ); }
 	};
-	
-	boost::shared_ptr< IOHandle > List_data_Handle::Clone()
-	{
-		return boost::shared_ptr< IOHandle >( new List_data_Handle( GetFile(), GetFlags() ) );
-	}
 	
 	ssize_t List_data_Handle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
@@ -172,7 +163,7 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		return Advance( byteCount );
+		return byteCount;
 	}
 	
 	

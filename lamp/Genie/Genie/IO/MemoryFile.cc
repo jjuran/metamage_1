@@ -8,12 +8,15 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Io
-#include "io/io.hh"
+// POSeven
+#include "POSeven/Errno.hh"
 
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	MemoryFileHandle::~MemoryFileHandle()
 	{
@@ -41,13 +44,23 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	ssize_t MemoryFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		std::copy( data,
-		           data + byteCount,
-		           itsBase + GetFileMark() );
+		if ( n_bytes == 0 )
+		{
+			return 0;
+		}
 		
-		return Advance( byteCount );
+		if ( offset >= itsSize )
+		{
+			p7::throw_errno( ENOSPC );
+		}
+		
+		n_bytes = std::min( n_bytes, itsSize - offset );
+		
+		memcpy( itsBase + offset, buffer, n_bytes );
+		
+		return n_bytes;
 	}
 	
 }

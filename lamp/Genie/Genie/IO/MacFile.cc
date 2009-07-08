@@ -40,7 +40,9 @@ namespace Genie
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
+			
+			ssize_t Append( const char* buffer, size_t n_bytes );
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
@@ -113,13 +115,11 @@ namespace Genie
 		return read;
 	}
 	
-	ssize_t MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
+	ssize_t MacFileHandle::Positioned_Write( const char* data, size_t byteCount, off_t offset )
 	{
-		const bool appending = GetFlags() & O_APPEND;
-		const bool async     = GetFlags() & O_MAC_ASYNC;
+		const bool async = GetFlags() & O_MAC_ASYNC;
 		
-		const N::FSIOPosMode  mode   = appending ? N::fsFromLEOF : N::fsFromStart;
-		const SInt32          offset = appending ? 0             : GetFileMark();
+		const N::FSIOPosMode mode = N::fsFromStart;
 		
 		ssize_t written = FSWrite( itsRefNum,
 		                           mode,
@@ -128,7 +128,24 @@ namespace Genie
 		                           data,
 		                           async );
 		
-		return Advance( written );
+		return written;
+	}
+	
+	ssize_t MacFileHandle::Append( const char* data, size_t byteCount )
+	{
+		const bool async = GetFlags() & O_MAC_ASYNC;
+		
+		const N::FSIOPosMode  mode   = N::fsFromLEOF;
+		const SInt32          offset = 0;
+		
+		ssize_t written = FSWrite( itsRefNum,
+		                           mode,
+		                           offset,
+		                           byteCount,
+		                           data,
+		                           async );
+		
+		return written;
 	}
 	
 	void MacFileHandle::Synchronize( bool metadata )
