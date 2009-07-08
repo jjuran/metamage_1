@@ -4,6 +4,9 @@
 
 #include "Execution.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Standard C/C++
 #include <cctype>
 #include <cstring>
