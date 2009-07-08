@@ -304,7 +304,7 @@ namespace tool
 				
 				if ( !io::item_exists( item ) )
 				{
-					throw p7::enoent();
+					throw p7::errno_t( ENOENT );
 				}
 				
 				itemsToOpen.push_back( item );
