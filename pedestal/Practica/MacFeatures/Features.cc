@@ -6,8 +6,12 @@
 #include "MacFeatures/Features.hh"
 
 
-namespace MacFeatures
+namespace
 {
+	
+	void dummy()
+	{
+	}
 	
 }
 
