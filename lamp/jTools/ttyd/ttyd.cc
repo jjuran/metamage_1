@@ -3,13 +3,7 @@
  *	=======
  */
 
-// POSIX
-#include <signal.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/clearenv.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/read.hh"

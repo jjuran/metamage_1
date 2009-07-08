@@ -18,8 +18,11 @@
 #include <unistd.h>
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 #include "POSeven/types/fd_t.hh"
+
+// Io
+#include "io/io.hh"
 
 
 namespace poseven

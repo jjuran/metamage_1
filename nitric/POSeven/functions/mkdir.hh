@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/types/errno_t.hh"
 #include "POSeven/types/mode_t.hh"
 
 

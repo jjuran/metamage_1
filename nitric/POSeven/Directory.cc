@@ -13,7 +13,6 @@
 #include "POSeven/Directory.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/readdir.hh"
 
 

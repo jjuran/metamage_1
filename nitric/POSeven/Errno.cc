@@ -28,11 +28,6 @@ namespace poseven
 	static posix_errnos_registration the_registration;
 	
 	
-	void throw_errno_internal( errno_t number )
-	{
-		Nucleus::ThrowErrorCode< errno_t >( number );
-	}
-	
 	void register_posix_errnos()
 	{
 		register_errno< ENOENT >();
