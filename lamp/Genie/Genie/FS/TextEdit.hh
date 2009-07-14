@@ -71,8 +71,6 @@ namespace Genie
 			void On_UserSelect();
 			void On_UserEdit();
 			
-			void On_EnterKey();
-			
 			void UpdateText();
 			
 			void UpdateClientHeight();
