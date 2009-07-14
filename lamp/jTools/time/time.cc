@@ -3,17 +3,10 @@
  *	=======
  */
 
-// Standard C
-#include <errno.h>
-
-// POSIX
-#include <time.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/times.h>
-
 // POSeven
 #include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/gettimeofday.hh"
+#include "POSeven/functions/times.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/_exit.hh"
@@ -21,39 +14,6 @@
 // Orion
 #include "Orion/Main.hh"
 
-
-namespace poseven
-{
-	
-	inline void gettimeofday( struct timeval& tv )
-	{
-		throw_posix_result( ::gettimeofday( &tv, NULL ) );
-	}
-	
-	inline struct timeval gettimeofday()
-	{
-		struct timeval tv = { 0 };
-		
-		gettimeofday( tv );
-		
-		return tv;
-	}
-	
-	inline void times( struct tms& time_set )
-	{
-		throw_posix_result( ::times( &time_set ) );
-	}
-	
-	inline struct tms times()
-	{
-		struct tms time_set = { 0 };
-		
-		times( time_set );
-		
-		return time_set;
-	}
-	
-}
 
 namespace tool
 {
