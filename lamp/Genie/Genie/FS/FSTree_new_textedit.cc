@@ -12,6 +12,7 @@
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
 
 
@@ -53,6 +54,65 @@ namespace Genie
 		const FSTree* view = ParentRef().get();
 		
 		TextEditParameters::Get( view ).itIsInterlocked = true;
+	}
+	
+	
+	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
+	{
+		public:
+			TextEdit_gate_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			{
+			}
+			
+			unsigned SysPoll();
+			
+			ssize_t SysRead( char* buffer, size_t n_bytes );
+	};
+	
+	unsigned TextEdit_gate_Handle::SysPoll()
+	{
+		const FSTree* view = GetFile()->ParentRef().get();
+		
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		const bool readable = !params.itIsInterlocked;
+		
+		return readable * kPollRead | kPollWrite;
+	}
+	
+	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
+	{
+		const FSTree* view = GetFile()->ParentRef().get();
+		
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		while ( params.itIsInterlocked )
+		{
+			TryAgainLater();
+		}
+		
+		return 0;
+	}
+	
+	
+	class FSTree_TextEdit_gate : public FSTree
+	{
+		public:
+			FSTree_TextEdit_gate( const FSTreePtr&    parent,
+			                      const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			mode_t FilePermMode() const  { return S_IRUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	boost::shared_ptr< IOHandle > FSTree_TextEdit_gate::Open( OpenFlags flags ) const
+	{
+		IOHandle* result = new TextEdit_gate_Handle( Self(), flags );
+		
+		return boost::shared_ptr< IOHandle >( result );
 	}
 	
 	
@@ -117,6 +177,8 @@ namespace Genie
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "text", &New_FSTree_TextEdit_text },
+		
+		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
 		
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
