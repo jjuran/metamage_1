@@ -182,6 +182,67 @@ namespace Pedestal
 		return c >= 'a'  &&  c <= 'z';
 	}
 	
+	void TextEdit::Apply_Modified_Arrow( char c, bool cmdKeyIsDown, bool optionKeyIsDown )
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		// Dereferencing hTE
+		const TERec& te = **hTE;
+		
+		// Dereferencing te.hText
+		const char* begin = te.hText[0];
+		const char* end   = begin + te.teLength;
+		
+		const char* p = begin + gSelectionExtent;
+		
+		if ( cmdKeyIsDown )
+		{
+			switch ( c )
+			{
+				case kLeftArrowCharCode:
+					while ( p > begin  &&  p[-1] != '\r' )  --p;
+					break;
+				
+				case kRightArrowCharCode:
+					while ( p < end  &&  p[0] != '\r' )  ++p;
+					break;
+				
+				case kUpArrowCharCode:
+					p = begin;
+					break;
+				
+				case kDownArrowCharCode:
+					p = end;
+					break;
+				
+			}
+		}
+		else if ( optionKeyIsDown )
+		{
+			switch ( c )
+			{
+				case kLeftArrowCharCode:
+					if ( p > begin )
+						while ( --p > begin  &&  char_is_word_char( p[-1] ) )  continue;
+					break;
+				
+				case kRightArrowCharCode:
+					if ( p < end )
+						while ( ++p < end  &&  char_is_word_char( p[0] ) )  continue;
+					break;
+				
+				case kUpArrowCharCode:
+				case kDownArrowCharCode:
+					::SysBeep( 30 );  // May move memory
+					break;
+			}
+		}
+		
+		gSelectionExtent = p - begin;
+	}
+	
 	void TextEdit::Apply_Key( const EventRecord& event )
 	{
 		TEHandle hTE = Get();
@@ -271,59 +332,7 @@ namespace Pedestal
 		
 		if ( char_is_arrow( c )  &&  (cmdKeyIsDown || optionKeyIsDown) )
 		{
-			// Dereferencing hTE
-			const TERec& te = **hTE;
-			
-			// Dereferencing te.hText
-			const char* begin = te.hText[0];
-			const char* end   = begin + te.teLength;
-			
-			const char* p = begin + gSelectionExtent;
-			
-			if ( cmdKeyIsDown )
-			{
-				switch ( c )
-				{
-					case kLeftArrowCharCode:
-						while ( p > begin  &&  p[-1] != '\r' )  --p;
-						break;
-					
-					case kRightArrowCharCode:
-						while ( p < end  &&  p[0] != '\r' )  ++p;
-						break;
-					
-					case kUpArrowCharCode:
-						p = begin;
-						break;
-					
-					case kDownArrowCharCode:
-						p = end;
-						break;
-					
-				}
-			}
-			else if ( optionKeyIsDown )
-			{
-				switch ( c )
-				{
-					case kLeftArrowCharCode:
-						if ( p > begin )
-							while ( --p > begin  &&  char_is_word_char( p[-1] ) )  continue;
-						break;
-					
-					case kRightArrowCharCode:
-						if ( p < end )
-							while ( ++p < end  &&  char_is_word_char( p[0] ) )  continue;
-						break;
-					
-					case kUpArrowCharCode:
-					case kDownArrowCharCode:
-						::SysBeep( 30 );  // May move memory
-						break;
-				}
-			}
-			
-			gSelectionExtent = p - begin;
+			Apply_Modified_Arrow( c, cmdKeyIsDown, optionKeyIsDown );
 			
 			if ( !gExtendingSelection )
 			{
