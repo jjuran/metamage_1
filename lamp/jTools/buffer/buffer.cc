@@ -143,7 +143,9 @@ namespace tool
 			dup2( buffer, 0 );
 			dup2( output, 1 );
 			
-			const char* window_argv[] = { "/bin/cat", NULL };
+			const char* gate = "view/v/v/gate";
+			
+			const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
 			
 			p7::execvp( window_argv );
 		}
