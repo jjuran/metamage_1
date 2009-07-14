@@ -380,16 +380,11 @@ namespace Pedestal
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
-		const char c   =  event.message & charCodeMask;
-		const char key = (event.message & keyCodeMask) >> 8;
+		const char c =  event.message & charCodeMask;
 		
 		if ( Preprocess_Key( event ) )
 		{
 			// already handled
-		}
-		else if ( c == kEnterCharCode  &&  key >= 0x30 )
-		{
-			On_EnterKey();
 		}
 		else if ( c <= 0x1b  &&  c != 0x08  &&  (c != 0x0d || IsSingular()) )
 		{

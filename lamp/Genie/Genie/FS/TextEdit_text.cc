@@ -90,11 +90,6 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		while ( params.itIsInterlocked )
-		{
-			TryAgainLater();
-		}
-		
 		std::string& s = params.itsText;
 		
 		if ( offset >= s.size() )

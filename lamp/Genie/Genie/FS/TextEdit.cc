@@ -200,11 +200,6 @@ namespace Genie
 		On_UserSelect();
 	}
 	
-	void TextEdit::On_EnterKey()
-	{
-		TextEditParameters::Get( itsKey ).itIsInterlocked = false;
-	}
-	
 	void TextEdit::UpdateText()
 	{
 		Ped::TextSelection current = GetCurrentSelection();

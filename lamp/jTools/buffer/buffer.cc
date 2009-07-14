@@ -55,14 +55,19 @@ namespace tool
 		p7::spew( "ref/text-font", STR_LEN( "4" "\n" ) );
 		p7::spew( "ref/text-size", STR_LEN( "9" "\n" ) );
 		
-		p7::link( "/new/scrollframe", "view"     );
-		p7::link( "/new/frame",       "view/v"   );
-		p7::link( "/new/textedit",    "view/v/v" );
+		p7::link( "/new/stack",       "view"          );
+		p7::link( "/new/scrollframe", "view/main"     );
+		p7::link( "/new/frame",       "view/main/v"   );
+		p7::link( "/new/textedit",    "view/main/v/v" );
 		
-		p7::symlink( "v/v", "view/target" );
+		p7::symlink( "v/v", "view/main/target" );
 		
-		p7::spew( "view/vertical", STR_LEN( "1" "\n" ) );
-		p7::spew( "view/v/padding", STR_LEN( "4" "\n" ) );
+		p7::spew( "view/main/vertical", STR_LEN( "1" "\n" ) );
+		p7::spew( "view/main/v/padding", STR_LEN( "4" "\n" ) );
+		
+		p7::symlink( "view/main/v/v/gate", "accept" );
+		
+		p7::link( "/new/defaultkeys", "view/defaultkeys" );
 	}
 	
 	
@@ -120,13 +125,13 @@ namespace tool
 		
 		make_window( title );
 		
-		p7::pump( input, p7::open( "view/v/v/text", p7::o_wronly | p7::o_trunc ) );
+		p7::pump( input, p7::open( "view/main/v/v/text", p7::o_wronly | p7::o_trunc ) );
 		
 		p7::close( input );
 		
-		p7::utime( "view/v/v/interlock" );
+		p7::utime( "view/main/v/v/interlock" );
 		
-		NN::Owned< p7::fd_t > buffer = p7::open( "view/v/v/text", p7::o_rdonly );
+		NN::Owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
 		
 		NN::Owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
 		
@@ -143,7 +148,9 @@ namespace tool
 			dup2( buffer, 0 );
 			dup2( output, 1 );
 			
-			const char* window_argv[] = { "/bin/cat", NULL };
+			const char* gate = "view/main/v/v/gate";
+			
+			const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
 			
 			p7::execvp( window_argv );
 		}
