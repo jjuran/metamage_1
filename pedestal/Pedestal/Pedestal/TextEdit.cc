@@ -155,8 +155,12 @@ namespace Pedestal
 		return c >= 'a'  &&  c <= 'z';
 	}
 	
-	static void TEKeyEvent( const EventRecord& event, TEHandle hTE )
+	void TextEdit::Apply_Key( const EventRecord& event )
 	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
 		const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 		const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
@@ -370,7 +374,7 @@ namespace Pedestal
 		}
 		else
 		{
-			TEKeyEvent( event, hTE );
+			Apply_Key( event );
 			
 			On_UserEdit();
 		}

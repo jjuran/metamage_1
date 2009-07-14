@@ -29,6 +29,8 @@ namespace Pedestal
 			virtual TEHandle Get() const = 0;
 			
 			virtual bool IsSingular() const  { return false; }
+			
+			void Apply_Key( const EventRecord& event );
 		
 		public:
 			TextEdit();
