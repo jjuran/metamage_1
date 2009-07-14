@@ -30,6 +30,12 @@ namespace Pedestal
 			
 			virtual bool IsSingular() const  { return false; }
 			
+			virtual void Insert_Key( char c );
+			
+			virtual void Delete();
+			
+			virtual void Paste();
+			
 			void Apply_Key( const EventRecord& event );
 		
 		public:

@@ -43,6 +43,33 @@ namespace Pedestal
 	{
 	}
 	
+	void TextEdit::Insert_Key( char c )
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEKey( c, hTE );
+	}
+	
+	void TextEdit::Delete()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEDelete( hTE );
+	}
+	
+	void TextEdit::Paste()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEPaste( hTE );
+	}
+	
 	static bool LeftOrRightArrowsKeyed()
 	{
 		N::GetKeys_Result keys = N::GetKeys();
@@ -323,7 +350,7 @@ namespace Pedestal
 		}
 		else
 		{
-			N::TEKey( c, hTE );
+			Insert_Key( c );
 			
 			// Update the extent
 			gSelectionExtent = hTE[0]->selStart;
@@ -339,7 +366,7 @@ namespace Pedestal
 			
 			if ( deleting )
 			{
-				::TEDelete( hTE );
+				Delete();
 			}
 		}
 	}
@@ -518,14 +545,17 @@ namespace Pedestal
 			
 			case 'past':  // kHICommandPaste
 			case 'pste':
-				Clipboard::TEPaste( hTE );
+				// Update the TE scrap just-in-time
+				N::TEFromScrap();
+				
+				Paste();
 				
 				On_UserEdit();
 				
 				break;
 			
 			case 'clea':
-				N::TEDelete( hTE );
+				Delete();
 				
 				On_UserEdit();
 				
