@@ -3,6 +3,9 @@
  *	===========
  */
 
+#ifndef GENIE_FS_TEXTEDIT_HH
+#define GENIE_FS_TEXTEDIT_HH
+
 // Pedestal
 #include "Pedestal/TextEdit.hh"
 
@@ -145,4 +148,6 @@ namespace Genie
 	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params );
 	
 }
+
+#endif
 
