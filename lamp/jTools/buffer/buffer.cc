@@ -64,6 +64,10 @@ namespace tool
 		
 		p7::spew( "view/main/vertical", STR_LEN( "1" "\n" ) );
 		p7::spew( "view/main/v/padding", STR_LEN( "4" "\n" ) );
+		
+		p7::symlink( "view/main/v/v/gate", "accept" );
+		
+		p7::link( "/new/defaultkeys", "view/defaultkeys" );
 	}
 	
 	
