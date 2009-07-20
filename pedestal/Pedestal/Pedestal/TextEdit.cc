@@ -347,6 +347,8 @@ namespace Pedestal
 		
 		if ( gExtendingSelection || char_is_vertical_arrow( c ) )
 		{
+			// Up/down arrow key or arrow key with Shift
+			
 			// Set our extent as the insertion point so we can use TextEdit's arrow
 			// behavior.
 			::TESetSelect( gSelectionExtent, gSelectionExtent, hTE );
@@ -354,6 +356,9 @@ namespace Pedestal
 		
 		if ( char_is_arrow( c )  &&  (cmdKeyIsDown || optionKeyIsDown) )
 		{
+			// Arrow key with Command or Option (and possibly Shift)
+			// Delete key with Command or Option on empty selection
+			
 			Apply_Modified_Arrow( c, cmdKeyIsDown, optionKeyIsDown );
 			
 			if ( !gExtendingSelection )
@@ -364,6 +369,8 @@ namespace Pedestal
 		}
 		else if ( !gExtendingSelection  &&  char_is_horizontal_arrow( c )  &&  !emptySelection )
 		{
+			// Unmodified left/right arrow on non-empty selection
+			
 			// Workaround TextEdit's bug where left- or right-arrow places the
 			// insertion point past the selection instead of at the edge of it.
 			
@@ -389,6 +396,9 @@ namespace Pedestal
 		
 		if ( gExtendingSelection )
 		{
+			// Arrow key with Shift
+			// Delete key with Command or Option on empty selection
+			
 			selStart = std::min( gSelectionAnchor, gSelectionExtent );
 			selEnd   = std::max( gSelectionAnchor, gSelectionExtent );
 			
