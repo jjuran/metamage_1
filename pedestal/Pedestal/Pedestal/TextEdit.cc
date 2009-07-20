@@ -243,6 +243,14 @@ namespace Pedestal
 		gSelectionExtent = p - begin;
 	}
 	
+	static inline void OutOfBounds()
+	{
+		// left/up arrow or backspace at start, or
+		// right/down arrow or forward delete at end
+		
+		// do nothing
+	}
+	
 	void TextEdit::Apply_Key( const EventRecord& event )
 	{
 		TEHandle hTE = Get();
@@ -302,6 +310,8 @@ namespace Pedestal
 			{
 				if ( selEnd == te.teLength )
 				{
+					OutOfBounds();  // Forward Delete at end
+					
 					return;
 				}
 				
@@ -309,6 +319,18 @@ namespace Pedestal
 				
 				c = kBackspaceCharCode;
 			}
+			else if ( selStart == 0 )
+			{
+				OutOfBounds();  // Backspace at start
+				
+				return;
+			}
+		}
+		else if ( emptySelection  &&  char_is_arrow( c )  &&  selStart == (forward ? te.teLength : 0) )
+		{
+			OutOfBounds();
+			
+			return;
 		}
 		
 		const bool initializingSelection = char_is_arrow( c )  &&  (!gExtendingSelection || !shiftKeyIsDown);
