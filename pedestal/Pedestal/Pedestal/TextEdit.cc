@@ -386,12 +386,32 @@ namespace Pedestal
 			// Update the real insertion point
 			::TESetSelect( selStart, selEnd, hTE );
 		}
-		else
+		else if ( char_is_arrow( c ) )
 		{
-			Insert_Key( c );
+			// Up/down arrow key, possibly with Shift
+			// Left/right arrow key with Shift or on empty selection
+			
+			::TEKey( c, hTE );
 			
 			// Update the extent
 			gSelectionExtent = hTE[0]->selStart;
+		}
+		else if ( deleting )
+		{
+			// Delete key unmodified or on non-empty selection
+			
+			if ( selStart == selEnd )
+			{
+				hTE[0]->selStart = --selStart;
+			}
+			
+			Delete();
+		}
+		else
+		{
+			// Not an arrow or delete key
+			
+			Insert_Key( c );
 		}
 		
 		if ( gExtendingSelection )
