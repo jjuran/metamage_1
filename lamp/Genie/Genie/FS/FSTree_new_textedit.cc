@@ -136,6 +136,11 @@ namespace Genie
 	namespace
 	{
 		
+		bool& Secret( const FSTree* view )
+		{
+			return TextEditParameters::Get( view ).itIsSecret;
+		}
+		
 		bool& Singular( const FSTree* view )
 		{
 			return TextEditParameters::Get( view ).itIsSingular;
@@ -181,6 +186,19 @@ namespace Genie
 		}
 	};
 	
+	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	struct TextInvalidating_View_Property : public View_Property< Scribe, Access >
+	{
+		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const FSTree* view = GetViewKey( that );
+			
+			TextEditParameters::Get( view ).itsValidLength = 0;
+			
+			View_Property::Set( that, begin, end, binary );
+		}
+	};
+	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
@@ -200,6 +218,8 @@ namespace Genie
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
+		
+		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, Secret > > },
 		
 		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, Singular > > },
 		
