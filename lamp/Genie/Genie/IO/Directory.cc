@@ -9,6 +9,7 @@
 #include <cstring>
 
 // POSIX
+#include "fcntl.h"
 #include "sys/stat.h"
 
 // POSeven
@@ -21,7 +22,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree )
+	DirHandle::DirHandle( const FSTreePtr& tree )
+	:
+		IOHandle( O_RDONLY ),
+		itsDir( tree )
 	{
 	}
 	
