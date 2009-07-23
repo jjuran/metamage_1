@@ -501,7 +501,9 @@ namespace Genie
 		                      consoleParams.itsStartOfInput,
 		                      params.itsSelection );
 		
-		if ( s.size() + byteCount > 30000 )
+		const size_t max_TextEdit_size = 30000;
+		
+		if ( s.size() + byteCount > max_TextEdit_size )
 		{
 			size_t n_cut = consoleParams.itsStartOfInput / 2;
 			
