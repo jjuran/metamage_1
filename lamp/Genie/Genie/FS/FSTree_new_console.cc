@@ -75,11 +75,13 @@ namespace Genie
 	{
 		boost::shared_ptr< IOHandle >  itsTerminal;
 		std::size_t         itsStartOfInput;
+		std::size_t         itsStartOfOutput;
 		bool                itHasReceivedEOF;
 		
 		ConsoleParameters()
 		:
 			itsStartOfInput(),
+			itsStartOfOutput(),
 			itHasReceivedEOF()
 		{
 		}
@@ -420,11 +422,13 @@ namespace Genie
 	
 	static void check_for_truncation( size_t               text_size,
 	                                  size_t&              start_of_input,
+	                                  size_t&              start_of_output,
 	                                  Ped::TextSelection&  selection )
 	{
 		if ( start_of_input > text_size )
 		{
-			start_of_input = text_size;
+			start_of_output =
+			start_of_input  = text_size;
 		}
 		
 		if ( selection.end > text_size )
@@ -457,6 +461,7 @@ namespace Genie
 			
 			check_for_truncation( s.size(),
 			                      params.itsStartOfInput,
+			                      params.itsStartOfOutput,
 			                      text_params.itsSelection );
 			
 			if ( params.itsStartOfInput < s.size()  &&  *s.rbegin() == '\n' )
@@ -482,6 +487,7 @@ namespace Genie
 		           s.begin() + params.itsStartOfInput + byteCount,
 		           buffer );
 		
+		params.itsStartOfOutput = 
 		params.itsStartOfInput += byteCount;
 		
 		return byteCount;
@@ -499,25 +505,26 @@ namespace Genie
 		
 		check_for_truncation( s.size(),
 		                      consoleParams.itsStartOfInput,
+		                      consoleParams.itsStartOfOutput,
 		                      params.itsSelection );
 		
 		const size_t max_TextEdit_size = 30000;
 		
 		if ( s.size() + byteCount > max_TextEdit_size )
 		{
-			size_t n_cut = consoleParams.itsStartOfInput / 2;
+			size_t n_cut = consoleParams.itsStartOfOutput / 2;
 			
 			while ( n_cut > 0  &&  s[ n_cut - 1 ] != '\n' )
 			{
 				--n_cut;
 			}
 			
-			const size_t input_length = s.size() - consoleParams.itsStartOfInput;
-			
 			s.erase( s.begin(), s.begin() + n_cut );
 			
-			consoleParams.itsStartOfInput = s.size() - input_length;
-			params       .itsValidLength  = 0;
+			consoleParams.itsStartOfInput  -= n_cut;
+			consoleParams.itsStartOfOutput -= n_cut;
+			
+			params.itsValidLength = 0;
 			
 			if ( params.itsSelection.start >= n_cut )
 			{
@@ -535,18 +542,62 @@ namespace Genie
 			byteCount = std::min( byteCount, max_write_after_cut );
 		}
 		
-		ASSERT( consoleParams.itsStartOfInput <= s.size() );
+		const size_t start_of_input  = consoleParams.itsStartOfInput;
+		const size_t start_of_output = consoleParams.itsStartOfOutput;
 		
-		params.itsValidLength = std::min( params.itsValidLength, consoleParams.itsStartOfInput );
+		ASSERT( start_of_input <= s.size() );
+		ASSERT( start_of_input >= start_of_output );
 		
-		s.insert( consoleParams.itsStartOfInput, buffer, byteCount );
+		params.itsValidLength = std::min( params.itsValidLength, start_of_output );
 		
-		if ( params.itsSelection.start >= consoleParams.itsStartOfInput )
+		std::string saved_input( s.begin() + start_of_input, s.end() );
+		
+		if ( start_of_output + byteCount > s.size() )
 		{
-			params.itsSelection.start += byteCount;
-			params.itsSelection.end   += byteCount;
+			s.resize( start_of_output + byteCount );
 		}
-		else if ( params.itsSelection.end <= consoleParams.itsStartOfInput )
+		
+		const size_t bytes_overwritable = start_of_input - start_of_output;
+		
+		char* p = &s[ start_of_output ];
+		
+		for ( int i = 0;  i < byteCount;  ++i )
+		{
+			char c = buffer[ i ];
+			
+			switch ( c )
+			{
+				case 0x07:
+					::SysBeep( 30 );
+					break;
+				
+				default:
+					*p++ = c;
+					break;
+			}
+		}
+		
+		const size_t bytes_written = p - &s[ start_of_output ];
+		
+		const size_t bytes_inserted = std::max( int( bytes_written - bytes_overwritable ), 0 );
+		
+		if ( bytes_inserted == 0 )
+		{
+			s.resize( start_of_input + saved_input.size() );
+		}
+		else
+		{
+			s.resize( start_of_output + bytes_written );
+			
+			s += saved_input;
+		}
+		
+		if ( params.itsSelection.start >= start_of_input )
+		{
+			params.itsSelection.start += bytes_inserted;
+			params.itsSelection.end   += bytes_inserted;
+		}
+		else if ( params.itsSelection.end <= start_of_input )
 		{
 			// preserve selection
 		}
@@ -556,7 +607,8 @@ namespace Genie
 			params.itsSelection.end   = s.length();
 		}
 		
-		consoleParams.itsStartOfInput += byteCount;
+		consoleParams.itsStartOfInput  += bytes_inserted;
+		consoleParams.itsStartOfOutput += bytes_written;
 		
 		params.itHasChangedAttributes = true;
 		
