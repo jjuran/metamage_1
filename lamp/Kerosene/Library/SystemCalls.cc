@@ -143,6 +143,8 @@ DEFINE_STUB( select )
 
 //DEFINE_STUB( readlink_k )
 
+DEFINE_STUB( mmap )
+DEFINE_STUB( munmap )
 DEFINE_STUB( truncate )
 DEFINE_STUB( ftruncate )
 DEFINE_STUB( fchmod )
