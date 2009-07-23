@@ -559,7 +559,12 @@ namespace Genie
 		
 		const size_t bytes_overwritable = start_of_input - start_of_output;
 		
-		char* p = &s[ start_of_output ];
+		char *const start_of_output_p = &s[ start_of_output ];
+		char *      end_of_output_p   = &s[ start_of_input  ];
+		
+		char* p = start_of_output_p;
+		
+		char* start_of_last_line = NULL;
 		
 		for ( int i = 0;  i < byteCount;  ++i )
 		{
@@ -571,13 +576,40 @@ namespace Genie
 					::SysBeep( 30 );
 					break;
 				
+				case '\r':
+					if ( start_of_last_line == NULL )
+					{
+						start_of_last_line = &s[ 0 ];
+						
+						for ( int j = start_of_output - 1;  j >= 0;  --j )
+						{
+							if ( s[ j ] == '\n' )
+							{
+								start_of_last_line = &s[ j ] + 1;
+								
+								break;
+							}
+						}
+					}
+					
+					p = start_of_last_line;
+					break;
+				
 				default:
 					*p++ = c;
+					
+					end_of_output_p = std::max( end_of_output_p, p );
+					
+					if ( c == '\n' )
+					{
+						start_of_last_line = p;
+					}
+					
 					break;
 			}
 		}
 		
-		const size_t bytes_written = p - &s[ start_of_output ];
+		const size_t bytes_written = end_of_output_p - start_of_output_p;
 		
 		const size_t bytes_inserted = std::max( int( bytes_written - bytes_overwritable ), 0 );
 		
@@ -608,7 +640,7 @@ namespace Genie
 		}
 		
 		consoleParams.itsStartOfInput  += bytes_inserted;
-		consoleParams.itsStartOfOutput += bytes_written;
+		consoleParams.itsStartOfOutput += p - start_of_output_p;
 		
 		params.itHasChangedAttributes = true;
 		
