@@ -29,7 +29,7 @@ namespace Genie
 	
 	StreamHandle::StreamHandle( OpenFlags flags )
 	:
-		itsOpenFlags( flags ),
+		IOHandle( flags ),
 		itHasBeenDisconnected()
 	{
 	}

@@ -11,6 +11,7 @@
 
 // POSIX
 #include "errno.h"
+#include "fcntl.h"
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -33,8 +34,11 @@ namespace Genie
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
 		public:
-			TerminalHandle( const std::string& ttyName ) : itsTTYName         ( ttyName ),
-			                                               itIsDisconnected   ( false   )
+			TerminalHandle( const std::string& ttyName )
+			:
+				IOHandle( O_RDWR ),
+				itsTTYName      ( ttyName ),
+				itIsDisconnected( false   )
 			{
 			}
 			

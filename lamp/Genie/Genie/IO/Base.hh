@@ -16,6 +16,8 @@
 namespace Genie
 {
 	
+	class memory_mapping;
+	
 	enum
 	{
 		kPollRead   = 1,
@@ -36,6 +38,8 @@ namespace Genie
 	class IOHandle : public boost::enable_shared_from_this< IOHandle >
 	{
 		private:
+			OpenFlags itsOpenFlags;
+			
 			virtual IOHandle* Next() const  { return NULL; }
 			
 			// non-copyable
@@ -45,7 +49,7 @@ namespace Genie
 		public:
 			typedef bool (IOHandle::*Test)() const;
 			
-			IOHandle();
+			IOHandle( OpenFlags flags );
 			
 			virtual ~IOHandle();
 			
@@ -57,6 +61,10 @@ namespace Genie
 			
 			IOHandle* GetBaseForCast( Test test );
 			
+			OpenFlags GetFlags() const  { return itsOpenFlags; }
+			
+			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
+			
 			virtual boost::shared_ptr< IOHandle > Clone();
 			
 			virtual void Attach( const boost::shared_ptr< IOHandle >& target );
@@ -64,6 +72,8 @@ namespace Genie
 			virtual FSTreePtr GetFile();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
+			
+			virtual boost::shared_ptr< memory_mapping > Map( size_t length, off_t offset );
 			
 	};
 	

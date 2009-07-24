@@ -23,7 +23,6 @@ namespace Genie
 	class StreamHandle : public IOHandle
 	{
 		private:
-			OpenFlags    itsOpenFlags;
 			std::string  itsPeekBuffer;
 			bool         itHasBeenDisconnected;
 		
@@ -33,10 +32,6 @@ namespace Genie
 			virtual ~StreamHandle();
 			
 			bool IsStream() const  { return true; }
-			
-			OpenFlags GetFlags() const  { return itsOpenFlags; }
-			
-			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
 			
 			virtual unsigned int SysPoll() = 0;
 			
@@ -52,10 +47,10 @@ namespace Genie
 			
 			virtual bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
-			bool IsNonblocking() const  { return itsOpenFlags & O_NONBLOCK; }
+			bool IsNonblocking() const  { return GetFlags() & O_NONBLOCK; }
 			
-			void SetNonblocking  ()  { itsOpenFlags |=  O_NONBLOCK; }
-			void ClearNonblocking()  { itsOpenFlags &= ~O_NONBLOCK; }
+			void SetNonblocking  ()  { SetFlags( GetFlags() |  O_NONBLOCK ); }
+			void ClearNonblocking()  { SetFlags( GetFlags() & ~O_NONBLOCK ); }
 			
 			void TryAgainLater() const;
 			
