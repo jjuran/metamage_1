@@ -36,6 +36,8 @@ namespace Genie
 	class IOHandle : public boost::enable_shared_from_this< IOHandle >
 	{
 		private:
+			OpenFlags itsOpenFlags;
+			
 			virtual IOHandle* Next() const  { return NULL; }
 			
 			// non-copyable
@@ -45,7 +47,7 @@ namespace Genie
 		public:
 			typedef bool (IOHandle::*Test)() const;
 			
-			IOHandle();
+			IOHandle( OpenFlags flags );
 			
 			virtual ~IOHandle();
 			
@@ -56,6 +58,10 @@ namespace Genie
 			virtual bool IsDirectory  () const  { return false; }
 			
 			IOHandle* GetBaseForCast( Test test );
+			
+			OpenFlags GetFlags() const  { return itsOpenFlags; }
+			
+			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
 			
 			virtual boost::shared_ptr< IOHandle > Clone();
 			
