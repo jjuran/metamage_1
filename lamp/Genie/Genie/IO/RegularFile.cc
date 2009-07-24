@@ -8,14 +8,46 @@
 // POSIX
 #include <fcntl.h>
 
+// Nitrogen
+#include "Nitrogen/MacMemory.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
+
+// Genie
+#include "Genie/mmap/Handle_memory_mapping.hh"
 
 
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
+	
+	class malloc_memory_mapping : public memory_mapping
+	{
+		private:
+			void* its_address;
+			
+			addr_t get_address() const  { return its_address; }
+		
+		private:
+			// non-copyable
+			malloc_memory_mapping           ( const malloc_memory_mapping& );
+			malloc_memory_mapping& operator=( const malloc_memory_mapping& );
+		
+		public:
+			malloc_memory_mapping( void* addr ) : its_address( addr )
+			{
+			}
+			
+			~malloc_memory_mapping()
+			{
+				free( its_address );
+			}
+	};
 	
 	
 	RegularFileHandle::RegularFileHandle( OpenFlags flags ) : FileHandle( flags ), itsMark()
@@ -117,6 +149,41 @@ namespace Genie
 		}
 		
 		return SysWrite( buffer, byteCount );
+	}
+	
+	memory_mapping::shared_ptr RegularFileHandle::Map( size_t length, off_t offset )
+	{
+		memory_mapping* mapping = NULL;
+		
+		if ( const bool small = length < 64 * 1024 )
+		{
+			if ( void* addr = malloc( length ) )
+			{
+				mapping = new malloc_memory_mapping( addr );
+			}
+		}
+		
+		if ( mapping == NULL )
+		{
+			// Either malloc() failed or we didn't try.
+			
+			NN::Owned< N::Handle > h = N::TempNewHandle( length );
+			
+			mapping = new Handle_memory_mapping( h );
+		}
+		
+		memory_mapping::shared_ptr result( mapping );
+		
+		void* addr = mapping->get_address();
+		
+		ssize_t count = Positioned_Read( (char*) addr, length, offset );
+		
+		if ( count < length )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
+		return result;
 	}
 	
 }
