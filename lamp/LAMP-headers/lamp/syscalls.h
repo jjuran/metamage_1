@@ -93,8 +93,8 @@
 // 87
 // 88
 // 89
-// 90
-// 91
+#define __NR_mmap                       90
+#define __NR_munmap                     91
 #define __NR_truncate                   92
 #define __NR_ftruncate                  93
 #define __NR_fchmod                     94
