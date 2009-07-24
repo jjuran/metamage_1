@@ -49,7 +49,7 @@ namespace Genie
 			}
 	};
 	
-	IOHandle::IOHandle()
+	IOHandle::IOHandle( OpenFlags flags ) : itsOpenFlags( flags )
 	{
 	}
 	
