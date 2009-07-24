@@ -188,8 +188,17 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
+		const bool secret = IsSecret();
+		
 		// Dereferencing hTE
 		const TERec& te = **hTE;
+		
+		if ( secret )
+		{
+			gSelectionExtent = char_is_forward_arrow( c ) ? te.teLength : 0;
+			
+			return;
+		}
 		
 		// Dereferencing te.hText
 		const char* begin = te.hText[0];
@@ -434,6 +443,11 @@ namespace Pedestal
 	
 	bool TextEdit::Preprocess_Key( const EventRecord& event )
 	{
+		if ( IsSecret() )
+		{
+			return event.what == autoKey;  // eat auto-keys for password entry
+		}
+		
 		return    Try_IgnoreAutoKey( event )
 		       || Try_RepeatSearch( *this, event )
 		       || event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask );
@@ -499,6 +513,11 @@ namespace Pedestal
 	//
 	TextEdit::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
+		if ( IsSecret() )
+		{
+			return View::EnterShiftSpaceQuasimode( event );
+		}
+		
 		const bool backward = event.modifiers & shiftKey;
 		
 		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
@@ -594,6 +613,13 @@ namespace Pedestal
 				break;
 			
 			case 'cut ':
+				if ( IsSecret() )
+				{
+					::SysBeep( 30 );
+					
+					break;
+				}
+				
 				Clipboard::TECut( hTE );
 				
 				On_UserEdit();
@@ -601,6 +627,13 @@ namespace Pedestal
 				break;
 			
 			case 'copy':
+				if ( IsSecret() )
+				{
+					::SysBeep( 30 );
+					
+					break;
+				}
+				
 				Clipboard::TECopy( hTE );
 				break;
 			
