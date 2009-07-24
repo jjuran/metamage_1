@@ -321,6 +321,8 @@ namespace Nitrogen
 		MemError();
 	}
 	
+	Nucleus::Owned< Handle > TempNewHandle( std::size_t size );
+	
 	inline void MoveHHi( Handle h )
 	{
 		::MoveHHi( h );

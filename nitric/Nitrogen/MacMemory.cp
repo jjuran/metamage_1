@@ -82,6 +82,19 @@ namespace Nitrogen
 		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrSysClear( size ) ) );
 	}
 	
+	Nucleus::Owned< Handle > TempNewHandle( std::size_t size )
+	{
+		OSErr err = noErr;
+		
+		const Handle h = ::TempNewHandle( size, &err );
+		
+		ThrowOSStatus( err );
+		
+		Nucleus::Owned< Handle > result = Nucleus::Owned< Handle >::Seize( h );
+		
+		return result;
+	}
+	
 	
    void RegisterMemoryManagerErrors()
      {
