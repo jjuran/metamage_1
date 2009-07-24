@@ -16,6 +16,8 @@
 namespace Genie
 {
 	
+	class memory_mapping;
+	
 	enum
 	{
 		kPollRead   = 1,
@@ -70,6 +72,8 @@ namespace Genie
 			virtual FSTreePtr GetFile();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
+			
+			virtual boost::shared_ptr< memory_mapping > Map( size_t length, off_t offset );
 			
 	};
 	
