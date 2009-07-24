@@ -97,6 +97,15 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
+	boost::shared_ptr< memory_mapping >
+	//
+	IOHandle::Map( size_t length, off_t offset )
+	{
+		p7::throw_errno( ENODEV );
+		
+		return boost::shared_ptr< memory_mapping >();
+	}
+	
 	void Check_IOHandle_Cast( const void* cast, int errorToThrow )
 	{
 		if ( cast == NULL )
