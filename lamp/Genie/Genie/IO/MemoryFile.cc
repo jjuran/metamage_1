@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Genie
+#include "Genie/mmap/static_memory_mapping.hh"
+
 
 namespace Genie
 {
@@ -61,6 +64,16 @@ namespace Genie
 		memcpy( itsBase + offset, buffer, n_bytes );
 		
 		return n_bytes;
+	}
+	
+	memory_mapping::shared_ptr MemoryFileHandle::Map( size_t length, off_t offset )
+	{
+		if ( offset + length > itsSize )
+		{
+			p7::throw_errno( ENXIO );
+		}
+		
+		return memory_mapping::shared_ptr( new static_memory_mapping( itsBase + offset ) );
 	}
 	
 }
