@@ -28,6 +28,7 @@ namespace Genie
 		bool                     itHasChangedAttributes;
 		bool                     itIsAtBottom;
 		bool                     itIsInterlocked;
+		bool                     itIsSecret;
 		bool                     itIsSingular;
 		bool                     itIsWrapped;
 		
@@ -66,6 +67,7 @@ namespace Genie
 			
 			Pedestal::TextSelection  itsSelectionPriorToSearch;
 			
+			bool IsSecret() const;
 			bool IsSingular() const;
 			
 			void On_UserSelect();
@@ -77,6 +79,12 @@ namespace Genie
 			void UpdateScrollOffsets();
 			
 			void ClickInLoop()  { UpdateScrollOffsets(); }
+			
+			void Insert_Key( char c );
+			
+			void Delete();
+			
+			void Paste();
 		
 		public:
 			TextEdit( Key               key,

@@ -42,6 +42,7 @@ namespace Genie
 		itHasChangedAttributes(),
 		itIsAtBottom(),
 		itIsInterlocked(),
+		itIsSecret(),
 		itIsSingular(),
 		itIsWrapped( true )
 	{
@@ -161,6 +162,11 @@ namespace Genie
 	}
 	
 	
+	bool TextEdit::IsSecret() const
+	{
+		return TextEditParameters::Get( itsKey ).itIsSecret;
+	}
+	
 	bool TextEdit::IsSingular() const
 	{
 		return TextEditParameters::Get( itsKey ).itIsSingular;
@@ -202,6 +208,11 @@ namespace Genie
 	
 	void TextEdit::UpdateText()
 	{
+		if ( IsSecret() )
+		{
+			return;
+		}
+		
 		Ped::TextSelection current = GetCurrentSelection();
 		
 		if ( current.start != current.end )
@@ -306,6 +317,111 @@ namespace Genie
 		}
 		
 		return true;
+	}
+	
+	static void Insert_Secret_Keys( const char *begin, size_t n, TEHandle hTE, const FSTree* key )
+	{
+		const TERec& te = **hTE;
+		
+		ASSERT( te.selStart == te.selEnd );
+		
+		short offset = te.selStart;
+		
+		TextEditParameters& params = TextEditParameters::Get( key );
+		
+		if ( params.itsValidLength >= offset )
+		{
+			++params.itsValidLength;
+		}
+		
+		params.itsText.insert( params.itsText.begin() + offset, begin, begin + n );
+		
+		offset += n;
+		
+		for ( int i = 0;  i < n;  ++i )
+		{
+			N::TEKey( '¥', hTE );
+		}
+		
+		params.itsSelection.start = offset;
+		params.itsSelection.end   = offset;
+	}
+	
+	void TextEdit::Insert_Key( char c )
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		if ( IsSecret() )
+		{
+			Insert_Secret_Keys( &c, 1, hTE, itsKey );
+		}
+		else
+		{
+			::TEKey( c, hTE );
+		}
+	}
+	
+	void TextEdit::Delete()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		if ( IsSecret() )
+		{
+			const TERec& te = **hTE;
+			
+			const short start = te.selStart;
+			const short end   = te.selEnd;
+			
+			TextEditParameters& params = TextEditParameters::Get( itsKey );
+			
+			if ( params.itsValidLength >= end )
+			{
+				params.itsValidLength -= (end - start);
+			}
+			else if ( params.itsValidLength > start )
+			{
+				params.itsValidLength = start;
+			}
+			
+			params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+			
+			::TEDelete( hTE );
+			
+			params.itsSelection.start =
+			params.itsSelection.end   = start;
+		}
+		else
+		{
+			::TEDelete( hTE );
+		}
+	}
+	
+	void TextEdit::Paste()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		if ( IsSecret() )
+		{
+			Delete();
+			
+			std::string scrap;
+			
+			scrap.resize( TEGetScrapLength() );
+			
+			memcpy( &scrap[0], *TEScrapHandle(), scrap.size() );
+			
+			Insert_Secret_Keys( scrap.data(), scrap.size(), hTE, itsKey );
+		}
+		else
+		{
+			::TEPaste( hTE );
+		}
 	}
 	
 	
@@ -419,15 +535,28 @@ namespace Genie
 			
 			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
 			
+			const bool secret = params.itIsSecret;
+			
 			TERec& te = **hTE;
 			
 			te.teLength = params.itsText.length();
 			
-			std::replace_copy( params.itsText.begin() + params.itsValidLength,
-			                   params.itsText.end(),
-			                   *te.hText + params.itsValidLength,
-			                   '\n',
-			                   '\r' );
+			char* text = *te.hText;
+			
+			if ( secret )
+			{
+				std::fill( text + params.itsValidLength,
+				           text + te.teLength,
+				           '¥' );
+			}
+			else
+			{
+				std::replace_copy( params.itsText.begin() + params.itsValidLength,
+				                   params.itsText.end(),
+				                   text + params.itsValidLength,
+				                   '\n',
+				                   '\r' );
+			}
 			
 			params.itsValidLength = te.teLength;
 		}

@@ -43,6 +43,33 @@ namespace Pedestal
 	{
 	}
 	
+	void TextEdit::Insert_Key( char c )
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEKey( c, hTE );
+	}
+	
+	void TextEdit::Delete()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEDelete( hTE );
+	}
+	
+	void TextEdit::Paste()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		::TEPaste( hTE );
+	}
+	
 	static bool LeftOrRightArrowsKeyed()
 	{
 		N::GetKeys_Result keys = N::GetKeys();
@@ -155,8 +182,90 @@ namespace Pedestal
 		return c >= 'a'  &&  c <= 'z';
 	}
 	
-	static void TEKeyEvent( const EventRecord& event, TEHandle hTE )
+	void TextEdit::Apply_Modified_Arrow( char c, bool cmdKeyIsDown, bool optionKeyIsDown )
 	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		const bool secret = IsSecret();
+		
+		// Dereferencing hTE
+		const TERec& te = **hTE;
+		
+		if ( secret )
+		{
+			gSelectionExtent = char_is_forward_arrow( c ) ? te.teLength : 0;
+			
+			return;
+		}
+		
+		// Dereferencing te.hText
+		const char* begin = te.hText[0];
+		const char* end   = begin + te.teLength;
+		
+		const char* p = begin + gSelectionExtent;
+		
+		if ( cmdKeyIsDown )
+		{
+			switch ( c )
+			{
+				case kLeftArrowCharCode:
+					while ( p > begin  &&  p[-1] != '\r' )  --p;
+					break;
+				
+				case kRightArrowCharCode:
+					while ( p < end  &&  p[0] != '\r' )  ++p;
+					break;
+				
+				case kUpArrowCharCode:
+					p = begin;
+					break;
+				
+				case kDownArrowCharCode:
+					p = end;
+					break;
+				
+			}
+		}
+		else if ( optionKeyIsDown )
+		{
+			switch ( c )
+			{
+				case kLeftArrowCharCode:
+					if ( p > begin )
+						while ( --p > begin  &&  char_is_word_char( p[-1] ) )  continue;
+					break;
+				
+				case kRightArrowCharCode:
+					if ( p < end )
+						while ( ++p < end  &&  char_is_word_char( p[0] ) )  continue;
+					break;
+				
+				case kUpArrowCharCode:
+				case kDownArrowCharCode:
+					::SysBeep( 30 );  // May move memory
+					break;
+			}
+		}
+		
+		gSelectionExtent = p - begin;
+	}
+	
+	static inline void OutOfBounds()
+	{
+		// left/up arrow or backspace at start, or
+		// right/down arrow or forward delete at end
+		
+		// do nothing
+	}
+	
+	void TextEdit::Apply_Key( const EventRecord& event )
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
 		const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 		const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
@@ -210,6 +319,8 @@ namespace Pedestal
 			{
 				if ( selEnd == te.teLength )
 				{
+					OutOfBounds();  // Forward Delete at end
+					
 					return;
 				}
 				
@@ -217,6 +328,18 @@ namespace Pedestal
 				
 				c = kBackspaceCharCode;
 			}
+			else if ( selStart == 0 )
+			{
+				OutOfBounds();  // Backspace at start
+				
+				return;
+			}
+		}
+		else if ( emptySelection  &&  char_is_arrow( c )  &&  selStart == (forward ? te.teLength : 0) )
+		{
+			OutOfBounds();
+			
+			return;
 		}
 		
 		const bool initializingSelection = char_is_arrow( c )  &&  (!gExtendingSelection || !shiftKeyIsDown);
@@ -233,6 +356,8 @@ namespace Pedestal
 		
 		if ( gExtendingSelection || char_is_vertical_arrow( c ) )
 		{
+			// Up/down arrow key or arrow key with Shift
+			
 			// Set our extent as the insertion point so we can use TextEdit's arrow
 			// behavior.
 			::TESetSelect( gSelectionExtent, gSelectionExtent, hTE );
@@ -240,59 +365,10 @@ namespace Pedestal
 		
 		if ( char_is_arrow( c )  &&  (cmdKeyIsDown || optionKeyIsDown) )
 		{
-			// Dereferencing hTE
-			const TERec& te = **hTE;
+			// Arrow key with Command or Option (and possibly Shift)
+			// Delete key with Command or Option on empty selection
 			
-			// Dereferencing te.hText
-			const char* begin = te.hText[0];
-			const char* end   = begin + te.teLength;
-			
-			const char* p = begin + gSelectionExtent;
-			
-			if ( cmdKeyIsDown )
-			{
-				switch ( c )
-				{
-					case kLeftArrowCharCode:
-						while ( p > begin  &&  p[-1] != '\r' )  --p;
-						break;
-					
-					case kRightArrowCharCode:
-						while ( p < end  &&  p[0] != '\r' )  ++p;
-						break;
-					
-					case kUpArrowCharCode:
-						p = begin;
-						break;
-					
-					case kDownArrowCharCode:
-						p = end;
-						break;
-					
-				}
-			}
-			else if ( optionKeyIsDown )
-			{
-				switch ( c )
-				{
-					case kLeftArrowCharCode:
-						if ( p > begin )
-							while ( --p > begin  &&  char_is_word_char( p[-1] ) )  continue;
-						break;
-					
-					case kRightArrowCharCode:
-						if ( p < end )
-							while ( ++p < end  &&  char_is_word_char( p[0] ) )  continue;
-						break;
-					
-					case kUpArrowCharCode:
-					case kDownArrowCharCode:
-						::SysBeep( 30 );  // May move memory
-						break;
-				}
-			}
-			
-			gSelectionExtent = p - begin;
+			Apply_Modified_Arrow( c, cmdKeyIsDown, optionKeyIsDown );
 			
 			if ( !gExtendingSelection )
 			{
@@ -302,6 +378,8 @@ namespace Pedestal
 		}
 		else if ( !gExtendingSelection  &&  char_is_horizontal_arrow( c )  &&  !emptySelection )
 		{
+			// Unmodified left/right arrow on non-empty selection
+			
 			// Workaround TextEdit's bug where left- or right-arrow places the
 			// insertion point past the selection instead of at the edge of it.
 			
@@ -317,16 +395,39 @@ namespace Pedestal
 			// Update the real insertion point
 			::TESetSelect( selStart, selEnd, hTE );
 		}
-		else
+		else if ( char_is_arrow( c ) )
 		{
-			N::TEKey( c, hTE );
+			// Up/down arrow key, possibly with Shift
+			// Left/right arrow key with Shift or on empty selection
+			
+			::TEKey( c, hTE );
 			
 			// Update the extent
 			gSelectionExtent = hTE[0]->selStart;
 		}
+		else if ( deleting )
+		{
+			// Delete key unmodified or on non-empty selection
+			
+			if ( selStart == selEnd )
+			{
+				hTE[0]->selStart = --selStart;
+			}
+			
+			Delete();
+		}
+		else
+		{
+			// Not an arrow or delete key
+			
+			Insert_Key( c );
+		}
 		
 		if ( gExtendingSelection )
 		{
+			// Arrow key with Shift
+			// Delete key with Command or Option on empty selection
+			
 			selStart = std::min( gSelectionAnchor, gSelectionExtent );
 			selEnd   = std::max( gSelectionAnchor, gSelectionExtent );
 			
@@ -335,13 +436,18 @@ namespace Pedestal
 			
 			if ( deleting )
 			{
-				::TEDelete( hTE );
+				Delete();
 			}
 		}
 	}
 	
 	bool TextEdit::Preprocess_Key( const EventRecord& event )
 	{
+		if ( IsSecret() )
+		{
+			return event.what == autoKey;  // eat auto-keys for password entry
+		}
+		
 		return    Try_IgnoreAutoKey( event )
 		       || Try_RepeatSearch( *this, event )
 		       || event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask );
@@ -370,7 +476,7 @@ namespace Pedestal
 		}
 		else
 		{
-			TEKeyEvent( event, hTE );
+			Apply_Key( event );
 			
 			On_UserEdit();
 		}
@@ -407,6 +513,11 @@ namespace Pedestal
 	//
 	TextEdit::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
+		if ( IsSecret() )
+		{
+			return View::EnterShiftSpaceQuasimode( event );
+		}
+		
 		const bool backward = event.modifiers & shiftKey;
 		
 		boost::shared_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
@@ -502,6 +613,13 @@ namespace Pedestal
 				break;
 			
 			case 'cut ':
+				if ( IsSecret() )
+				{
+					::SysBeep( 30 );
+					
+					break;
+				}
+				
 				Clipboard::TECut( hTE );
 				
 				On_UserEdit();
@@ -509,19 +627,29 @@ namespace Pedestal
 				break;
 			
 			case 'copy':
+				if ( IsSecret() )
+				{
+					::SysBeep( 30 );
+					
+					break;
+				}
+				
 				Clipboard::TECopy( hTE );
 				break;
 			
 			case 'past':  // kHICommandPaste
 			case 'pste':
-				Clipboard::TEPaste( hTE );
+				// Update the TE scrap just-in-time
+				N::TEFromScrap();
+				
+				Paste();
 				
 				On_UserEdit();
 				
 				break;
 			
 			case 'clea':
-				N::TEDelete( hTE );
+				Delete();
 				
 				On_UserEdit();
 				

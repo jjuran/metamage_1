@@ -28,7 +28,18 @@ namespace Pedestal
 			
 			virtual TEHandle Get() const = 0;
 			
+			virtual bool IsSecret  () const  { return false; }
 			virtual bool IsSingular() const  { return false; }
+			
+			virtual void Apply_Modified_Arrow( char c, bool cmdKeyIsDown, bool optionKeyIsDown );
+			
+			virtual void Insert_Key( char c );
+			
+			virtual void Delete();
+			
+			virtual void Paste();
+			
+			void Apply_Key( const EventRecord& event );
 		
 		public:
 			TextEdit();
