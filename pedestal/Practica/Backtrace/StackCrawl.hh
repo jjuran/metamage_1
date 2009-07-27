@@ -101,15 +101,31 @@ namespace Backtrace
 		#endif
 		};
 		
-		bool isCFM;
+	#if defined( __MACOS__ )
 		
-		ReturnAddress() : addrNative(), isCFM()  {}
+		typedef bool CFM_Flag;
 		
-		ReturnAddress( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
+	#else
+		
+		struct CFM_Flag {};
+		
+	#endif
+		
+		CFM_Flag isCFM;
+		
+		ReturnAddress() : addrNative()
+		{
+		}
+		
+		ReturnAddress( ReturnAddrNative addr ) : addrNative( addr ), isCFM()
+		{
+		}
 		
 	#if defined( __MACOS__ )
 		
-		ReturnAddress( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
+		ReturnAddress( ReturnAddrCFM addr ) : addrCFM( addr ), isCFM( true )
+		{
+		}
 		
 	#endif
 	};
