@@ -51,15 +51,15 @@ namespace Orion
 		{
 			using namespace Backtrace;
 			
-			const std::vector< ReturnAddress >& stackCrawl = debugging.GetStackCrawl();
+			const std::vector< FrameData >& stackCrawl = debugging.GetStackCrawl();
 			
 			if ( stackCrawl.size() < 2 )
 			{
 				return;
 			}
 			
-			std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
-			std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
+			std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
+			std::vector< FrameData >::const_iterator end   = stackCrawl.end();
 			
 			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
 			

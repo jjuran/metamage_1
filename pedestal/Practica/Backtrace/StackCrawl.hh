@@ -88,8 +88,10 @@ namespace Backtrace
 	
 	typedef const struct OpaqueStackFrame* StackFramePtr;
 	
-	struct ReturnAddress
+	struct FrameData
 	{
+		StackFramePtr framePtr;
+		
 		union
 		{
 			ReturnAddrNative  addrNative;
@@ -113,17 +115,25 @@ namespace Backtrace
 		
 		CFM_Flag isCFM;
 		
-		ReturnAddress() : addrNative()
+		FrameData()
 		{
 		}
 		
-		ReturnAddress( ReturnAddrNative addr ) : addrNative( addr ), isCFM()
+		FrameData( StackFramePtr frame, ReturnAddrNative addr )
+		:
+			framePtr( frame ),
+			addrNative( addr ),
+			isCFM()
 		{
 		}
 		
 	#if defined( __MACOS__ )
 		
-		ReturnAddress( ReturnAddrCFM addr ) : addrCFM( addr ), isCFM( true )
+		FrameData( StackFramePtr frame, ReturnAddrCFM addr )
+		:
+			framePtr( frame ),
+			addrCFM( addr ),
+			isCFM( true )
 		{
 		}
 		
@@ -133,16 +143,16 @@ namespace Backtrace
 	
 	StackFramePtr GetStackFramePointer( int levelsToSkip = 0 );
 	
-	std::vector< ReturnAddress > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
+	std::vector< FrameData > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
 	
-	inline std::vector< ReturnAddress > MakeStackCrawlFromTop( StackFramePtr frame )
+	inline std::vector< FrameData > MakeStackCrawlFromTop( StackFramePtr frame )
 	{
 		return MakeStackCrawlFromTopToBottom( frame, (const void*) 0xFFFFFFFF );
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawlToBottom( const void* limit );
+	std::vector< FrameData > MakeStackCrawlToBottom( const void* limit );
 	
-	inline std::vector< ReturnAddress > MakeStackCrawl()
+	inline std::vector< FrameData > MakeStackCrawl()
 	{
 		return MakeStackCrawlToBottom( (const void*) 0xFFFFFFFF );
 	}

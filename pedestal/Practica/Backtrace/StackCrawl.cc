@@ -156,7 +156,7 @@ namespace Backtrace
 	
 	
 	template < class StackFrame >
-	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< ReturnAddress >& result )
+	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< FrameData >& result )
 	{
 	next:
 		
@@ -179,7 +179,7 @@ namespace Backtrace
 			}
 		}
 		
-		result.push_back( ReturnAddress( frame->returnAddr ) );
+		result.push_back( FrameData( (StackFramePtr) frame, frame->returnAddr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -192,9 +192,9 @@ namespace Backtrace
 		goto next;
 	}
 	
-	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top, const void* limit )
+	static std::vector< FrameData > MakeStackCrawl( const StackFrame* top, const void* limit )
 	{
-		std::vector< ReturnAddress > result;
+		std::vector< FrameData > result;
 		
 		try
 		{
@@ -207,14 +207,14 @@ namespace Backtrace
 		return result;
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawlFromTopToBottom( StackFramePtr top, const void* limit )
+	std::vector< FrameData > MakeStackCrawlFromTopToBottom( StackFramePtr top, const void* limit )
 	{
 		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
 		
 		return MakeStackCrawl( frame, limit );
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawlToBottom( const void* limit )
+	std::vector< FrameData > MakeStackCrawlToBottom( const void* limit )
 	{
 		return MakeStackCrawl( GetTopFrame(), limit );
 	}

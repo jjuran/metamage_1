@@ -140,10 +140,11 @@ namespace Backtrace
 		}
 	}
 	
-	CallInfo GetCallInfoFromReturnAddress( const ReturnAddress& call )
+	CallInfo GetCallInfoFromReturnAddress( const FrameData& call )
 	{
 		CallInfo result;
 		
+		result.itsFramePtr   = call.framePtr;
 		result.itsReturnAddr = call.addrNative;
 		
 	#ifdef __MACOS__
@@ -165,6 +166,7 @@ namespace Backtrace
 	}
 	
 	static std::string MakeReportForCall( unsigned            offset,
+	                                      const void*         frame,
 	                                      const void*         addr,
 	                                      const char*         arch,
 	                                      const std::string&  name )
@@ -193,7 +195,8 @@ namespace Backtrace
 		{
 			const CallInfo& info = *it;
 			
-			result += MakeReportForCall( offset, info.itsReturnAddr,
+			result += MakeReportForCall( offset, info.itsFramePtr,
+			                                     info.itsReturnAddr,
 			                                     info.itsArch,
 			                                     info.itsUnmangledName );
 		}
@@ -203,8 +206,8 @@ namespace Backtrace
 		return result;
 	}
 	
-	std::string MakeReportFromStackCrawl( std::vector< ReturnAddress >::const_iterator  begin,
-	                                      std::vector< ReturnAddress >::const_iterator  end )
+	std::string MakeReportFromStackCrawl( std::vector< FrameData >::const_iterator  begin,
+	                                      std::vector< FrameData >::const_iterator  end )
 	{
 		std::vector< CallInfo > callChain;
 		

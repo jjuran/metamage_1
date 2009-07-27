@@ -405,7 +405,7 @@ namespace Genie
 	std::string proc_PID_stack::Get( const Process& process )
 	{
 		using Backtrace::StackFramePtr;
-		using Backtrace::ReturnAddress;
+		using Backtrace::FrameData;
 		
 		StackFramePtr top    = process.GetStackFramePointer();
 		StackFramePtr bottom = process.GetStackBottomPointer();
@@ -415,10 +415,10 @@ namespace Genie
 			return "";
 		}
 		
-		std::vector< ReturnAddress > stackCrawl = MakeStackCrawlFromTopToBottom( top, bottom );
+		std::vector< FrameData > stackCrawl = MakeStackCrawlFromTopToBottom( top, bottom );
 		
-		std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
-		std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
+		std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
+		std::vector< FrameData >::const_iterator end   = stackCrawl.end();
 		
 		--end;  // skip Genie::Process::Run( void )
 		
