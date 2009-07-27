@@ -31,9 +31,17 @@ namespace Genie
 			map its_mappings;
 		
 		public:
+			memory_mapping_holder()
+			{
+			}
+			
+			memory_mapping_holder( const memory_mapping_holder& other );
+			
 			addr_t add_memory_mapping( const shared_ptr& mapping );
 			
 			void remove_memory_mapping( addr_t key );
+			
+			void clear_memory_mappings();
 	};
 	
 }

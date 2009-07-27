@@ -12,6 +12,12 @@
 namespace Genie
 {
 	
+	memory_mapping_holder::memory_mapping_holder( const memory_mapping_holder& other )
+	:
+		its_mappings( other.its_mappings )
+	{
+	}
+	
 	void* memory_mapping_holder::add_memory_mapping( const shared_ptr& mapping )
 	{
 		void* key = mapping->get_address();
@@ -24,6 +30,11 @@ namespace Genie
 	void memory_mapping_holder::remove_memory_mapping( void* key )
 	{
 		its_mappings.erase( key );
+	}
+	
+	void memory_mapping_holder::clear_memory_mappings()
+	{
+		its_mappings.clear();
 	}
 	
 }
