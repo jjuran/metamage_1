@@ -18,14 +18,14 @@ namespace Backtrace
 	// It's either classic 68K or Mach-O -- never CFM.
 	typedef const struct OpaqueCodeNative*  ReturnAddrNative;
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MACOS__ )
 	
 	typedef const struct OpaqueCodeCFM*  ReturnAddrCFM;
 	
 #endif
 	
 	
-#if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MC68K__ )  ||  defined( __MACOS__ )
 	
 	// 68K is considered native for traditional Mac OS
 	// Even Carbon CFM binaries may run on OS 9 and can intermingle with 68K
@@ -38,7 +38,7 @@ namespace Backtrace
 #endif
 	
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MACOS__ )
 	
 	typedef ReturnAddrCFM ReturnAddrPPC;
 	
@@ -75,7 +75,7 @@ namespace Backtrace
 #endif
 
 
-#if ( defined( __POWERPC__ ) || defined( __MACOS__ ) )  &&  !defined( __MACH__ )
+#if defined( __POWERPC__ ) && !defined( __MACH__ )  ||  defined( __MACOS__ )
 	
 	typedef ReturnAddrPPC ReturnAddrWithTraceback;
 	
@@ -94,7 +94,7 @@ namespace Backtrace
 		{
 			ReturnAddrNative  addrNative;
 			
-		#if defined( __MACOS__ ) && !defined( __MACH__ )
+		#if defined( __MACOS__ )
 			
 			ReturnAddrCFM     addrCFM;
 			
@@ -107,7 +107,7 @@ namespace Backtrace
 		
 		ReturnAddress( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
 		
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
+	#if defined( __MACOS__ )
 		
 		ReturnAddress( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
 		
