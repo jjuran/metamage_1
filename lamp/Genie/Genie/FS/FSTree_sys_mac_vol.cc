@@ -205,6 +205,8 @@ namespace Genie
 		static const bool needsName = false;
 		
 		static const bool alwaysStringified = false;
+		
+		static const bool neverZero = false;
 	};
 	
 	struct GetVolumeName : Volume_Accessor_Defaults
@@ -304,6 +306,8 @@ namespace Genie
 	
 	struct GetVolumeWriteCount : Volume_Accessor_Defaults
 	{
+		static const bool neverZero = true;
+		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -314,6 +318,8 @@ namespace Genie
 	
 	struct GetVolumeFileCount : Volume_Accessor_Defaults
 	{
+		static const bool neverZero = true;
+		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -324,6 +330,8 @@ namespace Genie
 	
 	struct GetVolumeDirCount : Volume_Accessor_Defaults
 	{
+		static const bool neverZero = true;
+		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -517,9 +525,9 @@ namespace Genie
 		
 		{ "fsid", &Property_Factory< GetVolumeFSID > },
 		
-		{ "writes", &Property_Factory< GetVolumeWriteCount > },
-		{ "files",  &Property_Factory< GetVolumeFileCount  > },
-		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
+		{ "writes", &Property_Factory< GetVolumeWriteCount >, true },
+		{ "files",  &Property_Factory< GetVolumeFileCount  >, true },
+		{ "dirs",   &Property_Factory< GetVolumeDirCount   >, true },
 		
 		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },
 		
