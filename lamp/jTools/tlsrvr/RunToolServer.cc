@@ -412,10 +412,12 @@ namespace tool
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
-		// than the limit, it pretends that YOU canceled it while printing the
-		// output, claiming "User break", and returning 2.  Here we fix that.
+		// than the limit, it pretends that YOU cancelled it while printing the
+		// output, claiming "User break", and returning 2.
+		// Also, sometimes 1 is returned on user cancel, which could mean that
+		// ToolServer was running a script rather than a Metrowerks tool.
 		
-		if ( result == 2 )
+		if ( result == 1  ||  result == 2 )
 		{
 			if ( user_cancelled( errors ) )
 			{
