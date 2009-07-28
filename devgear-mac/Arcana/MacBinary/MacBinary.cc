@@ -30,9 +30,15 @@
 // Standard C++
 #include <algorithm>
 
+// Standard C
+#include <string.h>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Convert.h"
+
+// Nitrogen
+#include "Nitrogen/MacMemory.h"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
@@ -569,11 +575,15 @@ namespace MacBinary
 	{
 		std::size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
-		std::vector< char > buffer( paddedCount );
+		NN::Owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
 		
-		UInt32 bytesRead = N::FSRead( file, byteCount, &buffer[0], N::ThrowEOF_Never() );
+		char* buffer = *tempMem.get().Get();
 		
-		std::fill( buffer.begin() + bytesRead, buffer.end(), '\0' );
+		UInt32 bytesRead = N::FSRead( file, byteCount, buffer, N::ThrowEOF_Never() );
+		
+		memset( buffer + bytesRead, '\0', paddedCount - bytesRead );
+		
+		N::HLock( tempMem );
 		
 		blockWrite( output, &buffer[0], paddedCount );
 	}
