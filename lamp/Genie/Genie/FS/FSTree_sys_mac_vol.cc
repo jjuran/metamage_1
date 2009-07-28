@@ -493,6 +493,11 @@ namespace Genie
 		
 		PBHGetVInfoSync( pb, key );
 		
+		if ( pb.ioVDrvInfo == 1 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
 		
 		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive );
@@ -506,6 +511,11 @@ namespace Genie
 		HVolumeParam pb;
 		
 		PBHGetVInfoSync( pb, key );
+		
+		if ( pb.ioVDRefNum == 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
 		
 		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
 		
@@ -534,8 +544,8 @@ namespace Genie
 		
 		{ "sig", &Property_Factory< GetVolumeSignature > },
 		
-		{ "drive",  &Drive_Link_Factory  },
-		{ "driver", &Driver_Link_Factory },
+		{ "drive",  &Drive_Link_Factory,  true },
+		{ "driver", &Driver_Link_Factory, true },
 		
 		{ "fsid", &Property_Factory< GetVolumeFSID > },
 		
