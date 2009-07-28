@@ -1272,9 +1272,9 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > opened = Open( flags );
 		
-		if ( created  &&  (mode & 0200) == 0 )
+		if ( created )
 		{
-			N::FSpSetFLock( GetFSSpec() );
+			ChangeMode( mode );
 		}
 		
 		return opened;
