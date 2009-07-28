@@ -78,10 +78,10 @@ static void DumpBacktrace( const void* stackBottom )
 {
 	using namespace Backtrace;
 	
-	std::vector< ReturnAddress > stackCrawl = MakeStackCrawlToBottom( stackBottom );
+	std::vector< FrameData > stackCrawl = MakeStackCrawlToBottom( stackBottom );
 	
-	std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
-	std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
+	std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
+	std::vector< FrameData >::const_iterator end   = stackCrawl.end();
 	
 	++begin;  // skip DumpBacktrace( void )
 	--end;    // skip Genie::Process::Run( void )

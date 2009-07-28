@@ -18,14 +18,14 @@ namespace Backtrace
 	// It's either classic 68K or Mach-O -- never CFM.
 	typedef const struct OpaqueCodeNative*  ReturnAddrNative;
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MACOS__ )
 	
 	typedef const struct OpaqueCodeCFM*  ReturnAddrCFM;
 	
 #endif
 	
 	
-#if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MC68K__ )  ||  defined( __MACOS__ )
 	
 	// 68K is considered native for traditional Mac OS
 	// Even Carbon CFM binaries may run on OS 9 and can intermingle with 68K
@@ -38,7 +38,7 @@ namespace Backtrace
 #endif
 	
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MACOS__ )
 	
 	typedef ReturnAddrCFM ReturnAddrPPC;
 	
@@ -75,7 +75,7 @@ namespace Backtrace
 #endif
 
 
-#if ( defined( __POWERPC__ ) || defined( __MACOS__ ) )  &&  !defined( __MACH__ )
+#if defined( __POWERPC__ ) && !defined( __MACH__ )  ||  defined( __MACOS__ )
 	
 	typedef ReturnAddrPPC ReturnAddrWithTraceback;
 	
@@ -88,28 +88,54 @@ namespace Backtrace
 	
 	typedef const struct OpaqueStackFrame* StackFramePtr;
 	
-	struct ReturnAddress
+	struct FrameData
 	{
+		StackFramePtr framePtr;
+		
 		union
 		{
 			ReturnAddrNative  addrNative;
 			
-		#if defined( __MACOS__ ) && !defined( __MACH__ )
+		#if defined( __MACOS__ )
 			
 			ReturnAddrCFM     addrCFM;
 			
 		#endif
 		};
 		
-		bool isCFM;
+	#if defined( __MACOS__ )
 		
-		ReturnAddress() : addrNative(), isCFM()  {}
+		typedef bool CFM_Flag;
 		
-		ReturnAddress( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
+	#else
 		
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
+		struct CFM_Flag {};
 		
-		ReturnAddress( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
+	#endif
+		
+		CFM_Flag isCFM;
+		
+		FrameData()
+		{
+		}
+		
+		FrameData( StackFramePtr frame, ReturnAddrNative addr )
+		:
+			framePtr( frame ),
+			addrNative( addr ),
+			isCFM()
+		{
+		}
+		
+	#if defined( __MACOS__ )
+		
+		FrameData( StackFramePtr frame, ReturnAddrCFM addr )
+		:
+			framePtr( frame ),
+			addrCFM( addr ),
+			isCFM( true )
+		{
+		}
 		
 	#endif
 	};
@@ -117,16 +143,16 @@ namespace Backtrace
 	
 	StackFramePtr GetStackFramePointer( int levelsToSkip = 0 );
 	
-	std::vector< ReturnAddress > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
+	std::vector< FrameData > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
 	
-	inline std::vector< ReturnAddress > MakeStackCrawlFromTop( StackFramePtr frame )
+	inline std::vector< FrameData > MakeStackCrawlFromTop( StackFramePtr frame )
 	{
 		return MakeStackCrawlFromTopToBottom( frame, (const void*) 0xFFFFFFFF );
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawlToBottom( const void* limit );
+	std::vector< FrameData > MakeStackCrawlToBottom( const void* limit );
 	
-	inline std::vector< ReturnAddress > MakeStackCrawl()
+	inline std::vector< FrameData > MakeStackCrawl()
 	{
 		return MakeStackCrawlToBottom( (const void*) 0xFFFFFFFF );
 	}

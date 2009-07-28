@@ -19,28 +19,29 @@ namespace Backtrace
 	
 	struct CallInfo
 	{
+		const void*  itsFramePtr;
 		const void*  itsReturnAddr;
 		const char*  itsArch;
 		std::string  itsUnmangledName;
 	};
 	
-	CallInfo GetCallInfoFromReturnAddress( const ReturnAddress& call );
+	CallInfo GetCallInfoFromReturnAddress( const FrameData& call );
 	
 	std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
 	                                     std::vector< CallInfo >::const_iterator  end );
 	
-	std::string MakeReportFromStackCrawl( std::vector< ReturnAddress >::const_iterator  begin,
-	                                      std::vector< ReturnAddress >::const_iterator  end );
+	std::string MakeReportFromStackCrawl( std::vector< FrameData >::const_iterator  begin,
+	                                      std::vector< FrameData >::const_iterator  end );
 	
 	class DebuggingContext
 	{
 		private:
-			std::vector< ReturnAddress > itsStackCrawl;
+			std::vector< FrameData > itsStackCrawl;
 		
 		public:
 			DebuggingContext();
 			
-			const std::vector< ReturnAddress >& GetStackCrawl() const  { return itsStackCrawl; }
+			const std::vector< FrameData >& GetStackCrawl() const  { return itsStackCrawl; }
 	};
 	
 	void SetStackBottomLimit( const void* limit );
