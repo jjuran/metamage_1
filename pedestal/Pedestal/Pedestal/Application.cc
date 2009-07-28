@@ -777,9 +777,9 @@ namespace Pedestal
 			return true;
 		}
 		
-		UInt32 minTicksBetweenWNE = 2;
+		const UInt32 gMaxTicksBetweenEventChecks = 6;
 		
-		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
+		const UInt32 timetoWNE = gTickCountAtLastContextSwitch + gMaxTicksBetweenEventChecks;
 		
 		UInt32 now = ::LMGetTicks();
 		
