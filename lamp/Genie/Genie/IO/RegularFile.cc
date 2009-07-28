@@ -180,7 +180,7 @@ namespace Genie
 		
 		if ( count < length )
 		{
-			p7::throw_errno( EACCES );
+			memset( (char*) addr + count, '\0', length - count );
 		}
 		
 		return result;
