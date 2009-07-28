@@ -777,7 +777,7 @@ namespace Pedestal
 			return true;
 		}
 		
-		UInt32 minTicksBetweenWNE = 2;
+		UInt32 minTicksBetweenWNE = 6;
 		
 		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
 		
