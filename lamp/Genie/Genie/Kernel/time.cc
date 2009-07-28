@@ -71,6 +71,27 @@ namespace Genie
 	}
 	
 	
+	static inline UInt64 microseconds_from_timespec( const struct timespec& time )
+	{
+		const UInt64 result = time.tv_sec * 1000000LL + time.tv_nsec / 1000;
+		
+		return result;
+	}
+	
+	static inline void set_timespec_microseconds( struct timespec& time, UInt64 microseconds )
+	{
+		time.tv_sec  = microseconds / 1000000;
+		time.tv_nsec = microseconds % 1000000 * 1000;
+	}
+	
+	static inline void set_timespec_microseconds( struct timespec* time, UInt64 microseconds )
+	{
+		if ( time != NULL )
+		{
+			set_timespec_microseconds( *time, microseconds );
+		}
+	}
+	
 	static int nanosleep( const struct timespec* requested, struct timespec* remaining )
 	{
 		SystemCallFrame frame( "nanosleep" );
@@ -80,11 +101,23 @@ namespace Genie
 			return frame.SetErrno( EFAULT );
 		}
 		
+		const bool dozing = requested->tv_nsec == NANOSLEEP_DOZE;
+		
+		const struct timespec& minimum = requested[ dozing ? 1 : 0 ];
+		const struct timespec& maximum = requested[ dozing ? 2 : 0 ];
+		
+		const UInt64 minimum_microseconds = microseconds_from_timespec( minimum );
+		const UInt64 maximum_microseconds = microseconds_from_timespec( maximum );
+		
+		const SInt64 delta_microseconds = maximum_microseconds - minimum_microseconds;
+		
 		UInt64 start_microseconds = N::Microseconds();
 		
-		SInt64 remaining_microseconds = requested->tv_sec * 1000000LL + requested->tv_nsec / 1000;
+		UInt64 end_microseconds = start_microseconds + maximum_microseconds;
 		
-		UInt64 end_microseconds = start_microseconds + remaining_microseconds;
+		SInt64 remaining_microseconds = maximum_microseconds;
+		
+		int result = 0;
 		
 		try
 		{
@@ -107,26 +140,18 @@ namespace Genie
 				
 				remaining_microseconds = end_microseconds - N::Microseconds();
 			}
-			while ( remaining_microseconds > 0 );
+			while ( remaining_microseconds > delta_microseconds );
 		}
 		catch ( ... )
 		{
-			if ( remaining != NULL )
-			{
-				remaining->tv_sec  = remaining_microseconds / 1000000;
-				remaining->tv_nsec = remaining_microseconds % 1000000 * 1000;
-			}
+			remaining_microseconds = end_microseconds - N::Microseconds();
 			
-			return frame.SetErrnoFromException();
+			result = frame.SetErrnoFromException();
 		}
 		
-		if ( remaining != NULL )
-		{
-			remaining->tv_sec  =
-			remaining->tv_nsec = 0;
-		}
+		set_timespec_microseconds( remaining, std::max( remaining_microseconds, 0LL ) );
 		
-		return 0;
+		return result;
 	}
 	
 	#pragma force_active on
