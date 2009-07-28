@@ -385,7 +385,7 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static typename Accessor::Result Get( const FSTree* that )
 		{
 			XVolumeParam pb;
 			
@@ -394,6 +394,13 @@ namespace Genie
 			GetVolInfo( pb, that, Accessor::needsName ? name : NULL );
 			
 			const typename Accessor::Result data = Accessor::Get( pb );
+			
+			return data;
+		}
+		
+		static std::string Read( const FSTree* that, bool binary )
+		{
+			const typename Accessor::Result data = Get( that );
 			
 			const bool raw = !Accessor::alwaysStringified  &&  binary;
 			
