@@ -200,7 +200,14 @@ namespace Genie
 	}
 	
 	
-	struct GetVolumeName
+	struct Volume_Accessor_Defaults
+	{
+		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
+	};
+	
+	struct GetVolumeName : Volume_Accessor_Defaults
 	{
 		static const bool needsName = true;
 		
@@ -214,12 +221,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeBlockCount
+	struct GetVolumeBlockCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;  // will break on 16TB volumes
 		
 		static Result Get( const XVolumeParam& volume )
@@ -229,12 +232,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeBlockSize
+	struct GetVolumeBlockSize : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -243,12 +242,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFreeBlockCount
+	struct GetVolumeFreeBlockCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -258,12 +253,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeCapacity
+	struct GetVolumeCapacity : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -273,12 +264,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFreeSpace
+	struct GetVolumeFreeSpace : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -288,10 +275,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeSignature
+	struct GetVolumeSignature : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
 		static const bool alwaysStringified = true;
 		
 		typedef const char* Result;
@@ -307,12 +292,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFSID
+	struct GetVolumeFSID : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef SInt16 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -321,12 +302,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeWriteCount
+	struct GetVolumeWriteCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -335,12 +312,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFileCount
+	struct GetVolumeFileCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -349,12 +322,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeDirCount
+	struct GetVolumeDirCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef SInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
