@@ -34,7 +34,7 @@ namespace poseven
 	
 	Nucleus::Owned< fd_t > openat( fd_t dirfd, const char* path, open_flags_t flags, mode_t mode = mode_t( 0666 ) );
 	
-	inline Nucleus::Owned< fd_t > openat( fd_t dirfd, const std::string& path, open_flags_t flags, mode_t mode = mode_t( 644 ) )
+	inline Nucleus::Owned< fd_t > openat( fd_t dirfd, const std::string& path, open_flags_t flags, mode_t mode = mode_t( 0666 ) )
 	{
 		return openat( dirfd, path.c_str(), flags, mode );
 	}

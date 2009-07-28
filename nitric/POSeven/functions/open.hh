@@ -32,9 +32,9 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > open( const char* name, open_flags_t oflag, mode_t mode = mode_t( 644 ) );
+	Nucleus::Owned< fd_t > open( const char* name, open_flags_t oflag, mode_t mode = mode_t( 0666 ) );
 	
-	inline Nucleus::Owned< fd_t > open( const std::string& name, open_flags_t oflag, mode_t mode = mode_t( 644 ) )
+	inline Nucleus::Owned< fd_t > open( const std::string& name, open_flags_t oflag, mode_t mode = mode_t( 0666 ) )
 	{
 		return open( name.c_str(), oflag, mode );
 	}
