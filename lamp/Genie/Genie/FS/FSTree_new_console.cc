@@ -523,6 +523,10 @@ namespace Genie
 				params.itsSelection.start =
 				params.itsSelection.end   = s.length();
 			}
+			
+			const size_t max_write_after_cut = 8192;
+			
+			byteCount = std::min( byteCount, max_write_after_cut );
 		}
 		
 		ASSERT( consoleParams.itsStartOfInput <= s.size() );
