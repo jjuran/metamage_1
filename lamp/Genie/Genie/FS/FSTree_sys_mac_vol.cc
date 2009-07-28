@@ -452,10 +452,17 @@ namespace Genie
 		
 		const size_t size = fixed ? sizeof (typename Accessor::Result) : 0;
 		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            size,
-		                            &Property::Read );
+		FSTreePtr result = New_FSTree_Property( parent,
+		                                        name,
+		                                        size,
+		                                        &Property::Read );
+		
+		if ( Accessor::neverZero  &&  Property::Get( result.get() ) == 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return result;
 	}
 	
 	template < class Trigger >
