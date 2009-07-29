@@ -85,6 +85,11 @@ namespace Genie
 			decoded += c;
 		}
 		
+		if ( decoded.length() < sizeof (Key)  &&  decoded.length() >= 2 )
+		{
+			decoded.resize( sizeof (Key), ' ' );
+		}
+		
 		return NN::Convert< N::OSType >( decoded );
 	}
 	
