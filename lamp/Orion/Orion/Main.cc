@@ -76,7 +76,7 @@ namespace Orion
 			
 			std::string report = MakeReportFromStackCrawl( begin, end );
 			
-			p7::write( p7::stderr_fileno, report.data(), report.size() );
+			p7::write( p7::stderr_fileno, report );
 			
 			return;
 		}

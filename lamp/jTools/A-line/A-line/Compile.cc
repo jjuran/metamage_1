@@ -142,16 +142,6 @@ namespace tool
 		return name.size() > 2  &&  *(name.end() - 2) == '.';
 	}
 	
-	static std::string CreateFolder( const std::string& folder )
-	{
-		if ( !io::item_exists( folder ) )
-		{
-			p7::mkdir( folder, p7::mode_t( 0700 ) );
-		}
-		
-		return folder;
-	}
-	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
 	                                   const std::string&      source_pathname,
 	                                   const std::string&      output_pathname )
@@ -236,7 +226,7 @@ namespace tool
 		{
 			std::string line = *it + '\n';
 			
-			p7::write( output, line.data(), line.length() );
+			p7::write( output, line );
 		}
 	}
 	
@@ -349,8 +339,7 @@ namespace tool
 					
 					// Write .d file for next time
 					write_dependencies_file( p7::open( dependencies_pathname,
-					                                   p7::o_wronly | p7::o_creat | p7::o_trunc,
-					                                   p7::mode_t( 0666 ) ),
+					                                   p7::o_wronly | p7::o_creat | p7::o_trunc ),
 					                         includes );
 				}
 				

@@ -14,46 +14,16 @@
 #ifndef POSEVEN_PATHNAMES_HH
 #define POSEVEN_PATHNAMES_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
-
-// POSIX
-#include <unistd.h>
 
 // Io
 #include "io/files.hh"
 
 // POSeven
-#include "POSeven/types/errno_t.hh"
+#include "POSeven/functions/rmdir.hh"
+#include "POSeven/functions/unlink.hh"
 
-
-namespace poseven
-{
-	
-	inline void unlink( const char* pathname )
-	{
-		throw_posix_result( ::unlink( pathname ) );
-	}
-	
-	inline void unlink( const std::string& pathname )
-	{
-		unlink( pathname.c_str() );
-	}
-	
-	inline void rmdir( const char* pathname )
-	{
-		throw_posix_result( ::rmdir( pathname ) );
-	}
-	
-	inline void rmdir( const std::string& pathname )
-	{
-		rmdir( pathname.c_str() );
-	}
-	
-}
 
 namespace io
 {

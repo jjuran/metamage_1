@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2008 by Joshua Juran.
+// Written 2008-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -53,6 +53,13 @@ namespace poseven
 		s_isvtx = S_ISVTX,
 		
 	#endif
+		
+		_400 = 0400,
+		_444 = 0444,
+		_600 = 0600,
+		_666 = 0666,
+		_700 = 0700,
+		_777 = 0777,
 		
 		mode_t_max = Nucleus::Enumeration_Traits< ::mode_t >::max
 	};

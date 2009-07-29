@@ -198,7 +198,7 @@ namespace tool
 		
 		command_line += "\n";
 		
-		p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
+		p7::write( p7::stdout_fileno, command_line );
 	}
 	
 	static void PrintCommandForShell( const std::vector< const char* >& command )
@@ -633,8 +633,7 @@ namespace tool
 			}
 			
 			write_catalog_cache( p7::open( catalog_cache_pathname,
-			                               p7::o_wronly | p7::o_creat | p7::o_trunc,
-			                               p7::mode_t( 0666 ) ) );
+			                               p7::o_wronly | p7::o_creat | p7::o_trunc ) );
 			
 			cache_was_written = true;
 			

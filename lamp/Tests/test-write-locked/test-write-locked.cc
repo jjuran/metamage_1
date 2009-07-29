@@ -42,7 +42,7 @@ namespace tool
 	
 	static void lock_and_write( p7::fd_t fd )
 	{
-		p7::fchmod( fd, p7::mode_t( 0400 ) );
+		p7::fchmod( fd, p7::_400 );
 		
 		p7::write( fd, STR_LEN( TEST_STRING ) );
 	}
@@ -55,7 +55,7 @@ namespace tool
 		
 		(void) ::unlink( path );
 		
-		lock_and_write( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl, p7::mode_t( 0600 ) ) );
+		lock_and_write( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ) );
 		
 		RUN_TEST( (p7::stat( path ).st_mode & 0200) == 0, 1 );
 		
@@ -67,7 +67,7 @@ namespace tool
 		
 		p7::unlink( path );
 		
-		p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl, p7::mode_t( 0400 ) );
+		p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
 		
 		RUN_TEST( (p7::stat( path ).st_mode & 0200) == 0, 3 );
 		

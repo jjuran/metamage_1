@@ -189,7 +189,7 @@ namespace tool
 		//p7::copyfile( source, dest );
 		
 		// Lock backup files to prevent accidents
-		p7::mode_t mode = p7::mode_t( globally_locking_files ? 0400 : 0600 );
+		const p7::mode_t mode = globally_locking_files ? p7::_400 : p7::_600;
 		
 		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly );
 		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_creat | p7::o_excl, mode );
@@ -433,12 +433,12 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			p7::fchmod( b_fd, p7::mode_t( 0600 ) );  // unlock
+			p7::fchmod( b_fd, p7::_600 );  // unlock
 			
 			p7::close( b_fd );
 		}
 		
-		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
+		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
 		
 		off_t from_offset = 0;
 		
@@ -448,7 +448,7 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			p7::fchmod( b_fd, p7::mode_t( 0400 ) );  // lock
+			p7::fchmod( b_fd, p7::_400 );  // lock
 		}
 	}
 	

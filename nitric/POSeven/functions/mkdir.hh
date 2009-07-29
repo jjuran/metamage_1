@@ -28,12 +28,12 @@
 namespace poseven
 {
 	
-	inline void mkdir( const char* path, mode_t mode = mode_t( 0777 ) )
+	inline void mkdir( const char* path, mode_t mode = _777 )
 	{
 		throw_posix_result( ::mkdir( path, mode ) );
 	}
 	
-	inline void mkdir( const std::string& path, mode_t mode = mode_t( 0777 ) )
+	inline void mkdir( const std::string& path, mode_t mode = _777 )
 	{
 		mkdir( path.c_str(), mode );
 	}
