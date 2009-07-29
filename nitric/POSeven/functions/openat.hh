@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2006-2008 by Joshua Juran.
+// Written 2006-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -32,9 +32,9 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > openat( fd_t dirfd, const char* path, open_flags_t flags, mode_t mode = mode_t( 0666 ) );
+	Nucleus::Owned< fd_t > openat( fd_t dirfd, const char* path, open_flags_t flags, mode_t mode = _666 );
 	
-	inline Nucleus::Owned< fd_t > openat( fd_t dirfd, const std::string& path, open_flags_t flags, mode_t mode = mode_t( 0666 ) )
+	inline Nucleus::Owned< fd_t > openat( fd_t dirfd, const std::string& path, open_flags_t flags, mode_t mode = _666 )
 	{
 		return openat( dirfd, path.c_str(), flags, mode );
 	}
