@@ -19,9 +19,11 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
-#include "POSeven/extras/slurp.hh"
-#include "POSeven/extras/spew.hh"
+#include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/open.hh"
+#include "POSeven/functions/pread.hh"
 #include "POSeven/functions/stat.hh"
+#include "POSeven/functions/write.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"
@@ -147,13 +149,36 @@ namespace tool
 		std::string resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
+	static bool check_file_contents( p7::fd_t fd, const std::string& desired )
+	{
+		const size_t size = desired.size();
+		
+		const bool sizes_match = p7::fstat( fd ).st_size == size;
+		
+		if ( sizes_match )
+		{
+			std::string actual;
+			
+			actual.resize( size );
+			
+			if ( p7::pread( fd, &actual[0], size, 0 ) == size )
+			{
+				return actual == desired;
+			}
+		}
+		
+		return false;
+	}
+	
 	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
 	{
-		p7::open( pathname, p7::o_creat, p7::mode_t( 0666 ) );
+		NN::Owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_creat );
 		
-		if ( p7::slurp( pathname ) != contents )
+		const bool match = check_file_contents( pkgInfo, contents );
+		
+		if ( !match )
 		{
-			p7::spew( pathname, contents );
+			p7::write( pkgInfo, contents );
 		}
 	}
 	
