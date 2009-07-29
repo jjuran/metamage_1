@@ -17,6 +17,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.h"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/Process.hh"
 
@@ -26,6 +29,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
 	static pascal void YieldingNotifier( void*        contextPtr,
@@ -38,6 +42,9 @@ namespace Genie
 			switch ( code )
 			{
 				case kOTSyncIdleEvent:
+					// Hack to make sure we don't get starved for events
+					Ped::AdjustSleepForTimer( 4 );
+					
 					Yield( kInterruptNever );  // FIXME
 					
 					break;
@@ -176,6 +183,9 @@ namespace Genie
 			{
 				break;
 			}
+			
+			// Hack to make sure we don't get starved for events
+			Ped::AdjustSleepForTimer( 4 );
 			
 			Yield( kInterruptAlways );
 		}
