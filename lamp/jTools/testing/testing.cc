@@ -429,7 +429,7 @@ static int TestAFP( int argc, iota::argv_t argv )
 	message += supports;
 	message += " AppleTalk.\n";
 	
-	p7::write( p7::stdout_fileno, message.data(), message.size() );
+	p7::write( p7::stdout_fileno, message );
 	
 #endif
 	
@@ -581,7 +581,7 @@ static int TestMD5( int argc, iota::argv_t argv )
 	
 	std::string message = MD5Hex( text ) + "\n";
 	
-	p7::write( p7::stdout_fileno, message.data(), message.size() );
+	p7::write( p7::stdout_fileno, message );
 	
 	return 0;
 }
@@ -683,7 +683,7 @@ static int TestSoundInput( int argc, iota::argv_t argv )
 		
 		std::string output = NN::Convert< std::string >( deviceName ) + "\n";
 		
-		p7::write( p7::stdout_fileno, output.data(), output.size() );
+		p7::write( p7::stdout_fileno, output );
 	}
 	
 	return 0;
@@ -705,7 +705,7 @@ static void PrintString( std::string s )
 {
 	s += "\n";
 	
-	p7::write( p7::stdout_fileno, s.data(), s.size() );
+	p7::write( p7::stdout_fileno, s );
 }
 
 static int TestAE( int argc, iota::argv_t argv )
@@ -752,7 +752,7 @@ void MyThreadRoutine( const std::string& param  )
 {
 	std::string message = "Param is " + param + "\n";
 	
-	p7::write( p7::stdout_fileno, message.data(), message.size() );
+	p7::write( p7::stdout_fileno, message );
 }
 
 static int TestThread( int argc, iota::argv_t argv )
@@ -1252,7 +1252,7 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	unmangled += "\n";
 	
-	p7::write( p7::stdout_fileno, unmangled.data(), unmangled.size() );
+	p7::write( p7::stdout_fileno, unmangled );
 	
 	return 0;
 }
@@ -1387,7 +1387,7 @@ namespace tool
 				message += "\n";
 			}
 			
-			p7::write( p7::stdout_fileno, message.data(), message.size() );
+			p7::write( p7::stdout_fileno, message );
 			
 			return 0;
 		}
@@ -1400,7 +1400,7 @@ namespace tool
 		{
 			message = "No such test '" + arg1 + "'.\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			
 			return 1;
 		}

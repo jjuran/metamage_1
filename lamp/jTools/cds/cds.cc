@@ -122,7 +122,7 @@ namespace tool
 		command += NN::Convert< std::string >( NX::DiscLength( gTOC ) / 75 );
 		command += "\n";
 		
-		p7::write( p7::stdout_fileno, command.data(), command.size() );
+		p7::write( p7::stdout_fileno, command );
 	}
 	
 	

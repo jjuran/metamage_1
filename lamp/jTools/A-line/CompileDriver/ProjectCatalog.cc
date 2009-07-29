@@ -266,7 +266,7 @@ namespace tool
 				
 				record += '\n';
 				
-				p7::write( output, record.data(), record.length() );
+				p7::write( output, record );
 			}
 		}
 	}

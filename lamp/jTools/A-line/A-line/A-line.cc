@@ -198,7 +198,7 @@ namespace tool
 		
 		command_line += "\n";
 		
-		p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
+		p7::write( p7::stdout_fileno, command_line );
 	}
 	
 	static void PrintCommandForShell( const std::vector< const char* >& command )

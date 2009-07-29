@@ -175,7 +175,7 @@ namespace tool
 			message += NN::Convert< std::string >( error.Get() );
 			message += "\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			isComplete = true;
 		}
 		
@@ -211,7 +211,7 @@ namespace tool
 			message += NN::Convert< std::string >( error.Get() );
 			message += "\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			
 			isComplete = true;
 		}
@@ -286,7 +286,7 @@ namespace tool
 			message += NN::Convert< std::string >( h_errno );
 			message += "\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			
 			throw p7::exit_failure;
 		}

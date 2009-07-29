@@ -74,7 +74,7 @@ namespace tool
 		message += status[ scroll ];
 		message += "\n";
 		
-		p7::write( p7::stdout_fileno, message.data(), message.size() );
+		p7::write( p7::stdout_fileno, message );
 	}
 	
 	static void DoLEDs( N::GetIndADB_Result adbDevice, int leds )

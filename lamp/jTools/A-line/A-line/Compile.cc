@@ -226,7 +226,7 @@ namespace tool
 		{
 			std::string line = *it + '\n';
 			
-			p7::write( output, line.data(), line.length() );
+			p7::write( output, line );
 		}
 	}
 	
