@@ -66,6 +66,7 @@
 #include "Genie/FS/FSTree_sys.hh"
 #include "Genie/FS/FSTree_sys_mac_errata.hh"
 #include "Genie/FS/FSTree_sys_mac_vol.hh"
+#include "Genie/FS/ResFile_Dir.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
@@ -1330,6 +1331,11 @@ namespace Genie
 		if ( name == "rsrc"  &&  IsFile() )
 		{
 			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
+		}
+		
+		if ( name == "res"  &&  IsFile() )
+		{
+			return Get_ResFileDir_FSTree( itsFileSpec, itIsOnServer );
 		}
 		
 		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
