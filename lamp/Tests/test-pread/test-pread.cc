@@ -60,8 +60,7 @@ namespace tool
 	static void create_tmp_file()
 	{
 		p7::write( p7::open( tmp_file_path,
-		                     p7::o_rdwr | p7::o_creat | p7::o_trunc,
-		                     p7::mode_t( 0666 ) ),
+		                     p7::o_rdwr | p7::o_creat | p7::o_trunc ),
 		           STR_LEN( "123456789abcdef\n" ) );
 	}
 	
