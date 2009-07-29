@@ -142,16 +142,6 @@ namespace tool
 		return name.size() > 2  &&  *(name.end() - 2) == '.';
 	}
 	
-	static std::string CreateFolder( const std::string& folder )
-	{
-		if ( !io::item_exists( folder ) )
-		{
-			p7::mkdir( folder, p7::mode_t( 0700 ) );
-		}
-		
-		return folder;
-	}
-	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
 	                                   const std::string&      source_pathname,
 	                                   const std::string&      output_pathname )
