@@ -595,15 +595,16 @@ namespace Genie
 					p = start_of_last_line;
 					break;
 				
+				case '\n':
+					*end_of_output_p++ = c;
+					
+					start_of_last_line = p = end_of_output_p;
+					break;
+				
 				default:
 					*p++ = c;
 					
 					end_of_output_p = std::max( end_of_output_p, p );
-					
-					if ( c == '\n' )
-					{
-						start_of_last_line = p;
-					}
 					
 					break;
 			}
