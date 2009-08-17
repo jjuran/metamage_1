@@ -66,7 +66,19 @@ if ( $arg =~ m/^ - ([bdxktvV]) /x )
 
 my $selector = $arg;
 
-length $selector == 4 or die "Selector must be length 4";
+my $selector_length = length $selector;
+
+if ( $selector_length != 4 )
+{
+	if ( $selector_length >= 2  &&  $selector_length < 4 )
+	{
+		$selector .= " " x (4 - $selector_length);
+	}
+	else
+	{
+		die "Selector must be length 4";
+	}
+}
 
 my $request = unpack "L", $selector;
 
