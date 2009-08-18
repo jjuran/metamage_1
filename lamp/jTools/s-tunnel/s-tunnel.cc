@@ -34,6 +34,12 @@
 // Iota
 #include "iota/strings.hh"
 
+// Io
+#include "io/io.hh"
+
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // POSeven
 #include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
@@ -172,7 +178,7 @@ namespace tool
 		{
 			std::string message = "Remote read error: ";
 			
-			message += NN::Convert< std::string >( error.Get() );
+			message += strerror( error.Get() );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );
@@ -208,7 +214,7 @@ namespace tool
 		{
 			std::string message = "Local read error: ";
 			
-			message += NN::Convert< std::string >( error.Get() );
+			message += strerror( error.Get() );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );
