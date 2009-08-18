@@ -306,8 +306,8 @@ namespace tool
 	{
 		const char* remote_host;
 		
-		short remote_port;
-		short listener_port;
+		unsigned short remote_port;
+		unsigned short listener_port;
 		
 		O::BindOption( "--lport",  listener_port );
 		O::BindOption( "--remote", remote_host   );
