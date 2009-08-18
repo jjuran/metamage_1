@@ -200,7 +200,16 @@ namespace Genie
 	}
 	
 	
-	struct GetVolumeName
+	struct Volume_Accessor_Defaults
+	{
+		static const bool needsName = false;
+		
+		static const bool alwaysStringified = false;
+		
+		static const bool neverZero = false;
+	};
+	
+	struct GetVolumeName : Volume_Accessor_Defaults
 	{
 		static const bool needsName = true;
 		
@@ -214,12 +223,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeBlockCount
+	struct GetVolumeBlockCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;  // will break on 16TB volumes
 		
 		static Result Get( const XVolumeParam& volume )
@@ -229,12 +234,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeBlockSize
+	struct GetVolumeBlockSize : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -243,12 +244,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFreeBlockCount
+	struct GetVolumeFreeBlockCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt32 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -258,12 +255,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeCapacity
+	struct GetVolumeCapacity : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -273,12 +266,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFreeSpace
+	struct GetVolumeFreeSpace : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef UInt64 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -288,10 +277,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeSignature
+	struct GetVolumeSignature : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
 		static const bool alwaysStringified = true;
 		
 		typedef const char* Result;
@@ -307,12 +294,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFSID
+	struct GetVolumeFSID : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
-		
 		typedef SInt16 Result;
 		
 		static Result Get( const XVolumeParam& volume )
@@ -321,11 +304,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeWriteCount
+	struct GetVolumeWriteCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
+		static const bool neverZero = true;
 		
 		typedef SInt32 Result;
 		
@@ -335,11 +316,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFileCount
+	struct GetVolumeFileCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
+		static const bool neverZero = true;
 		
 		typedef SInt32 Result;
 		
@@ -349,11 +328,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeDirCount
+	struct GetVolumeDirCount : Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
-		static const bool alwaysStringified = false;
+		static const bool neverZero = true;
 		
 		typedef SInt32 Result;
 		
@@ -408,7 +385,7 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static typename Accessor::Result Get( const FSTree* that )
 		{
 			XVolumeParam pb;
 			
@@ -417,6 +394,13 @@ namespace Genie
 			GetVolInfo( pb, that, Accessor::needsName ? name : NULL );
 			
 			const typename Accessor::Result data = Accessor::Get( pb );
+			
+			return data;
+		}
+		
+		static std::string Read( const FSTree* that, bool binary )
+		{
+			const typename Accessor::Result data = Get( that );
 			
 			const bool raw = !Accessor::alwaysStringified  &&  binary;
 			
@@ -468,10 +452,17 @@ namespace Genie
 		
 		const size_t size = fixed ? sizeof (typename Accessor::Result) : 0;
 		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            size,
-		                            &Property::Read );
+		FSTreePtr result = New_FSTree_Property( parent,
+		                                        name,
+		                                        size,
+		                                        &Property::Read );
+		
+		if ( Accessor::neverZero  &&  Property::Get( result.get() ) == 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return result;
 	}
 	
 	template < class Trigger >
@@ -502,6 +493,11 @@ namespace Genie
 		
 		PBHGetVInfoSync( pb, key );
 		
+		if ( pb.ioVDrvInfo == 1 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
 		
 		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive );
@@ -515,6 +511,11 @@ namespace Genie
 		HVolumeParam pb;
 		
 		PBHGetVInfoSync( pb, key );
+		
+		if ( pb.ioVDRefNum == 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
 		
 		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
 		
@@ -543,14 +544,14 @@ namespace Genie
 		
 		{ "sig", &Property_Factory< GetVolumeSignature > },
 		
-		{ "drive",  &Drive_Link_Factory  },
-		{ "driver", &Driver_Link_Factory },
+		{ "drive",  &Drive_Link_Factory,  true },
+		{ "driver", &Driver_Link_Factory, true },
 		
 		{ "fsid", &Property_Factory< GetVolumeFSID > },
 		
-		{ "writes", &Property_Factory< GetVolumeWriteCount > },
-		{ "files",  &Property_Factory< GetVolumeFileCount  > },
-		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
+		{ "writes", &Property_Factory< GetVolumeWriteCount >, true },
+		{ "files",  &Property_Factory< GetVolumeFileCount  >, true },
+		{ "dirs",   &Property_Factory< GetVolumeDirCount   >, true },
 		
 		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },
 		
