@@ -84,7 +84,7 @@ my @programs = qw
 	abort aevt ar argv0
 	beep buffer buserror
 	cat cds chain cp cpres cr2lf
-	daemonize divide
+	d68k daemonize divide
 	echo env err2text
 	false follower
 	gzip
@@ -126,6 +126,8 @@ my %fsmap =
 		[
 			# Build tools
 			qw( A-line ar cpres ld mpwrez mwcc ),
+			# Debugging
+			qw( d68k ),
 			# Source management
 			qw( jsync ),
 			# Exceptions
