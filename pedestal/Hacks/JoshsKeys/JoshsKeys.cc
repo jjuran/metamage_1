@@ -27,7 +27,6 @@
 
 namespace Ag = Silver;
 
-static EventRecord gLastEvent;
 static bool gExtendingSelection;
 static short gSelectionAnchor, gSelectionExtent;
 
@@ -77,17 +76,20 @@ static bool CharIsSpecialForCmdOrOption( char c)
 	return CharIsDelete( c ) || CharIsArrow( c );
 }
 
+static inline UInt16 GetPartialKeyModifiers()
+{
+	// Credit to Lawrence D'Oliveiro for the low memory tip, from PsyScript.
+	UInt16 lowMemModifiers = *reinterpret_cast< UInt16* >( 0x017A );
+	
+	UInt16 keyModifiers = (lowMemModifiers & 0x007F) << 9   // Shift/Alpha/Option/Control
+	                    | (lowMemModifiers & 0x8000) >> 7;  // Command
+	
+	return keyModifiers;
+}
+
+
 namespace
 {
-	
-	short GetNextEvent_Patch( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
-	{
-		short result = nextHandler( eventMask, theEvent );
-		
-		gLastEvent = *theEvent;
-		
-		return result;
-	}
 	
 	void TEActivate_Patch( TEHandle hTE, Ag::TEActivateProcPtr nextHandler )
 	{
@@ -105,14 +107,16 @@ namespace
 		
 	void TEKey_Patch( short c, TEHandle hTE, Ag::TEKeyProcPtr nextHandler )
 	{
+		const UInt16 modifiers = GetPartialKeyModifiers();
+		
 		short selStart = hTE[0]->selStart;
 		short selEnd   = hTE[0]->selEnd;
 		
 		bool emptySelection = selStart == selEnd;
 		
-		bool cmdKeyIsDown    = gLastEvent.modifiers & cmdKey;
-		bool shiftKeyIsDown  = gLastEvent.modifiers & kEitherShiftKey;
-		bool optionKeyIsDown = gLastEvent.modifiers & kEitherOptionKey;
+		bool cmdKeyIsDown    = modifiers & cmdKey;
+		bool shiftKeyIsDown  = modifiers & kEitherShiftKey;
+		bool optionKeyIsDown = modifiers & kEitherOptionKey;
 		
 		bool forward = CharIsForwardArrow( c );
 		
@@ -287,10 +291,9 @@ namespace
 		}
 		else
 		{
-			Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch >::Install();
-			Ag::TrapPatch< _TEActivate,   TEActivate_Patch   >::Install();
-			Ag::TrapPatch< _TEClick,      TEClick_Patch      >::Install();
-			Ag::TrapPatch< _TEKey,        TEKey_Patch        >::Install();
+			Ag::TrapPatch< _TEActivate, TEActivate_Patch >::Install();
+			Ag::TrapPatch< _TEClick,    TEClick_Patch    >::Install();
+			Ag::TrapPatch< _TEKey,      TEKey_Patch      >::Install();
 		}
 		
 		nextHandler();
