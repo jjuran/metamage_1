@@ -43,7 +43,7 @@
 //#include "Utilities/Processes.h"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // CompileDriver
@@ -69,7 +69,7 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -555,65 +555,65 @@ namespace tool
 		
 		// General
 		
-		O::BindOption( "-v", gOptions.verbose );
+		o::bind_option_to_variable( "-v", gOptions.verbose );
 		
-		O::AliasOption( "-v", "--verbose" );
+		o::alias_option( "-v", "--verbose" );
 		
 		// Actions
 		
-		O::BindOption( "-a", gOptions.all );
+		o::bind_option_to_variable( "-a", gOptions.all );
 		
-		O::AliasOption( "-a", "--all" );
+		o::alias_option( "-a", "--all" );
 		
-		O::BindOption( "-n", gDryRun );
+		o::bind_option_to_variable( "-n", gDryRun );
 		
-		O::AliasOption( "-n", "--dry-run" );
+		o::alias_option( "-n", "--dry-run" );
 		
-		O::BindOption( "-t", gOptions.catalog );
+		o::bind_option_to_variable( "-t", gOptions.catalog );
 		
-		O::AliasOption( "-t", "--catalog" );
+		o::alias_option( "-t", "--catalog" );
 		
 		// Targeting
 		
-		O::BindOption( "-6", arch, arch68K );
-		O::BindOption( "-P", arch, archPPC );
-		O::BindOption( "-8", arch, archX86 );
+		o::bind_option_to_variable( "-6", arch, arch68K );
+		o::bind_option_to_variable( "-P", arch, archPPC );
+		o::bind_option_to_variable( "-8", arch, archX86 );
 		
-		O::BindOption( "-4", runtime, runtimeA4CodeResource );
-		O::BindOption( "-5", runtime, runtimeA5CodeSegments );
-		O::BindOption( "-F", runtime, runtimeCodeFragments  );
-		O::BindOption( "-O", runtime, runtimeMachO          );
+		o::bind_option_to_variable( "-4", runtime, runtimeA4CodeResource );
+		o::bind_option_to_variable( "-5", runtime, runtimeA5CodeSegments );
+		o::bind_option_to_variable( "-F", runtime, runtimeCodeFragments  );
+		o::bind_option_to_variable( "-O", runtime, runtimeMachO          );
 		
-		O::BindOption( "-B", macAPI, apiMacBlue   );
-		O::BindOption( "-C", macAPI, apiMacCarbon );
+		o::bind_option_to_variable( "-B", macAPI, apiMacBlue   );
+		o::bind_option_to_variable( "-C", macAPI, apiMacCarbon );
 		
-		O::BindOption( "-g", buildVariety, buildDebug   );
-		O::BindOption( "-R", buildVariety, buildRelease );
-		O::BindOption( "-D", buildVariety, buildDemo    );
+		o::bind_option_to_variable( "-g", buildVariety, buildDebug   );
+		o::bind_option_to_variable( "-R", buildVariety, buildRelease );
+		o::bind_option_to_variable( "-D", buildVariety, buildDemo    );
 		
-		O::AliasOption( "-6", "--68k" );
-		O::AliasOption( "-P", "--ppc" );
-		O::AliasOption( "-8", "--x86" );
+		o::alias_option( "-6", "--68k" );
+		o::alias_option( "-P", "--ppc" );
+		o::alias_option( "-8", "--x86" );
 		
-		O::AliasOption( "-4", "--a4"    );
-		O::AliasOption( "-5", "--a5"    );
-		O::AliasOption( "-F", "--cfm"   );
-		O::AliasOption( "-O", "--macho" );
+		o::alias_option( "-4", "--a4"    );
+		o::alias_option( "-5", "--a5"    );
+		o::alias_option( "-F", "--cfm"   );
+		o::alias_option( "-O", "--macho" );
 		
-		O::AliasOption( "-B", "--blue"   );
-		O::AliasOption( "-C", "--carbon" );
+		o::alias_option( "-B", "--blue"   );
+		o::alias_option( "-C", "--carbon" );
 		
-		O::AliasOption( "-g", "--debug"   );
-		O::AliasOption( "-R", "--release" );
-		O::AliasOption( "-D", "--demo"    );
+		o::alias_option( "-g", "--debug"   );
+		o::alias_option( "-R", "--release" );
+		o::alias_option( "-D", "--demo"    );
 		
 		// Performance
 		
-		O::BindOption( "-j", global_job_limit );
+		o::bind_option_to_variable( "-j", global_job_limit );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
 		
 		Platform targetPlatform = arch | runtime | macAPI;
 		

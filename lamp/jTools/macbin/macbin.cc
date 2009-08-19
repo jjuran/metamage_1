@@ -41,7 +41,7 @@
 #include "MacBinary.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -52,7 +52,7 @@ namespace tool
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	// Operations:
@@ -127,14 +127,14 @@ namespace tool
 		const char* encode_target = NULL;
 		const char* decode_target = NULL;
 		
-		O::BindOption( "--encode", encode_target );
-		O::BindOption( "--decode", decode_target );
+		o::bind_option_to_variable( "--encode", encode_target );
+		o::bind_option_to_variable( "--decode", decode_target );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t argCount = O::FreeArgumentCount();
+		const size_t n_args = o::free_argument_count();
 		
 		if ( bool both_or_neither = (encode_target == NULL) == (decode_target == NULL) )
 		{
@@ -156,12 +156,12 @@ namespace tool
 			
 			MacBinary::Encode( targetFile,
 			                   &BlockWrite,
-			                   p7::open( argCount > 0 ? freeArgs[ 0 ] : make_archive_name( encode_target ).c_str(),
+			                   p7::open( n_args > 0 ? free_args[ 0 ] : make_archive_name( encode_target ).c_str(),
 			                             p7::o_wronly | p7::o_excl | p7::o_creat ) );
 		}
 		else if ( decode_target )
 		{
-			const char* destDirPath = argCount > 0 ? freeArgs[ 0 ] : ".";
+			const char* destDirPath = n_args > 0 ? free_args[ 0 ] : ".";
 			
 			try
 			{

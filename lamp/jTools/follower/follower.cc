@@ -12,7 +12,7 @@
 #include "POSeven/functions/pwrite.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -20,7 +20,7 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static bool PathnameMeansStdIn( const char* pathname )
@@ -43,13 +43,13 @@ namespace tool
 	{
 		const char* sleep_arg = NULL;
 		
-		O::BindOption( "--sleep", sleep_arg );
+		o::bind_option_to_variable( "--sleep", sleep_arg );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *free_args = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t n_args = O::FreeArgumentCount();
+		std::size_t n_args = o::free_argument_count();
 		
 		const char* pathname = EvaluateMetaFilename( free_args[0] ? free_args[0] : "-" );
 		

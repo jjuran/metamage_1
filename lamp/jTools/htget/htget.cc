@@ -30,7 +30,7 @@
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -39,7 +39,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static bool ParseURL( const std::string& url,
@@ -128,26 +128,26 @@ namespace tool
 		
 		const char* outputFile = defaultOutput;
 		
-		O::BindOption( "-i", dumpHeader      );
-		O::BindOption( "-I", sendHEADRequest );
-		O::BindOption( "-o", outputFile      );
-		O::BindOption( "-O", saveToFile      );
+		o::bind_option_to_variable( "-i", dumpHeader      );
+		o::bind_option_to_variable( "-I", sendHEADRequest );
+		o::bind_option_to_variable( "-o", outputFile      );
+		o::bind_option_to_variable( "-O", saveToFile      );
 		
-		O::AliasOption( "-i", "--headers" );
-		O::AliasOption( "-i", "--include" );
+		o::alias_option( "-i", "--headers" );
+		o::alias_option( "-i", "--include" );
 		
-		O::AliasOption( "-I", "--head" );
+		o::alias_option( "-I", "--head" );
 		
-		O::AliasOption( "-O", "--remote-name" );
-		O::AliasOption( "-O", "--save"        );
+		o::alias_option( "-O", "--remote-name" );
+		o::alias_option( "-O", "--save"        );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
 		
-		std::size_t argCount = O::FreeArgumentCount();
+		const size_t n_args = o::free_argument_count();
 		
-		if ( argCount == 0 )
+		if ( n_args == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Usage:  htget <url>\n" ) );
 			

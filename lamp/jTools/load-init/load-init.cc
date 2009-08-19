@@ -28,7 +28,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -39,7 +39,7 @@ namespace tool
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static int LoadInit( const char* type, const char* id, iota::argv_t args )
@@ -102,16 +102,16 @@ namespace tool
 		const char* type = "INIT";
 		const char* id   = "0";
 		
-		O::BindOption( "--type", type );
-		O::BindOption( "--id",   id   );
+		o::bind_option_to_variable( "--type", type );
+		o::bind_option_to_variable( "--id",   id   );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		iota::argp_t freeArgs = O::FreeArguments();
+		iota::argp_t freeArgs = o::free_arguments();
 		
-		std::size_t argCount = O::FreeArgumentCount();
+		const size_t n_args = o::free_argument_count();
 		
-		if ( argCount == 0 )
+		if ( n_args == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Usage: load-init --type=TYPE --id=nnn file\n" ) );
 			

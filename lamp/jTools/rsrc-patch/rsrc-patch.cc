@@ -20,7 +20,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -31,7 +31,7 @@ namespace tool
 	namespace NN = Nucleus;
 	namespace Bits = BitsAndBytes;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static const char* gResFilePathname = NULL;
@@ -146,26 +146,22 @@ namespace tool
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		O::BindOption( "--type", gResType );
-		O::BindOption( "--id",   gResID   );
+		o::bind_option_to_variable( "--type", gResType );
+		o::bind_option_to_variable( "--id",   gResID   );
 		
-		O::BindOptionTrigger( "--file", std::ptr_fun( FileOptor ) );
-		O::BindOptionTrigger( "--load", std::ptr_fun( LoadOptor ) );
-		O::BindOptionTrigger( "--find", std::ptr_fun( FindOptor ) );
-		O::BindOptionTrigger( "--seek", std::ptr_fun( SeekOptor ) );
+		o::bind_option_trigger( "--file", std::ptr_fun( FileOptor ) );
+		o::bind_option_trigger( "--load", std::ptr_fun( LoadOptor ) );
+		o::bind_option_trigger( "--find", std::ptr_fun( FindOptor ) );
+		o::bind_option_trigger( "--seek", std::ptr_fun( SeekOptor ) );
 		
-		O::BindOptionTrigger( "--write", std::ptr_fun( WriteOptor ) );
+		o::bind_option_trigger( "--write", std::ptr_fun( WriteOptor ) );
 		
-		O::BindOptionTrigger( "--find-hex",  std::ptr_fun( FindHexOptor  ) );
-		O::BindOptionTrigger( "--write-hex", std::ptr_fun( WriteHexOptor ) );
+		o::bind_option_trigger( "--find-hex",  std::ptr_fun( FindHexOptor  ) );
+		o::bind_option_trigger( "--write-hex", std::ptr_fun( WriteHexOptor ) );
 		
-		//O::AliasOption( "--type", "-t" );
+		//o::alias_option( "--type", "-t" );
 		
-		O::GetOptions( argc, argv );
-		
-		char const *const *freeArgs = O::FreeArguments();
-		
-		std::size_t argCount = O::FreeArgumentCount();
+		o::get_options( argc, argv );
 		
 		return EXIT_SUCCESS;
 	}

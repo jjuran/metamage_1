@@ -45,7 +45,7 @@
 #include "POSeven/types/exit_t.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -54,7 +54,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	struct PeerClosedSocket {};
@@ -309,15 +309,11 @@ namespace tool
 		unsigned short remote_port;
 		unsigned short listener_port;
 		
-		O::BindOption( "--lport",  listener_port );
-		O::BindOption( "--remote", remote_host   );
-		O::BindOption( "--rport",  remote_port   );
+		o::bind_option_to_variable( "--lport",  listener_port );
+		o::bind_option_to_variable( "--remote", remote_host   );
+		o::bind_option_to_variable( "--rport",  remote_port   );
 		
-		O::GetOptions( argc, argv );
-		
-		char const *const *freeArgs = O::FreeArguments();
-		
-		std::size_t argCount = O::FreeArgumentCount();
+		o::get_options( argc, argv );
 		
 		if ( listener_port == 0 )
 		{

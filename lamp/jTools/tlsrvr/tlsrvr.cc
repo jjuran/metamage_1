@@ -27,7 +27,7 @@
 #include "Utilities/Processes.h"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // tlsrvr
@@ -41,7 +41,7 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	template < class F >
@@ -143,15 +143,15 @@ namespace tool
 		bool escapeForMPW = false;
 		bool switchLayers = false;
 		
-		O::BindOption( "--escape", escapeForMPW );
-		O::BindOption( "--switch", switchLayers );
+		o::bind_option_to_variable( "--escape", escapeForMPW );
+		o::bind_option_to_variable( "--switch", switchLayers );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::string command = MakeCommand( freeArgs,
-		                                   freeArgs + O::FreeArgumentCount(),
+		std::string command = MakeCommand( free_args,
+		                                   free_args + o::free_argument_count(),
 		                                   escapeForMPW );
 		
 		// This is a bit of a hack.  It really ought to happen just after we send the event,

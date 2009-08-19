@@ -24,7 +24,7 @@
 #include "POSeven/functions/open.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -33,7 +33,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static int usage()
@@ -52,18 +52,18 @@ namespace tool
 		
 		const char* ctty = NULL;
 		
-		O::BindOption( "--cwd",    keep_cwd    );
-		O::BindOption( "--stdin",  keep_stdin  );
-		O::BindOption( "--stdout", keep_stdout );
-		O::BindOption( "--stderr", keep_stderr );
+		o::bind_option_to_variable( "--cwd",    keep_cwd    );
+		o::bind_option_to_variable( "--stdin",  keep_stdin  );
+		o::bind_option_to_variable( "--stdout", keep_stdout );
+		o::bind_option_to_variable( "--stderr", keep_stderr );
 		
-		O::BindOption( "--ctty", ctty );
+		o::bind_option_to_variable( "--ctty", ctty );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *free_args = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t n_args = O::FreeArgumentCount();
+		std::size_t n_args = o::free_argument_count();
 		
 		if ( n_args < 1 )
 		{

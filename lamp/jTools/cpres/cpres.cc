@@ -17,7 +17,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -29,7 +29,7 @@ namespace Div = Divergence;
 namespace tool
 {
 	
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static bool globally_using_data_fork = false;
@@ -115,13 +115,13 @@ namespace tool
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		O::BindOption( "--data", globally_using_data_fork );
+		o::bind_option_to_variable( "--data", globally_using_data_fork );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
 		
-		std::size_t n_args = O::FreeArgumentCount();
+		std::size_t n_args = o::free_argument_count();
 		
 		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
 		{

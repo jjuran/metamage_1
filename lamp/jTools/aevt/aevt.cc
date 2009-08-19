@@ -33,11 +33,9 @@
 #endif
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
-
-namespace O = Orion;
 
 namespace tool
 {
@@ -45,6 +43,7 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	namespace o = orion;
 	
 	
 	static NN::Owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
@@ -136,26 +135,26 @@ namespace tool
 	{
 		std::string url, host, machine, app, sig;
 		
-		O::BindOption( "-u", url     );
-		O::BindOption( "-h", host    );
-		O::BindOption( "-m", machine );
-		O::BindOption( "-a", app     );
-		O::BindOption( "-s", sig     );
+		o::bind_option_to_variable( "-u", url     );
+		o::bind_option_to_variable( "-h", host    );
+		o::bind_option_to_variable( "-m", machine );
+		o::bind_option_to_variable( "-a", app     );
+		o::bind_option_to_variable( "-s", sig     );
 		
-		O::AliasOption( "-u", "--url"       );
-		O::AliasOption( "-h", "--host"      );
-		O::AliasOption( "-m", "--machine"   );
-		O::AliasOption( "-a", "--app"       );
-		O::AliasOption( "-s", "--sig"       );
-		O::AliasOption( "-s", "--signature" );
+		o::alias_option( "-u", "--url"       );
+		o::alias_option( "-h", "--host"      );
+		o::alias_option( "-m", "--machine"   );
+		o::alias_option( "-a", "--app"       );
+		o::alias_option( "-s", "--sig"       );
+		o::alias_option( "-s", "--signature" );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
 		
 		std::string argBuild, argEventClass, argEventID;
 		
-		if ( O::FreeArgumentCount() == 0 )
+		if ( o::free_argument_count() == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN(
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
@@ -166,13 +165,13 @@ namespace tool
 			
 			return 2;
 		}
-		else if ( O::FreeArgumentCount() < 2 )
+		else if ( o::free_argument_count() < 2 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "aevt: missing arguments" "\n" ) );
 			
 			return 2;
 		}
-		else if ( O::FreeArgumentCount() < 3 )
+		else if ( o::free_argument_count() < 3 )
 		{
 			argBuild = "";
 		}

@@ -25,7 +25,7 @@
 #include "POSeven/functions/write.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -34,7 +34,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static void make_window( const char* title )
@@ -81,19 +81,19 @@ namespace tool
 		
 		const char* output_file = "/dev/null";
 		
-		O::BindOption( "-o", output_file );
-		O::BindOption( "-t", title       );
-		O::BindOption( "-w", should_wait );
+		o::bind_option_to_variable( "-o", output_file );
+		o::bind_option_to_variable( "-t", title       );
+		o::bind_option_to_variable( "-w", should_wait );
 		
-		O::BindOption( "--in-place", in_place );
+		o::bind_option_to_variable( "--in-place", in_place );
 		
-		O::AliasOption( "-o", "--out"   );
-		O::AliasOption( "-t", "--title" );
-		O::AliasOption( "-w", "--wait"  );
+		o::alias_option( "-o", "--out"   );
+		o::alias_option( "-t", "--title" );
+		o::alias_option( "-w", "--wait"  );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *freeArgs = o::free_arguments();
 		
 		if ( *freeArgs == NULL )
 		{

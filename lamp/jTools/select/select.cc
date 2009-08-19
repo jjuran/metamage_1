@@ -26,7 +26,7 @@
 #include "POSeven/types/exit_t.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -34,7 +34,7 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static int Select( const std::vector< std::string >& read_files, bool only_one )
@@ -101,14 +101,14 @@ namespace tool
 		
 		std::vector< std::string > readers;
 		
-		O::BindOption( "-1", only_one );
-		O::BindOption( "-r", readers  );
+		o::bind_option_to_variable( "-1", only_one );
+		o::bind_option_to_variable( "-r", readers  );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		//char const *const *free_args = O::FreeArguments();
+		//char const *const *free_args = o::free_arguments();
 		
-		//const std::size_t n_args = O::FreeArgumentCount();
+		//const std::size_t n_args = o::free_argument_count();
 		
 		return Select( readers, only_one );
 	}

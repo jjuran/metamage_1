@@ -56,7 +56,7 @@
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -68,7 +68,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -520,9 +520,9 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		O::BindOption( "--doc-root", gDocumentRoot );
+		o::bind_option_to_variable( "--doc-root", gDocumentRoot );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
 		sockaddr_in peer;
 		socklen_t peerlen = sizeof peer;

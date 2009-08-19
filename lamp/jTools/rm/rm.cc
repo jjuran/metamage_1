@@ -22,7 +22,7 @@
 #include "POSeven/types/exit_t.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -30,7 +30,7 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static bool globally_forced = false;
@@ -78,18 +78,18 @@ namespace tool
 	{
 		bool recursive = false;
 		
-		O::BindOption( "-r", recursive       );
-		O::BindOption( "-f", globally_forced );
+		o::bind_option_to_variable( "-r", recursive       );
+		o::bind_option_to_variable( "-f", globally_forced );
 		
-		O::AliasOption( "-r", "-R" );
-		O::AliasOption( "-r", "--recursive" );
-		O::AliasOption( "-f", "--force" );
+		o::alias_option( "-r", "-R" );
+		o::alias_option( "-r", "--recursive" );
+		o::alias_option( "-f", "--force" );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *free_args = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		const std::size_t n_args = O::FreeArgumentCount();
+		const size_t n_args = o::free_argument_count();
 		
 		// Check for sufficient number of args
 		if ( n_args < 1 )

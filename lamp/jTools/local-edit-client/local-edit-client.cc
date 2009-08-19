@@ -31,7 +31,7 @@
 #include "MD5.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -40,7 +40,7 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	static MD5::Result MD5DigestFile( p7::fd_t input )
@@ -170,16 +170,16 @@ namespace tool
 		
 		const char* outputFile = defaultOutput;
 		
-		O::BindOption( "-i", dumpHeader );
-		O::BindOption( "-o", outputFile  );
+		o::bind_option_to_variable( "-i", dumpHeader );
+		o::bind_option_to_variable( "-o", outputFile  );
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
-		std::size_t argCount = O::FreeArgumentCount();
+		const size_t n_args = o::free_argument_count();
 		
-		const char* target_pathname = argCount > 0 ? freeArgs[0] : "/dev/null";
+		const char* target_pathname = n_args > 0 ? free_args[0] : "/dev/null";
 		
 		NN::Owned< p7::fd_t > target_file_stream = p7::open( target_pathname, p7::o_rdwr | p7::o_creat );
 		

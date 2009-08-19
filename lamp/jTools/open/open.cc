@@ -44,7 +44,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
+#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -56,7 +56,7 @@ namespace tool
 	namespace p7 = poseven;
 	namespace NX = NitrogenExtras;
 	namespace Div = Divergence;
-	namespace O = Orion;
+	namespace o = orion;
 	
 	
 	enum
@@ -154,14 +154,14 @@ namespace tool
 	
 	static void DefineOptions()
 	{
-		O::BindOption( "--app",  gAppNameToOpenIn );
-		O::BindOption( "--sig",  gAppSigToOpenIn  );
-		O::BindOption( "--mac",  gUseMacPathnames );
-		O::BindOption( "--edit", gOpenInEditor    );
+		o::bind_option_to_variable( "--app",  gAppNameToOpenIn );
+		o::bind_option_to_variable( "--sig",  gAppSigToOpenIn  );
+		o::bind_option_to_variable( "--mac",  gUseMacPathnames );
+		o::bind_option_to_variable( "--edit", gOpenInEditor    );
 		
-		O::AliasOption( "--app",  "-a" );
-		O::AliasOption( "--edit", "-e" );
-		O::AliasOption( "--edit", "-t" );
+		o::alias_option( "--app",  "-a" );
+		o::alias_option( "--edit", "-e" );
+		o::alias_option( "--edit", "-t" );
 	}
 	
 	static N::OSType SignatureOfAppForOpening()
@@ -288,13 +288,13 @@ namespace tool
 		
 		DefineOptions();
 		
-		O::GetOptions( argc, argv );
+		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = O::FreeArguments();
+		char const *const *free_args = o::free_arguments();
 		
 		std::vector< FSSpec > itemsToOpen;
 		
-		for ( char const *const *it = freeArgs;  *it != NULL;  ++it )
+		for ( char const *const *it = free_args;  *it != NULL;  ++it )
 		{
 			const char* pathname = *it;
 			
