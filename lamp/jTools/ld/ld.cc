@@ -39,7 +39,6 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
 
