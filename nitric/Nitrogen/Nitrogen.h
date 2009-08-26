@@ -80,26 +80,3 @@
 #include "Nitrogen/UPP.h"
 #include "Nitrogen/UnicodeConverter.h"
 
-#if TARGET_RT_MAC_MACHO
-#include "Nitrogen/ABAddressBookC.h"
-#include "Nitrogen/ABPeoplePickerC.h"
-#include "Nitrogen/AddressBook.h"
-#include "Nitrogen/CFDateFormatter.h"
-#include "Nitrogen/CFLocale.h"
-#include "Nitrogen/CGDirectDisplay.h"
-#include "Nitrogen/HIObject.h"
-#include "Nitrogen/HIShape.h"
-#include "Nitrogen/HITheme.h"
-#include "Nitrogen/HIToolbar.h"
-#include "Nitrogen/HIView.h"
-#include "Nitrogen/KeychainCore.h"
-#include "Nitrogen/KeychainHI.h"
-#include "Nitrogen/LSInfo.h"
-#include "Nitrogen/LSOpen.h"
-#include "Nitrogen/Navigation.h"
-// #include "Nitrogen/SecCertificateSupport.h"
-#include "Nitrogen/SecIdentity.h"
-#include "Nitrogen/SecTrust.h"
-#include "Nitrogen/UTType.h"
-#endif
-
