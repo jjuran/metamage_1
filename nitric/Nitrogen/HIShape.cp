@@ -11,6 +11,8 @@
 // in the public domain.
 
 
+#ifdef __MACH__
+
 #include "Nitrogen/HIShape.h"
 
 
@@ -103,4 +105,6 @@ namespace Nitrogen {
 		}
 	
 	}
+
+#endif
 

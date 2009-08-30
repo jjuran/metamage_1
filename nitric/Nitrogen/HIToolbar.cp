@@ -11,6 +11,8 @@
 // in the public domain.
 
 
+#ifdef __MACH__
+
 #include "Nitrogen/HIToolbar.h"
 
 
@@ -41,3 +43,6 @@ namespace Nitrogen {
 		}
 	
 	}
+
+#endif
+

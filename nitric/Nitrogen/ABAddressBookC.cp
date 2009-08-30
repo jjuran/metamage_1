@@ -11,6 +11,8 @@
 // in the public domain.
 
 
+#ifdef __MACH__
+
 #ifndef NITROGEN_ADDRESSBOOKC_H
 #include "Nitrogen/ABAddressBookC.h"
 #endif
@@ -41,4 +43,6 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif
 

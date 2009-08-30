@@ -11,6 +11,8 @@
 // in the public domain.
 
 
+#ifdef __MACH__
+
 #include "Nitrogen/HIView.h"
 
 
@@ -108,3 +110,6 @@ namespace Nitrogen {
 		}
 
 	}
+
+#endif
+
