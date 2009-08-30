@@ -23,9 +23,27 @@ namespace Nitrogen
    template < ::OSType selector >
    long Gestalt()
      {
-      return Gestalt( selector, GestaltDefault<selector>::defaultValue );
+      return Gestalt( OSType( selector ), GestaltDefault<selector>::defaultValue );
      }
    
+	template < ::OSType selector, SInt32 bitMask >
+	bool Gestalt_Mask()
+	{
+		return Gestalt< selector >() & bitMask;
+	}
+	
+	template < ::OSType selector, SInt32 bitOffset >
+	bool Gestalt_Bit()
+	{
+		return Gestalt_Mask< selector, 1 << bitOffset >();
+	}
+	
+	template < ::OSType selector >
+	bool Gestalt_NonZero()
+	{
+		return Gestalt_Mask< selector, 0xffffffff >();
+	}
+	
    struct GestaltAttrDefaults
      {
       static const long defaultValue = 0;
@@ -35,9 +53,17 @@ namespace Nitrogen
      {
       static const long defaultValue = 0;
      };
-  
-   template <> struct GestaltDefault< gestaltMenuMgrAttr >: GestaltAttrDefaults {};
-   
+	
+	template <> struct GestaltDefault< gestaltAliasMgrAttr     >: GestaltAttrDefaults {};  // 263
+	template <> struct GestaltDefault< gestaltAppleEventsAttr  >: GestaltAttrDefaults {};  // 614
+	template <> struct GestaltDefault< gestaltFindFolderAttr   >: GestaltAttrDefaults {};  // 668
+	template <> struct GestaltDefault< gestaltHelpMgrAttr      >: GestaltAttrDefaults {};  // 760
+	template <> struct GestaltDefault< gestaltMenuMgrAttr      >: GestaltAttrDefaults {};  // 1117
+	template <> struct GestaltDefault< gestaltStandardFileAttr >: GestaltAttrDefaults {};  // 1720
+	
+	template <> struct GestaltDefault< gestaltComponentMgr     >: GestaltVersionDefaults {};  // 427
+	template <> struct GestaltDefault< gestaltQuickTimeVersion >: GestaltVersionDefaults {};  // 1521
+	
    void RegisterGestaltManagerErrors();
   }
 

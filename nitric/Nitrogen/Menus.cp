@@ -21,7 +21,7 @@ namespace Nitrogen
       MenuFont result;
       SInt16 fontID;
       ThrowOSStatus( ::GetMenuFont( menu, &fontID, &result.fontSize ) );
-      result.fontID = fontID;
+      result.fontID = FontID( fontID );
       return result;
      }
 
@@ -67,6 +67,19 @@ namespace Nitrogen
       ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
      }
 
+	Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
+	{
+		::MacInsertMenu( menu, beforeID );
+		return Owned< MenuID >::Seize( Nitrogen::GetMenuID( menu ) );
+	}
+	
+	Str255 GetMenuItemText( MenuRef menu, SInt16 item )
+	{
+		Str255 itemText;
+		::GetMenuItemText( menu, item, itemText );
+		return itemText;
+	}
+	
    void ChangeMenuItemAttributes( MenuRef            menu,
                                   MenuItemIndex      item,
                                   MenuItemAttributes setTheseAttributes,

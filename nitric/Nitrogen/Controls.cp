@@ -12,6 +12,53 @@
 
 namespace Nitrogen
   {
+  
+	ControlRef NewControl(
+		WindowRef owningWindow, 
+		const Rect& boundsRect, 
+		ConstStr255Param controlTitle, 
+		bool initiallyVisible, 
+		short initialValue, 
+		short minimumValue, 
+		short maximumValue, 
+		ControlProcID procID, 
+		RefCon refCon)
+	{
+		return ::NewControl(
+			owningWindow, 
+			&boundsRect, 
+			controlTitle, 
+			initiallyVisible, 
+			initialValue, 
+			minimumValue, 
+			maximumValue, 
+			procID, 
+			refCon
+		);
+	}
+	
+	void HiliteControl( ControlRef control, ControlPartCode hiliteState )
+	{
+		::HiliteControl( control, hiliteState );
+	}
+	
+	ControlPartCode TrackControl( ControlRef theControl, Point startPoint, ControlActionUPP actionProc )
+	{
+		return ControlPartCode( ::TrackControl( theControl, startPoint, actionProc ) );
+	}
+	
+	FindControl_Result FindControl( Point testPoint, WindowRef theWindow )
+	{
+		FindControl_Result result;
+		result.part = ControlPartCode( ::FindControl( testPoint, theWindow, &result.control ) );
+		return result;
+	}
+	
+	void SetControlTitle( ControlRef control, std::string title )
+	{
+		::SetControlTitle( control, Str255( title ) );
+	}
+	
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id )
      {
       OnlyOnce< RegisterControlManagerErrors >();
@@ -28,6 +75,21 @@ namespace Nitrogen
       return GetControlByID( inWindow, controlID );
      }
 
+	void SetControlAction( ControlRef control, ControlActionUPP actionProc )
+	{
+		::SetControlAction( control, actionProc );
+	}
+	
+	void SetControlReference( ControlRef control, RefCon data )
+	{
+		::SetControlReference( control, data );
+	}
+	
+	RefCon GetControlReference( ControlRef control )
+	{
+		return ::GetControlReference( control );
+	}
+	
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ResType           inTagName,
@@ -113,6 +175,33 @@ namespace Nitrogen
       return tracks;
      }
 
+	Rect GetControlBounds( ControlRef control )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		Rect bounds;
+		return *( ::GetControlBounds( control, &bounds ) );
+		
+	#else
+		
+		return (**control).contrlRect;
+		
+	#endif
+	}
+	
+	void SetControlBounds( ControlRef control, const Rect& bounds )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		::SetControlBounds( control, &bounds );
+		
+	#else
+		
+		(**control).contrlRect = bounds;
+		
+	#endif
+	}
+	
    void RegisterControlManagerErrors()
      {
       RegisterOSStatus< memFullErr                   >();

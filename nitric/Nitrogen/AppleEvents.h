@@ -1,4 +1,6 @@
-// AppleEvents.h
+//	=============
+//	AppleEvents.h
+//	=============
 
 #ifndef NITROGEN_APPLEEVENTS_H
 #define NITROGEN_APPLEEVENTS_H
@@ -9,15 +11,30 @@
 #ifndef __APPLEEVENTS__
 #include FRAMEWORK_HEADER(AE,AppleEvents.h)
 #endif
-#ifndef NITROGEN_AEDATAMODEL_H
-#include "Nitrogen/AEDataModel.h"
+
+// Nitrogen core
+#ifndef NITROGEN_OBJECTPARAMETERTRAITS_H
+#include "Nitrogen/ObjectParameterTraits.h"
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
 
+// Nitrogen Carbon support
+#ifndef NITROGEN_AEDATAMODEL_H
+#include "Nitrogen/AEDataModel.h"
+#endif
+#ifndef NITROGEN_AEINTERACTION_H
+#include "Nitrogen/AEInteraction.h"
+#endif
+
+
 namespace Nitrogen
-  {
+{
+	
+	class AEEventSource_Tag {};
+	typedef SelectorType< AEEventSource_Tag, ::AEEventSource, kAEUnknownSource > AEEventSource;
+	
    struct AEEventHandler
      {
       AEEventClass        theAEEventClass;
@@ -31,8 +48,8 @@ namespace Nitrogen
       AEEventHandler( AEEventClass      theAEEventClass,
                       AEEventID         theAEEventID,
                       AEEventHandlerUPP handler,
-                      RefCon            handlerRefCon,
-                      bool              isSysHandler )
+                      RefCon            handlerRefCon = RefCon(),
+                      bool              isSysHandler  = false )
         : theAEEventClass( theAEEventClass ),
           theAEEventID( theAEEventID ),
           handler( handler ),
@@ -50,22 +67,84 @@ namespace Nitrogen
      {
       void operator()( const AEEventHandler& installation ) const
         {
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-                                                                                              installation.theAEEventID,
-                                                                                              installation.handler,
-                                                                                              installation.isSysHandler ) );
+         HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
+                                                            installation.theAEEventID,
+                                                            installation.handler,
+                                                            installation.isSysHandler ) );
         }
      };
-
-   Owned<AEEventHandler>
+	
+	//typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
+	
+	template < class RefConType >
+	struct AEEventHandler_RefCon_Traits
+	{
+		typedef RefConType RefCon;
+		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefConType refCon );
+	};
+	
+	template <>
+	struct AEEventHandler_RefCon_Traits< void >
+	{
+		typedef void RefCon;
+		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply );
+	};
+	
+	template < class RefConType,
+	           typename AEEventHandler_RefCon_Traits< RefConType >::ProcPtr handler >
+	struct AEEventHandler_Callback
+	{
+		static pascal OSErr Adapter( AppleEvent const*  appleEvent,
+		                             AppleEvent      *  reply,
+		                             long               refCon )
+		{
+			try
+			{
+				handler( *appleEvent,
+				         *reply,
+				         reinterpret_cast< RefConType >( refCon ) );
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			
+			return noErr;
+		}
+	};
+	
+	template < AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	struct AEEventHandler_Callback< void, handler >
+	{
+		static pascal OSErr Adapter( AppleEvent const*  appleEvent,
+		                             AppleEvent      *  reply,
+		                             long )
+		{
+			try
+			{
+				handler( *appleEvent,
+				         *reply );
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			
+			return noErr;
+		}
+	};
+	
+	// Level 0
+	
+   Owned< AEEventHandler >
    AEInstallEventHandler( const AEEventHandler& );
    
-   inline Owned<AEEventHandler>
+   inline Owned< AEEventHandler >
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
                           AEEventHandlerUPP  handler,
-                          RefCon             handlerRefCon,
-                          Boolean            isSysHandler )
+                          RefCon             handlerRefCon = RefCon(),
+                          Boolean            isSysHandler  = false )
      {
       return AEInstallEventHandler( AEEventHandler( theAEEventClass,
                                                     theAEEventID,
@@ -73,13 +152,15 @@ namespace Nitrogen
                                                     handlerRefCon,
                                                     isSysHandler ) );
      }
-
+	
+	// Level 1
+	
    template < typename AEEventHandlerUPP::ProcPtr handler >
-   inline  Owned<AEEventHandler>
+   inline Owned< AEEventHandler >
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
-                          RefCon             handlerRefCon,
-                          Boolean            isSysHandler )
+                          RefCon             handlerRefCon = RefCon(),
+                          Boolean            isSysHandler  = false )
      {
       return AEInstallEventHandler( AEEventHandler( theAEEventClass,
                                                     theAEEventID,
@@ -87,13 +168,64 @@ namespace Nitrogen
                                                     handlerRefCon,
                                                     isSysHandler ) );
      }
-   
+	
+	// Level 2, refcon type specified
+	
+	template < class Object,
+	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass                                    theAEEventClass,
+	                       AEEventID                                       theAEEventID,
+	                       typename ObjectParameterTraits< Object >::Type  handlerRefCon   = typename ObjectParameterTraits< Object >::Type(),
+	                       Boolean                                         isSysHandler    = false )
+	{
+		return AEInstallEventHandler< AEEventHandler_Callback< Object, handler >::Adapter >
+		(
+			theAEEventClass, 
+			theAEEventID, 
+			ObjectParameterTraits< Object >::ConvertToPointer( handlerRefCon ), 
+			isSysHandler
+		);
+	}
+	
+	// With default handlerRefCon but supplied isSysHandler
+	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass  theAEEventClass,
+	                       AEEventID     theAEEventID,
+	                       Boolean       isSysHandler )
+	{
+		typedef typename ObjectParameterTraits< Object >::Type ObjectType;
+		
+		return AEInstallEventHandler< AEEventHandler_Callback< void, handler >::Adapter >
+		(
+			theAEEventClass,
+			theAEEventID,
+			ObjectParameterTraits< Object >::ConvertToPointer( ObjectType() ),
+			isSysHandler
+		);
+	}
+	
+	// Same as above, but void parameter is omitted.
+	template < typename AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass  theAEEventClass,
+	                       AEEventID     theAEEventID,
+	                       Boolean       isSysHandler    = false )
+	{
+		return AEInstallEventHandler< void, handler >( theAEEventClass,
+		                                               theAEEventID,
+		                                               isSysHandler );
+	}
+	
    void AERemoveEventHandler( Owned<AEEventHandler> );
 
    typedef AEEventHandler AEGetEventHandler_Result;
-   AEEventHandler AEGetEventHandler( AEEventClass theAEEventClass,
-                                     AEEventID    theAEEventID,
-                                     bool         isSysHandler );
-  }
+   
+   AEEventHandler AEGetEventHandler( AEEventClass  theAEEventClass,
+                                     AEEventID     theAEEventID,
+                                     bool          isSysHandler = false );
+}
 
 #endif
+

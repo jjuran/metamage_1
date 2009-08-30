@@ -23,7 +23,8 @@ namespace Nitrogen
    template <> struct CFType_Traits< CFBooleanRef >: Basic_CFType_Traits< CFBooleanRef, ::CFBooleanGetTypeID > {};
    template <> struct OwnedDefaults< CFBooleanRef >: OwnedDefaults<CFTypeRef>  {};
    
-   inline bool CFBooleanGetValue( CFBooleanRef b )       { return ::CFBooleanGetValue( b ); }
+   inline bool CFBooleanGetValue( const CFBooleanRef b ) { return ::CFBooleanGetValue( b ); }
+   inline void CFShow( const CFBooleanRef b )            { ::CFShow( b ); }
 
    template <>
    struct Converter< bool, CFBooleanRef >: public std::unary_function< CFBooleanRef, bool >

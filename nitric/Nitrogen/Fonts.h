@@ -30,6 +30,10 @@
 
 namespace Nitrogen
   {
+	
+	FontID GetFNum( ConstStr255Param name );
+	FontID GetFNum( const std::string& name );
+	
   }
 
 #endif

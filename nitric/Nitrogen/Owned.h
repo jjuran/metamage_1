@@ -183,6 +183,12 @@ namespace Nitrogen
              resource( r )
            {}
 
+         DisposableResource( const Resource& r, const DisposerType& disposer )
+           : DisposerType( disposer ),
+             TesterType( true ),
+             resource( r )
+           {}
+
          template< class R >
          DisposableResource( const DisposableResource<R,DisposerType>& r )
            : DisposerType( r.Disposer() ),
@@ -235,6 +241,7 @@ namespace Nitrogen
          
          class Seizing {};
          explicit Owned( Seizing, const Resource& r ) : body( r, true ) {}
+         explicit Owned( const Resource& r, const Disposer& d ) : body( r, d ) {}
          explicit Owned( Seizing, const Body& r )     : body( r )       {}
          
       public:                                       
@@ -266,6 +273,7 @@ namespace Nitrogen
          
          static Owned Seize( const Body& r )          { return Owned( Seizing(), r ); }
          static Owned Seize( const Resource& r )      { return Owned( Seizing(), r ); }
+         static Owned Seize( const Resource& r, const Disposer& d )      { return Owned( r, d ); }
          
          Body ReleaseWithDisposer()
            {

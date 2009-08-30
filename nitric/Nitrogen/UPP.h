@@ -131,6 +131,8 @@ namespace Nitrogen
          operator UPPType() const     { return upp; }
          UPPType Get() const          { return upp; }
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
          friend bool operator==( const BasicUPP& a, const BasicUPP& b )    { return a.Get() == b.Get(); }
          friend bool operator!=( const BasicUPP& a, const BasicUPP& b )    { return a.Get() != b.Get(); }
 
@@ -139,6 +141,8 @@ namespace Nitrogen
          
          friend bool operator==( const UPPType& a, const BasicUPP& b )     { return a == b.Get(); }
          friend bool operator!=( const UPPType& a, const BasicUPP& b )     { return a != b.Get(); }
+         
+      #endif
      };
 
    
@@ -369,7 +373,8 @@ namespace Nitrogen
    template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
    NitrogenUPP StaticUPP()
      {
-      static const Owned<NitrogenUPP> upp = NewUPP<NitrogenUPP>( procPtr );
+      static const Owned<NitrogenUPP> upp = procPtr != NULL ? NewUPP<NitrogenUPP>( procPtr )
+                                                            : Owned<NitrogenUPP>();
       return upp;
      }
      

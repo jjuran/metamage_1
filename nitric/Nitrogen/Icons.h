@@ -29,26 +29,228 @@
 #endif
 
 namespace Nitrogen
-  {
-   void RegisterIconManagerErrors();
-   
-   using ::IconRef;
-
+{
+	void RegisterIconManagerErrors();
+	
+	struct IconAlignmentType_Tag  {};
+	typedef FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
+	
+	struct IconTransformType_Tag  {};
+	typedef FlagType< IconTransformType_Tag, ::IconTransformType, kTransformNone > IconTransformType;
+	
+	struct IconSelectorValue_Tag  {};
+	typedef FlagType< IconSelectorValue_Tag, ::IconSelectorValue, kSelectorAllAvailableData > IconSelectorValue;
+	
    class IconLabelTag {};
    typedef IDType< IconLabelTag, SInt16, 0 > IconLabel;
    
-   class IconServicesUsageFlagsTag {};
-   typedef FlagType< IconServicesUsageFlagsTag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
-   
+	// ...
+	
+	// ResType 'ICON'
+	struct PlainIcon
+	{
+		UInt32 data[ 32 ];
+	};
+	typedef PlainIcon** PlainIconHandle;
+	
+	// ResType 'ICN#'
+	struct MaskedIcon
+	{
+		PlainIcon icon;
+		PlainIcon mask;
+	};
+	typedef MaskedIcon** MaskedIconHandle;
+	
+	typedef MaskedIcon       IconAndMask;
+	typedef MaskedIconHandle IconAndMaskHandle;
+	
+	// ResType 'SICN'
+	struct SmallIcon
+	{
+		UInt16 data[ 16 ];
+	};
+	typedef SmallIcon** SmallIconHandle;
+	
+	typedef SmallIcon       SICN;
+	typedef SmallIconHandle SICNHandle;
+	
+	template <> struct OwnedDefaults< PlainIconHandle  > : OwnedDefaults< Handle > {};
+	template <> struct OwnedDefaults< MaskedIconHandle > : OwnedDefaults< Handle > {};
+	template <> struct OwnedDefaults< SmallIconHandle  > : OwnedDefaults< Handle > {};
+	
+	// ResType 'cicn'
+	using ::CIconHandle;
+	
+	template <> struct Disposer< CIconHandle > : public std::unary_function< CIconHandle, void >
+	{
+		void operator()( CIconHandle h ) const
+		{
+			//OnlyOnce< RegisterIconManagerErrors >();
+			::DisposeCIcon( h );
+		}
+	};
+	
+	Owned< CIconHandle > GetCIcon( ResID iconID );
+	
+	void PlotCIcon( const Rect& rect, CIconHandle icon );
+	
+	inline void DisposeCIcon( Owned< CIconHandle > )  {}
+	
+	PlainIconHandle GetIcon( ResID iconID );  // Returns a resource handle
+	
+	void PlotIcon( const Rect& rect, PlainIconHandle icon );
+	
+	class IconSuiteRef
+	{
+		private:
+			typedef ::IconSuiteRef UnderlyingType;
+			UnderlyingType value;
+		
+		public:
+			IconSuiteRef()                   : value( NULL )  {}
+			IconSuiteRef( UnderlyingType v ) : value( v    )  {}
+			
+			UnderlyingType Get() const       { return value; }
+			operator UnderlyingType() const  { return Get(); }
+	};
+	
+	typedef IconSuiteRef IconCacheRef;
+	
+	template <> struct Disposer< IconSuiteRef > : public std::unary_function< IconSuiteRef, void >,
+	                                              private DefaultDestructionOSStatusPolicy
+	{
+		// DisposeIconSuite() takes a Boolean argument that tells it whether to
+		// dispose the individual icon data associated with the icon suite.
+		// It will not dispose resource handles, regardless of the value passed.
+		// I'm hard-coding this argument to true, as that seems the most useful to me.
+		// If you need to pass false, use DisposeIconSuiteButNotData instead.
+		
+		enum { disposeData = true };
+		
+		void operator()( IconSuiteRef i ) const
+		{
+			OnlyOnce< RegisterIconManagerErrors >();
+			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+		}
+	};
+	
+	struct DisposeIconSuiteButNotData : public std::unary_function< IconSuiteRef, void >,
+	                                    private DefaultDestructionOSStatusPolicy
+	{
+		enum { disposeData = false };
+		
+		void operator()( IconSuiteRef i ) const
+		{
+			OnlyOnce< RegisterIconManagerErrors >();
+			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+		}
+	};
+	
+   using ::IconRef;
+	
    template <> struct Disposer< IconRef >: public std::unary_function< IconRef, void >,
                                            private DefaultDestructionOSStatusPolicy
      {
       void operator()( IconRef i ) const
         {
          OnlyOnce<RegisterIconManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
+         HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
         }
      };
+	
+	void PlotIconID( const Rect&        rect,
+	                 IconAlignmentType  align,
+	                 IconTransformType  transform,
+	                 ResID              resID );
+	
+	Owned< IconSuiteRef > NewIconSuite();
+	
+	template < bool disposeData >  struct DisposeData_Traits;
+	
+	template <>  struct DisposeData_Traits< true >
+	{
+		typedef Disposer< IconSuiteRef > Disposer;
+	};
+	
+	template <>  struct DisposeData_Traits< false >
+	{
+		typedef DisposeIconSuiteButNotData Disposer;
+	};
+	
+	template < bool disposeData >
+	Owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer > NewIconSuite()
+	{
+		typedef typename DisposeData_Traits< disposeData >::Disposer Disposer;
+		
+		return Owned< IconSuiteRef, Disposer >::Seize( NewIconSuite().Release() );
+	}
+	
+	void AddIconToSuite( Handle iconData, IconSuiteRef suite, ResType type );
+	
+	Handle GetIconFromSuite( IconSuiteRef suite, ResType type );
+	
+	// ForEachIconDo
+	
+	Owned< IconSuiteRef > GetIconSuite( ResID resID, IconSelectorValue selector );
+	
+	void DisposeIconSuite( Owned< IconSuiteRef                             > iconSuite );  // true
+	void DisposeIconSuite( Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite );  // false
+	
+	void PlotIconSuite( const Rect&        rect,
+	                    IconAlignmentType  align,
+	                    IconTransformType  transform,
+	                    IconSuiteRef       iconSuite );
+	
+	// MakeIconCache
+	// LoadIconCache
+	// PlotIconMethod
+	// GetLabel
+	// PtInIconID
+	// PtInIconSuite
+	// PtInIconMethod
+	// RectInIconID
+	// RectInIconSuite
+	// RectInIconMethod
+	// IconIDToRgn
+	// IconSuiteToRgn
+	// IconMethodToRgn
+	// SetSuiteLabel
+	// GetSuiteLabel
+	// GetIconCacheData
+	// SetIconCacheData
+	// GetIconCacheProc
+	// SetIconCacheProc
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     PlainIconHandle    icon );
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     MaskedIconHandle   icon );
+	
+	void PlotSICNHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     SmallIconHandle    theSICN );
+	
+	void PlotCIconHandle( const Rect&        rect,
+	                      IconAlignmentType  align,
+	                      IconTransformType  transform,
+	                      CIconHandle        theCIcon );
+	
+	class IconServicesUsageFlags_Tag {};
+	typedef FlagType< IconServicesUsageFlags_Tag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
+	
+	class PlotIconRefFlags_Tag {};
+	typedef FlagType< PlotIconRefFlags_Tag, ::PlotIconRefFlags, 0 > PlotIconRefFlags;
+	
+	// ... Icon Families
+	// ... Initialization and Termination
+	// ... Conversions
+	// ... Reference counting
 	
    struct GetIconRefFromFile_Result
      {
@@ -163,17 +365,37 @@ namespace Nitrogen
                                      inFileName.unicode,
                                      inUsageFlags );
      }
-
+	
+	// RegisterIconRefFromIconFamily
+	// RegisterIconRefFromResource
+	
    Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile );
-   
-	Owned<IconRef> RegisterIconRefFromIconFile( OSType creator,
-                                               OSType iconType,
-                                               const FSSpec& iconFile );
+	
+	// UnregisterIconRef
+	// UpdateIconRef
+	// OverrideIconRefFromResource
+	// OverrideIconRef
+	// RemoveIconRefOverride
+	
+	// ... Creating composite IconRef
+	// ... Using IconRef
+	// ... Flushing IconRef data
+	// ... Controling custom icons
+	
+	Owned< IconRef > RegisterIconRefFromIconFile( OSType creator,
+	                                              OSType iconType,
+	                                              const FSSpec& iconFile );
 
    inline Owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, 0, iconFile );
+      return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType( 0 ), iconFile );
      }
-  }
+	
+	// ReadIconFile
+	// ReadIconFromFSRef
+	// WriteIconFile
+	
+}
 
 #endif
+

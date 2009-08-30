@@ -54,6 +54,16 @@
 #ifndef NITROGEN_CFUUID_H
 #include "Nitrogen/CFUUID.h"
 #endif
+#ifndef NITROGEN_RESOURCES_H
+#include "Nitrogen/Resources.h"
+#endif
+
+#ifdef GetMenuRef
+#undef GetMenuRef
+
+inline MenuRef GetMenuRef( MenuID menuID )  { return GetMenuHandle( menuID ); }
+
+#endif
 
 namespace Nitrogen
   {
@@ -72,6 +82,14 @@ namespace Nitrogen
    class MenuIDTag {};
    typedef IDType< MenuIDTag, ::MenuID, 0 > MenuID;
    
+   template <> struct Disposer< MenuID >: public std::unary_function< MenuID, void >
+     {
+      void operator()( MenuID id ) const
+        {
+         ::DeleteMenu( id );
+        }
+     };
+
    using ::MenuItemIndex;
    
    class MenuCommandTag {};
@@ -100,18 +118,39 @@ namespace Nitrogen
    
    /* ... */
    
+   #pragma mark -
+   #pragma mark ¥ Menu Manipulation ¥
+   
    class NewMenu_Failed {};
    
+   // 1549
    Owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle );
    
-   inline MenuRef MacGetMenu( ResourceID resourceID )             { return ::MacGetMenu( resourceID ); }
+	inline MenuRef CheckResource( MenuRef menu )
+	{
+		CheckResource( reinterpret_cast< ::Handle >( menu ) );
+		return menu;
+	}
+	
+   // 1563
+   inline MenuRef MacGetMenu( ResID resourceID )             { return CheckResource( ::MacGetMenu( resourceID ) ); }
    
+   // 1578
    inline void DisposeMenu( Owned<MenuRef> /* theMenu */ )          {}
    
    using ::CalcMenuSize;
-   using ::CountMenuItems;
-   
+	
+#if TARGET_CPU_68K && TARGET_RT_MAC_CFM
+	
+	inline UInt16 CountMenuItems( MenuRef menu )  { return ::CountMItems( menu ); }
+	
+#else
+	
+	using ::CountMenuItems;
+	
+#endif
+	
    struct MenuFont
      {
       FontID fontID;
@@ -136,6 +175,24 @@ namespace Nitrogen
    
    /* ... */
    
+   #pragma mark -
+   #pragma mark ¥ Menu Item Insertion ¥
+   
+   // 2224
+   using ::MacAppendMenu;
+   
+   // 2241
+   inline void InsertResMenu( MenuRef menu, ResType type, SInt16 afterItem )  { ::InsertResMenu( menu, type, afterItem ); }
+   
+   // 2256
+   inline void AppendResMenu( MenuRef menu, ResType type )  { ::AppendResMenu( menu, type ); }
+   
+   // 2270
+   inline void MacInsertMenuItem( MenuRef menu, ConstStr255Param itemString, SInt16 afterItem )  { ::MacInsertMenuItem( menu, itemString, afterItem ); }
+   
+   // 2288
+   inline void DeleteMenuItem( MenuRef menu, SInt16 item )  { ::DeleteMenuItem( menu, item ); }
+   
    MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
                                                  CFStringRef        inString,
                                                  MenuItemAttributes inAttributes,
@@ -156,15 +213,55 @@ namespace Nitrogen
    using ::MacEnableMenuItem;
    using ::DisableMenuItem;
 
+   #pragma mark -
+   #pragma mark ¥ Menu Bar ¥
+   
+   using ::GetMBarHeight;
+   using ::MacDrawMenuBar;
+   using ::InvalMenuBar;
+   
+   inline void HiliteMenu( MenuID menuID = MenuID() )  { ::HiliteMenu( menuID ); }
+   
+   inline MenuRef GetMenuHandle( MenuID menuID )  { return ::GetMenuHandle( menuID ); }
+   inline MenuRef GetMenuRef   ( MenuID menuID )  { return ::GetMenuRef   ( menuID ); }
+   
+   Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
+   inline void MacDeleteMenu( Owned< MenuID > /* menuID */ )  {}
+   
    /* ... */
 
+   #pragma mark -
+   #pragma mark ¥ Menu Item Accessors ¥
+   
+   using ::SetMenuItemText;
+   
+   Str255 GetMenuItemText( MenuRef menu, SInt16 item );
+   
+   #pragma mark -
+   #pragma mark ¥ Attributes ¥
+   
+   // 4315
    void ChangeMenuItemAttributes( MenuRef            menu,
                                   MenuItemIndex      item,
                                   MenuItemAttributes setTheseAttributes,
                                   MenuItemAttributes clearTheseAttributes );
 
    /* ... */
-   
+	
+	// 5826
+	inline MenuID GetMenuID( MenuRef menu )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		return MenuID( ::GetMenuID( menu ) );
+		
+	#else
+		
+		return MenuID( (**menu).menuID );
+		
+	#endif
+	}
+	
    void RegisterMenuManagerErrors();
   }
 

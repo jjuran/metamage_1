@@ -6,7 +6,7 @@
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
-#ifndef __CGPDFDOCUMENT__
+#ifndef CGPDFDOCUMENT_H_
 #include FRAMEWORK_HEADER(CoreGraphics,CGPDFDocument.h)
 #endif
 #ifndef NITROGEN_CGBASE_H

@@ -97,7 +97,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::DragItemRef result;
       ThrowOSStatus( ::GetDragItemReferenceNumber( theDrag, index, &result ) );
-      return result;
+      return DragItemRef( result );
      }
 
    UInt16 CountDragItemFlavors( DragRef theDrag, DragItemRef theItemRef )
@@ -113,7 +113,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::FlavorType result;
       ThrowOSStatus( ::GetFlavorType( theDrag, theItemRef, index, &result ) );
-      return result;
+      return FlavorType( result );
      }
 
    FlavorFlags GetFlavorFlags( DragRef theDrag, DragItemRef theItemRef, FlavorType theType )
@@ -121,7 +121,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::FlavorFlags result;
       ThrowOSStatus( ::GetFlavorFlags( theDrag, theItemRef, theType, &result ) );
-      return result;
+      return FlavorFlags( result );
      }
 
    Size GetFlavorDataSize( DragRef theDrag, DragItemRef theItemRef, FlavorType theType )
@@ -178,7 +178,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::DragAttributes result;
       ThrowOSStatus( ::GetDragAttributes( theDrag, &result ) );
-      return result;
+      return DragAttributes( result );
      }
 
    GetDragMouse_Result GetDragMouse( DragRef theDrag )
@@ -213,9 +213,9 @@ namespace Nitrogen
       ThrowOSStatus( ::GetDragModifiers( theDrag, &modifiers, &mouseDownModifiers, &mouseUpModifiers ) );
       
       GetDragModifiers_Result result;
-      result.modifiers          = static_cast< ::EventModifiers >( modifiers );
-      result.mouseDownModifiers = static_cast< ::EventModifiers >( mouseDownModifiers );
-      result.mouseUpModifiers   = static_cast< ::EventModifiers >( mouseUpModifiers );
+      result.modifiers          = EventModifiers( static_cast< ::EventModifiers >( modifiers          ) );
+      result.mouseDownModifiers = EventModifiers( static_cast< ::EventModifiers >( mouseDownModifiers ) );
+      result.mouseUpModifiers   = EventModifiers( static_cast< ::EventModifiers >( mouseUpModifiers   ) );
 
       return result;
      }
@@ -225,7 +225,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::DragActions result;
       ThrowOSStatus( ::GetDragAllowableActions( theDrag, &result ) );
-      return result;
+      return DragActions( result );
      }
 
    void SetDragAllowableActions( DragRef theDrag, DragActions inActions, bool isLocal )
@@ -239,7 +239,7 @@ namespace Nitrogen
       OnlyOnce<RegisterDragManagerErrors>();
       ::DragActions result;
       ThrowOSStatus( ::GetDragDropAction( theDrag, &result ) );
-      return result;
+      return DragActions( result );
      }
 
    void SetDragDropAction( DragRef theDrag, DragActions inAction )

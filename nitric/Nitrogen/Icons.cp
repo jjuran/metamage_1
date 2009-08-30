@@ -11,7 +11,104 @@
 #endif
 
 namespace Nitrogen
-  {
+{
+	
+	Owned< CIconHandle > GetCIcon( ResID iconID )
+	{
+		return Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
+	}
+	
+	void PlotCIcon( const Rect& rect, CIconHandle icon )
+	{
+		::PlotCIcon( &rect, icon );
+	}
+	
+	PlainIconHandle GetIcon( ResID iconID )
+	{
+		// Returns a resource handle
+		return Handle_Cast< PlainIcon >( Handle( ::GetIcon( iconID ) ) );
+	}
+	
+	void PlotIcon( const Rect& rect, PlainIconHandle icon )
+	{
+		::PlotIcon( &rect, Handle( icon ) );
+	}
+	
+	void PlotIconID( const Rect& rect,
+	                 IconAlignmentType align,
+	                 IconTransformType transform,
+	                 ResID resID )
+	{
+		ThrowOSStatus( ::PlotIconID( &rect, align, transform, resID ) );
+	}
+	
+	Owned< IconSuiteRef > NewIconSuite()
+	{
+		::IconSuiteRef result;
+		ThrowOSStatus( ::NewIconSuite( &result ) );
+		return Owned< IconSuiteRef >::Seize( IconSuiteRef( result ) );
+	}
+	
+	void DisposeIconSuite( Owned< IconSuiteRef > iconSuite )
+	{
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), true ) );
+	}
+	
+	void DisposeIconSuite( Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite )
+	{
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), false ) );
+	}
+	
+	void PlotIconSuite( const Rect&        rect,
+	                    IconAlignmentType  align,
+	                    IconTransformType  transform,
+	                    IconSuiteRef       iconSuite )
+	{
+		ThrowOSStatus( ::PlotIconSuite( &rect, align, transform, iconSuite ) );
+	}
+	
+	static void PlotIconHandle_Internal( const Rect&        area,
+	                                     IconAlignmentType  align,
+	                                     IconTransformType  transform,
+	                                     Handle             icon )
+	{
+		ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
+	}
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     PlainIconHandle    icon )
+	{
+		PlotIconHandle_Internal( area, align, transform, icon );
+	}
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     MaskedIconHandle   icon )
+	{
+		PlotIconHandle_Internal( area, align, transform, icon );
+	}
+	
+	// The plot sickens...
+	
+	void PlotSICNHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     SmallIconHandle    theSICN )
+	{
+		ThrowOSStatus( ::PlotSICNHandle( &area, align, transform, Handle( theSICN ) ) );
+	}
+	
+	void PlotCIconHandle( const Rect&        rect,
+	                      IconAlignmentType  align,
+	                      IconTransformType  transform,
+	                      CIconHandle        theCIcon )
+	{
+		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
+	}
+	
    Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
      {
       OnlyOnce<RegisterIconManagerErrors>();
@@ -27,7 +124,7 @@ namespace Nitrogen
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    Owned<IconRef> GetIconRef( OSType creator, OSType iconType )
@@ -76,7 +173,7 @@ namespace Nitrogen
                                                &icon,
                                                &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
@@ -96,7 +193,7 @@ namespace Nitrogen
                                                &icon,
                                                &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
@@ -129,4 +226,5 @@ namespace Nitrogen
       RegisterOSStatus< noIconDataAvailableErr >();
       RegisterOSStatus< afpIconTypeError       >();
      }
-  }
+}
+

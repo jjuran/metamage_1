@@ -37,9 +37,13 @@ namespace Nitrogen
       template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
       template <> struct OwnedDefaults< CFStringRef >: OwnedDefaults<CFTypeRef> {};
    */
+
+   inline void CFShow( const CFStringRef s )        { ::CFShow( s ); }
+
    using ::CFMutableStringRef;
    template <> struct CFType_Traits< CFMutableStringRef >: Basic_CFType_Traits< CFMutableStringRef, ::CFStringGetTypeID > {};
    template <> struct OwnedDefaults< CFMutableStringRef >: OwnedDefaults<CFTypeRef> {};
+   inline void CFShow( const CFMutableStringRef s )        { ::CFShow( s ); }
 
    using ::CFStringGetTypeID;
    

@@ -3,6 +3,12 @@
 #ifndef NITROGEN_CFNUMBER_H
 #define NITROGEN_CFNUMBER_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
+#ifndef __CFDATE__
+#include FRAMEWORK_HEADER(CoreFoundation,CFNumber.h)
+#endif
 #ifndef NITROGEN_CFBOOLEAN_H
 #include "Nitrogen/CFBoolean.h"
 #endif
@@ -14,6 +20,7 @@ namespace Nitrogen
    
    template <> struct CFType_Traits< CFNumberRef >: Basic_CFType_Traits< CFNumberRef, ::CFNumberGetTypeID > {};
    template <> struct OwnedDefaults< CFNumberRef > : OwnedDefaults<CFTypeRef>  {};
+   inline void CFShow( const CFNumberRef n )        { ::CFShow( n ); }
  
    template < class NumericType > struct CFNumber_Traits;
    

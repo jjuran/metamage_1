@@ -23,9 +23,70 @@
 #endif
 
 namespace Nitrogen
-  {
-   class EventModifiersTag {};
-   typedef FlagType< EventModifiersTag, ::EventModifiers, 0 > EventModifiers;
-  }
+{
+	
+#ifdef JOSHUA_JURAN_EXPERIMENTAL
+	
+	class EventKind_Tag {};
+	typedef SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
+	
+#endif
+	
+	class EventMask_Tag {};
+	typedef FlagType< EventMask_Tag, ::EventMask > EventMask;
+	
+	class EventModifiers_Tag {};
+	typedef FlagType< EventModifiers_Tag, ::EventModifiers > EventModifiers;
+	
+	class KeyModifiers_Tag {};
+	typedef FlagType< KeyModifiers_Tag, ::EventModifiers > KeyModifiers;
+	
+	// ...
+	
+	Point GetMouse();
+	
+	bool Button();
+	bool StillDown();
+	bool WaitMouseUp();
+	
+	// ...
+	
+	union GetKeys_Result
+	{
+		KeyMap           keyMap;
+		KeyMapByteArray  keyMapByteArray;
+	};
+	
+	GetKeys_Result GetKeys();
+	
+	// ...
+	
+	inline bool IsNullEvent( const EventRecord& event )
+	{
+		return event.what == nullEvent;
+	}
+	
+	EventRecord GetNextEvent( EventMask eventMask );
+	
+	EventRecord WaitNextEvent( EventMask eventMask, UInt32 sleep, RgnHandle mouseRgn = NULL );
+	
+	EventRecord EventAvail( EventMask eventMask );
+	
+	// ...
+	
+	void FlushEvents( EventMask whichMask, EventMask stopMask );
+	
+	// ...
+	
+	Point GetGlobalMouse();
+	
+	KeyModifiers GetCurrentKeyModifiers();
+	
+	bool CheckEventQueueForUserCancel();
+	
+	// ...
+	
+}
 
 #endif
+

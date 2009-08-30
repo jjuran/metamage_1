@@ -45,7 +45,7 @@ namespace Nitrogen
 
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
-                                EventKind         kind,
+                                CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags )
      {
@@ -108,7 +108,7 @@ namespace Nitrogen
                                           outData ) );
 
       GetEventParameter_Result result;
-         result.outActualType = outActualType;
+         result.outActualType = EventParamType( outActualType );
          result.outActualSize = outActualSize;
       
       return result;
@@ -150,7 +150,7 @@ namespace Nitrogen
    Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                EventClass             eventClass,
-                                               EventKind              eventKind,
+                                               CarbonEventKind        eventKind,
                                                const void *           inUserData )
      {
       EventTypeSpec event;
@@ -164,10 +164,10 @@ namespace Nitrogen
                                   inUserData );
      }
 
-   OSStatus EventHandler_ExceptionGlue::CatchExceptions( EventHandlerCallRef inHandlerCallRef,
-                                                         EventRef inEvent,
-                                                         void *inUserData,
-                                                         Handler handler )
+   ::OSStatus EventHandler_ExceptionGlue::CatchExceptions( EventHandlerCallRef inHandlerCallRef,
+                                                           EventRef inEvent,
+                                                           void *inUserData,
+                                                           Handler handler )
      {
       try
         {
@@ -176,7 +176,7 @@ namespace Nitrogen
         }
       catch ( ... )
         {
-         return Convert< OSStatus >( TheExceptionBeingHandled(), eventInternalErr );
+         return Convert< OSStatus >( TheExceptionBeingHandled(), EventInternalErr() );
         }
      }
 

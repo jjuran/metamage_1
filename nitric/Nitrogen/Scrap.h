@@ -10,4 +10,28 @@
 #include FRAMEWORK_HEADER(HIToolbox,Scrap.h)
 #endif
 
+// Replace macro
+
+#ifdef kScrapRefNone
+#undef kScrapRefNone
+
+static const ScrapRef kScrapRefNone = ScrapRef( NULL );
+
 #endif
+
+namespace Nitrogen {
+	
+	void RegisterScrapManagerErrors();
+	
+	using ::ScrapRef;
+	
+	inline ScrapRef ScrapRefNone()  { return kScrapRefNone; }
+	
+	ScrapRef GetCurrentScrap();
+	
+	void ClearCurrentScrap();
+	
+}
+
+#endif
+
