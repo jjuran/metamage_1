@@ -5,5 +5,5 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "NitrogenLib.hh"
+#include "Nitrogen/NitrogenLib.hh"
 
