@@ -108,6 +108,12 @@
     #define NUCLEUS_RICH_ERRORCODES 1
 #endif
 
+#if NUCLEUS_RICH_ERRORCODES
+  #define DEFINE_ERRORCODE( error_type, c_name, new_name )  typedef Nucleus::ErrorCode< error_type, c_name > new_name
+#else
+  #define DEFINE_ERRORCODE( error_type, c_name, new_name )  inline Nucleus::ErrorCode< error_type, 0 > new_name()  { return Nucleus::ErrorCode< error_type, 0 >( c_name ); }
+#endif
+
 
 namespace Nucleus
   {   
