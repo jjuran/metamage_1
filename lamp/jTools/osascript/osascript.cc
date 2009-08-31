@@ -176,7 +176,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != errOSAScriptError )
+			if ( err != errOSAScriptError )
 			{
 				throw;
 			}
@@ -345,7 +345,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != errOSAScriptError )
+			if ( err != errOSAScriptError )
 			{
 				throw;
 			}

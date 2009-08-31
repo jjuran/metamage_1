@@ -121,7 +121,7 @@ namespace Nitrogen
 			}
 			catch ( const OSStatus& err )
 			{
-				if ( err.Get() != errAENoSuchObject )
+				if ( err != errAENoSuchObject )
 				{
 					throw;
 				}

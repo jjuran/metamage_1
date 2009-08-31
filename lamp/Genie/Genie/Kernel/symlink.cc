@@ -56,7 +56,7 @@ namespace Genie
 			}
 			catch ( const N::OSStatus& err )
 			{
-				if ( err.Get() != fnfErr )
+				if ( err != fnfErr )
 				{
 					throw;
 				}

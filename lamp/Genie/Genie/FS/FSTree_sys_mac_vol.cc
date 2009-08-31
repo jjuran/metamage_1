@@ -174,7 +174,7 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != nsvErr )
+			if ( err != nsvErr )
 			{
 				throw;
 			}

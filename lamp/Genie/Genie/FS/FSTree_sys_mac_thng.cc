@@ -187,7 +187,7 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != badComponentSelector )
+			if ( err != badComponentSelector )
 			{
 				throw;
 			}

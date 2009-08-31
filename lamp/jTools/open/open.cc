@@ -94,7 +94,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != errAECoercionFail )
+			if ( err != errAECoercionFail )
 			{
 				throw;
 			}
@@ -228,7 +228,7 @@ namespace tool
 			}
 			catch ( const N::OSStatus& err )
 			{
-				if ( err.Get() != procNotFound )
+				if ( err != procNotFound )
 				{
 					throw;
 				}
@@ -257,7 +257,7 @@ namespace tool
 			}
 			catch ( const N::OSStatus& err )
 			{
-				if ( err.Get() != procNotFound )
+				if ( err != procNotFound )
 				{
 					throw;
 				}

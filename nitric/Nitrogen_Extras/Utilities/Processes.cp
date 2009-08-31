@@ -80,7 +80,7 @@ namespace NitrogenExtras
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != procNotFound )
+			if ( err != procNotFound )
 			{
 				throw;
 			}

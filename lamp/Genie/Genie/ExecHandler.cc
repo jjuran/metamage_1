@@ -61,7 +61,7 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() != errAEDescNotFound )
+			if ( err != errAEDescNotFound )
 			{
 				throw;
 			}
