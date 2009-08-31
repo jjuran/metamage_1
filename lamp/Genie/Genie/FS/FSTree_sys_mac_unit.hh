@@ -12,7 +12,7 @@
 #endif
 
 // Nucleus
-#include "Nucleus/AdvanceUntilFailureContainer.h"
+#include "Nucleus/AdvanceUntilDoneSequence.h"
 
 // ClassicToolbox
 #include "ClassicToolbox/Devices.h"
@@ -33,8 +33,6 @@ namespace Nitrogen
 		typedef const value_type*  const_pointer;
 		typedef const_pointer      key_type;
 		
-		class EndOfEnumeration {};  // not used
-		
 		static key_type GetNextKey( key_type key );
 		
 		static const_pointer GetPointer( key_type ptr )  { return ptr; }
@@ -43,13 +41,13 @@ namespace Nitrogen
 		static key_type end_key()    { return (AuxDCEHandle*) LMGetUTableBase() + LMGetUnitTableEntryCount(); }
 	};
 	
-	class UnitTableDrivers_Container: public Nucleus::AdvanceUntilFailureContainer< UnitTableDrivers_Container_Specifics >
+	class UnitTableDrivers_Container: public Nucleus::AdvanceUntilDoneSequence< UnitTableDrivers_Container_Specifics >
 	{
 		friend UnitTableDrivers_Container UnitTableDrivers();
 		
 		private:
 			UnitTableDrivers_Container()
-			: Nucleus::AdvanceUntilFailureContainer< UnitTableDrivers_Container_Specifics >( UnitTableDrivers_Container_Specifics() )
+			: Nucleus::AdvanceUntilDoneSequence< UnitTableDrivers_Container_Specifics >( UnitTableDrivers_Container_Specifics() )
 			{}
 	};
 	
