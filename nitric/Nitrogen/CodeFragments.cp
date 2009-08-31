@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2004-2006 by Joshua Juran.
+// Written 2004-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -59,6 +59,8 @@ namespace Nitrogen
 				throw ParamErr();
 				break;
 			
+		#if NUCLEUS_RICH_ERRORCODES
+			
 			case cfragNoLibraryErr:     ThrowOSStatusErrMessage< CFragNoLibraryErr    >( errMessage );
 			case cfragUnresolvedErr:    ThrowOSStatusErrMessage< CFragUnresolvedErr   >( errMessage );
 			case cfragNoPrivateMemErr:  ThrowOSStatusErrMessage< CFragNoPrivateMemErr >( errMessage );
@@ -69,6 +71,22 @@ namespace Nitrogen
 			case cfragInitLoopErr:      ThrowOSStatusErrMessage< CFragInitLoopErr     >( errMessage );
 			case cfragLibConnErr:       ThrowOSStatusErrMessage< CFragLibConnErr      >( errMessage );
 			case cfragInitFunctionErr:  ThrowOSStatusErrMessage< CFragInitFunctionErr >( errMessage );
+			
+		#else
+			
+			case cfragNoLibraryErr:
+			case cfragUnresolvedErr:
+			case cfragNoPrivateMemErr:
+			case cfragNoClientMemErr:
+			case cfragInitOrderErr:
+			case cfragImportTooOldErr:
+			case cfragImportTooNewErr:
+			case cfragInitLoopErr:
+			case cfragLibConnErr:
+			case cfragInitFunctionErr:
+				throw OSStatusErrMessage< Nucleus::ErrorCode< OSStatus, 0 > >( status, errMessage );
+			
+		#endif
 			
 			default:
 				ThrowOSStatus( status );
