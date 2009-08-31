@@ -49,8 +49,13 @@ namespace Pedestal
 		{
 			return N::Get1Resource< N::kVersionResType >( N::ResID( 1 ) );
 		}
-		catch ( const N::ResNotFound& )
+		catch ( const N::OSStatus& err )
 		{
+			if ( err != resNotFound )
+			{
+				throw;
+			}
+			
 			// Return below
 		}
 		

@@ -59,16 +59,12 @@ namespace Genie
 			return NN::Convert< N::FSDirSpec >( N::AEGetParamPtr< N::typeFSS >( appleEvent,
 			                                                                    keyCurrentWorkingDir ) );
 		}
-		catch ( const N::ErrAEDescNotFound& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
 			if ( err.Get() != errAEDescNotFound )
 			{
 				throw;
 			}
-			
-		#endif
 			
 			return N::FSDirSpec();
 		}

@@ -143,16 +143,12 @@ namespace tool
 			{
 				result.load_config();
 			}
-			catch ( const p7::enoent& err )
+			catch ( const p7::errno_t& err )
 			{
-			#ifdef __MWERKS__
-				
 				if ( err != ENOENT )
 				{
 					throw;
 				}
-				
-			#endif
 				
 				throw missing_project_config( name, result.get_pathname() );
 			}

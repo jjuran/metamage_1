@@ -172,16 +172,12 @@ namespace Genie
 		{
 			(void) MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, NULL );
 		}
-		catch ( const N::NSVErr& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
 			if ( err.Get() != nsvErr )
 			{
 				throw;
 			}
-			
-		#endif
 			
 			return false;
 		}

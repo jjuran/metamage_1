@@ -92,16 +92,12 @@ namespace tool
 		{
 			return AECoerce_Alias_From_FSSpec( item );
 		}
-		catch ( const N::ErrAECoercionFail& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
 			if ( err.Get() != errAECoercionFail )
 			{
 				throw;
 			}
-			
-		#endif
 		}
 		
 		// Older systems don't provide alias->FSSpec coercion, so do it manually.
@@ -230,16 +226,12 @@ namespace tool
 				// We're done
 				return;
 			}
-			catch ( const N::ProcNotFound& err )
+			catch ( const N::OSStatus& err )
 			{
-			#ifdef __MWERKS__
-				
 				if ( err.Get() != procNotFound )
 				{
 					throw;
 				}
-				
-			#endif
 				
 				// No such process
 				// appFile is already set
@@ -263,16 +255,12 @@ namespace tool
 				// We're done
 				return;
 			}
-			catch ( const N::ProcNotFound& err )
+			catch ( const N::OSStatus& err )
 			{
-			#ifdef __MWERKS__
-				
 				if ( err.Get() != procNotFound )
 				{
 					throw;
 				}
-				
-			#endif
 				
 				// No such process
 				appFile = N::DTGetAPPL( signature );

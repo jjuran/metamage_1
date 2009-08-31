@@ -180,32 +180,23 @@ namespace tool
 		{
 			psnToolServer = NX::LaunchApplication( sigToolServer );
 		}
-		catch ( const N::AFPItemNotFound& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != afpItemNotFound )
+			if ( err == afpItemNotFound )
+			{
+				p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
+			}
+			else if ( TARGET_API_MAC_CARBON  &&  err == -10661 )
+			{
+				p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not runnable on this system\n" ) );
+			}
+			else
 			{
 				throw;
 			}
 			
-		#endif
-			
-			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
-			
 			throw p7::exit_failure;
 		}
-		
-	#if TARGET_RT_MAC_MACHO
-		
-		catch ( const NN::ErrorCode< N::OSStatus, -10661 >& err )
-		{
-			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not runnable on this system\n" ) );
-			
-			throw p7::exit_failure;
-		}
-		
-	#endif
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,

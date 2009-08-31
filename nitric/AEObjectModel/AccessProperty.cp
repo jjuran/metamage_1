@@ -119,16 +119,12 @@ namespace Nitrogen
 				                                containerToken,
 				                                containerClass );
 			}
-			catch ( const ErrAENoSuchObject& err )
+			catch ( const OSStatus& err )
 			{
-			#ifdef __MWERKS__
-				
 				if ( err.Get() != errAENoSuchObject )
 				{
 					throw;
 				}
-				
-			#endif
 				
 				propertyToken = MissingValue();
 			}
