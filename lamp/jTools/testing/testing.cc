@@ -67,6 +67,7 @@
 //#include "Nitrogen/Resources.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Str.h"
+#include "Nitrogen/Threads.h"
 
 // POSeven
 #include "POSeven/functions/open.hh"
@@ -82,12 +83,6 @@
 #include "Iteration/AEDescListItems.h"
 #include "Iteration/AEDescListItemDatas.h"
 #include "Iteration/FSContents.h"
-
-// Nitrogen Extras / Templates
-#include "Templates/DataPointer.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Threads.h"
 
 // Backtrace
 #include "Backtrace/StackCrawl.hh"
@@ -118,7 +113,6 @@
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace p7 = poseven;
-namespace NX = NitrogenExtras;
 namespace Div = Divergence;
 
 using BitsAndBytes::EncodeAsHex;
@@ -851,23 +845,21 @@ static int TestNull( int argc, iota::argv_t argv )
 	}
 	*/
 	
-	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const char* pathname )
+	static NN::Owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
 		NN::Owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
 		
 		struct ::stat stat_buffer;
 		
-		int statted = stat( pathname, &stat_buffer );
+		int statted = fstat( filehandle.get(), &stat_buffer );
 		
 		std::size_t size = stat_buffer.st_size;
 		
-		std::auto_ptr< FragmentImage > result;
+		NN::Owned< N::Ptr > result = N::NewPtr( size );
 		
-		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
+		int bytes = read( filehandle, result.get(), size );
 		
-		int bytes = read( filehandle, reinterpret_cast< char* >( result.get() ), size );
-		
-		return NX::DataPtr< FragmentImage >( result, size );
+		return result;
 	}
 	
 static int TestGMFShared( int argc, iota::argv_t argv )
@@ -878,13 +870,13 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	const char* pathname = argv[2];
 	
-	NX::DataPtr< FragmentImage > fragment = ReadFragmentImageFromPluginFile( pathname );
+	NN::Owned< N::Ptr > fragment = ReadFragmentImageFromPluginFile( pathname );
 	
-	int len = fragment.Len();
+	int len = N::GetPtrSize( fragment );
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	int* scratch;
 	
@@ -892,7 +884,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	*scratch = 42;
 	
-	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	N::FindSymbol( two, "\p" "errno", &scratch );
 	
