@@ -105,7 +105,11 @@
 
 
 #ifndef NUCLEUS_RICH_ERRORCODES
+  #if defined( __MWERKS__ )
+    #define NUCLEUS_RICH_ERRORCODES 0
+  #else
     #define NUCLEUS_RICH_ERRORCODES 1
+  #endif
 #endif
 
 #if NUCLEUS_RICH_ERRORCODES
