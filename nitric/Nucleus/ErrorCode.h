@@ -192,6 +192,7 @@ namespace Nucleus
    template < class ErrorClass, typename ErrorClassTraits<ErrorClass>::ErrorNumber number >
    inline void RegisterErrorCode()
      {
+      if ( NUCLEUS_RICH_ERRORCODES )
       TheGlobalErrorCodeThrower<ErrorClass>().template Register<number>();
      }
    
