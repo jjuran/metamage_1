@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2005 by Lisa Lippincott and Joshua Juran.
+// Written 2003-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -98,8 +98,10 @@ namespace Nucleus
                     {
                      value = Specifics::GetValue( position );
                     }
-                  catch ( const typename Specifics::EndOfEnumeration& )
+                  catch ( const typename Specifics::EndOfEnumeration& end )
                     {
+                     if ( !Specifics::Exception_Is_EndOfEnumeration( end ) )  throw;
+                     
                      position = Specifics::end_position();
                     }
                  }
