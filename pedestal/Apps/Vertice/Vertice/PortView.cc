@@ -17,9 +17,6 @@
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/Timing.h"
-
 // Nitrogen Extras / Utilities
 #include "Utilities/RectangleMath.h"
 
