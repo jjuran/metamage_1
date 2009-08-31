@@ -195,4 +195,33 @@ namespace Nucleus
      }
   }
 
+namespace Nucleus
+{
+	
+	template < class ErrorClass, typename ErrorClassTraits< ErrorClass >::ErrorNumber number >
+	struct ErrorCode_EndOfEnumeration
+	{
+	#if NUCLEUS_RICH_ERRORCODES
+		
+		typedef ErrorCode< ErrorClass, number > EndOfEnumeration;
+		
+		static bool Exception_Is_EndOfEnumeration( const EndOfEnumeration& err )
+		{
+			return true;
+		}
+		
+	#else
+		
+		typedef ErrorCode< ErrorClass, 0 > EndOfEnumeration;
+		
+		static bool Exception_Is_EndOfEnumeration( const EndOfEnumeration& err )
+		{
+			return err == number;
+		}
+		
+	#endif
+	};
+	
+}
+
 #endif
