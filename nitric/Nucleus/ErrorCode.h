@@ -128,10 +128,17 @@ namespace Nucleus
    class ErrorCode: public ErrorClass, public DebuggingContext
      {
       public:
+	#if NUCLEUS_RICH_ERRORCODES
          ErrorCode()
            : ErrorClass( Convert<ErrorClass>( number ) ),
              DebuggingContext()
            {}
+	#else
+         ErrorCode( typename ErrorClassTraits<ErrorClass>::ErrorNumber errnum )
+           : ErrorClass( Convert<ErrorClass>( errnum ) ),
+             DebuggingContext()
+           {}
+	#endif
      };
 	
 	template < class Exception >
