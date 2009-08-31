@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2006-2007 by Joshua Juran.
+// Written 2006-2009 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -66,8 +66,11 @@ namespace poseven
 	
 	typedef DestructionErrnoPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionErrnoPolicy;
 	
-	typedef Nucleus::ErrorCode< errno_t, ENOENT > enoent;
-	typedef Nucleus::ErrorCode< errno_t, EEXIST > eexist;
+	
+	#define DEFINE_ERRNO( c_name, new_name )  DEFINE_ERRORCODE( errno_t, c_name, new_name )
+	
+	DEFINE_ERRNO( ENOENT, enoent );
+	DEFINE_ERRNO( EEXIST, eexist );
 	
 }
 
