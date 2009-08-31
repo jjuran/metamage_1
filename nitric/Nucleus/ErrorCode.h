@@ -198,7 +198,11 @@ namespace Nucleus
    template < class ErrorClass >
    inline void ThrowErrorCode( ErrorClass error )
      {
+	#if NUCLEUS_RICH_ERRORCODES
       TheGlobalErrorCodeThrower<ErrorClass>().Throw( error );
+	#else
+      throw ErrorCode< ErrorClass, 0 >( error );
+	#endif
      }
   }
 
