@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
+// Written 2003-2009 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -108,6 +108,16 @@ namespace Nitrogen
    
    typedef DestructionOSStatusPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionOSStatusPolicy;
   }
+
+namespace Nitrogen
+{
+	
+	template < ::OSStatus status >
+	struct OSStatus_EndOfEnumeration : public Nucleus::ErrorCode_EndOfEnumeration< OSStatus, status >
+	{
+	};
+	
+}
 
 namespace Nucleus
   {
