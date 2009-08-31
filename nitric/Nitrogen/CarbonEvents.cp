@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2006 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -194,7 +194,7 @@ namespace Nitrogen
         }
       catch ( ... )
         {
-         return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), EventInternalErr() );
+         return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( eventInternalErr ) );
         }
      }
 
