@@ -550,7 +550,7 @@ namespace Nitrogen
 	
 	// Mac OS X only bits for sound input components
 	
-	class SoundInputDevice_ContainerSpecifics
+	class SoundInputDevice_ContainerSpecifics : public OSStatus_EndOfEnumeration< siBadSoundInDevice >
 	{
 		public:
 			typedef SPBGetIndexedDevice_Result value_type;
@@ -559,8 +559,6 @@ namespace Nitrogen
 			
 			static size_type begin_position()   { return 1; }
 			static size_type end_position()     { return 0; }
-			
-			typedef Nucleus::ErrorCode< OSStatus, siBadSoundInDevice > EndOfEnumeration;
 			
 			value_type GetValue( size_type position )
 			{
