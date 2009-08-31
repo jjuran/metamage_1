@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -102,6 +102,11 @@
 #endif
 
 #include <map>
+
+
+#ifndef NUCLEUS_RICH_ERRORCODES
+    #define NUCLEUS_RICH_ERRORCODES 1
+#endif
 
 
 namespace Nucleus
