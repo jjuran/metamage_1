@@ -33,6 +33,7 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
+#include "Nitrogen/Timer.h"
 
 // Io: MacFiles
 #include "MacFiles.hh"

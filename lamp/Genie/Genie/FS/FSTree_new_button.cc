@@ -8,6 +8,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Nitrogen
+#include "Nitrogen/ControlDefinitions.h"
+
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/TrackControl.hh"

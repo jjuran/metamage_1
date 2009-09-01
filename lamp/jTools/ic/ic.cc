@@ -5,9 +5,11 @@
 
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
+#include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
 // Nitrogen
+#include "Nitrogen/MacTypes.h"
 #include "Nitrogen/InternetConfig.h"
 
 // Orion

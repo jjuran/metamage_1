@@ -14,7 +14,7 @@
 
 // Nitrogen
 #include "Nitrogen/MacMemory.h"
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/MacWindows.h"
 
 // Genie
 #include "Genie/FS/ScrollerBase.hh"

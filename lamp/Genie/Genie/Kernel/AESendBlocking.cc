@@ -7,6 +7,7 @@
 #include <signal.h>
 
 // Nitrogen
+#include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/OSStatus.h"
 
 // Nitrogen Extras / AEFramework

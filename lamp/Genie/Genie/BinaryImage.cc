@@ -5,8 +5,11 @@
 
 #include "Genie/BinaryImage.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Resources.h"
 
 // Io: MacFiles
 #include "MacFiles.hh"

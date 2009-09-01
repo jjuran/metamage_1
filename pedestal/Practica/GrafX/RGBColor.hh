@@ -6,13 +6,12 @@
 #ifndef GRAFX_RGBCOLOR_HH
 #define GRAFX_RGBCOLOR_HH
 
-// Mac OS Universal Interfaces
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
-#endif
-
 // Nucleus
 #include "Nucleus/Convert.h"
+#include "Nucleus/Make.h"
+
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
 
 // Vectoria
 #include "Vectoria/TriColor.hh"

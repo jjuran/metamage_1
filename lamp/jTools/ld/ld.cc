@@ -24,6 +24,7 @@
 
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
+#include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
 
 // Io: MacFiles

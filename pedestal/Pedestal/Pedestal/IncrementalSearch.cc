@@ -8,8 +8,13 @@
 // Standard C/C++
 #include <cctype>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen
+#include "Nitrogen/Events.h"
 #include "Nitrogen/Resources.h"
+#include "Nitrogen/Sound.h"
 
 
 namespace Pedestal

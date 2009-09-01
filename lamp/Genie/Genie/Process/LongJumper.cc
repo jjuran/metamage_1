@@ -5,6 +5,9 @@
 
 #include "Genie/Process/LongJumper.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 
 namespace Genie
 {

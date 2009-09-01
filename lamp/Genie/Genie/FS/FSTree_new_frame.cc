@@ -11,6 +11,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"

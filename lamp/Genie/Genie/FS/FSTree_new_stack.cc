@@ -8,6 +8,9 @@
 // Standard C++
 #include <vector>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Pedestal
 #include "Pedestal/Stack.hh"
 

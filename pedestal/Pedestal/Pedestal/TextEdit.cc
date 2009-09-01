@@ -16,6 +16,7 @@
 
 // Nitrogen
 #include "Nitrogen/Events.h"
+#include "Nitrogen/Sound.h"
 #include "Nitrogen/TextEdit.h"
 
 // Pedestal

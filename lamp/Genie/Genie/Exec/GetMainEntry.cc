@@ -5,6 +5,9 @@
 
 #include "Genie/Exec/GetMainEntry.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
 

@@ -13,7 +13,7 @@
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/CodeFragments.h"
 
 // Genie
 #include "Genie/Process.hh"

@@ -10,6 +10,9 @@
 // Mac OS
 #include <CursorDevices.h>
 
+// Nitrogen
+#include "Nitrogen/OSStatus.h"
+
 // ClassicToolbox
 //#include "ClassicToolbox/CursorDevices.h"
 

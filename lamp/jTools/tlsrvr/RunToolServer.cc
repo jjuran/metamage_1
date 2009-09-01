@@ -24,6 +24,7 @@
 
 // Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Shared.h"
 
 // Io
 #include "io/slurp.hh"
@@ -35,6 +36,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/AERegistry.h"
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/MacErrors.h"
 
