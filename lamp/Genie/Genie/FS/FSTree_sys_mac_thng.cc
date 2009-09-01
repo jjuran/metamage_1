@@ -185,16 +185,12 @@ namespace Genie
 		{
 			(void) N::GetComponentInfo( key );
 		}
-		catch ( const N::BadComponentSelector& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != badComponentSelector )
+			if ( err != badComponentSelector )
 			{
 				throw;
 			}
-			
-		#endif
 			
 			return false;
 		}

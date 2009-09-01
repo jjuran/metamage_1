@@ -1284,14 +1284,10 @@ Return Value
             result.erase( std::strlen( result.c_str() ) );
             return result;
            }
-         catch ( const PathTooLongErr& )
+         catch ( const OSStatus& err )
            {
-            if ( maxPathSize > std::numeric_limits<UInt32>::max() / 2 )
+            if ( err != pathTooLongErr  &&  err != buffersTooSmall )
                throw;
-            // Otherwise, try again with a larger string
-           }
-         catch ( const BuffersTooSmall& )
-           {
             if ( maxPathSize > std::numeric_limits<UInt32>::max() / 2 )
                throw;
             // Otherwise, try again with a larger string

@@ -73,11 +73,6 @@ namespace Nitrogen
 	{
 		CRMRecPtr result = ::CRMSearch( const_cast< CRMRecPtr >( &crmRec ) );
 		
-		if ( result == NULL )
-		{
-			throw CRMSearch_Failed();
-		}
-		
 		return result;
 	}
 	

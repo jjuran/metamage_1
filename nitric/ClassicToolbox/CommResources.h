@@ -12,9 +12,7 @@
 #endif
 
 // Nucleus
-#ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
-#include "Nucleus/AdvanceUntilFailureContainer.h"
-#endif
+#include "Nucleus/AdvanceUntilDoneSequence.h"
 #include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_OWNED_H
@@ -235,8 +233,6 @@ namespace Nitrogen
 			typedef SInt32 difference_type;
 			typedef value_type key_type;
 			
-			typedef CRMSearch_Failed EndOfEnumeration;
-			
 			CRMResource_Container_Specifics( CRMDeviceType crmDeviceType )
 			:
 				crmDeviceType( crmDeviceType )
@@ -254,14 +250,14 @@ namespace Nitrogen
 			static key_type end_key  ()        { return             NULL  ; }
 	};
 	
-	class CRMResource_Container: public Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+	class CRMResource_Container: public Nucleus::AdvanceUntilDoneSequence< CRMResource_Container_Specifics >
 	{
 		friend CRMResource_Container CRMResources( CRMDeviceType crmDeviceType );
 		
 		private:
 			CRMResource_Container( CRMDeviceType crmDeviceType )
 			:
-				Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+				Nucleus::AdvanceUntilDoneSequence< CRMResource_Container_Specifics >
 				(
 					CRMResource_Container_Specifics( crmDeviceType )
 				)

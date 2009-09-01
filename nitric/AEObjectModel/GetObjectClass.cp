@@ -21,13 +21,25 @@ namespace Nitrogen
 		{
 			return TheGlobalObjectClassMap().GetObjectClass( DescType( obj.descriptorType ) );
 		}
-		catch ( ErrAEEventNotHandled )  {}
+		catch ( const OSStatus& err )
+		{
+			if ( err != errAEEventNotHandled )
+			{
+				throw;
+			}
+		}
 		
 		try
 		{
 			return TheGlobalObjectClassGetter().GetObjectClass( obj );
 		}
-		catch ( ErrAEEventNotHandled )  {}
+		catch ( const OSStatus& err )
+		{
+			if ( err != errAEEventNotHandled )
+			{
+				throw;
+			}
+		}
 		
 		return AEObjectClass( obj.descriptorType );
 	}

@@ -54,16 +54,12 @@ namespace Genie
 			{
 				if ( errnum != ENOENT )  throw;
 			}
-			catch ( const N::FNFErr& err )
+			catch ( const N::OSStatus& err )
 			{
-			#ifdef __MWERKS__
-				
-				if ( err.Get() != fnfErr )
+				if ( err != fnfErr )
 				{
 					throw;
 				}
-				
-			#endif
 			}
 			
 			// If we got here, link is a valid location.

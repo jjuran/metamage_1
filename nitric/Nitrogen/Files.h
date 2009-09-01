@@ -1675,7 +1675,8 @@ namespace Nitrogen
    FSRef FSGetVolumeRootDirectory( FSVolumeRefNum volume );
    FSRef FSGetVolumeRootDirectory( FSVolumeIndex volumeIndex );
 
-   class Volume_ContainerSpecifics
+
+   class Volume_ContainerSpecifics : public OSStatus_EndOfEnumeration< nsvErr >
      {
       public:
          typedef FSVolumeRefNum value_type;
@@ -1684,8 +1685,6 @@ namespace Nitrogen
       
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
-         
-         typedef NSVErr EndOfEnumeration;
          
          value_type GetValue( size_type position )
            {
@@ -1718,7 +1717,7 @@ namespace Nitrogen
    typedef FSGetVolumeInfo_Result VolumeInfo;
 
    template < ::FSVolumeInfoBitmap whichInfo >
-   class VolumeInfo_ContainerSpecifics
+   class VolumeInfo_ContainerSpecifics : public OSStatus_EndOfEnumeration< nsvErr >
      {
       public:
          typedef VolumeInfo value_type;
@@ -1727,8 +1726,6 @@ namespace Nitrogen
       
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
-         
-         typedef NSVErr EndOfEnumeration;
          
          value_type GetValue( size_type position )
            {
@@ -1756,7 +1753,7 @@ namespace Nitrogen
       return VolumeInfo_Container<whichInfo>();
      }
 
-   class VolumeName_ContainerSpecifics
+   class VolumeName_ContainerSpecifics : public OSStatus_EndOfEnumeration< nsvErr >
      {
       public:
          typedef HFSUniStr255 value_type;
@@ -1765,8 +1762,6 @@ namespace Nitrogen
       
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
-         
-         typedef NSVErr EndOfEnumeration;
          
          value_type GetValue( size_type position )
            {
@@ -1788,7 +1783,7 @@ namespace Nitrogen
       return VolumeName_Container();
      }
 
-   class VolumeRootDirectory_ContainerSpecifics
+   class VolumeRootDirectory_ContainerSpecifics : public OSStatus_EndOfEnumeration< nsvErr >
      {
       public:
          typedef FSRef value_type;
@@ -1797,8 +1792,6 @@ namespace Nitrogen
       
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
-         
-         typedef NSVErr EndOfEnumeration;
          
          value_type GetValue( size_type position )
            {
@@ -1819,6 +1812,7 @@ namespace Nitrogen
      {
       return VolumeRootDirectory_Container();
      }
+
 
    void FSSetVolumeInfo( FSVolumeRefNum volume,
                          FSVolumeInfoBitmap  whichInfo,

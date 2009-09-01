@@ -982,16 +982,12 @@ namespace Genie
 		{
 			file->Stat( stat_buffer );
 		}
-		catch ( const N::FNFErr& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
 			if ( err != fnfErr )
 			{
 				throw;
 			}
-			
-		#endif
 		}
 		
 		if ( stat_buffer.st_dev <= 0 )

@@ -180,6 +180,17 @@ namespace Nitrogen
 			ErrMessage( errMessage )
 		{
 		}
+		
+	#if !NUCLEUS_RICH_ERRORCODES
+		
+		OSStatusErrMessage( OSStatus err, ConstStr255Param errMessage )
+		:
+			ErrorCode ( err        ),
+			ErrMessage( errMessage )
+		{
+		}
+		
+	#endif
 	};
 	
 	template < CFragLoadOptions options >  struct CFragLoadOptions_Traits;

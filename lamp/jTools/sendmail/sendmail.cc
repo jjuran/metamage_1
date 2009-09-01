@@ -57,8 +57,6 @@ namespace tool
 	
 	static std::string gRelayServer;
 	
-	struct BadEmailAddress : N::ParamErr {};
-	
 	
 	static N::FSDirSpec QueueDirectory()
 	{
@@ -72,7 +70,7 @@ namespace tool
 		
 		if ( at >= emailAddr.size() - 1 )
 		{
-			throw BadEmailAddress();
+			throw N::ParamErr();  // bad email address
 		}
 		
 		return emailAddr.substr( at + 1, emailAddr.find( '>' ) - (at + 1) );

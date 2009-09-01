@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2009 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -104,6 +104,21 @@
 #include <map>
 
 
+#ifndef NUCLEUS_RICH_ERRORCODES
+  #if defined( __MWERKS__ )
+    #define NUCLEUS_RICH_ERRORCODES 0
+  #else
+    #define NUCLEUS_RICH_ERRORCODES 1
+  #endif
+#endif
+
+#if NUCLEUS_RICH_ERRORCODES
+  #define DEFINE_ERRORCODE( error_type, c_name, new_name )  typedef Nucleus::ErrorCode< error_type, c_name > new_name
+#else
+  #define DEFINE_ERRORCODE( error_type, c_name, new_name )  inline Nucleus::ErrorCode< error_type, 0 > new_name()  { return Nucleus::ErrorCode< error_type, 0 >( c_name ); }
+#endif
+
+
 namespace Nucleus
   {   
    
@@ -117,10 +132,17 @@ namespace Nucleus
    class ErrorCode: public ErrorClass, public DebuggingContext
      {
       public:
+	#if NUCLEUS_RICH_ERRORCODES
          ErrorCode()
            : ErrorClass( Convert<ErrorClass>( number ) ),
              DebuggingContext()
            {}
+	#else
+         ErrorCode( typename ErrorClassTraits<ErrorClass>::ErrorNumber errnum )
+           : ErrorClass( Convert<ErrorClass>( errnum ) ),
+             DebuggingContext()
+           {}
+	#endif
      };
 	
 	template < class Exception >
@@ -174,14 +196,48 @@ namespace Nucleus
    template < class ErrorClass, typename ErrorClassTraits<ErrorClass>::ErrorNumber number >
    inline void RegisterErrorCode()
      {
+      if ( NUCLEUS_RICH_ERRORCODES )
       TheGlobalErrorCodeThrower<ErrorClass>().template Register<number>();
      }
    
    template < class ErrorClass >
    inline void ThrowErrorCode( ErrorClass error )
      {
+	#if NUCLEUS_RICH_ERRORCODES
       TheGlobalErrorCodeThrower<ErrorClass>().Throw( error );
+	#else
+      throw ErrorCode< ErrorClass, 0 >( error );
+	#endif
      }
   }
+
+namespace Nucleus
+{
+	
+	template < class ErrorClass, typename ErrorClassTraits< ErrorClass >::ErrorNumber number >
+	struct ErrorCode_EndOfEnumeration
+	{
+	#if NUCLEUS_RICH_ERRORCODES
+		
+		typedef ErrorCode< ErrorClass, number > EndOfEnumeration;
+		
+		static bool Exception_Is_EndOfEnumeration( const EndOfEnumeration& err )
+		{
+			return true;
+		}
+		
+	#else
+		
+		typedef ErrorCode< ErrorClass, 0 > EndOfEnumeration;
+		
+		static bool Exception_Is_EndOfEnumeration( const EndOfEnumeration& err )
+		{
+			return err == number;
+		}
+		
+	#endif
+	};
+	
+}
 
 #endif

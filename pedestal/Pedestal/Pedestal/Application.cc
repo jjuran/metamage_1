@@ -278,9 +278,12 @@ namespace Pedestal
 		{
 			N::AEProcessAppleEvent( event );
 		}
-		catch ( N::ErrAEEventNotHandled )
+		catch ( const N::OSStatus& err )
 		{
-			//
+			if ( err != errAEEventNotHandled )
+			{
+				throw;
+			}
 		}
 	}
 	

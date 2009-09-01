@@ -71,8 +71,13 @@ namespace Nitrogen
 					*replyStorage = AEDuplicateDesc( reply ).Release();
 				}
 			}
-			catch ( ThreadNotFoundErr )
+			catch ( const OSStatus& err )
 			{
+				if ( err != threadNotFoundErr )
+				{
+					throw;
+				}
+				
 				// A thread terminated without canceling a pending reply
 			}
 			

@@ -60,7 +60,7 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
-			if ( err.Get() == resNotFound )
+			if ( err == resNotFound )
 			{
 				return frame.SetErrno( EINVAL );
 			}

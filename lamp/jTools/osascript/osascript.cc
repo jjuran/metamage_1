@@ -174,16 +174,12 @@ namespace tool
 			                      mode,
 			                      scriptContext );
 		}
-		catch ( const N::ErrOSAScriptError& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != errOSAScriptError )
+			if ( err != errOSAScriptError )
 			{
 				throw;
 			}
-			
-		#endif
 		}
 		
 		ReportAndThrowScriptError( scriptingComponent, step );
@@ -347,16 +343,12 @@ namespace tool
 				p7::write( p7::stdout_fileno, output );
 			}
 		}
-		catch ( const N::ErrOSAScriptError& err )
+		catch ( const N::OSStatus& err )
 		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != errOSAScriptError )
+			if ( err != errOSAScriptError )
 			{
 				throw;
 			}
-			
-		#endif
 			
 			ReportAndThrowScriptError( script.GetDisposer().Component(), "execution" );
 		}

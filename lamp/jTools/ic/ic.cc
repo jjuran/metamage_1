@@ -4,7 +4,7 @@
  */
 
 // Nucleus
-#include "Nucleus/AdvanceUntilFailureContainer.h"
+#include "Nucleus/AdvanceUntilDoneSequence.h"
 #include "Nucleus/Shared.h"
 
 // Nitrogen
@@ -35,8 +35,6 @@ namespace Nitrogen
 			typedef SInt32 difference_type;
 			typedef const value_type* key_type;
 			
-			class EndOfEnumeration {};  // Not used
-			
 			key_type GetNextKey( const key_type& value ) const
 			{
 				const char* next = reinterpret_cast< const char* >( value ) + value->totalLength;
@@ -58,7 +56,7 @@ namespace Nitrogen
 			static key_type end_key()          { return NULL;       }
 	};
 	
-	class ICMapEntry_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::ICMapEntry_ContainerSpecifics >
+	class ICMapEntry_Container: public Nucleus::AdvanceUntilDoneSequence< ::Nitrogen::ICMapEntry_ContainerSpecifics >
 	{
 		friend ICMapEntry_Container ICMapEntries( Nucleus::Shared< ICMapEntryHandle > entries );
 		
@@ -67,7 +65,7 @@ namespace Nitrogen
 			
 			typedef ::Nitrogen::ICMapEntry_ContainerSpecifics Specifics;
 			
-			ICMapEntry_Container( const Nucleus::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilFailureContainer< Specifics >( Specifics( entries ) ),
+			ICMapEntry_Container( const Nucleus::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilDoneSequence< Specifics >( Specifics( entries ) ),
 			                                                                             itsEntries( entries )
 			{
 				Nitrogen::HLock( entries.Get() );

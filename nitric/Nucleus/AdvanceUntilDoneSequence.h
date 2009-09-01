@@ -1,5 +1,5 @@
-// Nucleus/AdvanceUntilFailureContainer.h
-// --------------------------------------
+// Nucleus/AdvanceUntilDoneSequence.h
+// ----------------------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,20 +11,21 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
-#define NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
+#ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_H
+#define NUCLEUS_ADVANCEUNTILDONESEQUENCE_H
 
 #include <iterator>
+
 
 namespace Nucleus
 {
 	
 	template < class Specifics >
-	class AdvanceUntilFailureContainer : private Specifics
+	class AdvanceUntilDoneSequence : private Specifics
 	{
 		private: 
 			// not implemented:
-			AdvanceUntilFailureContainer& operator=( const AdvanceUntilFailureContainer& );
+			AdvanceUntilDoneSequence& operator=( const AdvanceUntilDoneSequence& );
 		
 		public:
 			typedef typename Specifics::size_type        size_type;
@@ -37,13 +38,13 @@ namespace Nucleus
 			
 			class const_iterator : private Specifics
 			{
-				friend class AdvanceUntilFailureContainer;
+				friend class AdvanceUntilDoneSequence;
 				
 				public:
-					typedef typename AdvanceUntilFailureContainer::size_type        size_type;
-					typedef typename AdvanceUntilFailureContainer::difference_type  difference_type;
-					typedef typename AdvanceUntilFailureContainer::value_type       value_type;
-					typedef typename AdvanceUntilFailureContainer::key_type         key_type;
+					typedef typename AdvanceUntilDoneSequence::size_type        size_type;
+					typedef typename AdvanceUntilDoneSequence::difference_type  difference_type;
+					typedef typename AdvanceUntilDoneSequence::value_type       value_type;
+					typedef typename AdvanceUntilDoneSequence::key_type         key_type;
 					typedef const value_type *pointer;
 					typedef const value_type& reference;
 					typedef std::forward_iterator_tag iterator_category;
@@ -53,19 +54,7 @@ namespace Nucleus
 					
 					void GetNextKey()
 					{
-						try
-						{
-							its_key = Specifics::GetNextKey( its_key );
-						}
-						catch ( const typename Specifics::EndOfEnumeration& end )
-						{
-							if ( !Specifics::Exception_Is_EndOfEnumeration( end ) )
-							{
-								throw;
-							}
-							
-							its_key = Specifics::end_key();
-						}
+						its_key = Specifics::GetNextKey( its_key );
 					}
 					
 					const_iterator( const Specifics& b, key_type k ) : Specifics( b ),
@@ -89,7 +78,7 @@ namespace Nucleus
 					                        const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			AdvanceUntilFailureContainer( const Specifics& base ) : Specifics( base )
+			AdvanceUntilDoneSequence( const Specifics& base ) : Specifics( base )
 			{
 			}
 			

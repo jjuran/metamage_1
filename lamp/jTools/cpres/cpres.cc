@@ -101,7 +101,15 @@ namespace tool
 						::RemoveResource( existing );
 					}
 				}
-				catch ( N::ResNotFound ) {}  // Okay, resource didn't exist in dest file
+				catch ( const N::OSStatus& err )
+				{
+					if ( err != resNotFound )
+					{
+						throw;
+					}
+					
+					// Okay, resource didn't exist in dest file
+				}
 				
 				N::AddResource( N::DetachResource( h ), resInfo );
 			}
