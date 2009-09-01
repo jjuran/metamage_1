@@ -31,11 +31,6 @@
 // POSeven
 #include "POSeven/types/errno_t.hh"
 
-// Io
-#ifndef IO_IO_HH
-#include "io/io.hh"
-#endif
-
 
 namespace poseven
 {
@@ -86,15 +81,6 @@ namespace Nucleus
 			ErrorCode() : errno_t( ENOMEM )  {}
 			
 			~ErrorCode() throw ()  {}
-	};
-	
-	template <>
-	class ErrorCode< poseven::errno_t, EAGAIN > : public poseven::errno_t,
-	                                              public io::no_input_pending,
-	                                              public DebuggingContext
-	{
-		public:
-			ErrorCode() : errno_t( EAGAIN )  {}
 	};
 	
 	template <> struct Converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
