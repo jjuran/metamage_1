@@ -5,9 +5,31 @@
 
 #include "AEFramework/AEFramework.h"
 
+// Standard C++
+#include <map>
+
 
 namespace Nitrogen
 {
+	
+	struct ExpectedReply
+	{
+		ThreadID     thread;
+		AppleEvent*  reply;
+		
+		ExpectedReply()
+		{
+		}
+		
+		ExpectedReply( ThreadID thread, AppleEvent* reply )
+		:
+			thread( thread ),
+			reply ( reply  )
+		{
+		}
+	};
+	
+	typedef std::map< AEReturnID, ExpectedReply > ExpectedReplies;
 	
 	static ExpectedReplies gExpectedReplies;
 	
