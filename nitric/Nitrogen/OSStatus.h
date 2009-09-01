@@ -36,9 +36,6 @@
 #ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 #include "Nucleus/TheExceptionBeingHandled.h"
 #endif
-#ifndef IO_IO_HH
-#include "io/io.hh"
-#endif
 
 
 namespace Nitrogen
@@ -131,15 +128,6 @@ namespace Nucleus
          
          const char* what() const throw()  { return "OSStatus -108 (memFullErr)"; }
      };
-	
-	template <>
-	class ErrorCode< Nitrogen::OSStatus, ::kOTNoDataErr > : public Nitrogen::OSStatus,
-	                                                        public io::no_input_pending,
-	                                                        public DebuggingContext
-	{
-		public:
-			ErrorCode() : OSStatus( kOTNoDataErr )  {}
-	};
 	
 	
 	template <>

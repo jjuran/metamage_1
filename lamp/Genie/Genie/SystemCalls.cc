@@ -53,6 +53,15 @@ namespace Nucleus
 		}
 	};
 	
+	template <>
+	struct Converter< poseven::errno_t, io::no_input_pending > : public std::unary_function< io::no_input_pending, poseven::errno_t >
+	{
+		poseven::errno_t operator()( const io::no_input_pending& ) const
+		{
+			return poseven::errno_t( EAGAIN );
+		}
+	};
+	
 }
 
 namespace Genie
