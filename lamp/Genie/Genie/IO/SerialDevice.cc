@@ -18,6 +18,7 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
+#include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacErrors.h"
 
 // ClassicToolbox

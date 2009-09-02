@@ -3,11 +3,6 @@
  *	=======
  */
 
-// Universal Interfaces
-#ifndef __AEREGISTRY__
-#include <AERegistry.h>
-#endif
-
 // C Standard Library
 #include <stdlib.h>
 
@@ -22,6 +17,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/AERegistry.h"
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/Str.h"
 

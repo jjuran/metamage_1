@@ -11,6 +11,7 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Folders.h"
+#include "Nitrogen/Gestalt.h"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"

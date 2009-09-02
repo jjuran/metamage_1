@@ -15,6 +15,9 @@
 // Io
 #include "io/io.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 

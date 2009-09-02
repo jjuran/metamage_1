@@ -7,6 +7,9 @@
 
 #include "ADBProtocol.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;

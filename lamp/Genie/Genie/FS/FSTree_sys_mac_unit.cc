@@ -9,6 +9,7 @@
 
 // Nucleus
 #include "Nucleus/IndexedContainer.h"
+#include "Nucleus/NAssert.h"
 
 // BitsAndBytes
 #include "HexStrings.hh"

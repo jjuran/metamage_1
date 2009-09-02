@@ -15,6 +15,9 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
+// Nitrogen
+#include "Nitrogen/ControlDefinitions.h"
+
 // MacFeatures
 #include "MacFeatures/Features.hh"
 

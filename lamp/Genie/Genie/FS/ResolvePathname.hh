@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 

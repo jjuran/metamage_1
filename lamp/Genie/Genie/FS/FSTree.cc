@@ -14,6 +14,7 @@
 
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
+#include "Nitrogen/Threads.h"
 
 // POSeven
 #include "POSeven/Errno.hh"

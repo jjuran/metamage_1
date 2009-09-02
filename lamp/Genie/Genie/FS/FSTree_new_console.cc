@@ -11,6 +11,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Nitrogen
+#include "Nitrogen/Sound.h"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/Process.hh"

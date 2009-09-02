@@ -8,6 +8,7 @@
 
 // Standard C++
 #include <string>
+#include <vector>
 
 // Pedestal
 #include "Pedestal/Quasimode.hh"

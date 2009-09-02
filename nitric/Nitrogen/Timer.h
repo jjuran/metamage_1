@@ -21,6 +21,7 @@
 #include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
+#include "Nitrogen/MacTypes.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/UPP.h"
 

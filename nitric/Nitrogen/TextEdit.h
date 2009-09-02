@@ -24,6 +24,7 @@
 
 // Nucleus
 #include "Nucleus/Enumeration.h"
+#include "Nucleus/NAssert.h"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_H

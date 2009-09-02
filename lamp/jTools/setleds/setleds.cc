@@ -21,6 +21,11 @@
 #include "Orion/Main.hh"
 
 
+namespace Nitrogen
+{
+	// Define namespace Nitrogen for Carbon
+}
+
 namespace tool
 {
 	

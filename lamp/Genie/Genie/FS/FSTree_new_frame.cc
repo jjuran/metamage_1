@@ -11,6 +11,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
@@ -27,8 +30,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	

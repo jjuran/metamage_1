@@ -3,6 +3,9 @@
  *	=========
  */
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
