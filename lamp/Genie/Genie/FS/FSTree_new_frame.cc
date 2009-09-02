@@ -27,8 +27,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	

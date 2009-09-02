@@ -15,10 +15,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	static TEClickLoop_User   *  gCurrentUser    = NULL;
 	static TEClickLoop_Subject*  gCurrentSubject = NULL;
 	
