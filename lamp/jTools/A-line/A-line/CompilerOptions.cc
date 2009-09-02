@@ -5,6 +5,9 @@
 
 #include "A-line/CompilerOptions.hh"
 
+// Standard C++
+#include <algorithm>
+
 // A-line
 #include "A-line/TargetNames.hh"
 
@@ -55,7 +58,21 @@ namespace tool
 	
 	void CompilerOptions::AppendIncludeDir( const std::string& dir )
 	{
-		its_include_search_options.push_back( Include( dir ) );
+		const std::string include = Include( dir );
+		
+		std::vector< std::string >& dirs = its_include_search_options;
+		
+		// This is O(n^3), where
+		// n[1] is the number of calls to AppendIncludeDir(),
+		// n[2] is the number of unique paths, and
+		// n[3] is the average length of a path.
+		// None of these are expected to be large enough to require optimization,
+		// and saving even a single disk access will be a performance win.
+		
+		if ( std::find( dirs.begin(), dirs.end(), include ) == dirs.end() )
+		{
+			its_include_search_options.push_back( include );
+		}
 	}
 	
 	void CompilerOptions::PrependIncludeDir( const std::string& dir )
