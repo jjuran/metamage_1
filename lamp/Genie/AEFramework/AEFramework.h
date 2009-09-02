@@ -6,9 +6,6 @@
 #ifndef AEFRAMEWORK_AEFRAMEWORK_H
 #define AEFRAMEWORK_AEFRAMEWORK_H
 
-// Standard C++
-#include <map>
-
 // Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
@@ -20,22 +17,6 @@
 
 namespace Nitrogen
 {
-	
-	struct ExpectedReply
-	{
-		ThreadID thread;
-		AppleEvent* reply;
-		
-		ExpectedReply()  {}
-		
-		ExpectedReply( ThreadID thread, AppleEvent* reply )
-		:
-			thread( thread ),
-			reply ( reply  )
-		{}
-	};
-	
-	typedef std::map< AEReturnID, ExpectedReply > ExpectedReplies;
 	
 	void ExpectReply( AEReturnID   returnID,
 	                  AppleEvent*  replyStorage,
