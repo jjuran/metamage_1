@@ -20,8 +20,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// Iota
+#include "iota/decimal.hh"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -433,7 +433,8 @@ namespace tool
 		
 		std::string result = test_ok ? "ok" : "not ok";
 		
-		result += " " + NN::Convert< std::string >( ++gLastNumber );
+		result += " ";
+		result += iota::inscribe_decimal( ++gLastNumber );
 		
 		const std::string& reason = test.GetToDoReason();
 		
@@ -532,7 +533,9 @@ namespace tool
 		
 		battery.push_back( test );
 		
-		std::string header = "1.." + NN::Convert< std::string >( battery.size() ) + "\n";
+		std::string header = "1..";
+		header += iota::inscribe_decimal( battery.size() );
+		header += "\n";
 		
 		p7::write( p7::stdout_fileno, header );
 		
