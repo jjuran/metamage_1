@@ -35,6 +35,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// Iota
+#include "iota/decimal.hh"
+
 // Backtrace
 #include "Backtrace/Unmangle.hh"
 
@@ -181,7 +184,7 @@ std::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& mat
 			
 			int value = matrix.Cell( i, j );
 			
-			std::string string = NN::Convert< std::string >( value );
+			std::string string = iota::inscribe_decimal( value );
 			
 			result += string;
 			
