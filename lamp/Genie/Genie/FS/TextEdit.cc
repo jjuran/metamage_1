@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <map>
 
+// Iota
+#include "iota/decimal.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -25,7 +28,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -77,13 +79,13 @@ namespace Genie
 		
 		const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
 		
-		std::string result = NN::Convert< std::string >( selection.start );
+		std::string result = iota::inscribe_decimal( selection.start );
 		
 		if ( selection.end != selection.start )
 		{
 			result += '-';
 			
-			result += NN::Convert< std::string >( selection.end );
+			result += iota::inscribe_decimal( selection.end );
 		}
 		
 		return result;

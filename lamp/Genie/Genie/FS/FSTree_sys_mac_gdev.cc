@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_sys_mac_gdev.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // Nucleus
 #include "Nucleus/LinkedListContainer.h"
 
@@ -58,7 +61,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct GDHandle_KeyName_Traits : public Pointer_KeyName_Traits< Nitrogen::GDHandle >  {};
@@ -195,7 +197,7 @@ namespace Genie
 	{
 		GDHandle_KeyName_Traits::Key key = GetKeyFromParent( parent );
 		
-		std::string unit = NN::Convert< std::string >( ~key[0]->gdRefNum );
+		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		
 		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
 	}

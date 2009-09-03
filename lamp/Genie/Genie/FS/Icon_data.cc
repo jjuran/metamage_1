@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Icon_data.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -369,7 +372,7 @@ namespace Genie
 			
 			std::memcpy( &resID, buffer, sizeof (::ResID) );
 			
-			std::string result = NN::Convert< std::string >( resID );
+			std::string result = iota::inscribe_decimal( resID );
 			
 			result += '\n';
 			

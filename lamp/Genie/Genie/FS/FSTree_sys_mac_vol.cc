@@ -6,6 +6,7 @@
 #include "Genie/FS/FSTree_sys_mac_vol.hh"
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Nitrogen
@@ -495,7 +496,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
+		std::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
 		
 		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive );
 	}
@@ -514,7 +515,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
+		std::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
 		
 		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
 	}
