@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys_mac_vol_parms.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
@@ -19,7 +22,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -179,6 +181,18 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 	}
 	
+	static inline std::string stringify( const char* string )
+	{
+		return string;
+	}
+	
+	static inline std::string stringify( int i )
+	{
+		return iota::inscribe_decimal( i );
+	}
+	
+	static std::string stringify( ::Handle );
+	
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property
 	{
@@ -199,7 +213,7 @@ namespace Genie
 			
 			std::string result = raw ? std::string( (char*) &data, sizeof data )
 			                   : hex ? EncodeAsHex(         &data, sizeof data )
-			                   :       NN::Convert< std::string >( data );
+			                   :       stringify( data );
 			
 			return result;
 		}
