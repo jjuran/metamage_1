@@ -16,6 +16,9 @@
 // Mac OS
 #include <Quickdraw.h>
 
+// Iota
+#include "iota/decimal.hh"
+
 
 namespace Genie
 {
@@ -76,7 +79,10 @@ namespace Genie
 	{
 		typedef int Value;
 		
-		static std::string Encode( int value );
+		static std::string Encode( int value )
+		{
+			return iota::inscribe_decimal( value );
+		}
 		
 		static int Decode( const char* begin, const char* end )
 		{

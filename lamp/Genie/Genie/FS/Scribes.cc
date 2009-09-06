@@ -5,17 +5,9 @@
 
 #include "Genie/FS/Scribes.hh"
 
-// Iota
-#include "iota/decimal.hh"
-
 
 namespace Genie
 {
-	
-	std::string Int_Scribe::Encode( int value )
-	{
-		return iota::inscribe_decimal( value );
-	}
 	
 	static inline bool is_integer( const char* s )
 	{
