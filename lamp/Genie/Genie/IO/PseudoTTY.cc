@@ -5,11 +5,8 @@
 
 #include "Genie/IO/PseudoTTY.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
+// Iota
+#include "iota/decimal.hh"
 
 // Genie
 #include "Genie/IO/DynamicGroup.hh"
@@ -18,10 +15,6 @@
 
 namespace Genie
 {
-	
-	namespace NN = Nucleus;
-	namespace p7 = poseven;
-	
 	
 	inline DynamicGroup& GetPseudoTTYMap()
 	{
@@ -55,12 +48,21 @@ namespace Genie
 		return result;
 	}
 	
+	static inline std::string make_devpts( size_t id )
+	{
+		std::string result = "/dev/pts/";
+		
+		result += iota::inscribe_decimal( id );
+		
+		return result;
+	}
+	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                   id,
 			                          boost::shared_ptr< Conduit >  input,
 			                          boost::shared_ptr< Conduit >  output )
 	: TTYHandle( O_RDWR ),
 	  itsID( id ),
-	  itsTerminal( NewTerminal( "/dev/pts/" + NN::Convert< std::string >( id ) ) ),
+	  itsTerminal( NewTerminal( make_devpts( id ) ) ),
 	  itsInput( input ),
 	  itsOutput( output )
 	{

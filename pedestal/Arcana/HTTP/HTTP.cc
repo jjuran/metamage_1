@@ -14,17 +14,16 @@
 #include <vector>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
 
 // POSeven
 #include "POSeven/functions/fstat.hh"
 
 
-namespace NN = Nucleus;
 namespace p7 = poseven;
 
 
@@ -61,7 +60,7 @@ namespace HTTP
 	
 	std::string GetContentLengthLine( p7::fd_t message_body )
 	{
-		return HeaderFieldLine( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
+		return HeaderFieldLine( "Content-Length", iota::inscribe_decimal( GetContentLength( message_body ) ) );
 	}
 	
 	

@@ -10,6 +10,9 @@
 // Standard C
 #include <stdlib.h>
 
+// Iota
+#include "iota/decimal.hh"
+
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/ioctl.hh"
@@ -31,7 +34,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -81,8 +83,8 @@ namespace tool
 			           TIOCGWINSZ,
 			           &size );
 			
-			std::string lines   = NN::Convert< std::string >( size.ws_row );
-			std::string columns = NN::Convert< std::string >( size.ws_col );
+			std::string lines   = iota::inscribe_decimal( size.ws_row );
+			std::string columns = iota::inscribe_decimal( size.ws_col );
 			
 			AssignShellVariable( "LINES",   lines  .c_str() );
 			AssignShellVariable( "COLUMNS", columns.c_str() );

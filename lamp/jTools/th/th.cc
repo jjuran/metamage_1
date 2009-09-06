@@ -22,10 +22,8 @@
 #include <unistd.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
-
-// Nucleus
-#include "Nucleus/Convert.h"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -230,17 +228,22 @@ namespace tool
 			{
 				if ( results.unexpected > 0 )
 				{
-					result += ", with " + NN::Convert< std::string >( results.unexpected ) + " tests unexpectedly passing";
+					result += ", with ";
+					result += iota::inscribe_decimal( results.unexpected );
+					result += " tests unexpectedly passing";
 				}
 				
 				if ( results.todo > 0 )
 				{
-					result += ", but " + NN::Convert< std::string >( results.todo ) + " tests TODO failed";
+					result += ", but ";
+					result += iota::inscribe_decimal( results.todo );
+					result += " tests TODO failed";
 				}
 			}
 			else
 			{
-				result = "FAILED at test " + NN::Convert< std::string >( results.failure );
+				result = "FAILED at test ";
+				result += iota::inscribe_decimal( results.failure );
 			}
 			
 			result += "\n";

@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // POSeven
@@ -179,15 +180,15 @@ namespace tool
 		
 		if ( param == "$" )
 		{
-			single_result = NN::Convert< std::string >( getpid() );
+			single_result = iota::inscribe_decimal( getpid() );
 		}
 		else if ( param == "?" )
 		{
-			single_result = NN::Convert< std::string >( NN::Convert< p7::exit_t >( global_last_wait_status ) );
+			single_result = iota::inscribe_decimal( NN::Convert< p7::exit_t >( global_last_wait_status ) );
 		}
 		else if ( param == "#" )
 		{
-			single_result = NN::Convert< std::string >( gParameterCount );
+			single_result = iota::inscribe_decimal( gParameterCount );
 		}
 		else if ( double_quoted  &&  param == "*" )
 		{

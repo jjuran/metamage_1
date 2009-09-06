@@ -16,10 +16,8 @@
 #include <netdb.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
-
-// Nucleus
-#include "Nucleus/Convert.h"
 
 // POSeven
 #include "POSeven/bundles/inet.hh"
@@ -47,7 +45,7 @@ namespace tool
 		{
 			std::string message = "Domain name lookup failed: ";
 			
-			message += Nucleus::Convert< std::string >( h_errno );
+			message += iota::inscribe_decimal( h_errno );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );

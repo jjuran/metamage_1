@@ -15,6 +15,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+// Iota
+#include "iota/decimal.hh"
+
 // MoreFunctional
 #include "PointerToFunction.hh"
 
@@ -138,7 +141,7 @@ namespace tool
 		{
 			std::string message = "Domain name lookup failed: ";
 			
-			message += NN::Convert< std::string >( h_errno );
+			message += iota::inscribe_decimal( h_errno );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );

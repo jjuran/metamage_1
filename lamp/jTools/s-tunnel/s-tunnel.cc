@@ -32,13 +32,11 @@
 #include <openssl/err.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Io
 #include "io/io.hh"
-
-// Nucleus
-#include "Nucleus/Convert.h"
 
 // POSeven
 #include "POSeven/functions/write.hh"
@@ -52,7 +50,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -289,7 +286,7 @@ namespace tool
 		{
 			std::string message = "Domain name lookup failed: ";
 			
-			message += NN::Convert< std::string >( h_errno );
+			message += iota::inscribe_decimal( h_errno );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );

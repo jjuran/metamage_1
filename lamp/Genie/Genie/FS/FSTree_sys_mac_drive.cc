@@ -7,6 +7,9 @@
 
 #include "Genie/FS/FSTree_sys_mac_drive.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -28,7 +31,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -138,7 +140,7 @@ namespace Genie
 		
 		UnitNumber unit = ~refNum;
 		
-		std::string unitNumber = NN::Convert< std::string >( unit );
+		std::string unitNumber = iota::inscribe_decimal( unit );
 		
 		std::string target = "/sys/mac/unit/" + unitNumber;
 		
@@ -218,7 +220,7 @@ namespace Genie
 			
 			std::string result = raw ? std::string( (char*) &data, sizeof data )
 			                   : hex ? EncodeAsHex(         &data, sizeof data )
-			                   :       NN::Convert< std::string >( data );
+			                   :       iota::inscribe_decimal( data );
 			
 			return result;
 		}

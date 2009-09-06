@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_Proc.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // Backtrace
 #include "Backtrace/Backtrace.hh"
 
@@ -373,7 +376,7 @@ namespace Genie
 				
 				std::string result;
 				
-				result += NN::Convert< std::string >( pid );
+				result += iota::inscribe_decimal( pid );
 				result += " "
 				          "(";
 				result += process.ProgramName();
@@ -381,15 +384,15 @@ namespace Genie
 				          " ";
 				result += ProcessStateCode( process );
 				result += " ";
-				result += NN::Convert< std::string >( ppid );
+				result += iota::inscribe_decimal( ppid );
 				result += " ";
-				result += NN::Convert< std::string >( pgid );
+				result += iota::inscribe_decimal( pgid );
 				result += " ";
-				result += NN::Convert< std::string >( sid );
+				result += iota::inscribe_decimal( sid );
 				result += " ";
 				result += terminal_name;
 				result += " ";
-				result += NN::Convert< std::string >( tpgid );
+				result += iota::inscribe_decimal( tpgid );
 				result += "\n";
 				
 				return result;

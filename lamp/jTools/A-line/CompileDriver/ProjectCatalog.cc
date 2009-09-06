@@ -10,14 +10,12 @@
 #include <vector>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Io
 #include "io/files.hh"
 #include "io/walk.hh"
-
-// Nucleus
-#include "Nucleus/Convert.h"
 
 // POSeven
 #include "POSeven/Directory.hh"
@@ -38,7 +36,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -250,11 +247,11 @@ namespace tool
 				
 				record += '\t';
 				
-				record += NN::Convert< std::string >( demands.Required  () );
+				record += iota::inscribe_decimal( demands.Required  () );
 				
 				record += '/';
 				
-				record += NN::Convert< std::string >( demands.Prohibited() );
+				record += iota::inscribe_decimal( demands.Prohibited() );
 				
 				record += '\t';
 				

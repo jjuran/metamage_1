@@ -9,6 +9,7 @@
 #include <sys/ttycom.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Nitrogen
@@ -348,7 +349,7 @@ namespace Genie
 	{
 		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/dev/con" ) );
 		
-		std::string name = NN::Convert< std::string >( id );
+		std::string name = iota::inscribe_decimal( id );
 		
 		return FSTreePtr( new FSTree( parent, name ) );
 	}

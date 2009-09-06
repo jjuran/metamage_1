@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_sys_cpu.hh"
 
+// Iota
+#include "iota/decimal.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
@@ -44,7 +47,7 @@ namespace Genie
 	
 	static std::string Get68KCPUName( long code )
 	{
-		return NN::Convert< std::string >( 68000 + 10 * code );
+		return iota::inscribe_decimal( 68000 + 10 * code );
 	}
 	
 	struct GetCPUProc
@@ -113,7 +116,7 @@ namespace Genie
 			case gestaltCPU970MP:   name = "970MP";  break;
 			
 			default:
-				return NN::Convert< std::string >( code );
+				return iota::inscribe_decimal( code );
 		}
 		
 		ASSERT( name != NULL );

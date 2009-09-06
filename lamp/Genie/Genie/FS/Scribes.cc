@@ -5,19 +5,16 @@
 
 #include "Genie/FS/Scribes.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// Iota
+#include "iota/decimal.hh"
 
 
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
-	
-	
 	std::string Int_Scribe::Encode( int value )
 	{
-		return NN::Convert< std::string >( value );
+		return iota::inscribe_decimal( value );
 	}
 	
 	static inline bool is_integer( const char* s )
@@ -51,11 +48,11 @@ namespace Genie
 	
 	std::string WritePoint( Point point, char separator )
 	{
-		std::string result = NN::Convert< std::string >( point.h );
+		std::string result = iota::inscribe_decimal( point.h );
 		
 		result += separator;
 		
-		result += NN::Convert< std::string >( point.v );
+		result += iota::inscribe_decimal( point.v );
 		
 		return result;
 	}
@@ -64,19 +61,19 @@ namespace Genie
 	{
 		std::string result;
 		
-		result += NN::Convert< std::string >( r.left );
+		result += iota::inscribe_decimal( r.left );
 		
 		result += ",";
 		
-		result += NN::Convert< std::string >( r.top );
+		result += iota::inscribe_decimal( r.top );
 		
 		result += "-";
 		
-		result += NN::Convert< std::string >( r.right );
+		result += iota::inscribe_decimal( r.right );
 		
 		result += ",";
 		
-		result += NN::Convert< std::string >( r.bottom );
+		result += iota::inscribe_decimal( r.bottom );
 		
 		return result;
 	}

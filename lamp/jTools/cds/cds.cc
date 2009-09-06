@@ -4,10 +4,10 @@
  */
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
 
 // POSeven
@@ -28,7 +28,6 @@ namespace tool
 #if !TARGET_API_MAC_CARBON
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	using namespace NX::Constants;
@@ -108,18 +107,18 @@ namespace tool
 		
 		std::string command = "discid ";
 		
-		command += NN::Convert< std::string >( tracks );
+		command += iota::inscribe_decimal( tracks );
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
 			int offset = NX::TrackStart( gTOC, track );
 			
 			command += " ";
-			command += NN::Convert< std::string >( offset );
+			command += iota::inscribe_decimal( offset );
 		}
 		
 		command += " ";
-		command += NN::Convert< std::string >( NX::DiscLength( gTOC ) / 75 );
+		command += iota::inscribe_decimal( NX::DiscLength( gTOC ) / 75 );
 		command += "\n";
 		
 		p7::write( p7::stdout_fileno, command );
