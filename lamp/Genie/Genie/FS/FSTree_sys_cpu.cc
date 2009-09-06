@@ -9,7 +9,6 @@
 #include "iota/decimal.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
@@ -37,7 +36,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static long GetProcCode()
@@ -45,14 +43,14 @@ namespace Genie
 		return N::Gestalt( N::Gestalt_Selector( 'proc' ) ) - 1;
 	}
 	
-	static std::string Get68KCPUName( long code )
+	static const char* Get68KCPUName( long code )
 	{
 		return iota::inscribe_decimal( 68000 + 10 * code );
 	}
 	
 	struct GetCPUProc
 	{
-		typedef std::string Result;
+		typedef const char* Result;
 		
 		static Result Get()
 		{
@@ -87,7 +85,7 @@ namespace Genie
 		return code;
 	}
 	
-	static std::string GetCPUName( long code )
+	static const char* GetCPUName( long code )
 	{
 		if ( TARGET_CPU_68K  &&  code < 0x0100 )
 		{
@@ -126,7 +124,7 @@ namespace Genie
 	
 	struct GetCPUFamily
 	{
-		typedef std::string Result;
+		typedef const char* Result;
 		
 		static Result Get()
 		{
@@ -136,7 +134,7 @@ namespace Genie
 	
 	struct GetCPUType
 	{
-		typedef std::string Result;
+		typedef const char* Result;
 		
 		static Result Get()
 		{
@@ -146,7 +144,7 @@ namespace Genie
 	
 	struct GetPrivilegeMode
 	{
-		typedef std::string Result;
+		typedef const char* Result;
 		
 		static Result Get()
 		{
@@ -161,7 +159,7 @@ namespace Genie
 			
 		#endif
 			
-			std::string text = status & (1 << 13) ? "supervisor" : "user";
+			const char *const text = status & (1 << 13) ? "supervisor" : "user";
 			
 			return text;
 		}
@@ -172,7 +170,7 @@ namespace Genie
 	{
 		static std::string Read( const FSTree* that, bool binary )
 		{
-			return NN::Convert< std::string >( Accessor::Get() );
+			return Accessor::Get();
 		}
 	};
 	
