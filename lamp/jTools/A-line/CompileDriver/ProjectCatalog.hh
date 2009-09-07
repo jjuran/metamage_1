@@ -12,9 +12,6 @@
 #include <string>
 #include <vector>
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // POSeven
 #include "POSeven/types/fd_t.hh"
 

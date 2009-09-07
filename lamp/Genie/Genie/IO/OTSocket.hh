@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_OTSOCKET_HH
 #define GENIE_IO_OTSOCKET_HH
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // POSIX
 #include <sys/socket.h>
 

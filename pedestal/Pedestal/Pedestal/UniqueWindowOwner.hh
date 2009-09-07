@@ -9,9 +9,6 @@
 // Standard C++
 #include <memory>
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // Pedestal
 #include "Pedestal/Window.hh"
 
