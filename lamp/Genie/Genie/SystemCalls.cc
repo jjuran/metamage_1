@@ -91,6 +91,13 @@ namespace Genie
 	{
 		itsCaller.EnterSystemCall( name );
 		
+		const size_t space = N::ThreadCurrentStackSpace( N::GetCurrentThread() );
+		
+		if ( space < 8192 )
+		{
+			DeliverFatalSignal( SIGSTKFLT );
+		}
+		
 		Breathe();
 	}
 	

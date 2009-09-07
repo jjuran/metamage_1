@@ -160,7 +160,7 @@ namespace Backtrace
 	{
 	next:
 		
-		if ( frame == NULL  ||  frame >= limit  ||  level > 99 )
+		if ( frame == NULL  ||  frame >= limit  ||  level > 63 )
 		{
 			return;
 		}
