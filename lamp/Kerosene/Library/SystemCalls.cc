@@ -164,6 +164,7 @@ DEFINE_STUB( fchdir )
 
 DEFINE_STUB( getdents )
 
+DEFINE_STUB( writev )
 DEFINE_STUB( getsid )
 DEFINE_STUB( fdatasync )
 

@@ -11,6 +11,7 @@
 // POSIX
 #include "sys/ioctl.h"
 #include "sys/stat.h"
+#include "sys/uio.h"
 #include "unistd.h"
 
 // Nucleus
@@ -687,6 +688,74 @@ namespace Genie
 		}
 	}
 	
+	static ssize_t writev( int fd, const struct iovec *iov, int n_iov )
+	{
+		SystemCallFrame frame( "writev" );
+		
+		bool valid = n_iov > 0;
+		
+		if ( valid )
+		{
+		#ifdef IOV_MAX
+			
+			valid = valid  &&  n_iov <= IOV_MAX;
+			
+		#endif
+			
+			if ( valid )
+			{
+				ssize_t n_bytes = 0;
+				
+				for ( int i = 0;  i < n_iov;  ++i )
+				{
+					n_bytes += iov[ i ].iov_len;
+					
+					if ( n_bytes < 0 )
+					{
+						valid = false;  // ssize_t overflow
+						
+						break;
+					}
+				}
+				
+			}
+		}
+		
+		if ( !valid )
+		{
+			return frame.SetErrno( EINVAL );
+		}
+		
+		try
+		{
+			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
+			
+			ssize_t result = 0;
+			
+			for ( int i = 0;  i < n_iov;  ++i )
+			{
+				const char* buffer = (char*) iov[ i ].iov_base;
+				
+				const size_t length = iov[ i ].iov_len;
+				
+				const ssize_t written = stream.Write( buffer, length );
+				
+				result += written;
+				
+				if ( written != length )
+				{
+					break;
+				}
+			}
+			
+			return result;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+	}
+	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( InitProc  );
@@ -714,6 +783,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( ftruncate );
 	REGISTER_SYSTEM_CALL( ttypair   );
 	REGISTER_SYSTEM_CALL( write     );
+	REGISTER_SYSTEM_CALL( writev    );
 	REGISTER_SYSTEM_CALL( pwrite    );
 	
 	#pragma force_active reset
