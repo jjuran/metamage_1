@@ -4,17 +4,16 @@
  */
 
 // Standard C/C++
-#include <cerrno>
-#include <cstddef>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 // POSIX
 #include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 
 #pragma exceptions off
@@ -42,7 +41,7 @@ int main( int argc, char *const *argv )
 		{
 			exit_status = EXIT_FAILURE;
 			
-			std::fprintf( stderr, "rmdir: %s: %s\n", pathname, std::strerror( errno ) );
+			more::perror( "rmdir", argv[ index ] );
 		}
 	}
 	

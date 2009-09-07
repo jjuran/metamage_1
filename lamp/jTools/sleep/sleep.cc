@@ -15,6 +15,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// more-posix
+#include "more/perror.hh"
+
 
 int main( int argc, char const *const argv[] )
 {
@@ -41,7 +44,7 @@ int main( int argc, char const *const argv[] )
 	}
 	else
 	{
-		std::fprintf( stderr, "sleep: bad argument '%s'\n", argv[1] );
+		more::perror( "sleep: invalid time interval", argv[1], 0 );
 		
 		return EXIT_FAILURE;
 	}

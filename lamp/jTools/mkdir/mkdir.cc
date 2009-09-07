@@ -5,13 +5,15 @@
 
 // Standard C/C++
 #include <cstdio>
-#include <cstring>
 
 // Standard C
 #include <errno.h>
 
 // POSIX
 #include <sys/stat.h>
+
+// more-posix
+#include "more/perror.hh"
 
 
 #pragma exceptions off
@@ -35,10 +37,8 @@ int main( int argc, char *const *argv )
 		
 		if ( result == -1 )
 		{
-			std::fprintf( stderr,
-			              "mkdir: %s: %s\n",
-			                      argv[ index ],
-			                          std::strerror( errno ) );
+			more::perror( "mkdir", argv[ index ] );
+			
 			fail++;
 		}
 	}

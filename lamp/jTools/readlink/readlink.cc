@@ -5,13 +5,15 @@
 
 // Standard C
 #include <errno.h>
-#include <stdio.h>
 
 // POSIX
 #include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 
 #pragma exceptions off
@@ -35,7 +37,7 @@ int main( int argc, char const *const argv[] )
 	{
 		if ( errno != EINVAL )
 		{
-			fprintf( stderr, "readlink: %s: %s\n", argv[1], strerror( errno ) );
+			more::perror( "readlink", argv[1] );
 		}
 		
 		return EXIT_FAILURE;
