@@ -38,6 +38,17 @@ namespace tool
 		}
 	};
 	
+	struct circular_dependency
+	{
+		std::string project_name;
+		
+		circular_dependency( const std::string& name )
+		:
+			project_name( name )
+		{
+		}
+	};
+	
 }
 
 #endif

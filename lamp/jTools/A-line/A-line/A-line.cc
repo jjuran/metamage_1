@@ -693,6 +693,12 @@ namespace tool
 				
 				throw p7::exit_t( 3 );
 			}
+			catch ( const circular_dependency& circular )
+			{
+				std::fprintf( stderr, "A-line: Circular dependency on '%s'\n", circular.project_name.c_str() );
+				
+				throw p7::exit_t( 4 );
+			}
 			catch ( const p7::errno_t& err )
 			{
 				std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );
