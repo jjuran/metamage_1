@@ -23,6 +23,7 @@
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/ftruncate.hh"
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
 #include "POSeven/functions/pwrite.hh"
 #include "POSeven/functions/shutdown.hh"
 
@@ -270,7 +271,7 @@ namespace tool
 					
 					if ( bytes_read == -1 )
 					{
-						std::perror( "local-edit-client: read" );
+						p7::perror( "local-edit-client: read" );
 						
 						// I'm not sure what the scenario is here.
 						// (EINTR on handled signal?  EIO on disconnected terminal?)

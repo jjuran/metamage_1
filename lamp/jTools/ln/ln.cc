@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 // Standard C/C++
-#include <cstdio>
 #include <cstring>
 
 // POSIX
@@ -19,6 +18,7 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
+#include "POSeven/functions/perror.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/write.hh"
 
@@ -82,7 +82,7 @@ namespace tool
 			
 			if ( location_exists )
 			{
-				std::fprintf( stderr, "ln: %s: %s\n", location.c_str(), std::strerror( EEXIST ) );
+				p7::perror( "ln", location, EEXIST );
 				
 				return EXIT_FAILURE;
 			}
@@ -93,7 +93,7 @@ namespace tool
 		
 		if ( linked < 0 )
 		{
-			std::perror( "ln" );
+			p7::perror( "ln" );
 			
 			return EXIT_FAILURE;
 		}

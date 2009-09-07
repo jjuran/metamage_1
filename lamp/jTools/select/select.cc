@@ -23,6 +23,7 @@
 
 // POSeven
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Orion
@@ -67,7 +68,7 @@ namespace tool
 		
 		if ( selected == -1 )
 		{
-			std::perror( "select: select()" );
+			p7::perror( "select: select()" );
 			
 			return 3;  // error from select()
 		}
