@@ -13,6 +13,9 @@
 // Standard C
 #include <time.h>
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>

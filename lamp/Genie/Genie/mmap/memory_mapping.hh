@@ -6,6 +6,9 @@
 #ifndef GENIE_MMAP_MEMORYMAPPING_HH
 #define GENIE_MMAP_MEMORYMAPPING_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/shared_ptr.hpp>
 

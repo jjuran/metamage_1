@@ -6,6 +6,9 @@
 #ifndef GENIE_PROCESSGROUP_HH
 #define GENIE_PROCESSGROUP_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
