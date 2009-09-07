@@ -6,6 +6,9 @@
 #ifndef GENIE_FILEDESCRIPTOR_HH
 #define GENIE_FILEDESCRIPTOR_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/shared_ptr.hpp>
 

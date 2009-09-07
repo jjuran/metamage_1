@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
