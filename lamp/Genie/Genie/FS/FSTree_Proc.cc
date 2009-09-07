@@ -440,7 +440,7 @@ namespace Genie
 		{
 			Key pid = GetKey( that );
 			
-			return NN::Convert< std::string >( Accessor::Get( GetProcess( pid ) ) );
+			return Accessor::Get( GetProcess( pid ) );
 		}
 	};
 	
