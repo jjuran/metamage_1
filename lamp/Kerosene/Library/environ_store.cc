@@ -5,11 +5,11 @@
 
 #include "environ_store.hh"
 
-// Standard C
-#include <assert.h>
-
 // Standard C/C++
 #include <cstring>
+
+// Debug
+#include "debug/assert.hh"
 
 
 iota::environ_t environ = NULL;
@@ -125,11 +125,11 @@ namespace kerosene
 	
 	environ_store* environ_store::pop( environ_store* top )
 	{
-		assert( top != NULL );
+		ASSERT( top != NULL );
 		
 		environ_store *const next = top->its_next;
 		
-		assert( next != NULL );
+		ASSERT( next != NULL );
 		
 		next->update_environ();
 		
