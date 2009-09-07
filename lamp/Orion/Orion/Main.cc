@@ -23,10 +23,10 @@
 // Nucleus
 #include "Nucleus/ErrorCode.h"
 #include "Nucleus/Exception.h"
+#include "Nucleus/TheExceptionBeingHandled.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 
