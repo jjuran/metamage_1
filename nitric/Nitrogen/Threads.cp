@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterThreadManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ThreadManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static ThreadManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 #if TARGET_CPU_PPC && TARGET_RT_MAC_CFM

@@ -22,6 +22,7 @@ namespace Nitrogen
 	static void RegisterPPCToolboxErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class PPCToolboxErrorsRegistration
@@ -33,6 +34,7 @@ namespace Nitrogen
 	static PPCToolboxErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )

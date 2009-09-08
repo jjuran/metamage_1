@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterTimeManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class TimeManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static TimeManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )

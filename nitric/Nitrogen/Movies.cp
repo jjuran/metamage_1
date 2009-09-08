@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterQuickTimeErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class QuickTimeErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static QuickTimeErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,

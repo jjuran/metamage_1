@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterComponentManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ComponentManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static ComponentManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< ComponentInstance >

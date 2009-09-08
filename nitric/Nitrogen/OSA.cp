@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterOSAErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class OSAErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static OSAErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< OSAID >

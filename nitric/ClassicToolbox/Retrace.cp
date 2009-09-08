@@ -16,6 +16,7 @@ namespace Nitrogen
 	static void RegisterVerticalRetraceManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class VerticalRetraceManagerErrorsRegistration
@@ -27,6 +28,7 @@ namespace Nitrogen
 	static VerticalRetraceManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )

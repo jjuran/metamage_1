@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterMemoryManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class MemoryManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static MemoryManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
    void MemError()

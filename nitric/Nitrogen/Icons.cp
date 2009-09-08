@@ -28,6 +28,7 @@ namespace Nitrogen
 	static void RegisterIconManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class IconManagerErrorsRegistration
@@ -39,6 +40,7 @@ namespace Nitrogen
 	static IconManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID )

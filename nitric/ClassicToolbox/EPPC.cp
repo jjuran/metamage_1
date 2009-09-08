@@ -16,6 +16,7 @@ namespace Nitrogen
 	static void RegisterHighLevelEventManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class HighLevelEventManagerErrorsRegistration
@@ -27,6 +28,7 @@ namespace Nitrogen
 	static HighLevelEventManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void RegisterHighLevelEventManagerErrors()

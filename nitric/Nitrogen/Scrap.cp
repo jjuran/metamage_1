@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterScrapManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ScrapManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static ScrapManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	ScrapRef GetCurrentScrap()

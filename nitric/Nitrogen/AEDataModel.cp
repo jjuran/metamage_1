@@ -30,6 +30,7 @@ namespace Nitrogen
 	static void RegisterAppleEventManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class AppleEventManagerErrorsRegistration
@@ -41,6 +42,7 @@ namespace Nitrogen
 	static AppleEventManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	AECoercionHandler::AECoercionHandler() : fromType(),

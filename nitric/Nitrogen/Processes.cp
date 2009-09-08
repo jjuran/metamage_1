@@ -28,6 +28,7 @@ namespace Nitrogen
 	static void RegisterProcessManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ProcessManagerErrorsRegistration
@@ -39,6 +40,7 @@ namespace Nitrogen
 	static ProcessManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	ProcessSerialNumber GetCurrentProcess()

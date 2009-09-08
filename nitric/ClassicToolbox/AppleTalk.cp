@@ -19,6 +19,7 @@ namespace Nitrogen
 	static void RegisterAppleTalkErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class AppleTalkErrorsRegistration
@@ -30,6 +31,7 @@ namespace Nitrogen
 	static AppleTalkErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void RegisterAppleTalkErrors()

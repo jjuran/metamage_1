@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterMenuManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class MenuManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static MenuManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
    Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,

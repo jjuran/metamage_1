@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterDeferredTaskManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class DeferredTaskManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static DeferredTaskManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void DTInstall( DeferredTask& dtTaskPtr )

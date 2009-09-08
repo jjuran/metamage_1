@@ -16,6 +16,7 @@ namespace Nitrogen
 	static void RegisterSerialDriverErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class SerialDriverErrorsRegistration
@@ -27,6 +28,7 @@ namespace Nitrogen
 	static SerialDriverErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	template < class Type >

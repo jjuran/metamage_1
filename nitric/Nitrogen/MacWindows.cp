@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterWindowManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class WindowManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static WindowManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 #if OPAQUE_TOOLBOX_STRUCTS

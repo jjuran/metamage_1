@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterAliasManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class AliasManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static AliasManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	static Nucleus::Owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )

@@ -28,6 +28,7 @@ namespace Nitrogen
 	static void RegisterCodeFragmentManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class CodeFragmentManagerErrorsRegistration
@@ -39,6 +40,7 @@ namespace Nitrogen
 	static CodeFragmentManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	template < class ErrorCode >

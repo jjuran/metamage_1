@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterControlManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ControlManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static ControlManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	ControlRef NewControl( WindowRef         owningWindow,

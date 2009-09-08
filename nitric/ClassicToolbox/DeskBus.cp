@@ -19,6 +19,7 @@ namespace Nitrogen
 	static void RegisterADBManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ADBManagerErrorsRegistration
@@ -30,6 +31,7 @@ namespace Nitrogen
 	static ADBManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum )

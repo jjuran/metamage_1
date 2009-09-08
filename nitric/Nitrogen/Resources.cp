@@ -28,6 +28,7 @@ namespace Nitrogen
 	static void RegisterResourceManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class ResourceManagerErrorsRegistration
@@ -39,6 +40,7 @@ namespace Nitrogen
 	static ResourceManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Handle CheckResource( Handle r )

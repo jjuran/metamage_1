@@ -32,6 +32,7 @@ namespace Nitrogen
 	static void RegisterQuickDrawErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class QuickDrawErrorsRegistration
@@ -43,6 +44,7 @@ namespace Nitrogen
 	static QuickDrawErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	GrafPtr GetPort()

@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterDeviceManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class DeviceManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static DeviceManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void RegisterDeviceManagerErrors()

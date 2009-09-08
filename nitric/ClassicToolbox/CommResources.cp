@@ -16,6 +16,7 @@ namespace Nitrogen
 	static void RegisterCommunicationResourceManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class CommunicationResourceManagerErrorsRegistration
@@ -27,6 +28,7 @@ namespace Nitrogen
 	static CommunicationResourceManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void CRMAttributesDisposer::Dispose( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )

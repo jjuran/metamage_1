@@ -55,6 +55,7 @@ namespace Nitrogen
 	static void RegisterFileManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class FileManagerErrorsRegistration
@@ -66,6 +67,7 @@ namespace Nitrogen
 	static FileManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	void PBHOpenDFSync( HParamBlockRec& pb )

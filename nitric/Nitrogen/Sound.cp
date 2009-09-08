@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterSoundManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class SoundManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static SoundManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )

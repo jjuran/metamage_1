@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterOpenTransportErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class OpenTransportErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static OpenTransportErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )

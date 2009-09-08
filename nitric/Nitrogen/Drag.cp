@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterDragManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class DragManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static DragManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
    Nucleus::Owned<DragRef> NewDrag()

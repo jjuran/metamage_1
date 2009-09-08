@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterGestaltManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class GestaltManagerErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static GestaltManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	SInt32 Gestalt( Gestalt_Selector selector )
 	{

@@ -24,6 +24,7 @@ namespace Nitrogen
 	static void RegisterCarbonEventManagerErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class CarbonEventManagerErrorsRegistration
@@ -35,6 +36,7 @@ namespace Nitrogen
 	static CarbonEventManagerErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
    void RunCurrentEventLoop( EventTimeout inTimeout )

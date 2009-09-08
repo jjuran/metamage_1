@@ -27,6 +27,7 @@ namespace Nitrogen
 	static void RegisterInternetConfigErrors();
 	
 	
+#if NUCLEUS_RICH_ERRORCODES
 #pragma force_active on
 	
 	class InternetConfigErrorsRegistration
@@ -38,6 +39,7 @@ namespace Nitrogen
 	static InternetConfigErrorsRegistration theRegistration;
 	
 #pragma force_active reset
+#endif
 	
 	
 	Nucleus::Owned< ICInstance > ICStart( OSType signature )
