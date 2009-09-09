@@ -3,17 +3,12 @@
  *	====================
  */
 
-// Standard C/C++
-#include <cerrno>
-#include <cstdlib>
-
 // Standard C++
 #include <string>
 
 // POSIX
 #include <fcntl.h>
 #include <sys/socket.h>
-#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -26,6 +21,7 @@
 #include "POSeven/functions/perror.hh"
 #include "POSeven/functions/pwrite.hh"
 #include "POSeven/functions/shutdown.hh"
+#include "POSeven/functions/write.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -251,7 +247,7 @@ namespace tool
 			
 			if ( new_digest_b64 != received_digest_b64 )
 			{
-				std::fprintf( stderr, "MD5 digest mismatch\n" );
+				p7::write( p7::stderr_fileno, STR_LEN( "MD5 digest mismatch\n" ) );
 				
 				unlink( outputFile );
 				
@@ -306,7 +302,7 @@ namespace tool
 		}
 		else
 		{
-			std::fprintf( stderr, "%s\n", response.GetResult().c_str() );
+			p7::write( p7::stderr_fileno, response.GetResult() + "\n" );
 			
 			return EXIT_FAILURE;
 		}

@@ -6,7 +6,6 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 // Standard C++
@@ -62,7 +61,12 @@ int main( int argc, char *const argv[] )
 			}
 		}
 		
-		std::fprintf( stderr, "sending output to %s\n", nohup_out.c_str() );
+		std::string output_message = "sending output to ";
+		
+		output_message += nohup_out;
+		output_message += "\n";
+		
+		(void) write( STDERR_FILENO, output_message.data(), output_message.size() );
 		
 		dup2( output, STDOUT_FILENO );
 		

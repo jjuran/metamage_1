@@ -29,12 +29,15 @@
 #include <map>
 
 // Standard C
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Nucleus
 #include "Nucleus/NAssert.h"
+
+// POSeven
+#include "POSeven/functions/write.hh"
+
 
 // Option vocabulary
 
@@ -59,6 +62,9 @@
 
 namespace orion
 {
+	
+	namespace p7 = poseven;
+	
 	
 	template < class Integer >
 	class integer_option_binding : public option_binding
@@ -232,7 +238,7 @@ namespace orion
 		
 		for ( Iter it = global_option_map.begin();  it != end;  ++it )
 		{
-			printf( "%s\n", it->first.c_str() );
+			p7::write( p7::stdout_fileno, it->first + "\n" );
 		}
 		
 		exit( EXIT_SUCCESS );

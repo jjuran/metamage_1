@@ -4,7 +4,6 @@
  */
 
 // Standard C/C++
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -79,7 +78,9 @@ int main( int argc, char const *const argv[] )
 			{
 				found = true;
 				
-				std::printf( "%s\n", pathname.c_str() );
+				pathname += "\n";
+				
+				::write( STDOUT_FILENO, pathname.data(), pathname.length() );
 				
 				break;
 			}
