@@ -393,7 +393,9 @@ namespace tool
 		
 		Io::TextInputAdapter< p7::fd_t > input( p7::stdin_fileno );
 		
-		const char* hostname = "temporarily.out.of.order";
+		char hostname[256] = "smtpd";
+		
+		gethostname( hostname, sizeof hostname );
 		
 		std::printf( "220 %s ready"  "\r\n", hostname );
 		
