@@ -4,7 +4,6 @@
  */
 
 // Standard C
-#include <assert.h>
 #include "errno.h"
 
 // POSIX
@@ -12,6 +11,9 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// Debug
+#include "debug/assert.hh"
 
 
 // Exceptions are off here
@@ -79,7 +81,7 @@ int ttyname_r( int fd, char* buffer, size_t buffer_size )
 	
 	if ( length < 0 )
 	{
-		assert( errno != 0 );
+		ASSERT( errno != 0 );
 		
 		return errno;
 	}
