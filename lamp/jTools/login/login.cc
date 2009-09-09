@@ -75,19 +75,7 @@ static void DumpMOTD()
 	
 	if ( fd != -1 )
 	{
-		while ( true )
-		{
-			char data[ 4096 ];
-			
-			int bytes = read( fd, data, 4096 );
-			
-			if ( bytes <= 0 )
-			{
-				break;
-			}
-			
-			bytes = write( STDOUT_FILENO, data, bytes );
-		}
+		pump( fd, NULL, STDOUT_FILENO, NULL, 0, 0 );
 		
 		(void) close( fd );
 	}

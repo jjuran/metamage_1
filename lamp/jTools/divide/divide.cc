@@ -11,6 +11,7 @@
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/extras/pump.hh"
 #include "POSeven/functions/open.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
@@ -137,12 +138,12 @@ namespace tool
 		
 		std::string first_blocks;
 		
-		const std::size_t blockSize = 4096;
-		
-		char data[ blockSize ];
-		
 		while ( !divided )
 		{
+			const std::size_t blockSize = 4096;
+			
+			char data[ blockSize ];
+			
 			std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
 			
 			if ( bytes == 0 )
@@ -172,10 +173,7 @@ namespace tool
 			}
 		}
 		
-		while ( std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize ) )
-		{
-			p7::write( out2, data, bytes );
-		}
+		p7::pump( p7::stdin_fileno, out2 );
 		
 		return 0;
 	}
