@@ -35,10 +35,8 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Lamp
-#ifdef __MWERKS__
-#include "lamp/winio.h"
-#endif
+// Iota
+#include "iota/decimal.hh"
 
 // Backtrace
 #include "Backtrace/Unmangle.hh"
@@ -67,9 +65,12 @@
 //#include "Nitrogen/Resources.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Str.h"
+#include "Nitrogen/Threads.h"
 
 // POSeven
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/openat.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 
 // Nitrogen Extras / ClassicToolbox
@@ -82,13 +83,6 @@
 #include "Iteration/AEDescListItems.h"
 #include "Iteration/AEDescListItemDatas.h"
 #include "Iteration/FSContents.h"
-
-// Nitrogen Extras / Templates
-#include "Templates/DataPointer.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
-#include "Utilities/Threads.h"
 
 // Backtrace
 #include "Backtrace/StackCrawl.hh"
@@ -119,7 +113,6 @@
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace p7 = poseven;
-namespace NX = NitrogenExtras;
 namespace Div = Divergence;
 
 using BitsAndBytes::EncodeAsHex;
@@ -191,7 +184,7 @@ std::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& mat
 			
 			int value = matrix.Cell( i, j );
 			
-			std::string string = NN::Convert< std::string >( value );
+			std::string string = iota::inscribe_decimal( value );
 			
 			result += string;
 			
@@ -553,7 +546,7 @@ static int TestCRC32( int argc, iota::argv_t argv )
 
 static MD5::Result MD5String( const char* text )
 {
-	return MD5::Digest( text, std::strlen( text ) * 8 );
+	return MD5::Digest_Bytes( text, std::strlen( text ) );
 }
 
 static std::string MD5Hex( const char* text )
@@ -607,65 +600,6 @@ static int TestOADC( int argc, iota::argv_t argv )
 	return 0;
 }
 
-class HasSignature
-{
-	private:
-		OSType signature;
-		ProcessInfoRec processInfo;
-	
-	public:
-		HasSignature( OSType signature ) : signature( signature )
-		{
-			processInfo.processInfoLength = sizeof processInfo;
-			processInfo.processName = NULL;
-			processInfo.processAppSpec = NULL;
-		}
-		
-		bool operator()( const ProcessSerialNumber& process )
-		{
-			N::GetProcessInformation( process, processInfo );
-			return processInfo.processSignature == signature;
-		}
-};
-
-static int TestProcesses( int argc, iota::argv_t argv )
-{
-	//if (argc < 3)  return 1;
-	
-	ProcessSerialNumber psn = N::NoProcess();
-	ProcessInfoRec info;
-	Str255 name;
-	
-	info.processInfoLength = sizeof info;
-	info.processName = name;
-	info.processAppSpec = NULL;
-	
-	typedef N::Process_Container::const_iterator P_ci;
-	
-	for ( P_ci it = N::Processes().begin();  it != N::Processes().end();  ++it )
-	{
-		N::GetProcessInformation( *it, info );
-		
-		std::string message = "'"
-		                    + NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
-		                    + "' "
-		                    + NN::Convert< std::string, const unsigned char* >( name )
-		                    + "\n";
-		
-		p7::write( p7::stdout_fileno, message.data(), message.size() );
-	}
-	
-	N::Process_Container::const_iterator finder = std::find_if( N::Processes().begin(),
-	                                                            N::Processes().end(),
-	                                                            HasSignature( 'MACS' ) );
-	
-	if ( finder != N::Processes().end() )
-	{
-		std::printf( "%.8x-%.8x\n", finder->highLongOfPSN, finder->lowLongOfPSN );
-	}
-	
-	return 0;
-}
 
 static int TestSoundInput( int argc, iota::argv_t argv )
 {
@@ -911,23 +845,21 @@ static int TestNull( int argc, iota::argv_t argv )
 	}
 	*/
 	
-	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const char* pathname )
+	static NN::Owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
 		NN::Owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
 		
 		struct ::stat stat_buffer;
 		
-		int statted = stat( pathname, &stat_buffer );
+		int statted = fstat( filehandle.get(), &stat_buffer );
 		
 		std::size_t size = stat_buffer.st_size;
 		
-		std::auto_ptr< FragmentImage > result;
+		NN::Owned< N::Ptr > result = N::NewPtr( size );
 		
-		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
+		int bytes = read( filehandle, result.get(), size );
 		
-		int bytes = read( filehandle, reinterpret_cast< char* >( result.get() ), size );
-		
-		return NX::DataPtr< FragmentImage >( result, size );
+		return result;
 	}
 	
 static int TestGMFShared( int argc, iota::argv_t argv )
@@ -938,13 +870,13 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	const char* pathname = argv[2];
 	
-	NX::DataPtr< FragmentImage > fragment = ReadFragmentImageFromPluginFile( pathname );
+	NN::Owned< N::Ptr > fragment = ReadFragmentImageFromPluginFile( pathname );
 	
-	int len = fragment.Len();
+	int len = N::GetPtrSize( fragment );
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	int* scratch;
 	
@@ -952,7 +884,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	*scratch = 42;
 	
-	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	N::FindSymbol( two, "\p" "errno", &scratch );
 	
@@ -1054,32 +986,6 @@ static int TestReadLoc( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestKeys( int argc, iota::argv_t argv )
-{
-	KeyMap keys;
-	
-	::GetKeys( keys );
-	
-	for ( unsigned i = 0;  i < 16;  ++i )
-	{
-		const UInt8 byte = reinterpret_cast< const UInt8* >( keys )[i];
-		
-		for ( unsigned j = 0;  j < 8;  ++j )
-		{
-			bool down = byte & (1 << j);
-			
-			if ( down )
-			{
-				UInt8 keyCode = i * 8 + j;
-				
-				std::printf( "0x%x %d\n", keyCode, keyCode );
-			}
-		}
-	}
-	
-	return 0;
-}
-
 inline double get_scaled_linear_motion( double elapsed_time )
 {
 	return elapsed_time;
@@ -1110,6 +1016,11 @@ class path_generator
 		}
 };
 
+static inline void MoveWindowTo( p7::fd_t pos_fd, Point point )
+{
+	p7::write( pos_fd, (const char*) &point, sizeof point );
+}
+
 static int TestPath( int argc, iota::argv_t argv )
 {
 	if ( argc < 3 )
@@ -1117,7 +1028,17 @@ static int TestPath( int argc, iota::argv_t argv )
 		return 1;
 	}
 	
-#ifdef __MWERKS__
+#ifdef __LAMP__
+	
+	const char* window_path = getenv( "WINDOW" );
+	
+	if ( !window_path )
+	{
+		return 1;
+	}
+	
+	NN::Owned< p7::fd_t > window = p7::open( window_path,
+	                                         p7::o_rdonly | p7::o_directory );
 	
 	int pix = std::atoi( argv[2] );
 	
@@ -1125,13 +1046,18 @@ static int TestPath( int argc, iota::argv_t argv )
 	
 	int fd = 0;
 	
-	ioctl( fd, WIOCGPOS, &location );
+	p7::read( p7::openat( window, "ref/pos", p7::o_rdonly | p7::o_binary ),
+	          (char*) &location, sizeof location );
 	
 	int start_pos = location.h;
 	
 	int stop_pos = start_pos + pix;
 	
 	UInt64 time_length = 250000;  // quarter second
+	
+	NN::Owned< p7::fd_t > pos = p7::openat( window,
+	                                        "ref/pos",
+	                                        p7::o_wronly | p7::o_trunc | p7::o_binary );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
 	{
@@ -1150,12 +1076,12 @@ static int TestPath( int argc, iota::argv_t argv )
 	{
 		location.h = start_pos + path.sample( elapsed_time ) * pix;
 		
-		ioctl( fd, WIOCSPOS, &location );
+		MoveWindowTo( pos, location );
 	}
 	
 	location.h = stop_pos;
 	
-	ioctl( fd, WIOCSPOS, &location );
+	MoveWindowTo( pos, location );
 	
 #endif
 	
@@ -1325,13 +1251,11 @@ const SubMain gSubs[] =
 	{ "crc32",     TestCRC32      },
 	{ "md5",       TestMD5        },
 	{ "OADC",      TestOADC       },
-	{ "proc",      TestProcesses  },
 	{ "si",        TestSoundInput },
 	{ "ae",        TestAE         },
 //	{ "svcs",      TestServices   },
 	{ "thread",    TestThread     },
 	{ "null",      TestNull       },
-	{ "keys",      TestKeys       },
 	{ "path",      TestPath       },
 	{ "unmangle",  TestUnmangle   },
 	{ "mangling",  TestMangling   },
