@@ -564,6 +564,11 @@ pid_t tcgetpgrp( int fd )
 	
 	int io = ioctl( fd, TIOCGPGRP, &pgrp );
 	
+	if ( io < 0  &&  errno == EINVAL )
+	{
+		errno = ENOTTY;
+	}
+	
 	return pgrp;
 }
 
