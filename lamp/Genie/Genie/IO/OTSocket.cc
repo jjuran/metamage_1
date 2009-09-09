@@ -17,6 +17,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.h"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/Process.hh"
 
@@ -26,6 +29,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
 	static pascal void YieldingNotifier( void*        contextPtr,
@@ -38,6 +42,9 @@ namespace Genie
 			switch ( code )
 			{
 				case kOTSyncIdleEvent:
+					// Hack to make sure we don't get starved for events
+					Ped::AdjustSleepForTimer( 4 );
+					
 					Yield( kInterruptNever );  // FIXME
 					
 					break;
@@ -71,6 +78,22 @@ namespace Genie
 		}
 	}
 	
+	static void SetUpEndpoint( N::EndpointRef endpoint )
+	{
+		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
+		
+		// The new endpoint is synchronous and (by default) nonblocking.
+		
+		// The underlying endpoint is always nonblocking for send and recv
+		// and blocking for connect and listen (until we add support)
+		
+		N::OTSetBlocking( endpoint );
+		
+		N::OTInstallNotifier( endpoint, gNotifyUPP, NULL );
+		
+		N::OTUseSyncIdleEvents( endpoint, true );
+	}
+	
 	OTSocket::OTSocket( bool nonblocking ) : SocketHandle( nonblocking ),
 	                                         itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 	                                         itsBacklog(),
@@ -80,18 +103,7 @@ namespace Genie
 	                                         itHasReceivedFIN( false ),
 	                                         itHasReceivedRST( false )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
-		
-		// The new endpoint is synchronous and (by default) nonblocking.
-		
-		// The underlying endpoint is always nonblocking for send and recv
-		// and blocking for connect and listen (until we add support)
-		
-		N::OTSetBlocking( itsEndpoint );
-		
-		N::OTInstallNotifier( itsEndpoint, gNotifyUPP, NULL );
-		
-		N::OTUseSyncIdleEvents( itsEndpoint, true );
+		SetUpEndpoint( itsEndpoint );
 	}
 	
 	OTSocket::~OTSocket()
@@ -176,6 +188,9 @@ namespace Genie
 			{
 				break;
 			}
+			
+			// Hack to make sure we don't get starved for events
+			Ped::AdjustSleepForTimer( 4 );
 			
 			Yield( kInterruptAlways );
 		}
@@ -320,6 +335,8 @@ namespace Genie
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
 		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
+		
+		SetUpEndpoint( itsEndpoint );
 		
 		TBind reqAddr;
 		
