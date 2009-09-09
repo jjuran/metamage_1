@@ -3,15 +3,11 @@
  *	==========
  */
 
-// Standard C++
-#include <algorithm>
-
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
 // Standard C
-#include <assert.h>
 #include "errno.h"
 #include "signal.h"
 #include "stdio.h"
@@ -521,7 +517,7 @@ int gethostname( char* result, size_t buffer_length )
 	
 	const char* nodename = uts.nodename;
 	
-	size_t name_length = std::strlen( nodename );
+	const size_t name_length = std::strlen( nodename ) + 1;  // count the NUL
 	
 	if ( name_length > buffer_length )
 	{
@@ -530,7 +526,7 @@ int gethostname( char* result, size_t buffer_length )
 		return -1;
 	}
 	
-	std::copy( nodename, nodename + name_length + 1, result );
+	memcpy( result, nodename, name_length );
 	
 	return 0;
 }
