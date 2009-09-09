@@ -393,11 +393,27 @@ namespace tool
 		
 		Io::TextInputAdapter< p7::fd_t > input( p7::stdin_fileno );
 		
+		const size_t max_hostname_length = 255;
+		
+		const size_t buffer_size = STRLEN( "220 " )
+		                         + max_hostname_length
+		                         + STRLEN( " ready" "\r\n" )
+		                         + 1;
+		
 		char hostname[256] = "smtpd";
 		
-		gethostname( hostname, sizeof hostname );
+		char message_buffer[ buffer_size ] = "220 smtpd";
 		
-		std::printf( "220 %s ready"  "\r\n", hostname );
+		(void) gethostname( message_buffer + STRLEN( "220 " ),
+		                    max_hostname_length + 1 );
+		
+		const size_t partial_size = strlen( message_buffer );
+		
+		memcpy( message_buffer + partial_size, STR_LEN( " ready" "\r\n" ) + 1 );
+		
+		const size_t message_size = partial_size + STRLEN( " ready" "\r\n" );
+		
+		p7::write( p7::stdout_fileno, message_buffer, message_size );
 		
 		while ( input.Ready() )
 		{
