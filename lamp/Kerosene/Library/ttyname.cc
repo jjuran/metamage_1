@@ -4,45 +4,22 @@
  */
 
 // Standard C
-#include <assert.h>
 #include "errno.h"
 
 // POSIX
 #include "unistd.h"
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// Debug
+#include "debug/assert.hh"
 
 
 // Exceptions are off here
 #pragma exceptions off
 
-
-static int decimal_magnitude( unsigned x )
-{
-	int result = 0;
-	
-	while ( x > 0 )
-	{
-		x /= 10;
-		
-		++result;
-	}
-	
-	return result;
-}
-
-static char* inscribe_decimal_backwards( unsigned x, char* p )
-{
-	while ( x > 0 )
-	{
-		*--p = x % 10 + '0';
-		
-		x /= 10;
-	}
-	
-	return p;
-}
 
 ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 {
@@ -57,16 +34,7 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	
 	char* begin = pathname + STRLEN( "/dev/fd/" );
 	
-	char* end = begin + decimal_magnitude( fd );
-	
-	if ( begin < end )
-	{
-		inscribe_decimal_backwards( fd, end );
-	}
-	else
-	{
-		*end++ = '0';
-	}
+	char* end = iota::inscribe_unsigned_decimal_r( fd, begin );
 	
 	*end = '\0';
 	
@@ -79,7 +47,7 @@ int ttyname_r( int fd, char* buffer, size_t buffer_size )
 	
 	if ( length < 0 )
 	{
-		assert( errno != 0 );
+		ASSERT( errno != 0 );
 		
 		return errno;
 	}
