@@ -12,6 +12,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// more-posix
+#include "more/perror.hh"
+
 
 #pragma exceptions off
 
@@ -32,13 +35,7 @@ int main( int argc, char const *const argv[] )
 	}
 	else
 	{
-		const char* error = strerror( errno );
-		
-		write( STDERR_FILENO, STR_LEN( "tty: " ) );
-		
-		write( STDERR_FILENO, error, strlen( error ) );
-		
-		write( STDERR_FILENO, STR_LEN( "\n" ) );
+		more::perror( "tty" );
 		
 		return 1;
 	}
