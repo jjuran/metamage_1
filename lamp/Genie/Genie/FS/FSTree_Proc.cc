@@ -20,9 +20,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
