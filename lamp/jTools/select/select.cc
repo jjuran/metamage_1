@@ -9,9 +9,6 @@
 #include <string>
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-
 // POSIX
 #include <sys/select.h>
 
@@ -23,6 +20,8 @@
 
 // POSeven
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Orion
@@ -67,7 +66,7 @@ namespace tool
 		
 		if ( selected == -1 )
 		{
-			std::perror( "select: select()" );
+			p7::perror( "select: select()" );
 			
 			return 3;  // error from select()
 		}
@@ -88,7 +87,11 @@ namespace tool
 			
 			const char* name = name_of[ reader ];
 			
-			std::printf( "%s\n", name );
+			std::string message = name;
+			
+			message += "\n";
+			
+			p7::write( p7::stdout_fileno, message );
 		}
 		
 		return 0;

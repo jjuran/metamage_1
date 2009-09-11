@@ -6,11 +6,7 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
-
-// Standard C/C++
-#include <cstring>
 
 // Standard C++
 #include <string>
@@ -21,6 +17,12 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// POSeven
+#include "POSeven/functions/perror.hh"
+
+
+namespace p7 = poseven;
 
 
 int main( int argc, char *const argv[] )
@@ -53,13 +55,18 @@ int main( int argc, char *const argv[] )
 			
 			if ( output == -1 )
 			{
-				std::perror( "nohup: can't open a nohup.out file." );
+				p7::perror( "nohup: can't open a nohup.out file." );
 				
 				return 127;
 			}
 		}
 		
-		std::fprintf( stderr, "sending output to %s\n", nohup_out.c_str() );
+		std::string output_message = "sending output to ";
+		
+		output_message += nohup_out;
+		output_message += "\n";
+		
+		(void) write( STDERR_FILENO, output_message.data(), output_message.size() );
 		
 		dup2( output, STDOUT_FILENO );
 		
@@ -75,7 +82,7 @@ int main( int argc, char *const argv[] )
 	
 	bool noSuchFile = errno == ENOENT;
 	
-	std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
+	p7::perror( argv[0], argv[1] );
 	
 	return noSuchFile ? 127 : 126;
 }

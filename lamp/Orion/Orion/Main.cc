@@ -10,7 +10,6 @@
 #include <functional>
 
 // Standard C/C++
-#include <cstdio>
 #include <cstring>
 
 // Standard C
@@ -23,10 +22,11 @@
 // Nucleus
 #include "Nucleus/ErrorCode.h"
 #include "Nucleus/Exception.h"
+#include "Nucleus/TheExceptionBeingHandled.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/perror.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 
@@ -104,13 +104,13 @@ namespace Orion
 		}
 		catch ( const p7::errno_t& err )
 		{
-			std::fprintf( stderr, "%s: exception: %s\n", argv[0], std::strerror( err ) );
+			p7::perror( argv[0], "exception" );
 			
 			ShowDebuggingContext();
 		}
 		catch ( const std::exception& e )
 		{
-			std::fprintf( stderr, "%s: exception: %s\n", argv[0], e.what() );
+			p7::perror( argv[0], "exception", e.what() );
 			
 			ShowDebuggingContext();
 		}
@@ -120,11 +120,11 @@ namespace Orion
 			{
 				NN::Exception e = NN::Convert< NN::Exception >( NN::TheExceptionBeingHandled() );
 				
-				std::fprintf( stderr, "%s: exception: %s\n", argv[0], e.what() );
+				p7::perror( argv[0], "exception", e.what() );
 			}
 			catch ( ... )
 			{
-				std::fprintf( stderr, "%s: uncaught exception\n", argv[0] );
+				p7::perror( argv[0], "uncaught exception" );
 			}
 			
 			ShowDebuggingContext();

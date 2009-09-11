@@ -3,11 +3,6 @@
  *	======
  */
 
-// Standard C/C++
-#include <cerrno>
-#include <cstdio>
-#include <cstring>
-
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -15,6 +10,7 @@
 // POSeven
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -72,7 +68,7 @@ namespace tool
 			}
 			catch ( const p7::errno_t& error )
 			{
-				std::fprintf( stderr, "%s: %s: %s\n", argv0, pathname, std::strerror( error ) );
+				p7::perror( argv0, pathname, error );
 				
 				exit_status = EXIT_FAILURE;
 				

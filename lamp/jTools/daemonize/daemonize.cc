@@ -4,7 +4,6 @@
  */
 
 // Standard C/C++
-#include <cstdio>
 #include <cstring>
 
 // Standard C
@@ -22,6 +21,7 @@
 #include "POSeven/functions/close.hh"
 #include "POSeven/functions/ioctl.hh"
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -123,7 +123,7 @@ namespace tool
 		
 		bool noSuchFile = errno == ENOENT;
 		
-		std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
+		p7::perror( argv[0], argv[1] );
 		
 		return noSuchFile ? 127 : 126;
 	}

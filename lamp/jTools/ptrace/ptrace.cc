@@ -3,13 +3,9 @@
  *	=========
  */
 
-// Standard C++
-#include <string>
-
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 // POSIX
@@ -19,6 +15,12 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
+
+
+#pragma exceptions off
 
 
 int main( int argc, char *const argv[] )
@@ -34,7 +36,7 @@ int main( int argc, char *const argv[] )
 	
 	if ( pid == -1 )
 	{
-		std::perror( "vfork" );
+		more::perror( "vfork" );
 		
 		return 127;
 	}
@@ -56,7 +58,7 @@ int main( int argc, char *const argv[] )
 		
 		if ( waited < 0 )
 		{
-			std::perror( "ptrace: waitpid" );
+			more::perror( "ptrace: waitpid" );
 			
 			return EXIT_FAILURE;
 		}

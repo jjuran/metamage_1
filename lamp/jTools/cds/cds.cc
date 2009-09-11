@@ -40,6 +40,17 @@ namespace tool
 	static NX::AudioPlayMode         gPlayMode = kAudioPlayModeStereo;
 	
 	
+	static void print_field( const char* name, const char* value )
+	{
+		std::string message = name;
+		
+		message += ": ";
+		message += value;
+		message += "\n";
+		
+		p7::write( p7::stdout_fileno, message );
+	}
+	
 	static void PrintHelp()
 	{
 		
@@ -59,10 +70,10 @@ namespace tool
 			case kAudioStatusNil    :  state = "nil";        break;
 		}
 		
-		std::printf( "Audio status: %s\n", state );
+		print_field( "Audio status", state );
 		
-		std::printf( "Audio play mode: %d\n", gStatus.playMode & 0x0f );
-		std::printf( "Track format:    %d\n", gStatus.control  & 0x0f );
+		print_field( "Audio play mode", iota::inscribe_decimal( gStatus.playMode & 0x0f ) );
+		print_field( "Track format",    iota::inscribe_decimal( gStatus.control  & 0x0f ) );
 		
 		char time[] = "mm:ss";
 		
@@ -72,7 +83,7 @@ namespace tool
 		time[ 3 ] = '0' | gStatus.seconds >> 4;
 		time[ 4 ] = '0' | gStatus.seconds & 0x0F;
 		
-		std::printf( "Time: %s\n", time );
+		print_field( "Time", time );
 	}
 	
 	static void PrintInfo()
@@ -93,15 +104,51 @@ namespace tool
 			
 			seconds %= 60;
 			
-			std::printf( "Track %d: %.2d:%.2d\n", track, minutes, seconds );
+			char buffer[] = "Track  n: 0m:0s\n";
+			
+			using iota::inscribe_unsigned_decimal_backwards;
+			
+			inscribe_unsigned_decimal_backwards( track, buffer + STRLEN( "Track  n" ) );
+			
+			inscribe_unsigned_decimal_backwards( minutes, buffer + STRLEN( "Track  n: 0m"    ) );
+			inscribe_unsigned_decimal_backwards( seconds, buffer + STRLEN( "Track  n: 0m:0s" ) );
+			
+			p7::write( p7::stdout_fileno, buffer, sizeof buffer - 1 );
 		}
+	}
+	
+	static inline char hex_digit( int x )
+	{
+		x &= 0xf;
+		
+		return x + (x < 10 ? '0'
+		                   : 'a' - 10);
+	}
+	
+	static void write_8_hex_digits( char* p, unsigned long x )
+	{
+		*p++ = hex_digit( x >> 28 );
+		*p++ = hex_digit( x >> 24 );
+		
+		*p++ = hex_digit( x >> 20 );
+		*p++ = hex_digit( x >> 16 );
+		
+		*p++ = hex_digit( x >> 12 );
+		*p++ = hex_digit( x >>  8 );
+		
+		*p++ = hex_digit( x >>  4 );
+		*p   = hex_digit( x       );
 	}
 	
 	static void PrintDiscID()
 	{
 		unsigned int discID = NX::CDDBDiscID( gTOC );
 		
-		std::printf( "Disc ID is %.8x\n", discID );
+		char discid_message[] = "Disc ID is abcd1234\n";
+		
+		write_8_hex_digits( discid_message + STRLEN( "Disc ID is " ), discID );
+		
+		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		
 		NX::TrackCount tracks = NX::CountTracks( gTOC );
 		
@@ -212,6 +259,16 @@ namespace tool
 	}
 	
 	
+	static int unrecognized_command( const char* command )
+	{
+		std::string message = "cds: unrecognized command '";
+		
+		message += command;
+		message += "'\n";
+		
+		return EXIT_FAILURE;
+	}
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		if ( argc <= 1 )
@@ -242,9 +299,7 @@ namespace tool
 			case 'b':  GoBack   ();  break;  // Skip to previous track, or track boundary?
 			
 			default:
-				std::fprintf( stderr, "Unrecognized command '%s'\n", argv[ 1 ] );
-				
-				return EXIT_FAILURE;
+				return unrecognized_command( argv[ 1 ] );
 		}
 		
 		return 0;

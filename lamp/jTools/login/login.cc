@@ -6,11 +6,16 @@
 // Standard C
 #include <errno.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
+
+// more-posix
+#include "more/perror.hh"
+
+
+#pragma exceptions off
 
 
 static void SetVariables()
@@ -59,7 +64,7 @@ static void SetVariables()
 	
 	if ( size < 0 )
 	{
-		std::perror( "login: /sys/mac/user/home" );
+		more::perror( "login: /sys/mac/user/home" );
 	}
 	else
 	{

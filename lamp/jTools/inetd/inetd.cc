@@ -8,12 +8,6 @@
 #include <string>
 #include <vector>
 
-// Standard C/C++
-#include <cstring>
-
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include <fcntl.h>
 #include <signal.h>
@@ -34,6 +28,7 @@
 #include "POSeven/functions/fcntl.hh"
 #include "POSeven/functions/listen.hh"
 #include "POSeven/functions/open.hh"
+#include "POSeven/functions/perror.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/vfork.hh"
@@ -115,7 +110,7 @@ namespace tool
 			
 			if ( selected == -1 && errno != EINTR )
 			{
-				std::perror( "inetd: select()" );
+				p7::perror( "inetd: select()" );
 				
 				return;
 			}
