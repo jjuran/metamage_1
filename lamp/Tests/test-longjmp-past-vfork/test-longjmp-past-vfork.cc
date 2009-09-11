@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -150,7 +151,7 @@ int main( int argc, const char *const *argv )
 	// The same program plays both roles, with --fatal indicating the faulty
 	// behavior.
 	
-	fatal_subtest = argc >= 2  &&  std::strcmp( argv[1], "--fatal" ) == 0;
+	fatal_subtest = argc >= 2  &&  strcmp( argv[1], "--fatal" ) == 0;
 	
 	if ( fatal_subtest )
 	{
