@@ -41,11 +41,12 @@
 
 #if defined( __MACOS__ ) || defined( __APPLE__ )
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-
 // Divergence
 #include "Divergence/Utilities.hh"
+
+#else
+
+typedef unsigned int OSType;
 
 #endif
 
@@ -373,6 +374,7 @@ namespace tool
 		{
 			return "text/css";
 		}
+	#if TARGET_OS_MAC
 		else if ( type == 'TEXT' )
 		{
 			return "text/plain";
@@ -381,6 +383,7 @@ namespace tool
 		{
 			return "application/x-macbinary";
 		}
+	#endif
 		
 		return "application/octet-stream";
 	}
@@ -456,8 +459,6 @@ namespace tool
 		{
 			bool is_dir = false;
 			
-			OSType type = kUnknownType;
-			
 			if ( io::directory_exists( pathname ) )
 			{
 				if ( *pathname.rbegin() != '/' )
@@ -479,17 +480,24 @@ namespace tool
 				}
 			}
 			
-			FInfo info = { 0 };
+			OSType type = 0;
 			
 		#if TARGET_OS_MAC
+			
+			type = kUnknownType;
+			
+			FInfo info = { 0 };
 			
 			if ( !is_dir )
 			{
 				FSSpec file = Divergence::ResolvePathToFSSpec( pathname );
 				
-				info = Nitrogen::FSpGetFInfo( file );
+				::OSErr err = FSpGetFInfo( &file, &info );
 				
-				type = info.fdType;
+				if ( err == noErr )
+				{
+					type = info.fdType;
+				}
 			}
 			
 		#endif
