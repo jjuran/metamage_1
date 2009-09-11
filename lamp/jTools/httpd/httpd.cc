@@ -41,9 +41,6 @@
 
 #if defined( __MACOS__ ) || defined( __APPLE__ )
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -487,9 +484,12 @@ namespace tool
 			{
 				FSSpec file = Divergence::ResolvePathToFSSpec( pathname );
 				
-				info = Nitrogen::FSpGetFInfo( file );
+				::OSErr err = FSpGetFInfo( &file, &info );
 				
-				type = info.fdType;
+				if ( err == noErr )
+				{
+					type = info.fdType;
+				}
 			}
 			
 		#endif
