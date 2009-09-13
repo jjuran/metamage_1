@@ -34,7 +34,7 @@
 #endif
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	template < class ReturnAddr > struct UnmanglingForReturnAddr_Traits;

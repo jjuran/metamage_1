@@ -124,9 +124,9 @@ namespace Genie
 			
 			int* itsErrno;
 			
-			Backtrace::StackFramePtr itsStackBottomPtr;
-			Backtrace::StackFramePtr itsStackFramePtr;
-			Backtrace::StackFramePtr itsVForkFramePtr;
+			recall::StackFramePtr itsStackBottomPtr;
+			recall::StackFramePtr itsStackFramePtr;
+			recall::StackFramePtr itsVForkFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
 			
@@ -205,8 +205,8 @@ namespace Genie
 			
 			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
-			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
-			Backtrace::StackFramePtr GetStackBottomPointer() const  { return itsStackBottomPtr; }
+			recall::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
+			recall::StackFramePtr GetStackBottomPointer() const  { return itsStackBottomPtr; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }

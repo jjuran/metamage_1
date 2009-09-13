@@ -13,7 +13,7 @@
 
 #define ARRAY_LEN( array )  ( sizeof array / sizeof array[0] )
 
-namespace Backtrace
+namespace recall
 {
 	
 	struct Replacement

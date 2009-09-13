@@ -6,7 +6,7 @@
 #include "recall/macsbug_symbols.hh"
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	typedef unsigned short UInt16;

@@ -6,7 +6,7 @@
 #include "recall/traceback_tables.hh"
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	typedef unsigned long UInt32;

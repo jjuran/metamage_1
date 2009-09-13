@@ -49,7 +49,7 @@ namespace Orion
 		}
 		catch ( const NN::DebuggingContext& debugging )
 		{
-			using namespace Backtrace;
+			using namespace recall;
 			
 			const std::vector< FrameData >& stackCrawl = debugging.GetStackCrawl();
 			
@@ -61,7 +61,7 @@ namespace Orion
 			std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
 			std::vector< FrameData >::const_iterator end   = stackCrawl.end();
 			
-			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
+			++begin;  // skip recall::DebuggingContext::DebuggingContext( void )
 			
 			std::string report = MakeReportFromStackCrawl( begin, end );
 			
@@ -79,9 +79,9 @@ namespace Orion
 	
 	int main( int argc, iota::argv_t argv )
 	{
-		const void* stackBottom = Backtrace::GetStackFramePointer();
+		const void* stackBottom = recall::GetStackFramePointer();
 		
-		Backtrace::SetStackBottomLimit( stackBottom );
+		recall::SetStackBottomLimit( stackBottom );
 		
 		try
 		{

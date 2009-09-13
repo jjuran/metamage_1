@@ -404,8 +404,8 @@ namespace Genie
 	
 	std::string proc_PID_stack::Get( const Process& process )
 	{
-		using Backtrace::StackFramePtr;
-		using Backtrace::FrameData;
+		using recall::StackFramePtr;
+		using recall::FrameData;
 		
 		StackFramePtr top    = process.GetStackFramePointer();
 		StackFramePtr bottom = process.GetStackBottomPointer();

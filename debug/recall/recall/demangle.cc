@@ -24,7 +24,7 @@ static std::string join( const char* space, const std::string& a, const std::str
 	return a + space + b;
 }
 
-namespace Backtrace
+namespace recall
 {
 	
 	static const char* gBasicTypes[] =

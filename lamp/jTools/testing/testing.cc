@@ -1171,8 +1171,8 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '.' ? Backtrace::UnmangleMWCPPC( name )
-	                                       : Backtrace::UnmangleMWC68K( name );
+	std::string unmangled = name[0] == '.' ? recall::UnmangleMWCPPC( name )
+	                                       : recall::UnmangleMWC68K( name );
 	
 	unmangled += "\n";
 	

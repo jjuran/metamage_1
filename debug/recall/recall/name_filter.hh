@@ -10,7 +10,7 @@
 #include <string>
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	std::string FilterSymbol( const std::string& name );

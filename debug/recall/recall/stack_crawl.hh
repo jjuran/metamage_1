@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	// The 'native' code type, whatever that is.

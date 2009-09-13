@@ -77,7 +77,7 @@
 
 static void DumpBacktrace( const void* stackBottom )
 {
-	using namespace Backtrace;
+	using namespace recall;
 	
 	std::vector< FrameData > stackCrawl = MakeStackCrawlToBottom( stackBottom );
 	
@@ -386,7 +386,7 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		itsStackBottomPtr = Backtrace::GetStackFramePointer();
+		itsStackBottomPtr = recall::GetStackFramePointer();
 		
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
@@ -1106,7 +1106,7 @@ namespace Genie
 		itsSchedule        = kProcessFrozen;
 		
 		itsVForkFramePtr =
-		itsStackFramePtr = Backtrace::GetStackFramePointer( 5 );
+		itsStackFramePtr = recall::GetStackFramePointer( 5 );
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1121,7 +1121,7 @@ namespace Genie
 		ASSERT( itsForkedChildPID != 0 );
 		
 		// Stack grows down
-		const bool stack_fault = Backtrace::GetStackFramePointer( 2 ) > itsVForkFramePtr;
+		const bool stack_fault = recall::GetStackFramePointer( 2 ) > itsVForkFramePtr;
 		
 		itsVForkFramePtr = NULL;
 		
@@ -1303,7 +1303,7 @@ namespace Genie
 		
 		Suspend();
 		
-		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		itsStackFramePtr = recall::GetStackFramePointer();
 		
 		SaveRegisters( &itsSavedRegisters );
 		

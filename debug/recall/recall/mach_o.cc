@@ -15,7 +15,7 @@
 #endif
 
 
-namespace Backtrace
+namespace recall
 {
 	
 #ifdef __MACH__

@@ -13,7 +13,7 @@
 #include "recall/stack_crawl.hh"
 
 
-namespace Backtrace
+namespace recall
 {
 	
 	const char* FindSymbolName( ReturnAddrMachO addr );
