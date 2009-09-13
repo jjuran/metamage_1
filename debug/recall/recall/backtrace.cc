@@ -140,7 +140,16 @@ namespace recall
 		}
 	}
 	
-	CallInfo GetCallInfoFromReturnAddress( const FrameData& call )
+	
+	struct CallInfo
+	{
+		const void*  itsFramePtr;
+		const void*  itsReturnAddr;
+		const char*  itsArch;
+		std::string  itsUnmangledName;
+	};
+	
+	static CallInfo GetCallInfoFromReturnAddress( const FrameData& call )
 	{
 		CallInfo result;
 		
@@ -183,8 +192,8 @@ namespace recall
 		return result;
 	}
 	
-	std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
-	                                     std::vector< CallInfo >::const_iterator  end )
+	static std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
+	                                            std::vector< CallInfo >::const_iterator  end )
 	{
 		unsigned offset = 0;
 		

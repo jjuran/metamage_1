@@ -17,19 +17,6 @@
 namespace recall
 {
 	
-	struct CallInfo
-	{
-		const void*  itsFramePtr;
-		const void*  itsReturnAddr;
-		const char*  itsArch;
-		std::string  itsUnmangledName;
-	};
-	
-	CallInfo GetCallInfoFromReturnAddress( const FrameData& call );
-	
-	std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
-	                                     std::vector< CallInfo >::const_iterator  end );
-	
 	std::string MakeReportFromStackCrawl( std::vector< FrameData >::const_iterator  begin,
 	                                      std::vector< FrameData >::const_iterator  end );
 	
