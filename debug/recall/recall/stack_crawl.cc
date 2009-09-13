@@ -12,20 +12,20 @@ namespace recall
 	struct StackFrame68K
 	{
 		StackFrame68K*  next;
-		ReturnAddr68K   returnAddr;
+		return_address_68k   returnAddr;
 	};
 	
 	struct StackFramePPC
 	{
 		StackFramePPC*  next;
 		const void*     savedCR;
-		ReturnAddrPPC   returnAddr;
+		return_address_ppc   returnAddr;
 	};
 	
 	struct StackFrameX86
 	{
 		StackFrameX86*    next;
-		ReturnAddrNative  returnAddr;
+		return_address_native  returnAddr;
 	};
 	
 	
@@ -81,16 +81,16 @@ namespace recall
 	
 #endif
 	
-	StackFramePtr GetStackFramePointer( int levelsToSkip )
+	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip )
 	{
 		StackFrame* frame = GetTopFrame()->next;
 		
-		while ( frame != NULL  &&  --levelsToSkip >= 0 )
+		while ( frame != NULL  &&  --levels_to_skip >= 0 )
 		{
 			frame = frame->next;  // FIXME:  This needs to perform the usual checks
 		}
 		
-		return reinterpret_cast< StackFramePtr >( frame );
+		return reinterpret_cast< stack_frame_pointer >( frame );
 	}
 	
 	template < class StackFrame > struct SwitchFrame_Traits
@@ -156,7 +156,7 @@ namespace recall
 	
 	
 	template < class StackFrame >
-	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< FrameData >& result )
+	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< frame_data >& result )
 	{
 	next:
 		
@@ -179,7 +179,7 @@ namespace recall
 			}
 		}
 		
-		result.push_back( FrameData( (StackFramePtr) frame, frame->returnAddr ) );
+		result.push_back( frame_data( (stack_frame_pointer) frame, frame->returnAddr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -192,9 +192,9 @@ namespace recall
 		goto next;
 	}
 	
-	static std::vector< FrameData > MakeStackCrawl( const StackFrame* top, const void* limit )
+	static std::vector< frame_data > make_stack_crawl( const StackFrame* top, const void* limit )
 	{
-		std::vector< FrameData > result;
+		std::vector< frame_data > result;
 		
 		try
 		{
@@ -207,16 +207,16 @@ namespace recall
 		return result;
 	}
 	
-	std::vector< FrameData > MakeStackCrawlFromTopToBottom( StackFramePtr top, const void* limit )
+	std::vector< frame_data > make_stack_crawl_from_top_to_bottom( stack_frame_pointer top, const void* limit )
 	{
 		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
 		
-		return MakeStackCrawl( frame, limit );
+		return make_stack_crawl( frame, limit );
 	}
 	
-	std::vector< FrameData > MakeStackCrawlToBottom( const void* limit )
+	std::vector< frame_data > make_stack_crawl_to_bottom( const void* limit )
 	{
-		return MakeStackCrawl( GetTopFrame(), limit );
+		return make_stack_crawl( GetTopFrame(), limit );
 	}
 	
 }

@@ -13,7 +13,7 @@ namespace recall
 	typedef unsigned char  UInt8;
 	
 	
-	MacsbugSymbolPtr FindSymbolName( ReturnAddr68K addr )
+	MacsbugSymbolPtr FindSymbolName( return_address_68k addr )
 	{
 		if ( addr == NULL )
 		{

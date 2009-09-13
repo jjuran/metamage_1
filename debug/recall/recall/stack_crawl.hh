@@ -16,11 +16,11 @@ namespace recall
 	// The 'native' code type, whatever that is.
 	// Most platforms have just one, but Mac OS is special:
 	// It's either classic 68K or Mach-O -- never CFM.
-	typedef const struct OpaqueCodeNative*  ReturnAddrNative;
+	typedef const struct opaque_code_native*  return_address_native;
 	
 #if defined( __MACOS__ )
 	
-	typedef const struct OpaqueCodeCFM*  ReturnAddrCFM;
+	typedef const struct opaque_code_cfm*  return_address_cfm;
 	
 #endif
 	
@@ -29,76 +29,76 @@ namespace recall
 	
 	// 68K is considered native for traditional Mac OS
 	// Even Carbon CFM binaries may run on OS 9 and can intermingle with 68K
-	typedef ReturnAddrNative ReturnAddr68K;
+	typedef return_address_native return_address_68k;
 	
 #else
 	
-	typedef const struct OpaqueCodeAlien68K* ReturnAddr68K;
+	typedef const struct opaque_code_alien_68k* return_address_68k;
 	
 #endif
 	
 	
 #if defined( __MACOS__ )
 	
-	typedef ReturnAddrCFM ReturnAddrPPC;
+	typedef return_address_cfm return_address_ppc;
 	
 #elif defined( __POWERPC__ )
 	
-	typedef ReturnAddrNative ReturnAddrPPC;
+	typedef return_address_native return_address_ppc;
 	
 #else
 	
-	typedef const struct OpaqueCodeAlienPPC* ReturnAddrPPC;
+	typedef const struct opaque_code_alien_ppc* return_address_ppc;
 	
 #endif
 	
 	
 #ifdef __i386__
 	
-	typedef ReturnAddrNative ReturnAddrX86;
+	typedef return_address_native return_address_x86;
 	
 #else
 	
-	typedef const struct OpaqueCodeAlienX86* ReturnAddrX86;
+	typedef const struct opaque_code_alien_x86* return_address_x86;
 	
 #endif
 	
 	
 #ifdef __MACH__
 	
-	typedef ReturnAddrNative ReturnAddrMachO;
+	typedef return_address_native return_address_mach_o;
 	
 #else
 	
-	typedef const struct OpaqueCodeAlienMachO* ReturnAddrMachO;
+	typedef const struct opaque_code_alien_mach_o* return_address_mach_o;
 	
 #endif
 
 
 #if defined( __POWERPC__ ) && !defined( __MACH__ )  ||  defined( __MACOS__ )
 	
-	typedef ReturnAddrPPC ReturnAddrWithTraceback;
+	typedef return_address_ppc return_address_traceback;
 	
 #else
 	
-	typedef const struct OpaqueCodeAlienTraceback* ReturnAddrWithTraceback;
+	typedef const struct opaque_code_alien_traceback* return_address_traceback;
 	
 #endif
 	
 	
-	typedef const struct OpaqueStackFrame* StackFramePtr;
+	typedef const struct opaque_stack_frame* stack_frame_pointer;
 	
-	struct FrameData
+	struct frame_data
 	{
-		StackFramePtr framePtr;
+		stack_frame_pointer framePtr;
 		
 		union
 		{
-			ReturnAddrNative  addrNative;
+			return_address_native  addrNative;
 			
 		#if defined( __MACOS__ )
 			
-			ReturnAddrCFM     addrCFM;
+			return_address_cfm     addrCFM;
 			
 		#endif
 		};
@@ -115,11 +115,11 @@ namespace recall
 		
 		CFM_Flag isCFM;
 		
-		FrameData()
+		frame_data()
 		{
 		}
 		
-		FrameData( StackFramePtr frame, ReturnAddrNative addr )
+		frame_data( stack_frame_pointer frame, return_address_native addr )
 		:
 			framePtr( frame ),
 			addrNative( addr ),
@@ -129,7 +129,7 @@ namespace recall
 		
 	#if defined( __MACOS__ )
 		
-		FrameData( StackFramePtr frame, ReturnAddrCFM addr )
+		frame_data( stack_frame_pointer frame, return_address_cfm addr )
 		:
 			framePtr( frame ),
 			addrCFM( addr ),
@@ -141,20 +141,20 @@ namespace recall
 	};
 	
 	
-	StackFramePtr GetStackFramePointer( int levelsToSkip = 0 );
+	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip = 0 );
 	
-	std::vector< FrameData > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
+	std::vector< frame_data > make_stack_crawl_from_top_to_bottom( stack_frame_pointer frame, const void* limit );
 	
-	inline std::vector< FrameData > MakeStackCrawlFromTop( StackFramePtr frame )
+	inline std::vector< frame_data > make_stack_crawl_from_top( stack_frame_pointer frame )
 	{
-		return MakeStackCrawlFromTopToBottom( frame, (const void*) 0xFFFFFFFF );
+		return make_stack_crawl_from_top_to_bottom( frame, (const void*) 0xFFFFFFFF );
 	}
 	
-	std::vector< FrameData > MakeStackCrawlToBottom( const void* limit );
+	std::vector< frame_data > make_stack_crawl_to_bottom( const void* limit );
 	
-	inline std::vector< FrameData > MakeStackCrawl()
+	inline std::vector< frame_data > make_stack_crawl()
 	{
-		return MakeStackCrawlToBottom( (const void*) 0xFFFFFFFF );
+		return make_stack_crawl_to_bottom( (const void*) 0xFFFFFFFF );
 	}
 	
 }

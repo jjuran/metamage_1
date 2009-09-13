@@ -17,18 +17,18 @@
 namespace recall
 {
 	
-	std::string MakeReportFromStackCrawl( std::vector< FrameData >::const_iterator  begin,
-	                                      std::vector< FrameData >::const_iterator  end );
+	std::string MakeReportFromStackCrawl( std::vector< frame_data >::const_iterator  begin,
+	                                      std::vector< frame_data >::const_iterator  end );
 	
 	class DebuggingContext
 	{
 		private:
-			std::vector< FrameData > itsStackCrawl;
+			std::vector< frame_data > itsStackCrawl;
 		
 		public:
 			DebuggingContext();
 			
-			const std::vector< FrameData >& GetStackCrawl() const  { return itsStackCrawl; }
+			const std::vector< frame_data >& get_stack_crawl() const  { return itsStackCrawl; }
 	};
 	
 	void SetStackBottomLimit( const void* limit );

@@ -24,7 +24,7 @@ namespace recall
 	typedef const struct MacsbugSymbol* MacsbugSymbolPtr;
 	
 	
-	MacsbugSymbolPtr FindSymbolName( ReturnAddr68K addr );
+	MacsbugSymbolPtr FindSymbolName( return_address_68k addr );
 	
 	std::string GetSymbolString( MacsbugSymbolPtr symbol );
 	

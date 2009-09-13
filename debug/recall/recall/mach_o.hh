@@ -16,7 +16,7 @@
 namespace recall
 {
 	
-	const char* FindSymbolName( ReturnAddrMachO addr );
+	const char* FindSymbolName( return_address_mach_o addr );
 	
 	inline std::string GetSymbolString( const char* name )
 	{

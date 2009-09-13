@@ -51,15 +51,15 @@ namespace Orion
 		{
 			using namespace recall;
 			
-			const std::vector< FrameData >& stackCrawl = debugging.GetStackCrawl();
+			const std::vector< frame_data >& stackCrawl = debugging.get_stack_crawl();
 			
 			if ( stackCrawl.size() < 2 )
 			{
 				return;
 			}
 			
-			std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
-			std::vector< FrameData >::const_iterator end   = stackCrawl.end();
+			std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
+			std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 			
 			++begin;  // skip recall::DebuggingContext::DebuggingContext( void )
 			
@@ -79,7 +79,7 @@ namespace Orion
 	
 	int main( int argc, iota::argv_t argv )
 	{
-		const void* stackBottom = recall::GetStackFramePointer();
+		const void* stackBottom = recall::get_stack_frame_pointer();
 		
 		recall::SetStackBottomLimit( stackBottom );
 		

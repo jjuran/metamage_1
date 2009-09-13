@@ -11,7 +11,7 @@ namespace recall
 	
 	typedef unsigned long UInt32;
 	
-	TracebackTablePtr FindSymbolName( ReturnAddrWithTraceback addr )
+	TracebackTablePtr FindSymbolName( return_address_traceback addr )
 	{
 		if ( addr == NULL )
 		{

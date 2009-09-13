@@ -143,7 +143,7 @@ namespace recall
 		return NULL;
 	}
 	
-	const char* FindSymbolName( ReturnAddrMachO addr )
+	const char* FindSymbolName( return_address_mach_o addr )
 	{
 		unsigned int  offset       = 0;
 		bool          publicSymbol = false;

@@ -28,7 +28,7 @@ namespace recall
 	
 	typedef const TracebackTable* TracebackTablePtr;
 	
-	TracebackTablePtr FindSymbolName( ReturnAddrWithTraceback addr );
+	TracebackTablePtr FindSymbolName( return_address_traceback addr );
 	
 	inline std::string GetSymbolString( TracebackTablePtr table )
 	{

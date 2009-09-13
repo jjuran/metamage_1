@@ -41,12 +41,12 @@ namespace recall
 	
 #ifdef __MACOS__
 	
-	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddr68K >
+	template <> struct UnmanglingForReturnAddr_Traits< return_address_68k >
 	{
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWC68K( name ); }
 	};
 	
-	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrCFM >
+	template <> struct UnmanglingForReturnAddr_Traits< return_address_cfm >
 	{
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWCPPC( name ); }
 	};
@@ -55,7 +55,7 @@ namespace recall
 	
 #ifdef __GNUC__
 	
-	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrNative >
+	template <> struct UnmanglingForReturnAddr_Traits< return_address_native >
 	{
 		static std::string Unmangle( const std::string& name )
 		{
@@ -88,7 +88,7 @@ namespace recall
 	
 #ifdef __ELF__
 	
-	static const char* FindSymbolName( ReturnAddrNative )
+	static const char* FindSymbolName( return_address_native )
 	{
 		return NULL;
 	}
@@ -116,9 +116,9 @@ namespace recall
 #ifdef __MACOS__
 	
 	template <>
-	inline std::string GetSymbolName< ReturnAddrPPC >( ReturnAddrPPC addr )
+	inline std::string GetSymbolName< return_address_ppc >( return_address_ppc addr )
 	{
-		const ReturnAddrPPC mixedModeSwitch = (ReturnAddrPPC) 0xffcec400;
+		const return_address_ppc mixedModeSwitch = (return_address_ppc) 0xffcec400;
 		
 		return addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
 	}
@@ -149,7 +149,7 @@ namespace recall
 		std::string  itsUnmangledName;
 	};
 	
-	static CallInfo GetCallInfoFromReturnAddress( const FrameData& call )
+	static CallInfo GetCallInfoFromReturnAddress( const frame_data& call )
 	{
 		CallInfo result;
 		
@@ -215,8 +215,8 @@ namespace recall
 		return result;
 	}
 	
-	std::string MakeReportFromStackCrawl( std::vector< FrameData >::const_iterator  begin,
-	                                      std::vector< FrameData >::const_iterator  end )
+	std::string MakeReportFromStackCrawl( std::vector< frame_data >::const_iterator  begin,
+	                                      std::vector< frame_data >::const_iterator  end )
 	{
 		std::vector< CallInfo > callChain;
 		
@@ -229,7 +229,7 @@ namespace recall
 	
 	static const void* gStackBottomLimit = (const void*) 0xFFFFFFFF;
 	
-	DebuggingContext::DebuggingContext() : itsStackCrawl( MakeStackCrawlToBottom( gStackBottomLimit ) )
+	DebuggingContext::DebuggingContext() : itsStackCrawl( make_stack_crawl_to_bottom( gStackBottomLimit ) )
 	{
 	}
 	
