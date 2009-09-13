@@ -422,7 +422,7 @@ namespace Genie
 		
 		--end;  // skip Genie::Process::Run( void )
 		
-		std::string result = MakeReportFromStackCrawl( begin, end );
+		std::string result = make_report_from_stack_crawl( begin, end );
 		
 		return result;
 	}

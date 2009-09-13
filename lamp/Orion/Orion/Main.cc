@@ -41,16 +41,16 @@ namespace Orion
 	
 	static void ShowDebuggingContext()
 	{
-	#if TARGET_CONFIG_DEBUGGING
+	#if TARGET_CONFIG_DEBUGGING && defined( NUCLEUS_USES_BACKTRACE )
+		
+		using namespace recall;
 		
 		try
 		{
 			throw;
 		}
-		catch ( const NN::DebuggingContext& debugging )
+		catch ( const debugging_context& debugging )
 		{
-			using namespace recall;
-			
 			const std::vector< frame_data >& stackCrawl = debugging.get_stack_crawl();
 			
 			if ( stackCrawl.size() < 2 )
@@ -61,9 +61,9 @@ namespace Orion
 			std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 			std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 			
-			++begin;  // skip recall::DebuggingContext::DebuggingContext( void )
+			++begin;  // skip recall::debugging_context::debugging_context( void )
 			
-			std::string report = MakeReportFromStackCrawl( begin, end );
+			std::string report = make_report_from_stack_crawl( begin, end );
 			
 			p7::write( p7::stderr_fileno, report );
 			
@@ -81,7 +81,7 @@ namespace Orion
 	{
 		const void* stackBottom = recall::get_stack_frame_pointer();
 		
-		recall::SetStackBottomLimit( stackBottom );
+		recall::set_stack_bottom_limit( stackBottom );
 		
 		try
 		{

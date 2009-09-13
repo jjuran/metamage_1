@@ -35,7 +35,7 @@
 	// Recall
 	#include "recall/backtrace.hh"
 	
-	#define NUCLEUS_DEBUGGING_CONTEXT recall::DebuggingContext
+	#define NUCLEUS_DEBUGGING_CONTEXT recall::debugging_context
 	
 #endif
 

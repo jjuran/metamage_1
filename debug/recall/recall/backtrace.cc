@@ -215,8 +215,8 @@ namespace recall
 		return result;
 	}
 	
-	std::string MakeReportFromStackCrawl( std::vector< frame_data >::const_iterator  begin,
-	                                      std::vector< frame_data >::const_iterator  end )
+	std::string make_report_from_stack_crawl( std::vector< frame_data >::const_iterator  begin,
+	                                          std::vector< frame_data >::const_iterator  end )
 	{
 		std::vector< CallInfo > callChain;
 		
@@ -229,11 +229,11 @@ namespace recall
 	
 	static const void* gStackBottomLimit = (const void*) 0xFFFFFFFF;
 	
-	DebuggingContext::DebuggingContext() : itsStackCrawl( make_stack_crawl_to_bottom( gStackBottomLimit ) )
+	debugging_context::debugging_context() : itsStackCrawl( make_stack_crawl_to_bottom( gStackBottomLimit ) )
 	{
 	}
 	
-	void SetStackBottomLimit( const void* limit )
+	void set_stack_bottom_limit( const void* limit )
 	{
 		gStackBottomLimit = limit;
 	}
