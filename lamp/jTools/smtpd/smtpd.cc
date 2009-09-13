@@ -52,7 +52,6 @@
 
 // BitsAndBytes
 #include "DecimalStrings.hh"
-#include "StringFilters.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -105,7 +104,6 @@ namespace tool
 	
 	using BitsAndBytes::EncodeDecimal2;
 	using BitsAndBytes::EncodeDecimal4;
-	using BitsAndBytes::q;
 	
 	
 	// E.g. "19840124.183000"

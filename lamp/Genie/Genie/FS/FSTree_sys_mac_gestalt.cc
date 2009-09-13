@@ -9,10 +9,6 @@
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/OSStatus.h"
 
-// BitsAndBytes
-#include "HexCodes.hh"
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Name_OSType.hh"
@@ -122,7 +118,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace Bits = BitsAndBytes;
 	
 	
 	struct Gestalt_KeyName_Traits : OSType_KeyName_Traits
