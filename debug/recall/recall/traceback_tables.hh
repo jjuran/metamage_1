@@ -9,8 +9,8 @@
 // Standard C++
 #include <string>
 
-// Backtrace
-#include "Backtrace/StackCrawl.hh"
+// Recall
+#include "recall/stack_crawl.hh"
 
 
 namespace Backtrace

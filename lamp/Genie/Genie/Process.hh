@@ -16,8 +16,8 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Backtrace
-#include "Backtrace/StackCrawl.hh"
+// Recall
+#include "recall/stack_crawl.hh"
 
 // Nucleus
 #include "Nucleus/Owned.h"

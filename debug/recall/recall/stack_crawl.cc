@@ -3,7 +3,7 @@
  *	=============
  */
 
-#include "Backtrace/StackCrawl.hh"
+#include "recall/stack_crawl.hh"
 
 
 namespace Backtrace

@@ -3,7 +3,7 @@
  *	==================
  */
 
-#include "Backtrace/TracebackTables.hh"
+#include "recall/traceback_tables.hh"
 
 
 namespace Backtrace

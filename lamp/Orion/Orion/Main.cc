@@ -15,9 +15,9 @@
 // Standard C
 #include <errno.h>
 
-// Backtrace
-#include "Backtrace/Backtrace.hh"
-#include "Backtrace/StackCrawl.hh"
+// Recall
+#include "recall/backtrace.hh"
+#include "recall/stack_crawl.hh"
 
 // Nucleus
 #include "Nucleus/ErrorCode.h"

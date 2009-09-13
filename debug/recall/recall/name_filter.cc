@@ -3,7 +3,7 @@
  *	=========
  */
 
-#include "Backtrace/Filter.hh"
+#include "recall/name_filter.hh"
 
 // Standard C++
 #include <algorithm>

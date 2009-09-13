@@ -3,7 +3,7 @@
  *	============
  */
 
-#include "Backtrace/Backtrace.hh"
+#include "recall/backtrace.hh"
 
 // Standard C++
 #include <algorithm>
@@ -17,12 +17,12 @@
 #include <cxxabi.h>
 #endif
 
-// Backtrace
-#include "Backtrace/Filter.hh"
-#include "Backtrace/MachO.hh"
-#include "Backtrace/MacsbugSymbols.hh"
-#include "Backtrace/TracebackTables.hh"
-#include "Backtrace/Unmangle.hh"
+// Recall
+#include "recall/demangle.hh"
+#include "recall/mach_o.hh"
+#include "recall/macsbug_symbols.hh"
+#include "recall/name_filter.hh"
+#include "recall/traceback_tables.hh"
 
 
 #ifndef TARGET_CPU_PPC

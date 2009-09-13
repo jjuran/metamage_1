@@ -3,7 +3,7 @@
  *	=================
  */
 
-#include "Backtrace/MacsbugSymbols.hh"
+#include "recall/macsbug_symbols.hh"
 
 
 namespace Backtrace
