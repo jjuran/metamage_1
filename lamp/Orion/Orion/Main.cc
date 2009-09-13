@@ -63,17 +63,6 @@ namespace Orion
 			
 			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
 			
-			std::string prefix = "Nucleus::Throw< Nucleus::ErrorCode< ";
-			
-			if ( std::equal( prefix.begin(),
-			                 prefix.end(),
-			                 GetCallInfoFromReturnAddress( *begin ).itsUnmangledName.begin() ) )
-			{
-				// Skip Nucleus::Throw< Nucleus::ErrorCode< T, i > >( void )
-				// Skip Nucleus::ThrowErrorCode< T >( T )
-				begin += 2;
-			}
-			
 			std::string report = MakeReportFromStackCrawl( begin, end );
 			
 			p7::write( p7::stderr_fileno, report );
