@@ -16,24 +16,13 @@
 namespace recall
 {
 	
-	struct TracebackTable
-	{
-		unsigned long   zero;
-		unsigned long   unknown1;
-		unsigned long   unknown2;
-		unsigned long   codeSize;
-		unsigned short  nameSize;
-		const char      name[2];
-	};
+	struct TracebackTable;
 	
 	typedef const TracebackTable* TracebackTablePtr;
 	
 	TracebackTablePtr FindSymbolName( return_address_traceback addr );
 	
-	inline std::string GetSymbolString( TracebackTablePtr table )
-	{
-		return std::string( table->name, table->nameSize );
-	}
+	std::string GetSymbolString( TracebackTablePtr table );
 	
 }
 
