@@ -1,10 +1,10 @@
-/*	========
- *	MachO.hh
- *	========
+/*	=========
+ *	mach_o.hh
+ *	=========
  */
 
-#ifndef BACKTRACE_MACHO_HH
-#define BACKTRACE_MACHO_HH
+#ifndef RECALL_MACHO_HH
+#define RECALL_MACHO_HH
 
 // Standard C++
 #include <string>

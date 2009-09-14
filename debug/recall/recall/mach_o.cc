@@ -1,6 +1,6 @@
-/*	========
- *	MachO.cc
- *	========
+/*	=========
+ *	mach_o.cc
+ *	=========
  */
 
 #include "recall/mach_o.hh"

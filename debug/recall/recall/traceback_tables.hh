@@ -1,10 +1,10 @@
-/*	==================
- *	TracebackTables.hh
- *	==================
+/*	===================
+ *	traceback_tables.hh
+ *	===================
  */
 
-#ifndef BACKTRACE_TRACEBACKTABLES_HH
-#define BACKTRACE_TRACEBACKTABLES_HH
+#ifndef RECALL_TRACEBACKTABLES_HH
+#define RECALL_TRACEBACKTABLES_HH
 
 // Standard C++
 #include <string>

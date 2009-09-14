@@ -1,6 +1,6 @@
-/*	=========
- *	Filter.cc
- *	=========
+/*	==============
+ *	name_filter.cc
+ *	==============
  */
 
 #include "recall/name_filter.hh"

@@ -1,6 +1,6 @@
-/*	==================
- *	TracebackTables.cc
- *	==================
+/*	===================
+ *	traceback_tables.cc
+ *	===================
  */
 
 #include "recall/traceback_tables.hh"

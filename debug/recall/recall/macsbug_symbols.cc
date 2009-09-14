@@ -1,6 +1,6 @@
-/*	=================
- *	MacsbugSymbols.cc
- *	=================
+/*	==================
+ *	macsbug_symbols.cc
+ *	==================
  */
 
 #include "recall/macsbug_symbols.hh"

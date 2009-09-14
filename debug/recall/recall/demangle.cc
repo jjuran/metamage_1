@@ -1,5 +1,5 @@
 /*	===========
- *	Unmangle.cc
+ *	demangle.cc
  *	===========
  */
 

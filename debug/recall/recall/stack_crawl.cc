@@ -1,6 +1,6 @@
-/*	=============
- *	StackCrawl.cc
- *	=============
+/*	==============
+ *	stack_crawl.cc
+ *	==============
  */
 
 #include "recall/stack_crawl.hh"

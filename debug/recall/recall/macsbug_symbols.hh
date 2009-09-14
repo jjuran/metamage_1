@@ -1,10 +1,10 @@
-/*	=================
- *	MacsbugSymbols.hh
- *	=================
+/*	==================
+ *	macsbug_symbols.hh
+ *	==================
  */
 
-#ifndef BACKTRACE_MACSBUGSYMBOLS_HH
-#define BACKTRACE_MACSBUGSYMBOLS_HH
+#ifndef RECALL_MACSBUGSYMBOLS_HH
+#define RECALL_MACSBUGSYMBOLS_HH
 
 // Standard C++
 #include <string>

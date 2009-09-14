@@ -1,10 +1,10 @@
-/*	=========
- *	Filter.hh
- *	=========
+/*	==============
+ *	name_filter.hh
+ *	==============
  */
 
-#ifndef BACKTRACE_FILTER_HH
-#define BACKTRACE_FILTER_HH
+#ifndef RECALL_NAMEFILTER_HH
+#define RECALL_NAMEFILTER_HH
 
 // Standard C++
 #include <string>

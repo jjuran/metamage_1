@@ -1,10 +1,10 @@
 /*	===========
- *	Unmangle.hh
+ *	demangle.hh
  *	===========
  */
 
-#ifndef BACKTRACE_UNMANGLE_HH
-#define BACKTRACE_UNMANGLE_HH
+#ifndef RECALL_DEMANGLE_HH
+#define RECALL_DEMANGLE_HH
 
 // Standard C++
 #include <string>

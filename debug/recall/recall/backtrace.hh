@@ -1,10 +1,10 @@
 /*	============
- *	Backtrace.hh
+ *	backtrace.hh
  *	============
  */
 
-#ifndef BACKTRACE_BACKTRACE_HH
-#define BACKTRACE_BACKTRACE_HH
+#ifndef RECALL_BACKTRACE_HH
+#define RECALL_BACKTRACE_HH
 
 // Standard C++
 #include <string>

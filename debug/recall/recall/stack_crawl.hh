@@ -1,10 +1,10 @@
-/*	=============
- *	StackCrawl.hh
- *	=============
+/*	==============
+ *	stack_crawl.hh
+ *	==============
  */
 
-#ifndef BACKTRACE_STACKCRAWL_HH
-#define BACKTRACE_STACKCRAWL_HH
+#ifndef RECALL_STACKCRAWL_HH
+#define RECALL_STACKCRAWL_HH
 
 // Standard C++
 #include <vector>
