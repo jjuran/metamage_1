@@ -37,27 +37,33 @@
 namespace recall
 {
 	
-	template < class ReturnAddr > struct UnmanglingForReturnAddr_Traits;
+	template < class ReturnAddr > struct demangler_traits;
 	
 #ifdef __MACOS__
 	
-	template <> struct UnmanglingForReturnAddr_Traits< return_address_68k >
+	template <> struct demangler_traits< return_address_68k >
 	{
-		static std::string Unmangle( const std::string& name )  { return demangle_MWC68K( name ); }
+		static std::string demangle( const std::string& name )
+		{
+			return demangle_MWC68K( name );
+		}
 	};
 	
-	template <> struct UnmanglingForReturnAddr_Traits< return_address_cfm >
+	template <> struct demangler_traits< return_address_cfm >
 	{
-		static std::string Unmangle( const std::string& name )  { return demangle_MWCPPC( name ); }
+		static std::string demangle( const std::string& name )
+		{
+			return demangle_MWCPPC( name );
+		}
 	};
 	
 #endif
 	
 #ifdef __GNUC__
 	
-	template <> struct UnmanglingForReturnAddr_Traits< return_address_native >
+	template <> struct demangler_traits< return_address_native >
 	{
-		static std::string Unmangle( const std::string& name )
+		static std::string demangle( const std::string& name )
 		{
 			std::string result = name;
 			
@@ -96,43 +102,43 @@ namespace recall
 #endif
 	
 	template < class SymbolPtr >
-	inline std::string GetNameFromSymbolPtr( SymbolPtr symbol )
+	inline std::string get_name_from_symbol_pointer( SymbolPtr symbol )
 	{
 		return symbol != NULL ? get_symbol_string( symbol ) : "???";
 	}
 	
 	template < class ReturnAddr >
-	inline std::string FindSymbolString( ReturnAddr addr )
+	inline std::string find_symbol_string( ReturnAddr addr )
 	{
-		return GetNameFromSymbolPtr( find_symbol_name( addr ) );
+		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
 	}
 	
 	template < class ReturnAddr >
-	inline std::string GetSymbolName( ReturnAddr addr )
+	inline std::string get_symbol_name( ReturnAddr addr )
 	{
-		return FindSymbolString( addr );
+		return find_symbol_string( addr );
 	}
 	
 #ifdef __MACOS__
 	
 	template <>
-	inline std::string GetSymbolName< return_address_ppc >( return_address_ppc addr )
+	inline std::string get_symbol_name< return_address_ppc >( return_address_ppc addr )
 	{
 		const return_address_ppc mixedModeSwitch = (return_address_ppc) 0xffcec400;
 		
-		return addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
+		return addr == mixedModeSwitch ? "MixedMode" : find_symbol_string( addr );
 	}
 	
 #endif
 	
 	template < class ReturnAddr >
-	inline std::string GetUnmangledSymbolName( ReturnAddr addr )
+	inline std::string get_demangled_symbol_name( ReturnAddr addr )
 	{
-		std::string name = GetSymbolName( addr );
+		std::string name = get_symbol_name( addr );
 		
 		try
 		{
-			return UnmanglingForReturnAddr_Traits< ReturnAddr >::Unmangle( name );
+			return demangler_traits< ReturnAddr >::demangle( name );
 		}
 		catch ( ... )
 		{
@@ -141,44 +147,44 @@ namespace recall
 	}
 	
 	
-	struct CallInfo
+	struct call_info
 	{
-		const void*  itsFramePtr;
-		const void*  itsReturnAddr;
-		const char*  itsArch;
-		std::string  itsUnmangledName;
+		const void*  frame_pointer;
+		const void*  return_address;
+		const char*  arch;
+		std::string  demangled_name;
 	};
 	
-	static CallInfo GetCallInfoFromReturnAddress( const frame_data& call )
+	static call_info get_call_info_from_return_address( const frame_data& call )
 	{
-		CallInfo result;
+		call_info result;
 		
-		result.itsFramePtr   = call.frame_pointer;
-		result.itsReturnAddr = call.addr_native;
+		result.frame_pointer  = call.frame_pointer;
+		result.return_address = call.addr_native;
 		
 	#ifdef __MACOS__
 		
-		result.itsArch          = call.is_cfm ? "ppc" : "68k";
-		result.itsUnmangledName = call.is_cfm ? GetUnmangledSymbolName( call.addr_cfm    )
-		                                      : GetUnmangledSymbolName( call.addr_native );
+		result.arch           = call.is_cfm ? "ppc" : "68k";
+		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
+		                                    : get_demangled_symbol_name( call.addr_native );
 		
-		result.itsUnmangledName = filter_symbol( result.itsUnmangledName );
+		result.demangled_name = filter_symbol( result.demangled_name );
 		
 	#else
 		
-		result.itsArch          = TARGET_CPU_PPC ? "ppc" : "x86";
-		result.itsUnmangledName = GetUnmangledSymbolName( call.addr_native );
+		result.arch           = TARGET_CPU_PPC ? "ppc" : "x86";
+		result.demangled_name = get_demangled_symbol_name( call.addr_native );
 		
 	#endif
 		
 		return result;
 	}
 	
-	static std::string MakeReportForCall( unsigned            offset,
-	                                      const void*         frame,
-	                                      const void*         addr,
-	                                      const char*         arch,
-	                                      const std::string&  name )
+	static std::string make_report_for_call( unsigned            offset,
+	                                         const void*         frame,
+	                                         const void*         addr,
+	                                         const char*         arch,
+	                                         const std::string&  name )
 	{
 		char buffer[ sizeof "1234567890: [<0x12345678|xyz>] \0" ];
 		
@@ -192,22 +198,22 @@ namespace recall
 		return result;
 	}
 	
-	static std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
-	                                            std::vector< CallInfo >::const_iterator  end )
+	static std::string make_report_from_call_chain( std::vector< call_info >::const_iterator  begin,
+	                                                std::vector< call_info >::const_iterator  end )
 	{
 		unsigned offset = 0;
 		
 		std::string result;
 		
 		// It's important to use < instead of != if we might skip past the end
-		for ( std::vector< CallInfo >::const_iterator it = begin;  it < end;  ++it, ++offset )
+		for ( std::vector< call_info >::const_iterator it = begin;  it < end;  ++it, ++offset )
 		{
-			const CallInfo& info = *it;
+			const call_info& info = *it;
 			
-			result += MakeReportForCall( offset, info.itsFramePtr,
-			                                     info.itsReturnAddr,
-			                                     info.itsArch,
-			                                     info.itsUnmangledName );
+			result += make_report_for_call( offset, info.frame_pointer,
+			                                        info.return_address,
+			                                        info.arch,
+			                                        info.demangled_name );
 		}
 		
 		result += "\n";
@@ -218,24 +224,29 @@ namespace recall
 	std::string make_report_from_stack_crawl( std::vector< frame_data >::const_iterator  begin,
 	                                          std::vector< frame_data >::const_iterator  end )
 	{
-		std::vector< CallInfo > callChain;
+		std::vector< call_info > call_chain;
 		
-		callChain.resize( end - begin );
+		call_chain.resize( end - begin );
 		
-		std::transform( begin, end, callChain.begin(), std::ptr_fun( GetCallInfoFromReturnAddress ) );
+		std::transform( begin,
+		                end,
+		                call_chain.begin(),
+		                std::ptr_fun( get_call_info_from_return_address ) );
 		
-		return MakeReportFromCallChain( callChain.begin(), callChain.end() );
+		return make_report_from_call_chain( call_chain.begin(), call_chain.end() );
 	}
 	
-	static const void* gStackBottomLimit = (const void*) 0xFFFFFFFF;
+	static const void* global_stack_bottom_limit = (const void*) 0xFFFFFFFF;
 	
-	debugging_context::debugging_context() : itsStackCrawl( make_stack_crawl_to_bottom( gStackBottomLimit ) )
+	debugging_context::debugging_context()
+	:
+		itsStackCrawl( make_stack_crawl_to_bottom( global_stack_bottom_limit ) )
 	{
 	}
 	
 	void set_stack_bottom_limit( const void* limit )
 	{
-		gStackBottomLimit = limit;
+		global_stack_bottom_limit = limit;
 	}
 	
 }
