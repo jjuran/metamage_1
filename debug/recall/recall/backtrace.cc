@@ -153,21 +153,21 @@ namespace recall
 	{
 		CallInfo result;
 		
-		result.itsFramePtr   = call.framePtr;
-		result.itsReturnAddr = call.addrNative;
+		result.itsFramePtr   = call.frame_pointer;
+		result.itsReturnAddr = call.addr_native;
 		
 	#ifdef __MACOS__
 		
-		result.itsArch          = call.isCFM ? "ppc" : "68k";
-		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
-		                                     : GetUnmangledSymbolName( call.addrNative );
+		result.itsArch          = call.is_cfm ? "ppc" : "68k";
+		result.itsUnmangledName = call.is_cfm ? GetUnmangledSymbolName( call.addr_cfm    )
+		                                      : GetUnmangledSymbolName( call.addr_native );
 		
 		result.itsUnmangledName = filter_symbol( result.itsUnmangledName );
 		
 	#else
 		
 		result.itsArch          = TARGET_CPU_PPC ? "ppc" : "x86";
-		result.itsUnmangledName = GetUnmangledSymbolName( call.addrNative );
+		result.itsUnmangledName = GetUnmangledSymbolName( call.addr_native );
 		
 	#endif
 		

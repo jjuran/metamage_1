@@ -90,30 +90,30 @@ namespace recall
 	
 	struct frame_data
 	{
-		stack_frame_pointer framePtr;
+		stack_frame_pointer frame_pointer;
 		
 		union
 		{
-			return_address_native  addrNative;
+			return_address_native  addr_native;
 			
 		#if defined( __MACOS__ )
 			
-			return_address_cfm     addrCFM;
+			return_address_cfm     addr_cfm;
 			
 		#endif
 		};
 		
 	#if defined( __MACOS__ )
 		
-		typedef bool CFM_Flag;
+		typedef bool cfm_flag_t;
 		
 	#else
 		
-		struct CFM_Flag {};
+		struct cfm_flag_t {};
 		
 	#endif
 		
-		CFM_Flag isCFM;
+		cfm_flag_t is_cfm;
 		
 		frame_data()
 		{
@@ -121,9 +121,9 @@ namespace recall
 		
 		frame_data( stack_frame_pointer frame, return_address_native addr )
 		:
-			framePtr( frame ),
-			addrNative( addr ),
-			isCFM()
+			frame_pointer( frame ),
+			addr_native( addr ),
+			is_cfm()
 		{
 		}
 		
@@ -131,9 +131,9 @@ namespace recall
 		
 		frame_data( stack_frame_pointer frame, return_address_cfm addr )
 		:
-			framePtr( frame ),
-			addrCFM( addr ),
-			isCFM( true )
+			frame_pointer( frame ),
+			addr_cfm( addr ),
+			is_cfm( true )
 		{
 		}
 		
