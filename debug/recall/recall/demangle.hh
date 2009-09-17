@@ -13,10 +13,10 @@
 namespace recall
 {
 	
-	class Unmangle_Failed {};
+	class demangle_failed {};
 	
-	std::string UnmangleMWC68K( const std::string& name );
-	std::string UnmangleMWCPPC( const std::string& name );
+	std::string demangle_MWC68K( const std::string& name );
+	std::string demangle_MWCPPC( const std::string& name );
 	
 }
 

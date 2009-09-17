@@ -43,12 +43,12 @@ namespace recall
 	
 	template <> struct UnmanglingForReturnAddr_Traits< return_address_68k >
 	{
-		static std::string Unmangle( const std::string& name )  { return UnmangleMWC68K( name ); }
+		static std::string Unmangle( const std::string& name )  { return demangle_MWC68K( name ); }
 	};
 	
 	template <> struct UnmanglingForReturnAddr_Traits< return_address_cfm >
 	{
-		static std::string Unmangle( const std::string& name )  { return UnmangleMWCPPC( name ); }
+		static std::string Unmangle( const std::string& name )  { return demangle_MWCPPC( name ); }
 	};
 	
 #endif
