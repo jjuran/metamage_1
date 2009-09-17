@@ -13,7 +13,7 @@
 namespace recall
 {
 	
-	std::string FilterSymbol( const std::string& name );
+	std::string filter_symbol( const std::string& name );
 	
 }
 

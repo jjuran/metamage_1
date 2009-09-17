@@ -162,7 +162,7 @@ namespace recall
 		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
 		                                     : GetUnmangledSymbolName( call.addrNative );
 		
-		result.itsUnmangledName = FilterSymbol( result.itsUnmangledName );
+		result.itsUnmangledName = filter_symbol( result.itsUnmangledName );
 		
 	#else
 		

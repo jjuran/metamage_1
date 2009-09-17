@@ -33,7 +33,7 @@ namespace recall
 		REPLACE( "std::vector< std::string >",  "std::vector< std::string, std::allocator< std::string > >" )
 	};
 	
-	std::string FilterSymbol( const std::string& name )
+	std::string filter_symbol( const std::string& name )
 	{
 		const Replacement* end = gReplacements + ARRAY_LEN( gReplacements );
 		
