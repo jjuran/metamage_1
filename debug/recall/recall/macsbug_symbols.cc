@@ -54,9 +54,9 @@ namespace recall
 	{
 		const unsigned char* p = symbol->bytes;
 		
-		bool hasLongName = *p == 0x80;
+		const bool has_long_name = *p == 0x80;
 		
-		uint8_t length = hasLongName ? *++p : *p & 0x1f;
+		const uint8_t length = has_long_name ? *++p : *p & 0x1f;
 		
 		return std::string( (const char*) p + 1, length );
 	}

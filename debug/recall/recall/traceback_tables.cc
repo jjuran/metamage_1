@@ -17,8 +17,8 @@ namespace recall
 		uint32_t    zero;
 		uint32_t    unknown1;
 		uint32_t    unknown2;
-		uint32_t    codeSize;
-		uint16_t    nameSize;
+		uint32_t    code_size;
+		uint16_t    name_size;
 		const char  name[2];
 	};
 	
@@ -61,7 +61,7 @@ namespace recall
 	
 	std::string get_symbol_string( const traceback_table* table )
 	{
-		return std::string( table->name, table->nameSize );
+		return std::string( table->name, table->name_size );
 	}
 	
 }
