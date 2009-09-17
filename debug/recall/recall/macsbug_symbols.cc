@@ -12,6 +12,11 @@ namespace recall
 	typedef unsigned short UInt16;
 	typedef unsigned char  UInt8;
 	
+	struct MacsbugSymbol
+	{
+		unsigned char bytes[1];
+	};
+	
 	
 	MacsbugSymbolPtr FindSymbolName( return_address_68k addr )
 	{

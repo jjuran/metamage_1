@@ -16,10 +16,7 @@
 namespace recall
 {
 	
-	struct MacsbugSymbol
-	{
-		unsigned char bytes[1];
-	};
+	struct MacsbugSymbol;
 	
 	typedef const struct MacsbugSymbol* MacsbugSymbolPtr;
 	
