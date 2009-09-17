@@ -5,20 +5,21 @@
 
 #include "recall/traceback_tables.hh"
 
+// Standard C
+#include <stdint.h>
+
 
 namespace recall
 {
 	
-	typedef unsigned long UInt32;
-	
 	struct traceback_table
 	{
-		unsigned long   zero;
-		unsigned long   unknown1;
-		unsigned long   unknown2;
-		unsigned long   codeSize;
-		unsigned short  nameSize;
-		const char      name[2];
+		uint32_t    zero;
+		uint32_t    unknown1;
+		uint32_t    unknown2;
+		uint32_t    codeSize;
+		uint16_t    nameSize;
+		const char  name[2];
 	};
 	
 	
@@ -29,9 +30,9 @@ namespace recall
 			return NULL;
 		}
 		
-		const UInt32* word = (const UInt32*) addr;
+		const uint32_t* word = (const uint32_t*) addr;
 		
-		const UInt32* end  = word + 0x10000;
+		const uint32_t* end  = word + 0x10000;
 		
 		while ( word < end )
 		{

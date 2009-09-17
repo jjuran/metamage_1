@@ -5,12 +5,12 @@
 
 #include "recall/macsbug_symbols.hh"
 
+// Standard C
+#include <stdint.h>
+
 
 namespace recall
 {
-	
-	typedef unsigned short UInt16;
-	typedef unsigned char  UInt8;
 	
 	struct macsbug_symbol
 	{
@@ -25,15 +25,15 @@ namespace recall
 			return NULL;
 		}
 		
-		const UInt16* word = (const UInt16*) addr;
+		const uint16_t* word = (const uint16_t*) addr;
 		
-		const UInt16* end  = word + 0x10000;
+		const uint16_t* end  = word + 0x10000;
 		
 		while ( word < end )
 		{
 			if ( *word == 0x4e75 )
 			{
-				const UInt8* p = (const UInt8*) ++word;
+				const uint8_t* p = (const uint8_t*) ++word;
 				
 				if ( (*p & 0x80) != 0x80 )
 				{
@@ -56,7 +56,7 @@ namespace recall
 		
 		bool hasLongName = *p == 0x80;
 		
-		UInt8 length = hasLongName ? *++p : *p & 0x1f;
+		uint8_t length = hasLongName ? *++p : *p & 0x1f;
 		
 		return std::string( (const char*) p + 1, length );
 	}
