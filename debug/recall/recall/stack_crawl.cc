@@ -9,45 +9,45 @@
 namespace recall
 {
 	
-	struct StackFrame68K
+	struct stack_frame_68k
 	{
-		StackFrame68K*  next;
-		return_address_68k   returnAddr;
+		stack_frame_68k*    next;
+		return_address_68k  return_address;
 	};
 	
-	struct StackFramePPC
+	struct stack_frame_ppc
 	{
-		StackFramePPC*  next;
-		const void*     savedCR;
-		return_address_ppc   returnAddr;
+		stack_frame_ppc*    next;
+		const void*         saved_CR;
+		return_address_ppc  return_address;
 	};
 	
-	struct StackFrameX86
+	struct stack_frame_x86
 	{
-		StackFrameX86*    next;
-		return_address_native  returnAddr;
+		stack_frame_x86*       next;
+		return_address_native  return_address;
 	};
 	
 	
 #ifdef __MC68K__
 	
-	typedef StackFrame68K StackFrame;
+	typedef stack_frame_68k stack_frame;
 	
-	#pragma parameter __D0 GetA6
+	#pragma parameter __D0 get_A6
 	
-	inline char* GetA6() = { 0x200e };
+	inline char* get_A6() = { 0x200e };
 	
-	inline const StackFrame68K* GetTopFrame()  { return (const StackFrame68K*) GetA6(); }
+	inline const stack_frame_68k* get_top_frame()  { return (const stack_frame_68k*) get_A6(); }
 	
 #endif
 
 #ifdef __POWERPC__
 	
-	typedef StackFramePPC StackFrame;
+	typedef stack_frame_ppc stack_frame;
 	
 	#ifdef __MWERKS__
 		
-		static asm char *GetSP( void )
+		static asm char *get_r1( void )
 		{
 			mr		r3,r1
 			blr
@@ -57,33 +57,33 @@ namespace recall
 	
 	#ifdef __GNUC__
 		
-		static char *GetSP( void )
+		static char *get_r1( void )
 		{
 			__asm__( "mr r3,r1; blr" );
 		}
 		
 	#endif
 	
-	inline const StackFramePPC* GetTopFrame()  { return ( (const StackFramePPC*) GetSP() )->next; }
+	inline const stack_frame_ppc* get_top_frame()  { return ( (const stack_frame_ppc*) get_r1() )->next; }
 	
 #endif
 	
 #ifdef __i386__
 	
-	typedef StackFrameX86 StackFrame;
+	typedef stack_frame_x86 stack_frame;
 	
-	static char *GetEBP( void )
+	static char *get_ebp( void )
 	{
 		__asm__( "mov  %ebp,%eax" );
 	}
 	
-	inline const StackFrameX86* GetTopFrame()  { return (const StackFrameX86*) GetEBP(); }
+	inline const stack_frame_x86* get_top_frame()  { return (const stack_frame_x86*) get_ebp(); }
 	
 #endif
 	
 	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip )
 	{
-		StackFrame* frame = GetTopFrame()->next;
+		stack_frame* frame = get_top_frame()->next;
 		
 		while ( frame != NULL  &&  --levels_to_skip >= 0 )
 		{
@@ -93,52 +93,54 @@ namespace recall
 		return reinterpret_cast< stack_frame_pointer >( frame );
 	}
 	
-	template < class StackFrame > struct SwitchFrame_Traits
+	template < class StackFrame > struct switch_frame_traits
 	{
 		static const bool can_switch = false;
 		
-		typedef const StackFrame *ThisPtr;
-		typedef const StackFrame *NextPtr;
+		typedef const StackFrame *this_frame_type;
+		typedef const StackFrame *next_frame_type;
 		
-		static NextPtr Check( ThisPtr frame )  { return NULL; }
+		static next_frame_type check( this_frame_type frame )  { return NULL; }
 	};
 	
 #ifdef __MACOS__
 	
 	// PPC calls 68K
-	template <> struct SwitchFrame_Traits< StackFrame68K >
+	template <> struct switch_frame_traits< stack_frame_68k >
 	{
 		static const bool can_switch = true;
 		
-		typedef const StackFrame68K *ThisPtr;
-		typedef const StackFramePPC *NextPtr;
+		typedef const stack_frame_68k *this_frame_type;
+		typedef const stack_frame_ppc *next_frame_type;
 		
-		static NextPtr Check( ThisPtr frame );
+		static next_frame_type check( this_frame_type frame );
 	};
 	
 	// 68K calls PPC
-	template <> struct SwitchFrame_Traits< StackFramePPC >
+	template <> struct switch_frame_traits< stack_frame_ppc >
 	{
 		static const bool can_switch = true;
 		
-		typedef const StackFramePPC *ThisPtr;
-		typedef const StackFrame68K *NextPtr;
+		typedef const stack_frame_ppc *this_frame_type;
+		typedef const stack_frame_68k *next_frame_type;
 		
-		static NextPtr Check( ThisPtr frame );
+		static next_frame_type check( this_frame_type frame );
 	};
 	
 	template <>
-	inline const StackFramePPC* SwitchFrame_Traits< StackFrame68K >::Check( ThisPtr frame )
+	inline const stack_frame_ppc*
+	//
+	switch_frame_traits< stack_frame_68k >::check( this_frame_type frame )
 	{
-		const StackFrame68K* next = frame->next;
+		const stack_frame_68k* next = frame->next;
 		
 		if ( next != NULL  &&  ((unsigned long*) next)[-1] == 0xffffffff )
 		{
-			const void* addr = frame->returnAddr;
+			const void* addr = frame->return_address;
 			
 			if ( frame < addr  &&  addr < next )
 			{
-				return (const StackFramePPC*) next;
+				return (const stack_frame_ppc*) next;
 			}
 		}
 		
@@ -146,17 +148,24 @@ namespace recall
 	}
 	
 	template <>
-	inline const StackFrame68K* SwitchFrame_Traits< StackFramePPC >::Check( ThisPtr frame )
+	inline const stack_frame_68k*
+	//
+	switch_frame_traits< stack_frame_ppc >::check( this_frame_type frame )
 	{
-		return (long) frame & 0x00000001 ? (const StackFrame68K*) ((long) frame - 1)
-		                                 : NULL;
+		const long addr = (long) frame;
+		
+		return addr & 0x00000001 ? (const stack_frame_68k*) (addr - 1)
+		                         : NULL;
 	}
 	
 #endif
 	
 	
 	template < class StackFrame >
-	static void CrawlStack( unsigned level, const StackFrame* frame, const void* limit, std::vector< frame_data >& result )
+	static void crawl_stack( unsigned                     level,
+	                         const StackFrame            *frame,
+	                         const void                  *limit,
+	                         std::vector< frame_data >&   result )
 	{
 	next:
 		
@@ -167,19 +176,20 @@ namespace recall
 		
 		++level;
 		
-		typedef SwitchFrame_Traits< StackFrame > Traits;
+		typedef switch_frame_traits< StackFrame > traits;
 		
-		if ( Traits::can_switch )
+		if ( traits::can_switch )
 		{
-			if ( typename Traits::NextPtr next = Traits::Check( frame ) )
+			if ( typename traits::next_frame_type next = traits::check( frame ) )
 			{
-				CrawlStack( level, next, limit, result );
+				crawl_stack( level, next, limit, result );
 				
 				return;
 			}
 		}
 		
-		result.push_back( frame_data( (stack_frame_pointer) frame, frame->returnAddr ) );
+		result.push_back( frame_data( (stack_frame_pointer) frame,
+		                              frame->return_address ) );
 		
 		if ( frame->next < frame )
 		{
@@ -192,13 +202,13 @@ namespace recall
 		goto next;
 	}
 	
-	static std::vector< frame_data > make_stack_crawl( const StackFrame* top, const void* limit )
+	static std::vector< frame_data > make_stack_crawl( const stack_frame* top, const void* limit )
 	{
 		std::vector< frame_data > result;
 		
 		try
 		{
-			CrawlStack( 0, top, limit, result );
+			crawl_stack( 0, top, limit, result );
 		}
 		catch ( const std::bad_alloc& )
 		{
@@ -209,14 +219,14 @@ namespace recall
 	
 	std::vector< frame_data > make_stack_crawl_from_top_to_bottom( stack_frame_pointer top, const void* limit )
 	{
-		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
+		const stack_frame* frame = (const stack_frame*) top;
 		
 		return make_stack_crawl( frame, limit );
 	}
 	
 	std::vector< frame_data > make_stack_crawl_to_bottom( const void* limit )
 	{
-		return make_stack_crawl( GetTopFrame(), limit );
+		return make_stack_crawl( get_top_frame(), limit );
 	}
 	
 }
