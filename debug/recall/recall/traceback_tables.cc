@@ -11,7 +11,7 @@ namespace recall
 	
 	typedef unsigned long UInt32;
 	
-	struct TracebackTable
+	struct traceback_table
 	{
 		unsigned long   zero;
 		unsigned long   unknown1;
@@ -22,7 +22,7 @@ namespace recall
 	};
 	
 	
-	TracebackTablePtr FindSymbolName( return_address_traceback addr )
+	const traceback_table* find_symbol_name( return_address_traceback addr )
 	{
 		if ( addr == NULL )
 		{
@@ -37,7 +37,7 @@ namespace recall
 		{
 			if ( *word == 0x4e800020 )
 			{
-				TracebackTablePtr table = (TracebackTablePtr) ++word;
+				const traceback_table* table = (const traceback_table*) ++word;
 				
 				if ( table->zero != 0 )
 				{
@@ -58,7 +58,7 @@ namespace recall
 		return NULL;
 	}
 	
-	std::string GetSymbolString( TracebackTablePtr table )
+	std::string get_symbol_string( const traceback_table* table )
 	{
 		return std::string( table->name, table->nameSize );
 	}

@@ -12,13 +12,13 @@ namespace recall
 	typedef unsigned short UInt16;
 	typedef unsigned char  UInt8;
 	
-	struct MacsbugSymbol
+	struct macsbug_symbol
 	{
 		unsigned char bytes[1];
 	};
 	
 	
-	MacsbugSymbolPtr FindSymbolName( return_address_68k addr )
+	const macsbug_symbol* find_symbol_name( return_address_68k addr )
 	{
 		if ( addr == NULL )
 		{
@@ -40,7 +40,7 @@ namespace recall
 					break;
 				}
 				
-				return (MacsbugSymbolPtr) p;
+				return (const macsbug_symbol*) p;
 			}
 			
 			++word;
@@ -50,7 +50,7 @@ namespace recall
 	}
 	
 	
-	std::string GetSymbolString( MacsbugSymbolPtr symbol )
+	std::string get_symbol_string( const macsbug_symbol* symbol )
 	{
 		const unsigned char* p = symbol->bytes;
 		

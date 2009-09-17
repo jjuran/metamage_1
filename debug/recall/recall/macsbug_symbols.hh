@@ -16,14 +16,11 @@
 namespace recall
 {
 	
-	struct MacsbugSymbol;
+	struct macsbug_symbol;
 	
-	typedef const struct MacsbugSymbol* MacsbugSymbolPtr;
+	const macsbug_symbol* find_symbol_name( return_address_68k addr );
 	
-	
-	MacsbugSymbolPtr FindSymbolName( return_address_68k addr );
-	
-	std::string GetSymbolString( MacsbugSymbolPtr symbol );
+	std::string get_symbol_string( const macsbug_symbol* symbol );
 	
 }
 

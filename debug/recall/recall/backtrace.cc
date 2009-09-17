@@ -88,7 +88,7 @@ namespace recall
 	
 #ifdef __ELF__
 	
-	static const char* FindSymbolName( return_address_native )
+	static const char* find_symbol_name( return_address_native )
 	{
 		return NULL;
 	}
@@ -98,13 +98,13 @@ namespace recall
 	template < class SymbolPtr >
 	inline std::string GetNameFromSymbolPtr( SymbolPtr symbol )
 	{
-		return symbol != NULL ? GetSymbolString( symbol ) : "???";
+		return symbol != NULL ? get_symbol_string( symbol ) : "???";
 	}
 	
 	template < class ReturnAddr >
 	inline std::string FindSymbolString( ReturnAddr addr )
 	{
-		return GetNameFromSymbolPtr( FindSymbolName( addr ) );
+		return GetNameFromSymbolPtr( find_symbol_name( addr ) );
 	}
 	
 	template < class ReturnAddr >
