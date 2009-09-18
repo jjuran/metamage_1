@@ -236,11 +236,9 @@ namespace recall
 		return make_report_from_call_chain( call_chain.begin(), call_chain.end() );
 	}
 	
-	static const void* global_stack_bottom_limit = (const void*) 0xFFFFFFFF;
-	
 	debugging_context::debugging_context()
 	:
-		its_stack_crawl( make_stack_crawl_to_bottom( global_stack_bottom_limit ) )
+		its_stack_crawl( make_stack_crawl() )
 	{
 	}
 	
