@@ -119,18 +119,6 @@ namespace recall
 		return find_symbol_string( addr );
 	}
 	
-#ifdef __MACOS__
-	
-	template <>
-	inline std::string get_symbol_name< return_address_ppc >( return_address_ppc addr )
-	{
-		const return_address_ppc mixedModeSwitch = (return_address_ppc) 0xffcec400;
-		
-		return addr == mixedModeSwitch ? "MixedMode" : find_symbol_string( addr );
-	}
-	
-#endif
-	
 	template < class ReturnAddr >
 	inline std::string get_demangled_symbol_name( ReturnAddr addr )
 	{
