@@ -240,7 +240,7 @@ namespace recall
 	
 	debugging_context::debugging_context()
 	:
-		itsStackCrawl( make_stack_crawl_to_bottom( global_stack_bottom_limit ) )
+		its_stack_crawl( make_stack_crawl_to_bottom( global_stack_bottom_limit ) )
 	{
 	}
 	

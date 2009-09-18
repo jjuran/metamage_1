@@ -23,12 +23,15 @@ namespace recall
 	class debugging_context
 	{
 		private:
-			std::vector< frame_data > itsStackCrawl;
+			std::vector< frame_data > its_stack_crawl;
 		
 		public:
 			debugging_context();
 			
-			const std::vector< frame_data >& get_stack_crawl() const  { return itsStackCrawl; }
+			const std::vector< frame_data >& get_stack_crawl() const
+			{
+				return its_stack_crawl;
+			}
 	};
 	
 	void set_stack_bottom_limit( const void* limit );
