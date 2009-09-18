@@ -35,9 +35,12 @@ namespace recall
 	
 	#pragma parameter __D0 get_A6
 	
-	inline char* get_A6() = { 0x200e };
+	static inline char* get_A6() = { 0x200e };
 	
-	inline const stack_frame_68k* get_top_frame()  { return (const stack_frame_68k*) get_A6(); }
+	static inline const stack_frame_68k* get_top_frame()
+	{
+		return (const stack_frame_68k*) get_A6();
+	}
 	
 #endif
 
@@ -64,7 +67,10 @@ namespace recall
 		
 	#endif
 	
-	inline const stack_frame_ppc* get_top_frame()  { return ( (const stack_frame_ppc*) get_r1() )->next; }
+	static inline const stack_frame_ppc* get_top_frame()
+	{
+		return ( (const stack_frame_ppc*) get_r1() )->next;
+	}
 	
 #endif
 	
@@ -77,7 +83,10 @@ namespace recall
 		__asm__( "mov  %ebp,%eax" );
 	}
 	
-	inline const stack_frame_x86* get_top_frame()  { return (const stack_frame_x86*) get_ebp(); }
+	static inline const stack_frame_x86* get_top_frame()
+	{
+		return (const stack_frame_x86*) get_ebp();
+	}
 	
 #endif
 	

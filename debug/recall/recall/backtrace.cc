@@ -102,13 +102,13 @@ namespace recall
 #endif
 	
 	template < class SymbolPtr >
-	inline std::string get_name_from_symbol_pointer( SymbolPtr symbol )
+	static inline std::string get_name_from_symbol_pointer( SymbolPtr symbol )
 	{
 		return symbol != NULL ? get_symbol_string( symbol ) : "???";
 	}
 	
 	template < class ReturnAddr >
-	inline std::string get_symbol_name( ReturnAddr addr )
+	static inline std::string get_symbol_name( ReturnAddr addr )
 	{
 		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
 	}
