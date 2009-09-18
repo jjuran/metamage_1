@@ -39,7 +39,7 @@ namespace Orion
 	extern "C" int main( int argc, iota::argv_t argv );
 	
 	
-	static void ShowDebuggingContext()
+	static void ShowDebuggingContext( const void* stack_bottom_limit )
 	{
 	#if TARGET_CONFIG_DEBUGGING && defined( NUCLEUS_USES_BACKTRACE )
 		
@@ -63,6 +63,18 @@ namespace Orion
 			
 			++begin;  // skip recall::debugging_context::debugging_context( void )
 			
+			if ( begin->frame_pointer < stack_bottom_limit )
+			{
+				std::vector< frame_data >::const_iterator last = end - 1;
+				
+				while ( last->frame_pointer >= stack_bottom_limit )
+				{
+					--last;
+				}
+				
+				end = last + 1;
+			}
+			
 			std::string report = make_report_from_stack_crawl( begin, end );
 			
 			p7::write( p7::stderr_fileno, report );
@@ -81,8 +93,6 @@ namespace Orion
 	{
 		const void* stackBottom = recall::get_stack_frame_pointer();
 		
-		recall::set_stack_bottom_limit( stackBottom );
-		
 		try
 		{
 			return tool::Main( argc, argv );
@@ -95,13 +105,13 @@ namespace Orion
 		{
 			p7::perror( argv[0], "exception" );
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		catch ( const std::exception& e )
 		{
 			p7::perror( argv[0], "exception", e.what() );
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		catch ( ... )
 		{
@@ -116,7 +126,7 @@ namespace Orion
 				p7::perror( argv[0], "uncaught exception" );
 			}
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		
 		return EXIT_FAILURE;
