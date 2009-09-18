@@ -409,15 +409,16 @@ namespace tool
 		// output, claiming "User break", and returning 2.
 		// Also, sometimes 1 is returned on user cancel, which could mean that
 		// ToolServer was running a script rather than a Metrowerks tool.
+		// And canceling a script might also return 0.  Go figure.
 		
-		if ( result == 1  ||  result == 2 )
+		if ( result <= 2 )
 		{
 			if ( user_cancelled( errors ) )
 			{
 				// User pressed Command-period
 				return 128;
 			}
-			else
+			else if ( result == 2 )
 			{
 				// Sorry, but the existence of more errors than I asked to be
 				// printed does NOT equal user-sponsored cancellation.
