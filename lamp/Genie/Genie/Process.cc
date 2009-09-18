@@ -75,17 +75,16 @@
 #endif
 
 
-static void DumpBacktrace( const void* stackBottom )
+static void DumpBacktrace()
 {
 	using namespace recall;
 	
-	std::vector< frame_data > stackCrawl = make_stack_crawl_to_bottom( stackBottom );
+	std::vector< frame_data > stackCrawl = make_stack_crawl();
 	
 	std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 	std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 	
 	++begin;  // skip DumpBacktrace( void )
-	--end;    // skip Genie::Process::Run( void )
 	
 	std::string report = make_report_from_stack_crawl( begin, end );
 	
@@ -1445,7 +1444,7 @@ namespace Genie
 			// Fatal signal received.  Terminate.
 			if ( itMayDumpCore && WCOREDUMP( itsResult ) )
 			{
-				DumpBacktrace( itsStackBottomPtr );
+				DumpBacktrace();
 			}
 			
 			if ( itsInterdependence == kProcessForked )
