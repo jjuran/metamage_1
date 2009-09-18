@@ -244,10 +244,5 @@ namespace recall
 	{
 	}
 	
-	void set_stack_bottom_limit( const void* limit )
-	{
-		global_stack_bottom_limit = limit;
-	}
-	
 }
 
