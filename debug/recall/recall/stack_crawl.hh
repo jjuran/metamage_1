@@ -143,19 +143,9 @@ namespace recall
 	
 	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip = 0 );
 	
-	std::vector< frame_data > make_stack_crawl_from_top_to_bottom( stack_frame_pointer frame, const void* limit );
+	std::vector< frame_data > make_stack_crawl_from_top( stack_frame_pointer frame );
 	
-	inline std::vector< frame_data > make_stack_crawl_from_top( stack_frame_pointer frame )
-	{
-		return make_stack_crawl_from_top_to_bottom( frame, (const void*) 0xFFFFFFFF );
-	}
-	
-	std::vector< frame_data > make_stack_crawl_to_bottom( const void* limit );
-	
-	inline std::vector< frame_data > make_stack_crawl()
-	{
-		return make_stack_crawl_to_bottom( (const void*) 0xFFFFFFFF );
-	}
+	std::vector< frame_data > make_stack_crawl();
 	
 }
 

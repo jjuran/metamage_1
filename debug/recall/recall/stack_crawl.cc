@@ -202,9 +202,11 @@ namespace recall
 		goto next;
 	}
 	
-	static std::vector< frame_data > make_stack_crawl( const stack_frame* top, const void* limit )
+	static std::vector< frame_data > make_stack_crawl( const stack_frame* top )
 	{
 		std::vector< frame_data > result;
+		
+		const void* limit = (const void*) 0xFFFFFFFF;
 		
 		try
 		{
@@ -217,16 +219,16 @@ namespace recall
 		return result;
 	}
 	
-	std::vector< frame_data > make_stack_crawl_from_top_to_bottom( stack_frame_pointer top, const void* limit )
+	std::vector< frame_data > make_stack_crawl_from_top( stack_frame_pointer top )
 	{
 		const stack_frame* frame = (const stack_frame*) top;
 		
-		return make_stack_crawl( frame, limit );
+		return make_stack_crawl( frame );
 	}
 	
-	std::vector< frame_data > make_stack_crawl_to_bottom( const void* limit )
+	std::vector< frame_data > make_stack_crawl()
 	{
-		return make_stack_crawl( get_top_frame(), limit );
+		return make_stack_crawl( get_top_frame() );
 	}
 	
 }
