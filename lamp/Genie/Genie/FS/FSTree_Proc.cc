@@ -407,20 +407,29 @@ namespace Genie
 		using recall::stack_frame_pointer;
 		using recall::frame_data;
 		
-		stack_frame_pointer top    = process.GetStackFramePointer();
-		stack_frame_pointer bottom = process.GetStackBottomPointer();
+		stack_frame_pointer top = process.GetStackFramePointer();
 		
 		if ( top == NULL )
 		{
 			return "";
 		}
 		
-		std::vector< frame_data > stackCrawl = make_stack_crawl_from_top_to_bottom( top, bottom );
+		std::vector< frame_data > stackCrawl = make_stack_crawl_from_top( top );
 		
 		std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 		std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 		
-		--end;  // skip Genie::Process::Run( void )
+		// skip __lamp_main
+		// skip Invoke()
+		// skip Run()
+		// skip ProcessThreadEntry()
+		// skip Adapter()
+		// skip ??? (Thread Manager)
+		
+		if ( end - 6 > begin )
+		{
+			end -= 6;
+		}
 		
 		std::string result = make_report_from_stack_crawl( begin, end );
 		
