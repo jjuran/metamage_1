@@ -164,12 +164,11 @@ namespace recall
 	template < class StackFrame >
 	static void crawl_stack( unsigned                     level,
 	                         const StackFrame            *frame,
-	                         const void                  *limit,
 	                         std::vector< frame_data >&   result )
 	{
 	next:
 		
-		if ( frame == NULL  ||  frame >= limit  ||  level > 63 )
+		if ( frame == NULL  ||  level > 63 )
 		{
 			return;
 		}
@@ -182,7 +181,7 @@ namespace recall
 		{
 			if ( typename traits::next_frame_type next = traits::check( frame ) )
 			{
-				crawl_stack( level, next, limit, result );
+				crawl_stack( level, next, result );
 				
 				return;
 			}
@@ -206,11 +205,9 @@ namespace recall
 	{
 		std::vector< frame_data > result;
 		
-		const void* limit = (const void*) 0xFFFFFFFF;
-		
 		try
 		{
-			crawl_stack( 0, top, limit, result );
+			crawl_stack( 0, top, result );
 		}
 		catch ( const std::bad_alloc& )
 		{
