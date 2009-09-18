@@ -108,19 +108,13 @@ namespace recall
 	}
 	
 	template < class ReturnAddr >
-	inline std::string find_symbol_string( ReturnAddr addr )
+	inline std::string get_symbol_name( ReturnAddr addr )
 	{
 		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
 	}
 	
 	template < class ReturnAddr >
-	inline std::string get_symbol_name( ReturnAddr addr )
-	{
-		return find_symbol_string( addr );
-	}
-	
-	template < class ReturnAddr >
-	inline std::string get_demangled_symbol_name( ReturnAddr addr )
+	static std::string get_demangled_symbol_name( ReturnAddr addr )
 	{
 		std::string name = get_symbol_name( addr );
 		
