@@ -19,7 +19,7 @@ namespace Genie
 		public:
 			virtual ~MainEntryPoint();
 			
-			virtual void Invoke( int argc, iota::argv_t argv, iota::environ_t envp ) = 0;
+			virtual void Invoke( int argc, iota::argv_t argv ) = 0;
 	};
 	
 }

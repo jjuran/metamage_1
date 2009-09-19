@@ -417,7 +417,7 @@ namespace Genie
 			// Pass envp in ToolScratch + 4 to initialize environ
 			SetUpToolScratch( &DispatchSystemCall, envp );
 			
-			itsMainEntry->Invoke( argc, argv, envp );
+			itsMainEntry->Invoke( argc, argv );
 			
 			// Not reached
 		}
