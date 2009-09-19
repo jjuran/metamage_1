@@ -15,9 +15,9 @@
 // Standard C
 #include <errno.h>
 
-// Backtrace
-#include "Backtrace/Backtrace.hh"
-#include "Backtrace/StackCrawl.hh"
+// Recall
+#include "recall/backtrace.hh"
+#include "recall/stack_crawl.hh"
 
 // Nucleus
 #include "Nucleus/ErrorCode.h"
@@ -39,42 +39,43 @@ namespace Orion
 	extern "C" int main( int argc, iota::argv_t argv );
 	
 	
-	static void ShowDebuggingContext()
+	static void ShowDebuggingContext( const void* stack_bottom_limit )
 	{
-	#if TARGET_CONFIG_DEBUGGING
+	#if TARGET_CONFIG_DEBUGGING && defined( NUCLEUS_USES_BACKTRACE )
+		
+		using namespace recall;
 		
 		try
 		{
 			throw;
 		}
-		catch ( const NN::DebuggingContext& debugging )
+		catch ( const debugging_context& debugging )
 		{
-			using namespace Backtrace;
-			
-			const std::vector< FrameData >& stackCrawl = debugging.GetStackCrawl();
+			const std::vector< frame_data >& stackCrawl = debugging.get_stack_crawl();
 			
 			if ( stackCrawl.size() < 2 )
 			{
 				return;
 			}
 			
-			std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
-			std::vector< FrameData >::const_iterator end   = stackCrawl.end();
+			std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
+			std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 			
-			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
+			++begin;  // skip recall::debugging_context::debugging_context( void )
 			
-			std::string prefix = "Nucleus::Throw< Nucleus::ErrorCode< ";
-			
-			if ( std::equal( prefix.begin(),
-			                 prefix.end(),
-			                 GetCallInfoFromReturnAddress( *begin ).itsUnmangledName.begin() ) )
+			if ( begin->frame_pointer < stack_bottom_limit )
 			{
-				// Skip Nucleus::Throw< Nucleus::ErrorCode< T, i > >( void )
-				// Skip Nucleus::ThrowErrorCode< T >( T )
-				begin += 2;
+				std::vector< frame_data >::const_iterator last = end - 1;
+				
+				while ( last->frame_pointer >= stack_bottom_limit )
+				{
+					--last;
+				}
+				
+				end = last + 1;
 			}
 			
-			std::string report = MakeReportFromStackCrawl( begin, end );
+			std::string report = make_report_from_stack_crawl( begin, end );
 			
 			p7::write( p7::stderr_fileno, report );
 			
@@ -90,9 +91,7 @@ namespace Orion
 	
 	int main( int argc, iota::argv_t argv )
 	{
-		const void* stackBottom = Backtrace::GetStackFramePointer();
-		
-		Backtrace::SetStackBottomLimit( stackBottom );
+		const void* stackBottom = recall::get_stack_frame_pointer();
 		
 		try
 		{
@@ -106,13 +105,13 @@ namespace Orion
 		{
 			p7::perror( argv[0], "exception" );
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		catch ( const std::exception& e )
 		{
 			p7::perror( argv[0], "exception", e.what() );
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		catch ( ... )
 		{
@@ -127,7 +126,7 @@ namespace Orion
 				p7::perror( argv[0], "uncaught exception" );
 			}
 			
-			ShowDebuggingContext();
+			ShowDebuggingContext( stackBottom );
 		}
 		
 		return EXIT_FAILURE;

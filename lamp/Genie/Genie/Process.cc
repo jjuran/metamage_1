@@ -41,8 +41,8 @@
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 
-// Backtrace
-#include "Backtrace/Backtrace.hh"
+// Recall
+#include "recall/backtrace.hh"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -75,19 +75,18 @@
 #endif
 
 
-static void DumpBacktrace( const void* stackBottom )
+static void DumpBacktrace()
 {
-	using namespace Backtrace;
+	using namespace recall;
 	
-	std::vector< FrameData > stackCrawl = MakeStackCrawlToBottom( stackBottom );
+	std::vector< frame_data > stackCrawl = make_stack_crawl();
 	
-	std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
-	std::vector< FrameData >::const_iterator end   = stackCrawl.end();
+	std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
+	std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 	
 	++begin;  // skip DumpBacktrace( void )
-	--end;    // skip Genie::Process::Run( void )
 	
-	std::string report = MakeReportFromStackCrawl( begin, end );
+	std::string report = make_report_from_stack_crawl( begin, end );
 	
 	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
 }
@@ -386,7 +385,7 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		itsStackBottomPtr = Backtrace::GetStackFramePointer();
+		itsStackBottomPtr = recall::get_stack_frame_pointer();
 		
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
@@ -1106,7 +1105,7 @@ namespace Genie
 		itsSchedule        = kProcessFrozen;
 		
 		itsVForkFramePtr =
-		itsStackFramePtr = Backtrace::GetStackFramePointer( 5 );
+		itsStackFramePtr = recall::get_stack_frame_pointer( 5 );
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1121,7 +1120,7 @@ namespace Genie
 		ASSERT( itsForkedChildPID != 0 );
 		
 		// Stack grows down
-		const bool stack_fault = Backtrace::GetStackFramePointer( 2 ) > itsVForkFramePtr;
+		const bool stack_fault = recall::get_stack_frame_pointer( 2 ) > itsVForkFramePtr;
 		
 		itsVForkFramePtr = NULL;
 		
@@ -1303,7 +1302,7 @@ namespace Genie
 		
 		Suspend();
 		
-		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		itsStackFramePtr = recall::get_stack_frame_pointer();
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1445,7 +1444,7 @@ namespace Genie
 			// Fatal signal received.  Terminate.
 			if ( itMayDumpCore && WCOREDUMP( itsResult ) )
 			{
-				DumpBacktrace( itsStackBottomPtr );
+				DumpBacktrace();
 			}
 			
 			if ( itsInterdependence == kProcessForked )

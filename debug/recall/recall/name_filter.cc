@@ -1,9 +1,9 @@
-/*	=========
- *	Filter.cc
- *	=========
+/*	==============
+ *	name_filter.cc
+ *	==============
  */
 
-#include "Backtrace/Filter.hh"
+#include "recall/name_filter.hh"
 
 // Standard C++
 #include <algorithm>
@@ -13,36 +13,37 @@
 
 #define ARRAY_LEN( array )  ( sizeof array / sizeof array[0] )
 
-namespace Backtrace
+
+namespace recall
 {
 	
-	struct Replacement
+	struct replacement
 	{
 		const char*  pattern;
-		std::size_t  patternLength;
-		const char*  newText;
-		std::size_t  newTextLength;
+		std::size_t  pattern_length;
+		const char*  new_text;
+		std::size_t  new_text_length;
 	};
 	
 	#define REPLACE( newtext, pattern )  { STR_LEN( pattern ), STR_LEN( newtext ) }
 	
-	const Replacement gReplacements[] =
+	const replacement global_replacements[] =
 	{
 		REPLACE( "std::string",  "std::basic_string< char, std::char_traits< char >, std::allocator< char > >" ),
 		
 		REPLACE( "std::vector< std::string >",  "std::vector< std::string, std::allocator< std::string > >" )
 	};
 	
-	std::string FilterSymbol( const std::string& name )
+	std::string filter_symbol( const std::string& name )
 	{
-		const Replacement* end = gReplacements + ARRAY_LEN( gReplacements );
+		const replacement* end = global_replacements + ARRAY_LEN( global_replacements );
 		
 		std::string result = name;
 		
-		for ( const Replacement* it = gReplacements;  it < end;  ++it )
+		for ( const replacement* it = global_replacements;  it < end;  ++it )
 		{
 			const char* pattern = it->pattern;
-			const char* pattern_end = pattern + it->patternLength;
+			const char* pattern_end = pattern + it->pattern_length;
 			
 			while ( true )
 			{
@@ -56,7 +57,7 @@ namespace Backtrace
 					break;
 				}
 				
-				result.replace( found, found + it->patternLength, it->newText, it->newTextLength );
+				result.replace( found, found + it->pattern_length, it->new_text, it->new_text_length );
 			}
 		}
 		

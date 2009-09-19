@@ -38,8 +38,12 @@
 // Iota
 #include "iota/decimal.hh"
 
-// Backtrace
-#include "Backtrace/Unmangle.hh"
+// Recall
+#include "recall/demangle.hh"
+#include "recall/mach_o.hh"
+#include "recall/macsbug_symbols.hh"
+#include "recall/stack_crawl.hh"
+#include "recall/traceback_tables.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -83,12 +87,6 @@
 #include "Iteration/AEDescListItems.h"
 #include "Iteration/AEDescListItemDatas.h"
 #include "Iteration/FSContents.h"
-
-// Backtrace
-#include "Backtrace/StackCrawl.hh"
-#include "Backtrace/MacsbugSymbols.hh"
-#include "Backtrace/TracebackTables.hh"
-#include "Backtrace/MachO.hh"
 
 // Scaffold
 #include "Tests.hh"
@@ -1173,8 +1171,8 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '.' ? Backtrace::UnmangleMWCPPC( name )
-	                                       : Backtrace::UnmangleMWC68K( name );
+	std::string unmangled = name[0] == '.' ? recall::UnmangleMWCPPC( name )
+	                                       : recall::UnmangleMWC68K( name );
 	
 	unmangled += "\n";
 	

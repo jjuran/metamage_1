@@ -1,9 +1,9 @@
 /*	===========
- *	Unmangle.cc
+ *	demangle.cc
  *	===========
  */
 
-#include "Backtrace/Unmangle.hh"
+#include "recall/demangle.hh"
 
 // Standard C/C++
 #include <cctype>
@@ -24,7 +24,7 @@ static std::string join( const char* space, const std::string& a, const std::str
 	return a + space + b;
 }
 
-namespace Backtrace
+namespace recall
 {
 	
 	static const char* gBasicTypes[] =
@@ -143,7 +143,7 @@ namespace Backtrace
 		
 		if ( it == map.end() )
 		{
-			throw Unmangle_Failed();
+			throw demangle_failed();
 		}
 		
 		p = end;
@@ -184,14 +184,14 @@ namespace Backtrace
 		
 		if ( *p < 'a'  ||  *p > 'z' )
 		{
-			throw Unmangle_Failed();
+			throw demangle_failed();
 		}
 		
 		const char* type = gBasicTypes[ *p++ - 'a' ];
 		
 		if ( type == NULL )
 		{
-			throw Unmangle_Failed();
+			throw demangle_failed();
 		}
 		
 		return sign + type;
@@ -382,7 +382,7 @@ namespace Backtrace
 			
 			if ( !TemplateParameterFollows( p ) )
 			{
-				throw Unmangle_Failed();
+				throw demangle_failed();
 			}
 		}
 		
@@ -533,7 +533,7 @@ namespace Backtrace
 		
 		if ( *p == 'A' )
 		{
-			throw Unmangle_Failed();
+			throw demangle_failed();
 		}
 		
 		if ( *p == 'F' )
@@ -541,7 +541,7 @@ namespace Backtrace
 			return ReadFunctionType( ++p );
 		}
 		
-		throw Unmangle_Failed();
+		throw demangle_failed();
 	}
 	
 	struct NotSpecial {};
@@ -559,7 +559,7 @@ namespace Backtrace
 		
 		if ( double_underscore == NULL )
 		{
-			throw Unmangle_Failed();
+			throw demangle_failed();
 		}
 		
 		std::string name( p, double_underscore );
@@ -567,12 +567,12 @@ namespace Backtrace
 		if ( name == "__ct" )  return p = double_underscore, "";
 		if ( name == "__dt" )  return p = double_underscore, "~";
 		
-		if ( name == "_vtbl"     )  throw Unmangle_Failed();
-		if ( name == "_rttivtbl" )  throw Unmangle_Failed();
-		if ( name == "_vbtbl"    )  throw Unmangle_Failed();
-		if ( name == "__rtti"    )  throw Unmangle_Failed();
-		if ( name == "__ti"      )  throw Unmangle_Failed();
-		if ( name == "___ti"     )  throw Unmangle_Failed();
+		if ( name == "_vtbl"     )  throw demangle_failed();
+		if ( name == "_rttivtbl" )  throw demangle_failed();
+		if ( name == "_vbtbl"    )  throw demangle_failed();
+		if ( name == "__rtti"    )  throw demangle_failed();
+		if ( name == "__ti"      )  throw demangle_failed();
+		if ( name == "___ti"     )  throw demangle_failed();
 		
 		if ( p[1] == '_' )
 		{
@@ -677,14 +677,14 @@ namespace Backtrace
 	}
 	
 	
-	std::string UnmangleMWC68K( const std::string& name )
+	std::string demangle_MWC68K( const std::string& name )
 	{
 		const char* p = name.c_str();
 		
 		return MWC68K_Unmangler().ReadSymbol( p );
 	}
 	
-	std::string UnmangleMWCPPC( const std::string& name )
+	std::string demangle_MWCPPC( const std::string& name )
 	{
 		if ( name[0] != '.' )
 		{

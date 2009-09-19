@@ -16,8 +16,8 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Backtrace
-#include "Backtrace/StackCrawl.hh"
+// Recall
+#include "recall/stack_crawl.hh"
 
 // Nucleus
 #include "Nucleus/Owned.h"
@@ -124,9 +124,9 @@ namespace Genie
 			
 			int* itsErrno;
 			
-			Backtrace::StackFramePtr itsStackBottomPtr;
-			Backtrace::StackFramePtr itsStackFramePtr;
-			Backtrace::StackFramePtr itsVForkFramePtr;
+			recall::stack_frame_pointer itsStackBottomPtr;
+			recall::stack_frame_pointer itsStackFramePtr;
+			recall::stack_frame_pointer itsVForkFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
 			
@@ -205,8 +205,8 @@ namespace Genie
 			
 			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
-			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
-			Backtrace::StackFramePtr GetStackBottomPointer() const  { return itsStackBottomPtr; }
+			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
+			recall::stack_frame_pointer GetStackBottomPointer() const  { return itsStackBottomPtr; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }

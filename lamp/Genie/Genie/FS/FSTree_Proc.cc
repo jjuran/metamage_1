@@ -8,8 +8,8 @@
 // Iota
 #include "iota/decimal.hh"
 
-// Backtrace
-#include "Backtrace/Backtrace.hh"
+// Recall
+#include "recall/backtrace.hh"
 
 // Nucleus
 #include "Nucleus/Convert.h"
@@ -404,25 +404,34 @@ namespace Genie
 	
 	std::string proc_PID_stack::Get( const Process& process )
 	{
-		using Backtrace::StackFramePtr;
-		using Backtrace::FrameData;
+		using recall::stack_frame_pointer;
+		using recall::frame_data;
 		
-		StackFramePtr top    = process.GetStackFramePointer();
-		StackFramePtr bottom = process.GetStackBottomPointer();
+		stack_frame_pointer top = process.GetStackFramePointer();
 		
 		if ( top == NULL )
 		{
 			return "";
 		}
 		
-		std::vector< FrameData > stackCrawl = MakeStackCrawlFromTopToBottom( top, bottom );
+		std::vector< frame_data > stackCrawl = make_stack_crawl_from_top( top );
 		
-		std::vector< FrameData >::const_iterator begin = stackCrawl.begin();
-		std::vector< FrameData >::const_iterator end   = stackCrawl.end();
+		std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
+		std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 		
-		--end;  // skip Genie::Process::Run( void )
+		// skip __lamp_main
+		// skip Invoke()
+		// skip Run()
+		// skip ProcessThreadEntry()
+		// skip Adapter()
+		// skip ??? (Thread Manager)
 		
-		std::string result = MakeReportFromStackCrawl( begin, end );
+		if ( end - 6 > begin )
+		{
+			end -= 6;
+		}
+		
+		std::string result = make_report_from_stack_crawl( begin, end );
 		
 		return result;
 	}

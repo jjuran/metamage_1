@@ -1,9 +1,9 @@
-/*	========
- *	MachO.cc
- *	========
+/*	=========
+ *	mach_o.cc
+ *	=========
  */
 
-#include "Backtrace/MachO.hh"
+#include "recall/mach_o.hh"
 
 #include <string.h>
 
@@ -15,7 +15,7 @@
 #endif
 
 
-namespace Backtrace
+namespace recall
 {
 	
 #ifdef __MACH__
@@ -143,7 +143,7 @@ namespace Backtrace
 		return NULL;
 	}
 	
-	const char* FindSymbolName( ReturnAddrMachO addr )
+	const char* find_symbol_name( return_address_mach_o addr )
 	{
 		unsigned int  offset       = 0;
 		bool          publicSymbol = false;
