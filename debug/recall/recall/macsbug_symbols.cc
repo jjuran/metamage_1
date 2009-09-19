@@ -31,8 +31,19 @@ namespace recall
 		
 		while ( word < end )
 		{
-			if ( *word == 0x4e75 )
+			const uint16_t op = *word;
+			
+			if ( (op & 0xfffe) == 0x4e74 )
 			{
+				if ( op == 0x4e74 )
+				{
+					++word;  // RTD:  skip op parameter
+				}
+				else
+				{
+					// RTS
+				}
+				
 				const uint8_t* p = (const uint8_t*) ++word;
 				
 				if ( (*p & 0x80) != 0x80 )
