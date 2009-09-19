@@ -814,13 +814,6 @@ namespace tool
 		
 		memcpy( format + STRLEN( "B" ), name, name_len );
 		
-		const short size_index = op >> 6 & 0x3;
-		
-		if ( size_index == 3 )
-		{
-			throw illegal_instruction();
-		}
-		
 		const short mode_reg = op & 0x3f;
 		
 		const unsigned immediate_data = read_word();
