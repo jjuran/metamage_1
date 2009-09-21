@@ -14,6 +14,7 @@
 
 // Iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
 // POSeven
@@ -111,29 +112,19 @@ namespace tool
 	
 	static void append_hex( std::string& s, unsigned long x, int min_bytes )
 	{
-		if ( x & 0xff000000  ||  min_bytes >= 4 )
-		{
-			s += hex_digit( x >> 28 );
-			s += hex_digit( x >> 24 );
-		}
+		const unsigned short min_digits = min_bytes * 2;
 		
-		if ( x & 0xffff0000  ||  min_bytes >= 3 )
-		{
-			s += hex_digit( x >> 20 );
-			s += hex_digit( x >> 16 );
-		}
+		const unsigned short magnitude = iota::hexidecimal_magnitude( x );
 		
-		if ( x & 0xffffff00  ||  min_bytes >= 2 )
-		{
-			s += hex_digit( x >> 12 );
-			s += hex_digit( x >>  8 );
-		}
+		const unsigned short even_magnitude = magnitude + (magnitude & 0x1 );
 		
-		if ( true )
-		{
-			s += hex_digit( x >>  4 );
-			s += hex_digit( x       );
-		}
+		const unsigned short n_bytes = std::max( even_magnitude, min_digits );
+		
+		s.resize( s.size() + n_bytes );
+		
+		char* buf = &*s.end() - n_bytes;
+		
+		iota::inscribe_n_hex_digits( buf, x, n_bytes );
 	}
 	
 	static void append_signed_decimal( std::string& s, int x )
