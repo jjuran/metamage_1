@@ -168,7 +168,7 @@ namespace recall
 	                                         const char*         arch,
 	                                         const std::string&  name )
 	{
-		char buffer[ sizeof "1234567890: [<0x12345678|xyz>] \0" ];
+		char buffer[ sizeof "1234567890: [0x12345678 <0x12345678|xyz>] \0" ];
 		
 		std::sprintf( buffer, "%2d: [%#.8x <%#.8x|%s>] \0", offset, frame, addr, arch );
 		
