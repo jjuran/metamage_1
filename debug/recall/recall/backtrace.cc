@@ -17,6 +17,9 @@
 #include <cxxabi.h>
 #endif
 
+// Iota
+#include "iota/decimal.hh"
+
 // Recall
 #include "recall/demangle.hh"
 #include "recall/mach_o.hh"
@@ -162,8 +165,7 @@ namespace recall
 		return result;
 	}
 	
-	static void make_report_for_call( unsigned          offset,
-	                                  const call_info&  info,
+	static void make_report_for_call( const call_info&  info,
 	                                  std::string&      result )
 	{
 		const void         *frame = info.frame_pointer;
@@ -171,9 +173,9 @@ namespace recall
 		const char         *arch  = info.arch;
 		const std::string&  name  = info.demangled_name;
 		
-		char buffer[ sizeof "1234567890: [0x12345678 <0x12345678|xyz>] \0" ];
+		char buffer[ sizeof ": [0x12345678 <0x12345678|xyz>] \0" ];
 		
-		std::sprintf( buffer, "%2d: [%#.8x <%#.8x|%s>] \0", offset, frame, addr, arch );
+		std::sprintf( buffer, ": [%#.8x <%#.8x|%s>] \0", frame, addr, arch );
 		
 		result += buffer;
 		result += name;
@@ -183,6 +185,15 @@ namespace recall
 	static std::string make_report_from_call_chain( std::vector< call_info >::const_iterator  begin,
 	                                                std::vector< call_info >::const_iterator  end )
 	{
+		const unsigned n_frames = end - begin;
+		
+		const unsigned nth_offset = n_frames - 1;
+		
+		const char* spaces = "         ";
+		//                    123456789  // 9 spaces ought to be enough
+		
+		const unsigned nth_magnitude = iota::decimal_magnitude( nth_offset );
+		
 		unsigned offset = 0;
 		
 		std::string result;
@@ -190,9 +201,19 @@ namespace recall
 		// It's important to use < instead of != if we might skip past the end
 		for ( std::vector< call_info >::const_iterator it = begin;  it < end;  ++it, ++offset )
 		{
+			const unsigned magnitude = iota::decimal_magnitude( offset );
+			
+			const unsigned n_spaces = nth_magnitude - magnitude;
+			
+			result.append( spaces, n_spaces );
+			
+			result.resize( result.size() + magnitude );
+			
+			iota::inscribe_unsigned_decimal_backwards( offset, &*result.end() );
+			
 			const call_info& info = *it;
 			
-			make_report_for_call( offset, info, result );
+			make_report_for_call( info, result );
 		}
 		
 		result += "\n";
