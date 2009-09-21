@@ -5,6 +5,7 @@
 
 // Iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
 // Nucleus
@@ -117,36 +118,15 @@ namespace tool
 		}
 	}
 	
-	static inline char hex_digit( int x )
-	{
-		x &= 0xf;
-		
-		return x + (x < 10 ? '0'
-		                   : 'a' - 10);
-	}
-	
-	static void write_8_hex_digits( char* p, unsigned long x )
-	{
-		*p++ = hex_digit( x >> 28 );
-		*p++ = hex_digit( x >> 24 );
-		
-		*p++ = hex_digit( x >> 20 );
-		*p++ = hex_digit( x >> 16 );
-		
-		*p++ = hex_digit( x >> 12 );
-		*p++ = hex_digit( x >>  8 );
-		
-		*p++ = hex_digit( x >>  4 );
-		*p   = hex_digit( x       );
-	}
-	
 	static void PrintDiscID()
 	{
 		unsigned int discID = NX::CDDBDiscID( gTOC );
 		
 		char discid_message[] = "Disc ID is abcd1234\n";
 		
-		write_8_hex_digits( discid_message + STRLEN( "Disc ID is " ), discID );
+		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
+		
+		iota::inscribe_n_hex_digits( discid_buf, discID, 8 );
 		
 		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		
