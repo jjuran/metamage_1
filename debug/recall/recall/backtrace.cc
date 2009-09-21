@@ -162,12 +162,14 @@ namespace recall
 		return result;
 	}
 	
-	static std::string make_report_for_call( unsigned            offset,
-	                                         const void*         frame,
-	                                         const void*         addr,
-	                                         const char*         arch,
-	                                         const std::string&  name )
+	static std::string make_report_for_call( unsigned          offset,
+	                                         const call_info&  info )
 	{
+		const void         *frame = info.frame_pointer;
+		const void         *addr  = info.return_address;
+		const char         *arch  = info.arch;
+		const std::string&  name  = info.demangled_name;
+		
 		char buffer[ sizeof "1234567890: [0x12345678 <0x12345678|xyz>] \0" ];
 		
 		std::sprintf( buffer, "%2d: [%#.8x <%#.8x|%s>] \0", offset, frame, addr, arch );
@@ -192,10 +194,7 @@ namespace recall
 		{
 			const call_info& info = *it;
 			
-			result += make_report_for_call( offset, info.frame_pointer,
-			                                        info.return_address,
-			                                        info.arch,
-			                                        info.demangled_name );
+			result += make_report_for_call( offset, info );
 		}
 		
 		result += "\n";
