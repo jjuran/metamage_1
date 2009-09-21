@@ -859,7 +859,10 @@ namespace tool
 		{
 			const unsigned data = global_last_immediate_data_from_ea;
 			
-			if ( isprint( data >> 24 )  &&  isprint( data >> 16 & 0xff ) )
+			if (     isprint( data >> 24        )
+			     &&  isprint( data >> 16 & 0xff )
+			     &&         ( data >>  8 & 0xff ) >= ' '
+			     &&         ( data       & 0xff ) >= ' ' )
 			{
 				comment = COMMENT;
 				
