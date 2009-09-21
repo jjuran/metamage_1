@@ -162,8 +162,9 @@ namespace recall
 		return result;
 	}
 	
-	static std::string make_report_for_call( unsigned          offset,
-	                                         const call_info&  info )
+	static void make_report_for_call( unsigned          offset,
+	                                  const call_info&  info,
+	                                  std::string&      result )
 	{
 		const void         *frame = info.frame_pointer;
 		const void         *addr  = info.return_address;
@@ -174,12 +175,9 @@ namespace recall
 		
 		std::sprintf( buffer, "%2d: [%#.8x <%#.8x|%s>] \0", offset, frame, addr, arch );
 		
-		std::string result = buffer;
-		
+		result += buffer;
 		result += name;
 		result += "\n";
-		
-		return result;
 	}
 	
 	static std::string make_report_from_call_chain( std::vector< call_info >::const_iterator  begin,
@@ -194,7 +192,7 @@ namespace recall
 		{
 			const call_info& info = *it;
 			
-			result += make_report_for_call( offset, info );
+			make_report_for_call( offset, info, result );
 		}
 		
 		result += "\n";
