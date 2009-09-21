@@ -13,12 +13,17 @@
 // Standard C/C++
 #include <cstdio>
 
+// Standard C
+#include <string.h>
+
 #ifdef __GNUC__
 #include <cxxabi.h>
 #endif
 
 // Iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
+#include "iota/strings.hh"
 
 // Recall
 #include "recall/demangle.hh"
@@ -173,11 +178,18 @@ namespace recall
 		const char         *arch  = info.arch;
 		const std::string&  name  = info.demangled_name;
 		
-		char buffer[ sizeof ": [0x12345678 <0x12345678|xyz>] \0" ];
+		const size_t old_size = result.size();
 		
-		std::sprintf( buffer, ": [%#.8x <%#.8x|%s>] \0", frame, addr, arch );
+		result.append( STR_LEN( ": [0x12345678 <0x12345678|xyz>] " ) );
 		
-		result += buffer;
+		char* frame_buf  = &result[ old_size + STRLEN( ": [0x"             ) ];
+		char* return_buf = &result[ old_size + STRLEN( ": [0x12345678 <0x" ) ];
+		
+		iota::inscribe_n_hex_digits( frame_buf, (long) frame, 8 );
+		iota::inscribe_n_hex_digits( return_buf, (long) addr, 8 );
+		
+		strncpy( &*result.end() - STRLEN( "xyz>] " ), arch, 3 );
+		
 		result += name;
 		result += "\n";
 	}
