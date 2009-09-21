@@ -173,11 +173,6 @@ namespace recall
 	static void make_report_for_call( const call_info&  info,
 	                                  std::string&      result )
 	{
-		const void         *frame = info.frame_pointer;
-		const void         *addr  = info.return_address;
-		const char         *arch  = info.arch;
-		const std::string&  name  = info.demangled_name;
-		
 		const size_t old_size = result.size();
 		
 		result.append( STR_LEN( ": [0x12345678 <0x12345678|xyz>] " ) );
@@ -185,12 +180,12 @@ namespace recall
 		char* frame_buf  = &result[ old_size + STRLEN( ": [0x"             ) ];
 		char* return_buf = &result[ old_size + STRLEN( ": [0x12345678 <0x" ) ];
 		
-		iota::inscribe_n_hex_digits( frame_buf, (long) frame, 8 );
-		iota::inscribe_n_hex_digits( return_buf, (long) addr, 8 );
+		iota::inscribe_n_hex_digits( frame_buf,  (long) info.frame_pointer,  8 );
+		iota::inscribe_n_hex_digits( return_buf, (long) info.return_address, 8 );
 		
-		strncpy( &*result.end() - STRLEN( "xyz>] " ), arch, 3 );
+		strncpy( &*result.end() - STRLEN( "xyz>] " ), info.arch, 3 );
 		
-		result += name;
+		result += info.demangled_name;
 		result += "\n";
 	}
 	
