@@ -210,12 +210,11 @@ namespace recall
 		goto next;
 	}
 	
-	std::vector< frame_data > make_stack_crawl( stack_frame_pointer top )
+	void make_stack_crawl( std::vector< frame_data >&  result,
+	                       stack_frame_pointer         top )
 	{
 		const stack_frame* top_frame = top ? (const stack_frame*) top
 		                                   : get_top_frame();
-		
-		std::vector< frame_data > result;
 		
 		try
 		{
@@ -224,8 +223,6 @@ namespace recall
 		catch ( const std::bad_alloc& )
 		{
 		}
-		
-		return result;
 	}
 	
 }

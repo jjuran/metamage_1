@@ -143,7 +143,8 @@ namespace recall
 	
 	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip = 0 );
 	
-	std::vector< frame_data > make_stack_crawl( stack_frame_pointer top = NULL );
+	void make_stack_crawl( std::vector< frame_data >&  result,
+	                       stack_frame_pointer         top = NULL );
 	
 }
 

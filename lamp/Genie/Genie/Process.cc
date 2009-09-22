@@ -79,7 +79,9 @@ static void DumpBacktrace()
 {
 	using namespace recall;
 	
-	std::vector< frame_data > stackCrawl = make_stack_crawl();
+	std::vector< frame_data > stackCrawl;
+	
+	make_stack_crawl( stackCrawl );
 	
 	std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 	std::vector< frame_data >::const_iterator end   = stackCrawl.end();
