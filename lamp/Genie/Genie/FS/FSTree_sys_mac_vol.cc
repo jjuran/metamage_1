@@ -409,6 +409,18 @@ namespace Genie
 		}
 	};
 	
+	struct sys_mac_vol_N_name : sys_mac_vol_N_Property< GetVolumeName >
+	{
+		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		{
+			const N::FSVolumeRefNum vRefNum = GetKey( that );
+			
+			N::Str27 name( begin, end - begin );
+			
+			N::ThrowOSStatus( ::HRename( vRefNum, fsRtDirID, "\p", name ) );
+		}
+	};
+	
 	class FSTree_Folder_Link : public FSTree
 	{
 		private:
@@ -459,6 +471,22 @@ namespace Genie
 		{
 			p7::throw_errno( ENOENT );
 		}
+		
+		return result;
+	}
+	
+	static FSTreePtr Volume_Name_Factory( const FSTreePtr&    parent,
+	                                      const std::string&  name )
+	{
+		typedef sys_mac_vol_N_name Property;
+		
+		const size_t size = 0;
+		
+		FSTreePtr result = New_FSTree_Property( parent,
+		                                        name,
+		                                        size,
+		                                        &Property::Read,
+		                                        &Property::Write );
 		
 		return result;
 	}
@@ -531,7 +559,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
-		{ "name", &Property_Factory< GetVolumeName > },
+		{ "name", &Volume_Name_Factory },
 		
 		{ "block-size",  &Property_Factory< GetVolumeBlockSize      > },
 		{ "blocks",      &Property_Factory< GetVolumeBlockCount     > },
