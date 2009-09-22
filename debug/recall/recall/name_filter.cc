@@ -34,11 +34,9 @@ namespace recall
 		REPLACE( "std::vector< std::string >",  "std::vector< std::string, std::allocator< std::string > >" )
 	};
 	
-	std::string filter_symbol( const std::string& name )
+	void filter_symbol( std::string& name )
 	{
 		const replacement* end = global_replacements + ARRAY_LEN( global_replacements );
-		
-		std::string result = name;
 		
 		for ( const replacement* it = global_replacements;  it < end;  ++it )
 		{
@@ -47,21 +45,19 @@ namespace recall
 			
 			while ( true )
 			{
-				std::string::iterator found = std::search( result.begin(),
-				                                           result.end(),
+				std::string::iterator found = std::search( name.begin(),
+				                                           name.end(),
 				                                           pattern,
 				                                           pattern_end );
 				
-				if ( found == result.end() )
+				if ( found == name.end() )
 				{
 					break;
 				}
 				
-				result.replace( found, found + it->pattern_length, it->new_text, it->new_text_length );
+				name.replace( found, found + it->pattern_length, it->new_text, it->new_text_length );
 			}
 		}
-		
-		return result;
 	}
 	
 }

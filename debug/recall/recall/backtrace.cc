@@ -13,9 +13,17 @@
 // Standard C/C++
 #include <cstdio>
 
+// Standard C
+#include <string.h>
+
 #ifdef __GNUC__
 #include <cxxabi.h>
 #endif
+
+// Iota
+#include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
+#include "iota/strings.hh"
 
 // Recall
 #include "recall/demangle.hh"
@@ -150,7 +158,7 @@ namespace recall
 		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
 		                                    : get_demangled_symbol_name( call.addr_native );
 		
-		result.demangled_name = filter_symbol( result.demangled_name );
+		filter_symbol( result.demangled_name );
 		
 	#else
 		
@@ -162,27 +170,37 @@ namespace recall
 		return result;
 	}
 	
-	static std::string make_report_for_call( unsigned            offset,
-	                                         const void*         frame,
-	                                         const void*         addr,
-	                                         const char*         arch,
-	                                         const std::string&  name )
+	static void make_report_for_call( const call_info&  info,
+	                                  std::string&      result )
 	{
-		char buffer[ sizeof "1234567890: [0x12345678 <0x12345678|xyz>] \0" ];
+		const size_t old_size = result.size();
 		
-		std::sprintf( buffer, "%2d: [%#.8x <%#.8x|%s>] \0", offset, frame, addr, arch );
+		result.append( STR_LEN( ": [0x12345678 <0x12345678|xyz>] " ) );
 		
-		std::string result = buffer;
+		char* frame_buf  = &result[ old_size + STRLEN( ": [0x"             ) ];
+		char* return_buf = &result[ old_size + STRLEN( ": [0x12345678 <0x" ) ];
 		
-		result += name;
+		iota::inscribe_n_hex_digits( frame_buf,  (long) info.frame_pointer,  8 );
+		iota::inscribe_n_hex_digits( return_buf, (long) info.return_address, 8 );
+		
+		strncpy( &*result.end() - STRLEN( "xyz>] " ), info.arch, 3 );
+		
+		result += info.demangled_name;
 		result += "\n";
-		
-		return result;
 	}
 	
 	static std::string make_report_from_call_chain( std::vector< call_info >::const_iterator  begin,
 	                                                std::vector< call_info >::const_iterator  end )
 	{
+		const unsigned n_frames = end - begin;
+		
+		const unsigned nth_offset = n_frames - 1;
+		
+		const char* spaces = "         ";
+		//                    123456789  // 9 spaces ought to be enough
+		
+		const unsigned nth_magnitude = iota::decimal_magnitude( nth_offset );
+		
 		unsigned offset = 0;
 		
 		std::string result;
@@ -190,12 +208,19 @@ namespace recall
 		// It's important to use < instead of != if we might skip past the end
 		for ( std::vector< call_info >::const_iterator it = begin;  it < end;  ++it, ++offset )
 		{
+			const unsigned magnitude = iota::decimal_magnitude( offset );
+			
+			const unsigned n_spaces = nth_magnitude - magnitude;
+			
+			result.append( spaces, n_spaces );
+			
+			result.resize( result.size() + magnitude );
+			
+			iota::inscribe_unsigned_decimal_backwards( offset, &*result.end() );
+			
 			const call_info& info = *it;
 			
-			result += make_report_for_call( offset, info.frame_pointer,
-			                                        info.return_address,
-			                                        info.arch,
-			                                        info.demangled_name );
+			make_report_for_call( info, result );
 		}
 		
 		result += "\n";
