@@ -158,7 +158,7 @@ namespace recall
 		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
 		                                    : get_demangled_symbol_name( call.addr_native );
 		
-		result.demangled_name = filter_symbol( result.demangled_name );
+		filter_symbol( result.demangled_name );
 		
 	#else
 		
