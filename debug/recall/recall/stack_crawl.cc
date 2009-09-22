@@ -210,31 +210,22 @@ namespace recall
 		goto next;
 	}
 	
-	static std::vector< frame_data > make_stack_crawl( const stack_frame* top )
+	std::vector< frame_data > make_stack_crawl( stack_frame_pointer top )
 	{
+		const stack_frame* top_frame = top ? (const stack_frame*) top
+		                                   : get_top_frame();
+		
 		std::vector< frame_data > result;
 		
 		try
 		{
-			crawl_stack( 0, top, result );
+			crawl_stack( 0, top_frame, result );
 		}
 		catch ( const std::bad_alloc& )
 		{
 		}
 		
 		return result;
-	}
-	
-	std::vector< frame_data > make_stack_crawl_from_top( stack_frame_pointer top )
-	{
-		const stack_frame* frame = (const stack_frame*) top;
-		
-		return make_stack_crawl( frame );
-	}
-	
-	std::vector< frame_data > make_stack_crawl()
-	{
-		return make_stack_crawl( get_top_frame() );
 	}
 	
 }

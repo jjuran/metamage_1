@@ -414,7 +414,7 @@ namespace Genie
 			return "";
 		}
 		
-		std::vector< frame_data > stackCrawl = make_stack_crawl_from_top( top );
+		std::vector< frame_data > stackCrawl = make_stack_crawl( top );
 		
 		std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 		std::vector< frame_data >::const_iterator end   = stackCrawl.end();
