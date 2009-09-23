@@ -204,11 +204,11 @@ namespace tool
 		{
 			const std::string& include_path = *it;
 			
-			if ( result.find( include_path ) == result.end() )
+			std::string pathname = project.FindIncludeRecursively( include_path );
+			
+			if ( !pathname.empty() )
 			{
-				std::string pathname = project.FindIncludeRecursively( include_path );
-				
-				if ( !pathname.empty() )
+				if ( result.find( pathname ) == result.end() )
 				{
 					result.insert( pathname );
 					
