@@ -222,12 +222,15 @@ namespace tool
 	{
 		typedef std::set< std::string >::const_iterator Iter;
 		
+		std::string contents;
+		
 		for ( Iter it = includes.begin();  it != includes.end();  ++it )
 		{
-			std::string line = *it + '\n';
-			
-			p7::write( output, line );
+			contents += *it;
+			contents += '\n';
 		}
+		
+		p7::write( output, contents );
 	}
 	
 	static void read_dependencies_file( p7::fd_t input_fd, std::set< std::string >& includes )
