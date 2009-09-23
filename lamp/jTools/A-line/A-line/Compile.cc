@@ -222,7 +222,22 @@ namespace tool
 	{
 		typedef std::set< std::string >::const_iterator Iter;
 		
+		size_t length = 0;
+		
+		for ( Iter it = includes.begin();  it != includes.end();  ++it )
+		{
+			length += it->length() + 1;
+		}
+		
 		std::string contents;
+		
+		try
+		{
+			contents.reserve( length );
+		}
+		catch ( ... )
+		{
+		}
 		
 		for ( Iter it = includes.begin();  it != includes.end();  ++it )
 		{
