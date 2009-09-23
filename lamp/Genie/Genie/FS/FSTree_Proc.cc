@@ -355,11 +355,11 @@ namespace Genie
 				
 				pid_t tpgid = 0;
 				
-				if ( term.get() )
+				if ( IOHandle* handle = term.get() )
 				{
-					terminal_name = term->GetFile()->Pathname();
+					terminal_name = handle->GetFile()->Pathname();
 					
-					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *term );
+					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 					
 					const boost::weak_ptr< ProcessGroup >& group = terminal.GetProcessGroup();
 					
