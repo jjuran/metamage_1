@@ -244,9 +244,8 @@ namespace recall
 	}
 	
 	debugging_context::debugging_context()
-	:
-		its_stack_crawl( make_stack_crawl() )
 	{
+		make_stack_crawl( its_stack_crawl );
 	}
 	
 }
