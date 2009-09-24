@@ -204,11 +204,11 @@ namespace tool
 		{
 			const std::string& include_path = *it;
 			
-			if ( result.find( include_path ) == result.end() )
+			std::string pathname = project.FindIncludeRecursively( include_path );
+			
+			if ( !pathname.empty() )
 			{
-				std::string pathname = project.FindIncludeRecursively( include_path );
-				
-				if ( !pathname.empty() )
+				if ( result.find( pathname ) == result.end() )
 				{
 					result.insert( pathname );
 					
@@ -222,12 +222,30 @@ namespace tool
 	{
 		typedef std::set< std::string >::const_iterator Iter;
 		
+		size_t length = 0;
+		
 		for ( Iter it = includes.begin();  it != includes.end();  ++it )
 		{
-			std::string line = *it + '\n';
-			
-			p7::write( output, line );
+			length += it->length() + 1;
 		}
+		
+		std::string contents;
+		
+		try
+		{
+			contents.reserve( length );
+		}
+		catch ( ... )
+		{
+		}
+		
+		for ( Iter it = includes.begin();  it != includes.end();  ++it )
+		{
+			contents += *it;
+			contents += '\n';
+		}
+		
+		p7::write( output, contents );
 	}
 	
 	static void read_dependencies_file( p7::fd_t input_fd, std::set< std::string >& includes )
