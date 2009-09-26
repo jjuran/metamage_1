@@ -88,7 +88,7 @@ my @programs = qw
 	echo env err2text
 	false follower
 	gzip
-	htget httpd
+	hostname htget httpd
 	ic idle illegal inetd
 	jgetty jsync jtest
 	keymods kill killall
@@ -143,7 +143,7 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
+		qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
 		qw( jgetty ),
 		# Perl scripts
