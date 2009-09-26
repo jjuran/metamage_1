@@ -18,6 +18,7 @@
 // Genie
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
+#include "Genie/Utilities/GetWorkstationName.hh"
 
 
 namespace Genie
@@ -57,8 +58,18 @@ namespace Genie
 	{
 		SystemCallFrame frame( "uname" );
 		
+		std::string nodename;
+		
+		try
+		{
+			nodename = GetWorkstationName();
+		}
+		catch ( ... )
+		{
+		}
+		
 		string_copy( uts->sysname,  STR_LEN( "Genie" ) );
-		string_copy( uts->nodename, STR_LEN( "nodename" ) );
+		string_copy( uts->nodename, nodename.c_str(), nodename.length() );
 		string_copy( uts->release,  STR_LEN( "0.7something" ) );
 		string_copy( uts->version,  STR_LEN( "verbose version string" ) );
 		string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
