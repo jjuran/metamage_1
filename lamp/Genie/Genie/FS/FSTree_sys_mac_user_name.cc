@@ -9,6 +9,7 @@
 #include "MacFeatures/Features.hh"
 
 // Genie
+#include "Genie/Utilities/CFStringGetStdString.hh"
 #include "Genie/Utilities/GetStringResource.hh"
 
 
@@ -45,33 +46,6 @@ namespace Genie
 		// no need to release.
 		
 		return NULL;
-	}
-	
-	static std::string CFStringGetStdString( CFStringRef string )
-	{
-		CFIndex length = CFStringGetLength( string );
-		
-		std::string result;
-		
-		result.resize( length );
-		
-		CFIndex usedBufLen = 0;
-		
-		CFIndex nConverted = CFStringGetBytes( string,
-		                                       CFRangeMake( 0, length ),
-		                                       kCFStringEncodingMacRoman,
-		                                       '\0',
-		                                       false,
-		                                       (UInt8*) &result[0],
-		                                       length,
-		                                       &usedBufLen );
-		
-		if ( usedBufLen != length )
-		{
-			throw N::ParamErr();
-		}
-		
-		return result;
 	}
 	
 	static std::string GetUserName()
