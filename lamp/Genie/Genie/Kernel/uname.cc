@@ -4,6 +4,7 @@
  */
 
 // Standard C
+#include <ctype.h>
 #include <string.h>
 
 // POSIX
@@ -66,6 +67,23 @@ namespace Genie
 		}
 		catch ( ... )
 		{
+		}
+		
+		char *const begin = &*nodename.begin();
+		char *const end   = &*nodename.end();
+		
+		for ( char *p = begin;  p != end;  ++p )
+		{
+			const char c = *p;
+			
+			if ( !isalnum( c ) )
+			{
+				*p = '-';
+			}
+			else if ( c >= 'A'  &&  c <= 'Z' )
+			{
+				*p = c | ' ';
+			}
 		}
 		
 		string_copy( uts->sysname,  STR_LEN( "Genie" ) );
