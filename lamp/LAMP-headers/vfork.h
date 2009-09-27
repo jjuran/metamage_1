@@ -17,14 +17,18 @@
 extern "C" {
 #endif
 	
-	int _vfork_start( jmp_buf* buffer );
+	// Rename _vfork_start() to ensure only recompiled sources link successfully.
+	// _vfork_start_1 marks the switch from setjmp() to sigsetjmp().
+	#define _vfork_start  _vfork_start_1
+	
+	int _vfork_start( sigjmp_buf* buffer );
 	
 	inline pid_t vfork()
 	{
-		jmp_buf *const temp_jmp_buf = (jmp_buf*) alloca( sizeof (jmp_buf) );
+		sigjmp_buf *const jmpbuf = (sigjmp_buf*) alloca( sizeof (sigjmp_buf) );
 		
-		return (pid_t) _vfork_start( temp_jmp_buf ) ? -1
-		                                            : setjmp( *temp_jmp_buf );
+		return (pid_t) _vfork_start( jmpbuf ) ? -1
+		                                      : sigsetjmp( *jmpbuf, 1 );
 	}
 	
 #ifdef __cplusplus
