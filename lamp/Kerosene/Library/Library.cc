@@ -298,6 +298,28 @@ struct passwd* getpwuid( uid_t uid )
 #pragma mark -
 #pragma mark ¥ setjmp ¥
 
+#ifdef __POWERPC__
+
+struct stack_frame
+{
+	stack_frame* next;
+};
+
+static asm stack_frame* get_backlink()
+{
+	lwz  r3,0(r1)
+	lwz  r3,0(r3)
+	blr
+}
+
+static asm void set_backlink( stack_frame* frame, const stack_frame* backlink )
+{
+	stw  r4,0(r3)
+	blr
+}
+
+#endif
+
 __sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask )
 {
 	sigset_t signals = 0xffffffff;
@@ -309,11 +331,26 @@ __sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask )
 	
 	env->sigmask = signals;
 	
+#if defined( __POWERPC__ ) && defined( __MWERKS__ )
+	
+	env->backlink = get_backlink();
+	
+#endif
+	
 	return env;
 }
 
 void siglongjmp( sigjmp_buf env, int val )
 {
+#if defined( __POWERPC__ ) && defined( __MWERKS__ )
+	
+	stack_frame *const sp       = (stack_frame*) ((void**) env)[2];
+	stack_frame *const backlink = (stack_frame*) env->backlink;
+	
+	set_backlink( sp, backlink );
+	
+#endif
+	
 	if ( env->sigmask != 0xffffffff )
 	{
 		int set = sigprocmask( SIG_SETMASK, &env->sigmask, NULL );

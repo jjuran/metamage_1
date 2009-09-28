@@ -12,6 +12,9 @@ struct __sigjmp_buf_struct
 {
 	jmp_buf   jumpbuf;
 	sigset_t  sigmask;
+#if defined( __POWERPC__ ) && defined( __MWERKS__ )
+	void*     backlink;  // save in case alloc() clobbers the previous SP
+#endif
 };
 
 typedef struct __sigjmp_buf_struct sigjmp_buf[1];
