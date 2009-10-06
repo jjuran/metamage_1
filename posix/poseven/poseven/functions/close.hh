@@ -20,9 +20,9 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/types/fd_t.hh"
+// poseven
+#include "poseven/Errno.hh"
+#include "poseven/types/fd_t.hh"
 
 
 namespace Nucleus

@@ -18,9 +18,9 @@
 #include "Nucleus/Convert.h"
 #include "Nucleus/Enumeration.h"
 
-// POSeven
-#include "POSeven/types/exit_t.hh"
-#include "POSeven/types/pid_t.hh"
+// poseven
+#include "poseven/types/exit_t.hh"
+#include "poseven/types/pid_t.hh"
 
 
 namespace poseven

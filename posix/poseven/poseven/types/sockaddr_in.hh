@@ -14,10 +14,10 @@
 #ifndef POSEVEN_TYPES_SOCKADDR_IN_HH
 #define POSEVEN_TYPES_SOCKADDR_IN_HH
 
-// POSeven
-#include "POSeven/types/in_addr_t.hh"
-#include "POSeven/types/in_port_t.hh"
-#include "POSeven/types/sockaddr.hh"
+// poseven
+#include "poseven/types/in_addr_t.hh"
+#include "poseven/types/in_port_t.hh"
+#include "poseven/types/sockaddr.hh"
 
 
 namespace poseven

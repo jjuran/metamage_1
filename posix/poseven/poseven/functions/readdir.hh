@@ -14,9 +14,9 @@
 #ifndef POSEVEN_FUNCTIONS_READDIR_HH
 #define POSEVEN_FUNCTIONS_READDIR_HH
 
-// POSeven
-#include "POSeven/types/dir_t.hh"
-#include "POSeven/types/errno_t.hh"
+// poseven
+#include "poseven/types/dir_t.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace poseven

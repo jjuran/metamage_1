@@ -14,10 +14,10 @@
 #ifndef POSEVEN_FUNCTIONS_BIND_HH
 #define POSEVEN_FUNCTIONS_BIND_HH
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/fd_t.hh"
-#include "POSeven/types/sockaddr.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/fd_t.hh"
+#include "poseven/types/sockaddr.hh"
 
 
 namespace poseven

@@ -17,9 +17,9 @@
 // POSIX
 #include <sys/wait.h>
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/wait_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/wait_t.hh"
 
 
 namespace poseven

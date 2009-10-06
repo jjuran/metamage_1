@@ -10,7 +10,7 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
-#include "POSeven/functions/openat.hh"
+#include "poseven/functions/openat.hh"
 
 // Convergence
 #include "at.h"

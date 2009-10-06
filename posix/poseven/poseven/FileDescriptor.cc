@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#include "POSeven/FileDescriptor.hh"
+#include "poseven/FileDescriptor.hh"
 
 
 namespace

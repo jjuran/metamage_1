@@ -20,9 +20,9 @@
 // Io
 #include "io/io.hh"
 
-// POSeven
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 
 struct stat;

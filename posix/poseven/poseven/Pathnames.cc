@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#include "POSeven/Pathnames.hh"
+#include "poseven/Pathnames.hh"
 
 
 namespace io

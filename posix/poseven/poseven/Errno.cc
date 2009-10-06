@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#include "POSeven/Errno.hh"
+#include "poseven/Errno.hh"
 
 
 namespace poseven

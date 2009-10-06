@@ -11,10 +11,10 @@
 // in the public domain.
 
 
-#include "POSeven/functions/dup2.hh"
+#include "poseven/functions/dup2.hh"
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
 
 
 namespace poseven

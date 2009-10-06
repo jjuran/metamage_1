@@ -17,8 +17,8 @@
 // POSIX
 #include <unistd.h>
 
-// POSeven
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/types/exit_t.hh"
 
 
 namespace poseven

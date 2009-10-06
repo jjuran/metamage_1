@@ -20,9 +20,9 @@
 // Io
 #include "io/files.hh"
 
-// POSeven
-#include "POSeven/functions/rmdir.hh"
-#include "POSeven/functions/unlink.hh"
+// poseven
+#include "poseven/functions/rmdir.hh"
+#include "poseven/functions/unlink.hh"
 
 
 namespace io

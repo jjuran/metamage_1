@@ -14,9 +14,9 @@
 #ifndef POSEVEN_FUNCTIONS_FDOPENDIR_HH
 #define POSEVEN_FUNCTIONS_FDOPENDIR_HH
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/functions/closedir.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/functions/closedir.hh"
 
 
 namespace poseven

@@ -17,9 +17,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/types/dir_t.hh"
-#include "POSeven/types/fd_t.hh"
+// poseven
+#include "poseven/types/dir_t.hh"
+#include "poseven/types/fd_t.hh"
 
 
 #ifdef dirfd

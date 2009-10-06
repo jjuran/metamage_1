@@ -14,12 +14,12 @@
 #ifndef POSEVEN_BUNDLES_INET_HH
 #define POSEVEN_BUNDLES_INET_HH
 
-// POSeven
-#include "POSeven/functions/accept.hh"
-#include "POSeven/functions/bind.hh"
-#include "POSeven/functions/connect.hh"
-#include "POSeven/functions/socket.hh"
-#include "POSeven/types/sockaddr_in.hh"
+// poseven
+#include "poseven/functions/accept.hh"
+#include "poseven/functions/bind.hh"
+#include "poseven/functions/connect.hh"
+#include "poseven/functions/socket.hh"
+#include "poseven/types/sockaddr_in.hh"
 
 
 namespace poseven

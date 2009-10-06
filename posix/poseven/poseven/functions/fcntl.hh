@@ -17,14 +17,14 @@
 // POSIX
 #include <fcntl.h>
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/fcntl_cmd_t.hh"
-#include "POSeven/types/fcntl_fd_flags_t.hh"
-#include "POSeven/types/fd_t.hh"
-#include "POSeven/types/open_flags_t.hh"
-#include "POSeven/types/pid_t.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/fcntl_cmd_t.hh"
+#include "poseven/types/fcntl_fd_flags_t.hh"
+#include "poseven/types/fd_t.hh"
+#include "poseven/types/open_flags_t.hh"
+#include "poseven/types/pid_t.hh"
 
 
 namespace poseven

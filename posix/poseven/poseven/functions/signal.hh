@@ -14,9 +14,9 @@
 #ifndef POSEVEN_FUNCTIONS_SIGNAL_HH
 #define POSEVEN_FUNCTIONS_SIGNAL_HH
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/signo_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/signo_t.hh"
 
 
 namespace poseven

@@ -23,10 +23,10 @@
 // Io
 #include "io/io.hh"
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/types/mode_t.hh"
-#include "POSeven/types/open_flags_t.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/types/mode_t.hh"
+#include "poseven/types/open_flags_t.hh"
 
 
 namespace poseven

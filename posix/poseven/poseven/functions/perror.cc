@@ -6,13 +6,13 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
-#include "POSeven/functions/perror.hh"
+#include "poseven/functions/perror.hh"
 
 // Standard C
 #include <string.h>
 
-// POSeven
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/write.hh"
 
 
 namespace poseven

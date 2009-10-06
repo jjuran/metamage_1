@@ -23,9 +23,9 @@
 // Nucleus
 #include "Nucleus/Flattener.h"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/functions/open.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/functions/open.hh"
 
 
 namespace poseven

@@ -20,9 +20,9 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/types/dir_t.hh"
+// poseven
+#include "poseven/Errno.hh"
+#include "poseven/types/dir_t.hh"
 
 
 namespace Nucleus
@@ -30,7 +30,7 @@ namespace Nucleus
 	
 	template <>
 	struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >//,
-	                                    //private POSeven::DefaultDestructionPOSIXResultPolicy
+	                                    //private poseven::DefaultDestructionPOSIXResultPolicy
 	{
 		void operator()( poseven::dir_t dir ) const
 		{

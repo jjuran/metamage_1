@@ -21,8 +21,8 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
-// POSeven
-#include "POSeven/functions/opendir.hh"
+// poseven
+#include "poseven/functions/opendir.hh"
 
 
 namespace poseven

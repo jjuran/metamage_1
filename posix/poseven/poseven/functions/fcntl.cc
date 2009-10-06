@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#include "POSeven/functions/fcntl.hh"
+#include "poseven/functions/fcntl.hh"
 
 
 namespace

@@ -20,9 +20,9 @@
 // Nucleus
 #include "Nucleus/Flag.h"
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/types/errno_t.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace poseven

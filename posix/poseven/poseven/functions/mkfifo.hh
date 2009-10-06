@@ -17,9 +17,9 @@
 // Standard C++
 #include <string>
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/mode_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/mode_t.hh"
 
 
 namespace poseven

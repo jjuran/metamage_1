@@ -7,7 +7,7 @@
 // in the public domain.
 
 
-#include "POSeven/types/errno_t.hh"
+#include "poseven/types/errno_t.hh"
 
 // Nucleus
 #include "Nucleus/ErrorCode.h"

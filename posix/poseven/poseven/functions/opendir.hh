@@ -17,8 +17,8 @@
 // Standard C++
 #include <string>
 
-// POSeven
-#include "POSeven/functions/closedir.hh"
+// poseven
+#include "poseven/functions/closedir.hh"
 
 
 namespace poseven

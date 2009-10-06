@@ -17,11 +17,11 @@
 // POSIX
 #include <unistd.h>
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/types/errno_t.hh"
-#include "POSeven/types/fd_t.hh"
-#include "POSeven/types/sockaddr.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/types/errno_t.hh"
+#include "poseven/types/fd_t.hh"
+#include "poseven/types/sockaddr.hh"
 
 
 namespace poseven

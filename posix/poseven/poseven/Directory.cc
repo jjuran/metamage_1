@@ -10,10 +10,10 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
-#include "POSeven/Directory.hh"
+#include "poseven/Directory.hh"
 
-// POSeven
-#include "POSeven/functions/readdir.hh"
+// poseven
+#include "poseven/functions/readdir.hh"
 
 
 namespace poseven

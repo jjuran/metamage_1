@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#include "POSeven/functions/open.hh"
+#include "poseven/functions/open.hh"
 
 
 namespace poseven
