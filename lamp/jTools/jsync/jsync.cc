@@ -465,9 +465,9 @@ namespace tool
 	{
 		struct stat a_stat, b_stat, c_stat;
 		
-		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat );
-		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat );
-		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat );
+		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat, p7::at_symlink_nofollow );
+		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat, p7::at_symlink_nofollow );
+		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat, p7::at_symlink_nofollow );
 		
 		const bool a_is_dir = a_exists && S_ISDIR( a_stat.st_mode );
 		const bool b_is_dir = b_exists && S_ISDIR( b_stat.st_mode );
