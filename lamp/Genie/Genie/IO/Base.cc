@@ -8,8 +8,8 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 
 namespace Genie

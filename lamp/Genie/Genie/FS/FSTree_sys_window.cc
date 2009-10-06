@@ -8,8 +8,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/FSTree_sys_window_REF.hh"

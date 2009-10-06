@@ -21,9 +21,9 @@
 // Iota
 #include "iota/environ.hh"
 
-// POSeven
-#include "POSeven/functions/fcntl.hh"
-#include "POSeven/functions/open.hh"
+// poseven
+#include "poseven/functions/fcntl.hh"
+#include "poseven/functions/open.hh"
 
 // sh
 #include "Options.hh"

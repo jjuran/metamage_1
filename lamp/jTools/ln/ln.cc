@@ -16,11 +16,11 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/perror.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/perror.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"

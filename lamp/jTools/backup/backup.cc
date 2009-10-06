@@ -21,21 +21,21 @@
 // Io
 #include "io/walk.hh"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/fchmod.hh"
-#include "POSeven/functions/fstat.hh"
-#include "POSeven/functions/mkdir.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/rename.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/symlink.hh"
-#include "POSeven/functions/utime.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/fchmod.hh"
+#include "poseven/functions/fstat.hh"
+#include "poseven/functions/mkdir.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/rename.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/symlink.hh"
+#include "poseven/functions/utime.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Orion
 #include "Orion/get_options.hh"

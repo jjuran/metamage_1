@@ -28,16 +28,16 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/waitpid.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/functions/_exit.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/waitpid.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/functions/_exit.hh"
 
 // Nitrogen Extras / Utilities
 //#include "Utilities/Processes.h"

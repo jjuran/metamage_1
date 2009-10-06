@@ -17,11 +17,11 @@
 #include "io/files.hh"
 #include "io/walk.hh"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/FileDescriptor.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"

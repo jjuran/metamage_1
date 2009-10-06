@@ -14,8 +14,8 @@
 // Nitrogen
 #include "Nitrogen/Resources.h"
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"

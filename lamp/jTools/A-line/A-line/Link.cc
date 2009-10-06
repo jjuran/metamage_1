@@ -17,13 +17,13 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/fstat.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/pread.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/fstat.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/pread.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"

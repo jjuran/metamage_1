@@ -8,10 +8,10 @@
 // Standard C
 #include <stdlib.h>
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/mkdir.hh"
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/mkdir.hh"
+#include "poseven/functions/stat.hh"
 
 // A-line
 #include "CompileDriver/Platform.hh"

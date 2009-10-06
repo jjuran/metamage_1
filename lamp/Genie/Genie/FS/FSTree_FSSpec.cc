@@ -38,8 +38,8 @@
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // TimeOff
 #include "TimeOff.hh"

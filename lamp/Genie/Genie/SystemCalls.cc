@@ -23,8 +23,8 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"

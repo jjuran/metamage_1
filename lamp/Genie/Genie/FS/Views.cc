@@ -5,8 +5,8 @@
 
 #include "Genie/FS/Views.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // PEdestal
 #include "Pedestal/EmptyView.hh"

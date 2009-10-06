@@ -8,10 +8,10 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/write.hh"
 
 // Io
 #include "Io/TextInput.hh"

@@ -30,9 +30,9 @@
 #include "io/slurp.hh"
 #include "io/spew.hh"
 
-// POSeven
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"

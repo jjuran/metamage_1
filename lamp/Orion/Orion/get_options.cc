@@ -35,8 +35,8 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/write.hh"
 
 
 // Option vocabulary

@@ -24,7 +24,7 @@
 	#include "Nucleus/Convert.h"
 	#include "Nitrogen/Files.h"
 	#include "MacFiles.hh"
-	#include "POSeven/Pathnames.hh"
+	#include "poseven/Pathnames.hh"
 #else
 	#include "fsspec_from_path.hh"
 	#include "SystemCalls.hh"

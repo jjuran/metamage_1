@@ -12,14 +12,14 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/pread.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/functions/wait.hh"
+// poseven
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/pread.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/functions/wait.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"

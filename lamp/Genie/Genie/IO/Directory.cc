@@ -12,8 +12,8 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 
 namespace Genie

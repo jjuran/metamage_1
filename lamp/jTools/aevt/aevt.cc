@@ -14,8 +14,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/write.hh"
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"

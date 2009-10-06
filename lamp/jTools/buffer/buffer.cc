@@ -10,19 +10,19 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/extras/pump.hh"
-#include "POSeven/extras/spew.hh"
-#include "POSeven/functions/chdir.hh"
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/link.hh"
-#include "POSeven/functions/openat.hh"
-#include "POSeven/functions/symlink.hh"
-#include "POSeven/functions/utime.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/extras/pump.hh"
+#include "poseven/extras/spew.hh"
+#include "poseven/functions/chdir.hh"
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/ioctl.hh"
+#include "poseven/functions/link.hh"
+#include "poseven/functions/openat.hh"
+#include "poseven/functions/symlink.hh"
+#include "poseven/functions/utime.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/get_options.hh"

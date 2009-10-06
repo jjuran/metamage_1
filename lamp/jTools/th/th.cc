@@ -26,14 +26,14 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/functions/close.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/dup2.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/functions/close.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/dup2.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
 
 // Io
 #include "Io/TextInput.hh"

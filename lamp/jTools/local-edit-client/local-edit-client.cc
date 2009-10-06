@@ -13,15 +13,15 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/ftruncate.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/perror.hh"
-#include "POSeven/functions/pwrite.hh"
-#include "POSeven/functions/shutdown.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/ftruncate.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/perror.hh"
+#include "poseven/functions/pwrite.hh"
+#include "poseven/functions/shutdown.hh"
+#include "poseven/functions/write.hh"
 
 // Arcana
 #include "HTTP.hh"

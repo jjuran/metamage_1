@@ -17,8 +17,8 @@
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/Drives.hh"

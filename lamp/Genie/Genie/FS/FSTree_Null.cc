@@ -8,8 +8,8 @@
 // Standard C/C++
 #include <cerrno>
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 
 namespace Genie

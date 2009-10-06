@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-// POSeven
-#include "POSeven/types/fd_t.hh"
+// poseven
+#include "poseven/types/fd_t.hh"
 
 // A-line
 #include "CompileDriver/Platform.hh"

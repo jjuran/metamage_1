@@ -17,11 +17,11 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/functions/dup2.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/dup2.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"

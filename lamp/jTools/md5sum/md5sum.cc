@@ -10,9 +10,9 @@
 // Standard C
 #include <string.h>
 
-// POSeven
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
+// poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"

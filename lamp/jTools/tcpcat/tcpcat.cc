@@ -19,11 +19,11 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/bundles/inet.hh"
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/bundles/inet.hh"
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Orion
 #include "Orion/Main.hh"

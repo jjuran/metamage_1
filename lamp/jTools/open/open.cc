@@ -24,8 +24,8 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
-// POSeven
-#include "POSeven/types/errno_t.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"

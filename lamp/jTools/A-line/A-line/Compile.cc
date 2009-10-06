@@ -29,13 +29,13 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/mkdir.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/mkdir.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"

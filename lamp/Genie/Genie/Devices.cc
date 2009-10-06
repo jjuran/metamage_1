@@ -11,8 +11,8 @@
 // Io
 #include "io/io.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/IO/SimpleDevice.hh"

@@ -9,7 +9,7 @@
 // POSIX
 #include "sys/file.h"
 
-// POSeven
+// poseven
 //#include "Errno.hh"
 
 // Genie

@@ -17,14 +17,14 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/extras/slurp.hh"
-#include "POSeven/functions/dirfd.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/openat.hh"
-#include "POSeven/functions/opendir.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/dirfd.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/openat.hh"
+#include "poseven/functions/opendir.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/get_options.hh"

@@ -23,12 +23,12 @@
 // Iota
 #include "iota/decimal.hh"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/fcntl.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/fcntl.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
 
 // Io
 #include "Io/TextInput.hh"

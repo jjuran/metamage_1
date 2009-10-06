@@ -14,8 +14,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/Devices.hh"
