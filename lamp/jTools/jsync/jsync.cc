@@ -130,7 +130,7 @@ namespace tool
 	
 	static inline NN::Owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
 	{
-		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory );
+		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory | p7::o_nofollow );
 	}
 	
 	static inline NN::Owned< p7::fd_t > open_dir( const std::string& path )
@@ -191,8 +191,8 @@ namespace tool
 		// Lock backup files to prevent accidents
 		const p7::mode_t mode = globally_locking_files ? p7::_400 : p7::_600;
 		
-		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly );
-		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_creat | p7::o_excl, mode );
+		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly | p7::o_nofollow );
+		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_nofollow | p7::o_creat | p7::o_excl, mode );
 		
 		p7::pump( in, out );
 		
@@ -324,8 +324,8 @@ namespace tool
 			//std::printf( "%s\n", subpath.c_str() );
 		}
 		
-		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly );
-		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly );
+		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
+		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
 		
 		NN::Owned< p7::fd_t > b_fd;
 		
@@ -334,7 +334,7 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly );
+			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
 			
 			time_t a_time = a_stat.st_mtime;
 			time_t c_time = c_stat.st_mtime;
@@ -409,7 +409,7 @@ namespace tool
 			
 			p7::close( to_fd );
 			
-			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc );
+			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_nofollow );
 			
 			off_t from_offset = 0;
 			
@@ -438,7 +438,7 @@ namespace tool
 			p7::close( b_fd );
 		}
 		
-		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
+		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat | p7::o_nofollow, p7::_400 );
 		
 		off_t from_offset = 0;
 		
