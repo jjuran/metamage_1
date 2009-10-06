@@ -17,9 +17,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/stat.hh"
 
 // Orion
 #include "Orion/Main.hh"

@@ -20,8 +20,8 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/functions/fstat.hh"
+// poseven
+#include "poseven/functions/fstat.hh"
 
 
 namespace p7 = poseven;

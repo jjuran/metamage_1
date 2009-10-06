@@ -19,13 +19,13 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/bundles/inet.hh"
-#include "POSeven/functions/dup2.hh"
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/socket.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/bundles/inet.hh"
+#include "poseven/functions/dup2.hh"
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/socket.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Orion
 #include "Orion/Main.hh"

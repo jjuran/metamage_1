@@ -18,8 +18,8 @@
 #include "MacIO/FSRead_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Io
 #include "io/slurp.hh"

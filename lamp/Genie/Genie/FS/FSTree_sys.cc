@@ -8,8 +8,8 @@
 // Nitrogen
 #include "Nitrogen/Sound.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/Exec/GetMainEntry.hh"

@@ -16,10 +16,10 @@
 #include "lamp/grafio.h"
 #include "lamp/winio.h"
 
-// POSeven
-#include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
+// poseven
+#include "poseven/functions/ioctl.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
 
 
 namespace p7 = poseven;

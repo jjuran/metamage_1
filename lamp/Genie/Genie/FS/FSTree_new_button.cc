@@ -5,8 +5,8 @@
 
 #include "Genie/FS/FSTree_new_button.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"

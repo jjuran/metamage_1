@@ -24,10 +24,10 @@
 #include "Nucleus/Exception.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
-// POSeven
-#include "POSeven/functions/perror.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/functions/perror.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 
 namespace Orion

@@ -3,17 +3,17 @@
  *	=======
  */
 
-// POSeven
-#include "POSeven/functions/clearenv.hh"
-#include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/select.hh"
-#include "POSeven/functions/setsid.hh"
-#include "POSeven/functions/signal.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/functions/_exit.hh"
+// poseven
+#include "poseven/functions/clearenv.hh"
+#include "poseven/functions/ioctl.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/select.hh"
+#include "poseven/functions/setsid.hh"
+#include "poseven/functions/signal.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/functions/_exit.hh"
 
 // Orion
 #include "Orion/Main.hh"

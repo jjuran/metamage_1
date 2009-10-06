@@ -9,8 +9,8 @@
 // POSIX
 #include "sys/stat.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // MacLamp
 #include "fsspec_from_path.hh"

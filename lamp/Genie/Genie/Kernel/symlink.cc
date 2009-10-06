@@ -13,8 +13,8 @@
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

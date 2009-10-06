@@ -27,12 +27,12 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
-// POSeven
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

@@ -20,20 +20,20 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/bundles/inet.hh"
-#include "POSeven/functions/accept.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/fcntl.hh"
-#include "POSeven/functions/listen.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/perror.hh"
-#include "POSeven/functions/signal.hh"
-#include "POSeven/functions/socket.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/bundles/inet.hh"
+#include "poseven/functions/accept.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/fcntl.hh"
+#include "poseven/functions/listen.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/perror.hh"
+#include "poseven/functions/signal.hh"
+#include "poseven/functions/socket.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Io
 #include "Io/TextInput.hh"

@@ -8,8 +8,8 @@
 // POSIX
 #include <fcntl.h>
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Pedestal
 #include "Pedestal/ListView.hh"

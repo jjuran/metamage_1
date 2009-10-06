@@ -8,11 +8,11 @@
 #include <string>
 #include <vector>
 
-// POSeven
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
 
 // GetPathname
 #include "GetPathname.hh"

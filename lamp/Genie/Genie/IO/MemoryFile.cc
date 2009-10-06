@@ -8,8 +8,8 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/mmap/static_memory_mapping.hh"

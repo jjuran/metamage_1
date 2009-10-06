@@ -24,12 +24,12 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/functions/signal.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/functions/_exit.hh"
+// poseven
+#include "poseven/functions/signal.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/functions/_exit.hh"
 
 // ShellShock
 #include "ShellShock/Expansion.hh"

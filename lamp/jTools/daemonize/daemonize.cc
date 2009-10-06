@@ -17,11 +17,11 @@
 // Convergence
 #include "fork_and_exit.hh"
 
-// POSeven
-#include "POSeven/functions/close.hh"
-#include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/perror.hh"
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/functions/ioctl.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/perror.hh"
 
 // Orion
 #include "Orion/get_options.hh"

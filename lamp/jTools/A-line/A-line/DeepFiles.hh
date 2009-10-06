@@ -18,10 +18,10 @@
 #include "io/files.hh"
 #include "io/walk.hh"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/lstat.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/lstat.hh"
 
 
 namespace tool

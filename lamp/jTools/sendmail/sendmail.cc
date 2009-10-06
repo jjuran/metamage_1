@@ -25,10 +25,10 @@
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/OpenTransportProviders.h"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/bundles/inet.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/bundles/inet.hh"
+#include "poseven/types/exit_t.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"

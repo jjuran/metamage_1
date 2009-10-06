@@ -16,8 +16,8 @@
 #include "Nitrogen/OSUtils.h"
 #include "Nitrogen/Threads.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"

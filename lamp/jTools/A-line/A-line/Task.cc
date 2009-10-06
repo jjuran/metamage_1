@@ -13,9 +13,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/stat.hh"
 
 // A-line
 #include "A-line/A-line.hh"

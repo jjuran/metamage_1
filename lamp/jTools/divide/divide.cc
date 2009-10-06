@@ -10,11 +10,11 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"

@@ -19,12 +19,12 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/bundles/inet.hh"
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/socket.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/bundles/inet.hh"
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/socket.hh"
+#include "poseven/types/exit_t.hh"
 
 // Arcana
 #include "HTTP.hh"

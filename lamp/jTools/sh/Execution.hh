@@ -8,8 +8,8 @@
 // Standard C++
 #include <string>
 
-// POSeven
-#include "POSeven/types/wait_t.hh"
+// poseven
+#include "poseven/types/wait_t.hh"
 
 
 namespace tool

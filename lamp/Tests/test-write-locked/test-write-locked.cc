@@ -6,14 +6,14 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/extras/slurp.hh"
-#include "POSeven/functions/fchmod.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/unlink.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/fchmod.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/unlink.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"

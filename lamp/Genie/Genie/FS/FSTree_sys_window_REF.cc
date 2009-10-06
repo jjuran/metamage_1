@@ -14,8 +14,8 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Nitrogen
 #include "Nitrogen/MacWindows.h"

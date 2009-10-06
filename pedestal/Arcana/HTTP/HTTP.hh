@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
 
 
 namespace HTTP

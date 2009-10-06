@@ -13,13 +13,13 @@
 // Io
 #include "io/walk.hh"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/FileDescriptor.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Orion
 #include "Orion/get_options.hh"

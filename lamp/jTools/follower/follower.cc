@@ -6,10 +6,10 @@
 // Standard C/C++
 #include <cstdio>
 
-// POSeven
-#include "POSeven/extras/slurp.hh"
-#include "POSeven/functions/ftruncate.hh"
-#include "POSeven/functions/pwrite.hh"
+// poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/ftruncate.hh"
+#include "poseven/functions/pwrite.hh"
 
 // Orion
 #include "Orion/get_options.hh"

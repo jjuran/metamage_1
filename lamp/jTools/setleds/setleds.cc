@@ -14,8 +14,8 @@
 #include "ADBKeyboardLEDs.hh"
 #endif
 
-// POSeven
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"

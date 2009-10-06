@@ -3,13 +3,13 @@
  *	=======
  */
 
-// POSeven
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/gettimeofday.hh"
-#include "POSeven/functions/times.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/_exit.hh"
+// poseven
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/gettimeofday.hh"
+#include "poseven/functions/times.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/_exit.hh"
 
 // Orion
 #include "Orion/Main.hh"

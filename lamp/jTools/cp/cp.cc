@@ -15,8 +15,8 @@
 // Convergence
 #include "copyfile.hh"
 
-// POSeven
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/functions/stat.hh"
 
 // Orion
 #include "Orion/Main.hh"

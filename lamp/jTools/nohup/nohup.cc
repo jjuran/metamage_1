@@ -18,8 +18,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/functions/perror.hh"
+// poseven
+#include "poseven/functions/perror.hh"
 
 
 namespace p7 = poseven;

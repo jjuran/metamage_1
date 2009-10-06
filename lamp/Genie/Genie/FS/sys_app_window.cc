@@ -8,8 +8,8 @@
 // Mac OS
 #include <MacWindows.h>
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/sys_app_window_list.hh"

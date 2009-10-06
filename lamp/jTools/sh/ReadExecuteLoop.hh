@@ -5,9 +5,9 @@
 #ifndef READEXECUTELOOP_HH
 #define READEXECUTELOOP_HH
 
-// POSeven
-#include "POSeven/types/fd_t.hh"
-#include "POSeven/types/wait_t.hh"
+// poseven
+#include "poseven/types/fd_t.hh"
+#include "poseven/types/wait_t.hh"
 
 
 namespace tool

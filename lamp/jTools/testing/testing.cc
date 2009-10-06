@@ -71,11 +71,11 @@
 #include "Nitrogen/Str.h"
 #include "Nitrogen/Threads.h"
 
-// POSeven
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/openat.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/openat.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON

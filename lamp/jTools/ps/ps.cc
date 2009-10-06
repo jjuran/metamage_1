@@ -15,14 +15,14 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/ftruncate.hh"
-#include "POSeven/functions/lseek.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/openat.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/ftruncate.hh"
+#include "poseven/functions/lseek.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/openat.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/get_options.hh"

@@ -21,12 +21,12 @@
 #include "Nucleus/Owned.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
-// POSeven
-#include "POSeven/extras/slurp.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/read.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"

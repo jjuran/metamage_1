@@ -11,8 +11,8 @@
 // POSIX
 #include "sys/ttycom.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"

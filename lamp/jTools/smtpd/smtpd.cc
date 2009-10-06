@@ -36,9 +36,9 @@
 // Io: MacFiles
 #include "MacFiles.hh"
 
-// POSeven
-#include "POSeven/FileDescriptor.hh"
-#include "POSeven/types/exit_t.hh"
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/types/exit_t.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"

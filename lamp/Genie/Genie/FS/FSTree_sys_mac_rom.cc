@@ -16,8 +16,8 @@
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/FS/FSTree_sys_mac.hh"

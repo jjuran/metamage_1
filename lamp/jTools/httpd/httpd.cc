@@ -28,16 +28,16 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Directory.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/Directory.hh"
+#include "poseven/Pathnames.hh"
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
 
 #if defined( __MACOS__ ) || defined( __APPLE__ )
 

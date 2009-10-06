@@ -13,20 +13,20 @@
 // Iota
 #include "iota/strings.hh"
 
-// POSeven
-#include "POSeven/extras/spew.hh"
-#include "POSeven/functions/chdir.hh"
-#include "POSeven/functions/dup2.hh"
-#include "POSeven/functions/execv.hh"
-#include "POSeven/functions/ioctl.hh"
-#include "POSeven/functions/link.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/rename.hh"
-#include "POSeven/functions/setsid.hh"
-#include "POSeven/functions/symlink.hh"
-#include "POSeven/functions/utime.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
+// poseven
+#include "poseven/extras/spew.hh"
+#include "poseven/functions/chdir.hh"
+#include "poseven/functions/dup2.hh"
+#include "poseven/functions/execv.hh"
+#include "poseven/functions/ioctl.hh"
+#include "poseven/functions/link.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/rename.hh"
+#include "poseven/functions/setsid.hh"
+#include "poseven/functions/symlink.hh"
+#include "poseven/functions/utime.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
 
 
 namespace NN = Nucleus;

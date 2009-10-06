@@ -20,8 +20,8 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
-// POSeven
-#include "POSeven/types/wait_t.hh"
+// poseven
+#include "poseven/types/wait_t.hh"
 
 
 namespace tool

@@ -18,8 +18,8 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"

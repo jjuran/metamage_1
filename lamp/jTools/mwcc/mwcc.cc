@@ -6,13 +6,13 @@
 // Standard C++
 #include <vector>
 
-// POSeven
-#include "POSeven/functions/execvp.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/vfork.hh"
-#include "POSeven/functions/wait.hh"
-#include "POSeven/functions/write.hh"
-#include "POSeven/Pathnames.hh"
+// poseven
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/vfork.hh"
+#include "poseven/functions/wait.hh"
+#include "poseven/functions/write.hh"
+#include "poseven/Pathnames.hh"
 
 // Nitrogen
 #include "Nitrogen/MacErrors.h"

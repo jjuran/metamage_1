@@ -8,8 +8,8 @@
 // Iota
 #include "iota/decimal.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Nitrogen
 #include "Nitrogen/Icons.h"

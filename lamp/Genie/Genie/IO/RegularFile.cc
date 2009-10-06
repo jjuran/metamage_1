@@ -11,8 +11,8 @@
 // Nitrogen
 #include "Nitrogen/MacMemory.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
+// poseven
+#include "poseven/Errno.hh"
 
 // Genie
 #include "Genie/mmap/Handle_memory_mapping.hh"

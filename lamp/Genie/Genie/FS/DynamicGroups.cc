@@ -8,8 +8,8 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
+// poseven
+#include "poseven/Pathnames.hh"
 
 
 namespace Genie

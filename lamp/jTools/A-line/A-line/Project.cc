@@ -17,9 +17,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/functions/stat.hh"
+// poseven
+#include "poseven/Pathnames.hh"
+#include "poseven/functions/stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"

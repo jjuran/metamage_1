@@ -7,10 +7,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// POSeven
-#include "POSeven/extras/pump.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/perror.hh"
+// poseven
+#include "poseven/extras/pump.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/perror.hh"
 
 // Orion
 #include "Orion/Main.hh"

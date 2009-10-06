@@ -21,8 +21,8 @@
 #include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
 
-// POSeven
-#include "POSeven/functions/write.hh"
+// poseven
+#include "poseven/functions/write.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

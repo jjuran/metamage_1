@@ -20,12 +20,12 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/functions/fcntl.hh"
-#include "POSeven/functions/open.hh"
-#include "POSeven/functions/signal.hh"
-#include "POSeven/functions/stat.hh"
-#include "POSeven/functions/wait.hh"
+// poseven
+#include "poseven/functions/fcntl.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/signal.hh"
+#include "poseven/functions/stat.hh"
+#include "poseven/functions/wait.hh"
 
 // Iota
 #include "iota/strings.hh"
