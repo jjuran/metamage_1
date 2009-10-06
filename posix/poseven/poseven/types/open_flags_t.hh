@@ -48,6 +48,12 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef O_NOFOLLOW
+		
+		o_nofollow = O_NOFOLLOW,
+		
+	#endif
+		
 	#ifdef O_EXEC
 		
 		o_exec = O_EXEC,
