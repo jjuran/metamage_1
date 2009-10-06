@@ -21,15 +21,19 @@
 #include <sys/stat.h>
 
 // poseven
+#include "poseven/types/at_flags_t.hh"
 #include "poseven/types/errno_t.hh"
 
 
 namespace poseven
 {
 	
-	inline bool fstatat( fd_t dirfd, const char* path, struct stat& sb )
+	inline bool fstatat( fd_t           dirfd,
+	                     const char    *path,
+	                     struct stat&   sb,
+	                     at_flags_t     flags = at_flags_t() )
 	{
-		int status = ::fstatat( dirfd, path, &sb, 0 );
+		int status = ::fstatat( dirfd, path, &sb, flags );
 		
 		if ( status == -1 )
 		{
@@ -44,23 +48,30 @@ namespace poseven
 		return true;
 	}
 	
-	inline struct stat fstatat( fd_t dirfd, const char* path )
+	inline struct stat fstatat( fd_t         dirfd,
+	                            const char  *path,
+	                            at_flags_t   flags = at_flags_t() )
 	{
 		struct stat sb;
 		
-		throw_posix_result( ::fstatat( dirfd, path, &sb, 0 ) );
+		throw_posix_result( ::fstatat( dirfd, path, &sb, flags ) );
 		
 		return sb;
 	}
 	
-	inline bool fstatat( fd_t dirfd, const std::string& path, struct stat& sb )
+	inline bool fstatat( fd_t                dirfd,
+	                     const std::string&  path,
+	                     struct stat&        sb,
+	                     at_flags_t          flags = at_flags_t() )
 	{
-		return fstatat( dirfd, path.c_str(), sb );
+		return fstatat( dirfd, path.c_str(), sb, flags );
 	}
 	
-	inline struct stat fstatat( fd_t dirfd, const std::string& path )
+	inline struct stat fstatat( fd_t                dirfd,
+	                            const std::string&  path,
+	                            at_flags_t          flags = at_flags_t() )
 	{
-		return fstatat( dirfd, path.c_str() );
+		return fstatat( dirfd, path.c_str(), flags );
 	}
 	
 }
