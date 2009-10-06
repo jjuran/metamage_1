@@ -405,8 +405,6 @@ namespace tool
 			
 			p7::fd_t to_dirfd = a_matches_b ? a_dirfd : c_dirfd;
 			
-			struct stat& to_stat = a_matches_b ? a_stat : c_stat;
-			
 			p7::close( to_fd );
 			
 			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_nofollow );
@@ -414,8 +412,6 @@ namespace tool
 			off_t from_offset = 0;
 			
 			p7::pump( from_fd, &from_offset, to_fd );
-			
-			to_stat = p7::fstat( to_fd );
 		}
 		else
 		{
