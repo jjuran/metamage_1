@@ -205,7 +205,7 @@ namespace tool
 	{
 		struct ::stat stat_buffer = { 0 };
 		
-		p7::throw_posix_result( ::fstatat( olddirfd, name.c_str(), &stat_buffer, AT_SYMLINK_NOFOLLOW ) );
+		p7::fstatat( olddirfd, name, stat_buffer, p7::at_symlink_nofollow );
 		
 		if ( S_ISREG( stat_buffer.st_mode ) )
 		{
