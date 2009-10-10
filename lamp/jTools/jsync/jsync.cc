@@ -30,6 +30,10 @@
 // Io
 #include "io/walk.hh"
 
+#ifdef __APPLE__
+static int futimens( int fd, const struct timespec times[2] );
+#endif
+
 // poseven
 #include "poseven/Directory.hh"
 #include "poseven/FileDescriptor.hh"
@@ -40,6 +44,7 @@
 #include "poseven/functions/fdopendir.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/fstatat.hh"
+#include "poseven/functions/futimens.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/mkdirat.hh"
 #include "poseven/functions/open.hh"
@@ -67,33 +72,7 @@ static inline int futimens( int fd, const struct timespec times[2] )
 	return futimes( fd, tvs );
 }
 
-#define UTIME_OMIT 0
-
 #endif
-
-namespace poseven
-{
-	
-	inline void futimens( fd_t fd, const timespec times[2] )
-	{
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-	inline void futimens( fd_t fd, const timespec& mod )
-	{
-		struct timespec times[2] = { { 0, UTIME_OMIT }, mod };
-		
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-	inline void futimens( fd_t fd, const time_t& mod )
-	{
-		struct timespec times[2] = { { 0, UTIME_OMIT }, { mod, 0 } };
-		
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-}
 
 namespace tool
 {
