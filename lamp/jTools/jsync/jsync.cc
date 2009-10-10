@@ -30,6 +30,10 @@
 // Io
 #include "io/walk.hh"
 
+#ifdef __APPLE__
+static int futimens( int fd, const struct timespec times[2] );
+#endif
+
 // poseven
 #include "poseven/Directory.hh"
 #include "poseven/FileDescriptor.hh"
@@ -40,6 +44,7 @@
 #include "poseven/functions/fdopendir.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/fstatat.hh"
+#include "poseven/functions/futimens.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/mkdirat.hh"
 #include "poseven/functions/open.hh"
@@ -67,33 +72,7 @@ static inline int futimens( int fd, const struct timespec times[2] )
 	return futimes( fd, tvs );
 }
 
-#define UTIME_OMIT 0
-
 #endif
-
-namespace poseven
-{
-	
-	inline void futimens( fd_t fd, const timespec times[2] )
-	{
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-	inline void futimens( fd_t fd, const timespec& mod )
-	{
-		struct timespec times[2] = { { 0, UTIME_OMIT }, mod };
-		
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-	inline void futimens( fd_t fd, const time_t& mod )
-	{
-		struct timespec times[2] = { { 0, UTIME_OMIT }, { mod, 0 } };
-		
-		throw_posix_result( ::futimens( fd, times ) );
-	}
-	
-}
 
 namespace tool
 {
@@ -130,7 +109,7 @@ namespace tool
 	
 	static inline NN::Owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
 	{
-		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory );
+		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory | p7::o_nofollow );
 	}
 	
 	static inline NN::Owned< p7::fd_t > open_dir( const std::string& path )
@@ -191,8 +170,8 @@ namespace tool
 		// Lock backup files to prevent accidents
 		const p7::mode_t mode = globally_locking_files ? p7::_400 : p7::_600;
 		
-		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly );
-		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_creat | p7::o_excl, mode );
+		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly | p7::o_nofollow );
+		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_nofollow | p7::o_creat | p7::o_excl, mode );
 		
 		p7::pump( in, out );
 		
@@ -205,7 +184,7 @@ namespace tool
 	{
 		struct ::stat stat_buffer = { 0 };
 		
-		p7::throw_posix_result( ::fstatat( olddirfd, name.c_str(), &stat_buffer, AT_SYMLINK_NOFOLLOW ) );
+		p7::fstatat( olddirfd, name, stat_buffer, p7::at_symlink_nofollow );
 		
 		if ( S_ISREG( stat_buffer.st_mode ) )
 		{
@@ -324,8 +303,8 @@ namespace tool
 			//std::printf( "%s\n", subpath.c_str() );
 		}
 		
-		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly );
-		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly );
+		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
+		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
 		
 		NN::Owned< p7::fd_t > b_fd;
 		
@@ -334,7 +313,7 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly );
+			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
 			
 			time_t a_time = a_stat.st_mtime;
 			time_t c_time = c_stat.st_mtime;
@@ -405,17 +384,13 @@ namespace tool
 			
 			p7::fd_t to_dirfd = a_matches_b ? a_dirfd : c_dirfd;
 			
-			struct stat& to_stat = a_matches_b ? a_stat : c_stat;
-			
 			p7::close( to_fd );
 			
-			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc );
+			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_nofollow );
 			
 			off_t from_offset = 0;
 			
 			p7::pump( from_fd, &from_offset, to_fd );
-			
-			to_stat = p7::fstat( to_fd );
 		}
 		else
 		{
@@ -438,7 +413,7 @@ namespace tool
 			p7::close( b_fd );
 		}
 		
-		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
+		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat | p7::o_nofollow, p7::_400 );
 		
 		off_t from_offset = 0;
 		
@@ -465,9 +440,9 @@ namespace tool
 	{
 		struct stat a_stat, b_stat, c_stat;
 		
-		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat );
-		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat );
-		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat );
+		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat, p7::at_symlink_nofollow );
+		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat, p7::at_symlink_nofollow );
+		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat, p7::at_symlink_nofollow );
 		
 		const bool a_is_dir = a_exists && S_ISDIR( a_stat.st_mode );
 		const bool b_is_dir = b_exists && S_ISDIR( b_stat.st_mode );
