@@ -78,9 +78,11 @@ int main( int argc, const char *argv[] )
 		{
 			(void) execvp( argp[ 0 ], (char**) argp );
 			
+			const int exit_code = errno == ENOENT ? 127 : 126;
+			
 			more::perror( argv[0], argp[0] );
 			
-			_exit( 127 );
+			_exit( exit_code );
 		}
 		
 		int wait_status = -1;
