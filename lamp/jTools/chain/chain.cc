@@ -70,7 +70,7 @@ int main( int argc, const char *argv[] )
 		{
 			more::perror( "chain: vfork" );
 			
-			return 126;
+			return 1;
 		}
 		
 		// child process, or end of chain
