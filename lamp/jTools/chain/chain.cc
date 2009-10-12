@@ -80,7 +80,7 @@ int main( int argc, const char *argv[] )
 			
 			const int exit_code = errno == ENOENT ? 127 : 126;
 			
-			more::perror( argv[0], argp[0] );
+			more::perror( "chain", argp[0] );
 			
 			_exit( exit_code );
 		}
