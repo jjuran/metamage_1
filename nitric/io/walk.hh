@@ -18,11 +18,6 @@
 #include <algorithm>
 #include <string>
 
-// Nucleus
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
-#endif
-
 // Io
 #ifndef IO_FILES_HH
 #include "io/files.hh"

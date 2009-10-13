@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_sys_mac_desktop.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 

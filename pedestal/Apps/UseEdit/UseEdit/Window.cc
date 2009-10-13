@@ -5,9 +5,6 @@
 
 #include "UseEdit/Window.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Pedestal
 #include "Pedestal/Frame.hh"
 #include "Pedestal/Scrollbar.hh"
