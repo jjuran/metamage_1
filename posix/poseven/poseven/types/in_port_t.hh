@@ -18,7 +18,7 @@
 #include <netinet/in.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -43,7 +43,7 @@ namespace poseven
 		
 		// ...
 		
-		in_port_t_max = Nucleus::Enumeration_Traits< ::in_port_t >::max
+		in_port_t_max = nucleus::enumeration_traits< ::in_port_t >::max
 	};
 	
 	namespace big_endian
@@ -53,7 +53,7 @@ namespace poseven
 		
 		enum in_port_t
 		{
-			in_port_t_max = Nucleus::Enumeration_Traits< ::in_port_t >::max
+			in_port_t_max = nucleus::enumeration_traits< ::in_port_t >::max
 		};
 		
 	#else

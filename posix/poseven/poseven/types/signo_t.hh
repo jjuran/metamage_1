@@ -18,7 +18,7 @@
 #include <signal.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -26,7 +26,7 @@ namespace poseven
 	
 	enum signo_t
 	{
-		signo_t_min = Nucleus::Enumeration_Traits< int >::min,
+		signo_t_min = nucleus::enumeration_traits< int >::min,
 		
 		sigio = SIGIO,
 		
@@ -74,7 +74,7 @@ namespace poseven
 		
 	#endif
 		
-		signo_t_max = Nucleus::Enumeration_Traits< int >::max
+		signo_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 }

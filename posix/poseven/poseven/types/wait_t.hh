@@ -16,7 +16,7 @@
 
 // Nucleus
 #include "Nucleus/Convert.h"
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 // poseven
 #include "poseven/types/exit_t.hh"
@@ -30,7 +30,7 @@ namespace poseven
 	{
 		wait_t_min = -1,
 		
-		wait_t_max = Nucleus::Enumeration_Traits< int >::max
+		wait_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	inline int wtermsig( wait_t status )

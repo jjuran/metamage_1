@@ -43,7 +43,7 @@ namespace poseven
 		
 	#endif
 		
-		protocol_family_max = Nucleus::Enumeration_Traits< int >::max
+		protocol_family_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	enum socket_type
@@ -63,7 +63,7 @@ namespace poseven
 		
 	#endif
 		
-		socket_type_max = Nucleus::Enumeration_Traits< int >::max
+		socket_type_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( socket_type )

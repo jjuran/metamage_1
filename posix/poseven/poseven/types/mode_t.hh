@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 
 // Nucleus
+#include "nucleus/enumeration_traits.hh"
 #include "Nucleus/Flag.h"
 
 
@@ -61,7 +62,7 @@ namespace poseven
 		_700 = 0700,
 		_777 = 0777,
 		
-		mode_t_max = Nucleus::Enumeration_Traits< ::mode_t >::max
+		mode_t_max = nucleus::enumeration_traits< ::mode_t >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( mode_t )

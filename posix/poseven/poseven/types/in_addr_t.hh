@@ -18,7 +18,7 @@
 #include <netinet/in.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -36,7 +36,7 @@ namespace poseven
 		inaddr_allrtrs_group   = 0xe0000002,
 		inaddr_max_local_group = 0xe00000ff,
 		
-		in_addr_t_max = Nucleus::Enumeration_Traits< ::in_addr_t >::max
+		in_addr_t_max = nucleus::enumeration_traits< ::in_addr_t >::max
 	};
 	
 }

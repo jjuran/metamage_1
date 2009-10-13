@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 
 // Nucleus
+#include "nucleus/enumeration_traits.hh"
 #include "Nucleus/Flag.h"
 
 
@@ -24,7 +25,7 @@ namespace poseven
 	{
 		at_symlink_nofollow = AT_SYMLINK_NOFOLLOW,
 		
-		at_flags_t_max = Nucleus::Enumeration_Traits< int >::max
+		at_flags_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( at_flags_t )

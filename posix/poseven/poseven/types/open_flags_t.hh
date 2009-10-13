@@ -18,6 +18,7 @@
 #include <fcntl.h>
 
 // Nucleus
+#include "nucleus/enumeration_traits.hh"
 #include "Nucleus/Flag.h"
 
 
@@ -84,7 +85,7 @@ namespace poseven
 		
 	#endif
 		
-		open_flags_t_max = Nucleus::Enumeration_Traits< int >::max
+		open_flags_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( open_flags_t )

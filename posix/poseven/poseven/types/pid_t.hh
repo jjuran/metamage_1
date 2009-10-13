@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -28,7 +28,7 @@ namespace poseven
 	{
 		pid_t_min = -1,
 		
-		pid_t_max = Nucleus::Enumeration_Traits< ::pid_t >::max
+		pid_t_max = nucleus::enumeration_traits< ::pid_t >::max
 	};
 	
 }

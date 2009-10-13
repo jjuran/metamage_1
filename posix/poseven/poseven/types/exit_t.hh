@@ -18,7 +18,7 @@
 #include <cstdlib>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -29,7 +29,7 @@ namespace poseven
 		exit_success = EXIT_SUCCESS,
 		exit_failure = EXIT_FAILURE,
 		
-		exit_t_max = Nucleus::Enumeration_Traits< int >::max
+		exit_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 }
