@@ -60,47 +60,71 @@
 #define NUCLEUS_CONVERT_HH
 
 // Standard C++
-#include <functional>
+#include <sstream>
+#include <string>
+#include <ios>
 
 
 namespace nucleus
 {
 	
-	template < class Output, class Input >
-	struct converter: public std::unary_function< Input, Output >
+	// Bust partial specialization ambiguity
+	template < class Char, class Traits, class Allocator >
+	struct converter< std::basic_string< Char, Traits, Allocator >,
+	                  std::basic_string< Char, Traits, Allocator > >
+	: public std::unary_function< std::basic_string< Char, Traits, Allocator >,
+	                              std::basic_string< Char, Traits, Allocator > >
 	{
-		Output operator()( const Input& in ) const      { return Output( in ); }
+		typedef std::basic_string< Char, Traits, Allocator > String;
+		
+		const String& operator()( const String& input ) const
+		{
+			return input;
+		}
 	};
 	
-	template < class Input >
-	struct convert_input_traits
+	template < class CharT,
+	           class Traits,
+	           class Allocator,
+	           class Input >
+	struct converter< std::basic_string< CharT, Traits, Allocator >, Input >
+	           : public std::unary_function< Input, std::basic_string< CharT, Traits, Allocator > >
 	{
-		typedef Input converter_input_type;
+		std::basic_string< CharT, Traits, Allocator > operator()( const Input& input ) const
+		{
+			std::basic_ostringstream< CharT, Traits, Allocator > stream;
+			
+			stream << std::boolalpha << input;
+			
+			return stream.str(); 
+		}
 	};
 	
-	template < class Output, class Input >
-	inline Output convert( const Input& input )
-	{
-		return converter< Output, typename convert_input_traits< Input >::converter_input_type >()( input );
-	}
+	class conversion_from_string_failed {};
 	
-	template < class Output, class Input, class P1 >
-	inline Output convert( const Input& input, const P1& p1 )
+	template < class Output,
+	           class CharT,
+	           class Traits,
+	           class Allocator >
+	struct converter< Output, std::basic_string< CharT, Traits, Allocator > >
+	         : public std::unary_function< std::basic_string< CharT, Traits, Allocator >, Output >
 	{
-		return converter< Output, typename convert_input_traits< Input >::converter_input_type >( p1 )( input );
-	}
-	
-	template < class Output, class Input, class P1, class P2 >
-	inline Output convert( const Input& input, const P1& p1, const P2& p2 )
-	{
-		return converter< Output, typename convert_input_traits< Input >::converter_input_type >( p1, p2 )( input );
-	}
-	
-	template < class Output, class Input, class P1, class P2, class P3 >
-	inline Output convert( const Input& input, const P1& p1, const P2& p2, const P3& p3 )
-	{
-		return converter< Output, typename convert_input_traits< Input >::converter_input_type >( p1, p2, p3 )( input );
-	}
+		Output operator()( const std::basic_string< CharT, Traits, Allocator >& input ) const
+		{
+			std::basic_istringstream< CharT, Traits, Allocator > stream( input );
+			
+			Output output;
+			
+			stream >> std::boolalpha >> output;
+			
+			if ( stream.snextc() != Traits::eof() )
+			{
+				throw conversion_from_string_failed();
+			}
+			
+			return output; 
+		}
+	};
 	
 }
 
