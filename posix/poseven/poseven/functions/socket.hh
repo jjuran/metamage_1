@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 // Nucleus
-#include "Nucleus/Flag.h"
+#include "nucleus/flag_ops.hh"
 
 // poseven
 #include "poseven/functions/close.hh"

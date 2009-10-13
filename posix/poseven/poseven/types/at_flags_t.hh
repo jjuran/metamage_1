@@ -15,7 +15,7 @@
 
 // Nucleus
 #include "nucleus/enumeration_traits.hh"
-#include "Nucleus/Flag.h"
+#include "nucleus/flag_ops.hh"
 
 
 namespace poseven
