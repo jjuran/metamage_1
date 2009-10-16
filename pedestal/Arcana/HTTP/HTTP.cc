@@ -6,6 +6,7 @@
 #include "HTTP.hh"
 
 // Standard C/C++
+#include <cctype>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
