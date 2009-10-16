@@ -6,13 +6,13 @@
 #ifndef KEROSENE_TIME_H
 #define KEROSENE_TIME_H
 
+#include <ctime>
+
 #include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
-	//#define CLOCKS_PER_SEC 1000000
 	
 	struct tm
 	{
