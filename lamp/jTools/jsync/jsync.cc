@@ -74,6 +74,7 @@ static inline int futimens( int fd, const struct timespec times[2] )
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
@@ -97,19 +98,19 @@ namespace tool
 	static bool globally_locking_files = false;
 	
 	
-	static inline NN::Shared< p7::dir_t > fdopendir_shared( NN::Owned< p7::fd_t > dirfd )
+	static inline NN::Shared< p7::dir_t > fdopendir_shared( n::owned< p7::fd_t > dirfd )
 	{
 		NN::Owned< p7::dir_t > dir = p7::fdopendir( dirfd );
 		
 		return dir;
 	}
 	
-	static inline NN::Owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
+	static inline n::owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
 	{
 		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory | p7::o_nofollow );
 	}
 	
-	static inline NN::Owned< p7::fd_t > open_dir( const std::string& path )
+	static inline n::owned< p7::fd_t > open_dir( const std::string& path )
 	{
 		return p7::open( path, p7::o_rdonly | p7::o_directory );
 	}
@@ -167,8 +168,8 @@ namespace tool
 		// Lock backup files to prevent accidents
 		const p7::mode_t mode = globally_locking_files ? p7::_400 : p7::_600;
 		
-		NN::Owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly | p7::o_nofollow );
-		NN::Owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_nofollow | p7::o_creat | p7::o_excl, mode );
+		n::owned< p7::fd_t > in  = p7::openat( olddirfd, name, p7::o_rdonly | p7::o_nofollow );
+		n::owned< p7::fd_t > out = p7::openat( newdirfd, name, p7::o_wronly | p7::o_nofollow | p7::o_creat | p7::o_excl, mode );
 		
 		p7::pump( in, out );
 		
@@ -204,7 +205,7 @@ namespace tool
 		recursively_copy( dirs.first, name, dirs.second );
 	}
 	
-	static void recursively_copy_directory_contents( NN::Owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
+	static void recursively_copy_directory_contents( n::owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -300,10 +301,10 @@ namespace tool
 			//std::printf( "%s\n", subpath.c_str() );
 		}
 		
-		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
-		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
+		n::owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
+		n::owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
 		
-		NN::Owned< p7::fd_t > b_fd;
+		n::owned< p7::fd_t > b_fd;
 		
 		struct stat a_stat = p7::fstat( a_fd );
 		struct stat c_stat = p7::fstat( c_fd );
@@ -376,8 +377,8 @@ namespace tool
 				return;
 			}
 			
-			p7::fd_t                from_fd = a_matches_b ? c_fd : a_fd;
-			NN::Owned< p7::fd_t >&  to_fd   = a_matches_b ? a_fd : c_fd;
+			p7::fd_t               from_fd = a_matches_b ? c_fd : a_fd;
+			n::owned< p7::fd_t >&  to_fd   = a_matches_b ? a_fd : c_fd;
 			
 			p7::fd_t to_dirfd = a_matches_b ? a_dirfd : c_dirfd;
 			
@@ -424,10 +425,10 @@ namespace tool
 		}
 	}
 	
-	static void recursively_sync_directories( NN::Owned< p7::fd_t >  a_dirfd,
-	                                          NN::Owned< p7::fd_t >  b_dirfd,
-	                                          NN::Owned< p7::fd_t >  c_dirfd,
-	                                          const std::string&     subpath );
+	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
+	                                          n::owned< p7::fd_t >  b_dirfd,
+	                                          n::owned< p7::fd_t >  c_dirfd,
+	                                          const std::string&    subpath );
 	
 	static void recursively_sync( p7::fd_t            a_dirfd,
 	                              p7::fd_t            b_dirfd,
@@ -588,10 +589,10 @@ namespace tool
 		std::copy( b_begin, b_end, b_only );
 	}
 	
-	static void recursively_sync_directory_contents( NN::Owned< p7::fd_t >  a_dirfd,
-	                                                 NN::Owned< p7::fd_t >  b_dirfd,
-	                                                 NN::Owned< p7::fd_t >  c_dirfd,
-	                                                 const std::string&     subpath )
+	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
+	                                                 n::owned< p7::fd_t >  b_dirfd,
+	                                                 n::owned< p7::fd_t >  c_dirfd,
+	                                                 const std::string&    subpath )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -790,10 +791,10 @@ namespace tool
 		// deleted/deleted:  mutual delete -- just do it
 	}
 	
-	static void recursively_sync_directories( NN::Owned< p7::fd_t >  a_dirfd,
-	                                          NN::Owned< p7::fd_t >  b_dirfd,
-	                                          NN::Owned< p7::fd_t >  c_dirfd,
-	                                          const std::string&     subpath )
+	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
+	                                          n::owned< p7::fd_t >  b_dirfd,
+	                                          n::owned< p7::fd_t >  c_dirfd,
+	                                          const std::string&    subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		

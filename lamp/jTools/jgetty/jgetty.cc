@@ -29,7 +29,7 @@
 #include "poseven/functions/wait.hh"
 
 
-namespace NN = Nucleus;
+namespace n = nucleus;
 namespace p7 = poseven;
 
 
@@ -81,7 +81,7 @@ int main( int argc, char const *const argv[] )
 	
 	p7::rename( "view/v/v/tty", "tty" );
 	
-	NN::Owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
+	n::owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
 	
 	p7::dup2( tty, p7::stdin_fileno  );
 	p7::dup2( tty, p7::stdout_fileno );

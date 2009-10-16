@@ -29,7 +29,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -75,7 +75,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "Daemon starting up..." ) );
 		
-		NN::Owned< p7::fd_t > listener = p7::bind( p7::inaddr_any, port );
+		n::owned< p7::fd_t > listener = p7::bind( p7::inaddr_any, port );
 		
 		p7::listen( listener, 3 );
 		

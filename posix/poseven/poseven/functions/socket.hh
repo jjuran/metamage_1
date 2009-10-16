@@ -68,12 +68,12 @@ namespace poseven
 	
 	NUCLEUS_DEFINE_FLAG_OPS( socket_type )
 	
-	inline Nucleus::Owned< fd_t > socket( protocol_family  domain,
+	inline nucleus::owned< fd_t > socket( protocol_family  domain,
 	                                      socket_type      type )
 	{
 		const int fd = throw_posix_result( ::socket( domain, type, 0 ) );
 		
-		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
+		return nucleus::owned< fd_t >::seize( fd_t( fd ) );
 	}
 	
 }

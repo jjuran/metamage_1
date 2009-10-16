@@ -36,7 +36,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -179,7 +179,7 @@ namespace tool
 		
 		const char* target_pathname = n_args > 0 ? free_args[0] : "/dev/null";
 		
-		NN::Owned< p7::fd_t > target_file_stream = p7::open( target_pathname, p7::o_rdwr | p7::o_creat );
+		n::owned< p7::fd_t > target_file_stream = p7::open( target_pathname, p7::o_rdwr | p7::o_creat );
 		
 		MD5::Result digest = MD5DigestFile( target_file_stream );
 		
@@ -230,7 +230,7 @@ namespace tool
 		
 		if ( result_code == 200 )
 		{
-			NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
+			n::owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
 			
 			const std::string& partial_content = response.GetPartialContent();
 			

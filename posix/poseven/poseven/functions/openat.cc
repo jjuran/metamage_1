@@ -19,13 +19,13 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > openat( fd_t dirfd, const char* path, open_flags_t flags, mode_t mode )
+	nucleus::owned< fd_t > openat( fd_t dirfd, const char* path, open_flags_t flags, mode_t mode )
 	{
 		// register errnos
 		
 		int fd = throw_posix_result( ::openat( dirfd, path, flags, mode ) );
 		
-		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
+		return nucleus::owned< fd_t >::seize( fd_t( fd ) );
 	}
 	
 }

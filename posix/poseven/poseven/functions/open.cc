@@ -17,13 +17,13 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > open( const char* name, open_flags_t oflag, mode_t mode )
+	nucleus::owned< fd_t > open( const char* name, open_flags_t oflag, mode_t mode )
 	{
 		// register errnos
 		
 		int fd = throw_posix_result( ::open( name, oflag, mode ) );
 		
-		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
+		return nucleus::owned< fd_t >::seize( fd_t( fd ) );
 	}
 	
 	

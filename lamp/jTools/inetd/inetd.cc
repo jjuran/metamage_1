@@ -43,7 +43,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -237,7 +237,7 @@ namespace tool
 	{
 		text_input::feed feed;
 		
-		NN::Owned< p7::fd_t > fd( io::open_for_reading( "/etc/inetd.conf" ) );
+		n::owned< p7::fd_t > fd( io::open_for_reading( "/etc/inetd.conf" ) );
 		
 		p7::fd_reader reader( fd );
 		

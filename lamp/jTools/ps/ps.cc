@@ -45,7 +45,7 @@ static struct timespec timespec_from_seconds( float time )
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -91,7 +91,7 @@ namespace tool
 	{
 		using namespace io::path_descent_operators;
 		
-		NN::Owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
+		n::owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
 		
 		char buffer[ 4096 ];
 		

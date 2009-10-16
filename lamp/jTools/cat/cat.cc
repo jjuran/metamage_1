@@ -19,7 +19,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -62,7 +62,7 @@ namespace tool
 			
 			try
 			{
-				NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
+				n::owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 				
 				p7::pump( fd, p7::stdout_fileno );
 			}

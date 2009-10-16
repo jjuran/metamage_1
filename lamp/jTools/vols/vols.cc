@@ -34,6 +34,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
@@ -70,9 +71,9 @@ namespace tool
 		{
 			const char* vol_name = *it;
 			
-			NN::Owned< p7::fd_t > vol_N_dirfd = p7::openat( p7::dirfd( vol_dir ), vol_name, p7::o_rdonly | p7::o_directory );
+			n::owned< p7::fd_t > vol_N_dirfd = p7::openat( p7::dirfd( vol_dir ), vol_name, p7::o_rdonly | p7::o_directory );
 			
-			NN::Owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/name", p7::o_rdonly | p7::o_binary );
+			n::owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/name", p7::o_rdonly | p7::o_binary );
 			
 			bool wanted = true;
 			

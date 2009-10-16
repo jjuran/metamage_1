@@ -45,13 +45,13 @@ namespace poseven
 	
 	template <> struct fcntl_traits< f_dupfd >
 	{
-		typedef Nucleus::Owned< fd_t > result_type;
+		typedef nucleus::owned< fd_t > result_type;
 		
 		typedef fd_t param_type;
 		
-		static Nucleus::Owned< fd_t > make_result( int result )
+		static nucleus::owned< fd_t > make_result( int result )
 		{
-			return Nucleus::Owned< fd_t >::Seize( fd_t( result ) );
+			return nucleus::owned< fd_t >::seize( fd_t( result ) );
 		}
 	};
 	

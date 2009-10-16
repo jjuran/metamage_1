@@ -22,7 +22,7 @@
 namespace poseven
 {
 	
-	inline Nucleus::Owned< dir_t > fdopendir( Nucleus::Owned< fd_t > fd )
+	inline Nucleus::Owned< dir_t > fdopendir( nucleus::owned< fd_t > fd )
 	{
 		DIR* handle = ::fdopendir( fd );
 		

@@ -35,7 +35,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace n = nucleus;
 	namespace p7 = poseven;
 	
@@ -375,7 +374,7 @@ namespace tool
 		
 	#endif
 		
-		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], flags );
+		n::owned< p7::fd_t > fd = p7::open( argv[ 1 ], flags );
 		
 	#ifndef O_CLOEXEC
 		

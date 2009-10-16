@@ -30,7 +30,7 @@ namespace poseven
 	namespace detail
 	{
 		
-		inline Nucleus::Owned< fd_t > accept( fd_t        listener,
+		inline nucleus::owned< fd_t > accept( fd_t        listener,
 		                                      sockaddr*   address,
 		                                      socklen_t*  length )
 		{
@@ -38,19 +38,20 @@ namespace poseven
 			                                           address,
 			                                           length ) );
 			
-			return Nucleus::Owned< fd_t >::Seize( fd_t( result ) );
+			return nucleus::owned< fd_t >::seize( fd_t( result ) );
 		}
 		
 	}
 	
-	inline Nucleus::Owned< fd_t > accept( fd_t listener )
+	inline nucleus::owned< fd_t > accept( fd_t listener )
 	{
 		return detail::accept( listener, NULL, NULL );
 	}
 	
 	template < address_family af >
 	inline
-	Nucleus::Owned< fd_t >
+	nucleus::owned< fd_t >
+	//
 	accept( fd_t                                           listener,
 	        typename sockaddr_traits< af >::address_type&  client_address )
 	{

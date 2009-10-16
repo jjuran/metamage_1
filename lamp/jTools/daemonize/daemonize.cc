@@ -31,7 +31,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -79,7 +79,7 @@ namespace tool
 		// Start a new session with no controlling terminal
 		setsid();
 		
-		NN::Owned< p7::fd_t > stdio;
+		n::owned< p7::fd_t > stdio;
 		
 		if ( ctty )
 		{
