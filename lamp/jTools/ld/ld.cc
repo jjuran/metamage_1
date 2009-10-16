@@ -833,7 +833,7 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( tlsrvr_pid );
 		
-		int exit_status = Nucleus::Convert< p7::exit_t >( wait_status );
+		p7::exit_t exit_status = nucleus::convert< p7::exit_t >( wait_status );
 		
 		if ( exit_status != 0 )
 		{

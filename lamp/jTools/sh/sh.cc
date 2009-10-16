@@ -42,6 +42,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -198,7 +199,7 @@ namespace tool
 		if ( command != NULL )
 		{
 			// Run a single command
-			return Nucleus::Convert< p7::exit_t >( ExecuteCmdLine( command ) );
+			return n::convert< p7::exit_t >( ExecuteCmdLine( command ) );
 		}
 		
 		OnExit onExit;
@@ -206,7 +207,7 @@ namespace tool
 		p7::wait_t status = ReadExecuteLoop( input,
 		                                     GetOption( kOptionInteractive ) );
 		
-		return Nucleus::Convert< p7::exit_t >( status );
+		return n::convert< p7::exit_t >( status );
 	}
 	
 }

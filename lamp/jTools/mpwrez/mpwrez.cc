@@ -148,7 +148,7 @@ namespace tool
 			p7::execvp( &command[0] );
 		}
 		
-		return Nucleus::Convert< p7::exit_t >( p7::wait() );
+		return nucleus::convert< p7::exit_t >( p7::wait() );
 	}
 	
 }

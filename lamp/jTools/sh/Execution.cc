@@ -96,7 +96,7 @@ const char* strsignal( int signo )
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace Sh = ShellShock;
 	
@@ -184,7 +184,7 @@ namespace tool
 		}
 		else if ( param == "?" )
 		{
-			single_result = iota::inscribe_decimal( NN::Convert< p7::exit_t >( global_last_wait_status ) );
+			single_result = iota::inscribe_decimal( n::convert< p7::exit_t >( global_last_wait_status ) );
 		}
 		else if ( param == "#" )
 		{
@@ -616,7 +616,7 @@ namespace tool
 			if ( exiting )
 			{
 				// The 'child' was the 'exit' builtin, meaning we should exit
-				throw NN::Convert< p7::exit_t >( wait_status );
+				throw n::convert< p7::exit_t >( wait_status );
 			}
 			
 			return wait_status;
@@ -681,7 +681,7 @@ namespace tool
 	{
 		try
 		{
-			p7::_exit( NN::Convert< p7::exit_t >( ExecuteCommandFromPipeline( command ) ) );
+			p7::_exit( n::convert< p7::exit_t >( ExecuteCommandFromPipeline( command ) ) );
 		}
 		catch ( const p7::exit_t& status )
 		{

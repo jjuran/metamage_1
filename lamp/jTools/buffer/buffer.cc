@@ -33,6 +33,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
@@ -158,7 +159,7 @@ namespace tool
 		
 		if ( should_wait )
 		{
-			return NN::Convert< p7::exit_t >( p7::wait() );
+			return n::convert< p7::exit_t >( p7::wait() );
 		}
 		
 		return p7::exit_success;
