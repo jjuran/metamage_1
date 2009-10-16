@@ -71,7 +71,9 @@ namespace poseven
 	inline Nucleus::Owned< fd_t > socket( protocol_family  domain,
 	                                      socket_type      type )
 	{
-		return Nucleus::Owned< fd_t >::Seize( fd_t( throw_posix_result( ::socket( domain, type, 0 ) ) ) );
+		const int fd = throw_posix_result( ::socket( domain, type, 0 ) );
+		
+		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
 	}
 	
 }
