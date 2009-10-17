@@ -8,9 +8,6 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/functions/write.hh"
 

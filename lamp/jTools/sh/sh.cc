@@ -17,9 +17,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"

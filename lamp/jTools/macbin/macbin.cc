@@ -18,9 +18,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 

@@ -5,9 +5,6 @@
 
 #include "Genie/IO/MemoryFile.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/Errno.hh"
 

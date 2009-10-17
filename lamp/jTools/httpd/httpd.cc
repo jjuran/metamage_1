@@ -25,9 +25,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/Directory.hh"
 #include "poseven/Pathnames.hh"
