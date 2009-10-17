@@ -9,7 +9,7 @@
 #include "io/io.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Nitrogen
 #include "Nitrogen/OSUtils.h"

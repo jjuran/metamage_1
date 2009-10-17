@@ -11,7 +11,7 @@
 #include "iota/decimal.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/Files.h"

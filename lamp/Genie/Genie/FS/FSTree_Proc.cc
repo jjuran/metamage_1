@@ -15,7 +15,7 @@
 #include "Nitrogen/Timer.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"

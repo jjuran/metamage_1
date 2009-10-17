@@ -6,7 +6,7 @@
 #include "Genie/IO/MemoryFile.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/mmap/static_memory_mapping.hh"

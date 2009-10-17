@@ -45,7 +45,7 @@
 #include "recall/backtrace.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 #include "poseven/Pathnames.hh"
 
 // Pedestal

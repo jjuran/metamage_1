@@ -10,7 +10,7 @@
 #include "sys/stat.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // MacLamp
 #include "fsspec_from_path.hh"

@@ -24,7 +24,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"

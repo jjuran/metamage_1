@@ -9,7 +9,7 @@
 #include <fcntl.h>
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/IO/PropertyFile.hh"

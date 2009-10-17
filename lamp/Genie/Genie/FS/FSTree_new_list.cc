@@ -9,7 +9,7 @@
 #include <fcntl.h>
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Pedestal
 #include "Pedestal/ListView.hh"
