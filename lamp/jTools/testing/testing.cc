@@ -45,6 +45,9 @@
 #include "recall/stack_crawl.hh"
 #include "recall/traceback_tables.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -54,7 +57,6 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
-#include "Nucleus/NAssert.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // Io

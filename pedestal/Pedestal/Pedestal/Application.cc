@@ -15,8 +15,10 @@
 // Nostalgia
 #include "Nostalgia/LowMem.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
 // Nitrogen

@@ -8,8 +8,8 @@
 // Standard C++
 #include <algorithm>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // poseven
 #include "poseven/Errno.hh"

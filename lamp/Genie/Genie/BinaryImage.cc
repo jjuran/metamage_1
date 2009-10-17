@@ -5,8 +5,8 @@
 
 #include "Genie/BinaryImage.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.h"

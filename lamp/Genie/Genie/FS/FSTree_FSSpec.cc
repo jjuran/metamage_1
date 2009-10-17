@@ -23,8 +23,8 @@
 #include "FileCopy.h"
 #include "MoreFilesExtras.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Aliases.h"

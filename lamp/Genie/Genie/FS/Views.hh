@@ -9,8 +9,8 @@
 // Standard C++
 #include <memory>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"

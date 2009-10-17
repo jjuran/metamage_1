@@ -8,8 +8,8 @@
 // Boost
 #include <boost/weak_ptr.hpp>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.h"

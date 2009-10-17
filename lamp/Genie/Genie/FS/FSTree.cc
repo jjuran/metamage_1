@@ -9,8 +9,8 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/OSUtils.h"

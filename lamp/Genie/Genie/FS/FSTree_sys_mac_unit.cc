@@ -7,9 +7,11 @@
 
 #include "Genie/FS/FSTree_sys_mac_unit.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
 #include "Nucleus/IndexedContainer.h"
-#include "Nucleus/NAssert.h"
 
 // BitsAndBytes
 #include "HexStrings.hh"

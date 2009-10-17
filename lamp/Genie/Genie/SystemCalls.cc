@@ -14,8 +14,8 @@
 #include "sys/uio.h"
 #include "unistd.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Io
 #include "io/io.hh"

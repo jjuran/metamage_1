@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // poseven
 #include "poseven/functions/write.hh"

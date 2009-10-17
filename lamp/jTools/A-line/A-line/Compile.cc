@@ -26,8 +26,8 @@
 #include "io/io.hh"
 #include "io/files.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // poseven
 #include "poseven/FileDescriptor.hh"

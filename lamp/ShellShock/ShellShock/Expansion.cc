@@ -15,8 +15,8 @@
 // POSIX
 #include "dirent.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // ShellShock
 #include "ShellShock/PointerToFunction.h"

@@ -11,8 +11,10 @@
 // Standard C++
 #include <algorithm>
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
 // Nitrogen
