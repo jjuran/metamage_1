@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 // Nucleus
-#include "Nucleus/Shared.h"
+#include "nucleus/shared.hh"
 
 // poseven
 #include "poseven/Directory.hh"
@@ -35,7 +35,6 @@ namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -59,7 +58,7 @@ namespace tool
 		
 		const char* vol_path = "/sys/mac/vol";
 		
-		NN::Shared< p7::dir_t > vol_dir = p7::opendir( vol_path );
+		n::shared< p7::dir_t > vol_dir = p7::opendir( vol_path );
 		
 		typedef p7::directory_contents_container directory_container;
 		

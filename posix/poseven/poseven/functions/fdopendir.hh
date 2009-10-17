@@ -22,7 +22,7 @@
 namespace poseven
 {
 	
-	inline Nucleus::Owned< dir_t > fdopendir( nucleus::owned< fd_t > fd )
+	inline nucleus::owned< dir_t > fdopendir( nucleus::owned< fd_t > fd )
 	{
 		DIR* handle = ::fdopendir( fd );
 		
@@ -33,7 +33,7 @@ namespace poseven
 		
 		fd.release();
 		
-		return Nucleus::Owned< dir_t >::Seize( handle );
+		return nucleus::owned< dir_t >::seize( handle );
 	}
 	
 }

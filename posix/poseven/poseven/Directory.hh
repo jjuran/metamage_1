@@ -19,7 +19,7 @@
 #include "io/walk.hh"
 
 // Nucleus
-#include "Nucleus/Shared.h"
+#include "nucleus/shared.hh"
 
 // poseven
 #include "poseven/functions/opendir.hh"
@@ -31,7 +31,7 @@ namespace poseven
 	class directory_contents_container
 	{
 		private:
-			Nucleus::Shared< dir_t >  itsDirHandle;
+			nucleus::shared< dir_t >  itsDirHandle;
 			
 			// not implemented:
 			directory_contents_container& operator=( const directory_contents_container& );
@@ -59,13 +59,13 @@ namespace poseven
 					typedef std::forward_iterator_tag iterator_category;
 					
 				private:
-					Nucleus::Shared< dir_t >  itsDirHandle;
+					nucleus::shared< dir_t >  itsDirHandle;
 					value_type                value;
 					bool                      done;
 					
 					void GetNextValue();
 					
-					const_iterator( const Nucleus::Shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle ),
+					const_iterator( const nucleus::shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle ),
 					                                                              done( false )
 					{
 						GetNextValue();
@@ -86,7 +86,7 @@ namespace poseven
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			directory_contents_container( const Nucleus::Shared< dir_t >& dir ) : itsDirHandle( dir )
+			directory_contents_container( const nucleus::shared< dir_t >& dir ) : itsDirHandle( dir )
 			{
 			}
 			
@@ -96,14 +96,14 @@ namespace poseven
 	};
 	
 	
-	inline directory_contents_container directory_contents( const Nucleus::Shared< dir_t >& dir )
+	inline directory_contents_container directory_contents( const nucleus::shared< dir_t >& dir )
 	{
 		return directory_contents_container( dir );
 	}
 	
 	inline directory_contents_container directory_contents( const std::string& dir_path )
 	{
-		return directory_contents_container( Nucleus::Shared< dir_t >( opendir( dir_path ) ) );
+		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
 	}
 	
 }
