@@ -176,7 +176,7 @@ namespace tool
 				
 			#endif
 				
-				input = p7::open( gArgZero, flags ).Release();
+				input = p7::open( gArgZero, flags ).release();
 				
 			#ifndef O_CLOEXEC
 				
