@@ -15,7 +15,6 @@
 #include "Nucleus/ResourceTransfer.h"
 
 // poseven
-#include "poseven/FileDescriptor.hh"
 #include "poseven/Pathnames.hh"
 
 // MoreFunctional
