@@ -24,6 +24,7 @@
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/socket.hh"
+#include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
 // Arcana
