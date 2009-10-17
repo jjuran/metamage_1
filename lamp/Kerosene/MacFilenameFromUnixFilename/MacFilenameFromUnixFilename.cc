@@ -11,18 +11,12 @@
 // Debug
 #include "debug/assert.hh"
 
-// poseven
-#include "poseven/Errno.hh"
-
 // Arcana / MD5
 #include "MD5.hh"
 
 
 namespace Kerosene
 {
-	
-	namespace p7 = poseven;
-	
 	
 	static char base32_encode( unsigned x )
 	{
