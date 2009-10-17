@@ -20,18 +20,16 @@ namespace poseven
 	class errno_t
 	{
 		private:
-			int itsNumber;
+			int its_number;
 		
 		public:
 			typedef int ErrorNumber;
 			
-			errno_t(       ) : itsNumber( 0 )  {}
-			errno_t( int n ) : itsNumber( n )  {}
+			errno_t(       ) : its_number( 0 )  {}
+			errno_t( int n ) : its_number( n )  {}
 			
-			static errno_t Make( int n )    { return errno_t( n ); }
-			
-			int Get() const               { return itsNumber; }
-			operator int() const          { return itsNumber; }
+			int get() const               { return its_number; }
+			operator int() const          { return its_number; }
 	};
 	
 	void throw_errno_internal( errno_t number );
