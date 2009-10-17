@@ -15,8 +15,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// Iota
+#include "iota/decimal.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -53,12 +53,11 @@ namespace Genie
 		
 		static std::string NameFromKey( const Key& key )
 		{
-			return Nucleus::Convert< std::string >( key );
+			return iota::inscribe_decimal( key );
 		}
 		
 		static Key KeyFromName( const std::string& name )
 		{
-			//return Nucleus::Convert< Integer >( name );
 			return Key( std::atoi( name.c_str() ) );
 		}
 	};
