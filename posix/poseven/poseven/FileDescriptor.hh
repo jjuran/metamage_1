@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FILEDESCRIPTOR_HH
 #define POSEVEN_FILEDESCRIPTOR_HH
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Io
 #include "io/io.hh"
 
@@ -58,13 +55,13 @@ namespace io
 	template < class ByteCount >
 	inline ssize_t read( poseven::fd_t fd, char* buffer, ByteCount byteCount, overload = overload() )
 	{
-		return poseven::read( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+		return poseven::read( fd, buffer, byteCount );
 	}
 	
 	template < class ByteCount >
 	inline ssize_t write( poseven::fd_t fd, const char* buffer, ByteCount byteCount, overload = overload() )
 	{
-		return poseven::write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+		return poseven::write( fd, buffer, byteCount );
 	}
 	
 }
