@@ -17,6 +17,7 @@
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/link.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/symlink.hh"
 #include "poseven/functions/utime.hh"
