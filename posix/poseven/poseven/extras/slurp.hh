@@ -37,14 +37,14 @@ namespace poseven
 		return io::slurp_input< Nucleus::StringFlattener< std::string > >( fd );
 	}
 	
-	inline std::string slurp( const std::string& path )
-	{
-		return io::slurp_file< Nucleus::StringFlattener< std::string > >( path );
-	}
-	
 	inline std::string slurp( const char* path )
 	{
 		return io::slurp_input< Nucleus::StringFlattener< std::string > >( open( path, o_rdonly ).get() );
+	}
+	
+	inline std::string slurp( const std::string& path )
+	{
+		return io::slurp_file< Nucleus::StringFlattener< std::string > >( path );
 	}
 	
 }

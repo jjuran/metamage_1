@@ -36,16 +36,6 @@ namespace poseven
 		io::spew_output( fd, buffer, length );
 	}
 	
-	inline void spew( const std::string& path, const char* buffer, std::size_t length )
-	{
-		io::spew_file( path, buffer, length );
-	}
-	
-	inline void spew( const std::string& path, const std::string& stuff )
-	{
-		io::spew_file< Nucleus::StringFlattener< std::string > >( path, stuff );
-	}
-	
 	
 	inline void spew( const char* path, const char* buffer, std::size_t length )
 	{
@@ -55,6 +45,16 @@ namespace poseven
 	inline void spew( const char* path, const std::string& stuff )
 	{
 		io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_wronly | o_trunc ).get(), stuff );
+	}
+	
+	inline void spew( const std::string& path, const char* buffer, std::size_t length )
+	{
+		io::spew_file( path, buffer, length );
+	}
+	
+	inline void spew( const std::string& path, const std::string& stuff )
+	{
+		io::spew_file< Nucleus::StringFlattener< std::string > >( path, stuff );
 	}
 	
 }
