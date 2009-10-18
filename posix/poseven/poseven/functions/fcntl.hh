@@ -30,45 +30,12 @@
 namespace poseven
 {
 	
-	inline void throw_errno_on_negative( int result )
-	{
-		if ( result < 0 )
-		{
-			throw_errno( errno );
-		}
-	}
-	
-	inline void throw_errno_on_negative_one( int result )
-	{
-		if ( result == -1 )
-		{
-			throw_errno( errno );
-		}
-	}
-	
-	struct throws_errno_on_negative
-	{
-		static void check_result( int result )
-		{
-			throw_errno_on_negative( result );
-		}
-	};
-	
-	struct throws_errno_on_negative_one
-	{
-		static void check_result( int result )
-		{
-			throw_errno_on_negative_one( result );
-		}
-	};
-	
-	struct fcntl_returns_void : throws_errno_on_negative_one
+	struct fcntl_returns_void
 	{
 		typedef void result_type;
 		
 		static void make_result( int result )
 		{
-			check_result( result );
 		}
 	};
 	
@@ -76,7 +43,7 @@ namespace poseven
 	template < fcntl_cmd_t cmd >  struct fcntl_traits;
 	
 	
-	template <> struct fcntl_traits< f_dupfd > : throws_errno_on_negative
+	template <> struct fcntl_traits< f_dupfd >
 	{
 		typedef Nucleus::Owned< fd_t > result_type;
 		
@@ -84,8 +51,6 @@ namespace poseven
 		
 		static Nucleus::Owned< fd_t > make_result( int result )
 		{
-			check_result( result );
-			
 			return Nucleus::Owned< fd_t >::Seize( fd_t( result ) );
 		}
 	};
@@ -98,14 +63,12 @@ namespace poseven
 	
 #endif
 	
-	template <> struct fcntl_traits< f_getfd > : throws_errno_on_negative
+	template <> struct fcntl_traits< f_getfd >
 	{
 		typedef fcntl_fd_flags_t result_type;
 		
 		static fcntl_fd_flags_t make_result( int result )
 		{
-			check_result( result );
-			
 			return fcntl_fd_flags_t( result );
 		}
 	};
@@ -115,14 +78,12 @@ namespace poseven
 		typedef fcntl_fd_flags_t param_type;
 	};
 	
-	template <> struct fcntl_traits< f_getfl > : throws_errno_on_negative
+	template <> struct fcntl_traits< f_getfl >
 	{
 		typedef open_flags_t result_type;
 		
 		static open_flags_t make_result( int result )
 		{
-			check_result( result );
-			
 			return open_flags_t( result );
 		}
 	};
@@ -132,14 +93,12 @@ namespace poseven
 		typedef open_flags_t param_type;
 	};
 	
-	template <> struct fcntl_traits< f_getown > : throws_errno_on_negative_one
+	template <> struct fcntl_traits< f_getown >
 	{
 		typedef pid_t result_type;
 		
 		static pid_t make_result( int result )
 		{
-			check_result( result );
-			
 			return pid_t( result );
 		}
 	};
@@ -170,7 +129,9 @@ namespace poseven
 	//
 	fcntl( fd_t fd )
 	{
-		return fcntl_traits< cmd >::make_result( ::fcntl( fd, cmd, 0 ) );
+		int result = throw_posix_result( ::fcntl( fd, cmd, 0 ) );
+		
+		return fcntl_traits< cmd >::make_result( result );
 	}
 	
 	template < fcntl_cmd_t cmd >
@@ -178,7 +139,9 @@ namespace poseven
 	//
 	fcntl( fd_t fd, typename fcntl_traits< cmd >::param_type param )
 	{
-		return fcntl_traits< cmd >::make_result( ::fcntl( fd, cmd, (int) param ) );
+		int result = throw_posix_result( ::fcntl( fd, cmd, (int) param ) );
+		
+		return fcntl_traits< cmd >::make_result( result );
 	}
 	
 }
