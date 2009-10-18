@@ -21,22 +21,19 @@
 #include "Nucleus/Owned.h"
 
 // poseven
-#include "poseven/Errno.hh"
 #include "poseven/types/dir_t.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace Nucleus
 {
 	
 	template <>
-	struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >//,
-	                                    //private poseven::DefaultDestructionPOSIXResultPolicy
+	struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >
 	{
 		void operator()( poseven::dir_t dir ) const
 		{
-			//(void) Nitrogen::FileManagerErrorsRegistrationDependency();
-			//HandleDestructionPOSIXResult( ::closedir( dir ) );
-			::closedir( dir );
+			poseven::handle_destruction_posix_result( ::closedir( dir ) );
 		}
 	};
 	

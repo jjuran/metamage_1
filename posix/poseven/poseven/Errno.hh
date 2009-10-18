@@ -21,12 +21,6 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
-#ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
-#include "Nucleus/DestructionExceptionPolicy.h"
-#endif
-#ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
-#include "Nucleus/TheExceptionBeingHandled.h"
-#endif
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -40,26 +34,6 @@ namespace poseven
 	{
 		Nucleus::RegisterErrorCode< errno_t, number >();
 	}
-	
-	template < class DestructionExceptionPolicy >
-	struct DestructionErrnoPolicy: public DestructionExceptionPolicy
-	{
-		void HandleDestructionErrno( int error ) const
-		{
-			try
-			{
-				throw_errno( error );
-				
-				DestructionExceptionPolicy::WarnOfDestructionExceptionRisk();
-			}
-			catch( ... )
-			{
-				DestructionExceptionPolicy::HandleDestructionException( Nucleus::TheExceptionBeingHandled() );
-			}
-		}
-	};
-	
-	typedef DestructionErrnoPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionErrnoPolicy;
 	
 	
 	#define DEFINE_ERRNO( c_name, new_name )  DEFINE_ERRORCODE( errno_t, c_name, new_name )

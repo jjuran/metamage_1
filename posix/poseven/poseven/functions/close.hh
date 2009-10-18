@@ -21,7 +21,7 @@
 #include "Nucleus/Owned.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
@@ -29,18 +29,11 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >,
-	                                   poseven::DefaultDestructionErrnoPolicy
+	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >
 	{
 		void operator()( poseven::fd_t fd ) const
 		{
-			// FIXME
-			// HandleDestructionPOSIXError( ::close( fd ) );
-			
-			if ( ::close( fd ) <= -1 )
-			{
-				HandleDestructionErrno( errno );
-			}
+			poseven::handle_destruction_posix_result( ::close( fd ) );
 		}
 	};
 	

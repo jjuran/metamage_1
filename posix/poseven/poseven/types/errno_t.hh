@@ -52,6 +52,11 @@ namespace poseven
 		return result;
 	}
 	
+	inline void handle_destruction_posix_result( int result )
+	{
+		// ignore errors in destructors for now
+	}
+	
 }
 
 #endif
