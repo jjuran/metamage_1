@@ -6,6 +6,7 @@
 #include "HTTP.hh"
 
 // Standard C/C++
+#include <cctype>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -22,6 +23,7 @@
 
 // poseven
 #include "poseven/functions/fstat.hh"
+#include "poseven/functions/read.hh"
 
 
 namespace p7 = poseven;

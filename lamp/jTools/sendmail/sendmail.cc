@@ -28,6 +28,7 @@
 // poseven
 #include "poseven/FileDescriptor.hh"
 #include "poseven/bundles/inet.hh"
+#include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
 // Nitrogen Extras / Iteration

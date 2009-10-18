@@ -20,6 +20,7 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/pwrite.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/shutdown.hh"
 #include "poseven/functions/write.hh"
 
