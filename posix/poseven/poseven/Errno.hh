@@ -72,17 +72,6 @@ namespace poseven
 namespace Nucleus
 {
 	
-	template <>
-	class ErrorCode< poseven::errno_t, ENOMEM > : public poseven::errno_t,
-	                                              public std::bad_alloc,
-	                                              public DebuggingContext
-	{
-		public:
-			ErrorCode() : errno_t( ENOMEM )  {}
-			
-			~ErrorCode() throw ()  {}
-	};
-	
 	template <> struct Converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
 	{
 		poseven::errno_t operator()( const std::bad_alloc& ) const
