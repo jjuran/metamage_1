@@ -21,9 +21,6 @@
 // poseven
 #include "poseven/Errno.hh"
 
-// Io
-#include "io/slurp.hh"
-
 // Genie
 #include "Genie/Utilities/AsyncIO.hh"
 
