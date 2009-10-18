@@ -9,15 +9,15 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
 #include "Nitrogen/Threads.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"

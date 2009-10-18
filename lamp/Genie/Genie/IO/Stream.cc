@@ -11,11 +11,8 @@
 // POSIX
 #include "sys/ioctl.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/Process.hh"

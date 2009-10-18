@@ -23,7 +23,6 @@
 #include "iota/strings.hh"
 
 // Nucleus
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
 // Io

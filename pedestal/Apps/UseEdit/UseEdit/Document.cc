@@ -5,9 +5,6 @@
 
 #include "UseEdit/Document.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Io
 #include "io/slurp.hh"
 

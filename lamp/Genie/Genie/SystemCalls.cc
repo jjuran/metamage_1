@@ -14,8 +14,8 @@
 #include "sys/uio.h"
 #include "unistd.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Io
 #include "io/io.hh"
@@ -24,7 +24,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"

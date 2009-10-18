@@ -7,12 +7,11 @@
 
 #include "ADBProtocol.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace N = Nitrogen;
-namespace NN = Nucleus;
 
 
 const UInt8 kADBListenCommand =  8;

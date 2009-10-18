@@ -5,8 +5,8 @@
 
 #include "Genie/Process/Entry.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace Genie

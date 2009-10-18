@@ -9,9 +9,6 @@
 // Standard C++
 #include <map>
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Genie
 #include "Genie/IO/Base.hh"
 

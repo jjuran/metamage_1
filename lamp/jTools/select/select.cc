@@ -15,9 +15,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"

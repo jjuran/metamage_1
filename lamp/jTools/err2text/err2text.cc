@@ -22,8 +22,8 @@ enum { sigMPWShell = 'MPS ' };
 // Standard C/C++
 #include <cstdio>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"

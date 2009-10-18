@@ -3,9 +3,11 @@
  *	=====
  */
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
 // Nitrogen

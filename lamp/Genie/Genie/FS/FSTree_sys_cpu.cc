@@ -8,8 +8,8 @@
 // Iota
 #include "iota/decimal.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.h"

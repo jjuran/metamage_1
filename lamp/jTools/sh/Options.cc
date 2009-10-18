@@ -12,8 +12,8 @@
 // Standard C/C++
 #include <cstring>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace tool

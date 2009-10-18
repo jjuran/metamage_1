@@ -16,9 +16,6 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/extras/pump.hh"

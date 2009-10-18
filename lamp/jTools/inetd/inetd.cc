@@ -17,9 +17,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
 #include "poseven/FileDescriptor.hh"
 #include "poseven/bundles/inet.hh"

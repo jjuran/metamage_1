@@ -33,8 +33,10 @@
 // Standard C
 #include <string.h>
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Convert.h"
 
 // Nitrogen

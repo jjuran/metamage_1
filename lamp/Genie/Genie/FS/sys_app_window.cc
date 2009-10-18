@@ -9,7 +9,7 @@
 #include <MacWindows.h>
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/sys_app_window_list.hh"

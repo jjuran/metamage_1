@@ -15,7 +15,7 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/Devices.hh"

@@ -7,7 +7,6 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/FileDescriptor.hh"
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/open.hh"

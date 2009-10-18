@@ -11,8 +11,8 @@
 // Mac OS
 #include <Fonts.h>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Events.h"

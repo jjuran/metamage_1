@@ -18,8 +18,8 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // poseven
 #include "poseven/functions/fstat.hh"

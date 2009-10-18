@@ -19,7 +19,7 @@
 #include "Nucleus/Convert.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"

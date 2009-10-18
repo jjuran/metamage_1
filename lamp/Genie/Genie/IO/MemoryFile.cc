@@ -5,11 +5,8 @@
 
 #include "Genie/IO/MemoryFile.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/mmap/static_memory_mapping.hh"

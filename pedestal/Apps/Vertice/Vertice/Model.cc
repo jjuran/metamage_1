@@ -8,9 +8,6 @@
 // Standard C++
 #include <algorithm>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Vertice
 #include "Vectoria/Units.hh"
 

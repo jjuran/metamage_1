@@ -5,8 +5,8 @@
 
 #include "Genie/BinaryImage.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.h"
@@ -19,10 +19,7 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // poseven
-#include "poseven/Errno.hh"
-
-// Io
-#include "io/slurp.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/Utilities/AsyncIO.hh"

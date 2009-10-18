@@ -21,8 +21,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Io
 #include "io/io.hh"
@@ -45,7 +45,7 @@
 #include "recall/backtrace.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 #include "poseven/Pathnames.hh"
 
 // Pedestal

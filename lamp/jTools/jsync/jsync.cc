@@ -24,9 +24,6 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Io
 #include "io/walk.hh"
 

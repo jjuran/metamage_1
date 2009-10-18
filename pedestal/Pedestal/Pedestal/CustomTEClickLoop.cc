@@ -8,8 +8,8 @@
 // Universal Interfaces
 #include <TextEdit.h>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace Pedestal

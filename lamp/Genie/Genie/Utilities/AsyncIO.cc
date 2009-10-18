@@ -8,9 +8,6 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // MacIO
 #include "MacIO/FSMakeFSSpec_Async.hh"
 #include "MacIO/FSpOpen_Async.hh"

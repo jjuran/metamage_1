@@ -9,8 +9,8 @@
 // POSIX
 #include "unistd.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"

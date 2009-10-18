@@ -8,8 +8,8 @@
 // Standard C/C++
 #include <cctype>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Events.h"

@@ -14,9 +14,6 @@
 // Standard C/C++
 #include <cctype>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Nitrogen
 #include "Nitrogen/Events.h"
 

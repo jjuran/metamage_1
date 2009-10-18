@@ -14,7 +14,7 @@
 #include "Nitrogen/MacErrors.h"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

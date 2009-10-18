@@ -9,7 +9,7 @@
 #include "iota/decimal.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // Nitrogen
 #include "Nitrogen/Icons.h"

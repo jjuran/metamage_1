@@ -9,9 +9,6 @@
 // POSIX
 #include "sys/time.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
 #include "Nitrogen/Timer.h"

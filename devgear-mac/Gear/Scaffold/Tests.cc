@@ -23,8 +23,8 @@ static registration -- a file-static object registers the test in its constructo
 #include <algorithm>
 #include <vector>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace Test

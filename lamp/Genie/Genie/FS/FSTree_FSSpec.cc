@@ -23,8 +23,8 @@
 #include "FileCopy.h"
 #include "MoreFilesExtras.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // Nitrogen
 #include "Nitrogen/Aliases.h"
@@ -39,7 +39,7 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 // TimeOff
 #include "TimeOff.hh"

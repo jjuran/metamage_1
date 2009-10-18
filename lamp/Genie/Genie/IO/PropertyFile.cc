@@ -6,7 +6,7 @@
 #include "Genie/IO/PropertyFile.hh"
 
 // poseven
-#include "poseven/Errno.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace Genie

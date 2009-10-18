@@ -15,9 +15,11 @@
 // Iota
 #include "iota/strings.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Nucleus
 #include "Nucleus/Exception.h"
-#include "Nucleus/NAssert.h"
 #include "Nucleus/Owned.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
