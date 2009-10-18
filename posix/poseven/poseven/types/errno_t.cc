@@ -10,7 +10,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nucleus
-#include "Nucleus/ErrorCode.h"
+#include "nucleus/error_code.hh"
 
 
 namespace poseven
@@ -18,7 +18,7 @@ namespace poseven
 	
 	void throw_errno_internal( errno_t number )
 	{
-		Nucleus::ThrowErrorCode< errno_t >( number );
+		nucleus::throw_error_code< errno_t >( number );
 	}
 	
 }

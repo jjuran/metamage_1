@@ -18,9 +18,7 @@
 #include <errno.h>
 
 // Nucleus
-#ifndef NUCLEUS_ERRORCODE_H
-#include "Nucleus/ErrorCode.h"
-#endif
+#include "nucleus/error_code.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -32,7 +30,7 @@ namespace poseven
 	template < int number >
 	void register_errno()
 	{
-		Nucleus::RegisterErrorCode< errno_t, number >();
+		nucleus::register_error_code< errno_t, number >();
 	}
 	
 	
@@ -43,10 +41,10 @@ namespace poseven
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
+	template <> struct converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
 	{
 		poseven::errno_t operator()( const std::bad_alloc& ) const
 		{
