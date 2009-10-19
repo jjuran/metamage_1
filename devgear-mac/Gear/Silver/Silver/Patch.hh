@@ -10,7 +10,7 @@
 #define SILVER_PATCH_HH
 
 #include "Silver/PatchUtils.hh"
-#include "Silver/PatchStub.hh"
+#include "Silver/PatchAdapterGlue.hh"
 #include "Silver/Traps.hh"
 
 

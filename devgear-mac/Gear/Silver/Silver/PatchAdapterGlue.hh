@@ -1,13 +1,13 @@
 /*
 	
-	Patch.hh
+	PatchAdapterGlue.hh
 	
 	Joshua Juran
 	
 */
 
-#ifndef SILVER_PATCHSTUB_HH
-#define SILVER_PATCHSTUB_HH
+#ifndef SILVER_PATCHADAPTERGLUE_HH
+#define SILVER_PATCHADAPTERGLUE_HH
 
 #include "Silver/Traps.hh"
 
