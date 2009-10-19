@@ -18,7 +18,9 @@ namespace Silver
 {
 	
 	template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
-	class TrapPatch : private PatchStub< typename TrapTraits< trapWord >::PatchProcPtr, patch >
+	class TrapPatch
+	:
+		private PatchAdapter< TrapTraits< trapWord >::arity >::Glue< trapWord, patch >
 	{
 		public:
 			static void Install()
