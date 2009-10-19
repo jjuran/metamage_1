@@ -17,20 +17,20 @@
 namespace Silver
 {
 	
-	template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+	template < UInt16 trap, typename TrapTraits< trap >::PatchProcPtr patch >
 	class TrapPatch
 	:
-		private PatchAdapter< TrapTraits< trapWord >::arity >::Glue< trapWord, patch >
+		private PatchAdapter< TrapTraits< trap >::arity >::Glue< trap, patch >
 	{
 		public:
 			static void Install()
 			{
-				Next::proc = ApplyTrapPatch( trapWord, Function );
+				Next::proc = ApplyTrapPatch( trap, Function );
 			}
 			
 			static void Remove()
 			{
-				RemoveTrapPatch( trapWord, Next::proc );
+				RemoveTrapPatch( trap, Next::proc );
 				
 				Next::proc = NULL;
 			}

@@ -15,18 +15,18 @@
 namespace Silver
 {
 	
-	template < UInt16                                         trapWord,
-	           typename TrapTraits< trapWord >::PatchProcPtr  patch >
+	template < UInt16                                     trap,
+	           typename TrapTraits< trap >::PatchProcPtr  patch >
 	//
 	struct PatchChainLink
 	{
-		static typename TrapTraits< trapWord >::ProcPtr proc;
+		static typename TrapTraits< trap >::ProcPtr proc;
 	};
 	
-	template < UInt16                                         trapWord,
-	           typename TrapTraits< trapWord >::PatchProcPtr  patch >
+	template < UInt16                                     trap,
+	           typename TrapTraits< trap >::PatchProcPtr  patch >
 	//
-	typename TrapTraits< trapWord >::ProcPtr PatchChainLink< trapWord, patch >::proc;
+	typename TrapTraits< trap >::ProcPtr PatchChainLink< trap, patch >::proc;
 	
 	
 	template < int Arity > struct PatchAdapter {};
@@ -34,12 +34,12 @@ namespace Silver
 	template <>
 	struct PatchAdapter< 0 >
 	{
-		template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+		template < UInt16 trap, typename TrapTraits< trap >::PatchProcPtr patch >
 		struct Glue
 		{
-			typedef typename TrapTraits< trapWord >::result_type R;
+			typedef typename TrapTraits< trap >::result_type R;
 			
-			typedef PatchChainLink< trapWord, patch > Next;
+			typedef PatchChainLink< trap, patch > Next;
 			
 			static pascal R Function()
 			{
@@ -51,13 +51,13 @@ namespace Silver
 	template <>
 	struct PatchAdapter< 1 >
 	{
-		template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+		template < UInt16 trap, typename TrapTraits< trap >::PatchProcPtr patch >
 		struct Glue
 		{
-			typedef typename TrapTraits< trapWord >::result_type R;
-			typedef typename TrapTraits< trapWord >::param0_type P0;
+			typedef typename TrapTraits< trap >::result_type R;
+			typedef typename TrapTraits< trap >::param0_type P0;
 			
-			typedef PatchChainLink< trapWord, patch > Next;
+			typedef PatchChainLink< trap, patch > Next;
 			
 			static pascal R Function( P0 p0 )
 			{
@@ -69,14 +69,14 @@ namespace Silver
 	template <>
 	struct PatchAdapter< 2 >
 	{
-		template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+		template < UInt16 trap, typename TrapTraits< trap >::PatchProcPtr patch >
 		struct Glue
 		{
-			typedef typename TrapTraits< trapWord >::result_type R;
-			typedef typename TrapTraits< trapWord >::param0_type P0;
-			typedef typename TrapTraits< trapWord >::param1_type P1;
+			typedef typename TrapTraits< trap >::result_type R;
+			typedef typename TrapTraits< trap >::param0_type P0;
+			typedef typename TrapTraits< trap >::param1_type P1;
 			
-			typedef PatchChainLink< trapWord, patch > Next;
+			typedef PatchChainLink< trap, patch > Next;
 			
 			static pascal R Function( P0 p0, P1 p1 )
 			{
@@ -88,15 +88,15 @@ namespace Silver
 	template <>
 	struct PatchAdapter< 3 >
 	{
-		template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+		template < UInt16 trap, typename TrapTraits< trap >::PatchProcPtr patch >
 		struct Glue
 		{
-			typedef typename TrapTraits< trapWord >::result_type R;
-			typedef typename TrapTraits< trapWord >::param0_type P0;
-			typedef typename TrapTraits< trapWord >::param1_type P1;
-			typedef typename TrapTraits< trapWord >::param2_type P2;
+			typedef typename TrapTraits< trap >::result_type R;
+			typedef typename TrapTraits< trap >::param0_type P0;
+			typedef typename TrapTraits< trap >::param1_type P1;
+			typedef typename TrapTraits< trap >::param2_type P2;
 			
-			typedef PatchChainLink< trapWord, patch > Next;
+			typedef PatchChainLink< trap, patch > Next;
 			
 			static pascal R Function( P0 p0, P1 p1, P2 p2 )
 			{
