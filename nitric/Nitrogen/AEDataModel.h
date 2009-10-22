@@ -359,8 +359,6 @@ namespace Nitrogen
 	class AEDesc_AlivenessTest
 	{
 		public:
-			AEDesc_AlivenessTest( bool )  {}
-			
 			static bool IsLive( const AEDesc& desc )
 			{
 				return desc.dataHandle != NULL;

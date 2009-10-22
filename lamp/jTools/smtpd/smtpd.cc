@@ -86,8 +86,6 @@ namespace Nitrogen
 	class FSDirSpec_AlivenessTest
 	{
 		public:
-			FSDirSpec_AlivenessTest( bool )  {}
-			
 			static bool IsLive( const FSDirSpec& dir )
 			{
 				return dir.dirID != 0;

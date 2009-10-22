@@ -147,8 +147,6 @@ namespace Nucleus
    class NondefaultValuesAreLive
      {
       public:
-         NondefaultValuesAreLive( bool )           {}
-
          template < class Resource >
          static bool IsLive( const Resource& r )
          {
