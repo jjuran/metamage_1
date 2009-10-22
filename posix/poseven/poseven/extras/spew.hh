@@ -13,7 +13,6 @@
 #include <string>
 
 // poseven
-#include "poseven/functions/open.hh"
 #include "poseven/extras/write_all.hh"
 
 
@@ -26,10 +25,8 @@ namespace poseven
 	}
 	
 	
-	inline void spew( const char* path, const char* buffer, std::size_t length )
-	{
-		spew( open( path, o_wronly | o_trunc ), buffer, length );
-	}
+	void spew( const char* path, const char* buffer, std::size_t length );
+	
 	
 	inline void spew( const char* path, const std::string& stuff )
 	{
