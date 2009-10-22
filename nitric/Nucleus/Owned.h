@@ -150,7 +150,7 @@ namespace Nucleus
          NondefaultValuesAreLive( bool )           {}
 
          template < class Resource >
-         bool IsLive( const Resource& r ) const
+         static bool IsLive( const Resource& r )
          {
             return r != OwnedDefaults< Resource >::DefaultValue();
          }
