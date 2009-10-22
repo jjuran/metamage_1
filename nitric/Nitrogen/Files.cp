@@ -554,7 +554,7 @@ Return Value
                                             &catalogInfo,
                                             &result.fsRef,
                                             &result.fsSpec ) );
-      return Nucleus::Owned<FSRefSpec>::Seize( result );
+      return result;
      }
 
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&   parentRef,
@@ -569,7 +569,7 @@ Return Value
                                             0,
                                             &result.fsRef,
                                             &result.fsSpec ) );
-      return Nucleus::Owned<FSRefSpec>::Seize( result );
+      return result;
      }
 
 
@@ -605,7 +605,7 @@ Return Value
                                                  &result.fsSpec,
                                                  &dirID ) );
       result.dirID = FSDirID( dirID );
-      return Nucleus::Owned<FSRefSpecDirID>::Seize( result );
+      return result;
      }
 
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&   parentRef,
@@ -623,7 +623,7 @@ Return Value
                                                  &result.fsSpec,
                                                  &dirID ) );
       result.dirID = FSDirID( dirID );
-      return Nucleus::Owned<FSRefSpecDirID>::Seize( result );
+      return result;
      }
 
 

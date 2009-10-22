@@ -778,24 +778,13 @@ namespace Nucleus
   {
    inline bool operator==( const ::FSRef& ref1, const ::FSRef& ref2 )   { return Nitrogen::FSCompareFSRefs( ref1, ref2 ); }
    inline bool operator!=( const ::FSRef& ref1, const ::FSRef& ref2 )   { return !( ref1 == ref2 ); }
-
-   template <> struct OwnedDefaults< Nitrogen::FSRef >           { typedef Nitrogen::FileSystemDisposer DisposerType; };
-   template <> struct OwnedDefaults< Nitrogen::FSSpec >          { typedef Nitrogen::FileSystemDisposer DisposerType; };
-   template <> struct OwnedDefaults< Nitrogen::FSDirID >         { typedef Nitrogen::FileSystemDisposer DisposerType; };
-   template <> struct OwnedDefaults< Nitrogen::FSRefSpec >       { typedef Nitrogen::FileSystemDisposer DisposerType; };
-   template <> struct OwnedDefaults< Nitrogen::FSRefSpecDirID >  { typedef Nitrogen::FileSystemDisposer DisposerType; };
-   
-   template <> struct LivelinessTraits< Nitrogen::FSRef,          Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< Nitrogen::FSSpec,         Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< Nitrogen::FSRefSpec,      Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< Nitrogen::FSRefSpecDirID, Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
   }
 
 namespace Nitrogen
   {
 
 
-   typedef Nucleus::Owned<FSRefSpec> FSCreateFileUnicode_Result;
+   typedef FSRefSpec FSCreateFileUnicode_Result;
    
    // 5588
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
@@ -816,7 +805,7 @@ namespace Nitrogen
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&     parentRef,
                                                    const UniString& name );
    
-   typedef Nucleus::Owned<FSRefSpecDirID> FSCreateDirectoryUnicode_Result;
+   typedef FSRefSpecDirID FSCreateDirectoryUnicode_Result;
    
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&         parentRef,
                                                              UniCharCount         nameLength,
