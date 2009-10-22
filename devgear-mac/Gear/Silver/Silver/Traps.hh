@@ -24,6 +24,10 @@ namespace Silver
 	template < class R >
 	struct PatchProc_Traits< R (*)() >
 	{
+		static const int arity = 0;
+		
+		typedef R result_type;
+		
 		typedef pascal R (*ProcPtr)();
 		
 		typedef R (*PatchProcPtr)( ProcPtr );
@@ -32,6 +36,11 @@ namespace Silver
 	template < class R, class P0 >
 	struct PatchProc_Traits< R (*)( P0 ) >
 	{
+		static const int arity = 1;
+		
+		typedef R   result_type;
+		typedef P0  param0_type;
+		
 		typedef pascal R (*ProcPtr)( P0 );
 		
 		typedef R (*PatchProcPtr)( P0, ProcPtr );
@@ -40,6 +49,12 @@ namespace Silver
 	template < class R, class P0, class P1 >
 	struct PatchProc_Traits< R (*)( P0, P1 ) >
 	{
+		static const int arity = 2;
+		
+		typedef R   result_type;
+		typedef P0  param0_type;
+		typedef P1  param1_type;
+		
 		typedef pascal R (*ProcPtr)( P0, P1 );
 		
 		typedef R (*PatchProcPtr)( P0, P1, ProcPtr );
@@ -48,6 +63,13 @@ namespace Silver
 	template < class R, class P0, class P1, class P2 >
 	struct PatchProc_Traits< R (*)( P0, P1, P2 ) >
 	{
+		static const int arity = 3;
+		
+		typedef R   result_type;
+		typedef P0  param0_type;
+		typedef P1  param1_type;
+		typedef P2  param2_type;
+		
 		typedef pascal R (*ProcPtr)( P0, P1, P2 );
 		
 		typedef R (*PatchProcPtr)( P0, P1, P2, ProcPtr );
