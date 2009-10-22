@@ -37,7 +37,7 @@ namespace Nitrogen {
 
 namespace Nucleus
    {
-	template <> struct OwnedDefaults< Nitrogen::CFDateFormatterRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+	template <> struct Disposer_Traits< Nitrogen::CFDateFormatterRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen

@@ -62,7 +62,7 @@ namespace Nitrogen {
 namespace Nucleus
   {
 //	marshall sez: Dang! - we have to have our own Disposer because we don't have "HIObjectGetTypeID"
-//	template <> struct OwnedDefaults< HIObjectRef > : OwnedDefaults<CFTypeRef>  {};
+//	template <> struct Disposer_Traits< HIObjectRef > : Disposer_Traits<CFTypeRef>  {};
 //	template <> struct CFType_Traits< HIObjectRef > : Basic_CFType_Traits< CFDateRef, ::HIObjectGetTypeID > {};  }
 	template <> struct Disposer< Nitrogen::HIObjectRef >: public std::unary_function< Nitrogen::HIObjectRef, void >
 		{

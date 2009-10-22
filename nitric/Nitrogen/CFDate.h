@@ -29,7 +29,7 @@ namespace Nitrogen {
 
 namespace Nucleus
   {
-	template <> struct OwnedDefaults< Nitrogen::CFDateRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+	template <> struct Disposer_Traits< Nitrogen::CFDateRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
