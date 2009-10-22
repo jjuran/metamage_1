@@ -127,9 +127,15 @@ namespace Nucleus
    template < class Resource > struct Disposer;
    
    template < class Resource >
+   struct Disposer_Traits
+     {
+      typedef Disposer< Resource > Type;
+     };
+
+   template < class Resource >
    struct OwnedDefaults
      {
-      typedef Disposer<Resource> DisposerType;
+      typedef typename Disposer_Traits< Resource >::Type DisposerType;
      };
 
    class NondefaultValuesAreLive
