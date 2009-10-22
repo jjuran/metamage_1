@@ -22,9 +22,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/Shared.h"
-
 // Io
 #include "io/slurp.hh"
 #include "io/spew.hh"
@@ -237,7 +234,7 @@ namespace tool
 		return dir / name;
 	}
 	
-	static NN::Owned< FSSpec > NewTempFile( const FSSpec& item )
+	static FSSpec NewTempFile( const FSSpec& item )
 	{
 		if ( io::file_exists( item ) )
 		{
@@ -246,10 +243,10 @@ namespace tool
 		
 		N::FSpCreate( item, N::OSType( 'R*ch' ), N::OSType( 'TEXT' ) );
 		
-		return NN::Owned< FSSpec >::Seize( item );
+		return item;
 	}
 	
-	NN::Shared< FSSpec > gTempFiles[ 4 ];
+	static FSSpec gTempFiles[ 4 ];
 	
 	static std::string SetUpScript( const std::string& command )
 	{
@@ -430,9 +427,9 @@ namespace tool
 		DumpFile( gTempFiles[ kOutputFile ], p7::stdout_fileno );
 		
 		// Delete temp files
-		std::fill( gTempFiles,
-		           gTempFiles + 4,
-		           NN::Shared< FSSpec >() );
+		std::for_each( gTempFiles,
+		               gTempFiles + 4,
+		               more::ptr_fun( &N::FSpDelete ) );
 		
 		return result;
 	}
