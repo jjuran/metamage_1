@@ -177,7 +177,7 @@ namespace Nucleus
              resource( OwnedDefaults< Resource >::DefaultValue() )
            {}
          
-         DisposableResource( const Resource& r, bool seized )
+         DisposableResource( const Resource& r )
            : DisposerType(),
              resource( r )
            {}
@@ -236,8 +236,8 @@ namespace Nucleus
          Body body;
          
          class Seizing {};
-         explicit Owned( Seizing, const Resource& r ) : body( r, true ) {}
-         explicit Owned( Seizing, const Body& r )     : body( r )       {}
+         explicit Owned( Seizing, const Resource& r ) : body( r )  {}
+         explicit Owned( Seizing, const Body& r )     : body( r )  {}
          
       public:                                       
          Owned()                                      : body()    {}
