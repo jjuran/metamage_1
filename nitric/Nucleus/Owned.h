@@ -132,15 +132,6 @@ namespace Nucleus
       typedef Disposer<Resource> DisposerType;
      };
 
-   class AllValuesAreLive
-     {
-      public:
-         AllValuesAreLive( bool )                  {}
-         
-         template < class Resource >
-         bool IsLive( const Resource& ) const      { return true; }
-     };
-
    class NondefaultValuesAreLive
      {
       public:
