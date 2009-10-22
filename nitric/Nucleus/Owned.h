@@ -133,7 +133,13 @@ namespace Nucleus
      };
 
    template < class Resource >
-   struct OwnedDefaults
+   struct DefaultValue_Traits
+     {
+      static Resource DefaultValue()  { return Resource(); }
+     };
+
+   template < class Resource >
+   struct OwnedDefaults : public DefaultValue_Traits< Resource >
      {
       typedef typename Disposer_Traits< Resource >::Type DisposerType;
      };
@@ -144,7 +150,10 @@ namespace Nucleus
          NondefaultValuesAreLive( bool )           {}
 
          template < class Resource >
-         bool IsLive( const Resource& r ) const    { return r != Resource(); }
+         bool IsLive( const Resource& r ) const
+         {
+            return r != OwnedDefaults< Resource >::DefaultValue();
+         }
      };
 
    class SeizedValuesAreLive
@@ -182,7 +191,7 @@ namespace Nucleus
          DisposableResource()
            : DisposerType(),
              TesterType( false ),
-             resource()
+             resource( OwnedDefaults< Resource >::DefaultValue() )
            {}
          
          DisposableResource( const Resource& r, bool seized )
