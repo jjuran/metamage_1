@@ -163,55 +163,46 @@ namespace Nucleus
      };
    
    template < class Resource, class DisposerType >
-   class DisposableResource: private DisposerType,
-                             private Nucleus::LivelinessTraits< Resource, DisposerType >::LivelinessTest
+   class DisposableResource: private DisposerType
      {
       private:
          typedef typename LivelinessTraits< Resource, DisposerType >::LivelinessTest TesterType;
          Resource resource;
       
          static Resource ImplicitlyConvert( const Resource& r )      { return r; }
-
-         const TesterType& Tester() const      { return *this; }
-         TesterType& Tester()                  { return *this; }
          
       public:
          DisposableResource()
            : DisposerType(),
-             TesterType( false ),
              resource( OwnedDefaults< Resource >::DefaultValue() )
            {}
          
          DisposableResource( const Resource& r, bool seized )
            : DisposerType(),
-             TesterType( seized ),
              resource( r )
            {}
 
          DisposableResource( const Resource& r, const DisposerType& disposer )
            : DisposerType( disposer ),
-             TesterType( true ),
              resource( r )
            {}
 
          template< class R >
          DisposableResource( const DisposableResource<R,DisposerType>& r )
            : DisposerType( r.Disposer() ),
-             TesterType( r.IsLive() ),
              resource( ImplicitlyConvert( r.Get() ) )
            {}
             
          void Swap( DisposableResource& r )
            {
             std::swap( Disposer(), r.Disposer() );
-            std::swap( Tester(), r.Tester() );
             std::swap( resource,   r.resource   );
            }
 
          DisposerType const& Disposer() const      { return *this; }
          DisposerType      & Disposer()            { return *this; }
          
-         bool IsLive() const                       { return Tester().IsLive( Get() ); }
+         bool IsLive() const                       { return TesterType::IsLive( Get() ); }
          
          void Dispose() const                      { if ( IsLive() ) Disposer()( resource ); }
 
