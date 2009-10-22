@@ -83,13 +83,27 @@ namespace Nitrogen
 		}
 	};
 	
+	class FSDirSpec_AlivenessTest
+	{
+		public:
+			FSDirSpec_AlivenessTest( bool )  {}
+			
+			static bool IsLive( const FSDirSpec& dir )
+			{
+				return dir.dirID != 0;
+			}
+	};
+	
 }
 
 namespace Nucleus
 {
 	
 	template <>
-	struct LivelinessTraits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
+	{
+		typedef Nitrogen::FSDirSpec_AlivenessTest LivelinessTest;
+	};
 	
 }
 
