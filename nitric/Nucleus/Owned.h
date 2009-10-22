@@ -156,18 +156,6 @@ namespace Nucleus
          }
      };
 
-   class SeizedValuesAreLive
-     {
-      private:
-         bool isLive;
-      
-      public:
-         SeizedValuesAreLive( bool seized )        : isLive( seized )  {}
-
-         template < class Resource >
-         bool IsLive( const Resource& ) const      { return isLive; }
-     };
-   
    template < class Resource, class DisposerType >
    struct LivelinessTraits
      {
