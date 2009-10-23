@@ -1,14 +1,9 @@
-// slurp.hh
-// --------
-//
-// Maintained by Joshua Juran
-
-// Part of the Nitrogen project.
-//
-// Written 2008 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
+/*
+	slurp.hh
+	--------
+	
+	Copyright 2009, Joshua Juran
+*/
 
 
 #ifndef POSEVEN_EXTRAS_SLURP_HH
@@ -17,14 +12,8 @@
 // Standard C++
 #include <string>
 
-// Io
-#include "io/slurp.hh"
-
-// Nucleus
-#include "Nucleus/Flattener.h"
-
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/read_all.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/open.hh"
 
@@ -34,17 +23,27 @@ namespace poseven
 	
 	inline std::string slurp( fd_t fd )
 	{
-		return io::slurp_input< Nucleus::StringFlattener< std::string > >( fd );
-	}
-	
-	inline std::string slurp( const std::string& path )
-	{
-		return io::slurp_file< Nucleus::StringFlattener< std::string > >( path );
+		const size_t size = fstat( fd ).st_size;
+		
+		std::string result;
+		
+		result.resize( size );
+		
+		const ssize_t n_read = read_all( fd, &result[0], size );
+		
+		result.resize( n_read );
+		
+		return result;
 	}
 	
 	inline std::string slurp( const char* path )
 	{
-		return io::slurp_input< Nucleus::StringFlattener< std::string > >( open( path, o_rdonly ).get() );
+		return slurp( open( path, o_rdonly ) );
+	}
+	
+	inline std::string slurp( const std::string& path )
+	{
+		return slurp( path.c_str() );
 	}
 	
 }

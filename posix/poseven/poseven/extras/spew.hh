@@ -1,14 +1,9 @@
-// spew.hh
-// -------
-//
-// Maintained by Joshua Juran
-
-// Part of the Nitrogen project.
-//
-// Written 2008 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
+/*
+	spew.hh
+	-------
+	
+	Copyright 2009, Joshua Juran
+*/
 
 
 #ifndef POSEVEN_EXTRAS_SPEW_HH
@@ -17,15 +12,8 @@
 // Standard C++
 #include <string>
 
-// Io
-#include "io/spew.hh"
-
-// Nucleus
-#include "Nucleus/Flattener.h"
-
 // poseven
-#include "poseven/FileDescriptor.hh"
-#include "poseven/functions/open.hh"
+#include "poseven/extras/write_all.hh"
 
 
 namespace poseven
@@ -33,28 +21,26 @@ namespace poseven
 	
 	inline void spew( fd_t fd, const char* buffer, std::size_t length )
 	{
-		io::spew_output( fd, buffer, length );
+		write_all( fd, buffer, length );
+	}
+	
+	
+	void spew( const char* path, const char* buffer, std::size_t length );
+	
+	
+	inline void spew( const char* path, const std::string& stuff )
+	{
+		spew( path, stuff.data(), stuff.length() );
 	}
 	
 	inline void spew( const std::string& path, const char* buffer, std::size_t length )
 	{
-		io::spew_file( path, buffer, length );
+		spew( path.c_str(), buffer, length );
 	}
 	
 	inline void spew( const std::string& path, const std::string& stuff )
 	{
-		io::spew_file< Nucleus::StringFlattener< std::string > >( path, stuff );
-	}
-	
-	
-	inline void spew( const char* path, const char* buffer, std::size_t length )
-	{
-		io::spew_file( path, buffer, length );
-	}
-	
-	inline void spew( const char* path, const std::string& stuff )
-	{
-		io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_wronly | o_trunc ).get(), stuff );
+		spew( path.c_str(), stuff );
 	}
 	
 }
