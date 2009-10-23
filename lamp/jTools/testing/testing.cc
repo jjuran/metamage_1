@@ -1283,6 +1283,106 @@ static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
 	return 0;
 }
 
+static int gObjectCount = 0;
+
+class Object
+{
+	public:
+		Object()  { ++gObjectCount; }
+		
+		Object( const Object& )  { ++gObjectCount; }
+		
+		~Object()  { --gObjectCount; }
+		
+		//Object& operator=( const gObjectCount& )  {}
+};
+
+namespace Nucleus
+{
+	
+	template <> struct Disposer< Object* > : public DisposeWithDelete {};
+	
+}
+
+static void CheckObjects( int trial )
+{
+	if ( gObjectCount )
+	{
+		std::fprintf( stderr, "%d: Object count: %d\n", trial, gObjectCount );
+		
+		gObjectCount = 0;
+	}
+}
+
+static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
+{
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+	}
+	CheckObjects( 1 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Owned< Object* > bar( foo );
+	}
+	CheckObjects( 2 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Owned< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		bar = foo;
+	}
+	CheckObjects( 3 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		foo.Reset();
+	}
+	CheckObjects( 4 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+	}
+	CheckObjects( 5 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Shared< Object* > bar( foo );
+	}
+	CheckObjects( 6 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		bar = foo;
+	}
+	CheckObjects( 7 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		foo.Reset();
+	}
+	CheckObjects( 8 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Shared< Object* > baz( bar );
+		
+		bar = foo;
+	}
+	CheckObjects( 9 );
+	
+	return 0;
+}
+
 typedef int (*MainProcPtr)( int argc, iota::argv_t argv );
 
 struct SubMain
@@ -1321,6 +1421,7 @@ const SubMain gSubs[] =
 	{ "callback",  TestCallback   },
 	{ "forkstop",  TestForkAndStop },
 	{ "stack",     TestDefaultThreadStackSize },
+	{ "owned",     TestNucleusOwnedShared },
 	
 #if TARGET_RT_MAC_CFM
 	
