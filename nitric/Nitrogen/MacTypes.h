@@ -118,7 +118,8 @@ namespace Nitrogen
      {
       typedef double Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, Putter put )
+      template < class Putter >
+      static void Put( Put_Parameter toPut, Putter put )
         {
          const Fixed fixed = DoubleToFixed( toPut );
          put( &fixed, &fixed + 1 );
@@ -126,7 +127,8 @@ namespace Nitrogen
       
       typedef double Get_Result;
       
-      template < class Getter > Get_Result Get( Getter get )
+      template < class Getter >
+      static Get_Result Get( Getter get )
         {
          Fixed fixed;
          get( &fixed, &fixed + 1 );
@@ -237,7 +239,8 @@ namespace Nitrogen
 	{
 		typedef const std::basic_string< UTFChar >& Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, Putter put )
 		{
 			const UTFChar* begin = &toPut[0];
 			const std::size_t size = toPut.size() * sizeof (UTFChar);
@@ -247,7 +250,8 @@ namespace Nitrogen
 		
 		typedef std::basic_string< UTFChar > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter >
+		static Get_Result Get( Getter get )
 		{
 			const std::size_t size = get.size();
 			Get_Result result;

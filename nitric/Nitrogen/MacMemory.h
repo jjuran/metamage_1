@@ -427,7 +427,8 @@ namespace Nitrogen
 	{
 		typedef Ptr Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, Putter put )
 		{
 			const char* begin = toPut;
 			const std::size_t size = GetPtrSize( toPut );
@@ -437,7 +438,8 @@ namespace Nitrogen
 		
 		typedef Nucleus::Owned< Ptr > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter >
+		static Get_Result Get( Getter get )
 		{
 			const std::size_t size = get.size();
 			Get_Result result = NewPtr( size );
@@ -464,16 +466,18 @@ namespace Nitrogen
 		
 		typedef PtrType Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, Putter put )
 		{
-			PtrFlattener().Put( Ptr( toPut ), put );
+			PtrFlattener::Put( Ptr( toPut ), put );
 		}
 		
 		typedef Nucleus::Owned< PtrType > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter >
+		static Get_Result Get( Getter get )
 		{
-			return Ptr_Cast< T >( PtrFlattener().Get( get ) );
+			return Ptr_Cast< T >( PtrFlattener::Get( get ) );
 		}
 		
 		typedef Put_Parameter Parameter;
@@ -487,7 +491,8 @@ namespace Nitrogen
 	{
 		typedef Handle Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, Putter put )
 		{
 		#if !TARGET_API_MAC_OSX
 			
@@ -505,7 +510,8 @@ namespace Nitrogen
 		
 		typedef Nucleus::Owned< Handle > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter >
+		static Get_Result Get( Getter get )
 		{
 			const std::size_t size = get.size();
 			Get_Result result = NewHandle( size );
@@ -545,16 +551,18 @@ namespace Nitrogen
 		
 		typedef HandleType Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, Putter put )
 		{
-			HandleFlattener().Put( Handle( toPut ), put );
+			HandleFlattener::Put( Handle( toPut ), put );
 		}
 		
 		typedef Nucleus::Owned< HandleType > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter >
+		static Get_Result Get( Getter get )
 		{
-			return Handle_Cast< T >( HandleFlattener().Get( get ) );
+			return Handle_Cast< T >( HandleFlattener::Get( get ) );
 		}
 		
 		typedef Put_Parameter Parameter;
