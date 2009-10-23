@@ -48,7 +48,7 @@ namespace Nitrogen
 
 namespace Nucleus
   {
-   template <> struct OwnedDefaults< Nitrogen::CFURLRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+   template <> struct Disposer_Traits< Nitrogen::CFURLRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen

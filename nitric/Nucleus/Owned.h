@@ -127,41 +127,33 @@ namespace Nucleus
    template < class Resource > struct Disposer;
    
    template < class Resource >
-   struct OwnedDefaults
+   struct Disposer_Traits
      {
-      typedef Disposer<Resource> DisposerType;
+      typedef Disposer< Resource > Type;
      };
 
-   class AllValuesAreLive
+   template < class Resource >
+   struct DefaultValue_Traits
      {
-      public:
-         AllValuesAreLive( bool )                  {}
-         
-         template < class Resource >
-         bool IsLive( const Resource& ) const      { return true; }
+      static Resource DefaultValue()  { return Resource(); }
+     };
+
+   template < class Resource >
+   struct OwnedDefaults : public DefaultValue_Traits< Resource >
+     {
+      typedef typename Disposer_Traits< Resource >::Type DisposerType;
      };
 
    class NondefaultValuesAreLive
      {
       public:
-         NondefaultValuesAreLive( bool )           {}
-
          template < class Resource >
-         bool IsLive( const Resource& r ) const    { return r != Resource(); }
+         static bool IsLive( const Resource& r )
+         {
+            return r != OwnedDefaults< Resource >::DefaultValue();
+         }
      };
 
-   class SeizedValuesAreLive
-     {
-      private:
-         bool isLive;
-      
-      public:
-         SeizedValuesAreLive( bool seized )        : isLive( seized )  {}
-
-         template < class Resource >
-         bool IsLive( const Resource& ) const      { return isLive; }
-     };
-   
    template < class Resource, class DisposerType >
    struct LivelinessTraits
      {
@@ -169,55 +161,46 @@ namespace Nucleus
      };
    
    template < class Resource, class DisposerType >
-   class DisposableResource: private DisposerType,
-                             private Nucleus::LivelinessTraits< Resource, DisposerType >::LivelinessTest
+   class DisposableResource: private DisposerType
      {
       private:
          typedef typename LivelinessTraits< Resource, DisposerType >::LivelinessTest TesterType;
          Resource resource;
       
          static Resource ImplicitlyConvert( const Resource& r )      { return r; }
-
-         const TesterType& Tester() const      { return *this; }
-         TesterType& Tester()                  { return *this; }
          
       public:
          DisposableResource()
            : DisposerType(),
-             TesterType( false ),
-             resource()
+             resource( OwnedDefaults< Resource >::DefaultValue() )
            {}
          
-         DisposableResource( const Resource& r, bool seized )
+         DisposableResource( const Resource& r )
            : DisposerType(),
-             TesterType( seized ),
              resource( r )
            {}
 
          DisposableResource( const Resource& r, const DisposerType& disposer )
            : DisposerType( disposer ),
-             TesterType( true ),
              resource( r )
            {}
 
          template< class R >
          DisposableResource( const DisposableResource<R,DisposerType>& r )
            : DisposerType( r.Disposer() ),
-             TesterType( r.IsLive() ),
              resource( ImplicitlyConvert( r.Get() ) )
            {}
             
          void Swap( DisposableResource& r )
            {
             std::swap( Disposer(), r.Disposer() );
-            std::swap( Tester(), r.Tester() );
             std::swap( resource,   r.resource   );
            }
 
          DisposerType const& Disposer() const      { return *this; }
          DisposerType      & Disposer()            { return *this; }
          
-         bool IsLive() const                       { return Tester().IsLive( Get() ); }
+         bool IsLive() const                       { return TesterType::IsLive( Get() ); }
          
          void Dispose() const                      { if ( IsLive() ) Disposer()( resource ); }
 
@@ -251,8 +234,8 @@ namespace Nucleus
          Body body;
          
          class Seizing {};
-         explicit Owned( Seizing, const Resource& r ) : body( r, true ) {}
-         explicit Owned( Seizing, const Body& r )     : body( r )       {}
+         explicit Owned( Seizing, const Resource& r ) : body( r )  {}
+         explicit Owned( Seizing, const Body& r )     : body( r )  {}
          
       public:                                       
          Owned()                                      : body()    {}

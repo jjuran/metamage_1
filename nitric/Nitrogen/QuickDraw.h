@@ -217,16 +217,16 @@ namespace Nucleus
 	};
 	
 	
-	template <> struct OwnedDefaults< Nitrogen::CGrafPtr >
+	template <> struct Disposer_Traits< Nitrogen::CGrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > DisposerType;
+		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > Type;
 	};
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
-	template <> struct OwnedDefaults< Nitrogen::GrafPtr >
+	template <> struct Disposer_Traits< Nitrogen::GrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< Nitrogen::GrafPtr > DisposerType;
+		typedef Nitrogen::Detail::PortDisposer< Nitrogen::GrafPtr > Type;
 	};
 	
 #endif

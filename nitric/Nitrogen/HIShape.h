@@ -55,8 +55,8 @@ namespace Nitrogen {
 
 namespace Nucleus
   {
-	template <> struct OwnedDefaults< Nitrogen::HIShapeRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
-	template <> struct OwnedDefaults< Nitrogen::HIMutableShapeRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+	template <> struct Disposer_Traits< Nitrogen::HIShapeRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+	template <> struct Disposer_Traits< Nitrogen::HIMutableShapeRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen

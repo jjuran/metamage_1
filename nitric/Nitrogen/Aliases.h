@@ -64,7 +64,7 @@ namespace Nitrogen
 
 namespace Nucleus
   {
-   template <> struct OwnedDefaults< Nitrogen::AliasHandle > : OwnedDefaults< Nitrogen::Handle >  {};
+   template <> struct Disposer_Traits< Nitrogen::AliasHandle > : Disposer_Traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen

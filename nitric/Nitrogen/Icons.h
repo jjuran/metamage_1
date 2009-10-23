@@ -141,9 +141,9 @@ namespace Nitrogen
 
 namespace Nucleus
    {
-	template <> struct OwnedDefaults< Nitrogen::PlainIconHandle  > : OwnedDefaults< Nitrogen::Handle > {};
-	template <> struct OwnedDefaults< Nitrogen::MaskedIconHandle > : OwnedDefaults< Nitrogen::Handle > {};
-	template <> struct OwnedDefaults< Nitrogen::SmallIconHandle  > : OwnedDefaults< Nitrogen::Handle > {};
+	template <> struct Disposer_Traits< Nitrogen::PlainIconHandle  > : Disposer_Traits< Nitrogen::Handle > {};
+	template <> struct Disposer_Traits< Nitrogen::MaskedIconHandle > : Disposer_Traits< Nitrogen::Handle > {};
+	template <> struct Disposer_Traits< Nitrogen::SmallIconHandle  > : Disposer_Traits< Nitrogen::Handle > {};
   }
 
 namespace Nitrogen

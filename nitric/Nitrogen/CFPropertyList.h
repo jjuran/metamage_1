@@ -100,7 +100,7 @@ namespace Nitrogen
 
 namespace Nucleus
   {
-   template <> struct OwnedDefaults<Nitrogen::CFPropertyListRef> : OwnedDefaults<Nitrogen::CFTypeRef>  {};
+   template <> struct Disposer_Traits<Nitrogen::CFPropertyListRef> : Disposer_Traits<Nitrogen::CFTypeRef>  {};
   }
 
 namespace Nitrogen

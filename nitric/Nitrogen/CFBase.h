@@ -123,8 +123,8 @@ namespace Nitrogen {
 }
 
 namespace Nucleus {
-   template <> struct OwnedDefaults< Nitrogen::CFStringRef >   : OwnedDefaults< Nitrogen::CFTypeRef > {};
-   template <> struct OwnedDefaults< Nitrogen::CFAllocatorRef >: OwnedDefaults< Nitrogen::CFTypeRef > {};
+   template <> struct Disposer_Traits< Nitrogen::CFStringRef >   : Disposer_Traits< Nitrogen::CFTypeRef > {};
+   template <> struct Disposer_Traits< Nitrogen::CFAllocatorRef >: Disposer_Traits< Nitrogen::CFTypeRef > {};
 }
 
 namespace Nitrogen {

@@ -116,7 +116,7 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
-	template <> struct OwnedDefaults< Nitrogen::InetSvcRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
+	template <> struct Disposer_Traits< Nitrogen::InetSvcRef > : Disposer_Traits< Nitrogen::ProviderRef > {};
 	
 }
 

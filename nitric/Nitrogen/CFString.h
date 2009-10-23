@@ -44,7 +44,7 @@ namespace Nitrogen
    /* These declararions are in Nitrogen/CFBase.h:
       using ::CFStringRef;
       template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
-      template <> struct OwnedDefaults< CFStringRef >: OwnedDefaults<CFTypeRef> {};
+      template <> struct Disposer_Traits< CFStringRef >: Disposer_Traits<CFTypeRef> {};
    */
 
    inline void CFShow( const CFStringRef s )        { ::CFShow( s ); }
@@ -57,7 +57,7 @@ namespace Nitrogen
    }
 
 namespace Nucleus {
-   template <> struct OwnedDefaults< Nitrogen::CFMutableStringRef >: OwnedDefaults< Nitrogen::CFTypeRef > {};
+   template <> struct Disposer_Traits< Nitrogen::CFMutableStringRef >: Disposer_Traits< Nitrogen::CFTypeRef > {};
    }
    
 namespace Nitrogen {

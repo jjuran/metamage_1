@@ -138,7 +138,7 @@ namespace Nucleus
         }
      };
    
-	template <>  struct OwnedDefaults< Nitrogen::StringHandle > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::StringHandle > : Disposer_Traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen

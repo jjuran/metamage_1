@@ -341,6 +341,35 @@ namespace Nitrogen
 	using ::AERecord;
 	using ::AEKeyDesc;
 	
+	inline void Initialize_AEDesc( AEDesc& desc )
+	{
+		desc.descriptorType = typeNull;
+		desc.dataHandle     = NULL;
+	}
+	
+	inline AEDesc Initialized_AEDesc()
+	{
+		AEDesc result;
+		
+		Initialize_AEDesc( result );
+		
+		return result;
+	}
+	
+	class AEDesc_AlivenessTest
+	{
+		public:
+			static bool IsLive( const AEDesc& desc )
+			{
+				return desc.dataHandle != NULL;
+			}
+			
+			static bool IsLive( const AEKeyDesc& keyDesc )
+			{
+				return IsLive( keyDesc.descContent );
+			}
+	};
+	
 	struct AEDesc_Data : AEDesc
 	{
 	};
@@ -354,6 +383,17 @@ namespace Nitrogen
 	};
 	
 	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
+	
+	inline bool operator==( const AEDesc& a, const AEDesc& b )
+	{
+		return    a.descriptorType == b.descriptorType
+		       && a.dataHandle     == b.dataHandle;
+	}
+	
+	inline bool operator!=( const AEDesc& a, const AEDesc& b )
+	{
+		return !( a == b );
+	}
 	
 	template < class AEDesc_Type >
 	struct Qualified_AEDesc_Traits
@@ -445,7 +485,25 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct LivelinessTraits< Nitrogen::AEDesc_Data, Disposer< Nitrogen::AEDesc_Data > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< Nitrogen::AEDesc_Data, Disposer< Nitrogen::AEDesc_Data > >
+	{
+		typedef Nitrogen::AEDesc_AlivenessTest LivelinessTest;
+	};
+	
+	template <>
+	struct DefaultValue_Traits< Nitrogen::AEDesc_Data >
+	{
+		typedef Nitrogen::AEDesc_Data Resource;
+		
+		static Resource DefaultValue()
+		{
+			Resource r;
+			
+			Nitrogen::Initialize_AEDesc( r );
+			
+			return r;
+		}
+	};
 	
 	template <>
 	struct Disposer< Nitrogen::AEDesc_Token > : public std::unary_function< Nitrogen::AEDesc, void >,
@@ -461,7 +519,25 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct LivelinessTraits< Nitrogen::AEDesc_Token, Disposer< Nitrogen::AEDesc_Token > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< Nitrogen::AEDesc_Token, Disposer< Nitrogen::AEDesc_Token > >
+	{
+		typedef Nitrogen::AEDesc_AlivenessTest LivelinessTest;
+	};
+	
+	template <>
+	struct DefaultValue_Traits< Nitrogen::AEDesc_Token >
+	{
+		typedef Nitrogen::AEDesc_Token Resource;
+		
+		static Resource DefaultValue()
+		{
+			Resource r;
+			
+			Nitrogen::Initialize_AEDesc( r );
+			
+			return r;
+		}
+	};
 	
 	template <>
 	struct Disposer< Nitrogen::AEKeyDesc > : public std::unary_function< Nitrogen::AEKeyDesc, void >,
@@ -475,9 +551,24 @@ namespace Nucleus
 	};
 	
 	template <>
+	struct DefaultValue_Traits< Nitrogen::AEKeyDesc >
+	{
+		typedef Nitrogen::AEKeyDesc Resource;
+		
+		static Resource DefaultValue()
+		{
+			Resource r;
+			
+			Nitrogen::Initialize_AEDesc( r.descContent );
+			
+			return r;
+		}
+	};
+	
+	template <>
 	struct LivelinessTraits< Nitrogen::AEKeyDesc, Disposer< Nitrogen::AEKeyDesc > >
 	{
-		typedef SeizedValuesAreLive LivelinessTest;
+		typedef Nitrogen::AEDesc_AlivenessTest LivelinessTest;
 	};
 	
 	template <>

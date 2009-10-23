@@ -111,14 +111,14 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct OwnedDefaults< Nitrogen::ICFontRecordHandle   > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICCharTableHandle    > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecHandle      > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecListHandle  > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICFileSpecHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICMapEntryHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICServiceEntryHandle > : OwnedDefaults< Nitrogen::Handle >  {};
-	template <>  struct OwnedDefaults< Nitrogen::ICServicesHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICFontRecordHandle   > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICCharTableHandle    > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICAppSpecHandle      > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICAppSpecListHandle  > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICFileSpecHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICMapEntryHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICServiceEntryHandle > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct Disposer_Traits< Nitrogen::ICServicesHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
 	
 }
 

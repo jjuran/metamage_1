@@ -213,7 +213,7 @@ namespace Nucleus
 		}
 	};
 
-	template <> struct OwnedDefaults< Nitrogen::EndpointRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
+	template <> struct Disposer_Traits< Nitrogen::EndpointRef > : Disposer_Traits< Nitrogen::ProviderRef > {};
 	
 }
 
