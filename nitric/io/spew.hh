@@ -64,7 +64,7 @@ namespace io
 	{
 		spew_putter< io::iostream_traits< Stream > > putter( output );
 		
-		Flattener().Put( param, putter );
+		Flattener::Put( param, putter );
 	}
 	
 	template < class FileSpec >

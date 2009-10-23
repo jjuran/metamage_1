@@ -437,10 +437,10 @@ namespace Nitrogen
      {
       typedef DescType_Traits< inType > Traits;
       
-      Traits().Put( inData,
-		            SetEventParameter_Putter( inEvent,
-		                                      inName,
-		                                      inType ) );
+      Traits::Put( inData,
+		           SetEventParameter_Putter( inEvent,
+		                                     inName,
+		                                     inType ) );
       }
 
    struct GetEventParameter_Result
@@ -505,7 +505,7 @@ namespace Nitrogen
      {
       typedef DescType_Traits< inDesiredType > Traits;
       
-      return Traits().Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
+      return Traits::Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
      }
 
    template < EventParamType inDesiredType >

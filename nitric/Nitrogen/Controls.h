@@ -335,10 +335,10 @@ namespace Nitrogen
      {
       typedef SetControlData_Traits< inTagName > Traits;
       
-      Traits().Put( inData,
-		            SetControlData_Putter( inControl,
-		                                   inPart,
-		                                   ControlDataTag( inTagName ) ) );
+      Traits::Put( inData,
+		           SetControlData_Putter( inControl,
+		                                  inPart,
+		                                  ControlDataTag( inTagName ) ) );
      }
 
    template < ::ResType inTagName >
@@ -398,7 +398,7 @@ namespace Nitrogen
      {
       typedef GetControlData_Traits< inTagName > Traits;
       
-      return Traits().Get( GetControlData_Getter< inTagName >( inControl, inPart ) );
+      return Traits::Get( GetControlData_Getter< inTagName >( inControl, inPart ) );
      }
    
    /* ... */
