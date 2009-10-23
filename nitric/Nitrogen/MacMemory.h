@@ -505,12 +505,16 @@ namespace Nitrogen
 			const std::size_t size = get.size();
 			Get_Result result = NewHandle( size );
 			
-			Nucleus::Scoped< HandleState > hState( HandleState( result ) );
+			// A new handle's state is known and need not be saved
 			HLock( result );
 			
 			char* begin = *result.Get();
 			
 			get( begin, begin + size );
+			
+			// If we get this far, the handle will be unlocked as before.
+			// On exception, the handle is disposed anyway, locked or not.
+			HUnlock( result );
 			
 			return result;
 		}
