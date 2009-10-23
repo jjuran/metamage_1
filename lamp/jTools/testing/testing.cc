@@ -1184,6 +1184,64 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 }
 
 
+static std::vector< recall::frame_data > gStackCrawl;
+
+class ThingThatSavesStackCrawlDuringDestruction
+{
+	public:
+		~ThingThatSavesStackCrawlDuringDestruction()
+		{
+			try
+			{
+				recall::make_stack_crawl( gStackCrawl );
+			}
+			catch ( ... )
+			{
+			}
+		}
+};
+
+static void Throw()
+{
+	p7::throw_errno( ENOENT );
+}
+
+static int TestUnwind( int argc, iota::argv_t argv )
+{
+	std::string report;
+	
+	try
+	{
+		throw ThingThatSavesStackCrawlDuringDestruction();
+	}
+	catch ( ... )
+	{
+	}
+	
+	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	
+	report += "\n";
+	
+	try
+	{
+		ThingThatSavesStackCrawlDuringDestruction thing;
+		
+		Throw();
+	}
+	catch ( ... )
+	{
+	}
+	
+	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	
+	report += "\n";
+	
+	p7::write( p7::stdout_fileno, report.data(), report.size() );
+	
+	return 0;
+}
+
+
 static int TestForkAndStop( int argc, iota::argv_t argv )
 {
 	pid_t pid = vfork();
@@ -1258,6 +1316,7 @@ const SubMain gSubs[] =
 	{ "null",      TestNull       },
 	{ "path",      TestPath       },
 	{ "unmangle",  TestUnmangle   },
+	{ "unwind",    TestUnwind     },
 	{ "mangling",  TestMangling   },
 	{ "callback",  TestCallback   },
 	{ "forkstop",  TestForkAndStop },
