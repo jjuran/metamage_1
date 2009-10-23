@@ -1173,8 +1173,8 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '.' ? recall::UnmangleMWCPPC( name )
-	                                       : recall::UnmangleMWC68K( name );
+	std::string unmangled = name[0] == '.' ? recall::demangle_MWCPPC( name )
+	                                       : recall::demangle_MWC68K( name );
 	
 	unmangled += "\n";
 	
