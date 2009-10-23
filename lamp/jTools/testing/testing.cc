@@ -1173,12 +1173,70 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '.' ? recall::UnmangleMWCPPC( name )
-	                                       : recall::UnmangleMWC68K( name );
+	std::string unmangled = name[0] == '.' ? recall::demangle_MWCPPC( name )
+	                                       : recall::demangle_MWC68K( name );
 	
 	unmangled += "\n";
 	
 	p7::write( p7::stdout_fileno, unmangled );
+	
+	return 0;
+}
+
+
+static std::vector< recall::frame_data > gStackCrawl;
+
+class ThingThatSavesStackCrawlDuringDestruction
+{
+	public:
+		~ThingThatSavesStackCrawlDuringDestruction()
+		{
+			try
+			{
+				recall::make_stack_crawl( gStackCrawl );
+			}
+			catch ( ... )
+			{
+			}
+		}
+};
+
+static void Throw()
+{
+	p7::throw_errno( ENOENT );
+}
+
+static int TestUnwind( int argc, iota::argv_t argv )
+{
+	std::string report;
+	
+	try
+	{
+		throw ThingThatSavesStackCrawlDuringDestruction();
+	}
+	catch ( ... )
+	{
+	}
+	
+	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	
+	report += "\n";
+	
+	try
+	{
+		ThingThatSavesStackCrawlDuringDestruction thing;
+		
+		Throw();
+	}
+	catch ( ... )
+	{
+	}
+	
+	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	
+	report += "\n";
+	
+	p7::write( p7::stdout_fileno, report.data(), report.size() );
 	
 	return 0;
 }
@@ -1225,6 +1283,106 @@ static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
 	return 0;
 }
 
+static int gObjectCount = 0;
+
+class Object
+{
+	public:
+		Object()  { ++gObjectCount; }
+		
+		Object( const Object& )  { ++gObjectCount; }
+		
+		~Object()  { --gObjectCount; }
+		
+		//Object& operator=( const gObjectCount& )  {}
+};
+
+namespace Nucleus
+{
+	
+	template <> struct Disposer< Object* > : public DisposeWithDelete {};
+	
+}
+
+static void CheckObjects( int trial )
+{
+	if ( gObjectCount )
+	{
+		std::fprintf( stderr, "%d: Object count: %d\n", trial, gObjectCount );
+		
+		gObjectCount = 0;
+	}
+}
+
+static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
+{
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+	}
+	CheckObjects( 1 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Owned< Object* > bar( foo );
+	}
+	CheckObjects( 2 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Owned< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		bar = foo;
+	}
+	CheckObjects( 3 );
+	
+	{
+		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		foo.Reset();
+	}
+	CheckObjects( 4 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+	}
+	CheckObjects( 5 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Shared< Object* > bar( foo );
+	}
+	CheckObjects( 6 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		bar = foo;
+	}
+	CheckObjects( 7 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		
+		foo.Reset();
+	}
+	CheckObjects( 8 );
+	
+	{
+		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		
+		NN::Shared< Object* > baz( bar );
+		
+		bar = foo;
+	}
+	CheckObjects( 9 );
+	
+	return 0;
+}
+
 typedef int (*MainProcPtr)( int argc, iota::argv_t argv );
 
 struct SubMain
@@ -1258,10 +1416,12 @@ const SubMain gSubs[] =
 	{ "null",      TestNull       },
 	{ "path",      TestPath       },
 	{ "unmangle",  TestUnmangle   },
+	{ "unwind",    TestUnwind     },
 	{ "mangling",  TestMangling   },
 	{ "callback",  TestCallback   },
 	{ "forkstop",  TestForkAndStop },
 	{ "stack",     TestDefaultThreadStackSize },
+	{ "owned",     TestNucleusOwnedShared },
 	
 #if TARGET_RT_MAC_CFM
 	
