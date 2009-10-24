@@ -177,9 +177,13 @@ namespace Nitrogen
 				throw ParamErr();  // should assert?
 			}
 			
+		#if !TARGET_API_MAC_OSX
+			
 			Nucleus::Scoped< HandleState > scopedHandleState( HandleState( handle ) );
 			
 			HLock( handle );
+			
+		#endif
 			
 			return AECreateDesc_Unowned( typeCode, *handle, GetHandleSize( handle ) );
 		}

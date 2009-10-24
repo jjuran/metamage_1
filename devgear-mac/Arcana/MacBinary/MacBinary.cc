@@ -585,7 +585,10 @@ namespace MacBinary
 		
 		memset( buffer + bytesRead, '\0', paddedCount - bytesRead );
 		
-		N::HLock( tempMem );
+		if ( !TARGET_API_MAC_OSX )
+		{
+			N::HLock( tempMem );
+		}
 		
 		blockWrite( output, &buffer[0], paddedCount );
 	}

@@ -72,7 +72,10 @@ namespace Nitrogen
 			ICMapEntry_Container( const Nucleus::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilDoneSequence< Specifics >( Specifics( entries ) ),
 			                                                                             itsEntries( entries )
 			{
-				Nitrogen::HLock( entries.Get() );
+				if ( !TARGET_API_MAC_OSX )
+				{
+					Nitrogen::HLock( entries.Get() );
+				}
 			}
 	};
 	

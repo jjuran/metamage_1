@@ -489,8 +489,13 @@ namespace Nitrogen
 		
 		template < class Putter > void Put( Put_Parameter toPut, Putter put )
 		{
+		#if !TARGET_API_MAC_OSX
+			
 			Nucleus::Scoped< HandleState > hState( HandleState( toPut ) );
+			
 			HLock( toPut );
+			
+		#endif
 			
 			const char* begin = *toPut.Get();
 			const std::size_t size = GetHandleSize( toPut );
@@ -505,16 +510,22 @@ namespace Nitrogen
 			const std::size_t size = get.size();
 			Get_Result result = NewHandle( size );
 			
-			// A new handle's state is known and need not be saved
-			HLock( result );
+			if ( !TARGET_API_MAC_OSX )
+			{
+				// A new handle's state is known and need not be saved
+				HLock( result );
+			}
 			
 			char* begin = *result.Get();
 			
 			get( begin, begin + size );
 			
-			// If we get this far, the handle will be unlocked as before.
-			// On exception, the handle is disposed anyway, locked or not.
-			HUnlock( result );
+			if ( !TARGET_API_MAC_OSX )
+			{
+				// If we get this far, the handle will be unlocked as before.
+				// On exception, the handle is disposed anyway, locked or not.
+				HUnlock( result );
+			}
 			
 			return result;
 		}
