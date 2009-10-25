@@ -1222,6 +1222,9 @@ static int TestUnwind( int argc, iota::argv_t argv )
 	
 	report += "\n";
 	
+	
+	gStackCrawl.clear();
+	
 	try
 	{
 		ThingThatSavesStackCrawlDuringDestruction thing;
