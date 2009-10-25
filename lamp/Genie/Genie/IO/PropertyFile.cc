@@ -29,7 +29,7 @@ namespace Genie
 		
 		n_bytes = std::min< size_t >( n_bytes, itsData.size() - offset );
 		
-		memcpy( buffer, itsData.begin() + offset, n_bytes );
+		memcpy( buffer, &itsData[ offset ], n_bytes );
 		
 		return n_bytes;
 	}
