@@ -105,7 +105,7 @@ namespace Genie
 			
 			std::string Pathname() const;
 			
-			const FSTreePtr& Self() const  { return shared_from_this(); }
+			FSTreePtr Self() const  { return shared_from_this(); }
 			
 			virtual FSTreePtr Parent() const;
 			

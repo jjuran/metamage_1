@@ -28,11 +28,11 @@ namespace Genie
 		return gGroup;
 	}
 	
-	const boost::shared_ptr< IOHandle >& GetDynamicElementFromGroupByID( const DynamicGroup&  group,
-	                                                                     DynamicElementID     id );
+	boost::shared_ptr< IOHandle > GetDynamicElementFromGroupByID( const DynamicGroup&  group,
+	                                                              DynamicElementID     id );
 	
 	template < class Handle >
-	const boost::shared_ptr< IOHandle >& GetDynamicElementByID( DynamicElementID id )
+	boost::shared_ptr< IOHandle > GetDynamicElementByID( DynamicElementID id )
 	{
 		DynamicGroup& group( GetDynamicGroup< Handle >() );
 		
