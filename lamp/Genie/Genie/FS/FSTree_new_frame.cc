@@ -50,7 +50,7 @@ namespace Genie
 	
 	struct Value_Scribe
 	{
-		typedef Value Value;
+		typedef Genie::Value Value;
 		
 		static std::string Encode( const Value& value );
 		
