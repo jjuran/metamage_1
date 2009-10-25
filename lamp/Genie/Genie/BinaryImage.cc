@@ -260,7 +260,7 @@ namespace Genie
 	template < class Container, class Predicate >
 	static void erase_if( Container& container, Predicate f )
 	{
-		Container::iterator it;
+		typename Container::iterator it;
 		
 		while ( (it = std::find_if( container.begin(), container.end(), f )) != container.end() )
 		{

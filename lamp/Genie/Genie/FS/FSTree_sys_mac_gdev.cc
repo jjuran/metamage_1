@@ -183,7 +183,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( key );
 			
-			return Freeze< Accessor::Scribe >( data, binary );
+			return Freeze< typename Accessor::Scribe >( data, binary );
 		}
 	};
 	

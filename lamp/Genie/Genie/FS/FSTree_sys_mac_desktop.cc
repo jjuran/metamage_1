@@ -58,7 +58,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( screenBits );
 			
-			return Freeze< Accessor::Scribe >( data, binary );
+			return Freeze< typename Accessor::Scribe >( data, binary );
 		}
 	};
 	
