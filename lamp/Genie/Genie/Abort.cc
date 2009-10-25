@@ -16,6 +16,8 @@
 #include "Genie/Faults.hh"
 
 
+#ifdef __LAMP__
+
 void abort()
 {
 	try
@@ -29,3 +31,5 @@ void abort()
 	::ExitToShell();
 }
 	
+#endif
+
