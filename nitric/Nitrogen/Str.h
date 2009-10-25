@@ -74,10 +74,7 @@ namespace Nitrogen
 			Str& operator=( const unsigned char* s )                 { CopyToPascalString( s, string, length ); return *this; } 
 			Str& operator=( const char* s )                          { CopyToPascalString( s, string, length ); return *this; } 
 			Str& operator=( const std::string& s )                   { CopyToPascalString( s, string, length ); return *this; } 
-			 
-			unsigned char& operator[]( unsigned char i )             { return string[ i ]; }
-			const unsigned char& operator[]( unsigned char i ) const { return string[ i ]; }
-		
+			
 			operator unsigned char*()                                { return string; }
 			operator const unsigned char *() const                   { return string; }
 	};
