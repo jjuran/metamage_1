@@ -96,8 +96,8 @@ namespace Genie
 	}
 	
 	// never called
-	static inline UInt16 GetTotalBlocks( const XVolumeParam& volume );
-	static inline UInt16 GetFreeBlocks ( const XVolumeParam& volume );
+	static UInt16 GetTotalBlocks( const XVolumeParam& volume )  { return 0; }
+	static UInt16 GetFreeBlocks ( const XVolumeParam& volume )  { return 0; }
 	
 #else
 	
