@@ -24,9 +24,19 @@ namespace Genie
 	
 	static inline bool merely_touch( const timespec* t )
 	{
-		const long now = UTIME_NOW;
+		if ( t != NULL )
+		{
+		#ifdef UTIME_NOW
+			
+			if ( t[0].tv_nsec == UTIME_NOW  &&  t[1].tv_nsec == UTIME_NOW )
+			{
+				return true;
+			}
+			
+		#endif
+		}
 		
-		return t == NULL  ||  t[0].tv_nsec == now  &&  t[1].tv_nsec == now;
+		return t == NULL;
 	}
 	
 	static int utimensat( int fd, const char* path, const timespec times[2], int flags )
