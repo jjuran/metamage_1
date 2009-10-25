@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Icon_data.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Iota
 #include "iota/decimal.hh"
 
@@ -249,7 +252,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, size - mark );
+		n_bytes = std::min< size_t >( n_bytes, size - mark );
 		
 		const char* p = use_handle ? *h
 		                           : (const char*) &itsResID;

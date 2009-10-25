@@ -84,7 +84,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, size - offset );
+		n_bytes = std::min< size_t >( n_bytes, size - offset );
 		
 		memcpy( buffer, *itsHandle.get().Get() + offset, n_bytes );
 		
@@ -122,7 +122,7 @@ namespace Genie
 					throw;
 				}
 				
-				n_bytes = std::min( n_bytes, existing_size - offset );
+				n_bytes = std::min< size_t >( n_bytes, existing_size - offset );
 			}
 		}
 		

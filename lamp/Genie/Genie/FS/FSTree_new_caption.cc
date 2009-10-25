@@ -167,7 +167,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, s.size() - offset );
+		n_bytes = std::min< size_t >( n_bytes, s.size() - offset );
 		
 		memcpy( buffer, s.begin() + offset, n_bytes );
 		
