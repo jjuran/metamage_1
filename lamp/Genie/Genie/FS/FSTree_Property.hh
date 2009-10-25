@@ -25,10 +25,11 @@ namespace Genie
 	
 	class FSTree_Property : public FSTree
 	{
-		private:
+		public:
 			typedef Property_ReadHook   ReadHook;
 			typedef Property_WriteHook  WriteHook;
-			
+		
+		private:
 			size_t     itsSize;
 			ReadHook   itsReadHook;
 			WriteHook  itsWriteHook;
