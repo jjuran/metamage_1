@@ -284,11 +284,13 @@ namespace Genie
 					case T_DISCONNECT:
 						ReceiveDisconnect();
 						
-						Process& current = CurrentProcess();
-						
-						current.Raise( SIGPIPE );
-						
-						current.HandlePendingSignals( kInterruptNever );
+						{
+							Process& current = CurrentProcess();
+							
+							current.Raise( SIGPIPE );
+							
+							current.HandlePendingSignals( kInterruptNever );
+						}
 						
 						p7::throw_errno( EPIPE );
 						
