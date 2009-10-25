@@ -52,7 +52,7 @@ namespace io
 	{
 		slurp_getter< io::iostream_traits< Stream > > getter( stream );
 		
-		return Flattener().Get( getter );
+		return Flattener::Get( getter );
 	}
 	
 	template < class Flattener, class FileSpec >

@@ -50,11 +50,11 @@
      {
       typedef P Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter, Putter );
+      template < class Putter > static void Put( Put_Parameter, Putter );
       
       typedef R Get_Result;
       
-      template < class Getter > Get_Result Get( Getter );
+      template < class Getter > static Get_Result Get( Getter );
      };
 */
 
@@ -72,14 +72,16 @@ namespace Nucleus
      {
       typedef const T& Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+      template < class Putter >
+      static void Put( Put_Parameter toPut, const Putter& put )
         {
          put( &toPut, &toPut + 1 );
         }
       
       typedef T Get_Result;
       
-      template < class Getter > Get_Result Get( const Getter& get )
+      template < class Getter >
+      static Get_Result Get( const Getter& get )
         {
          Get_Result result;
          get( &result, &result + 1 );
@@ -98,14 +100,16 @@ namespace Nucleus
      {
       typedef const T& Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+      template < class Putter >
+      static void Put( Put_Parameter toPut, const Putter& put )
         {
          put( &*toPut.begin(), &*toPut.end() );
         }
       
       typedef T Get_Result;
       
-      template < class Getter > Get_Result Get( const Getter& get )
+      template < class Getter >
+      static Get_Result Get( const Getter& get )
         {
          Get_Result result;
          result.resize( get.size() );
@@ -128,22 +132,21 @@ namespace Nucleus
    template < class Converted, class BaseFlattener >
    class ConvertingFlattener
      {
-      private:
-         BaseFlattener base;
-      
       public:
          typedef const Converted& Put_Parameter;
          
-         template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+         template < class Putter >
+         static void Put( Put_Parameter toPut, const Putter& put )
            {
-            base.Put( toPut, put );
+            BaseFlattener::Put( toPut, put );
            }
          
          typedef Converted Get_Result;
          
-         template < class Getter > Get_Result Get( const Getter& get )
+         template < class Getter >
+         static Get_Result Get( const Getter& get )
            {
-            return Get_Result( base.Get( get ) );
+            return Get_Result( BaseFlattener::Get( get ) );
            }
          
          typedef Put_Parameter Parameter;
@@ -164,14 +167,16 @@ namespace Nucleus
 	{
 		typedef Ownable Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, const Putter& put )
 		{
 			put( &toPut, &toPut + 1 );
 		}
 		
 		typedef Nucleus::Owned< Ownable > Get_Result;
 		
-		template < class Getter > Get_Result Get( const Getter& get )
+		template < class Getter >
+		static Get_Result Get( const Getter& get )
 		{
 			Get_Result result;
 			
@@ -193,7 +198,8 @@ namespace Nucleus
 	{
 		typedef const T& Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+		template < class Putter >
+		static void Put( Put_Parameter toPut, const Putter& put )
 		{
 			const T* begin = &toPut;
 			const std::size_t size = SizeOf( toPut );
@@ -203,7 +209,8 @@ namespace Nucleus
 		
 		typedef std::auto_ptr< T > Get_Result;
 		
-		template < class Getter > Get_Result Get( const Getter& get )
+		template < class Getter >
+		static Get_Result Get( const Getter& get )
 		{
 			const std::size_t size = get.size();
 			
@@ -230,14 +237,16 @@ namespace Nucleus
      {
       typedef NoData Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
+      template < class Putter >
+      static void Put( Put_Parameter toPut, const Putter& put )
         {
          put( 0, 0 );
         }
       
       typedef NoData Get_Result;
       
-      template < class Getter > Get_Result Get( const Getter& get )
+      template < class Getter >
+      static Get_Result Get( const Getter& get )
         {
          get( 0, 0 );  // So it has a chance to throw
          return NoData();
