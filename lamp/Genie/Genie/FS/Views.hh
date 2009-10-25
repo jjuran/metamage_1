@@ -40,6 +40,9 @@ namespace Genie
 	bool InvalidateWindowForView( const FSTree* view );
 	
 	
+	inline const FSTree* GetViewKey( const FSTree* that )  { return that->ParentRef().get(); }
+	
+	
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct View_Property
 	{
@@ -87,8 +90,6 @@ namespace Genie
 			
 			void HardLink( const FSTreePtr& target ) const;
 	};
-	
-	inline const FSTree* GetViewKey( const FSTree* that )  { return that->ParentRef().get(); }
 	
 	class FSTree_View : public FSTree
 	{
