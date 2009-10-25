@@ -184,7 +184,7 @@ namespace Genie
 			
 			TextEditParameters::Get( view ).itHasChangedAttributes = true;
 			
-			View_Property::Set( that, begin, end, binary );
+			View_Property< Scribe, Access >::Set( that, begin, end, binary );
 		}
 	};
 	
@@ -197,7 +197,7 @@ namespace Genie
 			
 			TextEditParameters::Get( view ).itsValidLength = 0;
 			
-			View_Property::Set( that, begin, end, binary );
+			View_Property< Scribe, Access >::Set( that, begin, end, binary );
 		}
 	};
 	
