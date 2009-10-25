@@ -25,7 +25,9 @@ namespace Genie
 	{
 		public:
 			TriggerHandle( const FSTreePtr&  file,
-			               OpenFlags         flags ) : VirtualFileHandle( file, flags )
+			               OpenFlags         flags )
+			:
+				VirtualFileHandle< StreamHandle >( file, flags )
 			{
 			}
 			

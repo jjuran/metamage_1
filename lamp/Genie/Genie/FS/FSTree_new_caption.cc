@@ -127,7 +127,9 @@ namespace Genie
 	class CaptionTextFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
-			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags )
+			:
+				VirtualFileHandle< RegularFileHandle >( file, flags )
 			{
 			}
 			

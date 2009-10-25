@@ -61,7 +61,9 @@ namespace Genie
 	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
 	{
 		public:
-			TextEdit_gate_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			TextEdit_gate_Handle( const FSTreePtr& file, OpenFlags flags )
+			:
+				VirtualFileHandle< StreamHandle >( file, flags )
 			{
 			}
 			

@@ -46,7 +46,7 @@ namespace Genie
 			                 OpenFlags                       flags,
 			                 const NN::Shared< N::Handle >&  h )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsHandle( h )
 			{
 			}

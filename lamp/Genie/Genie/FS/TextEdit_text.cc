@@ -55,7 +55,9 @@ namespace Genie
 	class TextEdit_text_Handle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
-			TextEdit_text_Handle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			TextEdit_text_Handle( const FSTreePtr& file, OpenFlags flags )
+			:
+				VirtualFileHandle< RegularFileHandle >( file, flags )
 			{
 			}
 			

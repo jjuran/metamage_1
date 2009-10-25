@@ -319,7 +319,7 @@ namespace Genie
 			                    OpenFlags                             flags,
 			                    const boost::shared_ptr< IconData >&  data )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
@@ -342,7 +342,7 @@ namespace Genie
 			                      OpenFlags                             flags,
 			                      const boost::shared_ptr< IconData >&  data )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< StreamHandle >( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
