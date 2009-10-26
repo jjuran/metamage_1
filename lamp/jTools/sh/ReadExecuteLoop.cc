@@ -13,14 +13,15 @@
 // Iota
 #include "iota/decimal.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -97,8 +98,6 @@ namespace tool
 	p7::wait_t ReadExecuteLoop( p7::fd_t  fd,
 	                            bool      prompts )
 	{
-		Io::TextInputAdapter< p7::fd_t > input( fd );
-		
 		p7::wait_t status = p7::wait_t( 0 );
 		
 		if ( prompts )
@@ -118,11 +117,14 @@ namespace tool
 			SendPrompt();
 		}
 		
-		while ( !input.Ended() )
+		text_input::feed feed;
+		
+		p7::fd_reader reader( fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			if ( input.Ready() )
 			{
-				std::string command = input.Read();
+				std::string command( s->begin(), s->end() - 1 );
 				
 				// Only process non-blank lines
 				if ( command.find_first_not_of( " \t" ) != command.npos )
