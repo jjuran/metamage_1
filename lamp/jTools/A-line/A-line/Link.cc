@@ -490,7 +490,9 @@ namespace tool
 		
 		TaskPtr lib_task;
 		
-		if ( hasStaticLib )
+		const bool non_empty_lib = hasStaticLib  &&  objectFiles.size() > n_tools;
+		
+		if ( non_empty_lib )
 		{
 			std::string library_prefix    = real_unix ? "lib" : "";
 			std::string library_extension = real_unix ? ".a" : ".lib";
@@ -591,20 +593,24 @@ namespace tool
 		
 		if ( toolkit )
 		{
-			lib_task->AddDependent( link_dependency_task );
-			
 			link_input_arguments.push_back( "" );  // the tool .o file, later
 			
-			link_input_arguments.push_back( library_pathname );  // the static library
+			if ( non_empty_lib )
+			{
+				link_input_arguments.push_back( library_pathname );  // the static library
+			}
 		}
 		else
 		{
-			source_dependency->AddDependent( link_dependency_task );
-			
 			link_input_arguments.insert( link_input_arguments.begin(),
 			                             objectFiles.begin(),
 			                             objectFiles.end() );
 		}
+		
+		const TaskPtr& link_prerequisite = non_empty_lib ? lib_task
+		                                                 : source_dependency;
+		
+		link_prerequisite->AddDependent( link_dependency_task );
 		
 		// A copy so we can munge it
 		std::vector< std::string > usedProjects = project.AllUsedProjects();
