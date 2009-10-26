@@ -127,11 +127,6 @@ namespace tool
 				// Only process non-blank lines
 				if ( command.find_first_not_of( " \t" ) != command.npos )
 				{
-					if ( command == "exit" )
-					{
-						return p7::wait_t( 0 );
-					}
-					
 					SetRowsAndColumns();
 					
 					status = ExecuteCmdLine( command );
