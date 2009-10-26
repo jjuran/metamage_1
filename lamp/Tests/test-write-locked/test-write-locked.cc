@@ -3,6 +3,9 @@
  *	====================
  */
 
+// Standard C/C++
+#include <cstring>
+
 // Iota
 #include "iota/strings.hh"
 

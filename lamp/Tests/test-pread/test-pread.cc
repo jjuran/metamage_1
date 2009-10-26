@@ -4,6 +4,9 @@
  */
 
 // Standard C
+#include <string.h>
+
+// POSIX
 #include <unistd.h>
 
 // Iota
