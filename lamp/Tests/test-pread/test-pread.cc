@@ -12,6 +12,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// tap-out
+#include "tap/test.hh"
+
 // poseven
 #include "poseven/functions/lseek.hh"
 #include "poseven/functions/open.hh"
@@ -29,17 +32,10 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	#define RUN_TEST( condition, i )  run_test( condition, STR_LEN( "ok " #i "\n" ) )
+	static const unsigned n_tests = 7;
 	
-	static void run_test( bool condition, const char* ok, std::size_t ok_length )
-	{
-		if ( !condition )
-		{
-			p7::write( p7::stdout_fileno, STR_LEN( "not " ) );
-		}
-		
-		p7::write( p7::stdout_fileno, ok, ok_length );
-	}
+	
+	#define RUN_TEST( condition )  tap::ok_if( condition, #condition )
 	
 	
 	static void pread_pipe()
@@ -52,7 +48,7 @@ namespace tool
 		
 		int n_read = pread( fds[0], buffer, sizeof buffer, 0 );
 		
-		RUN_TEST( n_read == -1  &&  errno == ESPIPE, 1 );
+		RUN_TEST( n_read == -1  &&  errno == ESPIPE );
 		
 		close( fds[0] );
 		close( fds[1] );
@@ -78,18 +74,18 @@ namespace tool
 		
 		int n_read = pread( tmp_file, buffer, length, 0 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "1234" ) ) == 0, 2 );
+		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "1234" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 0, 3 );
+		RUN_TEST( p7::lseek( tmp_file ) == 0 );
 		
 		
 		length = STRLEN( "34567" );
 		
 		n_read = pread( tmp_file, buffer, length, 2 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "34567" ) ) == 0, 4 );
+		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "34567" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 0, 5 );
+		RUN_TEST( p7::lseek( tmp_file ) == 0 );
 		
 		
 		p7::lseek( tmp_file, 6 );
@@ -98,9 +94,9 @@ namespace tool
 		
 		n_read = pread( tmp_file, buffer, length + 3, 11 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "cdef\n" ) ) == 0, 6 );
+		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "cdef\n" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 6, 7 );
+		RUN_TEST( p7::lseek( tmp_file ) == 6 );
 	}
 	
 	static void delete_tmp_file()
@@ -110,7 +106,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		p7::write( p7::stdout_fileno, STR_LEN( "1..7\n" ) );
+		tap::start( "test-pread", 7 );
 		
 		pread_pipe();
 		
