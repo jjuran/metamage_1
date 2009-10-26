@@ -10,7 +10,7 @@
 #include <string>
 
 // Recall
-#include "recall/stack_crawl.hh"
+#include "recall/return_address.hh"
 
 
 namespace recall
