@@ -11,17 +11,14 @@
 
 // Standard C
 #include <stdlib.h>
-#include <stdio.h>
 
 // POSIX
 #include <unistd.h>
+#include <sys/uio.h>
 
 // Iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
-
-// more-posix
-#include "more/perror.hh"
 
 // tap-out
 #include "tap/check.hh"
@@ -43,12 +40,27 @@ namespace tap
 			return;
 		}
 		
-		fprintf( stderr, "There were %d %s tests\n",
-									 std::abs( extra_tests ),
-										extra_tests > 0 ? "extra"
-														: "missing" );
+		const unsigned odd_tests = std::abs( extra_tests );
 		
-		fflush( stderr );
+		const unsigned magnitude = iota::decimal_magnitude( odd_tests );
+		
+		const char* tests_str = iota::inscribe_unsigned_decimal( odd_tests );
+		
+		const bool extra = extra_tests > 0;
+		
+		const bool missing = extra_tests < 0;
+		
+		struct iovec iov[] =
+		{
+			{ (void*) STR_LEN( "There were " )           },
+			{ (void*) tests_str, magnitude               },
+			{ (void*) STR_LEN( " "           )           },
+			{ (void*) STR_LEN( "extra"       ) * extra   },
+			{ (void*) STR_LEN( "missing"     ) * missing },
+			{ (void*) STR_LEN( " tests\n"    )           },
+		};
+		
+		CHECK( writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] ) );
 		
 		_exit( 1 );
 	}
@@ -76,19 +88,31 @@ namespace tap
 	
 	void ok_if( bool ok, const char* comment )
 	{
-		const char* separator = comment ? " - " : "";
-		
 		if ( comment == NULL )
 		{
 			comment = "";
 		}
 		
-		printf( "%s" "ok %d" "%s" "%s\n",
-		         ok ? ""
-		            : "not ",
-		                 ++global_tests_run,
-		                      separator,
-		                           comment );
+		const bool not_ok = !ok;
+		
+		const unsigned magnitude = iota::decimal_magnitude( ++global_tests_run );
+		
+		const char* tests_str = iota::inscribe_unsigned_decimal( global_tests_run );
+		
+		const bool has_comment = comment[0] != '\0';
+		
+		struct iovec iov[] =
+		{
+			{ (void*) STR_LEN( "not " ) * not_ok      },
+			{ (void*) STR_LEN( "ok "  )               },
+			{ (void*) tests_str, magnitude            },
+			{ (void*) STR_LEN( " - "  ) * has_comment },
+			{ (void*) comment,   strlen( comment )    },
+			{ (void*) STR_LEN( "\n"   )               },
+		};
+		
+		CHECK( writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] ) );
+		
 	}
 	
 }
