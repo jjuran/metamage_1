@@ -28,8 +28,13 @@ static void sigalrm_handler( int signo )
 
 int main( int argc, const char *const *argv )
 {
-	signal( SIGCONT, &sigcont_handler );
-	signal( SIGALRM, &sigalrm_handler );
+	struct sigaction new_action = { &sigcont_handler, sigset_t(), 0 };
+	
+	sigaction( SIGCONT, &new_action, NULL );
+	
+	new_action.sa_handler = &sigalrm_handler;
+	
+	sigaction( SIGALRM, &new_action, NULL );
 	
 	write( STDOUT_FILENO, STR_LEN( "1..3\n" ) );
 	
