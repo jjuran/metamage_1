@@ -9,7 +9,6 @@
 
 // POSIX
 #include <errno.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 // Convergence
@@ -113,7 +112,7 @@ namespace tool
 			
 			std::string destFilePath = destPath;
 			
-			if ( 0 == stat( destPath, &sb ) )
+			if ( p7::stat( destPath, sb ) )
 			{
 				// dest exists
 				
@@ -134,10 +133,6 @@ namespace tool
 					
 					destPath = destFilePath.c_str();
 				}
-			}
-			else if ( errno != ENOENT )
-			{
-				p7::throw_errno( errno );
 			}
 			
 			p7::throw_posix_result( copyfile( sourcePath, destPath ) );
