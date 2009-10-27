@@ -5,8 +5,9 @@
 
 #include "Genie/IO/Base.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// iota
+#include "iota/hexidecimal.hh"
+#include "iota/strings.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -15,14 +16,20 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
 	
 	static std::string IOName( const void* address, bool is_pipe )
 	{
-		std::string prefix = is_pipe ? "pipe" : "socket";
+		std::string name = is_pipe ? "pipe" : "socket";
 		
-		return prefix + ":[" + NN::Convert< std::string >( (unsigned long) address ) + "]";
+		const size_t hex_offset = name.size() + STRLEN( ":[" );
+		
+		name += ":[12345678]";
+		
+		iota::inscribe_n_hex_digits( &name[ hex_offset ], (long) address, 8 );
+		
+		return name;
 	}
 	
 	class FSTree_IOHandle : public FSTree
