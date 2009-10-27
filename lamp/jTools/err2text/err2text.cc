@@ -22,6 +22,9 @@ enum { sigMPWShell = 'MPS ' };
 // Standard C/C++
 #include <cstdio>
 
+// Standard C
+#include <string.h>
+
 // Debug
 #include "debug/assert.hh"
 
@@ -34,9 +37,6 @@ enum { sigMPWShell = 'MPS ' };
 // Orion
 #include "Orion/Main.hh"
 
-// err2text
-#include "FSLocator.hh"
-
 
 namespace tool
 {
@@ -45,24 +45,21 @@ namespace tool
 	namespace NN = Nucleus;
 	
 	
-	using FSLocator::FSLocatorChainedT;
-	using FSLocator::FSLocatorAppBySignature;
-	using FSLocator::FSLinkNewName;
-	
-	
 	struct UnrecognizedSysErrsDotErrFormat  {};
 	struct CorruptedSysErrsDotErrFile  {};
 	
-	typedef FSLocatorChainedT< FSLocatorAppBySignature,
-	                           FSLinkNewName >           NextToApp;
-	
-	class SysErrsDotErrLocator : public NextToApp
+	static FSSpec Find_SysErrsDotErr()
 	{
-		public:
-			SysErrsDotErrLocator() : NextToApp( FSLocatorAppBySignature( N::OSType( sigMPWShell ) ),
-			                                    FSLinkNewName( "SysErrs.err" ) )
-			{}
-	};
+		const N::OSType sigMPWShell = N::OSType( ::sigMPWShell );
+		
+		FSSpec fsspec = N::DTGetAPPL( sigMPWShell );
+		
+		const unsigned char* new_name = "\p" "SysErrs.err";
+		
+		memcpy( fsspec.name, new_name, 1 + new_name[0] );
+		
+		return fsspec;
+	}
 	
 	struct TOCEntry
 	{
@@ -185,15 +182,16 @@ namespace tool
 	class Errortable
 	{
 		private:
-			SysErrsDotErrLocator myLocator;
 			FSSpec myFile;
 			SysErrsDotErrTOC myTOC;
 			SysErrsDotErrText myText;
 		
 		public:
-			Errortable() : myFile( myLocator.Locate() ),
-			               myTOC ( myFile             ),
-			               myText( myFile             )  {}
+			Errortable() : myFile( Find_SysErrsDotErr() ),
+			               myTOC ( myFile               ),
+			               myText( myFile               )
+			{
+			}
 			
 			std::string Lookup( OSErr err );
 	};
