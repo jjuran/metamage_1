@@ -11,10 +11,8 @@
 #include <errno.h>
 #include <unistd.h>
 
-// Convergence
-#include "copyfile.hh"
-
 // poseven
+#include "poseven/extras/copyfile.hh"
 #include "poseven/functions/stat.hh"
 
 // Orion
@@ -135,7 +133,7 @@ namespace tool
 				}
 			}
 			
-			p7::throw_posix_result( copyfile( sourcePath, destPath ) );
+			p7::copyfile( sourcePath, destPath );
 		}
 		
 		return fail;
