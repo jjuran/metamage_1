@@ -24,6 +24,9 @@
 #include "tap/check.hh"
 
 
+#pragma exceptions off
+
+
 namespace tap
 {
 	

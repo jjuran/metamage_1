@@ -13,6 +13,9 @@
 #include "more/perror.hh"
 
 
+#pragma exceptions off
+
+
 namespace tap
 {
 	
