@@ -10,6 +10,10 @@
 #include <string>
 #include <vector>
 
+// poseven
+#include "poseven/FileDescriptor.hh"
+#include "poseven/functions/write.hh"
+
 // Io
 #include "Io/TextInput.hh"
 
@@ -67,44 +71,23 @@ namespace SMTP
 		
 		bool CheckResponse( const std::string& response );
 		
-		template < class Stream >
-		ResponseCode GetResponse( Io::TextInputAdapter< Stream >& input )
-		{
-			while ( true )
-			{
-				std::string response = input.Read();
-				ResponseCode code = response;
-				
-				if ( CheckResponse( response ) )
-				{
-					return code;
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
+		ResponseCode GetResponse( Io::TextInputAdapter< poseven::fd_t >& input );
 		
 		
 		ResponseCode VerifySuccess( ResponseCode code );
 		
-		template < class Stream >
-		inline void SendCommand( Stream stream, const std::string& command )
+		inline void SendCommand( poseven::fd_t stream, const std::string& command )
 		{
-			io::write( stream, command.data(), command.size() );
-			io::write( stream, "\r\n", 2 );  // FIXME
+			poseven::write( stream, command + "\r\n" );
 		}
 		
-		template < class Stream >
 		class Session
 		{
 			private:
-				Io::TextInputAdapter< Stream >  itsInput;
+				Io::TextInputAdapter< poseven::fd_t >  itsInput;
 			
 			public:
-				// If Stream is Owned<>, then initializing itsInput transfers ownership
-				Session( Stream stream ) : itsInput( stream )
+				Session( poseven::fd_t stream ) : itsInput( stream )
 				{
 					VerifySuccess( GetResponse( itsInput ) );
 				}

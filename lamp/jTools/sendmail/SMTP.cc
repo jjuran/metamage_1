@@ -42,6 +42,24 @@ namespace SMTP
 			throw InvalidResponse();
 		}
 		
+		ResponseCode GetResponse( Io::TextInputAdapter< poseven::fd_t >& input )
+		{
+			while ( true )
+			{
+				std::string response = input.Read();
+				ResponseCode code = response;
+				
+				if ( CheckResponse( response ) )
+				{
+					return code;
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+		
 		ResponseCode VerifySuccess( ResponseCode code )
 		{
 			if ( code.chars[ 0 ] == '4' )
