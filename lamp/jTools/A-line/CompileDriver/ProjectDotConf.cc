@@ -5,12 +5,13 @@
 
 #include "CompileDriver/ProjectDotConf.hh"
 
-// poseven
-#include "poseven/FileDescriptor.hh"
-#include "poseven/functions/open.hh"
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
 
-// Io
-#include "Io/TextInput.hh"
+// poseven
+#include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/open.hh"
 
 // BitsAndBytes
 #include "StringPredicates.hh"
@@ -82,15 +83,19 @@ namespace tool
 	
 	void ReadProjectDotConf( const std::string& pathname, DotConfData& data )
 	{
+		text_input::feed feed;
+		
 		// Open the config file, and read as a text input stream.
-		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
+		NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
+		
+		p7::fd_reader reader( fd );
 		
 		std::size_t lineCount = 0;
 		
-		while ( input.Ready() )
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			// Read a line
-			std::string text = input.Read();
+			std::string text( s->begin(), s->end() - 1 );
+			
 			++lineCount;
 			// Skip blank lines
 			if ( text.size() == 0 )  continue;
