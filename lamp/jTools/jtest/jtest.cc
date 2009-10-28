@@ -23,15 +23,17 @@
 // Iota
 #include "iota/decimal.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
-
-// Io
-#include "Io/TextInput.hh"
+#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -105,7 +107,9 @@ namespace tool
 	};
 	
 	
-	static Redirection GetRedirectionFromLine( const std::string& line, Io::TextInputAdapter< p7::fd_t >& input )
+	static Redirection GetRedirectionFromLine( const std::string&  line,
+	                                           text_input::feed&   feed,
+	                                           p7::fd_reader       reader )
 	{
 		std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 		
@@ -158,19 +162,24 @@ namespace tool
 			else
 			{
 				std::string hereDoc;
-				bool premature_EOF = false;
 				
-				while ( !( input.Ended() && (premature_EOF = true) ) )
+				bool found_terminator = false;
+				
+				while ( const std::string* s = get_line_from_feed( feed, reader ) )
 				{
-					std::string nextLine = input.Read();
+					std::string nextLine( s->begin(), s->end() - 1 );
 					
 					if ( nextLine == param )
 					{
+						found_terminator = true;
+						
 						break;
 					}
 					
 					hereDoc += nextLine + "\n";
 				}
+				
+				const bool premature_EOF = !found_terminator;
 				
 				if ( premature_EOF )
 				{
@@ -475,14 +484,16 @@ namespace tool
 			}
 		}
 		
-		Io::TextInputAdapter< p7::fd_t > input = p7::fd_t( fd );
-		
 		std::vector< TestCase > battery;
 		TestCase test;
 		
-		while ( !input.Ended() )
+		text_input::feed feed;
+		
+		p7::fd_reader reader = p7::fd_t( fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.empty() )  continue;
 			
@@ -510,7 +521,7 @@ namespace tool
 			
 			if ( std::isdigit( line[0] ) )
 			{
-				test.AddRedirection( GetRedirectionFromLine( line, input ) );
+				test.AddRedirection( GetRedirectionFromLine( line, feed, reader ) );
 				
 				continue;
 			}
