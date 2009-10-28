@@ -97,6 +97,7 @@ my %fsmap =
 			perm   => [ \ qw( test-write-locked ) ],
 			signal => [ \ qw( test-longjmp-past-vfork test-read-intr ) ],
 			time   => [ \ qw( test-time ) ],
+			"text-input" => [ \ map { "text-input-tests/$_" } qw( empty exceptions newlines ) ],
 		},
 		Tools =>
 		[
