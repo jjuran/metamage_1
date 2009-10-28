@@ -6,8 +6,13 @@
 #ifndef GENIE_FILESYSTEM_DRIVES_HH
 #define GENIE_FILESYSTEM_DRIVES_HH
 
+// Nitrogen
+#include "Nitrogen/Files.hh"
+
 // ClassicToolbox
+#if !TARGET_API_MAC_CARBON
 #include "ClassicToolbox/Files.hh"
+#endif
 
 
 namespace Genie

@@ -32,7 +32,9 @@
 #include "Nitrogen/Gestalt.hh"
 
 // ClassicToolbox
+#if !TARGET_API_MAC_CARBON
 #include "ClassicToolbox/Serial.hh"
+#endif
 
 // Genie
 #include "Genie/Process.hh"
