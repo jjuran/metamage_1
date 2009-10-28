@@ -1327,7 +1327,9 @@ namespace Genie
 	
 	void Process::DeliverSignal( int signo )
 	{
-		__sig_handler action = GetSignalAction( signo ).sa_handler;
+		typedef void (*signal_handler_t)(int);
+		
+		signal_handler_t action = GetSignalAction( signo ).sa_handler;
 		
 		if ( action == SIG_IGN )
 		{

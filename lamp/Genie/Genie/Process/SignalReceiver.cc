@@ -122,7 +122,9 @@ namespace Genie
 					signal_mask |= signo_mask;
 				}
 				
-				const __sig_handler handler = action.sa_handler;
+				typedef void (*signal_handler_t)(int);
+				
+				const signal_handler_t handler = action.sa_handler;
 				
 				ASSERT( handler != SIG_IGN );
 				ASSERT( handler != SIG_DFL );
