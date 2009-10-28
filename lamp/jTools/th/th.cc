@@ -26,17 +26,18 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/close.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/dup2.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -108,24 +109,28 @@ namespace tool
 		
 		(void) p7::wait();
 		
-		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( NN::Owned< p7::fd_t >::Seize( p7::fd_t( pipe_ends[0] ) ) );
-		
-		std::string plan = input.Read();
-		
 		TestResults results;
 		
-		if ( plan.substr( 0, 3 ) != "1.." )
+		text_input::feed feed;
+		
+		NN::Owned< p7::fd_t > input_fd( NN::Owned< p7::fd_t >::Seize( p7::fd_t( pipe_ends[0] ) ) );
+		
+		p7::fd_reader reader( input_fd );
+		
+		const std::string* plan = get_line_from_feed( feed, reader );
+		
+		if ( plan == NULL  ||  plan->substr( 0, 3 ) != "1.." )
 		{
 			return results;
 		}
 		
-		results.planned = std::atoi( plan.c_str() + 3 );
+		results.planned = std::atoi( plan->c_str() + 3 );
 		
 		unsigned next_test_number = 1;
 		
-		while ( !input.Ended() )
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			if ( line[0] == '#' )
 			{
