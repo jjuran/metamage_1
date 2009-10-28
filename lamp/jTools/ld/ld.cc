@@ -13,6 +13,10 @@
 // Iota
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
@@ -27,11 +31,11 @@
 #include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
 
+// Nitrogen Extras
+#include "FSReader.hh"
+
 // Io: MacFiles
 #include "MacFiles.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -299,13 +303,17 @@ namespace tool
 		
 		std::size_t format_length = STRLEN( CODE_FORMAT_68K );
 		
-		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( linkMap ) );
+		text_input::feed feed;
+		
+		NN::Owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( linkMap, N::fsRdPerm );
+		
+		N::FSReader reader( fRefNum );
 		
 		const std::size_t minimum_line_length = format_length + name_length;
 		
-		while ( input.Ready() )
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.length() < minimum_line_length )
 			{
