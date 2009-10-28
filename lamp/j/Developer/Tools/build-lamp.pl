@@ -207,7 +207,9 @@ sub build_output
 	
 	$foreign_build_tree ||= $build_tree;
 	
-	my $result = "$foreign_build_tree/Output/$project/$project";
+	my $project_file = $project =~ m{/} ? $project : "$project/$project";
+	
+	my $result = "$foreign_build_tree/Output/$project_file";
 	
 	-f $result or die "Missing build output for $project\n";
 	
