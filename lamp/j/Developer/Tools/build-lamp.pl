@@ -337,6 +337,13 @@ sub create_node
 	
 	my $ref = ref $param or return create_file( $path, $param );
 	
+	if ( $ref eq "SCALAR" )
+	{
+		install_program( $$param, $path );
+		
+		return;
+	}
+	
 	$path .= "/$dir"  unless $dir eq '.';
 	
 	if ( $ref eq "CODE" )
