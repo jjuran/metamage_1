@@ -118,22 +118,22 @@ my %fsmap =
 			perl   => [ qw( print.t ) ],
 			proc   => [ qw( exe.t   ) ],
 			sh     => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
-			perm   => [ qw( test-write-locked ) ],
-			signal => [ qw( test-longjmp-past-vfork test-read-intr ) ],
-			time   => [ qw( test-time ) ],
+			perm   => [ \ qw( test-write-locked ) ],
+			signal => [ \ qw( test-longjmp-past-vfork test-read-intr ) ],
+			time   => [ \ qw( test-time ) ],
 		},
 		Tools =>
 		[
 			# Build tools
-			qw( A-line ar cpres ld mpwrez mwcc ),
+			\ qw( A-line ar cpres ld mpwrez mwcc ),
 			# Debugging
-			qw( d68k ),
+			\ qw( d68k ),
 			# Source management
-			qw( jsync ),
+			\ qw( jsync ),
 			# Exceptions
-			qw( abort buserror illegal privileged ),
+			\ qw( abort buserror illegal privileged ),
 			# Mac-specific
-			qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
+			\ qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
 			# AppleScript
 			qw( system ),
 			# aevt wrappers
@@ -145,9 +145,9 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
+		\ qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
-		qw( jgetty ),
+		\ qw( jgetty ),
 		# Perl scripts
 		qw( chmod date ls test ),
 	],
@@ -169,27 +169,27 @@ my %fsmap =
 		bin =>
 		[
 			# Standard
-			qw( env time touch ),
+			\ qw( env time touch ),
 			# Common
-			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			\ qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
-			qw( argv0 tcpcat tcpclient ),
+			\ qw( argv0 tcpcat tcpclient ),
 			# Modem-related scripts
 			qw( cidlistener cidmon mcmd ),
 			# Newline translation
-			qw( cr2lf lf2cr lf2crlf mread stripcr striplf ),
+			\ qw( cr2lf lf2cr lf2crlf mread stripcr striplf ),
 			# Local editor
-			qw( local-edit-client ),
+			\ qw( local-edit-client ),
 			# Apps
-			qw( buffer ),
+			\ qw( buffer ),
 			# Script apps
 			qw( confirm prompt psmon ),
 			# App utilities
-			qw( daemonize follower idle select ),
+			\ qw( daemonize follower idle select ),
 			# Misc
-			qw( chain divide jtest pause ptrace th ),
+			\ qw( chain divide jtest pause ptrace th ),
 			# Mac-specific
-			qw( beep cds err2text keymods macbin vols ),
+			\ qw( beep cds err2text keymods macbin vols ),
 			# Mac-specific scripts
 			qw( drvr gestalt ),
 			# Perl scripts
@@ -199,7 +199,7 @@ my %fsmap =
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [qw( superd inetd httpd ttyd )],
+		sbin => [ \ qw( superd inetd httpd ttyd ) ],
 	},
 	var =>
 	{
