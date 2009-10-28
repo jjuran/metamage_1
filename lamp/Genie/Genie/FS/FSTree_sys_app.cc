@@ -14,6 +14,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/sys_app_dir.hh"
 #include "Genie/FS/sys_app_window.hh"
 #include "Genie/FS/Scribes.hh"
 
@@ -73,6 +74,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_app_Mappings[] =
 	{
+		{ "dir",   &New_FSTree_sys_app_dir },
+		
 		{ "freemem", &Property_Factory< GetFreeMem > },
 		
 	#if !TARGET_API_MAC_CARBON
