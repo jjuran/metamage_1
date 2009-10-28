@@ -133,7 +133,9 @@ my %fsmap =
 			# Exceptions
 			qw( abort buserror illegal privileged ),
 			# Mac-specific
-			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
+			qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
+			# AppleScript
+			qw( system ),
 			# aevt wrappers
 			qw( File Line activate quit ),
 			# Misc scripts
@@ -179,13 +181,17 @@ my %fsmap =
 			# Local editor
 			qw( local-edit-client ),
 			# Apps
-			qw( buffer confirm prompt psmon ),
+			qw( buffer ),
+			# Script apps
+			qw( confirm prompt psmon ),
 			# App utilities
 			qw( daemonize follower idle select ),
 			# Misc
 			qw( chain divide jtest pause ptrace th ),
 			# Mac-specific
-			qw( beep cds drvr err2text gestalt keymods macbin vols ),
+			qw( beep cds err2text keymods macbin vols ),
+			# Mac-specific scripts
+			qw( drvr gestalt ),
 			# Perl scripts
 			qw( grep head printenv strings tee tr wc ),
 		],
