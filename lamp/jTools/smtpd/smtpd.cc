@@ -22,6 +22,10 @@
 // Iota
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // Nucleus
 #include "Nucleus/Shared.h"
 
@@ -37,7 +41,8 @@
 #include "MacFiles.hh"
 
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
 // MoreFunctional
@@ -46,9 +51,6 @@
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
-
-// Io
-#include "Io/TextInput.hh"
 
 // BitsAndBytes
 #include "DecimalStrings.hh"
@@ -401,8 +403,6 @@ namespace tool
 			                                                peer.sin_port );
 		}
 		
-		Io::TextInputAdapter< p7::fd_t > input( p7::stdin_fileno );
-		
 		const size_t max_hostname_length = 255;
 		
 		const size_t buffer_size = STRLEN( "220 " )
@@ -425,9 +425,15 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, message_buffer, message_size );
 		
-		while ( input.Ready() )
+		text_input::feed feed;
+		
+		p7::fd_reader reader( p7::stdin_fileno );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			DoLine( input.Read() );
+			std::string line( s->begin(), s->end() - 1 );
+			
+			DoLine( line );
 		}
 		
 		return 0;

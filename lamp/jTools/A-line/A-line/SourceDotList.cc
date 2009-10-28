@@ -5,12 +5,13 @@
 
 #include "A-line/SourceDotList.hh"
 
-// poseven
-#include "poseven/FileDescriptor.hh"
-#include "poseven/functions/open.hh"
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
 
-// Io
-#include "Io/TextInput.hh"
+// poseven
+#include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/open.hh"
 
 // BitsAndBytes
 #include "StringPredicates.hh"
@@ -28,11 +29,15 @@ namespace tool
 	void ReadSourceDotList( const std::string&           pathname,
 	                        std::vector< std::string >&  files )
 	{
-		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
+		text_input::feed feed;
 		
-		while ( input.Ready() )
+		NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
+		
+		p7::fd_reader reader( fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.empty()             )  continue;
 			if ( line[ 0 ] == ';'         )  continue;

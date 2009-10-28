@@ -13,21 +13,23 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // Io
 #include "io/files.hh"
 #include "io/walk.hh"
 
 // poseven
 #include "poseven/Directory.hh"
-#include "poseven/FileDescriptor.hh"
 #include "poseven/Pathnames.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/stat.hh"
+#include "poseven/functions/write.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // A-line
 #include "A-line/Exceptions.hh"
@@ -266,11 +268,13 @@ namespace tool
 	
 	void read_catalog_cache( p7::fd_t input_fd )
 	{
-		Io::TextInputAdapter< p7::fd_t > input( input_fd );
+		text_input::feed feed;
 		
-		while ( input.Ready() )
+		p7::fd_reader reader( input_fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string text = input.Read();
+			std::string text( s->begin(), s->end() - 1 );
 			
 			const char* begin = text.c_str();
 			

@@ -22,6 +22,10 @@
 // Iota
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // Io
 #include "io/io.hh"
 #include "io/files.hh"
@@ -30,7 +34,7 @@
 #include "debug/assert.hh"
 
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/Pathnames.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
@@ -39,9 +43,6 @@
 
 // MoreFunctional
 #include "PointerToFunction.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -250,11 +251,13 @@ namespace tool
 	
 	static void read_dependencies_file( p7::fd_t input_fd, std::set< std::string >& includes )
 	{
-		Io::TextInputAdapter< p7::fd_t > input( input_fd );
+		text_input::feed feed;
 		
-		while ( input.Ready() )
+		p7::fd_reader reader( input_fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string include_path = input.Read();
+			std::string include_path( s->begin(), s->end() - 1 );
 			
 			includes.insert( include_path );
 		}

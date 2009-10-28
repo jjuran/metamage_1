@@ -8,13 +8,14 @@
 // Iota
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // BitsAndBytes
 #include "StringPredicates.hh"
@@ -87,13 +88,17 @@ namespace tool
 	
 	IncludesCache ExtractIncludes( const std::string& pathname )
 	{
-		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
+		text_input::feed feed;
+		
+		NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
+		
+		p7::fd_reader reader( fd );
 		
 		IncludesCache includes;
 		
-		while ( input.Ready() )
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			ExtractInclude( line, includes );
 		}

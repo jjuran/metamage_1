@@ -17,8 +17,12 @@
 // Iota
 #include "iota/strings.hh"
 
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
 // poseven
-#include "poseven/FileDescriptor.hh"
+#include "poseven/extras/fd_reader.hh"
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/accept.hh"
 #include "poseven/functions/execv.hh"
@@ -31,9 +35,6 @@
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
-
-// Io
-#include "Io/TextInput.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -234,11 +235,15 @@ namespace tool
 	
 	static void ReadInetdDotConf()
 	{
-		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( "/etc/inetd.conf" ) );
+		text_input::feed feed;
 		
-		while ( !input.Ended() )
+		NN::Owned< p7::fd_t > fd( io::open_for_reading( "/etc/inetd.conf" ) );
+		
+		p7::fd_reader reader( fd );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			std::string line( s->begin(), s->end() - 1 );
 			
 			ProcessLine( line );
 		}
