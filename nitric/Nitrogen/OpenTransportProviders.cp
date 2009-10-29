@@ -14,6 +14,10 @@
 #include "Nitrogen/OpenTransportProviders.h"
 
 
+using Nitrogen::DefaultInternetServicesPath;
+
+const DefaultInternetServicesPath kDefaultInternetServicesPath = DefaultInternetServicesPath();
+
 namespace Nitrogen
 {
 	

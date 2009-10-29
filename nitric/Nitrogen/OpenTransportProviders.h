@@ -50,8 +50,7 @@ namespace Nitrogen
 
 //static const OTConfigurationRef kDefaultInternetServicesPath = (OTConfigurationRef)-3L;
 
-static const Nitrogen::DefaultInternetServicesPath
-       kDefaultInternetServicesPath = Nitrogen::DefaultInternetServicesPath();
+extern const Nitrogen::DefaultInternetServicesPath kDefaultInternetServicesPath;
 
 #endif
 
