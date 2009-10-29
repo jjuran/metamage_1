@@ -167,7 +167,7 @@ my %fsmap =
 		bin =>
 		[
 			# Standard
-			qw( touch ),
+			qw( env time touch ),
 			# Common
 			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
@@ -187,7 +187,7 @@ my %fsmap =
 			# Mac-specific
 			qw( beep cds drvr err2text gestalt keymods macbin vols ),
 			# Perl scripts
-			qw( env grep head printenv strings tee time tr wc ),
+			qw( grep head printenv strings tee tr wc ),
 		],
 		lib =>
 		{
