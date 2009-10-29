@@ -10,6 +10,10 @@
 
 #include <sys/types.h>
 
+
+#define NANOSLEEP_DOZE  (-1)
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,6 +60,10 @@ extern "C" {
 	time_t time( time_t* t );
 	
 	int nanosleep( const struct timespec* requested, struct timespec* remaining );
+	
+	int doze( struct timespec const  *minimum,
+	          struct timespec const  *maximum,
+	          struct timespec        *remaining );
 	
 	size_t strftime( char *s, size_t max, const char *format, const struct tm *tm );
 	
