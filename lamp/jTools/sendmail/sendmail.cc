@@ -28,6 +28,7 @@
 // poseven
 #include "poseven/FileDescriptor.hh"
 #include "poseven/bundles/inet.hh"
+#include "poseven/functions/gethostname.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -212,8 +213,7 @@ namespace tool
 		
 		NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 		
-		//smtpSession.Hello      ( HW::GetHostname() );
-		smtpSession.Hello      ( "hostname"  );
+		smtpSession.Hello      ( p7::gethostname() );
 		smtpSession.MailFrom   ( returnPath  );
 		smtpSession.RecipientTo( forwardPath );
 		
