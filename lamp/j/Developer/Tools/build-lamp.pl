@@ -77,37 +77,6 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $lamp_dist\n";
 
-my @programs = qw
-(
-	A-line
-	SetFile
-	abort aevt ar argv0
-	beep buffer buserror
-	cat cds chain cp cpres cr2lf
-	d68k daemonize divide
-	echo env err2text
-	false follower
-	gzip
-	hostname htget httpd
-	ic idle illegal inetd
-	jgetty jsync jtest
-	keymods kill killall
-	ld lf2cr lf2crlf ln load-init local-edit-client login
-	macbin md5sum mkdir mpwrez mread mv mwcc
-	nohup
-	open osascript
-	pause perl privileged ps ptrace pwd
-	readlink realpath rm rmdir rsrc-patch
-	select setleds sh sleep stripcr striplf superd sync
-	tcpcat tcpclient
-	test-longjmp-past-vfork test-read-intr test-time test-write-locked
-	th time tlsrvr touch true tty ttyd
-	uncaught_exception
-	vols
-	which
-);
-my %is_program = map { $_ => 1 } @programs;
-
 my %fsmap =
 (
 	Developer =>
@@ -118,22 +87,24 @@ my %fsmap =
 			perl   => [ qw( print.t ) ],
 			proc   => [ qw( exe.t   ) ],
 			sh     => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
-			perm   => [ qw( test-write-locked ) ],
-			signal => [ qw( test-longjmp-past-vfork test-read-intr ) ],
-			time   => [ qw( test-time ) ],
+			perm   => [ \ qw( test-write-locked ) ],
+			signal => [ \ qw( test-longjmp-past-vfork test-read-intr ) ],
+			time   => [ \ qw( test-time ) ],
 		},
 		Tools =>
 		[
 			# Build tools
-			qw( A-line ar cpres ld mpwrez mwcc ),
+			\ qw( A-line ar cpres ld mpwrez mwcc ),
 			# Debugging
-			qw( d68k ),
+			\ qw( d68k ),
 			# Source management
-			qw( jsync ),
+			\ qw( jsync ),
 			# Exceptions
-			qw( abort buserror illegal privileged ),
+			\ qw( abort buserror illegal privileged ),
 			# Mac-specific
-			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
+			\ qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
+			# AppleScript
+			qw( system ),
 			# aevt wrappers
 			qw( File Line activate quit ),
 			# Misc scripts
@@ -143,9 +114,9 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
+		\ qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
-		qw( jgetty ),
+		\ qw( jgetty ),
 		# Perl scripts
 		qw( chmod date ls test ),
 	],
@@ -167,33 +138,37 @@ my %fsmap =
 		bin =>
 		[
 			# Standard
-			qw( touch ),
+			\ qw( env time touch ),
 			# Common
-			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			\ qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
-			qw( argv0 tcpcat tcpclient ),
+			\ qw( argv0 tcpcat tcpclient ),
 			# Modem-related scripts
 			qw( cidlistener cidmon mcmd ),
 			# Newline translation
-			qw( cr2lf lf2cr lf2crlf mread stripcr striplf ),
+			\ qw( cr2lf lf2cr lf2crlf mread stripcr striplf ),
 			# Local editor
-			qw( local-edit-client ),
+			\ qw( local-edit-client ),
 			# Apps
-			qw( buffer confirm prompt psmon ),
+			\ qw( buffer ),
+			# Script apps
+			qw( confirm prompt psmon ),
 			# App utilities
-			qw( daemonize follower idle select ),
+			\ qw( daemonize follower idle select ),
 			# Misc
-			qw( chain divide jtest pause ptrace th ),
+			\ qw( chain divide jtest pause ptrace th ),
 			# Mac-specific
-			qw( beep cds drvr err2text gestalt keymods macbin vols ),
+			\ qw( beep cds err2text keymods macbin vols ),
+			# Mac-specific scripts
+			qw( drvr gestalt ),
 			# Perl scripts
-			qw( env grep head printenv strings tee time tr wc ),
+			qw( grep head printenv strings tee tr wc ),
 		],
 		lib =>
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [qw( superd inetd httpd ttyd )],
+		sbin => [ \ qw( superd inetd httpd ttyd ) ],
 	},
 	var =>
 	{
@@ -313,29 +288,20 @@ sub install_program
 	copy_file( "$output.xSYM", $install_path )  if $should_copy_syms;
 }
 
-sub create_file
-{
-	my ( $path, $file ) = @_;
-	
-	if ( $is_program{ $file } )
-	{
-		install_program( $file, $path );
-	}
-	else
-	{
-		install_script( $file, $path );
-	}
-	
-	return;
-}
-
 sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
 	#print "create_node( '$path', '$dir', '$param' )\n";
 	
-	my $ref = ref $param or return create_file( $path, $param );
+	my $ref = ref $param or return install_script( $param, $path );
+	
+	if ( $ref eq "SCALAR" )
+	{
+		install_program( $$param, $path );
+		
+		return;
+	}
 	
 	$path .= "/$dir"  unless $dir eq '.';
 	
