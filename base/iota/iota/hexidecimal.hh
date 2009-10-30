@@ -47,14 +47,6 @@ namespace iota
 		return result;
 	}
 	
-	inline char printable_hex_digit( unsigned short x )
-	{
-		x &= 0xf;
-		
-		return x + (x < 10 ? '0'
-		                   : 'a' - 10);
-	}
-	
 	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n );
 	
 }
