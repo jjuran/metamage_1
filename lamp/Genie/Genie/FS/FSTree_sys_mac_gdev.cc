@@ -67,10 +67,10 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct GDHandle_KeyName_Traits : public Pointer_KeyName_Traits< Nitrogen::GDHandle >  {};
-	
-	struct sys_mac_gdev_Details : public GDHandle_KeyName_Traits
+	struct sys_mac_gdev_Details
 	{
+		typedef N::GDHandle Key;
+		
 		typedef Nitrogen::DeviceList_Container Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::DeviceList(); }
@@ -78,6 +78,16 @@ namespace Genie
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
 		static bool KeyIsValid( const Key& key );
+		
+		static std::string NameFromKey( Key key )
+		{
+			return plus::encode_32_bit_hex( (unsigned) key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return (Key) plus::decode_32_bit_hex( name );
+		}
 		
 		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
 		                               const std::string&  name,
@@ -179,7 +189,7 @@ namespace Genie
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		GDHandle_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::GDHandle key = GetKeyFromParent( parent );
 		
 		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		
