@@ -180,8 +180,8 @@ namespace recall
 		char* frame_buf  = &result[ old_size + STRLEN( ": [0x"             ) ];
 		char* return_buf = &result[ old_size + STRLEN( ": [0x12345678 <0x" ) ];
 		
-		iota::inscribe_n_hex_digits( frame_buf,  (long) info.frame_pointer,  8 );
-		iota::inscribe_n_hex_digits( return_buf, (long) info.return_address, 8 );
+		iota::encode_32_bit_hex( (long) info.frame_pointer,  frame_buf  );
+		iota::encode_32_bit_hex( (long) info.return_address, return_buf );
 		
 		strncpy( &*result.end() - STRLEN( "xyz>] " ), info.arch, 3 );
 		

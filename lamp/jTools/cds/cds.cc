@@ -123,7 +123,7 @@ namespace tool
 		
 		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
 		
-		iota::inscribe_n_hex_digits( discid_buf, discID, 8 );
+		iota::encode_32_bit_hex( discID, discid_buf );
 		
 		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		

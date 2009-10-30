@@ -27,7 +27,7 @@ namespace Genie
 		
 		name += ":[12345678]";
 		
-		iota::inscribe_n_hex_digits( &name[ hex_offset ], (long) address, 8 );
+		iota::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
 		
 		return name;
 	}
