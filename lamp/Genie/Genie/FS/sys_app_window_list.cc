@@ -17,6 +17,11 @@ namespace Genie
 	
 	bool sys_app_window_list_Details::KeyIsValid( const Key& key )
 	{
+		if ( key == NULL )
+		{
+			return false;
+		}
+		
 		Sequence sequence = ItemSequence();
 		
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();

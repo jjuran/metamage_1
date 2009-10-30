@@ -100,6 +100,11 @@ namespace Genie
 	
 	bool sys_mac_gdev_Details::KeyIsValid( const Key& key )
 	{
+		if ( key == NULL )
+		{
+			return false;
+		}
+		
 		Sequence sequence = ItemSequence();
 		
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();

@@ -181,6 +181,11 @@ namespace Genie
 	
 	bool sys_mac_thng_Details::KeyIsValid( const Key& key )
 	{
+		if ( key == NULL )
+		{
+			return false;
+		}
+		
 		try
 		{
 			(void) N::GetComponentInfo( key );
