@@ -148,13 +148,10 @@ namespace Genie
 	class IteratorConverter
 	{
 		private:
-			FSTreePtr  itsParent;
-			Details    itsDetails;
+			Details itsDetails;
 		
 		public:
-			IteratorConverter( const FSTreePtr&  parent,
-			                   const Details&    details ) : itsParent ( parent  ),
-			                                                 itsDetails( details )
+			IteratorConverter( const Details& details ) : itsDetails( details )
 			{
 			}
 			
@@ -172,7 +169,7 @@ namespace Genie
 	template < class Details >
 	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IteratorConverter< Details > converter( Self(), itsDetails );
+		IteratorConverter< Details > converter( itsDetails );
 		
 		typename Details::Sequence sequence = itsDetails.ItemSequence();
 		
