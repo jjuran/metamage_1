@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// plus
+#include "plus/hexidecimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -170,7 +173,7 @@ namespace Genie
 	
 	static Component GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return Pointer_KeyName_Traits< Component >::KeyFromName( parent->Name() );
+		return (Component) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static Component GetKey( const FSTree* that )
