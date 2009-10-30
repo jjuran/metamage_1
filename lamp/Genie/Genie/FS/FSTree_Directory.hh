@@ -158,7 +158,7 @@ namespace Genie
 			{
 			}
 			
-			FSNode operator()( const Details::Sequence::value_type& value ) const
+			FSNode operator()( const typename Details::Sequence::value_type& value ) const
 			{
 				typename Details::Key key = itsDetails.KeyFromValue( value );
 				
@@ -210,7 +210,7 @@ namespace Genie
 	
 	class FSTree_Premapped : public FSTree_Directory
 	{
-		private:
+		public:
 			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
 			
 			struct Mapping
@@ -219,7 +219,8 @@ namespace Genie
 				Function     f;
 				bool         needs_check;
 			};
-			
+		
+		private:
 			typedef std::map< std::string, const Mapping* > Mappings;
 			
 			typedef void (*Destructor)( const FSTree* );

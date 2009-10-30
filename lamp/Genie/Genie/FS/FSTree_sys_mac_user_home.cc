@@ -67,7 +67,9 @@ namespace Genie
 		
 		CInfoPBRec cInfo = { 0 };
 		
-		MacIO::GetCatInfo< FNF_Throws >( cInfo, vRefNum, N::fsRtDirID, "\p" "Users" );
+		const FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
+		
+		MacIO::GetCatInfo< FNF_Throws >( cInfo, users );
 		
 		return Dir_From_CInfo( cInfo );
 	}

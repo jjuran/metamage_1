@@ -93,9 +93,10 @@ namespace Genie
 	
 	class ScrollerBase : public Pedestal::Scroller
 	{
-		private:
+		public:
 			typedef const FSTree* Key;
-			
+		
+		private:
 			Key  itsKey;
 		
 		public:

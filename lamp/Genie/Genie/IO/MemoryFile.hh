@@ -30,9 +30,11 @@ namespace Genie
 			MemoryFileHandle( const FSTreePtr&  file,
 			                  OpenFlags         flags,
 			                  ::Ptr             base,
-			                  std::size_t       size ) : VirtualFileHandle( file, flags ),
-			                                             itsBase( base ),
-			                                             itsSize( size )
+			                  std::size_t       size )
+			:
+				VirtualFileHandle< RegularFileHandle >( file, flags ),
+				itsBase( base ),
+				itsSize( size )
 			{
 			}
 			

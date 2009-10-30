@@ -209,7 +209,7 @@ namespace Genie
 	
 	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, OpenFlags flags )
 	:
-		VirtualFileHandle( file, flags ),
+		VirtualFileHandle< StreamHandle >( file, flags ),
 		itsSeed( gButtonMap[ file->ParentRef().get() ].seed )
 	{
 	}

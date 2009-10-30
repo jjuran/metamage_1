@@ -62,7 +62,7 @@ namespace Genie
 	template < class Handle >
 	struct DynamicGroup_Details : public DynamicGroup_Details_Base
 	{
-		typedef typename FSTree_Dynamic_N< Handle > ChildNode;
+		typedef FSTree_Dynamic_N< Handle > ChildNode;
 		
 		static bool KeyIsValid( const Key& key )
 		{

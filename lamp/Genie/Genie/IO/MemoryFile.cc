@@ -37,7 +37,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, itsSize - offset );
+		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
 		
 		memcpy( buffer, itsBase + offset, n_bytes );
 		
@@ -56,7 +56,7 @@ namespace Genie
 			p7::throw_errno( ENOSPC );
 		}
 		
-		n_bytes = std::min( n_bytes, itsSize - offset );
+		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
 		
 		memcpy( itsBase + offset, buffer, n_bytes );
 		

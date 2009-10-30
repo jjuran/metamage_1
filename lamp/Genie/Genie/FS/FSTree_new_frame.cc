@@ -50,7 +50,7 @@ namespace Genie
 	
 	struct Value_Scribe
 	{
-		typedef Value Value;
+		typedef Genie::Value Value;
 		
 		static std::string Encode( const Value& value );
 		
@@ -88,10 +88,10 @@ namespace Genie
 		Value  margin_bottom;
 		Value  margin_left;
 		
-		short  padding;
-		short  outline_width;
-		short  outline_offset;
-		short  outline_curvature;
+		int    padding;
+		int    outline_width;
+		int    outline_offset;
+		int    outline_curvature;
 		bool   bounds_changed;
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
@@ -317,22 +317,22 @@ namespace Genie
 			return gFrameParametersMap[ view ].margin_left;
 		}
 		
-		short& Padding( const FSTree* view )
+		int& Padding( const FSTree* view )
 		{
 			return gFrameParametersMap[ view ].padding;
 		}
 		
-		short& Outline_Width( const FSTree* view )
+		int& Outline_Width( const FSTree* view )
 		{
 			return gFrameParametersMap[ view ].outline_width;
 		}
 		
-		short& Outline_Offset( const FSTree* view )
+		int& Outline_Offset( const FSTree* view )
 		{
 			return gFrameParametersMap[ view ].outline_offset;
 		}
 		
-		short& Outline_Curvature( const FSTree* view )
+		int& Outline_Curvature( const FSTree* view )
 		{
 			return gFrameParametersMap[ view ].outline_curvature;
 		}

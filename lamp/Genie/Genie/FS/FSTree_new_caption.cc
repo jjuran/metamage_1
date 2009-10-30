@@ -127,7 +127,9 @@ namespace Genie
 	class CaptionTextFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		public:
-			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags ) : VirtualFileHandle( file, flags )
+			CaptionTextFileHandle( const FSTreePtr& file, OpenFlags flags )
+			:
+				VirtualFileHandle< RegularFileHandle >( file, flags )
 			{
 			}
 			
@@ -165,9 +167,9 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, s.size() - offset );
+		n_bytes = std::min< size_t >( n_bytes, s.size() - offset );
 		
-		memcpy( buffer, s.begin() + offset, n_bytes );
+		memcpy( buffer, &s[ offset ], n_bytes );
 		
 		return n_bytes;
 	}

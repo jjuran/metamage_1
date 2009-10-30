@@ -24,7 +24,7 @@ namespace Genie
 			                          OpenFlags           flags,
 			                          const std::string&  value )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsData( value )
 			{
 			}
@@ -54,7 +54,7 @@ namespace Genie
 			                          WriteHook         writeHook,
 			                          bool              binary )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< StreamHandle >( file, flags ),
 				itsWriteHook( writeHook ),
 				itIsBinary( binary )
 			{

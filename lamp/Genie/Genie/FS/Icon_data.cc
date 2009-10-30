@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Icon_data.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Iota
 #include "iota/decimal.hh"
 
@@ -249,7 +252,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min( n_bytes, size - mark );
+		n_bytes = std::min< size_t >( n_bytes, size - mark );
 		
 		const char* p = use_handle ? *h
 		                           : (const char*) &itsResID;
@@ -319,7 +322,7 @@ namespace Genie
 			                    OpenFlags                             flags,
 			                    const boost::shared_ptr< IconData >&  data )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
@@ -342,7 +345,7 @@ namespace Genie
 			                      OpenFlags                             flags,
 			                      const boost::shared_ptr< IconData >&  data )
 			:
-				VirtualFileHandle( file, flags ),
+				VirtualFileHandle< StreamHandle >( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
