@@ -10,6 +10,24 @@
 namespace iota
 {
 	
+	// (hex-digit & 0x1f) -> numeric nibble
+	extern unsigned char decoded_hex_table[];
+	
+	// (nibble & 0x0f) -> ASCII hex digit
+	extern char encoded_hex_table[];
+	
+	
+	inline unsigned char decoded_hex_digit( char c )
+	{
+		return decoded_hex_table[ c & 0x1f ];
+	}
+	
+	inline char encoded_hex_char( unsigned char d )
+	{
+		return encoded_hex_table[ d & 0x0f ];
+	}
+	
+	
 	inline unsigned short hexidecimal_magnitude( unsigned x )
 	{
 		const unsigned short result = x >= 0x10000000 ? 8
