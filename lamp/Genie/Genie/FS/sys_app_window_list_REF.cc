@@ -8,6 +8,12 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/hexidecimal.hh"
+
+// plus
+#include "plus/hexidecimal.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Saved.h"
@@ -384,33 +390,9 @@ namespace Genie
 	};
 	
 	
-	static inline UInt32 Read_8_nibbles( const char* p )
-	{
-		UInt32 result = nibble_from_ascii( p[ 0 ] ) << 28
-		              | nibble_from_ascii( p[ 1 ] ) << 24
-		              | nibble_from_ascii( p[ 2 ] ) << 20
-		              | nibble_from_ascii( p[ 3 ] ) << 16
-		              | nibble_from_ascii( p[ 4 ] ) << 12
-		              | nibble_from_ascii( p[ 5 ] ) <<  8
-		              | nibble_from_ascii( p[ 6 ] ) <<  4
-		              | nibble_from_ascii( p[ 7 ] ) <<  0;
-		
-		return result;
-	}
-	
-	static inline void* PtrFromName( const std::string& name )
-	{
-		if ( name.length() != sizeof (void*) * 2 )
-		{
-			return NULL;
-		}
-		
-		return (void*) Read_8_nibbles( name.data() );
-	}
-	
 	static N::WindowRef GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return (N::WindowRef) PtrFromName( parent->Name() );
+		return (N::WindowRef) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static N::WindowRef GetKey( const FSTree* that )
