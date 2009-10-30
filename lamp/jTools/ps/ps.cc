@@ -6,6 +6,9 @@
 // Standard C++
 #include <string>
 
+// Standard C
+#include <stdio.h>
+
 // POSIX
 #include <dirent.h>
 
@@ -28,6 +31,16 @@
 #include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
+
+static struct timespec timespec_from_seconds( float time )
+{
+	const unsigned long seconds     = time;
+	const unsigned long nanoseconds = (time - seconds) * 1000 * 1000 * 1000;
+	
+	const struct timespec result = { seconds, nanoseconds };
+	
+	return result;
+}
 
 namespace tool
 {
@@ -228,11 +241,26 @@ namespace tool
 	{
 		bool monitor = false;
 		
+		const char* sleep_arg = NULL;
+		
 		o::bind_option_to_variable( "--monitor", monitor );
 		
 		o::bind_option_to_variable( "--wide", globally_wide );
 		
+		o::bind_option_to_variable( "--sleep", sleep_arg );
+		
 		o::get_options( argc, argv );
+		
+		float min_sleep = 1.0;
+		
+		if ( sleep_arg )
+		{
+			monitor = true;
+			
+			int scanned = sscanf( sleep_arg, "%f", &min_sleep );
+		}
+		
+		const struct timespec minimum = timespec_from_seconds( min_sleep );
 		
 		std::string output;
 		std::string previous;
@@ -257,7 +285,7 @@ namespace tool
 		
 		if ( monitor )
 		{
-			sleep( 1 );
+			int dozed = doze( &minimum, NULL, NULL );  // min, max, remaining
 			
 			goto again;
 		}

@@ -21,7 +21,7 @@ ln /new/caption view/v
 echo 4 > view/padding
 echo 0 > view/v/wrapped
 
-daemonize --cwd --stdout --ctty=tty -- ps --wide --monitor > view/v/text
+daemonize --cwd --stdout --ctty=tty -- ps --wide --sleep=0.2 > view/v/text
 
 echo 1 > vis
 
