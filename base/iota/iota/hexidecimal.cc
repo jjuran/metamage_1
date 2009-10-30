@@ -28,6 +28,32 @@ namespace iota
 	};
 	
 	
+	unsigned decode_32_bit_hex( const char* s )
+	{
+		const unsigned x = decoded_hex_digit( s[ 0 ] ) << 28
+		                 | decoded_hex_digit( s[ 1 ] ) << 24
+		                 | decoded_hex_digit( s[ 2 ] ) << 20
+		                 | decoded_hex_digit( s[ 3 ] ) << 16
+		                 | decoded_hex_digit( s[ 4 ] ) << 12
+		                 | decoded_hex_digit( s[ 5 ] ) <<  8
+		                 | decoded_hex_digit( s[ 6 ] ) <<  4
+		                 | decoded_hex_digit( s[ 7 ] ) <<  0;
+		
+		return x;
+	}
+	
+	void encode_32_bit_hex( unsigned x, char* s )
+	{
+		s[ 0 ] = encoded_hex_char( x >> 28 );
+		s[ 1 ] = encoded_hex_char( x >> 24 );
+		s[ 2 ] = encoded_hex_char( x >> 20 );
+		s[ 3 ] = encoded_hex_char( x >> 16 );
+		s[ 4 ] = encoded_hex_char( x >> 12 );
+		s[ 5 ] = encoded_hex_char( x >>  8 );
+		s[ 6 ] = encoded_hex_char( x >>  4 );
+		s[ 7 ] = encoded_hex_char( x >>  0 );
+	}
+	
 	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n )
 	{
 		switch ( n )

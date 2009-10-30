@@ -28,6 +28,11 @@ namespace iota
 	}
 	
 	
+	unsigned decode_32_bit_hex( const char* s );
+	
+	void encode_32_bit_hex( unsigned x, char* s );
+	
+	
 	inline unsigned short hexidecimal_magnitude( unsigned x )
 	{
 		const unsigned short result = x >= 0x10000000 ? 8
