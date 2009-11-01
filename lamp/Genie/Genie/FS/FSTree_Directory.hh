@@ -93,34 +93,26 @@ namespace Genie
 	class FSTree_Sequence : public FSTree_Directory
 	{
 		protected:
-			Details itsDetails;
-			
 			typedef typename Details::Key Key;
 		
 		public:
 			FSTree_Sequence( const FSTreePtr&    parent,
-			                 const std::string&  name ) : FSTree_Directory( parent, name ),
-			                                              itsDetails()
-			{
-			}
-			
-			FSTree_Sequence( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 const Details&      details ) : FSTree_Directory( parent, name ),
-			                                                 itsDetails( details )
+			                 const std::string&  name )
+			:
+				FSTree_Directory( parent, name )
 			{
 			}
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const
 			{
-				Key key = itsDetails.KeyFromName( name );
+				Key key = Details::KeyFromName( name );
 				
-				if ( !itsDetails.KeyIsValid( key ) )
+				if ( !Details::KeyIsValid( key ) )
 				{
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return itsDetails.GetChildNode( Self(), name, key );
+				return Details::GetChildNode( Self(), name, key );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -129,19 +121,12 @@ namespace Genie
 	template < class Details >
 	class IteratorConverter
 	{
-		private:
-			Details itsDetails;
-		
 		public:
-			IteratorConverter( const Details& details ) : itsDetails( details )
-			{
-			}
-			
 			FSNode operator()( const typename Details::Sequence::value_type& value ) const
 			{
-				typename Details::Key key = itsDetails.KeyFromValue( value );
+				typename Details::Key key = Details::KeyFromValue( value );
 				
-				std::string name = itsDetails.NameFromKey( key );
+				std::string name = Details::NameFromKey( key );
 				ino_t inode = 0;
 				
 				return FSNode( inode, name );
@@ -151,9 +136,9 @@ namespace Genie
 	template < class Details >
 	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IteratorConverter< Details > converter( itsDetails );
+		IteratorConverter< Details > converter;
 		
-		typename Details::Sequence sequence = itsDetails.ItemSequence();
+		typename Details::Sequence sequence = Details::ItemSequence();
 		
 		std::transform( sequence.begin(),
 		                sequence.end(),
