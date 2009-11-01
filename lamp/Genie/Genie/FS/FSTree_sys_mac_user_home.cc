@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -28,19 +29,15 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	class FSTree_sys_mac_user_home : public FSTree
+	class FSTree_sys_mac_user_home : public FSTree_ResolvableSymLink
 	{
 		public:
 			FSTree_sys_mac_user_home( const FSTreePtr&    parent,
 			                          const std::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
 	};
@@ -109,11 +106,6 @@ namespace Genie
 		return FindUserHomeFolder();
 	}
 	
-	
-	std::string FSTree_sys_mac_user_home::ReadLink() const
-	{
-		return ResolveLink()->Pathname();
-	}
 	
 	FSTreePtr FSTree_sys_mac_user_home::ResolveLink() const
 	{

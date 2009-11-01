@@ -26,6 +26,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/FSTree_Virtual_Link.hh"
+#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys_mac_vol_parms.hh"
@@ -421,7 +422,7 @@ namespace Genie
 		}
 	};
 	
-	class FSTree_Folder_Link : public FSTree
+	class FSTree_Folder_Link : public FSTree_ResolvableSymLink
 	{
 		private:
 			typedef N::FSVolumeRefNum Key;
@@ -435,15 +436,11 @@ namespace Genie
 			                    N::FolderType       type,
 			                    const std::string&  name )
 			:
-				FSTree( parent, name ),
+				FSTree_ResolvableSymLink( parent, name ),
 				itsKey ( key  ),
 				itsType( type )
 			{
 			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const
 			{

@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -119,7 +120,7 @@ namespace Genie
 	
 	typedef FSTree_Sequence< PID_fd_Details > FSTree_PID_fd;
 	
-	class FSTree_PID_fd_N : public FSTree
+	class FSTree_PID_fd_N : public FSTree_ResolvableSymLink
 	{
 		private:
 			pid_t  itsPID;
@@ -131,36 +132,28 @@ namespace Genie
 			                 pid_t               pid,
 			                 int                 fd )
 			:
-				FSTree( parent, name ),
+				FSTree_ResolvableSymLink( parent, name ),
 				itsPID( pid ),
 				itsFD ( fd  )
 			{
 			}
 			
-			bool IsLink() const  { return true; }
-			
 			off_t GetEOF() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
-			
 			FSTreePtr ResolveLink() const;
 	};
 	
-	class FSTree_PID_Link_Base : public FSTree
+	class FSTree_PID_Link_Base : public FSTree_ResolvableSymLink
 	{
 		public:
 			FSTree_PID_Link_Base( const FSTreePtr&    parent,
 			                      const std::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 		protected:
 			Process& GetProcess() const;
