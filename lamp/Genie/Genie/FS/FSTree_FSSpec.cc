@@ -1689,7 +1689,8 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link : public FSTree, public Volume_KeyName_Traits
+	class FSTree_Volumes_Link : public FSTree,
+	                            public Volume_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -1697,8 +1698,10 @@ namespace Genie
 		public:
 			FSTree_Volumes_Link( const FSTreePtr&    parent,
 			                     const std::string&  name,
-			                     const Key&          key ) : FSTree( parent, name ),
-			                                                 itsKey( key    )
+			                     const Key&          key )
+			:
+				FSTree( parent, name ),
+				itsKey( key    )
 			{
 			}
 			

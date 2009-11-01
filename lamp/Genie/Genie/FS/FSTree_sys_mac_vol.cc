@@ -433,9 +433,11 @@ namespace Genie
 			FSTree_Folder_Link( const FSTreePtr&    parent,
 			                    const Key&          key,
 			                    N::FolderType       type,
-			                    const std::string&  name ) : FSTree( parent, name ),
-			                                                 itsKey ( key  ),
-			                                                 itsType( type )
+			                    const std::string&  name )
+			:
+				FSTree( parent, name ),
+				itsKey ( key  ),
+				itsType( type )
 			{
 			}
 			

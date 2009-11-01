@@ -193,7 +193,9 @@ namespace Genie
 	{
 		public:
 			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&    parent,
-			                             const std::string&  name ) : FSTree( parent, name )
+			                             const std::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			

@@ -129,9 +129,11 @@ namespace Genie
 			FSTree_PID_fd_N( const FSTreePtr&    parent,
 			                 const std::string&  name,
 			                 pid_t               pid,
-			                 int                 fd ) : FSTree( parent, name ),
-			                                            itsPID( pid ),
-			                                            itsFD ( fd  )
+			                 int                 fd )
+			:
+				FSTree( parent, name ),
+				itsPID( pid ),
+				itsFD ( fd  )
 			{
 			}
 			
@@ -150,7 +152,9 @@ namespace Genie
 	{
 		public:
 			FSTree_PID_Link_Base( const FSTreePtr&    parent,
-			                      const std::string&  name ) : FSTree( parent, name )
+			                      const std::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
