@@ -8,6 +8,10 @@
 // Mac OS
 #include <MacWindows.h>
 
+// iota
+#include "iota/hexidecimal.hh"
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -48,9 +52,11 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string result = "list/";
+		std::string result = "list/12345678";
 		
-		result += Pointer_KeyName_Traits< ::WindowRef >::NameFromKey( windowPtr );
+		const size_t hex_offset = STRLEN( "list/" );
+		
+		iota::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
 		
 		return result;
 	}

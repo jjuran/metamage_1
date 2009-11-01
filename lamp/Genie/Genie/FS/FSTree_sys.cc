@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_sys.hh"
 
+// iota
+#include "iota/hexidecimal.hh"
+
 // Nitrogen
 #include "Nitrogen/Sound.h"
 
@@ -36,8 +39,20 @@ namespace Genie
 		
 		static std::string NameFromKey( const Key& key )
 		{
-			return key->name ? key->name
-			                 : "." + Pointer_KeyName_Traits< SystemCallPtr >::NameFromKey( key );
+			if ( key->name == NULL )
+			{
+				std::string name;
+				
+				name.resize( sizeof '.' + sizeof (unsigned) * 2 );  // 9
+				
+				name[0] = '.';
+				
+				iota::encode_32_bit_hex( (unsigned) key, &name[1] );
+				
+				return name;
+			}
+			
+			return key->name;
 		}
 		
 		static Key CheckKey( Key key )

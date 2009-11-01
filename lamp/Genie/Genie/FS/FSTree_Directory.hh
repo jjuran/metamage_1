@@ -21,9 +21,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Null.hh"
@@ -31,21 +28,6 @@
 
 namespace Genie
 {
-	
-	template < class Pointer > struct Pointer_KeyName_Traits
-	{
-		typedef Pointer Key;
-		
-		static std::string NameFromKey( const Key& key )
-		{
-			return BitsAndBytes::EncodeAsHex( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return reinterpret_cast< Key >( DecodeHex32( &*name.begin(), &*name.end() ) );
-		}
-	};
 	
 	struct Int_KeyName_Traits
 	{
@@ -270,9 +252,6 @@ namespace Genie
 	{
 		return Premapped_Factory( parent, name, mappings, dtor );
 	}
-	
-	
-	UInt32 DecodeHex32( const char* begin, const char* end );
 	
 }
 

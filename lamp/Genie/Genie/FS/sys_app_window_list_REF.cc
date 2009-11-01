@@ -8,6 +8,12 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/hexidecimal.hh"
+
+// plus
+#include "plus/hexidecimal.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Saved.h"
@@ -173,15 +179,9 @@ namespace Genie
 		}
 	};
 	
-	inline unsigned char nibble_from_ascii( char c )
-	{
-		return c & 0x10 ?  c         - '0'
-		                : (c | 0x20) - 'a' + 10;
-	}
-	
 	inline UInt16 ReadIntensity_1n( const char* p )
 	{
-		const unsigned char nibble = nibble_from_ascii( p[ 0 ] );
+		const unsigned char nibble = iota::decoded_hex_digit( p[ 0 ] );
 		
 		UInt16 result = nibble << 12
 		              | nibble <<  8
@@ -193,8 +193,8 @@ namespace Genie
 	
 	inline UInt16 ReadIntensity_2n( const char* p )
 	{
-		const unsigned char high = nibble_from_ascii( p[ 0 ] );
-		const unsigned char low  = nibble_from_ascii( p[ 1 ] );
+		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
+		const unsigned char low  = iota::decoded_hex_digit( p[ 1 ] );
 		
 		UInt16 result = high << 12
 		              | low  <<  8
@@ -206,9 +206,9 @@ namespace Genie
 	
 	inline UInt16 ReadIntensity_3n( const char* p )
 	{
-		const unsigned char high = nibble_from_ascii( p[ 0 ] );
-		const unsigned char med  = nibble_from_ascii( p[ 1 ] );
-		const unsigned char low  = nibble_from_ascii( p[ 2 ] );
+		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
+		const unsigned char med  = iota::decoded_hex_digit( p[ 1 ] );
+		const unsigned char low  = iota::decoded_hex_digit( p[ 2 ] );
 		
 		UInt16 result = high << 12
 		              | med  <<  8
@@ -220,10 +220,10 @@ namespace Genie
 	
 	static UInt16 ReadIntensity_4n( const char* p )
 	{
-		UInt16 result = nibble_from_ascii( p[ 0 ] ) << 12
-		              | nibble_from_ascii( p[ 1 ] ) <<  8
-		              | nibble_from_ascii( p[ 2 ] ) <<  4
-		              | nibble_from_ascii( p[ 3 ] ) <<  0;
+		const UInt16 result = iota::decoded_hex_digit( p[ 0 ] ) << 12
+		                    | iota::decoded_hex_digit( p[ 1 ] ) <<  8
+		                    | iota::decoded_hex_digit( p[ 2 ] ) <<  4
+		                    | iota::decoded_hex_digit( p[ 3 ] ) <<  0;
 		
 		return result;
 	}
@@ -384,33 +384,9 @@ namespace Genie
 	};
 	
 	
-	static inline UInt32 Read_8_nibbles( const char* p )
-	{
-		UInt32 result = nibble_from_ascii( p[ 0 ] ) << 28
-		              | nibble_from_ascii( p[ 1 ] ) << 24
-		              | nibble_from_ascii( p[ 2 ] ) << 20
-		              | nibble_from_ascii( p[ 3 ] ) << 16
-		              | nibble_from_ascii( p[ 4 ] ) << 12
-		              | nibble_from_ascii( p[ 5 ] ) <<  8
-		              | nibble_from_ascii( p[ 6 ] ) <<  4
-		              | nibble_from_ascii( p[ 7 ] ) <<  0;
-		
-		return result;
-	}
-	
-	static inline void* PtrFromName( const std::string& name )
-	{
-		if ( name.length() != sizeof (void*) * 2 )
-		{
-			return NULL;
-		}
-		
-		return (void*) Read_8_nibbles( name.data() );
-	}
-	
 	static N::WindowRef GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return (N::WindowRef) PtrFromName( parent->Name() );
+		return (N::WindowRef) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static N::WindowRef GetKey( const FSTree* that )

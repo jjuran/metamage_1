@@ -7,6 +7,10 @@
 
 // Iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
+
+// plus
+#include "plus/hexidecimal.hh"
 
 // Nucleus
 #include "Nucleus/LinkedListContainer.h"
@@ -63,10 +67,10 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct GDHandle_KeyName_Traits : public Pointer_KeyName_Traits< Nitrogen::GDHandle >  {};
-	
-	struct sys_mac_gdev_Details : public GDHandle_KeyName_Traits
+	struct sys_mac_gdev_Details
 	{
+		typedef N::GDHandle Key;
+		
 		typedef Nitrogen::DeviceList_Container Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::DeviceList(); }
@@ -74,6 +78,16 @@ namespace Genie
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
 		static bool KeyIsValid( const Key& key );
+		
+		static std::string NameFromKey( Key key )
+		{
+			return plus::encode_32_bit_hex( (unsigned) key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return (Key) plus::decode_32_bit_hex( name );
+		}
 		
 		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
 		                               const std::string&  name,
@@ -83,40 +97,9 @@ namespace Genie
 	typedef FSTree_Sequence< sys_mac_gdev_Details > FSTree_sys_mac_gdev;
 	
 	
-	inline unsigned char nibble_from_ascii( char c )
-	{
-		return c & 0x10 ?  c         - '0'
-		                : (c | 0x20) - 'a' + 10;
-	}
-	
-	static inline UInt32 Read_8_nibbles( const char* p )
-	{
-		UInt32 result = nibble_from_ascii( p[ 0 ] ) << 28
-		              | nibble_from_ascii( p[ 1 ] ) << 24
-		              | nibble_from_ascii( p[ 2 ] ) << 20
-		              | nibble_from_ascii( p[ 3 ] ) << 16
-		              | nibble_from_ascii( p[ 4 ] ) << 12
-		              | nibble_from_ascii( p[ 5 ] ) <<  8
-		              | nibble_from_ascii( p[ 6 ] ) <<  4
-		              | nibble_from_ascii( p[ 7 ] ) <<  0;
-		
-		return result;
-	}
-	
-	
-	static inline void* PtrFromName( const std::string& name )
-	{
-		if ( name.length() != sizeof (void*) * 2 )
-		{
-			return NULL;
-		}
-		
-		return (void*) Read_8_nibbles( name.data() );
-	}
-	
 	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return (N::GDHandle) PtrFromName( parent->Name() );
+		return (N::GDHandle) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static N::GDHandle GetKey( const FSTree* that )
@@ -127,6 +110,11 @@ namespace Genie
 	
 	bool sys_mac_gdev_Details::KeyIsValid( const Key& key )
 	{
+		if ( key == NULL )
+		{
+			return false;
+		}
+		
 		Sequence sequence = ItemSequence();
 		
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
@@ -201,7 +189,7 @@ namespace Genie
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		GDHandle_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::GDHandle key = GetKeyFromParent( parent );
 		
 		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		

@@ -8,6 +8,10 @@
 // POSIX
 #include <fcntl.h>
 
+// iota
+#include "iota/hexidecimal.hh"
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/Saved.h"
 
@@ -504,6 +508,8 @@ namespace Genie
 		CloseUserWindow( key );
 	}
 	
+	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
+	
 	std::string FSTree_sys_window_REF_ref::ReadLink() const
 	{
 		N::WindowRef windowPtr = GetWindowRef( WindowKey() );
@@ -513,9 +519,11 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		std::string result = "/sys/app/window/list/";
+		std::string result = SYS_APP_WINDOW_LIST "12345678";
 		
-		result += Pointer_KeyName_Traits< ::WindowRef >::NameFromKey( windowPtr );
+		const size_t hex_offset = STRLEN( SYS_APP_WINDOW_LIST );
+		
+		iota::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
 		
 		return result;
 	}

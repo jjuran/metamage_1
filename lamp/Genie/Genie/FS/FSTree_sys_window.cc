@@ -8,6 +8,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/hexidecimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -30,7 +33,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_sys_window::Lookup_Child( const std::string& name ) const
 	{
-		const FSTree* key = Pointer_KeyName_Traits< const FSTree* >::KeyFromName( name );
+		const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
 		
 		WindowMap::const_iterator it = gWindowMap.find( key );
 		

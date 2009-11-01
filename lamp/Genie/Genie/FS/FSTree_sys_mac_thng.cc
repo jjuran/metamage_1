@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// plus
+#include "plus/hexidecimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -150,8 +153,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct sys_mac_thng_Details : public Pointer_KeyName_Traits< Component >
+	struct sys_mac_thng_Details
 	{
+		typedef ::Component Key;
+		
 		typedef Nitrogen::Component_Container Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::Components(); }
@@ -159,6 +164,16 @@ namespace Genie
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
 		static bool KeyIsValid( const Key& key );
+		
+		static std::string NameFromKey( Key key )
+		{
+			return plus::encode_32_bit_hex( (unsigned) key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return (Key) plus::decode_32_bit_hex( name );
+		}
 		
 		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
 		                               const std::string&  name,
@@ -170,7 +185,7 @@ namespace Genie
 	
 	static Component GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return Pointer_KeyName_Traits< Component >::KeyFromName( parent->Name() );
+		return (Component) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static Component GetKey( const FSTree* that )
@@ -181,6 +196,11 @@ namespace Genie
 	
 	bool sys_mac_thng_Details::KeyIsValid( const Key& key )
 	{
+		if ( key == NULL )
+		{
+			return false;
+		}
+		
 		try
 		{
 			(void) N::GetComponentInfo( key );

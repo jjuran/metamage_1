@@ -5,8 +5,14 @@
 
 #include "Genie/FS/FSTree_sys_mac_proc.hh"
 
+// iota
+#include "iota/hexidecimal.hh"
+
 // Nitrogen
 #include "Nitrogen/Processes.h"
+
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
@@ -19,6 +25,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
 	
 	struct ProcessSerialNumber_KeyName_Traits
@@ -61,17 +68,28 @@ namespace Genie
 	
 	std::string ProcessSerialNumber_KeyName_Traits::NameFromKey( const Key& psn )
 	{
-		using BitsAndBytes::EncodeAsHex;
+		const bool extended = psn.highLongOfPSN != 0;
 		
-		std::string name = EncodeAsHex( psn.lowLongOfPSN );
+		std::string name;
 		
-		if ( psn.highLongOfPSN != 0 )
+		const size_t eight = sizeof psn.highLongOfPSN * 2;
+		
+		const size_t more = extended ? eight + sizeof '-' : 0;
+		
+		name.resize( more + eight );
+		
+		if ( extended )
 		{
-			name = EncodeAsHex( psn.highLongOfPSN ) + "-" + name;
+			iota::encode_32_bit_hex( psn.highLongOfPSN, &name[0] );
+			
+			name[ eight ] = '-';
 		}
+		
+		iota::encode_32_bit_hex( psn.lowLongOfPSN, &name[ more ] );
 		
 		return name;
 	}
+	
 	
 	ProcessSerialNumber_KeyName_Traits::Key ProcessSerialNumber_KeyName_Traits::KeyFromName( const std::string& name )
 	{
@@ -80,14 +98,33 @@ namespace Genie
 		const char* begin = name.c_str();
 		const char* end   = name.c_str() + name.size();
 		
+		UInt32 high = 0;
+		
 		if ( const char* hyphen = std::strchr( begin, '-' ) )
 		{
-			psn.highLongOfPSN = DecodeHex32( begin, hyphen );
+			if ( hyphen - begin != sizeof (UInt32) * 2 )
+			{
+				return psn;
+			}
+			
+			high = iota::decode_32_bit_hex( begin );
+			
+			if ( high == 0 )
+			{
+				return psn;
+			}
 			
 			begin = hyphen + 1;
 		}
 		
-		psn.lowLongOfPSN = DecodeHex32( begin, end );
+		if ( end - begin != sizeof (UInt32) * 2 )
+		{
+			return psn;
+		}
+		
+		psn.highLongOfPSN = high;
+		
+		psn.lowLongOfPSN = iota::decode_32_bit_hex( begin );
 		
 		return psn;
 	}
@@ -95,6 +132,11 @@ namespace Genie
 	
 	bool sys_mac_proc_Details::KeyIsValid( const Key& key )
 	{
+		if ( key.lowLongOfPSN == 0  &&  key.highLongOfPSN == 0 )
+		{
+			return false;
+		}
+		
 		try
 		{
 			(void) N::GetProcessInformation( key );

@@ -9,6 +9,9 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
+// plus
+#include "plus/hexidecimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -18,9 +21,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// BitsAndBytes
-#include "HexStrings.hh"
 
 // TimeOff
 #include "TimeOff.hh"
@@ -50,7 +50,7 @@ namespace Genie
 	
 	inline std::string NameFromPtr( const FSTree* ptr )
 	{
-		return BitsAndBytes::EncodeAsHex( ptr );
+		return plus::encode_32_bit_hex( (unsigned) ptr );
 	}
 	
 	FSTree::FSTree( const FSTreePtr&    parent,

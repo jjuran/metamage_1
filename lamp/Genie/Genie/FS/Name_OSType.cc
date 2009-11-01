@@ -5,9 +5,8 @@
 
 #include "Genie/FS/Name_OSType.hh"
 
-// BitsAndBytes
-#include "HexCodes.hh"
-#include "HexStrings.hh"
+// iota
+#include "iota/hexidecimal.hh"
 
 
 namespace Genie
@@ -15,7 +14,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace Bits = BitsAndBytes;
 	
 	
 	std::string OSType_KeyName_Traits::NameFromKey( const Key& key )
@@ -40,8 +38,8 @@ namespace Genie
 			
 			if ( c < ' '  ||  c == '%'  ||  c == '/' )
 			{
-				escape[ 1 ] = Bits::NibbleAsHex( Bits::HighNibble( c ) );
-				escape[ 2 ] = Bits::NibbleAsHex( Bits::LowNibble ( c ) );
+				escape[ 1 ] = iota::encoded_hex_char( c >> 4 );
+				escape[ 2 ] = iota::encoded_hex_char( c      );
 				
 				result.append( escape, sizeof escape - 1 );
 			}
@@ -80,7 +78,8 @@ namespace Genie
 				break;  // conversion below will fail and throw exception
 			}
 			
-			char c = Bits::DecodeHexNibbles( escape[1], escape[2] );
+			const char c = iota::decoded_hex_digit( escape[1] ) << 4
+			             | iota::decoded_hex_digit( escape[2] );
 			
 			decoded += c;
 		}
