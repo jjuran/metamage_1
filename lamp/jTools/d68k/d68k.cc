@@ -90,26 +90,6 @@ namespace tool
 		return x;
 	}
 	
-	static void append_hex_short( std::string& s, unsigned short x )
-	{
-		if ( x & 0xff00 )
-		{
-			s += '0' + (x >> 12      );
-			s += '0' + (x >>  8 & 0xf);
-		}
-		
-		s += '0' + (x >> 4 & 0xf);
-		s += '0' + (x      & 0xf);
-	}
-	
-	static inline char hex_digit( short x )
-	{
-		x &= 0xf;
-		
-		return x + (x < 10 ? '0'
-		                   : 'a' - 10);
-	}
-	
 	static void append_hex( std::string& s, unsigned long x, int min_bytes )
 	{
 		const unsigned short min_digits = min_bytes * 2;
