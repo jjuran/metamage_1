@@ -104,9 +104,9 @@ namespace Genie
 			return key != NULL;
 		}
 		
-		FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                        const std::string&  name,
-		                        const Key&          key ) const;
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
 	};
 	
 	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
@@ -186,7 +186,7 @@ namespace Genie
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr&    parent,
 	                                                    const std::string&  name,
-	                                                    const Key&          key ) const
+	                                                    const Key&          key )
 	{
 		return FSTreePtr( new FSTree_Premapped( parent, name ) );
 	}
