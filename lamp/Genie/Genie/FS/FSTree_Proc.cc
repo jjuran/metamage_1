@@ -93,32 +93,60 @@ namespace Genie
 	};
 	
 	
-	struct PID_fd_Details : public Integer_KeyName_Traits< int >
+	class FSTree_PID_fd : public FSTree_Directory
 	{
-		typedef pid_t              ParentKey;
-		typedef FileDescriptorMap  Sequence;
-		
-		ParentKey itsPID;
-		
-		PID_fd_Details( ParentKey pid ) : itsPID( pid )  {}
-		
-		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
-		
-		static int KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-		
-		bool KeyIsValid( const Key& key ) const
-		{
-			const Sequence& sequence = ItemSequence();
+		private:
+			typedef FileDescriptorMap  Sequence;
 			
-			return sequence.find( key ) != sequence.end();
-		}
+			pid_t its_pid;
 		
-		FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                        const std::string&  name,
-		                        const Key&          key ) const;
+		public:
+			FSTree_PID_fd( const FSTreePtr&    parent,
+			               const std::string&  name,
+			               pid_t               pid )
+			:
+				FSTree_Directory( parent, name ),
+				its_pid( pid )
+			{
+			}
+			
+			const Sequence& ItemSequence() const
+			{
+				return GetProcess( its_pid ).FileDescriptors();
+			}
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	typedef FSTree_Sequence< PID_fd_Details > FSTree_PID_fd;
+	class fdmap_IteratorConverter
+	{
+		public:
+			FSNode operator()( const FileDescriptorMap::value_type& value ) const
+			{
+				const int key = value.first;
+				
+				const ino_t inode = key;
+				
+				std::string name = iota::inscribe_decimal( key );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	void FSTree_PID_fd::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		fdmap_IteratorConverter converter;
+		
+		const Sequence& sequence = ItemSequence();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
+	
 	
 	class FSTree_PID_fd_N : public FSTree_ResolvableSymLink
 	{
@@ -522,11 +550,18 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr&    parent,
-		                                    const std::string&  name,
-		                                    const Key&          key ) const
+	FSTreePtr FSTree_PID_fd::Lookup_Child( const std::string& name ) const
 	{
-		return FSTreePtr( new FSTree_PID_fd_N( parent, name, itsPID, key ) );
+		const int key = atoi( name.c_str() );
+		
+		const Sequence& sequence = ItemSequence();
+		
+		if ( sequence.find( key ) == sequence.end() )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
+		return FSTreePtr( new FSTree_PID_fd_N( Self(), name, its_pid, key ) );
 	}
 	
 	

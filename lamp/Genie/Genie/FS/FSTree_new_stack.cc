@@ -174,50 +174,50 @@ namespace Genie
 	}
 	
 	
-	struct Stack_Details : Null_KeyName_Traits
-	{
-		typedef ViewList  Sequence;
-		
-		const FSTree* itsSelfKey;
-		
-		Stack_Details() : itsSelfKey()
-		{
-		}
-		
-		Stack_Details( const FSTree* self ) : itsSelfKey( self )
-		{
-		}
-		
-		const Sequence& ItemSequence() const  { return gStack_Parameters_Map[ itsSelfKey ].v; }
-		
-		const std::string& KeyFromValue( const Sequence::value_type& value ) const  { return value.name; }
-		
-		bool KeyIsValid( const Key& key ) const  { return true; }
-		
-		FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                        const std::string&  name,
-		                        const Key&          key ) const;
-	};
-	
-	FSTreePtr Stack_Details::GetChildNode( const FSTreePtr&    parent,
-		                                   const std::string&  name,
-		                                   const Key&          key ) const
-	{
-		return FSTreePtr( new FSTree_Stack_Subview( parent, name ) );
-	}
-	
-	class FSTree_Stack : public FSTree_Sequence< Stack_Details >
+	class FSTree_Stack : public FSTree_Directory
 	{
 		public:
+			typedef ViewList  Sequence;
+			
 			FSTree_Stack( const FSTreePtr&    parent,
 		                  const std::string&  name)
 			:
-				FSTree_Sequence< Stack_Details >( parent, name, this )
+				FSTree_Directory( parent, name )
 			{
 			}
 			
+			FSTreePtr Lookup_Child( const std::string& name ) const
+			{
+				return FSTreePtr( new FSTree_Stack_Subview( Self(), name ) );
+			}
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+			
 			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
 	};
+	
+	class Stack_IteratorConverter
+	{
+		public:
+			FSNode operator()( const ViewList::value_type& value ) const
+			{
+				const ino_t inode = 0;
+				
+				return FSNode( inode, value.name );
+			}
+	};
+	
+	void FSTree_Stack::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		Stack_IteratorConverter converter;
+		
+		const Sequence& sequence = gStack_Parameters_Map[ this ].v;
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
 	
 	
 	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&    parent,
