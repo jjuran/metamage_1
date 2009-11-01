@@ -67,6 +67,7 @@
 #include "Genie/FS/FSTree_sys_mac_errata.hh"
 #include "Genie/FS/FSTree_sys_mac_vol.hh"
 #include "Genie/FS/ResFile_Dir.hh"
+#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
@@ -1689,7 +1690,8 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link : public FSTree, public Volume_KeyName_Traits
+	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink,
+	                            public Volume_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -1697,14 +1699,12 @@ namespace Genie
 		public:
 			FSTree_Volumes_Link( const FSTreePtr&    parent,
 			                     const std::string&  name,
-			                     const Key&          key ) : FSTree( parent, name ),
-			                                                 itsKey( key    )
+			                     const Key&          key )
+			:
+				FSTree_ResolvableSymLink( parent, name ),
+				itsKey( key    )
 			{
 			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const
 			{

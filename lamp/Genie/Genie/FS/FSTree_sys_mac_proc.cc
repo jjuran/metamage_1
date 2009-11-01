@@ -18,6 +18,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/ResolvableSymLink.hh"
 
 
 namespace Genie
@@ -189,17 +190,15 @@ namespace Genie
 			}
 	};
 	
-	class FSTree_sys_mac_proc_PSN_exe : public FSTree
+	class FSTree_sys_mac_proc_PSN_exe : public FSTree_ResolvableSymLink
 	{
 		public:
 			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&    parent,
-			                             const std::string&  name ) : FSTree( parent, name )
+			                             const std::string&  name )
+			:
+				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const
 			{
