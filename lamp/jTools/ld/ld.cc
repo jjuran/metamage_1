@@ -13,6 +13,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // iota
 #include "iota/quad.hh"
@@ -57,6 +58,9 @@
 
 // one_path
 #include "one_path/find_InterfacesAndLibraries.hh"
+
+// ld
+#include "link_map.hh"
 
 
 namespace tool
@@ -925,6 +929,11 @@ namespace tool
 		if ( exit_status != 0 )
 		{
 			return exit_status;
+		}
+		
+		if ( arch == arch_m68k )
+		{
+			record_symbolics( output_pathname, strlen( output_pathname ) );
 		}
 		
 		if ( arch == arch_m68k  &&  gProductType == kProductTool )
