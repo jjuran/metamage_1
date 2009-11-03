@@ -129,8 +129,8 @@ namespace Genie
 	
 	class ConsoleTTYHandle;
 	
-	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
-	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
+	typedef FSTree_DynamicGroup< ConsoleTTYHandle > FSTree_dev_con;
+	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
 	
 	
 	boost::shared_ptr< IOHandle > FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
