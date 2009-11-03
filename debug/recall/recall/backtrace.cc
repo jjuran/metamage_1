@@ -30,6 +30,7 @@
 #include "recall/mach_o.hh"
 #include "recall/macsbug_symbols.hh"
 #include "recall/name_filter.hh"
+#include "recall/symbol_locator.hh"
 #include "recall/traceback_tables.hh"
 
 
@@ -115,10 +116,23 @@ namespace recall
 		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
 	}
 	
+	static const char* locate_symbol_name( const void* address )
+	{
+		if ( const symbol_locator locate = get_symbol_locator() )
+		{
+			return locate( address );
+		}
+		
+		return NULL;
+	}
+	
 	template < class ReturnAddr >
 	static plus::string get_demangled_symbol_name( ReturnAddr addr )
 	{
-		plus::string name = get_symbol_name( addr );
+		const char* located_name = locate_symbol_name( addr );
+		
+		plus::string name = located_name ? plus::string( located_name )
+		                                 : get_symbol_name( addr );
 		
 		plus::var_string result;
 		
@@ -171,6 +185,8 @@ namespace recall
 		result.demangled_name = get_demangled_symbol_name( call.addr_native );
 		
 	#endif
+		
+		locate_symbol_name( NULL );  // signal that we're done with the string
 		
 		return result;
 	}
