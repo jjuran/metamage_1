@@ -21,11 +21,12 @@
 #include <string>
 #include <vector>
 
-// MacFiles
-#include "MacFiles.hh"
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
 
-// Io
-#include "Io/TextInput.hh"
+// Nitrogen Extras
+#include "FSReader.hh"
 
 // Vectoria
 #include "Vectoria/Point3D.hh"
@@ -489,6 +490,13 @@ namespace Vertice
 		
 		const char* end = &*line.end();
 		
+		// We are guaranteed a non-empty line since we didn't return above.
+		
+		if ( end[ -1 ] == '\n' )
+		{
+			--end;
+		}
+		
 		const char* start = line.c_str() + iCmdStart;
 		
 		const char* stop = std::find( start, end, ' ' );
@@ -524,15 +532,19 @@ namespace Vertice
 	{
 		N::SetWTitle( Get(), file.name );
 		
-		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( file ) );
+		NN::Owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		Parser parser( ItsScene() );
 		
 		std::list< Parser > savedParsers;
 		
-		while ( input.Ready() )
+		text_input::feed feed;
+		
+		N::FSReader reader( fRefNum );
+		
+		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line = input.Read();
+			const std::string& line = *s;
 			
 			if ( std::strchr( line.c_str(), '{' ) )
 			{
