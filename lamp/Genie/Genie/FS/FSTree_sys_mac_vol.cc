@@ -152,12 +152,12 @@ namespace Genie
 	
 	std::string VRefNum_KeyName_Traits::NameFromKey( const Key& key )
 	{
-		return Int_KeyName_Traits::NameFromKey( -key );
+		return iota::inscribe_unsigned_decimal( -key );
 	}
 	
 	VRefNum_KeyName_Traits::Key VRefNum_KeyName_Traits::KeyFromName( const std::string& name )
 	{
-		int n = Int_KeyName_Traits::KeyFromName( name );
+		int n = atoi( name.c_str() );
 		
 		if ( n <= 0  ||  SInt16( n ) != n )
 		{

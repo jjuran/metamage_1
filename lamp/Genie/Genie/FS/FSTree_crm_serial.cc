@@ -7,6 +7,9 @@
 
 #include "Genie/FS/FSTree_crm_serial.hh"
 
+// iota
+#include "iota/decimal.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/CRMSerialDevices.h"
 
@@ -23,12 +26,20 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	struct CRMDeviceID_KeyName_Traits : Integer_KeyName_Traits< N::CRMDeviceID >
+	struct sys_mac_crm_serial_Details
 	{
-	};
-	
-	struct sys_mac_crm_serial_Details : public CRMDeviceID_KeyName_Traits
-	{
+		typedef N::CRMDeviceID Key;
+		
+		static std::string NameFromKey( Key key )
+		{
+			return iota::inscribe_decimal( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return Key( std::atoi( name.c_str() ) );
+		}
+		
 		typedef N::CRMSerialDevice_Container Sequence;
 		
 		static Sequence ItemSequence()  { return N::CRMSerialDevices(); }
@@ -47,7 +58,7 @@ namespace Genie
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return CRMDeviceID_KeyName_Traits::KeyFromName( parent->Name() );
+		return N::CRMDeviceID( atoi( parent->Name().c_str() ) );
 	}
 	
 	static N::CRMDeviceID GetKey( const FSTree* that )

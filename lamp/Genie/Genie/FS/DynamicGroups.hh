@@ -14,71 +14,72 @@
 namespace Genie
 {
 	
-	struct DynamicGroup_Details_Base : public Integer_KeyName_Traits< unsigned >
-	{
-		typedef DynamicGroup Sequence;
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-	};
+	typedef boost::shared_ptr< IOHandle > (*DynamicElementGetter)( std::size_t );
 	
-	class FSTree_Dynamic_N_Base : public FSTree
+	
+	class FSTree_Dynamic_N : public FSTree
 	{
 		private:
-			unsigned itsID;
-		
-		protected:
-			unsigned ID() const  { return itsID; }
+			DynamicElementGetter itsGetter;
 		
 		public:
-			FSTree_Dynamic_N_Base( const FSTreePtr&    parent,
-			                       const std::string&  name,
-			                       unsigned            id ) : FSTree( parent, name ),
-			                                                  itsID ( id     )
+			FSTree_Dynamic_N( const FSTreePtr&      parent,
+			                  const std::string&    name,
+			                  DynamicElementGetter  getter )
+			:
+				FSTree( parent, name ),
+				itsGetter( getter )
 			{
 			}
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	
-	template < class Handle >
-	class FSTree_Dynamic_N : public FSTree_Dynamic_N_Base
+	class FSTree_DynamicGroup_Base : public FSTree_Directory
 	{
 		public:
-			FSTree_Dynamic_N( const FSTreePtr&    parent,
-			                  const std::string&  name,
-			                  unsigned            id ) : FSTree_Dynamic_N_Base( parent, name, id )
+			typedef DynamicGroup Sequence;
+			
+			FSTree_DynamicGroup_Base( const FSTreePtr&    parent,
+			                          const std::string&  name )
+			:
+				FSTree_Directory( parent, name )
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
-			{
-				return GetDynamicElementByID< Handle >( ID() );
-			}
+			virtual const Sequence& ItemSequence() const = 0;
+			
+			virtual DynamicElementGetter Getter() const = 0;
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	
 	template < class Handle >
-	struct DynamicGroup_Details : public DynamicGroup_Details_Base
+	class FSTree_DynamicGroup : public FSTree_DynamicGroup_Base
 	{
-		typedef FSTree_Dynamic_N< Handle > ChildNode;
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			const Sequence& sequence = ItemSequence();
+		public:
+			FSTree_DynamicGroup( const FSTreePtr&      parent,
+			                     const std::string&    name )
+			:
+				FSTree_DynamicGroup_Base( parent, name )
+			{
+			}
 			
-			return sequence.find( key ) != sequence.end();
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key )
-		{
-			return FSTreePtr( new ChildNode( parent, name, key ) );
-		}
-		
-		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }
+			const Sequence& ItemSequence() const
+			{
+				return GetDynamicGroup< Handle >();
+			}
+			
+			DynamicElementGetter Getter() const
+			{
+				return &GetDynamicElementByID< Handle >;
+			}
 	};
 	
 }

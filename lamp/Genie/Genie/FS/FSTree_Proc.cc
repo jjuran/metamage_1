@@ -36,13 +36,20 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct pid_KeyName_Traits : Integer_KeyName_Traits< pid_t >
+	struct proc_Details
 	{
-	};
-	
-	
-	struct proc_Details : public pid_KeyName_Traits
-	{
+		typedef pid_t Key;
+		
+		static std::string NameFromKey( Key key )
+		{
+			return iota::inscribe_decimal( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return Key( std::atoi( name.c_str() ) );
+		}
+		
 		typedef ProcessList::Map Sequence;
 		
 		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
@@ -87,7 +94,7 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
-			std::string ReadLink() const  { return pid_KeyName_Traits::NameFromKey( getpid() ); }
+			std::string ReadLink() const  { return iota::inscribe_unsigned_decimal( getpid() ); }
 			
 			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( ParentRef(), ReadLink(), getpid() ); }
 	};
@@ -189,7 +196,7 @@ namespace Genie
 	
 	inline Process& FSTree_PID_Link_Base::GetProcess() const
 	{
-		pid_KeyName_Traits::Key pid = GetKeyFromParent( ParentRef() );
+		const pid_t pid = GetKeyFromParent( ParentRef() );
 		
 		return Genie::GetProcess( pid );
 	}
@@ -464,7 +471,7 @@ namespace Genie
 	template < class Accessor >
 	struct proc_PID_Property
 	{
-		typedef pid_KeyName_Traits::Key Key;
+		typedef pid_t Key;
 		
 		static std::string Read( const FSTree* that )
 		{
@@ -488,7 +495,7 @@ namespace Genie
 	static FSTreePtr fd_Factory( const FSTreePtr&    parent,
 	                             const std::string&  name )
 	{
-		pid_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		const pid_t key = GetKeyFromParent( parent );
 		
 		return FSTreePtr( new FSTree_PID_fd( parent, name, key ) );
 	}
@@ -513,7 +520,7 @@ namespace Genie
 	
 	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
 	{
-		pid_KeyName_Traits::Key pid = GetKeyFromParent( ParentRef() );
+		const pid_t pid = GetKeyFromParent( ParentRef() );
 		
 		Process& process = GetProcess( pid );
 		
