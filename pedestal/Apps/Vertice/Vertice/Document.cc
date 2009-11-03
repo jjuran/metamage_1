@@ -490,6 +490,13 @@ namespace Vertice
 		
 		const char* end = &*line.end();
 		
+		// We are guaranteed a non-empty line since we didn't return above.
+		
+		if ( end[ -1 ] == '\n' )
+		{
+			--end;
+		}
+		
 		const char* start = line.c_str() + iCmdStart;
 		
 		const char* stop = std::find( start, end, ' ' );
@@ -537,7 +544,7 @@ namespace Vertice
 		
 		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			const std::string& line = *s;
 			
 			if ( std::strchr( line.c_str(), '{' ) )
 			{
