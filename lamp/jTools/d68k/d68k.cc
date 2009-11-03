@@ -26,6 +26,9 @@
 // Orion
 #include "Orion/Main.hh"
 
+// d68k
+#include "traps.hh"
+
 
 /*
 	A 68K disassembler.
@@ -123,90 +126,9 @@ namespace tool
 		s += iota::inscribe_decimal( x );
 	}
 	
-	static const char* get_aTrap_name( unsigned short trap_word )
+	static inline const char* get_aTrap_name( unsigned short trap_word )
 	{
-		switch ( trap_word )
-		{
-			case 0xa029:
-				return "_HLock";
-			
-			case 0xa04a:
-				return "_HNoPurge";
-			
-			case 0xa055:
-				return "_StripAddress";
-			
-			case 0xa064:
-				return "_MoveHHi";
-			
-			case 0xa01b:
-				return "_SetZone";
-			
-			case 0xa11a:
-				return "_GetZone";
-			
-			case 0xa198:
-				return "_HWPriv";
-			
-			case 0xa247:
-				return "_SetOSTrapAddress";
-			
-			case 0xa346:
-				return "_GetOSTrapAddress";
-			
-			case 0xa647:
-				return "_SetToolTrapAddress";
-			
-			case 0xa746:
-				return "_GetToolTrapAddress";
-			
-			case 0xa81f:
-				return "_Get1Resource";
-			
-			case 0xa820:
-				return "_Get1NamedResource";
-			
-			case 0xa970:
-				return "_GetNextEvent";
-			
-			case 0xa992:
-				return "_DetachResource";
-			
-			case 0xa89f:
-				return "_Unimplemented";
-			
-			case 0xa9a3:
-				return "_ReleaseResource";
-			
-			case 0xa9af:
-				return "_ResError";
-			
-			case 0xa9c8:
-				return "_SysBeep";
-			
-			case 0xa9cc:
-				return "_TEInit";
-			
-			case 0xa9d1:
-				return "_TESetSelect";
-			
-			case 0xa9d4:
-				return "_TEClick";
-			
-			case 0xa9d7:
-				return "_TEDelete";
-			
-			case 0xa9d8:
-				return "_TEActivate";
-			
-			case 0xa9dc:
-				return "_TEKey";
-			
-			default:
-				break;
-		}
-		
-		return NULL;
+		return get_trap_name( trap_word );
 	}
 	
 	
