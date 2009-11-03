@@ -7,7 +7,6 @@
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
-#include "Nitrogen/Processes.h"
 
 // Io: MacFiles
 #include "MacFiles.hh"
@@ -20,6 +19,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/GetAppFolder.hh"
 
 
 namespace Genie
@@ -42,17 +42,6 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
-	
-	static N::FSDirSpec GetAppFolder()
-	{
-		FSSpec appFile;
-		
-		ProcessInfoRec info = NN::Make< ProcessInfoRec >( &appFile );
-		
-		N::GetProcessInformation( N::CurrentProcess(), info );
-		
-		return io::get_preceding_directory( appFile );
-	}
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
 	{
