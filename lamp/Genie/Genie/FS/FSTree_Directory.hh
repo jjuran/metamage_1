@@ -15,9 +15,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Iota
-#include "iota/decimal.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -28,37 +25,6 @@
 
 namespace Genie
 {
-	
-	struct Int_KeyName_Traits
-	{
-		typedef int Key;
-		
-		static std::string NameFromKey( const Key& key )
-		{
-			return iota::inscribe_decimal( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( std::atoi( name.c_str() ) );
-		}
-	};
-	
-	template < class Integer > struct Integer_KeyName_Traits
-	{
-		typedef Integer Key;
-		
-		static std::string NameFromKey( const Key& key )
-		{
-			return Int_KeyName_Traits::NameFromKey( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( Int_KeyName_Traits::KeyFromName( name ) );
-		}
-	};
-	
 	
 	typedef std::vector< FSNode > FSTreeCache;
 	
