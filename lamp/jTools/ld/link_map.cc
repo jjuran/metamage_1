@@ -137,6 +137,23 @@ namespace tool
 	}
 	
 	
+	uint32_t get_code_offset( const char* name )
+	{
+		const size_t n = global_name_offsets.size();
+		
+		for ( unsigned i = 0;  i < n;  ++i )
+		{
+			const uint32_t offset = global_name_offsets[ i ];
+			
+			if ( strcmp( name, &global_name_data[ offset ] ) == 0 )
+			{
+				return global_code_offsets[ i ];
+			}
+		}
+		
+		return 0;
+	}
+	
 	void record_symbolics( const char* output_path, unsigned path_size )
 	{
 	#ifndef __LAMP__

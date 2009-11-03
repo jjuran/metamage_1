@@ -22,10 +22,6 @@
 // plus
 #include "plus/string.hh"
 
-// text-input
-#include "text_input/feed.hh"
-#include "text_input/get_line_from_feed.hh"
-
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
@@ -39,10 +35,8 @@
 #include "pfiles/common.hh"
 
 // Nitrogen
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
-
-// Nitrogen Extras
-#include "FSReader.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -304,56 +298,6 @@ namespace tool
 	static const char* gFileType    = NULL;
 	static const char* gFileCreator = NULL;
 	
-	#define CODE_LABEL "Code: "
-	#define CODE_FORMAT_68K  CODE_LABEL "0079b2   12345 bytes  "
-	
-	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name, std::size_t name_length )
-	{
-		FSSpec linkMap = file;
-		
-		std::memcpy( linkMap.name + 1 + linkMap.name[0], STR_LEN( ".map" ) );
-		
-		linkMap.name[0] += 4;
-		
-		const char* format = CODE_FORMAT_68K;
-		
-		std::size_t format_length = STRLEN( CODE_FORMAT_68K );
-		
-		text_input::feed feed;
-		
-		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( linkMap, N::fsRdPerm );
-		
-		N::FSReader reader( fRefNum );
-		
-		const std::size_t minimum_line_length = format_length + name_length;
-		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
-		{
-			plus::string line( s->begin(), s->end() - 1 );
-			
-			if ( line.length() < minimum_line_length )
-			{
-				continue;
-			}
-			
-			if ( std::memcmp( line.c_str(), STR_LEN( CODE_LABEL ) ) != 0 )
-			{
-				continue;
-			}
-			
-			if ( std::memcmp( line.c_str() + format_length, quoted_name, name_length ) == 0 )
-			{
-				const char* begin = line.c_str() + STRLEN( CODE_LABEL );
-				
-				const unsigned long offset = std::strtoul( begin, NULL, 16 );
-				
-				return offset;
-			}
-		}
-		
-		return 0;
-	}
-	
 	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset,
 	                                                UInt32 initCodeOffset,
 	                                                UInt32 lampMainOffset )
@@ -379,15 +323,11 @@ namespace tool
 		*jmpToMain     = lampMainOffset ? jmp | (lampMainOffset - 36 - 2) : *jmpToMain;
 	}
 	
-	#define QUOT "\""
-	
-	#define QUOTED( string )  QUOT string QUOT
-	
 	static void Patch68KStartup( const FSSpec& file )
 	{
-		unsigned long inittool = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "InitializeTool" ) ) );
-		unsigned long initcode = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__InitCode__"   ) ) );
-		unsigned long lampmain = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "_lamp_main"     ) ) );
+		const unsigned long inittool = get_code_offset( "InitializeTool" );
+		const unsigned long initcode = get_code_offset( "__InitCode__"   );
+		const unsigned long lampmain = get_code_offset( "_lamp_main"     );
 		
 		if ( inittool > 0x7fff )
 		{
