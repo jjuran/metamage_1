@@ -7,6 +7,9 @@
 
 #include "Genie/FS/FSTree_sys_mac_adb.hh"
 
+// iota
+#include "iota/decimal.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.h"
 
@@ -28,12 +31,20 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct ADBAddress_KeyName_Traits : Integer_KeyName_Traits< Nitrogen::ADBAddress >
+	struct sys_mac_adb_Details
 	{
-	};
-	
-	struct sys_mac_adb_Details : public ADBAddress_KeyName_Traits
-	{
+		typedef N::ADBAddress Key;
+		
+		static std::string NameFromKey( Key key )
+		{
+			return iota::inscribe_decimal( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return Key( std::atoi( name.c_str() ) );
+		}
+		
 		typedef Nitrogen::ADBDevice_Container Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::ADBDevice_Container(); }
@@ -52,7 +63,7 @@ namespace Genie
 	
 	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return ADBAddress_KeyName_Traits::KeyFromName( parent->Name() );
+		return N::ADBAddress( atoi( parent->Name().c_str() ) );
 	}
 	
 	static N::ADBAddress GetKey( const FSTree* that )

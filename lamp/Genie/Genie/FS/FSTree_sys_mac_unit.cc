@@ -7,6 +7,9 @@
 
 #include "Genie/FS/FSTree_sys_mac_unit.hh"
 
+// iota
+#include "iota/decimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -98,12 +101,20 @@ namespace Genie
 	AuxDCEHandle* GetUTableBase();
 	
 	
-	struct UnitNumber_KeyName_Traits : Integer_KeyName_Traits< UnitNumber >
+	struct sys_mac_unit_Details
 	{
-	};
-	
-	struct sys_mac_unit_Details : public UnitNumber_KeyName_Traits
-	{
+		typedef UnitNumber Key;
+		
+		static std::string NameFromKey( Key key )
+		{
+			return iota::inscribe_decimal( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return Key( std::atoi( name.c_str() ) );
+		}
+		
 		typedef Nitrogen::UnitTableDrivers_Container Sequence;
 		
 		static Sequence ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
@@ -122,7 +133,7 @@ namespace Genie
 	
 	static UnitNumber GetKey( const FSTree* that )
 	{
-		return UnitNumber_KeyName_Traits::KeyFromName( that->ParentRef()->Name() );
+		return UnitNumber( atoi( that->ParentRef()->Name().c_str() ) );
 	}
 	
 	
