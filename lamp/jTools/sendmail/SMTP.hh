@@ -61,22 +61,6 @@ namespace SMTP
 		struct Failure         : Exception  {};
 		
 		
-		struct ResponseCode
-		{
-			enum { size = 4 };
-			
-			ResponseCode( const std::string& response );
-			
-			char chars[ size ];
-		};
-		
-		bool CheckResponse( const std::string& response );
-		
-		ResponseCode GetResponse( text_input::feed feed, poseven::fd_reader& reader );
-		
-		
-		ResponseCode VerifySuccess( ResponseCode code );
-		
 		inline void SendCommand( poseven::fd_t stream, const std::string& command )
 		{
 			poseven::write( stream, command + "\r\n" );
@@ -88,6 +72,8 @@ namespace SMTP
 				text_input::feed    its_feed;
 				poseven::fd_reader  its_input_reader;
 				poseven::fd_t       its_connection;
+				
+				void verify_response();
 			
 			public:
 				Session( poseven::fd_t fd )
@@ -95,15 +81,16 @@ namespace SMTP
 					its_connection  ( fd ),
 					its_input_reader( fd )
 				{
-					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
+					verify_response();
 				}
 				
 				~Session()  {}
 				
 				void DoCommand( const std::string& command )
 				{
-					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
 					SendCommand( its_connection, command );
+					
+					verify_response();
 				}
 				
 				void Hello( const std::string& hostname )
@@ -128,7 +115,7 @@ namespace SMTP
 				
 				void EndData()
 				{
-					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
+					verify_response();
 				}
 				
 				void Quit()

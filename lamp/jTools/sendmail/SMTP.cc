@@ -19,6 +19,16 @@ namespace SMTP
 		namespace p7 = poseven;
 		
 		
+		struct ResponseCode
+		{
+			enum { size = 4 };
+			
+			ResponseCode( const std::string& response );
+			
+			char chars[ size ];
+		};
+		
+		
 		ResponseCode::ResponseCode( const std::string& response )
 		{
 			if ( response.size() < size )
@@ -29,56 +39,37 @@ namespace SMTP
 			std::copy( response.begin(), response.begin() + size, chars );
 		}
 		
-		bool CheckResponse( const std::string& response )
-		{
-			if ( response.size() >= ResponseCode::size )
-			{
-				switch ( response[ 3 ] )
-				{
-					case ' ':  return true;
-					case '-':  return false;
-					
-					default:  break;
-				}
-			}
-			
-			throw InvalidResponse();
-		}
-		
-		ResponseCode GetResponse( text_input::feed feed, p7::fd_reader& reader )
+		static void GetResponse( text_input::feed feed, p7::fd_reader& reader )
 		{
 			while ( const std::string* s = get_line_from_feed( feed, reader ) )
 			{
-				std::string response = *s;
+				ResponseCode code = *s;
 				
-				ResponseCode code = response;
-				
-				if ( CheckResponse( response ) )
+				switch ( code.chars[ 3 ] )
 				{
-					return code;
-				}
-				else
-				{
-					continue;
+					default:
+						throw InvalidResponse();
+					
+					case '-':
+						continue;
+					
+					case ' ':
+						switch ( code.chars[ 0 ] )
+						{
+							case '4': throw Error();
+							case '5': throw Failure();
+							
+							default: return;
+						}
 				}
 			}
 			
-			throw InvalidResponse();
+			throw InvalidResponse();  // end of file -- connection dropped
 		}
 		
-		ResponseCode VerifySuccess( ResponseCode code )
+		void Session::verify_response()
 		{
-			if ( code.chars[ 0 ] == '4' )
-			{
-				throw Error();
-			}
-			
-			if ( code.chars[ 0 ] == '5' )
-			{
-				throw Failure();
-			}
-			
-			return code;
+			GetResponse( its_feed, its_input_reader );
 		}
 		
 	}  // namespace Client
