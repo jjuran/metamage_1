@@ -16,6 +16,9 @@ namespace SMTP
 	namespace Client
 	{
 		
+		namespace p7 = poseven;
+		
+		
 		ResponseCode::ResponseCode( const std::string& response )
 		{
 			if ( response.size() < size )
@@ -42,11 +45,12 @@ namespace SMTP
 			throw InvalidResponse();
 		}
 		
-		ResponseCode GetResponse( Io::TextInputAdapter< poseven::fd_t >& input )
+		ResponseCode GetResponse( text_input::feed feed, p7::fd_reader& reader )
 		{
-			while ( true )
+			while ( const std::string* s = get_line_from_feed( feed, reader ) )
 			{
-				std::string response = input.Read();
+				std::string response = *s;
+				
 				ResponseCode code = response;
 				
 				if ( CheckResponse( response ) )
@@ -58,6 +62,8 @@ namespace SMTP
 					continue;
 				}
 			}
+			
+			throw InvalidResponse();
 		}
 		
 		ResponseCode VerifySuccess( ResponseCode code )

@@ -10,12 +10,13 @@
 #include <string>
 #include <vector>
 
-// poseven
-#include "poseven/FileDescriptor.hh"
-#include "poseven/functions/write.hh"
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
 
-// Io
-#include "Io/TextInput.hh"
+// poseven
+#include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/write.hh"
 
 
 namespace SMTP
@@ -71,7 +72,7 @@ namespace SMTP
 		
 		bool CheckResponse( const std::string& response );
 		
-		ResponseCode GetResponse( Io::TextInputAdapter< poseven::fd_t >& input );
+		ResponseCode GetResponse( text_input::feed feed, poseven::fd_reader& reader );
 		
 		
 		ResponseCode VerifySuccess( ResponseCode code );
@@ -84,20 +85,25 @@ namespace SMTP
 		class Session
 		{
 			private:
-				Io::TextInputAdapter< poseven::fd_t >  itsInput;
+				text_input::feed    its_feed;
+				poseven::fd_reader  its_input_reader;
+				poseven::fd_t       its_connection;
 			
 			public:
-				Session( poseven::fd_t stream ) : itsInput( stream )
+				Session( poseven::fd_t fd )
+				:
+					its_connection  ( fd ),
+					its_input_reader( fd )
 				{
-					VerifySuccess( GetResponse( itsInput ) );
+					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
 				}
 				
 				~Session()  {}
 				
 				void DoCommand( const std::string& command )
 				{
-					SendCommand( itsInput.GetStream(), command );
-					VerifySuccess( GetResponse( itsInput ) );
+					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
+					SendCommand( its_connection, command );
 				}
 				
 				void Hello( const std::string& hostname )
@@ -122,7 +128,7 @@ namespace SMTP
 				
 				void EndData()
 				{
-					VerifySuccess( GetResponse( itsInput ) );
+					VerifySuccess( GetResponse( its_feed, its_input_reader ) );
 				}
 				
 				void Quit()
