@@ -10,8 +10,13 @@
 #include <string>
 #include <vector>
 
-// Io
-#include "Io/TextInput.hh"
+// text-input
+#include "text_input/feed.hh"
+#include "text_input/get_line_from_feed.hh"
+
+// poseven
+#include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/write.hh"
 
 
 namespace SMTP
@@ -56,65 +61,36 @@ namespace SMTP
 		struct Failure         : Exception  {};
 		
 		
-		struct ResponseCode
+		inline void SendCommand( poseven::fd_t stream, const std::string& command )
 		{
-			enum { size = 4 };
-			
-			ResponseCode( const std::string& response );
-			
-			char chars[ size ];
-		};
-		
-		bool CheckResponse( const std::string& response );
-		
-		template < class Stream >
-		ResponseCode GetResponse( Io::TextInputAdapter< Stream >& input )
-		{
-			while ( true )
-			{
-				std::string response = input.Read();
-				ResponseCode code = response;
-				
-				if ( CheckResponse( response ) )
-				{
-					return code;
-				}
-				else
-				{
-					continue;
-				}
-			}
+			poseven::write( stream, command + "\r\n" );
 		}
 		
-		
-		ResponseCode VerifySuccess( ResponseCode code );
-		
-		template < class Stream >
-		inline void SendCommand( Stream stream, const std::string& command )
-		{
-			io::write( stream, command.data(), command.size() );
-			io::write( stream, "\r\n", 2 );  // FIXME
-		}
-		
-		template < class Stream >
 		class Session
 		{
 			private:
-				Io::TextInputAdapter< Stream >  itsInput;
+				text_input::feed    its_feed;
+				poseven::fd_reader  its_input_reader;
+				poseven::fd_t       its_connection;
+				
+				void verify_response();
 			
 			public:
-				// If Stream is Owned<>, then initializing itsInput transfers ownership
-				Session( Stream stream ) : itsInput( stream )
+				Session( poseven::fd_t fd )
+				:
+					its_connection  ( fd ),
+					its_input_reader( fd )
 				{
-					VerifySuccess( GetResponse( itsInput ) );
+					verify_response();
 				}
 				
 				~Session()  {}
 				
 				void DoCommand( const std::string& command )
 				{
-					SendCommand( itsInput.GetStream(), command );
-					VerifySuccess( GetResponse( itsInput ) );
+					SendCommand( its_connection, command );
+					
+					verify_response();
 				}
 				
 				void Hello( const std::string& hostname )
@@ -139,7 +115,7 @@ namespace SMTP
 				
 				void EndData()
 				{
-					VerifySuccess( GetResponse( itsInput ) );
+					verify_response();
 				}
 				
 				void Quit()

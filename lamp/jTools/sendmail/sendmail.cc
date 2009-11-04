@@ -26,7 +26,6 @@
 #include "Nitrogen/OpenTransportProviders.h"
 
 // poseven
-#include "poseven/FileDescriptor.hh"
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/gethostname.hh"
 #include "poseven/functions/write.hh"
@@ -209,7 +208,7 @@ namespace tool
 		
 		NN::Owned< p7::fd_t > smtp_server = p7::connect( addr, smtp_port );
 		
-		SMTP::Client::Session< p7::fd_t > smtpSession( smtp_server );
+		SMTP::Client::Session smtpSession( smtp_server );
 		
 		NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 		
