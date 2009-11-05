@@ -17,8 +17,8 @@
 // Standard C++
 #include <string>
 
-// Convergence
-#include "copyfile.hh"
+// compat
+#include "lamp/copyfile.h"
 
 // poseven
 #include "poseven/types/errno_t.hh"
