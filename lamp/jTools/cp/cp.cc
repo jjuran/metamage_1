@@ -9,13 +9,10 @@
 
 // POSIX
 #include <errno.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
-// Convergence
-#include "copyfile.hh"
-
 // poseven
+#include "poseven/extras/copyfile.hh"
 #include "poseven/functions/stat.hh"
 
 // Orion
@@ -113,7 +110,7 @@ namespace tool
 			
 			std::string destFilePath = destPath;
 			
-			if ( 0 == stat( destPath, &sb ) )
+			if ( p7::stat( destPath, sb ) )
 			{
 				// dest exists
 				
@@ -135,12 +132,8 @@ namespace tool
 					destPath = destFilePath.c_str();
 				}
 			}
-			else if ( errno != ENOENT )
-			{
-				p7::throw_errno( errno );
-			}
 			
-			p7::throw_posix_result( copyfile( sourcePath, destPath ) );
+			p7::copyfile( sourcePath, destPath );
 		}
 		
 		return fail;
