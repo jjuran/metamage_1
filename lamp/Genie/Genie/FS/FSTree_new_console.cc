@@ -109,7 +109,20 @@ namespace Genie
 				// Edit
 				case 'past':  // kHICommandPaste
 				case 'pste':
-					that.Select( 32767, 32767 );
+					{
+						TEHandle hTE = that.Get();
+						
+						ASSERT( hTE != NULL );
+						
+						TERec& te = **hTE;
+						
+						const short length = te.teLength;
+						
+						::TESetSelect( length, length, hTE );
+						
+						textParams.itsSelection.start =
+						textParams.itsSelection.end   = length;
+					}
 					
 					break;
 				
