@@ -408,21 +408,51 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const Handle scrapHandle = TEScrapHandle();
+		const UInt16 scrapLength = TEGetScrapLength();
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		const TERec& te = **hTE;
+		
+		const short start = te.selStart;
+		const short end   = te.selEnd;
+		
+		const int delta = scrapLength - (end - start);
+		
+		params.itsText.reserve( params.itsText.size() + delta );
+		
+		params.itsText.replace( params.itsText.begin() + start,
+		                        params.itsText.begin() + end,
+		                        *scrapHandle,
+		                        scrapLength );
+		
+		if ( params.itsValidLength > end )
 		{
-			Delete();
-			
-			std::string scrap;
-			
-			scrap.resize( TEGetScrapLength() );
-			
-			memcpy( &scrap[0], *TEScrapHandle(), scrap.size() );
-			
-			Insert_Secret_Keys( scrap.data(), scrap.size(), hTE, itsKey );
+			params.itsValidLength += delta;
 		}
-		else
+		else if ( params.itsValidLength >= start )
 		{
-			::TEPaste( hTE );
+			params.itsValidLength = start + scrapLength;
+		}
+		
+		const bool secret = params.itIsSecret;
+		
+		if ( secret )
+		{
+			// Fill the TE scrap with bullets temporarily
+			memset( *scrapHandle, '¥', scrapLength );
+		}
+		
+		::TEPaste( hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = hTE[0]->selStart;
+		
+		if ( secret )
+		{
+			// Restore the TE scrap
+			memcpy( *scrapHandle, &params.itsText[ start ], scrapLength );
 		}
 	}
 	
