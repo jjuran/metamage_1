@@ -250,7 +250,11 @@ namespace Genie
 		
 		Ped::TextSelection& selection = params.itsSelection;
 		
-		if ( Update_TE_From_Model( that.Get(), params )  &&  params.itHasChangedAttributes )
+		const TEHandle hTE = that.Get();
+		
+		ASSERT( hTE != NULL );
+		
+		if ( Update_TE_From_Model( hTE, params )  &&  params.itHasChangedAttributes )
 		{
 			if ( params.itsValidLength > 0 )
 			{
@@ -262,7 +266,7 @@ namespace Genie
 			
 			if ( params.itHasChangedAttributes )
 			{
-				TERec& te = **that.Get();
+				TERec& te = **hTE;
 				
 				te.selStart = selection.start;
 				te.selEnd   = selection.end;
@@ -309,10 +313,6 @@ namespace Genie
 			if ( event.modifiers & cmdKey )
 			{
 				// Don't delete the prompt.
-				
-				TEHandle hTE = that.Get();
-				
-				ASSERT( hTE != NULL );
 				
 				hTE[0]->selStart = consoleParams.itsStartOfInput;
 			}
