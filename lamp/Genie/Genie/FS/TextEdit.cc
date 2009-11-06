@@ -321,34 +321,6 @@ namespace Genie
 		return true;
 	}
 	
-	static void Insert_Secret_Keys( const char *begin, size_t n, TEHandle hTE, const FSTree* key )
-	{
-		const TERec& te = **hTE;
-		
-		ASSERT( te.selStart == te.selEnd );
-		
-		short offset = te.selStart;
-		
-		TextEditParameters& params = TextEditParameters::Get( key );
-		
-		if ( params.itsValidLength >= offset )
-		{
-			++params.itsValidLength;
-		}
-		
-		params.itsText.insert( params.itsText.begin() + offset, begin, begin + n );
-		
-		offset += n;
-		
-		for ( int i = 0;  i < n;  ++i )
-		{
-			N::TEKey( '¥', hTE );
-		}
-		
-		params.itsSelection.start = offset;
-		params.itsSelection.end   = offset;
-	}
-	
 	void TextEdit::Insert_Key( char c )
 	{
 		TEHandle hTE = Get();
