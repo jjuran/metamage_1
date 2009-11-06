@@ -292,7 +292,9 @@ namespace Genie
 		
 		if ( c == kReturnCharCode  ||  params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
-			that.Select( 32767, 32767 );
+			const short length = hTE[0]->teLength;
+			
+			::TESetSelect( length, length, hTE );
 		}
 		
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
