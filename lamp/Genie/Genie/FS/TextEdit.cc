@@ -355,13 +355,26 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const TERec& te = **hTE;
+		
+		ASSERT( te.selStart == te.selEnd );
+		
+		const short offset = te.selStart;
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		const char unix_char = (c == '\r') ? '\n' : c;
+		
+		params.itsText.insert( params.itsText.begin() + offset, unix_char );
+		
+		N::TEKey( params.itIsSecret ? '¥' : c, hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = offset + 1;
+		
+		if ( params.itsValidLength >= offset )
 		{
-			Insert_Secret_Keys( &c, 1, hTE, itsKey );
-		}
-		else
-		{
-			::TEKey( c, hTE );
+			++params.itsValidLength;
 		}
 	}
 	
