@@ -1688,25 +1688,23 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink,
-	                            public Volume_KeyName_Traits
+	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink
 	{
-		private:
-			Key itsKey;
-		
 		public:
 			FSTree_Volumes_Link( const FSTreePtr&    parent,
-			                     const std::string&  name,
-			                     const Key&          key )
+			                     const std::string&  name )
 			:
-				FSTree_ResolvableSymLink( parent, name ),
-				itsKey( key    )
+				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
 			
 			FSTreePtr ResolveLink() const
 			{
-				return FSTreeFromFSSpec( FSSpecFromKey( itsKey ), VolumeIsOnServer( itsKey ) );
+				typedef Volume_KeyName_Traits Traits;
+				
+				const N::FSVolumeRefNum key = Traits::KeyFromName( Name() );
+				
+				return FSTreeFromFSSpec( Traits::FSSpecFromKey( key ), VolumeIsOnServer( key ) );
 			}
 	};
 	
@@ -1715,7 +1713,7 @@ namespace Genie
 		                                     const std::string&  name,
 		                                     const Key&          key )
 	{
-		return FSTreePtr( new FSTree_Volumes_Link( parent, name, key ) );
+		return FSTreePtr( new FSTree_Volumes_Link( parent, name ) );
 	}
 	
 }
