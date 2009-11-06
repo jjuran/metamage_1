@@ -371,35 +371,28 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const TERec& te = **hTE;
+		
+		const short start = te.selStart;
+		const short end   = te.selEnd;
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		if ( params.itsValidLength >= end )
 		{
-			const TERec& te = **hTE;
-			
-			const short start = te.selStart;
-			const short end   = te.selEnd;
-			
-			TextEditParameters& params = TextEditParameters::Get( itsKey );
-			
-			if ( params.itsValidLength >= end )
-			{
-				params.itsValidLength -= (end - start);
-			}
-			else if ( params.itsValidLength > start )
-			{
-				params.itsValidLength = start;
-			}
-			
-			params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
-			
-			::TEDelete( hTE );
-			
-			params.itsSelection.start =
-			params.itsSelection.end   = start;
+			params.itsValidLength -= (end - start);
 		}
-		else
+		else if ( params.itsValidLength > start )
 		{
-			::TEDelete( hTE );
+			params.itsValidLength = start;
 		}
+		
+		params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+		
+		::TEDelete( hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = start;
 	}
 	
 	void TextEdit::Paste()
