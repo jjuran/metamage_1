@@ -286,7 +286,7 @@ namespace Genie
 			return true;
 		}
 		
-		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
+		if ( c == kReturnCharCode  ||  params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
 			that.Select( 32767, 32767 );
 		}
@@ -316,10 +316,6 @@ namespace Genie
 				
 				hTE[0]->selStart = consoleParams.itsStartOfInput;
 			}
-		}
-		else if ( c == kReturnCharCode )
-		{
-			that.Select( 32767, 32767 );
 		}
 		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == consoleParams.itsStartOfInput )
 		{
