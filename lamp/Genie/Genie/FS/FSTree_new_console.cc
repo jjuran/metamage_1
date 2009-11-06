@@ -296,7 +296,12 @@ namespace Genie
 			if ( event.modifiers & cmdKey )
 			{
 				// Don't delete the prompt.
-				that.Select( consoleParams.itsStartOfInput, params.itsSelection.end );
+				
+				TEHandle hTE = that.Get();
+				
+				ASSERT( hTE != NULL );
+				
+				hTE[0]->selStart = consoleParams.itsStartOfInput;
 			}
 		}
 		else if ( c == kReturnCharCode )
