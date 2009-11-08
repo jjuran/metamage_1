@@ -488,61 +488,20 @@ namespace Genie
 		
 		const FSTree* key = GetKey();
 		
-		ScrollerParameters& params = GetScrollerParams( key );
-		
 		TextEditParameters& editParams = TextEditParameters::Get( key );
 		
-		const bool text_modified = Update_TE_From_Model( hTE, editParams );
-		
-		if ( text_modified )
-		{
-			N::TECalText( hTE );
-			
-			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
-			
-			const short viewHeight = bounds.bottom - bounds.top;
-			
-			const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
-			
-			if ( params.itsVOffset == max_voffset )
-			{
-				// do nothing
-			}
-			else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
-			{
-				params.itsVOffset = max_voffset;
-				
-				editParams.itHasChangedAttributes = true;
-			}
-		}
-		
-		if ( editParams.itHasChangedAttributes )
-		{
-			TERec& te = **hTE;
-			
-			// Propagate changes made to 'x' and 'y' files
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			te.selStart = editParams.itsSelection.start;
-			te.selEnd   = editParams.itsSelection.end;
-			
-			editParams.itHasChangedAttributes = false;
-		}
+		Update_TE_From_Model( hTE, key, editParams );
 		
 		Subview().Draw( bounds, erasing );
 	}
 	
 	
-	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params )
+	void Update_TE_From_Model( TEHandle             hTE,
+	                           const FSTree*        viewKey,
+	                           TextEditParameters&  params )
 	{
-		bool text_modified = false;
-		
 		if ( params.itsValidLength < params.itsText.length() )
 		{
-			text_modified = true;
-			
 			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
 			
 			const bool secret = params.itIsSecret;
@@ -574,16 +533,55 @@ namespace Genie
 		{
 			// Text was merely truncated
 			
-			text_modified = true;
-			
 			TERec& te = **hTE;
 			
 			te.teLength = params.itsValidLength;
 			
 			N::SetHandleSize( te.hText, params.itsValidLength );
 		}
+		else
+		{
+			// Text wasn't modified at all
+			return;
+		}
 		
-		return text_modified;
+		N::TECalText( hTE );
+		
+		Rect bounds = hTE[0]->viewRect;
+		
+		ScrollerParameters& scroller_params = GetScrollerParams( viewKey );
+		
+		scroller_params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
+		
+		const short viewHeight = bounds.bottom - bounds.top;
+		
+		const short max_voffset = std::max( scroller_params.itsClientHeight - viewHeight, 0 );
+		
+		if ( scroller_params.itsVOffset == max_voffset )
+		{
+			// do nothing
+		}
+		else if ( scroller_params.itsVOffset > max_voffset  ||  params.itIsAtBottom )
+		{
+			scroller_params.itsVOffset = max_voffset;
+			
+			params.itHasChangedAttributes = true;
+		}
+		
+		if ( params.itHasChangedAttributes )
+		{
+			TERec& te = **hTE;
+			
+			// Propagate changes made to 'x' and 'y' files
+			te.destRect = N::OffsetRect( te.viewRect,
+			                             -scroller_params.itsHOffset,
+			                             -scroller_params.itsVOffset );
+			
+			te.selStart = params.itsSelection.start;
+			te.selEnd   = params.itsSelection.end;
+			
+			params.itHasChangedAttributes = false;
+		}
 	}
 	
 }

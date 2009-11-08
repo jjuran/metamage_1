@@ -254,26 +254,7 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( Update_TE_From_Model( hTE, params )  &&  params.itHasChangedAttributes )
-		{
-			if ( params.itsValidLength > 0 )
-			{
-				// Draw() does additional processing on update that we don't
-				// want to skip.  This will minimally invalidate the text,
-				// unless it's completely empty.
-				--params.itsValidLength;
-			}
-			
-			if ( params.itHasChangedAttributes )
-			{
-				TERec& te = **hTE;
-				
-				te.selStart = selection.start;
-				te.selEnd   = selection.end;
-				
-				// Don't reset itHasChangedAttributes, since we didn't update scroll offsets
-			}
-		}
+		Update_TE_From_Model( hTE, viewKey, params );
 		
 		const char c   =  event.message & charCodeMask;
 		const char key = (event.message & keyCodeMask) >> 8;

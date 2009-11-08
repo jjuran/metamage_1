@@ -151,7 +151,9 @@ namespace Genie
 	};
 	
 	
-	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params );
+	void Update_TE_From_Model( TEHandle             hTE,
+	                           const FSTree*        viewKey,
+	                           TextEditParameters&  params );
 	
 }
 
