@@ -28,6 +28,7 @@ namespace Genie
 		bool                     itHasChangedAttributes;
 		bool                     itIsAtBottom;
 		bool                     itIsInterlocked;
+		bool                     itIsActive;
 		bool                     itIsSecret;
 		bool                     itIsSingular;
 		bool                     itIsWrapped;
@@ -81,6 +82,8 @@ namespace Genie
 			void UpdateScrollOffsets();
 			
 			void ClickInLoop()  { UpdateScrollOffsets(); }
+			
+			void SetActive( bool activating );
 			
 			void Insert_Key( char c );
 			
