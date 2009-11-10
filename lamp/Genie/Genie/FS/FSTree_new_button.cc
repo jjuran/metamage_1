@@ -126,6 +126,14 @@ namespace Genie
 		gButtonMap[ itsUserData.key ].installed = false;
 	}
 	
+	static inline void QDFlushPortBuffer()
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), NULL );
+		}
+	}
+	
 	void PushButton::Idle( const EventRecord& event )
 	{
 		Ped::PushButton::Idle( event );
@@ -138,9 +146,13 @@ namespace Genie
 			
 			N::HiliteControl( Get(), N::kControlButtonPart );
 			
+			QDFlushPortBuffer();
+			
 			N::Delay( 8 );
 			
 			N::HiliteControl( Get(), N::kControlNoPart );
+			
+			QDFlushPortBuffer();
 			
 			++params.seed;
 		}
