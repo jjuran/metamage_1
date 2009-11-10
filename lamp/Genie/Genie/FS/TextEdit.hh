@@ -73,8 +73,6 @@ namespace Genie
 			void On_UserSelect();
 			void On_UserEdit();
 			
-			void UpdateText();
-			
 			void UpdateClientHeight();
 			void UpdateScrollOffsets();
 			

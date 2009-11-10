@@ -210,53 +210,9 @@ namespace Genie
 	
 	void TextEdit::On_UserEdit()
 	{
-		UpdateText();
-		
 		UpdateClientHeight();
 		
 		On_UserSelect();
-	}
-	
-	void TextEdit::UpdateText()
-	{
-		if ( IsSecret() )
-		{
-			return;
-		}
-		
-		Ped::TextSelection current = GetCurrentSelection();
-		
-		if ( current.start != current.end )
-		{
-			// Destructive operations don't leave a selection
-			return;
-		}
-		
-		ASSERT( itsTE != NULL );
-		
-		std::size_t length = itsTE[0]->teLength;
-		
-		TextEditParameters& params = TextEditParameters::Get( itsKey );
-		
-		const Ped::TextSelection& previous = params.itsSelection;
-		
-		unsigned start = std::min( current.start, previous.start );
-		
-		start = std::min< unsigned >( params.itsText.length(), start );
-		
-		params.itsText.resize( length );
-		
-		const TERec& te = **itsTE;
-		
-		Handle h = te.hText;
-		
-		std::replace_copy( *h + start,
-		                   *h + length,
-		                   params.itsText.begin() + start,
-		                   '\r',
-		                   '\n' );
-		
-		params.itsValidLength = length;
 	}
 	
 	void TextEdit::UpdateClientHeight()
