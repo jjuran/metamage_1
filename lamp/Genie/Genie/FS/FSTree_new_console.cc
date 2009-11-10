@@ -735,6 +735,16 @@ namespace Genie
 		                            &Property::Set );
 	}
 	
+	template < class Property >
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
+	                                         const std::string&  name )
+	{
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Get,
+		                            NULL );
+	}
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "tty", &Basic_Factory< FSTree_Console_tty > },
@@ -742,6 +752,8 @@ namespace Genie
 		{ "text", &New_FSTree_TextEdit_text },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
+		
+		{ "active", &Const_Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Active > > },
 		
 		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Wrapped > > },
 		
