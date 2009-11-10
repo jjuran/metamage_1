@@ -186,6 +186,8 @@ namespace Genie
 	
 	bool TextEdit::UserCommand( Ped::MenuItemCode code )
 	{
+		Update_TE_From_Model( itsTE, itsKey );
+		
 		if ( itsUserCommand != NULL  &&  itsUserCommand( *this, code ) )
 		{
 			return true;
