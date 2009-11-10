@@ -24,8 +24,6 @@ namespace Pedestal
 	                 public IncrementalSearchEditor
 	{
 		private:
-			bool itIsActive;
-			
 			virtual TEHandle Get() const = 0;
 			
 			virtual bool IsSecret  () const  { return false; }
@@ -42,8 +40,6 @@ namespace Pedestal
 			void Apply_Key( const EventRecord& event );
 		
 		public:
-			TextEdit();
-			
 			virtual void On_UserSelect()  {}
 			virtual void On_UserEdit()  {}
 			

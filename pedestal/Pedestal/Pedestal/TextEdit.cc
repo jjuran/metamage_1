@@ -40,10 +40,6 @@ namespace Pedestal
 	static short gSelectionAnchor, gSelectionExtent;
 	
 	
-	TextEdit::TextEdit() : itIsActive()
-	{
-	}
-	
 	void TextEdit::Insert_Key( char c )
 	{
 		TEHandle hTE = Get();
@@ -84,14 +80,14 @@ namespace Pedestal
 	
 	void TextEdit::Idle( const EventRecord& )
 	{
-		if ( !itIsActive )
-		{
-			return;
-		}
-		
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
+		
+		if ( !hTE[0]->active )
+		{
+			return;
+		}
 		
 		N::TEIdle( hTE );
 		
@@ -545,8 +541,6 @@ namespace Pedestal
 		gExtendingSelection = false;
 		
 		ResetArrowKeyChordability();
-		
-		itIsActive = activating;
 	}
 	
 	static void EraseBlankArea( TEHandle hTE )
