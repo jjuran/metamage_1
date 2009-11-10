@@ -19,6 +19,9 @@
 #include "Nitrogen/MacMemory.h"
 #include "Nitrogen/MacWindows.h"
 
+// Pedestal
+#include "Pedestal/Clipboard.hh"
+
 // Genie
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
@@ -384,6 +387,26 @@ namespace Genie
 		
 		params.itsSelection.start =
 		params.itsSelection.end   = start;
+	}
+	
+	void TextEdit::Cut()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		Ped::TextSelection& selection = params.itsSelection;
+		
+		params.itsText.erase( params.itsText.begin() + selection.start,
+		                      params.itsText.begin() + selection.end );
+		
+		params.itsValidLength -= selection.end - selection.start;
+		
+		selection.end = selection.start;
+		
+		Ped::Clipboard::TECut( hTE );
 	}
 	
 	void TextEdit::Paste()

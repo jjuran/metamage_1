@@ -84,6 +84,7 @@ namespace Genie
 			
 			void Delete();
 			
+			void Cut();
 			void Paste();
 		
 		public:
