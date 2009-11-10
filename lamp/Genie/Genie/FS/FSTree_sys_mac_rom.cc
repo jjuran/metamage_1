@@ -46,6 +46,19 @@ namespace Genie
 			{
 			}
 			
+		#if TARGET_API_MAC_CARBON
+			
+			bool Exists() const
+			{
+				SInt32 result = 0;
+				
+				OSErr err = ::Gestalt( gestaltROMSize, &result );
+				
+				return err == noErr;
+			}
+			
+		#endif
+			
 			mode_t FileTypeMode() const  { return S_IFREG; }
 			
 			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }
