@@ -140,6 +140,8 @@ namespace Genie
 	}
 	
 	
+	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey );
+	
 	void TextEdit::Install( const Rect& bounds )
 	{
 		ASSERT( itsTE == NULL );
@@ -176,6 +178,8 @@ namespace Genie
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
+		Update_TE_From_Model( itsTE, itsKey );
+		
 		return itsKeyDown != NULL ? itsKeyDown( *this, event )
 		                          : Ped::TextEdit::KeyDown( event );
 	}
@@ -488,18 +492,16 @@ namespace Genie
 		
 		const FSTree* key = GetKey();
 		
-		TextEditParameters& editParams = TextEditParameters::Get( key );
-		
-		Update_TE_From_Model( hTE, key, editParams );
+		Update_TE_From_Model( hTE, key );
 		
 		Subview().Draw( bounds, erasing );
 	}
 	
 	
-	void Update_TE_From_Model( TEHandle             hTE,
-	                           const FSTree*        viewKey,
-	                           TextEditParameters&  params )
+	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey )
 	{
+		TextEditParameters& params = TextEditParameters::Get( viewKey );
+		
 		if ( params.itsValidLength < params.itsText.length() )
 		{
 			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );

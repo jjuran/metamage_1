@@ -254,8 +254,6 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		Update_TE_From_Model( hTE, viewKey, params );
-		
 		const char c   =  event.message & charCodeMask;
 		const char key = (event.message & keyCodeMask) >> 8;
 		

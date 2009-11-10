@@ -150,11 +150,6 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
-	
-	void Update_TE_From_Model( TEHandle             hTE,
-	                           const FSTree*        viewKey,
-	                           TextEditParameters&  params );
-	
 }
 
 #endif
