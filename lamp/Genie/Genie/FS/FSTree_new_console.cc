@@ -720,26 +720,6 @@ namespace Genie
 			return TextEditParameters::Get( view ).itIsWrapped;
 		}
 		
-		int& Width( const FSTree* view )
-		{
-			return ScrollerParameters::Get( view ).itsClientWidth;
-		}
-		
-		int& Height( const FSTree* view )
-		{
-			return ScrollerParameters::Get( view ).itsClientHeight;
-		}
-		
-		int& HOffset( const FSTree* view )
-		{
-			return ScrollerParameters::Get( view ).itsHOffset;
-		}
-		
-		int& VOffset( const FSTree* view )
-		{
-			return ScrollerParameters::Get( view ).itsVOffset;
-		}
-		
 	}
 	
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
@@ -777,11 +757,11 @@ namespace Genie
 		
 		// unlocked-text
 		
-		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
-		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
+		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Width  > > },
+		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Height > > },
 		
-		{ "x", &Property_Factory< Console_View_Property< Integer_Scribe< int >, HOffset > > },
-		{ "y", &Property_Factory< Console_View_Property< Integer_Scribe< int >, VOffset > > },
+		{ "x", &Property_Factory< Console_View_Property< Integer_Scribe< int >, ScrollerParameters::HOffset > > },
+		{ "y", &Property_Factory< Console_View_Property< Integer_Scribe< int >, ScrollerParameters::VOffset > > },
 		
 		{ NULL, NULL }
 	};
