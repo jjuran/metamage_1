@@ -712,16 +712,6 @@ namespace Genie
 	}
 	
 	
-	namespace
-	{
-		
-		bool& Wrapped( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsWrapped;
-		}
-		
-	}
-	
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct Console_View_Property : public View_Property< Scribe, Access >
 	{
@@ -753,7 +743,7 @@ namespace Genie
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
-		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
+		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Wrapped > > },
 		
 		// unlocked-text
 		

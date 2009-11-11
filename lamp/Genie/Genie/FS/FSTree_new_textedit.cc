@@ -135,26 +135,6 @@ namespace Genie
 	}
 	
 	
-	namespace
-	{
-		
-		bool& Secret( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsSecret;
-		}
-		
-		bool& Singular( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsSingular;
-		}
-		
-		bool& Wrapped( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsWrapped;
-		}
-		
-	}
-	
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct TE_View_Property : public View_Property< Scribe, Access >
 	{
@@ -201,11 +181,11 @@ namespace Genie
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
-		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, Secret > > },
+		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, TextEditParameters::Secret > > },
 		
-		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, Singular > > },
+		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Singular > > },
 		
-		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
+		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Wrapped > > },
 		
 		// unlocked-text
 		
