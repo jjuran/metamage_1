@@ -40,6 +40,7 @@ namespace Genie
 		
 		static void Erase( const FSTree* key );
 		
+		static bool& Active  ( const FSTree* view )  { return Get( view ).itIsActive;   }
 		static bool& Secret  ( const FSTree* view )  { return Get( view ).itIsSecret;   }
 		static bool& Singular( const FSTree* view )  { return Get( view ).itIsSingular; }
 		static bool& Wrapped ( const FSTree* view )  { return Get( view ).itIsWrapped;  }
