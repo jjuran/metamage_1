@@ -334,7 +334,7 @@ namespace Genie
 	
 	static void DestroyDelegate( const FSTree* delegate )
 	{
-		RemoveScrollerParams( delegate );
+		ScrollerParameters::Erase( delegate );
 		
 		TextEditParameters::Erase( delegate );
 		
@@ -658,7 +658,7 @@ namespace Genie
 			case TIOCGWINSZ:
 				if ( result != NULL )
 				{
-					const Rect& bounds = GetScrollerParams( view ).itsLastViewBounds;
+					const Rect& bounds = ScrollerParameters::Get( view ).itsLastViewBounds;
 					
 					result[0] = params.itsTextDimensions;
 					result[1] = N::SetPt( bounds.right - bounds.left, bounds.bottom - bounds.top );
@@ -722,22 +722,22 @@ namespace Genie
 		
 		int& Width( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsClientWidth;
+			return ScrollerParameters::Get( view ).itsClientWidth;
 		}
 		
 		int& Height( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsClientHeight;
+			return ScrollerParameters::Get( view ).itsClientHeight;
 		}
 		
 		int& HOffset( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsHOffset;
+			return ScrollerParameters::Get( view ).itsHOffset;
 		}
 		
 		int& VOffset( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsVOffset;
+			return ScrollerParameters::Get( view ).itsVOffset;
 		}
 		
 	}

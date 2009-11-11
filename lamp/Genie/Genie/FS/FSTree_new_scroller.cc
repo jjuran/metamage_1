@@ -118,7 +118,7 @@ namespace Genie
 	
 	static void DestroyDelegate( const FSTree* delegate )
 	{
-		RemoveScrollerParams( delegate );
+		ScrollerParameters::Erase( delegate );
 		
 		gBasicScrollerParametersMap.erase( delegate );
 	}
@@ -129,22 +129,22 @@ namespace Genie
 		
 		int& Width( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsClientWidth;
+			return ScrollerParameters::Get( view ).itsClientWidth;
 		}
 		
 		int& Height( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsClientHeight;
+			return ScrollerParameters::Get( view ).itsClientHeight;
 		}
 		
 		int& HOffset( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsHOffset;
+			return ScrollerParameters::Get( view ).itsHOffset;
 		}
 		
 		int& VOffset( const FSTree* view )
 		{
-			return GetScrollerParams( view ).itsVOffset;
+			return ScrollerParameters::Get( view ).itsVOffset;
 		}
 		
 		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
