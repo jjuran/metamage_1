@@ -79,8 +79,6 @@ namespace Pedestal
 		
 		using Nucleus::operator!=;
 		
-		const short kScrollbarThickness = 16;
-		
 		ASSERT( itsControl != NULL );
 		
 		if ( N::GetControlBounds( itsControl ) != bounds )
@@ -88,7 +86,7 @@ namespace Pedestal
 			N::HideControl( itsControl );
 			
 			N::MoveControl( itsControl, bounds.left, bounds.top );
-			N::SizeControl( itsControl, kScrollbarThickness, bounds.bottom - bounds.top );
+			N::SizeControl( itsControl, bounds.right - bounds.left, bounds.bottom - bounds.top );
 			
 			N::ShowControl( itsControl );
 		}
