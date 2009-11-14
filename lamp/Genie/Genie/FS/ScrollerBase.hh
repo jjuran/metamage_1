@@ -45,6 +45,8 @@ namespace Genie
 		
 		static int& HOffset( const FSTree* view )  { return Get( view ).itsHOffset; }
 		static int& VOffset( const FSTree* view )  { return Get( view ).itsVOffset; }
+		
+		static Rect& ViewBounds( const FSTree* view )  { return Get( view ).itsLastViewBounds; }
 	};
 	
 	short GetScrollerLastViewWidth ( const FSTree* scroller );
