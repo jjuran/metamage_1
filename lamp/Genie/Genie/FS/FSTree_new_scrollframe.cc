@@ -228,13 +228,15 @@ namespace Genie
 		
 		const FSTree* target = params.itsTargetProxy.Get();
 		
+		const Rect aperture = ApertureFromBounds( itsLastBounds );
+		
 		itsHorizontal.Adjust( GetScrollerClientWidth( target ),
 		                      GetScrollerHOffset    ( target ),
-		                      itsLastBounds.right - itsLastBounds.left );
+		                      aperture.right - aperture.left );
 		
 		itsVertical.Adjust( GetScrollerClientHeight( target ),
 		                    GetScrollerVOffset     ( target ),
-		                    itsLastBounds.bottom - itsLastBounds.top );
+		                    aperture.bottom - aperture.top );
 	}
 	
 	
