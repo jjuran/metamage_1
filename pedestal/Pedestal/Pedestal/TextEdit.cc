@@ -119,6 +119,11 @@ namespace Pedestal
 	
 	bool TextEdit::MouseDown( const EventRecord& event )
 	{
+		if ( Get_Focus() != NULL )
+		{
+			Change_Focus( this );
+		}
+		
 		ASSERT( Get() != NULL );
 		
 		TEClickLoop_Scope scope( this );
