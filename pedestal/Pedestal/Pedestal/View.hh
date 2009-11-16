@@ -50,6 +50,10 @@ namespace Pedestal
 			
 			virtual void Activate( bool activating )  {}
 			
+			virtual void Focus()  {}
+			virtual void Blur ()  {}
+			virtual void Cue  ()  {}
+			
 			virtual bool SetCursor( const EventRecord&  event,
 			                        RgnHandle           mouseRgn  )  { return false; }
 			
