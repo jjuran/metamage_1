@@ -39,6 +39,8 @@ namespace Pedestal
 			
 			void Activate( bool activating );
 			
+			View* AdvanceFocus( View* current, bool backward );
+			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );

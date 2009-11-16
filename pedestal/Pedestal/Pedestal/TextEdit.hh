@@ -56,6 +56,8 @@ namespace Pedestal
 			void Blur ();
 			void Cue  ();
 			
+			View* AdvanceFocus( View* current, bool backward );
+			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );

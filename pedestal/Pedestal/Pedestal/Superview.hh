@@ -54,6 +54,11 @@ namespace Pedestal
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
 			
+			View* AdvanceFocus( View* current, bool backward )
+			{
+				return Subview().AdvanceFocus( current, backward );
+			}
+			
 			void Draw( const Rect& bounds, bool erasing )
 			{
 				return Subview().Draw( ApertureFromBounds( bounds ), erasing );

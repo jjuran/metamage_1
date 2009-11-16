@@ -71,6 +71,37 @@ namespace Pedestal
 		}
 	}
 	
+	View* Stack::AdvanceFocus( View* current, bool backward )
+	{
+		const unsigned count = ViewCount();
+		
+		const unsigned first = backward ? count : 1;
+		const unsigned last  = backward ? 1 : count;
+		
+		const int increment = backward ? -1 : 1;
+		
+		for ( unsigned i = first;  i != last + increment;  i += increment )
+		{
+			View& view = GetNthView( i );
+			
+			View* next = view.AdvanceFocus( current, backward );
+			
+			if ( next != current )
+			{
+				ASSERT( (next == NULL)  !=  (current == NULL) );
+				
+				if ( next != NULL )
+				{
+					return next;
+				}
+				
+				current = next;
+			}
+		}
+		
+		return current;
+	}
+	
 	bool Stack::MouseDown( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();

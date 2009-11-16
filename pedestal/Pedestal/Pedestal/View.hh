@@ -54,6 +54,11 @@ namespace Pedestal
 			virtual void Blur ()  {}
 			virtual void Cue  ()  {}
 			
+			virtual View* AdvanceFocus( View* current, bool backward = false )
+			{
+				return current;
+			}
+			
 			virtual bool SetCursor( const EventRecord&  event,
 			                        RgnHandle           mouseRgn  )  { return false; }
 			

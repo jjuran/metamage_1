@@ -590,6 +590,15 @@ namespace Pedestal
 		Select( 0, 32767 );
 	}
 	
+	View* TextEdit::AdvanceFocus( View* current, bool backward )
+	{
+		View* result = current == this ? NULL
+		             : current == NULL ? this
+		             :                   current;
+		
+		return result;
+	}
+	
 	static void EraseBlankArea( TEHandle hTE )
 	{
 		TERec& te = **hTE;
