@@ -159,11 +159,6 @@ namespace Genie
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		
 		InstallCustomTEClickLoop( itsTE );
-		
-		if ( N::GetWindowPort( N::FrontWindow() ) == thePort )
-		{
-			Activate( true );
-		}
 	}
 	
 	void TextEdit::Uninstall()

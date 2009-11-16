@@ -284,6 +284,8 @@ namespace Genie
 		bounds = N::GetPortBounds( N::GetWindowPort( window->Get() ) );
 		
 		params.itsSubview->Install( bounds );
+		
+		params.itsSubview->Activate( true );
 	}
 	
 	void RemoveUserWindow( const FSTree* key )
@@ -451,6 +453,11 @@ namespace Genie
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 			
 			view->Install( bounds );
+			
+			if ( window == N::FrontWindow() )
+			{
+				view->Activate( true );
+			}
 		}
 	}
 	
