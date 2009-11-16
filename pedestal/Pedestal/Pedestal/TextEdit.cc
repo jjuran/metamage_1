@@ -554,6 +554,29 @@ namespace Pedestal
 		SetActive( activating );
 	}
 	
+	void TextEdit::Focus()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		N::TEActivate( hTE );
+	}
+	
+	void TextEdit::Blur()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		N::TEDeactivate( hTE );
+	}
+	
+	void TextEdit::Cue()
+	{
+		Select( 0, 32767 );
+	}
+	
 	static void EraseBlankArea( TEHandle hTE )
 	{
 		TERec& te = **hTE;

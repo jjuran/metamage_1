@@ -52,6 +52,10 @@ namespace Pedestal
 			
 			void Activate( bool activating );
 			
+			void Focus();
+			void Blur ();
+			void Cue  ();
+			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
