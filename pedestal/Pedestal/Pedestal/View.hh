@@ -35,7 +35,7 @@ namespace Pedestal
 			virtual ~View()  {}
 			
 			virtual void Install  ( const Rect& bounds )  {}
-			virtual void Uninstall(                    )  {}
+			virtual void Uninstall(                    );
 			
 			virtual void SetBounds( const Rect& bounds )  {}
 			
