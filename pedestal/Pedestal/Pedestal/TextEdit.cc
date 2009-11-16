@@ -23,6 +23,7 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/AutoKey.hh"
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/IncrementalSearch.hh"
 #include "Pedestal/Quasimode.hh"
@@ -532,17 +533,24 @@ namespace Pedestal
 	}
 	
 	
+	static bool IsFocused( const View* that )
+	{
+		const View* focus = Get_Focus();
+		
+		return focus == NULL  ||  focus == that;
+	}
+	
 	void TextEdit::Activate( bool activating )
 	{
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
 		
-		if ( activating )
+		if ( activating  &&  IsFocused( this ) )
 		{
 			N::TEActivate( hTE );
 		}
-		else
+		else if ( !activating  &&  hTE[0]->active )
 		{
 			N::TEDeactivate( hTE );
 		}
