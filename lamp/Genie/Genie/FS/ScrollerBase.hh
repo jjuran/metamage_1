@@ -13,6 +13,8 @@
 namespace Genie
 {
 	
+	class FSTree;
+	
 	struct ScrollerParameters
 	{
 		int  itsClientWidth;
@@ -32,15 +34,18 @@ namespace Genie
 		                       itsView()
 		{
 		}
+		
+		static ScrollerParameters* Find( const FSTree* key );
+		static ScrollerParameters& Get ( const FSTree* key );
+		
+		static void Erase( const FSTree* key );
+		
+		static int& Width ( const FSTree* view )  { return Get( view ).itsClientWidth;  }
+		static int& Height( const FSTree* view )  { return Get( view ).itsClientHeight; }
+		
+		static int& HOffset( const FSTree* view )  { return Get( view ).itsHOffset; }
+		static int& VOffset( const FSTree* view )  { return Get( view ).itsVOffset; }
 	};
-	
-	class FSTree;
-	
-	ScrollerParameters* FindScrollerParams( const FSTree* key );
-	
-	ScrollerParameters& GetScrollerParams( const FSTree* key );
-	
-	void RemoveScrollerParams( const FSTree* key );
 	
 	short GetScrollerLastViewWidth ( const FSTree* scroller );
 	short GetScrollerLastViewHeight( const FSTree* scroller );

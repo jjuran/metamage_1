@@ -219,7 +219,7 @@ namespace Genie
 	{
 		ASSERT( itsTE != NULL );
 		
-		ScrollerParameters& params = GetScrollerParams( itsKey );
+		ScrollerParameters& params = ScrollerParameters::Get( itsKey );
 		
 		params.itsClientHeight = Ped::GetTextEditingHeight( **itsTE );
 	}
@@ -228,7 +228,7 @@ namespace Genie
 	{
 		ASSERT( itsTE != NULL );
 		
-		ScrollerParameters& params = GetScrollerParams( itsKey );
+		ScrollerParameters& params = ScrollerParameters::Get( itsKey );
 		
 		const TERec& te = **itsTE;
 		
@@ -424,7 +424,7 @@ namespace Genie
 	{
 		const FSTree* key = GetKey();
 		
-		ScrollerParameters& params = GetScrollerParams( key );
+		ScrollerParameters& params = ScrollerParameters::Get( key );
 		
 		TextEditParameters& editParams = TextEditParameters::Get( key );
 		
@@ -462,7 +462,7 @@ namespace Genie
 		
 		const FSTree* key = GetKey();
 		
-		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( GetScrollerParams( key ) );
+		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( ScrollerParameters::Get( key ) );
 	}
 	
 	void TextEdit_Scroller::Draw( const Rect& bounds, bool erasing )
@@ -532,7 +532,7 @@ namespace Genie
 		
 		Rect bounds = hTE[0]->viewRect;
 		
-		ScrollerParameters& scroller_params = GetScrollerParams( viewKey );
+		ScrollerParameters& scroller_params = ScrollerParameters::Get( viewKey );
 		
 		scroller_params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
 		

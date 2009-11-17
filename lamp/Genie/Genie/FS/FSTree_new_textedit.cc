@@ -31,7 +31,7 @@ namespace Genie
 	
 	static void DestroyDelegate( const FSTree* delegate )
 	{
-		RemoveScrollerParams( delegate );
+		ScrollerParameters::Erase( delegate );
 		
 		TextEditParameters::Erase( delegate );
 	}
@@ -135,46 +135,6 @@ namespace Genie
 	}
 	
 	
-	namespace
-	{
-		
-		bool& Secret( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsSecret;
-		}
-		
-		bool& Singular( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsSingular;
-		}
-		
-		bool& Wrapped( const FSTree* view )
-		{
-			return TextEditParameters::Get( view ).itIsWrapped;
-		}
-		
-		int& Width( const FSTree* view )
-		{
-			return GetScrollerParams( view ).itsClientWidth;
-		}
-		
-		int& Height( const FSTree* view )
-		{
-			return GetScrollerParams( view ).itsClientHeight;
-		}
-		
-		int& HOffset( const FSTree* view )
-		{
-			return GetScrollerParams( view ).itsHOffset;
-		}
-		
-		int& VOffset( const FSTree* view )
-		{
-			return GetScrollerParams( view ).itsVOffset;
-		}
-		
-	}
-	
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct TE_View_Property : public View_Property< Scribe, Access >
 	{
@@ -221,19 +181,19 @@ namespace Genie
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
-		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, Secret > > },
+		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, TextEditParameters::Secret > > },
 		
-		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, Singular > > },
+		{ "singular", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Singular > > },
 		
-		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, Wrapped > > },
+		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Wrapped > > },
 		
 		// unlocked-text
 		
-		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, Width  > > },
-		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, Height > > },
+		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Width  > > },
+		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Height > > },
 		
-		{ "x", &Property_Factory< TE_View_Property< Integer_Scribe< int >, HOffset > > },
-		{ "y", &Property_Factory< TE_View_Property< Integer_Scribe< int >, VOffset > > },
+		{ "x", &Property_Factory< TE_View_Property< Integer_Scribe< int >, ScrollerParameters::HOffset > > },
+		{ "y", &Property_Factory< TE_View_Property< Integer_Scribe< int >, ScrollerParameters::VOffset > > },
 		
 		{ NULL, NULL }
 	};

@@ -38,6 +38,10 @@ namespace Genie
 		static TextEditParameters& Get ( const FSTree* key );
 		
 		static void Erase( const FSTree* key );
+		
+		static bool& Secret  ( const FSTree* view )  { return Get( view ).itIsSecret;   }
+		static bool& Singular( const FSTree* view )  { return Get( view ).itIsSingular; }
+		static bool& Wrapped ( const FSTree* view )  { return Get( view ).itIsWrapped;  }
 	};
 	
 	

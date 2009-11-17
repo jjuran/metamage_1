@@ -20,7 +20,7 @@ namespace Genie
 	static ScrollerParametersMap gScrollerParametersMap;
 	
 	
-	ScrollerParameters* FindScrollerParams( const FSTree* key )
+	ScrollerParameters* ScrollerParameters::Find( const FSTree* key )
 	{
 		ScrollerParametersMap::iterator it = gScrollerParametersMap.find( key );
 		
@@ -32,19 +32,19 @@ namespace Genie
 		return NULL;
 	}
 	
-	ScrollerParameters& GetScrollerParams( const FSTree* key )
+	ScrollerParameters& ScrollerParameters::Get( const FSTree* key )
 	{
 		return gScrollerParametersMap[ key ];
 	}
 	
-	void RemoveScrollerParams( const FSTree* key )
+	void ScrollerParameters::Erase( const FSTree* key )
 	{
 		gScrollerParametersMap.erase( key );
 	}
 	
 	int GetScrollerClientWidth( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			return params->itsClientWidth;
 		}
@@ -54,7 +54,7 @@ namespace Genie
 	
 	int GetScrollerClientHeight( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			return params->itsClientHeight;
 		}
@@ -64,7 +64,7 @@ namespace Genie
 	
 	int GetScrollerHOffset( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			return params->itsHOffset;
 		}
@@ -74,7 +74,7 @@ namespace Genie
 	
 	int GetScrollerVOffset( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			return params->itsVOffset;
 		}
@@ -84,7 +84,7 @@ namespace Genie
 	
 	void SetScrollerHOffset( const FSTree* scroller, int h )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			short dh = params->itsHOffset - h;
 			
@@ -101,7 +101,7 @@ namespace Genie
 	
 	void SetScrollerVOffset( const FSTree* scroller, int v )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			short dv = params->itsVOffset - v;
 			
@@ -118,7 +118,7 @@ namespace Genie
 	
 	short GetScrollerLastViewWidth( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			const Rect& bounds = params->itsLastViewBounds;
 			
@@ -130,7 +130,7 @@ namespace Genie
 	
 	short GetScrollerLastViewHeight( const FSTree* scroller )
 	{
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			const Rect& bounds = params->itsLastViewBounds;
 			
@@ -144,7 +144,7 @@ namespace Genie
 	{
 		Rect result = { 0 };
 		
-		if ( ScrollerParameters* params = FindScrollerParams( scroller ) )
+		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
 			result = params->itsLastViewBounds;
 		}
