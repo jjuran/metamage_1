@@ -287,7 +287,7 @@ namespace Genie
 		
 		if ( c == kBackspaceCharCode )
 		{
-			if ( params.itsSelection.end == consoleParams.itsStartOfInput )
+			if ( hTE[0]->selEnd == consoleParams.itsStartOfInput )
 			{
 				// Eat the event -- don't backspace over the prompt.
 				return true;
