@@ -148,6 +148,8 @@ namespace Genie
 	
 	void TextEdit::Install( const Rect& bounds )
 	{
+		Ped::TextEdit::Install( bounds );
+		
 		ASSERT( itsTE == NULL );
 		
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
@@ -167,6 +169,8 @@ namespace Genie
 	void TextEdit::Uninstall()
 	{
 		itsTE.reset();
+		
+		Ped::TextEdit::Uninstall();
 	}
 	
 	
