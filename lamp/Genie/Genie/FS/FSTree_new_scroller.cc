@@ -77,6 +77,10 @@ namespace Genie
 	
 	void BasicScroller::Draw( const Rect& bounds, bool erasing )
 	{
+		ScrollerParameters::ViewBounds( GetKey() ) = bounds;
+		
+		itsSavedBounds = bounds;
+		
 		NN::Saved< N::Clip_Value > savedClip;
 		
 		N::SetClip( N::SectRgn( N::RectRgn( bounds ), N::GetClip() ) );
@@ -96,7 +100,7 @@ namespace Genie
 	
 	void BasicScroller::Scroll( int dh, int dv )
 	{
-		Rect bounds = GetScrollerLastViewBounds( GetKey() );
+		const Rect& bounds = itsSavedBounds;
 		
 		NN::Saved< N::Clip_Value > savedClip;
 		
