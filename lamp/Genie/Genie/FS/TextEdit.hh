@@ -28,6 +28,7 @@ namespace Genie
 		bool                     itHasChangedAttributes;
 		bool                     itIsAtBottom;
 		bool                     itIsInterlocked;
+		bool                     itIsActive;
 		bool                     itIsSecret;
 		bool                     itIsSingular;
 		bool                     itIsWrapped;
@@ -39,6 +40,7 @@ namespace Genie
 		
 		static void Erase( const FSTree* key );
 		
+		static bool& Active  ( const FSTree* view )  { return Get( view ).itIsActive;   }
 		static bool& Secret  ( const FSTree* view )  { return Get( view ).itIsSecret;   }
 		static bool& Singular( const FSTree* view )  { return Get( view ).itIsSingular; }
 		static bool& Wrapped ( const FSTree* view )  { return Get( view ).itIsWrapped;  }
@@ -81,6 +83,8 @@ namespace Genie
 			void UpdateScrollOffsets();
 			
 			void ClickInLoop()  { UpdateScrollOffsets(); }
+			
+			void SetActive( bool activating );
 			
 			void Insert_Key( char c );
 			

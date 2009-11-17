@@ -47,6 +47,7 @@ namespace Genie
 		itHasChangedAttributes(),
 		itIsAtBottom(),
 		itIsInterlocked(),
+		itIsActive(),
 		itIsSecret(),
 		itIsSingular(),
 		itIsWrapped( true )
@@ -284,6 +285,13 @@ namespace Genie
 		}
 		
 		return true;
+	}
+	
+	void TextEdit::SetActive( bool activating )
+	{
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		params.itIsActive = activating;
 	}
 	
 	void TextEdit::Insert_Key( char c )

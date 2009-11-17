@@ -171,6 +171,16 @@ namespace Genie
 		                            &Property::Set );
 	}
 	
+	template < class Property >
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
+	                                         const std::string&  name )
+	{
+		return New_FSTree_Property( parent,
+		                            name,
+		                            &Property::Get,
+		                            NULL );
+	}
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "text", &New_FSTree_TextEdit_text },
@@ -180,6 +190,8 @@ namespace Genie
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
 		{ "selection", &Property_Factory< Selection_Property > },
+		
+		{ "active", &Const_Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Active > > },
 		
 		{ "secret", &Property_Factory< TextInvalidating_View_Property< Boolean_Scribe, TextEditParameters::Secret > > },
 		

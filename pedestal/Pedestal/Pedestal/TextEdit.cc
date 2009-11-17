@@ -550,6 +550,8 @@ namespace Pedestal
 		gExtendingSelection = false;
 		
 		ResetArrowKeyChordability();
+		
+		SetActive( activating );
 	}
 	
 	static void EraseBlankArea( TEHandle hTE )

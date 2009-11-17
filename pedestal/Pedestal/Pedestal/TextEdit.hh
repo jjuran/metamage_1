@@ -31,6 +31,8 @@ namespace Pedestal
 			
 			virtual void Apply_Modified_Arrow( char c, bool cmdKeyIsDown, bool optionKeyIsDown );
 			
+			virtual void SetActive( bool activating )  {}
+			
 			virtual void Insert_Key( char c );
 			
 			virtual void Delete();
