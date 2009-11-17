@@ -58,6 +58,15 @@ namespace Pedestal
 		::TEDelete( hTE );
 	}
 	
+	void TextEdit::Cut()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		Clipboard::TECut( hTE );
+	}
+	
 	void TextEdit::Paste()
 	{
 		TEHandle hTE = Get();
@@ -615,7 +624,7 @@ namespace Pedestal
 					break;
 				}
 				
-				Clipboard::TECut( hTE );
+				Cut();
 				
 				On_UserEdit();
 				

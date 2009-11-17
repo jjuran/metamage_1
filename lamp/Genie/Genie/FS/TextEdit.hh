@@ -73,8 +73,6 @@ namespace Genie
 			void On_UserSelect();
 			void On_UserEdit();
 			
-			void UpdateText();
-			
 			void UpdateClientHeight();
 			void UpdateScrollOffsets();
 			
@@ -84,6 +82,7 @@ namespace Genie
 			
 			void Delete();
 			
+			void Cut();
 			void Paste();
 		
 		public:
@@ -149,9 +148,6 @@ namespace Genie
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
-	
-	
-	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params );
 	
 }
 

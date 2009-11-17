@@ -109,7 +109,20 @@ namespace Genie
 				// Edit
 				case 'past':  // kHICommandPaste
 				case 'pste':
-					that.Select( 32767, 32767 );
+					{
+						TEHandle hTE = that.Get();
+						
+						ASSERT( hTE != NULL );
+						
+						TERec& te = **hTE;
+						
+						const short length = te.teLength;
+						
+						::TESetSelect( length, length, hTE );
+						
+						textParams.itsSelection.start =
+						textParams.itsSelection.end   = length;
+					}
 					
 					break;
 				
@@ -237,26 +250,9 @@ namespace Genie
 		
 		Ped::TextSelection& selection = params.itsSelection;
 		
-		if ( Update_TE_From_Model( that.Get(), params )  &&  params.itHasChangedAttributes )
-		{
-			if ( params.itsValidLength > 0 )
-			{
-				// Draw() does additional processing on update that we don't
-				// want to skip.  This will minimally invalidate the text,
-				// unless it's completely empty.
-				--params.itsValidLength;
-			}
-			
-			if ( params.itHasChangedAttributes )
-			{
-				TERec& te = **that.Get();
-				
-				te.selStart = selection.start;
-				te.selEnd   = selection.end;
-				
-				// Don't reset itHasChangedAttributes, since we didn't update scroll offsets
-			}
-		}
+		const TEHandle hTE = that.Get();
+		
+		ASSERT( hTE != NULL );
 		
 		const char c   =  event.message & charCodeMask;
 		const char key = (event.message & keyCodeMask) >> 8;
@@ -273,9 +269,11 @@ namespace Genie
 			return true;
 		}
 		
-		if ( params.itsSelection.start < consoleParams.itsStartOfInput )
+		if ( c == kReturnCharCode  ||  params.itsSelection.start < consoleParams.itsStartOfInput )
 		{
-			that.Select( 32767, 32767 );
+			const short length = hTE[0]->teLength;
+			
+			::TESetSelect( length, length, hTE );
 		}
 		
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
@@ -297,16 +295,8 @@ namespace Genie
 			{
 				// Don't delete the prompt.
 				
-				TEHandle hTE = that.Get();
-				
-				ASSERT( hTE != NULL );
-				
 				hTE[0]->selStart = consoleParams.itsStartOfInput;
 			}
-		}
-		else if ( c == kReturnCharCode )
-		{
-			that.Select( 32767, 32767 );
 		}
 		else if ( c == kLeftArrowCharCode  &&  params.itsSelection.start == consoleParams.itsStartOfInput )
 		{

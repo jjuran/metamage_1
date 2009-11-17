@@ -35,6 +35,7 @@ namespace Pedestal
 			
 			virtual void Delete();
 			
+			virtual void Cut();
 			virtual void Paste();
 			
 			void Apply_Key( const EventRecord& event );

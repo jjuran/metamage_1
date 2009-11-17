@@ -19,6 +19,9 @@
 #include "Nitrogen/MacMemory.h"
 #include "Nitrogen/MacWindows.h"
 
+// Pedestal
+#include "Pedestal/Clipboard.hh"
+
 // Genie
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
@@ -140,6 +143,8 @@ namespace Genie
 	}
 	
 	
+	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey );
+	
 	void TextEdit::Install( const Rect& bounds )
 	{
 		ASSERT( itsTE == NULL );
@@ -176,12 +181,16 @@ namespace Genie
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
+		Update_TE_From_Model( itsTE, itsKey );
+		
 		return itsKeyDown != NULL ? itsKeyDown( *this, event )
 		                          : Ped::TextEdit::KeyDown( event );
 	}
 	
 	bool TextEdit::UserCommand( Ped::MenuItemCode code )
 	{
+		Update_TE_From_Model( itsTE, itsKey );
+		
 		if ( itsUserCommand != NULL  &&  itsUserCommand( *this, code ) )
 		{
 			return true;
@@ -201,53 +210,9 @@ namespace Genie
 	
 	void TextEdit::On_UserEdit()
 	{
-		UpdateText();
-		
 		UpdateClientHeight();
 		
 		On_UserSelect();
-	}
-	
-	void TextEdit::UpdateText()
-	{
-		if ( IsSecret() )
-		{
-			return;
-		}
-		
-		Ped::TextSelection current = GetCurrentSelection();
-		
-		if ( current.start != current.end )
-		{
-			// Destructive operations don't leave a selection
-			return;
-		}
-		
-		ASSERT( itsTE != NULL );
-		
-		std::size_t length = itsTE[0]->teLength;
-		
-		TextEditParameters& params = TextEditParameters::Get( itsKey );
-		
-		const Ped::TextSelection& previous = params.itsSelection;
-		
-		unsigned start = std::min( current.start, previous.start );
-		
-		start = std::min< unsigned >( params.itsText.length(), start );
-		
-		params.itsText.resize( length );
-		
-		const TERec& te = **itsTE;
-		
-		Handle h = te.hText;
-		
-		std::replace_copy( *h + start,
-		                   *h + length,
-		                   params.itsText.begin() + start,
-		                   '\r',
-		                   '\n' );
-		
-		params.itsValidLength = length;
 	}
 	
 	void TextEdit::UpdateClientHeight()
@@ -321,47 +286,32 @@ namespace Genie
 		return true;
 	}
 	
-	static void Insert_Secret_Keys( const char *begin, size_t n, TEHandle hTE, const FSTree* key )
-	{
-		const TERec& te = **hTE;
-		
-		ASSERT( te.selStart == te.selEnd );
-		
-		short offset = te.selStart;
-		
-		TextEditParameters& params = TextEditParameters::Get( key );
-		
-		if ( params.itsValidLength >= offset )
-		{
-			++params.itsValidLength;
-		}
-		
-		params.itsText.insert( params.itsText.begin() + offset, begin, begin + n );
-		
-		offset += n;
-		
-		for ( int i = 0;  i < n;  ++i )
-		{
-			N::TEKey( '¥', hTE );
-		}
-		
-		params.itsSelection.start = offset;
-		params.itsSelection.end   = offset;
-	}
-	
 	void TextEdit::Insert_Key( char c )
 	{
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const TERec& te = **hTE;
+		
+		ASSERT( te.selStart == te.selEnd );
+		
+		const short offset = te.selStart;
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		const char unix_char = (c == '\r') ? '\n' : c;
+		
+		params.itsText.insert( params.itsText.begin() + offset, unix_char );
+		
+		N::TEKey( params.itIsSecret ? '¥' : c, hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = offset + 1;
+		
+		if ( params.itsValidLength >= offset )
 		{
-			Insert_Secret_Keys( &c, 1, hTE, itsKey );
-		}
-		else
-		{
-			::TEKey( c, hTE );
+			++params.itsValidLength;
 		}
 	}
 	
@@ -371,35 +321,48 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const TERec& te = **hTE;
+		
+		const short start = te.selStart;
+		const short end   = te.selEnd;
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		if ( params.itsValidLength >= end )
 		{
-			const TERec& te = **hTE;
-			
-			const short start = te.selStart;
-			const short end   = te.selEnd;
-			
-			TextEditParameters& params = TextEditParameters::Get( itsKey );
-			
-			if ( params.itsValidLength >= end )
-			{
-				params.itsValidLength -= (end - start);
-			}
-			else if ( params.itsValidLength > start )
-			{
-				params.itsValidLength = start;
-			}
-			
-			params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
-			
-			::TEDelete( hTE );
-			
-			params.itsSelection.start =
-			params.itsSelection.end   = start;
+			params.itsValidLength -= (end - start);
 		}
-		else
+		else if ( params.itsValidLength > start )
 		{
-			::TEDelete( hTE );
+			params.itsValidLength = start;
 		}
+		
+		params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+		
+		::TEDelete( hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = start;
+	}
+	
+	void TextEdit::Cut()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		Ped::TextSelection& selection = params.itsSelection;
+		
+		params.itsText.erase( params.itsText.begin() + selection.start,
+		                      params.itsText.begin() + selection.end );
+		
+		params.itsValidLength -= selection.end - selection.start;
+		
+		selection.end = selection.start;
+		
+		Ped::Clipboard::TECut( hTE );
 	}
 	
 	void TextEdit::Paste()
@@ -408,21 +371,51 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		if ( IsSecret() )
+		const Handle scrapHandle = TEScrapHandle();
+		const UInt16 scrapLength = TEGetScrapLength();
+		
+		TextEditParameters& params = TextEditParameters::Get( itsKey );
+		
+		const TERec& te = **hTE;
+		
+		const short start = te.selStart;
+		const short end   = te.selEnd;
+		
+		const int delta = scrapLength - (end - start);
+		
+		params.itsText.reserve( params.itsText.size() + delta );
+		
+		params.itsText.replace( params.itsText.begin() + start,
+		                        params.itsText.begin() + end,
+		                        *scrapHandle,
+		                        scrapLength );
+		
+		if ( params.itsValidLength > end )
 		{
-			Delete();
-			
-			std::string scrap;
-			
-			scrap.resize( TEGetScrapLength() );
-			
-			memcpy( &scrap[0], *TEScrapHandle(), scrap.size() );
-			
-			Insert_Secret_Keys( scrap.data(), scrap.size(), hTE, itsKey );
+			params.itsValidLength += delta;
 		}
-		else
+		else if ( params.itsValidLength >= start )
 		{
-			::TEPaste( hTE );
+			params.itsValidLength = start + scrapLength;
+		}
+		
+		const bool secret = params.itIsSecret;
+		
+		if ( secret )
+		{
+			// Fill the TE scrap with bullets temporarily
+			memset( *scrapHandle, '¥', scrapLength );
+		}
+		
+		::TEPaste( hTE );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = hTE[0]->selStart;
+		
+		if ( secret )
+		{
+			// Restore the TE scrap
+			memcpy( *scrapHandle, &params.itsText[ start ], scrapLength );
 		}
 	}
 	
@@ -480,61 +473,18 @@ namespace Genie
 		
 		const FSTree* key = GetKey();
 		
-		ScrollerParameters& params = GetScrollerParams( key );
-		
-		TextEditParameters& editParams = TextEditParameters::Get( key );
-		
-		const bool text_modified = Update_TE_From_Model( hTE, editParams );
-		
-		if ( text_modified )
-		{
-			N::TECalText( hTE );
-			
-			params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
-			
-			const short viewHeight = bounds.bottom - bounds.top;
-			
-			const short max_voffset = std::max( params.itsClientHeight - viewHeight, 0 );
-			
-			if ( params.itsVOffset == max_voffset )
-			{
-				// do nothing
-			}
-			else if ( params.itsVOffset > max_voffset  ||  editParams.itIsAtBottom )
-			{
-				params.itsVOffset = max_voffset;
-				
-				editParams.itHasChangedAttributes = true;
-			}
-		}
-		
-		if ( editParams.itHasChangedAttributes )
-		{
-			TERec& te = **hTE;
-			
-			// Propagate changes made to 'x' and 'y' files
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -params.itsHOffset,
-			                             -params.itsVOffset );
-			
-			te.selStart = editParams.itsSelection.start;
-			te.selEnd   = editParams.itsSelection.end;
-			
-			editParams.itHasChangedAttributes = false;
-		}
+		Update_TE_From_Model( hTE, key );
 		
 		Subview().Draw( bounds, erasing );
 	}
 	
 	
-	bool Update_TE_From_Model( TEHandle hTE, TextEditParameters& params )
+	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey )
 	{
-		bool text_modified = false;
+		TextEditParameters& params = TextEditParameters::Get( viewKey );
 		
 		if ( params.itsValidLength < params.itsText.length() )
 		{
-			text_modified = true;
-			
 			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
 			
 			const bool secret = params.itIsSecret;
@@ -566,16 +516,55 @@ namespace Genie
 		{
 			// Text was merely truncated
 			
-			text_modified = true;
-			
 			TERec& te = **hTE;
 			
 			te.teLength = params.itsValidLength;
 			
 			N::SetHandleSize( te.hText, params.itsValidLength );
 		}
+		else
+		{
+			// Text wasn't modified at all
+			return;
+		}
 		
-		return text_modified;
+		N::TECalText( hTE );
+		
+		Rect bounds = hTE[0]->viewRect;
+		
+		ScrollerParameters& scroller_params = GetScrollerParams( viewKey );
+		
+		scroller_params.itsClientHeight = Ped::GetTextEditingHeight( **hTE );
+		
+		const short viewHeight = bounds.bottom - bounds.top;
+		
+		const short max_voffset = std::max( scroller_params.itsClientHeight - viewHeight, 0 );
+		
+		if ( scroller_params.itsVOffset == max_voffset )
+		{
+			// do nothing
+		}
+		else if ( scroller_params.itsVOffset > max_voffset  ||  params.itIsAtBottom )
+		{
+			scroller_params.itsVOffset = max_voffset;
+			
+			params.itHasChangedAttributes = true;
+		}
+		
+		if ( params.itHasChangedAttributes )
+		{
+			TERec& te = **hTE;
+			
+			// Propagate changes made to 'x' and 'y' files
+			te.destRect = N::OffsetRect( te.viewRect,
+			                             -scroller_params.itsHOffset,
+			                             -scroller_params.itsVOffset );
+			
+			te.selStart = params.itsSelection.start;
+			te.selEnd   = params.itsSelection.end;
+			
+			params.itHasChangedAttributes = false;
+		}
 	}
 	
 }
