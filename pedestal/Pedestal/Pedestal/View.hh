@@ -35,7 +35,7 @@ namespace Pedestal
 			virtual ~View()  {}
 			
 			virtual void Install  ( const Rect& bounds )  {}
-			virtual void Uninstall(                    )  {}
+			virtual void Uninstall(                    );
 			
 			virtual void SetBounds( const Rect& bounds )  {}
 			
@@ -49,6 +49,15 @@ namespace Pedestal
 			virtual void Draw( const Rect& bounds, bool erasing );
 			
 			virtual void Activate( bool activating )  {}
+			
+			virtual void Focus()  {}
+			virtual void Blur ()  {}
+			virtual void Cue  ()  {}
+			
+			virtual View* AdvanceFocus( View* current, bool backward = false )
+			{
+				return current;
+			}
 			
 			virtual bool SetCursor( const EventRecord&  event,
 			                        RgnHandle           mouseRgn  )  { return false; }

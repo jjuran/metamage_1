@@ -8,12 +8,25 @@
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 
+// Pedestal
+#include "Pedestal/CurrentFocus.hh"
+
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
 	
+	
+	void View::Uninstall()
+	{
+		// This is only needed for focusable fields, but it's critical to ensure
+		// that we don't continue to reference them after they've been destroyed.
+		// Rather than count on remembering to override Uninstall() for every
+		// field class, just do it here.
+		
+		Unfocus( this );
+	}
 	
 	void View::Draw( const Rect& bounds, bool erasing )
 	{

@@ -23,6 +23,7 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/AutoKey.hh"
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/IncrementalSearch.hh"
 #include "Pedestal/Quasimode.hh"
@@ -118,6 +119,11 @@ namespace Pedestal
 	
 	bool TextEdit::MouseDown( const EventRecord& event )
 	{
+		if ( Get_Focus() != NULL )
+		{
+			Change_Focus( this );
+		}
+		
 		ASSERT( Get() != NULL );
 		
 		TEClickLoop_Scope scope( this );
@@ -532,17 +538,24 @@ namespace Pedestal
 	}
 	
 	
+	static bool IsFocused( const View* that )
+	{
+		const View* focus = Get_Focus();
+		
+		return focus == NULL  ||  focus == that;
+	}
+	
 	void TextEdit::Activate( bool activating )
 	{
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
 		
-		if ( activating )
+		if ( activating  &&  IsFocused( this ) )
 		{
 			N::TEActivate( hTE );
 		}
-		else
+		else if ( !activating  &&  hTE[0]->active )
 		{
 			N::TEDeactivate( hTE );
 		}
@@ -552,6 +565,38 @@ namespace Pedestal
 		ResetArrowKeyChordability();
 		
 		SetActive( activating );
+	}
+	
+	void TextEdit::Focus()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		N::TEActivate( hTE );
+	}
+	
+	void TextEdit::Blur()
+	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
+		N::TEDeactivate( hTE );
+	}
+	
+	void TextEdit::Cue()
+	{
+		Select( 0, 32767 );
+	}
+	
+	View* TextEdit::AdvanceFocus( View* current, bool backward )
+	{
+		View* result = current == this ? NULL
+		             : current == NULL ? this
+		             :                   current;
+		
+		return result;
 	}
 	
 	static void EraseBlankArea( TEHandle hTE )
