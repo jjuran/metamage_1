@@ -19,7 +19,7 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	static int NewVOffset( const Scroller& scroller, char c )
+	static int NewVOffset( const ScrollerAPI& scroller, char c )
 	{
 		if ( c == kHomeCharCode )
 		{
