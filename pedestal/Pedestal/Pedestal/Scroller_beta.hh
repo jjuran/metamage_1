@@ -36,10 +36,10 @@ namespace Pedestal
 	class Scroller : public Superview, public ScrollerAPI
 	{
 		public:
-			bool KeyDown( const EventRecord& event );
-			
 			virtual void Scroll( int dh, int dv ) = 0;
 	};
+	
+	bool Scroller_KeyDown( ScrollerAPI& scroller, const EventRecord& event );
 	
 	class ScrollFrame : public Superview, public TEClickLoop_User
 	{

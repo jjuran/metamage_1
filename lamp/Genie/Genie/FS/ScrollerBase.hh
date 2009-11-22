@@ -128,6 +128,8 @@ namespace Genie
 			void SetHOffset( int h )  { SetScrollerHOffset( itsKey, h ); }
 			void SetVOffset( int v )  { SetScrollerVOffset( itsKey, v ); }
 			
+			bool KeyDown( const EventRecord& event );
+			
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	

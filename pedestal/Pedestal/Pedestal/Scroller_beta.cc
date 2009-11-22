@@ -52,7 +52,7 @@ namespace Pedestal
 		return -1;
 	}
 	
-	bool Scroller::KeyDown( const EventRecord& event )
+	bool Scroller_KeyDown( ScrollerAPI& scroller, const EventRecord& event )
 	{
 		const char keyCode = (event.message & keyCodeMask) >> 8;
 		
@@ -61,17 +61,17 @@ namespace Pedestal
 		{
 			const char keyChar = event.message & charCodeMask;
 			
-			const int voffset = NewVOffset( *this, keyChar );
+			const int voffset = NewVOffset( scroller, keyChar );
 			
 			if ( voffset >= 0 )
 			{
-				SetVOffset( voffset );
+				scroller.SetVOffset( voffset );
 				
 				return true;
 			}
 		}
 		
-		return Superview::KeyDown( event );
+		return false;
 	}
 	
 	

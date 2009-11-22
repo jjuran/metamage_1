@@ -211,6 +211,11 @@ namespace Genie
 		Ped::Scroller::Uninstall();
 	}
 	
+	bool ScrollerBase::KeyDown( const EventRecord& event )
+	{
+		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
+	}
+	
 	void ScrollerBase::Draw( const Rect& bounds, bool erasing )
 	{
 		gScrollerParametersMap[ itsKey ].itsLastViewBounds = bounds;
