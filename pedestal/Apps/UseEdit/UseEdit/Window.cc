@@ -163,7 +163,7 @@ namespace UseEdit
 		return r.bottom - r.top;
 	}
 	
-	class Scroller : public Ped::Scroller
+	class Scroller : public Ped::Superview, public Ped::ScrollerAPI
 	{
 		private:
 			TextEdit  itsSubview;
