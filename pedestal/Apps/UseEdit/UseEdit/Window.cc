@@ -179,8 +179,6 @@ namespace UseEdit
 			
 			Ped::View& Subview()  { return itsSubview; }
 			
-			void Scroll( int dh, int dv );
-			
 			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
 			short ViewHeight() const  { return Height( itsSubview.Get()[0]->viewRect ); }
 			
@@ -205,7 +203,7 @@ namespace UseEdit
 					
 					short dv = v - (te.viewRect.top - te.destRect.top);
 					
-					Scroll( 0, -dv );
+					N::TEPinScroll( 0, -dv, itsSubview.Get() );
 				}
 				
 				TERec& te = **hTE;
@@ -223,11 +221,6 @@ namespace UseEdit
 	void Scroller::Draw( const Rect& bounds, bool erasing )
 	{
 		Subview().Draw( bounds, erasing );
-	}
-	
-	void Scroller::Scroll( int dh, int dv )
-	{
-		N::TEPinScroll( dh, dv, itsSubview.Get() );
 	}
 	
 	class Frame : public Ped::Frame
