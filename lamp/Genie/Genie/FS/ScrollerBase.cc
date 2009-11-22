@@ -199,7 +199,7 @@ namespace Genie
 	{
 		gScrollerParametersMap[ itsKey ].itsView = this;
 		
-		Ped::Scroller::Install( bounds );
+		Ped::Superview::Install( bounds );
 		
 		SetBounds( bounds );
 	}
@@ -208,7 +208,7 @@ namespace Genie
 	{
 		gScrollerParametersMap[ itsKey ].itsView = NULL;
 		
-		Ped::Scroller::Uninstall();
+		Ped::Superview::Uninstall();
 	}
 	
 	bool ScrollerBase::KeyDown( const EventRecord& event )
@@ -220,7 +220,7 @@ namespace Genie
 	{
 		gScrollerParametersMap[ itsKey ].itsLastViewBounds = bounds;
 		
-		Ped::Scroller::Draw( bounds, erasing );
+		Ped::Superview::Draw( bounds, erasing );
 	}
 	
 }
