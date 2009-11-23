@@ -15,6 +15,12 @@ namespace Genie
 	
 	class FSTree;
 	
+	class Scroller : public Pedestal::ScrollerAPI
+	{
+		public:
+			virtual void Scroll( int dh, int dv ) = 0;
+	};
+	
 	struct ScrollerParameters
 	{
 		int  itsClientWidth;
