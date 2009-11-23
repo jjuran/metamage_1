@@ -31,7 +31,7 @@ namespace Genie
 		
 		Rect  itsLastViewBounds;
 		
-		Pedestal::Scroller*  itsView;
+		Scroller*  itsView;
 		
 		ScrollerParameters() : itsClientWidth ( 0 ),
 		                       itsClientHeight( 0 ),
@@ -104,7 +104,7 @@ namespace Genie
 	};
 	
 	
-	class ScrollerBase : public Pedestal::Scroller
+	class ScrollerBase : public Pedestal::Superview, public Scroller
 	{
 		public:
 			typedef const FSTree* Key;

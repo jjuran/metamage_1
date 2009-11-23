@@ -92,7 +92,7 @@ namespace Genie
 			
 			if ( params->itsView )
 			{
-				Ped::Scroller& scroller = *params->itsView;
+				Scroller& scroller = *params->itsView;
 				
 				scroller.Scroll( dh, 0 );
 			}
@@ -109,7 +109,7 @@ namespace Genie
 			
 			if ( params->itsView )
 			{
-				Ped::Scroller& scroller = *params->itsView;
+				Scroller& scroller = *params->itsView;
 				
 				scroller.Scroll( 0, dv );
 			}
