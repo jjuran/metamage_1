@@ -153,16 +153,6 @@ namespace UseEdit
 	}
 	
 	
-	static inline short Width( const Rect& r )
-	{
-		return r.right - r.left;
-	}
-	
-	static inline short Height( const Rect& r )
-	{
-		return r.bottom - r.top;
-	}
-	
 	class Scroller : public Ped::Superview, public Ped::ScrollerAPI
 	{
 		private:
@@ -177,43 +167,65 @@ namespace UseEdit
 			
 			Ped::View& Subview()  { return itsSubview; }
 			
-			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
-			short ViewHeight() const  { return Height( itsSubview.Get()[0]->viewRect ); }
+			short ViewWidth () const;
+			short ViewHeight() const;
 			
 			int ClientWidth () const  { return ViewWidth();  }
-			int ClientHeight() const  { return GetTextEditingHeight( itsSubview.Get() ); }
+			int ClientHeight() const;
 			
 			int GetHOffset() const  { return 0; }
-			int GetVOffset() const
-			{
-				const TERec& te = **itsSubview.Get();
-				
-				return te.viewRect.top - te.destRect.top;
-			}
+			int GetVOffset() const;
 			
 			void SetHOffset( int h )  {}
-			void SetVOffset( int v )
-			{
-				TEHandle hTE = itsSubview.Get();
-				
-				{
-					const TERec& te = **hTE;
-					
-					short dv = v - (te.viewRect.top - te.destRect.top);
-					
-					N::TEPinScroll( 0, -dv, itsSubview.Get() );
-				}
-				
-				TERec& te = **hTE;
-				
-				te.destRect = N::OffsetRect( te.viewRect, 0, -v );
-			}
-			
+			void SetVOffset( int v );
 	};
 	
 	bool Scroller::KeyDown( const EventRecord& event )
 	{
 		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
+	}
+	
+	short Scroller::ViewWidth() const
+	{
+		const Rect& viewRect = itsSubview.Get()[0]->viewRect;
+		
+		return viewRect.right - viewRect.left;
+	}
+	
+	short Scroller::ViewHeight() const
+	{
+		const Rect& viewRect = itsSubview.Get()[0]->viewRect;
+		
+		return viewRect.bottom - viewRect.top;
+	}
+	
+	int Scroller::ClientHeight() const
+	{
+		return GetTextEditingHeight( itsSubview.Get() );
+	}
+	
+	int Scroller::GetVOffset() const
+	{
+		const TERec& te = **itsSubview.Get();
+		
+		return te.viewRect.top - te.destRect.top;
+	}
+	
+	void Scroller::SetVOffset( int v )
+	{
+		TEHandle hTE = itsSubview.Get();
+		
+		{
+			const TERec& te = **hTE;
+			
+			short dv = v - (te.viewRect.top - te.destRect.top);
+			
+			N::TEPinScroll( 0, -dv, itsSubview.Get() );
+		}
+		
+		TERec& te = **hTE;
+		
+		te.destRect = N::OffsetRect( te.viewRect, 0, -v );
 	}
 	
 	class Frame : public Ped::Frame
