@@ -15,6 +15,12 @@ namespace Genie
 	
 	class FSTree;
 	
+	class Scroller : public Pedestal::ScrollerAPI
+	{
+		public:
+			virtual void Scroll( int dh, int dv ) = 0;
+	};
+	
 	struct ScrollerParameters
 	{
 		int  itsClientWidth;
@@ -25,7 +31,7 @@ namespace Genie
 		
 		Rect  itsLastViewBounds;
 		
-		Pedestal::Scroller*  itsView;
+		Scroller*  itsView;
 		
 		ScrollerParameters() : itsClientWidth ( 0 ),
 		                       itsClientHeight( 0 ),
@@ -98,7 +104,7 @@ namespace Genie
 	};
 	
 	
-	class ScrollerBase : public Pedestal::Scroller
+	class ScrollerBase : public Pedestal::Superview, public Scroller
 	{
 		public:
 			typedef const FSTree* Key;
@@ -127,6 +133,8 @@ namespace Genie
 			
 			void SetHOffset( int h )  { SetScrollerHOffset( itsKey, h ); }
 			void SetVOffset( int v )  { SetScrollerVOffset( itsKey, v ); }
+			
+			bool KeyDown( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};

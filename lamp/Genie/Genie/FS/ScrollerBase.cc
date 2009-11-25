@@ -92,7 +92,7 @@ namespace Genie
 			
 			if ( params->itsView )
 			{
-				Ped::Scroller& scroller = *params->itsView;
+				Scroller& scroller = *params->itsView;
 				
 				scroller.Scroll( dh, 0 );
 			}
@@ -109,7 +109,7 @@ namespace Genie
 			
 			if ( params->itsView )
 			{
-				Ped::Scroller& scroller = *params->itsView;
+				Scroller& scroller = *params->itsView;
 				
 				scroller.Scroll( 0, dv );
 			}
@@ -199,7 +199,7 @@ namespace Genie
 	{
 		gScrollerParametersMap[ itsKey ].itsView = this;
 		
-		Ped::Scroller::Install( bounds );
+		Ped::Superview::Install( bounds );
 		
 		SetBounds( bounds );
 	}
@@ -208,14 +208,19 @@ namespace Genie
 	{
 		gScrollerParametersMap[ itsKey ].itsView = NULL;
 		
-		Ped::Scroller::Uninstall();
+		Ped::Superview::Uninstall();
+	}
+	
+	bool ScrollerBase::KeyDown( const EventRecord& event )
+	{
+		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
 	}
 	
 	void ScrollerBase::Draw( const Rect& bounds, bool erasing )
 	{
 		gScrollerParametersMap[ itsKey ].itsLastViewBounds = bounds;
 		
-		Ped::Scroller::Draw( bounds, erasing );
+		Ped::Superview::Draw( bounds, erasing );
 	}
 	
 }

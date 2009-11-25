@@ -163,7 +163,7 @@ namespace UseEdit
 		return r.bottom - r.top;
 	}
 	
-	class Scroller : public Ped::Scroller
+	class Scroller : public Ped::Superview, public Ped::ScrollerAPI
 	{
 		private:
 			TextEdit  itsSubview;
@@ -173,11 +173,11 @@ namespace UseEdit
 			{
 			}
 			
+			bool KeyDown( const EventRecord& event );
+			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			Ped::View& Subview()  { return itsSubview; }
-			
-			void Scroll( int dh, int dv );
 			
 			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
 			short ViewHeight() const  { return Height( itsSubview.Get()[0]->viewRect ); }
@@ -203,7 +203,7 @@ namespace UseEdit
 					
 					short dv = v - (te.viewRect.top - te.destRect.top);
 					
-					Scroll( 0, -dv );
+					N::TEPinScroll( 0, -dv, itsSubview.Get() );
 				}
 				
 				TERec& te = **hTE;
@@ -213,14 +213,14 @@ namespace UseEdit
 			
 	};
 	
+	bool Scroller::KeyDown( const EventRecord& event )
+	{
+		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
+	}
+	
 	void Scroller::Draw( const Rect& bounds, bool erasing )
 	{
 		Subview().Draw( bounds, erasing );
-	}
-	
-	void Scroller::Scroll( int dh, int dv )
-	{
-		N::TEPinScroll( dh, dv, itsSubview.Get() );
 	}
 	
 	class Frame : public Ped::Frame
