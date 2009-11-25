@@ -175,8 +175,6 @@ namespace UseEdit
 			
 			bool KeyDown( const EventRecord& event );
 			
-			void Draw( const Rect& bounds, bool erasing );
-			
 			Ped::View& Subview()  { return itsSubview; }
 			
 			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
@@ -216,11 +214,6 @@ namespace UseEdit
 	bool Scroller::KeyDown( const EventRecord& event )
 	{
 		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
-	}
-	
-	void Scroller::Draw( const Rect& bounds, bool erasing )
-	{
-		Subview().Draw( bounds, erasing );
 	}
 	
 	class Frame : public Ped::Frame
