@@ -182,7 +182,7 @@ namespace UseEdit
 			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
 			short ViewHeight() const  { return Height( itsSubview.Get()[0]->viewRect ); }
 			
-			int ClientWidth () const  { return ViewHeight();  }
+			int ClientWidth () const  { return ViewWidth();  }
 			int ClientHeight() const  { return GetTextEditingHeight( itsSubview.Get() ); }
 			
 			int GetHOffset() const  { return 0; }
