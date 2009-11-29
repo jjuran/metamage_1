@@ -123,6 +123,9 @@ Offset	Type	Description
 namespace MacBinary
 {
 	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
 	using namespace io::path_descent_operators;
 	
 	using N::fsRdPerm;

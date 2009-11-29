@@ -17,9 +17,6 @@
 namespace MacBinary
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	typedef void (*BlockWriter)( int, const void*, std::size_t );
 	
 	void Encode( const FSSpec& file, BlockWriter blockWrite, int output );
@@ -42,10 +39,10 @@ namespace MacBinary
 		private:
 			struct Frame
 			{
-				N::FSDirSpec  destDir;
-				FSSpec        file;
-				UInt32        modificationDate;
-				std::string   comment;
+				Nitrogen::FSDirSpec  destDir;
+				FSSpec               file;
+				UInt32               modificationDate;
+				std::string          comment;
 			};
 			
 			Frame itsFrame;
@@ -60,13 +57,13 @@ namespace MacBinary
 			UInt16    itsSecondaryHeaderLength;
 			UInt16    itsCommentLength;
 			
-			NN::Owned< N::FSFileRefNum > itsDataFork;
-			NN::Owned< N::FSFileRefNum > itsResourceFork;
+			Nucleus::Owned< Nitrogen::FSFileRefNum > itsDataFork;
+			Nucleus::Owned< Nitrogen::FSFileRefNum > itsResourceFork;
 			
 			void DecodeHeader( const char* header );
 			
 		public:
-			Decoder( const N::FSDirSpec& destination );
+			Decoder( const Nitrogen::FSDirSpec& destination );
 			
 			int Write( const char* data, ByteCount byteCount );
 	};
