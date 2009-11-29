@@ -6,8 +6,6 @@
 #ifndef KEROSENE_TIME_H
 #define KEROSENE_TIME_H
 
-#include <ctime>
-
 #include <sys/types.h>
 
 
