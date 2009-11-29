@@ -141,7 +141,7 @@ namespace Genie
 	{
 		OpenFlags flags = GetFlags();
 		
-		if ( flags & O_TRUNC_LAZY )
+		if ( (flags & O_TRUNC_LAZY) == O_TRUNC_LAZY )
 		{
 			SetEOF( GetFileMark() );
 			
