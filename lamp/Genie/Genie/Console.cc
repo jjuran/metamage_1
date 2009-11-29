@@ -12,9 +12,6 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
-	
-	
 	static void SpawnNewConsole( const char* programPath )
 	{
 		Process& parent = GetInitProcess();

@@ -33,7 +33,6 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static bool gExtendingSelection = false;

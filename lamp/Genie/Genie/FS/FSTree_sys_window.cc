@@ -22,7 +22,6 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	

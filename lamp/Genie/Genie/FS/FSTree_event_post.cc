@@ -28,7 +28,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct sys_mac_event_post_click

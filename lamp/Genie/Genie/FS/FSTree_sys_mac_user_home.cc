@@ -26,7 +26,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	class FSTree_sys_mac_user_home : public FSTree_ResolvableSymLink

@@ -23,9 +23,6 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
-	
-	
 	struct GetFreeMem
 	{
 		typedef long Result;
