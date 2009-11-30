@@ -17,16 +17,17 @@
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
 #include "poseven/functions/chdir.hh"
-#include "poseven/functions/execvp.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/link.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/symlink.hh"
 #include "poseven/functions/utime.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/functions/_exit.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -81,14 +82,16 @@ namespace tool
 		
 		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 		
-		dup2( buffer, 0 );
-		dup2( output, 1 );
-		
 		const char* gate = "view/main/v/v/gate";
 		
-		const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
+		char c;
 		
-		p7::execvp( window_argv );
+		// reading gate blocks
+		p7::read( p7::open( gate, p7::o_rdonly ), &c, 1 );
+		
+		p7::pump( buffer, output );
+		
+		p7::_exit( p7::exit_success );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -168,8 +171,15 @@ namespace tool
 		
 		if ( pid == 0 )
 		{
-			// Doesn't return
-			run( buffer, output );
+			try
+			{
+				// Doesn't return
+				run( buffer, output );
+			}
+			catch ( ... )
+			{
+				abort();
+			}
 		}
 		
 		return n::convert< p7::exit_t >( p7::wait() );
