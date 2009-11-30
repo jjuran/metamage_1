@@ -72,6 +72,22 @@ namespace tool
 	}
 	
 	
+	static void run( p7::fd_t buffer, p7::fd_t output )
+	{
+		setsid();
+		
+		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
+		
+		dup2( buffer, 0 );
+		dup2( output, 1 );
+		
+		const char* gate = "view/main/v/v/gate";
+		
+		const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
+		
+		p7::execvp( window_argv );
+	}
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		bool should_wait = false;
@@ -140,20 +156,8 @@ namespace tool
 		
 		if ( pid == 0 )
 		{
-			// New child, so we're not a process group leader
-			
-			setsid();
-			
-			p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
-			
-			dup2( buffer, 0 );
-			dup2( output, 1 );
-			
-			const char* gate = "view/main/v/v/gate";
-			
-			const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
-			
-			p7::execvp( window_argv );
+			// Doesn't return
+			run( buffer, output );
 		}
 		
 		if ( should_wait )
