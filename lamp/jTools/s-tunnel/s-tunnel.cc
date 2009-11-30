@@ -175,7 +175,7 @@ namespace tool
 		{
 			std::string message = "Remote read error: ";
 			
-			message += strerror( error.Get() );
+			message += strerror( error );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );
@@ -211,7 +211,7 @@ namespace tool
 		{
 			std::string message = "Local read error: ";
 			
-			message += strerror( error.Get() );
+			message += strerror( error );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );
