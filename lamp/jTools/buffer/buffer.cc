@@ -17,6 +17,7 @@
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
 #include "poseven/functions/chdir.hh"
+#include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/link.hh"
 #include "poseven/functions/open.hh"
@@ -89,6 +90,8 @@ namespace tool
 		// reading gate blocks
 		p7::read( p7::open( gate, p7::o_rdonly ), &c, 1 );
 		
+		p7::ftruncate( output, 0 );
+		
 		p7::pump( buffer, output );
 		
 		p7::_exit( p7::exit_success );
@@ -156,7 +159,7 @@ namespace tool
 		
 		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
 		
-		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
+		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat );
 		
 		p7::pid_t pid = p7::pid_t();
 		
