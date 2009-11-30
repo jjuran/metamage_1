@@ -10,6 +10,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Convergence
+#include "fork_and_exit.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
@@ -152,7 +155,16 @@ namespace tool
 		
 		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
 		
-		p7::pid_t pid = p7::vfork();
+		p7::pid_t pid = p7::pid_t();
+		
+		if ( !should_wait )
+		{
+			fork_and_exit( p7::exit_success );
+		}
+		else
+		{
+			pid = p7::vfork();
+		}
 		
 		if ( pid == 0 )
 		{
@@ -160,12 +172,7 @@ namespace tool
 			run( buffer, output );
 		}
 		
-		if ( should_wait )
-		{
-			return n::convert< p7::exit_t >( p7::wait() );
-		}
-		
-		return p7::exit_success;
+		return n::convert< p7::exit_t >( p7::wait() );
 	}
 	
 }
