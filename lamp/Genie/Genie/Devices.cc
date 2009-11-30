@@ -8,9 +8,6 @@
 // Standard C++ library
 #include <algorithm>
 
-// Io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 

@@ -5,9 +5,6 @@
 
 #include "Genie/IO/PairedSocket.hh"
 
-// Io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 

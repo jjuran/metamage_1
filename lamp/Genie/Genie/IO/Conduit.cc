@@ -12,9 +12,6 @@
 // Standard C++
 #include <algorithm>
 
-// Io
-#include "io/io.hh"
-
 // Debug
 #include "debug/assert.hh"
 
