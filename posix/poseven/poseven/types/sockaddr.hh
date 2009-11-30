@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -32,7 +32,7 @@ namespace poseven
 		af_ipx       = AF_IPX,
 		af_appletalk = AF_APPLETALK,
 		
-		address_family_max = Nucleus::Enumeration_Traits< unsigned short >::max
+		address_family_max = nucleus::enumeration_traits< unsigned short >::max
 	};
 	
 	template < address_family family > struct sockaddr_traits;

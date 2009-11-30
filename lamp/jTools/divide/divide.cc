@@ -26,7 +26,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -134,8 +134,8 @@ namespace tool
 		const char* outfile1 = argv[2];
 		const char* outfile2 = argv[3];
 		
-		NN::Owned< p7::fd_t > out1 = p7::open( outfile1, p7::o_wronly | p7::o_trunc | p7::o_creat );
-		NN::Owned< p7::fd_t > out2 = p7::open( outfile2, p7::o_wronly | p7::o_trunc | p7::o_creat );
+		n::owned< p7::fd_t > out1 = p7::open( outfile1, p7::o_wronly | p7::o_trunc | p7::o_creat );
+		n::owned< p7::fd_t > out2 = p7::open( outfile2, p7::o_wronly | p7::o_trunc | p7::o_creat );
 		
 		bool divided = false;
 		

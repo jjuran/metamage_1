@@ -111,6 +111,7 @@
 
 
 namespace N = Nitrogen;
+namespace n = nucleus;
 namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace Div = Divergence;
@@ -847,7 +848,7 @@ static int TestNull( int argc, iota::argv_t argv )
 	
 	static NN::Owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
-		NN::Owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
+		n::owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
 		
 		struct ::stat stat_buffer;
 		
@@ -1037,8 +1038,8 @@ static int TestPath( int argc, iota::argv_t argv )
 		return 1;
 	}
 	
-	NN::Owned< p7::fd_t > window = p7::open( window_path,
-	                                         p7::o_rdonly | p7::o_directory );
+	n::owned< p7::fd_t > window = p7::open( window_path,
+	                                        p7::o_rdonly | p7::o_directory );
 	
 	int pix = std::atoi( argv[2] );
 	
@@ -1055,9 +1056,9 @@ static int TestPath( int argc, iota::argv_t argv )
 	
 	UInt64 time_length = 250000;  // quarter second
 	
-	NN::Owned< p7::fd_t > pos = p7::openat( window,
-	                                        "ref/pos",
-	                                        p7::o_wronly | p7::o_trunc | p7::o_binary );
+	n::owned< p7::fd_t > pos = p7::openat( window,
+	                                       "ref/pos",
+	                                       p7::o_wronly | p7::o_trunc | p7::o_binary );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
 	{

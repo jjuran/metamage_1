@@ -52,6 +52,7 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
+	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
@@ -206,7 +207,7 @@ namespace tool
 		// Make a new socket
 		// and connect to the server.  This could fail, thanks to a bunch of Cox.
 		
-		NN::Owned< p7::fd_t > smtp_server = p7::connect( addr, smtp_port );
+		n::owned< p7::fd_t > smtp_server = p7::connect( addr, smtp_port );
 		
 		SMTP::Client::Session smtpSession( smtp_server );
 		

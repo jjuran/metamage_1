@@ -32,6 +32,7 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
+	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
@@ -442,7 +443,7 @@ namespace tool
 			p7::execvp( &command[0] );
 		}
 		
-		return NN::Convert< p7::exit_t >( p7::wait() );
+		return n::convert< p7::exit_t >( p7::wait() );
 	}
 	
 }

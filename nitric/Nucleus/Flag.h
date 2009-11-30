@@ -14,6 +14,9 @@
 #ifndef NUCLEUS_FLAG_H
 #define NUCLEUS_FLAG_H
 
+// Nucleus
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_ENUMERATION_H
 #include "Nucleus/Enumeration.h"
 #endif
@@ -93,40 +96,6 @@ namespace Nucleus
 	template <> struct EnumSize_Traits< sizeof (unsigned long long) > { typedef unsigned long long  Type; };
 	
 }
-
-#define NUCLEUS_DEFINE_FLAG_OPS( Enum )                               \
-	inline Enum operator&( Enum a, Enum b )                           \
-	{                                                                 \
-		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
-		return Enum( Int( a ) & Int( b ) );                           \
-	}                                                                 \
-	                                                                  \
-	inline Enum operator|( Enum a, Enum b )                           \
-	{                                                                 \
-		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
-		return Enum( Int( a ) | Int( b ) );                           \
-	}                                                                 \
-	                                                                  \
-	inline Enum operator^( Enum a, Enum b )                           \
-	{                                                                 \
-		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
-		return Enum( Int( a ) ^ Int( b ) );                           \
-	}                                                                 \
-	                                                                  \
-	inline Enum& operator&=( Enum& a, Enum b )                        \
-	{                                                                 \
-		return a = a & b;                                             \
-	}                                                                 \
-	                                                                  \
-	inline Enum& operator|=( Enum& a, Enum b )                        \
-	{                                                                 \
-		return a = a | b;                                             \
-	}                                                                 \
-	                                                                  \
-	inline Enum& operator^=( Enum& a, Enum b )                        \
-	{                                                                 \
-		return a = a ^ b;                                             \
-	}
 
 #endif
 

@@ -24,7 +24,7 @@
 namespace poseven
 {
 	
-	inline Nucleus::Owned< dir_t > opendir( const char* pathname )
+	inline nucleus::owned< dir_t > opendir( const char* pathname )
 	{
 		DIR* handle = ::opendir( pathname );
 		
@@ -33,10 +33,10 @@ namespace poseven
 			throw_errno( errno );
 		}
 		
-		return Nucleus::Owned< dir_t >::Seize( handle );
+		return nucleus::owned< dir_t >::seize( handle );
 	}
 	
-	inline Nucleus::Owned< dir_t > opendir( const std::string& pathname )
+	inline nucleus::owned< dir_t > opendir( const std::string& pathname )
 	{
 		return opendir( pathname.c_str() );
 	}

@@ -25,7 +25,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -69,7 +69,7 @@ namespace tool
 	
 	static void pread_file()
 	{
-		NN::Owned< p7::fd_t > tmp_file = p7::open( tmp_file_path, p7::o_rdonly );
+		n::owned< p7::fd_t > tmp_file = p7::open( tmp_file_path, p7::o_rdonly );
 		
 		char buffer[ 16 ];
 		

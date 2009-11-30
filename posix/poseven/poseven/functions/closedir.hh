@@ -18,18 +18,18 @@
 #include <dirent.h>
 
 // Nucleus
-#include "Nucleus/Owned.h"
+#include "nucleus/owned.hh"
 
 // poseven
 #include "poseven/types/dir_t.hh"
 #include "poseven/types/errno_t.hh"
 
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >
+	struct disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >
 	{
 		void operator()( poseven::dir_t dir ) const
 		{
@@ -42,7 +42,7 @@ namespace Nucleus
 namespace poseven
 {
 	
-	inline void closedir( Nucleus::Owned< dir_t > dir )
+	inline void closedir( nucleus::owned< dir_t > dir )
 	{
 		throw_posix_result( ::closedir( dir.release() ) );
 	}

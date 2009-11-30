@@ -18,18 +18,18 @@
 #include <unistd.h>
 
 // Nucleus
-#include "Nucleus/Owned.h"
+#include "nucleus/owned.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >
+	struct disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >
 	{
 		void operator()( poseven::fd_t fd ) const
 		{
@@ -42,9 +42,9 @@ namespace Nucleus
 namespace poseven
 {
 	
-	inline void close( Nucleus::Owned< fd_t > fd )
+	inline void close( nucleus::owned< fd_t > fd )
 	{
-		throw_posix_result( ::close( fd.Release() ) );
+		throw_posix_result( ::close( fd.release() ) );
 	}
 	
 }

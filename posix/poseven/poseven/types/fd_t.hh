@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace poseven
@@ -37,7 +37,7 @@ namespace poseven
 		
 	#endif
 		
-		fd_t_max = Nucleus::Enumeration_Traits< int >::max
+		fd_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 }

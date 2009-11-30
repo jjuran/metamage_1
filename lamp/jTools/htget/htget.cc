@@ -35,7 +35,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -213,7 +213,7 @@ namespace tool
 		                             + HTTP::HeaderFieldLine( "Host", hostname )
 		                             + "\r\n";
 		
-		NN::Owned< p7::fd_t > http_server = p7::connect( ip, port );
+		n::owned< p7::fd_t > http_server = p7::connect( ip, port );
 		
 		p7::write( http_server, message_header );
 		

@@ -20,7 +20,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	using BitsAndBytes::eos;
@@ -31,7 +31,7 @@ namespace tool
 	{
 		text_input::feed feed;
 		
-		NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
+		n::owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 		
 		p7::fd_reader reader( fd );
 		

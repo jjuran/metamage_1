@@ -34,7 +34,7 @@ namespace poseven
 		seek_cur = SEEK_CUR,
 		seek_end = SEEK_END,
 		
-		seek_t_max = Nucleus::Enumeration_Traits< int >::max
+		seek_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	inline off_t lseek( fd_t fd, off_t offset, seek_t whence = seek_set )

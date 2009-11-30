@@ -31,7 +31,7 @@ namespace poseven
 		shut_wr   = SHUT_WR,
 		shut_rdwr = SHUT_RDWR,
 		
-		shut_t_max = Nucleus::Enumeration_Traits< int >::max
+		shut_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	inline void shutdown( fd_t fd, shut_t how )

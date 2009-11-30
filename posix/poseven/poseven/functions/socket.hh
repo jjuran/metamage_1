@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 // Nucleus
-#include "Nucleus/Flag.h"
+#include "nucleus/flag_ops.hh"
 
 // poseven
 #include "poseven/functions/close.hh"
@@ -43,7 +43,7 @@ namespace poseven
 		
 	#endif
 		
-		protocol_family_max = Nucleus::Enumeration_Traits< int >::max
+		protocol_family_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	enum socket_type
@@ -63,17 +63,17 @@ namespace poseven
 		
 	#endif
 		
-		socket_type_max = Nucleus::Enumeration_Traits< int >::max
+		socket_type_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( socket_type )
 	
-	inline Nucleus::Owned< fd_t > socket( protocol_family  domain,
+	inline nucleus::owned< fd_t > socket( protocol_family  domain,
 	                                      socket_type      type )
 	{
 		const int fd = throw_posix_result( ::socket( domain, type, 0 ) );
 		
-		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
+		return nucleus::owned< fd_t >::seize( fd_t( fd ) );
 	}
 	
 }

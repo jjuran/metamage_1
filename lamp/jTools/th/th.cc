@@ -46,7 +46,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -113,7 +113,7 @@ namespace tool
 		
 		text_input::feed feed;
 		
-		NN::Owned< p7::fd_t > input_fd( NN::Owned< p7::fd_t >::Seize( p7::fd_t( pipe_ends[0] ) ) );
+		n::owned< p7::fd_t > input_fd( n::owned< p7::fd_t >::seize( p7::fd_t( pipe_ends[0] ) ) );
 		
 		p7::fd_reader reader( input_fd );
 		

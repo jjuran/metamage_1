@@ -35,7 +35,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -374,7 +374,7 @@ namespace tool
 		
 	#endif
 		
-		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], flags );
+		n::owned< p7::fd_t > fd = p7::open( argv[ 1 ], flags );
 		
 	#ifndef O_CLOEXEC
 		
@@ -384,7 +384,7 @@ namespace tool
 		
 		ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 		
-		return NN::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
+		return n::convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
 	}
 	
 	typedef std::map< std::string, Builtin > BuiltinMap;

@@ -3,6 +3,12 @@
  *	=======
  */
 
+// Standard C/C++
+#include <cstdio>
+
+// Standard C
+#include <time.h>
+
 // poseven
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/gettimeofday.hh"
@@ -18,7 +24,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -67,7 +73,7 @@ namespace tool
 		                      "sys  %.2f" "\n",
 		                      real_diff, user_diff, sys_diff );
 		
-		return NN::Convert< p7::exit_t >( wait_status );
+		return n::convert< p7::exit_t >( wait_status );
 	}
 
 }

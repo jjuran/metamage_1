@@ -18,7 +18,8 @@
 #include <fcntl.h>
 
 // Nucleus
-#include "Nucleus/Flag.h"
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
 
 
 namespace poseven
@@ -28,7 +29,7 @@ namespace poseven
 	{
 		fd_cloexec = FD_CLOEXEC,
 		
-		fcntl_fd_flags_t_max = Nucleus::Enumeration_Traits< int >::max
+		fcntl_fd_flags_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( fcntl_fd_flags_t )

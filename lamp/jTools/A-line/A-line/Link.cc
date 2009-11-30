@@ -40,7 +40,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
@@ -172,7 +172,7 @@ namespace tool
 	
 	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
 	{
-		NN::Owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_rdwr | p7::o_creat );
+		n::owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_rdwr | p7::o_creat );
 		
 		const bool match = check_file_contents( pkgInfo, contents );
 		

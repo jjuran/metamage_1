@@ -33,7 +33,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -120,9 +120,9 @@ namespace tool
 			title = input_file;
 		}
 		
-		NN::Owned< p7::fd_t > cwd = p7::open( ".", p7::o_rdonly | p7::o_directory );
+		n::owned< p7::fd_t > cwd = p7::open( ".", p7::o_rdonly | p7::o_directory );
 		
-		NN::Owned< p7::fd_t > input = p7::open( input_file, p7::o_rdonly );
+		n::owned< p7::fd_t > input = p7::open( input_file, p7::o_rdonly );
 		
 		make_window( title );
 		
@@ -132,9 +132,9 @@ namespace tool
 		
 		p7::utime( "view/main/v/v/interlock" );
 		
-		NN::Owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
+		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
 		
-		NN::Owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
+		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
 		
 		p7::pid_t pid = p7::vfork();
 		
@@ -158,7 +158,7 @@ namespace tool
 		
 		if ( should_wait )
 		{
-			return NN::Convert< p7::exit_t >( p7::wait() );
+			return n::convert< p7::exit_t >( p7::wait() );
 		}
 		
 		return p7::exit_success;

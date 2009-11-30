@@ -42,7 +42,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -426,7 +426,7 @@ namespace tool
 		p7::wait_t wait_status = p7::wait();
 		
 		bool output_matches = DoesOutputMatch();
-		bool status_matches = NN::Convert< p7::exit_t >( wait_status ) == itsExpectedExitStatus;
+		bool status_matches = n::convert< p7::exit_t >( wait_status ) == itsExpectedExitStatus;
 		
 		bool test_ok = status_matches && output_matches;
 		

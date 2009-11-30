@@ -23,7 +23,7 @@ namespace poseven
 			int its_number;
 		
 		public:
-			typedef int ErrorNumber;
+			typedef int error_number;
 			
 			errno_t(       ) : its_number( 0 )  {}
 			errno_t( int n ) : its_number( n )  {}
