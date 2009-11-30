@@ -28,14 +28,12 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	
-	using namespace NX::Constants;
-	
 	
 	static NX::CDROMDrive            gDrive;
 	static NX::TrackNumber           gSelectedTrack = 1;
 	static NX::CDROMTableOfContents  gTOC;
 	static NX::AudioStatus_Result    gStatus;
-	static NX::AudioPlayMode         gPlayMode = kAudioPlayModeStereo;
+	static NX::AudioPlayMode         gPlayMode = NX::kAudioPlayModeStereo;
 	
 	
 	static void print_field( const char* name, const char* value )
@@ -60,12 +58,12 @@ namespace tool
 		
 		switch ( gStatus.status )
 		{
-			case kAudioStatusPlaying:  state = "playing";    break;
-			case kAudioStatusPaused :  state = "paused";     break;
-			case kAudioStatusMuteOn :  state = "muting-on";  break;
-			case kAudioStatusDone   :  state = "done";       break;
-			case kAudioStatusError  :  state = "error";      break;
-			case kAudioStatusNil    :  state = "nil";        break;
+			case NX::kAudioStatusPlaying:  state = "playing";    break;
+			case NX::kAudioStatusPaused :  state = "paused";     break;
+			case NX::kAudioStatusMuteOn :  state = "muting-on";  break;
+			case NX::kAudioStatusDone   :  state = "done";       break;
+			case NX::kAudioStatusError  :  state = "error";      break;
+			case NX::kAudioStatusNil    :  state = "nil";        break;
 		}
 		
 		print_field( "Audio status", state );
@@ -173,10 +171,10 @@ namespace tool
 	{
 		switch ( gStatus.status )
 		{
-			case kAudioStatusPlaying:  NX::AudioPause( gDrive, true  );  break;
-			case kAudioStatusPaused :  NX::AudioPause( gDrive, false );  break;
+			case NX::kAudioStatusPlaying:  NX::AudioPause( gDrive, true  );  break;
+			case NX::kAudioStatusPaused :  NX::AudioPause( gDrive, false );  break;
 			
-			case kAudioStatusNil:
+			case NX::kAudioStatusNil:
 				PlayAllTracks();
 				break;
 			
@@ -203,7 +201,7 @@ namespace tool
 		
 		switch ( gStatus.status )
 		{
-			case kAudioStatusNil:
+			case NX::kAudioStatusNil:
 				NX::AudioTrackSearch( gDrive,
 				                      q.track,
 				                      false,
