@@ -11,9 +11,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/ResourceTransfer.h"
-
 // poseven
 #include "poseven/Pathnames.hh"
 
@@ -31,7 +28,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -107,8 +103,8 @@ namespace tool
 		return map;
 	}
 	
-	static void SetPlatformInfo( NN::ResourceTransfer< PlatformDemands >  cumulative_demands,
-	                             const std::string&                       new_spec )
+	static void SetPlatformInfo( PlatformDemands     *cumulative_demands,
+	                             const std::string&   new_spec )
 	{
 		static std::map< std::string, Platform > map = MakePlatformMap();
 		
@@ -161,7 +157,7 @@ namespace tool
 		std::for_each( infos.begin(),
 		               infos.end(),
 		               std::bind1st( more::ptr_fun( SetPlatformInfo ),
-		                             NN::ResourceTransfer< PlatformDemands >( result ) ) );
+		                             &result ) );
 		
 		return result;
 	}
