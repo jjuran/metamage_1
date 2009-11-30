@@ -75,6 +75,8 @@ namespace Genie
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		boost::intrusive_ptr< Ped::View   >  itsSubview;
 		
+		const FSTree* itsFocus;
+		
 		plus::string itsGesturePaths[ n_gestures ];
 		
 		FSTreePtr                    itsTTYDelegate;
@@ -318,7 +320,10 @@ namespace Genie
 		{
 			WindowParameters& params = it->second;
 			
-			// ...
+			if ( params.itsFocus == view )
+			{
+				params.itsFocus = NULL;
+			}
 		}
 	}
 	
@@ -487,6 +492,53 @@ namespace Genie
 			
 			view->Uninstall();
 		}
+	}
+	
+	
+	class FSTree_sys_window_REF_focus : public FSTree
+	{
+		public:
+			FSTree_sys_window_REF_focus( const FSTreePtr&     parent,
+			                             const plus::string&  name )
+			:
+				FSTree( parent, name )
+			{
+			}
+			
+			const FSTree* WindowKey() const  { return ParentRef().get(); }
+			
+			bool Exists() const;
+			
+			bool IsLink() const  { return Exists(); }
+			
+			plus::string ReadLink() const;
+			
+			FSTreePtr ResolveLink() const;
+	};
+	
+	bool FSTree_sys_window_REF_focus::Exists() const
+	{
+		return gWindowParametersMap[ WindowKey() ].itsFocus != NULL;
+	}
+	
+	plus::string FSTree_sys_window_REF_focus::ReadLink() const
+	{
+		return ResolveLink()->Pathname();  // FIXME:  Use relative path
+	}
+	
+	FSTreePtr FSTree_sys_window_REF_focus::ResolveLink() const
+	{
+		if ( const FSTree* focus = gWindowParametersMap[ WindowKey() ].itsFocus )
+		{
+			return FSTreePtr( focus );
+		}
+		
+		throw p7::errno_t( ENOENT );
+	}
+	
+	void SetWindowFocus( const FSTree* window, const FSTree* focus )
+	{
+		gWindowParametersMap[ window ].itsFocus = focus;
 	}
 	
 	
@@ -819,6 +871,8 @@ namespace Genie
 		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref >, true },
 		
 		{ "view",   &Basic_Factory< FSTree_X_view< GetView > >, true },
+		
+		{ "focus",  &Basic_Factory< FSTree_sys_window_REF_focus >, true },
 		
 		{ "accept", &Basic_Factory< FSTree_Window_Gesture >, true },
 		{ "cancel", &Basic_Factory< FSTree_Window_Gesture >, true },

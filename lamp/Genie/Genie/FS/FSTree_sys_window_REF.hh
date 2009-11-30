@@ -31,6 +31,8 @@ namespace Genie
 	void InstallViewInWindow    ( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
 	void UninstallViewFromWindow( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
 	
+	void SetWindowFocus( const FSTree* window, const FSTree* focus );
+	
 }
 
 #endif
