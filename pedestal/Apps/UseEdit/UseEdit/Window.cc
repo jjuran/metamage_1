@@ -58,7 +58,7 @@ namespace UseEdit
 	}
 	
 	
-	class TextEdit : public Ped::TextEdit
+	class TextEdit : public Ped::TextEdit, public Ped::ScrollerAPI
 	{
 		private:
 			NN::Owned< N::TEHandle >  itsTE;
@@ -85,6 +85,19 @@ namespace UseEdit
 			
 			void SetPriorSelection( const Ped::TextSelection& selection );
 			
+			bool KeyDown( const EventRecord& event );
+			
+			short ViewWidth () const;
+			short ViewHeight() const;
+			
+			int ClientWidth () const  { return ViewWidth();  }
+			int ClientHeight() const;
+			
+			int GetHOffset() const  { return 0; }
+			int GetVOffset() const;
+			
+			void SetHOffset( int h )  {}
+			void SetVOffset( int v );
 	};
 	
 	void TextEdit::Install( const Rect& bounds )
@@ -153,74 +166,53 @@ namespace UseEdit
 	}
 	
 	
-	static inline short Width( const Rect& r )
+	typedef TextEdit Scroller;
+	
+	
+	bool TextEdit::KeyDown( const EventRecord& event )
 	{
-		return r.right - r.left;
+		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::TextEdit::KeyDown( event );
 	}
 	
-	static inline short Height( const Rect& r )
+	short TextEdit::ViewWidth() const
 	{
-		return r.bottom - r.top;
-	}
-	
-	class Scroller : public Ped::Superview, public Ped::ScrollerAPI
-	{
-		private:
-			TextEdit  itsSubview;
+		const Rect& viewRect = itsTE[0]->viewRect;
 		
-		public:
-			Scroller( const Rect& bounds ) : itsSubview( bounds )
-			{
-			}
-			
-			bool KeyDown( const EventRecord& event );
-			
-			void Draw( const Rect& bounds, bool erasing );
-			
-			Ped::View& Subview()  { return itsSubview; }
-			
-			short ViewWidth () const  { return Width ( itsSubview.Get()[0]->viewRect ); }
-			short ViewHeight() const  { return Height( itsSubview.Get()[0]->viewRect ); }
-			
-			int ClientWidth () const  { return ViewHeight();  }
-			int ClientHeight() const  { return GetTextEditingHeight( itsSubview.Get() ); }
-			
-			int GetHOffset() const  { return 0; }
-			int GetVOffset() const
-			{
-				const TERec& te = **itsSubview.Get();
-				
-				return te.viewRect.top - te.destRect.top;
-			}
-			
-			void SetHOffset( int h )  {}
-			void SetVOffset( int v )
-			{
-				TEHandle hTE = itsSubview.Get();
-				
-				{
-					const TERec& te = **hTE;
-					
-					short dv = v - (te.viewRect.top - te.destRect.top);
-					
-					N::TEPinScroll( 0, -dv, itsSubview.Get() );
-				}
-				
-				TERec& te = **hTE;
-				
-				te.destRect = N::OffsetRect( te.viewRect, 0, -v );
-			}
-			
-	};
-	
-	bool Scroller::KeyDown( const EventRecord& event )
-	{
-		return Ped::Scroller_KeyDown( *this, event )  ||  Ped::Superview::KeyDown( event );
+		return viewRect.right - viewRect.left;
 	}
 	
-	void Scroller::Draw( const Rect& bounds, bool erasing )
+	short TextEdit::ViewHeight() const
 	{
-		Subview().Draw( bounds, erasing );
+		const Rect& viewRect = itsTE[0]->viewRect;
+		
+		return viewRect.bottom - viewRect.top;
+	}
+	
+	int TextEdit::ClientHeight() const
+	{
+		return GetTextEditingHeight( itsTE );
+	}
+	
+	int TextEdit::GetVOffset() const
+	{
+		const TERec& te = **itsTE;
+		
+		return te.viewRect.top - te.destRect.top;
+	}
+	
+	void TextEdit::SetVOffset( int v )
+	{
+		{
+			const TERec& te = **itsTE;
+			
+			short dv = v - (te.viewRect.top - te.destRect.top);
+			
+			N::TEPinScroll( 0, -dv, itsTE );
+		}
+		
+		TERec& te = **itsTE;
+		
+		te.destRect = N::OffsetRect( te.viewRect, 0, -v );
 	}
 	
 	class Frame : public Ped::Frame
@@ -377,7 +369,7 @@ namespace UseEdit
 		
 		Scroller& scroller = static_cast< Scroller& >( frame.Subview() );
 		
-		TextEdit& textedit = static_cast< TextEdit& >( scroller.Subview() );
+		TextEdit& textedit = scroller;
 		
 		Handle hText = textedit.Get()[0]->hText;
 		
