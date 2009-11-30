@@ -35,9 +35,6 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// Io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -56,6 +53,8 @@ namespace tool
 	
 	struct PeerClosedSocket {};
 	struct InvalidEOF       {};
+	
+	class no_input_pending {};
 	
 	static struct sockaddr_in gRemoteAddress;
 	
@@ -79,7 +78,7 @@ namespace tool
 			
 			case SSL_ERROR_WANT_READ:
 			case SSL_ERROR_WANT_WRITE:
-				throw io::no_input_pending();
+				throw no_input_pending();
 				break;
 			
 			case SSL_ERROR_SYSCALL:
@@ -158,7 +157,7 @@ namespace tool
 				if (bytes != dataSize)  break;
 			}
 		}
-		catch ( const io::no_input_pending& )
+		catch ( const no_input_pending& )
 		{
 		}
 		catch ( PeerClosedSocket& )
@@ -198,7 +197,7 @@ namespace tool
 				if ( bytes != dataSize )  break;
 			}
 		}
-		catch ( const io::no_input_pending& )
+		catch ( const no_input_pending& )
 		{
 			
 		}
