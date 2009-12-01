@@ -10,20 +10,25 @@
 // Iota
 #include "iota/strings.hh"
 
+// Convergence
+#include "fork_and_exit.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
 #include "poseven/functions/chdir.hh"
-#include "poseven/functions/execvp.hh"
+#include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/link.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/symlink.hh"
 #include "poseven/functions/utime.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/functions/_exit.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -71,6 +76,26 @@ namespace tool
 		p7::link( "/new/defaultkeys", "view/defaultkeys" );
 	}
 	
+	
+	static void run( p7::fd_t buffer, p7::fd_t output )
+	{
+		setsid();
+		
+		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
+		
+		const char* gate = "view/main/v/v/gate";
+		
+		char c;
+		
+		// reading gate blocks
+		p7::read( p7::open( gate, p7::o_rdonly ), &c, 1 );
+		
+		p7::ftruncate( output, 0 );
+		
+		p7::pump( buffer, output );
+		
+		p7::_exit( p7::exit_success );
+	}
 	
 	int Main( int argc, iota::argv_t argv )
 	{
@@ -134,34 +159,33 @@ namespace tool
 		
 		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
 		
-		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
+		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat );
 		
-		p7::pid_t pid = p7::vfork();
+		p7::pid_t pid = p7::pid_t();
+		
+		if ( !should_wait )
+		{
+			fork_and_exit( p7::exit_success );
+		}
+		else
+		{
+			pid = p7::vfork();
+		}
 		
 		if ( pid == 0 )
 		{
-			// New child, so we're not a process group leader
-			
-			setsid();
-			
-			p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
-			
-			dup2( buffer, 0 );
-			dup2( output, 1 );
-			
-			const char* gate = "view/main/v/v/gate";
-			
-			const char* window_argv[] = { "/bin/cat", gate, "-", NULL };
-			
-			p7::execvp( window_argv );
+			try
+			{
+				// Doesn't return
+				run( buffer, output );
+			}
+			catch ( ... )
+			{
+				abort();
+			}
 		}
 		
-		if ( should_wait )
-		{
-			return n::convert< p7::exit_t >( p7::wait() );
-		}
-		
-		return p7::exit_success;
+		return n::convert< p7::exit_t >( p7::wait() );
 	}
 	
 }
