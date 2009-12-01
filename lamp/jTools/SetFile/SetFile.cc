@@ -101,14 +101,14 @@ namespace tool
 	
 	static void CreatorOptor( N::OSType param )
 	{
-		static CreatorSetter setter( NN::Convert< N::OSType >( param ) );
+		static CreatorSetter setter( param );
 		
 		gInfoMutators.push_back( &setter );
 	}
 	
 	static void TypeOptor( N::OSType param )
 	{
-		static TypeSetter setter( NN::Convert< N::OSType >( param ) );
+		static TypeSetter setter( param );
 		
 		gInfoMutators.push_back( &setter );
 	}
