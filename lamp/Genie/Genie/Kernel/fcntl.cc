@@ -52,9 +52,8 @@ namespace Genie
 			                                                 : file->Open( flags, mode );
 			
 			const bool truncating = flags & O_TRUNC;
-			const bool lazy       = flags & O_LAZY;
 			
-			if ( truncating  && !lazy )
+			if ( truncating )
 			{
 				if ( RegularFileHandle* file_handle = IOHandle_Cast< RegularFileHandle >( opened.get() ) )
 				{
@@ -108,7 +107,7 @@ namespace Genie
 			
 			StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
 			
-			const OpenFlags mask = O_APPEND | O_NONBLOCK | O_LAZY;  // settable flags
+			const OpenFlags mask = O_APPEND | O_NONBLOCK;  // settable flags
 			
 			switch ( cmd )
 			{
