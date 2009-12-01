@@ -598,9 +598,14 @@ namespace Genie
 		
 		try
 		{
-			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
+			IOHandle* h = GetFileHandle( fd ).get();
 			
-			fh.SetEOF( length );
+			typedef RegularFileHandle FileHandle;
+			
+			if ( FileHandle* fh = IOHandle_Cast< FileHandle >( h ) )
+			{
+				fh->SetEOF( length );
+			}
 		}
 		catch ( ... )
 		{
