@@ -73,12 +73,6 @@ namespace poseven
 		
 	#endif
 		
-	#ifdef O_TRUNC_LAZY
-		
-		o_trunc_lazy = O_TRUNC_LAZY,
-		
-	#endif
-		
 	#ifdef O_CLOEXEC
 		
 		o_cloexec = O_CLOEXEC,
