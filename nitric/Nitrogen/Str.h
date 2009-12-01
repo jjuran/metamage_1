@@ -94,12 +94,7 @@ namespace Nucleus
 	template <>
 	struct Converter< std::string, const unsigned char * > : public std::unary_function< const unsigned char *, std::string >
 	{
-		std::string operator()( const unsigned char *input ) const
-		{
-			const char *begin = reinterpret_cast< const char * >( input + 1 );
-			
-			return std::string( begin, begin + input[ 0 ] ); 
-		}
+		std::string operator()( const unsigned char *input ) const;
 	};
 	
 	template <>
