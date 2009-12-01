@@ -46,10 +46,6 @@ extern "C" {
 	
 	#define O_BINARY	0x8000  // matches WinCE
 	
-	#define O_LAZY  0x00010000
-	
-	#define O_TRUNC_LAZY  (O_TRUNC | O_LAZY)  // truncate at initial write(), not open()
-	
 	#define O_EXEC  0x00040000
 	
 	#define O_CLOEXEC  0x00080000
