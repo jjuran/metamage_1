@@ -86,7 +86,7 @@ namespace Pedestal
 		private:
 			IncrementalSearchEditor&      itsView;
 			bool                          itSearchesBackward;
-			UInt16                        itsModifierMask;
+			unsigned short                itsModifierMask;
 			TextSelection                 itsSavedSelection;
 			std::vector< TextSelection >  itsMatches;
 			std::string                   itsPattern;
