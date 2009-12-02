@@ -21,7 +21,6 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/Fonts.h"
-#include "Nitrogen/FrameworkHeader.h"
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/IBCarbonRuntime.h"
 #include "Nitrogen/Icons.h"
