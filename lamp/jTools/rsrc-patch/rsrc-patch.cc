@@ -7,6 +7,12 @@
 #include <functional>
 #include <vector>
 
+// Standard C
+#include <string.h>
+
+// iota
+#include "iota/quad.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
@@ -74,7 +80,12 @@ namespace tool
 			throw N::ResNotFound();
 		}
 		
-		N::ResType resType = NN::Convert< N::ResType >( std::string( gResType ) );
+		if ( strlen( gResType ) != sizeof (::ResType) )
+		{
+			throw N::ParamErr();
+		}
+		
+		N::ResType resType = N::ResType( iota::decode_quad( gResType ) );
 		
 		N::ResID   resID   = N::ResID( std::atoi( gResID ) );
 		

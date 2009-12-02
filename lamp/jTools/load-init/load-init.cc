@@ -12,7 +12,8 @@
 #include <functional>
 #include <vector>
 
-// Iota
+// iota
+#include "iota/quad.hh"
 #include "iota/strings.hh"
 
 // Nitrogen
@@ -44,7 +45,12 @@ namespace tool
 	
 	static int LoadInit( const char* type, const char* id, iota::argv_t args )
 	{
-		N::ResType resType = NN::Convert< N::ResType >( std::string( type ) );
+		if ( strlen( type ) != sizeof 'quad' )
+		{
+			throw N::ParamErr();
+		}
+		
+		N::ResType resType = N::ResType( iota::decode_quad( type ) );
 		
 		N::ResID   resID   = N::ResID( std::atoi( id ) );
 		

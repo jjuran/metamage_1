@@ -5,11 +5,15 @@
 
 // C Standard Library
 #include <stdlib.h>
+#include <string.h>
 
 // C++ Standard Library
 #include <functional>
 #include <string>
 #include <vector>
+
+// iota
+#include "iota/quad.hh"
 
 // Nucleus
 #include "Nucleus/Exception.h"
@@ -166,7 +170,12 @@ namespace tool
 			
 			if ( const char* macEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" ) )
 			{
-				return NN::Convert< N::OSType, std::string >( macEditorSignature );
+				if ( strlen( macEditorSignature ) == sizeof 'quad' )
+				{
+					return N::OSType( iota::decode_quad( macEditorSignature ) );
+				}
+				
+				// Treat a malformed quad value the same as no value.  Move on.
 			}
 			
 			// No MAC_EDITOR_SIGNATURE; default to BBEdit/TextWrangler.
@@ -178,7 +187,13 @@ namespace tool
 		if ( !gAppSigToOpenIn.empty() )
 		{
 			// User has specified an application by its signature
-			return NN::Convert< N::OSType >( gAppSigToOpenIn );
+			
+			if ( gAppSigToOpenIn.length() != sizeof 'quad' )
+			{
+				throw N::ParamErr();
+			}
+			
+			return N::OSType( iota::decode_quad( gAppSigToOpenIn.data() ) );
 		}
 		
 		// Otherwise, give everything to the Finder.
