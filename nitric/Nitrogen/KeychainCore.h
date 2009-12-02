@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __KEYCHAINCORE__
-#include <SecurityCore/KeychainCore.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 #ifndef NUCLEUS_OWNED_H

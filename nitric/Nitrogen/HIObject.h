@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __HIOBJECT__
-#include <HiToolbox/HIObject.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef	NITROGEN_MACTYPES_H

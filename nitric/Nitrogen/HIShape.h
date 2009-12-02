@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __HISHAPE__
-#include <HIToolbox/HIShape.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef NITROGEN_CFBASE_H

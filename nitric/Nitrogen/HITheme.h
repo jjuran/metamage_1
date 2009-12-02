@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __HITHEME__
-#include <HIToolbox/HITheme.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef	NITROGEN_MACTYPES_H

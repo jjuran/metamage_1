@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __KEYCHAINHI__
-#include <SecurityHI/KeychainHI.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef NITROGEN_KEYCHAINCORE_H

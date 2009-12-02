@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __LSOPEN__
-#include <LaunchServices/LSOpen.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #ifndef NITROGEN_OSSTATUS_H

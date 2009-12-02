@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __HIVIEW__
-#include <HiToolbox/HIView.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef	NITROGEN_MACTYPES_H

@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __HITOOLBAR__
-#include <HiToolbox/HIToolbar.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef NITROGEN_HIOBJECT_H
