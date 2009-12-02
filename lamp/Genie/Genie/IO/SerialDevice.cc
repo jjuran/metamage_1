@@ -5,6 +5,10 @@
 
 #include "Genie/IO/SerialDevice.hh"
 
+// Mac OS
+#include <LowMem.h>
+#include <StringCompare.h>
+
 // Standard C++
 #include <map>
 

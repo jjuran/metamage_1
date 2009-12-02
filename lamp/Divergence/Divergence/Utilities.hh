@@ -16,6 +16,9 @@
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
+#ifndef __AEINTERACTION__
+#include <AEInteraction.h>
+#endif
 
 // Standard C++
 #include <string>

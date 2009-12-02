@@ -13,6 +13,11 @@
 
 #include "Nitrogen/Files.h"
 
+// Mac OS
+#ifndef __STRINGCOMPARE__
+#include <StringCompare.h>
+#endif
+
 // Standard C++
 #include <limits>
 

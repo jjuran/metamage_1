@@ -6,6 +6,9 @@
 #ifndef PEDESTAL_PUSHBUTTON_HH
 #define PEDESTAL_PUSHBUTTON_HH
 
+// Mac OS
+#include <Controls.h>
+
 // Nitrogen
 #include "Nitrogen/RefCon.h"
 #include "Nitrogen/Str.h"

@@ -5,6 +5,9 @@
 
 #include "Pedestal/ApplicationContext.hh"
 
+// Mac OS
+#include <Dialogs.h>
+
 
 namespace Pedestal
 {
