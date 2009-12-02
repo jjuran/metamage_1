@@ -80,7 +80,7 @@ namespace Genie
 		return text;
 	}
 	
-	int WriteToSystemConsole( const char* data, std::size_t byteCount )
+	int WriteToSystemConsole( const char* data, unsigned byteCount )
 	{
 		return Append( GetConsoleText(), data, byteCount );
 	}
