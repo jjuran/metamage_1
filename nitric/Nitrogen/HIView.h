@@ -14,7 +14,7 @@
 #ifndef NITROGEN_HIVIEW_H
 #define NITROGEN_HIVIEW_H
 
-#if !TARGET_RT_MAC_MACHO
+#ifndef __MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
