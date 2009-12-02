@@ -93,7 +93,7 @@ namespace Nitrogen
 	{
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		inline void InvokeVBLUPP( VBLTaskPtr vblTaskPtr, ::TimerUPP userUPP )
+		inline void InvokeVBLUPP( VBLTaskPtr vblTaskPtr, ::VBLUPP userUPP )
 		{
 			::InvokeVBLUPP( vblTaskPtr, userUPP );
 		}
