@@ -44,7 +44,7 @@ namespace Genie
 	
 	extern SystemCall* gSystemCallArray;
 	
-	extern size_t gLastSystemCall;
+	extern std::size_t gLastSystemCall;
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
 	

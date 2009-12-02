@@ -17,7 +17,7 @@ namespace Genie
 	
 	SystemCall* gSystemCallArray = NULL;
 	
-	size_t gLastSystemCall = 0;
+	std::size_t gLastSystemCall = 0;
 	
 	
 	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name()

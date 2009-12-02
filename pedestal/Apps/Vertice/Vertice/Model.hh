@@ -59,7 +59,7 @@ namespace Vertice
 			Context const& GetContext( std::size_t index ) const;
 			Context      & GetContext( std::size_t index );
 			
-			std::size_t GetSuperContext( size_t index ) const
+			std::size_t GetSuperContext( std::size_t index ) const
 			{
 				return GetContext( index ).ParentIndex();
 			}
