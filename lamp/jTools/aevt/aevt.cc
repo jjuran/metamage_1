@@ -11,7 +11,8 @@
 // Standard C++
 #include <vector>
 
-// Iota
+// iota
+#include "iota/quad.hh"
 #include "iota/strings.hh"
 
 // poseven
@@ -45,6 +46,12 @@ namespace tool
 	namespace p7 = poseven;
 	namespace o = orion;
 	
+	
+	template < class Quad >
+	static inline Quad decode_quad( const std::string& s )
+	{
+		return Quad( iota::decode_quad( s.data() ) );
+	}
 	
 	static NN::Owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
 	                                                   N::AEEventID             eventID,
@@ -190,10 +197,11 @@ namespace tool
 			return 1;
 		}
 		
-		N::OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ) : N::kUnknownType;
+		N::OSType sigCode = (sig.size() == 4) ? decode_quad< N::OSType >( sig )
+		                                      : N::kUnknownType;
 		
-		N::AEEventClass eventClass = NN::Convert< N::AEEventClass >( argEventClass );
-		N::AEEventID    eventID    = NN::Convert< N::AEEventID    >( argEventID    );
+		N::AEEventClass eventClass = decode_quad< N::AEEventClass >( argEventClass );
+		N::AEEventID    eventID    = decode_quad< N::AEEventID    >( argEventID    );
 		
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,
