@@ -22,6 +22,9 @@ namespace Genie
 	using MacFeatures::Is_Running_OSXNative;
 	
 	
+	static const void* kUnresolvedCFragSymbolAddress = NULL;
+	
+	
 	std::string GetWorkstationName()
 	{
 		if ( !Is_Running_OSXNative() )
@@ -29,7 +32,7 @@ namespace Genie
 			return GetStringResource( -16413 );
 		}
 		
-		if ( CSCopyMachineName != (void*) kUnresolvedCFragSymbolAddress )
+		if ( CSCopyMachineName != kUnresolvedCFragSymbolAddress )
 		{
 			if ( CFStringRef userName = CSCopyMachineName() )
 			{
