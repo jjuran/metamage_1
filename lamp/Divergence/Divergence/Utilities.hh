@@ -6,7 +6,7 @@
 #ifndef DIVERGENCE_UTILITIES_HH
 #define DIVERGENCE_UTILITIES_HH
 
-#if !TARGET_OS_MAC
+#if !defined( __MACOS__ ) && !defined( __APPLE__ )
 
 #error Divergence is Mac-only
 
