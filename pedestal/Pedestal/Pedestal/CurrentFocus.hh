@@ -20,7 +20,7 @@ namespace Pedestal
 	
 	void Set_Focus( View* view );
 	
-	inline void Reset_Focus()  { Set_Focus( NULL ); }
+	inline void Reset_Focus()  { Set_Focus( 0 ); }  // NULL
 	
 	void Change_Focus( View* view );
 	
