@@ -20,10 +20,6 @@
 
 #include <AddressBook/ABAddressBookC.h>
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
-
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
