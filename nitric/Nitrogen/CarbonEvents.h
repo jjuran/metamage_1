@@ -14,11 +14,8 @@
 #ifndef NITROGEN_CARBONEVENTS_H
 #define NITROGEN_CARBONEVENTS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CARBONEVENTS__
-#include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
+#include <CarbonEvents.h>
 #endif
 
 // Nucleus

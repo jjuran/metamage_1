@@ -14,14 +14,11 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #define NITROGEN_AEDATAMODEL_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __AEDATAMODEL__
-#include FRAMEWORK_HEADER(AE,AEDataModel.h)
+#include <AEDataModel.h>
 #endif
 #ifndef __EVENTS__
-#include FRAMEWORK_HEADER(HIToolbox,Events.h)
+#include <Events.h>
 #endif
 
 #if !TARGET_API_MAC_CARBON

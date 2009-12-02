@@ -18,11 +18,8 @@
 #include "Nucleus/Owned.h"
 #endif
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __INTERNETCONFIG__
-#include FRAMEWORK_HEADER(HIServices,InternetConfig.h)
+#include <InternetConfig.h>
 #endif
 
 #ifndef NITROGEN_MACMEMORY_H

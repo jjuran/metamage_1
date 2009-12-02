@@ -14,11 +14,8 @@
 #ifndef NITROGEN_RESOURCES_H
 #define NITROGEN_RESOURCES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __RESOURCES__
-#include FRAMEWORK_HEADER(CarbonCore,Resources.h)
+#include <Resources.h>
 #endif
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"

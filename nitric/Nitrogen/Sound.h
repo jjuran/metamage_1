@@ -14,11 +14,8 @@
 #ifndef NITROGEN_SOUND_H
 #define NITROGEN_SOUND_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __SOUND__
-#include FRAMEWORK_HEADER(CarbonSound,Sound.h)
+#include <Sound.h>
 #endif
 
 // Nucleus

@@ -14,12 +14,9 @@
 #ifndef NITROGEN_UNICODECONVERTER_H
 #define NITROGEN_UNICODECONVERTER_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 
 #ifndef __UNICODECONVERTER__
-#include FRAMEWORK_HEADER(HIToolbox,UnicodeConverter.h)
+#include <UnicodeConverter.h>
 #endif
 
 #ifndef NITROGEN_MACTYPES_H

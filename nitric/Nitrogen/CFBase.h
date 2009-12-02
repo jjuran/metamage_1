@@ -12,14 +12,11 @@
 #ifndef NITROGEN_CFBASE_H
 #define NITROGEN_CFBASE_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CFBASE__
-#include FRAMEWORK_HEADER(CoreFoundation,CFBase.h)
+#include <CFBase.h>
 #endif
 #ifndef __CFSTRING__
-#include FRAMEWORK_HEADER(CoreFoundation,CFString.h)
+#include <CFString.h>
 #endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"

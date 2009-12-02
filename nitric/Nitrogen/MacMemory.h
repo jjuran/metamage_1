@@ -14,11 +14,8 @@
 #ifndef NITROGEN_MACMEMORY_H
 #define NITROGEN_MACMEMORY_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __MACMEMORY__
-#include FRAMEWORK_HEADER(CarbonCore,MacMemory.h)
+#include <MacMemory.h>
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"

@@ -7,11 +7,8 @@
 #ifndef NITROGEN_CGCONTEXT_H
 #define NITROGEN_CGCONTEXT_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef CGCONTEXT_H_
-#include FRAMEWORK_HEADER(CoreGraphics,CGContext.h)
+#include <CGContext.h>
 #endif
 #ifndef NITROGEN_CGBASE_H
 #include "Nitrogen/CGBase.h"

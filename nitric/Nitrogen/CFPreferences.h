@@ -12,11 +12,8 @@
 #ifndef NITROGEN_CFPREFERENCES_H
 #define NITROGEN_CFPREFERENCES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CFPREFERENCES__
-#include FRAMEWORK_HEADER(CoreFoundation,CFPreferences.h)
+#include <CFPreferences.h>
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"

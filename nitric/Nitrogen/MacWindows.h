@@ -14,11 +14,8 @@
 #ifndef NITROGEN_MACWINDOWS_H
 #define NITROGEN_MACWINDOWS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __MACWINDOWS__
-#include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
+#include <MacWindows.h>
 #endif
 
 #ifndef NUCLEUS_FLAG_H

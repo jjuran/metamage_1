@@ -31,11 +31,8 @@
 #include "Nucleus/Owned.h"
 #endif
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __FILES__
-#include FRAMEWORK_HEADER(CarbonCore,Files.h)
+#include <Files.h>
 #endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"

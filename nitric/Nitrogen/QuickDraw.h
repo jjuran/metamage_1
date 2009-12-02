@@ -14,11 +14,8 @@
 #ifndef NITROGEN_QUICKDRAW_H
 #define NITROGEN_QUICKDRAW_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __QUICKDRAW__
-#include FRAMEWORK_HEADER(QD,QuickDraw.h)
+#include <QuickDraw.h>
 #endif
 
 #if !TARGET_API_MAC_CARBON
