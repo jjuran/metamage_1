@@ -20,6 +20,11 @@
 #ifndef __EVENTS__
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Events.hh"
+#endif
+
 #ifndef NITROGEN_OSUTILS_H
 #include "Nitrogen/OSUtils.h"
 #endif

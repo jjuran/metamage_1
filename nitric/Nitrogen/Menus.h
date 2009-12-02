@@ -20,6 +20,11 @@
 #ifndef __MENUS__
 #include FRAMEWORK_HEADER(HIToolbox,Menus.h)
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Menus.hh"
+#endif
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif

@@ -21,6 +21,10 @@
 #include FRAMEWORK_HEADER(HIToolbox,Controls.h)
 #endif
 
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Controls.hh"
+#endif
+
 // Nucleus
 #include "Nucleus/Enumeration.h"
 

@@ -20,6 +20,11 @@
 #ifndef __QUICKDRAW__
 #include FRAMEWORK_HEADER(QD,QuickDraw.h)
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Quickdraw.hh"
+#endif
+
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif

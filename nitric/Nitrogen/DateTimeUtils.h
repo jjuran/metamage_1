@@ -20,6 +20,11 @@
 #ifndef __DATETIMEUTILS__
 #include FRAMEWORK_HEADER(CarbonCore,DateTimeUtils.h)
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/DateTimeUtils.hh"
+#endif
+
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
