@@ -5,6 +5,9 @@
 
 #include "Genie/SystemCallRegistry.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Genie
 #include "Genie/Dispatch/UnimplementedSystemCall.hh"
 
