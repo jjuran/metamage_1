@@ -7,6 +7,9 @@
 #define PEDESTAL_GRAPHIC_HH
 
 
+struct Rect;
+
+
 namespace Pedestal
 {
 	
