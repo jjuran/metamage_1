@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/quad.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -266,9 +267,7 @@ namespace Genie
 			
 			const ComponentDescription desc = N::GetComponentInfo( comp );
 			
-			const N::OSType code = N::OSType( Accessor::Get( desc ) );
-			
-			return NN::Convert< std::string >( code );
+			return plus::encode_quad( Accessor::Get( desc ) );
 		}
 	};
 	
