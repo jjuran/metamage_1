@@ -7,7 +7,7 @@
 namespace Genie
 {
 	
-	int WriteToSystemConsole( const char* data, std::size_t byteCount );
+	int WriteToSystemConsole( const char* data, unsigned byteCount );
 	
 }
 

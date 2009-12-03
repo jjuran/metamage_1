@@ -9,6 +9,7 @@
 // Standard C++
 #include <algorithm>
 #include <iterator>
+#include <map>
 #include <string>
 #include <vector>
 
