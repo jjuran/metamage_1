@@ -3,6 +3,9 @@
  *	===================
  */
 
+// Mac OS
+#include <Sound.h>
+
 // Debug
 #include "debug/assert.hh"
 

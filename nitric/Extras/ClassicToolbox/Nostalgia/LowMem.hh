@@ -3,6 +3,10 @@
 #ifndef NOSTALGIA_LOWMEM_HH
 #define NOSTALGIA_LOWMEM_HH
 
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
+
 #ifndef __OSUTILS__
 #include <OSUtils.h>
 #endif

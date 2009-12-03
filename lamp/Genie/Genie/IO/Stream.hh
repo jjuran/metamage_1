@@ -54,7 +54,7 @@ namespace Genie
 			
 			void TryAgainLater() const;
 			
-			const std::string* Peek( ByteCount minBytes );
+			const std::string* Peek( std::size_t minBytes );
 			
 			unsigned int Poll();
 			

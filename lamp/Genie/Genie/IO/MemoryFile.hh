@@ -23,13 +23,13 @@ namespace Genie
 	class MemoryFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
-			::Ptr        itsBase;  // base address
+			char*        itsBase;  // base address
 			std::size_t  itsSize;
 		
 		public:
 			MemoryFileHandle( const FSTreePtr&  file,
 			                  OpenFlags         flags,
-			                  ::Ptr             base,
+			                  char*             base,
 			                  std::size_t       size )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),

@@ -25,13 +25,21 @@
 namespace Genie
 {
 	
-	#if TARGET_CPU_68K
+	#ifdef __MC68K__
 		
 		#define HARDWARE_CLASS "m68k"
 		
-	#elif TARGET_CPU_PPC
+	#endif
+		
+	#ifdef __POWERPC__
 		
 		#define HARDWARE_CLASS "powerpc"
+		
+	#endif
+	
+	#ifdef __i386__
+		
+		#define HARDWARE_CLASS "x86"
 		
 	#endif
 	

@@ -9,6 +9,7 @@
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
+#include <Sound.h>
 
 // Standard C++
 #include <string>

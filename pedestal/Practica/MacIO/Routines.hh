@@ -7,6 +7,7 @@
 #define MACIO_ROUTINES_HH
 
 // Mac OS
+#include <Devices.h>
 #include <Files.h>
 
 // MacIO

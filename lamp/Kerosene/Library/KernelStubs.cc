@@ -7,6 +7,7 @@
 #include "netdb.h"
 
 // Mac OS
+#define OTUNIXERRORS 1
 #include <OpenTransportProviders.h>
 
 // Kerosene

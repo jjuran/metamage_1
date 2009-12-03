@@ -5,6 +5,10 @@
 
 #include "Genie/FS/FSTree_sys_mac_user_name.hh"
 
+// Mac OS
+#include <CFBundle.h>
+#include <CFString.h>
+
 // MacFeatures
 #include "MacFeatures/Features.hh"
 
