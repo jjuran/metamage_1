@@ -14,11 +14,8 @@
 #ifndef NITROGEN_CONTROLDEFINITIONS_H
 #define NITROGEN_CONTROLDEFINITIONS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CONTROLDEFINITIONS__
-#include FRAMEWORK_HEADER(HIToolbox,ControlDefinitions.h)
+#include <ControlDefinitions.h>
 #endif
 #ifndef NITROGEN_TSMTE_H
 #include "Nitrogen/TSMTE.h"

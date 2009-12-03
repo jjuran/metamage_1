@@ -14,11 +14,12 @@
 #ifndef NITROGEN_CONTROLS_H
 #define NITROGEN_CONTROLS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CONTROLS__
-#include FRAMEWORK_HEADER(HIToolbox,Controls.h)
+#include <Controls.h>
+#endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Controls.hh"
 #endif
 
 // Nucleus

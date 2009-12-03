@@ -14,12 +14,12 @@
 #ifndef NITROGEN_KEYCHAINHI_H
 #define	NITROGEN_KEYCHAINHI_H
 
-#if	!TARGET_RT_MAC_MACHO
+#ifndef __MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
 #ifndef __KEYCHAINHI__
-#include <SecurityHI/KeychainHI.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef NITROGEN_KEYCHAINCORE_H

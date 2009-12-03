@@ -14,11 +14,8 @@
 #ifndef NITROGEN_NAVIGATION_H
 #define NITROGEN_NAVIGATION_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __NAVIGATION__
-#include FRAMEWORK_HEADER(NavigationServices,Navigation.h)
+#include <Navigation.h>
 #endif
 
 #ifndef NUCLEUS_OWNED_H

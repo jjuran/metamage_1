@@ -14,14 +14,11 @@
 #ifndef NITROGEN_AEREGISTRY_H
 #define NITROGEN_AEREGISTRY_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __AEREGISTRY__
-#include FRAMEWORK_HEADER(AE,AERegistry.h)
+#include <AERegistry.h>
 #endif
 #ifndef __CARBONEVENTS__
-#include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
+#include <CarbonEvents.h>
 #endif
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"

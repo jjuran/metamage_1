@@ -14,12 +14,12 @@
 #ifndef NITROGEN_LSOPEN_H
 #define NITROGEN_LSOPEN_H
 
-#if	!TARGET_RT_MAC_MACHO
+#ifndef __MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
 #ifndef __LSOPEN__
-#include <LaunchServices/LSOpen.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #ifndef NITROGEN_OSSTATUS_H

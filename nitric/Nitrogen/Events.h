@@ -14,12 +14,14 @@
 #ifndef NITROGEN_EVENTS_H
 #define NITROGEN_EVENTS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __EVENTS__
-#include FRAMEWORK_HEADER(HIToolbox,Events.h)
+#include <Events.h>
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Events.hh"
+#endif
+
 #ifndef NITROGEN_OSUTILS_H
 #include "Nitrogen/OSUtils.h"
 #endif

@@ -12,11 +12,8 @@
 #ifndef NITROGEN_CFURL_H
 #define NITROGEN_CFURL_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CFURL__
-#include FRAMEWORK_HEADER(CoreFoundation,CFURL.h)
+#include <CFURL.h>
 #endif
 
 #ifndef NUCLEUS_OWNED_H

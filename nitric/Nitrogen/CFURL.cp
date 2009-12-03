@@ -12,7 +12,7 @@
 #include "Nitrogen/CFURL.h"
 
 #ifndef __FILES__
-#include FRAMEWORK_HEADER(CarbonCore,Files.h)
+#include <Files.h>
 #endif
 
 

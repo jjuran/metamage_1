@@ -12,11 +12,8 @@
 #ifndef NITROGEN_TEXTCOMMON_H
 #define NITROGEN_TEXTCOMMON_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __TEXTCOMMON__
-#include FRAMEWORK_HEADER(CarbonCore,TextCommon.h)
+#include <TextCommon.h>
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

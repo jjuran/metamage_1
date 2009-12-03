@@ -12,11 +12,8 @@
 #ifndef NITROGEN_CFPROPERTYLIST_H
 #define NITROGEN_CFPROPERTYLIST_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CFPROPERTYLIST__
-#include FRAMEWORK_HEADER(CoreFoundation,CFPropertyList.h)
+#include <CFPropertyList.h>
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"

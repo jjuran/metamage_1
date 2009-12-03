@@ -14,12 +14,14 @@
 #ifndef NITROGEN_DATETIMEUTILS_H
 #define NITROGEN_DATETIMEUTILS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __DATETIMEUTILS__
-#include FRAMEWORK_HEADER(CarbonCore,DateTimeUtils.h)
+#include <DateTimeUtils.h>
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/DateTimeUtils.hh"
+#endif
+
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif

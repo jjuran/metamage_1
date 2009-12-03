@@ -14,11 +14,8 @@
 #ifndef NITROGEN_PROCESSES_H
 #define NITROGEN_PROCESSES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __PROCESSES__
-#include FRAMEWORK_HEADER(HIServices,Processes.h)
+#include <Processes.h>
 #endif
 
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H

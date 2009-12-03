@@ -14,11 +14,8 @@
 #ifndef NITROGEN_ALIASES_H
 #define NITROGEN_ALIASES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __ALIASES__
-#include FRAMEWORK_HEADER(CarbonCore,Aliases.h)
+#include <Aliases.h>
 #endif
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"

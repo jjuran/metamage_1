@@ -18,20 +18,17 @@
 #include "Nucleus/Enumeration.h"
 #endif
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __AEDATAMODEL__
-#include FRAMEWORK_HEADER(AE,AEDataModel.h)
+#include <AEDataModel.h>
 #endif
 #ifndef __AEOBJECTS__
-#include FRAMEWORK_HEADER(AE,AEObjects.h)
+#include <AEObjects.h>
 #endif
 #ifndef __APPLEEVENTS__
-#include FRAMEWORK_HEADER(AE,AppleEvents.h)
+#include <AppleEvents.h>
 #endif
 #ifndef __AEREGISTRY__
-#include FRAMEWORK_HEADER(AE,AERegistry.h)
+#include <AERegistry.h>
 #endif
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>

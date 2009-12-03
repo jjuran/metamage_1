@@ -14,12 +14,14 @@
 #ifndef NITROGEN_MENUS_H
 #define NITROGEN_MENUS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __MENUS__
-#include FRAMEWORK_HEADER(HIToolbox,Menus.h)
+#include <Menus.h>
 #endif
+
+#if !TARGET_API_MAC_CARBON
+#include "Carbonate/Menus.hh"
+#endif
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif

@@ -12,11 +12,8 @@
 #ifndef NITROGEN_CFNUMBER_H
 #define NITROGEN_CFNUMBER_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __CFDATE__
-#include FRAMEWORK_HEADER(CoreFoundation,CFNumber.h)
+#include <CFNumber.h>
 #endif
 #ifndef NITROGEN_CFBOOLEAN_H
 #include "Nitrogen/CFBoolean.h"

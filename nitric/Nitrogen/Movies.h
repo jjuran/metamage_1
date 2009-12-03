@@ -14,11 +14,8 @@
 #ifndef NITROGEN_MOVIES_H
 #define NITROGEN_MOVIES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __MOVIES__
-#include FRAMEWORK_HEADER(QuickTime,QuickTime.h)
+#include <Movies.h>
 #endif
 
 #ifndef NUCLEUS_FLAG_H

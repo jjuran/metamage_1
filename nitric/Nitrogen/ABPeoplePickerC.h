@@ -14,15 +14,11 @@
 #ifndef NITROGEN_ABPEOPLEPICKER_H
 #define	NITROGEN_ABPEOPLEPICKER_H
 
-#if	!TARGET_RT_MAC_MACHO
+#ifndef __MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
 #include <AddressBook/ABPeoplePickerC.h>
-
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"

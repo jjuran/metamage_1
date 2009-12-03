@@ -18,11 +18,8 @@
 #include "Nucleus/Enumeration.h"
 #endif
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __AEREGISTRY__
-#include FRAMEWORK_HEADER(AE,AERegistry.h)
+#include <AERegistry.h>
 #endif
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>

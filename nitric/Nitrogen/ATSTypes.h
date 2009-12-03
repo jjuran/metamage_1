@@ -14,11 +14,8 @@
 #ifndef NITROGEN_ATSTYPES_H
 #define NITROGEN_ATSTYPES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __ATSTYPES__
-#include FRAMEWORK_HEADER(ATS,ATSTypes.h)
+#include <ATSTypes.h>
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

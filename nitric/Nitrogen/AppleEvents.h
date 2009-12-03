@@ -14,11 +14,8 @@
 #ifndef NITROGEN_APPLEEVENTS_H
 #define NITROGEN_APPLEEVENTS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __APPLEEVENTS__
-#include FRAMEWORK_HEADER(AE,AppleEvents.h)
+#include <AppleEvents.h>
 #endif
 
 // Nucleus

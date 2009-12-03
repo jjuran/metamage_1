@@ -14,12 +14,12 @@
 #ifndef NITROGEN_HISHAPE_H
 #define NITROGEN_HISHAPE_H
 
-#if !TARGET_RT_MAC_MACHO
+#ifndef __MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
 #ifndef __HISHAPE__
-#include <HIToolbox/HIShape.h>
+#include <Carbon/Carbon.h>
 #endif
 
 #ifndef NITROGEN_CFBASE_H

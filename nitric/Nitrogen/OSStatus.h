@@ -14,14 +14,11 @@
 #ifndef NITROGEN_OSSTATUS_H
 #define NITROGEN_OSSTATUS_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
 #ifndef __MACTYPES__
-#include FRAMEWORK_HEADER(CarbonCore,MacTypes.h)
+#include <MacTypes.h>
 #endif
 #ifndef __MACERRORS__
-#include FRAMEWORK_HEADER(CarbonCore,MacErrors.h)
+#include <MacErrors.h>
 #endif
 
 #ifndef NUCLEUS_ERRORCODE_H
