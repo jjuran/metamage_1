@@ -14,6 +14,10 @@
 #include <MacErrors.h>
 #endif
 
+// Math
+#include <math.h>
+#include <fp.h>
+
 // Standard C
 #include "errno.h"
 #include "signal.h"
@@ -57,6 +61,7 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
+#include "Nucleus/Shared.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // Io
@@ -72,6 +77,7 @@
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Str.h"
 #include "Nitrogen/Threads.h"
+#include "Nitrogen/Timer.h"
 
 // poseven
 #include "poseven/functions/open.hh"
