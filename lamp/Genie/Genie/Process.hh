@@ -26,7 +26,6 @@
 #include "Nitrogen/Threads.h"
 
 // Genie
-#include "Genie/BinaryImage.hh"
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FS/FSTree.hh"
