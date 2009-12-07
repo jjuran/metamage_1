@@ -110,9 +110,13 @@ namespace tool
 	{
 		private:
 			CompilerOptions& its_options;
+			bool&            it_needs_include_union;
 		
 		public:
-			IncludeDirGatherer( CompilerOptions& options ) : its_options( options )
+			IncludeDirGatherer( CompilerOptions& options, bool& needs_union )
+			:
+				its_options( options ),
+				it_needs_include_union( needs_union )
 			{
 			}
 			
@@ -540,8 +544,10 @@ namespace tool
 		
 		DefineMacros( options, target_info );
 		
+		bool needs_include_union = false;
+		
 		// Select the includes belonging to the projects we use
-		IncludeDirGatherer gatherer( options );
+		IncludeDirGatherer gatherer( options, needs_include_union );
 		
 		const std::vector< std::string >& all_used_projects = project.AllUsedProjects();
 		
