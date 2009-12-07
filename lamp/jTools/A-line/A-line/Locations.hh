@@ -25,6 +25,8 @@ namespace tool
 	
 	std::string TargetDirPath( const std::string& target );
 	
+	std::string get_includes_union_pathname();
+	
 	std::string LibrariesDirPath();
 	std::string RezzedDirPath();
 	
