@@ -69,7 +69,7 @@ namespace iota
 		
 		char* end = buffer + magnitude;
 		
-		inscribe_unsigned_decimal_backwards( x, end );
+		fill_unsigned_decimal( x, buffer, end );
 		
 		return end;
 	}

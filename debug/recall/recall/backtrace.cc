@@ -214,9 +214,11 @@ namespace recall
 			
 			result.append( spaces, n_spaces );
 			
-			result.resize( result.size() + magnitude );
+			const std::size_t size = result.size();
 			
-			iota::inscribe_unsigned_decimal_backwards( offset, &*result.end() );
+			result.resize( size + magnitude );
+			
+			iota::fill_unsigned_decimal( offset, &result[ size ], magnitude );
 			
 			const call_info& info = *it;
 			
