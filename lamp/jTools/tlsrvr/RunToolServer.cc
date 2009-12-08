@@ -52,9 +52,6 @@
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
 
-// BitsAndBytes
-#include "StringFilters.hh"
-
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -71,12 +68,15 @@ namespace tool
 	namespace Div = Divergence;
 	namespace NX = NitrogenExtras;
 	
-	using BitsAndBytes::q;
-	
 	//using namespace Nucleus::Operators;
 	
 	using namespace io::path_descent_operators;
 	
+	
+	static std::string q( const std::string& str )
+	{
+		return std::string( "'" ) + str + "'";
+	}
 	
 	static std::string& operator<<( std::string& str, const std::string& appendage )
 	{
