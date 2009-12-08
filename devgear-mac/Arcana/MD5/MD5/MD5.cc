@@ -11,7 +11,7 @@
 #include <functional>
 #include <vector>
 
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 
 namespace MD5

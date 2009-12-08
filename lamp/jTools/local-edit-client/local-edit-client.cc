@@ -26,7 +26,7 @@
 
 // Arcana
 #include "HTTP.hh"
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 // Orion
 #include "Orion/get_options.hh"

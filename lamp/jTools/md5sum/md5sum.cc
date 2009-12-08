@@ -18,7 +18,7 @@
 #include "HexStrings.hh"
 
 // Arcana
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 // Orion
 #include "Orion/Main.hh"

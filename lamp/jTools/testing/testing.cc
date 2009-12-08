@@ -101,7 +101,7 @@
 
 // Arcana
 #include "CRC32.hh"
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 // Vectoria
 #include "Vectoria/Matrix.hh"

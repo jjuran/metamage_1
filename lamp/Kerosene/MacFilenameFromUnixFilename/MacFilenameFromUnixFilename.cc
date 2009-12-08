@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 // Arcana / MD5
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 
 namespace Kerosene

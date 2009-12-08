@@ -45,7 +45,7 @@
 #include "TimeOff.hh"
 
 // Arcana / MD5
-#include "MD5.hh"
+#include "MD5/MD5.hh"
 
 // Kerosene
 #include "MacFilenameFromUnixFilename.hh"
