@@ -368,5 +368,36 @@ namespace Vertice
 		return closestModel;
 	}
 	
+	V::Point3D::Type FisheyeLens::Bend( const V::Point3D::Type& pt ) const
+	{
+		double x = pt[ X ];
+		double y = pt[ Y ];
+		double z = pt[ Z ];
+		
+		double r, theta;
+		V::XY2Polar( x, y, r, theta );
+		
+		r = atan( r / z );
+		r *= z;  // Because the clipping code expects we haven't divided by z yet
+		V::Polar2XY( r, theta, x, y );
+		
+		return V::Point3D::Make( x, y, z );
+	}
+	
+	V::Point3D::Type FisheyeLens::Unbend( const V::Point3D::Type& pt ) const
+	{
+		double x = pt[ X ];
+		double y = pt[ Y ];
+		double z = pt[ Z ];
+		
+		double r, theta;
+		V::XY2Polar( x, y, r, theta );
+		
+		r = tan( r );
+		V::Polar2XY( r, theta, x, y );
+		
+		return V::Point3D::Make( x, y, z );
+	}
+	
 }
 
