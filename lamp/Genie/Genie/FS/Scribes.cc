@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Scribes.hh"
 
+// Standard C/C++
+#include <cctype>
+
 
 namespace Genie
 {
