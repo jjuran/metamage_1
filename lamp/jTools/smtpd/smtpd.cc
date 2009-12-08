@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <functional>
 #include <list>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -19,7 +18,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-// Iota
+// iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // text-input
@@ -51,9 +51,6 @@
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
-
-// BitsAndBytes
-#include "DecimalStrings.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -116,26 +113,33 @@ namespace tool
 	
 	using namespace io::path_descent_operators;
 	
-	using BitsAndBytes::EncodeDecimal2;
-	using BitsAndBytes::EncodeDecimal4;
-	
 	
 	// E.g. "19840124.183000"
-	static std::string DateFormattedForFilename( unsigned long clock )
+	static std::string DateFormattedForFilename( unsigned long clock, int serial )
 	{
 		DateTimeRec date = N::SecondsToDate( clock );
 		
-		std::ostringstream stamp;
+		std::string result;
 		
-		stamp << EncodeDecimal4( date.year   )
-		      << EncodeDecimal2( date.month  )
-		      << EncodeDecimal2( date.day    )
-		      << "."
-		      << EncodeDecimal2( date.hour   )
-		      << EncodeDecimal2( date.minute )
-		      << EncodeDecimal2( date.second );
+		result.resize( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
-		return stamp.str();
+		char* p = &result[0];
+		
+		iota::fill_unsigned_decimal( date.year,  p,     4 );
+		iota::fill_unsigned_decimal( date.month, &p[4], 2 );
+		iota::fill_unsigned_decimal( date.day,   &p[6], 2 );
+		
+		result[8] = '.';
+		
+		iota::fill_unsigned_decimal( date.hour,   &p[ 9], 2 );
+		iota::fill_unsigned_decimal( date.minute, &p[11], 2 );
+		iota::fill_unsigned_decimal( date.second, &p[13], 2 );
+		
+		result[15] = '-';
+		
+		iota::fill_unsigned_decimal( serial, &p[16], 2 );
+		
+		return result;
 	}
 	
 	static std::string MakeMessageName()
@@ -155,7 +159,7 @@ namespace tool
 			serial = 1;
 		}
 		
-		return DateFormattedForFilename( now ) + "-" + EncodeDecimal2( serial );
+		return DateFormattedForFilename( now, serial );
 	}
 	
 	inline unsigned int IP( unsigned char a,
