@@ -55,9 +55,6 @@
 // Divergence
 #include "Divergence/Utilities.hh"
 
-// MoreFiles
-//#include "MoreFilesExtras.h"
-
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
@@ -100,7 +97,6 @@
 #include "Tests.hh"
 
 // BitsAndBytes
-#include "DecimalStrings.hh"
 #include "HexStrings.hh"
 
 // Arcana
@@ -123,7 +119,6 @@ namespace p7 = poseven;
 namespace Div = Divergence;
 
 using BitsAndBytes::EncodeAsHex;
-using BitsAndBytes::EncodeDecimal2;
 
 
 static int TestUnit( int argc, iota::argv_t argv )
@@ -319,13 +314,6 @@ static int TestVectoria( int argc, iota::argv_t argv )
 	                         PrintableValue( V::IdentityMatrix::Make< int, 2 >() ).c_str() );
 	
 	return 0;
-}
-
-
-static std::string MinSec( unsigned int seconds )
-{
-	return EncodeDecimal2( seconds / 60 ) + ":" + 
-	       EncodeDecimal2( seconds % 60 );
 }
 
 
