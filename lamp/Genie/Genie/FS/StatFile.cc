@@ -28,7 +28,7 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // TimeOff
-#include "TimeOff.hh"
+#include "TimeOff/TimeOff.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"

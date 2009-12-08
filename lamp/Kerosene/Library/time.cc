@@ -8,7 +8,7 @@
 #include "time.h"
 
 // TimeOff
-#include "TimeOff.hh"
+#include "TimeOff/TimeOff.hh"
 
 
 #pragma exceptions off

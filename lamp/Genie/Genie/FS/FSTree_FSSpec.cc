@@ -42,7 +42,7 @@
 #include "poseven/types/errno_t.hh"
 
 // TimeOff
-#include "TimeOff.hh"
+#include "TimeOff/TimeOff.hh"
 
 // Arcana / MD5
 #include "MD5/MD5.hh"

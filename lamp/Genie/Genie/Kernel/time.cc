@@ -14,7 +14,7 @@
 #include "Nitrogen/Timer.h"
 
 // TimeOff
-#include "TimeOff.hh"
+#include "TimeOff/TimeOff.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
