@@ -42,27 +42,6 @@ namespace iota
 		fill_unsigned_decimal( x, begin, begin + length );
 	}
 	
-	inline char* inscribe_unsigned_decimal_backwards( unsigned x, char* end )
-	{
-		char* p = end;
-		
-		if ( x == 0 )
-		{
-			*--p = '0';
-			
-			return p;
-		}
-		
-		while ( x != 0 )
-		{
-			*--p = '0' + x % 10;
-			
-			x /= 10;
-		}
-		
-		return p;
-	}
-	
 	inline char* inscribe_unsigned_decimal_r( unsigned x, char* buffer )
 	{
 		const unsigned magnitude = decimal_magnitude( x );
