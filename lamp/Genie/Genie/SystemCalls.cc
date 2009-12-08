@@ -30,6 +30,7 @@
 #include "OSErrno/OSErrno.hh"
 
 // Genie
+#include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"

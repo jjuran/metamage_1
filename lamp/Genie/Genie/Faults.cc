@@ -11,9 +11,6 @@
 // Standard C
 #include <signal.h>
 
-// Genie
-#include "Genie/Process.hh"
-
 
 namespace Genie
 {
@@ -40,7 +37,7 @@ namespace Genie
 	
 #if TARGET_CPU_68K
 	
-	extern Process* gCurrentProcess;  // defined in Process.cc
+	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];

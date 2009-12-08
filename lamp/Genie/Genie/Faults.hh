@@ -12,6 +12,9 @@ namespace Genie
 	
 	void InstallExceptionHandlers();
 	
+	// Defined in Process.cc.
+	void DeliverFatalSignal( int signo );
+	
 }
 
 #endif

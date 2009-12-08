@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/Faults.hh"
 
 
 void abort()
