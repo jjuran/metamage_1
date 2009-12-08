@@ -29,25 +29,17 @@ namespace iota
 		return x == 0 ? 1 : pure_decimal_magnitude( x );
 	}
 	
-	inline char* inscribe_unsigned_decimal_backwards( unsigned x, char* end )
+	inline void fill_unsigned_decimal( unsigned x, char* begin, char* end )
 	{
-		char* p = end;
-		
-		if ( x == 0 )
-		{
-			*--p = '0';
-			
-			return p;
-		}
-		
-		while ( x != 0 )
+		for ( char* p = end;  p > begin;  x /= 10 )
 		{
 			*--p = '0' + x % 10;
-			
-			x /= 10;
 		}
-		
-		return p;
+	}
+	
+	inline void fill_unsigned_decimal( unsigned x, char* begin, unsigned length )
+	{
+		fill_unsigned_decimal( x, begin, begin + length );
 	}
 	
 	inline char* inscribe_unsigned_decimal_r( unsigned x, char* buffer )
@@ -56,7 +48,7 @@ namespace iota
 		
 		char* end = buffer + magnitude;
 		
-		inscribe_unsigned_decimal_backwards( x, end );
+		fill_unsigned_decimal( x, buffer, end );
 		
 		return end;
 	}

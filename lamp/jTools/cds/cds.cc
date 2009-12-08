@@ -102,12 +102,12 @@ namespace tool
 			
 			char buffer[] = "Track  n: 0m:0s\n";
 			
-			using iota::inscribe_unsigned_decimal_backwards;
+			using iota::fill_unsigned_decimal;
 			
-			inscribe_unsigned_decimal_backwards( track, buffer + STRLEN( "Track  n" ) );
+			fill_unsigned_decimal( track, buffer, STRLEN( "Track  n" ) );
 			
-			inscribe_unsigned_decimal_backwards( minutes, buffer + STRLEN( "Track  n: 0m"    ) );
-			inscribe_unsigned_decimal_backwards( seconds, buffer + STRLEN( "Track  n: 0m:0s" ) );
+			fill_unsigned_decimal( minutes, buffer, STRLEN( "Track  n: 0m"    ) );
+			fill_unsigned_decimal( seconds, buffer, STRLEN( "Track  n: 0m:0s" ) );
 			
 			p7::write( p7::stdout_fileno, buffer, sizeof buffer - 1 );
 		}

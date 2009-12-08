@@ -29,7 +29,7 @@ namespace debug
 		
 		char line_buffer[ sizeof "1234567890" ];
 		
-		iota::inscribe_unsigned_decimal_backwards( line, line_buffer + magnitude );
+		iota::fill_unsigned_decimal( line, line_buffer, magnitude );
 		
 		struct iovec iov[] =
 		{
