@@ -29,6 +29,19 @@ namespace iota
 		return x == 0 ? 1 : pure_decimal_magnitude( x );
 	}
 	
+	inline void fill_unsigned_decimal( unsigned x, char* begin, char* end )
+	{
+		for ( char* p = end;  p > begin;  x /= 10 )
+		{
+			*--p = '0' + x % 10;
+		}
+	}
+	
+	inline void fill_unsigned_decimal( unsigned x, char* begin, unsigned length )
+	{
+		fill_unsigned_decimal( x, begin, begin + length );
+	}
+	
 	inline char* inscribe_unsigned_decimal_backwards( unsigned x, char* end )
 	{
 		char* p = end;
