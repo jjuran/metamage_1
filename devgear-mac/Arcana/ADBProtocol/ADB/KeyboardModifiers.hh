@@ -4,7 +4,7 @@
  */
 
 // Arcana
-#include "ADBProtocol.hh"
+#include "ADB/Protocol.hh"
 
 
 bool KeyboardModifiersAreDistinct( Nitrogen::ADBAddress address );

@@ -17,7 +17,7 @@
 #include "HexStrings.hh"
 
 // Arcana
-#include "ADBProtocol.hh"
+#include "ADB/Protocol.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"

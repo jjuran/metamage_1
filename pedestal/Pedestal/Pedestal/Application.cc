@@ -32,8 +32,8 @@
 #if !TARGET_API_MAC_CARBON
 
 // Arcana
-#include "ADBKeyboardLEDs.hh"
-#include "ADBKeyboardModifiers.hh"
+#include "ADB/KeyboardLEDs.hh"
+#include "ADB/KeyboardModifiers.hh"
 
 #endif
 

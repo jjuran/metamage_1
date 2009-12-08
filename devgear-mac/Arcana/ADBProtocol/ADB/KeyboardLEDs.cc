@@ -5,7 +5,7 @@
 
 #if !TARGET_API_MAC_CARBON
 
-#include "ADBKeyboardLEDs.hh"
+#include "ADB/KeyboardLEDs.hh"
 
 
 namespace N = Nitrogen;

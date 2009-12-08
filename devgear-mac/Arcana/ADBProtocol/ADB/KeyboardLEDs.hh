@@ -7,7 +7,7 @@
 #define ADBKEYBOARDLEDS_HH
 
 // Arcana
-#include "ADBProtocol.hh"
+#include "ADB/Protocol.hh"
 
 
 UInt8 GetLEDs( Nitrogen::ADBAddress address );

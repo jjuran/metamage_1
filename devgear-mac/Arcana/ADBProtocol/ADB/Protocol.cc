@@ -5,7 +5,7 @@
 
 #if !TARGET_API_MAC_CARBON
 
-#include "ADBProtocol.hh"
+#include "ADB/Protocol.hh"
 
 // Debug
 #include "debug/assert.hh"
