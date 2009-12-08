@@ -20,8 +20,8 @@
 #include "iota/strings.hh"
 
 // MoreFiles
-#include "FileCopy.h"
-#include "MoreFilesExtras.h"
+#include "MoreFiles/FileCopy.h"
+#include "MoreFiles/MoreFilesExtras.h"
 
 // Debug
 #include "debug/assert.hh"

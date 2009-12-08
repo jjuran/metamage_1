@@ -28,8 +28,8 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "FSpCompat.h"
-#include "FullPath.h"
+#include "MoreFiles/FSpCompat.h"
+#include "MoreFiles/FullPath.h"
 
 /*
 	IMPORTANT NOTE:

@@ -25,7 +25,7 @@
 #include <Types.h>
 #include <Files.h>
 
-#include "Optimization.h"
+#include "MoreFiles/Optimization.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -3117,6 +3117,6 @@ pascal	OSErr	GetUGEntries(short objType,
 }
 #endif
 
-#include "OptimizationEnd.h"
+#include "MoreFiles/OptimizationEnd.h"
 
 #endif	/* __MOREFILESEXTRAS__ */

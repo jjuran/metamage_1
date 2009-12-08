@@ -28,11 +28,11 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "MoreFiles.h"
-#include "MoreFilesExtras.h"
-#include "MoreDesktopMgr.h"
-#include "FileCopy.h"
-#include "DirectoryCopy.h"
+#include "MoreFiles/MoreFiles.h"
+#include "MoreFiles/MoreFilesExtras.h"
+#include "MoreFiles/MoreDesktopMgr.h"
+#include "MoreFiles/FileCopy.h"
+#include "MoreFiles/DirectoryCopy.h"
 
 /*****************************************************************************/
 

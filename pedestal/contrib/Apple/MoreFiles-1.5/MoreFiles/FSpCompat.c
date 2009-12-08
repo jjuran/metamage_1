@@ -37,8 +37,8 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "MoreFilesExtras.h"
-#include "FSpCompat.h"
+#include "MoreFiles/MoreFilesExtras.h"
+#include "MoreFiles/FSpCompat.h"
 
 /*****************************************************************************/
 

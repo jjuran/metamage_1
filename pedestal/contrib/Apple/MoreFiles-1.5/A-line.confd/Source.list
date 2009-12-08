@@ -1,10 +1,9 @@
-Sources:
-#	DirectoryCopy.c
-	FileCopy.c
-	FSpCompat.c
-#	FullPath.c
-#	IterateDirectory.c
-	MoreDesktopMgr.c
-	MoreFiles.c
-	MoreFilesExtras.c
-#	Search.c
+#	MoreFiles/DirectoryCopy.c
+	MoreFiles/FileCopy.c
+	MoreFiles/FSpCompat.c
+#	MoreFiles/FullPath.c
+#	MoreFiles/IterateDirectory.c
+	MoreFiles/MoreDesktopMgr.c
+	MoreFiles/MoreFiles.c
+	MoreFiles/MoreFilesExtras.c
+#	MoreFiles/Search.c

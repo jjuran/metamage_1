@@ -22,8 +22,8 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "MoreFilesExtras.h"
-#include "IterateDirectory.h"
+#include "MoreFiles/MoreFilesExtras.h"
+#include "MoreFiles/IterateDirectory.h"
 
 /*
 **	Type definitions

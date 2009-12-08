@@ -29,9 +29,9 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "MoreFiles.h"
-#include "MoreFilesExtras.h"
-#include "Search.h"
+#include "MoreFiles/MoreFiles.h"
+#include "MoreFiles/MoreFilesExtras.h"
+#include "MoreFiles/Search.h"
 
 /*****************************************************************************/
 

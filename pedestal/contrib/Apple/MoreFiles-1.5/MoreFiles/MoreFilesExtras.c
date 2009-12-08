@@ -38,10 +38,10 @@
 
 #define	__COMPILINGMOREFILES
 
-#include "MoreFiles.h"
-#include "MoreFilesExtras.h"
-#include "MoreDesktopMgr.h"
-#include "FSpCompat.h"
+#include "MoreFiles/MoreFiles.h"
+#include "MoreFiles/MoreFilesExtras.h"
+#include "MoreFiles/MoreDesktopMgr.h"
+#include "MoreFiles/FSpCompat.h"
 
 /*****************************************************************************/
 
