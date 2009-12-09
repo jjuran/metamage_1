@@ -11,11 +11,9 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/stringify.hh"
 
 
 namespace Genie
@@ -37,11 +35,11 @@ namespace Genie
 	
 	struct GetVolumeParmsAttrib
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef UInt32 Result;
+		
+		typedef stringify_32_bit_hex stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -51,11 +49,11 @@ namespace Genie
 	
 	struct GetVolumeParmsHandle
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef ::Handle Result;
+		
+		typedef stringify_pointer stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -70,11 +68,11 @@ namespace Genie
 	
 	struct GetVolumeParmsServer
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef UInt32 Result;
+		
+		typedef stringify_32_bit_hex stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -89,11 +87,11 @@ namespace Genie
 	
 	struct GetVolumeParmsGrade
 	{
-		static const bool hexEncoded = false;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef SInt32 Result;
+		
+		typedef stringify_int stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -108,11 +106,11 @@ namespace Genie
 	
 	struct GetVolumeParmsPrivID
 	{
-		static const bool hexEncoded = false;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef SInt16 Result;
+		
+		typedef stringify_short stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -127,11 +125,11 @@ namespace Genie
 	
 	struct GetVolumeParmsExtended
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef UInt32 Result;
+		
+		typedef stringify_32_bit_hex stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -146,11 +144,11 @@ namespace Genie
 	
 	struct GetVolumeParmsDeviceID
 	{
-		static const bool hexEncoded = false;
-		
 		static const bool alwaysStringified = true;
 		
 		typedef const char* Result;
+		
+		typedef stringify_string stringify;
 		
 		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
@@ -206,14 +204,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( parmsInfo );
 			
-			const bool raw = !Accessor::alwaysStringified  &&  binary;
-			const bool hex =  Accessor::hexEncoded;
-			
-			using BitsAndBytes::EncodeAsHex;
-			
-			std::string result = raw ? std::string( (char*) &data, sizeof data )
-			                   : hex ? EncodeAsHex(         &data, sizeof data )
-			                   :       stringify( data );
+			std::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}

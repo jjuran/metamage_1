@@ -16,14 +16,12 @@
 // ClassicToolbox
 #include "ClassicToolbox/Files.h"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/FSTree_Virtual_Link.hh"
+#include "Genie/FS/stringify.hh"
 #include "Genie/FS/Trigger.hh"
 
 
@@ -149,9 +147,9 @@ namespace Genie
 	
 	struct GetDriveFlags
 	{
-		static const bool hexEncoded = true;
-		
 		typedef UInt32 Result;
+		
+		typedef stringify_32_bit_hex stringify;
 		
 		static Result Get( const DrvQEl& drive )
 		{
@@ -161,9 +159,9 @@ namespace Genie
 	
 	struct GetDriveSize
 	{
-		static const bool hexEncoded = false;
-		
 		typedef UInt32 Result;
+		
+		typedef stringify_unsigned stringify;
 		
 		static UInt32 Get( const DrvQEl& drive )
 		{
@@ -180,9 +178,9 @@ namespace Genie
 	
 	struct GetDriveFSID
 	{
-		static const bool hexEncoded = false;
-		
 		typedef SInt16 Result;
+		
+		typedef stringify_short stringify;
 		
 		static SInt16 Get( const DrvQEl& drive )
 		{
@@ -213,14 +211,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( el );
 			
-			const bool raw = binary;
-			const bool hex = Accessor::hexEncoded;
-			
-			using BitsAndBytes::EncodeAsHex;
-			
-			std::string result = raw ? std::string( (char*) &data, sizeof data )
-			                   : hex ? EncodeAsHex(         &data, sizeof data )
-			                   :       iota::inscribe_decimal( data );
+			std::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}
