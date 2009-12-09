@@ -3,7 +3,7 @@
  *	==============================
  */
 
-#include "MacFilenameFromUnixFilename.hh"
+#include "Genie/MacFilenameFromUnixFilename.hh"
 
 // Standard C++
 #include <algorithm>

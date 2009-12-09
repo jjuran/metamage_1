@@ -47,13 +47,11 @@
 // Arcana / MD5
 #include "MD5/MD5.hh"
 
-// Kerosene
-#include "MacFilenameFromUnixFilename.hh"
-
 // Pedestal
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/MacFilenameFromUnixFilename.hh"
 #include "Genie/Exec/GetMainEntry.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
