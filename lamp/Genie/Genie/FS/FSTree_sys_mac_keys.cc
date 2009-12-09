@@ -8,8 +8,8 @@
 // Nitrogen
 #include "Nitrogen/Events.h"
 
-// BitsAndBytes
-#include "HexStrings.hh"
+// Genie
+#include "Genie/FS/append_hex_encoded_byte.hh"
 
 
 namespace Genie
@@ -20,8 +20,6 @@ namespace Genie
 	
 	std::string sys_mac_keys::Read( const FSTree* )
 	{
-		using BitsAndBytes::ByteAsHex;
-		
 		std::string result;
 		
 		N::GetKeys_Result keys = N::GetKeys();
@@ -38,7 +36,8 @@ namespace Genie
 				{
 					const UInt8 keyCode = i * 8 + j;
 					
-					result += ByteAsHex( keyCode );
+					append_hex_encoded_byte( result, keyCode );
+					
 					result += '\n';
 				}
 			}
