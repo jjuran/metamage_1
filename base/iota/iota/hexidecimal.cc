@@ -42,6 +42,14 @@ namespace iota
 		return x;
 	}
 	
+	void encode_16_bit_hex( unsigned short x, char* s )
+	{
+		s[ 0 ] = encoded_hex_char( x >> 12 );
+		s[ 1 ] = encoded_hex_char( x >>  8 );
+		s[ 2 ] = encoded_hex_char( x >>  4 );
+		s[ 3 ] = encoded_hex_char( x >>  0 );
+	}
+	
 	void encode_32_bit_hex( unsigned x, char* s )
 	{
 		s[ 0 ] = encoded_hex_char( x >> 28 );

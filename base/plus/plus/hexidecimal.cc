@@ -29,6 +29,15 @@ namespace plus
 		return iota::decode_32_bit_hex( s.data() );
 	}
 	
+	void encode_16_bit_hex( unsigned short x, std::string& result )
+	{
+		const unsigned short n_nibbles = 16 / n_bits_per_nibble;
+		
+		result.resize( n_nibbles );
+		
+		iota::encode_16_bit_hex( x, &result[0] );
+	}
+	
 	void encode_32_bit_hex( unsigned x, std::string& result )
 	{
 		const unsigned short n_nibbles = 32 / n_bits_per_nibble;
@@ -36,6 +45,15 @@ namespace plus
 		result.resize( n_nibbles );
 		
 		iota::encode_32_bit_hex( x, &result[0] );
+	}
+	
+	std::string encode_16_bit_hex( unsigned short x )
+	{
+		std::string result;
+		
+		encode_16_bit_hex( x, result );
+		
+		return result;
 	}
 	
 	std::string encode_32_bit_hex( unsigned x )
