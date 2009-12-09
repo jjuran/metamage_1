@@ -14,8 +14,8 @@
 #ifndef POSEVEN_EXTRAS_PUMP_HH
 #define POSEVEN_EXTRAS_PUMP_HH
 
-// Convergence
-#include "pump.h"
+// Lamp
+#include "lamp/pump.h"
 
 // poseven
 #include "poseven/types/errno_t.hh"

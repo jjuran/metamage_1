@@ -1,10 +1,12 @@
-/*	======
- *	pump.h
- *	======
- */
+/*
+	pump.h
+	------
+	
+	Joshua Juran
+*/
 
-#ifndef PUMP_H
-#define PUMP_H
+#ifndef LAMP_PUMP_H
+#define LAMP_PUMP_H
 
 // POSIX
 #include <sys/types.h>

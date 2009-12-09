@@ -1,7 +1,9 @@
-/*	=======
- *	pump.cc
- *	=======
- */
+/*
+	pump.cc
+	-------
+	
+	Joshua Juran
+*/
 
 #include "pump.h"
 

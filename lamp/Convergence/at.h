@@ -16,9 +16,6 @@ extern "C" {
 
 #ifndef __LAMP__
 
-// unistd
-ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size );
-
 #ifndef __linux__
 
 #ifndef AT_SYMLINK_NOFOLLOW

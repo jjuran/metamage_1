@@ -1,10 +1,12 @@
-/*	================
- *	fork_and_exit.hh
- *	================
- */
+/*
+	fork_and_exit.h
+	---------------
+	
+	Joshua Juran
+*/
 
-#ifndef FORKANDEXIT_HH
-#define FORKANDEXIT_HH
+#ifndef LAMP_FORKANDEXIT_H
+#define LAMP_FORKANDEXIT_H
 
 // POSIX
 #include <unistd.h>
