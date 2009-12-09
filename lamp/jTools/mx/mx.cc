@@ -10,11 +10,6 @@
 // Standard C/C++
 #include <cstdio>
 
-// OpenTransportProviders.h has evil, blind dependency on FSSpec.
-#ifndef __FILES__
-#include <Files.h>
-#endif
-
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 

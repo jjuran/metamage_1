@@ -9,12 +9,6 @@
 // POSIX
 #include "sys/socket.h"
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
-
-// Kerosene/Common
-#include "SystemCalls.hh"
-
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Conduit.hh"

@@ -15,9 +15,6 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
