@@ -3,13 +3,13 @@
  *	==================
  */
 
-#include "CFMLateImporter.hh"
+#include "CFMLateImporter/CFMLateImporter.hh"
 
 // CFMLateImport
 #include "CFMLateImport.h"
 
 // CFMLateImporter
-#include "SavedCFragInitBlock.h"
+#include "CFMLateImporter/SavedCFragInitBlock.h"
 
 
 namespace CFMLateImporter

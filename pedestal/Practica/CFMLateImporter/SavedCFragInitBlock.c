@@ -3,7 +3,7 @@
  *	=====================
  */
 
-#include "SavedCFragInitBlock.h"
+#include "CFMLateImporter/SavedCFragInitBlock.h"
 
 // Mac OS Universal Interfaces
 #include <CodeFragments.h>
