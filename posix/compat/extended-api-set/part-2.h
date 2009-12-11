@@ -1,10 +1,12 @@
-/*	====
- *	at.h
- *	====
- */
+/*
+	extended-api-set/part-2.h
+	-------------------------
+	
+	Joshua Juran
+*/
 
-#ifndef AT_H
-#define AT_H
+#ifndef EXTENDEDAPISET_PART2_H
+#define EXTENDEDAPISET_PART2_H
 
 // POSIX
 #include <dirent.h>
