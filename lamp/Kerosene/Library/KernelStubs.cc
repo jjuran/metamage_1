@@ -10,8 +10,8 @@
 #define OTUNIXERRORS 1
 #include <OpenTransportProviders.h>
 
-// Kerosene
-#include "SystemCalls.hh"
+// Lamp
+#include "lamp/OTInetMailExchange_k.h"
 
 
 #pragma exceptions off

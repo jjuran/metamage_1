@@ -1,10 +1,12 @@
-/*	====
- *	at.h
- *	====
- */
+/*
+	extended-api-set/part-2.h
+	-------------------------
+	
+	Joshua Juran
+*/
 
-#ifndef AT_H
-#define AT_H
+#ifndef EXTENDEDAPISET_PART2_H
+#define EXTENDEDAPISET_PART2_H
 
 // POSIX
 #include <dirent.h>
@@ -15,9 +17,6 @@ extern "C" {
 #endif
 
 #ifndef __LAMP__
-
-// unistd
-ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size );
 
 #ifndef __linux__
 

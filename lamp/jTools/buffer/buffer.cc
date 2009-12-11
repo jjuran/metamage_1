@@ -10,8 +10,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// Convergence
-#include "fork_and_exit.hh"
+// Lamp
+#include "lamp/fork_and_exit.h"
 
 // poseven
 #include "poseven/extras/pump.hh"
