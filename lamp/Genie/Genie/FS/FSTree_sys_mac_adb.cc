@@ -13,13 +13,11 @@
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.h"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Arcana
 #include "ADB/Protocol.hh"
 
 // Genie
+#include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -105,11 +103,13 @@ namespace Genie
 			{
 				Key key = GetKey( that );
 				
-				using BitsAndBytes::ByteAsHex;
-				
 				ADBDataBlock data = N::GetADBInfo( key );
 				
-				return ByteAsHex( data.devType );
+				std::string result;
+				
+				append_hex_encoded_byte( result, data.devType );
+				
+				return result;
 			}
 	};
 	
@@ -133,13 +133,11 @@ namespace Genie
 	
 	static void WriteADBRegister( N::ADBAddress address, int i, std::string& result )
 	{
-		using BitsAndBytes::ByteAsHex;
-		
 		ADBRegister reg = GetADBRegister( address, i );
 		
 		for ( unsigned i = 1;  i <= reg.buffer[0];  ++i )
 		{
-			result += ByteAsHex( reg.buffer[i] );
+			append_hex_encoded_byte( result, reg.buffer[i] );
 			
 			result += ' ';
 		}
