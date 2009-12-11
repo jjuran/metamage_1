@@ -26,15 +26,6 @@ namespace Genie
 		N::FSIOPermissions rdPerm = N::FSIOPermissions( flags + 1  &  FREAD  );
 		N::FSIOPermissions wrPerm = N::FSIOPermissions( flags + 1  &  FWRITE );
 		
-		bool nonblocking = flags & O_NONBLOCK;
-		bool appending   = flags & O_APPEND;
-		// ...
-		bool creating    = flags & O_CREAT;
-		bool truncating  = flags & O_TRUNC;
-		bool excluding   = flags & O_EXCL;
-		// ...
-		bool lazy        = flags & O_LAZY;
-		
 		NN::Shared< N::FSFileRefNum > fileHandle = openFork( fileSpec, rdPerm | wrPerm );
 		
 		return createHandle( fileHandle, flags );
