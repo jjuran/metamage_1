@@ -16,12 +16,10 @@
 // Nucleus
 #include "Nucleus/IndexedContainer.h"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/stringify.hh"
 
 
 namespace Nitrogen
@@ -155,11 +153,11 @@ namespace Genie
 	
 	struct GetDriverFlags
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef short Result;
+		
+		typedef stringify_16_bit_hex stringify;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
@@ -202,11 +200,11 @@ namespace Genie
 	
 	struct DriverName
 	{
-		static const bool hexEncoded = false;
-		
 		static const bool alwaysStringified = true;
 		
 		typedef N::Str255 Result;
+		
+		typedef stringify_pascal_string stringify;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
@@ -216,12 +214,12 @@ namespace Genie
 	
 	struct GetDriverSlot
 	{
-		static const bool hexEncoded = false;
-		
 		static const bool alwaysStringified = false;
 		
 		// dCtlSlot is defined as 'char', but we want integer conversion
 		typedef UInt16 Result;
+		
+		typedef stringify_short stringify;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
@@ -238,11 +236,11 @@ namespace Genie
 	
 	struct GetDriverBase
 	{
-		static const bool hexEncoded = true;
-		
 		static const bool alwaysStringified = false;
 		
 		typedef long Result;
+		
+		typedef stringify_32_bit_hex stringify;
 		
 		static Result Get( AuxDCEHandle dceHandle )
 		{
@@ -277,14 +275,7 @@ namespace Genie
 				
 				const typename Accessor::Result data = Accessor::Get( dceHandle );
 				
-				const bool raw = !Accessor::alwaysStringified  &&  binary;
-				const bool hex =  Accessor::hexEncoded;
-				
-				using BitsAndBytes::EncodeAsHex;
-				
-				std::string result = raw ? std::string( (char*) &data, sizeof data )
-				                   : hex ? EncodeAsHex(         &data, sizeof data )
-				                   :       NN::Convert< std::string >( data );
+				std::string result = Accessor::stringify::apply( data, binary );
 				
 				return result;
 			}
