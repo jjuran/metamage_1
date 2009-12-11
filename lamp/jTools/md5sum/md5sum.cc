@@ -10,12 +10,12 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/hexidecimal.hh"
+
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
-
-// BitsAndBytes
-#include "HexStrings.hh"
 
 // Arcana
 #include "MD5/MD5.hh"
@@ -28,8 +28,22 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace Bits = BitsAndBytes;
 	
+	
+	static std::string md5_hex( const MD5::Result& md5 )
+	{
+		std::string result;
+		
+		result.resize( sizeof md5.data * 2 );
+		
+		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
+		{
+			result[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
+			result[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
+		}
+		
+		return result;
+	}
 	
 	static ssize_t buffered_read( p7::fd_t fd, char* small_buffer, size_t n_bytes_requested )
 	{
@@ -71,7 +85,7 @@ namespace tool
 		
 		engine.Finish( data, bytes * 8 );
 		
-		std::string digest = Bits::EncodeAsHex( engine.GetResult() );
+		std::string digest = md5_hex( engine.GetResult() );
 		
 		return digest;
 	}

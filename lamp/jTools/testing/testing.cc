@@ -39,8 +39,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Iota
+// iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
 
 // Recall
 #include "recall/demangle.hh"
@@ -96,9 +97,6 @@
 // Scaffold
 #include "Tests.hh"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Arcana
 #include "CRC32.hh"
 #include "MD5/MD5.hh"
@@ -117,8 +115,6 @@ namespace n = nucleus;
 namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace Div = Divergence;
-
-using BitsAndBytes::EncodeAsHex;
 
 
 static int TestUnit( int argc, iota::argv_t argv )
@@ -544,9 +540,24 @@ static MD5::Result MD5String( const char* text )
 	return MD5::Digest_Bytes( text, std::strlen( text ) );
 }
 
+	static std::string md5_hex( const MD5::Result& md5 )
+	{
+		std::string result;
+		
+		result.resize( sizeof md5.data * 2 );
+		
+		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
+		{
+			result[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
+			result[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
+		}
+		
+		return result;
+	}
+	
 static std::string MD5Hex( const char* text )
 {
-	return EncodeAsHex( MD5String( text ) );
+	return md5_hex( MD5String( text ) );
 }
 
 TEST( MD5 )
