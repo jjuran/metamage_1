@@ -13,15 +13,11 @@
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/RectangleMath.h"
-
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
 	
 	
 	inline ControlRef NewMacPushButton( WindowRef owningWindow,
@@ -50,18 +46,13 @@ namespace Pedestal
 		return N::SetPt( width, 20 );
 	}
 	
-	static Rect CalcCenteredButtonRect( const Rect& frame, ConstStr255Param title )
-	{
-		return NX::CenteredRect( frame, CalcButtonSize( title ) );
-	}
-	
 	
 	void PushButton::Install( const Rect& bounds )
 	{
 		N::Str255 title = Title();
 		
 		itsControl = NewMacPushButton( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-		                               CalcCenteredButtonRect( bounds, title ),
+		                               bounds,
 		                               title,
 		                               RefCon() );
 	}
@@ -75,7 +66,7 @@ namespace Pedestal
 	
 	void PushButton::SetBounds( const Rect& bounds )
 	{
-		N::SetControlBounds( itsControl, CalcCenteredButtonRect( bounds, Title() ) );
+		N::SetControlBounds( itsControl, bounds );
 	}
 	
 	void PushButton::Activate( bool activating )

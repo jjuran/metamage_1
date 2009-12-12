@@ -3,18 +3,16 @@
  *	==============
  */
 
-// Nitrogen Extras / Utilities
-#include "Utilities/RectangleMath.h"
-
-// Pedestal
 #include "Pedestal/ProgressBar.hh"
+
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
 
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
 	
 	enum
 	{
@@ -27,13 +25,6 @@ namespace Pedestal
 	static RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
 	static RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
 	
-	
-	static Rect CalcCenteredProgressBarRect( const Rect& frame )
-	{
-		return NX::CenteredRect( frame,
-		                         N::SetPt( NX::RectWidth( frame ) - kSideMargin * 2,
-		                                   kStdProgressBarHeight ) );
-	}
 	
 	static Rect ProgressBarInsetBounds( const Rect& bounds )
 	{
@@ -88,7 +79,7 @@ namespace Pedestal
 	
 	void ProgressBar::DrawProgress( Rect insetBounds )
 	{
-		double boundsWidth = NX::RectWidth( insetBounds );
+		double boundsWidth = insetBounds.right - insetBounds.left;
 		
 		double progressWidth = Progress() * boundsWidth;
 		
