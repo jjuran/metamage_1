@@ -39,6 +39,8 @@
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
+#include "poseven/functions/symlink.hh"
+#include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
 
 // MoreFunctional
@@ -106,6 +108,62 @@ namespace tool
 			void Return( bool succeeded );
 	};
 	
+	
+	static void populate_include_union( const Project& project )
+	{
+		if ( !project.SourceDirs().empty() )
+		{
+			const std::vector< std::string > source_dirs = project.SourceDirs();
+			
+			std::string includes_union_pathname = get_includes_union_pathname();
+			
+			typedef std::vector< std::string >::const_iterator Iter;
+			
+			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
+			{
+				const std::string& dir_pathname = *it;
+				
+				std::string dir_name = io::get_filename( dir_pathname );
+				
+				std::string include_link = includes_union_pathname / dir_name;
+				
+				// Source dir must exist (or it would have been culled)
+				struct ::stat dir_stat = p7::stat( dir_pathname );
+				
+				try
+				{
+					struct ::stat link_stat = p7::stat( include_link );
+					
+					if ( memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
+					{
+						// They stat the same.  Assume that one is a symlink.
+						
+						continue;
+					}
+					
+					if ( S_ISLNK( link_stat.st_mode ) )
+					{
+						// Stale symlink.
+						
+						p7::unlink( include_link );
+					}
+				}
+				catch ( const p7::errno_t& err )
+				{
+					if ( err != ENOENT )
+					{
+						throw;
+					}
+					
+					// No symlink present yet, create one below
+				}
+				
+				p7::symlink( dir_pathname, include_link );
+			}
+		}
+		
+	}
+	
 	class IncludeDirGatherer
 	{
 		private:
@@ -129,6 +187,16 @@ namespace tool
 		
 		if ( project.Product() == productNotBuilt )
 		{
+			return;
+		}
+		
+		if ( !project.SourceDirs().empty() )
+		{
+			// Omit projects with 'sources' dirs, since those will be unioned
+			it_needs_include_union = true;
+			
+			populate_include_union( project );
+			
 			return;
 		}
 		
@@ -555,6 +623,11 @@ namespace tool
 		std::for_each( all_used_projects.rbegin(),
 		               all_used_projects.rend(),
 		               gatherer );
+		
+		if ( needs_include_union )
+		{
+			options.PrependIncludeDir( get_includes_union_pathname() );
+		}
 		
 		CompilerOptions precompile_options = options;
 		
