@@ -46,6 +46,8 @@ namespace tool
 			std::vector< std::string > its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
 			std::vector< std::string > its_search_dir_pathnames;
+			// Directories to which search for source files is restricted.
+			std::vector< std::string > its_source_dir_pathnames;
 			// Creator code / signature for output files.
 			std::string its_creator_code;
 			// Source filenames which are tools.
@@ -82,6 +84,7 @@ namespace tool
 			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names;    }
 			
 			const std::vector< std::string >& SearchDirs() const  { return its_search_dir_pathnames; }
+			const std::vector< std::string >& SourceDirs() const  { return its_source_dir_pathnames; }
 			
 			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_filenames; }
 			

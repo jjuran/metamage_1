@@ -101,6 +101,11 @@ namespace tool
 		return mkdir_path( UserLabDirPath() / target );
 	}
 	
+	std::string get_includes_union_pathname()
+	{
+		return mkdir_path( "Includes" );
+	}
+	
 	std::string LibrariesDirPath()
 	{
 		return mkdir_path( "Libraries" );
