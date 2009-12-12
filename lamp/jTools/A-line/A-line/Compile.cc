@@ -93,6 +93,7 @@ namespace tool
 			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, source ) ),
 			  its_caption              ( caption )
 			{
+				its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
 			}
 			
 			bool UpToDate();
@@ -513,12 +514,8 @@ namespace tool
 			{
 				const char* caption = "Compiling: ";
 				
-				CompilerOptions source_options = its_options;
-				
-				source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
-				
 				TaskPtr task( new CompilingTask( its_project,
-				                                 source_options,
+				                                 its_options,
 				                                 source_pathname,
 				                                 object_pathname,
 				                                 ProjectDiagnosticsDirPath( its_project.Name() ),
@@ -651,14 +648,10 @@ namespace tool
 			
 			const std::string& output_path = *the_object;
 			
-			CompilerOptions source_options = options;
-			
-			source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
-			
 			const char* caption = "Compiling: ";
 			
 			TaskPtr task( new CompilingTask( project,
-			                                 source_options,
+			                                 options,
 			                                 source_pathname,
 			                                 output_path,
 			                                 diagnostics_dir_path,
