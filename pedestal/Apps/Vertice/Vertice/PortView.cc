@@ -17,9 +17,6 @@
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/RectangleMath.h"
-
 // GrafX
 #include "GrafX/Pixel32.hh"
 #include "GrafX/RGBColor.hh"
@@ -48,7 +45,6 @@ namespace Vertice
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	namespace GX = GrafX;
 	
 	
@@ -828,8 +824,8 @@ namespace Vertice
 	
 	void PortView::Paint()
 	{
-		unsigned width  = NX::RectWidth ( itsBounds );
-		unsigned height = NX::RectHeight( itsBounds );
+		const unsigned width  = itsBounds.right - itsBounds.left;
+		const unsigned height = itsBounds.bottom - itsBounds.top;
 		
 		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
 		
@@ -1148,8 +1144,8 @@ namespace Vertice
 	
 	MeshModel* PortView::Mesh_HitTest( double x, double y )
 	{
-		int width  = NX::RectWidth ( itsBounds );
-		int height = NX::RectHeight( itsBounds );
+		const int width  = itsBounds.right - itsBounds.left;
+		const int height = itsBounds.bottom - itsBounds.top;
 		
 		x = (x + 0.5 - width  / 2.0) / ( width / 2.0);
 		y = (y + 0.5 - height / 2.0) / (-width / 2.0);
@@ -1230,8 +1226,8 @@ namespace Vertice
 			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 		}
 		
-		short width  = NX::RectWidth ( portRect );
-		short height = NX::RectHeight( portRect );
+		const short width  = portRect.right - portRect.left;
+		const short height = portRect.bottom - portRect.top;
 		
 		//DeepPixelDevice device( width, height );
 		gDeepPixelDevice.Resize( width, height );
