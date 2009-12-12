@@ -17,17 +17,12 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 
-// BitsAndBytes
-#include "StringPredicates.hh"
-
 
 namespace tool
 {
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	
-	using BitsAndBytes::eos;
 	
 	
 	static void ExtractInclude( const std::string& line, IncludesCache& includes )
@@ -36,7 +31,7 @@ namespace tool
 		
 		std::size_t pos = line.find_first_not_of( " \t" );
 		
-		if ( !eos( pos )  &&  line[ pos ] == '#' )
+		if ( ~pos  &&  line[ pos ] == '#' )
 		{
 			std::string include = "include";
 			
@@ -46,7 +41,7 @@ namespace tool
 				{
 					pos = line.find_first_not_of( " \t", pos + 1 + include.size() );
 					
-					if ( eos( pos ) )  throw BadIncludeDirective();
+					if ( !~pos )  throw BadIncludeDirective();
 					
 					char c;
 					
@@ -68,7 +63,7 @@ namespace tool
 					++pos;
 					std::size_t end = line.find( c, pos );
 					
-					if ( eos( end ) )  throw BadIncludeDirective();
+					if ( !~end )  throw BadIncludeDirective();
 					
 					std::vector< std::string >& v( c == '"' ? includes.user : includes.system );
 					

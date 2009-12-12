@@ -13,17 +13,12 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/open.hh"
 
-// BitsAndBytes
-#include "StringPredicates.hh"
-
 
 namespace tool
 {
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	
-	using BitsAndBytes::eos;
 	
 	
 	void ReadSourceDotList( const std::string&           pathname,
@@ -39,10 +34,10 @@ namespace tool
 		{
 			std::string line( s->begin(), s->end() - 1 );
 			
-			if ( line.empty()             )  continue;
-			if ( line[ 0 ] == ';'         )  continue;
-			if ( line[ 0 ] == '#'         )  continue;
-			if ( !eos( line.find( ':' ) ) )  continue;
+			if ( line.empty()      )  continue;
+			if ( line[ 0 ] == ';'  )  continue;
+			if ( line[ 0 ] == '#'  )  continue;
+			if ( ~line.find( ':' ) )  continue;
 			
 			files.push_back( line.substr( line.find_first_not_of( "\t" ),
 			                              line.npos ) );

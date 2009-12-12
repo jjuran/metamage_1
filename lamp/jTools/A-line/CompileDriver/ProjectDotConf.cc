@@ -13,9 +13,6 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/open.hh"
 
-// BitsAndBytes
-#include "StringPredicates.hh"
-
 // CompileDriver
 #include "CompileDriver/ProjectCatalog.hh"
 
@@ -25,8 +22,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	
-	using BitsAndBytes::eos;
 	
 	
 	static std::pair< std::string, std::string > ParseKeyValue( const std::string& line )
@@ -38,12 +33,12 @@ namespace tool
 		std::string key = line.substr( 0, posWhitespace );
 		std::string value;
 		
-		if ( !eos( posWhitespace ) )
+		if ( ~posWhitespace )
 		{
 			// Whitespace follows the key
 			std::size_t posValue = line.find_first_not_of( ws, posWhitespace );
 			
-			if ( !eos( posValue ) )
+			if ( ~posValue )
 			{
 				// A value is present
 				std::size_t posLastPrintableChar = line.find_last_not_of( ws );
@@ -63,7 +58,7 @@ namespace tool
 		const char* ws = " \t";
 		size_type iLastPrintableChar = line.find_last_not_of( ws );
 		
-		if ( eos( iLastPrintableChar ) )
+		if ( !~iLastPrintableChar )
 		{
 			return;
 		}
