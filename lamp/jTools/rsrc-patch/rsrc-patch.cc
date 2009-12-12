@@ -11,6 +11,7 @@
 #include <string.h>
 
 // iota
+#include "iota/hexidecimal.hh"
 #include "iota/quad.hh"
 
 // Nitrogen
@@ -18,9 +19,6 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
-
-// BitsAndBytes
-#include "HexStrings.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -35,7 +33,6 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace Bits = BitsAndBytes;
 	namespace Div = Divergence;
 	namespace o = orion;
 	
@@ -50,6 +47,28 @@ namespace tool
 	static N::Handle gHandle;
 	
 	static std::size_t gOffset = 0;
+	
+	
+	// E.g. "666f6f20626171" -> "foo bar"
+	static std::string decoded_hex( const std::string& hex_codes )
+	{
+		std::string result;
+		
+		// FIXME:  Verify the hex data.
+		
+		result.resize( hex_codes.size() / 2 );
+		
+		for ( std::size_t i = 0;  i < result.size();  ++i )
+		{
+			const char high = hex_codes[ i * 2     ];
+			const char low  = hex_codes[ i * 2 + 1 ];
+			
+			result[ i ] = iota::decoded_hex_digit( high ) << 4
+			            | iota::decoded_hex_digit( low  );
+		}
+		
+		return result;
+	}
 	
 	
 	static void FileOptor( const char* param )
@@ -117,7 +136,7 @@ namespace tool
 	
 	static void FindHexOptor( const char* param )
 	{
-		Find( Bits::DecodeHex( param ) );
+		Find( decoded_hex( param ) );
 	}
 	
 	static void SeekOptor( const char* param )
@@ -150,7 +169,7 @@ namespace tool
 	
 	static void WriteHexOptor( const char* param )
 	{
-		Write( Bits::DecodeHex( param ) );
+		Write( decoded_hex( param ) );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
