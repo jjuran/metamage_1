@@ -10,7 +10,8 @@
 // Standard C
 #include <stdlib.h>
 
-// Iota
+// iota
+#include "iota/quad.hh"
 #include "iota/strings.hh"
 
 // text-input
@@ -572,7 +573,7 @@ namespace tool
 					gFileType    = store_string( type    );
 					gFileCreator = store_string( creator );
 					
-					N::OSType typeCode = NN::Convert< N::OSType >( type );
+					N::OSType typeCode = N::OSType( iota::decode_quad( type.data() ) );
 					
 					switch ( typeCode )
 					{

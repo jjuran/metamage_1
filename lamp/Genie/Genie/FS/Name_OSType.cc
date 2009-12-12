@@ -7,26 +7,31 @@
 
 // iota
 #include "iota/hexidecimal.hh"
+#include "iota/quad.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
+	
+	
+	static const unsigned quad_size = sizeof 'quad';
 	
 	
 	std::string OSType_KeyName_Traits::NameFromKey( const Key& key )
 	{
-		std::string bytes = NN::Convert< std::string >( key );
+		char bytes[ quad_size ];
+		
+		iota::encode_quad( key, bytes );
 		
 		std::string result;
 		
-		result.reserve( sizeof (Key) );  // the usual case
+		result.reserve( quad_size );  // the usual case
 		
 		char escape[] = "%00";
 		
-		for ( int i = 0;  i < sizeof (Key);  ++i )
+		for ( int i = 0;  i < quad_size;  ++i )
 		{
 			unsigned char c = bytes[ i ];
 			
@@ -56,7 +61,7 @@ namespace Genie
 	{
 		std::string decoded;
 		
-		decoded.reserve( sizeof (Key) );
+		decoded.reserve( quad_size );
 		
 		const char* end = name.data() + name.size();
 		
@@ -75,7 +80,7 @@ namespace Genie
 			
 			if ( p > end )
 			{
-				break;  // conversion below will fail and throw exception
+				return N::OSType();  // eventual lookup will yield ENOENT
 			}
 			
 			const char c = iota::decoded_hex_digit( escape[1] ) << 4
@@ -84,12 +89,16 @@ namespace Genie
 			decoded += c;
 		}
 		
-		if ( decoded.length() < sizeof (Key)  &&  decoded.length() >= 2 )
+		if ( decoded.length() > quad_size )
 		{
-			decoded.resize( sizeof (Key), ' ' );
+			return N::OSType();  // eventual lookup will yield ENOENT
+		}
+		else if ( decoded.length() < quad_size  &&  decoded.length() >= 2 )
+		{
+			decoded.resize( quad_size, ' ' );
 		}
 		
-		return NN::Convert< N::OSType >( decoded );
+		return N::OSType( iota::decode_quad( decoded.data() ) );
 	}
 	
 }

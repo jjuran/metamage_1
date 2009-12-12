@@ -10,6 +10,9 @@
 #include <ToolUtils.h>
 #endif
 
+// iota
+#include "iota/quad.hh"
+
 // ClassicToolbox
 #if CALL_NOT_IN_CARBON
 #include "ClassicToolbox/Devices.h"
@@ -23,7 +26,6 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct UnhighlightMenus
@@ -51,8 +53,8 @@ namespace Pedestal
 		if ( ioItemText[ len     ] != ']' )  return 0;
 		if ( ioItemText[ len - 5 ] != '[' )  return 0;
 		
-		MenuItemCode code = NN::Convert< N::FourCharCode >( std::string( &ioItemText[ len - 4 ],
-		                                                                 &ioItemText[ len     ] ) );
+		MenuItemCode code = iota::decode_quad( &ioItemText[ len - 4 ] );
+		
 		ioItemText[ 0 ] -= 7;
 		
 		return code;
