@@ -93,7 +93,10 @@ namespace tool
 			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, source ) ),
 			  its_caption              ( caption )
 			{
-				its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
+				if ( project.SourceDirs().empty() )
+				{
+					its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
+				}
 			}
 			
 			bool UpToDate();
