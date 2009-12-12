@@ -22,8 +22,12 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-// Iota
+// iota
+#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/hexidecimal.hh"
 
 // poseven
 #include "poseven/Directory.hh"
@@ -47,9 +51,6 @@ typedef unsigned int OSType;
 
 #endif
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // Arcana
 #include "HTTP.hh"
 
@@ -70,8 +71,6 @@ namespace tool
 	
 	
 	using namespace io::path_descent_operators;
-	
-	using BitsAndBytes::EncodeAsHex;
 	
 	
 	static const char* gDocumentRoot = "/var/www";
@@ -288,8 +287,6 @@ namespace tool
 	
 	static std::string expand_percent_escapes( const std::string& escaped )
 	{
-		using BitsAndBytes::DecodeHexNibbles;
-		
 		std::string result;
 		
 		//const char* p = &*escaped.begin();
@@ -304,7 +301,8 @@ namespace tool
 				char high = check_xdigit( *++p );
 				char low  = check_xdigit( *++p );
 				
-				c = DecodeHexNibbles( high, low );
+				c = iota::decoded_hex_digit( high ) << 4
+				  | iota::decoded_hex_digit( low  );
 			}
 			
 			result += c;
@@ -507,8 +505,8 @@ namespace tool
 			
 		#if TARGET_OS_MAC
 			
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
+			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
+			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
 			
 		#endif
 			
