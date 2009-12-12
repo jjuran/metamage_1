@@ -586,6 +586,11 @@ namespace tool
 		
 		its_search_dir_pathnames = get_search_dir_pathnames( get_values( conf_data, "search" ), its_dir_pathname );
 		
+		get_source_data( its_dir_pathname,
+		                 get_values( conf_data, "sources" ),
+		                 its_source_dir_pathnames,
+		                 its_source_file_pathnames );
+		
 		if ( !ProductGetsBuilt( its_product_type ) )
 		{
 			return;
@@ -600,11 +605,6 @@ namespace tool
 		{
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
-		
-		get_source_data( its_dir_pathname,
-		                 get_values( conf_data, "sources" ),
-		                 its_source_dir_pathnames,
-		                 its_source_file_pathnames );
 		
 		if ( !its_source_file_pathnames.empty() )
 		{
