@@ -14,6 +14,12 @@
 #ifndef NITROGEN_UPP_H
 #define NITROGEN_UPP_H
 
+// Mac OS
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
+// Nucleus
 #include "Nucleus/Owned.h"
 
 
