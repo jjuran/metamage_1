@@ -1,24 +1,22 @@
-/*	========
- *	CDROM.cp
- *	========
- */
+/*
+	MacCDROM/Device.cc
+	------------------
+	
+	Joshua Juran
+*/
 
-#ifndef __MACH__
-#ifndef CLASSICEXTRAS_CDROM_H
-#include "ClassicExtras/CDROM.h"
-#endif
+#ifdef __MACOS__
+#include "MacCDROM/Device.hh"
 #endif
 
 // Nitrogen Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Extras / ClassicExtras
-#ifndef CLASSICEXTRAS_APPLECD_H
-#include "ClassicExtras/AppleCD.h"
-#endif
+// MacCDROM
+#include "MacCDROM/AppleCD.hh"
 
 
-namespace NitrogenExtras
+namespace MacCDROM
 {
 	
 #if CALL_NOT_IN_CARBON

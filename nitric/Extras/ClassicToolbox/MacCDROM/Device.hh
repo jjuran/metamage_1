@@ -1,10 +1,12 @@
-/*	=======
- *	CDROM.h
- *	=======
- */
+/*
+	MacCDROM/Device.hh
+	------------------
+	
+	Joshua Juran
+*/
 
-#ifndef CLASSICEXTRAS_CDROM_H
-#define CLASSICEXTRAS_CDROM_H
+#ifndef MACCDROM_DEVICE_HH
+#define MACCDROM_DEVICE_HH
 
 // Nucleus
 #include "Nucleus/Enumeration.h"
@@ -15,7 +17,7 @@
 #endif
 
 
-namespace NitrogenExtras
+namespace MacCDROM
 {
 	
 	namespace N = Nitrogen;

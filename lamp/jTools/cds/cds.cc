@@ -11,8 +11,8 @@
 // poseven
 #include "poseven/functions/write.hh"
 
-// Nitrogen Extras / ClassicExtras
-#include "ClassicExtras/CDROMAudio.h"
+// MacCDROM
+#include "MacCDROM/Audio.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -26,14 +26,14 @@ namespace tool
 #if !TARGET_API_MAC_CARBON
 	
 	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
+	namespace CD = MacCDROM;
 	
 	
-	static NX::CDROMDrive            gDrive;
-	static NX::TrackNumber           gSelectedTrack = 1;
-	static NX::CDROMTableOfContents  gTOC;
-	static NX::AudioStatus_Result    gStatus;
-	static NX::AudioPlayMode         gPlayMode = NX::kAudioPlayModeStereo;
+	static CD::CDROMDrive            gDrive;
+	static CD::TrackNumber           gSelectedTrack = 1;
+	static CD::CDROMTableOfContents  gTOC;
+	static CD::AudioStatus_Result    gStatus;
+	static CD::AudioPlayMode         gPlayMode = CD::kAudioPlayModeStereo;
 	
 	
 	static void print_field( const char* name, const char* value )
@@ -58,12 +58,12 @@ namespace tool
 		
 		switch ( gStatus.status )
 		{
-			case NX::kAudioStatusPlaying:  state = "playing";    break;
-			case NX::kAudioStatusPaused :  state = "paused";     break;
-			case NX::kAudioStatusMuteOn :  state = "muting-on";  break;
-			case NX::kAudioStatusDone   :  state = "done";       break;
-			case NX::kAudioStatusError  :  state = "error";      break;
-			case NX::kAudioStatusNil    :  state = "nil";        break;
+			case CD::kAudioStatusPlaying:  state = "playing";    break;
+			case CD::kAudioStatusPaused :  state = "paused";     break;
+			case CD::kAudioStatusMuteOn :  state = "muting-on";  break;
+			case CD::kAudioStatusDone   :  state = "done";       break;
+			case CD::kAudioStatusError  :  state = "error";      break;
+			case CD::kAudioStatusNil    :  state = "nil";        break;
 		}
 		
 		print_field( "Audio status", state );
@@ -89,11 +89,11 @@ namespace tool
 	
 	static void PrintList()
 	{
-		NX::TrackCount tracks = NX::CountTracks( gTOC );
+		CD::TrackCount tracks = CD::CountTracks( gTOC );
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
-			int frames  = NX::TrackLength( gTOC, track );
+			int frames  = CD::TrackLength( gTOC, track );
 			int seconds = frames / 75;
 			
 			int minutes = seconds / 60;
@@ -115,7 +115,7 @@ namespace tool
 	
 	static void PrintDiscID()
 	{
-		unsigned int discID = NX::CDDBDiscID( gTOC );
+		unsigned int discID = CD::CDDBDiscID( gTOC );
 		
 		char discid_message[] = "Disc ID is abcd1234\n";
 		
@@ -125,7 +125,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		
-		NX::TrackCount tracks = NX::CountTracks( gTOC );
+		CD::TrackCount tracks = CD::CountTracks( gTOC );
 		
 		std::string command = "discid ";
 		
@@ -133,31 +133,31 @@ namespace tool
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
-			int offset = NX::TrackStart( gTOC, track );
+			int offset = CD::TrackStart( gTOC, track );
 			
 			command += " ";
 			command += iota::inscribe_decimal( offset );
 		}
 		
 		command += " ";
-		command += iota::inscribe_decimal( NX::DiscLength( gTOC ) / 75 );
+		command += iota::inscribe_decimal( CD::DiscLength( gTOC ) / 75 );
 		command += "\n";
 		
 		p7::write( p7::stdout_fileno, command );
 	}
 	
 	
-	static void PlayTrackRange( NX::TrackNumber first,
-	                            NX::TrackNumber last )
+	static void PlayTrackRange( CD::TrackNumber first,
+	                            CD::TrackNumber last )
 	{
 		// Set stop-mark first
-		NX::AudioPlayAtTrack( gDrive, last,  true,  gPlayMode );
+		CD::AudioPlayAtTrack( gDrive, last,  true,  gPlayMode );
 		
 		// Then set start-mark
-		NX::AudioPlayAtTrack( gDrive, first, false, gPlayMode );
+		CD::AudioPlayAtTrack( gDrive, first, false, gPlayMode );
 	}
 	
-	static void PlayOneTrack( NX::TrackNumber track )
+	static void PlayOneTrack( CD::TrackNumber track )
 	{
 		PlayTrackRange( track, track );
 	}
@@ -171,10 +171,10 @@ namespace tool
 	{
 		switch ( gStatus.status )
 		{
-			case NX::kAudioStatusPlaying:  NX::AudioPause( gDrive, true  );  break;
-			case NX::kAudioStatusPaused :  NX::AudioPause( gDrive, false );  break;
+			case CD::kAudioStatusPlaying:  CD::AudioPause( gDrive, true  );  break;
+			case CD::kAudioStatusPaused :  CD::AudioPause( gDrive, false );  break;
 			
-			case NX::kAudioStatusNil:
+			case CD::kAudioStatusNil:
 				PlayAllTracks();
 				break;
 			
@@ -185,24 +185,24 @@ namespace tool
 	
 	static void StopNow()
 	{
-		NX::AudioStop( gDrive );
+		CD::AudioStop( gDrive );
 	}
 	
 	static void AutoStop()
 	{
-		NX::ReadTheQSubcode_Result q = NX::ReadTheQSubcode( gDrive );
+		CD::ReadTheQSubcode_Result q = CD::ReadTheQSubcode( gDrive );
 		
-		NX::AudioStopAtTrack( gDrive, q.track );
+		CD::AudioStopAtTrack( gDrive, q.track );
 	}
 	
 	static void Cue()
 	{
-		NX::ReadTheQSubcode_Result q = NX::ReadTheQSubcode( gDrive );
+		CD::ReadTheQSubcode_Result q = CD::ReadTheQSubcode( gDrive );
 		
 		switch ( gStatus.status )
 		{
-			case NX::kAudioStatusNil:
-				NX::AudioTrackSearch( gDrive,
+			case CD::kAudioStatusNil:
+				CD::AudioTrackSearch( gDrive,
 				                      q.track,
 				                      false,
 				                      gPlayMode );
@@ -215,9 +215,9 @@ namespace tool
 	
 	static void GoNext()
 	{
-		NX::ReadTheQSubcode_Result q = NX::ReadTheQSubcode( gDrive );
+		CD::ReadTheQSubcode_Result q = CD::ReadTheQSubcode( gDrive );
 		
-		NX::AudioTrackSearch( gDrive,
+		CD::AudioTrackSearch( gDrive,
 		                      q.track + 1,
 		                      true,
 		                      gPlayMode );
@@ -225,9 +225,9 @@ namespace tool
 	
 	static void GoBack()
 	{
-		NX::ReadTheQSubcode_Result q = NX::ReadTheQSubcode( gDrive );
+		CD::ReadTheQSubcode_Result q = CD::ReadTheQSubcode( gDrive );
 		
-		NX::AudioTrackSearch( gDrive,
+		CD::AudioTrackSearch( gDrive,
 		                      q.track - 1,
 		                      true,
 		                      gPlayMode );
@@ -253,10 +253,10 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		gDrive  = NX::OpenCDROMDriver();
+		gDrive  = CD::OpenCDROMDriver();
 		
-		gTOC    = NX::ReadTOC    ( gDrive );
-		gStatus = NX::AudioStatus( gDrive );
+		gTOC    = CD::ReadTOC    ( gDrive );
+		gStatus = CD::AudioStatus( gDrive );
 		
 		switch ( argv[ 1 ][ 0 ] )
 		{

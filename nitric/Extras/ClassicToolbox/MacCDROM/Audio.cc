@@ -1,26 +1,24 @@
-/*	=============
- *	CDROMAudio.cp
- *	=============
- */
+/*
+	MacCDROM/Audio.cc
+	-----------------
+	
+	Joshua Juran
+*/
 
-#ifndef __MACH__
-#ifndef CLASSICEXTRAS_CDROMAUDIO_H
-#include "ClassicExtras/CDROMAudio.h"
-#endif
+#ifdef __MACOS__
+#include "MacCDROM/Audio.hh"
 #endif
 
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Extras / ClassicExtras
-#ifndef __MACH__
-#ifndef CLASSICEXTRAS_APPLECD_H
-#include "ClassicExtras/AppleCD.h"
-#endif
+// MacCDROM
+#ifdef __MACOS__
+#include "MacCDROM/AppleCD.hh"
 #endif
 
 
-namespace NitrogenExtras
+namespace MacCDROM
 {
 	
 #if CALL_NOT_IN_CARBON

@@ -1,22 +1,22 @@
-/*	============
- *	CDROMAudio.h
- *	============
- */
+/*
+	MacCDROM/Audio.hh
+	-----------------
+	
+	Joshua Juran
+*/
 
-#ifndef CLASSICEXTRAS_CDROMAUDIO_H
-#define CLASSICEXTRAS_CDROMAUDIO_H
+#ifndef MACCDROM_AUDIO_HH
+#define MACCDROM_AUDIO_HH
 
 // Nucleus
 #include "Nucleus/Enumeration.h"
 #include "Nucleus/Flag.h"
 
-// Nitrogen Extras / ClassicExtras
-#ifndef CLASSICEXTRAS_CDROM_H
-#include "ClassicExtras/CDROM.h"
-#endif
+// MacCDROM
+#include "MacCDROM/Device.hh"
 
 
-namespace NitrogenExtras
+namespace MacCDROM
 {
 	
 	enum OpticalPositioningType

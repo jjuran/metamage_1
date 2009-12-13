@@ -1,13 +1,15 @@
-/*	=========
- *	AppleCD.h
- *	=========
- */
+/*
+	MacCDROM/AppleCD.hh
+	-------------------
+	
+	Joshua Juran
+*/
 
-#ifndef CLASSICEXTRAS_APPLECD_H
-#define CLASSICEXTRAS_APPLECD_H
+#ifndef MACCDROM_APPLECD_HH
+#define MACCDROM_APPLECD_HH
 
 
-namespace NitrogenExtras
+namespace MacCDROM
 {
 	enum
 	{
