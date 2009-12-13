@@ -3,9 +3,7 @@
  *	===================
  */
 
-#ifndef TEMPLATES_TRAPPINGFUNCTION_H
-#include "Templates/TrappingFunction.h"
-#endif
+#include "AEObjectModel/TrappingFunction.h"
 
 namespace Nitrogen
 {

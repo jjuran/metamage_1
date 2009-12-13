@@ -28,15 +28,11 @@
 #ifndef AEOBJECTMODEL_DISPOSETOKEN_H
 #include "AEObjectModel/DisposeToken.h"
 #endif
+#include "AEObjectModel/TrappingFunction.h"
 
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #include "Iteration/AEDescListItems.h"
-#endif
-
-// Nitrogen Extras / Templates
-#ifndef TEMPLATES_POINTERTOFUNCTION_H
-#include "Templates/TrappingFunction.h"
 #endif
 
 
