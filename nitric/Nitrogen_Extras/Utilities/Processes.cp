@@ -7,6 +7,10 @@
 #include "Utilities/Processes.h"
 #endif
 
+// plus
+#include "plus/functional_extensions.hh"
+#include "plus/pointer_to_function.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 #ifndef NITROGEN_MACERRORS_H
@@ -15,10 +19,6 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-#include "PointerToFunction.hh"
 
 
 namespace NitrogenExtras
@@ -42,7 +42,7 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    more::compose1( std::bind2nd( std::equal_to< N::OSType >(),
+		                                    plus::compose1( std::bind2nd( std::equal_to< N::OSType >(),
 		                                                                  signature ),
 		                                                    std::ptr_fun( GetProcessSignature ) ) );
 		
@@ -60,9 +60,9 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    more::compose1( std::bind2nd( more::ptr_fun( N::FSCompareFSSpecs ),
+		                                    plus::compose1( std::bind2nd( plus::ptr_fun( N::FSCompareFSSpecs ),
 		                                                                  appFile ),
-		                                                    more::ptr_fun( N::GetProcessAppSpec ) ) );
+		                                                    plus::ptr_fun( N::GetProcessAppSpec ) ) );
 		
 		if ( proc == N::Processes().end() )
 		{

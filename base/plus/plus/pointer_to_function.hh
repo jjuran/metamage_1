@@ -1,16 +1,18 @@
-/*	====================
- *	PointerToFunction.hh
- *	====================
- */
+/*
+	pointer_to_function.hh
+	----------------------
+	
+	Joshua Juran
+*/
 
-#ifndef MOREFUNCTIONAL_POINTERTOFUNCTION_HH
-#define MOREFUNCTIONAL_POINTERTOFUNCTION_HH
+#ifndef PLUS_POINTERTOFUNCTION_HH
+#define PLUS_POINTERTOFUNCTION_HH
 
 // Standard C++
 #include <functional>
 
 
-namespace more
+namespace plus
 {
 	
 	template < class Result >

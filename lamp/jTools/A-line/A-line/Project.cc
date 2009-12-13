@@ -14,15 +14,15 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // Debug
 #include "debug/assert.hh"
 
 // poseven
 #include "poseven/Pathnames.hh"
 #include "poseven/functions/stat.hh"
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
@@ -370,7 +370,7 @@ namespace tool
 			std::transform( search_directives.begin(),
 			                search_directives.end(),
 			                result.begin(),
-			                std::bind1st( more::ptr_fun( FindSearchDir ),
+			                std::bind1st( plus::ptr_fun( FindSearchDir ),
 				                          project_dir_pathname ) );
 		}
 		else
@@ -543,7 +543,7 @@ namespace tool
 	{
 		std::size_t n_tools = std::partition( source_paths.begin(),
 		                                      source_paths.end(),
-		                                      std::bind2nd( more::ptr_fun( &filename_belongs ),
+		                                      std::bind2nd( plus::ptr_fun( &filename_belongs ),
 		                                                                    tool_filenames ) ) - source_paths.begin();
 		
 		return n_tools;

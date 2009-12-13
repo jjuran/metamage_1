@@ -18,8 +18,8 @@
 // Iota
 #include "iota/decimal.hh"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
@@ -348,7 +348,7 @@ namespace tool
 		
 		std::for_each( queue.begin(),
 		               queue.end(),
-		               std::bind1st( more::ptr_fun( ProcessMessage ), queue_dir ) );
+		               std::bind1st( plus::ptr_fun( ProcessMessage ), queue_dir ) );
 		
 		return 0;
 	}

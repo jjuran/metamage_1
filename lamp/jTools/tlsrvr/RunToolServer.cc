@@ -23,6 +23,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // Io
 #include "io/slurp.hh"
 #include "io/spew.hh"
@@ -39,9 +42,6 @@
 
 // Io: MacFiles
 #include "MacFiles.hh"
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -281,13 +281,13 @@ namespace tool
 		std::transform( filenames,
 		                filenames + 4,
 		                files,
-		                std::bind1st( more::ptr_fun( DirLookup ),
+		                std::bind1st( plus::ptr_fun( DirLookup ),
 		                              tempItems ) );
 		
 		std::transform( files,
 		                files + 4,
 		                gTempFiles,
-		                more::ptr_fun( NewTempFile ) );
+		                plus::ptr_fun( NewTempFile ) );
 		
 		WriteCommandFile( command, files[ kScriptFile ] );
 		
@@ -430,7 +430,7 @@ namespace tool
 		// Delete temp files
 		std::for_each( gTempFiles,
 		               gTempFiles + 4,
-		               more::ptr_fun( &N::FSpDelete ) );
+		               plus::ptr_fun( &N::FSpDelete ) );
 		
 		return result;
 	}

@@ -21,8 +21,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 // Io
 #include "io/walk.hh"
@@ -214,7 +214,7 @@ namespace tool
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               std::bind2nd( more::ptr_fun( recursively_copy_into ),
+		               std::bind2nd( plus::ptr_fun( recursively_copy_into ),
 		                             std::make_pair( p7::dirfd( olddir ), newdirfd ) ) );
 	}
 	

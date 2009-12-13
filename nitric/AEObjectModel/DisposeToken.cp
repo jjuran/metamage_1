@@ -7,8 +7,8 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
@@ -79,7 +79,7 @@ namespace Nitrogen
 		
 		std::for_each( tokens.begin(),
 		               tokens.end(),
-		               more::ptr_fun( DisposeTokenFromList ) );
+		               plus::ptr_fun( DisposeTokenFromList ) );
 		
 		// Implicit
 		//AEDisposeDesc( listOfTokens );

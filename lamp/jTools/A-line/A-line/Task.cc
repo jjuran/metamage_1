@@ -10,8 +10,8 @@
 #include <functional>
 #include <queue>
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 // poseven
 #include "poseven/Pathnames.hh"
@@ -71,7 +71,7 @@ namespace tool
 	{
 		std::for_each( its_dependents.begin(),
 		               its_dependents.end(),
-		               std::bind2nd( more::ptr_fun( UpdateTaskInputStamp ),
+		               std::bind2nd( plus::ptr_fun( UpdateTaskInputStamp ),
 		                             its_input_stamp ) );
 		
 		std::for_each( its_dependents.begin(),

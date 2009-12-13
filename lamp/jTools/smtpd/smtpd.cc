@@ -22,6 +22,10 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/functional_extensions.hh"
+#include "plus/pointer_to_function.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -44,10 +48,6 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-#include "PointerToFunction.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
@@ -277,9 +277,9 @@ namespace tool
 		// Create the destination files.
 		std::for_each( myTo.begin(),
 		               myTo.end(),
-		               more::compose1( std::bind1st( more::ptr_fun( CreateDestinationFile ),
+		               plus::compose1( std::bind1st( plus::ptr_fun( CreateDestinationFile ),
 		                                             destFolder ),
-		                               more::ptr_fun( GetForwardPath ) ) );
+		                               plus::ptr_fun( GetForwardPath ) ) );
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.

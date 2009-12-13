@@ -14,11 +14,11 @@
 // Standard C/C++
 #include <cctype>
 
+// plus
+#include "plus/functional_extensions.hh"
+
 // Nitrogen
 #include "Nitrogen/Events.h"
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -125,7 +125,7 @@ namespace tool
 					begin + 1, 
 					end, 
 					std::string( begin[ 0 ] ), 
-					Concat< more::identity< const char* > >()
+					Concat< plus::identity< const char* > >()
 				);
 			}
 		}

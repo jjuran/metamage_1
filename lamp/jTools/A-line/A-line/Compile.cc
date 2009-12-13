@@ -22,6 +22,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -42,9 +45,6 @@
 #include "poseven/functions/symlink.hh"
 #include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -557,7 +557,7 @@ namespace tool
 			
 			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
 			                                  project.AllUsedProjects().end(),
-			                                  std::bind2nd( more::ptr_fun( project_has_prefix ),
+			                                  std::bind2nd( plus::ptr_fun( project_has_prefix ),
 			                                                platform ) );
 			
 			if ( it != project.AllUsedProjects().end() )

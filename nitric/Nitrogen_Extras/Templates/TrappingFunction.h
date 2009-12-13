@@ -6,15 +6,15 @@
 #ifndef TEMPLATES_TRAPPINGFUNCTION_H
 #define TEMPLATES_TRAPPINGFUNCTION_H
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 
 namespace Nitrogen
 {
 	
 	template < class Exception, class Closure >
-	class ExceptionTrap : public more::constant_function< typename Closure::result_type >
+	class ExceptionTrap : public plus::constant_function< typename Closure::result_type >
 	{
 		private:
 			Closure closure;

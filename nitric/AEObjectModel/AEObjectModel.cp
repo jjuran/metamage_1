@@ -7,6 +7,9 @@
 #include "AEObjectModel/AEObjectModel.h"
 #endif
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // Nitrogen
 #ifndef NITROGEN_ASREGISTRY_H
 #include "Nitrogen/ASRegistry.h"
@@ -25,9 +28,6 @@
 #ifndef AEOBJECTMODEL_DISPOSETOKEN_H
 #include "AEObjectModel/DisposeToken.h"
 #endif
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
@@ -275,13 +275,13 @@ namespace Nitrogen
 		std::transform( values.begin(),
 		                values.end(),
 		                AEDescList_Item_BackInserter( result ),
-		                Trap1( std::bind2nd( more::ptr_fun( CallObjectAccessorWithContext ),
+		                Trap1( std::bind2nd( plus::ptr_fun( CallObjectAccessorWithContext ),
 		                                     ObjectAccessContext( desiredClass,
 		                                                          containerClass,
 		                                                          keyForm,
 		                                                          keyData ) ),
 		                       TrapException( ErrAENoSuchObject(),
-		                                      more::ptr_fun( MissingValue ) ) ) );
+		                                      plus::ptr_fun( MissingValue ) ) ) );
 		
 		return result;
 	}

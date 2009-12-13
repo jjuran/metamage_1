@@ -13,6 +13,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -27,9 +30,6 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // A-line
 #include "A-line/Exceptions.hh"
@@ -224,7 +224,7 @@ namespace tool
 		std::transform( contents.begin(),
 		                contents.end(),
 		                has_confd ? configs : folders,
-		                std::bind1st( more::ptr_fun( path_descender( io::path_descent ) ),
+		                std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
 		                              conf_path ) );
 	}
 	

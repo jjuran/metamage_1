@@ -25,11 +25,11 @@ enum { sigMPWShell = 'MPS ' };
 // Standard C
 #include <string.h>
 
+// plus
+#include "plus/functional_extensions.hh"
+
 // Debug
 #include "debug/assert.hh"
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
 
 // Io: MacFiles
 #include "MacFiles.hh"
@@ -139,7 +139,7 @@ namespace tool
 		
 		const_iterator it = std::find_if( myTOCEntries.begin(),
 		                                  myTOCEntries.end(),
-		                                  more::compose1( std::bind1st( std::equal_to< SInt16 >(),
+		                                  plus::compose1( std::bind1st( std::equal_to< SInt16 >(),
 		                                                                err ),
 		                                                  std::ptr_fun( TOCEntry::GetError ) ) );
 		

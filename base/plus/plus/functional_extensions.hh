@@ -1,10 +1,12 @@
-/*	=======================
- *	FunctionalExtensions.hh
- *	=======================
- */
+/*
+	functional_extensions.hh
+	------------------------
+	
+	Joshua Juran
+*/
 
-#ifndef MOREFUNCTIONAL_FUNCTIONALEXTENSIONS_HH
-#define MOREFUNCTIONAL_FUNCTIONALEXTENSIONS_HH
+#ifndef PLUS_FUNCTIONALEXTENSIONS_HH
+#define PLUS_FUNCTIONALEXTENSIONS_HH
 
 // STL extensions
 #ifdef __MWERKS__
@@ -14,7 +16,7 @@
 #endif
 
 
-namespace more
+namespace plus
 {
 #ifdef __MWERKS__
 	

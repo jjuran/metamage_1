@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-#include "PointerToFunction.hh"
+// plus
+#include "plus/functional_extensions.hh"
+#include "plus/pointer_to_function.hh"
 
 // Io
 #include "io/files.hh"
@@ -81,9 +81,9 @@ namespace tool
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               more::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
+		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
 		                                             this ),
-		                               std::bind1st( more::ptr_fun( path_descender( io::path_descent ) ),
+		                               std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
 		                                             dir ) ) );
 		
 		return *this;

@@ -5,8 +5,8 @@
 
 #include "Genie/Utilities/AsyncIO.hh"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
+// plus
+#include "plus/pointer_to_function.hh"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Async.hh"
@@ -25,7 +25,7 @@
 #include "Genie/FS/FSTree_sys_mac_errata.hh"
 
 
-#define CALLBACK  more::ptr_fun( AsyncYield )
+#define CALLBACK  plus::ptr_fun( AsyncYield )
 
 
 namespace Genie

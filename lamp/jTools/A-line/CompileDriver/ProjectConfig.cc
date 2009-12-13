@@ -11,12 +11,11 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/pointer_to_function.hh"
+
 // poseven
 #include "poseven/Pathnames.hh"
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-#include "PointerToFunction.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -156,7 +155,7 @@ namespace tool
 		
 		std::for_each( infos.begin(),
 		               infos.end(),
-		               std::bind1st( more::ptr_fun( SetPlatformInfo ),
+		               std::bind1st( plus::ptr_fun( SetPlatformInfo ),
 		                             &result ) );
 		
 		return result;
@@ -248,7 +247,7 @@ namespace tool
 		std::transform( conf_subprojects.begin(),
 		                conf_subprojects.end(),
 		                std::back_inserter( Subprojects() ),
-		                std::bind1st( more::ptr_fun( DescendPathToDir ),
+		                std::bind1st( plus::ptr_fun( DescendPathToDir ),
 		                              project_dir ) );
 		
 	}

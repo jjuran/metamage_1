@@ -14,6 +14,10 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/functional_extensions.hh"
+#include "plus/pointer_to_function.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -24,10 +28,6 @@
 #include "poseven/functions/pread.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
-
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-#include "PointerToFunction.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -126,8 +126,8 @@ namespace tool
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
-		                                     more::compose1( std::not1( more::ptr_fun( ProjectBuildsLib ) ),
-		                                                     std::bind2nd( more::ptr_fun( GetProject ),
+		                                     plus::compose1( std::not1( plus::ptr_fun( ProjectBuildsLib ) ),
+		                                                     std::bind2nd( plus::ptr_fun( GetProject ),
 		                                                                   platform ) ) ) - usedProjects.begin() );
 	}
 	
@@ -331,7 +331,7 @@ namespace tool
 		std::transform( input_filenames.begin(),
 		                input_filenames.end(),
 		                input_pathnames.begin(),
-		                std::bind1st( more::ptr_fun( &Project_FindResourceFile ), project ) );
+		                std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
 		
 		if ( needsCarbResource )
 		{
@@ -344,7 +344,7 @@ namespace tool
 		
 		std::for_each( input_pathnames.begin(),
 		               input_pathnames.end(),
-		               std::bind1st( more::ptr_fun( UpdateInputStamp ), rez_task ) );
+		               std::bind1st( plus::ptr_fun( UpdateInputStamp ), rez_task ) );
 		
 		return rez_task;
 	}
@@ -443,10 +443,10 @@ namespace tool
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
+		                plus::compose1( std::bind1st( plus::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
 		                                              objects_dir ),
-		                                more::compose1( more::ptr_fun( ObjectFileName ),
-		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
+		                                plus::compose1( plus::ptr_fun( ObjectFileName ),
+		                                                plus::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 	}
 	
 	void NameObjectFiles( const Project&               project,
@@ -752,7 +752,7 @@ namespace tool
 				std::transform( rsrc_filenames.begin(), 
 				                rsrc_filenames.end(),
 				                rsrc_pathnames.begin(),
-		                        std::bind1st( more::ptr_fun( &Project_FindResourceFile ), project ) );
+		                        std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
 				
 				TaskPtr rez_task;
 				
