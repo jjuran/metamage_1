@@ -9,6 +9,7 @@
 
 // Nitrogen
 #include "Nitrogen/Files.h"
+#include "Nitrogen/Processes.h"
 
 
 namespace NitrogenExtras

@@ -6,8 +6,13 @@
 #ifndef UTILITIES_PROCESSES_H
 #define UTILITIES_PROCESSES_H
 
+// Mac OS
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // Nitrogen
-#include "Nitrogen/Processes.h"
+#include "Nitrogen/MacTypes.h"
 
 
 namespace NitrogenExtras
