@@ -185,7 +185,9 @@ namespace tool
 	{
 		const Project& project = GetProject( project_name, its_options.Target().platform );
 		
-		if ( project.Product() == productNotBuilt )
+		const ProductType product = project.Product();
+		
+		if ( product == productNotBuilt )
 		{
 			return;
 		}
