@@ -1,10 +1,12 @@
-/*	===========
- *	Processes.h
- *	===========
- */
+/*
+	FindProcess.hh
+	--------------
+	
+	Copyright 2009, Joshua Juran
+*/
 
-#ifndef UTILITIES_PROCESSES_H
-#define UTILITIES_PROCESSES_H
+#ifndef FINDPROCESS_HH
+#define FINDPROCESS_HH
 
 // Mac OS
 #ifndef __PROCESSES__

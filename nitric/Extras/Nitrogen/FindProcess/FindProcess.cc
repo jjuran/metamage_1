@@ -1,11 +1,11 @@
-/*	============
- *	Processes.cp
- *	============
- */
+/*
+	FindProcess.cc
+	--------------
+	
+	Copyright 2009, Joshua Juran
+*/
 
-#ifndef UTILITIES_PROCESSES_H
-#include "Utilities/Processes.h"
-#endif
+#include "FindProcess.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"

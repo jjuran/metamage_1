@@ -46,11 +46,8 @@
 // GetPathname
 #include "GetPathname.hh"
 
-// Nitrogen Extras / Operators
-//#include "Operators/AEDataModel.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
+// FindProcess
+#include "FindProcess.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
