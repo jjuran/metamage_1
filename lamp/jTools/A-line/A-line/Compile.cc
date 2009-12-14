@@ -187,8 +187,9 @@ namespace tool
 		
 		const ProductType product = project.Product();
 		
-		if ( product == productNotBuilt )
+		if ( product == productNotBuilt  ||  product == productDropIn )
 		{
+			// Pseudo-projects and drop-in code don't export headers
 			return;
 		}
 		

@@ -121,7 +121,7 @@ namespace tool
 	{
 		const ProductType product = project.Product();
 		
-		return product == productStaticLib;
+		return product == productStaticLib  ||  product == productDropIn;
 	}
 	
 	static void RemoveNonLibs( std::vector< std::string >& usedProjects, Platform platform )
@@ -486,7 +486,7 @@ namespace tool
 		
 		const ProductType product = project.Product();
 		
-		const bool exports_static_lib = product == productStaticLib;
+		const bool exports_static_lib = product == productStaticLib  ||  product == productDropIn;
 		
 		const bool hasStaticLib = exports_static_lib  ||  product == productToolkit;
 		
