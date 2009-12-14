@@ -7,10 +7,6 @@
 #include "Utilities/Processes.h"
 #endif
 
-// plus
-#include "plus/functional_extensions.hh"
-#include "plus/pointer_to_function.hh"
-
 // Nitrogen
 #include "Nitrogen/Files.h"
 #ifndef NITROGEN_MACERRORS_H
@@ -23,15 +19,46 @@ namespace NitrogenExtras
 	
 	namespace N = Nitrogen;
 	
-	static N::OSType GetProcessInfoSignature( const ProcessInfoRec& processInfo )
-	{
-		return N::OSType( processInfo.processSignature );
-	}
 	
-	static N::OSType GetProcessSignature( const ProcessSerialNumber process )
+	class Process_HasSignature
 	{
-		return GetProcessInfoSignature( N::GetProcessInformation( process ) );
-	}
+		private:
+			N::OSType itsSignature;
+		
+		public:
+			Process_HasSignature( N::OSType signature )
+			:
+				itsSignature( signature )
+			{
+			}
+			
+			bool operator()( const ProcessSerialNumber& psn ) const
+			{
+				ProcessInfoRec processInfo = N::GetProcessInformation( psn );
+				
+				return processInfo.processSignature == itsSignature;
+			}
+	};
+	
+	class Process_HasAppSpec
+	{
+		private:
+			FSSpec itsAppSpec;
+		
+		public:
+			Process_HasAppSpec( const FSSpec& appSpec )
+			:
+				itsAppSpec( appSpec )
+			{
+			}
+			
+			bool operator()( const ProcessSerialNumber& psn ) const
+			{
+				FSSpec appSpec = N::GetProcessAppSpec( psn );
+				
+				return N::FSCompareFSSpecs( appSpec, itsAppSpec );
+			}
+	};
 	
 	ProcessSerialNumber FindProcess( N::OSType signature )
 	{
@@ -39,9 +66,7 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    plus::compose1( std::bind2nd( std::equal_to< N::OSType >(),
-		                                                                  signature ),
-		                                                    std::ptr_fun( GetProcessSignature ) ) );
+		                                    Process_HasSignature( signature ) );
 		
 		if ( proc == N::Processes().end() )
 		{
@@ -57,9 +82,7 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    plus::compose1( std::bind2nd( plus::ptr_fun( N::FSCompareFSSpecs ),
-		                                                                  appFile ),
-		                                                    plus::ptr_fun( N::GetProcessAppSpec ) ) );
+		                                    Process_HasAppSpec( appFile ) );
 		
 		if ( proc == N::Processes().end() )
 		{
