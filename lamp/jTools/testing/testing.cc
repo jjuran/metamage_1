@@ -89,10 +89,12 @@
 #include "ClassicToolbox/Serial.h"
 #endif
 
+// FSContents
+#include "FSContents.h"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
 #include "Iteration/AEDescListItemDatas.h"
-#include "Iteration/FSContents.h"
 
 // Scaffold
 #include "Tests.hh"
