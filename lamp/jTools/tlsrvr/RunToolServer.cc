@@ -388,9 +388,23 @@ namespace tool
 		return false;
 	}
 	
-	int RunCommandInToolServer( const std::string& command )
+	int RunCommandInToolServer( const std::string& command, bool switch_layers )
 	{
+		// This is a bit of a hack.
+		// It really ought to happen just after we send the event.
+		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
+		                                      N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
+		}
+		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
+		
+		if ( switch_layers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
+		                                      N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( N::CurrentProcess() );
+		}
 		
 		if ( result == -9 )
 		{

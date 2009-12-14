@@ -34,7 +34,7 @@ namespace tool
 	};
 	*/
 	
-	int RunCommandInToolServer( const std::string& command );
+	int RunCommandInToolServer( const std::string& command, bool switch_layers );
 	
 }
 

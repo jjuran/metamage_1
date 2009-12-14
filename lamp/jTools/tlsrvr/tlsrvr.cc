@@ -6,22 +6,14 @@
 // Standard C++
 #include <algorithm>
 #include <functional>
-#include <memory>
 #include <numeric>
 #include <string>
-#include <vector>
 
 // Standard C/C++
 #include <cctype>
 
 // plus
 #include "plus/functional_extensions.hh"
-
-// Nitrogen
-#include "Nitrogen/Events.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -37,7 +29,6 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	namespace o = orion;
 	
 	
@@ -151,21 +142,7 @@ namespace tool
 		                                   free_args + o::free_argument_count(),
 		                                   escapeForMPW );
 		
-		// This is a bit of a hack.  It really ought to happen just after we send the event,
-		// but switchLayers is local to this file and I'm not dealing with that now.
-		if ( switchLayers && N::SameProcess( N::CurrentProcess(),
-		                                     N::GetFrontProcess() ) )
-		{
-			N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
-		}
-		
-		int result = RunCommandInToolServer( command );
-		
-		if ( switchLayers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
-		                                     N::GetFrontProcess() ) )
-		{
-			N::SetFrontProcess( N::CurrentProcess() );
-		}
+		int result = RunCommandInToolServer( command, switchLayers );
 		
 		return result;
 	}
