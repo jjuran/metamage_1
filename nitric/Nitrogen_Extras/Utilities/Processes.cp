@@ -60,13 +60,14 @@ namespace NitrogenExtras
 			}
 	};
 	
-	ProcessSerialNumber FindProcess( N::OSType signature )
+	template < class Predicate >
+	static inline ProcessSerialNumber FindProcess( Predicate predicate )
 	{
 		typedef N::Process_Container::const_iterator const_iterator;
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    Process_HasSignature( signature ) );
+		                                    predicate );
 		
 		if ( proc == N::Processes().end() )
 		{
@@ -76,20 +77,14 @@ namespace NitrogenExtras
 		return *proc;
 	}
 	
+	ProcessSerialNumber FindProcess( N::OSType signature )
+	{
+		return FindProcess( Process_HasSignature( signature ) );
+	}
+	
 	ProcessSerialNumber FindProcess( const FSSpec& appFile )
 	{
-		typedef N::Process_Container::const_iterator const_iterator;
-		
-		const_iterator proc = std::find_if( N::Processes().begin(),
-		                                    N::Processes().end(),
-		                                    Process_HasAppSpec( appFile ) );
-		
-		if ( proc == N::Processes().end() )
-		{
-			throw N::ProcNotFound();
-		}
-		
-		return *proc;
+		return FindProcess( Process_HasAppSpec( appFile ) );
 	}
 	
 }
