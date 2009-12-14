@@ -16,9 +16,6 @@
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
-#ifndef NITROGEN_OSSTATUS_H
-#include "Nitrogen/OSStatus.h"
-#endif
 
 
 namespace NitrogenExtras
@@ -70,23 +67,6 @@ namespace NitrogenExtras
 		}
 		
 		return *proc;
-	}
-	
-	ProcessSerialNumber LaunchApplication( N::OSType signature )
-	{
-		try
-		{
-			return FindProcess( signature );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err != procNotFound )
-			{
-				throw;
-			}
-			
-			return N::LaunchApplication( N::DTGetAPPL( signature ) );
-		}
 	}
 	
 }

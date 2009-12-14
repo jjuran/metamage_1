@@ -158,6 +158,24 @@ namespace tool
 	}
 	
 	
+	static ProcessSerialNumber LaunchApplication( N::OSType signature )
+	{
+		try
+		{
+			return NX::FindProcess( signature );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err != procNotFound )
+			{
+				throw;
+			}
+			
+			return N::LaunchApplication( N::DTGetAPPL( signature ) );
+		}
+	}
+	
+	
 	static long GetResult( const N::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
@@ -177,7 +195,7 @@ namespace tool
 		
 		try
 		{
-			psnToolServer = NX::LaunchApplication( sigToolServer );
+			psnToolServer = LaunchApplication( sigToolServer );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -395,12 +413,12 @@ namespace tool
 		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
 		                                      N::GetFrontProcess() ) )
 		{
-			N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
+			N::SetFrontProcess( LaunchApplication( sigToolServer ) );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		if ( switch_layers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
+		if ( switch_layers && N::SameProcess( LaunchApplication( sigToolServer ),
 		                                      N::GetFrontProcess() ) )
 		{
 			N::SetFrontProcess( N::CurrentProcess() );

@@ -17,8 +17,6 @@ namespace NitrogenExtras
 	
 	ProcessSerialNumber FindProcess( const FSSpec& appFile );
 	
-	ProcessSerialNumber LaunchApplication( Nitrogen::OSType signature );
-	
 }
 
 #endif
