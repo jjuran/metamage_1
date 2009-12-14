@@ -46,11 +46,8 @@
 // GetPathname
 #include "GetPathname.hh"
 
-// Nitrogen Extras / Operators
-//#include "Operators/AEDataModel.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
+// FindProcess
+#include "FindProcess.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -158,6 +155,24 @@ namespace tool
 	}
 	
 	
+	static ProcessSerialNumber LaunchApplication( N::OSType signature )
+	{
+		try
+		{
+			return NX::FindProcess( signature );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err != procNotFound )
+			{
+				throw;
+			}
+			
+			return N::LaunchApplication( N::DTGetAPPL( signature ) );
+		}
+	}
+	
+	
 	static long GetResult( const N::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
@@ -177,7 +192,7 @@ namespace tool
 		
 		try
 		{
-			psnToolServer = NX::LaunchApplication( sigToolServer );
+			psnToolServer = LaunchApplication( sigToolServer );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -388,9 +403,23 @@ namespace tool
 		return false;
 	}
 	
-	int RunCommandInToolServer( const std::string& command )
+	int RunCommandInToolServer( const std::string& command, bool switch_layers )
 	{
+		// This is a bit of a hack.
+		// It really ought to happen just after we send the event.
+		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
+		                                      N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( LaunchApplication( sigToolServer ) );
+		}
+		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
+		
+		if ( switch_layers && N::SameProcess( LaunchApplication( sigToolServer ),
+		                                      N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( N::CurrentProcess() );
+		}
 		
 		if ( result == -9 )
 		{
