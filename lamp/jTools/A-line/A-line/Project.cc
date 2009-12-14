@@ -257,6 +257,10 @@ namespace tool
 		{
 			return productSource;
 		}
+		else if ( productName == "dropin" )
+		{
+			return productDropIn;
+		}
 		else if ( productName == "lib" )
 		{
 			return productStaticLib;

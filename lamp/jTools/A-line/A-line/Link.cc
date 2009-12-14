@@ -119,7 +119,9 @@ namespace tool
 	
 	static bool ProjectBuildsLib( const Project& project )
 	{
-		return project.Product() == productStaticLib;
+		const ProductType product = project.Product();
+		
+		return product == productStaticLib  ||  product == productDropIn;
 	}
 	
 	static void RemoveNonLibs( std::vector< std::string >& usedProjects, Platform platform )
@@ -482,7 +484,11 @@ namespace tool
 		
 		const std::size_t n_tools = project.ToolCount();
 		
-		const bool hasStaticLib = project.Product() == productStaticLib  ||  project.Product() == productToolkit;
+		const ProductType product = project.Product();
+		
+		const bool exports_static_lib = product == productStaticLib  ||  product == productDropIn;
+		
+		const bool hasStaticLib = exports_static_lib  ||  product == productToolkit;
 		
 		std::string libsDir = LibrariesDirPath();
 		
@@ -509,7 +515,7 @@ namespace tool
 			source_dependency->AddDependent( lib_task );
 		}
 		
-		if ( project.Product() == productStaticLib )
+		if ( exports_static_lib )
 		{
 			project.set_static_lib_task( lib_task );
 			
@@ -542,7 +548,7 @@ namespace tool
 		
 	#endif
 		
-		switch ( project.Product() )
+		switch ( product )
 		{
 			case productToolkit:
 			case productTool:
@@ -697,7 +703,7 @@ namespace tool
 				linkName = project.Name();
 			}
 			
-			const bool app = ALINE_MAC_DEVELOPMENT  &&  project.Product() == productApplication;
+			const bool app = ALINE_MAC_DEVELOPMENT  &&  product == productApplication;
 			
 			const bool bundle = real_unix && app;
 			
@@ -758,7 +764,7 @@ namespace tool
 				
 				const Platform carbonCFM = apiMacCarbon | runtimeCodeFragments;
 				
-				const bool needsCarbResource = project.Product() == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
+				const bool needsCarbResource = product == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
 				
 				if ( needsCarbResource || !project.UsedRezFiles().empty() )
 				{

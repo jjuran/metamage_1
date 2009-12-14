@@ -15,6 +15,7 @@ namespace tool
 		productNotBuilt = 0,
 		productSource,
 		productApplication,
+		productDropIn,
 		productStaticLib,
 		productSharedLib,
 		productTool,

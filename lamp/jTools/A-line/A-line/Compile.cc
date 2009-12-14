@@ -185,8 +185,11 @@ namespace tool
 	{
 		const Project& project = GetProject( project_name, its_options.Target().platform );
 		
-		if ( project.Product() == productNotBuilt )
+		const ProductType product = project.Product();
+		
+		if ( product == productNotBuilt  ||  product == productDropIn )
 		{
+			// Pseudo-projects and drop-in code don't export headers
 			return;
 		}
 		
