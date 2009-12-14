@@ -28,9 +28,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Kerosene
-#include "FreeTheMallocPool.h"
-
 
 // Exceptions are off here
 #pragma exceptions off
@@ -41,6 +38,8 @@ typedef void (*CleanupHandler)();
 extern "C" void InitProc( CleanupHandler, int* );
 
 extern "C" void InitializeCallbacks();
+
+extern "C" void FreeTheMallocPool();
 
 void InitializeCallbacks()
 {
