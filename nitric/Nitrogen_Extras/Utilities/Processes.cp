@@ -9,9 +9,6 @@
 
 // Nitrogen
 #include "Nitrogen/Files.h"
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 
 
 namespace NitrogenExtras
@@ -63,18 +60,19 @@ namespace NitrogenExtras
 	template < class Predicate >
 	static inline ProcessSerialNumber FindProcess( Predicate predicate )
 	{
-		typedef N::Process_Container::const_iterator const_iterator;
+		ProcessSerialNumber psn = N::NoProcess();
 		
-		const_iterator proc = std::find_if( N::Processes().begin(),
-		                                    N::Processes().end(),
-		                                    predicate );
-		
-		if ( proc == N::Processes().end() )
+		while ( true )
 		{
-			throw N::ProcNotFound();
+			psn = N::GetNextProcess( psn );
+			
+			if ( predicate( psn ) )
+			{
+				break;
+			}
 		}
 		
-		return *proc;
+		return psn;
 	}
 	
 	ProcessSerialNumber FindProcess( N::OSType signature )
