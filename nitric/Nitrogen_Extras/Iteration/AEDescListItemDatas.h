@@ -6,15 +6,14 @@
 #ifndef ITERATION_AEDESCLISTITEMDATAS_H
 #define ITERATION_AEDESCLISTITEMDATAS_H
 
+// Nucleus
+#include "Nucleus/IndexedValueContainer.h"
+
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
-#endif
-
-#ifndef NITROGEN_INDEXEDVALUECONTAINER_H
-#include "Iteration/IndexedValueContainer.h"
 #endif
 
 
@@ -160,14 +159,14 @@ namespace Nitrogen
 	};
 	
 	template < DescType type >
-	class AEDescList_ItemDataValue_Container : public IndexedValueContainer< AEDescList_ItemData_Specifics< type > >
+	class AEDescList_ItemDataValue_Container : public Nucleus::IndexedValueContainer< AEDescList_ItemData_Specifics< type > >
 	{
 		private:
 			typedef typename AEDescList_ItemData_Specifics< type >::ContainerState State;
 			
 			AEDescList_ItemDataValue_Container( State state )
 			:
-				IndexedValueContainer< AEDescList_ItemData_Specifics< type > >( state )
+				Nucleus::IndexedValueContainer< AEDescList_ItemData_Specifics< type > >( state )
 			{}
 		
 		public:

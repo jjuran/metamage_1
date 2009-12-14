@@ -6,16 +6,15 @@
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #define ITERATION_AEDESCLISTITEMS_H
 
+// Nucleus
+#include "Nucleus/IndexedValueContainer.h"
+
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
 
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
-#endif
-
-#ifndef NITROGEN_INDEXEDVALUECONTAINER_H
-#include "Iteration/IndexedValueContainer.h"
 #endif
 
 
@@ -81,7 +80,7 @@ namespace Nitrogen
 		typedef ContainerState IteratorState;
 	};
 	
-	typedef IndexedValueContainer< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
+	typedef Nucleus::IndexedValueContainer< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
 	
 	inline AEDescList_ItemValue_Container AEDescList_ItemValues( const AEDescList& list )
 	{

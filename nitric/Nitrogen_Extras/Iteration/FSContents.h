@@ -9,6 +9,9 @@
 // Io
 #include "io/walk.hh"
 
+// Nucleus
+#include "Nucleus/IndexedValueContainer.h"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
@@ -17,9 +20,6 @@
 
 // Io: UnicodeMacFiles
 #include "UnicodeMacFiles.hh"
-
-// Nitrogen Extras / Iteration
-#include "Iteration/IndexedValueContainer.h"
 
 
 namespace Nitrogen
@@ -79,8 +79,8 @@ namespace Nitrogen
 		typedef ContainerState IteratorState;
 	};
 	
-	typedef IndexedValueContainer< FSContents_Specifics< FSSpec_Io_Details > > FSSpecContents_Container;
-	typedef IndexedValueContainer< FSContents_Specifics< FSRef_Io_Details  > > FSRefContents_Container;
+	typedef Nucleus::IndexedValueContainer< FSContents_Specifics< FSSpec_Io_Details > > FSSpecContents_Container;
+	typedef Nucleus::IndexedValueContainer< FSContents_Specifics< FSRef_Io_Details  > > FSRefContents_Container;
 	
 	inline FSSpecContents_Container FSContents( const FSDirSpec& dir )
 	{

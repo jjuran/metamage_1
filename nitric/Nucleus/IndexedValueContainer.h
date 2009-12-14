@@ -3,14 +3,14 @@
  *	=======================
  */
 
-#ifndef ITERATION_INDEXEDVALUECONTAINER_H
-#define ITERATION_INDEXEDVALUECONTAINER_H
+#ifndef NUCLEUS_INDEXEDVALUECONTAINER_H
+#define NUCLEUS_INDEXEDVALUECONTAINER_H
 
 // Standard C++
 #include <iterator>
 
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 	template < class Specifics >
