@@ -186,13 +186,11 @@ namespace tool
 	}
 	
 	
-	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
+	static ProcessSerialNumber LaunchToolServer()
 	{
-		ProcessSerialNumber psnToolServer;
-		
 		try
 		{
-			psnToolServer = LaunchApplication( sigToolServer );
+			return LaunchApplication( sigToolServer );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -208,9 +206,14 @@ namespace tool
 			{
 				throw;
 			}
-			
-			throw p7::exit_failure;
 		}
+		
+		throw p7::exit_failure;
+	}
+	
+	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
+	{
+		ProcessSerialNumber psnToolServer = LaunchToolServer();
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,
@@ -410,12 +413,12 @@ namespace tool
 		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
 		                                      N::GetFrontProcess() ) )
 		{
-			N::SetFrontProcess( LaunchApplication( sigToolServer ) );
+			N::SetFrontProcess( LaunchToolServer() );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		if ( switch_layers && N::SameProcess( LaunchApplication( sigToolServer ),
+		if ( switch_layers && N::SameProcess( LaunchToolServer(),
 		                                      N::GetFrontProcess() ) )
 		{
 			N::SetFrontProcess( N::CurrentProcess() );
