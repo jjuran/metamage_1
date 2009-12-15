@@ -29,13 +29,13 @@ namespace Nitrogen
 		}
 	};
 	
-	typedef std::map< AEReturnID, ExpectedReply > ExpectedReplies;
+	typedef std::map< AEReturnID_32Bit, ExpectedReply > ExpectedReplies;
 	
 	static ExpectedReplies gExpectedReplies;
 	
-	void ExpectReply( AEReturnID   returnID,
-	                  AppleEvent*  replyStorage,
-	                  ThreadID     thread )
+	void ExpectReply( AEReturnID_32Bit   returnID,
+	                  AppleEvent        *replyStorage,
+	                  ThreadID           thread )
 	{
 		// assert( returnID != 0 );
 		// Can replyStorage be NULL?  If you wanted to know when the reply came back
@@ -44,7 +44,7 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( thread, replyStorage );
 	}
 	
-	void CancelReply( AEReturnID returnID )
+	void CancelReply( AEReturnID_32Bit returnID )
 	{
 		gExpectedReplies.erase( returnID );
 	}
@@ -68,7 +68,7 @@ namespace Nitrogen
 	
 	void ReceiveReply( const AppleEvent& reply )
 	{
-		AEReturnID returnID = AEGetAttributePtr< keyReturnIDAttr >( reply );
+		AEReturnID_32Bit returnID = AEGetAttributePtr< keyReturnIDAttr >( reply );
 		
 		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
 		

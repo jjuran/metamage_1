@@ -760,7 +760,7 @@ namespace Nitrogen
 			return AEGetAttributePtr< typeChar >( appleEvent, keyword );
 		}
 		
-		static AEReturnID GetReturnID( const AppleEvent& appleEvent )
+		static AEReturnID_32Bit GetReturnID( const AppleEvent& appleEvent )
 		{
 			return AEGetAttributePtr< keyReturnIDAttr >( appleEvent );
 		}

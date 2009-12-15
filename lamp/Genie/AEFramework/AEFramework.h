@@ -18,11 +18,11 @@
 namespace Nitrogen
 {
 	
-	void ExpectReply( AEReturnID   returnID,
-	                  AppleEvent*  replyStorage,
-	                  ThreadID     thread = GetCurrentThread() );
+	void ExpectReply( AEReturnID_32Bit   returnID,
+	                  AppleEvent        *replyStorage,
+	                  ThreadID           thread = GetCurrentThread() );
 	
-	void CancelReply( AEReturnID returnID );
+	void CancelReply( AEReturnID_32Bit returnID );
 	
 	void CancelRepliesForThread( ThreadID thread );
 	
@@ -31,3 +31,4 @@ namespace Nitrogen
 }
 
 #endif
+

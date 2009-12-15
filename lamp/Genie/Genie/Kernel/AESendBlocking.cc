@@ -38,7 +38,7 @@ namespace Genie
 			                  N::kAEQueueReply | N::kAECanInteract );
 			
 			// Now that we've sent the event, retrieve the return ID
-			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( appleEvent );
+			N::AEReturnID_32Bit returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( appleEvent );
 			
 			// Subscribe to AEFramework's queued reply delivery and wake-up service
 			N::ExpectReply( returnID, &reply );

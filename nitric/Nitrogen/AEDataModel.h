@@ -180,6 +180,15 @@ namespace Nitrogen
 		kAEReturnID_Max = Nucleus::Enumeration_Traits< ::AEReturnID >::max
 	};
 	
+	// The OSA runtime can generate 'long' return IDs greater than 0x7fff.
+	// AECreateAppleEvent() can only ever accept SInt16, but our specialization
+	// of AEGetAttributePtr() needs to use a 32-bit type.
+	
+	enum AEReturnID_32Bit
+	{
+		kAEReturnID_32Bit_Max = Nucleus::Enumeration_Traits< ::SInt32 >::max
+	};
+	
 	enum AETransactionID
 	{
 		kAnyTransactionID = ::kAnyTransactionID,
@@ -322,8 +331,8 @@ namespace Nitrogen
 	
 	template < AEKeyword key > struct AEKeyword_Traits;
 	
-	template <> struct AEKeyword_Traits< keyTransactionIDAttr > : Integer_AEKeyword_Traits< AETransactionID, ::AETransactionID > {};
-	template <> struct AEKeyword_Traits< keyReturnIDAttr      > : Integer_AEKeyword_Traits< AEReturnID,      ::AEReturnID      > {};
+	template <> struct AEKeyword_Traits< keyTransactionIDAttr > : Integer_AEKeyword_Traits< AETransactionID,  ::AETransactionID > {};
+	template <> struct AEKeyword_Traits< keyReturnIDAttr      > : Integer_AEKeyword_Traits< AEReturnID_32Bit, ::SInt32          > {};
 	
 	template <> struct AEKeyword_Traits< keyEventClassAttr > : Type_AEKeyword_Traits< AEEventClass > {};
 	template <> struct AEKeyword_Traits< keyEventIDAttr    > : Type_AEKeyword_Traits< AEEventID    > {};
