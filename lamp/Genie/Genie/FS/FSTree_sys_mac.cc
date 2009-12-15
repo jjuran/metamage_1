@@ -57,7 +57,6 @@ namespace Genie
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
 		{ "vol",     &New_FSTree_sys_mac_vol     },
-		{ "gdev",    &New_FSTree_sys_mac_gdev    },
 		{ "proc",    &New_FSTree_sys_mac_proc    },
 		{ "tempmem", &New_FSTree_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng    },
@@ -79,6 +78,7 @@ namespace Genie
 		{ "desktop", &Premapped_Factory< sys_mac_desktop_Mappings > },
 		{ "errata",  &Premapped_Factory< sys_mac_errata_Mappings  > },
 		{ "event",   &Premapped_Factory< sys_mac_event_Mappings   > },
+		{ "gdev",    &Premapped_Factory< sys_mac_gdev_Mappings    > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
