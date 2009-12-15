@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-long AESendBlocking( const struct AppleEvent *appleEvent, struct AppleEvent *reply );
+long AESendBlocking( const struct AEDesc *appleEvent, struct AEDesc *reply );
 
 #ifdef __cplusplus
 }
