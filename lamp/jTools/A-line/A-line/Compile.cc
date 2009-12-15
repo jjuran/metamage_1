@@ -39,6 +39,7 @@
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/Pathnames.hh"
+#include "poseven/functions/lstat.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
@@ -140,6 +141,8 @@ namespace tool
 						
 						continue;
 					}
+					
+					link_stat = p7::lstat( include_link );
 					
 					if ( S_ISLNK( link_stat.st_mode ) )
 					{
