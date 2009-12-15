@@ -5,210 +5,70 @@
 
 #include "Genie/FS/FSTree_sys_mac_gdev.hh"
 
-// Iota
-#include "iota/decimal.hh"
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// iota
 #include "iota/hexidecimal.hh"
-
-// plus
-#include "plus/hexidecimal.hh"
-
-// Nucleus
-#include "Nucleus/LinkedListContainer.h"
-
-// Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "iota/strings.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Virtual_Link.hh"
-#include "Genie/FS/Scribes.hh"
+#include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/sys_mac_gdev_list.hh"
 
-
-namespace Nitrogen
-{
-	
-	class DeviceList_ContainerSpecifics
-	{
-		public:
-			typedef GDHandle  value_type;
-			typedef UInt32    size_type;
-			typedef SInt32    difference_type;
-			
-			value_type GetNextValue( value_type value )
-			{
-				return GetNextDevice( value );
-			}
-			
-			static value_type begin_value()  { return GetDeviceList(); }
-	};
-	
-	class DeviceList_Container: public Nucleus::LinkedListContainer< ::Nitrogen::DeviceList_ContainerSpecifics >
-	{
-		friend DeviceList_Container DeviceList();
-		
-		private:
-			DeviceList_Container()
-			: Nucleus::LinkedListContainer< ::Nitrogen::DeviceList_ContainerSpecifics >( ::Nitrogen::DeviceList_ContainerSpecifics() )
-			{
-			}
-	};
-	
-	inline DeviceList_Container DeviceList()
-	{
-		return DeviceList_Container();
-	}
-	
-}
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	struct sys_mac_gdev_Details
+	class sys_mac_gdev_main : public FSTree
 	{
-		typedef N::GDHandle Key;
-		
-		typedef Nitrogen::DeviceList_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::DeviceList(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static std::string NameFromKey( Key key )
-		{
-			return plus::encode_32_bit_hex( (unsigned) key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return (Key) plus::decode_32_bit_hex( name );
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
+		public:
+			sys_mac_gdev_main( const FSTreePtr&    parent,
+			                   const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
+			bool Exists() const  { return true; }
+			
+			bool IsLink() const  { return true; }
+			
+			std::string ReadLink() const;
+			
+			FSTreePtr ResolveLink() const;
 	};
 	
-	typedef FSTree_Sequence< sys_mac_gdev_Details > FSTree_sys_mac_gdev;
-	
-	
-	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
+	std::string sys_mac_gdev_main::ReadLink() const
 	{
-		return (N::GDHandle) plus::decode_32_bit_hex( parent->Name() );
+		const GDHandle gdH = ::GetMainDevice();
+		
+		ASSERT( gdH != NULL );
+		
+		std::string result = "list/12345678";
+		
+		const size_t hex_offset = STRLEN( "list/" );
+		
+		iota::encode_32_bit_hex( (unsigned) gdH, &result[ hex_offset ] );
+		
+		return result;
 	}
 	
-	static N::GDHandle GetKey( const FSTree* that )
+	FSTreePtr sys_mac_gdev_main::ResolveLink() const
 	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
-	
-	bool sys_mac_gdev_Details::KeyIsValid( const Key& key )
-	{
-		if ( key == NULL )
-		{
-			return false;
-		}
-		
-		Sequence sequence = ItemSequence();
-		
-		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
+		return ResolveAbsolutePath( "/sys/mac/gdev/" + ReadLink() );
 	}
 	
 	
-	extern const FSTree_Premapped::Mapping sys_mac_gdev_H_Mappings[];
-	
-	FSTreePtr sys_mac_gdev_Details::GetChildNode( const FSTreePtr&    parent,
-		                                          const std::string&  name,
-		                                          const Key&          key )
+	const FSTree_Premapped::Mapping sys_mac_gdev_Mappings[] =
 	{
-		return Premapped_Factory< sys_mac_gdev_H_Mappings >( parent, name );
-	}
-	
-	
-	struct GetGDBounds
-	{
-		typedef const Rect& Result;
+		{ "main", &Basic_Factory< sys_mac_gdev_main > },
 		
-		typedef Rect_Scribe Scribe;
-		
-		static Result Get( N::GDHandle gdevice )
-		{
-			return gdevice[0]->gdRect;
-		}
-	};
-	
-	struct GetGDSize
-	{
-		typedef Point Result;
-		
-		typedef Point_Scribe< 'x' > Scribe;
-		
-		static Result Get( N::GDHandle gdevice )
-		{
-			const Rect& bounds = gdevice[0]->gdRect;
-			
-			const Point size = { bounds.bottom - bounds.top,
-			                     bounds.right - bounds.left };
-			
-			return size;
-		}
-	};
-	
-	template < class Accessor >
-	struct sys_mac_gdev_N_Property
-	{
-		typedef N::GDHandle Key;
-		
-		static std::string Read( const FSTree* that, bool binary )
-		{
-			Key key = GetKey( that );
-			
-			const typename Accessor::Result data = Accessor::Get( key );
-			
-			return Freeze< typename Accessor::Scribe >( data, binary );
-		}
-	};
-	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
-	{
-		typedef sys_mac_gdev_N_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::Read );
-	}
-	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
-	{
-		N::GDHandle key = GetKeyFromParent( parent );
-		
-		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
-		
-		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
-	}
-	
-	const FSTree_Premapped::Mapping sys_mac_gdev_H_Mappings[] =
-	{
-		{ "driver", &Driver_Link_Factory },
-		
-		{ "bounds", &Property_Factory< GetGDBounds > },
+		{ "list", &New_FSTree_sys_mac_gdev_list },
 		
 		{ NULL, NULL }
+		
 	};
-	
-	FSTreePtr New_FSTree_sys_mac_gdev( const FSTreePtr& parent, const std::string& name )
-	{
-		return FSTreePtr( new FSTree_sys_mac_gdev( parent, name ) );
-	}
 	
 }
 
