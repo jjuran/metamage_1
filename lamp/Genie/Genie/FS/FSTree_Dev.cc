@@ -61,20 +61,26 @@ namespace Genie
 	
 	typedef boost::shared_ptr< IOHandle > (*OpenProc)( OpenFlags flags );
 	
-	class FSTree_BasicDevice : public FSTree_Device
+	class FSTree_BasicDevice : public FSTree
 	{
 		private:
 			OpenProc itsOpener;
+			mode_t   itsPermMode;
 		
 		public:
 			FSTree_BasicDevice( const FSTreePtr&    parent,
 			                    const std::string&  name,
-			                    OpenProc            opener )
+			                    OpenProc            opener,
+			                    mode_t              perm )
 			:
-				FSTree_Device( parent, name ),
-				itsOpener( opener )
+				FSTree( parent, name ),
+				itsOpener( opener ),
+				itsPermMode( perm )
 			{
 			}
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return itsPermMode; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
@@ -106,6 +112,8 @@ namespace Genie
 	template < class Mode, class Port >
 	struct dev_Serial
 	{
+		static const mode_t perm = S_IRUSR | S_IWUSR;
+		
 		typedef boost::shared_ptr< IOHandle > IORef;
 		
 		static IORef open( OpenFlags flags )
@@ -135,6 +143,8 @@ namespace Genie
 	
 	struct dev_tty
 	{
+		static const mode_t perm = S_IRUSR | S_IWUSR;
+		
 		typedef boost::shared_ptr< IOHandle > IORef;
 		
 		static IORef open( OpenFlags flags )
@@ -161,7 +171,10 @@ namespace Genie
 	static FSTreePtr BasicDevice_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_BasicDevice( parent, name, &Opener::open ) );
+		return FSTreePtr( new FSTree_BasicDevice( parent,
+		                                          name,
+		                                          &Opener::open,
+		                                          Opener::perm ) );
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
