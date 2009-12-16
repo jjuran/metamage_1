@@ -17,7 +17,7 @@
 
 // Genie
 #include "Genie/FS/sys_app_window_list.hh"
-#include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/ReadableSymLink.hh"
 
 
 namespace Genie
@@ -26,11 +26,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class sys_app_window_front : public FSTree
+	class sys_app_window_front : public FSTree_ReadableSymLink
 	{
 		public:
 			sys_app_window_front( const FSTreePtr&    parent,
-			                      const std::string&  name ) : FSTree( parent, name )
+			                      const std::string&  name )
+			:
+				FSTree_ReadableSymLink( parent, name )
 			{
 			}
 			
@@ -39,8 +41,6 @@ namespace Genie
 			bool IsLink() const  { return Exists(); }
 			
 			std::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const;
 	};
 	
 	std::string sys_app_window_front::ReadLink() const
@@ -59,11 +59,6 @@ namespace Genie
 		iota::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
 		
 		return result;
-	}
-	
-	FSTreePtr sys_app_window_front::ResolveLink() const
-	{
-		return ResolveAbsolutePath( "/sys/app/window/" + ReadLink() );
 	}
 	
 	

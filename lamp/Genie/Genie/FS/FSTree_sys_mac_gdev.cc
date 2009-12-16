@@ -15,28 +15,24 @@
 #include "iota/strings.hh"
 
 // Genie
-#include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/sys_mac_gdev_list.hh"
 
 
 namespace Genie
 {
 	
-	class sys_mac_gdev_main : public FSTree
+	class sys_mac_gdev_main : public FSTree_ReadableSymLink
 	{
 		public:
 			sys_mac_gdev_main( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree( parent, name )
+			                   const std::string&  name )
+			:
+				FSTree_ReadableSymLink( parent, name )
 			{
 			}
 			
-			bool Exists() const  { return true; }
-			
-			bool IsLink() const  { return true; }
-			
 			std::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const;
 	};
 	
 	std::string sys_mac_gdev_main::ReadLink() const
@@ -52,11 +48,6 @@ namespace Genie
 		iota::encode_32_bit_hex( (unsigned) gdH, &result[ hex_offset ] );
 		
 		return result;
-	}
-	
-	FSTreePtr sys_mac_gdev_main::ResolveLink() const
-	{
-		return ResolveAbsolutePath( "/sys/mac/gdev/" + ReadLink() );
 	}
 	
 	
