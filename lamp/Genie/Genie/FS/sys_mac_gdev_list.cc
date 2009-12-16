@@ -23,8 +23,8 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Virtual_Link.hh"
 #include "Genie/FS/Scribes.hh"
+#include "Genie/FS/SymbolicLink.hh"
 
 
 namespace Nitrogen
@@ -195,7 +195,7 @@ namespace Genie
 		
 		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		
-		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
+		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_gdev_list_H_Mappings[] =

@@ -20,8 +20,8 @@
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Virtual_Link.hh"
 #include "Genie/FS/stringify.hh"
+#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
 
 
@@ -142,7 +142,7 @@ namespace Genie
 		
 		std::string target = "/sys/mac/unit/" + unitNumber;
 		
-		return New_FSTree_Virtual_Link( parent, name, target );
+		return New_FSTree_SymbolicLink( parent, name, target );
 	}
 	
 	struct GetDriveFlags
