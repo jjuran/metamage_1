@@ -22,6 +22,7 @@
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
@@ -33,21 +34,6 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
-	
-	class FSTree_dev_fd : public FSTree
-	{
-		public:
-			FSTree_dev_fd( const FSTreePtr&    parent,
-			               const std::string&  name ) : FSTree( parent, name )
-			{
-			}
-			
-			bool IsLink() const { return true; }
-			
-			std::string ReadLink() const  { return "/proc/self/fd"; }
-			
-			FSTreePtr ResolveLink() const  { return ResolveAbsolutePath( STR_LEN( "/proc/self/fd" ) ); }
-	};
 	
 	class FSTree_Device : public FSTree
 	{
@@ -151,6 +137,12 @@ namespace Genie
 	}
 	
 	
+	static FSTreePtr dev_fd_Factory( const FSTreePtr&    parent,
+	                                 const std::string&  name )
+	{
+		return FSTreePtr( New_FSTree_SymbolicLink( parent, name, "/proc/self/fd" ) );
+	}
+	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
 	                                       const std::string&  name )
 	{
@@ -174,7 +166,8 @@ namespace Genie
 		
 		{ "con", &Basic_Factory< FSTree_dev_con > },
 		{ "pts", &Basic_Factory< FSTree_dev_pts > },
-		{ "fd",  &Basic_Factory< FSTree_dev_fd  > },
+		
+		{ "fd", &dev_fd_Factory },
 		
 		{ NULL, NULL }
 	};
