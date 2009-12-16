@@ -10,24 +10,17 @@
 #include "sys/stat.h"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/IO/Base.hh"
 
 
 namespace Genie
 {
 	
-	class FSTree_dev_gestalt : public FSTree
+	struct dev_gestalt
 	{
-		public:
-			FSTree_dev_gestalt( const FSTreePtr&    parent,
-			                    const std::string&  name ) : FSTree( parent, name )
-			{
-			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR; }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+		static const mode_t perm = S_IRUSR;
+		
+		static boost::shared_ptr< IOHandle > open( OpenFlags flags );
 	};
 	
 }

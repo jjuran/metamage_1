@@ -49,7 +49,7 @@ namespace Genie
 		}
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_gestalt::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > dev_gestalt::open( OpenFlags flags )
 	{
 		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle( flags ) );
 	}

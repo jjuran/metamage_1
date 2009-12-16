@@ -196,7 +196,7 @@ namespace Genie
 		{ "tty.modem",   &BasicDevice_Factory< dev_ttymodem   > },
 		{ "tty.printer", &BasicDevice_Factory< dev_ttyprinter > },
 		
-		{ "gestalt", &Basic_Factory< FSTree_dev_gestalt > },
+		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
 		{ "con", &Basic_Factory< FSTree_dev_con > },
 		{ "pts", &Basic_Factory< FSTree_dev_pts > },
