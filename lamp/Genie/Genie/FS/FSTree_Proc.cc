@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
@@ -81,21 +82,19 @@ namespace Genie
 	}
 	
 	
-	class FSTree_proc_self : public FSTree
+	class FSTree_proc_self : public FSTree_ReadableSymLink
 	{
 		private:
 			pid_t getpid() const  { return CurrentProcess().GetPID(); }
 		
 		public:
-			FSTree_proc_self( const FSTreePtr& parent ) : FSTree( parent, "self" )
+			FSTree_proc_self( const FSTreePtr& parent )
+			:
+				FSTree_ReadableSymLink( parent, "self" )
 			{
 			}
 			
-			bool IsLink() const  { return true; }
-			
 			std::string ReadLink() const  { return iota::inscribe_unsigned_decimal( getpid() ); }
-			
-			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( ParentRef(), ReadLink(), getpid() ); }
 	};
 	
 	

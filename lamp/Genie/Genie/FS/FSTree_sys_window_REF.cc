@@ -31,6 +31,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/Terminal.hh"
@@ -474,11 +475,13 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_ref : public FSTree
+	class FSTree_sys_window_REF_ref : public FSTree_ReadableSymLink
 	{
 		public:
 			FSTree_sys_window_REF_ref( const FSTreePtr&    parent,
-			                           const std::string&  name ) : FSTree( parent, name )
+			                           const std::string&  name )
+			:
+				FSTree_ReadableSymLink( parent, name )
 			{
 			}
 			
@@ -493,8 +496,6 @@ namespace Genie
 			void Delete() const;
 			
 			std::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const;
 	};
 	
 	
@@ -533,11 +534,6 @@ namespace Genie
 		iota::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
 		
 		return result;
-	}
-	
-	FSTreePtr FSTree_sys_window_REF_ref::ResolveLink() const
-	{
-		return ResolveAbsolutePath( ReadLink() );
 	}
 	
 	
@@ -610,7 +606,7 @@ namespace Genie
 		return -1;
 	}
 	
-	class FSTree_Window_Gesture : public FSTree
+	class FSTree_Window_Gesture : public FSTree_ReadableSymLink
 	{
 		private:
 			int itsIndex;
@@ -628,17 +624,12 @@ namespace Genie
 			void SymLink( const std::string& target ) const;
 			
 			std::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const
-			{
-				return ResolvePathname( ReadLink(), ParentRef() );
-			}
 	};
 	
 	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&    parent,
 	                                              const std::string&  name )
 	:
-		FSTree( parent, name ),
+		FSTree_ReadableSymLink( parent, name ),
 		itsIndex( LookupGesture( name ) )
 	{
 		ASSERT( itsIndex != -1 );

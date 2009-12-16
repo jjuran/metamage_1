@@ -25,9 +25,9 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_Virtual_Link.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys_mac_vol_parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -525,7 +525,7 @@ namespace Genie
 		
 		std::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
 		
-		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive );
+		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/drive/" + drive );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
@@ -544,7 +544,7 @@ namespace Genie
 		
 		std::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
 		
-		return New_FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit );
+		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
 	}
 	
 	template < N::FolderType type >
