@@ -9,9 +9,6 @@
 // POSIX
 #include <fcntl.h>
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-
  // Genie
 #include "Genie/IO/Device.hh"
 

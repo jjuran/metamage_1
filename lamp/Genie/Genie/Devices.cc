@@ -7,6 +7,7 @@
 
 // Standard C++ library
 #include <algorithm>
+#include <map>
 
 // poseven
 #include "poseven/types/errno_t.hh"
