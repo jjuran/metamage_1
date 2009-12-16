@@ -58,15 +58,28 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_tty : public FSTree_Device
+	
+	typedef boost::shared_ptr< IOHandle > (*OpenProc)( OpenFlags flags );
+	
+	class FSTree_BasicDevice : public FSTree_Device
 	{
+		private:
+			OpenProc itsOpener;
+		
 		public:
-			FSTree_dev_tty( const FSTreePtr&    parent,
-			                const std::string&  name ) : FSTree_Device( parent, name )
+			FSTree_BasicDevice( const FSTreePtr&    parent,
+			                    const std::string&  name,
+			                    OpenProc            opener )
+			:
+				FSTree_Device( parent, name ),
+				itsOpener( opener )
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			{
+				return itsOpener( flags );
+			}
 	};
 	
 	
@@ -91,26 +104,22 @@ namespace Genie
 	};
 	
 	template < class Mode, class Port >
-	class FSTree_dev_Serial : public FSTree_Device
+	struct dev_Serial
 	{
-		public:
-			FSTree_dev_Serial( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree_Device( parent, name )
-			{
-			}
+		typedef boost::shared_ptr< IOHandle > IORef;
+		
+		static IORef open( OpenFlags flags )
+		{
+			const bool nonblocking = flags & O_NONBLOCK;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
-			{
-				bool nonblocking = flags & O_NONBLOCK;
-				
-				return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
-			}
+			return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
+		}
 	};
 	
-	typedef FSTree_dev_Serial< CallOut_Traits, ModemPort_Traits   > FSTree_dev_cumodem;
-	typedef FSTree_dev_Serial< CallOut_Traits, PrinterPort_Traits > FSTree_dev_cuprinter;
-	typedef FSTree_dev_Serial< DialIn_Traits,  ModemPort_Traits   > FSTree_dev_ttymodem;
-	typedef FSTree_dev_Serial< DialIn_Traits,  PrinterPort_Traits > FSTree_dev_ttyprinter;
+	typedef dev_Serial< CallOut_Traits, ModemPort_Traits   > dev_cumodem;
+	typedef dev_Serial< CallOut_Traits, PrinterPort_Traits > dev_cuprinter;
+	typedef dev_Serial< DialIn_Traits,  ModemPort_Traits   > dev_ttymodem;
+	typedef dev_Serial< DialIn_Traits,  PrinterPort_Traits > dev_ttyprinter;
 	
 	
 	class ConsoleTTYHandle;
@@ -124,23 +133,35 @@ namespace Genie
 		return GetSimpleDeviceHandle( Name() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags /*flags*/ ) const
+	struct dev_tty
 	{
-		const boost::shared_ptr< IOHandle >& tty = CurrentProcess().ControllingTerminal();
+		typedef boost::shared_ptr< IOHandle > IORef;
 		
-		if ( tty.get() == NULL )
+		static IORef open( OpenFlags flags )
 		{
-			p7::throw_errno( ENOENT );
+			const IORef& tty = CurrentProcess().ControllingTerminal();
+			
+			if ( tty.get() == NULL )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
+			return tty;
 		}
-		
-		return tty;
-	}
+	};
 	
 	
 	static FSTreePtr dev_fd_Factory( const FSTreePtr&    parent,
 	                                 const std::string&  name )
 	{
 		return FSTreePtr( New_FSTree_SymbolicLink( parent, name, "/proc/self/fd" ) );
+	}
+	
+	template < class Opener >
+	static FSTreePtr BasicDevice_Factory( const FSTreePtr&    parent,
+	                                      const std::string&  name )
+	{
+		return FSTreePtr( new FSTree_BasicDevice( parent, name, &Opener::open ) );
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
@@ -155,12 +176,12 @@ namespace Genie
 		{ "zero",    &SimpleDevice_Factory },
 		{ "console", &SimpleDevice_Factory },
 		
-		{ "tty", &Basic_Factory< FSTree_dev_tty > },
+		{ "tty", &BasicDevice_Factory< dev_tty > },
 		
-		{ "cu.modem",    &Basic_Factory< FSTree_dev_cumodem    > },
-		{ "cu.printer",  &Basic_Factory< FSTree_dev_cuprinter  > },
-		{ "tty.modem",   &Basic_Factory< FSTree_dev_ttymodem   > },
-		{ "tty.printer", &Basic_Factory< FSTree_dev_ttyprinter > },
+		{ "cu.modem",    &BasicDevice_Factory< dev_cumodem    > },
+		{ "cu.printer",  &BasicDevice_Factory< dev_cuprinter  > },
+		{ "tty.modem",   &BasicDevice_Factory< dev_ttymodem   > },
+		{ "tty.printer", &BasicDevice_Factory< dev_ttyprinter > },
 		
 		{ "gestalt", &Basic_Factory< FSTree_dev_gestalt > },
 		
