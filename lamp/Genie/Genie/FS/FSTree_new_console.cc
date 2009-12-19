@@ -35,7 +35,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
