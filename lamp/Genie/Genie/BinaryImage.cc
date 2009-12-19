@@ -12,7 +12,7 @@
 #include "Nitrogen/Resources.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // MacIO
 #include "MacIO/FSRead_Sync.hh"

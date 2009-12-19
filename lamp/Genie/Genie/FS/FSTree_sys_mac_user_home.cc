@@ -9,7 +9,7 @@
 #include "Nitrogen/Folders.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"

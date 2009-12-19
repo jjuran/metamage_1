@@ -11,7 +11,7 @@
 #include "Nitrogen/Resources.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

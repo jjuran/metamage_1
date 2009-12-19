@@ -41,7 +41,7 @@
 #include "Nitrogen/MacErrors.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // GetPathname
 #include "GetPathname.hh"

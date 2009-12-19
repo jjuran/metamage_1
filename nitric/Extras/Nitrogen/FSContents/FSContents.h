@@ -16,10 +16,8 @@
 #include "Nitrogen/Files.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
-
-// Io: UnicodeMacFiles
-#include "UnicodeMacFiles.hh"
+#include "MacFiles/Classic.hh"
+#include "MacFiles/Unicode.hh"
 
 
 namespace Nitrogen

@@ -36,7 +36,7 @@
 #include "FSReader.hh"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // GetPathname
 #include "GetPathname.hh"

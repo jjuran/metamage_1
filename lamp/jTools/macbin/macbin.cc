@@ -22,7 +22,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // poseven
 #include "poseven/functions/open.hh"

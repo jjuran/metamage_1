@@ -8,7 +8,7 @@
 #include "Genie/Utilities/GetAppFolder.hh"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // Genie
 #include "Genie/Utilities/GetAppFile.hh"

@@ -9,8 +9,8 @@
 #include "io/slurp.hh"
 
 // MacFiles
-#include "MacFiles.hh"
-#include "UnicodeMacFiles.hh"
+#include "MacFiles/Classic.hh"
+#include "MacFiles/Unicode.hh"
 
 
 namespace UseEdit

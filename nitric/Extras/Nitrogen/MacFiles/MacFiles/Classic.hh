@@ -1,5 +1,5 @@
-// MacFiles.hh
-// -----------
+// MacFiles/Classic.hh
+// -------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef MACFILES_HH
-#define MACFILES_HH
+#ifndef MACFILES_CLASSIC_HH
+#define MACFILES_CLASSIC_HH
 
 // Io
 #include "io/io.hh"

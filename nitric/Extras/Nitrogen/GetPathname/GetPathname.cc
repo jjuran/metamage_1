@@ -13,7 +13,7 @@
 #endif
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 
 static std::string GetMacPathname_Internal( const FSSpec& file )

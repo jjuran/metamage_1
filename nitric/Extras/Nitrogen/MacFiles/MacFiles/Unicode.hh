@@ -1,5 +1,5 @@
-// UnicodeMacFiles.hh
-// ------------------
+// MacFiles/Unicode.hh
+// -------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef UNICODEMACFILES_HH
-#define UNICODEMACFILES_HH
+#ifndef MACFILES_UNICODE_HH
+#define MACFILES_UNICODE_HH
 
 // Io
 #include "io/io.hh"

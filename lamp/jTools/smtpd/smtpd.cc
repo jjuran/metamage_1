@@ -42,7 +42,7 @@
 #include "Nitrogen/Folders.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // poseven
 #include "poseven/extras/fd_reader.hh"

@@ -10,8 +10,8 @@
 #include "Nucleus/Owned.h"
 
 // MacFiles
-#include "MacFiles.hh"
-#include "UnicodeMacFiles.hh"
+#include "MacFiles/Classic.hh"
+#include "MacFiles/Unicode.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

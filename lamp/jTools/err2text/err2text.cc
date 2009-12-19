@@ -32,7 +32,7 @@ enum { sigMPWShell = 'MPS ' };
 #include "debug/assert.hh"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // Orion
 #include "Orion/Main.hh"

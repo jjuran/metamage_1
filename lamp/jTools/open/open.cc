@@ -26,7 +26,7 @@
 #include "Nitrogen/Str.h"
 
 // Io: MacFiles
-#include "MacFiles.hh"
+#include "MacFiles/Classic.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
