@@ -66,7 +66,7 @@ namespace Genie
 	{
 		{ "front", &Basic_Factory< sys_app_window_front >, true },
 		
-		{ "list", &Basic_Factory< sys_app_window_list > },
+		{ "list", &New_FSTree_sys_app_window_list },
 		
 		{ NULL, NULL }
 		
