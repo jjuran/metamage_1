@@ -28,7 +28,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Scribes.hh"
 #include "Genie/FS/Trigger.hh"
-#include "Genie/FS/sys_app_window_list.hh"
+#include "Genie/Utilities/WindowList_contains.hh"
 
 
 namespace Nitrogen
@@ -403,7 +403,7 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			if ( !sys_app_window_list_Details::KeyIsValid( key ) )
+			if ( !WindowList_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -415,7 +415,7 @@ namespace Genie
 		{
 			Key key = GetKey( that );
 			
-			if ( !sys_app_window_list_Details::KeyIsValid( key ) )
+			if ( !WindowList_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
