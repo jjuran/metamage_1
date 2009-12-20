@@ -616,38 +616,21 @@ namespace Genie
 	}
 	
 	
-	struct Volumes_Details : public Volume_KeyName_Traits
+	class FSTree_Volumes : public FSTree_Directory
 	{
-		typedef N::Volume_Container Sequence;
-		
-		static FSTreePtr Parent()  { return FSRoot(); }
-		
-		static Sequence ItemSequence()  { return N::Volumes(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			return true;  // GetVRefNum() only returns valid keys
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	class FSTree_Volumes : public FSTree_Sequence< Volumes_Details >
-	{
-		private:
-			typedef FSTree_Sequence< Volumes_Details > Base;
-		
 		public:
 			FSTree_Volumes( const FSTreePtr&    parent,
-			                const std::string&  name ) : Base( parent, name )
+			                const std::string&  name )
+			:
+				FSTree_Directory( parent, name )
 			{
 			}
 			
 			ino_t Inode() const  { return fsRtParID; }
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
@@ -1709,11 +1692,34 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr Volumes_Details::GetChildNode( const FSTreePtr&    parent,
-		                                     const std::string&  name,
-		                                     const Key&          key )
+	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name ) const
 	{
-		return FSTreePtr( new FSTree_Volumes_Link( parent, name ) );
+		return FSTreePtr( new FSTree_Volumes_Link( Self(), name ) );
+	}
+	
+	class volumes_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::FSVolumeRefNum key ) const
+			{
+				const ino_t inode = -key;
+				
+				std::string name = Volume_KeyName_Traits::NameFromKey( key );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		volumes_IteratorConverter converter;
+		
+		N::Volume_Container sequence = N::Volumes();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 }
