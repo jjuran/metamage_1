@@ -96,5 +96,10 @@ namespace Genie
 		return window;
 	}
 	
+	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_window( parent, name ) );
+	}
+	
 }
 

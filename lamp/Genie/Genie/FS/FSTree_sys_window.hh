@@ -33,6 +33,9 @@ namespace Genie
 	
 	void RemoveWindow( const FSTree* window );
 	
+	
+	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const std::string& name );
+	
 }
 
 #endif
