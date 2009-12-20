@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_sys_window.hh"
 
+// Standard C++
+#include <map>
+
 // Iota
 #include "iota/strings.hh"
 
@@ -15,6 +18,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ResolvePathname.hh"
 
@@ -28,6 +32,20 @@ namespace Genie
 	typedef std::map< const FSTree*, boost::weak_ptr< const FSTree > > WindowMap;
 	
 	static WindowMap gWindowMap;
+	
+	
+	class FSTree_sys_window : public FSTree_Directory
+	{
+		public:
+			FSTree_sys_window( const FSTreePtr&    parent,
+			                   const std::string&  name ) : FSTree_Directory( parent, name )
+			{
+			}
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
 	
 	
 	FSTreePtr FSTree_sys_window::Lookup_Child( const std::string& name ) const
@@ -94,6 +112,11 @@ namespace Genie
 		AddWindow( window );
 		
 		return window;
+	}
+	
+	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new FSTree_sys_window( parent, name ) );
 	}
 	
 }

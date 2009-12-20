@@ -178,7 +178,7 @@ namespace Genie
 		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
 		
-		{ "window", &Basic_Factory< FSTree_sys_window > },
+		{ "window", &New_FSTree_sys_window },
 		
 		{ NULL, NULL }
 	};
