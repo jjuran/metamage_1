@@ -48,6 +48,8 @@ namespace Genie
 	
 	typedef FSTree_Sequence< sys_app_window_list_Details > sys_app_window_list;
 	
+	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr& parent, const std::string& name );
+	
 }
 
 #endif

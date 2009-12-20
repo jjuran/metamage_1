@@ -34,5 +34,10 @@ namespace Genie
 		return Premapped_Factory< sys_app_window_list_REF_Mappings >( parent, name );
 	}
 	
+	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr& parent, const std::string& name )
+	{
+		return FSTreePtr( new sys_app_window_list( parent, name ) );
+	}
+	
 }
 
