@@ -154,7 +154,7 @@ namespace Genie
 				
 				if ( (i & 0xffff8000) == 0 )
 				{
-					is_valid_VolumeRefNum( N::FSVolumeRefNum( -i ) );
+					return is_valid_VolumeRefNum( N::FSVolumeRefNum( -i ) );
 				}
 			}
 			
