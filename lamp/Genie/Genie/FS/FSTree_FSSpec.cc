@@ -63,7 +63,7 @@
 #include "Genie/FS/FSTree_new.hh"
 #include "Genie/FS/FSTree_sys.hh"
 #include "Genie/FS/FSTree_sys_mac_errata.hh"
-#include "Genie/FS/FSTree_sys_mac_vol.hh"
+#include "Genie/FS/sys_mac_vol_list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"

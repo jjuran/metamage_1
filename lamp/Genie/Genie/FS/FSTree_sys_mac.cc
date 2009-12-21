@@ -29,7 +29,7 @@
 #include "Genie/FS/FSTree_sys_mac_xpram.hh"
 #endif
 #include "Genie/FS/FSTree_sys_mac_user.hh"
-#include "Genie/FS/FSTree_sys_mac_vol.hh"
+#include "Genie/FS/sys_mac_vol.hh"
 //#include "Genie/FS/FSTree_sys_mac_window.hh"
 
 
@@ -56,7 +56,6 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
-		{ "vol",     &New_FSTree_sys_mac_vol     },
 		{ "proc",    &New_FSTree_sys_mac_proc    },
 		{ "tempmem", &New_FSTree_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng    },
@@ -81,6 +80,7 @@ namespace Genie
 		{ "gdev",    &Premapped_Factory< sys_mac_gdev_Mappings    > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
+		{ "vol",     &Premapped_Factory< sys_mac_vol_Mappings     > },
 		
 		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		
