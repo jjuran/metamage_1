@@ -494,7 +494,7 @@ namespace Genie
 	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
 	                                  const std::string&  name )
 	{
-		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		return FSTreePtr( new Trigger( parent, name, key ) );
 	}
@@ -502,7 +502,7 @@ namespace Genie
 	static FSTreePtr Root_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		FSSpec volume = MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		
@@ -512,7 +512,7 @@ namespace Genie
 	static FSTreePtr Drive_Link_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		HVolumeParam pb;
 		
@@ -531,7 +531,7 @@ namespace Genie
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		HVolumeParam pb;
 		
@@ -551,7 +551,7 @@ namespace Genie
 	static FSTreePtr Folder_Link_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		VRefNum_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		return FSTreePtr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
