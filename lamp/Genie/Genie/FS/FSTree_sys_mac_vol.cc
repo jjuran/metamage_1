@@ -21,9 +21,9 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -31,6 +31,7 @@
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys_mac_vol_parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/canonical_positive_integer.hh"
 
 
 namespace Nitrogen
@@ -48,34 +49,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	
-	
-	struct VRefNum_KeyName_Traits
-	{
-		typedef N::FSVolumeRefNum Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
-		
-		static bool KeyIsValid( const Key& key );
-	};
-	
-	
-	struct sys_mac_vol_Details : public VRefNum_KeyName_Traits
-	{
-		typedef N::Volume_Container Sequence;
-		
-		static Sequence ItemSequence()  { return N::Volumes(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_vol_Details > FSTree_sys_mac_vol;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -150,26 +123,7 @@ namespace Genie
 #endif
 	
 	
-	std::string VRefNum_KeyName_Traits::NameFromKey( const Key& key )
-	{
-		return iota::inscribe_unsigned_decimal( -key );
-	}
-	
-	VRefNum_KeyName_Traits::Key VRefNum_KeyName_Traits::KeyFromName( const std::string& name )
-	{
-		int n = atoi( name.c_str() );
-		
-		if ( n <= 0  ||  SInt16( n ) != n )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -n );
-		
-		return vRefNum;
-	}
-	
-	bool VRefNum_KeyName_Traits::KeyIsValid( const Key& key )
+	static bool is_valid_VolumeRefNum( N::FSVolumeRefNum key )
 	{
 		try
 		{
@@ -188,14 +142,62 @@ namespace Genie
 		return true;
 	}
 	
+	struct valid_name_of_vol_number
+	{
+		typedef canonical_positive_integer well_formed_name;
+		
+		static bool applies( const std::string& name )
+		{
+			if ( well_formed_name::applies( name ) )
+			{
+				const int i = atoi( name.c_str() );
+				
+				if ( (i & 0xffff8000) == 0 )
+				{
+					is_valid_VolumeRefNum( N::FSVolumeRefNum( -i ) );
+				}
+			}
+			
+			return false;
+		}
+	};
+	
 	
 	extern const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[];
 	
-	FSTreePtr sys_mac_vol_Details::GetChildNode( const FSTreePtr&    parent,
-		                                         const std::string&  name,
-		                                         const Key&          key )
+	static FSTreePtr vol_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !valid_name_of_vol_number::applies( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
+	}
+	
+	class vol_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::FSVolumeRefNum vRefNum ) const
+			{
+				const ino_t inode = -vRefNum;
+				
+				std::string name = iota::inscribe_decimal( -vRefNum );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void vol_iterate( FSTreeCache& cache )
+	{
+		vol_IteratorConverter converter;
+		
+		N::Volume_Container sequence = N::Volumes();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -601,14 +603,16 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_vol( parent, name ) );
+		return new_basic_directory( parent, name, vol_lookup, vol_iterate );
 	}
 	
 	FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		return sys_mac_vol_Details::GetChildNode( ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) ),
-		                                          VRefNum_KeyName_Traits::NameFromKey( vRefNum ),
-		                                          vRefNum );
+		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) );
+		
+		const std::string name = iota::inscribe_decimal( -vRefNum );
+		
+		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
 	}
 	
 }
