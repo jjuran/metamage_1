@@ -1,9 +1,11 @@
-/*	=====================
- *	FSTree_sys_mac_vol.cc
- *	=====================
- */
+/*
+	sys_mac_vol_list.cc
+	-------------------
+	
+	Joshua Juran
+*/
 
-#include "Genie/FS/FSTree_sys_mac_vol.hh"
+#include "Genie/FS/sys_mac_vol_list.hh"
 
 // Iota
 #include "iota/decimal.hh"
@@ -608,7 +610,7 @@ namespace Genie
 	
 	FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol" ) );
+		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol/list" ) );
 		
 		const std::string name = iota::inscribe_decimal( -vRefNum );
 		
