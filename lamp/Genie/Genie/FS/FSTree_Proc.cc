@@ -8,6 +8,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/contains.hh"
+
 // Recall
 #include "recall/backtrace.hh"
 
@@ -18,7 +21,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
@@ -27,6 +30,7 @@
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
+#include "Genie/Utilities/canonical_positive_integer.hh"
 
 
 namespace Genie
@@ -34,41 +38,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	
-	
-	struct proc_Details
-	{
-		typedef pid_t Key;
-		
-		static std::string NameFromKey( Key key )
-		{
-			return iota::inscribe_decimal( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( std::atoi( name.c_str() ) );
-		}
-		
-		typedef ProcessList::Map Sequence;
-		
-		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			const Sequence& sequence = ItemSequence();
-			
-			return key == 0  ||  sequence.find( key ) != sequence.end();
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< proc_Details > FSTree_proc;
 	
 	
 	static pid_t GetKeyFromParent( const FSTreePtr& parent )
@@ -238,21 +207,63 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping proc_PID_Mappings[];
 	
-	FSTreePtr proc_Details::GetChildNode( const FSTreePtr&    parent,
-		                                  const std::string&  name,
-		                                  const Key&          key )
+	template < class Key, class Value >
+	static inline bool map_contains( const std::map< Key, Value >& map, const Key& key )
+	{
+		return map.find( key ) != map.end();
+	}
+	
+	struct valid_name_of_pid
+	{
+		typedef canonical_positive_integer well_formed_name;
+		
+		static bool applies( const std::string& name )
+		{
+			return    well_formed_name::applies( name )
+			       && map_contains( GetProcessList().GetMap(), atoi( name.c_str() ) );
+		}
+	};
+	
+	static FSTreePtr proc_lookup( const FSTreePtr& parent, const std::string& name )
 	{
 		if ( name == "self" )
 		{
 			return FSTreePtr( new FSTree_proc_self( parent ) );
 		}
 		
-		if ( atoi( name.c_str() ) == 0 )
+		if ( !valid_name_of_pid::applies( name ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
 		return Premapped_Factory< proc_PID_Mappings >( parent, name );
+	}
+	
+	class proc_IteratorConverter
+	{
+		public:
+			FSNode operator()( const ProcessList::Map::value_type& value ) const
+			{
+				const int key = value.first;
+				
+				const ino_t inode = key;
+				
+				std::string name = iota::inscribe_decimal( key );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void proc_iterate( FSTreeCache& cache )
+	{
+		proc_IteratorConverter converter;
+		
+		const ProcessList::Map& sequence = GetProcessList().GetMap();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	// Process states
@@ -618,7 +629,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_proc( parent, name ) );
+		return new_basic_directory( parent, name, proc_lookup, proc_iterate );
 	}
 	
 }
