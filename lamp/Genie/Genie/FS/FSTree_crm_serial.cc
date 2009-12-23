@@ -10,11 +10,14 @@
 // iota
 #include "iota/decimal.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/CRMSerialDevices.h"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 
@@ -24,36 +27,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	
-	
-	struct sys_mac_crm_serial_Details
-	{
-		typedef N::CRMDeviceID Key;
-		
-		static std::string NameFromKey( Key key )
-		{
-			return iota::inscribe_decimal( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( std::atoi( name.c_str() ) );
-		}
-		
-		typedef N::CRMSerialDevice_Container Sequence;
-		
-		static Sequence ItemSequence()  { return N::CRMSerialDevices(); }
-		
-		static Key KeyFromValue( Sequence::const_reference ref )  { return Key( ref->crmDeviceID ); }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_crm_serial_Details > FSTree_sys_mac_crm_serial;
 	
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
@@ -86,22 +59,48 @@ namespace Genie
 		return NULL;
 	}
 	
+	extern const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[];
 	
-	bool sys_mac_crm_serial_Details::KeyIsValid( const Key& key )
+	static FSTreePtr serial_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		const N::CRMDeviceID key = N::CRMDeviceID( atoi( name.c_str() ) );
+		
 		// We can't just call N::CRMSearch< N::crmSerialDevice >( key ),
 		// because that returns the *next* record.  So, linear search it is.
 		
-		return GetCRMRecPtrFromID( key ) != NULL;
+		if ( GetCRMRecPtrFromID( key ) == NULL )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
+		return Premapped_Factory< sys_mac_crm_serial_N_Mappings >( parent, name );
 	}
 	
-	extern const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[];
-	
-	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr&    parent,
-		                                                const std::string&  name,
-		                                                const Key&          key )
+	class crm_IteratorConverter
 	{
-		return Premapped_Factory< sys_mac_crm_serial_N_Mappings >( parent, name );
+		public:
+			FSNode operator()( const N::CRMSerialDevice_Container::value_type& rec ) const
+			{
+				const int key = rec->crmDeviceID;
+				
+				const ino_t inode = key;
+				
+				std::string name = iota::inscribe_decimal( key );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void serial_iterate( FSTreeCache& cache )
+	{
+		crm_IteratorConverter converter;
+		
+		N::CRMSerialDevice_Container sequence = N::CRMSerialDevices();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -220,7 +219,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_crm_serial( parent, name ) );
+		return new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}
 	
 }
