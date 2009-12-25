@@ -7,8 +7,6 @@
 #define GENIE_FILESYSTEM_FSTREE_DIRECTORY_HH
 
 // Standard C++
-#include <algorithm>
-#include <iterator>
 #include <map>
 #include <string>
 #include <vector>
@@ -16,12 +14,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Null.hh"
 
 
 namespace Genie
@@ -54,64 +48,6 @@ namespace Genie
 			
 			virtual void IterateIntoCache( FSTreeCache& cache ) const = 0;
 	};
-	
-	
-	template < class Details >
-	class FSTree_Sequence : public FSTree_Directory
-	{
-		protected:
-			typedef typename Details::Key Key;
-		
-		public:
-			FSTree_Sequence( const FSTreePtr&    parent,
-			                 const std::string&  name )
-			:
-				FSTree_Directory( parent, name )
-			{
-			}
-			
-			FSTreePtr Lookup_Child( const std::string& name ) const
-			{
-				Key key = Details::KeyFromName( name );
-				
-				if ( !Details::KeyIsValid( key ) )
-				{
-					poseven::throw_errno( ENOENT );
-				}
-				
-				return Details::GetChildNode( Self(), name, key );
-			}
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	template < class Details >
-	class IteratorConverter
-	{
-		public:
-			FSNode operator()( const typename Details::Sequence::value_type& value ) const
-			{
-				typename Details::Key key = Details::KeyFromValue( value );
-				
-				std::string name = Details::NameFromKey( key );
-				ino_t inode = 0;
-				
-				return FSNode( inode, name );
-			}
-	};
-	
-	template < class Details >
-	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		IteratorConverter< Details > converter;
-		
-		typename Details::Sequence sequence = Details::ItemSequence();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
-	}
 	
 	
 	class FSTree_Mappable : public FSTree_Directory
