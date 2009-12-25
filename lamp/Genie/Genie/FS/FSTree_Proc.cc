@@ -242,9 +242,14 @@ namespace Genie
 		                                  const std::string&  name,
 		                                  const Key&          key )
 	{
-		if ( key == 0 )
+		if ( name == "self" )
 		{
 			return FSTreePtr( new FSTree_proc_self( parent ) );
+		}
+		
+		if ( atoi( name.c_str() ) == 0 )
+		{
+			p7::throw_errno( ENOENT );
 		}
 		
 		return Premapped_Factory< proc_PID_Mappings >( parent, name );
