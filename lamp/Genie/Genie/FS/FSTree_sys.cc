@@ -16,6 +16,7 @@
 
 // Genie
 #include "Genie/Exec/GetMainEntry.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_sys_app.hh"
 #include "Genie/FS/FSTree_sys_cpu.hh"
 #include "Genie/FS/FSTree_sys_mac.hh"
@@ -33,43 +34,24 @@ namespace Genie
 	
 	typedef const SystemCall* SystemCallPtr;
 	
-	struct SystemCall_KeyName_Traits
+	
+	static std::string name_of_syscall( SystemCallPtr key )
 	{
-		typedef SystemCallPtr Key;
-		
-		static std::string NameFromKey( const Key& key )
+		if ( key->name == NULL )
 		{
-			if ( key->name == NULL )
-			{
-				std::string name;
-				
-				name.resize( sizeof '.' + sizeof (unsigned) * 2 );  // 9
-				
-				name[0] = '.';
-				
-				iota::encode_32_bit_hex( (unsigned) key, &name[1] );
-				
-				return name;
-			}
+			std::string name;
 			
-			return key->name;
-		}
-		
-		static Key CheckKey( Key key )
-		{
-			if ( key == NULL )
-			{
-				p7::throw_errno( ENOENT );
-			}
+			name.resize( sizeof '.' + sizeof (unsigned) * 2 );  // 9
 			
-			return key;
+			name[0] = '.';
+			
+			iota::encode_32_bit_hex( (unsigned) key, &name[1] );
+			
+			return name;
 		}
 		
-		static Key KeyFromName( const std::string& name )
-		{
-			return CheckKey( LookUpSystemCallByName( name.c_str() ) );
-		}
-	};
+		return key->name;
+	}
 	
 	
 	class FSTree_sys_kernel_bin_EXE : public FSTree
@@ -91,25 +73,45 @@ namespace Genie
 	};
 	
 	
-	struct sys_kernel_syscall_Details : public SystemCall_KeyName_Traits
+	static FSTreePtr syscall_lookup( const FSTreePtr& parent, const std::string& name )
 	{
-		typedef SystemCallRegistry Sequence;
-		
-		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return &value; }
-		
-		static bool KeyIsValid( const Key& key )
+		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
-			return key != NULL;
+			poseven::throw_errno( ENOENT );
 		}
 		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
+		return FSTreePtr( new FSTree_Premapped( parent, name ) );
+	}
+	
+	class syscall_IteratorConverter
+	{
+		public:
+			FSNode operator()( const SystemCall& value ) const
+			{
+				const ino_t inode = &value - GetSystemCall( 0 );
+				
+				std::string name = name_of_syscall( &value );
+				
+				return FSNode( inode, name );
+			}
 	};
 	
-	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
+	static void syscall_iterate( FSTreeCache& cache )
+	{
+		syscall_IteratorConverter converter;
+		
+		const SystemCallRegistry& sequence = GetSystemCallRegistry();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
+	
+	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr& parent, const std::string& name )
+	{
+		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
+	}
 	
 	
 	template < int (*main)() >
@@ -166,7 +168,7 @@ namespace Genie
 	{
 		{ "bin",     &Premapped_Factory< sys_kernel_bin_Mappings > },
 		
-		{ "syscall", &Basic_Factory< FSTree_sys_kernel_syscall > },
+		{ "syscall", &New_sys_kernel_syscall },
 		
 		{ NULL, NULL }
 	};
@@ -182,14 +184,6 @@ namespace Genie
 		
 		{ NULL, NULL }
 	};
-	
-	
-	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr&    parent,
-	                                                    const std::string&  name,
-	                                                    const Key&          key )
-	{
-		return FSTreePtr( new FSTree_Premapped( parent, name ) );
-	}
 	
 }
 
