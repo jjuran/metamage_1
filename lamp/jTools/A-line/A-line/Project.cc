@@ -303,9 +303,9 @@ namespace tool
 		return usedProjects;
 	}
 	
-	static Project& GetUsedProject( const std::string&  user_name,
-	                                const std::string&  used_name,
-	                                Platform            platform )
+	static const Project& GetUsedProject( const std::string&  user_name,
+	                                      const std::string&  used_name,
+	                                      Platform            platform )
 	{
 		try
 		{
@@ -336,7 +336,7 @@ namespace tool
 		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
 		{
 			// Recursively creates projects
-			Project& used = GetUsedProject( project_name, *it, platform );
+			const Project& used = GetUsedProject( project_name, *it, platform );
 			
 			// Find out which projects it uses
 			const std::vector< std::string >& subUsed = used.AllUsedProjects();
