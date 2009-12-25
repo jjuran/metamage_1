@@ -18,6 +18,9 @@
 #include "Nucleus/Convert.h"
 #include "Nucleus/Saved.h"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 

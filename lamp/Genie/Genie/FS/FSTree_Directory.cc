@@ -10,6 +10,9 @@
 #include <functional>
 #include <iterator>
 
+// Genie
+#include "Genie/FS/FSTree_Null.hh"
+
 
 namespace Genie
 {

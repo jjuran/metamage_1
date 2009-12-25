@@ -14,6 +14,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Genie
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/sys_mac_gdev_list.hh"

@@ -8,6 +8,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 
 namespace Genie
 {
