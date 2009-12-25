@@ -17,12 +17,14 @@
 #include "ClassicToolbox/Files.h"
 
 // Genie
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/FSTree_Null.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/stringify.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/Utilities/canonical_positive_integer.hh"
 
 
 namespace Genie
@@ -30,34 +32,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	
-	
-	struct DriveNumber_KeyName_Traits
-	{
-		typedef Nitrogen::FSVolumeRefNum Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
-		
-		static bool KeyIsValid( const Key& key );
-	};
-	
-	
-	struct sys_mac_drive_Details : public DriveNumber_KeyName_Traits
-	{
-		typedef Nitrogen::DriveQueue_Sequence Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::DriveQueue(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return Key( value.dQDrive ); }
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_drive_Details > FSTree_sys_mac_drive;
 	
 	
 	static const DrvQEl* FindDrive( UInt16 driveNumber )
@@ -77,38 +51,49 @@ namespace Genie
 		return NULL;
 	}
 	
-	std::string DriveNumber_KeyName_Traits::NameFromKey( const Key& key )
+	static bool is_valid_drive_name( const std::string& name )
 	{
-		return iota::inscribe_unsigned_decimal( key );
-	}
-	
-	DriveNumber_KeyName_Traits::Key DriveNumber_KeyName_Traits::KeyFromName( const std::string& name )
-	{
-		int n = atoi( name.c_str() );
+		typedef canonical_positive_integer well_formed_name;
 		
-		if ( n <= 0  ||  SInt16( n ) != n )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		N::FSVolumeRefNum driveNum = N::FSVolumeRefNum( n );
-		
-		return driveNum;
-	}
-	
-	bool DriveNumber_KeyName_Traits::KeyIsValid( const Key& key )
-	{
-		return FindDrive( key ) != NULL;
+		return well_formed_name::applies( name )  &&  FindDrive( atoi( name.c_str() ) ) != NULL;
 	}
 	
 	
 	extern const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[];
 	
-	FSTreePtr sys_mac_drive_Details::GetChildNode( const FSTreePtr&    parent,
-		                                           const std::string&  name,
-		                                           const Key&          key )
+	static FSTreePtr drive_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !is_valid_drive_name( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_drive_N_Mappings >( parent, name );
+	}
+	
+	class drive_IteratorConverter
+	{
+		public:
+			FSNode operator()( const N::DriveQueue_Sequence::value_type& value ) const
+			{
+				const ino_t inode = value.dQDrive;
+				
+				std::string name = iota::inscribe_decimal( value.dQDrive );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void drive_iterate( FSTreeCache& cache )
+	{
+		drive_IteratorConverter converter;
+		
+		N::DriveQueue_Sequence sequence = N::DriveQueue();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -125,7 +110,7 @@ namespace Genie
 	static FSTreePtr Link_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
-		DriveNumber_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		const DrvQEl* el = FindDrive( key );
 		
@@ -232,7 +217,7 @@ namespace Genie
 	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
 	                                  const std::string&  name )
 	{
-		DriveNumber_KeyName_Traits::Key key = GetKeyFromParent( parent );
+		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		return FSTreePtr( new Trigger( parent, name, key ) );
 	}
@@ -255,7 +240,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_drive( parent, name ) );
+		return new_basic_directory( parent, name, drive_lookup, drive_iterate );
 	}
 	
 }
