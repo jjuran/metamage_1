@@ -21,6 +21,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
 namespace Genie
@@ -36,11 +37,18 @@ namespace Genie
 	
 	static FSTreePtr window_lookup( const FSTreePtr& parent, const std::string& name )
 	{
-		const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
+		WindowMap::const_iterator it;
 		
-		WindowMap::const_iterator it = gWindowMap.find( key );
+		const bool canonical = canonical_32_bit_hex::applies( name );
 		
-		if ( it == gWindowMap.end()  ||  it->second.expired() )
+		if ( canonical )
+		{
+			const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
+			
+			it = gWindowMap.find( key );
+		}
+		
+		if ( !canonical  ||  it == gWindowMap.end()  ||  it->second.expired() )
 		{
 			p7::throw_errno( ENOENT );
 		}
