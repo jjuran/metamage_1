@@ -7,8 +7,14 @@
 
 #include "Genie/FS/FSTree_sys_mac_adb.hh"
 
+// Standard C
+#include <ctype.h>
+
 // iota
-#include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
+
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.h"
@@ -18,7 +24,7 @@
 
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 
@@ -29,39 +35,9 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct sys_mac_adb_Details
-	{
-		typedef N::ADBAddress Key;
-		
-		static std::string NameFromKey( Key key )
-		{
-			return iota::inscribe_decimal( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( std::atoi( name.c_str() ) );
-		}
-		
-		typedef Nitrogen::ADBDevice_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::ADBDevice_Container(); }
-		
-		static Key KeyFromValue( Sequence::const_reference ref )  { return ref; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_adb_Details > FSTree_sys_mac_adb;
-	
-	
 	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return N::ADBAddress( atoi( parent->Name().c_str() ) );
+		return N::ADBAddress( iota::decoded_hex_digit( parent->Name()[0] ) );
 	}
 	
 	static N::ADBAddress GetKey( const FSTree* that )
@@ -70,7 +46,7 @@ namespace Genie
 	}
 	
 	
-	bool sys_mac_adb_Details::KeyIsValid( const Key& key )
+	static bool ADBAddress_is_valid( N::ADBAddress key )
 	{
 		try
 		{
@@ -82,16 +58,62 @@ namespace Genie
 		}
 	}
 	
+	struct well_formed_ADBAddress_name
+	{
+		static bool applies( const std::string& name )
+		{
+			return name.size() == 1  &&  name[0] & 0x20  && isxdigit( name[0] );
+		}
+	};
+	
+	static bool name_is_valid_ADBAddress( const std::string& name )
+	{
+		if ( !well_formed_ADBAddress_name::applies( name ) )
+		{
+			return false;
+		}
+		
+		const unsigned char hex_digit = iota::decoded_hex_digit( name[0] );
+		
+		return ADBAddress_is_valid( N::ADBAddress( hex_digit ) );
+	}
 	
 	extern const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[];
 	
-	FSTreePtr sys_mac_adb_Details::GetChildNode( const FSTreePtr&    parent,
-		                                         const std::string&  name,
-		                                         const Key&          key )
+	static FSTreePtr adb_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !name_is_valid_ADBAddress( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_adb_N_Mappings >( parent, name );
 	}
 	
+	class adb_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::ADBAddress addr ) const
+			{
+				const ino_t inode = addr;
+				
+				std::string name( 1, iota::encoded_hex_char( addr ) );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void adb_iterate( FSTreeCache& cache )
+	{
+		adb_IteratorConverter converter;
+		
+		N::ADBDevice_Container sequence;
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
 	
 	class sys_mac_adb_N_type
 	{
@@ -200,7 +222,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_adb( parent, name ) );
+		return new_basic_directory( parent, name, adb_lookup, adb_iterate );
 	}
 	
 }
