@@ -18,12 +18,12 @@
 #include "Nitrogen/Components.h"
 
 // Genie
-#include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Name_OSType.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
 namespace Nitrogen
@@ -153,36 +153,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct sys_mac_thng_Details
-	{
-		typedef ::Component Key;
-		
-		typedef Nitrogen::Component_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::Components(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static std::string NameFromKey( Key key )
-		{
-			return plus::encode_32_bit_hex( (unsigned) key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return (Key) plus::decode_32_bit_hex( name );
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_thng_Details > FSTree_sys_mac_thng;
-	
-	
 	static Component GetKeyFromParent( const FSTreePtr& parent )
 	{
 		return (Component) plus::decode_32_bit_hex( parent->Name() );
@@ -194,16 +164,23 @@ namespace Genie
 	}
 	
 	
-	bool sys_mac_thng_Details::KeyIsValid( const Key& key )
+	static bool is_valid_Component_name( const std::string& name )
 	{
-		if ( key == NULL )
+		if ( !canonical_32_bit_hex::applies( name ) )
+		{
+			return false;
+		}
+		
+		const Component component = (Component) plus::decode_32_bit_hex( name );
+		
+		if ( component == NULL )
 		{
 			return false;
 		}
 		
 		try
 		{
-			(void) N::GetComponentInfo( key );
+			(void) N::GetComponentInfo( component );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -220,12 +197,41 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[];
 	
-	FSTreePtr sys_mac_thng_Details::GetChildNode( const FSTreePtr&    parent,
-		                                          const std::string&  name,
-		                                          const Key&          key )
+	static FSTreePtr thng_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !is_valid_Component_name( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_thng_REF_Mappings >( parent, name );
 	}
+	
+	class thng_IteratorConverter
+	{
+		public:
+			FSNode operator()( Component component ) const
+			{
+				const ino_t inode = 0;
+				
+				std::string name = plus::encode_32_bit_hex( (unsigned) component );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void thng_iterate( FSTreeCache& cache )
+	{
+		thng_IteratorConverter converter;
+		
+		N::Component_Container sequence = N::Components();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
+	
 	
 	struct ComponentDescription_Type
 	{
@@ -417,7 +423,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_thng( parent, name ) );
+		return new_basic_directory( parent, name, thng_lookup, thng_iterate );
 	}
 	
 }
