@@ -327,12 +327,10 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
-	                                                      Platform            platform,
-	                                                      const ConfData&     config )
+	static std::vector< std::string > GetAllUsedProjects( const std::string&                 project_name,
+	                                                      Platform                           platform,
+	                                                      const std::vector< std::string >&  used_project_names )
 	{
-		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( config );
-		
 		std::vector< std::string > all_used_project_names;
 		
 		std::set< std::string > set_of_all_used_project_names;
@@ -577,8 +575,10 @@ namespace tool
 	{
 		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
 		
+		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( conf_data );
+		
 		// Figure out which projects we use
-		its_used_project_names = GetAllUsedProjects( its_name, platform, conf_data );
+		its_used_project_names = GetAllUsedProjects( its_name, platform, used_project_names );
 		
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
