@@ -562,13 +562,6 @@ namespace tool
 	{
 		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
 		
-		if ( get_first( conf_data, "product" ) == "wish" )
-		{
-			std::fprintf( stderr, "A-line: product 'wish' is deprecated in project %s\n", proj.c_str() );
-			
-			its_product_type = productTool;
-		}
-		
 		// Figure out which projects we use
 		its_used_project_names = GetAllUsedProjects( its_name, platform, conf_data );
 		
