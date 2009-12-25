@@ -365,22 +365,14 @@ namespace tool
 	{
 		std::vector< std::string > result;
 		
-		// If search folders are specified,
-		if ( search_directives.size() > 0 )
-		{
-			result.resize( search_directives.size() );
-			
-			// Find and record them.
-			std::transform( search_directives.begin(),
-			                search_directives.end(),
-			                result.begin(),
-			                std::bind1st( plus::ptr_fun( FindSearchDir ),
-				                          project_dir_pathname ) );
-		}
-		else
-		{
-			result.push_back( project_dir_pathname );
-		}
+		result.resize( search_directives.size() );
+		
+		// Find and record search directories.
+		std::transform( search_directives.begin(),
+		                search_directives.end(),
+		                result.begin(),
+		                std::bind1st( plus::ptr_fun( FindSearchDir ),
+			                          project_dir_pathname ) );
 		
 		return result;
 	}
@@ -589,6 +581,11 @@ namespace tool
 		}
 		
 		its_search_dir_pathnames = get_search_dir_pathnames( get_values( conf_data, "search" ), its_dir_pathname );
+		
+		if ( its_search_dir_pathnames.empty() )
+		{
+			its_search_dir_pathnames.push_back( its_dir_pathname );
+		}
 		
 		get_source_data( its_dir_pathname,
 		                 get_values( conf_data, "sources" ),
