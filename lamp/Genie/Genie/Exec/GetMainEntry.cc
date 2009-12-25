@@ -38,11 +38,11 @@ namespace Genie
 				ASSERT( itsEntry != NULL );
 			}
 			
-			void Invoke( int argc, iota::argv_t argv )
+			int Invoke( int argc, iota::argv_t argv )
 			{
 				ASSERT( itsEntry != NULL );
 				
-				itsEntry( argc, argv );
+				return itsEntry( argc, argv );
 			}
 	};
 	
@@ -97,10 +97,10 @@ namespace Genie
 			{
 			}
 			
-			void Invoke( int argc, iota::argv_t argv );
+			int Invoke( int argc, iota::argv_t argv );
 	};
 	
-	void CFMPluginMain::Invoke( int argc, iota::argv_t argv )
+	int CFMPluginMain::Invoke( int argc, iota::argv_t argv )
 	{
 		Standard_Entry lamp_main = NULL;
 		
@@ -113,7 +113,7 @@ namespace Genie
 		
 		ASSERT( lamp_main != NULL );
 		
-		lamp_main( argc, argv );
+		return lamp_main( argc, argv );
 	}
 	
 	

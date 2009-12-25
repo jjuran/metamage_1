@@ -21,7 +21,6 @@
 #include "Genie/FS/FSTree_sys_cpu.hh"
 #include "Genie/FS/FSTree_sys_mac.hh"
 #include "Genie/FS/FSTree_sys_window.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -114,12 +113,6 @@ namespace Genie
 	}
 	
 	
-	template < int (*main)() >
-	static void main_and_exit()
-	{
-		CurrentProcess().Exit( main() );
-	}
-	
 	namespace
 	{
 		
@@ -146,7 +139,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main_and_exit< main > ) );
+		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
 	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];

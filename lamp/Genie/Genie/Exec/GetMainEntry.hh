@@ -17,8 +17,8 @@
 namespace Genie
 {
 	
-	typedef void (*Trivial_Entry )(                             );
-	typedef void (*Standard_Entry)( int argc, iota::argv_t argv );
+	typedef int (*Trivial_Entry )(                             );
+	typedef int (*Standard_Entry)( int argc, iota::argv_t argv );
 	
 	
 	MainEntry GetMainEntryFromAddress( Trivial_Entry  address );

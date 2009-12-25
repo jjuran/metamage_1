@@ -419,9 +419,9 @@ namespace Genie
 			// Pass envp in ToolScratch + 4 to initialize environ
 			SetUpToolScratch( &DispatchSystemCall, envp );
 			
-			itsMainEntry->Invoke( argc, argv );
+			exit_status = itsMainEntry->Invoke( argc, argv );
 			
-			// Not reached
+			// Not reached by regular tools, since they call exit()
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
