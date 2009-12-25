@@ -15,8 +15,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 
@@ -29,45 +29,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct ProcessSerialNumber_KeyName_Traits
-	{
-		typedef Nitrogen::ProcessSerialNumber Key;
-		
-		static std::string NameFromKey( const Key& psn );
-		
-		static Key KeyFromName( const std::string& name );
-	};
-	
-	struct sys_mac_proc_Details : public ProcessSerialNumber_KeyName_Traits
-	{
-		typedef Nitrogen::Process_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::Processes(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_proc_Details > FSTree_sys_mac_proc;
-	
-	
-	static ProcessSerialNumber GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return ProcessSerialNumber_KeyName_Traits::KeyFromName( parent->Name() );
-	}
-	
-	static ProcessSerialNumber GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
-	
-	std::string ProcessSerialNumber_KeyName_Traits::NameFromKey( const Key& psn )
+	static std::string encoded_ProcessSerialNumber( const ProcessSerialNumber& psn )
 	{
 		const bool extended = psn.highLongOfPSN != 0;
 		
@@ -92,7 +54,7 @@ namespace Genie
 	}
 	
 	
-	ProcessSerialNumber_KeyName_Traits::Key ProcessSerialNumber_KeyName_Traits::KeyFromName( const std::string& name )
+	static ProcessSerialNumber decoded_ProcessSerialNumber( const std::string& name )
 	{
 		ProcessSerialNumber psn = { 0, 0 };
 		
@@ -131,7 +93,18 @@ namespace Genie
 	}
 	
 	
-	bool sys_mac_proc_Details::KeyIsValid( const Key& key )
+	static ProcessSerialNumber GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return decoded_ProcessSerialNumber( parent->Name() );
+	}
+	
+	static ProcessSerialNumber GetKey( const FSTree* that )
+	{
+		return GetKeyFromParent( that->ParentRef() );
+	}
+	
+	
+	static bool is_valid_ProcessSerialNumber( const ProcessSerialNumber& key )
 	{
 		if ( key.lowLongOfPSN == 0  &&  key.highLongOfPSN == 0 )
 		{
@@ -158,11 +131,43 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[];
 	
-	FSTreePtr sys_mac_proc_Details::GetChildNode( const FSTreePtr&    parent,
-		                                          const std::string&  name,
-		                                          const Key&          key )
+	static FSTreePtr psn_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		const ProcessSerialNumber psn = decoded_ProcessSerialNumber( name.c_str() );
+		
+		const bool canonical = encoded_ProcessSerialNumber( psn ) == name;
+		
+		if ( !canonical  ||  !is_valid_ProcessSerialNumber( psn ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_proc_PSN_Mappings >( parent, name );
+	}
+	
+	class psn_IteratorConverter
+	{
+		public:
+			FSNode operator()( const ProcessSerialNumber& psn ) const
+			{
+				const ino_t inode = 0;
+				
+				std::string name = encoded_ProcessSerialNumber( psn );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void psn_iterate( FSTreeCache& cache )
+	{
+		psn_IteratorConverter converter;
+		
+		N::Process_Container sequence = N::Processes();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -236,7 +241,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_proc( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_proc( parent, name ) );
+		return new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}
 	
 }
