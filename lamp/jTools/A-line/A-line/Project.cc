@@ -582,6 +582,15 @@ namespace tool
 		
 		std::vector< std::string > used_project_names;
 		
+		switch ( its_product_type )
+		{
+			case productApplication:
+			case productTool:
+			case productToolkit:
+			case productINIT:
+				used_project_names.push_back( "__" + product_name );
+		}
+		
 		GetDirectlyUsedProjectsFromConfig( conf_data, used_project_names );
 		
 		// Figure out which projects we use
