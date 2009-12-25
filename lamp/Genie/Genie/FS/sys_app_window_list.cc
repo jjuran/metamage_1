@@ -11,69 +11,75 @@
 // plus
 #include "plus/hexidecimal.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/sys_app_window_list_REF.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
+#include "Genie/Utilities/WindowList_contains.hh"
 
 
 namespace Genie
 {
 	
-	struct sys_app_window_list_Details
+	namespace N = Nitrogen;
+	
+	
+	static bool is_valid_WindowRef_name( const std::string& name )
 	{
-		typedef Nitrogen::WindowRef Key;
-		
-		typedef Nitrogen::WindowList_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::WindowList(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static std::string NameFromKey( Key key )
-		{
-			return plus::encode_32_bit_hex( (unsigned) key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return (Key) plus::decode_32_bit_hex( name );
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_app_window_list_Details > sys_app_window_list;
-	
-	
-	bool sys_app_window_list_Details::KeyIsValid( const Key& key )
-	{
-		if ( key == NULL )
+		if ( !canonical_32_bit_hex::applies( name ) )
 		{
 			return false;
 		}
 		
-		Sequence sequence = ItemSequence();
+		const WindowRef window = (WindowRef) plus::decode_32_bit_hex( name );
 		
-		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
+		return WindowList_contains( window );
 	}
 	
-	FSTreePtr sys_app_window_list_Details::GetChildNode( const FSTreePtr&    parent,
-		                                                 const std::string&  name,
-		                                                 const Key&          key )
+	static FSTreePtr WindowRef_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !is_valid_WindowRef_name( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_app_window_list_REF_Mappings >( parent, name );
+	}
+	
+	class window_IteratorConverter
+	{
+		public:
+			FSNode operator()( WindowRef window ) const
+			{
+				const ino_t inode = 0;
+				
+				std::string name = plus::encode_32_bit_hex( (unsigned) window );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void WindowRef_iterate( FSTreeCache& cache )
+	{
+		window_IteratorConverter converter;
+		
+		N::WindowList_Container sequence = N::WindowList();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new sys_app_window_list( parent, name ) );
+		return new_basic_directory( parent, name, WindowRef_lookup, WindowRef_iterate );
 	}
 	
 }

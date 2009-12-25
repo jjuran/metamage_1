@@ -18,9 +18,10 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
 namespace Genie
@@ -34,27 +35,20 @@ namespace Genie
 	static WindowMap gWindowMap;
 	
 	
-	class FSTree_sys_window : public FSTree_Directory
+	static FSTreePtr window_lookup( const FSTreePtr& parent, const std::string& name )
 	{
-		public:
-			FSTree_sys_window( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree_Directory( parent, name )
-			{
-			}
-			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	
-	FSTreePtr FSTree_sys_window::Lookup_Child( const std::string& name ) const
-	{
-		const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
+		WindowMap::const_iterator it;
 		
-		WindowMap::const_iterator it = gWindowMap.find( key );
+		const bool canonical = canonical_32_bit_hex::applies( name );
 		
-		if ( it == gWindowMap.end()  ||  it->second.expired() )
+		if ( canonical )
+		{
+			const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
+			
+			it = gWindowMap.find( key );
+		}
+		
+		if ( !canonical  ||  it == gWindowMap.end()  ||  it->second.expired() )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -62,7 +56,7 @@ namespace Genie
 		return it->second.lock();
 	}
 	
-	void FSTree_sys_window::IterateIntoCache( FSTreeCache& cache ) const
+	static void window_iterate( FSTreeCache& cache )
 	{
 		WindowMap::const_iterator end = gWindowMap.end();
 		
@@ -116,7 +110,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_window( parent, name ) );
+		return new_basic_directory( parent, name, window_lookup, window_iterate );
 	}
 	
 }
