@@ -576,7 +576,9 @@ namespace tool
 		its_prefix_source_path( get_first( conf_data, "precompile" ) ),
 		its_tool_count  ()
 	{
-		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
+		const std::string& product_name = get_first( conf_data, "product" );
+		
+		its_product_type = ReadProduct( product_name );
 		
 		std::vector< std::string > used_project_names;
 		
