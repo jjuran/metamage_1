@@ -7,8 +7,14 @@
 
 #include "Genie/FS/FSTree_sys_mac_unit.hh"
 
+// Standard C
+#include <ctype.h>
+
 // iota
 #include "iota/decimal.hh"
+
+// plus
+#include "plus/contains.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -16,10 +22,14 @@
 // Nucleus
 #include "Nucleus/IndexedContainer.h"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/stringify.hh"
+#include "Genie/Utilities/canonical_positive_integer.hh"
 
 
 namespace Nitrogen
@@ -96,58 +106,33 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	AuxDCEHandle* GetUTableBase();
-	
-	
-	struct sys_mac_unit_Details
+	struct decode_unit_number
 	{
-		typedef UnitNumber Key;
-		
-		static std::string NameFromKey( Key key )
+		static unsigned apply( const std::string& name )
 		{
-			return iota::inscribe_decimal( key );
+			return atoi( name.c_str() );
 		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Key( std::atoi( name.c_str() ) );
-		}
-		
-		typedef Nitrogen::UnitTableDrivers_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
-		
-		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
 	};
-	
-	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
-	
 	
 	static UnitNumber GetKey( const FSTree* that )
 	{
-		return UnitNumber( atoi( that->ParentRef()->Name().c_str() ) );
+		return UnitNumber( decode_unit_number::apply( that->ParentRef()->Name() ) );
 	}
 	
 	
-	AuxDCEHandle* GetUTableBase()
+	static inline AuxDCEHandle* GetUTableBase()
 	{
 		return (AuxDCEHandle*) LMGetUTableBase();
 	}
 	
 	
-	bool sys_mac_unit_Details::KeyIsValid( const Key& key )
+	static bool is_valid_unit_number( UInt32 i )
 	{
 		AuxDCEHandle* base = GetUTableBase();
 		
 		const UInt16 count = LMGetUnitTableEntryCount();
 		
-		return key < count  &&  base[ key ] != NULL;
+		return i < count  &&  base[ i ] != NULL;
 	}
 	
 	
@@ -266,7 +251,7 @@ namespace Genie
 			{
 				Key key = GetKey( that );
 				
-				if ( !sys_mac_unit_Details::KeyIsValid( key ) )
+				if ( !is_valid_unit_number( key ) )
 				{
 					throw FSTree_Property::Undefined();
 				}
@@ -282,13 +267,53 @@ namespace Genie
 	};
 	
 	
+	struct valid_name_of_unit_number
+	{
+		typedef canonical_positive_integer well_formed_name;
+		
+		static bool applies( const std::string& name )
+		{
+			return well_formed_name::applies( name )  &&  is_valid_unit_number( decode_unit_number::apply( name ) );
+		}
+	};
+	
 	extern const FSTree_Premapped::Mapping sys_mac_unit_N_Mappings[];
 	
-	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr&    parent,
-		                                          const std::string&  name,
-		                                          const Key&          key )
+	static FSTreePtr unit_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !valid_name_of_unit_number::applies( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name );
+	}
+	
+	class unit_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::UnitTableDrivers_Container::const_reference ref ) const
+			{
+				const int i = &ref - GetUTableBase();
+				
+				const ino_t inode = i;
+				
+				std::string name = iota::inscribe_decimal( i );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void unit_iterate( FSTreeCache& cache )
+	{
+		unit_IteratorConverter converter;
+		
+		N::UnitTableDrivers_Container sequence = N::UnitTableDrivers();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -315,7 +340,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_unit( parent, name ) );
+		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}
 	
 }
