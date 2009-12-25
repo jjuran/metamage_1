@@ -12,19 +12,24 @@
 #include "iota/hexidecimal.hh"
 
 // plus
+#include "plus/contains.hh"
 #include "plus/hexidecimal.hh"
 
 // Nucleus
 #include "Nucleus/LinkedListContainer.h"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Scribes.hh"
 #include "Genie/FS/SymbolicLink.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
 namespace Nitrogen
@@ -69,36 +74,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct sys_mac_gdev_list_Details
-	{
-		typedef N::GDHandle Key;
-		
-		typedef Nitrogen::DeviceList_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::DeviceList(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static std::string NameFromKey( Key key )
-		{
-			return plus::encode_32_bit_hex( (unsigned) key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return (Key) plus::decode_32_bit_hex( name );
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_gdev_list_Details > FSTree_sys_mac_gdev_list;
-	
-	
 	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
 	{
 		return (N::GDHandle) plus::decode_32_bit_hex( parent->Name() );
@@ -110,26 +85,54 @@ namespace Genie
 	}
 	
 	
-	bool sys_mac_gdev_list_Details::KeyIsValid( const Key& key )
+	static bool is_valid_GDHandle_name( const std::string& name )
 	{
-		if ( key == NULL )
+		if ( !canonical_32_bit_hex::applies( name ) )
 		{
 			return false;
 		}
 		
-		Sequence sequence = ItemSequence();
+		const GDHandle gdH = (GDHandle) plus::decode_32_bit_hex( name );
 		
-		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
+		return plus::contains( N::DeviceList(), gdH );
 	}
 	
 	
 	extern const FSTree_Premapped::Mapping sys_mac_gdev_list_H_Mappings[];
 	
-	FSTreePtr sys_mac_gdev_list_Details::GetChildNode( const FSTreePtr&    parent,
-		                                               const std::string&  name,
-		                                               const Key&          key )
+	static FSTreePtr gdev_lookup( const FSTreePtr& parent, const std::string& name )
 	{
+		if ( !is_valid_GDHandle_name( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return Premapped_Factory< sys_mac_gdev_list_H_Mappings >( parent, name );
+	}
+	
+	class gdev_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::GDHandle gdH ) const
+			{
+				const ino_t inode = 0;
+				
+				std::string name = plus::encode_32_bit_hex( (unsigned) gdH );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void gdev_iterate( FSTreeCache& cache )
+	{
+		gdev_IteratorConverter converter;
+		
+		N::DeviceList_Container sequence = N::DeviceList();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	
@@ -209,7 +212,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_gdev_list( parent, name ) );
+		return new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
 	}
 	
 }
