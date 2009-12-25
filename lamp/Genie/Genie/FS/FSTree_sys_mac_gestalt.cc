@@ -5,13 +5,20 @@
 
 #include "Genie/FS/FSTree_sys_mac_gestalt.hh"
 
+// iota
+#include "iota/hexidecimal.hh"
+
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/OSStatus.h"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Name_OSType.hh"
+#include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
 namespace Nitrogen
@@ -19,7 +26,7 @@ namespace Nitrogen
 	
 	struct Gestalt_Record
 	{
-		Nitrogen::OSType  selector;
+		Gestalt_Selector  selector;
 		UInt32            zero;
 	};
 	
@@ -37,7 +44,7 @@ namespace Nitrogen
 			typedef UInt16 size_type;
 			typedef SInt16 difference_type;
 			
-			typedef Nitrogen::OSType value_type;
+			typedef Gestalt_Selector value_type;
 			
 			typedef const value_type &reference;
 			typedef const value_type &const_reference;
@@ -120,47 +127,11 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct Gestalt_KeyName_Traits : OSType_KeyName_Traits
-	{
-		static std::string NameFromKey( const Key& key );
-	};
-	
-	struct sys_mac_gestalt_Details : public Gestalt_KeyName_Traits
-	{
-		typedef Nitrogen::GestaltTable_Container Sequence;
-		
-		static Sequence ItemSequence()  { return Nitrogen::GestaltTable(); }
-		
-		static Key KeyFromValue( Sequence::const_reference ref )  { return ref; }
-		
-		static bool KeyIsValid( const Key& key );
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< sys_mac_gestalt_Details > FSTree_sys_mac_gestalt;
-	
-	
-	std::string Gestalt_KeyName_Traits::NameFromKey( const Key& key )
-	{
-		std::string result = OSType_KeyName_Traits::NameFromKey( key );
-		
-		if ( !sys_mac_gestalt_Details::KeyIsValid( key ) )
-		{
-			result = "." + result;
-		}
-		
-		return result;
-	}
-	
-	
-	bool sys_mac_gestalt_Details::KeyIsValid( const Key& key )
+	static bool is_valid_Gestalt_Selector( N::Gestalt_Selector selector )
 	{
 		try
 		{
-			N::Gestalt( N::GestaltSelector( key ) );
+			N::Gestalt( selector );
 		}
 		catch ( ... )
 		{
@@ -170,16 +141,67 @@ namespace Genie
 		return true;
 	}
 	
-	FSTreePtr sys_mac_gestalt_Details::GetChildNode( const FSTreePtr&    parent,
-		                                             const std::string&  name,
-		                                             const Key&          key )
+	static inline bool is_valid_Gestalt_Selector_name( const std::string& name )
 	{
+		if ( !canonical_32_bit_hex::applies( name ) )
+		{
+			return false;
+		}
+		
+		const unsigned decoded = iota::decode_32_bit_hex( name.c_str() );
+		
+		return is_valid_Gestalt_Selector( N::Gestalt_Selector( decoded ) );
+	}
+	
+	static FSTreePtr gestalt_lookup( const FSTreePtr& parent, const std::string& name )
+	{
+		if ( !is_valid_Gestalt_Selector_name( name ) )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
 		return FSTreePtr( new FSTree_Premapped( parent, name ) );
+	}
+	
+	class gestalt_IteratorConverter
+	{
+		public:
+			FSNode operator()( N::Gestalt_Selector selector ) const
+			{
+				const bool valid = is_valid_Gestalt_Selector( selector );
+				
+				const ino_t inode = 0;
+				
+				std::string name;
+				
+				name.resize( !valid + 8 );
+				
+				if ( !valid )
+				{
+					name[0] = '.';
+				}
+				
+				iota::encode_32_bit_hex( (unsigned) selector, &name[ !valid ] );
+				
+				return FSNode( inode, name );
+			}
+	};
+	
+	static void gestalt_iterate( FSTreeCache& cache )
+	{
+		gestalt_IteratorConverter converter;
+		
+		N::GestaltTable_Container sequence = N::GestaltTable();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_gestalt( parent, name ) );
+		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}
 	
 }
