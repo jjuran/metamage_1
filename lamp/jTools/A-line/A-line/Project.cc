@@ -303,6 +303,8 @@ namespace tool
 		return usedProjects;
 	}
 	
+	static Project global_empty_project;
+	
 	static const Project& GetUsedProject( const std::string&  user_name,
 	                                      const std::string&  used_name,
 	                                      Platform            platform )
@@ -313,6 +315,11 @@ namespace tool
 		}
 		catch ( const NoSuchProject& )
 		{
+			if ( used_name[0] == '_' )
+			{
+				return global_empty_project;
+			}
+			
 			throw NoSuchUsedProject( user_name, used_name );
 		}
 		
@@ -545,6 +552,14 @@ namespace tool
 		return n_tools;
 	}
 	
+	
+	Project::Project()
+	:
+		its_config_data( ConfData() ),
+		its_program_filename  ( std::string() ),
+		its_prefix_source_path( std::string() )
+	{
+	}
 	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
