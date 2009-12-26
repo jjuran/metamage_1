@@ -1,7 +1,9 @@
-/*	==============
- *	SystemCalls.cc
- *	==============
- */
+/*
+	syscalls.c
+	----------
+	
+	Joshua Juran
+*/
 
 // Mac OS
 #include <LowMem.h>
@@ -10,12 +12,9 @@
 #include "lamp/syscalls.h"
 
 
-#pragma exceptions off
-
-
 static void* global_dispatcher;
 
-extern "C" void InitializeDispatcher();
+extern void InitializeDispatcher();
 
 void InitializeDispatcher()
 {
@@ -35,7 +34,7 @@ void InitializeDispatcher()
 	}
 	
 	#define DEFINE_STUB( name )       \
-		extern "C" void name();       \
+		extern void name();           \
 		asm void name()               \
 		{                             \
 			MOVE.L #__NR_##name,D0 ;  \
@@ -46,7 +45,7 @@ void InitializeDispatcher()
 
 #if TARGET_CPU_PPC
 	
-	extern "C" void __ptr_glue();
+	extern void __ptr_glue();
 	
 	static asm void SystemCall()
 	{
@@ -69,7 +68,7 @@ void InitializeDispatcher()
 	}
 	
 	#define DEFINE_STUB( name )   \
-		extern "C" void name();   \
+		extern void name();       \
 		asm void name()           \
 		{                         \
 			li r11,__NR_##name ;  \
