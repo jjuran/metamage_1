@@ -62,6 +62,7 @@ qw
 	:KSIOUXConsole.cc
 	Abort.cc
 	KSIOUXConsole.cc
+	syscalls.c
 	Kerosene-Library.lib
 	Kerosene-User.lib
 	MSL-fixup.lib
