@@ -1,41 +1,37 @@
-/*	==============
- *	SystemCalls.cc
- *	==============
- */
-
-// Mac OS
-#include <LowMem.h>
+/*
+	syscalls.c
+	----------
+	
+	Joshua Juran
+*/
 
 // Lamp
 #include "lamp/syscalls.h"
 
 
-#pragma exceptions off
+static void* global_dispatcher;
 
+extern void _set_dispatcher( void* address );
 
-static void* gDispatcher;
-
-extern "C" void InitializeDispatcher();
-
-void InitializeDispatcher()
+void _set_dispatcher( void* address )
 {
-	gDispatcher = *reinterpret_cast< void** >( LMGetToolScratch() );
+	global_dispatcher = address;
 }
 
 
-#if TARGET_CPU_68K
+#ifdef __MC68K__
 	
 	static asm void SystemCall()
 	{
-		MOVEA.L		gDispatcher,A0	;  // load the dispatcher's address
-									;  // arg 1:  syscall index already on stack
-		JMP			(A0)			;  // jump to dispatcher -- doesn't return
+		MOVEA.L		global_dispatcher,A0	;  // load the dispatcher's address
+											;  // syscall index already on stack
+		JMP			(A0)					;  // jump to dispatcher
 		
 		// Not reached
 	}
 	
 	#define DEFINE_STUB( name )       \
-		extern "C" void name();       \
+		extern void name();           \
 		asm void name()               \
 		{                             \
 			MOVE.L #__NR_##name,D0 ;  \
@@ -44,32 +40,32 @@ void InitializeDispatcher()
 	
 #endif
 
-#if TARGET_CPU_PPC
+#ifdef __POWERPC__
 	
-	extern "C" void __ptr_glue();
+	extern void __ptr_glue();
 	
 	static asm void SystemCall()
 	{
-		mflr	r0				// get caller's return address
-		stw		r0,8(SP)		// store return address in caller's stack frame
+		mflr	r0						// get caller's return address
+		stw		r0,8(SP)				// store it in caller's stack frame
 		
-		stwu	SP,-64(SP)		// allocate our own stack frame
+		stwu	SP,-64(SP)				// allocate our own stack frame
 		
-		lwz		r12,gDispatcher	// load dispatcher T-vector
+		lwz		r12,global_dispatcher	// load dispatcher T-vector
 		
-		bl		__ptr_glue		// cross-TOC call
-		nop						// synchronize pipeline
-		lwz		RTOC,20(SP)		// restore our RTOC
+		bl		__ptr_glue				// cross-TOC call
+		nop								// synchronize pipeline
+		lwz		RTOC,20(SP)				// restore our RTOC
 		
-		addi	SP,SP,64		// deallocate our stack frame
+		addi	SP,SP,64				// deallocate our stack frame
 		
-		lwz		r0,8(SP)		// reload caller's return address
-		mtlr	r0				// load it into the link register
-		blr						// return
+		lwz		r0,8(SP)				// reload caller's return address
+		mtlr	r0						// load it into the link register
+		blr								// return
 	}
 	
 	#define DEFINE_STUB( name )   \
-		extern "C" void name();   \
+		extern void name();       \
 		asm void name()           \
 		{                         \
 			li r11,__NR_##name ;  \

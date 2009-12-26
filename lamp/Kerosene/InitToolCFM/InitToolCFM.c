@@ -4,6 +4,9 @@
  */
 
 // Mac OS
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
@@ -19,8 +22,7 @@ extern pascal void  __terminate ();
 extern pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock );
 
 
-// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
-extern void InitializeDispatcher();
+extern void _set_dispatcher( void* address );
 
 // Initialize environ from ToolScratch
 extern const void* InitializeEnviron();
@@ -40,7 +42,7 @@ extern void exit( int );
 
 pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 {
-	InitializeDispatcher();
+	_set_dispatcher( *(void**) LMGetToolScratch() );
 	
 	if ( InitializeEnviron() == NULL )
 	{
