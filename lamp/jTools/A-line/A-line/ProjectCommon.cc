@@ -40,29 +40,31 @@ namespace tool
 		
 		const bool exists = it != map.end();
 		
-		// Take a reference (auto-vivifying)
-		boost::shared_ptr< Project >& project_ptr = exists ? it->second
-		                                                   : map[ project_name ];
-		
 		if ( !exists )
 		{
 			// First encounter with this project; load it
 			
 			const ProjectConfig& config = GetProjectConfig( project_name, platform );
 			
+			// Take a reference (auto-vivifying)
+			boost::shared_ptr< Project >& project_ptr = map[ project_name ];
+			
 			project_ptr.reset( new Project( project_name,
 			                                platform,
 			                                config.get_project_dir(),
 			                                config.get_config_data() ) );
+			
+			return *project_ptr.get();
 		}
-		else if ( project_ptr.get() == NULL )
+		
+		if ( it->second.get() == NULL )
 		{
 			// Project entry exists but is NULL -- probably trying to load itself
 			
 			throw circular_dependency( project_name );
 		}
 		
-		return *project_ptr;
+		return *it->second.get();
 	}
 	
 }
