@@ -372,7 +372,7 @@ namespace tool
 	{
 		unsigned long inittool = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "InitializeTool" ) ) );
 		unsigned long initcode = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__InitCode__"   ) ) );
-		unsigned long lampmain = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "__lamp_main"    ) ) );
+		unsigned long lampmain = GetOffsetOfRoutine( file, STR_LEN( QUOTED( "_lamp_main"     ) ) );
 		
 		if ( inittool > 0x7fff )
 		{
@@ -677,7 +677,7 @@ namespace tool
 					command.push_back( "-xm"      );
 					command.push_back( "s"        );
 					command.push_back( "-export"  );
-					command.push_back( "sym=__lamp_main" );
+					command.push_back( "sym=_lamp_main" );
 					
 					// MWLinkPPC gets pissy if a shlb is larger than the default size,
 					// even though the size is meaningless since this isn't an app.
