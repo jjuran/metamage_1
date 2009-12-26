@@ -56,7 +56,7 @@ namespace tool
 			wanted_driver_name = ".EDisk";
 		}
 		
-		const char* vol_path = "/sys/mac/vol";
+		const char* vol_path = "/sys/mac/vol/list";
 		
 		n::shared< p7::dir_t > vol_dir = p7::opendir( vol_path );
 		
