@@ -13,13 +13,13 @@
 #pragma exceptions off
 
 
-static void* gDispatcher;
+static void* global_dispatcher;
 
 extern "C" void InitializeDispatcher();
 
 void InitializeDispatcher()
 {
-	gDispatcher = *reinterpret_cast< void** >( LMGetToolScratch() );
+	global_dispatcher = *(void**) LMGetToolScratch();
 }
 
 
@@ -27,9 +27,9 @@ void InitializeDispatcher()
 	
 	static asm void SystemCall()
 	{
-		MOVEA.L		gDispatcher,A0	;  // load the dispatcher's address
-									;  // arg 1:  syscall index already on stack
-		JMP			(A0)			;  // jump to dispatcher -- doesn't return
+		MOVEA.L		global_dispatcher,A0	;  // load the dispatcher's address
+											;  // syscall index already on stack
+		JMP			(A0)					;  // jump to dispatcher
 		
 		// Not reached
 	}
@@ -50,22 +50,22 @@ void InitializeDispatcher()
 	
 	static asm void SystemCall()
 	{
-		mflr	r0				// get caller's return address
-		stw		r0,8(SP)		// store return address in caller's stack frame
+		mflr	r0						// get caller's return address
+		stw		r0,8(SP)				// store it in caller's stack frame
 		
-		stwu	SP,-64(SP)		// allocate our own stack frame
+		stwu	SP,-64(SP)				// allocate our own stack frame
 		
-		lwz		r12,gDispatcher	// load dispatcher T-vector
+		lwz		r12,global_dispatcher	// load dispatcher T-vector
 		
-		bl		__ptr_glue		// cross-TOC call
-		nop						// synchronize pipeline
-		lwz		RTOC,20(SP)		// restore our RTOC
+		bl		__ptr_glue				// cross-TOC call
+		nop								// synchronize pipeline
+		lwz		RTOC,20(SP)				// restore our RTOC
 		
-		addi	SP,SP,64		// deallocate our stack frame
+		addi	SP,SP,64				// deallocate our stack frame
 		
-		lwz		r0,8(SP)		// reload caller's return address
-		mtlr	r0				// load it into the link register
-		blr						// return
+		lwz		r0,8(SP)				// reload caller's return address
+		mtlr	r0						// load it into the link register
+		blr								// return
 	}
 	
 	#define DEFINE_STUB( name )   \
