@@ -64,6 +64,8 @@ namespace tool
 			boost::weak_ptr< Task > its_static_lib_task;
 		
 		public:
+			Project();
+			
 			Project( const std::string&  name,
 			         Platform            platform,
 			         const std::string&  project_dir,

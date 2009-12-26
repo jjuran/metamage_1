@@ -289,19 +289,24 @@ namespace tool
 		return productNotBuilt;
 	}
 	
-	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( const ConfData& config )
+	static void GetDirectlyUsedProjectsFromConfig( const ConfData& config, std::vector< std::string >& used )
 	{
 		// Figure out which projects we use
-		const std::vector< std::string >& moreUsedProjects = get_values( config, "use" );
+		const std::vector< std::string >& projects_via_USE  = get_values( config, "use"  );
+		const std::vector< std::string >& projects_via_USES = get_values( config, "uses" );
 		
-		std::vector< std::string > usedProjects = get_values( config, "uses" );
+		const std::string& product_name = get_first( config, "product" );
 		
-		usedProjects.insert( usedProjects.end(),
-		                     moreUsedProjects.begin(),
-		                     moreUsedProjects.end() );
+		used.insert( used.end(),
+		             projects_via_USES.begin(),
+		             projects_via_USES.end() );
 		
-		return usedProjects;
+		used.insert( used.end(),
+		             projects_via_USE.begin(),
+		             projects_via_USE.end() );
 	}
+	
+	static Project global_empty_project;
 	
 	static const Project& GetUsedProject( const std::string&  user_name,
 	                                      const std::string&  used_name,
@@ -313,6 +318,11 @@ namespace tool
 		}
 		catch ( const NoSuchProject& )
 		{
+			if ( used_name[0] == '_' )
+			{
+				return global_empty_project;
+			}
+			
 			throw NoSuchUsedProject( user_name, used_name );
 		}
 		
@@ -320,12 +330,10 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
-	                                                      Platform            platform,
-	                                                      const ConfData&     config )
+	static std::vector< std::string > GetAllUsedProjects( const std::string&                 project_name,
+	                                                      Platform                           platform,
+	                                                      const std::vector< std::string >&  used_project_names )
 	{
-		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( config );
-		
 		std::vector< std::string > all_used_project_names;
 		
 		std::set< std::string > set_of_all_used_project_names;
@@ -546,6 +554,14 @@ namespace tool
 	}
 	
 	
+	Project::Project()
+	:
+		its_config_data( ConfData() ),
+		its_program_filename  ( std::string() ),
+		its_prefix_source_path( std::string() )
+	{
+	}
+	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
 	                  const std::string&  project_dir,
@@ -560,10 +576,25 @@ namespace tool
 		its_prefix_source_path( get_first( conf_data, "precompile" ) ),
 		its_tool_count  ()
 	{
-		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
+		const std::string& product_name = get_first( conf_data, "product" );
+		
+		its_product_type = ReadProduct( product_name );
+		
+		std::vector< std::string > used_project_names;
+		
+		switch ( its_product_type )
+		{
+			case productApplication:
+			case productTool:
+			case productToolkit:
+			case productINIT:
+				used_project_names.push_back( "__" + product_name );
+		}
+		
+		GetDirectlyUsedProjectsFromConfig( conf_data, used_project_names );
 		
 		// Figure out which projects we use
-		its_used_project_names = GetAllUsedProjects( its_name, platform, conf_data );
+		its_used_project_names = GetAllUsedProjects( its_name, platform, used_project_names );
 		
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
