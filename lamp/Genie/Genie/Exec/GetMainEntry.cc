@@ -108,7 +108,7 @@ namespace Genie
 		{
 			itsFragmentConnection = ConnectToFragment( itsBinaryImage );
 			
-			N::FindSymbol( itsFragmentConnection, "\p" "__lamp_main", &lamp_main );
+			N::FindSymbol( itsFragmentConnection, "\p" "_lamp_main", &lamp_main );
 		}
 		
 		ASSERT( lamp_main != NULL );
