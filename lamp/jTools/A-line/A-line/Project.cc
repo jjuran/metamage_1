@@ -247,6 +247,11 @@ namespace tool
 	}
 	
 	
+	static bool ends_with( const std::string& s, const char* tail, unsigned length )
+	{
+		return s.length() >= length  &&  std::equal( s.end() - length, s.end(), tail );
+	}
+	
 	static ProductType ReadProduct( const std::string& productName )
 	{
 		if ( productName == "app" )
@@ -269,7 +274,7 @@ namespace tool
 		{
 			return productSharedLib;
 		}
-		else if ( productName == "tool" )
+		else if ( ends_with( productName, STR_LEN( "tool" ) ) )
 		{
 			return productTool;
 		}
