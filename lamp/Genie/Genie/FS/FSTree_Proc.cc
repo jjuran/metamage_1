@@ -464,7 +464,7 @@ namespace Genie
 		std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
 		std::vector< frame_data >::const_iterator end   = stackCrawl.end();
 		
-		// skip __lamp_main
+		// skip _lamp_main
 		// skip Invoke()
 		// skip Run()
 		// skip ProcessThreadEntry()
