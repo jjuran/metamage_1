@@ -22,7 +22,7 @@ void InitializeDispatcher()
 }
 
 
-#if TARGET_CPU_68K
+#ifdef __MC68K__
 	
 	static asm void SystemCall()
 	{
@@ -43,7 +43,7 @@ void InitializeDispatcher()
 	
 #endif
 
-#if TARGET_CPU_PPC
+#ifdef __POWERPC__
 	
 	extern void __ptr_glue();
 	
