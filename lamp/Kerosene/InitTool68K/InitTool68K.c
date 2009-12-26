@@ -5,10 +5,14 @@
 
 #ifdef __MC68K__
 
+// Mac OS
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
+
 extern void InitializeTool();
 
-// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
-extern void InitializeDispatcher();
+extern void _set_dispatcher( void* address );
 
 // Initialize environ from ToolScratch
 extern const void* InitializeEnviron();
@@ -28,7 +32,7 @@ extern void _exit( int );
 
 void InitializeTool()
 {
-	InitializeDispatcher();
+	_set_dispatcher( *(void**) LMGetToolScratch() );
 	
 	if ( InitializeEnviron() == 0L )
 	{

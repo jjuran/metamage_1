@@ -5,20 +5,17 @@
 	Joshua Juran
 */
 
-// Mac OS
-#include <LowMem.h>
-
 // Lamp
 #include "lamp/syscalls.h"
 
 
 static void* global_dispatcher;
 
-extern void InitializeDispatcher();
+extern void _set_dispatcher( void* address );
 
-void InitializeDispatcher()
+void _set_dispatcher( void* address )
 {
-	global_dispatcher = *(void**) LMGetToolScratch();
+	global_dispatcher = address;
 }
 
 
