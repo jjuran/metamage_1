@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/Exec/MainEntryPoint.hh"
+#include "Genie/Process/Entry.hh"
 
 
 namespace Genie
@@ -20,6 +21,9 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	
+	typedef int (*Extended_Entry)( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher );
 	
 	
 	class AddressMain : public MainEntryPoint
@@ -42,7 +46,11 @@ namespace Genie
 			{
 				ASSERT( itsEntry != NULL );
 				
-				return itsEntry( argc, argv );
+				ToolScratchGlobals& toolScratch = GetToolScratchGlobals();
+				
+				Extended_Entry entry = (Extended_Entry) itsEntry;
+				
+				return entry( argc, argv, toolScratch.envp, toolScratch.dispatcher );
 			}
 	};
 	
@@ -102,7 +110,7 @@ namespace Genie
 	
 	int CFMPluginMain::Invoke( int argc, iota::argv_t argv )
 	{
-		Standard_Entry lamp_main = NULL;
+		Extended_Entry lamp_main = NULL;
 		
 		if ( itsFragmentConnection.Get() == N::CFragConnectionID() )
 		{
@@ -113,7 +121,9 @@ namespace Genie
 		
 		ASSERT( lamp_main != NULL );
 		
-		return lamp_main( argc, argv );
+		ToolScratchGlobals& toolScratch = GetToolScratchGlobals();
+		
+		return lamp_main( argc, argv, toolScratch.envp, toolScratch.dispatcher );
 	}
 	
 	
