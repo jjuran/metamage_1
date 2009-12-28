@@ -157,6 +157,10 @@ namespace Genie
 	
 	void InstallExceptionHandlers()
 	{
+		install_68k_exception_handlers();
+		
+		Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Install();
+		Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Install();
 	}
 	
 #endif
