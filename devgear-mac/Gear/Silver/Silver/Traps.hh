@@ -9,6 +9,8 @@
 #ifndef SILVER_TRAPS_HH
 #define SILVER_TRAPS_HH
 
+#ifdef __MACOS__
+
 // Universal Interfaces
 #include <Traps.h>
 
@@ -101,6 +103,8 @@ namespace Silver
 	#undef DEFINE_TRAP_TRAITS
 	
 }
+
+#endif
 
 #endif
 
