@@ -11,9 +11,17 @@
 // Standard C
 #include <signal.h>
 
+// Silver
+#include "Silver/Patch.hh"
+#include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
+
 
 namespace Genie
 {
+	
+	namespace Ag = Silver;
+	
 	
 	static void BusError()
 	{
@@ -118,6 +126,18 @@ namespace Genie
 			}
 		}
 	}
+	
+	
+	struct ExitToShell_Patch
+	{
+		static void Code( Ag::ExitToShellProcPtr nextHandler )
+		{
+			remove_68k_exception_handlers();
+			
+			nextHandler();
+		}
+	};
+	
 	
 	void InstallExceptionHandlers()
 	{
