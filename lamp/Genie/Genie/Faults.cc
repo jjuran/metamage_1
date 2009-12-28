@@ -92,7 +92,10 @@ namespace Genie
 		BusError,
 		NULL,  // 3, address error
 		IllegalInstruction,
-		DivisionByZero
+		DivisionByZero,
+		NULL,  // 6, CHK
+		NULL,  // 7, TRAPV
+		PrivilegeViolation
 	};
 	
 	static const unsigned n_vectors = sizeof gExceptionUserHandlerTable / sizeof (void*);
