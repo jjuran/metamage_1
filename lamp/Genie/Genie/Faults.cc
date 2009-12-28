@@ -42,6 +42,19 @@ namespace Genie
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
 	
+	static asm void generic_68k_recovery_handler()
+	{
+		// D0 is the vector offset
+		// A1 is the PC reported in the exception stack frame
+		
+		MOVE.L	A1,-(SP)  // push PC as if it were a return address
+		
+		LEA		gExceptionUserHandlerTable,A0
+		MOVEA.L	(A0,D0.W),A0  // get the handler address
+		
+		JMP		(A0)
+	}
+	
 	static asm void GenericExceptionHandler()
 	{
 		MOVE.W	6(SP),D0  // get the vector offset
@@ -56,12 +69,10 @@ namespace Genie
 		JMP		(A0)
 		
 	recover:
-		MOVE	USP,A1
-		MOVE.L	2(SP),-(A1)  // push old PC as return address for stack crawls
-		MOVE	A1,USP
+		MOVEA.L	2(SP),A1  // save the stacked PC for later
 		
-		LEA		gExceptionUserHandlerTable,A0
-		MOVE.L	(A0,D0.W),2(SP)  // set stacked PC to the handler address
+		LEA		generic_68k_recovery_handler,A0
+		MOVE.L	A0,2(SP)  // set the stacked PC to the recovery handler
 		
 		RTE
 	}
