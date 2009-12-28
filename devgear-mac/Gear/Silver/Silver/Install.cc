@@ -53,6 +53,8 @@ namespace Silver
 		return noErr;
 	}
 	
+#if !TARGET_API_MAC_CARBON
+	
 	static OSErr LoadAndLock()
 	{
 		THz oldZone = NULL;
@@ -85,6 +87,8 @@ namespace Silver
 		
 		return installer();
 	}
+	
+#endif
 	
 }
 

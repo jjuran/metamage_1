@@ -15,6 +15,8 @@
 namespace Silver
 {
 	
+#ifdef __MACOS__
+	
 	template < UInt16                                     trap,
 	           typename TrapTraits< trap >::PatchProcPtr  patch >
 	//
@@ -104,6 +106,8 @@ namespace Silver
 			}
 		};
 	};
+	
+#endif
 	
 }
 

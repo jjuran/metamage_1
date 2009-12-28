@@ -18,7 +18,9 @@
 namespace Silver
 {
 	
-	ProcPtr ApplyTrapPatch_( short trap, ProcPtr patchPtr )
+#if !TARGET_API_MAC_CARBON
+	
+	UniversalProcPtr ApplyTrapPatch_( short trap, UniversalProcPtr patchPtr )
 	{
 		if ( patchPtr == NULL )
 		{
@@ -27,12 +29,14 @@ namespace Silver
 		
 		TrapType trapType = (trap & 0x0800) ? ToolTrap : OSTrap;
 		
-		ProcPtr trapPtr = ::NGetTrapAddress( trap, trapType );
+		UniversalProcPtr trapPtr = ::NGetTrapAddress( trap, trapType );
 		
 		::NSetTrapAddress( patchPtr, trap, trapType );
 		
 		return trapPtr;
 	}
+	
+#endif
 	
 }
 
