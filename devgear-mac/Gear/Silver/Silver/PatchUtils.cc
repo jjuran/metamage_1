@@ -18,6 +18,8 @@
 namespace Silver
 {
 	
+#if !TARGET_API_MAC_CARBON
+	
 	UniversalProcPtr ApplyTrapPatch_( short trap, UniversalProcPtr patchPtr )
 	{
 		if ( patchPtr == NULL )
@@ -33,6 +35,8 @@ namespace Silver
 		
 		return trapPtr;
 	}
+	
+#endif
 	
 }
 
