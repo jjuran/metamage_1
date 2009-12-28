@@ -77,16 +77,6 @@ namespace Genie
 		RTE
 	}
 	
-	static void* gExceptionVectorTable[] =
-	{
-		NULL,  // 0, ISP on reset
-		NULL,  // 1, PC on reset
-		GenericExceptionHandler,
-		NULL,  // 3, address error
-		GenericExceptionHandler,
-		GenericExceptionHandler
-	};
-	
 	static void* gExceptionUserHandlerTable[] =
 	{
 		NULL,  // 0, ISP on reset
@@ -97,21 +87,40 @@ namespace Genie
 		DivisionByZero
 	};
 	
-	void InstallExceptionHandlers()
+	static const unsigned n_vectors = sizeof gExceptionUserHandlerTable / sizeof (void*);
+	
+	static void* gExceptionVectorTable[ n_vectors ];
+	
+	static void install_68k_exception_handlers()
 	{
-		/*
-		const std::size_t n_vectors = sizeof gExceptionVectorTable / sizeof gExceptionVectorTable[0];
-		
 		void** const system_vectors = 0L;
 		
 		for ( unsigned i = 0;  i < n_vectors;  ++i  )
 		{
-			if ( gExceptionVectorTable[ i ] != NULL )
+			if ( gExceptionUserHandlerTable[ i ] != NULL )
 			{
-				std::swap( system_vectors[ i ], gExceptionVectorTable[ i ] );
+				gExceptionVectorTable[ i ] = system_vectors[ i ];
+				
+				system_vectors[ i ] = &GenericExceptionHandler;
 			}
 		}
-		*/
+	}
+	
+	static void remove_68k_exception_handlers()
+	{
+		void** const system_vectors = 0L;
+		
+		for ( unsigned i = 0;  i < n_vectors;  ++i  )
+		{
+			if ( gExceptionUserHandlerTable[ i ] != NULL )
+			{
+				system_vectors[ i ] = gExceptionVectorTable[ i ];
+			}
+		}
+	}
+	
+	void InstallExceptionHandlers()
+	{
 	}
 	
 #endif
