@@ -102,13 +102,13 @@ namespace Genie
 		/*
 		const std::size_t n_vectors = sizeof gExceptionVectorTable / sizeof gExceptionVectorTable[0];
 		
+		void** const system_vectors = 0L;
+		
 		for ( unsigned i = 0;  i < n_vectors;  ++i  )
 		{
 			if ( gExceptionVectorTable[ i ] != NULL )
 			{
-				void **const v = (void**) ( i * sizeof (void*) );
-				
-				std::swap( *v, gExceptionVectorTable[ i ] );
+				std::swap( system_vectors[ i ], gExceptionVectorTable[ i ] );
 			}
 		}
 		*/
