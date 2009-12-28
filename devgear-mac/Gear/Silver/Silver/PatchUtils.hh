@@ -16,9 +16,9 @@
 namespace Silver
 {
 	
-	ProcPtr ApplyTrapPatch_( short trap, ProcPtr patchPtr );
+	UniversalProcPtr ApplyTrapPatch_( short trap, UniversalProcPtr patchPtr );
 	
-	inline void RemoveTrapPatch_( short trap, ProcPtr patchPtr )
+	inline void RemoveTrapPatch_( short trap, UniversalProcPtr patchPtr )
 	{
 		ApplyTrapPatch_( trap, patchPtr );
 	}
@@ -27,7 +27,7 @@ namespace Silver
 	inline PatchedProcPtr ApplyTrapPatch( short trap, PatchedProcPtr patchPtr )
 	{
 		ProcPtr trapPtr = ApplyTrapPatch_( trap,
-		                                   reinterpret_cast< ProcPtr >( patchPtr ) );
+		                                   (UniversalProcPtr) patchPtr );
 		
 		return reinterpret_cast< PatchedProcPtr >( trapPtr );
 	}
@@ -35,7 +35,7 @@ namespace Silver
 	template < class PatchedProcPtr >
 	inline void RemoveTrapPatch( short trap, PatchedProcPtr patchPtr )
 	{
-		RemoveTrapPatch_( trap, reinterpret_cast< ProcPtr >( patchPtr ) );
+		RemoveTrapPatch_( trap, (UniversalProcPtr) patchPtr );
 	}
 	
 }
