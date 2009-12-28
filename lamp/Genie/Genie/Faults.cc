@@ -55,16 +55,13 @@ namespace Genie
 		MOVE	A1,USP
 		
 		LEA		gExceptionUserHandlerTable,A0
-		ADDA.W	D0,A0  // add the offset
-		
-		MOVE.L	(A0),2(SP)  // set stacked PC to the handler address
+		MOVE.L	(A0,D0.W),2(SP)  // set stacked PC to the handler address
 		
 		BRA		end
 		
 	null:
 		LEA		gExceptionVectorTable,A0
-		ADDA.W	D0,A0  // add the offset
-		MOVEA.L	(A0),A0  // get the handler address
+		MOVEA.L	(A0,D0.W),A0  // get the handler address
 		
 		JMP		(A0)
 		
