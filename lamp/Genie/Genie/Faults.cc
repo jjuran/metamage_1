@@ -138,6 +138,22 @@ namespace Genie
 		}
 	};
 	
+	struct GetNextEvent_Patch
+	{
+		static short Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler );
+	};
+	
+	short GetNextEvent_Patch::Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
+	{
+		remove_68k_exception_handlers();
+		
+		short result = nextHandler( eventMask, theEvent );
+		
+		install_68k_exception_handlers();
+		
+		return result;
+	}
+	
 	
 	void InstallExceptionHandlers()
 	{
