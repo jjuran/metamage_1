@@ -48,8 +48,14 @@ namespace Genie
 		ANDI.W	#0x0FFF,D0  // mask off frame code
 		
 		TST.L	gCurrentProcess
-		BEQ		null
+		BNE		recover
 		
+		LEA		gExceptionVectorTable,A0
+		MOVEA.L	(A0,D0.W),A0  // get the handler address
+		
+		JMP		(A0)
+		
+	recover:
 		MOVE	USP,A1
 		MOVE.L	2(SP),-(A1)  // push old PC as return address for stack crawls
 		MOVE	A1,USP
@@ -57,15 +63,6 @@ namespace Genie
 		LEA		gExceptionUserHandlerTable,A0
 		MOVE.L	(A0,D0.W),2(SP)  // set stacked PC to the handler address
 		
-		BRA		end
-		
-	null:
-		LEA		gExceptionVectorTable,A0
-		MOVEA.L	(A0,D0.W),A0  // get the handler address
-		
-		JMP		(A0)
-		
-	end:
 		RTE
 	}
 	
