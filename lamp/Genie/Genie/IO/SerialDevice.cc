@@ -115,8 +115,8 @@ namespace Genie
 	template < class Type >
 	inline boost::shared_ptr< IOHandle > NewSerialDeviceHandle( Type param, bool isPassive )
 	{
-		SerialDeviceHandle* h = isPassive ? static_cast< SerialDeviceHandle* >( new PassiveSerialDeviceHandle( param ) )
-		                                  : static_cast< SerialDeviceHandle* >( new ActiveSerialDeviceHandle ( param ) );
+		IOHandle* h = isPassive ? static_cast< IOHandle* >( new PassiveSerialDeviceHandle( param ) )
+		                        : static_cast< IOHandle* >( new ActiveSerialDeviceHandle ( param ) );
 		
 		return boost::shared_ptr< IOHandle >( h );
 	}
