@@ -80,7 +80,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_tempmem( parent, name ) );
+		return seize_ptr( new FSTree_sys_mac_tempmem( parent, name ) );
 	}
 	
 }

@@ -150,7 +150,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_TextEdit_text( parent, name ) );
+		return seize_ptr( new FSTree_TextEdit_text( parent, name ) );
 	}
 	
 }

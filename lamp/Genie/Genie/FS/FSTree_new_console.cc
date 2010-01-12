@@ -346,7 +346,7 @@ namespace Genie
 		
 		std::string name = iota::inscribe_decimal( id );
 		
-		return FSTreePtr( new FSTree( parent, name ) );
+		return seize_ptr( new FSTree( parent, name ) );
 	}
 	
 	class ConsoleTTYHandle : public TTYHandle
@@ -768,7 +768,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_new_console( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_new_View( parent,
+		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,
 		                                       &CreateView,
 		                                       local_mappings,

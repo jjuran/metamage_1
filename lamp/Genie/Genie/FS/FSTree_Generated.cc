@@ -99,7 +99,7 @@ namespace Genie
 	                                const std::string&  name,
 	                                Generated_ReadHook  readHook )
 	{
-		return FSTreePtr( new FSTree_Generated( parent, name, readHook ) );
+		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
 	}
 	
 }

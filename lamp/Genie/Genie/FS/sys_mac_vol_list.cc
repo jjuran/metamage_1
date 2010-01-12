@@ -500,7 +500,7 @@ namespace Genie
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new Trigger( parent, name, key ) );
+		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&    parent,
@@ -557,7 +557,7 @@ namespace Genie
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new FSTree_Folder_Link( parent, key, type, name ) );
+		return seize_ptr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =

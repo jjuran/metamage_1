@@ -121,7 +121,7 @@ namespace Genie
 	template < class FSTree_Type >
 	FSTreePtr Basic_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_Type( parent, name ) );
+		return seize_ptr( new FSTree_Type( parent, name ) );
 	}
 	
 	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,

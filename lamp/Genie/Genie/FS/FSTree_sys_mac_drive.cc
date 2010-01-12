@@ -219,7 +219,7 @@ namespace Genie
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new Trigger( parent, name, key ) );
+		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[] =

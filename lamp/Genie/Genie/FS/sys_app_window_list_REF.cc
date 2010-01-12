@@ -434,7 +434,7 @@ namespace Genie
 	{
 		N::WindowRef key = GetKeyFromParent( parent );
 		
-		return FSTreePtr( new Trigger( parent, name, key ) );
+		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
 	template < class Accessor >

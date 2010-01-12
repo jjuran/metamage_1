@@ -171,7 +171,7 @@ namespace Genie
 	static FSTreePtr BasicDevice_Factory( const FSTreePtr&    parent,
 	                                      const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_BasicDevice( parent,
+		return seize_ptr( new FSTree_BasicDevice( parent,
 		                                          name,
 		                                          &Opener::open,
 		                                          Opener::perm ) );
@@ -180,7 +180,7 @@ namespace Genie
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
 	                                       const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_SimpleDevice( parent, name ) );
+		return seize_ptr( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
 	const FSTree_Premapped::Mapping dev_Mappings[] =

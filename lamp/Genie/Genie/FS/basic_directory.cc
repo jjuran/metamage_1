@@ -51,7 +51,7 @@ namespace Genie
 	                               Lookup_Proc         lookup,
 	                               Iterate_Proc        iterate )
 	{
-		return FSTreePtr( new basic_directory( parent, name, lookup, iterate ) );
+		return seize_ptr( new basic_directory( parent, name, lookup, iterate ) );
 	}
 	
 }

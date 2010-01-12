@@ -35,7 +35,7 @@ namespace Genie
 	                                   const std::string&  name,
 	                                   const std::string&  target )
 	{
-		return FSTreePtr( new FSTree_SymbolicLink( parent, name, target ) );
+		return seize_ptr( new FSTree_SymbolicLink( parent, name, target ) );
 	}
 	
 }

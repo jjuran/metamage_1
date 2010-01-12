@@ -102,7 +102,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_user_home( parent, name ) );
+		return seize_ptr( new FSTree_sys_mac_user_home( parent, name ) );
 	}
 	
 }

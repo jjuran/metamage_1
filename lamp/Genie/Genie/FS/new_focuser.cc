@@ -207,7 +207,7 @@ namespace Genie
 	
 	FSTreePtr New_focuser( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_new_View( parent,
+		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,
 		                                       &CreateView,
 		                                       local_mappings,

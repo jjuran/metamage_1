@@ -61,7 +61,7 @@ namespace Genie
 			              const std::string&                    name,
 			              const NN::Shared< N::IconSuiteRef >&  iconSuite )
 	{
-		return FSTreePtr( new FSTree_IconSuite( parent, name, iconSuite ) );
+		return seize_ptr( new FSTree_IconSuite( parent, name, iconSuite ) );
 	}
 	
 	const NN::Shared< N::IconSuiteRef >& Fetch_IconSuite()

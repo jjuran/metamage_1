@@ -384,7 +384,7 @@ namespace Genie
 	{
 		// FIXME:  verify name converts to an id
 		
-		return FSTreePtr( new FSTree_RsrcFile_Type_ID( Self(), name, itsFileSpec ) );
+		return seize_ptr( new FSTree_RsrcFile_Type_ID( Self(), name, itsFileSpec ) );
 	}
 	
 	void FSTree_RsrcFile_Type::IterateIntoCache( FSTreeCache& cache ) const
@@ -437,7 +437,7 @@ namespace Genie
 		// Throws if conversion to OSType fails.
 		(void) OSType_KeyName_Traits::KeyFromName( name );
 		
-		return FSTreePtr( new FSTree_RsrcFile_Type( Self(), name, itsFileSpec ) );
+		return seize_ptr( new FSTree_RsrcFile_Type( Self(), name, itsFileSpec ) );
 	}
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
@@ -461,7 +461,7 @@ namespace Genie
 	
 	FSTreePtr Get_ResFileDir_FSTree( const FSSpec& file, bool onServer )
 	{
-		return FSTreePtr( new FSTree_ResFileDir( file, onServer ) );
+		return seize_ptr( new FSTree_ResFileDir( file, onServer ) );
 	}
 	
 }

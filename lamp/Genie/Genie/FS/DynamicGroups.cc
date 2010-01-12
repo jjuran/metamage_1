@@ -48,7 +48,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_Dynamic_N( Self(), name, Getter() ) );
+		return seize_ptr( new FSTree_Dynamic_N( Self(), name, Getter() ) );
 	}
 	
 	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const

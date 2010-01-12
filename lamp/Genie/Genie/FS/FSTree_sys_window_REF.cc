@@ -779,7 +779,7 @@ namespace Genie
 	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
 	                                   const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_window_REF_Property( parent,
+		return seize_ptr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,
 		                                                      Property::fixed_size,
 		                                                      &Property::Get,

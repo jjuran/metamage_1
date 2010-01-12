@@ -165,7 +165,7 @@ namespace Genie
 			data = boost::shared_ptr< IconData >( new IconData );
 		}
 		
-		return FSTreePtr( new FSTree_Icon_data( parent, name, data ) );
+		return seize_ptr( new FSTree_Icon_data( parent, name, data ) );
 	}
 	
 	template < class Property >
@@ -193,7 +193,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_new_icon( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_new_View( parent,
+		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,
 		                                       &CreateView,
 		                                       local_mappings,
