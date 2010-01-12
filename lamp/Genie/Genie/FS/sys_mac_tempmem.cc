@@ -49,7 +49,7 @@ namespace Genie
 		
 		NN::Owned< N::Handle > h = N::TempNewHandle( length );
 		
-		return memory_mapping::shared_ptr( new Handle_memory_mapping( h ) );
+		return seize_ptr( new Handle_memory_mapping( h ) );
 	}
 	
 	

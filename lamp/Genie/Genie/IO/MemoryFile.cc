@@ -70,7 +70,7 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return memory_mapping::shared_ptr( new static_memory_mapping( itsBase + offset ) );
+		return seize_ptr( new static_memory_mapping( itsBase + offset ) );
 	}
 	
 }
