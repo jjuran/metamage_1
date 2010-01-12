@@ -560,6 +560,13 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsTTYDelegate = target;
 	}
 	
+	static inline boost::shared_ptr< IOHandle >
+	//
+	NewTerminal( const std::string& name )
+	{
+		return seize_ptr( new TerminalHandle( name ) );
+	}
+	
 	boost::shared_ptr< IOHandle >
 	//
 	FSTree_sys_window_REF_tty::Open( OpenFlags flags ) const
@@ -577,7 +584,7 @@ namespace Genie
 		
 		std::string pathname = ( has_tty ? tty->GetFile().get() : this )->Pathname();
 		
-		boost::shared_ptr< IOHandle > terminal( new TerminalHandle( pathname ) );
+		boost::shared_ptr< IOHandle > terminal = NewTerminal( pathname );
 		
 		if ( has_tty )
 		{

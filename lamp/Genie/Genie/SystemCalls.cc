@@ -373,6 +373,20 @@ namespace Genie
 	}
 	
 	
+	static inline boost::shared_ptr< IOHandle >
+	//
+	NewPipeReader( const boost::shared_ptr< Conduit >& conduit, bool nonblocking )
+	{
+		return seize_ptr( new PipeOutHandle( conduit, nonblocking ) );
+	}
+	
+	static inline boost::shared_ptr< IOHandle >
+	//
+	NewPipeWriter( const boost::shared_ptr< Conduit >& conduit, bool nonblocking )
+	{
+		return seize_ptr( new PipeInHandle( conduit, nonblocking ) );
+	}
+	
 	static int pipe2( int pipefd[ 2 ], int flags )
 	{
 		SystemCallFrame frame( "pipe2" );
@@ -389,8 +403,8 @@ namespace Genie
 			
 			boost::shared_ptr< Conduit > conduit( new Conduit );
 			
-			boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit, nonblocking ) );
-			boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit, nonblocking ) );
+			boost::shared_ptr< IOHandle > pipeIn ( NewPipeWriter( conduit, nonblocking ) );
+			boost::shared_ptr< IOHandle > pipeOut( NewPipeReader( conduit, nonblocking ) );
 			
 			AssignFileDescriptor( reader, pipeOut, close_on_exec );
 			AssignFileDescriptor( writer, pipeIn,  close_on_exec );

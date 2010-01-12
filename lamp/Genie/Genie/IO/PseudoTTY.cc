@@ -21,6 +21,15 @@ namespace Genie
 		return GetDynamicGroup< PseudoTTYHandle >();
 	}
 	
+	static inline boost::shared_ptr< IOHandle >
+	//
+	NewPseudoTTY( TerminalID                           id,
+	              const boost::shared_ptr< Conduit >&  input,
+	              const boost::shared_ptr< Conduit >&  output )
+	{
+		return seize_ptr( new PseudoTTYHandle( id, input, output ) );
+	}
+	
 	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
 	                          boost::shared_ptr< IOHandle >& slave )
 	{
@@ -29,8 +38,8 @@ namespace Genie
 		boost::shared_ptr< Conduit > incoming( new Conduit );
 		boost::shared_ptr< Conduit > outgoing( new Conduit );
 		
-		boost::shared_ptr< IOHandle > master_handle( new PseudoTTYHandle( index, outgoing, incoming ) );
-		boost::shared_ptr< IOHandle > slave_handle ( new PseudoTTYHandle( index, incoming, outgoing ) );
+		boost::shared_ptr< IOHandle > master_handle( NewPseudoTTY( index, outgoing, incoming ) );
+		boost::shared_ptr< IOHandle > slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
 		GetPseudoTTYMap()[ index ] = slave_handle;
 		

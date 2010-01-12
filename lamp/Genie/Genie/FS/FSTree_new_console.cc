@@ -694,6 +694,13 @@ namespace Genie
 		destination->Attach( Self() );
 	}
 	
+	static inline boost::shared_ptr< IOHandle >
+	//
+	NewConsoleTTY( const FSTreePtr& self, TerminalID id )
+	{
+		return seize_ptr( new ConsoleTTYHandle( self, id ) );
+	}
+	
 	boost::shared_ptr< IOHandle >
 	//
 	FSTree_Console_tty::Open( OpenFlags flags ) const
@@ -702,7 +709,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		boost::shared_ptr< IOHandle > result( new ConsoleTTYHandle( Self(), id ) );
+		boost::shared_ptr< IOHandle > result( NewConsoleTTY( Self(), id ) );
 		
 		GetDynamicGroup< ConsoleTTYHandle >()[ id ] = result;
 		
