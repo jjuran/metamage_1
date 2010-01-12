@@ -6,8 +6,12 @@
 #include "Genie/ReplyHandler.hh"
 
 // Mac OS
+#ifndef __AEOBJECTS__
 #include <AEObjects.h>
+#endif
+#ifndef __AEREGISTRY__
 #include <AERegistry.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.h"

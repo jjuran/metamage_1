@@ -6,7 +6,9 @@
 #include "Genie/FS/new_defaultkeys.hh"
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"

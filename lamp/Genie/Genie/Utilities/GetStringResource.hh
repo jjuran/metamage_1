@@ -10,7 +10,9 @@
 #include <string>
 
 // Mac OS
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
 
 
 namespace Genie

@@ -6,8 +6,12 @@
 #include "debug/assert.hh"
 
 // Mac OS
+#ifndef __MACTYPES__
 #include <MacTypes.h>
+#endif
+#ifndef __PROCESSES__
 #include <Processes.h>
+#endif
 
 
 namespace debug

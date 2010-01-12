@@ -15,7 +15,9 @@
 #define NITROGEN_DEVICES_H
 
 // Mac OS
+#ifndef __DEVICES__
 #include <Devices.h>
+#endif
 
 // Nucleus
 #include "Nucleus/ErrorsRegistered.h"

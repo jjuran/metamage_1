@@ -15,7 +15,9 @@
 #define NITROGEN_TIMER_H
 
 // Mac OS
+#ifndef __TIMER__
 #include <Timer.h>
+#endif
 
 // Nucleus
 #include "Nucleus/ErrorsRegistered.h"

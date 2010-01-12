@@ -9,7 +9,9 @@
 #include "Silver/Install.hh"
 
 // Mac OS
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
 
 
 #pragma exceptions off

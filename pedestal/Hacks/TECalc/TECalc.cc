@@ -7,11 +7,21 @@
 */
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
+#ifndef __NUMBERFORMATTING__
 #include <NumberFormatting.h>
+#endif
+#ifndef __SOUND__
 #include <Sound.h>
+#endif
+#ifndef __TEXTEDIT__
 #include <TextEdit.h>
+#endif
+#ifndef __TRAPS__
 #include <Traps.h>
+#endif
 
 // Standard C/C++
 #include <cstring>

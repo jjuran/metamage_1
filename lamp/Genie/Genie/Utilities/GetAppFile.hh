@@ -9,7 +9,9 @@
 #define GENIE_UTILITIES_GETAPPFILE_HH
 
 // Mac OS
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 
 namespace Genie

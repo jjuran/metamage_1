@@ -9,7 +9,9 @@
 #include "sys/stat.h"
 
 // Mac OS
+#ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif

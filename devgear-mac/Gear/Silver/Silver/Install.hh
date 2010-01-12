@@ -10,7 +10,9 @@
 #define SILVER_INSTALL_HH
 
 // Mac OS
+#ifndef __MACTYPES__
 #include <MacTypes.h>
+#endif
 
 
 namespace Silver

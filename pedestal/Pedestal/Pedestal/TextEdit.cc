@@ -9,7 +9,9 @@
 #include <algorithm>
 
 // Mac OS
+#ifndef __FONTS__
 #include <Fonts.h>
+#endif
 
 // Debug
 #include "debug/assert.hh"

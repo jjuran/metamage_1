@@ -12,7 +12,9 @@
 #ifdef __MACOS__
 
 // Mac OS
+#ifndef __TRAPS__
 #include <Traps.h>
+#endif
 
 // Silver
 #include "Silver/Procs.hh"

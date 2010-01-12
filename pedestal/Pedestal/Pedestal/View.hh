@@ -7,7 +7,9 @@
 #define PEDESTAL_VIEW_HH
 
 // Mac OS
+#ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
 
 // Debug
 #include "debug/boost_assert.hh"

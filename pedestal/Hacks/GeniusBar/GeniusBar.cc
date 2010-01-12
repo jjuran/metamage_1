@@ -7,13 +7,27 @@
 */
 
 // Mac OS
+#ifndef __CONTROLS__
 #include <Controls.h>
+#endif
+#ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
+#endif
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
+#ifndef __MACWINDOWS__
 #include <MacWindows.h>
+#endif
+#ifndef __PROCESSES__
 #include <Processes.h>
-#include <QuickDraw.h>
+#endif
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
 
 // Standard C/C++
 #include <cstring>

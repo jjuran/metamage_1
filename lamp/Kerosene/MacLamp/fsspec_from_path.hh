@@ -11,7 +11,9 @@
 #if TARGET_RT_MAC_MACHO
 #include <Carbon/Carbon.h>
 #else
+#ifndef __FILES__
 #include <Files.h>
+#endif
 #endif
 
 

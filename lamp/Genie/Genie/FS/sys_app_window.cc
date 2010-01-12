@@ -6,7 +6,9 @@
 #include "Genie/FS/sys_app_window.hh"
 
 // Mac OS
+#ifndef __MACWINDOWS__
 #include <MacWindows.h>
+#endif
 
 // iota
 #include "iota/hexidecimal.hh"

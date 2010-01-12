@@ -7,8 +7,12 @@
 #define MACIO_ROUTINES_HH
 
 // Mac OS
+#ifndef __DEVICES__
 #include <Devices.h>
+#endif
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 // MacIO
 #include "MacIO/ParamBlocks.hh"

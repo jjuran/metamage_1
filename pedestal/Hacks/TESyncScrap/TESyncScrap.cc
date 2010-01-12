@@ -7,9 +7,15 @@
 */
 
 // Mac OS
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
+#ifndef __SCRAP__
 #include <Scrap.h>
+#endif
+#ifndef __TEXTEDIT__
 #include <TextEdit.h>
+#endif
 
 // Silver
 #include "Silver/Install.hh"

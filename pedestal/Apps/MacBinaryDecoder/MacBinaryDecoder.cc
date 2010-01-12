@@ -4,7 +4,9 @@
  */
 
 // Mac OS
+#ifndef __SOUND__
 #include <Sound.h>
+#endif
 
 // Debug
 #include "debug/assert.hh"

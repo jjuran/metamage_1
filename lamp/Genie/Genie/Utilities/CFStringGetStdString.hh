@@ -10,7 +10,9 @@
 #include <string>
 
 // Mac OS
+#ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 
 
 namespace Genie

@@ -6,7 +6,9 @@
 #include "CFMLateImporter/SavedCFragInitBlock.h"
 
 // Mac OS
+#ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
+#endif
 
 /*
 

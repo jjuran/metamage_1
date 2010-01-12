@@ -14,7 +14,9 @@
 #include <cstdlib>
 
 // Mac OS
+#ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
 
 // Iota
 #include "iota/decimal.hh"

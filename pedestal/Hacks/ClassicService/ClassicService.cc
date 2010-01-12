@@ -7,14 +7,30 @@
 */
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
+#ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#ifndef __MACWINDOWS__
 #include <MacWindows.h>
+#endif
+#ifndef __MENUS__
 #include <Menus.h>
+#endif
+#ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
+#ifndef __SOUND__
 #include <Sound.h>
+#endif
+#ifndef __TOOLUTILS__
 #include <ToolUtils.h>
+#endif
 
 // Silver
 #include "Silver/Install.hh"

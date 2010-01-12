@@ -8,7 +8,9 @@
 #include <ConditionalMacros.h>
 #endif
 #if UNIVERSAL_INTERFACES_VERSION < 0x0400
+#ifndef __FILETYPESANDCREATORS__
 #include <FileTypesAndCreators.h>  // for sigMPWShell
+#endif
 #else
 enum { sigMPWShell = 'MPS ' };
 #endif

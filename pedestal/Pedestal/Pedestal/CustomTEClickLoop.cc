@@ -6,7 +6,9 @@
 #include "Pedestal/CustomTEClickLoop.hh"
 
 // Mac OS
+#ifndef __TEXTEDIT__
 #include <TextEdit.h>
+#endif
 
 // Debug
 #include "debug/assert.hh"

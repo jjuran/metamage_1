@@ -7,7 +7,9 @@
 #define PEDESTAL_SOLIDCOLORGRAPHIC_HH
 
 // Mac OS
+#ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
 
 // Pedestal
 #include "Pedestal/Graphic.hh"

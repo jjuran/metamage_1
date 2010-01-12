@@ -6,7 +6,9 @@
 #include "TimeOff/TimeOff.hh"
 
 // Mac OS
+#ifndef __OSUTILS__
 #include <OSUtils.h>
+#endif
 
 
 namespace TimeOff

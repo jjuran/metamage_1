@@ -7,7 +7,9 @@
 #define PEDESTAL_CLIPBOARD_HH
 
 // Mac OS
+#ifndef __TEXTEDIT__
 #include <TextEdit.h>
+#endif
 
 
 namespace Pedestal

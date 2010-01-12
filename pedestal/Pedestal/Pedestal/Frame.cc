@@ -6,7 +6,9 @@
 #include "Pedestal/Frame.hh"
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"

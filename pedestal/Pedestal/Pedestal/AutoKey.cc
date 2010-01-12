@@ -6,7 +6,9 @@
 #include "Pedestal/AutoKey.hh"
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
 
 
 namespace Pedestal

@@ -7,7 +7,9 @@
 #define GENIE_PROCESS_ENTRY_HH
 
 // Mac OS
+#ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
 
 // Iota
 #include "iota/environ.hh"

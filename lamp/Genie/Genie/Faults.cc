@@ -6,7 +6,9 @@
 #include "Genie/Faults.hh"
 
 // Mac OS
+#ifndef __MACHINEEXCEPTIONS__
 #include <MachineExceptions.h>
+#endif
 
 // Standard C
 #include <signal.h>

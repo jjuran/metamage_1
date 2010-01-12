@@ -16,7 +16,9 @@
 
 // Math
 #include <math.h>
+#ifndef __FP__
 #include <fp.h>
+#endif
 
 // Standard C
 #include "errno.h"

@@ -6,8 +6,12 @@
 #include "Genie/IO/SerialDevice.hh"
 
 // Mac OS
+#ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#ifndef __STRINGCOMPARE__
 #include <StringCompare.h>
+#endif
 
 // Standard C++
 #include <map>

@@ -7,7 +7,9 @@
 #define MACIO_PARAMBLOCKS_HH
 
 // Mac OS
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 
 namespace MacIO

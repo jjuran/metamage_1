@@ -9,7 +9,9 @@
 #include "Silver/PatchUtils.hh"
 
 // Mac OS
+#ifndef __PATCHES__
 #include <Patches.h>
+#endif
 
 
 #pragma exceptions off

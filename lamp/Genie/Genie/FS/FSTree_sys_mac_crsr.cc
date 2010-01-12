@@ -8,7 +8,9 @@
 #include "Genie/FS/FSTree_sys_mac_crsr.hh"
 
 // Mac OS
+#ifndef __CURSORDEVICES__
 #include <CursorDevices.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"

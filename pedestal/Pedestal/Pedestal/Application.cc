@@ -9,10 +9,16 @@
 #include <map>
 
 // Mac OS
-#ifndef __MACH__
-	#include <Controls.h>
-	#include <DiskInit.h>
-	#include <ToolUtils.h>
+#ifndef __CONTROLS__
+#include <Controls.h>
+#endif
+#ifdef __MACOS__
+#ifndef __DISKINIT__
+#include <DiskInit.h>
+#endif
+#endif
+#ifndef __TOOLUTILS__
+#include <ToolUtils.h>
 #endif
 
 // Nostalgia

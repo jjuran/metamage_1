@@ -7,10 +7,18 @@
 */
 
 // Mac OS
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
+#ifndef __SOUND__
 #include <Sound.h>
+#endif
+#ifndef __TEXTEDIT__
 #include <TextEdit.h>
+#endif
 
 // Standard C++
 #include <algorithm>

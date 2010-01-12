@@ -6,7 +6,9 @@
 #include "Pedestal/TrackScrollbar.hh"
 
 // Mac OS
+#ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
+#endif
 
 // Standard C++
 #include <algorithm>

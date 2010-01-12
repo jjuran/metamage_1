@@ -7,7 +7,9 @@
 #define PEDESTAL_PUSHBUTTON_HH
 
 // Mac OS
+#ifndef __CONTROLS__
 #include <Controls.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/RefCon.h"

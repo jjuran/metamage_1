@@ -6,7 +6,9 @@
 #include "Pedestal/Initialize.hh"
 
 // Mac OS
+#ifndef __DIALOGS__
 #include <Dialogs.h>
+#endif
 
 
 namespace Pedestal

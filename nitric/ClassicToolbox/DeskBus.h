@@ -11,7 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __DESKBUS__
 #include <DeskBus.h>
+#endif
 
 // Nucleus
 #include "Nucleus/Enumeration.h"

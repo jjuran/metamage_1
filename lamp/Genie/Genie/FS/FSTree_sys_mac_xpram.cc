@@ -8,8 +8,12 @@
 #include "Genie/FS/FSTree_sys_mac_xpram.hh"
 
 // Mac OS
+#ifndef __MIXEDMODE__
 #include <MixedMode.h>
+#endif
+#ifndef __TRAPS__
 #include <Traps.h>
+#endif
 
 
 #if TARGET_CPU_68K
