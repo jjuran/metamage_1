@@ -95,9 +95,9 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > MacFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new MacFileHandle( itsRefNum,
-		                                                         GetFlags(),
-		                                                         itsFileGetter ) );
+		return seize_ptr( new MacFileHandle( itsRefNum,
+		                                     GetFlags(),
+		                                     itsFileGetter ) );
 	}
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
@@ -171,9 +171,9 @@ namespace Genie
 	New_DataForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
 	                    OpenFlags                             flags )
 	{
-		return boost::shared_ptr< IOHandle >( new MacFileHandle( refNum,
-		                                                         flags,
-		                                                         &FSTreeFromFSSpec ) );
+		return seize_ptr( new MacFileHandle( refNum,
+		                                     flags,
+		                                     &FSTreeFromFSSpec ) );
 	}
 	
 	boost::shared_ptr< IOHandle >
@@ -181,9 +181,9 @@ namespace Genie
 	New_RsrcForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
 	                    OpenFlags                             flags )
 	{
-		return boost::shared_ptr< IOHandle >( new MacFileHandle( refNum,
-		                                                         flags,
-		                                                         &GetRsrcForkFSTree ) );
+		return seize_ptr( new MacFileHandle( refNum,
+		                                     flags,
+		                                     &GetRsrcForkFSTree ) );
 	}
 	
 }

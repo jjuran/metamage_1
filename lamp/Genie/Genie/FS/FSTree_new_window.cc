@@ -34,7 +34,7 @@ namespace Genie
 	{
 		FSTreePtr dir = NewWindow();
 		
-		return boost::shared_ptr< IOHandle >( new OpenWindowHandle( dir ) );
+		return seize_ptr( new OpenWindowHandle( dir ) );
 	}
 	
 }

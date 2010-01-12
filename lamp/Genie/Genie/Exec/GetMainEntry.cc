@@ -137,19 +137,24 @@ namespace Genie
 	
 #endif
 	
+	static inline MainEntry seize_ptr( MainEntryPoint* entry )
+	{
+		return MainEntry( entry );
+	}
+	
 	MainEntry GetMainEntryFromAddress( Trivial_Entry address )
 	{
-		return MainEntry( new AddressMain( address ) );
+		return seize_ptr( new AddressMain( address ) );
 	}
 	
 	MainEntry GetMainEntryFromAddress( Standard_Entry address )
 	{
-		return MainEntry( new AddressMain( address ) );
+		return seize_ptr( new AddressMain( address ) );
 	}
 	
 	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& binary )
 	{
-		return MainEntry( new ExternalBinaryMain( binary ) );
+		return seize_ptr( new ExternalBinaryMain( binary ) );
 	}
 	
 }

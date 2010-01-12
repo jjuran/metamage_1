@@ -150,7 +150,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > CaptionTextFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
+		return seize_ptr( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
 	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()

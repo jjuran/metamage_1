@@ -360,7 +360,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > IconDataFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
+		return seize_ptr( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )

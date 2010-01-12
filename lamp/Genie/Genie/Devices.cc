@@ -94,7 +94,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( *found->second ) );
+		return seize_ptr( new SimpleDeviceHandle( *found->second ) );
 	}
 	
 }
