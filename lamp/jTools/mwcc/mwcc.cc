@@ -346,17 +346,13 @@ namespace tool
 				command.push_back( "MWC68K"   );
 				command.push_back( "-mc68020" );
 				command.push_back( "-model"   );
-				command.push_back( "far"      );
+				command.push_back( cfm ? "CFMflatdf" : "far" );
 				
 				if ( a4 )
 				{
 					command.push_back( "-a4" );
 				}
-				else if ( cfm )
-				{
-					command.push_back( "-model"     );
-					command.push_back( "-CFMflatdf" );
-				}
+				
 				break;
 			
 			case arch_ppc:
