@@ -984,6 +984,8 @@ namespace Genie
 		if ( itsCleanupHandler != NULL )
 		{
 			itsCleanupHandler();
+			
+			itsCleanupHandler = NULL;
 		}
 		
 		// Make the new thread belong to this process and save the old one
