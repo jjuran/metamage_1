@@ -17,7 +17,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > PropertyReaderFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData ) );
+		return seize_ptr( new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
 	
 	ssize_t PropertyReaderFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

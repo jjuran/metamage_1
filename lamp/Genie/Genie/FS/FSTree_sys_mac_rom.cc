@@ -81,10 +81,10 @@ namespace Genie
 		
 	#else
 		
-		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( Self(),
-		                                                            flags,
-		                                                            LMGetROMBase(),
-		                                                            GetEOF() ) );
+		return seize_ptr( new MemoryFileHandle( Self(),
+		                                        flags,
+		                                        LMGetROMBase(),
+		                                        GetEOF() ) );
 		
 	#endif
 	}

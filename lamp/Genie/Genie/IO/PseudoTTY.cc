@@ -41,11 +41,9 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< IOHandle > NewTerminal( const std::string& name )
+	static inline boost::shared_ptr< IOHandle > NewTerminal( const std::string& name )
 	{
-		boost::shared_ptr< IOHandle > result( new TerminalHandle( name ) );
-		
-		return result;
+		return seize_ptr( new TerminalHandle( name ) );
 	}
 	
 	static inline std::string make_devpts( size_t id )

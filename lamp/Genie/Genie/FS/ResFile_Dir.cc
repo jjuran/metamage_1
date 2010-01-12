@@ -70,9 +70,9 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > Handle_IOHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new Handle_IOHandle( GetFile(),
-		                                                           GetFlags(),
-		                                                           itsHandle ) );
+		return seize_ptr( new Handle_IOHandle( GetFile(),
+		                                       GetFlags(),
+		                                       itsHandle ) );
 	}
 	
 	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
@@ -217,10 +217,10 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > Resource_IOHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new Resource_IOHandle( GetFile(),
-		                                                             GetFlags(),
-		                                                             GetHandle(),
-		                                                             itsFileSpec ) );
+		return seize_ptr( new Resource_IOHandle( GetFile(),
+		                                         GetFlags(),
+		                                         GetHandle(),
+		                                         itsFileSpec ) );
 	}
 	
 	void Resource_IOHandle::Synchronize( bool metadata )

@@ -68,7 +68,7 @@ namespace Genie
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
 			AssignFileDescriptor( fd,
-			                      boost::shared_ptr< IOHandle >( new OTSocket( nonblocking ) ),
+			                      seize_ptr( new OTSocket( nonblocking ) ),
 			                      close_on_exec );
 		}
 		catch ( ... )
