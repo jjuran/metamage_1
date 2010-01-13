@@ -91,7 +91,7 @@ namespace Genie
 	
 	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new DefaultKey_Handler( delegate ) );
+		return seize_ptr( new DefaultKey_Handler( delegate ) );
 	}
 	
 	
