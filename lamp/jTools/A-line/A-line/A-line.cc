@@ -469,8 +469,8 @@ namespace tool
 		
 		if ( needToBuild )
 		{
-			TaskPtr project_base_task( new NullTask() );
-			TaskPtr source_dependency( new NullTask() );
+			TaskPtr project_base_task = seize_ptr( new NullTask() );
+			TaskPtr source_dependency = seize_ptr( new NullTask() );
 			
 			std::vector< TaskPtr > tool_dependencies;
 			

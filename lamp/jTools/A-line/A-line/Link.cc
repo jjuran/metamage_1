@@ -342,7 +342,10 @@ namespace tool
 		
 		const std::string& includeDir = project.ProjectFolder();
 		
-		TaskPtr rez_task( new RezzingTask( input_pathnames, output_pathname, includeDir, lamp ) );
+		TaskPtr rez_task = seize_ptr( new RezzingTask( input_pathnames,
+		                                               output_pathname,
+		                                               includeDir,
+		                                               lamp ) );
 		
 		std::for_each( input_pathnames.begin(),
 		               input_pathnames.end(),
@@ -426,7 +429,11 @@ namespace tool
 		link_command.push_back( "ar"  );
 		link_command.push_back( "rcs" );
 		
-		return TaskPtr( new LinkingTask( link_command, output_pathname, begin, end, diagnostics_dir ) );
+		return seize_ptr( new LinkingTask( link_command,
+		                                   output_pathname,
+		                                   begin,
+		                                   end,
+		                                   diagnostics_dir ) );
 	}
 	
 	
@@ -476,7 +483,7 @@ namespace tool
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
-		TaskPtr rmdir_diagnostics_task( new RemoveDirTask( diagnosticsDir ) );
+		TaskPtr rmdir_diagnostics_task = seize_ptr( new RemoveDirTask( diagnosticsDir ) );
 		
 		std::vector< std::string > objectFiles;
 		
@@ -593,7 +600,7 @@ namespace tool
 		
 		const bool toolkit = n_tools > 0;
 		
-		TaskPtr link_dependency_task( new NullTask() );
+		TaskPtr link_dependency_task = seize_ptr( new NullTask() );
 		
 		std::vector< std::string > link_input_arguments;
 		
@@ -683,7 +690,10 @@ namespace tool
 				
 				link_input_arguments.front() = objectFile;
 				
-				TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
+				TaskPtr link_tool_task = seize_ptr( new LinkingTask( command,
+				                                                     linkOutput,
+				                                                     link_input_arguments,
+				                                                     diagnosticsDir ) );
 				
 				(*the_task)->AddDependent( link_tool_task );
 				
@@ -743,7 +753,10 @@ namespace tool
 			
 			std::string outFile = exeDir / linkName;
 			
-			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
+			TaskPtr link_task = seize_ptr( new LinkingTask( command,
+			                                                outFile,
+			                                                link_input_arguments,
+			                                                diagnosticsDir ) );
 			
 			link_dependency_task->AddDependent( link_task );
 			
@@ -776,7 +789,7 @@ namespace tool
 				}
 				else
 				{
-					rez_task.reset( new NullTask() );
+					rez_task = seize_ptr( new NullTask() );
 				}
 				
 				project_base_task->AddDependent( rez_task );
@@ -786,7 +799,9 @@ namespace tool
 					std::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
 					                              : outFile;
 					
-					TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, lamp ) );
+					TaskPtr copy_rsrcs = seize_ptr( new ResourceCopyingTask( rsrc_pathnames,
+					                                                         rsrcFile,
+					                                                         lamp ) );
 					
 					if ( bundle )
 					{
