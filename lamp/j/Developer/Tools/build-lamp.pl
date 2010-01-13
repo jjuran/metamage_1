@@ -100,7 +100,7 @@ my %fsmap =
 			# Source management
 			\ qw( jsync ),
 			# Exceptions
-			\ qw( abort buserror illegal privileged ),
+			\ qw( abort buserror div0 illegal privileged ),
 			# Mac-specific
 			\ qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
 			# AppleScript
