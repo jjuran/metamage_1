@@ -324,9 +324,9 @@ namespace Genie
 	{
 		typedef TextEdit_Scroller View;
 		
-		return boost::shared_ptr< Ped::View >( new View( delegate,
-		                                                 Console_KeyDown,
-		                                                 Console_UserCommand_Hook ) );
+		return seize_ptr( new View( delegate,
+		                            Console_KeyDown,
+		                            Console_UserCommand_Hook ) );
 	}
 	
 	

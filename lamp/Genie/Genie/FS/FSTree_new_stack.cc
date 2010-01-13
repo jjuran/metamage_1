@@ -134,7 +134,7 @@ namespace Genie
 	
 	boost::shared_ptr< Ped::View > StackFactory( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new Stack( delegate ) );
+		return seize_ptr( new Stack( delegate ) );
 	}
 	
 	

@@ -65,6 +65,12 @@ namespace Pedestal
 			virtual bool UserCommand( MenuItemCode code  )  { return false; }
 	};
 	
+	
+	inline boost::shared_ptr< View > seize_ptr( View* view )
+	{
+		return boost::shared_ptr< View >( view );
+	}
+	
 }
 
 #endif

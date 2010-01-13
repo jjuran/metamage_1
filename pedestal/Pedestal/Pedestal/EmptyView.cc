@@ -11,7 +11,7 @@ namespace Pedestal
 	
 	const boost::shared_ptr< View >& EmptyView::Get()
 	{
-		static boost::shared_ptr< View > empty = boost::shared_ptr< View >( new EmptyView );
+		static boost::shared_ptr< View > empty = seize_ptr( new EmptyView );
 		
 		return empty;
 	}

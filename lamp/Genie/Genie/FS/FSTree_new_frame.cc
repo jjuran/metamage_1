@@ -273,7 +273,7 @@ namespace Genie
 	
 	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return boost::shared_ptr< Ped::View >( new Frame( delegate ) );
+		return seize_ptr( new Frame( delegate ) );
 	}
 	
 	
