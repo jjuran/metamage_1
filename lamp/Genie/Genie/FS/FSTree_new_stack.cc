@@ -188,7 +188,7 @@ namespace Genie
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const
 			{
-				return FSTreePtr( new FSTree_Stack_Subview( Self(), name ) );
+				return seize_ptr( new FSTree_Stack_Subview( Self(), name ) );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -223,9 +223,7 @@ namespace Genie
 	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&    parent,
 	                                            const std::string&  name ) const
 	{
-		FSTreePtr delegate( new FSTree_Stack( parent, name ) );
-		
-		return delegate;
+		return seize_ptr( new FSTree_Stack( parent, name ) );
 	}
 	
 	void FSTree_new_stack::DestroyDelegate( const FSTree* delegate )

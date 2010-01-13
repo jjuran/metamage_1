@@ -28,6 +28,12 @@ namespace Genie
 			virtual addr_t get_address() const = 0;
 	};
 	
+	
+	inline memory_mapping::shared_ptr seize_ptr( memory_mapping* map )
+	{
+		return memory_mapping::shared_ptr( map );
+	}
+	
 }
 
 #endif

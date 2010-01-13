@@ -81,17 +81,17 @@ namespace Genie
 		
 	#else
 		
-		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( Self(),
-		                                                            flags,
-		                                                            LMGetROMBase(),
-		                                                            GetEOF() ) );
+		return seize_ptr( new MemoryFileHandle( Self(),
+		                                        flags,
+		                                        LMGetROMBase(),
+		                                        GetEOF() ) );
 		
 	#endif
 	}
 	
 	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_rom( parent, name ) );
+		return seize_ptr( new FSTree_sys_mac_rom( parent, name ) );
 	}
 	
 }

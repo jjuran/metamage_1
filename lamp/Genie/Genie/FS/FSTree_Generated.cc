@@ -90,16 +90,16 @@ namespace Genie
 		
 		std::string data = itsReadHook( this );
 		
-		return boost::shared_ptr< IOHandle >( new PropertyReaderFileHandle( Self(),
-		                                                                    flags,
-		                                                                    data ) );
+		return seize_ptr( new PropertyReaderFileHandle( Self(),
+		                                                flags,
+		                                                data ) );
 	}
 	
 	FSTreePtr New_FSTree_Generated( const FSTreePtr&    parent,
 	                                const std::string&  name,
 	                                Generated_ReadHook  readHook )
 	{
-		return FSTreePtr( new FSTree_Generated( parent, name, readHook ) );
+		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
 	}
 	
 }

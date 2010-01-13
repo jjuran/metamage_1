@@ -49,7 +49,7 @@ namespace Genie
 		
 		NN::Owned< N::Handle > h = N::TempNewHandle( length );
 		
-		return memory_mapping::shared_ptr( new Handle_memory_mapping( h ) );
+		return seize_ptr( new Handle_memory_mapping( h ) );
 	}
 	
 	
@@ -73,14 +73,13 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_tempmem::Open( OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new TempMem_IOHandle( Self(),
-		                                                            flags ) );
+		return seize_ptr( new TempMem_IOHandle( Self(), flags ) );
 		
 	}
 	
 	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_tempmem( parent, name ) );
+		return seize_ptr( new FSTree_sys_mac_tempmem( parent, name ) );
 	}
 	
 }

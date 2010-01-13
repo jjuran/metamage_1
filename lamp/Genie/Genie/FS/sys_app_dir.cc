@@ -37,7 +37,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_sys_app_dir( parent, name ) );
+		return seize_ptr( new FSTree_sys_app_dir( parent, name ) );
 	}
 	
 }

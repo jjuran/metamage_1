@@ -79,7 +79,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_Premapped( parent, name ) );
+		return seize_ptr( new FSTree_Premapped( parent, name ) );
 	}
 	
 	class syscall_IteratorConverter
@@ -139,7 +139,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
+		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
 	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];

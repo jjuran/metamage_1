@@ -24,10 +24,10 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > MemoryFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( GetFile(),
-		                                                            GetFlags(),
-		                                                            itsBase,
-		                                                            itsSize ) );
+		return seize_ptr( new MemoryFileHandle( GetFile(),
+		                                        GetFlags(),
+		                                        itsBase,
+		                                        itsSize ) );
 	}
 	
 	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
@@ -70,7 +70,7 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return memory_mapping::shared_ptr( new static_memory_mapping( itsBase + offset ) );
+		return seize_ptr( new static_memory_mapping( itsBase + offset ) );
 	}
 	
 }

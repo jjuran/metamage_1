@@ -78,7 +78,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > TextEdit_text_Handle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new TextEdit_text_Handle( GetFile(), GetFlags() ) );
+		return seize_ptr( new TextEdit_text_Handle( GetFile(), GetFlags() ) );
 	}
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()
@@ -150,7 +150,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_TextEdit_text( parent, name ) );
+		return seize_ptr( new FSTree_TextEdit_text( parent, name ) );
 	}
 	
 }

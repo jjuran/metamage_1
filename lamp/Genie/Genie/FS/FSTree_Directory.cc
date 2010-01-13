@@ -198,11 +198,13 @@ namespace Genie
 	                             const FSTree_Premapped::Mapping    mappings[],
 	                             void                             (*dtor)(const FSTree*) )
 	{
-		FSTree_Premapped* raw_ptr = new FSTree_Premapped( parent, name, dtor );
+		FSTree_Premapped* premapped = new FSTree_Premapped( parent, name, dtor );
+		
+		const FSTree* raw_ptr = premapped;
 		
 		FSTreePtr result( raw_ptr );
 		
-		raw_ptr->AddMappings( mappings );
+		premapped->AddMappings( mappings );
 		
 		return result;
 	}

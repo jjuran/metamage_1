@@ -150,7 +150,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > CaptionTextFileHandle::Clone()
 	{
-		return boost::shared_ptr< IOHandle >( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
+		return seize_ptr( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
 	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()
@@ -258,7 +258,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_new_caption( const FSTreePtr& parent, const std::string& name )
 	{
-		return FSTreePtr( new FSTree_new_View( parent,
+		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,
 		                                       &CreateView,
 		                                       local_mappings,

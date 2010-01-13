@@ -636,7 +636,7 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
 	{
-		return FSTreePtr( new FSTree_HFS( item, onServer ) );
+		return seize_ptr( new FSTree_HFS( item, onServer ) );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
@@ -649,13 +649,13 @@ namespace Genie
 	{
 		FSTree_Root* tree = NULL;
 		
-		static FSTreePtr result = FSTreePtr( tree = new FSTree_Root() );
+		static FSTreePtr result = seize_ptr( tree = new FSTree_Root() );
 		
 		if ( tree != NULL )
 		{
 			tree->Map( FSTreeFromFSDirSpec( GetUsersDirectory(), false ) );
 			
-			tree->Map( FSTreePtr( new FSTree_Volumes( result, "Volumes" ) ) );
+			tree->Map( seize_ptr( new FSTree_Volumes( result, "Volumes" ) ) );
 			tree->Map(            New_FSTree_proc   ( result, "proc"    )   );
 			
 			tree->Map( Premapped_Factory< dev_Mappings >( result, "dev" ) );
@@ -1295,7 +1295,7 @@ namespace Genie
 		
 		const FSSpec item = dir / macName;
 		
-		return FSTreePtr( new FSTree_HFS( item, onServer, name ) );
+		return seize_ptr( new FSTree_HFS( item, onServer, name ) );
 	}
 	
 	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
@@ -1694,7 +1694,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name ) const
 	{
-		return FSTreePtr( new FSTree_Volumes_Link( Self(), name ) );
+		return seize_ptr( new FSTree_Volumes_Link( Self(), name ) );
 	}
 	
 	class volumes_IteratorConverter

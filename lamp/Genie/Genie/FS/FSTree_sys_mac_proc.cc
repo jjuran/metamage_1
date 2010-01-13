@@ -227,7 +227,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
+		return seize_ptr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[] =

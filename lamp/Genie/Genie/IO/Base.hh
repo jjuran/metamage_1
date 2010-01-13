@@ -78,6 +78,12 @@ namespace Genie
 	};
 	
 	
+	inline boost::shared_ptr< IOHandle > seize_ptr( IOHandle* handle )
+	{
+		return boost::shared_ptr< IOHandle >( handle );
+	}
+	
+	
 	template < class Handle > struct IOHandle_Downcast_Traits;
 	
 	template < class Handle >

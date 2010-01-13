@@ -134,7 +134,7 @@ namespace Genie
 	                               Property_ReadHook   readHook,
 	                               Property_WriteHook  writeHook )
 	{
-		return FSTreePtr( new FSTree_Property( parent,
+		return seize_ptr( new FSTree_Property( parent,
 		                                       name,
 		                                       size,
 		                                       readHook,
