@@ -595,12 +595,12 @@ namespace tool
 			{
 				const char* caption = "Compiling: ";
 				
-				TaskPtr task( new CompilingTask( its_project,
-				                                 its_options,
-				                                 source_pathname,
-				                                 object_pathname,
-				                                 ProjectDiagnosticsDirPath( its_project.Name() ),
-				                                 caption ) );
+				TaskPtr task = seize_ptr( new CompilingTask( its_project,
+				                                             its_options,
+				                                             source_pathname,
+				                                             object_pathname,
+				                                             ProjectDiagnosticsDirPath( its_project.Name() ),
+				                                             caption ) );
 				
 				its_precompile_task->AddDependent( task );
 				
@@ -639,7 +639,7 @@ namespace tool
 		
 		const std::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
 		
-		TaskPtr precompile_task( new NullTask() );
+		TaskPtr precompile_task = seize_ptr( new NullTask() );
 		
 		// In case we have a toolkit with no common sources?
 		precompile_task->AddDependent( source_dependency );
@@ -738,12 +738,12 @@ namespace tool
 			
 			const char* caption = "Compiling: ";
 			
-			TaskPtr task( new CompilingTask( project,
-			                                 options,
-			                                 source_pathname,
-			                                 output_path,
-			                                 diagnostics_dir_path,
-			                                 caption ) );
+			TaskPtr task = seize_ptr( new CompilingTask( project,
+			                                             options,
+			                                             source_pathname,
+			                                             output_path,
+			                                             diagnostics_dir_path,
+			                                             caption ) );
 			
 			precompile_task->AddDependent( task );
 			
