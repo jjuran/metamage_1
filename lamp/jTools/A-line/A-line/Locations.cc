@@ -76,13 +76,6 @@ namespace tool
 			return builds;
 		}
 		
-		std::string builds = home_dir_pathname() / "Developer/Builds";
-		
-		if ( io::directory_exists( builds ) )
-		{
-			return builds;
-		}
-		
 		return mkdir_path( home_dir_pathname() / "var/build" );
 	}
 	
