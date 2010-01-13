@@ -31,6 +31,11 @@ namespace tool
 	
 	typedef boost::shared_ptr< Task > TaskPtr;
 	
+	inline TaskPtr seize_ptr( Task* task )
+	{
+		return TaskPtr( task );
+	}
+	
 	class Task : public boost::enable_shared_from_this< Task >
 	{
 		private:
