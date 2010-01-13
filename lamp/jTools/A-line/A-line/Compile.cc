@@ -682,12 +682,12 @@ namespace tool
 					prefix_source_pathname.insert( prefix_source_pathname.end() - prefix_source_path.size(), '/' );
 				}
 				
-				precompile_task.reset( new CompilingTask( project,
-				                                          precompile_options,
-				                                          prefix_source_pathname,
-				                                          pchImage,
-				                                          diagnostics_dir_path,
-				                                          "Precompiling: " ) );
+				precompile_task = seize_ptr( new CompilingTask( project,
+				                                                precompile_options,
+				                                                prefix_source_pathname,
+				                                                pchImage,
+				                                                diagnostics_dir_path,
+				                                                "Precompiling: " ) );
 				
 				project.set_precompile_task( precompile_task );
 			}

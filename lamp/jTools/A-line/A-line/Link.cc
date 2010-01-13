@@ -789,7 +789,7 @@ namespace tool
 				}
 				else
 				{
-					rez_task.reset( new NullTask() );
+					rez_task = seize_ptr( new NullTask() );
 				}
 				
 				project_base_task->AddDependent( rez_task );
