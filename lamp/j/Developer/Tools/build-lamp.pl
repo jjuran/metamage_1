@@ -52,7 +52,7 @@ my $should_copy_syms = $ENV{LAMP_SYMS};
 my $timestamp = timestamp();
 
 my $lamp_source_dir = "$ENV{HOME}/src/tree/synced/metamage/lamp";
-my $user_builds_dir = "$ENV{HOME}/Developer/Builds";
+my $user_builds_dir = "$ENV{HOME}/var/build";
 my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
 my $tmp_dir = tmpdir();
