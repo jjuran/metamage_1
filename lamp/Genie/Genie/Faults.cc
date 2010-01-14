@@ -11,9 +11,17 @@
 // Standard C
 #include <signal.h>
 
+// Silver
+#include "Silver/Patch.hh"
+#include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
+
 
 namespace Genie
 {
+	
+	namespace Ag = Silver;
+	
 	
 	static void BusError()
 	{
@@ -42,45 +50,40 @@ namespace Genie
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
 	
+	static asm void generic_68k_recovery_handler()
+	{
+		// D0 is the vector offset
+		// A1 is the PC reported in the exception stack frame
+		
+		MOVE.L	A1,-(SP)  // push PC as if it were a return address
+		
+		LEA		gExceptionUserHandlerTable,A0
+		MOVEA.L	(A0,D0.W),A0  // get the handler address
+		
+		JMP		(A0)
+	}
+	
 	static asm void GenericExceptionHandler()
 	{
 		MOVE.W	6(SP),D0  // get the vector offset
 		ANDI.W	#0x0FFF,D0  // mask off frame code
 		
 		TST.L	gCurrentProcess
-		BEQ		null
+		BNE		recover
 		
-		MOVE	USP,A1
-		MOVE.L	2(SP),-(A1)  // push old PC as return address for stack crawls
-		MOVE	A1,USP
-		
-		LEA		gExceptionUserHandlerTable,A0
-		ADDA.W	D0,A0  // add the offset
-		
-		MOVE.L	(A0),2(SP)  // set stacked PC to the handler address
-		
-		BRA		end
-		
-	null:
 		LEA		gExceptionVectorTable,A0
-		ADDA.W	D0,A0  // add the offset
-		MOVEA.L	(A0),A0  // get the handler address
+		MOVEA.L	(A0,D0.W),A0  // get the handler address
 		
 		JMP		(A0)
 		
-	end:
+	recover:
+		MOVEA.L	2(SP),A1  // save the stacked PC for later
+		
+		LEA		generic_68k_recovery_handler,A0
+		MOVE.L	A0,2(SP)  // set the stacked PC to the recovery handler
+		
 		RTE
 	}
-	
-	static void* gExceptionVectorTable[] =
-	{
-		NULL,  // 0, ISP on reset
-		NULL,  // 1, PC on reset
-		GenericExceptionHandler,
-		NULL,  // 3, address error
-		GenericExceptionHandler,
-		GenericExceptionHandler
-	};
 	
 	static void* gExceptionUserHandlerTable[] =
 	{
@@ -89,24 +92,78 @@ namespace Genie
 		BusError,
 		NULL,  // 3, address error
 		IllegalInstruction,
-		DivisionByZero
+		DivisionByZero,
+		NULL,  // 6, CHK
+		NULL,  // 7, TRAPV
+		PrivilegeViolation
 	};
 	
-	void InstallExceptionHandlers()
+	static const unsigned n_vectors = sizeof gExceptionUserHandlerTable / sizeof (void*);
+	
+	static void* gExceptionVectorTable[ n_vectors ];
+	
+	static void install_68k_exception_handlers()
 	{
-		/*
-		const std::size_t n_vectors = sizeof gExceptionVectorTable / sizeof gExceptionVectorTable[0];
+		void** const system_vectors = 0L;
 		
 		for ( unsigned i = 0;  i < n_vectors;  ++i  )
 		{
-			if ( gExceptionVectorTable[ i ] != NULL )
+			if ( gExceptionUserHandlerTable[ i ] != NULL )
 			{
-				void **const v = (void**) ( i * sizeof (void*) );
+				gExceptionVectorTable[ i ] = system_vectors[ i ];
 				
-				std::swap( *v, gExceptionVectorTable[ i ] );
+				system_vectors[ i ] = &GenericExceptionHandler;
 			}
 		}
-		*/
+	}
+	
+	static void remove_68k_exception_handlers()
+	{
+		void** const system_vectors = 0L;
+		
+		for ( unsigned i = 0;  i < n_vectors;  ++i  )
+		{
+			if ( gExceptionUserHandlerTable[ i ] != NULL )
+			{
+				system_vectors[ i ] = gExceptionVectorTable[ i ];
+			}
+		}
+	}
+	
+	
+	struct ExitToShell_Patch
+	{
+		static void Code( Ag::ExitToShellProcPtr nextHandler )
+		{
+			remove_68k_exception_handlers();
+			
+			nextHandler();
+		}
+	};
+	
+	struct GetNextEvent_Patch
+	{
+		static short Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler );
+	};
+	
+	short GetNextEvent_Patch::Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
+	{
+		remove_68k_exception_handlers();
+		
+		short result = nextHandler( eventMask, theEvent );
+		
+		install_68k_exception_handlers();
+		
+		return result;
+	}
+	
+	
+	void InstallExceptionHandlers()
+	{
+		install_68k_exception_handlers();
+		
+		Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Install();
+		Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Install();
 	}
 	
 #endif
