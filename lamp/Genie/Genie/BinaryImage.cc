@@ -11,6 +11,9 @@
 // Nitrogen
 #include "Nitrogen/Resources.h"
 
+// MacFeatures
+#include "MacFeatures/Features.hh"
+
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
@@ -297,12 +300,9 @@ namespace Genie
 			return ReadImageFromFile( file );
 		}
 		
-		if ( TARGET_API_MAC_CARBON )
+		if ( MacFeatures::Is_Running_OSXNative() )
 		{
-			// GetMemFragment / kPrivateCFragCopy is broken on OS X
-			// FIXME:  Find out which versions exactly,
-			// and still cache for the good ones and OS 9
-			// Or just test for it at runtime
+			// kPrivateCFragCopy is broken on OS X as early as 10.2.8
 			return ReadImageFromFile( file );
 		}
 		
