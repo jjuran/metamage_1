@@ -48,7 +48,7 @@ namespace Genie
 	{
 	}
 	
-	inline std::string NameFromPtr( const FSTree* ptr )
+	static inline std::string NameFromPtr( const FSTree* ptr )
 	{
 		return plus::encode_32_bit_hex( (unsigned) ptr );
 	}

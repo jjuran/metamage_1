@@ -195,7 +195,7 @@ namespace ShellShock
 	}
 	
 	
-	inline bool IsNewLine( char c )
+	static inline bool IsNewLine( char c )
 	{
 		return c == '\r'  ||  c == '\n';
 	}

@@ -109,7 +109,7 @@ namespace tool
 	static p7::wait_t global_last_wait_status;
 	
 	
-	inline p7::wait_t wait_from_exit( p7::exit_t exit_status )
+	static inline p7::wait_t wait_from_exit( p7::exit_t exit_status )
 	{
 		return p7::wait_t( exit_status << 8 );
 	}
@@ -168,7 +168,7 @@ namespace tool
 	};
 	
 	template < class T >
-	inline std::vector< T > MakeVector( const T& value )
+	static inline std::vector< T > MakeVector( const T& value )
 	{
 		return std::vector< T >( 1, value );
 	}

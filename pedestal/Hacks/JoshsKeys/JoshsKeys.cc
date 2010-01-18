@@ -43,22 +43,22 @@ static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 static const UInt32 kEitherControlKey = controlKey | rightControlKey;
 
-inline bool CharIsHorizontalArrow( char c )
+static inline bool CharIsHorizontalArrow( char c )
 {
 	return (c & 0xFE) == 0x1C;
 }
 
-inline bool CharIsVerticalArrow( char c )
+static inline bool CharIsVerticalArrow( char c )
 {
 	return (c & 0xFE) == 0x1E;
 }
 
-inline bool CharIsForwardArrow( char c )
+static inline bool CharIsForwardArrow( char c )
 {
 	return (c & 0xFD) == 0x1D;
 }
 
-inline bool CharIsArrow( char c )
+static inline bool CharIsArrow( char c )
 {
 	return (c & 0xFC) == 0x1C;
 }

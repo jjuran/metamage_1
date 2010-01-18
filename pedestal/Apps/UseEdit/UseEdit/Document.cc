@@ -34,7 +34,7 @@ namespace UseEdit
 		return data;
 	}
 	
-	inline ConstStr255Param GetFilenameAsPascalString( const FSSpec& file )
+	static inline ConstStr255Param GetFilenameAsPascalString( const FSSpec& file )
 	{
 		return file.name;
 	}

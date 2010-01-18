@@ -65,7 +65,7 @@ namespace tool
 	}
 	
 	
-	inline bool TargetingLamp( bool targetingLamp )
+	static inline bool TargetingLamp( bool targetingLamp )
 	{
 		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targetingLamp;
 	}
@@ -437,7 +437,7 @@ namespace tool
 	}
 	
 	
-	inline std::string ObjectFileName( const std::string& sourceName )
+	static inline std::string ObjectFileName( const std::string& sourceName )
 	{
 		std::size_t dot = sourceName.find_last_of( '.' );
 		// If the filename has no dot, then dot == npos, 

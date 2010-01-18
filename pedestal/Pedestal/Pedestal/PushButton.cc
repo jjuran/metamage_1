@@ -20,10 +20,10 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	inline ControlRef NewMacPushButton( WindowRef owningWindow,
-	                                    const Rect& boundsRect,
-	                                    ConstStr255Param title,
-	                                    void* refCon )
+	static inline ControlRef NewMacPushButton( WindowRef owningWindow,
+	                                           const Rect& boundsRect,
+	                                           ConstStr255Param title,
+	                                           void* refCon )
 	{
 		return N::NewControl( owningWindow,
 		                      boundsRect,

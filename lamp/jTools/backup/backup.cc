@@ -233,12 +233,12 @@ namespace tool
 		std::printf( "%s is %s\n", path.c_str(), new_vs_old ? "new" : "old" );
 	}
 	
-	inline void new_item( const std::string& path )
+	static inline void new_item( const std::string& path )
 	{
 		odd_item( path, true );
 	}
 	
-	inline void old_item( const std::string& path )
+	static inline void old_item( const std::string& path )
 	{
 		odd_item( path, false );
 	}

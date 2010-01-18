@@ -43,7 +43,7 @@ namespace tool
 	static int gChangedBitsMask = 0;
 	
 	
-	inline bool IsKeyboard( const ADBDataBlock& adbData )
+	static inline bool IsKeyboard( const ADBDataBlock& adbData )
 	{
 		const SInt8 kADBKeyboardDevice = 2;
 		

@@ -995,17 +995,17 @@ static int TestReadLoc( int argc, iota::argv_t argv )
 	return 0;
 }
 
-inline double get_scaled_linear_motion( double elapsed_time )
+static inline double get_scaled_linear_motion( double elapsed_time )
 {
 	return elapsed_time;
 }
 
-inline double get_scaled_parabolic_motion( double elapsed_time )
+static inline double get_scaled_parabolic_motion( double elapsed_time )
 {
 	return elapsed_time * elapsed_time;
 }
 
-inline double get_scaled_simple_harmonic_motion( double elapsed_time )
+static inline double get_scaled_simple_harmonic_motion( double elapsed_time )
 {
 	return (1.0 - cos( elapsed_time * pi )) / 2.0;
 }

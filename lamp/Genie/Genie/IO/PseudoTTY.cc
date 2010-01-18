@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	inline DynamicGroup& GetPseudoTTYMap()
+	static inline DynamicGroup& GetPseudoTTYMap()
 	{
 		return GetDynamicGroup< PseudoTTYHandle >();
 	}

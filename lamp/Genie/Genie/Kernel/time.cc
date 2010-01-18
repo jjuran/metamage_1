@@ -32,7 +32,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	inline UInt32 GlobalDateTime()
+	static inline UInt32 GlobalDateTime()
 	{
 		return N::GetDateTime() - TimeOff::GetGMTDelta();
 	}

@@ -355,7 +355,7 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
-	inline void PBHGetVInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	static inline void PBHGetVInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
 	{
 		PBHGetVInfoSync( (HVolumeParam&) pb, vRefNum, name );
 	}

@@ -78,12 +78,12 @@ namespace tool
 		return result;
 	}
 	
-	inline std::string left_padded( const std::string& word, unsigned length )
+	static inline std::string left_padded( const std::string& word, unsigned length )
 	{
 		return left_padded( &*word.begin(), &*word.end(), length );
 	}
 	
-	inline std::string right_padded( const std::string& word, unsigned length )
+	static inline std::string right_padded( const std::string& word, unsigned length )
 	{
 		return right_padded( &*word.begin(), &*word.end(), length );
 	}

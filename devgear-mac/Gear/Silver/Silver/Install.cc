@@ -20,7 +20,7 @@
 namespace Silver
 {
 	
-	inline bool WindowManagerInitialized()
+	static inline bool WindowManagerInitialized()
 	{
 		const UInt8& WWExist = *(UInt8*) 0x08f2;
 		

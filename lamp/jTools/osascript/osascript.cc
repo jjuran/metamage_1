@@ -71,7 +71,7 @@ namespace tool
 		                      : p7::exit_failure;
 	}
 	
-	inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
+	static inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 	{
 		return N::OpenDefaultComponent( N::kOSAComponentType,
 		                                N::kOSAGenericScriptingComponentSubtype );
@@ -224,7 +224,7 @@ namespace tool
 	}
 	
 	
-	inline std::size_t total_string_size( std::size_t total, const std::string& string )
+	static inline std::size_t total_string_size( std::size_t total, const std::string& string )
 	{
 		return total + string.size();
 	}

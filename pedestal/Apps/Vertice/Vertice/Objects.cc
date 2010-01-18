@@ -198,7 +198,7 @@ namespace Vertice
 	
 	
 	// This is not suitable for general use, but works for the case below
-	inline bool close_enough( double a, double b )
+	static inline bool close_enough( double a, double b )
 	{
 		return std::abs( (a - b) / b ) < 0.001;
 	}

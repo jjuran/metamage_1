@@ -65,10 +65,10 @@ namespace HTTP
 	}
 	
 	
-	inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
-	                                              std::size_t colon,
-	                                              std::size_t value,
-	                                              std::size_t crlf )
+	static inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
+	                                                     std::size_t colon,
+	                                                     std::size_t value,
+	                                                     std::size_t crlf )
 	{
 		HeaderFieldEntry result;
 		

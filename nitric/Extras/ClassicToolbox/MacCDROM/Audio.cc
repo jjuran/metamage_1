@@ -59,7 +59,7 @@ namespace MacCDROM
 	}
 	
 	// E.g. Given 0x12, return 0x0C.
-	inline int DecodeBCD( unsigned char bcd )
+	static inline int DecodeBCD( unsigned char bcd )
 	{
 		unsigned char high = bcd >> 4;
 		unsigned char low  = bcd & 0x0F;
@@ -70,7 +70,7 @@ namespace MacCDROM
 		return high * 10 + low;
 	}
 	
-	inline unsigned char EncodeBCD( int i )
+	static inline unsigned char EncodeBCD( int i )
 	{
 		ASSERT( i >=  0 );
 		ASSERT( i <= 99 );
@@ -79,16 +79,16 @@ namespace MacCDROM
 		       | i % 10;
 	}
 	
-	inline unsigned long EncodeBCD( int a,
-	                                int b,
-	                                int c )
+	static inline unsigned long EncodeBCD( int a,
+	                                       int b,
+	                                       int c )
 	{
 		return   EncodeBCD( a ) << 16
 		       | EncodeBCD( b ) <<  8
 		       | EncodeBCD( c );
 	}
 	
-	inline unsigned long EncodeTimeBCD( Frames time )
+	static inline unsigned long EncodeTimeBCD( Frames time )
 	{
 		return EncodeBCD( time / 75 / 60,
 		                  time / 75 % 60,
@@ -103,7 +103,7 @@ namespace MacCDROM
 		framesPerSecond = 75
 	};
 	
-	inline Frames CountFrames( int minutes, int seconds, int frames )
+	static inline Frames CountFrames( int minutes, int seconds, int frames )
 	{
 		return ( (minutes * 60) + seconds ) * 75 + frames;
 	}

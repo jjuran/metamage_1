@@ -76,7 +76,7 @@ namespace Genie
 	};
 	
 	
-	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
+	static inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
 	{
 		// Set up dispatcher and envp
 		

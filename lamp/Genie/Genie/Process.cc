@@ -513,7 +513,7 @@ namespace Genie
 		{}
 	};
 	
-	inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
+	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
 	static void Normalize( const char* path, ExecContext& context, const FSTreePtr& cwd )
 	{

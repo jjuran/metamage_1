@@ -48,7 +48,7 @@ namespace tool
 		it_has_precompiled_header_source = true;
 	}
 	
-	inline std::string Include( const std::string& dir )
+	static inline std::string Include( const std::string& dir )
 	{
 		// Turn a pathname into a -I option.
 		// Works for gcc and CW Pro 6; doesn't work for CW Pro 2, MrC, or SC.

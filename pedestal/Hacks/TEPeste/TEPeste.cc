@@ -59,12 +59,12 @@ static const unsigned kCountOfGags = sizeof gGags / sizeof gGags[0] - 1;
 static bool gLastTimeWasAGag;
 
 
-inline bool ShouldDoAGag()
+static inline bool ShouldDoAGag()
 {
 	return !gLastTimeWasAGag  &&  (TickCount() & 3) == 0;
 }
 
-inline const char* PickAGag( short which )
+static inline const char* PickAGag( short which )
 {
 	return gGags[ which ];
 }

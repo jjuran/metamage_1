@@ -159,7 +159,7 @@ namespace tool
 		return has_dot  &&  dot[ 1 ] == c;
 	}
 	
-	inline bool is_object_filename( const char* path )
+	static inline bool is_object_filename( const char* path )
 	{
 		return extension_begins_with_char( path, 'o' );
 	}

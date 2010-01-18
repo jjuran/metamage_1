@@ -34,7 +34,7 @@ namespace tool
 	static std::vector< TaskPtr > gFailedTasks;
 	
 	
-	inline void UpdateTaskInputStamp( const TaskPtr& task, time_t stamp )
+	static inline void UpdateTaskInputStamp( const TaskPtr& task, time_t stamp )
 	{
 		task->UpdateInputStamp( stamp );
 	}

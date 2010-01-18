@@ -161,7 +161,7 @@ namespace Pedestal
 	static boost::shared_ptr< Quasimode > gQuasimode;
 	
 	
-	inline void DebugBeep()
+	static inline void DebugBeep()
 	{
 		N::SysBeep();
 	}
@@ -203,7 +203,7 @@ namespace Pedestal
 	
 #if !TARGET_API_MAC_CARBON
 	
-	inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
+	static inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
 	{
 		return N::ADBAddress( (event.message & adbAddrMask) >> 16 );
 	}
@@ -429,17 +429,17 @@ namespace Pedestal
 		UpdateLastUserEvent();
 	}
 	
-	inline bool CharIsArrowKey( char c )
+	static inline bool CharIsArrowKey( char c )
 	{
 		return (c & 0xFC) == 0x1C;
 	}
 	
-	inline bool CharIsDelete( char c )
+	static inline bool CharIsDelete( char c )
 	{
 		return c == kBackspaceCharCode  ||  c == kDeleteCharCode;
 	}
 	
-	inline bool CharMayBeCommand( char c )
+	static inline bool CharMayBeCommand( char c )
 	{
 		// Command-Space is passed as a key-down, never a menu command.
 		// Command-arrow is an editing gesture, not a command.
@@ -448,7 +448,7 @@ namespace Pedestal
 		return c != ' '  &&  !CharIsArrowKey( c )  &&  !CharIsDelete( c );
 	}
 	
-	inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
+	static inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
 	{
 		if ( gQuasimode                   )  return false;
 		if ( gShiftKeyIsDownFromKeyStroke )  return false;

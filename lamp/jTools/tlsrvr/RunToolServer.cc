@@ -118,7 +118,7 @@ namespace tool
 		io::spew_file< NN::StringFlattener< std::string > >( scriptFile, script );
 	}
 	
-	inline void WriteInputFile( const FSSpec& file )
+	static inline void WriteInputFile( const FSSpec& file )
 	{
 		// Prepare stdin file
 		//NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
@@ -250,7 +250,7 @@ namespace tool
 		kErrorFile
 	};
 	
-	inline FSSpec DirLookup( const N::FSDirSpec& dir, const std::string& name )
+	static inline FSSpec DirLookup( const N::FSDirSpec& dir, const std::string& name )
 	{
 		return dir / name;
 	}

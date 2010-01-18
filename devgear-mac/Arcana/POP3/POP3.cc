@@ -23,7 +23,7 @@ namespace POP3
 	
 	namespace NN = Nucleus;
 	
-	inline std::string Censored( const std::string& password )
+	static inline std::string Censored( const std::string& password )
 	{
 		return std::string( password.size(), '*' );
 	}

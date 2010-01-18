@@ -729,7 +729,7 @@ namespace ShellShock
 	}
 	
 	template < class Inserter >
-	inline void Copy( const std::string& word, Inserter inserter )
+	static inline void Copy( const std::string& word, Inserter inserter )
 	{
 		*inserter++ = word;
 	}
@@ -740,7 +740,7 @@ namespace ShellShock
 		std::copy( words.begin(), words.end(), inserter );
 	}
 	
-	inline std::string Join( const std::string& word )
+	static inline std::string Join( const std::string& word )
 	{
 		return word;
 	}
@@ -802,7 +802,7 @@ namespace ShellShock
 	
 	
 	template < class Algorithm >
-	inline Command Apply( Algorithm algorithm, const Command& command )
+	static inline Command Apply( Algorithm algorithm, const Command& command )
 	{
 		return ApplyCommand< Algorithm >( algorithm )( command );
 	}

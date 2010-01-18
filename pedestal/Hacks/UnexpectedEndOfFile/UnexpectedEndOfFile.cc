@@ -58,7 +58,7 @@ static unsigned stashCount;
 static QuitInfo gStash[ stashSize ];
 
 
-inline MenuHandle GetAppMenuHandle()
+static inline MenuHandle GetAppMenuHandle()
 {
 	const UInt16 appMenuID = 0xbf97;
 	
@@ -67,12 +67,12 @@ inline MenuHandle GetAppMenuHandle()
 	return appMenu;
 }
 
-inline bool StashIsFull()
+static inline bool StashIsFull()
 {
 	return stashCount >= stashSize;
 }
 
-inline QuitInfo* NextStashSlot()
+static inline QuitInfo* NextStashSlot()
 {
 	if ( StashIsFull() )
 	{

@@ -12,7 +12,7 @@
 namespace Genie
 {
 	
-	inline UInt64 GetTimer()
+	static inline UInt64 GetTimer()
 	{
 		return Nitrogen::Microseconds();
 	}

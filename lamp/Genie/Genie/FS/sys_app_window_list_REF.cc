@@ -182,7 +182,7 @@ namespace Genie
 		}
 	};
 	
-	inline UInt16 ReadIntensity_1n( const char* p )
+	static inline UInt16 ReadIntensity_1n( const char* p )
 	{
 		const unsigned char nibble = iota::decoded_hex_digit( p[ 0 ] );
 		
@@ -194,7 +194,7 @@ namespace Genie
 		return result;
 	}
 	
-	inline UInt16 ReadIntensity_2n( const char* p )
+	static inline UInt16 ReadIntensity_2n( const char* p )
 	{
 		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
 		const unsigned char low  = iota::decoded_hex_digit( p[ 1 ] );
@@ -207,7 +207,7 @@ namespace Genie
 		return result;
 	}
 	
-	inline UInt16 ReadIntensity_3n( const char* p )
+	static inline UInt16 ReadIntensity_3n( const char* p )
 	{
 		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
 		const unsigned char med  = iota::decoded_hex_digit( p[ 1 ] );

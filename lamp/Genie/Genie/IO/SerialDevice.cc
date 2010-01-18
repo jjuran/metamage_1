@@ -164,7 +164,7 @@ namespace Genie
 		return result;
 	}
 	
-	inline bool SerialPortsAreArbitrated()
+	static inline bool SerialPortsAreArbitrated()
 	{
 		return N::Gestalt_Bit< N::gestaltSerialPortArbitratorAttr, ::gestaltSerialPortArbitratorExists >();
 	}

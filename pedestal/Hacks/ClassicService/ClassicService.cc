@@ -79,7 +79,7 @@ namespace ClassicService
 		return NULL;
 	}
 	
-	inline ServicesMenuItem* NewServicesMenuItem()
+	static inline ServicesMenuItem* NewServicesMenuItem()
 	{
 		return FindServicesMenuItem( 0 );
 	}
@@ -99,7 +99,7 @@ namespace ClassicService
 	}
 	
 	
-	inline long GetUniqueKeyForApp()
+	static inline long GetUniqueKeyForApp()
 	{
 		return (long) LMGetApplZone();
 	}
@@ -276,7 +276,7 @@ namespace ClassicService
 		
 	}
 	
-	inline bool WindowManagerInitialized()
+	static inline bool WindowManagerInitialized()
 	{
 		const UInt8& WWExist = *(UInt8*) 0x08f2;
 		

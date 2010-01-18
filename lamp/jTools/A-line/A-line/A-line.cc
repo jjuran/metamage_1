@@ -135,7 +135,7 @@ namespace tool
 	*/
 	
 	
-	inline std::string MakeTargetName( const TargetInfo& info )
+	static inline std::string MakeTargetName( const TargetInfo& info )
 	{
 		return MakeTargetName( info.platform & archMask,
 		                       info.platform & runtimeMask,
@@ -242,7 +242,7 @@ namespace tool
 		return true;
 	}
 	
-	inline bool is_null( const char* string )
+	static inline bool is_null( const char* string )
 	{
 		return string == NULL  ||  string[0] == '\0';
 	}
@@ -306,12 +306,12 @@ namespace tool
 	static std::map< p7::pid_t, TaskPtr > global_running_tasks;
 	
 	
-	inline bool is_user_break( p7::wait_t wait_status )
+	static inline bool is_user_break( p7::wait_t wait_status )
 	{
 		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 128;
 	}
 	
-	inline bool is_plain_error( p7::wait_t wait_status )
+	static inline bool is_plain_error( p7::wait_t wait_status )
 	{
 		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 1;
 	}

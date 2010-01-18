@@ -275,7 +275,7 @@ namespace tool
 			const_iterator end()   const  { return const_iterator( resource, const_iterator::kEnd ); }
 	};
 	
-	inline char check_xdigit( char c )
+	static inline char check_xdigit( char c )
 	{
 		if ( !std::isxdigit( c ) )
 		{

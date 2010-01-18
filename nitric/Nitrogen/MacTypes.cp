@@ -70,8 +70,8 @@ namespace std
 // Temporary measure until this code moves elsewhere
 #if !TARGET_API_MAC_OSX
 
-inline UInt32 CFSwapInt32BigToHost( UInt32 x )  { return x; }
-inline UInt32 CFSwapInt32HostToBig( UInt32 x )  { return x; }
+static inline UInt32 CFSwapInt32BigToHost( UInt32 x )  { return x; }
+static inline UInt32 CFSwapInt32HostToBig( UInt32 x )  { return x; }
 
 #endif
 

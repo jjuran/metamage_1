@@ -118,12 +118,12 @@ namespace Vertice
 	*/
 	
 	
-	inline ColorMatrix ModulateGray( double gray, const ColorMatrix& light )
+	static inline ColorMatrix ModulateGray( double gray, const ColorMatrix& light )
 	{
 		return gray * light;
 	}
 	
-	inline ColorMatrix ModulateColor( const ColorMatrix& color, const ColorMatrix& light )
+	static inline ColorMatrix ModulateColor( const ColorMatrix& color, const ColorMatrix& light )
 	{
 		using V::Red;
 		using V::Green;
@@ -176,7 +176,7 @@ namespace Vertice
 	};
 	
 	
-	inline UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
+	static inline UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
 	{
 		const UInt32 a = 0;
 		
@@ -184,7 +184,7 @@ namespace Vertice
 		                            : b << 24 | g << 16 | r << 8 | a << 0;
 	}
 	
-	inline UInt32 MakePixel32( double red, double green, double blue )
+	static inline UInt32 MakePixel32( double red, double green, double blue )
 	{
 		UInt32 r = UInt32( red   < 1.0  ?  red   * 255  :  255 );
 		UInt32 g = UInt32( green < 1.0  ?  green * 255  :  255 );
@@ -193,7 +193,7 @@ namespace Vertice
 		return MakePixel32( r, g, b );
 	}
 	
-	inline UInt32 MakePixel32( const ColorMatrix& color )
+	static inline UInt32 MakePixel32( const ColorMatrix& color )
 	{
 		return MakePixel32( color[ V::Red   ],
 		                    color[ V::Green ],
@@ -453,7 +453,7 @@ namespace Vertice
 	}
 	*/
 	
-	inline bool VerticallyGreater( const DeepVertex& a, const DeepVertex& b )
+	static inline bool VerticallyGreater( const DeepVertex& a, const DeepVertex& b )
 	{
 		return a[ Y ] > b[ Y ];
 	}
@@ -809,10 +809,10 @@ namespace Vertice
 		return totalLight;
 	}
 	
-	inline ColorMatrix TweakColor( const ColorMatrix&  color,
-	                               double              distance,
-	                               double              incidenceRatio,
-	                               bool                selected )
+	static inline ColorMatrix TweakColor( const ColorMatrix&  color,
+	                                      double              distance,
+	                                      double              incidenceRatio,
+	                                      bool                selected )
 	{
 		return ModulateColor( color, LightColor( distance, incidenceRatio, selected ) );
 	}
@@ -984,7 +984,7 @@ namespace Vertice
 		}
 	}
 	
-	inline int BigToNative32BitOffset( int bits )
+	static inline int BigToNative32BitOffset( int bits )
 	{
 		return (bits - 12) * (TARGET_RT_BIG_ENDIAN - TARGET_RT_LITTLE_ENDIAN) + 12;
 	}

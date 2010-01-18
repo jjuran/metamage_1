@@ -19,7 +19,7 @@ namespace MD5
 	
 	typedef unsigned int Word;
 	
-	inline unsigned int byteswap4( unsigned int word )
+	static inline unsigned int byteswap4( unsigned int word )
 	{
 		return (word &  0xFF)        << 24
 			 | (word & (0xFF <<  8)) <<  8
@@ -29,7 +29,7 @@ namespace MD5
 	
 	// MWC68K doesn't define __BIG_ENDIAN__, so we have to use __LITTLE_ENDIAN__.
 	
-	inline unsigned int HostFromLittle32( unsigned int word )
+	static inline unsigned int HostFromLittle32( unsigned int word )
 	{
 	#ifndef __LITTLE_ENDIAN__
 		
@@ -40,7 +40,7 @@ namespace MD5
 		return word;
 	}
 	
-	inline unsigned int LittleFromHost32( unsigned int word )
+	static inline unsigned int LittleFromHost32( unsigned int word )
 	{
 	#ifndef __LITTLE_ENDIAN__
 		
@@ -82,15 +82,15 @@ namespace MD5
 	{
 	}
 	
-	inline unsigned int rotate_left( unsigned int x, unsigned char bits )
+	static inline unsigned int rotate_left( unsigned int x, unsigned char bits )
 	{
 		return (x << bits) | (x >> (32 - bits));
 	}
 	
-	inline Word F( Word x, Word y, Word z )  { return (x & y)  |  (~x & z); }
-	inline Word G( Word x, Word y, Word z )  { return (x & z)  |  (y & ~z); }
-	inline Word H( Word x, Word y, Word z )  { return (x ^ y ^ z); }
-	inline Word I( Word x, Word y, Word z )  { return (y ^ (x | ~z)); }
+	static inline Word F( Word x, Word y, Word z )  { return (x & y)  |  (~x & z); }
+	static inline Word G( Word x, Word y, Word z )  { return (x & z)  |  (y & ~z); }
+	static inline Word H( Word x, Word y, Word z )  { return (x ^ y ^ z); }
+	static inline Word I( Word x, Word y, Word z )  { return (y ^ (x | ~z)); }
 	
 	template < class Munger >
 	class Operator

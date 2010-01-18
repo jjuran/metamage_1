@@ -258,7 +258,7 @@ namespace tool
 	}
 	
 	template < class FileSpec >
-	inline std::string ReadOneLinerFromFile( const FileSpec& file )
+	static inline std::string ReadOneLinerFromFile( const FileSpec& file )
 	{
 		return ReadOneLinerFromStream( io::open_for_reading( file ) );
 	}

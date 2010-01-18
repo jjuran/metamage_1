@@ -241,7 +241,7 @@ namespace Genie
 		return data;
 	}
 	
-	inline BinaryImage ReadImageFromFile( const FSSpec& file )
+	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
 		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
 		

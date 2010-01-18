@@ -123,7 +123,7 @@ namespace tool
 		return v[ 0 ];
 	}
 	
-	inline const std::string& get_first( const ConfData& config, const std::string& key )
+	static inline const std::string& get_first( const ConfData& config, const std::string& key )
 	{
 		return get_first( get_values( config, key ) );
 	}
@@ -402,7 +402,7 @@ namespace tool
 		return false;
 	}
 	
-	inline bool match_backwards( const char* a_end, const char* b_begin, std::size_t length )
+	static inline bool match_backwards( const char* a_end, const char* b_begin, std::size_t length )
 	{
 		return std::equal( a_end - length, a_end, b_begin );
 	}
