@@ -5,8 +5,8 @@
 
 #include "vfork.h"
 
-// Kerosene
-#include "environ.hh"
+// Lamp
+#include "lamp/environ_stack.h"
 
 
 #pragma exceptions off

@@ -3,14 +3,15 @@
  *	==========
  */
 
-#include "environ.hh"
-
 // Mac OS Universal Interfaces
 #include <LowMem.h>
 
 // Standard C
 #include "errno.h"
 #include "stdlib.h"
+
+// Lamp
+#include "lamp/environ_stack.h"
 
 // Kerosene
 #include "environ_store.hh"
