@@ -32,7 +32,9 @@ extern void _exit( int );
 
 void InitializeTool()
 {
-	_set_dispatcher( *(void**) LMGetToolScratch() );
+	void **const toolScratch = (void**) LMGetToolScratch();
+	
+	_set_dispatcher( toolScratch[ 0 ] );
 	
 	if ( InitializeEnviron() == 0L )
 	{
