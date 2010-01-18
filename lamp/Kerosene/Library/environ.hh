@@ -7,9 +7,9 @@
 #define KEROSENE_ENVIRON_HH
 
 
-void vfork_push();
+void _push_environ();
 
-void vfork_pop();
+void _pop_environ();
 
 #endif
 

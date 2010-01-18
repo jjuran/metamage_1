@@ -18,7 +18,7 @@ extern "C" int vfork_start( void (*long_jump)( sigjmp_buf*, int ), sigjmp_buf* b
 
 static void kerosene_long_jump( sigjmp_buf* buffer, int second_result )
 {
-	vfork_pop();
+	_pop_environ();
 	
 	siglongjmp( *buffer, second_result );
 }
@@ -29,7 +29,7 @@ int _vfork_start( sigjmp_buf* buffer )
 	
 	if ( result == 0 )
 	{
-		vfork_push();
+		_push_environ();
 	}
 	
 	return result;

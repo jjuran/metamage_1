@@ -60,12 +60,12 @@ const void* InitializeEnviron()
 	return global_environ_top;  // NULL if bad_alloc
 }
 
-void vfork_push()
+void _push_environ()
 {
 	++global_vfork_level;
 }
 
-void vfork_pop()
+void _pop_environ()
 {
 	if ( global_environ_level > global_vfork_level-- )
 	{
