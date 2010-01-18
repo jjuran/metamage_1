@@ -872,6 +872,11 @@ namespace tool
 		return !resumes;
 	}
 	
+	static void print_comment( unsigned long pc_relative_target )
+	{
+		printf( COMMENT "%#.6x", pc_relative_target );
+	}
+	
 	static void decode_Jump( unsigned short op )
 	{
 		const unsigned short source = op & 0x3f;
@@ -888,7 +893,7 @@ namespace tool
 		
 		if ( globally_attach_target_comments  &&  source == 0x3a )
 		{
-			printf( COMMENT "%#.6x", global_last_pc_relative_target );
+			print_comment( global_last_pc_relative_target );
 		}
 		
 		const char* newlines = "\n\n";
@@ -1235,7 +1240,7 @@ namespace tool
 			
 			if ( globally_attach_target_comments  &&  lea  &&  source == 0x3a )
 			{
-				printf( COMMENT "%#.6x", global_last_pc_relative_target );
+				print_comment( global_last_pc_relative_target );
 			}
 			
 			printf( "\n" );
@@ -1353,7 +1358,7 @@ namespace tool
 				
 				if ( globally_attach_target_comments )
 				{
-					printf( COMMENT "%#.6x", global_pc + displacement );
+					print_comment( global_pc + displacement );
 				}
 				
 				printf( "\n" );
@@ -1424,7 +1429,7 @@ namespace tool
 		
 		if ( globally_attach_target_comments )
 		{
-			printf( COMMENT "%#.6x", target );
+			print_comment( target );
 		}
 		
 		printf( "\n" );
