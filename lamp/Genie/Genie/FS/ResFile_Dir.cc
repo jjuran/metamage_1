@@ -23,6 +23,7 @@
 #include "Genie/FS/Name_OSType.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 
 namespace Genie
@@ -201,7 +202,7 @@ namespace Genie
 		
 		const N::ResID id = N::ResID( atoi( file->Name().c_str() ) );
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdWrPerm );
+		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
 		const N::Handle r = GetOrAddResource( type, id );
 		
@@ -286,7 +287,7 @@ namespace Genie
 		const N::ResType  type = GetType();
 		const N::ResID    id   = GetID  ();
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdWrPerm );
+		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
 		const N::Handle r = N::Get1Resource( type, id );
 		
