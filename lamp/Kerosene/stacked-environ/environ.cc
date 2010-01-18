@@ -3,23 +3,15 @@
  *	==========
  */
 
-#include "environ.hh"
-
-// Mac OS Universal Interfaces
-#include <LowMem.h>
-
 // Standard C
 #include "errno.h"
 #include "stdlib.h"
 
+// Lamp
+#include "lamp/environ_stack.h"
+
 // Kerosene
 #include "environ_store.hh"
-
-
-inline iota::environ_t GetEnvironFromKernel()
-{
-	return reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
-}
 
 
 using kerosene::environ_store;
@@ -41,13 +33,13 @@ static environ_store& get_envp()
 	return *global_environ_top;
 }
 
-extern "C" const void* InitializeEnviron();
+extern "C" const void* _initialize_environ( char** envp );
 
-const void* InitializeEnviron()
+const void* _initialize_environ( char** envp )
 {
 	try
 	{
-		static environ_store gEnviron( NULL, GetEnvironFromKernel() );
+		static environ_store gEnviron( NULL, envp );
 		
 		global_environ_top = &gEnviron;
 		
@@ -60,12 +52,12 @@ const void* InitializeEnviron()
 	return global_environ_top;  // NULL if bad_alloc
 }
 
-void vfork_push()
+void _push_environ()
 {
 	++global_vfork_level;
 }
 
-void vfork_pop()
+void _pop_environ()
 {
 	if ( global_environ_level > global_vfork_level-- )
 	{

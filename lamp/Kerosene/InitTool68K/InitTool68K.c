@@ -15,7 +15,7 @@ extern void InitializeTool();
 extern void _set_dispatcher( void* address );
 
 // Initialize environ from ToolScratch
-extern const void* InitializeEnviron();
+extern const void* _initialize_environ( char **envp );
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -32,9 +32,11 @@ extern void _exit( int );
 
 void InitializeTool()
 {
-	_set_dispatcher( *(void**) LMGetToolScratch() );
+	void **const toolScratch = (void**) LMGetToolScratch();
 	
-	if ( InitializeEnviron() == 0L )
+	_set_dispatcher( toolScratch[ 0 ] );
+	
+	if ( _initialize_environ( (char**) toolScratch[ 1 ] ) == 0L )
 	{
 		_exit( 127 );
 	}
