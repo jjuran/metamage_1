@@ -24,7 +24,8 @@ int main( int argc, char *const *argv )
 	// Check for sufficient number of args
 	if ( argc < 2 )
 	{
-		std::fprintf( stderr, "mkdir: missing arguments\n" );
+		more::perror( "mkdir", "missing arguments", 0 );
+		
 		return 1;
 	}
 	
