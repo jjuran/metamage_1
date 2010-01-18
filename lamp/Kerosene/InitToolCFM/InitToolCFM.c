@@ -42,7 +42,9 @@ extern void exit( int );
 
 pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 {
-	_set_dispatcher( *(void**) LMGetToolScratch() );
+	void **const toolScratch = (void**) LMGetToolScratch();
+	
+	_set_dispatcher( toolScratch[ 0 ] );
 	
 	if ( InitializeEnviron() == NULL )
 	{
