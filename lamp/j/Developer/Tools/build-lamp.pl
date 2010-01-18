@@ -94,7 +94,7 @@ my %fsmap =
 		Tools =>
 		[
 			# Build tools
-			\ qw( A-line ar cpres ld mpwrez mwcc ),
+			\ qw( A-line ar cpres ld mpwrez mwcc strip ),
 			# Debugging
 			\ qw( d68k ),
 			# Source management
