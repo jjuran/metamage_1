@@ -3,67 +3,53 @@
  *	=======
  */
 
-// Standard C++
-#include <string>
+// Standard C
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
+#include <sys/uio.h>
 
-// Orion
-#include "Orion/Main.hh"
+// Historical
+#include <alloca.h>
 
 
-namespace tool
+#pragma exceptions off
+
+
+int main( int argc, char **argv )
 {
+	struct iovec end = { (void*) "\n", 1 };
 	
-	template < class F, class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
+	struct iovec *v = &end;
+	
+	size_t n_strings = 1;
+	
+	if ( const int n_args = argc - 1 )
 	{
-		if ( begin == end )
+		n_strings = n_args * 2;
+		
+		const size_t storage_size = n_strings * sizeof (struct iovec);
+		
+		v = (struct iovec *) alloca( storage_size );
+		
+		const char *const *args = argv + 1;
+		
+		struct iovec space = { (void*) " ", 1 };
+		
+		for ( int i = 0;  i < n_args;  ++i )
 		{
-			return "";
+			v[ i * 2 ].iov_base = (void*) args[ i ];
+			v[ i * 2 ].iov_len  = strlen( args[ i ] );
+			
+			v[ i * 2 + 1 ] = space;
 		}
 		
-		std::string result = f( *begin++ );
-		
-		while ( begin != end )
-		{
-			result += glue;
-			result += f( *begin++ );
-		}
-		
-		return result;
+		v[ n_strings - 1 ].iov_base = end.iov_base;
 	}
 	
-	struct string_identity
-	{
-		const std::string& operator()( const std::string& s ) const
-		{
-			return s;
-		}
-	};
+	const int n_written = writev( STDOUT_FILENO, v, n_strings );
 	
-	template < class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "" )
-	{
-		return join( begin,
-		             end,
-		             glue,
-		             //ext::identity< std::string >()
-		             string_identity()
-		             );
-	}
-	
-	int Main( int argc, iota::argv_t argv )
-	{
-		std::string output = join( argv + 1,
-		                           argv + argc,
-		                           " "          ) + "\n";
-		
-		(void) write( STDOUT_FILENO, output.data(), output.size() );
-		
-		return 0;
-	}
-	
+	return n_written < 0 ? 1 : 0;
 }
 
