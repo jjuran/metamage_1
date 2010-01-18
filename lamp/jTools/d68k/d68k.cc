@@ -918,13 +918,13 @@ namespace tool
 	
 	static const char *const ops_4e7x[] =
 	{
-		"RESET",
-		"NOP",
+		"RESET" "\n",
+		"NOP" "\n",
 		"STOP     #%#x" "\n",
 		"RTE" "\n",
 		"RTD      #%d"  "\n",
 		"RTS" "\n",
-		"TRAPV",
+		"TRAPV" "\n",
 		"RTR" "\n"
 	};
 	
