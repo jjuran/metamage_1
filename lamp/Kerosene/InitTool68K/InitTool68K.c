@@ -15,7 +15,7 @@ extern void InitializeTool();
 extern void _set_dispatcher( void* address );
 
 // Initialize environ from ToolScratch
-extern const void* InitializeEnviron();
+extern const void* _initialize_environ( char **envp );
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -36,7 +36,7 @@ void InitializeTool()
 	
 	_set_dispatcher( toolScratch[ 0 ] );
 	
-	if ( InitializeEnviron() == 0L )
+	if ( _initialize_environ( (char**) toolScratch[ 1 ] ) == 0L )
 	{
 		_exit( 127 );
 	}

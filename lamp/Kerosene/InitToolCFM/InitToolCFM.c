@@ -25,7 +25,7 @@ extern pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock );
 extern void _set_dispatcher( void* address );
 
 // Initialize environ from ToolScratch
-extern const void* InitializeEnviron();
+extern const void* _initialize_environ( char **envp );
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -46,7 +46,7 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 	
 	_set_dispatcher( toolScratch[ 0 ] );
 	
-	if ( InitializeEnviron() == NULL )
+	if ( _initialize_environ( (char**) toolScratch[ 1 ] ) == NULL )
 	{
 		return memFullErr;
 	}
