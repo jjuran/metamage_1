@@ -62,6 +62,7 @@ qw
 	:KSIOUXConsole.cc
 	Abort.cc
 	KSIOUXConsole.cc
+	stacked-environ.lib
 	syscalls.c
 	Kerosene-Library.lib
 	Kerosene-User.lib
