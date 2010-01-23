@@ -72,6 +72,9 @@ namespace Genie
 		// We'll need to have a generic binary type and a means of autodetection.
 		// UPDATE:  To avoid pain, we're going with .mbin / 'mBIN' for new archives.
 		
+		// General
+		{ "rsrc", 'rsrc', "resource file" },
+		
 		// Archive formats
 		{ "mBin", 'BIN+', "MacBinary III+" " archive" },
 		{ "jbin", 'BIN+', "MacBinary III+" " archive" },
@@ -124,6 +127,7 @@ namespace Genie
 	
 	const FileSignature gDefaultCreatorForTypeInput[] =
 	{
+		{ 'RSED', 'rsrc' },
 		{ 'mBin', 'mBIN' },
 		{ 'mBin', 'BIN+' },
 		{ 'CARO', 'PDF ' },
