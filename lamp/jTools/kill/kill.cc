@@ -23,14 +23,8 @@
 // klibc
 #include "klibc/signal_lookup.hh"
 
-// Orion
-#include "Orion/Main.hh"
 
-
-namespace tool
-{
-
-int Main( int argc, iota::argv_t argv )
+int main( int argc, char **argv )
 {
 	int sig_number = SIGTERM;
 	
@@ -68,7 +62,5 @@ int Main( int argc, iota::argv_t argv )
 	}
 	
 	return 0;
-}
-
 }
 
