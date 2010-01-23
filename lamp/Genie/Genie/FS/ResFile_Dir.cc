@@ -426,12 +426,37 @@ namespace Genie
 			{
 			}
 			
+			bool Exists() const;
+			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
 	};
 	
+	
+	bool FSTree_ResFileDir::Exists() const
+	{
+		::ResFileRefNum refNum = ::FSpOpenResFile( &itsFileSpec, fsRdPerm );
+		
+		const bool exists = refNum >= 0;
+		
+		if ( exists )
+		{
+			::CloseResFile( refNum );
+		}
+		else
+		{
+			const OSErr err = ::ResError();
+			
+			if ( err != resFNotFound )
+			{
+				N::ThrowOSStatus( err );
+			}
+		}
+		
+		return exists;
+	}
 	
 	FSTreePtr FSTree_ResFileDir::Lookup_Child( const std::string& name ) const
 	{
