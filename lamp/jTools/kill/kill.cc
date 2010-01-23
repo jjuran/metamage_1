@@ -18,6 +18,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // klibc
 #include "klibc/signal_lookup.hh"
 
@@ -36,9 +39,9 @@ namespace tool
 		
 		if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
 		{
-			const char* sig = argp[ 1 ] + 1;
+			const char *const sig = argp[ 1 ] + 1;
 			
-			bool numeric = std::isdigit( *sig );
+			const bool numeric = std::isdigit( *sig );
 			
 			// FIXME:  Needs error checking instead of silently using 0
 			sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
@@ -49,16 +52,14 @@ namespace tool
 		
 		if ( argc != 2 )
 		{
-			const char usage[] = "kill: usage: kill [-sig] pid\n";
-			
-			(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+			(void) write( STDERR_FILENO, STR_LEN( "usage: kill [-sig] pid\n" ) );
 			
 			return 1;
 		}
 		
-		int pid = std::atoi( argp[ 1 ] );
+		const pid_t pid = std::atoi( argp[ 1 ] );
 		
-		int killed = kill( pid, sig_number );
+		const int killed = kill( pid, sig_number );
 		
 		if ( killed == -1 )
 		{
