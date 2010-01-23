@@ -544,8 +544,11 @@ resource 'FREF' (130) {
 	""
 };
 
-data 'Poof' (0, "Owner resource") {
-	$"1959 6574 2061 6E6F 7468 6572 2050 6564"            /* .Yet another Ped */
-	$"6573 7461 6C20 6861 636B"                           /* estal hack */
+type 'Poof' {
+	pstring;
+};
+
+resource 'Poof' (0, "Owner resource") {
+	"Lamp (Lamp ain't Mac POSIX) by Joshua Juran"
 };
 
