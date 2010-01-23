@@ -21,6 +21,7 @@
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
@@ -47,6 +48,9 @@
 // Orion
 #include "Orion/Main.hh"
 
+// metrowerks
+#include "metrowerks/object_file.hh"
+
 
 namespace tool
 {
@@ -54,6 +58,7 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	namespace mw = metrowerks;
 	namespace Div = Divergence;
 	
 	
@@ -212,6 +217,10 @@ namespace tool
 	};
 	
 	static MacAPI gMacAPI = kMacAPINone;
+	
+	static bool gCFM68K = false;
+	
+	static const char* gFirstObjectFilePath = NULL;
 	
 	
 	enum Architecture
@@ -412,6 +421,60 @@ namespace tool
 	}
 	
 	
+	static void check_object_file( p7::fd_t object_file_stream )
+	{
+		mw::object_file_header file_header;
+		
+		ssize_t bytes_read = p7::read( object_file_stream, (char*) &file_header, sizeof file_header );
+		
+		if ( bytes_read != sizeof file_header )
+		{
+			// complain
+			return;
+		}
+		
+		if ( file_header.magic_number != mw::object_file_magic )
+		{
+			// complain
+			return;
+		}
+		
+		if ( file_header.cpu_arch != mw::cpu_m68k )
+		{
+			// complain
+			return;
+		}
+		
+		char buffer[ 512 ];
+		
+		bytes_read = p7::read( object_file_stream, buffer, sizeof buffer );
+		
+		const char *const buffer_begin = buffer;  // appease picky compilers
+		const char *const buffer_end   = buffer + sizeof buffer;
+		
+		const char* p = std::find( buffer_begin, buffer_end, '\0' );
+		
+		p += 4 - ((int) p & 0x3);  // skip padding
+		
+		if ( p + sizeof (mw::runtime_block) <= buffer_end )
+		{
+			const mw::runtime_block& rt = *(const mw::runtime_block*) p;
+			
+			gCFM68K = rt.runtime_arch == mw::runtime_cfm68k;
+		}
+		else
+		{
+			// Highly unlikely that a pathname would be this long, but if it
+			// happens, let me know.
+			p7::throw_errno( ENAMETOOLONG );
+		}
+	}
+	
+	static void check_object_file( const char* path )
+	{
+		check_object_file( p7::open( path, p7::o_rdonly ) );
+	}
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
@@ -595,6 +658,18 @@ namespace tool
 				
 				const bool is_pathname = std::strchr( arg, '/' ) != NULL;
 				
+				if ( is_pathname  &&  gFirstObjectFilePath == NULL )
+				{
+					const size_t length = strlen( arg );
+					
+					const int base_length = length - STRLEN( ".o" );
+					
+					if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
+					{
+						gFirstObjectFilePath = arg;
+					}
+				}
+				
 				std::string library_pathname;
 				
 				if ( !is_pathname )
@@ -631,9 +706,11 @@ namespace tool
 				return EXIT_FAILURE;
 			
 			case arch_m68k:
+				check_object_file( gFirstObjectFilePath );
+				
 				command.push_back( "MWLink68K" );
 				command.push_back( "-model"    );
-				command.push_back( "far"       );
+				command.push_back( gCFM68K ? "CFMflatdf" : "far" );
 				break;
 			
 			case arch_ppc:
@@ -664,7 +741,14 @@ namespace tool
 			
 			default:
 			case kProductTool:
-				if ( arch == arch_m68k )
+				if ( gCFM68K )
+				{
+					command.push_back( "-xm"      );
+					command.push_back( "s"        );
+					command.push_back( "-export"  );
+					command.push_back( "sym=_lamp_main" );
+				}
+				else if ( arch == arch_m68k )
 				{
 					command.push_back( "-xm"      );
 					command.push_back( "c"        );
