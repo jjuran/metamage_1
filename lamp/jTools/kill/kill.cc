@@ -4,71 +4,63 @@
  */
 
 // Standard C
-#include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 // Standard C/C++
 #include <cctype>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
+
 // klibc
 #include "klibc/signal_lookup.hh"
 
-// Orion
-#include "Orion/Main.hh"
 
-
-namespace tool
+int main( int argc, char **argv )
 {
+	int sig_number = SIGTERM;
 	
-	int Main( int argc, iota::argv_t argv )
+	char const *const *argp = argv;
+	
+	if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
 	{
-		int sig_number = SIGTERM;
+		const char *const sig = argp[ 1 ] + 1;
 		
-		char const *const *argp = argv;
+		const bool numeric = std::isdigit( *sig );
 		
-		if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
-		{
-			const char* sig = argp[ 1 ] + 1;
-			
-			bool numeric = std::isdigit( *sig );
-			
-			// FIXME:  Needs error checking instead of silently using 0
-			sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
-			
-			++argp;
-			--argc;
-		}
+		// FIXME:  Needs error checking instead of silently using 0
+		sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
 		
-		if ( argc != 2 )
-		{
-			const char usage[] = "kill: usage: kill [-sig] pid\n";
-			
-			(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
-			
-			return 1;
-		}
-		
-		int pid = std::atoi( argp[ 1 ] );
-		
-		int killed = kill( pid, sig_number );
-		
-		if ( killed == -1 )
-		{
-			std::fprintf( stderr, "kill: %s: %s\n", argp[1], std::strerror( errno ) );
-			
-			return 1;
-		}
-		
-		return 0;
+		++argp;
+		--argc;
 	}
 	
+	if ( argc != 2 )
+	{
+		(void) write( STDERR_FILENO, STR_LEN( "usage: kill [-sig] pid\n" ) );
+		
+		return 1;
+	}
+	
+	const pid_t pid = std::atoi( argp[ 1 ] );
+	
+	const int killed = kill( pid, sig_number );
+	
+	if ( killed == -1 )
+	{
+		more::perror( "kill", argp[1] );
+		
+		return 1;
+	}
+	
+	return 0;
 }
 
