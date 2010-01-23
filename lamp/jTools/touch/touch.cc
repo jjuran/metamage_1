@@ -4,15 +4,15 @@
  */
 
 // Standard C/C++
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 // POSIX
-#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <utime.h>
+
+// more-posix
+#include "more/perror.hh"
 
 
 #pragma exceptions off
@@ -23,7 +23,7 @@ int main( int argc, char *const *argv )
 	// Check for sufficient number of args
 	if ( argc < 2 )
 	{
-		std::fprintf( stderr, "touch: missing arguments\n" );
+		more::perror( "touch", "missing arguments", 0 );
 		
 		return 1;
 	}
@@ -51,7 +51,7 @@ int main( int argc, char *const *argv )
 				}
 			}
 			
-			std::fprintf( stderr, "touch: %s: %s\n", pathname, std::strerror( errno ) );
+			more::perror( "touch", pathname );
 			
 			exit_status = EXIT_FAILURE;
 		}
