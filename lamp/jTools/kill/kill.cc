@@ -4,22 +4,21 @@
  */
 
 // Standard C
-#include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 // Standard C/C++
 #include <cctype>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 // POSIX
 #include <unistd.h>
 
 // iota
 #include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 // klibc
 #include "klibc/signal_lookup.hh"
@@ -63,7 +62,7 @@ namespace tool
 		
 		if ( killed == -1 )
 		{
-			std::fprintf( stderr, "kill: %s: %s\n", argp[1], std::strerror( errno ) );
+			more::perror( "kill", argp[1] );
 			
 			return 1;
 		}
