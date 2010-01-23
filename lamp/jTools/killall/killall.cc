@@ -20,9 +20,11 @@
 #include <dirent.h>
 #include <unistd.h>
 
+// klibc
+#include "klibc/signal_lookup.hh"
+
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/SignalLookup.hh"
 
 
 namespace tool
@@ -112,7 +114,7 @@ namespace tool
 			bool numeric = std::isdigit( *sig );
 			
 			// FIXME:  Needs error checking instead of silently using 0
-			sig_number = numeric ? std::atoi( sig ) : Orion::SignalLookup( sig );
+			sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
 			
 			++argp;
 			--argc;

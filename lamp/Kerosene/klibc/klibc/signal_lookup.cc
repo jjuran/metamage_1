@@ -1,9 +1,11 @@
-/*	===============
- *	SignalLookup.cc
- *	===============
- */
+/*
+	signal_lookup.cc
+	----------------
+	
+	Joshua Juran
+*/
 
-#include "Orion/SignalLookup.hh"
+#include "klibc/signal_lookup.hh"
 
 // Standard C
 #include <signal.h>
@@ -13,7 +15,7 @@
 #include <cstring>
 
 
-namespace Orion
+namespace klibc
 {
 	
 	struct signal_record
@@ -56,7 +58,7 @@ namespace Orion
 		return compare_signal_name( sig, name );
 	}
 	
-	int SignalLookup( const char* signame )
+	int signal_lookup( const char* signame )
 	{
 		const signal_record* end = gSignals + gCountOfSignals;
 		
