@@ -33,6 +33,9 @@
 // Orion
 #include "Orion/Main.hh"
 
+// metrowerks
+#include "metrowerks/object_file.hh"
+
 
 namespace tool
 {
@@ -41,6 +44,7 @@ namespace tool
 	namespace n = nucleus;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	namespace mw = metrowerks;
 	namespace Div = Divergence;
 	
 	
@@ -81,36 +85,6 @@ namespace tool
 	}
 	
 	
-	enum Architecture
-	{
-		archUnknown = 0,
-		
-		archM68K = 'M68K',
-		archPPC  = 'PPC '
-	};
-	
-	struct MetrowerksObjectFileHeader
-	{
-		::OSType magicNumber;
-		
-		Architecture architecture;
-		
-		UInt32 _8, _12, _16, _20, _24, _28, _32, _36;
-		
-		UInt32 objectOffset;
-		UInt32 objectLength;
-	};
-	
-	struct ObjectHeader
-	{
-		::OSType magicNumber;
-		
-		UInt32 _4, _8, _12, _16;
-		
-		UInt32 symOffset;
-		UInt32 symLength;
-	};
-	
 	static bool HasFullPathname( p7::fd_t object_file_stream )
 	{
 		char buffer[ 512 ];
@@ -137,28 +111,29 @@ namespace tool
 		return false;
 	}
 	
-	static bool HasSymH( p7::fd_t object_file_stream, const MetrowerksObjectFileHeader& file_header )
+	static bool HasSymH( p7::fd_t                       object_file_stream,
+	                     const mw::object_file_header&  file_header )
 	{
-		ObjectHeader object_header;
+		mw::object_header object_header;
 		
 		const ssize_t bytes_read = p7::pread( object_file_stream,
 		                                      (char*) &object_header,
 		                                      sizeof object_header,
-		                                      file_header.objectOffset );
+		                                      file_header.object_offset );
 		
 		if ( bytes_read != sizeof object_header )
 		{
 			// complain
 		}
 		
-		return object_header.symOffset != 0;
+		return object_header.sym_offset != 0;
 	}
 	
-	static void CheckObjectFile( p7::fd_t       object_file_stream,
-	                             Architecture&  arch,
-	                             bool&          debug )
+	static void CheckObjectFile( p7::fd_t               object_file_stream,
+	                             mw::cpu_architecture&  arch,
+	                             bool&                  debug )
 	{
-		MetrowerksObjectFileHeader file_header;
+		mw::object_file_header file_header;
 		
 		ssize_t bytes_read = p7::read( object_file_stream, (char*) &file_header, sizeof file_header );
 		
@@ -168,19 +143,19 @@ namespace tool
 			return;
 		}
 		
-		if ( file_header.magicNumber != 'MWOB' )
+		if ( file_header.magic_number != mw::object_file_magic )
 		{
 			// complain
 			return;
 		}
 		
-		switch ( arch = file_header.architecture )
+		switch ( arch = file_header.cpu_arch )
 		{
-			case archM68K:
+			case mw::cpu_m68k:
 				debug = HasFullPathname( object_file_stream );
 				break;
 			
-			case archPPC:
+			case mw::cpu_powerpc:
 				debug = HasSymH( object_file_stream, file_header );
 				break;
 			
@@ -190,9 +165,9 @@ namespace tool
 		}
 	}
 	
-	static void CheckObjectFile( const char*    object_path,
-	                             Architecture&  arch,
-	                             bool&          debug )
+	static void CheckObjectFile( const char*            object_path,
+	                             mw::cpu_architecture&  arch,
+	                             bool&                  debug )
 	{
 		CheckObjectFile( io::open_for_reading( object_path ), arch, debug );
 	}
@@ -226,7 +201,7 @@ namespace tool
 		
 		std::string output_mac_pathname = GetMacPathname( Div::ResolvePathToFSSpec( output_path ) );
 		
-		Architecture arch = archUnknown;
+		mw::cpu_architecture arch = mw::cpu_unknown;
 		
 		bool debug = false;
 		
@@ -243,13 +218,13 @@ namespace tool
 		
 		switch ( arch )
 		{
-			case archM68K:
+			case mw::cpu_m68k:
 				command.push_back( "MWLink68K" );
 				command.push_back( "-model"    );
 				command.push_back( "far"       );
 				break;
 			
-			case archPPC:
+			case mw::cpu_powerpc:
 				command.push_back( "MWLinkPPC" );
 				break;
 			
@@ -266,7 +241,7 @@ namespace tool
 			command.push_back( "-sym" );
 			command.push_back( "full" );
 			
-			if ( arch == archPPC )
+			if ( arch == mw::cpu_powerpc )
 			{
 				command.push_back( "-tb" );
 				command.push_back( "on"  );
