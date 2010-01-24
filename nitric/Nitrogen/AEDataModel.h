@@ -663,16 +663,12 @@ namespace Nitrogen
 	{
 		AECoercionHandlerUPP()  {}
 		AECoercionHandlerUPP( ::AECoerceDescUPP p ) : AECoerceDescUPP( p )  {}
-	
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM  ||  OPAQUE_UPP_TYPES
 		
 		AECoercionHandlerUPP( ::AECoercePtrUPP p )
 		:
 			AECoerceDescUPP( reinterpret_cast< ::AECoerceDescUPP >( p ) )
 		{
 		}
-		
-	#endif
 	};
 	
 	struct AECoercionHandler
