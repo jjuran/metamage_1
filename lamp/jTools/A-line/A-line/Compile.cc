@@ -528,7 +528,6 @@ namespace tool
 			if ( target_info.platform & archPPC )
 			{
 				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
-				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
 			}
 		}
 		
