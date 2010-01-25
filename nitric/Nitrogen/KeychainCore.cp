@@ -11,8 +11,6 @@
 // in the public domain.
 
 
-#ifdef __MACH__
-
 #include "Nitrogen/KeychainCore.h"
 
 
@@ -68,6 +66,4 @@ namespace Nitrogen {
 		}
 
 	}
-
-#endif
 

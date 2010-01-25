@@ -14,12 +14,8 @@
 #ifndef NITROGEN_KEYCHAINCORE_H
 #define	NITROGEN_KEYCHAINCORE_H
 
-#ifndef __MACH__
-#error "These routines are only directly callable from MachO"
-#endif
-
 #ifndef __KEYCHAINCORE__
-#include <CoreServices/CoreServices.h>
+#include <KeychainCore.h>
 #endif
 
 #ifndef NUCLEUS_OWNED_H

@@ -11,8 +11,6 @@
 // in the public domain.
 
 
-#ifdef __MACH__
-
 #include "Nitrogen/KeychainHI.h"
 
 
@@ -22,6 +20,4 @@ namespace Nitrogen {
 	static KeychainErrorsRegistrationDependency gKeychainErrorsRegistrationDependency;
 
 	}
-
-#endif
 
