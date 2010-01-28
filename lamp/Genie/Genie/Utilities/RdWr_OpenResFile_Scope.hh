@@ -20,22 +20,8 @@ namespace Genie
 	class RdWr_OpenResFile_Scope
 	{
 		private:
-		#if TARGET_API_MAC_CARBON
-			
-			typedef ::ResFileRefNum  TopOfResourceChain;
-			
-		#else
-			
-			typedef ::Handle         TopOfResourceChain;
-			
-		#endif
-			
-			static TopOfResourceChain GetTop();
-			
 			::ResFileRefNum     itsPreviouslyCurrentResFile;
-			TopOfResourceChain  itsTop;
 			::ResFileRefNum     itsResFile;
-			bool                itShouldCloseTheResFile;
 		
 		private:
 			// Non-copyable
