@@ -23,6 +23,7 @@
 #include "Genie/FS/Name_OSType.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 
@@ -428,6 +429,8 @@ namespace Genie
 			
 			bool Exists() const;
 			
+			void CreateDirectory( mode_t mode ) const;
+			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -456,6 +459,49 @@ namespace Genie
 		}
 		
 		return exists;
+	}
+	
+	static inline bool contains( const char* s, size_t length, char c )
+	{
+		const char* end = s + length;
+		
+		return std::find( s, end, c ) != end;
+	}
+	
+	static inline bool is_rsrc_file( const CInfoPBRec&  cInfo,
+	                                 ConstStr255Param   name )
+	{
+		return cInfo.hFileInfo.ioFlLgLen == 0  &&  !contains( (char*) &name[ 1 ],
+		                                                      1 + name[0],
+		                                                      '.' );
+	}
+	
+	void FSTree_ResFileDir::CreateDirectory( mode_t mode ) const
+	{
+		CInfoPBRec cInfo = { 0 };
+		
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, itsFileSpec );
+		
+		::OSType creator;
+		::OSType type;
+		
+		if ( !exists || is_rsrc_file( cInfo, itsFileSpec.name ) )
+		{
+			creator = 'RSED';
+			type    = 'rsrc';
+		}
+		else
+		{
+			const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+			
+			creator = fInfo.fdCreator;
+			type    = fInfo.fdType;
+		}
+		
+		N::FSpCreateResFile( itsFileSpec,
+		                     N::OSType( creator ),
+		                     N::OSType( type    ),
+		                     N::smSystemScript );
 	}
 	
 	FSTreePtr FSTree_ResFileDir::Lookup_Child( const std::string& name ) const
