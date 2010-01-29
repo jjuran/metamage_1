@@ -31,6 +31,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/sys_mac_vol_list_N_dt.hh"
 #include "Genie/FS/sys_mac_vol_parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -582,6 +583,7 @@ namespace Genie
 		{ "files",  &Property_Factory< GetVolumeFileCount  >, true },
 		{ "dirs",   &Property_Factory< GetVolumeDirCount   >, true },
 		
+		{ "dt",    &Premapped_Factory< sys_mac_vol_list_N_dt_Mappings > },
 		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },
 		
 		// volume roots are named "mnt", not the volume name
