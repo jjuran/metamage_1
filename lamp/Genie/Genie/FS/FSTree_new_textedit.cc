@@ -129,9 +129,7 @@ namespace Genie
 			return Trigger_Base::Open( flags );
 		}
 		
-		IOHandle* result = new TextEdit_gate_Handle( Self(), flags );
-		
-		return boost::shared_ptr< IOHandle >( result );
+		return seize_ptr( new TextEdit_gate_Handle( Self(), flags ) );
 	}
 	
 	

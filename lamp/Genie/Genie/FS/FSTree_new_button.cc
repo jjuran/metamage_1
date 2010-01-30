@@ -300,9 +300,7 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		IOHandle* result = new Button_socket_Handle( Self(), flags );
-		
-		return boost::shared_ptr< IOHandle >( result );
+		return seize_ptr( new Button_socket_Handle( Self(), flags ) );
 	}
 	
 	
