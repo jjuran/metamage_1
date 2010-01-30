@@ -13,9 +13,8 @@ namespace Pedestal
 	class Application
 	{
 		public:
-			// Constructor & destructor.
+			// Constructor
 			Application();
-			~Application();
 			
 			// Control
 			int Run(); // This calls the main event loop.

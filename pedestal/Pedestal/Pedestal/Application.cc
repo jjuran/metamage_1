@@ -767,9 +767,6 @@ namespace Pedestal
 		N::InvalMenuBar();
 	}
 	
-	Application::~Application()
-	{
-	}
 	
 	static void CheckMouse()
 	{
