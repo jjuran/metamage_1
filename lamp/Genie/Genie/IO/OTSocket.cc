@@ -327,7 +327,7 @@ namespace Genie
 	{
 		if ( itsSocketAddress.Get() == NULL )
 		{
-			throw N::OTOutStateErr();
+			N::ThrowOSStatus( kOTOutStateErr );
 		}
 		
 		itsBacklog = backlog;
