@@ -6,9 +6,6 @@
 #ifndef PEDESTAL_APPLICATIONCONTEXT_HH
 #define PEDESTAL_APPLICATIONCONTEXT_HH
 
-// Nitrogen
-#include "Nitrogen/Resources.h"
-
 
 namespace Pedestal
 {
@@ -20,22 +17,17 @@ namespace Pedestal
 	
 	struct MemoryInit
 	{
-		MemoryInit( std::size_t moreMasters );
+		MemoryInit( unsigned moreMasters );
 	};
 	
 	class ApplicationContext
 	{
 		private:
-			MacToolboxInit           itsMacToolboxInit;
-			MemoryInit               itsMemoryInit;
-			Nitrogen::ResFileRefNum  itsResFileRefNum;
-			VersRec                  itsVersion;
+			MacToolboxInit  itsMacToolboxInit;
+			MemoryInit      itsMemoryInit;
 		
 		public:
 			ApplicationContext();
-			
-			Nitrogen::ResFileRefNum ResFileAccessPath() const  { return itsResFileRefNum; }
-			const VersRec&          Version          () const  { return itsVersion;       }
 	};
 	
 }
