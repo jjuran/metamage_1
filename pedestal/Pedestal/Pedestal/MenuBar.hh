@@ -22,13 +22,6 @@ namespace Pedestal
 	
 	MenuItemCode HandleMenuItem( Nitrogen::MenuID menuID, SInt16 item );
 	
-	
-	class MenuItemHandler
-	{
-		public:
-			virtual bool Run( MenuItemCode code ) const = 0;
-	};
-	
 }
 
 #endif

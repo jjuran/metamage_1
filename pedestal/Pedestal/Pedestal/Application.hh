@@ -11,11 +11,17 @@
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
-#include "Pedestal/Menubar.hh"
+#include "Pedestal/MenuItemCode.hh"
 
 
 namespace Pedestal
 {
+	
+	class MenuItemHandler
+	{
+		public:
+			virtual bool Run( MenuItemCode code ) const = 0;
+	};
 	
 	class Application : public ApplicationContext
 	{
