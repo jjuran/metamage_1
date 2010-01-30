@@ -102,7 +102,7 @@ namespace Pedestal
 	{
 	}
 	
-	void MenuBar::AddMenu( N::MenuID menuID )
+	void AddMenu( N::MenuID menuID )
 	{
 		MenuRef menu = N::GetMenuRef( menuID );
 		
@@ -112,7 +112,7 @@ namespace Pedestal
 	
 	static const N::ResType kDeskAccessoryResourceType = N::ResType( 'DRVR' );
 	
-	void MenuBar::AddAppleMenu( N::MenuID menuID )
+	void AddAppleMenu( N::MenuID menuID )
 	{
 		AddMenu( menuID );
 		

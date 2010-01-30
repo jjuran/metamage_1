@@ -16,6 +16,11 @@
 namespace Pedestal
 {
 	
+	void AddMenu( Nitrogen::MenuID menuID );
+	
+	void AddAppleMenu( Nitrogen::MenuID menuID );
+	
+	
 	class MenuItemHandler
 	{
 		public:
@@ -27,9 +32,6 @@ namespace Pedestal
 		public:
 			MenuBar( const MenuItemHandler& handler );
 			~MenuBar();
-			
-			void AddMenu     ( Nitrogen::MenuID menuID );
-			void AddAppleMenu( Nitrogen::MenuID menuID );
 			
 			void ProcessMenuItem( Nitrogen::MenuID menuID, SInt16 item );
 			void ProcessMenuItem( int menuItem );

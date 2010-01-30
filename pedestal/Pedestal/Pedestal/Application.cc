@@ -745,9 +745,9 @@ namespace Pedestal
 			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
 		}
 		
-		myMenubar.AddAppleMenu( myAppleMenu );
-		myMenubar.AddMenu     ( myFileMenu  );
-		myMenubar.AddMenu     ( myEditMenu  );
+		AddAppleMenu( myAppleMenu );
+		AddMenu     ( myFileMenu  );
+		AddMenu     ( myEditMenu  );
 		
 		N::InvalMenuBar();
 	}
