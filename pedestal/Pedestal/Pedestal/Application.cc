@@ -993,7 +993,10 @@ namespace Pedestal
 	
 	void Application::HandleMenuChoice( long menuChoice )
 	{
-		myMenubar.ProcessMenuItem( menuChoice );
+		N::MenuID menuID = N::MenuID( HiWord( menuChoice ) );
+		SInt16    item   =            LoWord( menuChoice );
+		
+		myMenubar.ProcessMenuItem( menuID, item );
 	}
 	
 	bool Application::DoCommand( MenuItemCode code )

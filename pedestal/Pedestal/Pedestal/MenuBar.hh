@@ -34,7 +34,6 @@ namespace Pedestal
 			~MenuBar();
 			
 			void ProcessMenuItem( Nitrogen::MenuID menuID, SInt16 item );
-			void ProcessMenuItem( int menuItem );
 		
 		private:
 			const MenuItemHandler& handler;

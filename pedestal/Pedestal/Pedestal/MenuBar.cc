@@ -9,11 +9,6 @@
 #include <map>
 #include <vector>
 
-// Universal Interfaces
-#ifndef __TOOLUTILS__
-#include <ToolUtils.h>
-#endif
-
 // iota
 #include "iota/quad.hh"
 
@@ -150,14 +145,6 @@ namespace Pedestal
 			
 		#endif
 		}
-	}
-	
-	void MenuBar::ProcessMenuItem( int menuItem )
-	{
-		N::MenuID menuID = N::MenuID( HiWord( menuItem ) );
-		SInt16    item   =            LoWord( menuItem );
-		
-		ProcessMenuItem( menuID, item );
 		
 	}
 	
