@@ -87,6 +87,22 @@ namespace Pedestal
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
 	
+	
+	struct AppleEventSignature
+	{
+		Nitrogen::AEEventClass eventClass;
+		Nitrogen::AEEventID    eventID;
+		
+		AppleEventSignature()  {}
+		
+		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
+		                     Nitrogen::AEEventID     eventID )
+		:
+			eventClass( eventClass ),
+			eventID   ( eventID    )
+		{}
+	};
+	
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;

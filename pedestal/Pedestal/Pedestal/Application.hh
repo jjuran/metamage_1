@@ -20,21 +20,6 @@
 namespace Pedestal
 {
 	
-	struct AppleEventSignature
-	{
-		Nitrogen::AEEventClass eventClass;
-		Nitrogen::AEEventID    eventID;
-		
-		AppleEventSignature()  {}
-		
-		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
-		                     Nitrogen::AEEventID     eventID )
-		:
-			eventClass( eventClass ),
-			eventID   ( eventID    )
-		{}
-	};
-	
 	class Application;
 	
 	class MenuItemDispatcher : public MenuItemHandler
