@@ -12,7 +12,6 @@
 
 // Nitrogen
 #include "Nitrogen/Menus.h"
-#include "Nitrogen/RefCon.h"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
@@ -20,8 +19,6 @@
 
 namespace Pedestal
 {
-	
-	//typedef bool ( *MenuItemHandler )( MenuItemCode code );
 	
 	class MenuItemHandler
 	{

@@ -9,12 +9,8 @@
 // Standard C++
 #include <map>
 
-// Mac OS Universal Interfaces
-#include <AERegistry.h>
-
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/MacWindows.h"
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
@@ -74,8 +70,6 @@ namespace Pedestal
 			void HandleMenuChoice( long menuChoice );
 			
 			bool DoCommand( MenuItemCode code );
-			
-			DescType Class() const  { return cApplication; }
 		
 		protected:
 			void EventLoop(); // This is the main event loop.
