@@ -14,7 +14,6 @@
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
-#include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/Menubar.hh"
 
 

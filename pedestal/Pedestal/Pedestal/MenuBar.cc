@@ -18,9 +18,6 @@
 #include "ClassicToolbox/Devices.h"
 #endif
 
-// Pedestal
-#include "Pedestal/MenuItemCode.hh"
-
 
 namespace Pedestal
 {
