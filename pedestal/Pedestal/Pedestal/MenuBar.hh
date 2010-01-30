@@ -18,7 +18,7 @@ namespace Pedestal
 	
 	void AddMenu( Nitrogen::MenuID menuID );
 	
-	void AddAppleMenu( Nitrogen::MenuID menuID );
+	void PopulateAppleMenu( Nitrogen::MenuID menuID );
 	
 	MenuItemCode HandleMenuItem( Nitrogen::MenuID menuID, SInt16 item );
 	

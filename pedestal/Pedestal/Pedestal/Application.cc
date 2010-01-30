@@ -744,9 +744,14 @@ namespace Pedestal
 			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
 		}
 		
-		AddAppleMenu( myAppleMenu );
-		AddMenu     ( myFileMenu  );
-		AddMenu     ( myEditMenu  );
+		AddMenu( myAppleMenu );
+		AddMenu( myFileMenu  );
+		AddMenu( myEditMenu  );
+		
+		if ( !TARGET_API_MAC_CARBON )
+		{
+			PopulateAppleMenu( myAppleMenu );
+		}
 		
 		N::InvalMenuBar();
 	}

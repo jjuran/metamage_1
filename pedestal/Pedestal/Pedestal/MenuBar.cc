@@ -80,10 +80,8 @@ namespace Pedestal
 	
 	static const N::ResType kDeskAccessoryResourceType = N::ResType( 'DRVR' );
 	
-	void AddAppleMenu( N::MenuID menuID )
+	void PopulateAppleMenu( N::MenuID menuID )
 	{
-		AddMenu( menuID );
-		
 		gAppleMenuID = menuID;
 		
 		N::AppendResMenu( N::GetMenuRef( menuID ), kDeskAccessoryResourceType );
