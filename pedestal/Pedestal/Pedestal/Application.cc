@@ -190,7 +190,7 @@ namespace Pedestal
 			}
 		}
 		
-		handled = handled || app.DoCommand( code );
+		handled = handled || gApp->DoCommand( code );
 		
 		if ( !handled )
 		{
@@ -718,7 +718,6 @@ namespace Pedestal
 	
 	Application::Application()
 	:
-		menuItemDispatcher( *this ),
 		myMenubar  ( menuItemDispatcher ),
 		myAppleMenu( N::InsertMenu( N::GetMenu( N::ResID( idAppleMENU ) ) ) ),
 		myFileMenu ( N::InsertMenu( N::GetMenu( N::ResID( idFileMENU  ) ) ) ),

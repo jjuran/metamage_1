@@ -20,16 +20,9 @@
 namespace Pedestal
 {
 	
-	class Application;
-	
 	class MenuItemDispatcher : public MenuItemHandler
 	{
-		private:
-			Application& app;
-		
 		public:
-			MenuItemDispatcher( Application& app ) : app( app )  {}
-			
 			bool Run( MenuItemCode code ) const;
 	};
 	
