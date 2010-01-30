@@ -28,6 +28,7 @@
 
 // Nitrogen
 #include "Nitrogen/Aliases.h"
+#include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Resources.h"
 
