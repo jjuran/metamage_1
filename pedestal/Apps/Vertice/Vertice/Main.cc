@@ -9,6 +9,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/Commands.hh"
 #include "Pedestal/WindowsOwner.hh"
 
 // Vertice
@@ -30,11 +31,9 @@ namespace Vertice
 	};
 	
 	class App : public Ped::Application,
-	            public Ped::AboutBoxOwner,
 	            public DocumentsOwner
 	{
 		private:
-			Ped::AboutHandler< App > aboutHandler;
 			//PedMenu myOptionsMenu;
 			//PedMenu myViewMenu;
 			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
@@ -61,9 +60,15 @@ namespace Vertice
 		doc->Load( file );
 	}
 	
+	static bool About( Ped::CommandCode )
+	{
+		Ped::ShowAboutBox();
+		
+		return true;
+	}
+	
 	App::App()
 	:
-		aboutHandler( *this ),
 		myOpenDocsEventHandler
 		(
 			N::AEInstallEventHandler< App*, AppleEventHandler >( N::kCoreEventClass,
@@ -72,10 +77,7 @@ namespace Vertice
 	//, myOptionsMenu(131)
 	//, myViewMenu(132)
 	{
-		RegisterMenuItemHandler( 'abou', &aboutHandler );
-	//	RegisterMenuItemHandler( 'new ', &newHandler   );  // New is not supported
-		//myMenubar.AddMenu(myOptionsMenu);
-		//myMenubar.AddMenu(myViewMenu);
+		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
 	void App::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app )

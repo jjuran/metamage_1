@@ -22,12 +22,18 @@
 // MacBinaryDecoder
 #include "MacBinaryDecoder.hh"
 
+// Pedestal
+#include "Pedestal/AboutBox.hh"
+#include "Pedestal/Commands.hh"
+
 
 namespace MacBinaryDecoder
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
+	
 	
 	using N::keyDirectObject;
 	using N::typeAEList;
@@ -102,9 +108,15 @@ namespace MacBinaryDecoder
 		return *theApp;
 	}
 	
+	static bool About( Ped::CommandCode )
+	{
+		Ped::ShowAboutBox();
+		
+		return true;
+	}
+	
 	App::App()
 	: 
-		itsAboutHandler( *this ),
 		itsOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
 		                                                                                          kAEOpenDocuments,
 		                                                                                          this ) )
@@ -113,7 +125,7 @@ namespace MacBinaryDecoder
 		
 		theApp = this;
 		
-		RegisterMenuItemHandler( 'abou', &itsAboutHandler );
+		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
 	App::~App()

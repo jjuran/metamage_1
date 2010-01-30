@@ -24,7 +24,7 @@
 
 // Pedestal
 #include "Pedestal/Application.hh"
-#include "Pedestal/AboutBox.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace UseEdit
@@ -106,17 +106,14 @@ namespace UseEdit
 			void OpenDocument( const Io_Details::file_spec& file );
 	};
 	
-	class App : public Pedestal::Application,
-	            public Pedestal::AboutBoxOwner,
-	            public DocumentsOwner
+	
+	class App : public Pedestal::Application
 	{
 		private:
 			static App* theApp;
 			
 			typedef void (*AEEventHandlerProcPtr)( Nitrogen::AppleEvent const&, Nitrogen::AppleEvent&, App* );
 			
-			Pedestal::AboutHandler< App > itsAboutHandler;
-			Pedestal::NewHandler  < App > itsNewHandler;
 			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
 			Nucleus::Owned< Nitrogen::AEEventHandler > itsCloseHandler;
 			Nucleus::Owned< Nitrogen::AEEventHandler > itsCountHandler;

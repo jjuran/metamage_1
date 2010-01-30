@@ -20,6 +20,10 @@
 #include "AEObjectModel/GetData.h"
 #include "AEObjectModel/GetObjectClass.h"
 
+// Pedestal
+#include "Pedestal/AboutBox.hh"
+#include "Pedestal/Commands.hh"
+
 // UseEdit
 #include "UseEdit/App.hh"
 #include "UseEdit/Document.hh"
@@ -37,6 +41,9 @@ namespace UseEdit
 	
 	
 	static const N::DescType typeDocument = N::DescType( 'Doc ' );
+	
+	
+	static DocumentsOwner gDocuments;
 	
 	
 	namespace
@@ -129,7 +136,7 @@ namespace UseEdit
 			{
 				Io_Details::file_spec fileSpec = *it;
 				
-				app->OpenDocument( fileSpec );
+				gDocuments.OpenDocument( fileSpec );
 			}
 			
 		}
@@ -164,7 +171,7 @@ namespace UseEdit
 	                                                 const N::AEDesc_Data&   keyData,
 	                                                 N::RefCon )
 		{
-			const DocumentContainer& docs( App::Get().Documents() );
+			const DocumentContainer& docs( gDocuments.Documents() );
 			
 			if ( keyForm == N::formUniqueID )
 			{
@@ -207,7 +214,7 @@ namespace UseEdit
 		{
 			UInt32 id = N::AEGetDescData< N::typeUInt32 >( containerToken, typeDocument );
 			
-			const Document& document = App::Get().Documents().GetDocumentByID( id );
+			const Document& document = gDocuments.Documents().GetDocumentByID( id );
 			
 			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( document.GetName() );
 		}
@@ -218,7 +225,7 @@ namespace UseEdit
 		                            N::AEObjectClass        containerClass,
 		                            const N::AEDesc_Token&  containerToken )
 		{
-			return App::Get().Documents().CountElements();
+			return gDocuments.Documents().CountElements();
 		}
 		
 		// Get data
@@ -343,7 +350,7 @@ namespace UseEdit
 		public:
 			void operator()( N::WindowRef window ) const
 			{
-				App::Get().CloseDocument( window );
+				gDocuments.CloseDocument( window );
 			}
 	};
 	
@@ -388,10 +395,22 @@ namespace UseEdit
 		return *theApp;
 	}
 	
+	static bool About( Ped::CommandCode )
+	{
+		Ped::ShowAboutBox();
+		
+		return true;
+	}
+	
+	static bool NewDocument( Ped::CommandCode )
+	{
+		gDocuments.NewWindow();
+		
+		return true;
+	}
+	
 	App::App()
 	: 
-		itsAboutHandler( *this ),
-		itsNewHandler  ( *this ),
 		itsOpenDocsHandler( InstallAppleEventHandler< HandleOpenDocumentsAppleEvent >( N::kCoreEventClass, N::kAEOpenDocuments ) ),
 		itsCloseHandler   ( InstallAppleEventHandler< HandleCloseAppleEvent   >( N::kAECoreSuite, N::kAEClose         ) ),
 		itsCountHandler   ( InstallAppleEventHandler< HandleCountAppleEvent   >( N::kAECoreSuite, N::kAECountElements ) ),
@@ -401,8 +420,8 @@ namespace UseEdit
 		
 		theApp = this;
 		
-		RegisterMenuItemHandler( 'abou', &itsAboutHandler );
-		RegisterMenuItemHandler( 'new ', &itsNewHandler   );
+		SetCommandHandler( Ped::kCmdAbout, &About       );
+		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
 		// Initialize the Object Support Library.
 		N::AEObjectInit();

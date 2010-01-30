@@ -43,6 +43,7 @@
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
+#include "Pedestal/Commands.hh"
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
@@ -152,10 +153,6 @@ namespace Pedestal
 	
 	static boost::shared_ptr< Quasimode > gQuasimode;
 	
-	typedef std::map< MenuItemCode, MenuItemHandler* > MenuItemHandlerMap;
-	
-	static MenuItemHandlerMap gMenuItemHandlers;
-	
 	
 	inline void DebugBeep()
 	{
@@ -182,7 +179,7 @@ namespace Pedestal
 		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
-	static bool DoCommand( MenuItemCode code );
+	static bool DoCommand( CommandCode code );
 	
 	static bool DispatchMenuItem( MenuItemCode code )
 	{
@@ -201,7 +198,7 @@ namespace Pedestal
 			}
 		}
 		
-		handled = handled || DoCommand( code );
+		handled = handled || DoCommand( CommandCode( code ) );
 		
 		if ( !handled )
 		{
@@ -732,11 +729,6 @@ namespace Pedestal
 		
 	}
 	
-	void Application::RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler )
-	{
-		gMenuItemHandlers[ code ] = handler;
-	}
-	
 	static MenuRef GetAndInsertMenu( N::ResID resID )
 	{
 		MenuRef menu = N::GetMenu( resID );
@@ -1048,17 +1040,11 @@ namespace Pedestal
 		}
 	}
 	
-	bool DoCommand( MenuItemCode code )
+	bool DoCommand( CommandCode code )
 	{
-		typedef MenuItemHandlerMap::const_iterator const_iterator;
-		
-		const_iterator found = gMenuItemHandlers.find( code );
-		
-		if ( found != gMenuItemHandlers.end() )
+		if ( CommandHandler handler = GetCommandHandler( code ) )
 		{
-			MenuItemHandler* handler = found->second;
-			
-			return handler->Run( code );
+			return handler( code );
 		}
 		
 		switch ( code )
