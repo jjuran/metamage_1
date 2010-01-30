@@ -5,6 +5,9 @@
 
 #include "Pedestal/Application.hh"
 
+// Standard C++
+#include <map>
+
 // Mac OS
 #ifndef __MACH__
 	#include <Controls.h>
@@ -146,6 +149,10 @@ namespace Pedestal
 	static UInt32 gShiftSpaceQuasimodeMask = 0;
 	
 	static boost::shared_ptr< Quasimode > gQuasimode;
+	
+	typedef std::map< MenuItemCode, MenuItemHandler* > MenuItemHandlerMap;
+	
+	static MenuItemHandlerMap gMenuItemHandlers;
 	
 	
 	inline void DebugBeep()
@@ -713,7 +720,7 @@ namespace Pedestal
 	
 	void Application::RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler )
 	{
-		menuItemHandlers[ code ] = handler;
+		gMenuItemHandlers[ code ] = handler;
 	}
 	
 	Application::Application()
@@ -993,9 +1000,9 @@ namespace Pedestal
 	{
 		typedef MenuItemHandlerMap::const_iterator const_iterator;
 		
-		const_iterator found = menuItemHandlers.find( code );
+		const_iterator found = gMenuItemHandlers.find( code );
 		
-		if ( found != menuItemHandlers.end() )
+		if ( found != gMenuItemHandlers.end() )
 		{
 			MenuItemHandler* handler = found->second;
 			

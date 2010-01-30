@@ -6,9 +6,6 @@
 #ifndef PEDESTAL_APPLICATION_HH
 #define PEDESTAL_APPLICATION_HH
 
-// Standard C++
-#include <map>
-
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"
 
@@ -51,13 +48,10 @@ namespace Pedestal
 		protected:
 			void EventLoop(); // This is the main event loop.
 			
-			typedef std::map< MenuItemCode, MenuItemHandler* > MenuItemHandlerMap;
-			
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
 		
 		private:
 			MenuItemDispatcher menuItemDispatcher;
-			MenuItemHandlerMap menuItemHandlers;
 			
 			MenuBar myMenubar;
 			Nucleus::Owned< Nitrogen::MenuID > myAppleMenu;
