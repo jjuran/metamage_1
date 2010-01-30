@@ -167,12 +167,6 @@ namespace Pedestal
 		//, idDebugMENU = 255  // menu ID = 128
 	};
 	
-	static Application* gApp = NULL;
-	
-	static Application& TheApp()
-	{
-		return *gApp;
-	}
 	
 	static void UpdateLastUserEvent()
 	{
@@ -740,9 +734,6 @@ namespace Pedestal
 	
 	Application::Application()
 	{
-		ASSERT( gApp == NULL );
-		gApp = this;
-		
 		N::AEInstallEventHandler< Application*,
 		                          AppleEventHandler >( kCoreEventClass,
 		                                               N::AEEventID( typeWildCard ),
