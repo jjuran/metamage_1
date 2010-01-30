@@ -733,14 +733,14 @@ namespace Pedestal
 	}
 	
 	Application::Application()
-	:
-		myCoreEventsHandler( N::AEInstallEventHandler< Application*,
-		                                               AppleEventHandler >( kCoreEventClass,
-		                                                                    N::AEEventID( typeWildCard ),
-		                                                                    this ) )
 	{
 		ASSERT( gApp == NULL );
 		gApp = this;
+		
+		N::AEInstallEventHandler< Application*,
+		                          AppleEventHandler >( kCoreEventClass,
+		                                               N::AEEventID( typeWildCard ),
+		                                               this ).release();
 		
 		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );

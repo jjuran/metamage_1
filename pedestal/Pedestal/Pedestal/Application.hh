@@ -43,9 +43,6 @@ namespace Pedestal
 			void EventLoop(); // This is the main event loop.
 			
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
-		
-		private:
-			Nucleus::Owned< Nitrogen::AEEventHandler > myCoreEventsHandler;
 	};
 	
 	template < class Responder >
