@@ -9,10 +9,6 @@
 #include "Nitrogen/AEDataModel.h"
 #include "Nitrogen/OSStatus.h"
 
-// Pedestal
-#include "Pedestal/ApplicationContext.hh"
-#include "Pedestal/Application.hh"
-
 // Genie
 #include "Genie/PipeOrganSuite.h"
 #include "Genie/Process.hh"
