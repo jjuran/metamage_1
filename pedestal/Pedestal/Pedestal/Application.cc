@@ -26,6 +26,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/AppleEvents.h"
 #include "Nitrogen/Events.h"
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacErrors.h"
@@ -181,6 +182,8 @@ namespace Pedestal
 		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
+	static bool DoCommand( MenuItemCode code );
+	
 	static bool DispatchMenuItem( MenuItemCode code )
 	{
 		bool handled = false;
@@ -198,7 +201,7 @@ namespace Pedestal
 			}
 		}
 		
-		handled = handled || gApp->DoCommand( code );
+		handled = handled || DoCommand( code );
 		
 		if ( !handled )
 		{
@@ -268,6 +271,8 @@ namespace Pedestal
 	 *	Event processing routines.
 	 *	--------------------------
 	 */
+	
+	static void HandleMenuChoice( long menuChoice );
 	
 	static bool DispatchCursorToFrontWindow( const EventRecord& event )
 	{
@@ -420,7 +425,8 @@ namespace Pedestal
 		
 		if ( found.part == N::inMenuBar )
 		{
-			TheApp().HandleMenuChoice( ::MenuSelect( event.where ) );
+			HandleMenuChoice( ::MenuSelect( event.where ) );
+			
 			return;
 		}
 		
@@ -546,7 +552,7 @@ namespace Pedestal
 		
 		if ( command  &&  CharMayBeCommand( c ) )
 		{
-			TheApp().HandleMenuChoice( ::MenuKey( c ) );
+			HandleMenuChoice( ::MenuKey( c ) );
 		}
 		else if ( gQuasimode && gQuasimode->KeyDown( event ) )
 		{
@@ -712,6 +718,8 @@ namespace Pedestal
 		}
 	}
 	
+	static void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
+	
 	namespace
 	{
 		
@@ -719,7 +727,7 @@ namespace Pedestal
 		                        N::AppleEvent&         reply,
 		                        Application           *app )
 		{
-			app->HandleAppleEvent( appleEvent, reply );
+			HandleAppleEvent( appleEvent, reply );
 		}
 		
 	}
@@ -906,7 +914,7 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
-	void Application::EventLoop()
+	static void EventLoop()
 	{
 		// Use two levels of looping.
 		// This lets us loop inside the try block without entering and leaving,
@@ -979,7 +987,7 @@ namespace Pedestal
 		return 0;
 	}
 	
-	void Application::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
+	void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
 		N::AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
 		N::AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
@@ -1027,7 +1035,7 @@ namespace Pedestal
 			Func func;
 	};
 	
-	void Application::HandleMenuChoice( long menuChoice )
+	void HandleMenuChoice( long menuChoice )
 	{
 		N::MenuID menuID = N::MenuID( HiWord( menuChoice ) );
 		SInt16    item   =            LoWord( menuChoice );
@@ -1040,7 +1048,7 @@ namespace Pedestal
 		}
 	}
 	
-	bool Application::DoCommand( MenuItemCode code )
+	bool DoCommand( MenuItemCode code )
 	{
 		typedef MenuItemHandlerMap::const_iterator const_iterator;
 		

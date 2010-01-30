@@ -6,9 +6,6 @@
 #ifndef PEDESTAL_APPLICATION_HH
 #define PEDESTAL_APPLICATION_HH
 
-// Nitrogen
-#include "Nitrogen/AppleEvents.h"
-
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/MenuItemCode.hh"
@@ -32,18 +29,8 @@ namespace Pedestal
 			
 			// Control
 			int Run(); // This calls the main event loop.
-			
-			// Event responding
-			void HandleAppleEvent( const Nitrogen::AppleEvent&  appleEvent,
-			                       Nitrogen::AppleEvent&        reply );
-			
-			void HandleMenuChoice( long menuChoice );
-			
-			bool DoCommand( MenuItemCode code );
 		
 		protected:
-			void EventLoop(); // This is the main event loop.
-			
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
 	};
 	
