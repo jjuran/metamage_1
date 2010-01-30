@@ -20,10 +20,6 @@ namespace Pedestal
 	class Application : public ApplicationContext
 	{
 		public:
-			static void AppleEventHandler( const Nitrogen::AppleEvent&  appleEvent,
-			                               Nitrogen::AppleEvent&        reply,
-			                               Application*                 app );
-			
 			// Constructor & destructor.
 			Application();
 			~Application();

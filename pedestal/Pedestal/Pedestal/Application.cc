@@ -711,11 +711,16 @@ namespace Pedestal
 		}
 	}
 	
-	void Application::AppleEventHandler( const N::AppleEvent&  appleEvent,
-	                                     N::AppleEvent&        reply,
-	                                     Application*          app )
+	namespace
 	{
-		app->HandleAppleEvent( appleEvent, reply );
+		
+		void AppleEventHandler( const N::AppleEvent&   appleEvent,
+		                        N::AppleEvent&         reply,
+		                        Application           *app )
+		{
+			app->HandleAppleEvent( appleEvent, reply );
+		}
+		
 	}
 	
 	void Application::RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler )
