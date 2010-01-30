@@ -20,23 +20,13 @@ namespace Pedestal
 	
 	void AddAppleMenu( Nitrogen::MenuID menuID );
 	
+	MenuItemCode HandleMenuItem( Nitrogen::MenuID menuID, SInt16 item );
+	
 	
 	class MenuItemHandler
 	{
 		public:
 			virtual bool Run( MenuItemCode code ) const = 0;
-	};
-	
-	class MenuBar
-	{
-		public:
-			MenuBar( const MenuItemHandler& handler );
-			~MenuBar();
-			
-			void ProcessMenuItem( Nitrogen::MenuID menuID, SInt16 item );
-		
-		private:
-			const MenuItemHandler& handler;
 	};
 	
 }

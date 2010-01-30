@@ -180,7 +180,7 @@ namespace Pedestal
 		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
-	bool MenuItemDispatcher::Run( MenuItemCode code ) const
+	static bool DispatchMenuItem( MenuItemCode code )
 	{
 		bool handled = false;
 		
@@ -725,7 +725,6 @@ namespace Pedestal
 	
 	Application::Application()
 	:
-		myMenubar  ( menuItemDispatcher ),
 		myAppleMenu( N::InsertMenu( N::GetMenu( N::ResID( idAppleMENU ) ) ) ),
 		myFileMenu ( N::InsertMenu( N::GetMenu( N::ResID( idFileMENU  ) ) ) ),
 		myEditMenu ( N::InsertMenu( N::GetMenu( N::ResID( idEditMENU  ) ) ) ),
@@ -991,12 +990,33 @@ namespace Pedestal
 		}
 	}
 	
+	struct UnhighlightMenus
+	{
+		void operator()() const  { N::HiliteMenu(); }
+	};
+	
+	template < class Func >
+	class AtEnd
+	{
+		public:
+			AtEnd( const Func& func = Func() ) : func( func )  {}
+			~AtEnd()                                           { func(); }
+		
+		private:
+			Func func;
+	};
+	
 	void Application::HandleMenuChoice( long menuChoice )
 	{
 		N::MenuID menuID = N::MenuID( HiWord( menuChoice ) );
 		SInt16    item   =            LoWord( menuChoice );
 		
-		myMenubar.ProcessMenuItem( menuID, item );
+		AtEnd< UnhighlightMenus > unhighlightMenus;
+		
+		if ( MenuItemCode code = HandleMenuItem( menuID, item ) )
+		{
+			DispatchMenuItem( code );
+		}
 	}
 	
 	bool Application::DoCommand( MenuItemCode code )

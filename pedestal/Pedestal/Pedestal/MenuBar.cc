@@ -30,23 +30,7 @@ namespace Pedestal
 	static N::MenuID gAppleMenuID = N::MenuID();
 	
 	static Menus gMenus;
-
-
-	struct UnhighlightMenus
-	{
-		void operator()() const  { N::HiliteMenu(); }
-	};
 	
-	template < class Func >
-	class AtEnd
-	{
-		public:
-			AtEnd( const Func& func = Func() ) : func( func )  {}
-			~AtEnd()                                           { func(); }
-		
-		private:
-			Func func;
-	};
 	
 	static MenuItemCode TakeCodeFromItemText( Str255 ioItemText )
 	{
@@ -86,17 +70,6 @@ namespace Pedestal
 		}
 	}
 	
-	MenuBar::MenuBar( const MenuItemHandler& handler )
-	:
-		handler( handler )
-	{
-		N::InvalMenuBar();
-	}
-	
-	MenuBar::~MenuBar()
-	{
-	}
-	
 	void AddMenu( N::MenuID menuID )
 	{
 		MenuRef menu = N::GetMenuRef( menuID );
@@ -116,10 +89,8 @@ namespace Pedestal
 		N::AppendResMenu( N::GetMenuRef( menuID ), kDeskAccessoryResourceType );
 	}
 	
-	void MenuBar::ProcessMenuItem( N::MenuID menuID, SInt16 item )
+	MenuItemCode HandleMenuItem( N::MenuID menuID, SInt16 item )
 	{
-		AtEnd< UnhighlightMenus > unhighlightMenus;
-		
 		Menus::const_iterator it = gMenus.find( menuID );
 		
 		if ( it != gMenus.end() )
@@ -130,10 +101,7 @@ namespace Pedestal
 			{
 				MenuItemCode code = commands[ item ];
 				
-				if ( code != 0 )
-				{
-					handler.Run( code );
-				}
+				return code;
 			}
 			
 		#if CALL_NOT_IN_CARBON
@@ -146,6 +114,7 @@ namespace Pedestal
 		#endif
 		}
 		
+		return 0;
 	}
 	
 }

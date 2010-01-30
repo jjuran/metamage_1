@@ -17,12 +17,6 @@
 namespace Pedestal
 {
 	
-	class MenuItemDispatcher : public MenuItemHandler
-	{
-		public:
-			bool Run( MenuItemCode code ) const;
-	};
-	
 	class Application : public ApplicationContext
 	{
 		public:
@@ -51,9 +45,6 @@ namespace Pedestal
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
 		
 		private:
-			MenuItemDispatcher menuItemDispatcher;
-			
-			MenuBar myMenubar;
 			Nucleus::Owned< Nitrogen::MenuID > myAppleMenu;
 			Nucleus::Owned< Nitrogen::MenuID > myFileMenu;
 			Nucleus::Owned< Nitrogen::MenuID > myEditMenu;
