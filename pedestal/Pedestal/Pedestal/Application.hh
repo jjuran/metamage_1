@@ -136,7 +136,7 @@ namespace Pedestal
 	// Call from a completion routine to resume synchronous processing.
 	void WakeUp();
 	
-	void AdjustSleepForTimer( UInt32 ticksToSleep );
+	void AdjustSleepForTimer( unsigned ticksToSleep );
 	
 	void AdjustSleepForActivity();
 	

@@ -1035,7 +1035,7 @@ namespace Pedestal
 		::WakeUpProcess( &gPSN );
 	}
 	
-	void AdjustSleepForTimer( UInt32 ticksToSleep )
+	void AdjustSleepForTimer( unsigned ticksToSleep )
 	{
 		const UInt32 businessTime = ::LMGetTicks() + ticksToSleep;
 		
