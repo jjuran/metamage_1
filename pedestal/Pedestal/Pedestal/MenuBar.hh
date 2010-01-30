@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_MENUBAR_HH
 #define PEDESTAL_MENUBAR_HH
 
-// Standard C++
-#include <map>
-#include <vector>
-
 // Nitrogen
 #include "Nitrogen/Menus.h"
 
@@ -39,11 +35,7 @@ namespace Pedestal
 			void ProcessMenuItem( int menuItem );
 		
 		private:
-			typedef std::map< Nitrogen::MenuID, std::vector< MenuItemCode > > Menus;
-			
 			const MenuItemHandler& handler;
-			Menus myMenus;
-			Nitrogen::MenuID appleMenuID;
 	};
 	
 }
