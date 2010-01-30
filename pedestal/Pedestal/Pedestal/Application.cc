@@ -42,8 +42,8 @@
 #endif
 
 // Pedestal
-#include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/Commands.hh"
+#include "Pedestal/Initialize.hh"
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"

@@ -1,9 +1,9 @@
-/*	=====================
- *	ApplicationContext.cc
- *	=====================
- */
+/*
+	Initialize.cc
+	-------------
+*/
 
-#include "Pedestal/ApplicationContext.hh"
+#include "Pedestal/Initialize.hh"
 
 // Mac OS
 #include <Dialogs.h>
