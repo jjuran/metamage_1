@@ -9,6 +9,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/Commands.hh"
 
 // Genie
 #include "Genie/Console.hh"
@@ -33,14 +34,12 @@ namespace Genie
 			void OpenDocument( const FSSpec& script );
 	};
 	
+	static TerminalsOwner gTerminals;
 	
-	class App : public Ped::Application,
-	            public Ped::AboutBoxOwner,
-	            public TerminalsOwner
+	
+	class App : public Ped::Application
 	{
 		private:
-			Ped::AboutHandler< Ped::AboutBoxOwner > aboutHandler;
-			Ped::NewHandler  < App > newHandler;
 			GenieHandlerReply myReplyEventHandler;
 			GenieExecHandler myExecHandler;
 			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
@@ -56,10 +55,22 @@ namespace Genie
 	};
 	
 	
+	static bool About( Ped::CommandCode )
+	{
+		Ped::ShowAboutBox();
+		
+		return true;
+	}
+	
+	static bool NewDocument( Ped::CommandCode )
+	{
+		gTerminals.NewWindow();
+		
+		return true;
+	}
+	
 	App::App()
 	:
-		aboutHandler( *this ),
-		newHandler  ( *this ),
 		myOpenDocsEventHandler
 		(
 			N::AEInstallEventHandler< App*, AppleEventHandler >( N::kCoreEventClass,
@@ -67,8 +78,8 @@ namespace Genie
 			                                                     this )
 		)
 	{
-		RegisterMenuItemHandler( 'abou', &aboutHandler );
-		RegisterMenuItemHandler( 'new ', &newHandler   );
+		SetCommandHandler( Ped::kCmdAbout, &About       );
+		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
 		CreateSystemConsole();
 	}
@@ -90,7 +101,7 @@ namespace Genie
 		{
 			FSSpec fss = N::AEGetNthPtr< N::typeFSS >( docList, index );
 			
-			OpenDocument( fss );
+			gTerminals.OpenDocument( fss );
 		}
 	}
 	

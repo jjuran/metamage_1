@@ -5,10 +5,9 @@
 
 #include "Pedestal/MenuBar.hh"
 
-// Universal Interfaces
-#ifndef __TOOLUTILS__
-#include <ToolUtils.h>
-#endif
+// Standard C++
+#include <map>
+#include <vector>
 
 // iota
 #include "iota/quad.hh"
@@ -18,9 +17,6 @@
 #include "ClassicToolbox/Devices.h"
 #endif
 
-// Pedestal
-#include "Pedestal/MenuItemCode.hh"
-
 
 namespace Pedestal
 {
@@ -28,21 +24,13 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	struct UnhighlightMenus
-	{
-		void operator()() const  { N::HiliteMenu(); }
-	};
+	typedef std::map< N::MenuID, std::vector< MenuItemCode > > Menus;
 	
-	template < class Func >
-	class AtEnd
-	{
-		public:
-			AtEnd( const Func& func = Func() ) : func( func )  {}
-			~AtEnd()                                           { func(); }
-		
-		private:
-			Func func;
-	};
+	
+	static N::MenuID gAppleMenuID = N::MenuID();
+	
+	static Menus gMenus;
+	
 	
 	static MenuItemCode TakeCodeFromItemText( Str255 ioItemText )
 	{
@@ -82,44 +70,28 @@ namespace Pedestal
 		}
 	}
 	
-	MenuBar::MenuBar( const MenuItemHandler& handler )
-	:
-		handler    ( handler ), 
-		appleMenuID()
-	{
-		N::InvalMenuBar();
-	}
-	
-	MenuBar::~MenuBar()
-	{
-	}
-	
-	void MenuBar::AddMenu( N::MenuID menuID )
+	void AddMenu( N::MenuID menuID )
 	{
 		MenuRef menu = N::GetMenuRef( menuID );
 		
-		ExtractCmdCodes( menu, myMenus[ menuID ] );
+		ExtractCmdCodes( menu, gMenus[ menuID ] );
 	}
 	
 	
 	static const N::ResType kDeskAccessoryResourceType = N::ResType( 'DRVR' );
 	
-	void MenuBar::AddAppleMenu( N::MenuID menuID )
+	void PopulateAppleMenu( N::MenuID menuID )
 	{
-		AddMenu( menuID );
-		
-		appleMenuID = menuID;
+		gAppleMenuID = menuID;
 		
 		N::AppendResMenu( N::GetMenuRef( menuID ), kDeskAccessoryResourceType );
 	}
 	
-	void MenuBar::ProcessMenuItem( N::MenuID menuID, SInt16 item )
+	MenuItemCode HandleMenuItem( N::MenuID menuID, SInt16 item )
 	{
-		AtEnd< UnhighlightMenus > unhighlightMenus;
+		Menus::const_iterator it = gMenus.find( menuID );
 		
-		Menus::const_iterator it = myMenus.find( menuID );
-		
-		if ( it != myMenus.end() )
+		if ( it != gMenus.end() )
 		{
 			const std::vector< MenuItemCode >& commands = it->second;
 			
@@ -127,30 +99,20 @@ namespace Pedestal
 			{
 				MenuItemCode code = commands[ item ];
 				
-				if ( code != 0 )
-				{
-					handler.Run( code );
-				}
+				return code;
 			}
 			
 		#if CALL_NOT_IN_CARBON
 			
-			else if ( menuID == appleMenuID )
+			else if ( menuID == gAppleMenuID )
 			{
 				N::OpenDeskAcc( N::GetMenuItemText( N::GetMenuRef( menuID ), item ) );
 			}
 			
 		#endif
 		}
-	}
-	
-	void MenuBar::ProcessMenuItem( int menuItem )
-	{
-		N::MenuID menuID = N::MenuID( HiWord( menuItem ) );
-		SInt16    item   =            LoWord( menuItem );
 		
-		ProcessMenuItem( menuID, item );
-		
+		return 0;
 	}
 	
 }

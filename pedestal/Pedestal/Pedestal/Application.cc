@@ -5,6 +5,9 @@
 
 #include "Pedestal/Application.hh"
 
+// Standard C++
+#include <map>
+
 // Mac OS
 #ifndef __MACH__
 	#include <Controls.h>
@@ -23,6 +26,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/AppleEvents.h"
 #include "Nitrogen/Events.h"
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacErrors.h"
@@ -38,7 +42,9 @@
 #endif
 
 // Pedestal
-#include "Pedestal/ApplicationContext.hh"
+#include "Pedestal/Commands.hh"
+#include "Pedestal/Initialize.hh"
+#include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Window.hh"
@@ -86,6 +92,22 @@ namespace Pedestal
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
+	
+	
+	struct AppleEventSignature
+	{
+		Nitrogen::AEEventClass eventClass;
+		Nitrogen::AEEventID    eventID;
+		
+		AppleEventSignature()  {}
+		
+		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
+		                     Nitrogen::AEEventID     eventID )
+		:
+			eventClass( eventClass ),
+			eventID   ( eventID    )
+		{}
+	};
 	
 	struct RunState
 	{
@@ -145,19 +167,15 @@ namespace Pedestal
 		//, idDebugMENU = 255  // menu ID = 128
 	};
 	
-	static Application* gApp = NULL;
-	
-	Application& TheApp()
-	{
-		return *gApp;
-	}
 	
 	static void UpdateLastUserEvent()
 	{
 		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
-	bool MenuItemDispatcher::Run( MenuItemCode code ) const
+	static bool DoCommand( CommandCode code );
+	
+	static bool DispatchMenuItem( MenuItemCode code )
 	{
 		bool handled = false;
 		
@@ -174,7 +192,7 @@ namespace Pedestal
 			}
 		}
 		
-		handled = handled || app.DoCommand( code );
+		handled = handled || DoCommand( CommandCode( code ) );
 		
 		if ( !handled )
 		{
@@ -244,6 +262,8 @@ namespace Pedestal
 	 *	Event processing routines.
 	 *	--------------------------
 	 */
+	
+	static void HandleMenuChoice( long menuChoice );
 	
 	static bool DispatchCursorToFrontWindow( const EventRecord& event )
 	{
@@ -396,7 +416,8 @@ namespace Pedestal
 		
 		if ( found.part == N::inMenuBar )
 		{
-			TheApp().HandleMenuChoice( ::MenuSelect( event.where ) );
+			HandleMenuChoice( ::MenuSelect( event.where ) );
+			
 			return;
 		}
 		
@@ -522,7 +543,7 @@ namespace Pedestal
 		
 		if ( command  &&  CharMayBeCommand( c ) )
 		{
-			TheApp().HandleMenuChoice( ::MenuKey( c ) );
+			HandleMenuChoice( ::MenuKey( c ) );
 		}
 		else if ( gQuasimode && gQuasimode->KeyDown( event ) )
 		{
@@ -638,7 +659,7 @@ namespace Pedestal
 	}
 	
 	
-	void DispatchEvent( const EventRecord& event )
+	static void DispatchEvent( const EventRecord& event )
 	{
 		switch ( event.what )
 		{
@@ -688,51 +709,64 @@ namespace Pedestal
 		}
 	}
 	
-	void Application::AppleEventHandler( const N::AppleEvent&  appleEvent,
-	                                     N::AppleEvent&        reply,
-	                                     Application*          app )
+	static void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
+	
+	namespace
 	{
-		app->HandleAppleEvent( appleEvent, reply );
+		
+		void AppleEventHandler( const N::AppleEvent&   appleEvent,
+		                        N::AppleEvent&         reply,
+		                        Application           *app )
+		{
+			HandleAppleEvent( appleEvent, reply );
+		}
+		
 	}
 	
-	void Application::RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler )
+	static MenuRef GetAndInsertMenu( N::ResID resID )
 	{
-		menuItemHandlers[ code ] = handler;
+		MenuRef menu = N::GetMenu( resID );
+		
+		::InsertMenu( menu, MenuID() );
+		
+		return menu;
 	}
 	
 	Application::Application()
-	:
-		menuItemDispatcher( *this ),
-		myMenubar  ( menuItemDispatcher ),
-		myAppleMenu( N::InsertMenu( N::GetMenu( N::ResID( idAppleMENU ) ) ) ),
-		myFileMenu ( N::InsertMenu( N::GetMenu( N::ResID( idFileMENU  ) ) ) ),
-		myEditMenu ( N::InsertMenu( N::GetMenu( N::ResID( idEditMENU  ) ) ) ),
-		myCoreEventsHandler( N::AEInstallEventHandler< Application*,
-		                                               AppleEventHandler >( kCoreEventClass,
-		                                                                    N::AEEventID( typeWildCard ),
-		                                                                    this ) )
 	{
-		ASSERT( gApp == NULL );
-		gApp = this;
+		Init_MacToolbox();
+		
+		Init_Memory( 0 );
+		
+		N::AEInstallEventHandler< Application*,
+		                          AppleEventHandler >( kCoreEventClass,
+		                                               N::AEEventID( typeWildCard ),
+		                                               this ).release();
+		
+		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
+		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
+		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
 		
 		if ( N::Gestalt_Mask< N::gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
 		{
-			MenuRef fileMenu = N::GetMenuRef( myFileMenu );
 			SInt16 last = N::CountMenuItems( fileMenu );
+			
 			N::DeleteMenuItem( fileMenu, last );
 			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
 		}
 		
-		myMenubar.AddAppleMenu( myAppleMenu );
-		myMenubar.AddMenu     ( myFileMenu  );
-		myMenubar.AddMenu     ( myEditMenu  );
+		AddMenu( N::GetMenuID( appleMenu ) );
+		AddMenu( N::GetMenuID( fileMenu  ) );
+		AddMenu( N::GetMenuID( editMenu  ) );
+		
+		if ( !TARGET_API_MAC_CARBON )
+		{
+			PopulateAppleMenu( N::GetMenuID( appleMenu ) );
+		}
 		
 		N::InvalMenuBar();
 	}
 	
-	Application::~Application()
-	{
-	}
 	
 	static void CheckMouse()
 	{
@@ -864,7 +898,7 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
-	void Application::EventLoop()
+	static void EventLoop()
 	{
 		// Use two levels of looping.
 		// This lets us loop inside the try block without entering and leaving,
@@ -937,7 +971,7 @@ namespace Pedestal
 		return 0;
 	}
 	
-	void Application::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
+	void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
 		N::AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
 		N::AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
@@ -969,22 +1003,40 @@ namespace Pedestal
 		}
 	}
 	
-	void Application::HandleMenuChoice( long menuChoice )
+	struct UnhighlightMenus
 	{
-		myMenubar.ProcessMenuItem( menuChoice );
+		void operator()() const  { N::HiliteMenu(); }
+	};
+	
+	template < class Func >
+	class AtEnd
+	{
+		public:
+			AtEnd( const Func& func = Func() ) : func( func )  {}
+			~AtEnd()                                           { func(); }
+		
+		private:
+			Func func;
+	};
+	
+	void HandleMenuChoice( long menuChoice )
+	{
+		N::MenuID menuID = N::MenuID( HiWord( menuChoice ) );
+		SInt16    item   =            LoWord( menuChoice );
+		
+		AtEnd< UnhighlightMenus > unhighlightMenus;
+		
+		if ( MenuItemCode code = HandleMenuItem( menuID, item ) )
+		{
+			DispatchMenuItem( code );
+		}
 	}
 	
-	bool Application::DoCommand( MenuItemCode code )
+	bool DoCommand( CommandCode code )
 	{
-		typedef MenuItemHandlerMap::const_iterator const_iterator;
-		
-		const_iterator found = menuItemHandlers.find( code );
-		
-		if ( found != menuItemHandlers.end() )
+		if ( CommandHandler handler = GetCommandHandler( code ) )
 		{
-			MenuItemHandler* handler = found->second;
-			
-			return handler->Run( code );
+			return handler( code );
 		}
 		
 		switch ( code )

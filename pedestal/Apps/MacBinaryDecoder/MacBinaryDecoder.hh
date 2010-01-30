@@ -15,7 +15,6 @@
 
 // Pedestal
 #include "Pedestal/Application.hh"
-#include "Pedestal/AboutBox.hh"
 
 
 namespace MacBinaryDecoder
@@ -42,13 +41,11 @@ namespace MacBinaryDecoder
 #endif
 	
 	
-	class App : public Pedestal::Application,
-	            public Pedestal::AboutBoxOwner
+	class App : public Pedestal::Application
 	{
 		private:
 			static App* theApp;
 			
-			Pedestal::AboutHandler< App > itsAboutHandler;
 			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
 		
 		public:

@@ -8,6 +8,7 @@
 // Pedestal
 #include "Pedestal/GeneratedGraphic.hh"
 #include "Pedestal/GraphicView.hh"
+#include "Pedestal/UniqueWindowOwner.hh"
 #include "Pedestal/UserWindow.hh"
 
 
@@ -30,11 +31,8 @@ namespace Pedestal
 	
 	typedef GraphicView< GeneratedGraphic< AboutFunction > > AboutBoxView;
 	
-	AboutBoxOwner::~AboutBoxOwner()
-	{
-	}
 	
-	std::auto_ptr< Window > AboutBoxOwner::New()
+	static std::auto_ptr< Window > NewAboutBox()
 	{
 		Rect bounds = N::OffsetRect( N::SetRect( 0, 0, 128, 128 ),
 		                             300,
@@ -47,6 +45,14 @@ namespace Pedestal
 		window->SetView( std::auto_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
 		
 		return window;
+	}
+	
+	
+	static UniqueWindowOwner gAboutBox( &NewAboutBox );
+	
+	void ShowAboutBox()
+	{
+		gAboutBox.Show();
 	}
 	
 }
