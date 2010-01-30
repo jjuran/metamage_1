@@ -163,7 +163,7 @@ namespace Pedestal
 	
 	static Application* gApp = NULL;
 	
-	Application& TheApp()
+	static Application& TheApp()
 	{
 		return *gApp;
 	}
@@ -654,7 +654,7 @@ namespace Pedestal
 	}
 	
 	
-	void DispatchEvent( const EventRecord& event )
+	static void DispatchEvent( const EventRecord& event )
 	{
 		switch ( event.what )
 		{

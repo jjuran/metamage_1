@@ -106,10 +106,6 @@ namespace Pedestal
 			}
 	};
 	
-	Application& TheApp();
-	
-	void DispatchEvent( const EventRecord& event );
-	
 	// Callable at interrupt time.
 	// Call from a completion routine to resume synchronous processing.
 	void WakeUp();
