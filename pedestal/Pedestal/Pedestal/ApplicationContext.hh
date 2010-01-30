@@ -10,25 +10,9 @@
 namespace Pedestal
 {
 	
-	struct MacToolboxInit
-	{
-		MacToolboxInit();
-	};
+	void Init_MacToolbox();
 	
-	struct MemoryInit
-	{
-		MemoryInit( unsigned moreMasters );
-	};
-	
-	class ApplicationContext
-	{
-		private:
-			MacToolboxInit  itsMacToolboxInit;
-			MemoryInit      itsMemoryInit;
-		
-		public:
-			ApplicationContext();
-	};
+	void Init_Memory( unsigned moreMasters );
 	
 }
 

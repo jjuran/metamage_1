@@ -734,6 +734,10 @@ namespace Pedestal
 	
 	Application::Application()
 	{
+		Init_MacToolbox();
+		
+		Init_Memory( 0 );
+		
 		N::AEInstallEventHandler< Application*,
 		                          AppleEventHandler >( kCoreEventClass,
 		                                               N::AEEventID( typeWildCard ),

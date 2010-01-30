@@ -12,7 +12,7 @@
 namespace Pedestal
 {
 	
-	MacToolboxInit::MacToolboxInit()
+	void Init_MacToolbox()
 	{
 	#if !TARGET_API_MAC_CARBON
 		
@@ -29,7 +29,7 @@ namespace Pedestal
 		// FlushEvents?
 	}
 	
-	MemoryInit::MemoryInit( unsigned moreMasters )
+	void Init_Memory( unsigned moreMasters )
 	{
 	#if !TARGET_API_MAC_CARBON
 		
@@ -41,12 +41,6 @@ namespace Pedestal
 		{
 			::MoreMasters();
 		}
-	}
-	
-	ApplicationContext::ApplicationContext()
-	:
-		itsMemoryInit( 0 )
-	{
 	}
 	
 }

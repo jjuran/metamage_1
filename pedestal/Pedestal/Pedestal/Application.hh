@@ -6,14 +6,11 @@
 #ifndef PEDESTAL_APPLICATION_HH
 #define PEDESTAL_APPLICATION_HH
 
-// Pedestal
-#include "Pedestal/ApplicationContext.hh"
-
 
 namespace Pedestal
 {
 	
-	class Application : public ApplicationContext
+	class Application
 	{
 		public:
 			// Constructor & destructor.
