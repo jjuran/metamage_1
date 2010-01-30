@@ -45,10 +45,6 @@ namespace Pedestal
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
 		
 		private:
-			Nucleus::Owned< Nitrogen::MenuID > myAppleMenu;
-			Nucleus::Owned< Nitrogen::MenuID > myFileMenu;
-			Nucleus::Owned< Nitrogen::MenuID > myEditMenu;
-			
 			Nucleus::Owned< Nitrogen::AEEventHandler > myCoreEventsHandler;
 	};
 	

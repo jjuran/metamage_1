@@ -723,11 +723,17 @@ namespace Pedestal
 		gMenuItemHandlers[ code ] = handler;
 	}
 	
+	static MenuRef GetAndInsertMenu( N::ResID resID )
+	{
+		MenuRef menu = N::GetMenu( resID );
+		
+		::InsertMenu( menu, MenuID() );
+		
+		return menu;
+	}
+	
 	Application::Application()
 	:
-		myAppleMenu( N::InsertMenu( N::GetMenu( N::ResID( idAppleMENU ) ) ) ),
-		myFileMenu ( N::InsertMenu( N::GetMenu( N::ResID( idFileMENU  ) ) ) ),
-		myEditMenu ( N::InsertMenu( N::GetMenu( N::ResID( idEditMENU  ) ) ) ),
 		myCoreEventsHandler( N::AEInstallEventHandler< Application*,
 		                                               AppleEventHandler >( kCoreEventClass,
 		                                                                    N::AEEventID( typeWildCard ),
@@ -736,21 +742,25 @@ namespace Pedestal
 		ASSERT( gApp == NULL );
 		gApp = this;
 		
+		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
+		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
+		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
+		
 		if ( N::Gestalt_Mask< N::gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
 		{
-			MenuRef fileMenu = N::GetMenuRef( myFileMenu );
 			SInt16 last = N::CountMenuItems( fileMenu );
+			
 			N::DeleteMenuItem( fileMenu, last );
 			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
 		}
 		
-		AddMenu( myAppleMenu );
-		AddMenu( myFileMenu  );
-		AddMenu( myEditMenu  );
+		AddMenu( N::GetMenuID( appleMenu ) );
+		AddMenu( N::GetMenuID( fileMenu  ) );
+		AddMenu( N::GetMenuID( editMenu  ) );
 		
 		if ( !TARGET_API_MAC_CARBON )
 		{
-			PopulateAppleMenu( myAppleMenu );
+			PopulateAppleMenu( N::GetMenuID( appleMenu ) );
 		}
 		
 		N::InvalMenuBar();
