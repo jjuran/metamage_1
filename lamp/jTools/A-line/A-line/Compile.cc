@@ -640,7 +640,7 @@ namespace tool
 		
 		TaskPtr precompile_task = seize_ptr( new NullTask() );
 		
-		// In case we have a toolkit with no common sources?
+		// In case we have a toolkit with no common sources
 		precompile_task->AddDependent( source_dependency );
 		
 		// For width reasons, we call the precompiled header a 'prefix'.
