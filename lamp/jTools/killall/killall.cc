@@ -6,7 +6,6 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdio.h>
 
 // Standard C/C++
 #include <cctype>
@@ -22,6 +21,9 @@
 
 // iota
 #include "iota/decimal.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 // klibc
 #include "klibc/signal_lookup.hh"
@@ -91,7 +93,7 @@ namespace tool
 						}
 						else
 						{
-							std::fprintf( stderr, "%s(%d): %s\n", proc_name, pid, std::strerror( errno ) );
+							more::perror( proc_name, iota::inscribe_decimal( pid ) );
 						}
 					}
 				}
@@ -137,7 +139,7 @@ namespace tool
 		
 		if ( kills == 0 )
 		{
-			std::fprintf( stderr, "%s: %s\n", argp[1], "no process killed" );
+			more::perror( argp[1], "no process killed", 0 );
 			
 			return EXIT_FAILURE;
 		}
