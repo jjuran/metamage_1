@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Scribes.hh"
+#include "Genie/Utilities/GetMachineName.hh"
 
 #if !TARGET_API_MAC_CARBON
 	
@@ -62,7 +63,11 @@ namespace Genie
 				return false;
 			}
 			
-			return false;  // FIXME
+			const unsigned char* name = GetMachineName();
+			
+			const bool powerpc = name[1] == 'P';
+			
+			return !powerpc;
 		}
 	};
 	
