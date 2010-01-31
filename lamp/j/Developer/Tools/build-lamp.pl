@@ -77,6 +77,13 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $lamp_dist\n";
 
+my $vers_2_data;
+
+if ( defined $ENV{BUILD_DATE} )
+{
+	$vers_2_data = `vers "" "Lamp experimental build, $ENV{BUILD_DATE}"`;
+}
+
 my %fsmap =
 (
 	Developer =>
@@ -251,6 +258,17 @@ sub copy_file
 	-f $src or die "### Missing file $src for copy\n";
 	
 	verbose_system( 'cp', $src, $dest );
+	
+	if ( defined $vers_2_data  &&  -d "$dest/$name/res" )
+	{
+		my ( $name ) = $src =~ m{/([^/]*)$};
+		
+		open my $out, ">", "$dest/$name/res/vers/2" or die "$dest/$name/res/vers/2: $!\n";
+		
+		print $out $vers_2_data;
+		
+		close $out;
+	}
 	
 	return;
 }
