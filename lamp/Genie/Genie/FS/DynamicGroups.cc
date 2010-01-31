@@ -17,7 +17,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Dynamic_N::Open( OpenFlags flags ) const
 	{
-		const unsigned id = std::atoi( Name().c_str() );
+		const unsigned id = iota::parse_unsigned_decimal( Name().c_str() );
 		
 		return itsGetter( id );
 	}
@@ -39,7 +39,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const std::string& name ) const
 	{
-		const unsigned id = atoi( name.c_str() );
+		const unsigned id = iota::parse_unsigned_decimal( name.c_str() );
 		
 		const DynamicGroup& sequence = ItemSequence();
 		

@@ -10,15 +10,13 @@
 // Standard C/C++
 #include <cstring>
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/environ.hh"
 
 // poseven
@@ -198,7 +196,7 @@ namespace tool
 		
 		if ( argc > 1 )
 		{
-			exitStatus = std::atoi( argv[ 1 ] );
+			exitStatus = iota::parse_unsigned_decimal( argv[ 1 ] );
 		}
 		
 		throw p7::exit_t( exitStatus );

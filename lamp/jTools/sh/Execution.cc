@@ -13,7 +13,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 
 // POSIX
 #include <fcntl.h>
@@ -211,7 +210,7 @@ namespace tool
 		}
 		else if ( std::isdigit( param[0] ) )
 		{
-			int i = std::atoi( param.c_str() );
+			int i = iota::parse_unsigned_decimal( param.c_str() );
 			
 			if ( i <= gParameterCount )
 			{
@@ -348,7 +347,7 @@ namespace tool
 					break;
 				
 				case Sh::kRedirectInputDuplicate:
-					file = std::atoi( param );  // FIXME:  Probably bad if param isn't an integer
+					file = iota::parse_unsigned_decimal( param );  // FIXME:  Probably bad if param isn't an integer
 					Dup2( file, fd );
 					break;
 				
@@ -392,7 +391,7 @@ namespace tool
 					break;
 				
 				case Sh::kRedirectOutputDuplicate:
-					file = std::atoi( param );  // FIXME:  Probably bad if atoi returns 0
+					file = iota::parse_unsigned_decimal( param );  // FIXME:  Probably bad if atoi returns 0
 					Dup2( file, fd );
 					break;
 				

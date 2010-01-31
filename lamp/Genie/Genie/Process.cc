@@ -19,6 +19,7 @@
 #include "lamp/syscalls.h"
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Debug
@@ -940,7 +941,7 @@ namespace Genie
 			{
 				const char* fd_name = script_path + STRLEN( "/dev/fd/" );
 				
-				script_fd = std::atoi( fd_name );
+				script_fd = iota::parse_unsigned_decimal( fd_name );
 			}
 		}
 		

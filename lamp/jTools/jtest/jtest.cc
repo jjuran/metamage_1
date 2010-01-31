@@ -14,7 +14,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 
 // POSIX
 #include <fcntl.h>
@@ -113,7 +112,7 @@ namespace tool
 	{
 		std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 		
-		int fd_to_redirect = std::atoi( line.substr( 0, end_of_fd - 0 ).c_str() );
+		int fd_to_redirect = iota::parse_unsigned_decimal( line.substr( 0, end_of_fd - 0 ).c_str() );
 		
 		std::size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
 		
@@ -514,7 +513,7 @@ namespace tool
 			
 			if ( line[0] == '?' )
 			{
-				int exit_status = std::atoi( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+				int exit_status = iota::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
 				test.SetExitStatus( exit_status );
 				continue;
 			}

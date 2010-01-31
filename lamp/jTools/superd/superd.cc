@@ -9,7 +9,8 @@
 // Standard C/C++
 #include <cstring>
 
-// Iota
+// iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // poseven
@@ -69,7 +70,7 @@ namespace tool
 			return 1;
 		}
 		
-		p7::in_port_t port = p7::in_port_t( std::atoi( argv[ 1 ] ) );
+		p7::in_port_t port = p7::in_port_t( iota::parse_unsigned_decimal( argv[ 1 ] ) );
 		
 		const char* command = argv[ 2 ];
 		

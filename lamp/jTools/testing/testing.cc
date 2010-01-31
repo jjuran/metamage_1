@@ -24,7 +24,6 @@
 
 // Standard C/C++
 #include <cstdio>
-#include <cstdlib>
 
 // Standard C++
 #include <functional>
@@ -144,7 +143,7 @@ static int TestMap( int argc, iota::argv_t argv )
 {
 	std::vector< std::string > foo;
 	
-	int count = (argc > 2) ? std::atoi( argv[ 2 ] ) : 10000;
+	int count = (argc > 2) ? iota::parse_unsigned_decimal( argv[ 2 ] ) : 10000;
 	
 	for ( int i = 0;  i < count;  ++i )
 	{
@@ -923,7 +922,7 @@ static int TestThrow( int argc, iota::argv_t argv )
 {
 	if ( argc < 3 )  return 1;
 	
-	int errnum = std::atoi( argv[2] );
+	int errnum = iota::parse_decimal( argv[2] );
 	
 	if ( errnum < 0 )
 	{
@@ -1048,7 +1047,7 @@ static int TestPath( int argc, iota::argv_t argv )
 	n::owned< p7::fd_t > window = p7::open( window_path,
 	                                        p7::o_rdonly | p7::o_directory );
 	
-	int pix = std::atoi( argv[2] );
+	int pix = iota::parse_decimal( argv[2] );
 	
 	Point location = { 0, 0 };
 	

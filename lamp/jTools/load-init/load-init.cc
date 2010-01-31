@@ -13,6 +13,7 @@
 #include <vector>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
@@ -52,7 +53,7 @@ namespace tool
 		
 		N::ResType resType = N::ResType( iota::decode_quad( type ) );
 		
-		N::ResID   resID   = N::ResID( std::atoi( id ) );
+		N::ResID   resID   = N::ResID( iota::parse_decimal( id ) );
 		
 		const char* file = args[0];
 		

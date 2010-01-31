@@ -31,7 +31,7 @@ namespace Genie
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return N::CRMDeviceID( atoi( parent->Name().c_str() ) );
+		return N::CRMDeviceID( iota::parse_decimal( parent->Name().c_str() ) );
 	}
 	
 	static N::CRMDeviceID GetKey( const FSTree* that )
@@ -63,7 +63,7 @@ namespace Genie
 	
 	static FSTreePtr serial_lookup( const FSTreePtr& parent, const std::string& name )
 	{
-		const N::CRMDeviceID key = N::CRMDeviceID( atoi( name.c_str() ) );
+		const N::CRMDeviceID key = N::CRMDeviceID( iota::parse_decimal( name.c_str() ) );
 		
 		// We can't just call N::CRMSearch< N::crmSerialDevice >( key ),
 		// because that returns the *next* record.  So, linear search it is.

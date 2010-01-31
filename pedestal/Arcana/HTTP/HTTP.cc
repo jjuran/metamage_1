@@ -8,7 +8,6 @@
 // Standard C/C++
 #include <cctype>
 #include <cerrno>
-#include <cstdlib>
 #include <cstring>
 
 // Standard C++
@@ -240,7 +239,7 @@ namespace HTTP
 				                           header_stream + contentLengthEntry->crlf_offset );
 				
 				// Now get the *real* value, as opposed to its textual representation
-				itsContentLength = std::atoi( contentLength.c_str() );
+				itsContentLength = iota::parse_unsigned_decimal( contentLength.c_str() );
 				itsContentLengthIsKnown = true;
 			}
 			else
@@ -353,7 +352,7 @@ namespace HTTP
 		
 		if ( const char* p = std::strchr( message.data(), ' ' ) )
 		{
-			return std::atoi( p + 1 );
+			return iota::parse_unsigned_decimal( p + 1 );
 		}
 		
 		return 0;

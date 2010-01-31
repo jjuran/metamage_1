@@ -12,7 +12,8 @@
 // POSIX
 #include <dirent.h>
 
-// Iota
+// iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Debug
@@ -138,12 +139,12 @@ namespace tool
 		
 		std::string tpgid_string( p_tpgid, space );
 		
-		pid_t pid = std::atoi( pid_name.c_str() );
+		pid_t pid = iota::parse_unsigned_decimal( pid_name.c_str() );
 		
-		pid_t ppid  = std::atoi( p_ppid  );
-		pid_t pgid  = std::atoi( p_pgid  );
-		pid_t sid   = std::atoi( p_sid   );
-		pid_t tpgid = std::atoi( p_tpgid );
+		pid_t ppid  = iota::parse_unsigned_decimal( p_ppid  );
+		pid_t pgid  = iota::parse_unsigned_decimal( p_pgid  );
+		pid_t sid   = iota::parse_unsigned_decimal( p_sid   );
+		pid_t tpgid = iota::parse_unsigned_decimal( p_tpgid );
 		
 		if ( term_string.length() == STRLEN( "/sys/window/12345678/tty" ) )
 		{
@@ -219,7 +220,7 @@ namespace tool
 		
 		while ( const dirent* ent = readdir( iter ) )
 		{
-			if ( pid_t pid = std::atoi( ent->d_name ) )
+			if ( pid_t pid = iota::parse_unsigned_decimal( ent->d_name ) )
 			{
 				// A process could exit while we're examining it
 				try

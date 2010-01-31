@@ -21,6 +21,9 @@ enum { sigMPWShell = 'MPS ' };
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/decimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -210,7 +213,7 @@ namespace tool
 		
 		for ( int i = 1;  i < argc;  ++i )
 		{
-			int errnum = std::atoi( argv[ i ] );
+			int errnum = iota::parse_decimal( argv[ i ] );
 			
 			// look up and print
 			

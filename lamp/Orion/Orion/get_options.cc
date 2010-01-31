@@ -29,8 +29,10 @@
 #include <map>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
+
+// iota
+#include "iota/decimal.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -81,7 +83,7 @@ namespace orion
 			
 			void set( const char* param ) const
 			{
-				its_integer = atoi( param );
+				its_integer = iota::parse_decimal( param );
 			}
 	};
 	

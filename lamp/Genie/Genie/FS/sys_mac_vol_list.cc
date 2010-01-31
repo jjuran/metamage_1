@@ -56,7 +56,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return N::FSVolumeRefNum( -std::atoi( parent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static N::FSVolumeRefNum GetKey( const FSTree* that )
@@ -153,7 +153,7 @@ namespace Genie
 		{
 			if ( well_formed_name::applies( name ) )
 			{
-				const int i = atoi( name.c_str() );
+				const int i = iota::parse_unsigned_decimal( name.c_str() );
 				
 				if ( (i & 0xffff8000) == 0 )
 				{

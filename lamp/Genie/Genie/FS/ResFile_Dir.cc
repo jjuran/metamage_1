@@ -201,7 +201,7 @@ namespace Genie
 		
 		const N::ResType type = N::ResType( osType );
 		
-		const N::ResID id = N::ResID( atoi( file->Name().c_str() ) );
+		const N::ResID id = N::ResID( iota::parse_decimal( file->Name().c_str() ) );
 		
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
@@ -278,7 +278,7 @@ namespace Genie
 	
 	N::ResID FSTree_RsrcFile_Type_ID::GetID() const
 	{
-		const int id = atoi( Name().c_str() );
+		const int id = iota::parse_decimal( Name().c_str() );
 		
 		return N::ResID( id );
 	}

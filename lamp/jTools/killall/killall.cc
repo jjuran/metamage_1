@@ -20,6 +20,9 @@
 #include <dirent.h>
 #include <unistd.h>
 
+// iota
+#include "iota/decimal.hh"
+
 // klibc
 #include "klibc/signal_lookup.hh"
 
@@ -70,7 +73,7 @@ namespace tool
 		{
 			const char* proc_id = entry->d_name;
 			
-			if ( pid_t pid = std::atoi( proc_id ) )
+			if ( pid_t pid = iota::parse_unsigned_decimal( proc_id ) )
 			{
 				std::string exe = std::string( "/proc/" ) + proc_id + "/exe";
 				
@@ -114,7 +117,8 @@ namespace tool
 			bool numeric = std::isdigit( *sig );
 			
 			// FIXME:  Needs error checking instead of silently using 0
-			sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
+			sig_number = numeric ? iota::parse_unsigned_decimal( sig )
+			                     : klibc::signal_lookup        ( sig );
 			
 			++argp;
 			--argc;
