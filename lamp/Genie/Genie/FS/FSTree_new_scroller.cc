@@ -57,6 +57,8 @@ namespace Genie
 			
 			View& Subview();
 			
+			Rect ApertureFromBounds( const Rect& bounds );
+			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			void Scroll( int dh, int dv );
@@ -72,6 +74,21 @@ namespace Genie
 		}
 		
 		return *subview;
+	}
+	
+	Rect BasicScroller::ApertureFromBounds( const Rect& bounds )
+	{
+		Rect area = { 0 };
+		
+		area.right  = ClientWidth();
+		area.bottom = ClientHeight();
+		
+		const short dx = bounds.left - GetHOffset();
+		const short dy = bounds.top  - GetVOffset();
+		
+		::OffsetRect( &area, dx, dy );
+		
+		return area;
 	}
 	
 	void BasicScroller::Draw( const Rect& bounds, bool erasing )
