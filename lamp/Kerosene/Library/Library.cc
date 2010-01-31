@@ -711,3 +711,27 @@ char* realpath( const char *path, char *buffer )
 	return buffer;
 }
 
+int setgid( gid_t gid )
+{
+	if ( gid != 0 )
+	{
+		errno = EINVAL;
+		
+		return -1;
+	}
+	
+	return 0;
+}
+
+int setuid( uid_t uid )
+{
+	if ( uid != 0 )
+	{
+		errno = EINVAL;
+		
+		return -1;
+	}
+	
+	return 0;
+}
+

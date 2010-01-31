@@ -20,25 +20,6 @@ typedef enum Boolean Boolean;
 
 #endif
 
-/* Borrowed from msdos.c
- * Just pretend that everyone is a superuser
- */
-/* DISPATCH_START */
-#define ROOT_UID	0
-#define ROOT_GID	0
-
-int
-(setuid)(Uid_t uid)
-{ 
-	return (uid==ROOT_UID?0:-1);
-}
-
-int
-(setgid)(Gid_t gid)
-{ 
-	return (gid==ROOT_GID?0:-1); 
-}
-
 void Lamp_async_check()
 {
 	static unsigned long global_counter = 0;
