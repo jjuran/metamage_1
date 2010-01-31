@@ -18,6 +18,7 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "grp.h"
 #include "pwd.h"
 #include "sys/ioctl.h"
 #include "sys/stat.h"
@@ -291,6 +292,16 @@ int creat( const char* path, mode_t mode )
 int open( const char* path, int flags, mode_t mode )
 {
 	return openat( AT_FDCWD, path, flags, mode );
+}
+
+#pragma mark -
+#pragma mark ¥ grp ¥
+
+struct group* getgrnam( const char *name )
+{
+	errno = ENOSYS;
+	
+	return NULL;
 }
 
 #pragma mark -
@@ -610,6 +621,13 @@ uid_t getgid()   { return 0; }
 uid_t getegid()  { return 0; }
 
 pid_t getpgrp()  { return getpgid( 0 ); }
+
+int initgroups( const char *user, gid_t group )
+{
+	errno = ENOSYS;
+	
+	return -1;
+}
 
 int isatty( int fd )
 {
