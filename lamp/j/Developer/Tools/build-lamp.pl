@@ -365,7 +365,7 @@ sub make_macball
 }
 
 
-want_dir( tmpdir() );
+want_dir( $tmp_dir );
 
 mkdir $tmp_subdir;
 
