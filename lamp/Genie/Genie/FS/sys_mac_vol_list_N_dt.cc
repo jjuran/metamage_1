@@ -114,23 +114,26 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr ResolveLink() const
-			{
-				const FSTreePtr& parent = ParentRef();
-				
-				const ::OSType creator = iota::decode_quad( parent->Name().c_str() );
-				
-				const FSTreePtr& great_x2_grandparent = parent->ParentRef()->ParentRef()->ParentRef();
-				
-				const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
-				
-				const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ) );
-				
-				const bool onServer = VolumeIsOnServer( vRefNum );
-				
-				return FSTreeFromFSSpec( file, onServer );
-			}
+			FSTreePtr ResolveLink() const;
 	};
+	
+	
+	FSTreePtr dt_appls_QUAD_latest::ResolveLink() const
+	{
+		const FSTreePtr& parent = ParentRef();
+		
+		const ::OSType creator = iota::decode_quad( parent->Name().c_str() );
+		
+		const FSTreePtr& great_x2_grandparent = parent->ParentRef()->ParentRef()->ParentRef();
+		
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
+		
+		const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ) );
+		
+		const bool onServer = VolumeIsOnServer( vRefNum );
+		
+		return FSTreeFromFSSpec( file, onServer );
+	}
 	
 	
 	extern const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
