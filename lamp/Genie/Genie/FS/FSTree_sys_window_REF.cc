@@ -582,7 +582,8 @@ namespace Genie
 			tty = params.itsTTYDelegate->Open( flags );
 		}
 		
-		std::string pathname = ( has_tty ? tty->GetFile().get() : this )->Pathname();
+		std::string pathname = ( has_tty ? tty->GetFile().get()
+		                                 : this                 )->Pathname();
 		
 		boost::shared_ptr< IOHandle > terminal = NewTerminal( pathname );
 		
