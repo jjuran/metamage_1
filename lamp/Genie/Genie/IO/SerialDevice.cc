@@ -60,42 +60,27 @@ namespace Genie
 	class SerialDeviceHandle : public DeviceHandle
 	{
 		private:
-			NN::Shared< N::DriverRefNum > itsOutputRefNum;
-			NN::Shared< N::DriverRefNum > itsInputRefNum;
+			NN::Shared< N::DriverRefNum >  itsOutputRefNum;
+			NN::Shared< N::DriverRefNum >  itsInputRefNum;
+			bool                           itIsPassive;
 		
 		protected:
 			bool IsShared() const  { return !itsOutputRefNum.Sole(); }
 		
 		public:
-			SerialDeviceHandle( const std::string& portName );
+			SerialDeviceHandle( const std::string& portName, bool passive );
+			
+			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
 			
 			SerialDeviceHandle( const SerialDeviceHandle& other );
 			
-			virtual bool Preempted() const  { return false; }
+			bool Preempted() const  { return itIsPassive && IsShared(); }
 			
 			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
-	};
-	
-	class ActiveSerialDeviceHandle : public SerialDeviceHandle
-	{
-		public:
-			ActiveSerialDeviceHandle( const std::string& portName ) : SerialDeviceHandle( portName )  {}
-			
-			ActiveSerialDeviceHandle( const SerialDeviceHandle& h ) : SerialDeviceHandle( h )  {}
-	};
-	
-	class PassiveSerialDeviceHandle : public SerialDeviceHandle
-	{
-		public:
-			PassiveSerialDeviceHandle( const std::string& portName ) : SerialDeviceHandle( portName )  {}
-			
-			PassiveSerialDeviceHandle( const SerialDeviceHandle& h ) : SerialDeviceHandle( h )  {}
-			
-			bool Preempted() const  { return IsShared(); }
 	};
 	
 	struct SerialDevicePair
@@ -113,12 +98,9 @@ namespace Genie
 	}
 	
 	template < class Type >
-	inline boost::shared_ptr< IOHandle > NewSerialDeviceHandle( Type param, bool isPassive )
+	static inline boost::shared_ptr< IOHandle > NewSerialDeviceHandle( Type param, bool isPassive )
 	{
-		IOHandle* h = isPassive ? static_cast< IOHandle* >( new PassiveSerialDeviceHandle( param ) )
-		                        : static_cast< IOHandle* >( new ActiveSerialDeviceHandle ( param ) );
-		
-		return boost::shared_ptr< IOHandle >( h );
+		return seize_ptr( new SerialDeviceHandle( param, isPassive ) );
 	}
 	
 #endif
@@ -147,7 +129,7 @@ namespace Genie
 		}
 		
 		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
-		                                                       : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock() ), isPassive );
+		                                                       : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock().get() ), isPassive );
 		
 		same = result;
 		
@@ -223,11 +205,12 @@ namespace Genie
 		return N::OpenDriver( driverName );
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName )
+	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName, bool passive )
 	:
 		DeviceHandle( O_RDWR ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
-		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) )
+		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
+		itIsPassive( passive )
 	{
 		
 		using N::kSERDHandshake;
@@ -241,11 +224,21 @@ namespace Genie
 		N::SerReset( itsOutputRefNum, baud19200 | data8 | noParity | stop10 );
 	}
 	
+	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
+	:
+		DeviceHandle( O_RDWR ),
+		itsOutputRefNum( other.itsOutputRefNum ),
+		itsInputRefNum ( other.itsInputRefNum  ),
+		itIsPassive    ( passive               )
+	{
+	}
+	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
 	:
 		DeviceHandle( O_RDWR ),
 		itsOutputRefNum( other.itsOutputRefNum ),
-		itsInputRefNum ( other.itsInputRefNum  )
+		itsInputRefNum ( other.itsInputRefNum  ),
+		itIsPassive    ( other.itIsPassive     )
 	{
 	}
 	
