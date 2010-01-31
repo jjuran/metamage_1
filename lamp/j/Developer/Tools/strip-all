@@ -1,0 +1,4 @@
+#!/bin/sh
+
+test -f /sys/app/exe && strip /{,usr/}{,s}bin/* /Developer/Tools/* /sys/app/exe
+
