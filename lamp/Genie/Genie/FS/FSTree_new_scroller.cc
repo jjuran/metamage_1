@@ -91,6 +91,18 @@ namespace Genie
 		return area;
 	}
 	
+	static void Draw_Clipped( BasicScroller&  that,
+	                          const Rect&     bounds,
+	                          bool            erasing,
+	                          RgnHandle       clip )
+	{
+		NN::Saved< N::Clip_Value > savedClip;
+		
+		N::SetClip( N::SectRgn( N::RectRgn( bounds ), clip ) );
+		
+		that.Superview::Draw( bounds, erasing );
+	}
+	
 	void BasicScroller::Draw( const Rect& bounds, bool erasing )
 	{
 		ScrollerParameters::ViewBounds( GetKey() ) = bounds;
