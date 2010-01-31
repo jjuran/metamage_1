@@ -47,6 +47,7 @@
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
+#include "Pedestal/SetPort_GetWindow.hh"
 #include "Pedestal/Window.hh"
 
 
@@ -179,17 +180,9 @@ namespace Pedestal
 	{
 		bool handled = false;
 		
-		if ( N::WindowRef window = N::FrontWindow() )
+		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
-			{
-				if ( Window* base = N::GetWRefCon( window ) )
-				{
-					N::SetPortWindowPort( window );
-					
-					handled = base->GetView()->UserCommand( code );
-				}
-			}
+			handled = window->GetView()->UserCommand( code );
 		}
 		
 		handled = handled || DoCommand( CommandCode( code ) );
@@ -226,16 +219,9 @@ namespace Pedestal
 	{
 		gNeedToConfigureKeyboard = true;
 		
-		N::WindowRef window = N::FrontWindow();
-		
-		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				N::SetPortWindowPort( window );
-				
-				return base->Activate( false );
-			}
+			window->Activate( false );
 		}
 	}
 	
@@ -243,16 +229,9 @@ namespace Pedestal
 	{
 		gNeedToConfigureKeyboard = true;
 		
-		N::WindowRef window = N::FrontWindow();
-		
-		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				N::SetPortWindowPort( window );
-				
-				return base->Activate( true );
-			}
+			window->Activate( true );
 		}
 	}
 	
@@ -267,16 +246,9 @@ namespace Pedestal
 	
 	static bool DispatchCursorToFrontWindow( const EventRecord& event )
 	{
-		N::WindowRef window = N::FrontWindow();
-		
-		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				N::SetPortWindowPort( window );
-				
-				return base->GetView()->SetCursor( event, NULL );
-			}
+			return window->GetView()->SetCursor( event, NULL );
 		}
 		
 		return false;
@@ -362,21 +334,18 @@ namespace Pedestal
 		return TrackedControl( found.control, found.part, point );
 	}
 	
-	static void RespondToContent( const EventRecord& event, N::WindowRef window )
+	static void RespondToContent( const EventRecord& event, WindowRef windowRef )
 	{
 		Point pt = N::GlobalToLocal( event.where );
 		
 		// TrackedControl's result indicates whether a control was found.
-		if ( TrackedControl( N::FindControl( pt, window ), pt ) )
+		if ( TrackedControl( N::FindControl( pt, windowRef ), pt ) )
 		{
 			// already handled
 		}
-		else if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		else if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				base->MouseDown( event );
-			}
+			window->MouseDown( event );
 		}
 	}
 	
@@ -492,21 +461,13 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		if ( N::WindowRef window = N::FrontWindow() )
+		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			if ( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) )
 			{
-				if ( Window* base = N::GetWRefCon( window ) )
-				{
-					N::SetPortWindowPort( window );
-					
-					if ( gQuasimode = base->GetView()->EnterShiftSpaceQuasimode( event ) )
-					{
-						gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
-						
-						return;
-					}
-				}
+				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
+				
+				return;
 			}
 		}
 		
@@ -553,17 +514,9 @@ namespace Pedestal
 		{
 			EnterShiftSpaceQuasimode( event );
 		}
-		else if ( N::WindowRef window = N::FrontWindow() )
+		else if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
-			{
-				if ( Window* base = N::GetWRefCon( window ) )
-				{
-					N::SetPortWindowPort( window );
-					
-					base->GetView()->KeyDown( event );
-				}
-			}
+			window->GetView()->KeyDown( event );
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;
@@ -571,49 +524,35 @@ namespace Pedestal
 	
 	static void DispatchActivate( const EventRecord& event )
 	{
-		N::WindowRef window = reinterpret_cast< ::WindowRef >( event.message );
-		
-		ASSERT( window != NULL );
-		
-		N::SetPortWindowPort( window );
-		
-		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_GetWindow( (::WindowRef) event.message ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				base->Activate( event.modifiers & activeFlag );
-			}
+			window->Activate( event.modifiers & activeFlag );
 		}
 	}
 	
 	static void DispatchUpdate( const EventRecord& event )
 	{
-		N::WindowRef window = reinterpret_cast< ::WindowRef >( event.message );
+		WindowRef windowRef = reinterpret_cast< ::WindowRef >( event.message );
 		
-		ASSERT( window != NULL );
+		ASSERT( windowRef != NULL );
 		
-		N::SetPortWindowPort( window );
+		N::Update_Scope update( windowRef );
 		
-		N::Update_Scope update( window );
-		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
+		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( windowRef ) ) )
 		{
 			return;
 		}
 		
-		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				base->Update();
-			}
+			window->Update();
+			
+			NN::Saved< N::Clip_Value > savedClip;
+			
+			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
+			
+			N::UpdateControls( windowRef );
 		}
-		
-		NN::Saved< N::Clip_Value > savedClip;
-		
-		N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
-		
-		N::UpdateControls( window );
 	}
 	
 	static void DispatchDiskInsert( const EventRecord& event )
@@ -682,14 +621,11 @@ namespace Pedestal
 		}
 	}
 	
-	static void GiveIdleTimeToWindow( N::WindowRef window, const EventRecord& event )
+	static void GiveIdleTimeToWindow( N::WindowRef windowRef, const EventRecord& event )
 	{
-		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				base->GetView()->Idle( event );
-			}
+			window->GetView()->Idle( event );
 		}
 	}
 	
@@ -703,8 +639,6 @@ namespace Pedestal
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
-			N::SetPortWindowPort( window );
-			
 			GiveIdleTimeToWindow( window, event );
 		}
 	}
