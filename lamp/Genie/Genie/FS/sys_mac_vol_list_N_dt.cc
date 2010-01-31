@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -218,9 +219,101 @@ namespace Genie
 		// Can't enumerate
 	}
 	
+	
+	static std::string generate_dt_icons_QUAD_QUAD_X( const FSTree* that )
+	{
+		const FSTreePtr&    parent = that   ->ParentRef();
+		const FSTreePtr&   gparent = parent ->ParentRef();
+		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
+		
+		const short selector = iota::parse_unsigned_decimal( that->Name().c_str() );
+		
+		const ::OSType type    = iota::decode_quad( parent ->Name().c_str() );
+		const ::OSType creator = iota::decode_quad( gparent->Name().c_str() );
+		
+		const short vRefNum = -iota::parse_unsigned_decimal( gggparent->Name().c_str() );
+		
+		DTPBRec pb;
+		
+		N::PBDTGetPath( N::FSVolumeRefNum( vRefNum ), pb );
+		
+		const size_t max_icon_size = kLarge8BitIconSize;  // 1024
+		
+		char buffer[ max_icon_size ];
+		
+		pb.ioTagInfo     = 0;
+		pb.ioDTBuffer      = buffer;
+		pb.ioDTReqCount  = sizeof buffer;
+		pb.ioIconType    = selector;
+		pb.ioFileCreator = creator;
+		pb.ioFileType    = type;
+		
+		N::ThrowOSStatus( ::PBDTGetIconSync( &pb ) );
+		
+		if ( pb.ioDTActCount > pb.ioDTReqCount )
+		{
+			p7::throw_errno( E2BIG );
+		}
+		
+		std::string result( buffer, pb.ioDTActCount );
+		
+		return result;
+	}
+	
+	
+	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTreePtr& parent, const std::string& name )
+	{
+		if ( !canonical_positive_integer::applies( name ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
+	}
+	
+	static void icon_QUAD_QUAD_iterate( FSTreeCache& cache )
+	{
+		// Can't enumerate
+	}
+	
+	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const std::string& name )
+	{
+		if ( name.length() != sizeof 'quad' )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
+	}
+	
+	static void icon_QUAD_iterate( FSTreeCache& cache )
+	{
+		// Can't enumerate
+	}
+	
+	static FSTreePtr icon_lookup( const FSTreePtr& parent, const std::string& name )
+	{
+		if ( name.length() != sizeof 'quad' )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return new_basic_directory( parent, name, icon_QUAD_lookup, icon_QUAD_iterate );
+	}
+	
+	static void icon_iterate( FSTreeCache& cache )
+	{
+		// Can't enumerate
+	}
+	
 	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr& parent, const std::string& name )
 	{
 		return new_basic_directory( parent, name, appl_lookup, appl_iterate );
+	}
+	
+	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr& parent, const std::string& name )
+	{
+		return new_basic_directory( parent, name, icon_lookup, icon_iterate );
 	}
 	
 	
@@ -229,6 +322,8 @@ namespace Genie
 		{ "dir",  &Basic_Factory< FSTree_Desktop_Dir_Link > },
 		
 		{ "appls",  &new_sys_mac_vol_list_N_dt_appls },
+		
+		{ "icons",  &new_sys_mac_vol_list_N_dt_icons },
 		
 		{ NULL, NULL }
 		
