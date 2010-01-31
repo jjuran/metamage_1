@@ -109,32 +109,14 @@ namespace Genie
 		
 		itsSavedBounds = bounds;
 		
-		NN::Saved< N::Clip_Value > savedClip;
-		
-		N::SetClip( N::SectRgn( N::RectRgn( bounds ), N::GetClip() ) );
-		
-		Rect area = { 0 };
-		
-		area.right  = ClientWidth();
-		area.bottom = ClientHeight();
-		
-		short dx = bounds.left - GetHOffset();
-		short dy = bounds.top  - GetVOffset();
-		
-		::OffsetRect( &area, dx, dy );
-		
-		Subview().Draw( area, erasing );
+		Draw_Clipped( *this, bounds, erasing, N::GetClip() );
 	}
 	
 	void BasicScroller::Scroll( int dh, int dv )
 	{
 		const Rect& bounds = itsSavedBounds;
 		
-		NN::Saved< N::Clip_Value > savedClip;
-		
-		N::SetClip( N::ScrollRect( bounds, dh, dv ) );
-		
-		Draw( bounds, true );
+		Draw_Clipped( *this, bounds, true, N::ScrollRect( bounds, dh, dv ) );
 		
 		N::ValidRect( bounds );
 	}
