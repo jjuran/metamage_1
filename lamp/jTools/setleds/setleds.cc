@@ -6,7 +6,8 @@
 // Standard C/C++
 #include <cstdio>
 
-// Iota
+// iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Arcana
@@ -158,7 +159,7 @@ namespace tool
 		
 		bool setting = argc >= 2;
 		
-		int leds = setting ? std::atoi( argv[1] ) & kLEDValueMask
+		int leds = setting ? iota::parse_unsigned_decimal( argv[1] ) & kLEDValueMask
 		                   : -1;
 		
 		N::ADBDevice_Container adbs;

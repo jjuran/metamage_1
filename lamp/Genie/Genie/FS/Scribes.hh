@@ -88,7 +88,7 @@ namespace Genie
 		{
 			// *end == '\n'
 			
-			return std::atoi( begin );
+			return iota::parse_decimal( begin );
 		}
 	};
 	

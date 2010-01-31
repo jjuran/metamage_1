@@ -115,7 +115,7 @@ namespace Genie
 		}
 		else
 		{
-			start = std::atoi( begin );
+			start = iota::parse_unsigned_decimal( begin );
 			
 			const char* hyphen = std::find( begin, end, '-' );
 			
@@ -125,7 +125,7 @@ namespace Genie
 			
 			s_end = hyphen     == end ? start
 			      : hyphen + 1 == end ? length
-			      :                     std::atoi( hyphen + 1 );
+			      :                     iota::parse_unsigned_decimal( hyphen + 1 );
 			
 			// The selection must not be inverted or exceed the text range.
 			

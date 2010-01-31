@@ -8,7 +8,6 @@
 
 // Standard C/C++
 #include <cerrno>
-#include <cstdlib>
 
 // POSIX
 #include <arpa/inet.h>
@@ -68,7 +67,7 @@ namespace tool
 		const char* hostname = argv[1];
 		const char* port_str = argv[2];
 		
-		p7::in_port_t port = p7::in_port_t( std::atoi( port_str ) );
+		p7::in_port_t port = p7::in_port_t( iota::parse_unsigned_decimal( port_str ) );
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		

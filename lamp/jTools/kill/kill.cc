@@ -9,12 +9,12 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdlib>
 
 // POSIX
 #include <unistd.h>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // more-posix
@@ -37,7 +37,8 @@ int main( int argc, char **argv )
 		const bool numeric = std::isdigit( *sig );
 		
 		// FIXME:  Needs error checking instead of silently using 0
-		sig_number = numeric ? std::atoi( sig ) : klibc::signal_lookup( sig );
+		sig_number = numeric ? iota::parse_unsigned_decimal( sig )
+		                     : klibc::signal_lookup        ( sig );
 		
 		++argp;
 		--argc;
@@ -50,7 +51,7 @@ int main( int argc, char **argv )
 		return 1;
 	}
 	
-	const pid_t pid = std::atoi( argp[ 1 ] );
+	const pid_t pid = iota::parse_decimal( argp[ 1 ] );
 	
 	const int killed = kill( pid, sig_number );
 	

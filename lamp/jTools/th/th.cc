@@ -124,7 +124,7 @@ namespace tool
 			return results;
 		}
 		
-		results.planned = std::atoi( plan->c_str() + 3 );
+		results.planned = iota::parse_unsigned_decimal( plan->c_str() + 3 );
 		
 		unsigned next_test_number = 1;
 		
@@ -164,7 +164,7 @@ namespace tool
 				return results;
 			}
 			
-			if ( std::atoi( number ) != next_test_number++ )
+			if ( iota::parse_unsigned_decimal( number ) != next_test_number++ )
 			{
 				return results;
 			}

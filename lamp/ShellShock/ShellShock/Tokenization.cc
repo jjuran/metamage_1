@@ -6,7 +6,9 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdlib>
+
+// iota
+#include "iota/decimal.hh"
 
 
 namespace ShellShock
@@ -98,7 +100,7 @@ namespace ShellShock
 		
 		if ( q > p )
 		{
-			fd = std::atoi( std::string( p, q - p ).c_str() );
+			fd = iota::parse_unsigned_decimal( std::string( p, q - p ).c_str() );
 		}
 		
 		unsigned char len = 0;

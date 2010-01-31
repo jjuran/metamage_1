@@ -11,6 +11,7 @@
 #include <string.h>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/quad.hh"
 
@@ -106,7 +107,7 @@ namespace tool
 		
 		N::ResType resType = N::ResType( iota::decode_quad( gResType ) );
 		
-		N::ResID   resID   = N::ResID( std::atoi( gResID ) );
+		N::ResID   resID   = N::ResID( iota::parse_decimal( gResID ) );
 		
 		gHandle = N::Get1Resource( resType, resID );
 	}
@@ -141,7 +142,7 @@ namespace tool
 	
 	static void SeekOptor( const char* param )
 	{
-		std::size_t delta = std::atoi( param );
+		std::size_t delta = iota::parse_unsigned_decimal( param );
 		
 		gOffset += delta;
 	}

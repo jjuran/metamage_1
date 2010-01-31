@@ -24,7 +24,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return N::FSVolumeRefNum( -std::atoi( parent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static N::FSVolumeRefNum GetKey( const FSTree* that )

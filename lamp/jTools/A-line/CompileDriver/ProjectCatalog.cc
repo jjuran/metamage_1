@@ -291,8 +291,8 @@ namespace tool
 						
 						std::string config_pathname( tab2 + 1 );
 						
-						PlatformDemands demands( Platform( std::atoi( requirements.c_str() ) ),
-						                         Platform( std::atoi( prohibitions.c_str() ) ) );
+						PlatformDemands demands( Platform( iota::parse_unsigned_decimal( requirements.c_str() ) ),
+						                         Platform( iota::parse_unsigned_decimal( prohibitions.c_str() ) ) );
 						
 						add_cached_config( project_name, demands, config_pathname );
 					}

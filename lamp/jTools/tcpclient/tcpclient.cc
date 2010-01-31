@@ -5,7 +5,6 @@
 
 // Standard C/C++
 #include <cerrno>
-#include <cstdlib>
 
 // Standard C++
 #include <string>
@@ -60,7 +59,7 @@ namespace tool
 	
 	static void Connect( const char* hostname, const char* port_str )
 	{
-		p7::in_port_t port = p7::in_port_t( std::atoi( port_str ) );
+		p7::in_port_t port = p7::in_port_t( iota::parse_unsigned_decimal( port_str ) );
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		

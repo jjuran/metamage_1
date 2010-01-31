@@ -110,7 +110,7 @@ namespace Genie
 	{
 		static unsigned apply( const std::string& name )
 		{
-			return atoi( name.c_str() );
+			return iota::parse_unsigned_decimal( name.c_str() );
 		}
 	};
 	

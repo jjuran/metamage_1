@@ -406,7 +406,7 @@ namespace Genie
 		
 		if ( (GetFlags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
 		{
-			resID = std::atoi( buffer );
+			resID = iota::parse_decimal( buffer );
 			
 			buffer = (const char*) &resID;
 			

@@ -7,11 +7,13 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdlib>
 #include <cstring>
 
 // Standard C++
 #include <map>
+
+// iota
+#include "iota/decimal.hh"
 
 
 static std::string join( const char* space, const std::string& a, const std::string& b )
@@ -197,18 +199,14 @@ namespace recall
 		return sign + type;
 	}
 	
-	static int ReadLength( const char*& p )
+	static inline unsigned ReadLength( const char*& p )
 	{
-		int length = std::atoi( p );
-		
-		while ( std::isdigit( *++p ) )  continue;
-		
-		return length;
+		return iota::parse_unsigned_decimal( &p );
 	}
 	
 	static std::string ReadLName( const char*& p )
 	{
-		int length = ReadLength( p );
+		unsigned length = ReadLength( p );
 		
 		std::string result( p, length );
 		
@@ -221,7 +219,7 @@ namespace recall
 	{
 		if ( *begin != '-' )
 		{
-			unsigned x = std::atoi( begin );  // *end is either ',' or '>'
+			unsigned x = iota::parse_unsigned_decimal( begin );  // *end is either ',' or '>'
 			
 			char code[] = "'code'";
 			

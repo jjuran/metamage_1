@@ -8,6 +8,7 @@
 #include "Genie/FS/sys_mac_vol_list_N_dt.hh"
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/quad.hh"
 
 // poseven
@@ -33,7 +34,7 @@ namespace Genie
 	{
 		const FSTreePtr& grandparent = parent->ParentRef();
 		
-		return N::FSVolumeRefNum( -std::atoi( grandparent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( grandparent->Name().c_str() ) );
 	}
 	
 	
@@ -114,7 +115,7 @@ namespace Genie
 				
 				const FSTreePtr& great_x2_grandparent = parent->ParentRef()->ParentRef()->ParentRef();
 				
-				const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -atoi( great_x2_grandparent->Name().c_str() ) );
+				const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
 				
 				const FSSpec file = DTGetAPPL( vRefNum, creator );
 				

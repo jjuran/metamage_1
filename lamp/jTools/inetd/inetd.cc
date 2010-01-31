@@ -14,7 +14,8 @@
 #include <sys/select.h>
 #include <sys/wait.h>
 
-// Iota
+// iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // text-input
@@ -185,7 +186,7 @@ namespace tool
 		
 		Record result;
 		
-		result.port = std::atoi( tokens[ kPort ].c_str() );
+		result.port = iota::parse_unsigned_decimal( tokens[ kPort ].c_str() );
 		result.path = tokens[ kPath ];
 		
 		std::size_t argc = tokens.size() - kArgv;
