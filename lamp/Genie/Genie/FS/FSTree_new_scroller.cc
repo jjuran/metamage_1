@@ -57,6 +57,8 @@ namespace Genie
 			
 			View& Subview();
 			
+			Rect ApertureFromBounds( const Rect& bounds );
+			
 			void Draw( const Rect& bounds, bool erasing );
 			
 			void Scroll( int dh, int dv );
@@ -74,38 +76,47 @@ namespace Genie
 		return *subview;
 	}
 	
+	Rect BasicScroller::ApertureFromBounds( const Rect& bounds )
+	{
+		Rect area = { 0 };
+		
+		area.right  = ClientWidth();
+		area.bottom = ClientHeight();
+		
+		const short dx = bounds.left - GetHOffset();
+		const short dy = bounds.top  - GetVOffset();
+		
+		::OffsetRect( &area, dx, dy );
+		
+		return area;
+	}
+	
+	static void Draw_Clipped( BasicScroller&  that,
+	                          const Rect&     bounds,
+	                          bool            erasing,
+	                          RgnHandle       clip )
+	{
+		NN::Saved< N::Clip_Value > savedClip;
+		
+		N::SetClip( N::SectRgn( N::RectRgn( bounds ), clip ) );
+		
+		that.Superview::Draw( bounds, erasing );
+	}
+	
 	void BasicScroller::Draw( const Rect& bounds, bool erasing )
 	{
 		ScrollerParameters::ViewBounds( GetKey() ) = bounds;
 		
 		itsSavedBounds = bounds;
 		
-		NN::Saved< N::Clip_Value > savedClip;
-		
-		N::SetClip( N::SectRgn( N::RectRgn( bounds ), N::GetClip() ) );
-		
-		Rect area = { 0 };
-		
-		area.right  = ClientWidth();
-		area.bottom = ClientHeight();
-		
-		short dx = bounds.left - GetHOffset();
-		short dy = bounds.top  - GetVOffset();
-		
-		::OffsetRect( &area, dx, dy );
-		
-		Subview().Draw( area, erasing );
+		Draw_Clipped( *this, bounds, erasing, N::GetClip() );
 	}
 	
 	void BasicScroller::Scroll( int dh, int dv )
 	{
 		const Rect& bounds = itsSavedBounds;
 		
-		NN::Saved< N::Clip_Value > savedClip;
-		
-		N::SetClip( N::ScrollRect( bounds, dh, dv ) );
-		
-		Draw( bounds, true );
+		Draw_Clipped( *this, bounds, true, N::ScrollRect( bounds, dh, dv ) );
 		
 		N::ValidRect( bounds );
 	}
