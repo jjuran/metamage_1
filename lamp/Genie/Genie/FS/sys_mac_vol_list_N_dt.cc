@@ -23,6 +23,33 @@
 #include "Genie/FS/ResolvableSymLink.hh"
 
 
+namespace Nitrogen
+{
+	
+	static FSSpec DTGetAPPL( FSVolumeRefNum  vRefNum,
+	                         OSType          signature,
+	                         short           index = 0 )
+	{
+		DTPBRec pb;
+		
+		PBDTGetPath( vRefNum, pb );
+		
+		FSSpec result;
+		
+		pb.ioNamePtr     = result.name;
+		pb.ioIndex       = index;
+		pb.ioFileCreator = signature;
+		
+		PBDTGetAPPLSync( pb );
+		
+		result.vRefNum = vRefNum;
+		result.parID   = pb.ioAPPLParID;
+		
+		return result;
+	}
+	
+}
+
 namespace Genie
 {
 	
@@ -77,26 +104,6 @@ namespace Genie
 	};
 	
 	
-	static FSSpec DTGetAPPL( N::FSVolumeRefNum vRefNum, ::OSType creator )
-	{
-		DTPBRec pb;
-		
-		N::PBDTGetPath( vRefNum, pb );
-		
-		FSSpec result;
-		
-		pb.ioNamePtr     = result.name;
-		pb.ioIndex       = 0;
-		pb.ioFileCreator = creator;
-		
-		N::ThrowOSStatus( ::PBDTGetAPPLSync( &pb ) );
-		
-		result.vRefNum = vRefNum;
-		result.parID   = pb.ioAPPLParID;
-		
-		return result;
-	}
-	
 	class dt_appls_QUAD_latest : public FSTree_ResolvableSymLink
 	{
 		public:
@@ -117,7 +124,7 @@ namespace Genie
 				
 				const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
 				
-				const FSSpec file = DTGetAPPL( vRefNum, creator );
+				const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ) );
 				
 				const bool onServer = VolumeIsOnServer( vRefNum );
 				
