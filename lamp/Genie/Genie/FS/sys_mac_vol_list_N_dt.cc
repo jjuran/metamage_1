@@ -21,6 +21,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/Utilities/canonical_positive_integer.hh"
 
 
 namespace Nitrogen
@@ -55,6 +56,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -117,6 +119,19 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
+	class dt_appls_QUAD_list_N : public FSTree_ResolvableSymLink
+	{
+		public:
+			dt_appls_QUAD_list_N( const FSTreePtr&    parent,
+			                      const std::string&  name )
+			:
+				FSTree_ResolvableSymLink( parent, name )
+			{
+			}
+			
+			FSTreePtr ResolveLink() const;
+	};
+	
 	
 	FSTreePtr dt_appls_QUAD_latest::ResolveLink() const
 	{
@@ -135,6 +150,45 @@ namespace Genie
 		return FSTreeFromFSSpec( file, onServer );
 	}
 	
+	FSTreePtr dt_appls_QUAD_list_N::ResolveLink() const
+	{
+		const short index = iota::parse_unsigned_decimal( Name().c_str() );
+		
+		const FSTreePtr& grandparent = ParentRef()->ParentRef();
+		
+		const ::OSType creator = iota::decode_quad( grandparent->Name().c_str() );
+		
+		const FSTreePtr& great_x3_grandparent = grandparent->ParentRef()->ParentRef()->ParentRef();
+		
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x3_grandparent->Name().c_str() ) );
+		
+		const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ), index );
+		
+		const bool onServer = VolumeIsOnServer( vRefNum );
+		
+		return FSTreeFromFSSpec( file, onServer );
+	}
+	
+	
+	static FSTreePtr appl_QUAD_list_lookup( const FSTreePtr& parent, const std::string& name )
+	{
+		if ( !canonical_positive_integer::applies( name ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return seize_ptr( new dt_appls_QUAD_list_N( parent, name ) );
+	}
+	
+	static void appl_QUAD_list_iterate( FSTreeCache& cache )
+	{
+		// Can't enumerate
+	}
+	
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr& parent, const std::string& name )
+	{
+		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
+	}
 	
 	extern const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
 	
@@ -142,15 +196,18 @@ namespace Genie
 	{
 		{ "latest",  &Basic_Factory< dt_appls_QUAD_latest > },
 		
+		{ "list",  &new_sys_mac_vol_list_N_dt_appls_QUAD_list },
+		
 		{ NULL, NULL }
 		
 	};
+	
 	
 	static FSTreePtr appl_lookup( const FSTreePtr& parent, const std::string& name )
 	{
 		if ( name.length() != sizeof 'quad' )
 		{
-			poseven::throw_errno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return Premapped_Factory< sys_mac_vol_list_N_dt_appls_QUAD_Mappings >( parent, name );
