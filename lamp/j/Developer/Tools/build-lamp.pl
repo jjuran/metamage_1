@@ -259,10 +259,10 @@ sub copy_file
 	
 	verbose_system( 'cp', $src, $dest );
 	
+	my ( $name ) = $src =~ m{/([^/]*)$};
+	
 	if ( defined $vers_2_data  &&  -d "$dest/$name/res" )
 	{
-		my ( $name ) = $src =~ m{/([^/]*)$};
-		
 		open my $out, ">", "$dest/$name/res/vers/2" or die "$dest/$name/res/vers/2: $!\n";
 		
 		print $out $vers_2_data;
