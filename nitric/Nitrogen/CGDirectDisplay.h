@@ -15,8 +15,9 @@
 #define NITROGEN_CGDIRECTDISPLAY_H
 
 // Mac OS
-#include <Carbon/Carbon.h>
-#include <ApplicationServices/ApplicationServices.h>
+#ifndef __CGDIRECTDISPLAY__
+#include <CGDirectDisplay.h>
+#endif
 	
 // Nitrogen
 #ifndef NUCLEUS_OWNED_H
