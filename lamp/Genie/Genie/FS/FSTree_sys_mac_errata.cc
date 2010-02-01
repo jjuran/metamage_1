@@ -65,7 +65,7 @@ namespace Genie
 			
 			const unsigned char* name = GetMachineName();
 			
-			const bool powerpc = name[1] == 'P';
+			const bool powerpc = name != NULL  &&  name[1] == 'P';
 			
 			return !powerpc;
 		}

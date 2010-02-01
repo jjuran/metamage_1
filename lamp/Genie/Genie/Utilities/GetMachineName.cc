@@ -23,7 +23,7 @@ namespace Genie
 		
 		if ( OSErr err = ::Gestalt( gestaltUserVisibleMachineName, &mnam ) )
 		{
-			result = "\p" "?";
+			result = NULL;
 		}
 		
 		return result;
