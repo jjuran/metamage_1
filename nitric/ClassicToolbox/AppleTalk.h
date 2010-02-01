@@ -3,7 +3,7 @@
 #ifndef CLASSICTOOLBOX_APPLETALK_H
 #define CLASSICTOOLBOX_APPLETALK_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __APPLETALK__
 #include <AppleTalk.h>
 #endif

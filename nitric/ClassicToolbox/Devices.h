@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_DEVICES_H
 #define CLASSICTOOLBOX_DEVICES_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif

@@ -5,7 +5,7 @@
 
 #include "Genie/ReplyHandler.hh"
 
-// Universal Interfaces
+// Mac OS
 #include <AEObjects.h>
 #include <AERegistry.h>
 

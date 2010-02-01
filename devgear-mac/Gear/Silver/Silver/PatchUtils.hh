@@ -9,7 +9,7 @@
 #ifndef SILVER_PATCHUTILS_HH
 #define SILVER_PATCHUTILS_HH
 
-// Universal Interfaces
+// Mac OS
 #include <MacTypes.h>
 
 

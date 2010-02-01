@@ -8,7 +8,7 @@
 
 #include "Silver/PatchUtils.hh"
 
-// Mac OS Universal Interfaces
+// Mac OS
 #include <Patches.h>
 
 

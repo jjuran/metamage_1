@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_CRMSERIALDEVICES_HH
 #define CLASSICTOOLBOX_CRMSERIALDEVICES_HH
 
-// Universal Interfaces
+// Mac OS
 #ifndef __CRMSERIALDEVICES__
 #include <CRMSerialDevices.h>
 #endif

@@ -5,7 +5,7 @@
 
 #include "Pedestal/CustomTEClickLoop.hh"
 
-// Universal Interfaces
+// Mac OS
 #include <TextEdit.h>
 
 // Debug

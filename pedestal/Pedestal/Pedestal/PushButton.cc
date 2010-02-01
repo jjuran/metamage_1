@@ -5,7 +5,7 @@
 
 #include "Pedestal/PushButton.hh"
 
-// Universal Interfaces
+// Mac OS
 #ifndef __FONTS__
 #include <Fonts.h>
 #endif

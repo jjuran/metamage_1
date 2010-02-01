@@ -9,7 +9,7 @@
 #ifndef SILVER_INSTALL_HH
 #define SILVER_INSTALL_HH
 
-// Universal Interfaces
+// Mac OS
 #include <MacTypes.h>
 
 

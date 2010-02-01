@@ -14,7 +14,7 @@
 #ifndef NITROGEN_OPENTRANSPORT_H
 #define NITROGEN_OPENTRANSPORT_H
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif

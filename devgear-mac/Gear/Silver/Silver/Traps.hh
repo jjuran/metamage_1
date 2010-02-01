@@ -11,7 +11,7 @@
 
 #ifdef __MACOS__
 
-// Universal Interfaces
+// Mac OS
 #include <Traps.h>
 
 // Silver

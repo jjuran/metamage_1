@@ -5,7 +5,7 @@
 
 #include "RunToolServer.hh"
 
-// Universal Interfaces
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

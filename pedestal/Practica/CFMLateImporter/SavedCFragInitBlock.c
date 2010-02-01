@@ -5,7 +5,7 @@
 
 #include "CFMLateImporter/SavedCFragInitBlock.h"
 
-// Mac OS Universal Interfaces
+// Mac OS
 #include <CodeFragments.h>
 
 /*

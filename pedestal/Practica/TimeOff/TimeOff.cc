@@ -5,7 +5,7 @@
 
 #include "TimeOff/TimeOff.hh"
 
-// Universal Interfaces
+// Mac OS
 #include <OSUtils.h>
 
 

@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_RETRACE_H
 #define CLASSICTOOLBOX_RETRACE_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __RETRACE__
 #include <Retrace.h>
 #endif

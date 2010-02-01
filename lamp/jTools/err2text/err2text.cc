@@ -3,7 +3,7 @@
  *	===========
  */
 
-// Universal Interfaces
+// Mac OS
 #ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
 #endif

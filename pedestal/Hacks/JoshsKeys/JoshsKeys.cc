@@ -6,7 +6,7 @@
 	
 */
 
-// Universal Interfaces
+// Mac OS
 #include <Events.h>
 #include <Resources.h>
 #include <Sound.h>

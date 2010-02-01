@@ -6,7 +6,7 @@
 	
 */
 
-// Universal Interfaces
+// Mac OS
 #include <Controls.h>
 #include <ControlDefinitions.h>
 #include <Events.h>

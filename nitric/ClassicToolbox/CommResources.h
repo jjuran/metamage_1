@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_COMMRESOURCES_H
 #define CLASSICTOOLBOX_COMMRESOURCES_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __COMMRESOURCES__
 #include <CommResources.h>
 #endif

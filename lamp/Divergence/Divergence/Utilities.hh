@@ -12,7 +12,7 @@
 
 #endif
 
-// Universal Interfaces
+// Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif

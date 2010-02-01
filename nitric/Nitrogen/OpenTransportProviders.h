@@ -14,7 +14,7 @@
 #ifndef NITROGEN_OPENTRANSPORTPROVIDERS_H
 #define NITROGEN_OPENTRANSPORTPROVIDERS_H
 
-// Mac OS Universal Interfaces
+// Mac OS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
 #ifndef __FILES__
 #include <Files.h>

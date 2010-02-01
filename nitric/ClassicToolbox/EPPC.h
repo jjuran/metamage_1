@@ -3,7 +3,7 @@
 #ifndef CLASSICTOOLBOX_EPPC_H
 #define CLASSICTOOLBOX_EPPC_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __EPPC__
 #include <EPPC.h>
 #endif

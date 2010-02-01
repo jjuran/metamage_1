@@ -7,7 +7,7 @@
 
 #include "Genie/FS/FSTree_sys_mac_xpram.hh"
 
-// Mac OS Universal Interfaces
+// Mac OS
 #include <MixedMode.h>
 #include <Traps.h>
 

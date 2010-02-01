@@ -3,7 +3,7 @@
  *	==========
  */
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __EVENTS__
 #include <Events.h>
 #endif

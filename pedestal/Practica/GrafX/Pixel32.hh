@@ -6,7 +6,7 @@
 #ifndef GRAFX_PIXEL32_HH
 #define GRAFX_PIXEL32_HH
 
-// Mac OS Universal Interfaces
+// Mac OS
 #include <Quickdraw.h>
 
 

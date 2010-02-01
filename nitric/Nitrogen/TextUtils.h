@@ -14,7 +14,7 @@
 #ifndef NITROGEN_TEXTUTILS_H
 #define NITROGEN_TEXTUTILS_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>
 #endif

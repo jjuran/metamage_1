@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_SERIAL_H
 #define CLASSICTOOLBOX_SERIAL_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __SERIAL__
 #include <Serial.h>
 #endif

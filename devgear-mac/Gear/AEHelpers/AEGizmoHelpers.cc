@@ -1,6 +1,6 @@
 // AEGizmos.cc
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __AEHELPERS__
 #include <AEHelpers.h>
 #endif

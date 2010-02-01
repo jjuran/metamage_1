@@ -6,7 +6,7 @@
 #ifndef GENIE_PROCESS_TIMEKEEPER_HH
 #define GENIE_PROCESS_TIMEKEEPER_HH
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif

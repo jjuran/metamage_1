@@ -3,7 +3,7 @@
  *	============
  */
 
-// Mac OS Universal Interfaces
+// Mac OS
 #ifndef __MIXEDMODE__
 #include <MixedMode.h>
 #endif

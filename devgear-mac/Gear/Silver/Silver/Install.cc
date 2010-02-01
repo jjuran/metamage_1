@@ -8,7 +8,7 @@
 
 #include "Silver/Install.hh"
 
-// Universal Interfaces
+// Mac OS
 #include <Resources.h>
 
 

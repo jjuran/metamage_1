@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_PPCTOOLBOX_H
 #define CLASSICTOOLBOX_PPCTOOLBOX_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __PPCTOOLBOX__
 #include <PPCToolbox.h>
 #endif

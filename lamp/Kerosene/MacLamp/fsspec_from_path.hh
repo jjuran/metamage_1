@@ -6,7 +6,7 @@
 #ifndef KEROSENE_FSSPECFROMPATH_HH
 #define KEROSENE_FSSPECFROMPATH_HH
 
-// Universal Interfaces
+// Mac OS
 #include <TargetConditionals.h>
 #if TARGET_RT_MAC_MACHO
 #include <Carbon/Carbon.h>

@@ -14,7 +14,7 @@
 #ifndef NITROGEN_THREADS_H
 #define NITROGEN_THREADS_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __THREADS__
 #include <Threads.h>
 #endif

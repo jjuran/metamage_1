@@ -14,7 +14,7 @@
 #ifndef NITROGEN_TEXTEDIT_H
 #define NITROGEN_TEXTEDIT_H
 
-// Universal Interfaces
+// Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
