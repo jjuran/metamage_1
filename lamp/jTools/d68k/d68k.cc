@@ -1277,6 +1277,8 @@ namespace tool
 					const std::string ea = read_ea( source, 1 );
 					
 					printf( "NBCD.B   %s" "\n", ea.c_str() );
+					
+					break;
 				}
 				else if ( (op & 0x38) == 0x00 )
 				{
@@ -1465,8 +1467,8 @@ namespace tool
 	
 	static const char* sbcd_ops[] =
 	{
-		"SBCD.B   D%d,D%d",
-		"SBCD.B   -(A%d),-(A%d)"
+		"SBCD.B   D%d,D%d"       "\n",
+		"SBCD.B   -(A%d),-(A%d)" "\n"
 	};
 	
 	static void decode_8_line( unsigned short op )
