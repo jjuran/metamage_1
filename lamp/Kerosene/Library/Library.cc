@@ -9,6 +9,7 @@
 
 // Standard C
 #include "errno.h"
+#include "setjmp.h"
 #include "signal.h"
 #include "stdio.h"
 #include "stdlib.h"

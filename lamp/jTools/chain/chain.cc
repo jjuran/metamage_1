@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C
+#include <errno.h>
+
 // POSIX
 #include <sys/wait.h>
 #include <unistd.h>

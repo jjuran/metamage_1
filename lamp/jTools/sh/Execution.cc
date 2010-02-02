@@ -13,6 +13,7 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
 
 // POSIX
 #include <fcntl.h>

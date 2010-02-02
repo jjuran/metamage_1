@@ -29,6 +29,7 @@
 #include <map>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // iota

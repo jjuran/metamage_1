@@ -7,6 +7,9 @@
 #include <cstddef>
 #include <cstring>
 
+// Standard C
+#include <stdlib.h>
+
 // Iota
 #include "iota/strings.hh"
 

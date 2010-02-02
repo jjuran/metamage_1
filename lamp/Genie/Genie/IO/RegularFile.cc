@@ -5,6 +5,9 @@
 
 #include "Genie/IO/RegularFile.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // POSIX
 #include <fcntl.h>
 
