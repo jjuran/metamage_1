@@ -145,7 +145,7 @@ my %fsmap =
 		bin =>
 		[
 			# Standard
-			\ qw( env time touch ),
+			\ qw( clear env time touch ),
 			# Common
 			\ qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
