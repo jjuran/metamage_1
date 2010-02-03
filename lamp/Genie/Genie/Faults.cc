@@ -30,6 +30,11 @@ namespace Genie
 		DeliverFatalSignal( SIGSEGV );
 	}
 	
+	static void AddressError()
+	{
+		DeliverFatalSignal( SIGBUS );
+	}
+	
 	static void IllegalInstruction()
 	{
 		DeliverFatalSignal( SIGILL );
@@ -92,7 +97,7 @@ namespace Genie
 		NULL,  // 0, ISP on reset
 		NULL,  // 1, PC on reset
 		BusError,
-		NULL,  // 3, address error
+		AddressError,
 		IllegalInstruction,
 		DivisionByZero,
 		NULL,  // 6, CHK
