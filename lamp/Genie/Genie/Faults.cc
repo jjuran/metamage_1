@@ -27,7 +27,7 @@ namespace Genie
 	
 	static void BusError()
 	{
-		DeliverFatalSignal( SIGBUS );
+		DeliverFatalSignal( SIGSEGV );
 	}
 	
 	static void IllegalInstruction()
