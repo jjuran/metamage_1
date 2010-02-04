@@ -12,12 +12,13 @@
 namespace Genie
 {
 	
-	void LongJumper::LongJump( int second_result ) const
+	void LongJumper::LongJump( int second_result )
 	{
-		ASSERT( its_long_jump != 0 );  // NULL
-		ASSERT( its_buffer    != 0 );  // NULL
+		ASSERT( its_resume_handler != 0 );  // NULL
 		
-		its_long_jump( its_buffer, second_result );
+		its_pad.pid = second_result;
+		
+		its_resume_handler( &its_pad );
 	}
 	
 }

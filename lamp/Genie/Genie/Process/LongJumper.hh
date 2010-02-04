@@ -6,8 +6,8 @@
 #ifndef GENIE_PROCESS_LONGJUMPER_HH
 #define GENIE_PROCESS_LONGJUMPER_HH
 
-// Standard C
-#include <setjmp.h>
+// Lamp
+#include "lamp/vfork.h"
 
 
 namespace Genie
@@ -15,24 +15,21 @@ namespace Genie
 	
 	class LongJumper
 	{
-		public:
-			typedef void (*long_jump_t)( jmp_buf*, int);
-			
 		private:
-			long_jump_t   its_long_jump;
-			jmp_buf      *its_buffer;
+			_resume_handler_t  its_resume_handler;
+			_vfork_pad         its_pad;
 		
 		public:
-			LongJumper() : its_long_jump(), its_buffer()
+			LongJumper() : its_resume_handler()
 			{
 			}
 			
-			void LongJump( int second_result ) const;
+			void LongJump( int second_result );
 			
-			void SetLongJmp( long_jump_t f, jmp_buf* buffer )
+			void SetLongJmp( _resume_handler_t handler, const _vfork_pad* pad )
 			{
-				its_long_jump = f;
-				its_buffer    = buffer;
+				its_resume_handler = handler;
+				its_pad            = *pad;
 			}
 	};
 	
