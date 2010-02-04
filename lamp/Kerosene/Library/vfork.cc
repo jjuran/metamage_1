@@ -21,9 +21,6 @@ extern "C" pid_t vfork_start( _resume_handler_t handler, const _vfork_pad* pad )
 static void _resume_vfork( const _vfork_pad* pad );
 
 
-static _vfork_pad global_pad;
-
-
 static void resume_vfork( const _vfork_pad* pad )
 {
 	_pop_environ();
@@ -32,9 +29,9 @@ static void resume_vfork( const _vfork_pad* pad )
 }
 
 
-static pid_t _vfork()
+static pid_t _vfork( const _vfork_pad* pad )
 {
-	pid_t result = vfork_start( &resume_vfork, &global_pad );
+	pid_t result = vfork_start( &resume_vfork, pad );
 	
 	if ( result == 0 )
 	{
@@ -48,12 +45,21 @@ static pid_t _vfork()
 
 asm pid_t vfork()
 {
-	MOVEA.L  (A7),              A1             // save return address in A1
+	MOVEA.L  (A7),           A1     // save return address in A1
 	
-	MOVEM.L  D3-D7/A1-A4/A6/A7, global_pad.d3  // save remaining registers
-	ADDQ.L   #4,                global_pad.sp  // pop the saved stack
+	LINK     A6, #0
 	
-	JMP		 _vfork
+	PEA      8(A6)                  // push the pre-vfork SP
+	MOVE.L   (A6),           -(A7)  // push the pre-LINK A6
+	MOVEM.L  D0/D3-D7/A1-A4, -(A7)  // save remaining registers
+	
+	PEA      (A7)                   // push our stack-based pad onto the stack
+	
+	JSR		 _vfork
+	
+	UNLK     A6
+	
+	RTS
 }
 
 static asm void _resume_vfork( const _vfork_pad* pad )
@@ -72,17 +78,23 @@ asm pid_t vfork()
 {
 	nofralloc
 	
-	lwz   r3,global_pad
-	
 	mflr  r0
+	stw   r0,8(SP)
+	
+	mr  r6,SP
+	
+	stwu  SP,-272(SP)
+	
+	addi  r3,SP,24
+	
 	mfcr  r5
 	
 	stw  r0,4(r3)
 	stw  r5,8(r3)
 	
-	lwz  r4,0(r1)
+	lwz  r4,0(r6)
 	
-	stw  r1,12(r3)
+	stw  r6,12(r3)
 	stw  r4,16(r3)
 	
 	mffs fp0
@@ -112,7 +124,13 @@ asm pid_t vfork()
 	STORE_FLOAT( 30 )
 	STORE_FLOAT( 31 )
 	
-	b  _vfork
+	bl  _vfork
+	
+	addi  SP,SP,272
+	
+	lwz   r0,8(SP)
+	mtlr  r0
+	blr
 }
 
 static asm void _resume_vfork( const _vfork_pad* pad )

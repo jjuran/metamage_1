@@ -1110,7 +1110,7 @@ namespace Genie
 		itsSchedule        = kProcessFrozen;
 		
 		itsVForkFramePtr =
-		itsStackFramePtr = recall::get_stack_frame_pointer( 5 );
+		itsStackFramePtr = recall::get_stack_frame_pointer( 6 );
 		
 		SaveRegisters( &itsSavedRegisters );
 		
