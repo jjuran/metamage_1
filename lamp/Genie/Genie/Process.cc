@@ -1152,7 +1152,7 @@ namespace Genie
 		
 		LeaveSystemCall();
 		
-		LongJump( child );
+		resume_vfork( child );
 	}
 	
 	void Process::UsurpParent( int exit_status )

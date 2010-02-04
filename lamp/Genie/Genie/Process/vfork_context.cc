@@ -1,9 +1,11 @@
-/*	=============
- *	LongJumper.cc
- *	=============
- */
+/*
+	vfork_context.cc
+	----------------
+	
+	Joshua Juran
+*/
 
-#include "Genie/Process/LongJumper.hh"
+#include "Genie/Process/vfork_context.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -12,7 +14,7 @@
 namespace Genie
 {
 	
-	void LongJumper::LongJump( int second_result )
+	void vfork_context::resume_vfork( int second_result )
 	{
 		ASSERT( its_resume_handler != 0 );  // NULL
 		

@@ -26,7 +26,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "vfork_start" );
 		
-		frame.Caller().SetLongJmp( handler, pad );
+		frame.Caller().set_resume_handler( handler, pad );
 		
 		try
 		{
