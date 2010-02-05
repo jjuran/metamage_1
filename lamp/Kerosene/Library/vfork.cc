@@ -15,7 +15,7 @@
 
 
 // System call
-extern "C" pid_t vfork_start( _resume_handler_t handler, const _vfork_pad* pad );
+extern "C" pid_t vfork_start( const _vfork_pad* pad );
 
 
 static void _resume_vfork( const _vfork_pad* pad );
@@ -29,9 +29,11 @@ static void resume_vfork( const _vfork_pad* pad )
 }
 
 
-static pid_t _vfork( const _vfork_pad* pad )
+static pid_t _vfork( _vfork_pad* pad )
 {
-	pid_t result = vfork_start( &resume_vfork, pad );
+	pad->resume_handler = &resume_vfork;
+	
+	pid_t result = vfork_start( pad );
 	
 	if ( result == 0 )
 	{

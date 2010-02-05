@@ -16,7 +16,11 @@ typedef void (*_resume_handler_t)( const struct _vfork_pad* );
 
 struct _vfork_pad
 {
-	long pid;
+	union
+	{
+		_resume_handler_t  resume_handler;
+		long               pid;
+	};
 	
 #ifdef __MC68K__
 

@@ -16,11 +16,18 @@ namespace Genie
 	
 	void vfork_context::resume_vfork( int second_result )
 	{
-		ASSERT( its_resume_handler != 0 );  // NULL
+		const _resume_handler_t resume = its_pad.resume_handler;
+		
+		ASSERT( resume != NULL );
 		
 		its_pad.pid = second_result;
 		
-		its_resume_handler( &its_pad );
+		resume( &its_pad );
+	}
+	
+	void vfork_context::set_resume_handler( const _vfork_pad* pad )
+	{
+		its_pad = *pad;
 	}
 	
 }

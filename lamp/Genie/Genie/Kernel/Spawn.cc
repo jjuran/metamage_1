@@ -22,11 +22,11 @@ namespace Genie
 		return *child;
 	}
 	
-	static int vfork_start( _resume_handler_t handler, const _vfork_pad* pad )
+	static int vfork_start( const _vfork_pad* pad )
 	{
 		SystemCallFrame frame( "vfork_start" );
 		
-		frame.Caller().set_resume_handler( handler, pad );
+		frame.Caller().set_resume_handler( pad );
 		
 		try
 		{
