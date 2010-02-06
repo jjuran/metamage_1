@@ -20,6 +20,11 @@ namespace Genie
 		private:
 			_vfork_pad* its_pad;
 		
+		private:
+			// Non-copyable
+			vfork_context           ( const vfork_context& );
+			vfork_context& operator=( const vfork_context& );
+		
 		public:
 			vfork_context() : its_pad()
 			{
