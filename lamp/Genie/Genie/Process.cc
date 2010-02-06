@@ -704,7 +704,6 @@ namespace Genie
 		itsErrno              ( NULL ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
-		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot()->ChangeToDirectory() ),
@@ -746,7 +745,6 @@ namespace Genie
 		itsErrno              ( parent.itsErrno ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
-		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.itsCWD ),
@@ -1125,13 +1123,11 @@ namespace Genie
 		
 		using recall::get_stack_frame_pointer;
 		
-		recall::stack_frame_pointer vfork_fp = itsVForkFramePtr;
+		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(   );
 		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 2 );
 		
 		// Stack grows down
 		const bool stack_fault = stack_fp > vfork_fp;
-		
-		itsVForkFramePtr = NULL;
 		
 		Resume();
 		

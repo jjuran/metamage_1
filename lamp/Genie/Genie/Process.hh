@@ -16,9 +16,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Recall
-#include "recall/stack_crawl.hh"
-
 // Nucleus
 #include "Nucleus/Owned.h"
 
@@ -125,7 +122,6 @@ namespace Genie
 			
 			recall::stack_frame_pointer itsStackBottomPtr;
 			recall::stack_frame_pointer itsStackFramePtr;
-			recall::stack_frame_pointer itsVForkFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
 			
