@@ -146,9 +146,7 @@ static asm void _resume_vfork( const _vfork_pad* pad )
 	mtcr  r5
 	
 	lwz  r4,16(r3)
-	lwz  r1,12(r3)
-	
-	stw  r4,0(r1)
+	lwz  r6,12(r3)
 	
 	lfd  fp0,96(r3)
 	
@@ -177,7 +175,11 @@ static asm void _resume_vfork( const _vfork_pad* pad )
 	
 	mtfsf  0xff,fp0
 	
+	stw  r4,0(r6)
+	
 	lwz  r3,0(r3)
+	
+	mr  r1,r6
 	
 	blr
 }
