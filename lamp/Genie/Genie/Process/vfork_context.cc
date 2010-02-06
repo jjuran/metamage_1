@@ -14,20 +14,38 @@
 namespace Genie
 {
 	
+	vfork_context::~vfork_context()
+	{
+		delete its_pad;
+	}
+	
 	void vfork_context::resume_vfork( int second_result )
 	{
-		const _resume_handler_t resume = its_pad.resume_handler;
+		ASSERT( its_pad != NULL );
+		
+		_vfork_pad pad = *its_pad;
+		
+		delete its_pad;
+		
+		its_pad = NULL;
+		
+		const _resume_handler_t resume = pad.resume_handler;
 		
 		ASSERT( resume != NULL );
 		
-		its_pad.pid = second_result;
+		pad.pid = second_result;
 		
-		resume( &its_pad );
+		resume( &pad );
 	}
 	
 	void vfork_context::set_resume_handler( const _vfork_pad* pad )
 	{
-		its_pad = *pad;
+		if ( its_pad == NULL )
+		{
+			its_pad = new _vfork_pad;
+		}
+		
+		*its_pad = *pad;
 	}
 	
 }

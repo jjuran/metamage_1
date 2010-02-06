@@ -18,9 +18,15 @@ namespace Genie
 	class vfork_context
 	{
 		private:
-			_vfork_pad its_pad;
+			_vfork_pad* its_pad;
 		
 		public:
+			vfork_context() : its_pad()
+			{
+			}
+			
+			~vfork_context();
+			
 			void resume_vfork( int second_result );
 			
 			void set_resume_handler( const _vfork_pad* pad );
