@@ -10,6 +10,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// Lamp
+#include "lamp/vfork.h"
+
 
 namespace Genie
 {

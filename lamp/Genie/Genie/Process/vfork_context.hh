@@ -8,8 +8,8 @@
 #ifndef GENIE_PROCESS_VFORKCONTEXT_HH
 #define GENIE_PROCESS_VFORKCONTEXT_HH
 
-// Lamp
-#include "lamp/vfork.h"
+
+struct _vfork_pad;
 
 
 namespace Genie
