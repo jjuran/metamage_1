@@ -22,6 +22,16 @@ namespace Genie
 		delete its_pad;
 	}
 	
+	recall::stack_frame_pointer vfork_context::get_vfork_frame_pointer() const
+	{
+		if ( its_pad != NULL )
+		{
+			return (recall::stack_frame_pointer) its_pad->fp;
+		}
+		
+		return NULL;
+	}
+	
 	void vfork_context::resume_vfork( int second_result )
 	{
 		ASSERT( its_pad != NULL );
