@@ -1124,8 +1124,13 @@ namespace Genie
 		
 		ASSERT( itsForkedChildPID != 0 );
 		
+		using recall::get_stack_frame_pointer;
+		
+		recall::stack_frame_pointer vfork_fp = itsVForkFramePtr;
+		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 2 );
+		
 		// Stack grows down
-		const bool stack_fault = recall::get_stack_frame_pointer( 2 ) > itsVForkFramePtr;
+		const bool stack_fault = stack_fp > vfork_fp;
 		
 		itsVForkFramePtr = NULL;
 		
