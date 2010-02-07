@@ -163,9 +163,9 @@ namespace tool
 			{
 				throw;
 			}
-			
-			return N::LaunchApplication( N::DTGetAPPL( signature ) );
 		}
+		
+		return N::LaunchApplication( N::DTGetAPPL( signature ) );
 	}
 	
 	
