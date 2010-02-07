@@ -16,9 +16,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Recall
-#include "recall/stack_crawl.hh"
-
 // Nucleus
 #include "Nucleus/Owned.h"
 
@@ -29,11 +26,11 @@
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/memory_mapping_holder.hh"
 #include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
+#include "Genie/Process/vfork_context.hh"
 #include "Genie/ProcessGroup.hh"
 
 
@@ -103,7 +100,7 @@ namespace Genie
 	};
 	
 	class Process : public SignalReceiver,
-	                public LongJumper,
+	                public vfork_context,
 	                public memory_mapping_holder,
 	                public TraceTarget
 	{
@@ -125,7 +122,6 @@ namespace Genie
 			
 			recall::stack_frame_pointer itsStackBottomPtr;
 			recall::stack_frame_pointer itsStackFramePtr;
-			recall::stack_frame_pointer itsVForkFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
 			

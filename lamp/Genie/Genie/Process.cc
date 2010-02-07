@@ -704,7 +704,6 @@ namespace Genie
 		itsErrno              ( NULL ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
-		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot()->ChangeToDirectory() ),
@@ -746,7 +745,6 @@ namespace Genie
 		itsErrno              ( parent.itsErrno ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
-		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.itsCWD ),
@@ -1109,8 +1107,7 @@ namespace Genie
 		itsInterdependence = kProcessForking;
 		itsSchedule        = kProcessFrozen;
 		
-		itsVForkFramePtr =
-		itsStackFramePtr = recall::get_stack_frame_pointer( 5 );
+		itsStackFramePtr = get_vfork_frame_pointer();
 		
 		SaveRegisters( &itsSavedRegisters );
 		
@@ -1124,10 +1121,13 @@ namespace Genie
 		
 		ASSERT( itsForkedChildPID != 0 );
 		
-		// Stack grows down
-		const bool stack_fault = recall::get_stack_frame_pointer( 2 ) > itsVForkFramePtr;
+		using recall::get_stack_frame_pointer;
 		
-		itsVForkFramePtr = NULL;
+		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(   );
+		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 2 );
+		
+		// Stack grows down
+		const bool stack_fault = stack_fp > vfork_fp;
 		
 		Resume();
 		
@@ -1152,7 +1152,7 @@ namespace Genie
 		
 		LeaveSystemCall();
 		
-		LongJump( child );
+		resume_vfork( child );
 	}
 	
 	void Process::UsurpParent( int exit_status )
