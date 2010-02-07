@@ -18,6 +18,7 @@ void _set_dispatcher( void* address )
 	global_dispatcher = address;
 }
 
+extern int syscall( int number, ... );
 
 #ifdef __MC68K__
 	
@@ -28,6 +29,14 @@ void _set_dispatcher( void* address )
 		JMP			(A0)					;  // jump to dispatcher
 		
 		// Not reached
+	}
+	
+	asm int syscall( int number, ... )
+	{
+		MOVE.L  4(SP), D0    // copy system call number to d0
+		MOVE.L  (SP)+, (SP)  // overwrite it with the return address, and pop
+		
+		JMP     SystemCall
 	}
 	
 	#define DEFINE_STUB( name )       \
@@ -64,6 +73,24 @@ void _set_dispatcher( void* address )
 		lwz		r0,8(SP)				// reload caller's return address
 		mtlr	r0						// load it into the link register
 		blr								// return
+	}
+	
+	asm int syscall( int number, ... )
+	{
+		nofralloc
+		
+		// copy system call number to r11
+		mr  r11,r3
+		
+		// bump up to six arguments into the correct registers
+		mr  r3,r4
+		mr  r4,r5
+		mr  r5,r6
+		mr  r6,r7
+		mr  r7,r8
+		mr  r8,r9
+		
+		b   SystemCall
 	}
 	
 	#define DEFINE_STUB( name )   \
