@@ -329,8 +329,9 @@ namespace Genie
 	
 	static asm void DispatchSystemCall( unsigned index )
 	{
+		nofralloc
+		
 		// r11 contains the requested system call number
-		// (r0 is already clobbered by compiler-inserted prolog)
 		// r3-r10 are up to 8 arguments
 		
 		// r12.last = gLastSystemCall;

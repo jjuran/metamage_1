@@ -46,6 +46,8 @@ void _set_dispatcher( void* address )
 	
 	static asm void SystemCall()
 	{
+		nofralloc
+		
 		mflr	r0						// get caller's return address
 		stw		r0,8(SP)				// store it in caller's stack frame
 		
