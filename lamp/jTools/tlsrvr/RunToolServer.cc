@@ -27,6 +27,7 @@
 #include "io/spew.hh"
 
 // poseven
+#include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -151,6 +152,30 @@ namespace tool
 	}
 	
 	
+	static inline int device_of_ramdisk()
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			// Lamp Carbon doesn't check driver names, and
+			// OS X's BSD layer doesn't have /sys in the first place
+			return 0;
+		}
+		
+		struct stat ram_status = { 0 };
+		
+		const bool has_ramdisk = p7::stat( "/sys/mac/vol/ram/mnt", ram_status );
+		
+		return has_ramdisk ? ram_status.st_dev : 0;
+	}
+	
+	static ProcessSerialNumber launch_ToolServer_from_ramdisk( int dev )
+	{
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -dev );
+		
+		return N::LaunchApplication( N::DTGetAPPL( sigToolServer, vRefNum ) );
+	}
+	
+	
 	static long GetResult( const N::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
@@ -175,6 +200,21 @@ namespace tool
 			if ( err != procNotFound )
 			{
 				throw;
+			}
+		}
+		
+		if ( const int device = device_of_ramdisk() )
+		{
+			try
+			{
+				launch_ToolServer_from_ramdisk( device );
+			}
+			catch ( const N::OSStatus& err )
+			{
+				if ( err != afpItemNotFound )
+				{
+					throw;
+				}
 			}
 		}
 		
