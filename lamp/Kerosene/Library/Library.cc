@@ -646,17 +646,14 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 	
 	const ssize_t size = readlinkat_k( dirfd, path, buffer, buffer_size );
 	
-	if ( size == -1 )
-	{
-		return -1;
-	}
-	
 	if ( size < -1 )
 	{
 		errno = saved_errno;  // was ERANGE
+		
+		return buffer_size;
 	}
 	
-	return 0;
+	return size;
 }
 
 char* realpath( const char *path, char *buffer )
