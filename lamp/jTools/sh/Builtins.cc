@@ -10,6 +10,9 @@
 // Standard C/C++
 #include <cstring>
 
+// Standard C
+#include <stdlib.h>
+
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
