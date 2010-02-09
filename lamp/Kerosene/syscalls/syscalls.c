@@ -31,6 +31,13 @@ extern int syscall( int number, ... );
 		// Not reached
 	}
 	
+	static asm void SystemCall_FF()
+	{
+		ANDI.W  #0x00FF,D0
+		
+		BRA     SystemCall
+	}
+	
 	asm int syscall( int number, ... )
 	{
 		MOVE.L  4(SP), D0    // copy system call number to d0
@@ -45,6 +52,14 @@ extern int syscall( int number, ... );
 		{                             \
 			MOVEQ #__NR_##name,D0  ;  \
 			BRA SystemCall         ;  \
+		}
+	
+	#define DEFINE_STUB_FF( name )    \
+		extern void name();           \
+		asm void name()               \
+		{                             \
+			MOVEQ #__NR_##name,D0  ;  \
+			BRA SystemCall_FF      ;  \
 		}
 	
 	#define DEFINE_STUB( name )       \
@@ -110,6 +125,7 @@ extern int syscall( int number, ... );
 		}
 	
 	#define DEFINE_STUB_7F( name )  DEFINE_STUB( name )
+	#define DEFINE_STUB_FF( name )  DEFINE_STUB( name )
 	
 #endif
 
@@ -194,38 +210,38 @@ DEFINE_STUB_7F( fsync )
 
 DEFINE_STUB_7F( sigprocmask )
 
-DEFINE_STUB( getpgid )
-DEFINE_STUB( fchdir )
+DEFINE_STUB_FF( getpgid )
+DEFINE_STUB_FF( fchdir )
 
-DEFINE_STUB( getdents )
+DEFINE_STUB_FF( getdents )
 
-DEFINE_STUB( writev )
-DEFINE_STUB( getsid )
-DEFINE_STUB( fdatasync )
+DEFINE_STUB_FF( writev )
+DEFINE_STUB_FF( getsid )
+DEFINE_STUB_FF( fdatasync )
 
-DEFINE_STUB( nanosleep )
+DEFINE_STUB_FF( nanosleep )
 
-DEFINE_STUB( poll )
+DEFINE_STUB_FF( poll )
 
-DEFINE_STUB( pread )
-DEFINE_STUB( pwrite )
+DEFINE_STUB_FF( pread )
+DEFINE_STUB_FF( pwrite )
 
-DEFINE_STUB( openat       )
-DEFINE_STUB( mkdirat      )
-DEFINE_STUB( mknodat      )
-DEFINE_STUB( fchownat     )
-//DEFINE_STUB( futimesat    )
-DEFINE_STUB( fstatat      )
-DEFINE_STUB( unlinkat     )
-DEFINE_STUB( renameat     )
-DEFINE_STUB( linkat       )
-DEFINE_STUB( symlinkat    )
-DEFINE_STUB( readlinkat_k )
-DEFINE_STUB( fchmodat     )
-DEFINE_STUB( faccessat    )
+DEFINE_STUB_FF( openat       )
+DEFINE_STUB_FF( mkdirat      )
+DEFINE_STUB_FF( mknodat      )
+DEFINE_STUB_FF( fchownat     )
+//DEFINE_STUB_FF( futimesat    )
+DEFINE_STUB_FF( fstatat      )
+DEFINE_STUB_FF( unlinkat     )
+DEFINE_STUB_FF( renameat     )
+DEFINE_STUB_FF( linkat       )
+DEFINE_STUB_FF( symlinkat    )
+DEFINE_STUB_FF( readlinkat_k )
+DEFINE_STUB_FF( fchmodat     )
+DEFINE_STUB_FF( faccessat    )
 
-DEFINE_STUB( copyfileat )
-DEFINE_STUB( updateat   )
+DEFINE_STUB_FF( copyfileat )
+DEFINE_STUB_FF( updateat   )
 
 DEFINE_STUB( socketpair )
 DEFINE_STUB( socket )
