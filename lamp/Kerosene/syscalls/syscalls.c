@@ -43,7 +43,7 @@ extern int syscall( int number, ... );
 		extern void name();           \
 		asm void name()               \
 		{                             \
-			MOVE.L #__NR_##name,D0 ;  \
+			MOVE.W #__NR_##name,D0 ;  \
 			BRA SystemCall         ;  \
 		}
 	
