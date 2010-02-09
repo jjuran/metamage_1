@@ -309,14 +309,14 @@ namespace Genie
 	{
 		// D0 contains the system call number
 		
-		CMP.L	gLastSystemCall,D0
+		CMP.W	gLastSystemCall,D0
 		BLT		in_range
 		
-		MOVE.L	gLastSystemCall,D0
+		MOVE.W	gLastSystemCall,D0
 		
 	in_range:
 		MOVEA.L	gSystemCallArray,A0
-		MOVEA.L	(A0,D0.L*8),A0
+		MOVEA.L	(A0,D0.W*8),A0
 		
 		JMP		(A0)
 	}

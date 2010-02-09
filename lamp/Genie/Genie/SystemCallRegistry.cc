@@ -17,7 +17,7 @@ namespace Genie
 	
 	SystemCall* gSystemCallArray = NULL;
 	
-	std::size_t gLastSystemCall = 0;
+	syscall_number_t gLastSystemCall = 0;
 	
 	
 	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name()
@@ -42,7 +42,7 @@ namespace Genie
 		return theSystemCallRegistry;
 	}
 	
-	void RegisterSystemCall( unsigned index, const char* name, void* func )
+	void RegisterSystemCall( syscall_number_t index, const char* name, void* func )
 	{
 		SystemCallRegistry& registry = TheSystemCallRegistry();
 		
@@ -65,9 +65,9 @@ namespace Genie
 		return TheSystemCallRegistry();
 	}
 	
-	const SystemCall* GetSystemCall( unsigned index )
+	const SystemCall* GetSystemCall( syscall_number_t index )
 	{
-		const unsigned required_size = index + 1;
+		const syscall_number_t required_size = index + 1;
 		
 		SystemCallRegistry& registry = TheSystemCallRegistry();
 		
