@@ -305,7 +305,7 @@ namespace Genie
 	
 #if TARGET_CPU_68K
 	
-	static asm void DispatchSystemCall( unsigned index )
+	static asm void DispatchSystemCall( ... )
 	{
 		// D0 contains the system call number
 		
@@ -327,7 +327,7 @@ namespace Genie
 	
 	enum { kSystemCallSize = sizeof (SystemCall) };
 	
-	static asm void DispatchSystemCall( unsigned index )
+	static asm void DispatchSystemCall( ... )
 	{
 		nofralloc
 		
