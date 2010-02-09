@@ -22,20 +22,19 @@ extern int syscall( int number, ... );
 
 #ifdef __MC68K__
 	
-	static asm void SystemCall()
-	{
-		MOVEA.L		global_dispatcher,A0	;  // load the dispatcher's address
-											;  // syscall index already on stack
-		JMP			(A0)					;  // jump to dispatcher
-		
-		// Not reached
-	}
+	static void SystemCall();
 	
 	static asm void SystemCall_FF()
 	{
 		ANDI.W  #0x00FF,D0
 		
-		BRA     SystemCall
+		entry static SystemCall
+		
+		MOVEA.L		global_dispatcher,A0	;  // load the dispatcher's address
+											;  // syscall index already on stack
+		JMP			(A0)					;  // jump to dispatcher
+		
+		// Not reached
 	}
 	
 	asm int syscall( int number, ... )
