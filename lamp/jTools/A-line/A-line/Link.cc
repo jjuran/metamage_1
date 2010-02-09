@@ -437,13 +437,68 @@ namespace tool
 	}
 	
 	
-	static inline std::string ObjectFileName( const std::string& sourceName )
+	class object_filename_filler
 	{
-		std::size_t dot = sourceName.find_last_of( '.' );
-		// If the filename has no dot, then dot == npos, 
-		// and substr() returns the whole string.  (And ".o" is appended.)
-		return sourceName.substr( 0, dot ) + ".o";
-	}
+		private:
+			const std::string& its_objects_dir;
+		
+		public:
+			object_filename_filler( const std::string& objects )
+			:
+				its_objects_dir( objects )
+			{
+				ASSERT( !its_objects_dir.empty() );
+				
+				ASSERT( *its_objects_dir.rbegin() != '/' );
+			}
+			
+			std::string operator()( const std::string& source_path ) const
+			{
+				// The last dot in the source path.
+				// There should definitely be a dot in the filename, or the file
+				// wouldn't be compiled in the first place.
+				const size_t dot = source_path.find_last_of( '.' );
+				
+				// The sentinel is a double slash inserted in the full pathname
+				// to mark the project directory -- the portion following the
+				// mark is the project-relative path.
+				const size_t sentinel = source_path.find( "//" );
+				
+				ASSERT( sentinel < dot );
+				
+				// Offset of project-relative path within the source pathname.
+				const size_t path_offset = sentinel + STRLEN( "//" );
+				
+				// Length of result before ".o" is appended:
+				const size_t truncated_length = its_objects_dir.size()
+				                              + 1
+				                              + dot - path_offset;
+				
+				std::string result;
+				
+				result.reserve( truncated_length + STRLEN( ".o" ) );
+				
+				result += its_objects_dir;
+				result += '/';
+				
+				const size_t filename_offset = result.size();
+				
+				// Allocate space for the truncated filename
+				result.resize( truncated_length );
+				
+				// Copy the project-relative path, minus extension, replacing
+				// path separators with ':'
+				std::replace_copy( &source_path[ path_offset ],
+				                   &source_path[ dot         ],
+				                   &result[ filename_offset ],
+				                   '/',
+				                   ':' );
+				
+				result.append( STR_LEN( ".o" ) );
+				
+				return result;
+			}
+	};
 	
 	static void FillObjectFiles( const std::string&                 objects_dir,
 	                             const std::vector< std::string >&  source_paths,
@@ -452,10 +507,7 @@ namespace tool
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                plus::compose1( std::bind1st( plus::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
-		                                              objects_dir ),
-		                                plus::compose1( plus::ptr_fun( ObjectFileName ),
-		                                                plus::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
+		                object_filename_filler( objects_dir ) );
 	}
 	
 	void NameObjectFiles( const Project&               project,
