@@ -445,6 +445,24 @@ namespace tool
 		return sourceName.substr( 0, dot ) + ".o";
 	}
 	
+	class object_filename_filler
+	{
+		private:
+			const std::string& its_objects_dir;
+		
+		public:
+			object_filename_filler( const std::string& objects )
+			:
+				its_objects_dir( objects )
+			{
+			}
+			
+			std::string operator()( const std::string& source_path ) const
+			{
+				return its_objects_dir / ObjectFileName( io::get_filename( source_path ) );
+			}
+	};
+	
 	static void FillObjectFiles( const std::string&                 objects_dir,
 	                             const std::vector< std::string >&  source_paths,
 	                             std::vector< std::string >&        object_pathnames )
@@ -452,10 +470,7 @@ namespace tool
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                plus::compose1( std::bind1st( plus::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
-		                                              objects_dir ),
-		                                plus::compose1( plus::ptr_fun( ObjectFileName ),
-		                                                plus::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
+		                object_filename_filler( objects_dir ) );
 	}
 	
 	void NameObjectFiles( const Project&               project,
