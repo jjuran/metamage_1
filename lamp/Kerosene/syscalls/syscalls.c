@@ -36,7 +36,7 @@ extern int syscall( int number, ... );
 		MOVE.L  4(SP), D0    // copy system call number to d0
 		MOVE.L  (SP)+, (SP)  // overwrite it with the return address, and pop
 		
-		JMP     SystemCall
+		BRA     SystemCall
 	}
 	
 	#define DEFINE_STUB( name )       \
@@ -44,7 +44,7 @@ extern int syscall( int number, ... );
 		asm void name()               \
 		{                             \
 			MOVE.L #__NR_##name,D0 ;  \
-			JMP SystemCall         ;  \
+			BRA SystemCall         ;  \
 		}
 	
 #endif
