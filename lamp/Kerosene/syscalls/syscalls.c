@@ -39,6 +39,14 @@ extern int syscall( int number, ... );
 		BRA     SystemCall
 	}
 	
+	#define DEFINE_STUB_7F( name )    \
+		extern void name();           \
+		asm void name()               \
+		{                             \
+			MOVEQ #__NR_##name,D0  ;  \
+			BRA SystemCall         ;  \
+		}
+	
 	#define DEFINE_STUB( name )       \
 		extern void name();           \
 		asm void name()               \
@@ -101,88 +109,90 @@ extern int syscall( int number, ... );
 			b SystemCall       ;  \
 		}
 	
+	#define DEFINE_STUB_7F( name )  DEFINE_STUB( name )
+	
 #endif
 
-DEFINE_STUB( InitProc )
-DEFINE_STUB( _exit )
-DEFINE_STUB( vfork_start )
-DEFINE_STUB( read  )
-DEFINE_STUB( write )
-//DEFINE_STUB( open  )
-DEFINE_STUB( close )
-DEFINE_STUB( waitpid )
-DEFINE_STUB( realpath_k )
+DEFINE_STUB_7F( InitProc )
+DEFINE_STUB_7F( _exit )
+DEFINE_STUB_7F( vfork_start )
+DEFINE_STUB_7F( read  )
+DEFINE_STUB_7F( write )
+//DEFINE_STUB_7F( open  )
+DEFINE_STUB_7F( close )
+DEFINE_STUB_7F( waitpid )
+DEFINE_STUB_7F( realpath_k )
 
-//DEFINE_STUB( unlink )
-DEFINE_STUB( execve )
-DEFINE_STUB( chdir  )
+//DEFINE_STUB_7F( unlink )
+DEFINE_STUB_7F( execve )
+DEFINE_STUB_7F( chdir  )
 
-//DEFINE_STUB( mknod )
-//DEFINE_STUB( chmod )
+//DEFINE_STUB_7F( mknod )
+//DEFINE_STUB_7F( chmod )
 
-DEFINE_STUB( reexec )
-DEFINE_STUB( getcwd_k )
-DEFINE_STUB( lseek )
-DEFINE_STUB( getpid )
+DEFINE_STUB_7F( reexec )
+DEFINE_STUB_7F( getcwd_k )
+DEFINE_STUB_7F( lseek )
+DEFINE_STUB_7F( getpid )
 
-DEFINE_STUB( ptrace )
-DEFINE_STUB( alarm )
+DEFINE_STUB_7F( ptrace )
+DEFINE_STUB_7F( alarm )
 
-DEFINE_STUB( pause )
-//DEFINE_STUB( utime )
+DEFINE_STUB_7F( pause )
+//DEFINE_STUB_7F( utime )
 
-//DEFINE_STUB( access )
+//DEFINE_STUB_7F( access )
 
-DEFINE_STUB( sync )
-DEFINE_STUB( kill )
-//DEFINE_STUB( rename )
-//DEFINE_STUB( mkdir )
-//DEFINE_STUB( rmdir )
-//DEFINE_STUB( dup )
-//DEFINE_STUB( pipe )
-DEFINE_STUB( times )
+DEFINE_STUB_7F( sync )
+DEFINE_STUB_7F( kill )
+//DEFINE_STUB_7F( rename )
+//DEFINE_STUB_7F( mkdir )
+//DEFINE_STUB_7F( rmdir )
+//DEFINE_STUB_7F( dup )
+//DEFINE_STUB_7F( pipe )
+DEFINE_STUB_7F( times )
 
-DEFINE_STUB( signal )
-DEFINE_STUB( flock )
-DEFINE_STUB( ioctl )
-DEFINE_STUB( fcntl )
+DEFINE_STUB_7F( signal )
+DEFINE_STUB_7F( flock )
+DEFINE_STUB_7F( ioctl )
+DEFINE_STUB_7F( fcntl )
 
-DEFINE_STUB( setpgid )
+DEFINE_STUB_7F( setpgid )
 
-DEFINE_STUB( uname )
-DEFINE_STUB( umask )
+DEFINE_STUB_7F( uname )
+DEFINE_STUB_7F( umask )
 
-//DEFINE_STUB( dup2 )
-DEFINE_STUB( getppid )
+//DEFINE_STUB_7F( dup2 )
+DEFINE_STUB_7F( getppid )
 
-DEFINE_STUB( setsid )
-DEFINE_STUB( sigaction )
+DEFINE_STUB_7F( setsid )
+DEFINE_STUB_7F( sigaction )
 
-DEFINE_STUB( sigsuspend )
-DEFINE_STUB( sigpending )
+DEFINE_STUB_7F( sigsuspend )
+DEFINE_STUB_7F( sigpending )
 
-DEFINE_STUB( gettimeofday )
+DEFINE_STUB_7F( gettimeofday )
 
-DEFINE_STUB( select )
-//DEFINE_STUB( symlink )
+DEFINE_STUB_7F( select )
+//DEFINE_STUB_7F( symlink )
 
-//DEFINE_STUB( readlink_k )
+//DEFINE_STUB_7F( readlink_k )
 
-DEFINE_STUB( mmap )
-DEFINE_STUB( munmap )
-DEFINE_STUB( truncate )
-DEFINE_STUB( ftruncate )
-DEFINE_STUB( fchmod )
+DEFINE_STUB_7F( mmap )
+DEFINE_STUB_7F( munmap )
+DEFINE_STUB_7F( truncate )
+DEFINE_STUB_7F( ftruncate )
+DEFINE_STUB_7F( fchmod )
 
-DEFINE_STUB( setitimer )
-DEFINE_STUB( getitimer )
-//DEFINE_STUB( stat )
-//DEFINE_STUB( lstat )
-DEFINE_STUB( fstat )
+DEFINE_STUB_7F( setitimer )
+DEFINE_STUB_7F( getitimer )
+//DEFINE_STUB_7F( stat )
+//DEFINE_STUB_7F( lstat )
+DEFINE_STUB_7F( fstat )
 
-DEFINE_STUB( fsync )
+DEFINE_STUB_7F( fsync )
 
-DEFINE_STUB( sigprocmask )
+DEFINE_STUB_7F( sigprocmask )
 
 DEFINE_STUB( getpgid )
 DEFINE_STUB( fchdir )
