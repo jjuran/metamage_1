@@ -18,7 +18,7 @@
 namespace Genie
 {
 	
-	typedef void (*Dispatcher)( unsigned );
+	typedef void (*Dispatcher)( ... );
 	
 	struct ToolScratchGlobals
 	{

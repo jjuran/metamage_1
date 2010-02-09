@@ -16,17 +16,27 @@
 namespace Genie
 {
 	
+#ifdef __MC68K__
+	
+	typedef unsigned short syscall_number_t;
+	
+#else
+	
+	typedef unsigned syscall_number_t;
+	
+#endif
+	
 	// Register system calls
 	
 	#define REGISTER_SYSTEM_CALL(call)  \
 		SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
 	
-	void RegisterSystemCall( unsigned index, const char* name, void* func );
+	void RegisterSystemCall( syscall_number_t index, const char* name, void* func );
 	
 	class SystemCallRegistration
 	{
 		public:
-			SystemCallRegistration( unsigned index, const char* name, void* func )
+			SystemCallRegistration( syscall_number_t index, const char* name, void* func )
 			{
 				RegisterSystemCall( index, name, func );
 			}
@@ -44,13 +54,13 @@ namespace Genie
 	
 	extern SystemCall* gSystemCallArray;
 	
-	extern std::size_t gLastSystemCall;
+	extern syscall_number_t gLastSystemCall;
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
 	
 	const SystemCallRegistry& GetSystemCallRegistry();
 	
-	const SystemCall* GetSystemCall( unsigned index );
+	const SystemCall* GetSystemCall( syscall_number_t index );
 	
 	const SystemCall* LookUpSystemCallByName( const char* name );
 	
