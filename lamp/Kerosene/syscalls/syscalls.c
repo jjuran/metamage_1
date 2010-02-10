@@ -167,7 +167,7 @@ DEFINE_STUB_7F( kill )
 //DEFINE_STUB_7F( pipe )
 DEFINE_STUB_7F( times )
 
-DEFINE_STUB_7F( signal )
+//DEFINE_STUB_7F( signal )
 DEFINE_STUB_7F( flock )
 DEFINE_STUB_7F( ioctl )
 DEFINE_STUB_7F( fcntl )

@@ -163,6 +163,33 @@ void std::perror( const char* s )
 }
 
 #pragma mark -
+#pragma mark ¥ signal ¥
+
+typedef void (*signal_handler_t)(int);
+
+signal_handler_t signal( int signo, signal_handler_t func )
+{
+	if ( func == SIG_ERR )
+	{
+		errno = EINVAL;
+		
+		return SIG_ERR;
+	}
+	
+	struct sigaction old_action = { 0,    0, 0 };
+	struct sigaction new_action = { func, 0, 0 };
+	
+	int status = ::sigaction( signo, &new_action, &old_action );
+	
+	if ( status < 0 )
+	{
+		return SIG_ERR;
+	}
+	
+	return old_action.sa_handler;
+}
+
+#pragma mark -
 #pragma mark ¥ stdlib ¥
 
 void abort()
