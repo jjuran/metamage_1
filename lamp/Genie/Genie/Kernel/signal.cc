@@ -107,36 +107,6 @@ namespace Genie
 	}
 	
 	
-	static __sig_handler signal( int signo, __sig_handler func )
-	{
-		SystemCallFrame frame( "signal" );
-		
-		if ( signo <= 0  ||  signo >= NSIG )
-		{
-			frame.SetErrno( EINVAL );
-			
-			return SIG_ERR;
-		}
-		
-		if ( signo == SIGKILL  ||  signo == SIGSTOP  ||  func == SIG_ERR )
-		{
-			frame.SetErrno( EINVAL );
-			
-			return SIG_ERR;
-		}
-		
-		Process& current = frame.Caller();
-		
-		__sig_handler result = current.GetSignalAction( signo ).sa_handler;
-		
-		struct sigaction action = { func, 0, 0 };
-		
-		current.SetSignalAction( signo, action );
-		
-		return result;
-	}
-	
-	
 	static int sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
 	{
 		SystemCallFrame frame( "sigaction" );
@@ -249,7 +219,6 @@ namespace Genie
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( kill        );
-	REGISTER_SYSTEM_CALL( signal      );
 	REGISTER_SYSTEM_CALL( sigaction   );
 	REGISTER_SYSTEM_CALL( sigpending  );
 	REGISTER_SYSTEM_CALL( sigprocmask );
