@@ -16,12 +16,6 @@
 // Standard C++
 #include <string>
 
-// Standard C
-#include <signal.h>
-
-// POSIX
-#include <unistd.h>
-
 // Iota
 #include "iota/strings.hh"
 
