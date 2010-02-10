@@ -9,8 +9,6 @@
 #include <vector>
 
 // POSIX
-#include <fcntl.h>
-#include <signal.h>
 #include <sys/select.h>
 #include <sys/wait.h>
 
@@ -31,7 +29,7 @@
 #include "poseven/functions/listen.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
-#include "poseven/functions/signal.hh"
+#include "poseven/functions/sigaction.hh"
 #include "poseven/functions/socket.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/write.hh"
@@ -261,7 +259,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "Starting internet superserver: inetd" ) );
 		
-		p7::signal( p7::sigchld, HandleSIGCHLD );
+		p7::sigaction( p7::sigchld, HandleSIGCHLD );
 		
 		ReadInetdDotConf();
 		

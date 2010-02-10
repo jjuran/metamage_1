@@ -34,7 +34,9 @@ int main( int argc, char *const argv[] )
 		return 1;
 	}
 	
-	signal( SIGHUP, SIG_IGN );
+	struct sigaction action = { SIG_IGN, 0, 0 };
+	
+	sigaction( SIGHUP, &action, NULL );
 	
 	if ( isatty( STDOUT_FILENO ) )
 	{

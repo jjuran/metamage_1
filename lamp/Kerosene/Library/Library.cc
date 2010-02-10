@@ -167,7 +167,10 @@ void std::perror( const char* s )
 
 void abort()
 {
-	(void) signal( SIGABRT, SIG_DFL );
+	struct sigaction action = { SIG_DFL, 0, 0 };
+	
+	(void) sigaction( SIGABRT, &action, NULL );
+	
 	(void) raise( SIGABRT );
 }
 

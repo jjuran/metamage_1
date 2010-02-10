@@ -70,8 +70,10 @@ namespace tool
 			return usage();
 		}
 		
+		struct sigaction action = { SIG_IGN, 0, 0 };
+		
 		// Ignore SIGHUP
-		signal( SIGHUP, SIG_IGN );
+		sigaction( SIGHUP, &action, NULL );
 		
 		// Ensure we are not a process group leader
 		fork_and_exit( 0 );
@@ -83,7 +85,9 @@ namespace tool
 		
 		if ( ctty )
 		{
-			signal( SIGHUP, SIG_DFL );
+			action.sa_handler = SIG_DFL;
+			
+			sigaction( SIGHUP, &action, NULL );
 			
 			stdio = p7::open( ctty, p7::o_rdwr );
 			

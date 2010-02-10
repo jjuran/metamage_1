@@ -9,7 +9,7 @@
 #include "poseven/functions/read.hh"
 #include "poseven/functions/select.hh"
 #include "poseven/functions/setsid.hh"
-#include "poseven/functions/signal.hh"
+#include "poseven/functions/sigaction.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/write.hh"
@@ -126,7 +126,7 @@ namespace tool
 	{
 		p7::pid_t sid = p7::setsid();  // New session
 		
-		p7::signal( p7::sigchld, sigchld_handler );
+		p7::sigaction( p7::sigchld, sigchld_handler );
 		
 		p7::fd_t master = Spawn();
 		

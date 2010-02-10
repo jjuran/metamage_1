@@ -25,7 +25,7 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/functions/signal.hh"
+#include "poseven/functions/sigaction.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
@@ -526,11 +526,11 @@ namespace tool
 	{
 		if ( GetOption( kOptionMonitor ) )
 		{
-			p7::signal( p7::sigint,  p7::sig_dfl );
-			p7::signal( p7::sigquit, p7::sig_dfl );
-			p7::signal( p7::sigtstp, p7::sig_dfl );
-			p7::signal( p7::sigttin, p7::sig_dfl );
-			p7::signal( p7::sigttou, p7::sig_dfl );
+			p7::sigaction( p7::sigint,  p7::sig_dfl );
+			p7::sigaction( p7::sigquit, p7::sig_dfl );
+			p7::sigaction( p7::sigtstp, p7::sig_dfl );
+			p7::sigaction( p7::sigttin, p7::sig_dfl );
+			p7::sigaction( p7::sigttou, p7::sig_dfl );
 			
 			setpgid( 0, pgid );
 			
