@@ -7,7 +7,6 @@
 #include <cstring>
 
 // Standard C
-#include "signal.h"
 #include "stdlib.h"
 
 // Iota
@@ -53,9 +52,6 @@ namespace tool
 
 int main( int argc, char const *const argv[] )
 {
-	// Restore default SIGHUP handling in case daemonize had it ignored
-	signal( SIGHUP, SIG_DFL );
-	
 	p7::chdir( "/new/window" );
 	
 	setenv( "WINDOW", tool::getcwd(), true );
