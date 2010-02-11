@@ -84,13 +84,13 @@ namespace tool
 	}
 	
 	
-	static std::string InterfacesAndLibraries()
+	static std::string get_Libraries_pathname()
 	{
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
-		static std::string intfsAndLibs( GetPOSIXPathname( io::get_preceding_directory( io::get_preceding_directory( N::DTGetAPPL( sigMPWShell ) ) ) / "Interfaces&Libraries" / "Libraries" ) );
+		static std::string libraries( GetPOSIXPathname( io::get_preceding_directory( io::get_preceding_directory( N::DTGetAPPL( sigMPWShell ) ) ) / "Interfaces&Libraries" / "Libraries" ) );
 		
-		return intfsAndLibs;
+		return libraries;
 	}
 	
 	
@@ -188,7 +188,7 @@ namespace tool
 		
 		const char* subdir = it->second;
 		
-		std::string pathname = InterfacesAndLibraries() / subdir / libName;
+		std::string pathname = get_Libraries_pathname() / subdir / libName;
 		
 		if ( !io::file_exists( pathname ) )
 		{
