@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
@@ -21,7 +22,10 @@
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
+#include "poseven/functions/readlinkat.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
@@ -31,7 +35,6 @@
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Resources.h"
-#include "Nitrogen/Str.h"
 
 // Nitrogen Extras
 #include "FSReader.hh"
@@ -57,6 +60,7 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
 	namespace Div = Divergence;
@@ -85,13 +89,76 @@ namespace tool
 	}
 	
 	
-	static std::string InterfacesAndLibraries()
+	static std::string find_ToolServer()
 	{
-		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
+		n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
 		
-		static std::string intfsAndLibs( GetPOSIXPathname( io::get_preceding_directory( io::get_preceding_directory( N::DTGetAPPL( sigMPWShell ) ) ) / "Interfaces&Libraries" / "Libraries" ) );
+		try
+		{
+			return p7::readlinkat( vol, "ram/dt/appls/MPSX/latest" );
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != ENOENT )
+			{
+				throw;
+			}
+		}
 		
-		return intfsAndLibs;
+		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
+		
+		for ( int i = 1;  ;  ++i )
+		{
+			const char *name = iota::inscribe_decimal( i );
+			
+			n::owned< p7::fd_t > list_i = p7::openat( vol_list, name, p7::o_rdonly | p7::o_directory );
+			
+			try
+			{
+				return p7::readlinkat( list_i, "dt/appls/MPSX/latest" );
+			}
+			catch ( const p7::errno_t& err )
+			{
+				if ( err != ENOENT )
+				{
+					throw;
+				}
+			}
+		}
+	}
+	
+	static std::string find_Libraries()
+	{
+		std::string pathname = find_ToolServer();
+		
+		typedef std::string::reverse_iterator Iter;
+		
+		Iter it = std::find( pathname.rbegin(), pathname.rend(), '/' );
+		
+		if ( it == pathname.rend() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		it = std::find( it + 1, pathname.rend(), '/' );
+		
+		if ( it == pathname.rend() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		pathname.resize( pathname.rend() - it );
+		
+		pathname += "Interfaces&Libraries/Libraries";
+		
+		return pathname;
+	}
+	
+	static const std::string& get_Libraries_pathname()
+	{
+		static std::string libraries = find_Libraries();
+		
+		return libraries;
 	}
 	
 	
@@ -189,7 +256,7 @@ namespace tool
 		
 		const char* subdir = it->second;
 		
-		std::string pathname = InterfacesAndLibraries() / subdir / libName;
+		std::string pathname = get_Libraries_pathname() / subdir / libName;
 		
 		if ( !io::file_exists( pathname ) )
 		{
