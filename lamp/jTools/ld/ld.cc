@@ -84,7 +84,7 @@ namespace tool
 	}
 	
 	
-	static std::string get_Libraries_pathname()
+	static const std::string& get_Libraries_pathname()
 	{
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
