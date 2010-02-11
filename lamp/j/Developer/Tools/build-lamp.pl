@@ -165,7 +165,7 @@ my %fsmap =
 			# Misc
 			\ qw( chain divide jtest pause ptrace th ),
 			# Mac-specific
-			\ qw( beep cds err2text keymods macbin vols ),
+			\ qw( beep cds err2text keymods macbin rominfo vols ),
 			# Mac-specific scripts
 			qw( drvr gestalt ),
 			# Perl scripts
