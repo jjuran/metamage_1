@@ -151,24 +151,6 @@ namespace tool
 	}
 	
 	
-	static ProcessSerialNumber LaunchApplication( N::OSType signature )
-	{
-		try
-		{
-			return NX::FindProcess( signature );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err != procNotFound )
-			{
-				throw;
-			}
-		}
-		
-		return N::LaunchApplication( N::DTGetAPPL( signature ) );
-	}
-	
-	
 	static long GetResult( const N::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
@@ -186,7 +168,19 @@ namespace tool
 	{
 		try
 		{
-			return LaunchApplication( sigToolServer );
+			return NX::FindProcess( sigToolServer );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err != procNotFound )
+			{
+				throw;
+			}
+		}
+		
+		try
+		{
+			return N::LaunchApplication( N::DTGetAPPL( sigToolServer ) );
 		}
 		catch ( const N::OSStatus& err )
 		{
