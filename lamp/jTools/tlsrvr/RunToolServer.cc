@@ -182,7 +182,7 @@ namespace tool
 	}
 	
 	
-	static ProcessSerialNumber LaunchToolServer()
+	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
 		try
 		{
@@ -209,7 +209,7 @@ namespace tool
 	
 	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
 	{
-		ProcessSerialNumber psnToolServer = LaunchToolServer();
+		ProcessSerialNumber psnToolServer = find_or_launch_ToolServer();
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,
@@ -409,12 +409,12 @@ namespace tool
 		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
 		                                      N::GetFrontProcess() ) )
 		{
-			N::SetFrontProcess( LaunchToolServer() );
+			N::SetFrontProcess( find_or_launch_ToolServer() );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		if ( switch_layers && N::SameProcess( LaunchToolServer(),
+		if ( switch_layers && N::SameProcess( find_or_launch_ToolServer(),
 		                                      N::GetFrontProcess() ) )
 		{
 			N::SetFrontProcess( N::CurrentProcess() );
