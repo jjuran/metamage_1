@@ -84,11 +84,21 @@ namespace tool
 	}
 	
 	
-	static const std::string& get_Libraries_pathname()
+	static std::string find_Libraries()
 	{
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
-		static std::string libraries( GetPOSIXPathname( io::get_preceding_directory( io::get_preceding_directory( N::DTGetAPPL( sigMPWShell ) ) ) / "Interfaces&Libraries" / "Libraries" ) );
+		const FSSpec toolserver = N::DTGetAPPL( sigMPWShell );
+		
+		const FSSpec mpw  = io::get_preceding_directory( toolserver );
+		const FSSpec apps = io::get_preceding_directory( mpw        );
+		
+		return GetPOSIXPathname( apps / "Interfaces&Libraries" / "Libraries" );
+	}
+	
+	static const std::string& get_Libraries_pathname()
+	{
+		static std::string libraries = find_Libraries();
 		
 		return libraries;
 	}
