@@ -84,16 +84,40 @@ namespace tool
 	}
 	
 	
-	static std::string find_Libraries()
+	static std::string find_ToolServer()
 	{
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
 		const FSSpec toolserver = N::DTGetAPPL( sigMPWShell );
 		
-		const FSSpec mpw  = io::get_preceding_directory( toolserver );
-		const FSSpec apps = io::get_preceding_directory( mpw        );
+		return GetPOSIXPathname( toolserver );
+	}
+	
+	static std::string find_Libraries()
+	{
+		std::string pathname = find_ToolServer();
 		
-		return GetPOSIXPathname( apps / "Interfaces&Libraries" / "Libraries" );
+		typedef std::string::reverse_iterator Iter;
+		
+		Iter it = std::find( pathname.rbegin(), pathname.rend(), '/' );
+		
+		if ( it == pathname.rend() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		it = std::find( it + 1, pathname.rend(), '/' );
+		
+		if ( it == pathname.rend() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		pathname.resize( pathname.rend() - it );
+		
+		pathname += "Interfaces&Libraries/Libraries";
+		
+		return pathname;
 	}
 	
 	static const std::string& get_Libraries_pathname()
