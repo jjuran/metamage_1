@@ -27,6 +27,7 @@
 #include "io/spew.hh"
 
 // poseven
+#include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -151,21 +152,27 @@ namespace tool
 	}
 	
 	
-	static ProcessSerialNumber LaunchApplication( N::OSType signature )
+	static inline int device_of_ramdisk()
 	{
-		try
+		if ( TARGET_API_MAC_CARBON )
 		{
-			return NX::FindProcess( signature );
+			// Lamp Carbon doesn't check driver names, and
+			// OS X's BSD layer doesn't have /sys in the first place
+			return 0;
 		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err != procNotFound )
-			{
-				throw;
-			}
-			
-			return N::LaunchApplication( N::DTGetAPPL( signature ) );
-		}
+		
+		struct stat ram_status = { 0 };
+		
+		const bool has_ramdisk = p7::stat( "/sys/mac/vol/ram/mnt", ram_status );
+		
+		return has_ramdisk ? ram_status.st_dev : 0;
+	}
+	
+	static ProcessSerialNumber launch_ToolServer_from_ramdisk( int dev )
+	{
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -dev );
+		
+		return N::LaunchApplication( N::DTGetAPPL( sigToolServer, vRefNum ) );
 	}
 	
 	
@@ -182,11 +189,38 @@ namespace tool
 	}
 	
 	
-	static ProcessSerialNumber LaunchToolServer()
+	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
 		try
 		{
-			return LaunchApplication( sigToolServer );
+			return NX::FindProcess( sigToolServer );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err != procNotFound )
+			{
+				throw;
+			}
+		}
+		
+		if ( const int device = device_of_ramdisk() )
+		{
+			try
+			{
+				launch_ToolServer_from_ramdisk( device );
+			}
+			catch ( const N::OSStatus& err )
+			{
+				if ( err != afpItemNotFound )
+				{
+					throw;
+				}
+			}
+		}
+		
+		try
+		{
+			return N::LaunchApplication( N::DTGetAPPL( sigToolServer ) );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -209,7 +243,7 @@ namespace tool
 	
 	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
 	{
-		ProcessSerialNumber psnToolServer = LaunchToolServer();
+		ProcessSerialNumber psnToolServer = find_or_launch_ToolServer();
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,
@@ -409,12 +443,12 @@ namespace tool
 		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
 		                                      N::GetFrontProcess() ) )
 		{
-			N::SetFrontProcess( LaunchToolServer() );
+			N::SetFrontProcess( find_or_launch_ToolServer() );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		if ( switch_layers && N::SameProcess( LaunchToolServer(),
+		if ( switch_layers && N::SameProcess( find_or_launch_ToolServer(),
 		                                      N::GetFrontProcess() ) )
 		{
 			N::SetFrontProcess( N::CurrentProcess() );
