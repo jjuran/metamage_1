@@ -93,6 +93,18 @@ namespace tool
 	{
 		n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
 		
+		try
+		{
+			return p7::readlinkat( vol, "ram/dt/appls/MPSX/latest" );
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != ENOENT )
+			{
+				throw;
+			}
+		}
+		
 		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
 		
 		for ( int i = 1;  ;  ++i )
