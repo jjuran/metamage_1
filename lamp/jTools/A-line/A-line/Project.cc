@@ -11,6 +11,9 @@
 #include <set>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // Iota
 #include "iota/strings.hh"
 

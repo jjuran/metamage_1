@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <string>
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include <string.h>
 

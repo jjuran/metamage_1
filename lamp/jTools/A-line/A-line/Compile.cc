@@ -12,6 +12,9 @@
 #include <set>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include <stdlib.h>
 

@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Standard C/C++
+#include <cstdio>
+
 // Iota
 #include "iota/strings.hh"
 

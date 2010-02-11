@@ -5,6 +5,7 @@
 #include "ReadExecuteLoop.hh"
 
 // Standard C/C++
+#include <cstdio>
 #include <cstring>
 
 // Standard C

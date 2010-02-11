@@ -8,6 +8,7 @@
 #include <set>
 
 // Standard C/C++
+#include <cstdio>
 #include <cstring>
 
 // Standard C
