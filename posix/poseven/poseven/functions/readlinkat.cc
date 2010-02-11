@@ -7,8 +7,8 @@
 
 #include "poseven/functions/readlinkat.hh"
 
-// POSIX
-#include <unistd.h>
+// Extended API Set Part 2
+#include "extended-api-set/part-2.h"
 
 // poseven
 #include "poseven/types/errno_t.hh"
