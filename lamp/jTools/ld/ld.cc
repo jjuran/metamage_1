@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
@@ -21,7 +22,10 @@
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
+#include "poseven/functions/open.hh"
+#include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
+#include "poseven/functions/readlinkat.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
@@ -56,6 +60,7 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
 	namespace Div = Divergence;
@@ -86,11 +91,28 @@ namespace tool
 	
 	static std::string find_ToolServer()
 	{
-		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
+		n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
 		
-		const FSSpec toolserver = N::DTGetAPPL( sigMPWShell );
+		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
 		
-		return GetPOSIXPathname( toolserver );
+		for ( int i = 1;  ;  ++i )
+		{
+			const char *name = iota::inscribe_decimal( i );
+			
+			n::owned< p7::fd_t > list_i = p7::openat( vol_list, name, p7::o_rdonly | p7::o_directory );
+			
+			try
+			{
+				return p7::readlinkat( list_i, "dt/appls/MPSX/latest" );
+			}
+			catch ( const p7::errno_t& err )
+			{
+				if ( err != ENOENT )
+				{
+					throw;
+				}
+			}
+		}
 	}
 	
 	static std::string find_Libraries()
