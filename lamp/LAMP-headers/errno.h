@@ -51,7 +51,6 @@ extern int errno;
 #endif
 
 #ifndef __OPENTRANSPORT__
-#define OTUNIXERRORS 1
 #include <OpenTransport.h>
 #endif
 

@@ -8,7 +8,6 @@
 
 // Mac OS
 #ifndef __OPENTRANSPORTPROVIDERS__
-#define OTUNIXERRORS 1
 #include <OpenTransportProviders.h>
 #endif
 

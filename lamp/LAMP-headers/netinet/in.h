@@ -44,7 +44,6 @@
 #ifndef __FILES__
 #include <Files.h>
 #endif
-#define OTUNIXERRORS 1
 #include <OpenTransportProviders.h>
 #endif
 

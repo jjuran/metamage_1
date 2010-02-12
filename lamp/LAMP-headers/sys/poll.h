@@ -29,7 +29,6 @@
 #define	_SYS_POLL_H_
 
 #ifndef __OPENTRANSPORTPROTOCOL__
-#define OTUNIXERRORS 1
 #include <OpenTransportProtocol.h>
 #endif
 

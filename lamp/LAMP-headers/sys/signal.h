@@ -43,7 +43,6 @@
 #define	_SYS_SIGNAL_H_
 
 #ifndef __OPENTRANSPORT__
-#define OTUNIXERRORS 1
 #include <OpenTransport.h>
 #endif
 

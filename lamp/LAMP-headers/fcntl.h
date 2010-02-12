@@ -7,7 +7,6 @@
 #define KEROSENE_FCNTL_H
 
 #ifndef __OPENTRANSPORT__
-#define OTUNIXERRORS 1
 #include <OpenTransport.h>
 #endif
 
