@@ -28,10 +28,6 @@
 #ifndef	_SYS_POLL_H_
 #define	_SYS_POLL_H_
 
-#ifndef __OPENTRANSPORTPROTOCOL__
-#include <OpenTransportProtocol.h>
-#endif
-
 #undef POLLIN
 #undef POLLPRI
 #undef POLLOUT

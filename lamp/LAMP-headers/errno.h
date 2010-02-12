@@ -50,10 +50,6 @@ extern int errno;
 #include <mpw/errno.h>
 #endif
 
-#ifndef __OPENTRANSPORT__
-#include <OpenTransport.h>
-#endif
-
 #include <sys/errno.h>
 
 #if defined(__cplusplus) && defined(_MSL_USING_NAMESPACE) && (__MSL__ < 0x5000)

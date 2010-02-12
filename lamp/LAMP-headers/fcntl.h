@@ -6,10 +6,6 @@
 #ifndef KEROSENE_FCNTL_H
 #define KEROSENE_FCNTL_H
 
-#ifndef __OPENTRANSPORT__
-#include <OpenTransport.h>
-#endif
-
 #include <sys/types.h>
 
 #ifdef __cplusplus

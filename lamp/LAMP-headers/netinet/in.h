@@ -40,10 +40,6 @@
 #ifndef _NETINET_IN_H_
 #define	_NETINET_IN_H_
 
-#ifndef __OPENTRANSPORTPROVIDERS__
-#include <OpenTransportProviders.h>
-#endif
-
 #include <sys/types.h>
 
 /*

@@ -35,11 +35,6 @@
 #ifndef _SYS_SOCKET_H_
 #define	_SYS_SOCKET_H_
 
-// Open Transport defines AF_INET et al as enumerations; get that done and move on
-#ifndef __OPENTRANSPORTPROVIDERS__
-#include <OpenTransportProviders.h>
-#endif
-
 #include <sys/types.h>
 
 /*

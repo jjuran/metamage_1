@@ -42,10 +42,6 @@
 #ifndef	_SYS_SIGNAL_H_
 #define	_SYS_SIGNAL_H_
 
-#ifndef __OPENTRANSPORT__
-#include <OpenTransport.h>
-#endif
-
 #include <sys/cdefs.h>
 
 #define NSIG	32		/* counting 0; could be 33 (mask is 1-32) */
