@@ -48,19 +48,10 @@
 	
 	#include <CGBase.h>
 	
-	#if CALL_NOT_IN_CARBON
-		
-		#define OTUNIXERRORS 1
-		#include <OpenTransportProtocol.h>
-		
-	#else
-		
-		typedef	char *		caddr_t;	/* core address */
-		typedef	__dev_t		dev_t;		/* device number */
-		typedef	__gid_t		gid_t;		/* group id */
-		typedef	__uid_t		uid_t;		/* user id */
-		
-	#endif
+	typedef	char *		caddr_t;	/* core address */
+	typedef	__dev_t		dev_t;		/* device number */
+	typedef	__gid_t		gid_t;		/* group id */
+	typedef	__uid_t		uid_t;		/* user id */
 	
 	#include <stdint.h>
 	
