@@ -37,10 +37,6 @@
 
 // Open Transport defines AF_INET et al as enumerations; get that done and move on
 #ifndef __OPENTRANSPORTPROVIDERS__
-// OpenTransportProviders.h depends on Files.h but doesn't include it
-#ifndef __FILES__
-#include <Files.h>
-#endif
 #include <OpenTransportProviders.h>
 #endif
 

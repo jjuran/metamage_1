@@ -41,9 +41,6 @@
 #define	_NETINET_IN_H_
 
 #ifndef __OPENTRANSPORTPROVIDERS__
-#ifndef __FILES__
-#include <Files.h>
-#endif
 #include <OpenTransportProviders.h>
 #endif
 
