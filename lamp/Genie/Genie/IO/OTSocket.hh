@@ -6,6 +6,11 @@
 #ifndef GENIE_IO_OTSOCKET_HH
 #define GENIE_IO_OTSOCKET_HH
 
+// Mac OS
+#ifndef __OPENTRANSPORTPROVIDERS__
+#include <OpenTransportProviders.h>
+#endif
+
 // POSIX
 #include <sys/socket.h>
 
