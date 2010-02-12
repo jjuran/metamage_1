@@ -7,6 +7,7 @@
 #include <cstdlib>
 
 // POSIX
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <utime.h>

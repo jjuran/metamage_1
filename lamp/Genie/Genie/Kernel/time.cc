@@ -7,6 +7,7 @@
 #include <algorithm>
 
 // POSIX
+#include "errno.h"
 #include "sys/time.h"
 
 // Nitrogen
