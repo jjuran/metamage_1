@@ -46,8 +46,6 @@
 
 #ifdef __MWERKS__
 	
-	#include <CGBase.h>
-	
 	typedef	char *		caddr_t;	/* core address */
 	typedef	__dev_t		dev_t;		/* device number */
 	typedef	__gid_t		gid_t;		/* group id */
@@ -137,11 +135,9 @@ typedef	__uint64_t		uint64_t;
 #endif
 
 /* BSD-style unsigned bits types */
-/*
 typedef	__uint8_t	u_int8_t;
 typedef	__uint16_t	u_int16_t;
 typedef	__uint32_t	u_int32_t;
-*/
 typedef	__uint64_t	u_int64_t;
 
 /* quads, deprecated in favor of 64 bit int types */
