@@ -207,7 +207,7 @@ namespace tool
 		{
 			try
 			{
-				launch_ToolServer_from_ramdisk( device );
+				return launch_ToolServer_from_ramdisk( device );
 			}
 			catch ( const N::OSStatus& err )
 			{
