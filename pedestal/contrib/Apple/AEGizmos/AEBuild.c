@@ -24,7 +24,7 @@
 #ifndef __POWERPC__
 #include <SANE.h>
 #endif
-#include <Errors.h>
+#include <MacErrors.h>
 #include <stdarg.h>
 #include "AEStream.h"
 #include "AEBuild.h"

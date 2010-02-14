@@ -26,7 +26,7 @@
 
 #include <ctype.h>
 #include <stdarg.h>
-#include <Errors.h>
+#include <MacErrors.h>
 #include <Packages.h>
 #include <AppleEvents.h>
 #include <NumberFormatting.h>
