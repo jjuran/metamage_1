@@ -19,12 +19,10 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Types.h>
 #include <Gestalt.h>
 #include <Timer.h>
 #include <Errors.h>
 #include <Memory.h>
-#include <Files.h>
 #include <TextUtils.h>
 
 #define	__COMPILINGMOREFILES

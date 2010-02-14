@@ -19,10 +19,8 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Types.h>
 #include <Errors.h>
 #include <Memory.h>
-#include <Files.h>
 #include <TextUtils.h>
 #include <Aliases.h>
 

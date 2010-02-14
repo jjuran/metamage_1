@@ -28,7 +28,6 @@
 #define GENERATENODATA 0
 #endif
 
-#include <Types.h>
 #include <Errors.h>
 #include <LowMem.h>
 #include <Gestalt.h>

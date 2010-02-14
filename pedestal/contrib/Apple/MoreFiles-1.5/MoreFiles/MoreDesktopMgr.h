@@ -26,7 +26,6 @@
 #ifndef __MOREDESKTOPMGR__
 #define __MOREDESKTOPMGR__
 
-#include <Types.h>
 #include <Files.h>
 
 #include "MoreFiles/Optimization.h"

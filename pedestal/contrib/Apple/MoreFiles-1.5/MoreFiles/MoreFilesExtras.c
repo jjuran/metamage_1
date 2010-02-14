@@ -19,11 +19,9 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Types.h>
 #include <Traps.h>
 #include <OSUtils.h>
 #include <Errors.h>
-#include <Files.h>
 #include <Devices.h>
 #include <Finder.h>
 #include <Folders.h>
