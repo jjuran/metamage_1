@@ -20,13 +20,10 @@
 */
 
 #include <Traps.h>
-#include <OSUtils.h>
 #include <MacErrors.h>
 #include <Devices.h>
-#include <Finder.h>
 #include <Folders.h>
 #include <FSM.h>
-#include <Disks.h>
 #include <Gestalt.h>
 #include <TextUtils.h>
 #include <Script.h>
