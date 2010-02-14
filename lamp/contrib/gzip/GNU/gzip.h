@@ -28,9 +28,6 @@
 #include <stdio.h>
 #if !defined(NO_STRING_H) || defined(STDC_HEADERS)
 #  include <string.h>
-#  if !defined(STDC_HEADERS) && !defined(NO_MEMORY_H) && !defined(__GNUC__)
-#    include <memory.h>
-#  endif
 #  define memzero(s, n)     memset ((voidp)(s), 0, (n))
 #else
 #  include <strings.h>
