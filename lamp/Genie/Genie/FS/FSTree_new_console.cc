@@ -271,6 +271,9 @@ namespace Genie
 		{
 			const short length = hTE[0]->teLength;
 			
+			selection.start =
+			selection.end   = length;
+			
 			::TESetSelect( length, length, hTE );
 		}
 		
