@@ -22,7 +22,6 @@
 #ifndef __FSPCOMPAT__
 #define __FSPCOMPAT__
 
-#include <Types.h>
 #include <Files.h>
 
 #include "MoreFiles/Optimization.h"

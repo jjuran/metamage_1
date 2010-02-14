@@ -22,7 +22,6 @@
 #ifndef __DIRECTORYCOPY__
 #define __DIRECTORYCOPY__
 
-#include <Types.h>
 #include <Files.h>
 
 #include "MoreFiles/Optimization.h"

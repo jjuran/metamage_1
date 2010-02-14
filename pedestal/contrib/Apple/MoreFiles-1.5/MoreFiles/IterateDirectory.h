@@ -19,7 +19,6 @@
 #ifndef __ITERATEDIRECTORY__
 #define __ITERATEDIRECTORY__
 
-#include <Types.h>
 #include <Files.h>
 
 #include "MoreFiles/Optimization.h"
