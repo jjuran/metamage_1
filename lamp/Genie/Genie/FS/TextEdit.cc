@@ -324,6 +324,15 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		
+		if ( c == kBackspaceCharCode )
+		{
+			DeleteRange( params, offset - 1, offset );
+			
+			TEKey( c, hTE );
+			
+			return;
+		}
+		
 		const char unix_char = (c == '\r') ? '\n' : c;
 		
 		params.itsText.insert( params.itsText.begin() + offset, unix_char );
