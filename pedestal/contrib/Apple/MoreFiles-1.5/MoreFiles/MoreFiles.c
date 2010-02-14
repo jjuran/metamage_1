@@ -19,7 +19,7 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Errors.h>
+#include <MacErrors.h>
 
 #define	__COMPILINGMOREFILES
 

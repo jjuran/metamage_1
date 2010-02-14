@@ -21,7 +21,7 @@
 
 #include <Traps.h>
 #include <OSUtils.h>
-#include <Errors.h>
+#include <MacErrors.h>
 #include <Devices.h>
 #include <Finder.h>
 #include <Folders.h>

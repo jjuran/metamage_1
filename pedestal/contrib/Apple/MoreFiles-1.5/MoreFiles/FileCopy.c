@@ -19,8 +19,8 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Errors.h>
-#include <Memory.h>
+#include <MacErrors.h>
+#include <MacMemory.h>
 #include <Math64.h>
 
 #define	__COMPILINGMOREFILES

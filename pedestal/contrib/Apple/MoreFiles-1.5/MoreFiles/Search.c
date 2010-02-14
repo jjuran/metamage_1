@@ -21,8 +21,8 @@
 
 #include <Gestalt.h>
 #include <Timer.h>
-#include <Errors.h>
-#include <Memory.h>
+#include <MacErrors.h>
+#include <MacMemory.h>
 #include <TextUtils.h>
 
 #define	__COMPILINGMOREFILES

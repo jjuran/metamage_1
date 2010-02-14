@@ -28,7 +28,7 @@
 #define GENERATENODATA 0
 #endif
 
-#include <Errors.h>
+#include <MacErrors.h>
 #include <LowMem.h>
 #include <Gestalt.h>
 #include <Resources.h>
