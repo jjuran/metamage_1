@@ -99,7 +99,7 @@ namespace tool
 		}
 		catch ( const p7::errno_t& err )
 		{
-			if ( err != ENOENT )
+			if ( err != ENOENT  &&  err != EINVAL )
 			{
 				throw;
 			}
