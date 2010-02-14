@@ -146,6 +146,23 @@ namespace Genie
 	
 	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey );
 	
+	static void DeleteRange( TextEditParameters& params, short start, short end )
+	{
+		if ( params.itsValidLength >= end )
+		{
+			params.itsValidLength -= (end - start);
+		}
+		else if ( params.itsValidLength > start )
+		{
+			params.itsValidLength = start;
+		}
+		
+		params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+		
+		params.itsSelection.start =
+		params.itsSelection.end   = start;
+	}
+	
 	void TextEdit::Install( const Rect& bounds )
 	{
 		Ped::TextEdit::Install( bounds );
@@ -335,21 +352,9 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		
-		if ( params.itsValidLength >= end )
-		{
-			params.itsValidLength -= (end - start);
-		}
-		else if ( params.itsValidLength > start )
-		{
-			params.itsValidLength = start;
-		}
-		
-		params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+		DeleteRange( params, start, end );
 		
 		::TEDelete( hTE );
-		
-		params.itsSelection.start =
-		params.itsSelection.end   = start;
 	}
 	
 	void TextEdit::Cut()
