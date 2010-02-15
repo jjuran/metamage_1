@@ -135,9 +135,12 @@ typedef	__uint64_t		uint64_t;
 #endif
 
 /* BSD-style unsigned bits types */
+#ifndef __CGBASE__
+#define _MACHTYPES_H_
 typedef	__uint8_t	u_int8_t;
 typedef	__uint16_t	u_int16_t;
 typedef	__uint32_t	u_int32_t;
+#endif
 typedef	__uint64_t	u_int64_t;
 
 /* quads, deprecated in favor of 64 bit int types */
