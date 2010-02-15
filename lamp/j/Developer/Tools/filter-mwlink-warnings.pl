@@ -7,6 +7,7 @@ my @ignored_routines =
 qw
 (
 	abort
+	clock
 	getenv
 	gmtime
 	localtime
