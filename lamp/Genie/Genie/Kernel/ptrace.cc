@@ -4,6 +4,7 @@
  */
 
 // POSIX
+#include "errno.h"
 #include "signal.h"
 #include "sys/ptrace.h"
 #include "unistd.h"

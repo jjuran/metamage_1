@@ -3,6 +3,11 @@
  *	========
  */
 
+// Mac OS
+#ifndef __OPENTRANSPORT__
+#include <OpenTransport.h>
+#endif
+
 // POSIX
 #include "netdb.h"
 

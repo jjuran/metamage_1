@@ -33,12 +33,6 @@
 	
 	#include <math.h>
 	
-	// OpenTransport.h will define some useful Unix error constants for us,
-	// but only if we define OTUNIXERRORS.  Since we precompile, this is our
-	// only shot to do it.
-	
-	#define OTUNIXERRORS 1
-	
 	#include <ConditionalMacros.h>
 	
 	#if !TARGET_API_MAC_CARBON

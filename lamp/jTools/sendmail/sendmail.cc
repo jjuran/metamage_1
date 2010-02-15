@@ -11,6 +11,11 @@
 // Standard C/C++
 #include <cctype>
 
+// Mac OS
+#ifndef __OPENTRANSPORT__
+#include <OpenTransport.h>
+#endif
+
 // POSIX
 #include <arpa/inet.h>
 #include <netdb.h>

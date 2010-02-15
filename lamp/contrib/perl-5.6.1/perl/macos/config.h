@@ -103,10 +103,6 @@ First build released to public
 
 #define MACOS_LAMP
 
-// Get this out of the way so the Move macro doesn't break it
-#include <Quickdraw.h>
-
-
 #define PERL_USE_SAFE_PUTENV
 
 /* LOC_SED:

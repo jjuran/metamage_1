@@ -4,6 +4,7 @@
  */
 
 // Standard C
+#include <errno.h>
 #include <stdio.h>
 
 // POSIX
