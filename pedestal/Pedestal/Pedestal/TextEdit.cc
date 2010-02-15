@@ -424,10 +424,12 @@ namespace Pedestal
 			
 			if ( selStart == selEnd )
 			{
-				hTE[0]->selStart = --selStart;
+				Insert_Key( kBackspaceCharCode );
 			}
-			
-			Delete();
+			else
+			{
+				Delete();
+			}
 		}
 		else
 		{
