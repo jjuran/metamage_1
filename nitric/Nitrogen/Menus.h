@@ -52,9 +52,6 @@
 #ifndef NITROGEN_COLLECTIONS_H
 #include "Nitrogen/Collections.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
 #endif

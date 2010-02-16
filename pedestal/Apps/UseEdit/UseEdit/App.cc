@@ -73,7 +73,7 @@ namespace UseEdit
 					break;
 				
 				default:
-					throw N::ErrAEEventNotHandled();
+					N::ThrowOSStatus( errAEEventNotHandled );
 					break;
 			}
 		}
@@ -203,7 +203,7 @@ namespace UseEdit
 			}
 			
 			// Unsupported key form
-			throw N::ErrAEEventNotHandled();
+			N::ThrowOSStatus( errAEEventNotHandled );
 			
 			return NN::Owned< N::AEDesc_Token >();
 		}
@@ -273,7 +273,7 @@ namespace UseEdit
 	{
 		if ( it == itsMap.end() )
 		{
-			throw N::ErrAENoSuchObject();
+			N::ThrowOSStatus( errAENoSuchObject );
 		}
 	}
 	
@@ -282,7 +282,7 @@ namespace UseEdit
 	{
 		if ( !ExistsElementByIndex( index ) )
 		{
-			throw N::ErrAENoSuchObject();
+			N::ThrowOSStatus( errAENoSuchObject );
 		}
 		
 		Map::const_iterator it = itsMap.begin();
@@ -325,7 +325,7 @@ namespace UseEdit
 	{
 		if ( !ExistsElementByIndex( index ) )
 		{
-			throw N::ErrAENoSuchObject();
+			N::ThrowOSStatus( errAENoSuchObject );
 		}
 		
 		Map::iterator it = itsMap.begin();

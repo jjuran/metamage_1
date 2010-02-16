@@ -29,9 +29,6 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 #ifndef NITROGEN_APPLEEVENTS_H
 #include "Nitrogen/AppleEvents.h"
 #endif

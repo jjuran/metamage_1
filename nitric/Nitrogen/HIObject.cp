@@ -15,9 +15,6 @@
 
 #include "Nitrogen/HIObject.h"
 
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-
 
 namespace Nitrogen {
 

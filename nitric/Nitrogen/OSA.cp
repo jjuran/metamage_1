@@ -209,7 +209,7 @@ namespace Nitrogen
 	{
 		if ( scriptingComponent.Get() != to.GetDisposer().Component() )
 		{
-			throw ErrOSAComponentMismatch();
+			ThrowOSStatus( errOSAComponentMismatch );
 		}
 		
 		OSACopyID( fromID, to );

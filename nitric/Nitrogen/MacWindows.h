@@ -64,9 +64,6 @@
 #ifndef NITROGEN_ICONS_H
 #include "Nitrogen/Icons.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
 #endif

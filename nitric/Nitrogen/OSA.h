@@ -24,9 +24,6 @@
 #ifndef NITROGEN_COMPONENTS_H
 #include "Nitrogen/Components.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
