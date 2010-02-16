@@ -21,12 +21,6 @@
 #include "Orion/Main.hh"
 
 
-#ifndef CLOCKS_PER_SEC
-#warning CLOCKS_PER_SEC not defined, assuming 60
-#define CLOCKS_PER_SEC 60
-#endif
-
-
 namespace tool
 {
 	

@@ -9,6 +9,8 @@
 #include <sys/types.h>
 
 
+#define CLOCKS_PER_SEC  1000000ul
+
 #define NANOSLEEP_DOZE  (-1)
 
 
