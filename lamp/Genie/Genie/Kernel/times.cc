@@ -39,13 +39,13 @@ namespace Genie
 		{
 			const Times& clocks = frame.Caller().GetTimes();
 			
-			tp->tms_utime  = clocks.user         * (CLOCKS_PER_SEC / 1000000.0);
-			tp->tms_stime  = clocks.system       * (CLOCKS_PER_SEC / 1000000.0);
-			tp->tms_cutime = clocks.child_user   * (CLOCKS_PER_SEC / 1000000.0);
-			tp->tms_cstime = clocks.child_system * (CLOCKS_PER_SEC / 1000000.0);
+			tp->tms_utime  = clocks.user;
+			tp->tms_stime  = clocks.system;
+			tp->tms_cutime = clocks.child_user;
+			tp->tms_cstime = clocks.child_system;
 		}
 		
-		return (N::Microseconds() - gStartTime.microseconds) * (CLOCKS_PER_SEC / 1000000.0);
+		return N::Microseconds() - gStartTime.microseconds;
 	}
 	
 	#pragma force_active on
