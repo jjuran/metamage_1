@@ -15,7 +15,6 @@
 #include "plus/hexidecimal.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/Saved.h"
 
 // poseven
@@ -95,7 +94,7 @@ namespace Genie
 		
 		static std::string freeze( ConstStr255Param param, bool binary )
 		{
-			return NN::Convert< std::string >( param );
+			return std::string( (const char*) &param[1], param[0] );
 		}
 		
 		static N::Str255 vivify( const char* begin, const char* end, bool binary )
