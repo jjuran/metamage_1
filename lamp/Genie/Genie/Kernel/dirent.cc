@@ -6,9 +6,6 @@
 // POSIX
 #include "dirent.h"
 
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
@@ -22,9 +19,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
 	{

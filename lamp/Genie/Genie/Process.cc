@@ -30,7 +30,6 @@
 
 // Nitrogen
 #include "Nitrogen/Aliases.h"
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"

@@ -35,7 +35,6 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/AERegistry.h"
 #include "Nitrogen/Folders.h"
-#include "Nitrogen/MacErrors.h"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

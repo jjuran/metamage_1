@@ -15,7 +15,6 @@
 #include "poseven/Pathnames.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
 
 // GetPathname

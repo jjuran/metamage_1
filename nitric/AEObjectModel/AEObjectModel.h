@@ -15,9 +15,6 @@
 #ifndef NITROGEN_AEOBJECTS_H
 #include "Nitrogen/AEObjects.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 
 
 namespace Nitrogen

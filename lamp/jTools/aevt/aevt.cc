@@ -20,7 +20,6 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
 
 #if CALL_NOT_IN_CARBON
