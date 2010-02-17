@@ -33,7 +33,6 @@
 #include "poseven/Pathnames.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Resources.h"
 
 // Nitrogen Extras
@@ -694,7 +693,7 @@ namespace tool
 					{
 						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
 						
-						throw N::EOFErr();
+						N::ThrowOSStatus( eofErr );
 					}
 					
 					std::string type   ( pkgInfo.begin(),     pkgInfo.begin() + 4 );

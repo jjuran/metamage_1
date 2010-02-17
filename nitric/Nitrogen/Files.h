@@ -37,9 +37,6 @@
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
@@ -1898,7 +1895,7 @@ namespace Nitrogen
 			}
 		}
 		
-		throw AFPItemNotFound();
+		ThrowOSStatus( afpItemNotFound );
 	}
 	
 	inline FSSpec DTGetAPPL( OSType signature )

@@ -16,7 +16,6 @@
 #include "iota/quad.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
@@ -92,17 +91,17 @@ namespace tool
 		
 		if ( !gResFile.Get() )
 		{
-			throw N::ResFNotFound();
+			N::ThrowOSStatus( resFNotFound );
 		}
 		
 		if ( gResType == NULL  ||  gResID == NULL )
 		{
-			throw N::ResNotFound();
+			N::ThrowOSStatus( resNotFound );
 		}
 		
 		if ( strlen( gResType ) != sizeof (::ResType) )
 		{
-			throw N::ParamErr();
+			N::ThrowOSStatus( paramErr );
 		}
 		
 		N::ResType resType = N::ResType( iota::decode_quad( gResType ) );
@@ -124,7 +123,7 @@ namespace tool
 		
 		if ( mark == end )
 		{
-			throw N::ParamErr();
+			N::ThrowOSStatus( paramErr );
 		}
 		
 		gOffset = mark - begin;
@@ -151,7 +150,7 @@ namespace tool
 	{
 		if ( gOffset + bytes.size() > N::GetHandleSize( gHandle ) )
 		{
-			throw N::ParamErr();
+			N::ThrowOSStatus( paramErr );
 		}
 		
 		char* begin = *gHandle.Get();

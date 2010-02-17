@@ -79,7 +79,7 @@ namespace Nitrogen
 		{
 			if ( op != AECompOperator( kAEEquals ) )
 			{
-				throw ErrAEEventNotHandled();
+				ThrowOSStatus( errAEEventNotHandled );
 			}
 			
 			Result a = AEGetDescData< descType >( obj1 );
@@ -122,7 +122,7 @@ namespace Nitrogen
 					break;
 			}
 			
-			throw ErrAEEventNotHandled();
+			ThrowOSStatus( errAEEventNotHandled );
 		}
 	};
 	

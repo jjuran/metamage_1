@@ -27,7 +27,6 @@
 
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
-#include "Nitrogen/MacErrors.h"
 
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
@@ -203,7 +202,7 @@ namespace Genie
 	{
 		if ( !SerialDriverMayBeOpened( driverName ) )
 		{
-			throw N::PortInUse();
+			N::ThrowOSStatus( portInUse );
 		}
 		
 		return N::OpenDriver( driverName );

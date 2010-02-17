@@ -236,7 +236,7 @@ namespace Nucleus
 		if ( !is_dir )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
-			throw Nitrogen::ErrFSNotAFolder();
+			Nitrogen::ThrowOSStatus( errFSNotAFolder );
 		}
 		
 		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( cInfo.dirInfo.ioDrDirID );

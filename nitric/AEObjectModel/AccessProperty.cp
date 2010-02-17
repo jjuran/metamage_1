@@ -16,9 +16,6 @@
 #ifndef NITROGEN_ASREGISTRY_H
 #include "Nitrogen/ASRegistry.h"
 #endif
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
 
 
 namespace Nitrogen
@@ -81,7 +78,10 @@ namespace Nitrogen
 			}
 		}
 		
-		throw ErrAEEventNotHandled();
+		ThrowOSStatus( errAEEventNotHandled );
+		
+		// Not reached
+		return NULL;
 	}
 	
 	Nucleus::Owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
@@ -100,7 +100,7 @@ namespace Nitrogen
 		
 		if ( foundType == map.end() )
 		{
-			throw ErrAEEventNotHandled();
+			ThrowOSStatus( errAEEventNotHandled );
 		}
 		
 		Nucleus::Owned< AEDesc_Token > result = AECreateList< AEDesc_Token >( true );

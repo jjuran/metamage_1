@@ -126,7 +126,7 @@ namespace Genie
 			
 			sb->st_rdev = dirID;
 			
-			throw N::FNFErr();
+			N::ThrowOSStatus( fnfErr );
 		}
 		
 		const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;

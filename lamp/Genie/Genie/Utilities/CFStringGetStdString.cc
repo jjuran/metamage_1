@@ -6,7 +6,7 @@
 #include "Genie/Utilities/CFStringGetStdString.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
+#include "Nitrogen/OSStatus.h"
 
 
 namespace Genie
@@ -36,7 +36,7 @@ namespace Genie
 		
 		if ( usedBufLen != length )
 		{
-			throw N::ParamErr();
+			N::ThrowOSStatus( paramErr );
 		}
 		
 		return result;

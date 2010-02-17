@@ -18,7 +18,6 @@
 #include "iota/strings.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 #include "Nitrogen/Str.h"
@@ -48,7 +47,7 @@ namespace tool
 	{
 		if ( strlen( type ) != sizeof 'quad' )
 		{
-			throw N::ParamErr();
+			N::ThrowOSStatus( paramErr );
 		}
 		
 		N::ResType resType = N::ResType( iota::decode_quad( type ) );

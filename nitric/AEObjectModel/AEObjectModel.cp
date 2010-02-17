@@ -70,7 +70,7 @@ namespace Nitrogen
 						// Anything else requires a non-empty list
 						if ( count == 0 )
 						{
-							throw ErrAENoSuchObject();
+							ThrowOSStatus( errAENoSuchObject );
 						}
 					}
 					
@@ -118,7 +118,10 @@ namespace Nitrogen
 				break;
 		}
 		
-		throw ErrAENoSuchObject();
+		ThrowOSStatus( errAENoSuchObject );
+		
+		// Not reached
+		return 0;
 	}
 	
 	#pragma mark -

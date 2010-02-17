@@ -40,7 +40,7 @@ namespace Genie
 		if ( !is_dir )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
-			throw N::ErrFSNotAFolder();
+			N::ThrowOSStatus( errFSNotAFolder );
 		}
 		
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );

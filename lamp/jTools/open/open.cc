@@ -23,6 +23,7 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/AERegistry.h"
 #include "Nitrogen/Aliases.h"
+#include "Nitrogen/AppleEvents.h"
 #include "Nitrogen/Str.h"
 
 // Io: MacFiles
@@ -187,7 +188,7 @@ namespace tool
 			
 			if ( gAppSigToOpenIn.length() != sizeof 'quad' )
 			{
-				throw N::ParamErr();
+				N::ThrowOSStatus( paramErr );
 			}
 			
 			return N::OSType( iota::decode_quad( gAppSigToOpenIn.data() ) );

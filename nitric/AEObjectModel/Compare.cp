@@ -7,10 +7,6 @@
 #include "AEObjectModel/Compare.h"
 #endif
 
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
-
 
 namespace Nitrogen
 {
@@ -34,7 +30,7 @@ namespace Nitrogen
 			
 			if ( found == map.end() )
 			{
-				throw ErrAEEventNotHandled();
+				ThrowOSStatus( errAEEventNotHandled );
 			}
 		}
 		

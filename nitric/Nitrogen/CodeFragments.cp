@@ -14,7 +14,9 @@
 #include "Nitrogen/CodeFragments.h"
 
 // Nitrogen
+#if NUCLEUS_RICH_ERRORCODES
 #include "Nitrogen/MacErrors.h"
+#endif
 #include "Nitrogen/OSStatus.h"
 
 
@@ -53,14 +55,6 @@ namespace Nitrogen
 	{
 		switch ( status.Get ())
 		{
-			case noErr:
-				return;
-				break;
-			
-			case paramErr:
-				throw ParamErr();
-				break;
-			
 		#if NUCLEUS_RICH_ERRORCODES
 			
 			case cfragNoLibraryErr:     ThrowOSStatusErrMessage< CFragNoLibraryErr    >( errMessage );

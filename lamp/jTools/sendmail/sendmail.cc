@@ -80,7 +80,7 @@ namespace tool
 		
 		if ( at >= emailAddr.size() - 1 )
 		{
-			throw N::ParamErr();  // bad email address
+			N::ThrowOSStatus( paramErr );  // bad email address
 		}
 		
 		return emailAddr.substr( at + 1, emailAddr.find( '>' ) - (at + 1) );

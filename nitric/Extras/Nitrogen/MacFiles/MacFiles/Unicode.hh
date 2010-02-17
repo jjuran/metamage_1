@@ -121,7 +121,7 @@ namespace io
 	{
 		if ( directory_exists( file ) )
 		{
-			throw Nitrogen::NotAFileErr();
+			Nitrogen::ThrowOSStatus( notAFileErr );
 		}
 		
 		delete_file( file );
@@ -136,7 +136,7 @@ namespace io
 	{
 		if ( file_exists( dir ) )
 		{
-			throw Nitrogen::DirNFErr();
+			Nitrogen::ThrowOSStatus( dirNFErr );
 		}
 		
 		delete_empty_directory( dir );
