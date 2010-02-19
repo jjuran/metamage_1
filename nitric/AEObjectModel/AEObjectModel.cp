@@ -7,9 +7,6 @@
 #include "AEObjectModel/AEObjectModel.h"
 #endif
 
-// plus
-#include "plus/pointer_to_function.hh"
-
 // Nitrogen
 #ifndef NITROGEN_ASREGISTRY_H
 #include "Nitrogen/ASRegistry.h"
@@ -28,7 +25,6 @@
 #ifndef AEOBJECTMODEL_DISPOSETOKEN_H
 #include "AEObjectModel/DisposeToken.h"
 #endif
-#include "AEObjectModel/TrappingFunction.h"
 
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
@@ -257,6 +253,54 @@ namespace Nitrogen
 		                           context );
 	}
 	
+	static inline const AEDesc_Token& AEToken_Cast( const AEDesc& token )
+	{
+		return AEDesc_Cast< const AEDesc_Token >( token );
+	}
+	
+	class ObjectAccessor_Caller
+	{
+		private:
+			AEObjectClass       itsDesiredClass;
+			AEObjectClass       itsContainerClass;
+			AEEnumerated        itsKeyForm;
+			const AEDesc_Data&  itsKeyData;
+		
+		public:
+			ObjectAccessor_Caller( AEObjectClass       desiredClass,
+	                               AEObjectClass       containerClass,
+	                               AEEnumerated        keyForm,
+	                               const AEDesc_Data&  keyData )
+			:
+				itsDesiredClass  ( desiredClass   ),
+				itsContainerClass( containerClass ),
+				itsKeyForm       ( keyForm        ),
+				itsKeyData       ( keyData        )
+			{
+			}
+			
+			Nucleus::Owned< AEDesc_Token > operator()( const AEDesc& containerToken ) const
+			{
+				try
+				{
+					return AECallObjectAccessor( itsDesiredClass,
+					                             AEToken_Cast( containerToken ),
+					                             itsContainerClass,
+					                             itsKeyForm,
+					                             itsKeyData );
+				}
+				catch ( const OSStatus& err )
+				{
+					if ( err != errAENoSuchObject )
+					{
+						throw;
+					}
+					
+					return MissingValue();
+				}
+			}
+	};
+	
 	Nucleus::Owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
@@ -271,13 +315,10 @@ namespace Nitrogen
 		std::transform( values.begin(),
 		                values.end(),
 		                AEDescList_Item_BackInserter( result ),
-		                Trap1( std::bind2nd( plus::ptr_fun( CallObjectAccessorWithContext ),
-		                                     ObjectAccessContext( desiredClass,
-		                                                          containerClass,
-		                                                          keyForm,
-		                                                          keyData ) ),
-		                       TrapException( ErrAENoSuchObject(),
-		                                      plus::ptr_fun( MissingValue ) ) ) );
+		                ObjectAccessor_Caller( desiredClass,
+		                                       containerClass,
+		                                       keyForm,
+		                                       keyData ) );
 		
 		return result;
 	}
