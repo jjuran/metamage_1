@@ -27,10 +27,10 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/DateTimeUtils.h"
-#include "Nitrogen/Files.h"
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/Aliases.hh"
+#include "Nitrogen/DateTimeUtils.hh"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/Resources.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

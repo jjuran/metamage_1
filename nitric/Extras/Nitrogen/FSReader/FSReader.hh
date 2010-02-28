@@ -16,7 +16,7 @@
 #include <functional>
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 
 namespace Nitrogen

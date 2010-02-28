@@ -7,11 +7,11 @@
 #define AEFRAMEWORK_AEFRAMEWORK_H
 
 // Nitrogen
-#ifndef NITROGEN_AEDATAMODEL_H
-#include "Nitrogen/AEDataModel.h"
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
 #endif
-#ifndef NITROGEN_THREADS_H
-#include "Nitrogen/Threads.h"
+#ifndef NITROGEN_THREADS_HH
+#include "Nitrogen/Threads.hh"
 #endif
 
 

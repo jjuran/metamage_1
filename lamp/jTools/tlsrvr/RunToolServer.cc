@@ -32,9 +32,9 @@
 #include "poseven/types/exit_t.hh"
 
 // Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/AERegistry.h"
-#include "Nitrogen/Folders.h"
+#include "Nitrogen/AEInteraction.hh"
+#include "Nitrogen/AERegistry.hh"
+#include "Nitrogen/Folders.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

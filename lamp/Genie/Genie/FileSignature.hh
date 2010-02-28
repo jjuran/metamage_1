@@ -10,7 +10,7 @@
 #include <string>
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 
 namespace Genie

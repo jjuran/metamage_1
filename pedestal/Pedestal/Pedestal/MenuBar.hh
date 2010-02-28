@@ -7,7 +7,7 @@
 #define PEDESTAL_MENUBAR_HH
 
 // Nitrogen
-#include "Nitrogen/Menus.h"
+#include "Nitrogen/Menus.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"

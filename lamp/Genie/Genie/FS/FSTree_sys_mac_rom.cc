@@ -17,7 +17,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

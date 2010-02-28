@@ -11,7 +11,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Pedestal

@@ -7,8 +7,8 @@
 #define GENIE_EXECHANDLER_HH
 
 // Nitrogen
-#include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/Files.h"
+#include "Nitrogen/AppleEvents.hh"
+#include "Nitrogen/Files.hh"
 
 
 namespace Genie

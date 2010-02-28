@@ -20,11 +20,11 @@
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/AERegistry.h"
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/Str.h"
+#include "Nitrogen/AEInteraction.hh"
+#include "Nitrogen/AERegistry.hh"
+#include "Nitrogen/Aliases.hh"
+#include "Nitrogen/AppleEvents.hh"
+#include "Nitrogen/Str.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

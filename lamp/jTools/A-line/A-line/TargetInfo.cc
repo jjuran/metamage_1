@@ -6,8 +6,8 @@
 #include "A-line/TargetInfo.hh"
 
 // Nitrogen
-//#include "Nitrogen/MacErrors.h"
-//#include "Nitrogen/OSStatus.h"
+//#include "Nitrogen/MacErrors.hh"
+//#include "Nitrogen/OSStatus.hh"
 
 
 namespace tool

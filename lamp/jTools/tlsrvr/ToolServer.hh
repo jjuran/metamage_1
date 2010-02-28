@@ -7,7 +7,7 @@
 #define TLSRVR_TOOLSERVER_HH
 
 // Nitrogen
-#include "Nitrogen/MacTypes.h"
+#include "Nitrogen/MacTypes.hh"
 
 
 namespace tool

@@ -10,7 +10,7 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/Icons.h"
+#include "Nitrogen/Icons.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

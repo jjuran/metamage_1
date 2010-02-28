@@ -10,7 +10,7 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/IO/Base.hh"

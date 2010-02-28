@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_sys_mac_keys.hh"
 
 // Nitrogen
-#include "Nitrogen/Events.h"
+#include "Nitrogen/Events.hh"
 
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"

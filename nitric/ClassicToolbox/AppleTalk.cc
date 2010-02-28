@@ -6,7 +6,7 @@
 #include "ClassicToolbox/AppleTalk.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 
 namespace Nitrogen

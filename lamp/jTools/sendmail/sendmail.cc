@@ -27,8 +27,8 @@
 #include "plus/pointer_to_function.hh"
 
 // Nitrogen
-#include "Nitrogen/Folders.h"
-#include "Nitrogen/OpenTransportProviders.h"
+#include "Nitrogen/Folders.hh"
+#include "Nitrogen/OpenTransportProviders.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"

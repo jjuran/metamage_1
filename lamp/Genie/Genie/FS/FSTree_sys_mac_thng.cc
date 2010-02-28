@@ -15,7 +15,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Components.h"
+#include "Nitrogen/Components.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"

@@ -5,7 +5,7 @@
 
 #include "ClassicToolbox/Devices.hh"
 
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Nucleus
 #include "Nucleus/Saved.h"

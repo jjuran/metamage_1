@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

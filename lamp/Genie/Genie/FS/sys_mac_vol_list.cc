@@ -12,9 +12,9 @@
 #include "iota/strings.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/Folders.h"
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/Folders.hh"
+#include "Nitrogen/Gestalt.hh"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"

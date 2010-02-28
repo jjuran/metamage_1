@@ -16,9 +16,9 @@
 #include "iota/quad.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Resources.h"
-#include "Nitrogen/Str.h"
+#include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Resources.hh"
+#include "Nitrogen/Str.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

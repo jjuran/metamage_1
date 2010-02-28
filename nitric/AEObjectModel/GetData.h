@@ -8,8 +8,8 @@
 
 #include <map>
 
-#ifndef NITROGEN_AEOBJECTS_H
-#include "Nitrogen/AEObjects.h"
+#ifndef NITROGEN_AEOBJECTS_HH
+#include "Nitrogen/AEObjects.hh"
 #endif
 
 

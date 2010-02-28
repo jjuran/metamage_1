@@ -19,8 +19,8 @@
 #include "io/files.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/Folders.h"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/Folders.hh"
 
 
 namespace Nitrogen

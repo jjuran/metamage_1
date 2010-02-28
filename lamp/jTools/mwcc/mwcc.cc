@@ -15,7 +15,7 @@
 #include "poseven/Pathnames.hh"
 
 // Nitrogen
-#include "Nitrogen/Str.h"
+#include "Nitrogen/Str.hh"
 
 // GetPathname
 #include "GetPathname.hh"

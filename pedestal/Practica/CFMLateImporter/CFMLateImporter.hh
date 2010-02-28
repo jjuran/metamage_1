@@ -7,7 +7,7 @@
 #define CFMLATEIMPORTER_HH
 
 // Nitrogen
-#include "Nitrogen/CodeFragments.h"
+#include "Nitrogen/CodeFragments.hh"
 
 
 namespace CFMLateImporter

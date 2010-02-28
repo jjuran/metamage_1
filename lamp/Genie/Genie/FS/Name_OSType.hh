@@ -10,7 +10,7 @@
 #include <string>
 
 // Nitrogen
-#include "Nitrogen/MacTypes.h"
+#include "Nitrogen/MacTypes.hh"
 
 
 namespace Genie

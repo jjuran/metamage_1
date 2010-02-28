@@ -28,11 +28,11 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_ICONS_H
-#include "Nitrogen/Icons.h"
+#ifndef NITROGEN_ICONS_HH
+#include "Nitrogen/Icons.hh"
 #endif
-#ifndef NITROGEN_MACMEMORY_H
-#include "Nitrogen/MacMemory.h"
+#ifndef NITROGEN_MACMEMORY_HH
+#include "Nitrogen/MacMemory.hh"
 #endif
 
 // Nitrogen Extras / ClassicToolbox

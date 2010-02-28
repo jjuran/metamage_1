@@ -8,7 +8,7 @@
 #include "unistd.h"
 
 // Nitrogen
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/Timer.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

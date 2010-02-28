@@ -13,7 +13,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/Resources.hh"
 
 
 namespace Nitrogen

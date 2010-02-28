@@ -12,8 +12,8 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.h"
-#include "Nitrogen/AERegistry.h"
+#include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/AERegistry.hh"
 
 // Iteration
 #include "Iteration/AEDescListItemDatas.h"

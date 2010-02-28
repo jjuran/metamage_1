@@ -51,5 +51,5 @@
 	
 #endif
 
-#include "Nitrogen/Nitrogen.h"
+#include "Nitrogen/Nitrogen.hh"
 

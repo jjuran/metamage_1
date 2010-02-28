@@ -12,7 +12,7 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/Resources.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

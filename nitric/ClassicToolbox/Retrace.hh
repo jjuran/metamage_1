@@ -15,11 +15,11 @@
 #include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
-#ifndef NITROGEN_OSSTATUS_H
-#include "Nitrogen/OSStatus.h"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
-#ifndef NITROGEN_UPP_H
-#include "Nitrogen/UPP.h"
+#ifndef NITROGEN_UPP_HH
+#include "Nitrogen/UPP.hh"
 #endif
 
 

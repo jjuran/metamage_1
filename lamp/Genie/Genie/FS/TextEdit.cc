@@ -16,8 +16,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacMemory.hh"
+#include "Nitrogen/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/Clipboard.hh"

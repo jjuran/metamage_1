@@ -6,7 +6,7 @@
 #include "Pedestal/TrackControl.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.h"
+#include "Nitrogen/ControlDefinitions.hh"
 
 
 namespace Pedestal

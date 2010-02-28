@@ -7,7 +7,7 @@
 #define MACIO_INITIOPARAM_HH
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 
 namespace MacIO

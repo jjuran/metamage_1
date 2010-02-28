@@ -20,7 +20,7 @@
 #include "Nucleus/Owned.h"
 
 // Nitrogen
-#include "Nitrogen/Threads.h"
+#include "Nitrogen/Threads.hh"
 
 // Genie
 #include "Genie/Exec/MainEntry.hh"

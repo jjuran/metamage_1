@@ -20,11 +20,11 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_MACMEMORY_H
-#include "Nitrogen/MacMemory.h"
+#ifndef NITROGEN_MACMEMORY_HH
+#include "Nitrogen/MacMemory.hh"
 #endif
-#ifndef NITROGEN_OSSTATUS_H
-#include "Nitrogen/OSStatus.h"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 

@@ -33,7 +33,7 @@
 #include "poseven/Pathnames.hh"
 
 // Nitrogen
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/Resources.hh"
 
 // Nitrogen Extras
 #include "FSReader.hh"

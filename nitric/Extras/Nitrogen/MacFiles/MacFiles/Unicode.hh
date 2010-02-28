@@ -19,7 +19,7 @@
 #include "io/files.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 
 namespace Nitrogen

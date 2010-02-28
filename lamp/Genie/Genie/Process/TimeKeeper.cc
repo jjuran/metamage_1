@@ -6,7 +6,7 @@
 #include "Genie/Process/TimeKeeper.hh"
 
 // Nitrogen
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/Timer.hh"
 
 
 namespace Genie

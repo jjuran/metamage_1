@@ -9,7 +9,7 @@
 #define GENIE_FS_SYSMACVOLLIST_HH
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

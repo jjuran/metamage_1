@@ -25,7 +25,7 @@
 
 #if TARGET_RT_MAC_MACHO
 	#include "Nucleus/Convert.h"
-	#include "Nitrogen/Files.h"
+	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
 	#include "poseven/Pathnames.hh"
 #else

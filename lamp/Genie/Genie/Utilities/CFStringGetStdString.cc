@@ -6,7 +6,7 @@
 #include "Genie/Utilities/CFStringGetStdString.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 
 namespace Genie

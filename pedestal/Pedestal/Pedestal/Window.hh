@@ -19,7 +19,7 @@
 #include "Nucleus/Owned.h"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"

@@ -8,8 +8,8 @@
 #include "FindProcess.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/Processes.h"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/Processes.hh"
 
 
 namespace NitrogenExtras

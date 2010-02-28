@@ -7,7 +7,7 @@
 #define GENIE_FILESYSTEM_FSSPEC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

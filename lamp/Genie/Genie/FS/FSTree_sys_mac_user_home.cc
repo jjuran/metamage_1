@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_sys_mac_user_home.hh"
 
 // Nitrogen
-#include "Nitrogen/Folders.h"
+#include "Nitrogen/Folders.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

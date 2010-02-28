@@ -13,7 +13,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 // ClassicToolbox
 //#include "ClassicToolbox/CursorDevices.h"

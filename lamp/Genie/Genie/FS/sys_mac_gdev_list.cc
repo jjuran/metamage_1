@@ -22,7 +22,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"

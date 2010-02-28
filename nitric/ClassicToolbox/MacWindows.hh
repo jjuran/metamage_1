@@ -10,7 +10,7 @@
 #include "Nostalgia/MacWindows.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacWindows.hh"
 
 
 namespace Nitrogen

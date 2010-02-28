@@ -31,9 +31,9 @@
 #include "poseven/types/exit_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSA.h"
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/OSA.hh"
+#include "Nitrogen/Resources.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

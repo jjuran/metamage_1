@@ -11,8 +11,8 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/MacTypes.h"
-#include "Nitrogen/InternetConfig.h"
+#include "Nitrogen/MacTypes.hh"
+#include "Nitrogen/InternetConfig.hh"
 
 // Orion
 #include "Orion/Main.hh"

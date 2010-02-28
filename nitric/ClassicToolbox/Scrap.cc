@@ -9,7 +9,7 @@
 #include "ClassicToolbox/Scrap.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 
 namespace Nitrogen

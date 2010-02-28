@@ -7,7 +7,7 @@
 #define GENIE_REPLYHANDLER_HH
 
 // Nitrogen
-#include "Nitrogen/AppleEvents.h"
+#include "Nitrogen/AppleEvents.hh"
 
 
 namespace Genie

@@ -13,8 +13,8 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_ASREGISTRY_H
-#include "Nitrogen/ASRegistry.h"
+#ifndef NITROGEN_ASREGISTRY_HH
+#include "Nitrogen/ASRegistry.hh"
 #endif
 
 

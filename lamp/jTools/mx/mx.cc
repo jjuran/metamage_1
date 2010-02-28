@@ -11,7 +11,7 @@
 #include <cstdio>
 
 // Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
+#include "Nitrogen/OpenTransportProviders.hh"
 
 // Orion
 #include "Orion/Main.hh"

@@ -19,8 +19,8 @@
 #include "poseven/functions/write.hh"
 
 // Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/Str.h"
+#include "Nitrogen/AEInteraction.hh"
+#include "Nitrogen/Str.hh"
 
 #if CALL_NOT_IN_CARBON
 

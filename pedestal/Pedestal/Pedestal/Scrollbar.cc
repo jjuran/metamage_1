@@ -12,8 +12,8 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.h"
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/MacWindows.hh"
 
 // MacFeatures
 #include "MacFeatures/Features.hh"

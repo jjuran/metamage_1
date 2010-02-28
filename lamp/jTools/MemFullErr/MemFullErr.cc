@@ -4,7 +4,7 @@
  */
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
+#include "Nitrogen/MacErrors.hh"
 
 // Orion
 #include "Orion/Main.hh"

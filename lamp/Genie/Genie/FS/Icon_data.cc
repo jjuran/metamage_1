@@ -15,7 +15,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Icons.h"
+#include "Nitrogen/Icons.hh"
 
 // Genie
 #include "Genie/FS/FSTree_IconSuite.hh"

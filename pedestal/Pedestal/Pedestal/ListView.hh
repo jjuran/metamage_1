@@ -7,7 +7,7 @@
 #define PEDESTAL_LISTVIEW_HH
 
 // Nitrogen
-#include "Nitrogen/Lists.h"
+#include "Nitrogen/Lists.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"

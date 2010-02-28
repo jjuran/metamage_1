@@ -19,7 +19,7 @@
 #include "iota/strings.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

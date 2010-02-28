@@ -9,7 +9,7 @@
 #include "ClassicToolbox/PPCToolbox.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 
 namespace Nitrogen

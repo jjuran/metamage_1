@@ -4,7 +4,7 @@
  */
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.h"
+#include "Nitrogen/AEDataModel.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

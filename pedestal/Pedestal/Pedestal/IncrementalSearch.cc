@@ -12,9 +12,9 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Events.h"
-#include "Nitrogen/Resources.h"
-#include "Nitrogen/Sound.h"
+#include "Nitrogen/Events.hh"
+#include "Nitrogen/Resources.hh"
+#include "Nitrogen/Sound.hh"
 
 
 namespace Pedestal

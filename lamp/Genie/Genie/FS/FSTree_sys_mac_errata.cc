@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_sys_mac_errata.hh"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

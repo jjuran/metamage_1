@@ -13,7 +13,7 @@
 #include "Nucleus/IndexedValueContainer.h"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

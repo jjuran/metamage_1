@@ -9,7 +9,7 @@
 #include "Nucleus/Saved.h"
 
 // Nitrogen
-#include "Nitrogen/TextEdit.h"
+#include "Nitrogen/TextEdit.hh"
 
 
 namespace Nitrogen

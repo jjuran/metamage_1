@@ -21,7 +21,7 @@
 #include "Nucleus/IndexedContainer.h"
 
 // Nitrogen
-#include "Nitrogen/UPP.h"
+#include "Nitrogen/UPP.hh"
 
 
 namespace Nitrogen

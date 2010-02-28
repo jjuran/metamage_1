@@ -6,8 +6,8 @@
 #include "Genie/ExecHandler.hh"
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.h"
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/PipeOrganSuite.h"

@@ -7,7 +7,7 @@
 #include "unistd.h"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/FileDescriptors.hh"

@@ -15,7 +15,7 @@ struct FSSpec;
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
+#include "Nitrogen/MacMemory.hh"
 
 
 namespace Genie

@@ -14,8 +14,8 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.h"
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"

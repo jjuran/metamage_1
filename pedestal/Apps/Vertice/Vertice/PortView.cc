@@ -15,7 +15,7 @@
 #include "ClassicToolbox/MacWindows.hh"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // GrafX
 #include "GrafX/Pixel32.hh"

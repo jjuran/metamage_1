@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_sys_mac_desktop.hh"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

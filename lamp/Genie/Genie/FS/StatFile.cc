@@ -19,7 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"

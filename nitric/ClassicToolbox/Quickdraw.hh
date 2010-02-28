@@ -7,8 +7,8 @@
 #define CLASSICTOOLBOX_QUICKDRAW_HH
 
 // Nitrogen
-#ifndef NITROGEN_QUICKDRAW_H
-#include "Nitrogen/QuickDraw.h"
+#ifndef NITROGEN_QUICKDRAW_HH
+#include "Nitrogen/Quickdraw.hh"
 #endif
 
 

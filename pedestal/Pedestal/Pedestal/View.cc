@@ -6,7 +6,7 @@
 #include "Pedestal/View.hh"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
 #include "Pedestal/CurrentFocus.hh"

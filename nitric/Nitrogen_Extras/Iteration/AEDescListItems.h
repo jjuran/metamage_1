@@ -13,8 +13,8 @@
 #include "Nucleus/Pseudoreference.h"
 #endif
 
-#ifndef NITROGEN_AEDATAMODEL_H
-#include "Nitrogen/AEDataModel.h"
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
 #endif
 
 

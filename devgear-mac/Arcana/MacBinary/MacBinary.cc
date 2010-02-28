@@ -40,7 +40,7 @@
 #include "Nucleus/Convert.h"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
+#include "Nitrogen/MacMemory.hh"
 
 // FSContents
 #include "FSContents.h"

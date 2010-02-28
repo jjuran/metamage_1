@@ -7,7 +7,7 @@
 #define PEDESTAL_SCROLLBAR_HH
 
 // Nitrogen
-#include "Nitrogen/Controls.h"
+#include "Nitrogen/Controls.hh"
 
 
 namespace Pedestal

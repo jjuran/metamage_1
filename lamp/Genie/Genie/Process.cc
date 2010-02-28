@@ -29,11 +29,11 @@
 #include "io/io.hh"
 
 // Nitrogen
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Sound.h"
-#include "Nitrogen/Threads.h"
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/Aliases.hh"
+#include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Sound.hh"
+#include "Nitrogen/Threads.hh"
+#include "Nitrogen/Timer.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

@@ -8,8 +8,8 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_FOLDERS_H
-#include "Nitrogen/Folders.h"
+#ifndef NITROGEN_FOLDERS_HH
+#include "Nitrogen/Folders.hh"
 #endif
 
 // Io: MacFiles

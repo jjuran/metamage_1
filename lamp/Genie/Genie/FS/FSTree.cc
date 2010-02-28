@@ -16,8 +16,8 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/OSUtils.h"
-#include "Nitrogen/Threads.h"
+#include "Nitrogen/OSUtils.hh"
+#include "Nitrogen/Threads.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

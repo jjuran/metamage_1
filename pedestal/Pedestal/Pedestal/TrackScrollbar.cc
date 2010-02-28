@@ -20,7 +20,7 @@
 #include "Nucleus/Saved.h"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.h"
+#include "Nitrogen/ControlDefinitions.hh"
 
 // MacFeatures
 #include "MacFeatures/Features.hh"

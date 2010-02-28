@@ -9,7 +9,7 @@
 #include "iota/strings.hh"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"

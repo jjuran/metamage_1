@@ -7,7 +7,7 @@
 #define PEDESTAL_CONTROL_HH
 
 // Nitrogen
-#include "Nitrogen/Controls.h"
+#include "Nitrogen/Controls.hh"
 
 
 namespace Pedestal

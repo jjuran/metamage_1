@@ -8,8 +8,8 @@
 #include <vector>
 
 // Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Files.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

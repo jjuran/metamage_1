@@ -7,7 +7,7 @@
 #define GENIE_ASYNCIO_HH
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // MacIO
 #include "MacIO/EOF_Policy.hh"

@@ -15,7 +15,7 @@
 #include "recall/backtrace.hh"
 
 // Nitrogen
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/Timer.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

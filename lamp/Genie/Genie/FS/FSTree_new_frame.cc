@@ -12,7 +12,7 @@
 #include "iota/strings.hh"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"

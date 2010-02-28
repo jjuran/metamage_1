@@ -9,7 +9,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/OSUtils.h"
+#include "Nitrogen/OSUtils.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"

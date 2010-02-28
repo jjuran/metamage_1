@@ -7,7 +7,7 @@
 #define MACFEATURES_FEATURES_HH
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 
 namespace Nitrogen

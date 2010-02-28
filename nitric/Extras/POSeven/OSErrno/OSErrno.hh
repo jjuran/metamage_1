@@ -4,7 +4,7 @@
 #define OSERRNO_HH
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/OSStatus.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

@@ -7,8 +7,8 @@
 #include "Nucleus/Saved.h"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Resources.h"
+#include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Resources.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

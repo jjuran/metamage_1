@@ -8,7 +8,7 @@
 #include "Pedestal/SetPort_GetWindow.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacWindows.hh"
 
 
 namespace Pedestal

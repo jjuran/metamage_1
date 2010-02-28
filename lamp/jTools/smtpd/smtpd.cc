@@ -38,8 +38,8 @@
 #include "io/spew.hh"
 
 // Nitrogen
-#include "Nitrogen/DateTimeUtils.h"
-#include "Nitrogen/Folders.h"
+#include "Nitrogen/DateTimeUtils.hh"
+#include "Nitrogen/Folders.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

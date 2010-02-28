@@ -17,9 +17,9 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Events.h"
-#include "Nitrogen/Sound.h"
-#include "Nitrogen/TextEdit.h"
+#include "Nitrogen/Events.hh"
+#include "Nitrogen/Sound.hh"
+#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

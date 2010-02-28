@@ -7,8 +7,8 @@
 #define GETPATHNAME_HH
 
 // Nitrogen
-#ifndef NITROGEN_FILES_H
-#include "Nitrogen/Files.h"
+#ifndef NITROGEN_FILES_HH
+#include "Nitrogen/Files.hh"
 #endif
 
 

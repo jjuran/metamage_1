@@ -11,7 +11,7 @@
 #include <vector>
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 
 namespace MacBinary

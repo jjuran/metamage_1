@@ -11,7 +11,7 @@
 #include "Nucleus/Make.h"
 
 // Nitrogen
-#include "Nitrogen/QuickDraw.h"
+#include "Nitrogen/Quickdraw.hh"
 
 // Vectoria
 #include "Vectoria/TriColor.hh"

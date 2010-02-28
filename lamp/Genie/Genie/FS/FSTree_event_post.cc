@@ -6,8 +6,8 @@
 #include "Genie/FS/FSTree_event_post.hh"
 
 // Nitrogen
-#include "Nitrogen/Events.h"
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Events.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

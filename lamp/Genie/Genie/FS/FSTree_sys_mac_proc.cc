@@ -9,7 +9,7 @@
 #include "iota/hexidecimal.hh"
 
 // Nitrogen
-#include "Nitrogen/Processes.h"
+#include "Nitrogen/Processes.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

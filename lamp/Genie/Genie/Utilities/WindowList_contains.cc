@@ -11,7 +11,7 @@
 #include "plus/contains.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacWindows.hh"
 
 
 namespace Genie

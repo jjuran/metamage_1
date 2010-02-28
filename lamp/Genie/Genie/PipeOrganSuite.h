@@ -6,7 +6,7 @@
 #ifndef GENIE_PIPEORGANSUITE_H
 #define GENIE_PIPEORGANSUITE_H
 
-#include "Nitrogen/AEDataModel.h"
+#include "Nitrogen/AEDataModel.hh"
 
 
 namespace Genie

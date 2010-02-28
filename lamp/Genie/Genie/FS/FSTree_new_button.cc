@@ -9,7 +9,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.h"
+#include "Nitrogen/ControlDefinitions.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

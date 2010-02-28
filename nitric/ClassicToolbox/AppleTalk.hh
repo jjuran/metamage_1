@@ -15,8 +15,8 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_STR_H
-#include "Nitrogen/Str.h"
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 

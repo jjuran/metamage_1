@@ -11,7 +11,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/Controls.h"
+#include "Nitrogen/Controls.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"

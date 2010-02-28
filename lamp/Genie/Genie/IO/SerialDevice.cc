@@ -26,7 +26,7 @@
 #include "Nucleus/Shared.h"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
+#include "Nitrogen/Gestalt.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/Serial.hh"

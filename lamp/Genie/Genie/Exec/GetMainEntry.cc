@@ -9,7 +9,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/CodeFragments.h"
+#include "Nitrogen/CodeFragments.hh"
 
 // Genie
 #include "Genie/Exec/MainEntryPoint.hh"

@@ -12,7 +12,7 @@
 #include <fcntl.h>
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
+#include "Nitrogen/MacMemory.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

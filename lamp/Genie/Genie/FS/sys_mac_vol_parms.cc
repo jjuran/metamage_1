@@ -9,7 +9,7 @@
 #include "iota/decimal.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

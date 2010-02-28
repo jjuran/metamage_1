@@ -31,13 +31,13 @@
 #include "Nucleus/Saved.h"
 
 // Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/Events.h"
-#include "Nitrogen/Gestalt.h"
-#include "Nitrogen/MacErrors.h"
-#include "Nitrogen/Sound.h"
-#include "Nitrogen/Threads.h"
+#include "Nitrogen/AEInteraction.hh"
+#include "Nitrogen/AppleEvents.hh"
+#include "Nitrogen/Events.hh"
+#include "Nitrogen/Gestalt.hh"
+#include "Nitrogen/MacErrors.hh"
+#include "Nitrogen/Sound.hh"
+#include "Nitrogen/Threads.hh"
 
 #if !TARGET_API_MAC_CARBON
 

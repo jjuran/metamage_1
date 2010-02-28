@@ -12,8 +12,8 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/RefCon.h"
-#include "Nitrogen/Str.h"
+#include "Nitrogen/RefCon.hh"
+#include "Nitrogen/Str.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"

@@ -3,7 +3,7 @@
 #include "OSErrno/OSErrno.hh"
 
 // Nitrogen
-#include "Nitrogen/OpenTransport.h"
+#include "Nitrogen/OpenTransport.hh"
 
 
 namespace OSErrno

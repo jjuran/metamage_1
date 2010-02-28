@@ -67,16 +67,16 @@
 #include "io/slurp.hh"
 
 // Nitrogen
-#include "Nitrogen/CodeFragments.h"
-#include "Nitrogen/DateTimeUtils.h"
-#include "Nitrogen/MacMemory.h"
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/OSUtils.h"
-//#include "Nitrogen/Resources.h"
-#include "Nitrogen/Sound.h"
-#include "Nitrogen/Str.h"
-#include "Nitrogen/Threads.h"
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/CodeFragments.hh"
+#include "Nitrogen/DateTimeUtils.hh"
+#include "Nitrogen/MacMemory.hh"
+#include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/OSUtils.hh"
+//#include "Nitrogen/Resources.hh"
+#include "Nitrogen/Sound.hh"
+#include "Nitrogen/Str.hh"
+#include "Nitrogen/Threads.hh"
+#include "Nitrogen/Timer.hh"
 
 // poseven
 #include "poseven/functions/open.hh"

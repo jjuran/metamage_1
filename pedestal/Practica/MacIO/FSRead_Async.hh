@@ -7,7 +7,7 @@
 #define MACIO_FSREADASYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // MacIO
 #include "MacIO/Async.hh"

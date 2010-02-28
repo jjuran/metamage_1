@@ -6,7 +6,7 @@
 #include "ClassicToolbox/CRMSerialDevices.hh"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.h"
+#include "Nitrogen/MacMemory.hh"
 
 
 namespace Nitrogen

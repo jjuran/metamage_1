@@ -6,7 +6,7 @@
 #include "Pedestal/UniqueWindowOwner.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.h"
+#include "Nitrogen/MacWindows.hh"
 
 
 namespace Pedestal

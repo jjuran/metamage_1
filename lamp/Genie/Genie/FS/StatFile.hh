@@ -7,7 +7,7 @@
 #include <sys/types.h>
 
 // Nitrogen
-#include "Nitrogen/Files.h"
+#include "Nitrogen/Files.hh"
 
 // <sys/stat.h>
 struct stat;

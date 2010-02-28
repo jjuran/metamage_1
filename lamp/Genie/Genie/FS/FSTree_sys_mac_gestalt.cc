@@ -12,8 +12,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Gestalt.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"

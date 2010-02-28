@@ -7,7 +7,7 @@
 #define PEDESTAL_TEXTEDIT_HH
 
 // Nitrogen
-#include "Nitrogen/TextEdit.h"
+#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/CustomTEClickLoop.hh"

@@ -16,7 +16,7 @@
 #include <string>
 
 // Nitrogen
-#include "Nitrogen/Sound.h"
+#include "Nitrogen/Sound.hh"
 
 // Vectoria
 #include "Vectoria/Clipping3D.hh"

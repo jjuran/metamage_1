@@ -11,8 +11,8 @@
 #include "sys/time.h"
 
 // Nitrogen
-#include "Nitrogen/OSUtils.h"
-#include "Nitrogen/Timer.h"
+#include "Nitrogen/OSUtils.hh"
+#include "Nitrogen/Timer.hh"
 
 // TimeOff
 #include "TimeOff/TimeOff.hh"

@@ -19,7 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Folders.h"
+#include "Nitrogen/Folders.hh"
 
 // Genie
 #include "Genie/FS/ReadableSymLink.hh"
