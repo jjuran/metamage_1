@@ -14,16 +14,15 @@
 #ifndef NITROGEN_AEPROPERTYID_HH
 #define NITROGEN_AEPROPERTYID_HH
 
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace Nitrogen
@@ -109,7 +108,7 @@ namespace Nitrogen
 		// ASRegistry
 		// ----------
 		
-		kAEPropertyID_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAEPropertyID_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 }

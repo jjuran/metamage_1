@@ -25,9 +25,10 @@
 #include "Carbonate/AEDataModel.hh"
 #endif
 
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
 #endif
@@ -177,7 +178,7 @@ namespace Nitrogen
 	{
 		kAutoGenerateReturnID = ::kAutoGenerateReturnID,
 		
-		kAEReturnID_Max = Nucleus::Enumeration_Traits< ::AEReturnID >::max
+		kAEReturnID_Max = nucleus::enumeration_traits< ::AEReturnID >::max
 	};
 	
 	// The OSA runtime can generate 'long' return IDs greater than 0x7fff.
@@ -186,29 +187,29 @@ namespace Nitrogen
 	
 	enum AEReturnID_32Bit
 	{
-		kAEReturnID_32Bit_Max = Nucleus::Enumeration_Traits< ::SInt32 >::max
+		kAEReturnID_32Bit_Max = nucleus::enumeration_traits< ::SInt32 >::max
 	};
 	
 	enum AETransactionID
 	{
 		kAnyTransactionID = ::kAnyTransactionID,
 		
-		kAETransactionID_Max = Nucleus::Enumeration_Traits< ::AETransactionID >::max
+		kAETransactionID_Max = nucleus::enumeration_traits< ::AETransactionID >::max
 	};
 	
 	enum AEEventClass
 	{
-		kAEEventClass_Max = Nucleus::Enumeration_Traits< ::AEEventClass >::max
+		kAEEventClass_Max = nucleus::enumeration_traits< ::AEEventClass >::max
 	};
 	
 	enum AEEventID
 	{
-		kAEEventID_Max = Nucleus::Enumeration_Traits< ::AEEventID >::max
+		kAEEventID_Max = nucleus::enumeration_traits< ::AEEventID >::max
 	};
 	
 	enum AEEnumerated
 	{
-		kAEEnumerated_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kAEEnumerated_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
 	typedef AEEnumerated AEEnumeration;
@@ -220,7 +221,7 @@ namespace Nitrogen
 		kAENormalPriority = ::kAENormalPriority,
 		kAEHighPriority   = ::kAEHighPriority,
 		
-		kAESendPriority_Max = Nucleus::Enumeration_Traits< ::AESendPriority >::max
+		kAESendPriority_Max = nucleus::enumeration_traits< ::AESendPriority >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AESendPriority )
@@ -240,7 +241,7 @@ namespace Nitrogen
 		kAEDontExecute           = ::kAEDontExecute,
 		kAEProcessNonReplyEvents = ::kAEProcessNonReplyEvents,
 		
-		kAESendMode_Max = Nucleus::Enumeration_Traits< ::AESendMode >::max
+		kAESendMode_Max = nucleus::enumeration_traits< ::AESendMode >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AESendMode )

@@ -15,8 +15,10 @@
 #include <DeskBus.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 #include "Nucleus/IndexedContainer.h"
 
@@ -32,7 +34,7 @@ namespace Nitrogen
 	
 	enum ADBAddress
 	{
-		kADBAddress_Max = Nucleus::Enumeration_Traits< ::ADBAddress >::max
+		kADBAddress_Max = nucleus::enumeration_traits< ::ADBAddress >::max
 	};
 	
 	// ProcPtrs and UPPs

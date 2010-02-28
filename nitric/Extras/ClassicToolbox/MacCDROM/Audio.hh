@@ -8,9 +8,9 @@
 #ifndef MACCDROM_AUDIO_HH
 #define MACCDROM_AUDIO_HH
 
-// Nucleus
-#include "Nucleus/Enumeration.h"
-#include "Nucleus/Flag.h"
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
 
 // MacCDROM
 #include "MacCDROM/Device.hh"
@@ -26,7 +26,7 @@ namespace MacCDROM
 		kOpticalPositioningTrackNumberBCD      = 0x0002,
 		kOpticalPositioningPlayListIndex       = 0x0003,
 		
-		kOpticalPositioningType_Max = Nucleus::Enumeration_Traits< ::UInt16 >::max
+		kOpticalPositioningType_Max = nucleus::enumeration_traits< ::UInt16 >::max
 	};
 	
 	enum AudioStatusCode
@@ -38,7 +38,7 @@ namespace MacCDROM
 		kAudioStatusError   = 4,
 		kAudioStatusNil     = 5,
 		
-		kAudioStatusCode_Max = Nucleus::Enumeration_Traits< ::UInt8 >::max
+		kAudioStatusCode_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
 	enum AudioPlayMode
@@ -58,7 +58,7 @@ namespace MacCDROM
 		                       | kAudioPlayModeLeftThruRight
 		                       | kAudioPlayModeRightThruRight,
 		
-		kAudioPlayMode_Max = Nucleus::Enumeration_Traits< ::UInt8 >::max
+		kAudioPlayMode_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AudioPlayMode )
@@ -79,7 +79,7 @@ namespace MacCDROM
 		kTrackControlDigitalCopyProhibited = 0x00,
 		kTrackControlDigitalCopyPermitted = 0x02,
 		
-		kTrackControl_Max = Nucleus::Enumeration_Traits< ::UInt8 >::max
+		kTrackControl_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
 	typedef std::size_t Frames;

@@ -17,14 +17,16 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
@@ -376,7 +378,7 @@ namespace Nitrogen
 	
 	enum Handle_Flags
 	{
-		kHandle_Flags_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+		kHandle_Flags_Max = nucleus::enumeration_traits< SInt8 >::max
 	};
 	
 	// 1253

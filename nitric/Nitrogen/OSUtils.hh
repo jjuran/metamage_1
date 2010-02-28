@@ -71,7 +71,7 @@ namespace Nitrogen
 		false32b = ::false32b,
 		true32b  = ::true32b,
 		
-		kMMUMode_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+		kMMUMode_Max = nucleus::enumeration_traits< SInt8 >::max
 	};
 	
 	// ...

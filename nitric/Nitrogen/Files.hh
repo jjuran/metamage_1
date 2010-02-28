@@ -14,11 +14,12 @@
 #ifndef NITROGEN_FILES_HH
 #define NITROGEN_FILES_HH
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_INDEXTYPE_H
 #include "Nucleus/IndexType.h"
@@ -99,29 +100,29 @@ namespace Nitrogen
 		fsRtParID = ::fsRtParID,
 		fsRtDirID = ::fsRtDirID,
 		
-		kFSDirID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kFSDirID_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
 	enum FSNodeFlags
 	{
-		kFSNodeFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+		kFSNodeFlags_Max = nucleus::enumeration_traits< UInt16 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSNodeFlags )
 	
 	enum FSNodeID
 	{
-		kFSNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kFSNodeID_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
 	enum FSVolumeRefNum
 	{
-		kFSVolumeRefNum_Max = Nucleus::Enumeration_Traits< ::FSVolumeRefNum >::max
+		kFSVolumeRefNum_Max = nucleus::enumeration_traits< ::FSVolumeRefNum >::max
 	};
 	
 	enum FSSharingFlags
 	{
-		kFSSharingFlags_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+		kFSSharingFlags_Max = nucleus::enumeration_traits< UInt8 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSSharingFlags )
@@ -131,7 +132,7 @@ namespace Nitrogen
 	
 	enum FSUserPrivileges
 	{
-		kFSUserPrivileges_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+		kFSUserPrivileges_Max = nucleus::enumeration_traits< UInt8 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSUserPrivileges )
@@ -140,19 +141,19 @@ namespace Nitrogen
 	
 	enum FSIteratorFlags
 	{
-		kFSIteratorFlags_Max = Nucleus::Enumeration_Traits< ::FSIteratorFlags >::max
+		kFSIteratorFlags_Max = nucleus::enumeration_traits< ::FSIteratorFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIteratorFlags )
 	
 	enum FSFileRefNum
 	{
-		kFSFileRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kFSFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum FSForkRefNum
 	{
-		kFSForkRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kFSForkRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum FSIOPermssn
@@ -165,7 +166,7 @@ namespace Nitrogen
 		fsRdDenyPerm = ::fsRdDenyPerm,
 		fsWrDenyPerm = ::fsWrDenyPerm,
 		
-		kFSIOPermssn_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+		kFSIOPermssn_Max = nucleus::enumeration_traits< SInt8 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
@@ -179,7 +180,7 @@ namespace Nitrogen
 		fsFromLEOF  = ::fsFromLEOF,
 		fsFromMark  = ::fsFromMark,
 		
-		kFSIOPosMode_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+		kFSIOPosMode_Max = nucleus::enumeration_traits< UInt16 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPosMode )
@@ -188,19 +189,19 @@ namespace Nitrogen
 	
 	enum FSAllocationFlags
 	{
-		kFSAllocationFlags_Max = Nucleus::Enumeration_Traits< ::FSAllocationFlags >::max
+		kFSAllocationFlags_Max = nucleus::enumeration_traits< ::FSAllocationFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSAllocationFlags )
 	
 	enum FSForkIterator
 	{
-		kFSForkIterator_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kFSForkIterator_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum FSVolumeInfoFlags
 	{
-		kFSVolumeInfoFlags_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+		kFSVolumeInfoFlags_Max = nucleus::enumeration_traits< UInt16 >::max
 	};
 	
 	typedef FSVolumeInfoFlags FSIOVAtrb;
@@ -219,14 +220,14 @@ namespace Nitrogen
 	
 	enum FSFileSystemID
 	{
-		kFSFileSystemID_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+		kFSFileSystemID_Max = nucleus::enumeration_traits< UInt16 >::max
 	};
 	
 	typedef FSFileSystemID IOFSID;
 	
 	enum DriverReferenceNumber
 	{
-		kDriverReferenceNumber_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kDriverReferenceNumber_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	typedef DriverReferenceNumber DRefNum;
@@ -234,7 +235,7 @@ namespace Nitrogen
 	
 	enum HFSCatalogNodeID
 	{
-		kHFSCatalogNodeID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kHFSCatalogNodeID_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM

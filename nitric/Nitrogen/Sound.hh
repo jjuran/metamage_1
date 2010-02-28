@@ -18,10 +18,11 @@
 #include <Sound.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 // Nucleus
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
@@ -156,7 +157,7 @@ namespace Nitrogen
 		siPauseRecording    = ::siPauseRecording,
 		siUserInterruptProc = ::siUserInterruptProc,
 		
-		kSoundInputDeviceInfoType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kSoundInputDeviceInfoType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	typedef SoundInputDeviceInfoType SoundInputDeviceInformationSelector;
@@ -165,14 +166,14 @@ namespace Nitrogen
 	
 	enum SoundInputReferenceNumber
 	{
-		kSoundInputReferenceNumber_Max = Nucleus::Enumeration_Traits< long >::max
+		kSoundInputReferenceNumber_Max = nucleus::enumeration_traits< long >::max
 	};
 	
 	typedef SoundInputReferenceNumber SoundInputRefNum;
 	
 	enum SoundInputPermissions
 	{
-		kSoundInputPermissions_Max = Nucleus::Enumeration_Traits< short >::max
+		kSoundInputPermissions_Max = nucleus::enumeration_traits< short >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( SoundInputPermissions )

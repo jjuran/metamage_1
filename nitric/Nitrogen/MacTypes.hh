@@ -20,11 +20,13 @@
 #ifndef __SCRIPT__
 #include <Script.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_OVERLOADED_MATH_H
 #include "Nucleus/Overloaded_math.h"
@@ -149,7 +151,7 @@ namespace Nitrogen
 	{
 		kNilOptions = ::kNilOptions,
 		
-		kOptionBits_Max = Nucleus::Enumeration_Traits< ::OptionBits >::max
+		kOptionBits_Max = nucleus::enumeration_traits< ::OptionBits >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
@@ -158,35 +160,35 @@ namespace Nitrogen
 	{
 		smSystemScript = ::smSystemScript,
 		
-		kScriptCode_Max = Nucleus::Enumeration_Traits< ::ScriptCode >::max
+		kScriptCode_Max = nucleus::enumeration_traits< ::ScriptCode >::max
 	};
 	
 	enum LangCode
 	{
 		langUnspecified = ::langUnspecified,
 		
-		kLangCode_Max = Nucleus::Enumeration_Traits< ::LangCode >::max
+		kLangCode_Max = nucleus::enumeration_traits< ::LangCode >::max
 	};
 	
 	enum RegionCode
 	{
 		verUS = ::verUS,
 		
-		kRegionCode_Max = Nucleus::Enumeration_Traits< ::RegionCode >::max
+		kRegionCode_Max = nucleus::enumeration_traits< ::RegionCode >::max
 	};
 	
 	enum OSType
 	{
 		kUnknownType = ::kUnknownType,
 		
-		kOSType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kOSType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	enum ResType
 	{
 		kVersionResType = 'vers',
 		
-		kResType_Max = Nucleus::Enumeration_Traits< ::ResType >::max
+		kResType_Max = nucleus::enumeration_traits< ::ResType >::max
 	};
 	
 	typedef bool Boolean;
@@ -195,7 +197,7 @@ namespace Nitrogen
 	
 	enum Style
 	{
-		kStyle_Max = Nucleus::Enumeration_Traits< ::Style >::max
+		kStyle_Max = nucleus::enumeration_traits< ::Style >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( Style )

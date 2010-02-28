@@ -11,8 +11,8 @@
 #include <Devices.h>
 #endif
 
-// Nucleus
-#include "Nucleus/Enumeration.h"
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 // Nitrogen
 #ifndef NITROGEN_FILES_HH
@@ -25,7 +25,7 @@ namespace Nitrogen
 	
 	enum ControlStatusCode
 	{
-		kControlStatusCode_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kControlStatusCode_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	typedef ControlStatusCode CSCode;

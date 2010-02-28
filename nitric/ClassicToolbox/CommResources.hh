@@ -11,9 +11,11 @@
 #include <CommResources.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -47,12 +49,12 @@ namespace Nitrogen
 	
 	enum CRMDeviceType
 	{
-		kCRMDeviceType_Max = Nucleus::Enumeration_Traits< long >::max
+		kCRMDeviceType_Max = nucleus::enumeration_traits< long >::max
 	};
 	
 	enum CRMDeviceID
 	{
-		kCRMDeviceID_Max = Nucleus::Enumeration_Traits< long >::max
+		kCRMDeviceID_Max = nucleus::enumeration_traits< long >::max
 	};
 	
 	typedef struct CRMAttributes_Tag* CRMAttributes;

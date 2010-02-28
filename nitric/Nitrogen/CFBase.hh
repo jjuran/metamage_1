@@ -18,9 +18,11 @@
 #ifndef __CFSTRING__
 #include <CFString.h>
 #endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -30,7 +32,7 @@ namespace Nitrogen
 	
 	enum CFTypeID
 	{
-		kCFTypeID_Max = Nucleus::Enumeration_Traits< ::CFTypeID >::max
+		kCFTypeID_Max = nucleus::enumeration_traits< ::CFTypeID >::max
 	};
 	
    template < class T > struct CFType_Traits;
@@ -102,14 +104,14 @@ namespace Nitrogen {
 
 	enum CFOptionFlags
 	{
-		kCFOptionFlags_Max = Nucleus::Enumeration_Traits< ::CFOptionFlags >::max
+		kCFOptionFlags_Max = nucleus::enumeration_traits< ::CFOptionFlags >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( CFOptionFlags )
    
 	enum CFHashCode
 	{
-		kCFHashCode_Max = Nucleus::Enumeration_Traits< ::CFHashCode >::max
+		kCFHashCode_Max = nucleus::enumeration_traits< ::CFHashCode >::max
 	};
 	
    using ::CFStringRef;

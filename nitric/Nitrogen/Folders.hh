@@ -180,7 +180,7 @@ namespace Nitrogen
 		kPreMacOS91AutomountedServersFolderType     = ::kPreMacOS91AutomountedServersFolderType,
 		kPreMacOS91StationeryFolderType             = ::kPreMacOS91StationeryFolderType,
 		
-		kFolderType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kFolderType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 
 	

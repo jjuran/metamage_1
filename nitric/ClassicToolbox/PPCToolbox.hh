@@ -18,8 +18,10 @@
 #include <algorithm>
 #include <string>
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
@@ -53,7 +55,7 @@ namespace Nitrogen
 	{
 		ppcServiceRealTime = ::ppcServiceRealTime,
 		
-		kPPCServiceType_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+		kPPCServiceType_Max = nucleus::enumeration_traits< UInt8 >::max
 	};
 	
 	enum PPCLocationKind
@@ -63,7 +65,7 @@ namespace Nitrogen
 		ppcNBPTypeLocation = ::ppcNBPTypeLocation,
 		ppcXTIAddrLocation = ::ppcXTIAddrLocation,
 		
-		kPPCLocationKind_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kPPCLocationKind_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum PPCPortKinds
@@ -71,7 +73,7 @@ namespace Nitrogen
 		ppcByCreatorAndType = ::ppcByCreatorAndType,
 		ppcByString         = ::ppcByString,
 		
-		kPPCPortKinds_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kPPCPortKinds_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum PPCSessionOrigin
@@ -79,17 +81,17 @@ namespace Nitrogen
 		ppcLocalOrigin  = ::ppcLocalOrigin,
 		ppcRemoteOrigin = ::ppcRemoteOrigin,
 		
-		kPPCSessionOrigin_Max = Nucleus::Enumeration_Traits< UInt8 >::max
+		kPPCSessionOrigin_Max = nucleus::enumeration_traits< UInt8 >::max
 	};
 	
 	enum PPCPortRefNum
 	{
-		kPPCPortRefNum_Max = Nucleus::Enumeration_Traits< short >::max
+		kPPCPortRefNum_Max = nucleus::enumeration_traits< short >::max
 	};
 	
 	enum PPCSessRefNum
 	{
-		kPPCSessRefNum_Max = Nucleus::Enumeration_Traits< long >::max
+		kPPCSessRefNum_Max = nucleus::enumeration_traits< long >::max
 	};
 	
 	static const std::size_t kMaxPPCXTIAddress = ::kMaxPPCXTIAddress;
@@ -99,7 +101,7 @@ namespace Nitrogen
 		kINETAddrType = ::kINETAddrType,
 		kDNSAddrType  = ::kDNSAddrType,
 		
-		kPPCXTIAddressType_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kPPCXTIAddressType_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	#pragma mark -

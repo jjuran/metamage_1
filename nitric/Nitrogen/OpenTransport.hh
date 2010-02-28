@@ -19,8 +19,10 @@
 #include <OpenTransport.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 
 #ifndef NUCLEUS_OWNED_H
@@ -138,37 +140,37 @@ namespace Nitrogen
 	
 	enum OTSequence
 	{
-		kOTSequence_Max = Nucleus::Enumeration_Traits< ::OTSequence >::max
+		kOTSequence_Max = nucleus::enumeration_traits< ::OTSequence >::max
 	};
 	
 	enum OTNameID
 	{
-		kOTNameID_Max = Nucleus::Enumeration_Traits< ::OTNameID >::max
+		kOTNameID_Max = nucleus::enumeration_traits< ::OTNameID >::max
 	};
 	
 	enum OTReason
 	{
-		kOTReason_Max = Nucleus::Enumeration_Traits< ::OTReason >::max
+		kOTReason_Max = nucleus::enumeration_traits< ::OTReason >::max
 	};
 	
 	enum OTCommand
 	{
-		kOTCommand_Max = Nucleus::Enumeration_Traits< ::OTCommand >::max
+		kOTCommand_Max = nucleus::enumeration_traits< ::OTCommand >::max
 	};
 	
 	enum OTOpenFlags
 	{
-		kOTOpenFlags_Max = Nucleus::Enumeration_Traits< ::OTOpenFlags >::max
+		kOTOpenFlags_Max = nucleus::enumeration_traits< ::OTOpenFlags >::max
 	};
 	
 	enum OTUnixErr
 	{
-		kOTUnixErr_Max = Nucleus::Enumeration_Traits< ::OTUnixErr >::max
+		kOTUnixErr_Max = nucleus::enumeration_traits< ::OTUnixErr >::max
 	};
 	
 	enum OTXTIErr
 	{
-		kOTXTIErr_Max = Nucleus::Enumeration_Traits< ::OTXTIErr >::max
+		kOTXTIErr_Max = nucleus::enumeration_traits< ::OTXTIErr >::max
 	};
 	
 	// ...

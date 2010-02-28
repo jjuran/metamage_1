@@ -22,8 +22,10 @@
 // Standard C++
 #include <string>
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
@@ -50,7 +52,7 @@ namespace Nitrogen
 		teFlushRight   = ::teFlushRight,
 		teFlushLeft    = ::teFlushLeft,
 		
-		kJustification_Max = Nucleus::Enumeration_Traits< short >::max
+		kJustification_Max = nucleus::enumeration_traits< short >::max
 	};
 	
 	using ::TEHandle;

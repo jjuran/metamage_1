@@ -19,15 +19,13 @@
 #include <Threads.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 // Nucleus
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
-#endif
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 
 // Nitrogen
@@ -57,7 +55,7 @@ namespace Nitrogen
 		kStoppedThreadState = ::kStoppedThreadState,
 		kRunningThreadState = ::kRunningThreadState,
 		
-		kThreadState_Max = Nucleus::Enumeration_Traits< ::ThreadState >::max
+		kThreadState_Max = nucleus::enumeration_traits< ::ThreadState >::max
 	};
 	
 	using ::ThreadTaskRef;  // FIXME
@@ -67,7 +65,7 @@ namespace Nitrogen
 		kCooperativeThread = ::kCooperativeThread,
 		kPreemptiveThread  = ::kPreemptiveThread,
 		
-		kThreadStyle_Max = Nucleus::Enumeration_Traits< ::ThreadStyle >::max
+		kThreadStyle_Max = nucleus::enumeration_traits< ::ThreadStyle >::max
 	};
 	
 	enum ThreadID
@@ -76,7 +74,7 @@ namespace Nitrogen
 		kCurrentThreadID     = ::kCurrentThreadID,
 		kApplicationThreadID = ::kApplicationThreadID,
 		
-		kThreadID_Max = Nucleus::Enumeration_Traits< ::ThreadID >::max
+		kThreadID_Max = nucleus::enumeration_traits< ::ThreadID >::max
 	};
 	
 	enum ThreadOptions
@@ -87,7 +85,7 @@ namespace Nitrogen
 		kFPUNotNeeded     = ::kFPUNotNeeded,
 		kExactMatchThread = ::kExactMatchThread,
 		
-		kThreadOptions_Max = Nucleus::Enumeration_Traits< ::ThreadOptions >::max
+		kThreadOptions_Max = nucleus::enumeration_traits< ::ThreadOptions >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ThreadOptions )

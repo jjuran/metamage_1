@@ -32,9 +32,11 @@
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
 #endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -52,60 +54,60 @@ namespace Nitrogen
 	
 	enum DragItemRef
 	{
-		kDragItemRef_Max = Nucleus::Enumeration_Traits< ::DragItemRef >::max
+		kDragItemRef_Max = nucleus::enumeration_traits< ::DragItemRef >::max
 	};
 	
 	enum FlavorType
 	{
-		kFlavorType_Max = Nucleus::Enumeration_Traits< ::FlavorType >::max
+		kFlavorType_Max = nucleus::enumeration_traits< ::FlavorType >::max
 	};
 	
 	enum DragAttributes
 	{
-		kDragAttributes_Max = Nucleus::Enumeration_Traits< ::DragAttributes >::max
+		kDragAttributes_Max = nucleus::enumeration_traits< ::DragAttributes >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragAttributes )
    
 	enum DragBehaviors
 	{
-		kDragBehaviors_Max = Nucleus::Enumeration_Traits< ::DragBehaviors >::max
+		kDragBehaviors_Max = nucleus::enumeration_traits< ::DragBehaviors >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragBehaviors )
    
 	enum DragImageFlags
 	{
-		kDragImageFlags_Max = Nucleus::Enumeration_Traits< ::DragImageFlags >::max
+		kDragImageFlags_Max = nucleus::enumeration_traits< ::DragImageFlags >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragImageFlags )
     
 	enum DragRegionMessage
 	{
-		kDragRegionMessage_Max = Nucleus::Enumeration_Traits< ::DragRegionMessage >::max
+		kDragRegionMessage_Max = nucleus::enumeration_traits< ::DragRegionMessage >::max
 	};
 	
 	enum ZoomAcceleration
 	{
-		kZoomAcceleration_Max = Nucleus::Enumeration_Traits< ::ZoomAcceleration >::max
+		kZoomAcceleration_Max = nucleus::enumeration_traits< ::ZoomAcceleration >::max
 	};
 	
 	enum FlavorFlags
 	{
-		kFlavorFlags_Max = Nucleus::Enumeration_Traits< ::FlavorFlags >::max
+		kFlavorFlags_Max = nucleus::enumeration_traits< ::FlavorFlags >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( FlavorFlags )
     
 	enum DragTrackingMessage
 	{
-		kDragTrackingMessage_Max = Nucleus::Enumeration_Traits< ::DragTrackingMessage >::max
+		kDragTrackingMessage_Max = nucleus::enumeration_traits< ::DragTrackingMessage >::max
 	};
 	
 	enum DragActions
 	{
-		kDragActions_Max = Nucleus::Enumeration_Traits< ::DragActions >::max
+		kDragActions_Max = nucleus::enumeration_traits< ::DragActions >::max
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragActions )

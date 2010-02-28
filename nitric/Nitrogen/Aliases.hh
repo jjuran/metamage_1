@@ -17,11 +17,13 @@
 #ifndef __ALIASES__
 #include <Aliases.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -51,7 +53,7 @@ namespace Nitrogen
 	
 	enum MountFlags
 	{
-		kMountFlags_Max = Nucleus::Enumeration_Traits< unsigned long >::max
+		kMountFlags_Max = nucleus::enumeration_traits< unsigned long >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( MountFlags )

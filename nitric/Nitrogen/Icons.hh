@@ -68,17 +68,17 @@ namespace Nitrogen
 	
 	enum IconAlignmentType
 	{
-		kIconAlignmentType_Max = Nucleus::Enumeration_Traits< ::IconAlignmentType >::max
+		kIconAlignmentType_Max = nucleus::enumeration_traits< ::IconAlignmentType >::max
 	};
 	
 	enum IconTransformType
 	{
-		kIconTransformType_Max = Nucleus::Enumeration_Traits< ::IconTransformType >::max
+		kIconTransformType_Max = nucleus::enumeration_traits< ::IconTransformType >::max
 	};
 	
 	enum IconSelectorValue
 	{
-		kIconSelectorValue_Max = Nucleus::Enumeration_Traits< ::IconSelectorValue >::max
+		kIconSelectorValue_Max = nucleus::enumeration_traits< ::IconSelectorValue >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( IconAlignmentType )
@@ -94,7 +94,7 @@ namespace Nitrogen
 	
 	enum IconLabel
 	{
-		kIconLabel_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kIconLabel_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	// ...
@@ -340,14 +340,14 @@ namespace Nitrogen
 	{
 		kIconServicesNormalUsageFlag = ::kIconServicesNormalUsageFlag,
 		
-		kIconServicesUsageFlags_Max = Nucleus::Enumeration_Traits< ::IconServicesUsageFlags >::max
+		kIconServicesUsageFlags_Max = nucleus::enumeration_traits< ::IconServicesUsageFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( IconServicesUsageFlags )
 	
 	enum PlotIconRefFlags
 	{
-		kPlotIconRefFlags_Max = Nucleus::Enumeration_Traits< ::PlotIconRefFlags >::max
+		kPlotIconRefFlags_Max = nucleus::enumeration_traits< ::PlotIconRefFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( PlotIconRefFlags )

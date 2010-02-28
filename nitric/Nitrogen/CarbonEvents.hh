@@ -18,8 +18,8 @@
 #include <CarbonEvents.h>
 #endif
 
-// Nucleus
-#include "Nucleus/Enumeration.h"
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
@@ -215,7 +215,7 @@ namespace Nitrogen
 
 	enum EventPriority
 	{
-		kEventPriority_Max = Nucleus::Enumeration_Traits< ::EventPriority >::max
+		kEventPriority_Max = nucleus::enumeration_traits< ::EventPriority >::max
 	};
 	
    /* To deal with:
@@ -235,12 +235,12 @@ namespace Nitrogen
 
 	enum EventClass
 	{
-		kEventClass_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kEventClass_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
 	enum CarbonEventKind
 	{
-		kCarbonEventKind_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+		kCarbonEventKind_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
    // This conflicts with Events.h
@@ -250,7 +250,7 @@ namespace Nitrogen
 
 	enum MouseTrackingResult
 	{
-		kMouseTrackingResult_Max = Nucleus::Enumeration_Traits< ::MouseTrackingResult >::max
+		kMouseTrackingResult_Max = nucleus::enumeration_traits< ::MouseTrackingResult >::max
 	};
 	
 	enum EventParamName
@@ -290,7 +290,7 @@ namespace Nitrogen
 		
 	#endif
 		
-		kEventParamName_Max = Nucleus::Enumeration_Traits< ::EventParamName >::max
+		kEventParamName_Max = nucleus::enumeration_traits< ::EventParamName >::max
 	};
 
 	typedef DescType EventParamType;

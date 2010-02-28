@@ -18,13 +18,15 @@
 #include <Components.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#include "Nucleus/Enumeration.h"
 #include "Nucleus/ErrorsRegistered.h"
 
 
@@ -37,14 +39,14 @@ namespace Nitrogen
 	{
 		kAnyComponentType = ::kAnyComponentType,
 		
-		kComponentType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kComponentType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	enum ComponentSubType
 	{
 		kAnyComponentSubType = ::kAnyComponentSubType,
 		
-		kComponentSubType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kComponentSubType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	enum ComponentManufacturer
@@ -52,7 +54,7 @@ namespace Nitrogen
 		kAppleManufacturer        = ::kAppleManufacturer,
 		kAnyComponentManufacturer = ::kAnyComponentManufacturer,
 		
-		kComponentManufacturer_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kComponentManufacturer_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	static const ResType kComponentResourceType      = ResType( ::kComponentResourceType      );

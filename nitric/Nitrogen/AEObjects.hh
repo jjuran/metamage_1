@@ -53,7 +53,7 @@ namespace Nitrogen
 		kAENext     = ::kAENext,
 		kAEPrevious = ::kAEPrevious,
 		
-		kAERelativeDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAERelativeDescriptor_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 	typedef AERelativeDescriptor AERelativeOrdinal;
@@ -66,7 +66,7 @@ namespace Nitrogen
 		kAEAny    = ::kAEAny,
 		kAEAll    = ::kAEAll,
 		
-		kAEAbsoluteOrdinal_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAEAbsoluteOrdinal_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 	enum AELogicalOperator
@@ -75,7 +75,7 @@ namespace Nitrogen
 		kAEOR  = ::kAEOR,
 		kAENOT = ::kAENOT,
 		
-		kAELogicalOperator_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAELogicalOperator_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 	//typedef AELogicalOperator AELogicalDescriptor;
@@ -92,7 +92,7 @@ namespace Nitrogen
 		kAELessThan          = ::kAELessThan,
 		kAELessThanEquals    = ::kAELessThanEquals,
 		
-		kAEComparisonOperator_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAEComparisonOperator_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 	typedef AEComparisonOperator AECompOperator;
@@ -135,7 +135,7 @@ namespace Nitrogen
 		kAEHandleSimpleRanges   = ::kAEHandleSimpleRanges,
 		kAEUseRelativeIterators = ::kAEUseRelativeIterators,
 		
-		kAEResolveCallbackFlags_Max = Nucleus::Enumeration_Traits< short >::max
+		kAEResolveCallbackFlags_Max = nucleus::enumeration_traits< short >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AEResolveCallbackFlags )

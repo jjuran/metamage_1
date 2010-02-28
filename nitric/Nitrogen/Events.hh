@@ -22,6 +22,10 @@
 #include "Carbonate/Events.hh"
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NITROGEN_OSUTILS_HH
 #include "Nitrogen/OSUtils.hh"
 #endif
@@ -30,9 +34,6 @@
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 
 namespace Nitrogen
@@ -52,7 +53,7 @@ namespace Nitrogen
 		osEvt           = ::osEvt,
 		kHighLevelEvent = ::kHighLevelEvent,
 		
-		kEventKind_Max = Nucleus::Enumeration_Traits< ::EventKind >::max
+		kEventKind_Max = nucleus::enumeration_traits< ::EventKind >::max
 	};
 	
 	
@@ -70,7 +71,7 @@ namespace Nitrogen
 		osMask             = ::osMask,
 		everyEvent         = ::everyEvent,
 		
-		kEventMask_Max = Nucleus::Enumeration_Traits< ::EventMask >::max
+		kEventMask_Max = nucleus::enumeration_traits< ::EventMask >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( EventMask )
@@ -89,7 +90,7 @@ namespace Nitrogen
 		rightOptionKey  = ::rightOptionKey,
 		rightControlKey = ::rightControlKey,
 		
-		kEventModifiers_Max = Nucleus::Enumeration_Traits< ::EventModifiers >::max
+		kEventModifiers_Max = nucleus::enumeration_traits< ::EventModifiers >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( EventModifiers )
@@ -99,7 +100,7 @@ namespace Nitrogen
 	
 	enum KeyModifiers
 	{
-		kKeyModifiers_Max = Nucleus::Enumeration_Traits< ::UInt32 >::max
+		kKeyModifiers_Max = nucleus::enumeration_traits< ::UInt32 >::max
 	};
 	
 	// There's no point defining operators if there are no constants.

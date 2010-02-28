@@ -63,7 +63,7 @@ namespace Nitrogen
 		kAELocalProcess  = ::kAELocalProcess,
 		kAERemoteProcess = ::kAERemoteProcess,
 		
-		kAEEventSource_Max = Nucleus::Enumeration_Traits< ::AEEventSource >::max
+		kAEEventSource_Max = nucleus::enumeration_traits< ::AEEventSource >::max
 	};
 	
 	// In AppleEvents.h due to dependency on enum AEEventSource.

@@ -42,7 +42,7 @@ namespace Nitrogen
 		longDate   = ::longDate,
 		abbrevDate = ::abbrevDate,
 		
-		kDateForm_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+		kDateForm_Max = nucleus::enumeration_traits< SInt8 >::max
 	};
 	
    typedef UInt32 DateTime;

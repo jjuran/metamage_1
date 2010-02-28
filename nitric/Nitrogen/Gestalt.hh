@@ -40,7 +40,7 @@ namespace Nitrogen
 		gestaltComponentMgr     = ::gestaltComponentMgr,
 		gestaltQuickTimeVersion = ::gestaltQuickTimeVersion,
 		
-		kGestaltSelector_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+		kGestaltSelector_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
 	typedef Gestalt_Selector GestaltSelector;

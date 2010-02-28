@@ -17,6 +17,10 @@
 #ifndef __ATSTYPES__
 #include <ATSTypes.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
@@ -26,7 +30,6 @@
 #ifndef NITROGEN_MIXEDMODE_HH
 #include "Nitrogen/MixedMode.hh"
 #endif
-#include "Nucleus/Enumeration.h"
 
 
 namespace Nitrogen
@@ -34,14 +37,14 @@ namespace Nitrogen
 	
 	enum FMFontFamily
 	{
-		kFMFontFamily_Max = Nucleus::Enumeration_Traits< ::FMFontFamily >::max
+		kFMFontFamily_Max = nucleus::enumeration_traits< ::FMFontFamily >::max
 	};
 	
 	typedef FMFontFamily FontID;
 	
 	enum FMFontStyle
 	{
-		kFMFontStyle_Max = Nucleus::Enumeration_Traits< ::FMFontStyle >::max
+		kFMFontStyle_Max = nucleus::enumeration_traits< ::FMFontStyle >::max
 	};
 	
 }

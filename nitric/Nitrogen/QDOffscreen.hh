@@ -26,7 +26,7 @@ namespace Nitrogen
 	
 	enum GWorldFlags
 	{
-		kGWorldFlags_Max = Nucleus::Enumeration_Traits< ::GWorldFlags >::max
+		kGWorldFlags_Max = nucleus::enumeration_traits< ::GWorldFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( GWorldFlags )

@@ -18,11 +18,12 @@
 #include <Processes.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nucleus/AdvanceUntilFailureContainer.h"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NITROGEN_CFSTRING_HH
 //#include "Nitrogen/CFString.hh"
@@ -58,7 +59,7 @@ namespace Nitrogen
 		launchContinue    = ::launchContinue,
 		launchNoFileFlags = ::launchNoFileFlags,
 		
-		kLaunchFlags_Max = Nucleus::Enumeration_Traits< ::LaunchFlags >::max
+		kLaunchFlags_Max = nucleus::enumeration_traits< ::LaunchFlags >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( LaunchFlags )

@@ -18,9 +18,10 @@
 #include <Movies.h>
 #endif
 
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -46,12 +47,12 @@ namespace Nitrogen
 	
 	enum MovieFileRefNum
 	{
-		kMovieFileRefNum_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kMovieFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	enum NewMovieFlags
 	{
-		kNewMovieFlags_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kNewMovieFlags_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( NewMovieFlags )
@@ -61,7 +62,7 @@ namespace Nitrogen
 	
 	enum FullScreenFlags
 	{
-		kFullScreenFlags_Max = Nucleus::Enumeration_Traits< long >::max
+		kFullScreenFlags_Max = nucleus::enumeration_traits< long >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FullScreenFlags )

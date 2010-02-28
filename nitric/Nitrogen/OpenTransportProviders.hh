@@ -26,8 +26,10 @@
 // Standard C++
 #include <vector>
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 // Nucleus
-#include "Nucleus/Enumeration.h"
 #ifndef NUCLEUS_INITIALIZE_H
 #include "Nucleus/Initialize.h"
 #endif
@@ -81,7 +83,7 @@ namespace Nitrogen
 	
 	enum InetPort
 	{
-		kInetPort_Max = Nucleus::Enumeration_Traits< ::InetPort >::max
+		kInetPort_Max = nucleus::enumeration_traits< ::InetPort >::max
 	};
 	
 	// Default InetHost is kOTAnyInetAddress (i.e. 0).

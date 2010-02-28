@@ -17,6 +17,11 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
@@ -25,9 +30,6 @@
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
@@ -43,26 +45,26 @@ namespace Nitrogen
 	{
 		kResFileNotOpened = ::kResFileNotOpened,
 		
-		kResFileRefNum_Max = Nucleus::Enumeration_Traits< ::ResFileRefNum >::max
+		kResFileRefNum_Max = nucleus::enumeration_traits< ::ResFileRefNum >::max
 	};
 	
 	enum ResID
 	{
-		kResID_Max = Nucleus::Enumeration_Traits< ::ResID >::max
+		kResID_Max = nucleus::enumeration_traits< ::ResID >::max
 	};
 	
 	typedef ResID ResourceID;
 	
 	enum ResAttributes
 	{
-		kResAttributes_Max = Nucleus::Enumeration_Traits< ::ResAttributes >::max
+		kResAttributes_Max = nucleus::enumeration_traits< ::ResAttributes >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ResAttributes )
 	
 	enum ResFileAttributes
 	{
-		kResFileAttributes_Max = Nucleus::Enumeration_Traits< ::ResFileAttributes >::max
+		kResFileAttributes_Max = nucleus::enumeration_traits< ::ResFileAttributes >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ResFileAttributes )

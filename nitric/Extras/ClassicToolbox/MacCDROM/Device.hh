@@ -8,8 +8,8 @@
 #ifndef MACCDROM_DEVICE_HH
 #define MACCDROM_DEVICE_HH
 
-// Nucleus
-#include "Nucleus/Enumeration.h"
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_HH
@@ -29,7 +29,7 @@ namespace MacCDROM
 		kCDROMPowerLevelIdle    = 2,
 		kCDROMPowerLevelSleep   = 3,
 		
-		kCDROMPowerLevel_Max = Nucleus::Enumeration_Traits< unsigned char >::max
+		kCDROMPowerLevel_Max = nucleus::enumeration_traits< unsigned char >::max
 	};
 	
 	struct CDROMDrive

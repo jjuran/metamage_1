@@ -14,16 +14,15 @@
 #ifndef NITROGEN_AEOBJECTCLASS_HH
 #define NITROGEN_AEOBJECTCLASS_HH
 
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace Nitrogen
@@ -143,7 +142,7 @@ namespace Nitrogen
 		cAliasOrString          = ::cAliasOrString,
 		cSeconds                = ::cSeconds,
 		
-		kAEObjectClass_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAEObjectClass_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 }

@@ -45,7 +45,7 @@ namespace Nitrogen
 		kICAttrLockedMask   = ::kICAttrLockedMask,
 		kICAttrVolatileMask = ::kICAttrVolatileMask,
 		
-		kICAttr_Max = Nucleus::Enumeration_Traits< ::ICAttr >::max
+		kICAttr_Max = nucleus::enumeration_traits< ::ICAttr >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ICAttr )
@@ -56,7 +56,7 @@ namespace Nitrogen
 		icReadOnlyPerm  = ::icReadOnlyPerm,
 		icReadWritePerm = ::icReadWritePerm,
 		
-		kICPerm_Max = Nucleus::Enumeration_Traits< ::ICPerm >::max
+		kICPerm_Max = nucleus::enumeration_traits< ::ICPerm >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ICPerm )
@@ -65,7 +65,7 @@ namespace Nitrogen
 	{
 		kICNilProfileID = ::kICNilProfileID,
 		
-		kICProfileID_Max = Nucleus::Enumeration_Traits< ::ICProfileID >::max
+		kICProfileID_Max = nucleus::enumeration_traits< ::ICProfileID >::max
 	};
 	
 	static const OSType kICFileType = OSType( ::kICFileType );

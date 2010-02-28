@@ -22,11 +22,12 @@
 #include "Carbonate/Menus.hh"
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
@@ -77,7 +78,7 @@ namespace Nitrogen
 	
 	enum MenuAttributes
 	{
-		kMenuAttributes_Max = Nucleus::Enumeration_Traits< ::MenuAttributes >::max
+		kMenuAttributes_Max = nucleus::enumeration_traits< ::MenuAttributes >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( MenuAttributes )
@@ -86,26 +87,26 @@ namespace Nitrogen
 	{
 		kMenuItemAttrIgnoreMeta = ::kMenuItemAttrIgnoreMeta,
 		
-		kMenuItemAttributes_Max = Nucleus::Enumeration_Traits< ::MenuItemAttributes >::max
+		kMenuItemAttributes_Max = nucleus::enumeration_traits< ::MenuItemAttributes >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( MenuItemAttributes )
 	
 	enum MenuTrackingMode
 	{
-		kMenuTrackingMode_Max = Nucleus::Enumeration_Traits< ::MenuTrackingMode >::max
+		kMenuTrackingMode_Max = nucleus::enumeration_traits< ::MenuTrackingMode >::max
 	};
 	 
 	enum MenuEventOptions
 	{
-		kMenuEventOptions_Max = Nucleus::Enumeration_Traits< ::MenuEventOptions >::max
+		kMenuEventOptions_Max = nucleus::enumeration_traits< ::MenuEventOptions >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
 	
 	enum MenuID
 	{
-		kMenuID_Max = Nucleus::Enumeration_Traits< ::MenuID >::max
+		kMenuID_Max = nucleus::enumeration_traits< ::MenuID >::max
 	};
 	
 }
@@ -128,7 +129,7 @@ namespace Nitrogen
    
 	enum MenuCommand
 	{
-		kMenuCommand_Max = Nucleus::Enumeration_Traits< ::MenuCommand >::max
+		kMenuCommand_Max = nucleus::enumeration_traits< ::MenuCommand >::max
 	};
    
    using ::MenuRef;
@@ -151,7 +152,7 @@ namespace Nitrogen
    
 	enum MenuItemDataFlags
 	{
-		kMenuItemDataFlags_Max = Nucleus::Enumeration_Traits< ::MenuItemDataFlags >::max
+		kMenuItemDataFlags_Max = nucleus::enumeration_traits< ::MenuItemDataFlags >::max
 	};
    
    NUCLEUS_DEFINE_FLAG_OPS( MenuItemDataFlags )
@@ -161,7 +162,7 @@ namespace Nitrogen
    
 	enum MenuItemID
 	{
-		kMenuItemID_Max = Nucleus::Enumeration_Traits< ::MenuItemID >::max
+		kMenuItemID_Max = nucleus::enumeration_traits< ::MenuItemID >::max
 	};
 	
    /* ... */

@@ -18,6 +18,10 @@
 #include <OSA.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
 #endif
@@ -25,9 +29,6 @@
 #include "Nitrogen/Components.hh"
 #endif
 
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
 #ifndef NUCLEUS_SHARED_H
 #include "Nucleus/Shared.h"
 #endif
@@ -56,7 +57,7 @@ namespace Nitrogen
 	{
 		kOSANullScript = ::kOSANullScript,
 		
-		kOSAID_Max = Nucleus::Enumeration_Traits< ::OSAID >::max
+		kOSAID_Max = nucleus::enumeration_traits< ::OSAID >::max
 	};
 	
 	enum OSAModeFlags
@@ -76,7 +77,7 @@ namespace Nitrogen
 		kOSAModeDispatchToDirectObject  = ::kOSAModeDispatchToDirectObject,
 		kOSAModeDontGetDataForArguments = ::kOSAModeDontGetDataForArguments,
 		
-		kOSAModeFlags_Max = Nucleus::Enumeration_Traits< SInt32 >::max
+		kOSAModeFlags_Max = nucleus::enumeration_traits< SInt32 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( OSAModeFlags )

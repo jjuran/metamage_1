@@ -18,9 +18,10 @@
 #include <MacWindows.h>
 #endif
 
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_LINKEDLISTCONTAINER_H
 #include "Nucleus/LinkedListContainer.h"
 #endif
@@ -103,7 +104,7 @@ namespace Nitrogen
 		zoomDocProc     = ::zoomDocProc,
 		zoomNoGrow      = ::zoomNoGrow,
 		
-		kWindowDefProcID_Max = Nucleus::Enumeration_Traits< ::SInt16 >::max
+		kWindowDefProcID_Max = nucleus::enumeration_traits< ::SInt16 >::max
 	};
 	
 	enum WindowKind
@@ -111,7 +112,7 @@ namespace Nitrogen
 		kDialogWindowKind      = ::kDialogWindowKind,
 		kApplicationWindowKind = ::kApplicationWindowKind,
 		
-		kWindowKind_Max = Nucleus::Enumeration_Traits< ::SInt16 >::max
+		kWindowKind_Max = nucleus::enumeration_traits< ::SInt16 >::max
 	};
 	
 	enum WindowPartCode
@@ -131,17 +132,17 @@ namespace Nitrogen
 		inToolbarButton = ::inToolbarButton,
 		inStructure     = ::inStructure,
 		
-		kWindowPartCode_Max = Nucleus::Enumeration_Traits< ::WindowPartCode >::max
+		kWindowPartCode_Max = nucleus::enumeration_traits< ::WindowPartCode >::max
 	};
 	
 	enum PropertyCreator
 	{
-		kPropertyCreator_Max = Nucleus::Enumeration_Traits< ::PropertyCreator >::max
+		kPropertyCreator_Max = nucleus::enumeration_traits< ::PropertyCreator >::max
 	};
 	
 	enum PropertyTag
 	{
-		kPropertyTag_Max = Nucleus::Enumeration_Traits< ::PropertyTag >::max
+		kPropertyTag_Max = nucleus::enumeration_traits< ::PropertyTag >::max
 	};
 	
 	enum WindowClass
@@ -163,7 +164,7 @@ namespace Nitrogen
 		kDrawerWindowClass       = ::kDrawerWindowClass,
 		kAllWindowClasses        = ::kAllWindowClasses,
 		
-		kWindowClass_Max = Nucleus::Enumeration_Traits< ::WindowClass >::max
+		kWindowClass_Max = nucleus::enumeration_traits< ::WindowClass >::max
 	};
 	
 	enum WindowAttributes
@@ -190,7 +191,7 @@ namespace Nitrogen
 		kWindowStandardDocumentAttributes = ::kWindowStandardDocumentAttributes,
 		kWindowStandardFloatingAttributes = ::kWindowStandardFloatingAttributes,
 		
-		kWindowAttributes_Max = Nucleus::Enumeration_Traits< ::WindowAttributes >::max
+		kWindowAttributes_Max = nucleus::enumeration_traits< ::WindowAttributes >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
@@ -209,7 +210,7 @@ namespace Nitrogen
 		kWindowAlertPositionParentWindowScreen = ::kWindowAlertPositionParentWindowScreen,
 		kWindowStaggerParentWindowScreen       = ::kWindowStaggerParentWindowScreen,
 		
-		kWindowPosition_Max = Nucleus::Enumeration_Traits< ::UInt16 >::max
+		kWindowPosition_Max = nucleus::enumeration_traits< ::UInt16 >::max
 	};
 	
 	enum WindowPositionMethod
@@ -225,7 +226,7 @@ namespace Nitrogen
 		kWindowAlertPositionOnParentWindow       = ::kWindowAlertPositionOnParentWindow,
 		kWindowAlertPositionOnParentWindowScreen = ::kWindowAlertPositionOnParentWindowScreen,
 		
-		kWindowPositionMethod_Max = Nucleus::Enumeration_Traits< ::WindowPositionMethod >::max
+		kWindowPositionMethod_Max = nucleus::enumeration_traits< ::WindowPositionMethod >::max
 	};
 	
 	enum WindowRegionCode
@@ -244,7 +245,7 @@ namespace Nitrogen
 		kWindowOpaqueRgn         = ::kWindowOpaqueRgn,
 		kWindowGlobalPortRgn     = ::kWindowGlobalPortRgn,
 		
-		kWindowRegionCode_Max = Nucleus::Enumeration_Traits< ::WindowRegionCode >::max
+		kWindowRegionCode_Max = nucleus::enumeration_traits< ::WindowRegionCode >::max
 	};
 	
    using ::GetWindowRegionRec;

@@ -14,10 +14,6 @@
 #ifndef NITROGEN_AEKEYWORD_HH
 #define NITROGEN_AEKEYWORD_HH
 
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
@@ -34,6 +30,9 @@
 #include <ASRegistry.h>
 #endif
 #include <OSA.h>
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace Nitrogen
@@ -251,7 +250,7 @@ namespace Nitrogen
 		keyOSASourceStart        = ::keyOSASourceStart,
 		keyOSASourceEnd          = ::keyOSASourceEnd,
 		
-		kAEKeyword_Max = Nucleus::Enumeration_Traits< ::AEKeyword >::max
+		kAEKeyword_Max = nucleus::enumeration_traits< ::AEKeyword >::max
 	};
 	
 }

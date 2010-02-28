@@ -22,13 +22,14 @@
 #include "Carbonate/Quickdraw.hh"
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
 
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -62,14 +63,14 @@ namespace Nitrogen
 	{
 		srcCopy = ::srcCopy,
 		
-		kTransferMode_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kTransferMode_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( TransferMode )
 	
 	enum PixelType
 	{
-		kPixelType_Max = Nucleus::Enumeration_Traits< ::PixelType >::max
+		kPixelType_Max = nucleus::enumeration_traits< ::PixelType >::max
 	};
 	
 	using ::BitMap;

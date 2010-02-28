@@ -15,10 +15,13 @@
 #ifndef __TEXTCOMMON__
 #include <TextCommon.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#include "Nucleus/Enumeration.h"
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
@@ -42,31 +45,31 @@ namespace Nitrogen
    
 	enum TextEncodingBase
 	{
-		kTextEncodingBase_Max = Nucleus::Enumeration_Traits< ::TextEncodingBase >::max
+		kTextEncodingBase_Max = nucleus::enumeration_traits< ::TextEncodingBase >::max
 	};
 	
 	enum TextEncodingVariant
 	{
 		kTextEncodingDefaultVariant = ::kTextEncodingDefaultVariant,
 		
-		kTextEncodingVariant_Max = Nucleus::Enumeration_Traits< ::TextEncodingVariant >::max
+		kTextEncodingVariant_Max = nucleus::enumeration_traits< ::TextEncodingVariant >::max
 	};
 	
 	enum TextEncodingFormat
 	{
-		kTextEncodingFormat_Max = Nucleus::Enumeration_Traits< ::TextEncodingFormat >::max
+		kTextEncodingFormat_Max = nucleus::enumeration_traits< ::TextEncodingFormat >::max
 	};
 	
 	enum TextEncoding
 	{
 		kTextEncodingUnknown = ::kTextEncodingUnknown,
 		
-		kTextEncoding_Max = Nucleus::Enumeration_Traits< ::TextEncoding >::max
+		kTextEncoding_Max = nucleus::enumeration_traits< ::TextEncoding >::max
 	};
 	
 	enum TextEncodingNameSelector
 	{
-		kTextEncodingNameSelector_Max = Nucleus::Enumeration_Traits< ::TextEncodingNameSelector >::max
+		kTextEncodingNameSelector_Max = nucleus::enumeration_traits< ::TextEncodingNameSelector >::max
 	};
 	
    using ::TextEncodingRun;
@@ -104,29 +107,29 @@ namespace Nitrogen
   {
 	enum UCCharPropertyType
 	{
-		kUCCharPropertyType_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyType >::max
+		kUCCharPropertyType_Max = nucleus::enumeration_traits< ::UCCharPropertyType >::max
 	};
 	
 	enum UCCharPropertyValue
 	{
-		kUCCharPropertyValue_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+		kUCCharPropertyValue_Max = nucleus::enumeration_traits< ::UCCharPropertyValue >::max
 	};
 	
    // UCCharPropertyValue is really three types overloaded: UCCharGenlCategory, UCCharCombiningClass, and UCCharBidiCategory.
    
 	enum UCCharGenlCategory
 	{
-		kUCCharGenlCategory_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+		kUCCharGenlCategory_Max = nucleus::enumeration_traits< ::UCCharPropertyValue >::max
 	};
 	
 	enum UCCharCombiningClass
 	{
-		kUCCharCombiningClass_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+		kUCCharCombiningClass_Max = nucleus::enumeration_traits< ::UCCharPropertyValue >::max
 	};
 	  
 	enum UCCharBidiCategory
 	{
-		kUCCharBidiCategory_Max = Nucleus::Enumeration_Traits< ::UCCharPropertyValue >::max
+		kUCCharBidiCategory_Max = nucleus::enumeration_traits< ::UCCharPropertyValue >::max
 	};
 	
 

@@ -22,8 +22,8 @@
 #include "Carbonate/Controls.hh"
 #endif
 
-// Nucleus
-#include "Nucleus/Enumeration.h"
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 #ifndef NITROGEN_MACWINDOWS_HH
 #include "Nitrogen/MacWindows.hh"
@@ -77,7 +77,7 @@ namespace Nitrogen
 		
 		kControlEntireControl = ::kControlEntireControl,
 		
-		kControlPartCode_Max = Nucleus::Enumeration_Traits< ::ControlPartCode >::max
+		kControlPartCode_Max = nucleus::enumeration_traits< ::ControlPartCode >::max
 	};
 	
 	struct ControlActionUPP_Details : Basic_UPP_Details< ::ControlActionUPP,
@@ -124,7 +124,7 @@ namespace Nitrogen
 	
 	enum ControlProcID
 	{
-		kControlProcID_Max = Nucleus::Enumeration_Traits< SInt16 >::max
+		kControlProcID_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
 	// 972
@@ -239,7 +239,7 @@ namespace Nitrogen
 		kControlKindTag      = ::kControlKindTag,
 		kControlSizeTag      = ::kControlSizeTag,
 		
-		kControlDataTag_Max = Nucleus::Enumeration_Traits< ::FourCharCode >::max
+		kControlDataTag_Max = nucleus::enumeration_traits< ::FourCharCode >::max
 	};
 	
    template < ::ResType inTagName > struct ControlData_Traits;

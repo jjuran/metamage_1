@@ -11,12 +11,12 @@
 #include <Serial.h>
 #endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/flag_ops.hh"
+
 // Nucleus
 #include "Nucleus/ErrorsRegistered.h"
-
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_HH
@@ -60,7 +60,7 @@ namespace Nitrogen
 		data7 = ::data7,
 		data8 = ::data8,
 		
-		kSerConfig_Max = Nucleus::Enumeration_Traits< short >::max
+		kSerConfig_Max = nucleus::enumeration_traits< short >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( SerConfig )

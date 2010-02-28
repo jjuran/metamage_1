@@ -73,7 +73,7 @@ namespace Nitrogen
 		
 	#endif
 		
-		kCFragArchitecture_Max = Nucleus::Enumeration_Traits< ::CFragArchitecture >::max
+		kCFragArchitecture_Max = nucleus::enumeration_traits< ::CFragArchitecture >::max
 	};
 	
 	using ::CFragVersionNumber;
@@ -86,7 +86,7 @@ namespace Nitrogen
 		kStubLibraryCFrag     = ::kStubLibraryCFrag,
 		kWeakStubLibraryCFrag = ::kWeakStubLibraryCFrag,
 		
-		kCFragUsage_Max = Nucleus::Enumeration_Traits< ::CFragUsage >::max
+		kCFragUsage_Max = nucleus::enumeration_traits< ::CFragUsage >::max
 	};
 	
 	enum CFragLocatorKind
@@ -103,7 +103,7 @@ namespace Nitrogen
 		
 	#endif
 		
-		kCFragLocatorKind_Max = Nucleus::Enumeration_Traits< ::CFragLocatorKind >::max
+		kCFragLocatorKind_Max = nucleus::enumeration_traits< ::CFragLocatorKind >::max
 	};
 	
 	using ::CFragConnectionID;
@@ -114,7 +114,7 @@ namespace Nitrogen
 		kFindCFrag        = ::kFindCFrag,
 		kPrivateCFragCopy = ::kPrivateCFragCopy,
 		
-		kCFragLoadOptions_Max = Nucleus::Enumeration_Traits< ::CFragLoadOptions >::max
+		kCFragLoadOptions_Max = nucleus::enumeration_traits< ::CFragLoadOptions >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( CFragLoadOptions )
@@ -129,7 +129,7 @@ namespace Nitrogen
 		kTOCCFragSymbol     = ::kTOCCFragSymbol,
 		kGlueCFragSymbol    = ::kGlueCFragSymbol,
 		
-		kCFragSymbolClass_Max = Nucleus::Enumeration_Traits< ::CFragSymbolClass >::max
+		kCFragSymbolClass_Max = nucleus::enumeration_traits< ::CFragSymbolClass >::max
 	};
 	
 }

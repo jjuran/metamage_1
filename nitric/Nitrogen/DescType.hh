@@ -14,10 +14,6 @@
 #ifndef NITROGEN_DESCTYPE_HH
 #define NITROGEN_DESCTYPE_HH
 
-#ifndef NUCLEUS_ENUMERATION_H
-#include "Nucleus/Enumeration.h"
-#endif
-
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
@@ -33,6 +29,9 @@
 #ifndef __CARBONEVENTS__
 #include <CarbonEvents.h>
 #endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
 
 
 namespace Nitrogen
@@ -241,7 +240,7 @@ namespace Nitrogen
 		
 		typeOSAErrorRange = ::typeOSAErrorRange,
 		
-		kDescType_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kDescType_Max = nucleus::enumeration_traits< ::DescType >::max
 	};
 	
 }
