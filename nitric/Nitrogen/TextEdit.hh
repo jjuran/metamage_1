@@ -22,11 +22,11 @@
 // Standard C++
 #include <string>
 
+// Debug
+#include "debug/assert.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
-
-// Nucleus
-#include "Nucleus/NAssert.h"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH

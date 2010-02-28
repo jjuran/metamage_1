@@ -18,6 +18,9 @@
 #include <OSA.h>
 #endif
 
+// Debug
+#include "debug/assert.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
@@ -32,8 +35,6 @@
 #ifndef NUCLEUS_SHARED_H
 #include "Nucleus/Shared.h"
 #endif
-
-#include "Nucleus/NAssert.h"
 
 
 namespace Nitrogen

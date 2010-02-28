@@ -9,9 +9,6 @@
 #include "MacCDROM/Device.hh"
 #endif
 
-// Nitrogen Nucleus
-#include "Nucleus/NAssert.h"
-
 // MacCDROM
 #include "MacCDROM/AppleCD.hh"
 

@@ -9,8 +9,8 @@
 #include "MacCDROM/Audio.hh"
 #endif
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 // MacCDROM
 #ifdef __MACOS__

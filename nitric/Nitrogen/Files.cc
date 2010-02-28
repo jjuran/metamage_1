@@ -21,8 +21,8 @@
 // Standard C++
 #include <limits>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace Nucleus

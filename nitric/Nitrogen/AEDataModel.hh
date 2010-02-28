@@ -25,13 +25,13 @@
 #include "Carbonate/AEDataModel.hh"
 #endif
 
+// Debug
+#include "debug/assert.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_NASSERT_H
-#include "Nucleus/NAssert.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
