@@ -1896,6 +1896,9 @@ namespace Nitrogen
 		}
 		
 		ThrowOSStatus( afpItemNotFound );
+		
+		// Not reached
+		return FSSpec();
 	}
 	
 	inline FSSpec DTGetAPPL( OSType signature )
