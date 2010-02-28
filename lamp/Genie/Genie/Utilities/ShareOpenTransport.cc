@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 // ClassicToolbox
-#include "ClassicToolbox/OpenTransport.h"
+#include "ClassicToolbox/OpenTransport.hh"
 
 
 namespace Genie

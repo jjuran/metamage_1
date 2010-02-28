@@ -21,7 +21,7 @@
 #include "poseven/types/errno_t.hh"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/Window.hh"

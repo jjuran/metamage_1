@@ -14,7 +14,7 @@
 #include "Nitrogen/Controls.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 
 namespace Nitrogen

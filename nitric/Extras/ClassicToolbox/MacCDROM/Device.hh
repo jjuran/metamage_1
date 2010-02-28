@@ -12,8 +12,8 @@
 #include "Nucleus/Enumeration.h"
 
 // Nitrogen Extras / ClassicToolbox
-#ifndef CLASSICTOOLBOX_DEVICES_H
-#include "ClassicToolbox/Devices.h"
+#ifndef CLASSICTOOLBOX_DEVICES_HH
+#include "ClassicToolbox/Devices.hh"
 #endif
 
 

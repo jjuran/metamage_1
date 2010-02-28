@@ -14,7 +14,7 @@
 #include "poseven/types/errno_t.hh"
 
 // ClassicToolbox
-#include "ClassicToolbox/CRMSerialDevices.h"
+#include "ClassicToolbox/CRMSerialDevices.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"

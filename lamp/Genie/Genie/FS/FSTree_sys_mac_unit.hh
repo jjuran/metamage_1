@@ -15,7 +15,7 @@
 #include "Nucleus/AdvanceUntilDoneSequence.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/Devices.h"
+#include "ClassicToolbox/Devices.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

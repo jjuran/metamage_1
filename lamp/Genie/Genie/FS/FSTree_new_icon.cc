@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_new_icon.hh"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"

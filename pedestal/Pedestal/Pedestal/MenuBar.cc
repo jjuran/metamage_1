@@ -14,7 +14,7 @@
 
 // ClassicToolbox
 #if CALL_NOT_IN_CARBON
-#include "ClassicToolbox/Devices.h"
+#include "ClassicToolbox/Devices.hh"
 #endif
 
 

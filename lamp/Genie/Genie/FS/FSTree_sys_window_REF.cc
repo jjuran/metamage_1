@@ -16,7 +16,7 @@
 #include "Nucleus/Saved.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

@@ -12,7 +12,7 @@
 #include "netdb.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/OpenTransportProviders.h"
+#include "ClassicToolbox/OpenTransportProviders.hh"
 
 // Genie
 #include "Genie/Process.hh"

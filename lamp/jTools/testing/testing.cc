@@ -86,8 +86,8 @@
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/AppleTalk.h"
-#include "ClassicToolbox/Serial.h"
+#include "ClassicToolbox/AppleTalk.hh"
+#include "ClassicToolbox/Serial.hh"
 #endif
 
 // FSContents

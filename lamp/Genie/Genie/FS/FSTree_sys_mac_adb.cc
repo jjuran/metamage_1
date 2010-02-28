@@ -17,7 +17,7 @@
 #include "poseven/types/errno_t.hh"
 
 // ClassicToolbox
-#include "ClassicToolbox/DeskBus.h"
+#include "ClassicToolbox/DeskBus.hh"
 
 // Arcana
 #include "ADB/Protocol.hh"

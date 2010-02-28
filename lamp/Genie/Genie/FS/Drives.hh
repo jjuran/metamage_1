@@ -7,7 +7,7 @@
 #define GENIE_FILESYSTEM_DRIVES_HH
 
 // ClassicToolbox
-#include "ClassicToolbox/Files.h"
+#include "ClassicToolbox/Files.hh"
 
 
 namespace Genie

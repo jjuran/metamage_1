@@ -12,7 +12,7 @@
 #include "Nucleus/Saved.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"

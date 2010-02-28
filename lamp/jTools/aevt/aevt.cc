@@ -25,10 +25,10 @@
 #if CALL_NOT_IN_CARBON
 
 // ClassicToolbox
-#include "ClassicToolbox/AEDataModel.h"
-#include "ClassicToolbox/AppleTalk.h"
-#include "ClassicToolbox/EPPC.h"
-#include "ClassicToolbox/PPCToolbox.h"
+#include "ClassicToolbox/AEDataModel.hh"
+#include "ClassicToolbox/AppleTalk.hh"
+#include "ClassicToolbox/EPPC.hh"
+#include "ClassicToolbox/PPCToolbox.hh"
 
 #endif
 

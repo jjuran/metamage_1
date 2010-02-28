@@ -11,7 +11,7 @@
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/Scrap.h"
+#include "ClassicToolbox/Scrap.hh"
 #endif
 
 

@@ -12,7 +12,7 @@
 #include "Nitrogen/OSUtils.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/OpenTransport.h"
+#include "ClassicToolbox/OpenTransport.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

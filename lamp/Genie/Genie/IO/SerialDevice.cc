@@ -29,7 +29,7 @@
 #include "Nitrogen/Gestalt.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/Serial.h"
+#include "ClassicToolbox/Serial.hh"
 
 // Genie
 #include "Genie/Process.hh"

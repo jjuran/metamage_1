@@ -9,7 +9,7 @@
 #include "Nucleus/Saved.h"
 
 // ClassicToolbox
-#include "ClassicToolbox/MacWindows.h"
+#include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
