@@ -22,9 +22,6 @@
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_HH

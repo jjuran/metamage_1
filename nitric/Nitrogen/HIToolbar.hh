@@ -38,10 +38,6 @@
 #include "Nitrogen/OSStatus.hh"
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef NITROGEN_CFARRAY_HH
 #include "Nitrogen/CFArray.hh"
 #endif

@@ -17,9 +17,6 @@
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH

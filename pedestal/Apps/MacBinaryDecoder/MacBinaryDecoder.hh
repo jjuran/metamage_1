@@ -6,9 +6,6 @@
 #ifndef MACBINARYDECODER_HH
 #define MACBINARYDECODER_HH
 
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"

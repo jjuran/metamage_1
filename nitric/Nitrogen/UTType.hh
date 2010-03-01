@@ -30,10 +30,6 @@
 #include "Nitrogen/OSStatus.hh"
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef NITROGEN_CFURL_HH
 #include "Nitrogen/CFURL.hh"
 #endif

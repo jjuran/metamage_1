@@ -15,9 +15,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"

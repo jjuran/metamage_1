@@ -22,9 +22,6 @@
 #ifndef NITROGEN_EVENTS_HH
 #include "Nitrogen/Events.hh"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
 #endif

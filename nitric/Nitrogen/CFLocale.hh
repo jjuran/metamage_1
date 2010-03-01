@@ -26,10 +26,6 @@
 #include "Nitrogen/CFBase.hh"
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 namespace Nitrogen {
 	using ::CFLocaleRef;
   }

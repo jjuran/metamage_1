@@ -25,9 +25,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif

@@ -37,9 +37,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NUCLEUS_FLATTENER_H
 #include "Nucleus/Flattener.h"
 #endif

@@ -17,9 +17,6 @@
 #ifndef __IBCARBONRUNTIME__
 #include <IBCarbonRuntime.h>
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_MACWINDOWS_HH
 #include "Nitrogen/MacWindows.hh"
 #endif

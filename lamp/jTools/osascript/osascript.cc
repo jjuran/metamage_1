@@ -20,7 +20,6 @@
 
 // Nucleus
 #include "Nucleus/Exception.h"
-#include "Nucleus/Owned.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // poseven

@@ -20,10 +20,6 @@
 #endif
 	
 // Nitrogen
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 //	we need this include in order to instantiate Owned<CGrafPtr>
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"

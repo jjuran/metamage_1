@@ -14,11 +14,6 @@
 // Standard C++
 #include <functional>
 
-// Nucleus
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 // Nitrogen
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"

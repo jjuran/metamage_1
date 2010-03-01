@@ -25,9 +25,6 @@
 #ifndef NUCLEUS_LINKEDLISTCONTAINER_H
 #include "Nucleus/LinkedListContainer.h"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"

@@ -22,10 +22,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 // Nitrogen
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"

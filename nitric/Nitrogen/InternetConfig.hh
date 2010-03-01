@@ -14,10 +14,6 @@
 #ifndef NITROGEN_INTERNETCONFIG_HH
 #define NITROGEN_INTERNETCONFIG_HH
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef __INTERNETCONFIG__
 #include <InternetConfig.h>
 #endif

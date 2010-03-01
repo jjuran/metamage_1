@@ -26,10 +26,6 @@
 #include "Nitrogen/MacTypes.hh"
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif

@@ -16,9 +16,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // Nitrogen
 #include "Nitrogen/Threads.hh"
 

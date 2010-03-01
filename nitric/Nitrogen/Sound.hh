@@ -26,9 +26,6 @@
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NUCLEUS_TRANSFERTRAITS_H
 #include "Nucleus/TransferTraits.h"
 #endif
