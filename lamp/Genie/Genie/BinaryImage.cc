@@ -28,26 +28,6 @@
 #include "Genie/Utilities/AsyncIO.hh"
 
 
-namespace Nucleus
-{
-	
-	template <>
-	struct Converter< Owned< Nitrogen::Ptr >, Nitrogen::Handle >: public std::unary_function< Nitrogen::Handle, Owned< Nitrogen::Ptr > >
-	{
-		Owned< Nitrogen::Ptr > operator()( const Nitrogen::Handle& h ) const
-		{
-			Nitrogen::Size size = Nitrogen::GetHandleSize( h );
-			
-			Owned< Nitrogen::Ptr > result = Nitrogen::NewPtr( size );
-			
-			std::copy( *h.Get(), *h.Get() + size, result.Get().Get() );
-			
-			return result;
-		}
-	};
-	
-}
-
 namespace Genie
 {
 	
