@@ -459,14 +459,20 @@ namespace Genie
 	
 	static std::string GetMacPathname_Internal( const FSSpec& file )
 	{
-		std::string filename = NN::Convert< std::string >( file.name );
+		const char* filename = (const char*) &file.name[1];
+		
+		const size_t length = file.name[0];
 		
 		if ( file.parID == fsRtParID )
 		{
-			return filename;
+			return std::string( filename, length );
 		}
 		
-		return GetMacPathname( io::get_preceding_directory( file ) ) + filename;
+		std::string pathname = GetMacPathname( io::get_preceding_directory( file ) );
+		
+		pathname.append( filename, length );
+		
+		return pathname;
 	}
 
 	static std::string GetMacPathname( const N::FSDirSpec& dir )
