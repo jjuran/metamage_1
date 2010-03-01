@@ -23,6 +23,7 @@
 // Standard C
 #include "errno.h"
 #include "signal.h"
+#include "stdlib.h"
 
 // Standard C/C++
 #include <cstdio>
