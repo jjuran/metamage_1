@@ -105,23 +105,23 @@ namespace Nitrogen
    template <> CFPropertyListRef CFCast<CFPropertyListRef>( CFTypeRef p );
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Converter< bool, Nitrogen::CFPropertyListRef >: public std::unary_function< Nitrogen::CFPropertyListRef, bool >
+   struct converter< bool, Nitrogen::CFPropertyListRef >: public std::unary_function< Nitrogen::CFPropertyListRef, bool >
      {
       bool operator()( const ::CFPropertyListRef& in ) const
         {
-         return Convert< bool >( Nitrogen::CFCast<Nitrogen::CFBooleanRef>( in ) );
+         return convert< bool >( Nitrogen::CFCast<Nitrogen::CFBooleanRef>( in ) );
         }
      };
 
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFPropertyListRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFPropertyListRef> >
      {
       Nucleus::Owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
         {
-         return Nucleus::Owned<Nitrogen::CFPropertyListRef>( Convert< Nucleus::Owned<Nitrogen::CFBooleanRef> >( in ) );
+         return Nucleus::Owned<Nitrogen::CFPropertyListRef>( convert< Nucleus::Owned<Nitrogen::CFBooleanRef> >( in ) );
          // The explicit conversion to Nucleus::Owned<CFPropertyListRef> is a workaround 
          // for a bug in gcc 3.1 20020420; it rejects the implicit conversion.
         }

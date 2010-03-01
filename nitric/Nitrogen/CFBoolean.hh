@@ -40,10 +40,10 @@ namespace Nitrogen
    inline void CFShow( const CFBooleanRef b )            { ::CFShow( b ); }
   }
   
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Converter< bool, Nitrogen::CFBooleanRef >: public std::unary_function< Nitrogen::CFBooleanRef, bool >
+   struct converter< bool, Nitrogen::CFBooleanRef >: public std::unary_function< Nitrogen::CFBooleanRef, bool >
      {
       bool operator()( const Nitrogen::CFBooleanRef& in ) const
         {
@@ -52,7 +52,7 @@ namespace Nucleus
      };
 
    template <>
-   struct Converter< Nitrogen::CFBooleanRef, bool >: public std::unary_function< bool, Nitrogen::CFBooleanRef >
+   struct converter< Nitrogen::CFBooleanRef, bool >: public std::unary_function< bool, Nitrogen::CFBooleanRef >
      {
       Nitrogen::CFBooleanRef operator()( const bool& in ) const
         {
@@ -61,11 +61,11 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFBooleanRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFBooleanRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFBooleanRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFBooleanRef> >
      {
       Nucleus::Owned<Nitrogen::CFBooleanRef> operator()( const bool& in ) const
         {
-         return Nitrogen::CFRetain( Convert<Nitrogen::CFBooleanRef>( in ) );
+         return Nitrogen::CFRetain( convert<Nitrogen::CFBooleanRef>( in ) );
         }
      };
   }

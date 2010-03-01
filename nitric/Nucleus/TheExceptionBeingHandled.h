@@ -216,32 +216,36 @@ namespace Nucleus
       RegisterExceptionConversion< Output, Exception, ConvertException >();
 #endif
      }
-   
-   
+  }
+
+namespace nucleus
+{
+	
    template < class Output >
-   class Converter< Output, TheExceptionBeingHandled >: public std::unary_function< TheExceptionBeingHandled, Output >
+   class converter< Output, ::Nucleus::TheExceptionBeingHandled >: public std::unary_function< ::Nucleus::TheExceptionBeingHandled, Output >
      {
       private:
          bool hasDefaultValue;
          Output defaultValue;
       
       public:
-         Converter()
+         converter()
            : hasDefaultValue( false )
            {}
          
-         Converter( const Output& theDefaultValue )
+         converter( const Output& theDefaultValue )
            : hasDefaultValue( true ),
              defaultValue( theDefaultValue )
            {}
          
-      Output operator()( TheExceptionBeingHandled e ) const
+      Output operator()( ::Nucleus::TheExceptionBeingHandled e ) const
         {
          return hasDefaultValue
-                  ? TheGlobalExceptionConverter< Output >().Convert( e, defaultValue ) 
-                  : TheGlobalExceptionConverter< Output >().Convert( e ); 
+                  ? ::Nucleus::TheGlobalExceptionConverter< Output >().Convert( e, defaultValue ) 
+                  : ::Nucleus::TheGlobalExceptionConverter< Output >().Convert( e ); 
         }
      };
-  }
+	
+}
 
 #endif

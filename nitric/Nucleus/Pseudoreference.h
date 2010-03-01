@@ -171,12 +171,6 @@ namespace Nucleus
      };
 
    template < class Details >
-   struct ConvertInputTraits< ConstPseudoreference< Details > >
-     {
-      typedef typename Details::Value ConverterInputType;
-     };
-   
-   template < class Details >
    struct ReferenceTraits< Pseudoreference< Details > >
      {
       typedef Pseudoreference< Details > Reference;
@@ -185,12 +179,6 @@ namespace Nucleus
       typedef typename Reference::Pointer         Pointer;
       typedef typename Reference::ConstReference  ConstReference;
       typedef typename Reference::ConstPointer    ConstPointer;
-     };
-
-   template < class Details >
-   struct ConvertInputTraits< Pseudoreference< Details > >
-     {
-      typedef typename Details::Value ConverterInputType;
      };
 
    template < class Details >
@@ -215,5 +203,22 @@ namespace Nucleus
       typedef typename Reference::ConstPointer    ConstPointer;
      };
   }
+
+namespace nucleus
+{
+	
+	template < class Details >
+	struct convert_input_traits< Nucleus::ConstPseudoreference< Details > >
+	{
+		typedef typename Details::Value converter_input_type;
+	};
+	
+	template < class Details >
+	struct convert_input_traits< Nucleus::Pseudoreference< Details > >
+	{
+		typedef typename Details::Value converter_input_type;
+	};
+	
+}
 
 #endif

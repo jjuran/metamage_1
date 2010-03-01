@@ -229,14 +229,14 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
-  template <> struct Converter< Nitrogen::FSRef, Nitrogen::CFURLRef >: public std::unary_function< Nitrogen::CFURLRef, Nitrogen::FSRef >
+  template <> struct converter< Nitrogen::FSRef, Nitrogen::CFURLRef >: public std::unary_function< Nitrogen::CFURLRef, Nitrogen::FSRef >
      {
       Nitrogen::FSRef operator()( Nitrogen::CFURLRef url ) const;
      };
 
-   template <> struct Converter< Nucleus::Owned<Nitrogen::CFURLRef>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nucleus::Owned<Nitrogen::CFURLRef> >
+   template <> struct converter< Nucleus::Owned<Nitrogen::CFURLRef>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nucleus::Owned<Nitrogen::CFURLRef> >
      {
       Nucleus::Owned<Nitrogen::CFURLRef> operator()( const Nitrogen::FSRef& ref ) const
         {

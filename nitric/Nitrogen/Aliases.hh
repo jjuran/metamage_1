@@ -118,9 +118,9 @@ namespace Nitrogen
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& target );
   }
 
-namespace Nucleus
+namespace nucleus
   {   
-   template <> struct Converter< Nucleus::Owned<Nitrogen::AliasHandle>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nucleus::Owned<Nitrogen::AliasHandle> >
+   template <> struct converter< Nucleus::Owned<Nitrogen::AliasHandle>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nucleus::Owned<Nitrogen::AliasHandle> >
      {
       Nucleus::Owned<Nitrogen::AliasHandle> operator()( const Nitrogen::FSRef& ref ) const
         {
@@ -171,9 +171,9 @@ namespace Nitrogen
    Nucleus::Owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias );
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Converter< Nitrogen::FSRef, Nitrogen::AliasHandle >: public std::unary_function< Nitrogen::AliasHandle, Nitrogen::FSRef >
+   template <> struct converter< Nitrogen::FSRef, Nitrogen::AliasHandle >: public std::unary_function< Nitrogen::AliasHandle, Nitrogen::FSRef >
      {
       Nitrogen::FSRef operator()( Nitrogen::AliasHandle alias ) const
         {

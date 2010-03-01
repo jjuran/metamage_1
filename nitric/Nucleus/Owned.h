@@ -292,12 +292,6 @@ namespace Nucleus
             Disposer      & disposer()                { return GetDisposer(); }
      };
 
-   template < class Resource, class Disposer >
-   struct ConvertInputTraits< Owned< Resource, Disposer > >
-     {
-      typedef Resource ConverterInputType;
-     };
-   
    // This disposer makes Owned<Foo *> similar to std::auto_ptr<Foo>.  I generally
    // recommend std::auto_ptr<Foo> instead -- it helps you get along with the rest
    // of the world.  But sometimes uniformity is more important.
@@ -320,5 +314,16 @@ namespace Nucleus
            }
         };
   }
+
+namespace nucleus
+{
+	
+	template < class Resource, class Disposer >
+	struct convert_input_traits< Nucleus::Owned< Resource, Disposer > >
+	{
+		typedef Resource converter_input_type;
+	};
+	
+}
 
 #endif

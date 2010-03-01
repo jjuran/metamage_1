@@ -94,12 +94,17 @@ namespace Nucleus
          template < class T > const Scoped& operator<<=( const T& rhs ) const  { Set( Get() << rhs ); return *this; }
          template < class T > const Scoped& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
      };
-
-   template < class Reference >
-   struct ConvertInputTraits< Scoped<Reference> >
-     {
-      typedef typename ReferenceTraits<Reference>::Value ConverterInputType;
-     };
   }
+
+namespace nucleus
+{
+	
+	template < class Reference >
+	struct convert_input_traits< Nucleus::Scoped< Reference > >
+	{
+		typedef typename Nucleus::ReferenceTraits< Reference >::Value converter_input_type;
+	};
+	
+}
 
 #endif
