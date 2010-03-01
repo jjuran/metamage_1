@@ -44,6 +44,7 @@ namespace Nitrogen
 	enum ResFileRefNum
 	{
 		kResFileNotOpened = ::kResFileNotOpened,
+		kSystemResFile    = ::kSystemResFile,
 		
 		kResFileRefNum_Max = nucleus::enumeration_traits< ::ResFileRefNum >::max
 	};
@@ -57,6 +58,13 @@ namespace Nitrogen
 	
 	enum ResAttributes
 	{
+		resSysHeap   = ::resSysHeap,
+		resPurgeable = ::resPurgeable,
+		resLocked    = ::resLocked,
+		resProtected = ::resProtected,
+		resPreload   = ::resPreload,
+		resChanged   = ::resChanged,
+		
 		kResAttributes_Max = nucleus::enumeration_traits< ::ResAttributes >::max
 	};
 	
@@ -64,6 +72,10 @@ namespace Nitrogen
 	
 	enum ResFileAttributes
 	{
+		mapReadOnly = ::mapReadOnly,
+		mapCompact  = ::mapCompact,
+		mapChanged  = ::mapChanged,
+		
 		kResFileAttributes_Max = nucleus::enumeration_traits< ::ResFileAttributes >::max
 	};
 	
