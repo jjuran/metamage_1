@@ -6,6 +6,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
 #include "Nucleus/Shared.h"
@@ -108,23 +111,23 @@ namespace tool
 		
 		const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
 		
-		result.extension = NN::Convert< std::string >( p );
+		result.extension = plus::make_string( p );
 		
 		p += 1 + p[0];
 		
-		result.creatorAppName = NN::Convert< std::string >( p );
+		result.creatorAppName = plus::make_string( p );
 		
 		p += 1 + p[0];
 		
-		result.postAppName = NN::Convert< std::string >( p );
+		result.postAppName = plus::make_string( p );
 		
 		p += 1 + p[0];
 		
-		result.MIMEType = NN::Convert< std::string >( p );
+		result.MIMEType = plus::make_string( p );
 		
 		p += 1 + p[0];
 		
-		result.entryName = NN::Convert< std::string >( p );
+		result.entryName = plus::make_string( p );
 		
 		return result;
 	}

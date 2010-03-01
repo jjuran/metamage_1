@@ -8,6 +8,9 @@
 // iota
 #include "iota/hexidecimal.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Processes.hh"
 
@@ -25,7 +28,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -191,7 +193,7 @@ namespace Genie
 				
 				N::GetProcessInformation( key, processInfo );
 				
-				return NN::Convert< std::string >( name );
+				return plus::make_string( name );
 			}
 	};
 	

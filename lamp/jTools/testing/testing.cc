@@ -55,6 +55,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -625,7 +628,7 @@ static int TestSoundInput( int argc, iota::argv_t argv )
 	{
 		ConstStr255Param deviceName = *it;
 		
-		std::string output = NN::Convert< std::string >( deviceName ) + "\n";
+		std::string output = plus::make_string( deviceName ) + "\n";
 		
 		p7::write( p7::stdout_fileno, output );
 	}

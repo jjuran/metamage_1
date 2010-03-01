@@ -28,6 +28,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/make_string.hh"
 
 // poseven
 #include "poseven/Directory.hh"
@@ -65,7 +66,6 @@ typedef unsigned int OSType;
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -354,7 +354,7 @@ namespace tool
 	
 	static std::string FilenameExtension(const unsigned char* filename)
 	{
-		return FilenameExtension( NN::Convert< std::string >( filename ) );
+		return FilenameExtension( plus::make_string( filename ) );
 	}
 	
 	static std::string GuessContentType( const std::string& filename, ::OSType type )

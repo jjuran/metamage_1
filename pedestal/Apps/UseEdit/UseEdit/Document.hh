@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// plus
+#include "plus/make_string.hh"
+
 // UseEdit
 #include "UseEdit/Window.hh"
 
@@ -35,7 +38,7 @@ namespace UseEdit
 			
 			std::string GetName() const
 			{
-				return Nucleus::Convert< std::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
+				return plus::make_string( Nitrogen::GetWTitle( GetWindowRef() ) );
 			}
 	};
 	

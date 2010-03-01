@@ -12,6 +12,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // Nucleus
 #include "Nucleus/Saved.h"
 
@@ -713,7 +716,7 @@ namespace Genie
 		
 		static std::string Get( const FSTree* that, bool binary )
 		{
-			return NN::Convert< std::string >( Find( GetViewKey( that ) ).itsTitle );
+			return plus::make_string( Find( GetViewKey( that ) ).itsTitle );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )

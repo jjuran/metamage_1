@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/make_string.hh"
 #include "plus/quad.hh"
 
 // poseven
@@ -292,7 +293,7 @@ namespace Genie
 			}
 		}
 		
-		return NN::Convert< std::string >( result );
+		return plus::make_string( result );
 	}
 	
 	struct sys_mac_thng_REF_name
