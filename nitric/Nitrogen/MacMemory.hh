@@ -441,7 +441,7 @@ namespace Nitrogen
 			const std::size_t size = get.size();
 			Get_Result result = NewPtr( size );
 			
-			char* begin = result.Get();
+			char* begin = result.get();
 			
 			get( begin, begin + size );
 			
@@ -519,7 +519,7 @@ namespace Nitrogen
 				HLock( result );
 			}
 			
-			char* begin = *result.Get();
+			char* begin = *result.get();
 			
 			get( begin, begin + size );
 			

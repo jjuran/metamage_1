@@ -40,7 +40,7 @@ namespace Nitrogen
 	
 	void SlotVRemove( Nucleus::Owned< SlotVBLTask > slotVBLTask )
 	{
-		SlotVBLTask released = slotVBLTask.Release();
+		SlotVBLTask released = slotVBLTask.release();
 		
 		ThrowOSStatus( ::SlotVRemove( reinterpret_cast< ::QElemPtr >( released.task ),
 		                              released.slot ) );
@@ -55,7 +55,7 @@ namespace Nitrogen
 	
 	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask )
 	{
-		ThrowOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTask.Release() ) ) );
+		ThrowOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTask.release() ) ) );
 	}
 	
 	void RegisterVerticalRetraceManagerErrors()

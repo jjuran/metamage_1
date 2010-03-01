@@ -26,8 +26,8 @@ namespace Nitrogen
 		{
 			AEPutDesc( list,
 			           0,
-			           GetData( AEDesc_Cast< const AEDesc_Token >( AEGetNthDesc( obj, i ).Get() ),
-			                    desiredType ).Get() );
+			           GetData( AEDesc_Cast< const AEDesc_Token >( AEGetNthDesc( obj, i ).get() ),
+			                    desiredType ).get() );
 		}
 		
 		return list;

@@ -143,7 +143,7 @@ namespace Nitrogen
 	                    void*                       threadResult,
 	                    bool                        recycleThread )
 	{
-		ThrowOSStatus( ::DisposeThread( thread.Release(),
+		ThrowOSStatus( ::DisposeThread( thread.release(),
 		                                threadResult,
 		                                recycleThread ) );
 	}

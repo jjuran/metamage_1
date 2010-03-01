@@ -769,7 +769,7 @@ namespace Nitrogen
 			{
 				*result = handler( static_cast< const AEDesc_Data& >( *fromDesc ),
 				                   DescType( toType ),
-				                   refCon ).Release();
+				                   refCon ).release();
 			}
 			catch ( ... )
 			{
@@ -797,7 +797,7 @@ namespace Nitrogen
 				                   dataPtr,
 				                   dataSize,
 				                   DescType( toType ),
-				                   refCon ).Release();
+				                   refCon ).release();
 			}
 			catch ( ... )
 			{
@@ -923,7 +923,7 @@ namespace Nitrogen
 				AEDescEditor( Nucleus::Owned< AEDesc_Type >& desc )
 				:
 					itsDesc       ( desc           ), 
-					itsWorkingCopy( desc.Release() )
+					itsWorkingCopy( desc.release() )
 				{
 				}
 				
@@ -1206,7 +1206,7 @@ namespace Nitrogen
 		
 		AEPutDesc( AEDesc_Cast< AEDescList_Data >( Detail::AEDescEditor< AEDescList_Token >( list ).Get() ),
 		           index,
-		           AEDesc_Cast< const AEDesc_Data >( desc.Get() ) );
+		           AEDesc_Cast< const AEDesc_Data >( desc.get() ) );
 		
 		Nucleus::Disposer< AEDesc_Data >()( desc.Release() );
 	}

@@ -30,7 +30,7 @@ namespace CFMLateImporter
 		                                        weakLinkedLibraryName,
 		                                        connIDToImport ) );
 		
-		connIDToImport.Release();
+		connIDToImport.release();
 	}
 	
 }

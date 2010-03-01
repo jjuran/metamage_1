@@ -348,7 +348,7 @@ namespace Genie
 			
 			result.resize( size );
 			
-			std::memcpy( &result[0], *icon.Get().Get(), size );
+			std::memcpy( &result[0], *icon.get().Get(), size );
 			
 			return result;
 		}

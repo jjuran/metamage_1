@@ -53,9 +53,9 @@ namespace Nitrogen
 	
 	void ICStop( Nucleus::Owned< ICInstance >& instance )
 	{
-		ThrowOSStatus( ::ICStop( instance.Get() ) );
+		ThrowOSStatus( ::ICStop( instance.get() ) );
 		
-		instance.Release();
+		instance.release();
 	}
 	
 	
@@ -65,7 +65,7 @@ namespace Nitrogen
 	{
 		Nucleus::Owned< Handle > prefh = NewHandle( 0 );
 		
-		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.Get() ) );
+		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.get() ) );
 		
 		return prefh;
 	}

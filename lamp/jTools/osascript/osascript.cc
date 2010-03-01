@@ -327,7 +327,7 @@ namespace tool
 		{
 			NN::Owned< N::OSAID > result = N::OSAExecuteEvent( runEvent, script );
 			
-			if ( result.Get() != N::kOSANullScript )
+			if ( result.get() != N::kOSANullScript )
 			{
 				N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 				

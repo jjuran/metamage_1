@@ -192,14 +192,14 @@ namespace Nitrogen
 		{
 		#if OPAQUE_TOOLBOX_STRUCTS
 			
-			return AECreateDesc_Unowned( typeCode, handle.Get() );
+			return AECreateDesc_Unowned( typeCode, handle.get() );
 			
 		#else
 			
 			AEDesc desc;
 			
 			desc.descriptorType = typeCode;
-			desc.dataHandle     = handle.Release();
+			desc.dataHandle     = handle.release();
 			
 			return desc;
 			

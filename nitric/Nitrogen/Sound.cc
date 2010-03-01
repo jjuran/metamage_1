@@ -67,7 +67,7 @@ namespace Nitrogen
 	
 	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > refNum )
 	{
-		ThrowOSStatus( ::SPBCloseDevice( refNum.Release() ) );
+		ThrowOSStatus( ::SPBCloseDevice( refNum.release() ) );
 	}
 	
 	void SPBGetDeviceInfo( SoundInputRefNum          refNum,

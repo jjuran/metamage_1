@@ -77,7 +77,7 @@ namespace Nitrogen
 			{
 				if ( !TARGET_API_MAC_OSX )
 				{
-					Nitrogen::HLock( entries.Get() );
+					Nitrogen::HLock( entries.get() );
 				}
 			}
 	};

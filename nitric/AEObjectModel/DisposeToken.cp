@@ -31,7 +31,7 @@ namespace Nitrogen
 	
 	void TokenDisposer::DisposeToken( Nucleus::Owned< AEDesc_Data > token )
 	{
-		Map::const_iterator found = map.find( DescType( token.Get().descriptorType ) );
+		Map::const_iterator found = map.find( DescType( token.get().descriptorType ) );
 		if ( found == map.end() )
 		{
 			// If we omitted this, the descriptor would still be disposed

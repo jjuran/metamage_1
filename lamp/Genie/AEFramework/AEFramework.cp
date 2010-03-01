@@ -90,7 +90,7 @@ namespace Nitrogen
 				// before writing to its storage
 				if ( replyStorage != NULL )
 				{
-					*replyStorage = AEDuplicateDesc( reply ).Release();
+					*replyStorage = AEDuplicateDesc( reply ).release();
 				}
 			}
 			catch ( const OSStatus& err )

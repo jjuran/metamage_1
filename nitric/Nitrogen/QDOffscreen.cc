@@ -72,7 +72,7 @@ namespace Nitrogen
 	                          GDHandle                      aGDevice,
 	                          GWorldFlags                   flags )
 	{
-		::GWorldPtr gWorldPtr = offscreenGWorld.Get();
+		::GWorldPtr gWorldPtr = offscreenGWorld.get();
 		
 		GWorldFlags result = GWorldFlags( ::UpdateGWorld( &gWorldPtr,
 		                                                  pixelDepth,
@@ -86,9 +86,9 @@ namespace Nitrogen
 			ThrowOSStatus( ::QDError() );
 		}
 		
-		if ( gWorldPtr != offscreenGWorld.Get() )
+		if ( gWorldPtr != offscreenGWorld.get() )
 		{
-			offscreenGWorld.Release();
+			offscreenGWorld.release();
 			
 			offscreenGWorld = Nucleus::Owned< GWorldPtr >::Seize( gWorldPtr, &Function::DisposeGWorld );
 		}

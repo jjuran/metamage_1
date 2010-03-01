@@ -113,9 +113,9 @@ namespace Nucleus
 			{
 				NUCLEUS_REQUIRE_ERRORS( Nitrogen::OSA );
 				
-				ASSERT( itsComponent.Get() != ComponentInstance() );
+				ASSERT( itsComponent.get() != ComponentInstance() );
 				
-				HandleDestructionOSStatus( ::OSADispose( itsComponent.Get(), id ) );
+				HandleDestructionOSStatus( ::OSADispose( itsComponent.get(), id ) );
 			}
 	};
 	
@@ -148,8 +148,8 @@ namespace Nitrogen
 	          DescType                        desiredType = typeOSAGenericStorage,
 	          OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
-		return OSAStore( script.GetDisposer().Component(),
-		                 script.Get(),
+		return OSAStore( script.disposer().Component(),
+		                 script.get(),
 		                 desiredType,
 		                 modeFlags );
 	}
@@ -170,8 +170,8 @@ namespace Nitrogen
 	            OSAID                           contextID = OSAID(),
 	            OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
-		return OSAExecute( script.GetDisposer().Component(),
-		                   script.Get(),
+		return OSAExecute( script.disposer().Component(),
+		                   script.get(),
 		                   contextID,
 		                   modeFlags );
 	}
@@ -192,8 +192,8 @@ namespace Nitrogen
 	            DescType                        desiredType = typeChar,
 	            OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
-		return OSADisplay( scriptValue.GetDisposer().Component(),
-		                   scriptValue.Get(),
+		return OSADisplay( scriptValue.disposer().Component(),
+		                   scriptValue.get(),
 		                   desiredType,
 		                   modeFlags );
 	}
@@ -243,8 +243,8 @@ namespace Nitrogen
 	inline void OSACopyID( const Nucleus::Owned< OSAID >&  from,
 	                       Nucleus::Owned< OSAID >&        to )
 	{
-		OSACopyID( from.GetDisposer().Component(),
-		           from.Get(),
+		OSACopyID( from.disposer().Component(),
+		           from.get(),
 		           to );
 	}
 	
@@ -257,8 +257,8 @@ namespace Nitrogen
 	//
 	OSACopyID( const Nucleus::Owned< OSAID >& fromID )
 	{
-		return OSACopyID( fromID.GetDisposer().Component(),
-		                  fromID.Get() );
+		return OSACopyID( fromID.disposer().Component(),
+		                  fromID.get() );
 	}
 	
 	
@@ -301,9 +301,9 @@ namespace Nitrogen
 	                 const Nucleus::Owned< OSAID >&  context,
 	                 OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
-		return OSAExecuteEvent( context.GetDisposer().Component(),
+		return OSAExecuteEvent( context.disposer().Component(),
 		                        appleEvent,
-		                        context.Get(),
+		                        context.get(),
 		                        modeFlags );
 	}
 	
@@ -321,9 +321,9 @@ namespace Nitrogen
 	            const Nucleus::Owned< OSAID >&  context,
 	            OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
-		return OSADoEvent( context.GetDisposer().Component(),
+		return OSADoEvent( context.disposer().Component(),
 		                   appleEvent,
-		                   context.Get(),
+		                   context.get(),
 		                   modeFlags );
 	}
 	
@@ -347,17 +347,17 @@ namespace Nitrogen
 	OSAMakeContext( const AEDesc&                   contextName,
 	                const Nucleus::Owned< OSAID >&  parentContext )
 	{
-		return OSAMakeContext( parentContext.GetDisposer().Component(),
+		return OSAMakeContext( parentContext.disposer().Component(),
 		                       contextName,
-		                       parentContext.Get() );
+		                       parentContext.get() );
 	}
 	
 	inline Nucleus::Owned< OSAID >
 	//
 	OSAMakeContext( const Nucleus::Owned< OSAID >&  parentContext )
 	{
-		return OSAMakeContext( parentContext.GetDisposer().Component(),
-		                       parentContext.Get() );
+		return OSAMakeContext( parentContext.disposer().Component(),
+		                       parentContext.get() );
 	}
 	
 	// OSADebuggerCreateSession

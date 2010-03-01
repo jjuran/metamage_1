@@ -91,12 +91,12 @@ namespace Nitrogen
 	
 	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef > iconSuite )
 	{
-		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), true ) );
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.release(), true ) );
 	}
 	
 	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite )
 	{
-		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), false ) );
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.release(), false ) );
 	}
 	
 	void PlotIconSuite( const Rect&        rect,

@@ -68,7 +68,7 @@ namespace Genie
 			bool                           itIsPassive;
 		
 		protected:
-			bool IsShared() const  { return !itsOutputRefNum.Sole(); }
+			bool IsShared() const  { return !itsOutputRefNum.sole(); }
 		
 		public:
 			SerialDeviceHandle( const std::string& portName, bool passive );

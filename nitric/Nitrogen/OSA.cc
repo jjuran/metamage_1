@@ -163,7 +163,7 @@ namespace Nitrogen
 	            OSAModeFlags                                 modeFlags,
 	            Nucleus::Owned< OSAID >                      previousScriptID )
 	{
-		::OSAID previousAndResultingScriptID = previousScriptID.Release();
+		::OSAID previousAndResultingScriptID = previousScriptID.release();
 		
 		OSAError err = ::OSACompile( scriptingComponent,
 		                             &sourceData,
@@ -188,18 +188,18 @@ namespace Nitrogen
 	void OSACopyID( OSAID                     fromID,
 	                Nucleus::Owned< OSAID >&  to )
 	{
-		::OSAID toID = to.Get();
+		::OSAID toID = to.get();
 		
-		ThrowOSStatus( ::OSACopyID( to.GetDisposer().Component(),
+		ThrowOSStatus( ::OSACopyID( to.disposer().Component(),
 		                            fromID,
 		                            &toID ) );
 		
-		if ( toID != to.Get() )
+		if ( toID != to.get() )
 		{
-			to.Release();
+			to.release();
 			
 			to = Nucleus::Owned< OSAID >::Seize( OSAID( toID ),
-			                                     to.GetDisposer().Component() );
+			                                     to.disposer().Component() );
 		}
 	}
 	
@@ -207,7 +207,7 @@ namespace Nitrogen
 	                OSAID                                        fromID,
 	                Nucleus::Owned< OSAID >&                     to )
 	{
-		if ( scriptingComponent.Get() != to.GetDisposer().Component() )
+		if ( scriptingComponent.get() != to.disposer().Component() )
 		{
 			ThrowOSStatus( errOSAComponentMismatch );
 		}

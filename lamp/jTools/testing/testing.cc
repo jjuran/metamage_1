@@ -1167,7 +1167,7 @@ static int TestCallback( int argc, iota::argv_t argv )
 	
 	N::HLock( init );
 	
-	ColorComplementUPP initMain = (ColorComplementUPP) *init.Get();
+	ColorComplementUPP initMain = (ColorComplementUPP) *init.get();
 	
 	CallbackUPP callback = NewDragGrayRgnUPP( MyCallback );
 	
@@ -1358,7 +1358,7 @@ static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
 	{
 		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
 		
-		foo.Reset();
+		foo.reset();
 	}
 	CheckObjects( 4 );
 	
@@ -1385,7 +1385,7 @@ static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
 	{
 		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
 		
-		foo.Reset();
+		foo.reset();
 	}
 	CheckObjects( 8 );
 	

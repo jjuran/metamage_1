@@ -56,7 +56,7 @@ namespace Nitrogen
 	
 	void CloseResFile( Nucleus::Owned< ResFileRefNum > resFileRefNum )
 	{
-		::CloseResFile( resFileRefNum.Release() );
+		::CloseResFile( resFileRefNum.release() );
 		
 		ResError();
 	}
@@ -238,10 +238,10 @@ namespace Nitrogen
 	                    ResID             resID,
 	                    ConstStr255Param  name )
 	{
-		::AddResource( h.Get(), type, resID, name );
+		::AddResource( h.get(), type, resID, name );
 		ResError();
 		
-		return h.Release();
+		return h.release();
 	}
 	
 	Handle AddResource( Nucleus::Owned< Handle > h, const GetResInfo_Result& resInfo )

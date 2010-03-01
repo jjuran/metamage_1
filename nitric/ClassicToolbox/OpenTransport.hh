@@ -30,7 +30,7 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		EndpointRef result = ::OTOpenEndpoint( config.Release(),
+		EndpointRef result = ::OTOpenEndpoint( config.release(),
 		                                       OTOpenFlags( 0 ),
 		                                       info,
 		                                       &err );

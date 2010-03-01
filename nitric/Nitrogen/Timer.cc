@@ -58,7 +58,7 @@ namespace Nitrogen
 	
 	void RemoveTimeTask( Nucleus::Owned< TMTaskPtr > tmTaskPtr )
 	{
-		ThrowOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr.Release() ) ) );
+		ThrowOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr.release() ) ) );
 	}
 	
 	UnsignedWide Microseconds()

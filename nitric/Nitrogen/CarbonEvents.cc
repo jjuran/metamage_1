@@ -238,7 +238,7 @@ namespace Nitrogen
 
    void UnregisterEventHotKey( Nucleus::Owned< EventHotKeyRef > hotKey )
      {
-      ThrowOSStatus( ::UnregisterEventHotKey( hotKey.Release() ) );
+      ThrowOSStatus( ::UnregisterEventHotKey( hotKey.release() ) );
      }
 
    void RegisterCarbonEventManagerErrors()

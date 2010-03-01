@@ -25,7 +25,7 @@ namespace Pedestal
 		public:
 			GWorldView( const Rect& bounds );
 			
-			Nitrogen::GWorldPtr Get() const  { return itsGWorld.Get(); }
+			Nitrogen::GWorldPtr Get() const  { return itsGWorld.get(); }
 			
 			const Rect& Bounds() const  { return itsBounds; }
 			

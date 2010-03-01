@@ -80,7 +80,7 @@ namespace Genie
 	{
 		// Set up dispatcher and envp
 		
-		return N::GetMemFragment< N::kPrivateCFragCopy >( *image.Get(),
+		return N::GetMemFragment< N::kPrivateCFragCopy >( *image.get(),
 		                                                  N::GetHandleSize( image ) );
 	}
 	
@@ -112,7 +112,7 @@ namespace Genie
 	{
 		Extended_Entry lamp_main = NULL;
 		
-		if ( itsFragmentConnection.Get() == N::CFragConnectionID() )
+		if ( itsFragmentConnection.get() == N::CFragConnectionID() )
 		{
 			itsFragmentConnection = ConnectToFragment( itsBinaryImage );
 			

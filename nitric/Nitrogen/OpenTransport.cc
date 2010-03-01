@@ -50,7 +50,7 @@ namespace Nitrogen
 	
 	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider )
 	{
-		ThrowOSStatus( ::OTCloseProvider( provider.Release() ) );
+		ThrowOSStatus( ::OTCloseProvider( provider.release() ) );
 	}
 	
 	void OTSetSynchronous( ProviderRef ref )
@@ -92,7 +92,7 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		EndpointRef result = ::OTOpenEndpointInContext( config.Release(),
+		EndpointRef result = ::OTOpenEndpointInContext( config.release(),
 		                                                OTOpenFlags( 0 ),
 		                                                info,
 		                                                &err,

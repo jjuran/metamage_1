@@ -66,7 +66,7 @@ namespace Nitrogen
 	Nucleus::Owned< RgnHandle > GetClip()
 	{
 		Nucleus::Owned< RgnHandle > result = NewRgn();
-		::GetClip( result.Get() );
+		::GetClip( result.get() );
 		
 		return result;
 	}
@@ -132,7 +132,7 @@ namespace Nitrogen
 	{
 		Nucleus::Owned< RgnHandle > result = NewRgn();
 		
-		::CloseRgn( result.Get() );
+		::CloseRgn( result.get() );
 		
 		return result;
 	}

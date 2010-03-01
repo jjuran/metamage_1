@@ -128,7 +128,7 @@ namespace Nitrogen
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
 	{
-		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
+		ThrowOSStatus( ::FSClose( fileRefNum.release() ) );
 	}
 	
 	SInt32 FSWrite( FSFileRefNum file,
@@ -722,7 +722,7 @@ Return Value
    
    void FSCloseIterator( Nucleus::Owned<FSIterator> iterator )
      {
-      ThrowOSStatus( ::FSCloseIterator( iterator.Release() ) );
+      ThrowOSStatus( ::FSCloseIterator( iterator.release() ) );
      }
 
    FSGetCatalogInfoBulk_Result FSGetCatalogInfoBulk( FSIterator          iterator,
@@ -1050,7 +1050,7 @@ Return Value
    
    void FSCloseFork( Nucleus::Owned<FSForkRefNum> forkRefNum )
      {
-      ThrowOSStatus( ::FSCloseFork( forkRefNum.Release() ) );
+      ThrowOSStatus( ::FSCloseFork( forkRefNum.release() ) );
      }
    
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkRefNum desiredRefNum )

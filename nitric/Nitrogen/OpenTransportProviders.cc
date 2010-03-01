@@ -64,7 +64,7 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		InetSvcRef result = ::OTOpenInternetServicesInContext( cfig.Release(),
+		InetSvcRef result = ::OTOpenInternetServicesInContext( cfig.release(),
 		                                                       OTOpenFlags( 0 ),
 		                                                       &err,
 		                                                       clientContext );

@@ -257,7 +257,7 @@ namespace Genie
 		
 		const BinaryImage& image = cacheEntry.image;
 		
-		if ( image.Sole() && image.get() && *image.get() )
+		if ( image.sole() && image.get() && *image.get() )
 		{
 			N::HUnlock( image.get() );
 		}

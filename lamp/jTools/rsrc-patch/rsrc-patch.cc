@@ -82,7 +82,7 @@ namespace tool
 	{
 		gResFilePathname = param;
 		
-		gResFile.Reset();  // next line resets only if resolve and open succeed
+		gResFile.reset();  // next line resets only if resolve and open succeed
 		
 		gResFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( param ), N::fsRdWrPerm );
 	}
@@ -96,7 +96,7 @@ namespace tool
 			N::ReleaseResource( gHandle );
 		}
 		
-		if ( !gResFile.Get() )
+		if ( !gResFile.get() )
 		{
 			N::ThrowOSStatus( resFNotFound );
 		}

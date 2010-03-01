@@ -815,7 +815,7 @@ namespace Genie
 	{
 		const Process* process = this;
 		
-		while ( process->itsThread.Get() == N::kNoThreadID )
+		while ( process->itsThread.get() == N::kNoThreadID )
 		{
 			pid_t ppid = process->GetPPID();
 			
@@ -827,7 +827,7 @@ namespace Genie
 			process = &GetProcess( ppid );
 		}
 		
-		return process->itsThread.Get();
+		return process->itsThread.get();
 	}
 	
 	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors, int keep_fd = -1 )

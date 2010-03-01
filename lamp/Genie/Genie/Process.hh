@@ -242,7 +242,7 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.Get() == Nitrogen::kNoThreadID; }
+			bool Forked() const  { return itsThread.get() == Nitrogen::kNoThreadID; }
 			
 			bool Forking() const  { return itsForkedChildPID != 0; }
 			

@@ -126,7 +126,7 @@ namespace Pedestal
 		          r.bottom - r.top,
 		          itsList );
 		
-		itsList.Get()[0]->cellSize.h = r.right - r.left;
+		itsList.get()[0]->cellSize.h = r.right - r.left;
 		
 		if ( IntersectsGrowBox() )
 		{

@@ -333,7 +333,7 @@ namespace Nitrogen
 		{
 			Nucleus::Owned< Handle > result = NewHandle( text.size() );
 			
-			std::copy( text.begin(), text.end(), *result.Get().Get() );
+			std::copy( text.begin(), text.end(), *result.get().Get() );
 			
 			return result;
 		}
@@ -365,7 +365,7 @@ namespace Nitrogen
 		{
 			Nucleus::Owned< Handle > result = NewHandle( sizeof (Result) );
 			
-			**result.Get() = pod;
+			**result.get() = pod;
 			
 			return result;
 		}
@@ -387,7 +387,7 @@ namespace Nitrogen
 			
 			const char* const begin = reinterpret_cast< const char* >( &pod );
 			
-			std::copy( begin, begin + size, *result.Get() );
+			std::copy( begin, begin + size, *result.get() );
 			
 			return result;
 		}

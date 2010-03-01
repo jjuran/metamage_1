@@ -203,7 +203,7 @@ namespace Nitrogen
 				                  AEObjectClass( containerClass ),
 				                  AEKeyForm( keyForm ),
 				                  static_cast< const AEDesc_Data& >( *keyData ),
-				                  accessorRefcon ).Release();
+				                  accessorRefcon ).release();
 			}
 			catch ( ... )
 			{

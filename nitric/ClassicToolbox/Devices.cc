@@ -29,7 +29,7 @@ namespace Nitrogen
 	
 	void CloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum )
 	{
-		ThrowOSStatus( ::CloseDriver( driverRefNum.Release() ) );
+		ThrowOSStatus( ::CloseDriver( driverRefNum.release() ) );
 	}
 	
 	void KillIO( DriverRefNum driverRefNum )

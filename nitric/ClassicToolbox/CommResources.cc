@@ -60,13 +60,13 @@ namespace Nitrogen
 	Nucleus::Owned< CRMRecPtr, CRMRemover > CRMInstall( Nucleus::Owned< CRMRecPtr > crmRec )
 	{
 		// ::CRMInstall() returns void.  There's no means for reporting errors.
-		::CRMInstall( crmRec.Get() );
+		::CRMInstall( crmRec.get() );
 		return Nucleus::Owned< CRMRecPtr, CRMRemover >::Seize( crmRec.Release() );
 	}
 	
 	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec )
 	{
-		ThrowOSStatus( ::CRMRemove( crmRec.Get() ) );
+		ThrowOSStatus( ::CRMRemove( crmRec.get() ) );
 		
 		return Nucleus::Owned< CRMRecPtr >::Seize( crmRec.Release() );
 	}
@@ -93,7 +93,7 @@ namespace Nitrogen
 		(
 			reinterpret_cast< CRMRecPtr >
 			(
-				NewPtrSysClear( sizeof (CRMRec) ).Release().Get()
+				NewPtrSysClear( sizeof (CRMRec) ).release().Get()
 			)
 		);
 		

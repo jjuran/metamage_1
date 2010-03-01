@@ -134,7 +134,7 @@ namespace Nitrogen
 			              propertyToken );
 			
 			// Dispose the token's AEDesc, but don't call the token disposal function.
-			AEDesc tokenDesc = propertyToken.Release();
+			AEDesc tokenDesc = propertyToken.release();
 			
 			Nucleus::Owned< AEDesc_Data >::Seize( static_cast< const AEDesc_Data& >( tokenDesc ) );
 		}

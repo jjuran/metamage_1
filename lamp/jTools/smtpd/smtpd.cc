@@ -226,7 +226,7 @@ namespace tool
 	PartialMessage::PartialMessage( const FSSpec& dirLoc )
 	:
 		dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
-		out( io::open_for_writing( N::FSpCreate( dir.Get() / "Message",
+		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
 		                                         N::OSType( 'R*ch' ),
 		                                         N::OSType( 'TEXT' ) ) ) )
 	{
@@ -256,7 +256,7 @@ namespace tool
 	
 	void PartialMessage::Finished()
 	{
-		dir.Release();
+		dir.release();
 	}
 	
 	

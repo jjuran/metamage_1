@@ -60,7 +60,7 @@ namespace UseEdit
 			NN::Owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
 			                                                                      N::keyDirectObject ) );
 			
-			switch ( N::DescType( token.Get().descriptorType ) )
+			switch ( N::DescType( token.get().descriptorType ) )
 			{
 				case typeDocument:
 					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
@@ -87,7 +87,7 @@ namespace UseEdit
 			NN::Owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( appleEvent,
 			                                                                             N::keyDirectObject );
 			
-			bool containerIsRoot = containerObjSpec.Get().descriptorType == typeNull;
+			bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
 			
 			// AEResolve can't handle a null descriptor.
 			NN::Owned< N::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
@@ -427,14 +427,14 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), N::typeAEList ).Release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), N::typeAEList ).release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, N::typeNull  ).Release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, typeDocument ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, N::typeNull  ).release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, typeDocument ).release();
 		
 		// Document accessor
-		N::AEInstallObjectAccessor< AccessDocument >( N::cDocument, N::typeNull ).Release();
+		N::AEInstallObjectAccessor< AccessDocument >( N::cDocument, N::typeNull ).release();
 		
 		// Set up AEObjectModel
 		N::AESetObjectCallbacks();
