@@ -63,6 +63,10 @@
 #ifndef NUCLEUS_CONVERT_H
 #define NUCLEUS_CONVERT_H
 
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
+
 #ifndef NUCLEUS_OVERLOADED_MATH_H
 #include "Nucleus/Overloaded_math.h"
 #endif
@@ -75,15 +79,22 @@
 namespace Nucleus
   {
    template < class Output, class Input >
-   struct Converter: public std::unary_function< Input, Output >
+   struct Converter: public ::nucleus::converter< Output, Input >
      {
-      Output operator()( const Input& in ) const      { return Output( in ); }
+      Converter()
+        {
+        }
+      
+      template < class Arg >
+      Converter( const Arg& arg ) : ::nucleus::converter< Output, Input >( arg )
+        {
+        }
      };
 
    template < class Input >
    struct ConvertInputTraits
      {
-      typedef Input ConverterInputType;
+      typedef typename ::nucleus::convert_input_traits< Input >::converter_input_type ConverterInputType;
      };
    
    template < class Output, class Input >
