@@ -86,7 +86,7 @@ namespace nucleus
 			template < class R, class D >
 			const share& get_share( const shared< R, D >& s )
 			{
-				return s.share;
+				return s.its_share;
 			}
 	};
 
