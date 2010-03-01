@@ -287,6 +287,9 @@ namespace Nucleus
             const Resource& get() const               { return Get(); }
             Resource release()                        { return Release(); }
             void reset()                              { Reset(); }
+            
+            Disposer const& disposer() const          { return GetDisposer(); }
+            Disposer      & disposer()                { return GetDisposer(); }
      };
 
    template < class Resource, class Disposer >

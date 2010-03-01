@@ -133,6 +133,7 @@ namespace Nucleus
             void swap( Shared& s )                          { Swap( s ); }
             const Resource& get() const                     { return Get(); }
             void reset()                                    { Reset(); }
+            bool sole() const                               { return Sole(); }
      };
 
    class Unshare_Failed {};
