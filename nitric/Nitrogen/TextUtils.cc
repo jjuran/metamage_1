@@ -60,7 +60,7 @@ namespace Nitrogen
 	
 	std::string p2cstrcpy( ConstStr255Param src )
 	{
-		return Nucleus::Convert< std::string >( src );
+		return std::string( (const char*) &src[1], src[0] );
 	}
 	
 }
