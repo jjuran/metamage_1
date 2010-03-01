@@ -29,7 +29,7 @@ namespace nucleus
 		
 		const static int binary_digits = bit_width - int( is_signed );
 		
-		const static integral_type high_bit_mask = one << bit_width - 1;
+		const static integral_type high_bit_mask = Int( one << bit_width - 1 );
 		
 		const static integral_type min = is_signed ? high_bit_mask : zero;
 		const static integral_type max = integral_type( ~zero ^ min );
