@@ -145,13 +145,13 @@ namespace Genie
 	}
 	
 	
-	Nucleus::Owned< Nitrogen::FSFileRefNum >
+	nucleus::owned< Nitrogen::FSFileRefNum >
 	//
 	FSpOpenDF( const FSSpec&          spec,
 	           Nitrogen::FSIOPermssn  permissions );
 	
 	
-	Nucleus::Owned< Nitrogen::FSFileRefNum >
+	nucleus::owned< Nitrogen::FSFileRefNum >
 	//
 	FSpOpenRF( const FSSpec&          spec,
 	           Nitrogen::FSIOPermssn  permissions );

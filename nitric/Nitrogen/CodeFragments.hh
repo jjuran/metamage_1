@@ -134,11 +134,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >,
+	struct disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >,
 	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::CFragConnectionID connID ) const
@@ -201,11 +201,11 @@ namespace Nitrogen
 	
 	struct Reference_CFragConnection_Traits
 	{
-		typedef Nucleus::Owned< CFragConnectionID > Result;
+		typedef nucleus::owned< CFragConnectionID > Result;
 		
 		static Result MakeResult( CFragConnectionID connID )
 		{
-			return Nucleus::Owned< CFragConnectionID >::Seize( connID );
+			return nucleus::owned< CFragConnectionID >::seize( connID );
 		}
 	};
 	
@@ -373,7 +373,7 @@ namespace Nitrogen
 		                                                    NULL );
 	}
 	
-	void CloseConnection( Nucleus::Owned< CFragConnectionID > connID );
+	void CloseConnection( nucleus::owned< CFragConnectionID > connID );
 	
 	// 384
 	void FindSymbol( CFragConnectionID  connID,

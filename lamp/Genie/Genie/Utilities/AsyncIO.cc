@@ -31,8 +31,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -188,7 +188,7 @@ namespace Genie
 	                                    const unsigned char*  name );
 	
 	
-	NN::Owned< N::FSFileRefNum >
+	n::owned< N::FSFileRefNum >
 	//
 	FSpOpenDF( const FSSpec&   spec,
 	           N::FSIOPermssn  permissions )
@@ -196,7 +196,7 @@ namespace Genie
 		return MacIO::FSpOpenDF( spec, permissions, CALLBACK, gWakeUp );
 	}
 	
-	NN::Owned< N::FSFileRefNum >
+	n::owned< N::FSFileRefNum >
 	//
 	FSpOpenRF( const FSSpec&   spec,
 	           N::FSIOPermssn  permissions )

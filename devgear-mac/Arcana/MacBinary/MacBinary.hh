@@ -57,8 +57,8 @@ namespace MacBinary
 			UInt16    itsSecondaryHeaderLength;
 			UInt16    itsCommentLength;
 			
-			Nucleus::Owned< Nitrogen::FSFileRefNum > itsDataFork;
-			Nucleus::Owned< Nitrogen::FSFileRefNum > itsResourceFork;
+			nucleus::owned< Nitrogen::FSFileRefNum > itsDataFork;
+			nucleus::owned< Nitrogen::FSFileRefNum > itsResourceFork;
 			
 			void DecodeHeader( const char* header );
 			

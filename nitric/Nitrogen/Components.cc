@@ -39,7 +39,7 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< ComponentInstance >
+	nucleus::owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType     componentType,
 	                      ComponentSubType  componentSubType )
 	{
@@ -50,7 +50,7 @@ namespace Nitrogen
 			throw OpenDefaultComponent_Failed();
 		}
 		
-		return Nucleus::Owned< ComponentInstance >::Seize( component );
+		return nucleus::owned< ComponentInstance >::seize( component );
 	}
 	
 	void RegisterComponentManagerErrors()

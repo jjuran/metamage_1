@@ -37,9 +37,9 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::IBNibRef >: public std::unary_function< Nitrogen::IBNibRef, void >
+   template <> struct disposer< Nitrogen::IBNibRef >: public std::unary_function< Nitrogen::IBNibRef, void >
      {
       void operator()( Nitrogen::IBNibRef n ) const
         {
@@ -51,17 +51,17 @@ namespace Nucleus
 namespace Nitrogen
   {
    
-   Nucleus::Owned< IBNibRef > CreateNibReference( CFStringRef inNibName );
-   Nucleus::Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle, CFStringRef inNibName );
+   nucleus::owned< IBNibRef > CreateNibReference( CFStringRef inNibName );
+   nucleus::owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle, CFStringRef inNibName );
 
-   inline void DisposeNibReference( Nucleus::Owned<IBNibRef> /*toDispose*/ )
+   inline void DisposeNibReference( nucleus::owned<IBNibRef> /*toDispose*/ )
      {
      }
 
-   Nucleus::Owned< WindowRef > CreateWindowFromNib ( IBNibRef inNibRef, CFStringRef inName );
-   Nucleus::Owned< MenuRef >   CreateMenuFromNib   ( IBNibRef inNibRef, CFStringRef inName );
+   nucleus::owned< WindowRef > CreateWindowFromNib ( IBNibRef inNibRef, CFStringRef inName );
+   nucleus::owned< MenuRef >   CreateMenuFromNib   ( IBNibRef inNibRef, CFStringRef inName );
 #if 0
-   Nucleus::Owned< Handle >    CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
+   nucleus::owned< Handle >    CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
 #endif
    void SetMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
    

@@ -41,8 +41,8 @@
 namespace Vertice
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	using V::X;
@@ -532,7 +532,7 @@ namespace Vertice
 	{
 		N::SetWTitle( Get(), file.name );
 		
-		NN::Owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		Parser parser( ItsScene() );
 		

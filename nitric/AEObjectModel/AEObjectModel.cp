@@ -181,7 +181,7 @@ namespace Nitrogen
 			const AEDesc_Data& desc( static_cast< const AEDesc_Data& >( *token ) );
 			
 			// Atom or list, it will hence be missed.
-			DisposeToken( Nucleus::Owned< AEDesc_Data >::Seize( desc ) );
+			DisposeToken( nucleus::owned< AEDesc_Data >::seize( desc ) );
 		}
 		catch ( ... )
 		{
@@ -203,7 +203,7 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	Nucleus::Owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
 	                                                       AEObjectClass        containerClass,
 	                                                       AEEnumerated         keyForm,
@@ -239,7 +239,7 @@ namespace Nitrogen
 		{}
 	};
 	
-	static Nucleus::Owned< AEDesc_Token > CallObjectAccessor( const AEDesc_Token&         containerToken,
+	static nucleus::owned< AEDesc_Token > CallObjectAccessor( const AEDesc_Token&         containerToken,
 	                                                          const ObjectAccessContext&  context )
 	{
 		return AECallObjectAccessor( context.desiredClass,
@@ -249,7 +249,7 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static Nucleus::Owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc&               containerToken,
+	static nucleus::owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc&               containerToken,
 	                                                                     const ObjectAccessContext&  context )
 	{
 		return CallObjectAccessor( AEDesc_Cast< const AEDesc_Token >( containerToken ),
@@ -282,7 +282,7 @@ namespace Nitrogen
 			{
 			}
 			
-			Nucleus::Owned< AEDesc_Token > operator()( const AEDesc& containerToken ) const
+			nucleus::owned< AEDesc_Token > operator()( const AEDesc& containerToken ) const
 			{
 				try
 				{
@@ -304,14 +304,14 @@ namespace Nitrogen
 			}
 	};
 	
-	Nucleus::Owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
 	                                                     AEEnumerated         keyForm,
 	                                                     const AEDesc_Data&   keyData,
 	                                                     RefCon )
 	{
-		Nucleus::Owned< AEDescList_Token > result = AECreateList< AEDescList_Token >();
+		nucleus::owned< AEDescList_Token > result = AECreateList< AEDescList_Token >();
 		
 		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		

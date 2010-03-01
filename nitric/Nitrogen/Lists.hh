@@ -41,10 +41,10 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Disposer< Nitrogen::ListHandle > : public std::unary_function< Nitrogen::ListHandle, void >
+	template <> struct disposer< Nitrogen::ListHandle > : public std::unary_function< Nitrogen::ListHandle, void >
 	{
 		void operator()( Nitrogen::ListHandle list ) const
 		{
@@ -58,7 +58,7 @@ namespace Nitrogen
 {
 	
 	// 436
-	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
+	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
 	                                   ResID              theProc,
@@ -69,7 +69,7 @@ namespace Nitrogen
 	                                   bool               scrollVert );
 	
 	// 457
-	inline void LDispose( Nucleus::Owned< ListHandle > )  {}
+	inline void LDispose( nucleus::owned< ListHandle > )  {}
 	
 	// 469, 484, 499, 514
 	using ::LAddColumn;

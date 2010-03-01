@@ -76,8 +76,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace K = Kerosene;
 	namespace Ped = Pedestal;
@@ -1176,7 +1176,7 @@ namespace Genie
 		
 		N::FSpCreateResFile( linkSpec, signature );
 		
-		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
+		n::owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
 		
 		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
 		
@@ -1184,7 +1184,7 @@ namespace Genie
 		
 		N::FSpSetFInfo( linkSpec, linkFInfo );
 		
-		NN::Owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
+		n::owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
 		
 		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
 	}

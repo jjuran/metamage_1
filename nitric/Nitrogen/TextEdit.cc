@@ -23,7 +23,7 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< TEHandle > TENew( const Rect&  destRect,
+	nucleus::owned< TEHandle > TENew( const Rect&  destRect,
 	                                  const Rect&  viewRect )
 	{
 		TEHandle hTE = ::TENew( &destRect, &viewRect );
@@ -36,7 +36,7 @@ namespace Nitrogen
 			ThrowOSStatus( memFullErr );
 		}
 		
-		return Nucleus::Owned< TEHandle >::Seize( hTE );
+		return nucleus::owned< TEHandle >::seize( hTE );
 	}
 	
 }

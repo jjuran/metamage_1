@@ -63,7 +63,7 @@ namespace Nitrogen
 		    && a.isSysHandler   == b.isSysHandler;
 	}
 	
-	Nucleus::Owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall )
+	nucleus::owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall )
 	{
 		ThrowOSStatus( ::AEInstallCoercionHandler( toInstall.fromType, 
 		                                           toInstall.toType, 
@@ -72,7 +72,7 @@ namespace Nitrogen
 		                                           toInstall.fromTypeIsDesc,
 		                                           toInstall.isSysHandler ) );
 		
-		return Nucleus::Owned< AECoercionHandler >::Seize( toInstall );
+		return nucleus::owned< AECoercionHandler >::seize( toInstall );
 	}
 	
 	AECoercionHandler AEGetCoercionHandler( DescType  fromType,
@@ -98,7 +98,7 @@ namespace Nitrogen
 		                          isSysHandler );
 	}
 	
-	Nucleus::Owned< AEDesc_Data > AECoercePtr( DescType     typeCode, 
+	nucleus::owned< AEDesc_Data > AECoercePtr( DescType     typeCode, 
 	                                           const void*  dataPtr, 
 	                                           Size         dataSize, 
 	                                           DescType     toType )
@@ -117,10 +117,10 @@ namespace Nitrogen
 		                              toType,
 		                              &result ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( result );
+		return nucleus::owned< AEDesc_Data >::seize( result );
 	}
 	
-	Nucleus::Owned< AEDesc_Data > AECoerceDesc( const AEDesc& desc, DescType toType )
+	nucleus::owned< AEDesc_Data > AECoerceDesc( const AEDesc& desc, DescType toType )
 	{
 		// Necessary for OS 9; OS X does this automatically
 		if ( toType == typeWildCard )
@@ -132,7 +132,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( ::AECoerceDesc( &desc, toType, &result ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( result );
+		return nucleus::owned< AEDesc_Data >::seize( result );
 	}
 	
 	// Mac OS X allows AERecord arguments to have any descriptorType.
@@ -188,7 +188,7 @@ namespace Nitrogen
 			return AECreateDesc_Unowned( typeCode, *handle, GetHandleSize( handle ) );
 		}
 		
-		AEDesc AECreateDesc_Unowned( DescType typeCode, Nucleus::Owned< Handle > handle )
+		AEDesc AECreateDesc_Unowned( DescType typeCode, nucleus::owned< Handle > handle )
 		{
 		#if OPAQUE_TOOLBOX_STRUCTS
 			
@@ -336,7 +336,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEDeleteItem( &list, index ) );
 	}
 	
-	void AEDeleteItem( Nucleus::Owned< AEDescList_Data >& list, long index )
+	void AEDeleteItem( nucleus::owned< AEDescList_Data >& list, long index )
 	{
 		AEDeleteItem( Detail::AEDescEditor< AEDescList_Data >( list ), index );
 	}
@@ -428,7 +428,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEDeleteKeyDesc( &record, keyword ) );
 	}
 	
-	Nucleus::Owned< AppleEvent > AECreateAppleEvent( AEEventClass          eventClass,
+	nucleus::owned< AppleEvent > AECreateAppleEvent( AEEventClass          eventClass,
 	                                                 AEEventID             eventID,
 	                                                 const AEAddressDesc&  target,
 	                                                 AEReturnID            returnID,
@@ -443,7 +443,7 @@ namespace Nitrogen
 		                                     transactionID,
 		                                     &result ) );
 		
-		return Nucleus::Owned< AppleEvent >::Seize( result );
+		return nucleus::owned< AppleEvent >::seize( result );
 	}
 	
 	void AEPutParamPtr( AppleEvent&  appleEvent,
@@ -459,7 +459,7 @@ namespace Nitrogen
 		                                dataSize ) );
 	}
 	
-	void AEPutParamPtr( Nucleus::Owned< AppleEvent >&  appleEvent,
+	void AEPutParamPtr( nucleus::owned< AppleEvent >&  appleEvent,
 	                    AEKeyword                      keyword,
 	                    DescType                       typeCode,
 	                    const void*                    dataPtr,
@@ -479,7 +479,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEPutParamDesc( &appleEvent, keyword, &desc ) );
 	}
 	
-	void AEPutParamDesc( Nucleus::Owned< AppleEvent >&  appleEvent,
+	void AEPutParamDesc( nucleus::owned< AppleEvent >&  appleEvent,
 	                     AEKeyword                      keyword,
 	                     const AEDesc&                  desc )
 	{
@@ -511,7 +511,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Nucleus::Owned< AEDesc_Data > AEGetParamDesc( const AppleEvent&  appleEvent,
+	nucleus::owned< AEDesc_Data > AEGetParamDesc( const AppleEvent&  appleEvent,
 	                                              AEKeyword          keyword,
 	                                              DescType           desiredType )
 	{
@@ -522,7 +522,7 @@ namespace Nitrogen
 		                                 desiredType,
 		                                 &result ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( result );
+		return nucleus::owned< AEDesc_Data >::seize( result );
 	}
 	
 	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
@@ -549,7 +549,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEDeleteParam( &appleEvent, keyword ) );
 	}
 	
-	void AEDeleteParam( Nucleus::Owned< AppleEvent >&  appleEvent,
+	void AEDeleteParam( nucleus::owned< AppleEvent >&  appleEvent,
 	                    AEKeyword                      keyword )
 	{
 		AEDeleteParam( Detail::AEDescEditor< AppleEvent >( appleEvent ), keyword );
@@ -568,7 +568,7 @@ namespace Nitrogen
 		                                    dataSize ) );
 	}
 	
-	void AEPutAttributePtr( Nucleus::Owned< AppleEvent >&  appleEvent,
+	void AEPutAttributePtr( nucleus::owned< AppleEvent >&  appleEvent,
 	                        AEKeyword                      keyword,
 	                        DescType                       typeCode,
 	                        const void*                    dataPtr,
@@ -588,7 +588,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEPutAttributeDesc( &appleEvent, keyword, &desc ) );
 	}
 	
-	void AEPutAttributeDesc( Nucleus::Owned< AppleEvent >&  appleEvent,
+	void AEPutAttributeDesc( nucleus::owned< AppleEvent >&  appleEvent,
 	                         AEKeyword                      keyword,
 	                         const AEDesc&                  desc )
 	{
@@ -620,7 +620,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Nucleus::Owned< AEDesc_Data > AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	nucleus::owned< AEDesc_Data > AEGetAttributeDesc( const AppleEvent&  appleEvent,
 	                                                  AEKeyword          keyword,
 	                                                  DescType           desiredType )
 	{
@@ -631,7 +631,7 @@ namespace Nitrogen
 		                                     desiredType,
 		                                     &result ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( result );
+		return nucleus::owned< AEDesc_Data >::seize( result );
 	}
 	
 	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
@@ -669,7 +669,7 @@ namespace Nitrogen
 	void AEReplaceDescData( DescType                        typeCode,
 	                        const void*                     dataPtr,
 	                        std::size_t                     dataSize,
-	                        Nucleus::Owned< AEDesc_Data >&  result)
+	                        nucleus::owned< AEDesc_Data >&  result)
 	{
 		AEReplaceDescData( typeCode, dataPtr, dataSize, Detail::AEDescEditor< AEDesc_Data >( result ) );
 	}
@@ -736,21 +736,21 @@ namespace Nitrogen
 				return errAEEventNotHandled;
 			}
 			
-			Nucleus::Owned< AEDesc_Data > AECoercerOfDescs_N( const AEDesc_Data&  fromDesc,
+			nucleus::owned< AEDesc_Data > AECoercerOfDescs_N( const AEDesc_Data&  fromDesc,
 			                                                  DescType            /*toType*/,
 			                                                  RefCon              /*refCon*/ )
 			{
-				return Nucleus::Owned< AEDesc_Data >::Seize( fromDesc );
+				return nucleus::owned< AEDesc_Data >::seize( fromDesc );
 			}
 			
 		}
 		
-		static Nucleus::Owned< AECoercionHandler > InstallCoercionHandler_ProcPtr()
+		static nucleus::owned< AECoercionHandler > InstallCoercionHandler_ProcPtr()
 		{
 			return AEInstallCoercionHandler< AECoercerOfDescs_ProcPtr >( DescType( 'from' ), DescType( 'to  ' ) );
 		}
 		
-		static Nucleus::Owned< AECoercionHandler > InstallCoercionHandler_N()
+		static nucleus::owned< AECoercionHandler > InstallCoercionHandler_N()
 		{
 			return AEInstallCoercionHandler< AECoercerOfDescs_N >( DescType( 'from' ), DescType( 'to  ' ) );
 		}

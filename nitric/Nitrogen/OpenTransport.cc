@@ -39,16 +39,16 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )
+	nucleus::owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )
 	{
 		OTClientContextPtr result;
 		
 		ThrowOSStatus( ::InitOpenTransportInContext( flags, &result ) );
 		
-		return Nucleus::Owned< OTClientContextPtr >::Seize( result );
+		return nucleus::owned< OTClientContextPtr >::seize( result );
 	}
 	
-	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider )
+	void OTCloseProvider( nucleus::owned< ProviderRef > provider )
 	{
 		ThrowOSStatus( ::OTCloseProvider( provider.release() ) );
 	}
@@ -86,7 +86,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::OTUseSyncIdleEvents( ref, useEvents ) );
 	}
 	
-	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
+	nucleus::owned< EndpointRef > OTOpenEndpointInContext( nucleus::owned< OTConfigurationRef >  config,
 	                                                       TEndpointInfo*                        info,
 	                                                       OTClientContextPtr                    clientContext )
 	{
@@ -100,7 +100,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< EndpointRef >::Seize( result );
+		return nucleus::owned< EndpointRef >::seize( result );
 	}
 	
 	static OTResult ThrowOTResult( OTResult result )
@@ -199,7 +199,7 @@ namespace Nitrogen
 	
 	class OTCreateConfiguration_Failed {};
 	
-	Nucleus::Owned< OTConfigurationRef > OTCreateConfiguration( const char* path )
+	nucleus::owned< OTConfigurationRef > OTCreateConfiguration( const char* path )
 	{
 		OTConfigurationRef result = ::OTCreateConfiguration( path );
 		
@@ -208,12 +208,12 @@ namespace Nitrogen
 			throw OTCreateConfiguration_Failed();
 		}
 		
-		return Nucleus::Owned< OTConfigurationRef >::Seize( result );
+		return nucleus::owned< OTConfigurationRef >::seize( result );
 	}
 	
-	Nucleus::Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config )
+	nucleus::owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config )
 	{
-		return Nucleus::Owned< OTConfigurationRef >::Seize( ::OTCloneConfiguration( config ) );
+		return nucleus::owned< OTConfigurationRef >::seize( ::OTCloneConfiguration( config ) );
 	}
 	
 	void RegisterOpenTransportErrors()

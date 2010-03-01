@@ -157,7 +157,7 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: Nucleus::PodFlattener    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: Nucleus::PodFlattener    < ::SInt32                      > {};
    template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: BooleanFlattener                                           {};
-//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: Nucleus::PodFlattener    < Nucleus::Owned<MenuRef>                > {};
+//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: Nucleus::PodFlattener    < nucleus::owned<MenuRef>                > {};
    template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: Nucleus::PodFlattener    < ThemeButtonKind               > {};
 
    template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: Nucleus::PodFlattener    < ::SInt16                      > {};

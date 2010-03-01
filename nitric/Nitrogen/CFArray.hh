@@ -32,53 +32,53 @@ namespace Nitrogen
    inline void CFShow( const CFMutableArrayRef a ) { ::CFShow( a ); }
   }
   
-namespace Nucleus {
-   template <> struct Disposer_Traits< Nitrogen::CFArrayRef >       : Disposer_Traits< Nitrogen::CFTypeRef >  {};
-   template <> struct Disposer_Traits< Nitrogen::CFMutableArrayRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+namespace nucleus {
+   template <> struct disposer_traits< Nitrogen::CFArrayRef >       : disposer_traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< Nitrogen::CFMutableArrayRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
   {
 
 struct CFArrayCreate_Failed {};
-   inline Nucleus::Owned<CFArrayRef> CFArrayCreate ( CFAllocatorRef allocator, const void **values, CFIndex numValues, const CFArrayCallBacks *callBacks )
+   inline nucleus::owned<CFArrayRef> CFArrayCreate ( CFAllocatorRef allocator, const void **values, CFIndex numValues, const CFArrayCallBacks *callBacks )
      {
       CFArrayRef result;
       ::CFArrayCreate ( allocator, values, numValues, callBacks );
       if ( NULL == result )
         throw CFArrayCreate_Failed ();
-      return Nucleus::Owned<CFArrayRef>::Seize ( result );
+      return nucleus::owned<CFArrayRef>::seize ( result );
       }
 
    struct CFArrayCreateCopy_Failed {};
-   inline Nucleus::Owned<CFArrayRef> CFArrayCreateCopy ( CFAllocatorRef allocator, CFArrayRef theArray )
+   inline nucleus::owned<CFArrayRef> CFArrayCreateCopy ( CFAllocatorRef allocator, CFArrayRef theArray )
      {
       CFArrayRef result;
       ::CFArrayCreateCopy ( allocator, theArray );
       if ( NULL == result )
         throw CFArrayCreateCopy_Failed ();
-      return Nucleus::Owned<CFArrayRef>::Seize ( result );
+      return nucleus::owned<CFArrayRef>::seize ( result );
       }
 
    struct CFArrayCreateMutable_Failed {};
-   inline Nucleus::Owned<CFMutableArrayRef> CFArrayCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, const CFArrayCallBacks *callBacks )
+   inline nucleus::owned<CFMutableArrayRef> CFArrayCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, const CFArrayCallBacks *callBacks )
      {
       CFMutableArrayRef result;
       ::CFArrayCreateMutable ( allocator, capacity, callBacks );
       if ( NULL == result )
         throw CFArrayCreateMutable_Failed ();
-      return Nucleus::Owned<CFMutableArrayRef>::Seize ( result );
+      return nucleus::owned<CFMutableArrayRef>::seize ( result );
       }
 
 
    struct CFArrayCreateMutableCopy_Failed {};
-   inline Nucleus::Owned<CFMutableArrayRef> CFArrayCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFArrayRef theArray )
+   inline nucleus::owned<CFMutableArrayRef> CFArrayCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFArrayRef theArray )
      {
       CFMutableArrayRef result;
       ::CFArrayCreateMutableCopy ( allocator, capacity, theArray );
       if ( NULL == result )
         throw CFArrayCreateMutableCopy_Failed ();
-      return Nucleus::Owned<CFMutableArrayRef>::Seize ( result );
+      return nucleus::owned<CFMutableArrayRef>::seize ( result );
       }
 
   using ::CFArrayGetValueAtIndex;

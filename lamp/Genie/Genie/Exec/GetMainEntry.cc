@@ -19,8 +19,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	typedef int (*Extended_Entry)( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher );
@@ -76,7 +76,7 @@ namespace Genie
 	};
 	
 	
-	static inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
+	static inline n::owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
 	{
 		// Set up dispatcher and envp
 		
@@ -97,8 +97,8 @@ namespace Genie
 	class CFMPluginMain : public MainEntryPoint
 	{
 		private:
-			BinaryImage                        itsBinaryImage;
-			NN::Owned< N::CFragConnectionID >  itsFragmentConnection;
+			BinaryImage                       itsBinaryImage;
+			n::owned< N::CFragConnectionID >  itsFragmentConnection;
 		
 		public:
 			CFMPluginMain( const BinaryImage& image ) : itsBinaryImage( image )

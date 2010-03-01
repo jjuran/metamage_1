@@ -27,8 +27,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	void GenieHandlerReply::AppleEventHandler( const N::AppleEvent&   appleEvent,
@@ -40,7 +40,7 @@ namespace Genie
 	
 	GenieHandlerReply::GenieHandlerReply()
 	:
-		NN::Owned< N::AEEventHandler >
+		n::owned< N::AEEventHandler >
 		(
 			N::AEInstallEventHandler< GenieHandlerReply*,
 			                          AppleEventHandler >( N::kCoreEventClass,

@@ -19,12 +19,12 @@ namespace Genie
 	class Handle_memory_mapping : public memory_mapping
 	{
 		private:
-			Nucleus::Owned< Nitrogen::Handle > its_handle;
+			nucleus::owned< Nitrogen::Handle > its_handle;
 			
 			addr_t get_address() const  { return *its_handle.get(); }
 		
 		public:
-			Handle_memory_mapping( Nucleus::Owned< Nitrogen::Handle > h );
+			Handle_memory_mapping( nucleus::owned< Nitrogen::Handle > h );
 	};
 	
 }

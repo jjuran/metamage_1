@@ -24,16 +24,13 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/shared.hh"
 
 #ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
 #endif
 #ifndef NITROGEN_COMPONENTS_HH
 #include "Nitrogen/Components.hh"
-#endif
-
-#ifndef NUCLEUS_SHARED_H
-#include "Nucleus/Shared.h"
 #endif
 
 
@@ -85,28 +82,28 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >,
+	struct disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >,
 	                                     private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		private:
-			Shared< Nitrogen::ComponentInstance > itsComponent;
+			shared< Nitrogen::ComponentInstance > itsComponent;
 		
 		public:
-			Disposer()
+			disposer()
 			{
 			}
 			
-			Disposer( const Shared< Nitrogen::ComponentInstance >& component )
+			disposer( const shared< Nitrogen::ComponentInstance >& component )
 			:
 				itsComponent( component )
 			{
 			}
 			
-			const Shared< Nitrogen::ComponentInstance >& Component() const
+			const shared< Nitrogen::ComponentInstance >& Component() const
 			{
 				return itsComponent;
 			}
@@ -128,25 +125,25 @@ namespace Nitrogen
 	
 	// OSALoad
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSALoad( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSALoad( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	         const AEDesc&                                scriptData,
 	         OSAModeFlags                                 modeFlags = OSAModeFlags() );
 	
 	
 	// OSAStore
 	
-	Nucleus::Owned< AEDesc_Data >
+	nucleus::owned< AEDesc_Data >
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
 	          DescType           desiredType = typeOSAGenericStorage,
 	          OSAModeFlags       modeFlags   = kOSAModeNull );
 	
-	inline Nucleus::Owned< AEDesc_Data >
+	inline nucleus::owned< AEDesc_Data >
 	//
-	OSAStore( const Nucleus::Owned< OSAID >&  script,
+	OSAStore( const nucleus::owned< OSAID >&  script,
 	          DescType                        desiredType = typeOSAGenericStorage,
 	          OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
@@ -159,16 +156,16 @@ namespace Nitrogen
 	
 	// OSAExecute
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSAExecute( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAExecute( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            OSAID                                        compiledScriptID,
 	            OSAID                                        contextID = OSAID(),
 	            OSAModeFlags                                 modeFlags = kOSAModeNull );
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
-	OSAExecute( const Nucleus::Owned< OSAID >&  script,
+	OSAExecute( const nucleus::owned< OSAID >&  script,
 	            OSAID                           contextID = OSAID(),
 	            OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
@@ -181,16 +178,16 @@ namespace Nitrogen
 	
 	// OSADisplay
 	
-	Nucleus::Owned< AEDesc_Data >
+	nucleus::owned< AEDesc_Data >
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
 	            DescType           desiredType = typeChar,
 	            OSAModeFlags       modeFlags   = OSAModeFlags() );
 	
-	inline Nucleus::Owned< AEDesc_Data >
+	inline nucleus::owned< AEDesc_Data >
 	//
-	OSADisplay( const Nucleus::Owned< OSAID >&  scriptValue,
+	OSADisplay( const nucleus::owned< OSAID >&  scriptValue,
 	            DescType                        desiredType = typeChar,
 	            OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
@@ -201,11 +198,11 @@ namespace Nitrogen
 	}
 	
 	
-	Nucleus::Owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
 	                                              AEKeyword          selector,
 	                                              DescType           desiredType );
 	
-	inline void OSADispose( Nucleus::Owned< OSAID > )
+	inline void OSADispose( nucleus::owned< OSAID > )
 	{
 	}
 	
@@ -214,50 +211,50 @@ namespace Nitrogen
 	// OSASetActiveProc
 	// OSAGetActiveProc
 	
-	Nucleus::Owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent );
+	nucleus::owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent );
 	
 	
 	// OSACompile
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACompile( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACompile( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            const AEDesc&                                sourceData,
 	            OSAModeFlags                                 modeFlags = OSAModeFlags() );
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACompile( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACompile( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            const AEDesc&                                sourceData,
 	            OSAModeFlags                                 modeFlags,
-	            Nucleus::Owned< OSAID >                      previousScriptID );
+	            nucleus::owned< OSAID >                      previousScriptID );
 	
 	
 	// OSACopyID
 	
 	void OSACopyID( OSAID                     fromID,
-	                Nucleus::Owned< OSAID >&  to );
+	                nucleus::owned< OSAID >&  to );
 	
-	void OSACopyID( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	void OSACopyID( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                OSAID                                        fromID,
-	                Nucleus::Owned< OSAID >&                     to );
+	                nucleus::owned< OSAID >&                     to );
 	
-	inline void OSACopyID( const Nucleus::Owned< OSAID >&  from,
-	                       Nucleus::Owned< OSAID >&        to )
+	inline void OSACopyID( const nucleus::owned< OSAID >&  from,
+	                       nucleus::owned< OSAID >&        to )
 	{
 		OSACopyID( from.disposer().Component(),
 		           from.get(),
 		           to );
 	}
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACopyID( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACopyID( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	           OSAID                                        fromID );
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
-	OSACopyID( const Nucleus::Owned< OSAID >& fromID )
+	OSACopyID( const nucleus::owned< OSAID >& fromID )
 	{
 		return OSACopyID( fromID.disposer().Component(),
 		                  fromID.get() );
@@ -290,17 +287,17 @@ namespace Nitrogen
 	// OSASetResumeDispatchProc
 	// OSAGetResumeDispatchProc
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSAExecuteEvent( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAExecuteEvent( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                 const AppleEvent&                            appleEvent,
 	                 OSAID                                        contextID,
 	                 OSAModeFlags                                 modeFlags = OSAModeFlags() );
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
 	OSAExecuteEvent( const AppleEvent&               appleEvent,
-	                 const Nucleus::Owned< OSAID >&  context,
+	                 const nucleus::owned< OSAID >&  context,
 	                 OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
 		return OSAExecuteEvent( context.disposer().Component(),
@@ -310,17 +307,17 @@ namespace Nitrogen
 	}
 	
 	
-	Nucleus::Owned< AppleEvent >
+	nucleus::owned< AppleEvent >
 	//
-	OSADoEvent( Nucleus::Shared< ComponentInstance >  scriptingComponent,
+	OSADoEvent( nucleus::shared< ComponentInstance >  scriptingComponent,
 	            const AppleEvent&                     appleEvent,
 	            OSAID                                 contextID,
 	            OSAModeFlags                          modeFlags = OSAModeFlags() );
 	
-	inline Nucleus::Owned< AppleEvent >
+	inline nucleus::owned< AppleEvent >
 	//
 	OSADoEvent( const AppleEvent&               appleEvent,
-	            const Nucleus::Owned< OSAID >&  context,
+	            const nucleus::owned< OSAID >&  context,
 	            OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
 		return OSADoEvent( context.disposer().Component(),
@@ -330,33 +327,33 @@ namespace Nitrogen
 	}
 	
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSAMakeContext( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAMakeContext( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                const AEDesc&                                contextName,
 	                OSAID                                        parentContext = OSAID() );
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
-	OSAMakeContext( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAMakeContext( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                OSAID                                        parentContext = OSAID() )
 	{
 		return OSAMakeContext( scriptingComponent, Nucleus::Make< AEDesc >(), parentContext );
 	}
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
 	OSAMakeContext( const AEDesc&                   contextName,
-	                const Nucleus::Owned< OSAID >&  parentContext )
+	                const nucleus::owned< OSAID >&  parentContext )
 	{
 		return OSAMakeContext( parentContext.disposer().Component(),
 		                       contextName,
 		                       parentContext.get() );
 	}
 	
-	inline Nucleus::Owned< OSAID >
+	inline nucleus::owned< OSAID >
 	//
-	OSAMakeContext( const Nucleus::Owned< OSAID >&  parentContext )
+	OSAMakeContext( const nucleus::owned< OSAID >&  parentContext )
 	{
 		return OSAMakeContext( parentContext.disposer().Component(),
 		                       parentContext.get() );

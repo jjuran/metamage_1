@@ -32,12 +32,12 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 #if CALL_NOT_IN_CARBON
 	
-	template <> struct Disposer< Nitrogen::DriverRefNum > : public std::unary_function< Nitrogen::DriverRefNum, void >,
+	template <> struct disposer< Nitrogen::DriverRefNum > : public std::unary_function< Nitrogen::DriverRefNum, void >,
 	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
@@ -66,11 +66,11 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 1158
-	Nucleus::Owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
-	Nucleus::Owned< DriverRefNum > MacOpenDriver( const std::string& name );
+	nucleus::owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
+	nucleus::owned< DriverRefNum > MacOpenDriver( const std::string& name );
 	
 	// 1175
-	void MacCloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum );
+	void MacCloseDriver( nucleus::owned< DriverRefNum > driverRefNum );
 	
 	// 1190
 	void Control( DriverRefNum       driverRefNum,

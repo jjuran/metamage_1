@@ -15,12 +15,12 @@
 namespace CFMLateImporter
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
-	void ImportLibrary( ConstStr255Param                weakLinkedLibraryName,
-	                    NN::Owned< CFragConnectionID >  connIDToImport )
+	void ImportLibrary( ConstStr255Param               weakLinkedLibraryName,
+	                    n::owned< CFragConnectionID >  connIDToImport )
 	{
 		const CFragSystem7InitBlock* initBlock = SavedCFragInitBlock();
 		

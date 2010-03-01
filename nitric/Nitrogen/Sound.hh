@@ -177,11 +177,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >,
+	struct disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >,
                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::SoundInputRefNum refNum ) const
@@ -262,12 +262,12 @@ namespace Nitrogen
 		struct Result
 		{
 			UInt16 count;
-			Nucleus::Owned< T**, Nucleus::Disposer< Handle > > data;
+			nucleus::owned< T**, nucleus::disposer< Handle > > data;
 			
 			struct Transfer
 			{
 				UInt16 count;
-				Nucleus::OwnershipTransfer< T**, Nucleus::Disposer< Handle > > data;
+				nucleus::ownership_transfer< T**, nucleus::disposer< Handle > > data;
 				
 				explicit Transfer( Result* s )
 				:
@@ -303,7 +303,7 @@ namespace Nitrogen
 			Result result;
 			
 			result.count = buffer.count;
-			result.data  = Nucleus::Owned< T**, Nucleus::Disposer< Handle > >::Seize( handle );
+			result.data  = nucleus::owned< T**, nucleus::disposer< Handle > >::seize( handle );
 			
 			return result;
 		}
@@ -333,18 +333,18 @@ namespace Nitrogen
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siInputSourceNames >
 	{
-		typedef Nucleus::Owned< Handle > Result;
+		typedef nucleus::owned< Handle > Result;
 		typedef ::Handle GetBuffer;
 		
-		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Nucleus::Owned< Handle >::Seize( buffer ); }
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return nucleus::owned< Handle >::seize( buffer ); }
 	};
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siDeviceIcon >
 	{
-		typedef Nucleus::Owned< MaskedIconHandle > Result;
+		typedef nucleus::owned< MaskedIconHandle > Result;
 		typedef ::Handle GetBuffer;
 		
-		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::Seize( Handle_Cast< MaskedIcon >( buffer ) ); }
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::seize( Handle_Cast< MaskedIcon >( buffer ) ); }
 	};
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleSizeAvailable > : InfoData_Traits< UInt16** >  {};
@@ -438,8 +438,8 @@ namespace Nitrogen
 	{
 		struct Transfer
 		{
-			Str255                                                             deviceName;
-			Nucleus::OwnershipTransfer< Handle, Nucleus::Disposer< Handle > >  deviceIconHandle;
+			Str255                                                              deviceName;
+			nucleus::ownership_transfer< Handle, nucleus::disposer< Handle > >  deviceIconHandle;
 			
 			explicit Transfer( SPBGetIndexedDevice_Result* value )
 			:
@@ -449,7 +449,7 @@ namespace Nitrogen
 		};
 		
 		Str255 deviceName;
-		Nucleus::Owned< Handle > deviceIconHandle;
+		nucleus::owned< Handle > deviceIconHandle;
 		
 		SPBGetIndexedDevice_Result()  {}
 		
@@ -492,10 +492,10 @@ namespace Nitrogen
 {	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
-	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
+	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                                  SoundInputPermissions  permission );
 	
-	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > );
+	void SPBCloseDevice( nucleus::owned< SoundInputRefNum > );
 	
 	// SPBRecord
 	// old SPBRecordToFile

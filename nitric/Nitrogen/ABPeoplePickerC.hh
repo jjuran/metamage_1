@@ -38,9 +38,9 @@ namespace Nitrogen {
 	using ::ABPickerRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::ABPickerRef >: public std::unary_function< Nitrogen::ABPickerRef, void >
+   template <> struct disposer< Nitrogen::ABPickerRef >: public std::unary_function< Nitrogen::ABPickerRef, void >
      {
       void operator()( Nitrogen::ABPickerRef pick ) const
         {
@@ -59,10 +59,10 @@ namespace Nitrogen
 
 //	Creates an ABPickerRef. The window is created hidden. 
 //	Call ABPickerSetVisibility() to show it.
-    inline Nucleus::Owned<ABPickerRef> ABPickerCreate ( void ) {
+    inline nucleus::owned<ABPickerRef> ABPickerCreate ( void ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		ABPickerRef result = ::ABPickerCreate ();
-		return Nucleus::Owned<ABPickerRef>::Seize( result );
+		return nucleus::owned<ABPickerRef>::seize( result );
     	}
 
 // Change the structural frame of the window.
@@ -119,30 +119,30 @@ namespace Nitrogen
 	using ::ABPickerRemoveProperty;
 	
 // Returns an array of AB Properties as CFStringRefs.
-    inline Nucleus::Owned<CFArrayRef> ABPickerCopyProperties ( ABPickerRef inPicker ) {
+    inline nucleus::owned<CFArrayRef> ABPickerCopyProperties ( ABPickerRef inPicker ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopyProperties ( inPicker );
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 
 //	Localized titles for third party properties should be set with these methods.
 //	extern void ABPickerSetColumnTitle ( ABPickerRef inPicker, CFStringRef inTitle, CFStringRef inProperty );
 	using ::ABPickerSetColumnTitle;
 	
-    inline Nucleus::Owned<CFStringRef> ABPickerCopyColumnTitle ( ABPickerRef inPicker, CFStringRef inProperty ) {
+    inline nucleus::owned<CFStringRef> ABPickerCopyColumnTitle ( ABPickerRef inPicker, CFStringRef inProperty ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABPickerCopyColumnTitle ( inPicker, inProperty );
-		return Nucleus::Owned<CFStringRef>::Seize( result );
+		return nucleus::owned<CFStringRef>::seize( result );
     	}
 
 //	Display one of the properties added above in the values column.
 //	extern void ABPickerSetDisplayedProperty ( ABPickerRef inPicker, CFStringRef inProperty );
 	using ::ABPickerSetDisplayedProperty;
 	
-	inline Nucleus::Owned<CFStringRef> ABPickerCopyDisplayedProperty ( ABPickerRef inPicker ) {
+	inline nucleus::owned<CFStringRef> ABPickerCopyDisplayedProperty ( ABPickerRef inPicker ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABPickerCopyDisplayedProperty ( inPicker );
-		return Nucleus::Owned<CFStringRef>::Seize( result );
+		return nucleus::owned<CFStringRef>::seize( result );
     	}
 
 //	---------------------------------------
@@ -150,32 +150,32 @@ namespace Nitrogen
 //	---------------------------------------
 
 //	Returns group column selection as an array of ABGroupRef objects.
-	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedGroups ( ABPickerRef inPicker ) {
+	inline nucleus::owned<CFArrayRef> ABPickerCopySelectedGroups ( ABPickerRef inPicker ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedGroups ( inPicker );
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 
 //	Returns names column selection as an array of ABGroupRef or ABPersonRef objects.
-	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedRecords ( ABPickerRef inPicker ) {
+	inline nucleus::owned<CFArrayRef> ABPickerCopySelectedRecords ( ABPickerRef inPicker ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedRecords ( inPicker );
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 
 //	This method returns an array of selected multi-value identifiers. Returns nil if the displayed
 //	property is a single value type.
-	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedIdentifiers ( ABPickerRef inPicker, ABPersonRef inPerson ) {
+	inline nucleus::owned<CFArrayRef> ABPickerCopySelectedIdentifiers ( ABPickerRef inPicker, ABPersonRef inPerson ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedIdentifiers ( inPicker, inPerson );
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 
 //	Returns an array containing CFStringRefs for each item selected in the values column.
-	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedValues ( ABPickerRef inPicker ) {
+	inline nucleus::owned<CFArrayRef> ABPickerCopySelectedValues ( ABPickerRef inPicker ) {
 		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedValues ( inPicker );
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 
 //	Select group/name/value programatically.

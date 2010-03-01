@@ -22,9 +22,8 @@
 #include <Security/SecIdentity.h>
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
+// nucleus
+#include "nucleus/owned.hh"
 
 #ifndef NUCLEUS_ONLYONCE_H
 #include "Nucleus/OnlyOnce.h"
@@ -40,11 +39,11 @@ namespace Nitrogen {
 	using ::SecKeyRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    // Should these go through CFTypeRef's disposer?
    
-   template <> struct Disposer< Nitrogen::SecIdentityRef >: public std::unary_function< Nitrogen::SecIdentityRef, void >
+   template <> struct disposer< Nitrogen::SecIdentityRef >: public std::unary_function< Nitrogen::SecIdentityRef, void >
      {
       void operator()( Nitrogen::SecIdentityRef kc ) const
         {
@@ -52,7 +51,7 @@ namespace Nucleus
         }
      };
 
-   template <> struct Disposer< Nitrogen::SecCertificateRef >: public std::unary_function< Nitrogen::SecCertificateRef, void >
+   template <> struct disposer< Nitrogen::SecCertificateRef >: public std::unary_function< Nitrogen::SecCertificateRef, void >
      {
       void operator()( Nitrogen::SecCertificateRef kci ) const
         {
@@ -60,7 +59,7 @@ namespace Nucleus
         }
      };
 
-   template <> struct Disposer< Nitrogen::SecKeyRef >: public std::unary_function< Nitrogen::SecKeyRef, void >
+   template <> struct disposer< Nitrogen::SecKeyRef >: public std::unary_function< Nitrogen::SecKeyRef, void >
      {
       void operator()( Nitrogen::SecKeyRef kcs ) const
         {
@@ -80,18 +79,18 @@ namespace Nitrogen
 	inline void CFShow ( SecCertificateRef cr )	{ ::CFShow ( cr ); }
 	inline void CFShow ( SecKeyRef kr )			{ ::CFShow ( kr ); }
 
-	inline Nucleus::Owned<SecCertificateRef> SecIdentityCopyCertificate ( SecIdentityRef identityRef ) {
+	inline nucleus::owned<SecCertificateRef> SecIdentityCopyCertificate ( SecIdentityRef identityRef ) {
 		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecCertificateRef	result;
 		ThrowOSStatus ( ::SecIdentityCopyCertificate ( identityRef, &result ));
-  	    return Nucleus::Owned<SecCertificateRef>::Seize( result );
+  	    return nucleus::owned<SecCertificateRef>::seize( result );
 		}
 
-	inline Nucleus::Owned<SecKeyRef> SecIdentityCopyPrivateKey ( SecIdentityRef identityRef ) {
+	inline nucleus::owned<SecKeyRef> SecIdentityCopyPrivateKey ( SecIdentityRef identityRef ) {
 		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecKeyRef	result;
 		ThrowOSStatus ( ::SecIdentityCopyPrivateKey ( identityRef, &result ));
-  	    return Nucleus::Owned<SecKeyRef>::Seize( result );
+  	    return nucleus::owned<SecKeyRef>::seize( result );
 		}
 
 	}

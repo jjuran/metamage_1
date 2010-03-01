@@ -19,8 +19,8 @@
 namespace Vertice
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -36,7 +36,7 @@ namespace Vertice
 		private:
 			//PedMenu myOptionsMenu;
 			//PedMenu myViewMenu;
-			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
+			n::owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
 			static void AppleEventHandler( N::AppleEvent const&  appleEvent,
@@ -87,9 +87,9 @@ namespace Vertice
 	
 	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
-		NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                             N::keyDirectObject,
-		                                                             N::typeAEList );
+		n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                            N::keyDirectObject,
+		                                                            N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

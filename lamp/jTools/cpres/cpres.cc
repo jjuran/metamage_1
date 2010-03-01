@@ -24,6 +24,7 @@
 #include "Orion/Main.hh"
 
 
+namespace n = nucleus;
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace Div = Divergence;
@@ -38,16 +39,16 @@ namespace tool
 	static bool globally_using_data_fork = false;
 	
 	
-	static NN::Owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
-	                                                                   N::FSIOPermssn  perm )
+	static n::owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
+	                                                                  N::FSIOPermssn  perm )
 	{
 		FSRef fileref = N::FSpMakeFSRef( filespec );
 		
 		return N::FSOpenResourceFile( fileref, N::UniString(), perm );
 	}
 	
-	static NN::Owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
-	                                                    N::FSIOPermssn  perm )
+	static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
+	                                                   N::FSIOPermssn  perm )
 	{
 		try
 		{
@@ -76,7 +77,7 @@ namespace tool
 			return 1;
 		}
 		
-		NN::Owned< N::ResFileRefNum > sourceRes( open_res_file( source, N::fsRdPerm ) );
+		n::owned< N::ResFileRefNum > sourceRes( open_res_file( source, N::fsRdPerm ) );
 		
 		int types = N::Count1Types();
 		
@@ -187,7 +188,7 @@ namespace tool
 			::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
 		}
 		
-		NN::Owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
+		n::owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
 		
 		// Try to copy each file.  Return whether any errors occurred.
 		for ( int index = 0;  index < n_args - 1;  ++index )

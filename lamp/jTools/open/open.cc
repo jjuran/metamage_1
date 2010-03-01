@@ -44,8 +44,8 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace NX = NitrogenExtras;
 	namespace Div = Divergence;
@@ -68,12 +68,12 @@ namespace tool
 		                   : Div::ResolvePathToFSSpec(            pathname.c_str() );
 	}
 	
-	static inline NN::Owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
+	static inline n::owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
 	{
 		return N::AECoercePtr< N::typeFSS >( item, N::typeAlias );
 	}
 	
-	static NN::Owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
+	static n::owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
@@ -98,12 +98,12 @@ namespace tool
 		return N::AECreateDesc( N::typeAlias, N::NewAlias( item ) );
 	}
 	
-	static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
-	                                                     const ProcessSerialNumber&  psn )
+	static n::owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
+	                                                    const ProcessSerialNumber&  psn )
 	{
-		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
-		                                                               N::kAEOpenDocuments,
-		                                                               N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
+		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+		                                                              N::kAEOpenDocuments,
+		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, N::keyDirectObject, items );
 		
@@ -275,7 +275,7 @@ namespace tool
 		
 		char const *const *free_args = o::free_arguments();
 		
-		NN::Owned< N::AEDescList_Data > items = N::AECreateList< N::AEDescList_Data >( false );
+		n::owned< N::AEDescList_Data > items = N::AECreateList< N::AEDescList_Data >( false );
 		
 		for ( char const *const *it = free_args;  *it != NULL;  ++it )
 		{

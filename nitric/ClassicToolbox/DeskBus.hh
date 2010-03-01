@@ -136,12 +136,12 @@ namespace Nitrogen
 	
 	// UPP management
 	
-	inline Nucleus::Owned< ADBCompletionUPP > NewADBCompletionUPP( ADBCompletionProcPtr p )
+	inline nucleus::owned< ADBCompletionUPP > NewADBCompletionUPP( ADBCompletionProcPtr p )
 	{
 		return NewUPP< ADBCompletionUPP >( p );
 	}
 	
-	inline void DisposeADBCompletionUPP( Nucleus::Owned< ADBCompletionUPP > )  {}
+	inline void DisposeADBCompletionUPP( nucleus::owned< ADBCompletionUPP > )  {}
 	
 	inline void InvokeADBCompletionUPP( Ptr               buffer,
 	                                    Ptr               refCon,

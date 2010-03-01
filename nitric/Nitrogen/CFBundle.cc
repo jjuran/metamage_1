@@ -30,30 +30,30 @@ namespace Nitrogen
       return result;
      }
 
-   Nucleus::Owned<CFBundleRef> CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL )
+   nucleus::owned<CFBundleRef> CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL )
      {
       CFBundleRef result = ::CFBundleCreate( allocator, bundleURL );
       if ( result == 0 )
          throw CFBundleCreate_Failed();
-      return Nucleus::Owned<CFBundleRef>::Seize( result );
+      return nucleus::owned<CFBundleRef>::seize( result );
      }
 
-   Nucleus::Owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
+   nucleus::owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
                                                          CFURLRef       directoryURL,
                                                          CFStringRef    bundleType )
      {
       CFArrayRef result = ::CFBundleCreateBundlesFromDirectory( allocator, directoryURL, bundleType );
       if ( result == 0 )
          throw CFBundleCreateBundlesFromDirectory_Failed();
-      return Nucleus::Owned<CFArrayRef>::Seize( result );
+      return nucleus::owned<CFArrayRef>::seize( result );
      }
 
-   Nucleus::Owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle )
+   nucleus::owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle )
      {
       CFURLRef result = ::CFBundleCopyBundleURL( bundle );
       if ( result == 0 )
          throw CFBundleCopyBundleURL_Failed();
-      return Nucleus::Owned<CFURLRef>::Seize( result );
+      return nucleus::owned<CFURLRef>::seize( result );
      }
 
    CFTypeRef CFBundleGetValueForInfoDictionaryKey( CFBundleRef bundle,
@@ -81,7 +81,7 @@ namespace Nitrogen
       return result;
      }
 
-   Nucleus::Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
+   nucleus::owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
                                             CFStringRef resourceName,
                                             CFStringRef resourceType,
                                             CFStringRef subDirName )
@@ -89,7 +89,7 @@ namespace Nitrogen
       CFURLRef result = ::CFBundleCopyResourceURL( bundle, resourceName, resourceType, subDirName );
       if ( result == 0 )
          throw CFBundleCopyResourceURL_Failed();
-      return Nucleus::Owned<CFURLRef>::Seize( result );
+      return nucleus::owned<CFURLRef>::seize( result );
      }
 
    void *CFBundleGetFunctionPointerForName( CFBundleRef bundle, CFStringRef functionName )

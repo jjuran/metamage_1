@@ -19,6 +19,7 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -32,7 +33,7 @@ namespace Genie
 	
 	GenieExecHandler::GenieExecHandler()
 	:
-		NN::Owned< N::AEEventHandler >
+		n::owned< N::AEEventHandler >
 		(
 			N::AEInstallEventHandler< GenieExecHandler*, AppleEventHandler >( kAEPipeOrganSuite,
 			                                                                  kAEExec,
@@ -82,7 +83,7 @@ namespace Genie
 		} 
 		else
 		{
-			NN::Owned< N::AEDescList_Data > list = N::AEGetParamDesc( appleEvent, N::keyDirectObject, N::typeWildCard );
+			n::owned< N::AEDescList_Data > list = N::AEGetParamDesc( appleEvent, N::keyDirectObject, N::typeWildCard );
 			
 			std::vector< std::string > argVec;
 			

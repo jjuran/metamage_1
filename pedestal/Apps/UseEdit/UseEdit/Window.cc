@@ -17,8 +17,8 @@
 namespace UseEdit
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -61,7 +61,7 @@ namespace UseEdit
 	class TextEdit : public Ped::TextEdit, public Ped::ScrollerAPI
 	{
 		private:
-			NN::Owned< N::TEHandle >  itsTE;
+			n::owned< N::TEHandle >  itsTE;
 			
 			Ped::TextSelection  itsSelectionPriorToSearch;
 		

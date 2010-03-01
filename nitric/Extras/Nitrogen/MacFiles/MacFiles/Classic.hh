@@ -200,24 +200,24 @@ namespace io
 	
 	// Open
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file, overload = overload() )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file, overload = overload() )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_io( const FSSpec& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_io( const FSSpec& file, overload = overload() )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdWrPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_truncated( const FSSpec& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSFileRefNum > open_truncated( const FSSpec& file, overload = overload() )
 	{
-		Nucleus::Owned< Nitrogen::FSFileRefNum > result = Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
+		nucleus::owned< Nitrogen::FSFileRefNum > result = Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
 		
 		Nitrogen::SetEOF( result, 0 );
 		

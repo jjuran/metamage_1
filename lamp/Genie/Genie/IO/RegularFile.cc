@@ -24,8 +24,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -161,7 +161,7 @@ namespace Genie
 		{
 			// Either malloc() failed or we didn't try.
 			
-			NN::Owned< N::Handle > h = N::TempNewHandle( length );
+			n::owned< N::Handle > h = N::TempNewHandle( length );
 			
 			mapping = new Handle_memory_mapping( h );
 		}

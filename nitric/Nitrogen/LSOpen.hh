@@ -50,11 +50,11 @@ namespace Nitrogen {
 		return result;
 		}
 
-	inline Nucleus::Owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
+	inline nucleus::owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenCFURLRef ( inURL, &result ));
-  	    return Nucleus::Owned<CFURLRef>::Seize( result );
+  	    return nucleus::owned<CFURLRef>::seize( result );
 		}
 
 	inline FSRef LSOpenFromRefSpec ( const LSLaunchFSRefSpec &inLaunchSpec ) {
@@ -64,11 +64,11 @@ namespace Nitrogen {
 		return result;
 		}
 
-	inline Nucleus::Owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
+	inline nucleus::owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenFromURLSpec ( &inLaunchSpec, &result ));
-  	    return Nucleus::Owned<CFURLRef>::Seize( result );
+  	    return nucleus::owned<CFURLRef>::seize( result );
 		}
 	}
 	

@@ -19,7 +19,7 @@
 namespace Nitrogen
 {
 	
-	void DisposeToken( Nucleus::Owned< AEDesc_Data > token )
+	void DisposeToken( nucleus::owned< AEDesc_Data > token )
 	{
 		return TheGlobalTokenDisposer().DisposeToken( token );
 	}
@@ -29,7 +29,7 @@ namespace Nitrogen
 		Register( typeAEList, DisposeTokenList );
 	}
 	
-	void TokenDisposer::DisposeToken( Nucleus::Owned< AEDesc_Data > token )
+	void TokenDisposer::DisposeToken( nucleus::owned< AEDesc_Data > token )
 	{
 		Map::const_iterator found = map.find( DescType( token.get().descriptorType ) );
 		if ( found == map.end() )
@@ -51,19 +51,19 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
-	static void DisposeTokenFromList( Nucleus::Owned< AEDesc_Data > token )
+	static void DisposeTokenFromList( nucleus::owned< AEDesc_Data > token )
 	{
 		// This is basically a call to AEDisposeToken(), but it's for tokens
 		// stored as Owned< AEDesc_Data >.
 		
-		Nucleus::Disposer< AEDesc_Token >()( token.Release() );
+		nucleus::disposer< AEDesc_Token >()( token.release() );
 	}
 	
-	void DisposeTokenList( Nucleus::Owned< AEDescList_Data > listOfTokens )
+	void DisposeTokenList( nucleus::owned< AEDescList_Data > listOfTokens )
 	{
-		// listOfTokens is Owned< AEDescList_Data > for this reason:
+		// listOfTokens is owned< AEDescList_Data > for this reason:
 		// We're already inside AEDisposeToken() for the list, so
-		// Disposer< AEDesc_Token > isn't appropriate (since running it would
+		// disposer< AEDesc_Token > isn't appropriate (since running it would
 		// yield recursion).  But we haven't yet called AEDisposeToken() on the
 		// individual list elements, so they still have token-nature.
 		// Since we've deliberately made it hard to accidentally pull tokens out

@@ -29,29 +29,29 @@ namespace Nitrogen
    template <> struct CFType_Traits< CFMutableDictionaryRef >: Basic_CFType_Traits< CFMutableDictionaryRef, ::CFDictionaryGetTypeID > {};
    }
 
-namespace Nucleus {
-   template <> struct Disposer_Traits< Nitrogen::CFDictionaryRef >       : Disposer_Traits< Nitrogen::CFTypeRef >  {};
-   template <> struct Disposer_Traits< Nitrogen::CFMutableDictionaryRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+namespace nucleus {
+   template <> struct disposer_traits< Nitrogen::CFDictionaryRef >       : disposer_traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< Nitrogen::CFMutableDictionaryRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
    }
 
 namespace Nitrogen {
    class CFDictionaryCreate_Failed {};
-   Nucleus::Owned<CFDictionaryRef> CFDictionaryCreate ( CFAllocatorRef allocator, const void **keys, const void **values, CFIndex numValues, 
+   nucleus::owned<CFDictionaryRef> CFDictionaryCreate ( CFAllocatorRef allocator, const void **keys, const void **values, CFIndex numValues, 
    				const CFDictionaryKeyCallBacks *keyCallBacks = NULL, const CFDictionaryValueCallBacks *valueCallBacks = NULL);
 
    inline void CFShow( const CFMutableDictionaryRef d ) { ::CFShow( d ); }
    inline void CFShow( const CFDictionaryRef d )        { ::CFShow( d ); }
 
    class CFDictionaryCreateMutable_Failed {};
-   Nucleus::Owned<CFMutableDictionaryRef> CFDictionaryCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, 
+   nucleus::owned<CFMutableDictionaryRef> CFDictionaryCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, 
    				const CFDictionaryKeyCallBacks *keyCallBacks = NULL, const CFDictionaryValueCallBacks *valueCallBacks = NULL );
    
    
    class CFDictionaryCreateCopy_Failed {};
-   Nucleus::Owned<CFDictionaryRef> CFDictionaryCreateCopy ( CFAllocatorRef allocator, CFDictionaryRef theDict );
+   nucleus::owned<CFDictionaryRef> CFDictionaryCreateCopy ( CFAllocatorRef allocator, CFDictionaryRef theDict );
 
    class CFDictionaryCreateMutableCopy_Failed {};
-   Nucleus::Owned<CFMutableDictionaryRef> CFDictionaryCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFDictionaryRef theDict );
+   nucleus::owned<CFMutableDictionaryRef> CFDictionaryCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFDictionaryRef theDict );
 
 //	CFIndex CFDictionaryGetCount		( CFDictionaryRef theDict );
 //	CFIndex CFDictionaryGetCountOfKey	( CFDictionaryRef theDict, const void *key );

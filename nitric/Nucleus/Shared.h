@@ -14,6 +14,8 @@
 #ifndef NUCLEUS_SHARED_H
 #define NUCLEUS_SHARED_H
 
+#include "nucleus/shared.hh"
+
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif

@@ -23,7 +23,7 @@ namespace MacIO
 	
 	
 	template < class Traits, class Callback >
-	Nucleus::Owned< FSFileRefNum >
+	nucleus::owned< FSFileRefNum >
 	//
 	FSpOpen( const FSSpec&      spec,
 	         FSIOPermssn        permissions,
@@ -44,12 +44,12 @@ namespace MacIO
 		                              callback,
 		                              completion );
 		
-		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( io.ioRefNum ) );
+		return nucleus::owned< FSFileRefNum >::seize( FSFileRefNum( io.ioRefNum ) );
 	}
 	
 	
 	template < class Callback >
-	Nucleus::Owned< FSFileRefNum >
+	nucleus::owned< FSFileRefNum >
 	//
 	inline FSpOpenDF( const FSSpec&      spec,
 	                  FSIOPermssn        permissions,
@@ -63,7 +63,7 @@ namespace MacIO
 	}
 	
 	template < class Callback >
-	Nucleus::Owned< FSFileRefNum >
+	nucleus::owned< FSFileRefNum >
 	//
 	inline FSpOpenRF( const FSSpec&      spec,
 	                  FSIOPermssn        permissions,

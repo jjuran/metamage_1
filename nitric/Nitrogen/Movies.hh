@@ -65,11 +65,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::Movie > : public std::unary_function< Nitrogen::Movie, void >
+	struct disposer< Nitrogen::Movie > : public std::unary_function< Nitrogen::Movie, void >
 	{
 		void operator()( Nitrogen::Movie movie ) const
 		{
@@ -78,7 +78,7 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >,
+	struct disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >,
 	                                               private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::MovieFileRefNum refNum ) const
@@ -90,7 +90,7 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >,
+	struct disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >,
 	                                                    private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::FullScreenContextPtr context ) const
@@ -117,37 +117,37 @@ namespace Nitrogen
 	
 	// ...
 	
-	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
+	nucleus::owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
 	                                                 FSIOPermssn    permission );
 	
 	// DeleteMovieFile
 	
-	Nucleus::Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
+	nucleus::owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
 	                                          ResID            resID,
 	                                          NewMovieFlags    flags );
 	
 	// ...
 	
-	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	nucleus::owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                                        short            desiredWidth,
 	                                                        short            desiredHeight,
 	                                                        ::WindowRef*     newWindow,
 	                                                        const RGBColor&  eraseColor,
 	                                                        FullScreenFlags  flags      = FullScreenFlags() );
 	
-	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	nucleus::owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                                        short            desiredWidth,
 	                                                        short            desiredHeight,
 	                                                        ::WindowRef*     newWindow  = NULL,
 	                                                        FullScreenFlags  flags      = FullScreenFlags() );
 	
-	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	nucleus::owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                                        short            desiredWidth,
 	                                                        short            desiredHeight,
 	                                                        const RGBColor&  eraseColor,
 	                                                        FullScreenFlags  flags      = FullScreenFlags() );
 	
-	inline void EndFullScreen( Nucleus::Owned< FullScreenContextPtr > )  {}
+	inline void EndFullScreen( nucleus::owned< FullScreenContextPtr > )  {}
 	
 }
 

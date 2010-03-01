@@ -60,16 +60,16 @@ namespace Nitrogen
      }
 
    template <>
-   Nucleus::Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
+   nucleus::owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
                                             const EventTypeSpec * inList,
                                             EventTimeout          inTimeout )
      {
       EventRef result;
       ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, true, &result ) );
-      return Nucleus::Owned<EventRef>::Seize( result );
+      return nucleus::owned<EventRef>::seize( result );
      }
 
-   Nucleus::Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
+   nucleus::owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
                                 CarbonEventKind   kind,
                                 EventTime         when,
@@ -85,17 +85,17 @@ namespace Nitrogen
                                   flags,
                                   &result ) );
       
-      return Nucleus::Owned<EventRef>::Seize( result );
+      return nucleus::owned<EventRef>::seize( result );
      }
 
-   Nucleus::Owned<EventRef> CopyEvent( EventRef inOther )
+   nucleus::owned<EventRef> CopyEvent( EventRef inOther )
      {
       EventRef result = ::CopyEvent( inOther );
       
       if ( result == 0 )
          throw CopyEvent_Failed();
       
-      return Nucleus::Owned<EventRef>::Seize( result );
+      return nucleus::owned<EventRef>::seize( result );
      }
 
    void SetEventParameter( EventRef         inEvent,
@@ -151,7 +151,7 @@ namespace Nitrogen
       ThrowOSStatus( userUPP( inHandlerCallRef, inEvent, inUserData ) );
      }
 
-   Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+   nucleus::owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                UInt32                 inNumTypes,
                                                const EventTypeSpec *  inList,
@@ -164,10 +164,10 @@ namespace Nitrogen
                                             inList,
                                             const_cast<void*>( inUserData ),
                                             &result ) );
-      return Nucleus::Owned<EventHandlerRef>::Seize( result );
+      return nucleus::owned<EventHandlerRef>::seize( result );
      }
 
-   Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+   nucleus::owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                EventClass             eventClass,
                                                CarbonEventKind        eventKind,
@@ -205,7 +205,7 @@ namespace Nitrogen
       ThrowOSStatus( ::InstallStandardEventHandler( inTarget ) );
      }
 
-   void RemoveEventHandler( Nucleus::Owned<EventHandlerRef> inHandlerRef )
+   void RemoveEventHandler( nucleus::owned<EventHandlerRef> inHandlerRef )
      {
       ThrowOSStatus( ::RemoveEventHandler( inHandlerRef.release() ) );
      }
@@ -220,7 +220,7 @@ namespace Nitrogen
       ThrowOSStatus( ::ProcessHICommand( &inCommand ) );
      }
 
-   Nucleus::Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
+   nucleus::owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
                                                 UInt32            inHotKeyModifiers,
                                                 EventHotKeyID     inHotKeyID,
                                                 EventTargetRef    inTarget,
@@ -233,10 +233,10 @@ namespace Nitrogen
                                             inTarget,
                                             inOptions,
                                             &result ) );
-      return Nucleus::Owned< EventHotKeyRef >::Seize( result );
+      return nucleus::owned< EventHotKeyRef >::seize( result );
      }
 
-   void UnregisterEventHotKey( Nucleus::Owned< EventHotKeyRef > hotKey )
+   void UnregisterEventHotKey( nucleus::owned< EventHotKeyRef > hotKey )
      {
       ThrowOSStatus( ::UnregisterEventHotKey( hotKey.release() ) );
      }

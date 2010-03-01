@@ -98,17 +98,17 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier, 
+	nucleus::owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier, 
 	                                          AEResolveCallbackFlags         callbackFlags )
 	{
 		AEDesc_Token token;
 		
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
 		
-		return Nucleus::Owned< AEDesc_Token >::Seize( token );
+		return nucleus::owned< AEDesc_Token >::seize( token );
 	}
 	
-	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
+	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
 	{
 		ThrowOSStatus( ::AEInstallObjectAccessor( toInstall.desiredClass,
 		                                          toInstall.containerType,
@@ -116,7 +116,7 @@ namespace Nitrogen
 		                                          toInstall.accessorRefCon,
 		                                          toInstall.isSysHandler ) );
 		
-		return Nucleus::Owned< OSLAccessor >::Seize( toInstall );
+		return nucleus::owned< OSLAccessor >::seize( toInstall );
 	}
 	
 	OSLAccessor AEGetObjectAccessor( AEObjectClass  desiredClass,
@@ -139,7 +139,7 @@ namespace Nitrogen
 		                    isSysHandler );
 	}
 	
-	Nucleus::Owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
 	                                                     AEEnumerated         keyForm,
@@ -154,7 +154,7 @@ namespace Nitrogen
 		                                       &keyData,
 		                                       &result ) );
 		
-		return Nucleus::Owned< AEDesc_Token >::Seize( result );
+		return nucleus::owned< AEDesc_Token >::seize( result );
 	}
 	
 }

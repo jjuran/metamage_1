@@ -64,7 +64,7 @@ namespace Nitrogen
 	// cWeekday .. kASMagicEndTellEvent
 	
 	// Do we ever need the missing value outside an object accessor?
-	inline Nucleus::Owned< AEDesc_Token > MissingValue()
+	inline nucleus::owned< AEDesc_Token > MissingValue()
 	{
 		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::cMissingValue ) );
 	}

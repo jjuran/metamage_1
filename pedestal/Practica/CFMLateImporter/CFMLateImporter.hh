@@ -14,7 +14,7 @@ namespace CFMLateImporter
 {
 	
 	void ImportLibrary( ConstStr255Param                     weakLinkedLibraryName,
-	                    Nucleus::Owned< CFragConnectionID >  connIDToImport );
+	                    nucleus::owned< CFragConnectionID >  connIDToImport );
 	
 }
 

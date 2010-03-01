@@ -24,18 +24,18 @@ namespace Nitrogen
 	#endif
 	}
 	
-	Nucleus::Owned< GrafPtr > OpenPort( GrafPtr port )
+	nucleus::owned< GrafPtr > OpenPort( GrafPtr port )
 	{
 		::OpenPort( port );
 		
-		return Nucleus::Owned< GrafPtr >::Seize( port, &Function::ClosePort );
+		return nucleus::owned< GrafPtr >::seize( port, &Function::ClosePort );
 	}
 	
-	Nucleus::Owned< CGrafPtr > OpenCPort( CGrafPtr port )
+	nucleus::owned< CGrafPtr > OpenCPort( CGrafPtr port )
 	{
 		::OpenCPort( port );
 		
-		return Nucleus::Owned< CGrafPtr >::Seize( port, &Function::CloseCPort );
+		return nucleus::owned< CGrafPtr >::seize( port, &Function::CloseCPort );
 	}
 	
 }

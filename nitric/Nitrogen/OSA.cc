@@ -39,9 +39,9 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSALoad( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSALoad( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	         const AEDesc&                                scriptData,
 	         OSAModeFlags                                 modeFlags )
 	{
@@ -52,12 +52,12 @@ namespace Nitrogen
 		                          modeFlags,
 		                          &resultingScriptID ) );
 		
-		return Nucleus::Owned< OSAID >::Seize( OSAID( resultingScriptID ),
+		return nucleus::owned< OSAID >::seize( OSAID( resultingScriptID ),
 		                                       scriptingComponent );
 	}
 	
 	
-	Nucleus::Owned< AEDesc_Data >
+	nucleus::owned< AEDesc_Data >
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
@@ -72,13 +72,13 @@ namespace Nitrogen
 		                           modeFlags,
 		                           &resultingScriptData ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( resultingScriptData );
+		return nucleus::owned< AEDesc_Data >::seize( resultingScriptData );
 	}
 	
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSAExecute( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAExecute( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            OSAID                                        compiledScriptID,
 	            OSAID                                        contextID,
 	            OSAModeFlags                                 modeFlags )
@@ -91,11 +91,11 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &resultingScriptValueID ) );
 		
-		return Nucleus::Owned< OSAID >::Seize( OSAID( resultingScriptValueID ),
+		return nucleus::owned< OSAID >::seize( OSAID( resultingScriptValueID ),
 		                                       scriptingComponent );
 	}
 	
-	Nucleus::Owned< AEDesc_Data >
+	nucleus::owned< AEDesc_Data >
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
@@ -110,11 +110,11 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &resultingText ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( resultingText );
+		return nucleus::owned< AEDesc_Data >::seize( resultingText );
 	}
 	
 	
-	Nucleus::Owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
 	                                              AEKeyword          selector,
 	                                              DescType           desiredType )
 	{
@@ -125,23 +125,23 @@ namespace Nitrogen
 		                                 desiredType,
 		                                 &resultingErrorDescription ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( resultingErrorDescription );
+		return nucleus::owned< AEDesc_Data >::seize( resultingErrorDescription );
 	}
 	
-	Nucleus::Owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent )
+	nucleus::owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent )
 	{
 		AEDesc_Data resultingScriptingComponentName;
 		
 		ThrowOSStatus( ::OSAScriptingComponentName( scriptingComponent,
 		                                            &resultingScriptingComponentName ) );
 		
-		return Nucleus::Owned< AEDesc_Data >::Seize( resultingScriptingComponentName );
+		return nucleus::owned< AEDesc_Data >::seize( resultingScriptingComponentName );
 	}
 	
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACompile( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACompile( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            const AEDesc&                                sourceData,
 	            OSAModeFlags                                 modeFlags )
 	{
@@ -152,16 +152,16 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &previousAndResultingScriptID ) );
 		
-		return Nucleus::Owned< OSAID >::Seize( OSAID( previousAndResultingScriptID ),
+		return nucleus::owned< OSAID >::seize( OSAID( previousAndResultingScriptID ),
 		                                              scriptingComponent );
 	}
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACompile( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACompile( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	            const AEDesc&                                sourceData,
 	            OSAModeFlags                                 modeFlags,
-	            Nucleus::Owned< OSAID >                      previousScriptID )
+	            nucleus::owned< OSAID >                      previousScriptID )
 	{
 		::OSAID previousAndResultingScriptID = previousScriptID.release();
 		
@@ -170,8 +170,8 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &previousAndResultingScriptID );
 		
-		Nucleus::Owned< OSAID > resultingScriptID
-			= Nucleus::Owned< OSAID >::Seize( OSAID( previousAndResultingScriptID ),
+		nucleus::owned< OSAID > resultingScriptID
+			= nucleus::owned< OSAID >::seize( OSAID( previousAndResultingScriptID ),
 			                                  scriptingComponent );
 		
 		if ( err != noErr )
@@ -186,7 +186,7 @@ namespace Nitrogen
 	
 	
 	void OSACopyID( OSAID                     fromID,
-	                Nucleus::Owned< OSAID >&  to )
+	                nucleus::owned< OSAID >&  to )
 	{
 		::OSAID toID = to.get();
 		
@@ -198,14 +198,14 @@ namespace Nitrogen
 		{
 			to.release();
 			
-			to = Nucleus::Owned< OSAID >::Seize( OSAID( toID ),
+			to = nucleus::owned< OSAID >::seize( OSAID( toID ),
 			                                     to.disposer().Component() );
 		}
 	}
 	
-	void OSACopyID( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	void OSACopyID( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                OSAID                                        fromID,
-	                Nucleus::Owned< OSAID >&                     to )
+	                nucleus::owned< OSAID >&                     to )
 	{
 		if ( scriptingComponent.get() != to.disposer().Component() )
 		{
@@ -215,9 +215,9 @@ namespace Nitrogen
 		OSACopyID( fromID, to );
 	}
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSACopyID( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSACopyID( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	           OSAID                                        fromID )
 	{
 		::OSAID toID = kOSANullScript;
@@ -226,14 +226,14 @@ namespace Nitrogen
 		                            fromID,
 		                            &toID ) );
 		
-		return Nucleus::Owned< OSAID >::Seize( OSAID( toID ),
+		return nucleus::owned< OSAID >::seize( OSAID( toID ),
 		                                       scriptingComponent );
 	}
 	
 	
-	Nucleus::Owned< OSAID >
+	nucleus::owned< OSAID >
 	//
-	OSAExecuteEvent( const Nucleus::Shared< ComponentInstance >&  scriptingComponent,
+	OSAExecuteEvent( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                 const AppleEvent&                            appleEvent,
 	                 OSAID                                        contextID,
 	                 OSAModeFlags                                 modeFlags )
@@ -246,7 +246,7 @@ namespace Nitrogen
 		                                  modeFlags,
 		                                  &resultingScriptValueID ) );
 		
-		return Nucleus::Owned< OSAID >::Seize( OSAID( resultingScriptValueID ),
+		return nucleus::owned< OSAID >::seize( OSAID( resultingScriptValueID ),
 		                                       scriptingComponent );
 	}
 	

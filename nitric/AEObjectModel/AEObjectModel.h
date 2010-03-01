@@ -20,7 +20,7 @@
 namespace Nitrogen
 {
 	
-	inline Nucleus::Owned< AEDesc_Token > GetRootToken()
+	inline nucleus::owned< AEDesc_Token > GetRootToken()
 	{
 		return AEInitializeDesc< AEDesc_Token >();
 	}
@@ -45,14 +45,14 @@ namespace Nitrogen
 	
 	void AESetObjectCallbacks();
 	
-	Nucleus::Owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
 	                                                       AEObjectClass        containerClass,
 	                                                       AEEnumerated         keyForm,
 	                                                       const AEDesc_Data&   keyData,
 	                                                       RefCon );
 	
-	Nucleus::Owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
 	                                                     AEEnumerated         keyForm,

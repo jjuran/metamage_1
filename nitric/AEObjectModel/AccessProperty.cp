@@ -21,7 +21,7 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               AEObjectClass        containerClass )
 	{
@@ -84,7 +84,7 @@ namespace Nitrogen
 		return NULL;
 	}
 	
-	Nucleus::Owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
 	                                                                 const AEDesc_Token&  containerToken,
 	                                                                 AEObjectClass        containerClass )
 	{
@@ -93,7 +93,7 @@ namespace Nitrogen
 		return accessor( propertyID, containerToken, containerClass );
 	}
 	
-	Nucleus::Owned< AEDesc_Token > PropertyAccessor::AccessAll( const AEDesc_Token&  containerToken,
+	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessAll( const AEDesc_Token&  containerToken,
 	                                                            AEObjectClass        containerClass )
 	{
 		Map::const_iterator foundType = map.find( DescType( containerToken.descriptorType ) );
@@ -103,7 +103,7 @@ namespace Nitrogen
 			ThrowOSStatus( errAEEventNotHandled );
 		}
 		
-		Nucleus::Owned< AEDesc_Token > result = AECreateList< AEDesc_Token >( true );
+		nucleus::owned< AEDesc_Token > result = AECreateList< AEDesc_Token >( true );
 		
 		for ( PropertyMap::const_iterator itProp = foundType->second.begin();
 		      itProp != foundType->second.end();
@@ -111,7 +111,7 @@ namespace Nitrogen
 		{
 			AEPropertyID propertyID = itProp->first;
 			
-			Nucleus::Owned< AEDesc_Token > propertyToken;
+			nucleus::owned< AEDesc_Token > propertyToken;
 			
 			try
 			{
@@ -136,7 +136,7 @@ namespace Nitrogen
 			// Dispose the token's AEDesc, but don't call the token disposal function.
 			AEDesc tokenDesc = propertyToken.release();
 			
-			Nucleus::Owned< AEDesc_Data >::Seize( static_cast< const AEDesc_Data& >( tokenDesc ) );
+			nucleus::owned< AEDesc_Data >::seize( static_cast< const AEDesc_Data& >( tokenDesc ) );
 		}
 		
 		return result;
@@ -148,7 +148,7 @@ namespace Nitrogen
 		return theGlobalPropertyAccessor;
 	}
 	
-	Nucleus::Owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
+	nucleus::owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    AEObjectClass        containerClass )
 	{
@@ -156,7 +156,7 @@ namespace Nitrogen
 		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
-	Nucleus::Owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,
+	nucleus::owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,
 	                                                    const AEDesc_Token&  containerToken,
 	                                                    AEObjectClass        containerClass )
 	{

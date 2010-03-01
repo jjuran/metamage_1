@@ -42,16 +42,16 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< ICInstance > ICStart( OSType signature )
+	nucleus::owned< ICInstance > ICStart( OSType signature )
 	{
 		::ICInstance instance;
 		
 		ThrowOSStatus( ::ICStart( &instance, signature ) );
 		
-		return Nucleus::Owned< ICInstance >::Seize( ICInstance( instance ) );
+		return nucleus::owned< ICInstance >::seize( ICInstance( instance ) );
 	}
 	
-	void ICStop( Nucleus::Owned< ICInstance >& instance )
+	void ICStop( nucleus::owned< ICInstance >& instance )
 	{
 		ThrowOSStatus( ::ICStop( instance.get() ) );
 		
@@ -59,31 +59,31 @@ namespace Nitrogen
 	}
 	
 	
-	static Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	static nucleus::owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                                  ConstStr255Param  key,
 	                                                  ::ICAttr&         attr )
 	{
-		Nucleus::Owned< Handle > prefh = NewHandle( 0 );
+		nucleus::owned< Handle > prefh = NewHandle( 0 );
 		
 		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.get() ) );
 		
 		return prefh;
 	}
 	
-	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	nucleus::owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key,
 	                                           ICAttr&           attr )
 	{
 		::ICAttr tempAttr;
 		
-		Nucleus::Owned< Handle > prefh = ICFindPrefHandle( instance, key, tempAttr );
+		nucleus::owned< Handle > prefh = ICFindPrefHandle( instance, key, tempAttr );
 		
 		attr = ICAttr( tempAttr );
 		
 		return prefh;
 	}
 	
-	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	nucleus::owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key )
 	{
 		::ICAttr attr;

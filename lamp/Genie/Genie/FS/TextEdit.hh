@@ -69,7 +69,7 @@ namespace Genie
 			KeyDown_Hook      itsKeyDown;
 			UserCommand_Hook  itsUserCommand;
 			
-			Nucleus::Owned< Nitrogen::TEHandle >  itsTE;
+			nucleus::owned< Nitrogen::TEHandle >  itsTE;
 			
 			Pedestal::TextSelection  itsSelectionPriorToSearch;
 			

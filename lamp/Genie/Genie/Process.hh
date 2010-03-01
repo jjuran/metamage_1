@@ -148,7 +148,7 @@ namespace Genie
 			
 			void* itsReexecArgs[8];
 			
-			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
+			nucleus::owned< Nitrogen::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
 			

@@ -18,6 +18,7 @@
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -77,21 +78,21 @@ namespace Pedestal
 	}
 	
 	
-	NN::Owned< N::WindowRef > CreateWindow( const Rect&         bounds,
-	                                        ConstStr255Param    title,
-	                                        bool                visible,
-	                                        N::WindowDefProcID  procID,
-	                                        N::WindowRef        behind,
-	                                        bool                goAwayFlag,
-	                                        N::RefCon           refCon )
+	n::owned< N::WindowRef > CreateWindow( const Rect&         bounds,
+	                                       ConstStr255Param    title,
+	                                       bool                visible,
+	                                       N::WindowDefProcID  procID,
+	                                       N::WindowRef        behind,
+	                                       bool                goAwayFlag,
+	                                       N::RefCon           refCon )
 	{
-		NN::Owned< N::WindowRef > window = N::NewCWindow( bounds,
-		                                                  title,
-		                                                  visible,
-		                                                  procID,
-		                                                  behind,
-		                                                  goAwayFlag,
-		                                                  refCon );
+		n::owned< N::WindowRef > window = N::NewCWindow( bounds,
+		                                                 title,
+		                                                 visible,
+		                                                 procID,
+		                                                 behind,
+		                                                 goAwayFlag,
+		                                                 refCon );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );

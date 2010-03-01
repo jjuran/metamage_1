@@ -49,29 +49,29 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Disposer< Nitrogen::CRMIconHandle > : public std::unary_function< Nitrogen::CRMIconHandle, void >
+	template <> struct disposer< Nitrogen::CRMIconHandle > : public std::unary_function< Nitrogen::CRMIconHandle, void >
 	{
 		void operator()( Nitrogen::CRMIconHandle deviceIcon ) const
 		{
 			Nitrogen::IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
 			
-			Disposer< Nitrogen::IconSuiteRef >()( iconSuite  );
-			Disposer< Nitrogen::Handle       >()( deviceIcon );
+			disposer< Nitrogen::IconSuiteRef >()( iconSuite  );
+			disposer< Nitrogen::Handle       >()( deviceIcon );
 		}
 	};
 	
-	template <> struct Disposer< Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, void >
+	template <> struct disposer< Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, void >
 	{
 		void operator()( Nitrogen::CRMSerialPtr crmSerial ) const
 		{
-			Disposer< Nitrogen::Handle        >()( crmSerial->inputDriverName  );
-			Disposer< Nitrogen::Handle        >()( crmSerial->outputDriverName );
-			Disposer< Nitrogen::Handle        >()( crmSerial->name             );
-			Disposer< Nitrogen::CRMIconHandle >()( crmSerial->deviceIcon       );
-			Disposer< Nitrogen::Ptr           >()( crmSerial                   );
+			disposer< Nitrogen::Handle        >()( crmSerial->inputDriverName  );
+			disposer< Nitrogen::Handle        >()( crmSerial->outputDriverName );
+			disposer< Nitrogen::Handle        >()( crmSerial->name             );
+			disposer< Nitrogen::CRMIconHandle >()( crmSerial->deviceIcon       );
+			disposer< Nitrogen::Ptr           >()( crmSerial                   );
 		}
 	};
 	
@@ -82,7 +82,7 @@ namespace Nitrogen
 	
 	inline Str255 GetCRMSerialName( CRMSerialPtr crmSerial )  { return *crmSerial->name; }
 	
-	Nucleus::Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	nucleus::owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
 	                                                    ConstStr255Param outputDriverName,
 	                                                    ConstStr255Param portName );
 	

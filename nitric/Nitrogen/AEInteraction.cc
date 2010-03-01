@@ -19,7 +19,7 @@ namespace Nitrogen
 	
 	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )
 	
-	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
+	nucleus::owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
 	                                     AESendMode         sendMode,
 	                                     AESendPriority     sendPriority,
 	                                     long               timeOutInTicks,
@@ -36,10 +36,10 @@ namespace Nitrogen
 		                         idleProc,
 		                         filterProc ) );
 		
-		return Nucleus::Owned< AppleEvent >::Seize( reply );
+		return nucleus::owned< AppleEvent >::seize( reply );
 	}
 	
-	Nucleus::Owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID )
+	nucleus::owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID )
 	{
 		return AESend( AECreateAppleEvent( eventClass,
 				                           eventID,

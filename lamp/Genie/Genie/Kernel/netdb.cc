@@ -24,8 +24,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static pascal void YieldingNotifier( void*        context,
@@ -58,11 +58,11 @@ namespace Genie
 	}
 	
 	
-	static NN::Owned< InetSvcRef > InternetServices()
+	static n::owned< InetSvcRef > InternetServices()
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
-		NN::Owned< N::InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
+		n::owned< N::InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
 		N::OTInstallNotifier( provider, gNotifyUPP, NULL );
 		

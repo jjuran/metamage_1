@@ -43,7 +43,7 @@ namespace MacBinaryDecoder
 		private:
 			static App* theApp;
 			
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
 		
 		public:
 			static App& Get();

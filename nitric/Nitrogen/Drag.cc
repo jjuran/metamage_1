@@ -39,14 +39,14 @@ namespace Nitrogen
 #endif
 	
 	
-   Nucleus::Owned<DragRef> NewDrag()
+   nucleus::owned<DragRef> NewDrag()
      {
       DragRef result;
       ThrowOSStatus( ::NewDrag( &result ) );
-      return Nucleus::Owned<DragRef>::Seize( result );
+      return nucleus::owned<DragRef>::seize( result );
      }
    
-   void DisposeDrag( Nucleus::Owned<DragRef> theDrag )
+   void DisposeDrag( nucleus::owned<DragRef> theDrag )
      {
       ThrowOSStatus( ::DisposeDrag( theDrag.release() ) );
      }

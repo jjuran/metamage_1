@@ -81,7 +81,7 @@ namespace Pedestal
 		}
 	};
 	
-	Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const Rect&                bounds,
+	nucleus::owned< Nitrogen::WindowRef > CreateWindow( const Rect&                bounds,
 	                                                    ConstStr255Param           title,
 	                                                    bool                       visible,
 	                                                    Nitrogen::WindowDefProcID  procID,
@@ -89,7 +89,7 @@ namespace Pedestal
 	                                                    bool                       goAwayFlag,
 	                                                    Nitrogen::RefCon           refCon );
 	
-	inline Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&  context,
+	inline nucleus::owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&  context,
 	                                                           Nitrogen::RefCon         refCon )
 	{
 		return CreateWindow( context.bounds,
@@ -122,7 +122,7 @@ namespace Pedestal
 			boost::shared_ptr< WindowCloseHandler  > itsCloseHandler;
 			boost::shared_ptr< WindowResizeHandler > itsResizeHandler;
 			
-			Nucleus::Owned< Nitrogen::WindowRef > itsWindowRef;
+			nucleus::owned< Nitrogen::WindowRef > itsWindowRef;
 			
 			Nitrogen::WindowDefProcID itsDefProcID;
 		

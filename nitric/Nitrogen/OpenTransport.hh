@@ -21,13 +21,10 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/owned.hh"
 
 // Nucleus
 #include "Nucleus/ErrorsRegistered.h"
-
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH
@@ -182,11 +179,11 @@ namespace Nitrogen
     
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::OTConfigurationRef > : public std::unary_function< Nitrogen::OTConfigurationRef, void >
+	struct disposer< Nitrogen::OTConfigurationRef > : public std::unary_function< Nitrogen::OTConfigurationRef, void >
 	{
 		void operator()( Nitrogen::OTConfigurationRef config ) const
 		{
@@ -195,7 +192,7 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Disposer< Nitrogen::OTClientContextPtr > : public std::unary_function< Nitrogen::OTClientContextPtr, void >
+	struct disposer< Nitrogen::OTClientContextPtr > : public std::unary_function< Nitrogen::OTClientContextPtr, void >
 	{
 		void operator()( Nitrogen::OTClientContextPtr context ) const
 		{
@@ -204,7 +201,7 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >,
+	struct disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >,
 											   private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::ProviderRef provider ) const
@@ -215,7 +212,7 @@ namespace Nucleus
 		}
 	};
 
-	template <> struct Disposer_Traits< Nitrogen::EndpointRef > : Disposer_Traits< Nitrogen::ProviderRef > {};
+	template <> struct disposer_traits< Nitrogen::EndpointRef > : disposer_traits< Nitrogen::ProviderRef > {};
 	
 }
 
@@ -225,11 +222,11 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
-	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags );
+	nucleus::owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags );
 	
-	inline void CloseOpenTransportInContext( Nucleus::Owned< OTClientContextPtr > )  {}
+	inline void CloseOpenTransportInContext( nucleus::owned< OTClientContextPtr > )  {}
 	
-	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider );
+	void OTCloseProvider( nucleus::owned< ProviderRef > provider );
 	
 	// ...
 	
@@ -266,11 +263,11 @@ namespace Nitrogen
 	using ::OTIsNonBlocking;
 	using ::OTIsAsynchronous;
 	
-	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
+	nucleus::owned< EndpointRef > OTOpenEndpointInContext( nucleus::owned< OTConfigurationRef >  config,
 	                                                       TEndpointInfo*                        info          = NULL,
 	                                                       OTClientContextPtr                    clientContext = NULL );
 	
-	inline Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
+	inline nucleus::owned< EndpointRef > OTOpenEndpointInContext( nucleus::owned< OTConfigurationRef >  config,
 	                                                              OTClientContextPtr                    clientContext )
 	{
 		return OTOpenEndpointInContext( config, NULL, clientContext );
@@ -325,11 +322,11 @@ namespace Nitrogen
 	                OTByteCount  nbytes,
 	                OTFlags      flags = OTFlags( 0 ) );
 	
-	Nucleus::Owned< OTConfigurationRef > OTCreateConfiguration( const char* path );
+	nucleus::owned< OTConfigurationRef > OTCreateConfiguration( const char* path );
 	
-	Nucleus::Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config );
+	nucleus::owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config );
 	
-	inline void OTDestroyConfiguration( Nucleus::Owned< OTConfigurationRef > )  {}
+	inline void OTDestroyConfiguration( nucleus::owned< OTConfigurationRef > )  {}
 	
 }
 

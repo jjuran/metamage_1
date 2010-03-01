@@ -14,17 +14,17 @@
 
 namespace Nitrogen
   {
-   Nucleus::Owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
+   nucleus::owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
                                   const UInt8 *  bytes,
                                   CFIndex        length )
      {
       CFDataRef result = ::CFDataCreate( allocator, bytes, length );
       if ( result == 0 )
          throw CFDataCreate_Failed();
-      return Nucleus::Owned<CFDataRef>::Seize( result );
+      return nucleus::owned<CFDataRef>::seize( result );
      }
    
-   Nucleus::Owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
+   nucleus::owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
                                   const std::vector<UInt8>& bytes )
      {
       return Nitrogen::CFDataCreate( allocator,
@@ -32,7 +32,7 @@ namespace Nitrogen
                                      nucleus::convert<CFIndex>( bytes.size() ) );
      }
    
-   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
+   nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
                                                  const UInt8 *  bytes,
                                                  CFIndex        length,
                                                  CFAllocatorRef bytesDeallocator )
@@ -40,10 +40,10 @@ namespace Nitrogen
       CFDataRef result = ::CFDataCreateWithBytesNoCopy( allocator, bytes, length, bytesDeallocator );
       if ( result == 0 )
          throw CFDataCreateWithBytesNoCopy_Failed();
-      return Nucleus::Owned<CFDataRef>::Seize( result );
+      return nucleus::owned<CFDataRef>::seize( result );
      }
    
-   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
+   nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
                                                  std::vector<UInt8>& bytes )
      {
       return Nitrogen::CFDataCreateWithBytesNoCopy( allocator,
@@ -51,32 +51,32 @@ namespace Nitrogen
                                                     nucleus::convert<CFIndex>( bytes.size() ) );
      }
 
-   Nucleus::Owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
+   nucleus::owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
                                       CFDataRef        theData )
      {
       CFDataRef result = ::CFDataCreateCopy( allocator, theData );
       if ( result == 0 )
          throw CFDataCreateCopy_Failed();
-      return Nucleus::Owned<CFDataRef>::Seize( result );
+      return nucleus::owned<CFDataRef>::seize( result );
      }
    
-   Nucleus::Owned<CFMutableDataRef> CFDataCreateMutable( CFAllocatorRef   allocator,
+   nucleus::owned<CFMutableDataRef> CFDataCreateMutable( CFAllocatorRef   allocator,
                                                 CFIndex          capacity )
      {
       CFMutableDataRef result = ::CFDataCreateMutable( allocator, capacity );
       if ( result == 0 )
          throw CFDataCreateMutable_Failed();
-      return Nucleus::Owned<CFMutableDataRef>::Seize( result );
+      return nucleus::owned<CFMutableDataRef>::seize( result );
      }
    
-   Nucleus::Owned<CFMutableDataRef> CFDataCreateMutableCopy( CFAllocatorRef   allocator,
+   nucleus::owned<CFMutableDataRef> CFDataCreateMutableCopy( CFAllocatorRef   allocator,
                                                     CFIndex          capacity,
                                                     CFDataRef        theData )
      {
       CFMutableDataRef result = ::CFDataCreateMutableCopy( allocator, capacity, theData );
       if ( result == 0 )
          throw CFDataCreateMutableCopy_Failed();
-      return Nucleus::Owned<CFMutableDataRef>::Seize( result );
+      return nucleus::owned<CFMutableDataRef>::seize( result );
      }
    
    std::vector<UInt8> CFDataGetBytes( CFDataRef theData,

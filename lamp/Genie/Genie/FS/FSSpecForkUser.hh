@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSSPECFORKUSER_HH
 #define GENIE_FILESYSTEM_FSSPECFORKUSER_HH
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
@@ -19,9 +19,9 @@
 namespace Genie
 {
 	
-	typedef Nucleus::Owned< Nitrogen::FSFileRefNum > (*ForkOpener)( const FSSpec&, Nitrogen::FSIOPermissions );
+	typedef nucleus::owned< Nitrogen::FSFileRefNum > (*ForkOpener)( const FSSpec&, Nitrogen::FSIOPermissions );
 	
-	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const Nucleus::Shared< Nitrogen::FSFileRefNum >&, OpenFlags );
+	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const nucleus::shared< Nitrogen::FSFileRefNum >&, OpenFlags );
 	
 	boost::shared_ptr< IOHandle >
 	//

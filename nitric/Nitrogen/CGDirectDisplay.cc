@@ -24,7 +24,7 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< CGDirectDisplayID > CGDisplayCapture( CGDirectDisplayID display )
+	nucleus::owned< CGDirectDisplayID > CGDisplayCapture( CGDirectDisplayID display )
 	{
 		if ( display == 0 )
 		{
@@ -33,7 +33,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( ::CGDisplayCapture( display ) );
 		
-		return Nucleus::Owned< CGDirectDisplayID >::Seize( display );
+		return nucleus::owned< CGDirectDisplayID >::seize( display );
 	}
 	
 }

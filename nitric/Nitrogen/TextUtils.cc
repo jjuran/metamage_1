@@ -23,13 +23,13 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< StringHandle > NewString( ConstStr255Param string )
+	nucleus::owned< StringHandle > NewString( ConstStr255Param string )
 	{
 		StringHandle result = ::NewString( string );
 		
 		MemError();
 		
-		return Nucleus::Owned< StringHandle >::Seize( result );
+		return nucleus::owned< StringHandle >::seize( result );
 	}
 	
 	void SetString( StringHandle string, ConstStr255Param newStr )

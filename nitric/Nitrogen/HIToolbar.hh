@@ -78,11 +78,11 @@ namespace Nitrogen {
 	using ::HIToolbarRef;
 	template<> struct DescType_Traits< typeHIToolbarRef		>: Nucleus::PodFlattener< HIToolbarRef > {};
 
-	inline Nucleus::Owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
+	inline nucleus::owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarRef result;
 		ThrowOSStatus ( ::HIToolbarCreate ( inIdentifier, inOptions, &result ));
-		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
+		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 
 	inline OptionBits HIToolbarGetAttributes ( HIToolbarRef toolbar ) {
@@ -121,11 +121,11 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIToolbarSetDisplaySize ( inToolbar, inSize ));
 		}
 
-	inline Nucleus::Owned<CFStringRef> HIToolbarCopyIdentifier ( HIToolbarRef inToolbar ) {
+	inline nucleus::owned<CFStringRef> HIToolbarCopyIdentifier ( HIToolbarRef inToolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarCopyIdentifier ( inToolbar, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize( result );
+		return nucleus::owned<CFStringRef>::seize( result );
 		}
 		
 	inline void HIToolbarSetItemsWithIdentifiers ( HIToolbarRef inToolbar, CFArrayRef inArray ) {
@@ -133,19 +133,19 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIToolbarSetItemsWithIdentifiers ( inToolbar, inArray ));
 		}
 
-	inline Nucleus::Owned<CFArrayRef> HIToolbarCopyItems ( HIToolbarRef inToolbar ) {
+	inline nucleus::owned<CFArrayRef> HIToolbarCopyItems ( HIToolbarRef inToolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFArrayRef result;
 		ThrowOSStatus ( ::HIToolbarCopyItems ( inToolbar, &result ));
-		return Nucleus::Owned<CFArrayRef>::Seize( result );
+		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 		
-	inline Nucleus::Owned<HIToolbarItemRef> HIToolbarCreateItemWithIdentifier ( HIToolbarRef toolbar,
+	inline nucleus::owned<HIToolbarItemRef> HIToolbarCreateItemWithIdentifier ( HIToolbarRef toolbar,
 					 		CFStringRef inIdentifier, CFTypeRef inConfigData = NULL ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarItemRef result;
 		ThrowOSStatus ( ::HIToolbarCreateItemWithIdentifier ( toolbar, inIdentifier, inConfigData, &result ));
-		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
+		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 		
 	inline void HIToolbarInsertItemAtIndex ( HIToolbarRef inToolbar, HIToolbarItemRef inItem, CFIndex inIndex ) {
@@ -177,18 +177,18 @@ namespace Nitrogen {
 	using ::HIToolbarItemRef;
 	template<> struct DescType_Traits< typeHIToolbarItemRef	>: Nucleus::PodFlattener< HIToolbarItemRef > {};
 
-	inline Nucleus::Owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
+	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarItemRef result;
 		ThrowOSStatus ( ::HIToolbarItemCreate ( inIdentifier, inOptions, &result ));
-		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
+		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 		
-	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyIdentifier ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<CFStringRef> HIToolbarItemCopyIdentifier ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyIdentifier ( inItem, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize( result );
+		return nucleus::owned<CFStringRef>::seize( result );
 		}
 		
 
@@ -209,11 +209,11 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIToolbarItemSetLabel ( inItem, inLabel ));
 		}
 
-	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyLabel ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<CFStringRef> HIToolbarItemCopyLabel ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyLabel ( inItem, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize( result );
+		return nucleus::owned<CFStringRef>::seize( result );
 		}
 
 	inline void HIToolbarItemSetHelpText ( HIToolbarItemRef inItem, CFStringRef inShortText, CFStringRef inLongText = NULL ) {
@@ -228,18 +228,18 @@ namespace Nitrogen {
 		}
 	
 //	Helper versions
-	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyShortHelpText ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<CFStringRef> HIToolbarItemCopyShortHelpText ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef retVal;
 		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, &retVal, NULL ));
-		return Nucleus::Owned<CFStringRef>::Seize ( retVal );
+		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
-	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyLongHelpText ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<CFStringRef> HIToolbarItemCopyLongHelpText ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef retVal;
 		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, NULL, &retVal ));
-		return Nucleus::Owned<CFStringRef>::Seize ( retVal );
+		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
 	inline void HIToolbarItemSetCommandID ( HIToolbarItemRef inItem, ::MenuCommand inCommandID ) {
@@ -264,11 +264,11 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIToolbarItemSetImage ( inItem, inImage ));
 		}
 
-	inline Nucleus::Owned<CGImageRef> HIToolbarItemCopyImage ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<CGImageRef> HIToolbarItemCopyImage ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CGImageRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyImage ( inItem, &result ));
-		return Nucleus::Owned<CGImageRef>::Seize( result );
+		return nucleus::owned<CGImageRef>::seize( result );
 		}
 
 	inline void HIToolbarItemSetMenu ( HIToolbarItemRef inItem, MenuRef inMenu ) {
@@ -276,11 +276,11 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIToolbarItemSetMenu ( inItem, inMenu ));
 		}
 	
-	inline Nucleus::Owned<MenuRef> HIToolbarItemCopyMenu ( HIToolbarItemRef inItem ) {
+	inline nucleus::owned<MenuRef> HIToolbarItemCopyMenu ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		MenuRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyMenu ( inItem, &result ));
-		return Nucleus::Owned<MenuRef>::Seize( result );
+		return nucleus::owned<MenuRef>::seize( result );
 		}
 
 //	extern HIToolbarRef HIToolbarItemGetToolbar(HIToolbarItemRef inItem)

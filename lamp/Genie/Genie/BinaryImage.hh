@@ -11,8 +11,8 @@
 
 struct FSSpec;
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
@@ -21,7 +21,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	typedef Nucleus::Shared< Nitrogen::Handle > BinaryImage;
+	typedef nucleus::shared< Nitrogen::Handle > BinaryImage;
 	
 	BinaryImage GetBinaryImage( const FSSpec& file );
 	

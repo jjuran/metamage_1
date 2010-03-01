@@ -19,16 +19,15 @@
 #include <UnicodeConverter.h>
 #endif
 
+// nucleus
+#include "nucleus/owned.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
 
 #ifndef NITROGEN_TEXTCOMMON_HH
 #include "Nitrogen/TextCommon.hh"
-#endif
-
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
 #endif
 
 
@@ -85,10 +84,10 @@ InvokeUnicodeToTextFallbackUPP(
   }
 
 
-namespace Nucleus
+namespace nucleus
   {
 //	Do these need to take pointers???? [ No - they are already pointers ]
-	template <> struct Disposer< Nitrogen::TextToUnicodeInfo >: public std::unary_function< Nitrogen::TextToUnicodeInfo, void >
+	template <> struct disposer< Nitrogen::TextToUnicodeInfo >: public std::unary_function< Nitrogen::TextToUnicodeInfo, void >
 		{
 		void operator()( Nitrogen::TextToUnicodeInfo ttui ) const
 			{
@@ -96,7 +95,7 @@ namespace Nucleus
 			}
 		};
 
-	template <> struct Disposer< Nitrogen::UnicodeToTextInfo >: public std::unary_function< Nitrogen::UnicodeToTextInfo, void >
+	template <> struct disposer< Nitrogen::UnicodeToTextInfo >: public std::unary_function< Nitrogen::UnicodeToTextInfo, void >
 		{
 		void operator()( Nitrogen::UnicodeToTextInfo utti ) const
 			{
@@ -104,7 +103,7 @@ namespace Nucleus
 			}
 		};
 
-	template <> struct Disposer< Nitrogen::UnicodeToTextRunInfo >: public std::unary_function< Nitrogen::UnicodeToTextRunInfo, void >
+	template <> struct disposer< Nitrogen::UnicodeToTextRunInfo >: public std::unary_function< Nitrogen::UnicodeToTextRunInfo, void >
 		{
 		void operator()( Nitrogen::UnicodeToTextRunInfo uttri ) const
 			{
@@ -117,53 +116,53 @@ namespace Nitrogen
   {
 
 //	Shouldn't these pointers be const &s ??
-	inline Nucleus::Owned<TextToUnicodeInfo> CreateTextToUnicodeInfo ( const UnicodeMapping &iUnicodeMapping ) {
+	inline nucleus::owned<TextToUnicodeInfo> CreateTextToUnicodeInfo ( const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		TextToUnicodeInfo result;
 		ThrowOSStatus ( ::CreateTextToUnicodeInfo ( &iUnicodeMapping, &result ));
-		return Nucleus::Owned<TextToUnicodeInfo>::Seize ( result );
+		return nucleus::owned<TextToUnicodeInfo>::seize ( result );
 		}
 	
-	inline Nucleus::Owned<TextToUnicodeInfo> CreateTextToUnicodeInfoByEncoding ( TextEncoding iEncoding ) {
+	inline nucleus::owned<TextToUnicodeInfo> CreateTextToUnicodeInfoByEncoding ( TextEncoding iEncoding ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		TextToUnicodeInfo result;
 		ThrowOSStatus ( ::CreateTextToUnicodeInfoByEncoding ( iEncoding, &result ));
-		return Nucleus::Owned<TextToUnicodeInfo>::Seize ( result );
+		return nucleus::owned<TextToUnicodeInfo>::seize ( result );
 		}
 
-	inline Nucleus::Owned<UnicodeToTextInfo> CreateUnicodeToTextInfo ( const UnicodeMapping &iUnicodeMapping ) {
+	inline nucleus::owned<UnicodeToTextInfo> CreateUnicodeToTextInfo ( const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextInfo ( &iUnicodeMapping, &result ));
-		return Nucleus::Owned<UnicodeToTextInfo>::Seize ( result );
+		return nucleus::owned<UnicodeToTextInfo>::seize ( result );
 		}
 	
-	inline Nucleus::Owned<UnicodeToTextInfo> CreateUnicodeToTextInfoByEncoding ( TextEncoding iEncoding ) {
+	inline nucleus::owned<UnicodeToTextInfo> CreateUnicodeToTextInfoByEncoding ( TextEncoding iEncoding ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextInfoByEncoding ( iEncoding, &result ));
-		return Nucleus::Owned<UnicodeToTextInfo>::Seize ( result );
+		return nucleus::owned<UnicodeToTextInfo>::seize ( result );
 		}
 
-	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfo ( ItemCount iNumberOfMappings, const UnicodeMapping iUnicodeMappings[] ) {
+	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfo ( ItemCount iNumberOfMappings, const UnicodeMapping iUnicodeMappings[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfo ( iNumberOfMappings, iUnicodeMappings, &result ));
-		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 	
-	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByEncoding ( ItemCount iNumberOfEncodings, const ::TextEncoding iEncodings[] ) {
+	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByEncoding ( ItemCount iNumberOfEncodings, const ::TextEncoding iEncodings[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByEncoding ( iNumberOfEncodings, iEncodings, &result ));
-		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 
-	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByScriptCode ( ItemCount iNumberOfScriptCodes, const ::ScriptCode iScripts[] ) {
+	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByScriptCode ( ItemCount iNumberOfScriptCodes, const ::ScriptCode iScripts[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByScriptCode ( iNumberOfScriptCodes, iScripts, &result ));
-		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 
 //	I think that these two  should possibly return a new info, rather than changing the input

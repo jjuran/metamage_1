@@ -19,7 +19,7 @@ namespace Pedestal
 	class ListView : public View
 	{
 		private:
-			Nucleus::Owned< ListHandle > itsList;
+			nucleus::owned< ListHandle > itsList;
 		
 		private:
 			void Install( const Rect& bounds );

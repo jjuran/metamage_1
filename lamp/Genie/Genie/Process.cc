@@ -93,8 +93,8 @@ static void DumpBacktrace()
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -548,7 +548,7 @@ namespace Genie
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
 			
-			NN::Owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
+			n::owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
 			
 			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
 			
@@ -914,7 +914,7 @@ namespace Genie
 	                    const char* const*  envp )
 	{
 		// Declare this first so it goes out of scope last
-		NN::Owned< N::ThreadID > looseThread;
+		n::owned< N::ThreadID > looseThread;
 		
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
 		FSTreePtr programFile = ResolvePathname( path, GetCWD() );
@@ -1024,7 +1024,7 @@ namespace Genie
 		itsReexecArgs[7] = _7;
 		
 		// Declare this first so it goes out of scope last
-		NN::Owned< N::ThreadID > looseThread;
+		n::owned< N::ThreadID > looseThread;
 		
 		clear_memory_mappings();
 		
@@ -1244,7 +1244,7 @@ namespace Genie
 		
 		if ( !Forked() )
 		{
-			NN::Owned< N::ThreadID > savedThreadID = itsThread;
+			n::owned< N::ThreadID > savedThreadID = itsThread;
 			
 			gCurrentProcess = NULL;
 			
@@ -1525,7 +1525,7 @@ namespace Genie
 	
 	const boost::shared_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
 	{
-		static NN::Owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
+		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
 		pid_t pid = 1;
 		

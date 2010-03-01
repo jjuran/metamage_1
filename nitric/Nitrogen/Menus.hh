@@ -108,9 +108,9 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::MenuID >: public std::unary_function< Nitrogen::MenuID, void >
+   template <> struct disposer< Nitrogen::MenuID >: public std::unary_function< Nitrogen::MenuID, void >
      {
       void operator()( Nitrogen::MenuID id ) const
         {
@@ -132,9 +132,9 @@ namespace Nitrogen
    using ::MenuRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {   
-   template <> struct Disposer< Nitrogen::MenuRef >: public std::unary_function< Nitrogen::MenuRef, void >
+   template <> struct disposer< Nitrogen::MenuRef >: public std::unary_function< Nitrogen::MenuRef, void >
      {
       void operator()( Nitrogen::MenuRef m ) const
         {
@@ -170,7 +170,7 @@ namespace Nitrogen
    class NewMenu_Failed {};
    
    // 1549
-   Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,
+   nucleus::owned<MenuRef> NewMenu( MenuID           menuID,
                                     ConstStr255Param menuTitle );
    
 	inline MenuRef CheckResource( MenuRef menu )
@@ -183,7 +183,7 @@ namespace Nitrogen
    inline MenuRef MacGetMenu( ResID resourceID )             { return CheckResource( ::MacGetMenu( resourceID ) ); }
    
    // 1578
-   inline void DisposeMenu( Nucleus::Owned<MenuRef> /* theMenu */ )          {}
+   inline void DisposeMenu( nucleus::owned<MenuRef> /* theMenu */ )          {}
    
    using ::CalcMenuSize;
 	
@@ -205,7 +205,7 @@ namespace Nitrogen
    
    /* ... RegisterMenuDefinition */
    
-   Nucleus::Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes = MenuAttributes() );
+   nucleus::owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes = MenuAttributes() );
 
    /* ... CreateCustomMenu */
    
@@ -263,8 +263,8 @@ namespace Nitrogen
    inline MenuRef GetMenuHandle( MenuID menuID )  { return ::GetMenuHandle( menuID ); }
    inline MenuRef GetMenuRef   ( MenuID menuID )  { return ::GetMenuRef   ( menuID ); }
    
-   Nucleus::Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
-   inline void MacDeleteMenu( Nucleus::Owned< MenuID > /* menuID */ )  {}
+   nucleus::owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
+   inline void MacDeleteMenu( nucleus::owned< MenuID > /* menuID */ )  {}
    
    /* ... */
 

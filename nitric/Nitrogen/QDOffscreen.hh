@@ -66,13 +66,13 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
 	                                       CTabHandle   cTable   = NULL,
 	                                       GDHandle     aGDevice = NULL,
 	                                       GWorldFlags  flags    = GWorldFlags() );
 	
-	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
 	                                       GWorldFlags  flags );
 	
@@ -82,14 +82,14 @@ namespace Nitrogen
 	
 	using ::UnlockPixels;
 	
-	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr >&  offscreenGWorld,
+	GWorldFlags UpdateGWorld( nucleus::owned< GWorldPtr >&  offscreenGWorld,
 	                          short                         pixelDepth,
 	                          const Rect&                   boundsRect,
 	                          CTabHandle                    cTable   = NULL,
 	                          GDHandle                      aGDevice = NULL,
 	                          GWorldFlags                   flags    = GWorldFlags() );
 	
-	inline void DisposeGWorld( Nucleus::Owned< GWorldPtr > )  {}
+	inline void DisposeGWorld( nucleus::owned< GWorldPtr > )  {}
 	
 	GWorld_State GetGWorld();
 	

@@ -39,13 +39,13 @@ namespace Nitrogen
 #endif
 	
 	
-   Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,
+   nucleus::owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle )
      {
       MenuRef result = ::NewMenu( menuID, menuTitle );
       if ( result == 0 )
          throw NewMenu_Failed();
-      return Nucleus::Owned<MenuRef>::Seize( result );
+      return nucleus::owned<MenuRef>::seize( result );
      }
    
    MenuFont GetMenuFont( MenuRef menu )
@@ -68,11 +68,11 @@ namespace Nitrogen
      }
 
    
-   Nucleus::Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes )
+   nucleus::owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes )
       {
         MenuRef result;
        ThrowOSStatus( ::CreateNewMenu( inMenuID, inMenuAttributes, &result ) );
-       return Nucleus::Owned<MenuRef>::Seize ( result );
+       return nucleus::owned<MenuRef>::seize ( result );
       }
    
    MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
@@ -94,10 +94,10 @@ namespace Nitrogen
       ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
      }
 
-	Nucleus::Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
+	nucleus::owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
 	{
 		::MacInsertMenu( menu, beforeID );
-		return Nucleus::Owned< MenuID >::Seize( Nitrogen::GetMenuID( menu ) );
+		return nucleus::owned< MenuID >::seize( Nitrogen::GetMenuID( menu ) );
 	}
 	
 	Str255 GetMenuItemText( MenuRef menu, SInt16 item )

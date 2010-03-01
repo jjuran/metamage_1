@@ -96,10 +96,10 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
 	template <>
-	struct Disposer< Nitrogen::ThreadID > : public  std::unary_function< Nitrogen::ThreadID, void >,
+	struct disposer< Nitrogen::ThreadID > : public  std::unary_function< Nitrogen::ThreadID, void >,
 	                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::ThreadID thread ) const
@@ -150,12 +150,12 @@ namespace Nitrogen
 	
 	typedef ThreadEntryUPP ThreadEntryTPP;
 	
-	inline Nucleus::Owned< ThreadEntryUPP > NewThreadEntryUPP( ::ThreadEntryProcPtr p )
+	inline nucleus::owned< ThreadEntryUPP > NewThreadEntryUPP( ::ThreadEntryProcPtr p )
 	{
 		return NewUPP< ThreadEntryUPP >( p );
 	}
 	
-	inline void DisposeThreadEntryUPP( Nucleus::Owned< ThreadEntryUPP > )  {}
+	inline void DisposeThreadEntryUPP( nucleus::owned< ThreadEntryUPP > )  {}
 	
 	inline void InvokeThreadEntryUPP( void*           threadParam,
 	                                  ThreadEntryUPP  userUPP )
@@ -253,9 +253,9 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ NewThread ¥
 	
-	// Level 0, returns Nucleus::Owned< ThreadID >
+	// Level 0, returns nucleus::owned< ThreadID >
 	
-	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
+	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
 	                                      void*           threadParam,
 	                                      Size            stackSize,
@@ -265,7 +265,7 @@ namespace Nitrogen
 	// Level 1, creates static UPP
 	
 	template < ::ThreadEntryProcPtr threadEntry >
-	inline Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
+	inline nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                             void*           threadParam,
 	                                             Size            stackSize,
 	                                             ThreadOptions   options,
@@ -284,7 +284,7 @@ namespace Nitrogen
 	template < class Param,
 	           class Result,
 	           typename ThreadEntry_Traits< Param, Result >::ProcPtr threadEntry >
-	inline Nucleus::Owned< ThreadID >
+	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Param          param,
 	           Size           stackSize = Size( 0 ),
@@ -306,7 +306,7 @@ namespace Nitrogen
 	// No result
 	template < class Param,
 	           typename ThreadEntry_Traits< Param, void >::ProcPtr threadEntry >
-	inline Nucleus::Owned< ThreadID >
+	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Param          param,
 	           Size           stackSize = Size( 0 ),
@@ -326,7 +326,7 @@ namespace Nitrogen
 	// No param
 	template < class Result,
 	           typename ThreadEntry_Traits< void, Result >::ProcPtr threadEntry >
-	inline Nucleus::Owned< ThreadID >
+	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Size           stackSize = Size( 0 ),
 	           ThreadOptions  options   = ThreadOptions(),
@@ -345,7 +345,7 @@ namespace Nitrogen
 	
 	// No result or param
 	template < typename ThreadEntry_Traits< void, void >::ProcPtr threadEntry >
-	inline Nucleus::Owned< ThreadID >
+	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Size           stackSize = Size( 0 ),
 	           ThreadOptions  options   = ThreadOptions() )
@@ -388,7 +388,7 @@ namespace Nitrogen
 	
 	std::size_t ThreadCurrentStackSpace( ThreadID thread );
 	
-	void DisposeThread( Nucleus::Owned< ThreadID >  thread,
+	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*              threadResult,
 	                    bool               recycleThread );
 	

@@ -12,8 +12,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	boost::shared_ptr< IOHandle >
@@ -26,7 +26,7 @@ namespace Genie
 		N::FSIOPermissions rdPerm = N::FSIOPermissions( flags + 1  &  FREAD  );
 		N::FSIOPermissions wrPerm = N::FSIOPermissions( flags + 1  &  FWRITE );
 		
-		NN::Shared< N::FSFileRefNum > fileHandle = openFork( fileSpec, rdPerm | wrPerm );
+		n::shared< N::FSFileRefNum > fileHandle = openFork( fileSpec, rdPerm | wrPerm );
 		
 		return createHandle( fileHandle, flags );
 	}

@@ -136,11 +136,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
    {
-	template <> struct Disposer_Traits< Nitrogen::PlainIconHandle  > : Disposer_Traits< Nitrogen::Handle > {};
-	template <> struct Disposer_Traits< Nitrogen::MaskedIconHandle > : Disposer_Traits< Nitrogen::Handle > {};
-	template <> struct Disposer_Traits< Nitrogen::SmallIconHandle  > : Disposer_Traits< Nitrogen::Handle > {};
+	template <> struct disposer_traits< Nitrogen::PlainIconHandle  > : disposer_traits< Nitrogen::Handle > {};
+	template <> struct disposer_traits< Nitrogen::MaskedIconHandle > : disposer_traits< Nitrogen::Handle > {};
+	template <> struct disposer_traits< Nitrogen::SmallIconHandle  > : disposer_traits< Nitrogen::Handle > {};
   }
 
 namespace Nitrogen
@@ -150,9 +150,9 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer< Nitrogen::CIconHandle > : public std::unary_function< Nitrogen::CIconHandle, void >
+	template <> struct disposer< Nitrogen::CIconHandle > : public std::unary_function< Nitrogen::CIconHandle, void >
 	{
 		void operator()( Nitrogen::CIconHandle h ) const
 		{
@@ -166,11 +166,11 @@ namespace Nucleus
 namespace Nitrogen
   {
 	
-	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID );
+	nucleus::owned< CIconHandle > GetCIcon( ResID iconID );
 	
 	void PlotCIcon( const Rect& rect, CIconHandle icon );
 	
-	inline void DisposeCIcon( Nucleus::Owned< CIconHandle > )  {}
+	inline void DisposeCIcon( nucleus::owned< CIconHandle > )  {}
 	
 	PlainIconHandle GetIcon( ResID iconID );  // Returns a resource handle
 	
@@ -194,9 +194,9 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer< Nitrogen::IconSuiteRef > : public std::unary_function< Nitrogen::IconSuiteRef, void >,
+	template <> struct disposer< Nitrogen::IconSuiteRef > : public std::unary_function< Nitrogen::IconSuiteRef, void >,
 	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		// DisposeIconSuite() takes a Boolean argument that tells it whether to
@@ -236,9 +236,9 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::IconRef >: public std::unary_function< Nitrogen::IconRef, void >,
+   template <> struct disposer< Nitrogen::IconRef >: public std::unary_function< Nitrogen::IconRef, void >,
 												     private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::IconRef i ) const
@@ -258,13 +258,13 @@ namespace Nitrogen
 	                 IconTransformType  transform,
 	                 ResID              resID );
 	
-	Nucleus::Owned< IconSuiteRef > NewIconSuite();
+	nucleus::owned< IconSuiteRef > NewIconSuite();
 	
 	template < bool disposeData >  struct DisposeData_Traits;
 	
 	template <>  struct DisposeData_Traits< true >
 	{
-		typedef Nucleus::Disposer< IconSuiteRef > Disposer;
+		typedef nucleus::disposer< IconSuiteRef > Disposer;
 	};
 	
 	template <>  struct DisposeData_Traits< false >
@@ -273,11 +273,11 @@ namespace Nitrogen
 	};
 	
 	template < bool disposeData >
-	Nucleus::Owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer > NewIconSuite()
+	nucleus::owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer > NewIconSuite()
 	{
 		typedef typename DisposeData_Traits< disposeData >::Disposer Disposer;
 		
-		return Nucleus::Owned< IconSuiteRef, Disposer >::Seize( NewIconSuite().Release() );
+		return nucleus::owned< IconSuiteRef, Disposer >::seize( NewIconSuite().release() );
 	}
 	
 	void AddIconToSuite( Handle iconData, IconSuiteRef suite, ResType type );
@@ -286,10 +286,10 @@ namespace Nitrogen
 	
 	// ForEachIconDo
 	
-	Nucleus::Owned< IconSuiteRef > GetIconSuite( ResID resID, IconSelectorValue selector );
+	nucleus::owned< IconSuiteRef > GetIconSuite( ResID resID, IconSelectorValue selector );
 	
-	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef                             > iconSuite );  // true
-	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite );  // false
+	void DisposeIconSuite( nucleus::owned< IconSuiteRef                             > iconSuite );  // true
+	void DisposeIconSuite( nucleus::owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite );  // false
 	
 	void PlotIconSuite( const Rect&        rect,
 	                    IconAlignmentType  align,
@@ -359,10 +359,10 @@ namespace Nitrogen
 	
    struct GetIconRefFromFile_Result
      {
-      Nucleus::Owned<IconRef> theIconRef;
+      nucleus::owned<IconRef> theIconRef;
       IconLabel theLabel;
       
-      GetIconRefFromFile_Result( Nucleus::Owned<IconRef> icon, IconLabel label )
+      GetIconRefFromFile_Result( nucleus::owned<IconRef> icon, IconLabel label )
         : theIconRef( icon ),
           theLabel( label )
         {}
@@ -377,19 +377,19 @@ namespace Nitrogen
          return Nucleus::ResourceTransfer<GetIconRefFromFile_Result>( *this );
         }
       
-      operator Nucleus::Owned<IconRef>()            { return theIconRef; }
+      operator nucleus::owned<IconRef>()            { return theIconRef; }
       operator IconRef() const             { return theIconRef; }
      };
 
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
 
-   Nucleus::Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType );
+   nucleus::owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType );
 
-   Nucleus::Owned<IconRef> GetIconRef( OSType creator, OSType iconType );
+   nucleus::owned<IconRef> GetIconRef( OSType creator, OSType iconType );
 
-   Nucleus::Owned<IconRef> GetIconRef( OSType iconType );
+   nucleus::owned<IconRef> GetIconRef( OSType iconType );
 
-	Nucleus::Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
+	nucleus::owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
 	                                     FSDirID parentFolderID,
 	                                     FSDirID folderID,
 	                                     FSIOFileAttributes attributes,
@@ -474,7 +474,7 @@ namespace Nitrogen
 	// RegisterIconRefFromIconFamily
 	// RegisterIconRefFromResource
 	
-   Nucleus::Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile );
+   nucleus::owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile );
 	
 	// UnregisterIconRef
 	// UpdateIconRef
@@ -487,11 +487,11 @@ namespace Nitrogen
 	// ... Flushing IconRef data
 	// ... Controling custom icons
 	
-	Nucleus::Owned< IconRef > RegisterIconRefFromIconFile( OSType creator,
+	nucleus::owned< IconRef > RegisterIconRefFromIconFile( OSType creator,
 	                                              OSType iconType,
 	                                              const FSSpec& iconFile );
 
-   inline Nucleus::Owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
+   inline nucleus::owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
       return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType( 0 ), iconFile );
      }

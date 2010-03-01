@@ -120,6 +120,7 @@ Offset	Type	Description
 namespace MacBinary
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -577,7 +578,7 @@ namespace MacBinary
 	{
 		std::size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
-		NN::Owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
+		n::owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
 		
 		char* buffer = *tempMem.get().Get();
 		

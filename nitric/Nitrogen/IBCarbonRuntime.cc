@@ -38,41 +38,41 @@ namespace Nitrogen
 	static InterfaceBuilderServicesErrorsRegistration theRegistration;
 	
 	
-   Nucleus::Owned< IBNibRef > CreateNibReference( CFStringRef inNibName )
+   nucleus::owned< IBNibRef > CreateNibReference( CFStringRef inNibName )
      {
       IBNibRef result;
       ThrowOSStatus( ::CreateNibReference( inNibName, &result ) );
-      return Nucleus::Owned<IBNibRef>::Seize( result );
+      return nucleus::owned<IBNibRef>::seize( result );
      }
 
-   Nucleus::Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle,
+   nucleus::owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle,
                                                      CFStringRef inNibName )
      {
       IBNibRef result;
       ThrowOSStatus( ::CreateNibReferenceWithCFBundle( inBundle, inNibName, &result ) );
-      return Nucleus::Owned<IBNibRef>::Seize( result );
+      return nucleus::owned<IBNibRef>::seize( result );
      }
 
-   Nucleus::Owned< WindowRef > CreateWindowFromNib( IBNibRef inNibRef, CFStringRef inName )
+   nucleus::owned< WindowRef > CreateWindowFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
       WindowRef result;
       ThrowOSStatus( ::CreateWindowFromNib( inNibRef, inName, &result ) );
-      return Nucleus::Owned<WindowRef>::Seize( result );
+      return nucleus::owned<WindowRef>::seize( result );
      }
 
-   Nucleus::Owned< MenuRef > CreateMenuFromNib( IBNibRef inNibRef, CFStringRef inName )
+   nucleus::owned< MenuRef > CreateMenuFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
       MenuRef result;
       ThrowOSStatus( ::CreateMenuFromNib( inNibRef, inName, &result ) );
-      return Nucleus::Owned<MenuRef>::Seize( result );
+      return nucleus::owned<MenuRef>::seize( result );
      }
 
 #if 0
-   Nucleus::Owned< Handle > CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName )
+   nucleus::owned< Handle > CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
       Handle result;
       ThrowOSStatus( ::CreateMenuBarFromNib( inNibRef, inName, &result ) );
-      return Nucleus::Owned<Handle>::Seize( result );
+      return nucleus::owned<Handle>::seize( result );
      }
 #endif
 

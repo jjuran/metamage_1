@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_ICONSUITE_HH
 #define GENIE_FILESYSTEM_FSTREE_ICONSUITE_HH
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/Icons.hh"
@@ -23,9 +23,9 @@ namespace Genie
 	//
 	New_FSTree_IconSuite( const FSTreePtr&                                  parent,
 			              const std::string&                                name,
-			              const Nucleus::Shared< Nitrogen::IconSuiteRef >&  iconSuite );
+			              const nucleus::shared< Nitrogen::IconSuiteRef >&  iconSuite );
 	
-	const Nucleus::Shared< Nitrogen::IconSuiteRef >& Fetch_IconSuite();
+	const nucleus::shared< Nitrogen::IconSuiteRef >& Fetch_IconSuite();
 	
 }
 

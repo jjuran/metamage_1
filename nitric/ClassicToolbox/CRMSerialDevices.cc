@@ -12,19 +12,19 @@
 namespace Nitrogen
 {
 	
-	static Nucleus::Owned< StringHandle > NewHandleSys( ConstStr255Param str )
+	static nucleus::owned< StringHandle > NewHandleSys( ConstStr255Param str )
 	{
 		std::size_t size = 1 + str[0];
-		Nucleus::Owned< StringHandle > block = Handle_Cast< unsigned char >( NewHandleSys( size ) );
+		nucleus::owned< StringHandle > block = Handle_Cast< unsigned char >( NewHandleSys( size ) );
 		::BlockMoveData( str, *block.get(), size );
 		return block;
 	}
 	
-	Nucleus::Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	nucleus::owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
 	                                                    ConstStr255Param outputDriverName,
 	                                                    ConstStr255Param portName )
 	{
-		Nucleus::Owned< CRMSerialPtr > result = Nucleus::Owned< CRMSerialPtr >::Seize
+		nucleus::owned< CRMSerialPtr > result = nucleus::owned< CRMSerialPtr >::seize
 		(
 			Ptr_Cast< CRMSerialRecord >( NewPtrSysClear( sizeof (CRMSerialRecord) ).release() )
 		);

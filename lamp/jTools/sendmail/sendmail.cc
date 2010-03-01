@@ -56,6 +56,7 @@ inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace n = nucleus;
 	namespace NN = Nucleus;
@@ -216,7 +217,7 @@ namespace tool
 		
 		SMTP::Client::Session smtpSession( smtp_server );
 		
-		NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
+		n::owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 		
 		smtpSession.Hello      ( p7::gethostname() );
 		smtpSession.MailFrom   ( returnPath  );

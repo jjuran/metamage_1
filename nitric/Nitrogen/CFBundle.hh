@@ -40,9 +40,9 @@ namespace Nitrogen
 
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer_Traits< Nitrogen::CFBundleRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< Nitrogen::CFBundleRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
@@ -57,26 +57,26 @@ namespace Nitrogen
    using ::CFBundleGetAllBundles;  // Is this really a "Get", not a "Copy"?
    
    class CFBundleCreate_Failed {};
-   Nucleus::Owned<CFBundleRef> CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL );
+   nucleus::owned<CFBundleRef> CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL );
    
-   inline Nucleus::Owned<CFBundleRef> CFBundleCreate( CFURLRef bundleURL )
+   inline nucleus::owned<CFBundleRef> CFBundleCreate( CFURLRef bundleURL )
      {
       return Nitrogen::CFBundleCreate( kCFAllocatorDefault, bundleURL );
      }
 
    class CFBundleCreateBundlesFromDirectory_Failed {};
-   Nucleus::Owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
+   nucleus::owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
                                                          CFURLRef       directoryURL,
                                                          CFStringRef    bundleType );
    
-   inline Nucleus::Owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFURLRef    directoryURL,
+   inline nucleus::owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFURLRef    directoryURL,
                                                                 CFStringRef bundleType )
      {
       return Nitrogen::CFBundleCreateBundlesFromDirectory( kCFAllocatorDefault, directoryURL, bundleType );
      }
 
    class CFBundleCopyBundleURL_Failed {};
-   Nucleus::Owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle );
+   nucleus::owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle );
 
    class CFBundleGetValueForInfoDictionaryKey_Failed {};
    CFTypeRef CFBundleGetValueForInfoDictionaryKey( CFBundleRef bundle,
@@ -91,7 +91,7 @@ namespace Nitrogen
    /* ... */
    
    class CFBundleCopyResourceURL_Failed {};
-   Nucleus::Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
+   nucleus::owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
                                             CFStringRef resourceName,
                                             CFStringRef resourceType,
                                             CFStringRef subDirName );

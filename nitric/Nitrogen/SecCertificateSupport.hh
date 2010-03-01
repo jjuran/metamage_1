@@ -34,11 +34,11 @@
 namespace Nitrogen {
 	void RegisterSecCertificateErrors ();
 	
-	inline Nucleus::Owned<SecIdentityRef> SecChooseIdentity ( CFStringRef displayInfo, CFArrayRef identities ) {
+	inline nucleus::owned<SecIdentityRef> SecChooseIdentity ( CFStringRef displayInfo, CFArrayRef identities ) {
 		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecIdentityRef	result;
 		ThrowOSStatus ( ::SecChooseIdentity ( displayInfo, identities, &result ));
-  	    return Nucleus::Owned<SecIdentityRef>::Seize( result );
+  	    return nucleus::owned<SecIdentityRef>::seize( result );
 		}
 
 	inline void SecChooseIdentityAsSheet ( WindowRef parentWindow, EventTargetRef inTarget, CFStringRef displayInfo, CFArrayRef identities ) {

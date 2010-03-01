@@ -39,16 +39,16 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )
+	nucleus::owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )
 	{
 		ThrowOSStatus( ::InstallTimeTask( reinterpret_cast< QElemPtr >( &tmTask ) ) );
-		return Nucleus::Owned< TMTaskPtr >::Seize( &tmTask );
+		return nucleus::owned< TMTaskPtr >::seize( &tmTask );
 	}
 	
-	Nucleus::Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask )
+	nucleus::owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask )
 	{
 		ThrowOSStatus( ::InstallXTimeTask( reinterpret_cast< QElemPtr >( &tmTask ) ) );
-		return Nucleus::Owned< TMTaskPtr >::Seize( &tmTask );
+		return nucleus::owned< TMTaskPtr >::seize( &tmTask );
 	}
 	
 	void PrimeTimeTask( TMTask& tmTask, long count )
@@ -56,7 +56,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::PrimeTimeTask( reinterpret_cast< QElemPtr >( &tmTask ), count ) );
 	}
 	
-	void RemoveTimeTask( Nucleus::Owned< TMTaskPtr > tmTaskPtr )
+	void RemoveTimeTask( nucleus::owned< TMTaskPtr > tmTaskPtr )
 	{
 		ThrowOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr.release() ) ) );
 	}

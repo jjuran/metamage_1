@@ -49,47 +49,47 @@ namespace Nitrogen
       ThrowOSStatus( ::MemError() );
      }
    
-	Nucleus::Owned< Handle > NewHandle( std::size_t size )
+	nucleus::owned< Handle > NewHandle( std::size_t size )
 	{
-		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandle( size ) ) );
+		return nucleus::owned< Handle >::seize( CheckMemory( ::NewHandle( size ) ) );
 	}
 	
-	Nucleus::Owned< Handle > NewHandleSys( std::size_t size )
+	nucleus::owned< Handle > NewHandleSys( std::size_t size )
 	{
-		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleSys( size ) ) );
+		return nucleus::owned< Handle >::seize( CheckMemory( ::NewHandleSys( size ) ) );
 	}
 	
-	Nucleus::Owned< Handle > NewHandleClear( std::size_t size )
+	nucleus::owned< Handle > NewHandleClear( std::size_t size )
 	{
-		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleClear( size ) ) );
+		return nucleus::owned< Handle >::seize( CheckMemory( ::NewHandleClear( size ) ) );
 	}
 	
-	Nucleus::Owned< Handle > NewHandleSysClear( std::size_t size )
+	nucleus::owned< Handle > NewHandleSysClear( std::size_t size )
 	{
-		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleSysClear( size ) ) );
+		return nucleus::owned< Handle >::seize( CheckMemory( ::NewHandleSysClear( size ) ) );
 	}
 	
-	Nucleus::Owned< Ptr > NewPtr( std::size_t size )
+	nucleus::owned< Ptr > NewPtr( std::size_t size )
 	{
-		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtr( size ) ) );
+		return nucleus::owned< Ptr >::seize( CheckMemory( ::NewPtr( size ) ) );
 	}
 	
-	Nucleus::Owned< Ptr > NewPtrSys( std::size_t size )
+	nucleus::owned< Ptr > NewPtrSys( std::size_t size )
 	{
-		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrSys( size ) ) );
+		return nucleus::owned< Ptr >::seize( CheckMemory( ::NewPtrSys( size ) ) );
 	}
 	
-	Nucleus::Owned< Ptr > NewPtrClear( std::size_t size )
+	nucleus::owned< Ptr > NewPtrClear( std::size_t size )
 	{
-		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrClear( size ) ) );
+		return nucleus::owned< Ptr >::seize( CheckMemory( ::NewPtrClear( size ) ) );
 	}
 	
-	Nucleus::Owned< Ptr > NewPtrSysClear( std::size_t size )
+	nucleus::owned< Ptr > NewPtrSysClear( std::size_t size )
 	{
-		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrSysClear( size ) ) );
+		return nucleus::owned< Ptr >::seize( CheckMemory( ::NewPtrSysClear( size ) ) );
 	}
 	
-	Nucleus::Owned< Handle > TempNewHandle( std::size_t size )
+	nucleus::owned< Handle > TempNewHandle( std::size_t size )
 	{
 		OSErr err = noErr;
 		
@@ -97,7 +97,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		Nucleus::Owned< Handle > result = Nucleus::Owned< Handle >::Seize( h );
+		nucleus::owned< Handle > result = nucleus::owned< Handle >::seize( h );
 		
 		return result;
 	}

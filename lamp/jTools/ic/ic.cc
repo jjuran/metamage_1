@@ -9,9 +9,11 @@
 // plus
 #include "plus/make_string.hh"
 
+// nucleus
+#include "nucleus/shared.hh"
+
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
-#include "Nucleus/Shared.h"
 
 // Nitrogen
 #include "Nitrogen/MacTypes.hh"
@@ -65,14 +67,14 @@ namespace Nitrogen
 	
 	class ICMapEntry_Container: public Nucleus::AdvanceUntilDoneSequence< ::Nitrogen::ICMapEntry_ContainerSpecifics >
 	{
-		friend ICMapEntry_Container ICMapEntries( Nucleus::Shared< ICMapEntryHandle > entries );
+		friend ICMapEntry_Container ICMapEntries( nucleus::shared< ICMapEntryHandle > entries );
 		
 		private:
-			Nucleus::Shared< ICMapEntryHandle > itsEntries;
+			nucleus::shared< ICMapEntryHandle > itsEntries;
 			
 			typedef ::Nitrogen::ICMapEntry_ContainerSpecifics Specifics;
 			
-			ICMapEntry_Container( const Nucleus::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilDoneSequence< Specifics >( Specifics( entries ) ),
+			ICMapEntry_Container( const nucleus::shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilDoneSequence< Specifics >( Specifics( entries ) ),
 			                                                                             itsEntries( entries )
 			{
 				if ( !TARGET_API_MAC_OSX )
@@ -82,7 +84,7 @@ namespace Nitrogen
 			}
 	};
 	
-	inline ICMapEntry_Container ICMapEntries( Nucleus::Shared< ICMapEntryHandle > entries )
+	inline ICMapEntry_Container ICMapEntries( nucleus::shared< ICMapEntryHandle > entries )
 	{
 		return ICMapEntry_Container( entries );
 	}
@@ -92,6 +94,7 @@ namespace Nitrogen
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -153,7 +156,7 @@ namespace tool
 	{
 		N::OSType signature = N::OSType( 'Poof' );
 		
-		NN::Owned< N::ICInstance > ic = N::ICStart( signature );
+		n::owned< N::ICInstance > ic = N::ICStart( signature );
 		
 	#if !TARGET_API_MAC_CARBON
 		

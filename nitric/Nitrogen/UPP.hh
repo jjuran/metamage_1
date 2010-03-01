@@ -19,8 +19,8 @@
 #include <ConditionalMacros.h>
 #endif
 
-// Nucleus
-#include "Nucleus/Owned.h"
+// nucleus
+#include "nucleus/owned.hh"
 
 
 namespace Nitrogen
@@ -339,9 +339,9 @@ namespace Nitrogen
 	};
 	
 	template < class NitrogenUPP >
-	inline Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
+	inline nucleus::owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
 	{
-		return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
+		return nucleus::owned<NitrogenUPP>::seize( NitrogenUPP::Details::Create( function ) );
 	}
 	
 	template < class UPP_Details >
@@ -359,8 +359,8 @@ namespace Nitrogen
 		template < ProcPtr procPtr >
 		static UPP Static()
 		{
-			static const Nucleus::Owned< UPP > upp = procPtr != NULL ? NewUPP< UPP >( procPtr )
-			                                                         : Nucleus::Owned< UPP >();
+			static const nucleus::owned< UPP > upp = procPtr != NULL ? NewUPP< UPP >( procPtr )
+			                                                         : nucleus::owned< UPP >();
 			return upp;
 		}
 	};
@@ -399,11 +399,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template < class UPP_Details >
-	struct Disposer< Nitrogen::UPP< UPP_Details > >
+	struct disposer< Nitrogen::UPP< UPP_Details > >
 	         : public std::unary_function< Nitrogen::UPP< UPP_Details >, void >
 	{      
 		void operator()( Nitrogen::UPP< UPP_Details > upp ) const
@@ -413,7 +413,7 @@ namespace Nucleus
 	};
 	
 	template < class UPP_Details >
-	struct Disposer< Nitrogen::GlueUPP< UPP_Details > >
+	struct disposer< Nitrogen::GlueUPP< UPP_Details > >
 	         : public std::unary_function< Nitrogen::GlueUPP< UPP_Details >, void >
 	{      
 		void operator()( Nitrogen::GlueUPP< UPP_Details > upp ) const

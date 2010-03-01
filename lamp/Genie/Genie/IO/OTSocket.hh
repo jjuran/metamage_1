@@ -30,7 +30,7 @@ namespace Genie
 	{
 		private:
 			OpenTransportShare                       itsOpenTransport;
-			Nucleus::Owned< Nitrogen::EndpointRef >  itsEndpoint;
+			nucleus::owned< Nitrogen::EndpointRef >  itsEndpoint;
 			int                                      itsBacklog;
 			SocketAddress                            itsSocketAddress;
 			SocketAddress                            itsPeerAddress;

@@ -39,9 +39,9 @@ namespace Nitrogen {
     using ::KCSearchRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::KCRef >: public std::unary_function< Nitrogen::KCRef, void >
+   template <> struct disposer< Nitrogen::KCRef >: public std::unary_function< Nitrogen::KCRef, void >
      {
       void operator()( Nitrogen::KCRef kc ) const
         {
@@ -49,7 +49,7 @@ namespace Nucleus
         }
      };
 
-   template <> struct Disposer< Nitrogen::KCItemRef >: public std::unary_function< Nitrogen::KCItemRef, void >
+   template <> struct disposer< Nitrogen::KCItemRef >: public std::unary_function< Nitrogen::KCItemRef, void >
      {
       void operator()( Nitrogen::KCItemRef kci ) const
         {
@@ -57,7 +57,7 @@ namespace Nucleus
         }
      };
 
-   template <> struct Disposer< Nitrogen::KCSearchRef >: public std::unary_function< Nitrogen::KCSearchRef, void >
+   template <> struct disposer< Nitrogen::KCSearchRef >: public std::unary_function< Nitrogen::KCSearchRef, void >
      {
       void operator()( Nitrogen::KCSearchRef kcs ) const
         {
@@ -76,33 +76,33 @@ namespace Nitrogen
 //	Boolean KCIsInteractionAllowed ( void );
 	using ::KCIsInteractionAllowed;
 	
-	inline Nucleus::Owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
+	inline nucleus::owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
-  	    return Nucleus::Owned<KCRef>::Seize( result );
+  	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
-	inline Nucleus::Owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
+	inline nucleus::owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCMakeKCRefFromAlias ( keychainAlias, &result ));
-  	    return Nucleus::Owned<KCRef>::Seize( result );
+  	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
-	inline Nucleus::Owned<AliasHandle> KCMakeAliasFromKCRef ( KCRef keychain ) {
+	inline nucleus::owned<AliasHandle> KCMakeAliasFromKCRef ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
 		AliasHandle	result;
 		ThrowOSStatus ( ::KCMakeAliasFromKCRef ( keychain, &result ));
-  	    return Nucleus::Owned<AliasHandle>::Seize( result );
+  	    return nucleus::owned<AliasHandle>::seize( result );
 		}
 
 //	extern OSStatus KCReleaseKeychain(KCRef * keychain);
-	inline Nucleus::Owned<KCRef> KCGetDefaultKeychain () {
+	inline nucleus::owned<KCRef> KCGetDefaultKeychain () {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetDefaultKeychain ( &result ));
-  	    return Nucleus::Owned<KCRef>::Seize( result );
+  	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
 	inline void KCSetDefaultKeychain ( KCRef keychain ) {
@@ -117,11 +117,11 @@ namespace Nitrogen
   	    return result;
 		}
 	
-	inline Nucleus::Owned<KCRef> KCGetKeychain ( KCItemRef item ) {
+	inline nucleus::owned<KCRef> KCGetKeychain ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetKeychain ( item, &result ));
-  	    return Nucleus::Owned<KCRef>::Seize( result );
+  	    return nucleus::owned<KCRef>::seize( result );
 		}
 
 
@@ -143,11 +143,11 @@ KCGetKeychainName(
 //	extern UInt16 KCCountKeychains(void)
 	using ::KCCountKeychains;
 
-	inline Nucleus::Owned<KCRef> KCGetIndKeychain ( UInt16 idx ) {
+	inline nucleus::owned<KCRef> KCGetIndKeychain ( UInt16 idx ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetIndKeychain ( idx, &result ));
-  	    return Nucleus::Owned<KCRef>::Seize( result );
+  	    return nucleus::owned<KCRef>::seize( result );
 		}
 
 
@@ -309,12 +309,12 @@ extern OSStatus
 KCRemoveCallback(KCCallbackUPP callbackProc)                  AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
 #endif
 
-	inline Nucleus::Owned<KCItemRef> KCNewItem ( KCItemClass itemClass, OSType itemCreator,
+	inline nucleus::owned<KCItemRef> KCNewItem ( KCItemClass itemClass, OSType itemCreator,
 								UInt32 length, const void *data ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCNewItem ( itemClass, itemCreator, length, data, &result ));
-  	    return Nucleus::Owned<KCItemRef>::Seize( result );
+  	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
 	inline void KCSetAttribute ( KCItemRef item, SecKeychainAttrType tag, UInt32 length, const void *data ) {
@@ -365,11 +365,11 @@ KCGetAttribute(
 
 //	extern OSStatus KCReleaseItem(KCItemRef * item);
 
-	inline Nucleus::Owned<KCItemRef> KCCopyItem ( KCItemRef item, KCRef destKeychain ) {
+	inline nucleus::owned<KCItemRef> KCCopyItem ( KCItemRef item, KCRef destKeychain ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCCopyItem ( item, destKeychain, &result ));
-  	    return Nucleus::Owned<KCItemRef>::Seize( result );
+  	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
 
@@ -393,16 +393,16 @@ KCFindFirstItem(
 Marshall sez: this is icky because it returns two things that need to be owned.
 #endif
 
-	inline Nucleus::Owned<KCItemRef> KCFindNextItem ( KCSearchRef search ) {
+	inline nucleus::owned<KCItemRef> KCFindNextItem ( KCSearchRef search ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCFindNextItem ( search, &result ));
-  	    return Nucleus::Owned<KCItemRef>::Seize( result );
+  	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
 //	extern OSStatus KCReleaseSearch(KCSearchRef * search);
 
-//	!!! Should this be an Nucleus::Owned<KCItemRef> ???
+//	!!! Should this be an nucleus::owned<KCItemRef> ???
 	inline void KCDeleteItem ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
 		ThrowOSStatus ( ::KCDeleteItem ( item ));

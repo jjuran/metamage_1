@@ -60,11 +60,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::VBLTaskPtr > : public  std::unary_function< Nitrogen::VBLTaskPtr, void >,
+	struct disposer< Nitrogen::VBLTaskPtr > : public  std::unary_function< Nitrogen::VBLTaskPtr, void >,
 	                                          private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::VBLTaskPtr vblTaskPtr ) const
@@ -74,7 +74,7 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Disposer< Nitrogen::SlotVBLTask > : public  std::unary_function< Nitrogen::SlotVBLTask, void >,
+	struct disposer< Nitrogen::SlotVBLTask > : public  std::unary_function< Nitrogen::SlotVBLTask, void >,
 	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::SlotVBLTask slotVBLTask ) const
@@ -114,12 +114,12 @@ namespace Nitrogen
 	
 	typedef UPP< VBLUPP_Details > VBLUPP;
 	
-	inline Nucleus::Owned< VBLUPP > NewVBLUPP( ::VBLProcPtr p )
+	inline nucleus::owned< VBLUPP > NewVBLUPP( ::VBLProcPtr p )
 	{
 		return NewUPP< VBLUPP >( p );
 	}
 	
-	inline void DisposeVBLUPP( Nucleus::Owned< VBLUPP > )  {}
+	inline void DisposeVBLUPP( nucleus::owned< VBLUPP > )  {}
 	
 #if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	
@@ -131,15 +131,15 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot );
+	nucleus::owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot );
 	
-	void SlotVRemove( Nucleus::Owned< SlotVBLTask > vblTask );
+	void SlotVRemove( nucleus::owned< SlotVBLTask > vblTask );
 	
 	// ...
 	
-	Nucleus::Owned< VBLTaskPtr > VInstall( VBLTask& vblTask );
+	nucleus::owned< VBLTaskPtr > VInstall( VBLTask& vblTask );
 	
-	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask );
+	void VRemove( nucleus::owned< VBLTaskPtr > vblTask );
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 	

@@ -15,6 +15,7 @@
 namespace Artifact
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -85,13 +86,13 @@ namespace Artifact
 	class IncomingMessageDelivery
 	{
 		private:
-			NN::Owned< FileAccess > myFileAccess;
+			n::owned< FileAccess > myFileAccess;
 			CommitFunc myCommit;
 			RollbackFunc myRollback;
 			bool myIsComplete, myRolledBack;
 		
 		public:
-			IncomingMessageDelivery( NN::Owned< FileAccess > fileAccess,
+			IncomingMessageDelivery( n::owned< FileAccess > fileAccess,
 			                         const CommitFunc& commit,
 			                         const RollbackFunc& rollback )
 			:
@@ -113,7 +114,7 @@ namespace Artifact
 				N::FSWrite( myFileAccess, entireLine.size(), entireLine.c_str() );
 			}
 			
-			void CloseFile()  { myFileAccess = NN::Owned< FileAccess >(); }
+			void CloseFile()  { myFileAccess = n::owned< FileAccess >(); }
 			
 			void Commit()
 			{

@@ -127,9 +127,9 @@ namespace Nitrogen
 
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
+   template <> struct disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::DragRef i ) const
@@ -143,9 +143,9 @@ namespace Nucleus
 namespace Nitrogen
   {
    
-   Nucleus::Owned<DragRef> NewDrag();
+   nucleus::owned<DragRef> NewDrag();
    
-   void DisposeDrag( Nucleus::Owned<DragRef> );
+   void DisposeDrag( nucleus::owned<DragRef> );
 
    void AddDragItemFlavor( DragRef     theDrag,
                            DragItemRef theItemRef,

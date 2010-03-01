@@ -67,16 +67,16 @@ namespace Nitrogen {
 		return retVal;
 		}
 	
-	inline Nucleus::Owned<CFStringRef> LSCopyDisplayNameForRef ( const FSRef &inRef ) {
+	inline nucleus::owned<CFStringRef> LSCopyDisplayNameForRef ( const FSRef &inRef ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyDisplayNameForRef ( &inRef, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 	
-	inline Nucleus::Owned<CFStringRef> LSCopyDisplayNameForURL ( CFURLRef inURL ) {
+	inline nucleus::owned<CFStringRef> LSCopyDisplayNameForURL ( CFURLRef inURL ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyDisplayNameForURL ( inURL, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
 	inline void LSSetExtensionHiddenForRef ( const FSRef &inRef, Boolean inHide ) {
@@ -87,41 +87,41 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::LSSetExtensionHiddenForURL ( inURL, inHide ));
 		}
 	
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForRef ( const FSRef &inRef ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForRef ( const FSRef &inRef ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForRef ( &inRef, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 	
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForURL ( CFURLRef inURL ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForURL ( CFURLRef inURL ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForURL ( inURL, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator, CFStringRef inExtension ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator, CFStringRef inExtension ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForTypeInfo ( inType, inCreator, inExtension, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 	
 //	Helpful special cases
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForTypeInfo ( inType, inCreator, NULL, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForTypeInfo ( CFStringRef inExtension ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( CFStringRef inExtension ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForTypeInfo ( kLSUnknownType, kLSUnknownCreator, inExtension, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
-	inline Nucleus::Owned<CFStringRef> LSCopyKindStringForMIMEType ( CFStringRef inMIMEType ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForMIMEType ( CFStringRef inMIMEType ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForMIMEType ( inMIMEType, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
 
@@ -129,7 +129,7 @@ namespace Nitrogen {
 	T LSGetApplicationForItem ( const FSRef &inItemRef, LSRolesMask inRoleMask );
 	
 //	template <> FSRef			LSGetApplicationForItem < FSRef > 			( const FSRef &inItemRef, LSRolesMask inRoleMask );
-//	template <> Nucleus::Owned<CFURLRef> LSGetApplicationForItem < Nucleus::Owned<CFURLRef> > ( const FSRef &inItemRef, LSRolesMask inRoleMask );
+//	template <> nucleus::owned<CFURLRef> LSGetApplicationForItem < nucleus::owned<CFURLRef> > ( const FSRef &inItemRef, LSRolesMask inRoleMask );
 
 	template <> inline FSRef LSGetApplicationForItem < FSRef > ( const FSRef &inItemRef, LSRolesMask inRoleMask ) {
 		FSRef retVal;
@@ -137,10 +137,10 @@ namespace Nitrogen {
 		return retVal;		
 		}
 	
-	template <> inline Nucleus::Owned<CFURLRef> LSGetApplicationForItem ( const FSRef &inItemRef, LSRolesMask inRoleMask ) {
+	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForItem ( const FSRef &inItemRef, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForItem ( &inItemRef, inRoleMask, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 
 
@@ -148,7 +148,7 @@ namespace Nitrogen {
 	T LSGetApplicationForInfo ( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
 	
 //	FSRef			LSGetApplicationForInfo < FSRef > 			( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
-//	Nucleus::Owned<CFURLRef> LSGetApplicationForInfo < Nucleus::Owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
+//	nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
 
 	template <> inline FSRef LSGetApplicationForInfo < FSRef > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask ) {
 		FSRef retVal;
@@ -156,10 +156,10 @@ namespace Nitrogen {
 		return retVal;
 		}
 
-	template <> inline Nucleus::Owned<CFURLRef> LSGetApplicationForInfo < Nucleus::Owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask ) {
+	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForInfo ( inType, inCreator, NULL, inRoleMask, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 
 
@@ -167,7 +167,7 @@ namespace Nitrogen {
 	T LSGetApplicationForInfo ( CFStringRef inExtension, LSRolesMask inRoleMask );
 	
 //	FSRef			LSGetApplicationForInfo < FSRef > 			( CFStringRef inExtension, LSRolesMask inRoleMask );
-//	Nucleus::Owned<CFURLRef> LSGetApplicationForInfo < Nucleus::Owned<CFURLRef> > ( CFStringRef inExtension, LSRolesMask inRoleMask );
+//	nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( CFStringRef inExtension, LSRolesMask inRoleMask );
 
 	template <> inline FSRef LSGetApplicationForInfo < FSRef > ( CFStringRef inExtension, LSRolesMask inRoleMask ) {
 		FSRef retVal;
@@ -175,16 +175,16 @@ namespace Nitrogen {
 		return retVal;
 		}
 
-	template <> inline Nucleus::Owned<CFURLRef> LSGetApplicationForInfo < Nucleus::Owned<CFURLRef> > ( CFStringRef inExtension, LSRolesMask inRoleMask ) {
+	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( CFStringRef inExtension, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForInfo ( kLSUnknownType, kLSUnknownCreator, inExtension, inRoleMask, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 
-	inline Nucleus::Owned<CFURLRef> LSCopyApplicationForMIMEType ( CFStringRef inMIMEType, LSRolesMask inRoleMask ) {
+	inline nucleus::owned<CFURLRef> LSCopyApplicationForMIMEType ( CFStringRef inMIMEType, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSCopyApplicationForMIMEType ( inMIMEType, inRoleMask, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 
 
@@ -192,7 +192,7 @@ namespace Nitrogen {
 	T LSGetApplicationForURL ( CFURLRef inURL, LSRolesMask inRoleMask );
 	
 //	FSRef			LSGetApplicationForURL < FSRef > 		   ( CFURLRef inURL, LSRolesMask inRoleMask );
-//	Nucleus::Owned<CFURLRef> LSGetApplicationForURL < Nucleus::Owned<CFURLRef> > ( CFURLRef inURL, LSRolesMask inRoleMask );
+//	nucleus::owned<CFURLRef> LSGetApplicationForURL < nucleus::owned<CFURLRef> > ( CFURLRef inURL, LSRolesMask inRoleMask );
 
 	template <> inline FSRef LSGetApplicationForURL < FSRef > ( CFURLRef inURL, LSRolesMask inRoleMask ) {
 		FSRef retVal;
@@ -200,10 +200,10 @@ namespace Nitrogen {
 		return retVal;		
 		}
 	
-	template <> inline Nucleus::Owned<CFURLRef> LSGetApplicationForURL < Nucleus::Owned<CFURLRef> > ( CFURLRef inURL, LSRolesMask inRoleMask ) {
+	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForURL < nucleus::owned<CFURLRef> > ( CFURLRef inURL, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForURL ( inURL, inRoleMask, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 	
 
@@ -216,10 +216,10 @@ namespace Nitrogen {
 		return retVal;		
 		}
 	
-	inline Nucleus::Owned<CFURLRef> LSGetApplicationForURL ( CFURLRef inURL, LSRolesMask inRoleMask ) {
+	inline nucleus::owned<CFURLRef> LSGetApplicationForURL ( CFURLRef inURL, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForURL ( inURL, inRoleMask, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 #endif
 
@@ -228,7 +228,7 @@ namespace Nitrogen {
 	T LSFindApplicationForInfo ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
 	
 //	FSRef			LSFindApplicationForInfo < FSRef > 			 ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
-//	Nucleus::Owned<CFURLRef> LSFindApplicationForInfo < Nucleus::Owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
+//	nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
 
 	template <> inline FSRef LSFindApplicationForInfo < FSRef > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName ) {
 		FSRef retVal;
@@ -236,10 +236,10 @@ namespace Nitrogen {
 		return retVal;		
 		}
 	
-	template <> inline Nucleus::Owned<CFURLRef> LSFindApplicationForInfo < Nucleus::Owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName ) {
+	template <> inline nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSFindApplicationForInfo ( inCreator, inBundleID, inName, NULL, &result ));
-		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		return nucleus::owned<CFURLRef>::seize ( result );
 		}
 
 
@@ -263,8 +263,8 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::LSRegisterURL ( inURL, inUpdate ));
 		}
 
-	inline Nucleus::Owned<CFArrayRef> LSCopyApplicationURLsForURL ( CFURLRef inURL, LSRolesMask inRoleMask ) {
-		return Nucleus::Owned<CFArrayRef>::Seize ( ::LSCopyApplicationURLsForURL ( inURL, inRoleMask ));
+	inline nucleus::owned<CFArrayRef> LSCopyApplicationURLsForURL ( CFURLRef inURL, LSRolesMask inRoleMask ) {
+		return nucleus::owned<CFArrayRef>::seize ( ::LSCopyApplicationURLsForURL ( inURL, inRoleMask ));
 		}
 	}	
 

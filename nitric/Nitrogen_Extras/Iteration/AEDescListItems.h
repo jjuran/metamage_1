@@ -28,7 +28,7 @@ namespace Nitrogen
 			std::size_t index;
 			
 		public:
-			typedef Nucleus::Owned< AEDesc_Data >  Value;
+			typedef nucleus::owned< AEDesc_Data >  Value;
 			typedef Value                          GetResult;
 			
 			Const_AEDescList_Item_Details( const AEDescList& list, std::size_t index ) 
@@ -44,15 +44,15 @@ namespace Nitrogen
 	class AEDescList_Item_Details
 	{
 		private:
-			Nucleus::Owned< AEDescList_Data >&  list;
+			nucleus::owned< AEDescList_Data >&  list;
 			std::size_t                         index;
 			
 		public:
-			typedef Nucleus::Owned< AEDesc_Data >  Value;
+			typedef nucleus::owned< AEDesc_Data >  Value;
 			typedef Value                          GetResult;
 			typedef const AEDesc_Data&             SetParameter;
 			
-			AEDescList_Item_Details( Nucleus::Owned< AEDescList_Data >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_Item_Details( nucleus::owned< AEDescList_Data >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 			void Set( SetParameter param ) const  { AEPutDesc( list, index, param ); }
@@ -64,7 +64,7 @@ namespace Nitrogen
 	{
 		typedef UInt32                         size_type;
 		typedef SInt32                         difference_type;
-		typedef Nucleus::Owned< AEDesc_Data >  value_type;
+		typedef nucleus::owned< AEDesc_Data >  value_type;
 		
 		static std::size_t Size( const AEDescList& list )
 		{
@@ -92,7 +92,7 @@ namespace Nitrogen
 		public:
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
-			typedef Nucleus::Owned< AEDesc_Data > value_type;
+			typedef nucleus::owned< AEDesc_Data > value_type;
 		
 		private:
 			typedef AEDescList_Item_ValueIterator This;
@@ -136,7 +136,7 @@ namespace Nitrogen
 		private:
 			typedef AEDescList_Item_BackInsertionIterator< AEDesc_Type > This;
 			typedef This Proxy;
-			typedef Nucleus::Owned< AEDesc_Type > List;
+			typedef nucleus::owned< AEDesc_Type > List;
 			
 			List& list;
 		
@@ -149,7 +149,7 @@ namespace Nitrogen
 			Proxy& operator=(           const AEDesc_Type&  param )  { AEPutDesc( list, 0, param );  return *this; }
 			
 			// For AEDesc_Token, where param must be Owned
-			Proxy& operator=( Nucleus::Owned< AEDesc_Type > param )  { AEPutDesc( list, 0, param );  return *this; }
+			Proxy& operator=( nucleus::owned< AEDesc_Type > param )  { AEPutDesc( list, 0, param );  return *this; }
 			
 			This& operator++()     { return *this; }
 			This& operator++(int)  { return *this; }
@@ -157,7 +157,7 @@ namespace Nitrogen
 	
 	template < class AEDesc_Type >
 	inline AEDescList_Item_BackInsertionIterator< AEDesc_Type >
-	AEDescList_Item_BackInserter( Nucleus::Owned< AEDesc_Type >& list )
+	AEDescList_Item_BackInserter( nucleus::owned< AEDesc_Type >& list )
 	{
 		return AEDescList_Item_BackInsertionIterator< AEDesc_Type >( list );
 	}

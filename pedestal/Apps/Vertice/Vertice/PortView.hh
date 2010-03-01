@@ -44,7 +44,7 @@ namespace Vertice
 			Frame                                  itsFrame;
 			Vectoria::XMatrix                      itsScreen2Port;
 			std::size_t                            itsSelectedContext;
-			Nucleus::Owned< Nitrogen::GWorldPtr >  itsGWorld;
+			nucleus::owned< Nitrogen::GWorldPtr >  itsGWorld;
 			AnaglyphMode                           itsAnaglyphMode;
 		
 		public:

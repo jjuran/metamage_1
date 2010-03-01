@@ -144,24 +144,24 @@ namespace io
 	
 	// Open
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_io( const FSRef& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_io( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_truncated( const FSRef& file, overload = overload() )
+	inline nucleus::owned< Nitrogen::FSForkRefNum > open_truncated( const FSRef& file, overload = overload() )
 	{
-		Nucleus::Owned< Nitrogen::FSForkRefNum > result = Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
+		nucleus::owned< Nitrogen::FSForkRefNum > result = Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
 		
 		Nitrogen::FSSetForkSize( result, Nitrogen::fsFromStart, 0 );
 		

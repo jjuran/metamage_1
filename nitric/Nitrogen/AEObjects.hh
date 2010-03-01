@@ -153,12 +153,12 @@ namespace Nitrogen
 	
 	typedef UPP< OSLAccessorUPP_Details > OSLAccessorUPP;
 	
-	inline Nucleus::Owned< OSLAccessorUPP > NewOSLAccessorUPP( ::OSLAccessorProcPtr p )
+	inline nucleus::owned< OSLAccessorUPP > NewOSLAccessorUPP( ::OSLAccessorProcPtr p )
 	{
 		return NewUPP< OSLAccessorUPP >( p );
 	}
 	
-	inline void DisposeOSLAccessorUPP( Nucleus::Owned< OSLAccessorUPP > )  {}
+	inline void DisposeOSLAccessorUPP( nucleus::owned< OSLAccessorUPP > )  {}
 	
 	inline void InvokeOSLAccessorUPP( AEObjectClass        desiredClass,
 	                                  const AEDesc_Token&  containerToken,
@@ -178,7 +178,7 @@ namespace Nitrogen
 		                        accessorRefcon ) );
 	}
 	
-	typedef Nucleus::Owned< AEDesc_Token > ( *OSLAccessorProcPtr )( AEObjectClass        desiredClass,
+	typedef nucleus::owned< AEDesc_Token > ( *OSLAccessorProcPtr )( AEObjectClass        desiredClass,
 	                                                                const AEDesc_Token&  containerToken,
 	                                                                AEObjectClass        containerClass,
 	                                                                AEEnumerated         keyForm,
@@ -226,12 +226,12 @@ namespace Nitrogen
 	
 	typedef UPP< OSLCompareUPP_Details > OSLCompareUPP;
 	
-	inline Nucleus::Owned< OSLCompareUPP > NewOSLCompareUPP( ::OSLCompareProcPtr p )
+	inline nucleus::owned< OSLCompareUPP > NewOSLCompareUPP( ::OSLCompareProcPtr p )
 	{
 		return NewUPP< OSLCompareUPP >( p );
 	}
 	
-	inline void DisposeOSLCompareUPP( Nucleus::Owned< OSLCompareUPP > )  {}
+	inline void DisposeOSLCompareUPP( nucleus::owned< OSLCompareUPP > )  {}
 	
 	inline void InvokeOSLCompareUPP( AECompOperator       oper,
 	                                 const AEDesc_Token&  obj1,
@@ -285,11 +285,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >,
+	struct disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >,
 	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( const Nitrogen::OSLAccessor& installation ) const
@@ -303,6 +303,7 @@ namespace Nucleus
 			);
 		}
 	};
+	
 }
 
 namespace Nitrogen
@@ -330,12 +331,12 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier,
+	nucleus::owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier,
 	                                          AEResolveCallbackFlags         callbackFlags = AEResolveCallbackFlags() );
 	
-	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
+	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
-	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
 	                                                              DescType         containerType,
 	                                                              OSLAccessorUPP   accessor,
 	                                                              RefCon           accessorRefCon = RefCon(),
@@ -349,7 +350,7 @@ namespace Nitrogen
 	}
 	
 	template < typename OSLAccessorUPP::ProcPtr accessor >
-	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
+	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
 	                                                              DescType       containerType,
 	                                                              RefCon         accessorRefCon = RefCon(),
 	                                                              bool           isSysHandler   = false )
@@ -362,7 +363,7 @@ namespace Nitrogen
 	}
 	
 	template < OSLAccessorProcPtr accessor >
-	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
 	                                                              DescType         containerType,
 	                                                              RefCon           accessorRefCon = RefCon(),
 	                                                              bool             isSysHandler   = false )
@@ -376,14 +377,14 @@ namespace Nitrogen
 		);
 	}
 	
-	inline void AERemoveObjectAccessor( Nucleus::Owned< OSLAccessor > )  {}
+	inline void AERemoveObjectAccessor( nucleus::owned< OSLAccessor > )  {}
 	
 	typedef OSLAccessor AEGetObjectAccessor_Result;
 	OSLAccessor AEGetObjectAccessor( AEObjectClass    desiredClass,
 	                                 DescType         containerType,
 	                                 bool             isSysHandler );
 	
-	Nucleus::Owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
 	                                                     AEEnumerated         keyForm,
@@ -392,7 +393,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Token routines ¥
 	
-	inline void AEDisposeToken( Nucleus::Owned< AEDesc_Token > )
+	inline void AEDisposeToken( nucleus::owned< AEDesc_Token > )
 	{
 	}
 	
