@@ -699,14 +699,14 @@ namespace Nitrogen
 	// dest is the directory to move source *into*, not the actual new location of source.
 	void FSpCatMove( const FSSpec& source, const FSSpec& dest );
 	
-	inline void FSpCatMove( const FSSpec& source, FSDirSpec dest )
+	inline void FSpCatMove( const FSSpec& source, const FSDirSpec& dest )
 	{
 		FSpCatMove( source, FSMakeFSSpec( dest ) );
 	}
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirID dest )
 	{
-		FSpCatMove( source, Nucleus::Make< FSDirSpec >( FSVolumeRefNum( source.vRefNum ), dest ) );
+		FSpCatMove( source, FSMakeFSSpec( FSVolumeRefNum( source.vRefNum ), dest ) );
 	}
 	
 	void FSpExchangeFiles( const FSSpec& a, const FSSpec& b );
