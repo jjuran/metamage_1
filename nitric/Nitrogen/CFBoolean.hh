@@ -18,8 +18,8 @@
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
-#ifndef NUCLEUS_CONVERT_HH
-#include "Nucleus/Convert.hh"
+#ifndef NUCLEUS_CONVERT_H
+#include "Nucleus/Convert.h"
 #endif
 
 namespace Nitrogen
