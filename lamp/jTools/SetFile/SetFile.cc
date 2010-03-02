@@ -34,31 +34,26 @@ namespace tool
 			virtual void operator()( CInfoPBRec& cInfo ) const = 0;
 	};
 	
-	class TypeSetter : public InfoMutator
-	{
-		private:
-			N::OSType itsType;
-		
-		public:
-			TypeSetter( N::OSType type ) : itsType( type )  {}
-			
-			void operator()( CInfoPBRec& cInfo ) const
-			{
-				cInfo.hFileInfo.ioFlFndrInfo.fdType = itsType;
-			}
-	};
 	
-	class CreatorSetter : public InfoMutator
+	class SignatureSetter : public InfoMutator
 	{
 		private:
-			N::OSType itsCreator;
+			OSType          itsCode;
+			OSType  FInfo::*itsField;
 		
 		public:
-			CreatorSetter( N::OSType creator ) : itsCreator( creator )  {}
+			SignatureSetter( N::OSType code, OSType FInfo::*field )
+			:
+				itsCode ( code  ),
+				itsField( field )
+			{
+			}
 			
 			void operator()( CInfoPBRec& cInfo ) const
 			{
-				cInfo.hFileInfo.ioFlFndrInfo.fdCreator = itsCreator;
+				FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+				
+				fInfo.*itsField = itsCode;
 			}
 	};
 	
@@ -101,14 +96,14 @@ namespace tool
 	
 	static void CreatorOptor( N::OSType param )
 	{
-		static CreatorSetter setter( param );
+		static SignatureSetter setter( param, &FInfo::fdCreator );
 		
 		gInfoMutators.push_back( &setter );
 	}
 	
 	static void TypeOptor( N::OSType param )
 	{
-		static TypeSetter setter( param );
+		static SignatureSetter setter( param, &FInfo::fdType );
 		
 		gInfoMutators.push_back( &setter );
 	}
