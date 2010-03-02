@@ -616,9 +616,10 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum    vRefNum,
 	                     FSDirID           dirID,
-	                     ConstStr255Param  name );
+	                     ConstStr255Param  name = NULL );
 	
-	inline FSSpec FSMakeFSSpec( const FSDirSpec& dir, ConstStr255Param name )
+	inline FSSpec FSMakeFSSpec( const FSDirSpec&  dir,
+	                            ConstStr255Param  name = NULL )
 	{
 		return FSMakeFSSpec( dir.vRefNum, dir.dirID, name );
 	}
@@ -631,7 +632,7 @@ namespace Nucleus
 	{
 		Nitrogen::FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
 		{
-			return Nitrogen::FSMakeFSSpec( dir, NULL );
+			return Nitrogen::FSMakeFSSpec( dir );
 		}
 	};
 	
