@@ -288,22 +288,6 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
-	template <> struct Converter< Nitrogen::AERelativeDescriptor, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AERelativeDescriptor > {};
-	template <> struct Converter< Nitrogen::AEAbsoluteOrdinal,    std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEAbsoluteOrdinal    > {};
-	template <> struct Converter< Nitrogen::AELogicalOperator,    std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AELogicalOperator    > {};
-	template <> struct Converter< Nitrogen::AEComparisonOperator, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEComparisonOperator > {};
-//	template <> struct Converter< Nitrogen::AEKeyForm,            std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEKeyForm            > {};
-	template <> struct Converter< Nitrogen::AEObjectClass,        std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEObjectClass        > {};
-	template <> struct Converter< Nitrogen::AEPropertyID,         std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEPropertyID         > {};
-	
-	template <> struct Converter< std::string, Nitrogen::AERelativeDescriptor > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AERelativeDescriptor > {};
-	template <> struct Converter< std::string, Nitrogen::AEAbsoluteOrdinal    > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEAbsoluteOrdinal    > {};
-	template <> struct Converter< std::string, Nitrogen::AELogicalOperator    > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AELogicalOperator    > {};
-	template <> struct Converter< std::string, Nitrogen::AEComparisonOperator > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEComparisonOperator > {};
-//	template <> struct Converter< std::string, Nitrogen::AEKeyForm            > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEKeyForm            > {};
-	template <> struct Converter< std::string, Nitrogen::AEObjectClass        > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEObjectClass        > {};
-	template <> struct Converter< std::string, Nitrogen::AEPropertyID         > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEPropertyID         > {};
-	
 	template <>
 	struct Disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >,
 	                                           private Nitrogen::DefaultDestructionOSStatusPolicy

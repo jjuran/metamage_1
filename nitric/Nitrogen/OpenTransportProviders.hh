@@ -171,37 +171,6 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
-{
-	template <>
-	struct Converter< Nitrogen::InetHost, const char* > : std::unary_function< const char*, Nitrogen::InetHost >
-	{
-		Nitrogen::InetHost operator()( const char* input ) const
-		{
-			return Nitrogen::OTInetStringToHost( input );
-		}
-	};
-	
-	template <>
-	struct Converter< Nitrogen::InetHost, std::string > : std::unary_function< std::string, Nitrogen::InetHost >
-	{
-		Nitrogen::InetHost operator()( const std::string& input ) const
-		{
-			return Nitrogen::OTInetStringToHost( input );
-		}
-	};
-	
-	template <>
-	struct Converter< std::string, Nitrogen::InetHost > : std::unary_function< Nitrogen::InetHost, std::string >
-	{
-		std::string operator()( Nitrogen::InetHost input ) const
-		{
-			return Nitrogen::OTInetHostToString( input );
-		}
-	};
-	
-}
-
 namespace Nitrogen
 {
 	
