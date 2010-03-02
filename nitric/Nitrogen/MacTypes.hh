@@ -175,23 +175,6 @@ namespace Nitrogen
 		kRegionCode_Max = Nucleus::Enumeration_Traits< ::RegionCode >::max
 	};
 	
-	class FourCharCode
-	{
-		private:
-			::FourCharCode itsValue;
-		
-		public:
-			FourCharCode()  {}
-			
-			FourCharCode( ::FourCharCode value ) : itsValue( value )  {}
-			
-			FourCharCode& operator=( ::FourCharCode value )  { itsValue = value;  return *this; }
-			
-			::FourCharCode Get() const  { return itsValue; }
-			
-			operator ::FourCharCode() const  { return Get(); }
-	};
-	
 	enum OSType
 	{
 		kUnknownType = ::kUnknownType,
@@ -268,38 +251,6 @@ namespace Nitrogen
    
    using ::Point;
    using ::Rect;
-	
-	
-	namespace Detail
-	{
-		
-		::FourCharCode ConvertStringToFourCharCode( const std::string& string );
-		
-		std::string ConvertFourCharCodeToString( ::FourCharCode code );
-		
-	}
-	
-	// Convert string to FourCharCode
-	template < class CodeType >
-	struct StringToFourCharCode_Converter : public std::unary_function< std::string, CodeType >
-	{
-		CodeType operator()( const std::string& input ) const
-		{
-			return CodeType( Detail::ConvertStringToFourCharCode( input ) );
-		}
-	};
-	
-	// Convert FourCharCode to string
-	template < class CodeType >
-	struct FourCharCodeToString_Converter : public std::unary_function< CodeType, std::string >
-	{
-		std::string operator()( CodeType input ) const
-		{
-			return Detail::ConvertFourCharCodeToString( input );
-		}
-	};
-	
-	
   }
 
 namespace Nucleus
