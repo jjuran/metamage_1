@@ -168,7 +168,7 @@ namespace tool
 		
 		if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
 		{
-			FSSpec parent_spec = NN::Convert< FSSpec >( io::get_preceding_directory( dest ) );
+			FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( dest ) );
 			
 			FSRef parent_ref = NN::Convert< FSRef >( parent_spec );
 			

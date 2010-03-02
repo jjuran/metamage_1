@@ -701,7 +701,7 @@ namespace Nitrogen
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirSpec dest )
 	{
-		FSpCatMove( source, Nucleus::Convert< FSSpec >( dest ) );
+		FSpCatMove( source, FSMakeFSSpec( dest ) );
 	}
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirID dest )

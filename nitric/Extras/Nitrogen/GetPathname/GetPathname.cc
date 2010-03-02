@@ -33,7 +33,7 @@ static std::string GetMacPathname_Internal( const FSSpec& file )
 
 std::string GetMacPathname( const Nitrogen::FSDirSpec& dir )
 {
-	return GetMacPathname_Internal( Nucleus::Convert< FSSpec >( dir ) ) + ":";
+	return GetMacPathname_Internal( Nitrogen::FSMakeFSSpec( dir ) ) + ":";
 }
 
 std::string GetMacPathname( const FSSpec& file )
@@ -74,7 +74,7 @@ static std::string GetPOSIXPathname_Internal( const FSSpec& file )
 
 std::string GetPOSIXPathname( const Nitrogen::FSDirSpec& dir )
 {
-	return GetPOSIXPathname_Internal( Nucleus::Convert< FSSpec >( dir ) ) + "/";
+	return GetPOSIXPathname_Internal( Nitrogen::FSMakeFSSpec( dir ) ) + "/";
 }
 
 std::string GetPOSIXPathname( const FSSpec& file )

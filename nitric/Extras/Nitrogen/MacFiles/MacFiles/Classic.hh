@@ -64,7 +64,7 @@ namespace io
 	
 	inline Nitrogen::Str63 get_filename( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
-		return get_filename( Nucleus::Convert< FSSpec >( dir ) );
+		return get_filename( Nitrogen::FSMakeFSSpec( dir ) );
 	}
 	
 	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file, overload = overload() )
@@ -75,7 +75,7 @@ namespace io
 	
 	inline Nitrogen::FSDirSpec get_preceding_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
-		return get_preceding_directory( Nucleus::Convert< FSSpec >( dir ) );
+		return get_preceding_directory( Nitrogen::FSMakeFSSpec( dir ) );
 	}
 	
 	inline Nitrogen::FSDirSpec get_parent_directory_of_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
@@ -180,7 +180,7 @@ namespace io
 	
 	inline void delete_empty_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
-		delete_empty_directory( Nucleus::Convert< FSSpec >( dir ) );
+		delete_empty_directory( Nitrogen::FSMakeFSSpec( dir ) );
 	}
 	
 	inline void delete_empty_directory_only( const FSSpec& dir, overload = overload() )
@@ -267,7 +267,7 @@ namespace io
 	{
 		FSSpec operator()() const
 		{
-			return Nucleus::Convert< FSSpec >( system_root< Nitrogen::FSDirSpec >() );
+			return Nitrogen::FSMakeFSSpec( system_root< Nitrogen::FSDirSpec >() );
 		}
 	};
 	
