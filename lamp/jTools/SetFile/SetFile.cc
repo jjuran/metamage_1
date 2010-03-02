@@ -7,6 +7,9 @@
 #include <functional>
 #include <vector>
 
+// iota
+#include "iota/quad.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -42,10 +45,10 @@ namespace tool
 			OSType  FInfo::*itsField;
 		
 		public:
-			SignatureSetter( N::OSType code, OSType FInfo::*field )
+			SignatureSetter( const char* param, OSType FInfo::*field )
 			:
-				itsCode ( code  ),
-				itsField( field )
+				itsCode ( iota::decode_quad( param ) ),
+				itsField( field                      )
 			{
 			}
 			
@@ -94,14 +97,14 @@ namespace tool
 	}
 	
 	
-	static void CreatorOptor( N::OSType param )
+	static void CreatorOptor( const char* param )
 	{
 		static SignatureSetter setter( param, &FInfo::fdCreator );
 		
 		gInfoMutators.push_back( &setter );
 	}
 	
-	static void TypeOptor( N::OSType param )
+	static void TypeOptor( const char* param )
 	{
 		static SignatureSetter setter( param, &FInfo::fdType );
 		
@@ -112,8 +115,8 @@ namespace tool
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		o::bind_option_trigger< N::OSType >( "-c", std::ptr_fun( CreatorOptor ) );
-		o::bind_option_trigger< N::OSType >( "-t", std::ptr_fun( TypeOptor    ) );
+		o::bind_option_trigger_with_param( "-c", std::ptr_fun( CreatorOptor ) );
+		o::bind_option_trigger_with_param( "-t", std::ptr_fun( TypeOptor    ) );
 		
 		o::get_options( argc, argv );
 		

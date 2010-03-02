@@ -121,7 +121,7 @@ namespace orion
 			void set( const char* param ) const  { its_trigger( param ); }
 	};
 	
-	template < class Trigger, class ParamType >
+	template < class Trigger >
 	class trigger_with_parameter_option_binding : public option_binding
 	{
 		private:
@@ -138,9 +138,7 @@ namespace orion
 			
 			void set( const char* param ) const
 			{
-				ParamType converted = Nucleus::Convert< ParamType, std::string >( param );
-				
-				its_trigger( converted );
+				its_trigger( param );
 			}
 	};
 	
@@ -176,10 +174,10 @@ namespace orion
 		return new trigger_option_binding< Trigger >( trigger );
 	}
 	
-	template < class ParamType, class Trigger >
+	template < class Trigger >
 	option_binding* new_trigger_with_parameter_option_binding( Trigger trigger )
 	{
-		return new trigger_with_parameter_option_binding< Trigger, ParamType >( trigger );
+		return new trigger_with_parameter_option_binding< Trigger >( trigger );
 	}
 	
 	
@@ -215,12 +213,12 @@ namespace orion
 		add_binding( id, binding );
 	}
 	
-	template < class ParamType, class Trigger >
-	void bind_option_trigger( const char* option_spec, Trigger trigger )
+	template < class Trigger >
+	void bind_option_trigger_with_param( const char* option_spec, Trigger trigger )
 	{
 		option_id_t id = new_option( option_spec );
 		
-		option_binding* binding = new_trigger_with_parameter_option_binding< ParamType >( trigger );
+		option_binding* binding = new_trigger_with_parameter_option_binding( trigger );
 		
 		add_binding( id, binding );
 	}
