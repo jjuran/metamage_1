@@ -227,9 +227,19 @@ namespace tool
 		
 		std::vector< const char* > command_args;
 		
-		Architecture arch = TARGET_CPU_68K ? arch_m68k
-		                  : TARGET_CPU_PPC ? arch_ppc
-		                  :                  arch_none;
+		Architecture arch = arch_none;
+		
+	#ifdef __MC68K__
+		
+		arch = arch_m68k;
+		
+	#endif
+		
+	#ifdef __POWERPC__
+		
+		arch = arch_ppc;
+		
+	#endif
 		
 		const char* output_pathname = NULL;
 		
