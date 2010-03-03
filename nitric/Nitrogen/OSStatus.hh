@@ -17,9 +17,6 @@
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
-#ifndef __MACERRORS__
-#include <MacErrors.h>
-#endif
 
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
@@ -115,18 +112,6 @@ namespace Nitrogen
 
 namespace Nucleus
   {
-   template <>
-   class ErrorCode< Nitrogen::OSStatus, ::memFullErr >: public Nitrogen::OSStatus,
-										                public std::bad_alloc,
-										                public DebuggingContext
-     {
-      public:
-         ErrorCode() : OSStatus( memFullErr )  {}
-         
-         const char* what() const throw()  { return "OSStatus -108 (memFullErr)"; }
-     };
-	
-	
 	template <>
 	struct Converter< Exception, Nitrogen::OSStatus > : public std::unary_function< Nitrogen::OSStatus, Exception >
 	{
