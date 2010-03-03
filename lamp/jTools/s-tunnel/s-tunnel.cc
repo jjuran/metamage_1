@@ -302,14 +302,17 @@ namespace tool
 	{
 		const char* remote_host;
 		
-		unsigned short remote_port;
-		unsigned short listener_port;
+		const char* lport = "0";
+		const char* rport = "0";
 		
-		o::bind_option_to_variable( "--lport",  listener_port );
-		o::bind_option_to_variable( "--remote", remote_host   );
-		o::bind_option_to_variable( "--rport",  remote_port   );
+		o::bind_option_to_variable( "--lport",  lport       );
+		o::bind_option_to_variable( "--remote", remote_host );
+		o::bind_option_to_variable( "--rport",  rport       );
 		
 		o::get_options( argc, argv );
+		
+		unsigned short remote_port   = iota::parse_decimal( rport );
+		unsigned short listener_port = iota::parse_decimal( lport );
 		
 		if ( listener_port == 0 )
 		{
