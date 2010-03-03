@@ -17,10 +17,10 @@
 
 clock_t clock( void )
 {
-	clock_t result;
+	UnsignedWide result;
 	
-	::Microseconds( (UnsignedWide*) &result );
+	::Microseconds( &result );
 	
-	return result;
+	return result.lo;
 }
 
