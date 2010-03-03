@@ -80,17 +80,6 @@ namespace Nucleus
 		}
 	};
 	
-	template <> struct Converter< Nitrogen::CRMSerialPtr, Nitrogen::CRMRecPtr > : public std::unary_function< Nitrogen::CRMRecPtr, Nitrogen::CRMSerialPtr >
-	{
-		Nitrogen::CRMSerialPtr operator()( Nitrogen::CRMRecPtr crmRec ) const
-		{
-			using Nitrogen::crmSerialDevice;
-			
-			// FIXME:  Throw if device type is wrong
-			return Nitrogen::GetCRMAttributes< crmSerialDevice >( crmRec );
-		}
-	};
-	
 }
 
 namespace Nitrogen
