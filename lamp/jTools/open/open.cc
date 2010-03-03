@@ -281,8 +281,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		DefineOptions();
 		
 		o::get_options( argc, argv );

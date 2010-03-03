@@ -124,8 +124,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		o::bind_option_to_variable( "--data", globally_using_data_fork );
 		
 		o::get_options( argc, argv );
