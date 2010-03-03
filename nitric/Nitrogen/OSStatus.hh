@@ -21,9 +21,6 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
-#ifndef NUCLEUS_EXCEPTION_H
-#include "Nucleus/Exception.h"
-#endif
 #ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
 #include "Nucleus/DestructionExceptionPolicy.h"
 #endif
@@ -109,19 +106,6 @@ namespace Nitrogen
 	};
 	
 }
-
-namespace Nucleus
-  {
-	template <>
-	struct Converter< Exception, Nitrogen::OSStatus > : public std::unary_function< Nitrogen::OSStatus, Exception >
-	{
-		Exception operator()( Nitrogen::OSStatus error ) const
-		{
-			return Exception( "OSStatus " + Convert< std::string >( error ) );
-		}
-	};
-	
-  }
 
 #endif
 
