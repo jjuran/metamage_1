@@ -19,11 +19,6 @@
 #include "recall/backtrace.hh"
 #include "recall/stack_crawl.hh"
 
-// Nucleus
-#include "Nucleus/ErrorCode.h"
-#include "Nucleus/Exception.h"
-#include "Nucleus/TheExceptionBeingHandled.h"
-
 // poseven
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
@@ -33,7 +28,6 @@
 namespace Orion
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	extern "C" int main( int argc, iota::argv_t argv );
@@ -115,16 +109,7 @@ namespace Orion
 		}
 		catch ( ... )
 		{
-			try
-			{
-				NN::Exception e = NN::Convert< NN::Exception >( NN::TheExceptionBeingHandled() );
-				
-				p7::perror( argv[0], "exception", e.what() );
-			}
-			catch ( ... )
-			{
-				p7::perror( argv[0], "uncaught exception" );
-			}
+			p7::perror( argv[0], "uncaught exception" );
 			
 			ShowDebuggingContext( stackBottom );
 		}
