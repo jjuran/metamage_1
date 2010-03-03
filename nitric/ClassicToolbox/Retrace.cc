@@ -5,6 +5,11 @@
 
 #include "ClassicToolbox/Retrace.hh"
 
+// Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 
 namespace Nitrogen
 {

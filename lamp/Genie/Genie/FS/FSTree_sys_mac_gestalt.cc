@@ -5,6 +5,11 @@
 
 #include "Genie/FS/FSTree_sys_mac_gestalt.hh"
 
+// Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 // iota
 #include "iota/hexidecimal.hh"
 

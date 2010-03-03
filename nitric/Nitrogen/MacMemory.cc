@@ -13,6 +13,11 @@
 
 #include "Nitrogen/MacMemory.hh"
 
+// Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 
 namespace Nitrogen
 {

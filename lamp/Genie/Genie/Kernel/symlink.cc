@@ -10,6 +10,11 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
+// Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
