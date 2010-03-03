@@ -624,6 +624,8 @@ namespace Nitrogen
 		return FSMakeFSSpec( dir.vRefNum, dir.dirID, name );
 	}
 	
+	FSSpec FSMakeFSSpec( const FSRef& ref );
+	
   }
 
 namespace Nucleus
@@ -1017,9 +1019,7 @@ namespace Nucleus
      {
       Nitrogen::FSSpec operator()( const Nitrogen::FSRef& ref ) const
         {
-         ::FSSpec result;
-         Nitrogen::FSGetCatalogInfo( ref, 0, 0, 0, &result, 0 );
-         return result;
+         return Nitrogen::FSMakeFSSpec( ref );
         }
      };
 	

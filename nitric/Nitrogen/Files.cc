@@ -400,6 +400,15 @@ namespace Nitrogen
 		return result;
 	}
 	
+	FSSpec FSMakeFSSpec( const FSRef& ref )
+	{
+		FSSpec result;
+		
+		FSGetCatalogInfo( ref, 0, 0, 0, &result, 0 );
+		
+		return result;
+	}
+	
 	// The cheap and easy way to do it.  This will throw if the pathname exceeds 255 characters.
 	// It might be nice to have a backup method for when this one fails.
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname )
