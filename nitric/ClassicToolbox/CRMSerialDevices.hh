@@ -12,15 +12,7 @@
 #endif
 
 // Standard C++
-#include <algorithm>
 #include <functional>
-
-// STL extensions
-#ifdef __MWERKS__
-#include <functional_ext>
-#else
-#include <ext/functional>
-#endif
 
 // Nucleus
 #ifndef NUCLEUS_OWNED_H
@@ -96,36 +88,6 @@ namespace Nucleus
 			
 			// FIXME:  Throw if device type is wrong
 			return Nitrogen::GetCRMAttributes< crmSerialDevice >( crmRec );
-		}
-	};
-	
-#ifdef __MWERKS__
-	namespace ext = std;
-#else
-	namespace ext = __gnu_cxx;
-#endif
-	
-	template <> struct Converter< Nitrogen::CRMRecPtr, Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, Nitrogen::CRMRecPtr >
-	{
-		Nitrogen::CRMRecPtr operator()( Nitrogen::CRMSerialPtr crmSerialPtr ) const
-		{
-			using Nitrogen::crmSerialDevice;
-			
-			typedef Nitrogen::CRMResource_Container::const_iterator const_iterator;
-			
-			Nitrogen::CRMResource_Container crmResources = Nitrogen::CRMResources( crmSerialDevice );
-			
-			const_iterator it = std::find_if( crmResources.begin(),
-			                                  crmResources.end(),
-			                                  ext::compose1( std::bind2nd( std::equal_to< Nitrogen::CRMSerialPtr >(),
-			                                                               crmSerialPtr ),
-			                                                 Nitrogen::CRMAttributes_Getter< crmSerialDevice >() ) );
-			if ( it == crmResources.end() )
-			{
-				throw Nitrogen::CRMSearch_Failed();
-			}
-			
-			return *it;
 		}
 	};
 	
