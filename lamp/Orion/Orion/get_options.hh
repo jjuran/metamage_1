@@ -32,7 +32,6 @@
 #include "iota/argv.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
 
 
@@ -102,7 +101,7 @@ namespace orion
 			
 			bool argument_expected() const  { return true; }
 			
-			void set( const char* value ) const  { its_data = Nucleus::Convert< Type >( value ); }
+			void set( const char* value ) const  { its_data = value; }
 	};
 	
 	template < class Trigger >
