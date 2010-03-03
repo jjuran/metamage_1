@@ -1031,7 +1031,7 @@ namespace Nucleus
 	{
 		Nitrogen::FSDirSpec operator()( const Nitrogen::FSRef& ref ) const
 		{
-			return Convert< Nitrogen::FSDirSpec >( Convert< Nitrogen::FSSpec >( ref ) );
+			return Convert< Nitrogen::FSDirSpec >( Nitrogen::FSMakeFSSpec( ref ) );
 		}
 	};
 }
