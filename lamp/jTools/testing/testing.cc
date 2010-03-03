@@ -84,6 +84,7 @@
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 
@@ -99,6 +100,9 @@
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
 #include "Iteration/AEDescListItemDatas.h"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Scaffold
 #include "Tests.hh"
@@ -1466,10 +1470,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
-		//Assert_(argc > 0);
-		
 		MakeMap();
 		
 		std::string message;
@@ -1504,7 +1504,23 @@ namespace tool
 			return 1;
 		}
 		
-		return sub->proc( argc, argv );
+		try
+		{
+			return sub->proc( argc, argv );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			std::string status = "OSStatus ";
+			
+			status += iota::inscribe_decimal( err );
+			
+			p7::perror( "testing", status, 0 );
+			
+			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+		}
+		
+		// Not reached
+		return 0;
 	}
 
 }

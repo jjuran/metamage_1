@@ -12,8 +12,17 @@
 // Standard C/C++
 #include <cctype>
 
+// iota
+#include "iota/decimal.hh"
+
 // plus
 #include "plus/functional_extensions.hh"
+
+// poseven
+#include "poseven/functions/perror.hh"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -28,7 +37,7 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace o = orion;
 	
 	
@@ -126,8 +135,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		bool escapeForMPW = false;
 		bool switchLayers = false;
 		
@@ -142,9 +149,23 @@ namespace tool
 		                                   free_args + o::free_argument_count(),
 		                                   escapeForMPW );
 		
-		int result = RunCommandInToolServer( command, switchLayers );
+		try
+		{
+			return RunCommandInToolServer( command, switchLayers );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			std::string status = "OSStatus ";
+			
+			status += iota::inscribe_decimal( err );
+			
+			p7::perror( "tlsrvr", status, 0 );
+			
+			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+		}
 		
-		return result;
+		// Not reached
+		return 0;
 	}
 
 }
