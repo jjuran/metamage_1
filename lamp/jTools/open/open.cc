@@ -8,9 +8,7 @@
 #include <string.h>
 
 // C++ Standard Library
-#include <functional>
 #include <string>
-#include <vector>
 
 // iota
 #include "iota/quad.hh"
@@ -31,9 +29,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Nitrogen Extras / Iteration
-#include "Iteration/AEDescListItems.h"
 
 // FindProcess
 #include "FindProcess.hh"
@@ -103,34 +98,27 @@ namespace tool
 		return N::AECreateDesc( N::typeAlias, N::NewAlias( item ) );
 	}
 	
-	static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
-	                                                     const ProcessSerialNumber&    psn )
+	static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
+	                                                     const ProcessSerialNumber&  psn )
 	{
-		NN::Owned< N::AEDescList_Data > documents = N::AECreateList< N::AEDescList_Data >( false );
-		
-		std::transform( items.begin(),
-		                items.end(),
-		                N::AEDescList_Item_BackInserter( documents ),
-		                std::ptr_fun( CoerceFSSpecToAliasDesc ) );
-		
-		//using namespace NN::Operators;
-		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
 		                                                               N::kAEOpenDocuments,
 		                                                               N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
-		N::AEPutParamDesc( appleEvent, N::keyDirectObject, documents );
+		N::AEPutParamDesc( appleEvent, N::keyDirectObject, items );
 		
 		return appleEvent;
 	}
 	
-	static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const ProcessSerialNumber& psn )
+	static void OpenItemsWithRunningApp( const N::AEDescList_Data&   items,
+	                                     const ProcessSerialNumber&  psn )
 	{
 		N::AESend( MakeOpenDocsEvent( items, psn ),
 		           N::kAENoReply | N::kAECanInteract );
 	}
 	
-	static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vector< FSSpec >& items )
+	static void LaunchApplicationWithDocsToOpen( const FSSpec&              app,
+	                                             const N::AEDescList_Data&  items )
 	{
 		std::auto_ptr< AppParameters > appParameters
 			= N::AEGetDescData< N::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
@@ -199,7 +187,7 @@ namespace tool
 		return N::OSType( sigFinder );
 	}
 	
-	static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
+	static void OpenItemsUsingOptions( const N::AEDescList_Data& items )
 	{
 		// we either have a pathname or signature for the app.
 		// if pathname, resolve to FSSpec and check if it's running.
@@ -287,7 +275,7 @@ namespace tool
 		
 		char const *const *free_args = o::free_arguments();
 		
-		std::vector< FSSpec > itemsToOpen;
+		NN::Owned< N::AEDescList_Data > items = N::AECreateList< N::AEDescList_Data >( false );
 		
 		for ( char const *const *it = free_args;  *it != NULL;  ++it )
 		{
@@ -302,7 +290,7 @@ namespace tool
 					throw p7::errno_t( ENOENT );
 				}
 				
-				itemsToOpen.push_back( item );
+				N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
 			}
 			catch ( const N::OSStatus& err )
 			{
@@ -314,7 +302,7 @@ namespace tool
 			}
 		}
 		
-		OpenItemsUsingOptions( itemsToOpen );
+		OpenItemsUsingOptions( items );
 		
 		return 0;
 	}
