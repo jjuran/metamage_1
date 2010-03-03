@@ -21,38 +21,6 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ Property traits ¥
-	
-	template < AEPropertyID propertyID, DescType tokenType >  struct Property_Traits;
-	
-	template < AEPropertyID propertyID, DescType tokenType >
-	struct Basic_PropertyAccessor
-	{
-		typedef typename DescType_Traits< tokenType >::Result RecordPtr;
-		typedef Property_Traits< propertyID, tokenType > PropertyTraits;
-		typedef typename PropertyTraits::Record Record;
-		typedef typename PropertyTraits::Field  Field;
-		typedef Field Record::* Member;
-		
-		enum { descType = PropertyTraits::descType };
-		
-		typedef typename DescType_Traits< descType >::Result Result;
-		
-		static Nucleus::Owned< AEDesc_Token >
-		AccessProperty( AEPropertyID         /* propertyID */,
-	                    const AEDesc_Token&  containerToken,
-	                    AEObjectClass        /* containerClass */ )
-		{
-			RecordPtr record = AEGetDescData< tokenType >( containerToken );
-			Member member = PropertyTraits::Member();
-			Field fieldValue = record->*member;
-			Result result = Nucleus::Convert< Result >( fieldValue );
-			
-			return AECreateDesc< descType, AEDesc_Token >( result );
-		}
-	};
-	
-	#pragma mark -
 	#pragma mark ¥ AccessProperty ¥
 	
 	Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
@@ -82,12 +50,6 @@ namespace Nitrogen
 				map[ containerType ][ propertyID ] = callback;
 			}
 			
-			template < AEPropertyID propertyID, DescType containerType >
-			void Register()
-			{
-				Register( propertyID, containerType, Basic_PropertyAccessor< propertyID, containerType >::AccessProperty );
-			}
-			
 			Callback FindAccessor( AEPropertyID  propertyID, DescType tokenType );
 			
 			Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
@@ -103,12 +65,6 @@ namespace Nitrogen
 	inline void RegisterPropertyAccessor( AEPropertyID propertyID, DescType containerType, PropertyAccessor::Callback callback )
 	{
 		TheGlobalPropertyAccessor().Register( propertyID, containerType, callback );
-	}
-	
-	template < AEPropertyID propertyID, DescType containerType >
-	inline void RegisterPropertyAccessor()
-	{
-		TheGlobalPropertyAccessor().template Register< propertyID, containerType >();
 	}
 	
 	Nucleus::Owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
