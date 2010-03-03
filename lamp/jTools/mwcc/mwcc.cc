@@ -4,6 +4,7 @@
  */
 
 // Standard C++
+#include <list>
 #include <vector>
 
 // poseven
@@ -14,14 +15,8 @@
 #include "poseven/functions/write.hh"
 #include "poseven/Pathnames.hh"
 
-// Nitrogen
-#include "Nitrogen/Str.hh"
-
-// GetPathname
-#include "GetPathname.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+// mac_pathname
+#include "mac_pathname_from_path.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -30,11 +25,8 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace n = nucleus;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	
 	
 	using namespace io::path_descent_operators;
@@ -111,11 +103,9 @@ namespace tool
 		}
 	}
 	
-	static std::string MacPathFromPOSIXPath( const char* pathname )
+	static inline std::string MacPathFromPOSIXPath( const char* path )
 	{
-		FSSpec item = Div::ResolvePathToFSSpec( pathname );
-		
-		return GetMacPathname( item );
+		return mac_pathname_from_path( path );
 	}
 	
 	static const std::string& MacPathForCWD()
@@ -223,8 +213,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		std::vector< const char* > command_args;
 		
 		Architecture arch = arch_none;

@@ -4,7 +4,9 @@
  */
 
 // Standard C++
+#include <list>
 #include <string>
+#include <vector>
 
 // Standard C/C++
 #include <cstring>
@@ -21,14 +23,8 @@
 #include "poseven/functions/write.hh"
 #include "poseven/functions/wait.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
-// GetPathname
-#include "GetPathname.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+// mac_pathname
+#include "mac_pathname_from_path.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -40,12 +36,9 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace n = nucleus;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
-	namespace Div = Divergence;
 	
 	
 	template < class Iter >
@@ -68,18 +61,11 @@ namespace tool
 	}
 	
 	
-	static std::string MacPathFromPOSIXPath( const char* pathname )
-	{
-		FSSpec item = Div::ResolvePathToFSSpec( pathname );
-		
-		return GetMacPathname( item );
-	}
-	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
 		static std::list< std::string > static_string_storage;
 		
-		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		static_string_storage.push_back( mac_pathname_from_path( pathname ) );
 		
 		return static_string_storage.back().c_str();
 	}
@@ -175,8 +161,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		// $ ar rcs output.lib input{1,2}.o
 		
 		if ( argc < 4 )
@@ -199,7 +183,7 @@ namespace tool
 		
 		const char* first_input_path = argv[ 3 ];
 		
-		std::string output_mac_pathname = GetMacPathname( Div::ResolvePathToFSSpec( output_path ) );
+		std::string output_mac_pathname = mac_pathname_from_path( output_path );
 		
 		mw::cpu_architecture arch = mw::cpu_unknown;
 		
