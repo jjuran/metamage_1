@@ -44,18 +44,28 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	namespace p7 = poseven;
 	
 	
 	static p7::errno_t GetErrnoFromException()
 	{
-		NN::RegisterExceptionConversion< p7::errno_t, N::OSStatus >();
+		try
+		{
+			throw;
+		}
+		catch ( const p7::errno_t& errnum )
+		{
+			return errnum;
+		}
+		catch ( const N::OSStatus& err )
+		{
+			return OSErrno::ErrnoFromOSStatus( err );
+		}
+		catch ( ... )
+		{
+		}
 		
-		p7::errno_t errnum = NN::Convert< p7::errno_t >( NN::TheExceptionBeingHandled(), EINVAL );
-		
-		return errnum;
+		return EINVAL;
 	}
 	
 	
