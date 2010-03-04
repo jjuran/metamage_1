@@ -408,7 +408,7 @@ namespace tool
 			
 			if ( MoreRecent( output_stat.st_mtime ) )
 			{
-				std::string source_filename = io::get_filename_string( its_source_pathname );
+				std::string source_filename = io::get_filename( its_source_pathname );
 				
 				std::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
 				
@@ -654,7 +654,7 @@ namespace tool
 		{
 			std::string prefix_source_path = project_providing_prefix->PrecompiledHeaderSource();
 			
-			std::string prefix_source_filename = io::get_filename_string( prefix_source_path );
+			std::string prefix_source_filename = io::get_filename( prefix_source_path );
 			
 			std::string pchImage = get_prefix_image_pathname( project_providing_prefix->Name(),
 			                                                  prefix_source_filename,

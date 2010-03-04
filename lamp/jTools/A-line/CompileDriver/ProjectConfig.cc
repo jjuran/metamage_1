@@ -227,7 +227,7 @@ namespace tool
 	
 	static void AddPendingConfigFile( const std::string& filePath )
 	{
-		std::string filename = io::get_filename_string( filePath );
+		std::string filename = io::get_filename( filePath );
 		std::string extension = ".conf";
 		
 		std::string::difference_type rootSize = filename.size() - extension.size();
