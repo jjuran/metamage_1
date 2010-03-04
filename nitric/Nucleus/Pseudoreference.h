@@ -58,8 +58,8 @@
 #ifndef NUCLEUS_PSEUDOPOINTER_H
 #include "Nucleus/Pseudopointer.h"
 #endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 namespace Nucleus

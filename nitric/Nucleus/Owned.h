@@ -116,8 +116,8 @@
 #ifndef NUCLEUS_OWNED_H
 #define NUCLEUS_OWNED_H
 
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 #include <algorithm>

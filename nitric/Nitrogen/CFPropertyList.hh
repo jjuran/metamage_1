@@ -15,11 +15,12 @@
 #ifndef __CFPROPERTYLIST__
 #include <CFPropertyList.h>
 #endif
+
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
-#endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

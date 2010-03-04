@@ -14,8 +14,8 @@
 #ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 #define NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 #include <list>

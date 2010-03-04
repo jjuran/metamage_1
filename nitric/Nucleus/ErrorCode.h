@@ -93,8 +93,8 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #define NUCLEUS_ERRORCODE_H
 
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 #ifndef NUCLEUS_DEBUGGING_H

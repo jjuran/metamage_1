@@ -27,8 +27,8 @@
 #ifndef NITROGEN_CFDICTIONARY_HH
 #include "Nitrogen/CFDictionary.hh"
 #endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"

@@ -6,8 +6,12 @@
 #ifndef GRAFX_RGBCOLOR_HH
 #define GRAFX_RGBCOLOR_HH
 
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
+
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/Make.h"
 
 // Nitrogen

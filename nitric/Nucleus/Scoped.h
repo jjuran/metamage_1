@@ -17,8 +17,8 @@
 #ifndef NUCLEUS_REFERENCETRAITS_H
 #include "Nucleus/ReferenceTraits.h"
 #endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 namespace Nucleus

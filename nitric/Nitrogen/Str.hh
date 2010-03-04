@@ -14,8 +14,16 @@
 #ifndef NITROGEN_STR_HH
 #define NITROGEN_STR_HH
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// Standard C++
+#include <string>
+
+// Standard C/C++
+#include <cstring>
+
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
 
 
 namespace Nitrogen
