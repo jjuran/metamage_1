@@ -34,20 +34,11 @@ namespace UseEdit
 		return data;
 	}
 	
-	static inline ConstStr255Param GetFilenameAsPascalString( const FSSpec& file )
-	{
-		return file.name;
-	}
-	
-	static N::Str255 GetFilenameAsPascalString( const FSRef& file )
+	static NN::Owned< N::CFStringRef > GetFilenameAsCFString( const FSRef& file )
 	{
 		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
 		
-		N::UniString unistring = NN::Convert< N::UniString >( info.outName );
-		
-		std::string string( unistring.begin(), unistring.end() );
-		
-		return N::Str255( string );
+		return NN::Convert< NN::Owned< N::CFStringRef > >( info.outName );
 	}
 	
 	
@@ -68,7 +59,7 @@ namespace UseEdit
 	
 	Document::Document( const FSSpec& file )
 	: 
-		itsWindow( NewWindow( GetFilenameAsPascalString( file ) ) ),
+		itsWindow( NewWindow( file.name ) ),
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
@@ -77,10 +68,13 @@ namespace UseEdit
 	
 	Document::Document( const FSRef& file )
 	: 
-		itsWindow( NewWindow( GetFilenameAsPascalString( file ) ) ),
+		itsWindow( NewWindow() ),
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
+		N::SetWindowTitleWithCFString( N::FrontWindow(),
+		                               GetFilenameAsCFString( file ) );
+		
 		LoadText( *itsWindow, ReadFileData( file ) );
 	}
 	
