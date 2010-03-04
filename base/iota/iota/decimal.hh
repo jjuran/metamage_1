@@ -114,6 +114,8 @@ namespace iota
 	
 	char* inscribe_decimal( int x );
 	
+	char* inscribe_unsigned_wide_decimal( unsigned long long x );
+	
 }
 
 #endif

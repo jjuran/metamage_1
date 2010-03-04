@@ -70,5 +70,16 @@ namespace iota
 		return buffer;
 	}
 	
+	char* inscribe_unsigned_wide_decimal( unsigned long long x )
+	{
+		static char buffer[ sizeof "12345678901234567890" ];
+		
+		char* end = inscribe_unsigned_r< 10 >( x, buffer );
+		
+		*end = '\0';
+		
+		return buffer;
+	}
+	
 }
 
