@@ -568,6 +568,7 @@ namespace Nitrogen
 		return PBGetCatInfoSync( pb, policy );
 	}
 	
+	FSDirSpec FSpMake_FSDirSpec( const FSSpec& dir );
 	
 	// ...
 	
@@ -640,7 +641,10 @@ namespace Nucleus
 	
 	template <> struct Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSDirSpec >
 	{
-		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const;
+		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const
+		{
+			return Nitrogen::FSpMake_FSDirSpec( dir );
+		}
 	};
   }
 

@@ -219,34 +219,27 @@ namespace Nitrogen
 		ThrowOSStatus( ::PBSetCatInfoAsync( &pb ) );
 	}
 	
-	
-	using ::FileInfo;
-	
-}
-
-namespace Nucleus
-  {	
-	Nitrogen::FSDirSpec Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >::operator()( const Nitrogen::FSSpec& dir ) const
+	FSDirSpec FSpMake_FSDirSpec( const FSSpec& dir )
 	{
-		Nitrogen::CInfoPBRec cInfo;
-		Nitrogen::FSpGetCatInfo( dir, cInfo );
+		CInfoPBRec cInfo;
+		FSpGetCatInfo( dir, cInfo );
 		
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
 		if ( !is_dir )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
-			Nitrogen::ThrowOSStatus( errFSNotAFolder );
+			ThrowOSStatus( errFSNotAFolder );
 		}
 		
-		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( cInfo.dirInfo.ioDrDirID );
+		FSDirID dirID = FSDirID( cInfo.dirInfo.ioDrDirID );
 		
-		return Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( dir.vRefNum ), dirID );
+		return Nucleus::Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), dirID );
 	}
-  }
-
-namespace Nitrogen
-  {	
+	
+	
+	using ::FileInfo;
+	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
 	{
 		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );
