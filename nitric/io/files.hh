@@ -17,11 +17,6 @@
 // Standard C++
 #include <string>
 
-// Nucleus
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
-#endif
-
 // Io
 #ifndef IO_IO_HH
 #include "io/io.hh"
@@ -44,11 +39,7 @@ namespace io
 	
 	dummy::filename_result get_filename( dummy::file_spec, overload );
 	
-	template < class FileSpec >
-	inline std::string get_filename_string( const FileSpec& file )
-	{
-		return Nucleus::Convert< std::string >( get_filename( file, overload() ) );
-	}
+	std::string get_filename_string( dummy::file_spec );
 	
 	dummy::file_spec get_preceding_directory          ( dummy::file_spec, overload );
 	dummy::file_spec get_parent_directory_of_directory( dummy::file_spec, overload );
