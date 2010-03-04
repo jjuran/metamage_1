@@ -17,9 +17,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Io
-#include "io/io.hh"
-
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -43,29 +40,6 @@
 #include "Genie/SystemCalls.hh"
 
 
-namespace Nucleus
-{
-	
-	template <>
-	struct Converter< poseven::errno_t, io::end_of_input > : public std::unary_function< io::end_of_input, poseven::errno_t >
-	{
-		poseven::errno_t operator()( io::end_of_input ) const
-		{
-			return poseven::errno_t( 0 );
-		}
-	};
-	
-	template <>
-	struct Converter< poseven::errno_t, io::no_input_pending > : public std::unary_function< io::no_input_pending, poseven::errno_t >
-	{
-		poseven::errno_t operator()( const io::no_input_pending& ) const
-		{
-			return poseven::errno_t( EAGAIN );
-		}
-	};
-	
-}
-
 namespace Genie
 {
 	
@@ -77,9 +51,7 @@ namespace Genie
 	
 	static p7::errno_t GetErrnoFromException()
 	{
-		NN::RegisterExceptionConversion< p7::errno_t, N::OSStatus          >();
-		NN::RegisterExceptionConversion< p7::errno_t, io::end_of_input     >();
-		NN::RegisterExceptionConversion< p7::errno_t, io::no_input_pending >();
+		NN::RegisterExceptionConversion< p7::errno_t, N::OSStatus >();
 		
 		p7::errno_t errnum = NN::Convert< p7::errno_t >( NN::TheExceptionBeingHandled(), EINVAL );
 		

@@ -25,9 +25,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Io
-#include "io/io.hh"
-
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -1695,7 +1692,7 @@ namespace Genie
 	{
 		if ( isNonblocking )
 		{
-			throw io::no_input_pending();
+			p7::throw_errno( EAGAIN );
 		}
 		
 		// I/O is restartable

@@ -22,11 +22,6 @@
 namespace io
 {
 	
-	class end_of_input {};
-	
-	class no_input_pending {};
-	
-	
 	inline ptrdiff_t distance( const void* begin, const void* end )
 	{
 		return (uintptr_t) end - (uintptr_t) begin;
