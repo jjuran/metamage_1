@@ -168,7 +168,7 @@ namespace tool
 				}
 				
 				Decode( io::open_for_reading( decode_target ),
-				        NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
+				        N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( destDirPath ) ) );
 			}
 			catch ( const MacBinary::InvalidMacBinaryHeader& )
 			{

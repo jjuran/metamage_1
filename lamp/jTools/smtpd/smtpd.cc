@@ -66,7 +66,7 @@ namespace io
 	
 	inline FSSpec path_descent( const FSSpec& dir, const unsigned char* name )
 	{
-		return path_descent( Nucleus::Convert< Nitrogen::FSDirSpec >( dir ), name );
+		return path_descent( Nitrogen::FSpMake_FSDirSpec( dir ), name );
 	}
 	
 }
@@ -201,7 +201,7 @@ namespace tool
 	
 	static N::FSDirSpec QueueDirectory()
 	{
-		return NN::Convert< N::FSDirSpec >( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
 	}
 	
 	

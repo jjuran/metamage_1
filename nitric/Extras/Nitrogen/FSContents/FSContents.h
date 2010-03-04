@@ -118,7 +118,7 @@ namespace io
 	
 	inline Nitrogen::FSSpecContents_Container directory_contents( const FSSpec& dir, overload = overload() )
 	{
-		return Nitrogen::FSSpecContents_Container( Nucleus::Convert< Nitrogen::FSDirSpec >( dir ) );
+		return Nitrogen::FSSpecContents_Container( Nitrogen::FSpMake_FSDirSpec( dir ) );
 	}
 	
 	inline Nitrogen::FSRefContents_Container directory_contents( const FSRef& dir, overload = overload() )

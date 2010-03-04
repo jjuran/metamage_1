@@ -62,7 +62,6 @@
 #include "Divergence/Utilities.hh"
 
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
 #include "Nucleus/Shared.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
@@ -756,7 +755,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	using namespace io::path_descent_operators;
 	
 	// Find Info.plist
-	FSSpec infoPListFile = NN::Convert< N::FSDirSpec >( file ) / "Contents" / "Info.plist";
+	FSSpec infoPListFile = N::FSpMake_FSDirSpec( file ) / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
 	std::string infoPList = io::slurp_file< Flattener >( infoPListFile );

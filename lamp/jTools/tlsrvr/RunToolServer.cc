@@ -313,7 +313,7 @@ namespace tool
 		// This breaks in SheepShaver running 8.5, at least for me.
 		//N::FSDirSpec tempItems = N::FindFolder( kTemporaryFolderType, kCreateFolder );
 		
-		N::FSDirSpec tempItems = NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( "/tmp" ) );
+		N::FSDirSpec tempItems = N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( "/tmp" ) );
 		
 		static char const* filenames[ 4 ] =
 		{

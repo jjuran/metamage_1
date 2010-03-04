@@ -52,8 +52,8 @@ namespace Genie
 	{
 		try
 		{
-			return NN::Convert< N::FSDirSpec >( N::AEGetParamPtr< N::typeFSS >( appleEvent,
-			                                                                    keyCurrentWorkingDir ) );
+			return N::FSpMake_FSDirSpec( N::AEGetParamPtr< N::typeFSS >( appleEvent,
+			                                                             keyCurrentWorkingDir ) );
 		}
 		catch ( const N::OSStatus& err )
 		{

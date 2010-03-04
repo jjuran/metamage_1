@@ -95,7 +95,7 @@ namespace io
 		
 		inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
 		{
-			return Nucleus::Convert< Nitrogen::FSDirSpec >( dir ) / name;
+			return Nitrogen::FSpMake_FSDirSpec( dir ) / name;
 		}
 		
 		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const std::string& name )
