@@ -33,6 +33,12 @@ namespace Genie
 		              : iota::inscribe_unsigned_decimal( x );
 	}
 	
+	std::string stringify_unsigned_wide::apply( unsigned long long x, bool binary )
+	{
+		return binary ? std::string( (char*) &x, sizeof x )
+		              : iota::inscribe_unsigned_wide_decimal( x );
+	}
+	
 	std::string stringify_16_bit_hex::apply( unsigned short x, bool binary )
 	{
 		return binary ? std::string( (char*) &x, sizeof x )

@@ -30,6 +30,11 @@ namespace Genie
 		static std::string apply( unsigned x, bool binary );
 	};
 	
+	struct stringify_unsigned_wide
+	{
+		static std::string apply( unsigned long long x, bool binary );
+	};
+	
 	struct stringify_16_bit_hex
 	{
 		static std::string apply( unsigned short x, bool binary );
