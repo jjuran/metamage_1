@@ -42,12 +42,17 @@ std::string GetMacPathname( const FSSpec& file )
 
 static std::string GetPOSIXPathname_Internal( const FSSpec& file )
 {
-	std::string filename = io::get_filename_string( file );
+	ConstStr255Param name = file.name;
 	
-	std::replace( filename.begin(),
-	              filename.end(),
-	              '/',
-	              ':' );
+	std::string filename;
+	
+	filename.resize( name[0] );
+	
+	std::replace_copy( &name[ 1           ],
+					   &name[ 1 + name[0] ],
+					   filename.begin(),
+					   '/',
+					   ':' );
 	
 	if ( file.parID == fsRtParID )
 	{

@@ -137,14 +137,14 @@ namespace Genie
 		return result;
 	}
 	
-	static std::string UnixFromMacName( const std::string& name )
+	static std::string UnixFromMacName( ConstStr255Param name )
 	{
 		std::string result;
 		
-		result.resize( name.size() );
+		result.resize( name[0] );
 		
-		std::replace_copy( name.begin(),
-		                   name.end(),
+		std::replace_copy( &name[ 1           ],
+		                   &name[ 1 + name[0] ],
 		                   result.begin(),
 		                   '/',
 		                   ':' );
@@ -179,7 +179,7 @@ namespace Genie
 			}
 		}
 		
-		return UnixFromMacName( io::get_filename_string( item ) );
+		return UnixFromMacName( item.name );
 	}
 	
 	
@@ -360,7 +360,7 @@ namespace Genie
 		
 		static std::string NameFromKey( const Key& key )
 		{
-			return UnixFromMacName( io::get_filename_string( FSSpecFromKey( key ) ) );
+			return UnixFromMacName( FSSpecFromKey( key ).name );
 		}
 		
 		static Key KeyFromName( const std::string& name )
