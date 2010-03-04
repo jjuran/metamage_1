@@ -13,6 +13,7 @@
 #include <vector>
 
 // Standard C/C++
+#include <cctype>
 #include <cstdio>
 #include <cstring>
 
