@@ -7,6 +7,9 @@
 #include <functional>
 #include <vector>
 
+// iota
+#include "iota/quad.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -34,31 +37,26 @@ namespace tool
 			virtual void operator()( CInfoPBRec& cInfo ) const = 0;
 	};
 	
-	class TypeSetter : public InfoMutator
-	{
-		private:
-			N::OSType itsType;
-		
-		public:
-			TypeSetter( N::OSType type ) : itsType( type )  {}
-			
-			void operator()( CInfoPBRec& cInfo ) const
-			{
-				cInfo.hFileInfo.ioFlFndrInfo.fdType = itsType;
-			}
-	};
 	
-	class CreatorSetter : public InfoMutator
+	class SignatureSetter : public InfoMutator
 	{
 		private:
-			N::OSType itsCreator;
+			OSType          itsCode;
+			OSType  FInfo::*itsField;
 		
 		public:
-			CreatorSetter( N::OSType creator ) : itsCreator( creator )  {}
+			SignatureSetter( const char* param, OSType FInfo::*field )
+			:
+				itsCode ( iota::decode_quad( param ) ),
+				itsField( field                      )
+			{
+			}
 			
 			void operator()( CInfoPBRec& cInfo ) const
 			{
-				cInfo.hFileInfo.ioFlFndrInfo.fdCreator = itsCreator;
+				FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+				
+				fInfo.*itsField = itsCode;
 			}
 	};
 	
@@ -99,16 +97,16 @@ namespace tool
 	}
 	
 	
-	static void CreatorOptor( N::OSType param )
+	static void CreatorOptor( const char* param )
 	{
-		static CreatorSetter setter( param );
+		static SignatureSetter setter( param, &FInfo::fdCreator );
 		
 		gInfoMutators.push_back( &setter );
 	}
 	
-	static void TypeOptor( N::OSType param )
+	static void TypeOptor( const char* param )
 	{
-		static TypeSetter setter( param );
+		static SignatureSetter setter( param, &FInfo::fdType );
 		
 		gInfoMutators.push_back( &setter );
 	}
@@ -117,8 +115,8 @@ namespace tool
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		o::bind_option_trigger< N::OSType >( "-c", std::ptr_fun( CreatorOptor ) );
-		o::bind_option_trigger< N::OSType >( "-t", std::ptr_fun( TypeOptor    ) );
+		o::bind_option_trigger_with_param( "-c", std::ptr_fun( CreatorOptor ) );
+		o::bind_option_trigger_with_param( "-t", std::ptr_fun( TypeOptor    ) );
 		
 		o::get_options( argc, argv );
 		

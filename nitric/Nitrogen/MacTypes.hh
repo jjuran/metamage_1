@@ -32,9 +32,6 @@
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
-#endif
 #ifndef NUCLEUS_FLATTENER_H
 #include "Nucleus/Flattener.h"
 #endif
@@ -178,23 +175,6 @@ namespace Nitrogen
 		kRegionCode_Max = Nucleus::Enumeration_Traits< ::RegionCode >::max
 	};
 	
-	class FourCharCode
-	{
-		private:
-			::FourCharCode itsValue;
-		
-		public:
-			FourCharCode()  {}
-			
-			FourCharCode( ::FourCharCode value ) : itsValue( value )  {}
-			
-			FourCharCode& operator=( ::FourCharCode value )  { itsValue = value;  return *this; }
-			
-			::FourCharCode Get() const  { return itsValue; }
-			
-			operator ::FourCharCode() const  { return Get(); }
-	};
-	
 	enum OSType
 	{
 		kUnknownType = ::kUnknownType,
@@ -271,38 +251,6 @@ namespace Nitrogen
    
    using ::Point;
    using ::Rect;
-	
-	
-	namespace Detail
-	{
-		
-		::FourCharCode ConvertStringToFourCharCode( const std::string& string );
-		
-		std::string ConvertFourCharCodeToString( ::FourCharCode code );
-		
-	}
-	
-	// Convert string to FourCharCode
-	template < class CodeType >
-	struct StringToFourCharCode_Converter : public std::unary_function< std::string, CodeType >
-	{
-		CodeType operator()( const std::string& input ) const
-		{
-			return CodeType( Detail::ConvertStringToFourCharCode( input ) );
-		}
-	};
-	
-	// Convert FourCharCode to string
-	template < class CodeType >
-	struct FourCharCodeToString_Converter : public std::unary_function< CodeType, std::string >
-	{
-		std::string operator()( CodeType input ) const
-		{
-			return Detail::ConvertFourCharCodeToString( input );
-		}
-	};
-	
-	
   }
 
 namespace Nucleus
@@ -342,16 +290,6 @@ namespace Nucleus
          return operator()( 0, 0, 0, 0 );
         }
      };
-	
-	
-	template <> struct Converter< Nitrogen::FourCharCode, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::FourCharCode > {};
-	template <> struct Converter< Nitrogen::OSType,       std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::OSType       > {};
-	template <> struct Converter< Nitrogen::ResType,      std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::ResType      > {};
-	
-	template <> struct Converter< std::string, Nitrogen::FourCharCode > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::FourCharCode > {};
-	template <> struct Converter< std::string, Nitrogen::OSType       > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::OSType       > {};
-	template <> struct Converter< std::string, Nitrogen::ResType      > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::ResType      > {};
-	
   }
 
 #endif
