@@ -29,7 +29,7 @@ namespace Nitrogen
      {
       return Nitrogen::CFDataCreate( allocator,
                                      bytes.empty() ? 0 : &*bytes.begin(),
-                                     Nucleus::Convert<CFIndex>( bytes.size() ) );
+                                     nucleus::convert<CFIndex>( bytes.size() ) );
      }
    
    Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
@@ -48,7 +48,7 @@ namespace Nitrogen
      {
       return Nitrogen::CFDataCreateWithBytesNoCopy( allocator,
                                                     bytes.empty() ? 0 : &*bytes.begin(),
-                                                    Nucleus::Convert<CFIndex>( bytes.size() ) );
+                                                    nucleus::convert<CFIndex>( bytes.size() ) );
      }
 
    Nucleus::Owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
@@ -83,7 +83,7 @@ namespace Nitrogen
                                       CFRange   range )
      {
       typedef std::vector<UInt8> Vector;
-      Vector result( Nucleus::Convert<Vector::size_type>( range.length ) );
+      Vector result( nucleus::convert<Vector::size_type>( range.length ) );
       if ( !result.empty() )
          CFDataGetBytes( theData, range, &*result.begin() );
       return result;
@@ -100,7 +100,7 @@ namespace Nitrogen
       if ( !bytes.empty() )
          CFDataAppendBytes( theData,
                             &*bytes.begin(),
-                            Nucleus::Convert<CFIndex>( bytes.size() ) );
+                            nucleus::convert<CFIndex>( bytes.size() ) );
      }
 
 
@@ -111,6 +111,6 @@ namespace Nitrogen
       CFDataReplaceBytes( theData,
                           range,
                           newBytes.empty() ? 0 : &*newBytes.begin(),
-                          Nucleus::Convert<CFIndex>( newBytes.size() ) );
+                          nucleus::convert<CFIndex>( newBytes.size() ) );
      }
   }

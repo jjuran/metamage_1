@@ -141,7 +141,7 @@ namespace Nitrogen {
                                                                  bool               isExternalRepresentation )
      {
       return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8 * >( string.data() ),
-                                                Nucleus::Convert<CFIndex>( string.size() ),
+                                                nucleus::convert<CFIndex>( string.size() ),
                                                 encoding,
                                                 isExternalRepresentation );
      }

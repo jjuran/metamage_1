@@ -16,6 +16,7 @@
 namespace UseEdit
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
@@ -38,7 +39,7 @@ namespace UseEdit
 	{
 		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
 		
-		return NN::Convert< NN::Owned< N::CFStringRef > >( info.outName );
+		return n::convert< NN::Owned< N::CFStringRef > >( info.outName );
 	}
 	
 	

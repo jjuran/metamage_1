@@ -79,7 +79,7 @@ namespace Nitrogen
                                         NumericType    value )
      {
       typedef typename CFNumber_Traits< NumericType >::ClosestType ClosestType;
-      ClosestType convertable = Nucleus::Convert< ClosestType >( value );
+      ClosestType convertable = nucleus::convert< ClosestType >( value );
       return Nitrogen::CFNumberCreate( allocator,
                                        CFNumber_Traits< ClosestType >::type,
                                        &convertable );
@@ -123,7 +123,7 @@ namespace Nitrogen
                                        CFNumber_Traits< ClosestType >::type,
                                        &convertable );
       
-      NumericType result = Nucleus::Convert< NumericType >( convertable );
+      NumericType result = nucleus::convert< NumericType >( convertable );
       
       if ( !success )
          throw CFNumberGetValue_FailedWithResult<NumericType>( result );

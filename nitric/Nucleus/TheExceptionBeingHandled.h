@@ -154,7 +154,7 @@ namespace Nucleus
 	template < class Output, class Exception >
 	Output ConvertException( const Exception& e )
 	{
-		return Convert< Output, Exception >( e );
+		return nucleus::convert< Output, Exception >( e );
 	}
 	
    template < class Output,
@@ -209,7 +209,7 @@ namespace Nucleus
      {
       typedef Output (*ConversionFunction)( const Exception& );
 #ifdef __MWERKS__
-      // gcc 4:  Nucleus::Convert cannot appear in a constant-expression
+      // gcc 4:  nucleus::convert cannot appear in a constant-expression
       RegisterExceptionConversion< Output, Exception, static_cast<ConversionFunction>( ConvertException ) >();
 #else
       // CW Pro 6:  ambiguous access to overloaded function

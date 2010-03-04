@@ -32,6 +32,7 @@
 namespace MacBinaryDecoder
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
@@ -136,7 +137,7 @@ namespace MacBinaryDecoder
 	
 	void App::OpenDocument( const Io_Details::file_spec& file )
 	{
-		N::FSDirSpec parent = NN::Convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
+		N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
 		
 		Decode( io::open_for_reading( file ), parent );
 	}

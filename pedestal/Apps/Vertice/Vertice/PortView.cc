@@ -43,6 +43,7 @@
 namespace Vertice
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace GX = GrafX;
@@ -1173,7 +1174,7 @@ namespace Vertice
 	
 	void PortView::DrawPixel( int x, int y )
 	{
-		N::SetCPixel( x, y, NN::Convert< N::RGBColor >( TracePixel( x, y ) ) );
+		N::SetCPixel( x, y, n::convert< N::RGBColor >( TracePixel( x, y ) ) );
 	}
 	
 	/*
@@ -1455,7 +1456,7 @@ namespace Vertice
 								
 								if ( !gBlitting )
 								{
-									N::RGBColor rgb = NN::Convert< N::RGBColor >( tweaked );
+									N::RGBColor rgb = n::convert< N::RGBColor >( tweaked );
 									
 									N::SetCPixel( iX, iY, rgb );
 								}
