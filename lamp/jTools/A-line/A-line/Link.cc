@@ -245,7 +245,7 @@ namespace tool
 	
 	void LinkingTask::Make()
 	{
-		std::string output_filename = io::get_filename_string( OutputPath() );
+		std::string output_filename = io::get_filename( OutputPath() );
 		
 		ExecuteCommand( shared_from_this(), "Linking: " + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
@@ -307,7 +307,7 @@ namespace tool
 		
 		rezCommand.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "Rezzing: " + io::get_filename_string( OutputPath() ), rezCommand );
+		ExecuteCommand( shared_from_this(), "Rezzing: " + io::get_filename( OutputPath() ), rezCommand );
 	}
 	
 	void RezzingTask::Return( bool succeeded )
@@ -391,7 +391,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "Copying resources: " + io::get_filename_string( OutputPath() ), command );
+		ExecuteCommand( shared_from_this(), "Copying resources: " + io::get_filename( OutputPath() ), command );
 	}
 	
 	void ResourceCopyingTask::Return( bool succeeded )
