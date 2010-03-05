@@ -25,13 +25,14 @@ namespace iota
 	}
 	
 	
-	inline unsigned pure_decimal_magnitude( unsigned x )
+	template < unsigned base, class Type >
+	inline unsigned pure_magnitude( Type x )
 	{
 		unsigned result = 0;
 		
 		while ( x > 0 )
 		{
-			x /= 10;
+			x /= base;
 			
 			++result;
 		}
@@ -39,33 +40,62 @@ namespace iota
 		return result;
 	}
 	
+	template < unsigned base, class Type >
+	inline unsigned magnitude( Type x )
+	{
+		return x == 0 ? 1 : pure_magnitude< base >( x );
+	}
+	
+	template < unsigned base, class Type >
+	inline void fill_unsigned( Type x, char* begin, char* end )
+	{
+		for ( char* p = end;  p > begin;  x /= base )
+		{
+			*--p = '0' + x % base;
+		}
+	}
+	
+	template < unsigned base, class Type >
+	inline void fill_unsigned( Type x, char* begin, unsigned length )
+	{
+		fill_unsigned< base >( x, begin, begin + length );
+	}
+	
+	template < unsigned base, class Type >
+	inline char* inscribe_unsigned_r( Type x, char* buffer )
+	{
+		const unsigned length = magnitude< base >( x );
+		
+		char* end = buffer + length;
+		
+		fill_unsigned< base >( x, buffer, end );
+		
+		return end;
+	}
+	
+	inline unsigned pure_decimal_magnitude( unsigned x )
+	{
+		return pure_magnitude< 10 >( x );
+	}
+	
 	inline unsigned decimal_magnitude( unsigned x )
 	{
-		return x == 0 ? 1 : pure_decimal_magnitude( x );
+		return magnitude< 10 >( x );
 	}
 	
 	inline void fill_unsigned_decimal( unsigned x, char* begin, char* end )
 	{
-		for ( char* p = end;  p > begin;  x /= 10 )
-		{
-			*--p = '0' + x % 10;
-		}
+		fill_unsigned< 10 >( x, begin, end );
 	}
 	
 	inline void fill_unsigned_decimal( unsigned x, char* begin, unsigned length )
 	{
-		fill_unsigned_decimal( x, begin, begin + length );
+		fill_unsigned< 10 >( x, begin, length );
 	}
 	
 	inline char* inscribe_unsigned_decimal_r( unsigned x, char* buffer )
 	{
-		const unsigned magnitude = decimal_magnitude( x );
-		
-		char* end = buffer + magnitude;
-		
-		fill_unsigned_decimal( x, buffer, end );
-		
-		return end;
+		return inscribe_unsigned_r< 10 >( x, buffer );
 	}
 	
 	inline char* inscribe_decimal_r( int x, char* buffer )
@@ -83,6 +113,8 @@ namespace iota
 	char* inscribe_unsigned_decimal( unsigned x );
 	
 	char* inscribe_decimal( int x );
+	
+	char* inscribe_unsigned_wide_decimal( unsigned long long x );
 	
 }
 

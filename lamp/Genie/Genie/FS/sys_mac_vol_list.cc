@@ -31,6 +31,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/stringify.hh"
 #include "Genie/FS/sys_mac_vol_list_N_dt.hh"
 #include "Genie/FS/sys_mac_vol_parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -49,8 +50,8 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -221,6 +222,8 @@ namespace Genie
 		
 		typedef const unsigned char* Result;
 		
+		typedef stringify_pascal_string stringify;
+		
 		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioNamePtr;
@@ -230,6 +233,8 @@ namespace Genie
 	struct GetVolumeBlockCount : Volume_Accessor_Defaults
 	{
 		typedef UInt32 Result;  // will break on 16TB volumes
+		
+		typedef stringify_unsigned stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -242,6 +247,8 @@ namespace Genie
 	{
 		typedef UInt32 Result;
 		
+		typedef stringify_unsigned stringify;
+		
 		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVAlBlkSiz;
@@ -251,6 +258,8 @@ namespace Genie
 	struct GetVolumeFreeBlockCount : Volume_Accessor_Defaults
 	{
 		typedef UInt32 Result;
+		
+		typedef stringify_unsigned stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -263,6 +272,8 @@ namespace Genie
 	{
 		typedef UInt64 Result;
 		
+		typedef stringify_unsigned_wide stringify;
+		
 		static Result Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes
@@ -273,6 +284,8 @@ namespace Genie
 	struct GetVolumeFreeSpace : Volume_Accessor_Defaults
 	{
 		typedef UInt64 Result;
+		
+		typedef stringify_unsigned_wide stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -286,6 +299,8 @@ namespace Genie
 		static const bool alwaysStringified = true;
 		
 		typedef const char* Result;
+		
+		typedef stringify_string stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -302,6 +317,8 @@ namespace Genie
 	{
 		typedef SInt16 Result;
 		
+		typedef stringify_short stringify;
+		
 		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFSID;
@@ -313,6 +330,8 @@ namespace Genie
 		static const bool neverZero = true;
 		
 		typedef SInt32 Result;
+		
+		typedef stringify_int stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -326,6 +345,8 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
+		typedef stringify_int stringify;
+		
 		static Result Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFilCnt;
@@ -337,6 +358,8 @@ namespace Genie
 		static const bool neverZero = true;
 		
 		typedef SInt32 Result;
+		
+		typedef stringify_int stringify;
 		
 		static Result Get( const XVolumeParam& volume )
 		{
@@ -406,10 +429,7 @@ namespace Genie
 		{
 			const typename Accessor::Result data = Get( that );
 			
-			const bool raw = !Accessor::alwaysStringified  &&  binary;
-			
-			std::string result = raw ? std::string( (char*) &data, sizeof data )
-			                   :       NN::Convert< std::string >( data );
+			std::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}
