@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_button.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -29,7 +32,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -188,7 +190,7 @@ namespace Genie
 	{
 		static std::string Get( const FSTree* that, bool binary )
 		{
-			return NN::Convert< std::string >( gButtonMap[ GetViewKey( that ) ].title );
+			return plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )

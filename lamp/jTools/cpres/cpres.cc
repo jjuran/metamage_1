@@ -3,6 +3,9 @@
  *	========
  */
 
+// plus
+#include "plus/make_string.hh"
+
 // Nucleus
 #include "Nucleus/Saved.h"
 
@@ -65,7 +68,7 @@ namespace tool
 	{
 		if ( io::directory_exists( source ) )
 		{
-			std::string name = NN::Convert< std::string >( source.name );
+			std::string name = plus::make_string( source.name );
 			
 			// Source item is a directory.
 			std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
@@ -201,7 +204,7 @@ namespace tool
 			{
 				++fail;
 				
-				std::string destName = NN::Convert< std::string >( dest.name );
+				std::string destName = plus::make_string( dest.name );
 				
 				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
 				                                err.Get(),      freeArgs[ index ],

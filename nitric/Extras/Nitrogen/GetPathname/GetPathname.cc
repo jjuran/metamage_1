@@ -7,6 +7,9 @@
 #include "GetPathname.hh"
 #endif
 
+// plus
+#include "plus/make_string.hh"
+
 // Nitrogen
 #ifndef NITROGEN_FOLDERS_HH
 #include "Nitrogen/Folders.hh"
@@ -18,7 +21,7 @@
 
 static std::string GetMacPathname_Internal( const FSSpec& file )
 {
-	std::string filename = Nucleus::Convert< std::string >( file.name );
+	std::string filename = plus::make_string( file.name );
 	
 	if ( file.parID == fsRtParID )
 	{

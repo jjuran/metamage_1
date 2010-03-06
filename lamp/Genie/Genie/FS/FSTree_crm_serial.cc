@@ -10,6 +10,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -26,7 +29,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
@@ -122,7 +124,7 @@ namespace Genie
 		
 		StringHandle h = serialPtr->*selector;
 		
-		return NN::Convert< std::string >( N::Str255( *h ) );
+		return plus::make_string( N::Str255( *h ) );
 	}
 	
 	// These are necessary because CW Pro 6 doesn't support pointer-to-member template parameters.

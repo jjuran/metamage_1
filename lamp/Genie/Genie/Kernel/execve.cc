@@ -13,6 +13,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/make_string.hh"
+
 // Nitrogen
 #include "Nitrogen/CodeFragments.hh"
 
@@ -26,7 +29,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static int execve( const char*        path,
@@ -74,7 +76,7 @@ namespace Genie
 			}
 			catch ( const N::ErrMessage& msg )
 			{
-				errMsg = ", errMessage: " + NN::Convert< std::string >( msg.errMessage ) + "\n";
+				errMsg = ", errMessage: " + plus::make_string( msg.errMessage ) + "\n";
 			}
 			catch ( ... )  {}
 			
