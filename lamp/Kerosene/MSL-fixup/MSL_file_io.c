@@ -18,7 +18,7 @@ int	__open_file(const char * name, __file_modes mode, __file_handle * handle)
 	
 	int fd = -1;
 	
-	switch ( mode.io_mode )
+	switch ( mode.io_mode & __read_write )
 	{
 		case __read:
 			posix_mode |= O_RDONLY;
@@ -32,12 +32,13 @@ int	__open_file(const char * name, __file_modes mode, __file_handle * handle)
 			posix_mode |= O_RDWR;
 			break;
 		
-		case __append:
-			posix_mode |= O_WRONLY | O_APPEND;
-			break;
-		
 		default:
 			break;
+	}
+	
+	if ( mode.io_mode & __append )
+	{
+		posix_mode |= O_APPEND;
 	}
 	
 	if ( mode.open_mode != __must_exist )
