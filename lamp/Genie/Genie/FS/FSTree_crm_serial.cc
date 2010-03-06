@@ -59,6 +59,12 @@ namespace Genie
 		return NULL;
 	}
 	
+	static N::CRMSerialPtr CRMRecGetSerial( N::CRMRecPtr crmRec )
+	{
+		// FIXME:  Throw if device type is wrong
+		return N::GetCRMAttributes< N::crmSerialDevice >( crmRec );
+	}
+	
 	extern const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[];
 	
 	static FSTreePtr serial_lookup( const FSTreePtr& parent, const std::string& name )
@@ -112,7 +118,7 @@ namespace Genie
 		
 		N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 		
-		N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
+		N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
 		
 		StringHandle h = serialPtr->*selector;
 		
@@ -158,7 +164,7 @@ namespace Genie
 				
 				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 				
-				N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
+				N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
 				
 				CRMIconHandle iconHandle = serialPtr->deviceIcon;
 				
