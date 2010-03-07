@@ -568,6 +568,7 @@ namespace Nitrogen
 		return PBGetCatInfoSync( pb, policy );
 	}
 	
+	FSDirSpec FSpMake_FSDirSpec( const FSSpec& dir );
 	
 	// ...
 	
@@ -616,12 +617,15 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum    vRefNum,
 	                     FSDirID           dirID,
-	                     ConstStr255Param  name );
+	                     ConstStr255Param  name = NULL );
 	
-	inline FSSpec FSMakeFSSpec( const FSDirSpec& dir, ConstStr255Param name )
+	inline FSSpec FSMakeFSSpec( const FSDirSpec&  dir,
+	                            ConstStr255Param  name = NULL )
 	{
 		return FSMakeFSSpec( dir.vRefNum, dir.dirID, name );
 	}
+	
+	FSSpec FSMakeFSSpec( const FSRef& ref );
 	
   }
 
@@ -631,13 +635,16 @@ namespace Nucleus
 	{
 		Nitrogen::FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
 		{
-			return Nitrogen::FSMakeFSSpec( dir, NULL );
+			return Nitrogen::FSMakeFSSpec( dir );
 		}
 	};
 	
 	template <> struct Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSDirSpec >
 	{
-		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const;
+		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const
+		{
+			return Nitrogen::FSpMake_FSDirSpec( dir );
+		}
 	};
   }
 
@@ -694,7 +701,7 @@ namespace Nitrogen
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirSpec dest )
 	{
-		FSpCatMove( source, Nucleus::Convert< FSSpec >( dest ) );
+		FSpCatMove( source, FSMakeFSSpec( dest ) );
 	}
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirID dest )
@@ -1016,9 +1023,7 @@ namespace Nucleus
      {
       Nitrogen::FSSpec operator()( const Nitrogen::FSRef& ref ) const
         {
-         ::FSSpec result;
-         Nitrogen::FSGetCatalogInfo( ref, 0, 0, 0, &result, 0 );
-         return result;
+         return Nitrogen::FSMakeFSSpec( ref );
         }
      };
 	
@@ -1026,7 +1031,7 @@ namespace Nucleus
 	{
 		Nitrogen::FSDirSpec operator()( const Nitrogen::FSRef& ref ) const
 		{
-			return Convert< Nitrogen::FSDirSpec >( Convert< Nitrogen::FSSpec >( ref ) );
+			return Nitrogen::FSpMake_FSDirSpec( Nitrogen::FSMakeFSSpec( ref ) );
 		}
 	};
 }

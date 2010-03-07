@@ -70,7 +70,7 @@ namespace tool
 	
 	static N::FSDirSpec QueueDirectory()
 	{
-		return NN::Convert< N::FSDirSpec >( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
 	}
 	
 	
@@ -317,13 +317,13 @@ namespace tool
 		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 		
-		directory_spec msgFolder( NN::Convert< N::FSDirSpec >( msgFolderItem ) );
+		directory_spec msgFolder( N::FSpMake_FSDirSpec( msgFolderItem ) );
 		
 		FSSpec message      = msgFolder / "Message";
 		FSSpec returnPath   = msgFolder / "Return-Path";
 		FSSpec destinations = msgFolder / "Destinations";
 		
-		directory_spec destFolder( NN::Convert< N::FSDirSpec >( destinations ) );
+		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
 		typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
 		directory_container contents = io::directory_contents( destFolder );

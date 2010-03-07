@@ -36,9 +36,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -905,7 +902,8 @@ namespace MacBinary
 			{
 				itsFrameStack.push_back( itsFrame );
 				
-				itsFrame.destDir = NN::Convert< N::FSDirSpec >( itsFrame.file );
+				itsFrame.destDir = N::FSpMake_FSDirSpec( itsFrame.file );
+				
 				itsFrame.comment.clear();
 			}
 			else

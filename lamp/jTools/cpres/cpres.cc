@@ -41,7 +41,7 @@ namespace tool
 	static NN::Owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
 	                                                                   N::FSIOPermssn  perm )
 	{
-		FSRef fileref = NN::Convert< FSRef >( filespec );
+		FSRef fileref = N::FSpMakeFSRef( filespec );
 		
 		return N::FSOpenResourceFile( fileref, N::UniString(), perm );
 	}
@@ -168,9 +168,9 @@ namespace tool
 		
 		if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
 		{
-			FSSpec parent_spec = NN::Convert< FSSpec >( io::get_preceding_directory( dest ) );
+			FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( dest ) );
 			
-			FSRef parent_ref = NN::Convert< FSRef >( parent_spec );
+			FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
 			
 			N::UniString name( dest.name + 1, dest.name + 1 + dest.name[0] );
 			

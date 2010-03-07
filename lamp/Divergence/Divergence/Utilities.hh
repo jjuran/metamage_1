@@ -24,7 +24,6 @@
 #include <string>
 
 #if TARGET_RT_MAC_MACHO
-	#include "Nucleus/Convert.h"
 	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
 	#include "poseven/Pathnames.hh"
@@ -43,7 +42,7 @@ namespace Divergence
 		
 		try
 		{
-			return Nucleus::Convert< FSSpec >( Nitrogen::FSPathMakeRef( path ).ref );
+			return Nitrogen::FSMakeFSSpec( Nitrogen::FSPathMakeRef( path ).ref );
 		}
 		catch ( ... )
 		{
@@ -55,7 +54,7 @@ namespace Divergence
 		
 		FSRef parent_ref = Nitrogen::FSPathMakeRef( parent_path ).ref;
 		
-		FSSpec parent_spec = Nucleus::Convert< FSSpec >( parent_ref );
+		FSSpec parent_spec = Nitrogen::FSMakeFSSpec( parent_ref );
 		
 		return parent_spec / io::get_filename( path );
 		
