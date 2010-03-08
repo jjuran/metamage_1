@@ -1,4 +1,5 @@
 #include	"sfhdr.h"
+#include "stdio.h"
 
 /*	Open a stream given a file descriptor.
 **
