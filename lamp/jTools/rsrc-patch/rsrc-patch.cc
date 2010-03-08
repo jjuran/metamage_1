@@ -15,6 +15,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/quad.hh"
 
+// poseven
+#include "poseven/functions/perror.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
@@ -22,6 +25,9 @@
 
 // Divergence
 #include "Divergence/Utilities.hh"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -33,6 +39,7 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace o = orion;
 	
@@ -174,8 +181,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		o::bind_option_to_variable( "--type", gResType );
 		o::bind_option_to_variable( "--id",   gResID   );
 		
@@ -191,7 +196,20 @@ namespace tool
 		
 		//o::alias_option( "--type", "-t" );
 		
-		o::get_options( argc, argv );
+		try
+		{
+			o::get_options( argc, argv );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			std::string status = "OSStatus ";
+			
+			status += iota::inscribe_decimal( err );
+			
+			p7::perror( "rsrc-patch", status, 0 );
+			
+			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+		}
 		
 		return EXIT_SUCCESS;
 	}

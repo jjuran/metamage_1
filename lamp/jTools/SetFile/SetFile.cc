@@ -8,7 +8,11 @@
 #include <vector>
 
 // iota
+#include "iota/decimal.hh"
 #include "iota/quad.hh"
+
+// poseven
+#include "poseven/functions/perror.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
@@ -16,6 +20,9 @@
 
 // Divergence
 #include "Divergence/Utilities.hh"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -26,7 +33,7 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace o = orion;
 	
@@ -113,8 +120,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		o::bind_option_trigger_with_param( "-c", std::ptr_fun( CreatorOptor ) );
 		o::bind_option_trigger_with_param( "-t", std::ptr_fun( TypeOptor    ) );
 		
@@ -122,16 +127,32 @@ namespace tool
 		
 		char const *const *free_args = o::free_arguments();
 		
+		int exit_status = 0;
+		
 		while ( *free_args )
 		{
 			const char* pathname = *free_args++;
 			
-			FSSpec file = Div::ResolvePathToFSSpec( pathname );
-			
-			SetFileInfo( file );
+			try
+			{
+				SetFileInfo( Div::ResolvePathToFSSpec( pathname ) );
+			}
+			catch ( const N::OSStatus& err )
+			{
+				std::string status = "OSStatus ";
+				
+				status += iota::inscribe_decimal( err );
+				
+				const int errnum = OSErrno::ErrnoFromOSStatus( err );
+				
+				p7::perror( "SetFile", pathname, status );
+				p7::perror( "SetFile", pathname, errnum );
+				
+				exit_status = 1;
+			}
 		}
 		
-		return EXIT_SUCCESS;
+		return exit_status;
 	}
 	
 }

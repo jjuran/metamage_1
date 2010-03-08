@@ -46,7 +46,6 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace o = orion;
@@ -119,8 +118,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		const char* encode_target = NULL;
 		const char* decode_target = NULL;
 		

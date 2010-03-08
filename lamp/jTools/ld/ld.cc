@@ -543,8 +543,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		std::vector< const char* > command_args;
 		
 		Architecture arch = TARGET_CPU_68K ? arch_m68k

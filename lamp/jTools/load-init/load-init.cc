@@ -23,10 +23,14 @@
 #include "Nitrogen/Str.hh"
 
 // poseven
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/get_options.hh"
@@ -103,8 +107,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		const char* type = "INIT";
 		const char* id   = "0";
 		
@@ -124,7 +126,23 @@ namespace tool
 			return 2;
 		}
 		
-		return LoadInit( type, id, freeArgs );
+		try
+		{
+			return LoadInit( type, id, freeArgs );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			std::string status = "OSStatus ";
+			
+			status += iota::inscribe_decimal( err );
+			
+			p7::perror( "load-init", status, 0 );
+			
+			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+		}
+		
+		// Not reached
+		return 0;
 	}
 
 }

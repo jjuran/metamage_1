@@ -265,8 +265,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		std::vector< std::string > inlineScriptPieces;
 		
 		// human-readable by default, like Apple osascript
