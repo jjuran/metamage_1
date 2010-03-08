@@ -2,7 +2,7 @@
 	atexit.cc
 	---------
 	
-	Copyrght 2009, Joshua Juran
+	Copyright 2009, Joshua Juran
 */
 
 // POSIX
