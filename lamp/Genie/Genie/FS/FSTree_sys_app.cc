@@ -9,9 +9,6 @@
 #include <MacMemory.h>
 #endif
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys_app_dir.hh"
