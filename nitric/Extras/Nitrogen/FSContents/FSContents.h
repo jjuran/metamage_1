@@ -58,7 +58,7 @@ namespace Nitrogen
 		{
 			CInfoPBRec pb;
 			
-			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb, NULL );
+			FSpGetCatInfo( nucleus::convert< FSDirSpec >( dir ), pb, NULL );
 			
 			return pb.dirInfo.ioDrNmFls;
 		}
@@ -68,7 +68,7 @@ namespace Nitrogen
 			CInfoPBRec pb;
 			::Str255 name;
 			
-			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
+			FSpGetCatInfo( nucleus::convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
 			
 			return name;
 		}

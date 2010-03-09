@@ -159,9 +159,9 @@ namespace Nitrogen
      }
    }
 
-namespace Nucleus
+namespace nucleus
    {
-   Nitrogen::FSRef Converter< Nitrogen::FSRef, Nitrogen::CFURLRef >::operator()( Nitrogen::CFURLRef url ) const
+   Nitrogen::FSRef converter< Nitrogen::FSRef, Nitrogen::CFURLRef >::operator()( Nitrogen::CFURLRef url ) const
      {
       return Nitrogen::CFURLGetFSRef( url );
      }

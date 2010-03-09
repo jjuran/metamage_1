@@ -14,8 +14,16 @@
 #ifndef NITROGEN_STR_HH
 #define NITROGEN_STR_HH
 
-// Nucleus
-#include "Nucleus/Convert.h"
+// Standard C++
+#include <string>
+
+// Standard C/C++
+#include <cstring>
+
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
 
 
 namespace Nitrogen
@@ -88,20 +96,20 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Converter< std::string, const unsigned char * > : public std::unary_function< const unsigned char *, std::string >
+	struct converter< std::string, const unsigned char * > : public std::unary_function< const unsigned char *, std::string >
 	{
 		std::string operator()( const unsigned char *input ) const;
 	};
 	
 	template <>
-	struct ConvertInputTraits< unsigned char* > : ConvertInputTraits< const unsigned char* > {};
+	struct convert_input_traits<       unsigned char*          > : convert_input_traits< const unsigned char* > {};
 	
 	template < unsigned char length >
-	struct ConvertInputTraits< const unsigned char[ length ] > : ConvertInputTraits< const unsigned char* > {};
+	struct convert_input_traits< const unsigned char[ length ] > : convert_input_traits< const unsigned char* > {};
 	
 #ifdef __APPLE_CC__
 	
@@ -109,26 +117,26 @@ namespace Nucleus
 	// If you're inclined to discover why this is, by all means be my guest.
 	
 	template < unsigned char length >
-	struct ConvertInputTraits<       unsigned char[ length ] > : ConvertInputTraits< const unsigned char* > {};
+	struct convert_input_traits<       unsigned char[ length ] > : convert_input_traits< const unsigned char* > {};
 	
 #endif
 	
 	template < unsigned char length >
-	struct ConvertInputTraits< Nitrogen::Str< length > > : ConvertInputTraits< const unsigned char* > {};
+	struct convert_input_traits<       Nitrogen::Str< length > > : convert_input_traits< const unsigned char* > {};
 	
 	// Convert StringHandle to std::string
 	template <>
-	struct Converter< std::string, unsigned char ** >: public std::unary_function< unsigned char **, std::string >
+	struct converter< std::string, unsigned char ** >: public std::unary_function< unsigned char **, std::string >
 	{
 		std::string operator()( unsigned char **input ) const
 		{
 			// We don't need to lock the handle because we copy it to the stack
 			// before touching the heap, after which point we work from the copy.
-			return Convert< std::string >( Nitrogen::Str255( *input ) );
+			return convert< std::string >( Nitrogen::Str255( *input ) );
 		}
 	};
 	
 }
-	
+
 #endif
 

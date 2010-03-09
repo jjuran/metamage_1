@@ -24,6 +24,7 @@
 #endif
 
 // Standard C++
+#include <string>
 #include <vector>
 
 // nucleus

@@ -55,7 +55,7 @@ namespace Nitrogen
      {
       return Nitrogen::CFStringCreateWithCharacters( alloc,
                                                      string.data(),
-                                                     Nucleus::Convert<CFIndex>( string.size() ) );
+                                                     nucleus::convert<CFIndex>( string.size() ) );
      }
 
    UniString CFStringGetCharacters( CFStringRef theString, CFRange range )
@@ -68,7 +68,7 @@ namespace Nitrogen
       if ( range.length == 0 )
          return UniString();
       
-      UniString result( Nucleus::Convert<UniString::size_type>( range.length ), UniChar() );
+      UniString result( nucleus::convert<UniString::size_type>( range.length ), UniChar() );
       Nitrogen::CFStringGetCharacters( theString,
                                        range,
                                        &*result.begin() );

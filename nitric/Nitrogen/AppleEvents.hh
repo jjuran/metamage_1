@@ -152,7 +152,7 @@ namespace Nitrogen
 			}
 			catch ( ... )
 			{
-				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
+				return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;
@@ -173,7 +173,7 @@ namespace Nitrogen
 			}
 			catch ( ... )
 			{
-				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
+				return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;

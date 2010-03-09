@@ -14,8 +14,8 @@
 #ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 #define NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 #include <list>
@@ -154,7 +154,7 @@ namespace Nucleus
 	template < class Output, class Exception >
 	Output ConvertException( const Exception& e )
 	{
-		return Convert< Output, Exception >( e );
+		return nucleus::convert< Output, Exception >( e );
 	}
 	
    template < class Output,
@@ -209,39 +209,43 @@ namespace Nucleus
      {
       typedef Output (*ConversionFunction)( const Exception& );
 #ifdef __MWERKS__
-      // gcc 4:  Nucleus::Convert cannot appear in a constant-expression
+      // gcc 4:  nucleus::convert cannot appear in a constant-expression
       RegisterExceptionConversion< Output, Exception, static_cast<ConversionFunction>( ConvertException ) >();
 #else
       // CW Pro 6:  ambiguous access to overloaded function
       RegisterExceptionConversion< Output, Exception, ConvertException >();
 #endif
      }
-   
-   
+  }
+
+namespace nucleus
+{
+	
    template < class Output >
-   class Converter< Output, TheExceptionBeingHandled >: public std::unary_function< TheExceptionBeingHandled, Output >
+   class converter< Output, ::Nucleus::TheExceptionBeingHandled >: public std::unary_function< ::Nucleus::TheExceptionBeingHandled, Output >
      {
       private:
          bool hasDefaultValue;
          Output defaultValue;
       
       public:
-         Converter()
+         converter()
            : hasDefaultValue( false )
            {}
          
-         Converter( const Output& theDefaultValue )
+         converter( const Output& theDefaultValue )
            : hasDefaultValue( true ),
              defaultValue( theDefaultValue )
            {}
          
-      Output operator()( TheExceptionBeingHandled e ) const
+      Output operator()( ::Nucleus::TheExceptionBeingHandled e ) const
         {
          return hasDefaultValue
-                  ? TheGlobalExceptionConverter< Output >().Convert( e, defaultValue ) 
-                  : TheGlobalExceptionConverter< Output >().Convert( e ); 
+                  ? ::Nucleus::TheGlobalExceptionConverter< Output >().Convert( e, defaultValue ) 
+                  : ::Nucleus::TheGlobalExceptionConverter< Output >().Convert( e ); 
         }
      };
-  }
+	
+}
 
 #endif

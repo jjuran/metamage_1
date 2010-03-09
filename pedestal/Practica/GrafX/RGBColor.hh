@@ -6,8 +6,12 @@
 #ifndef GRAFX_RGBCOLOR_HH
 #define GRAFX_RGBCOLOR_HH
 
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
+#endif
+
 // Nucleus
-#include "Nucleus/Convert.h"
 #include "Nucleus/Make.h"
 
 // Nitrogen
@@ -38,10 +42,10 @@ namespace GrafX
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Converter< GrafX::Color, ::RGBColor >: public std::unary_function< ::RGBColor, GrafX::Color >
+	template <> struct converter< GrafX::Color, ::RGBColor >: public std::unary_function< ::RGBColor, GrafX::Color >
 	{
 		GrafX::Color operator()( const ::RGBColor& color ) const
 		{
@@ -53,10 +57,11 @@ namespace Nucleus
 		}
 	};
 	
-	template <> struct Converter< ::RGBColor, GrafX::Color >: public std::unary_function< GrafX::Color, ::RGBColor >
+	template <> struct converter< ::RGBColor, GrafX::Color >: public std::unary_function< GrafX::Color, ::RGBColor >
 	{
 		::RGBColor operator()( const GrafX::Color& color ) const
 		{
+			using Nucleus::Make;
 			using GrafX::gMaxIntensity;
 			
 			return Make< ::RGBColor >( GrafX::Denormalize< gMaxIntensity >( color[ Vectoria::Red   ] ),

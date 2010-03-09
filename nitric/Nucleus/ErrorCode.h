@@ -73,9 +73,9 @@
    or one may use this sceme with an existing error class by specializing
    ErrorClassTraits.
    
-   The template function Convert is used to convert ErrorNumber to ErrorClass
+   The template function convert() is used to convert ErrorNumber to ErrorClass
    and vice versa.  By default, it attempts an implicit conversion; if
-   these conversions are not allowed, Convert may be extended to provide
+   these conversions are not allowed, convert() may be extended to provide
    the necessary conversions.
    
    The class template ErrorCode may be specialized to provide a richer
@@ -93,8 +93,8 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #define NUCLEUS_ERRORCODE_H
 
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 
 #ifndef NUCLEUS_DEBUGGING_H
@@ -134,12 +134,12 @@ namespace Nucleus
       public:
 	#if NUCLEUS_RICH_ERRORCODES
          ErrorCode()
-           : ErrorClass( Convert<ErrorClass>( number ) ),
+           : ErrorClass( nucleus::convert<ErrorClass>( number ) ),
              DebuggingContext()
            {}
 	#else
          ErrorCode( typename ErrorClassTraits<ErrorClass>::ErrorNumber errnum )
-           : ErrorClass( Convert<ErrorClass>( errnum ) ),
+           : ErrorClass( nucleus::convert<ErrorClass>( errnum ) ),
              DebuggingContext()
            {}
 	#endif
@@ -178,7 +178,7 @@ namespace Nucleus
          
          void Throw( ErrorClass error ) const
            {
-            typename Map::const_iterator found = map.find( Convert<ErrorNumber>( error ) );
+            typename Map::const_iterator found = map.find( nucleus::convert<ErrorNumber>( error ) );
             if ( found != map.end() )
                return found->second();
             throw error;

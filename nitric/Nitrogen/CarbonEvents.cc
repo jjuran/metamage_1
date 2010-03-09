@@ -196,7 +196,7 @@ namespace Nitrogen
         }
       catch ( ... )
         {
-         return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( eventInternalErr ) );
+         return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( eventInternalErr ) );
         }
      }
 

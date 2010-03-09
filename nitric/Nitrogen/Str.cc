@@ -39,12 +39,12 @@ namespace Nitrogen
      
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	std::string
 	//
-	Converter< std::string, const unsigned char * >::operator()( const unsigned char *input ) const
+	converter< std::string, const unsigned char * >::operator()( const unsigned char *input ) const
 	{
 		const char *begin = reinterpret_cast< const char * >( input + 1 );
 		

@@ -27,8 +27,8 @@
 #ifndef NITROGEN_CFDICTIONARY_HH
 #include "Nitrogen/CFDictionary.hh"
 #endif
-#ifndef NUCLEUS_CONVERT_H
-#include "Nucleus/Convert.h"
+#ifndef NUCLEUS_CONVERT_HH
+#include "nucleus/convert.hh"
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
@@ -141,7 +141,7 @@ namespace Nitrogen {
                                                                  bool               isExternalRepresentation )
      {
       return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8 * >( string.data() ),
-                                                Nucleus::Convert<CFIndex>( string.size() ),
+                                                nucleus::convert<CFIndex>( string.size() ),
                                                 encoding,
                                                 isExternalRepresentation );
      }
@@ -150,10 +150,10 @@ namespace Nitrogen {
    using ::CFStringGetDoubleValue;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Converter< Nitrogen::UniString, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, Nitrogen::UniString >
+   struct converter< Nitrogen::UniString, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, Nitrogen::UniString >
      {
       Nitrogen::UniString operator()( const Nitrogen::CFStringRef& in ) const
         {
@@ -162,7 +162,7 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, Nucleus::Owned<Nitrogen::CFStringRef> >
      {
       Nucleus::Owned<Nitrogen::CFStringRef> operator()( const Nitrogen::UniString& in ) const
         {
@@ -171,13 +171,13 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, Nucleus::Owned<Nitrogen::CFStringRef> >
      {
       private:
          Nitrogen::CFStringEncoding encoding;
       
       public:
-         Converter( Nitrogen::CFStringEncoding e )
+         converter( Nitrogen::CFStringEncoding e )
            : encoding( e )
            {}
          
@@ -188,13 +188,13 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFStringRef>, const char * >: public std::unary_function< const char *, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, const char * >: public std::unary_function< const char *, Nucleus::Owned<Nitrogen::CFStringRef> >
      {
       private:
          Nitrogen::CFStringEncoding encoding;
       
       public:
-         Converter( Nitrogen::CFStringEncoding e )
+         converter( Nitrogen::CFStringEncoding e )
            : encoding( e )
            {}
          
@@ -205,7 +205,7 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< Nucleus::Owned<Nitrogen::CFStringRef>, double >: public std::unary_function< double, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, double >: public std::unary_function< double, Nucleus::Owned<Nitrogen::CFStringRef> >
      {
       Nucleus::Owned<Nitrogen::CFStringRef> operator()( const double& in ) const
         {
@@ -217,7 +217,7 @@ namespace Nucleus
      };
    
    template <>
-   struct Converter< double, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, double >
+   struct converter< double, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, double >
      {
       double operator()( const Nitrogen::CFStringRef& in ) const
         {
