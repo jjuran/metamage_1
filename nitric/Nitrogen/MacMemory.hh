@@ -21,10 +21,8 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/owned.hh"
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -78,9 +76,9 @@ namespace Nitrogen
 	};
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer< Nitrogen::Ptr > : public std::unary_function< Nitrogen::Ptr, void >,
+	template <> struct disposer< Nitrogen::Ptr > : public std::unary_function< Nitrogen::Ptr, void >,
 	                                               private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::Ptr ptr ) const
@@ -123,9 +121,9 @@ namespace Nitrogen
    using ::StringHandle;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer<Nitrogen::Handle>: public std::unary_function< Nitrogen::Handle, void >,
+   template <> struct disposer<Nitrogen::Handle>: public std::unary_function< Nitrogen::Handle, void >,
                                                   private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::Handle h ) const
@@ -137,7 +135,7 @@ namespace Nucleus
         }
      };
    
-	template <>  struct Disposer_Traits< Nitrogen::StringHandle > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::StringHandle > : disposer_traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen
@@ -149,9 +147,9 @@ namespace Nitrogen
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T*, Nucleus::Disposer< Ptr > > Ptr_Cast( Nucleus::Owned< Ptr > p )
+	inline nucleus::owned< T*, nucleus::disposer< Ptr > > Ptr_Cast( nucleus::owned< Ptr > p )
 	{
-		return Nucleus::Owned< T*, Nucleus::Disposer< Ptr > >::Seize( reinterpret_cast< T* >( p.Release().Get() ) );
+		return nucleus::owned< T*, nucleus::disposer< Ptr > >::seize( reinterpret_cast< T* >( p.release().Get() ) );
 	}
    
    template < class T >
@@ -161,9 +159,9 @@ namespace Nitrogen
      }
    
    template < class T >
-   inline Nucleus::Owned< T**, Nucleus::Disposer<Handle> > Handle_Cast( Nucleus::Owned< Handle > h )
+   inline nucleus::owned< T**, nucleus::disposer<Handle> > Handle_Cast( nucleus::owned< Handle > h )
      {
-      return Nucleus::Owned< T**, Nucleus::Disposer<Handle> >::Seize( reinterpret_cast< T** >( h.Release().Get() ) );
+      return nucleus::owned< T**, nucleus::disposer<Handle> >::seize( reinterpret_cast< T** >( h.release().Get() ) );
      }
    
    // 394
@@ -181,109 +179,109 @@ namespace Nitrogen
 	}
 	
 	// 425, 441, 458, 474
-	Nucleus::Owned< Handle > NewHandle        ( std::size_t size );
-	Nucleus::Owned< Handle > NewHandleSys     ( std::size_t size );
-	Nucleus::Owned< Handle > NewHandleClear   ( std::size_t size );
-	Nucleus::Owned< Handle > NewHandleSysClear( std::size_t size );
+	nucleus::owned< Handle > NewHandle        ( std::size_t size );
+	nucleus::owned< Handle > NewHandleSys     ( std::size_t size );
+	nucleus::owned< Handle > NewHandleClear   ( std::size_t size );
+	nucleus::owned< Handle > NewHandleSysClear( std::size_t size );
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandle( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandle( std::size_t size )
 	{
 		return Handle_Cast< T >( Nitrogen::NewHandle( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleSys( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleSys( std::size_t size )
 	{
 		return Handle_Cast< T >( Nitrogen::NewHandleSys( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleClear( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleClear( std::size_t size )
 	{
 		return Handle_Cast< T >( Nitrogen::NewHandleClear( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleSysClear( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleSysClear( std::size_t size )
 	{
 		return Handle_Cast< T >( Nitrogen::NewHandleSysClear( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleArray( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleArray( std::size_t elementCount = 1 )
 	{
 		return NewHandle< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleArraySys( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleArraySys( std::size_t elementCount = 1 )
 	{
 		return NewHandleSys< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleArrayClear( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleArrayClear( std::size_t elementCount = 1 )
 	{
 		return NewHandleClear< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Handle > > NewHandleArraySysClear( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Handle > > NewHandleArraySysClear( std::size_t elementCount = 1 )
 	{
 		return NewHandleSysClear< T >( elementCount * sizeof (T) );
 	}
 	
 	// 539, 555, 572, 588
-	Nucleus::Owned< Ptr > NewPtr        ( std::size_t size );
-	Nucleus::Owned< Ptr > NewPtrClear   ( std::size_t size );
-	Nucleus::Owned< Ptr > NewPtrSys     ( std::size_t size );
-	Nucleus::Owned< Ptr > NewPtrSysClear( std::size_t size );
+	nucleus::owned< Ptr > NewPtr        ( std::size_t size );
+	nucleus::owned< Ptr > NewPtrClear   ( std::size_t size );
+	nucleus::owned< Ptr > NewPtrSys     ( std::size_t size );
+	nucleus::owned< Ptr > NewPtrSysClear( std::size_t size );
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtr( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtr( std::size_t size )
 	{
 		return Ptr_Cast< T >( Nitrogen::NewPtr( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrSys( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrSys( std::size_t size )
 	{
 		return Ptr_Cast< T >( Nitrogen::NewPtrSys( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrClear( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrClear( std::size_t size )
 	{
 		return Ptr_Cast< T >( Nitrogen::NewPtrClear( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrSysClear( std::size_t size )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrSysClear( std::size_t size )
 	{
 		return Ptr_Cast< T >( Nitrogen::NewPtrSysClear( size ) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrArray( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrArray( std::size_t elementCount = 1 )
 	{
 		return NewPtr< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrArraySys( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrArraySys( std::size_t elementCount = 1 )
 	{
 		return NewPtrSys< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrArrayClear( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrArrayClear( std::size_t elementCount = 1 )
 	{
 		return NewPtrClear< T >( elementCount * sizeof (T) );
 	}
 	
 	template < class T >
-	inline Nucleus::Owned< T**, Nucleus::Disposer< Ptr > > NewPtrArraySysClear( std::size_t elementCount = 1 )
+	inline nucleus::owned< T**, nucleus::disposer< Ptr > > NewPtrArraySysClear( std::size_t elementCount = 1 )
 	{
 		return NewPtrSysClear< T >( elementCount * sizeof (T) );
 	}
@@ -320,7 +318,7 @@ namespace Nitrogen
 		MemError();
 	}
 	
-	Nucleus::Owned< Handle > TempNewHandle( std::size_t size );
+	nucleus::owned< Handle > TempNewHandle( std::size_t size );
 	
 	inline void MoveHHi( Handle h )
 	{
@@ -329,7 +327,7 @@ namespace Nitrogen
 	}
 	
 	// 1058
-	inline void DisposePtr( Nucleus::Owned< Ptr > )  {}
+	inline void DisposePtr( nucleus::owned< Ptr > )  {}
 	
 	inline std::size_t GetPtrSize( Ptr p )
 	{
@@ -347,7 +345,7 @@ namespace Nitrogen
 	}
 	
 	// 1102
-	inline void DisposeHandle( Nucleus::Owned< Handle > )  {}
+	inline void DisposeHandle( nucleus::owned< Handle > )  {}
 	
 	// 1117
 	inline void SetHandleSize( Handle h, std::size_t size )
@@ -435,7 +433,7 @@ namespace Nitrogen
 			put( begin, begin + size );
 		}
 		
-		typedef Nucleus::Owned< Ptr > Get_Result;
+		typedef nucleus::owned< Ptr > Get_Result;
 		
 		template < class Getter >
 		static Get_Result Get( Getter get )
@@ -471,7 +469,7 @@ namespace Nitrogen
 			PtrFlattener::Put( Ptr( toPut ), put );
 		}
 		
-		typedef Nucleus::Owned< PtrType > Get_Result;
+		typedef nucleus::owned< PtrType > Get_Result;
 		
 		template < class Getter >
 		static Get_Result Get( Getter get )
@@ -507,7 +505,7 @@ namespace Nitrogen
 			put( begin, begin + size );
 		}
 		
-		typedef Nucleus::Owned< Handle > Get_Result;
+		typedef nucleus::owned< Handle > Get_Result;
 		
 		template < class Getter >
 		static Get_Result Get( Getter get )
@@ -556,7 +554,7 @@ namespace Nitrogen
 			HandleFlattener::Put( Handle( toPut ), put );
 		}
 		
-		typedef Nucleus::Owned< HandleType > Get_Result;
+		typedef nucleus::owned< HandleType > Get_Result;
 		
 		template < class Getter >
 		static Get_Result Get( Getter get )

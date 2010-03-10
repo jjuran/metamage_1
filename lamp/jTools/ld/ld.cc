@@ -58,7 +58,6 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
@@ -381,7 +380,7 @@ namespace tool
 		
 		text_input::feed feed;
 		
-		NN::Owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( linkMap, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( linkMap, N::fsRdPerm );
 		
 		N::FSReader reader( fRefNum );
 		
@@ -461,7 +460,7 @@ namespace tool
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		

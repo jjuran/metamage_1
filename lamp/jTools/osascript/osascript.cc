@@ -20,7 +20,6 @@
 
 // Nucleus
 #include "Nucleus/Exception.h"
-#include "Nucleus/Owned.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // poseven
@@ -46,6 +45,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -71,7 +71,7 @@ namespace tool
 		                      : p7::exit_failure;
 	}
 	
-	static inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
+	static inline n::owned< N::ComponentInstance > OpenGenericScriptingComponent()
 	{
 		return N::OpenDefaultComponent( N::kOSAComponentType,
 		                                N::kOSAGenericScriptingComponentSubtype );
@@ -125,7 +125,7 @@ namespace tool
 		return result;
 	}
 	
-	static NN::Owned< N::OSAID > MakeCWDContext( const NN::Shared< N::ComponentInstance >& scriptingComponent )
+	static n::owned< N::OSAID > MakeCWDContext( const n::shared< N::ComponentInstance >& scriptingComponent )
 	{
 		char stupid_buffer[ 1024 ];
 		char* gotcwd = getcwd( stupid_buffer, 1024 );
@@ -148,9 +148,9 @@ namespace tool
 		               N::kOSAModeCompileIntoContext );
 	}
 	
-	static NN::Owned< N::OSAID > CompileSource( const AEDesc& source, bool useCWD )
+	static n::owned< N::OSAID > CompileSource( const AEDesc& source, bool useCWD )
 	{
-		NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
+		n::shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 		
 		const char* step;
 		
@@ -158,7 +158,7 @@ namespace tool
 		{
 			N::OSAModeFlags mode = N::kOSAModeCompileIntoContext;
 			
-			NN::Owned< N::OSAID > scriptContext;
+			n::owned< N::OSAID > scriptContext;
 			
 			if ( useCWD )
 			{
@@ -187,15 +187,15 @@ namespace tool
 		ReportAndThrowScriptError( scriptingComponent, step );
 		
 		// Not reached
-		return NN::Owned< N::OSAID >();
+		return n::owned< N::OSAID >();
 	}
 	
-	static NN::Owned< N::OSAID > LoadCompiledScript( const FSSpec& scriptFile )
+	static n::owned< N::OSAID > LoadCompiledScript( const FSSpec& scriptFile )
 	{
 		using N::fsRdPerm;
 		
-		NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
-		                                                           fsRdPerm ) );
+		n::owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
+		                                                          fsRdPerm ) );
 		
 		return N::OSALoad( OpenGenericScriptingComponent(),
 		                   N::AECreateDesc< N::AEDesc_Data >( N::typeOSAGenericStorage,
@@ -203,7 +203,7 @@ namespace tool
 		                                                     N::ResID( 128 ) ) ) );
 	}
 	
-	static NN::Owned< N::OSAID > LoadScriptFile( const char* pathname, bool useCWD )
+	static n::owned< N::OSAID > LoadScriptFile( const char* pathname, bool useCWD )
 	{
 		try
 		{
@@ -287,7 +287,7 @@ namespace tool
 		const_iterator params_begin = free_args;
 		const_iterator params_end   = free_args + o::free_argument_count();
 		
-		NN::Owned< N::OSAID > script;
+		n::owned< N::OSAID > script;
 		
 		if ( !inlineScriptPieces.empty() )
 		{
@@ -307,13 +307,13 @@ namespace tool
 			script = LoadScriptFile( pathname, getsCWDProperty );
 		}
 		
-		NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
-		                                                             N::kAEOpenApplication,
-		                                                             NN::Make< N::AEAddressDesc >() );
+		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+		                                                            N::kAEOpenApplication,
+		                                                            NN::Make< N::AEAddressDesc >() );
 		
 		// Add the list, even if there are zero parameters.
 		{
-			NN::Owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >( false );
+			n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >( false );
 			
 			for ( const_iterator it = params_begin;  it != params_end;  ++it )
 			{
@@ -325,7 +325,7 @@ namespace tool
 		
 		try
 		{
-			NN::Owned< N::OSAID > result = N::OSAExecuteEvent( runEvent, script );
+			n::owned< N::OSAID > result = N::OSAExecuteEvent( runEvent, script );
 			
 			if ( result.get() != N::kOSANullScript )
 			{
@@ -350,7 +350,7 @@ namespace tool
 				throw;
 			}
 			
-			ReportAndThrowScriptError( script.GetDisposer().Component(), "execution" );
+			ReportAndThrowScriptError( script.disposer().Component(), "execution" );
 		}
 		
 		return 0;

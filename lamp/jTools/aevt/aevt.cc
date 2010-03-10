@@ -40,6 +40,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -52,13 +53,13 @@ namespace tool
 		return Quad( iota::decode_quad( s.data() ) );
 	}
 	
-	static NN::Owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
-	                                                   N::AEEventID             eventID,
-	                                                   const N::AEAddressDesc&  address,
-	                                                   const char*              buildString,
-	                                                   va_list                  args,
-	                                                   N::AEReturnID            returnID      = N::kAutoGenerateReturnID,
-	                                                   N::AETransactionID       transactionID = N::kAnyTransactionID )
+	static n::owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
+	                                                  N::AEEventID             eventID,
+	                                                  const N::AEAddressDesc&  address,
+	                                                  const char*              buildString,
+	                                                  va_list                  args,
+	                                                  N::AEReturnID            returnID      = N::kAutoGenerateReturnID,
+	                                                  N::AETransactionID       transactionID = N::kAnyTransactionID )
 	{
 		std::size_t addrSize = N::AEGetDescDataSize( address );
 		
@@ -81,7 +82,7 @@ namespace tool
 		                                        buildString,
 		                                        args ) );
 		
-		return NN::Owned< N::AppleEvent >::Seize( appleEvent );
+		return n::owned< N::AppleEvent >::seize( appleEvent );
 	}
 	
 #if CALL_NOT_IN_CARBON
@@ -107,11 +108,11 @@ namespace tool
 	
 #endif
 	
-	static NN::Owned< N::AEAddressDesc > SelectAddress( N::OSType           sig,
-	                                                    const std::string&  app,
-	                                                    const std::string&  machine,
-	                                                    const std::string&  host,
-	                                                    const std::string&  url )
+	static n::owned< N::AEAddressDesc > SelectAddress( N::OSType           sig,
+	                                                   const std::string&  app,
+	                                                   const std::string&  machine,
+	                                                   const std::string&  host,
+	                                                   const std::string&  url )
 	{
 		if ( sig != N::OSType( kUnknownType ) )
 		{
@@ -131,7 +132,7 @@ namespace tool
 		}
 		
 		// Not reached
-		return NN::Owned< N::AEAddressDesc >();
+		return n::owned< N::AEAddressDesc >();
 	}
 	
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]

@@ -61,8 +61,10 @@
 // Standard C++
 #include <memory>
 
-// Nucleus
-#include "Nucleus/Owned.h"
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
 
 
 namespace Nucleus
@@ -173,7 +175,7 @@ namespace Nucleus
 			put( &toPut, &toPut + 1 );
 		}
 		
-		typedef Nucleus::Owned< Ownable > Get_Result;
+		typedef ::nucleus::owned< Ownable > Get_Result;
 		
 		template < class Getter >
 		static Get_Result Get( const Getter& get )
@@ -182,7 +184,7 @@ namespace Nucleus
 			
 			get( &result, &result + 1 );
 			
-			return Nucleus::Owned< Ownable >::Seize( result );
+			return ::nucleus::owned< Ownable >::seize( result );
 		}
 		
 		typedef Put_Parameter Parameter;

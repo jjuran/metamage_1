@@ -25,9 +25,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif
@@ -61,26 +58,26 @@ namespace Nitrogen
    using ::AliasHandle;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer_Traits< Nitrogen::AliasHandle > : Disposer_Traits< Nitrogen::Handle >  {};
+   template <> struct disposer_traits< Nitrogen::AliasHandle > : disposer_traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen
   {
 	// 90
-	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& fromFile,
+	nucleus::owned< AliasHandle > NewAlias( const FSSpec& fromFile,
 	                                        const FSSpec& target );
 	
-	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& target );
-	Nucleus::Owned< AliasHandle > NewAlias( CFDataRef theData );
+	nucleus::owned< AliasHandle > NewAlias( const FSSpec& target );
+	nucleus::owned< AliasHandle > NewAlias( CFDataRef theData );
 	
 	// 127
-	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
+	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
 	                                                           ConstStr32Param     zoneName,
 	                                                           ConstStr31Param     serverName );
 	
-	inline Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string& fullPath )
+	inline nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string& fullPath )
 	{
 		return NewAliasMinimalFromFullPath( fullPath, "\p", "\p" );
 	}
@@ -112,17 +109,17 @@ namespace Nitrogen
 	ResolveAliasFile_Result ResolveAliasFile( const FSSpec&  target,
 	                                          bool           resolveAliasChains );
 	
-   Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
+   nucleus::owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                            const FSRef& target );
    
-   Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& target );
+   nucleus::owned<AliasHandle> FSNewAlias( const FSRef& target );
   }
 
 namespace nucleus
   {   
-   template <> struct converter< Nucleus::Owned<Nitrogen::AliasHandle>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nucleus::Owned<Nitrogen::AliasHandle> >
+   template <> struct converter< nucleus::owned<Nitrogen::AliasHandle>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, nucleus::owned<Nitrogen::AliasHandle> >
      {
-      Nucleus::Owned<Nitrogen::AliasHandle> operator()( const Nitrogen::FSRef& ref ) const
+      nucleus::owned<Nitrogen::AliasHandle> operator()( const Nitrogen::FSRef& ref ) const
         {
          return Nitrogen::FSNewAlias( ref );
         }
@@ -131,7 +128,7 @@ namespace nucleus
 
 namespace Nitrogen
   {   
-   Nucleus::Owned<AliasHandle> FSNewAliasMinimal( const FSRef& target );
+   nucleus::owned<AliasHandle> FSNewAliasMinimal( const FSRef& target );
    
    struct FSIsAliasFile_Result
      {
@@ -168,7 +165,7 @@ namespace Nitrogen
    FSResolveAlias_Result FSResolveAlias( CFDataRef alias );
 
    struct AliasAsDataRef_Failed {};
-   Nucleus::Owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias );
+   nucleus::owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias );
   }
 
 namespace nucleus

@@ -22,8 +22,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
@@ -54,6 +54,7 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -63,9 +64,9 @@ namespace Genie
 	class SerialDeviceHandle : public DeviceHandle
 	{
 		private:
-			NN::Shared< N::DriverRefNum >  itsOutputRefNum;
-			NN::Shared< N::DriverRefNum >  itsInputRefNum;
-			bool                           itIsPassive;
+			n::shared< N::DriverRefNum >  itsOutputRefNum;
+			n::shared< N::DriverRefNum >  itsInputRefNum;
+			bool                          itIsPassive;
 		
 		protected:
 			bool IsShared() const  { return !itsOutputRefNum.sole(); }
@@ -198,7 +199,7 @@ namespace Genie
 		return SerialPortsAreArbitrated() || !DriverIsOpen( driverName );
 	}
 	
-	static NN::Owned< N::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
+	static n::owned< N::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
 	{
 		if ( !SerialDriverMayBeOpened( driverName ) )
 		{

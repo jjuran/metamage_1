@@ -22,8 +22,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -47,7 +47,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		NN::Owned< N::Handle > h = N::TempNewHandle( length );
+		n::owned< N::Handle > h = N::TempNewHandle( length );
 		
 		return seize_ptr( new Handle_memory_mapping( h ) );
 	}

@@ -59,7 +59,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
+	nucleus::owned< InetSvcRef > OTOpenInternetServicesInContext( nucleus::owned< OTConfigurationRef >  cfig,
 	                                                              OTClientContextPtr                    clientContext )
 	{
 		::OSStatus err;
@@ -71,10 +71,10 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< InetSvcRef >::Seize( result );
+		return nucleus::owned< InetSvcRef >::seize( result );
 	}
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
+	nucleus::owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
 	                                                              OTClientContextPtr           clientContext )
 	{
 		::OSStatus err;
@@ -86,7 +86,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< InetSvcRef >::Seize( result );
+		return nucleus::owned< InetSvcRef >::seize( result );
 	}
 	
 	InetHostInfo& OTInetStringToAddress( InetSvcRef     ref,

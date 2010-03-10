@@ -37,9 +37,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NUCLEUS_FLATTENER_H
 #include "Nucleus/Flattener.h"
 #endif
@@ -130,9 +127,9 @@ namespace Nitrogen
 
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
+   template <> struct disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::DragRef i ) const
@@ -146,9 +143,9 @@ namespace Nucleus
 namespace Nitrogen
   {
    
-   Nucleus::Owned<DragRef> NewDrag();
+   nucleus::owned<DragRef> NewDrag();
    
-   void DisposeDrag( Nucleus::Owned<DragRef> );
+   void DisposeDrag( nucleus::owned<DragRef> );
 
    void AddDragItemFlavor( DragRef     theDrag,
                            DragItemRef theItemRef,

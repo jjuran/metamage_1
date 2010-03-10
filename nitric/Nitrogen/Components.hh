@@ -20,10 +20,8 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/owned.hh"
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -64,11 +62,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >,
+	struct disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >,
 	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::ComponentInstance component ) const
@@ -86,10 +84,10 @@ namespace Nitrogen
 	
 	struct OpenDefaultComponent_Failed  {};
 	
-	Nucleus::Owned< ComponentInstance > OpenDefaultComponent( ComponentType     componentType,
+	nucleus::owned< ComponentInstance > OpenDefaultComponent( ComponentType     componentType,
 	                                                          ComponentSubType  componentSubType );
 	
-	inline void CloseComponent( Nucleus::Owned< ComponentInstance > )
+	inline void CloseComponent( nucleus::owned< ComponentInstance > )
 	{
 	}
 	

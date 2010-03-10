@@ -8,8 +8,8 @@
 // Iota
 #include "iota/decimal.hh"
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.hh"
@@ -30,23 +30,23 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
 	class Handle_IOHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
-			NN::Shared< N::Handle > itsHandle;
+			n::shared< N::Handle > itsHandle;
 		
 		protected:
-			const NN::Shared< N::Handle >& GetHandle() const  { return itsHandle; }
+			const n::shared< N::Handle >& GetHandle() const  { return itsHandle; }
 		
 		public:
-			Handle_IOHandle( const FSTreePtr&                file,
-			                 OpenFlags                       flags,
-			                 const NN::Shared< N::Handle >&  h )
+			Handle_IOHandle( const FSTreePtr&               file,
+			                 OpenFlags                      flags,
+			                 const n::shared< N::Handle >&  h )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsHandle( h )
@@ -148,10 +148,10 @@ namespace Genie
 			Resource_IOHandle& operator=( const Resource_IOHandle& );
 		
 		public:
-			Resource_IOHandle( const FSTreePtr&                file,
-			                   OpenFlags                       flags,
-			                   const NN::Shared< N::Handle >&  h,
-			                   const FSSpec&                   resFile )
+			Resource_IOHandle( const FSTreePtr&               file,
+			                   OpenFlags                      flags,
+			                   const n::shared< N::Handle >&  h,
+			                   const FSSpec&                  resFile )
 			:
 				Handle_IOHandle( file, flags, h ),
 				itsFileSpec( resFile )
@@ -300,7 +300,7 @@ namespace Genie
 		const N::ResType  type = GetType();
 		const N::ResID    id   = GetID  ();
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
 		
 		const N::Handle r = N::Get1Resource( type, id );
 		
@@ -319,9 +319,9 @@ namespace Genie
 		const N::ResType  type = GetType();
 		const N::ResID    id   = GetID  ();
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
 		
-		NN::Owned< N::Handle > h;
+		n::owned< N::Handle > h;
 		
 		try
 		{
@@ -393,7 +393,7 @@ namespace Genie
 	{
 		const N::ResType type = GetType();
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
 		
 		const short n_rsrcs = N::Count1Resources( type );
 		
@@ -514,7 +514,7 @@ namespace Genie
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
 		
 		const short n_types = N::Count1Types();
 		

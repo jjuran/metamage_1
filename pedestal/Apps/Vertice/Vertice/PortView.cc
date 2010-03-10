@@ -1062,7 +1062,7 @@ namespace Vertice
 		
 		double eyeRadius = 0.05;  // distance from eye to bridge of nose
 		
-		Nucleus::Owned< Nitrogen::GWorldPtr > altGWorld = N::NewGWorld( 32, itsBounds );
+		nucleus::owned< Nitrogen::GWorldPtr > altGWorld = N::NewGWorld( 32, itsBounds );
 		
 		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
 		

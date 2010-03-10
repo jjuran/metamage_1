@@ -14,7 +14,7 @@
 namespace Genie
 {
 	
-	class GenieExecHandler : public Nucleus::Owned< Nitrogen::AEEventHandler >
+	class GenieExecHandler : public nucleus::owned< Nitrogen::AEEventHandler >
 	{
 		public:
 			static void AppleEventHandler( const Nitrogen::AppleEvent& appleEvent, Nitrogen::AppleEvent& reply, GenieExecHandler* handler );

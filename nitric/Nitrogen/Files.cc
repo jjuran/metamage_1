@@ -126,7 +126,7 @@ namespace Nitrogen
 	}
 	
 	
-	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
+	void FSClose( nucleus::owned< FSFileRefNum > fileRefNum )
 	{
 		ThrowOSStatus( ::FSClose( fileRefNum.release() ) );
 	}
@@ -424,20 +424,20 @@ namespace Nitrogen
 		       && FSCompareNames( a.name, b.name );
 	}
 	
-	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	nucleus::owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::FSpOpenDF( &spec, permissions, &result ) );
-		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+		return nucleus::owned< FSFileRefNum >::seize( FSFileRefNum( result ) );
 	}
 	
-	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	nucleus::owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::FSpOpenRF( &spec, permissions, &result ) );
-		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+		return nucleus::owned< FSFileRefNum >::seize( FSFileRefNum( result ) );
 	}
 	
 	FSSpec FSpCreate( const FSSpec& file, OSType creator, OSType type, ScriptCode scriptTag )
@@ -713,14 +713,14 @@ Return Value
       ThrowOSStatus( ::FSSetCatalogInfo( &ref, whichInfo, &catalogInfo ) );
      }
    
-   Nucleus::Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags )
+   nucleus::owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags )
      {
       FSIterator result;
       ThrowOSStatus( ::FSOpenIterator( &container, iteratorFlags, &result ) );
-      return Nucleus::Owned<FSIterator>::Seize( result );
+      return nucleus::owned<FSIterator>::seize( result );
      }
    
-   void FSCloseIterator( Nucleus::Owned<FSIterator> iterator )
+   void FSCloseIterator( nucleus::owned<FSIterator> iterator )
      {
       ThrowOSStatus( ::FSCloseIterator( iterator.release() ) );
      }
@@ -915,24 +915,24 @@ Return Value
       return result;
      }   
 
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
                                             UniCharCount   forkNameLength,
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions )
      {
       SInt16 result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
-      return Nucleus::Owned<FSForkRefNum>::Seize( FSForkRefNum( result ) );
+      return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
 
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                             const UniString forkName,
                                             FSIOPermssn     permissions )
      {
       return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
      }
 
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                             FSIOPermssn      permissions )
      {
       return FSOpenFork( fork.File(), fork.Name(), permissions );
@@ -1048,7 +1048,7 @@ Return Value
       ThrowOSStatus( ::FSFlushFork( forkRefNum ) );
      }
    
-   void FSCloseFork( Nucleus::Owned<FSForkRefNum> forkRefNum )
+   void FSCloseFork( nucleus::owned<FSForkRefNum> forkRefNum )
      {
       ThrowOSStatus( ::FSCloseFork( forkRefNum.release() ) );
      }

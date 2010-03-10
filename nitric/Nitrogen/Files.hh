@@ -28,9 +28,6 @@
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
 #include "Nucleus/Initialize.h"
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 #ifndef __FILES__
 #include <Files.h>
@@ -280,9 +277,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, Nucleus::Owned<Nitrogen::CFStringRef> >
+   template <> struct converter< owned<Nitrogen::CFStringRef>, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, owned<Nitrogen::CFStringRef> >
      {
-      Nucleus::Owned<Nitrogen::CFStringRef> operator()( const Nitrogen::HFSUniStr255& in ) const
+      owned<Nitrogen::CFStringRef> operator()( const Nitrogen::HFSUniStr255& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in.unicode, in.length );
         }
@@ -322,13 +319,8 @@ namespace nucleus
          return result;
         }
      };
-
-}
-
-namespace Nucleus
-{
-
-	template <> struct Disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >,
+	
+	template <> struct disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >,
 	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::FSFileRefNum file ) const
@@ -364,7 +356,7 @@ namespace Nitrogen
 	
 	// HSetVol
 	
-	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
+	void FSClose( nucleus::owned< FSFileRefNum > fileRefNum );
 	
 	template < class EOF_Policy >
 	SInt32 FSRead( FSFileRefNum  file,
@@ -662,11 +654,11 @@ namespace Nitrogen
 	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b );
 	
 	
-	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	nucleus::owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
 	
 	
-	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	nucleus::owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
 	
 	
@@ -1064,9 +1056,9 @@ namespace Nitrogen
    using ::FSIterator;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >,
+   template <> struct disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >,
                                                       private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::FSIterator iterator ) const
@@ -1081,9 +1073,9 @@ namespace Nucleus
 namespace Nitrogen
   {
 
-   Nucleus::Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags );
+   nucleus::owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags );
     
-   void FSCloseIterator( Nucleus::Owned<FSIterator> );
+   void FSCloseIterator( nucleus::owned<FSIterator> );
 
 #if 0
    template < class Specifics >
@@ -1279,9 +1271,9 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >,
+   template <> struct disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >,
                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( const Nitrogen::FSForkRef& fork ) const
@@ -1319,9 +1311,9 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >,
+   template <> struct disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >,
                                                         private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
@@ -1336,16 +1328,16 @@ namespace Nucleus
 namespace Nitrogen
   {
    
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
                                             UniCharCount   forkNameLength,
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions );
 
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                             const UniString forkName,
                                             FSIOPermssn     permissions );
 
-   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
+   nucleus::owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                             FSIOPermssn      permissions );
 	
 	ByteCount FSReadFork( FSForkRefNum    fork,
@@ -1441,7 +1433,7 @@ namespace Nitrogen
    
    void FSFlushFork( FSForkRefNum forkRefNum );
    
-   void FSCloseFork( Nucleus::Owned<FSForkRefNum> forkRefNum );
+   void FSCloseFork( nucleus::owned<FSForkRefNum> forkRefNum );
    
    struct FSGetForkCBInfo_Result
      {

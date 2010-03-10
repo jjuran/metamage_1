@@ -52,11 +52,11 @@ namespace Nitrogen
    using ::ControlRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    // Not actually used, since controls are owned by the parent window
    
-   template <> struct Disposer< Nitrogen::ControlRef >: public std::unary_function< Nitrogen::ControlRef, void >
+   template <> struct disposer< Nitrogen::ControlRef >: public std::unary_function< Nitrogen::ControlRef, void >
      {
       void operator()( Nitrogen::ControlRef c ) const
         {
@@ -106,12 +106,12 @@ namespace Nitrogen
 		}
 	};
 	
-	inline Nucleus::Owned< ControlActionUPP > NewControlActionUPP( ::ControlActionProcPtr p )
+	inline nucleus::owned< ControlActionUPP > NewControlActionUPP( ::ControlActionProcPtr p )
 	{
 		return NewUPP< ControlActionUPP >( p );
 	}
 
-	inline void DisposeControlActionUPP( Nucleus::Owned< ControlActionUPP > )
+	inline void DisposeControlActionUPP( nucleus::owned< ControlActionUPP > )
 	{
 	}
 	
@@ -140,7 +140,7 @@ namespace Nitrogen
 	
 	// 1007
 	using ::DisposeControl;
-	inline void DisposeControl( Nucleus::Owned< ControlRef > )  {}
+	inline void DisposeControl( nucleus::owned< ControlRef > )  {}
 	
 	// 1169
 	void HiliteControl( ControlRef control, ControlPartCode hiliteState );

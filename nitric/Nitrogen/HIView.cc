@@ -40,15 +40,15 @@ namespace Nitrogen {
 		HIViewCreateOffscreenImage_Result retVal;
 		CGImageRef	returnedCG;
 		ThrowOSStatus ( ::HIViewCreateOffscreenImage ( inView, inOptions, &retVal.frame, &returnedCG ));
-		retVal.image = Nucleus::Owned<CGImageRef>::Seize ( returnedCG );
+		retVal.image = nucleus::owned<CGImageRef>::seize ( returnedCG );
 		return retVal;
 		}
 	
 	
 #if 0
 //	Returns a new, converted region. Original region is untouched
-	Nucleus::Owned<RgnHandle> HIViewConvertRegion ( RgnHandle inRgn, HIViewRef inSourceView, HIViewRef inDestView ) {
-		Nucleus::Owned<RgnHandle> result = CopyRgn ( inRgn );
+	nucleus::owned<RgnHandle> HIViewConvertRegion ( RgnHandle inRgn, HIViewRef inSourceView, HIViewRef inDestView ) {
+		nucleus::owned<RgnHandle> result = CopyRgn ( inRgn );
 		ThrowOSStatus ( ::HIViewConvertRegion ( result, inSourceView, inDestView ));
 		return result;
 		}
@@ -78,16 +78,16 @@ namespace Nitrogen {
 		}
 	
 #if 0
-	template < Nucleus::Owned<CGImageRef> > HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
+	template < nucleus::owned<CGImageRef> > HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
 		HIViewImageContentInfo result;
 		cinfo.contentType	= kControlContentCGImageRef;
 		cinfo.u.imageRef	= NULL;	/* It's a union */
 		ThrowOSStatus ( ::HISegmentedViewCopySegmentImage ( inSegmentedView, inSegmentIndexOneBased, &result ));
-		return Nucleus::Owned<CGImageRef>::Seize ( cinfo.u.imageRef );
+		return nucleus::owned<CGImageRef>::seize ( cinfo.u.imageRef );
 		}
 	
 //	!!! Marshall says "Ewwww!"
-//	!!! Should we have an Nucleus::Owned<HIViewImageContentInfo> here?
+//	!!! Should we have an nucleus::owned<HIViewImageContentInfo> here?
 //	We should have a whole series of these, maybe templated on what kind of info we want to return
 	inline HIViewImageContentInfo HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
 		HIViewImageContentInfo retVal;
@@ -96,12 +96,12 @@ namespace Nitrogen {
 		}
 
 	template <typename returnType, int returnTag>
-	Nucleus::Owned<returnType> HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
+	nucleus::owned<returnType> HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
 		HIViewImageContentInfo cinfo;
 		cinfo.contentType = returnTag;
 		cinfo.u.iconSuite = NULL;	/* It's a union */
 		ThrowOSStatus ( ::HISegmentedViewCopySegmentImage ( inSegmentedView, inSegmentIndexOneBased, &cinfo ));
-		return Nucleus::Owned<returnType>::Seize ( * ((returnType *) &(cinfo.u)));
+		return nucleus::owned<returnType>::seize ( * ((returnType *) &(cinfo.u)));
 		};
 #endif
 			

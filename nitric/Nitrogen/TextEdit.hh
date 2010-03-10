@@ -60,10 +60,10 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	template <>
-	struct Disposer< Nitrogen::TEHandle > : public std::unary_function< Nitrogen::TEHandle, void >
+	struct disposer< Nitrogen::TEHandle > : public std::unary_function< Nitrogen::TEHandle, void >
 	{
 		void operator()( Nitrogen::TEHandle teH ) const
 		{
@@ -78,14 +78,14 @@ namespace Nitrogen
 	// TEScrapHandle
 	// TEGetScrapLength
 	
-	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
+	nucleus::owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
 	
-	inline Nucleus::Owned< TEHandle > TENew( const Rect& rect )
+	inline nucleus::owned< TEHandle > TENew( const Rect& rect )
 	{
 		return TENew( rect, rect );
 	}
 	
-	inline void TEDispose( Nucleus::Owned< TEHandle > )  {}
+	inline void TEDispose( nucleus::owned< TEHandle > )  {}
 	
 	inline void TESetText( const void* text, std::size_t length, TEHandle hTE )
 	{

@@ -26,7 +26,7 @@ namespace Nitrogen
 		}
 	};
 	
-	inline void MacCloseWindow( Nucleus::Owned< WindowRef, WindowCloser > )  {}
+	inline void MacCloseWindow( nucleus::owned< WindowRef, WindowCloser > )  {}
 	
 #endif
 	

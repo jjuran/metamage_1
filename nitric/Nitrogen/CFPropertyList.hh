@@ -19,9 +19,6 @@
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
@@ -96,9 +93,9 @@ namespace Nitrogen
 
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer_Traits<Nitrogen::CFPropertyListRef> : Disposer_Traits<Nitrogen::CFTypeRef>  {};
+   template <> struct disposer_traits<Nitrogen::CFPropertyListRef> : disposer_traits<Nitrogen::CFTypeRef>  {};
   }
 
 namespace Nitrogen
@@ -118,12 +115,12 @@ namespace nucleus
      };
 
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFPropertyListRef> >
+   struct converter< nucleus::owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, nucleus::owned<Nitrogen::CFPropertyListRef> >
      {
-      Nucleus::Owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
+      nucleus::owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
         {
-         return Nucleus::Owned<Nitrogen::CFPropertyListRef>( convert< Nucleus::Owned<Nitrogen::CFBooleanRef> >( in ) );
-         // The explicit conversion to Nucleus::Owned<CFPropertyListRef> is a workaround 
+         return nucleus::owned<Nitrogen::CFPropertyListRef>( convert< nucleus::owned<Nitrogen::CFBooleanRef> >( in ) );
+         // The explicit conversion to nucleus::owned<CFPropertyListRef> is a workaround 
          // for a bug in gcc 3.1 20020420; it rejects the implicit conversion.
         }
      };

@@ -38,11 +38,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Disposer< TMTaskPtr > : public  std::unary_function< TMTaskPtr, void >,
+	struct disposer< TMTaskPtr > : public  std::unary_function< TMTaskPtr, void >,
                                    private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( TMTaskPtr tmTaskPtr ) const
@@ -92,23 +92,23 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask );
-	Nucleus::Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask );
+	nucleus::owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask );
+	nucleus::owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask );
 	
 	void PrimeTimeTask( TMTask& tmTask, long count );
 	
-	void RemoveTimeTask( Nucleus::Owned< TMTaskPtr > tmTask );
+	void RemoveTimeTask( nucleus::owned< TMTaskPtr > tmTask );
 	
 	// ...
 	
 	UnsignedWide Microseconds();
 	
-	inline Nucleus::Owned< TimerUPP > NewTimerUPP( TimerProcPtr p )
+	inline nucleus::owned< TimerUPP > NewTimerUPP( TimerProcPtr p )
 	{
 		return NewUPP< TimerUPP >( p );
 	}
 	
-	inline void DisposeTimerUPP( Nucleus::Owned< TimerUPP > )
+	inline void DisposeTimerUPP( nucleus::owned< TimerUPP > )
 	{
 	}
 	

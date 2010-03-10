@@ -136,13 +136,13 @@ namespace Nitrogen
 		return result;
 	}
 	
-	inline Nucleus::Owned< IconSuiteRef > GetComponentIconSuite( Component component )
+	inline nucleus::owned< IconSuiteRef > GetComponentIconSuite( Component component )
 	{
 		::IconSuiteRef iconSuite = NULL;
 		
 		ThrowOSStatus( ::GetComponentIconSuite( component, &iconSuite ) );
 		
-		return Nucleus::Owned< IconSuiteRef >::Seize( IconSuiteRef( iconSuite ) );
+		return nucleus::owned< IconSuiteRef >::seize( IconSuiteRef( iconSuite ) );
 	}
 	
 }
@@ -150,6 +150,7 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -302,7 +303,7 @@ namespace Genie
 		{
 			const Component comp = GetKey( that );
 			
-			NN::Owned< N::Handle > name = N::NewHandle( 0 );
+			n::owned< N::Handle > name = N::NewHandle( 0 );
 			
 			(void) N::GetComponentInfo( comp, name );
 			
@@ -316,7 +317,7 @@ namespace Genie
 		{
 			const Component comp = GetKey( that );
 			
-			NN::Owned< N::Handle > info = N::NewHandle( 0 );
+			n::owned< N::Handle > info = N::NewHandle( 0 );
 			
 			(void) N::GetComponentInfo( comp, N::Handle(), info );
 			
@@ -333,7 +334,7 @@ namespace Genie
 		{
 			const Component comp = GetKey( that );
 			
-			NN::Owned< N::Handle > icon = N::NewHandle( 0 );
+			n::owned< N::Handle > icon = N::NewHandle( 0 );
 			
 			(void) N::GetComponentInfo( comp, N::Handle(), N::Handle(), icon );
 			
@@ -364,9 +365,9 @@ namespace Genie
 	{
 		const Component comp = GetKeyFromParent( parent );
 		
-		NN::Shared< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
+		n::shared< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
 		
-		const ::Handle h = iconSuite.Get().Get();
+		const ::Handle h = iconSuite.get().Get();
 		
 		if ( h == NULL )
 		{

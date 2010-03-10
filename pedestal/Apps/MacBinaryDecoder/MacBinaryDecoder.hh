@@ -6,9 +6,6 @@
 #ifndef MACBINARYDECODER_HH
 #define MACBINARYDECODER_HH
 
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
@@ -46,7 +43,7 @@ namespace MacBinaryDecoder
 		private:
 			static App* theApp;
 			
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
 		
 		public:
 			static App& Get();

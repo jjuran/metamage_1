@@ -14,13 +14,13 @@
 
 namespace Nitrogen
   {
-   Nucleus::Owned< CFNumberRef > CFNumberCreate( CFAllocatorRef allocator,
+   nucleus::owned< CFNumberRef > CFNumberCreate( CFAllocatorRef allocator,
                                         CFNumberType   theType,
                                         const void *   valuePtr )
      {
       CFNumberRef result = ::CFNumberCreate( allocator, theType, valuePtr );
       if ( result == CFNumberRef() )
          throw CFNumberCreate_Failed();
-      return Nucleus::Owned< CFNumberRef >::Seize( result );
+      return nucleus::owned< CFNumberRef >::seize( result );
      }
   }

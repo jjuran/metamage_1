@@ -42,44 +42,44 @@ namespace Nitrogen {
 /*  IMMUTABLE FUNCTIONS                                                                 */
 /*======================================================================================*/
 
-	Nucleus::Owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn ) {
 		HIShapeRef result =       ::HIShapeCreateWithQDRgn ( inRgn );
 		if ( result == NULL ) throw HIShapeCreateWithQDRgn_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 	
-	Nucleus::Owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect ) {
 		HIShapeRef result =       ::HIShapeCreateWithRect ( &inRect );
 		if ( result == NULL ) throw HIShapeCreateWithRect_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
-	Nucleus::Owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape ) {
 		HIShapeRef result =       ::HIShapeCreateCopy ( inShape );
 		if ( result == NULL ) throw HIShapeCreateCopy_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
-	Nucleus::Owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
 		HIShapeRef result =       ::HIShapeCreateIntersection ( inShape1, inShape2 );
 		if ( result == NULL ) throw HIShapeCreateIntersection_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
-	Nucleus::Owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
 		HIShapeRef result =       ::HIShapeCreateDifference ( inShape1, inShape2 );
 		if ( result == NULL ) throw HIShapeCreateDifference_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
-	Nucleus::Owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
+	nucleus::owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 ) {
 		HIShapeRef result =       ::HIShapeCreateUnion ( inShape1, inShape2 );
 		if ( result == NULL ) throw HIShapeCreateUnion_Failed ();
-		return Nucleus::Owned<HIShapeRef>::Seize ( result );
+		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
-	inline Nucleus::Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape ) {
-		Nucleus::Owned<RgnHandle> result = Nucleus::Owned<RgnHandle>::Seize ( NewRgn ());
+	inline nucleus::owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape ) {
+		nucleus::owned<RgnHandle> result = nucleus::owned<RgnHandle>::seize ( NewRgn ());
 		ThrowOSStatus ( ::HIShapeGetAsQDRgn ( inShape, result ));
 		return result;
 		}
@@ -88,16 +88,16 @@ namespace Nitrogen {
 /*  MUTABLE FUNCTIONS                                                                   */
 /*======================================================================================*/
 
-	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutable ( void ) {
+	nucleus::owned<HIMutableShapeRef> HIShapeCreateMutable ( void ) {
 		HIMutableShapeRef result = ::HIShapeCreateMutable ();
 		if ( result == NULL )  throw HIShapeCreateMutable_Failed ();
-		return Nucleus::Owned<HIMutableShapeRef>::Seize ( result );
+		return nucleus::owned<HIMutableShapeRef>::seize ( result );
 		}
 
-	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig ) {
+	nucleus::owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig ) {
 		HIMutableShapeRef result = ::HIShapeCreateMutableCopy ( inOrig );
 		if ( result == NULL )  throw HIShapeCreateMutableCopy_Failed ();
-		return Nucleus::Owned<HIMutableShapeRef>::Seize ( result );
+		return nucleus::owned<HIMutableShapeRef>::seize ( result );
 		}
 
 	void RegisterHIShapeErrors () {

@@ -51,21 +51,21 @@ namespace Nitrogen
 		                                      result.deviceName,
 		                                      &deviceIconHandle ) );
 		
-		result.deviceIconHandle = Nucleus::Owned< Handle >::Seize( deviceIconHandle );
+		result.deviceIconHandle = nucleus::owned< Handle >::seize( deviceIconHandle );
 		
 		return result;
 	}
 	
-	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
+	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                                  SoundInputPermissions  permission )
 	{
 		long refNum;
 		ThrowOSStatus( ::SPBOpenDevice( deviceName, permission, &refNum ) );
 		
-		return Nucleus::Owned< SoundInputRefNum >::Seize( SoundInputRefNum( refNum ) );
+		return nucleus::owned< SoundInputRefNum >::seize( SoundInputRefNum( refNum ) );
 	}
 	
-	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > refNum )
+	void SPBCloseDevice( nucleus::owned< SoundInputRefNum > refNum )
 	{
 		ThrowOSStatus( ::SPBCloseDevice( refNum.release() ) );
 	}

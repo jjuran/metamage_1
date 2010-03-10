@@ -22,10 +22,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
-
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
+#include "nucleus/owned.hh"
 
 namespace Nitrogen
   {
@@ -84,8 +81,8 @@ namespace Nitrogen
 
 }
 
-namespace Nucleus {
-   template <> struct Disposer<Nitrogen::CFTypeRef>: public std::unary_function< Nitrogen::CFTypeRef, void >
+namespace nucleus {
+   template <> struct disposer<Nitrogen::CFTypeRef>: public std::unary_function< Nitrogen::CFTypeRef, void >
      {
       void operator()( Nitrogen::CFTypeRef cf ) const
         {
@@ -121,9 +118,9 @@ namespace Nitrogen {
    template <> struct CFType_Traits< CFAllocatorRef >: Basic_CFType_Traits< CFAllocatorRef, ::CFAllocatorGetTypeID > {};
 }
 
-namespace Nucleus {
-   template <> struct Disposer_Traits< Nitrogen::CFStringRef >   : Disposer_Traits< Nitrogen::CFTypeRef > {};
-   template <> struct Disposer_Traits< Nitrogen::CFAllocatorRef >: Disposer_Traits< Nitrogen::CFTypeRef > {};
+namespace nucleus {
+   template <> struct disposer_traits< Nitrogen::CFStringRef >   : disposer_traits< Nitrogen::CFTypeRef > {};
+   template <> struct disposer_traits< Nitrogen::CFAllocatorRef >: disposer_traits< Nitrogen::CFTypeRef > {};
 }
 
 namespace Nitrogen {
@@ -133,19 +130,19 @@ namespace Nitrogen {
       return CFTypeID( ::CFGetTypeID( cf ) );
      }
 
-   inline Nucleus::Owned<CFStringRef> CFCopyTypeIDDescription( CFTypeID cf )
+   inline nucleus::owned<CFStringRef> CFCopyTypeIDDescription( CFTypeID cf )
      {
-      return Nucleus::Owned<CFStringRef>::Seize( ::CFCopyTypeIDDescription( cf ) );
+      return nucleus::owned<CFStringRef>::seize( ::CFCopyTypeIDDescription( cf ) );
      }
    
    template < class CF >
-   Nucleus::Owned< CF > CFRetain( CF toRetain )
+   nucleus::owned< CF > CFRetain( CF toRetain )
      {
       ::CFRetain( CFTypeRef( toRetain ) );
-      return Nucleus::Owned<CF>::Seize( toRetain );
+      return nucleus::owned<CF>::seize( toRetain );
      }
 
-   inline void CFRelease( Nucleus::Owned<CFTypeRef> /*toRelease*/ )
+   inline void CFRelease( nucleus::owned<CFTypeRef> /*toRelease*/ )
      {
      }
    
@@ -164,9 +161,9 @@ namespace Nitrogen {
       return CFHashCode( ::CFHash( cf ) );
      }
 
-   inline Nucleus::Owned<CFStringRef> CFCopyDescription( CFTypeRef cf )
+   inline nucleus::owned<CFStringRef> CFCopyDescription( CFTypeRef cf )
      {
-      return Nucleus::Owned<CFStringRef>::Seize( ::CFCopyDescription( cf ) );
+      return nucleus::owned<CFStringRef>::seize( ::CFCopyDescription( cf ) );
      }
 
    inline CFAllocatorRef CFGetAllocator( CFTypeRef cf )
@@ -188,11 +185,11 @@ namespace Nitrogen {
       return static_cast< Desired >( p.Get() );
      }
 
-   template < class Desired > Nucleus::Owned<Desired> CFCast( Nucleus::Owned<CFTypeRef> p )
+   template < class Desired > nucleus::owned<Desired> CFCast( nucleus::owned<CFTypeRef> p )
      {
       Desired result = CFCast<Desired>( p.get() );
       p.release();
-      return Nucleus::Owned<Desired>::Seize( result );
+      return nucleus::owned<Desired>::seize( result );
      }
   }
 

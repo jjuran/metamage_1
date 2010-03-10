@@ -81,7 +81,7 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ResFileAttributes )
 	
-	// ResourceReleaser is not used as a Disposer for Owned because resource 
+	// ResourceReleaser is not used as a disposer for owned<> because resource 
 	// handles are owned by the Resource Manager, not the application.
 	// But here it is anyway for completeness, in case someone finds it useful.
 	
@@ -99,10 +99,10 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
 	template <>
-	struct Disposer< Nitrogen::ResFileRefNum > : public std::unary_function< Nitrogen::ResFileRefNum, void >,
+	struct disposer< Nitrogen::ResFileRefNum > : public std::unary_function< Nitrogen::ResFileRefNum, void >,
 	                                             private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::ResFileRefNum resFile ) const
@@ -129,7 +129,7 @@ namespace Nitrogen
 	// InitResources
 	// RsrcZoneInit
 	
-	void CloseResFile( Nucleus::Owned< ResFileRefNum > resFileRefNum );
+	void CloseResFile( nucleus::owned< ResFileRefNum > resFileRefNum );
 	
 	void ResError();
 	
@@ -178,14 +178,14 @@ namespace Nitrogen
 	
 	void ReleaseResource( Handle r );
 	
-	// Nucleus::Owned< Handle > is never a resource handle, so any attempt to
+	// nucleus::owned< Handle > is never a resource handle, so any attempt to
 	// detach or remove one is invalid.
 	// This function is not defined, and calling it results in a link error.
 	// It's here so the real DetachResource() (below) doesn't get called instead.
 	
-	void DetachResource( Nucleus::Owned< Handle > h );
+	void DetachResource( nucleus::owned< Handle > h );
 	
-	Nucleus::Owned< Handle >  DetachResource( Handle r );
+	nucleus::owned< Handle >  DetachResource( Handle r );
 	
 	ResID UniqueID ( ResType type );
 	ResID Unique1ID( ResType type );
@@ -203,12 +203,12 @@ namespace Nitrogen
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
 	
-	Handle AddResource( Nucleus::Owned< Handle >  h,
+	Handle AddResource( nucleus::owned< Handle >  h,
 	                    ResType                   type,
 	                    ResID                     resID,
 	                    ConstStr255Param          name );
 	
-	Handle AddResource( Nucleus::Owned< Handle > h, const GetResInfo_Result& resInfo );
+	Handle AddResource( nucleus::owned< Handle > h, const GetResInfo_Result& resInfo );
 	
 	std::size_t GetResourceSizeOnDisk( Handle r );
 	
@@ -221,9 +221,9 @@ namespace Nitrogen
 	void ChangedResource( Handle r );
 	
 	// Invalid; not defined.  See notes for DetachResource() above.
-	void RemoveResource( Nucleus::Owned< Handle > h );
+	void RemoveResource( nucleus::owned< Handle > h );
 	
-	Nucleus::Owned< Handle > RemoveResource( Handle r );
+	nucleus::owned< Handle > RemoveResource( Handle r );
 	
 	void UpdateResFile( ResFileRefNum refNum );
 	
@@ -240,7 +240,7 @@ namespace Nitrogen
 	// HOpenResFile   -- not implemented; use FSpOpenResFile
 	// HCreateResFile -- not implemented; use FSpCreateResFile
 	
-	Nucleus::Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
+	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
 	                                                FSIOPermssn    permissions );
 	
 	void FSpCreateResFile( const FSSpec&  spec,
@@ -268,12 +268,12 @@ namespace Nitrogen
 	// GetTopResourceFile
 	// GetNextResourceFile
 	
-	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
+	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
 	                                                    const UniChar*  forkName,
 	                                                    FSIOPermssn     permissions );
 	
-	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
+	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
 	                                                    const UniString&  forkName,
 	                                                    FSIOPermssn       permissions );
 	
@@ -318,11 +318,11 @@ namespace Nitrogen
 	struct ResType_Traits
 	{
 		typedef                 Handle    Result;
-		typedef Nucleus::Owned< Handle >  Parameter;
+		typedef nucleus::owned< Handle >  Parameter;
 		
 		static Result MakeFromHandle( Handle h )  { return h; }
 		
-		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter h )  { return h; }
+		static nucleus::owned< Handle > MakeIntoHandle( Parameter h )  { return h; }
 	};
 	
 	template <>
@@ -343,9 +343,9 @@ namespace Nitrogen
 			return result;
 		}
 		
-		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter text )
+		static nucleus::owned< Handle > MakeIntoHandle( Parameter text )
 		{
-			Nucleus::Owned< Handle > result = NewHandle( text.size() );
+			nucleus::owned< Handle > result = NewHandle( text.size() );
 			
 			std::copy( text.begin(), text.end(), *result.get().Get() );
 			
@@ -357,13 +357,13 @@ namespace Nitrogen
 	struct Handle_ResType_Traits
 	{
 		typedef                 Data**                                 Result;
-		typedef Nucleus::Owned< Data**, Nucleus::Disposer< Handle > >  Parameter;
+		typedef nucleus::owned< Data**, nucleus::disposer< Handle > >  Parameter;
 		
 		static Result MakeFromHandle( Handle h )  { return Handle_Cast< Data >( h ); }
 		
-		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter h )
+		static nucleus::owned< Handle > MakeIntoHandle( Parameter h )
 		{
-			return Nucleus::Owned< Handle >( h );
+			return nucleus::owned< Handle >( h );
 		}
 	};
 	
@@ -375,9 +375,9 @@ namespace Nitrogen
 		
 		static Result MakeFromHandle( Handle h )  { return **Handle_Cast< Result >( h ); }
 		
-		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter pod )
+		static nucleus::owned< Handle > MakeIntoHandle( Parameter pod )
 		{
-			Nucleus::Owned< Handle > result = NewHandle( sizeof (Result) );
+			nucleus::owned< Handle > result = NewHandle( sizeof (Result) );
 			
 			**result.get() = pod;
 			
@@ -393,11 +393,11 @@ namespace Nitrogen
 		
 		static Result MakeFromHandle( Handle h )  { return **Handle_Cast< Result >( h ); }
 		
-		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter pod )
+		static nucleus::owned< Handle > MakeIntoHandle( Parameter pod )
 		{
 			const std::size_t size = SizeOf( pod );
 			
-			Nucleus::Owned< Handle > result = NewHandle( size );
+			nucleus::owned< Handle > result = NewHandle( size );
 			
 			const char* const begin = reinterpret_cast< const char* >( &pod );
 			
@@ -436,7 +436,7 @@ namespace Nitrogen
 	}
 	
 	template < class Data >
-	inline Nucleus::Owned< Data**, Nucleus::Disposer< Handle > > DetachResource( Data** h )
+	inline nucleus::owned< Data**, nucleus::disposer< Handle > > DetachResource( Data** h )
 	{
 		return Handle_Cast< Data >( DetachResource( Handle( h ) ) );
 	}

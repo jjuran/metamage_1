@@ -30,7 +30,7 @@ namespace Nitrogen
 	#endif
 	}
 	
-	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
 	                                       CTabHandle   cTable,
 	                                       GDHandle     aGDevice,
@@ -45,10 +45,10 @@ namespace Nitrogen
 		                            aGDevice,
 		                            flags ) );
 		
-		return Nucleus::Owned< GWorldPtr >::Seize( newWorld, &Function::DisposeGWorld );
+		return nucleus::owned< GWorldPtr >::seize( newWorld, &Function::DisposeGWorld );
 	}
 	
-	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
 	                                       GWorldFlags  flags )
 	{
@@ -65,7 +65,7 @@ namespace Nitrogen
 		}
 	}
 	
-	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr >&  offscreenGWorld,
+	GWorldFlags UpdateGWorld( nucleus::owned< GWorldPtr >&  offscreenGWorld,
 	                          short                         pixelDepth,
 	                          const Rect&                   boundsRect,
 	                          CTabHandle                    cTable,
@@ -90,7 +90,7 @@ namespace Nitrogen
 		{
 			offscreenGWorld.release();
 			
-			offscreenGWorld = Nucleus::Owned< GWorldPtr >::Seize( gWorldPtr, &Function::DisposeGWorld );
+			offscreenGWorld = nucleus::owned< GWorldPtr >::seize( gWorldPtr, &Function::DisposeGWorld );
 		}
 		
 		return result;

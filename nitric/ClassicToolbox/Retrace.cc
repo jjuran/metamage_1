@@ -36,14 +36,14 @@ namespace Nitrogen
 #endif
 	
 	
-	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )
+	nucleus::owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )
 	{
 		ThrowOSStatus( ::SlotVInstall( reinterpret_cast< ::QElemPtr >( &vblTask ), slot ) );
 		
-		return Nucleus::Owned< SlotVBLTask >::Seize( SlotVBLTask( &vblTask, slot ) );
+		return nucleus::owned< SlotVBLTask >::seize( SlotVBLTask( &vblTask, slot ) );
 	}
 	
-	void SlotVRemove( Nucleus::Owned< SlotVBLTask > slotVBLTask )
+	void SlotVRemove( nucleus::owned< SlotVBLTask > slotVBLTask )
 	{
 		SlotVBLTask released = slotVBLTask.release();
 		
@@ -51,14 +51,14 @@ namespace Nitrogen
 		                              released.slot ) );
 	}
 	
-	Nucleus::Owned< VBLTaskPtr > VInstall( VBLTask& vblTask )
+	nucleus::owned< VBLTaskPtr > VInstall( VBLTask& vblTask )
 	{
 		ThrowOSStatus( ::VInstall( reinterpret_cast< ::QElemPtr >( &vblTask ) ) );
 		
-		return Nucleus::Owned< VBLTaskPtr >::Seize( &vblTask );
+		return nucleus::owned< VBLTaskPtr >::seize( &vblTask );
 	}
 	
-	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask )
+	void VRemove( nucleus::owned< VBLTaskPtr > vblTask )
 	{
 		ThrowOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTask.release() ) ) );
 	}

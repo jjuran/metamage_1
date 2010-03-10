@@ -44,7 +44,7 @@ namespace Nitrogen
 	
 	using ::AEIdleProcPtr;
 	
-	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
+	nucleus::owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
 	                                     AESendMode         sendMode,
 	                                     AESendPriority     sendPriority   = kAENormalPriority,
 	                                     long               timeOutInTicks = kAEDefaultTimeout,
@@ -52,16 +52,16 @@ namespace Nitrogen
 	                                     AEFilterUPP        filterProc     = NULL
 	);
 	
-	Nucleus::Owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID );
+	nucleus::owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID );
 	
 	void AEProcessAppleEvent( const EventRecord& event );
 	
-	inline Nucleus::Owned< AEIdleUPP > NewAEIdleUPP( AEIdleProcPtr p )
+	inline nucleus::owned< AEIdleUPP > NewAEIdleUPP( AEIdleProcPtr p )
 	{
 			return NewUPP< AEIdleUPP >( p );
 	}
 
-	inline void DisposeAEIdleUPP( Nucleus::Owned< AEIdleUPP > )
+	inline void DisposeAEIdleUPP( nucleus::owned< AEIdleUPP > )
 	{
 	}
 	
@@ -73,12 +73,12 @@ namespace Nitrogen
 		return userUPP( &theEvent, &sleepTime, &mouseRgn );
 	}
 
-	inline Nucleus::Owned< AEFilterUPP > NewAEFilterUPP( AEFilterProcPtr p )
+	inline nucleus::owned< AEFilterUPP > NewAEFilterUPP( AEFilterProcPtr p )
 	{
 			return NewUPP< AEFilterUPP >( p );
 	}
 
-	inline void DisposeAEFilterUPP( Nucleus::Owned< AEFilterUPP > )
+	inline void DisposeAEFilterUPP( nucleus::owned< AEFilterUPP > )
 	{
 	}
 	

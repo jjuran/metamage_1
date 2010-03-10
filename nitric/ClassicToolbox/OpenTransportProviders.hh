@@ -24,9 +24,9 @@ namespace Nitrogen
 	}
 	
 	
-	inline Nucleus::Owned< InetSvcRef >
+	inline nucleus::owned< InetSvcRef >
 	//
-	OTOpenInternetServices( Nucleus::Owned< OTConfigurationRef > config )
+	OTOpenInternetServices( nucleus::owned< OTConfigurationRef > config )
 	{
 		::OSStatus err;
 		
@@ -36,10 +36,10 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< InetSvcRef >::Seize( result );
+		return nucleus::owned< InetSvcRef >::seize( result );
 	}
 	
-	inline Nucleus::Owned< InetSvcRef >
+	inline nucleus::owned< InetSvcRef >
 	//
 	OTOpenInternetServices( DefaultInternetServicesPath /**/ )
 	{
@@ -51,7 +51,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< InetSvcRef >::Seize( result );
+		return nucleus::owned< InetSvcRef >::seize( result );
 	}
 	
 }

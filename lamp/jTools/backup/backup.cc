@@ -45,7 +45,7 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -97,8 +97,8 @@ namespace tool
 		
 		//p7::copyfile( source, dest );
 		
-		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
-		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
+		n::owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
+		n::owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
 		
 		p7::pump( in, out );
 		
@@ -172,8 +172,8 @@ namespace tool
 	
 	static void compare_files( const std::string& a, const std::string& b )
 	{
-		NN::Owned< p7::fd_t > a_fd = p7::open( a, p7::o_rdonly );
-		NN::Owned< p7::fd_t > b_fd = p7::open( b, p7::o_rdonly );
+		n::owned< p7::fd_t > a_fd = p7::open( a, p7::o_rdonly );
+		n::owned< p7::fd_t > b_fd = p7::open( b, p7::o_rdonly );
 		
 		const std::size_t buffer_size = 4096;
 		

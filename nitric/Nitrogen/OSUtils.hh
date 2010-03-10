@@ -110,12 +110,12 @@ namespace Nitrogen
 	
 #endif
 	
-	inline Nucleus::Owned< DeferredTaskUPP > NewDeferredTaskUPP( DeferredTaskProcPtr p )
+	inline nucleus::owned< DeferredTaskUPP > NewDeferredTaskUPP( DeferredTaskProcPtr p )
 	{
 		return NewUPP< DeferredTaskUPP >( p );
 	}
 	
-	inline void DisposeDeferredTaskUPP( Nucleus::Owned< DeferredTaskUPP > )  {}
+	inline void DisposeDeferredTaskUPP( nucleus::owned< DeferredTaskUPP > )  {}
 	
 	inline void InvokeDeferredTaskUPP( long             dtParam,
 	                                   DeferredTaskUPP  userUPP )
@@ -182,17 +182,17 @@ namespace Nitrogen
 */
 
 	class CSCopyUserName_Failed {};
-	inline Nucleus::Owned<CFStringRef> CSCopyUserName ( Boolean useShortName ) {
+	inline nucleus::owned<CFStringRef> CSCopyUserName ( Boolean useShortName ) {
 		CFStringRef result = ::CSCopyUserName ( useShortName );
 		if ( NULL == result ) throw CSCopyUserName_Failed();
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
 	class CSCopyMachineName_Failed {};
-	inline Nucleus::Owned<CFStringRef> CSCopyMachineName (void) {
+	inline nucleus::owned<CFStringRef> CSCopyMachineName (void) {
 		CFStringRef result = ::CSCopyMachineName();
 		if ( NULL == result ) throw CSCopyMachineName_Failed();
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 #endif
 

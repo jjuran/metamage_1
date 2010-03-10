@@ -27,26 +27,22 @@
 #include "Nitrogen/CFDate.hh"	// We need this for the defs for Owned < CFDateRef >
 #endif
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 namespace Nitrogen {
 	using ::CFDateFormatterRef;
    }
 
-namespace Nucleus
+namespace nucleus
    {
-	template <> struct Disposer_Traits< Nitrogen::CFDateFormatterRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+	template <> struct disposer_traits< Nitrogen::CFDateFormatterRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
   {
 	template <> struct CFType_Traits< CFDateFormatterRef >: Basic_CFType_Traits< CFDateFormatterRef, ::CFDateFormatterGetTypeID > {};
 
-	inline Nucleus::Owned<CFDateFormatterRef> CFDateFormatterCreate ( CFAllocatorRef allocator, 
+	inline nucleus::owned<CFDateFormatterRef> CFDateFormatterCreate ( CFAllocatorRef allocator, 
 			CFLocaleRef locale, CFDateFormatterStyle dateStyle, CFDateFormatterStyle timeStyle ) {
-		return Nucleus::Owned<CFDateFormatterRef>::Seize ( ::CFDateFormatterCreate ( allocator,
+		return nucleus::owned<CFDateFormatterRef>::seize ( ::CFDateFormatterCreate ( allocator,
 				locale, dateStyle, timeStyle ));
 		}
 
@@ -66,17 +62,17 @@ namespace Nitrogen
 //	void CFDateFormatterSetFormat ( CFDateFormatterRef formatter, CFStringRef formatString );
 	using ::CFDateFormatterSetFormat;
 	
-	inline Nucleus::Owned<CFStringRef> CFDateFormatterCreateStringWithDate ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFDateRef date ) {
-		return Nucleus::Owned<CFStringRef>::Seize ( ::CFDateFormatterCreateStringWithDate ( allocator, formatter, date ));
+	inline nucleus::owned<CFStringRef> CFDateFormatterCreateStringWithDate ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFDateRef date ) {
+		return nucleus::owned<CFStringRef>::seize ( ::CFDateFormatterCreateStringWithDate ( allocator, formatter, date ));
 		}
 		
 
-	inline Nucleus::Owned<CFStringRef> CFDateFormatterCreateStringWithAbsoluteTime ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFAbsoluteTime at ) {
-		return Nucleus::Owned<CFStringRef>::Seize ( ::CFDateFormatterCreateStringWithAbsoluteTime ( allocator, formatter, at ));
+	inline nucleus::owned<CFStringRef> CFDateFormatterCreateStringWithAbsoluteTime ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFAbsoluteTime at ) {
+		return nucleus::owned<CFStringRef>::seize ( ::CFDateFormatterCreateStringWithAbsoluteTime ( allocator, formatter, at ));
 		}
 
-	inline Nucleus::Owned<CFDateRef> CFDateFormatterCreateDateFromString ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFStringRef string, CFRange *rangep = NULL ) {
-		return Nucleus::Owned<CFDateRef>::Seize ( ::CFDateFormatterCreateDateFromString ( allocator, formatter, string, rangep ));
+	inline nucleus::owned<CFDateRef> CFDateFormatterCreateDateFromString ( CFAllocatorRef allocator, CFDateFormatterRef formatter, CFStringRef string, CFRange *rangep = NULL ) {
+		return nucleus::owned<CFDateRef>::seize ( ::CFDateFormatterCreateDateFromString ( allocator, formatter, string, rangep ));
 		}
 		
 	struct CFDateFormatterGetAbsoluteTimeFromString_Failed {};
@@ -91,8 +87,8 @@ namespace Nitrogen
 //	void CFDateFormatterSetProperty ( CFDateFormatterRef formatter, CFStringRef key, CFTypeRef value );
 	using ::CFDateFormatterSetProperty;
 	
-	inline Nucleus::Owned<CFTypeRef> CFDateFormatterCopyProperty ( CFDateFormatterRef formatter, CFStringRef key ) {
-		return Nucleus::Owned<CFTypeRef>::Seize ( ::CFDateFormatterCopyProperty ( formatter, key ));
+	inline nucleus::owned<CFTypeRef> CFDateFormatterCopyProperty ( CFDateFormatterRef formatter, CFStringRef key ) {
+		return nucleus::owned<CFTypeRef>::seize ( ::CFDateFormatterCopyProperty ( formatter, key ));
 		}
 	
 	}

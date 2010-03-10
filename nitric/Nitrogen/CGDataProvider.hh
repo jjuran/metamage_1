@@ -27,8 +27,8 @@ namespace Nitrogen
    using ::CGDataProviderRef; 
   }
 
-namespace Nucleus {
-   template <> struct Disposer< Nitrogen::CGDataProviderRef >: public std::unary_function< Nitrogen::CGDataProviderRef, void >
+namespace nucleus {
+   template <> struct disposer< Nitrogen::CGDataProviderRef >: public std::unary_function< Nitrogen::CGDataProviderRef, void >
      {
       void operator()( Nitrogen::CGDataProviderRef image ) const
         {
@@ -48,27 +48,27 @@ namespace Nitrogen
 //	CG_EXTERN CGDataProviderRef CGDataProviderCreateWithData(void *info, const void *data, size_t size, CGDataProviderReleaseDataCallback releaseData);
 
 	class CGDataProviderCreateWithCFData_Failed {};
-	inline Nucleus::Owned<CGDataProviderRef> CGDataProviderCreateWithCFData ( CFDataRef data ) {
+	inline nucleus::owned<CGDataProviderRef> CGDataProviderCreateWithCFData ( CFDataRef data ) {
 		CGDataProviderRef result = ::CGDataProviderCreateWithCFData ( data );
 		if ( NULL == result ) throw CGDataProviderCreateWithCFData_Failed ();
-		return Nucleus::Owned< CGDataProviderRef>::Seize ( result );
+		return nucleus::owned< CGDataProviderRef>::seize ( result );
 		}
   
 #endif
 	
 	class CGDataProviderCreateWithURL_Failed {};
-	inline Nucleus::Owned<CGDataProviderRef> CGDataProviderCreateWithURL ( CFURLRef url ) {
+	inline nucleus::owned<CGDataProviderRef> CGDataProviderCreateWithURL ( CFURLRef url ) {
 		CGDataProviderRef result = ::CGDataProviderCreateWithURL ( url );
 		if ( NULL == result ) throw CGDataProviderCreateWithURL_Failed ();
-		return Nucleus::Owned< CGDataProviderRef>::Seize ( result );
+		return nucleus::owned< CGDataProviderRef>::seize ( result );
 		}
 	
-   inline Nucleus::Owned<CGDataProviderRef> CGDataProviderRetain( CGDataProviderRef image )
+   inline nucleus::owned<CGDataProviderRef> CGDataProviderRetain( CGDataProviderRef image )
      {
-      return Nucleus::Owned<CGDataProviderRef>::Seize( ::CGDataProviderRetain( image ) );
+      return nucleus::owned<CGDataProviderRef>::seize( ::CGDataProviderRetain( image ) );
      }
    
-   inline void CGDataProviderRelease( Nucleus::Owned<CGDataProviderRef> )
+   inline void CGDataProviderRelease( nucleus::owned<CGDataProviderRef> )
      {}
 
   }

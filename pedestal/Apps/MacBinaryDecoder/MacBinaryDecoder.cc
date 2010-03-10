@@ -86,9 +86,9 @@ namespace MacBinaryDecoder
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-			                                                             keyDirectObject,
-			                                                             typeAEList );
+			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+			                                                            keyDirectObject,
+			                                                            typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			

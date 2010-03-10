@@ -14,20 +14,20 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
+	nucleus::owned< DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::OpenDriver( name, &result ) );
 		
-		return Nucleus::Owned< DriverRefNum >::Seize( DriverRefNum( result ) );
+		return nucleus::owned< DriverRefNum >::seize( DriverRefNum( result ) );
 	}
 	
-	Nucleus::Owned< DriverRefNum > OpenDriver( const std::string& name )
+	nucleus::owned< DriverRefNum > OpenDriver( const std::string& name )
 	{
 		return OpenDriver( Str255( name ) );
 	}
 	
-	void CloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum )
+	void CloseDriver( nucleus::owned< DriverRefNum > driverRefNum )
 	{
 		ThrowOSStatus( ::CloseDriver( driverRefNum.release() ) );
 	}

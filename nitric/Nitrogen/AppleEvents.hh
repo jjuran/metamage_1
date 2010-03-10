@@ -22,9 +22,6 @@
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_HH
@@ -101,10 +98,10 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Disposer< Nitrogen::AEEventHandler >: public std::unary_function< Nitrogen::AEEventHandler, void >,
+   struct disposer< Nitrogen::AEEventHandler >: public std::unary_function< Nitrogen::AEEventHandler, void >,
                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( const Nitrogen::AEEventHandler& installation ) const
@@ -182,10 +179,10 @@ namespace Nitrogen
 	
 	// Level 0
 	
-   Nucleus::Owned< AEEventHandler >
+   nucleus::owned< AEEventHandler >
    AEInstallEventHandler( const AEEventHandler& );
    
-   inline Nucleus::Owned< AEEventHandler >
+   inline nucleus::owned< AEEventHandler >
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
                           AEEventHandlerUPP  handler,
@@ -202,7 +199,7 @@ namespace Nitrogen
 	// Level 1
 	
    template < typename AEEventHandlerUPP::ProcPtr handler >
-   inline Nucleus::Owned< AEEventHandler >
+   inline nucleus::owned< AEEventHandler >
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
                           RefCon             handlerRefCon = RefCon(),
@@ -219,7 +216,7 @@ namespace Nitrogen
 	
 	template < class Object,
 	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
-	inline Nucleus::Owned< AEEventHandler >
+	inline nucleus::owned< AEEventHandler >
 	AEInstallEventHandler( AEEventClass                                             theAEEventClass,
 	                       AEEventID                                                theAEEventID,
 	                       typename Nucleus::ObjectParameterTraits< Object >::Type  handlerRefCon   = typename Nucleus::ObjectParameterTraits< Object >::Type(),
@@ -236,7 +233,7 @@ namespace Nitrogen
 	
 	// With default handlerRefCon but supplied isSysHandler
 	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
-	inline Nucleus::Owned< AEEventHandler >
+	inline nucleus::owned< AEEventHandler >
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
 	                       Boolean       isSysHandler )
@@ -254,7 +251,7 @@ namespace Nitrogen
 	
 	// Same as above, but void parameter is omitted.
 	template < typename AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
-	inline Nucleus::Owned< AEEventHandler >
+	inline nucleus::owned< AEEventHandler >
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
 	                       Boolean       isSysHandler    = false )
@@ -264,7 +261,7 @@ namespace Nitrogen
 		                                               isSysHandler );
 	}
 	
-   void AERemoveEventHandler( Nucleus::Owned<AEEventHandler> );
+   void AERemoveEventHandler( nucleus::owned<AEEventHandler> );
 
    typedef AEEventHandler AEGetEventHandler_Result;
    

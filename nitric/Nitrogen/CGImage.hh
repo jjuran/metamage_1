@@ -30,9 +30,9 @@ namespace Nitrogen
    using ::CGImageRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::CGImageRef >: public std::unary_function< Nitrogen::CGImageRef, void >
+   template <> struct disposer< Nitrogen::CGImageRef >: public std::unary_function< Nitrogen::CGImageRef, void >
      {
       void operator()( Nitrogen::CGImageRef image ) const
         {
@@ -43,12 +43,12 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-   inline Nucleus::Owned<CGImageRef> CGImageRetain( CGImageRef image )
+   inline nucleus::owned<CGImageRef> CGImageRetain( CGImageRef image )
      {
-      return Nucleus::Owned<CGImageRef>::Seize( ::CGImageRetain( image ) );
+      return nucleus::owned<CGImageRef>::seize( ::CGImageRetain( image ) );
      }
    
-   inline void CGImageRelease( Nucleus::Owned<CGImageRef> )
+   inline void CGImageRelease( nucleus::owned<CGImageRef> )
      {}
 	 
 #if UNIVERSAL_INTERFACES_VERSION >= 0x0400
@@ -57,72 +57,72 @@ namespace Nitrogen
 	
 
 	class CGImageCreate_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreate (
+	inline nucleus::owned<CGImageRef> CGImageCreate (
 				size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, 
 				CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, 
 				const float decode[] = NULL, bool shouldInterpolate = false, CGColorRenderingIntent intent = kCGRenderingIntentDefault ) {
 		CGImageRef result = ::CGImageCreate ( width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, 
 										colorspace, bitmapInfo, provider, decode, shouldInterpolate, intent );
 		if ( NULL == result ) throw CGImageCreate_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 	
 #endif
 	
 	class CGImageMaskCreate_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageMaskCreate (
+	inline nucleus::owned<CGImageRef> CGImageMaskCreate (
 				size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, 
 				CGDataProviderRef provider, const float decode[] = NULL, bool shouldInterpolate = false) {
 		CGImageRef result = ::CGImageMaskCreate ( width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, 
 										provider, decode, shouldInterpolate );
 		if ( NULL == result ) throw CGImageMaskCreate_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 
 #if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 
 	class CGImageCreateCopy_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreateCopy ( CGImageRef image ) {
+	inline nucleus::owned<CGImageRef> CGImageCreateCopy ( CGImageRef image ) {
 		CGImageRef result = ::CGImageCreateCopy ( image ); 
 		if ( NULL == result ) throw CGImageCreateCopy_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 	
 #endif
 
 	class CGImageCreateWithJPEGDataProvider_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreateWithJPEGDataProvider (
+	inline nucleus::owned<CGImageRef> CGImageCreateWithJPEGDataProvider (
 				CGDataProviderRef source, const float decode[] = NULL,
 				bool shouldInterpolate = false, CGColorRenderingIntent intent = kCGRenderingIntentDefault ) {
 		CGImageRef result = ::CGImageCreateWithJPEGDataProvider ( source, decode, shouldInterpolate, intent );
 		if ( NULL == result ) throw CGImageCreateWithJPEGDataProvider_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 
 #if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 
 	class CGImageCreateWithPNGDataProvider_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreateWithPNGDataProvider (
+	inline nucleus::owned<CGImageRef> CGImageCreateWithPNGDataProvider (
 				CGDataProviderRef source, const float decode[] = NULL,
 				bool shouldInterpolate = false, CGColorRenderingIntent intent = kCGRenderingIntentDefault ) {
 		CGImageRef result = ::CGImageCreateWithPNGDataProvider ( source, decode, shouldInterpolate, intent );
 		if ( NULL == result ) throw CGImageCreateWithPNGDataProvider_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 	
 	class CGImageCreateWithImageInRect_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreateWithImageInRect ( CGImageRef image, CGRect rect ) {
+	inline nucleus::owned<CGImageRef> CGImageCreateWithImageInRect ( CGImageRef image, CGRect rect ) {
 		CGImageRef result = ::CGImageCreateWithImageInRect ( image, rect );
 		if ( NULL == result ) throw CGImageCreateWithImageInRect_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 
 
 	class CGImageCreateWithMask_Failed {};
-	inline Nucleus::Owned<CGImageRef> CGImageCreateWithMask ( CGImageRef image, CGImageRef mask ) {
+	inline nucleus::owned<CGImageRef> CGImageCreateWithMask ( CGImageRef image, CGImageRef mask ) {
 		CGImageRef result = ::CGImageCreateWithMask ( image, mask );
 		if ( NULL == result ) throw CGImageCreateWithMask_Failed ();
-		return Nucleus::Owned<CGImageRef>::Seize ( result );
+		return nucleus::owned<CGImageRef>::seize ( result );
 		}
 
 #endif

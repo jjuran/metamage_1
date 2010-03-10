@@ -30,8 +30,8 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Io
 #include "io/io.hh"
@@ -82,10 +82,10 @@ namespace Nitrogen
 		}
 	};
 	
-	class FSDirSpec_AlivenessTest
+	class FSDirSpec_aliveness_test
 	{
 		public:
-			static bool IsLive( const FSDirSpec& dir )
+			static bool is_live( const FSDirSpec& dir )
 			{
 				return dir.dirID != 0;
 			}
@@ -93,13 +93,13 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct LivelinessTraits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
+	struct aliveness_traits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
 	{
-		typedef Nitrogen::FSDirSpec_AlivenessTest LivelinessTest;
+		typedef Nitrogen::FSDirSpec_aliveness_test aliveness_test;
 	};
 	
 }
@@ -107,6 +107,7 @@ namespace Nucleus
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -208,8 +209,8 @@ namespace tool
 	class PartialMessage
 	{
 		private:
-			NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
-			NN::Owned< N::FSFileRefNum > out;
+			n::owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
+			n::owned< N::FSFileRefNum > out;
 			unsigned int bytes;
 		
 		public:
@@ -225,7 +226,7 @@ namespace tool
 	
 	PartialMessage::PartialMessage( const FSSpec& dirLoc )
 	:
-		dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
+		dir( n::owned< N::FSDirSpec, N::RecursiveFSDeleter >::seize( N::FSpDirCreate( dirLoc ) ) ), 
 		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
 		                                         N::OSType( 'R*ch' ),
 		                                         N::OSType( 'TEXT' ) ) ) )

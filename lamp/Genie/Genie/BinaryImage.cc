@@ -31,8 +31,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	struct BinaryFileMetadata
@@ -114,7 +114,7 @@ namespace Genie
 		
 		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
 		
-		N::HLockHi( code.Get() );
+		N::HLockHi( code.get() );
 		
 		return code;
 	}
@@ -193,7 +193,7 @@ namespace Genie
 		
 		// Handle no longer used here
 		
-		NN::Owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		if ( length == kCFragGoesToEOF )
 		{
@@ -216,14 +216,14 @@ namespace Genie
 		               N::fsFromStart,
 		               offset,
 		               length,
-		               *data.Get().Get() );
+		               *data.get().Get() );
 		
 		return data;
 	}
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
 		
 		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
 		

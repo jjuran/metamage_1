@@ -40,6 +40,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -60,7 +61,7 @@ namespace tool
 		
 		const char* file = args[0];
 		
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( file ), N::fsRdWrPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( file ), N::fsRdWrPerm );
 		
 		N::Handle handle = N::Get1Resource( resType, resID );
 		

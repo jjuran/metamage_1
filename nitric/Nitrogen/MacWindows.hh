@@ -25,9 +25,6 @@
 #ifndef NUCLEUS_LINKEDLISTCONTAINER_H
 #include "Nucleus/LinkedListContainer.h"
 #endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
@@ -262,9 +259,9 @@ namespace Nitrogen
 
 #if OPAQUE_TOOLBOX_STRUCTS
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer< Nitrogen::WindowRef >: public std::unary_function< Nitrogen::WindowRef, void >
+   template <> struct disposer< Nitrogen::WindowRef >: public std::unary_function< Nitrogen::WindowRef, void >
      {
       void operator()( Nitrogen::WindowRef w ) const
         {
@@ -286,7 +283,7 @@ namespace Nitrogen
 	// GetNewCWindow
 	
 	// 1402
-	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
+	nucleus::owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
 	                                       WindowDefProcID   procID,
@@ -297,7 +294,7 @@ namespace Nitrogen
 	// GetNewWindow
 	
 	// 1437
-	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
+	nucleus::owned< WindowRef > NewCWindow( const Rect&       bounds,
 	                                        ConstStr255Param  title,
 	                                        bool              visible,
 	                                        WindowDefProcID   procID,
@@ -306,7 +303,7 @@ namespace Nitrogen
 	                                        RefCon            refCon );
 	
 	// 1457
-	inline void DisposeWindow( Nucleus::Owned< WindowRef > )  {}
+	inline void DisposeWindow( nucleus::owned< WindowRef > )  {}
 	
 	// CreateNewWindow
 	// CreateWindowFromResource
@@ -473,14 +470,14 @@ namespace Nitrogen
 		ThrowOSStatus( ::SetWindowTitleWithCFString( inWindow, inString ) );
 	}
 	
-	inline Nucleus::Owned< CFStringRef > CopyWindowTitleAsCFString( WindowRef inWindow )
+	inline nucleus::owned< CFStringRef > CopyWindowTitleAsCFString( WindowRef inWindow )
 	{
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		CFStringRef result;
 		ThrowOSStatus( ::CopyWindowTitleAsCFString( inWindow, &result ) );
 		
-		return Nucleus::Owned< CFStringRef >::Seize( result );
+		return nucleus::owned< CFStringRef >::seize( result );
 	}
 	
 	// SetWindowProxyFSSpec
@@ -714,20 +711,20 @@ namespace Nitrogen
 		ThrowOSStatus ( ::SetWindowProxyAlias ( inWindow, inAlias ));
 		}
 	
-	inline Nucleus::Owned<AliasHandle> GetWindowProxyAlias ( WindowRef inWindow ) {
+	inline nucleus::owned<AliasHandle> GetWindowProxyAlias ( WindowRef inWindow ) {
 		AliasHandle result;
 		ThrowOSStatus ( ::GetWindowProxyAlias ( inWindow, &result ));
-		return Nucleus::Owned<AliasHandle>::Seize ( result );
+		return nucleus::owned<AliasHandle>::seize ( result );
 		}
 
 	inline void SetWindowProxyIcon ( WindowRef inWindow, IconRef icon ) {
 		ThrowOSStatus ( ::SetWindowProxyIcon ( inWindow, icon ));
 		}
 	
-	inline Nucleus::Owned<IconRef> GetWindowProxyIcon ( WindowRef inWindow ) {
+	inline nucleus::owned<IconRef> GetWindowProxyIcon ( WindowRef inWindow ) {
 		IconRef result;
 		ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
-		return Nucleus::Owned<IconRef>::Seize ( result );
+		return nucleus::owned<IconRef>::seize ( result );
 		}
 	
 	

@@ -23,9 +23,9 @@ namespace Nitrogen
 	
 	using ::CloseOpenTransport;
 	
-	inline Nucleus::Owned< EndpointRef >
+	inline nucleus::owned< EndpointRef >
 	//
-	OTOpenEndpoint( Nucleus::Owned< OTConfigurationRef >  config,
+	OTOpenEndpoint( nucleus::owned< OTConfigurationRef >  config,
 	                TEndpointInfo*                        info = NULL )
 	{
 		::OSStatus err;
@@ -37,7 +37,7 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Nucleus::Owned< EndpointRef >::Seize( result );
+		return nucleus::owned< EndpointRef >::seize( result );
 	}
 	
 }

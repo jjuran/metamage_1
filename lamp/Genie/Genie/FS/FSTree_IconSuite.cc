@@ -9,14 +9,14 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	class FSTree_IconSuite : public FSTree
 	{
 		private:
-			typedef NN::Shared< N::IconSuiteRef > Value;
+			typedef n::shared< N::IconSuiteRef > Value;
 			
 			Value itsIconSuite;
 		
@@ -34,7 +34,7 @@ namespace Genie
 	};
 	
 	
-	static NN::Shared< N::IconSuiteRef > gStoredIconSuite;
+	static n::shared< N::IconSuiteRef > gStoredIconSuite;
 	
 	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
 	{
@@ -57,14 +57,14 @@ namespace Genie
 	
 	FSTreePtr
 	//
-	New_FSTree_IconSuite( const FSTreePtr&                      parent,
-			              const std::string&                    name,
-			              const NN::Shared< N::IconSuiteRef >&  iconSuite )
+	New_FSTree_IconSuite( const FSTreePtr&                     parent,
+			              const std::string&                   name,
+			              const n::shared< N::IconSuiteRef >&  iconSuite )
 	{
 		return seize_ptr( new FSTree_IconSuite( parent, name, iconSuite ) );
 	}
 	
-	const NN::Shared< N::IconSuiteRef >& Fetch_IconSuite()
+	const n::shared< N::IconSuiteRef >& Fetch_IconSuite()
 	{
 		return gStoredIconSuite;
 	}

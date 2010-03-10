@@ -17,9 +17,6 @@
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH
@@ -103,7 +100,7 @@ namespace Nitrogen
 			{
 				static void ForCRMAttributes( CRMAttributes crmAttributes )
 				{
-					Nucleus::Disposer< T >()( reinterpret_cast< T >( crmAttributes ) );
+					nucleus::disposer< T >()( reinterpret_cast< T >( crmAttributes ) );
 				}
 			};
 		
@@ -134,14 +131,14 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
 	template < Nitrogen::CRMDeviceType crmDeviceType >
-	struct Disposer< Nitrogen::CRMAttributes > : public std::unary_function< Nitrogen::CRMAttributes, void >
+	struct disposer< Nitrogen::CRMAttributes > : public std::unary_function< Nitrogen::CRMAttributes, void >
 	{
 		void operator()( Nitrogen::CRMAttributes crmAttributes ) const
 		{
@@ -149,7 +146,7 @@ namespace Nucleus
 		}
 	};
 	
-	template <> struct Disposer< CRMRecPtr > : public std::unary_function< CRMRecPtr, void >
+	template <> struct disposer< CRMRecPtr > : public std::unary_function< CRMRecPtr, void >
 	{
 		void operator()( CRMRecPtr crmRec ) const
 		{
@@ -159,7 +156,7 @@ namespace Nucleus
 				reinterpret_cast< Nitrogen::CRMAttributes >( crmRec->crmAttributes )
 			);
 			
-			Disposer< Nitrogen::Ptr >()( crmRec );
+			disposer< Nitrogen::Ptr >()( crmRec );
 		}
 	};
 	
@@ -182,9 +179,9 @@ namespace Nitrogen
 	
 	void InitCRM();
 	
-	Nucleus::Owned< CRMRecPtr, CRMRemover > CRMInstall( Nucleus::Owned< CRMRecPtr > crmRec );
+	nucleus::owned< CRMRecPtr, CRMRemover > CRMInstall( nucleus::owned< CRMRecPtr > crmRec );
 	
-	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec );
+	nucleus::owned< CRMRecPtr > CRMRemove( nucleus::owned< CRMRecPtr, CRMRemover > crmRec );
 	
 	struct CRMSearch_Failed  {};
 	
@@ -204,14 +201,14 @@ namespace Nitrogen
 		return ::CRMIsDriverOpen( driverName );
 	}
 	
-	Nucleus::Owned< CRMRecPtr > New_CRMRecord();
+	nucleus::owned< CRMRecPtr > New_CRMRecord();
 	
 	template < CRMDeviceType crmDeviceType >
-	Nucleus::Owned< CRMRecPtr > New_CRMRecord( Nucleus::Owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
+	nucleus::owned< CRMRecPtr > New_CRMRecord( nucleus::owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
 	{
 		RegisterCRMAttributesDisposer< crmDeviceType >();
 		
-		Nucleus::Owned< CRMRecPtr > result = New_CRMRecord();
+		nucleus::owned< CRMRecPtr > result = New_CRMRecord();
 		
 		CRMRecPtr crmRec = result;
 		

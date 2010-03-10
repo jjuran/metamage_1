@@ -37,6 +37,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -46,7 +47,7 @@ namespace tool
 	
 	static const char* gResFilePathname = NULL;
 	
-	static NN::Owned< N::ResFileRefNum > gResFile;
+	static n::owned< N::ResFileRefNum > gResFile;
 	
 	static const char* gResType = NULL;
 	static const char* gResID   = NULL;

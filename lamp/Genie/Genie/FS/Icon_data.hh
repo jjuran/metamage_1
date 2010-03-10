@@ -47,11 +47,11 @@ namespace Genie
 			
 			void Destroy();
 			
-			void SetPlainIcon( Nucleus::Owned< Nitrogen::Handle > h );
+			void SetPlainIcon( nucleus::owned< Nitrogen::Handle > h );
 			
 			void SetIconID( Nitrogen::ResID id );
 			
-			void SetIconSuite( Nucleus::Owned< Nitrogen::IconSuiteRef > suite );
+			void SetIconSuite( nucleus::owned< Nitrogen::IconSuiteRef > suite );
 			
 			void Plot( const Rect&                  area,
 			           Nitrogen::IconAlignmentType  align,

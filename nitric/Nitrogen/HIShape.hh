@@ -53,10 +53,10 @@ namespace Nitrogen {
 	using ::HIMutableShapeRef;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer_Traits< Nitrogen::HIShapeRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
-	template <> struct Disposer_Traits< Nitrogen::HIMutableShapeRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+	template <> struct disposer_traits< Nitrogen::HIShapeRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
+	template <> struct disposer_traits< Nitrogen::HIMutableShapeRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
@@ -73,22 +73,22 @@ namespace Nitrogen
 /*======================================================================================*/
 
 	class HIShapeCreateWithQDRgn_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn );
+	nucleus::owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn );
 
 	class HIShapeCreateWithRect_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect );
+	nucleus::owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect );
 
 	class HIShapeCreateCopy_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape );
+	nucleus::owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape );
 
 	class HIShapeCreateIntersection_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	nucleus::owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 	class HIShapeCreateDifference_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	nucleus::owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 	class HIShapeCreateUnion_Failed {};
-	Nucleus::Owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	nucleus::owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 //	extern Boolean HIShapeIsEmpty(HIShapeRef inShape)
 	using ::HIShapeIsEmpty;
@@ -106,7 +106,7 @@ namespace Nitrogen
 		return result;
 		}
 	
-	inline Nucleus::Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape );
+	inline nucleus::owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape );
 	
 	inline void HIShapeReplacePathInCGContext ( HIShapeRef inShape, CGContextRef inContext ) {
      	(void) HIShapeErrorsRegistrationDependency();
@@ -123,10 +123,10 @@ namespace Nitrogen
 /*======================================================================================*/
 
 	class HIShapeCreateMutable_Failed {};
-	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutable ( void );
+	nucleus::owned<HIMutableShapeRef> HIShapeCreateMutable ( void );
 
 	class HIShapeCreateMutableCopy_Failed {};
-	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig );
+	nucleus::owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig );
 
 	inline void HIShapeSetEmpty ( HIMutableShapeRef inShape ) {
      	(void) HIShapeErrorsRegistrationDependency();

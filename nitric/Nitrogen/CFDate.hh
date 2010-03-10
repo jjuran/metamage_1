@@ -24,17 +24,17 @@ namespace Nitrogen {
 	using ::CFDateGetTypeID;
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer_Traits< Nitrogen::CFDateRef >: Disposer_Traits< Nitrogen::CFTypeRef >  {};
+	template <> struct disposer_traits< Nitrogen::CFDateRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
   {	
   	template <> struct CFType_Traits< CFDateRef >: Basic_CFType_Traits< CFDateRef, ::CFDateGetTypeID > {};
 
-	inline Nucleus::Owned<CFDateRef> CFDateCreate ( CFAllocatorRef allocator, CFAbsoluteTime at ) {
-		return Nucleus::Owned<CFDateRef>::Seize ( ::CFDateCreate ( allocator, at ));
+	inline nucleus::owned<CFDateRef> CFDateCreate ( CFAllocatorRef allocator, CFAbsoluteTime at ) {
+		return nucleus::owned<CFDateRef>::seize ( ::CFDateCreate ( allocator, at ));
 		}
 	
 //	CFAbsoluteTime CFDateGetAbsoluteTime ( CFDateRef theDate );

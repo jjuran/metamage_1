@@ -23,14 +23,14 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AccessProperty ¥
 	
-	Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               AEObjectClass        containerClass );
 	
 	class PropertyAccessor
 	{
 		public:
-			typedef Nucleus::Owned< AEDesc_Token > (*Callback)( AEPropertyID, const AEDesc_Token&, AEObjectClass );
+			typedef nucleus::owned< AEDesc_Token > (*Callback)( AEPropertyID, const AEDesc_Token&, AEObjectClass );
 		
 		private:
 			typedef std::map< AEPropertyID, Callback >  PropertyMap;
@@ -52,11 +52,11 @@ namespace Nitrogen
 			
 			Callback FindAccessor( AEPropertyID  propertyID, DescType tokenType );
 			
-			Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+			nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 			                                               const AEDesc_Token&  containerToken,
 			                                               AEObjectClass        containerClass );
 			
-			Nucleus::Owned< AEDesc_Token > AccessAll( const AEDesc_Token&  containerToken,
+			nucleus::owned< AEDesc_Token > AccessAll( const AEDesc_Token&  containerToken,
 			                                          AEObjectClass        containerClass );
 	};
 	
@@ -67,15 +67,15 @@ namespace Nitrogen
 		TheGlobalPropertyAccessor().Register( propertyID, containerType, callback );
 	}
 	
-	Nucleus::Owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
+	nucleus::owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    AEObjectClass        containerClass );
 	
-	Nucleus::Owned< AEDesc_Token > AccessAllProperties( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessAllProperties( AEPropertyID         propertyID,
 	                                                    const AEDesc_Token&  containerToken,
 	                                                    AEObjectClass        containerClass );
 	
-	inline Nucleus::Owned< AEDesc_Token > AccessAllProperties( const AEDesc_Token&  containerToken,
+	inline nucleus::owned< AEDesc_Token > AccessAllProperties( const AEDesc_Token&  containerToken,
 	                                                           AEObjectClass        containerClass )
 	{
 		return AccessAllProperties( AEPropertyID(), containerToken, containerClass );

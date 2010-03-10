@@ -61,9 +61,11 @@
 // Divergence
 #include "Divergence/Utilities.hh"
 
+// nucleus
+#include "nucleus/shared.hh"
+
 // Nucleus
 #include "Nucleus/Exception.h"
-#include "Nucleus/Shared.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // Io
@@ -661,7 +663,7 @@ static void PrintString( std::string s )
 static int TestAE( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
-	NN::Owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
+	n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
 	
 	N::AEPutPtr< N::typeChar >( list, 0, "foo" );
 	N::AEPutPtr< N::typeChar >( list, 0, "bar" );
@@ -718,10 +720,10 @@ static int TestThread( int argc, iota::argv_t argv )
 		param = argv[ 2 ];
 	}
 	
-	NN::Owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( N::kCooperativeThread,
-	                                                                                       param,
-	                                                                                       0,
-	                                                                                       N::ThreadOptions() );
+	n::owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( N::kCooperativeThread,
+	                                                                                      param,
+	                                                                                      0,
+	                                                                                      N::ThreadOptions() );
 	N::ThreadState state = N::GetThreadState( thread );
 	
 	int count = 0;
@@ -847,7 +849,7 @@ static int TestNull( int argc, iota::argv_t argv )
 	/*
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
-		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );
 		
@@ -861,7 +863,7 @@ static int TestNull( int argc, iota::argv_t argv )
 	}
 	*/
 	
-	static NN::Owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
+	static n::owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
 		n::owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
 		
@@ -871,7 +873,7 @@ static int TestNull( int argc, iota::argv_t argv )
 		
 		std::size_t size = stat_buffer.st_size;
 		
-		NN::Owned< N::Ptr > result = N::NewPtr( size );
+		n::owned< N::Ptr > result = N::NewPtr( size );
 		
 		int bytes = read( filehandle, result.get(), size );
 		
@@ -886,13 +888,13 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	const char* pathname = argv[2];
 	
-	NN::Owned< N::Ptr > fragment = ReadFragmentImageFromPluginFile( pathname );
+	n::owned< N::Ptr > fragment = ReadFragmentImageFromPluginFile( pathname );
 	
 	int len = N::GetPtrSize( fragment );
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
+	n::owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	int* scratch;
 	
@@ -900,7 +902,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	*scratch = 42;
 	
-	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
+	n::owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
 	
 	N::FindSymbol( two, "\p" "errno", &scratch );
 	
@@ -1161,9 +1163,9 @@ static int TestCallback( int argc, iota::argv_t argv )
 	
 	FSSpec file = Div::ResolvePathToFSSpec( pathname );
 	
-	NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+	n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
 	
-	NN::Owned< N::Handle > init = N::DetachResource( N::Get1Resource( N::ResType( 'INIT' ), N::ResID( 0 ) ) );
+	n::owned< N::Handle > init = N::DetachResource( N::Get1Resource( N::ResType( 'INIT' ), N::ResID( 0 ) ) );
 	
 	N::HLock( init );
 	
@@ -1316,10 +1318,10 @@ class Object
 		//Object& operator=( const gObjectCount& )  {}
 };
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Disposer< Object* > : public DisposeWithDelete {};
+	template <> struct disposer< Object* > : public dispose_with_delete {};
 	
 }
 
@@ -1336,64 +1338,64 @@ static void CheckObjects( int trial )
 static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
 {
 	{
-		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::owned< Object* > foo = n::owned< Object* >::seize( new Object );
 	}
 	CheckObjects( 1 );
 	
 	{
-		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::owned< Object* > foo = n::owned< Object* >::seize( new Object );
 		
-		NN::Owned< Object* > bar( foo );
+		n::owned< Object* > bar( foo );
 	}
 	CheckObjects( 2 );
 	
 	{
-		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
-		NN::Owned< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		n::owned< Object* > foo = n::owned< Object* >::seize( new Object );
+		n::owned< Object* > bar = n::owned< Object* >::seize( new Object );
 		
 		bar = foo;
 	}
 	CheckObjects( 3 );
 	
 	{
-		NN::Owned< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::owned< Object* > foo = n::owned< Object* >::seize( new Object );
 		
 		foo.reset();
 	}
 	CheckObjects( 4 );
 	
 	{
-		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::shared< Object* > foo = n::owned< Object* >::seize( new Object );
 	}
 	CheckObjects( 5 );
 	
 	{
-		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::shared< Object* > foo = n::owned< Object* >::seize( new Object );
 		
-		NN::Shared< Object* > bar( foo );
+		n::shared< Object* > bar( foo );
 	}
 	CheckObjects( 6 );
 	
 	{
-		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
-		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		n::shared< Object* > foo = n::owned< Object* >::seize( new Object );
+		n::shared< Object* > bar = n::owned< Object* >::seize( new Object );
 		
 		bar = foo;
 	}
 	CheckObjects( 7 );
 	
 	{
-		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
+		n::shared< Object* > foo = n::owned< Object* >::seize( new Object );
 		
 		foo.reset();
 	}
 	CheckObjects( 8 );
 	
 	{
-		NN::Shared< Object* > foo = NN::Owned< Object* >::Seize( new Object );
-		NN::Shared< Object* > bar = NN::Owned< Object* >::Seize( new Object );
+		n::shared< Object* > foo = n::owned< Object* >::seize( new Object );
+		n::shared< Object* > bar = n::owned< Object* >::seize( new Object );
 		
-		NN::Shared< Object* > baz( bar );
+		n::shared< Object* > baz( bar );
 		
 		bar = foo;
 	}

@@ -14,15 +14,15 @@
 
 namespace Nitrogen
   {
-   Nucleus::Owned< CFUUIDRef > CFUUIDCreate( CFAllocatorRef alloc )
+   nucleus::owned< CFUUIDRef > CFUUIDCreate( CFAllocatorRef alloc )
      {
       CFUUIDRef result = ::CFUUIDCreate( alloc );
       if ( result == 0 )
          throw CFUUIDCreate_Failed();
-      return Nucleus::Owned< CFUUIDRef >::Seize( result );
+      return nucleus::owned< CFUUIDRef >::seize( result );
      }
 
-   Nucleus::Owned< CFUUIDRef > CFUUIDCreateWithBytes( CFAllocatorRef alloc,
+   nucleus::owned< CFUUIDRef > CFUUIDCreateWithBytes( CFAllocatorRef alloc,
                                                       UInt8          byte0,
                                                       UInt8          byte1,
                                                       UInt8          byte2,
@@ -47,25 +47,25 @@ namespace Nitrogen
                                                   byte12, byte13, byte14, byte15 );
       if ( result == 0 )
          throw CFUUIDCreateWithBytes_Failed();
-      return Nucleus::Owned< CFUUIDRef >::Seize( result );
+      return nucleus::owned< CFUUIDRef >::seize( result );
      }
 
-   Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromString( CFAllocatorRef alloc,
+   nucleus::owned< CFUUIDRef > CFUUIDCreateFromString( CFAllocatorRef alloc,
                                                        CFStringRef    uuidStr )
      {
       CFUUIDRef result = ::CFUUIDCreateFromString( alloc, uuidStr );
       if ( result == 0 )
          throw CFUUIDCreateFromString_Failed();
-      return Nucleus::Owned< CFUUIDRef >::Seize( result );
+      return nucleus::owned< CFUUIDRef >::seize( result );
      }
 
-   Nucleus::Owned< CFStringRef > CFUUIDCreateString( CFAllocatorRef alloc,
+   nucleus::owned< CFStringRef > CFUUIDCreateString( CFAllocatorRef alloc,
                                                      CFUUIDRef      uuid )
      {
       CFStringRef result = ::CFUUIDCreateString( alloc, uuid );
       if ( result == 0 )
          throw CFUUIDCreateString_Failed();
-      return Nucleus::Owned< CFStringRef >::Seize( result );
+      return nucleus::owned< CFStringRef >::seize( result );
      }
 
    CFUUIDRef CFUUIDGetConstantUUIDWithBytes( CFAllocatorRef alloc,
@@ -96,12 +96,12 @@ namespace Nitrogen
       return result;
      }
 
-   Nucleus::Owned<CFUUIDRef> CFUUIDCreateFromUUIDBytes( CFAllocatorRef alloc,
+   nucleus::owned<CFUUIDRef> CFUUIDCreateFromUUIDBytes( CFAllocatorRef alloc,
                                                         CFUUIDBytes    bytes )
      {
       CFUUIDRef result = ::CFUUIDCreateFromUUIDBytes( alloc, bytes );
       if ( result == 0 )
          throw CFUUIDCreateFromUUIDBytes_Failed();
-      return Nucleus::Owned< CFUUIDRef >::Seize( result );
+      return nucleus::owned< CFUUIDRef >::seize( result );
      }
   }

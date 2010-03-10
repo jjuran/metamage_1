@@ -14,10 +14,6 @@
 #ifndef NITROGEN_INTERNETCONFIG_HH
 #define NITROGEN_INTERNETCONFIG_HH
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef __INTERNETCONFIG__
 #include <InternetConfig.h>
 #endif
@@ -94,10 +90,10 @@ namespace Nitrogen
 	using ::ICServicesHandle;
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >,
+	template <> struct disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >,
 	                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( Nitrogen::ICInstance instance ) const
@@ -108,23 +104,23 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct Disposer_Traits< Nitrogen::ICFontRecordHandle   > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICCharTableHandle    > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICAppSpecHandle      > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICAppSpecListHandle  > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICFileSpecHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICMapEntryHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICServiceEntryHandle > : Disposer_Traits< Nitrogen::Handle >  {};
-	template <>  struct Disposer_Traits< Nitrogen::ICServicesHandle     > : Disposer_Traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICFontRecordHandle   > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICCharTableHandle    > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICAppSpecHandle      > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICAppSpecListHandle  > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICFileSpecHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICMapEntryHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICServiceEntryHandle > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< Nitrogen::ICServicesHandle     > : disposer_traits< Nitrogen::Handle >  {};
 	
 }
 
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< ICInstance > ICStart( OSType signature );
+	nucleus::owned< ICInstance > ICStart( OSType signature );
 	
-	void ICStop( Nucleus::Owned< ICInstance >& instance );
+	void ICStop( nucleus::owned< ICInstance >& instance );
 	
 	UInt32 ICGetVersion( ICInstance  instance,
 	                     long        whichVersion );
@@ -140,11 +136,11 @@ namespace Nitrogen
 	// ICSetPref
 	
 	// 1179
-	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	nucleus::owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key,
 	                                           ICAttr&           attr );
 	
-	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	nucleus::owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key );
 	
 	// ICGetPrefHandle

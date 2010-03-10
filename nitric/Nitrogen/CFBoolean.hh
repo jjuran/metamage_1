@@ -29,9 +29,9 @@ namespace Nitrogen
    template <> struct CFType_Traits< CFBooleanRef >: Basic_CFType_Traits< CFBooleanRef, ::CFBooleanGetTypeID > {};
   }
 
-namespace Nucleus
+namespace nucleus
   {
-   template <> struct Disposer_Traits< Nitrogen::CFBooleanRef >: Disposer_Traits<Nitrogen::CFTypeRef>  {};
+   template <> struct disposer_traits< Nitrogen::CFBooleanRef >: disposer_traits<Nitrogen::CFTypeRef>  {};
   }
 
 namespace Nitrogen
@@ -61,9 +61,9 @@ namespace nucleus
      };
    
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFBooleanRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFBooleanRef> >
+   struct converter< nucleus::owned<Nitrogen::CFBooleanRef>, bool >: public std::unary_function< bool, nucleus::owned<Nitrogen::CFBooleanRef> >
      {
-      Nucleus::Owned<Nitrogen::CFBooleanRef> operator()( const bool& in ) const
+      nucleus::owned<Nitrogen::CFBooleanRef> operator()( const bool& in ) const
         {
          return Nitrogen::CFRetain( convert<Nitrogen::CFBooleanRef>( in ) );
         }

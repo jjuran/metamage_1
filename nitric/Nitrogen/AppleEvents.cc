@@ -32,7 +32,7 @@ namespace Nitrogen
           && a.isSysHandler    == b.isSysHandler;
      }
 
-   Nucleus::Owned<AEEventHandler>
+   nucleus::owned<AEEventHandler>
    AEInstallEventHandler( const AEEventHandler& toInstall )
      {
       ThrowOSStatus( ::AEInstallEventHandler( toInstall.theAEEventClass,
@@ -41,10 +41,10 @@ namespace Nitrogen
                                               toInstall.handlerRefCon,
                                               toInstall.isSysHandler ) );
       
-      return Nucleus::Owned<AEEventHandler>::Seize( toInstall );
+      return nucleus::owned<AEEventHandler>::seize( toInstall );
      }
 
-   void AERemoveEventHandler( Nucleus::Owned<AEEventHandler> toRemove )
+   void AERemoveEventHandler( nucleus::owned<AEEventHandler> toRemove )
      {
       AEEventHandler released = toRemove.release();
       

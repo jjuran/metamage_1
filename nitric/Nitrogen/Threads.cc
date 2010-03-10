@@ -50,7 +50,7 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
+	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
 	                                      void*           threadParam,
 	                                      Size            stackSize,
@@ -67,7 +67,7 @@ namespace Nitrogen
 		                            threadResult,
 		                            &result ) );
 		
-		return Nucleus::Owned< ThreadID >::Seize( ThreadID( result ) );
+		return nucleus::owned< ThreadID >::seize( ThreadID( result ) );
 	}
 	
 	void SetThreadScheduler( ThreadSchedulerTPP threadScheduler )
@@ -139,7 +139,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void DisposeThread( Nucleus::Owned< ThreadID >  thread,
+	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*                       threadResult,
 	                    bool                        recycleThread )
 	{

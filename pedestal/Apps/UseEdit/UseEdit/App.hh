@@ -15,9 +15,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
@@ -78,8 +75,8 @@ namespace UseEdit
 			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
 			bool ExistsElementByID   ( UInt32      id    ) const;
 			
-			Nucleus::Owned< Nitrogen::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
-			Nucleus::Owned< Nitrogen::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
+			nucleus::owned< Nitrogen::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
+			nucleus::owned< Nitrogen::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
 			
 			void DeleteElementByIndex( std::size_t index );
 			
@@ -114,14 +111,14 @@ namespace UseEdit
 			
 			typedef void (*AEEventHandlerProcPtr)( Nitrogen::AppleEvent const&, Nitrogen::AppleEvent&, App* );
 			
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsCloseHandler;
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsCountHandler;
-			Nucleus::Owned< Nitrogen::AEEventHandler > itsGetDataHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsCloseHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsCountHandler;
+			nucleus::owned< Nitrogen::AEEventHandler > itsGetDataHandler;
 			
 			template < AEEventHandlerProcPtr proc >
 			inline
-			Nucleus::Owned< Nitrogen::AEEventHandler >
+			nucleus::owned< Nitrogen::AEEventHandler >
 			InstallAppleEventHandler( Nitrogen::AEEventClass  eventClass,
 			                          Nitrogen::AEEventID     eventID )
 			{

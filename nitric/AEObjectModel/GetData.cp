@@ -11,14 +11,14 @@
 namespace Nitrogen
 {
 	
-	static Nucleus::Owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, DescType )
+	static nucleus::owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, DescType )
 	{
 		return GetRootObjectSpecifier();
 	}
 	
-	static Nucleus::Owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, DescType desiredType )
+	static nucleus::owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, DescType desiredType )
 	{
-		Nucleus::Owned< AEDescList_Data > list = AECreateList( false );
+		nucleus::owned< AEDescList_Data > list = AECreateList( false );
 		
 		UInt32 count = AECountItems( obj );
 		
@@ -34,12 +34,12 @@ namespace Nitrogen
 	}
 	
 	
-	Nucleus::Owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
+	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
 	                                                                  const AEDesc_ObjectSpecifier&  container,
 	                                                                  AEEnumeration                  keyForm,
 	                                                                  const AEDesc_Data&             keyData )
 	{
-		Nucleus::Owned< AERecord_Data > record = AECreateList( true );
+		nucleus::owned< AERecord_Data > record = AECreateList( true );
 		
 		AEPutKeyPtr< keyAEDesiredClass >( record, objectClass );
 		AEPutKeyPtr< keyAEKeyForm      >( record, keyForm     );
@@ -50,7 +50,7 @@ namespace Nitrogen
 		return AECoerceDesc( record, typeObjectSpecifier );
 	}
 	
-	Nucleus::Owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType )
+	nucleus::owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );
 	}
@@ -61,7 +61,7 @@ namespace Nitrogen
 		Register( typeAEList, GetDataFromTokenList );
 	}
 	
-	Nucleus::Owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, DescType desiredType )
+	nucleus::owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, DescType desiredType )
 	{
 		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
 		

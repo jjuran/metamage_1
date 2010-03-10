@@ -52,7 +52,7 @@ namespace Nitrogen
 #undef kDefaultInternetServicesPath
 
 // This definition is useless to clients because OTOpenInternetServices[InContext]() takes
-// Nucleus::Owned< OTConfigurationRef >, not OTConfigurationRef.  You can't get there from here.
+// nucleus::owned< OTConfigurationRef >, not OTConfigurationRef.  You can't get there from here.
 // Instead, we define a new class and overload on that.
 
 //static const OTConfigurationRef kDefaultInternetServicesPath = (OTConfigurationRef)-3L;
@@ -119,10 +119,10 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <> struct Disposer_Traits< Nitrogen::InetSvcRef > : Disposer_Traits< Nitrogen::ProviderRef > {};
+	template <> struct disposer_traits< Nitrogen::InetSvcRef > : disposer_traits< Nitrogen::ProviderRef > {};
 	
 }
 
@@ -180,10 +180,10 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DNR ¥
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
+	nucleus::owned< InetSvcRef > OTOpenInternetServicesInContext( nucleus::owned< OTConfigurationRef >  cfig,
 	                                                              OTClientContextPtr                    clientContext = NULL );
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
+	nucleus::owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
 	                                                              OTClientContextPtr           clientContext = NULL );
 	
 	InetHostInfo& OTInetStringToAddress( InetSvcRef     ref,

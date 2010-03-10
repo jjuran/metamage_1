@@ -14,9 +14,9 @@
 #ifndef NUCLEUS_TRANSFERTRAITS_H
 #define NUCLEUS_TRANSFERTRAITS_H
 
-// Nucleus
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
 #endif
 
 
@@ -33,13 +33,13 @@ namespace Nucleus
 	};
 	
 	// FIXME:  This should be moved to Owned.h
-	template < class T, class Disposer > struct Transfer_Traits< Owned< T, Disposer > >
+	template < class T, class Disposer > struct Transfer_Traits< ::nucleus::owned< T, Disposer > >
 	{
 		static const bool mayCopyConstSource = false;
 		
-		typedef Owned< T, Disposer > Type;
+		typedef ::nucleus::owned< T, Disposer > Type;
 		
-		typedef OwnershipTransfer< T, Disposer > Transfer;
+		typedef ::nucleus::ownership_transfer< T, Disposer > Transfer;
 	};
 	
 }

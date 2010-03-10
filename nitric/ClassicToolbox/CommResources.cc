@@ -57,18 +57,18 @@ namespace Nitrogen
 		ThrowOSStatus( ::InitCRM() );
 	}
 	
-	Nucleus::Owned< CRMRecPtr, CRMRemover > CRMInstall( Nucleus::Owned< CRMRecPtr > crmRec )
+	nucleus::owned< CRMRecPtr, CRMRemover > CRMInstall( nucleus::owned< CRMRecPtr > crmRec )
 	{
 		// ::CRMInstall() returns void.  There's no means for reporting errors.
 		::CRMInstall( crmRec.get() );
-		return Nucleus::Owned< CRMRecPtr, CRMRemover >::Seize( crmRec.Release() );
+		return nucleus::owned< CRMRecPtr, CRMRemover >::seize( crmRec.release() );
 	}
 	
-	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec )
+	nucleus::owned< CRMRecPtr > CRMRemove( nucleus::owned< CRMRecPtr, CRMRemover > crmRec )
 	{
 		ThrowOSStatus( ::CRMRemove( crmRec.get() ) );
 		
-		return Nucleus::Owned< CRMRecPtr >::Seize( crmRec.Release() );
+		return nucleus::owned< CRMRecPtr >::seize( crmRec.release() );
 	}
 	
 	CRMRecPtr CRMSearch( const CRMRec& crmRec )
@@ -87,9 +87,9 @@ namespace Nitrogen
 		return CRMSearch( crmRec );
 	}
 	
-	Nucleus::Owned< CRMRecPtr > New_CRMRecord()
+	nucleus::owned< CRMRecPtr > New_CRMRecord()
 	{
-		Nucleus::Owned< CRMRecPtr > result = Nucleus::Owned< CRMRecPtr >::Seize
+		nucleus::owned< CRMRecPtr > result = nucleus::owned< CRMRecPtr >::seize
 		(
 			reinterpret_cast< CRMRecPtr >
 			(

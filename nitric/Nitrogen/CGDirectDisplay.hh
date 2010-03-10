@@ -20,10 +20,6 @@
 #endif
 	
 // Nitrogen
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 //	we need this include in order to instantiate Owned<CGrafPtr>
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
@@ -36,9 +32,9 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
   {
-	template <> struct Disposer< Nitrogen::CGDirectDisplayID > : public std::unary_function< Nitrogen::CGDirectDisplayID, void >
+	template <> struct disposer< Nitrogen::CGDirectDisplayID > : public std::unary_function< Nitrogen::CGDirectDisplayID, void >
 	{
 		void operator()( Nitrogen::CGDirectDisplayID display ) const
 		{
@@ -54,11 +50,11 @@ namespace Nitrogen
 	// which is defined in CGDirectDisplay.h which isn't included by Quickdraw.h,
 	// so we move it here so as not to create a new header dependency.
 	// (It's defined in Nitrogen/Quickdraw.cc.)
-	Nucleus::Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
+	nucleus::owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
 	
-	Nucleus::Owned< CGDirectDisplayID > CGDisplayCapture( CGDirectDisplayID display = 0 );
+	nucleus::owned< CGDirectDisplayID > CGDisplayCapture( CGDirectDisplayID display = 0 );
 	
-	inline void CGDisplayRelease( Nucleus::Owned< CGDirectDisplayID > )  {}
+	inline void CGDisplayRelease( nucleus::owned< CGDirectDisplayID > )  {}
 	
 }
 

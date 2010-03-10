@@ -55,6 +55,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -115,7 +116,7 @@ namespace tool
 	static inline void WriteInputFile( const FSSpec& file )
 	{
 		// Prepare stdin file
-		//NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
+		//n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
 		
 		// FIXME:  Needs to be implemented
 	}
@@ -240,22 +241,22 @@ namespace tool
 		throw p7::exit_failure;
 	}
 	
-	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
+	static n::owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
 	{
 		ProcessSerialNumber psnToolServer = find_or_launch_ToolServer();
 		
-		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
-		                                                               N::kAEDoScript,
-		                                                               N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) );
+		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
+		                                                              N::kAEDoScript,
+		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) );
 		
 		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
 		
 		return appleEvent;
 	}
 	
-	static NN::Owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
+	static n::owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
 	{
-		NN::Owned< N::AppleEvent > replyEvent = N::AEInitializeDesc< N::AppleEvent >();
+		n::owned< N::AppleEvent > replyEvent = N::AEInitializeDesc< N::AppleEvent >();
 		
 		// Declare a block to limit the scope of mutableReply
 		{

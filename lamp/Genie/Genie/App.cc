@@ -21,8 +21,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -42,7 +42,7 @@ namespace Genie
 		private:
 			GenieHandlerReply myReplyEventHandler;
 			GenieExecHandler myExecHandler;
-			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
+			n::owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
 			static void AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app );
@@ -91,9 +91,9 @@ namespace Genie
 	
 	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& /*reply*/ )
 	{
-		NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                             N::keyDirectObject,
-		                                                             N::typeAEList );
+		n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                            N::keyDirectObject,
+		                                                            N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

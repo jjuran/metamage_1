@@ -6,8 +6,8 @@
 #ifndef GENIE_IO_MACFILE_HH
 #define GENIE_IO_MACFILE_HH
 
-// Nucleus
-#include "Nucleus/Shared.h"
+// nucleus
+#include "nucleus/shared.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
@@ -21,12 +21,12 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle >
 	//
-	New_DataForkHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+	New_DataForkHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
 	                    OpenFlags                                         flags );
 	
 	boost::shared_ptr< IOHandle >
 	//
-	New_RsrcForkHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+	New_RsrcForkHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
 	                    OpenFlags                                         flags );
 	
 }

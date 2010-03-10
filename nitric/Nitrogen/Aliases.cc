@@ -39,35 +39,35 @@ namespace Nitrogen
 #endif
 	
 	
-	static Nucleus::Owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )
+	static nucleus::owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )
 	{
 		::AliasHandle result;
 		ThrowOSStatus( ::NewAlias( fromFile, &target, &result ) );
 		
-		return Nucleus::Owned< AliasHandle >::Seize( result );
+		return nucleus::owned< AliasHandle >::seize( result );
 	}
 	
-	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec&  fromFile,
+	nucleus::owned< AliasHandle > NewAlias( const FSSpec&  fromFile,
 	                                        const FSSpec&  target )
 	{
 		return NewAlias( &fromFile, target );
 	}
 	
-	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& target )
+	nucleus::owned< AliasHandle > NewAlias( const FSSpec& target )
 	{
 		return NewAlias( NULL, target );
 	}
 	
-	Nucleus::Owned< AliasHandle > NewAlias( CFDataRef theData )
+	nucleus::owned< AliasHandle > NewAlias( CFDataRef theData )
 	{
 	   CFIndex dataSize = CFDataGetLength ( theData );
-	   Nucleus::Owned<AliasHandle> retVal = NewHandle<AliasRecord> ( dataSize );
+	   nucleus::owned<AliasHandle> retVal = NewHandle<AliasRecord> ( dataSize );
 	   CFDataGetBytes ( theData, CFRangeMake ( 0, dataSize ), (UInt8 *) *retVal );
 	   return retVal;
 	}
 
 
-	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
+	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
 	                                                           ConstStr32Param     zoneName,
 	                                                           ConstStr31Param     serverName )
 	{
@@ -78,7 +78,7 @@ namespace Nitrogen
 		                                              serverName,
 		                                              &result ) );
 		
-		return Nucleus::Owned< AliasHandle >::Seize( result );
+		return nucleus::owned< AliasHandle >::seize( result );
 	}
 	
 	ResolveAlias_Result ResolveAlias( const FSSpec&  fromFile,
@@ -132,26 +132,26 @@ namespace Nitrogen
 		return result;
 	}
 	
-   Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
+   nucleus::owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                            const FSRef& target )
      {
       AliasHandle result;
       ThrowOSStatus( ::FSNewAlias( &fromFile, &target, &result ) );
-      return Nucleus::Owned<AliasHandle>::Seize( result );
+      return nucleus::owned<AliasHandle>::seize( result );
      }
    
-   Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& target )
+   nucleus::owned<AliasHandle> FSNewAlias( const FSRef& target )
      {
       AliasHandle result;
       ThrowOSStatus( ::FSNewAlias( 0, &target, &result ) );
-      return Nucleus::Owned<AliasHandle>::Seize( result );
+      return nucleus::owned<AliasHandle>::seize( result );
      }
 
-   Nucleus::Owned<AliasHandle> FSNewAliasMinimal( const FSRef& target )
+   nucleus::owned<AliasHandle> FSNewAliasMinimal( const FSRef& target )
      {
       AliasHandle result;
       ThrowOSStatus( ::FSNewAliasMinimal( &target, &result ) );
-      return Nucleus::Owned<AliasHandle>::Seize( result );
+      return nucleus::owned<AliasHandle>::seize( result );
      }
   
    FSIsAliasFile_Result FSIsAliasFile( const FSRef& fileRef )
@@ -210,18 +210,18 @@ namespace Nitrogen
 	FSResolveAlias_Result FSResolveAlias ( CFDataRef alias )
 	  {
 	   CFIndex dataSize = CFDataGetLength ( alias );
-	   Nucleus::Owned<Handle> h = NewHandle ( dataSize );
+	   nucleus::owned<Handle> h = NewHandle ( dataSize );
 	   CFDataGetBytes ( alias, CFRangeMake ( 0, dataSize ), (UInt8 *) *h.get () );
 	   return FSResolveAlias ((AliasHandle) h.get ().Get() );
 	  }
 
 
-   Nucleus::Owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias )
+   nucleus::owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias )
      {
       CFDataRef result = ::CFDataCreate ( allocator, (UInt8*) *inAlias, GetHandleSize((Handle) inAlias ));
       if ( NULL == result )
         throw AliasAsDataRef_Failed ();
-      return Nucleus::Owned<CFDataRef>::Seize ( result );
+      return nucleus::owned<CFDataRef>::seize ( result );
      }
 
 

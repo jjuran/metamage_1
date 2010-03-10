@@ -200,7 +200,7 @@ namespace Nitrogen
                                                              RegionCode               iPreferredRegion,
                                                              TextEncoding             iPreferredEncoding );
 
-   Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> > TECGetInfo();
+   nucleus::owned< TECInfoHandle, nucleus::disposer<Handle> > TECGetInfo();
 
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                  LangCode         iTextLanguageID = kTextLanguageDontCare,

@@ -20,7 +20,7 @@ namespace Pedestal
 	{
 		private:
 			Rect                                   itsBounds;
-			Nucleus::Owned< Nitrogen::GWorldPtr >  itsGWorld;
+			nucleus::owned< Nitrogen::GWorldPtr >  itsGWorld;
 		
 		public:
 			GWorldView( const Rect& bounds );

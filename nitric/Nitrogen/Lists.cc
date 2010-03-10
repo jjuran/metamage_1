@@ -25,7 +25,7 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
+	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
 	                                   ResID              theProc,
@@ -47,7 +47,7 @@ namespace Nitrogen
 		
 		// FIXME:  Check for null handle
 		
-		return Nucleus::Owned< ListHandle >::Seize( list );
+		return nucleus::owned< ListHandle >::seize( list );
 	}
 	
 	void LSize( short width, short height, ListHandle list )

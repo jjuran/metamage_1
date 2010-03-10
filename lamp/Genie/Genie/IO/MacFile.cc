@@ -15,8 +15,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	class MacFileHandle : public RegularFileHandle
@@ -24,11 +24,11 @@ namespace Genie
 		private:
 			typedef FSTreePtr (*FileGetter)( const FSSpec&, bool );
 			
-			Nucleus::Shared< Nitrogen::FSFileRefNum >  itsRefNum;
+			nucleus::shared< Nitrogen::FSFileRefNum >  itsRefNum;
 			FileGetter                                 itsFileGetter;
 		
 		public:
-			MacFileHandle( const Nucleus::Shared< Nitrogen::FSFileRefNum >&  refNum,
+			MacFileHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
 			               OpenFlags                                         flags,
 			               FileGetter                                        getFile );
 			
@@ -73,9 +73,9 @@ namespace Genie
 		return result;
 	}
 	
-	MacFileHandle::MacFileHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
-	                              OpenFlags                             flags,
-	                              FileGetter                            getFile )
+	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
+	                              OpenFlags                            flags,
+	                              FileGetter                           getFile )
 	: RegularFileHandle( flags  ),
 	  itsRefNum        ( refNum ),
 	  itsFileGetter    ( getFile )
@@ -168,8 +168,8 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle >
 	//
-	New_DataForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
-	                    OpenFlags                             flags )
+	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
+	                    OpenFlags                            flags )
 	{
 		return seize_ptr( new MacFileHandle( refNum,
 		                                     flags,
@@ -178,8 +178,8 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle >
 	//
-	New_RsrcForkHandle( const NN::Shared< N::FSFileRefNum >&  refNum,
-	                    OpenFlags                             flags )
+	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
+	                    OpenFlags                            flags )
 	{
 		return seize_ptr( new MacFileHandle( refNum,
 		                                     flags,

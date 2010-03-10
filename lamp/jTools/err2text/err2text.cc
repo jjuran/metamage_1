@@ -42,8 +42,8 @@ enum { sigMPWShell = 'MPS ' };
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -117,7 +117,7 @@ namespace tool
 	{
 		using N::fsRdPerm;
 		
-		NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
+		n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
 		
 		toc_header header;
 		
@@ -173,7 +173,7 @@ namespace tool
 	{
 		using N::fsRdPerm;
 		
-		NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( global_SysErrs_dot_err, fsRdPerm ) );
+		n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( global_SysErrs_dot_err, fsRdPerm ) );
 		
 		N::SetFPos( fileH, N::fsFromStart, offset );
 		

@@ -174,7 +174,7 @@ namespace Nitrogen
 		}
 	}
 	
-	void CloseConnection( Nucleus::Owned< CFragConnectionID > connID )
+	void CloseConnection( nucleus::owned< CFragConnectionID > connID )
 	{
 		CFragConnectionID connIDcopy = connID.release();
 		

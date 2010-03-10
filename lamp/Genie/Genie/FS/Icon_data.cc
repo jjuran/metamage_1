@@ -40,8 +40,8 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -91,7 +91,7 @@ namespace Genie
 		}
 	}
 	
-	void IconData::SetPlainIcon( NN::Owned< N::Handle > h )
+	void IconData::SetPlainIcon( n::owned< N::Handle > h )
 	{
 		Destroy();
 		
@@ -112,7 +112,7 @@ namespace Genie
 		itIsSet = true;
 	}
 	
-	void IconData::SetIconSuite( NN::Owned< N::IconSuiteRef > suite )
+	void IconData::SetIconSuite( n::owned< N::IconSuiteRef > suite )
 	{
 		Destroy();
 		
@@ -491,9 +491,9 @@ namespace Genie
 	
 	static ::IconActionUPP gCopyIconToSuiteUPP = ::NewIconActionUPP( &CopyIconToSuite );
 	
-	static NN::Owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
+	static n::owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
 	{
-		NN::Owned< N::IconSuiteRef > copy = N::NewIconSuite();
+		n::owned< N::IconSuiteRef > copy = N::NewIconSuite();
 		
 		N::ThrowOSStatus( ::ForEachIconDo( iconSuite,
 		                                   kSelectorAllAvailableData,

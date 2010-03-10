@@ -44,7 +44,7 @@ namespace Nitrogen
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	static       Nucleus::OwnedDefaults< WindowRef >::DisposerType gDisposeWindow;
+	static       nucleus::disposer_traits< WindowRef >::type gDisposeWindow;
 	
 #else
 	
@@ -61,11 +61,11 @@ namespace Nitrogen
 	#endif
 	}
 	
-	static const Nucleus::OwnedDefaults< WindowRef >::DisposerType gDisposeWindow( &Function::DisposeWindow );
+	static const nucleus::disposer_traits< WindowRef >::type gDisposeWindow( &Function::DisposeWindow );
 	
 #endif
 	
-	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
+	nucleus::owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
 	                                       WindowDefProcID   procID,
@@ -73,7 +73,7 @@ namespace Nitrogen
 	                                       bool              goAwayFlag,
 	                                       RefCon            refCon )
 	{
-		return Nucleus::Owned< WindowRef >::Seize( ::NewWindow( NULL,
+		return nucleus::owned< WindowRef >::seize( ::NewWindow( NULL,
 		                                                        &bounds,
 		                                                        title,
 		                                                        visible,
@@ -83,7 +83,7 @@ namespace Nitrogen
 		                                                        refCon ), gDisposeWindow );
 	}
 	
-	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
+	nucleus::owned< WindowRef > NewCWindow( const Rect&       bounds,
 	                                        ConstStr255Param  title,
 	                                        bool              visible,
 	                                        WindowDefProcID   procID,
@@ -91,7 +91,7 @@ namespace Nitrogen
 	                                        bool              goAwayFlag,
 	                                        RefCon            refCon )
 	{
-		return Nucleus::Owned< WindowRef >::Seize( ::NewCWindow( NULL,
+		return nucleus::owned< WindowRef >::seize( ::NewCWindow( NULL,
 		                                                         &bounds,
 		                                                         title,
 		                                                         visible,

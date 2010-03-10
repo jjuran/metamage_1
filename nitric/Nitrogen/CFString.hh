@@ -41,7 +41,7 @@ namespace Nitrogen
    /* These declararions are in Nitrogen/CFBase.hh:
       using ::CFStringRef;
       template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
-      template <> struct Disposer_Traits< CFStringRef >: Disposer_Traits<CFTypeRef> {};
+      template <> struct disposer_traits< CFStringRef >: disposer_traits<CFTypeRef> {};
    */
 
    inline void CFShow( const CFStringRef s )        { ::CFShow( s ); }
@@ -53,50 +53,50 @@ namespace Nitrogen
 	using ::CFStringEncoding;
    }
 
-namespace Nucleus {
-   template <> struct Disposer_Traits< Nitrogen::CFMutableStringRef >: Disposer_Traits< Nitrogen::CFTypeRef > {};
+namespace nucleus {
+   template <> struct disposer_traits< Nitrogen::CFMutableStringRef >: disposer_traits< Nitrogen::CFTypeRef > {};
    }
    
 namespace Nitrogen {
    using ::CFStringGetTypeID;
    
    class CFStringCreateWithPascalString_Failed {};
-   Nucleus::Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
+   nucleus::owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
                                                                ConstStr255Param   pStr,
                                                                CFStringEncoding   encoding );
    
-   inline Nucleus::Owned<CFStringRef> CFStringCreateWithPascalString( ConstStr255Param   pStr,
+   inline nucleus::owned<CFStringRef> CFStringCreateWithPascalString( ConstStr255Param   pStr,
                                                                       CFStringEncoding   encoding )
      {
       return Nitrogen::CFStringCreateWithPascalString( kCFAllocatorDefault, pStr, encoding );
      }
 
    class CFStringCreateWithCString_Failed {};
-   Nucleus::Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
+   nucleus::owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
                                                           const char *cStr,
                                                           CFStringEncoding encoding );
 
-   inline Nucleus::Owned<CFStringRef> CFStringCreateWithCString( const char *cStr,
+   inline nucleus::owned<CFStringRef> CFStringCreateWithCString( const char *cStr,
                                                                  CFStringEncoding encoding )
      {
       return Nitrogen::CFStringCreateWithCString( kCFAllocatorDefault, cStr, encoding );
      }
    
    class CFStringCreateWithCharacters_Failed {};
-   Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
+   nucleus::owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
                                                              const UniChar *  chars,
                                                              CFIndex          numChars );
 
-   inline Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( const UniChar *  chars,
+   inline nucleus::owned<CFStringRef> CFStringCreateWithCharacters( const UniChar *  chars,
                                                                     CFIndex          numChars )
      {
       return Nitrogen::CFStringCreateWithCharacters( kCFAllocatorDefault, chars, numChars );
      }
 
-   Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
+   nucleus::owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
                                                              const UniString& string );
 
-   inline Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( const UniString& string )
+   inline nucleus::owned<CFStringRef> CFStringCreateWithCharacters( const UniString& string )
      {
       return Nitrogen::CFStringCreateWithCharacters( kCFAllocatorDefault, string );
      }
@@ -118,13 +118,13 @@ namespace Nitrogen {
    
    class CFStringCreateWithBytes_Failed {};
    
-   Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
+   nucleus::owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
                                                           const UInt8 *      bytes,
                                                           CFIndex            numBytes,
                                                           CFStringEncoding   encoding,
                                                           bool               isExternalRepresentation );
 
-   inline Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( const UInt8 *      bytes,
+   inline nucleus::owned< CFStringRef > CFStringCreateWithBytes( const UInt8 *      bytes,
                                                                  CFIndex            numBytes,
                                                                  CFStringEncoding   encoding,
                                                                  bool               isExternalRepresentation )
@@ -136,7 +136,7 @@ namespace Nitrogen {
                                                 isExternalRepresentation );
      }
 
-   inline Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( const std::string& string,
+   inline nucleus::owned< CFStringRef > CFStringCreateWithBytes( const std::string& string,
                                                                  CFStringEncoding   encoding,
                                                                  bool               isExternalRepresentation )
      {
@@ -162,16 +162,16 @@ namespace nucleus
      };
    
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<Nitrogen::CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, nucleus::owned<Nitrogen::CFStringRef> >
      {
-      Nucleus::Owned<Nitrogen::CFStringRef> operator()( const Nitrogen::UniString& in ) const
+      nucleus::owned<Nitrogen::CFStringRef> operator()( const Nitrogen::UniString& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in );
         }
      };
    
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<Nitrogen::CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, nucleus::owned<Nitrogen::CFStringRef> >
      {
       private:
          Nitrogen::CFStringEncoding encoding;
@@ -181,14 +181,14 @@ namespace nucleus
            : encoding( e )
            {}
          
-         Nucleus::Owned<Nitrogen::CFStringRef> operator()( ConstStr255Param in ) const
+         nucleus::owned<Nitrogen::CFStringRef> operator()( ConstStr255Param in ) const
            {
             return Nitrogen::CFStringCreateWithPascalString( in, encoding );
            }
      };
    
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, const char * >: public std::unary_function< const char *, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<Nitrogen::CFStringRef>, const char * >: public std::unary_function< const char *, nucleus::owned<Nitrogen::CFStringRef> >
      {
       private:
          Nitrogen::CFStringEncoding encoding;
@@ -198,21 +198,21 @@ namespace nucleus
            : encoding( e )
            {}
          
-         Nucleus::Owned<Nitrogen::CFStringRef> operator()( const char *in ) const
+         nucleus::owned<Nitrogen::CFStringRef> operator()( const char *in ) const
            {
             return Nitrogen::CFStringCreateWithCString( in, encoding );
            }
      };
    
    template <>
-   struct converter< Nucleus::Owned<Nitrogen::CFStringRef>, double >: public std::unary_function< double, Nucleus::Owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<Nitrogen::CFStringRef>, double >: public std::unary_function< double, nucleus::owned<Nitrogen::CFStringRef> >
      {
-      Nucleus::Owned<Nitrogen::CFStringRef> operator()( const double& in ) const
+      nucleus::owned<Nitrogen::CFStringRef> operator()( const double& in ) const
         {
          CFStringRef result = ::CFStringCreateWithFormat( kCFAllocatorDefault, 0, CFSTR("%g"), in );
          if ( result == 0 )
             throw Nitrogen::CFStringCreateWithFormat_Failed();
-         return Nucleus::Owned<Nitrogen::CFStringRef>::Seize( result );
+         return nucleus::owned<Nitrogen::CFStringRef>::seize( result );
         }
      };
    
