@@ -114,7 +114,7 @@ namespace Genie
 		
 		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
 		
-		N::HLockHi( code.Get() );
+		N::HLockHi( code.get() );
 		
 		return code;
 	}
@@ -216,7 +216,7 @@ namespace Genie
 		               N::fsFromStart,
 		               offset,
 		               length,
-		               *data.Get().Get() );
+		               *data.get().Get() );
 		
 		return data;
 	}
