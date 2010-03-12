@@ -24,7 +24,7 @@ void Lamp_async_check()
 {
 	static unsigned long global_counter = 0;
 	
-	if ( ++global_counter & 0x00100000 )
+	if ( (++global_counter & 0x000fffff) == 0 )
 	{
 		// kill() is a guaranteed preemption point.
 		// kill( 1, 0 ) is the canonical 'yield' idiom.
