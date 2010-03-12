@@ -26,6 +26,7 @@ namespace OSErrno
 		{
 			case eofErr         :  result = 0;             break;
 			case nsvErr         :  // fall through
+			case afpItemNotFound:  // fall through
 			case fnfErr         :  result = ENOENT;        break;
 			case ioErr          :  result = EIO;           break;
 			case fnOpnErr       :  // fall through
@@ -37,6 +38,7 @@ namespace OSErrno
 			case fBsyErr        :  result = EBUSY;         break;
 			case dupFNErr       :  result = EEXIST;        break;
 			case diffVolErr     :  result = EXDEV;         break;
+			case errFSNotAFolder:  // fall through
 			case dirNFErr       :  result = ENOTDIR;       break;
 			case notAFileErr    :  result = EISDIR;        break;
 			case posErr         :  // fall through
