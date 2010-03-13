@@ -76,7 +76,12 @@ namespace Nitrogen
 			ThrowOSStatus_Internal( err );
 		}
 	}
-   
+	
+	inline void HandleDestructionOSStatus( ::OSStatus err )
+	{
+		// ignore errors in destructors for now
+	}
+	
    template < class DestructionExceptionPolicy >
    struct DestructionOSStatusPolicy: public DestructionExceptionPolicy
      {
