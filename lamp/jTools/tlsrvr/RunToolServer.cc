@@ -241,13 +241,12 @@ namespace tool
 		throw p7::exit_failure;
 	}
 	
-	static n::owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
+	static n::owned< N::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
+	                                                    const std::string&          script )
 	{
-		ProcessSerialNumber psnToolServer = find_or_launch_ToolServer();
-		
 		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                              N::kAEDoScript,
-		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) );
+		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
 		
@@ -452,18 +451,21 @@ namespace tool
 	
 	int RunCommandInToolServer( const std::string& command, bool switch_layers )
 	{
+		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
+		
 		// This is a bit of a hack.
 		// It really ought to happen just after we send the event.
 		if ( switch_layers )
 		{
-			switch_process( N::CurrentProcess(), find_or_launch_ToolServer() );
+			switch_process( N::CurrentProcess(), toolServer );
 		}
 		
-		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
+		int result = GetResult( AESendBlocking( CreateScriptEvent( toolServer,
+		                                                           SetUpScript( command ) ) ) );
 		
 		if ( switch_layers )
 		{
-			switch_process( find_or_launch_ToolServer(), N::CurrentProcess() );
+			switch_process( toolServer, N::CurrentProcess() );
 		}
 		
 		if ( result == -9 )
