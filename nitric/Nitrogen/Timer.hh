@@ -49,7 +49,9 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::TimeManager );
 			
-			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< ::QElemPtr >( tmTaskPtr ) ) );
+			const QElemPtr qElem = (QElemPtr) tmTaskPtr;
+			
+			HandleDestructionOSStatus( ::RemoveTimeTask( qElem ) );
 		}
 	};
 	

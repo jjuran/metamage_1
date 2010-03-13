@@ -69,7 +69,9 @@ namespace nucleus
 	{
 		void operator()( Nitrogen::VBLTaskPtr vblTaskPtr ) const
 		{
-			HandleDestructionOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTaskPtr ) ) );
+			const QElemPtr qElem = (QElemPtr) vblTaskPtr;
+			
+			HandleDestructionOSStatus( ::VRemove( qElem ) );
 		}
 	};
 	
@@ -79,7 +81,9 @@ namespace nucleus
 	{
 		void operator()( Nitrogen::SlotVBLTask slotVBLTask ) const
 		{
-			HandleDestructionOSStatus( ::SlotVRemove( reinterpret_cast< ::QElemPtr >( slotVBLTask.task ),
+			const QElemPtr qElem = (QElemPtr) slotVBLTask.task;
+			
+			HandleDestructionOSStatus( ::SlotVRemove( qElem,
 			                                          slotVBLTask.slot ) );
 		}
 	};
