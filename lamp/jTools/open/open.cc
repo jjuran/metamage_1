@@ -13,10 +13,6 @@
 // iota
 #include "iota/quad.hh"
 
-// Nucleus
-#include "Nucleus/Exception.h"
-#include "Nucleus/TheExceptionBeingHandled.h"
-
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AERegistry.hh"

@@ -18,10 +18,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nucleus
-#include "Nucleus/Exception.h"
-#include "Nucleus/TheExceptionBeingHandled.h"
-
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/open.hh"

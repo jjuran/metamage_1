@@ -64,10 +64,6 @@
 // nucleus
 #include "nucleus/shared.hh"
 
-// Nucleus
-#include "Nucleus/Exception.h"
-#include "Nucleus/TheExceptionBeingHandled.h"
-
 // Io
 #include "io/slurp.hh"
 
