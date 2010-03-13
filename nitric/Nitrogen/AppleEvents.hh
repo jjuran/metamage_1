@@ -101,15 +101,14 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< Nitrogen::AEEventHandler >: public std::unary_function< Nitrogen::AEEventHandler, void >,
-                                                private Nitrogen::DefaultDestructionOSStatusPolicy
+   struct disposer< Nitrogen::AEEventHandler >: public std::unary_function< Nitrogen::AEEventHandler, void >
      {
       void operator()( const Nitrogen::AEEventHandler& installation ) const
         {
-         HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-                                                            installation.theAEEventID,
-                                                            installation.handler,
-                                                            installation.isSysHandler ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
+                                                                        installation.theAEEventID,
+                                                                        installation.handler,
+                                                                        installation.isSysHandler ) );
         }
      };
   }

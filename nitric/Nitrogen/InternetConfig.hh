@@ -93,14 +93,13 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >,
-	                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
+	template <> struct disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >
 	{
 		void operator()( Nitrogen::ICInstance instance ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::InternetConfig );
 			
-			HandleDestructionOSStatus( ::ICStop( instance ) );
+			::Nitrogen::HandleDestructionOSStatus( ::ICStop( instance ) );
 		}
 	};
 	

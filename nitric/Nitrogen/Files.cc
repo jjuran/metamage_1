@@ -538,12 +538,12 @@ Return Value
 
    void FileSystemDisposer::operator()( const FSRef& ref ) const
      {
-      DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSDeleteObject( &ref ) );
+      ::Nitrogen::HandleDestructionOSStatus( ::FSDeleteObject( &ref ) );
      }
 
    void FileSystemDisposer::operator()( const FSSpec& spec ) const
      {
-      DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSpDelete( &spec ) );
+      ::Nitrogen::HandleDestructionOSStatus( ::FSpDelete( &spec ) );
      }
    
    

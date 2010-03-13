@@ -165,12 +165,11 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	struct CRMRemover : public std::unary_function< CRMRecPtr, void >,
-	                    private DefaultDestructionOSStatusPolicy
+	struct CRMRemover : public std::unary_function< CRMRecPtr, void >
 	{
 		void operator()( CRMRecPtr crmRec ) const
 		{
-			HandleDestructionOSStatus( ::CRMRemove( crmRec ) );
+			::Nitrogen::HandleDestructionOSStatus( ::CRMRemove( crmRec ) );
 		}
 	};
 	

@@ -85,14 +85,14 @@ namespace Nitrogen
 	// handles are owned by the Resource Manager, not the application.
 	// But here it is anyway for completeness, in case someone finds it useful.
 	
-	struct ResourceReleaser : public std::unary_function< Handle, void >, 
-	                          private DefaultDestructionOSStatusPolicy
+	struct ResourceReleaser : public std::unary_function< Handle, void >
 	{
 		void operator()( Handle r ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( ResourceManager );
 			
 			::ReleaseResource( r );
+			
 			HandleDestructionOSStatus( ::ResError() );
 		}
 	};
@@ -102,15 +102,15 @@ namespace Nitrogen
 namespace nucleus
   {
 	template <>
-	struct disposer< Nitrogen::ResFileRefNum > : public std::unary_function< Nitrogen::ResFileRefNum, void >,
-	                                             private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::ResFileRefNum > : public std::unary_function< Nitrogen::ResFileRefNum, void >
 	{
 		void operator()( Nitrogen::ResFileRefNum resFile ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ResourceManager );
 			
 			::CloseResFile( resFile );
-			HandleDestructionOSStatus( ::ResError() );
+			
+			::Nitrogen::HandleDestructionOSStatus( ::ResError() );
 		}
 	};
   }

@@ -478,8 +478,7 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >,
-	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >
 	{
 		// parameter can't be const
 		void operator()( Nitrogen::AEDesc desc ) const
@@ -489,7 +488,7 @@ namespace nucleus
 			
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
 			
-			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
+			::Nitrogen::HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
 		}
 	};
 	
@@ -515,15 +514,14 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Token > : public std::unary_function< Nitrogen::AEDesc, void >,
-	                                            private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::AEDesc_Token > : public std::unary_function< Nitrogen::AEDesc, void >
 	{
 		// parameter can't be const
 		void operator()( Nitrogen::AEDesc desc ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
 			
-			HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
+			::Nitrogen::HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
 		}
 	};
 	
@@ -549,8 +547,7 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEKeyDesc > : public std::unary_function< Nitrogen::AEKeyDesc, void >,
-	                                         private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::AEKeyDesc > : public std::unary_function< Nitrogen::AEKeyDesc, void >
 	{
 		// parameter can't be const
 		void operator()( Nitrogen::AEKeyDesc keyDesc ) const
@@ -746,15 +743,14 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::AECoercionHandler > : public std::unary_function< Nitrogen::AECoercionHandler, void >,
-	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::AECoercionHandler > : public std::unary_function< Nitrogen::AECoercionHandler, void >
 	{
 		void operator()( const Nitrogen::AECoercionHandler& installation ) const
 		{
-			HandleDestructionOSStatus( ::AERemoveCoercionHandler( installation.fromType,
-			                                                      installation.toType,
-			                                                      installation.handler,
-			                                                      installation.isSysHandler ) );
+			::Nitrogen::HandleDestructionOSStatus( ::AERemoveCoercionHandler( installation.fromType,
+			                                                                  installation.toType,
+			                                                                  installation.handler,
+			                                                                  installation.isSysHandler ) );
 		}
 	};
 	

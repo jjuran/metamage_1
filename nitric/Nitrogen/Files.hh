@@ -320,14 +320,13 @@ namespace nucleus
         }
      };
 	
-	template <> struct disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >,
-	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
+	template <> struct disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >
 	{
 		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
 			
-			HandleDestructionOSStatus( ::FSClose( file ) );
+			::Nitrogen::HandleDestructionOSStatus( ::FSClose( file ) );
 		}
 	};
   }
@@ -763,7 +762,7 @@ namespace Nitrogen
       operator FSDirID() const          { return dirID; }
      };
 
-   class FileSystemDisposer: private DefaultDestructionOSStatusPolicy
+   class FileSystemDisposer
      {
       public:
          void operator()( const FSRef& ) const;
@@ -1058,14 +1057,13 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >,
-                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >
      {
       void operator()( Nitrogen::FSIterator iterator ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
-         HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
   }
@@ -1273,16 +1271,15 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >,
-                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >
      {
       void operator()( const Nitrogen::FSForkRef& fork ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
-         HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
-                                                    fork.Name().size(),
-                                                    fork.Name().data() ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
+                                                                fork.Name().size(),
+                                                                fork.Name().data() ) );
         }
      };
   }
@@ -1313,14 +1310,13 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >,
-                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
-         HandleDestructionOSStatus( ::FSCloseFork( fork ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };
   }

@@ -66,14 +66,13 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >,
-	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >
 	{
 		void operator()( Nitrogen::ComponentInstance component ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ComponentManager );
 			
-			HandleDestructionOSStatus( ::CloseComponent( component ) );
+			::Nitrogen::HandleDestructionOSStatus( ::CloseComponent( component ) );
 		}
 	};
 	

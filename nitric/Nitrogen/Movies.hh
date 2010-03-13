@@ -78,26 +78,24 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >,
-	                                               private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >
 	{
 		void operator()( Nitrogen::MovieFileRefNum refNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
-			HandleDestructionOSStatus( ::CloseMovieFile( refNum ) );
+			::Nitrogen::HandleDestructionOSStatus( ::CloseMovieFile( refNum ) );
 		}
 	};
 	
 	template <>
-	struct disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >,
-	                                                    private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >
 	{
 		void operator()( Nitrogen::FullScreenContextPtr context ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
-			HandleDestructionOSStatus( ::EndFullScreen( reinterpret_cast< ::Ptr >( context ), 0 ) );
+			::Nitrogen::HandleDestructionOSStatus( ::EndFullScreen( (::Ptr) context, 0 ) );
 		}
 	};
 	

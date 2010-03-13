@@ -289,12 +289,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >,
-	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >
 	{
 		void operator()( const Nitrogen::OSLAccessor& installation ) const
 		{
-			HandleDestructionOSStatus
+			::Nitrogen::HandleDestructionOSStatus
 			(
 				::AERemoveObjectAccessor( installation.desiredClass,
 				                          installation.containerType,

@@ -64,27 +64,25 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::VBLTaskPtr > : public  std::unary_function< Nitrogen::VBLTaskPtr, void >,
-	                                          private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::VBLTaskPtr > : public std::unary_function< Nitrogen::VBLTaskPtr, void >
 	{
 		void operator()( Nitrogen::VBLTaskPtr vblTaskPtr ) const
 		{
 			const QElemPtr qElem = (QElemPtr) vblTaskPtr;
 			
-			HandleDestructionOSStatus( ::VRemove( qElem ) );
+			::Nitrogen::HandleDestructionOSStatus( ::VRemove( qElem ) );
 		}
 	};
 	
 	template <>
-	struct disposer< Nitrogen::SlotVBLTask > : public  std::unary_function< Nitrogen::SlotVBLTask, void >,
-	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::SlotVBLTask > : public std::unary_function< Nitrogen::SlotVBLTask, void >
 	{
 		void operator()( Nitrogen::SlotVBLTask slotVBLTask ) const
 		{
 			const QElemPtr qElem = (QElemPtr) slotVBLTask.task;
 			
-			HandleDestructionOSStatus( ::SlotVRemove( qElem,
-			                                          slotVBLTask.slot ) );
+			::Nitrogen::HandleDestructionOSStatus( ::SlotVRemove( qElem,
+			                                                      slotVBLTask.slot ) );
 		}
 	};
 	

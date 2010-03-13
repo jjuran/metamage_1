@@ -129,13 +129,13 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
-                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >
      {
       void operator()( Nitrogen::DragRef i ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::DragManager );
-         HandleDestructionOSStatus( ::DisposeDrag( i ) );
+         
+         ::Nitrogen::HandleDestructionOSStatus( ::DisposeDrag( i ) );
         }
      };
   }

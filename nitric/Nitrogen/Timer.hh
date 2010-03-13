@@ -42,8 +42,7 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< TMTaskPtr > : public  std::unary_function< TMTaskPtr, void >,
-                                   private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< TMTaskPtr > : public std::unary_function< TMTaskPtr, void >
 	{
 		void operator()( TMTaskPtr tmTaskPtr ) const
 		{
@@ -51,7 +50,7 @@ namespace nucleus
 			
 			const QElemPtr qElem = (QElemPtr) tmTaskPtr;
 			
-			HandleDestructionOSStatus( ::RemoveTimeTask( qElem ) );
+			::Nitrogen::HandleDestructionOSStatus( ::RemoveTimeTask( qElem ) );
 		}
 	};
 	
