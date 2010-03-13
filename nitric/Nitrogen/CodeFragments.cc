@@ -80,7 +80,7 @@ namespace Nitrogen
 			case cfragInitLoopErr:
 			case cfragLibConnErr:
 			case cfragInitFunctionErr:
-				throw OSStatusErrMessage< Nucleus::ErrorCode< OSStatus, 0 > >( status, errMessage );
+				throw OSStatusErrMessage< nucleus::error_code< OSStatus > >( status, errMessage );
 			
 		#endif
 			

@@ -57,9 +57,9 @@ namespace Nucleus
 						{
 							its_key = Specifics::GetNextKey( its_key );
 						}
-						catch ( const typename Specifics::EndOfEnumeration& end )
+						catch ( const typename Specifics::end_of_enumeration& end )
 						{
-							if ( !Specifics::Exception_Is_EndOfEnumeration( end ) )
+							if ( !Specifics::exception_is_end_of_enumeration( end ) )
 							{
 								throw;
 							}

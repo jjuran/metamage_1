@@ -18,8 +18,8 @@
 #include <MacTypes.h>
 #endif
 
-#ifndef NUCLEUS_ERRORCODE_H
-#include "Nucleus/ErrorCode.h"
+#ifndef NUCLEUS_ERRORCODE_HH
+#include "nucleus/error_code.hh"
 #endif
 
 
@@ -42,7 +42,7 @@ namespace Nitrogen
             OSStatus( unsigned long long );
          
       public:
-         typedef ::OSStatus ErrorNumber;
+         typedef ::OSStatus error_number;
          
          OSStatus()                                            : status( noErr )    {}
          OSStatus( ::OSStatus s )                              : status( s )        {}
@@ -60,7 +60,7 @@ namespace Nitrogen
    template < ::OSStatus error >
    inline void RegisterOSStatus()
      {
-      Nucleus::RegisterErrorCode<OSStatus, error>();
+      ::nucleus::register_error_code< OSStatus, error >();
      }
    
    void ThrowOSStatus_Internal( OSStatus );
@@ -84,7 +84,7 @@ namespace Nitrogen
 {
 	
 	template < ::OSStatus status >
-	struct OSStatus_EndOfEnumeration : public Nucleus::ErrorCode_EndOfEnumeration< OSStatus, status >
+	struct OSStatus_EndOfEnumeration : public ::nucleus::error_code_end_of_enumeration< OSStatus, status >
 	{
 	};
 	

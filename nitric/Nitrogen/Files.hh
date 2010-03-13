@@ -1181,7 +1181,7 @@ namespace Nitrogen
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
          
-         typedef ErrFSNoMoreItems EndOfEnumeration;
+         typedef ErrFSNoMoreItems end_of_enumeration;
          
          value_type GetValue( size_type position )
            {

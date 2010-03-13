@@ -17,7 +17,7 @@ namespace Nitrogen
 	
 	void ThrowOSStatus_Internal( OSStatus error )
 	{
-		Nucleus::ThrowErrorCode< OSStatus >( error );
+		nucleus::throw_error_code< OSStatus >( error );
 	}
 	
 }
