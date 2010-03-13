@@ -21,12 +21,6 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
-#ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
-#include "Nucleus/DestructionExceptionPolicy.h"
-#endif
-#ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
-#include "Nucleus/TheExceptionBeingHandled.h"
-#endif
 
 
 namespace Nitrogen
@@ -82,24 +76,6 @@ namespace Nitrogen
 		// ignore errors in destructors for now
 	}
 	
-   template < class DestructionExceptionPolicy >
-   struct DestructionOSStatusPolicy: public DestructionExceptionPolicy
-     {
-      void HandleDestructionOSStatus( OSStatus error ) const
-        {
-         try
-           {
-            ThrowOSStatus( error );
-            DestructionExceptionPolicy::WarnOfDestructionExceptionRisk();
-           }
-         catch( ... )
-           {
-            DestructionExceptionPolicy::HandleDestructionException( Nucleus::TheExceptionBeingHandled() );
-           }
-        }
-     };
-   
-   typedef DestructionOSStatusPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionOSStatusPolicy;
   }
 
 namespace Nitrogen
