@@ -436,22 +436,34 @@ namespace tool
 		return false;
 	}
 	
+	static void switch_process( const ProcessSerialNumber& from,
+	                            const ProcessSerialNumber& to )
+	{
+		if ( N::SameProcess( from, N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( to );
+			
+			while ( N::SameProcess( from, N::GetFrontProcess() ) )
+			{
+				sleep( 0 );
+			}
+		}
+	}
+	
 	int RunCommandInToolServer( const std::string& command, bool switch_layers )
 	{
 		// This is a bit of a hack.
 		// It really ought to happen just after we send the event.
-		if ( switch_layers && N::SameProcess( N::CurrentProcess(),
-		                                      N::GetFrontProcess() ) )
+		if ( switch_layers )
 		{
-			N::SetFrontProcess( find_or_launch_ToolServer() );
+			switch_process( N::CurrentProcess(), find_or_launch_ToolServer() );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		if ( switch_layers && N::SameProcess( find_or_launch_ToolServer(),
-		                                      N::GetFrontProcess() ) )
+		if ( switch_layers )
 		{
-			N::SetFrontProcess( N::CurrentProcess() );
+			switch_process( find_or_launch_ToolServer(), N::CurrentProcess() );
 		}
 		
 		if ( result == -9 )
