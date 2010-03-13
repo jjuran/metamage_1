@@ -54,7 +54,9 @@ namespace Nitrogen
          ::OSStatus Get() const                                { return status; }
          operator ::OSStatus() const                           { return status; }
      };
-   
+	
+	#define DEFINE_OSSTATUS( c_name, new_name )  DEFINE_ERRORCODE( OSStatus, c_name, new_name )
+	
    template < ::OSStatus error >
    inline void RegisterOSStatus()
      {

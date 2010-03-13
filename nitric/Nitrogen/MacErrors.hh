@@ -22,8 +22,6 @@
 namespace Nitrogen
 {
 	
-	#define DEFINE_OSSTATUS( c_name, new_name )  DEFINE_ERRORCODE( OSStatus, c_name, new_name )
-	
 	DEFINE_OSSTATUS( paramErr,                                ParamErr                               );
 	DEFINE_OSSTATUS( noHardwareErr,                           NoHardwareErr                          );
 	DEFINE_OSSTATUS( notEnoughHardwareErr,                    NotEnoughHardwareErr                   );
