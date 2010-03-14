@@ -133,12 +133,6 @@ namespace Nitrogen
 			void Set( SetParameter state ) const   { SetPixelsState( pm, state );           }
 	};
 	
-	typedef GWorld_Value       GWorld_Details;
-	typedef PixelsState_Value  PixelsState_Details;
-	
-	typedef Nucleus::Pseudoreference< GWorld_Details      > GWorld;
-	typedef Nucleus::Pseudoreference< PixelsState_Details > PixelsState;
-	
 }
 
 #endif

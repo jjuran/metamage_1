@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2004 by Lisa Lippincott and Joshua Juran.
+// Written 2002-2010 by Lisa Lippincott and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -14,45 +14,29 @@
 #ifndef NUCLEUS_SCOPED_H
 #define NUCLEUS_SCOPED_H
 
-#ifndef NUCLEUS_REFERENCETRAITS_H
-#include "Nucleus/ReferenceTraits.h"
-#endif
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
 
 namespace Nucleus
   {
-   template < class Reference >
+   template < class Value >
    class Scoped
      {
       private:
-         typedef typename ReferenceTraits<Reference>::Value Value;
-         typedef typename ReferenceTraits<Reference>::Pointer Pointer;
+         typedef Value&  Reference;
+         typedef Value  *Pointer;
          
          Reference reference;
          Value oldValue;
          
       public:
-         explicit Scoped()
-         :
-         	reference(),
-         	oldValue( reference )
-         {}
-         
          explicit Scoped( Reference theProperty )
            : reference( theProperty ),
              oldValue( reference )
            {
            }
 
-         explicit Scoped( Value newValue )
-           : reference(),
-             oldValue( reference )
-           {
-            reference = newValue;
-           }
-         
          explicit Scoped( Reference theProperty, Value newValue )
            : reference( theProperty ),
              oldValue( reference )
@@ -80,29 +64,16 @@ namespace Nucleus
          
          const Scoped& operator=( Value value ) const                          { Set( value ); return *this; }
          const Scoped& operator=( const Scoped& source ) const                 { Set( source.Get() ); return *this; }
-
-         template < class T > const Scoped& operator+=( const T& rhs ) const   { Set( Get() + rhs ); return *this; }
-         template < class T > const Scoped& operator-=( const T& rhs ) const   { Set( Get() - rhs ); return *this; }
-         template < class T > const Scoped& operator*=( const T& rhs ) const   { Set( Get() * rhs ); return *this; }
-         template < class T > const Scoped& operator/=( const T& rhs ) const   { Set( Get() / rhs ); return *this; }
-         template < class T > const Scoped& operator%=( const T& rhs ) const   { Set( Get() % rhs ); return *this; }
-
-         template < class T > const Scoped& operator&=( const T& rhs ) const   { Set( Get() & rhs ); return *this; }
-         template < class T > const Scoped& operator|=( const T& rhs ) const   { Set( Get() | rhs ); return *this; }
-         template < class T > const Scoped& operator^=( const T& rhs ) const   { Set( Get() ^ rhs ); return *this; }
-
-         template < class T > const Scoped& operator<<=( const T& rhs ) const  { Set( Get() << rhs ); return *this; }
-         template < class T > const Scoped& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
      };
   }
 
 namespace nucleus
 {
 	
-	template < class Reference >
-	struct convert_input_traits< Nucleus::Scoped< Reference > >
+	template < class Value >
+	struct convert_input_traits< Nucleus::Scoped< Value > >
 	{
-		typedef typename Nucleus::ReferenceTraits< Reference >::Value converter_input_type;
+		typedef Value converter_input_type;
 	};
 	
 }

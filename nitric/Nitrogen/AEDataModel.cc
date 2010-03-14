@@ -141,7 +141,7 @@ namespace Nitrogen
 	// We need two ways of doing this -- one for const AEDesc& and one for non-const.
 	// For const (AEGetKey{Ptr,Desc}, AESizeOfKeyDesc), we call Fix_AERecordDescriptorType
 	// to return an adjusted AERecord, a pointer to which is passed to the function.
-	// For non-const (AEPutKey{Ptr,Desc}, AEDeleteKeyDesc), we use Scoped< ::DescType& >,
+	// For non-const (AEPutKey{Ptr,Desc}, AEDeleteKeyDesc), we use Scoped< ::DescType >,
 	// which adjusts the actual AEDesc argument that was passed, and afterward adjusts it back.
 	
 	static AERecord Fix_AERecordDescriptorType( AERecord record )
@@ -179,7 +179,7 @@ namespace Nitrogen
 			
 		#if !TARGET_API_MAC_OSX
 			
-			Nucleus::Scoped< HandleState > scopedHandleState( HandleState( handle ) );
+			Nucleus::Saved< HandleState_Value > hState( HandleState_Value( handle ) );
 			
 			HLock( handle );
 			
@@ -347,7 +347,7 @@ namespace Nitrogen
 	                  const void*  dataPtr,
 	                  std::size_t  dataSize )
 	{
-		Nucleus::Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		Nucleus::Scoped< ::DescType > scopedDescType( record.descriptorType, typeAERecord );
 		
 		ThrowOSStatus( ::AEPutKeyPtr( &record,
 		                              keyword,
@@ -360,7 +360,7 @@ namespace Nitrogen
 	                   AEKeyword      keyword,
 	                   const AEDesc&  desc )
 	{
-		Nucleus::Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		Nucleus::Scoped< ::DescType > scopedDescType( record.descriptorType, typeAERecord );
 		
 		ThrowOSStatus( ::AEPutKeyDesc( &record, keyword, &desc ) );
 	}
@@ -423,7 +423,7 @@ namespace Nitrogen
 	
 	void AEDeleteKeyDesc( AERecord& record, AEKeyword keyword )
 	{
-		Nucleus::Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		Nucleus::Scoped< ::DescType > scopedDescType( record.descriptorType, typeAERecord );
 		
 		ThrowOSStatus( ::AEDeleteKeyDesc( &record, keyword ) );
 	}

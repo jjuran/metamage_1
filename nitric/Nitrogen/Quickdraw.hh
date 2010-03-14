@@ -26,10 +26,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_PSEUDOREFERENCE_H
-#include "Nucleus/Pseudoreference.h"
-#endif
-
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -879,22 +875,6 @@ namespace Nitrogen
 			GetResult Get() const                 { return GetPortPenSize( port );          }
 			void Set( SetParameter size ) const   { Nitrogen::SetPortPenSize( port, size ); }
 	};
-	
-	typedef Port_Value            Port_Details;
-	typedef Clip_Value            Clip_Details;
-	typedef PenState_Value        PenState_Details;
-	typedef RGBForeColor_Value    RGBForeColor_Details;
-	typedef RGBBackColor_Value    RGBBackColor_Details;
-	typedef PortClipRegion_Value  PortClipRegion_Details;
-	typedef PortPenSize_Value     PortPenSize_Details;
-	
-	typedef Nucleus::Pseudoreference< Port_Details           > Port;
-	typedef Nucleus::Pseudoreference< Clip_Details           > Clip;
-	typedef Nucleus::Pseudoreference< PenState_Details       > The_PenState;
-	typedef Nucleus::Pseudoreference< RGBForeColor_Details   > The_RGBForeColor;
-	typedef Nucleus::Pseudoreference< RGBBackColor_Details   > The_RGBBackColor;
-	typedef Nucleus::Pseudoreference< PortClipRegion_Details > PortClipRegion;
-	typedef Nucleus::Pseudoreference< PortPenSize_Details    > PortPenSize;
 	
 }
 
