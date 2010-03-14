@@ -102,7 +102,7 @@ namespace Nitrogen
 	
 	PixMapHandle GetGWorldPixMap( GWorldPtr offscreenGWorld );
 	
-	class GWorld_Value
+	class GWorld
 	{
 		public:
 			typedef GWorld_Context         Value;

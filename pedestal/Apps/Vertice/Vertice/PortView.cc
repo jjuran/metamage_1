@@ -944,7 +944,7 @@ namespace Vertice
 	
 	void PortView::Redraw()
 	{
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		N::SetGWorld( itsGWorld );
 		
 		
@@ -1066,7 +1066,7 @@ namespace Vertice
 		
 		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
 		
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -1202,7 +1202,7 @@ namespace Vertice
 		Escapement escapement( 10 );
 		*/
 		
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		if ( gBlitting )
 		{

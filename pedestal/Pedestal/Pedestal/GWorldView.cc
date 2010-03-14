@@ -25,7 +25,7 @@ namespace Pedestal
 	
 	void GWorldView::Erase( const Rect& bounds )
 	{
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		N::SetGWorld( itsGWorld );
 		
