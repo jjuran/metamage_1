@@ -944,7 +944,7 @@ namespace Vertice
 	
 	void PortView::Redraw()
 	{
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		N::SetGWorld( itsGWorld );
 		
 		
@@ -956,7 +956,7 @@ namespace Vertice
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
@@ -1066,7 +1066,7 @@ namespace Vertice
 		
 		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
 		
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -1120,7 +1120,7 @@ namespace Vertice
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( altGWorld ),
@@ -1202,7 +1202,7 @@ namespace Vertice
 		Escapement escapement( 10 );
 		*/
 		
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		if ( gBlitting )
 		{
@@ -1500,7 +1500,7 @@ namespace Vertice
 			N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 			
 			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
-			NN::Saved< N::PixelsState_Value > savedPixelsState( thePortPix );
+			NN::Saved< N::Pixels_State > savedPixelsState( thePortPix );
 			N::LockPixels( thePortPix );
 			
 			N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),

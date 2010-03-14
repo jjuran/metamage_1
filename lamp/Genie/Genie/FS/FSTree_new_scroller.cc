@@ -96,7 +96,7 @@ namespace Genie
 	                          bool            erasing,
 	                          RgnHandle       clip )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip > savedClip;
 		
 		N::SetClip( N::SectRgn( N::RectRgn( bounds ), clip ) );
 		

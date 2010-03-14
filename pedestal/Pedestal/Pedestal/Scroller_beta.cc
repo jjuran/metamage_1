@@ -77,7 +77,7 @@ namespace Pedestal
 	
 	void ScrollFrame::ClickInLoop()
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip > savedClip;
 		
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		

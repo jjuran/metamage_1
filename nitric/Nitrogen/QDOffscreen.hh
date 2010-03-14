@@ -33,13 +33,13 @@ namespace Nitrogen
 	
 	using ::GWorldPtr;
 	
-	struct GWorld_State
+	struct GWorld_Context
 	{
 		GWorldPtr port;
 		GDHandle gdh;
 	};
 	
-	typedef GWorld_State GetGWorld_Result;
+	typedef GWorld_Context GetGWorld_Result;
 	
 }
 
@@ -47,12 +47,12 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::GWorld_State >
+	struct Maker< Nitrogen::GWorld_Context >
 	{
-		Nitrogen::GWorld_State operator()( Nitrogen::GWorldPtr  port,
-		                                   Nitrogen::GDHandle   gdh = NULL ) const
+		Nitrogen::GWorld_Context operator()( Nitrogen::GWorldPtr  port,
+		                                     Nitrogen::GDHandle   gdh = NULL ) const
 		{
-			Nitrogen::GWorld_State result;
+			Nitrogen::GWorld_Context result;
 			
 			result.port = port;
 			result.gdh  = gdh;
@@ -91,9 +91,9 @@ namespace Nitrogen
 	
 	inline void DisposeGWorld( nucleus::owned< GWorldPtr > )  {}
 	
-	GWorld_State GetGWorld();
+	GWorld_Context GetGWorld();
 	
-	void SetGWorld( const GWorld_State& state );
+	void SetGWorld( const GWorld_Context& state );
 	void SetGWorld( GWorldPtr gWorld );
 	
 	GWorldFlags GetPixelsState( PixMapHandle pm );
@@ -102,12 +102,12 @@ namespace Nitrogen
 	
 	PixMapHandle GetGWorldPixMap( GWorldPtr offscreenGWorld );
 	
-	class GWorld_Value
+	class GWorld
 	{
 		public:
-			typedef GWorld_State         Value;
-			typedef GWorld_State         GetResult;
-			typedef GWorld_State const&  SetParameter;
+			typedef GWorld_Context         Value;
+			typedef GWorld_Context         GetResult;
+			typedef GWorld_Context const&  SetParameter;
 			
 			static const bool hasSwap = false;
 			
@@ -115,7 +115,7 @@ namespace Nitrogen
 			void Set( SetParameter state ) const  { SetGWorld( state ); }
 	};
 	
-	class PixelsState_Value
+	class Pixels_State
 	{
 		private:
 			PixMapHandle pm;
@@ -127,7 +127,7 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			PixelsState_Value( PixMapHandle pm ) : pm( pm )  {}
+			Pixels_State( PixMapHandle pm ) : pm( pm )  {}
 			
 			GetResult Get() const                  { return Nitrogen::GetPixelsState( pm ); }
 			void Set( SetParameter state ) const   { SetPixelsState( pm, state );           }

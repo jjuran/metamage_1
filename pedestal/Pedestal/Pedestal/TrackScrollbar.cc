@@ -145,7 +145,7 @@ namespace Pedestal
 	
 	void TrackScrollbar( ControlRef control, N::ControlPartCode part, Point point )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip > savedClip;
 		
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		

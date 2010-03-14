@@ -319,7 +319,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, const RGBColor& color )
 		{
-			NN::Saved< N::Port_Value > savePort;
+			NN::Saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			
@@ -338,7 +338,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, short fontID )
 		{
-			NN::Saved< N::Port_Value > savePort;
+			NN::Saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			
@@ -357,7 +357,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, short size )
 		{
-			NN::Saved< N::Port_Value > savePort;
+			NN::Saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			

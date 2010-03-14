@@ -553,7 +553,7 @@ namespace Pedestal
 		{
 			window->Update();
 			
-			NN::Saved< N::Clip_Value > savedClip;
+			NN::Saved< N::Clip > savedClip;
 			
 			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
 			
@@ -637,7 +637,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		NN::Saved< N::Port_Value > savePort;
+		NN::Saved< N::Port > savePort;
 		
 		// FIXME:  Use window iterator
 		for ( N::WindowRef window = N::FrontWindow();

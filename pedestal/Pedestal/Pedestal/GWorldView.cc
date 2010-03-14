@@ -25,7 +25,7 @@ namespace Pedestal
 	
 	void GWorldView::Erase( const Rect& bounds )
 	{
-		NN::Saved< N::GWorld_Value > savedGWorld;
+		NN::Saved< N::GWorld > savedGWorld;
 		
 		N::SetGWorld( itsGWorld );
 		
@@ -46,7 +46,7 @@ namespace Pedestal
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( itsGWorld );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		
 		N::LockPixels( pix );
 		
