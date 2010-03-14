@@ -395,7 +395,7 @@ namespace Nitrogen
 	}
 	
 	
-	class HandleState_Value
+	class Handle_State
 	{
 		private:
 			Handle h;
@@ -407,7 +407,7 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			HandleState_Value( Handle h )         : h( h )  {}
+			Handle_State( Handle h )              : h( h )  {}
 			
 			GetResult Get() const                 { return HGetState( h ); }
 			void Set( SetParameter state ) const  { HSetState( h, state ); }
@@ -486,7 +486,7 @@ namespace Nitrogen
 		{
 		#if !TARGET_API_MAC_OSX
 			
-			Nucleus::Saved< HandleState_Value > hState( HandleState_Value( toPut ) );
+			Nucleus::Saved< Handle_State > hState( Handle_State( toPut ) );
 			
 			HLock( toPut );
 			
