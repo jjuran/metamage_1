@@ -108,8 +108,6 @@ namespace Nitrogen
 			typedef GWorld_Context         value_type;
 			typedef GWorld_Context const&  param_type;
 			
-			static const bool can_swap = false;
-			
 			value_type get() const              { return GetGWorld(); }
 			void set( param_type state ) const  { SetGWorld( state ); }
 	};
@@ -122,8 +120,6 @@ namespace Nitrogen
 		public:
 			typedef GWorldFlags value_type;
 			typedef GWorldFlags param_type;
-			
-			static const bool can_swap = false;
 			
 			Pixels_State( PixMapHandle pm ) : pm( pm )  {}
 			

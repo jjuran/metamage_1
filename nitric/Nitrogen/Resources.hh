@@ -286,8 +286,6 @@ namespace Nitrogen
 			typedef ResFileRefNum value_type;
 			typedef ResFileRefNum param_type;
 			
-			static const bool can_swap = false;
-			
 			value_type get() const                { return CurResFile();   }
 			void set( param_type resFile ) const  { UseResFile( resFile ); }
 	};

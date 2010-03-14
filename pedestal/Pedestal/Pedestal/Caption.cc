@@ -21,8 +21,6 @@ namespace Nitrogen
 			typedef short  value_type;
 			typedef short  param_type;
 			
-			static const bool can_swap = false;
-			
 			value_type get() const  { return GetPortTextMode( GetQDGlobalsThePort() ); }
 			
 			void set( param_type mode ) const  { TextMode( mode ); }

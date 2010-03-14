@@ -18,21 +18,9 @@
 namespace nucleus
 {
 	
-	template < bool can_swap >
+	template < class Details >
 	struct swap_with_saved
 	{
-		template < class Details >
-		static typename Details::value_type apply( Details                       details,
-		                                           typename Details::param_type  param )
-		{
-			return details.swap( param );
-		}
-	};
-	
-	template <>
-	struct swap_with_saved< false >
-	{
-		template < class Details >
 		static typename Details::value_type apply( Details                       details,
 		                                           typename Details::param_type  param )
 		{
@@ -51,7 +39,7 @@ namespace nucleus
 			typedef typename Details::value_type  value_type;
 			typedef typename Details::param_type  param_type;
 			
-			typedef swap_with_saved< Details::can_swap > swapper;
+			typedef swap_with_saved< Details > swapper;
 		
 		private:
 			Details     details;

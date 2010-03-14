@@ -779,12 +779,8 @@ namespace Nitrogen
 			typedef GrafPtr  value_type;
 			typedef GrafPtr  param_type;
 			
-			static const bool can_swap = true;
-			
-			value_type get() const                    { return GetPort();          }
-			void set( param_type port ) const         { Nitrogen::SetPort( port ); }
-			
-			value_type swap( param_type port ) const  { return QDSwapPort( port ); }
+			value_type get() const             { return GetPort();          }
+			void set( param_type port ) const  { Nitrogen::SetPort( port ); }
 	};
 	
 	class Clip
@@ -792,8 +788,6 @@ namespace Nitrogen
 		public:
 			typedef nucleus::owned< RgnHandle >  value_type;
 			typedef                 RgnHandle    param_type;
-			
-			static const bool can_swap = false;
 			
 			value_type get() const               { return GetClip();  }
 			void set( param_type region ) const  { SetClip( region ); }
@@ -805,8 +799,6 @@ namespace Nitrogen
 			typedef PenState         value_type;
 			typedef PenState const&  param_type;
 			
-			static const bool can_swap = false;
-			
 			value_type get() const              { return GetPenState(); }
 			void set( param_type state ) const  { SetPenState( state ); }
 	};
@@ -817,8 +809,6 @@ namespace Nitrogen
 			typedef RGBColor         value_type;
 			typedef RGBColor const&  param_type;
 			
-			static const bool can_swap = false;
-			
 			value_type get() const              { return GetForeColor(); }
 			void set( param_type color ) const  { RGBForeColor( color ); }
 	};
@@ -828,8 +818,6 @@ namespace Nitrogen
 		public:
 			typedef RGBColor         value_type;
 			typedef RGBColor const&  param_type;
-			
-			static const bool can_swap = false;
 			
 			value_type get() const              { return GetBackColor(); }
 			void set( param_type color ) const  { RGBBackColor( color ); }
@@ -843,8 +831,6 @@ namespace Nitrogen
 		public:
 			typedef nucleus::owned< RgnHandle >  value_type;
 			typedef                 RgnHandle    param_type;
-			
-			static const bool can_swap = false;
 			
 			Port_ClipRegion( CGrafPtr port )     : port( port ) {}
 			
@@ -861,12 +847,24 @@ namespace Nitrogen
 			typedef Point value_type;
 			typedef Point param_type;
 			
-			static const bool can_swap = false;
-			
 			Port_PenSize( CGrafPtr port )      : port( port ) {}
 			
 			value_type get() const             { return GetPortPenSize( port );          }
 			void set( param_type size ) const  { Nitrogen::SetPortPenSize( port, size ); }
+	};
+	
+}
+
+namespace nucleus
+{
+	
+	template <>
+	struct swap_with_saved< Nitrogen::Port >
+	{
+		static GrafPtr apply( Nitrogen::Port, GrafPtr port )
+		{
+			return Nitrogen::QDSwapPort( port );
+		}
 	};
 	
 }
