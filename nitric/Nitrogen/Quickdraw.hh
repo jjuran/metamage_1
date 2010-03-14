@@ -773,7 +773,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Pseudoreferences ¥
 	
-	class Port_Value
+	class Port
 	{
 		public:
 			typedef GrafPtr Value;

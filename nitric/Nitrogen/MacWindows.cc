@@ -180,7 +180,7 @@ namespace Nitrogen
 		
 		else
 		{
-			Nucleus::Saved< Port_Value > savedPort;
+			Nucleus::Saved< Port > savedPort;
 			
 			SetPortWindowPort( window );
 			

@@ -54,7 +54,7 @@ namespace Nitrogen
 	
 	void OpenDeskAcc( ConstStr255Param deskAccName )
 	{
-		Nucleus::Saved< Port_Value > savedPort;
+		Nucleus::Saved< Port > savedPort;
 
 		::OpenDeskAcc( deskAccName );
 	}

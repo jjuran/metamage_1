@@ -385,7 +385,7 @@ namespace Genie
 	class SetWindowPort_Scope
 	{
 		private:
-			NN::Saved< N::Port_Value > savePort;
+			NN::Saved< N::Port > savePort;
 			
 			SetWindowPort_Scope           ( const SetWindowPort_Scope& );
 			SetWindowPort_Scope& operator=( const SetWindowPort_Scope& );

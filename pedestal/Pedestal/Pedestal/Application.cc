@@ -637,7 +637,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		NN::Saved< N::Port_Value > savePort;
+		NN::Saved< N::Port > savePort;
 		
 		// FIXME:  Use window iterator
 		for ( N::WindowRef window = N::FrontWindow();
