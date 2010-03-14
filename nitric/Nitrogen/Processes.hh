@@ -19,12 +19,10 @@
 #endif
 
 // nucleus
+#include "nucleus/advance_until_error_sequence.hh"
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
-#include "Nucleus/AdvanceUntilFailureContainer.h"
-#endif
 #ifndef NITROGEN_CFSTRING_HH
 //#include "Nitrogen/CFString.hh"
 #endif
@@ -93,8 +91,13 @@ namespace Nucleus
 		}
 	};
 	
+}
+
+namespace nucleus
+{
+	
 	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
-	// We include "Nucleus/Operators.h" below to make the operators available in Nitrogen::Operators.
+	// We include "nucleus/operators.hh" below to make the operators available in nucleus::operators.
 	inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
 	{
 		return a.highLongOfPSN == b.highLongOfPSN
@@ -186,24 +189,24 @@ namespace Nitrogen
 			typedef SInt32 difference_type;
 			typedef value_type key_type;
 			
-			static key_type GetNextKey( const key_type& value )
+			static key_type get_next_key( const key_type& value )
 			{
 				return GetNextProcess( value );
 			}
 			
-			static const key_type* GetPointer( const key_type& value )  { return &value; }
+			static const key_type* get_pointer( const key_type& value )  { return &value; }
 			
-			static key_type begin_key()  { return GetNextKey( NoProcess() ); }
-			static key_type end_key()    { return             NoProcess()  ; }
+			static key_type begin_key()  { return get_next_key( NoProcess() ); }
+			static key_type end_key()    { return               NoProcess()  ; }
 	};
 	
-	class Process_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >
+	class Process_Container: public nucleus::advance_until_error_sequence< ::Nitrogen::Process_ContainerSpecifics >
 	{
 		friend Process_Container Processes();
 		
 		private:
 			Process_Container()
-			: Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >( ::Nitrogen::Process_ContainerSpecifics() )
+			: nucleus::advance_until_error_sequence< ::Nitrogen::Process_ContainerSpecifics >( ::Nitrogen::Process_ContainerSpecifics() )
 			{}
 	};
 	
@@ -215,7 +218,7 @@ namespace Nitrogen
 }
 
 // Necessary for operators of types declared at global scope, such as ProcessSerialNumber.
-#include "Nucleus/Operators.h"
+#include "nucleus/operators.hh"
 
 #endif
 
