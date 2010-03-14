@@ -801,7 +801,7 @@ namespace Nitrogen
 			void Set( SetParameter region ) const  { SetClip( region ); }
 	};
 	
-	class PenState_Value
+	class Pen_State
 	{
 		public:
 			typedef PenState         Value;
@@ -827,7 +827,7 @@ namespace Nitrogen
 			void Set( SetParameter color ) const  { RGBForeColor( color ); }
 	};
 	
-	class RGBBackColor_Value
+	class RGBBackColor_Setting
 	{
 		public:
 			typedef RGBColor         Value;
@@ -840,7 +840,7 @@ namespace Nitrogen
 			void Set( SetParameter color ) const  { RGBBackColor( color ); }
 	};
 	
-	class PortClipRegion_Value
+	class Port_ClipRegion
 	{
 		private:
 			CGrafPtr port;
@@ -852,13 +852,13 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			PortClipRegion_Value( CGrafPtr port )    : port( port ) {}
+			Port_ClipRegion( CGrafPtr port )         : port( port ) {}
 			
 			GetResult Get() const                    { return GetPortClipRegion( port );            }
 			void Set( SetParameter region ) const    { Nitrogen::SetPortClipRegion( port, region ); }
 	};
 	
-	class PortPenSize_Value
+	class Port_PenSize
 	{
 		private:
 			CGrafPtr port;
@@ -870,7 +870,7 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			PortPenSize_Value( CGrafPtr port )    : port( port ) {}
+			Port_PenSize( CGrafPtr port )         : port( port ) {}
 			
 			GetResult Get() const                 { return GetPortPenSize( port );          }
 			void Set( SetParameter size ) const   { Nitrogen::SetPortPenSize( port, size ); }
