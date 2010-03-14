@@ -433,62 +433,37 @@ namespace Nitrogen
 	// SPBSignInDevice
 	// SPBSignOutDevice
 	
-	struct SPBGetIndexedDevice_Result
+	struct SPB_IndexedDevice
 	{
-		struct Transfer
-		{
-			Str255                                                              deviceName;
-			nucleus::ownership_transfer< Handle, nucleus::disposer< Handle > >  deviceIconHandle;
-			
-			explicit Transfer( SPBGetIndexedDevice_Result* value )
-			:
-				deviceName      ( value->deviceName       ),
-				deviceIconHandle( value->deviceIconHandle )
-			{}
-		};
-		
-		Str255 deviceName;
-		nucleus::owned< Handle > deviceIconHandle;
-		
-		SPBGetIndexedDevice_Result()  {}
-		
-		SPBGetIndexedDevice_Result( Transfer s )
-		:
-			deviceName      ( s.deviceName       ),
-			deviceIconHandle( s.deviceIconHandle )
-		{}
-		
-		SPBGetIndexedDevice_Result& operator=( Transfer s )
-		{
-			deviceName       = s.deviceName;
-			deviceIconHandle = s.deviceIconHandle;
-			
-			return *this;
-		}
-		
-		operator Transfer()
-		{
-			return Transfer( this );
-		}
+		Str255  deviceName;
+		Handle  deviceIconHandle;
 		
 		operator ConstStr255Param() const  { return deviceName; }
 	};
 	
 }
 
-namespace Nucleus
-{	
-	template <> struct Transfer_Traits< Nitrogen::SPBGetIndexedDevice_Result >
+namespace nucleus
+{
+	
+	template <>
+	struct disposer< Nitrogen::SPB_IndexedDevice > : public std::unary_function< Nitrogen::SPB_IndexedDevice, void >
 	{
-		static const bool mayCopyConstSource = false;
-		
-		typedef Nitrogen::SPBGetIndexedDevice_Result           Type;
-		typedef Nitrogen::SPBGetIndexedDevice_Result::Transfer Transfer;
+		void operator()( const Nitrogen::SPB_IndexedDevice& device ) const
+		{
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::SoundManager );
+			
+			disposer< Nitrogen::Handle >()( device.deviceIconHandle );
+		}
 	};
+	
 }
 
 namespace Nitrogen
 {	
+	
+	typedef nucleus::owned< SPB_IndexedDevice > SPBGetIndexedDevice_Result;
+	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
 	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,

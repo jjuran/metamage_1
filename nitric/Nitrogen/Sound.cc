@@ -44,16 +44,16 @@ namespace Nitrogen
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )
 	{
-		SPBGetIndexedDevice_Result  result;
-		::Handle                    deviceIconHandle;
+		SPB_IndexedDevice  device;
+		::Handle           deviceIconHandle;
 		
 		ThrowOSStatus( ::SPBGetIndexedDevice( count,
-		                                      result.deviceName,
+		                                      device.deviceName,
 		                                      &deviceIconHandle ) );
 		
-		result.deviceIconHandle = nucleus::owned< Handle >::seize( deviceIconHandle );
+		device.deviceIconHandle = Handle( deviceIconHandle );
 		
-		return result;
+		return SPBGetIndexedDevice_Result::seize( device );
 	}
 	
 	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
