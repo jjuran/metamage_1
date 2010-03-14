@@ -1662,7 +1662,7 @@ namespace Nitrogen
      {
       public:
          typedef FSVolumeRefNum value_type;
-         typedef FSVolumeIndex size_type;
+         typedef ItemCount size_type;
          typedef SInt64 difference_type;
       
          static size_type begin_position()   { return 1; }
@@ -1670,7 +1670,7 @@ namespace Nitrogen
          
          value_type GetValue( size_type position )
            {
-            return FSGetVolumeRefNum( position );
+            return FSGetVolumeRefNum( FSVolumeIndex( position ) );
            }
      };
 
@@ -1703,7 +1703,7 @@ namespace Nitrogen
      {
       public:
          typedef VolumeInfo value_type;
-         typedef FSVolumeIndex size_type;
+         typedef ItemCount size_type;
          typedef SInt64 difference_type;
       
          static size_type begin_position()   { return 1; }
@@ -1711,7 +1711,7 @@ namespace Nitrogen
          
          value_type GetValue( size_type position )
            {
-            return FSGetVolumeInfo( position, whichInfo );
+            return FSGetVolumeInfo( FSVolumeIndex( position ), whichInfo );
            }
      };
 
@@ -1739,7 +1739,7 @@ namespace Nitrogen
      {
       public:
          typedef HFSUniStr255 value_type;
-         typedef FSVolumeIndex size_type;
+         typedef ItemCount size_type;
          typedef SInt64 difference_type;
       
          static size_type begin_position()   { return 1; }
@@ -1747,7 +1747,7 @@ namespace Nitrogen
          
          value_type GetValue( size_type position )
            {
-            return FSGetVolumeName( position );
+            return FSGetVolumeName( FSVolumeIndex( position ) );
            }
      };
 
@@ -1769,7 +1769,7 @@ namespace Nitrogen
      {
       public:
          typedef FSRef value_type;
-         typedef FSVolumeIndex size_type;
+         typedef ItemCount size_type;
          typedef SInt64 difference_type;
       
          static size_type begin_position()   { return 1; }
@@ -1777,7 +1777,7 @@ namespace Nitrogen
          
          value_type GetValue( size_type position )
            {
-            return FSGetVolumeRootDirectory( position );
+            return FSGetVolumeRootDirectory( FSVolumeIndex( position ) );
            }
      };
 
