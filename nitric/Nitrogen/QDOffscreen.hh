@@ -115,7 +115,7 @@ namespace Nitrogen
 			void Set( SetParameter state ) const  { SetGWorld( state ); }
 	};
 	
-	class PixelsState_Value
+	class Pixels_State
 	{
 		private:
 			PixMapHandle pm;
@@ -127,7 +127,7 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			PixelsState_Value( PixMapHandle pm ) : pm( pm )  {}
+			Pixels_State( PixMapHandle pm ) : pm( pm )  {}
 			
 			GetResult Get() const                  { return Nitrogen::GetPixelsState( pm ); }
 			void Set( SetParameter state ) const   { SetPixelsState( pm, state );           }

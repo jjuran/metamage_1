@@ -46,7 +46,7 @@ namespace Pedestal
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( itsGWorld );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		
 		N::LockPixels( pix );
 		

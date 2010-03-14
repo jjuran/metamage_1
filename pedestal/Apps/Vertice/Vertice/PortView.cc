@@ -956,7 +956,7 @@ namespace Vertice
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
@@ -1120,7 +1120,7 @@ namespace Vertice
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( altGWorld ),
@@ -1500,7 +1500,7 @@ namespace Vertice
 			N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 			
 			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
-			NN::Saved< N::PixelsState_Value > savedPixelsState( thePortPix );
+			NN::Saved< N::Pixels_State > savedPixelsState( thePortPix );
 			N::LockPixels( thePortPix );
 			
 			N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
