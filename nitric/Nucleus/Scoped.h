@@ -34,25 +34,12 @@ namespace Nucleus
          Value oldValue;
          
       public:
-         explicit Scoped()
-         :
-         	reference(),
-         	oldValue( reference )
-         {}
-         
          explicit Scoped( Reference theProperty )
            : reference( theProperty ),
              oldValue( reference )
            {
            }
 
-         explicit Scoped( Value newValue )
-           : reference(),
-             oldValue( reference )
-           {
-            reference = newValue;
-           }
-         
          explicit Scoped( Reference theProperty, Value newValue )
            : reference( theProperty ),
              oldValue( reference )
