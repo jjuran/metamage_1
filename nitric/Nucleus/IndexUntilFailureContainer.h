@@ -98,9 +98,9 @@ namespace Nucleus
                     {
                      value = Specifics::GetValue( position );
                     }
-                  catch ( const typename Specifics::EndOfEnumeration& end )
+                  catch ( const typename Specifics::end_of_enumeration& end )
                     {
-                     if ( !Specifics::Exception_Is_EndOfEnumeration( end ) )  throw;
+                     if ( !Specifics::exception_is_end_of_enumeration( end ) )  throw;
                      
                      position = Specifics::end_position();
                     }

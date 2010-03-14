@@ -198,20 +198,20 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CarbonEventManager );
 	
-   typedef Nucleus::ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventClassInvalidErr            > EventClassInvalidErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventClassIncorrectErr          > EventClassIncorrectErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventHandlerAlreadyInstalledErr > EventHandlerAlreadyInstalledErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventInternalErr                > EventInternalErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventKindIncorrectErr           > EventKindIncorrectErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventParameterNotFoundErr       > EventParameterNotFoundErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventNotHandledErr              > EventNotHandledErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventLoopTimedOutErr            > EventLoopTimedOutErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventLoopQuitErr                > EventLoopQuitErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventNotInQueueErr              > EventNotInQueueErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventHotKeyExistsErr            > EventHotKeyExistsErr;
-   typedef Nucleus::ErrorCode< OSStatus, eventHotKeyInvalidErr           > EventHotKeyInvalidErr;
+	DEFINE_OSSTATUS( eventAlreadyPostedErr,           EventAlreadyPostedErr           );
+	DEFINE_OSSTATUS( eventTargetBusyErr,              EventTargetBusyErr              );
+	DEFINE_OSSTATUS( eventClassInvalidErr,            EventClassInvalidErr            );
+	DEFINE_OSSTATUS( eventClassIncorrectErr,          EventClassIncorrectErr          );
+	DEFINE_OSSTATUS( eventHandlerAlreadyInstalledErr, EventHandlerAlreadyInstalledErr );
+	DEFINE_OSSTATUS( eventInternalErr,                EventInternalErr                );
+	DEFINE_OSSTATUS( eventKindIncorrectErr,           EventKindIncorrectErr           );
+	DEFINE_OSSTATUS( eventParameterNotFoundErr,       EventParameterNotFoundErr       );
+	DEFINE_OSSTATUS( eventNotHandledErr,              EventNotHandledErr              );
+	DEFINE_OSSTATUS( eventLoopTimedOutErr,            EventLoopTimedOutErr            );
+	DEFINE_OSSTATUS( eventLoopQuitErr,                EventLoopQuitErr                );
+	DEFINE_OSSTATUS( eventNotInQueueErr,              EventNotInQueueErr              );
+	DEFINE_OSSTATUS( eventHotKeyExistsErr,            EventHotKeyExistsErr            );
+	DEFINE_OSSTATUS( eventHotKeyInvalidErr,           EventHotKeyInvalidErr           );
 
 	enum EventPriority
 	{
