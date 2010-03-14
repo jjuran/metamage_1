@@ -15,7 +15,7 @@
 namespace Nitrogen
 {
 	
-	class TextMode_Value
+	class TextMode_Setting
 	{
 		private:
 			CGrafPtr itsPort;
@@ -54,7 +54,7 @@ namespace Pedestal
 			N::ClipRect( bounds );
 		}
 		
-		NN::Saved< N::TextMode_Value > savedTextMode;
+		NN::Saved< N::TextMode_Setting > savedTextMode;
 		
 		if ( Disabled() )
 		{
