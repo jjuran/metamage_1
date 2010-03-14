@@ -67,19 +67,6 @@ namespace Nucleus
          
          const Scoped& operator=( Value value ) const                          { Set( value ); return *this; }
          const Scoped& operator=( const Scoped& source ) const                 { Set( source.Get() ); return *this; }
-
-         template < class T > const Scoped& operator+=( const T& rhs ) const   { Set( Get() + rhs ); return *this; }
-         template < class T > const Scoped& operator-=( const T& rhs ) const   { Set( Get() - rhs ); return *this; }
-         template < class T > const Scoped& operator*=( const T& rhs ) const   { Set( Get() * rhs ); return *this; }
-         template < class T > const Scoped& operator/=( const T& rhs ) const   { Set( Get() / rhs ); return *this; }
-         template < class T > const Scoped& operator%=( const T& rhs ) const   { Set( Get() % rhs ); return *this; }
-
-         template < class T > const Scoped& operator&=( const T& rhs ) const   { Set( Get() & rhs ); return *this; }
-         template < class T > const Scoped& operator|=( const T& rhs ) const   { Set( Get() | rhs ); return *this; }
-         template < class T > const Scoped& operator^=( const T& rhs ) const   { Set( Get() ^ rhs ); return *this; }
-
-         template < class T > const Scoped& operator<<=( const T& rhs ) const  { Set( Get() << rhs ); return *this; }
-         template < class T > const Scoped& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
      };
   }
 
