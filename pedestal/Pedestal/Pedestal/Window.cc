@@ -112,7 +112,7 @@ namespace Pedestal
 	
 	static void DrawWindow( N::WindowRef window )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip > savedClip;
 		
 		N::ClipRect( GrowBoxBounds( window ) );
 		

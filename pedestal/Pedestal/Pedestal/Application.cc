@@ -553,7 +553,7 @@ namespace Pedestal
 		{
 			window->Update();
 			
-			NN::Saved< N::Clip_Value > savedClip;
+			NN::Saved< N::Clip > savedClip;
 			
 			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
 			

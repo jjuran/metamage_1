@@ -788,7 +788,7 @@ namespace Nitrogen
 			GetResult Swap( SetParameter port ) const  { return QDSwapPort( port ); }
 	};
 	
-	class Clip_Value
+	class Clip
 	{
 		public:
 			typedef nucleus::owned< RgnHandle > Value;

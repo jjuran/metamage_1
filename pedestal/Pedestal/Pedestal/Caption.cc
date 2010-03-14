@@ -43,7 +43,7 @@ namespace Pedestal
 	
 	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip > savedClip;
 		
 		Rect newBounds = bounds;
 		
