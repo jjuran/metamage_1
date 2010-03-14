@@ -6,8 +6,8 @@
 // plus
 #include "plus/make_string.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
@@ -26,7 +26,6 @@
 
 namespace n = nucleus;
 namespace N = Nitrogen;
-namespace NN = Nucleus;
 namespace Div = Divergence;
 
 
@@ -92,7 +91,7 @@ namespace tool
 				
 				::HNoPurge( h );
 				
-				NN::Saved< N::ResFile > savedResFile( destRes );
+				n::saved< N::ResFile > savedResFile( destRes );
 				
 				N::GetResInfo_Result resInfo = N::GetResInfo( h );
 				

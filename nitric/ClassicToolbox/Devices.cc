@@ -7,8 +7,8 @@
 
 #include "Nitrogen/Quickdraw.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 
 namespace Nitrogen
@@ -54,7 +54,7 @@ namespace Nitrogen
 	
 	void OpenDeskAcc( ConstStr255Param deskAccName )
 	{
-		Nucleus::Saved< Port > savedPort;
+		nucleus::saved< Port > savedPort;
 
 		::OpenDeskAcc( deskAccName );
 	}

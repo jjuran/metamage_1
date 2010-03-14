@@ -8,8 +8,8 @@
 // Standard C++
 #include <vector>
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
@@ -944,19 +944,19 @@ namespace Vertice
 	
 	void PortView::Redraw()
 	{
-		NN::Saved< N::GWorld > savedGWorld;
+		n::saved< N::GWorld > savedGWorld;
 		N::SetGWorld( itsGWorld );
 		
 		
 		Paint();
 		
 		
-		savedGWorld.Restore();
+		savedGWorld.restore();
 		
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::Pixels_State > savedPixelsState( pix );
+		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
@@ -1066,7 +1066,7 @@ namespace Vertice
 		
 		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
 		
-		NN::Saved< N::GWorld > savedGWorld;
+		n::saved< N::GWorld > savedGWorld;
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -1089,7 +1089,7 @@ namespace Vertice
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
 		
-		savedGWorld.Restore();
+		savedGWorld.restore();
 		
 		PixMapHandle pixL = N::GetGWorldPixMap( itsGWorld );
 		PixMapHandle pixR = N::GetGWorldPixMap( altGWorld );
@@ -1120,7 +1120,7 @@ namespace Vertice
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::Pixels_State > savedPixelsState( pix );
+		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
 		N::CopyBits( N::GetPortBitMapForCopyBits( altGWorld ),
@@ -1202,7 +1202,7 @@ namespace Vertice
 		Escapement escapement( 10 );
 		*/
 		
-		NN::Saved< N::GWorld > savedGWorld;
+		n::saved< N::GWorld > savedGWorld;
 		
 		if ( gBlitting )
 		{
@@ -1495,12 +1495,12 @@ namespace Vertice
 		
 		if ( gBlitting )
 		{
-			savedGWorld.Restore();
+			savedGWorld.restore();
 			
 			N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 			
 			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
-			NN::Saved< N::Pixels_State > savedPixelsState( thePortPix );
+			n::saved< N::Pixels_State > savedPixelsState( thePortPix );
 			N::LockPixels( thePortPix );
 			
 			N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),

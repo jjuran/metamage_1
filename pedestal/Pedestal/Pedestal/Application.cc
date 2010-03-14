@@ -27,8 +27,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
@@ -85,8 +85,8 @@ namespace Nitrogen
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	// Save our PSN so we can wake up at interrupt time.
@@ -553,7 +553,7 @@ namespace Pedestal
 		{
 			window->Update();
 			
-			NN::Saved< N::Clip > savedClip;
+			n::saved< N::Clip > savedClip;
 			
 			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
 			
@@ -637,7 +637,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		NN::Saved< N::Port > savePort;
+		n::saved< N::Port > savePort;
 		
 		// FIXME:  Use window iterator
 		for ( N::WindowRef window = N::FrontWindow();

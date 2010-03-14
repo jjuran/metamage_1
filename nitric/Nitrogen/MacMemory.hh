@@ -22,12 +22,10 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/owned.hh"
+#include "nucleus/saved.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_SAVED_H
-#include "Nucleus/Saved.h"
 #endif
 #include "Nucleus/ErrorsRegistered.h"
 
@@ -401,16 +399,15 @@ namespace Nitrogen
 			Handle h;
 			
 		public:
-			typedef Handle_Flags Value;
-			typedef Handle_Flags GetResult;
-			typedef Handle_Flags SetParameter;
+			typedef Handle_Flags value_type;
+			typedef Handle_Flags param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			Handle_State( Handle h )              : h( h )  {}
+			Handle_State( Handle h )            : h( h )  {}
 			
-			GetResult Get() const                 { return HGetState( h ); }
-			void Set( SetParameter state ) const  { HSetState( h, state ); }
+			value_type get() const              { return HGetState( h ); }
+			void set( param_type state ) const  { HSetState( h, state ); }
 	};
 	
 	struct PtrFlattener
@@ -486,7 +483,7 @@ namespace Nitrogen
 		{
 		#if !TARGET_API_MAC_OSX
 			
-			Nucleus::Saved< Handle_State > hState( Handle_State( toPut ) );
+			nucleus::saved< Handle_State > hState( Handle_State( toPut ) );
 			
 			HLock( toPut );
 			

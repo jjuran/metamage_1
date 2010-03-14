@@ -179,7 +179,7 @@ namespace Nitrogen
 			
 		#if !TARGET_API_MAC_OSX
 			
-			Nucleus::Saved< Handle_State > hState( Handle_State( handle ) );
+			nucleus::saved< Handle_State > hState( Handle_State( handle ) );
 			
 			HLock( handle );
 			
