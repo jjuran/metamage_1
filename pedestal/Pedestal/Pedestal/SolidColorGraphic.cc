@@ -26,7 +26,7 @@ namespace Pedestal
 	
 	void SolidColorGraphic::Plot( const Rect& area )
 	{
-		NN::Saved< N::RGBForeColor_Value > saved;
+		NN::Saved< N::RGBForeColor_Setting > saved;
 		
 		N::RGBForeColor( color );
 		

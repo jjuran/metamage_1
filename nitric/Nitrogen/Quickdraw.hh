@@ -814,7 +814,7 @@ namespace Nitrogen
 			void Set( SetParameter state ) const  { SetPenState( state ); }
 	};
 	
-	class RGBForeColor_Value
+	class RGBForeColor_Setting
 	{
 		public:
 			typedef RGBColor         Value;
