@@ -39,9 +39,13 @@ namespace MacCDROM
 		
 		CDROMDrive()  {}
 		
-		CDROMDrive( N::DriverRefNum   d,
-		            N::FSVolumeIndex  v = 1 ) : dRefNum( d ),
-		                                        vRefNum( N::FSVolumeRefNum( v.Get() ) )  {}
+		CDROMDrive( N::DriverRefNum    d,
+		            N::FSVolumeRefNum  v = N::FSVolumeRefNum( 1 ) )  // index
+		:
+			dRefNum( d ),
+			vRefNum( v )
+		{
+		}
 	};
 	
 #if CALL_NOT_IN_CARBON
