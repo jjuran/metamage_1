@@ -9,10 +9,6 @@
 // Nucleus
 #include "Nucleus/IndexedValueContainer.h"
 
-#ifndef NUCLEUS_PSEUDOREFERENCE_H
-#include "Nucleus/Pseudoreference.h"
-#endif
-
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
@@ -39,8 +35,6 @@ namespace Nitrogen
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 	};
 	
-	typedef Nucleus::ConstPseudoreference< Const_AEDescList_Item_Details > Const_AEDescList_Item;
-	
 	class AEDescList_Item_Details
 	{
 		private:
@@ -57,8 +51,6 @@ namespace Nitrogen
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 			void Set( SetParameter param ) const  { AEPutDesc( list, index, param ); }
 	};
-	
-	typedef Nucleus::Pseudoreference< AEDescList_Item_Details > AEDescList_Item;
 	
 	struct AEDescList_Item_Specifics
 	{

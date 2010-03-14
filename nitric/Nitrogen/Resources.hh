@@ -31,9 +31,7 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NUCLEUS_PSEUDOREFERENCE_H
-#include "Nucleus/Pseudoreference.h"
-#endif
+
 
 namespace Nitrogen
 {
@@ -294,10 +292,6 @@ namespace Nitrogen
 			GetResult Get() const                        { return CurResFile();   }
 			void Set( SetParameter resFile ) const       { UseResFile( resFile ); }
 	};
-	
-	typedef ResFile_Value ResFile_Details;
-	
-	typedef Nucleus::Pseudoreference< ResFile_Details > ResFile;
 	
 	
 	namespace Constants

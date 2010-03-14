@@ -26,9 +26,6 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#ifndef NUCLEUS_PSEUDOREFERENCE_H
-#include "Nucleus/Pseudoreference.h"
-#endif
 #ifndef NUCLEUS_SAVED_H
 #include "Nucleus/Saved.h"
 #endif
@@ -416,10 +413,6 @@ namespace Nitrogen
 			void Set( SetParameter state ) const  { HSetState( h, state ); }
 	};
 	
-	typedef HandleState_Value HandleState_Details;
-	
-	typedef Nucleus::Pseudoreference< HandleState_Details > HandleState;
-   	
 	struct PtrFlattener
 	{
 		typedef Ptr Put_Parameter;
