@@ -280,7 +280,7 @@ namespace Nitrogen
 	// FSCreateResourceFile
 	// FSOpenResourceFile
 	
-	class ResFile_Value
+	class ResFile
 	{
 		public:
 			typedef ResFileRefNum Value;

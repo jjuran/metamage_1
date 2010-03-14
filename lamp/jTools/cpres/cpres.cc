@@ -92,7 +92,7 @@ namespace tool
 				
 				::HNoPurge( h );
 				
-				NN::Saved< N::ResFile_Value > savedResFile( destRes );
+				NN::Saved< N::ResFile > savedResFile( destRes );
 				
 				N::GetResInfo_Result resInfo = N::GetResInfo( h );
 				
