@@ -196,8 +196,7 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< Nitrogen::IconSuiteRef > : public std::unary_function< Nitrogen::IconSuiteRef, void >,
-	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
+	template <> struct disposer< Nitrogen::IconSuiteRef > : public std::unary_function< Nitrogen::IconSuiteRef, void >
 	{
 		// DisposeIconSuite() takes a Boolean argument that tells it whether to
 		// dispose the individual icon data associated with the icon suite.
@@ -211,7 +210,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
 			
-			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+			::Nitrogen::HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
   }
@@ -219,8 +218,7 @@ namespace nucleus
 namespace Nitrogen
   {
 	
-	struct DisposeIconSuiteButNotData : public std::unary_function< IconSuiteRef, void >,
-	                                    private DefaultDestructionOSStatusPolicy
+	struct DisposeIconSuiteButNotData : public std::unary_function< IconSuiteRef, void >
 	{
 		enum { disposeData = false };
 		
@@ -238,14 +236,13 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::IconRef >: public std::unary_function< Nitrogen::IconRef, void >,
-												     private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer< Nitrogen::IconRef >: public std::unary_function< Nitrogen::IconRef, void >
      {
       void operator()( Nitrogen::IconRef i ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
          
-         HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
         }
      };
   }

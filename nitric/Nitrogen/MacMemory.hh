@@ -78,15 +78,15 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< Nitrogen::Ptr > : public std::unary_function< Nitrogen::Ptr, void >,
-	                                               private Nitrogen::DefaultDestructionOSStatusPolicy
+	template <> struct disposer< Nitrogen::Ptr > : public std::unary_function< Nitrogen::Ptr, void >
 	{
 		void operator()( Nitrogen::Ptr ptr ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
 			
 			::DisposePtr( ptr );
-			HandleDestructionOSStatus( ::MemError() );
+			
+			::Nitrogen::HandleDestructionOSStatus( ::MemError() );
 		}
 	};
   }
@@ -123,15 +123,15 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::Handle>: public std::unary_function< Nitrogen::Handle, void >,
-                                                  private Nitrogen::DefaultDestructionOSStatusPolicy
+   template <> struct disposer<Nitrogen::Handle>: public std::unary_function< Nitrogen::Handle, void >
      {
       void operator()( Nitrogen::Handle h ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
          
          ::DisposeHandle( h );
-         HandleDestructionOSStatus( ::MemError() );
+         
+         ::Nitrogen::HandleDestructionOSStatus( ::MemError() );
         }
      };
    

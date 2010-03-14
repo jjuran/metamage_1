@@ -138,14 +138,13 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >,
-	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >
 	{
 		void operator()( Nitrogen::CFragConnectionID connID ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::CodeFragmentManager );
 			
-			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
+			::Nitrogen::HandleDestructionOSStatus( ::CloseConnection( &connID ) );
 		}
 	};
 	

@@ -201,14 +201,13 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >,
-											   private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >
 	{
 		void operator()( Nitrogen::ProviderRef provider ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OpenTransport );
 			
-			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
+			::Nitrogen::HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
 		}
 	};
 

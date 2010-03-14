@@ -181,14 +181,13 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >,
-                                                    private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >
 	{
 		void operator()( Nitrogen::SoundInputRefNum refNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::SoundManager );
 			
-			HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
+			::Nitrogen::HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
 		}
 	};
 	

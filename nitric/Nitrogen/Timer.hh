@@ -42,14 +42,15 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< TMTaskPtr > : public  std::unary_function< TMTaskPtr, void >,
-                                   private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< TMTaskPtr > : public std::unary_function< TMTaskPtr, void >
 	{
 		void operator()( TMTaskPtr tmTaskPtr ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::TimeManager );
 			
-			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< ::QElemPtr >( tmTaskPtr ) ) );
+			const QElemPtr qElem = (QElemPtr) tmTaskPtr;
+			
+			::Nitrogen::HandleDestructionOSStatus( ::RemoveTimeTask( qElem ) );
 		}
 	};
 	

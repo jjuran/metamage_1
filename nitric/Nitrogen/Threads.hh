@@ -99,14 +99,13 @@ namespace Nitrogen
 namespace nucleus
   {
 	template <>
-	struct disposer< Nitrogen::ThreadID > : public  std::unary_function< Nitrogen::ThreadID, void >,
-	                                        private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::ThreadID > : public std::unary_function< Nitrogen::ThreadID, void >
 	{
 		void operator()( Nitrogen::ThreadID thread ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ThreadManager );
 			
-			HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
+			::Nitrogen::HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
 		}
 	};
   }
@@ -117,8 +116,7 @@ namespace Nitrogen
 	namespace Detail
 	{
 		
-		class ThreadDisposer : public std::unary_function< ThreadID, void >,
-	                           private DefaultDestructionOSStatusPolicy
+		class ThreadDisposer : public std::unary_function< ThreadID, void >
 		{
 			private:
 				bool recycleThread;

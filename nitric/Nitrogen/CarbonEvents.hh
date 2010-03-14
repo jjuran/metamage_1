@@ -1287,14 +1287,13 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< Nitrogen::EventHandlerRef >: public std::unary_function< Nitrogen::EventHandlerRef, void >,
-                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
+   struct disposer< Nitrogen::EventHandlerRef >: public std::unary_function< Nitrogen::EventHandlerRef, void >
      {
       void operator()( EventHandlerRef toDispose ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::CarbonEventManager );
          
-         HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
+         ::Nitrogen::HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
         }
      };
   }

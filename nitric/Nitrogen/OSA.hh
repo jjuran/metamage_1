@@ -86,8 +86,7 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >,
-	                                     private Nitrogen::DefaultDestructionOSStatusPolicy
+	struct disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >
 	{
 		private:
 			shared< Nitrogen::ComponentInstance > itsComponent;
@@ -114,7 +113,7 @@ namespace nucleus
 				
 				ASSERT( itsComponent.get() != ComponentInstance() );
 				
-				HandleDestructionOSStatus( ::OSADispose( itsComponent.get(), id ) );
+				::Nitrogen::HandleDestructionOSStatus( ::OSADispose( itsComponent.get(), id ) );
 			}
 	};
 	
