@@ -96,22 +96,22 @@ namespace Nitrogen
 		return result;
 	}
 	
-	GWorld_State GetGWorld()
+	GWorld_Context GetGWorld()
 	{
 		::GWorldPtr port;
 		::GDHandle gdh;
 		
 		::GetGWorld( &port, &gdh );
 		
-		GWorld_State state;
+		GWorld_Context gworld;
 		
-		state.port = GWorldPtr( port );
-		state.gdh  = GDHandle( gdh );
+		gworld.port = port;
+		gworld.gdh  = gdh;
 		
-		return state;
+		return gworld;
 	}
 	
-	void SetGWorld( const GWorld_State& state )
+	void SetGWorld( const GWorld_Context& state )
 	{
 		::SetGWorld( state.port, state.gdh );
 	}
