@@ -29,8 +29,8 @@
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
-#ifndef NUCLEUS_SCOPED_H
-#include "Nucleus/Scoped.h"
+#ifndef NUCLEUS_SAVED_H
+#include "Nucleus/Saved.h"
 #endif
 #include "Nucleus/ErrorsRegistered.h"
 
@@ -493,7 +493,7 @@ namespace Nitrogen
 		{
 		#if !TARGET_API_MAC_OSX
 			
-			Nucleus::Scoped< HandleState > hState( HandleState( toPut ) );
+			Nucleus::Saved< HandleState_Value > hState( HandleState_Value( toPut ) );
 			
 			HLock( toPut );
 			

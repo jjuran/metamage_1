@@ -14,7 +14,7 @@
 #include "Nitrogen/MacWindows.hh"
 
 // Nucleus
-#include "Nucleus/Scoped.h"
+#include "Nucleus/Saved.h"
 
 
 namespace Nitrogen
@@ -180,7 +180,8 @@ namespace Nitrogen
 		
 		else
 		{
-			Nucleus::Scoped< Port > savedPort;
+			Nucleus::Saved< Port_Value > savedPort;
+			
 			SetPortWindowPort( window );
 			
 			::InvalRect( &bounds );
