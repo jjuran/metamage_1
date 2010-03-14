@@ -24,12 +24,10 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/overloaded_math.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_OVERLOADED_MATH_H
-#include "Nucleus/Overloaded_math.h"
 #endif
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
@@ -95,7 +93,7 @@ namespace Nitrogen
    template < class Integral, int fractionBits, class Floating >
    inline Integral FloatingToFixedPoint( Floating in )
      {
-      return static_cast< Integral >( Nucleus::CStd::nearbyint( std::ldexp( in, fractionBits ) ) );
+      return static_cast< Integral >( nucleus::c_std::nearbyint( std::ldexp( in, fractionBits ) ) );
      }
    
    inline double FixedToDouble( ::Fixed in )                   { return FixedToFloatingPoint< double,  16 >( in ); }
