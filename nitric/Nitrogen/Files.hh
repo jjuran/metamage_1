@@ -21,9 +21,6 @@
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
 #endif
-#ifndef NUCLEUS_INDEXTYPE_H
-#include "Nucleus/IndexType.h"
-#endif
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
@@ -206,14 +203,10 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSVolumeInfoFlags )
 	
-	struct FSVolumeIndex_Specifics
+	enum FSVolumeIndex
 	{
-		typedef ::ItemCount UnderlyingType;
-		
-		static const UnderlyingType defaultValue = 0;
+		kFSVolumeIndex_Max = nucleus::enumeration_traits< ::ItemCount >::max
 	};
-	
-	typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
 	
 	enum FSFileSystemID
 	{
