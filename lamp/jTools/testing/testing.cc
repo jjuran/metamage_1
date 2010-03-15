@@ -120,7 +120,6 @@
 
 namespace N = Nitrogen;
 namespace n = nucleus;
-namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace Div = Divergence;
 
@@ -752,7 +751,7 @@ static int TestThread( int argc, iota::argv_t argv )
 
 static void DoSomethingWithServiceFile( const FSSpec& file )
 {
-	typedef NN::StringFlattener< std::string > Flattener;
+	typedef n::string_scribe< std::string > scribe;
 	
 	using namespace io::path_descent_operators;
 	
@@ -760,7 +759,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	FSSpec infoPListFile = N::FSpMake_FSDirSpec( file ) / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
-	std::string infoPList = io::slurp_file< Flattener >( infoPListFile );
+	std::string infoPList = io::slurp_file< scribe >( infoPListFile );
 	
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );

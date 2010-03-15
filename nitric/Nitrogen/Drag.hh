@@ -37,9 +37,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NUCLEUS_FLATTENER_H
-#include "Nucleus/Flattener.h"
-#endif
 
 namespace Nitrogen
 {
@@ -115,12 +112,12 @@ namespace Nitrogen
    // FlavorType_Traits havce the same format as Flatteners.
    template < ::FlavorType > struct FlavorType_Traits;
    
-   template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public Nucleus::PodFlattener< HFSFlavor > {};
-   template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public Nucleus::PodFlattener< PromiseHFSFlavor > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public Nucleus::StringFlattener< std::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public Nucleus::StringFlattener< std::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public Nucleus::NoDataFlattener {};
-   template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public Nucleus::NoDataFlattener {};
+   template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public nucleus::POD_scribe< HFSFlavor > {};
+   template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public nucleus::POD_scribe< PromiseHFSFlavor > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public nucleus::string_scribe< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public nucleus::string_scribe< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public nucleus::empty_scribe {};
+   template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public nucleus::empty_scribe {};
    
    /* UPPs... */
    /* Handlers... */

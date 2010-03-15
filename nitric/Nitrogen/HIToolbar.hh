@@ -76,7 +76,7 @@ namespace Nitrogen {
 /* HITOOLBAR                                                                */
 /*==========================================================================*/
 	using ::HIToolbarRef;
-	template<> struct DescType_Traits< typeHIToolbarRef		>: Nucleus::PodFlattener< HIToolbarRef > {};
+	template<> struct DescType_Traits< typeHIToolbarRef		>: nucleus::POD_scribe< HIToolbarRef > {};
 
 	inline nucleus::owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
@@ -175,7 +175,7 @@ namespace Nitrogen {
 /* HITOOLBARITEMITEM                                                        */
 /*==========================================================================*/
 	using ::HIToolbarItemRef;
-	template<> struct DescType_Traits< typeHIToolbarItemRef	>: Nucleus::PodFlattener< HIToolbarItemRef > {};
+	template<> struct DescType_Traits< typeHIToolbarItemRef	>: nucleus::POD_scribe< HIToolbarItemRef > {};
 
 	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();

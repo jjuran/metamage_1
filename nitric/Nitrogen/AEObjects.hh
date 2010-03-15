@@ -110,10 +110,10 @@ namespace Nitrogen
 	static const DescType typePropertyID  = DescType( ::typePropertyID  );
 	
 	
-	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >  {};
-	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID,  ::AEPropertyID  >  {};
+	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< AEObjectClass, ::AEObjectClass >  {};
+	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< AEPropertyID,  ::AEPropertyID  >  {};
 	
-	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::DescType    >  {};
+	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : nucleus::converting_POD_scribe< AEAbsoluteOrdinal,    ::DescType    >  {};
 	
 	template <> struct DescType_Map_Traits< typeObjectClass     > { static const DescType result = typeType; };
 	template <> struct DescType_Map_Traits< typePropertyID      > { static const DescType result = typeType; };

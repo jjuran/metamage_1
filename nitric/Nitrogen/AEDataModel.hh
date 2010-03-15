@@ -253,37 +253,37 @@ namespace Nitrogen
 	
 	template < DescType > struct DescType_Traits;
 	
-	template<> struct DescType_Traits< typeChar > : public Nucleus::StringFlattener< std::string > {};
+	template<> struct DescType_Traits< typeChar > : public nucleus::string_scribe< std::string > {};
 	
 	template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 	
 	template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
 	
 	template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
-	template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >      {};
-	template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >      {};
-	template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >      {};
-	template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >      {};
-	template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >       {};
-	template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >      {};
-	template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double > {};
+	template<> struct DescType_Traits< typeSInt16 >                 : nucleus::POD_scribe< SInt16 >      {};
+	template<> struct DescType_Traits< typeSInt32 >                 : nucleus::POD_scribe< SInt32 >      {};
+	template<> struct DescType_Traits< typeUInt32 >                 : nucleus::POD_scribe< UInt32 >      {};
+	template<> struct DescType_Traits< typeSInt64 >                 : nucleus::POD_scribe< SInt64 >      {};
+	template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : nucleus::POD_scribe< float >       {};
+	template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : nucleus::POD_scribe< double >      {};
+	template<> struct DescType_Traits< type128BitFloatingPoint >    : nucleus::POD_scribe< long double > {};
 	
 	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
 	{
 		return sizeof (AppParameters) + appParameters.messageLength;
 	}
 	
-	template<> struct DescType_Traits< typeEventRecord >            : Nucleus::PodFlattener< EventRecord >                      {};
+	template<> struct DescType_Traits< typeEventRecord >            : nucleus::POD_scribe< EventRecord >                      {};
 	template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
-	template<> struct DescType_Traits< typeEnumerated >             : Nucleus::ConvertingPODFlattener< AEEnumerated, UInt32 >   {};
-	template<> struct DescType_Traits< typeType >                   : Nucleus::ConvertingPODFlattener< DescType, ::DescType >   {};
-	template<> struct DescType_Traits< typeAppParameters >          : Nucleus::VariableLengthPodFlattener< AppParameters, SizeOf_AppParameters > {};
-	template<> struct DescType_Traits< typeFSS >                    : Nucleus::PodFlattener< FSSpec >                           {};
-	template<> struct DescType_Traits< typeFSRef >                  : Nucleus::PodFlattener< FSRef >                            {};
-	template<> struct DescType_Traits< typeKeyword >                : Nucleus::ConvertingPODFlattener< AEKeyword, ::AEKeyword > {};
-	template<> struct DescType_Traits< typeApplSignature >          : Nucleus::ConvertingPODFlattener< OSType, ::OSType >       {};
-	template<> struct DescType_Traits< typeQDRectangle >            : Nucleus::PodFlattener< Rect >                             {};
-	template<> struct DescType_Traits< typeProcessSerialNumber >    : Nucleus::PodFlattener< ProcessSerialNumber >              {};
+	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< AEEnumerated, UInt32 >   {};
+	template<> struct DescType_Traits< typeType >                   : nucleus::converting_POD_scribe< DescType, ::DescType >   {};
+	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, SizeOf_AppParameters > {};
+	template<> struct DescType_Traits< typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
+	template<> struct DescType_Traits< typeFSRef >                  : nucleus::POD_scribe< FSRef >                            {};
+	template<> struct DescType_Traits< typeKeyword >                : nucleus::converting_POD_scribe< AEKeyword, ::AEKeyword > {};
+	template<> struct DescType_Traits< typeApplSignature >          : nucleus::converting_POD_scribe< OSType, ::OSType >       {};
+	template<> struct DescType_Traits< typeQDRectangle >            : nucleus::POD_scribe< Rect >                             {};
+	template<> struct DescType_Traits< typeProcessSerialNumber >    : nucleus::POD_scribe< ProcessSerialNumber >              {};
 	template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};
 	
 	
@@ -308,25 +308,25 @@ namespace Nitrogen
 	
 	
 	template < class Char >
-	struct Char_AEKeyword_Traits : Nucleus::StringFlattener< std::basic_string< Char > >,
+	struct Char_AEKeyword_Traits : nucleus::string_scribe< std::basic_string< Char > >,
 	                               Char_DescType_Traits< Char >
 	{
 	};
 	
 	template < class POD, class Integer >
-	struct Integer_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, Integer >,
+	struct Integer_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, Integer >,
 	                                  Integer_DescType_Traits< Integer >
 	{
 	};
 	
 	template < class POD >
-	struct Type_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, ::FourCharCode >,
+	struct Type_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, ::FourCharCode >,
 	                               Type_DescType_Traits
 	{
 	};
 	
 	template < class POD >
-	struct Enum_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, ::FourCharCode >,
+	struct Enum_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, ::FourCharCode >,
 	                               Enum_DescType_Traits
 	{
 	};

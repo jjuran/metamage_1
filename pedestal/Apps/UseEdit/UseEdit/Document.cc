@@ -18,13 +18,12 @@ namespace UseEdit
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	template < class FileSpec >
 	static std::string ReadFileData( const FileSpec& file )
 	{
-		std::string data = io::slurp_file< NN::StringFlattener< std::string > >( file );
+		std::string data = io::slurp_file< n::string_scribe< std::string > >( file );
 		
 		// Allow LF newlines
 		std::replace( data.begin(),

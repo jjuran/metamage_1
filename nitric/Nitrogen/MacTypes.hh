@@ -26,12 +26,10 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/make.hh"
 #include "nucleus/overloaded_math.hh"
+#include "nucleus/scribe.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_FLATTENER_H
-#include "Nucleus/Flattener.h"
 #endif
 
 #include <cstddef>
@@ -189,7 +187,7 @@ namespace Nitrogen
 	
 	typedef bool Boolean;
 	
-	typedef Nucleus::ConvertingPODFlattener< bool, ::Boolean > BooleanFlattener;
+	typedef nucleus::converting_POD_scribe< bool, ::Boolean > BooleanFlattener;
 	
 	enum Style
 	{

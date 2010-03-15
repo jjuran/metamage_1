@@ -183,17 +183,17 @@ namespace Nitrogen
 	
 	template <> struct AEKeyword_Traits< keyAEObjectClass > : Type_AEKeyword_Traits< AEObjectClass > {};
 	
-   template<> struct DescType_Traits< typeFixedPoint                >: Nucleus::PodFlattener< FixedPoint                > {};
-   template<> struct DescType_Traits< typeFixedRectangle            >: Nucleus::PodFlattener< FixedRect                 > {};
-   template<> struct DescType_Traits< typeIntlWritingCode           >: Nucleus::PodFlattener< ScriptCode                > {};
-   template<> struct DescType_Traits< typePtr                       >: Nucleus::PodFlattener< void *                    > {};
-   template<> struct DescType_Traits< typeQDPoint                   >: Nucleus::PodFlattener< Point                     > {};
-   template<> struct DescType_Traits< typeRectangle                 >: Nucleus::PodFlattener< Rect                      > {};
-   template<> struct DescType_Traits< typeRGBColor                  >: Nucleus::PodFlattener< RGBColor                  > {};
-   template<> struct DescType_Traits< typeScript                    >: Nucleus::PodFlattener< ScriptCode                > {};
-   template<> struct DescType_Traits< typeTextRange                 >: Nucleus::PodFlattener< TextRange                 > {};
-   template<> struct DescType_Traits< typeComponentInstance         >: Nucleus::PodFlattener< ComponentInstance         > {};
-   template<> struct DescType_Traits< typeEventRef                  >: Nucleus::PodFlattener< EventRef                  > {};
+   template<> struct DescType_Traits< typeFixedPoint                >: nucleus::POD_scribe< FixedPoint                > {};
+   template<> struct DescType_Traits< typeFixedRectangle            >: nucleus::POD_scribe< FixedRect                 > {};
+   template<> struct DescType_Traits< typeIntlWritingCode           >: nucleus::POD_scribe< ScriptCode                > {};
+   template<> struct DescType_Traits< typePtr                       >: nucleus::POD_scribe< void *                    > {};
+   template<> struct DescType_Traits< typeQDPoint                   >: nucleus::POD_scribe< Point                     > {};
+   template<> struct DescType_Traits< typeRectangle                 >: nucleus::POD_scribe< Rect                      > {};
+   template<> struct DescType_Traits< typeRGBColor                  >: nucleus::POD_scribe< RGBColor                  > {};
+   template<> struct DescType_Traits< typeScript                    >: nucleus::POD_scribe< ScriptCode                > {};
+   template<> struct DescType_Traits< typeTextRange                 >: nucleus::POD_scribe< TextRange                 > {};
+   template<> struct DescType_Traits< typeComponentInstance         >: nucleus::POD_scribe< ComponentInstance         > {};
+   template<> struct DescType_Traits< typeEventRef                  >: nucleus::POD_scribe< EventRef                  > {};
 
    template<> struct DescType_Traits< typeUnicodeText >: UnicodeFlattener< UniChar > {};
 	
@@ -211,9 +211,9 @@ namespace Nitrogen
       return sizeof( array ) - sizeof( array.fRange ) + array.fNumOfRanges * sizeof( TextRange );
      }
    
-   template<> struct DescType_Traits< typeVersion        >: Nucleus::VariableLengthPodFlattener< VersRec,        SizeOf_VersRec        > {};
-   template<> struct DescType_Traits< typeOffsetArray    >: Nucleus::VariableLengthPodFlattener< OffsetArray,    SizeOf_OffsetArray    > {};
-   template<> struct DescType_Traits< typeTextRangeArray >: Nucleus::VariableLengthPodFlattener< TextRangeArray, SizeOf_TextRangeArray > {};
+   template<> struct DescType_Traits< typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        SizeOf_VersRec        > {};
+   template<> struct DescType_Traits< typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    SizeOf_OffsetArray    > {};
+   template<> struct DescType_Traits< typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, SizeOf_TextRangeArray > {};
   }
 
 #endif

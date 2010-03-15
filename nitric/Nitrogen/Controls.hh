@@ -242,10 +242,10 @@ namespace Nitrogen
 	
    template < ::ResType inTagName > struct ControlData_Traits;
 
-   template<> struct ControlData_Traits< kControlFontStyleTag >: Nucleus::PodFlattener< ControlFontStyleRec > {};
-   template<> struct ControlData_Traits< kControlKeyFilterTag >: Nucleus::PodFlattener< ControlKeyFilterUPP > {};
-   template<> struct ControlData_Traits< kControlKindTag      >: Nucleus::PodFlattener< ControlKind         > {};
-   template<> struct ControlData_Traits< kControlSizeTag      >: Nucleus::PodFlattener< ControlSize         > {};
+   template<> struct ControlData_Traits< kControlFontStyleTag >: nucleus::POD_scribe< ControlFontStyleRec > {};
+   template<> struct ControlData_Traits< kControlKeyFilterTag >: nucleus::POD_scribe< ControlKeyFilterUPP > {};
+   template<> struct ControlData_Traits< kControlKindTag      >: nucleus::POD_scribe< ControlKind         > {};
+   template<> struct ControlData_Traits< kControlSizeTag      >: nucleus::POD_scribe< ControlSize         > {};
 
    struct ControlKeyFilterUPP_Details: Basic_UPP_Details< ::ControlKeyFilterUPP,
                                                           ::ControlKeyFilterProcPtr,

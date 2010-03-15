@@ -22,7 +22,7 @@ namespace Nitrogen
 	
 	// TargetID is defined for Carbon, but typeTargetID is not.
 	
-	template <> struct DescType_Traits< typeTargetID > : Nucleus::PodFlattener< TargetID > {};
+	template <> struct DescType_Traits< typeTargetID > : nucleus::POD_scribe< TargetID > {};
 	
 }
 

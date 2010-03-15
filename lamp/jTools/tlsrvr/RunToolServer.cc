@@ -57,7 +57,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace NX = NitrogenExtras;
@@ -110,7 +109,7 @@ namespace tool
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
 		
-		io::spew_file< NN::StringFlattener< std::string > >( scriptFile, script );
+		io::spew_file< n::string_scribe< std::string > >( scriptFile, script );
 	}
 	
 	static inline void WriteInputFile( const FSSpec& file )
@@ -357,7 +356,7 @@ namespace tool
 	
 	static std::string Slurp( const FSSpec& file )
 	{
-		return io::slurp_file< NN::StringFlattener< std::string > >( file );
+		return io::slurp_file< n::string_scribe< std::string > >( file );
 	}
 	
 	static void DumpFile( const FSSpec& file, p7::fd_t fd )

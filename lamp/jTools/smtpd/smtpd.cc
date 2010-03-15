@@ -109,7 +109,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
@@ -184,14 +183,14 @@ namespace tool
 	
 	static void CreateOneLiner( const FSSpec& file, const std::string& line )
 	{
-		typedef NN::StringFlattener< std::string > Flattener;
+		typedef n::string_scribe< std::string > scribe;
 		
 		std::string output = line + "\n";
 		
-		io::spew_file< Flattener >( N::FSpCreate( file,
-		                                          N::OSType( 'R*ch' ),
-		                                          N::OSType( 'TEXT' ) ),
-		                            output );
+		io::spew_file< scribe >( N::FSpCreate( file,
+		                                       N::OSType( 'R*ch' ),
+		                                       N::OSType( 'TEXT' ) ),
+		                         output );
 	}
 	
 	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
