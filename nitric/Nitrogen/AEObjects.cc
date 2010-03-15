@@ -17,7 +17,7 @@
 namespace Nitrogen
 {
 	
-	static AppleEventManagerErrorsRegistrationDependency gAppleEventManagerErrorsRegistrationDependency;
+	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )
 	
 	
 	OSLAccessor::OSLAccessor()

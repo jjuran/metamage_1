@@ -21,7 +21,7 @@ const DefaultInternetServicesPath kDefaultInternetServicesPath = DefaultInternet
 namespace Nitrogen
 {
 	
-	static OpenTransportErrorsRegistrationDependency gOpenTransportErrorsRegistrationDependency;
+	NUCLEUS_REQUIRE_ERRORS_STATIC( OpenTransport )
 	
 	
 	namespace Detail
