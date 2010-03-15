@@ -112,7 +112,7 @@ namespace Nitrogen
 	{
 		ProcessInfoRec processInfo;
 		
-		return GetProcessInformation( process, Nucleus::Initialize< ProcessInfoRec >( processInfo ) );
+		return GetProcessInformation( process, nucleus::initialize< ProcessInfoRec >( processInfo ) );
 	}
 	
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
@@ -132,7 +132,7 @@ namespace Nitrogen
 		return GetProcessInfoAppSpec
 		(
 			GetProcessInformation( process, 
-		                           Nucleus::Initialize< ProcessInfoRec >( processInfo, 
+		                           nucleus::initialize< ProcessInfoRec >( processInfo, 
 		                                                                  &appSpec ) )
 		);
 	}

@@ -22,6 +22,7 @@
 #include "nucleus/advance_until_error_sequence.hh"
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/initialize.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
 //#include "Nitrogen/CFString.hh"
@@ -37,9 +38,6 @@
 #endif
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
-#endif
-#ifndef NUCLEUS_INITIALIZE_H
-#include "Nucleus/Initialize.h"
 #endif
 #ifndef NITROGEN_TEXTCOMMON_HH
 //#include "Nitrogen/TextCommon.hh"
@@ -120,11 +118,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Initializer< Nitrogen::ProcessInfoRec >
+	struct initializer< Nitrogen::ProcessInfoRec >
 	{
 		ProcessInfoRec& operator()( Nitrogen::ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
 		{
@@ -136,6 +134,11 @@ namespace Nucleus
 		}
 	};
 	
+}
+
+namespace Nucleus
+{
+	
 	template <>
 	struct Maker< Nitrogen::ProcessInfoRec >
 	{
@@ -143,7 +146,7 @@ namespace Nucleus
 		{
 			Nitrogen::ProcessInfoRec result;
 			
-			return Initialize( result, appSpec );
+			return nucleus::initialize( result, appSpec );
 		}
 	};
 	

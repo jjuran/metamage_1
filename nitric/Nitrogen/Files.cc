@@ -25,14 +25,14 @@
 #include "debug/assert.hh"
 
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	namespace N = Nitrogen;
 	
 	CInfoPBRec&
 	//
-	Initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
+	initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
 		                                   N::FSVolumeRefNum  vRefNum,
 		                                   N::FSDirID         dirID,
 		                                   StringPtr          name,

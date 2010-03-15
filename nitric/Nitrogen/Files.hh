@@ -17,6 +17,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/initialize.hh"
 
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
@@ -24,7 +25,6 @@
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#include "Nucleus/Initialize.h"
 
 #ifndef __FILES__
 #include <Files.h>
@@ -456,8 +456,13 @@ namespace Nucleus
 		}
 	};
 	
+}
+
+namespace nucleus
+{
+	
 	template <>
-	struct Initializer< Nitrogen::CInfoPBRec >
+	struct initializer< Nitrogen::CInfoPBRec >
 	{
 		Nitrogen::CInfoPBRec& operator()( Nitrogen::CInfoPBRec&     pb,
 		                                  Nitrogen::FSVolumeRefNum  vRefNum,
@@ -533,7 +538,7 @@ namespace Nitrogen
 	{
 		Str255 name = item.name;
 		
-		Nucleus::Initialize< CInfoPBRec >( pb,
+		nucleus::initialize< CInfoPBRec >( pb,
 		                                   FSVolumeRefNum( item.vRefNum ),
 		                                   FSDirID       ( item.parID   ),
 		                                   name,
@@ -549,7 +554,7 @@ namespace Nitrogen
 	{
 		Str255 name = item.name;
 		
-		Nucleus::Initialize< CInfoPBRec >( pb,
+		nucleus::initialize< CInfoPBRec >( pb,
 		                                   FSVolumeRefNum( item.vRefNum ),
 		                                   FSDirID       ( item.parID   ),
 		                                   name,

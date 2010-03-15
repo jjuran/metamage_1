@@ -29,11 +29,7 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
-
-// Nucleus
-#ifndef NUCLEUS_INITIALIZE_H
-#include "Nucleus/Initialize.h"
-#endif
+#include "nucleus/initialize.hh"
 
 // Nitrogen
 #ifndef NITROGEN_OPENTRANSPORT_HH
@@ -141,11 +137,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Initializer< Nitrogen::InetAddress >
+	struct initializer< Nitrogen::InetAddress >
 	{
 		Nitrogen::InetAddress& operator()( Nitrogen::InetAddress&  addr,
 		                                   Nitrogen::InetPort      port,

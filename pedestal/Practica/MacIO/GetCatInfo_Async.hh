@@ -31,7 +31,7 @@ namespace MacIO
 	            Callback           callback,
 	            ::IOCompletionUPP  completion = NULL )
 	{
-		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
+		nucleus::initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		
 		return PBAsync< GetCatInfo_Traits, Policy >( pb,
 		                                             callback,

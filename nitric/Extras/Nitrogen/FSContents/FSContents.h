@@ -28,7 +28,7 @@ namespace Nitrogen
 	                           CInfoPBRec&       cInfo,
 	                           StringPtr         name )
 	{
-		Nucleus::Initialize< CInfoPBRec >( cInfo,
+		nucleus::initialize< CInfoPBRec >( cInfo,
 		                                   dir.vRefNum,
 		                                   dir.dirID,
 		                                   name,

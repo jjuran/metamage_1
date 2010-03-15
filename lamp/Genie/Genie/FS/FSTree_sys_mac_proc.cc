@@ -187,7 +187,7 @@ namespace Genie
 				
 				ProcessInfoRec processInfo;
 				
-				Nucleus::Initialize< ProcessInfoRec >( processInfo );
+				nucleus::initialize< ProcessInfoRec >( processInfo );
 				
 				processInfo.processName = name;
 				

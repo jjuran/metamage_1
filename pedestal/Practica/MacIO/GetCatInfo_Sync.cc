@@ -37,7 +37,7 @@ namespace MacIO
 			index = -1;
 		}
 		
-		Nucleus::Initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
+		nucleus::initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		
 		return PBSync< GetCatInfo_Traits, Policy >( pb );
 	}
