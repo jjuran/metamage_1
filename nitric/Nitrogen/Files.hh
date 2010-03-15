@@ -427,11 +427,11 @@ namespace Nitrogen
 	
   }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::FSDirSpec >
+	struct maker< Nitrogen::FSDirSpec >
 	{
 		Nitrogen::FSDirSpec operator()( Nitrogen::FSVolumeRefNum  vRefNum,
 		                                Nitrogen::FSDirID         dirID ) const
@@ -455,11 +455,6 @@ namespace Nucleus
 			return operator()( cInfo.dirInfo );
 		}
 	};
-	
-}
-
-namespace nucleus
-{
 	
 	template <>
 	struct initializer< Nitrogen::CInfoPBRec >

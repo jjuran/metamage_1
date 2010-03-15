@@ -109,13 +109,13 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
-	template <>  struct Maker< PPCXTIAddress >
+	template <>  struct maker< PPCXTIAddress >
 	{
 		PPCXTIAddress operator()( const std::string& address ) const
 		{
@@ -141,7 +141,7 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct Maker< PPCAddrRec >
+	template <>  struct maker< PPCAddrRec >
 	{
 		PPCAddrRec operator()( const PPCXTIAddress& xtiAddr ) const
 		{
@@ -161,7 +161,7 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct Maker< LocationNameRec >
+	template <>  struct maker< LocationNameRec >
 	{
 		LocationNameRec operator()() const
 		{
@@ -203,7 +203,7 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct Maker< PPCPortRec >
+	template <>  struct maker< PPCPortRec >
 	{
 		PPCPortRec operator()( ConstStr32Param name, ConstStr32Param portTypeStr = "\p=" ) const
 		{
@@ -220,7 +220,7 @@ namespace Nucleus
 		}
 	};
 	
-	template <>  struct Maker< IPCListPortsPBRec >
+	template <>  struct maker< IPCListPortsPBRec >
 	{
 		IPCListPortsPBRec operator()( const PPCPortRec*       name,
 		                              const LocationNameRec*  location,
@@ -239,7 +239,7 @@ namespace Nucleus
 		
 		IPCListPortsPBRec operator()( const PPCPortRec* name, PortInfoRec* portInfo ) const
 		{
-			return Make< IPCListPortsPBRec >( name, static_cast< const LocationNameRec* >( NULL ), portInfo );
+			return make< IPCListPortsPBRec >( name, static_cast< const LocationNameRec* >( NULL ), portInfo );
 		}
 	};
 	

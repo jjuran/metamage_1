@@ -75,11 +75,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::SerShk >
+	struct maker< Nitrogen::SerShk >
 	{
 		Nitrogen::SerShk operator()( Byte           fXOn = 0,
 		                             Byte           fCTS = 0,
@@ -130,7 +130,7 @@ namespace Nitrogen
 	void SerSetBuf( DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize );
 	
 	// 290
-	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk = Nucleus::Make< SerShk >() );
+	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk = nucleus::make< SerShk >() );
 	
 	// 328
 	std::size_t SerGetBuf( DriverRefNum inputDriverRefNum );

@@ -15,15 +15,15 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	FSSpec GetAppFile()
 	{
 		FSSpec appFile;
 		
-		ProcessInfoRec info = NN::Make< ProcessInfoRec >( &appFile );
+		ProcessInfoRec info = n::make< ProcessInfoRec >( &appFile );
 		
 		N::GetProcessInformation( N::CurrentProcess(), info );
 		

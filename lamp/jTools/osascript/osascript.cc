@@ -43,7 +43,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace o = orion;
@@ -305,7 +304,7 @@ namespace tool
 		
 		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
 		                                                            N::kAEOpenApplication,
-		                                                            NN::Make< N::AEAddressDesc >() );
+		                                                            n::make< N::AEAddressDesc >() );
 		
 		// Add the list, even if there are zero parameters.
 		{

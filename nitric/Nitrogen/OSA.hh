@@ -337,7 +337,7 @@ namespace Nitrogen
 	OSAMakeContext( const nucleus::shared< ComponentInstance >&  scriptingComponent,
 	                OSAID                                        parentContext = OSAID() )
 	{
-		return OSAMakeContext( scriptingComponent, Nucleus::Make< AEDesc >(), parentContext );
+		return OSAMakeContext( scriptingComponent, nucleus::make< AEDesc >(), parentContext );
 	}
 	
 	inline nucleus::owned< OSAID >

@@ -20,7 +20,7 @@ namespace Pedestal
 	
 	inline RGBColor DenormalizeRGBColor( double r, double g, double b )
 	{
-		return Nucleus::Make< RGBColor >( DenormalizeUInt16( r ),
+		return nucleus::make< RGBColor >( DenormalizeUInt16( r ),
 		                                  DenormalizeUInt16( g ),
 		                                  DenormalizeUInt16( b ) );
 	}

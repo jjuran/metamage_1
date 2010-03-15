@@ -23,6 +23,7 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/initialize.hh"
+#include "nucleus/make.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
 //#include "Nitrogen/CFString.hh"
@@ -35,9 +36,6 @@
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NUCLEUS_MAKE_H
-#include "Nucleus/Make.h"
 #endif
 #ifndef NITROGEN_TEXTCOMMON_HH
 //#include "Nitrogen/TextCommon.hh"
@@ -67,11 +65,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::ProcessSerialNumber >
+	struct maker< Nitrogen::ProcessSerialNumber >
 	{
 		Nitrogen::ProcessSerialNumber operator()( unsigned long high, unsigned long low ) const
 		{
@@ -88,11 +86,6 @@ namespace Nucleus
 			return result;
 		}
 	};
-	
-}
-
-namespace nucleus
-{
 	
 	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
 	// We include "nucleus/operators.hh" below to make the operators available in nucleus::operators.
@@ -112,9 +105,9 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	inline ProcessSerialNumber NoProcess()       { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
-	inline ProcessSerialNumber SystemProcess()   { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
-	inline ProcessSerialNumber CurrentProcess()  { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
+	inline ProcessSerialNumber NoProcess()       { return nucleus::make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
+	inline ProcessSerialNumber SystemProcess()   { return nucleus::make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
+	inline ProcessSerialNumber CurrentProcess()  { return nucleus::make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
 	
 }
 
@@ -134,13 +127,8 @@ namespace nucleus
 		}
 	};
 	
-}
-
-namespace Nucleus
-{
-	
 	template <>
-	struct Maker< Nitrogen::ProcessInfoRec >
+	struct maker< Nitrogen::ProcessInfoRec >
 	{
 		Nitrogen::ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
 		{

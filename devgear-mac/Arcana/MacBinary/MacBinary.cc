@@ -122,7 +122,6 @@ namespace MacBinary
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	using namespace io::path_descent_operators;
 	
@@ -631,7 +630,7 @@ namespace MacBinary
 		
 		blockWrite( output, u.block.data, sizeof u.block );
 		
-		N::FSDirSpec dir = NN::Make< N::FSDirSpec >( cInfo );
+		N::FSDirSpec dir = n::make< N::FSDirSpec >( cInfo );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		

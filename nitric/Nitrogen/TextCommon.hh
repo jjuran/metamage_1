@@ -18,12 +18,10 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/make.hh"
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NUCLEUS_MAKE_H
-#include "Nucleus/Make.h"
 #endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
@@ -76,10 +74,10 @@ namespace Nitrogen
    using ::ScriptCodeRun;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Maker< Nitrogen::TextEncodingRun >
+   struct maker< Nitrogen::TextEncodingRun >
      {
       Nitrogen::TextEncodingRun operator()( ByteOffset offset, Nitrogen::TextEncoding textEncoding ) const
         {
@@ -91,7 +89,7 @@ namespace Nucleus
      };
 
    template <>
-   struct Maker< Nitrogen::ScriptCodeRun >
+   struct maker< Nitrogen::ScriptCodeRun >
      {
       Nitrogen::ScriptCodeRun operator()( ByteOffset offset, Nitrogen::ScriptCode script ) const
         {

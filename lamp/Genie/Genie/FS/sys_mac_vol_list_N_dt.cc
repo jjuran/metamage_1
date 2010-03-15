@@ -55,8 +55,8 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -79,7 +79,7 @@ namespace Genie
 		const N::FSVolumeRefNum new_vRefNum = N::FSVolumeRefNum( pb.ioVRefNum );
 		const N::FSDirID        new_dirID   = N::FSDirID       ( pb.ioDirID   );
 		
-		return NN::Make< N::FSDirSpec >( new_vRefNum, new_dirID );
+		return n::make< N::FSDirSpec >( new_vRefNum, new_dirID );
 	}
 	
 	class FSTree_Desktop_Dir_Link : public FSTree_ResolvableSymLink

@@ -69,7 +69,7 @@ namespace io
 	
 	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file, overload = overload() )
 	{
-		return Nucleus::Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( file.vRefNum ),
+		return nucleus::make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( file.vRefNum ),
 		                                             Nitrogen::FSDirID       ( file.parID   ) );
 	}
 	
@@ -258,7 +258,7 @@ namespace io
 	{
 		Nitrogen::FSDirSpec operator()() const
 		{
-			return Nucleus::Make< Nitrogen::FSDirSpec >( system_root< Nitrogen::FSVolumeRefNum >(),
+			return nucleus::make< Nitrogen::FSDirSpec >( system_root< Nitrogen::FSVolumeRefNum >(),
 			                                             Nitrogen::fsRtDirID );
 		}
 	};

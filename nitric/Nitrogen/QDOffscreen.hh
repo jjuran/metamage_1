@@ -43,11 +43,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::GWorld_Context >
+	struct maker< Nitrogen::GWorld_Context >
 	{
 		Nitrogen::GWorld_Context operator()( Nitrogen::GWorldPtr  port,
 		                                     Nitrogen::GDHandle   gdh = NULL ) const

@@ -42,7 +42,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -91,19 +90,19 @@ namespace tool
 	                              const std::string& machine,
 	                              const std::string& host )
 	{
-		PPCPortRec name = NN::Make< PPCPortRec >( N::Str32( appName ), "\p=" );
+		PPCPortRec name = n::make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
 		/*
-		LocationNameRec location = machine.empty() ? host.empty() ? NN::Make< LocationNameRec >()
-		                                                          : NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
-		                                           : NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
+		LocationNameRec location = machine.empty() ? host.empty() ? n::make< LocationNameRec >()
+		                                                          : n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
+		                                           : n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
 		*/
 		
-		LocationNameRec location = !machine.empty() ? NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
-		                         : !host.empty()    ? NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
-		                                            : NN::Make< LocationNameRec >();
+		LocationNameRec location = !machine.empty() ? n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
+		                         : !host.empty()    ? n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
+		                                            : n::make< LocationNameRec >();
 		
-		return NN::Make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
+		return n::make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
 	}
 	
 #endif

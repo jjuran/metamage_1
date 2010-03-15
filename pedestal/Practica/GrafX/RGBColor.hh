@@ -10,9 +10,9 @@
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
-
-// Nucleus
-#include "Nucleus/Make.h"
+#ifndef NUCLEUS_MAKE_HH
+#include "nucleus/make.hh"
+#endif
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
@@ -61,10 +61,9 @@ namespace nucleus
 	{
 		::RGBColor operator()( const GrafX::Color& color ) const
 		{
-			using Nucleus::Make;
 			using GrafX::gMaxIntensity;
 			
-			return Make< ::RGBColor >( GrafX::Denormalize< gMaxIntensity >( color[ Vectoria::Red   ] ),
+			return make< ::RGBColor >( GrafX::Denormalize< gMaxIntensity >( color[ Vectoria::Red   ] ),
 			                           GrafX::Denormalize< gMaxIntensity >( color[ Vectoria::Green ] ),
 			                           GrafX::Denormalize< gMaxIntensity >( color[ Vectoria::Blue  ] ) );
 		}

@@ -226,13 +226,8 @@ namespace nucleus
 	
 #endif
 	
-}
-
-namespace Nucleus
-{
-	
 	template <>
-	struct Maker< Nitrogen::RGBColor >
+	struct maker< Nitrogen::RGBColor >
 	{
 		Nitrogen::RGBColor operator()( unsigned short  red,
 		                               unsigned short  green,
@@ -341,7 +336,7 @@ namespace Nitrogen
 	// BackColor
 	// ColorBit
 	
-	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return Nucleus::Make< Rect >( top, left, bottom, right ); }
+	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return nucleus::make< Rect >( top, left, bottom, right ); }
 	inline Rect MacSetRect( Point topLeft, Point bottomRight )  { return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v ); }
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv );
@@ -505,7 +500,7 @@ namespace Nitrogen
 	
 	inline void FillPoly( PolyHandle poly, const Pattern& pat )  { ::FillPoly( poly, &pat ); }
 	
-	inline Point SetPt( short h, short v )  { return Nucleus::Make< Point >( v, h ); }
+	inline Point SetPt( short h, short v )  { return nucleus::make< Point >( v, h ); }
 	
 	Point LocalToGlobal( Point        point );
 	Rect  LocalToGlobal( const Rect&  rect );

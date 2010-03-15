@@ -27,10 +27,10 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <>  struct Maker< TargetID >
+	template <>  struct maker< TargetID >
 	{
 		TargetID operator()( const PPCPortRec& name, const LocationNameRec& location ) const
 		{
@@ -46,7 +46,7 @@ namespace Nucleus
 		
 		TargetID operator()( const PPCPortRec& name ) const
 		{
-			return Make< TargetID >( name, Make< LocationNameRec >() );
+			return make< TargetID >( name, make< LocationNameRec >() );
 		}
 	};
 	

@@ -623,10 +623,10 @@ namespace Nitrogen
 
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Maker< Nitrogen::HICommand >
+   struct maker< Nitrogen::HICommand >
      {
       Nitrogen::HICommand operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
         {
@@ -663,10 +663,10 @@ namespace Nitrogen
    using ::HICommandExtended;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Maker< Nitrogen::HICommandExtended >
+   struct maker< Nitrogen::HICommandExtended >
      {
       Nitrogen::HICommandExtended operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
         {

@@ -45,7 +45,6 @@ namespace Vertice
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace GX = GrafX;
 	
 	
@@ -828,7 +827,7 @@ namespace Vertice
 		const unsigned width  = itsBounds.right - itsBounds.left;
 		const unsigned height = itsBounds.bottom - itsBounds.top;
 		
-		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
+		N::RGBBackColor( n::make< RGBColor >( 0 ) );
 		
 		//fishEye = itsPort.mCamera.fishEyeMode;
 		
@@ -1219,7 +1218,7 @@ namespace Vertice
 		::Ptr       baseAddr  = ( *pix )->baseAddr;
 		unsigned    rowBytes  = ( *pix )->rowBytes & 0x3fff;
 		
-		N::RGBForeColor( NN::Make< RGBColor >( 0 ) );
+		N::RGBForeColor( n::make< RGBColor >( 0 ) );
 		N::PaintRect( portRect );
 		
 		if ( TARGET_API_MAC_CARBON && !gBlitting )

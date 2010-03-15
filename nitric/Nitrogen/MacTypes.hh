@@ -24,13 +24,11 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/make.hh"
 #include "nucleus/overloaded_math.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NUCLEUS_MAKE_H
-#include "Nucleus/Make.h"
 #endif
 #ifndef NUCLEUS_FLATTENER_H
 #include "Nucleus/Flattener.h"
@@ -253,10 +251,10 @@ namespace Nitrogen
    using ::Rect;
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Maker< Nitrogen::Point >
+   struct maker< Nitrogen::Point >
      {
       Point operator()( short v, short h ) const
         {
@@ -273,7 +271,7 @@ namespace Nucleus
      };
 
    template <>
-   struct Maker< Nitrogen::Rect >
+   struct maker< Nitrogen::Rect >
      {
       Rect operator()( short top, short left, short bottom, short right ) const
         {

@@ -51,7 +51,7 @@ namespace Nitrogen
 	{
 		PortInfoRec portInfo;
 		
-		IPCListPortsPBRec pb = Nucleus::Make< IPCListPortsPBRec >( &name, &location, &portInfo );
+		IPCListPortsPBRec pb = nucleus::make< IPCListPortsPBRec >( &name, &location, &portInfo );
 		
 		IPCListPortsSync( pb );
 		
@@ -62,7 +62,7 @@ namespace Nitrogen
 	{
 		PortInfoRec portInfo;
 		
-		IPCListPortsPBRec pb = Nucleus::Make< IPCListPortsPBRec >( &name, &portInfo );
+		IPCListPortsPBRec pb = nucleus::make< IPCListPortsPBRec >( &name, &portInfo );
 		
 		IPCListPortsSync( pb );
 		

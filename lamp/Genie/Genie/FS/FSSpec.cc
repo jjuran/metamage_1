@@ -12,8 +12,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	bool VolumeIsOnServer( N::FSVolumeRefNum vRefNum )
@@ -46,7 +46,7 @@ namespace Genie
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );
 		const N::FSDirID        dirID   = N::FSDirID       ( cInfo.dirInfo.ioDrDirID );
 		
-		return NN::Make< N::FSDirSpec >( vRefNum, dirID );
+		return n::make< N::FSDirSpec >( vRefNum, dirID );
 	}
 	
 	N::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )

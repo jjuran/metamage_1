@@ -8,11 +8,11 @@
 #include <AppleTalk.h>
 #endif
 
+// nucleus
+#include "nucleus/make.hh"
+
 // Nucleus
 #include "Nucleus/ErrorsRegistered.h"
-#ifndef NUCLEUS_MAKE_H
-#include "Nucleus/Make.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_STR_HH
@@ -30,10 +30,10 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
-	template <>  struct Maker< EntityName >
+	template <>  struct maker< EntityName >
 	{
 		EntityName operator()( ConstStr32Param  object,
 		                       ConstStr32Param  type,

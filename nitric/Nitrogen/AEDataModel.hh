@@ -438,11 +438,11 @@ namespace Nitrogen
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::AEDesc >
+	struct maker< Nitrogen::AEDesc >
 	{
 		Nitrogen::AEDesc operator()() const
 		{
@@ -452,35 +452,30 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Maker< Nitrogen::AEDesc_Data >
+	struct maker< Nitrogen::AEDesc_Data >
 	{
 		Nitrogen::AEDesc_Data operator()() const
 		{
 			Nitrogen::AEDesc_Data result;
 			
-			static_cast< AEDesc& >( result ) = Make< AEDesc >();
+			static_cast< AEDesc& >( result ) = make< AEDesc >();
 			
 			return result;
 		}
 	};
 	
 	template <>
-	struct Maker< Nitrogen::AEDesc_Token >
+	struct maker< Nitrogen::AEDesc_Token >
 	{
 		Nitrogen::AEDesc_Token operator()() const
 		{
 			Nitrogen::AEDesc_Token result;
 			
-			static_cast< AEDesc& >( result ) = Make< AEDesc >();
+			static_cast< AEDesc& >( result ) = make< AEDesc >();
 			
 			return result;
 		}
 	};
-	
-}
-
-namespace nucleus
-{
 	
 	template <>
 	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >
@@ -584,15 +579,15 @@ namespace nucleus
 	
 }
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template <>
-	struct Maker< Nitrogen::AEKeyDesc >
+	struct maker< Nitrogen::AEKeyDesc >
 	{
 		Nitrogen::AEKeyDesc operator()() const
 		{
-			Nitrogen::AEKeyDesc result = { Nitrogen::AEKeyword(), Make< Nitrogen::AEDesc >() };
+			Nitrogen::AEKeyDesc result = { Nitrogen::AEKeyword(), make< Nitrogen::AEDesc >() };
 			return result;
 		}
 	};
@@ -971,7 +966,7 @@ namespace Nitrogen
 	// 484
 	inline AEDesc AEInitializeDesc()
 	{
-		return Nucleus::Make< AEDesc >();
+		return nucleus::make< AEDesc >();
 	}
 	
 	template < class AEDesc_Type >

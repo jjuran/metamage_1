@@ -93,7 +93,7 @@ namespace Nitrogen
 			size_type position;
 		
 		public:
-			AEDescList_Item_ValueIterator() : list( Nucleus::Make< AEDescList >() )  {}
+			AEDescList_Item_ValueIterator() : list( nucleus::make< AEDescList >() )  {}
 			
 			AEDescList_Item_ValueIterator( const AEDescList& list, size_type pos )
 			:

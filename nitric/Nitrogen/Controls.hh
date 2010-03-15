@@ -24,15 +24,13 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/make.hh"
 
 #ifndef NITROGEN_MACWINDOWS_HH
 #include "Nitrogen/MacWindows.hh"
 #endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NUCLEUS_MAKE_H
-#include "Nucleus/Make.h"
 #endif
 
 
@@ -214,10 +212,10 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
    template <>
-   struct Maker< Nitrogen::ControlID >
+   struct maker< Nitrogen::ControlID >
      {
       Nitrogen::ControlID operator()( Nitrogen::OSType signature, SInt32 id ) const
         {

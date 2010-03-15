@@ -234,7 +234,7 @@ namespace Nitrogen
 		
 		FSDirID dirID = FSDirID( cInfo.dirInfo.ioDrDirID );
 		
-		return Nucleus::Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), dirID );
+		return nucleus::make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), dirID );
 	}
 	
 	
@@ -451,7 +451,7 @@ namespace Nitrogen
 		SInt32 newDirID;
 		ThrowOSStatus( ::FSpDirCreate( &dir, scriptTag, &newDirID ) );
 		
-		return Nucleus::Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
+		return nucleus::make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
 	}
 	
 	void FSpDelete( const FSSpec& item )
