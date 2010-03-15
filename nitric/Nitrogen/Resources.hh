@@ -283,14 +283,13 @@ namespace Nitrogen
 	class ResFile
 	{
 		public:
-			typedef ResFileRefNum Value;
-			typedef ResFileRefNum GetResult;
-			typedef ResFileRefNum SetParameter;
+			typedef ResFileRefNum value_type;
+			typedef ResFileRefNum param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                        { return CurResFile();   }
-			void Set( SetParameter resFile ) const       { UseResFile( resFile ); }
+			value_type get() const                { return CurResFile();   }
+			void set( param_type resFile ) const  { UseResFile( resFile ); }
 	};
 	
 	

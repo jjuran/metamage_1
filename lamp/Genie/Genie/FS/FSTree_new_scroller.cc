@@ -5,8 +5,8 @@
 
 #include "Genie/FS/FSTree_new_scroller.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
@@ -26,6 +26,7 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
@@ -96,7 +97,7 @@ namespace Genie
 	                          bool            erasing,
 	                          RgnHandle       clip )
 	{
-		NN::Saved< N::Clip > savedClip;
+		n::saved< N::Clip > savedClip;
 		
 		N::SetClip( N::SectRgn( N::RectRgn( bounds ), clip ) );
 		

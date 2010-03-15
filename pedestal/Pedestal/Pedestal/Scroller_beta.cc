@@ -5,8 +5,8 @@
 
 #include "Pedestal/Scroller_beta.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // Pedestal
 #include "Pedestal/Scrollbar.hh"
@@ -15,8 +15,8 @@
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	static int NewVOffset( const ScrollerAPI& scroller, char c )
@@ -77,7 +77,7 @@ namespace Pedestal
 	
 	void ScrollFrame::ClickInLoop()
 	{
-		NN::Saved< N::Clip > savedClip;
+		n::saved< N::Clip > savedClip;
 		
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		

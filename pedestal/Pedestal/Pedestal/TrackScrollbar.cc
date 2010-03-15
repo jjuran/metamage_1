@@ -16,8 +16,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.hh"
@@ -32,8 +32,8 @@
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	using MacFeatures::Has_AppearanceManager;
@@ -145,7 +145,7 @@ namespace Pedestal
 	
 	void TrackScrollbar( ControlRef control, N::ControlPartCode part, Point point )
 	{
-		NN::Saved< N::Clip > savedClip;
+		n::saved< N::Clip > savedClip;
 		
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		

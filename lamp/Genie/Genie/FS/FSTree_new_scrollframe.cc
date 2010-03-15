@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_scrollframe.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
-
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Scrollbar.hh"

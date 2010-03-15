@@ -5,8 +5,8 @@
 
 #include "Pedestal/Window.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
@@ -20,7 +20,6 @@ namespace Pedestal
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	void ResizeWindow( N::WindowRef window, Point newSize )
@@ -44,7 +43,7 @@ namespace Pedestal
 	
 	void SetWindowSize( Nitrogen::WindowRef window, Point size )
 	{
-		NN::Saved< N::Port > savePort;
+		n::saved< N::Port > savePort;
 		
 		N::SetPortWindowPort( window );
 		
@@ -66,7 +65,7 @@ namespace Pedestal
 	
 	Point GetWindowPosition( N::WindowRef window )
 	{
-		NN::Saved< N::Port > savedPort;
+		n::saved< N::Port > savedPort;
 		
 		N::SetPortWindowPort( window );
 		
@@ -112,7 +111,7 @@ namespace Pedestal
 	
 	static void DrawWindow( N::WindowRef window )
 	{
-		NN::Saved< N::Clip > savedClip;
+		n::saved< N::Clip > savedClip;
 		
 		N::ClipRect( GrowBoxBounds( window ) );
 		

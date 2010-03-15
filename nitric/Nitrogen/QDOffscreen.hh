@@ -105,14 +105,13 @@ namespace Nitrogen
 	class GWorld
 	{
 		public:
-			typedef GWorld_Context         Value;
-			typedef GWorld_Context         GetResult;
-			typedef GWorld_Context const&  SetParameter;
+			typedef GWorld_Context         value_type;
+			typedef GWorld_Context const&  param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                 { return GetGWorld(); }
-			void Set( SetParameter state ) const  { SetGWorld( state ); }
+			value_type get() const              { return GetGWorld(); }
+			void set( param_type state ) const  { SetGWorld( state ); }
 	};
 	
 	class Pixels_State
@@ -121,16 +120,15 @@ namespace Nitrogen
 			PixMapHandle pm;
 		
 		public:
-			typedef GWorldFlags Value;
-			typedef GWorldFlags GetResult;
-			typedef GWorldFlags SetParameter;
+			typedef GWorldFlags value_type;
+			typedef GWorldFlags param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
 			Pixels_State( PixMapHandle pm ) : pm( pm )  {}
 			
-			GetResult Get() const                  { return Nitrogen::GetPixelsState( pm ); }
-			void Set( SetParameter state ) const   { SetPixelsState( pm, state );           }
+			value_type get() const              { return Nitrogen::GetPixelsState( pm ); }
+			void set( param_type state ) const  { SetPixelsState( pm, state );           }
 	};
 	
 }

@@ -15,8 +15,8 @@
 // plus
 #include "plus/make_string.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
@@ -44,8 +44,8 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -385,7 +385,7 @@ namespace Genie
 	class SetWindowPort_Scope
 	{
 		private:
-			NN::Saved< N::Port > savePort;
+			n::saved< N::Port > savePort;
 			
 			SetWindowPort_Scope           ( const SetWindowPort_Scope& );
 			SetWindowPort_Scope& operator=( const SetWindowPort_Scope& );

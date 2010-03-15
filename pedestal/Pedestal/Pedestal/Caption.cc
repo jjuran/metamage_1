@@ -5,8 +5,8 @@
 
 #include "Pedestal/Caption.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/TextEdit.hh"
@@ -17,19 +17,15 @@ namespace Nitrogen
 	
 	class TextMode_Setting
 	{
-		private:
-			CGrafPtr itsPort;
-		
 		public:
-			typedef short         Value;
-			typedef short         GetResult;
-			typedef short const&  SetParameter;
+			typedef short  value_type;
+			typedef short  param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const  { return GetPortTextMode( GetQDGlobalsThePort() ); }
+			value_type get() const  { return GetPortTextMode( GetQDGlobalsThePort() ); }
 			
-			void Set( SetParameter mode ) const  { TextMode( mode ); }
+			void set( param_type mode ) const  { TextMode( mode ); }
 	};
 	
 }
@@ -37,13 +33,13 @@ namespace Nitrogen
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
-		NN::Saved< N::Clip > savedClip;
+		n::saved< N::Clip > savedClip;
 		
 		Rect newBounds = bounds;
 		
@@ -54,7 +50,7 @@ namespace Pedestal
 			N::ClipRect( bounds );
 		}
 		
-		NN::Saved< N::TextMode_Setting > savedTextMode;
+		n::saved< N::TextMode_Setting > savedTextMode;
 		
 		if ( Disabled() )
 		{

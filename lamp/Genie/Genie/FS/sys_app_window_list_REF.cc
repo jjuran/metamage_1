@@ -14,8 +14,8 @@
 // plus
 #include "plus/hexidecimal.hh"
 
-// Nucleus
-#include "Nucleus/Saved.h"
+// nucleus
+#include "nucleus/saved.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -62,8 +62,8 @@ namespace Nitrogen
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -319,7 +319,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, const RGBColor& color )
 		{
-			NN::Saved< N::Port > savePort;
+			n::saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			
@@ -338,7 +338,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, short fontID )
 		{
-			NN::Saved< N::Port > savePort;
+			n::saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			
@@ -357,7 +357,7 @@ namespace Genie
 		
 		static void Set( N::WindowRef window, short size )
 		{
-			NN::Saved< N::Port > savePort;
+			n::saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
 			

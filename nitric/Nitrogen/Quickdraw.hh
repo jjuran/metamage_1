@@ -776,68 +776,63 @@ namespace Nitrogen
 	class Port
 	{
 		public:
-			typedef GrafPtr Value;
-			typedef GrafPtr GetResult;
-			typedef GrafPtr SetParameter;
+			typedef GrafPtr  value_type;
+			typedef GrafPtr  param_type;
 			
-			static const bool hasSwap = true;
+			static const bool can_swap = true;
 			
-			GetResult Get() const                      { return GetPort();          }
-			void Set( SetParameter port ) const        { Nitrogen::SetPort( port ); }
+			value_type get() const                    { return GetPort();          }
+			void set( param_type port ) const         { Nitrogen::SetPort( port ); }
 			
-			GetResult Swap( SetParameter port ) const  { return QDSwapPort( port ); }
+			value_type swap( param_type port ) const  { return QDSwapPort( port ); }
 	};
 	
 	class Clip
 	{
 		public:
-			typedef nucleus::owned< RgnHandle > Value;
-			typedef nucleus::owned< RgnHandle > GetResult;
-			typedef        RgnHandle   SetParameter;
+			typedef nucleus::owned< RgnHandle >  value_type;
+			typedef                 RgnHandle    param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                  { return GetClip();  }
-			void Set( SetParameter region ) const  { SetClip( region ); }
+			value_type get() const               { return GetClip();  }
+			void set( param_type region ) const  { SetClip( region ); }
 	};
 	
 	class Pen_State
 	{
 		public:
-			typedef PenState         Value;
-			typedef PenState         GetResult;
-			typedef PenState const&  SetParameter;
+			typedef PenState         value_type;
+			typedef PenState const&  param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                 { return GetPenState(); }
-			void Set( SetParameter state ) const  { SetPenState( state ); }
+			value_type get() const              { return GetPenState(); }
+			void set( param_type state ) const  { SetPenState( state ); }
 	};
 	
 	class RGBForeColor_Setting
 	{
 		public:
-			typedef RGBColor         Value;
-			typedef RGBColor         GetResult;
-			typedef RGBColor const&  SetParameter;
+			typedef RGBColor         value_type;
+			typedef RGBColor const&  param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                 { return GetForeColor(); }
-			void Set( SetParameter color ) const  { RGBForeColor( color ); }
+			value_type get() const              { return GetForeColor(); }
+			void set( param_type color ) const  { RGBForeColor( color ); }
 	};
 	
 	class RGBBackColor_Setting
 	{
 		public:
-			typedef RGBColor         Value;
-			typedef RGBColor         GetResult;
-			typedef RGBColor const&  SetParameter;
+			typedef RGBColor         value_type;
+			typedef RGBColor const&  param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			GetResult Get() const                 { return GetBackColor(); }
-			void Set( SetParameter color ) const  { RGBBackColor( color ); }
+			value_type get() const              { return GetBackColor(); }
+			void set( param_type color ) const  { RGBBackColor( color ); }
 	};
 	
 	class Port_ClipRegion
@@ -846,16 +841,15 @@ namespace Nitrogen
 			CGrafPtr port;
 			
 		public:
-			typedef nucleus::owned< RgnHandle > Value;
-			typedef nucleus::owned< RgnHandle > GetResult;
-			typedef        RgnHandle   SetParameter;
+			typedef nucleus::owned< RgnHandle >  value_type;
+			typedef                 RgnHandle    param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			Port_ClipRegion( CGrafPtr port )         : port( port ) {}
+			Port_ClipRegion( CGrafPtr port )     : port( port ) {}
 			
-			GetResult Get() const                    { return GetPortClipRegion( port );            }
-			void Set( SetParameter region ) const    { Nitrogen::SetPortClipRegion( port, region ); }
+			value_type get() const               { return GetPortClipRegion( port );            }
+			void set( param_type region ) const  { Nitrogen::SetPortClipRegion( port, region ); }
 	};
 	
 	class Port_PenSize
@@ -864,16 +858,15 @@ namespace Nitrogen
 			CGrafPtr port;
       
 		public:
-			typedef Point Value;
-			typedef Point GetResult;
-			typedef Point SetParameter;
+			typedef Point value_type;
+			typedef Point param_type;
 			
-			static const bool hasSwap = false;
+			static const bool can_swap = false;
 			
-			Port_PenSize( CGrafPtr port )         : port( port ) {}
+			Port_PenSize( CGrafPtr port )      : port( port ) {}
 			
-			GetResult Get() const                 { return GetPortPenSize( port );          }
-			void Set( SetParameter size ) const   { Nitrogen::SetPortPenSize( port, size ); }
+			value_type get() const             { return GetPortPenSize( port );          }
+			void set( param_type size ) const  { Nitrogen::SetPortPenSize( port, size ); }
 	};
 	
 }
