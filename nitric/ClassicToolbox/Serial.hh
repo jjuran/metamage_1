@@ -13,10 +13,8 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
-
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_HH

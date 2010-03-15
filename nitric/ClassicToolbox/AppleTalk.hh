@@ -9,10 +9,8 @@
 #endif
 
 // nucleus
+#include "nucleus/errors_registered.hh"
 #include "nucleus/make.hh"
-
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
 #ifndef NITROGEN_STR_HH

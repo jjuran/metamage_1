@@ -19,8 +19,8 @@
 #include <Devices.h>
 #endif
 
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
+// nucleus
+#include "nucleus/errors_registered.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"

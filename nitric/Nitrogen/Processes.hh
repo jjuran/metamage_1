@@ -21,6 +21,7 @@
 // nucleus
 #include "nucleus/advance_until_error_sequence.hh"
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/initialize.hh"
 #include "nucleus/make.hh"
@@ -40,7 +41,6 @@
 #ifndef NITROGEN_TEXTCOMMON_HH
 //#include "Nitrogen/TextCommon.hh"
 #endif
-#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen

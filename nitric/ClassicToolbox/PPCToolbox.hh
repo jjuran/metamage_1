@@ -20,9 +20,7 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
-
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
+#include "nucleus/errors_registered.hh"
 
 // Nitrogen
 #ifndef NITROGEN_STR_HH

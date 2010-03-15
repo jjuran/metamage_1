@@ -21,10 +21,8 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/owned.hh"
-
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH

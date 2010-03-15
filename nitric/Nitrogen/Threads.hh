@@ -21,6 +21,7 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
 
 // Nucleus
@@ -38,7 +39,6 @@
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
-#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen

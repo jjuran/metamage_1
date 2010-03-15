@@ -20,12 +20,12 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/owned.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen

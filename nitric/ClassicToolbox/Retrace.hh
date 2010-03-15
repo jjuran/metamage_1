@@ -11,8 +11,8 @@
 #include <Retrace.h>
 #endif
 
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
+// nucleus
+#include "nucleus/errors_registered.hh"
 
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH

@@ -8,8 +8,8 @@
 #include <EPPC.h>
 #endif
 
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
+// nucleus
+#include "nucleus/errors_registered.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_PPCTOOLBOX_HH

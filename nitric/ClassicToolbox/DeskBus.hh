@@ -17,9 +17,9 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 
 // Nucleus
-#include "Nucleus/ErrorsRegistered.h"
 #include "Nucleus/IndexedContainer.h"
 
 // Nitrogen

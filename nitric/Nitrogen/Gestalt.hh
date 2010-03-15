@@ -17,10 +17,13 @@
 #ifndef __GESTALT__
 #include <Gestalt.h>
 #endif
+
+// nucleus
+#include "nucleus/errors_registered.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen

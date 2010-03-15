@@ -17,7 +17,9 @@
 #ifndef __SCRAP__
 #include <Scrap.h>
 #endif
-#include "Nucleus/ErrorsRegistered.h"
+
+// nucleus
+#include "nucleus/errors_registered.hh"
 
 // Replace macro
 

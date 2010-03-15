@@ -20,6 +20,7 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/owned.hh"
 #include "nucleus/saved.hh"
@@ -27,7 +28,6 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#include "Nucleus/ErrorsRegistered.h"
 
 #include <cstddef>
 

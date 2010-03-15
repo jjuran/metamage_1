@@ -13,10 +13,10 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 
 // Nucleus
 #include "Nucleus/AdvanceUntilDoneSequence.h"
-#include "Nucleus/ErrorsRegistered.h"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH

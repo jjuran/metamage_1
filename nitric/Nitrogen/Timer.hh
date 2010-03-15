@@ -19,8 +19,8 @@
 #include <Timer.h>
 #endif
 
-// Nucleus
-#include "Nucleus/ErrorsRegistered.h"
+// nucleus
+#include "nucleus/errors_registered.hh"
 
 // Nitrogen
 #include "Nitrogen/MacTypes.hh"
