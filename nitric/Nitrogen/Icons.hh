@@ -17,6 +17,10 @@
 #ifndef __ICONS__
 #include <Icons.h>
 #endif
+
+// nucleus
+#include "nucleus/resource_transfer.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
@@ -32,9 +36,7 @@
 #ifndef NITROGEN_CGCONTEXT_HH
 #include "Nitrogen/CGContext.hh"
 #endif
-#ifndef NUCLEUS_RESOURCETRANSFER_H
-#include "Nucleus/ResourceTransfer.h"
-#endif
+
 
 namespace Nitrogen
 {
@@ -364,14 +366,14 @@ namespace Nitrogen
           theLabel( label )
         {}
       
-      GetIconRefFromFile_Result( Nucleus::ResourceTransfer<GetIconRefFromFile_Result> r )
+      GetIconRefFromFile_Result( nucleus::resource_transfer< GetIconRefFromFile_Result > r )
         : theIconRef( r->theIconRef ),
           theLabel( r->theLabel )
         {}
       
-      operator Nucleus::ResourceTransfer<GetIconRefFromFile_Result>()
+      operator nucleus::resource_transfer< GetIconRefFromFile_Result >()
         {
-         return Nucleus::ResourceTransfer<GetIconRefFromFile_Result>( *this );
+         return nucleus::resource_transfer< GetIconRefFromFile_Result >( *this );
         }
       
       operator nucleus::owned<IconRef>()            { return theIconRef; }
