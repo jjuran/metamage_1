@@ -12,11 +12,9 @@
 #endif
 
 // nucleus
+#include "nucleus/advance_until_done_sequence.hh"
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
-
-// Nucleus
-#include "Nucleus/AdvanceUntilDoneSequence.h"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH
@@ -236,7 +234,7 @@ namespace Nitrogen
 				crmDeviceType( crmDeviceType )
 			{}
 			
-			key_type GetNextKey( const key_type& value ) const
+			key_type get_next_key( const key_type& value ) const
 			{
 				return CRMSearch( crmDeviceType,
 				                  CRMDeviceID( value != NULL ? value->crmDeviceID : 0 ) );
@@ -244,18 +242,18 @@ namespace Nitrogen
 			
 			static const key_type* GetPointer( const key_type& value )  { return &value; }
 			
-			       key_type begin_key() const  { return GetNextKey( NULL ); }
-			static key_type end_key  ()        { return             NULL  ; }
+			       key_type begin_key() const  { return get_next_key( NULL ); }
+			static key_type end_key  ()        { return               NULL  ; }
 	};
 	
-	class CRMResource_Container: public Nucleus::AdvanceUntilDoneSequence< CRMResource_Container_Specifics >
+	class CRMResource_Container : public nucleus::advance_until_done_sequence< CRMResource_Container_Specifics >
 	{
 		friend CRMResource_Container CRMResources( CRMDeviceType crmDeviceType );
 		
 		private:
 			CRMResource_Container( CRMDeviceType crmDeviceType )
 			:
-				Nucleus::AdvanceUntilDoneSequence< CRMResource_Container_Specifics >
+				nucleus::advance_until_done_sequence< CRMResource_Container_Specifics >
 				(
 					CRMResource_Container_Specifics( crmDeviceType )
 				)

@@ -84,7 +84,7 @@ namespace Nitrogen
 	
 	UnitTableDrivers_Container_Specifics::key_type
 	//
-	UnitTableDrivers_Container_Specifics::GetNextKey( key_type key )
+	UnitTableDrivers_Container_Specifics::get_next_key( key_type key )
 	{
 		const key_type end = end_key();
 		

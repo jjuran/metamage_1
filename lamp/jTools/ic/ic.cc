@@ -10,10 +10,8 @@
 #include "plus/make_string.hh"
 
 // nucleus
+#include "nucleus/advance_until_done_sequence.hh"
 #include "nucleus/shared.hh"
-
-// Nucleus
-#include "Nucleus/AdvanceUntilDoneSequence.h"
 
 // Nitrogen
 #include "Nitrogen/MacTypes.hh"
@@ -44,7 +42,7 @@ namespace Nitrogen
 			typedef SInt32 difference_type;
 			typedef const value_type* key_type;
 			
-			key_type GetNextKey( const key_type& value ) const
+			key_type get_next_key( const key_type& value ) const
 			{
 				const char* next = reinterpret_cast< const char* >( value ) + value->totalLength;
 				
@@ -65,7 +63,7 @@ namespace Nitrogen
 			static key_type end_key()          { return NULL;       }
 	};
 	
-	class ICMapEntry_Container: public Nucleus::AdvanceUntilDoneSequence< ::Nitrogen::ICMapEntry_ContainerSpecifics >
+	class ICMapEntry_Container : public nucleus::advance_until_done_sequence< ::Nitrogen::ICMapEntry_ContainerSpecifics >
 	{
 		friend ICMapEntry_Container ICMapEntries( nucleus::shared< ICMapEntryHandle > entries );
 		
@@ -74,7 +72,7 @@ namespace Nitrogen
 			
 			typedef ::Nitrogen::ICMapEntry_ContainerSpecifics Specifics;
 			
-			ICMapEntry_Container( const nucleus::shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilDoneSequence< Specifics >( Specifics( entries ) ),
+			ICMapEntry_Container( const nucleus::shared< ICMapEntryHandle >& entries ) : nucleus::advance_until_done_sequence< Specifics >( Specifics( entries ) ),
 			                                                                             itsEntries( entries )
 			{
 				if ( !TARGET_API_MAC_OSX )
@@ -96,7 +94,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct ICMapEntryStrings

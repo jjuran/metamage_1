@@ -1,5 +1,5 @@
-// Nucleus/AdvanceUntilDoneSequence.h
-// ----------------------------------
+// nucleus/advance_until_done_sequence.hh
+// --------------------------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,21 +11,21 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_H
-#define NUCLEUS_ADVANCEUNTILDONESEQUENCE_H
+#ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_HH
+#define NUCLEUS_ADVANCEUNTILDONESEQUENCE_HH
 
 #include <iterator>
 
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template < class Specifics >
-	class AdvanceUntilDoneSequence : private Specifics
+	class advance_until_done_sequence : private Specifics
 	{
 		private: 
 			// not implemented:
-			AdvanceUntilDoneSequence& operator=( const AdvanceUntilDoneSequence& );
+			advance_until_done_sequence& operator=( const advance_until_done_sequence& );
 		
 		public:
 			typedef typename Specifics::size_type        size_type;
@@ -38,13 +38,13 @@ namespace Nucleus
 			
 			class const_iterator : private Specifics
 			{
-				friend class AdvanceUntilDoneSequence;
+				friend class advance_until_done_sequence;
 				
 				public:
-					typedef typename AdvanceUntilDoneSequence::size_type        size_type;
-					typedef typename AdvanceUntilDoneSequence::difference_type  difference_type;
-					typedef typename AdvanceUntilDoneSequence::value_type       value_type;
-					typedef typename AdvanceUntilDoneSequence::key_type         key_type;
+					typedef typename advance_until_done_sequence::size_type        size_type;
+					typedef typename advance_until_done_sequence::difference_type  difference_type;
+					typedef typename advance_until_done_sequence::value_type       value_type;
+					typedef typename advance_until_done_sequence::key_type         key_type;
 					typedef const value_type *pointer;
 					typedef const value_type& reference;
 					typedef std::forward_iterator_tag iterator_category;
@@ -52,9 +52,9 @@ namespace Nucleus
 				private:
 					key_type its_key;
 					
-					void GetNextKey()
+					void get_next_key()
 					{
-						its_key = Specifics::GetNextKey( its_key );
+						its_key = Specifics::get_next_key( its_key );
 					}
 					
 					const_iterator( const Specifics& b, key_type k ) : Specifics( b ),
@@ -65,7 +65,7 @@ namespace Nucleus
 				public:
 					const_iterator()                  : its_key( Specifics::end_key() )  {}
 					
-					const_iterator& operator++()      { GetNextKey();  return *this; }
+					const_iterator& operator++()      { get_next_key();  return *this; }
 					const_iterator operator++(int)    { const_iterator old = *this; operator++(); return old; }
 					
 					reference operator*() const       { return *Specifics::GetPointer( its_key ); }
@@ -78,7 +78,7 @@ namespace Nucleus
 					                        const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			AdvanceUntilDoneSequence( const Specifics& base ) : Specifics( base )
+			advance_until_done_sequence( const Specifics& base ) : Specifics( base )
 			{
 			}
 			

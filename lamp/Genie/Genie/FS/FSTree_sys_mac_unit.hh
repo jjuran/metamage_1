@@ -11,8 +11,8 @@
 #include <LowMem.h>
 #endif
 
-// Nucleus
-#include "Nucleus/AdvanceUntilDoneSequence.h"
+// nucleus
+#include "nucleus/advance_until_done_sequence.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/Devices.hh"
@@ -33,21 +33,21 @@ namespace Nitrogen
 		typedef const value_type*  const_pointer;
 		typedef const_pointer      key_type;
 		
-		static key_type GetNextKey( key_type key );
+		static key_type get_next_key( key_type key );
 		
 		static const_pointer GetPointer( key_type ptr )  { return ptr; }
 		
-		static key_type begin_key()  { return GetNextKey( reinterpret_cast< AuxDCEHandle* >( LMGetUTableBase() ) - 1 ); }
+		static key_type begin_key()  { return get_next_key( reinterpret_cast< AuxDCEHandle* >( LMGetUTableBase() ) - 1 ); }
 		static key_type end_key()    { return (AuxDCEHandle*) LMGetUTableBase() + LMGetUnitTableEntryCount(); }
 	};
 	
-	class UnitTableDrivers_Container: public Nucleus::AdvanceUntilDoneSequence< UnitTableDrivers_Container_Specifics >
+	class UnitTableDrivers_Container : public nucleus::advance_until_done_sequence< UnitTableDrivers_Container_Specifics >
 	{
 		friend UnitTableDrivers_Container UnitTableDrivers();
 		
 		private:
 			UnitTableDrivers_Container()
-			: Nucleus::AdvanceUntilDoneSequence< UnitTableDrivers_Container_Specifics >( UnitTableDrivers_Container_Specifics() )
+			: nucleus::advance_until_done_sequence< UnitTableDrivers_Container_Specifics >( UnitTableDrivers_Container_Specifics() )
 			{}
 	};
 	
