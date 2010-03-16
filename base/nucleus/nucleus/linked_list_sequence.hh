@@ -1,5 +1,5 @@
-// Nucleus/LinkedListContainer.h
-// -----------------------------
+// nucleus/linked_list_sequence.hh
+// -------------------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,21 +11,21 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_LINKEDLISTCONTAINER_H
-#define NUCLEUS_LINKEDLISTCONTAINER_H
+#ifndef NUCLEUS_LINKEDLISTSEQUENCE_HH
+#define NUCLEUS_LINKEDLISTSEQUENCE_HH
 
 #include <iterator>
 
 
-namespace Nucleus
+namespace nucleus
 {
 	
 	template < class Specifics >
-	class LinkedListContainer: private Specifics
+	class linked_list_sequence : private Specifics
 	{
 		private: 
 			// not implemented:
-			LinkedListContainer& operator=( const LinkedListContainer& );
+			linked_list_sequence& operator=( const linked_list_sequence& );
 		
 		public:
 			typedef typename Specifics::value_type value_type;
@@ -37,12 +37,12 @@ namespace Nucleus
 			
 			class const_iterator: private Specifics
 			{
-				friend class LinkedListContainer;
+				friend class linked_list_sequence;
  				
 				public:
-					typedef typename LinkedListContainer::size_type size_type;
-					typedef typename LinkedListContainer::difference_type difference_type;
-					typedef typename LinkedListContainer::value_type value_type;
+					typedef typename linked_list_sequence::size_type size_type;
+					typedef typename linked_list_sequence::difference_type difference_type;
+					typedef typename linked_list_sequence::value_type value_type;
 					typedef const value_type *pointer;
 					typedef const value_type& reference;
 					typedef std::forward_iterator_tag iterator_category;
@@ -50,9 +50,9 @@ namespace Nucleus
 				private:
 					value_type value;
 					
-					void GetNextValue()
+					void get_next_value()
 					{
-						value = Specifics::GetNextValue( value );
+						value = Specifics::get_next_value( value );
 					}
 					
 					const_iterator( const Specifics& b, value_type v ) : Specifics( b ), value( v )
@@ -62,7 +62,7 @@ namespace Nucleus
 				public:
 					const_iterator()                          : value( Specifics::end_value() )   {}
 					
-					const_iterator& operator++()              { GetNextValue();  return *this; }
+					const_iterator& operator++()              { get_next_value();  return *this; }
 					const_iterator operator++(int)            { const_iterator old = *this; operator++(); return old; }
 					
 					reference operator*() const               { return value; }
@@ -72,7 +72,7 @@ namespace Nucleus
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			LinkedListContainer( const Specifics& base ) : Specifics( base )
+			linked_list_sequence( const Specifics& base ) : Specifics( base )
 			{
 			}
 			

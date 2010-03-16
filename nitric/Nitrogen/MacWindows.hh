@@ -21,10 +21,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
-
-#ifndef NUCLEUS_LINKEDLISTCONTAINER_H
-#include "Nucleus/LinkedListContainer.h"
-#endif
+#include "nucleus/linked_list_sequence.hh"
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
@@ -735,7 +732,7 @@ namespace Nitrogen
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
 			
-			value_type GetNextValue( value_type value )
+			value_type get_next_value( value_type value )
 			{
 				return GetNextWindow( value );
 			}
@@ -743,13 +740,13 @@ namespace Nitrogen
 			static value_type begin_value()  { return GetWindowList(); }
 	};
 	
-	class WindowList_Container: public Nucleus::LinkedListContainer< ::Nitrogen::WindowList_ContainerSpecifics >
+	class WindowList_Container: public nucleus::linked_list_sequence< ::Nitrogen::WindowList_ContainerSpecifics >
 	{
 		friend WindowList_Container WindowList();
 		
 		private:
 			WindowList_Container()
-			: Nucleus::LinkedListContainer< ::Nitrogen::WindowList_ContainerSpecifics >( ::Nitrogen::WindowList_ContainerSpecifics() )
+			: nucleus::linked_list_sequence< ::Nitrogen::WindowList_ContainerSpecifics >( ::Nitrogen::WindowList_ContainerSpecifics() )
 			{
 			}
 	};

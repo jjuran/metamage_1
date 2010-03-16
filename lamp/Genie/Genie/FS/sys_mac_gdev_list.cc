@@ -15,8 +15,8 @@
 #include "plus/contains.hh"
 #include "plus/hexidecimal.hh"
 
-// Nucleus
-#include "Nucleus/LinkedListContainer.h"
+// nucleus
+#include "nucleus/linked_list_sequence.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -42,7 +42,7 @@ namespace Nitrogen
 			typedef UInt32    size_type;
 			typedef SInt32    difference_type;
 			
-			value_type GetNextValue( value_type value )
+			value_type get_next_value( value_type value )
 			{
 				return GetNextDevice( value );
 			}
@@ -50,13 +50,13 @@ namespace Nitrogen
 			static value_type begin_value()  { return GetDeviceList(); }
 	};
 	
-	class DeviceList_Container: public Nucleus::LinkedListContainer< ::Nitrogen::DeviceList_ContainerSpecifics >
+	class DeviceList_Container: public nucleus::linked_list_sequence< ::Nitrogen::DeviceList_ContainerSpecifics >
 	{
 		friend DeviceList_Container DeviceList();
 		
 		private:
 			DeviceList_Container()
-			: Nucleus::LinkedListContainer< ::Nitrogen::DeviceList_ContainerSpecifics >( ::Nitrogen::DeviceList_ContainerSpecifics() )
+			: nucleus::linked_list_sequence< ::Nitrogen::DeviceList_ContainerSpecifics >( ::Nitrogen::DeviceList_ContainerSpecifics() )
 			{
 			}
 	};
