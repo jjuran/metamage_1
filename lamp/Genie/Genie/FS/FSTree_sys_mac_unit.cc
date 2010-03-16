@@ -19,8 +19,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nucleus
-#include "Nucleus/IndexedContainer.h"
+// nucleus
+#include "nucleus/indexed_sequence.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -45,35 +45,34 @@ namespace Nitrogen
 		
 		class Nothing {};
 		
-		typedef Nothing ConstIteratorState;
-		typedef Nothing ConstContainerState;
+		typedef Nothing context_type;
 		
 		
-		static size_type Size( ConstContainerState )
+		static size_type Size( context_type )
 		{
 			return LMGetUnitTableEntryCount();
 		}
 		
-		static const_reference GetReference( ConstIteratorState state, size_type position )
+		static const_reference get_reference( context_type state, size_type position )
 		{
 			AuxDCEHandle* base = (AuxDCEHandle*) LMGetUTableBase();
 			
 			return base[ position ];
 		}
 		
-		static const_pointer GetPointer( ConstIteratorState state, size_type position )
+		static const_pointer get_pointer( context_type state, size_type position )
 		{
-			return &GetReference( state, position );
+			return &get_reference( state, position );
 		}
 	};
 	
-	class UnitTable_Container: public Nucleus::ConstIndexedContainer< UnitTable_Container_Specifics >
+	class UnitTable_Container: public nucleus::const_indexed_sequence< UnitTable_Container_Specifics >
 	{
 		friend UnitTable_Container UnitTable();
 		
 		private:
 			UnitTable_Container()
-			: Nucleus::ConstIndexedContainer< UnitTable_Container_Specifics >( UnitTable_Container_Specifics::Nothing() )
+			: nucleus::const_indexed_sequence< UnitTable_Container_Specifics >( UnitTable_Container_Specifics::Nothing() )
 			{}
 	};
 	
@@ -103,7 +102,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct decode_unit_number

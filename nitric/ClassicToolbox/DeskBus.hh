@@ -18,9 +18,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
-
-// Nucleus
-#include "Nucleus/IndexedContainer.h"
+#include "nucleus/indexed_sequence.hh"
 
 // Nitrogen
 #include "Nitrogen/UPP.hh"
@@ -162,30 +160,29 @@ namespace Nitrogen
 		
 		class Nothing {};
 		
-		typedef Nothing ConstIteratorState;
-		typedef Nothing ConstContainerState;
+		typedef Nothing context_type;
 		
 		
-		static size_type Size( ConstContainerState )
+		static size_type Size( context_type )
 		{
 			return CountADBs();
 		}
 		
-		static const_reference GetReference( ConstIteratorState state, size_type position )
+		static const_reference get_reference( context_type state, size_type position )
 		{
 			return GetIndADB( position + 1 );
 		}
 		
-		static const_pointer GetPointer( ConstIteratorState state, size_type position )
+		static const_pointer get_pointer( context_type state, size_type position )
 		{
-			return &GetReference( state, position );
+			return &get_reference( state, position );
 		}
 	};
 	
-	class ADBDevice_Container : public Nucleus::ConstIndexedContainer< ADBDevice_Container_Specifics >
+	class ADBDevice_Container : public nucleus::const_indexed_sequence< ADBDevice_Container_Specifics >
 	{
 		public:
-			ADBDevice_Container() : ConstIndexedContainer( ADBDevice_Container_Specifics::Nothing() )  {}
+			ADBDevice_Container() : const_indexed_sequence( ADBDevice_Container_Specifics::Nothing() )  {}
 	};
 	
 }
