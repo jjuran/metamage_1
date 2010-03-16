@@ -202,7 +202,7 @@ namespace Nitrogen
 	#pragma pack(2)
 #endif
 	
-	struct SPBGetDeviceInfo_SampleInfoAvailable_Result
+	struct SPBGetDeviceInfo_VariableLengthArray
 	{
 		UInt16 count;
 		::Handle data;
@@ -291,7 +291,7 @@ namespace Nitrogen
 			operator Transfer()  { return Transfer( this ); }
 		};
 		
-		typedef SPBGetDeviceInfo_SampleInfoAvailable_Result GetBuffer;
+		typedef SPBGetDeviceInfo_VariableLengthArray GetBuffer;
 	
 		static Result ProcessGetBuffer( const GetBuffer& buffer )
 		{
