@@ -23,11 +23,7 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
-
-// Nucleus
-#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
-#include "Nucleus/ObjectParameterTraits.h"
-#endif
+#include "nucleus/object_parameter_traits.hh"
 
 // Nitrogen
 #ifndef NITROGEN_MACTYPES_HH
@@ -168,7 +164,7 @@ namespace Nitrogen
 		
 		static Result InvokeWithResult( ProcPtr proc, void* param )
 		{
-			return proc( Nucleus::ObjectParameterTraits< Param  >::ConvertFromPointer( param ) );
+			return proc( nucleus::object_parameter_traits< Param  >::convert_from_pointer( param ) );
 		}
 	};
 	
@@ -289,7 +285,7 @@ namespace Nitrogen
 	           ThreadOptions  options   = ThreadOptions(),
 	           Result*        result    = NULL )
 	{
-		void*  threadParam  = const_cast< void* >( Nucleus::ObjectParameterTraits< Param  >::ConvertToPointer( param ) );
+		void*  threadParam  = const_cast< void* >( nucleus::object_parameter_traits< Param  >::convert_to_pointer( param ) );
 		void** threadResult = reinterpret_cast< void** >( result );
 		
 		return NewThread< ThreadEntry< Param,
@@ -310,7 +306,7 @@ namespace Nitrogen
 	           Size           stackSize = Size( 0 ),
 	           ThreadOptions  options   = ThreadOptions() )
 	{
-		void*  threadParam  = const_cast< void* >( Nucleus::ObjectParameterTraits< Param  >::ConvertToPointer( param ) );
+		void*  threadParam  = const_cast< void* >( nucleus::object_parameter_traits< Param  >::convert_to_pointer( param ) );
 		
 		return NewThread< ThreadEntry< Param,
 		                               void,

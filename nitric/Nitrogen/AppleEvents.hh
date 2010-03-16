@@ -18,9 +18,9 @@
 #include <AppleEvents.h>
 #endif
 
-// Nucleus
-#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
-#include "Nucleus/ObjectParameterTraits.h"
+// nucleus
+#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_HH
+#include "nucleus/object_parameter_traits.hh"
 #endif
 
 // Nitrogen
@@ -216,16 +216,16 @@ namespace Nitrogen
 	template < class Object,
 	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
 	inline nucleus::owned< AEEventHandler >
-	AEInstallEventHandler( AEEventClass                                             theAEEventClass,
-	                       AEEventID                                                theAEEventID,
-	                       typename Nucleus::ObjectParameterTraits< Object >::Type  handlerRefCon   = typename Nucleus::ObjectParameterTraits< Object >::Type(),
-	                       Boolean                                                  isSysHandler    = false )
+	AEInstallEventHandler( AEEventClass                                               theAEEventClass,
+	                       AEEventID                                                  theAEEventID,
+	                       typename nucleus::object_parameter_traits< Object >::type  handlerRefCon   = typename nucleus::object_parameter_traits< Object >::type(),
+	                       Boolean                                                    isSysHandler    = false )
 	{
 		return AEInstallEventHandler< AEEventHandler_Callback< Object, handler >::Adapter >
 		(
 			theAEEventClass, 
 			theAEEventID, 
-			Nucleus::ObjectParameterTraits< Object >::ConvertToPointer( handlerRefCon ), 
+			nucleus::object_parameter_traits< Object >::convert_to_pointer( handlerRefCon ), 
 			isSysHandler
 		);
 	}
@@ -237,13 +237,13 @@ namespace Nitrogen
 	                       AEEventID     theAEEventID,
 	                       Boolean       isSysHandler )
 	{
-		typedef typename Nucleus::ObjectParameterTraits< Object >::Type ObjectType;
+		typedef typename nucleus::object_parameter_traits< Object >::type ObjectType;
 		
 		return AEInstallEventHandler< AEEventHandler_Callback< void, handler >::Adapter >
 		(
 			theAEEventClass,
 			theAEEventID,
-			Nucleus::ObjectParameterTraits< Object >::ConvertToPointer( ObjectType() ),
+			nucleus::object_parameter_traits< Object >::convert_to_pointer( ObjectType() ),
 			isSysHandler
 		);
 	}

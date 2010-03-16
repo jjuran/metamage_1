@@ -134,11 +134,11 @@ namespace Nitrogen
 			OptionBits             inOptions,
 			UInt32                 inNumEvents,
 			const EventTypeSpec *  inEventList,
-			typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() ) {
+			typename nucleus::object_parameter_traits< Object >::type inUserData = typename nucleus::object_parameter_traits< Object >::type() ) {
 
 		return HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
 							EventHandler_Bound_ObjectGlue< Object, handler >::UPP(),
-							inNumEvents, inEventList, Nucleus::ObjectParameterTraits<Object>::ConvertToPointer( inUserData ));
+							inNumEvents, inEventList, nucleus::object_parameter_traits< Object >::convert_to_pointer( inUserData ));
 		}
 
 
