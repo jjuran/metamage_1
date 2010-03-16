@@ -17,11 +17,6 @@
 // Standard C++
 #include <iterator>
 
-// Nitrogen Core
-#ifndef NUCLEUS_TRANSFERTRAITS_H
-#include "Nucleus/TransferTraits.h"
-#endif
-
 
 namespace Nucleus
   {
@@ -51,42 +46,6 @@ namespace Nucleus
                typedef const value_type& reference;
                typedef std::forward_iterator_tag iterator_category;
 				
-				struct Transfer;  // Forward declaration, needed by CW Pro 6
-				friend struct Transfer;
-				
-				struct Transfer : private Specifics
-				{
-					friend class const_iterator;
-					
-					size_type                                         position;
-					typename Transfer_Traits< value_type >::Transfer  value;
-					
-					explicit Transfer( const_iterator* v )
-					:
-						Specifics( *v          ),
-						position ( v->position ),
-						value    ( v->value    )
-					{}
-				};
-				
-				const_iterator( Transfer s )
-				:
-					Specifics( s          ),
-					position ( s.position ),
-					value    ( s.value    )
-				{}
-				
-				const_iterator& operator=( Transfer s )
-				{
-					static_cast< Specifics& >( *this ) = static_cast< Specifics& >( s );
-					
-					position = s.position;
-					value    = s.value;
-					
-					return *this;
-				}
-				
-				operator Transfer()  { return Transfer( this ); }
            
             private:
                size_type position;
