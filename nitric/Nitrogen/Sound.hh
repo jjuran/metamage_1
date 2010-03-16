@@ -466,6 +466,8 @@ namespace Nitrogen
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
+	Str255 SPBGetIndexedDevice_Name( std::size_t index );
+	
 	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                                  SoundInputPermissions  permission );
 	
@@ -519,10 +521,10 @@ namespace Nitrogen
 	
 	// Mac OS X only bits for sound input components
 	
-	class SoundInputDevice_ContainerSpecifics : public OSStatus_EndOfEnumeration< siBadSoundInDevice >
+	class SoundInputDevice_Name_Specifics : public OSStatus_EndOfEnumeration< siBadSoundInDevice >
 	{
 		public:
-			typedef SPBGetIndexedDevice_Result value_type;
+			typedef Str255 value_type;
 			typedef UInt16 size_type;
 			typedef SInt16 difference_type;
 			
@@ -531,23 +533,26 @@ namespace Nitrogen
 			
 			value_type GetValue( size_type position )
 			{
-				return SPBGetIndexedDevice( position );
+				return SPBGetIndexedDevice_Name( position );
 			}
 	};
 	
-	class SoundInputDevice_Container: public Nucleus::IndexUntilFailureContainer< SoundInputDevice_ContainerSpecifics >
+	class SoundInputDevice_Name_Sequence : public Nucleus::IndexUntilFailureContainer< SoundInputDevice_Name_Specifics >
 	{
-		friend SoundInputDevice_Container SoundInputDevices();
+		friend SoundInputDevice_Name_Sequence SoundInputDevice_Names();
 		
 		private:
-			SoundInputDevice_Container()
-			: Nucleus::IndexUntilFailureContainer< ::Nitrogen::SoundInputDevice_ContainerSpecifics >( ::Nitrogen::SoundInputDevice_ContainerSpecifics() )
+			typedef ::Nitrogen::SoundInputDevice_Name_Specifics Specifics;
+			
+			SoundInputDevice_Name_Sequence()
+			:
+				Nucleus::IndexUntilFailureContainer< Specifics >( Specifics() )
 			{}
 	};
 	
-	inline SoundInputDevice_Container SoundInputDevices()
+	inline SoundInputDevice_Name_Sequence SoundInputDevice_Names()
 	{
-		return SoundInputDevice_Container();
+		return SoundInputDevice_Name_Sequence();
 	}
 	
 }

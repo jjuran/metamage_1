@@ -56,6 +56,20 @@ namespace Nitrogen
 		return SPBGetIndexedDevice_Result::seize( device );
 	}
 	
+	Str255 SPBGetIndexedDevice_Name( std::size_t index )
+	{
+		Str255    result;
+		::Handle  deviceIconHandle;
+		
+		ThrowOSStatus( ::SPBGetIndexedDevice( index,
+		                                      result,
+		                                      &deviceIconHandle ) );
+		
+		::DisposeHandle( deviceIconHandle );
+		
+		return result;
+	}
+	
 	nucleus::owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                                  SoundInputPermissions  permission )
 	{
@@ -112,37 +126,6 @@ namespace Nitrogen
 		RegisterOSStatus< siInputDeviceErr             >();
 		RegisterOSStatus< siUnknownInfoType            >();
 		RegisterOSStatus< siUnknownQuality             >();
-	}
-	
-	namespace CompileTests
-	{
-		
-		SoundInputDevice_Container::const_iterator Bar();
-		
-		static void Foo()
-		{
-			typedef SoundInputDevice_Container::const_iterator const_iterator;
-			
-			SPBGetIndexedDevice_Result result = SPBGetIndexedDevice( 1 );
-			
-			result = SPBGetIndexedDevice( 2 );
-			
-			const_iterator one;
-			
-			const_iterator two = one;
-			
-			const_iterator three( const_iterator() );
-			
-			SoundInputDevices().begin();
-			
-			const_iterator::Transfer( Bar() );
-			
-			one = const_iterator::Transfer( SoundInputDevices().begin() );
-			one = SoundInputDevices().begin();
-			
-			const_iterator four = SoundInputDevices().begin();
-		}
-		
 	}
 	
 }
