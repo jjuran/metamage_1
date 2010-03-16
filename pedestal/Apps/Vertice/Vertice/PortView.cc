@@ -1717,7 +1717,7 @@ namespace Vertice
 	
 	void PortView::Resize( short width, short height )
 	{
-		using namespace Nucleus::Operators;
+		using namespace nucleus::operators;
 		
 		//if ( newBounds == itsBounds )  return;
 		

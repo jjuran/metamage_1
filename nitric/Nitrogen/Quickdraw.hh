@@ -862,11 +862,6 @@ namespace nucleus
 		}
 	};
 	
-}
-
-namespace Nucleus
-{
-	
 	#pragma mark -
 	#pragma mark ¥ Operators ¥
 	
@@ -937,6 +932,6 @@ namespace Nucleus
 	
 }
 
-#include "Nucleus/Operators.h"
+#include "nucleus/operators.hh"
 
 #endif

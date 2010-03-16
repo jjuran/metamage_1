@@ -75,9 +75,9 @@ namespace Pedestal
 	
 	void Scrollbar::UpdateBounds( const Rect& bounds )
 	{
-		using namespace Nucleus::Operators;
+		using namespace nucleus::operators;
 		
-		using Nucleus::operator!=;
+		using nucleus::operator!=;
 		
 		ASSERT( itsControl != NULL );
 		

@@ -710,7 +710,7 @@ namespace Pedestal
 	
 	static void CheckMouse()
 	{
-		using namespace Nucleus::Operators;
+		using namespace nucleus::operators;
 		
 		Point mouseLocation = N::GetMouse();
 		
