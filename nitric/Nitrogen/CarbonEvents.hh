@@ -724,7 +724,7 @@ namespace Nitrogen
    
    /* ... */
    
-   template < UInt32 eventClass, UInt32 eventKind, ::EventParamName paramater >
+   template < UInt32 eventClass, UInt32 eventKind, EventParamName paramater >
    struct EventParameter_Traits;
    
    template < EventParamType theType, bool in, bool out >
@@ -736,10 +736,8 @@ namespace Nitrogen
       typedef typename DescType_Traits< type >::Result Type;
      };
  
-   static const ::EventParamName noEventHandlerResult = 0;
-   
    template < UInt32 eventClass, UInt32 eventKind >
-   struct EventParameter_Traits< eventClass, eventKind, noEventHandlerResult >
+   struct EventParameter_Traits< eventClass, eventKind, kEventParamUndef >
      {
       static const EventParamType type = typeNull;
       typedef typename DescType_Traits< type >::Result Type;
@@ -1595,7 +1593,7 @@ namespace Nitrogen
         };      
  
       template < EventParamType resultType,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  typename EventHandler_ResultGlue< resultType >::Handler handler >
       struct EventHandler_Bound_ResultGlue
         {
@@ -1612,7 +1610,7 @@ namespace Nitrogen
            }
         };
 
-      template < ::EventParamName resultParameter, EventHandler_ExceptionGlue::Handler handler >
+      template < EventParamName resultParameter, EventHandler_ExceptionGlue::Handler handler >
       struct EventHandler_Bound_ResultGlue< typeNull, resultParameter, handler >
         {
          static EventHandlerUPP UPP()
@@ -1625,10 +1623,16 @@ namespace Nitrogen
 	
 	static const EventParamType typeUndef = EventParamType( 0 );
 	
-      template < ::EventParamName name0 = 0, ::EventParamName name1 = 0, ::EventParamName name2 = 0, ::EventParamName name3 = 0,
-                 ::EventParamName name4 = 0, ::EventParamName name5 = 0, ::EventParamName name6 = 0, ::EventParamName name7 = 0 >
+      template < EventParamName name0 = kEventParamUndef,
+                 EventParamName name1 = kEventParamUndef,
+                 EventParamName name2 = kEventParamUndef,
+                 EventParamName name3 = kEventParamUndef,
+                 EventParamName name4 = kEventParamUndef,
+                 EventParamName name5 = kEventParamUndef,
+                 EventParamName name6 = kEventParamUndef,
+                 EventParamName name7 = kEventParamUndef >
       struct EventParamName_List
-         : nucleus::array_singleton< ::EventParamName >::array_type< name0, name1, name2, name3, name4, name5, name6, name7 >
+         : nucleus::array_singleton< EventParamName >::array_type< name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
 
       template < EventParamType type0 = typeUndef, EventParamType type1 = typeUndef, EventParamType type2 = typeUndef, EventParamType type3 = typeUndef,
@@ -1639,8 +1643,11 @@ namespace Nitrogen
 
       // These specializations take the load off a construct in array_singleton.hh that CodeWarrior 8.3 can't handle.
          template <>
-         struct EventParamName_List< 0, 0, 0, 0, 0, 0, 0, 0 >
-            : nucleus::array_singleton_0< ::EventParamName >
+         struct EventParamName_List< kEventParamUndef, kEventParamUndef,
+                                     kEventParamUndef, kEventParamUndef,
+                                     kEventParamUndef, kEventParamUndef,
+                                     kEventParamUndef, kEventParamUndef >
+            : nucleus::array_singleton_0< EventParamName >
             {};
       
          template <>
@@ -1669,7 +1676,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1699,7 +1706,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1727,7 +1734,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1753,7 +1760,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1777,7 +1784,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1799,7 +1806,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1819,7 +1826,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1837,7 +1844,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1853,7 +1860,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef,
                                       void *userData,
-                                      const ::EventParamName[],
+                                      const EventParamName[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ) );
@@ -1875,7 +1882,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1903,7 +1910,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1929,7 +1936,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1953,7 +1960,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1975,7 +1982,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1995,7 +2002,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -2013,7 +2020,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -2029,7 +2036,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
@@ -2044,7 +2051,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef,
                                       void *,
-                                      const ::EventParamName[],
+                                      const EventParamName[],
                                       Handler handler )
            {
             return handler();
@@ -2070,7 +2077,7 @@ namespace Nitrogen
            }
         };
       
-      template < ::EventParamName resultParameter,
+      template < EventParamName resultParameter,
                  EventParamType resultType,
                  class Object,
                  class ParameterNames,
@@ -2181,7 +2188,7 @@ namespace Nitrogen
    
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames >
       struct EventHandler_EventSpecificGlue
@@ -2210,7 +2217,7 @@ namespace Nitrogen
    
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2290,7 +2297,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2367,7 +2374,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2445,7 +2452,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2523,7 +2530,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2604,7 +2611,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
