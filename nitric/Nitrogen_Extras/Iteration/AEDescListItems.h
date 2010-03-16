@@ -6,8 +6,8 @@
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #define ITERATION_AEDESCLISTITEMS_H
 
-// Nucleus
-#include "Nucleus/IndexedValueContainer.h"
+// nucleus
+#include "nucleus/indexed_value_sequence.hh"
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
@@ -23,21 +23,20 @@ namespace Nitrogen
 		typedef SInt32                         difference_type;
 		typedef nucleus::owned< AEDesc_Data >  value_type;
 		
-		static std::size_t Size( const AEDescList& list )
+		static std::size_t size( const AEDescList& list )
 		{
 			return AECountItems( list );
 		}
 		
-		static value_type GetValue( const AEDescList& list, size_type position )
+		static value_type get_value( const AEDescList& list, size_type position )
 		{
 			return AEGetNthDesc( list, position + 1 );  // one-based
 		}
 		
-		typedef const AEDescList& ContainerState;
-		typedef ContainerState IteratorState;
+		typedef const AEDescList& context_type;
 	};
 	
-	typedef Nucleus::IndexedValueContainer< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
+	typedef nucleus::indexed_value_sequence< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
 	
 	inline AEDescList_ItemValue_Container AEDescList_ItemValues( const AEDescList& list )
 	{

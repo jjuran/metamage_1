@@ -9,8 +9,8 @@
 // Io
 #include "io/walk.hh"
 
-// Nucleus
-#include "Nucleus/IndexedValueContainer.h"
+// nucleus
+#include "nucleus/indexed_value_sequence.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
@@ -52,9 +52,9 @@ namespace Nitrogen
 		typedef Nitrogen::Str63  value_type;
 		
 		//typedef typename Specifics::filename_result           value_type;
-		typedef typename Specifics::optimized_directory_spec  ContainerType;
+		typedef typename Specifics::optimized_directory_spec  context_type;
 		
-		static std::size_t Size( const ContainerType& dir )
+		static std::size_t size( const context_type& dir )
 		{
 			CInfoPBRec pb;
 			
@@ -63,7 +63,7 @@ namespace Nitrogen
 			return pb.dirInfo.ioDrNmFls;
 		}
 		
-		static value_type GetValue( const ContainerType& dir, size_type position )
+		static value_type get_value( const context_type& dir, size_type position )
 		{
 			CInfoPBRec pb;
 			::Str255 name;
@@ -72,13 +72,10 @@ namespace Nitrogen
 			
 			return name;
 		}
-		
-		typedef ContainerType ContainerState;
-		typedef ContainerState IteratorState;
 	};
 	
-	typedef Nucleus::IndexedValueContainer< FSContents_Specifics< FSSpec_Io_Details > > FSSpecContents_Container;
-	typedef Nucleus::IndexedValueContainer< FSContents_Specifics< FSRef_Io_Details  > > FSRefContents_Container;
+	typedef nucleus::indexed_value_sequence< FSContents_Specifics< FSSpec_Io_Details > > FSSpecContents_Container;
+	typedef nucleus::indexed_value_sequence< FSContents_Specifics< FSRef_Io_Details  > > FSRefContents_Container;
 	
 	inline FSSpecContents_Container FSContents( const FSDirSpec& dir )
 	{

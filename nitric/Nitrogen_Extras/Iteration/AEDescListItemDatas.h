@@ -6,8 +6,8 @@
 #ifndef ITERATION_AEDESCLISTITEMDATAS_H
 #define ITERATION_AEDESCLISTITEMDATAS_H
 
-// Nucleus
-#include "Nucleus/IndexedValueContainer.h"
+// nucleus
+#include "nucleus/indexed_value_sequence.hh"
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
@@ -24,35 +24,34 @@ namespace Nitrogen
 		typedef SInt32                                    difference_type;
 		typedef typename DescType_Traits< type >::Result  value_type;
 		
-		static std::size_t Size( const AEDescList& list )
+		static std::size_t size( const AEDescList& list )
 		{
 			return AECountItems( list );
 		}
 		
-		static value_type GetValue( const AEDescList& list, size_type position )
+		static value_type get_value( const AEDescList& list, size_type position )
 		{
 			return AEGetNthPtr< type >( list, position + 1 );  // one-based
 		}
 		
-		typedef const AEDescList& ContainerState;
-		typedef ContainerState IteratorState;
+		typedef const AEDescList& context_type;
 	};
 	
 	template < DescType type >
-	class AEDescList_ItemDataValue_Container : public Nucleus::IndexedValueContainer< AEDescList_ItemData_Specifics< type > >
+	class AEDescList_ItemDataValue_Container : public nucleus::indexed_value_sequence< AEDescList_ItemData_Specifics< type > >
 	{
 		private:
-			typedef typename AEDescList_ItemData_Specifics< type >::ContainerState State;
+			typedef typename AEDescList_ItemData_Specifics< type >::context_type context_type;
 			
-			AEDescList_ItemDataValue_Container( State state )
+			AEDescList_ItemDataValue_Container( context_type context )
 			:
-				Nucleus::IndexedValueContainer< AEDescList_ItemData_Specifics< type > >( state )
+				nucleus::indexed_value_sequence< AEDescList_ItemData_Specifics< type > >( context )
 			{}
 		
 		public:
 			static AEDescList_ItemDataValue_Container< type > New( const AEDescList& list )
 			{
-				return AEDescList_ItemDataValue_Container< type >( State( list ) );
+				return AEDescList_ItemDataValue_Container< type >( list );
 			}
 	};
 	
