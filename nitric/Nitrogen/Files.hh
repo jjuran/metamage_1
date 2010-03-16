@@ -20,10 +20,6 @@
 #include "nucleus/index_until_error_sequence.hh"
 #include "nucleus/initialize.hh"
 
-#ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
-#include "Nucleus/ArrayContainerFunctions.h"
-#endif
-
 #ifndef __FILES__
 #include <Files.h>
 #endif
@@ -1523,16 +1519,22 @@ namespace Nitrogen
      {
       typedef FSVolumeInfoFinderInfo Type;
       
+      template < class Element, std::size_t size >
+      static void ArrayAssign( Element (&destination)[size], const Element (&source)[size] )
+        {
+         std::copy( source, source + size, destination );
+        }
+
       static Type Get( const FSVolumeInfo& info )
         {
          FSVolumeInfoFinderInfo result;
-         Nucleus::ArrayAssign( result.finderInfo, info.finderInfo );
+         ArrayAssign( result.finderInfo, info.finderInfo );
          return result;
         }
 
       static void Set( FSVolumeInfo& info, const FSVolumeInfoFinderInfo& value )
         {
-         Nucleus::ArrayAssign( info.finderInfo, value.finderInfo );
+         ArrayAssign( info.finderInfo, value.finderInfo );
         }      
      };
 #endif
