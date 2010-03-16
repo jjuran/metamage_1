@@ -23,11 +23,6 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/index_until_error_sequence.hh"
 
-// Nucleus
-#ifndef NUCLEUS_TRANSFERTRAITS_H
-#include "Nucleus/TransferTraits.h"
-#endif
-
 // Nitrogen
 #ifndef NITROGEN_COMPONENTS_HH
 #include "Nitrogen/Components.hh"
@@ -216,6 +211,25 @@ namespace Nitrogen
 	#pragma pack()
 #endif
 	
+}
+
+namespace nucleus
+{
+	
+	template <>
+	struct disposer< Nitrogen::SPBGetDeviceInfo_VariableLengthArray > : public std::unary_function< Nitrogen::SPBGetDeviceInfo_VariableLengthArray, void >
+	{
+		void operator()( const Nitrogen::SPBGetDeviceInfo_VariableLengthArray& array ) const
+		{
+			disposer< Nitrogen::Handle >()( array.data );
+		}
+	};
+	
+}
+
+namespace Nitrogen
+{
+	
 	template < class Type >  struct InfoData_Traits;
 	
 	template <>  struct InfoData_Traits< UInt16 >
@@ -256,53 +270,13 @@ namespace Nitrogen
 	
 	template < class T >  struct InfoData_Traits< T** >
 	{
-		struct Result
-		{
-			UInt16 count;
-			nucleus::owned< T**, nucleus::disposer< Handle > > data;
-			
-			struct Transfer
-			{
-				UInt16 count;
-				nucleus::ownership_transfer< T**, nucleus::disposer< Handle > > data;
-				
-				explicit Transfer( Result* s )
-				:
-					count( s->count ), data( s->data )
-				{}
-			};
-			
-			Result() : count( 0 )  {}
-			
-			Result( Transfer s )
-			:
-				count( s.count ),
-				data ( s.data  )
-			{}
-			
-			Result& operator=( Transfer s )
-			{
-				count = s.count;
-				data  = s.data;
-				
-				return *this;
-			}
-			
-			operator Transfer()  { return Transfer( this ); }
-		};
+		typedef nucleus::owned< SPBGetDeviceInfo_VariableLengthArray > Result;
 		
 		typedef SPBGetDeviceInfo_VariableLengthArray GetBuffer;
 	
 		static Result ProcessGetBuffer( const GetBuffer& buffer )
 		{
-			T** handle = Handle_Cast< T >( Handle( buffer.data ) );
-			
-			Result result;
-			
-			result.count = buffer.count;
-			result.data  = nucleus::owned< T**, nucleus::disposer< Handle > >::seize( handle );
-			
-			return result;
+			return Result::seize( buffer );
 		}
 	};
 	
