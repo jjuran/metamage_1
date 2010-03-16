@@ -78,6 +78,8 @@ namespace Nitrogen
 		// ignore errors in destructors for now
 	}
 	
+	::OSStatus ConvertTheExceptionToOSStatus( OSStatus defaultValue );
+	
   }
 
 namespace Nitrogen

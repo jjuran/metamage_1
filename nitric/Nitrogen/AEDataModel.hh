@@ -32,11 +32,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-// Nucleus
-#ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
-#include "Nucleus/TheExceptionBeingHandled.h"
-#endif
-
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
 #endif
@@ -785,8 +780,7 @@ namespace Nitrogen
 			}
 			catch ( ... )
 			{
-				return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
-				                                     OSStatus( errAEEventFailed ) );
+				return ConvertTheExceptionToOSStatus( errAEEventFailed );
 			}
 			
 			return noErr;
@@ -813,8 +807,7 @@ namespace Nitrogen
 			}
 			catch ( ... )
 			{
-				return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
-				                                     OSStatus( errAEEventFailed ) );
+				return ConvertTheExceptionToOSStatus( errAEEventFailed );
 			}
 			
 			return noErr;
