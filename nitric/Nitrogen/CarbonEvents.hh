@@ -19,12 +19,10 @@
 #endif
 
 // nucleus
+#include "nucleus/array_singleton.hh"
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/object_parameter_traits.hh"
 
-#ifndef NUCLEUS_ARRAYSINGLETON_H
-#include "Nucleus/ArraySingleton.h"
-#endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
@@ -1500,24 +1498,24 @@ namespace Nitrogen
       template < ::EventParamName name0 = 0, ::EventParamName name1 = 0, ::EventParamName name2 = 0, ::EventParamName name3 = 0,
                  ::EventParamName name4 = 0, ::EventParamName name5 = 0, ::EventParamName name6 = 0, ::EventParamName name7 = 0 >
       struct EventParamName_List
-         : Nucleus::ArraySingleton< ::EventParamName >::ArrayType< name0, name1, name2, name3, name4, name5, name6, name7 >
+         : nucleus::array_singleton< ::EventParamName >::array_type< name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
 
       template < EventParamType type0 = typeUndef, EventParamType type1 = typeUndef, EventParamType type2 = typeUndef, EventParamType type3 = typeUndef,
                  EventParamType type4 = typeUndef, EventParamType type5 = typeUndef, EventParamType type6 = typeUndef, EventParamType type7 = typeUndef >
       struct EventParamType_List
-         : Nucleus::ArraySingleton< EventParamType >::ArrayType< type0, type1, type2, type3, type4, type5, type6, type7 >
+         : nucleus::array_singleton< EventParamType >::array_type< type0, type1, type2, type3, type4, type5, type6, type7 >
          {};
 
-      // These specializations take the load off a construct in ArraySingleton.h that CodeWarrior 8.3 can't handle.
+      // These specializations take the load off a construct in array_singleton.hh that CodeWarrior 8.3 can't handle.
          template <>
          struct EventParamName_List< 0, 0, 0, 0, 0, 0, 0, 0 >
-            : Nucleus::ArraySingleton0< ::EventParamName >
+            : nucleus::array_singleton_0< ::EventParamName >
             {};
       
          template <>
          struct EventParamType_List< typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef >
-            : Nucleus::ArraySingleton0< EventParamType >
+            : nucleus::array_singleton_0< EventParamType >
             {};
       
    /* Glue for extracting an EventHandler's parameters */
