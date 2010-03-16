@@ -1935,7 +1935,7 @@ namespace Nitrogen
             return EventHandler_ParameterGlue< Result, Object, ParameterTypes >::GetParameters( call,
                                                                                                 event,
                                                                                                 userData,
-                                                                                                ParameterNames::Array(),
+                                                                                                ParameterNames::array(),
                                                                                                 handler );
            }
         };
