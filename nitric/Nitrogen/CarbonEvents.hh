@@ -251,6 +251,8 @@ namespace Nitrogen
 	
 	enum EventParamName
 	{
+		kEventParamUndef = 0,
+		
 		kEventParamDirectObject = ::kEventParamDirectObject,
 		
 		kEventParamPostTarget = ::kEventParamPostTarget,
