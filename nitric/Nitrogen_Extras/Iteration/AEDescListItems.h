@@ -17,41 +17,6 @@
 namespace Nitrogen
 {
 	
-	class Const_AEDescList_Item_Details
-	{
-		private:
-			const AEDescList& list;
-			std::size_t index;
-			
-		public:
-			typedef nucleus::owned< AEDesc_Data >  Value;
-			typedef Value                          GetResult;
-			
-			Const_AEDescList_Item_Details( const AEDescList& list, std::size_t index ) 
-			: 
-				list( list ), 
-				index( index )  {}
-			
-			GetResult Get() const  { return AEGetNthDesc( list, index ); }
-	};
-	
-	class AEDescList_Item_Details
-	{
-		private:
-			nucleus::owned< AEDescList_Data >&  list;
-			std::size_t                         index;
-			
-		public:
-			typedef nucleus::owned< AEDesc_Data >  Value;
-			typedef Value                          GetResult;
-			typedef const AEDesc_Data&             SetParameter;
-			
-			AEDescList_Item_Details( nucleus::owned< AEDescList_Data >& list, std::size_t index ) : list( list ), index( index )  {}
-			
-			GetResult Get() const  { return AEGetNthDesc( list, index ); }
-			void Set( SetParameter param ) const  { AEPutDesc( list, index, param ); }
-	};
-	
 	struct AEDescList_Item_Specifics
 	{
 		typedef UInt32                         size_type;
