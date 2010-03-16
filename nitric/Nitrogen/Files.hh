@@ -17,13 +17,11 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/index_until_error_sequence.hh"
 #include "nucleus/initialize.hh"
 
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
-#endif
-#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
-#include "Nucleus/IndexUntilFailureContainer.h"
 #endif
 
 #ifndef __FILES__
@@ -1661,18 +1659,18 @@ namespace Nitrogen
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
          
-         value_type GetValue( size_type position )
+         value_type get_value( size_type position )
            {
             return FSGetVolumeRefNum( FSVolumeIndex( position ) );
            }
      };
 
-   class Volume_Container: public Nucleus::IndexUntilFailureContainer< Volume_ContainerSpecifics >
+   class Volume_Container : public nucleus::index_until_error_sequence< Volume_ContainerSpecifics >
      {
       friend Volume_Container Volumes();
       private:
          Volume_Container()
-           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::Volume_ContainerSpecifics >( ::Nitrogen::Volume_ContainerSpecifics() )
+           : nucleus::index_until_error_sequence< ::Nitrogen::Volume_ContainerSpecifics >( ::Nitrogen::Volume_ContainerSpecifics() )
            {}
      };
 
@@ -1702,7 +1700,7 @@ namespace Nitrogen
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
          
-         value_type GetValue( size_type position )
+         value_type get_value( size_type position )
            {
             return FSGetVolumeInfo( FSVolumeIndex( position ), whichInfo );
            }
@@ -1712,13 +1710,13 @@ namespace Nitrogen
    template < ::FSVolumeInfoBitmap whichInfo > inline VolumeInfo_Container<whichInfo> VolumeInfos();
    
    template < ::FSVolumeInfoBitmap whichInfo >
-   class VolumeInfo_Container: public Nucleus::IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >
+   class VolumeInfo_Container : public nucleus::index_until_error_sequence< VolumeInfo_ContainerSpecifics<whichInfo> >
      {
       friend VolumeInfo_Container<whichInfo> VolumeInfos<whichInfo>();
 
       private:
          VolumeInfo_Container()
-           : Nucleus::IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >( VolumeInfo_ContainerSpecifics<whichInfo>() )
+           : nucleus::index_until_error_sequence< VolumeInfo_ContainerSpecifics<whichInfo> >( VolumeInfo_ContainerSpecifics<whichInfo>() )
            {}
      };
    
@@ -1738,18 +1736,18 @@ namespace Nitrogen
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
          
-         value_type GetValue( size_type position )
+         value_type get_value( size_type position )
            {
             return FSGetVolumeName( FSVolumeIndex( position ) );
            }
      };
 
-   class VolumeName_Container: public Nucleus::IndexUntilFailureContainer< VolumeName_ContainerSpecifics >
+   class VolumeName_Container : public nucleus::index_until_error_sequence< VolumeName_ContainerSpecifics >
      {
       friend VolumeName_Container VolumeNames();
       private:
          VolumeName_Container()
-           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::VolumeName_ContainerSpecifics >( ::Nitrogen::VolumeName_ContainerSpecifics() )
+           : nucleus::index_until_error_sequence< ::Nitrogen::VolumeName_ContainerSpecifics >( ::Nitrogen::VolumeName_ContainerSpecifics() )
            {}
      };
 
@@ -1768,18 +1766,18 @@ namespace Nitrogen
          static size_type begin_position()   { return 1; }
          static size_type end_position()     { return 0; }
          
-         value_type GetValue( size_type position )
+         value_type get_value( size_type position )
            {
             return FSGetVolumeRootDirectory( FSVolumeIndex( position ) );
            }
      };
 
-   class VolumeRootDirectory_Container: public Nucleus::IndexUntilFailureContainer< VolumeRootDirectory_ContainerSpecifics >
+   class VolumeRootDirectory_Container : public nucleus::index_until_error_sequence< VolumeRootDirectory_ContainerSpecifics >
      {
       friend VolumeRootDirectory_Container VolumeRootDirectories();
       private:
          VolumeRootDirectory_Container()
-           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::VolumeRootDirectory_ContainerSpecifics >( ::Nitrogen::VolumeRootDirectory_ContainerSpecifics() )
+           : nucleus::index_until_error_sequence< ::Nitrogen::VolumeRootDirectory_ContainerSpecifics >( ::Nitrogen::VolumeRootDirectory_ContainerSpecifics() )
            {}
      };
 

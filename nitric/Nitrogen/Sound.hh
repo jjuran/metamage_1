@@ -21,11 +21,9 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/index_until_error_sequence.hh"
 
 // Nucleus
-#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
-#include "Nucleus/IndexUntilFailureContainer.h"
-#endif
 #ifndef NUCLEUS_TRANSFERTRAITS_H
 #include "Nucleus/TransferTraits.h"
 #endif
@@ -531,13 +529,13 @@ namespace Nitrogen
 			static size_type begin_position()   { return 1; }
 			static size_type end_position()     { return 0; }
 			
-			value_type GetValue( size_type position )
+			value_type get_value( size_type position )
 			{
 				return SPBGetIndexedDevice_Name( position );
 			}
 	};
 	
-	class SoundInputDevice_Name_Sequence : public Nucleus::IndexUntilFailureContainer< SoundInputDevice_Name_Specifics >
+	class SoundInputDevice_Name_Sequence : public nucleus::index_until_error_sequence< SoundInputDevice_Name_Specifics >
 	{
 		friend SoundInputDevice_Name_Sequence SoundInputDevice_Names();
 		
@@ -546,7 +544,7 @@ namespace Nitrogen
 			
 			SoundInputDevice_Name_Sequence()
 			:
-				Nucleus::IndexUntilFailureContainer< Specifics >( Specifics() )
+				nucleus::index_until_error_sequence< Specifics >( Specifics() )
 			{}
 	};
 	
