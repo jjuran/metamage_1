@@ -251,6 +251,8 @@ namespace Nitrogen
 	
 	enum EventParamName
 	{
+		kEventParamUndef = 0,
+		
 		kEventParamDirectObject = ::kEventParamDirectObject,
 		
 		kEventParamPostTarget = ::kEventParamPostTarget,
@@ -279,6 +281,134 @@ namespace Nitrogen
 		kEventParamMouseDelta      = ::kEventParamMouseDelta,
 		kEventParamMouseChord      = ::kEventParamMouseChord,
 		kEventParamTabletEventType = ::kEventParamTabletEventType,
+		
+		kEventParamKeyCode = ::kEventParamKeyCode,
+		kEventParamKeyMacCharCodes = ::kEventParamKeyMacCharCodes,
+		kEventParamKeyModifiers    = ::kEventParamKeyModifiers,
+		kEventParamKeyUnicodes = ::kEventParamKeyUnicodes,
+		kEventParamKeyboardType = ::kEventParamKeyboardType,
+		
+		kEventParamTextInputSendRefCon = ::kEventParamTextInputSendRefCon,
+		kEventParamTextInputSendComponentInstance = ::kEventParamTextInputSendComponentInstance,
+		kEventParamTextInputSendSLRec = ::kEventParamTextInputSendSLRec,
+		kEventParamTextInputReplySLRec = ::kEventParamTextInputReplySLRec,
+		kEventParamTextInputSendText = ::kEventParamTextInputSendText,
+		kEventParamTextInputReplyText = ::kEventParamTextInputReplyText,
+		kEventParamTextInputSendUpdateRng = ::kEventParamTextInputSendUpdateRng,
+		kEventParamTextInputSendHiliteRng = ::kEventParamTextInputSendHiliteRng,
+		kEventParamTextInputSendClauseRng = ::kEventParamTextInputSendClauseRng,
+		kEventParamTextInputSendPinRng = ::kEventParamTextInputSendPinRng,
+		kEventParamTextInputSendFixLen = ::kEventParamTextInputSendFixLen,
+		kEventParamTextInputSendLeadingEdge = ::kEventParamTextInputSendLeadingEdge,
+		kEventParamTextInputReplyLeadingEdge = ::kEventParamTextInputReplyLeadingEdge,
+		kEventParamTextInputSendTextOffset = ::kEventParamTextInputSendTextOffset,
+		kEventParamTextInputReplyTextOffset = ::kEventParamTextInputReplyTextOffset,
+		kEventParamTextInputReplyRegionClass = ::kEventParamTextInputReplyRegionClass,
+		kEventParamTextInputSendCurrentPoint = ::kEventParamTextInputSendCurrentPoint,
+		kEventParamTextInputSendDraggingMode = ::kEventParamTextInputSendDraggingMode,
+		kEventParamTextInputReplyPoint = ::kEventParamTextInputReplyPoint,
+		kEventParamTextInputReplyFont = ::kEventParamTextInputReplyFont,
+		kEventParamTextInputReplyFMFont = ::kEventParamTextInputReplyFMFont,
+		kEventParamTextInputReplyPointSize = ::kEventParamTextInputReplyPointSize,
+		kEventParamTextInputReplyLineHeight = ::kEventParamTextInputReplyLineHeight,
+		kEventParamTextInputReplyLineAscent = ::kEventParamTextInputReplyLineAscent,
+		kEventParamTextInputReplyTextAngle = ::kEventParamTextInputReplyTextAngle,
+		kEventParamTextInputSendShowHide = ::kEventParamTextInputSendShowHide,
+		kEventParamTextInputReplyShowHide = ::kEventParamTextInputReplyShowHide,
+		kEventParamTextInputSendKeyboardEvent = ::kEventParamTextInputSendKeyboardEvent,
+		kEventParamTextInputSendTextServiceEncoding = ::kEventParamTextInputSendTextServiceEncoding,
+		kEventParamTextInputSendTextServiceMacEncoding = ::kEventParamTextInputSendTextServiceMacEncoding,
+		
+		kEventParamHICommand = ::kEventParamHICommand,
+		
+		kEventParamWindowFeatures = ::kEventParamWindowFeatures,
+		kEventParamWindowDefPart = ::kEventParamWindowDefPart,
+		kEventParamCurrentBounds = ::kEventParamCurrentBounds,
+		kEventParamOriginalBounds = ::kEventParamOriginalBounds,
+		kEventParamPreviousBounds = ::kEventParamPreviousBounds,
+		kEventParamClickActivation = ::kEventParamClickActivation,
+		kEventParamWindowRegionCode = ::kEventParamWindowRegionCode,
+		kEventParamWindowDragHiliteFlag = ::kEventParamWindowDragHiliteFlag,
+		kEventParamWindowModifiedFlag = ::kEventParamWindowModifiedFlag,
+		kEventParamWindowProxyGWorldPtr = ::kEventParamWindowProxyGWorldPtr,
+		kEventParamWindowProxyImageRgn = ::kEventParamWindowProxyImageRgn,
+		kEventParamWindowProxyOutlineRgn = ::kEventParamWindowProxyOutlineRgn,
+		kEventParamWindowStateChangedFlags = ::kEventParamWindowStateChangedFlags,
+		kEventParamWindowTitleFullWidth = ::kEventParamWindowTitleFullWidth,
+		kEventParamWindowTitleTextWidth = ::kEventParamWindowTitleTextWidth,
+		kEventParamWindowGrowRect = ::kEventParamWindowGrowRect,
+		kEventParamAttributes = ::kEventParamAttributes,
+		
+	#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+		
+		kEventParamDockChangedReason = ::kEventParamDockChangedReason,
+		
+	#endif
+		
+		kEventParamPreviousDockRect = ::kEventParamPreviousDockRect,
+		kEventParamCurrentDockRect = ::kEventParamCurrentDockRect,
+		
+		kEventParamControlPart = ::kEventParamControlPart,
+		kEventParamInitCollection = ::kEventParamInitCollection,
+		kEventParamControlMessage = ::kEventParamControlMessage,
+		kEventParamControlParam = ::kEventParamControlParam,
+		kEventParamControlResult = ::kEventParamControlResult,
+		kEventParamControlRegion = ::kEventParamControlRegion,
+		kEventParamControlAction = ::kEventParamControlAction,
+		kEventParamControlIndicatorDragConstraint = ::kEventParamControlIndicatorDragConstraint,
+		kEventParamControlIndicatorRegion = ::kEventParamControlIndicatorRegion,
+		kEventParamControlIsGhosting = ::kEventParamControlIsGhosting,
+		kEventParamControlIndicatorOffset = ::kEventParamControlIndicatorOffset,
+		kEventParamControlClickActivationResult = ::kEventParamControlClickActivationResult,
+		kEventParamControlSubControl = ::kEventParamControlSubControl,
+		kEventParamControlOptimalBounds = ::kEventParamControlOptimalBounds,
+		kEventParamControlOptimalBaselineOffset = ::kEventParamControlOptimalBaselineOffset,
+		kEventParamControlDataTag = ::kEventParamControlDataTag,
+		kEventParamControlDataBuffer = ::kEventParamControlDataBuffer,
+		kEventParamControlDataBufferSize = ::kEventParamControlDataBufferSize,
+		kEventParamControlDrawDepth = ::kEventParamControlDrawDepth,
+		kEventParamControlDrawInColor = ::kEventParamControlDrawInColor,
+		kEventParamControlFeatures = ::kEventParamControlFeatures,
+		kEventParamControlPartBounds = ::kEventParamControlPartBounds,
+		kEventParamControlOriginalOwningWindow = ::kEventParamControlOriginalOwningWindow,
+		kEventParamControlCurrentOwningWindow = ::kEventParamControlCurrentOwningWindow,
+		
+		kEventParamCurrentMenuTrackingMode = ::kEventParamCurrentMenuTrackingMode,
+		kEventParamNewMenuTrackingMode = ::kEventParamNewMenuTrackingMode,
+		kEventParamMenuFirstOpen = ::kEventParamMenuFirstOpen,
+		kEventParamMenuItemIndex = ::kEventParamMenuItemIndex,
+		kEventParamMenuCommand = ::kEventParamMenuCommand,
+		kEventParamEnableMenuForKeyEvent = ::kEventParamEnableMenuForKeyEvent,
+		kEventParamMenuEventOptions = ::kEventParamMenuEventOptions,
+		kEventParamMenuContext = ::kEventParamMenuContext,
+		kEventParamMenuItemBounds = ::kEventParamMenuItemBounds,
+		kEventParamMenuMarkBounds = ::kEventParamMenuMarkBounds,
+		kEventParamMenuIconBounds = ::kEventParamMenuIconBounds,
+		kEventParamMenuTextBounds = ::kEventParamMenuTextBounds,
+		kEventParamMenuTextBaseline = ::kEventParamMenuTextBaseline,
+		kEventParamMenuCommandKeyBounds = ::kEventParamMenuCommandKeyBounds,
+		kEventParamMenuVirtualTop = ::kEventParamMenuVirtualTop,
+		kEventParamMenuVirtualBottom = ::kEventParamMenuVirtualBottom,
+		kEventParamMenuDrawState = ::kEventParamMenuDrawState,
+		kEventParamMenuItemType = ::kEventParamMenuItemType,
+		kEventParamMenuItemWidth = ::kEventParamMenuItemWidth,
+		kEventParamMenuItemHeight = ::kEventParamMenuItemHeight,
+		
+		kEventParamProcessID = ::kEventParamProcessID,
+		kEventParamLaunchRefCon = ::kEventParamLaunchRefCon,
+		kEventParamLaunchErr = ::kEventParamLaunchErr,
+		
+		kEventParamTabletPointRec  = ::kEventParamTabletPointRec,
+		kEventParamTabletProximityRec  = ::kEventParamTabletProximityRec,
+		kEventParamTabletPointerRec = ::kEventParamTabletPointerRec,
+		
+		kEventParamNewScrollBarVariant = ::kEventParamNewScrollBarVariant,
+		
+		kEventParamScrapRef = ::kEventParamScrapRef,
+		kEventParamServiceCopyTypes = ::kEventParamServiceCopyTypes,
+		kEventParamServicePasteTypes = ::kEventParamServicePasteTypes,
+		kEventParamServiceMessageName = ::kEventParamServiceMessageName,
+		kEventParamServiceUserData = ::kEventParamServiceUserData,
 		
 	#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 		
@@ -594,7 +724,7 @@ namespace Nitrogen
    
    /* ... */
    
-   template < UInt32 eventClass, UInt32 eventKind, ::EventParamName paramater >
+   template < UInt32 eventClass, UInt32 eventKind, EventParamName paramater >
    struct EventParameter_Traits;
    
    template < EventParamType theType, bool in, bool out >
@@ -606,10 +736,8 @@ namespace Nitrogen
       typedef typename DescType_Traits< type >::Result Type;
      };
  
-   static const ::EventParamName noEventHandlerResult = 0;
-   
    template < UInt32 eventClass, UInt32 eventKind >
-   struct EventParameter_Traits< eventClass, eventKind, noEventHandlerResult >
+   struct EventParameter_Traits< eventClass, eventKind, kEventParamUndef >
      {
       static const EventParamType type = typeNull;
       typedef typename DescType_Traits< type >::Result Type;
@@ -1465,7 +1593,7 @@ namespace Nitrogen
         };      
  
       template < EventParamType resultType,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  typename EventHandler_ResultGlue< resultType >::Handler handler >
       struct EventHandler_Bound_ResultGlue
         {
@@ -1482,7 +1610,7 @@ namespace Nitrogen
            }
         };
 
-      template < ::EventParamName resultParameter, EventHandler_ExceptionGlue::Handler handler >
+      template < EventParamName resultParameter, EventHandler_ExceptionGlue::Handler handler >
       struct EventHandler_Bound_ResultGlue< typeNull, resultParameter, handler >
         {
          static EventHandlerUPP UPP()
@@ -1495,29 +1623,24 @@ namespace Nitrogen
 	
 	static const EventParamType typeUndef = EventParamType( 0 );
 	
-      template < ::EventParamName name0 = 0, ::EventParamName name1 = 0, ::EventParamName name2 = 0, ::EventParamName name3 = 0,
-                 ::EventParamName name4 = 0, ::EventParamName name5 = 0, ::EventParamName name6 = 0, ::EventParamName name7 = 0 >
+      template < EventParamName name0 = kEventParamUndef,
+                 EventParamName name1 = kEventParamUndef,
+                 EventParamName name2 = kEventParamUndef,
+                 EventParamName name3 = kEventParamUndef,
+                 EventParamName name4 = kEventParamUndef,
+                 EventParamName name5 = kEventParamUndef,
+                 EventParamName name6 = kEventParamUndef,
+                 EventParamName name7 = kEventParamUndef >
       struct EventParamName_List
-         : nucleus::array_singleton< ::EventParamName >::array_type< name0, name1, name2, name3, name4, name5, name6, name7 >
+         : nucleus::array_singleton< EventParamName, name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
 
       template < EventParamType type0 = typeUndef, EventParamType type1 = typeUndef, EventParamType type2 = typeUndef, EventParamType type3 = typeUndef,
                  EventParamType type4 = typeUndef, EventParamType type5 = typeUndef, EventParamType type6 = typeUndef, EventParamType type7 = typeUndef >
       struct EventParamType_List
-         : nucleus::array_singleton< EventParamType >::array_type< type0, type1, type2, type3, type4, type5, type6, type7 >
+         : nucleus::array_singleton< EventParamType, type0, type1, type2, type3, type4, type5, type6, type7 >
          {};
 
-      // These specializations take the load off a construct in array_singleton.hh that CodeWarrior 8.3 can't handle.
-         template <>
-         struct EventParamName_List< 0, 0, 0, 0, 0, 0, 0, 0 >
-            : nucleus::array_singleton_0< ::EventParamName >
-            {};
-      
-         template <>
-         struct EventParamType_List< typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef >
-            : nucleus::array_singleton_0< EventParamType >
-            {};
-      
    /* Glue for extracting an EventHandler's parameters */
       
       template < class Result, class Object, class ParameterTypes, int parameterCount = ParameterTypes::size >
@@ -1539,7 +1662,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1569,7 +1692,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1597,7 +1720,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1623,7 +1746,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1647,7 +1770,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1669,7 +1792,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1689,7 +1812,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1707,7 +1830,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *userData,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
@@ -1723,7 +1846,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef,
                                       void *userData,
-                                      const ::EventParamName[],
+                                      const EventParamName[],
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ) );
@@ -1745,7 +1868,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1773,7 +1896,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1799,7 +1922,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1823,7 +1946,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1845,7 +1968,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1865,7 +1988,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1883,7 +2006,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
@@ -1899,7 +2022,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
                                       void *,
-                                      const ::EventParamName parameterNames[],
+                                      const EventParamName parameterNames[],
                                       Handler handler )
            {
             return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
@@ -1914,7 +2037,7 @@ namespace Nitrogen
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef,
                                       void *,
-                                      const ::EventParamName[],
+                                      const EventParamName[],
                                       Handler handler )
            {
             return handler();
@@ -1940,7 +2063,7 @@ namespace Nitrogen
            }
         };
       
-      template < ::EventParamName resultParameter,
+      template < EventParamName resultParameter,
                  EventParamType resultType,
                  class Object,
                  class ParameterNames,
@@ -2051,7 +2174,7 @@ namespace Nitrogen
    
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames >
       struct EventHandler_EventSpecificGlue
@@ -2080,7 +2203,7 @@ namespace Nitrogen
    
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2160,7 +2283,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2237,7 +2360,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2315,7 +2438,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2393,7 +2516,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,
@@ -2474,7 +2597,7 @@ namespace Nitrogen
 
       template < UInt32 eventClass,
                  UInt32 eventKind,
-                 ::EventParamName resultParameter,
+                 EventParamName resultParameter,
                  class Object,
                  class ParameterNames,
                  typename EventHandler_EventSpecificGlue< eventClass,

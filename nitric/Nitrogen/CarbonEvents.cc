@@ -259,3 +259,28 @@ namespace Nitrogen
       RegisterOSStatus< eventHotKeyInvalidErr           >();
      }
   }
+
+namespace
+{
+	
+	namespace N = Nitrogen;
+	
+	
+	Point IdealWindowSize( const Rect&, WindowRef );
+	
+	static void test()
+	{
+		WindowRef window = NULL;
+		
+		Rect r = {};  // user data
+		
+		N::InstallWindowEventHandler< kEventClassWindow,
+		                              kEventWindowGetIdealSize,
+		                              N::kEventParamDimensions,
+		                              const Rect&,
+		                              N::EventParamName_List< N::kEventParamDirectObject >,
+		                              IdealWindowSize >( window, r );
+	}
+	
+}
+
