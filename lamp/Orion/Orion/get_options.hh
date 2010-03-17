@@ -25,25 +25,41 @@
 #define ORION_GET_OPTIONS_HH
 
 // Standard C++
+#include <exception>
 #include <string>
 #include <vector>
 
 // Iota
 #include "iota/argv.hh"
 
-// Nucleus
-#include "Nucleus/Exception.h"
-
 
 namespace orion
 {
 	
-	class undefined_option : public Nucleus::Exception
+	class Exception : public std::exception
+	{
+		private:
+			std::string itsDescription;
+		
+		public:
+			Exception()  {}
+			
+			Exception( const std::string& description ) : itsDescription( description )
+			{
+				(void) itsDescription.c_str();  // make sure c_str() is safe to call
+			}
+			
+			~Exception() throw()  {}
+			
+			const char* what() const throw()  { return itsDescription.c_str(); }
+	};
+	
+	class undefined_option : public Exception
 	{
 		public:
 			undefined_option( const std::string& option )
 			:
-				Nucleus::Exception( "Undefined option " + option )
+				Exception( "Undefined option " + option )
 			{
 			}
 			
