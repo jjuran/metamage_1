@@ -200,80 +200,99 @@ namespace nucleus
 	};
 	
 	
-	template < class Element >
-	struct array_singleton
+	template < int n, class Element, Element e0, Element e1, Element e2, Element e3, Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n;
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 8, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_8<    Element, e0, e1, e2, e3, e4, e5, e6, e7 >
 	{
-		template < Element e0 = 0, Element e1 = 0, Element e2 = 0, Element e3 = 0,
-		           Element e4 = 0, Element e5 = 0, Element e6 = 0, Element e7 = 0 >
-		struct array_type
-		:
-			array_singleton_8< Element, e0, e1, e2, e3, e4, e5, e6, e7 >
-		{
-		};
-		
-		template < Element e0, Element e1, Element e2, Element e3, Element e4, Element e5, Element e6 >
-		struct array_type< e0, e1, e2, e3, e4, e5, e6, 0 >
-		:
-			array_singleton_7< Element, e0, e1, e2, e3, e4, e5, e6 >
-		{
-		};
-		
-		template < Element e0, Element e1, Element e2, Element e3, Element e4, Element e5 >
-		struct array_type< e0, e1, e2, e3, e4, e5, 0, 0 >
-		:
-			array_singleton_6< Element, e0, e1, e2, e3, e4, e5 >
-		{
-		};
-		
-		template < Element e0, Element e1, Element e2, Element e3, Element e4 >
-		struct array_type< e0, e1, e2, e3, e4, 0, 0, 0 >
-		:
-			array_singleton_5< Element, e0, e1, e2, e3, e4 >
-		{
-		};
-		
-		template < Element e0, Element e1, Element e2, Element e3 >
-		struct array_type< e0, e1, e2, e3, 0, 0, 0, 0 >
-		:
-			array_singleton_4< Element, e0, e1, e2, e3 >
-		{
-		};
-		
-		template < Element e0, Element e1, Element e2 >
-		struct array_type< e0, e1, e2, 0, 0, 0, 0, 0 >
-		:
-			array_singleton_3< Element, e0, e1, e2 >
-		{
-		};
-		
-		template < Element e0, Element e1 >
-		struct array_type< e0, e1, 0, 0, 0, 0, 0, 0 >
-		:
-			array_singleton_2< Element, e0, e1 >
-		{
-		};
-		
-		template < Element e0 >
-		struct array_type< e0, 0, 0, 0, 0, 0, 0, 0 >
-		:
-			array_singleton_1< Element, e0 >
-		{
-		};
 	};
 	
-	#if 0
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 7, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_7<    Element, e0, e1, e2, e3, e4, e5, e6 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 6, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_6<    Element, e0, e1, e2, e3, e4, e5 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 5, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_5<    Element, e0, e1, e2, e3, e4 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 4, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_4<    Element, e0, e1, e2, e3 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 3, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_3<    Element, e0, e1, e2 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 2, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_2<    Element, e0, e1 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 1, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_1<    Element, e0 >
+	{
+	};
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton_n< 0, Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	:      array_singleton_0<    Element >
+	{
+	};
+	
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_size
+	{
+		static const int value = e7 ? 8
+		                       : e6 ? 7
+		                       : e5 ? 6
+		                       : e4 ? 5
+		                       : e3 ? 4
+		                       : e2 ? 3
+		                       : e1 ? 2
+		                       : e0 ? 1
+		                       :      0;
 		
-		// This double-specialization freaks out CodeWarrior 8.3.
-		// There's a (single) specialization in CarbonEvents.h to avoid this case.
-		template < class Element >
-		template <>
-		struct array_singleton< Element >::array_type< 0, 0, 0, 0, 0, 0, 0, 0 >
-		:
-			array_singleton_0< Element >
-		{
-		};
-		
-	#endif
+	};
+	
+	
+	template < class Element, Element e0, Element e1, Element e2, Element e3,
+	                          Element e4, Element e5, Element e6, Element e7 >
+	struct array_singleton
+	:
+		array_singleton_n< array_size< Element, e0, e1, e2, e3, e4, e5, e6, e7 >::value,
+		                               Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+	{
+	};
+	
 }
 
 #endif
