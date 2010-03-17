@@ -11,11 +11,6 @@
 
 #include "Nitrogen/OSStatus.hh"
 
-// Nucleus
-#ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
-#include "Nucleus/TheExceptionBeingHandled.h"
-#endif
-
 
 namespace Nitrogen
 {
@@ -27,7 +22,16 @@ namespace Nitrogen
 	
 	::OSStatus ConvertTheExceptionToOSStatus( OSStatus defaultValue )
 	{
-		return nucleus::convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), defaultValue );
+		try
+		{
+			throw;
+		}
+		catch ( const OSStatus& err )
+		{
+			return err;
+		}
+		
+		return defaultValue;
 	}
 	
 }
