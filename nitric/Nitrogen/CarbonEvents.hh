@@ -1632,29 +1632,15 @@ namespace Nitrogen
                  EventParamName name6 = kEventParamUndef,
                  EventParamName name7 = kEventParamUndef >
       struct EventParamName_List
-         : nucleus::array_singleton< EventParamName >::array_type< name0, name1, name2, name3, name4, name5, name6, name7 >
+         : nucleus::array_singleton< EventParamName, name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
 
       template < EventParamType type0 = typeUndef, EventParamType type1 = typeUndef, EventParamType type2 = typeUndef, EventParamType type3 = typeUndef,
                  EventParamType type4 = typeUndef, EventParamType type5 = typeUndef, EventParamType type6 = typeUndef, EventParamType type7 = typeUndef >
       struct EventParamType_List
-         : nucleus::array_singleton< EventParamType >::array_type< type0, type1, type2, type3, type4, type5, type6, type7 >
+         : nucleus::array_singleton< EventParamType, type0, type1, type2, type3, type4, type5, type6, type7 >
          {};
 
-      // These specializations take the load off a construct in array_singleton.hh that CodeWarrior 8.3 can't handle.
-         template <>
-         struct EventParamName_List< kEventParamUndef, kEventParamUndef,
-                                     kEventParamUndef, kEventParamUndef,
-                                     kEventParamUndef, kEventParamUndef,
-                                     kEventParamUndef, kEventParamUndef >
-            : nucleus::array_singleton_0< EventParamName >
-            {};
-      
-         template <>
-         struct EventParamType_List< typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef, typeUndef >
-            : nucleus::array_singleton_0< EventParamType >
-            {};
-      
    /* Glue for extracting an EventHandler's parameters */
       
       template < class Result, class Object, class ParameterTypes, int parameterCount = ParameterTypes::size >
