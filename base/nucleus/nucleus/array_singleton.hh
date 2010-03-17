@@ -3,9 +3,9 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002-2003 by Lisa Lippincott.
+// Written 2002-2010 by Lisa Lippincott and Joshua Juran.
 //
-// This code was written entirely by the above contributor, who places it
+// This code was written entirely by the above contributors, who place it
 // in the public domain.
 
 
