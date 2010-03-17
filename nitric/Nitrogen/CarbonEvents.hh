@@ -23,10 +23,6 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/object_parameter_traits.hh"
 
-#ifndef NUCLEUS_PSEUDOREFERENCE_H
-#include "Nucleus/Pseudoreference.h"
-#endif
-
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
@@ -627,91 +623,6 @@ namespace Nitrogen
       
       return Traits::Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
      }
-
-   template < EventParamType inDesiredType >
-   class EventParameter_Details
-     {
-      private:
-         EventRef event;
-         EventParamName name;
-      
-      public:
-         typedef typename GetEventParameter_Traits<inDesiredType>::Result      Value;
-         typedef typename GetEventParameter_Traits<inDesiredType>::Result      GetResult;
-         typedef typename SetEventParameter_Traits<inDesiredType>::InData_Type SetParameter;
-         
-         EventParameter_Details( EventRef theEvent, EventParamName theName )
-           : event( theEvent ),
-             name( theName )
-           {}
-         
-         GetResult Get() const                   { return GetEventParameter<inDesiredType>( event, name ); }
-         void Set( SetParameter value ) const    { SetEventParameter<inDesiredType>( event, name, value ); }
-     };
-
-   // These will become template-typedefs when those become available.
-      template < EventParamType inDesiredType >
-      class ConstEventParameter: public Nucleus::ConstPseudoreference< EventParameter_Details< inDesiredType > >
-        {
-         private:
-            typedef Nucleus::ConstPseudoreference< EventParameter_Details< inDesiredType > > Base;
-
-         public:
-            typedef typename Base::Details               Details;
-            
-            typedef ConstEventParameter< inDesiredType > Reference;
-            typedef ConstEventParameter< inDesiredType > ConstReference;
-
-            typedef Nucleus::Pseudopointer< Reference >           Pointer;
-            typedef Nucleus::Pseudopointer< ConstReference >      ConstPointer;
-
-            explicit ConstEventParameter( Details theDetails )                             : Base( theDetails ) {}
-            ConstEventParameter( EventRef theEvent, EventParamName theName )               : Base( Details( theEvent, theName ) ) {}
-            
-            Pointer operator&() const                                                      { return Pointer( Base::operator&().Get() ); }
-            
-            using Base::Get;
-        };
-
-      template < EventParamType inDesiredType >
-      class EventParameter: public Nucleus::Pseudoreference< EventParameter_Details< inDesiredType > >
-        {
-         private:
-            typedef Nucleus::Pseudoreference< EventParameter_Details< inDesiredType > > Base;
-
-         public:
-            typedef typename Base::Details               Details;
-            typedef typename Details::SetParameter       SetParameter;
-            
-            typedef EventParameter     < inDesiredType > Reference;
-            typedef ConstEventParameter< inDesiredType > ConstReference;
-
-            typedef Nucleus::Pseudopointer< Reference >           Pointer;
-            typedef Nucleus::Pseudopointer< ConstReference >      ConstPointer;
-
-            explicit EventParameter( Details theDetails )                                  : Base( theDetails ) {}
-            EventParameter( EventRef theEvent, EventParamName theName )                    : Base( Details( theEvent, theName ) ) {}
-                        
-            Pointer operator&() const                                                      { return Pointer( Base::operator&().Get() ); }
-    
-            operator ConstReference() const                                                { return ConstReference( Base::operator&().Get() ); }
-            
-            using Base::Get;
-            using Base::Set;
-            
-            const EventParameter& operator=( SetParameter value ) const                   { Set( value ); return *this; }
-            const EventParameter& operator=( const EventParameter& rhs ) const            { Set( rhs.Get() ); return *this; }
-            template < class T > const EventParameter& operator+=( const T& rhs ) const   { Set( Get() + rhs ); return *this; }
-            template < class T > const EventParameter& operator-=( const T& rhs ) const   { Set( Get() - rhs ); return *this; }
-            template < class T > const EventParameter& operator*=( const T& rhs ) const   { Set( Get() * rhs ); return *this; }
-            template < class T > const EventParameter& operator/=( const T& rhs ) const   { Set( Get() / rhs ); return *this; }
-            template < class T > const EventParameter& operator%=( const T& rhs ) const   { Set( Get() % rhs ); return *this; }
-            template < class T > const EventParameter& operator&=( const T& rhs ) const   { Set( Get() & rhs ); return *this; }
-            template < class T > const EventParameter& operator|=( const T& rhs ) const   { Set( Get() | rhs ); return *this; }
-            template < class T > const EventParameter& operator^=( const T& rhs ) const   { Set( Get() ^ rhs ); return *this; }
-            template < class T > const EventParameter& operator<<=( const T& rhs ) const  { Set( Get() << rhs ); return *this; }
-            template < class T > const EventParameter& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
-        };
 
    inline EventClass       GetEventClass( EventRef inEvent )     { return EventClass     ( ::GetEventClass( inEvent ) ); }
    inline CarbonEventKind  GetEventKind ( EventRef inEvent )     { return CarbonEventKind( ::GetEventKind ( inEvent ) ); }
@@ -1666,14 +1577,14 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
-                            EventParameter< ParameterTypes::item6 >( event, parameterNames[6] ),
-                            EventParameter< ParameterTypes::item7 >( event, parameterNames[7] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
+                            GetEventParameter< ParameterTypes::item6 >( event, parameterNames[6] ),
+                            GetEventParameter< ParameterTypes::item7 >( event, parameterNames[7] ) );
            }
         };
       
@@ -1696,13 +1607,13 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
-                            EventParameter< ParameterTypes::item6 >( event, parameterNames[6] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
+                            GetEventParameter< ParameterTypes::item6 >( event, parameterNames[6] ) );
            }
         };
       
@@ -1724,12 +1635,12 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ) );
            }
         };
       
@@ -1750,11 +1661,11 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ) );
            }
         };
       
@@ -1774,10 +1685,10 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ) );
            }
         };
       
@@ -1796,9 +1707,9 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ) );
            }
         };
       
@@ -1816,8 +1727,8 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ) );
            }
         };
       
@@ -1834,7 +1745,7 @@ namespace Nitrogen
                                       Handler handler )
            {
             return handler( nucleus::object_parameter_traits< Object >::convert_from_pointer( userData ),
-                            EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
+                            GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
            }
         };
       
@@ -1871,14 +1782,14 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
-                            EventParameter< ParameterTypes::item6 >( event, parameterNames[6] ),
-                            EventParameter< ParameterTypes::item7 >( event, parameterNames[7] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
+                            GetEventParameter< ParameterTypes::item6 >( event, parameterNames[6] ),
+                            GetEventParameter< ParameterTypes::item7 >( event, parameterNames[7] ) );
            }
         };
 
@@ -1899,13 +1810,13 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
-                            EventParameter< ParameterTypes::item6 >( event, parameterNames[6] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ),
+                            GetEventParameter< ParameterTypes::item6 >( event, parameterNames[6] ) );
            }
         };
 
@@ -1925,12 +1836,12 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
-                            EventParameter< ParameterTypes::item5 >( event, parameterNames[5] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ),
+                            GetEventParameter< ParameterTypes::item5 >( event, parameterNames[5] ) );
            }
         };
 
@@ -1949,11 +1860,11 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
-                            EventParameter< ParameterTypes::item4 >( event, parameterNames[4] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ),
+                            GetEventParameter< ParameterTypes::item4 >( event, parameterNames[4] ) );
            }
         };
 
@@ -1971,10 +1882,10 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
-                            EventParameter< ParameterTypes::item3 >( event, parameterNames[3] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
+                            GetEventParameter< ParameterTypes::item3 >( event, parameterNames[3] ) );
            }
         };
 
@@ -1991,9 +1902,9 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
-                            EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
+                            GetEventParameter< ParameterTypes::item2 >( event, parameterNames[2] ) );
            }
         };
 
@@ -2009,8 +1920,8 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
-                            EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
+                            GetEventParameter< ParameterTypes::item1 >( event, parameterNames[1] ) );
            }
         };
 
@@ -2025,7 +1936,7 @@ namespace Nitrogen
                                       const EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
+            return handler( GetEventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
            }
         };
 
