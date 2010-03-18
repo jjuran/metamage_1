@@ -26,6 +26,7 @@
 #include "stdlib.h"
 
 // Standard C/C++
+#include <cctype>
 #include <cstdio>
 
 // Standard C++
@@ -614,24 +615,18 @@ static int TestOADC( int argc, iota::argv_t argv )
 }
 
 
+static void print_string( ConstStr255Param str )
+{
+	std::string output = plus::make_string( str ) + "\n";
+	
+	p7::write( p7::stdout_fileno, output );
+}
+
 static int TestSoundInput( int argc, iota::argv_t argv )
 {
-	//if (argc < 3)  return 1;
-	
-	typedef N::SoundInputDevice_Container::const_iterator SID_ci;
-	
-	//SID_ci it = N::SoundInputDevices().begin();
-	SID_ci it ( N::SoundInputDevices().begin() );
-	SID_ci end( N::SoundInputDevices().end()   );
-	
-	for ( ;  it != end;  ++it )
-	{
-		ConstStr255Param deviceName = *it;
-		
-		std::string output = plus::make_string( deviceName ) + "\n";
-		
-		p7::write( p7::stdout_fileno, output );
-	}
+	std::for_each( N::SoundInputDevice_Names().begin(),
+	               N::SoundInputDevice_Names().end(),
+	               std::ptr_fun( print_string ) );
 	
 	return 0;
 }
@@ -889,7 +884,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	n::owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
+	n::owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.get(), len );
 	
 	int* scratch;
 	
@@ -897,7 +892,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	
 	*scratch = 42;
 	
-	n::owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), len );
+	n::owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.get(), len );
 	
 	N::FindSymbol( two, "\p" "errno", &scratch );
 	
