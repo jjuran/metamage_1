@@ -41,16 +41,24 @@ namespace Nitrogen
 			// Non-debug 68K code in System 7.6 has witnessed a memory address
 			// placed in D0 following a call to PBGetCatInfoAsync().
 			
-		#ifdef __MWERKS__
+			// FIXME:  According to Scott Boyd and Jim Luther[1], the result of
+			// async calls to the File Manager and PPC Toolbox should be IGNORED
+			// entirely, and ioResult alone should be checked, whereas success
+			// of a Device Manager call should be determined first by checking
+			// the result for noErr, and only then polling ioResult.
+			// Unfortunately, some calls are used by *both* the File Manager and
+			// Device Manager, so a correct fix is more involved than simply
+			// changing the code here.
 			
-			const bool debugging = __option( sym );
+			// [1] http://www.mactech.com/articles/develop/issue_13/Luther.html
 			
-			if ( TARGET_CPU_68K  &&  !debugging )
+			// In the meantime, we'll leave this code as it's been, with the
+			// exception of removing its dependency on non-debug mode.
+			
+			if ( TARGET_CPU_68K )
 			{
 				err = result < 0 ? result : 0;
 			}
-			
-		#endif
 		}
 		
 	}
