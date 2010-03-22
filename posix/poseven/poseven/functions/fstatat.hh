@@ -20,9 +20,14 @@
 // POSIX
 #include <sys/stat.h>
 
+// io
+#include "io/io.hh"
+
 // poseven
+#include "poseven/functions/stat.hh"
 #include "poseven/types/at_flags_t.hh"
 #include "poseven/types/errno_t.hh"
+#include "poseven/types/fd_t.hh"
 
 
 namespace poseven
@@ -91,17 +96,6 @@ namespace io
 	inline bool item_exists( poseven::fd_t dirfd, const std::string& item, overload = overload() )
 	{
 		return item_exists( dirfd, item.c_str() );
-	}
-	
-	
-	inline bool item_is_file( poseven::fd_t dirfd, const struct ::stat& sb, overload = overload() )
-	{
-		return S_ISREG( sb.st_mode );
-	}
-	
-	inline bool item_is_directory( poseven::fd_t dirfd, const struct ::stat& sb, overload = overload() )
-	{
-		return S_ISDIR( sb.st_mode );
 	}
 	
 	
