@@ -118,6 +118,26 @@ namespace orion
 			void set( const char* param ) const  { its_string = param; }
 	};
 	
+	class c_string_list_option_binding : public option_binding
+	{
+		private:
+			std::vector< const char* >& its_strings;
+		
+		public:
+			c_string_list_option_binding( std::vector< const char* >& strings )
+			:
+				its_strings( strings )
+			{
+			}
+			
+			bool argument_expected() const  { return true; }
+			
+			void set( const char* param ) const
+			{
+				its_strings.push_back( param );
+			}
+	};
+	
 	class string_list_option_binding : public option_binding
 	{
 		private:
@@ -180,6 +200,11 @@ namespace orion
 	option_binding* new_option_binding( std::string& string )
 	{
 		return new string_option_binding( string );
+	}
+	
+	option_binding* new_option_binding( std::vector< const char* >& strings )
+	{
+		return new c_string_list_option_binding( strings );
 	}
 	
 	option_binding* new_option_binding( std::vector< std::string >& strings )
