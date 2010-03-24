@@ -440,10 +440,14 @@ namespace tool
 		
 		global_running_tasks[ pid ] = task;
 		
+	#ifdef __APPLE__
+		
 		if ( has_diagnostics_file )
 		{
 			SetEditorSignature( diagnostics_file_path );
 		}
+		
+	#endif
 		
 		wait_for_jobs();
 	}
