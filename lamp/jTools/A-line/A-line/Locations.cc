@@ -103,52 +103,52 @@ namespace tool
 	
 	std::string get_includes_union_pathname()
 	{
-		return mkdir_path( "Includes" );
+		return mkdir_path( "include" );
 	}
 	
 	std::string LibrariesDirPath()
 	{
-		return mkdir_path( "Libraries" );
+		return mkdir_path( "lib" );
 	}
 	
 	std::string RezzedDirPath()
 	{
-		return mkdir_path( "_Rezzed" );
+		return mkdir_path( "rez" );
 	}
 	
 	std::string get_project_dependencies_pathname( const std::string& project_name )
 	{
-		return "_Dependencies" / project_name;
+		return "dep" / project_name;
 	}
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
 	{
-		return "Diagnostics" / proj;
+		return "log" / proj;
 	}
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj )
 	{
-		return mkdir_path( "PrecompiledHeaders" / proj );
+		return mkdir_path( "pch" / proj );
 	}
 	
 	std::string ProjectObjectsDirPath( const std::string& proj )
 	{
-		return mkdir_path( "Objects" / proj );
+		return mkdir_path( "obj" / proj );
 	}
 	
 	std::string ProjectMetadataDirPath( const std::string& proj )
 	{
-		return mkdir_path( "_Metadata" / proj );
+		return mkdir_path( "meta" / proj );
 	}
 	
 	std::string ProjectLinkedDirPath( const std::string& proj )
 	{
-		return mkdir_path( "_Linked" / proj );
+		return mkdir_path( "out" / proj );
 	}
 	
 	std::string ProjectOutputDirPath( const std::string& proj )
 	{
-		return mkdir_path( "Output" / proj );
+		return mkdir_path( "bin" / proj );
 	}
 	
 }

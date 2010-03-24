@@ -62,7 +62,7 @@ my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
 my $source_tree     = "$lamp_source_dir/j";
 my $build_tree      = "$user_builds_dir/$build_area";
-my $build_output    = "$build_tree/Output";
+my $build_output    = "$build_tree/bin";
 my $lamp_builds_dir = "$user_lamp_dir/Builds";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
@@ -216,7 +216,7 @@ sub build_output
 	
 	my $project_file = $project =~ m{/} ? $project : "$project/$project";
 	
-	my $result = "$foreign_build_tree/Output/$project_file";
+	my $result = "$foreign_build_tree/bin/$project_file";
 	
 	-f $result or die "Missing build output for $project\n";
 	
