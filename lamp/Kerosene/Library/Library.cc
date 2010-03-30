@@ -704,31 +704,6 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 	return size;
 }
 
-char* realpath( const char *path, char *buffer )
-{
-	const size_t buffer_size = 4096;
-	
-	const int saved_errno = errno;
-	
-	ssize_t length = realpath_k( path, buffer, buffer_size - 1 );
-	
-	if ( length == -1 )
-	{
-		return NULL;
-	}
-	
-	if ( length < -1 )
-	{
-		errno = saved_errno;  // was ERANGE
-		
-		length = buffer_size - 1;
-	}
-	
-	buffer[ length ] = '\0';
-	
-	return buffer;
-}
-
 int setgid( gid_t gid )
 {
 	if ( gid != 0 )
