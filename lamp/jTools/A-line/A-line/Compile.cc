@@ -70,6 +70,10 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	typedef Command (*CompileCommandMaker)( const CompilerOptions&  options,
+	                                        const std::string&      source_pathname,
+	                                        const std::string&      output_pathname );
+	
 	static std::string diagnostics_file_path( const std::string&  dir_path,
 	                                          const std::string&  target_path )
 	{
@@ -84,6 +88,7 @@ namespace tool
 			std::string      its_source_pathname;
 			std::string      its_diagnostics_file_path;
 			const char*      its_caption;
+			CompileCommandMaker  its_command_maker;
 		
 		public:
 			CompilingTask( const Project&          project,
@@ -91,13 +96,15 @@ namespace tool
 			               const std::string&      source,
 			               const std::string&      output,
 			               const std::string&      diagnostics,
-			               const char*             caption )
+			               const char*             caption,
+			               CompileCommandMaker     maker )
 			: FileTask                 ( output ),
 			  its_project              ( project ),
 			  its_options              ( options ),
 			  its_source_pathname      ( source  ),
 			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, source ) ),
-			  its_caption              ( caption )
+			  its_caption              ( caption ),
+			  its_command_maker        ( maker   )
 			{
 				if ( project.SourceDirs().empty() )
 				{
@@ -463,7 +470,7 @@ namespace tool
 	
 	void CompilingTask::Make()
 	{
-		Command command = MakeCompileCommand( its_options, its_source_pathname, OutputPath() );
+		Command command = its_command_maker( its_options, its_source_pathname, OutputPath() );
 		
 		const char* source_path = std::strstr( its_source_pathname.c_str(), "//" );
 		
@@ -602,7 +609,8 @@ namespace tool
 				                                             source_pathname,
 				                                             object_pathname,
 				                                             ProjectDiagnosticsDirPath( its_project.Name() ),
-				                                             caption ) );
+				                                             caption,
+				                                             &MakeCompileCommand ) );
 				
 				its_precompile_task->AddDependent( task );
 				
@@ -689,7 +697,8 @@ namespace tool
 				                                                prefix_source_pathname,
 				                                                pchImage,
 				                                                diagnostics_dir_path,
-				                                                "Precompiling: " ) );
+				                                                "Precompiling: ",
+				                                                &MakeCompileCommand ) );
 				
 				project.set_precompile_task( precompile_task );
 			}
@@ -745,7 +754,8 @@ namespace tool
 			                                             source_pathname,
 			                                             output_path,
 			                                             diagnostics_dir_path,
-			                                             caption ) );
+			                                             caption,
+			                                             &MakeCompileCommand ) );
 			
 			precompile_task->AddDependent( task );
 			
