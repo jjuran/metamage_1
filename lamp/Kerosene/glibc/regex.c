@@ -154,7 +154,7 @@ init_syntax_once ()
 
 #ifdef REGEX_MALLOC
 
-#define REGEX_ALLOCATE malloc
+#define REGEX_ALLOCATE(size) malloc(size)
 #define REGEX_REALLOCATE(source, osize, nsize) realloc (source, nsize)
 
 #else /* not REGEX_MALLOC  */
@@ -177,7 +177,7 @@ char *alloca ();
 
 #endif /* not alloca */
 
-#define REGEX_ALLOCATE alloca
+#define REGEX_ALLOCATE(size) alloca(size)
 
 /* Assumes a `char *destination' variable.  */
 #define REGEX_REALLOCATE(source, osize, nsize)				\
