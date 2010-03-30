@@ -392,7 +392,6 @@ namespace tool
 		command.push_back( "-convertpaths"   );
 		command.push_back( "-nomapcr"        );
 		command.push_back( "-once"           );
-		command.push_back( "-DPRAGMA_ONCE=1" );
 		
 		command.push_back( "-D" "__LAMP__=1" );
 		
