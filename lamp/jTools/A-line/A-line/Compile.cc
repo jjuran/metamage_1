@@ -142,7 +142,7 @@ namespace tool
 					its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
 				}
 				
-				if ( options.Target().envType & envRelix )
+				if ( options.Target().envType & envRelix  &&  !options.GetMacros().empty() )
 				{
 					static const plus::string cwansiincludes = get_Interfaces_subdir( "CWANSIIncludes" );
 					static const plus::string cwcincludes    = get_Interfaces_subdir( "CWCIncludes" );
@@ -288,6 +288,72 @@ namespace tool
 		// Any one-character extension passes the test, including 'c', 'h', and 'm'.
 		
 		return name.size() > 2  &&  *(name.end() - 2) == '.';
+	}
+	
+	static Command MakePreprocessCommand( const CompilerOptions&  options,
+	                                      const plus::string&     source_pathname,
+	                                      const plus::string&     output_pathname )
+	{
+		CommandGenerator cmdgen( options.Target() );
+		
+		Command preprocess;
+		
+		preprocess.push_back( "mxcpp" );
+		
+		const char* arch = cmdgen.ppc  ? "--ppc"
+		                 : cmdgen.m68k ? "--68k"
+		                 :               "--x86";
+		
+		preprocess.push_back( arch );
+		
+		if ( cmdgen.cfm )
+		{
+			preprocess.push_back( "--cfm" );
+		}
+		
+		if ( cmdgen.a4 )
+		{
+			preprocess.push_back( "--a4" );
+		}
+		
+		if ( const bool cplusplus = !IsCFile( source_pathname ) )
+		{
+			preprocess.push_back( "--c++" );
+		}
+		
+		AugmentCommand( preprocess, options.GetMacros() );
+		
+		AugmentCommand( preprocess, options.IncludeDirOptions() );
+		
+		if ( options.Target().envType & envRelix )
+		{
+			preprocess.push_back( "--mac-lines" );
+			
+			preprocess.push_back( "-D" "macintosh=1" );
+			
+			if ( cmdgen.ppc )
+			{
+				preprocess.push_back( "-D" "powerc=1" );
+			}
+		}
+		else if ( options.Target().envType & envUnix )
+		{
+			preprocess.push_back( "-I/usr/include" );
+		}
+		
+		if ( false )
+		{
+			preprocess.push_back( "--precompile" );
+		}
+		
+		AugmentCommand( preprocess, OutputOption( output_pathname.c_str() ) );
+		
+		// Add the source file to the command line
+		preprocess.push_back( source_pathname.c_str() );
+		
+		preprocess.push_back( NULL );
+		
+		return preprocess;
 	}
 	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
@@ -608,22 +674,43 @@ namespace tool
 	
 	
 	static
-	TaskPtr add_cc_compile_tasks( const Project&          project,
+	TaskPtr add_cpp_and_cc_tasks( const Project&          project,
+	                              const CompilerOptions&  cpp_options,
 	                              const CompilerOptions&  cc_options,
 	                              const plus::string&     source_path,
+	                              const plus::string&     cpp_path,
 	                              const plus::string&     output_path,
 	                              const plus::string&     diagnostics_dir_path,
 	                              const TaskPtr&          precompile_task )
 	{
+		const bool preprocessing = !cpp_path.empty();
+		
 		TaskPtr cc_task = seize_ptr( new CompilingTask( project,
 		                                                cc_options,
-		                                                source_path,
+		                                                preprocessing ? cpp_path : source_path,
 		                                                output_path,
 		                                                diagnostics_dir_path,
 		                                                "CC    ",
 		                                                &MakeCompileCommand ) );
 		
-		precompile_task->AddDependent( cc_task );
+		if ( preprocessing )
+		{
+			TaskPtr cpp_task = seize_ptr( new CompilingTask( project,
+			                                                 cpp_options,
+			                                                 source_path,
+			                                                 cpp_path,
+			                                                 diagnostics_dir_path,
+			                                                 "CPP   ",
+			                                                 &MakePreprocessCommand ) );
+			
+			precompile_task->AddDependent( cpp_task );
+			
+			cpp_task->AddDependent( cc_task );
+		}
+		else
+		{
+			precompile_task->AddDependent( cc_task );
+		}
 		
 		return cc_task;
 	}
@@ -632,23 +719,50 @@ namespace tool
 	{
 		private:
 			const Project&          its_project;
-			const CompilerOptions&  its_options;
+			const CompilerOptions&  its_cpp_options;
+			const CompilerOptions&  its_cc_options;
+			const plus::string&     its_cpp_dir;
 			const TaskPtr&          its_precompile_task;
 		
 		public:
 			ToolTaskMaker( const Project&          project,
-			               const CompilerOptions&  options,
-			               const TaskPtr&          precompile ) : its_project        ( project    ),
-			                                                      its_options        ( options    ),
-			                                                      its_precompile_task( precompile )
+			               const CompilerOptions&  cpp_options,
+			               const CompilerOptions&  cc_options,
+			               const plus::string&     cpp_dir,
+			               const TaskPtr&          precompile )
+			:
+				its_project        ( project     ),
+				its_cpp_options    ( cpp_options ),
+				its_cc_options     ( cc_options  ),
+				its_cpp_dir        ( cpp_dir     ),
+				its_precompile_task( precompile  )
 			{
 			}
 			
 			TaskPtr operator()( const plus::string& source_pathname, const plus::string& object_pathname )
 			{
-				TaskPtr task = add_cc_compile_tasks( its_project,
-				                                     its_options,
+				const bool preprocessing = !its_cpp_dir.empty();
+				
+				plus::string cpp_path;
+				
+				if ( preprocessing )
+				{
+					const char* p = object_pathname.data();
+					
+					const char* it = gear::find_last_match( p, object_pathname.size(), '/' );
+					
+					it = it ? it + 1 : p;
+					
+					plus::string name( it, &*object_pathname.end() - 2 );
+					
+					cpp_path = its_cpp_dir / name;
+				}
+				
+				TaskPtr task = add_cpp_and_cc_tasks( its_project,
+				                                     its_cpp_options,
+				                                     its_cc_options,
 				                                     source_pathname,
+				                                     cpp_path,
 				                                     object_pathname,
 				                                     ProjectDiagnosticsDirPath( its_project.Name() ),
 				                                     its_precompile_task );
@@ -663,9 +777,9 @@ namespace tool
 	                     const TaskPtr&           source_dependency,
 	                     std::vector< TaskPtr >&  tool_dependencies )
 	{
-		CompilerOptions options( project.Name(), target_info );
+		CompilerOptions basic_options( project.Name(), target_info );
 		
-		CompilerOptions& preprocess_options = options;
+		CompilerOptions preprocess_options = basic_options;
 		
 		DefineMacros( preprocess_options, target_info );
 		
@@ -686,6 +800,9 @@ namespace tool
 			preprocess_options.PrependIncludeDir( get_includes_union_pathname() );
 		}
 		
+		// Currently, precompiling disables separate preprocessing, so the compiler always needs
+		// the preprocessor options.
+		
 		CompilerOptions precompile_options = preprocess_options;
 		
 		const plus::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
@@ -698,6 +815,14 @@ namespace tool
 		// For width reasons, we call the precompiled header a 'prefix'.
 		
 		const Project* project_providing_prefix = get_project_providing_prefix( project, target_info.platform );
+		
+		const bool preprocessing = Options().preprocess  &&  !project_providing_prefix;
+		
+		// If we're preprocessing, then only the preprocessor gets macros and includes,
+		// and the compiler gets just the basics.  Otherwise, the compiler gets the preprocessing
+		// options as well.
+		
+		CompilerOptions& options = preprocessing ? basic_options : preprocess_options;
 		
 		if ( project_providing_prefix != NULL )
 		{
@@ -761,9 +886,16 @@ namespace tool
 		
 		plus::string outDir = ProjectObjectsDirPath( project.Name() );
 		
+		plus::string cpp_dir;
+		
+		if ( preprocessing )
+		{
+			cpp_dir = mkdir_path( "cpp" / project.Name() );
+		}
+		
 		std::vector< plus::string > object_paths;
 		
-		NameObjectFiles( project, object_paths );
+		NameObjectFiles( project, object_paths, preprocessing );
 		
 		const std::vector< plus::string >& sources = project.Sources();
 		
@@ -775,7 +907,11 @@ namespace tool
 		                sources.begin() + n_tools,
 		                object_paths.begin(),
 		                tool_dependencies.begin(),
-		                ToolTaskMaker( project, options, precompile_task ) );
+		                ToolTaskMaker( project,
+		                               preprocess_options,
+		                               options,
+		                               cpp_dir,
+		                               precompile_task ) );
 		
 		std::vector< plus::string >::const_iterator the_source, the_object, end = sources.end();
 		
@@ -788,9 +924,26 @@ namespace tool
 			
 			const plus::string& output_path = *the_object;
 			
-			TaskPtr task = add_cc_compile_tasks( project,
+			plus::string cpp_path;
+			
+			if ( preprocessing )
+			{
+				const char* p = output_path.data();
+				
+				const char* it = gear::find_last_match( p, output_path.size(), '/' );
+				
+				it = it ? it + 1 : p;
+				
+				plus::string name( it, &*output_path.end() - 2 );
+				
+				cpp_path = cpp_dir / name;
+			}
+			
+			TaskPtr task = add_cpp_and_cc_tasks( project,
+			                                     preprocess_options,
 			                                     options,
 			                                     source_pathname,
+			                                     cpp_path,
 			                                     output_path,
 			                                     diagnostics_dir_path,
 			                                     precompile_task );
