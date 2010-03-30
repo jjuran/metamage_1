@@ -377,7 +377,7 @@ char *add_envopt(argcp, argvp, env)
  * Error handlers.
  */
 void error(m)
-    char *m;
+    const char *m;
 {
 #ifndef MACGZIP
     fprintf(stderr, "\n%s: %s: %s\n", progname, ifname, m);

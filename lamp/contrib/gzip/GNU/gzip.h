@@ -314,7 +314,7 @@ extern char *basename     OF((char *fname));
 #endif
 extern void make_simple_name OF((char *name));
 extern char *add_envopt   OF((int *argcp, char ***argvp, char *env));
-extern void error         OF((char *m));
+extern void error         OF((const char *m));
 extern void warn          OF((char *a, char *b));
 extern void read_error    OF((void));
 extern void write_error   OF((void));
