@@ -524,8 +524,6 @@ namespace tool
 	{
 		options.DEFINE_MACRO( "__ALINE__" );
 		
-		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
-		
 		if ( target_info.toolchain == toolchainMetrowerks )
 		{
 			// Assume CW Pro 6
