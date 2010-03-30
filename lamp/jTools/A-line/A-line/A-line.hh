@@ -24,10 +24,12 @@ namespace tool
 		bool all;
 		bool verbose;
 		bool catalog;
+		bool preprocess;
 		
-		OptionsRecord() : all    ( false ),
-		                  verbose( false ),
-		                  catalog( false )
+		OptionsRecord() : all       ( false ),
+		                  verbose   ( false ),
+		                  catalog   ( false ),
+		                  preprocess( false )
 		{
 		}
 	};
