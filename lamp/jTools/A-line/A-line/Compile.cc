@@ -61,6 +61,9 @@
 // pfiles
 #include "pfiles/common.hh"
 
+// one_path
+#include "one_path/find_InterfacesAndLibraries.hh"
+
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
@@ -122,6 +125,19 @@ namespace tool
 				if ( project.SourceDirs().empty() )
 				{
 					its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
+				}
+				
+				if ( options.Target().envType & envRelix )
+				{
+					static const plus::string interfaces = find_InterfacesAndLibraries() + "/" "Interfaces" "/";
+					
+					static const plus::string cwansiincludes = interfaces + "CWANSIIncludes";
+					static const plus::string cwcincludes    = interfaces + "CWCIncludes";
+					static const plus::string cincludes      = interfaces + "CIncludes";
+					
+					its_options.AppendIncludeDir( cwansiincludes );
+					its_options.AppendIncludeDir( cwcincludes    );
+					its_options.AppendIncludeDir( cincludes      );
 				}
 			}
 			
