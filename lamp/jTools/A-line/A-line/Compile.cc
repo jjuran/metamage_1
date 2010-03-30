@@ -526,6 +526,12 @@ namespace tool
 		
 		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
 		
+		if ( target_info.toolchain == toolchainMetrowerks )
+		{
+			// Assume CW Pro 6
+			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
+		}
+		
 		if ( target_info.platform & apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );

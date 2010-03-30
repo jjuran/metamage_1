@@ -396,9 +396,6 @@ namespace tool
 		
 		command.push_back( "-D" "__LAMP__=1" );
 		
-		// Assume CW Pro 6
-		command.push_back( "-D" "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS=1" );
-		
 		command.push_back( "-w"                                                   );
 		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
 		
