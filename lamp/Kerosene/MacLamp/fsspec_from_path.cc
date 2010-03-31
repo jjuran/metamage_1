@@ -14,6 +14,7 @@
 
 // MacLamp
 #include "fsspec_from_path.hh"
+#include "FSSpec_from_stat.h"
 
 
 //
@@ -32,36 +33,7 @@
 			return -1;
 		}
 		
-		typedef UInt32 FSDirID;
-		
-		const FSVolumeRefNum vRefNum = -stat_buffer.st_dev;
-		const FSDirID        parID   = stat_buffer.st_rdev;
-		
-		const unsigned name_length = stat_buffer.st_name[0];
-		
-		if ( vRefNum == 0  ||  name_length == 0 )
-		{
-			errno = EXDEV;
-			
-			return -1;
-		}
-		
-		if ( name_length > 31 )
-		{
-			errno = ENAMETOOLONG;
-			
-			return -1;
-		}
-		
-		if ( outFSS != NULL )
-		{
-			outFSS->vRefNum = vRefNum;
-			outFSS->parID   = parID;
-			
-			std::memcpy( outFSS->name, stat_buffer.st_name, 1 + name_length );
-		}
-		
-		return 0;
+		return FSSpec_from_stat( &stat_buffer, outFSS );
 	}
 	
 	FSSpec make_fsspec_from_path( const char* pathname )
