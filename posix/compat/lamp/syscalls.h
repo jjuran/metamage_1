@@ -89,7 +89,7 @@
 #define __NR_symlink                    83
 // 84
 #define __NR_readlink_k                 85
-// 86
+#define __NR__realpathat                86
 // 87
 // 88
 // 89
