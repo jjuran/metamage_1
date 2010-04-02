@@ -7,17 +7,23 @@
 
 #include "Divergence/Utilities.hh"
 
+// poseven
+#include "poseven/functions/stat.hh"
+
 #if TARGET_RT_MAC_MACHO
 	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
 	#include "poseven/Pathnames.hh"
 #else
-	#include "fsspec_from_path.hh"
+	#include "FSSpec_from_stat.h"
 #endif
 
 
 namespace Divergence
 {
+	
+	namespace p7 = poseven;
+	
 	
 	FSSpec ResolvePathToFSSpec( const char* path )
 	{
@@ -43,7 +49,15 @@ namespace Divergence
 		
 	#else
 		
-		return make_fsspec_from_path( path );
+		struct ::stat stat_buffer;
+		
+		const bool exists = p7::stat( path, stat_buffer );
+		
+		FSSpec spec;	
+		
+		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
+		
+		return spec;
 		
 	#endif
 	}
