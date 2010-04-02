@@ -136,7 +136,7 @@ DEFINE_STUB_7F( write )
 //DEFINE_STUB_7F( open  )
 DEFINE_STUB_7F( close )
 DEFINE_STUB_7F( waitpid )
-DEFINE_STUB_7F( realpath_k )
+//DEFINE_STUB_7F( _realpath )
 
 //DEFINE_STUB_7F( unlink )
 DEFINE_STUB_7F( execve )

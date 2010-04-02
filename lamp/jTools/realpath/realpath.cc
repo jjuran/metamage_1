@@ -42,7 +42,7 @@ int main( int argc, char const *const argv[] )
 		// Allocate a buffer on the stack
 		char *buffer = (char*) alloca( buffer_size );
 		
-		ssize_t actual_size = realpath_k( pathname, buffer, buffer_size - 1 );
+		ssize_t actual_size = _realpath( pathname, buffer, buffer_size - 1 );
 		
 		if ( actual_size == -1 )
 		{
@@ -55,7 +55,7 @@ int main( int argc, char const *const argv[] )
 		{
 			// Buffer too small; increase and try again
 			
-			// result of realpath_k() is the bitwise negation of the actual size
+			// result of _realpath() is the bitwise negation of the actual size
 			// or the additive inverse of the corresponding output size
 			
 			buffer_size = -actual_size;

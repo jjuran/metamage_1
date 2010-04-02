@@ -55,7 +55,7 @@ namespace poseven
 		{
 			result.resize( size );
 			
-			size = realpath_k( pathname, &result[0], result.size() );
+			size = _realpath( pathname, &result[0], result.size() );
 			
 			if ( size == -1 )
 			{

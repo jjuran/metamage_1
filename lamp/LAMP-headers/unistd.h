@@ -76,6 +76,7 @@ ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_s
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
+ssize_t _realpath( const char *path, char *buffer, size_t buffer_size );
 ssize_t _realpathat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
 
 #define REALPATH_MAC  0x0000001
@@ -176,7 +177,6 @@ int	 nice(int);
 int	 readlink(const char *, char *, size_t)
 		__attribute__ ((__bounded__(__string__,2,3)));
 ssize_t readlink_k( const char*, char*, size_t );  // jjuran
-ssize_t realpath_k( const char*, char*, size_t );  // jjuran
 int	 setkey(const char *);
 int	 setpgrp(pid_t pid, pid_t pgrp);	/* obsoleted by setpgid() */
 int	 setregid(gid_t, gid_t);
