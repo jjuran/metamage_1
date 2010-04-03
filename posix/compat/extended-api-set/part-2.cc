@@ -128,5 +128,36 @@ int openat( int dirfd, const char* path, int flags, mode_t mode )
 	return result;
 }
 
+ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
+{
+	int saved_cwd;
+	
+	int result = 0;
+	
+	const bool need_chdir = path[0] != '/';
+	
+	if ( need_chdir )
+	{
+		saved_cwd = open( ".", O_RDONLY );
+		
+		result = fchdir( dirfd );
+		
+		if ( result == -1 )
+		{
+			return result;
+		}
+	}
+	
+	result = readlink( path, buffer, buffer_size );
+	
+	if ( need_chdir )
+	{
+		fchdir( saved_cwd );
+		close ( saved_cwd );
+	}
+	
+	return result;
+}
+
 #endif
 
