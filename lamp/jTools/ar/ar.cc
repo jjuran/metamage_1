@@ -198,8 +198,6 @@ namespace tool
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
 		command.push_back( "--"       );  // stop interpreting options here
 		
-		std::string linker = "MWLinkUnsupportedArchitecture";
-		
 		switch ( arch )
 		{
 			case mw::cpu_m68k:
