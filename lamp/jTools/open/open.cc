@@ -58,10 +58,10 @@ namespace tool
 		sigGoodTextEditor = TARGET_API_MAC_CARBON ? sigTextWrangler : sigBBEdit
 	};
 	
-	static FSSpec ResolvePathname( const std::string& pathname, bool macPathname )
+	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
 	{
-		return macPathname ? N::FSMakeFSSpec         ( N::Str255( pathname       ) ) 
-		                   : Div::ResolvePathToFSSpec(            pathname.c_str() );
+		return macPathname ? N::FSMakeFSSpec         ( N::Str255( pathname ) ) 
+		                   : Div::ResolvePathToFSSpec(            pathname   );
 	}
 	
 	static inline n::owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
