@@ -1,5 +1,5 @@
 /*
-	mac_pathname_from_path.hh
+	mac_pathname_from_path.cc
 	-------------------------
 	
 	Joshua Juran
@@ -7,8 +7,14 @@
 
 #include "mac_pathname_from_path.hh"
 
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
+
 // poseven
 #include "poseven/types/errno_t.hh"
+
+#ifdef __APPLE__
 
 // GetPathname
 #include "GetPathname.hh"
@@ -19,14 +25,19 @@
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
+#endif
 
-namespace N = Nitrogen;
+
 namespace p7 = poseven;
-namespace Div = Divergence;
 
 
 std::string mac_pathname_from_path( const char* path )
 {
+#ifdef __APPLE__
+	
+	namespace N = Nitrogen;
+	namespace Div = Divergence;
+	
 	try
 	{
 		return GetMacPathname( Div::ResolvePathToFSSpec( path ) );
@@ -41,7 +52,21 @@ std::string mac_pathname_from_path( const char* path )
 		p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
 	}
 	
-	// Not reached
-	return std::string();
+#endif
+	
+#ifdef __LAMP__
+	
+	char buffer[ 4096 ];
+	
+	ssize_t size = _realpathat( AT_FDCWD, path, buffer, sizeof buffer, REALPATH_MAC );
+	
+	if ( size < 0 )
+	{
+		p7::throw_errno( errno );
+	}
+	
+	return std::string( buffer, size );
+	
+#endif
 }
 	
