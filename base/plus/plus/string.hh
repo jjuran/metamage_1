@@ -1,0 +1,125 @@
+/*
+	string.hh
+	---------
+	
+	Copyright 2010, Joshua Juran
+*/
+
+#ifndef PLUS_STRING_HH
+#define PLUS_STRING_HH
+
+
+namespace plus
+{
+	
+	class string
+	{
+		public:
+			typedef unsigned long size_type;
+			
+			enum
+			{
+				min_small_string_length = 15,
+				buffer_size_in_longs    = min_small_string_length / sizeof (long) + 1,
+				buffer_size             = buffer_size_in_longs * sizeof (long),
+				max_offset              = buffer_size - 1
+			};
+		
+		private:
+			struct alloc_state
+			{
+				size_type    length;
+				const char*  pointer;
+			};
+			
+			union
+			{
+				char         its_small_name[ buffer_size ];
+				alloc_state  its_alloc;
+				long         its_longs[ buffer_size_in_longs ];
+			};
+			
+			void dispose();
+		
+		public:
+			string()  { its_alloc.length = 0; }
+			
+			string( const char* p, size_type length );
+			
+			string( const char* p, const char* q );
+			
+			string( const char* s );
+			
+			~string();
+			
+			string           ( const string& other );
+			string& operator=( const string& other );
+			
+			bool empty() const  { return its_alloc.length == 0; }
+			
+			size_type length() const;
+			
+			size_type size() const  { return length(); }
+			
+			const char* c_str() const;
+			
+			const char* data() const;
+			
+			operator const char*() const  { return c_str(); }
+			
+			void assign( const char* p, size_type length );
+			
+			void assign( const char* p, const char* q )  { assign( p, q - p ); }
+			
+			void assign( const char* s );
+			
+			void assign( const string& other )  { assign( other.data(), other.size() ); }
+			
+			string& operator=( const char* s )  { assign( s );  return *this; }
+			
+			void swap( string& other );
+	};
+	
+	
+	bool operator==( const string& a, const string& b );
+	
+	bool operator==( const string& a, const char* b );
+	
+	inline bool operator==( const char* a, const string& b )
+	{
+		return b == a;
+	}
+	
+	
+	inline bool operator!=( const string& a, const string& b )
+	{
+		return !( a == b );
+	}
+	
+	inline bool operator!=( const string& a, const char* b )
+	{
+		return !( a == b );
+	}
+	
+	inline bool operator!=( const char* a, const string& b )
+	{
+		return !( a == b );
+	}
+	
+	
+	bool operator<( const string& a, const string& b );
+	
+	bool operator<( const string& a, const char* b );
+	
+	bool operator<( const char* a, const string& b );
+	
+	
+	inline void swap( string& a, string& b )
+	{
+		a.swap( b );
+	}
+	
+}
+
+#endif
+
