@@ -25,6 +25,7 @@
 
 // iota
 #include "iota/decimal.hh"
+#include "iota/strings.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -121,9 +122,7 @@ namespace tool
 		
 		if ( argc != 2 )
 		{
-			const char usage[] = "killall: usage: killall [-sig] name\n";
-			
-			(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+			(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
 			
 			return EXIT_FAILURE;
 		}
