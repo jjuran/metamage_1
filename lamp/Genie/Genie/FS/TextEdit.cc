@@ -333,6 +333,8 @@ namespace Genie
 			return;
 		}
 		
+		Ped::Preflight_TEKey( c, hTE );
+		
 		const char unix_char = (c == '\r') ? '\n' : c;
 		
 		params.itsText.insert( params.itsText.begin() + offset, unix_char );
@@ -394,6 +396,8 @@ namespace Genie
 		
 		const Handle scrapHandle = TEScrapHandle();
 		const UInt16 scrapLength = TEGetScrapLength();
+		
+		Ped::Preflight_TEPaste( hTE, scrapLength );
 		
 		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		

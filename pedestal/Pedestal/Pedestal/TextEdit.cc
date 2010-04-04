@@ -41,12 +41,37 @@ namespace Pedestal
 	
 	static short gSelectionAnchor, gSelectionExtent;
 	
+	static const size_t kMaximumTELength = 30000;
+	
+	
+	class NotEnoughSpaceForTEKey   {};
+	class NotEnoughSpaceForTEPaste {};
+	
+	
+	void Preflight_TEKey( char c, TEHandle hTE )
+	{
+		if ( c != kBackspaceCharCode  &&  hTE[0]->teLength >= kMaximumTELength )
+		{
+			throw NotEnoughSpaceForTEKey();
+		}
+	}
+	
+	void Preflight_TEPaste( TEHandle hTE, size_t scrapLength )
+	{
+		if ( hTE[0]->teLength + TEGetScrapLength() > kMaximumTELength )
+		{
+			throw NotEnoughSpaceForTEPaste();
+		}
+	}
+	
 	
 	void TextEdit::Insert_Key( char c )
 	{
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
+		
+		Preflight_TEKey( c, hTE );
 		
 		::TEKey( c, hTE );
 	}
@@ -74,6 +99,8 @@ namespace Pedestal
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
+		
+		Preflight_TEPaste( hTE, TEGetScrapLength() );
 		
 		::TEPaste( hTE );
 	}

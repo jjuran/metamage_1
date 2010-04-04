@@ -19,6 +19,15 @@
 namespace Pedestal
 {
 	
+	class NotEnoughSpaceForTEKey;
+	class NotEnoughSpaceForTEPaste;
+	
+	
+	void Preflight_TEKey( char c, TEHandle hTE );
+	
+	void Preflight_TEPaste( TEHandle hTE, size_t scrapLength );
+	
+	
 	class TextEdit : public View,
 	                 public TEClickLoop_Subject,
 	                 public IncrementalSearchEditor
