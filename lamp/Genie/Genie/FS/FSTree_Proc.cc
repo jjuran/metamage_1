@@ -23,6 +23,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
@@ -496,6 +497,27 @@ namespace Genie
 		}
 	};
 	
+	struct proc_PID_name
+	{
+		static std::string Read( const FSTree* that, bool binary )
+		{
+			pid_t pid = GetKey( that );
+			
+			return GetProcess( pid ).ProgramName();
+		}
+	};
+	
+	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
+	{
+		FSTreePtr result = New_FSTree_Property( parent,
+		                                        name,
+		                                        0,
+		                                        &proc_PID_name::Read );
+		
+		return result;
+	}
+	
 	template < class Accessor >
 	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
 	                                    const std::string&  name )
@@ -562,6 +584,8 @@ namespace Genie
 		{ "cwd",  &Link_Factory< ResolveLink_cwd  > },
 		{ "exe",  &Link_Factory< ResolveLink_exe  > },
 		{ "root", &Link_Factory< ResolveLink_root > },
+		
+		{ "name", &Name_Factory },
 		
 		{ "cmdline", &Generated_Factory< proc_PID_cmdline > },
 		{ "stat",    &Generated_Factory< proc_PID_stat    > },
