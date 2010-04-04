@@ -6,18 +6,22 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
+#include <string.h>
 
 // Standard C/C++
 #include <cctype>
 #include <cstdlib>
-#include <cstring>
-
-// Standard C++
-#include <string>
 
 // POSIX
 #include <dirent.h>
+#include <fcntl.h>
 #include <unistd.h>
+
+// Extended API Set Part 2
+#include "extended-api-set/part-2.h"
+
+// Traditional
+#include <alloca.h>
 
 // iota
 #include "iota/decimal.hh"
@@ -32,42 +36,29 @@
 #include "Orion/Main.hh"
 
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
+
 namespace tool
 {
 	
-	static bool eq_strings( const char* a, const char* b )
-	{
-		return std::strcmp( a, b ) == 0;
-	}
-	
-	static void kill_process( pid_t pid, int sig )
-	{
-		int killed = kill( pid, sig );
-	}
-	
-	static std::string read_link( const char* link_path )
-	{
-		const std::size_t path_len = 1024;
-		
-		char target_path[ path_len + 1];
-		
-		int result = readlink( link_path, target_path, path_len );
-		
-		if ( result == -1 )
-		{
-			return "";
-		}
-		
-		return std::string( target_path, result );
-	}
-	
 	static int killall( const char* name_to_kill, int sig )
 	{
+		const size_t name_len = strlen( name_to_kill );
+		
+		const size_t buffer_size = name_len + 1;
+		
+		char* buffer = (char*) alloca( buffer_size );
+		
 		const char* proc_dir = "/proc";
 		
 		DIR* dir = opendir( proc_dir );
 		
 		if ( dir == NULL )  return -1;
+		
+		const int proc_dirfd = dirfd( dir );
 		
 		int kills = 0;
 		
@@ -77,26 +68,28 @@ namespace tool
 			
 			if ( pid_t pid = iota::parse_unsigned_decimal( proc_id ) )
 			{
-				std::string exe = std::string( "/proc/" ) + proc_id + "/exe";
+				int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
 				
-				std::string target_path = read_link( exe.c_str() );
+				int name_fd = openat( pid_dirfd, "name", O_RDONLY | O_BINARY );
 				
-				if ( const char* proc_name = std::strrchr( target_path.c_str(), '/' ) )
+				const ssize_t n_read = read( name_fd, buffer, buffer_size );
+				
+				if ( n_read == name_len  &&  memcmp( name_to_kill, buffer, name_len ) == 0 )
 				{
-					if ( eq_strings( ++proc_name, name_to_kill ) )
+					const int killed = kill( pid, sig );
+					
+					if ( killed == 0 )
 					{
-						int killed = kill( pid, sig );
-						
-						if ( killed == 0 )
-						{
-							++kills;
-						}
-						else
-						{
-							more::perror( proc_name, iota::inscribe_decimal( pid ) );
-						}
+						++kills;
+					}
+					else
+					{
+						more::perror( name_to_kill, iota::inscribe_decimal( pid ) );
 					}
 				}
+				
+				close( name_fd   );
+				close( pid_dirfd );
 			}
 		}
 		
