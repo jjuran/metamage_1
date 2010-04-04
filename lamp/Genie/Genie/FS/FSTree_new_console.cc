@@ -448,6 +448,8 @@ namespace Genie
 		
 		std::string& s = text_params.itsText;
 		
+		size_t command_size = 0;
+		
 		while ( true )
 		{
 			if ( params.itHasReceivedEOF )
@@ -460,8 +462,12 @@ namespace Genie
 			                      params.itsStartOfOutput,
 			                      text_params.itsSelection );
 			
-			if ( params.itsStartOfInput < s.size()  &&  *s.rbegin() == '\n' )
+			const char* p = s.c_str() + params.itsStartOfInput;
+			
+			if ( const char* nl = strchr( p, '\n' ) )
 			{
+				command_size = nl + 1 - p;
+				
 				break;
 			}
 			
@@ -477,7 +483,7 @@ namespace Genie
 		
 		ASSERT( params.itsStartOfInput < s.size() );
 		
-		byteCount = std::min( byteCount, s.size() - params.itsStartOfInput );
+		byteCount = std::min( byteCount, command_size );
 		
 		std::copy( s.begin() + params.itsStartOfInput,
 		           s.begin() + params.itsStartOfInput + byteCount,
