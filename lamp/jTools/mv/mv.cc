@@ -3,23 +3,21 @@
  *	=====
  */
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
 // Standard C
 #include <errno.h>
+#include <stdio.h>
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-// poseven
-#include "poseven/Pathnames.hh"
-#include "poseven/functions/stat.hh"
+// Extended API Set Part 2
+#include "extended-api-set/part-2.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -27,9 +25,6 @@
 
 namespace tool
 {
-	
-	namespace p7 = poseven;
-	
 	
 	static const char* basename( const char* path )
 	{
@@ -43,15 +38,11 @@ namespace tool
 		return slash + 1;
 	}
 	
-	static int move_into_dir( const char* old_path, const char* new_dir )
+	static int move_into_dir( const char* old_path, int new_dirfd )
 	{
-		using namespace io::path_descent_operators;
-		
 		const char* name = basename( old_path );
 		
-		std::string new_path = std::string( new_dir ) / name;
-		
-		return std::rename( old_path, new_path.c_str() );
+		return ::renameat( AT_FDCWD, old_path, new_dirfd, name );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -66,35 +57,35 @@ namespace tool
 			return 1;
 		}
 		
+		const char* destPath = argv[ argc - 1 ];
+		
+		int dest_dirfd = open( destPath, O_RDONLY | O_DIRECTORY );
+		
 		int fail = 0;
 		
 		if ( argc > 3 )
 		{
 			// Move multiple files.
 			
-			const char* destDir = argv[ argc - 1 ];
-			
-			struct stat sb;
-			int statted = stat( destDir, &sb );
-			
-			if ( statted == -1 )
+			if ( dest_dirfd < 0 )
 			{
-				std::fprintf( stderr, "Can't stat %s (%d)\n", destDir, errno );
-				return 1;
-			}
-			
-			if ( !S_ISDIR( sb.st_mode ) )
-			{
-				const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
-				
-				std::fprintf( stderr, format, argv[ 0 ], destDir );
+				if ( errno == ENOTDIR )
+				{
+					const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
+					
+					std::fprintf( stderr, format, argv[ 0 ], destPath );
+				}
+				else
+				{
+					std::fprintf( stderr, "mv: %s: %s\n", destPath, std::strerror( errno ) );
+				}
 				
 				return 1;
 			}
 			
 			for ( int index = 1;  index < argc - 1;  ++index )
 			{
-				fail += move_into_dir( argv[ index ], destDir ) == -1;
+				fail += move_into_dir( argv[ index ], dest_dirfd ) == -1;
 			}
 		}
 		else
@@ -102,10 +93,9 @@ namespace tool
 			// Move single file or directory.
 			
 			const char* srcPath  = argv[ 1 ];
-			const char* destPath = argv[ 2 ];
 			
-			int renamed = io::directory_exists( destPath ) ? move_into_dir( srcPath, destPath )
-			                                               : std::rename  ( srcPath, destPath );
+			int renamed = dest_dirfd >= 0 ? move_into_dir( srcPath, dest_dirfd )
+			                              : std::rename  ( srcPath, destPath   );
 			
 			if ( renamed == -1 )
 			{
