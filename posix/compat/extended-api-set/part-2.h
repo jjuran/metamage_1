@@ -20,6 +20,8 @@ extern "C" {
 
 #ifndef __linux__
 
+#define AT_FDCWD  (-100)
+
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW  4096
 #endif
