@@ -30,7 +30,11 @@ extern "C" {
 DIR *fdopendir( int fd );
 
 // fcntl
-int openat( int dirfd, const char* path, int flags, mode_t mode );
+#ifdef __cplusplus
+int openat( int dirfd, const char* path, int flags, mode_t mode = 0 );
+#else
+int openat( int dirfd, const char* path, int flags, ... );
+#endif
 
 // stdio
 int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath );
