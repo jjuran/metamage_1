@@ -76,6 +76,9 @@ ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_s
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
+ssize_t _realpathat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
+
+#define REALPATH_MAC  0x0000001
 
 __dead void	 _exit(int);
 int	 access(const char *, int);

@@ -192,6 +192,7 @@ DEFINE_STUB_7F( select )
 //DEFINE_STUB_7F( symlink )
 
 //DEFINE_STUB_7F( readlink_k )
+DEFINE_STUB_7F( _realpathat )
 
 DEFINE_STUB_7F( mmap )
 DEFINE_STUB_7F( munmap )
