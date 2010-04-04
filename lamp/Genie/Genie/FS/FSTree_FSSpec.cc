@@ -966,9 +966,9 @@ namespace Genie
 		{
 			file->Stat( stat_buffer );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const p7::errno_t& err )
 		{
-			if ( err != fnfErr )
+			if ( err != ENOENT )
 			{
 				throw;
 			}

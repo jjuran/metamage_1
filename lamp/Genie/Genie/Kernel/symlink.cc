@@ -59,13 +59,6 @@ namespace Genie
 			{
 				if ( errnum != ENOENT )  throw;
 			}
-			catch ( const N::OSStatus& err )
-			{
-				if ( err != fnfErr )
-				{
-					throw;
-				}
-			}
 			
 			// If we got here, link is a valid location.
 			

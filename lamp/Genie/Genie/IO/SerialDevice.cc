@@ -25,6 +25,9 @@
 // nucleus
 #include "nucleus/shared.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 
@@ -56,6 +59,7 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 #if !TARGET_API_MAC_CARBON
@@ -115,7 +119,7 @@ namespace Genie
 	{
 	#if TARGET_API_MAC_CARBON
 		
-		N::ThrowOSStatus( fnfErr );
+		p7::throw_errno( ENOENT );
 		
 		return boost::shared_ptr< IOHandle >();
 		

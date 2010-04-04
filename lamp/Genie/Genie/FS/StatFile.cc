@@ -119,14 +119,13 @@ namespace Genie
 		
 		if ( !exists )
 		{
-			// Treating this specially (a) prevents a stack crawl, and
-			// (b) doesn't pass through ThrowOSStatus_Internal(), which
-			// would make life hell if we had set a breakpoint there.
-			// Also it lets us pass partial results back before throwing.
+			// Treating this specially (a) avoids throw_errno_internal(), which
+			// would make life hell if we had set a breakpoint there, and (b)
+			// lets us pass partial results back before throwing.
 			
 			sb->st_rdev = dirID;
 			
-			N::ThrowOSStatus( fnfErr );
+			throw p7::errno_t( ENOENT );
 		}
 		
 		const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;

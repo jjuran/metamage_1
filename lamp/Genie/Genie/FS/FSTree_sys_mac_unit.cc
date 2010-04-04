@@ -102,6 +102,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	struct decode_unit_number
@@ -210,7 +211,7 @@ namespace Genie
 			
 			if ( dceHandle[0]->dCtlSlot == 0 )
 			{
-				N::ThrowOSStatus( fnfErr );
+				p7::throw_errno( ENOENT );
 			}
 			
 			return dceHandle[0]->dCtlSlot;
@@ -231,7 +232,7 @@ namespace Genie
 			
 			if ( dceHandle[0]->dCtlDevBase == 0 )
 			{
-				N::ThrowOSStatus( fnfErr );
+				p7::throw_errno( ENOENT );
 			}
 			
 			return dceHandle[0]->dCtlDevBase;
@@ -281,7 +282,7 @@ namespace Genie
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
-			poseven::throw_errno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name );
