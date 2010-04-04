@@ -10,7 +10,6 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdlib>
 
 // POSIX
 #include <dirent.h>
@@ -124,7 +123,7 @@ namespace tool
 		{
 			(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		int kills = killall( argp[ 1 ], sig_number );
@@ -133,10 +132,10 @@ namespace tool
 		{
 			more::perror( argp[1], "no process killed", 0 );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
-		return kills > 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+		return kills > 0 ? 0 : 1;
 	}
 	
 }
