@@ -20,6 +20,40 @@
 
 #if !defined( __LAMP__ ) && !defined( __linux__ )
 
+static int get_path( int dirfd, const char* path, char* buffer )
+{
+	ssize_t result = 0;
+	
+	if ( dirfd != AT_FDCWD  &&  path[0] != '/' )
+	{
+		int saved_cwd = open( ".", O_RDONLY );
+		
+		if ( saved_cwd < 0 )
+		{
+			return saved_cwd;
+		}
+		
+		result = fchdir( dirfd );
+		
+		int saved_errno = errno;
+		
+		if ( result == 0 )
+		{
+			result = realpath( path, buffer ) ? 1 : -1;
+			
+			saved_errno = errno;
+		}
+		
+		fchdir( saved_cwd );
+		
+		close( saved_cwd );
+		
+		errno = saved_errno;
+	}
+	
+	return result;
+}
+
 DIR *fdopendir( int fd )
 {
 	char path[] = "/dev/fd/1234567890";
@@ -157,6 +191,36 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 	}
 	
 	return result;
+}
+
+int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
+{
+	char old_pathname[ PATH_MAX ];
+	char new_pathname[ PATH_MAX ];
+	
+	int got_old = get_path( olddirfd, oldpath, old_pathname );
+	
+	if ( got_old < 0 )
+	{
+		return got_old;
+	}
+	else if ( got_old )
+	{
+		oldpath = old_pathname;
+	}
+	
+	int got_new = get_path( newdirfd, newpath, new_pathname );
+	
+	if ( got_new < 0 )
+	{
+		return got_new;
+	}
+	else if ( got_new )
+	{
+		newpath = new_pathname;
+	}
+	
+	return rename( oldpath, newpath );
 }
 
 #endif
