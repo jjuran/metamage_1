@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// C++ Standard Library
-#include <string>
+// C Standard Library
+#include <string.h>
 
 // iota
 #include "iota/quad.hh"
@@ -124,8 +124,8 @@ namespace tool
 	}
 	
 	
-	static std::string gAppNameToOpenIn;
-	static std::string gAppSigToOpenIn;
+	static const char* gAppNameToOpenIn = NULL;
+	static const char* gAppSigToOpenIn  = NULL;
 	
 	static bool gOpenInEditor    = false;
 	static bool gUseMacPathnames = false;
@@ -166,16 +166,16 @@ namespace tool
 			return N::OSType( sigGoodTextEditor );
 		}
 		
-		if ( !gAppSigToOpenIn.empty() )
+		if ( gAppSigToOpenIn != NULL )
 		{
 			// User has specified an application by its signature
 			
-			if ( gAppSigToOpenIn.length() != sizeof 'quad' )
+			if ( strlen( gAppSigToOpenIn ) != sizeof 'quad' )
 			{
 				N::ThrowOSStatus( paramErr );
 			}
 			
-			return N::OSType( iota::decode_quad( gAppSigToOpenIn.data() ) );
+			return N::OSType( iota::decode_quad( gAppSigToOpenIn ) );
 		}
 		
 		// Otherwise, give everything to the Finder.
@@ -201,12 +201,12 @@ namespace tool
 		
 		FSSpec appFile;
 		
-		if ( !gAppNameToOpenIn.empty() )
+		if ( gAppNameToOpenIn != NULL )
 		{
 			// User has specified an application by its pathname
 			
 			// Resolve to FSSpec
-			appFile = Div::ResolvePathToFSSpec( gAppNameToOpenIn.c_str() );
+			appFile = Div::ResolvePathToFSSpec( gAppNameToOpenIn );
 			
 			try
 			{
