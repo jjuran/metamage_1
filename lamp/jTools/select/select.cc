@@ -33,7 +33,7 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static int Select( const std::vector< std::string >& read_files, bool only_one )
+	static int Select( const std::vector< const char* >& read_files, bool only_one )
 	{
 		int maxFD = -1;
 		
@@ -43,11 +43,11 @@ namespace tool
 		
 		std::map< int, const char* > name_of;
 		
-		typedef std::vector< std::string >::const_iterator const_iterator;
+		typedef std::vector< const char* >::const_iterator const_iterator;
 		
 		for ( const_iterator it = read_files.begin();  it != read_files.end();  ++it )
 		{
-			const char* name = it->c_str();
+			const char* name = *it;
 			
 			p7::fd_t fd = p7::open( name, p7::o_rdonly ).release();
 			
@@ -99,7 +99,7 @@ namespace tool
 	{
 		bool only_one = false;
 		
-		std::vector< std::string > readers;
+		std::vector< const char* > readers;
 		
 		o::bind_option_to_variable( "-1", only_one );
 		o::bind_option_to_variable( "-r", readers  );
