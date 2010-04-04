@@ -32,8 +32,8 @@
 // klibc
 #include "klibc/signal_lookup.hh"
 
-// Orion
-#include "Orion/Main.hh"
+
+#pragma exceptions off
 
 
 #ifndef O_BINARY
@@ -41,102 +41,97 @@
 #endif
 
 
-namespace tool
+static int killall( const char* name_to_kill, int sig )
 {
+	const size_t name_len = strlen( name_to_kill );
 	
-	static int killall( const char* name_to_kill, int sig )
+	const size_t buffer_size = name_len + 1;
+	
+	char* buffer = (char*) alloca( buffer_size );
+	
+	const char* proc_dir = "/proc";
+	
+	DIR* dir = opendir( proc_dir );
+	
+	if ( dir == NULL )  return -1;
+	
+	const int proc_dirfd = dirfd( dir );
+	
+	int kills = 0;
+	
+	while ( dirent* entry = readdir( dir ) )
 	{
-		const size_t name_len = strlen( name_to_kill );
+		const char* proc_id = entry->d_name;
 		
-		const size_t buffer_size = name_len + 1;
-		
-		char* buffer = (char*) alloca( buffer_size );
-		
-		const char* proc_dir = "/proc";
-		
-		DIR* dir = opendir( proc_dir );
-		
-		if ( dir == NULL )  return -1;
-		
-		const int proc_dirfd = dirfd( dir );
-		
-		int kills = 0;
-		
-		while ( dirent* entry = readdir( dir ) )
+		if ( pid_t pid = iota::parse_unsigned_decimal( proc_id ) )
 		{
-			const char* proc_id = entry->d_name;
+			int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
 			
-			if ( pid_t pid = iota::parse_unsigned_decimal( proc_id ) )
+			int name_fd = openat( pid_dirfd, "name", O_RDONLY | O_BINARY );
+			
+			const ssize_t n_read = read( name_fd, buffer, buffer_size );
+			
+			if ( n_read == name_len  &&  memcmp( name_to_kill, buffer, name_len ) == 0 )
 			{
-				int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
+				const int killed = kill( pid, sig );
 				
-				int name_fd = openat( pid_dirfd, "name", O_RDONLY | O_BINARY );
-				
-				const ssize_t n_read = read( name_fd, buffer, buffer_size );
-				
-				if ( n_read == name_len  &&  memcmp( name_to_kill, buffer, name_len ) == 0 )
+				if ( killed == 0 )
 				{
-					const int killed = kill( pid, sig );
-					
-					if ( killed == 0 )
-					{
-						++kills;
-					}
-					else
-					{
-						more::perror( name_to_kill, iota::inscribe_decimal( pid ) );
-					}
+					++kills;
 				}
-				
-				close( name_fd   );
-				close( pid_dirfd );
+				else
+				{
+					more::perror( name_to_kill, iota::inscribe_decimal( pid ) );
+				}
 			}
+			
+			close( name_fd   );
+			close( pid_dirfd );
 		}
-		
-		closedir( dir );
-		
-		return kills;
 	}
 	
+	closedir( dir );
 	
-	int Main( int argc, iota::argv_t argv )
+	return kills;
+}
+
+
+int main( int argc, char const *const argv[] )
+{
+	int sig_number = SIGTERM;
+	
+	char const *const *argp = argv;
+	
+	if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
 	{
-		int sig_number = SIGTERM;
+		const char* sig = argp[ 1 ] + 1;
 		
-		char const *const *argp = argv;
+		bool numeric = std::isdigit( *sig );
 		
-		if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
-		{
-			const char* sig = argp[ 1 ] + 1;
-			
-			bool numeric = std::isdigit( *sig );
-			
-			// FIXME:  Needs error checking instead of silently using 0
-			sig_number = numeric ? iota::parse_unsigned_decimal( sig )
-			                     : klibc::signal_lookup        ( sig );
-			
-			++argp;
-			--argc;
-		}
+		// FIXME:  Needs error checking instead of silently using 0
+		sig_number = numeric ? iota::parse_unsigned_decimal( sig )
+		                     : klibc::signal_lookup        ( sig );
 		
-		if ( argc != 2 )
-		{
-			(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
-			
-			return 1;
-		}
-		
-		int kills = killall( argp[ 1 ], sig_number );
-		
-		if ( kills == 0 )
-		{
-			more::perror( argp[1], "no process killed", 0 );
-			
-			return 1;
-		}
-		
-		return kills > 0 ? 0 : 1;
+		++argp;
+		--argc;
 	}
 	
+	if ( argc != 2 )
+	{
+		(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
+		
+		return 1;
+	}
+	
+	int kills = killall( argp[ 1 ], sig_number );
+	
+	if ( kills == 0 )
+	{
+		more::perror( argp[1], "no process killed", 0 );
+		
+		return 1;
+	}
+	
+	return kills > 0 ? 0 : 1;
 }
 
