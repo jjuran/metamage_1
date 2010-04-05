@@ -229,7 +229,7 @@
 
 
 #define __NR_AESendBlocking            277
-#define __NR_OTInetMailExchange_k      278
+#define __NR__OTInetMailExchange       278
 
 #define __NR_utimensat                 320
 

@@ -9,7 +9,7 @@
 #endif
 
 // Lamp
-#include "lamp/OTInetMailExchange_k.h"
+#include "lamp/_OTInetMailExchange.h"
 
 
 #pragma exceptions off
@@ -22,6 +22,6 @@ pascal OSStatus OTInetMailExchange( InetSvcRef,
                                     UInt16            *count,
                                     InetMailExchange  *result )
 {
-	return OTInetMailExchange_k( domain, count, result );
+	return _OTInetMailExchange( domain, count, result );
 }
 
