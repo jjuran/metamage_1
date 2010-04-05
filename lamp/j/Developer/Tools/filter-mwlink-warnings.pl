@@ -20,6 +20,7 @@ qw
 	system
 	time
 	utime
+	_getcwd
 	__atexit
 	__exit
 	

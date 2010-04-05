@@ -21,7 +21,7 @@
 #define __NR_chmod                      15
 #define __NR_lchown                     16
 #define __NR_reexec                     17
-#define __NR_getcwd_k                   18
+//#define __NR_getcwd                     18
 #define __NR_lseek                      19
 #define __NR_getpid                     20
 #define __NR_mount                      21

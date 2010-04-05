@@ -225,39 +225,6 @@ namespace Genie
 	}
 	
 	
-	static ssize_t getcwd_k( char* buffer, std::size_t buffer_size )
-	{
-		SystemCallFrame frame( "getcwd_k" );
-		
-		try
-		{
-			FSTreePtr cwd = frame.Caller().GetCWD();
-			
-			std::string result = cwd->Pathname();
-			
-			const bool too_big = result.size() > buffer_size;
-			
-			const size_t bytes_copied = std::min( buffer_size, result.size() );
-			
-			std::memcpy( buffer, result.data(), bytes_copied );
-			
-			if ( too_big )
-			{
-				errno = ERANGE;
-				
-				// Return the bitwise inverse of the data size.
-				return ~result.size();
-			}
-			
-			return bytes_copied;
-		}
-		catch ( ... )
-		{
-			return frame.SetErrnoFromException();
-		}
-	}
-	
-	
 	static pid_t getpgid( pid_t pid )
 	{
 		SystemCallFrame frame( "getpgid" );
@@ -767,7 +734,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( close     );
 	REGISTER_SYSTEM_CALL( dup3      );
 	REGISTER_SYSTEM_CALL( _exit     );
-	REGISTER_SYSTEM_CALL( getcwd_k  );
 	REGISTER_SYSTEM_CALL( getpgid   );
 	REGISTER_SYSTEM_CALL( getpid    );
 	REGISTER_SYSTEM_CALL( getppid   );

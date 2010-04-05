@@ -662,6 +662,11 @@ int tcsetpgrp( int fd, pid_t pgrp )
 	return ioctl( fd, TIOCSPGRP, (int*) &pgrp );
 }
 
+ssize_t _getcwd( char* buffer, size_t buffer_size )
+{
+	return _realpath( ".", buffer, buffer_size );
+}
+
 char* getcwd( char* buffer, size_t buffer_size )
 {
 	if ( buffer_size == 0 )
@@ -671,7 +676,7 @@ char* getcwd( char* buffer, size_t buffer_size )
 		return NULL;
 	}
 	
-	ssize_t length = getcwd_k( buffer, buffer_size - 1 );
+	const ssize_t length = _getcwd( buffer, buffer_size - 1 );
 	
 	if ( length < 0 )
 	{

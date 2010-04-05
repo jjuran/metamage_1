@@ -146,7 +146,7 @@ DEFINE_STUB_7F( chdir  )
 //DEFINE_STUB_7F( chmod )
 
 DEFINE_STUB_7F( reexec )
-DEFINE_STUB_7F( getcwd_k )
+//DEFINE_STUB_7F( getcwd )
 DEFINE_STUB_7F( lseek )
 DEFINE_STUB_7F( getpid )
 

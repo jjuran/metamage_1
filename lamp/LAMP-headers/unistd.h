@@ -75,6 +75,8 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
+ssize_t _getcwd( char *buffer, size_t buffer_size );
+
 ssize_t _readlink( const char *path, char *buffer, size_t buffer_size );
 ssize_t _realpath( const char *path, char *buffer, size_t buffer_size );
 
@@ -105,7 +107,6 @@ long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,1,1024)));
-ssize_t getcwd_k( char*, size_t );  // jjuran
 gid_t	 getegid(void);
 uid_t	 geteuid(void);
 gid_t	 getgid(void);
