@@ -90,16 +90,16 @@ namespace Genie
 	// buffer entirely with null bytes, readlinkat_k() always returns the data
 	// size in some form if it returns data at all.
 	
-	// Like readlink() and readlinkat(), readlinkat_k() will copy as much data as
+	// Like readlink() and readlinkat(), _readlinkat() will copy as much data as
 	// will fit in the buffer.  If all the data fit in the buffer, the data size
 	// is returned.  But if the data exceed the buffer length, then errno is set
 	// to ERANGE (as for getcwd()) and the bitwise inverse of the data size is
 	// returned, which will invariably be a negative number.  The additive
 	// inverse of the return value in this case equals the data size plus one.
 	
-	static ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size )
+	static ssize_t _readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags )
 	{
-		SystemCallFrame frame( "readlinkat_k" );
+		SystemCallFrame frame( "_readlinkat" );
 		
 		try
 		{
@@ -133,8 +133,8 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( symlinkat    );
-	REGISTER_SYSTEM_CALL( readlinkat_k );
+	REGISTER_SYSTEM_CALL( symlinkat   );
+	REGISTER_SYSTEM_CALL( _readlinkat );
 	
 	#pragma force_active reset
 	

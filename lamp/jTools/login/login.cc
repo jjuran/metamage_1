@@ -60,7 +60,7 @@ static void SetVariables()
 	
 	char path_buffer[ 4096 ];
 	
-	ssize_t size = readlink_k( "/sys/mac/user/home", path_buffer, sizeof path_buffer - 1 );
+	ssize_t size = _readlink( "/sys/mac/user/home", path_buffer, sizeof path_buffer - 1 );
 	
 	if ( size < 0 )
 	{

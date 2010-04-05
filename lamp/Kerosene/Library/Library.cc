@@ -548,7 +548,7 @@ int readlink( const char *path, char *buffer, size_t buffer_size )
 {
 	const int saved_errno = errno;
 	
-	const ssize_t size = readlink_k( path, buffer, buffer_size );
+	const ssize_t size = _readlink( path, buffer, buffer_size );
 	
 	if ( size == -1 )
 	{
@@ -565,9 +565,9 @@ int readlink( const char *path, char *buffer, size_t buffer_size )
 	return size;
 }
 
-ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
+ssize_t _readlink( const char *path, char *buffer, size_t buffer_size )
 {
-	return readlinkat_k( AT_FDCWD, path, buffer, buffer_size );
+	return _readlinkat( AT_FDCWD, path, buffer, buffer_size, 0 );
 }
 
 int unlink( const char* path )
@@ -692,7 +692,7 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 {
 	const int saved_errno = errno;
 	
-	const ssize_t size = readlinkat_k( dirfd, path, buffer, buffer_size );
+	const ssize_t size = _readlinkat( dirfd, path, buffer, buffer_size, 0 );
 	
 	if ( size < -1 )
 	{

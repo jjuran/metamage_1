@@ -31,7 +31,7 @@ int main( int argc, char const *const argv[] )
 	
 	char buffer[ 4096 ];
 	
-	ssize_t size = readlink_k( argv[1], buffer, sizeof buffer - 1 );
+	ssize_t size = _readlink( argv[1], buffer, sizeof buffer - 1 );
 	
 	if ( size < 0 )
 	{

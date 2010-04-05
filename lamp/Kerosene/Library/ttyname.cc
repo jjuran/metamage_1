@@ -38,7 +38,7 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	
 	*end = '\0';
 	
-	return readlink_k( pathname, buffer, buffer_size );
+	return _readlink( pathname, buffer, buffer_size );
 }
 
 int ttyname_r( int fd, char* buffer, size_t buffer_size )

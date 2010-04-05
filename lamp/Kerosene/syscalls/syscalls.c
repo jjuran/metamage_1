@@ -191,7 +191,7 @@ DEFINE_STUB_7F( gettimeofday )
 DEFINE_STUB_7F( select )
 //DEFINE_STUB_7F( symlink )
 
-//DEFINE_STUB_7F( readlink_k )
+DEFINE_STUB_7F( _readlinkat )
 DEFINE_STUB_7F( _realpathat )
 
 DEFINE_STUB_7F( mmap )
@@ -236,7 +236,7 @@ DEFINE_STUB_FF( unlinkat     )
 DEFINE_STUB_FF( renameat     )
 DEFINE_STUB_FF( linkat       )
 DEFINE_STUB_FF( symlinkat    )
-DEFINE_STUB_FF( readlinkat_k )
+//DEFINE_STUB_FF( readlinkat )
 DEFINE_STUB_FF( fchmodat     )
 DEFINE_STUB_FF( faccessat    )
 
