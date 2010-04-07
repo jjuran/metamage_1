@@ -5,7 +5,6 @@
 #include "ReadExecuteLoop.hh"
 
 // Standard C/C++
-#include <cstdio>
 #include <cstring>
 
 // Standard C
@@ -23,9 +22,6 @@
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
-
-// Orion
-#include "Orion/Main.hh"
 
 // sh
 #include "Builtins.hh"
@@ -103,18 +99,6 @@ namespace tool
 		
 		if ( prompts )
 		{
-			const char* in = " in ";
-			
-			const char* window = getenv( "WINDOW" );
-			
-			if ( window == NULL )
-			{
-				in     =
-				window = "";
-			}
-			
-			std::printf( "Shell spawned with pid %d%s%s\n", getpid(), in, window );
-			
 			SendPrompt();
 		}
 		
