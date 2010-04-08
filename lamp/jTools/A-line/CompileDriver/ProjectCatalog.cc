@@ -25,11 +25,11 @@
 #include "io/walk.hh"
 
 // poseven
-#include "poseven/Directory.hh"
 #include "poseven/Pathnames.hh"
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/sequences/directory_contents.hh"
 
 // A-line
 #include "A-line/Exceptions.hh"

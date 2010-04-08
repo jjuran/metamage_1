@@ -1,5 +1,5 @@
-// Directory.hh
-// ------------
+// directory_contents.hh
+// ---------------------
 //
 // Maintained by Joshua Juran
 
@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef POSEVEN_DIRECTORY_HH
-#define POSEVEN_DIRECTORY_HH
+#ifndef POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
+#define POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 
 // Io
 #include "io/files.hh"

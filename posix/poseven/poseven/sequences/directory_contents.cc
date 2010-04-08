@@ -1,5 +1,5 @@
-// Directory.cc
-// ------------
+// directory_contents.cc
+// ---------------------
 //
 // Maintained by Joshua Juran
 
@@ -10,7 +10,7 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
-#include "poseven/Directory.hh"
+#include "poseven/sequences/directory_contents.hh"
 
 // poseven
 #include "poseven/functions/readdir.hh"

@@ -14,11 +14,11 @@
 #include "io/walk.hh"
 
 // poseven
-#include "poseven/Directory.hh"
 #include "poseven/FileDescriptor.hh"
 #include "poseven/Pathnames.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/sequences/directory_contents.hh"
 #include "poseven/types/exit_t.hh"
 
 // Orion

@@ -31,7 +31,6 @@
 #include "plus/make_string.hh"
 
 // poseven
-#include "poseven/Directory.hh"
 #include "poseven/Pathnames.hh"
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/execv.hh"
@@ -40,6 +39,7 @@
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/sequences/directory_contents.hh"
 
 #if defined( __MACOS__ ) || defined( __APPLE__ )
 
