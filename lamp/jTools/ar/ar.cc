@@ -155,7 +155,7 @@ namespace tool
 	                             mw::cpu_architecture&  arch,
 	                             bool&                  debug )
 	{
-		CheckObjectFile( io::open_for_reading( object_path ), arch, debug );
+		CheckObjectFile( p7::open( object_path, p7::o_rdonly ), arch, debug );
 	}
 	
 	

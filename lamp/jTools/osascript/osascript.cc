@@ -103,7 +103,7 @@ namespace tool
 				throw;	
 			}
 			
-			result = ReadUntilEOF( io::open_for_reading( file ) );
+			result = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
 		}
 		
 		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )

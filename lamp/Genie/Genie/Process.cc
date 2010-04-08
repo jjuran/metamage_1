@@ -43,7 +43,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-#include "poseven/Pathnames.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -924,7 +923,7 @@ namespace Genie
 		CheckProgramFile( programFile );
 		
 		// Do we take the name before or after normalization?
-		itsName = io::get_filename( path );
+		itsName = programFile->Name();
 		
 		ExecContext context( programFile, argv );
 		

@@ -108,7 +108,7 @@ namespace tool
 		{
 			name.resize( name.size() - 1 );
 		}
-		else if ( io::file_exists( name ) )
+		else if ( p7::s_isreg( p7::stat( name ) ) )
 		{
 			extension = ".mbin";
 		}
@@ -164,7 +164,7 @@ namespace tool
 					decode_target = "/dev/fd/0";
 				}
 				
-				Decode( io::open_for_reading( decode_target ),
+				Decode( p7::open( decode_target, p7::o_rdonly ),
 				        N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( destDirPath ) ) );
 			}
 			catch ( const MacBinary::InvalidMacBinaryHeader& )

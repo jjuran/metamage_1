@@ -236,7 +236,7 @@ namespace tool
 	{
 		text_input::feed feed;
 		
-		n::owned< p7::fd_t > fd( io::open_for_reading( "/etc/inetd.conf" ) );
+		n::owned< p7::fd_t > fd( p7::open( "/etc/inetd.conf", p7::o_rdonly ) );
 		
 		p7::fd_reader reader( fd );
 		
