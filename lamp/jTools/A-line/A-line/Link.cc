@@ -22,12 +22,14 @@
 #include "debug/assert.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/pread.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // A-line
 #include "A-line/A-line.hh"

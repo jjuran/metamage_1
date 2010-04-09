@@ -13,7 +13,9 @@
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
-#include "poseven/Pathnames.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // mac_pathname
 #include "mac_pathname_from_path.hh"

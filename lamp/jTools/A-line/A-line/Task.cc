@@ -14,8 +14,10 @@
 #include "plus/pointer_to_function.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/stat.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // A-line
 #include "A-line/A-line.hh"

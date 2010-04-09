@@ -20,13 +20,15 @@
 #include "debug/assert.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/lseek.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/get_options.hh"

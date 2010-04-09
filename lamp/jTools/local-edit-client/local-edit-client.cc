@@ -14,7 +14,6 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/open.hh"
@@ -40,6 +39,16 @@ namespace tool
 	namespace p7 = poseven;
 	namespace o = orion;
 	
+	
+	static const char* basename( const char* path )
+	{
+		if ( const char* last_slash = strrchr( path, '/' ) )
+		{
+			return last_slash + 1;
+		}
+		
+		return path;
+	}
 	
 	static MD5::Result MD5DigestFile( p7::fd_t input )
 	{
@@ -204,7 +213,7 @@ namespace tool
 		
 		std::string message_header =   HTTP::RequestLine( method, urlPath )
 		                             //+ HTTP::HeaderLine( "Host", hostname )
-		                             + HTTP::HeaderFieldLine( "X-Edit-Title", io::get_filename( target_pathname ) )
+		                             + HTTP::HeaderFieldLine( "X-Edit-Title", basename( target_pathname ) )
 		                             + HTTP::HeaderFieldLine( "Content-MD5", old_digest_b64 )
 		                             + contentLengthHeader
 		                             + "\r\n";

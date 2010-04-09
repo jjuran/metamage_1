@@ -189,7 +189,9 @@ namespace tool
 		{
 			// Read from stdin
 			
-			if ( gLoginShell && io::item_exists( "/etc/profile" ) )
+			struct ::stat stat_buffer;
+			
+			if ( gLoginShell && p7::stat( "/etc/profile", stat_buffer ) )
 			{
 				ExecuteCmdLine( ". /etc/profile" );
 			}

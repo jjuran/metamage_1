@@ -18,13 +18,13 @@
 #include "nucleus/shared.hh"
 
 // poseven
-#include "poseven/Directory.hh"
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/dirfd.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/opendir.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/sequences/directory_contents.hh"
 
 // Orion
 #include "Orion/get_options.hh"

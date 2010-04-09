@@ -17,10 +17,12 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/Main.hh"

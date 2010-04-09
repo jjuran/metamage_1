@@ -21,9 +21,6 @@
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
-// Io
-#include "io/io.hh"
-
 
 namespace poseven
 {
@@ -45,21 +42,6 @@ namespace poseven
 	inline off_t lseek( fd_t fd )
 	{
 		return throw_posix_result( ::lseek( fd, 0, seek_cur ) );
-	}
-	
-}
-
-namespace io
-{
-	
-	inline off_t get_file_mark( poseven::fd_t stream, overload = overload() )
-	{
-		return poseven::lseek( stream );
-	}
-	
-	inline void set_file_mark( poseven::fd_t stream, off_t mark, overload = overload() )
-	{
-		poseven::lseek( stream, mark );
 	}
 	
 }
