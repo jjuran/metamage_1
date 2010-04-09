@@ -20,9 +20,6 @@
 // POSIX
 #include <fcntl.h>
 
-// Io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/functions/close.hh"
 #include "poseven/types/mode_t.hh"
@@ -37,41 +34,6 @@ namespace poseven
 	inline nucleus::owned< fd_t > openat( fd_t dirfd, const std::string& path, open_flags_t flags, mode_t mode = _666 )
 	{
 		return openat( dirfd, path.c_str(), flags, mode );
-	}
-	
-}
-
-namespace io
-{
-	
-	inline nucleus::owned< poseven::fd_t > open_for_reading( poseven::fd_t dirfd, const char* path, overload = overload() )
-	{
-		return poseven::openat( dirfd, path, poseven::o_rdonly );
-	}
-	
-	inline nucleus::owned< poseven::fd_t > open_for_reading( poseven::fd_t dirfd, const std::string& path, overload = overload() )
-	{
-		return open_for_reading( dirfd, path.c_str(), overload() );
-	}
-	
-	inline nucleus::owned< poseven::fd_t > open_for_writing( poseven::fd_t dirfd, const char* path, overload = overload() )
-	{
-		return poseven::openat( dirfd, path, poseven::o_wronly );
-	}
-	
-	inline nucleus::owned< poseven::fd_t > open_for_writing( poseven::fd_t dirfd, const std::string& path, overload = overload() )
-	{
-		return open_for_writing( dirfd, path.c_str(), overload() );
-	}
-	
-	inline nucleus::owned< poseven::fd_t > open_for_io( poseven::fd_t dirfd, const char* path, overload = overload() )
-	{
-		return poseven::openat( dirfd, path, poseven::o_rdwr );
-	}
-	
-	inline nucleus::owned< poseven::fd_t > open_for_io( poseven::fd_t dirfd, const std::string& path, overload = overload() )
-	{
-		return open_for_io( dirfd, path.c_str(), overload() );
 	}
 	
 }

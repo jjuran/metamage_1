@@ -20,9 +20,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/functions/stat.hh"
 #include "poseven/types/at_flags_t.hh"
@@ -77,51 +74,6 @@ namespace poseven
 	                            at_flags_t          flags = at_flags_t() )
 	{
 		return fstatat( dirfd, path.c_str(), flags );
-	}
-	
-}
-
-namespace io
-{
-	
-	// Existence
-	
-	inline bool item_exists( poseven::fd_t dirfd, const char* item, overload = overload() )
-	{
-		struct ::stat sb;
-		
-		return poseven::fstatat( dirfd, item, sb );
-	}
-	
-	inline bool item_exists( poseven::fd_t dirfd, const std::string& item, overload = overload() )
-	{
-		return item_exists( dirfd, item.c_str() );
-	}
-	
-	
-	inline bool file_exists( poseven::fd_t dirfd, const char* item, overload = overload() )
-	{
-		struct ::stat sb;
-		
-		return poseven::fstatat( dirfd, item, sb ) && item_is_file( sb );
-	}
-	
-	inline bool file_exists( poseven::fd_t dirfd, const std::string& item, overload = overload() )
-	{
-		return file_exists( dirfd, item.c_str() );
-	}
-	
-	
-	inline bool directory_exists( poseven::fd_t dirfd, const char* item, overload = overload() )
-	{
-		struct ::stat sb;
-		
-		return poseven::fstatat( dirfd, item, sb ) && item_is_directory( sb );
-	}
-	
-	inline bool directory_exists( poseven::fd_t dirfd, const std::string& item, overload = overload() )
-	{
-		return directory_exists( dirfd, item.c_str() );
 	}
 	
 }
