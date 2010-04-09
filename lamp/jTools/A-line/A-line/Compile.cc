@@ -524,8 +524,6 @@ namespace tool
 	
 	static void DefineMacros( CompilerOptions& options, const TargetInfo& target_info )
 	{
-		options.DEFINE_MACRO( "__ALINE__" );
-		
 		if ( target_info.toolchain == toolchainMetrowerks )
 		{
 			// Assume CW Pro 6
