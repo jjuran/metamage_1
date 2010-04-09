@@ -17,8 +17,8 @@
 // plus
 #include "plus/pointer_to_function.hh"
 
-// poseven
-#include "poseven/Pathnames.hh"
+// pfiles
+#include "pfiles/common.hh"
 
 // A-line
 #include "A-line/A-line.hh"

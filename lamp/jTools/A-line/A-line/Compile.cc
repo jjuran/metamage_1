@@ -41,7 +41,6 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/lstat.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
@@ -49,6 +48,9 @@
 #include "poseven/functions/symlink.hh"
 #include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // A-line
 #include "A-line/A-line.hh"

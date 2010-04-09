@@ -30,7 +30,9 @@
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
 #include "poseven/types/fd_t.hh"
-#include "poseven/Pathnames.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.hh"

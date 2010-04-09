@@ -32,8 +32,6 @@ static int futimens( int fd, const struct timespec times[2] );
 #endif
 
 // poseven
-#include "poseven/FileDescriptor.hh"
-#include "poseven/Pathnames.hh"
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/dirfd.hh"
 #include "poseven/functions/fchmod.hh"
@@ -50,6 +48,9 @@ static int futimens( int fd, const struct timespec times[2] );
 #include "poseven/functions/write.hh"
 #include "poseven/sequences/directory_contents.hh"
 #include "poseven/types/exit_t.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/get_options.hh"

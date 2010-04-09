@@ -24,8 +24,10 @@
 #include "debug/assert.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/stat.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"

@@ -19,9 +19,11 @@
 #include "io/walk.hh"
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/lstat.hh"
 #include "poseven/sequences/directory_contents.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 
 namespace tool

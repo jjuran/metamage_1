@@ -14,10 +14,6 @@
 #ifndef POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 #define POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 
-// Io
-#include "io/files.hh"
-#include "io/walk.hh"
-
 // Nucleus
 #include "nucleus/shared.hh"
 
@@ -104,21 +100,6 @@ namespace poseven
 	inline directory_contents_container directory_contents( const std::string& dir_path )
 	{
 		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
-	}
-	
-}
-
-namespace io
-{
-	
-	template <> struct directory_contents_traits< std::string >
-	{
-		typedef poseven::directory_contents_container container_type;
-	};
-	
-	inline poseven::directory_contents_container directory_contents( const std::string& dir, overload = overload() )
-	{
-		return poseven::directory_contents( dir );
 	}
 	
 }

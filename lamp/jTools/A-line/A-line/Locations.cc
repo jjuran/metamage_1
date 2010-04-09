@@ -9,9 +9,11 @@
 #include <stdlib.h>
 
 // poseven
-#include "poseven/Pathnames.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/stat.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // A-line
 #include "CompileDriver/Platform.hh"
