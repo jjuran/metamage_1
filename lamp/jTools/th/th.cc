@@ -222,10 +222,10 @@ namespace tool
 				name_length -= 2;
 			}
 			
-			unsigned width = std::max( 18U, name_length );
+			unsigned width = std::max( 32U, name_length );
 			
-			write( STDOUT_FILENO, test_name,                    name_length );
-			write( STDOUT_FILENO, "..................", width - name_length );
+			write( STDOUT_FILENO, test_name,                                    name_length );
+			write( STDOUT_FILENO, "..................................", width - name_length );
 			
 			TestResults results = run_test( test_file );
 			
