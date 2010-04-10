@@ -138,8 +138,18 @@ namespace orion
 	static std::vector< iota::arg_t > global_free_arguments;
 	
 	
+	static void skip_hyphen( const char*& p )
+	{
+		if ( p[0] == '-'  &&  p[1] != '-' )
+		{
+			++p;
+		}
+	}
+	
 	option_id_t new_option( const char* option_spec )
 	{
+		skip_hyphen( option_spec );
+		
 		const unsigned id = global_next_option_id;
 		
 		global_bindings.resize( ++global_next_option_id );
@@ -149,6 +159,9 @@ namespace orion
 	
 	void alias_option( const char* from, const char* to )
 	{
+		skip_hyphen( from );
+		skip_hyphen( to   );
+		
 		global_option_map[ to ] = global_option_map[ from ];
 	}
 	
@@ -305,9 +318,7 @@ namespace orion
 					
 					while ( *token != '\0' )
 					{
-						std::string opt = "-";
-						
-						opt += *token++;
+						std::string opt( token++, 1 );
 						
 						const option_binding& binding = find_option( opt );
 						
