@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+// Standard C
+#include <string.h>
+
 // POSIX
 #include <unistd.h>
 
@@ -219,12 +222,12 @@ namespace tool
 	}
 	
 	
-	static inline std::size_t total_string_size( std::size_t total, const std::string& string )
+	static inline std::size_t total_string_size( std::size_t total, const char* s )
 	{
-		return total + string.size();
+		return total + strlen( s );
 	}
 	
-	static std::string JoinScriptPieces( const std::vector< std::string >& pieces )
+	static std::string JoinScriptPieces( const std::vector< const char* >& pieces )
 	{
 		ASSERT( !pieces.empty() );
 		
@@ -244,15 +247,17 @@ namespace tool
 		
 		std::string::iterator there = result.begin();
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< const char* >::const_iterator Iter;
 		
 		for ( Iter it  = pieces.begin();  it != pieces.end();  ++it )
 		{
-			const std::string& string = *it;
+			const char* string = *it;
 			
-			std::copy( string.begin(), string.end(), there );
+			const size_t length = strlen( string );
 			
-			there += string.size();
+			std::copy( string, string + length, there );
+			
+			there += length;
 			
 			*there++ = '\r';
 		}
@@ -263,7 +268,7 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		std::vector< std::string > inlineScriptPieces;
+		std::vector< const char* > inlineScriptPieces;
 		
 		// human-readable by default, like Apple osascript
 		bool humanReadable = true;
