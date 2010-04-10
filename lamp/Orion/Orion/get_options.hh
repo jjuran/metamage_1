@@ -25,8 +25,6 @@
 #define ORION_GET_OPTIONS_HH
 
 // Standard C++
-#include <exception>
-#include <string>
 #include <vector>
 
 // Iota
@@ -36,37 +34,7 @@
 namespace orion
 {
 	
-	class Exception : public std::exception
-	{
-		private:
-			std::string itsDescription;
-		
-		public:
-			Exception()  {}
-			
-			Exception( const std::string& description ) : itsDescription( description )
-			{
-				(void) itsDescription.c_str();  // make sure c_str() is safe to call
-			}
-			
-			~Exception() throw()  {}
-			
-			const char* what() const throw()  { return itsDescription.c_str(); }
-	};
-	
-	class undefined_option : public Exception
-	{
-		public:
-			undefined_option( const std::string& option )
-			:
-				Exception( "Undefined option " + option )
-			{
-			}
-			
-			~undefined_option() throw ()
-			{
-			}
-	};
+	class undefined_option;
 	
 	
 	typedef unsigned option_id_t;

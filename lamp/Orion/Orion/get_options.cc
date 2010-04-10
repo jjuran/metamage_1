@@ -35,6 +35,10 @@
 // iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/exception.hh"
+#include "plus/string.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -67,6 +71,21 @@ namespace orion
 {
 	
 	namespace p7 = poseven;
+	
+	
+	class undefined_option : public plus::exception
+	{
+		public:
+			undefined_option( const plus::string& option )
+			:
+				plus::exception( "Undefined option " + option )
+			{
+			}
+			
+			~undefined_option() throw ()
+			{
+			}
+	};
 	
 	
 	template < class Integer >
@@ -124,8 +143,7 @@ namespace orion
 	};
 	
 	
-	
-	typedef std::map< std::string, option_id_t > option_map_t;
+	typedef std::map< plus::string, option_id_t > option_map_t;
 	
 	typedef std::vector< option_binding* > binding_vector_t;
 	
@@ -188,7 +206,7 @@ namespace orion
 	}
 	
 	
-	static option_id_t find_option_id( const std::string& name )
+	static option_id_t find_option_id( const plus::string& name )
 	{
 		option_map_t::const_iterator it = global_option_map.find( name );
 		
@@ -207,13 +225,13 @@ namespace orion
 		return global_bindings[ id ];
 	}
 	
-	static const option_binding& find_option( const std::string& name )
+	static const option_binding& find_option( const plus::string& name )
 	{
 		return *find_option_binding( find_option_id( name ) );
 	}
 	
 	
-	static void SetOption( const std::string& name, iota::argp_t& it )
+	static void SetOption( const plus::string& name, iota::argp_t& it )
 	{
 		const option_binding& binding = find_option( name );
 		
@@ -235,7 +253,7 @@ namespace orion
 		
 		for ( Iter it = global_option_map.begin();  it != end;  ++it )
 		{
-			std::string line = it->first + "\n";
+			plus::string line = it->first + "\n";
 			
 			p7::write( p7::stdout_fileno, line.data(), line.size() );
 		}
@@ -302,7 +320,7 @@ namespace orion
 						else
 						{
 							// Option has parameter
-							std::string opt( token, eq - token );
+							plus::string opt( token, eq - token );
 							
 							const char* param = eq + 1;
 							
@@ -320,7 +338,7 @@ namespace orion
 					
 					while ( *token != '\0' )
 					{
-						std::string opt( token++, 1 );
+						plus::string opt( token++, 1 );
 						
 						const option_binding& binding = find_option( opt );
 						
