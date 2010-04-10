@@ -855,7 +855,7 @@ static int TestNull( int argc, iota::argv_t argv )
 	
 	static n::owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
-		n::owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
+		n::owned< p7::fd_t > filehandle = p7::open( pathname, p7::o_rdonly );
 		
 		struct ::stat stat_buffer;
 		
