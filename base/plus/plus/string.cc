@@ -10,12 +10,30 @@
 // Standard C
 #include <string.h>
 
+// Traditional
+#include <alloca.h>
+
 // debug
 #include "debug/assert.hh"
 
 
 namespace plus
 {
+	
+	static void concat( const char* a, string::size_type  a_size,
+	                    const char* b, string::size_type  b_size,
+	                    string& result )
+	{
+		const string::size_type total_size = a_size + b_size;
+		
+		char* buffer = (char*) alloca( total_size );
+		
+		memcpy( buffer,          a, a_size );
+		memcpy( buffer + a_size, b, b_size );
+		
+		result.assign( buffer, total_size );
+	}
+	
 	
 	void string::dispose()
 	{
@@ -132,6 +150,27 @@ namespace plus
 		assign( s, length );
 	}
 	
+	void string::append( const char* p, size_type length )
+	{
+		if ( length )
+		{
+			ASSERT( p != NULL );
+			
+			ASSERT( p + length >= p );
+		}
+		
+		concat( data(), size(), p, length, *this );
+	}
+	
+	void string::append( const char* s )
+	{
+		ASSERT( s != NULL );
+		
+		const size_type length = strlen( s );
+		
+		append( s, length );
+	}
+	
 	void string::swap( string& other )
 	{
 		long temp_longs[ buffer_size_in_longs ];
@@ -168,6 +207,32 @@ namespace plus
 	bool operator<( const char* a, const string& b )
 	{
 		return strcmp( a, b.c_str() ) < 0;
+	}
+	
+	
+	string concat( const char* a, string::size_type  a_size,
+	               const char* b, string::size_type  b_size )
+	{
+		string result;
+		
+		concat( a, a_size, b, b_size, result );
+		
+		return result;
+	}
+	
+	string operator+( const string& a, const string& b )
+	{
+		return concat( a.data(), a.size(), b.data(), b.size() );
+	}
+	
+	string operator+( const string& a, const char* b )
+	{
+		return concat( a.data(), a.size(), b, strlen( b ) );
+	}
+	
+	string operator+( const char* a, const string& b )
+	{
+		return concat( a, strlen( a ), b.data(), b.size() );
 	}
 	
 }

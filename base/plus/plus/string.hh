@@ -75,7 +75,18 @@ namespace plus
 			
 			void assign( const string& other )  { assign( other.data(), other.size() ); }
 			
+			void append( const char* p, size_type length );
+			
+			void append( const char* p, const char* q )  { append( p, q - p ); }
+			
+			void append( const char* s );
+			
+			void append( const string& other )  { append( other.data(), other.size() ); }
+			
 			string& operator=( const char* s )  { assign( s );  return *this; }
+			
+			string& operator+=( const string& s )  { append( s );  return *this; }
+			string& operator+=( const char*   s )  { append( s );  return *this; }
 			
 			void swap( string& other );
 	};
@@ -112,6 +123,16 @@ namespace plus
 	bool operator<( const string& a, const char* b );
 	
 	bool operator<( const char* a, const string& b );
+	
+	
+	string concat( const char* a, string::size_type  a_size,
+	               const char* b, string::size_type  b_size );
+	
+	string operator+( const string& a, const string& b );
+	
+	string operator+( const string& a, const char* b );
+	
+	string operator+( const char* a, const string& b );
 	
 	
 	inline void swap( string& a, string& b )
