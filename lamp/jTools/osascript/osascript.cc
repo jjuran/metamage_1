@@ -228,6 +228,11 @@ namespace tool
 	{
 		ASSERT( !pieces.empty() );
 		
+		if ( pieces.size() == 1 )
+		{
+			return pieces[0];
+		}
+		
 		std::size_t total_length = std::accumulate( pieces.begin(),
 		                                            pieces.end(),
 		                                            pieces.size(),  // add 1 byte for each CR
