@@ -8,12 +8,14 @@
 #include <cstring>
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // POSIX
 #include <sys/stat.h>
 #include <unistd.h>
+
+// plus
+#include "plus/string.hh"
 
 
 int main( int argc, char const *const argv[] )
@@ -31,7 +33,7 @@ int main( int argc, char const *const argv[] )
 		path = "/usr/bin:/bin";
 	}
 	
-	std::vector< std::string > dirs;
+	std::vector< plus::string > dirs;
 	
 	for ( const char* p = path;  ;  )
 	{
@@ -44,7 +46,7 @@ int main( int argc, char const *const argv[] )
 		
 		if ( q > p )
 		{
-			dirs.push_back( std::string( p, q ) );
+			dirs.push_back( plus::string( p, q ) );
 		}
 		
 		if ( *q != ':' )
@@ -60,13 +62,13 @@ int main( int argc, char const *const argv[] )
 	
 	for ( const char *const *program = argv + 1;  *program != NULL;  ++program )
 	{
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		bool found = false;
 		
 		for ( Iter it = dirs.begin();  it != dirs.end();  ++it )
 		{
-			std::string pathname = *it + '/' + *program;
+			plus::string pathname = *it + "/" + *program;
 			
 			struct ::stat sb;
 			
