@@ -2,5 +2,5 @@
 
 cd /Developer/Tests
 
-/usr/bin/th jtest/*.t perl/*.t proc/*.t sh/*.t
+/usr/bin/th jtest/*.t perl/*.t proc/*.t sh/*.t perm/* signal/* text-input/* time/*
 
