@@ -235,7 +235,9 @@ namespace orion
 		
 		for ( Iter it = global_option_map.begin();  it != end;  ++it )
 		{
-			p7::write( p7::stdout_fileno, it->first + "\n" );
+			std::string line = it->first + "\n";
+			
+			p7::write( p7::stdout_fileno, line.data(), line.size() );
 		}
 		
 		exit( EXIT_SUCCESS );
