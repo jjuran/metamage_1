@@ -114,10 +114,13 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		dispose();
+		const bool allocated = its_alloc.length  &&  its_small_name[ max_offset ] < 0;
+		
+		char const *const old_pointer = allocated ? its_alloc.pointer : NULL;
 		
 		if ( length >= sizeof its_small_name )
 		{
+			// may throw
 			char *const pointer = new char [ length + 1 ];
 			
 			memcpy( pointer, p, length );
@@ -135,10 +138,14 @@ namespace plus
 			its_small_name[ length     ] = '\0';
 			its_small_name[ max_offset ] = max_offset - length;
 			
+			delete [] old_pointer;
+			
 			return;
 		}
 		
 		its_alloc.length = length;
+		
+		delete [] old_pointer;
 	}
 	
 	void string::assign( const char* s )
