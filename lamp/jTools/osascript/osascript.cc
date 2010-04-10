@@ -241,8 +241,6 @@ namespace tool
 		
 		typedef std::vector< std::string >::const_iterator Iter;
 		
-		std::vector< std::string >::const_iterator it = pieces.begin();
-		
 		for ( Iter it  = pieces.begin();  it != pieces.end();  ++it )
 		{
 			const std::string& string = *it;
