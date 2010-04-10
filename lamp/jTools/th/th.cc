@@ -120,7 +120,7 @@ namespace tool
 		
 		const std::string* plan = get_line_from_feed( feed, reader );
 		
-		if ( plan == NULL  ||  plan->substr( 0, 3 ) != "1.." )
+		if ( plan == NULL  ||  memcmp( plan->c_str(), STR_LEN( "1.." ) + 1 ) != 0 )
 		{
 			return results;
 		}
