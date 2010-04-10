@@ -11,7 +11,6 @@
 #include <stdlib.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
@@ -23,9 +22,7 @@
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
-#include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
-#include "poseven/functions/readlinkat.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
 #include "poseven/types/fd_t.hh"
@@ -50,6 +47,9 @@
 
 // metrowerks
 #include "metrowerks/object_file.hh"
+
+// ld
+#include "find_InterfacesAndLibraries.hh"
 
 
 namespace tool
@@ -85,74 +85,9 @@ namespace tool
 	}
 	
 	
-	static std::string find_ToolServer()
-	{
-		n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
-		
-		try
-		{
-			return p7::readlinkat( vol, "ram/dt/appls/MPSX/latest" );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ENOENT  &&  err != EINVAL )
-			{
-				throw;
-			}
-		}
-		
-		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
-		
-		for ( int i = 1;  ;  ++i )
-		{
-			const char *name = iota::inscribe_decimal( i );
-			
-			n::owned< p7::fd_t > list_i = p7::openat( vol_list, name, p7::o_rdonly | p7::o_directory );
-			
-			try
-			{
-				return p7::readlinkat( list_i, "dt/appls/MPSX/latest" );
-			}
-			catch ( const p7::errno_t& err )
-			{
-				if ( err != ENOENT )
-				{
-					throw;
-				}
-			}
-		}
-	}
-	
-	static std::string find_Libraries()
-	{
-		std::string pathname = find_ToolServer();
-		
-		typedef std::string::reverse_iterator Iter;
-		
-		Iter it = std::find( pathname.rbegin(), pathname.rend(), '/' );
-		
-		if ( it == pathname.rend() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		it = std::find( it + 1, pathname.rend(), '/' );
-		
-		if ( it == pathname.rend() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		pathname.resize( pathname.rend() - it );
-		
-		pathname += "Interfaces&Libraries/Libraries";
-		
-		return pathname;
-	}
-	
 	static const std::string& get_Libraries_pathname()
 	{
-		static std::string libraries = find_Libraries();
+		static std::string libraries = find_InterfacesAndLibraries() + "/Libraries";
 		
 		return libraries;
 	}
