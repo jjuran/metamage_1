@@ -26,7 +26,6 @@
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/readlinkat.hh"
-#include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
 #include "poseven/types/fd_t.hh"
@@ -39,9 +38,6 @@
 
 // Nitrogen Extras
 #include "FSReader.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -912,9 +908,11 @@ namespace tool
 		
 		command.insert( command.end(), command_args.begin(), command_args.end() );
 		
-		if ( io::file_exists( output_filespec ) )
+		int unlinked = ::unlink( output_pathname );
+		
+		if ( unlinked < 0  &&  errno != ENOENT )
 		{
-			io::delete_file( output_filespec );
+			p7::throw_errno( errno );
 		}
 		
 		if ( verbose )
