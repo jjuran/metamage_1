@@ -179,11 +179,7 @@ namespace orion
 	
 	option_binding* new_option_binding( const char*& string );
 	
-	option_binding* new_option_binding( std::string& string );
-	
 	option_binding* new_option_binding( std::vector< const char* >& strings );
-	
-	option_binding* new_option_binding( std::vector< std::string >& strings );
 	
 	template < class Trigger >
 	option_binding* new_trigger_option_binding( Trigger trigger )

@@ -103,21 +103,6 @@ namespace orion
 			void set( const char* param ) const  { its_string = param; }
 	};
 	
-	class string_option_binding : public option_binding
-	{
-		private:
-			std::string& its_string;
-		
-		public:
-			string_option_binding( std::string& string ) : its_string( string )
-			{
-			}
-			
-			bool argument_expected() const  { return true; }
-			
-			void set( const char* param ) const  { its_string = param; }
-	};
-	
 	class c_string_list_option_binding : public option_binding
 	{
 		private:
@@ -138,25 +123,6 @@ namespace orion
 			}
 	};
 	
-	class string_list_option_binding : public option_binding
-	{
-		private:
-			std::vector< std::string >& its_strings;
-		
-		public:
-			string_list_option_binding( std::vector< std::string >& strings )
-			:
-				its_strings( strings )
-			{
-			}
-			
-			bool argument_expected() const  { return true; }
-			
-			void set( const char* param ) const
-			{
-				its_strings.push_back( param );
-			}
-	};
 	
 	
 	typedef std::map< std::string, option_id_t > option_map_t;
@@ -197,19 +163,9 @@ namespace orion
 		return new c_string_option_binding( string );
 	}
 	
-	option_binding* new_option_binding( std::string& string )
-	{
-		return new string_option_binding( string );
-	}
-	
 	option_binding* new_option_binding( std::vector< const char* >& strings )
 	{
 		return new c_string_list_option_binding( strings );
-	}
-	
-	option_binding* new_option_binding( std::vector< std::string >& strings )
-	{
-		return new string_list_option_binding( strings );
 	}
 	
 	
