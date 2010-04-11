@@ -354,7 +354,7 @@ namespace tool
 		}
 	}
 	
-	static std::string GuessContentType( const std::string& filename, ::OSType type )
+	static const char* GuessContentType( const std::string& filename, ::OSType type )
 	{
 		std::string ext = FilenameExtension( filename );
 		
@@ -494,7 +494,7 @@ namespace tool
 			
 		#endif
 			
-			std::string contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
+			const char* contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
 			
 			std::string responseHeader = HTTP_VERSION " 200 OK\r\n";
 			
