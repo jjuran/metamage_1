@@ -26,7 +26,7 @@ namespace tool
 	
 	typedef std::vector< DotConfLine > DotConfData;
 	
-	void ReadProjectDotConf( const std::string& pathname, DotConfData& data );
+	void ReadProjectDotConf( const char* pathname, DotConfData& data );
 	
 }
 

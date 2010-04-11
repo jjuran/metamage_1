@@ -76,7 +76,7 @@ namespace tool
 		}
 	}
 	
-	void ReadProjectDotConf( const std::string& pathname, DotConfData& data )
+	void ReadProjectDotConf( const char* pathname, DotConfData& data )
 	{
 		text_input::feed feed;
 		

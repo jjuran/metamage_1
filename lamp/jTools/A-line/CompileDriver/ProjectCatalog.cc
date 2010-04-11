@@ -176,7 +176,7 @@ namespace tool
 		
 		DotConfData data;
 		
-		ReadProjectDotConf( its_pathname, data );
+		ReadProjectDotConf( its_pathname.c_str(), data );
 		
 		its_config_data = MakeConfData( data );
 	}

@@ -238,7 +238,7 @@ namespace tool
 		}
 		
 		DotConfData data;
-		ReadProjectDotConf( filePath, data );
+		ReadProjectDotConf( filePath.c_str(), data );
 		ConfData conf = MakeConfData( data );
 		
 		AddConfigFile( filePath, conf );
