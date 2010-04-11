@@ -23,6 +23,7 @@
 
 // plus
 #include "plus/pointer_to_function.hh"
+#include "plus/string.hh"
 
 // Io
 #include "io/walk.hh"
@@ -105,14 +106,19 @@ namespace tool
 		return dir;
 	}
 	
-	static inline n::owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
+	static inline n::owned< p7::fd_t > open_dir( p7::fd_t dirfd, const char* path )
 	{
 		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory | p7::o_nofollow );
 	}
 	
-	static inline n::owned< p7::fd_t > open_dir( const std::string& path )
+	static inline n::owned< p7::fd_t > open_dir( const char* path )
 	{
 		return p7::open( path, p7::o_rdonly | p7::o_directory );
+	}
+	
+	static inline n::owned< p7::fd_t > open_dir( const std::string& path )
+	{
+		return open_dir( path.c_str() );
 	}
 	
 	static const std::string& mkdir_path( const std::string& path )
@@ -148,12 +154,12 @@ namespace tool
 	}
 	
 	
-	static bool filter_item( const std::string& filename )
+	static bool filter_item( const char* filename )
 	{
 		const filter_node *const begin = global_filter_nodes;
 		const filter_node *const end   = begin + sizeof global_filter_nodes / sizeof global_filter_nodes[0];
 		
-		const filter_node* it = std::find( begin, end, filename.c_str() );
+		const filter_node* it = std::find( begin, end, filename );
 		
 		return it != end;
 	}
@@ -173,7 +179,7 @@ namespace tool
 	#endif
 	}
 	
-	static void copy_file( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
+	static void copy_file( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
 	{
 		//p7::copyfile( source, dest );
 		
@@ -188,9 +194,9 @@ namespace tool
 		p7::close( out );
 	}
 	
-	static void recursively_copy_directory( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd );
+	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd );
 	
-	static void recursively_copy( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
+	static void recursively_copy( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
 	{
 		struct ::stat stat_buffer = { 0 };
 		
@@ -231,7 +237,7 @@ namespace tool
 		                             std::make_pair( p7::dirfd( olddir ), newdirfd ) ) );
 	}
 	
-	static void recursively_copy_directory( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
+	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
 	{
 		if ( filter_item( name ) )
 		{
@@ -301,16 +307,16 @@ namespace tool
 	}
 	
 	
-	static void sync_files( p7::fd_t            a_dirfd,
-	                        p7::fd_t            b_dirfd,
-	                        p7::fd_t            c_dirfd,
-	                        const std::string&  subpath,
-	                        const std::string&  filename,
-	                        bool                b_exists )
+	static void sync_files( p7::fd_t     a_dirfd,
+	                        p7::fd_t     b_dirfd,
+	                        p7::fd_t     c_dirfd,
+	                        const char*  subpath,
+	                        const char*  filename,
+	                        bool         b_exists )
 	{
 		if ( globally_verbose )
 		{
-			//std::printf( "%s\n", subpath.c_str() );
+			//std::printf( "%s\n", subpath );
 		}
 		
 		n::owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
@@ -369,7 +375,7 @@ namespace tool
 				const char* status = b_exists ? "requires 3-way merge"
 				                              : "added simultaneously with different contents";
 				
-				std::printf( "### %s %s\n", subpath.c_str(), status );
+				std::printf( "### %s %s\n", subpath, status );
 				
 				return;
 			}
@@ -382,7 +388,7 @@ namespace tool
 			std::printf( "%s %s\n", a_matches_b ? doable ? "--->"
 			                                             : "---|"
 			                                    : doable ? "<---"
-			                                             : "|---", subpath.c_str() );
+			                                             : "|---", subpath );
 			
 			if ( !doable || global_dry_run )
 			{
@@ -404,7 +410,7 @@ namespace tool
 		}
 		else
 		{
-			std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath.c_str() );
+			std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
 		}
 		
 		if ( global_dry_run )
@@ -440,13 +446,13 @@ namespace tool
 	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
 	                                          n::owned< p7::fd_t >  b_dirfd,
 	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const std::string&    subpath );
+	                                          const char*           subpath );
 	
-	static void recursively_sync( p7::fd_t            a_dirfd,
-	                              p7::fd_t            b_dirfd,
-	                              p7::fd_t            c_dirfd,
-	                              const std::string&  subpath,
-	                              const std::string&  filename )
+	static void recursively_sync( p7::fd_t     a_dirfd,
+	                              p7::fd_t     b_dirfd,
+	                              p7::fd_t     c_dirfd,
+	                              const char*  subpath,
+	                              const char*  filename )
 	{
 		struct stat a_stat, b_stat, c_stat;
 		
@@ -482,20 +488,20 @@ namespace tool
 			if ( a_is_dir != b_is_dir )
 			{
 				std::printf( "### %s changed from %s to %s\n",
-				                  subpath.c_str(),b_is_dir ? "directory" : "file",
+				                  subpath,        b_is_dir ? "directory" : "file",
 				                                        a_is_dir ? "directory" : "file" );
 			}
 			
 			if ( c_is_dir != b_is_dir )
 			{
 				std::printf( "### %s changed from %s to %s\n",
-				                  subpath.c_str(),b_is_dir ? "directory" : "file",
+				                  subpath,        b_is_dir ? "directory" : "file",
 				                                        c_is_dir ? "directory" : "file" );
 			}
 		}
 		else
 		{
-			std::printf( "### Add conflict in %s (file vs. directory)\n", subpath.c_str() );
+			std::printf( "### Add conflict in %s (file vs. directory)\n", subpath );
 		}
 	}
 	
@@ -604,7 +610,7 @@ namespace tool
 	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
 	                                                 n::owned< p7::fd_t >  b_dirfd,
 	                                                 n::owned< p7::fd_t >  c_dirfd,
-	                                                 const std::string&    subpath )
+	                                                 const char*           subpath )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -616,9 +622,9 @@ namespace tool
 		directory_container b_contents = p7::directory_contents( b_dir );
 		directory_container c_contents = p7::directory_contents( c_dir );
 		
-		std::vector< std::string > a;
-		std::vector< std::string > b;
-		std::vector< std::string > c;
+		std::vector< plus::string > a;
+		std::vector< plus::string > b;
+		std::vector< plus::string > c;
 		
 		copy_unless( a_contents.begin(), a_contents.end(), std::back_inserter( a ), std::ptr_fun( filter_item ) );
 		copy_unless( b_contents.begin(), b_contents.end(), std::back_inserter( b ), std::ptr_fun( filter_item ) );
@@ -628,13 +634,13 @@ namespace tool
 		std::sort( b.begin(), b.end() );
 		std::sort( c.begin(), c.end() );
 		
-		std::vector< std::string > a_added;
-		std::vector< std::string > a_removed;
-		std::vector< std::string > a_static;
+		std::vector< plus::string > a_added;
+		std::vector< plus::string > a_removed;
+		std::vector< plus::string > a_static;
 		
-		std::vector< std::string > c_added;
-		std::vector< std::string > c_removed;
-		std::vector< std::string > c_static;
+		std::vector< plus::string > c_added;
+		std::vector< plus::string > c_removed;
+		std::vector< plus::string > c_static;
 		
 		compare_sequences( a.begin(), a.end(),
 		                   b.begin(), b.end(),
@@ -648,15 +654,15 @@ namespace tool
 		                   std::back_inserter( c_removed ),
 		                   std::back_inserter( c_static  ) );
 		
-		std::vector< std::string > a_created;
-		std::vector< std::string > c_created;
-		std::vector< std::string > mutually_added;
+		std::vector< plus::string > a_created;
+		std::vector< plus::string > c_created;
+		std::vector< plus::string > mutually_added;
 		
-		std::vector< std::string > a_deleted;
-		std::vector< std::string > c_deleted;
-		std::vector< std::string > mutually_deleted;
+		std::vector< plus::string > a_deleted;
+		std::vector< plus::string > c_deleted;
+		std::vector< plus::string > mutually_deleted;
 		
-		std::vector< std::string > mutually_static;
+		std::vector< plus::string > mutually_static;
 		
 		compare_sequences( a_added.begin(), a_added.end(),
 		                   c_added.begin(), c_added.end(),
@@ -676,13 +682,13 @@ namespace tool
 		                   null_iterator(),
 		                   std::back_inserter( mutually_static ) );
 		
-		const char* path = subpath.c_str();
+		const char* path = subpath;
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = a_created.begin();  it != a_created.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			const bool doable = globally_up;
 			
@@ -702,7 +708,7 @@ namespace tool
 		
 		for ( Iter it = c_created.begin();  it != c_created.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			const bool doable = globally_down;
 			
@@ -722,7 +728,7 @@ namespace tool
 		
 		for ( Iter it = mutually_added.begin();  it != mutually_added.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			std::printf( "++++ %s%s\n", path, filename.c_str() );
 			
@@ -733,11 +739,11 @@ namespace tool
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			const bool doable = globally_up && globally_deleting;
 			
-			std::string child_subpath = subpath + filename;
+			plus::string child_subpath = subpath + filename;
 			
 			std::printf( "%s %s%s\n", doable ? "<--X" : "|--X", path, filename.c_str() );
 			
@@ -753,11 +759,11 @@ namespace tool
 		
 		for ( Iter it = c_deleted.begin();  it != c_deleted.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			const bool doable = globally_down && globally_deleting;
 			
-			std::string child_subpath = subpath + filename;
+			plus::string child_subpath = subpath + filename;
 			
 			std::printf( "%s %s%s\n", doable ? "X-->" : "X--|", path, filename.c_str() );
 			
@@ -773,9 +779,9 @@ namespace tool
 		
 		for ( Iter it = mutually_deleted.begin();  it != mutually_deleted.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
-			std::string child_subpath = subpath + filename;
+			plus::string child_subpath = subpath + filename;
 			
 			std::printf( "X--X %s%s\n", path, filename.c_str() );
 			
@@ -789,7 +795,7 @@ namespace tool
 		
 		for ( Iter it = mutually_static.begin();  it != mutually_static.end();  ++ it )
 		{
-			const std::string& filename = *it;
+			const plus::string& filename = *it;
 			
 			recursively_sync( p7::dirfd( a_dir ),
 			                  p7::dirfd( b_dir ),
@@ -806,16 +812,18 @@ namespace tool
 	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
 	                                          n::owned< p7::fd_t >  b_dirfd,
 	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const std::string&    subpath )
+	                                          const char*           subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		
 		if ( globally_verbose )
 		{
-			std::printf( "%s\n", subpath.c_str() );
+			std::printf( "%s\n", subpath );
 		}
 		
-		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath + '/' );
+		plus::string subpath_dir = plus::concat( subpath, strlen( subpath ), STR_LEN( "/" ) );
+		
+		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir );
 	}
 	
 	
