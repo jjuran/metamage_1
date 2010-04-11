@@ -174,7 +174,7 @@ namespace tool
 		return false;
 	}
 	
-	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
+	static void WritePkgInfo( const char* pathname, const std::string& contents )
 	{
 		n::owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_rdwr | p7::o_creat );
 		
@@ -796,7 +796,7 @@ namespace tool
 				{
 					std::string pkginfo = pkginfo_dir / "PkgInfo";
 					
-					WritePkgInfo( pkginfo, fileType + creator );
+					WritePkgInfo( pkginfo.c_str(), fileType + creator );
 					
 					if ( lamp )
 					{
