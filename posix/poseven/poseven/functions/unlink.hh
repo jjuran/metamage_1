@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_UNLINK_HH
 #define POSEVEN_FUNCTIONS_UNLINK_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <unistd.h>
 
@@ -30,11 +27,6 @@ namespace poseven
 	inline void unlink( const char* path )
 	{
 		throw_posix_result( ::unlink( path ) );
-	}
-	
-	inline void unlink( const std::string& path )
-	{
-		unlink( path.c_str() );
 	}
 	
 }

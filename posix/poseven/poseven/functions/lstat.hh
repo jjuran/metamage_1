@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_LSTAT_HH
 #define POSEVEN_FUNCTIONS_LSTAT_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -51,16 +48,6 @@ namespace poseven
 		throw_posix_result( ::lstat( pathname, &sb ) );
 		
 		return sb;
-	}
-	
-	inline bool lstat( const std::string& pathname, struct stat& sb )
-	{
-		return lstat( pathname.c_str(), sb );
-	}
-	
-	inline struct stat lstat( const std::string& pathname )
-	{
-		return lstat( pathname.c_str() );
 	}
 	
 }

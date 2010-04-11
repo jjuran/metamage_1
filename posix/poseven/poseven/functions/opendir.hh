@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_OPENDIR_HH
 #define POSEVEN_FUNCTIONS_OPENDIR_HH
 
-// Standard C++
-#include <string>
-
 // poseven
 #include "poseven/functions/closedir.hh"
 
@@ -34,11 +31,6 @@ namespace poseven
 		}
 		
 		return nucleus::owned< dir_t >::seize( handle );
-	}
-	
-	inline nucleus::owned< dir_t > opendir( const std::string& pathname )
-	{
-		return opendir( pathname.c_str() );
 	}
 	
 }

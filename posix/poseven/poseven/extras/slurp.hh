@@ -41,11 +41,6 @@ namespace poseven
 		return slurp( open( path, o_rdonly ) );
 	}
 	
-	inline std::string slurp( const std::string& path )
-	{
-		return slurp( path.c_str() );
-	}
-	
 }
 
 #endif

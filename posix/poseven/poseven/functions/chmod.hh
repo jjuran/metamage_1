@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_CHMOD_HH
 #define POSEVEN_FUNCTIONS_CHMOD_HH
 
-// Standard C++
-#include <string>
-
 // poseven
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
@@ -28,11 +25,6 @@ namespace poseven
 	inline void chmod( const char* pathname, mode_t mode )
 	{
 		throw_posix_result( ::chmod( pathname, mode ) );
-	}
-	
-	inline void chmod( const std::string& pathname, mode_t mode )
-	{
-		chmod( pathname.c_str(), mode );
 	}
 	
 }

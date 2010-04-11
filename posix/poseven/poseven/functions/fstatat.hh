@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_FSTATAT_HH
 #define POSEVEN_FUNCTIONS_FSTATAT_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -59,21 +56,6 @@ namespace poseven
 		throw_posix_result( ::fstatat( dirfd, path, &sb, flags ) );
 		
 		return sb;
-	}
-	
-	inline bool fstatat( fd_t                dirfd,
-	                     const std::string&  path,
-	                     struct stat&        sb,
-	                     at_flags_t          flags = at_flags_t() )
-	{
-		return fstatat( dirfd, path.c_str(), sb, flags );
-	}
-	
-	inline struct stat fstatat( fd_t                dirfd,
-	                            const std::string&  path,
-	                            at_flags_t          flags = at_flags_t() )
-	{
-		return fstatat( dirfd, path.c_str(), flags );
 	}
 	
 }

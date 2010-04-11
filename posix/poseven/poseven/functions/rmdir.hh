@@ -10,9 +10,6 @@
 #ifndef POSEVEN_FUNCTIONS_RMDIR_HH
 #define POSEVEN_FUNCTIONS_RMDIR_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <unistd.h>
 
@@ -26,11 +23,6 @@ namespace poseven
 	inline void rmdir( const char* path )
 	{
 		throw_posix_result( ::rmdir( path ) );
-	}
-	
-	inline void rmdir( const std::string& path )
-	{
-		rmdir( path.c_str() );
 	}
 	
 }

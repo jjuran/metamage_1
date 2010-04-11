@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_MKDIR_HH
 #define POSEVEN_FUNCTIONS_MKDIR_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <unistd.h>
 
@@ -31,11 +28,6 @@ namespace poseven
 	inline void mkdir( const char* path, mode_t mode = _777 )
 	{
 		throw_posix_result( ::mkdir( path, mode ) );
-	}
-	
-	inline void mkdir( const std::string& path, mode_t mode = _777 )
-	{
-		mkdir( path.c_str(), mode );
 	}
 	
 }

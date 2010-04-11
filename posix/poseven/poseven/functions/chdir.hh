@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_CHDIR_HH
 #define POSEVEN_FUNCTIONS_CHDIR_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <unistd.h>
 
@@ -30,11 +27,6 @@ namespace poseven
 	inline void chdir( const char* path )
 	{
 		throw_posix_result( ::chdir( path ) );
-	}
-	
-	inline void chdir( const std::string& path )
-	{
-		chdir( path.c_str() );
 	}
 	
 }

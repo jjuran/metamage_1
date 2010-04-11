@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_MKDIRAT_HH
 #define POSEVEN_FUNCTIONS_MKDIRAT_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -31,11 +28,6 @@ namespace poseven
 	inline void mkdirat( fd_t dirfd, const char* path, mode_t mode = _777 )
 	{
 		throw_posix_result( ::mkdirat( dirfd, path, mode ) );
-	}
-	
-	inline void mkdirat( fd_t dirfd, const std::string& path, mode_t mode = _777 )
-	{
-		mkdirat( dirfd, path.c_str(), mode );
 	}
 	
 }

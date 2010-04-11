@@ -14,9 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_UTIME_HH
 #define POSEVEN_FUNCTIONS_UTIME_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <utime.h>
 
@@ -42,21 +39,6 @@ namespace poseven
 		utimbuf time_buffer = { 0, mod_time };
 		
 		utime( path, time_buffer );
-	}
-	
-	inline void utime( const std::string& path )
-	{
-		utime( path.c_str() );
-	}
-	
-	inline void utime( const std::string& path, const utimbuf& time_buffer )
-	{
-		utime( path.c_str(), time_buffer );
-	}
-	
-	inline void utime( const std::string& path, const time_t& mod_time )
-	{
-		utime( path.c_str(), mod_time );
 	}
 	
 }

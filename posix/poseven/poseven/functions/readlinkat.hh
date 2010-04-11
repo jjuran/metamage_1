@@ -20,11 +20,6 @@ namespace poseven
 	
 	std::string readlinkat( fd_t dirfd, const char* path );
 	
-	inline std::string readlinkat( fd_t dirfd, const std::string& path )
-	{
-		return readlinkat( dirfd, path.c_str() );
-	}
-	
 }
 
 #endif

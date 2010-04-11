@@ -9,9 +9,6 @@
 #ifndef POSEVEN_EXTRAS_SPEW_HH
 #define POSEVEN_EXTRAS_SPEW_HH
 
-// Standard C++
-#include <string>
-
 // plus
 #include "plus/string.hh"
 
@@ -34,16 +31,6 @@ namespace poseven
 	inline void spew( const char* path, const plus::string& stuff )
 	{
 		spew( path, stuff.data(), stuff.length() );
-	}
-	
-	inline void spew( const std::string& path, const char* buffer, std::size_t length )
-	{
-		spew( path.c_str(), buffer, length );
-	}
-	
-	inline void spew( const std::string& path, const std::string& stuff )
-	{
-		spew( path.c_str(), stuff );
 	}
 	
 }
