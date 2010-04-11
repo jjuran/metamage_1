@@ -91,7 +91,7 @@ namespace tool
 		return result;
 	}
 	
-	static std::string ReadFileData( const std::string& file )
+	static std::string ReadFileData( const char* file )
 	{
 		std::string result;
 		
