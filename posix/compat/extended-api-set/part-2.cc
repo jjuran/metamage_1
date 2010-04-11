@@ -100,6 +100,38 @@ int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	return result;
 }
 
+int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
+{
+	char old_pathname[ PATH_MAX ];
+	char new_pathname[ PATH_MAX ];
+	
+	int got_old = get_path( olddirfd, oldpath, old_pathname );
+	
+	if ( got_old < 0 )
+	{
+		return got_old;
+	}
+	else if ( got_old )
+	{
+		oldpath = old_pathname;
+	}
+	
+	int got_new = get_path( newdirfd, newpath, new_pathname );
+	
+	if ( got_new < 0 )
+	{
+		return got_new;
+	}
+	else if ( got_new )
+	{
+		newpath = new_pathname;
+	}
+	
+	const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
+	
+	return link( oldpath, newpath );
+}
+
 int mkdirat( int dirfd, const char* path, mode_t mode )
 {
 	int saved_cwd;
@@ -221,6 +253,24 @@ int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpa
 	}
 	
 	return rename( oldpath, newpath );
+}
+
+int symlinkat( const char* target, int newdirfd, const char* newpath )
+{
+	char new_pathname[ PATH_MAX ];
+	
+	int got_new = get_path( newdirfd, newpath, new_pathname );
+	
+	if ( got_new < 0 )
+	{
+		return got_new;
+	}
+	else if ( got_new )
+	{
+		newpath = new_pathname;
+	}
+	
+	return symlink( target, newpath );
 }
 
 #endif
