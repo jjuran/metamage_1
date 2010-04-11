@@ -3,25 +3,10 @@
  *	===========
  */
 
-// Mac OS
-#ifndef __CONDITIONALMACROS__
-#include <ConditionalMacros.h>
-#endif
-#if UNIVERSAL_INTERFACES_VERSION < 0x0400
-#ifndef __FILETYPESANDCREATORS__
-#include <FileTypesAndCreators.h>  // for sigMPWShell
-#endif
-#else
-enum { sigMPWShell = 'MPS ' };
-#endif
-
 // Standard C++
 #include <algorithm>
 #include <string>
 #include <vector>
-
-// Standard C
-#include <string.h>
 
 // iota
 #include "iota/decimal.hh"
@@ -30,20 +15,26 @@ enum { sigMPWShell = 'MPS ' };
 #include "debug/assert.hh"
 
 // poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/pread.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
+// one_path
+#include "one_path/find_appl.hh"
 
 // Orion
 #include "Orion/Main.hh"
+
+#ifndef __MACTYPES__
+typedef unsigned short UInt16;
+typedef          short SInt16, OSErr;
+#endif
 
 
 namespace tool
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -63,22 +54,20 @@ namespace tool
 		UInt16 offset;
 	};
 	
-	static FSSpec global_SysErrs_dot_err;
+	static p7::fd_t global_SysErrs_dot_err_fd;
 	
 	static std::vector< toc_entry > global_toc_entries;
 	
 	
-	static FSSpec Find_SysErrsDotErr()
+	static std::string Find_SysErrsDotErr()
 	{
-		const N::OSType sigMPWShell = N::OSType( ::sigMPWShell );
+		std::string path = find_appl( "MPSX" );
 		
-		FSSpec fsspec = N::DTGetAPPL( sigMPWShell );
+		path.resize( path.rend() - std::find( path.rbegin(), path.rend(), '/' ) );
 		
-		const unsigned char* new_name = "\p" "SysErrs.err";
+		path += "SysErrs.err";
 		
-		memcpy( fsspec.name, new_name, 1 + new_name[0] );
-		
-		return fsspec;
+		return path;
 	}
 	
 	static OSErr get_error_from_entry( toc_entry entry )
@@ -86,7 +75,7 @@ namespace tool
 		return entry.errnum;
 	}
 	
-	static UInt32 length_of_toc()
+	static size_t length_of_toc()
 	{
 		return 2 + 2 + global_toc_entries.size() * 4;
 	}
@@ -94,7 +83,7 @@ namespace tool
 	template < class DataType, class InputStream >
 	void ReadData( InputStream& stream, DataType& outData )
 	{
-		int bytes = io::read( stream, reinterpret_cast< char* >( &outData ), sizeof outData );
+		int bytes = p7::read( stream, (char*) &outData, sizeof outData );
 		
 		if ( bytes != sizeof outData )
 		{
@@ -105,7 +94,7 @@ namespace tool
 	template < class DataType, class InputStream >
 	void ReadDataArray( InputStream& stream, DataType* outData, unsigned int count )
 	{
-		int bytes = io::read( stream, reinterpret_cast< char* >( outData ), sizeof outData * count );
+		int bytes = p7::read( stream, (char*) outData, sizeof outData * count );
 		
 		if ( bytes != sizeof outData * count )
 		{
@@ -113,12 +102,8 @@ namespace tool
 		}
 	}
 	
-	static void read_toc_entries( const FSSpec& errFile )
+	static void read_toc_entries( p7::fd_t fileH )
 	{
-		using N::fsRdPerm;
-		
-		n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
-		
 		toc_header header;
 		
 		ReadData( fileH, header );
@@ -171,18 +156,12 @@ namespace tool
 	
 	static std::string get_string_at_offset( UInt16 offset )
 	{
-		using N::fsRdPerm;
-		
-		n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( global_SysErrs_dot_err, fsRdPerm ) );
-		
-		N::SetFPos( fileH, N::fsFromStart, offset );
-		
 		enum { bufSize = 512 };
 		char buf[ bufSize ];
 		
 		buf[ bufSize - 1 ] = '\0';
 		
-		io::read( fileH, buf, bufSize - 1 );
+		p7::pread( global_SysErrs_dot_err_fd, buf, bufSize - 1, offset );
 		
 		ASSERT( buf[ bufSize - 1 ] == '\0' );
 		
@@ -209,9 +188,9 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		global_SysErrs_dot_err = Find_SysErrsDotErr();
+		global_SysErrs_dot_err_fd = p7::open( Find_SysErrsDotErr().c_str(), p7::o_rdonly ).release();
 		
-		read_toc_entries( global_SysErrs_dot_err );
+		read_toc_entries( global_SysErrs_dot_err_fd );
 		
 		for ( int i = 1;  i < argc;  ++i )
 		{
