@@ -128,22 +128,34 @@ namespace tool
 	}
 	
 	
-	static bool filter_file( const std::string& filename )
+	struct filter_node
 	{
-		return filename == "Icon\r"
-		    || filename == ".DS_Store";
+		const char* name;
+	};
+	
+	static const filter_node global_filter_nodes[] =
+	{
+		{ ".DS_Store" },
+		{ ".git"      },
+		{ "CVS"       },
+		{ "CVSROOT"   },
+		{ "Icon\r"    },
+	};
+	
+	static bool operator==( const filter_node& node, const char* name )
+	{
+		return strcmp( node.name, name ) == 0;
 	}
 	
-	static bool filter_directory( const std::string& filename )
-	{
-		return filename == "CVS"
-		    || filename == "CVSROOT"
-		    || filename == ".git";
-	}
 	
 	static bool filter_item( const std::string& filename )
 	{
-		return filter_file( filename ) || filter_directory( filename );
+		const filter_node *const begin = global_filter_nodes;
+		const filter_node *const end   = begin + sizeof global_filter_nodes / sizeof global_filter_nodes[0];
+		
+		const filter_node* it = std::find( begin, end, filename.c_str() );
+		
+		return it != end;
 	}
 	
 	
@@ -186,7 +198,7 @@ namespace tool
 		
 		if ( S_ISREG( stat_buffer.st_mode ) )
 		{
-			if ( !filter_file( name ) )
+			if ( !filter_item( name ) )
 			{
 				copy_file( olddirfd, name, newdirfd );
 			}
@@ -221,7 +233,7 @@ namespace tool
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const std::string& name, p7::fd_t newdirfd )
 	{
-		if ( filter_directory( name ) )
+		if ( filter_item( name ) )
 		{
 			return;
 		}
