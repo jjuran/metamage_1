@@ -97,7 +97,7 @@ namespace poseven
 		return directory_contents_container( dir );
 	}
 	
-	inline directory_contents_container directory_contents( const std::string& dir_path )
+	inline directory_contents_container directory_contents( const char* dir_path )
 	{
 		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
 	}
