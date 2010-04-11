@@ -334,7 +334,7 @@ namespace tool
 			pathname = pathname / component;
 		}
 		
-		p7::stat( pathname );  // Throw if nonexistent
+		p7::stat( pathname.c_str() );  // Throw if nonexistent
 		
 		return pathname;
 	}

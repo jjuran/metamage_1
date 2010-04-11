@@ -639,7 +639,7 @@ namespace tool
 				continue;
 			}
 			
-			write_catalog_cache( p7::open( catalog_cache_pathname,
+			write_catalog_cache( p7::open( catalog_cache_pathname.c_str(),
 			                               p7::o_wronly | p7::o_creat | p7::o_trunc ) );
 			
 			cache_was_written = true;
@@ -648,7 +648,7 @@ namespace tool
 		}
 		else
 		{
-			read_catalog_cache( p7::open( catalog_cache_pathname, p7::o_rdonly ) );
+			read_catalog_cache( p7::open( catalog_cache_pathname.c_str(), p7::o_rdonly ) );
 		}
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "# Loading project data..." ) );

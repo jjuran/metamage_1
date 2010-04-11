@@ -390,7 +390,7 @@ namespace tool
 		{
 			struct stat include_stat;
 			
-			const bool exists = p7::stat( pathname, include_stat );
+			const bool exists = p7::stat( pathname.c_str(), include_stat );
 			
 			// If an include is missing, ensure the .d gets refreshed by returning max
 			value = exists ? include_stat.st_mtime : 0x7fffffff;
@@ -429,12 +429,12 @@ namespace tool
 	{
 		struct stat output_stat;
 		
-		const bool output_exists = p7::stat( OutputPath(), output_stat );
+		const bool output_exists = p7::stat( OutputPath().c_str(), output_stat );
 		
 		if ( output_exists )
 		{
 			// Memoize this once we have multi-platform builds
-			const time_t source_stamp = p7::stat( its_source_pathname ).st_mtime;
+			const time_t source_stamp = p7::stat( its_source_pathname.c_str() ).st_mtime;
 			
 			UpdateInputStamp( source_stamp );
 			
@@ -448,7 +448,7 @@ namespace tool
 				
 				struct stat dependencies_stat;
 				
-				bool has_dot_d = p7::stat( dependencies_pathname, dependencies_stat )  &&  dependencies_stat.st_mtime > source_stamp;
+				bool has_dot_d = p7::stat( dependencies_pathname.c_str(), dependencies_stat )  &&  dependencies_stat.st_mtime > source_stamp;
 				
 				time_t includes_stamp;
 				
@@ -456,7 +456,7 @@ namespace tool
 				
 				if ( has_dot_d )
 				{
-					read_dependencies_file( p7::open( dependencies_pathname, p7::o_rdonly ), includes );
+					read_dependencies_file( p7::open( dependencies_pathname.c_str(), p7::o_rdonly ), includes );
 					
 					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
 					
@@ -476,7 +476,7 @@ namespace tool
 					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
 					
 					// Write .d file for next time
-					write_dependencies_file( p7::open( dependencies_pathname,
+					write_dependencies_file( p7::open( dependencies_pathname.c_str(),
 					                                   p7::o_wronly | p7::o_creat | p7::o_trunc ),
 					                         includes );
 				}

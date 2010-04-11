@@ -138,7 +138,7 @@ namespace tool
 	{
 		std::string file = folder / includePath;
 		
-		(void) p7::stat( file );  // throw if nonexistent
+		(void) p7::stat( file.c_str() );  // throw if nonexistent
 		
 		return file;
 	}

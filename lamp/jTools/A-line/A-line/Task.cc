@@ -94,7 +94,7 @@ namespace tool
 	{
 		struct stat output_stat;
 		
-		const bool output_exists = p7::stat( its_output_path, output_stat );
+		const bool output_exists = p7::stat( its_output_path.c_str(), output_stat );
 		
 		if ( output_exists )
 		{
@@ -127,7 +127,7 @@ namespace tool
 	
 	void FileTask::Success()
 	{
-		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
+		UpdateInputStamp( p7::stat( its_output_path.c_str() ).st_mtime );
 		
 		Return( true );
 	}

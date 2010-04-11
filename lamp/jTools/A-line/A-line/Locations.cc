@@ -34,7 +34,7 @@ namespace tool
 		{
 			mkdir_path( io::get_preceding_directory( path ) );
 			
-			p7::mkdir( path );
+			p7::mkdir( path.c_str() );
 		}
 		
 		return path;
