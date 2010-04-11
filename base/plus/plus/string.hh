@@ -125,6 +125,54 @@ namespace plus
 	bool operator<( const char* a, const string& b );
 	
 	
+	inline bool operator>( const string& a, const string& b )
+	{
+		return b < a;
+	}
+	
+	inline bool operator>( const string& a, const char* b )
+	{
+		return b < a;
+	}
+	
+	inline bool operator>( const char* a, const string& b )
+	{
+		return b < a;
+	}
+	
+	
+	inline bool operator<=( const string& a, const string& b )
+	{
+		return !( a > b );
+	}
+	
+	inline bool operator<=( const string& a, const char* b )
+	{
+		return !( a > b );
+	}
+	
+	inline bool operator<=( const char* a, const string& b )
+	{
+		return !( a > b );
+	}
+	
+	
+	inline bool operator>=( const string& a, const string& b )
+	{
+		return !( a < b );
+	}
+	
+	inline bool operator>=( const string& a, const char* b )
+	{
+		return !( a < b );
+	}
+	
+	inline bool operator>=( const char* a, const string& b )
+	{
+		return !( a < b );
+	}
+	
+	
 	string concat( const char* a, string::size_type  a_size,
 	               const char* b, string::size_type  b_size );
 	
