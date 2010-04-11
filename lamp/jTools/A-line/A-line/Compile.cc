@@ -22,7 +22,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// Iota
+// Extended API Set, Part 2
+#include "extended-api-set/part-2.h"
+
+// iota
+#include "iota/find.hh"
 #include "iota/strings.hh"
 
 // plus
@@ -41,12 +45,12 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
-#include "poseven/functions/lstat.hh"
+#include "poseven/functions/fstatat.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
-#include "poseven/functions/symlink.hh"
-#include "poseven/functions/unlink.hh"
+#include "poseven/functions/symlinkat.hh"
+#include "poseven/functions/unlinkat.hh"
 #include "poseven/functions/write.hh"
 
 // pfiles
@@ -67,6 +71,7 @@
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
@@ -122,6 +127,16 @@ namespace tool
 	};
 	
 	
+	static const char* basename( const char* path, size_t length )
+	{
+		if ( const char* match = iota::find_last_match( path, length, '/' ) )
+		{
+			return match + 1;
+		}
+		
+		return path;
+	}
+	
 	static void populate_include_union( const Project& project )
 	{
 		if ( !project.SourceDirs().empty() )
@@ -130,13 +145,19 @@ namespace tool
 			
 			std::string includes_union_pathname = get_includes_union_pathname();
 			
+			n::owned< p7::fd_t > include_fd = p7::open( includes_union_pathname.c_str(),
+			                                            p7::o_rdonly | p7::o_directory );
+			
 			typedef std::vector< std::string >::const_iterator Iter;
 			
 			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
-				const std::string& dir_pathname = *it;
+				const std::string& dir_pathname_string = *it;
 				
-				std::string dir_name = io::get_filename( dir_pathname );
+				const char* dir_pathname = dir_pathname_string.c_str();
+				
+				const char* dir_name = basename( dir_pathname,
+				                                 dir_pathname_string.size() );
 				
 				std::string include_link = includes_union_pathname / dir_name;
 				
@@ -145,7 +166,7 @@ namespace tool
 				
 				try
 				{
-					struct ::stat link_stat = p7::stat( include_link );
+					struct stat link_stat = p7::fstatat( include_fd, dir_name );
 					
 					if ( memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
 					{
@@ -154,13 +175,15 @@ namespace tool
 						continue;
 					}
 					
-					link_stat = p7::lstat( include_link );
+					link_stat = p7::fstatat( include_fd,
+					                         dir_name,
+					                         p7::at_symlink_nofollow );
 					
 					if ( S_ISLNK( link_stat.st_mode ) )
 					{
 						// Stale symlink.
 						
-						p7::unlink( include_link );
+						p7::unlinkat( include_fd, dir_name );
 					}
 				}
 				catch ( const p7::errno_t& err )
@@ -173,7 +196,7 @@ namespace tool
 					// No symlink present yet, create one below
 				}
 				
-				p7::symlink( dir_pathname, include_link );
+				p7::symlinkat( dir_pathname, include_fd, dir_name );
 			}
 		}
 		
