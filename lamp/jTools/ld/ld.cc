@@ -48,8 +48,8 @@
 // metrowerks
 #include "metrowerks/object_file.hh"
 
-// ld
-#include "find_InterfacesAndLibraries.hh"
+// one_path
+#include "one_path/find_InterfacesAndLibraries.hh"
 
 
 namespace tool

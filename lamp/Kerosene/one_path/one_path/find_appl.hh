@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LD_FINDAPPL_HH
-#define LD_FINDAPPL_HH
+#ifndef ONEPATH_FINDAPPL_HH
+#define ONEPATH_FINDAPPL_HH
 
 // Standard C++
 #include <string>

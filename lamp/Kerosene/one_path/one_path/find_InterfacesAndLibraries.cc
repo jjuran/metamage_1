@@ -5,7 +5,7 @@
 	Joshua Juran
 */
 
-#include "find_InterfacesAndLibraries.hh"
+#include "one_path/find_InterfacesAndLibraries.hh"
 
 // Standard C++
 #include <algorithm>
@@ -13,8 +13,8 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// ld
-#include "find_appl.hh"
+// one_path
+#include "one_path/find_appl.hh"
 
 
 namespace tool
