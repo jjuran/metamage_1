@@ -95,7 +95,7 @@ namespace tool
 		
 		if ( linked < 0 )
 		{
-			p7::perror( "ln" );
+			p7::perror( "ln", target );
 			
 			return EXIT_FAILURE;
 		}
