@@ -19,13 +19,13 @@
 namespace poseven
 {
 	
-	inline void spew( fd_t fd, const char* buffer, std::size_t length )
+	inline void spew( fd_t fd, const char* buffer, size_t length )
 	{
 		write_all( fd, buffer, length );
 	}
 	
 	
-	void spew( const char* path, const char* buffer, std::size_t length );
+	void spew( const char* path, const char* buffer, size_t length );
 	
 	
 	inline void spew( const char* path, const std::string& stuff )
