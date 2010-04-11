@@ -273,5 +273,26 @@ int symlinkat( const char* target, int newdirfd, const char* newpath )
 	return symlink( target, newpath );
 }
 
+int unlinkat( int dirfd, const char* path, int flags )
+{
+	char pathname[ PATH_MAX ];
+	
+	int got = get_path( dirfd, path, pathname );
+	
+	if ( got < 0 )
+	{
+		return got;
+	}
+	else if ( got )
+	{
+		path = pathname;
+	}
+	
+	const bool removedir = flags & AT_REMOVEDIR;
+	
+	return removedir ? rmdir ( path )
+	                 : unlink( path );
+}
+
 #endif
 

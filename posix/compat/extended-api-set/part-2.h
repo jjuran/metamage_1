@@ -22,6 +22,10 @@ extern "C" {
 
 #define AT_FDCWD  (-100)
 
+#ifndef AT_REMOVEDIR
+#define AT_REMOVEDIR  1
+#endif
+
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW  4096
 #endif
