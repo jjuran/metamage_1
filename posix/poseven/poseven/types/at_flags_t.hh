@@ -11,6 +11,7 @@
 #define POSEVEN_TYPES_AT_FLAGS_T_HH
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
 // Nucleus
@@ -23,6 +24,7 @@ namespace poseven
 	
 	enum at_flags_t
 	{
+		at_removedir        = AT_REMOVEDIR,
 		at_symlink_nofollow = AT_SYMLINK_NOFOLLOW,
 		
 		at_flags_t_max = nucleus::enumeration_traits< int >::max
