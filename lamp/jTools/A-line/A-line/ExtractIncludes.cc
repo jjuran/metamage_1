@@ -17,6 +17,9 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 
+// A-line
+#include "A-line/Includes.hh"
+
 
 namespace tool
 {
@@ -81,7 +84,7 @@ namespace tool
 		}
 	}
 	
-	IncludesCache ExtractIncludes( const std::string& pathname )
+	void ExtractIncludes( IncludesCache& result, const char* pathname )
 	{
 		text_input::feed feed;
 		
@@ -89,16 +92,12 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		IncludesCache includes;
-		
 		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
 			std::string line( s->begin(), s->end() - 1 );
 			
-			ExtractInclude( line, includes );
+			ExtractInclude( line, result );
 		}
-		
-		return includes;
 	}
 	
 }

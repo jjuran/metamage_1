@@ -29,7 +29,11 @@ namespace tool
 			return it->second;
 		}
 		
-		return gIncludesCaches[ pathname ] = ExtractIncludes( pathname );
+		IncludesCache& includes = gIncludesCaches[ pathname ];
+		
+		ExtractIncludes( includes, pathname.c_str() );
+		
+		return includes;
 	}
 	
 }
