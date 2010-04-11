@@ -12,6 +12,9 @@
 // Standard C++
 #include <string>
 
+// plus
+#include "plus/string.hh"
+
 // poseven
 #include "poseven/extras/write_all.hh"
 
@@ -28,7 +31,7 @@ namespace poseven
 	void spew( const char* path, const char* buffer, size_t length );
 	
 	
-	inline void spew( const char* path, const std::string& stuff )
+	inline void spew( const char* path, const plus::string& stuff )
 	{
 		spew( path, stuff.data(), stuff.length() );
 	}
