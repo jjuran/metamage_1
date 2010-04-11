@@ -197,24 +197,45 @@ namespace io
 	
 	// Delete
 	
-	inline void delete_file( const std::string& file, overload = overload() )
+	inline void delete_file( const char* file, overload = overload() )
 	{
 		poseven::unlink( file );
 	}
 	
-	inline void delete_file_only( const std::string& file, overload = overload() )
+	inline void delete_file_only( const char* file, overload = overload() )
 	{
 		delete_file( file );
 	}
 	
-	inline void delete_empty_directory( const std::string& dir, overload = overload() )
+	inline void delete_empty_directory( const char* dir, overload = overload() )
 	{
 		poseven::rmdir( dir );
 	}
 	
-	inline void delete_empty_directory_only( const std::string& dir, overload = overload() )
+	inline void delete_empty_directory_only( const char* dir, overload = overload() )
 	{
 		delete_empty_directory( dir );
+	}
+	
+	
+	inline void delete_file( const std::string& file, overload = overload() )
+	{
+		delete_file( file.c_str() );
+	}
+	
+	inline void delete_file_only( const std::string& file, overload = overload() )
+	{
+		delete_file_only( file.c_str() );
+	}
+	
+	inline void delete_empty_directory( const std::string& dir, overload = overload() )
+	{
+		delete_empty_directory( dir.c_str() );
+	}
+	
+	inline void delete_empty_directory_only( const std::string& dir, overload = overload() )
+	{
+		delete_empty_directory_only( dir.c_str() );
 	}
 	
 	// Open
