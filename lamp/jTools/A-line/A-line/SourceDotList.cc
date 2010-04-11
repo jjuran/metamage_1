@@ -44,14 +44,5 @@ namespace tool
 		}
 	}
 	
-	std::vector< std::string > ReadSourceDotList( const std::string& pathname )
-	{
-		std::vector< std::string > files;
-		
-		ReadSourceDotList( pathname, files );
-		
-		return files;
-	}
-	
 }
 
