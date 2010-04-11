@@ -354,11 +354,6 @@ namespace tool
 		}
 	}
 	
-	static std::string FilenameExtension(const unsigned char* filename)
-	{
-		return FilenameExtension( plus::make_string( filename ) );
-	}
-	
 	static std::string GuessContentType( const std::string& filename, ::OSType type )
 	{
 		std::string ext = FilenameExtension( filename );
