@@ -653,7 +653,7 @@ namespace tool
 		{
 			std::vector< std::string > listed_sources;
 			
-			ReadSourceDotList( source_list, listed_sources );
+			ReadSourceDotList( source_list.c_str(), listed_sources );
 			
 			its_source_file_pathnames = find_sources( listed_sources,
 		                                              its_search_dir_pathnames );

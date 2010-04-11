@@ -21,7 +21,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	void ReadSourceDotList( const std::string&           pathname,
+	void ReadSourceDotList( const char*                  pathname,
 	                        std::vector< std::string >&  files )
 	{
 		text_input::feed feed;
