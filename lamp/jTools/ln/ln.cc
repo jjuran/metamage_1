@@ -13,16 +13,16 @@
 // POSIX
 #include <unistd.h>
 
+// Extended API Set, Part 2
+#include "extended-api-set/part-2.h"
+
 // Iota
 #include "iota/strings.hh"
 
 // poseven
+#include "poseven/functions/fstatat.hh"
 #include "poseven/functions/perror.hh"
-#include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
-
-// pfiles
-#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -67,31 +67,71 @@ namespace tool
 		const char* target = argv[ 1 + symbolic ];
 		const char* loc    = argv[ 2 + symbolic ];
 		
-		std::string location = loc != NULL ? loc : ".";
+		int dirfd = AT_FDCWD;
 		
-		struct stat location_status;
 		
-		if ( bool location_exists = p7::stat( location, location_status ) )
+		
+		if ( loc != NULL )
 		{
-			if ( S_ISDIR( location_status.st_mode ) )
+			dirfd = open( loc, O_RDONLY | O_DIRECTORY );
+			
+			bool failed = true;
+			
+			if ( dirfd >= 0 )
 			{
-				using namespace io::path_descent_operators;
+				// It's a directory and therefore it exists.
+				// See if a file with the target's name exists within it.
 				
-				location = location / Basename( target );
+				const char* dir_path = loc;
 				
-				location_exists = p7::stat( location, location_status );
+				loc = Basename( target );
+				
+				struct stat sb;
+				
+				const bool exists = p7::fstatat( p7::fd_t( dirfd ), loc, sb );
+				
+				if (( failed = exists ))
+				{
+					// destination is a directory but the target's name is taken
+					errno = EEXIST;
+					
+					const size_t dir_len = strlen( dir_path );
+					const size_t loc_len = strlen( loc      );
+					
+					const size_t path_size = dir_len + 1 + loc_len;
+					
+					char* buffer = (char*) alloca( path_size + 1 );
+					
+					memcpy( buffer,               dir_path, dir_len );
+					memcpy( buffer + dir_len,     STR_LEN( "/" )    );
+					memcpy( buffer + dir_len + 1, loc,      loc_len );
+					
+					buffer[ path_size ] = '\0';
+					
+					loc = buffer;
+				}
+			}
+			else if ( errno == ENOENT )
+			{
+				// okay, destination doesn't exist
+				failed = false;
+			}
+			else if ( errno == ENOTDIR )
+			{
+				// destination exists but is not a directory
+				errno = EEXIST;
 			}
 			
-			if ( location_exists )
+			if ( failed )
 			{
-				p7::perror( "ln", location, EEXIST );
+				p7::perror( "ln", loc );
 				
 				return EXIT_FAILURE;
 			}
 		}
 		
-		int linked = symbolic ? symlink( target, location.c_str() )
-		                      :    link( target, location.c_str() );
+		int linked = symbolic ? symlinkat(           target, dirfd, loc    )
+		                      :    linkat( AT_FDCWD, target, dirfd, loc, 0 );
 		
 		if ( linked < 0 )
 		{
