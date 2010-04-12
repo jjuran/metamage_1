@@ -190,9 +190,7 @@ std::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& mat
 			
 			int value = matrix.Cell( i, j );
 			
-			std::string string = iota::inscribe_decimal( value );
-			
-			result += string;
+			result += iota::inscribe_decimal( value );
 			
 			result += "";
 		}
@@ -395,7 +393,7 @@ static bool TestAFPServer( const unsigned char* serverName )
 	//if (status[9] == -5)  return true;
 }
 
-static bool TestAFPServer(const std::string& serverName)
+static bool TestAFPServer( const char* serverName )
 {
 	return TestAFPServer( N::Str255( serverName ) );
 }
