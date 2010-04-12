@@ -852,35 +852,6 @@ namespace Genie
 		}
 	}
 	
-	static void StoreVector( const char* const*     envp,
-	                         std::string&           storage,
-	                         std::vector< char* >&  result )
-	{
-		result.clear();
-		storage.clear();
-		
-		if ( envp != NULL )
-		{
-			size_t total_length = 0;
-			
-			for ( const char* const* pp = envp;  *pp;  ++pp )
-			{
-				total_length += std::strlen( *pp ) + 1;
-			}
-			
-			storage.reserve( total_length );
-			
-			for ( const char* const* pp = envp;  *pp;  ++pp )
-			{
-				result.push_back( &*storage.end() );
-				
-				storage.append( *pp, *pp + std::strlen( *pp ) + 1 );  // include NUL byte
-			}
-		}
-		
-		result.push_back( NULL );
-	}
-	
 	static void CheckProgramFile( const FSTreePtr& programFile )
 	{
 		struct ::stat sb;
