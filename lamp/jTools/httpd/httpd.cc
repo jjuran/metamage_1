@@ -437,9 +437,7 @@ namespace tool
 			return;
 		}
 		
-		std::string cgiBin = "/cgi-bin/";
-		
-		if ( parsed.resource.substr( 0, cgiBin.size() ) == cgiBin )
+		if ( strncmp( parsed.resource.c_str(), STR_LEN( "/cgi-bin/" ) ) == 0 )
 		{
 			const char* path = pathname.c_str();
 			
