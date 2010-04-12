@@ -37,7 +37,7 @@ namespace plus
 	
 	void string::dispose()
 	{
-		if ( its_alloc.length  &&  its_small_name[ max_offset ] < 0 )
+		if ( its_small_name[ max_offset ] < 0 )
 		{
 			delete [] its_alloc.pointer;
 		}
@@ -95,14 +95,14 @@ namespace plus
 	{
 		const int margin = its_small_name[ max_offset ];
 		
-		return   its_alloc.length == 0 ? 0
-		       : margin >= 0           ? max_offset - margin
-		       :                         its_alloc.length;
+		return   margin == 0 ? 0
+		       : margin >= 0 ? max_offset - margin
+		       :               its_alloc.length;
 	}
 	
 	const char* string::c_str() const
 	{
-		const bool allocated = its_alloc.length  &&  its_small_name[ max_offset ] < 0;
+		const bool allocated = its_small_name[ max_offset ] < 0;
 		
 		return allocated ? its_alloc.pointer : its_small_name;
 	}
@@ -122,7 +122,7 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		const bool allocated = its_alloc.length  &&  its_small_name[ max_offset ] < 0;
+		const bool allocated = its_small_name[ max_offset ] < 0;
 		
 		char const *const old_pointer = allocated ? its_alloc.pointer : NULL;
 		
