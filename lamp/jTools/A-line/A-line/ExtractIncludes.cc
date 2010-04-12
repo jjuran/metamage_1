@@ -5,6 +5,9 @@
 
 #include "A-line/ExtractIncludes.hh"
 
+// Standard C
+#include <string.h>
+
 // Iota
 #include "iota/strings.hh"
 
@@ -36,13 +39,11 @@ namespace tool
 		
 		if ( ~pos  &&  line[ pos ] == '#' )
 		{
-			std::string include = "include";
-			
-			if ( line.substr( pos + 1, include.size() ) == include )
+			if ( strncmp( line.c_str() + pos + 1, STR_LEN( "include" ) ) == 0 )
 			{
 				try
 				{
-					pos = line.find_first_not_of( " \t", pos + 1 + include.size() );
+					pos = line.find_first_not_of( " \t", pos + 1 + STRLEN( "include" ) );
 					
 					if ( !~pos )  throw BadIncludeDirective();
 					
