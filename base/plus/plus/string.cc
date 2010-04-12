@@ -42,6 +42,15 @@ namespace plus
 		}
 	}
 	
+	
+	string::string( const char* p, size_type length, delete_policy policy )
+	{
+		its_alloc.pointer = p;
+		its_alloc.length  = length;
+		
+		its_small_name[ max_offset ] = ~policy;
+	}
+	
 	string::string( const char* p, size_type length )
 	{
 		its_small_name[ max_offset ] = 0;
@@ -95,6 +104,23 @@ namespace plus
 	{
 		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
 		                                        : its_small_name;
+	}
+	
+	void string::assign( const char* p, size_type length, delete_policy policy )
+	{
+		if ( length )
+		{
+			ASSERT( p != NULL );
+			
+			ASSERT( p + length >= p );
+		}
+		
+		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
+		
+		its_alloc.pointer = p;
+		its_alloc.length  = length;
+		
+		its_small_name[ max_offset ] = ~policy;
 	}
 	
 	void string::assign( const char* p, size_type length )

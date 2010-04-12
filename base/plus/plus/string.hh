@@ -52,6 +52,8 @@ namespace plus
 				its_small_name[ max_offset ] = 0;
 			}
 			
+			string( const char* p, size_type length, delete_policy policy );
+			
 			string( const char* p, size_type length );
 			
 			string( const char* p, const char* q );
@@ -74,6 +76,8 @@ namespace plus
 			const char* c_str() const  { return data(); }
 			
 			operator const char*() const  { return c_str(); }
+			
+			void assign( const char* p, size_type length, delete_policy policy );
 			
 			void assign( const char* p, size_type length );
 			
