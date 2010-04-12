@@ -9,6 +9,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -20,9 +23,7 @@ int main( int argc, char *const argv[] )
 {
 	if ( argc != 1 )
 	{
-		const char usage[] = "Usage: hostname\n";
-		
-		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+		(void) write( STDERR_FILENO, STR_LEN( "Usage: hostname\n" ) );
 		
 		return 1;
 	}
