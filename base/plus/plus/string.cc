@@ -136,6 +136,7 @@ namespace plus
 			pointer[ length ] = '\0';
 			
 			its_alloc.pointer = pointer;
+			its_alloc.length  = length;
 			
 			its_small_name[ max_offset ] = 0xff;
 		}
@@ -145,13 +146,7 @@ namespace plus
 			
 			its_small_name[ length     ] = '\0';
 			its_small_name[ max_offset ] = max_offset - length;
-			
-			delete [] old_pointer;
-			
-			return;
 		}
-		
-		its_alloc.length = length;
 		
 		delete [] old_pointer;
 	}
