@@ -12,6 +12,13 @@
 namespace plus
 {
 	
+	enum delete_policy
+	{
+		delete_none,
+		delete_basic
+	};
+	
+	
 	class string
 	{
 		public:

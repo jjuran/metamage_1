@@ -36,7 +36,7 @@ namespace plus
 	
 	static void dispose( const char* pointer, int margin )
 	{
-		if ( margin < 0 )
+		if ( margin == ~delete_basic )
 		{
 			delete pointer;
 		}
@@ -122,7 +122,7 @@ namespace plus
 			its_alloc.pointer = pointer;
 			its_alloc.length  = length;
 			
-			its_small_name[ max_offset ] = 0xff;
+			its_small_name[ max_offset ] = ~delete_basic;
 		}
 		else
 		{
