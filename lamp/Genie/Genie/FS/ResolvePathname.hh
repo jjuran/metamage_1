@@ -15,6 +15,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/string.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 
@@ -72,6 +75,12 @@ namespace Genie
 	
 	inline FSTreePtr ResolvePathname( const std::string&  pathname,
 	                                  const FSTreePtr&    current = FSTreePtr() )
+	{
+		return ResolvePathname( pathname.data(), pathname.size(), current );
+	}
+	
+	inline FSTreePtr ResolvePathname( const plus::string&  pathname,
+	                                  const FSTreePtr&     current = FSTreePtr() )
 	{
 		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
