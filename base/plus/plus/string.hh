@@ -42,8 +42,6 @@ namespace plus
 		public:
 			string()
 			{
-				its_alloc.length = 0;
-				
 				its_small_name[ max_offset ] = 0;
 			}
 			
