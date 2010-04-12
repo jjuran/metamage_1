@@ -66,9 +66,9 @@ namespace plus
 			
 			size_type size() const  { return length(); }
 			
-			const char* c_str() const;
-			
 			const char* data() const;
+			
+			const char* c_str() const  { return data(); }
 			
 			operator const char*() const  { return c_str(); }
 			

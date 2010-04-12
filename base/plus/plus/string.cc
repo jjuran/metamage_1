@@ -100,13 +100,6 @@ namespace plus
 		       :               its_alloc.length;
 	}
 	
-	const char* string::c_str() const
-	{
-		const bool allocated = its_small_name[ max_offset ] < 0;
-		
-		return allocated ? its_alloc.pointer : its_small_name;
-	}
-	
 	const char* string::data() const
 	{
 		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
