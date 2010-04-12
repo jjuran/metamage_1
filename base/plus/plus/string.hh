@@ -28,8 +28,8 @@ namespace plus
 		private:
 			struct alloc_state
 			{
-				size_type    length;
 				const char*  pointer;
+				size_type    length;
 			};
 			
 			union
