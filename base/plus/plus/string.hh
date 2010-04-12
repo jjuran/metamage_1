@@ -12,6 +12,13 @@
 namespace plus
 {
 	
+	enum delete_policy
+	{
+		delete_none,
+		delete_basic
+	};
+	
+	
 	class string
 	{
 		public:
@@ -28,8 +35,8 @@ namespace plus
 		private:
 			struct alloc_state
 			{
-				size_type    length;
 				const char*  pointer;
+				size_type    length;
 			};
 			
 			union
@@ -38,11 +45,14 @@ namespace plus
 				alloc_state  its_alloc;
 				long         its_longs[ buffer_size_in_longs ];
 			};
-			
-			void dispose();
 		
 		public:
-			string()  { its_alloc.length = 0; }
+			string()
+			{
+				its_small_name[ max_offset ] = 0;
+			}
+			
+			string( const char* p, size_type length, delete_policy policy );
 			
 			string( const char* p, size_type length );
 			
@@ -55,17 +65,19 @@ namespace plus
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
-			bool empty() const  { return its_alloc.length == 0; }
+			bool empty() const  { return length() == 0; }
 			
 			size_type length() const;
 			
 			size_type size() const  { return length(); }
 			
-			const char* c_str() const;
-			
 			const char* data() const;
 			
+			const char* c_str() const  { return data(); }
+			
 			operator const char*() const  { return c_str(); }
+			
+			void assign( const char* p, size_type length, delete_policy policy );
 			
 			void assign( const char* p, size_type length );
 			

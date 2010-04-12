@@ -10,9 +10,6 @@
 // Standard C
 #include <string.h>
 
-// Traditional
-#include <alloca.h>
-
 // debug
 #include "debug/assert.hh"
 
@@ -26,52 +23,60 @@ namespace plus
 	{
 		const string::size_type total_size = a_size + b_size;
 		
-		char* buffer = (char*) alloca( total_size );
+		char* buffer = (char*) ::operator new( total_size );
 		
 		memcpy( buffer,          a, a_size );
 		memcpy( buffer + a_size, b, b_size );
 		
-		result.assign( buffer, total_size );
+		result.assign( buffer, total_size, delete_basic );
+	}
+	
+	static void dispose( const char* pointer, int margin )
+	{
+		if ( margin == ~delete_basic )
+		{
+			delete pointer;
+		}
 	}
 	
 	
-	void string::dispose()
+	string::string( const char* p, size_type length, delete_policy policy )
 	{
-		if ( its_alloc.length  &&  its_small_name[ max_offset ] < 0 )
-		{
-			delete [] its_alloc.pointer;
-		}
+		its_alloc.pointer = p;
+		its_alloc.length  = length;
+		
+		its_small_name[ max_offset ] = ~policy;
 	}
 	
 	string::string( const char* p, size_type length )
 	{
-		its_alloc.length = 0;
+		its_small_name[ max_offset ] = 0;
 		
 		assign( p, length );
 	}
 	
 	string::string( const char* p, const char* q )
 	{
-		its_alloc.length = 0;
+		its_small_name[ max_offset ] = 0;
 		
 		assign( p, q );
 	}
 	
 	string::string( const char* s )
 	{
-		its_alloc.length = 0;
+		its_small_name[ max_offset ] = 0;
 		
 		assign( s );
 	}
 	
 	string::~string()
 	{
-		dispose();
+		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
 	}
 	
 	string::string( const string& other )
 	{
-		its_alloc.length = 0;
+		its_small_name[ max_offset ] = 0;
 		
 		assign( other );
 	}
@@ -87,22 +92,32 @@ namespace plus
 	{
 		const int margin = its_small_name[ max_offset ];
 		
-		return   its_alloc.length == 0 ? 0
-		       : margin >= 0           ? max_offset - margin
-		       :                         its_alloc.length;
-	}
-	
-	const char* string::c_str() const
-	{
-		const bool allocated = its_alloc.length  &&  its_small_name[ max_offset ] < 0;
-		
-		return allocated ? its_alloc.pointer : its_small_name;
+		return   margin == 0 ? 0
+		       : margin >= 0 ? max_offset - margin
+		       :               its_alloc.length;
 	}
 	
 	const char* string::data() const
 	{
 		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
 		                                        : its_small_name;
+	}
+	
+	void string::assign( const char* p, size_type length, delete_policy policy )
+	{
+		if ( length )
+		{
+			ASSERT( p != NULL );
+			
+			ASSERT( p + length >= p );
+		}
+		
+		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
+		
+		its_alloc.pointer = p;
+		its_alloc.length  = length;
+		
+		its_small_name[ max_offset ] = ~policy;
 	}
 	
 	void string::assign( const char* p, size_type length )
@@ -114,38 +129,33 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		const bool allocated = its_alloc.length  &&  its_small_name[ max_offset ] < 0;
+		char const *const old_pointer = its_alloc.pointer;
 		
-		char const *const old_pointer = allocated ? its_alloc.pointer : NULL;
+		const char old_margin = its_small_name[ max_offset ];
 		
 		if ( length >= sizeof its_small_name )
 		{
 			// may throw
-			char *const pointer = new char [ length + 1 ];
+			char *const pointer = (char*) ::operator new( length + 1 );
 			
 			memcpy( pointer, p, length );
 			
 			pointer[ length ] = '\0';
 			
 			its_alloc.pointer = pointer;
+			its_alloc.length  = length;
 			
-			its_small_name[ max_offset ] = 0xff;
+			its_small_name[ max_offset ] = ~delete_basic;
 		}
-		else if ( length != 0 )
+		else
 		{
 			memcpy( its_small_name, p, length );
 			
 			its_small_name[ length     ] = '\0';
 			its_small_name[ max_offset ] = max_offset - length;
-			
-			delete [] old_pointer;
-			
-			return;
 		}
 		
-		its_alloc.length = length;
-		
-		delete [] old_pointer;
+		dispose( old_pointer, old_margin );
 	}
 	
 	void string::assign( const char* s )
