@@ -8,6 +8,7 @@
 #include "plus/var_string.hh"
 
 // Standard C++
+#include <algorithm>
 #include <stdexcept>
 
 // Standard C
@@ -92,5 +93,30 @@ namespace plus
 			assign( buffer, data_size, delete_basic, new_capacity );
 		}
 	}
+	
+	void var_string::resize( size_type new_size )
+	{
+		check_size( new_size );
+		
+		size_type new_capacity = capacity();
+		
+		if ( new_size > new_capacity )
+		{
+			do
+			{
+				new_capacity *= 2;
+			}
+			while ( new_size > new_capacity );
+			
+			reserve( new_capacity );
+			
+			char* data = begin();
+			
+			std::fill( data + size(), data + new_size, '\0' );
+		}
+		
+		set_length( new_size );
+	}
+	
 }
 

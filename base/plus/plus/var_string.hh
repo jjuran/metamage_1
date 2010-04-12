@@ -61,6 +61,7 @@ namespace plus
 			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
 			
 			void reserve( size_type size );
+			void resize ( size_type size );
 	};
 	
 }
