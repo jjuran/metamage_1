@@ -139,7 +139,7 @@ namespace plus
 			
 			its_small_name[ max_offset ] = 0xff;
 		}
-		else if ( length != 0 )
+		else
 		{
 			memcpy( its_small_name, p, length );
 			
