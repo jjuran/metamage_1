@@ -14,6 +14,9 @@
 // Standard C
 #include <string.h>
 
+// debug
+#include "debug/assert.hh"
+
 
 #define LENGTH_ERROR_MESSAGE  "plus::var_string size can't exceed 0x7fffffff"
 
@@ -116,6 +119,33 @@ namespace plus
 		}
 		
 		set_length( new_size );
+	}
+	
+	void var_string::append( const char* p, size_type length )
+	{
+		check_size( length );
+		
+		if ( length )
+		{
+			ASSERT( p != NULL );
+			
+			ASSERT( p + length >= p );
+		}
+		
+		const size_type old_size = size();
+		
+		resize( old_size + length );
+		
+		memcpy( mutable_data() + old_size, p, length );
+	}
+	
+	void var_string::append( const char* s )
+	{
+		ASSERT( s != NULL );
+		
+		const size_type length = strlen( s );
+		
+		append( s, length );
 	}
 	
 }

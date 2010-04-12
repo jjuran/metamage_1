@@ -62,6 +62,17 @@ namespace plus
 			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
+			
+			void append( const char* p, size_type length );
+			
+			void append( const char* p, const char* q )  { append( p, q - p ); }
+			
+			void append( const char* s );
+			
+			void append( const string& other )  { append( other.data(), other.size() ); }
+			
+			string& operator+=( const string& s )  { append( s );  return *this; }
+			string& operator+=( const char*   s )  { append( s );  return *this; }
 	};
 	
 }

@@ -211,27 +211,6 @@ namespace plus
 		assign( s, length );
 	}
 	
-	void string::append( const char* p, size_type length )
-	{
-		if ( length )
-		{
-			ASSERT( p != NULL );
-			
-			ASSERT( p + length >= p );
-		}
-		
-		concat( data(), size(), p, length, *this );
-	}
-	
-	void string::append( const char* s )
-	{
-		ASSERT( s != NULL );
-		
-		const size_type length = strlen( s );
-		
-		append( s, length );
-	}
-	
 	void string::swap( string& other )
 	{
 		long temp_longs[ buffer_size_in_longs ];
