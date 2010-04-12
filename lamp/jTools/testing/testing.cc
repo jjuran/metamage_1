@@ -31,7 +31,6 @@
 
 // Standard C++
 #include <functional>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -1394,18 +1393,16 @@ static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
 
 typedef int (*MainProcPtr)( int argc, iota::argv_t argv );
 
-struct SubMain
+struct command_t
 {
 	const char* name;
 	MainProcPtr proc;
 };
 
-const SubMain gSubs[] =
+static const command_t global_commands[] =
 {
-	{ "unit",      TestUnit       },
-	{ "assert",    TestAssert     },
-	{ "map",       TestMap        },
-	{ "vector",    TestVectoria   },
+	{ "OADC",      TestOADC       },
+	{ "ae",        TestAE         },
 	
 #if !TARGET_API_MAC_CARBON
 	
@@ -1413,24 +1410,12 @@ const SubMain gSubs[] =
 	
 #endif
 	
-	{ "date",      TestDate       },
+	{ "assert",    TestAssert     },
+	{ "callback",  TestCallback   },
 	{ "crc16",     TestCRC16      },
 	{ "crc32",     TestCRC32      },
-	{ "md5",       TestMD5        },
-	{ "OADC",      TestOADC       },
-	{ "si",        TestSoundInput },
-	{ "ae",        TestAE         },
-//	{ "svcs",      TestServices   },
-	{ "thread",    TestThread     },
-	{ "null",      TestNull       },
-	{ "path",      TestPath       },
-	{ "unmangle",  TestUnmangle   },
-	{ "unwind",    TestUnwind     },
-	{ "mangling",  TestMangling   },
-	{ "callback",  TestCallback   },
+	{ "date",      TestDate       },
 	{ "forkstop",  TestForkAndStop },
-	{ "stack",     TestDefaultThreadStackSize },
-	{ "owned",     TestNucleusOwnedShared },
 	
 #if TARGET_RT_MAC_CFM
 	
@@ -1438,21 +1423,53 @@ const SubMain gSubs[] =
 	
 #endif
 	
+	{ "loc",       TestReadLoc    },
+	{ "mangling",  TestMangling   },
+	{ "map",       TestMap        },
+	{ "md5",       TestMD5        },
+	{ "null",      TestNull       },
+	{ "owned",     TestNucleusOwnedShared },
+	{ "path",      TestPath       },
+	{ "si",        TestSoundInput },
+	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
+//	{ "svcs",      TestServices   },
+	{ "thread",    TestThread     },
 	{ "throw",     TestThrow      },
-	{ "loc",       TestReadLoc    }
+	{ "unit",      TestUnit       },
+	{ "unmangle",  TestUnmangle   },
+	{ "unwind",    TestUnwind     },
+	{ "vector",    TestVectoria   },
 };
 
-std::map< std::string, const SubMain* > gMapping;
-
-static void MakeMap()
+static bool operator==( const command_t& command, const char* name )
 {
-	const SubMain* p = gSubs + sizeof gSubs / sizeof (SubMain);
+	return strcmp( command.name, name ) == 0;
+}
+
+static bool operator<( const command_t& command, const char* name )
+{
+	return strcmp( command.name, name ) < 0;
+}
+
+static bool operator<( const char* name, const command_t& command )
+{
+	return strcmp( name, command.name ) < 0;
+}
+
+static const command_t* find_command( const char* name )
+{
+	const command_t* begin = global_commands;
+	const command_t* end   = begin + sizeof global_commands / sizeof (command_t);
 	
-	while ( --p >= gSubs )
+	const command_t* it = std::lower_bound( begin, end, name );
+	
+	if ( it != end  &&  *it == name )
 	{
-		gMapping[ p->name ] = p;
+		return it;
 	}
+	
+	return NULL;
 }
 
 namespace tool
@@ -1460,19 +1477,16 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		MakeMap();
-		
 		std::string message;
 		
 		if (argc <= 1)
 		{
-			typedef std::map< std::string, const SubMain* >::const_iterator const_iterator;
+			const command_t* begin = global_commands;
+			const command_t* end   = begin + sizeof global_commands / sizeof (command_t);
 			
-			for ( const_iterator it = gMapping.begin();  it != gMapping.end();  ++it )
+			for ( const command_t* it = begin;  it != end;  ++it )
 			{
-				const char* name = it->second->name;
-				
-				message += name;
+				message += it->name;
 				message += "\n";
 			}
 			
@@ -1481,15 +1495,11 @@ namespace tool
 			return 0;
 		}
 		
-		std::string arg1 = argv[1];
-		
-		const SubMain* sub = gMapping[ arg1 ];
+		const command_t* sub = find_command( argv[1] );
 		
 		if ( sub == NULL )
 		{
-			message = "No such test '" + arg1 + "'.\n";
-			
-			p7::write( p7::stderr_fileno, message );
+			p7::perror( "testing", argv[1], "no such subcommand" );
 			
 			return 1;
 		}
