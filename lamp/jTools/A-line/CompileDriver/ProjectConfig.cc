@@ -225,14 +225,16 @@ namespace tool
 		
 	}
 	
+	static bool ends_with( const char* a, size_t a_size, const char* b, size_t b_size )
+	{
+		const ssize_t diff_size = a_size - b_size;
+		
+		return diff_size >= 0  &&  memcmp( a + diff_size, b, b_size ) == 0;
+	}
+	
 	static void AddPendingConfigFile( const std::string& filePath )
 	{
-		std::string filename = io::get_filename( filePath );
-		std::string extension = ".conf";
-		
-		std::string::difference_type rootSize = filename.size() - extension.size();
-		
-		if ( rootSize <= 0  ||  filename.substr( rootSize, std::string::npos ) != extension )
+		if ( ends_with( filePath.data(), filePath.size(), STR_LEN( ".conf" ) ) )
 		{
 			return;
 		}
