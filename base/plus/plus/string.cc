@@ -42,10 +42,11 @@ namespace plus
 	}
 	
 	
-	string::string( const char* p, size_type length, delete_policy policy )
+	string::string( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
-		its_alloc.pointer = p;
-		its_alloc.length  = length;
+		its_alloc.pointer  = p;
+		its_alloc.length   = length;
+		its_alloc.capacity = capacity ? capacity : length;
 		
 		its_small_name[ max_offset ] = ~policy;
 	}
@@ -98,13 +99,21 @@ namespace plus
 		                   : its_alloc.length;
 	}
 	
+	string::size_type string::capacity() const
+	{
+		const int margin = its_small_name[ max_offset ];
+		
+		return margin >= 0 ? max_offset
+		                   : its_alloc.capacity;
+	}
+	
 	const char* string::data() const
 	{
 		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
 		                                        : its_small_name;
 	}
 	
-	void string::assign( const char* p, size_type length, delete_policy policy )
+	void string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
 		if ( length )
 		{
@@ -115,8 +124,9 @@ namespace plus
 		
 		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
 		
-		its_alloc.pointer = p;
-		its_alloc.length  = length;
+		its_alloc.pointer  = p;
+		its_alloc.length   = length;
+		its_alloc.capacity = capacity ? capacity : length;
 		
 		its_small_name[ max_offset ] = ~policy;
 	}
@@ -143,8 +153,9 @@ namespace plus
 			
 			pointer[ length ] = '\0';
 			
-			its_alloc.pointer = pointer;
-			its_alloc.length  = length;
+			its_alloc.pointer  = pointer;
+			its_alloc.length   = length;
+			its_alloc.capacity = length;
 			
 			its_small_name[ max_offset ] = ~delete_basic;
 		}

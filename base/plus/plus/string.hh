@@ -37,6 +37,7 @@ namespace plus
 			{
 				const char*  pointer;
 				size_type    length;
+				size_type    capacity;
 			};
 			
 			union
@@ -52,7 +53,7 @@ namespace plus
 				its_small_name[ max_offset ] = max_offset;
 			}
 			
-			string( const char* p, size_type length, delete_policy policy );
+			string( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
 			
 			string( const char* p, size_type length );
 			
@@ -82,6 +83,8 @@ namespace plus
 			
 			size_type size() const  { return length(); }
 			
+			size_type capacity() const;
+			
 			const char* data() const;
 			
 			const char* c_str() const  { return data(); }
@@ -92,7 +95,7 @@ namespace plus
 			
 			const char* end() const  { return begin() + size(); }
 			
-			void assign( const char* p, size_type length, delete_policy policy );
+			void assign( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
 			
 			void assign( const char* p, size_type length );
 			
