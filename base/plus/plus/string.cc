@@ -38,7 +38,7 @@ namespace plus
 	{
 		if ( margin < 0 )
 		{
-			delete [] pointer;
+			delete pointer;
 		}
 	}
 	
@@ -121,7 +121,7 @@ namespace plus
 		if ( length >= sizeof its_small_name )
 		{
 			// may throw
-			char *const pointer = new char [ length + 1 ];
+			char *const pointer = (char*) ::operator new( length + 1 );
 			
 			memcpy( pointer, p, length );
 			
