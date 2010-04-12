@@ -42,6 +42,26 @@ namespace plus
 	}
 	
 	
+	void string::set_length( size_type length )
+	{
+		char& margin = its_small_name[ max_offset ];
+		
+		if ( margin < 0 )
+		{
+			its_alloc.length = length;
+		}
+		else
+		{
+			ASSERT( length <= max_offset );
+			
+			margin = max_offset - length;
+		}
+		
+		char* p = margin < 0 ? (char*) its_alloc.pointer : its_small_name;
+		
+		p[ length ] = '\0';
+	}
+	
 	string::string( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
 		its_alloc.pointer  = p;

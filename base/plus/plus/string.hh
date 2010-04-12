@@ -51,6 +51,8 @@ namespace plus
 			const char* internal_data() const;
 			
 			const char* external_data() const;
+			
+			void set_length( size_type length );
 		
 		public:
 			string()
