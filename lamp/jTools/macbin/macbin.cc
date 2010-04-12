@@ -18,6 +18,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -100,20 +103,24 @@ namespace tool
 		}
 	}
 	
-	static std::string make_archive_name( std::string name )
+	static plus::string make_archive_name( const char* name )
 	{
+		size_t length = strlen( name );
+		
+		ASSERT( length > 0 );
+		
 		const char* extension = ".mBin";
 		
-		if ( *name.rbegin() == '/' )
+		if ( name[ length - 1 ] == '/' )
 		{
-			name.resize( name.size() - 1 );
+			--length;
 		}
 		else if ( p7::s_isreg( p7::stat( name ) ) )
 		{
 			extension = ".mbin";
 		}
 		
-		return name + extension;
+		return plus::concat( name, length, extension, STRLEN( ".mbin" ) );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
