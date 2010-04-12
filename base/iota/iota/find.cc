@@ -11,11 +11,16 @@
 namespace iota
 {
 	
+	static inline bool char_matches( char a, char b )
+	{
+		return a == b;
+	}
+	
 	const char* find_first_match( const char* p, unsigned length, char c )
 	{
 		for ( const char* end = p + length;  p != end;  ++p )
 		{
-			if ( *p == c )
+			if ( char_matches( *p, c ) )
 			{
 				return p;
 			}
@@ -32,7 +37,7 @@ namespace iota
 		
 		while ( p != begin )
 		{
-			if ( *--p == c )
+			if ( char_matches( *--p, c ) )
 			{
 				return p;
 			}
