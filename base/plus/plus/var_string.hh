@@ -59,6 +59,8 @@ namespace plus
 			char* end() const  { return begin() + size(); }
 			
 			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
+			
+			void reserve( size_type size );
 	};
 	
 }
