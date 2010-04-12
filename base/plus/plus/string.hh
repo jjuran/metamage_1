@@ -42,7 +42,12 @@ namespace plus
 			void dispose();
 		
 		public:
-			string()  { its_alloc.length = 0; }
+			string()
+			{
+				its_alloc.length = 0;
+				
+				its_small_name[ max_offset ] = 0;
+			}
 			
 			string( const char* p, size_type length );
 			

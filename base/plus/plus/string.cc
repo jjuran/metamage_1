@@ -47,6 +47,8 @@ namespace plus
 	{
 		its_alloc.length = 0;
 		
+		its_small_name[ max_offset ] = 0;
+		
 		assign( p, length );
 	}
 	
@@ -54,12 +56,16 @@ namespace plus
 	{
 		its_alloc.length = 0;
 		
+		its_small_name[ max_offset ] = 0;
+		
 		assign( p, q );
 	}
 	
 	string::string( const char* s )
 	{
 		its_alloc.length = 0;
+		
+		its_small_name[ max_offset ] = 0;
 		
 		assign( s );
 	}
@@ -72,6 +78,8 @@ namespace plus
 	string::string( const string& other )
 	{
 		its_alloc.length = 0;
+		
+		its_small_name[ max_offset ] = 0;
 		
 		assign( other );
 	}
