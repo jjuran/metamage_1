@@ -35,6 +35,9 @@
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 
@@ -451,37 +454,6 @@ namespace Genie
 			}
 		}
 		
-	}
-	
-	
-	static std::string GetMacPathname( const N::FSDirSpec& dir );
-	
-	static std::string GetMacPathname_Internal( const FSSpec& file )
-	{
-		const char* filename = (const char*) &file.name[1];
-		
-		const size_t length = file.name[0];
-		
-		if ( file.parID == fsRtParID )
-		{
-			return std::string( filename, length );
-		}
-		
-		std::string pathname = GetMacPathname( io::get_preceding_directory( file ) );
-		
-		pathname.append( filename, length );
-		
-		return pathname;
-	}
-
-	static std::string GetMacPathname( const N::FSDirSpec& dir )
-	{
-		return GetMacPathname_Internal( MacIO::FSMakeFSSpec< FNF_Throws >( dir, "\p" ) ) + ":";
-	}
-
-	static std::string GetMacPathname( const FSSpec& file )
-	{
-		return GetMacPathname_Internal( file );
 	}
 	
 	
