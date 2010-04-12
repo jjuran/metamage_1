@@ -34,12 +34,11 @@ namespace plus
 		result.assign( buffer, total_size );
 	}
 	
-	
-	void string::dispose()
+	static void dispose( const char* pointer, int margin )
 	{
-		if ( its_small_name[ max_offset ] < 0 )
+		if ( margin < 0 )
 		{
-			delete [] its_alloc.pointer;
+			delete [] pointer;
 		}
 	}
 	
@@ -72,7 +71,7 @@ namespace plus
 	
 	string::~string()
 	{
-		dispose();
+		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
 	}
 	
 	string::string( const string& other )
@@ -115,9 +114,9 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		const bool allocated = its_small_name[ max_offset ] < 0;
+		char const *const old_pointer = its_alloc.pointer;
 		
-		char const *const old_pointer = allocated ? its_alloc.pointer : NULL;
+		const char old_margin = its_small_name[ max_offset ];
 		
 		if ( length >= sizeof its_small_name )
 		{
@@ -141,7 +140,7 @@ namespace plus
 			its_small_name[ max_offset ] = max_offset - length;
 		}
 		
-		delete [] old_pointer;
+		dispose( old_pointer, old_margin );
 	}
 	
 	void string::assign( const char* s )

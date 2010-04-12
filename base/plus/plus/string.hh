@@ -38,8 +38,6 @@ namespace plus
 				alloc_state  its_alloc;
 				long         its_longs[ buffer_size_in_longs ];
 			};
-			
-			void dispose();
 		
 		public:
 			string()
