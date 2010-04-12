@@ -10,9 +10,6 @@
 // Standard C
 #include <string.h>
 
-// Traditional
-#include <alloca.h>
-
 // debug
 #include "debug/assert.hh"
 
@@ -26,12 +23,12 @@ namespace plus
 	{
 		const string::size_type total_size = a_size + b_size;
 		
-		char* buffer = (char*) alloca( total_size );
+		char* buffer = (char*) ::operator new( total_size );
 		
 		memcpy( buffer,          a, a_size );
 		memcpy( buffer + a_size, b, b_size );
 		
-		result.assign( buffer, total_size );
+		result.assign( buffer, total_size, delete_basic );
 	}
 	
 	static void dispose( const char* pointer, int margin )
