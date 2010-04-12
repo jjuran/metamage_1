@@ -55,7 +55,7 @@ namespace plus
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
-			bool empty() const  { return its_alloc.length == 0; }
+			bool empty() const  { return length() == 0; }
 			
 			size_type length() const;
 			
