@@ -69,8 +69,6 @@ namespace tool
 		
 		int dirfd = AT_FDCWD;
 		
-		
-		
 		if ( loc != NULL )
 		{
 			dirfd = open( loc, O_RDONLY | O_DIRECTORY );
@@ -115,6 +113,8 @@ namespace tool
 			{
 				// okay, destination doesn't exist
 				failed = false;
+				
+				dirfd = AT_FDCWD;
 			}
 			else if ( errno == ENOTDIR )
 			{
