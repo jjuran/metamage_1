@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// Standard C/C++
+#include <cstring>
+
 // Debug
 #include "debug/assert.hh"
 
@@ -49,18 +52,28 @@ namespace Genie
 	}
 	
 	
-	inline FSTreePtr ResolvePathname( const std::string&  pathname,
-	                                  const FSTreePtr&    current = FSTreePtr() )
+	inline FSTreePtr ResolvePathname( const char*       begin,
+	                                  std::size_t       length,
+	                                  const FSTreePtr&  current = FSTreePtr() )
 	{
-		const char* begin  = pathname.c_str();
-		std::size_t length = pathname.length();
-		
 		if ( const bool absolute = *begin == '/' )
 		{
 			return ResolveAbsolutePath( begin, length );
 		}
 		
 		return ResolveRelativePath( begin, length, current );
+	}
+	
+	inline FSTreePtr ResolvePathname( const char*       pathname,
+	                                  const FSTreePtr&  current = FSTreePtr() )
+	{
+		return ResolvePathname( pathname, std::strlen( pathname ), current );
+	}
+	
+	inline FSTreePtr ResolvePathname( const std::string&  pathname,
+	                                  const FSTreePtr&    current = FSTreePtr() )
+	{
+		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
 	
 }
