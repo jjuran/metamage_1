@@ -23,10 +23,12 @@ namespace plus
 	{
 		const string::size_type total_size = a_size + b_size;
 		
-		char* buffer = (char*) ::operator new( total_size );
+		char* buffer = (char*) ::operator new( total_size + 1 );
 		
 		memcpy( buffer,          a, a_size );
 		memcpy( buffer + a_size, b, b_size );
+		
+		buffer[ total_size ] = '\0';
 		
 		result.assign( buffer, total_size, delete_basic );
 	}
