@@ -596,12 +596,10 @@ namespace recall
 		
 		const char* double_underscore = std::strstr( p + 1, "__" );
 		
-		if ( double_underscore == NULL )
-		{
-			double_underscore = p + std::strlen( p );
-		}
+		const char* id_end = double_underscore ? double_underscore
+		                                       : p + std::strlen( p );
 		
-		if ( params != NULL  &&  params < double_underscore )
+		if ( params != NULL  &&  params < id_end )
 		{
 			std::string identifier( p, params );
 			
@@ -610,9 +608,9 @@ namespace recall
 			return identifier + ReadTemplateParameters( p );
 		}
 		
-		std::string result( p, double_underscore );
+		std::string result( p, id_end );
 		
-		p = double_underscore;
+		p = id_end;
 		
 		return result;
 	}
