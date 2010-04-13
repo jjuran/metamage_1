@@ -223,12 +223,10 @@ namespace recall
 		return result;
 	}
 	
-	static std::string ReadInteger( const char* begin, const char* end )
+	static std::string ReadInteger( const char* begin, const char* end, unsigned x )
 	{
 		if ( *begin != '-' )
 		{
-			unsigned x = iota::parse_unsigned_decimal( begin );  // *end is either ',' or '>'
-			
 			char code[] = "'code'";
 			
 			code[4] =  x        & 0xff;
@@ -352,18 +350,22 @@ namespace recall
 			return ReadSymbol( ++p );
 		}
 		
-		if ( *p == '-'  ||  std::isdigit( *p ) )
+		const char* integer = p;
+		
+		const bool negative = *p == '-';
+		
+		if ( negative )
 		{
-			const char* integer = p;
-			
-			while ( std::isdigit( *++p ) )
-			{
-				continue;
-			}
+			++p;
+		}
+		
+		if ( std::isdigit( *p ) )
+		{
+			unsigned x = iota::parse_unsigned_decimal( &p );
 			
 			if ( TemplateParameterListEndsHere( p ) || TemplateParameterFollows( p ) )
 			{
-				return ReadInteger( integer, p );
+				return ReadInteger( integer, p, x );
 			}
 			
 			p = integer;  // backtrack
