@@ -92,9 +92,8 @@ namespace plus
 	{
 		const int margin = its_small_name[ max_offset ];
 		
-		return   margin == 0 ? 0
-		       : margin >= 0 ? max_offset - margin
-		       :               its_alloc.length;
+		return margin >= 0 ? max_offset - margin
+		                   : its_alloc.length;
 	}
 	
 	const char* string::data() const

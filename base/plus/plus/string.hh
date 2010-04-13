@@ -49,7 +49,7 @@ namespace plus
 		public:
 			string()
 			{
-				its_small_name[ max_offset ] = 0;
+				its_small_name[ max_offset ] = max_offset;
 			}
 			
 			string( const char* p, size_type length, delete_policy policy );
