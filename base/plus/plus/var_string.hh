@@ -69,10 +69,13 @@ namespace plus
 			
 			void append( const char* s );
 			
+			void append( char c )  { append( &c, sizeof c ); }
+			
 			void append( const string& other )  { append( other.data(), other.size() ); }
 			
 			string& operator+=( const string& s )  { append( s );  return *this; }
 			string& operator+=( const char*   s )  { append( s );  return *this; }
+			string& operator+=( char          c )  { append( c );  return *this; }
 	};
 	
 }
