@@ -13,33 +13,15 @@
 #include <string>
 
 // poseven
-#include "poseven/extras/read_all.hh"
-#include "poseven/functions/fstat.hh"
-#include "poseven/functions/open.hh"
+#include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline std::string slurp( fd_t fd )
-	{
-		const size_t size = fstat( fd ).st_size;
-		
-		std::string result;
-		
-		result.resize( size );
-		
-		const ssize_t n_read = read_all( fd, &result[0], size );
-		
-		result.resize( n_read );
-		
-		return result;
-	}
+	std::string slurp( fd_t fd );
 	
-	inline std::string slurp( const char* path )
-	{
-		return slurp( open( path, o_rdonly ) );
-	}
+	std::string slurp( const char* path );
 	
 }
 
