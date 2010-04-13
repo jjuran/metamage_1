@@ -13,7 +13,7 @@
 #if TARGET_RT_MAC_MACHO
 	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
-	#include "poseven/Pathnames.hh"
+	#include "pfiles/common.hh"
 #else
 	#include "FSSpec_from_stat.h"
 #endif
