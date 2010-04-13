@@ -4,9 +4,6 @@
  */
 
 // Standard C++
-#include <algorithm>
-#include <functional>
-#include <numeric>
 #include <string>
 
 // Standard C/C++
@@ -14,9 +11,6 @@
 
 // iota
 #include "iota/decimal.hh"
-
-// plus
-#include "plus/functional_extensions.hh"
 
 // poseven
 #include "poseven/functions/perror.hh"
@@ -41,39 +35,18 @@ namespace tool
 	namespace o = orion;
 	
 	
-	template < class F >
-	class Concat
+	static std::string QuoteForMPW( const char* str )
 	{
-		private:
-			F f;
-		
-		public:
-			Concat() : f( F() )  {}
-			Concat( const F& f ) : f( f )  {}
-			std::string operator()( const std::string& one, const char* other ) const
-			{
-				return one + " " + f( other );
-			}
-	};
-	
-	template < class F >
-	Concat< F > MakeConcat( const F& f )
-	{
-		return Concat< F >( f );
-	}
-	
-	
-	static std::string QuoteForMPW( const std::string& str )
-	{
-		std::string::const_iterator p = str.begin(), q = p, end = str.end();
+		const char* p = str;
+		const char* q = p;
 		
 		bool needsQuoting = false;
 		
 		std::string result = "'";
 		
-		while ( p < end )
+		while ( *p != '\0' )
 		{
-			while ( q < end  &&  *q != '\'' )
+			while ( *q != '\0'  &&  *q != '\'' )
 			{
 				needsQuoting = needsQuoting || !std::isalnum( *q );
 				++q;
@@ -81,7 +54,7 @@ namespace tool
 			
 			result += std::string( p, q );
 			
-			if ( q < end )
+			if ( *q != '\0' )
 			{
 				needsQuoting = true;
 				result += sEscapedQuote;
@@ -106,28 +79,18 @@ namespace tool
 	{
 		std::string command;
 		
-		if ( end - begin > 0 )
+		for ( char const *const *it = begin;  it < end;  ++it )
 		{
-			if ( needToEscape )
-			{
-				command = std::accumulate
-				(
-					begin + 1, 
-					end, 
-					QuoteForMPW( begin[ 0 ] ), 
-					MakeConcat( std::ptr_fun( QuoteForMPW ) )
-				);
-			}
-			else
-			{
-				command = std::accumulate
-				(
-					begin + 1, 
-					end, 
-					std::string( begin[ 0 ] ), 
-					Concat< plus::identity< const char* > >()
-				);
-			}
+			const char* word = *it;
+			
+			command += needToEscape ? QuoteForMPW( word ) : word;
+			
+			command += " ";
+		}
+		
+		if ( !command.empty() )
+		{
+			command.resize( command.size() - 1 );
 		}
 		
 		return command;
