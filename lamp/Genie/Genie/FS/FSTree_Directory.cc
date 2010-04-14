@@ -92,7 +92,7 @@ namespace Genie
 		
 		if ( result == NULL )
 		{
-			result = Lookup_Regular( name );
+			result = Lookup_Regular( name, parent );
 		}
 		
 		return result;

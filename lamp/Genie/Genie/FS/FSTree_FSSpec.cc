@@ -401,7 +401,7 @@ namespace Genie
 			
 			ino_t Inode() const;
 			
-			FSTreePtr Lookup_Regular( const std::string& name ) const;
+			FSTreePtr Lookup_Regular( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -1297,7 +1297,7 @@ namespace Genie
 		return seize_ptr( new FSTree_HFS( item, onServer, name ) );
 	}
 	
-	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name ) const
+	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name, const FSTree* parent ) const
 	{
 		return FSTreePtr_From_Lookup( GetJDirectory(), false, name );
 	}

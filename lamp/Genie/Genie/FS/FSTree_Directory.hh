@@ -71,7 +71,7 @@ namespace Genie
 			
 			FSTreePtr Lookup_Mapping( const std::string& name ) const;
 			
-			virtual FSTreePtr Lookup_Regular( const std::string& name ) const = 0;
+			virtual FSTreePtr Lookup_Regular( const std::string& name, const FSTree* parent ) const = 0;
 	};
 	
 	
