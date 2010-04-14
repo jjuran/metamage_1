@@ -63,10 +63,8 @@ namespace tool
 		return result;
 	}
 	
-	static std::string decode_escapes( const char* escaped_string )
+	static void decode_escapes( std::string& decoded, const char* escaped_string )
 	{
-		std::string decoded;
-		
 		const char* p = escaped_string;
 		
 		for ( const char* p = escaped_string;  *p != '\0';  ++p )
@@ -100,7 +98,7 @@ namespace tool
 			
 			switch ( c )
 			{
-				case '\0':  return decoded;
+				case '\0':  return;
 				
 				case 'a':  c = '\a';  break;  // 0x07
 				case 'b':  c = '\b';  break;  // 0x08
@@ -115,8 +113,6 @@ namespace tool
 			
 			decoded += c;
 		}
-		
-		return decoded;
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -131,7 +127,9 @@ namespace tool
 		
 		const char* divider_text = argv[1];
 		
-		std::string divider_string = decode_escapes( divider_text );
+		std::string divider_string;
+		
+		decode_escapes( divider_string, divider_text );
 		
 		const char* outfile1 = argv[2];
 		const char* outfile2 = argv[3];
