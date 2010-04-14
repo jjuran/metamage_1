@@ -175,19 +175,17 @@ namespace recall
 		return gBasicTypes[ c - 'a' ];
 	}
 	
-	static std::string ReadBasicType( const char*& p )
+	static void ReadBasicType( std::string& out, const char*& p )
 	{
-		std::string sign;
-		
 		if ( *p == 'U' )
 		{
-			sign = "unsigned ";
+			out += "unsigned ";
 			
 			++p;
 		}
 		else if ( *p == 'S' )
 		{
-			sign = "signed ";
+			out += "signed ";
 			
 			++p;
 		}
@@ -204,7 +202,7 @@ namespace recall
 			throw demangle_failed();
 		}
 		
-		return sign + type;
+		out += type;
 	}
 	
 	static inline unsigned ReadLength( const char*& p )
@@ -212,18 +210,18 @@ namespace recall
 		return iota::parse_unsigned_decimal( &p );
 	}
 	
-	static std::string ReadLName( const char*& p )
+	static const char* ReadLName( const char*& p )
 	{
 		unsigned length = ReadLength( p );
 		
-		std::string result( p, length );
+		const char* begin = p;
 		
 		p += length;
 		
-		return result;
+		return begin;
 	}
 	
-	static std::string ReadInteger( const char* begin, const char* end, unsigned x )
+	static void ReadInteger( std::string& out, const char* begin, const char* end, unsigned x )
 	{
 		if ( *begin != '-' )
 		{
@@ -241,11 +239,13 @@ namespace recall
 			
 			if ( isCode )
 			{
-				return code;
+				out.append( code, sizeof code );
+				
+				return;
 			}
 		}
 		
-		return std::string( begin, end );
+		out.append( begin, end );
 	}
 	
 	
@@ -259,33 +259,38 @@ namespace recall
 			virtual bool TemplateParameterListEndsHere( const char* p ) = 0;
 			
 			
-			std::string ReadTemplateParameter( const char*& p );
+			void ReadTemplateParameter( std::string& out, const char*& p );
 			
-			std::string ReadTemplateParameters( const char*&p );
+			void ReadTemplateParameters( std::string& out, const char*&p );
 			
-			std::string ExpandTemplates( const std::string& name );
+			void ExpandTemplates( std::string& out, const std::string& name );
 			
-			std::string ReadQualName( const char*& p );
+			void ReadQualName( std::string& out, const char*& p );
 			
-			std::string ReadQualifiedName( const char*& p );
+			void ReadQualifiedName( std::string& out, const char*& p );
 			
-			std::string ReadFunctionType( const char*& p );
+			void ReadFunctionType( std::string& out, const char*& p );
 			
-			std::string ReadIndirectType( const char*& p );
+			void ReadIndirectType( std::string& out, const char*& p );
 			
-			std::string ReadQualifiedType( const char*& p );
+			void ReadQualifiedType( std::string& out, const char*& p );
 			
-			std::string ReadType( const char*& p );
+			void ReadType( std::string& out, const char*& p );
 			
-			std::string ReadConversion( const char*& p )  { return "operator " + ReadType( p ); }
+			void ReadConversion( std::string& out, const char*& p )
+			{
+				out += "operator ";
+				
+				ReadType( out, p );
+			}
 			
-			std::string ReadSpecialName( const char*& p );
+			void ReadSpecialName( std::string& out, const char*& p );
 			
-			std::string ReadIdentifier( const char*& p );
+			void ReadIdentifier( std::string& out, const char*& p );
 			
-			std::string ReadEntityName( const char*& p );
+			void ReadEntityName( std::string& out, const char*& p );
 			
-			std::string ReadSymbol( const char*& p );
+			void ReadSymbol( std::string& out, const char*& p );
 	};
 	
 	class MWC68K_Unmangler : public Unmangler
@@ -343,11 +348,13 @@ namespace recall
 	}
 	
 	
-	std::string Unmangler::ReadTemplateParameter( const char*& p )
+	void Unmangler::ReadTemplateParameter( std::string& out, const char*& p )
 	{
 		if ( *p == '&' )
 		{
-			return ReadSymbol( ++p );
+			ReadSymbol( out, ++p );
+			
+			return;
 		}
 		
 		const char* integer = p;
@@ -365,22 +372,33 @@ namespace recall
 			
 			if ( TemplateParameterListEndsHere( p ) || TemplateParameterFollows( p ) )
 			{
-				return ReadInteger( integer, p, x );
+				ReadInteger( out, integer, p, x );
+				
+				return;
 			}
 			
 			p = integer;  // backtrack
 		}
 		
-		return ReadType( p );
+		ReadType( out, p );
 	}
 	
-	std::string Unmangler::ReadTemplateParameters( const char*&p )
+	void Unmangler::ReadTemplateParameters( std::string& out, const char*&p )
 	{
-		std::string result;
+		out += "< ";
+		
+		bool successive = false;
 		
 		while ( true )
 		{
-			result = join( ", ", result, ReadTemplateParameter( ++p ) );
+			if ( successive )
+			{
+				out += ", ";
+			}
+			
+			successive = true;
+			
+			ReadTemplateParameter( out, ++p );
 			
 			if ( TemplateParameterListEndsHere( p ) )
 			{
@@ -394,52 +412,51 @@ namespace recall
 			}
 		}
 		
-		result = "< " + result + " >";
-		
-		return result;
+		out += " >";
 	}
 	
-	std::string Unmangler::ExpandTemplates( const std::string& name )
+	void Unmangler::ExpandTemplates( std::string& out, const std::string& name )
 	{
 		const char* params = FindTemplateParameters( name.c_str() );
 		
 		if ( params == NULL )
 		{
-			return name;
+			out += name;
+			
+			return;
 		}
 		
 		const char* p = params;
 		
-		std::string result = ReadTemplateParameters( p );
+		out.append( name.data(), params );
 		
-		result = std::string( name.data(), params ) + result;
-		
-		return result;
+		ReadTemplateParameters( out, p );
 	}
 	
-	std::string Unmangler::ReadQualName( const char*& p )
+	void Unmangler::ReadQualName( std::string& out, const char*& p )
 	{
-		return ExpandTemplates( ReadLName( p ) );
+		const char* name = ReadLName( p );
+		
+		ExpandTemplates( out, std::string( name, p ) );
 	}
 	
-	std::string Unmangler::ReadQualifiedName( const char*& p )
+	void Unmangler::ReadQualifiedName( std::string& out, const char*& p )
 	{
 		int count = *p++ - '0';
 		
-		std::string result;
+		ReadQualName( out, p );
 		
-		while ( count-- )
+		while ( --count )
 		{
-			result = join( "::", result, ReadQualName( p ) );
+			out += "::";
+			
+			ReadQualName( out, p );
 		}
-		
-		return result;
 	}
 	
-	std::string Unmangler::ReadFunctionType( const char*& p )
+	void Unmangler::ReadFunctionType( std::string& out, const char*& p )
 	{
 		std::string params;
-		std::string return_type;
 		
 		while ( *p != '\0' )
 		{
@@ -450,37 +467,52 @@ namespace recall
 			
 			if ( *p == '_' )
 			{
-				return_type = ReadType( ++p ) + " ";
+				ReadType( out, ++p );
+				
+				out += " ";
 				
 				break;
 			}
 			
-			params = join( ", ", params, ReadType( p ) );
+			if ( !params.empty() )
+			{
+				params += ", ";
+			}
+			
+			ReadType( params, p );
 		}
 		
-		return return_type + "( " + params + " )";
+		out += "( ";
+		out += params;
+		out += " )";
 	}
 	
-	std::string Unmangler::ReadIndirectType( const char*& p )
+	void Unmangler::ReadIndirectType( std::string& out, const char*& p )
 	{
 		std::string result;
 		
 		switch ( *p )
 		{
 			case 'R':
-				result = "&" + result;
+				result = "&";
 				++p;
 				
 				break;
 			
 			case 'P':
-				result = "*" + result;
+				result = "*";
 				++p;
 				
 				break;
 			
 			case 'M':
-				result = "::(" + ReadType( ++p ) + ")*" + result;
+				{
+					result = "::(";
+					
+					ReadType( result, ++p );
+					
+					result += ")*";
+				}
 				
 				break;
 			
@@ -488,55 +520,75 @@ namespace recall
 				break;
 		}
 		
-		return ReadType( p ) + result;
+		ReadType( out, p );
+		
+		out += result;
 	}
 	
-	std::string Unmangler::ReadQualifiedType( const char*& p )
+	void Unmangler::ReadQualifiedType( std::string& out, const char*& p )
 	{
-		std::string result;
+		bool is_const = *p == 'C';
 		
-		if ( *p == 'C' )
+		if ( is_const )
 		{
-			result = " const";
-			
 			++p;
 		}
 		
-		if ( *p == 'V' )
+		bool is_volatile = *p == 'V';
+		
+		if ( is_volatile )
 		{
-			result = " volatile" + result;
-			
 			++p;
 		}
 		
-		return ReadType( p ) + result;
+		ReadType( out, p );
+		
+		if ( is_volatile )
+		{
+			out += " volatile";
+		}
+		
+		if ( is_const )
+		{
+			out += " const";
+		}
 	}
 	
-	std::string Unmangler::ReadType( const char*& p )
+	void Unmangler::ReadType( std::string& out, const char*& p )
 	{
 		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
 		{
-			return ReadBasicType( p );
+			ReadBasicType( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'C'  ||  *p == 'V' )
 		{
-			return ReadQualifiedType( p );
+			ReadQualifiedType( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'R'  ||  *p == 'P'  ||  *p == 'M' )
 		{
-			return ReadIndirectType( p );
+			ReadIndirectType( out, p );
+			
+			return;
 		}
 		
 		if ( std::isdigit( *p ) )
 		{
-			return ReadQualName( p );
+			ReadQualName( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'Q' )
 		{
-			return ReadQualifiedName( ++p );
+			ReadQualifiedName( out, ++p );
+			
+			return;
 		}
 		
 		if ( *p == 'A' )
@@ -546,7 +598,9 @@ namespace recall
 		
 		if ( *p == 'F' )
 		{
-			return ReadFunctionType( ++p );
+			ReadFunctionType( out, ++p );
+			
+			return;
 		}
 		
 		throw demangle_failed();
@@ -554,7 +608,7 @@ namespace recall
 	
 	struct NotSpecial {};
 	
-	std::string Unmangler::ReadSpecialName( const char*& p )
+	void Unmangler::ReadSpecialName( std::string& out, const char*& p )
 	{
 		const char* q = p;
 		
@@ -572,8 +626,8 @@ namespace recall
 		
 		std::string name( p, double_underscore );
 		
-		if ( name == "__ct" )  return p = double_underscore, "";
-		if ( name == "__dt" )  return p = double_underscore, "~";
+		if ( name == "__ct" )  { p = double_underscore;/*out += "";*/ return; }
+		if ( name == "__dt" )  { p = double_underscore;  out += "~";  return; }
 		
 		if ( name == "_vtbl"     )  throw demangle_failed();
 		if ( name == "_rttivtbl" )  throw demangle_failed();
@@ -590,16 +644,20 @@ namespace recall
 			{
 				p += 2;
 				
-				return ReadConversion( p );
+				ReadConversion( out, p );
+				
+				return;
 			}
 			
-			return ReadOperator( p, double_underscore );
+			out += ReadOperator( p, double_underscore );
+			
+			return;
 		}
 		
 		throw NotSpecial();
 	}
 	
-	std::string Unmangler::ReadIdentifier( const char*& p )
+	void Unmangler::ReadIdentifier( std::string& out, const char*& p )
 	{
 		const char* params = FindTemplateParameters( p );
 		
@@ -610,41 +668,47 @@ namespace recall
 		
 		if ( params != NULL  &&  params < id_end )
 		{
-			std::string identifier( p, params );
+			out.append( p, params );
 			
 			p = params;
 			
-			return identifier + ReadTemplateParameters( p );
+			ReadTemplateParameters( out, p );
+			
+			return;
 		}
 		
-		std::string result( p, id_end );
+		out.append( p, id_end );
 		
 		p = id_end;
-		
-		return result;
 	}
 	
-	std::string Unmangler::ReadEntityName( const char*& p )
+	void Unmangler::ReadEntityName( std::string& out, const char*& p )
 	{
 		if ( std::strcmp( p, "__end__catch" ) == 0 )
 		{
 			p += STRLEN( "__end__catch" );
 			
-			return "__end__catch";
+			out += "__end__catch";
+			
+			return;
 		}
 		
 		if ( std::strcmp( p, "__throw_bad_alloc__3stdFv" ) == 0 )
 		{
 			p += STRLEN( "__throw_bad_alloc__3stdFv" );
 			
-			return "std::__throw_bad_alloc( void )";
+			out += "std::__throw_bad_alloc( void )";
+			
+			return;
 		}
 		
 		if ( *p == '_' )
 		{
 			try
 			{
-				return ReadSpecialName( p );
+				ReadSpecialName( out, p );
+				
+				return;
 			}
 			catch ( const NotSpecial& )
 			{
@@ -652,48 +716,58 @@ namespace recall
 			}
 		}
 		
-		return ReadIdentifier( p );
+		ReadIdentifier( out, p );
 	}
 	
-	std::string Unmangler::ReadSymbol( const char*& p )
+	void Unmangler::ReadSymbol( std::string& out, const char*& p )
 	{
 		if ( p[0] == '.' )
 		{
 			++p;
 		}
 		
-		std::string function_name = ReadEntityName( p );
+		std::string function_name;
+		
+		ReadEntityName( function_name, p );
 		
 		if ( *p == '\0' )
 		{
-			return function_name;
+			out += function_name;
+			
+			return;
 		}
 		
-		std::string class_name;
+		bool has_class_name = false;
 		
 		p += 2;
 		
 		if ( std::isdigit( *p ) )
 		{
-			class_name = ReadQualName( p );
+			ReadQualName( out, p );
+			
+			has_class_name = true;
 		}
 		else if ( p[0] == 'Q' )
 		{
-			class_name = ReadQualifiedName( ++p );
+			ReadQualifiedName( out, ++p );
+			
+			has_class_name = true;
 		}
 		
 		if ( function_name.empty()  ||  function_name == "~" )
 		{
-			// Set the name for a constructor or destructor
-			function_name += LastName( class_name );
+			// The class name was the last thing appended
+			function_name += LastName( out );
 		}
 		
-		if ( !class_name.empty() )
+		if ( has_class_name )
 		{
-			function_name = class_name + "::" + function_name;
+			out += "::";
 		}
 		
-		return function_name + ReadType( p );
+		out += function_name;
+		
+		ReadType( out, p );
 	}
 	
 	
@@ -701,7 +775,11 @@ namespace recall
 	{
 		const char* p = name.c_str();
 		
-		return MWC68K_Unmangler().ReadSymbol( p );
+		std::string result;
+		
+		MWC68K_Unmangler().ReadSymbol( result, p );
+		
+		return result;
 	}
 	
 	std::string demangle_MWCPPC( const std::string& name )
@@ -713,7 +791,11 @@ namespace recall
 		
 		const char* p = name.c_str();
 		
-		return MWCPPC_Unmangler().ReadSymbol( p );
+		std::string result;
+		
+		MWCPPC_Unmangler().ReadSymbol( result, p );
+		
+		return result;
 	}
 	
 }
