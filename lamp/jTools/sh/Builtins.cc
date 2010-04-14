@@ -5,6 +5,7 @@
 #include "Builtins.hh"
 
 // Standard C++
+#include <map>
 #include <set>
 
 // Standard C/C++

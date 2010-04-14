@@ -3,12 +3,6 @@
  *	========
  */
 
-// Standard C++
-#include <numeric>
-#include <map>
-#include <string>
-#include <vector>
-
 // Standard C/C++
 #include <cctype>
 #include <cstdlib>

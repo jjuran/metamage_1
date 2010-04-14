@@ -8,7 +8,6 @@
 
 // Standard C++
 #include <iterator>
-#include <map>
 #include <vector>
 
 // plus

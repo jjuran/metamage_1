@@ -5,9 +5,6 @@
 #ifndef BUILTINS_HH
 #define BUILTINS_HH
 
-// Standard C++
-#include <map>
-
 // Iota
 #include "iota/argv.hh"
 

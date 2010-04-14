@@ -6,7 +6,6 @@
 #ifndef VERTICE_OBJECTS_HH
 #define VERTICE_OBJECTS_HH
 
-#include <map>
 #include <vector>
 
 // plus

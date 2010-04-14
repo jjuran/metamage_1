@@ -6,9 +6,6 @@
 #ifndef PEDESTAL_WINDOW_HH
 #define PEDESTAL_WINDOW_HH
 
-// Standard C++
-#include <map>
-
 // Debug
 #include "debug/boost_assert.hh"
 

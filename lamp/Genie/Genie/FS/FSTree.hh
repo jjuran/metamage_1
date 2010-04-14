@@ -6,6 +6,9 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_HH
 #define GENIE_FILESYSTEM_FSTREE_HH
 
+// POSIX
+#include <sys/types.h>
+
 // Debug
 #include "debug/boost_assert.hh"
 

@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_PSEUDOTTY_HH
 #define GENIE_IO_PSEUDOTTY_HH
 
-// Standard C++
-#include <map>
-
 // Debug
 #include "debug/boost_assert.hh"
 

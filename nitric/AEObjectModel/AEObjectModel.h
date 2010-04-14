@@ -6,8 +6,6 @@
 #ifndef AEOBJECTMODEL_AEOBJECTMODEL_H
 #define AEOBJECTMODEL_AEOBJECTMODEL_H
 
-#include <map>
-
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

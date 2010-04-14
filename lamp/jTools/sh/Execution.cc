@@ -6,6 +6,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <map>
 
 // Standard C/C++
 #include <cctype>

@@ -7,9 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <map>
-#include <vector>
 
 // POSIX
 #include "fcntl.h"

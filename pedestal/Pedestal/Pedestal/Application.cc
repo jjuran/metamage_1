@@ -5,9 +5,6 @@
 
 #include "Pedestal/Application.hh"
 
-// Standard C++
-#include <map>
-
 // Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>
