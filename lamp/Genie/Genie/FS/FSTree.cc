@@ -132,7 +132,7 @@ namespace Genie
 	
 	FSTreePtr FSTree::Parent() const
 	{
-		return itsParent;
+		return itsParent.get() ? itsParent : Self();
 	}
 	
 	ino_t FSTree::Inode() const

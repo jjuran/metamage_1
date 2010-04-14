@@ -391,8 +391,6 @@ namespace Genie
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
 			
-			FSTreePtr Parent() const  { return Self(); }
-			
 			ino_t ParentInode() const  { return Inode(); }
 			
 			void Stat( struct ::stat& sb ) const;
