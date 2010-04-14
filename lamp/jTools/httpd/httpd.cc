@@ -480,7 +480,7 @@ namespace tool
 			
 			if ( !is_dir )
 			{
-				FSSpec file = Divergence::ResolvePathToFSSpec( pathname );
+				FSSpec file = Divergence::ResolvePathToFSSpec( pathname.c_str() );
 				
 				::OSErr err = FSpGetFInfo( &file, &info );
 				

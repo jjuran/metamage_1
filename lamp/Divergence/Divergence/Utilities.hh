@@ -20,9 +20,6 @@
 #include <AEInteraction.h>
 #endif
 
-// Standard C++
-#include <string>
-
 #if !TARGET_RT_MAC_MACHO
 	#include "lamp/AESendBlocking.h"
 #endif
@@ -32,11 +29,6 @@ namespace Divergence
 {
 	
 	FSSpec ResolvePathToFSSpec( const char* path );
-	
-	inline FSSpec ResolvePathToFSSpec( const std::string& path )
-	{
-		return ResolvePathToFSSpec( path.c_str() );
-	}
 	
 #if TARGET_RT_MAC_MACHO
 	
