@@ -9,9 +9,6 @@
 #include <cctype>
 #include <cstring>
 
-// Standard C++
-#include <map>
-
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
@@ -68,90 +65,100 @@ namespace recall
 	
 	#define OP( op )  "operator" op
 	
-	static Operator gOperators[] =
+	static const Operator gOperators[] =
 	{
-		{ "nw",  OP( " new"      ) },
-		{ "nwa", OP( " new[]"    ) },
-		{ "dl",  OP( " delete"   ) },
-		{ "dla", OP( " delete[]" ) },
+		{ "nw"  "_", OP( " new"      ) },
+		{ "nwa" "_", OP( " new[]"    ) },
+		{ "dl"  "_", OP( " delete"   ) },
+		{ "dla" "_", OP( " delete[]" ) },
 		
-		{ "pl",  OP( "+" ) },  // PLus
-		{ "mi",  OP( "-" ) },  // MInus
-		{ "ml",  OP( "*" ) },  // MuLtiply
-		{ "dv",  OP( "/" ) },  // DiVide
-		{ "md",  OP( "%" ) },  // MoD
-		{ "er",  OP( "^" ) },  // Exclusive oR
+		{ "pl"  "_", OP( "+" ) },  // PLus
+		{ "mi"  "_", OP( "-" ) },  // MInus
+		{ "ml"  "_", OP( "*" ) },  // MuLtiply
+		{ "dv"  "_", OP( "/" ) },  // DiVide
+		{ "md"  "_", OP( "%" ) },  // MoD
+		{ "er"  "_", OP( "^" ) },  // Exclusive oR
 		
-		{ "ad",  OP( "&" ) },  // AnD
-		{ "or",  OP( "|" ) },  // OR
-		{ "co",  OP( "~" ) },  // COmplement
-		{ "nt",  OP( "!" ) },  // NoT
-		{ "as",  OP( "=" ) },  // ASsign
+		{ "ad"  "_", OP( "&" ) },  // AnD
+		{ "or"  "_", OP( "|" ) },  // OR
+		{ "co"  "_", OP( "~" ) },  // COmplement
+		{ "nt"  "_", OP( "!" ) },  // NoT
+		{ "as"  "_", OP( "=" ) },  // ASsign
 		
-		{ "apl",  OP( "+=" ) },  // Assign-PLus
-		{ "ami",  OP( "-=" ) },  // Assign-MInus
-		{ "amu",  OP( "*=" ) },  // Assign-MUltiply
-		{ "adv",  OP( "/=" ) },  // Assign-DiVide
-		{ "amd",  OP( "%=" ) },  // Assign-MoD
-		{ "aer",  OP( "^=" ) },  // Assign-Exclusive-oR
-		{ "aad",  OP( "&=" ) },  // Assign-AnD
-		{ "aor",  OP( "|=" ) },  // Assign-OR
+		{ "apl"  "_", OP( "+=" ) },  // Assign-PLus
+		{ "ami"  "_", OP( "-=" ) },  // Assign-MInus
+		{ "amu"  "_", OP( "*=" ) },  // Assign-MUltiply
+		{ "adv"  "_", OP( "/=" ) },  // Assign-DiVide
+		{ "amd"  "_", OP( "%=" ) },  // Assign-MoD
+		{ "aer"  "_", OP( "^=" ) },  // Assign-Exclusive-oR
+		{ "aad"  "_", OP( "&=" ) },  // Assign-AnD
+		{ "aor"  "_", OP( "|=" ) },  // Assign-OR
 		
-		{ "ls",  OP( "<<" ) },  // Left Shift
-		{ "rs",  OP( ">>" ) },  // Right Shift
-		{ "als",  OP( "<<=" ) },  // Assign-Left-Shift
-		{ "ars",  OP( ">>=" ) },  // Assign-Right-Shift
+		{ "ls"  "_", OP( "<<" ) },  // Left Shift
+		{ "rs"  "_", OP( ">>" ) },  // Right Shift
+		{ "als" "_", OP( "<<=" ) },  // Assign-Left-Shift
+		{ "ars" "_", OP( ">>=" ) },  // Assign-Right-Shift
 		
-		{ "eq",  OP( "==" ) },  // EQual
-		{ "ne",  OP( "!=" ) },  // Not Equal
-		{ "le",  OP( "<=" ) },  // Less than or Equal
-		{ "ge",  OP( ">=" ) },  // Greater than or Equal
-		{ "lt",  OP( "<" ) },  // Less Than
-		{ "gt",  OP( ">" ) },  // Greater Than
+		{ "eq"  "_", OP( "==" ) },  // EQual
+		{ "ne"  "_", OP( "!=" ) },  // Not Equal
+		{ "le"  "_", OP( "<=" ) },  // Less than or Equal
+		{ "ge"  "_", OP( ">=" ) },  // Greater than or Equal
+		{ "lt"  "_", OP( "<" ) },  // Less Than
+		{ "gt"  "_", OP( ">" ) },  // Greater Than
 		
-		{ "aa",  OP( "&&" ) },
-		{ "oo",  OP( "||" ) },
-		{ "pp",  OP( "++" ) },
-		{ "mm",  OP( "--" ) },
-		{ "cl",  OP( "()" ) },  // CaLl
-		{ "vc",  OP( "[]" ) },  // VeCtor
-		{ "rf",  OP( "->" ) },  // deReFerence
-		{ "cm",  OP( "," ) },  // CoMma
-		{ "rm",  OP( "->*" ) },  // deReference Member
+		{ "aa"  "_", OP( "&&" ) },
+		{ "oo"  "_", OP( "||" ) },
+		{ "pp"  "_", OP( "++" ) },
+		{ "mm"  "_", OP( "--" ) },
+		{ "cl"  "_", OP( "()" ) },  // CaLl
+		{ "vc"  "_", OP( "[]" ) },  // VeCtor
+		{ "rf"  "_", OP( "->" ) },  // deReFerence
+		{ "cm"  "_", OP( "," ) },  // CoMma
+		{ "rm"  "_", OP( "->*" ) },  // deReference Member
 		
 		{ NULL, NULL }
 	};
 	
-	typedef std::map< std::string, const char* > OperatorMap;
-	
-	static OperatorMap MakeOperatorMap()
+	static bool begins_with( const char* s, const char* sub )
 	{
-		OperatorMap result;
-		
-		const unsigned array_length = sizeof gOperators / sizeof (Operator) - 1;
-		
-		for ( const Operator* op = gOperators;  op < gOperators + array_length;  ++op )
+		while ( *s != '\0' )
 		{
-			result[ op->code ] = op->name;
+			if ( *s++ != *sub++ )
+			{
+				return false;
+			}
 		}
 		
-		return result;
+		return true;
+	}
+	
+	static inline bool operator==( const Operator& op, const char* code )
+	{
+		return begins_with( op.code, code );
+	}
+	
+	static const Operator* find_operator( const char* code )
+	{
+		const Operator* begin = gOperators;
+		const Operator* end   = begin + sizeof gOperators / sizeof gOperators[0];
+		
+		const Operator* it = std::find( begin, end, code );
+		
+		return it != end ? it : NULL;
 	}
 	
 	static const char* ReadOperator( const char*& p, const char* end )
 	{
-		static OperatorMap map = MakeOperatorMap();
+		const Operator* it = find_operator( p );
 		
-		OperatorMap::const_iterator it = map.find( std::string( p, end ) );
-		
-		if ( it == map.end() )
+		if ( it == NULL )
 		{
 			throw demangle_failed();
 		}
 		
 		p = end;
 		
-		return it->second;
+		return it->name;
 	}
 	
 	static std::string LastName( const std::string& qualified_name )
