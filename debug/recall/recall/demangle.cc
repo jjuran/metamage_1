@@ -761,31 +761,25 @@ namespace recall
 	}
 	
 	
-	std::string demangle_MWC68K( const std::string& name )
+	void demangle_MWC68K( std::string& result, const std::string& name )
 	{
 		const char* p = name.c_str();
 		
-		std::string result;
-		
 		MWC68K_Unmangler().ReadSymbol( result, p );
-		
-		return result;
 	}
 	
-	std::string demangle_MWCPPC( const std::string& name )
+	void demangle_MWCPPC( std::string& result, const std::string& name )
 	{
 		if ( name[0] != '.' )
 		{
-			return name;
+			result = name;
+			
+			return;
 		}
 		
 		const char* p = name.c_str();
 		
-		std::string result;
-		
 		MWCPPC_Unmangler().ReadSymbol( result, p );
-		
-		return result;
 	}
 	
 }

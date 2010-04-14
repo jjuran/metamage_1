@@ -15,8 +15,8 @@ namespace recall
 	
 	class demangle_failed {};
 	
-	std::string demangle_MWC68K( const std::string& name );
-	std::string demangle_MWCPPC( const std::string& name );
+	void demangle_MWC68K( std::string& result, const std::string& name );
+	void demangle_MWCPPC( std::string& result, const std::string& name );
 	
 }
 

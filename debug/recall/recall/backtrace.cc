@@ -51,17 +51,17 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_68k >
 	{
-		static std::string demangle( const std::string& name )
+		static void demangle( std::string& result, const std::string& name )
 		{
-			return demangle_MWC68K( name );
+			demangle_MWC68K( result, name );
 		}
 	};
 	
 	template <> struct demangler_traits< return_address_cfm >
 	{
-		static std::string demangle( const std::string& name )
+		static void demangle( std::string& result, const std::string& name )
 		{
-			return demangle_MWCPPC( name );
+			demangle_MWCPPC( result, name );
 		}
 	};
 	
@@ -71,9 +71,9 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_native >
 	{
-		static std::string demangle( const std::string& name )
+		static void demangle( std::string& result, const std::string& name )
 		{
-			std::string result = name;
+			result = name;
 			
 			// s/:.*//;
 			result.resize( std::find( result.begin(), result.end(), ':' ) - result.begin() );
@@ -90,11 +90,7 @@ namespace recall
 				result = unmangled;
 				
 				free( unmangled );
-				
-				return result;
 			}
-			
-			return result;
 		}
 	};
 	
@@ -126,14 +122,18 @@ namespace recall
 	{
 		std::string name = get_symbol_name( addr );
 		
+		std::string result;
+		
 		try
 		{
-			return demangler_traits< ReturnAddr >::demangle( name );
+			demangler_traits< ReturnAddr >::demangle( result, name );
 		}
 		catch ( ... )
 		{
-			return name;
+			result = name;
 		}
+		
+		return result;
 	}
 	
 	
