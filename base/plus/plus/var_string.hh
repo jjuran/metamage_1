@@ -54,6 +54,10 @@ namespace plus
 			
 			var_string& operator=( const char* s )  { assign( s );  return *this; }
 			
+			char* begin() const  { return mutable_data(); }
+			
+			char* end() const  { return begin() + size(); }
+			
 			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
 	};
 	
