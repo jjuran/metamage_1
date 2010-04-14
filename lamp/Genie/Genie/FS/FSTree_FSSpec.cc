@@ -501,7 +501,8 @@ namespace Genie
 		public:
 			FSTree_HFS( const FSSpec&       file,
 			            bool                onServer,
-			            const std::string&  name = std::string() );
+			            const std::string&  name = std::string(),
+			            const FSTree*       parent = NULL );
 			
 			bool Exists() const;
 			bool IsFile() const;
@@ -559,10 +560,11 @@ namespace Genie
 	
 	FSTree_HFS::FSTree_HFS( const FSSpec&       file,
 	                        bool                onServer,
-	                        const std::string&  name )
+	                        const std::string&  name,
+	                        const FSTree*       parent )
 	:
-		FSTree_Directory( FSTreePtr(), name.empty() ? MakeName( file )
-		                                            : name ),
+		FSTree_Directory( parent       ? parent->Self()    : FSTreePtr(),
+		                  name.empty() ? MakeName ( file ) : name ),
 		itsFileSpec     ( file                             ),
 		itIsOnServer    ( onServer                         )
 	{
