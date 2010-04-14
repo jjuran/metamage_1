@@ -1290,23 +1290,26 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec& dir, bool onServer, const std::string& name )
+	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
+	                                        bool                 onServer,
+	                                        const std::string&   name,
+	                                        const FSTree*        parent )
 	{
 		const std::string macName = K::MacFilenameFromUnixFilename( name );
 		
 		const FSSpec item = dir / macName;
 		
-		return seize_ptr( new FSTree_HFS( item, onServer, name ) );
+		return seize_ptr( new FSTree_HFS( item, onServer, name, parent ) );
 	}
 	
 	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name, const FSTree* parent ) const
 	{
-		return FSTreePtr_From_Lookup( GetJDirectory(), false, name );
+		return FSTreePtr_From_Lookup( GetJDirectory(), false, name, parent );
 	}
 	
 	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
-		return FSTreePtr_From_Lookup( itsDirSpec, itIsOnServer, name );
+		return FSTreePtr_From_Lookup( itsDirSpec, itIsOnServer, name, parent );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name, const FSTree* parent ) const
@@ -1323,7 +1326,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
 		
-		return FSTreePtr_From_Lookup( dir, itIsOnServer, name );
+		return FSTreePtr_From_Lookup( dir, itIsOnServer, name, parent );
 	}
 	
 	
