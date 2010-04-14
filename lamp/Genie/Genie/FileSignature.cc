@@ -141,39 +141,30 @@ namespace Genie
 		{ 'CWIE', 'MPLF' },
 	};
 	
-	typedef std::map< N::OSType,   N::OSType        > TypeToCreatorMapping;
 	typedef std::map< std::string, N::FileSignature > ExtensionToTypeMapping;
 	
 	
-	static TypeToCreatorMapping BuildTypeToCreatorMapping()
+	static inline bool operator==( const FileSignature& signature, ::OSType type )
 	{
-		TypeToCreatorMapping result;
-		
-		const std::size_t typeCount = sizeof gDefaultCreatorForTypeInput / sizeof (FileSignature);
-		
-		for ( const FileSignature* p = gDefaultCreatorForTypeInput;  p < gDefaultCreatorForTypeInput + typeCount;  ++p )
-		{
-			result[ N::OSType( p->type ) ] = N::OSType( p->creator );
-		}
-		
-		return result;
+		return signature.type == type;
 	}
 	
-	static const TypeToCreatorMapping& GetTypeToCreatorMapping()
+	static const FileSignature* FindFileSignature( ::OSType type )
 	{
-		static TypeToCreatorMapping mapping( BuildTypeToCreatorMapping() );
+		const FileSignature* begin = gDefaultCreatorForTypeInput;
+		const FileSignature* end   = begin + sizeof gDefaultCreatorForTypeInput / sizeof gDefaultCreatorForTypeInput[0];
 		
-		return mapping;
+		const FileSignature* it = std::find( begin, end, type );
+		
+		return it != end ? it : NULL;
 	}
 	
 	
 	static N::OSType GetCreatorForType( N::OSType type )
 	{
-		TypeToCreatorMapping::const_iterator it = GetTypeToCreatorMapping().find( type );
-		
-		if ( it != GetTypeToCreatorMapping().end() )
+		if ( const FileSignature* it = FindFileSignature( type ) )
 		{
-			return it->second;
+			return N::OSType( it->creator );
 		}
 		
 		return N::OSType( '\?\?\?\?' );
