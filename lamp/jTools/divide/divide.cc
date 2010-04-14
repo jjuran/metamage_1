@@ -13,6 +13,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/open.hh"
@@ -63,7 +66,7 @@ namespace tool
 		return result;
 	}
 	
-	static void decode_escapes( std::string& decoded, const char* escaped_string )
+	static void decode_escapes( plus::var_string& decoded, const char* escaped_string )
 	{
 		const char* p = escaped_string;
 		
@@ -127,7 +130,7 @@ namespace tool
 		
 		const char* divider_text = argv[1];
 		
-		std::string divider_string;
+		plus::var_string divider_string;
 		
 		decode_escapes( divider_string, divider_text );
 		
@@ -139,7 +142,7 @@ namespace tool
 		
 		bool divided = false;
 		
-		std::string first_blocks;
+		plus::var_string first_blocks;
 		
 		while ( !divided )
 		{
