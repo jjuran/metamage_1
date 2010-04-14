@@ -15,6 +15,9 @@
 // Standard C
 #include <errno.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // Recall
 #include "recall/backtrace.hh"
 #include "recall/stack_crawl.hh"
@@ -69,7 +72,7 @@ namespace Orion
 				end = last + 1;
 			}
 			
-			std::string report;
+			plus::var_string report;
 			
 			make_report_from_stack_crawl( report, begin, end );
 			

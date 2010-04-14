@@ -25,6 +25,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -87,7 +90,7 @@ static void DumpBacktrace()
 	
 	++begin;  // skip DumpBacktrace( void )
 	
-	std::string report;
+	plus::var_string report;
 	
 	make_report_from_stack_crawl( report, begin, end );
 	

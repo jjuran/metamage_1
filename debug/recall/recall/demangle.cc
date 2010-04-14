@@ -5,6 +5,9 @@
 
 #include "recall/demangle.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Standard C/C++
 #include <cctype>
 #include <cstring>
@@ -12,6 +15,9 @@
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 
 namespace recall
@@ -151,7 +157,7 @@ namespace recall
 		return it->name;
 	}
 	
-	static std::string LastName( const std::string& qualified_name )
+	static plus::string LastName( const plus::string& qualified_name )
 	{
 		std::size_t colon = qualified_name.find_last_of( ":" );
 		
@@ -165,7 +171,7 @@ namespace recall
 		return gBasicTypes[ c - 'a' ];
 	}
 	
-	static void ReadBasicType( std::string& out, const char*& p )
+	static void ReadBasicType( plus::var_string& out, const char*& p )
 	{
 		if ( *p == 'U' )
 		{
@@ -211,7 +217,7 @@ namespace recall
 		return begin;
 	}
 	
-	static void ReadInteger( std::string& out, const char* begin, const char* end, unsigned x )
+	static void ReadInteger( plus::var_string& out, const char* begin, const char* end, unsigned x )
 	{
 		if ( *begin != '-' )
 		{
@@ -249,38 +255,38 @@ namespace recall
 			virtual bool TemplateParameterListEndsHere( const char* p ) = 0;
 			
 			
-			void ReadTemplateParameter( std::string& out, const char*& p );
+			void ReadTemplateParameter( plus::var_string& out, const char*& p );
 			
-			void ReadTemplateParameters( std::string& out, const char*&p );
+			void ReadTemplateParameters( plus::var_string& out, const char*&p );
 			
-			void ExpandTemplates( std::string& out, const std::string& name );
+			void ExpandTemplates( plus::var_string& out, const plus::string& name );
 			
-			void ReadQualName( std::string& out, const char*& p );
+			void ReadQualName( plus::var_string& out, const char*& p );
 			
-			void ReadQualifiedName( std::string& out, const char*& p );
+			void ReadQualifiedName( plus::var_string& out, const char*& p );
 			
-			void ReadFunctionType( std::string& out, const char*& p );
+			void ReadFunctionType( plus::var_string& out, const char*& p );
 			
-			void ReadIndirectType( std::string& out, const char*& p );
+			void ReadIndirectType( plus::var_string& out, const char*& p );
 			
-			void ReadQualifiedType( std::string& out, const char*& p );
+			void ReadQualifiedType( plus::var_string& out, const char*& p );
 			
-			void ReadType( std::string& out, const char*& p );
+			void ReadType( plus::var_string& out, const char*& p );
 			
-			void ReadConversion( std::string& out, const char*& p )
+			void ReadConversion( plus::var_string& out, const char*& p )
 			{
 				out += "operator ";
 				
 				ReadType( out, p );
 			}
 			
-			void ReadSpecialName( std::string& out, const char*& p );
+			void ReadSpecialName( plus::var_string& out, const char*& p );
 			
-			void ReadIdentifier( std::string& out, const char*& p );
+			void ReadIdentifier( plus::var_string& out, const char*& p );
 			
-			void ReadEntityName( std::string& out, const char*& p );
+			void ReadEntityName( plus::var_string& out, const char*& p );
 			
-			void ReadSymbol( std::string& out, const char*& p );
+			void ReadSymbol( plus::var_string& out, const char*& p );
 	};
 	
 	class MWC68K_Unmangler : public Unmangler
@@ -338,7 +344,7 @@ namespace recall
 	}
 	
 	
-	void Unmangler::ReadTemplateParameter( std::string& out, const char*& p )
+	void Unmangler::ReadTemplateParameter( plus::var_string& out, const char*& p )
 	{
 		if ( *p == '&' )
 		{
@@ -373,7 +379,7 @@ namespace recall
 		ReadType( out, p );
 	}
 	
-	void Unmangler::ReadTemplateParameters( std::string& out, const char*&p )
+	void Unmangler::ReadTemplateParameters( plus::var_string& out, const char*&p )
 	{
 		out += "< ";
 		
@@ -405,7 +411,7 @@ namespace recall
 		out += " >";
 	}
 	
-	void Unmangler::ExpandTemplates( std::string& out, const std::string& name )
+	void Unmangler::ExpandTemplates( plus::var_string& out, const plus::string& name )
 	{
 		const char* params = FindTemplateParameters( name.c_str() );
 		
@@ -423,14 +429,14 @@ namespace recall
 		ReadTemplateParameters( out, p );
 	}
 	
-	void Unmangler::ReadQualName( std::string& out, const char*& p )
+	void Unmangler::ReadQualName( plus::var_string& out, const char*& p )
 	{
 		const char* name = ReadLName( p );
 		
-		ExpandTemplates( out, std::string( name, p ) );
+		ExpandTemplates( out, plus::string( name, p ) );
 	}
 	
-	void Unmangler::ReadQualifiedName( std::string& out, const char*& p )
+	void Unmangler::ReadQualifiedName( plus::var_string& out, const char*& p )
 	{
 		int count = *p++ - '0';
 		
@@ -444,9 +450,9 @@ namespace recall
 		}
 	}
 	
-	void Unmangler::ReadFunctionType( std::string& out, const char*& p )
+	void Unmangler::ReadFunctionType( plus::var_string& out, const char*& p )
 	{
-		std::string params;
+		plus::var_string params;
 		
 		while ( *p != '\0' )
 		{
@@ -477,9 +483,9 @@ namespace recall
 		out += " )";
 	}
 	
-	void Unmangler::ReadIndirectType( std::string& out, const char*& p )
+	void Unmangler::ReadIndirectType( plus::var_string& out, const char*& p )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		switch ( *p )
 		{
@@ -515,7 +521,7 @@ namespace recall
 		out += result;
 	}
 	
-	void Unmangler::ReadQualifiedType( std::string& out, const char*& p )
+	void Unmangler::ReadQualifiedType( plus::var_string& out, const char*& p )
 	{
 		bool is_const = *p == 'C';
 		
@@ -544,7 +550,7 @@ namespace recall
 		}
 	}
 	
-	void Unmangler::ReadType( std::string& out, const char*& p )
+	void Unmangler::ReadType( plus::var_string& out, const char*& p )
 	{
 		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
 		{
@@ -598,7 +604,7 @@ namespace recall
 	
 	struct NotSpecial {};
 	
-	void Unmangler::ReadSpecialName( std::string& out, const char*& p )
+	void Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 	{
 		const char* q = p;
 		
@@ -614,7 +620,7 @@ namespace recall
 			throw NotSpecial();
 		}
 		
-		std::string name( p, double_underscore );
+		plus::string name( p, double_underscore );
 		
 		if ( name == "__ct" )  { p = double_underscore;/*out += "";*/ return; }
 		if ( name == "__dt" )  { p = double_underscore;  out += "~";  return; }
@@ -647,7 +653,7 @@ namespace recall
 		throw NotSpecial();
 	}
 	
-	void Unmangler::ReadIdentifier( std::string& out, const char*& p )
+	void Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
 	{
 		const char* params = FindTemplateParameters( p );
 		
@@ -672,7 +678,7 @@ namespace recall
 		p = id_end;
 	}
 	
-	void Unmangler::ReadEntityName( std::string& out, const char*& p )
+	void Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
 	{
 		if ( std::strcmp( p, "__end__catch" ) == 0 )
 		{
@@ -709,14 +715,14 @@ namespace recall
 		ReadIdentifier( out, p );
 	}
 	
-	void Unmangler::ReadSymbol( std::string& out, const char*& p )
+	void Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 	{
 		if ( p[0] == '.' )
 		{
 			++p;
 		}
 		
-		std::string function_name;
+		plus::var_string function_name;
 		
 		ReadEntityName( function_name, p );
 		
@@ -761,14 +767,14 @@ namespace recall
 	}
 	
 	
-	void demangle_MWC68K( std::string& result, const std::string& name )
+	void demangle_MWC68K( plus::var_string& result, const plus::string& name )
 	{
 		const char* p = name.c_str();
 		
 		MWC68K_Unmangler().ReadSymbol( result, p );
 	}
 	
-	void demangle_MWCPPC( std::string& result, const std::string& name )
+	void demangle_MWCPPC( plus::var_string& result, const plus::string& name )
 	{
 		if ( name[0] != '.' )
 		{

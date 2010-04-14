@@ -8,10 +8,6 @@
 // Standard C++
 #include <algorithm>
 #include <functional>
-#include <string>
-
-// Standard C/C++
-#include <cstdio>
 
 // Standard C
 #include <string.h>
@@ -24,6 +20,9 @@
 #include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // Recall
 #include "recall/demangle.hh"
@@ -51,7 +50,7 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_68k >
 	{
-		static void demangle( std::string& result, const std::string& name )
+		static void demangle( plus::var_string& result, const plus::string& name )
 		{
 			demangle_MWC68K( result, name );
 		}
@@ -59,7 +58,7 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_cfm >
 	{
-		static void demangle( std::string& result, const std::string& name )
+		static void demangle( plus::var_string& result, const plus::string& name )
 		{
 			demangle_MWCPPC( result, name );
 		}
@@ -71,7 +70,7 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_native >
 	{
-		static void demangle( std::string& result, const std::string& name )
+		static void demangle( plus::var_string& result, const plus::string& name )
 		{
 			result = name;
 			
@@ -106,23 +105,23 @@ namespace recall
 #endif
 	
 	template < class SymbolPtr >
-	static inline std::string get_name_from_symbol_pointer( SymbolPtr symbol )
+	static inline plus::string get_name_from_symbol_pointer( SymbolPtr symbol )
 	{
 		return symbol != NULL ? get_symbol_string( symbol ) : "???";
 	}
 	
 	template < class ReturnAddr >
-	static inline std::string get_symbol_name( ReturnAddr addr )
+	static inline plus::string get_symbol_name( ReturnAddr addr )
 	{
 		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
 	}
 	
 	template < class ReturnAddr >
-	static std::string get_demangled_symbol_name( ReturnAddr addr )
+	static plus::string get_demangled_symbol_name( ReturnAddr addr )
 	{
-		std::string name = get_symbol_name( addr );
+		plus::string name = get_symbol_name( addr );
 		
-		std::string result;
+		plus::var_string result;
 		
 		try
 		{
@@ -139,10 +138,10 @@ namespace recall
 	
 	struct call_info
 	{
-		const void*  frame_pointer;
-		const void*  return_address;
-		const char*  arch;
-		std::string  demangled_name;
+		const void*   frame_pointer;
+		const void*   return_address;
+		const char*   arch;
+		plus::string  demangled_name;
 	};
 	
 	static call_info get_call_info_from_return_address( const frame_data& call )
@@ -158,7 +157,11 @@ namespace recall
 		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
 		                                    : get_demangled_symbol_name( call.addr_native );
 		
-		filter_symbol( result.demangled_name );
+		plus::var_string demangled_name;
+		
+		filter_symbol( demangled_name );
+		
+		result.demangled_name.swap( demangled_name );
 		
 	#else
 		
@@ -170,8 +173,8 @@ namespace recall
 		return result;
 	}
 	
-	static void make_report_for_call( const call_info&  info,
-	                                  std::string&      result )
+	static void make_report_for_call( plus::var_string&  result,
+	                                  const call_info&   info )
 	{
 		const size_t old_size = result.size();
 		
@@ -189,7 +192,7 @@ namespace recall
 		result += "\n";
 	}
 	
-	static void make_report_from_call_chain( std::string&                              result,
+	static void make_report_from_call_chain( plus::var_string&                         result,
 	                                         std::vector< call_info >::const_iterator  begin,
 	                                         std::vector< call_info >::const_iterator  end )
 	{
@@ -221,13 +224,13 @@ namespace recall
 			
 			const call_info& info = *it;
 			
-			make_report_for_call( info, result );
+			make_report_for_call( result, info );
 		}
 		
 		result += "\n";
 	}
 	
-	void make_report_from_stack_crawl( std::string&                               result,
+	void make_report_from_stack_crawl( plus::var_string&                          result,
 	                                   std::vector< frame_data >::const_iterator  begin,
 	                                   std::vector< frame_data >::const_iterator  end )
 	{

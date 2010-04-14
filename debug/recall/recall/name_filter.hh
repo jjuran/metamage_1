@@ -6,14 +6,18 @@
 #ifndef RECALL_NAMEFILTER_HH
 #define RECALL_NAMEFILTER_HH
 
-// Standard C++
-#include <string>
 
+namespace plus
+{
+	
+	class var_string;
+	
+}
 
 namespace recall
 {
 	
-	void filter_symbol( std::string& name );
+	void filter_symbol( plus::var_string& name );
 	
 }
 

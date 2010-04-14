@@ -60,6 +60,7 @@
 
 // plus
 #include "plus/make_string.hh"
+#include "plus/var_string.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -1126,7 +1127,7 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled;
+	plus::var_string unmangled;
 	
 	name[0] == '.' ? recall::demangle_MWCPPC( unmangled, name )
 	               : recall::demangle_MWC68K( unmangled, name );
@@ -1163,7 +1164,7 @@ static void Throw()
 
 static int TestUnwind( int argc, iota::argv_t argv )
 {
-	std::string report;
+	plus::var_string report;
 	
 	try
 	{

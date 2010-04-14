@@ -6,8 +6,8 @@
 #ifndef RECALL_TRACEBACKTABLES_HH
 #define RECALL_TRACEBACKTABLES_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 // Recall
 #include "recall/return_address.hh"
@@ -20,7 +20,7 @@ namespace recall
 	
 	const traceback_table* find_symbol_name( return_address_traceback addr );
 	
-	std::string get_symbol_string( const traceback_table* table );
+	plus::string get_symbol_string( const traceback_table* table );
 	
 }
 

@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// plus
+#include "plus/var_string.hh"
+
 
 #define STR_LEN( string )  "" string, (sizeof string - 1)
 
@@ -34,7 +37,7 @@ namespace recall
 		REPLACE( "std::vector< std::string >",  "std::vector< std::string, std::allocator< std::string > >" )
 	};
 	
-	void filter_symbol( std::string& name )
+	void filter_symbol( plus::var_string& name )
 	{
 		const replacement* end = global_replacements + ARRAY_LEN( global_replacements );
 		
@@ -45,10 +48,10 @@ namespace recall
 			
 			while ( true )
 			{
-				std::string::iterator found = std::search( name.begin(),
-				                                           name.end(),
-				                                           pattern,
-				                                           pattern_end );
+				plus::var_string::iterator found = std::search( name.begin(),
+				                                                name.end(),
+				                                                pattern,
+				                                                pattern_end );
 				
 				if ( found == name.end() )
 				{
