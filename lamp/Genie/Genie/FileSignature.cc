@@ -5,8 +5,8 @@
 
 #include "Genie/FileSignature.hh"
 
-// Standard C++
-#include <map>
+// Standard C
+#include <string.h>
 
 // Nucleus
 //#include "Nucleus/Convert.h"
@@ -141,12 +141,25 @@ namespace Genie
 		{ 'CWIE', 'MPLF' },
 	};
 	
-	typedef std::map< std::string, N::FileSignature > ExtensionToTypeMapping;
 	
+	static bool operator==( const ExtensionToTypeRecord& record, const char* extension )
+	{
+		return strcmp( record.extension, extension ) == 0;
+	}
 	
 	static inline bool operator==( const FileSignature& signature, ::OSType type )
 	{
 		return signature.type == type;
+	}
+	
+	static const ExtensionToTypeRecord* FindExtensionToTypeRecord( const char* extension )
+	{
+		const ExtensionToTypeRecord* begin = gExtensionToTypeMappingInput;
+		const ExtensionToTypeRecord* end   = begin + sizeof gExtensionToTypeMappingInput / sizeof gExtensionToTypeMappingInput[0];
+		
+		const ExtensionToTypeRecord* it = std::find( begin, end, extension );
+		
+		return it != end ? it : NULL;
 	}
 	
 	static const FileSignature* FindFileSignature( ::OSType type )
@@ -170,48 +183,21 @@ namespace Genie
 		return N::OSType( '\?\?\?\?' );
 	}
 	
-	static ExtensionToTypeMapping BuildExtensionToTypeMapping()
-	{
-		ExtensionToTypeMapping result;
-		
-		const std::size_t extensionCount = sizeof gExtensionToTypeMappingInput / sizeof (ExtensionToTypeRecord);
-		
-		// Would be nice to use std::for_each() but it's just too much of a PITA.
-		for ( const ExtensionToTypeRecord* p = gExtensionToTypeMappingInput;  p < gExtensionToTypeMappingInput + extensionCount;  ++p )
-		{
-			// ASSERT( p->extension != NULL );
-			N::OSType type = N::OSType( p->type );
-			
-			N::FileSignature signature( GetCreatorForType( type ), type );
-			
-			result[ std::string( p->extension ) ] = signature;
-		}
-		
-		return result;
-	}
-	
-	static const ExtensionToTypeMapping& GetExtensionToTypeMapping()
-	{
-		static ExtensionToTypeMapping mapping( BuildExtensionToTypeMapping() );
-		
-		return mapping;
-	}
-	
 	N::FileSignature PickFileSignatureForName( const std::string& name )
 	{
 		std::size_t dot = name.find_last_of( "." );
 		
 		if ( dot != name.npos )
 		{
-			std::string extension = name.substr( dot + 1, name.npos );
+			const char* extension = &name[ dot + 1 ];
 			
-			const ExtensionToTypeMapping& mapping( GetExtensionToTypeMapping() );
-			
-			ExtensionToTypeMapping::const_iterator it = mapping.find( extension );
-			
-			if ( it != mapping.end() )
+			if ( const ExtensionToTypeRecord* it = FindExtensionToTypeRecord( extension ) )
 			{
-				return it->second;
+				N::OSType type = N::OSType( it->type );
+				
+				N::FileSignature signature( GetCreatorForType( type ), type );
+				
+				return signature;
 			}
 		}
 		
