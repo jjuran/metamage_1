@@ -14,16 +14,6 @@
 #include "iota/strings.hh"
 
 
-static std::string join( const char* space, const std::string& a, const std::string& b )
-{
-	if ( a.empty() || b.empty() )
-	{
-		space = "";
-	}
-	
-	return a + space + b;
-}
-
 namespace recall
 {
 	
