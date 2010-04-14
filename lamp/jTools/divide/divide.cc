@@ -63,11 +63,13 @@ namespace tool
 		return result;
 	}
 	
-	static std::string decode_escapes( const std::string& escaped_string )
+	static std::string decode_escapes( const char* escaped_string )
 	{
 		std::string decoded;
 		
-		for ( std::string::const_iterator p = escaped_string.begin();  p < escaped_string.end();  ++p )
+		const char* p = escaped_string;
+		
+		for ( const char* p = escaped_string;  *p != '\0';  ++p )
 		{
 			if ( *p != '\\' )
 			{
@@ -76,7 +78,7 @@ namespace tool
 				continue;
 			}
 			
-			std::string::const_iterator q = ++p;
+			const char* q = ++p;
 			
 			while ( std::isdigit( *q )  &&  q - p < 3 )
 			{
@@ -127,7 +129,7 @@ namespace tool
 			return 2;
 		}
 		
-		std::string divider_text = argv[1];
+		const char* divider_text = argv[1];
 		
 		std::string divider_string = decode_escapes( divider_text );
 		
