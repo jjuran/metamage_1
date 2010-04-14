@@ -189,8 +189,9 @@ namespace recall
 		result += "\n";
 	}
 	
-	static std::string make_report_from_call_chain( std::vector< call_info >::const_iterator  begin,
-	                                                std::vector< call_info >::const_iterator  end )
+	static void make_report_from_call_chain( std::string&                              result,
+	                                         std::vector< call_info >::const_iterator  begin,
+	                                         std::vector< call_info >::const_iterator  end )
 	{
 		const unsigned n_frames = end - begin;
 		
@@ -202,8 +203,6 @@ namespace recall
 		const unsigned nth_magnitude = iota::decimal_magnitude( nth_offset );
 		
 		unsigned offset = 0;
-		
-		std::string result;
 		
 		// It's important to use < instead of != if we might skip past the end
 		for ( std::vector< call_info >::const_iterator it = begin;  it < end;  ++it, ++offset )
@@ -226,12 +225,11 @@ namespace recall
 		}
 		
 		result += "\n";
-		
-		return result;
 	}
 	
-	std::string make_report_from_stack_crawl( std::vector< frame_data >::const_iterator  begin,
-	                                          std::vector< frame_data >::const_iterator  end )
+	void make_report_from_stack_crawl( std::string&                               result,
+	                                   std::vector< frame_data >::const_iterator  begin,
+	                                   std::vector< frame_data >::const_iterator  end )
 	{
 		std::vector< call_info > call_chain;
 		
@@ -242,7 +240,7 @@ namespace recall
 		                call_chain.begin(),
 		                std::ptr_fun( get_call_info_from_return_address ) );
 		
-		return make_report_from_call_chain( call_chain.begin(), call_chain.end() );
+		make_report_from_call_chain( result, call_chain.begin(), call_chain.end() );
 	}
 	
 	debugging_context::debugging_context()

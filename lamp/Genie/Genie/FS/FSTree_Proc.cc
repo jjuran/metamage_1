@@ -478,7 +478,9 @@ namespace Genie
 			end -= 6;
 		}
 		
-		std::string result = make_report_from_stack_crawl( begin, end );
+		std::string result;
+		
+		make_report_from_stack_crawl( result, begin, end );
 		
 		return result;
 	}

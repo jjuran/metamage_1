@@ -87,7 +87,9 @@ static void DumpBacktrace()
 	
 	++begin;  // skip DumpBacktrace( void )
 	
-	std::string report = make_report_from_stack_crawl( begin, end );
+	std::string report;
+	
+	make_report_from_stack_crawl( report, begin, end );
 	
 	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
 }

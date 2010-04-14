@@ -69,7 +69,9 @@ namespace Orion
 				end = last + 1;
 			}
 			
-			std::string report = make_report_from_stack_crawl( begin, end );
+			std::string report;
+			
+			make_report_from_stack_crawl( report, begin, end );
 			
 			p7::write( p7::stderr_fileno, report );
 			

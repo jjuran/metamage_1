@@ -17,8 +17,9 @@
 namespace recall
 {
 	
-	std::string make_report_from_stack_crawl( std::vector< frame_data >::const_iterator  begin,
-	                                          std::vector< frame_data >::const_iterator  end );
+	void make_report_from_stack_crawl( std::string&                               result,
+	                                   std::vector< frame_data >::const_iterator  begin,
+	                                   std::vector< frame_data >::const_iterator  end );
 	
 	class debugging_context
 	{

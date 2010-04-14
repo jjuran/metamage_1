@@ -1126,8 +1126,10 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '.' ? recall::demangle_MWCPPC( name )
-	                                       : recall::demangle_MWC68K( name );
+	std::string unmangled;
+	
+	name[0] == '.' ? recall::demangle_MWCPPC( unmangled, name )
+	               : recall::demangle_MWC68K( unmangled, name );
 	
 	unmangled += "\n";
 	
@@ -1171,7 +1173,7 @@ static int TestUnwind( int argc, iota::argv_t argv )
 	{
 	}
 	
-	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	recall::make_report_from_stack_crawl( report, gStackCrawl.begin(), gStackCrawl.end() );
 	
 	report += "\n";
 	
@@ -1188,7 +1190,7 @@ static int TestUnwind( int argc, iota::argv_t argv )
 	{
 	}
 	
-	report += recall::make_report_from_stack_crawl( gStackCrawl.begin(), gStackCrawl.end() );
+	recall::make_report_from_stack_crawl( report, gStackCrawl.begin(), gStackCrawl.end() );
 	
 	report += "\n";
 	
