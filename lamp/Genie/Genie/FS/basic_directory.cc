@@ -29,15 +29,15 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
-	FSTreePtr basic_directory::Lookup_Child( const std::string& name ) const
+	FSTreePtr basic_directory::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
-		return itsLookup( Self(), name );
+		return itsLookup( (parent ? parent : this)->Self(), name );
 	}
 	
 	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const

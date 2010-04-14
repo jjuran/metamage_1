@@ -37,7 +37,7 @@ namespace Genie
 			}
 	};
 	
-	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		const unsigned id = iota::parse_unsigned_decimal( name.c_str() );
 		
@@ -48,7 +48,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return seize_ptr( new FSTree_Dynamic_N( Self(), name, Getter() ) );
+		return seize_ptr( new FSTree_Dynamic_N( (parent ? parent : this)->Self(), name, Getter() ) );
 	}
 	
 	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const

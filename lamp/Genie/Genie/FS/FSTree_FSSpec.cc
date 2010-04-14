@@ -475,7 +475,7 @@ namespace Genie
 			
 			ino_t Inode() const  { return itsDirSpec.dirID; }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -545,7 +545,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -627,7 +627,7 @@ namespace Genie
 			
 			ino_t Inode() const  { return fsRtParID; }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -1302,12 +1302,12 @@ namespace Genie
 		return FSTreePtr_From_Lookup( GetJDirectory(), false, name );
 	}
 	
-	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		return FSTreePtr_From_Lookup( itsDirSpec, itIsOnServer, name );
 	}
 	
-	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		if ( name == "rsrc"  &&  IsFile() )
 		{
@@ -1691,9 +1691,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
-		return seize_ptr( new FSTree_Volumes_Link( Self(), name ) );
+		return seize_ptr( new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name ) );
 	}
 	
 	class volumes_IteratorConverter

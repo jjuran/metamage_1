@@ -320,7 +320,7 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
-	FSTreePtr FSTree::Lookup( const std::string& /*name*/ ) const
+	FSTreePtr FSTree::Lookup( const std::string& name, const FSTree* parent ) const
 	{
 		p7::throw_errno( ENOENT );
 		

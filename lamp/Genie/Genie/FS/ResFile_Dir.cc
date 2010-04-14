@@ -369,7 +369,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -382,11 +382,11 @@ namespace Genie
 		return N::ResType( type );
 	}
 	
-	FSTreePtr FSTree_RsrcFile_Type::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_RsrcFile_Type::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		// FIXME:  verify name converts to an id
 		
-		return seize_ptr( new FSTree_RsrcFile_Type_ID( Self(), name, itsFileSpec ) );
+		return seize_ptr( new FSTree_RsrcFile_Type_ID( (parent ? parent : this)->Self(), name, itsFileSpec ) );
 	}
 	
 	void FSTree_RsrcFile_Type::IterateIntoCache( FSTreeCache& cache ) const
@@ -431,7 +431,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -504,12 +504,12 @@ namespace Genie
 		                     N::smSystemScript );
 	}
 	
-	FSTreePtr FSTree_ResFileDir::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_ResFileDir::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		// Throws if conversion to OSType fails.
 		(void) OSType_KeyName_Traits::KeyFromName( name );
 		
-		return seize_ptr( new FSTree_RsrcFile_Type( Self(), name, itsFileSpec ) );
+		return seize_ptr( new FSTree_RsrcFile_Type( (parent ? parent : this)->Self(), name, itsFileSpec ) );
 	}
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
