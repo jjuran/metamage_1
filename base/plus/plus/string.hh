@@ -77,6 +77,10 @@ namespace plus
 			
 			operator const char*() const  { return c_str(); }
 			
+			const char* begin() const  { return data(); }
+			
+			const char* end() const  { return begin() + size(); }
+			
 			void assign( const char* p, size_type length, delete_policy policy );
 			
 			void assign( const char* p, size_type length );
