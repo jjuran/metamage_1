@@ -387,7 +387,7 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Root : public FSTree_Mappable
+	class FSTree_Root : public FSTree_Directory
 	{
 		public:
 			FSTree_Root();
@@ -405,16 +405,15 @@ namespace Genie
 			
 			ino_t Inode() const;
 			
-			FSTreePtr Lookup_Regular( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	FSTree_Root::FSTree_Root()
 	:
-		FSTree_Mappable( FSTreePtr(), "" )
+		FSTree_Directory( FSTreePtr(), "" )
 	{
-		// we override Parent()
 	}
 	
 	ino_t FSTree_Root::Inode() const
@@ -1315,7 +1314,7 @@ namespace Genie
 		return seize_ptr( new FSTree_HFS( item, onServer, name, parent ) );
 	}
 	
-	FSTreePtr FSTree_Root::Lookup_Regular( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Root::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		return FSTreePtr_From_Lookup( GetJDirectory(), false, name, parent );
 	}

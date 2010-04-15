@@ -77,35 +77,6 @@ namespace Genie
 	}
 	
 	
-	FSTree_Mappable::~FSTree_Mappable()
-	{
-	}
-	
-	void FSTree_Mappable::Map( FSTreePtr tree )
-	{
-		mappings[ tree->Name() ] = tree;
-	}
-	
-	FSTreePtr FSTree_Mappable::Lookup_Child( const std::string& name, const FSTree* parent ) const
-	{
-		FSTreePtr result = Lookup_Mapping( name );
-		
-		if ( result == NULL )
-		{
-			result = Lookup_Regular( name, parent );
-		}
-		
-		return result;
-	}
-	
-	FSTreePtr FSTree_Mappable::Lookup_Mapping( const std::string& name ) const
-	{
-		Mappings::const_iterator found = mappings.find( name );
-		
-		return found != mappings.end() ? found->second : FSTreePtr();
-	}
-	
-	
 	FSTree_Premapped::~FSTree_Premapped()
 	{
 		if ( itsDestructor )

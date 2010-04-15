@@ -50,31 +50,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Mappable : public FSTree_Directory
-	{
-		protected:
-			typedef std::map< std::string, FSTreePtr > Mappings;
-			
-			Mappings mappings;
-		
-		public:
-			FSTree_Mappable( const FSTreePtr&    parent,
-			                 const std::string&  name ) : FSTree_Directory( parent, name )
-			{
-			}
-			
-			~FSTree_Mappable();
-			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
-			
-			void Map( FSTreePtr tree );
-			
-			FSTreePtr Lookup_Mapping( const std::string& name ) const;
-			
-			virtual FSTreePtr Lookup_Regular( const std::string& name, const FSTree* parent ) const = 0;
-	};
-	
-	
 	class FSTree_Premapped : public FSTree_Directory
 	{
 		public:
