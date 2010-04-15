@@ -57,7 +57,7 @@ namespace Genie
 	
 	inline FSTreePtr ResolvePathname( const char*       begin,
 	                                  std::size_t       length,
-	                                  const FSTreePtr&  current = FSTreePtr() )
+	                                  const FSTreePtr&  current = null_FSTreePtr )
 	{
 		if ( const bool absolute = *begin == '/' )
 		{
@@ -68,19 +68,19 @@ namespace Genie
 	}
 	
 	inline FSTreePtr ResolvePathname( const char*       pathname,
-	                                  const FSTreePtr&  current = FSTreePtr() )
+	                                  const FSTreePtr&  current = null_FSTreePtr )
 	{
 		return ResolvePathname( pathname, std::strlen( pathname ), current );
 	}
 	
 	inline FSTreePtr ResolvePathname( const std::string&  pathname,
-	                                  const FSTreePtr&    current = FSTreePtr() )
+	                                  const FSTreePtr&    current = null_FSTreePtr )
 	{
 		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
 	
 	inline FSTreePtr ResolvePathname( const plus::string&  pathname,
-	                                  const FSTreePtr&     current = FSTreePtr() )
+	                                  const FSTreePtr&     current = null_FSTreePtr )
 	{
 		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}

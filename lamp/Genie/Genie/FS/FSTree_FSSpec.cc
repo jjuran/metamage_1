@@ -412,7 +412,7 @@ namespace Genie
 	
 	FSTree_Root::FSTree_Root()
 	:
-		FSTree_Directory( FSTreePtr(), "" )
+		FSTree_Directory( null_FSTreePtr, "" )
 	{
 	}
 	
@@ -487,9 +487,9 @@ namespace Genie
 	                                bool                 onServer,
 	                                const std::string&   name )
 	:
-		FSTree_Directory( FSTreePtr(), name ),
-		itIsOnServer    ( onServer          ),
-		itsDirSpec      ( dir               )
+		FSTree_Directory( null_FSTreePtr, name ),
+		itIsOnServer    ( onServer             ),
+		itsDirSpec      ( dir                  )
 	{
 		// we override Parent()
 	}
@@ -566,7 +566,7 @@ namespace Genie
 	                        const std::string&  name,
 	                        const FSTree*       parent )
 	:
-		FSTree_Directory( parent       ? parent->Self()    : FSTreePtr(),
+		FSTree_Directory( parent       ? parent->Self()    : null_FSTreePtr,
 		                  name.empty() ? MakeName ( file ) : name ),
 		itsFileSpec     ( file                             ),
 		itIsOnServer    ( onServer                         )
@@ -665,11 +665,11 @@ namespace Genie
 	{
 		FSTree_Union* u = NULL;
 		
-		static FSTreePtr result = seize_ptr( u = new FSTree_Union( FSTreePtr(), "" ) );
+		static FSTreePtr result = seize_ptr( u = new FSTree_Union( null_FSTreePtr, "" ) );
 		
 		if ( u != NULL )
 		{
-			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( FSTreePtr(), "" );
+			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "" );
 			FSTreePtr bottom = seize_ptr( new FSTree_Root() );
 			
 			u->SetTop   ( top    );

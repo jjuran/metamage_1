@@ -36,6 +36,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	const FSTreePtr null_FSTreePtr = FSTreePtr();
+	
+	
 	FSNode::~FSNode()
 	{
 	}
@@ -262,7 +265,7 @@ namespace Genie
 	{
 		p7::throw_errno( EINVAL );
 		
-		return FSTreePtr();
+		return null_FSTreePtr;
 	}
 	
 	void FSTree::SymLink( const std::string& target ) const
@@ -325,7 +328,7 @@ namespace Genie
 		p7::throw_errno( ENOENT );
 		
 		// Not reached
-		return FSTreePtr();
+		return null_FSTreePtr;
 	}
 	
 	FSIteratorPtr FSTree::Iterate() const

@@ -40,7 +40,7 @@ namespace Genie
 		public:
 			FSTree_IOHandle( const boost::shared_ptr< IOHandle >& handle )
 			:
-				FSTree( FSTreePtr(), IOName( handle.get(), true ) ),
+				FSTree( null_FSTreePtr, IOName( handle.get(), true ) ),
 				itsHandle( handle )
 			{
 			}

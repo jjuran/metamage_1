@@ -27,7 +27,7 @@ namespace Genie
 	{
 		const bool absolute = !path.empty() && path[0] == '/';
 		
-		return ResolvePathname( path,   absolute          ? FSTreePtr()
+		return ResolvePathname( path,   absolute          ? null_FSTreePtr
 		                              : dirfd == AT_FDCWD ? CurrentProcess().GetCWD()
 			                          :                     GetDirFile( dirfd ) );
 	}
