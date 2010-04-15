@@ -37,6 +37,7 @@ namespace plus
 			{
 				const char*  pointer;
 				size_type    length;
+				size_type    capacity;
 			};
 			
 			union
@@ -46,13 +47,20 @@ namespace plus
 				long         its_longs[ buffer_size_in_longs ];
 			};
 		
+		protected:
+			const char* internal_data() const;
+			
+			const char* external_data() const;
+			
+			void set_length( size_type length );
+		
 		public:
 			string()
 			{
 				its_small_name[ max_offset ] = max_offset;
 			}
 			
-			string( const char* p, size_type length, delete_policy policy );
+			string( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
 			
 			string( const char* p, size_type length );
 			
@@ -65,11 +73,24 @@ namespace plus
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
+			static size_type max_size()
+			{
+				// 32 or 64
+				const int n_bits = sizeof (size_type) * 8;
+				
+				// 0x7fffffff[ffffffff]
+				const size_type max = (size_type( 1 ) << n_bits - 1) - 1;
+				
+				return max;
+			}
+			
 			bool empty() const  { return length() == 0; }
 			
 			size_type length() const;
 			
 			size_type size() const  { return length(); }
+			
+			size_type capacity() const;
 			
 			const char* data() const;
 			
@@ -77,7 +98,11 @@ namespace plus
 			
 			operator const char*() const  { return c_str(); }
 			
-			void assign( const char* p, size_type length, delete_policy policy );
+			const char* begin() const  { return data(); }
+			
+			const char* end() const  { return begin() + size(); }
+			
+			void assign( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
 			
 			void assign( const char* p, size_type length );
 			
@@ -87,18 +112,7 @@ namespace plus
 			
 			void assign( const string& other )  { assign( other.data(), other.size() ); }
 			
-			void append( const char* p, size_type length );
-			
-			void append( const char* p, const char* q )  { append( p, q - p ); }
-			
-			void append( const char* s );
-			
-			void append( const string& other )  { append( other.data(), other.size() ); }
-			
 			string& operator=( const char* s )  { assign( s );  return *this; }
-			
-			string& operator+=( const string& s )  { append( s );  return *this; }
-			string& operator+=( const char*   s )  { append( s );  return *this; }
 			
 			void swap( string& other );
 	};

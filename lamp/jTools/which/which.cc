@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 // plus
-#include "plus/string.hh"
+#include "plus/var_string.hh"
 
 
 int main( int argc, char const *const argv[] )
@@ -68,7 +68,7 @@ int main( int argc, char const *const argv[] )
 		
 		for ( Iter it = dirs.begin();  it != dirs.end();  ++it )
 		{
-			plus::string pathname = *it + "/" + *program;
+			plus::var_string pathname = *it + "/" + *program;
 			
 			struct ::stat sb;
 			
