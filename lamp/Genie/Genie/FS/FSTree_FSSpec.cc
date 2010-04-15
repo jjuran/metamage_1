@@ -68,7 +68,9 @@
 #include "Genie/FS/ResFile_Dir.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/Root_Overlay.hh"
 #include "Genie/FS/StatFile.hh"
+#include "Genie/FS/Union.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
 #include "Genie/IO/MacFile.hh"
@@ -662,20 +664,17 @@ namespace Genie
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
-		FSTree_Root* tree = NULL;
+		FSTree_Union* u = NULL;
 		
-		static FSTreePtr result = seize_ptr( tree = new FSTree_Root() );
+		static FSTreePtr result = seize_ptr( u = new FSTree_Union( FSTreePtr(), "" ) );
 		
-		if ( tree != NULL )
+		if ( u != NULL )
 		{
-			tree->Map( FSTreeFromFSDirSpec( GetUsersDirectory(), false ) );
+			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( FSTreePtr(), "" );
+			FSTreePtr bottom = seize_ptr( new FSTree_Root() );
 			
-			tree->Map( seize_ptr( new FSTree_Volumes( result, "Volumes" ) ) );
-			tree->Map(            New_FSTree_proc   ( result, "proc"    )   );
-			
-			tree->Map( Premapped_Factory< dev_Mappings >( result, "dev" ) );
-			tree->Map( Premapped_Factory< new_Mappings >( result, "new" ) );
-			tree->Map( Premapped_Factory< sys_Mappings >( result, "sys" ) );
+			u->SetTop   ( top    );
+			u->SetBottom( bottom );
 		}
 		
 		return result;
