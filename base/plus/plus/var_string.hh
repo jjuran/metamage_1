@@ -17,6 +17,9 @@ namespace plus
 	
 	class var_string : public string
 	{
+		private:
+			char* mutable_data() const  { return const_cast< char* >( data() ); }
+		
 		public:
 			var_string()
 			{
