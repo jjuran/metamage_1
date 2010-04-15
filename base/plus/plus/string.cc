@@ -113,6 +113,18 @@ namespace plus
 		                                        : its_small_name;
 	}
 	
+	const char* string::internal_data() const
+	{
+		return its_small_name[ max_offset ] < 0 ? NULL
+		                                        : its_small_name;
+	}
+	
+	const char* string::external_data() const
+	{
+		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
+		                                        : NULL;
+	}
+	
 	void string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
 		if ( length )

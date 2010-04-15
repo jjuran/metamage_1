@@ -47,6 +47,11 @@ namespace plus
 				long         its_longs[ buffer_size_in_longs ];
 			};
 		
+		protected:
+			const char* internal_data() const;
+			
+			const char* external_data() const;
+		
 		public:
 			string()
 			{
