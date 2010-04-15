@@ -69,6 +69,8 @@
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/StatFile.hh"
+#include "Genie/FS/Users.hh"
+#include "Genie/FS/Volumes.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -643,6 +645,18 @@ namespace Genie
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
 	{
 		return FSTreeFromFSSpec( MacIO::FSMakeFSSpec< FNF_Throws >( dir, NULL ), onServer );
+	}
+	
+	FSTreePtr New_FSTree_Users( const FSTreePtr&    parent,
+	                            const std::string&  name )
+	{
+		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
+	}
+	
+	FSTreePtr New_FSTree_Volumes( const FSTreePtr&    parent,
+	                              const std::string&  name )
+	{
+		return seize_ptr( new FSTree_Volumes( parent, name ) );
 	}
 	
 	
