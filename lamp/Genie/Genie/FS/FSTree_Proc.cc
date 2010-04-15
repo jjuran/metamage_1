@@ -90,7 +90,7 @@ namespace Genie
 				return GetProcess( its_pid ).FileDescriptors();
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -596,7 +596,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr FSTree_PID_fd::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_PID_fd::Lookup_Child( const std::string& name, const FSTree* parent ) const
 	{
 		const int key = iota::parse_unsigned_decimal( name.c_str() );
 		
@@ -607,7 +607,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return seize_ptr( new FSTree_PID_fd_N( Self(), name, its_pid, key ) );
+		return seize_ptr( new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name, its_pid, key ) );
 	}
 	
 	

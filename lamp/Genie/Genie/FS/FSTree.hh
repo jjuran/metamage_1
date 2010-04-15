@@ -159,7 +159,7 @@ namespace Genie
 			
 			virtual void CreateDirectory( mode_t mode ) const;
 			
-			virtual FSTreePtr Lookup( const std::string& name ) const;
+			virtual FSTreePtr Lookup( const std::string& name, const FSTree* parent = NULL ) const;
 			
 			virtual FSIteratorPtr Iterate() const;
 			

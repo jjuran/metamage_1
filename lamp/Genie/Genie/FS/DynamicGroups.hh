@@ -55,7 +55,7 @@ namespace Genie
 			
 			virtual DynamicElementGetter Getter() const = 0;
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};

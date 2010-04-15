@@ -132,7 +132,7 @@ namespace Genie
 	
 	FSTreePtr FSTree::Parent() const
 	{
-		return itsParent;
+		return itsParent.get() ? itsParent : Self();
 	}
 	
 	ino_t FSTree::Inode() const
@@ -320,7 +320,7 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
-	FSTreePtr FSTree::Lookup( const std::string& /*name*/ ) const
+	FSTreePtr FSTree::Lookup( const std::string& name, const FSTree* parent ) const
 	{
 		p7::throw_errno( ENOENT );
 		

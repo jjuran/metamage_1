@@ -40,38 +40,13 @@ namespace Genie
 			mode_t FileTypeMode() const  { return S_IFDIR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR | S_IXUSR; }
 			
-			FSTreePtr Lookup( const std::string& name ) const;
+			FSTreePtr Lookup( const std::string& name, const FSTree* parent ) const;
 			
-			virtual FSTreePtr Lookup_Child( const std::string& name ) const = 0;
+			virtual FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const = 0;
 			
 			FSIteratorPtr Iterate() const;
 			
 			virtual void IterateIntoCache( FSTreeCache& cache ) const = 0;
-	};
-	
-	
-	class FSTree_Mappable : public FSTree_Directory
-	{
-		protected:
-			typedef std::map< std::string, FSTreePtr > Mappings;
-			
-			Mappings mappings;
-		
-		public:
-			FSTree_Mappable( const FSTreePtr&    parent,
-			                 const std::string&  name ) : FSTree_Directory( parent, name )
-			{
-			}
-			
-			~FSTree_Mappable();
-			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
-			
-			void Map( FSTreePtr tree );
-			
-			FSTreePtr Lookup_Mapping( const std::string& name ) const;
-			
-			virtual FSTreePtr Lookup_Regular( const std::string& name ) const = 0;
 	};
 	
 	
@@ -112,7 +87,7 @@ namespace Genie
 			
 			void Delete() const;
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
