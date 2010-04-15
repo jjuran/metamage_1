@@ -65,6 +65,17 @@ namespace plus
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
+			static size_type max_size()
+			{
+				// 32 or 64
+				const int n_bits = sizeof (size_type) * 8;
+				
+				// 0x7fffffff[ffffffff]
+				const size_type max = (size_type( 1 ) << n_bits - 1) - 1;
+				
+				return max;
+			}
+			
 			bool empty() const  { return length() == 0; }
 			
 			size_type length() const;
