@@ -94,7 +94,7 @@ namespace plus
 		}
 	}
 	
-	void var_string::resize( size_type new_size )
+	void var_string::resize( size_type new_size, char c )
 	{
 		check_size( new_size );
 		
@@ -112,7 +112,7 @@ namespace plus
 			
 			char* data = begin();
 			
-			std::fill( data + size(), data + new_size, '\0' );
+			std::fill( data + size(), data + new_size, c );
 		}
 		
 		set_length( new_size );
