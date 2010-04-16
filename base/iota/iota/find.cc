@@ -19,9 +19,9 @@ namespace iota
 		return a == b;
 	}
 	
-	const char* find_first_match( const char* p, unsigned length, char c )
+	const char* find_first_match( const char* p, const char* end, char c )
 	{
-		for ( const char* end = p + length;  p != end;  ++p )
+		for ( ;  p != end;  ++p )
 		{
 			if ( char_matches( *p, c ) )
 			{
@@ -32,11 +32,11 @@ namespace iota
 		return 0;  // NULL
 	}
 	
-	const char* find_last_match( const char* p, unsigned length, char c )
+	const char* find_last_match( const char* p, const char* end, char c )
 	{
 		const char* begin = p;
 		
-		p += length;
+		p = end;
 		
 		while ( p != begin )
 		{
@@ -64,10 +64,10 @@ namespace iota
 	}
 	
 	const char* find_first_match( const char*           p,
-	                              unsigned              length,
+	                              const char*           end,
 	                              const unsigned char*  chars )
 	{
-		for ( const char* end = p + length;  p != end;  ++p )
+		for ( ;  p != end;  ++p )
 		{
 			if ( char_matches( *p, chars ) )
 			{
@@ -79,12 +79,12 @@ namespace iota
 	}
 	
 	const char* find_last_match( const char*           p,
-	                             unsigned              length,
+	                             const char*           end,
 	                             const unsigned char*  chars )
 	{
 		const char* begin = p;
 		
-		p += length;
+		p = end;
 		
 		while ( p != begin )
 		{
@@ -98,11 +98,11 @@ namespace iota
 	}
 	
 	const char* find_first_match( const char*  p,
-	                              unsigned     length,
+	                              const char*  end,
 	                              const char*  sub,
 	                              unsigned     sub_length )
 	{
-		for ( const char* end = p + length - sub_length;  p <= end;  ++p )
+		for ( end -= sub_length;  p <= end;  ++p )
 		{
 			if ( memcmp( p, sub, sub_length ) == 0 )
 			{
@@ -114,13 +114,13 @@ namespace iota
 	}
 	
 	const char* find_last_match( const char*  p,
-	                             unsigned     length,
+	                             const char*  end,
 	                             const char*  sub,
 	                             unsigned     sub_length )
 	{
 		const char* begin = p;
 		
-		p += length - sub_length;
+		p = end - sub_length;
 		
 		while ( p >= begin )
 		{
