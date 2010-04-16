@@ -19,7 +19,10 @@ namespace iota
 		return a == b;
 	}
 	
-	const char* find_first_match( const char* p, const char* end, char c )
+	const char* find_first_match( const char*  p,
+	                              const char*  end,
+	                              char         c,
+	                              const char*  _default )
 	{
 		for ( ;  p != end;  ++p )
 		{
@@ -29,10 +32,13 @@ namespace iota
 			}
 		}
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
-	const char* find_last_match( const char* p, const char* end, char c )
+	const char* find_last_match( const char*  p,
+	                             const char*  end,
+	                             char         c,
+	                             const char*  _default )
 	{
 		const char* begin = p;
 		
@@ -46,7 +52,7 @@ namespace iota
 			}
 		}
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
 	
@@ -65,7 +71,8 @@ namespace iota
 	
 	const char* find_first_match( const char*           p,
 	                              const char*           end,
-	                              const unsigned char*  chars )
+	                              const unsigned char*  chars,
+	                              const char*           _default )
 	{
 		for ( ;  p != end;  ++p )
 		{
@@ -75,12 +82,13 @@ namespace iota
 			}
 		}
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
 	const char* find_last_match( const char*           p,
 	                             const char*           end,
-	                             const unsigned char*  chars )
+	                             const unsigned char*  chars,
+	                             const char*           _default )
 	{
 		const char* begin = p;
 		
@@ -94,13 +102,14 @@ namespace iota
 			}
 		}
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
 	const char* find_first_match( const char*  p,
 	                              const char*  end,
 	                              const char*  sub,
-	                              unsigned     sub_length )
+	                              unsigned     sub_length,
+	                              const char*  _default )
 	{
 		for ( end -= sub_length;  p <= end;  ++p )
 		{
@@ -110,13 +119,14 @@ namespace iota
 			}
 		}
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
 	const char* find_last_match( const char*  p,
 	                             const char*  end,
 	                             const char*  sub,
-	                             unsigned     sub_length )
+	                             unsigned     sub_length,
+	                             const char*  _default )
 	{
 		const char* begin = p;
 		
@@ -132,7 +142,7 @@ namespace iota
 			--p;
 		};
 		
-		return 0;  // NULL
+		return _default;
 	}
 	
 }
