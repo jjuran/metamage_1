@@ -15,6 +15,9 @@
 // POSIX
 #include "dirent.h"
 
+// gear
+#include "gear/find.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -507,9 +510,9 @@ namespace ShellShock
 		
 		std::vector< plus::string > result;
 		
-		std::size_t meta = word.find_first_of( "*?[" );
+		const unsigned char* metachars = "\p" "*" "?" "[";
 		
-		if ( meta != word.npos )
+		if ( gear::find_first_match( word.data(), word.size(), metachars ) )
 		{
 			//char path[ 1024 ];
 			
