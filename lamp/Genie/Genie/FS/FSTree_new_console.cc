@@ -409,7 +409,7 @@ namespace Genie
 		
 		std::string& s = TextEditParameters::Get( view ).itsText;
 		
-		const bool readable = params.itsStartOfInput < s.size()  &&  *s.rbegin() == '\n'  ||  params.itHasReceivedEOF;
+		const bool readable = params.itsStartOfInput < s.size()  &&  *(s.end() - 1) == '\n'  ||  params.itHasReceivedEOF;
 		
 		int readability = readable ? kPollRead : 0;
 		

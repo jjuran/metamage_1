@@ -95,7 +95,7 @@ namespace io
 	{
 		std::string result = pathname;
 		
-		if ( *result.rbegin() != '/' )
+		if ( *(result.end() - 1) != '/' )
 		{
 			result += '/';
 		}
@@ -109,7 +109,7 @@ namespace io
 	
 	inline std::string path_descent( std::string path, const char* name, std::size_t length )
 	{
-		if ( *path.rbegin() != '/' )
+		if ( *(path.end() - 1) != '/' )
 		{
 			path += '/';
 		}

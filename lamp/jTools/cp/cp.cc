@@ -86,7 +86,7 @@ namespace tool
 				
 				std::string destFilePath = destDir;
 				
-				if ( *destFilePath.rbegin() != '/' )
+				if ( *(destFilePath.end() - 1) != '/' )
 				{
 					destFilePath += '/';
 				}
@@ -126,7 +126,7 @@ namespace tool
 					// Copy this -> that/this
 					// set that = that/this
 					
-					if ( *destFilePath.rbegin() != '/' )
+					if ( *(destFilePath.end() - 1) != '/' )
 					{
 						destFilePath += '/';
 					}

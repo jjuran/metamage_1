@@ -192,7 +192,7 @@ namespace tool
 		
 		std::string dirName = io::get_filename( dirPath );
 		
-		if ( dirName.c_str()[0] == '('  &&  *dirName.rbegin() == ')' )
+		if ( dirName.c_str()[0] == '('  &&  *(dirName.end() - 1) == ')' )
 		{
 			return;  // skip "(Guarded)" directories
 		}

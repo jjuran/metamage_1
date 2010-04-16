@@ -77,7 +77,7 @@ namespace tool
 			
 			global_name_data.append( trap_name, line_end );
 			
-			*global_name_data.rbegin() = '\0';
+			*(global_name_data.end() - 1) = '\0';
 		}
 	}
 	

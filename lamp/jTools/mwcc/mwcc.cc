@@ -130,7 +130,7 @@ namespace tool
 		
 		if ( within )
 		{
-			const bool trailing_colon = (*mac_cwd.rbegin() == ':');
+			const bool trailing_colon = *(mac_cwd.end() - 1) == ':';
 			
 			const std::size_t common = mac_cwd.length() - trailing_colon;
 			

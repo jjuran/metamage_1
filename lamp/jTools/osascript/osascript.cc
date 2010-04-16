@@ -338,7 +338,7 @@ namespace tool
 				                                                                     N::typeChar,
 				                                                                     displayFlags ) );
 				
-				if ( *output.rbegin() != '\n' )
+				if ( *(output.end() - 1) != '\n' )
 				{
 					output += "\n";
 				}

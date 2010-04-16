@@ -451,7 +451,7 @@ namespace tool
 			
 			if ( io::directory_exists( pathname ) )
 			{
-				if ( *pathname.rbegin() != '/' )
+				if ( *(pathname.end() - 1) != '/' )
 				{
 					SendError( "404 Not Found" );
 					

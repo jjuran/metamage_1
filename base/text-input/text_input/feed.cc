@@ -22,7 +22,7 @@ namespace text_input
 	
 	static inline bool is_complete_line( const std::string& s )
 	{
-		return !s.empty()  &&  *s.rbegin() == '\n';
+		return !s.empty()  &&  *(s.end() - 1) == '\n';
 	}
 	
 	

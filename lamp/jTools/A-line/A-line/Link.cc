@@ -451,7 +451,7 @@ namespace tool
 			{
 				ASSERT( !its_objects_dir.empty() );
 				
-				ASSERT( *its_objects_dir.rbegin() != '/' );
+				ASSERT( *(its_objects_dir.end() - 1) != '/' );
 			}
 			
 			std::string operator()( const std::string& source_path ) const

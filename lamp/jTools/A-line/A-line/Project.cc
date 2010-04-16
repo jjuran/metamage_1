@@ -485,7 +485,7 @@ namespace tool
 					continue;
 				}
 				
-				if ( *absolute_path.rbegin() == '*' )
+				if ( *(absolute_path.end() - 1) == '*' )
 				{
 					
 				}
