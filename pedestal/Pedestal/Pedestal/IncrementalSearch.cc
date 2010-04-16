@@ -147,24 +147,25 @@ namespace Pedestal
 	
 	short TextSearch( const char*           text,
 	                  std::size_t           text_length,
-	                  const std::string&    pattern,
+	                  const char*           pattern,
+	                  std::size_t           pattern_length,
 	                  const TextSelection&  selection,
 	                  bool                  backward,
 	                  bool                  matchAtPosition )
 	{
 		short increment = backward ? -1 : 1;
 		
-		int position = pattern.size() == 1 ? backward ? selection.start - pattern.size()
+		int position = pattern_length == 1 ? backward ? selection.start - pattern_length
 		                                              : selection.end
 		             : selection.start + !matchAtPosition * increment;
 		
-		int maxPosition = text_length - pattern.size();
+		int maxPosition = text_length - pattern_length;
 		
 		int limit = backward ? -1 : maxPosition + 1;
 		
 		while ( position != limit )
 		{
-			if ( pattern_match( text + position, pattern.data(), pattern.size() ) )
+			if ( pattern_match( text + position, pattern, pattern_length ) )
 			{
 				return position;
 			}
@@ -285,7 +286,7 @@ namespace Pedestal
 			
 			itsMatches.push_back( selection );
 			
-			short match = itsView.Search( itsPattern, selection, itSearchesBackward, true );
+			short match = itsView.Search( itsPattern.data(), itsPattern.size(), selection, itSearchesBackward, true );
 			
 			if ( match == -1 )
 			{
@@ -323,7 +324,9 @@ namespace Pedestal
 			
 			TextSelection selection = editor.GetCurrentSelection();
 			
-			short match = editor.Search( GetLastSearchPattern(), selection, backward, false );
+			const std::string& last_pattern = GetLastSearchPattern();
+			
+			short match = editor.Search( last_pattern.data(), last_pattern.size(), selection, backward, false );
 			
 			if ( match == -1 )
 			{
@@ -331,7 +334,7 @@ namespace Pedestal
 			}
 			else
 			{
-				editor.Select( match, match + GetLastSearchPattern().length() );
+				editor.Select( match, match + last_pattern.length() );
 			}
 			
 			return true;

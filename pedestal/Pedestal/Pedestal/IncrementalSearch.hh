@@ -40,7 +40,8 @@ namespace Pedestal
 	
 	short TextSearch( const char*           text,
 	                  std::size_t           text_length,
-	                  const std::string&    pattern,
+	                  const char*           pattern,
+	                  std::size_t           pattern_length,
 	                  const TextSelection&  selection,
 	                  bool                  backward,
 	                  bool                  matchAtPosition );
@@ -67,7 +68,8 @@ namespace Pedestal
 			
 			void AugmentSelection();
 			
-			virtual int Search( const std::string&    pattern,
+			virtual int Search( const char*           pattern,
+			                    std::size_t           pattern_length,
 			                    const TextSelection&  selection,
 			                    bool                  searchBackwards,
 			                    bool                  matchAtPosition ) const = 0;
