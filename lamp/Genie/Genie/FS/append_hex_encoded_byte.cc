@@ -16,7 +16,7 @@ namespace Genie
 	{
 		const std::size_t size = s.size();
 		
-		s.resize( 2 * sizeof c );
+		s.resize( size + 2 * sizeof c );
 		
 		s[ size     ] = iota::encoded_hex_char( c >> 4 );
 		s[ size + 1 ] = iota::encoded_hex_char( c >> 0 );
