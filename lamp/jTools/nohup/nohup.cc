@@ -7,22 +7,27 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
-
-// Standard C++
-#include <string>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/uio.h>
+
+// Extended API Set, PArt 2
+#include "extended-api-set/part-2.h"
 
 // Iota
 #include "iota/strings.hh"
 
-// poseven
-#include "poseven/functions/perror.hh"
+// more-posix
+#include "more/perror.hh"
 
 
-namespace p7 = poseven;
+#pragma exceptions off
+
+
+#define NOHUP_OUT  "nohup.out"
 
 
 int main( int argc, char *const argv[] )
@@ -40,35 +45,57 @@ int main( int argc, char *const argv[] )
 	
 	if ( isatty( STDOUT_FILENO ) )
 	{
-		std::string nohup_out = "nohup.out";
+		const char* path = NULL;
 		
-		int output = open( nohup_out.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0600 );
+		int output = open( NOHUP_OUT, O_WRONLY | O_CREAT | O_APPEND, 0600 );
 		
 		if ( output == -1 )
 		{
 			if ( const char* home = getenv( "HOME" ) )
 			{
-				nohup_out = home;
+				path = home;
 				
-				nohup_out += "/nohup.out";
+				int home_fd = open( home, O_RDONLY | O_DIRECTORY );
 				
-				output = open( nohup_out.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0600 );
+				if ( home_fd >= 0 )
+				{
+					output = openat( home_fd, NOHUP_OUT, O_WRONLY | O_CREAT | O_APPEND, 0600 );
+					
+					int saved_errno = errno;
+					
+					close( home_fd );
+					
+					errno = saved_errno;
+				}
 			}
 			
 			if ( output == -1 )
 			{
-				p7::perror( "nohup: can't open a nohup.out file." );
+				more::perror( "nohup: can't open a nohup.out file." );
 				
 				return 127;
 			}
 		}
 		
-		std::string output_message = "sending output to ";
+		struct iovec output_message[] =
+		{
+			{ (void*) STR_LEN( "sending output to " ) },
+			{ (void*) STR_LEN( ""                   ) },
+			{ (void*) STR_LEN( ""                   ) },
+			{ (void*) STR_LEN( NOHUP_OUT            ) },
+			{ (void*) STR_LEN( "\n"                 ) }
+		};
 		
-		output_message += nohup_out;
-		output_message += "\n";
+		if ( path )
+		{
+			output_message[1].iov_base = (char*) path;
+			output_message[1].iov_len  = strlen( path );
+			
+			output_message[2].iov_base = (char*) "/";
+			output_message[2].iov_len  = STRLEN( "/" );
+		}
 		
-		(void) write( STDERR_FILENO, output_message.data(), output_message.size() );
+		(void) writev( STDERR_FILENO, output_message, sizeof output_message / sizeof output_message[0] );
 		
 		dup2( output, STDOUT_FILENO );
 		
@@ -84,7 +111,7 @@ int main( int argc, char *const argv[] )
 	
 	bool noSuchFile = errno == ENOENT;
 	
-	p7::perror( argv[0], argv[1] );
+	more::perror( argv[0], argv[1] );
 	
 	return noSuchFile ? 127 : 126;
 }
