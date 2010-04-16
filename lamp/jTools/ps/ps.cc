@@ -60,9 +60,15 @@ namespace tool
 	
 	static std::string left_padded( const char* begin, const char* end, unsigned length )
 	{
-		int pad_length = std::max< int >( length - (end - begin), 0 );
+		length = std::max< unsigned >( length, end - begin );
 		
-		std::string result( pad_length, ' ' );
+		const size_t pad_length = length - (end - begin);
+		
+		std::string result;
+		
+		result.reserve( length );
+		
+		result.resize( pad_length, ' ' );
 		
 		result.append( begin, end );
 		
@@ -71,9 +77,15 @@ namespace tool
 	
 	static std::string right_padded( const char* begin, const char* end, unsigned length )
 	{
-		int pad_length = std::max< int >( length - (end - begin), 0 );
+		length = std::max< unsigned >( length, end - begin );
 		
-		std::string result( begin, end );
+		const size_t pad_length = length - (end - begin);
+		
+		std::string result;
+		
+		result.reserve( length );
+		
+		result.assign( begin, end );
 		
 		result.append( pad_length, ' ' );
 		
