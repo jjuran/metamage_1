@@ -287,26 +287,22 @@ namespace tool
 			               gLocalVariables.end(),
 			               std::ptr_fun( PrintVariable ) );
 		}
-		else if ( argc == 2 )
+		else
 		{
-			if ( argv[1] == std::string( "-e" ) )
+			const char* first = argv[1];
+			
+			if ( first[0] == '-'  ||  first[0] == '+' )
 			{
-				SetOption( kOptionExitOnError, true );
-			}
-			else if ( argv[1] == std::string( "+e" ) )
-			{
-				SetOption( kOptionExitOnError, false );
-			}
-		}
-		else if ( argc == 3 )
-		{
-			if ( argv[1] == std::string( "-o" ) )
-			{
-				SetOptionByName( argv[2], true );
-			}
-			else if ( argv[1] == std::string( "+o" ) )
-			{
-				SetOptionByName( argv[2], false );
+				const bool value = first[0] == '-';
+				
+				if ( argc == 2  &&  first[1] == 'e' )
+				{
+					SetOption( kOptionExitOnError, value );
+				}
+				else if ( argc == 3  &&  first[1] == 'o' )
+				{
+					SetOptionByName( argv[2], value );
+				}
 			}
 		}
 		
