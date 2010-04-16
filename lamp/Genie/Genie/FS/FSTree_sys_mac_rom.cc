@@ -76,10 +76,7 @@ namespace Genie
 	{
 	#if TARGET_API_MAC_CARBON
 		
-		p7::throw_errno( EPERM );
-		
-		// Not reached
-		return boost::shared_ptr< IOHandle >();
+		throw p7::errno_t( EPERM );
 		
 	#else
 		

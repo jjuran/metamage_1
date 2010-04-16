@@ -169,10 +169,7 @@ namespace Genie
 			return *process;
 		}
 		
-		p7::throw_errno( ESRCH );
-		
-		// Not reached;
-		throw;
+		throw p7::errno_t( ESRCH );
 	}
 	
 	Process* FindProcess( pid_t pid )

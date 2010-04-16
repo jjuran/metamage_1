@@ -256,16 +256,12 @@ namespace Genie
 	
 	std::string FSTree::ReadLink() const
 	{
-		p7::throw_errno( EINVAL );
-		
-		return std::string();
+		throw p7::errno_t( EINVAL );
 	}
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		p7::throw_errno( EINVAL );
-		
-		return null_FSTreePtr;
+		throw p7::errno_t( EINVAL );
 	}
 	
 	void FSTree::SymLink( const std::string& target ) const
@@ -288,18 +284,12 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags /*flags*/ ) const
 	{
-		p7::throw_errno( ENOENT );  // Assume read attempt if no mode
-		
-		// Not reached
-		return boost::shared_ptr< IOHandle >();
+		throw p7::errno_t( ENOENT );  // Assume read attempt if no mode
 	}
 	
 	MainEntry FSTree::GetMainEntry() const
 	{
-		p7::throw_errno( ENOEXEC );
-		
-		// Not reached
-		return MainEntry();
+		throw p7::errno_t( ENOEXEC );
 	}
 	
 	
@@ -325,18 +315,12 @@ namespace Genie
 	
 	FSTreePtr FSTree::Lookup( const std::string& name, const FSTree* parent ) const
 	{
-		p7::throw_errno( ENOENT );
-		
-		// Not reached
-		return null_FSTreePtr;
+		throw p7::errno_t( ENOENT );
 	}
 	
 	FSIteratorPtr FSTree::Iterate() const
 	{
-		p7::throw_errno( ENOENT );
-		
-		// Not reached
-		return FSIteratorPtr();
+		throw p7::errno_t( ENOENT );
 	}
 	
 	FSTreePtr FSTree::ResolvePath( const char*& begin, const char* end ) const
