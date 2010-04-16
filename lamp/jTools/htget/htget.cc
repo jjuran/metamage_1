@@ -16,6 +16,7 @@
 #include "iota/strings.hh"
 
 // gear
+#include "gear/find.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
@@ -76,15 +77,9 @@ namespace tool
 	}
 	
 	
-	static const char* DocName( const plus::string& urlPath )
+	static inline const char* DocName( const char* url_path, std::size_t length )
 	{
-		std::size_t lastSlash = urlPath.find_last_of( "/" );
-		
-		// Skip the slash.
-		// If there wasn't one, then lastSlash == string::npos == 0xFFFFFFFF == -1.
-		// Adding one then yields zero, which is exactly what we want.
-		
-		return urlPath.c_str() + lastSlash + 1;
+		return gear::find_last_match( url_path, length, '/', url_path - 1 ) + 1;
 	}
 	
 	
@@ -185,7 +180,7 @@ namespace tool
 		
 		if ( saveToFile )
 		{
-			outputFile = DocName( urlPath );
+			outputFile = DocName( urlPath.c_str(), urlPath.size() );
 		}
 		
 		bool outputIsToFile = outputFile != defaultOutput;
