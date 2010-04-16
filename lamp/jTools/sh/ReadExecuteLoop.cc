@@ -81,11 +81,8 @@ namespace tool
 			           TIOCGWINSZ,
 			           &size );
 			
-			std::string lines   = iota::inscribe_decimal( size.ws_row );
-			std::string columns = iota::inscribe_decimal( size.ws_col );
-			
-			AssignShellVariable( "LINES",   lines  .c_str() );
-			AssignShellVariable( "COLUMNS", columns.c_str() );
+			AssignShellVariable( "LINES",   iota::inscribe_decimal( size.ws_row ) );
+			AssignShellVariable( "COLUMNS", iota::inscribe_decimal( size.ws_col ) );
 		}
 		catch ( ... )
 		{
