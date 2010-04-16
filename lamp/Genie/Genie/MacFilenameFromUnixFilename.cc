@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// iota
+#include "iota/find.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -43,9 +46,7 @@ namespace Kerosene
 			const char* begin = unixName.data();
 			const char* end   = begin + long_length;
 			
-			std::size_t dot = unixName.find_last_of( "." );
-			
-			const bool has_dot = dot != unixName.npos;
+			const char* dot = iota::find_last_match( begin, end, '.' );
 			
 			const unsigned minimum_remaining_base = 8;
 			
@@ -60,14 +61,13 @@ namespace Kerosene
 			                                 - inserted_length;        // -7
 			                                                           // == 16
 			
-			if ( !has_dot  ||  long_length - dot > extension_limit )
-			{
-				// Set the end of the base to end of string if there's no dot,
-				// or if the extension (including the dot) exceeds the limit.
-				dot = long_length;
-			}
+			const bool dotted = dot != NULL  &&  end - dot <= extension_limit;
 			
-			const std::size_t base_length = dot;
+			// Set the end of the base to end of string if there's no dot,
+			// or if the extension (including the dot) exceeds the limit.
+			const char* base_end = dotted ? dot : end;
+			
+			const std::size_t base_length = base_end - begin;
 			
 			const std::size_t replaced_length = long_length - max_length + inserted_length;
 			
@@ -86,10 +86,7 @@ namespace Kerosene
 				macName += base32_encode( hash.data[ i ] >> 3 );
 			}
 			
-			if ( has_dot )
-			{
-				macName.append( begin + dot, end );
-			}
+			macName.append( base_end, end );
 		}
 		
 		std::replace( macName.begin(), macName.end(), ':', '/' );
