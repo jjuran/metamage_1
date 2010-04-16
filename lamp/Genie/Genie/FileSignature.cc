@@ -11,6 +11,9 @@
 // Standard C
 #include <string.h>
 
+// gear
+#include "gear/find.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -162,13 +165,12 @@ namespace Genie
 		return Mac::kUnknownFSCreator;  // '????'
 	}
 	
-	Mac::FSSignature PickFileSignatureForName( const plus::string& name )
+	Mac::FSSignature PickFileSignatureForName( const char*  name,
+	                                           unsigned     length )
 	{
-		std::size_t dot = name.find_last_of( "." );
-		
-		if ( dot != name.npos )
+		if ( const char* dot = gear::find_last_match( name, length, '.' ) )
 		{
-			const char* extension = &name[ dot + 1 ];
+			const char* extension = dot + 1;
 			
 			if ( const ExtensionToTypeRecord* it = FindExtensionToTypeRecord( extension ) )
 			{

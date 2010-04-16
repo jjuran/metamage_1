@@ -829,7 +829,9 @@ namespace Genie
 	
 	void FSTree_HFS::CreateFile() const
 	{
-		N::FileSignature sig = PickFileSignatureForName( Name() );
+		const plus::string& name = Name();
+		
+		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
 		
 		N::FSpCreate( itsFileSpec, sig );
 		

@@ -12,13 +12,6 @@
 #endif
 
 
-namespace plus
-{
-	
-	class string;
-	
-}
-
 namespace Genie
 {
 	
@@ -29,7 +22,8 @@ namespace Genie
 		return Mac::FSCreator( gTextFileCreator );
 	}
 	
-	Mac::FSSignature PickFileSignatureForName( const plus::string& name );
+	Mac::FSSignature PickFileSignatureForName( const char*  name,
+	                                           unsigned     length );
 	
 }
 
