@@ -13,34 +13,34 @@
 // gear
 #include "gear/find.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 
 namespace io
 {
 	
 	plus::string get_preceding_directory( const plus::string& pathname )
 	{
-		plus::var_string result = pathname;
+		const char* begin = pathname.data();
 		
-		std::size_t last_slash = result.find_last_of( "/" );
+		const std::size_t length = pathname.size();
 		
-		if ( last_slash == result.size() - 1 )
+		if ( length != 0 )
 		{
-			result.resize( last_slash );
+			const char* end = begin + length;
 			
-			last_slash = result.find_last_of( "/" );
+			if ( end[ -1 ] == '/' )
+			{
+				--end;
+			}
+			
+			if ( const char* last_slash = gear::find_last_match( begin, end, '/' ) )
+			{
+				// substring constructor, may share the buffer
+				return plus::string( pathname, 0, last_slash + 1 - begin );
+			}
+			
 		}
 		
-		if ( last_slash == result.npos )
-		{
-			return ".";
-		}
-		
-		result.resize( last_slash + 1 );
-		
-		return result;
+		return ".";
 	}
 	
 	plus::string path_descent( const plus::string& path, const char* name, std::size_t length )
