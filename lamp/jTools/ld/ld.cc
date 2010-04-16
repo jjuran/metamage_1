@@ -278,9 +278,6 @@ namespace tool
 		std::fprintf( stderr, "ld: can't find library: %s\n", lib );
 		
 		throw p7::exit_failure;
-		
-		// Not reached
-		return filename;
 	}
 	
 	enum ProductType

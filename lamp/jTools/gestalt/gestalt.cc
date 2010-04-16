@@ -47,6 +47,6 @@ int main( int argc, char const *const argv[] )
 		std::printf( "Gestalt( '%s' ):  0x%x, %d\n", *argv, request, request );
 	}
 	
-	return 0;  // Not reached
+	return 0;
 }
 
