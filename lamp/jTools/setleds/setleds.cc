@@ -10,6 +10,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Arcana
 #if !TARGET_API_MAC_CARBON
 #include "ADB/KeyboardLEDs.hh"
@@ -59,7 +62,10 @@ namespace tool
 		bool caps   = leds & 2;
 		bool scroll = leds & 4;
 		
-		std::string message;
+		plus::var_string message;
+		
+		// Reserve enough memory to hold everything, avoiding reallocation
+		message.reserve( 255 );
 		
 		/*
 		message += "# Device at ADB address ";
