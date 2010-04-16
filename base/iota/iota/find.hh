@@ -23,6 +23,16 @@ namespace iota
 	                             unsigned              length,
 	                             const unsigned char*  chars );
 	
+	const char* find_first_match( const char*  p,
+	                              unsigned     length,
+	                              const char*  sub,
+	                              unsigned     sub_length );
+	
+	const char* find_last_match( const char*  p,
+	                             unsigned     length,
+	                             const char*  sub,
+	                             unsigned     sub_length );
+	
 }
 
 #endif

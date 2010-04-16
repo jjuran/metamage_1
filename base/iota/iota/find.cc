@@ -7,6 +7,9 @@
 
 #include "iota/find.hh"
 
+// Standard C
+#include <string.h>
+
 
 namespace iota
 {
@@ -90,6 +93,44 @@ namespace iota
 				return p;
 			}
 		}
+		
+		return 0;  // NULL
+	}
+	
+	const char* find_first_match( const char*  p,
+	                              unsigned     length,
+	                              const char*  sub,
+	                              unsigned     sub_length )
+	{
+		for ( const char* end = p + length - sub_length;  p <= end;  ++p )
+		{
+			if ( memcmp( p, sub, sub_length ) == 0 )
+			{
+				return p;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
+	const char* find_last_match( const char*  p,
+	                             unsigned     length,
+	                             const char*  sub,
+	                             unsigned     sub_length )
+	{
+		const char* begin = p;
+		
+		p += length - sub_length;
+		
+		while ( p >= begin )
+		{
+			if ( memcmp( p, sub, sub_length ) == 0 )
+			{
+				return p;
+			}
+			
+			--p;
+		};
 		
 		return 0;  // NULL
 	}
