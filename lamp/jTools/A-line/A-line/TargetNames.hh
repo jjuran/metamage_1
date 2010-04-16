@@ -19,8 +19,6 @@
 namespace tool
 {
 	
-	std::string ArchName( Platform arch );
-	
 	std::string MakeTargetName( Platform      arch,
 	                            Platform      runtime,
 	                            Platform      api,

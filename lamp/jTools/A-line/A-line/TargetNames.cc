@@ -13,7 +13,7 @@ namespace tool
 	
 	class InvalidPlatform {};
 	
-	std::string ArchName( Platform arch )
+	static const char* ArchName( Platform arch )
 	{
 		switch ( arch )
 		{
@@ -27,7 +27,7 @@ namespace tool
 		throw InvalidPlatform();
 	}
 	
-	static std::string RuntimeName( Platform rt )
+	static const char* RuntimeName( Platform rt )
 	{
 		switch ( rt )
 		{
@@ -40,7 +40,7 @@ namespace tool
 		return "";
 	}
 	
-	static std::string APIName( Platform api )
+	static const char* APIName( Platform api )
 	{
 		switch ( api )
 		{
@@ -52,7 +52,7 @@ namespace tool
 		return "";
 	}
 	
-	static std::string BuildName( BuildVariety build )
+	static const char* BuildName( BuildVariety build )
 	{
 		switch ( build )
 		{
@@ -73,9 +73,12 @@ namespace tool
 		
 	#if ALINE_CROSS_DEVELOPMENT
 		
-		name += ArchName   ( arch    ) + "-";
-		name += RuntimeName( runtime ) + "-";
-		name += APIName    ( api     ) + "-";
+		name += ArchName   ( arch    );
+		name += "-";
+		name += RuntimeName( runtime );
+		name += "-";
+		name += APIName    ( api     );
+		name += "-";
 		
 	#endif
 		
