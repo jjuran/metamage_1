@@ -10,6 +10,7 @@
 
 // iota
 #include "iota/decimal.hh"
+#include "iota/find.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -63,11 +64,18 @@ namespace tool
 	{
 		std::string path = find_appl( "MPSX" );
 		
-		path.resize( path.rend() - std::find( path.rbegin(), path.rend(), '/' ) );
+		const char* p = path.data();
 		
-		path += "SysErrs.err";
+		if ( const char* it = iota::find_last_match( p, path.size(), '/' ) )
+		{
+			path.resize( it + 1 - p );
+			
+			path += "SysErrs.err";
+			
+			return path;
+		}
 		
-		return path;
+		throw p7::errno_t( ENOENT );
 	}
 	
 	static OSErr get_error_from_entry( toc_entry entry )

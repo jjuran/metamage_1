@@ -7,8 +7,8 @@
 
 #include "one_path/find_InterfacesAndLibraries.hh"
 
-// Standard C++
-#include <algorithm>
+// iota
+#include "iota/find.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -29,27 +29,21 @@ namespace tool
 		
 		std::string pathname = find_appl( sig_ToolServer );
 		
-		typedef std::string::reverse_iterator Iter;
+		const char* p = pathname.data();
 		
-		Iter it = std::find( pathname.rbegin(), pathname.rend(), '/' );
-		
-		if ( it == pathname.rend() )
+		if ( const char* it = iota::find_last_match( p, pathname.size(), '/' ) )
 		{
-			p7::throw_errno( ENOENT );
+			if (( it = iota::find_last_match( p, it - p, '/' ) ))
+			{
+				pathname.resize( it + 1 - p );
+				
+				pathname += "Interfaces&Libraries";
+				
+				return pathname;
+			}
 		}
 		
-		it = std::find( it + 1, pathname.rend(), '/' );
-		
-		if ( it == pathname.rend() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		pathname.resize( pathname.rend() - it );
-		
-		pathname += "Interfaces&Libraries";
-		
-		return pathname;
+		throw p7::errno_t( ENOENT );
 	}
 	
 }
