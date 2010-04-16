@@ -112,6 +112,8 @@ namespace plus
 			
 			void assign( const string& other )  { assign( other.data(), other.size() ); }
 			
+			void clear()  { assign( (const char*) 0, size_type() ); }
+			
 			string& operator=( const char* s )  { assign( s );  return *this; }
 			
 			void swap( string& other );
