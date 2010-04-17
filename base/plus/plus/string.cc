@@ -163,15 +163,8 @@ namespace plus
 		its_small_name[ max_offset ] = ~policy;
 	}
 	
-	void string::assign( const char* p, size_type length )
+	char* string::reallocate( size_type length )
 	{
-		if ( length )
-		{
-			ASSERT( p != NULL );
-			
-			ASSERT( p + length >= p );
-		}
-		
 		char const *const old_pointer = its_alloc.pointer;
 		
 		const char old_margin = its_small_name[ max_offset ];
@@ -196,11 +189,41 @@ namespace plus
 			its_small_name[ max_offset ] = max_offset - length;
 		}
 		
-		memcpy( new_pointer, p, length );
-		
 		new_pointer[ length ] = '\0';
 		
 		dispose( old_pointer, old_margin );
+		
+		return new_pointer;
+	}
+	
+	void string::assign( const char* p, size_type length )
+	{
+		if ( length )
+		{
+			ASSERT( p != NULL );
+			
+			ASSERT( p + length >= p );
+		}
+		
+		if ( p < its_small_name + sizeof its_small_name  &&  p + length > its_small_name )
+		{
+			// input lies within our small buffer
+			
+			string temp( p, length );
+			
+			swap( temp );
+		}
+		else
+		{
+			// in case the input lies in an allocated buffer
+			string temp;
+			
+			swap( temp );
+			
+			char* new_pointer = reallocate( length );
+			
+			memcpy( new_pointer, p, length );
+		}
 	}
 	
 	void string::assign( const char* s )
