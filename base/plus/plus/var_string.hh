@@ -49,6 +49,10 @@ namespace plus
 			{
 			}
 			
+			var_string( size_type n, char c ) : string( n, c )
+			{
+			}
+			
 			var_string( const string& other ) : string( other )  {}
 			
 			var_string& operator=( const string& other )
@@ -99,6 +103,13 @@ namespace plus
 			var_string& assign( const char* s )
 			{
 				string::assign( s );
+				
+				return *this;
+			}
+			
+			var_string& assign( size_type n, char c )
+			{
+				string::assign( n, c );
 				
 				return *this;
 			}

@@ -80,6 +80,8 @@ namespace plus
 			
 			string( const char* s );
 			
+			string( size_type n, char c );
+			
 			~string();
 			
 			string           ( const string& other );
@@ -130,6 +132,8 @@ namespace plus
 			}
 			
 			string& assign( const char* s );
+			
+			string& assign( size_type n, char c );
 			
 			string& assign( const string& other )
 			{

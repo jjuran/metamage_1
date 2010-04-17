@@ -95,6 +95,13 @@ namespace plus
 		assign( s );
 	}
 	
+	string::string( size_type n, char c )
+	{
+		its_small_name[ max_offset ] = 0;
+		
+		assign( n, c );
+	}
+	
 	string::~string()
 	{
 		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
@@ -240,6 +247,15 @@ namespace plus
 		const size_type length = strlen( s );
 		
 		return assign( s, length );
+	}
+	
+	string& string::assign( size_type n, char c )
+	{
+		char* pointer = reallocate( n );
+		
+		memset( pointer, c, n );
+		
+		return *this;
 	}
 	
 	void string::swap( string& other )
