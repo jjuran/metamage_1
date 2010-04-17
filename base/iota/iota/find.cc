@@ -22,11 +22,12 @@ namespace iota
 	const char* find_first_match( const char*  p,
 	                              const char*  end,
 	                              char         c,
-	                              const char*  _default )
+	                              const char*  _default,
+	                              bool         negated )
 	{
 		for ( ;  p != end;  ++p )
 		{
-			if ( char_matches( *p, c ) )
+			if ( char_matches( *p, c ) - negated )
 			{
 				return p;
 			}
@@ -38,7 +39,8 @@ namespace iota
 	const char* find_last_match( const char*  p,
 	                             const char*  end,
 	                             char         c,
-	                             const char*  _default )
+	                             const char*  _default,
+	                             bool         negated )
 	{
 		const char* begin = p;
 		
@@ -46,7 +48,7 @@ namespace iota
 		
 		while ( p != begin )
 		{
-			if ( char_matches( *--p, c ) )
+			if ( char_matches( *--p, c ) - negated )
 			{
 				return p;
 			}
@@ -72,11 +74,12 @@ namespace iota
 	const char* find_first_match( const char*           p,
 	                              const char*           end,
 	                              const unsigned char*  chars,
-	                              const char*           _default )
+	                              const char*           _default,
+	                              bool                  negated )
 	{
 		for ( ;  p != end;  ++p )
 		{
-			if ( char_matches( *p, chars ) )
+			if ( char_matches( *p, chars ) - negated )
 			{
 				return p;
 			}
@@ -88,7 +91,8 @@ namespace iota
 	const char* find_last_match( const char*           p,
 	                             const char*           end,
 	                             const unsigned char*  chars,
-	                             const char*           _default )
+	                             const char*           _default,
+	                             bool                  negated )
 	{
 		const char* begin = p;
 		
@@ -96,7 +100,7 @@ namespace iota
 		
 		while ( p != begin )
 		{
-			if ( char_matches( *--p, chars ) )
+			if ( char_matches( *--p, chars ) - negated )
 			{
 				return p;
 			}
