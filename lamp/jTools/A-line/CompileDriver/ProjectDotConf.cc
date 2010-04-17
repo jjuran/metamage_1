@@ -113,7 +113,7 @@ namespace tool
 			if ( value[ 0 ] == '"'  &&  value[ size - 1 ] == '"' )
 			{
 				// Strip off double-quotes and push single value
-				value = value.substr( 1, (size - 1) - 1 );
+				value.assign( &value[ 1 ], size - 2 );
 				
 				line.values.push_back( value );
 			}

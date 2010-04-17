@@ -638,7 +638,7 @@ namespace tool
 		
 		if ( its_creator_code.size() == 6  &&  its_creator_code[0] == '\''  &&  its_creator_code[5] == '\'' )
 		{
-			its_creator_code = its_creator_code.substr( 1, 4 );
+			its_creator_code.assign( &its_creator_code[ 1 ], 4 );
 		}
 		
 		if ( !its_source_file_pathnames.empty() )

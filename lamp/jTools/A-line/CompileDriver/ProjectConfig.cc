@@ -121,7 +121,7 @@ namespace tool
 		
 		if ( inverted )
 		{
-			new_prohibition = new_spec.substr( 1, new_spec.npos );
+			new_prohibition.assign( &new_spec[1], &*new_spec.end() );
 		}
 		
 		const std::string& platform_name = inverted ? new_prohibition : new_spec;
