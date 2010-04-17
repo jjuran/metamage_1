@@ -144,6 +144,8 @@ namespace plus
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			
+			string& operator=( char c )  { return assign( 1, c ); }
+			
 			void swap( string& other );
 	};
 	

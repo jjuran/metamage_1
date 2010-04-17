@@ -62,6 +62,8 @@ namespace plus
 			
 			var_string& operator=( const char* s )  { return assign( s ); }
 			
+			var_string& operator=( char c )  { return assign( 1, c ); }
+			
 			char* begin() const  { return mutable_data(); }
 			
 			char* end() const  { return begin() + size(); }
