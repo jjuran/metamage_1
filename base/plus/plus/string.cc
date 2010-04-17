@@ -176,16 +176,14 @@ namespace plus
 		
 		const char old_margin = its_small_name[ max_offset ];
 		
+		char* new_pointer = NULL;
+		
 		if ( length >= sizeof its_small_name )
 		{
 			// may throw
-			char *const pointer = (char*) ::operator new( length + 1 );
+			new_pointer = (char*) ::operator new( length + 1 );
 			
-			memcpy( pointer, p, length );
-			
-			pointer[ length ] = '\0';
-			
-			its_alloc.pointer  = pointer;
+			its_alloc.pointer  = new_pointer;
 			its_alloc.length   = length;
 			its_alloc.capacity = length;
 			
@@ -193,11 +191,14 @@ namespace plus
 		}
 		else
 		{
-			memcpy( its_small_name, p, length );
+			new_pointer = its_small_name;
 			
-			its_small_name[ length     ] = '\0';
 			its_small_name[ max_offset ] = max_offset - length;
 		}
+		
+		memcpy( new_pointer, p, length );
+		
+		new_pointer[ length ] = '\0';
 		
 		dispose( old_pointer, old_margin );
 	}
