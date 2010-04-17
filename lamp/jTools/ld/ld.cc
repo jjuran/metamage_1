@@ -623,8 +623,8 @@ namespace tool
 						N::ThrowOSStatus( eofErr );
 					}
 					
-					std::string type   ( pkgInfo.begin(),     pkgInfo.begin() + 4 );
-					std::string creator( pkgInfo.begin() + 4, pkgInfo.begin() + 8 );
+					std::string type   ( pkgInfo.data(),     4 );
+					std::string creator( pkgInfo.data() + 4, 4 );
 					
 					gFileType    = store_string( type    );
 					gFileCreator = store_string( creator );
