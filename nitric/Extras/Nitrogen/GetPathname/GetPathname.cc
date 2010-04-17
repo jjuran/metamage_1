@@ -65,7 +65,7 @@ static std::string GetPOSIXPathname_Internal( const FSSpec& file )
 		}
 		else
 		{
-			return std::string( "/Volumes/" ) + filename;
+			return "/Volumes/" + filename;
 		}
 	}
 	

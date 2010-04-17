@@ -30,17 +30,17 @@ namespace SMTP
 			
 			inline std::string Hello( const std::string& hostname )
 			{
-				return std::string( "HELO " ) + hostname;
+				return "HELO " + hostname;
 			}
 			
 			inline std::string MailFrom( const std::string& from )
 			{
-				return std::string( "MAIL FROM:" ) + from;
+				return "MAIL FROM:" + from;
 			}
 			
 			inline std::string RecipientTo( const std::string& to )
 			{
-				return std::string( "RCPT TO:" ) + to;
+				return "RCPT TO:" + to;
 			}
 			
 			inline std::string BeginData()

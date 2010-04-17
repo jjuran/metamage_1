@@ -68,7 +68,7 @@ namespace tool
 	
 	static std::string q( const std::string& str )
 	{
-		return std::string( "'" ) + str + "'";
+		return "'" + str + "'";
 	}
 	
 	static std::string& operator<<( std::string& str, const std::string& appendage )
