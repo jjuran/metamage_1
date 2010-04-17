@@ -15,6 +15,7 @@
 #include "iota/strings.hh"
 
 // gear
+#include "gear/find.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -147,20 +148,25 @@ namespace tool
 	{
 		std::vector< plus::string > result;
 		
-		std::size_t word = text.find_first_not_of( " \t" );
+		const unsigned char* whitespace = "\p"  " "  "\t";
 		
-		while ( word != text.npos )
+		const char* begin = text.data();
+		const char* end   = text.size() + begin;
+		
+		const char* word_start = gear::find_first_nonmatch( begin, end, whitespace );
+		
+		while ( const char* word_start = gear::find_first_nonmatch( begin, end, whitespace ) )
 		{
-			std::size_t ws = text.find_first_of( " \t", word );
+			const char* word_end = gear::find_first_match( word_start, end, whitespace, end );
 			
-			result.push_back( text.substr( word, ws - word ) );
+			result.push_back( plus::string( word_start, word_end ) );
 			
-			if ( ws == text.npos )
+			if ( word_end == end )
 			{
 				break;
 			}
 			
-			word = text.find_first_not_of( " \t", ws );
+			begin = word_end;
 		}
 		
 		return result;
@@ -202,9 +208,7 @@ namespace tool
 	
 	static void ProcessLine( const plus::string& line )
 	{
-		std::size_t first = line.find_first_not_of( " \t" );
-		
-		if ( first == line.npos || line[ first ] == '#' )
+		if ( gear::find_first_nonmatch( line.data(), line.size(), "\p \t", "#" )[0] == '#' )
 		{
 			return;  // It's blank or a comment
 		}
