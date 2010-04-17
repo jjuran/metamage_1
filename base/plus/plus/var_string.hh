@@ -146,6 +146,8 @@ namespace plus
 			
 			var_string& append( const char* s );
 			
+			var_string& append( size_type n, char c );
+			
 			var_string& append( char c )  { return append( &c, sizeof c ); }
 			
 			var_string& append( const string& other )

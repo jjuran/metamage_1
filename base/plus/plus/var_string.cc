@@ -218,5 +218,12 @@ namespace plus
 		return append( s, length );
 	}
 	
+	var_string& var_string::append( size_type n, char c )
+	{
+		resize( size() + n, c );
+		
+		return *this;
+	}
+	
 }
 
