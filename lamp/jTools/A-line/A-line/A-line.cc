@@ -657,7 +657,7 @@ namespace tool
 		
 		for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 		{
-			const std::string& project_name = freeArgs[ i ];
+			const char* project_name = freeArgs[ i ];
 			
 			try
 			{
@@ -665,7 +665,7 @@ namespace tool
 			}
 			catch ( const NoSuchProject& )
 			{
-				std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
+				std::fprintf( stderr, "A-line: No such project '%s'\n", project_name );
 				
 				if ( !cache_was_written )
 				{
@@ -708,7 +708,7 @@ namespace tool
 			}
 			catch ( const p7::errno_t& err )
 			{
-				std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );
+				std::fprintf( stderr, "A-line: %s: %s\n", project_name, std::strerror( err ) );
 				
 				throw;
 			}
@@ -724,7 +724,7 @@ namespace tool
 		
 		for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 		{
-			const std::string& proj = freeArgs[ i ];
+			const char* proj = freeArgs[ i ];
 			
 			try
 			{
@@ -734,7 +734,7 @@ namespace tool
 			}
 			catch ( const p7::errno_t& err )
 			{
-				std::fprintf( stderr, "A-line: %s: %s\n", proj.c_str(), std::strerror( err ) );
+				std::fprintf( stderr, "A-line: %s: %s\n", proj, std::strerror( err ) );
 				
 				throw;
 			}
