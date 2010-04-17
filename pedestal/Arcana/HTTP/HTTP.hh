@@ -76,7 +76,7 @@ namespace HTTP
 			
 			const plus::string& GetMessageStream() const  { return itsReceivedData; }
 			
-			plus::string GetStatusLine() const  { return itsReceivedData.substr( 0, itsStartOfHeaderFields - 2 ); }
+			plus::string GetStatusLine() const  { return plus::string( itsReceivedData.data(), itsStartOfHeaderFields - 2 ); }
 			
 			const char* GetHeaderStream() const  { return itsReceivedData.data() + itsStartOfHeaderFields; }
 			
