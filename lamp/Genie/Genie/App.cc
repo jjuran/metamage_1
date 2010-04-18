@@ -13,7 +13,6 @@
 
 // Genie
 #include "Genie/Console.hh"
-#include "Genie/ExecHandler.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/Process.hh"
 
@@ -41,7 +40,6 @@ namespace Genie
 	{
 		private:
 			GenieHandlerReply myReplyEventHandler;
-			GenieExecHandler myExecHandler;
 			n::owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
