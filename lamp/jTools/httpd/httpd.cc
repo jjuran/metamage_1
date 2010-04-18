@@ -404,16 +404,14 @@ namespace tool
 		
 	}
 	
-	static void SendError( const std::string& error )
-	{
-		std::string message = HTTP_VERSION " " + error +      "\r\n"
-		                      "Content-Type: text/html"       "\r\n"
-		                                                      "\r\n"
-		                      "<title>" + error + "</title>"  "\r\n"
-		                      "<p>"     + error + "</p>"      "\r\n";
-		
-			p7::write( p7::stdout_fileno, message );
-	}
+	#define HTTP_ERROR( error )             \
+		                                    \
+		HTTP_VERSION " " error      "\r\n"  \
+		"Content-Type: text/html"   "\r\n"  \
+		                            "\r\n"  \
+		"<title>" error "</title>"  "\r\n"  \
+		"<p>"     error "</p>"      "\r\n"
+	
 	
 	static void SendResponse( const HTTP::MessageReceiver& request )
 	{
@@ -428,11 +426,7 @@ namespace tool
 		catch ( ... )
 		{
 			p7::write( p7::stdout_fileno,
-			           STR_LEN( HTTP_VERSION " 404 Not Found"                "\r\n"
-			                                 "Content-Type: text/html"       "\r\n"
-			                                                                 "\r\n"
-			                                 "<title>404 Not Found</title>"  "\r\n"
-			                                 "<p>404 Not Found</p>"          "\r\n" ) );
+			           STR_LEN( HTTP_ERROR( "404 Not Found" ) ) );
 			
 			return;
 		}
@@ -453,7 +447,8 @@ namespace tool
 			{
 				if ( *(pathname.end() - 1) != '/' )
 				{
-					SendError( "404 Not Found" );
+					p7::write( p7::stdout_fileno,
+					           STR_LEN( HTTP_ERROR( "404 Not Found" ) ) );
 					
 					return;
 				}
