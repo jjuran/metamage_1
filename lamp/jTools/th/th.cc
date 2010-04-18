@@ -6,6 +6,7 @@
 // Standard C
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Standard C/C++
 #include <cctype>
@@ -131,29 +132,31 @@ namespace tool
 		
 		while ( const std::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			const char* begin = s->c_str();
 			
-			if ( line[0] == '#' )
+			if ( begin[ 0 ] == '#' )
 			{
 				continue;
 			}
 			
-			const char* comment = std::strchr( line.c_str(), '#' );
+			const char* comment = std::strchr( begin, '#' );
 			
-			bool todo = comment != NULL  &&  std::memcmp( comment, STR_LEN( "# TODO" ) ) == 0;
+			const bool todo = comment  &&  memcmp( comment,
+			                                       STR_LEN( "# TODO" ) ) == 0;
 			
 			const char* number = NULL;
 			
 			bool passed = false;
 			
-			if ( line.substr( 0, 3 ) == "ok " )
+			if ( memcmp( begin, STR_LEN( "ok " ) ) == 0 )
 			{
 				passed = true;
-				number = line.c_str() + 3;
+				
+				number = begin + STRLEN( "ok " );
 			}
-			else if ( line.substr( 0, 7 ) == "not ok " )
+			else if ( memcmp( begin, STR_LEN( "not ok " ) ) == 0 )
 			{
-				number = line.c_str() + 7;
+				number = begin + STRLEN( "not ok " );
 				
 				if ( !todo  &&  results.failure == 0 )
 				{
