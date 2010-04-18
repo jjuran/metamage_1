@@ -94,13 +94,13 @@ namespace HTTP
 	};
 	
 	
-	inline plus::string RequestLine( const char* method, const plus::string& urlPath )
+	inline plus::string RequestLine( const char* method, const char* path, size_t size )
 	{
 		plus::var_string result = method;
 		
 		result += ' ';
 		
-		result.append( urlPath );
+		result.append( path, size );
 		
 		result.append( STR_LEN( " HTTP/1.0" "\r\n" ) );
 		

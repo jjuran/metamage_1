@@ -209,7 +209,7 @@ namespace tool
 		
 		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
-		plus::string message_header =   HTTP::RequestLine( method, urlPath )
+		plus::string message_header =   HTTP::RequestLine( method, urlPath.c_str(), urlPath.size() )
 		                              + HTTP::HeaderFieldLine( "Host", hostname )
 		                              + "\r\n";
 		

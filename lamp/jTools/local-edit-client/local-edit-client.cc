@@ -202,8 +202,6 @@ namespace tool
 		
 		const char* method = "APPLY";
 		
-		const char* urlPath = "/cgi-bin/local-edit-server";
-		
 		plus::string contentLengthHeader;
 		
 		try
@@ -214,7 +212,7 @@ namespace tool
 		{
 		}
 		
-		plus::string message_header =   HTTP::RequestLine( method, urlPath )
+		plus::string message_header =   HTTP::RequestLine( method, STR_LEN( "/cgi-bin/local-edit-server" ) )
 		                              //+ HTTP::HeaderLine( "Host", hostname )
 		                              + HTTP::HeaderFieldLine( "X-Edit-Title", basename( target_pathname ) )
 		                              + HTTP::HeaderFieldLine( "Content-MD5", old_digest_b64 )
