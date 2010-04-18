@@ -67,13 +67,11 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			plus::var_string& String()  { return TextEditParameters::Get( ViewKey() ).itsText; }
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF()  { return String().size(); }
+			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).itsText.size(); }
 			
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
@@ -110,7 +108,11 @@ namespace Genie
 	
 	ssize_t TextEdit_text_Handle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		plus::var_string& s = String();
+		const FSTree* view = ViewKey();
+		
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		plus::var_string& s = params.itsText;
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -120,10 +122,6 @@ namespace Genie
 		std::copy( buffer,
 		           buffer + n_bytes,
 		           s.begin() + offset );
-		
-		const FSTree* view = ViewKey();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		params.itsValidLength = std::min< size_t >( params.itsValidLength, offset );
 		
