@@ -24,6 +24,7 @@
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/open.hh"
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 
@@ -145,36 +146,37 @@ namespace tool
 		p7::write( p7::stdout_fileno, dump );
 	}
 	
-	static bool ParseURL( const plus::string& url,
-	                      plus::string& outURLScheme, 
-	                      plus::string& outHostname,
-	                      plus::string& outPort,
-	                      plus::string& outURLpath )
+	static const char* ParseURL( const char*    url,
+	                             plus::string&  outURLScheme, 
+	                             plus::string&  outHostname,
+	                             plus::string&  outPort )
 	{
-		std::size_t colonSlashSlash = url.find( "://" );
+		const char* colon_slash_slash = strstr( url, "://" );
 		
-		if ( colonSlashSlash == url.npos )
+		if ( colon_slash_slash == NULL )
 		{
-			return false;
+			return NULL;
 		}
 		
-		outURLScheme = url.substr( 0, colonSlashSlash );
+		outURLScheme.assign( url, colon_slash_slash );
 		
-		std::size_t hostnameStart = colonSlashSlash + 3;
-		std::size_t slash = url.find( "/", hostnameStart );
-		std::size_t colon = url.find( ":", hostnameStart );
-		std::size_t hostnameEnd = std::min( slash, colon );
+		const char* hostname = colon_slash_slash + STRLEN( "://" );
 		
-		outHostname = url.substr( hostnameStart, hostnameEnd - hostnameStart );
+		const char* end = url + strlen( url );
+		
+		const char* slash = std::find( hostname, end, '/' );
+		const char* colon = std::find( hostname, end, ':' );
+		
+		const char* hostname_end = std::min( slash, colon );
+		
+		outHostname.assign( hostname, hostname_end );
 		
 		if ( colon < slash )
 		{
-			outPort = url.substr( colon + 1, slash - (colon + 1) );
+			outPort.assign( colon + 1, slash );
 		}
 		
-		outURLpath = (slash == url.npos) ? plus::string( "/" ) : url.substr( slash, url.npos );
-		
-		return true;
+		return slash != end ? slash : "/";
 	}
 	
 	
@@ -235,20 +237,28 @@ namespace tool
 			return 1;
 		}
 		
-		plus::string scheme;
-		plus::string hostname;
-		plus::string urlPath;
-		plus::string portStr;
+		plus::string  scheme;
+		plus::string  hostname;
+		plus::string  portStr;
 		
 		const char* default_port = "";
 		
-		bool parsed = ParseURL( args[ 0 ], scheme, hostname, portStr, urlPath );
+		const char* url_path = ParseURL( args[ 0 ], scheme, hostname, portStr );
 		
-		// FIXME:  Eliminate . and .. from urlPath
+		if ( url_path == NULL )
+		{
+			p7::perror( "htget", args[ 0 ], "Malformed URL" );
+			
+			return 2;
+		}
+		
+		const size_t url_path_size = strlen( url_path );
+		
+		// FIXME:  Eliminate . and .. from url_path
 		
 		if ( saveToFile )
 		{
-			outputFile = DocName( urlPath.c_str(), urlPath.size() );
+			outputFile = DocName( url_path, url_path_size );
 		}
 		
 		bool outputIsToFile = outputFile != defaultOutput;
@@ -274,7 +284,7 @@ namespace tool
 			port = portStr.c_str();
 		}
 		
-		plus::string message_header =   HTTP::RequestLine( method, urlPath.c_str(), urlPath.size() )
+		plus::string message_header =   HTTP::RequestLine( method, url_path, url_path_size )
 		                              + HTTP::HeaderFieldLine( "Host", hostname )
 		                              + "User-Agent: " DEFAULT_USER_AGENT "\r\n"
 		                              + "\r\n";
