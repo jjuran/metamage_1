@@ -22,7 +22,17 @@ namespace plus
 	class string
 	{
 		public:
-			typedef unsigned long size_type;
+			typedef char value_type;
+			
+			typedef unsigned long  size_type;
+			typedef long           difference_type;
+			
+			typedef const char&  reference;
+			typedef const char&  const_reference;
+			typedef const char*  pointer;
+			typedef const char*  const_pointer;
+			typedef const char*  iterator;
+			typedef const char*  const_iterator;
 			
 			enum
 			{

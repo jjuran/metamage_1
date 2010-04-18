@@ -21,6 +21,10 @@ namespace plus
 			char* mutable_data() const  { return const_cast< char* >( data() ); }
 		
 		public:
+			typedef char&  reference;
+			typedef char*  pointer;
+			typedef char*  iterator;
+			
 			var_string()
 			{
 			}
