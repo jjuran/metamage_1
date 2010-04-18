@@ -340,7 +340,7 @@ namespace Genie
 	{
 		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
 		
-		FSSpec users = root / "Users";
+		FSSpec users = root / "\p" "Users";
 		
 		return Dir_From_FSSpec( users );
 	}
@@ -616,7 +616,7 @@ namespace Genie
 			io::delete_file( destFile );
 		}
 		
-		FSpFileCopy( srcFile, destDir / "", name );
+		FSpFileCopy( srcFile, destDir / "\p", name );
 	}
 	
 	
@@ -768,7 +768,7 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( itsFileSpec == GetUsersDirectory() / "" )
+		if ( itsFileSpec == GetUsersDirectory() / "\p" )
 		{
 			return FSRoot();
 		}
