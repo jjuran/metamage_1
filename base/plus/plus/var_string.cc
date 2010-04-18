@@ -24,6 +24,26 @@
 namespace plus
 {
 	
+	char* var_string::erase( char* p, char* q )
+	{
+		const size_type old_size = size();
+		
+		char* data = mutable_data();
+		char* end  = data + old_size;
+		
+		ASSERT( data <= p   );
+		ASSERT( p    <= q   );
+		ASSERT( q    <= end );
+		
+		std::copy( q, end, p );
+		
+		const size_type new_size = old_size - ( q - p );
+		
+		set_length( new_size );
+		
+		return p;
+	}
+	
 	static void check_size( string::size_type size )
 	{
 		// 2 GB limit on 32-bit platforms

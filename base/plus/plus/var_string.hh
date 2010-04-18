@@ -100,6 +100,10 @@ namespace plus
 			
 			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
 			
+			char* erase( char* p, char* q );
+			
+			char* erase( char* p )  { return erase( p, p + 1 ); }
+			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
 			
