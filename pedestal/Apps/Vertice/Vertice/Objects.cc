@@ -5,6 +5,9 @@
 
 #include "Vertice/Objects.hh"
 
+// Standard C/C++
+#include <cstdio>
+
 // Vectoria
 #include "Vectoria/Coordinates.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
