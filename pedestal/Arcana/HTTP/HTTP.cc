@@ -31,22 +31,6 @@ namespace p7 = poseven;
 namespace HTTP
 {
 	
-	// Can be used to construct a message header field (for sending)
-	struct HeaderFieldData
-	{
-		std::string name;
-		std::string value;
-		
-		HeaderFieldData()
-		{
-		}
-		
-		HeaderFieldData( const std::string& n, const std::string& v ) : name( n ), value( v )
-		{
-		}
-	};
-	
-	
 	static std::size_t GetContentLength( p7::fd_t message_body )
 	{
 		struct stat sb = p7::fstat( message_body );
