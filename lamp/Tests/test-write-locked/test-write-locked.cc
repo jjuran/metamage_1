@@ -3,9 +3,6 @@
  *	====================
  */
 
-// Standard C/C++
-#include <cstring>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -63,7 +60,7 @@ namespace tool
 		
 		plus::string slurped = p7::slurp( path );
 		
-		const bool match = std::strcmp( slurped.c_str(), TEST_STRING ) == 0;
+		const bool match = slurped == TEST_STRING;
 		
 		RUN_TEST( match, 2 );
 		
