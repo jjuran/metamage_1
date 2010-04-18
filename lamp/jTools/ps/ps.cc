@@ -165,7 +165,7 @@ namespace tool
 			term_string.assign( term_string.data() + STRLEN( "/sys/window/" ),
 			                    STRLEN( "1234567" ) );
 		}
-		else
+		else if ( term_string.length() > STRLEN( "/dev/" ) )
 		{
 			term_string.erase( 0, STRLEN( "/dev/" ) );
 		}
