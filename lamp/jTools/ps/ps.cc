@@ -162,9 +162,8 @@ namespace tool
 		
 		if ( term_string.length() == STRLEN( "/sys/window/12345678/tty" ) )
 		{
-			term_string.erase( STRLEN( "/sys/window/1234567" ), STRLEN( "0/tty" ) );
-			
-			term_string.erase( 0, STRLEN( "/sys/window/" ) );
+			term_string.assign( term_string.data() + STRLEN( "/sys/window/" ),
+			                    STRLEN( "1234567" ) );
 		}
 		else
 		{
