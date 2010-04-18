@@ -146,6 +146,49 @@ namespace plus
 		set_length( new_size );
 	}
 	
+	char* var_string::insert_uninitialized( char* p, size_type n )
+	{
+		const size_type old_size = size();
+		const size_type new_size = old_size + n;
+		
+		char* data = mutable_data();
+		char* end  = data + old_size;
+		
+		ASSERT( data <= p   );
+		ASSERT( p    <= end );
+		
+		ASSERT( new_size >= old_size );  // catch integer overflow
+		
+		const size_type offset = p - data;
+		
+		reserve( new_size );
+		
+		data = mutable_data();
+		
+		p    = data + offset;
+		end  = data + old_size;
+		
+		std::copy_backward( p, end, data + new_size );
+		
+		set_length( new_size );
+		
+		return p;
+	}
+	
+	void var_string::insert( char* p, char* i, char* j )
+	{
+		ASSERT( i <= j );
+		
+		const size_type n = j - i;
+		
+		std::copy( i, j, insert_uninitialized( p, n ) );
+	}
+	
+	void var_string::insert( char* p, size_type n, char c )
+	{
+		memset( insert_uninitialized( p, n ), c, n );
+	}
+	
 	var_string& var_string::append( const char* p, size_type length )
 	{
 		check_size( length );

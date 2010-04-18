@@ -19,6 +19,8 @@ namespace plus
 	{
 		private:
 			char* mutable_data() const  { return const_cast< char* >( data() ); }
+			
+			char* insert_uninitialized( char* p, size_type n );
 		
 		public:
 			typedef char&  reference;
@@ -106,6 +108,15 @@ namespace plus
 			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
+			
+			void insert( char* p, char* i, char* j );
+			
+			void insert( char* p, size_type n, char c );
+			
+			char* insert( char* p, char c )
+			{
+				return &(insert_uninitialized( p, 1 )[0] = c);
+			}
 			
 			var_string& append( const char* p, size_type length );
 			
