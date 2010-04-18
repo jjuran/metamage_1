@@ -169,13 +169,15 @@ namespace HTTP
 			// We need to concatenate all received data to check for the EOH marker.
 			itsReceivedData.append( data, byteCount );
 			
+			const char* begin = itsReceivedData.c_str();
+			
 			if ( itsStartOfHeaderFields == 0 )
 			{
-				if ( std::size_t crlf = itsReceivedData.find( "\r\n" ) )
+				if ( const char* crlf = strstr( begin, "\r\n" ) )
 				{
-					itsStartOfHeaderFields = crlf + STRLEN( "\r\n" );
+					itsStartOfHeaderFields = crlf - begin + STRLEN( "\r\n" );
 					
-					itsPlaceToLookForEndOfHeader = crlf;
+					itsPlaceToLookForEndOfHeader = crlf - begin;
 				}
 			}
 			
