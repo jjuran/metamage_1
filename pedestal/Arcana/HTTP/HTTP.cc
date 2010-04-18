@@ -220,11 +220,10 @@ namespace HTTP
 			                                                                           itsHeaderIndex,
 			                                                                           STR_LEN( "Content-Length" ) ) )
 			{
-				plus::string contentLength( header_stream + contentLengthEntry->value_offset,
-				                           header_stream + contentLengthEntry->crlf_offset );
+				const char* contentLength = header_stream + contentLengthEntry->value_offset;
 				
 				// Now get the *real* value, as opposed to its textual representation
-				itsContentLength = iota::parse_unsigned_decimal( contentLength.c_str() );
+				itsContentLength = iota::parse_unsigned_decimal( contentLength );
 				itsContentLengthIsKnown = true;
 			}
 			else
