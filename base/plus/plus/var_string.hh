@@ -25,6 +25,8 @@ namespace plus
 			char* insert_uninitialized( char* p, size_type n );
 			
 			char* erase_unchecked( char* p, size_type n );
+			
+			char* replace_setup( char* p, size_type m, difference_type delta );
 		
 		public:
 			typedef char&  reference;
@@ -200,6 +202,23 @@ namespace plus
 			}
 			
 			var_string& append( const string& other, size_type pos, size_type n );
+			
+			var_string& replace( size_type pos, size_type m, const string& s );
+			var_string& replace( size_type pos, size_type m, const string& s, size_type offset, size_type n );
+			
+			var_string& replace( size_type pos, size_type m, const char* s, size_type n );
+			var_string& replace( size_type pos, size_type m, const char* s );
+			
+			var_string& replace( size_type pos, size_type m, size_type n, char c );
+			
+			void replace( char* p, char* q, const string& s );
+			
+			void replace( char* p, char* q, const char *i, size_type n );
+			void replace( char* p, char* q, const char *s );
+			
+			void replace( char* p, char* q, size_type n, char c );
+			
+			void replace( char* p, char* q, const char *i, const char *j );
 			
 			string& operator+=( const string& s )  { return append( s ); }
 			string& operator+=( const char*   s )  { return append( s ); }

@@ -331,5 +331,157 @@ namespace plus
 		return append( other.data() + pos, n );
 	}
 	
+	
+	char* var_string::replace_setup( char* p, size_type m, difference_type delta )
+	{
+		if ( delta == 0 )
+		{
+			return p;
+		}
+		
+		char* q = p + m;
+		
+		if ( delta > 0 )
+		{
+			p = insert_uninitialized( q, delta ) - m;
+		}
+		else
+		{
+			erase_unchecked( q + delta, -delta );
+		}
+		
+		return p;
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const string& s )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		return replace( pos, m, s.data(), s.size() );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const string& s, size_type offset, size_type n )
+	{
+		const size_type s_size = s.size();
+		
+		if ( pos > size()  ||  offset > s_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, s_size - offset );
+		
+		return replace( pos, m, s.data() + offset, n );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const char* s, size_type n )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		m = std::min( m, old_size - pos );
+		
+		const difference_type delta = n - m;
+		
+		char* p = mutable_data() + pos;
+		
+		p = replace_setup( p, m, delta );
+		
+		memcpy( p, s, n );
+		
+		return *this;
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const char* s )
+	{
+		return replace( pos, m, s, strlen( s ) );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, size_type n, char c )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		m = std::min( m, old_size - pos );
+		
+		const difference_type delta = n - m;
+		
+		char* p = mutable_data() + pos;
+		
+		p = replace_setup( p, m, delta );
+		
+		memset( p, c, n );
+		
+		return *this;
+	}
+	
+	void var_string::replace( char* p, char* q, const string& s )
+	{
+		replace( p, q, s.data(), s.size() );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *i, size_type n )
+	{
+		ASSERT( begin() <= p );
+		
+		ASSERT( q <= end() );
+		
+		ASSERT( p <= q );
+		
+		const char* j = i + n;
+		
+		ASSERT( j <= begin()  ||  i >= end() );
+		
+		const size_type m = q - p;
+		
+		const difference_type delta = n - m;
+		
+		p = replace_setup( p, m, delta );
+		
+		memcpy( p, i, n );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *s )
+	{
+		replace( p, q, s, strlen( s ) );
+	}
+	
+	void var_string::replace( char* p, char* q, size_type n, char c )
+	{
+		ASSERT( begin() <= p );
+		
+		ASSERT( q <= end() );
+		
+		ASSERT( p <= q );
+		
+		const size_type m = q - p;
+		
+		const difference_type delta = n - m;
+		
+		p = replace_setup( p, m, delta );
+		
+		memset( p, c, n );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *i, const char *j )
+	{
+		ASSERT( i <= j );
+		
+		const size_type n = j - i;
+		
+		replace( p, q, i, n );
+	}
+	
 }
 
