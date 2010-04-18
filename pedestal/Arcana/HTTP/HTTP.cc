@@ -193,9 +193,9 @@ namespace HTTP
 				return;
 			}
 			
-			std::size_t eohMarker = itsReceivedData.find( "\r\n" "\r\n", itsPlaceToLookForEndOfHeader );
+			const char* end_of_header = strstr( begin + itsPlaceToLookForEndOfHeader, "\r\n" "\r\n" );
 			
-			if ( eohMarker == itsReceivedData.npos )
+			if ( end_of_header == NULL )
 			{
 				itsPlaceToLookForEndOfHeader = received_data_size - STRLEN( "\r\n" "\r\n" ) + 1;
 				
@@ -206,19 +206,19 @@ namespace HTTP
 			itHasReceivedEntireHeader = true;
 			
 			// The content starts after the two CRLF
-			std::size_t startOfContent = eohMarker + STRLEN( "\r\n" "\r\n" );
+			const char* content = end_of_header + STRLEN( "\r\n" "\r\n" );
 			
 			const char* end = begin + received_data_size;
 			
 			// Anything left over is content
-			std::size_t leftOver = itsReceivedData.size() - startOfContent;
+			const size_t leftOver = end - content;
 			
 			// Start writing content if we have any
 			if ( leftOver > 0 )
 			{
-				ReceiveContent( itsReceivedData.data() + startOfContent, leftOver );
+				ReceiveContent( content, leftOver );
 				
-				itsReceivedData.resize( startOfContent );
+				itsReceivedData.resize( content - begin );
 			}
 			
 			const char* header_stream = GetHeaderStream();
