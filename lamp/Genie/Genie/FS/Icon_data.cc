@@ -375,19 +375,21 @@ namespace Genie
 			
 			std::memcpy( &resID, buffer, sizeof (::ResID) );
 			
-			std::string result = iota::inscribe_decimal( resID );
+			char decimal[ sizeof "-12345\n" ];
 			
-			result += '\n';
+			char* end = iota::inscribe_decimal_r( resID, decimal );
 			
-			if ( result.length() > byteCount )
+			*end++ = '\n';
+			
+			 bytes_read = end - decimal;
+			
+			if ( bytes_read > byteCount )
 			{
 				// Here's a nickel, kid.  Get yourself a larger buffer.
 				p7::throw_errno( ERANGE );
 			}
 			
-			std::copy( result.begin(), result.end(), buffer );
-			
-			bytes_read = result.length();
+			std::copy( decimal, end, buffer );
 		}
 		
 		return bytes_read;
