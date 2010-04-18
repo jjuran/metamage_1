@@ -152,7 +152,7 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		plus::string method = "GET";
+		const char* method = "GET";
 		
 		const bool expecting_content = !sendHEADRequest;
 		

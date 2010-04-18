@@ -6,6 +6,9 @@
 // Standard C++
 #include <vector>
 
+// iota
+#include "iota/strings.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -91,9 +94,17 @@ namespace HTTP
 	};
 	
 	
-	inline plus::string RequestLine( const plus::string& method, const plus::string& urlPath )
+	inline plus::string RequestLine( const char* method, const plus::string& urlPath )
 	{
-		return method + " " + urlPath + " HTTP/1.0" "\r\n";
+		plus::var_string result = method;
+		
+		result += ' ';
+		
+		result.append( urlPath );
+		
+		result.append( STR_LEN( " HTTP/1.0" "\r\n" ) );
+		
+		return result;
 	}
 	
 	inline plus::string HeaderFieldLine( const plus::string& name, const plus::string& value )
