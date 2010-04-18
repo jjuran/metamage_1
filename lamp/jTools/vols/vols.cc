@@ -3,14 +3,6 @@
  *	=======
  */
 
-// Standard C++
-#include <algorithm>
-
-// Standard C/C++
-#include <cerrno>
-#include <cstdio>
-#include <cstring>
-
 // POSIX
 #include <unistd.h>
 
