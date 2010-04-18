@@ -62,6 +62,9 @@ namespace plus
 			
 			char* end() const  { return begin() + size(); }
 			
+			char& front()  { return mutable_data()[ 0          ]; }
+			char& back ()  { return mutable_data()[ size() - 1 ]; }
+			
 			var_string& assign( const char*    p,
 			                    size_type      length,
 			                    delete_policy  policy,
