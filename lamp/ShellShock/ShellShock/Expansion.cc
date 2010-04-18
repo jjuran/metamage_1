@@ -540,7 +540,7 @@ namespace ShellShock
 				q++;
 			}
 			
-			newstr += std::string(p, q - p);
+			newstr.append( p, q - p );
 			
 			switch ( *q )
 			{
@@ -564,7 +564,9 @@ namespace ShellShock
 					{
 						q++;
 					}
-					newstr += std::string(p, q - p);
+					
+					newstr.append( p, q - p );
+					
 					if (*q != '\0')
 					{
 						q++;
@@ -579,7 +581,8 @@ namespace ShellShock
 					{
 						if ( *q == '\\' )
 						{
-							newstr += std::string( p, q - p );
+							newstr.append( p, q - p );
+							
 							p = q + 1;
 							
 							if ( *p == '\0' )
@@ -595,7 +598,7 @@ namespace ShellShock
 						}
 					}
 					
-					newstr += std::string( p, q - p );
+					newstr.append( p, q - p );
 					
 					if (*q != '\0')
 					{
@@ -680,7 +683,7 @@ namespace ShellShock
 			const char* var = ScanForDollar( p, double_quoted );
 			
 			// Include what we just scanned over in the string.
-			expansion += std::string( p, var - p );
+			expansion.append( p, var - p );
 			
 			if ( *var == '\0' )
 			{
