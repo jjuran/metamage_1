@@ -93,14 +93,9 @@ namespace ShellShock
 		
 		const char* q = p;
 		
-		while ( std::isdigit( *q ) )
+		if ( std::isdigit( *q ) )
 		{
-			q++;
-		}
-		
-		if ( q > p )
-		{
-			fd = iota::parse_unsigned_decimal( plus::string( p, q - p ).c_str() );
+			fd = iota::parse_unsigned_decimal( &q );
 		}
 		
 		unsigned char len = 0;
