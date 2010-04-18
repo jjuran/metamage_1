@@ -101,21 +101,26 @@ namespace plus
 	{
 		check_size( new_size );
 		
-		size_type new_capacity = capacity();
+		const size_type old_size = size();
 		
-		if ( new_size > new_capacity )
+		if ( new_size > old_size )
 		{
-			do
-			{
-				new_capacity *= 2;
-			}
-			while ( new_size > new_capacity );
+			size_type _capacity = capacity();
 			
-			reserve( new_capacity );
+			if ( new_size > _capacity )
+			{
+				do
+				{
+					_capacity *= 2;
+				}
+				while ( new_size > _capacity );
+				
+				reserve( _capacity );
+			}
 			
 			char* data = begin();
 			
-			std::fill( data + size(), data + new_size, c );
+			std::fill( data + old_size, data + new_size, c );
 		}
 		
 		set_length( new_size );
