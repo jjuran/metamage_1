@@ -7,7 +7,6 @@
 #define ALINE_COMMANDS_HH
 
 // Standard C++
-#include <algorithm>
 #include <vector>
 
 // plus
@@ -47,22 +46,7 @@ namespace tool
 		return command;
 	}
 	
-	static const char* c_str( const plus::string& s )
-	{
-		return s.c_str();
-	}
-	
-	inline Command& AugmentCommand( Command& command, const std::vector< plus::string >& more )
-	{
-		command.reserve( command.size() + more.size() );
-		
-		std::transform( more.begin(),
-		                more.end(),
-		                std::back_inserter( command ),
-		                std::ptr_fun( c_str ));
-		
-		return command;
-	}
+	Command& AugmentCommand( Command& command, const std::vector< plus::string >& more );
 	
 	inline Command OutputOption( const char* pathname )
 	{
