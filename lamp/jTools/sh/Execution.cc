@@ -905,6 +905,11 @@ namespace tool
 		
 		return status;
 	}
-
+	
+	p7::wait_t ExecuteCmdLine( const char* cmd )
+	{
+		return ExecuteCmdLine( std::string( cmd ) );
+	}
+	
 }
 

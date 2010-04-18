@@ -17,6 +17,8 @@ namespace tool
 	
 	poseven::wait_t ExecuteCmdLine( const std::string& cmd );
 	
+	poseven::wait_t ExecuteCmdLine( const char* cmd );
+	
 }
 
 #endif
