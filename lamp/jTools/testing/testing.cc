@@ -630,6 +630,7 @@ static int TestSoundInput( int argc, iota::argv_t argv )
 	return 0;
 }
 
+/*
 static std::string Capitalize( std::string s )
 {
 	char& c = s[ 0 ];
@@ -648,6 +649,7 @@ static void PrintString( std::string s )
 	
 	p7::write( p7::stdout_fileno, s );
 }
+*/
 
 static int TestAE( int argc, iota::argv_t argv )
 {
