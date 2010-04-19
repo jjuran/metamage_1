@@ -53,8 +53,8 @@ namespace tool
 	
 	static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
 	{
-		SInt16       errorNumber  = N::OSAScriptError< N::kOSAErrorNumber  >( comp );
-		std::string  errorMessage = N::OSAScriptError< N::kOSAErrorMessage >( comp );
+		SInt16                   errorNumber  = N::OSAScriptError< N::kOSAErrorNumber  >( comp );
+		nucleus::mutable_string  errorMessage = N::OSAScriptError< N::kOSAErrorMessage >( comp );
 		
 		if ( errorNumber < 0 )
 		{
@@ -75,9 +75,9 @@ namespace tool
 		                                N::kOSAGenericScriptingComponentSubtype );
 	}
 	
-	static std::string ReadUntilEOF( p7::fd_t stream )
+	static nucleus::string ReadUntilEOF( p7::fd_t stream )
 	{
-		std::string result;
+		nucleus::mutable_string result;
 		
 		const std::size_t block_size = 4096;
 		
@@ -91,9 +91,9 @@ namespace tool
 		return result;
 	}
 	
-	static std::string ReadFileData( const char* file )
+	static nucleus::string ReadFileData( const char* file )
 	{
-		std::string result;
+		nucleus::mutable_string result;
 		
 		try
 		{
@@ -135,9 +135,9 @@ namespace tool
 			throw p7::exit_failure;
 		}
 		
-		std::string cwd( stupid_buffer );
+		nucleus::string cwd( stupid_buffer );
 		
-		std::string cwdProperty = "property gCurrentWorkingDirectory : \"" + cwd + "\"";
+		nucleus::string cwdProperty = "property gCurrentWorkingDirectory : \"" + cwd + "\"";
 		
 		
 		return
@@ -227,7 +227,7 @@ namespace tool
 		return total + strlen( s );
 	}
 	
-	static std::string JoinScriptPieces( const std::vector< const char* >& pieces )
+	static nucleus::string JoinScriptPieces( const std::vector< const char* >& pieces )
 	{
 		ASSERT( !pieces.empty() );
 		
@@ -241,11 +241,11 @@ namespace tool
 		                                            pieces.size(),  // add 1 byte for each CR
 		                                            std::ptr_fun( total_string_size ) );
 		
-		std::string result;
+		nucleus::mutable_string result;
 		
 		result.resize( total_length );
 		
-		std::string::iterator there = result.begin();
+		nucleus::mutable_string::iterator there = result.begin();
 		
 		typedef std::vector< const char* >::const_iterator Iter;
 		
@@ -334,9 +334,9 @@ namespace tool
 			{
 				N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 				
-				std::string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
-				                                                                     N::typeChar,
-				                                                                     displayFlags ) );
+				nucleus::mutable_string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
+				                                                                                 N::typeChar,
+				                                                                                 displayFlags ) );
 				
 				if ( *(output.end() - 1) != '\n' )
 				{

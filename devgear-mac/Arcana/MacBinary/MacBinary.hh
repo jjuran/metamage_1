@@ -39,10 +39,10 @@ namespace MacBinary
 		private:
 			struct Frame
 			{
-				Nitrogen::FSDirSpec  destDir;
-				FSSpec               file;
-				UInt32               modificationDate;
-				std::string          comment;
+				Nitrogen::FSDirSpec      destDir;
+				FSSpec                   file;
+				UInt32                   modificationDate;
+				nucleus::mutable_string  comment;
 			};
 			
 			Frame itsFrame;

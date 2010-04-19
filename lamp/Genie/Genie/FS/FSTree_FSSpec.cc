@@ -163,7 +163,7 @@ namespace Genie
 		{
 			try
 			{
-				std::string comment = N::FSpDTGetComment( item );
+				nucleus::string comment = N::FSpDTGetComment( item );
 				
 				if ( comment.size() > 31 )
 				{

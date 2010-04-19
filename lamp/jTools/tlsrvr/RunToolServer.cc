@@ -71,7 +71,7 @@ namespace tool
 		return "'" + str + "'";
 	}
 	
-	static std::string& operator<<( std::string& str, const std::string& appendage )
+	static nucleus::mutable_string& operator<<( nucleus::mutable_string& str, const std::string& appendage )
 	{
 		if ( appendage.size() > 0 )
 		{
@@ -121,12 +121,12 @@ namespace tool
 		// FIXME:  Needs to be implemented
 	}
 	
-	static std::string MakeToolServerScript( const FSSpec& scriptFile,
-	                                         const FSSpec& inFile,
-	                                         const FSSpec& outFile,
-	                                         const FSSpec& errFile )
+	static nucleus::string MakeToolServerScript( const FSSpec&  scriptFile,
+	                                             const FSSpec&  inFile,
+	                                             const FSSpec&  outFile,
+	                                             const FSSpec&  errFile )
 	{
-		std::string script;
+		nucleus::mutable_string script;
 		
 		script << "Set Exit 0;";
 		
@@ -242,7 +242,7 @@ namespace tool
 	}
 	
 	static n::owned< N::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
-	                                                    const std::string&          script )
+	                                                    const nucleus::string&      script )
 	{
 		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                              N::kAEDoScript,
@@ -277,7 +277,7 @@ namespace tool
 		kErrorFile
 	};
 	
-	static inline FSSpec DirLookup( const N::FSDirSpec& dir, const std::string& name )
+	static inline FSSpec DirLookup( const N::FSDirSpec& dir, const nucleus::string& name )
 	{
 		return dir / name;
 	}
@@ -296,7 +296,7 @@ namespace tool
 	
 	static FSSpec gTempFiles[ 4 ];
 	
-	static std::string SetUpScript( const std::string& command )
+	static nucleus::string SetUpScript( const std::string& command )
 	{
 		// Send a Do Script event with the command as the direct object.
 		// Better yet:
@@ -340,10 +340,10 @@ namespace tool
 		
 		WriteInputFile( files[ kInputFile ] );
 		
-		std::string script = MakeToolServerScript( files[ kScriptFile ],
-		                                           files[ kInputFile  ],
-		                                           files[ kOutputFile ],
-		                                           files[ kErrorFile  ] );
+		nucleus::string script = MakeToolServerScript( files[ kScriptFile ],
+		                                               files[ kInputFile  ],
+		                                               files[ kOutputFile ],
+		                                               files[ kErrorFile  ] );
 		
 		return script;
 	}

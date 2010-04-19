@@ -613,7 +613,8 @@ namespace MacBinary
 		
 		try
 		{
-			std::string comment = N::FSpDTGetComment( file );
+			nucleus::mutable_string comment = N::FSpDTGetComment( file );
+			
 			comment.resize( PaddedLength( comment.size(), kMacBinaryBlockSize ) );
 			
 			blockWrite( output, comment.data(), comment.size() );
