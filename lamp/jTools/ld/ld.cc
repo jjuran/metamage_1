@@ -612,16 +612,7 @@ namespace tool
 					}
 				}
 				
-				plus::string library_pathname;
-				
-				if ( !is_pathname )
-				{
-					library_pathname = FindSystemLibrary( arg );
-					
-					arg = library_pathname.c_str();
-				}
-				
-				command_args.push_back( StoreMacPathFromPOSIXPath( arg ) );
+				command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
 			}
 		}
 		
