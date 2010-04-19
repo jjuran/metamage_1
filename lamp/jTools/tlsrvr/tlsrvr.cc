@@ -52,7 +52,7 @@ namespace tool
 				++q;
 			}
 			
-			result += plus::string( p, q );
+			result.append( p, q );
 			
 			if ( *q != '\0' )
 			{
