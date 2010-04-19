@@ -58,13 +58,13 @@ namespace tool
 	
 	
 	// E.g. "666f6f20626171" -> "foo bar"
-	static std::string decoded_hex( const std::string& hex_codes )
+	static std::string decoded_hex( const char* hex_codes )
 	{
 		std::string result;
 		
 		// FIXME:  Verify the hex data.
 		
-		result.resize( hex_codes.size() / 2 );
+		result.resize( strlen( hex_codes ) / 2 );
 		
 		for ( std::size_t i = 0;  i < result.size();  ++i )
 		{
