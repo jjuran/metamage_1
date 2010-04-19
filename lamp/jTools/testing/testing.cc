@@ -13,6 +13,9 @@
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
+#ifndef __THREADS__
+#include <Threads.h>
+#endif
 
 // Math
 #include <math.h>
@@ -76,7 +79,6 @@
 //#include "Nitrogen/Resources.hh"
 #include "Nitrogen/Sound.hh"
 #include "Nitrogen/Str.hh"
-#include "Nitrogen/Threads.hh"
 #include "Nitrogen/Timer.hh"
 
 // poseven
@@ -680,62 +682,6 @@ static int TestAE( int argc, iota::argv_t argv )
 	               listData.end(),
 	               std::ptr_fun( PrintString ) );
 	*/
-	
-	return 0;
-}
-
-// Template non-type argument objects shall have external linkage
-void MyThreadRoutine( const std::string& param  );
-
-void MyThreadRoutine( const std::string& param  )
-{
-	std::string message = "Param is " + param + "\n";
-	
-	p7::write( p7::stdout_fileno, message );
-}
-
-static int TestThread( int argc, iota::argv_t argv )
-{
-	int done = 0;
-	
-	//Io::Out << "Testing thread is ID " << N::GetCurrentThread() << "\n";
-	
-	std::string param;
-	
-	if ( argc > 2 )
-	{
-		param = argv[ 2 ];
-	}
-	
-	n::owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( N::kCooperativeThread,
-	                                                                                      param,
-	                                                                                      0,
-	                                                                                      N::ThreadOptions() );
-	N::ThreadState state = N::GetThreadState( thread );
-	
-	int count = 0;
-	
-	while ( !done )
-	{
-		sleep( 0 );
-		
-		try
-		{
-			state = N::GetThreadState( thread );
-			
-			std::printf( "State is %d\n", state );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			std::fprintf( stderr, "OSStatus %d\n", err.Get() );
-		}
-		
-		++count;
-		
-		if ( count >= 5 )  break;
-	}
-	
-	std::printf( "Looped %d times.\n", count );
 	
 	return 0;
 }
@@ -1434,7 +1380,6 @@ static const command_t global_commands[] =
 	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
 //	{ "svcs",      TestServices   },
-	{ "thread",    TestThread     },
 	{ "throw",     TestThrow      },
 	{ "unit",      TestUnit       },
 	{ "unmangle",  TestUnmangle   },
