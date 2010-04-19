@@ -49,6 +49,7 @@
 #include "iota/hexidecimal.hh"
 
 // Recall
+#include "recall/backtrace.hh"
 #include "recall/demangle.hh"
 #include "recall/mach_o.hh"
 #include "recall/macsbug_symbols.hh"
