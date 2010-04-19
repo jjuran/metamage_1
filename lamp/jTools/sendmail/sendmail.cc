@@ -33,6 +33,7 @@
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/gethostname.hh"
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -117,12 +118,7 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: ";
-			
-			message += iota::inscribe_decimal( h_errno );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
+			p7::perror( "sendmail: Domain name lookup failed", h_errno );
 			
 			throw p7::exit_failure;
 		}
