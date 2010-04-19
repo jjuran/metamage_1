@@ -87,36 +87,6 @@ namespace tool
 		return emailAddr.substr( at + 1, emailAddr.find( '>' ) - (at + 1) );
 	}
 	
-	/*
-	static std::string ResolverLookup( const std::string& domain )
-	{
-		try
-		{
-			std::vector< MX > results = Resolver::LookupMX( domain );
-			//ASSERT(!results.empty());
-			
-			std::sort( results.begin(),
-			           results.end() );
-			
-			return results.front().mxHost;
-		}
-		catch ( Resolver::ResolverError error )
-		{
-			switch ( error.Errno() )
-			{
-				case NO_DATA:
-					// No MX data.  No problem, we'll try A instead.
-					break;
-				
-				default:
-					throw;
-			}
-		}
-		
-		return "";
-	}
-	*/
-	
 	static std::string OTLookup( const std::string& domain )
 	{
 	#if TARGET_RT_MAC_MACHO
