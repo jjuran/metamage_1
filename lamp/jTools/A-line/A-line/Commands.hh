@@ -21,8 +21,6 @@
 namespace tool
 {
 	
-	static const std::string space = " ";
-	
 	typedef std::vector< const char* > Command;
 	
 	
