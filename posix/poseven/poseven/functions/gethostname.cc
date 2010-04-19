@@ -34,5 +34,15 @@ namespace poseven
 		name.resize( strlen( name.c_str() ) );
 	}
 	
+	const char* gethostname()
+	{
+		static char buffer[ HOST_NAME_MAX + 1 ];
+		
+		throw_posix_result( ::gethostname( buffer, sizeof buffer ) );
+		
+		return buffer;
+		
+	}
+	
 }
 

@@ -17,14 +17,7 @@ namespace poseven
 	
 	void gethostname( std::string& name );
 	
-	inline std::string gethostname()
-	{
-		std::string result;
-		
-		gethostname( result );
-		
-		return result;
-	}
+	const char* gethostname();
 	
 }
 
