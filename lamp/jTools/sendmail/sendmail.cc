@@ -66,7 +66,7 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	static std::string gRelayServer;
+	static const char* gRelayServer = NULL;
 	
 	
 	static N::FSDirSpec QueueDirectory()
@@ -146,11 +146,13 @@ namespace tool
 		
 		std::printf( "Relaying from %s to %s\n", returnPath.c_str(), forwardPath.c_str() );
 		
-		std::string smtpServer = gRelayServer;
+		std::string smtpServer;
 		
-		if ( !gRelayServer.empty() )
+		if ( gRelayServer != NULL )
 		{
-			std::printf( "Using relay %s\n", gRelayServer.c_str() );
+			smtpServer = gRelayServer;
+			
+			std::printf( "Using relay %s\n", gRelayServer );
 		}
 		else
 		{
