@@ -24,7 +24,6 @@
 #endif
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // iota
@@ -33,6 +32,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/initialize.hh"
+#include "nucleus/string.hh"
 
 // Nitrogen
 #ifndef NITROGEN_OPENTRANSPORT_HH

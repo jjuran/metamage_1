@@ -31,6 +31,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/string.hh"
 
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
@@ -60,8 +61,6 @@
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
-
-#include <string>
 
 
 #ifdef AEPutKeyPtr

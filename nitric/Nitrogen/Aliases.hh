@@ -24,6 +24,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/string.hh"
 
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
@@ -37,8 +38,6 @@
 #ifndef NITROGEN_CFDATA_HH
 #include "Nitrogen/CFData.hh"
 #endif
-
-#include <string>
 
 
 namespace Nitrogen

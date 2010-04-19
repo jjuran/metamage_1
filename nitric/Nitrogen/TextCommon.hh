@@ -19,6 +19,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/make.hh"
+#include "nucleus/string.hh"
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"

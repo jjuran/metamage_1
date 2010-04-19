@@ -14,9 +14,6 @@
 #ifndef NITROGEN_STR_HH
 #define NITROGEN_STR_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
 
@@ -26,6 +23,9 @@
 // nucleus
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
+#include "nucleus/string.hh"
 #endif
 
 

@@ -19,9 +19,6 @@
 #include <TextEdit.h>
 #endif
 
-// Standard C++
-#include <string>
-
 // iota
 #include "iota/string_traits.hh"
 

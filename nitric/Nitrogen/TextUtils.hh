@@ -19,9 +19,6 @@
 #include <TextUtils.h>
 #endif
 
-// Standard C++
-#include <string>
-
 // Nitrogen
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
