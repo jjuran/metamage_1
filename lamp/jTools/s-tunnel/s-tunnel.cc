@@ -3,10 +3,6 @@
  *	==========
  */
 
-// Standard C++
-#include <numeric>
-#include <vector>
-
 // Standard C/C++
 #include <cstdlib>
 //#include <cstring>
