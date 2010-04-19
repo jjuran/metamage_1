@@ -755,7 +755,7 @@ namespace Nitrogen
 			return AEInstallCoercionHandler< AECoercerOfDescs_N >( DescType( 'from' ), DescType( 'to  ' ) );
 		}
 		
-		static std::string GetTextAttr( const AppleEvent& appleEvent, AEKeyword keyword )
+		static nucleus::string GetTextAttr( const AppleEvent& appleEvent, AEKeyword keyword )
 		{
 			return AEGetAttributePtr< typeChar >( appleEvent, keyword );
 		}

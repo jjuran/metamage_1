@@ -130,7 +130,7 @@ namespace Nitrogen
 	
 	using ::InetAddress;
 	
-	typedef std::string InetDomainName;
+	typedef nucleus::string InetDomainName;
 	
 	using ::InetHostInfo;
 	using ::InetSysInfo;
@@ -170,7 +170,7 @@ namespace Nitrogen
 		return OTInetStringToHost( iota::get_string_c_str( str ) );
 	}
 	
-	std::string OTInetHostToString( InetHost host );
+	nucleus::string OTInetHostToString( InetHost host );
 	
 }
 

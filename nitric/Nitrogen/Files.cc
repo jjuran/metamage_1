@@ -353,7 +353,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
 	}
 	
-	std::string DTGetComment( DTPBRec& pb )
+	nucleus::string DTGetComment( DTPBRec& pb )
 	{
 		//const ByteCount kMaximumCommentLength      = 200;
 		const ByteCount kExperimentalCommentLength = 256;
@@ -368,10 +368,10 @@ namespace Nitrogen
 		ASSERT( pb.ioDTActCount >=   0 );
 		ASSERT( pb.ioDTActCount <= 200 );
 		
-		return std::string( comment, pb.ioDTActCount );
+		return nucleus::string( comment, pb.ioDTActCount );
 	}
 	
-	std::string FSpDTGetComment( const FSSpec& file )
+	nucleus::string FSpDTGetComment( const FSSpec& file )
 	{
 		DTPBRec pb;
 		
@@ -1282,15 +1282,15 @@ Return Value
       ThrowOSStatus( ::FSRefMakePath( &ref, path, maxPathSize ) );
      }
    
-   std::string FSRefMakePath( const FSRef& ref )
+   nucleus::string FSRefMakePath( const FSRef& ref )
      {
       for ( UInt32 maxPathSize = 1024; true; maxPathSize *= 2 )
         {
          try
            {
-            std::string result( maxPathSize, '\0' );
+            nucleus::mutable_string result( maxPathSize, '\0' );
             FSRefMakePath( ref, reinterpret_cast<UInt8 *>( &result[0] ), result.size() );
-            result.erase( std::strlen( result.c_str() ) );
+            result.resize( std::strlen( result.c_str() ) );
             return result;
            }
          catch ( const OSStatus& err )

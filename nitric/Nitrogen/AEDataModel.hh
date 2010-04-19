@@ -247,7 +247,7 @@ namespace Nitrogen
 	
 	template < DescType > struct DescType_Traits;
 	
-	template<> struct DescType_Traits< typeChar > : public nucleus::string_scribe< std::string > {};
+	template<> struct DescType_Traits< typeChar > : public nucleus::string_scribe< nucleus::mutable_string > {};
 	
 	template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 	
@@ -306,6 +306,13 @@ namespace Nitrogen
 	                               Char_DescType_Traits< Char >
 	{
 	};
+	
+	template <>
+	struct Char_AEKeyword_Traits< char > : nucleus::string_scribe< nucleus::mutable_string >,
+	                                       Char_DescType_Traits< char >
+	{
+	};
+	
 	
 	template < class POD, class Integer >
 	struct Integer_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, Integer >,

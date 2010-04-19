@@ -42,13 +42,13 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	std::string
+	nucleus::string
 	//
-	converter< std::string, const unsigned char * >::operator()( const unsigned char *input ) const
+	converter< nucleus::string, const unsigned char * >::operator()( const unsigned char *input ) const
 	{
 		const char *begin = reinterpret_cast< const char * >( input + 1 );
 		
-		return std::string( begin, 0 + input[ 0 ] ); 
+		return nucleus::string( begin, 0 + input[ 0 ] ); 
 	}
 	
 }

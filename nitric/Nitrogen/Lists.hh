@@ -134,7 +134,7 @@ namespace Nitrogen
 	using ::LClrCell;
 	
 	// 732
-	std::string LGetCell( Cell cell, ListHandle lHandle );
+	nucleus::string LGetCell( Cell cell, ListHandle lHandle );
 	
 	// 748
 	Rect LRect( Cell cell, ListHandle lHandle );

@@ -50,7 +50,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	std::string OTInetHostToString( InetHost host )
+	nucleus::string OTInetHostToString( InetHost host )
 	{
 		char result[ 16 ];
 		
