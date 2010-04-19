@@ -38,6 +38,7 @@
 #include "plus/var_string.hh"
 
 // poseven
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -174,12 +175,8 @@ namespace tool
 		}
 		catch ( p7::errno_t& error )
 		{
-			plus::var_string message = "Remote read error: ";
+			p7::perror( "s-tunnel: Remote read error" );
 			
-			message += strerror( error );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
 			isComplete = true;
 		}
 		
@@ -210,12 +207,7 @@ namespace tool
 		}
 		catch ( p7::errno_t& error )
 		{
-			plus::var_string message = "Local read error: ";
-			
-			message += strerror( error );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
+			p7::perror( "s-tunnel: Local read error" );
 			
 			isComplete = true;
 		}
@@ -285,12 +277,7 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			plus::var_string message = "Domain name lookup failed: ";
-			
-			message += iota::inscribe_decimal( h_errno );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
+			p7::perror( "s-tunnel: Domain name lookup failed", h_errno );
 			
 			throw p7::exit_failure;
 		}
