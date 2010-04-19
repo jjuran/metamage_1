@@ -83,7 +83,7 @@ namespace tool
 		{
 			const char* word = *it;
 			
-			command += needToEscape ? QuoteForMPW( word ) : word;
+			command += needToEscape ? QuoteForMPW( word ).c_str() : word;
 			
 			command += " ";
 		}
