@@ -20,8 +20,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Iota
+// iota
 #include "iota/decimal.hh"
+#include "iota/strings.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -533,7 +534,7 @@ namespace tool
 				continue;
 			}
 			
-			if ( line.substr( 0, 4 ) == "TODO" )
+			if ( memcmp( line.c_str(), STR_LEN( "TODO" ) ) == 0 )
 			{
 				test.SetToDoReason( line.substr( 5, line.npos ) );
 				continue;
