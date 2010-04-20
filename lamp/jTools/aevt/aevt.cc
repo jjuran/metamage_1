@@ -11,6 +11,9 @@
 // Standard C++
 #include <vector>
 
+// Standard C
+#include <string.h>
+
 // iota
 #include "iota/quad.hh"
 #include "iota/strings.hh"
@@ -47,9 +50,9 @@ namespace tool
 	
 	
 	template < class Quad >
-	static inline Quad decode_quad( const std::string& s )
+	static inline Quad decode_quad( const char* s )
 	{
-		return Quad( iota::decode_quad( s.data() ) );
+		return Quad( iota::decode_quad( s ) );
 	}
 	
 	static n::owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
@@ -86,9 +89,9 @@ namespace tool
 	
 #if CALL_NOT_IN_CARBON
 	
-	static TargetID LocateTarget( const std::string& appName,
-	                              const std::string& machine,
-	                              const std::string& host )
+	static TargetID LocateTarget( const char*  appName,
+	                              const char*  machine,
+	                              const char*  host )
 	{
 		PPCPortRec name = n::make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
@@ -98,20 +101,20 @@ namespace tool
 		                                           : n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
 		*/
 		
-		LocationNameRec location = !machine.empty() ? n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
-		                         : !host.empty()    ? n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
-		                                            : n::make< LocationNameRec >();
+		LocationNameRec location = machine != NULL ? n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
+		                         : host    != NULL ? n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
+		                                           : n::make< LocationNameRec >();
 		
 		return n::make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
 	}
 	
 #endif
 	
-	static n::owned< N::AEAddressDesc > SelectAddress( N::OSType           sig,
-	                                                   const std::string&  app,
-	                                                   const std::string&  machine,
-	                                                   const std::string&  host,
-	                                                   const std::string&  url )
+	static n::owned< N::AEAddressDesc > SelectAddress( N::OSType    sig,
+	                                                   const char*  app,
+	                                                   const char*  machine,
+	                                                   const char*  host,
+	                                                   const char*  url )
 	{
 		if ( sig != N::OSType( kUnknownType ) )
 		{
@@ -139,7 +142,12 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		std::string url, host, machine, app, sig;
+		const char*  url     = "";
+		const char*  host    = NULL;
+		const char*  machine = NULL;
+		const char*  app     = "";
+		
+		const char* sig = "\?\?\?\?";
 		
 		o::bind_option_to_variable( "-u", url     );
 		o::bind_option_to_variable( "-h", host    );
@@ -158,7 +166,9 @@ namespace tool
 		
 		char const *const *freeArgs = o::free_arguments();
 		
-		std::string argBuild, argEventClass, argEventID;
+		const char*  argBuild      = NULL;
+		const char*  argEventClass = NULL;
+		const char*  argEventID    = NULL;
 		
 		if ( o::free_argument_count() == 0 )
 		{
@@ -189,15 +199,14 @@ namespace tool
 		argEventClass = freeArgs[0];
 		argEventID    = freeArgs[1];
 		
-		if ( argEventClass.size() != 4  ||  argEventID.size() != 4 )
+		if ( strlen( argEventClass ) != 4  ||  strlen( argEventID ) != 4 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "aevt: invalid parameter" "\n" ) );
 			
 			return 1;
 		}
 		
-		N::OSType sigCode = (sig.size() == 4) ? decode_quad< N::OSType >( sig )
-		                                      : N::kUnknownType;
+		N::OSType sigCode = decode_quad< N::OSType >( sig );
 		
 		N::AEEventClass eventClass = decode_quad< N::AEEventClass >( argEventClass );
 		N::AEEventID    eventID    = decode_quad< N::AEEventID    >( argEventID    );
@@ -205,7 +214,7 @@ namespace tool
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,
 		                            SelectAddress( sigCode, app, machine, host, url ),
-		                            argBuild.c_str(),
+		                            argBuild,
 		                            NULL ),
 		           N::kAENoReply | N::kAECanInteract );
 		
