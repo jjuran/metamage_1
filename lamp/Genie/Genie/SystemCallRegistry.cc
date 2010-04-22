@@ -32,7 +32,7 @@ namespace Genie
 	
 	static bool operator==( const SystemCall& systemCall, const char* name )
 	{
-		return std::strcmp( systemCall.name, name ) == 0;
+		return systemCall.name  &&  std::strcmp( systemCall.name, name ) == 0;
 	}
 	
 	static SystemCallRegistry& TheSystemCallRegistry()
