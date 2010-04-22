@@ -47,16 +47,52 @@ namespace plus
 			
 			var_string& operator=( const string& other )
 			{
-				string::operator=( other );
-				
-				return *this;
+				return assign( other );
 			}
 			
-			var_string& operator=( const char* s )  { assign( s );  return *this; }
+			var_string& operator=( const char* s )  { return assign( s ); }
 			
 			char* begin() const  { return mutable_data(); }
 			
 			char* end() const  { return begin() + size(); }
+			
+			var_string& assign( const char*    p,
+			                    size_type      length,
+			                    delete_policy  policy,
+			                    size_type      capacity = 0 )
+			{
+				string::assign( p, length, policy, capacity );
+				
+				return *this;
+			}
+			
+			var_string& assign( const char* p, size_type length )
+			{
+				string::assign( p, length );
+				
+				return *this;
+			}
+			
+			var_string& assign( const char* p, const char* q )
+			{
+				string::assign( p, q );
+				
+				return *this;
+			}
+			
+			var_string& assign( const char* s )
+			{
+				string::assign( s );
+				
+				return *this;
+			}
+			
+			var_string& assign( const string& other )
+			{
+				string::assign( other );
+				
+				return *this;
+			}
 			
 			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
 			

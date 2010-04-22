@@ -104,19 +104,28 @@ namespace plus
 			
 			const char* end() const  { return begin() + size(); }
 			
-			void assign( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
+			string& assign( const char*    p,
+			                size_type      length,
+			                delete_policy  policy,
+			                size_type      capacity = 0 );
 			
-			void assign( const char* p, size_type length );
+			string& assign( const char* p, size_type length );
 			
-			void assign( const char* p, const char* q )  { assign( p, q - p ); }
+			string& assign( const char* p, const char* q )
+			{
+				return assign( p, q - p );
+			}
 			
-			void assign( const char* s );
+			string& assign( const char* s );
 			
-			void assign( const string& other )  { assign( other.data(), other.size() ); }
+			string& assign( const string& other )
+			{
+				return assign( other.data(), other.size() );
+			}
 			
 			void clear()  { reallocate( 0 ); }
 			
-			string& operator=( const char* s )  { assign( s );  return *this; }
+			string& operator=( const char* s )  { return assign( s ); }
 			
 			void swap( string& other );
 	};

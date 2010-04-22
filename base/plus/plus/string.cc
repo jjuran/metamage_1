@@ -62,7 +62,10 @@ namespace plus
 		p[ length ] = '\0';
 	}
 	
-	string::string( const char* p, size_type length, delete_policy policy, size_type capacity )
+	string::string( const char*    p,
+	                size_type      length,
+	                delete_policy  policy,
+	                size_type      capacity )
 	{
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
@@ -145,7 +148,7 @@ namespace plus
 		                                        : NULL;
 	}
 	
-	void string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
+	string& string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
 		if ( length )
 		{
@@ -161,6 +164,8 @@ namespace plus
 		its_alloc.capacity = capacity ? capacity : length;
 		
 		its_small_name[ max_offset ] = ~policy;
+		
+		return *this;
 	}
 	
 	char* string::reallocate( size_type length )
@@ -196,7 +201,7 @@ namespace plus
 		return new_pointer;
 	}
 	
-	void string::assign( const char* p, size_type length )
+	string& string::assign( const char* p, size_type length )
 	{
 		if ( length )
 		{
@@ -224,15 +229,17 @@ namespace plus
 			
 			memcpy( new_pointer, p, length );
 		}
+		
+		return *this;
 	}
 	
-	void string::assign( const char* s )
+	string& string::assign( const char* s )
 	{
 		ASSERT( s != NULL );
 		
 		const size_type length = strlen( s );
 		
-		assign( s, length );
+		return assign( s, length );
 	}
 	
 	void string::swap( string& other )
