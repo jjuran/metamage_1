@@ -14,8 +14,9 @@ namespace plus
 	
 	enum delete_policy
 	{
-		delete_none,
-		delete_basic
+		delete_never,  // propagates, for static storage like argv members
+		delete_none,   // copies will reallocate, for stack-based storage
+		delete_basic   // Standard-issue delete, for everything by default
 	};
 	
 	
@@ -136,10 +137,7 @@ namespace plus
 			
 			string& assign( size_type n, char c );
 			
-			string& assign( const string& other )
-			{
-				return assign( other.data(), other.size() );
-			}
+			string& assign( const string& other );
 			
 			void clear()  { reallocate( 0 ); }
 			

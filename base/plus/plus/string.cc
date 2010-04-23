@@ -7,6 +7,9 @@
 
 #include "plus/string.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Standard C
 #include <string.h>
 
@@ -288,6 +291,25 @@ namespace plus
 		char* pointer = reallocate( n );
 		
 		memset( pointer, c, n );
+		
+		return *this;
+	}
+	
+	string& string::assign( const string& other )
+	{
+		if ( other.its_small_name[ max_offset ] >= ~delete_never )
+		{
+			// Either it's a small string, or it occupies static storage.
+			// Either way, we perform a shallow copy.
+			
+			std::copy( other.its_longs,
+			           other.its_longs + buffer_size_in_longs,
+			           its_longs );
+		}
+		else
+		{
+			assign( other.data(), other.size() );
+		}
 		
 		return *this;
 	}

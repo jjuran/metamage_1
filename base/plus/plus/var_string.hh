@@ -55,7 +55,18 @@ namespace plus
 			{
 			}
 			
-			var_string( const string& other ) : string( other )  {}
+			var_string( const string& other ) : string( other.data(), other.size() )
+			{
+			}
+			
+			var_string( const var_string& other ) : string( other.data(), other.size() )
+			{
+			}
+			
+			var_string& operator=( const var_string& other )
+			{
+				return assign( other );
+			}
 			
 			var_string& operator=( const string& other )
 			{
@@ -120,9 +131,7 @@ namespace plus
 			
 			var_string& assign( const string& other )
 			{
-				string::assign( other );
-				
-				return *this;
+				return assign( other.data(), other.size() );
 			}
 			
 			char* erase( char* p, char* q );
