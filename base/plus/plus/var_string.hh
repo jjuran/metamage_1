@@ -99,19 +99,25 @@ namespace plus
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
 			
-			void append( const char* p, size_type length );
+			var_string& append( const char* p, size_type length );
 			
-			void append( const char* p, const char* q )  { append( p, q - p ); }
+			var_string& append( const char* p, const char* q )
+			{
+				return append( p, q - p );
+			}
 			
-			void append( const char* s );
+			var_string& append( const char* s );
 			
-			void append( char c )  { append( &c, sizeof c ); }
+			var_string& append( char c )  { return append( &c, sizeof c ); }
 			
-			void append( const string& other )  { append( other.data(), other.size() ); }
+			var_string& append( const string& other )
+			{
+				return append( other.data(), other.size() );
+			}
 			
-			string& operator+=( const string& s )  { append( s );  return *this; }
-			string& operator+=( const char*   s )  { append( s );  return *this; }
-			string& operator+=( char          c )  { append( c );  return *this; }
+			string& operator+=( const string& s )  { return append( s ); }
+			string& operator+=( const char*   s )  { return append( s ); }
+			string& operator+=( char          c )  { return append( c ); }
 	};
 	
 }

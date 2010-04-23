@@ -126,7 +126,7 @@ namespace plus
 		set_length( new_size );
 	}
 	
-	void var_string::append( const char* p, size_type length )
+	var_string& var_string::append( const char* p, size_type length )
 	{
 		check_size( length );
 		
@@ -142,15 +142,17 @@ namespace plus
 		resize( old_size + length );
 		
 		memcpy( mutable_data() + old_size, p, length );
+		
+		return *this;
 	}
 	
-	void var_string::append( const char* s )
+	var_string& var_string::append( const char* s )
 	{
 		ASSERT( s != NULL );
 		
 		const size_type length = strlen( s );
 		
-		append( s, length );
+		return append( s, length );
 	}
 	
 }
