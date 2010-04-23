@@ -66,7 +66,7 @@ namespace tool
 		
 		if ( !needsQuoting )
 		{
-			return str;
+			return plus::string( str, p - str, plus::delete_never );
 		}
 		
 		result += "'";
