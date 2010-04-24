@@ -188,9 +188,9 @@ namespace plus
 		
 		const size_type old_size = size();
 		
-		resize( old_size + length );
+		char* new_pointer = embiggen( old_size + length );
 		
-		memcpy( mutable_data() + old_size, p, length );
+		memcpy( new_pointer + old_size, p, length );
 		
 		return *this;
 	}
