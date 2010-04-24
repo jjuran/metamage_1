@@ -110,58 +110,12 @@ namespace plus
 	{
 		check_size( new_capacity );
 		
-		const size_type data_size = size();
-		
-		if ( new_capacity < data_size )
+		if ( new_capacity < max_offset )
 		{
-			new_capacity = data_size;
+			new_capacity = max_offset;
 		}
 		
-		if ( new_capacity <= max_offset )
-		{
-			// If the new capacity is small, use the internal buffer
-			
-			if ( const char* external = external_data() )
-			{
-				// Reassign the external data to the internal buffer,
-				// even if the old and new capacity match.
-				
-				assign( external, data_size );
-			}
-			else
-			{
-				// The data are already in the internal buffer, so do nothing
-			}
-			
-			return;
-		}
-		
-		const size_type old_capacity = capacity();
-		
-		if ( new_capacity != old_capacity )
-		{
-			char* buffer;
-			
-			try
-			{
-				buffer = (char*) ::operator new( new_capacity + 1 );
-			}
-			catch ( ... )
-			{
-				if ( new_capacity > old_capacity )
-				{
-					// Attempt to increase capacity failed
-					throw;
-				}
-				
-				// Attempt to decrease capacity failed -- do nothing
-				return;
-			}
-			
-			memcpy( buffer, data(), data_size + 1 );
-			
-			assign( buffer, data_size, delete_basic, new_capacity );
-		}
+		embiggen( size(), new_capacity );
 	}
 	
 	void var_string::resize( size_type new_size, char c )
