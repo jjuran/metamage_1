@@ -69,6 +69,7 @@ namespace plus
 		public:
 			string()
 			{
+				its_small_name[ 0          ] = '\0';
 				its_small_name[ max_offset ] = max_offset;
 			}
 			
