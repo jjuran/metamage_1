@@ -147,16 +147,12 @@ namespace plus
 		
 		const size_type offset = p - data;
 		
-		reserve( new_size );
-		
-		data = mutable_data();
+		data = embiggen( new_size );
 		
 		p    = data + offset;
 		end  = data + old_size;
 		
 		std::copy_backward( p, end, data + new_size );
-		
-		set_length( new_size );
 		
 		return p;
 	}
