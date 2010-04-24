@@ -20,6 +20,8 @@ namespace plus
 		private:
 			char* mutable_data() const  { return const_cast< char* >( data() ); }
 			
+			char* embiggen( size_type new_length, size_type new_capacity = 0 );
+			
 			char* insert_uninitialized( char* p, size_type n );
 		
 		public:

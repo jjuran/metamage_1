@@ -44,6 +44,53 @@ namespace plus
 		return p;
 	}
 	
+	char* var_string::embiggen( size_type new_length, size_type new_capacity )
+	{
+		ASSERT( new_length   <= max_size() );
+		ASSERT( new_capacity <= max_size() );
+		
+		const size_type capacity_ = capacity();
+		const size_type size_     = size();
+		
+		if ( new_capacity <= new_length )
+		{
+			const bool growing = new_length > capacity_;
+			
+			new_capacity = new_capacity ? new_length
+			             : growing      ? std::max( size_ * 2, new_length )
+			             :                capacity_;
+		}
+		
+		if ( new_capacity != capacity_ )
+		{
+			try
+			{
+				var_string temp;
+				
+				char* new_pointer = temp.reallocate( new_capacity );
+				
+				memcpy( new_pointer, data(), size() );
+				
+				swap( temp );
+			}
+			catch ( ... )
+			{
+				const bool increasing = new_capacity > capacity_;
+				
+				if ( increasing )
+				{
+					throw;
+				}
+				
+				// Failure to decrease capacity is not an error
+			}
+		}
+		
+		set_length( new_length );
+		
+		return mutable_data();
+	}
+	
 	static void check_size( string::size_type size )
 	{
 		// 2 GB limit on 32-bit platforms
