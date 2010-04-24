@@ -17,6 +17,35 @@
 namespace plus
 {
 	
+	static int lexicographical_compare_3way( const char* a, const char* a_end,
+	                                         const char* b, const char* b_end )
+	{
+		while ( a < a_end  &&  b < b_end )
+		{
+			if ( const int diff = *a++ - *b++ )
+			{
+				return diff;
+			}
+		}
+		
+		return (a != a_end) - (b != b_end);
+	}
+	
+	static int string_compare( const char* a, size_t a_size,
+	                           const char* b, size_t b_size )
+	{
+		return lexicographical_compare_3way( a, a + a_size,
+		                                     b, b + b_size );
+	}
+	
+	static int string_equal( const char* a, size_t a_size,
+	                         const char* b, size_t b_size )
+	{
+		return a_size == b_size  &&  string_compare( a, a_size,
+		                                             b, b_size ) == 0;
+	}
+	
+	
 	static void concat( const char* a, string::size_type  a_size,
 	                    const char* b, string::size_type  b_size,
 	                    string& result )
@@ -270,30 +299,28 @@ namespace plus
 	
 	bool operator==( const string& a, const string& b )
 	{
-		const string::size_type size = a.size();
-		
-		return size == b.size()  &&  memcmp( a.c_str(), b.c_str(), size ) == 0;
+		return string_equal( a.data(), a.size(), b.data(), b.size() );
 	}
 	
 	bool operator==( const string& a, const char* b )
 	{
-		return strcmp( a.c_str(), b ) == 0;
+		return string_equal( a.data(), a.size(), b, strlen( b ) );
 	}
 	
 	
 	bool operator<( const string& a, const string& b )
 	{
-		return strcmp( a.c_str(), b.c_str() ) < 0;
+		return string_compare( a.data(), a.size(), b.data(), b.size() ) < 0;
 	}
 	
 	bool operator<( const string& a, const char* b )
 	{
-		return strcmp( a.c_str(), b ) < 0;
+		return string_compare( a.data(), a.size(), b, strlen( b ) ) < 0;
 	}
 	
 	bool operator<( const char* a, const string& b )
 	{
-		return strcmp( a, b.c_str() ) < 0;
+		return string_compare( a, strlen( a ), b.data(), b.size() ) < 0;
 	}
 	
 	
