@@ -124,27 +124,12 @@ namespace plus
 		
 		const size_type old_size = size();
 		
+		char* new_pointer = embiggen( new_size );
+		
 		if ( new_size > old_size )
 		{
-			size_type _capacity = capacity();
-			
-			if ( new_size > _capacity )
-			{
-				do
-				{
-					_capacity *= 2;
-				}
-				while ( new_size > _capacity );
-				
-				reserve( _capacity );
-			}
-			
-			char* data = begin();
-			
-			std::fill( data + old_size, data + new_size, c );
+			std::fill( new_pointer + old_size, new_pointer + new_size, c );
 		}
-		
-		set_length( new_size );
 	}
 	
 	char* var_string::insert_uninitialized( char* p, size_type n )
