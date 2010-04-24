@@ -234,7 +234,7 @@ namespace tool
 	
 	static void AddPendingConfigFile( const plus::string& filePath )
 	{
-		if ( ends_with( filePath.data(), filePath.size(), STR_LEN( ".conf" ) ) )
+		if ( !ends_with( filePath.data(), filePath.size(), STR_LEN( ".conf" ) ) )
 		{
 			return;
 		}
