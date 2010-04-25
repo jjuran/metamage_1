@@ -4954,8 +4954,8 @@ void* dlpvalloc(size_t bytes) {
 }
 
 int dlmalloc_trim(size_t pad) {
-  ensure_initialization();
   int result = 0;
+  ensure_initialization();
   if (!PREACTION(gm)) {
     result = sys_trim(gm, pad);
     POSTACTION(gm);
