@@ -46,7 +46,8 @@ namespace kerosene
 				while ( *vars )
 				{
 					// This ensures push_back() won't (fail to) allocate memory
-					result.reserve( result.size() + 1 );
+					result.push_back( NULL );
+					result.pop_back();
 					
 					result.push_back( copy_string( *vars++ ) );
 				}
@@ -163,7 +164,8 @@ namespace kerosene
 		// (a) could fail and throw bad_alloc, or
 		// (b) could succeed and invalidate iterators.
 		
-		its_vars.reserve( its_vars.size() + 1 );
+		its_vars.push_back( NULL );
+		its_vars.pop_back();
 		
 		update_environ();
 	}
