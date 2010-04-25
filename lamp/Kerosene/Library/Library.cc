@@ -41,11 +41,11 @@ extern "C" void InitProc( CleanupHandler, int* );
 
 extern "C" void InitializeCallbacks();
 
-extern "C" void FreeTheMallocPool();
+extern "C" void _MSL_cleanup();
 
 void InitializeCallbacks()
 {
-	InitProc( &FreeTheMallocPool, &errno );
+	InitProc( &_MSL_cleanup, &errno );
 }
 
 const char* sys_errlist[] =

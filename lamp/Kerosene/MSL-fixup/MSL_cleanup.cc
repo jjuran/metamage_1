@@ -1,7 +1,7 @@
-/*	====================
- *	FreeTheMallocPool.cc
- *	====================
- */
+/*
+	MSL_cleanup.cc
+	--------------
+*/
 
 // MSL
 #include <pool_alloc.h>
@@ -11,10 +11,10 @@
 
 extern "C" void* __global_destructor_chain;
 
-extern "C" void FreeTheMallocPool();
+extern "C" void _MSL_cleanup();
 
 
-void FreeTheMallocPool()
+void _MSL_cleanup()
 {
 	__global_destructor_chain = 0L;
 	
