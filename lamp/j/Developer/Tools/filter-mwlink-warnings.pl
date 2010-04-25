@@ -35,6 +35,11 @@ qw
 	__convert_from_newlines
 	__convert_to_newlines
 	
+	malloc
+	calloc
+	realloc
+	free
+	
 	getc
 	putc
 	
@@ -64,6 +69,7 @@ qw
 	:KSIOUXConsole.cc
 	Abort.cc
 	KSIOUXConsole.cc
+	dlmalloc.c
 	readonly-environ.cc
 	stacked-environ.lib
 	syscalls.c
