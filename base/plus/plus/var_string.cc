@@ -44,6 +44,53 @@ namespace plus
 		return p;
 	}
 	
+	char* var_string::embiggen( size_type new_length, size_type new_capacity )
+	{
+		ASSERT( new_length   <= max_size() );
+		ASSERT( new_capacity <= max_size() );
+		
+		const size_type capacity_ = capacity();
+		const size_type size_     = size();
+		
+		if ( new_capacity <= new_length )
+		{
+			const bool growing = new_length > capacity_;
+			
+			new_capacity = new_capacity ? new_length
+			             : growing      ? std::max( size_ * 2, new_length )
+			             :                capacity_;
+		}
+		
+		if ( new_capacity != capacity_ )
+		{
+			try
+			{
+				var_string temp;
+				
+				char* new_pointer = temp.reallocate( new_capacity );
+				
+				memcpy( new_pointer, data(), size() );
+				
+				swap( temp );
+			}
+			catch ( ... )
+			{
+				const bool increasing = new_capacity > capacity_;
+				
+				if ( increasing )
+				{
+					throw;
+				}
+				
+				// Failure to decrease capacity is not an error
+			}
+		}
+		
+		set_length( new_length );
+		
+		return mutable_data();
+	}
+	
 	static void check_size( string::size_type size )
 	{
 		// 2 GB limit on 32-bit platforms
@@ -63,58 +110,12 @@ namespace plus
 	{
 		check_size( new_capacity );
 		
-		const size_type data_size = size();
-		
-		if ( new_capacity < data_size )
+		if ( new_capacity < max_offset )
 		{
-			new_capacity = data_size;
+			new_capacity = max_offset;
 		}
 		
-		if ( new_capacity <= max_offset )
-		{
-			// If the new capacity is small, use the internal buffer
-			
-			if ( const char* external = external_data() )
-			{
-				// Reassign the external data to the internal buffer,
-				// even if the old and new capacity match.
-				
-				assign( external, data_size );
-			}
-			else
-			{
-				// The data are already in the internal buffer, so do nothing
-			}
-			
-			return;
-		}
-		
-		const size_type old_capacity = capacity();
-		
-		if ( new_capacity != old_capacity )
-		{
-			char* buffer;
-			
-			try
-			{
-				buffer = (char*) ::operator new( new_capacity + 1 );
-			}
-			catch ( ... )
-			{
-				if ( new_capacity > old_capacity )
-				{
-					// Attempt to increase capacity failed
-					throw;
-				}
-				
-				// Attempt to decrease capacity failed -- do nothing
-				return;
-			}
-			
-			memcpy( buffer, data(), data_size + 1 );
-			
-			assign( buffer, data_size, delete_basic, new_capacity );
-		}
+		embiggen( size(), new_capacity );
 	}
 	
 	void var_string::resize( size_type new_size, char c )
@@ -123,27 +124,12 @@ namespace plus
 		
 		const size_type old_size = size();
 		
+		char* new_pointer = embiggen( new_size );
+		
 		if ( new_size > old_size )
 		{
-			size_type _capacity = capacity();
-			
-			if ( new_size > _capacity )
-			{
-				do
-				{
-					_capacity *= 2;
-				}
-				while ( new_size > _capacity );
-				
-				reserve( _capacity );
-			}
-			
-			char* data = begin();
-			
-			std::fill( data + old_size, data + new_size, c );
+			std::fill( new_pointer + old_size, new_pointer + new_size, c );
 		}
-		
-		set_length( new_size );
 	}
 	
 	char* var_string::insert_uninitialized( char* p, size_type n )
@@ -161,16 +147,12 @@ namespace plus
 		
 		const size_type offset = p - data;
 		
-		reserve( new_size );
-		
-		data = mutable_data();
+		data = embiggen( new_size );
 		
 		p    = data + offset;
 		end  = data + old_size;
 		
 		std::copy_backward( p, end, data + new_size );
-		
-		set_length( new_size );
 		
 		return p;
 	}
@@ -202,9 +184,9 @@ namespace plus
 		
 		const size_type old_size = size();
 		
-		resize( old_size + length );
+		char* new_pointer = embiggen( old_size + length );
 		
-		memcpy( mutable_data() + old_size, p, length );
+		memcpy( new_pointer + old_size, p, length );
 		
 		return *this;
 	}

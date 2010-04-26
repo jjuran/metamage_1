@@ -56,13 +56,13 @@ namespace plus
 				alloc_state  its_alloc;
 				long         its_longs[ buffer_size_in_longs ];
 			};
-			
-			char* reallocate( size_type length );
 		
 		protected:
 			const char* internal_data() const;
 			
 			const char* external_data() const;
+			
+			char* reallocate( size_type length );
 			
 			void set_length( size_type length );
 		
