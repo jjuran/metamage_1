@@ -17,6 +17,9 @@
 // debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/string_details.hh"
+
 
 #define LENGTH_ERROR_MESSAGE  "plus::var_string size can't exceed 0x7fffffff"
 
@@ -60,6 +63,8 @@ namespace plus
 			             : growing      ? std::max( size_ * 2, new_length )
 			             :                capacity_;
 		}
+		
+		new_capacity = adjusted_capacity( new_capacity );
 		
 		if ( new_capacity != capacity_ )
 		{

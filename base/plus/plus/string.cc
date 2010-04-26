@@ -13,6 +13,9 @@
 // debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/string_details.hh"
+
 
 namespace plus
 {
@@ -214,12 +217,14 @@ namespace plus
 		
 		if ( length >= sizeof its_small_name )
 		{
+			const size_type capacity = adjusted_capacity( length );
+			
 			// may throw
-			new_pointer = (char*) ::operator new( length + 1 );
+			new_pointer = (char*) ::operator new( capacity + 1 );
 			
 			its_alloc.pointer  = new_pointer;
 			its_alloc.length   = length;
-			its_alloc.capacity = length;
+			its_alloc.capacity = capacity;
 			
 			its_small_name[ max_offset ] = ~delete_basic;
 		}
