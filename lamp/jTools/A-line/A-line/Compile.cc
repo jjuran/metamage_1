@@ -7,8 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <numeric>
 #include <set>
 #include <vector>
 
@@ -32,7 +30,6 @@
 #include "gear/find.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -72,6 +69,7 @@
 #include "A-line/Includes.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
+#include "A-line/prefix.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
@@ -571,11 +569,6 @@ namespace tool
 		return prefix_dir_pathname / prefix_image_filename;
 	}
 	
-	static bool project_has_prefix( const plus::string& project_name, Platform platform )
-	{
-		return GetProject( project_name, platform ).HasPrecompiledHeader();
-	}
-	
 	#define DEFINE_MACRO_VALUE( macro, value )  AddDefinedMacro( "-D" macro "=" #value )
 	
 	#define DEFINE_MACRO( macro )  DEFINE_MACRO_VALUE( macro, 1 )
@@ -613,33 +606,6 @@ namespace tool
 		}
 	}
 	
-	
-	static const Project* get_project_providing_prefix( const Project& project, Platform platform )
-	{
-		const Project* result = NULL;
-		
-		if ( project.HasPrecompiledHeader() )
-		{
-			result = &project;
-		}
-		else
-		{
-			// This project doesn't have a precompiled header, but maybe a used one does
-			typedef std::vector< plus::string >::const_iterator const_iterator;
-			
-			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
-			                                  project.AllUsedProjects().end(),
-			                                  std::bind2nd( plus::ptr_fun( project_has_prefix ),
-			                                                platform ) );
-			
-			if ( it != project.AllUsedProjects().end() )
-			{
-				result = &GetProject( *it, platform );
-			}
-		}
-		
-		return result;
-	}
 	
 	class ToolTaskMaker
 	{
