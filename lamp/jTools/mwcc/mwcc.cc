@@ -395,8 +395,6 @@ namespace tool
 		command.push_back( "-nomapcr"        );
 		command.push_back( "-once"           );
 		
-		command.push_back( "-D" "__LAMP__=1" );
-		
 		command.push_back( "-w"                                                   );
 		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
 		

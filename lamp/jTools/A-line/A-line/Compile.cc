@@ -553,6 +553,11 @@ namespace tool
 			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
+		if ( options.Target().envType & envLamp )
+		{
+			options.DEFINE_MACRO( "__LAMP__" );
+		}
+		
 		if ( target_info.platform & apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
