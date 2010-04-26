@@ -68,6 +68,8 @@ namespace plus
 			void set_length( size_type length );
 		
 		public:
+			static const size_type npos = size_type( -1 );
+			
 			string()
 			{
 				its_small_name[ 0          ] = '\0';
