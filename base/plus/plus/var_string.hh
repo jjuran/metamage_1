@@ -129,6 +129,9 @@ namespace plus
 			
 			char* erase( char* p )  { return erase( p, p + 1 ); }
 			
+			void push_back( char c )  { append( 1, c ); }
+			void pop_back()           { resize( size() - 1 ); }
+			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
 			
@@ -152,8 +155,6 @@ namespace plus
 			
 			var_string& append( size_type n, char c );
 			
-			var_string& append( char c )  { return append( &c, sizeof c ); }
-			
 			var_string& append( const string& other )
 			{
 				return append( other.data(), other.size() );
@@ -161,7 +162,7 @@ namespace plus
 			
 			string& operator+=( const string& s )  { return append( s ); }
 			string& operator+=( const char*   s )  { return append( s ); }
-			string& operator+=( char          c )  { return append( c ); }
+			string& operator+=( char          c )  { return append( 1, c ); }
 	};
 	
 }
