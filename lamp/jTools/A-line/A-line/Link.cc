@@ -627,31 +627,33 @@ namespace tool
 	{
 		private:
 			const plus::string& its_objects_dir;
+			const char*         its_extension;
 		
 		public:
-			object_filename_filler( const plus::string& objects )
+			object_filename_filler( const plus::string& objects, const char* extension )
 			:
-				its_objects_dir( objects )
+				its_objects_dir( objects ),
+				its_extension( extension )
 			{
 				ASSERT( !its_objects_dir.empty() );
 			}
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				const char* extension = ".o";
-				
-				return derived_pathname( its_objects_dir, source_path, extension );
+				return derived_pathname( its_objects_dir, source_path, its_extension );
 			}
 	};
 	
-	static void FillObjectFiles( const plus::string&                 objects_dir,
-	                             const std::vector< plus::string >&  source_paths,
-	                             std::vector< plus::string >&        object_pathnames )
+	static
+	void FillObjectFiles( const plus::string&                 objects_dir,
+	                      const std::vector< plus::string >&  source_paths,
+	                      std::vector< plus::string >&        object_pathnames,
+	                      const char*                         extension = ".o" )
 	{
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                object_filename_filler( objects_dir ) );
+		                object_filename_filler( objects_dir, extension ) );
 	}
 	
 	void NameObjectFiles( const Project&                project,
