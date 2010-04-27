@@ -103,16 +103,6 @@ namespace Nitrogen
 		return nucleus::owned< EndpointRef >::seize( result );
 	}
 	
-	static OTResult ThrowOTResult( OTResult result )
-	{
-		if ( result < 0 )
-		{
-			ThrowOSStatus( result );
-		}
-		
-		return result;
-	}
-	
 	OTResult OTLook( EndpointRef ref )
 	{
 		return ThrowOTResult( ::OTLook( ref ) );

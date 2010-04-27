@@ -219,6 +219,16 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
+	inline OTResult ThrowOTResult( OTResult result )
+	{
+		if ( result < 0 )
+		{
+			ThrowOSStatus( result );
+		}
+		
+		return result;
+	}
+	
 	nucleus::owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags );
 	
 	inline void CloseOpenTransportInContext( nucleus::owned< OTClientContextPtr > )  {}
