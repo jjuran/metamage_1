@@ -357,6 +357,8 @@ namespace Genie
 	{
 		RepairListener();
 		
+		N::OTSetNonBlocking( itsEndpoint );
+		
 		TCall call;
 		
 		::OTMemzero( &call, sizeof (TCall) );
@@ -364,7 +366,14 @@ namespace Genie
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
+		while ( !IsNonblocking()  &&  ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
+		{
+			Yield( kInterruptUnlessRestarting );
+		}
+		
 		N::OTListen( itsEndpoint, &call );
+		
+		N::OTSetBlocking( itsEndpoint );
 		
 		len = call.addr.len;
 		
