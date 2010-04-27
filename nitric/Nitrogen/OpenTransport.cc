@@ -127,6 +127,12 @@ namespace Nitrogen
 		ThrowOSStatus( ::OTConnect( ref, &sndCall, rcvCall ) );
 	}
 	
+	void OTRcvConnect( EndpointRef  ref,
+	                   TCall*       call )
+	{
+		ThrowOSStatus( ::OTRcvConnect( ref, call ) );
+	}
+	
 	void OTListen( EndpointRef  ref,
 	               TCall*       call )
 	{

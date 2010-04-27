@@ -298,6 +298,9 @@ namespace Nitrogen
 	                TCall&       sndCall,
 	                TCall*       rcvCall = NULL );
 	
+	void OTRcvConnect( EndpointRef  ref,
+	                   TCall*       call = NULL );
+	
 	void OTListen( EndpointRef  ref,
 	               TCall*       call );
 	
