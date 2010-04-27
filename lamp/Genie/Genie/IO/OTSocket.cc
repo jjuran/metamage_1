@@ -34,6 +34,8 @@ namespace Genie
 	                                     OTResult     result,
 	                                     void*        cookie )
 	{
+		Ped::WakeUp();
+		
 		try
 		{
 			switch ( code )
