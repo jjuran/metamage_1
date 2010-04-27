@@ -108,6 +108,7 @@ namespace tool
 		
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
+		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
 		
 		io::spew_file< n::string_scribe< std::string > >( scriptFile, script );
 	}
