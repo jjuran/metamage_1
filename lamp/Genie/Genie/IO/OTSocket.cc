@@ -141,7 +141,7 @@ namespace Genie
 		}
 	}
 	
-	static void SetUpEndpoint( EndpointRef endpoint )
+	static void SetUpEndpoint( EndpointRef endpoint, OTSocket* socket )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( socket_notifier );
 		
@@ -152,7 +152,7 @@ namespace Genie
 		
 		N::OTSetBlocking( endpoint );
 		
-		N::OTInstallNotifier( endpoint, gNotifyUPP, NULL );
+		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
 		
 		N::OTUseSyncIdleEvents( endpoint, true );
 	}
@@ -168,7 +168,7 @@ namespace Genie
 		itHasReceivedFIN( false ),
 		itHasReceivedRST( false )
 	{
-		SetUpEndpoint( itsEndpoint );
+		SetUpEndpoint( itsEndpoint, this );
 	}
 	
 	OTSocket::~OTSocket()
@@ -421,7 +421,7 @@ namespace Genie
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
 		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
 		
-		SetUpEndpoint( itsEndpoint );
+		SetUpEndpoint( itsEndpoint, this );
 		
 		TBind reqAddr;
 		
