@@ -12,6 +12,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <stdexcept>
 
 // Standard C
 #include <string.h>
@@ -184,6 +185,13 @@ namespace plus
 		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
 	}
 	
+	string::string( const string& other, size_type pos, size_type n )
+	{
+		its_small_name[ max_offset ] = 0;
+		
+		assign( other, pos, n );
+	}
+	
 	string::string( const string& other )
 	{
 		its_small_name[ max_offset ] = 0;
@@ -335,6 +343,20 @@ namespace plus
 		memset( pointer, c, n );
 		
 		return *this;
+	}
+	
+	string& string::assign( const string& other, size_type pos, size_type n )
+	{
+		const size_type other_size = other.size();
+		
+		if ( pos > other_size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		n = std::min( n, other.size() - pos );
+		
+		return assign( other.data() + pos, n );
 	}
 	
 	string& string::assign( const string& other )

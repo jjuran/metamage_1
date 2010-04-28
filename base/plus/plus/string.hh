@@ -88,6 +88,8 @@ namespace plus
 			
 			~string();
 			
+			string( const string& other, size_type pos, size_type n = npos );
+			
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
@@ -139,6 +141,7 @@ namespace plus
 			
 			string& assign( size_type n, char c );
 			
+			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
 			void clear()  { reallocate( 0 ); }
