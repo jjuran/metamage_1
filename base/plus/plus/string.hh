@@ -183,6 +183,13 @@ namespace plus
 			size_type find_first_not_of( const char* s, size_type pos, size_type n ) const;
 			
 			size_type find_first_not_of( char c, size_type pos = 0 ) const;
+			
+			size_type find_last_not_of( const string& s, size_type pos = npos ) const;
+			size_type find_last_not_of( const char*   s, size_type pos = npos ) const;
+			
+			size_type find_last_not_of( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find_last_not_of( char c, size_type pos = npos ) const;
 	};
 	
 	
