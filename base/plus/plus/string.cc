@@ -56,6 +56,24 @@ namespace plus
 	}
 	
 	
+	class matches_none
+	{
+		private:
+			const char*  begin;
+			const char*  end;
+		
+		public:
+			matches_none( const char* a, const char* z ) : begin( a ), end( z )
+			{
+			}
+			
+			bool operator()( char c ) const
+			{
+				return std::find( begin, end, c ) == end;
+			}
+	};
+	
+	
 	static void dispose( const char* pointer, int margin )
 	{
 		if ( margin == ~delete_basic )
@@ -380,6 +398,39 @@ namespace plus
 	string::size_type string::find_first_of( char c, size_type pos ) const
 	{
 		return find( c, pos );
+	}
+	
+	
+	string::size_type string::find_first_not_of( const string& s, size_type pos ) const
+	{
+		return find_first_not_of( s.data(), pos, s.size() );
+	}
+	
+	string::size_type string::find_first_not_of( const char* s, size_type pos ) const
+	{
+		return find_first_not_of( s, pos, strlen( s ) );
+	}
+	
+	string::size_type string::find_first_not_of( const char* s, size_type pos, size_type n ) const
+	{
+		const size_t size = length();
+		
+		if ( pos >= size )
+		{
+			return npos;
+		}
+		
+		const char* begin = data();
+		const char* end   = begin + size;
+		
+		const char* it = std::find_if( begin + pos, end, matches_none( s, s + n ) );
+		
+		return it != end ? it - begin : npos;
+	}
+	
+	string::size_type string::find_first_not_of( char c, size_type pos ) const
+	{
+		return find_first_not_of( &c, pos, 1 );
 	}
 	
 	
