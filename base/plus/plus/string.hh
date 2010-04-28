@@ -193,6 +193,11 @@ namespace plus
 			size_type find_last_not_of( const char* s, size_type pos, size_type n ) const;
 			
 			size_type find_last_not_of( char c, size_type pos = npos ) const;
+			
+			string substr( size_type pos = 0, size_type n = npos ) const
+			{
+				return string( *this, pos, n );
+			}
 	};
 	
 	
