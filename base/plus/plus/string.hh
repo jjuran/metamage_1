@@ -198,6 +198,13 @@ namespace plus
 			{
 				return string( *this, pos, n );
 			}
+			
+			int compare( const string& b ) const;
+			int compare( size_type a_pos, size_type a_n, const string& b ) const;
+			int compare( size_type a_pos, size_type a_n, const string& b, size_type b_pos, size_type b_n ) const;
+			
+			int compare( const char* s ) const;
+			int compare( size_type a_pos, size_type a_n, const char* b, size_type b_n = npos ) const;
 	};
 	
 	

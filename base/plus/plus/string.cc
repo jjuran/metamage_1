@@ -602,6 +602,70 @@ namespace plus
 	}
 	
 	
+	int string::compare( const string& b ) const
+	{
+		return string_compare( data(), size(), b.data(), b.size() );
+	}
+	
+	int string::compare( size_type a_pos, size_type a_n, const string& b ) const
+	{
+		const size_type a_size = size();
+		
+		if ( a_pos > a_size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		a_n = std::min( a_n, a_size - a_pos );
+		
+		return string_compare( data() + a_pos, a_n, b.data(), b.size() );
+	}
+	
+	int string::compare( size_type a_pos, size_type a_n, const string& b, size_type b_pos, size_type b_n ) const
+	{
+		const size_type a_size = size();
+		
+		if ( a_pos > a_size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		a_n = std::min( a_n, a_size - a_pos );
+		
+		const size_type b_size = b.size();
+		
+		if ( b_pos > b_size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		b_n = std::min( b_n, b_size - b_pos );
+		
+		return string_compare( data() + a_pos, a_n, b.data() + b_pos, b_n );
+	}
+	
+	int string::compare( const char* b ) const
+	{
+		return string_compare( data(), size(), b, strlen( b ) );
+	}
+	
+	int string::compare( size_type a_pos, size_type a_n, const char* b, size_type b_n ) const
+	{
+		const size_type a_size = size();
+		
+		if ( a_pos > a_size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		a_n = std::min( a_n, a_size - a_pos );
+		
+		b_n = std::min( b_n, strlen( b ) );
+		
+		return string_compare( data(), size(), b, b_n );
+	}
+	
+	
 	bool operator==( const string& a, const string& b )
 	{
 		return string_equal( a.data(), a.size(), b.data(), b.size() );
