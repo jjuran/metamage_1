@@ -350,6 +350,39 @@ namespace plus
 	}
 	
 	
+	string::size_type string::find_first_of( const string& s, size_type pos ) const
+	{
+		return find_first_of( s.data(), pos, s.size() );
+	}
+	
+	string::size_type string::find_first_of( const char* s, size_type pos ) const
+	{
+		return find_first_of( s, pos, strlen( s ) );
+	}
+	
+	string::size_type string::find_first_of( const char* s, size_type pos, size_type n ) const
+	{
+		const size_t size = length();
+		
+		if ( pos >= size )
+		{
+			return npos;
+		}
+		
+		const char* begin = data();
+		const char* end   = begin + size;
+		
+		const char* it = std::find_first_of( begin + pos, end, s, s + n );
+		
+		return it != end ? it - begin : npos;
+	}
+	
+	string::size_type string::find_first_of( char c, size_type pos ) const
+	{
+		return find( c, pos );
+	}
+	
+	
 	bool operator==( const string& a, const string& b )
 	{
 		return string_equal( a.data(), a.size(), b.data(), b.size() );
