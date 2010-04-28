@@ -368,6 +368,46 @@ namespace plus
 	}
 	
 	
+	string::size_type string::rfind( const string& s, size_type pos ) const
+	{
+		return rfind( s.data(), pos, s.size() );
+	}
+	
+	string::size_type string::rfind( const char* s, size_type pos ) const
+	{
+		return rfind( s, pos, strlen( s ) );
+	}
+	
+	string::size_type string::rfind( const char* s, size_type pos, size_type n ) const
+	{
+		const size_type size = length();
+		
+		if ( n > size )
+		{
+			return npos;
+		}
+		
+		pos = std::min( pos, size - n );
+		
+		if ( n == 0 )
+		{
+			return pos;
+		}
+		
+		const char* begin = data();
+		const char* end   = begin + pos + n;
+		
+		const char* it = std::find_end( begin, end, s, s + n );
+		
+		return it != end ? it - begin : npos;
+	}
+	
+	string::size_type string::rfind( char c, size_type pos ) const
+	{
+		return rfind( &c, pos, 1 );
+	}
+	
+	
 	string::size_type string::find_first_of( const string& s, size_type pos ) const
 	{
 		return find_first_of( s.data(), pos, s.size() );

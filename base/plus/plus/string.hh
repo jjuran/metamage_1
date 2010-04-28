@@ -156,6 +156,13 @@ namespace plus
 			
 			size_type find( char c, size_type pos = 0 ) const;
 			
+			size_type rfind( const string& s, size_type pos = npos ) const;
+			size_type rfind( const char*   s, size_type pos = npos ) const;
+			
+			size_type rfind( const char* s, size_type pos, size_type n ) const;
+			
+			size_type rfind( char c, size_type pos = npos ) const;
+			
 			size_type find_first_of( const string& s, size_type pos = 0 ) const;
 			size_type find_first_of( const char*   s, size_type pos = 0 ) const;
 			
