@@ -148,6 +148,13 @@ namespace plus
 			string& operator=( char c )  { return assign( 1, c ); }
 			
 			void swap( string& other );
+			
+			size_type find( const string& s, size_type pos = 0 ) const;
+			size_type find( const char*   s, size_type pos = 0 ) const;
+			
+			size_type find( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find( char c, size_type pos = 0 ) const;
 	};
 	
 	

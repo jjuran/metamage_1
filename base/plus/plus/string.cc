@@ -2,7 +2,10 @@
 	string.cc
 	---------
 	
-	Copyright 2010, Joshua Juran
+	Copyright 2010, Joshua Juran 
+	
+	Some of the find-related member functions were written using 
+	boost/shmem/containers/string.hpp as a guide.
 */
 
 #include "plus/string.hh"
@@ -306,6 +309,44 @@ namespace plus
 		memcpy( temp_longs,      other.its_longs, buffer_size );
 		memcpy( other.its_longs, its_longs,       buffer_size );
 		memcpy( its_longs,       temp_longs,      buffer_size );
+	}
+	
+	
+	string::size_type string::find( const string& s, size_type pos ) const
+	{
+		return find( s.data(), pos, s.size() );
+	}
+	
+	string::size_type string::find( const char* s, size_type pos ) const
+	{
+		return find( s, pos, strlen( s ) );
+	}
+	
+	string::size_type string::find( const char* s, size_type pos, size_type n ) const
+	{
+		const size_t size = length();
+		
+		if ( pos > size  ||  pos + n > size )
+		{
+			return npos;
+		}
+		
+		if ( n == 0 )
+		{
+			return pos;
+		}
+		
+		const char* begin = data();
+		const char* end   = begin + size;
+		
+		const char* it = std::search( begin + pos, end, s, s + n );
+		
+		return it != end ? it - begin : npos;
+	}
+	
+	string::size_type string::find( char c, size_type pos ) const
+	{
+		return find( &c, pos, 1 );
 	}
 	
 	
