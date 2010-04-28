@@ -56,6 +56,23 @@ namespace plus
 	}
 	
 	
+	class matches_any
+	{
+		private:
+			const char*  begin;
+			const char*  end;
+		
+		public:
+			matches_any( const char* a, const char* z ) : begin( a ), end( z )
+			{
+			}
+			
+			bool operator()( char c ) const
+			{
+				return std::find( begin, end, c ) != end;
+			}
+	};
+	
 	class matches_none
 	{
 		private:
@@ -72,6 +89,25 @@ namespace plus
 				return std::find( begin, end, c ) == end;
 			}
 	};
+	
+	
+	template < class Iter, class F >
+	static Iter find_last_if( Iter begin, Iter end, F f )
+	{
+		ASSERT( begin <= end );
+		
+		Iter it = end;
+		
+		while ( --it >= begin )
+		{
+			if ( f( *it ) )
+			{
+				return it;
+			}
+		}
+		
+		return end;
+	}
 	
 	
 	static void dispose( const char* pointer, int margin )
@@ -438,6 +474,41 @@ namespace plus
 	string::size_type string::find_first_of( char c, size_type pos ) const
 	{
 		return find( c, pos );
+	}
+	
+	
+	string::size_type string::find_last_of( const string& s, size_type pos ) const
+	{
+		return find_last_of( s.data(), pos, s.size() );
+	}
+	
+	string::size_type string::find_last_of( const char* s, size_type pos ) const
+	{
+		return find_last_of( s, pos, strlen( s ) );
+	}
+	
+	string::size_type string::find_last_of( const char* s, size_type pos, size_type n ) const
+	{
+		const size_type size = length();
+		
+		if ( 1 > size )
+		{
+			return npos;
+		}
+		
+		pos = std::min( pos, size - 1 );
+		
+		const char* begin = data();
+		const char* end   = begin + pos + 1;
+		
+		const char* it = find_last_if( begin, end, matches_any( s, s + n ) );
+		
+		return it != end ? it - begin : npos;
+	}
+	
+	string::size_type string::find_last_of( char c, size_type pos ) const
+	{
+		return find_last_of( &c, pos, 1 );
 	}
 	
 	
