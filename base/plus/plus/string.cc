@@ -388,6 +388,23 @@ namespace plus
 	}
 	
 	
+	string::size_type string::copy( char* buffer, size_type n, size_type pos ) const
+	{
+		const size_t size = length();
+		
+		if ( pos > size )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		n = std::min( n, size - pos );
+		
+		memcpy( buffer, data() + pos, n );
+		
+		return n;
+	}
+	
+	
 	string::size_type string::find( const string& s, size_type pos ) const
 	{
 		return find( s.data(), pos, s.size() );

@@ -152,6 +152,8 @@ namespace plus
 			
 			void swap( string& other );
 			
+			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
+			
 			size_type find( const string& s, size_type pos = 0 ) const;
 			size_type find( const char*   s, size_type pos = 0 ) const;
 			
