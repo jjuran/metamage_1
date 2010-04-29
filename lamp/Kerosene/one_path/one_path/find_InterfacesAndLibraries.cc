@@ -7,6 +7,9 @@
 
 #include "one_path/find_InterfacesAndLibraries.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // iota
 #include "iota/find.hh"
 
@@ -25,6 +28,11 @@ namespace tool
 	
 	std::string find_InterfacesAndLibraries()
 	{
+		if ( const char* interfaces_libraries = getenv( "INTERFACES_LIBRARIES" ) )
+		{
+			return interfaces_libraries;
+		}
+		
 		const char* sig_ToolServer = "MPSX";
 		
 		std::string pathname = find_appl( sig_ToolServer );
