@@ -330,7 +330,13 @@ namespace tool
 		
 		if ( options.Target().envType & envRelix )
 		{
+		#ifdef __RELIX__
+			
+			// For now, mxcpp relies on _realpathat() for this.
+			
 			preprocess.push_back( "--mac-lines" );
+			
+		#endif
 			
 			preprocess.push_back( "-D" "macintosh=1" );
 			
