@@ -17,6 +17,7 @@
 #include "debug/assert.hh"
 
 // plus
+#include "plus/concat.hh"
 #include "plus/string_details.hh"
 
 
@@ -51,22 +52,6 @@ namespace plus
 		                                             b, b_size ) == 0;
 	}
 	
-	
-	static void concat( const char* a, string::size_type  a_size,
-	                    const char* b, string::size_type  b_size,
-	                    string& result )
-	{
-		const string::size_type total_size = a_size + b_size;
-		
-		char* buffer = (char*) ::operator new( total_size + 1 );
-		
-		memcpy( buffer,          a, a_size );
-		memcpy( buffer + a_size, b, b_size );
-		
-		buffer[ total_size ] = '\0';
-		
-		result.assign( buffer, total_size, delete_basic );
-	}
 	
 	static void dispose( const char* pointer, int margin )
 	{
@@ -350,16 +335,6 @@ namespace plus
 		return string_compare( a, strlen( a ), b.data(), b.size() ) < 0;
 	}
 	
-	
-	string concat( const char* a, string::size_type  a_size,
-	               const char* b, string::size_type  b_size )
-	{
-		string result;
-		
-		concat( a, a_size, b, b_size, result );
-		
-		return result;
-	}
 	
 	string operator+( const string& a, const string& b )
 	{

@@ -21,6 +21,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/concat.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 

@@ -22,6 +22,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/concat.hh"
 #include "plus/pointer_to_function.hh"
 #include "plus/string.hh"
 
