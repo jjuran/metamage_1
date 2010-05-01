@@ -169,7 +169,7 @@ namespace plus
 	{
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
-		its_alloc.capacity = capacity ? capacity : length;
+		its_alloc.capacity = capacity;  // may be zero
 		
 		its_alloc._policy = ~policy;
 	}
@@ -240,8 +240,9 @@ namespace plus
 	{
 		const int margin = its_small_name[ max_offset ];
 		
-		return margin >= 0 ? max_offset
-		                   : its_alloc.capacity;
+		return   margin >= 0        ? max_offset
+		       : its_alloc.capacity ? its_alloc.capacity
+		       :                      its_alloc.length;
 	}
 	
 	const char* string::data() const
@@ -271,7 +272,7 @@ namespace plus
 		
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
-		its_alloc.capacity = capacity ? capacity : length;
+		its_alloc.capacity = capacity;  // may be zero
 		
 		its_alloc._policy = ~policy;
 		
