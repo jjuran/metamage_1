@@ -292,7 +292,13 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		if ( !empty() )
+		if ( empty() )
+		{
+			char* new_pointer = reallocate( length );
+			
+			memcpy( new_pointer, p, length );
+		}
+		else
 		{
 			// Always assign to a temporary and then swap.
 			// This handles the cases of input occupying either our small buffer
@@ -303,12 +309,6 @@ namespace plus
 			temp.assign( p, length );
 			
 			swap( temp );
-		}
-		else
-		{
-			char* new_pointer = reallocate( length );
-			
-			memcpy( new_pointer, p, length );
 		}
 		
 		return *this;
