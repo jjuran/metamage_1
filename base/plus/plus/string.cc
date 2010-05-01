@@ -354,6 +354,11 @@ namespace plus
 			// Either it's a small string, or it occupies static storage.
 			// Either way, we perform a shallow copy.
 			
+			// If this is a self-assignment, then *we* are either a small string
+			// or static storage, and dispose() does nothing.
+			
+			dispose( its_alloc.pointer, its_alloc._policy );
+			
 			std::copy( other.its_longs,
 			           other.its_longs + buffer_size_in_longs,
 			           its_longs );
