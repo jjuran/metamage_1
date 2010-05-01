@@ -111,9 +111,9 @@ namespace plus
 	}
 	
 	
-	static void dispose( const char* pointer, int margin )
+	static void dispose( const char* pointer, int _policy )
 	{
-		if ( margin == ~delete_basic )
+		if ( _policy == ~delete_basic )
 		{
 			delete pointer;
 		}
@@ -149,7 +149,7 @@ namespace plus
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity ? capacity : length;
 		
-		its_small_name[ max_offset ] = ~policy;
+		its_alloc._policy = ~policy;
 	}
 	
 	string::string( const char* p, size_type length )
@@ -182,7 +182,7 @@ namespace plus
 	
 	string::~string()
 	{
-		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
+		dispose( its_alloc.pointer, its_alloc._policy );
 	}
 	
 	string::string( const string& other, size_type pos, size_type n )
@@ -224,8 +224,8 @@ namespace plus
 	
 	const char* string::data() const
 	{
-		return its_small_name[ max_offset ] < 0 ? its_alloc.pointer
-		                                        : its_small_name;
+		return its_alloc._policy < 0 ? its_alloc.pointer
+		                             : its_small_name;
 	}
 	
 	string& string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
@@ -237,13 +237,13 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		dispose( its_alloc.pointer, its_small_name[ max_offset ] );
+		dispose( its_alloc.pointer, its_alloc._policy );
 		
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity ? capacity : length;
 		
-		its_small_name[ max_offset ] = ~policy;
+		its_alloc._policy = ~policy;
 		
 		return *this;
 	}
@@ -252,7 +252,7 @@ namespace plus
 	{
 		char const *const old_pointer = its_alloc.pointer;
 		
-		const char old_margin = its_small_name[ max_offset ];
+		const char old_policy = its_alloc._policy;
 		
 		char* new_pointer = NULL;
 		
@@ -267,7 +267,7 @@ namespace plus
 			its_alloc.length   = length;
 			its_alloc.capacity = capacity;
 			
-			its_small_name[ max_offset ] = ~delete_basic;
+			its_alloc._policy = ~delete_basic;
 		}
 		else
 		{
@@ -278,7 +278,7 @@ namespace plus
 		
 		new_pointer[ length ] = '\0';
 		
-		dispose( old_pointer, old_margin );
+		dispose( old_pointer, old_policy );
 		
 		return new_pointer;
 	}
@@ -348,7 +348,7 @@ namespace plus
 	
 	string& string::assign( const string& other )
 	{
-		if ( other.its_small_name[ max_offset ] >= ~delete_never )
+		if ( other.its_alloc._policy >= ~delete_never )
 		{
 			// Either it's a small string, or it occupies static storage.
 			// Either way, we perform a shallow copy.
