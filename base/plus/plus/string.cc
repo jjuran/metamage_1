@@ -300,13 +300,17 @@ namespace plus
 			
 			swap( temp );
 		}
-		else
+		else if ( !empty() )
 		{
 			// in case the input lies in an allocated buffer
 			string temp;
 			
-			swap( temp );
+			temp.assign( p, length );
 			
+			swap( temp );
+		}
+		else
+		{
 			char* new_pointer = reallocate( length );
 			
 			memcpy( new_pointer, p, length );
