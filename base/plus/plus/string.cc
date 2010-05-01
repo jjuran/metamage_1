@@ -113,9 +113,31 @@ namespace plus
 	
 	static void dispose( const char* pointer, int _policy )
 	{
-		if ( _policy == ~delete_basic )
+		switch ( _policy )
 		{
-			delete pointer;
+			case ~delete_shared:
+			{
+				pointer -= sizeof (size_t);
+				
+				// This casts away const, but it's only the characters that are
+				// const, not the refcount.
+				
+				size_t& refcount = *(size_t*) pointer;
+				
+				if ( --refcount > 0 )
+				{
+					break;
+				}
+			}
+			
+			// fall through
+			
+			case ~delete_basic:
+				delete pointer;
+				break;
+			
+			default:
+				break;
 		}
 	}
 	
@@ -268,14 +290,20 @@ namespace plus
 		{
 			const size_type capacity = adjusted_capacity( length );
 			
+			const size_t buffer_length = sizeof (size_t) + capacity + 1;
+			
 			// may throw
-			new_pointer = (char*) ::operator new( capacity + 1 );
+			new_pointer = (char*) ::operator new( buffer_length );
+			
+			reinterpret_cast< size_t* >( new_pointer )[0] = 1;  // refcount
+			
+			new_pointer += sizeof (size_t);
 			
 			its_alloc.pointer  = new_pointer;
 			its_alloc.length   = length;
 			its_alloc.capacity = capacity;
 			
-			its_alloc._policy = ~delete_basic;
+			its_alloc._policy = ~delete_shared;
 		}
 		else
 		{
