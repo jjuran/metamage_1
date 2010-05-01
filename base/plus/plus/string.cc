@@ -292,17 +292,12 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		if ( p < its_small_name + sizeof its_small_name  &&  p + length > its_small_name )
+		if ( !empty() )
 		{
-			// input lies within our small buffer
+			// Always assign to a temporary and then swap.
+			// This handles the cases of input occupying either our small buffer
+			// or an allocated one.
 			
-			string temp( p, length );
-			
-			swap( temp );
-		}
-		else if ( !empty() )
-		{
-			// in case the input lies in an allocated buffer
 			string temp;
 			
 			temp.assign( p, length );
