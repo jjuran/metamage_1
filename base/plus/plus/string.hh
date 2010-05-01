@@ -59,10 +59,6 @@ namespace plus
 			};
 		
 		protected:
-			const char* internal_data() const;
-			
-			const char* external_data() const;
-			
 			char* reallocate( size_type length );
 			
 			void set_length( size_type length );
