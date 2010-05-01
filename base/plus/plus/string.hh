@@ -88,6 +88,8 @@ namespace plus
 			
 			~string();
 			
+			string( const string& other, size_type pos, size_type n = npos );
+			
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
@@ -139,6 +141,7 @@ namespace plus
 			
 			string& assign( size_type n, char c );
 			
+			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
 			void clear()  { reallocate( 0 ); }
@@ -148,6 +151,62 @@ namespace plus
 			string& operator=( char c )  { return assign( 1, c ); }
 			
 			void swap( string& other );
+			
+			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
+			
+			size_type find( const string& s, size_type pos = 0 ) const;
+			size_type find( const char*   s, size_type pos = 0 ) const;
+			
+			size_type find( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find( char c, size_type pos = 0 ) const;
+			
+			size_type rfind( const string& s, size_type pos = npos ) const;
+			size_type rfind( const char*   s, size_type pos = npos ) const;
+			
+			size_type rfind( const char* s, size_type pos, size_type n ) const;
+			
+			size_type rfind( char c, size_type pos = npos ) const;
+			
+			size_type find_first_of( const string& s, size_type pos = 0 ) const;
+			size_type find_first_of( const char*   s, size_type pos = 0 ) const;
+			
+			size_type find_first_of( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find_first_of( char c, size_type pos = 0 ) const;
+			
+			size_type find_last_of( const string& s, size_type pos = npos ) const;
+			size_type find_last_of( const char*   s, size_type pos = npos ) const;
+			
+			size_type find_last_of( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find_last_of( char c, size_type pos = npos ) const;
+			
+			size_type find_first_not_of( const string& s, size_type pos = 0 ) const;
+			size_type find_first_not_of( const char*   s, size_type pos = 0 ) const;
+			
+			size_type find_first_not_of( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find_first_not_of( char c, size_type pos = 0 ) const;
+			
+			size_type find_last_not_of( const string& s, size_type pos = npos ) const;
+			size_type find_last_not_of( const char*   s, size_type pos = npos ) const;
+			
+			size_type find_last_not_of( const char* s, size_type pos, size_type n ) const;
+			
+			size_type find_last_not_of( char c, size_type pos = npos ) const;
+			
+			string substr( size_type pos = 0, size_type n = npos ) const
+			{
+				return string( *this, pos, n );
+			}
+			
+			int compare( const string& b ) const;
+			int compare( size_type a_pos, size_type a_n, const string& b ) const;
+			int compare( size_type a_pos, size_type a_n, const string& b, size_type b_pos, size_type b_n ) const;
+			
+			int compare( const char* s ) const;
+			int compare( size_type a_pos, size_type a_n, const char* b, size_type b_n = npos ) const;
 	};
 	
 	

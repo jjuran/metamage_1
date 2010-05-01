@@ -55,12 +55,14 @@ namespace plus
 			{
 			}
 			
-			var_string( const string& other ) : string( other.data(), other.size() )
+			var_string( const string& other, size_type pos = 0, size_type n = npos )
 			{
+				assign( other, pos, n );
 			}
 			
-			var_string( const var_string& other ) : string( other.data(), other.size() )
+			var_string( const var_string& other, size_type pos = 0, size_type n = npos )
 			{
+				assign( other, pos, n );
 			}
 			
 			var_string& operator=( const var_string& other )
@@ -129,9 +131,13 @@ namespace plus
 				return *this;
 			}
 			
-			var_string& assign( const string& other )
+			var_string& assign( const string& other, size_type pos = 0, size_type n = npos )
 			{
-				return assign( other.data(), other.size() );
+				// Always allocates, even with pos == 0 and n == npos
+				
+				string::assign( other, pos, n );
+				
+				return *this;
 			}
 			
 			char* erase( char* p, char* q );
