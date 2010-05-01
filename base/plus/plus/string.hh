@@ -49,6 +49,10 @@ namespace plus
 				const char*  pointer;
 				size_type    length;
 				size_type    capacity;
+				char         _12;
+				char         _13;
+				char         _14;
+				char         _policy;  // The _ is mnemonic for ~
 			};
 			
 			union
