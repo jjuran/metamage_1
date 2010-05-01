@@ -416,13 +416,27 @@ namespace plus
 	
 	string& string::assign( const string& other )
 	{
-		if ( other.its_alloc._policy >= ~delete_never )
+		if ( other.its_alloc._policy >= ~delete_shared )
 		{
-			// Either it's a small string, or it occupies static storage.
+			if ( other.its_alloc._policy == ~delete_shared )
+			{
+				size_t& refcount = ((size_t*) other.its_alloc.pointer)[ -1 ];
+				
+				// Should never happen, since address space would be exhausted
+				// by size( -1 ) / sizeof (string) copies of a string, which is
+				// necessarily less than size( -1 ).  This is to catch errors in
+				// maintaining the refcount.
+				
+				ASSERT( refcount <= size_t( -1 ) );
+				
+				++refcount;
+			}
+			
+			// Either it's small, shared, or it occupies static storage.
 			// Either way, we perform a shallow copy.
 			
-			// If this is a self-assignment, then *we* are either a small string
-			// or static storage, and dispose() does nothing.
+			// If this is a self-assignment, then *we* are either small, static,
+			// or shared with non-minimal refcount, and dispose() does nothing.
 			
 			dispose( its_alloc.pointer, its_alloc._policy );
 			
