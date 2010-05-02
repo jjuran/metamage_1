@@ -199,6 +199,8 @@ namespace plus
 				return append( other.data(), other.size() );
 			}
 			
+			var_string& append( const string& other, size_type pos, size_type n );
+			
 			string& operator+=( const string& s )  { return append( s ); }
 			string& operator+=( const char*   s )  { return append( s ); }
 			string& operator+=( char          c )  { return append( 1, c ); }

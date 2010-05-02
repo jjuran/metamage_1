@@ -317,5 +317,19 @@ namespace plus
 		return *this;
 	}
 	
+	var_string& var_string::append( const string& other, size_type pos, size_type n )
+	{
+		const size_type other_size = other.size();
+		
+		if ( pos > other_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, other_size - pos );
+		
+		return append( other.data() + pos, n );
+	}
+	
 }
 
