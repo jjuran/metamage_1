@@ -166,6 +166,14 @@ namespace plus
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
 			
+			var_string& insert( size_type pos, const string& s );
+			var_string& insert( size_type pos, const string& s, size_type begin, size_type n );
+			
+			var_string& insert( size_type pos, const char* s, size_type n );
+			var_string& insert( size_type pos, const char* s );
+			
+			var_string& insert( size_type pos, size_type n, char c );
+			
 			void insert( char* p, char* i, char* j );
 			
 			void insert( char* p, size_type n, char c );

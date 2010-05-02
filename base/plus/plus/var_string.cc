@@ -210,6 +210,63 @@ namespace plus
 		return p;
 	}
 	
+	var_string& var_string::insert( size_type pos, const string& s )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		return insert( pos, s.data(), s.size() );
+	}
+	
+	var_string& var_string::insert( size_type pos, const string& s, size_type offset, size_type n )
+	{
+		const size_type s_size = s.size();
+		
+		if ( pos > size()  ||  offset > s_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, s_size - offset );
+		
+		return insert( pos, s.data() + offset, n );
+	}
+	
+	var_string& var_string::insert( size_type pos, const char* s, size_type n )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		char* data = mutable_data();
+		
+		memcpy( insert_uninitialized( data + pos, n ), s, n );
+		
+		return *this;
+	}
+	
+	var_string& var_string::insert( size_type pos, const char* s )
+	{
+		return insert( pos, s, strlen( s ) );
+	}
+	
+	var_string& var_string::insert( size_type pos, size_type n, char c )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		char* data = mutable_data();
+		
+		memset( insert_uninitialized( data + pos, n ), c, n );
+		
+		return *this;
+	}
+	
 	void var_string::insert( char* p, char* i, char* j )
 	{
 		ASSERT( i <= j );
