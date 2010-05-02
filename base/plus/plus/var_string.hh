@@ -18,7 +18,7 @@ namespace plus
 	class var_string : public string
 	{
 		private:
-			char* mutable_data()  { return const_cast< char* >( data() ); }
+			char* mutable_data();
 			
 			char* embiggen( size_type new_length, size_type new_capacity = 0 );
 			
@@ -84,7 +84,7 @@ namespace plus
 			
 			char* begin()  { return mutable_data(); }
 			
-			char* end()  { return const_cast< char* >( string::end() ); }
+			char* end();
 			
 			char& front()  { return begin()[  0 ]; }
 			char& back ()  { return end  ()[ -1 ]; }

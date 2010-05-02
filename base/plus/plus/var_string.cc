@@ -27,6 +27,20 @@
 namespace plus
 {
 	
+	char* var_string::mutable_data()
+	{
+		copy_on_write();
+		
+		return const_cast< char* >( data() );
+	}
+	
+	char* var_string::end()
+	{
+		copy_on_write();
+		
+		return const_cast< char* >( string::end() );
+	}
+	
 	char* var_string::erase( char* p, char* q )
 	{
 		const size_type old_size = size();
@@ -91,9 +105,11 @@ namespace plus
 			}
 		}
 		
+		char* data = mutable_data();  // copy on write
+		
 		set_length( new_length );
 		
-		return mutable_data();
+		return data;
 	}
 	
 	static void check_size( string::size_type size )
