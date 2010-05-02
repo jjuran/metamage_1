@@ -41,6 +41,24 @@ namespace plus
 		return const_cast< char* >( string::end() );
 	}
 	
+	char* var_string::erase_unchecked( char* p, size_type n )
+	{
+		const size_type old_size = size();
+		
+		char* begin = const_cast< char* >( data() );
+		char* end   = begin + old_size;
+		
+		char* q = p + n;
+		
+		std::copy( q, end, p );
+		
+		const size_type new_size = old_size - n;
+		
+		set_length( new_size );
+		
+		return p;
+	}
+	
 	var_string& var_string::erase( size_type pos, size_type n )
 	{
 		const size_type old_size = size();
@@ -50,40 +68,29 @@ namespace plus
 			throw std::out_of_range( __func__ );
 		}
 		
-		char* data = mutable_data();
-		char* end  = data + old_size;
-		
 		n = std::min( n, old_size - pos );
 		
-		std::copy( data + pos + n,
-		           end,
-		           data + pos );
+		char* data = mutable_data();
 		
-		const size_type new_size = old_size - n;
+		char* p = data + pos;
 		
-		set_length( new_size );
+		erase_unchecked( p, n );
 		
 		return *this;
 	}
 	
 	char* var_string::erase( char* p, char* q )
 	{
-		const size_type old_size = size();
+		char* begin = const_cast< char* >( data() );
+		char* end   = begin + size();
 		
-		char* data = mutable_data();
-		char* end  = data + old_size;
+		ASSERT( begin <= p   );
+		ASSERT( p     <= q   );
+		ASSERT( q     <= end );
 		
-		ASSERT( data <= p   );
-		ASSERT( p    <= q   );
-		ASSERT( q    <= end );
+		const size_type n = q - p;
 		
-		std::copy( q, end, p );
-		
-		const size_type new_size = old_size - ( q - p );
-		
-		set_length( new_size );
-		
-		return p;
+		return erase_unchecked( p, n );
 	}
 	
 	char* var_string::embiggen( size_type new_length, size_type new_capacity )

@@ -23,6 +23,8 @@ namespace plus
 			char* embiggen( size_type new_length, size_type new_capacity = 0 );
 			
 			char* insert_uninitialized( char* p, size_type n );
+			
+			char* erase_unchecked( char* p, size_type n );
 		
 		public:
 			typedef char&  reference;
