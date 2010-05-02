@@ -320,6 +320,37 @@ namespace plus
 		return new_pointer;
 	}
 	
+	void string::copy_on_write()
+	{
+		const int _policy = its_alloc._policy;
+		
+		if ( _policy >= 0 )
+		{
+			return;  // small string
+		}
+		
+		if ( its_alloc.capacity )
+		{
+			if ( _policy != ~delete_shared )
+			{
+				// Handoff with capacity specified -- we own this
+				return;
+			}
+			
+			const size_t refcount = ((size_t*) its_alloc.pointer)[ -1 ];
+			
+			ASSERT( refcount != 0 );
+			
+			if ( refcount == 1 )
+			{
+				// Shared with no others
+				return;
+			}
+		}
+		
+		assign( its_alloc.pointer, its_alloc.length );
+	}
+	
 	string& string::assign( const char* p, size_type length )
 	{
 		if ( length )
