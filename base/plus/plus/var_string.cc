@@ -41,6 +41,31 @@ namespace plus
 		return const_cast< char* >( string::end() );
 	}
 	
+	var_string& var_string::erase( size_type pos, size_type n )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		char* data = mutable_data();
+		char* end  = data + old_size;
+		
+		n = std::min( n, old_size - pos );
+		
+		std::copy( data + pos + n,
+		           end,
+		           data + pos );
+		
+		const size_type new_size = old_size - n;
+		
+		set_length( new_size );
+		
+		return *this;
+	}
+	
 	char* var_string::erase( char* p, char* q )
 	{
 		const size_type old_size = size();

@@ -150,6 +150,8 @@ namespace plus
 				return *this;
 			}
 			
+			var_string& erase( size_type pos = 0, size_type n = npos );
+			
 			char* erase( char* p, char* q );
 			
 			char* erase( char* p )  { return erase( p, p + 1 ); }
