@@ -158,22 +158,22 @@ namespace plus
 		const size_type old_size = size();
 		const size_type new_size = old_size + n;
 		
-		char* data = mutable_data();
-		char* end  = data + old_size;
+		char* begin = const_cast< char* >( data() );
+		char* end   = begin + old_size;
 		
-		ASSERT( data <= p   );
-		ASSERT( p    <= end );
+		ASSERT( begin <= p   );
+		ASSERT( p     <= end );
 		
 		ASSERT( new_size >= old_size );  // catch integer overflow
 		
-		const size_type offset = p - data;
+		const size_type offset = p - begin;
 		
-		data = embiggen( new_size );
+		begin = embiggen( new_size );
 		
-		p    = data + offset;
-		end  = data + old_size;
+		p    = begin + offset;
+		end  = begin + old_size;
 		
-		std::copy_backward( p, end, data + new_size );
+		std::copy_backward( p, end, begin + new_size );
 		
 		return p;
 	}
