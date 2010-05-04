@@ -86,8 +86,8 @@ namespace plus
 			
 			char* end()  { return const_cast< char* >( string::end() ); }
 			
-			char& front()  { return mutable_data()[ 0          ]; }
-			char& back ()  { return mutable_data()[ size() - 1 ]; }
+			char& front()  { return begin()[  0 ]; }
+			char& back ()  { return end  ()[ -1 ]; }
 			
 			char& operator[]( unsigned long long  i )  { return mutable_data()[ i ]; }
 			char& operator[](          long long  i )  { return mutable_data()[ i ]; }

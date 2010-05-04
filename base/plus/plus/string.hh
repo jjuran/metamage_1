@@ -122,8 +122,8 @@ namespace plus
 			
 			const char* end() const;
 			
-			const char& front() const  { return data()[ 0          ]; }
-			const char& back () const  { return data()[ size() - 1 ]; }
+			const char& front() const  { return begin()[  0 ]; }
+			const char& back () const  { return end  ()[ -1 ]; }
 			
 			string& assign( const char*    p,
 			                size_type      length,
