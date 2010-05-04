@@ -84,7 +84,7 @@ namespace plus
 			
 			char* begin()  { return mutable_data(); }
 			
-			char* end()  { return begin() + size(); }
+			char* end()  { return const_cast< char* >( string::end() ); }
 			
 			char& front()  { return mutable_data()[ 0          ]; }
 			char& back ()  { return mutable_data()[ size() - 1 ]; }

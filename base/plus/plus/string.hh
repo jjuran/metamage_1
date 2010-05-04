@@ -120,7 +120,7 @@ namespace plus
 			
 			const char* begin() const  { return data(); }
 			
-			const char* end() const  { return begin() + size(); }
+			const char* end() const;
 			
 			const char& front() const  { return data()[ 0          ]; }
 			const char& back () const  { return data()[ size() - 1 ]; }
