@@ -20,17 +20,18 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 9;
+static const unsigned n_tests = 10;
 
 
 using tap::ok_if;
 
 
+static const plus::string empty;
+
+
 static void string()
 {
 	plus::var_string test = "0123456789abcdef";
-	
-	const plus::string empty;
 	
 	const plus::string::size_type zero = 0;
 	
@@ -71,6 +72,26 @@ static void string()
 	test.replace( 2, 13, xyz );
 	
 	ok_if( test == "2xxyzz" );
+	
+	bool exception_thrown = false;
+	
+	try
+	{
+		test.replace( 7, 0, empty );
+	}
+	catch ( const std::out_of_range& )
+	{
+		exception_thrown = true;
+	}
+	
+	ok_if( exception_thrown );
+}
+
+static void substring()
+{
+	 plus::var_string test = "abcdefghijklmnop";
+	 
+	 const plus::string digits = "0123456789";
 }
 
 int main( int argc, const char *const *argv )
@@ -78,6 +99,8 @@ int main( int argc, const char *const *argv )
 	tap::start( "string_replace", n_tests );
 	
 	string();
+	
+	substring();
 	
 	return 0;
 }
