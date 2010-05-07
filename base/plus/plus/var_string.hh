@@ -157,6 +157,8 @@ namespace plus
 			void push_back( char c )  { append( 1, c ); }
 			void pop_back()           { resize( size() - 1 ); }
 			
+			void clear()  { set_length( 0 ); }
+			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
 			

@@ -147,7 +147,7 @@ namespace plus
 			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
-			void clear()  { reallocate( 0 ); }
+			void reset()  { reallocate( 0 ); }
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			
