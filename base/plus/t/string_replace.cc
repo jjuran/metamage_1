@@ -20,7 +20,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 10 + 7;
+static const unsigned n_tests = 10 + 7 + 2 + 3;
 
 
 using tap::ok_if;
@@ -140,6 +140,45 @@ static void substring()
 	ok_if( test == "0bc23hi56789lmno9" );
 }
 
+static void fill()
+{
+	plus::var_string test = "abc123xyz";
+	
+	bool exception_thrown = false;
+	
+	try
+	{
+		test.replace( 10, 0, 0, '\0' );
+	}
+	catch ( const std::out_of_range& )
+	{
+		exception_thrown = true;
+	}
+	
+	ok_if( exception_thrown );
+	
+	test.replace( 3, 3, 5, '.' );
+	
+	ok_if( test == "abc.....xyz" );
+}
+
+static void range()
+{
+	plus::var_string test = "0123456789";
+	
+	test.replace( test.begin() + 2, test.end() - 2, STR_LEN( "foo" ) );
+	
+	ok_if( test == "01foo89" );
+	
+	test.replace( test.end() - 1, test.end(), STR_LEN( "bar" ) );
+	
+	ok_if( test == "01foo8bar" );
+	
+	test.replace( test.end(), test.end(), 3, '.' );
+	
+	ok_if( test == "01foo8bar..." );
+}
+
 int main( int argc, const char *const *argv )
 {
 	tap::start( "string_replace", n_tests );
@@ -147,6 +186,10 @@ int main( int argc, const char *const *argv )
 	string();
 	
 	substring();
+	
+	fill();
+	
+	range();
 	
 	return 0;
 }
