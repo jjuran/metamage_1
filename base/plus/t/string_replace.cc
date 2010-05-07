@@ -20,7 +20,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 10;
+static const unsigned n_tests = 10 + 7;
 
 
 using tap::ok_if;
@@ -89,9 +89,55 @@ static void string()
 
 static void substring()
 {
-	 plus::var_string test = "abcdefghijklmnop";
-	 
-	 const plus::string digits = "0123456789";
+	plus::var_string test = "abcdefghijklmnop";
+	
+	const plus::string digits = "0123456789";
+	
+	bool exception_thrown = false;
+	
+	try
+	{
+		test.replace( 17, 0, empty, 0, 0 );
+	}
+	catch ( const std::out_of_range& )
+	{
+		exception_thrown = true;
+	}
+	
+	ok_if( exception_thrown );
+	
+	exception_thrown = false;
+	
+	try
+	{
+		test.replace( 0, 0, empty, 1, 0 );
+	}
+	catch ( const std::out_of_range& )
+	{
+		exception_thrown = true;
+	}
+	
+	ok_if( exception_thrown );
+	
+	test.replace( 0, 0, empty, 0, 0 );
+	
+	ok_if( test == "abcdefghijklmnop" );
+	
+	test.replace( 0, 1, digits, 0, 1 );
+	
+	ok_if( test == "0bcdefghijklmnop" );
+	
+	test.replace( 15, 1, digits, 9, 1 );
+	
+	ok_if( test == "0bcdefghijklmno9" );
+	
+	test.replace( 3, 4, digits, 2, 2 );
+	
+	ok_if( test == "0bc23hijklmno9" );
+	
+	test.replace( 7, 2, digits, 5, 5 );
+	
+	ok_if( test == "0bc23hi56789lmno9" );
 }
 
 int main( int argc, const char *const *argv )
