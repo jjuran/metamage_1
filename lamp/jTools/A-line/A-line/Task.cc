@@ -143,17 +143,17 @@ namespace tool
 	}
 	
 	
-	static const char* c_str( const std::string& s )
+	static const char* c_str( const plus::string& s )
 	{
 		return s.c_str();
 	}
 	
 	
-	CommandTask::CommandTask( const Command&      command,
-			                  const std::string&  output,
-			                  const std::string&  diagnostics,
-			                  const std::string  *input_begin,
-			                  const std::string  *input_end )
+	CommandTask::CommandTask( const Command&       command,
+			                  const plus::string&  output,
+			                  const plus::string&  diagnostics,
+			                  const plus::string  *input_begin,
+			                  const plus::string  *input_end )
 	: FileTask( output ),
 	  its_command( command ),
 	  its_diagnostics_file_path( diagnostics ),

@@ -69,7 +69,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[];
 	
-	static FSTreePtr serial_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr serial_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		const N::CRMDeviceID key = N::CRMDeviceID( iota::parse_decimal( name.c_str() ) );
 		
@@ -93,7 +93,7 @@ namespace Genie
 				
 				const ino_t inode = key;
 				
-				std::string name = iota::inscribe_decimal( key );
+				plus::string name = iota::inscribe_decimal( key );
 				
 				return FSNode( inode, name );
 			}
@@ -114,7 +114,7 @@ namespace Genie
 	
 	typedef StringHandle CRMSerialRecord::*StringSelector;
 	
-	static std::string GetSelectedString( const FSTree* that, StringSelector selector )
+	static plus::string GetSelectedString( const FSTree* that, StringSelector selector )
 	{
 		N::CRMDeviceID key = GetKey( that );
 		
@@ -131,7 +131,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_name
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return GetSelectedString( that, &CRMSerialRecord::name );
 		}
@@ -139,7 +139,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_input
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
@@ -147,7 +147,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_output
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
@@ -160,7 +160,7 @@ namespace Genie
 			typedef N::CRMDeviceID Key;
 		
 		public:
-			static std::string Read( const FSTree* that )
+			static plus::string Read( const FSTree* that )
 			{
 				Key key = GetKey( that );
 				
@@ -175,31 +175,31 @@ namespace Genie
 				// 32-bit * 32-bit = 1024 bits = 128 bytes, x2 = 256 bytes
 				const std::size_t maskedIconSize = sizeof icon.oldIcon + sizeof icon.oldMask;
 				
-				std::string iconData( (const char*) &icon.oldIcon, maskedIconSize );
+				plus::string iconData( (const char*) &icon.oldIcon, maskedIconSize );
 				
 				return iconData;
 			}
 	};
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
 		                            &sys_mac_crm_serial_N_name::Read );
 	}
 	
-	static FSTreePtr Input_Factory( const FSTreePtr&    parent,
-	                                const std::string&  name )
+	static FSTreePtr Input_Factory( const FSTreePtr&     parent,
+	                                const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
 		                            &sys_mac_crm_serial_N_input::Read );
 	}
 	
-	static FSTreePtr Output_Factory( const FSTreePtr&    parent,
-	                                 const std::string&  name )
+	static FSTreePtr Output_Factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -207,8 +207,8 @@ namespace Genie
 
 	}
 	
-	static FSTreePtr Icon_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Icon_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -225,7 +225,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}

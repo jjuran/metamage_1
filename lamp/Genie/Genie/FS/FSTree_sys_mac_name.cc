@@ -12,7 +12,7 @@
 namespace Genie
 {
 	
-	std::string sys_mac_name::Read( const FSTree* that, bool binary )
+	plus::string sys_mac_name::Read( const FSTree* that, bool binary )
 	{
 		return GetWorkstationName();
 	}

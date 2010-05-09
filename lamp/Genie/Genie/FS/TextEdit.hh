@@ -6,6 +6,9 @@
 #ifndef GENIE_FS_TEXTEDIT_HH
 #define GENIE_FS_TEXTEDIT_HH
 
+// plus
+#include "plus/var_string.hh"
+
 // Pedestal
 #include "Pedestal/TextEdit.hh"
 
@@ -22,7 +25,7 @@ namespace Genie
 	struct TextEditParameters
 	{
 		Point                    itsTextDimensions;
-		std::string              itsText;
+		plus::var_string         itsText;
 		Pedestal::TextSelection  itsSelection;
 		std::size_t              itsValidLength;
 		bool                     itHasChangedAttributes;
@@ -49,7 +52,7 @@ namespace Genie
 	
 	struct Selection_Property
 	{
-		static std::string Get( const FSTree* that, bool binary );
+		static plus::string Get( const FSTree* that, bool binary );
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary );
 	};

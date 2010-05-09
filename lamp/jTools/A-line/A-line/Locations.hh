@@ -6,38 +6,38 @@
 #ifndef A_LINE_LOCATIONS_HH
 #define A_LINE_LOCATIONS_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
 {
 	
-	const std::string& mkdir_path( const std::string& path );
+	const plus::string& mkdir_path( const plus::string& path );
 	
-	std::string home_dir_pathname();
+	plus::string home_dir_pathname();
 	
-	std::string UserSrcTreePath();
+	plus::string UserSrcTreePath();
 	
-	std::string get_user_cache_pathname();
+	plus::string get_user_cache_pathname();
 	
-	std::string SourceDotListFile( const std::string& projectPath );
+	plus::string SourceDotListFile( const plus::string& projectPath );
 	
-	std::string TargetDirPath( const std::string& target );
+	plus::string TargetDirPath( const plus::string& target );
 	
-	std::string get_includes_union_pathname();
+	plus::string get_includes_union_pathname();
 	
-	std::string LibrariesDirPath();
-	std::string RezzedDirPath();
+	plus::string LibrariesDirPath();
+	plus::string RezzedDirPath();
 	
-	std::string get_project_dependencies_pathname( const std::string& project_name );
+	plus::string get_project_dependencies_pathname( const plus::string& project_name );
 	
-	std::string ProjectDiagnosticsDirPath( const std::string& proj );
-	std::string ProjectPrecompiledDirPath( const std::string& proj );
-	std::string ProjectObjectsDirPath    ( const std::string& proj );
-	std::string ProjectMetadataDirPath   ( const std::string& proj );
-	std::string ProjectLinkedDirPath     ( const std::string& proj );
-	std::string ProjectOutputDirPath     ( const std::string& proj );
+	plus::string ProjectDiagnosticsDirPath( const plus::string& proj );
+	plus::string ProjectPrecompiledDirPath( const plus::string& proj );
+	plus::string ProjectObjectsDirPath    ( const plus::string& proj );
+	plus::string ProjectMetadataDirPath   ( const plus::string& proj );
+	plus::string ProjectLinkedDirPath     ( const plus::string& proj );
+	plus::string ProjectOutputDirPath     ( const plus::string& proj );
 	
 }
 

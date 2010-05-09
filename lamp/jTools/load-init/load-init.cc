@@ -17,6 +17,9 @@
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
@@ -133,7 +136,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			std::string status = "OSStatus ";
+			plus::var_string status = "OSStatus ";
 			
 			status += iota::inscribe_decimal( err );
 			

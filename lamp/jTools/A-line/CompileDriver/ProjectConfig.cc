@@ -41,7 +41,7 @@ namespace tool
 		return std::strcmp( a, b ) < 0;
 	}
 	
-	static bool DirectiveIsRecognized( const std::string& directive )
+	static bool DirectiveIsRecognized( const plus::string& directive )
 	{
 		char const* const recognized[] =
 		{
@@ -82,9 +82,9 @@ namespace tool
 		return found;
 	}
 	
-	static std::map< std::string, Platform > MakePlatformMap()
+	static std::map< plus::string, Platform > MakePlatformMap()
 	{
-		std::map< std::string, Platform > map;
+		std::map< plus::string, Platform > map;
 		
 		map[ "68k" ] = arch68K;
 		map[ "ppc" ] = archPPC;
@@ -105,10 +105,10 @@ namespace tool
 		return map;
 	}
 	
-	static void SetPlatformInfo( PlatformDemands     *cumulative_demands,
-	                             const std::string&   new_spec )
+	static void SetPlatformInfo( PlatformDemands      *cumulative_demands,
+	                             const plus::string&   new_spec )
 	{
-		static std::map< std::string, Platform > map = MakePlatformMap();
+		static std::map< plus::string, Platform > map = MakePlatformMap();
 		
 		if ( new_spec.empty() )
 		{
@@ -117,14 +117,14 @@ namespace tool
 		
 		const bool inverted = new_spec[0] == '!';
 		
-		std::string new_prohibition;
+		plus::string new_prohibition;
 		
 		if ( inverted )
 		{
 			new_prohibition.assign( &new_spec[1], &*new_spec.end() );
 		}
 		
-		const std::string& platform_name = inverted ? new_prohibition : new_spec;
+		const plus::string& platform_name = inverted ? new_prohibition : new_spec;
 		
 		Platform platform = map[ platform_name ];
 		
@@ -152,7 +152,7 @@ namespace tool
 		*/
 	}
 	
-	static PlatformDemands MakePlatformInfo( const std::vector< std::string >& infos )
+	static PlatformDemands MakePlatformInfo( const std::vector< plus::string >& infos )
 	{
 		PlatformDemands result;
 		
@@ -165,26 +165,26 @@ namespace tool
 	}
 	
 	
-	static std::vector< std::string >& Subprojects()
+	static std::vector< plus::string >& Subprojects()
 	{
-		static std::vector< std::string > gSubprojects;
+		static std::vector< plus::string > gSubprojects;
 		
 		return gSubprojects;
 	}
 	
-	static std::string DescendPathToDir( const std::string& dir, const std::string& path )
+	static plus::string DescendPathToDir( const plus::string& dir, const plus::string& path )
 	{
 		return dir / path;
 	}
 	
-	static bool ends_with( const std::string& string, const char* substring, std::size_t length )
+	static bool ends_with( const plus::string& string, const char* substring, std::size_t length )
 	{
 		return std::equal( string.end() - length, string.end(), substring );
 	}
 	
-	static std::string get_project_dir_from_config_file( const std::string& config_pathname )
+	static plus::string get_project_dir_from_config_file( const plus::string& config_pathname )
 	{
-		std::string config_dir = io::get_preceding_directory( config_pathname );
+		plus::string config_dir = io::get_preceding_directory( config_pathname );
 		
 		const bool has_confd = ends_with( config_dir, STR_LEN( "A-line.confd/" ) );
 		
@@ -192,16 +192,16 @@ namespace tool
 		                 :                              config_dir;
 	}
 	
-	static void AddConfigFile( const std::string& config_pathname, const ConfData& conf )
+	static void AddConfigFile( const plus::string& config_pathname, const ConfData& conf )
 	{
-		std::string project_dir = get_project_dir_from_config_file( config_pathname );
+		plus::string project_dir = get_project_dir_from_config_file( config_pathname );
 		
 		typedef ConfData::const_iterator const_iterator;
 		
 		const_iterator it = conf.find( "name" );
 		
-		std::string project_name = it != conf.end() ? it->second[ 0 ]
-		                                            : io::get_filename( project_dir );
+		plus::string project_name = it != conf.end() ? it->second[ 0 ]
+		                                             : io::get_filename( project_dir );
 		
 		it = conf.find( "platform" );
 		
@@ -232,7 +232,7 @@ namespace tool
 		return diff_size >= 0  &&  memcmp( a + diff_size, b, b_size ) == 0;
 	}
 	
-	static void AddPendingConfigFile( const std::string& filePath )
+	static void AddPendingConfigFile( const plus::string& filePath )
 	{
 		if ( ends_with( filePath.data(), filePath.size(), STR_LEN( ".conf" ) ) )
 		{
@@ -245,9 +245,9 @@ namespace tool
 		
 		AddConfigFile( filePath, conf );
 		
-		std::string project_dir = get_project_dir_from_config_file( filePath );
+		plus::string project_dir = get_project_dir_from_config_file( filePath );
 		
-		std::vector< std::string >& conf_subprojects = conf[ "subprojects" ];
+		std::vector< plus::string >& conf_subprojects = conf[ "subprojects" ];
 		
 		std::transform( conf_subprojects.begin(),
 		                conf_subprojects.end(),
@@ -257,16 +257,16 @@ namespace tool
 		
 	}
 	
-	void AddPendingSubproject( const std::string& dir )
+	void AddPendingSubproject( const plus::string& dir )
 	{
-		std::vector< std::string > configs;
-		std::vector< std::string > folders;
+		std::vector< plus::string > configs;
+		std::vector< plus::string > folders;
 		
 		ScanDirForProjects( dir,
 		                    std::back_inserter( configs ),
 		                    std::back_inserter( folders ) );
 		
-		std::vector< std::string >& subprojects = Subprojects();
+		std::vector< plus::string >& subprojects = Subprojects();
 		
 		subprojects.insert( subprojects.end(), folders.begin(), folders.end() );
 		
@@ -277,7 +277,7 @@ namespace tool
 	
 	bool AddPendingSubprojects()
 	{
-		std::vector< std::string > subprojects;
+		std::vector< plus::string > subprojects;
 		
 		std::swap( subprojects, Subprojects() );
 		
@@ -305,7 +305,7 @@ namespace tool
 					                                       line.key.c_str() );
 				}
 				
-				std::vector< std::string >& conf_key = conf[ line.key ];
+				std::vector< plus::string >& conf_key = conf[ line.key ];
 				
 				conf_key.insert( conf_key.end(), line.values.begin(), line.values.end() );
 			}

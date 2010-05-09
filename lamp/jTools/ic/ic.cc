@@ -98,11 +98,11 @@ namespace tool
 	
 	struct ICMapEntryStrings
 	{
-		std::string  extension;
-		std::string  creatorAppName;
-		std::string  postAppName;
-		std::string  MIMEType;
-		std::string  entryName;
+		plus::string  extension;
+		plus::string  creatorAppName;
+		plus::string  postAppName;
+		plus::string  MIMEType;
+		plus::string  entryName;
 	};
 	
 	static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )

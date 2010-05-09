@@ -6,6 +6,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <functional>
 
 
 namespace ShellShock
@@ -51,7 +52,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	StringArray::StringArray( const std::vector< std::string >& args )
+	StringArray::StringArray( const std::vector< plus::string >& args )
 	{
 		// Assume arrayPointer to be already sorted.
 		std::copy( args.begin(),
@@ -61,7 +62,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	void StringArray::Append( const std::string& s )
+	void StringArray::Append( const plus::string& s )
 	{
 		strings.push_back( s );
 		
@@ -73,7 +74,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	void StringArray::Prepend( const std::string& s )
+	void StringArray::Prepend( const plus::string& s )
 	{
 		//strings.push_front( s );
 		
@@ -98,7 +99,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	void StringArray::Insert( SVector::iterator location, const std::string& s )
+	void StringArray::Insert( SVector::iterator location, const plus::string& s )
 	{
 		std::size_t offset = location - array.begin();
 		
@@ -113,7 +114,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	void StringArray::Overwrite( SVector::iterator location, const std::string& s )
+	void StringArray::Overwrite( SVector::iterator location, const plus::string& s )
 	{
 		std::size_t offset = location - array.begin();
 		
@@ -135,7 +136,7 @@ namespace ShellShock
 		Update();
 	}
 	
-	static const char* c_str( const std::string& s )
+	static const char* c_str( const plus::string& s )
 	{
 		return s.c_str();
 	}

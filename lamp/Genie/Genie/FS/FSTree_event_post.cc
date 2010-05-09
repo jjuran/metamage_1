@@ -41,7 +41,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_key
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			throw FSTree_Property::Undefined();
 		}
@@ -61,8 +61,8 @@ namespace Genie
 	};
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,

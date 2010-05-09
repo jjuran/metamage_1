@@ -28,6 +28,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -119,7 +122,7 @@ namespace tool
 		
 		p7::fd_reader reader( input_fd );
 		
-		const std::string* plan = get_line_from_feed( feed, reader );
+		const plus::string* plan = get_line_from_feed( feed, reader );
 		
 		if ( plan == NULL  ||  memcmp( plan->c_str(), STR_LEN( "1.." ) + 1 ) != 0 )
 		{
@@ -130,7 +133,7 @@ namespace tool
 		
 		unsigned next_test_number = 1;
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
 			const char* begin = s->c_str();
 			
@@ -232,7 +235,7 @@ namespace tool
 			
 			TestResults results = run_test( test_file );
 			
-			std::string result = "ok";
+			plus::var_string result = "ok";
 			
 			if ( results.failure == 0 )
 			{

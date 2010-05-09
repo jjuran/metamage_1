@@ -49,15 +49,15 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return Freeze< Integer_Scribe< long > >( Accessor::Get(), binary );
 		}
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_app_Property< Accessor > Property;
 		

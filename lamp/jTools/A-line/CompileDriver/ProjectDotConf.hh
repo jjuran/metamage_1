@@ -7,15 +7,18 @@
 #define COMPILEDRIVER_PROJECTDOTCONF_HH
 
 // Standard C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
 {
 	
-	typedef std::string ConfigKey;
-	typedef std::vector< std::string > ConfigValues;
+	typedef plus::string ConfigKey;
+	
+	typedef std::vector< plus::string > ConfigValues;
 	
 	struct DotConfLine
 	{

@@ -15,6 +15,9 @@
 #include <errno.h>
 #include <unistd.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/extras/copyfile.hh"
 #include "poseven/functions/stat.hh"
@@ -84,7 +87,7 @@ namespace tool
 			{
 				const char* sourcePath = argv[index];
 				
-				std::string destFilePath = destDir;
+				plus::var_string destFilePath = destDir;
 				
 				if ( *(destFilePath.end() - 1) != '/' )
 				{
@@ -112,7 +115,7 @@ namespace tool
 				return 1;
 			}
 			
-			std::string destFilePath = destPath;
+			plus::var_string destFilePath = destPath;
 			
 			if ( p7::stat( destPath, sb ) )
 			{

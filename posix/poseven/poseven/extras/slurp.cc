@@ -8,6 +8,9 @@
 
 #include "poseven/extras/slurp.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/extras/read_all.hh"
 #include "poseven/functions/fstat.hh"
@@ -17,11 +20,11 @@
 namespace poseven
 {
 	
-	std::string slurp( fd_t fd )
+	plus::string slurp( fd_t fd )
 	{
 		const size_t size = fstat( fd ).st_size;
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( size );
 		
@@ -32,7 +35,7 @@ namespace poseven
 		return result;
 	}
 	
-	std::string slurp( const char* path )
+	plus::string slurp( const char* path )
 	{
 		return slurp( open( path, o_rdonly ) );
 	}

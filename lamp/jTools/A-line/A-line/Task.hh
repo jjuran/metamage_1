@@ -7,7 +7,6 @@
 #define ALINE_TASK_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Standard C
@@ -15,6 +14,9 @@
 
 // Debug
 #include "debug/boost_assert.hh"
+
+// plus
+#include "plus/string.hh"
 
 // Boost
 #include <boost/enable_shared_from_this.hpp>
@@ -75,16 +77,16 @@ namespace tool
 	class FileTask : public Task
 	{
 		private:
-			std::string its_output_path;
+			plus::string its_output_path;
 		
 		public:
-			FileTask( const std::string& output ) : its_output_path( output )
+			FileTask( const plus::string& output ) : its_output_path( output )
 			{
 			}
 			
 			~FileTask();
 			
-			const std::string& OutputPath() const  { return its_output_path; }
+			const plus::string& OutputPath() const  { return its_output_path; }
 			
 			time_t OutputStamp() const;
 			
@@ -106,20 +108,20 @@ namespace tool
 	class CommandTask : public FileTask
 	{
 		private:
-			Command                     its_command;
-			std::string                 its_diagnostics_file_path;
-			std::vector< std::string >  its_input_file_paths;
+			Command                      its_command;
+			plus::string                 its_diagnostics_file_path;
+			std::vector< plus::string >  its_input_file_paths;
 		
 		public:
-			CommandTask( const Command&      command,
-			             const std::string&  output,
-			             const std::string&  diagnostics,
-			             const std::string  *input_begin,
-			             const std::string  *input_end );
+			CommandTask( const Command&       command,
+			             const plus::string&  output,
+			             const plus::string&  diagnostics,
+			             const plus::string  *input_begin,
+			             const plus::string  *input_end );
 			
 			const Command& get_command() const  { return its_command; }
 			
-			const std::string& get_diagnostics_file_path() const  { return its_diagnostics_file_path; }
+			const plus::string& get_diagnostics_file_path() const  { return its_diagnostics_file_path; }
 			
 			void Return( bool succeeded );
 	};

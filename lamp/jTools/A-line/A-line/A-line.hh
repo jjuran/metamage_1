@@ -7,12 +7,18 @@
 #define ALINE_ALINE_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // A-line
 #include "A-line/Task.hh"
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace tool
 {
@@ -33,7 +39,7 @@ namespace tool
 	OptionsRecord& Options();
 	
 	void ExecuteCommand( const TaskPtr&                     task,
-	                     const std::string&                 caption,
+	                     const plus::string&                caption,
 	                     const std::vector< const char* >&  command,
 	                     const char*                        diagnostics_file_path = NULL );
 	

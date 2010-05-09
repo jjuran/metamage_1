@@ -51,15 +51,17 @@ namespace Genie
 	{
 	}
 	
-	static inline std::string NameFromPtr( const FSTree* ptr )
+	static inline plus::string NameFromPtr( const FSTree* ptr )
 	{
 		return plus::encode_32_bit_hex( (unsigned) ptr );
 	}
 	
-	FSTree::FSTree( const FSTreePtr&    parent,
-	                const std::string&  name ) : itsParent( parent ),
-	                                             itsName  ( name[0] == '/' ? NameFromPtr( this )
-	                                                                       : name )
+	FSTree::FSTree( const FSTreePtr&     parent,
+	                const plus::string&  name )
+	:
+		itsParent( parent ),
+		itsName  ( name[0] == '/' ? NameFromPtr( this )
+		                          : name )
 	{
 	}
 	
@@ -67,9 +69,9 @@ namespace Genie
 	{
 	}
 	
-	std::string FSTree::Pathname() const
+	plus::string FSTree::Pathname() const
 	{
-		std::string pathname = Name();
+		plus::string pathname = Name();
 		
 		FSTreePtr tree = Parent();
 		
@@ -81,7 +83,7 @@ namespace Genie
 		
 		while ( true )
 		{
-			const std::string& name = tree->Name();
+			const plus::string& name = tree->Name();
 			
 			pathname = name + "/" + pathname;
 			
@@ -254,7 +256,7 @@ namespace Genie
 		}
 	}
 	
-	std::string FSTree::ReadLink() const
+	plus::string FSTree::ReadLink() const
 	{
 		throw p7::errno_t( EINVAL );
 	}
@@ -264,7 +266,7 @@ namespace Genie
 		throw p7::errno_t( EINVAL );
 	}
 	
-	void FSTree::SymLink( const std::string& target ) const
+	void FSTree::SymLink( const plus::string& target ) const
 	{
 		p7::throw_errno( EINVAL );
 	}
@@ -313,7 +315,7 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
-	FSTreePtr FSTree::Lookup( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree::Lookup( const plus::string& name, const FSTree* parent ) const
 	{
 		throw p7::errno_t( ENOENT );
 	}
@@ -336,7 +338,7 @@ namespace Genie
 		
 		const bool done = slash == end;
 		
-		std::string name( begin, slash );
+		plus::string name( begin, slash );
 		
 		begin = slash + !done;
 		

@@ -16,8 +16,10 @@ namespace Genie
 	class Trigger_Base : public FSTree
 	{
 		public:
-			Trigger_Base( const FSTreePtr&    parent,
-			              const std::string&  name ) : FSTree( parent, name )
+			Trigger_Base( const FSTreePtr&     parent,
+			              const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -38,16 +40,20 @@ namespace Genie
 			Action itsAction;
 		
 		public:
-			Trigger( const FSTreePtr&    parent,
-			         const std::string&  name,
-			         const Action&       action ) : Trigger_Base( parent, name ),
-			                                        itsAction( action  )
+			Trigger( const FSTreePtr&     parent,
+			         const plus::string&  name,
+			         const Action&        action )
+			:
+				Trigger_Base( parent, name ),
+				itsAction( action  )
 			{
 			}
 			
-			Trigger( const FSTreePtr&    parent,
-			         const std::string&  name ) : Trigger_Base( parent, name ),
-			                                      itsAction()
+			Trigger( const FSTreePtr&     parent,
+			         const plus::string&  name )
+			:
+				Trigger_Base( parent, name ),
+				itsAction()
 			{
 			}
 			

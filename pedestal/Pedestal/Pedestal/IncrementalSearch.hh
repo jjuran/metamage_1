@@ -7,8 +7,10 @@
 #define PEDESTAL_INCREMENTALSEARCH_HH
 
 // Standard C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/var_string.hh"
 
 // Pedestal
 #include "Pedestal/Quasimode.hh"
@@ -81,7 +83,7 @@ namespace Pedestal
 	bool Try_ArrowKeyChord( IncrementalSearchEditor& editor, char c );
 	
 	
-	const std::string& GetLastSearchPattern();
+	const plus::string& GetLastSearchPattern();
 	
 	class IncrementalSearchQuasimode : public Quasimode
 	{
@@ -91,7 +93,7 @@ namespace Pedestal
 			unsigned short                itsModifierMask;
 			TextSelection                 itsSavedSelection;
 			std::vector< TextSelection >  itsMatches;
-			std::string                   itsPattern;
+			plus::var_string              itsPattern;
 		
 		public:
 			IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );

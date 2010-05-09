@@ -38,8 +38,10 @@ namespace Genie
 	class FSTree_Device : public FSTree
 	{
 		public:
-			FSTree_Device( const FSTreePtr&    parent,
-			               const std::string&  name ) : FSTree( parent, name )
+			FSTree_Device( const FSTreePtr&     parent,
+			               const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -50,8 +52,10 @@ namespace Genie
 	class FSTree_SimpleDevice : public FSTree_Device
 	{
 		public:
-			FSTree_SimpleDevice( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree_Device( parent, name )
+			FSTree_SimpleDevice( const FSTreePtr&     parent,
+			                     const plus::string&  name )
+			:
+				FSTree_Device( parent, name )
 			{
 			}
 			
@@ -68,10 +72,10 @@ namespace Genie
 			mode_t   itsPermMode;
 		
 		public:
-			FSTree_BasicDevice( const FSTreePtr&    parent,
-			                    const std::string&  name,
-			                    OpenProc            opener,
-			                    mode_t              perm )
+			FSTree_BasicDevice( const FSTreePtr&     parent,
+			                    const plus::string&  name,
+			                    OpenProc             opener,
+			                    mode_t               perm )
 			:
 				FSTree( parent, name ),
 				itsOpener( opener ),
@@ -161,15 +165,15 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr dev_fd_Factory( const FSTreePtr&    parent,
-	                                 const std::string&  name )
+	static FSTreePtr dev_fd_Factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name )
 	{
 		return FSTreePtr( New_FSTree_SymbolicLink( parent, name, "/proc/self/fd" ) );
 	}
 	
 	template < class Opener >
-	static FSTreePtr BasicDevice_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
+	static FSTreePtr BasicDevice_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_BasicDevice( parent,
 		                                          name,
@@ -177,8 +181,8 @@ namespace Genie
 		                                          Opener::perm ) );
 	}
 	
-	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
-	                                       const std::string&  name )
+	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
+	                                       const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_SimpleDevice( parent, name ) );
 	}

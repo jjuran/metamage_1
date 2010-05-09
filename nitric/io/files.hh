@@ -14,8 +14,8 @@
 #ifndef IO_FILES_HH
 #define IO_FILES_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 // Io
 #ifndef IO_IO_HH
@@ -39,7 +39,7 @@ namespace io
 	
 	dummy::filename_result get_filename( dummy::file_spec, overload );
 	
-	std::string get_filename_string( dummy::file_spec );
+	plus::string get_filename_string( dummy::file_spec );
 	
 	dummy::file_spec get_preceding_directory          ( dummy::file_spec, overload );
 	dummy::file_spec get_parent_directory_of_directory( dummy::file_spec, overload );

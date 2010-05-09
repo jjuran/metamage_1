@@ -25,7 +25,7 @@ namespace Genie
 		return id;
 	}
 	
-	std::string sys_mac_machine_id::Read( const FSTree* that, bool binary )
+	plus::string sys_mac_machine_id::Read( const FSTree* that, bool binary )
 	{
 		const UInt32 id = GetMachineID();
 		

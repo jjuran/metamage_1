@@ -8,7 +8,6 @@
 
 // Standard C++
 #include <map>
-#include <string>
 #include <vector>
 
 // POSIX
@@ -27,8 +26,10 @@ namespace Genie
 	class FSTree_Directory : public FSTree
 	{
 		public:
-			FSTree_Directory( const FSTreePtr&    parent,
-			                  const std::string&  name ) : FSTree( parent, name )
+			FSTree_Directory( const FSTreePtr&     parent,
+			                  const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -40,9 +41,9 @@ namespace Genie
 			mode_t FileTypeMode() const  { return S_IFDIR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR | S_IXUSR; }
 			
-			FSTreePtr Lookup( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup( const plus::string& name, const FSTree* parent ) const;
 			
-			virtual FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const = 0;
+			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const = 0;
 			
 			FSIteratorPtr Iterate() const;
 			
@@ -53,7 +54,7 @@ namespace Genie
 	class FSTree_Premapped : public FSTree_Directory
 	{
 		public:
-			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const plus::string& );
 			
 			struct Mapping
 			{
@@ -63,7 +64,7 @@ namespace Genie
 			};
 		
 		private:
-			typedef std::map< std::string, const Mapping* > Mappings;
+			typedef std::map< plus::string, const Mapping* > Mappings;
 			
 			typedef void (*Destructor)( const FSTree* );
 			
@@ -71,10 +72,12 @@ namespace Genie
 			Mappings    itsMappings;
 		
 		public:
-			FSTree_Premapped( const FSTreePtr&    parent,
-			                  const std::string&  name,
-			                  Destructor          dtor = NULL ) : FSTree_Directory( parent, name ),
-			                                                      itsDestructor( dtor )
+			FSTree_Premapped( const FSTreePtr&     parent,
+			                  const plus::string&  name,
+			                  Destructor           dtor = NULL )
+			:
+				FSTree_Directory( parent, name ),
+				itsDestructor( dtor )
 			{
 			}
 			
@@ -87,31 +90,31 @@ namespace Genie
 			
 			void Delete() const;
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
 	template < class FSTree_Type >
-	FSTreePtr Basic_Factory( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr Basic_Factory( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_Type( parent, name ) );
 	}
 	
 	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
-	                             const std::string&                 name,
+	                             const plus::string&                name,
 	                             const FSTree_Premapped::Mapping    mappings[],
 	                             void                             (*dtor)(const FSTree*) = NULL );
 	
 	template < const FSTree_Premapped::Mapping mappings[] >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const plus::string& name )
 	{
 		return Premapped_Factory( parent, name, mappings );
 	}
 	
 	template < const FSTree_Premapped::Mapping mappings[], void (*dtor)(const FSTree*) >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const plus::string& name )
 	{
 		return Premapped_Factory( parent, name, mappings, dtor );
 	}

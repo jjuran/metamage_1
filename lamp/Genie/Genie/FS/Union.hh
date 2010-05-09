@@ -22,8 +22,8 @@ namespace Genie
 			FSTreePtr itsBottom;
 		
 		public:
-			FSTree_Union( const FSTreePtr&    parent,
-			              const std::string&  name )
+			FSTree_Union( const FSTreePtr&     parent,
+			              const plus::string&  name )
 			:
 				FSTree_Directory( parent, name )
 			{
@@ -39,7 +39,7 @@ namespace Genie
 				itsBottom = bottom;
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};

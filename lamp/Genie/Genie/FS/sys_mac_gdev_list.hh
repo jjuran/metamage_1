@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const std::string& name );
+	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const plus::string& name );
 	
 }
 

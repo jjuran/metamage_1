@@ -9,14 +9,14 @@
 #ifndef POSIXFILES_COMMON_HH
 #define POSIXFILES_COMMON_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
 
 // iota
 #include "iota/string_traits.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // Io
 #include "io/io.hh"
@@ -40,11 +40,11 @@ namespace poseven
 	
 	struct posix_io_details
 	{
-		typedef std::string file_spec;
-		typedef std::string optimized_directory_spec;
+		typedef plus::string file_spec;
+		typedef plus::string optimized_directory_spec;
 		
-		typedef const std::string& filename_parameter;
-		typedef       std::string  filename_result;
+		typedef const plus::string& filename_parameter;
+		typedef       plus::string  filename_result;
 		
 		typedef struct ::stat file_catalog_record;
 		
@@ -60,43 +60,43 @@ namespace poseven
 namespace io
 {
 	
-	template <> struct filespec_traits< std::string   > : public poseven::posix_io_details {};
+	template <> struct filespec_traits< plus::string  > : public poseven::posix_io_details {};
 	template <> struct iostream_traits< poseven::fd_t > : public poseven::posix_io_details {};
 	
-	template <> struct directory_contents_traits< std::string >
+	template <> struct directory_contents_traits< plus::string >
 	{
 		typedef poseven::directory_contents_container container_type;
 	};
 	
 	// Get file info
 	
-	std::string get_filename( const std::string& pathname );
+	plus::string get_filename( const plus::string& pathname );
 	
-	inline std::string get_filename( const std::string& pathname, overload )
+	inline plus::string get_filename( const plus::string& pathname, overload )
 	{
 		return get_filename( pathname );
 	}
 	
-	inline std::string get_filename_string( const std::string& pathname, overload = overload() )
+	inline plus::string get_filename_string( const plus::string& pathname, overload = overload() )
 	{
 		return get_filename( pathname );
 	}
 	
-	inline std::string get_filename_string( const char* pathname, overload = overload() )
+	inline plus::string get_filename_string( const char* pathname, overload = overload() )
 	{
 		return get_filename( pathname );
 	}
 	
-	std::string get_preceding_directory( const std::string& pathname );
+	plus::string get_preceding_directory( const plus::string& pathname );
 	
-	inline std::string get_preceding_directory( const std::string& pathname, overload )
+	inline plus::string get_preceding_directory( const plus::string& pathname, overload )
 	{
 		return get_preceding_directory( pathname );
 	}
 	
-	inline std::string get_parent_directory_of_directory( const std::string& pathname, overload = overload() )
+	inline plus::string get_parent_directory_of_directory( const plus::string& pathname, overload = overload() )
 	{
-		std::string result = pathname;
+		plus::var_string result = pathname;
 		
 		if ( *(result.end() - 1) != '/' )
 		{
@@ -110,7 +110,7 @@ namespace io
 	
 	// Path descent
 	
-	inline std::string path_descent( std::string path, const char* name, std::size_t length )
+	inline plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
 	{
 		if ( *(path.end() - 1) != '/' )
 		{
@@ -122,7 +122,7 @@ namespace io
 		return path;
 	}
 	
-	inline std::string path_descent( const std::string& path, const char* name )
+	inline plus::string path_descent( const plus::string& path, const char* name )
 	{
 		return path_descent( path, name, std::strlen( name ) );
 	}
@@ -131,7 +131,7 @@ namespace io
 	{
 		
 		template < class String >
-		inline std::string operator/( const std::string& path, const String& name )
+		inline plus::string operator/( const plus::string& path, const String& name )
 		{
 			return path_descent( path,
 			                     iota::get_string_data( name ),
@@ -149,7 +149,7 @@ namespace io
 		return poseven::stat( item, sb );
 	}
 	
-	inline bool item_exists( const std::string& item, overload = overload() )
+	inline bool item_exists( const plus::string& item, overload = overload() )
 	{
 		return item_exists( item.c_str() );
 	}
@@ -173,7 +173,7 @@ namespace io
 		return poseven::stat( item, sb ) && item_is_file( sb );
 	}
 	
-	inline bool file_exists( const std::string& item, overload = overload() )
+	inline bool file_exists( const plus::string& item, overload = overload() )
 	{
 		return file_exists( item.c_str() );
 	}
@@ -186,7 +186,7 @@ namespace io
 		return poseven::stat( item, sb ) && item_is_directory( sb );
 	}
 	
-	inline bool directory_exists( const std::string& item, overload = overload() )
+	inline bool directory_exists( const plus::string& item, overload = overload() )
 	{
 		return directory_exists( item.c_str() );
 	}
@@ -214,22 +214,22 @@ namespace io
 	}
 	
 	
-	inline void delete_file( const std::string& file, overload = overload() )
+	inline void delete_file( const plus::string& file, overload = overload() )
 	{
 		delete_file( file.c_str() );
 	}
 	
-	inline void delete_file_only( const std::string& file, overload = overload() )
+	inline void delete_file_only( const plus::string& file, overload = overload() )
 	{
 		delete_file_only( file.c_str() );
 	}
 	
-	inline void delete_empty_directory( const std::string& dir, overload = overload() )
+	inline void delete_empty_directory( const plus::string& dir, overload = overload() )
 	{
 		delete_empty_directory( dir.c_str() );
 	}
 	
-	inline void delete_empty_directory_only( const std::string& dir, overload = overload() )
+	inline void delete_empty_directory_only( const plus::string& dir, overload = overload() )
 	{
 		delete_empty_directory_only( dir.c_str() );
 	}
@@ -241,7 +241,7 @@ namespace io
 		return poseven::open( pathname, poseven::o_rdonly );
 	}
 	
-	inline nucleus::owned< poseven::fd_t > open_for_reading( const std::string& pathname, overload = overload() )
+	inline nucleus::owned< poseven::fd_t > open_for_reading( const plus::string& pathname, overload = overload() )
 	{
 		return open_for_reading( pathname.c_str(), overload() );
 	}
@@ -252,7 +252,7 @@ namespace io
 		return poseven::open( pathname, poseven::o_wronly );
 	}
 	
-	inline nucleus::owned< poseven::fd_t > open_for_writing( const std::string& pathname, overload = overload() )
+	inline nucleus::owned< poseven::fd_t > open_for_writing( const plus::string& pathname, overload = overload() )
 	{
 		return open_for_writing( pathname.c_str(), overload() );
 	}
@@ -263,7 +263,7 @@ namespace io
 		return poseven::open( pathname, poseven::o_rdwr );
 	}
 	
-	inline nucleus::owned< poseven::fd_t > open_for_io( const std::string& pathname, overload = overload() )
+	inline nucleus::owned< poseven::fd_t > open_for_io( const plus::string& pathname, overload = overload() )
 	{
 		return open_for_io( pathname.c_str(), overload() );
 	}
@@ -274,7 +274,7 @@ namespace io
 		return poseven::open( pathname, poseven::o_wronly | poseven::o_trunc );
 	}
 	
-	inline nucleus::owned< poseven::fd_t > open_truncated( const std::string& pathname, overload = overload() )
+	inline nucleus::owned< poseven::fd_t > open_truncated( const plus::string& pathname, overload = overload() )
 	{
 		return open_truncated( pathname.c_str(), overload() );
 	}
@@ -307,7 +307,7 @@ namespace io
 	
 	// Directory contents
 	
-	inline poseven::directory_contents_container directory_contents( const std::string& dir, overload = overload() )
+	inline poseven::directory_contents_container directory_contents( const plus::string& dir, overload = overload() )
 	{
 		return poseven::directory_contents( dir.c_str() );
 	}

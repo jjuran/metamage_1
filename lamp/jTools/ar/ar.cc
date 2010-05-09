@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <string>
 #include <vector>
 
 // Standard C/C++
@@ -13,6 +12,9 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"
@@ -42,14 +44,14 @@ namespace tool
 	
 	
 	template < class Iter >
-	std::string join( const std::string& glue, Iter begin, Iter end )
+	plus::string join( const plus::string& glue, Iter begin, Iter end )
 	{
 		if ( begin == end )
 		{
 			return "";
 		}
 		
-		std::string result = *begin++;
+		plus::var_string result = *begin++;
 		
 		while ( begin != end )
 		{
@@ -63,7 +65,7 @@ namespace tool
 	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		static std::list< std::string > static_string_storage;
+		static std::list< plus::string > static_string_storage;
 		
 		static_string_storage.push_back( mac_pathname_from_path( pathname ) );
 		
@@ -183,7 +185,7 @@ namespace tool
 		
 		const char* first_input_path = argv[ 3 ];
 		
-		std::string output_mac_pathname = mac_pathname_from_path( output_path );
+		plus::string output_mac_pathname = mac_pathname_from_path( output_path );
 		
 		mw::cpu_architecture arch = mw::cpu_unknown;
 		
@@ -265,7 +267,7 @@ namespace tool
 		
 		if ( verbose )
 		{
-			std::string output = join( " ", command.begin(), command.end() );
+			plus::var_string output = join( " ", command.begin(), command.end() );
 			
 			output += '\n';
 			

@@ -14,6 +14,9 @@
 // POSIX
 #include <unistd.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // Nucleus
 #include "nucleus/shared.hh"
 
@@ -78,14 +81,14 @@ namespace tool
 			
 			if ( wanted_driver_name != NULL )
 			{
-				std::string driver_name = p7::slurp( name_fd.get() );
+				plus::string driver_name = p7::slurp( name_fd.get() );
 				
 				wanted = driver_name == wanted_driver_name;
 			}
 			
 			if ( wanted )
 			{
-				std::string message = vol_path;
+				plus::var_string message = vol_path;
 				
 				message += '/';
 				message += vol_name;

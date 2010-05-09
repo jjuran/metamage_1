@@ -7,8 +7,10 @@
 #define VERTICE_MODEL_HH
 
 #include <map>
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 #include "Vertice/Objects.hh"
 
@@ -47,11 +49,11 @@ namespace Vertice
 	class Scene
 	{
 		private:
-			std::vector< Context >                itsContexts;
-			std::map< std::string, std::size_t >  itsNameIndex;
+			std::vector< Context >                 itsContexts;
+			std::map< plus::string, std::size_t >  itsNameIndex;
 			
-			std::vector< Camera >                 itsCameras;
-			std::vector< PointLight >             itsPointLights;
+			std::vector< Camera >                  itsCameras;
+			std::vector< PointLight >              itsPointLights;
 			
 		public:
 			Scene();
@@ -69,10 +71,10 @@ namespace Vertice
 				return GetSuperContext( index ) < index;  // False for root context
 			}
 			
-			std::size_t AddSubcontext( std::size_t         super,
-			                           const std::string&  name,
-			                           const V::XMatrix&   offset,
-			                           const V::XMatrix&   inv );
+			std::size_t AddSubcontext( std::size_t          super,
+			                           const plus::string&  name,
+			                           const V::XMatrix&    offset,
+			                           const V::XMatrix&    inv );
 			
 			const std::vector< Camera >& Cameras() const  { return itsCameras; }
 			      std::vector< Camera >& Cameras()        { return itsCameras; }

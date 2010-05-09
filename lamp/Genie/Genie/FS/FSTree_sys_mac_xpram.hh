@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSTREESYSMACXPRAM_HH
 #define GENIE_FILESYSTEM_FSTREESYSMACXPRAM_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace Genie
@@ -18,14 +18,14 @@ namespace Genie
 		public:
 			sys_mac_xpram_Query()  {}
 			
-			std::string Get() const;
+			plus::string Get() const;
 	};
 	
 	class FSTree;
 	
 	struct sys_mac_xpram
 	{
-		static std::string Read( const FSTree* );
+		static plus::string Read( const FSTree* );
 	};
 	
 }

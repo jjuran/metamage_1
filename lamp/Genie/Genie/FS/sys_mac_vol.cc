@@ -15,6 +15,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -36,17 +39,17 @@ namespace Genie
 	class sys_mac_vol_boot : public FSTree_ReadableSymLink
 	{
 		public:
-			sys_mac_vol_boot( const FSTreePtr&    parent,
-			                  const std::string&  name )
+			sys_mac_vol_boot( const FSTreePtr&     parent,
+			                  const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
 			}
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
-	std::string sys_mac_vol_boot::ReadLink() const
+	plus::string sys_mac_vol_boot::ReadLink() const
 	{
 		const N::FSDirSpec system_folder = N::FindFolder( N::kOnAppropriateDisk,
 		                                                  N::kSystemFolderType,
@@ -54,7 +57,7 @@ namespace Genie
 		
 		const N::FSVolumeRefNum vRefNum = system_folder.vRefNum;
 		
-		std::string result = "list/";
+		plus::var_string result = "list/";
 		
 		result += iota::inscribe_decimal( -vRefNum );
 		
@@ -65,8 +68,8 @@ namespace Genie
 	class sys_mac_vol_ram : public FSTree_ReadableSymLink
 	{
 		public:
-			sys_mac_vol_ram( const FSTreePtr&    parent,
-			                 const std::string&  name )
+			sys_mac_vol_ram( const FSTreePtr&     parent,
+			                 const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
@@ -74,7 +77,7 @@ namespace Genie
 			
 			bool Exists() const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
 	struct volume_is_ram_disk
@@ -154,7 +157,7 @@ namespace Genie
 		return find_ram_disk();
 	}
 	
-	std::string sys_mac_vol_ram::ReadLink() const
+	plus::string sys_mac_vol_ram::ReadLink() const
 	{
 		const SInt16 vRefNum = find_ram_disk();
 		
@@ -163,7 +166,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string result = "list/";
+		plus::var_string result = "list/";
 		
 		result += iota::inscribe_decimal( -vRefNum );
 		

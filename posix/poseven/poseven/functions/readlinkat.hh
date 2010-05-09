@@ -8,8 +8,8 @@
 #ifndef POSEVEN_FUNCTIONS_READLINKAT_HH
 #define POSEVEN_FUNCTIONS_READLINKAT_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 // iota
 #include "iota/string_traits.hh"
@@ -21,10 +21,10 @@
 namespace poseven
 {
 	
-	std::string readlinkat( fd_t dirfd, const char* path );
+	plus::string readlinkat( fd_t dirfd, const char* path );
 	
 	template < class String >
-	inline std::string readlinkat( fd_t dirfd, const String& path )
+	inline plus::string readlinkat( fd_t dirfd, const String& path )
 	{
 		return readlinkat( dirfd, iota::get_string_c_str( path ) );
 	}

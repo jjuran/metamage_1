@@ -378,7 +378,7 @@ namespace Genie
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
 			
-			if ( const std::string* peekBuffer = stream.Peek( minBytes ) )
+			if ( const plus::string* peekBuffer = stream.Peek( minBytes ) )
 			{
 				if ( buffer != NULL )
 				{

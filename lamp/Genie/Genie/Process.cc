@@ -364,7 +364,7 @@ namespace Genie
 	
 #endif
 	
-	static std::vector< const char* > UnflattenedArgVector( const std::string& flat )
+	static std::vector< const char* > UnflattenedArgVector( const plus::string& flat )
 	{
 		std::vector< const char* > result;
 		
@@ -475,9 +475,9 @@ namespace Genie
 	{
 		FSTreePtr                   executable;
 		std::vector< const char* >  argVector;
-		std::string                 scriptPath;
-		std::string                 interpreterPath;
-		std::string                 interpreterArg;
+		plus::string                scriptPath;
+		plus::string                interpreterPath;
+		plus::string                interpreterArg;
 		
 		ExecContext()  {}
 		

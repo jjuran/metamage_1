@@ -12,6 +12,7 @@
 #include "plus/hexidecimal.hh"
 #include "plus/make_string.hh"
 #include "plus/quad.hh"
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -167,7 +168,7 @@ namespace Genie
 	}
 	
 	
-	static bool is_valid_Component_name( const std::string& name )
+	static bool is_valid_Component_name( const plus::string& name )
 	{
 		if ( !canonical_32_bit_hex::applies( name ) )
 		{
@@ -200,7 +201,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[];
 	
-	static FSTreePtr thng_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr thng_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !is_valid_Component_name( name ) )
 		{
@@ -217,7 +218,7 @@ namespace Genie
 			{
 				const ino_t inode = 0;
 				
-				std::string name = plus::encode_32_bit_hex( (unsigned) component );
+				plus::string name = plus::encode_32_bit_hex( (unsigned) component );
 				
 				return FSNode( inode, name );
 			}
@@ -263,7 +264,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_thng_REF_code
 	{
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -273,7 +274,7 @@ namespace Genie
 		}
 	};
 	
-	static std::string string_from_stringhandle( N::Handle h )
+	static plus::string string_from_stringhandle( N::Handle h )
 	{
 		N::Str255 result;
 		
@@ -299,7 +300,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_name
 	{
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -313,7 +314,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_info
 	{
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -330,7 +331,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_icon
 	{
-		static std::string Get( const FSTree* that )
+		static plus::string Get( const FSTree* that )
 		{
 			const Component comp = GetKey( that );
 			
@@ -345,7 +346,7 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			std::string result;
+			plus::var_string result;
 			
 			result.resize( size );
 			
@@ -360,8 +361,8 @@ namespace Genie
 		return c;
 	}
 	
-	static FSTreePtr IconSuite_Factory( const FSTreePtr&    parent,
-	                                    const std::string&  name )
+	static FSTreePtr IconSuite_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name )
 	{
 		const Component comp = GetKeyFromParent( parent );
 		
@@ -389,8 +390,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
-	                                    const std::string&  name )
+	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -398,8 +399,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -422,7 +423,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, thng_lookup, thng_iterate );
 	}

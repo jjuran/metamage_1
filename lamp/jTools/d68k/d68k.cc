@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Standard C
@@ -16,6 +15,9 @@
 #include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/dup2.hh"
@@ -93,7 +95,7 @@ namespace tool
 		return x;
 	}
 	
-	static void append_hex( std::string& s, unsigned long x, int min_bytes )
+	static void append_hex( plus::var_string& s, unsigned long x, int min_bytes )
 	{
 		const unsigned short min_digits = min_bytes * 2;
 		
@@ -110,7 +112,7 @@ namespace tool
 		iota::inscribe_n_hex_digits( buf, x, n_bytes );
 	}
 	
-	static void append_signed_decimal( std::string& s, int x )
+	static void append_signed_decimal( plus::var_string& s, int x )
 	{
 		char sign = '+';
 		
@@ -383,7 +385,7 @@ namespace tool
 	
 	static unsigned global_last_immediate_data_from_ea = 0;
 	
-	static std::string read_ea( short mode_reg, short immediate_size )
+	static plus::string read_ea( short mode_reg, short immediate_size )
 	{
 		const short mode = mode_reg >> 3;
 		
@@ -404,7 +406,7 @@ namespace tool
 			return reg_name;
 		}
 		
-		std::string result;
+		plus::var_string result;
 		
 		if ( mode <= 4 )
 		{
@@ -691,7 +693,7 @@ namespace tool
 				immediate_data = immediate_data << 16 | read_word();
 			}
 			
-			const std::string ea = read_ea( mode_reg, immediate_size );
+			const plus::string ea = read_ea( mode_reg, immediate_size );
 			
 			printf( format, name, qualifier, space, immediate_data, ea.c_str() );
 		}
@@ -713,7 +715,7 @@ namespace tool
 		
 		const short immediate_size = 1;
 		
-		const std::string ea = read_ea( mode_reg, immediate_size );
+		const plus::string ea = read_ea( mode_reg, immediate_size );
 		
 		printf( format, immediate_data, ea.c_str() );
 	}
@@ -729,7 +731,7 @@ namespace tool
 		
 		const short dest_mode_reg = (op >> 3 & 0x38) | (op >> 9 & 0x07);
 		
-		std::string comment;
+		plus::var_string comment;
 		
 		if ( immediate_size == 2  &&  dest_mode_reg == 0  &&  source_mode_reg == 0x3c )
 		{
@@ -746,7 +748,7 @@ namespace tool
 			}
 		}
 		
-		const std::string source = read_ea( source_mode_reg, immediate_size );
+		const plus::string source = read_ea( source_mode_reg, immediate_size );
 		
 		if ( immediate_size == 4  &&  source_mode_reg == 0x3c )
 		{
@@ -774,7 +776,7 @@ namespace tool
 			}
 		}
 		
-		const std::string dest = read_ea( dest_mode_reg, immediate_size );
+		const plus::string dest = read_ea( dest_mode_reg, immediate_size );
 		
 		const bool address = (dest_mode_reg >> 3) == 1;
 		
@@ -821,7 +823,7 @@ namespace tool
 		
 		const short immediate_size = sizes[ size_index ];
 		
-		const std::string ea = read_ea( op & 0x3f, immediate_size );
+		const plus::string ea = read_ea( op & 0x3f, immediate_size );
 		
 		printf( format, name.string, size_codes[ size_index ], ea.c_str() );
 	}
@@ -847,7 +849,7 @@ namespace tool
 		
 		const unsigned short immediate_size = tas ? 1 : 2;
 		
-		const std::string ea = read_ea( op & 0x3f, immediate_size );
+		const plus::string ea = read_ea( op & 0x3f, immediate_size );
 		
 		const char* format = tas ? "TAS.B    %s" "\n"
 		                         : move_ccr_sr[ op >> 9 & 0x3 ];
@@ -887,7 +889,7 @@ namespace tool
 		
 		const char* op_name = jump ? "JMP" : "JSR";
 		
-		const std::string ea = read_ea( source, 0 );
+		const plus::string ea = read_ea( source, 0 );
 		
 		printf( format, op_name, ea.c_str() );
 		
@@ -1044,7 +1046,7 @@ namespace tool
 		const unsigned short d_base = extension >> 24 & 0x7;
 		const unsigned short d_more = extension       & 0x7;
 		
-		const std::string ea = read_ea( mode_reg, 4 );
+		const plus::string ea = read_ea( mode_reg, 4 );
 		
 		char other_reg_name[] = "Dm:";
 		
@@ -1085,7 +1087,7 @@ namespace tool
 		
 		const char* format = "MOVEM.%c  %s,%s" "\n";
 		
-		const std::string ea = read_ea( mode_reg, sizes[ size_index ] );
+		const plus::string ea = read_ea( mode_reg, sizes[ size_index ] );
 		
 		const char* source =  restore ? ea.c_str() : buffer;
 		const char* dest   = !restore ? ea.c_str() : buffer;
@@ -1234,7 +1236,7 @@ namespace tool
 			const char* format = lea ? "LEA      %s,A%d"
 			                         : "CHK.W    %s,D%d";
 			
-			const std::string ea = read_ea( source, immediate_size );
+			const plus::string ea = read_ea( source, immediate_size );
 			
 			printf( format, ea.c_str(), op >> 9 & 0x7 );
 			
@@ -1274,7 +1276,7 @@ namespace tool
 			case 0x8:
 				if ( (op & 0x00c0) == 0x0000 )
 				{
-					const std::string ea = read_ea( source, 1 );
+					const plus::string ea = read_ea( source, 1 );
 					
 					printf( "NBCD.B   %s" "\n", ea.c_str() );
 					
@@ -1292,7 +1294,7 @@ namespace tool
 				else if ( (op & 0x00c0) == 0x0040 )
 				{
 					// PEA
-					const std::string ea = read_ea( source, 0 );
+					const plus::string ea = read_ea( source, 0 );
 					
 					printf( "PEA      %s" "\n", ea.c_str() );
 					
@@ -1367,7 +1369,7 @@ namespace tool
 			}
 			else
 			{
-				const std::string ea = read_ea( op & 0x3f, 1 );
+				const plus::string ea = read_ea( op & 0x3f, 1 );
 				
 				printf( "S%s.B    %s" "\n", ccode, ea.c_str() );
 			}
@@ -1383,7 +1385,7 @@ namespace tool
 		
 		const char* format = "%sQ.%c   #%d,%s" "\n";
 		
-		const std::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
+		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
 		printf( format, name, size_codes[ size_index ], quick_data, ea.c_str() );
 	}
@@ -1483,7 +1485,7 @@ namespace tool
 			
 			const char sign_code = signed_math ? 'S' : 'U';
 			
-			const std::string ea = read_ea( op & 0x3f, 2 );
+			const plus::string ea = read_ea( op & 0x3f, 2 );
 			
 			printf( "DIV%c.W   %s,D%d" "\n", sign_code, ea.c_str(), reg );
 			
@@ -1517,7 +1519,7 @@ namespace tool
 		
 		const char size_code = size_codes[ size_index ];
 		
-		const std::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
+		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
 		if ( op & 0x0100 )
 		{
@@ -1549,7 +1551,7 @@ namespace tool
 			return;
 		}
 		
-		const std::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
+		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
 		if ( size_index == 3 )
 		{
@@ -1587,7 +1589,7 @@ namespace tool
 			
 			const char sign_code = signed_math ? 'S' : 'U';
 			
-			const std::string ea = read_ea( op & 0x3f, 2 );
+			const plus::string ea = read_ea( op & 0x3f, 2 );
 			
 			printf( "MUL%c.W   %s,D%d" "\n", sign_code, ea.c_str(), reg );
 			
@@ -1631,7 +1633,7 @@ namespace tool
 		
 		const char size_code = size_codes[ size_index ];
 		
-		const std::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
+		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
 		if ( op & 0x0100 )
 		{
@@ -1672,7 +1674,7 @@ namespace tool
 			return;
 		}
 		
-		const std::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
+		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
 		if ( adda )
 		{
@@ -1732,7 +1734,7 @@ namespace tool
 		
 		if ( uses_ea )
 		{
-			const std::string ea = read_ea( op & 0x3f, 0 );
+			const plus::string ea = read_ea( op & 0x3f, 0 );
 			
 			printf( "%s", ea.c_str() );
 		}

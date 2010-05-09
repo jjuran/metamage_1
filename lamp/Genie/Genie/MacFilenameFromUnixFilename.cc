@@ -11,6 +11,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Arcana / MD5
 #include "MD5/MD5.hh"
 
@@ -23,11 +26,11 @@ namespace Kerosene
 		return ( x < 10 ? '0' : 'a' - 10 ) + x;
 	}
 	
-	std::string MacFilenameFromUnixFilename( const std::string& unixName )
+	plus::string MacFilenameFromUnixFilename( const plus::string& unixName )
 	{
 		const std::size_t max_length = 31;
 		
-		std::string macName;
+		plus::var_string macName;
 		
 		if ( unixName.length() <= max_length )
 		{

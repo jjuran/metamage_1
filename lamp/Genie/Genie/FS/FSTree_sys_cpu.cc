@@ -168,15 +168,15 @@ namespace Genie
 	template < class Accessor >
 	struct sys_cpu_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return Accessor::Get();
 		}
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_cpu_Property< Accessor > Property;
 		

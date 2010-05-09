@@ -8,10 +8,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
-
-// Standard C/C++
-#include <cstdlib>
 
 // Mac OS
 #ifndef __QUICKDRAW__
@@ -20,6 +16,9 @@
 
 // Iota
 #include "iota/decimal.hh"
+
+// plus
+#include "plus/string.hh"
 
 
 namespace Genie
@@ -31,9 +30,9 @@ namespace Genie
 	
 	
 	template < class Scribe >
-	std::string Freeze( const typename Scribe::Value& value, bool binary )
+	plus::string Freeze( const typename Scribe::Value& value, bool binary )
 	{
-		return binary ? std::string( (const char*) &value, sizeof value )
+		return binary ? plus::string( (const char*) &value, sizeof value )
 		              : Scribe::Encode( value );
 	}
 	
@@ -66,7 +65,7 @@ namespace Genie
 	{
 		typedef bool Value;
 		
-		static std::string Encode( bool value )
+		static plus::string Encode( bool value )
 		{
 			return value ? "1" : "0";
 		}
@@ -81,7 +80,7 @@ namespace Genie
 	{
 		typedef int Value;
 		
-		static std::string Encode( int value )
+		static plus::string Encode( int value )
 		{
 			return iota::inscribe_decimal( value );
 		}
@@ -99,7 +98,7 @@ namespace Genie
 	{
 		typedef Int Value;
 		
-		static std::string Encode( Int value )
+		static plus::string Encode( Int value )
 		{
 			return Int_Scribe::Encode( value );
 		}
@@ -113,14 +112,14 @@ namespace Genie
 	
 	Point ReadPoint( const char* begin, const char* end );
 	
-	std::string WritePoint( Point point, char separator );
+	plus::string WritePoint( Point point, char separator );
 	
 	template < char separator = ',' >
 	struct Point_Scribe
 	{
 		typedef Point Value;
 		
-		static std::string Encode( Point value )
+		static plus::string Encode( Point value )
 		{
 			return WritePoint( value, separator );
 		}
@@ -135,7 +134,7 @@ namespace Genie
 	{
 		typedef Rect Value;
 		
-		static std::string Encode( const Rect& value );
+		static plus::string Encode( const Rect& value );
 		
 		static Rect Decode( const char* begin, const char* end );
 	};

@@ -10,13 +10,16 @@
 // iota
 #include "iota/quad.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace plus
 {
 	
-	std::string encode_quad( unsigned long q )
+	string encode_quad( unsigned long q )
 	{
-		std::string result;
+		var_string result;
 		
 		result.resize( sizeof 'quad' );
 		

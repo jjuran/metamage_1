@@ -43,7 +43,7 @@ namespace HTTP
 		return sb.st_size;
 	}
 	
-	std::string GetContentLengthLine( p7::fd_t message_body )
+	plus::string GetContentLengthLine( p7::fd_t message_body )
 	{
 		return HeaderFieldLine( "Content-Length", iota::inscribe_decimal( GetContentLength( message_body ) ) );
 	}
@@ -219,7 +219,7 @@ namespace HTTP
 			                                                                           itsHeaderIndex,
 			                                                                           STR_LEN( "Content-Length" ) ) )
 			{
-				std::string contentLength( header_stream + contentLengthEntry->value_offset,
+				plus::string contentLength( header_stream + contentLengthEntry->value_offset,
 				                           header_stream + contentLengthEntry->crlf_offset );
 				
 				// Now get the *real* value, as opposed to its textual representation
@@ -294,7 +294,7 @@ namespace HTTP
 		}
 	}
 	
-	std::string MessageReceiver::GetHeaderField( const std::string& name, const char* nullValue )
+	plus::string MessageReceiver::GetHeaderField( const plus::string& name, const char* nullValue )
 	{
 		const char* stream = GetHeaderStream();
 		
@@ -305,8 +305,8 @@ namespace HTTP
 		
 		if ( it != NULL )
 		{
-			return std::string( stream + it->value_offset,
-				                stream + it->crlf_offset );
+			return plus::string( stream + it->value_offset,
+				                 stream + it->crlf_offset );
 		}
 		
 		if ( nullValue == NULL )
@@ -318,13 +318,13 @@ namespace HTTP
 	}
 	
 	
-	std::string ResponseReceiver::GetResult() const
+	plus::string ResponseReceiver::GetResult() const
 	{
-		const std::string& message = GetMessageStream();
+		const plus::string& message = GetMessageStream();
 		
 		if ( const char* p = std::strchr( message.data(), ' ' ) )
 		{
-			return std::string( p + 1, GetHeaderStream() - 2 );
+			return plus::string( p + 1, GetHeaderStream() - 2 );
 		}
 		
 		return "";
@@ -332,7 +332,7 @@ namespace HTTP
 	
 	unsigned ResponseReceiver::GetResultCode() const
 	{
-		const std::string& message = GetMessageStream();
+		const plus::string& message = GetMessageStream();
 		
 		if ( const char* p = std::strchr( message.data(), ' ' ) )
 		{

@@ -88,8 +88,8 @@ namespace Genie
 			N::FSVolumeRefNum itsVRefNum;
 		
 		public:
-			FSTree_Desktop_Dir_Link( const FSTreePtr&    parent,
-			                         const std::string&  name )
+			FSTree_Desktop_Dir_Link( const FSTreePtr&     parent,
+			                         const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name ),
 				itsVRefNum( GetKeyFromParent( parent ) )
@@ -110,8 +110,8 @@ namespace Genie
 	class dt_appls_QUAD_latest : public FSTree_ResolvableSymLink
 	{
 		public:
-			dt_appls_QUAD_latest( const FSTreePtr&    parent,
-			                      const std::string&  name )
+			dt_appls_QUAD_latest( const FSTreePtr&     parent,
+			                      const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -123,8 +123,8 @@ namespace Genie
 	class dt_appls_QUAD_list_N : public FSTree_ResolvableSymLink
 	{
 		public:
-			dt_appls_QUAD_list_N( const FSTreePtr&    parent,
-			                      const std::string&  name )
+			dt_appls_QUAD_list_N( const FSTreePtr&     parent,
+			                      const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -171,7 +171,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr appl_QUAD_list_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr appl_QUAD_list_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
@@ -186,7 +186,7 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
@@ -204,7 +204,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr appl_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr appl_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( name.length() != sizeof 'quad' )
 		{
@@ -220,7 +220,7 @@ namespace Genie
 	}
 	
 	
-	static std::string generate_dt_icons_QUAD_QUAD_X( const FSTree* that )
+	static plus::string generate_dt_icons_QUAD_QUAD_X( const FSTree* that )
 	{
 		const FSTreePtr&    parent = that   ->ParentRef();
 		const FSTreePtr&   gparent = parent ->ParentRef();
@@ -255,13 +255,13 @@ namespace Genie
 			p7::throw_errno( E2BIG );
 		}
 		
-		std::string result( buffer, pb.ioDTActCount );
+		plus::string result( buffer, pb.ioDTActCount );
 		
 		return result;
 	}
 	
 	
-	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
@@ -276,7 +276,7 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( name.length() != sizeof 'quad' )
 		{
@@ -291,7 +291,7 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr icon_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr icon_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( name.length() != sizeof 'quad' )
 		{
@@ -306,12 +306,12 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, appl_lookup, appl_iterate );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, icon_lookup, icon_iterate );
 	}

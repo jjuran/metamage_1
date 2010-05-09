@@ -15,12 +15,12 @@
 namespace tool
 {
 	
-	std::map< std::string, IncludesCache > gIncludesCaches;
+	std::map< plus::string, IncludesCache > gIncludesCaches;
 	
 	
-	const IncludesCache& GetIncludes( const std::string& pathname )
+	const IncludesCache& GetIncludes( const plus::string& pathname )
 	{
-		typedef std::map< std::string, IncludesCache >::const_iterator Iter;
+		typedef std::map< plus::string, IncludesCache >::const_iterator Iter;
 		
 		Iter it = gIncludesCaches.find( pathname );
 		

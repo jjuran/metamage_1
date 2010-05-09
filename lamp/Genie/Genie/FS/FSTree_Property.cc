@@ -49,7 +49,7 @@ namespace Genie
 			return itsSize;
 		}
 		
-		std::string data;
+		plus::string data;
 		
 		try
 		{
@@ -91,7 +91,7 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		std::string data;
+		plus::var_string data;
 		
 		try
 		{
@@ -128,11 +128,11 @@ namespace Genie
 		                                     binary );
 	}
 	
-	FSTreePtr New_FSTree_Property( const FSTreePtr&    parent,
-	                               const std::string&  name,
-	                               size_t              size,
-	                               Property_ReadHook   readHook,
-	                               Property_WriteHook  writeHook )
+	FSTreePtr New_FSTree_Property( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               size_t               size,
+	                               Property_ReadHook    readHook,
+	                               Property_WriteHook   writeHook )
 	{
 		return seize_ptr( new FSTree_Property( parent,
 		                                       name,

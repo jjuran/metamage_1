@@ -15,14 +15,14 @@
 namespace Genie
 {
 	
-	typedef FSTreePtr (*Lookup_Proc )( const FSTreePtr& parent, const std::string& name );
+	typedef FSTreePtr (*Lookup_Proc )( const FSTreePtr& parent, const plus::string& name );
 	typedef void      (*Iterate_Proc)( FSTreeCache& cache );
 	
 	
-	FSTreePtr new_basic_directory( const FSTreePtr&    parent,
-	                               const std::string&  name,
-	                               Lookup_Proc         lookup,
-	                               Iterate_Proc        iterate );
+	FSTreePtr new_basic_directory( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               Lookup_Proc          lookup,
+	                               Iterate_Proc         iterate );
 	
 }
 

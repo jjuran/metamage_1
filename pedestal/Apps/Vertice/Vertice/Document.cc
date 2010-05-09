@@ -18,7 +18,6 @@
 #include <functional>
 #include <list>
 #include <map>
-#include <string>
 #include <vector>
 
 // text-input
@@ -94,9 +93,9 @@ namespace Vertice
 	class Parser
 	{
 		public:
-			typedef std::map< std::string, V::Point3D::Type > PointMap;
-			typedef std::map< std::string, ColorMatrix      > ColorMap;
-			typedef std::map< std::string, ImageTile        > ImageTileMap;
+			typedef std::map< plus::string, V::Point3D::Type > PointMap;
+			typedef std::map< plus::string, ColorMatrix      > ColorMap;
+			typedef std::map< plus::string, ImageTile        > ImageTileMap;
 		
 		private:
 			Scene*               itsScene;
@@ -121,7 +120,7 @@ namespace Vertice
 			
 			~Parser()  {}
 			
-			void ParseLine( const std::string& line );
+			void ParseLine( const plus::string& line );
 			
 			ColorMatrix ReadColor( const char* begin, const char* end ) const;
 			
@@ -151,7 +150,7 @@ namespace Vertice
 		}
 		else
 		{
-			ColorMap::const_iterator it = itsColors.find( std::string( begin, end ) );
+			ColorMap::const_iterator it = itsColors.find( plus::string( begin, end ) );
 			
 			if ( it != itsColors.end() )
 			{
@@ -244,13 +243,13 @@ namespace Vertice
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
-		std::string type( begin, space );
+		plus::string type( begin, space );
 		
 		begin = space + (space != end);
 		
 		space = std::find( begin, end, ' ' );
 		
-		std::string name( begin, space );
+		plus::string name( begin, space );
 		
 		begin = space + (space != end);
 		
@@ -268,7 +267,7 @@ namespace Vertice
 	
 	void Parser::SetContext( const char* begin, const char* end )
 	{
-		std::string contextName( begin, end );
+		plus::string contextName( begin, end );
 		
 		itsContextID = itsScene->AddSubcontext( itsContextID,
 		                                        contextName,
@@ -294,7 +293,7 @@ namespace Vertice
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
-		std::string name( begin, space );
+		plus::string name( begin, space );
 		
 		ImageTileMap::const_iterator it = itsImageTiles.find( name );
 		
@@ -378,7 +377,7 @@ namespace Vertice
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
-		std::string name( begin, space );
+		plus::string name( begin, space );
 		
 		begin = space;
 		
@@ -407,7 +406,7 @@ namespace Vertice
 		{
 			const char* space = std::find( begin, end, ' ' );
 			
-			std::string ptName( begin, space );
+			plus::string ptName( begin, space );
 			
 			offsets.push_back( context.AddPointToMesh( itsPoints[ ptName ] ) );
 			
@@ -437,9 +436,9 @@ namespace Vertice
 	
 	typedef void ( Parser::*Handler )( const char*, const char* );
 	
-	static std::map< std::string, Handler > MakeHandlers()
+	static std::map< plus::string, Handler > MakeHandlers()
 	{
-		std::map< std::string, Handler > handlers;
+		std::map< plus::string, Handler > handlers;
 		
 		handlers[ "camera"    ] = &Parser::MakeCamera;
 		handlers[ "color"     ] = &Parser::SetColor;
@@ -457,9 +456,9 @@ namespace Vertice
 		return handlers;
 	}
 	
-	static Handler GetHandler( const std::string& command )
+	static Handler GetHandler( const plus::string& command )
 	{
-		typedef std::map< std::string, Handler > Handlers;
+		typedef std::map< plus::string, Handler > Handlers;
 		
 		static Handlers handlers = MakeHandlers();
 		
@@ -479,11 +478,11 @@ namespace Vertice
 	{
 	}
 	
-	void Parser::ParseLine( const std::string& line )
+	void Parser::ParseLine( const plus::string& line )
 	{
 		std::size_t iCmdStart = line.find_first_not_of( " \t" );
 		
-		if ( iCmdStart == std::string::npos )
+		if ( iCmdStart == plus::string::npos )
 		{
 			return;
 		}
@@ -501,7 +500,7 @@ namespace Vertice
 		
 		const char* stop = std::find( start, end, ' ' );
 		
-		std::string cmdname( start, stop );
+		plus::string cmdname( start, stop );
 		
 		if ( Handler handler = GetHandler( cmdname ) )
 		{
@@ -542,9 +541,9 @@ namespace Vertice
 		
 		N::FSReader reader( fRefNum );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			const std::string& line = *s;
+			const plus::string& line = *s;
 			
 			if ( std::strchr( line.c_str(), '{' ) )
 			{

@@ -11,6 +11,9 @@
 // Standard C
 #include <string.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/write.hh"
 
@@ -18,7 +21,7 @@
 namespace poseven
 {
 	
-	static void write_line( std::string& message )
+	static void write_line( plus::var_string& message )
 	{
 		message += '\n';
 		
@@ -37,7 +40,7 @@ namespace poseven
 		}
 	}
 	
-	static void write_error_line( std::string& message, bool extend, int errnum )
+	static void write_error_line( plus::var_string& message, bool extend, int errnum )
 	{
 		if ( extend  &&  errnum != 0 )
 		{
@@ -55,21 +58,21 @@ namespace poseven
 	
 	void perror( int errnum )
 	{
-		std::string message;
+		plus::var_string message;
 		
 		write_error_line( message, false, errnum );
 	}
 	
 	void perror( const char* s, int errnum )
 	{
-		std::string message = s;
+		plus::var_string message = s;
 		
 		write_error_line( message, true, errnum );
 	}
 	
 	void perror( const char* s1, const char* s2, int errnum )
 	{
-		std::string message = s1;
+		plus::var_string message = s1;
 		
 		message += ": ";
 		message += s2;
@@ -79,7 +82,7 @@ namespace poseven
 	
 	void perror( const char* s1, const char* s2, const char* s3 )
 	{
-		std::string message = s1;
+		plus::var_string message = s1;
 		
 		message += ": ";
 		message += s2;
@@ -89,16 +92,16 @@ namespace poseven
 		write_line( message );
 	}
 	
-	void perror( const std::string& s, int errnum )
+	void perror( const plus::string& s, int errnum )
 	{
-		std::string message = s;
+		plus::var_string message = s;
 		
 		write_error_line( message, true, errnum );
 	}
 	
-	void perror( const std::string& s1, const std::string& s2, int errnum )
+	void perror( const plus::string& s1, const plus::string& s2, int errnum )
 	{
-		std::string message = s1;
+		plus::var_string message = s1;
 		
 		message += ": ";
 		message += s2;
@@ -106,9 +109,9 @@ namespace poseven
 		write_error_line( message, true, errnum );
 	}
 	
-	void perror( const std::string& s1, const std::string& s2, const std::string& s3 )
+	void perror( const plus::string& s1, const plus::string& s2, const plus::string& s3 )
 	{
-		std::string message = s1;
+		plus::var_string message = s1;
 		
 		message += ": ";
 		message += s2;

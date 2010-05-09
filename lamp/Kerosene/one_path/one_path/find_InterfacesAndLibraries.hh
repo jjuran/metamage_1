@@ -8,14 +8,14 @@
 #ifndef ONEPATH_FINDINTERFACESANDLIBRARIES_HH
 #define ONEPATH_FINDINTERFACESANDLIBRARIES_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
 {
 	
-	std::string find_InterfacesAndLibraries();
+	plus::string find_InterfacesAndLibraries();
 	
 }
 

@@ -6,8 +6,8 @@
 #ifndef ALINE_TARGETNAMES_HH
 #define ALINE_TARGETNAMES_HH
 
-// C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -19,10 +19,10 @@
 namespace tool
 {
 	
-	std::string MakeTargetName( Platform      arch,
-	                            Platform      runtime,
-	                            Platform      api,
-	                            BuildVariety  build );
+	plus::string MakeTargetName( Platform      arch,
+	                             Platform      runtime,
+	                             Platform      api,
+	                             BuildVariety  build );
 	
 }
 

@@ -19,8 +19,8 @@ namespace Genie
 	class FSTree_sys_app_dir : public FSTree_ResolvableSymLink
 	{
 		public:
-			FSTree_sys_app_dir( const FSTreePtr&    parent,
-			                    const std::string&  name )
+			FSTree_sys_app_dir( const FSTreePtr&     parent,
+			                    const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -35,7 +35,7 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetAppFolder(), false );
 	}
 	
-	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_sys_app_dir( parent, name ) );
 	}

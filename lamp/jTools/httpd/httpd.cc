@@ -29,6 +29,7 @@
 // plus
 #include "plus/hexidecimal.hh"
 #include "plus/make_string.hh"
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/extras/pump.hh"
@@ -91,11 +92,11 @@ namespace tool
 		
 		for ( HTTP::HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
 		{
-			std::string name( stream + it->field_offset,
-			                  stream + it->colon_offset );
+			plus::var_string name( stream + it->field_offset,
+			                       stream + it->colon_offset );
 			
-			std::string value( stream + it->value_offset,
-			                   stream + it->crlf_offset );
+			plus::string value( stream + it->value_offset,
+			                    stream + it->crlf_offset );
 			
 			std::transform( name.begin(),
 			                name.end(),
@@ -117,7 +118,7 @@ namespace tool
 	static void ForkExecWait( char const* const             argv[],
 	                          const HTTP::MessageReceiver&  request )
 	{
-		const std::string& partialData = request.GetPartialContent();
+		const plus::string& partialData = request.GetPartialContent();
 		
 		bool partial_data_exist = !partialData.empty();
 		
@@ -170,24 +171,24 @@ namespace tool
 	
 	struct ParsedRequest
 	{
-		std::string method;
-		std::string resource;
-		std::string version;
+		plus::string  method;
+		plus::string  resource;
+		plus::string  version;
 	};
 	
-	static ParsedRequest ParseRequest( const std::string& request )
+	static ParsedRequest ParseRequest( const plus::string& request )
 	{
 		// E.g.  "GET / HTTP/1.0"
 		
 		ParsedRequest parsed;
 		
 		// Find the first space (which ends the request method)
-		std::string::size_type end = request.find( ' ' );
+		plus::string::size_type end = request.find( ' ' );
 		
 		parsed.method = request.substr( 0, end - 0 );  // e.g. "GET"
 		
 		// The resource starts after the space
-		std::string::size_type resource = end + 1;
+		plus::string::size_type resource = end + 1;
 		
 		// and ends with the next space
 		end = request.find( ' ', resource );
@@ -195,9 +196,9 @@ namespace tool
 		parsed.resource = request.substr( resource, end - resource );  // e.g. "/logo.png"
 		
 		// HTTP version string starts after the second space
-		std::string::size_type version = end + 1;
+		plus::string::size_type version = end + 1;
 		// and runs to the end
-		end = std::string::npos;
+		end = plus::string::npos;
 		
 		parsed.version = request.substr( version, end - version );  // e.g. "HTTP/1.1"
 		
@@ -207,35 +208,35 @@ namespace tool
 	class ResourceParser
 	{
 		private:
-			std::string resource;
+			plus::string resource;
 		
 		public:
 			class const_iterator
 			{
 				private:
-					const std::string& s;
-					std::string::size_type pos, end;
+					const plus::string& s;
+					plus::string::size_type pos, end;
 				
 				public:
-					enum { npos = std::string::npos };
+					enum { npos = plus::string::npos };
 					struct End  {};
 					static End kEnd;
 					
-					const_iterator( const std::string& s )
+					const_iterator( const plus::string& s )
 					:
 						s  ( s                  ),
 						pos( 1                  ),
 						end( s.find( '/', pos ) )
 					{}
 					
-					const_iterator( const std::string& s, End )
+					const_iterator( const plus::string& s, End )
 					:
 						s  ( s    ),
 						pos( npos ),
 						end( npos )
 					{}
 					
-					std::string operator*() const  { return s.substr( pos, end - pos ); }
+					plus::string operator*() const  { return s.substr( pos, end - pos ); }
 					
 					const_iterator& operator++()
 					{
@@ -246,7 +247,7 @@ namespace tool
 						}
 						else
 						{
-							pos = end = std::string::npos;
+							pos = end = plus::string::npos;
 						}
 						
 						return *this;
@@ -271,7 +272,7 @@ namespace tool
 					}
 			};
 			
-			ResourceParser( const std::string& resource ) : resource( resource + "/" )  {}
+			ResourceParser( const plus::string& resource ) : resource( resource + "/" )  {}
 			
 			const_iterator begin() const  { return const_iterator( resource                       ); }
 			const_iterator end()   const  { return const_iterator( resource, const_iterator::kEnd ); }
@@ -287,9 +288,9 @@ namespace tool
 		return c;
 	}
 	
-	static std::string expand_percent_escapes( const std::string& escaped )
+	static plus::string expand_percent_escapes( const plus::string& escaped )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		//const char* p = &*escaped.begin();
 		const char* end = &*escaped.end();
@@ -313,17 +314,17 @@ namespace tool
 		return result;
 	}
 	
-	static std::string LocateResource( const std::string& resource )
+	static plus::string LocateResource( const plus::string& resource )
 	{
 		ResourceParser parser( resource );
 		
-		std::string pathname = gDocumentRoot;
+		plus::string pathname = gDocumentRoot;
 		
 		// FIXME:  This can be an algorithm
 		typedef ResourceParser::const_iterator const_iterator;
 		for ( const_iterator it = parser.begin();  it != parser.end();  ++it )
 		{
-			std::string component = expand_percent_escapes( *it );
+			plus::string component = expand_percent_escapes( *it );
 			
 			if ( !component.empty() && component[0] == '.' )
 			{
@@ -339,14 +340,14 @@ namespace tool
 		return pathname;
 	}
 	
-	static std::string FilenameExtension(const std::string& filename)
+	static plus::string FilenameExtension(const plus::string& filename)
 	{
 		// This will break for index.html.en and similar
-		std::string::size_type lastDot = filename.find_last_of( "." );
+		plus::string::size_type lastDot = filename.find_last_of( "." );
 		
-		if ( lastDot != std::string::npos )
+		if ( lastDot != plus::string::npos )
 		{
-			return filename.substr( lastDot, std::string::npos );
+			return filename.substr( lastDot, plus::string::npos );
 		}
 		else
 		{
@@ -354,9 +355,9 @@ namespace tool
 		}
 	}
 	
-	static const char* GuessContentType( const std::string& filename, ::OSType type )
+	static const char* GuessContentType( const plus::string& filename, ::OSType type )
 	{
-		std::string ext = FilenameExtension( filename );
+		plus::string ext = FilenameExtension( filename );
 		
 		if ( ext == ".html" )
 		{
@@ -380,14 +381,14 @@ namespace tool
 		return "application/octet-stream";
 	}
 	
-	static void DumpFile( const std::string& pathname )
+	static void DumpFile( const plus::string& pathname )
 	{
 		p7::pump( io::open_for_reading( pathname ), p7::stdout_fileno );
 	}
 	
-	static void ListDir( const std::string& pathname )
+	static void ListDir( const plus::string& pathname )
 	{
-		typedef io::directory_contents_traits< std::string >::container_type directory_container;
+		typedef io::directory_contents_traits< plus::string >::container_type directory_container;
 		
 		directory_container contents = io::directory_contents( pathname );
 		
@@ -395,7 +396,7 @@ namespace tool
 		
 		for ( Iter it = contents.begin();  it != contents.end();  ++it )
 		{
-			std::string listing = *it;
+			plus::var_string listing = *it;
 			
 			listing += "\n";
 			
@@ -417,7 +418,7 @@ namespace tool
 	{
 		ParsedRequest parsed = ParseRequest( request.GetStatusLine() );
 		
-		std::string pathname;
+		plus::string pathname;
 		
 		try
 		{
@@ -453,7 +454,7 @@ namespace tool
 					return;
 				}
 				
-				std::string index_html = pathname / "index.html";
+				plus::string index_html = pathname / "index.html";
 				
 				if ( io::file_exists( index_html ) )
 				{
@@ -489,7 +490,7 @@ namespace tool
 			
 			const char* contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
 			
-			std::string responseHeader = HTTP_VERSION " 200 OK\r\n";
+			plus::var_string responseHeader = HTTP_VERSION " 200 OK\r\n";
 			
 			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType                   );
 			

@@ -16,8 +16,8 @@ namespace Genie
 	class FSTree_ResolvableSymLink : public FSTree
 	{
 		public:
-			FSTree_ResolvableSymLink( const FSTreePtr&    parent,
-			                          const std::string&  name )
+			FSTree_ResolvableSymLink( const FSTreePtr&     parent,
+			                          const plus::string&  name )
 			:
 				FSTree( parent, name )
 			{
@@ -25,7 +25,7 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
 }

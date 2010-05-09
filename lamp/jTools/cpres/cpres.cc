@@ -68,7 +68,7 @@ namespace tool
 	{
 		if ( io::directory_exists( source ) )
 		{
-			std::string name = plus::make_string( source.name );
+			plus::string name = plus::make_string( source.name );
 			
 			// Source item is a directory.
 			std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
@@ -202,7 +202,7 @@ namespace tool
 			{
 				++fail;
 				
-				std::string destName = plus::make_string( dest.name );
+				plus::string destName = plus::make_string( dest.name );
 				
 				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
 				                                err.Get(),      freeArgs[ index ],

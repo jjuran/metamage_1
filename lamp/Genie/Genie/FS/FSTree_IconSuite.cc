@@ -21,9 +21,9 @@ namespace Genie
 			Value itsIconSuite;
 		
 		public:
-			FSTree_IconSuite( const FSTreePtr&    parent,
-			                  const std::string&  name,
-			                  const Value&        iconSuite )
+			FSTree_IconSuite( const FSTreePtr&     parent,
+			                  const plus::string&  name,
+			                  const Value&         iconSuite )
 			:
 				FSTree( parent, name ),
 				itsIconSuite( iconSuite )
@@ -58,7 +58,7 @@ namespace Genie
 	FSTreePtr
 	//
 	New_FSTree_IconSuite( const FSTreePtr&                     parent,
-			              const std::string&                   name,
+			              const plus::string&                  name,
 			              const n::shared< N::IconSuiteRef >&  iconSuite )
 	{
 		return seize_ptr( new FSTree_IconSuite( parent, name, iconSuite ) );

@@ -44,8 +44,10 @@ namespace Genie
 	class FSTree_sys_mac_rom : public FSTree
 	{
 		public:
-			FSTree_sys_mac_rom( const FSTreePtr&    parent,
-			                    const std::string&  name ) : FSTree( parent, name )
+			FSTree_sys_mac_rom( const FSTreePtr&     parent,
+			                    const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -88,7 +90,7 @@ namespace Genie
 	#endif
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_sys_mac_rom( parent, name ) );
 	}

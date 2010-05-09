@@ -6,14 +6,14 @@
 #ifndef GENIE_UTILITIES_GETWORKSTATIONNAME_HH
 #define GENIE_UTILITIES_GETWORKSTATIONNAME_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace Genie
 {
 	
-	std::string GetWorkstationName();
+	plus::string GetWorkstationName();
 	
 }
 

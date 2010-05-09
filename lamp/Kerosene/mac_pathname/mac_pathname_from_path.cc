@@ -31,7 +31,7 @@
 namespace p7 = poseven;
 
 
-std::string mac_pathname_from_path( const char* path )
+plus::string mac_pathname_from_path( const char* path )
 {
 #ifdef __APPLE__
 	
@@ -65,7 +65,7 @@ std::string mac_pathname_from_path( const char* path )
 		p7::throw_errno( errno );
 	}
 	
-	return std::string( buffer, size );
+	return plus::string( buffer, size );
 	
 #endif
 }

@@ -14,6 +14,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -28,23 +31,23 @@ namespace Genie
 	class sys_mac_gdev_main : public FSTree_ReadableSymLink
 	{
 		public:
-			sys_mac_gdev_main( const FSTreePtr&    parent,
-			                   const std::string&  name )
+			sys_mac_gdev_main( const FSTreePtr&     parent,
+			                   const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
 			}
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
-	std::string sys_mac_gdev_main::ReadLink() const
+	plus::string sys_mac_gdev_main::ReadLink() const
 	{
 		const GDHandle gdH = ::GetMainDevice();
 		
 		ASSERT( gdH != NULL );
 		
-		std::string result = "list/12345678";
+		plus::var_string result = "list/12345678";
 		
 		const size_t hex_offset = STRLEN( "list/" );
 		

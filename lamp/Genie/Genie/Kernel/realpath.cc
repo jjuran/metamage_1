@@ -32,7 +32,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static std::string mac_pathname_from_file( const FSTreePtr& file )
+	static plus::string mac_pathname_from_file( const FSTreePtr& file )
 	{
 		struct ::stat stat_buffer;
 		
@@ -68,8 +68,8 @@ namespace Genie
 			
 			const bool is_mac = flags & REALPATH_MAC;
 			
-			std::string resolved = is_mac ? mac_pathname_from_file( file )
-			                              : file->Pathname();
+			plus::string resolved = is_mac ? mac_pathname_from_file( file )
+			                               : file->Pathname();
 			
 			const bool too_big = resolved.size() > buffer_size;
 			

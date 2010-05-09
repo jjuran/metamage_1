@@ -7,14 +7,23 @@
 
 // Standard C++
 #include <map>
-#include <string>
 
 // Iota
 #include "iota/argv.hh"
 
+// plus
+#include "plus/string.hh"
+
 // poseven
 #include "poseven/types/exit_t.hh"
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace tool
 {
@@ -23,9 +32,9 @@ namespace tool
 	
 	void AssignShellVariable( const char* name, const char* value );
 	
-	const char* QueryShellVariable( const std::string& name );
+	const char* QueryShellVariable( const plus::string& name );
 	
-	Builtin FindBuiltin( const std::string& name );
+	Builtin FindBuiltin( const plus::string& name );
 	
 }
 

@@ -19,6 +19,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/lseek.hh"
@@ -58,13 +61,13 @@ namespace tool
 	static p7::fd_t g_proc = p7::open( "/proc", p7::o_rdonly | p7::o_directory ).release();
 	
 	
-	static std::string left_padded( const char* begin, const char* end, unsigned length )
+	static plus::string left_padded( const char* begin, const char* end, unsigned length )
 	{
 		length = std::max< unsigned >( length, end - begin );
 		
 		const size_t pad_length = length - (end - begin);
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.reserve( length );
 		
@@ -75,13 +78,13 @@ namespace tool
 		return result;
 	}
 	
-	static std::string right_padded( const char* begin, const char* end, unsigned length )
+	static plus::string right_padded( const char* begin, const char* end, unsigned length )
 	{
 		length = std::max< unsigned >( length, end - begin );
 		
 		const size_t pad_length = length - (end - begin);
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.reserve( length );
 		
@@ -92,17 +95,17 @@ namespace tool
 		return result;
 	}
 	
-	static inline std::string left_padded( const std::string& word, unsigned length )
+	static inline plus::string left_padded( const plus::string& word, unsigned length )
 	{
 		return left_padded( &*word.begin(), &*word.end(), length );
 	}
 	
-	static inline std::string right_padded( const std::string& word, unsigned length )
+	static inline plus::string right_padded( const plus::string& word, unsigned length )
 	{
 		return right_padded( &*word.begin(), &*word.end(), length );
 	}
 	
-	static std::string report_process( const std::string& pid_name )
+	static plus::string report_process( const plus::string& pid_name )
 	{
 		using namespace io::path_descent_operators;
 		
@@ -121,37 +124,37 @@ namespace tool
 		
 		const char* space = std::find( p_stat, end, ' ' );
 		
-		std::string stat_string( p_stat, space );
+		plus::var_string stat_string( p_stat, space );
 		
 		const char* p_ppid = space + 1;
 		
 		space = std::find( p_ppid, end, ' ' );
 		
-		std::string ppid_string( p_ppid, space );
+		plus::string ppid_string( p_ppid, space );
 		
 		const char* p_pgid = space + 1;
 		
 		space = std::find( p_pgid, end, ' ' );
 		
-		std::string pgid_string( p_pgid, space );
+		plus::string pgid_string( p_pgid, space );
 		
 		const char* p_sid = space + 1;
 		
 		space = std::find( p_sid, end, ' ' );
 		
-		std::string sid_string( p_sid, space );
+		plus::string sid_string( p_sid, space );
 		
 		const char* p_termname = space + 1;
 		
 		space = std::find( p_termname, end, ' ' );
 		
-		std::string term_string( p_termname, space );
+		plus::var_string term_string( p_termname, space );
 		
 		const char* p_tpgid = space + 1;
 		
 		space = std::find( p_tpgid, end, ' ' );
 		
-		std::string tpgid_string( p_tpgid, space );
+		plus::string tpgid_string( p_tpgid, space );
 		
 		pid_t pid = iota::parse_unsigned_decimal( pid_name.c_str() );
 		
@@ -180,7 +183,7 @@ namespace tool
 			stat_string += '+';
 		}
 		
-		std::string report;
+		plus::var_string report;
 		
 		report += left_padded( pid_name, 5 );
 		
@@ -225,9 +228,9 @@ namespace tool
 		return report;
 	}
 	
-	static std::string ps()
+	static plus::string ps()
 	{
-		std::string output = "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n";
+		plus::var_string output = "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n";
 		
 		DIR* iter = opendir( "/proc" );
 		
@@ -276,8 +279,8 @@ namespace tool
 		
 		const struct timespec minimum = timespec_from_seconds( min_sleep );
 		
-		std::string output;
-		std::string previous;
+		plus::string output;
+		plus::string previous;
 		
 	again:
 		

@@ -37,14 +37,14 @@ namespace Genie
 	
 	struct Null_KeyName_Traits
 	{
-		typedef std::string Key;
+		typedef plus::string Key;
 		
-		static const std::string& NameFromKey( const Key& key )
+		static const plus::string& NameFromKey( const Key& key )
 		{
 			return key;
 		}
 		
-		static const Key& KeyFromName( const std::string& name )
+		static const Key& KeyFromName( const plus::string& name )
 		{
 			return name;
 		}
@@ -53,14 +53,14 @@ namespace Genie
 	
 	struct Named_Subview
 	{
-		std::string                     name;
+		plus::string                    name;
 		boost::shared_ptr< Ped::View >  view;
 		
 		Named_Subview()
 		{
 		}
 		
-		Named_Subview( const std::string& n ) : name( n )
+		Named_Subview( const plus::string& n ) : name( n )
 		{
 		}
 	};
@@ -78,7 +78,7 @@ namespace Genie
 	
 	static Named_Subview*
 	//
-	find_subview( Stack_Parameters& params, const std::string& name )
+	find_subview( Stack_Parameters& params, const plus::string& name )
 	{
 		ViewList& v = params.v;
 		
@@ -95,7 +95,7 @@ namespace Genie
 	
 	static Named_Subview&
 	//
-	find_or_append_subview( Stack_Parameters& params, const std::string& name )
+	find_or_append_subview( Stack_Parameters& params, const plus::string& name )
 	{
 		ViewList& v = params.v;
 		
@@ -141,8 +141,8 @@ namespace Genie
 	class FSTree_Stack_Subview : public FSTree_View
 	{
 		public:
-			FSTree_Stack_Subview( const FSTreePtr&    parent,
-		                          const std::string&  name)
+			FSTree_Stack_Subview( const FSTreePtr&     parent,
+		                          const plus::string&  name)
 			:
 				FSTree_View( parent, name )
 			{
@@ -179,14 +179,14 @@ namespace Genie
 		public:
 			typedef ViewList  Sequence;
 			
-			FSTree_Stack( const FSTreePtr&    parent,
-		                  const std::string&  name)
+			FSTree_Stack( const FSTreePtr&     parent,
+		                  const plus::string&  name)
 			:
 				FSTree_Directory( parent, name )
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const
 			{
 				return seize_ptr( new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name ) );
 			}
@@ -220,8 +220,8 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&    parent,
-	                                            const std::string&  name ) const
+	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&     parent,
+	                                            const plus::string&  name ) const
 	{
 		return seize_ptr( new FSTree_Stack( parent, name ) );
 	}

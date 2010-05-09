@@ -68,7 +68,7 @@ namespace Genie
 				return frame.SetErrno( EINVAL );
 			}
 			
-			std::string errMsg = "\n";
+			plus::string errMsg = "\n";
 			
 			try
 			{

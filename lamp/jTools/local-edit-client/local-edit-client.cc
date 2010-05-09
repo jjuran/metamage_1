@@ -13,6 +13,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/ftruncate.hh"
@@ -99,9 +102,9 @@ namespace tool
 		buffer[3] = code[ mask & (triplet[2] << 0)                     ];
 	}
 	
-	static std::string EncodeBase64( const unsigned char* begin, const unsigned char* end )
+	static plus::string EncodeBase64( const unsigned char* begin, const unsigned char* end )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		result.reserve( (end - begin + 2) * 4 / 3 );
 		
@@ -192,7 +195,7 @@ namespace tool
 		
 		MD5::Result digest = MD5DigestFile( target_file_stream );
 		
-		std::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
+		plus::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
 		const p7::fd_t socket_in  = p7::fd_t( 6 );
 		const p7::fd_t socket_out = p7::fd_t( 7 );
@@ -201,7 +204,7 @@ namespace tool
 		
 		const char* urlPath = "/cgi-bin/local-edit-server";
 		
-		std::string contentLengthHeader;
+		plus::string contentLengthHeader;
 		
 		try
 		{
@@ -211,12 +214,12 @@ namespace tool
 		{
 		}
 		
-		std::string message_header =   HTTP::RequestLine( method, urlPath )
-		                             //+ HTTP::HeaderLine( "Host", hostname )
-		                             + HTTP::HeaderFieldLine( "X-Edit-Title", basename( target_pathname ) )
-		                             + HTTP::HeaderFieldLine( "Content-MD5", old_digest_b64 )
-		                             + contentLengthHeader
-		                             + "\r\n";
+		plus::string message_header =   HTTP::RequestLine( method, urlPath )
+		                              //+ HTTP::HeaderLine( "Host", hostname )
+		                              + HTTP::HeaderFieldLine( "X-Edit-Title", basename( target_pathname ) )
+		                              + HTTP::HeaderFieldLine( "Content-MD5", old_digest_b64 )
+		                              + contentLengthHeader
+		                              + "\r\n";
 		
 		p7::write( socket_out, message_header );
 		
@@ -241,7 +244,7 @@ namespace tool
 		{
 			n::owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::_400 );
 			
-			const std::string& partial_content = response.GetPartialContent();
+			const plus::string& partial_content = response.GetPartialContent();
 			
 			p7::pwrite( edited_file_stream, partial_content, 0 );
 			
@@ -251,9 +254,9 @@ namespace tool
 			
 			digest = MD5DigestFile( edited_file_stream );
 			
-			std::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
+			plus::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 			
-			std::string received_digest_b64 = response.GetHeaderField( "Content-MD5", "" );
+			plus::string received_digest_b64 = response.GetHeaderField( "Content-MD5", "" );
 			
 			if ( new_digest_b64 != received_digest_b64 )
 			{

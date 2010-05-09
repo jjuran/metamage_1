@@ -8,16 +8,20 @@
 #ifndef GENIE_UTILITIES_CANINICALPOSITIVEINTEGER_HH
 #define GENIE_UTILITIES_CANINICALPOSITIVEINTEGER_HH
 
-// Standard C++
-#include <string>
 
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace Genie
 {
 	
 	struct canonical_positive_integer
 	{
-		static bool applies( const std::string& name );
+		static bool applies( const plus::string& name );
 	};
 	
 }

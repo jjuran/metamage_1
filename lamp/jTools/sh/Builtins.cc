@@ -23,6 +23,9 @@
 #include "iota/decimal.hh"
 #include "iota/environ.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"
@@ -41,33 +44,34 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	typedef std::map< std::string, std::string > StringMap;
+	typedef std::map< plus::string, plus::string > StringMap;
 	
 	static StringMap gLocalVariables;
 	static StringMap gAliases;
 	
-	static std::set< std::string > gVariablesToExport;
+	static std::set< plus::string > gVariablesToExport;
 	
 	static void PrintVariable( const StringMap::value_type& var )
 	{
-		const std::string& name  = var.first;
-		const std::string& value = var.second;
+		const plus::string& name  = var.first;
+		const plus::string& value = var.second;
 		
 		std::printf( "%s='%s'\n", name.c_str(), value.c_str() );
 	}
 	
 	static void PrintAlias( const StringMap::value_type& var )
 	{
-		const std::string& name  = var.first;
-		const std::string& value = var.second;
+		const plus::string& name  = var.first;
+		const plus::string& value = var.second;
 		
 		std::printf( "alias %s='%s'\n", name.c_str(), value.c_str() );
 	}
 	
 	
-	static bool UnmarkVariableForExport( const std::string& name )
+	static bool UnmarkVariableForExport( const plus::string& name )
 	{
-		std::set< std::string >::iterator found = gVariablesToExport.find( name );
+		std::set< plus::string >::iterator found = gVariablesToExport.find( name );
+		
 		bool wasMarked = found != gVariablesToExport.end();
 		
 		if ( wasMarked )
@@ -92,7 +96,7 @@ namespace tool
 		}
 	}
 	
-	const char* QueryShellVariable( const std::string& name )
+	const char* QueryShellVariable( const plus::string& name )
 	{
 		StringMap::const_iterator found = gLocalVariables.find( name );
 		
@@ -229,7 +233,7 @@ namespace tool
 			if ( const char* eq = std::strchr( arg1, '=' ) )
 			{
 				// $ export foo=bar
-				std::string name( arg1, eq - arg1 );
+				plus::string name( arg1, eq - arg1 );
 				
 				setenv( name.c_str(), eq + 1, true );
 				
@@ -265,7 +269,8 @@ namespace tool
 	
 	static p7::exit_t Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
 	{
-		std::string cwd;
+		plus::var_string cwd;
+		
 		cwd.resize( 256 );
 		
 		while ( getcwd( &cwd[ 0 ], cwd.size() ) == NULL )
@@ -385,7 +390,7 @@ namespace tool
 		return n::convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
 	}
 	
-	typedef std::map< std::string, Builtin > BuiltinMap;
+	typedef std::map< plus::string, Builtin > BuiltinMap;
 	
 	static BuiltinMap MakeBuiltins()
 	{
@@ -405,7 +410,7 @@ namespace tool
 		return builtins;
 	}
 	
-	Builtin FindBuiltin( const std::string& name )
+	Builtin FindBuiltin( const plus::string& name )
 	{
 		static BuiltinMap sBuiltins = MakeBuiltins();
 		

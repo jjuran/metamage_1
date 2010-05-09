@@ -16,7 +16,7 @@ namespace tool
 	
 	static AllFilter All;
 	
-	std::vector< std::string > DeepFiles( const std::string& item )
+	std::vector< plus::string > DeepFiles( const plus::string& item )
 	{
 		return DeepFiles( item, All );
 	}

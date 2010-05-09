@@ -24,6 +24,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -100,17 +103,23 @@ namespace tool
 	
 	struct Redirection
 	{
-		int          fd;
-		IoOperator   op;
-		std::string  data;
+		int           fd;
+		IoOperator    op;
+		plus::string  data;
 		
-		Redirection( int fd, IoOperator op, const std::string& data ) : fd( fd ), op( op ), data( data )  {}
+		Redirection( int fd, IoOperator op, const plus::string& data )
+		:
+			fd( fd ),
+			op( op ),
+			data( data )
+		{
+		}
 	};
 	
 	
-	static Redirection GetRedirectionFromLine( const std::string&  line,
-	                                           text_input::feed&   feed,
-	                                           p7::fd_reader       reader )
+	static Redirection GetRedirectionFromLine( const plus::string&  line,
+	                                           text_input::feed&    feed,
+	                                           p7::fd_reader        reader )
 	{
 		std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 		
@@ -136,7 +145,7 @@ namespace tool
 			throw p7::exit_failure;
 		}
 		
-		std::string param;
+		plus::var_string param;
 		
 		if ( op != kClosed )
 		{
@@ -162,13 +171,13 @@ namespace tool
 			}
 			else
 			{
-				std::string hereDoc;
+				plus::var_string hereDoc;
 				
 				bool found_terminator = false;
 				
-				while ( const std::string* s = get_line_from_feed( feed, reader ) )
+				while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 				{
-					std::string nextLine( s->begin(), s->end() - 1 );
+					plus::string nextLine( s->begin(), s->end() - 1 );
 					
 					if ( nextLine == param )
 					{
@@ -200,9 +209,9 @@ namespace tool
 	}
 	
 	
-	static std::string PrefixLines( const std::string text, const char* prefix = "# " )
+	static plus::string PrefixLines( const plus::string text, const char* prefix = "# " )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		const char* p = text.c_str();
 		
@@ -224,7 +233,7 @@ namespace tool
 	{
 		if ( redir.op != kOutput )  return false;
 		
-		std::string actual_output;
+		plus::var_string actual_output;
 		
 		char data[ 4096 ];
 		
@@ -270,8 +279,8 @@ namespace tool
 	class TestCase
 	{
 		private:
-			std::string itsCommand;
-			std::string itsToDoReason;
+			plus::string itsCommand;
+			plus::string itsToDoReason;
 			int itsExpectedExitStatus;
 			std::vector< Redirection > itsRedirections;
 			unsigned itsCountOfPipesNeeded;
@@ -281,9 +290,9 @@ namespace tool
 		public:
 			TestCase() : itsExpectedExitStatus(), itsCountOfPipesNeeded()  {}
 			
-			void SetCommand( const std::string& command )  { itsCommand = command; }
-			const std::string& GetToDoReason() const  { return itsToDoReason; }
-			void SetToDoReason( const std::string& reason )  { itsToDoReason = reason; }
+			void SetCommand( const plus::string& command )  { itsCommand = command; }
+			const plus::string& GetToDoReason() const  { return itsToDoReason; }
+			void SetToDoReason( const plus::string& reason )  { itsToDoReason = reason; }
 			void SetExitStatus( int status )  { itsExpectedExitStatus = status; }
 			void AddRedirection( const Redirection& redir );
 			
@@ -441,12 +450,12 @@ namespace tool
 		
 		bool test_ok = test.Run();
 		
-		std::string result = test_ok ? "ok" : "not ok";
+		plus::var_string result = test_ok ? "ok" : "not ok";
 		
 		result += " ";
 		result += iota::inscribe_decimal( ++gLastNumber );
 		
-		const std::string& reason = test.GetToDoReason();
+		const plus::string& reason = test.GetToDoReason();
 		
 		if ( !reason.empty() )
 		{
@@ -492,9 +501,9 @@ namespace tool
 		
 		p7::fd_reader reader = p7::fd_t( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.empty() )  continue;
 			
@@ -506,7 +515,7 @@ namespace tool
 			
 			if ( line[0] == '$' )
 			{
-				std::string command = line.substr( line.find_first_not_of( " \t", 1 ), line.npos );
+				plus::string command = line.substr( line.find_first_not_of( " \t", 1 ), line.npos );
 				
 				test.SetCommand( command );
 				
@@ -545,7 +554,8 @@ namespace tool
 		
 		battery.push_back( test );
 		
-		std::string header = "1..";
+		plus::var_string header = "1..";
+		
 		header += iota::inscribe_decimal( battery.size() );
 		header += "\n";
 		

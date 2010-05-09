@@ -24,7 +24,7 @@ namespace Genie
 		
 		public:
 			FSTree_Dynamic_N( const FSTreePtr&      parent,
-			                  const std::string&    name,
+			                  const plus::string&   name,
 			                  DynamicElementGetter  getter )
 			:
 				FSTree( parent, name ),
@@ -44,8 +44,8 @@ namespace Genie
 		public:
 			typedef DynamicGroup Sequence;
 			
-			FSTree_DynamicGroup_Base( const FSTreePtr&    parent,
-			                          const std::string&  name )
+			FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
+			                          const plus::string&  name )
 			:
 				FSTree_Directory( parent, name )
 			{
@@ -55,7 +55,7 @@ namespace Genie
 			
 			virtual DynamicElementGetter Getter() const = 0;
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -64,8 +64,8 @@ namespace Genie
 	class FSTree_DynamicGroup : public FSTree_DynamicGroup_Base
 	{
 		public:
-			FSTree_DynamicGroup( const FSTreePtr&      parent,
-			                     const std::string&    name )
+			FSTree_DynamicGroup( const FSTreePtr&     parent,
+			                     const plus::string&  name )
 			:
 				FSTree_DynamicGroup_Base( parent, name )
 			{

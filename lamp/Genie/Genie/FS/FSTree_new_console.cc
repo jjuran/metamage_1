@@ -38,7 +38,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static void RunShellCommand( const std::string& command )
+	static void RunShellCommand( const plus::string& command )
 	{
 		const char* argv[] = { "-sh", "-c", "", NULL };
 		
@@ -142,10 +142,10 @@ namespace Genie
 	
 	static void Console_On_EnterKey( TextEditParameters& params )
 	{
-		const std::string& s = params.itsText;
+		const plus::string& s = params.itsText;
 		
-		std::string command( s.begin() + params.itsSelection.start,
-		                     s.begin() + params.itsSelection.end );
+		plus::string command( s.begin() + params.itsSelection.start,
+		                      s.begin() + params.itsSelection.end );
 		
 		//command += '\n';
 		
@@ -347,7 +347,7 @@ namespace Genie
 	{
 		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/dev/con" ) );
 		
-		std::string name = iota::inscribe_decimal( id );
+		plus::string name = iota::inscribe_decimal( id );
 		
 		return seize_ptr( new FSTree( parent, name ) );
 	}
@@ -407,7 +407,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		std::string& s = TextEditParameters::Get( view ).itsText;
+		const plus::string& s = TextEditParameters::Get( view ).itsText;
 		
 		const bool readable = params.itsStartOfInput < s.size()  &&  *(s.end() - 1) == '\n'  ||  params.itHasReceivedEOF;
 		
@@ -446,7 +446,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		std::string& s = text_params.itsText;
+		const plus::string& s = text_params.itsText;
 		
 		size_t command_size = 0;
 		
@@ -503,7 +503,7 @@ namespace Genie
 		
 		ConsoleParameters& consoleParams = gConsoleParametersMap[ view ];
 		
-		std::string& s = params.itsText;
+		plus::var_string& s = params.itsText;
 		
 		check_for_truncation( s.size(),
 		                      consoleParams.itsStartOfInput,
@@ -552,7 +552,7 @@ namespace Genie
 		
 		params.itsValidLength = std::min( params.itsValidLength, start_of_output );
 		
-		std::string saved_input( s.begin() + start_of_input, s.end() );
+		const plus::string saved_input( s.begin() + start_of_input, s.end() );
 		
 		if ( start_of_output + byteCount > s.size() )
 		{
@@ -683,8 +683,10 @@ namespace Genie
 	class FSTree_Console_tty : public FSTree
 	{
 		public:
-			FSTree_Console_tty( const FSTreePtr&    parent,
-			                    const std::string&  name ) : FSTree( parent, name )
+			FSTree_Console_tty( const FSTreePtr&     parent,
+			                    const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -740,8 +742,8 @@ namespace Genie
 	};
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -750,8 +752,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
-	                                         const std::string&  name )
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&     parent,
+	                                         const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -782,7 +784,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_console( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_console( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

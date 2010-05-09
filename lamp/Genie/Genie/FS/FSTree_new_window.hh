@@ -16,8 +16,10 @@ namespace Genie
 	class FSTree_new_window : public FSTree
 	{
 		public:
-			FSTree_new_window( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree( parent, name )
+			FSTree_new_window( const FSTreePtr&     parent,
+			                   const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			

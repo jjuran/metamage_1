@@ -72,7 +72,7 @@ namespace Genie
 		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
-		std::string itsGesturePaths[ n_gestures ];
+		plus::string itsGesturePaths[ n_gestures ];
 		
 		FSTreePtr                    itsTTYDelegate;
 		boost::weak_ptr< IOHandle >  itsTerminal;
@@ -317,12 +317,12 @@ namespace Genie
 			bool itIsMutable;  // can this be changed after window is created?
 		
 		public:
-			FSTree_sys_window_REF_Property( const FSTreePtr&    parent,
-			                                const std::string&  name,
-			                                size_t              fixed_size,
-			                                ReadHook            readHook,
-			                                WriteHook           writeHook,
-			                                bool                mutability )
+			FSTree_sys_window_REF_Property( const FSTreePtr&     parent,
+			                                const plus::string&  name,
+			                                size_t               fixed_size,
+			                                ReadHook             readHook,
+			                                WriteHook            writeHook,
+			                                bool                 mutability )
 			:
 				FSTree_Property( parent,
 				                 name,
@@ -337,7 +337,7 @@ namespace Genie
 			
 			mode_t FilePermMode() const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
 			
@@ -353,7 +353,7 @@ namespace Genie
 		       :               S_IRUSR;                     // fixed attribute
 	}
 	
-	std::string FSTree_sys_window_REF_Property::ReadLink() const
+	plus::string FSTree_sys_window_REF_Property::ReadLink() const
 	{
 		if ( !IsLink() )
 		{
@@ -481,8 +481,8 @@ namespace Genie
 	class FSTree_sys_window_REF_ref : public FSTree_ReadableSymLink
 	{
 		public:
-			FSTree_sys_window_REF_ref( const FSTreePtr&    parent,
-			                           const std::string&  name )
+			FSTree_sys_window_REF_ref( const FSTreePtr&     parent,
+			                           const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
@@ -498,7 +498,7 @@ namespace Genie
 			
 			void Delete() const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
 	
@@ -521,7 +521,7 @@ namespace Genie
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
-	std::string FSTree_sys_window_REF_ref::ReadLink() const
+	plus::string FSTree_sys_window_REF_ref::ReadLink() const
 	{
 		N::WindowRef windowPtr = GetWindowRef( WindowKey() );
 		
@@ -530,7 +530,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		std::string result = SYS_APP_WINDOW_LIST "12345678";
+		plus::var_string result = SYS_APP_WINDOW_LIST "12345678";
 		
 		const size_t hex_offset = STRLEN( SYS_APP_WINDOW_LIST );
 		
@@ -543,8 +543,10 @@ namespace Genie
 	class FSTree_sys_window_REF_tty : public FSTree
 	{
 		public:
-			FSTree_sys_window_REF_tty( const FSTreePtr&    parent,
-			                           const std::string&  name ) : FSTree( parent, name )
+			FSTree_sys_window_REF_tty( const FSTreePtr&     parent,
+			                           const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -565,7 +567,7 @@ namespace Genie
 	
 	static inline boost::shared_ptr< IOHandle >
 	//
-	NewTerminal( const std::string& name )
+	NewTerminal( const plus::string& name )
 	{
 		return seize_ptr( new TerminalHandle( name ) );
 	}
@@ -585,8 +587,8 @@ namespace Genie
 			tty = params.itsTTYDelegate->Open( flags );
 		}
 		
-		std::string pathname = ( has_tty ? tty->GetFile().get()
-		                                 : this                 )->Pathname();
+		plus::string pathname = ( has_tty ? tty->GetFile().get()
+		                                  : this                 )->Pathname();
 		
 		boost::shared_ptr< IOHandle > terminal = NewTerminal( pathname );
 		
@@ -602,7 +604,7 @@ namespace Genie
 		return terminal;
 	}
 	
-	static int LookupGesture( const std::string& name )
+	static int LookupGesture( const plus::string& name )
 	{
 		for ( int i = 0;  i < n_gestures;  ++i )
 		{
@@ -623,8 +625,8 @@ namespace Genie
 			int itsIndex;
 		
 		public:
-			FSTree_Window_Gesture( const FSTreePtr&    parent,
-			                       const std::string&  name );
+			FSTree_Window_Gesture( const FSTreePtr&     parent,
+			                       const plus::string&  name );
 			
 			bool Exists() const;
 			
@@ -632,13 +634,13 @@ namespace Genie
 			
 			void Delete() const;
 			
-			void SymLink( const std::string& target ) const;
+			void SymLink( const plus::string& target ) const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
-	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&    parent,
-	                                              const std::string&  name )
+	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&     parent,
+	                                              const plus::string&  name )
 	:
 		FSTree_ReadableSymLink( parent, name ),
 		itsIndex( LookupGesture( name ) )
@@ -662,7 +664,7 @@ namespace Genie
 		params.itsGesturePaths[ itsIndex ] = "";
 	}
 	
-	void FSTree_Window_Gesture::SymLink( const std::string& target_path ) const
+	void FSTree_Window_Gesture::SymLink( const plus::string& target_path ) const
 	{
 		const FSTree* view = GetViewKey( this );
 		
@@ -671,11 +673,11 @@ namespace Genie
 		params.itsGesturePaths[ itsIndex ] = target_path;
 	}
 	
-	std::string FSTree_Window_Gesture::ReadLink() const
+	plus::string FSTree_Window_Gesture::ReadLink() const
 	{
 		const FSTree* view = GetViewKey( this );
 		
-		const std::string& link = gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ];
+		const plus::string& link = gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ];
 		
 		if ( link.empty() )
 		{
@@ -714,7 +716,7 @@ namespace Genie
 	{
 		static const bool fixed_size = 0;
 		
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			return plus::make_string( Find( GetViewKey( that ) ).itsTitle );
 		}
@@ -734,7 +736,7 @@ namespace Genie
 	{
 		static const bool fixed_size = sizeof (typename Scribe::Value);
 		
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			return Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
 		}
@@ -787,8 +789,8 @@ namespace Genie
 	};
 	
 	template < Variability variability, class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,

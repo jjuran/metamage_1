@@ -7,7 +7,6 @@
 #define ARCANA_SMTP_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // text-input
@@ -28,27 +27,27 @@ namespace SMTP
 		namespace Commands
 		{
 			
-			inline std::string Hello( const std::string& hostname )
+			inline plus::string Hello( const plus::string& hostname )
 			{
 				return "HELO " + hostname;
 			}
 			
-			inline std::string MailFrom( const std::string& from )
+			inline plus::string MailFrom( const plus::string& from )
 			{
 				return "MAIL FROM:" + from;
 			}
 			
-			inline std::string RecipientTo( const std::string& to )
+			inline plus::string RecipientTo( const plus::string& to )
 			{
 				return "RCPT TO:" + to;
 			}
 			
-			inline std::string BeginData()
+			inline plus::string BeginData()
 			{
 				return "DATA";
 			}
 			
-			inline std::string Quit()
+			inline plus::string Quit()
 			{
 				return "QUIT";
 			}
@@ -61,7 +60,7 @@ namespace SMTP
 		struct Failure         : Exception  {};
 		
 		
-		inline void SendCommand( poseven::fd_t stream, const std::string& command )
+		inline void SendCommand( poseven::fd_t stream, const plus::string& command )
 		{
 			poseven::write( stream, command + "\r\n" );
 		}
@@ -86,24 +85,24 @@ namespace SMTP
 				
 				~Session()  {}
 				
-				void DoCommand( const std::string& command )
+				void DoCommand( const plus::string& command )
 				{
 					SendCommand( its_connection, command );
 					
 					verify_response();
 				}
 				
-				void Hello( const std::string& hostname )
+				void Hello( const plus::string& hostname )
 				{
 					DoCommand( Commands::Hello( hostname ) );
 				}
 				
-				void MailFrom( const std::string& from )
+				void MailFrom( const plus::string& from )
 				{
 					DoCommand( Commands::MailFrom( from ) );
 				}
 				
-				void RecipientTo( const std::string& to )
+				void RecipientTo( const plus::string& to )
 				{
 					DoCommand( Commands::RecipientTo( to ) );
 				}

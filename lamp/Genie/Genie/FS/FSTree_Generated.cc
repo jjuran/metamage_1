@@ -29,9 +29,9 @@ namespace Genie
 			ReadHook itsReadHook;
 		
 		public:
-			FSTree_Generated( const FSTreePtr&    parent,
-			                  const std::string&  name,
-			                  ReadHook            readHook )
+			FSTree_Generated( const FSTreePtr&     parent,
+			                  const plus::string&  name,
+			                  ReadHook             readHook )
 			:
 				FSTree( parent, name ),
 				itsReadHook( readHook )
@@ -71,7 +71,7 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		const std::string data = itsReadHook( this );
+		const plus::string data = itsReadHook( this );
 		
 		return data.size();
 	}
@@ -88,16 +88,16 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		std::string data = itsReadHook( this );
+		plus::string data = itsReadHook( this );
 		
 		return seize_ptr( new PropertyReaderFileHandle( Self(),
 		                                                flags,
 		                                                data ) );
 	}
 	
-	FSTreePtr New_FSTree_Generated( const FSTreePtr&    parent,
-	                                const std::string&  name,
-	                                Generated_ReadHook  readHook )
+	FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
+	                                const plus::string&  name,
+	                                Generated_ReadHook   readHook )
 	{
 		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
 	}

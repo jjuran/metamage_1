@@ -65,7 +65,7 @@ namespace Genie
 			{
 			}
 			
-			std::string ReadLink() const  { return iota::inscribe_unsigned_decimal( getpid() ); }
+			plus::string ReadLink() const  { return iota::inscribe_unsigned_decimal( getpid() ); }
 	};
 	
 	
@@ -77,9 +77,9 @@ namespace Genie
 			pid_t its_pid;
 		
 		public:
-			FSTree_PID_fd( const FSTreePtr&    parent,
-			               const std::string&  name,
-			               pid_t               pid )
+			FSTree_PID_fd( const FSTreePtr&     parent,
+			               const plus::string&  name,
+			               pid_t                pid )
 			:
 				FSTree_Directory( parent, name ),
 				its_pid( pid )
@@ -91,7 +91,7 @@ namespace Genie
 				return GetProcess( its_pid ).FileDescriptors();
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -105,7 +105,7 @@ namespace Genie
 				
 				const ino_t inode = key;
 				
-				std::string name = iota::inscribe_decimal( key );
+				plus::string name = iota::inscribe_decimal( key );
 				
 				return FSNode( inode, name );
 			}
@@ -131,10 +131,10 @@ namespace Genie
 			int    itsFD;
 		
 		public:
-			FSTree_PID_fd_N( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 pid_t               pid,
-			                 int                 fd )
+			FSTree_PID_fd_N( const FSTreePtr&     parent,
+			                 const plus::string&  name,
+			                 pid_t                pid,
+			                 int                  fd )
 			:
 				FSTree_ResolvableSymLink( parent, name ),
 				itsPID( pid ),
@@ -152,8 +152,8 @@ namespace Genie
 	class FSTree_PID_Link_Base : public FSTree_ResolvableSymLink
 	{
 		public:
-			FSTree_PID_Link_Base( const FSTreePtr&    parent,
-			                      const std::string&  name )
+			FSTree_PID_Link_Base( const FSTreePtr&     parent,
+			                      const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -174,8 +174,10 @@ namespace Genie
 	class FSTree_PID_Link : public FSTree_PID_Link_Base
 	{
 		public:
-			FSTree_PID_Link( const FSTreePtr&    parent,
-			                 const std::string&  name ) : FSTree_PID_Link_Base( parent, name )
+			FSTree_PID_Link( const FSTreePtr&     parent,
+			                 const plus::string&  name )
+			:
+				FSTree_PID_Link_Base( parent, name )
 			{
 			}
 			
@@ -219,7 +221,7 @@ namespace Genie
 	{
 		typedef canonical_positive_integer well_formed_name;
 		
-		static bool applies( const std::string& name )
+		static bool applies( const plus::string& name )
 		{
 			return    well_formed_name::applies( name )
 			       && map_contains( GetProcessList().GetMap(),
@@ -227,7 +229,7 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr proc_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr proc_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( name == "self" )
 		{
@@ -251,7 +253,7 @@ namespace Genie
 				
 				const ino_t inode = key;
 				
-				std::string name = iota::inscribe_decimal( key );
+				plus::string name = iota::inscribe_decimal( key );
 				
 				return FSNode( inode, name );
 			}
@@ -379,7 +381,7 @@ namespace Genie
 	class proc_PID_cmdline
 	{
 		public:
-			static std::string Get( const Process& process )
+			static plus::string Get( const Process& process )
 			{
 				return process.GetCmdLine();
 			}
@@ -388,7 +390,7 @@ namespace Genie
 	class proc_PID_stat
 	{
 		public:
-			static std::string Get( const Process& process )
+			static plus::string Get( const Process& process )
 			{
 				pid_t pid  = process.GetPID();
 				pid_t ppid = process.GetPPID();
@@ -397,7 +399,7 @@ namespace Genie
 				
 				const boost::shared_ptr< IOHandle >& term = process.ControllingTerminal();
 				
-				std::string terminal_name = "?";
+				plus::string terminal_name = "?";
 				
 				pid_t tpgid = 0;
 				
@@ -417,7 +419,7 @@ namespace Genie
 					}
 				}
 				
-				std::string result;
+				plus::var_string result;
 				
 				result += iota::inscribe_decimal( pid );
 				result += " "
@@ -445,10 +447,10 @@ namespace Genie
 	class proc_PID_stack
 	{
 		public:
-			static std::string Get( const Process& process );
+			static plus::string Get( const Process& process );
 	};
 	
-	std::string proc_PID_stack::Get( const Process& process )
+	plus::string proc_PID_stack::Get( const Process& process )
 	{
 		using recall::stack_frame_pointer;
 		using recall::frame_data;
@@ -483,7 +485,7 @@ namespace Genie
 		
 		make_report_from_stack_crawl( result, begin, end );
 		
-		return std::string( result.data(), result.size() );
+		return result;
 	}
 	
 	
@@ -492,7 +494,7 @@ namespace Genie
 	{
 		typedef pid_t Key;
 		
-		static std::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* that )
 		{
 			Key pid = GetKey( that );
 			
@@ -502,7 +504,7 @@ namespace Genie
 	
 	struct proc_PID_name
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			pid_t pid = GetKey( that );
 			
@@ -510,8 +512,8 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
@@ -522,8 +524,8 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	static FSTreePtr Generated_Factory( const FSTreePtr&    parent,
-	                                    const std::string&  name )
+	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name )
 	{
 		typedef proc_PID_Property< Accessor > Property;
 		
@@ -532,8 +534,8 @@ namespace Genie
 		                             &Property::Read );
 	}
 	
-	static FSTreePtr fd_Factory( const FSTreePtr&    parent,
-	                             const std::string&  name )
+	static FSTreePtr fd_Factory( const FSTreePtr&     parent,
+	                             const plus::string&  name )
 	{
 		const pid_t key = GetKeyFromParent( parent );
 		
@@ -541,8 +543,8 @@ namespace Genie
 	}
 	
 	template < class LinkResolver >
-	FSTreePtr Link_Factory( const FSTreePtr&    parent,
-	                        const std::string&  name )
+	FSTreePtr Link_Factory( const FSTreePtr&     parent,
+	                        const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_PID_Link< LinkResolver >( parent, name ) );
 	}
@@ -550,8 +552,10 @@ namespace Genie
 	class FSTree_proc_PID_core : public FSTree
 	{
 		public:
-			FSTree_proc_PID_core( const FSTreePtr&    parent,
-			                      const std::string&  name ) : FSTree( parent, name )
+			FSTree_proc_PID_core( const FSTreePtr&     parent,
+			                      const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -574,8 +578,8 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr core_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr core_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_proc_PID_core( parent, name ) );
 	}
@@ -599,7 +603,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr FSTree_PID_fd::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_PID_fd::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		const int key = iota::parse_unsigned_decimal( name.c_str() );
 		
@@ -655,7 +659,7 @@ namespace Genie
 		return GetFDHandle( itsPID, itsFD )->GetFile();
 	}
 	
-	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, proc_lookup, proc_iterate );
 	}

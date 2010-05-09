@@ -253,9 +253,9 @@ namespace Genie
 			N::ResID    GetID  () const;
 		
 		public:
-			FSTree_RsrcFile_Type_ID( const FSTreePtr&    parent,
-			                         const std::string&  name,
-			                         const FSSpec&       file )
+			FSTree_RsrcFile_Type_ID( const FSTreePtr&     parent,
+			                         const plus::string&  name,
+			                         const FSSpec&        file )
 			:
 				FSTree( parent, name ),
 				itsFileSpec( file )
@@ -360,16 +360,16 @@ namespace Genie
 			N::ResType GetType() const;
 		
 		public:
-			FSTree_RsrcFile_Type( const FSTreePtr&    parent,
-			                      const std::string&  name,
-			                      const FSSpec&       file )
+			FSTree_RsrcFile_Type( const FSTreePtr&     parent,
+			                      const plus::string&  name,
+			                      const FSSpec&        file )
 			:
 				FSTree_Directory( parent, name ),
 				itsFileSpec( file )
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -382,7 +382,7 @@ namespace Genie
 		return N::ResType( type );
 	}
 	
-	FSTreePtr FSTree_RsrcFile_Type::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_RsrcFile_Type::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		// FIXME:  verify name converts to an id
 		
@@ -403,7 +403,7 @@ namespace Genie
 			
 			const N::GetResInfo_Result info = N::GetResInfo( r );
 			
-			const std::string name = iota::inscribe_decimal( info.id );
+			const plus::string name = iota::inscribe_decimal( info.id );
 			
 			const FSNode node( i, name );
 			
@@ -431,7 +431,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -504,7 +504,7 @@ namespace Genie
 		                     N::smSystemScript );
 	}
 	
-	FSTreePtr FSTree_ResFileDir::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_ResFileDir::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		// Throws if conversion to OSType fails.
 		(void) OSType_KeyName_Traits::KeyFromName( name );
@@ -522,7 +522,7 @@ namespace Genie
 		{
 			const ::ResType type = N::Get1IndType( i );
 			
-			std::string name = OSType_KeyName_Traits::NameFromKey( N::OSType( type ) );
+			plus::string name = OSType_KeyName_Traits::NameFromKey( N::OSType( type ) );
 			
 			const FSNode node( i, name );
 			

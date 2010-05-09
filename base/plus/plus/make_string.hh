@@ -8,14 +8,14 @@
 #ifndef PLUS_MAKESTRING_HH
 #define PLUS_MAKESTRING_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace plus
 {
 	
-	std::string make_string( const unsigned char* s );
+	string make_string( const unsigned char* s );
 	
 }
 

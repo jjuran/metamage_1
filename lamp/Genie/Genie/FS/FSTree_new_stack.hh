@@ -19,8 +19,8 @@ namespace Genie
 	class FSTree_new_stack : public FSTree_new_View
 	{
 		public:
-			FSTree_new_stack( const FSTreePtr&    parent,
-			                  const std::string&  name )
+			FSTree_new_stack( const FSTreePtr&     parent,
+			                  const plus::string&  name )
 			:
 				FSTree_new_View( parent,
 				                 name,
@@ -30,8 +30,8 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr CreateDelegate( const FSTreePtr&    parent,
-			                          const std::string&  name ) const;
+			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
+			                          const plus::string&  name ) const;
 			
 			static void DestroyDelegate( const FSTree* delegate );
 	};

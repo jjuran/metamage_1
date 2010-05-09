@@ -34,7 +34,6 @@
 
 // Standard C++
 #include <functional>
-#include <string>
 #include <vector>
 
 // POSIX
@@ -151,18 +150,18 @@ static int TestAssert( int argc, iota::argv_t argv )
 
 static int TestMap( int argc, iota::argv_t argv )
 {
-	std::vector< std::string > foo;
+	std::vector< plus::string > foo;
 	
 	int count = (argc > 2) ? iota::parse_unsigned_decimal( argv[ 2 ] ) : 10000;
 	
 	for ( int i = 0;  i < count;  ++i )
 	{
-		foo.push_back( std::string( "foo" ) );
+		foo.push_back( plus::string( "foo" ) );
 	}
 	
 	for ( int i = 0;  i < count;  ++i )
 	{
-		foo[ i ] = std::string( "foo" );
+		foo[ i ] = plus::string( "foo" );
 	}
 	
 	foo.clear();
@@ -172,9 +171,9 @@ static int TestMap( int argc, iota::argv_t argv )
 
 
 template < class Component, unsigned rows, unsigned cols >
-std::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& matrix )
+plus::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& matrix )
 {
-	std::string result;
+	plus::var_string result;
 	
 	// 0x0:  "[]"
 	// 0x2:  "[]"
@@ -414,7 +413,7 @@ static int TestAFP( int argc, iota::argv_t argv )
 	const char* supports = isRunningOSX ? "does not support"
 	                                    : "supports";
 	
-	std::string message;
+	plus::var_string message;
 	
 	message += "Server '";
 	message += server;
@@ -549,9 +548,9 @@ static MD5::Result MD5String( const char* text )
 	return MD5::Digest_Bytes( text, std::strlen( text ) );
 }
 
-	static std::string md5_hex( const MD5::Result& md5 )
+	static plus::string md5_hex( const MD5::Result& md5 )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( sizeof md5.data * 2 );
 		
@@ -564,7 +563,7 @@ static MD5::Result MD5String( const char* text )
 		return result;
 	}
 	
-static std::string MD5Hex( const char* text )
+static plus::string MD5Hex( const char* text )
 {
 	return md5_hex( MD5String( text ) );
 }
@@ -587,7 +586,7 @@ static int TestMD5( int argc, iota::argv_t argv )
 	
 	const char* text = argv[ 2 ];
 	
-	std::string message = MD5Hex( text ) + "\n";
+	plus::string message = MD5Hex( text ) + "\n";
 	
 	p7::write( p7::stdout_fileno, message );
 	
@@ -618,7 +617,7 @@ static int TestOADC( int argc, iota::argv_t argv )
 
 static void print_string( ConstStr255Param str )
 {
-	std::string output = plus::make_string( str ) + "\n";
+	plus::string output = plus::make_string( str ) + "\n";
 	
 	p7::write( p7::stdout_fileno, output );
 }
@@ -693,7 +692,7 @@ static int TestAE( int argc, iota::argv_t argv )
 
 static void DoSomethingWithServiceFile( const FSSpec& file )
 {
-	typedef n::string_scribe< std::string > scribe;
+	typedef n::string_scribe< plus::var_string > scribe;
 	
 	using namespace io::path_descent_operators;
 	
@@ -701,7 +700,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	FSSpec infoPListFile = N::FSpMake_FSDirSpec( file ) / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
-	std::string infoPList = io::slurp_file< scribe >( infoPListFile );
+	plus::string infoPList = io::slurp_file< scribe >( infoPListFile );
 	
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
@@ -725,7 +724,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 			break;
 		}
 		
-		std::string stringElement = "<string>";
+		plus::string stringElement = "<string>";
 		// Find the <string> start tag
 		std::size_t iString = infoPList.find( stringElement, iDefault );
 		// Skip the tag
@@ -733,7 +732,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 		// Find the end tag
 		std::size_t iEndString = infoPList.find( "</string>", iValue );
 		// Grab the intervening text
-		std::string value = infoPList.substr( iValue, iEndString - iValue );
+		plus::string value = infoPList.substr( iValue, iEndString - iValue );
 		
 		std::printf( "Service: %s\n", value.c_str() );
 		
@@ -1428,7 +1427,7 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		std::string message;
+		plus::var_string message;
 		
 		if (argc <= 1)
 		{
@@ -1461,7 +1460,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			std::string status = "OSStatus ";
+			plus::var_string status = "OSStatus ";
 			
 			status += iota::inscribe_decimal( err );
 			

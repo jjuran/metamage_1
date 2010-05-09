@@ -8,6 +8,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Genie
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
@@ -50,14 +53,14 @@ namespace Genie
 	}
 	
 	
-	static inline boost::shared_ptr< IOHandle > NewTerminal( const std::string& name )
+	static inline boost::shared_ptr< IOHandle > NewTerminal( const plus::string& name )
 	{
 		return seize_ptr( new TerminalHandle( name ) );
 	}
 	
-	static inline std::string make_devpts( size_t id )
+	static inline plus::string make_devpts( size_t id )
 	{
-		std::string result = "/dev/pts/";
+		plus::var_string result = "/dev/pts/";
 		
 		result += iota::inscribe_decimal( id );
 		

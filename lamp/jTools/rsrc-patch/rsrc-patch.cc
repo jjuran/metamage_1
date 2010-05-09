@@ -15,6 +15,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/quad.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/perror.hh"
 
@@ -58,9 +61,9 @@ namespace tool
 	
 	
 	// E.g. "666f6f20626171" -> "foo bar"
-	static std::string decoded_hex( const char* hex_codes )
+	static plus::string decoded_hex( const char* hex_codes )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		// FIXME:  Verify the hex data.
 		
@@ -119,7 +122,7 @@ namespace tool
 		gHandle = N::Get1Resource( resType, resID );
 	}
 	
-	static void Find( const std::string& pattern )
+	static void Find( const plus::string& pattern )
 	{
 		const char* begin = *gHandle.Get();
 		const char* end   = begin + N::GetHandleSize( gHandle );
@@ -154,7 +157,7 @@ namespace tool
 		gOffset += delta;
 	}
 	
-	static void Write( const std::string& bytes )
+	static void Write( const plus::string& bytes )
 	{
 		if ( gOffset + bytes.size() > N::GetHandleSize( gHandle ) )
 		{
@@ -203,7 +206,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			std::string status = "OSStatus ";
+			plus::var_string status = "OSStatus ";
 			
 			status += iota::inscribe_decimal( err );
 			

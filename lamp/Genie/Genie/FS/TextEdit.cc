@@ -77,13 +77,13 @@ namespace Genie
 	}
 	
 	
-	std::string Selection_Property::Get( const FSTree* that, bool binary )
+	plus::string Selection_Property::Get( const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		
 		const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
 		
-		std::string result = iota::inscribe_decimal( selection.start );
+		plus::var_string result = iota::inscribe_decimal( selection.start );
 		
 		if ( selection.end != selection.start )
 		{

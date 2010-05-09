@@ -16,24 +16,24 @@ namespace Genie
 	class FSTree_SymbolicLink : public FSTree_ReadableSymLink
 	{
 		private:
-			std::string itsTarget;
+			plus::string itsTarget;
 		
 		public:
-			FSTree_SymbolicLink( const FSTreePtr&    parent,
-			                     const std::string&  name,
-			                     const std::string&  target )
+			FSTree_SymbolicLink( const FSTreePtr&     parent,
+			                     const plus::string&  name,
+			                     const plus::string&  target )
 			:
 				FSTree_ReadableSymLink( parent, name ),
 				itsTarget( target )
 			{
 			}
 			
-			std::string ReadLink() const  { return itsTarget; }
+			plus::string ReadLink() const  { return itsTarget; }
 	};
 	
-	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&    parent,
-	                                   const std::string&  name,
-	                                   const std::string&  target )
+	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
+	                                   const plus::string&  name,
+	                                   const plus::string&  target )
 	{
 		return seize_ptr( new FSTree_SymbolicLink( parent, name, target ) );
 	}

@@ -24,8 +24,10 @@ namespace Genie
 	class FSTree_TextEdit_text : public FSTree
 	{
 		public:
-			FSTree_TextEdit_text( const FSTreePtr&    parent,
-			                      const std::string&  name ) : FSTree( parent, name )
+			FSTree_TextEdit_text( const FSTreePtr&     parent,
+			                      const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -65,7 +67,7 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			std::string& String()  { return TextEditParameters::Get( ViewKey() ).itsText; }
+			plus::var_string& String()  { return TextEditParameters::Get( ViewKey() ).itsText; }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -92,7 +94,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		std::string& s = params.itsText;
+		const plus::string& s = params.itsText;
 		
 		if ( offset >= s.size() )
 		{
@@ -108,7 +110,7 @@ namespace Genie
 	
 	ssize_t TextEdit_text_Handle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		std::string& s = String();
+		plus::var_string& s = String();
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -148,7 +150,7 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( result );
 	}
 	
-	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_TextEdit_text( parent, name ) );
 	}

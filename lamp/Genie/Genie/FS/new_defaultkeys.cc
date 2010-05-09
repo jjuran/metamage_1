@@ -107,7 +107,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_defaultkeys( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_defaultkeys( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

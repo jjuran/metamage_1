@@ -18,10 +18,10 @@ namespace Genie
 			Iterate_Proc  itsIterate;
 		
 		public:
-			basic_directory( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 Lookup_Proc         lookup,
-			                 Iterate_Proc        iterate )
+			basic_directory( const FSTreePtr&     parent,
+			                 const plus::string&  name,
+			                 Lookup_Proc          lookup,
+			                 Iterate_Proc         iterate )
 			:
 				FSTree_Directory( parent, name ),
 				itsLookup ( lookup  ),
@@ -29,13 +29,13 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
-	FSTreePtr basic_directory::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		return itsLookup( (parent ? parent : this)->Self(), name );
 	}
@@ -46,10 +46,10 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr new_basic_directory( const FSTreePtr&    parent,
-	                               const std::string&  name,
-	                               Lookup_Proc         lookup,
-	                               Iterate_Proc        iterate )
+	FSTreePtr new_basic_directory( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               Lookup_Proc          lookup,
+	                               Iterate_Proc         iterate )
 	{
 		return seize_ptr( new basic_directory( parent, name, lookup, iterate ) );
 	}

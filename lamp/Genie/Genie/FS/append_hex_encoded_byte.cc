@@ -8,13 +8,16 @@
 // iota
 #include "iota/hexidecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace Genie
 {
 	
-	void append_hex_encoded_byte( std::string& s, unsigned char c )
+	void append_hex_encoded_byte( plus::var_string& s, unsigned char c )
 	{
-		const std::size_t size = s.size();
+		const plus::string::size_type size = s.size();
 		
 		s.resize( size + 2 * sizeof c );
 		

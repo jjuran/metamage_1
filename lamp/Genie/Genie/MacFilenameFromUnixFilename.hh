@@ -6,14 +6,14 @@
 #ifndef KEROSENE_MACFILENAMEFROMUNIXFILENAME_HH
 #define KEROSENE_MACFILENAMEFROMUNIXFILENAME_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace Kerosene
 {
 	
-	std::string MacFilenameFromUnixFilename( const std::string& unixName );
+	plus::string MacFilenameFromUnixFilename( const plus::string& unixName );
 	
 }
 

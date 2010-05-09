@@ -6,12 +6,12 @@
 #ifndef GENIE_IO_STREAM_HH
 #define GENIE_IO_STREAM_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include "errno.h"
 #include <fcntl.h>
+
+// plus
+#include "plus/var_string.hh"
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -23,8 +23,8 @@ namespace Genie
 	class StreamHandle : public IOHandle
 	{
 		private:
-			std::string  itsPeekBuffer;
-			bool         itHasBeenDisconnected;
+			plus::var_string  itsPeekBuffer;
+			bool              itHasBeenDisconnected;
 		
 		public:
 			StreamHandle( OpenFlags flags );
@@ -54,7 +54,7 @@ namespace Genie
 			
 			void TryAgainLater() const;
 			
-			const std::string* Peek( std::size_t minBytes );
+			const plus::string* Peek( std::size_t minBytes );
 			
 			unsigned int Poll();
 			

@@ -10,6 +10,9 @@
 #include <MacErrors.h>
 #endif
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -20,11 +23,11 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string CFStringGetStdString( CFStringRef string )
+	plus::string CFStringGetStdString( CFStringRef string )
 	{
 		CFIndex length = CFStringGetLength( string );
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( length );
 		

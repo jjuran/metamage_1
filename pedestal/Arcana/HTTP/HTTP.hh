@@ -4,8 +4,10 @@
  */
 
 // Standard C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/fd_t.hh"
@@ -36,16 +38,16 @@ namespace HTTP
 	class MessageReceiver
 	{
 		private:
-			HeaderIndex itsHeaderIndex;
-			std::string itsReceivedData;
-			std::string itsPartialContent;
-			std::size_t itsStartOfHeaderFields;
-			std::size_t itsPlaceToLookForEndOfHeader;
-			std::size_t itsContentLength;
-			std::size_t itsContentBytesReceived;
-			bool itHasReceivedEntireHeader;
-			bool itsContentLengthIsKnown;
-			bool itHasReachedEndOfInput;
+			HeaderIndex       itsHeaderIndex;
+			plus::var_string  itsReceivedData;
+			plus::var_string  itsPartialContent;
+			std::size_t       itsStartOfHeaderFields;
+			std::size_t       itsPlaceToLookForEndOfHeader;
+			std::size_t       itsContentLength;
+			std::size_t       itsContentBytesReceived;
+			bool              itHasReceivedEntireHeader;
+			bool              itsContentLengthIsKnown;
+			bool              itHasReachedEndOfInput;
 			
 			void ReceiveContent( const char* data, std::size_t byteCount );
 			void ReceiveData   ( const char* data, std::size_t byteCount );
@@ -67,39 +69,39 @@ namespace HTTP
 			
 			void Receive( poseven::fd_t socket );
 			
-			const std::string& GetMessageStream() const  { return itsReceivedData; }
+			const plus::string& GetMessageStream() const  { return itsReceivedData; }
 			
-			std::string GetStatusLine() const  { return itsReceivedData.substr( 0, itsStartOfHeaderFields - 2 ); }
+			plus::string GetStatusLine() const  { return itsReceivedData.substr( 0, itsStartOfHeaderFields - 2 ); }
 			
 			const char* GetHeaderStream() const  { return itsReceivedData.data() + itsStartOfHeaderFields; }
 			
 			const HeaderIndex& GetHeaderIndex() const  { return itsHeaderIndex; }
 			
-			std::string GetHeaderField( const std::string& name, const char* nullValue = NULL );
+			plus::string GetHeaderField( const plus::string& name, const char* nullValue = NULL );
 			
-			const std::string& GetPartialContent() const  { return itsPartialContent; }
+			const plus::string& GetPartialContent() const  { return itsPartialContent; }
 	};
 	
 	class ResponseReceiver : public MessageReceiver
 	{
 		public:
-			std::string GetResult() const;
+			plus::string GetResult() const;
 			
 			unsigned GetResultCode() const;
 	};
 	
 	
-	inline std::string RequestLine( const std::string& method, const std::string& urlPath )
+	inline plus::string RequestLine( const plus::string& method, const plus::string& urlPath )
 	{
 		return method + " " + urlPath + " HTTP/1.0" "\r\n";
 	}
 	
-	inline std::string HeaderFieldLine( const std::string& name, const std::string& value )
+	inline plus::string HeaderFieldLine( const plus::string& name, const plus::string& value )
 	{
 		return name + ": " + value + "\r\n";
 	}
 	
-	std::string GetContentLengthLine( poseven::fd_t message_body );
+	plus::string GetContentLengthLine( poseven::fd_t message_body );
 	
 }
 

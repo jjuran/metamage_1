@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <map>
-#include <string>
 #include <vector>
 
 // POSIX
@@ -15,6 +14,9 @@
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/string.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -48,9 +50,9 @@ namespace tool
 	
 	struct Record
 	{
-		short                       port;
-		std::string                 path;
-		std::vector< std::string >  argv;
+		short                        port;
+		plus::string                 path;
+		std::vector< plus::string >  argv;
 	};
 	
 	static std::vector< Record > gRecords;
@@ -139,9 +141,9 @@ namespace tool
 	}
 	
 	
-	static std::vector< std::string > Split( const std::string& text )
+	static std::vector< plus::string > Split( const plus::string& text )
 	{
-		std::vector< std::string > result;
+		std::vector< plus::string > result;
 		
 		std::size_t word = text.find_first_not_of( " \t" );
 		
@@ -162,7 +164,7 @@ namespace tool
 		return result;
 	}
 	
-	static Record MakeRecord( const std::vector< std::string >& tokens )
+	static Record MakeRecord( const std::vector< plus::string >& tokens )
 	{
 		enum
 		{
@@ -196,7 +198,7 @@ namespace tool
 		return result;
 	}
 	
-	static void ProcessLine( const std::string& line )
+	static void ProcessLine( const plus::string& line )
 	{
 		std::size_t first = line.find_first_not_of( " \t" );
 		
@@ -240,9 +242,9 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			ProcessLine( line );
 		}

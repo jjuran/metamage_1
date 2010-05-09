@@ -54,7 +54,7 @@ namespace tool
 	
 	struct file_deleter
 	{
-		void operator()( const std::string& path, unsigned depth ) const
+		void operator()( const plus::string& path, unsigned depth ) const
 		{
 			delete_file( path.c_str() );
 		}
@@ -68,10 +68,10 @@ namespace tool
 			return;
 		}
 		
-		recursively_walk_tree( std::string( path ),
+		recursively_walk_tree( plus::string( path ),
 		                       io::walk_noop(),
 		                       file_deleter(),
-		                       io::directory_deleter< std::string >() );
+		                       io::directory_deleter< plus::string >() );
 	}
 	
 	

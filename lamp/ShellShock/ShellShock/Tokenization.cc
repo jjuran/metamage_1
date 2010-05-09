@@ -100,7 +100,7 @@ namespace ShellShock
 		
 		if ( q > p )
 		{
-			fd = iota::parse_unsigned_decimal( std::string( p, q - p ).c_str() );
+			fd = iota::parse_unsigned_decimal( plus::string( p, q - p ).c_str() );
 		}
 		
 		unsigned char len = 0;
@@ -295,7 +295,7 @@ namespace ShellShock
 		return p;
 	}
 	
-	List Tokenization( const std::string& cmdLine )
+	List Tokenization( const plus::string& cmdLine )
 	{
 		const char *p, *q, *r;
 		short n = 0;
@@ -332,7 +332,8 @@ namespace ShellShock
 				r += redirectInfo.len;
 				const char* paramBegin = SkipWhitespace( r );
 				r = SkipOverToken( paramBegin );
-				std::string param = std::string( paramBegin, r - paramBegin );
+				
+				plus::string param( paramBegin, r );
 				
 				resultList.back().pipelines.back()
 				                 .commands.back()
@@ -383,7 +384,7 @@ namespace ShellShock
 				// add arg to vector
 				resultList.back().pipelines.back()
 				                 .commands.back()
-				                 .args.push_back( std::string( q, r - q ) );
+				                 .args.push_back( plus::string( q, r - q ) );
 			}
 			
 			// skip intervening space

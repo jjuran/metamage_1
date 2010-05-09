@@ -29,6 +29,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/execvp.hh"
@@ -138,7 +141,7 @@ namespace tool
 	*/
 	
 	
-	static inline std::string MakeTargetName( const TargetInfo& info )
+	static inline plus::string MakeTargetName( const TargetInfo& info )
 	{
 		return MakeTargetName( info.platform & archMask,
 		                       info.platform & runtimeMask,
@@ -147,9 +150,9 @@ namespace tool
 	}
 	
 	
-	static std::string ShellEscapedWord( const std::string& word )
+	static plus::string ShellEscapedWord( const plus::string& word )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		result.reserve( word.size() );
 		
@@ -187,7 +190,7 @@ namespace tool
 	{
 		//ASSERT( command.size() > 1 ) );
 		
-		std::string command_line = command.front();
+		plus::var_string command_line = command.front();
 		
 		typedef std::vector< const char* >::const_iterator Iter;
 		
@@ -398,7 +401,7 @@ namespace tool
 	}
 	
 	void ExecuteCommand( const TaskPtr&                     task,
-	                     const std::string&                 caption,
+	                     const plus::string&                caption,
 	                     const std::vector< const char* >&  command,
 	                     const char*                        diagnostics_file_path )
 	{
@@ -433,7 +436,7 @@ namespace tool
 		
 		if ( has_diagnostics_file )
 		{
-			std::string diagnostics_dir = io::get_preceding_directory( diagnostics_file_path );
+			plus::string diagnostics_dir = io::get_preceding_directory( diagnostics_file_path );
 			
 			mkdir_path( diagnostics_dir );
 		}
@@ -465,10 +468,10 @@ namespace tool
 			{
 			}
 			
-			void operator()( const std::string& project_name ) const;
+			void operator()( const plus::string& project_name ) const;
 	};
 	
-	void project_builder::operator()( const std::string& project_name ) const
+	void project_builder::operator()( const plus::string& project_name ) const
 	{
 		Project& project = GetProject( project_name, its_target_info.platform );
 		
@@ -490,15 +493,16 @@ namespace tool
 	
 	static void BuildTarget( const Project& project, const TargetInfo& targetInfo )
 	{
-		std::string targetName = MakeTargetName( targetInfo );
+		plus::string targetName = MakeTargetName( targetInfo );
 		
-		std::string targetDir = TargetDirPath( targetName );
+		plus::string targetDir = TargetDirPath( targetName );
 		
 		PrintCommandForShell( MakeCommand( "cd", targetDir.c_str() ) );
 		
 		chdir( targetDir.c_str() );
 		
-		const std::vector< std::string >& prereqs = project.AllUsedProjects();
+		const std::vector< plus::string >& prereqs = project.AllUsedProjects();
+		
 		std::for_each
 		(
 			prereqs.begin(), 
@@ -626,7 +630,7 @@ namespace tool
 		
 		AddPendingSubproject( UserSrcTreePath() );
 		
-		std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
+		plus::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
 		
 		bool cache_was_written = false;
 		

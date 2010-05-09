@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_RESOLVEPATHNAME_HH
 #define GENIE_FILESYSTEM_RESOLVEPATHNAME_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
 
@@ -32,8 +29,8 @@ namespace Genie
 	                               std::size_t       length,
 	                               const FSTreePtr&  current );
 	
-	inline FSTreePtr ResolveRelativePath( const std::string&  path,
-	                                      const FSTreePtr&    current )
+	inline FSTreePtr ResolveRelativePath( const plus::string&  path,
+	                                      const FSTreePtr&     current )
 	{
 		return ResolveRelativePath( path.c_str(), path.length(), current );
 	}
@@ -49,7 +46,7 @@ namespace Genie
 		return ResolveRelativePath( begin + 1, length - 1, FSRoot() );
 	}
 	
-	inline FSTreePtr ResolveAbsolutePath( const std::string& path )
+	inline FSTreePtr ResolveAbsolutePath( const plus::string& path )
 	{
 		return ResolveAbsolutePath( path.c_str(), path.length() );
 	}
@@ -71,12 +68,6 @@ namespace Genie
 	                                  const FSTreePtr&  current = null_FSTreePtr )
 	{
 		return ResolvePathname( pathname, std::strlen( pathname ), current );
-	}
-	
-	inline FSTreePtr ResolvePathname( const std::string&  pathname,
-	                                  const FSTreePtr&    current = null_FSTreePtr )
-	{
-		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
 	
 	inline FSTreePtr ResolvePathname( const plus::string&  pathname,

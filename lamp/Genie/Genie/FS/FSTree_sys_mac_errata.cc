@@ -118,15 +118,15 @@ namespace Genie
 	template < class Erratum >
 	struct sys_mac_errata_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			return Freeze< Boolean_Scribe >( Erratum::Test(), binary );
 		}
 	};
 	
 	template < class Erratum >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_errata_Property< Erratum > Property;
 		

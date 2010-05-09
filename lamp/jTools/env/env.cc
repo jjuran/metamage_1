@@ -19,10 +19,13 @@
 #include "iota/argv.hh"
 #include "iota/environ.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 
 static void DumpEnvironment()
 {
-	std::string output;
+	plus::var_string output;
 	
 	for ( iota::envp_t envp = environ;  *envp != NULL;  ++envp )
 	{

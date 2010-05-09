@@ -9,6 +9,7 @@
 
 // plus
 #include "plus/contains.hh"
+#include "plus/string.hh"
 
 
 namespace Genie
@@ -35,7 +36,7 @@ namespace Genie
 		}
 	};
 	
-	bool canonical_positive_integer::applies( const std::string& name )
+	bool canonical_positive_integer::applies( const plus::string& name )
 	{
 		return name[0] != '0'  &&  !plus::contains_if( name, non_digit() );
 	}

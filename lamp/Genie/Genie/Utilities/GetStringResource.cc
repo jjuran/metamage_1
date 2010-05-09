@@ -8,6 +8,9 @@
 // Standard C/++
 #include <algorithm>
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Resources.hh"
 
@@ -18,7 +21,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string GetStringResource( ::ResID id )
+	plus::string GetStringResource( ::ResID id )
 	{
 		::Handle h = N::GetResource( N::ResType( 'STR ' ), N::ResID( id ) );
 		
@@ -26,7 +29,7 @@ namespace Genie
 		
 		const char* begin = *h + 1;
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( length );
 		

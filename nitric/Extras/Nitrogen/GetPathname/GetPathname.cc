@@ -9,6 +9,7 @@
 
 // plus
 #include "plus/make_string.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #ifndef NITROGEN_FOLDERS_HH
@@ -19,9 +20,9 @@
 #include "MacFiles/Classic.hh"
 
 
-static std::string GetMacPathname_Internal( const FSSpec& file )
+static plus::string GetMacPathname_Internal( const FSSpec& file )
 {
-	std::string filename = plus::make_string( file.name );
+	plus::string filename = plus::make_string( file.name );
 	
 	if ( file.parID == fsRtParID )
 	{
@@ -31,23 +32,23 @@ static std::string GetMacPathname_Internal( const FSSpec& file )
 	return GetMacPathname( io::get_preceding_directory( file ) ) + filename;
 }
 
-std::string GetMacPathname( const Nitrogen::FSDirSpec& dir )
+plus::string GetMacPathname( const Nitrogen::FSDirSpec& dir )
 {
 	return GetMacPathname_Internal( Nitrogen::FSMakeFSSpec( dir ) ) + ":";
 }
 
-std::string GetMacPathname( const FSSpec& file )
+plus::string GetMacPathname( const FSSpec& file )
 {
 	bool needsTrailingColon = file.parID == fsRtParID;
 	
 	return GetMacPathname_Internal( file ) + ( needsTrailingColon ? ":" : "" );
 }
 
-static std::string GetPOSIXPathname_Internal( const FSSpec& file )
+static plus::string GetPOSIXPathname_Internal( const FSSpec& file )
 {
 	ConstStr255Param name = file.name;
 	
-	std::string filename;
+	plus::var_string filename;
 	
 	filename.resize( name[0] );
 	
@@ -72,12 +73,12 @@ static std::string GetPOSIXPathname_Internal( const FSSpec& file )
 	return GetPOSIXPathname( io::get_preceding_directory( file ) ) + filename;
 }
 
-std::string GetPOSIXPathname( const Nitrogen::FSDirSpec& dir )
+plus::string GetPOSIXPathname( const Nitrogen::FSDirSpec& dir )
 {
 	return GetPOSIXPathname_Internal( Nitrogen::FSMakeFSSpec( dir ) ) + "/";
 }
 
-std::string GetPOSIXPathname( const FSSpec& file )
+plus::string GetPOSIXPathname( const FSSpec& file )
 {
 	bool needsTrailingSlash = file.parID == fsRtParID;
 	

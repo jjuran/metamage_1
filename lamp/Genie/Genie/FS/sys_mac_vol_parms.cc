@@ -179,24 +179,24 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 	}
 	
-	static inline std::string stringify( const char* string )
+	static inline plus::string stringify( const char* string )
 	{
 		return string;
 	}
 	
-	static inline std::string stringify( int i )
+	static inline plus::string stringify( int i )
 	{
 		return iota::inscribe_decimal( i );
 	}
 	
-	static std::string stringify( ::Handle );
+	static plus::string stringify( ::Handle );
 	
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
@@ -204,7 +204,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( parmsInfo );
 			
-			std::string result = Accessor::stringify::apply( data, binary );
+			plus::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}
@@ -212,8 +212,8 @@ namespace Genie
 	
 	
 	template < class Accessor >
-	static FSTreePtr Parms_Property_Factory( const FSTreePtr&    parent,
-	                                         const std::string&  name )
+	static FSTreePtr Parms_Property_Factory( const FSTreePtr&     parent,
+	                                         const plus::string&  name )
 	{
 		typedef sys_mac_vol_N_Parms_Property< Accessor > Property;
 		

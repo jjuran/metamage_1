@@ -74,10 +74,10 @@ namespace Vertice
 		return itsContexts[ index ];
 	}
 	
-	std::size_t Scene::AddSubcontext( std::size_t         super,
-	                                  const std::string&  name,
-	                                  const V::XMatrix&   offset,
-	                                  const V::XMatrix&   inv )
+	std::size_t Scene::AddSubcontext( std::size_t          super,
+	                                  const plus::string&  name,
+	                                  const V::XMatrix&    offset,
+	                                  const V::XMatrix&    inv )
 	{
 		std::size_t result = itsContexts.size();  // size == index of next element
 		

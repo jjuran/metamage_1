@@ -75,7 +75,7 @@ namespace Genie
 			bool IsShared() const  { return !itsOutputRefNum.sole(); }
 		
 		public:
-			SerialDeviceHandle( const std::string& portName, bool passive );
+			SerialDeviceHandle( const plus::string& portName, bool passive );
 			
 			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
 			
@@ -95,9 +95,9 @@ namespace Genie
 		boost::weak_ptr< IOHandle > passive, active;
 	};
 	
-	static SerialDevicePair& GetSerialDevicePair( const std::string& portName )
+	static SerialDevicePair& GetSerialDevicePair( const plus::string& portName )
 	{
-		static std::map< std::string, SerialDevicePair > gSerialDevices;
+		static std::map< plus::string, SerialDevicePair > gSerialDevices;
 		
 		SerialDevicePair& pair = gSerialDevices[ portName ];
 		
@@ -113,9 +113,9 @@ namespace Genie
 #endif
 	
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string&  portName,
-	                                                bool                isPassive,
-	                                                bool                nonblocking )
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const plus::string&  portName,
+	                                                bool                 isPassive,
+	                                                bool                 nonblocking )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -147,9 +147,9 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	static N::Str255 MakeDriverName( const std::string&   port_name,
-	                                 const char          *direction,
-	                                 size_t               direction_length )
+	static N::Str255 MakeDriverName( const plus::string&   port_name,
+	                                 const char           *direction,
+	                                 size_t                direction_length )
 	{
 		const size_t total_length = 1 + port_name.length() + direction_length;
 		
@@ -212,7 +212,7 @@ namespace Genie
 		return N::OpenDriver( driverName );
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName, bool passive )
+	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
 		DeviceHandle( O_RDWR ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),

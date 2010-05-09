@@ -103,10 +103,10 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
 			{
-				std::string command( s->begin(), s->end() - 1 );
+				plus::string command( s->begin(), s->end() - 1 );
 				
 				// Only process non-blank lines
 				if ( command.find_first_not_of( " \t" ) != command.npos )

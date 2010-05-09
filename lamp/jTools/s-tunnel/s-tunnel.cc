@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <numeric>
-#include <string>
 #include <vector>
 
 // Standard C/C++
@@ -34,6 +33,9 @@
 // Iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/write.hh"
@@ -172,7 +174,7 @@ namespace tool
 		}
 		catch ( p7::errno_t& error )
 		{
-			std::string message = "Remote read error: ";
+			plus::var_string message = "Remote read error: ";
 			
 			message += strerror( error );
 			message += "\n";
@@ -208,7 +210,7 @@ namespace tool
 		}
 		catch ( p7::errno_t& error )
 		{
-			std::string message = "Local read error: ";
+			plus::var_string message = "Local read error: ";
 			
 			message += strerror( error );
 			message += "\n";
@@ -283,7 +285,7 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: ";
+			plus::var_string message = "Domain name lookup failed: ";
 			
 			message += iota::inscribe_decimal( h_errno );
 			message += "\n";

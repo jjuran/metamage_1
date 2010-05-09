@@ -65,8 +65,8 @@ namespace tool
 		
 		timespec time = { seconds, nanoseconds };
 		
-		std::string output;
-		std::string previous;
+		plus::string output;
+		plus::string previous;
 		
 	again:
 		

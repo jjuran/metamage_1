@@ -3,9 +3,13 @@
  *	================
  */
 
-// C++ Standard Library
-#include <string>
 
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace tool
 {
@@ -34,7 +38,7 @@ namespace tool
 	};
 	*/
 	
-	int RunCommandInToolServer( const std::string& command, bool switch_layers );
+	int RunCommandInToolServer( const plus::string& command, bool switch_layers );
 	
 }
 

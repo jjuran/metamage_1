@@ -21,6 +21,7 @@
 
 // plus
 #include "plus/pointer_to_function.hh"
+#include "plus/var_string.hh"
 
 // Io
 #include "io/slurp.hh"
@@ -66,12 +67,12 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	static std::string q( const std::string& str )
+	static plus::string q( const plus::string& str )
 	{
 		return "'" + str + "'";
 	}
 	
-	static nucleus::mutable_string& operator<<( nucleus::mutable_string& str, const std::string& appendage )
+	static nucleus::mutable_string& operator<<( nucleus::mutable_string& str, const plus::string& appendage )
 	{
 		if ( appendage.size() > 0 )
 		{
@@ -87,7 +88,7 @@ namespace tool
 	}
 	
 	
-	static std::string DirectoryCommandForMPW()
+	static plus::string DirectoryCommandForMPW()
 	{
 		try
 		{
@@ -101,16 +102,16 @@ namespace tool
 		}
 	}
 	
-	static void WriteCommandFile( const std::string& command, const FSSpec& scriptFile )
+	static void WriteCommandFile( const plus::string& command, const FSSpec& scriptFile )
 	{
 		// Write the command into a file.
-		std::string script;
+		plus::var_string script;
 		
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
 		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
 		
-		io::spew_file< n::string_scribe< std::string > >( scriptFile, script );
+		io::spew_file< n::string_scribe< plus::string > >( scriptFile, script );
 	}
 	
 	static inline void WriteInputFile( const FSSpec& file )
@@ -133,8 +134,8 @@ namespace tool
 		script << q( GetMacPathname( scriptFile ) );
 		script << "<" << q( GetMacPathname( inFile ) );
 		
-		std::string outPath = GetMacPathname( outFile );
-		std::string errPath = GetMacPathname( errFile );
+		plus::string outPath = GetMacPathname( outFile );
+		plus::string errPath = GetMacPathname( errFile );
 		// FIXME:  This is case-sensitive
 		//bool identicalOutputAndError = outPath == errPath;
 		bool identicalOutputAndError = false;
@@ -296,7 +297,7 @@ namespace tool
 	
 	static FSSpec gTempFiles[ 4 ];
 	
-	static nucleus::string SetUpScript( const std::string& command )
+	static nucleus::string SetUpScript( const plus::string& command )
 	{
 		// Send a Do Script event with the command as the direct object.
 		// Better yet:
@@ -348,21 +349,21 @@ namespace tool
 		return script;
 	}
 	
-	static void ConvertAndDumpMacText( std::string& text, p7::fd_t fd )
+	static void ConvertAndDumpMacText( plus::var_string& text, p7::fd_t fd )
 	{
 		std::replace( text.begin(), text.end(), '\r', '\n' );
 		
 		p7::write( fd, text );
 	}
 	
-	static std::string Slurp( const FSSpec& file )
+	static plus::string Slurp( const FSSpec& file )
 	{
-		return io::slurp_file< n::string_scribe< std::string > >( file );
+		return io::slurp_file< n::string_scribe< plus::var_string > >( file );
 	}
 	
 	static void DumpFile( const FSSpec& file, p7::fd_t fd )
 	{
-		std::string text = Slurp( file );
+		plus::var_string text = Slurp( file );
 		
 		ConvertAndDumpMacText( text, fd );
 	}
@@ -405,7 +406,7 @@ namespace tool
 		return a_length == b_length  &&  std::equal( a_begin, a_end, b_begin );
 	}
 	
-	static bool user_cancelled( const std::string& errors )
+	static bool user_cancelled( const plus::string& errors )
 	{
 		const char* begin = &*errors.begin();
 		const char* end   = &*errors.end  ();
@@ -449,7 +450,7 @@ namespace tool
 		}
 	}
 	
-	int RunCommandInToolServer( const std::string& command, bool switch_layers )
+	int RunCommandInToolServer( const plus::string& command, bool switch_layers )
 	{
 		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
 		
@@ -474,7 +475,7 @@ namespace tool
 			return 128;
 		}
 		
-		std::string errors = Slurp( gTempFiles[ kErrorFile ] );
+		plus::var_string errors = Slurp( gTempFiles[ kErrorFile ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors

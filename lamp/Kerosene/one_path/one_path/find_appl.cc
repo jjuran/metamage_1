@@ -29,7 +29,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	std::string find_appl( const char* appl )
+	plus::string find_appl( const char* appl )
 	{
 		char ram_path[] = "ram/dt/appls/APPL/latest";
 		

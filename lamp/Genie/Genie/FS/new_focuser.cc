@@ -205,7 +205,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_focuser( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_focuser( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

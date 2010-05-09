@@ -14,8 +14,8 @@
 namespace Genie
 {
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,

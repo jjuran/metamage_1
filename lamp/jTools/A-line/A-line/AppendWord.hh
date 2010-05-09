@@ -6,11 +6,14 @@
 #ifndef ALINE_APPENDWORD_HH
 #define ALINE_APPENDWORD_HH
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace tool
 {
 	
-	inline std::string& operator<<( std::string& str, const std::string& appendage )
+	inline plus::string& operator<<( plus::var_string& str, const plus::string& appendage )
 	{
 		if ( appendage.size() > 0 )
 		{

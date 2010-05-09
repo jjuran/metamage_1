@@ -10,6 +10,13 @@
 #include "Pedestal/Window.hh"
 
 
+namespace plus
+{
+	
+	class string;
+	
+}
+
 namespace UseEdit
 {
 	
@@ -21,7 +28,7 @@ namespace UseEdit
 	//
 	NewWindow( ConstStr255Param title = "\p" "UseEdit" );
 	
-	void SetText( ScrollFrame& view, const std::string& text );
+	void SetText( ScrollFrame& view, const plus::string& text );
 	
 }
 

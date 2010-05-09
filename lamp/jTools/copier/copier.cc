@@ -40,9 +40,9 @@ int main( int argc, char const *const argv[] )
 	
 	p7::fd_reader reader( p7::stdin_fileno );
 	
-	while ( const std::string* s = get_line_from_feed( feed, reader ) )
+	while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 	{
-		const std::string& line = *s;
+		const plus::string& line = *s;
 		
 		const char* src =       line.data();
 		const char* end = src + line.size();

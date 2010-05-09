@@ -7,12 +7,12 @@
 
 #include "traps.hh"
 
-// Standard C++
-#include <string>
-
 // iota
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -33,7 +33,7 @@ namespace tool
 	
 	static offset_t global_name_offsets[ 0x1000 ];  // all possible A-traps
 	
-	static std::string global_name_data;
+	static plus::var_string global_name_data;
 	
 	
 	static uint16_t decode_16_bit_hex( const char* s )
@@ -58,9 +58,9 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			const std::string& line = *s;
+			const plus::string& line = *s;
 			
 			if ( line.length() < STRLEN( "A123 _X\n" ) )
 			{

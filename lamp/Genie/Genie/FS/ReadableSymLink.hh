@@ -18,8 +18,8 @@ namespace Genie
 	class FSTree_ReadableSymLink : public FSTree
 	{
 		public:
-			FSTree_ReadableSymLink( const FSTreePtr&    parent,
-			                        const std::string&  name )
+			FSTree_ReadableSymLink( const FSTreePtr&     parent,
+			                        const plus::string&  name )
 			:
 				FSTree( parent, name )
 			{

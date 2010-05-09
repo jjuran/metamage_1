@@ -14,6 +14,9 @@
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/string.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -66,14 +69,14 @@ namespace tool
 	
 	
 	template < class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	plus::string join( Iter begin, Iter end, const plus::string& glue = "" )
 	{
 		if ( begin == end )
 		{
 			return "";
 		}
 		
-		std::string result = *begin++;
+		plus::var_string result = *begin++;
 		
 		while ( begin != end )
 		{
@@ -85,9 +88,9 @@ namespace tool
 	}
 	
 	
-	static const std::string& get_Libraries_pathname()
+	static const plus::string& get_Libraries_pathname()
 	{
-		static std::string libraries = find_InterfacesAndLibraries() + "/Libraries";
+		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries";
 		
 		return libraries;
 	}
@@ -155,7 +158,7 @@ namespace tool
 		{ NULL, NULL }
 	};
 	
-	typedef std::map< std::string, const char* > LibraryMap;
+	typedef std::map< plus::string, const char* > LibraryMap;
 	
 	static LibraryMap MakeLibraryMap()
 	{
@@ -176,7 +179,7 @@ namespace tool
 		return gLibraryMap;
 	}
 	
-	static std::string FindSystemLibrary( const std::string& libName )
+	static plus::string FindSystemLibrary( const plus::string& libName )
 	{
 		LibraryMap::const_iterator it = TheLibraryMap().find( libName );
 		
@@ -187,7 +190,7 @@ namespace tool
 		
 		const char* subdir = it->second;
 		
-		std::string pathname = get_Libraries_pathname() / subdir / libName;
+		plus::string pathname = get_Libraries_pathname() / subdir / libName;
 		
 		if ( !io::file_exists( pathname ) )
 		{
@@ -243,7 +246,7 @@ namespace tool
 		return arch_none;
 	}
 	
-	static std::string MacPathFromPOSIXPath( const char* pathname )
+	static plus::string MacPathFromPOSIXPath( const char* pathname )
 	{
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
 		
@@ -257,17 +260,17 @@ namespace tool
 		gLibraryDirs.push_back( pathname );
 	}
 	
-	static std::string FindLibrary( const char* lib )
+	static plus::string FindLibrary( const char* lib )
 	{
 		typedef std::vector< const char* >::const_iterator Iter;
 		
-		std::string filename = lib;
+		plus::var_string filename = lib;
 		
 		filename += ".lib";
 		
 		for ( Iter it = gLibraryDirs.begin();  it != gLibraryDirs.end();  ++it )
 		{
-			std::string pathname = std::string( *it ) / filename;
+			plus::string pathname = plus::string( *it ) / filename;
 			
 			if ( io::file_exists( pathname ) )
 			{
@@ -316,9 +319,9 @@ namespace tool
 		
 		const std::size_t minimum_line_length = format_length + name_length;
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.length() < minimum_line_length )
 			{
@@ -401,9 +404,9 @@ namespace tool
 		N::WriteResource( code );
 	}
 	
-	static const char* store_string( const std::string& string )
+	static const char* store_string( const plus::string& string )
 	{
-		static std::list< std::string > static_string_storage;
+		static std::list< plus::string > static_string_storage;
 		
 		static_string_storage.push_back( string );
 		
@@ -556,7 +559,7 @@ namespace tool
 						{
 							const char* lib_name = arg + 2;  // skip "-l"
 							
-							std::string library_pathname = FindLibrary( lib_name );
+							plus::string library_pathname = FindLibrary( lib_name );
 							
 							const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
 							
@@ -587,7 +590,7 @@ namespace tool
 			{
 				if ( const char* equals = std::strchr( arg, '=' ) )
 				{
-					std::string option( arg, equals );
+					plus::var_string option( arg, equals );
 					
 					option[0] = '-';
 					
@@ -602,7 +605,7 @@ namespace tool
 			}
 			else
 			{
-				std::string filename = io::get_filename( arg );
+				plus::string filename = io::get_filename( arg );
 				
 				if ( filename == "CarbonLib" )
 				{
@@ -614,7 +617,7 @@ namespace tool
 				}
 				else if ( filename == "PkgInfo" )
 				{
-					std::string pkgInfo = p7::slurp( arg );
+					plus::string pkgInfo = p7::slurp( arg );
 					
 					if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
 					{
@@ -623,8 +626,8 @@ namespace tool
 						N::ThrowOSStatus( eofErr );
 					}
 					
-					std::string type   ( pkgInfo.data(),     4 );
-					std::string creator( pkgInfo.data() + 4, 4 );
+					plus::string type   ( pkgInfo.data(),     4 );
+					plus::string creator( pkgInfo.data() + 4, 4 );
 					
 					gFileType    = store_string( type    );
 					gFileCreator = store_string( creator );
@@ -663,7 +666,7 @@ namespace tool
 					}
 				}
 				
-				std::string library_pathname;
+				plus::string library_pathname;
 				
 				if ( !is_pathname )
 				{
@@ -763,7 +766,7 @@ namespace tool
 					command.push_back( "-sizemax" );
 					command.push_back( "8192"     );
 					
-					std::string output_name;
+					plus::var_string output_name;
 					
 					output_name  = io::get_filename( output_pathname );
 					output_name += ' ';
@@ -825,9 +828,9 @@ namespace tool
 		
 		FSSpec output_filespec = Div::ResolvePathToFSSpec( output_pathname );
 		
-		std::string output_mac_pathname = GetMacPathname( output_filespec );
+		plus::string output_mac_pathname = GetMacPathname( output_filespec );
 		
-		std::string linkmap_mac_pathname = output_mac_pathname + ".map";
+		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
 		
 		command.push_back( "-o" );
 		command.push_back( output_mac_pathname.c_str() );
@@ -849,7 +852,7 @@ namespace tool
 		
 		if ( verbose )
 		{
-			std::string output = join( command.begin(), command.end(), " " );
+			plus::var_string output = join( command.begin(), command.end(), " " );
 			
 			output += '\n';
 			

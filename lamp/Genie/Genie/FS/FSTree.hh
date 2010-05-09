@@ -6,11 +6,11 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_HH
 #define GENIE_FILESYSTEM_FSTREE_HH
 
-// Standard C++
-#include <string>
-
 // Debug
 #include "debug/boost_assert.hh"
+
+// plus
+#include "plus/string.hh"
 
 // boost
 #include <boost/enable_shared_from_this.hpp>
@@ -52,14 +52,14 @@ namespace Genie
 	
 	struct FSNode
 	{
-		ino_t        inode;
-		std::string  name;
+		ino_t         inode;
+		plus::string  name;
 		
 		FSNode()
 		{
 		}
 		
-		FSNode( ino_t i, const std::string& n ) : inode( i ), name( n )
+		FSNode( ino_t i, const plus::string& n ) : inode( i ), name( n )
 		{
 		}
 		
@@ -86,14 +86,14 @@ namespace Genie
 	class FSTree : public boost::enable_shared_from_this< FSTree >
 	{
 		private:
-			FSTreePtr    itsParent;
-			std::string  itsName;
+			FSTreePtr     itsParent;
+			plus::string  itsName;
 		
 		public:
 			FSTree();
 			
-			FSTree( const FSTreePtr&    parent,
-			        const std::string&  name );
+			FSTree( const FSTreePtr&     parent,
+			        const plus::string&  name );
 			
 			virtual ~FSTree();
 			
@@ -108,9 +108,9 @@ namespace Genie
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			
-			const std::string& Name() const  { return itsName; }
+			const plus::string& Name() const  { return itsName; }
 			
-			std::string Pathname() const;
+			plus::string Pathname() const;
 			
 			FSTreePtr Self() const  { return shared_from_this(); }
 			
@@ -143,10 +143,10 @@ namespace Genie
 			virtual off_t GetEOF() const;
 			virtual void  SetEOF( off_t length ) const;
 			
-			virtual std::string ReadLink() const;
+			virtual plus::string ReadLink() const;
 			virtual FSTreePtr ResolveLink() const;
 			
-			virtual void SymLink( const std::string& target ) const;
+			virtual void SymLink( const plus::string& target ) const;
 			
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
@@ -161,7 +161,7 @@ namespace Genie
 			
 			virtual void CreateDirectory( mode_t mode ) const;
 			
-			virtual FSTreePtr Lookup( const std::string& name, const FSTree* parent = NULL ) const;
+			virtual FSTreePtr Lookup( const plus::string& name, const FSTree* parent = NULL ) const;
 			
 			virtual FSIteratorPtr Iterate() const;
 			

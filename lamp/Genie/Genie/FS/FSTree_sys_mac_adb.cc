@@ -13,6 +13,9 @@
 // iota
 #include "iota/hexidecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -60,13 +63,13 @@ namespace Genie
 	
 	struct well_formed_ADBAddress_name
 	{
-		static bool applies( const std::string& name )
+		static bool applies( const plus::string& name )
 		{
 			return name.size() == 1  &&  name[0] & 0x20  && isxdigit( name[0] );
 		}
 	};
 	
-	static bool name_is_valid_ADBAddress( const std::string& name )
+	static bool name_is_valid_ADBAddress( const plus::string& name )
 	{
 		if ( !well_formed_ADBAddress_name::applies( name ) )
 		{
@@ -80,7 +83,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[];
 	
-	static FSTreePtr adb_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr adb_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !name_is_valid_ADBAddress( name ) )
 		{
@@ -97,7 +100,7 @@ namespace Genie
 			{
 				const ino_t inode = addr;
 				
-				std::string name( 1, iota::encoded_hex_char( addr ) );
+				plus::string name( 1, iota::encoded_hex_char( addr ) );
 				
 				return FSNode( inode, name );
 			}
@@ -121,13 +124,13 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( const FSTree* that, bool binary )
+			static plus::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
 				ADBDataBlock data = N::GetADBInfo( key );
 				
-				std::string result;
+				plus::var_string result;
 				
 				append_hex_encoded_byte( result, data.devType );
 				
@@ -141,7 +144,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( const FSTree* that, bool binary )
+			static plus::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -149,11 +152,11 @@ namespace Genie
 				
 				char c = '0' + data.origADBAddr;
 				
-				return std::string( 1, c );
+				return plus::string( 1, c );
 			}
 	};
 	
-	static void WriteADBRegister( N::ADBAddress address, int i, std::string& result )
+	static void WriteADBRegister( N::ADBAddress address, int i, plus::var_string& result )
 	{
 		ADBRegister reg = GetADBRegister( address, i );
 		
@@ -178,11 +181,11 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static std::string Read( const FSTree* that )
+			static plus::string Read( const FSTree* that )
 			{
 				Key key = GetKey( that );
 				
-				std::string output;
+				plus::var_string output;
 				
 				WriteADBRegister( key, 0, output );
 				WriteADBRegister( key, 1, output );
@@ -195,16 +198,16 @@ namespace Genie
 	
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
 		                            &Property::Read );
 	}
 	
-	static FSTreePtr Registers_Factory( const FSTreePtr&    parent,
-	                                    const std::string&  name )
+	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -220,7 +223,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, adb_lookup, adb_iterate );
 	}

@@ -35,7 +35,7 @@ namespace Genie
 		
 		boost::shared_ptr< Ped::View >  itsSubview;
 		
-		std::string  itsTargetPath;
+		plus::string  itsTargetPath;
 		
 		ScrollerProxy  itsTargetProxy;
 		
@@ -280,8 +280,10 @@ namespace Genie
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
-			FSTree_ScrollFrame_target( const FSTreePtr&    parent,
-			                           const std::string&  name ) : FSTree( parent, name )
+			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
+			                           const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -289,9 +291,9 @@ namespace Genie
 			
 			void Delete() const;
 			
-			void SymLink( const std::string& target ) const;
+			void SymLink( const plus::string& target ) const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
 	bool FSTree_ScrollFrame_target::Exists() const
@@ -314,7 +316,7 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	void FSTree_ScrollFrame_target::SymLink( const std::string& target_path ) const
+	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
 	{
 		FSTreePtr target = ResolvePathname( target_path, ParentRef() );
 		
@@ -330,7 +332,7 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	std::string FSTree_ScrollFrame_target::ReadLink() const
+	plus::string FSTree_ScrollFrame_target::ReadLink() const
 	{
 		const FSTree* view = GetViewKey( this );
 		
@@ -360,8 +362,8 @@ namespace Genie
 	
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -381,7 +383,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

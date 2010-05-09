@@ -8,14 +8,14 @@
 #ifndef ONEPATH_FINDAPPL_HH
 #define ONEPATH_FINDAPPL_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
 {
 	
-	std::string find_appl( const char* appl );
+	plus::string find_appl( const char* appl );
 	
 }
 

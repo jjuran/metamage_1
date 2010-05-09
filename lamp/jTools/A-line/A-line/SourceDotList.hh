@@ -7,15 +7,17 @@
 #define ALINE_SOURCEDOTLIST_HH
 
 // C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
 {
 	
-	void ReadSourceDotList( const char*                  pathname,
-	                        std::vector< std::string >&  results );
+	void ReadSourceDotList( const char*                   pathname,
+	                        std::vector< plus::string >&  results );
 	
 }
 

@@ -56,8 +56,10 @@ namespace Genie
 	class FSTree_sys_mac_tempmem : public FSTree
 	{
 		public:
-			FSTree_sys_mac_tempmem( const FSTreePtr&    parent,
-			                        const std::string&  name ) : FSTree( parent, name )
+			FSTree_sys_mac_tempmem( const FSTreePtr&     parent,
+			                        const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -77,7 +79,7 @@ namespace Genie
 		
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_sys_mac_tempmem( parent, name ) );
 	}

@@ -3,9 +3,6 @@
  *	=========
  */
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cerrno>
 
@@ -17,6 +14,9 @@
 // Iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"
@@ -40,7 +40,7 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: ";
+			plus::var_string message = "Domain name lookup failed: ";
 			
 			message += iota::inscribe_decimal( h_errno );
 			message += "\n";

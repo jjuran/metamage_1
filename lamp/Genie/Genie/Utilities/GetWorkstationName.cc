@@ -25,7 +25,7 @@ namespace Genie
 	static const void* kUnresolvedCFragSymbolAddress = NULL;
 	
 	
-	std::string GetWorkstationName()
+	plus::string GetWorkstationName()
 	{
 		if ( !Is_Running_OSXNative() )
 		{

@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_TERMINAL_HH
 #define GENIE_IO_TERMINAL_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include "errno.h"
 #include "fcntl.h"
@@ -26,7 +23,7 @@ namespace Genie
 	class TerminalHandle : public IOHandle
 	{
 		private:
-			const std::string                itsTTYName;
+			const plus::string               itsTTYName;
 			boost::shared_ptr< IOHandle >    itsTTY;
 			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
 			bool                             itIsDisconnected;
@@ -34,7 +31,7 @@ namespace Genie
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
 		public:
-			TerminalHandle( const std::string& ttyName )
+			TerminalHandle( const plus::string& ttyName )
 			:
 				IOHandle( O_RDWR ),
 				itsTTYName      ( ttyName ),
@@ -60,7 +57,7 @@ namespace Genie
 			
 			void Disconnect();
 			
-			const std::string& TTYName() const  { return itsTTYName; }
+			const plus::string& TTYName() const  { return itsTTYName; }
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< TerminalHandle >

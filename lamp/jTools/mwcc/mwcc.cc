@@ -7,6 +7,9 @@
 #include <list>
 #include <vector>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/stat.hh"
@@ -35,14 +38,14 @@ namespace tool
 	
 	
 	template < class Iter >
-	std::string join( const std::string& glue, Iter begin, Iter end )
+	plus::string join( const plus::string& glue, Iter begin, Iter end )
 	{
 		if ( begin == end )
 		{
 			return "";
 		}
 		
-		std::string result = *begin++;
+		plus::var_string result = *begin++;
 		
 		while ( begin != end )
 		{
@@ -81,7 +84,7 @@ namespace tool
 	static bool a4 = false;
 	static bool traceback = false;
 	
-	static void set_codegen_flag( const std::string& flag )
+	static void set_codegen_flag( const plus::string& flag )
 	{
 		if ( flag == "-fpascal-strings" )
 		{
@@ -105,23 +108,23 @@ namespace tool
 		}
 	}
 	
-	static inline std::string MacPathFromPOSIXPath( const char* path )
+	static inline plus::string MacPathFromPOSIXPath( const char* path )
 	{
 		return mac_pathname_from_path( path );
 	}
 	
-	static const std::string& MacPathForCWD()
+	static const plus::string& MacPathForCWD()
 	{
-		static std::string mac_path = MacPathFromPOSIXPath( "." );
+		static plus::string mac_path = MacPathFromPOSIXPath( "." );
 		
 		return mac_path;
 	}
 	
-	static std::string ShortMacPathFromPOSIXPath( const char* pathname )
+	static plus::string ShortMacPathFromPOSIXPath( const char* pathname )
 	{
-		std::string mac_path = MacPathFromPOSIXPath( pathname );
+		plus::var_string mac_path = MacPathFromPOSIXPath( pathname );
 		
-		const std::string& mac_cwd = MacPathForCWD();
+		const plus::string& mac_cwd = MacPathForCWD();
 		
 		const bool within =  mac_path.length() > mac_cwd.length()
 		                  && std::equal( mac_cwd.begin(),
@@ -162,7 +165,7 @@ namespace tool
 		gIncludeDirs.push_back( pathname );
 	}
 	
-	static std::string get_prefix_image_path( const char* prefix_path )
+	static plus::string get_prefix_image_path( const char* prefix_path )
 	{
 		const bool header_is_source = extension_begins_with_char( prefix_path, 'h' );
 		
@@ -171,7 +174,7 @@ namespace tool
 			return prefix_path;
 		}
 		
-		std::string prefix_image_path = prefix_path;
+		plus::var_string prefix_image_path = prefix_path;
 		
 		prefix_image_path += ".mwch";
 		
@@ -186,7 +189,7 @@ namespace tool
 		
 		for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
 		{
-			std::string location = *it / prefix_image_path;
+			plus::string location = *it / prefix_image_path;
 			
 			if ( io::file_exists( location ) )
 			{
@@ -198,9 +201,9 @@ namespace tool
 		return prefix_image_path;
 	}
 	
-	static const char* store_string( const std::string& string )
+	static const char* store_string( const plus::string& string )
 	{
-		static std::list< std::string > static_string_storage;
+		static std::list< plus::string > static_string_storage;
 		
 		static_string_storage.push_back( string );
 		
@@ -301,7 +304,7 @@ namespace tool
 					case 'i':
 						if ( std::strcmp( arg + 1, "include" ) == 0 )
 						{
-							std::string prefix_path = get_prefix_image_path( *++argv );
+							plus::string prefix_path = get_prefix_image_path( *++argv );
 							
 							command_args.push_back( "-prefix" );
 							
@@ -411,7 +414,7 @@ namespace tool
 		
 		if ( verbose )
 		{
-			std::string output = join( " ", command.begin(), command.end() );
+			plus::var_string output = join( " ", command.begin(), command.end() );
 			
 			output += '\n';
 			

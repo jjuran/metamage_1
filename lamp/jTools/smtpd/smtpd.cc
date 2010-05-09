@@ -25,6 +25,7 @@
 // plus
 #include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
+#include "plus/var_string.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -115,11 +116,11 @@ namespace tool
 	
 	
 	// E.g. "19840124.183000"
-	static std::string DateFormattedForFilename( unsigned long clock, int serial )
+	static plus::string DateFormattedForFilename( unsigned long clock, int serial )
 	{
 		DateTimeRec date = N::SecondsToDate( clock );
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
@@ -142,7 +143,7 @@ namespace tool
 		return result;
 	}
 	
-	static std::string MakeMessageName()
+	static plus::string MakeMessageName()
 	{
 		static unsigned long stamp = N::GetDateTime();
 		static int serial = 0;
@@ -171,21 +172,21 @@ namespace tool
 	}
 	
 	
-	static std::string GetForwardPath( const std::string& rcptLine )
+	static plus::string GetForwardPath( const plus::string& rcptLine )
 	{
 		return rcptLine.substr( std::strlen( "RCPT TO:" ), rcptLine.npos );
 	}
 	
-	static std::string GetReversePath( const std::string& fromLine )
+	static plus::string GetReversePath( const plus::string& fromLine )
 	{
 		return fromLine.substr( std::strlen( "MAIL FROM:" ), fromLine.npos );
 	}
 	
-	static void CreateOneLiner( const FSSpec& file, const std::string& line )
+	static void CreateOneLiner( const FSSpec& file, const plus::string& line )
 	{
-		typedef n::string_scribe< std::string > scribe;
+		typedef n::string_scribe< plus::string > scribe;
 		
-		std::string output = line + "\n";
+		plus::string output = line + "\n";
 		
 		io::spew_file< scribe >( N::FSpCreate( file,
 		                                       N::OSType( 'R*ch' ),
@@ -193,7 +194,7 @@ namespace tool
 		                         output );
 	}
 	
-	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
+	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const plus::string& dest )
 	{
 		CreateOneLiner( destFolder / dest.substr( 0, 31 ),
 		                dest );
@@ -218,7 +219,7 @@ namespace tool
 			
 			N::FSDirSpec Dir() const  { return dir; }
 			unsigned int Bytes() const  { return bytes; }
-			void WriteLine( const std::string& line );
+			void WriteLine( const plus::string& line );
 			
 			void Finished();
 	};
@@ -233,10 +234,10 @@ namespace tool
 		//
 	}
 	
-	void PartialMessage::WriteLine( const std::string& line )
+	void PartialMessage::WriteLine( const plus::string& line )
 	{
 		//static unsigned int lastFlushKBytes = 0;
-		std::string terminatedLine = line + "\r\n";
+		plus::string terminatedLine = line + "\r\n";
 		
 		io::write( out, terminatedLine.data(), terminatedLine.size() );
 		
@@ -260,9 +261,9 @@ namespace tool
 	}
 	
 	
-	std::string myHello;
-	std::string myFrom;
-	std::list< std::string > myTo;
+	plus::string myHello;
+	plus::string myFrom;
+	std::list< plus::string > myTo;
 	PartialMessage myMessage;
 	bool dataMode = false;
 	
@@ -288,9 +289,9 @@ namespace tool
 		
 	}
 	
-	static void DoCommand( const std::string& command )
+	static void DoCommand( const plus::string& command )
 	{
-		std::string word = command.substr( 0, command.find(' ') );
+		plus::string word = command.substr( 0, command.find(' ') );
 		
 		if ( false )
 		{
@@ -349,7 +350,7 @@ namespace tool
 		}
 	}
 	
-	static void DoData( const std::string& data )
+	static void DoData( const plus::string& data )
 	{
 		myMessage.WriteLine( data );
 		
@@ -383,7 +384,7 @@ namespace tool
 		}
 	}
 	
-	static void DoLine( const std::string& line )
+	static void DoLine( const plus::string& line )
 	{
 		if ( dataMode )
 		{
@@ -433,9 +434,9 @@ namespace tool
 		
 		p7::fd_reader reader( p7::stdin_fileno );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			DoLine( line );
 		}

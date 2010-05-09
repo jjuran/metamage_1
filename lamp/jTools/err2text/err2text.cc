@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 #include <vector>
 
 // iota
@@ -14,6 +13,9 @@
 
 // Debug
 #include "debug/assert.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/open.hh"
@@ -60,9 +62,9 @@ namespace tool
 	static std::vector< toc_entry > global_toc_entries;
 	
 	
-	static std::string Find_SysErrsDotErr()
+	static plus::string Find_SysErrsDotErr()
 	{
-		std::string path = find_appl( "MPSX" );
+		plus::var_string path = find_appl( "MPSX" );
 		
 		const char* p = path.data();
 		
@@ -162,7 +164,7 @@ namespace tool
 		return found ? it->offset : 0;
 	}
 	
-	static std::string get_string_at_offset( UInt16 offset )
+	static plus::string get_string_at_offset( UInt16 offset )
 	{
 		enum { bufSize = 512 };
 		char buf[ bufSize ];
@@ -173,10 +175,10 @@ namespace tool
 		
 		ASSERT( buf[ bufSize - 1 ] == '\0' );
 		
-		return std::string( buf );
+		return plus::string( buf );
 	}
 	
-	static std::string lookup_error( OSErr err )
+	static plus::string lookup_error( OSErr err )
 	{
 		const UInt16 offset = get_error_offset( err );
 		
@@ -206,7 +208,7 @@ namespace tool
 			
 			// look up and print
 			
-			std::string error = lookup_error( errnum );
+			plus::var_string error = lookup_error( errnum );
 			
 			error += "\n";
 			

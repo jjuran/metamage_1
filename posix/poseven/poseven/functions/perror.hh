@@ -10,12 +10,16 @@
 #ifndef POSEVEN_FUNCTIONS_PERROR_HH
 #define POSEVEN_FUNCTIONS_PERROR_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cerrno>
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace poseven
 {
@@ -28,11 +32,11 @@ namespace poseven
 	
 	void perror( const char* s1, const char* s2, const char* s3 );
 	
-	void perror( const std::string& s, int errnum = errno );
+	void perror( const plus::string& s, int errnum = errno );
 	
-	void perror( const std::string& s1, const std::string& s2, int errnum = errno );
+	void perror( const plus::string& s1, const plus::string& s2, int errnum = errno );
 	
-	void perror( const std::string& s1, const std::string& s2, const std::string& s3 );
+	void perror( const plus::string& s1, const plus::string& s2, const plus::string& s3 );
 	
 }
 

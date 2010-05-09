@@ -39,7 +39,7 @@ namespace Divergence
 		
 		using namespace io::path_descent_operators;
 		
-		const std::string parent_path = io::get_preceding_directory( path );
+		const plus::string parent_path = io::get_preceding_directory( path );
 		
 		FSRef parent_ref = Nitrogen::FSPathMakeRef( parent_path ).ref;
 		

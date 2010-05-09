@@ -8,6 +8,9 @@
 // Standard C/C++
 #include <cctype>
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace Genie
 {
@@ -41,9 +44,9 @@ namespace Genie
 		throw Invalid_Decode_Input();
 	}
 	
-	std::string WritePoint( Point point, char separator )
+	plus::string WritePoint( Point point, char separator )
 	{
-		std::string result = iota::inscribe_decimal( point.h );
+		plus::var_string result = iota::inscribe_decimal( point.h );
 		
 		result += separator;
 		
@@ -52,9 +55,9 @@ namespace Genie
 		return result;
 	}
 	
-	std::string Rect_Scribe::Encode( const Rect& r )
+	plus::string Rect_Scribe::Encode( const Rect& r )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		result += iota::inscribe_decimal( r.left );
 		

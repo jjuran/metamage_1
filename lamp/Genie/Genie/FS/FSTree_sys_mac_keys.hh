@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSTREESYSMACKEYS_HH
 #define GENIE_FILESYSTEM_FSTREESYSMACKEYS_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace Genie
@@ -17,7 +17,7 @@ namespace Genie
 	
 	struct sys_mac_keys
 	{
-		static std::string Read( const FSTree* );
+		static plus::string Read( const FSTree* );
 	};
 	
 }

@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -32,10 +35,10 @@ namespace Genie
 	
 	struct ListParameters
 	{
-		std::vector< std::string >  itsStrings;
-		bool                        itIntersectsGrowBox;
-		bool                        bounds_changed;
-		bool                        data_changed;
+		std::vector< plus::string >  itsStrings;
+		bool                         itIntersectsGrowBox;
+		bool                         bounds_changed;
+		bool                         data_changed;
 		
 		ListParameters() : itIntersectsGrowBox(),
 		                   bounds_changed(),
@@ -90,13 +93,13 @@ namespace Genie
 			
 			DeleteCells();
 			
-			const std::vector< std::string >& strings = params.itsStrings;
+			const std::vector< plus::string >& strings = params.itsStrings;
 			
-			typedef std::vector< std::string >::const_iterator Iter;
+			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			for ( Iter it = strings.begin();  it != strings.end();  ++it )
 			{
-				const std::string& s = *it;
+				const plus::string& s = *it;
 				
 				AppendCell( s.data(), s.size() );
 			}
@@ -143,7 +146,7 @@ namespace Genie
 		
 		ListParameters& params = gListParameterMap[ view ];
 		
-		std::vector< std::string >& strings = params.itsStrings;
+		std::vector< plus::string >& strings = params.itsStrings;
 		
 		const char* end = buffer + byteCount;
 		
@@ -153,7 +156,7 @@ namespace Genie
 		{
 			const char* q = std::find( p, end, '\n' );
 			
-			strings.push_back( std::string( p, q ) );
+			strings.push_back( plus::string( p, q ) );
 			
 			p = q + 1;
 			
@@ -171,8 +174,10 @@ namespace Genie
 	class FSTree_List_data : public FSTree
 	{
 		public:
-			FSTree_List_data( const FSTreePtr&    parent,
-			                  const std::string&  name ) : FSTree( parent, name )
+			FSTree_List_data( const FSTreePtr&     parent,
+			                  const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -186,11 +191,11 @@ namespace Genie
 	};
 	
 	
-	static std::size_t measure_strings( const std::vector< std::string >& strings )
+	static std::size_t measure_strings( const std::vector< plus::string >& strings )
 	{
 		std::size_t result = 0;
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = strings.begin();  it != strings.end();  ++it )
 		{
@@ -219,11 +224,11 @@ namespace Genie
 		params.data_changed = true;
 	}
 	
-	static std::string join_strings( const std::vector< std::string >& strings )
+	static plus::string join_strings( const std::vector< plus::string >& strings )
 	{
-		std::string result;
+		plus::var_string result;
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = strings.begin();  it != strings.end();  ++it )
 		{
@@ -240,7 +245,7 @@ namespace Genie
 		
 		if ( flags == O_RDONLY )
 		{
-			std::string data = join_strings( gListParameterMap[ ParentRef().get() ].itsStrings );
+			plus::string data = join_strings( gListParameterMap[ ParentRef().get() ].itsStrings );
 			
 			result = new PropertyReaderFileHandle( Self(), flags, data );
 		}
@@ -269,8 +274,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -300,7 +305,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_list( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_list( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

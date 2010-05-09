@@ -8,8 +8,10 @@
 
 // Standard C++
 #include <map>
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -19,25 +21,25 @@
 namespace tool
 {
 	
-	typedef std::string ConfigKey;
-	typedef std::vector< std::string > ConfigValue;
+	typedef plus::string ConfigKey;
+	typedef std::vector< plus::string > ConfigValue;
 	typedef std::map< ConfigKey, ConfigValue > ConfData;
 	
 	struct NoSuchProject
 	{
-		std::string name;
+		plus::string name;
 		
-		NoSuchProject( const std::string& name ) : name( name )  {}
+		NoSuchProject( const plus::string& name ) : name( name )  {}
 	};
 	
 	struct NoSuchPlatform
 	{
-		std::string name;
+		plus::string name;
 		
-		NoSuchPlatform( const std::string& name ) : name( name )  {}
+		NoSuchPlatform( const plus::string& name ) : name( name )  {}
 	};
 	
-	void AddPendingSubproject( const std::string& dir );
+	void AddPendingSubproject( const plus::string& dir );
 	
 	bool AddPendingSubprojects();
 	

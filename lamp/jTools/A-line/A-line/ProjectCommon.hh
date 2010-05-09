@@ -7,7 +7,6 @@
 #define ALINE_PROJECTCOMMON_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Standard C
@@ -17,12 +16,19 @@
 #include "CompileDriver/Platform.hh"
 
 
+namespace plus
+{
+	
+	class string;
+	
+}
+
 namespace tool
 {
 	
 	class Project;
 	
-	Project& GetProject( const std::string& project_name, Platform platform );
+	Project& GetProject( const plus::string& project_name, Platform platform );
 	
 }
 

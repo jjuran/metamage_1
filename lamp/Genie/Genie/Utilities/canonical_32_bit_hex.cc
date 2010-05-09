@@ -12,6 +12,7 @@
 
 // plus
 #include "plus/contains.hh"
+#include "plus/string.hh"
 
 
 namespace Genie
@@ -45,13 +46,13 @@ namespace Genie
 	
 	struct only_small_hexes
 	{
-		static bool applies( const std::string& s )
+		static bool applies( const plus::string& s )
 		{
 			return !plus::contains_if( s, no_small_hex_digit() );
 		}
 	};
 	
-	bool canonical_32_bit_hex::applies( const std::string& name )
+	bool canonical_32_bit_hex::applies( const plus::string& name )
 	{
 		const unsigned bits_per_byte      =  8;
 		const unsigned hex_chars_per_byte =  2;

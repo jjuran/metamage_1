@@ -21,8 +21,8 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	void ReadSourceDotList( const char*                  pathname,
-	                        std::vector< std::string >&  files )
+	void ReadSourceDotList( const char*                   pathname,
+	                        std::vector< plus::string >&  files )
 	{
 		text_input::feed feed;
 		
@@ -30,9 +30,9 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			if ( line.empty()      )  continue;
 			if ( line[ 0 ] == ';'  )  continue;

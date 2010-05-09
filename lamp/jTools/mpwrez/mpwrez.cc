@@ -5,8 +5,10 @@
 
 // Standard C++
 #include <list>
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"
@@ -32,14 +34,14 @@ namespace tool
 	
 	
 	template < class Iter >
-	std::string join( const std::string& glue, Iter begin, Iter end )
+	plus::string join( const plus::string& glue, Iter begin, Iter end )
 	{
 		if ( begin == end )
 		{
 			return "";
 		}
 		
-		std::string result = *begin++;
+		plus::var_string result = *begin++;
 		
 		while ( begin != end )
 		{
@@ -51,7 +53,7 @@ namespace tool
 	}
 	
 	
-	static std::string MacPathFromPOSIXPath( const char* pathname )
+	static plus::string MacPathFromPOSIXPath( const char* pathname )
 	{
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
 		
@@ -61,7 +63,7 @@ namespace tool
 	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		static std::list< std::string > static_string_storage;
+		static std::list< plus::string > static_string_storage;
 		
 		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
 		
@@ -127,7 +129,7 @@ namespace tool
 		
 		if ( verbose )
 		{
-			std::string output = join( " ", command.begin(), command.end() );
+			plus::var_string output = join( " ", command.begin(), command.end() );
 			
 			output += '\n';
 			

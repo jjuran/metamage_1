@@ -7,12 +7,12 @@
 #define ALINE_DEEPFILES_HH
 
 // C++
-#include <string>
 #include <vector>
 
 // plus
 #include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
+#include "plus/string.hh"
 
 // Io
 #include "io/files.hh"
@@ -93,12 +93,12 @@ namespace tool
 	
 	
 	template < class Filter >
-	std::vector< std::string > DeepFiles( const std::string& item, const Filter& filter )
+	std::vector< plus::string > DeepFiles( const plus::string& item, const Filter& filter )
 	{
-		return DeepFileSearch< std::string, Filter >( filter ).SearchItem( item );
+		return DeepFileSearch< plus::string, Filter >( filter ).SearchItem( item );
 	}
 	
-	std::vector< std::string > DeepFiles( const std::string& item );
+	std::vector< plus::string > DeepFiles( const plus::string& item );
 	
 }
 

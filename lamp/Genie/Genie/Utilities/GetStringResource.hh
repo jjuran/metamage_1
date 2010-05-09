@@ -6,19 +6,19 @@
 #ifndef GENIE_UTILITIES_GETSTRINGRESOURCE_HH
 #define GENIE_UTILITIES_GETSTRINGRESOURCE_HH
 
-// Standard C++
-#include <string>
-
 // Mac OS
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
 
+// plus
+#include "plus/string.hh"
+
 
 namespace Genie
 {
 	
-	std::string GetStringResource( ::ResID id );
+	plus::string GetStringResource( ::ResID id );
 	
 }
 

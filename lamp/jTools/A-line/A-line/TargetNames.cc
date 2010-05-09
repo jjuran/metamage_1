@@ -5,6 +5,9 @@
 
 #include <cstdio>
 
+// plus
+#include "plus/var_string.hh"
+
 #include "A-line/TargetNames.hh"
 
 
@@ -64,12 +67,12 @@ namespace tool
 		return "";
 	}
 	
-	std::string MakeTargetName( Platform      arch,
-	                            Platform      runtime,
-	                            Platform      api,
-	                            BuildVariety  build )
+	plus::string MakeTargetName( Platform      arch,
+	                             Platform      runtime,
+	                             Platform      api,
+	                             BuildVariety  build )
 	{
-		std::string name;
+		plus::var_string name;
 		
 	#if ALINE_CROSS_DEVELOPMENT
 		

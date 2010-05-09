@@ -7,8 +7,10 @@
 #define ALINE_INCLUDES_HH
 
 // C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 
 namespace tool
@@ -16,11 +18,11 @@ namespace tool
 	
 	struct IncludesCache
 	{
-		std::vector< std::string > user;
-		std::vector< std::string > system;
+		std::vector< plus::string > user;
+		std::vector< plus::string > system;
 	};
 	
-	const IncludesCache& GetIncludes( const std::string& pathname );
+	const IncludesCache& GetIncludes( const plus::string& pathname );
 	
 }
 

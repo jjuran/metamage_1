@@ -56,7 +56,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static std::string GetUserName()
+	static plus::string GetUserName()
 	{
 		if ( !Is_Running_OSXNative() )
 		{
@@ -71,7 +71,7 @@ namespace Genie
 		return "";
 	}
 	
-	std::string sys_mac_user_name::Read( const FSTree* that, bool binary )
+	plus::string sys_mac_user_name::Read( const FSTree* that, bool binary )
 	{
 		return GetUserName();
 	}

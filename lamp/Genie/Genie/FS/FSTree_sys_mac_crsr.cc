@@ -87,7 +87,7 @@ namespace Genie
 			return device;
 		}
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -107,8 +107,8 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_crsr_Property< Accessor > Property;
 		

@@ -8,8 +8,10 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 // A-line
 #include "A-line/TargetInfo.hh"
@@ -24,9 +26,9 @@ namespace tool
 	typedef std::vector< const char* > Command;
 	
 	
-	void RunCommand( const Command&      command,
-			         const char*         diagnostics_pathname,
-			         const std::string&  caption );
+	void RunCommand( const Command&       command,
+	                 const char*          diagnostics_pathname,
+	                 const plus::string&  caption );
 	
 	inline Command MakeCommand( const char* a, const char* b )
 	{
@@ -45,12 +47,12 @@ namespace tool
 		return command;
 	}
 	
-	static const char* c_str( const std::string& s )
+	static const char* c_str( const plus::string& s )
 	{
 		return s.c_str();
 	}
 	
-	inline Command& AugmentCommand( Command& command, const std::vector< std::string >& more )
+	inline Command& AugmentCommand( Command& command, const std::vector< plus::string >& more )
 	{
 		command.reserve( command.size() + more.size() );
 		

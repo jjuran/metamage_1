@@ -28,7 +28,7 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	const std::string& mkdir_path( const std::string& path )
+	const plus::string& mkdir_path( const plus::string& path )
 	{
 		if ( !io::directory_exists( path ) )
 		{
@@ -41,7 +41,7 @@ namespace tool
 	}
 	
 	
-	std::string home_dir_pathname()
+	plus::string home_dir_pathname()
 	{
 		if ( const char* home = getenv( "HOME" ) )
 		{
@@ -51,7 +51,7 @@ namespace tool
 		return "/";
 	}
 	
-	std::string UserSrcTreePath()
+	plus::string UserSrcTreePath()
 	{
 		if ( const char* tree = getenv( "ALINE_SRC_TREE" ) )
 		{
@@ -61,9 +61,9 @@ namespace tool
 		return home_dir_pathname() / "src/tree";
 	}
 	
-	std::string get_user_cache_pathname()
+	plus::string get_user_cache_pathname()
 	{
-		std::string home = home_dir_pathname();
+		plus::string home = home_dir_pathname();
 		
 		const char* cache = ALINE_MAC_DEVELOPMENT ? "Library/Caches/A-line"
 		                                          : "var/cache/a-line";
@@ -71,7 +71,7 @@ namespace tool
 		return mkdir_path( home / cache );
 	}
 	
-	static std::string UserLabDirPath()
+	static plus::string UserLabDirPath()
 	{
 		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
 		{
@@ -81,9 +81,9 @@ namespace tool
 		return mkdir_path( home_dir_pathname() / "var/build" );
 	}
 	
-	static std::string ProjectConfigDirPath( const std::string& projectPath )
+	static plus::string ProjectConfigDirPath( const plus::string& projectPath )
 	{
-		std::string confd = projectPath / "A-line.confd";
+		plus::string confd = projectPath / "A-line.confd";
 		
 		if ( io::directory_exists( confd ) )
 		{
@@ -93,62 +93,62 @@ namespace tool
 		return projectPath;
 	}
 	
-	std::string SourceDotListFile( const std::string& projectPath )
+	plus::string SourceDotListFile( const plus::string& projectPath )
 	{
 		return ProjectConfigDirPath( projectPath ) / "Source.list";
 	}
 	
-	std::string TargetDirPath( const std::string& target )
+	plus::string TargetDirPath( const plus::string& target )
 	{
 		return mkdir_path( UserLabDirPath() / target );
 	}
 	
-	std::string get_includes_union_pathname()
+	plus::string get_includes_union_pathname()
 	{
 		return mkdir_path( "include" );
 	}
 	
-	std::string LibrariesDirPath()
+	plus::string LibrariesDirPath()
 	{
 		return mkdir_path( "lib" );
 	}
 	
-	std::string RezzedDirPath()
+	plus::string RezzedDirPath()
 	{
 		return mkdir_path( "rez" );
 	}
 	
-	std::string get_project_dependencies_pathname( const std::string& project_name )
+	plus::string get_project_dependencies_pathname( const plus::string& project_name )
 	{
 		return "dep" / project_name;
 	}
 	
-	std::string ProjectDiagnosticsDirPath( const std::string& proj )
+	plus::string ProjectDiagnosticsDirPath( const plus::string& proj )
 	{
 		return "log" / proj;
 	}
 	
-	std::string ProjectPrecompiledDirPath( const std::string& proj )
+	plus::string ProjectPrecompiledDirPath( const plus::string& proj )
 	{
 		return mkdir_path( "pch" / proj );
 	}
 	
-	std::string ProjectObjectsDirPath( const std::string& proj )
+	plus::string ProjectObjectsDirPath( const plus::string& proj )
 	{
 		return mkdir_path( "obj" / proj );
 	}
 	
-	std::string ProjectMetadataDirPath( const std::string& proj )
+	plus::string ProjectMetadataDirPath( const plus::string& proj )
 	{
 		return mkdir_path( "meta" / proj );
 	}
 	
-	std::string ProjectLinkedDirPath( const std::string& proj )
+	plus::string ProjectLinkedDirPath( const plus::string& proj )
 	{
 		return mkdir_path( "out" / proj );
 	}
 	
-	std::string ProjectOutputDirPath( const std::string& proj )
+	plus::string ProjectOutputDirPath( const plus::string& proj )
 	{
 		return mkdir_path( "bin" / proj );
 	}

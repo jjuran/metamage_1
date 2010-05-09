@@ -8,8 +8,8 @@
 #ifndef TEXTINPUT_FEED_HH
 #define TEXTINPUT_FEED_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/var_string.hh"
 
 
 namespace text_input
@@ -18,7 +18,9 @@ namespace text_input
 	class feed
 	{
 		public:
-			static const std::size_t buffer_length = 4096;
+			typedef plus::string::size_type size_type;
+			
+			static const size_type buffer_length = 4096;
 			
 			class buffer_occupied {};
 			class buffer_overrun  {};
@@ -26,10 +28,10 @@ namespace text_input
 		private:
 			char its_buffer[ buffer_length ];
 			
-			std::size_t its_data_length;
-			std::size_t its_mark;
+			size_type its_data_length;
+			size_type its_mark;
 			
-			std::string its_next_line;
+			plus::var_string its_next_line;
 			
 			bool it_was_returned;
 			bool its_last_end_was_CR;
@@ -55,17 +57,17 @@ namespace text_input
 			
 			bool has_complete_line();
 			
-			const std::string* get_line();
-			const std::string& get_line_ref();
+			const plus::string* get_line();
+			const plus::string& get_line_ref();
 			
-			const std::string* get_fragment();
-			const std::string& get_fragment_ref();
+			const plus::string* get_fragment();
+			const plus::string& get_fragment_ref();
 			
 			char* buffer();
 			
-			void accept_input( std::size_t length );
+			void accept_input( size_type length );
 			
-			void accept_input( const char* buffer, std::size_t length );
+			void accept_input( const char* buffer, size_type length );
 	};
 	
 }

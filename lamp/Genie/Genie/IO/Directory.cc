@@ -43,7 +43,7 @@ namespace Genie
 		return itsIterator;
 	}
 	
-	static void SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
+	static void SetDirEntry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
 		

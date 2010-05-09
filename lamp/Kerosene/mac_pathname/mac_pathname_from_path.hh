@@ -8,10 +8,11 @@
 #ifndef KEROSENE_MACPATHNAMEFROMPATH_HH
 #define KEROSENE_MACPATHNAMEFROMPATH_HH
 
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
-std::string mac_pathname_from_path( const char* path );
+plus::string mac_pathname_from_path( const char* path );
 
 #endif
 

@@ -6,6 +6,9 @@
 #ifndef GENIE_IO_PROPERTYFILE_HH
 #define GENIE_IO_PROPERTYFILE_HH
 
+// plus
+#include "plus/string.hh"
+
 // Genie
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -17,12 +20,12 @@ namespace Genie
 	class PropertyReaderFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
-			std::string itsData;
+			plus::string itsData;
 		
 		public:
-			PropertyReaderFileHandle( const FSTreePtr&    file,
-			                          OpenFlags           flags,
-			                          const std::string&  value )
+			PropertyReaderFileHandle( const FSTreePtr&     file,
+			                          OpenFlags            flags,
+			                          const plus::string&  value )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsData( value )

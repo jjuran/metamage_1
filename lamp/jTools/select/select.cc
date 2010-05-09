@@ -6,7 +6,6 @@
 // Standard C++
 #include <algorithm>
 #include <map>
-#include <string>
 #include <vector>
 
 // POSIX
@@ -14,6 +13,9 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/open.hh"
@@ -84,7 +86,7 @@ namespace tool
 			
 			const char* name = name_of[ reader ];
 			
-			std::string message = name;
+			plus::var_string message = name;
 			
 			message += "\n";
 			

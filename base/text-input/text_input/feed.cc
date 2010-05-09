@@ -17,10 +17,10 @@
 namespace text_input
 {
 	
-	static const std::string the_empty_string = std::string();
+	static const plus::string the_empty_string = plus::string();
 	
 	
-	static inline bool is_complete_line( const std::string& s )
+	static inline bool is_complete_line( const plus::string& s )
 	{
 		return !s.empty()  &&  *(s.end() - 1) == '\n';
 	}
@@ -94,14 +94,14 @@ namespace text_input
 		return is_complete_line( its_next_line );
 	}
 	
-	const std::string& feed::get_line_ref()
+	const plus::string& feed::get_line_ref()
 	{
-		std::string const *const result = get_line();
+		plus::string const *const result = get_line();
 		
 		return result ? *result : the_empty_string;
 	}
 	
-	const std::string* feed::get_line()
+	const plus::string* feed::get_line()
 	{
 		const bool complete_line = has_complete_line();
 		
@@ -110,7 +110,7 @@ namespace text_input
 		return complete_line ? &its_next_line : NULL;
 	}
 	
-	const std::string& feed::get_fragment_ref()
+	const plus::string& feed::get_fragment_ref()
 	{
 		prime();
 		
@@ -119,7 +119,7 @@ namespace text_input
 		return its_next_line;
 	}
 	
-	const std::string* feed::get_fragment()
+	const plus::string* feed::get_fragment()
 	{
 		(void) get_fragment_ref();
 		
@@ -138,7 +138,7 @@ namespace text_input
 		return its_buffer;
 	}
 	
-	void feed::accept_input( std::size_t length )
+	void feed::accept_input( size_type length )
 	{
 		ASSERT( length <= buffer_length );
 		
@@ -150,7 +150,7 @@ namespace text_input
 		advance_CRLF();
 	}
 	
-	void feed::accept_input( const char* buffer, std::size_t length )
+	void feed::accept_input( const char* buffer, size_type length )
 	{
 		if ( length > buffer_length )
 		{

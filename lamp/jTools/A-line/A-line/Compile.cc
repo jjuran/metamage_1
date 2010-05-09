@@ -31,6 +31,7 @@
 
 // plus
 #include "plus/pointer_to_function.hh"
+#include "plus/var_string.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -78,11 +79,11 @@ namespace tool
 	
 	
 	typedef Command (*CompileCommandMaker)( const CompilerOptions&  options,
-	                                        const std::string&      source_pathname,
-	                                        const std::string&      output_pathname );
+	                                        const plus::string&     source_pathname,
+	                                        const plus::string&     output_pathname );
 	
-	static std::string diagnostics_file_path( const std::string&  dir_path,
-	                                          const std::string&  target_path )
+	static plus::string diagnostics_file_path( const plus::string&  dir_path,
+	                                           const plus::string&  target_path )
 	{
 		return dir_path / io::get_filename( target_path ) + ".txt";
 	}
@@ -92,17 +93,17 @@ namespace tool
 		private:
 			const Project&   its_project;
 			CompilerOptions  its_options;
-			std::string      its_source_pathname;
-			std::string      its_diagnostics_file_path;
+			plus::string     its_source_pathname;
+			plus::string     its_diagnostics_file_path;
 			const char*      its_caption;
 			CompileCommandMaker  its_command_maker;
 		
 		public:
 			CompilingTask( const Project&          project,
 			               const CompilerOptions&  options,
-			               const std::string&      source,
-			               const std::string&      output,
-			               const std::string&      diagnostics,
+			               const plus::string&     source,
+			               const plus::string&     output,
+			               const plus::string&     diagnostics,
 			               const char*             caption,
 			               CompileCommandMaker     maker )
 			: FileTask                 ( output ),
@@ -141,25 +142,25 @@ namespace tool
 	{
 		if ( !project.SourceDirs().empty() )
 		{
-			const std::vector< std::string > source_dirs = project.SourceDirs();
+			const std::vector< plus::string > source_dirs = project.SourceDirs();
 			
-			std::string includes_union_pathname = get_includes_union_pathname();
+			plus::string includes_union_pathname = get_includes_union_pathname();
 			
 			n::owned< p7::fd_t > include_fd = p7::open( includes_union_pathname,
 			                                            p7::o_rdonly | p7::o_directory );
 			
-			typedef std::vector< std::string >::const_iterator Iter;
+			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
-				const std::string& dir_pathname_string = *it;
+				const plus::string& dir_pathname_string = *it;
 				
 				const char* dir_pathname = dir_pathname_string.c_str();
 				
 				const char* dir_name = basename( dir_pathname,
 				                                 dir_pathname_string.size() );
 				
-				std::string include_link = includes_union_pathname / dir_name;
+				plus::string include_link = includes_union_pathname / dir_name;
 				
 				// Source dir must exist (or it would have been culled)
 				struct ::stat dir_stat = p7::stat( dir_pathname );
@@ -216,10 +217,10 @@ namespace tool
 			{
 			}
 			
-			void operator()( const std::string& project_name );
+			void operator()( const plus::string& project_name );
 	};
 	
-	void IncludeDirGatherer::operator()( const std::string& project_name )
+	void IncludeDirGatherer::operator()( const plus::string& project_name )
 	{
 		const Project& project = GetProject( project_name, its_options.Target().platform );
 		
@@ -241,9 +242,9 @@ namespace tool
 			return;
 		}
 		
-		const std::vector< std::string >& search_dirs( project.SearchDirs() );
+		const std::vector< plus::string >& search_dirs( project.SearchDirs() );
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
@@ -252,7 +253,7 @@ namespace tool
 	}
 	
 	
-	static bool IsCFile( const std::string& name )
+	static bool IsCFile( const plus::string& name )
 	{
 		// For our purposes here, ".c" is not a C file.  (Basename can't be empty.)
 		// Any one-character extension passes the test, including 'c', 'h', and 'm'.
@@ -261,8 +262,8 @@ namespace tool
 	}
 	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
-	                                   const std::string&      source_pathname,
-	                                   const std::string&      output_pathname )
+	                                   const plus::string&     source_pathname,
+	                                   const plus::string&     output_pathname )
 	{
 		CommandGenerator cmdgen( options.Target() );
 		
@@ -294,7 +295,7 @@ namespace tool
 		if ( options.HasPrecompiledHeaderSource() )
 		{
 			// Specify by name only, so gcc will search for the .gch image.
-			const std::string& pchSourceName = options.PrecompiledHeaderSource();
+			const plus::string& pchSourceName = options.PrecompiledHeaderSource();
 			
 			compile.push_back( "-include"            );
 			compile.push_back( pchSourceName.c_str() );
@@ -310,19 +311,19 @@ namespace tool
 		return compile;
 	}
 	
-	static void get_recursive_includes( const Project&            project,
-	                                    const std::string&        source_pathname,
-	                                    std::set< std::string >&  result )
+	static void get_recursive_includes( const Project&             project,
+	                                    const plus::string&        source_pathname,
+	                                    std::set< plus::string >&  result )
 	{
-		const std::vector< std::string >& includes = GetIncludes( source_pathname ).user;
+		const std::vector< plus::string >& includes = GetIncludes( source_pathname ).user;
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = includes.begin();  it != includes.end();  ++it )
 		{
-			const std::string& include_path = *it;
+			const plus::string& include_path = *it;
 			
-			std::string pathname = project.FindIncludeRecursively( include_path );
+			plus::string pathname = project.FindIncludeRecursively( include_path );
 			
 			if ( !pathname.empty() )
 			{
@@ -336,9 +337,9 @@ namespace tool
 		}
 	}
 	
-	static void write_dependencies_file( p7::fd_t output, const std::set< std::string >& includes )
+	static void write_dependencies_file( p7::fd_t output, const std::set< plus::string >& includes )
 	{
-		typedef std::set< std::string >::const_iterator Iter;
+		typedef std::set< plus::string >::const_iterator Iter;
 		
 		size_t length = 0;
 		
@@ -347,7 +348,7 @@ namespace tool
 			length += it->length() + 1;
 		}
 		
-		std::string contents;
+		plus::var_string contents;
 		
 		try
 		{
@@ -366,23 +367,23 @@ namespace tool
 		p7::write( output, contents );
 	}
 	
-	static void read_dependencies_file( p7::fd_t input_fd, std::set< std::string >& includes )
+	static void read_dependencies_file( p7::fd_t input_fd, std::set< plus::string >& includes )
 	{
 		text_input::feed feed;
 		
 		p7::fd_reader reader( input_fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string include_path( s->begin(), s->end() - 1 );
+			plus::string include_path( s->begin(), s->end() - 1 );
 			
 			includes.insert( include_path );
 		}
 	}
 	
-	static time_t get_memoized_timestamp( const std::string& pathname )
+	static time_t get_memoized_timestamp( const plus::string& pathname )
 	{
-		static std::map< std::string, time_t > map;
+		static std::map< plus::string, time_t > map;
 		
 		time_t& value = map[ pathname ];
 		
@@ -406,7 +407,7 @@ namespace tool
 		
 		while ( begin != end )
 		{
-			const std::string& pathname = *begin++;
+			const plus::string& pathname = *begin++;
 			
 			time_t stamp = get_memoized_timestamp( pathname );
 			
@@ -440,11 +441,11 @@ namespace tool
 			
 			if ( MoreRecent( output_stat.st_mtime ) )
 			{
-				std::string source_filename = io::get_filename( its_source_pathname );
+				plus::string source_filename = io::get_filename( its_source_pathname );
 				
-				std::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
+				plus::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
 				
-				std::string dependencies_pathname = dependencies_dir / source_filename + ".d";
+				plus::string dependencies_pathname = dependencies_dir / source_filename + ".d";
 				
 				struct stat dependencies_stat;
 				
@@ -452,7 +453,7 @@ namespace tool
 				
 				time_t includes_stamp;
 				
-				std::set< std::string > includes;
+				std::set< plus::string > includes;
 				
 				if ( has_dot_d )
 				{
@@ -508,7 +509,7 @@ namespace tool
 			source_path += STRLEN( "//" );
 		}
 		
-		std::string full_caption = its_caption;
+		plus::var_string full_caption = its_caption;
 		
 		full_caption += source_path;
 		
@@ -521,22 +522,22 @@ namespace tool
 	}
 	
 	
-	static std::string get_prefix_image_pathname( const std::string&  project_name,
-	                                              std::string         prefix_source_filename,
-	                                              const TargetInfo&   target_info )
+	static plus::string get_prefix_image_pathname( const plus::string&  project_name,
+	                                               plus::string         prefix_source_filename,
+	                                               const TargetInfo&    target_info )
 	{
-		std::string prefix_dir_pathname = ProjectPrecompiledDirPath( project_name );
+		plus::string prefix_dir_pathname = ProjectPrecompiledDirPath( project_name );
 		
 		const bool gnu = target_info.toolchain == toolchainGNU;
 		
 		const char* extension = (gnu ? ".gch" : ".mwch");
 		
-		std::string prefix_image_filename = prefix_source_filename + extension;
+		plus::string prefix_image_filename = prefix_source_filename + extension;
 		
 		return prefix_dir_pathname / prefix_image_filename;
 	}
 	
-	static bool project_has_prefix( const std::string& project_name, Platform platform )
+	static bool project_has_prefix( const plus::string& project_name, Platform platform )
 	{
 		return GetProject( project_name, platform ).HasPrecompiledHeader();
 	}
@@ -597,7 +598,7 @@ namespace tool
 		else
 		{
 			// This project doesn't have a precompiled header, but maybe a used one does
-			typedef std::vector< std::string >::const_iterator const_iterator;
+			typedef std::vector< plus::string >::const_iterator const_iterator;
 			
 			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
 			                                  project.AllUsedProjects().end(),
@@ -629,7 +630,7 @@ namespace tool
 			{
 			}
 			
-			TaskPtr operator()( const std::string& source_pathname, const std::string& object_pathname )
+			TaskPtr operator()( const plus::string& source_pathname, const plus::string& object_pathname )
 			{
 				const char* caption = "Compiling: ";
 				
@@ -662,7 +663,7 @@ namespace tool
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( options, needs_include_union );
 		
-		const std::vector< std::string >& all_used_projects = project.AllUsedProjects();
+		const std::vector< plus::string >& all_used_projects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
 		std::for_each( all_used_projects.rbegin(),
@@ -676,7 +677,7 @@ namespace tool
 		
 		CompilerOptions precompile_options = options;
 		
-		const std::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
+		const plus::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
 		
 		TaskPtr precompile_task = seize_ptr( new NullTask() );
 		
@@ -689,13 +690,13 @@ namespace tool
 		
 		if ( project_providing_prefix != NULL )
 		{
-			std::string prefix_source_path = project_providing_prefix->PrecompiledHeaderSource();
+			plus::string prefix_source_path = project_providing_prefix->PrecompiledHeaderSource();
 			
-			std::string prefix_source_filename = io::get_filename( prefix_source_path );
+			plus::string prefix_source_filename = io::get_filename( prefix_source_path );
 			
-			std::string pchImage = get_prefix_image_pathname( project_providing_prefix->Name(),
-			                                                  prefix_source_filename,
-			                                                  target_info );
+			plus::string pchImage = get_prefix_image_pathname( project_providing_prefix->Name(),
+			                                                   prefix_source_filename,
+			                                                   target_info );
 			
 			options.SetPrecompiledHeaderSource( prefix_source_filename );
 			// Theory:
@@ -709,7 +710,7 @@ namespace tool
 			if ( project.HasPrecompiledHeader() )
 			{
 				// Locate the precompiled header image file.
-				std::string prefix_source_pathname = project.FindIncludeRecursively( prefix_source_path );
+				plus::var_string prefix_source_pathname = project.FindIncludeRecursively( prefix_source_path );
 				
 				if ( prefix_source_pathname.empty() )
 				{
@@ -747,13 +748,13 @@ namespace tool
 		
 		mkdir_path( get_project_dependencies_pathname( project.Name() ) );
 		
-		std::string outDir = ProjectObjectsDirPath( project.Name() );
+		plus::string outDir = ProjectObjectsDirPath( project.Name() );
 		
-		std::vector< std::string > object_paths;
+		std::vector< plus::string > object_paths;
 		
 		NameObjectFiles( project, object_paths );
 		
-		const std::vector< std::string >& sources = project.Sources();
+		const std::vector< plus::string >& sources = project.Sources();
 		
 		const std::size_t n_tools = project.ToolCount();
 		
@@ -765,16 +766,16 @@ namespace tool
 		                tool_dependencies.begin(),
 		                ToolTaskMaker( project, options, precompile_task ) );
 		
-		std::vector< std::string >::const_iterator the_source, the_object, end = sources.end();
+		std::vector< plus::string >::const_iterator the_source, the_object, end = sources.end();
 		
 		for ( the_source = sources     .begin() + n_tools,
 		      the_object = object_paths.begin() + n_tools;  the_source != end;  ++the_source,
 		                                                                        ++the_object )
 		{
 			// The source file
-			const std::string& source_pathname = *the_source;
+			const plus::string& source_pathname = *the_source;
 			
-			const std::string& output_path = *the_object;
+			const plus::string& output_path = *the_object;
 			
 			const char* caption = "Compiling: ";
 			

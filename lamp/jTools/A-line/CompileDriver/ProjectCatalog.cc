@@ -53,7 +53,7 @@ namespace tool
 		typedef std::map< PlatformDemands, Data > platform_map;
 		
 		// A map from project name to config file set
-		typedef std::map< std::string, platform_map > name_map;
+		typedef std::map< plus::string, platform_map > name_map;
 	};
 	
 	typedef project_data< ProjectConfig >::platform_map  ProjectConfigCandidates;
@@ -63,14 +63,14 @@ namespace tool
 	static ProjectCatalog gProjectCatalog;
 	
 	
-	static bool ends_with( const std::string& string, const char* substring, std::size_t length )
+	static bool ends_with( const plus::string& string, const char* substring, std::size_t length )
 	{
 		return std::equal( string.end() - length, string.end(), substring );
 	}
 	
-	static std::string get_project_dir_from_config_file( const std::string& config_pathname )
+	static plus::string get_project_dir_from_config_file( const plus::string& config_pathname )
 	{
-		std::string config_dir = io::get_preceding_directory( config_pathname );
+		plus::string config_dir = io::get_preceding_directory( config_pathname );
 		
 		const bool has_confd = ends_with( config_dir, STR_LEN( "A-line.confd/" ) );
 		
@@ -79,7 +79,7 @@ namespace tool
 	}
 	
 	
-	void AddProjectConfigFile( const std::string&      name,
+	void AddProjectConfigFile( const plus::string&     name,
 	                           const PlatformDemands&  demands,
 	                           const ProjectConfig&    config )
 	{
@@ -110,7 +110,7 @@ namespace tool
 		}
 	};
 	
-	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
+	static ProjectConfigCandidates& find_project_config_candidates( const plus::string& project_name )
 	{
 		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
 		
@@ -122,7 +122,7 @@ namespace tool
 		return it->second;
 	}
 	
-	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
+	const ProjectConfig& GetProjectConfig( const plus::string& name, Platform targetPlatform )
 	{
 		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
@@ -158,9 +158,9 @@ namespace tool
 		return result;
 	}
 	
-	static void add_cached_config( const std::string&      project_name,
+	static void add_cached_config( const plus::string&     project_name,
 	                               const PlatformDemands&  demands,
-	                               const std::string&      pathname )
+	                               const plus::string&     pathname )
 	{
 		ProjectConfig& config = gProjectCatalog[ project_name ][ demands ];
 		
@@ -181,16 +181,16 @@ namespace tool
 		its_config_data = MakeConfData( data );
 	}
 	
-	void ScanDirForProjects( const std::string&                                       dirPath,
-	                         std::back_insert_iterator< std::vector< std::string > >  configs,
-	                         std::back_insert_iterator< std::vector< std::string > >  folders )
+	void ScanDirForProjects( const plus::string&                                       dirPath,
+	                         std::back_insert_iterator< std::vector< plus::string > >  configs,
+	                         std::back_insert_iterator< std::vector< plus::string > >  folders )
 	{
 		if ( !io::directory_exists( dirPath ) )
 		{
 			return;
 		}
 		
-		std::string dirName = io::get_filename( dirPath );
+		plus::string dirName = io::get_filename( dirPath );
 		
 		if ( dirName.c_str()[0] == '('  &&  *(dirName.end() - 1) == ')' )
 		{
@@ -202,7 +202,7 @@ namespace tool
 			return;
 		}
 		
-		std::string conf = dirPath / "A-line.conf";
+		plus::string conf = dirPath / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
@@ -211,15 +211,15 @@ namespace tool
 			return;
 		}
 		
-		typedef io::directory_contents_traits< std::string >::container_type directory_container;
+		typedef io::directory_contents_traits< plus::string >::container_type directory_container;
 		
-		typedef std::string (*path_descender)(const std::string&, const char*);
+		typedef plus::string (*path_descender)(const plus::string&, const char*);
 		
-		std::string confd = dirPath / "A-line.confd";
+		plus::string confd = dirPath / "A-line.confd";
 		
 		const bool has_confd = io::directory_exists( confd );
 		
-		const std::string& conf_path = has_confd ? confd : dirPath;
+		const plus::string& conf_path = has_confd ? confd : dirPath;
 		
 		directory_container contents = io::directory_contents( conf_path );
 		
@@ -239,7 +239,7 @@ namespace tool
 		
 		for ( name_iter the_name = gProjectCatalog.begin();  the_name != gProjectCatalog.end();  ++the_name )
 		{
-			const std::string&              name       = the_name->first;
+			const plus::string&             name       = the_name->first;
 			const ProjectConfigCandidates&  candidates = the_name->second;
 			
 			for ( demands_iter the_demands = candidates.begin();  the_demands != candidates.end();  ++the_demands )
@@ -247,7 +247,7 @@ namespace tool
 				const PlatformDemands&  demands = the_demands->first;
 				const ProjectConfig&    config  = the_demands->second;
 				
-				std::string record = name;
+				plus::var_string record = name;
 				
 				record += '\t';
 				
@@ -274,9 +274,9 @@ namespace tool
 		
 		p7::fd_reader reader( input_fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string text( s->begin(), s->end() - 1 );
+			plus::string text( s->begin(), s->end() - 1 );
 			
 			const char* begin = text.c_str();
 			
@@ -286,12 +286,12 @@ namespace tool
 				{
 					if ( const char* tab2 = std::strchr( slash + 1, '\t' ) )
 					{
-						std::string project_name( begin, tab1 );
+						plus::string project_name( begin, tab1 );
 						
-						std::string requirements( tab1  + 1, slash );
-						std::string prohibitions( slash + 1, tab2  );
+						plus::string requirements( tab1  + 1, slash );
+						plus::string prohibitions( slash + 1, tab2  );
 						
-						std::string config_pathname( tab2 + 1 );
+						plus::string config_pathname( tab2 + 1 );
 						
 						PlatformDemands demands( Platform( iota::parse_unsigned_decimal( requirements.c_str() ) ),
 						                         Platform( iota::parse_unsigned_decimal( prohibitions.c_str() ) ) );

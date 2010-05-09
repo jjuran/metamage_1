@@ -63,7 +63,7 @@ namespace Genie
 	
 	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle );
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const std::string& name );
+	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const plus::string& name );
 	
 }
 

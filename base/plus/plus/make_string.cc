@@ -11,13 +11,13 @@
 namespace plus
 {
 	
-	std::string make_string( const unsigned char* s )
+	string make_string( const unsigned char* s )
 	{
 		const char* data = (const char*) &s[1];
 		
-		const std::size_t length = s[0];
+		const unsigned long length = s[0];
 		
-		return std::string( data, length );
+		return string( data, length );
 	}
 	
 }

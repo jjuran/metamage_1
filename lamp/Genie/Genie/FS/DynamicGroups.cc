@@ -31,13 +31,13 @@ namespace Genie
 				
 				const ino_t inode = id;
 				
-				const std::string name = iota::inscribe_unsigned_decimal( id );
+				const plus::string name = iota::inscribe_unsigned_decimal( id );
 				
 				return FSNode( inode, name );
 			}
 	};
 	
-	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		const unsigned id = iota::parse_unsigned_decimal( name.c_str() );
 		

@@ -8,14 +8,18 @@
 #ifndef GENIE_FS_APPENDHEXENCODEDBYTE_HH
 #define GENIE_FS_APPENDHEXENCODEDBYTE_HH
 
-// Standard C++
-#include <string>
 
+namespace plus
+{
+	
+	class var_string;
+	
+}
 
 namespace Genie
 {
 	
-	void append_hex_encoded_byte( std::string& s, unsigned char c );
+	void append_hex_encoded_byte( plus::var_string& s, unsigned char c );
 	
 }
 

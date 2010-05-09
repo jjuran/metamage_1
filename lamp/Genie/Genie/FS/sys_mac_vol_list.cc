@@ -150,7 +150,7 @@ namespace Genie
 	{
 		typedef canonical_positive_integer well_formed_name;
 		
-		static bool applies( const std::string& name )
+		static bool applies( const plus::string& name )
 		{
 			if ( well_formed_name::applies( name ) )
 			{
@@ -169,7 +169,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[];
 	
-	static FSTreePtr vol_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr vol_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !valid_name_of_vol_number::applies( name ) )
 		{
@@ -186,7 +186,7 @@ namespace Genie
 			{
 				const ino_t inode = -vRefNum;
 				
-				std::string name = iota::inscribe_decimal( -vRefNum );
+				plus::string name = iota::inscribe_decimal( -vRefNum );
 				
 				return FSNode( inode, name );
 			}
@@ -425,11 +425,11 @@ namespace Genie
 			return data;
 		}
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			const typename Accessor::Result data = Get( that );
 			
-			std::string result = Accessor::stringify::apply( data, binary );
+			plus::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}
@@ -456,10 +456,10 @@ namespace Genie
 			N::FolderType  itsType;
 		
 		public:
-			FSTree_Folder_Link( const FSTreePtr&    parent,
-			                    const Key&          key,
-			                    N::FolderType       type,
-			                    const std::string&  name )
+			FSTree_Folder_Link( const FSTreePtr&     parent,
+			                    const Key&           key,
+			                    N::FolderType        type,
+			                    const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name ),
 				itsKey ( key  ),
@@ -477,8 +477,8 @@ namespace Genie
 	
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_vol_N_Property< Accessor > Property;
 		
@@ -499,8 +499,8 @@ namespace Genie
 		return result;
 	}
 	
-	static FSTreePtr Volume_Name_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
+	static FSTreePtr Volume_Name_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name )
 	{
 		typedef sys_mac_vol_N_name Property;
 		
@@ -516,16 +516,16 @@ namespace Genie
 	}
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
-	                                  const std::string&  name )
+	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
+	                                  const plus::string&  name )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
 		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
-	static FSTreePtr Root_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -534,8 +534,8 @@ namespace Genie
 		return FSTreeFromFSSpec( volume, VolumeIsOnServer( key ) );
 	}
 	
-	static FSTreePtr Drive_Link_Factory( const FSTreePtr&    parent,
-	                                     const std::string&  name )
+	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,
+	                                     const plus::string&  name )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -548,13 +548,13 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
+		plus::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
 		
 		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/drive/" + drive );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
+	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -567,14 +567,14 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
+		plus::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
 		
 		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
 	}
 	
 	template < N::FolderType type >
-	static FSTreePtr Folder_Link_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
+	static FSTreePtr Folder_Link_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -625,7 +625,7 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, vol_lookup, vol_iterate );
 	}
@@ -634,7 +634,7 @@ namespace Genie
 	{
 		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol/list" ) );
 		
-		const std::string name = iota::inscribe_decimal( -vRefNum );
+		const plus::string name = iota::inscribe_decimal( -vRefNum );
 		
 		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
 	}

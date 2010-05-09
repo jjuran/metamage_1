@@ -363,7 +363,7 @@ namespace UseEdit
 	}
 	
 	
-	void SetText( ScrollFrame& view, const std::string& text )
+	void SetText( ScrollFrame& view, const plus::string& text )
 	{
 		Frame& frame = static_cast< Frame& >( view.Subview() );
 		

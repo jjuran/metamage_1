@@ -9,7 +9,7 @@
 namespace Genie
 {
 	
-	std::string FSTree_ResolvableSymLink::ReadLink() const
+	plus::string FSTree_ResolvableSymLink::ReadLink() const
 	{
 		return ResolveLink()->Pathname();
 	}

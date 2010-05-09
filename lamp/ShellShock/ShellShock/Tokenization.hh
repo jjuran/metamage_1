@@ -6,8 +6,10 @@
 #define SHELLSHOCK_TOKENIZATION_HH
 
 // Standard C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 
 namespace ShellShock
@@ -84,11 +86,11 @@ namespace ShellShock
 	
 	struct Redirection : RedirectInfo
 	{
-		std::string param;
+		plus::string param;
 		
 		Redirection()  {}
 		
-		Redirection( const RedirectInfo& info, const std::string& param )
+		Redirection( const RedirectInfo& info, const plus::string& param )
 		:
 			RedirectInfo( info  ),
 			param       ( param )
@@ -97,13 +99,13 @@ namespace ShellShock
 	
 	struct Command
 	{
-		std::vector< std::string > args;
-		std::vector< Redirection > redirections;
+		std::vector< plus::string > args;
+		std::vector< Redirection  > redirections;
 		
 		Command()  {}
 		
-		Command( const std::vector< std::string >&  args,
-		         const std::vector< Redirection >&  redirections )
+		Command( const std::vector< plus::string >&  args,
+		         const std::vector< Redirection  >&  redirections )
 		:
 			args        ( args         ),
 			redirections( redirections )
@@ -141,7 +143,7 @@ namespace ShellShock
 	
 	typedef std::vector< Circuit > List;
 	
-	List Tokenization( const std::string& cmdLine );
+	List Tokenization( const plus::string& cmdLine );
 	
 }
 

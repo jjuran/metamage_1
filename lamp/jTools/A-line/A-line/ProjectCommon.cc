@@ -21,7 +21,7 @@ namespace tool
 {
 	
 	// A map from project name to project data
-	typedef std::map< std::string, boost::shared_ptr< Project > > ProjectMap;
+	typedef std::map< plus::string, boost::shared_ptr< Project > > ProjectMap;
 	
 	// A map from platform to project map
 	typedef std::map< Platform, ProjectMap > ProjectPlatformMap;
@@ -30,7 +30,7 @@ namespace tool
 	static ProjectPlatformMap gProjectPlatformMap;
 	
 	
-	Project& GetProject( const std::string& project_name, Platform platform )
+	Project& GetProject( const plus::string& project_name, Platform platform )
 	{
 		// Cache the platform lookup
 		ProjectMap& map = gProjectPlatformMap[ platform ];

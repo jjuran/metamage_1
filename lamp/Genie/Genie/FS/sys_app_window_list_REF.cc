@@ -77,7 +77,7 @@ namespace Genie
 		
 		static const size_t fixed_size = sizeof (value_type);
 		
-		static std::string freeze( const value_type& value, bool binary )
+		static plus::string freeze( const value_type& value, bool binary )
 		{
 			return Freeze< Scribe >( value, binary );
 		}
@@ -92,9 +92,9 @@ namespace Genie
 	{
 		static const size_t fixed_size = 0;
 		
-		static std::string freeze( ConstStr255Param param, bool binary )
+		static plus::string freeze( ConstStr255Param param, bool binary )
 		{
-			return std::string( (const char*) &param[1], param[0] );
+			return plus::string( (const char*) &param[1], param[0] );
 		}
 		
 		static N::Str255 vivify( const char* begin, const char* end, bool binary )
@@ -283,7 +283,7 @@ namespace Genie
 		return color;
 	}
 	
-	static std::string WriteColor( const RGBColor& color )
+	static plus::string WriteColor( const RGBColor& color )
 	{
 		char encoded[] = "#rrrrggggbbbb";
 		
@@ -298,7 +298,7 @@ namespace Genie
 	{
 		typedef RGBColor Value;
 		
-		static std::string Encode( const RGBColor& value )
+		static plus::string Encode( const RGBColor& value )
 		{
 			return WriteColor( value );
 		}
@@ -401,7 +401,7 @@ namespace Genie
 	{
 		typedef N::WindowRef Key;
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -428,8 +428,8 @@ namespace Genie
 	
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
-	                                  const std::string&  name )
+	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
+	                                  const plus::string&  name )
 	{
 		N::WindowRef key = GetKeyFromParent( parent );
 		
@@ -437,8 +437,8 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	static FSTreePtr Const_Property_Factory( const FSTreePtr&    parent,
-	                                         const std::string&  name )
+	static FSTreePtr Const_Property_Factory( const FSTreePtr&     parent,
+	                                         const plus::string&  name )
 	{
 		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		
@@ -449,8 +449,8 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		

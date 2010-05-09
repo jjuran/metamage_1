@@ -8,10 +8,12 @@
 
 // Standard C++
 #include <map>
-#include <string>
 
 // Debug
 #include "debug/boost_assert.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // Boost
 #include <boost/shared_ptr.hpp>
@@ -79,12 +81,12 @@ namespace Genie
 	class FlatArgVector
 	{
 		private:
-			std::string itsStorage;
+			plus::var_string itsStorage;
 		
 		public:
 			void Assign( char const *const *argv );
 			
-			const std::string& Data() const  { return itsStorage; }
+			const plus::string& Data() const  { return itsStorage; }
 	};
 	
 	struct Parameters
@@ -124,7 +126,7 @@ namespace Genie
 			
 			UInt64 itsAlarmClock;
 			
-			std::string itsName;
+			plus::string itsName;
 			
 			boost::shared_ptr< IOHandle > itsCWD;
 			
@@ -174,7 +176,7 @@ namespace Genie
 			
 			int Run();
 			
-			const std::string& GetCmdLine() const  { return itsParameters->itsCmdLine.Data(); }
+			const plus::string& GetCmdLine() const  { return itsParameters->itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
@@ -219,7 +221,7 @@ namespace Genie
 			
 			void ChangeDirectory( const FSTreePtr& newCWD );
 			
-			std::string ProgramName()  const  { return itsName;   }
+			const plus::string& ProgramName()  const  { return itsName;   }
 			
 			const FSTreePtr& ProgramFile() const  { return itsProgramFile; }
 			

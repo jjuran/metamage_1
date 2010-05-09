@@ -8,6 +8,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/write.hh"
 
@@ -38,7 +41,7 @@ namespace tool
 	
 	static void print_field( const char* name, const char* value )
 	{
-		std::string message = name;
+		plus::var_string message = name;
 		
 		message += ": ";
 		message += value;
@@ -127,7 +130,7 @@ namespace tool
 		
 		CD::TrackCount tracks = CD::CountTracks( gTOC );
 		
-		std::string command = "discid ";
+		plus::var_string command = "discid ";
 		
 		command += iota::inscribe_decimal( tracks );
 		
@@ -236,7 +239,7 @@ namespace tool
 	
 	static int unrecognized_command( const char* command )
 	{
-		std::string message = "cds: unrecognized command '";
+		plus::var_string message = "cds: unrecognized command '";
 		
 		message += command;
 		message += "'\n";

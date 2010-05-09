@@ -72,7 +72,7 @@ namespace Genie
 		
 		public:
 			FSTree_Icon_data( const FSTreePtr&                      parent,
-			                  const std::string&                    name,
+			                  const plus::string&                   name,
 			                  const boost::shared_ptr< IconData >&  data );
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }

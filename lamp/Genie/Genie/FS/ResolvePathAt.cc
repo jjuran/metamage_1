@@ -23,7 +23,7 @@ namespace Genie
 		return GetFileHandleWithCast< DirHandle >( fd ).GetFile();
 	}
 	
-	FSTreePtr ResolvePathAt( int dirfd, const std::string& path )
+	FSTreePtr ResolvePathAt( int dirfd, const plus::string& path )
 	{
 		const bool absolute = !path.empty() && path[0] == '/';
 		

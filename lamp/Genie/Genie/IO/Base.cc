@@ -9,6 +9,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -19,9 +22,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static std::string IOName( const void* address, bool is_pipe )
+	static plus::string IOName( const void* address, bool is_pipe )
 	{
-		std::string name = is_pipe ? "pipe" : "socket";
+		plus::var_string name = is_pipe ? "pipe" : "socket";
 		
 		const size_t hex_offset = name.size() + STRLEN( ":[" );
 		
@@ -48,7 +51,7 @@ namespace Genie
 			bool IsPipe()      const  { return true; }
 			bool IsAnonymous() const  { return true; }
 			
-			std::string Pathname() const  { return Name(); }
+			plus::string Pathname() const  { return Name(); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{

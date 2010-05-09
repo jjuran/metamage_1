@@ -47,9 +47,9 @@ namespace poseven
 	
 #ifdef __MWERKS__
 	
-	static std::string realpath( const char* pathname )
+	static plus::string realpath( const char* pathname )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		ssize_t size = 128;
 		
@@ -75,14 +75,14 @@ namespace poseven
 		return result;
 	}
 	
-	inline std::string realpath( const std::string& pathname )
+	inline plus::string realpath( const plus::string& pathname )
 	{
 		return realpath( pathname.c_str() );
 	}
 	
 #else
 	
-	inline const std::string& realpath( const std::string& pathname )
+	inline const plus::string& realpath( const plus::string& pathname )
 	{
 		return pathname;
 	}
@@ -102,13 +102,13 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	const std::vector< std::string >& get_values( const ConfData& config, const std::string& key )
+	const std::vector< plus::string >& get_values( const ConfData& config, const plus::string& key )
 	{
 		ConfData::const_iterator it = config.find( key );
 		
 		if ( it == config.end () )
 		{
-			static std::vector< std::string > null;
+			static std::vector< plus::string > null;
 			
 			return null;
 		}
@@ -116,11 +116,11 @@ namespace tool
 		return it->second;
 	}
 	
-	static const std::string& get_first( const std::vector< std::string >& v )
+	static const plus::string& get_first( const std::vector< plus::string >& v )
 	{
 		if ( v.empty() )
 		{
-			static std::string null;
+			static plus::string null;
 			
 			return null;
 		}
@@ -128,30 +128,30 @@ namespace tool
 		return v[ 0 ];
 	}
 	
-	static inline const std::string& get_first( const ConfData& config, const std::string& key )
+	static inline const plus::string& get_first( const ConfData& config, const plus::string& key )
 	{
 		return get_first( get_values( config, key ) );
 	}
 	
 	
-	static std::string FindIncludeInFolder( const std::string& folder, std::string includePath )
+	static plus::string FindIncludeInFolder( const plus::string& folder, plus::string includePath )
 	{
-		std::string file = folder / includePath;
+		plus::string file = folder / includePath;
 		
 		(void) p7::stat( file );  // throw if nonexistent
 		
 		return file;
 	}
 	
-	std::string Project::FindInclude( const std::string& include_path ) const
+	plus::string Project::FindInclude( const plus::string& include_path ) const
 	{
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = its_search_dir_pathnames.begin();  it != its_search_dir_pathnames.end();  ++it )
 		{
-			const std::string& search_dir_pathname = *it;
+			const plus::string& search_dir_pathname = *it;
 			
-			std::string include_pathname = search_dir_pathname / include_path;
+			plus::string include_pathname = search_dir_pathname / include_path;
 			
 			if ( io::file_exists( include_pathname ) )
 			{
@@ -162,17 +162,17 @@ namespace tool
 		return "";
 	}
 	
-	std::string Project::FindIncludeRecursively( const std::string& include_path ) const
+	plus::string Project::FindIncludeRecursively( const plus::string& include_path ) const
 	{
-		std::string& result = its_include_map[ include_path ];
+		plus::string& result = its_include_map[ include_path ];
 		
 		if ( result.empty() )
 		{
 			result = FindInclude( include_path );
 			
-			const std::vector< std::string >& project_names = AllUsedProjects();
+			const std::vector< plus::string >& project_names = AllUsedProjects();
 			
-			typedef std::vector< std::string >::const_iterator Iter;
+			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			for ( Iter it = project_names.begin();  result.empty()  &&  it != project_names.end();  ++it )
 			{
@@ -187,11 +187,11 @@ namespace tool
 		return result;
 	}
 	
-	std::string Project::FindResourceFile( const std::string& filespec ) const
+	plus::string Project::FindResourceFile( const plus::string& filespec ) const
 	{
 		if ( const char* colon = std::strchr( filespec.c_str(), ':' ) )
 		{
-			std::string project_name( filespec.c_str(), colon );
+			plus::string project_name( filespec.c_str(), colon );
 			
 			const char* filename = colon + 1;
 			
@@ -223,13 +223,13 @@ namespace tool
 		return "";
 	}
 	
-	static std::string FindSearchDir( const std::string& cwdPath, const std::string& pathname )
+	static plus::string FindSearchDir( const plus::string& cwdPath, const plus::string& pathname )
 	{
 		try
 		{
-			std::string dirPath = pathname[0] == '/' ? pathname
-			                    : pathname[0] == '~' ? home_dir_pathname() / (pathname.c_str() + 2)
-			                    :                      p7::realpath( cwdPath / pathname );
+			plus::string dirPath = pathname[0] == '/' ? pathname
+			                     : pathname[0] == '~' ? home_dir_pathname() / (pathname.c_str() + 2)
+			                     :                      p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
 			{
@@ -252,12 +252,12 @@ namespace tool
 	}
 	
 	
-	static bool ends_with( const std::string& s, const char* tail, unsigned length )
+	static bool ends_with( const plus::string& s, const char* tail, unsigned length )
 	{
 		return s.length() >= length  &&  std::equal( s.end() - length, s.end(), tail );
 	}
 	
-	static ProductType ReadProduct( const std::string& productName )
+	static ProductType ReadProduct( const plus::string& productName )
 	{
 		if ( productName == "app" )
 		{
@@ -299,13 +299,13 @@ namespace tool
 		return productNotBuilt;
 	}
 	
-	static void GetDirectlyUsedProjectsFromConfig( const ConfData& config, std::vector< std::string >& used )
+	static void GetDirectlyUsedProjectsFromConfig( const ConfData& config, std::vector< plus::string >& used )
 	{
 		// Figure out which projects we use
-		const std::vector< std::string >& projects_via_USE  = get_values( config, "use"  );
-		const std::vector< std::string >& projects_via_USES = get_values( config, "uses" );
+		const std::vector< plus::string >& projects_via_USE  = get_values( config, "use"  );
+		const std::vector< plus::string >& projects_via_USES = get_values( config, "uses" );
 		
-		const std::string& product_name = get_first( config, "product" );
+		const plus::string& product_name = get_first( config, "product" );
 		
 		used.insert( used.end(),
 		             projects_via_USES.begin(),
@@ -318,9 +318,9 @@ namespace tool
 	
 	static Project global_empty_project;
 	
-	static const Project& GetUsedProject( const std::string&  user_name,
-	                                      const std::string&  used_name,
-	                                      Platform            platform )
+	static const Project& GetUsedProject( const plus::string&  user_name,
+	                                      const plus::string&  used_name,
+	                                      Platform             platform )
 	{
 		try
 		{
@@ -340,15 +340,15 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< std::string > GetAllUsedProjects( const std::string&                 project_name,
-	                                                      Platform                           platform,
-	                                                      const std::vector< std::string >&  used_project_names )
+	static std::vector< plus::string > GetAllUsedProjects( const plus::string&                 project_name,
+	                                                       Platform                            platform,
+	                                                       const std::vector< plus::string >&  used_project_names )
 	{
-		std::vector< std::string > all_used_project_names;
+		std::vector< plus::string > all_used_project_names;
 		
-		std::set< std::string > set_of_all_used_project_names;
+		std::set< plus::string > set_of_all_used_project_names;
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		// For each project named in the 'uses' directive:
 		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
@@ -357,12 +357,12 @@ namespace tool
 			const Project& used = GetUsedProject( project_name, *it, platform );
 			
 			// Find out which projects it uses
-			const std::vector< std::string >& subUsed = used.AllUsedProjects();
+			const std::vector< plus::string >& subUsed = used.AllUsedProjects();
 			
 			// For each project even indirectly used by this one:
 			for ( Iter it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
 			{
-				const std::string& name = *it2;
+				const plus::string& name = *it2;
 				
 				// If it isn't already in the collection,
 				if ( set_of_all_used_project_names.count( name ) == 0 )
@@ -378,10 +378,10 @@ namespace tool
 		return all_used_project_names;
 	}
 	
-	static std::vector< std::string > get_search_dir_pathnames( const std::vector< std::string >&  search_directives,
-	                                                            const std::string&                 project_dir_pathname )
+	static std::vector< plus::string > get_search_dir_pathnames( const std::vector< plus::string >&  search_directives,
+	                                                             const plus::string&                 project_dir_pathname )
 	{
-		std::vector< std::string > result;
+		std::vector< plus::string > result;
 		
 		result.resize( search_directives.size() );
 		
@@ -396,7 +396,7 @@ namespace tool
 	}
 	
 	
-	static bool IsCompilableExtension( const std::string& ext )
+	static bool IsCompilableExtension( const plus::string& ext )
 	{
 		if ( ext == ".c"   )  return true;
 		if ( ext == ".cc"  )  return true;
@@ -412,23 +412,23 @@ namespace tool
 		return std::equal( a_end - length, a_end, b_begin );
 	}
 	
-	static bool IsCompilableFilename( const std::string& filename )
+	static bool IsCompilableFilename( const plus::string& filename )
 	{
 		std::size_t lastDot = filename.find_last_of( "." );
 		
-		return    lastDot != std::string::npos
-		       && IsCompilableExtension( filename.substr( lastDot, std::string::npos ) )
+		return    lastDot != plus::string::npos
+		       && IsCompilableExtension( filename.substr( lastDot, plus::string::npos ) )
 		       && !match_backwards( filename.c_str() + lastDot, STR_LEN( " copy" ) );
 	}
 	
 	
-	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& search_dirs )
+	static plus::string FindSourceFileInDirs( const plus::string& relative_path, const std::vector< plus::string >& search_dirs )
 	{
-		typedef std::vector< std::string >::const_iterator dir_iter;
+		typedef std::vector< plus::string >::const_iterator dir_iter;
 		
 		for ( dir_iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
-			std::string dir = *it;
+			plus::var_string dir = *it;
 			
 			if ( dir[ dir.size() - 1 ] != '/' )
 			{
@@ -436,7 +436,7 @@ namespace tool
 			}
 			
 			// dir has trailing slash, add another for sentinel
-			std::string result = dir + "/" +  relative_path;
+			plus::string result = dir + "/" +  relative_path;
 			
 			if ( io::item_exists( result ) )
 			{
@@ -452,24 +452,24 @@ namespace tool
 	}
 	
 	
-	static void get_source_data( const std::string&                 project_dir,
-	                             const std::vector< std::string >&  source_paths,
-	                             std::vector< std::string >&        source_file_search_dirs,
-	                             std::vector< std::string >&        source_file_pathnames )
+	static void get_source_data( const plus::string&                 project_dir,
+	                             const std::vector< plus::string >&  source_paths,
+	                             std::vector< plus::string >&        source_file_search_dirs,
+	                             std::vector< plus::string >&        source_file_pathnames )
 	{
 		if ( !source_paths.empty() )
 		{
 			// 'sources' directive specifies source files or source list files.
-			typedef std::vector< std::string >::const_iterator str_iter;
+			typedef std::vector< plus::string >::const_iterator str_iter;
 			
 			for ( str_iter it = source_paths.begin();  it != source_paths.end();  ++it )
 			{
-				const std::string& project_relative_path = *it;
+				const plus::string& project_relative_path = *it;
 				
 				ASSERT( project_dir[ project_dir.size() - 1 ] == '/' );
 				
 				// project_dir has trailing slash, add another for sentinel
-				std::string absolute_path = project_dir + "/" + project_relative_path;
+				plus::string absolute_path = project_dir + "/" + project_relative_path;
 				
 				if ( io::directory_exists( absolute_path ) )
 				{
@@ -493,18 +493,18 @@ namespace tool
 		}
 	}
 	
-	static std::vector< std::string > find_sources( const std::vector< std::string >&  source_filenames,
-	                                                const std::vector< std::string >&  search_dir_pathnames )
+	static std::vector< plus::string > find_sources( const std::vector< plus::string >&  source_filenames,
+	                                                 const std::vector< plus::string >&  search_dir_pathnames )
 	{
-		std::vector< std::string > result;
+		std::vector< plus::string > result;
 		
 		// We have filenames -- now, find them
 		
-		typedef std::vector< std::string >::const_iterator str_iter;
+		typedef std::vector< plus::string >::const_iterator str_iter;
 		
 		for ( str_iter it = source_filenames.begin();  it != source_filenames.end();  ++it )
 		{
-			const std::string& source_filename = *it;
+			const plus::string& source_filename = *it;
 			
 			result.push_back( FindSourceFileInDirs( source_filename, search_dir_pathnames ) );
 		}
@@ -512,30 +512,36 @@ namespace tool
 		return result;
 	}
 	
-	static void list_sources( const std::vector< std::string >&  source_dirs,
-	                          std::vector< std::string >&        output,
-	                          bool                               source_only_search )
+	static void list_sources( const std::vector< plus::string >&  source_dirs,
+	                          std::vector< plus::string >&        output,
+	                          bool                                source_only_search )
 	{
 		// Enumerate our source files
 		// FIXME:  Doesn't deal with duplicates
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 		{
-			const std::string& source_dir = *it;
+			plus::var_string source_dir = *it;
 			
-			std::vector< std::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
+			std::vector< plus::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
 			
 			if ( !source_only_search )
 			{
-				typedef std::vector< std::string >::iterator Iter;
+				typedef std::vector< plus::string >::iterator Iter;
 				
 				for ( Iter it = deepSources.begin();  it != deepSources.end();  ++ it )
 				{
-					std::string& pathname = *it;
+					plus::string& pathname = *it;
 					
-					pathname.insert( pathname.begin() + source_dir.size(), '/' );
+					plus::var_string mutable_path;
+					
+					mutable_path.swap( pathname );
+					
+					mutable_path.insert( mutable_path.begin() + source_dir.size(), '/' );
+					
+					mutable_path.swap( pathname );
 				}
 			}
 			
@@ -545,15 +551,15 @@ namespace tool
 		}
 	}
 	
-	static bool filename_belongs( const std::string& source_path, const std::vector< std::string >& tools )
+	static bool filename_belongs( const plus::string& source_path, const std::vector< plus::string >& tools )
 	{
 		return std::find( tools.begin(),
 		                  tools.end(),
 		                  io::get_filename( source_path ) ) != tools.end();
 	}
 	
-	static std::size_t partition_sources( const std::vector< std::string >&  tool_filenames,
-	                                      std::vector< std::string >&        source_paths )
+	static std::size_t partition_sources( const std::vector< plus::string >&  tool_filenames,
+	                                      std::vector< plus::string >&        source_paths )
 	{
 		std::size_t n_tools = std::partition( source_paths.begin(),
 		                                      source_paths.end(),
@@ -567,15 +573,15 @@ namespace tool
 	Project::Project()
 	:
 		its_config_data( ConfData() ),
-		its_program_filename  ( std::string() ),
-		its_prefix_source_path( std::string() )
+		its_program_filename  ( plus::string() ),
+		its_prefix_source_path( plus::string() )
 	{
 	}
 	
-	Project::Project( const std::string&  proj,
-	                  Platform            platform,
-	                  const std::string&  project_dir,
-	                  const ConfData&     conf_data )
+	Project::Project( const plus::string&  proj,
+	                  Platform             platform,
+	                  const plus::string&  project_dir,
+	                  const ConfData&      conf_data )
 	:
 		its_name        ( proj            ),
 		its_platform    ( platform        ),
@@ -586,11 +592,11 @@ namespace tool
 		its_prefix_source_path( get_first( conf_data, "precompile" ) ),
 		its_tool_count  ()
 	{
-		const std::string& product_name = get_first( conf_data, "product" );
+		const plus::string& product_name = get_first( conf_data, "product" );
 		
 		its_product_type = ReadProduct( product_name );
 		
-		std::vector< std::string > used_project_names;
+		std::vector< plus::string > used_project_names;
 		
 		switch ( its_product_type )
 		{
@@ -647,11 +653,11 @@ namespace tool
 		}
 		
 		// Try a Source.list file
-		std::string source_list = SourceDotListFile( its_dir_pathname );
+		plus::string source_list = SourceDotListFile( its_dir_pathname );
 		
 		if ( io::item_exists( source_list ) )
 		{
-			std::vector< std::string > listed_sources;
+			std::vector< plus::string > listed_sources;
 			
 			ReadSourceDotList( source_list.c_str(), listed_sources );
 			

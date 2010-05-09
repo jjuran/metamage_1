@@ -14,7 +14,7 @@
 namespace Genie
 {
 	
-	FSTreePtr FSTree_Union::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( parent == NULL )
 		{
@@ -28,7 +28,7 @@ namespace Genie
 	
 	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		std::set< std::string > names_that_have_been_seen;
+		std::set< plus::string > names_that_have_been_seen;
 		
 		FSIteratorPtr top = itsTop->Iterate();
 		

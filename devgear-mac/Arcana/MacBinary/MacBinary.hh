@@ -10,6 +10,9 @@
 #include <list>
 #include <vector>
 
+// plus
+#include "plus/string.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.hh"
 

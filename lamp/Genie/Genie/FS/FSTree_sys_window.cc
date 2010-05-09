@@ -35,7 +35,7 @@ namespace Genie
 	static WindowMap gWindowMap;
 	
 	
-	static FSTreePtr window_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr window_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		WindowMap::const_iterator it;
 		
@@ -108,7 +108,7 @@ namespace Genie
 		return window;
 	}
 	
-	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_window( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, window_lookup, window_iterate );
 	}

@@ -43,14 +43,14 @@ namespace Genie
 		std::swap( itsWindowKey, other.itsWindowKey );
 	}
 	
-	typedef std::map< std::string, ViewParameters > ViewParametersSubMap;
+	typedef std::map< plus::string, ViewParameters > ViewParametersSubMap;
 	
 	typedef std::map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	
 	
-	static const ViewParameters* FindView( const FSTree* parent, const std::string& name )
+	static const ViewParameters* FindView( const FSTree* parent, const plus::string& name )
 	{
 		ViewParametersMap::const_iterator the_submap = gViewParametersMap.find( parent );
 		
@@ -69,15 +69,15 @@ namespace Genie
 		return NULL;
 	}
 	
-	static bool ViewExists( const FSTree* parent, const std::string& name )
+	static bool ViewExists( const FSTree* parent, const plus::string& name )
 	{
 		return FindView( parent, name ) != NULL;
 	}
 	
-	static void AddViewParameters( const FSTree*       parent,
-	                               const std::string&  name,
-	                               const FSTreePtr&    delegate,
-	                               ViewFactory         factory )
+	static void AddViewParameters( const FSTree*        parent,
+	                               const plus::string&  name,
+	                               const FSTreePtr&     delegate,
+	                               ViewFactory          factory )
 	{
 		ASSERT( delegate.get() != NULL );
 		
@@ -87,7 +87,7 @@ namespace Genie
 		params.itsDelegate = delegate;
 	}
 	
-	static void AddViewWindowKey( const FSTree* parent, const std::string& name, const FSTree* windowKey )
+	static void AddViewWindowKey( const FSTree* parent, const plus::string& name, const FSTree* windowKey )
 	{
 		ASSERT( FindView( parent, name ) != NULL );
 		
@@ -123,7 +123,7 @@ namespace Genie
 		}
 	}
 	
-	static void RemoveViewParameters( const FSTree* parent, const std::string& name )
+	static void RemoveViewParameters( const FSTree* parent, const plus::string& name )
 	{
 		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
 		
@@ -170,8 +170,8 @@ namespace Genie
 		}
 	}
 	
-	static boost::shared_ptr< Ped::View > MakeView( const FSTree*       parent,
-	                                                const std::string&  name )
+	static boost::shared_ptr< Ped::View > MakeView( const FSTree*        parent,
+	                                                const plus::string&  name )
 	{
 		if ( const ViewParameters* params = FindView( parent, name ) )
 		{
@@ -188,7 +188,7 @@ namespace Genie
 		return boost::shared_ptr< Pedestal::View >();
 	}
 	
-	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const std::string& name )
+	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const plus::string& name )
 	{
 		const ViewParameters* params = FindView( parent, name );
 		
@@ -207,7 +207,7 @@ namespace Genie
 		return delegate;
 	}
 	
-	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const std::string& name )
+	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const plus::string& name )
 	{
 		const ViewParameters* params = FindView( parent, name );
 		
@@ -228,8 +228,8 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&    parent,
-	                                           const std::string&  name ) const
+	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&     parent,
+	                                           const plus::string&  name ) const
 	{
 		FSTreePtr delegate = Premapped_Factory( parent, name, itsMappings, itsDestructor );
 		
@@ -242,7 +242,7 @@ namespace Genie
 		
 		const FSTree* key = parent.get();
 		
-		const std::string& name = target->Name();
+		const plus::string& name = target->Name();
 		
 		FSTreePtr delegate = CreateDelegate( parent, name );
 		
@@ -269,7 +269,7 @@ namespace Genie
 	{
 		const FSTree* parent = ParentKey();
 		
-		const std::string& name = Name();
+		const plus::string& name = Name();
 		
 		if ( ViewExists( parent, name ) )
 		{
@@ -291,7 +291,7 @@ namespace Genie
 	{
 		const FSTree* parent = ParentRef().get();
 		
-		const std::string& name = Name();
+		const plus::string& name = Name();
 		
 		if ( ViewExists( parent, name ) )
 		{
@@ -317,7 +317,7 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr FSTree_View::Lookup( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_View::Lookup( const plus::string& name, const FSTree* parent ) const
 	{
 		return GetViewDelegate( this )->Lookup( name, parent );
 	}

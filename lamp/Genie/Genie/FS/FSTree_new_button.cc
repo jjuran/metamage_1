@@ -188,7 +188,7 @@ namespace Genie
 	
 	struct Button_Title
 	{
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			return plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
 		}
@@ -281,8 +281,10 @@ namespace Genie
 	class FSTree_Button_socket : public FSTree
 	{
 		public:
-			FSTree_Button_socket( const FSTreePtr&    parent,
-	                              const std::string&  name ) : FSTree( parent, name )
+			FSTree_Button_socket( const FSTreePtr&     parent,
+	                              const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
@@ -310,7 +312,9 @@ namespace Genie
 	{
 		public:
 			Button_click_Trigger( const FSTreePtr&     parent,
-			                      const std::string&   name ) : Trigger_Base( parent, name )
+			                      const plus::string&  name )
+			:
+				Trigger_Base( parent, name )
 			{
 			}
 			
@@ -326,8 +330,8 @@ namespace Genie
 	
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -346,7 +350,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_button( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_button( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

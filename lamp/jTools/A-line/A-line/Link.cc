@@ -51,10 +51,10 @@ namespace tool
 	class RemoveDirTask : public Task
 	{
 		private:
-			std::string its_pathname;
+			plus::string its_pathname;
 		
 		public:
-			RemoveDirTask( const std::string& pathname ) : its_pathname( pathname )
+			RemoveDirTask( const plus::string& pathname ) : its_pathname( pathname )
 			{
 			}
 			
@@ -73,21 +73,21 @@ namespace tool
 	}
 	
 	
-	static void AddProjectImports( const Project& project, Platform platform, std::vector< std::string >& link_input_arguments )
+	static void AddProjectImports( const Project& project, Platform platform, std::vector< plus::string >& link_input_arguments )
 	{
-		const std::vector< std::string >& used_project_names = project.AllUsedProjects();
+		const std::vector< plus::string >& used_project_names = project.AllUsedProjects();
 		
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter the_name = used_project_names.begin();  the_name != used_project_names.end();  ++the_name )
 		{
 			const Project& used_project = GetProject( *the_name, platform );
 			
-			const std::vector< std::string >& library_imports = used_project.LibImports();
+			const std::vector< plus::string >& library_imports = used_project.LibImports();
 			
 			for ( Iter the_import = library_imports.begin();  the_import != library_imports.end();  ++the_import )
 			{
-				const std::string& import = *the_import;
+				const plus::string& import = *the_import;
 				
 				if ( import[ 0 ] == '-' )
 				{
@@ -99,7 +99,7 @@ namespace tool
 				}
 				else
 				{
-					std::string library_pathname = used_project.ProjectFolder() / import;
+					plus::string library_pathname = used_project.ProjectFolder() / import;
 					
 					link_input_arguments.push_back( io::file_exists( library_pathname ) ? library_pathname : import );
 				}
@@ -108,9 +108,9 @@ namespace tool
 	}
 	
 	
-	static void AddFrameworks( const std::vector< std::string >& frameworkNames, std::vector< std::string >& v )
+	static void AddFrameworks( const std::vector< plus::string >& frameworkNames, std::vector< plus::string >& v )
 	{
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = frameworkNames.begin();  it != frameworkNames.end();  ++it )
 		{
@@ -126,7 +126,7 @@ namespace tool
 		return product == productStaticLib  ||  product == productDropIn;
 	}
 	
-	static void RemoveNonLibs( std::vector< std::string >& usedProjects, Platform platform )
+	static void RemoveNonLibs( std::vector< plus::string >& usedProjects, Platform platform )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
@@ -135,7 +135,7 @@ namespace tool
 		                                                                   platform ) ) ) - usedProjects.begin() );
 	}
 	
-	static std::string DirCreate_Idempotent( const std::string& dir )
+	static plus::string DirCreate_Idempotent( const plus::string& dir )
 	{
 		if ( !io::item_exists( dir ) )
 		{
@@ -145,15 +145,15 @@ namespace tool
 		return dir;
 	}
 	
-	static void CreateAppBundle( const std::string& location, const std::string& name )
+	static void CreateAppBundle( const plus::string& location, const plus::string& name )
 	{
-		std::string package   = DirCreate_Idempotent( location / name );
-		std::string contents  = DirCreate_Idempotent(   package  / "Contents" );
-		std::string macOS     = DirCreate_Idempotent(     contents / "MacOS" );
-		std::string resources = DirCreate_Idempotent(     contents / "Resources" );
+		plus::string package   = DirCreate_Idempotent( location / name );
+		plus::string contents  = DirCreate_Idempotent(   package  / "Contents" );
+		plus::string macOS     = DirCreate_Idempotent(     contents / "MacOS" );
+		plus::string resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
-	static bool check_file_contents( p7::fd_t fd, const std::string& desired )
+	static bool check_file_contents( p7::fd_t fd, const plus::string& desired )
 	{
 		const size_t size = desired.size();
 		
@@ -161,7 +161,7 @@ namespace tool
 		
 		if ( sizes_match )
 		{
-			std::string actual;
+			plus::var_string actual;
 			
 			actual.resize( size );
 			
@@ -174,7 +174,7 @@ namespace tool
 		return false;
 	}
 	
-	static void WritePkgInfo( const char* pathname, const std::string& contents )
+	static void WritePkgInfo( const char* pathname, const plus::string& contents )
 	{
 		n::owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_rdwr | p7::o_creat );
 		
@@ -187,28 +187,28 @@ namespace tool
 	}
 	
 	
-	static void AddLibraryLinkArgs( const std::vector< std::string >& usedLibs, std::vector< std::string >& v )
+	static void AddLibraryLinkArgs( const std::vector< plus::string >& usedLibs, std::vector< plus::string >& v )
 	{
 		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 		// Somehow, this is actually required to actually link anything on Unix.
 		
-		typedef std::vector< std::string >::const_reverse_iterator Iter;
+		typedef std::vector< plus::string >::const_reverse_iterator Iter;
 		
 		for ( Iter it = usedLibs.rbegin();  it != usedLibs.rend();  ++it )
 		{
-			const std::string& name = *it;
+			const plus::string& name = *it;
 			
 			v.push_back( "-l" + name );
 		}
 	}
 	
-	static void UpdateInputStamp( const TaskPtr& task, const std::string& input_pathname )
+	static void UpdateInputStamp( const TaskPtr& task, const plus::string& input_pathname )
 	{
 		task->UpdateInputStamp( p7::stat( input_pathname ).st_mtime );
 	}
 	
-	static std::string diagnostics_file_path( const std::string&  dir_path,
-	                                          const std::string&  target_path )
+	static plus::string diagnostics_file_path( const plus::string&  dir_path,
+	                                           const plus::string&  target_path )
 	{
 		return dir_path / io::get_filename( target_path ) + ".txt";
 	}
@@ -216,10 +216,10 @@ namespace tool
 	class LinkingTask : public CommandTask
 	{
 		public:
-			LinkingTask( const Command&                     command,
-			             const std::string&                 output,
-			             const std::vector< std::string >&  input,
-			             const std::string&                 diagnostics )
+			LinkingTask( const Command&                      command,
+			             const plus::string&                 output,
+			             const std::vector< plus::string >&  input,
+			             const plus::string&                 diagnostics )
 			: CommandTask( command,
 			               output,
 			               diagnostics_file_path( diagnostics, output ),
@@ -229,11 +229,11 @@ namespace tool
 			}
 			
 			template < class Iter >
-			LinkingTask( const Command&      command,
-			             const std::string&  output,
-			             Iter                input_begin,
-			             Iter                input_end,
-			             const std::string&  diagnostics )
+			LinkingTask( const Command&       command,
+			             const plus::string&  output,
+			             Iter                 input_begin,
+			             Iter                 input_end,
+			             const plus::string&  diagnostics )
 			: CommandTask( command,
 			               output,
 			               diagnostics_file_path( diagnostics, output ),
@@ -247,15 +247,15 @@ namespace tool
 	
 	void LinkingTask::Make()
 	{
-		std::string output_filename = io::get_filename( OutputPath() );
+		plus::string output_filename = io::get_filename( OutputPath() );
 		
 		ExecuteCommand( shared_from_this(), "Linking: " + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
 	
-	static std::string BundleResourceFileRelativePath( const std::string& linkName )
+	static plus::string BundleResourceFileRelativePath( const plus::string& linkName )
 	{
-		std::string bundleName   = linkName + ".app";
-		std::string rsrcFileName = linkName + ".rsrc";
+		plus::string  bundleName   = linkName + ".app";
+		plus::string  rsrcFileName = linkName + ".rsrc";
 		
 		return bundleName / "Contents" / "Resources" / rsrcFileName;
 	}
@@ -263,18 +263,20 @@ namespace tool
 	class RezzingTask : public FileTask
 	{
 		private:
-			std::vector< std::string >  itsInputPathnames;
-			std::string                 itsIncludeDirPathname;
-			bool                        itIsTargetingLamp;
+			std::vector< plus::string >  itsInputPathnames;
+			plus::string                 itsIncludeDirPathname;
+			bool                         itIsTargetingLamp;
 		
 		public:
-			RezzingTask( const std::vector< std::string >&  input,
-			             const std::string&                 output,
-			             const std::string&                 includeDir,
-			             bool                               lamp ) : FileTask             ( output     ),
-			                                                         itsInputPathnames    ( input      ),
-			                                                         itsIncludeDirPathname( includeDir ),
-			                                                         itIsTargetingLamp    ( lamp       )
+			RezzingTask( const std::vector< plus::string >&  input,
+			             const plus::string&                 output,
+			             const plus::string&                 includeDir,
+			             bool                                lamp )
+			:
+				FileTask             ( output     ),
+				itsInputPathnames    ( input      ),
+				itsIncludeDirPathname( includeDir ),
+				itIsTargetingLamp    ( lamp       )
 			{
 			}
 			
@@ -318,19 +320,19 @@ namespace tool
 	}
 	
 	
-	static std::string Project_FindResourceFile( const Project& project, const std::string& filespec )
+	static plus::string Project_FindResourceFile( const Project& project, const plus::string& filespec )
 	{
 		return project.FindResourceFile( filespec );
 	}
 	
-	static TaskPtr MakeRezTask( const Project&      project,
-	                            const std::string&  output_pathname,
-	                            bool                needsCarbResource,
-	                            bool                lamp )
+	static TaskPtr MakeRezTask( const Project&       project,
+	                            const plus::string&  output_pathname,
+	                            bool                 needsCarbResource,
+	                            bool                 lamp )
 	{
-		const std::vector< std::string >& input_filenames = project.UsedRezFiles();
+		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
 		
-		std::vector< std::string > input_pathnames( input_filenames.size() );
+		std::vector< plus::string > input_pathnames( input_filenames.size() );
 		
 		std::transform( input_filenames.begin(),
 		                input_filenames.end(),
@@ -342,7 +344,7 @@ namespace tool
 			input_pathnames.push_back( project.FindResourceFile( "Pedestal:CarbonApp.r" ) );
 		}
 		
-		const std::string& includeDir = project.ProjectFolder();
+		const plus::string& includeDir = project.ProjectFolder();
 		
 		TaskPtr rez_task = seize_ptr( new RezzingTask( input_pathnames,
 		                                               output_pathname,
@@ -359,15 +361,17 @@ namespace tool
 	class ResourceCopyingTask : public FileTask
 	{
 		private:
-			std::vector< std::string >  itsInputPathnames;
-			bool                        itIsTargetingLamp;
+			std::vector< plus::string >  itsInputPathnames;
+			bool                         itIsTargetingLamp;
 		
 		public:
-			ResourceCopyingTask( const std::vector< std::string >&  input,
-			                     const std::string&                 output,
-			                     bool                               lamp ) : FileTask         ( output   ),
-			                                                                 itsInputPathnames( input    ),
-			                                                                 itIsTargetingLamp( lamp     )
+			ResourceCopyingTask( const std::vector< plus::string >&  input,
+			                     const plus::string&                 output,
+			                     bool                                lamp )
+			:
+				FileTask         ( output   ),
+				itsInputPathnames( input    ),
+				itIsTargetingLamp( lamp     )
 			{
 			}
 			
@@ -402,15 +406,15 @@ namespace tool
 	}
 	
 	
-	static void make_task_depend_on_libs( const TaskPtr&                     task,
-	                                      const std::vector< std::string >&  used_project_names,
-	                                      Platform                           platform )
+	static void make_task_depend_on_libs( const TaskPtr&                      task,
+	                                      const std::vector< plus::string >&  used_project_names,
+	                                      Platform                            platform )
 	{
-		typedef std::vector< std::string >::const_iterator Iter;
+		typedef std::vector< plus::string >::const_iterator Iter;
 		
 		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
 		{
-			const std::string& name = *it;
+			const plus::string& name = *it;
 			
 			const Project& project  = GetProject( name, platform );
 			
@@ -421,10 +425,10 @@ namespace tool
 	}
 	
 	template < class Iter >
-	static TaskPtr MakeStaticLibTask( const std::string&  output_pathname,
-	                                  Iter                begin,
-	                                  Iter                end,
-	                                  const std::string&  diagnostics_dir )
+	static TaskPtr MakeStaticLibTask( const plus::string&  output_pathname,
+	                                  Iter                 begin,
+	                                  Iter                 end,
+	                                  const plus::string&  diagnostics_dir )
 	{
 		Command link_command;
 		
@@ -442,10 +446,10 @@ namespace tool
 	class object_filename_filler
 	{
 		private:
-			const std::string& its_objects_dir;
+			const plus::string& its_objects_dir;
 		
 		public:
-			object_filename_filler( const std::string& objects )
+			object_filename_filler( const plus::string& objects )
 			:
 				its_objects_dir( objects )
 			{
@@ -454,7 +458,7 @@ namespace tool
 				ASSERT( *(its_objects_dir.end() - 1) != '/' );
 			}
 			
-			std::string operator()( const std::string& source_path ) const
+			plus::string operator()( const plus::string& source_path ) const
 			{
 				// The last dot in the source path.
 				// There should definitely be a dot in the filename, or the file
@@ -476,7 +480,7 @@ namespace tool
 				                              + 1
 				                              + dot - path_offset;
 				
-				std::string result;
+				plus::var_string result;
 				
 				result.reserve( truncated_length + STRLEN( ".o" ) );
 				
@@ -502,9 +506,9 @@ namespace tool
 			}
 	};
 	
-	static void FillObjectFiles( const std::string&                 objects_dir,
-	                             const std::vector< std::string >&  source_paths,
-	                             std::vector< std::string >&        object_pathnames )
+	static void FillObjectFiles( const plus::string&                 objects_dir,
+	                             const std::vector< plus::string >&  source_paths,
+	                             std::vector< plus::string >&        object_pathnames )
 	{
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
@@ -512,12 +516,12 @@ namespace tool
 		                object_filename_filler( objects_dir ) );
 	}
 	
-	void NameObjectFiles( const Project&               project,
-	                      std::vector< std::string >&  object_pathnames )
+	void NameObjectFiles( const Project&                project,
+	                      std::vector< plus::string >&  object_pathnames )
 	{
-		std::string objects_dir = ProjectObjectsDirPath( project.Name() );
+		plus::string objects_dir = ProjectObjectsDirPath( project.Name() );
 		
-		const std::vector< std::string >& sources = project.Sources();
+		const std::vector< plus::string >& sources = project.Sources();
 		
 		object_pathnames.resize( sources.size() );
 		
@@ -535,11 +539,11 @@ namespace tool
 		
 		const bool real_unix = !lamp;  // unix is an evil macro on Linux
 		
-		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
+		plus::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
 		TaskPtr rmdir_diagnostics_task = seize_ptr( new RemoveDirTask( diagnosticsDir ) );
 		
-		std::vector< std::string > objectFiles;
+		std::vector< plus::string > objectFiles;
 		
 		NameObjectFiles( project, objectFiles );
 		
@@ -551,9 +555,9 @@ namespace tool
 		
 		const bool hasStaticLib = exports_static_lib  ||  product == productToolkit;
 		
-		std::string libsDir = LibrariesDirPath();
+		plus::string libsDir = LibrariesDirPath();
 		
-		std::string library_pathname;
+		plus::string library_pathname;
 		
 		TaskPtr lib_task;
 		
@@ -561,10 +565,10 @@ namespace tool
 		
 		if ( non_empty_lib )
 		{
-			std::string library_prefix    = real_unix ? "lib" : "";
-			std::string library_extension = real_unix ? ".a" : ".lib";
+			plus::string library_prefix    = real_unix ? "lib" : "";
+			plus::string library_extension = real_unix ? ".a" : ".lib";
 			
-			std::string library_filename = library_prefix + project.Name() + library_extension;
+			plus::string library_filename = library_prefix + project.Name() + library_extension;
 			
 			library_pathname = libsDir / library_filename;
 			
@@ -594,11 +598,11 @@ namespace tool
 		
 		AugmentCommand( command, cmdgen.TargetArchitecture() );
 		
-		std::string driverName;
+		plus::string driverName;
 		
 		const char* fileType = NULL;
 		
-		std::string creator = project.CreatorCode();
+		plus::string creator = project.CreatorCode();
 		
 	#if ALINE_MAC_DEVELOPMENT
 		
@@ -656,7 +660,7 @@ namespace tool
 		
 		TaskPtr link_dependency_task = seize_ptr( new NullTask() );
 		
-		std::vector< std::string > link_input_arguments;
+		std::vector< plus::string > link_input_arguments;
 		
 		if ( toolkit )
 		{
@@ -680,13 +684,13 @@ namespace tool
 		link_prerequisite->AddDependent( link_dependency_task );
 		
 		// A copy so we can munge it
-		std::vector< std::string > usedProjects = project.AllUsedProjects();
+		std::vector< plus::string > usedProjects = project.AllUsedProjects();
 		
 		usedProjects.pop_back();  // we're last; drop us
 		
 		RemoveNonLibs( usedProjects, targetInfo.platform );
 		
-		std::string libsDirOption;
+		plus::string libsDirOption;
 		
 		if ( !usedProjects.empty() )
 		{
@@ -712,7 +716,7 @@ namespace tool
 			bool has_frameworks = !project.Frameworks().empty();
 			
 			AddFrameworks( has_frameworks ? project.Frameworks()
-			                              : std::vector< std::string >( 1, "Carbon" ),
+			                              : std::vector< plus::string >( 1, "Carbon" ),
 			               link_input_arguments );
 		}
 		
@@ -722,13 +726,13 @@ namespace tool
 			command.push_back( cmdgen.LinkerOptions() );
 		}
 		
-		std::string outputDir = ProjectOutputDirPath( project.Name() );
+		plus::string outputDir = ProjectOutputDirPath( project.Name() );
 		
 		command.push_back( "-o" );
 		
 		if ( toolkit )
 		{
-			typedef std::vector< std::string >::const_iterator Iter;
+			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			const Iter end = objectFiles.begin() + n_tools;
 			
@@ -736,9 +740,9 @@ namespace tool
 			
 			for ( Iter the_object = objectFiles.begin();  the_object != end;  ++the_object, ++the_task )
 			{
-				const std::string& objectFile = *the_object;
+				const plus::string& objectFile = *the_object;
 				
-				std::string linkOutput = outputDir / io::get_filename( objectFile );
+				plus::var_string linkOutput = outputDir / io::get_filename( objectFile );
 				
 				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
 				
@@ -758,9 +762,9 @@ namespace tool
 		}
 		else
 		{
-			std::string exeDir = outputDir;
+			plus::string exeDir = outputDir;
 			
-			std::string linkName = project.ProgramName();
+			plus::string linkName = project.ProgramName();
 			
 			if ( linkName == "" )
 			{
@@ -773,15 +777,15 @@ namespace tool
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				std::string pkginfo_dir;
+				plus::string pkginfo_dir;
 				
 				if ( bundle )
 				{
-					std::string bundleName = linkName + ".app";
+					plus::string bundleName = linkName + ".app";
 					
 					CreateAppBundle( outputDir, bundleName );
 					
-					std::string contents( outputDir / bundleName / "Contents" );
+					plus::string contents( outputDir / bundleName / "Contents" );
 					
 					exeDir = contents / "MacOS";
 					
@@ -794,7 +798,7 @@ namespace tool
 				
 				if ( fileType != NULL )
 				{
-					std::string pkginfo = pkginfo_dir / "PkgInfo";
+					plus::string pkginfo = pkginfo_dir / "PkgInfo";
 					
 					WritePkgInfo( pkginfo.c_str(), fileType + creator );
 					
@@ -805,7 +809,7 @@ namespace tool
 				}
 			}
 			
-			std::string outFile = exeDir / linkName;
+			plus::string outFile = exeDir / linkName;
 			
 			TaskPtr link_task = seize_ptr( new LinkingTask( command,
 			                                                outFile,
@@ -818,9 +822,9 @@ namespace tool
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				const std::vector< std::string >& rsrc_filenames = project.UsedRsrcFiles();
+				const std::vector< plus::string >& rsrc_filenames = project.UsedRsrcFiles();
 				
-				std::vector< std::string > rsrc_pathnames( rsrc_filenames.size() );
+				std::vector< plus::string > rsrc_pathnames( rsrc_filenames.size() );
 				
 				std::transform( rsrc_filenames.begin(), 
 				                rsrc_filenames.end(),
@@ -835,7 +839,7 @@ namespace tool
 				
 				if ( needsCarbResource || !project.UsedRezFiles().empty() )
 				{
-					std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
+					plus::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
 					
 					rsrc_pathnames.push_back( rez_output_pathname );
 					
@@ -850,8 +854,8 @@ namespace tool
 				
 				if ( !rsrc_pathnames.empty() )
 				{
-					std::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
-					                              : outFile;
+					plus::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
+					                               : outFile;
 					
 					TaskPtr copy_rsrcs = seize_ptr( new ResourceCopyingTask( rsrc_pathnames,
 					                                                         rsrcFile,

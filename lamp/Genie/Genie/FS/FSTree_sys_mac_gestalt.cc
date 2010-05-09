@@ -13,6 +13,9 @@
 // iota
 #include "iota/hexidecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -146,7 +149,7 @@ namespace Genie
 		return true;
 	}
 	
-	static inline bool is_valid_Gestalt_Selector_name( const std::string& name )
+	static inline bool is_valid_Gestalt_Selector_name( const plus::string& name )
 	{
 		if ( !canonical_32_bit_hex::applies( name ) )
 		{
@@ -158,7 +161,7 @@ namespace Genie
 		return is_valid_Gestalt_Selector( N::Gestalt_Selector( decoded ) );
 	}
 	
-	static FSTreePtr gestalt_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr gestalt_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !is_valid_Gestalt_Selector_name( name ) )
 		{
@@ -177,7 +180,7 @@ namespace Genie
 				
 				const ino_t inode = 0;
 				
-				std::string name;
+				plus::var_string name;
 				
 				name.resize( !valid + 8 );
 				
@@ -204,7 +207,7 @@ namespace Genie
 		                converter );
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}

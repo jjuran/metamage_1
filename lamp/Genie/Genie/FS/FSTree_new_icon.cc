@@ -155,8 +155,8 @@ namespace Genie
 		
 	}
 	
-	static FSTreePtr Data_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Data_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		boost::shared_ptr< IconData >& data = gIconMap[ parent.get() ].data;
 		
@@ -169,8 +169,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -191,7 +191,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_icon( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_icon( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

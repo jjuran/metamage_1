@@ -31,7 +31,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static void ExtractInclude( const std::string& line, IncludesCache& includes )
+	static void ExtractInclude( const plus::string& line, IncludesCache& includes )
 	{
 		struct BadIncludeDirective {};
 		
@@ -69,7 +69,7 @@ namespace tool
 					
 					if ( !~end )  throw BadIncludeDirective();
 					
-					std::vector< std::string >& v( c == '"' ? includes.user : includes.system );
+					std::vector< plus::string >& v( c == '"' ? includes.user : includes.system );
 					
 					v.push_back( line.substr( pos, end - pos ) );
 				}
@@ -93,9 +93,9 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string line( s->begin(), s->end() - 1 );
+			plus::string line( s->begin(), s->end() - 1 );
 			
 			ExtractInclude( line, result );
 		}

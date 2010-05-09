@@ -15,8 +15,8 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_Volumes( const FSTreePtr&    parent,
-	                              const std::string&  name );
+	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
+	                              const plus::string&  name );
 	
 }
 

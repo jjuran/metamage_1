@@ -30,7 +30,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static bool is_valid_WindowRef_name( const std::string& name )
+	static bool is_valid_WindowRef_name( const plus::string& name )
 	{
 		if ( !canonical_32_bit_hex::applies( name ) )
 		{
@@ -42,7 +42,7 @@ namespace Genie
 		return WindowList_contains( window );
 	}
 	
-	static FSTreePtr WindowRef_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr WindowRef_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !is_valid_WindowRef_name( name ) )
 		{
@@ -59,7 +59,7 @@ namespace Genie
 			{
 				const ino_t inode = 0;
 				
-				std::string name = plus::encode_32_bit_hex( (unsigned) window );
+				plus::string name = plus::encode_32_bit_hex( (unsigned) window );
 				
 				return FSNode( inode, name );
 			}
@@ -77,7 +77,7 @@ namespace Genie
 		                converter );
 	}
 	
-	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, WindowRef_lookup, WindowRef_iterate );
 	}

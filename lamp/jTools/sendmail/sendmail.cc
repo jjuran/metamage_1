@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 #include <vector>
 
 // Standard C/C++
@@ -25,6 +24,7 @@
 
 // plus
 #include "plus/pointer_to_function.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/Folders.hh"
@@ -76,9 +76,9 @@ namespace tool
 	}
 	
 	
-	static std::string DomainFromEmailAddress( const std::string& emailAddr )
+	static plus::string DomainFromEmailAddress( const plus::string& emailAddr )
 	{
-		std::string::size_type at = emailAddr.find( '@' );
+		plus::string::size_type at = emailAddr.find( '@' );
 		
 		if ( at >= emailAddr.size() - 1 )
 		{
@@ -88,7 +88,7 @@ namespace tool
 		return emailAddr.substr( at + 1, emailAddr.find( '>' ) - (at + 1) );
 	}
 	
-	static std::string OTLookup( const std::string& domain )
+	static plus::string OTLookup( const plus::string& domain )
 	{
 	#if TARGET_RT_MAC_MACHO
 		
@@ -128,9 +128,9 @@ namespace tool
 		return p7::in_addr_t( addr.s_addr );
 	}
 	
-	static void Relay( const std::string&  returnPath,
-	                   const std::string&  forwardPath,
-	                   const FSSpec&       messageFile )
+	static void Relay( const plus::string&  returnPath,
+	                   const plus::string&  forwardPath,
+	                   const FSSpec&        messageFile )
 	{
 		if ( forwardPath == "" )
 		{
@@ -142,7 +142,7 @@ namespace tool
 		
 		std::printf( "Relaying from %s to %s\n", returnPath.c_str(), forwardPath.c_str() );
 		
-		std::string smtpServer;
+		plus::string smtpServer;
 		
 		if ( gRelayServer != NULL )
 		{
@@ -152,7 +152,7 @@ namespace tool
 		}
 		else
 		{
-			std::string rcptDomain = DomainFromEmailAddress( forwardPath );
+			plus::string rcptDomain = DomainFromEmailAddress( forwardPath );
 			
 			//smtpServer = ResolverLookup( rcptDomain );
 			smtpServer = OTLookup( rcptDomain );
@@ -212,17 +212,17 @@ namespace tool
 	}
 	
 	template < class Stream >
-	static std::string ReadOneLinerFromStream( Stream fileH )
+	static plus::string ReadOneLinerFromStream( Stream fileH )
 	{
-		std::string contents;
+		plus::var_string contents;
 		
 		contents.resize( io::get_file_size( fileH ) );
 		
 		io::read( fileH, &contents[0], contents.size() );
 		
-		const std::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
-		                                                                    contents.end(),
-		                                                                    std::ptr_fun( IsControlChar ) );
+		const plus::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
+		                                                                     contents.end(),
+		                                                                     std::ptr_fun( IsControlChar ) );
 		
 		const std::size_t length_of_first_line = end_of_first_line - contents.begin();
 		
@@ -232,7 +232,7 @@ namespace tool
 	}
 	
 	template < class FileSpec >
-	static inline std::string ReadOneLinerFromFile( const FileSpec& file )
+	static inline plus::string ReadOneLinerFromFile( const FileSpec& file )
 	{
 		return ReadOneLinerFromStream( io::open_for_reading( file ) );
 	}
@@ -241,16 +241,18 @@ namespace tool
 	class Transmitter
 	{
 		private:
-			std::string  itsReturnPath;
-			FSSpec       itsMessageFile;
-			FSSpec       itsDestinations;
+			plus::string  itsReturnPath;
+			FSSpec        itsMessageFile;
+			FSSpec        itsDestinations;
 		
 		public:
-			Transmitter( const std::string&  returnPath,
-			             const FSSpec&       message,
-			             const FSSpec&       dests ) : itsReturnPath  ( returnPath ),
-			                                           itsMessageFile ( message    ),
-			                                           itsDestinations( dests      )
+			Transmitter( const plus::string&  returnPath,
+			             const FSSpec&        message,
+			             const FSSpec&        dests )
+			:
+				itsReturnPath  ( returnPath ),
+				itsMessageFile ( message    ),
+				itsDestinations( dests      )
 			{
 			}
 			

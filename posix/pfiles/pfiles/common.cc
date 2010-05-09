@@ -7,13 +7,16 @@
 
 #include "pfiles/common.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace io
 {
 	
-	std::string get_filename( const std::string& pathname )
+	plus::string get_filename( const plus::string& pathname )
 	{
-		std::string result = pathname;
+		plus::var_string result = pathname;
 		
 		std::size_t last_slash = result.find_last_of( "/" );
 		
@@ -32,9 +35,9 @@ namespace io
 		return result.substr( last_slash + 1, result.npos );
 	}
 	
-	std::string get_preceding_directory( const std::string& pathname )
+	plus::string get_preceding_directory( const plus::string& pathname )
 	{
-		std::string result = pathname;
+		plus::var_string result = pathname;
 		
 		std::size_t last_slash = result.find_last_of( "/" );
 		

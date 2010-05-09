@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/make_string.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/Processes.hh"
@@ -31,11 +32,11 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static std::string encoded_ProcessSerialNumber( const ProcessSerialNumber& psn )
+	static plus::string encoded_ProcessSerialNumber( const ProcessSerialNumber& psn )
 	{
 		const bool extended = psn.highLongOfPSN != 0;
 		
-		std::string name;
+		plus::var_string name;
 		
 		const size_t eight = sizeof psn.highLongOfPSN * 2;
 		
@@ -56,7 +57,7 @@ namespace Genie
 	}
 	
 	
-	static ProcessSerialNumber decoded_ProcessSerialNumber( const std::string& name )
+	static ProcessSerialNumber decoded_ProcessSerialNumber( const plus::string& name )
 	{
 		ProcessSerialNumber psn = { 0, 0 };
 		
@@ -133,7 +134,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[];
 	
-	static FSTreePtr psn_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr psn_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		const ProcessSerialNumber psn = decoded_ProcessSerialNumber( name.c_str() );
 		
@@ -154,7 +155,7 @@ namespace Genie
 			{
 				const ino_t inode = 0;
 				
-				std::string name = encoded_ProcessSerialNumber( psn );
+				plus::string name = encoded_ProcessSerialNumber( psn );
 				
 				return FSNode( inode, name );
 			}
@@ -179,7 +180,7 @@ namespace Genie
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static std::string Read( const FSTree* that, bool binary )
+			static plus::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -200,8 +201,8 @@ namespace Genie
 	class FSTree_sys_mac_proc_PSN_exe : public FSTree_ResolvableSymLink
 	{
 		public:
-			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&    parent,
-			                             const std::string&  name )
+			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&     parent,
+			                             const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -218,16 +219,16 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
 		                            &sys_mac_proc_PSN_name::Read );
 	}
 	
-	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
-	                                     const std::string&  name )
+	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
+	                                     const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
@@ -241,7 +242,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_proc( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_proc( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}

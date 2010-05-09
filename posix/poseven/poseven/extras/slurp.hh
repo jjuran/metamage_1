@@ -9,8 +9,8 @@
 #ifndef POSEVEN_EXTRAS_SLURP_HH
 #define POSEVEN_EXTRAS_SLURP_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/fd_t.hh"
@@ -19,9 +19,9 @@
 namespace poseven
 {
 	
-	std::string slurp( fd_t fd );
+	plus::string slurp( fd_t fd );
 	
-	std::string slurp( const char* path );
+	plus::string slurp( const char* path );
 	
 }
 

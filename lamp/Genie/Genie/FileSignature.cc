@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// plus
+#include "plus/string.hh"
+
 // Nucleus
 //#include "Nucleus/Convert.h"
 
@@ -182,7 +185,7 @@ namespace Genie
 		return N::OSType( '\?\?\?\?' );
 	}
 	
-	N::FileSignature PickFileSignatureForName( const std::string& name )
+	N::FileSignature PickFileSignatureForName( const plus::string& name )
 	{
 		std::size_t dot = name.find_last_of( "." );
 		

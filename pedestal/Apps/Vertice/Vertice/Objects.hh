@@ -7,8 +7,10 @@
 #define VERTICE_OBJECTS_HH
 
 #include <map>
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 #include "Vectoria/Plane3D.hh"
 #include "Vectoria/Point3D.hh"
@@ -233,8 +235,8 @@ namespace Vertice
 	class Context : public Moveable, public MeshModel
 	{
 		private:
-			std::size_t itsParentIndex;
-			std::string itsName;
+			std::size_t   itsParentIndex;
+			plus::string  itsName;
 			
 			std::vector< std::size_t > itsSubcontexts;
 		
@@ -246,18 +248,20 @@ namespace Vertice
 			{
 			}
 			
-			Context( std::size_t         parentIndex,
-			         const std::string&  name,
-			         const V::XMatrix&   transform,
-	                 const V::XMatrix&   inverse ) : Moveable( transform, inverse ),
-	                                                 itsParentIndex( parentIndex ),
-	                                                 itsName       ( name        )
+			Context( std::size_t          parentIndex,
+			         const plus::string&  name,
+			         const V::XMatrix&    transform,
+	                 const V::XMatrix&    inverse )
+			:
+				Moveable( transform, inverse ),
+				itsParentIndex( parentIndex ),
+				itsName       ( name        )
 			{
 			}
 			
 			std::size_t ParentIndex() const  { return itsParentIndex; }
 			
-			const std::string& Name() const  { return itsName; }
+			const plus::string& Name() const  { return itsName; }
 			
 			std::vector< std::size_t > const& Subcontexts() const  { return itsSubcontexts; }
 			

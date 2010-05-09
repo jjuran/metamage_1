@@ -3,9 +3,6 @@
  *	=====
  */
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
@@ -16,6 +13,9 @@
 // POSIX
 #include <dirent.h>
 #include <sys/stat.h>
+
+// plus
+#include "plus/var_string.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -52,7 +52,7 @@ namespace tool
 				{
 					++fail;
 					
-					std::string message = "ls: ";
+					plus::var_string message = "ls: ";
 					
 					message += argv[ i ];
 					

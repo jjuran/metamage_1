@@ -52,12 +52,12 @@ namespace Genie
 	{
 		typedef Genie::Value Value;
 		
-		static std::string Encode( const Value& value );
+		static plus::string Encode( const Value& value );
 		
 		static Value Decode( const char* begin, const char* end );
 	};
 	
-	std::string Value_Scribe::Encode( const Value& value )
+	plus::string Value_Scribe::Encode( const Value& value )
 	{
 		if ( value.flags == 0  &&  value.number == 0 )
 		{
@@ -346,8 +346,8 @@ namespace Genie
 	
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -389,7 +389,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_frame( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_frame( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

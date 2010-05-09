@@ -58,7 +58,7 @@ namespace Genie
 	// We Read() until we have enough data.  If there're not enough data available,
 	// then we either block, or throw EWOULDBLOCK if the stream is non-blocking.
 	
-	const std::string* StreamHandle::Peek( std::size_t minBytes )
+	const plus::string* StreamHandle::Peek( std::size_t minBytes )
 	{
 		if ( IsDisconnected() )
 		{

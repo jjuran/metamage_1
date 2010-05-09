@@ -51,7 +51,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static bool is_valid_drive_name( const std::string& name )
+	static bool is_valid_drive_name( const plus::string& name )
 	{
 		typedef canonical_positive_integer well_formed_name;
 		
@@ -61,7 +61,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[];
 	
-	static FSTreePtr drive_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr drive_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !is_valid_drive_name( name ) )
 		{
@@ -78,7 +78,7 @@ namespace Genie
 			{
 				const ino_t inode = value.dQDrive;
 				
-				std::string name = iota::inscribe_decimal( value.dQDrive );
+				plus::string name = iota::inscribe_decimal( value.dQDrive );
 				
 				return FSNode( inode, name );
 			}
@@ -107,8 +107,8 @@ namespace Genie
 		return GetKeyFromParent( that->ParentRef() );
 	}
 	
-	static FSTreePtr Link_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
+	static FSTreePtr Link_Factory( const FSTreePtr&     parent,
+	                               const plus::string&  name )
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -123,9 +123,9 @@ namespace Genie
 		
 		UnitNumber unit = ~refNum;
 		
-		std::string unitNumber = iota::inscribe_decimal( unit );
+		plus::string unitNumber = iota::inscribe_decimal( unit );
 		
-		std::string target = "/sys/mac/unit/" + unitNumber;
+		plus::string target = "/sys/mac/unit/" + unitNumber;
 		
 		return New_FSTree_SymbolicLink( parent, name, target );
 	}
@@ -190,21 +190,21 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_drive_N_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			const DrvQEl& el = FindDrive( that );
 			
 			const typename Accessor::Result data = Accessor::Get( el );
 			
-			std::string result = Accessor::stringify::apply( data, binary );
+			plus::string result = Accessor::stringify::apply( data, binary );
 			
 			return result;
 		}
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_drive_N_Property< Accessor > Property;
 		
@@ -214,8 +214,8 @@ namespace Genie
 	}
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&    parent,
-	                                  const std::string&  name )
+	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
+	                                  const plus::string&  name )
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -238,7 +238,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, drive_lookup, drive_iterate );
 	}

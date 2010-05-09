@@ -25,6 +25,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/functions/sigaction.hh"
 #include "poseven/functions/vfork.hh"
@@ -149,15 +152,15 @@ namespace tool
 	class AppendWithSpace
 	{
 		public:
-			AppendWithSpace( std::string& ioString ) : myString( ioString )  {}
+			AppendWithSpace( plus::var_string& ioString ) : myString( ioString )  {}
 			
-			void operator()( const std::string& inNew )
+			void operator()( const plus::string& inNew )
 			{
 				myString += " " + inNew;
 			}
 		
 		private:
-			std::string& myString;
+			plus::var_string& myString;
 	};
 	
 	
@@ -166,7 +169,7 @@ namespace tool
 		public:
 			ShellParameterDictionary()  {}
 			
-			std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const;
+			std::vector< plus::string > Lookup( const plus::string& param, bool double_quoted ) const;
 	};
 	
 	template < class T >
@@ -175,9 +178,9 @@ namespace tool
 		return std::vector< T >( 1, value );
 	}
 	
-	std::vector< std::string > ShellParameterDictionary::Lookup( const std::string& param, bool double_quoted ) const
+	std::vector< plus::string > ShellParameterDictionary::Lookup( const plus::string& param, bool double_quoted ) const
 	{
-		std::string single_result;
+		plus::var_string single_result;
 		
 		if ( param == "$" )
 		{
@@ -204,7 +207,7 @@ namespace tool
 		}
 		else if ( param == "@"  ||  param == "*" )
 		{
-			std::vector< std::string > result( gParameterCount );
+			std::vector< plus::string > result( gParameterCount );
 			
 			std::copy( gParameters, gParameters + gParameterCount, result.begin() );
 			
@@ -232,7 +235,9 @@ namespace tool
 			single_result = var;
 		}
 		
-		return MakeVector( single_result );
+		const plus::string& const_result = single_result;
+		
+		return MakeVector( const_result );
 	}
 	
 	static int Open( const char* path, int oflags )
@@ -441,9 +446,9 @@ namespace tool
 		return builtin( argc, argv );
 	}
 	
-	static std::string EscapeForShell( const char* word )
+	static plus::string EscapeForShell( const char* word )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		for ( const char* p = word;  *p != '\0';  ++p )
 		{
@@ -458,9 +463,9 @@ namespace tool
 		return result;
 	}
 	
-	static std::string MakeShellCommandFromBuiltin( char** argv )
+	static plus::string MakeShellCommandFromBuiltin( char** argv )
 	{
-		std::string command = *argv;
+		plus::var_string command = *argv;
 		
 		while ( *++argv != NULL )
 		{
@@ -510,7 +515,7 @@ namespace tool
 		
 		while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
 		{
-			std::string name( argv[ 0 ], eq );
+			plus::string name( argv[ 0 ], eq );
 			
 			setenv( name.c_str(), eq + 1, true );
 			
@@ -656,7 +661,7 @@ namespace tool
 			
 			if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 			{
-				std::string subshell = MakeShellCommandFromBuiltin( argv );
+				plus::string subshell = MakeShellCommandFromBuiltin( argv );
 				
 				const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
 				
@@ -889,7 +894,7 @@ namespace tool
 		return status;
 	}
 	
-	p7::wait_t ExecuteCmdLine( const std::string& cmd )
+	p7::wait_t ExecuteCmdLine( const plus::string& cmd )
 	{
 		List list = Sh::Tokenization( cmd );
 		
@@ -908,7 +913,7 @@ namespace tool
 	
 	p7::wait_t ExecuteCmdLine( const char* cmd )
 	{
-		return ExecuteCmdLine( std::string( cmd ) );
+		return ExecuteCmdLine( plus::string( cmd ) );
 	}
 	
 }

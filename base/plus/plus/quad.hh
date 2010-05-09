@@ -8,14 +8,14 @@
 #ifndef PLUS_QUAD_HH
 #define PLUS_QUAD_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace plus
 {
 	
-	std::string encode_quad( unsigned long q );
+	string encode_quad( unsigned long q );
 	
 }
 

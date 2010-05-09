@@ -24,7 +24,7 @@
 // plus
 #include "plus/concat.hh"
 #include "plus/pointer_to_function.hh"
-#include "plus/string.hh"
+#include "plus/var_string.hh"
 
 // Io
 #include "io/walk.hh"
@@ -93,9 +93,9 @@ namespace tool
 	
 	static bool globally_deleting = false;
 	
-	static std::string global_base_root;
-	static std::string global_local_root;
-	static std::string global_remote_root;
+	static plus::string global_base_root;
+	static plus::string global_local_root;
+	static plus::string global_remote_root;
 	
 	static bool globally_locking_files = false;
 	
@@ -117,12 +117,12 @@ namespace tool
 		return p7::open( path, p7::o_rdonly | p7::o_directory );
 	}
 	
-	static inline n::owned< p7::fd_t > open_dir( const std::string& path )
+	static inline n::owned< p7::fd_t > open_dir( const plus::string& path )
 	{
 		return open_dir( path.c_str() );
 	}
 	
-	static const std::string& mkdir_path( const std::string& path )
+	static const plus::string& mkdir_path( const plus::string& path )
 	{
 		if ( !io::directory_exists( path ) )
 		{
@@ -764,8 +764,8 @@ namespace tool
 			
 			if ( doable && !global_dry_run )
 			{
-				std::string b_path = global_base_root   / child_subpath;
-				std::string c_path = global_remote_root / child_subpath;
+				plus::string b_path = global_base_root   / child_subpath;
+				plus::string c_path = global_remote_root / child_subpath;
 				
 				io::recursively_delete( c_path );
 				io::recursively_delete( b_path );
@@ -784,8 +784,8 @@ namespace tool
 			
 			if ( doable && !global_dry_run )
 			{
-				std::string a_path = global_local_root / child_subpath;
-				std::string b_path = global_base_root  / child_subpath;
+				plus::string a_path = global_local_root / child_subpath;
+				plus::string b_path = global_base_root  / child_subpath;
 				
 				io::recursively_delete( a_path );
 				io::recursively_delete( b_path );
@@ -802,7 +802,7 @@ namespace tool
 			
 			if ( !global_dry_run )
 			{
-				std::string b_path = global_base_root / child_subpath;
+				plus::string b_path = global_base_root / child_subpath;
 				
 				io::recursively_delete( b_path );
 			}
@@ -842,7 +842,7 @@ namespace tool
 	}
 	
 	
-	static std::string home_dir_pathname()
+	static plus::string home_dir_pathname()
 	{
 		if ( const char* home = std::getenv( "HOME" ) )
 		{
@@ -852,9 +852,9 @@ namespace tool
 		return "/";
 	}
 	
-	static std::string get_jsync_root_pathname()
+	static plus::string get_jsync_root_pathname()
 	{
-		std::string home = home_dir_pathname();
+		plus::string home = home_dir_pathname();
 		
 		const char* jsync = "Library/JSync";
 		
@@ -906,9 +906,9 @@ namespace tool
 		
 		const char* path = n_args >= 1 ? free_args[0] : default_path;
 		
-		std::string jsync_root = get_jsync_root_pathname();
+		plus::string jsync_root = get_jsync_root_pathname();
 		
-		std::string jsync_path = jsync_root / path;
+		plus::var_string jsync_path = jsync_root / path;
 		
 		jsync_path += ".jsync";
 		

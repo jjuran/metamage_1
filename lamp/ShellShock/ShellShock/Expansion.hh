@@ -7,8 +7,10 @@
 #define SHELLSHOCK_EXPANSION_HH
 
 // Standard C++
-#include <string>
 #include <vector>
+
+// plus
+#include "plus/string.hh"
 
 // ShellShock
 #include "ShellShock/Tokenization.hh"
@@ -20,25 +22,25 @@ namespace ShellShock
 	class ParameterDictionary
 	{
 		public:
-			virtual std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const = 0;
+			virtual std::vector< plus::string > Lookup( const plus::string& param, bool double_quoted ) const = 0;
 	};
 	
 	
-	std::vector< std::string > BraceExpansion( const std::string& word );
+	std::vector< plus::string > BraceExpansion( const plus::string& word );
 	
-	std::string TildeExpansion( const std::string& word );
+	plus::string TildeExpansion( const plus::string& word );
 	
-	std::vector< std::string > ParameterExpansion( const ParameterDictionary*  dictionary,
-	                                               const std::string&          word );
+	std::vector< plus::string > ParameterExpansion( const ParameterDictionary*  dictionary,
+	                                                const plus::string&         word );
 	
-	std::string CommandSubstitution( const std::string& word );
-	std::string ArithmeticExpansion( const std::string& word );
-	std::string ProcessSubstitution( const std::string& word );
+	plus::string CommandSubstitution( const plus::string& word );
+	plus::string ArithmeticExpansion( const plus::string& word );
+	plus::string ProcessSubstitution( const plus::string& word );
 	
-	std::vector< std::string > WordSplitting    ( const std::string& word );
-	std::vector< std::string > PathnameExpansion( const std::string& word );
+	std::vector< plus::string > WordSplitting    ( const plus::string& word );
+	std::vector< plus::string > PathnameExpansion( const plus::string& word );
 	
-	std::string QuoteRemoval( const std::string& word );
+	plus::string QuoteRemoval( const plus::string& word );
 	
 	Command ParseCommand( const Command&              command,
 	                      const ParameterDictionary&  dictionary );

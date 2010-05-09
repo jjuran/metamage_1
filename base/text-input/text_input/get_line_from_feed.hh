@@ -16,19 +16,21 @@ namespace text_input
 {
 	
 	template < class Reader >
-	const std::string* get_line_from_feed( text_input::feed&  feed,
-	                                       Reader             read )
+	const plus::string* get_line_from_feed( text_input::feed&  feed,
+	                                        Reader             read )
 	{
+		typedef plus::string::size_type size_type;
+		
 		while ( true )
 		{
-			if ( const std::string* result = feed.get_line() )
+			if ( const plus::string* result = feed.get_line() )
 			{
 				return result;
 			}
 			
-			const size_t length = feed.buffer_length;
+			const size_type length = feed.buffer_length;
 			
-			const size_t n_read = read( feed.buffer(), length );
+			const size_type n_read = read( feed.buffer(), length );
 			
 			if ( n_read == 0 )
 			{

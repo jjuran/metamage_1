@@ -85,7 +85,7 @@ namespace Genie
 	}
 	
 	
-	static bool is_valid_GDHandle_name( const std::string& name )
+	static bool is_valid_GDHandle_name( const plus::string& name )
 	{
 		if ( !canonical_32_bit_hex::applies( name ) )
 		{
@@ -100,7 +100,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_gdev_list_H_Mappings[];
 	
-	static FSTreePtr gdev_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr gdev_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !is_valid_GDHandle_name( name ) )
 		{
@@ -117,7 +117,7 @@ namespace Genie
 			{
 				const ino_t inode = 0;
 				
-				std::string name = plus::encode_32_bit_hex( (unsigned) gdH );
+				plus::string name = plus::encode_32_bit_hex( (unsigned) gdH );
 				
 				return FSNode( inode, name );
 			}
@@ -170,7 +170,7 @@ namespace Genie
 	{
 		typedef N::GDHandle Key;
 		
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -181,8 +181,8 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_gdev_list_N_Property< Accessor > Property;
 		
@@ -191,12 +191,12 @@ namespace Genie
 		                            &Property::Read );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&    parent,
-	                                      const std::string&  name )
+	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name )
 	{
 		N::GDHandle key = GetKeyFromParent( parent );
 		
-		std::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
+		plus::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		
 		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
 	}
@@ -210,7 +210,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
 	}

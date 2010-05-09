@@ -46,7 +46,7 @@ namespace Genie
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct View_Property
 	{
-		static std::string Get( const FSTree* that, bool binary )
+		static plus::string Get( const FSTree* that, bool binary )
 		{
 			return Freeze< Scribe >( Access( GetViewKey( that ) ), binary );
 		}
@@ -73,18 +73,20 @@ namespace Genie
 			Mappings     itsMappings;
 			Destructor   itsDestructor;
 			
-			virtual FSTreePtr CreateDelegate( const FSTreePtr&    parent,
-			                                  const std::string&  name ) const;
+			virtual FSTreePtr CreateDelegate( const FSTreePtr&     parent,
+			                                  const plus::string&  name ) const;
 		
 		public:
-			FSTree_new_View( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 ViewFactory         factory,
-			                 Mappings            mappings,
-			                 Destructor          dtor ) : FSTree( parent, name ),
-			                                              itsFactory( factory ),
-			                                              itsMappings( mappings ),
-			                                              itsDestructor( dtor )
+			FSTree_new_View( const FSTreePtr&     parent,
+			                 const plus::string&  name,
+			                 ViewFactory          factory,
+			                 Mappings             mappings,
+			                 Destructor           dtor )
+			:
+				FSTree( parent, name ),
+				itsFactory( factory ),
+				itsMappings( mappings ),
+				itsDestructor( dtor )
 			{
 			}
 			
@@ -103,9 +105,9 @@ namespace Genie
 			FSTree_View& operator=( const FSTree_View& );
 		
 		public:
-			FSTree_View( const FSTreePtr&    parent,
-			             const std::string&  name,
-			             ViewGetter          get = NULL )
+			FSTree_View( const FSTreePtr&     parent,
+			             const plus::string&  name,
+			             ViewGetter           get = NULL )
 			:
 				FSTree( parent, name ),
 				itsGetter( get )
@@ -124,7 +126,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup( const plus::string& name, const FSTree* parent ) const;
 			
 			FSIteratorPtr Iterate() const;
 			
@@ -141,8 +143,10 @@ namespace Genie
 	class FSTree_X_view : public FSTree_View
 	{
 		public:
-			FSTree_X_view( const FSTreePtr&    parent,
-			               const std::string&  name ) : FSTree_View( parent, name, getter )
+			FSTree_X_view( const FSTreePtr&     parent,
+			               const plus::string&  name )
+			:
+				FSTree_View( parent, name, getter )
 			{
 			}
 	};

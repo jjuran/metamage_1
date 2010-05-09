@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_sys_mac_keys.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Events.hh"
 
@@ -18,9 +21,9 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string sys_mac_keys::Read( const FSTree* )
+	plus::string sys_mac_keys::Read( const FSTree* )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		N::GetKeys_Result keys = N::GetKeys();
 		

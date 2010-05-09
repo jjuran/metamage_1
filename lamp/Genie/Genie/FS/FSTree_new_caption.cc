@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // Pedestal
 #include "Pedestal/Caption.hh"
 
@@ -28,9 +31,9 @@ namespace Genie
 	
 	struct CaptionParameters
 	{
-		std::string  itsText;
-		bool         itIsWrapped;
-		bool         disabling;
+		plus::var_string  itsText;
+		bool              itIsWrapped;
+		bool              disabling;
 		
 		CaptionParameters() : itIsWrapped( true ), disabling()
 		{
@@ -55,7 +58,7 @@ namespace Genie
 			{
 			}
 			
-			std::string Text() const;
+			plus::string Text() const;
 			
 			bool Wrapped() const;
 			bool Disabled() const;
@@ -63,9 +66,9 @@ namespace Genie
 			void Activate( bool activating )  { itIsActive = activating; }
 	};
 	
-	std::string Caption::Text() const
+	plus::string Caption::Text() const
 	{
-		std::string result;
+		plus::var_string result;
 		
 		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
 		
@@ -137,7 +140,7 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			std::string& String()  { return gCaptionParametersMap[ ViewKey() ].itsText; }
+			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].itsText; }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -160,7 +163,7 @@ namespace Genie
 	
 	ssize_t CaptionTextFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		std::string& s = String();
+		const plus::string& s = String();
 		
 		if ( offset >= s.size() )
 		{
@@ -176,7 +179,7 @@ namespace Genie
 	
 	ssize_t CaptionTextFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		std::string& s = String();
+		plus::var_string& s = String();
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -197,12 +200,14 @@ namespace Genie
 	class FSTree_Caption_text : public FSTree
 	{
 		public:
-			FSTree_Caption_text( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree( parent, name )
+			FSTree_Caption_text( const FSTreePtr&     parent,
+			                     const plus::string&  name )
+			:
+				FSTree( parent, name )
 			{
 			}
 			
-			std::string& String() const  { return gCaptionParametersMap[ ParentRef().get() ].itsText; }
+			plus::var_string& String() const  { return gCaptionParametersMap[ ParentRef().get() ].itsText; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -235,8 +240,8 @@ namespace Genie
 	}
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -254,7 +259,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_caption( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_new_caption( const FSTreePtr& parent, const plus::string& name )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

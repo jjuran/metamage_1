@@ -40,11 +40,11 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static bool ParseURL( const std::string& url,
-	                      std::string& outURLScheme, 
-	                      std::string& outHostname,
-	                      std::string& outPort,
-	                      std::string& outURLpath )
+	static bool ParseURL( const plus::string& url,
+	                      plus::string& outURLScheme, 
+	                      plus::string& outHostname,
+	                      plus::string& outPort,
+	                      plus::string& outURLpath )
 	{
 		std::size_t colonSlashSlash = url.find( "://" );
 		
@@ -67,13 +67,13 @@ namespace tool
 			outPort = url.substr( colon + 1, slash - (colon + 1) );
 		}
 		
-		outURLpath = (slash == url.npos) ? std::string( "/" ) : url.substr( slash, url.npos );
+		outURLpath = (slash == url.npos) ? plus::string( "/" ) : url.substr( slash, url.npos );
 		
 		return true;
 	}
 	
 	
-	static const char* DocName( const std::string& urlPath )
+	static const char* DocName( const plus::string& urlPath )
 	{
 		std::size_t lastSlash = urlPath.find_last_of( "/" );
 		
@@ -91,7 +91,7 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: ";
+			plus::var_string message = "Domain name lookup failed: ";
 			
 			message += iota::inscribe_decimal( h_errno );
 			message += "\n";
@@ -107,9 +107,9 @@ namespace tool
 	}
 	
 	
-	static void receive_document( const std::string&  partial_content,
-	                              p7::fd_t            http_server,
-	                              p7::fd_t            document_destination )
+	static void receive_document( const plus::string&  partial_content,
+	                              p7::fd_t             http_server,
+	                              p7::fd_t             document_destination )
 	{
 		p7::write( document_destination, partial_content );
 		
@@ -152,7 +152,7 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		std::string method = "GET";
+		plus::string method = "GET";
 		
 		const bool expecting_content = !sendHEADRequest;
 		
@@ -169,10 +169,10 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		std::string scheme;
-		std::string hostname;
-		std::string urlPath;
-		std::string portStr;
+		plus::string scheme;
+		plus::string hostname;
+		plus::string urlPath;
+		plus::string portStr;
 		
 		p7::in_port_t default_port = p7::in_port_t( 0 );
 		
@@ -193,7 +193,7 @@ namespace tool
 		}
 		else
 		{
-			std::string message = "Unsupported scheme '" + scheme + "'.\n";
+			plus::string message = "Unsupported scheme '" + scheme + "'.\n";
 			
 			p7::write( p7::stderr_fileno, message );
 			
@@ -209,9 +209,9 @@ namespace tool
 		
 		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
-		std::string message_header =   HTTP::RequestLine( method, urlPath )
-		                             + HTTP::HeaderFieldLine( "Host", hostname )
-		                             + "\r\n";
+		plus::string message_header =   HTTP::RequestLine( method, urlPath )
+		                              + HTTP::HeaderFieldLine( "Host", hostname )
+		                              + "\r\n";
 		
 		n::owned< p7::fd_t > http_server = p7::connect( ip, port );
 		

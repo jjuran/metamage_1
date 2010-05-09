@@ -15,6 +15,9 @@
 #include <Traps.h>
 #endif
 
+// plus
+#include "plus/var_string.hh"
+
 
 #if TARGET_CPU_68K
 
@@ -56,9 +59,9 @@ inline void ReadXPRam( void* buffer, UInt16 length, UInt16 offset )
 namespace Nitrogen
 {
 	
-	inline std::string ReadXPRam( UInt16 length = 256, UInt16 offset = 0 )
+	inline plus::string ReadXPRam( UInt16 length = 256, UInt16 offset = 0 )
 	{
-		std::string xpram;
+		plus::var_string xpram;
 		
 		xpram.resize( length );
 		
@@ -75,12 +78,12 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string sys_mac_xpram_Query::Get() const
+	plus::string sys_mac_xpram_Query::Get() const
 	{
 		return N::ReadXPRam();
 	}
 	
-	std::string sys_mac_xpram::Read( const FSTree* )
+	plus::string sys_mac_xpram::Read( const FSTree* )
 	{
 		return N::ReadXPRam();
 	}

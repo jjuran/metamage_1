@@ -13,6 +13,9 @@
 // iota
 #include "iota/find.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -26,7 +29,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	std::string find_InterfacesAndLibraries()
+	plus::string find_InterfacesAndLibraries()
 	{
 		if ( const char* interfaces_libraries = getenv( "INTERFACES_LIBRARIES" ) )
 		{
@@ -35,7 +38,7 @@ namespace tool
 		
 		const char* sig_ToolServer = "MPSX";
 		
-		std::string pathname = find_appl( sig_ToolServer );
+		plus::var_string pathname = find_appl( sig_ToolServer );
 		
 		const char* p = pathname.data();
 		

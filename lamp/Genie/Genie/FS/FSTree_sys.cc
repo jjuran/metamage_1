@@ -8,6 +8,9 @@
 // iota
 #include "iota/hexidecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Sound.hh"
 
@@ -34,11 +37,11 @@ namespace Genie
 	typedef const SystemCall* SystemCallPtr;
 	
 	
-	static std::string name_of_syscall( SystemCallPtr key )
+	static plus::string name_of_syscall( SystemCallPtr key )
 	{
 		if ( key->name == NULL )
 		{
-			std::string name;
+			plus::var_string name;
 			
 			name.resize( sizeof '.' + sizeof (unsigned) * 2 );  // 9
 			
@@ -59,10 +62,12 @@ namespace Genie
 			MainEntry itsMainEntry;
 		
 		public:
-			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
-			                           const std::string&  name,
-			                           Trivial_Entry       main ) : FSTree( parent, name ),
-			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
+			FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
+			                           const plus::string&  name,
+			                           Trivial_Entry        main )
+			:
+				FSTree( parent, name ),
+				itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
@@ -72,7 +77,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr syscall_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr syscall_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
@@ -89,7 +94,7 @@ namespace Genie
 			{
 				const ino_t inode = &value - GetSystemCall( 0 );
 				
-				std::string name = name_of_syscall( &value );
+				plus::string name = name_of_syscall( &value );
 				
 				return FSNode( inode, name );
 			}
@@ -107,7 +112,7 @@ namespace Genie
 		                converter );
 	}
 	
-	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}
@@ -136,8 +141,8 @@ namespace Genie
 	}
 	
 	template < int (*main)() >
-	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
-	                                     const std::string&  name )
+	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
+	                                     const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}

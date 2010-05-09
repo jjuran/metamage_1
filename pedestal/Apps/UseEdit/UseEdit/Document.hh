@@ -6,11 +6,11 @@
 #ifndef USEEDIT_DOCUMENT_HH
 #define USEEDIT_DOCUMENT_HH
 
-// Standard C++
-#include <string>
-
 // iota
 #include "iota/convert_string.hh"
+
+// plus
+#include "plus/string.hh"
 
 // UseEdit
 #include "UseEdit/Window.hh"
@@ -36,9 +36,9 @@ namespace UseEdit
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
-			std::string GetName() const
+			plus::string GetName() const
 			{
-				return iota::convert_string< std::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
+				return iota::convert_string< plus::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
 			}
 	};
 	

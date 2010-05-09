@@ -3,14 +3,14 @@
  *	=========
  */
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cctype>
 
 // iota
 #include "iota/decimal.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/perror.hh"
@@ -35,14 +35,14 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static std::string QuoteForMPW( const char* str )
+	static plus::string QuoteForMPW( const char* str )
 	{
 		const char* p = str;
 		const char* q = p;
 		
 		bool needsQuoting = false;
 		
-		std::string result = "'";
+		plus::var_string result = "'";
 		
 		while ( *p != '\0' )
 		{
@@ -52,7 +52,7 @@ namespace tool
 				++q;
 			}
 			
-			result += std::string( p, q );
+			result += plus::string( p, q );
 			
 			if ( *q != '\0' )
 			{
@@ -75,9 +75,9 @@ namespace tool
 	}
 	
 	
-	static std::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
+	static plus::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
 	{
-		std::string command;
+		plus::var_string command;
 		
 		for ( char const *const *it = begin;  it < end;  ++it )
 		{
@@ -108,9 +108,9 @@ namespace tool
 		
 		char const *const *free_args = o::free_arguments();
 		
-		std::string command = MakeCommand( free_args,
-		                                   free_args + o::free_argument_count(),
-		                                   escapeForMPW );
+		plus::string command = MakeCommand( free_args,
+		                                    free_args + o::free_argument_count(),
+		                                    escapeForMPW );
 		
 		try
 		{
@@ -118,7 +118,7 @@ namespace tool
 		}
 		catch ( const N::OSStatus& err )
 		{
-			std::string status = "OSStatus ";
+			plus::var_string status = "OSStatus ";
 			
 			status += iota::inscribe_decimal( err );
 			

@@ -11,6 +11,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -426,7 +429,7 @@ namespace Genie
 	
 	
 	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                      parent,
-	                                    const std::string&                    name,
+	                                    const plus::string&                   name,
 	                                    const boost::shared_ptr< IconData >&  data )
 	:
 		FSTree( parent, name ),

@@ -27,6 +27,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/DateTimeUtils.hh"
@@ -101,12 +104,12 @@ namespace Genie
 			return Dir_From_FSSpec( dir ) / name;
 		}
 		
-		static inline FSSpec operator/( const N::FSDirSpec& dir, const std::string& name )
+		static inline FSSpec operator/( const N::FSDirSpec& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
 		
-		static inline FSSpec operator/( const FSSpec& dir, const std::string& name )
+		static inline FSSpec operator/( const FSSpec& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
@@ -124,12 +127,12 @@ namespace Genie
 	}
 	
 	
-	static std::string MacFromUnixName( const std::string& name )
+	static plus::string MacFromUnixName( const plus::string& name )
 	{
 		//ASSERT( name != "."  );
 		//ASSERT( name != ".." );
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( name.size() );
 		
@@ -142,9 +145,9 @@ namespace Genie
 		return result;
 	}
 	
-	static std::string UnixFromMacName( ConstStr255Param name )
+	static plus::string UnixFromMacName( ConstStr255Param name )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		result.resize( name[0] );
 		
@@ -158,17 +161,17 @@ namespace Genie
 	}
 	
 	
-	static std::string GetUnixName( const FSSpec& item )
+	static plus::string GetUnixName( const FSSpec& item )
 	{
 		if ( item.name[0] == 31 )
 		{
 			try
 			{
-				std::string comment = iota::convert_string< std::string >( N::FSpDTGetComment( item ) );
+				plus::string comment = iota::convert_string< plus::string >( N::FSpDTGetComment( item ) );
 				
 				if ( comment.size() > 31 )
 				{
-					std::string hashed = K::MacFilenameFromUnixFilename( comment );
+					plus::string hashed = K::MacFilenameFromUnixFilename( comment );
 					
 					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
 					
@@ -201,7 +204,7 @@ namespace Genie
 		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
 	
-	static N::FSVolumeRefNum GetVRefNum( const std::string& name )
+	static N::FSVolumeRefNum GetVRefNum( const plus::string& name )
 	{
 		N::Str255 name_copy = name;
 		
@@ -363,12 +366,12 @@ namespace Genie
 			return MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
 		}
 		
-		static std::string NameFromKey( const Key& key )
+		static plus::string NameFromKey( const Key& key )
 		{
 			return UnixFromMacName( FSSpecFromKey( key ).name );
 		}
 		
-		static Key KeyFromName( const std::string& name )
+		static Key KeyFromName( const plus::string& name )
 		{
 			Key key = GetVRefNum( MacFromUnixName( name ) + ":" );
 			
@@ -377,7 +380,7 @@ namespace Genie
 	};
 	
 	
-	static std::string MakeName( const FSSpec& fileSpec )
+	static plus::string MakeName( const FSSpec& fileSpec )
 	{
 		if ( fileSpec.parID == fsRtParID )
 		{
@@ -406,7 +409,7 @@ namespace Genie
 			
 			ino_t Inode() const;
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -460,7 +463,7 @@ namespace Genie
 		public:
 			FSTree_DirSpec( const N::FSDirSpec&  dir,
 			                bool                 onServer,
-			                const std::string&   name );
+			                const plus::string&  name );
 			
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
@@ -479,14 +482,14 @@ namespace Genie
 			
 			ino_t Inode() const  { return itsDirSpec.dirID; }
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	FSTree_DirSpec::FSTree_DirSpec( const N::FSDirSpec&  dir,
 	                                bool                 onServer,
-	                                const std::string&   name )
+	                                const plus::string&  name )
 	:
 		FSTree_Directory( null_FSTreePtr, name ),
 		itIsOnServer    ( onServer             ),
@@ -503,10 +506,10 @@ namespace Genie
 			bool    itIsOnServer;
 		
 		public:
-			FSTree_HFS( const FSSpec&       file,
-			            bool                onServer,
-			            const std::string&  name = std::string(),
-			            const FSTree*       parent = NULL );
+			FSTree_HFS( const FSSpec&        file,
+			            bool                 onServer,
+			            const plus::string&  name = plus::string(),
+			            const FSTree*        parent = NULL );
 			
 			bool Exists() const;
 			bool IsFile() const;
@@ -538,10 +541,10 @@ namespace Genie
 			off_t GetEOF() const;
 			void  SetEOF( off_t length ) const;
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 			FSTreePtr ResolveLink() const;
 			
-			void SymLink( const std::string& target ) const;
+			void SymLink( const plus::string& target ) const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
@@ -550,7 +553,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
@@ -562,10 +565,10 @@ namespace Genie
 			void FinishCreation() const;
 	};
 	
-	FSTree_HFS::FSTree_HFS( const FSSpec&       file,
-	                        bool                onServer,
-	                        const std::string&  name,
-	                        const FSTree*       parent )
+	FSTree_HFS::FSTree_HFS( const FSSpec&        file,
+	                        bool                 onServer,
+	                        const plus::string&  name,
+	                        const FSTree*        parent )
 	:
 		FSTree_Directory( parent       ? parent->Self()    : null_FSTreePtr,
 		                  name.empty() ? MakeName ( file ) : name ),
@@ -624,8 +627,8 @@ namespace Genie
 	class FSTree_Volumes : public FSTree_Directory
 	{
 		public:
-			FSTree_Volumes( const FSTreePtr&    parent,
-			                const std::string&  name )
+			FSTree_Volumes( const FSTreePtr&     parent,
+			                const plus::string&  name )
 			:
 				FSTree_Directory( parent, name )
 			{
@@ -633,7 +636,7 @@ namespace Genie
 			
 			ino_t Inode() const  { return fsRtParID; }
 			
-			FSTreePtr Lookup_Child( const std::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -649,14 +652,14 @@ namespace Genie
 		return FSTreeFromFSSpec( MacIO::FSMakeFSSpec< FNF_Throws >( dir, NULL ), onServer );
 	}
 	
-	FSTreePtr New_FSTree_Users( const FSTreePtr&    parent,
-	                            const std::string&  name )
+	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
+	                            const plus::string&  name )
 	{
 		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
 	}
 	
-	FSTreePtr New_FSTree_Volumes( const FSTreePtr&    parent,
-	                              const std::string&  name )
+	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
+	                              const plus::string&  name )
 	{
 		return seize_ptr( new FSTree_Volumes( parent, name ) );
 	}
@@ -962,7 +965,7 @@ namespace Genie
 		lockBypass.SetFile( destFile );
 	}
 	
-	static void SetLongName( const FSSpec& item, const std::string& name )
+	static void SetLongName( const FSSpec& item, const plus::string& name )
 	{
 		if ( name.length() > 31 )
 		{
@@ -1028,7 +1031,7 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const std::string& destName = destFile->Name();
+		const plus::string& destName = destFile->Name();
 		
 		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
 		                          && std::equal( destName.begin(),
@@ -1057,7 +1060,7 @@ namespace Genie
 				
 				// Overwrite actual name with requested name
 				
-				std::string requested_name = K::MacFilenameFromUnixFilename( destName );
+				plus::string requested_name = K::MacFilenameFromUnixFilename( destName );
 				
 				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
 			}
@@ -1118,7 +1121,7 @@ namespace Genie
 		N::SetEOF( N::FSpOpenDF( GetFSSpec(), N::fsWrPerm ), length );
 	}
 	
-	std::string FSTree_HFS::ReadLink() const
+	plus::string FSTree_HFS::ReadLink() const
 	{
 		if ( !IsLink() )
 		{
@@ -1172,7 +1175,7 @@ namespace Genie
 		return N::FileSignature( fInfo );
 	}
 	
-	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
+	static void CreateSymLink( const FSTreePtr& linkFile, const plus::string& targetPath )
 	{
 		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
 		
@@ -1202,7 +1205,7 @@ namespace Genie
 		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
 	}
 	
-	void FSTree_HFS::SymLink( const std::string& target ) const
+	void FSTree_HFS::SymLink( const plus::string& target ) const
 	{
 		CreateSymLink( Self(), target );
 	}
@@ -1248,7 +1251,7 @@ namespace Genie
 			}
 			else
 			{
-				const std::string& name = Name();
+				const plus::string& name = Name();
 				
 				const bool equal = std::equal( name.begin(),
 				                               name.end(),
@@ -1256,7 +1259,7 @@ namespace Genie
 				
 				if ( !equal )
 				{
-					std::string new_mac_name = K::MacFilenameFromUnixFilename( name );
+					plus::string new_mac_name = K::MacFilenameFromUnixFilename( name );
 					
 					N::FSpRename( itsFileSpec, new_mac_name );
 				}
@@ -1305,27 +1308,27 @@ namespace Genie
 	
 	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
 	                                        bool                 onServer,
-	                                        const std::string&   name,
+	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		const std::string macName = K::MacFilenameFromUnixFilename( name );
+		const plus::string macName = K::MacFilenameFromUnixFilename( name );
 		
 		const FSSpec item = dir / macName;
 		
 		return seize_ptr( new FSTree_HFS( item, onServer, name, parent ) );
 	}
 	
-	FSTreePtr FSTree_Root::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Root::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		return FSTreePtr_From_Lookup( GetJDirectory(), false, name, parent );
 	}
 	
-	FSTreePtr FSTree_DirSpec::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_DirSpec::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		return FSTreePtr_From_Lookup( itsDirSpec, itIsOnServer, name, parent );
 	}
 	
-	FSTreePtr FSTree_HFS::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( name == "rsrc"  &&  IsFile() )
 		{
@@ -1691,8 +1694,8 @@ namespace Genie
 	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink
 	{
 		public:
-			FSTree_Volumes_Link( const FSTreePtr&    parent,
-			                     const std::string&  name )
+			FSTree_Volumes_Link( const FSTreePtr&     parent,
+			                     const plus::string&  name )
 			:
 				FSTree_ResolvableSymLink( parent, name )
 			{
@@ -1709,7 +1712,7 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		return seize_ptr( new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name ) );
 	}
@@ -1721,7 +1724,7 @@ namespace Genie
 			{
 				const ino_t inode = -key;
 				
-				std::string name = Volume_KeyName_Traits::NameFromKey( key );
+				plus::string name = Volume_KeyName_Traits::NameFromKey( key );
 				
 				return FSNode( inode, name );
 			}

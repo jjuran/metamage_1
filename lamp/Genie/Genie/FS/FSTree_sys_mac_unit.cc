@@ -107,7 +107,7 @@ namespace Genie
 	
 	struct decode_unit_number
 	{
-		static unsigned apply( const std::string& name )
+		static unsigned apply( const plus::string& name )
 		{
 			return iota::parse_unsigned_decimal( name.c_str() );
 		}
@@ -246,7 +246,7 @@ namespace Genie
 			typedef UnitNumber Key;
 		
 		public:
-			static std::string Read( const FSTree* that, bool binary )
+			static plus::string Read( const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -259,7 +259,7 @@ namespace Genie
 				
 				const typename Accessor::Result data = Accessor::Get( dceHandle );
 				
-				std::string result = Accessor::stringify::apply( data, binary );
+				plus::string result = Accessor::stringify::apply( data, binary );
 				
 				return result;
 			}
@@ -270,7 +270,7 @@ namespace Genie
 	{
 		typedef canonical_positive_integer well_formed_name;
 		
-		static bool applies( const std::string& name )
+		static bool applies( const plus::string& name )
 		{
 			return well_formed_name::applies( name )  &&  is_valid_unit_number( decode_unit_number::apply( name ) );
 		}
@@ -278,7 +278,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_mac_unit_N_Mappings[];
 	
-	static FSTreePtr unit_lookup( const FSTreePtr& parent, const std::string& name )
+	static FSTreePtr unit_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
@@ -297,7 +297,7 @@ namespace Genie
 				
 				const ino_t inode = i;
 				
-				std::string name = iota::inscribe_decimal( i );
+				plus::string name = iota::inscribe_decimal( i );
 				
 				return FSNode( inode, name );
 			}
@@ -317,8 +317,8 @@ namespace Genie
 	
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_unit_N_Property< Accessor > Property;
 		
@@ -337,7 +337,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const std::string& name )
+	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const plus::string& name )
 	{
 		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}

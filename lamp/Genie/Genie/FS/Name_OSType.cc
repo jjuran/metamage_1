@@ -9,6 +9,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/quad.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 
 namespace Genie
 {
@@ -19,13 +22,13 @@ namespace Genie
 	static const unsigned quad_size = sizeof 'quad';
 	
 	
-	std::string OSType_KeyName_Traits::NameFromKey( const Key& key )
+	plus::string OSType_KeyName_Traits::NameFromKey( const Key& key )
 	{
 		char bytes[ quad_size ];
 		
 		iota::encode_quad( key, bytes );
 		
-		std::string result;
+		plus::var_string result;
 		
 		result.reserve( quad_size );  // the usual case
 		
@@ -57,9 +60,9 @@ namespace Genie
 		return result;
 	}
 	
-	OSType_KeyName_Traits::Key OSType_KeyName_Traits::KeyFromName( const std::string& name )
+	OSType_KeyName_Traits::Key OSType_KeyName_Traits::KeyFromName( const plus::string& name )
 	{
-		std::string decoded;
+		plus::var_string decoded;
 		
 		decoded.reserve( quad_size );
 		

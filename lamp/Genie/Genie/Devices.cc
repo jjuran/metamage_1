@@ -64,7 +64,7 @@ namespace Genie
 		{ NULL,      NULL,     NULL         }
 	};
 	
-	typedef std::map< std::string, const DeviceIOSpec* > DeviceIOMap;
+	typedef std::map< plus::string, const DeviceIOSpec* > DeviceIOMap;
 	
 	static DeviceIOMap BuildDeviceMap()
 	{
@@ -85,7 +85,7 @@ namespace Genie
 		return gDeviceMap;
 	}
 	
-	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const std::string& path )
+	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const plus::string& path )
 	{
 		DeviceIOMap::const_iterator found = DeviceMap().find( path );
 		

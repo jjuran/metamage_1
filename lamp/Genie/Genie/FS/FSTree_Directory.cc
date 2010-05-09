@@ -62,7 +62,7 @@ namespace Genie
 		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
 	}
 	
-	FSTreePtr FSTree_Directory::Lookup( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Directory::Lookup( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( name == "." )
 		{
@@ -117,7 +117,7 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr FSTree_Premapped::Lookup_Child( const std::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		Mappings::const_iterator it = itsMappings.find( name );
 		
@@ -137,7 +137,7 @@ namespace Genie
 		
 		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
 		{
-			const std::string& name = it->first;
+			const plus::string& name = it->first;
 			
 			const Function& f = it->second->f;
 			
@@ -165,7 +165,7 @@ namespace Genie
 	
 	
 	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
-	                             const std::string&                 name,
+	                             const plus::string&                name,
 	                             const FSTree_Premapped::Mapping    mappings[],
 	                             void                             (*dtor)(const FSTree*) )
 	{

@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -25,7 +28,7 @@ namespace Genie
 	
 	FSTreePtr SimpleDeviceHandle::GetFile()
 	{
-		std::string deviceName = "/dev/";
+		plus::var_string deviceName = "/dev/";
 		
 		deviceName += io.name;
 		

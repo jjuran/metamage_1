@@ -100,7 +100,7 @@ namespace Genie
 			
 			// Do not resolve links -- we want the target even if it's another symlink
 			
-			std::string linkPath = link->ReadLink();
+			plus::string linkPath = link->ReadLink();
 			
 			const bool too_big = linkPath.size() > buffer_size;
 			

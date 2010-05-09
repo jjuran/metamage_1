@@ -2,13 +2,16 @@
 	plus/hexidecimal.cc
 	-------------------
 	
-	Copyright 2009, Joshua Juran
+	Copyright 2009-2010, Joshua Juran
 */
 
 #include "plus/hexidecimal.hh"
 
 // iota
 #include "iota/hexidecimal.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 
 namespace plus
@@ -17,7 +20,7 @@ namespace plus
 	static const unsigned short n_bits_per_nibble = 4;
 	
 	
-	unsigned decode_32_bit_hex( const std::string& s )
+	unsigned decode_32_bit_hex( const string& s )
 	{
 		const unsigned short n_nibbles = 32 / n_bits_per_nibble;
 		
@@ -29,38 +32,42 @@ namespace plus
 		return iota::decode_32_bit_hex( s.data() );
 	}
 	
-	void encode_16_bit_hex( unsigned short x, std::string& result )
+	void encode_16_bit_hex( var_string& out, unsigned short x )
 	{
 		const unsigned short n_nibbles = 16 / n_bits_per_nibble;
 		
-		result.resize( n_nibbles );
+		char buffer[ n_nibbles ];
 		
-		iota::encode_16_bit_hex( x, &result[0] );
+		iota::encode_16_bit_hex( x, buffer );
+		
+		out.append( buffer, sizeof buffer );
 	}
 	
-	void encode_32_bit_hex( unsigned x, std::string& result )
+	void encode_32_bit_hex( var_string& out, unsigned x )
 	{
 		const unsigned short n_nibbles = 32 / n_bits_per_nibble;
 		
-		result.resize( n_nibbles );
+		char buffer[ n_nibbles ];
 		
-		iota::encode_32_bit_hex( x, &result[0] );
+		iota::encode_32_bit_hex( x, buffer );
+		
+		out.append( buffer, sizeof buffer );
 	}
 	
-	std::string encode_16_bit_hex( unsigned short x )
+	string encode_16_bit_hex( unsigned short x )
 	{
-		std::string result;
+		var_string result;
 		
-		encode_16_bit_hex( x, result );
+		encode_16_bit_hex( result, x );
 		
 		return result;
 	}
 	
-	std::string encode_32_bit_hex( unsigned x )
+	string encode_32_bit_hex( unsigned x )
 	{
-		std::string result;
+		var_string result;
 		
-		encode_32_bit_hex( x, result );
+		encode_32_bit_hex( result, x );
 		
 		return result;
 	}

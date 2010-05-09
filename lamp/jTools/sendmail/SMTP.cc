@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 
 
 namespace SMTP
@@ -23,13 +22,13 @@ namespace SMTP
 		{
 			enum { size = 4 };
 			
-			ResponseCode( const std::string& response );
+			ResponseCode( const plus::string& response );
 			
 			char chars[ size ];
 		};
 		
 		
-		ResponseCode::ResponseCode( const std::string& response )
+		ResponseCode::ResponseCode( const plus::string& response )
 		{
 			if ( response.size() < size )
 			{
@@ -41,7 +40,7 @@ namespace SMTP
 		
 		static void GetResponse( text_input::feed feed, p7::fd_reader& reader )
 		{
-			while ( const std::string* s = get_line_from_feed( feed, reader ) )
+			while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 			{
 				ResponseCode code = *s;
 				

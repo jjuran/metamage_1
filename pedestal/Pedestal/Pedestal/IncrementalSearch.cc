@@ -177,9 +177,9 @@ namespace Pedestal
 	}
 	
 	
-	static std::string gLastSearchPattern;
+	static plus::string gLastSearchPattern;
 	
-	const std::string& GetLastSearchPattern()
+	const plus::string& GetLastSearchPattern()
 	{
 		return gLastSearchPattern;
 	}
@@ -324,7 +324,7 @@ namespace Pedestal
 			
 			TextSelection selection = editor.GetCurrentSelection();
 			
-			const std::string& last_pattern = GetLastSearchPattern();
+			const plus::string& last_pattern = GetLastSearchPattern();
 			
 			short match = editor.Search( last_pattern.data(), last_pattern.size(), selection, backward, false );
 			

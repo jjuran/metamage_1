@@ -22,7 +22,7 @@ namespace Genie
 	FSTreePtr
 	//
 	New_FSTree_IconSuite( const FSTreePtr&                                  parent,
-			              const std::string&                                name,
+			              const plus::string&                               name,
 			              const nucleus::shared< Nitrogen::IconSuiteRef >&  iconSuite );
 	
 	const nucleus::shared< Nitrogen::IconSuiteRef >& Fetch_IconSuite();

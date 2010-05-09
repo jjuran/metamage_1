@@ -51,7 +51,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static std::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
@@ -62,8 +62,8 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&    parent,
-	                                   const std::string&  name )
+	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
+	                                   const plus::string&  name )
 	{
 		typedef sys_mac_desktop_Property< Accessor > Property;
 		

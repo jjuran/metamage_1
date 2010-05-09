@@ -61,7 +61,7 @@ namespace tool
 		
 		RUN_TEST( (p7::stat( path ).st_mode & 0200) == 0, 1 );
 		
-		std::string slurped = p7::slurp( path );
+		plus::string slurped = p7::slurp( path );
 		
 		const bool match = std::strcmp( slurped.c_str(), TEST_STRING ) == 0;
 		

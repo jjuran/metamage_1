@@ -8,22 +8,24 @@
 #ifndef PLUS_HEXIDECIMAL_HH
 #define PLUS_HEXIDECIMAL_HH
 
-// Standard C++
-#include <string>
+// plus
+#include "plus/string.hh"
 
 
 namespace plus
 {
 	
-	unsigned decode_32_bit_hex( const std::string& s );
+	class var_string;
 	
-	void encode_16_bit_hex( unsigned short x, std::string& result );
+	unsigned decode_32_bit_hex( const string& s );
 	
-	void encode_32_bit_hex( unsigned x, std::string& result );
+	void encode_16_bit_hex( var_string& out, unsigned short x );
 	
-	std::string encode_16_bit_hex( unsigned short x );
+	void encode_32_bit_hex( var_string& out, unsigned x );
 	
-	std::string encode_32_bit_hex( unsigned x );
+	string encode_16_bit_hex( unsigned short x );
+	
+	string encode_32_bit_hex( unsigned x );
 	
 }
 

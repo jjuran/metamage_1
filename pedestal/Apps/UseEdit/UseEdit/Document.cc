@@ -5,6 +5,9 @@
 
 #include "UseEdit/Document.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Io
 #include "io/slurp.hh"
 
@@ -21,9 +24,9 @@ namespace UseEdit
 	namespace Ped = Pedestal;
 	
 	template < class FileSpec >
-	static std::string ReadFileData( const FileSpec& file )
+	static plus::string ReadFileData( const FileSpec& file )
 	{
-		std::string data = io::slurp_file< n::string_scribe< std::string > >( file );
+		plus::var_string data = io::slurp_file< n::string_scribe< plus::var_string > >( file );
 		
 		// Allow LF newlines
 		std::replace( data.begin(),
@@ -50,7 +53,7 @@ namespace UseEdit
 	{
 	}
 	
-	static void LoadText( Ped::Window& window, const std::string& text )
+	static void LoadText( Ped::Window& window, const plus::string& text )
 	{
 		View& scrollframe = reinterpret_cast< View& >( *window.GetView() );
 		

@@ -14,6 +14,9 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -31,8 +34,8 @@ namespace Genie
 	class sys_app_window_front : public FSTree_ReadableSymLink
 	{
 		public:
-			sys_app_window_front( const FSTreePtr&    parent,
-			                      const std::string&  name )
+			sys_app_window_front( const FSTreePtr&     parent,
+			                      const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
@@ -42,10 +45,10 @@ namespace Genie
 			
 			bool IsLink() const  { return Exists(); }
 			
-			std::string ReadLink() const;
+			plus::string ReadLink() const;
 	};
 	
-	std::string sys_app_window_front::ReadLink() const
+	plus::string sys_app_window_front::ReadLink() const
 	{
 		const WindowRef windowPtr = ::FrontWindow();
 		
@@ -54,7 +57,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		std::string result = "list/12345678";
+		plus::var_string result = "list/12345678";
 		
 		const size_t hex_offset = STRLEN( "list/" );
 		

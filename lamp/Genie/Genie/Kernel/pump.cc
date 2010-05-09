@@ -46,7 +46,7 @@ namespace Genie
 				IOHandle_Cast< RegularFileHandle >( output ).Seek( *off_out, 0 );
 			}
 			
-			while ( const std::string* peek_buffer = input.Peek( 1 ) )
+			while ( const plus::string* peek_buffer = input.Peek( 1 ) )
 			{
 				Breathe();
 				

@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_focuser( const FSTreePtr& parent, const std::string& name );
+	FSTreePtr New_focuser( const FSTreePtr& parent, const plus::string& name );
 	
 }
 

@@ -44,7 +44,7 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( !feed.buffer_empty(), "buffer not empty after second blank line" );
 	
-	const std::string& one = feed.get_line_ref();
+	const plus::string& one = feed.get_line_ref();
 	
 	ok_if( one == "\n", "first line is \\n" );
 	
@@ -54,7 +54,7 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( feed.has_complete_line() );
 	
-	const std::string& two = feed.get_line_ref();
+	const plus::string& two = feed.get_line_ref();
 	
 	ok_if( two == "\n" );
 	
@@ -64,7 +64,7 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( !feed.has_complete_line() );
 	
-	const std::string* three = feed.get_line();
+	const plus::string* three = feed.get_line();
 	
 	ok_if_null( three );
 }

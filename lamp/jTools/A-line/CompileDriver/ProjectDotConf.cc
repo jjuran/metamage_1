@@ -24,14 +24,14 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static std::pair< std::string, std::string > ParseKeyValue( const std::string& line )
+	static std::pair< plus::string, plus::string > ParseKeyValue( const plus::string& line )
 	{
 		//if (line.size() == 0)  return;  // Redundant
 		const char* ws = " \t";
 		std::size_t posWhitespace = line.find_first_of( ws );
 		// FIXME:  This will break when leading whitespace precedes key
-		std::string key = line.substr( 0, posWhitespace );
-		std::string value;
+		plus::string key = line.substr( 0, posWhitespace );
+		plus::string value;
 		
 		if ( ~posWhitespace )
 		{
@@ -50,8 +50,8 @@ namespace tool
 		return std::make_pair( key, value );
 	}
 	
-	static void Tokenize( const std::string& line,
-	                      std::back_insert_iterator< std::vector< std::string > > tokens )
+	static void Tokenize( const plus::string& line,
+	                      std::back_insert_iterator< std::vector< plus::string > > tokens )
 	{
 		typedef std::size_t size_type;
 		
@@ -87,9 +87,9 @@ namespace tool
 		
 		std::size_t lineCount = 0;
 		
-		while ( const std::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
-			std::string text( s->begin(), s->end() - 1 );
+			plus::string text( s->begin(), s->end() - 1 );
 			
 			++lineCount;
 			// Skip blank lines
@@ -103,9 +103,10 @@ namespace tool
 			
 			// Parse a line into key and value
 			//G::ref( line.key, value ) = ParseKeyValue( text );
-			std::pair< std::string, std::string > kv = ParseKeyValue( text );
-			line.key          = kv.first;
-			std::string value = kv.second;
+			std::pair< plus::string, plus::string > kv = ParseKeyValue( text );
+			
+			line.key           = kv.first;
+			plus::string value = kv.second;
 			
 			// Check for double-quotes
 			std::size_t size = value.size();
