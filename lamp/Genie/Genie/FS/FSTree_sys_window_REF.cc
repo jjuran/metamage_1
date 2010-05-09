@@ -659,7 +659,7 @@ namespace Genie
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		params.itsGesturePaths[ itsIndex ].clear();
+		params.itsGesturePaths[ itsIndex ] = "";
 	}
 	
 	void FSTree_Window_Gesture::SymLink( const std::string& target_path ) const
