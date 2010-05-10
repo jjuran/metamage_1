@@ -14,6 +14,7 @@
 
 // iota
 #include "iota/decimal.hh"
+#include "iota/strings.hh"
 
 
 static std::string join( const char* space, const std::string& a, const std::string& b )
@@ -557,7 +558,7 @@ namespace recall
 		
 		if ( double_underscore == NULL )
 		{
-			throw demangle_failed();
+			throw NotSpecial();
 		}
 		
 		std::string name( p, double_underscore );
@@ -593,7 +594,7 @@ namespace recall
 	{
 		const char* params = FindTemplateParameters( p );
 		
-		const char* double_underscore = std::strstr( p, "__" );
+		const char* double_underscore = std::strstr( p + 1, "__" );
 		
 		if ( double_underscore == NULL )
 		{
@@ -618,6 +619,20 @@ namespace recall
 	
 	std::string Unmangler::ReadEntityName( const char*& p )
 	{
+		if ( std::strcmp( p, "__end__catch" ) == 0 )
+		{
+			p += STRLEN( "__end__catch" );
+			
+			return "__end__catch";
+		}
+		
+		if ( std::strcmp( p, "__throw_bad_alloc__3stdFv" ) == 0 )
+		{
+			p += STRLEN( "__throw_bad_alloc__3stdFv" );
+			
+			return "std::__throw_bad_alloc( void )";
+		}
+		
 		if ( *p == '_' )
 		{
 			try
