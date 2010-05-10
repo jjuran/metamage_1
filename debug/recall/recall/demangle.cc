@@ -558,7 +558,7 @@ namespace recall
 		
 		if ( double_underscore == NULL )
 		{
-			throw demangle_failed();
+			throw NotSpecial();
 		}
 		
 		std::string name( p, double_underscore );
@@ -594,7 +594,7 @@ namespace recall
 	{
 		const char* params = FindTemplateParameters( p );
 		
-		const char* double_underscore = std::strstr( p, "__" );
+		const char* double_underscore = std::strstr( p + 1, "__" );
 		
 		if ( double_underscore == NULL )
 		{
