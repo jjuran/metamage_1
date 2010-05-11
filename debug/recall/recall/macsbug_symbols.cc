@@ -20,9 +20,9 @@ namespace recall
 	
 	const macsbug_symbol* find_symbol_name( return_address_68k addr )
 	{
-		if ( addr == NULL )
+		if ( addr == 0 )
 		{
-			return NULL;
+			return 0;  // NULL
 		}
 		
 		const uint16_t* word = (const uint16_t*) addr;
@@ -57,7 +57,7 @@ namespace recall
 			++word;
 		}
 		
-		return NULL;
+		return 0;  // NULL
 	}
 	
 	
