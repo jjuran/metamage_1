@@ -23,6 +23,10 @@ namespace plus
 			char* embiggen( size_type new_length, size_type new_capacity = 0 );
 			
 			char* insert_uninitialized( char* p, size_type n );
+			
+			char* erase_unchecked( char* p, size_type n );
+			
+			char* replace_setup( char* p, size_type m, difference_type delta );
 		
 		public:
 			typedef char&  reference;
@@ -150,6 +154,8 @@ namespace plus
 				return *this;
 			}
 			
+			var_string& erase( size_type pos = 0, size_type n = npos );
+			
 			char* erase( char* p, char* q );
 			
 			char* erase( char* p )  { return erase( p, p + 1 ); }
@@ -161,6 +167,14 @@ namespace plus
 			
 			void reserve( size_type size );
 			void resize ( size_type size, char c = '\0' );
+			
+			var_string& insert( size_type pos, const string& s );
+			var_string& insert( size_type pos, const string& s, size_type begin, size_type n );
+			
+			var_string& insert( size_type pos, const char* s, size_type n );
+			var_string& insert( size_type pos, const char* s );
+			
+			var_string& insert( size_type pos, size_type n, char c );
 			
 			void insert( char* p, char* i, char* j );
 			
@@ -186,6 +200,25 @@ namespace plus
 			{
 				return append( other.data(), other.size() );
 			}
+			
+			var_string& append( const string& other, size_type pos, size_type n );
+			
+			var_string& replace( size_type pos, size_type m, const string& s );
+			var_string& replace( size_type pos, size_type m, const string& s, size_type offset, size_type n );
+			
+			var_string& replace( size_type pos, size_type m, const char* s, size_type n );
+			var_string& replace( size_type pos, size_type m, const char* s );
+			
+			var_string& replace( size_type pos, size_type m, size_type n, char c );
+			
+			void replace( char* p, char* q, const string& s );
+			
+			void replace( char* p, char* q, const char *i, size_type n );
+			void replace( char* p, char* q, const char *s );
+			
+			void replace( char* p, char* q, size_type n, char c );
+			
+			void replace( char* p, char* q, const char *i, const char *j );
 			
 			string& operator+=( const string& s )  { return append( s ); }
 			string& operator+=( const char*   s )  { return append( s ); }

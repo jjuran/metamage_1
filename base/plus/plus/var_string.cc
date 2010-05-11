@@ -41,24 +41,56 @@ namespace plus
 		return const_cast< char* >( string::end() );
 	}
 	
-	char* var_string::erase( char* p, char* q )
+	char* var_string::erase_unchecked( char* p, size_type n )
 	{
 		const size_type old_size = size();
 		
-		char* data = mutable_data();
-		char* end  = data + old_size;
+		char* begin = const_cast< char* >( data() );
+		char* end   = begin + old_size;
 		
-		ASSERT( data <= p   );
-		ASSERT( p    <= q   );
-		ASSERT( q    <= end );
+		char* q = p + n;
 		
 		std::copy( q, end, p );
 		
-		const size_type new_size = old_size - ( q - p );
+		const size_type new_size = old_size - n;
 		
 		set_length( new_size );
 		
 		return p;
+	}
+	
+	var_string& var_string::erase( size_type pos, size_type n )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, old_size - pos );
+		
+		char* data = mutable_data();
+		
+		char* p = data + pos;
+		
+		erase_unchecked( p, n );
+		
+		return *this;
+	}
+	
+	char* var_string::erase( char* p, char* q )
+	{
+		char* begin = const_cast< char* >( data() );
+		char* end   = begin + size();
+		
+		ASSERT( begin <= p   );
+		ASSERT( p     <= q   );
+		ASSERT( q     <= end );
+		
+		const size_type n = q - p;
+		
+		return erase_unchecked( p, n );
 	}
 	
 	char* var_string::embiggen( size_type new_length, size_type new_capacity )
@@ -178,6 +210,63 @@ namespace plus
 		return p;
 	}
 	
+	var_string& var_string::insert( size_type pos, const string& s )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		return insert( pos, s.data(), s.size() );
+	}
+	
+	var_string& var_string::insert( size_type pos, const string& s, size_type offset, size_type n )
+	{
+		const size_type s_size = s.size();
+		
+		if ( pos > size()  ||  offset > s_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, s_size - offset );
+		
+		return insert( pos, s.data() + offset, n );
+	}
+	
+	var_string& var_string::insert( size_type pos, const char* s, size_type n )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		char* data = mutable_data();
+		
+		memcpy( insert_uninitialized( data + pos, n ), s, n );
+		
+		return *this;
+	}
+	
+	var_string& var_string::insert( size_type pos, const char* s )
+	{
+		return insert( pos, s, strlen( s ) );
+	}
+	
+	var_string& var_string::insert( size_type pos, size_type n, char c )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		char* data = mutable_data();
+		
+		memset( insert_uninitialized( data + pos, n ), c, n );
+		
+		return *this;
+	}
+	
 	void var_string::insert( char* p, char* i, char* j )
 	{
 		ASSERT( i <= j );
@@ -226,6 +315,172 @@ namespace plus
 		resize( size() + n, c );
 		
 		return *this;
+	}
+	
+	var_string& var_string::append( const string& other, size_type pos, size_type n )
+	{
+		const size_type other_size = other.size();
+		
+		if ( pos > other_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, other_size - pos );
+		
+		return append( other.data() + pos, n );
+	}
+	
+	
+	char* var_string::replace_setup( char* p, size_type m, difference_type delta )
+	{
+		if ( delta == 0 )
+		{
+			return p;
+		}
+		
+		char* q = p + m;
+		
+		if ( delta > 0 )
+		{
+			p = insert_uninitialized( q, delta ) - m;
+		}
+		else
+		{
+			erase_unchecked( q + delta, -delta );
+		}
+		
+		return p;
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const string& s )
+	{
+		if ( pos > size() )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		return replace( pos, m, s.data(), s.size() );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const string& s, size_type offset, size_type n )
+	{
+		const size_type s_size = s.size();
+		
+		if ( pos > size()  ||  offset > s_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		n = std::min( n, s_size - offset );
+		
+		return replace( pos, m, s.data() + offset, n );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const char* s, size_type n )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		m = std::min( m, old_size - pos );
+		
+		const difference_type delta = n - m;
+		
+		char* p = mutable_data() + pos;
+		
+		p = replace_setup( p, m, delta );
+		
+		memcpy( p, s, n );
+		
+		return *this;
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, const char* s )
+	{
+		return replace( pos, m, s, strlen( s ) );
+	}
+	
+	var_string& var_string::replace( size_type pos, size_type m, size_type n, char c )
+	{
+		const size_type old_size = size();
+		
+		if ( pos > old_size )
+		{
+			throw std::out_of_range( __func__ );
+		}
+		
+		m = std::min( m, old_size - pos );
+		
+		const difference_type delta = n - m;
+		
+		char* p = mutable_data() + pos;
+		
+		p = replace_setup( p, m, delta );
+		
+		memset( p, c, n );
+		
+		return *this;
+	}
+	
+	void var_string::replace( char* p, char* q, const string& s )
+	{
+		replace( p, q, s.data(), s.size() );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *i, size_type n )
+	{
+		ASSERT( begin() <= p );
+		
+		ASSERT( q <= end() );
+		
+		ASSERT( p <= q );
+		
+		const char* j = i + n;
+		
+		ASSERT( j <= begin()  ||  i >= end() );
+		
+		const size_type m = q - p;
+		
+		const difference_type delta = n - m;
+		
+		p = replace_setup( p, m, delta );
+		
+		memcpy( p, i, n );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *s )
+	{
+		replace( p, q, s, strlen( s ) );
+	}
+	
+	void var_string::replace( char* p, char* q, size_type n, char c )
+	{
+		ASSERT( begin() <= p );
+		
+		ASSERT( q <= end() );
+		
+		ASSERT( p <= q );
+		
+		const size_type m = q - p;
+		
+		const difference_type delta = n - m;
+		
+		p = replace_setup( p, m, delta );
+		
+		memset( p, c, n );
+	}
+	
+	void var_string::replace( char* p, char* q, const char *i, const char *j )
+	{
+		ASSERT( i <= j );
+		
+		const size_type n = j - i;
+		
+		replace( p, q, i, n );
 	}
 	
 }
