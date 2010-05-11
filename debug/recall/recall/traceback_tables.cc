@@ -25,9 +25,9 @@ namespace recall
 	
 	const traceback_table* find_symbol_name( return_address_traceback addr )
 	{
-		if ( addr == NULL )
+		if ( addr == 0 )
 		{
-			return NULL;
+			return 0;  // NULL
 		}
 		
 		const uint32_t* word = (const uint32_t*) addr;
@@ -56,12 +56,12 @@ namespace recall
 			++word;
 		}
 		
-		return NULL;
+		return 0;  // NULL
 	}
 	
-	std::string get_symbol_string( const traceback_table* table )
+	plus::string get_symbol_string( const traceback_table* table )
 	{
-		return std::string( table->name, table->name_size );
+		return plus::string( table->name, table->name_size );
 	}
 	
 }

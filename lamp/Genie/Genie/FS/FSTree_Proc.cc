@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/contains.hh"
+#include "plus/var_string.hh"
 
 // Recall
 #include "recall/backtrace.hh"
@@ -478,9 +479,11 @@ namespace Genie
 			end -= 6;
 		}
 		
-		std::string result = make_report_from_stack_crawl( begin, end );
+		plus::var_string result;
 		
-		return result;
+		make_report_from_stack_crawl( result, begin, end );
+		
+		return std::string( result.data(), result.size() );
 	}
 	
 	

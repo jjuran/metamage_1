@@ -5,27 +5,20 @@
 
 #include "recall/demangle.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Standard C/C++
 #include <cctype>
 #include <cstring>
-
-// Standard C++
-#include <map>
 
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
 
-static std::string join( const char* space, const std::string& a, const std::string& b )
-{
-	if ( a.empty() || b.empty() )
-	{
-		space = "";
-	}
-	
-	return a + space + b;
-}
 
 namespace recall
 {
@@ -68,93 +61,103 @@ namespace recall
 	
 	#define OP( op )  "operator" op
 	
-	static Operator gOperators[] =
+	static const Operator gOperators[] =
 	{
-		{ "nw",  OP( " new"      ) },
-		{ "nwa", OP( " new[]"    ) },
-		{ "dl",  OP( " delete"   ) },
-		{ "dla", OP( " delete[]" ) },
+		{ "nw"  "_", OP( " new"      ) },
+		{ "nwa" "_", OP( " new[]"    ) },
+		{ "dl"  "_", OP( " delete"   ) },
+		{ "dla" "_", OP( " delete[]" ) },
 		
-		{ "pl",  OP( "+" ) },  // PLus
-		{ "mi",  OP( "-" ) },  // MInus
-		{ "ml",  OP( "*" ) },  // MuLtiply
-		{ "dv",  OP( "/" ) },  // DiVide
-		{ "md",  OP( "%" ) },  // MoD
-		{ "er",  OP( "^" ) },  // Exclusive oR
+		{ "pl"  "_", OP( "+" ) },  // PLus
+		{ "mi"  "_", OP( "-" ) },  // MInus
+		{ "ml"  "_", OP( "*" ) },  // MuLtiply
+		{ "dv"  "_", OP( "/" ) },  // DiVide
+		{ "md"  "_", OP( "%" ) },  // MoD
+		{ "er"  "_", OP( "^" ) },  // Exclusive oR
 		
-		{ "ad",  OP( "&" ) },  // AnD
-		{ "or",  OP( "|" ) },  // OR
-		{ "co",  OP( "~" ) },  // COmplement
-		{ "nt",  OP( "!" ) },  // NoT
-		{ "as",  OP( "=" ) },  // ASsign
+		{ "ad"  "_", OP( "&" ) },  // AnD
+		{ "or"  "_", OP( "|" ) },  // OR
+		{ "co"  "_", OP( "~" ) },  // COmplement
+		{ "nt"  "_", OP( "!" ) },  // NoT
+		{ "as"  "_", OP( "=" ) },  // ASsign
 		
-		{ "apl",  OP( "+=" ) },  // Assign-PLus
-		{ "ami",  OP( "-=" ) },  // Assign-MInus
-		{ "amu",  OP( "*=" ) },  // Assign-MUltiply
-		{ "adv",  OP( "/=" ) },  // Assign-DiVide
-		{ "amd",  OP( "%=" ) },  // Assign-MoD
-		{ "aer",  OP( "^=" ) },  // Assign-Exclusive-oR
-		{ "aad",  OP( "&=" ) },  // Assign-AnD
-		{ "aor",  OP( "|=" ) },  // Assign-OR
+		{ "apl"  "_", OP( "+=" ) },  // Assign-PLus
+		{ "ami"  "_", OP( "-=" ) },  // Assign-MInus
+		{ "amu"  "_", OP( "*=" ) },  // Assign-MUltiply
+		{ "adv"  "_", OP( "/=" ) },  // Assign-DiVide
+		{ "amd"  "_", OP( "%=" ) },  // Assign-MoD
+		{ "aer"  "_", OP( "^=" ) },  // Assign-Exclusive-oR
+		{ "aad"  "_", OP( "&=" ) },  // Assign-AnD
+		{ "aor"  "_", OP( "|=" ) },  // Assign-OR
 		
-		{ "ls",  OP( "<<" ) },  // Left Shift
-		{ "rs",  OP( ">>" ) },  // Right Shift
-		{ "als",  OP( "<<=" ) },  // Assign-Left-Shift
-		{ "ars",  OP( ">>=" ) },  // Assign-Right-Shift
+		{ "ls"  "_", OP( "<<" ) },  // Left Shift
+		{ "rs"  "_", OP( ">>" ) },  // Right Shift
+		{ "als" "_", OP( "<<=" ) },  // Assign-Left-Shift
+		{ "ars" "_", OP( ">>=" ) },  // Assign-Right-Shift
 		
-		{ "eq",  OP( "==" ) },  // EQual
-		{ "ne",  OP( "!=" ) },  // Not Equal
-		{ "le",  OP( "<=" ) },  // Less than or Equal
-		{ "ge",  OP( ">=" ) },  // Greater than or Equal
-		{ "lt",  OP( "<" ) },  // Less Than
-		{ "gt",  OP( ">" ) },  // Greater Than
+		{ "eq"  "_", OP( "==" ) },  // EQual
+		{ "ne"  "_", OP( "!=" ) },  // Not Equal
+		{ "le"  "_", OP( "<=" ) },  // Less than or Equal
+		{ "ge"  "_", OP( ">=" ) },  // Greater than or Equal
+		{ "lt"  "_", OP( "<" ) },  // Less Than
+		{ "gt"  "_", OP( ">" ) },  // Greater Than
 		
-		{ "aa",  OP( "&&" ) },
-		{ "oo",  OP( "||" ) },
-		{ "pp",  OP( "++" ) },
-		{ "mm",  OP( "--" ) },
-		{ "cl",  OP( "()" ) },  // CaLl
-		{ "vc",  OP( "[]" ) },  // VeCtor
-		{ "rf",  OP( "->" ) },  // deReFerence
-		{ "cm",  OP( "," ) },  // CoMma
-		{ "rm",  OP( "->*" ) },  // deReference Member
+		{ "aa"  "_", OP( "&&" ) },
+		{ "oo"  "_", OP( "||" ) },
+		{ "pp"  "_", OP( "++" ) },
+		{ "mm"  "_", OP( "--" ) },
+		{ "cl"  "_", OP( "()" ) },  // CaLl
+		{ "vc"  "_", OP( "[]" ) },  // VeCtor
+		{ "rf"  "_", OP( "->" ) },  // deReFerence
+		{ "cm"  "_", OP( "," ) },  // CoMma
+		{ "rm"  "_", OP( "->*" ) },  // deReference Member
 		
 		{ NULL, NULL }
 	};
 	
-	typedef std::map< std::string, const char* > OperatorMap;
-	
-	static OperatorMap MakeOperatorMap()
+	static bool begins_with( const char* s, const char* sub )
 	{
-		OperatorMap result;
-		
-		const unsigned array_length = sizeof gOperators / sizeof (Operator) - 1;
-		
-		for ( const Operator* op = gOperators;  op < gOperators + array_length;  ++op )
+		while ( *s != '\0' )
 		{
-			result[ op->code ] = op->name;
+			if ( *s++ != *sub++ )
+			{
+				return false;
+			}
 		}
 		
-		return result;
+		return true;
+	}
+	
+	static inline bool operator==( const Operator& op, const char* code )
+	{
+		return begins_with( op.code, code );
+	}
+	
+	static const Operator* find_operator( const char* code )
+	{
+		const Operator* begin = gOperators;
+		const Operator* end   = begin + sizeof gOperators / sizeof gOperators[0];
+		
+		const Operator* it = std::find( begin, end, code );
+		
+		return it != end ? it : NULL;
 	}
 	
 	static const char* ReadOperator( const char*& p, const char* end )
 	{
-		static OperatorMap map = MakeOperatorMap();
+		const Operator* it = find_operator( p );
 		
-		OperatorMap::const_iterator it = map.find( std::string( p, end ) );
-		
-		if ( it == map.end() )
+		if ( it == NULL )
 		{
 			throw demangle_failed();
 		}
 		
 		p = end;
 		
-		return it->second;
+		return it->name;
 	}
 	
-	static std::string LastName( const std::string& qualified_name )
+	static plus::string LastName( const plus::string& qualified_name )
 	{
 		std::size_t colon = qualified_name.find_last_of( ":" );
 		
@@ -168,19 +171,17 @@ namespace recall
 		return gBasicTypes[ c - 'a' ];
 	}
 	
-	static std::string ReadBasicType( const char*& p )
+	static void ReadBasicType( plus::var_string& out, const char*& p )
 	{
-		std::string sign;
-		
 		if ( *p == 'U' )
 		{
-			sign = "unsigned ";
+			out += "unsigned ";
 			
 			++p;
 		}
 		else if ( *p == 'S' )
 		{
-			sign = "signed ";
+			out += "signed ";
 			
 			++p;
 		}
@@ -197,7 +198,7 @@ namespace recall
 			throw demangle_failed();
 		}
 		
-		return sign + type;
+		out += type;
 	}
 	
 	static inline unsigned ReadLength( const char*& p )
@@ -205,23 +206,21 @@ namespace recall
 		return iota::parse_unsigned_decimal( &p );
 	}
 	
-	static std::string ReadLName( const char*& p )
+	static const char* ReadLName( const char*& p )
 	{
 		unsigned length = ReadLength( p );
 		
-		std::string result( p, length );
+		const char* begin = p;
 		
 		p += length;
 		
-		return result;
+		return begin;
 	}
 	
-	static std::string ReadInteger( const char* begin, const char* end )
+	static void ReadInteger( plus::var_string& out, const char* begin, const char* end, unsigned x )
 	{
 		if ( *begin != '-' )
 		{
-			unsigned x = iota::parse_unsigned_decimal( begin );  // *end is either ',' or '>'
-			
 			char code[] = "'code'";
 			
 			code[4] =  x        & 0xff;
@@ -236,11 +235,13 @@ namespace recall
 			
 			if ( isCode )
 			{
-				return code;
+				out.append( code, sizeof code );
+				
+				return;
 			}
 		}
 		
-		return std::string( begin, end );
+		out.append( begin, end );
 	}
 	
 	
@@ -254,33 +255,38 @@ namespace recall
 			virtual bool TemplateParameterListEndsHere( const char* p ) = 0;
 			
 			
-			std::string ReadTemplateParameter( const char*& p );
+			void ReadTemplateParameter( plus::var_string& out, const char*& p );
 			
-			std::string ReadTemplateParameters( const char*&p );
+			void ReadTemplateParameters( plus::var_string& out, const char*&p );
 			
-			std::string ExpandTemplates( const std::string& name );
+			void ExpandTemplates( plus::var_string& out, const plus::string& name );
 			
-			std::string ReadQualName( const char*& p );
+			void ReadQualName( plus::var_string& out, const char*& p );
 			
-			std::string ReadQualifiedName( const char*& p );
+			void ReadQualifiedName( plus::var_string& out, const char*& p );
 			
-			std::string ReadFunctionType( const char*& p );
+			void ReadFunctionType( plus::var_string& out, const char*& p );
 			
-			std::string ReadIndirectType( const char*& p );
+			void ReadIndirectType( plus::var_string& out, const char*& p );
 			
-			std::string ReadQualifiedType( const char*& p );
+			void ReadQualifiedType( plus::var_string& out, const char*& p );
 			
-			std::string ReadType( const char*& p );
+			void ReadType( plus::var_string& out, const char*& p );
 			
-			std::string ReadConversion( const char*& p )  { return "operator " + ReadType( p ); }
+			void ReadConversion( plus::var_string& out, const char*& p )
+			{
+				out += "operator ";
+				
+				ReadType( out, p );
+			}
 			
-			std::string ReadSpecialName( const char*& p );
+			void ReadSpecialName( plus::var_string& out, const char*& p );
 			
-			std::string ReadIdentifier( const char*& p );
+			void ReadIdentifier( plus::var_string& out, const char*& p );
 			
-			std::string ReadEntityName( const char*& p );
+			void ReadEntityName( plus::var_string& out, const char*& p );
 			
-			std::string ReadSymbol( const char*& p );
+			void ReadSymbol( plus::var_string& out, const char*& p );
 	};
 	
 	class MWC68K_Unmangler : public Unmangler
@@ -338,40 +344,57 @@ namespace recall
 	}
 	
 	
-	std::string Unmangler::ReadTemplateParameter( const char*& p )
+	void Unmangler::ReadTemplateParameter( plus::var_string& out, const char*& p )
 	{
 		if ( *p == '&' )
 		{
-			return ReadSymbol( ++p );
+			ReadSymbol( out, ++p );
+			
+			return;
 		}
 		
-		if ( *p == '-'  ||  std::isdigit( *p ) )
+		const char* integer = p;
+		
+		const bool negative = *p == '-';
+		
+		if ( negative )
 		{
-			const char* integer = p;
-			
-			while ( std::isdigit( *++p ) )
-			{
-				continue;
-			}
+			++p;
+		}
+		
+		if ( std::isdigit( *p ) )
+		{
+			unsigned x = iota::parse_unsigned_decimal( &p );
 			
 			if ( TemplateParameterListEndsHere( p ) || TemplateParameterFollows( p ) )
 			{
-				return ReadInteger( integer, p );
+				ReadInteger( out, integer, p, x );
+				
+				return;
 			}
 			
 			p = integer;  // backtrack
 		}
 		
-		return ReadType( p );
+		ReadType( out, p );
 	}
 	
-	std::string Unmangler::ReadTemplateParameters( const char*&p )
+	void Unmangler::ReadTemplateParameters( plus::var_string& out, const char*&p )
 	{
-		std::string result;
+		out += "< ";
+		
+		bool successive = false;
 		
 		while ( true )
 		{
-			result = join( ", ", result, ReadTemplateParameter( ++p ) );
+			if ( successive )
+			{
+				out += ", ";
+			}
+			
+			successive = true;
+			
+			ReadTemplateParameter( out, ++p );
 			
 			if ( TemplateParameterListEndsHere( p ) )
 			{
@@ -385,52 +408,51 @@ namespace recall
 			}
 		}
 		
-		result = "< " + result + " >";
-		
-		return result;
+		out += " >";
 	}
 	
-	std::string Unmangler::ExpandTemplates( const std::string& name )
+	void Unmangler::ExpandTemplates( plus::var_string& out, const plus::string& name )
 	{
 		const char* params = FindTemplateParameters( name.c_str() );
 		
 		if ( params == NULL )
 		{
-			return name;
+			out += name;
+			
+			return;
 		}
 		
 		const char* p = params;
 		
-		std::string result = ReadTemplateParameters( p );
+		out.append( name.data(), params );
 		
-		result = std::string( name.data(), params ) + result;
-		
-		return result;
+		ReadTemplateParameters( out, p );
 	}
 	
-	std::string Unmangler::ReadQualName( const char*& p )
+	void Unmangler::ReadQualName( plus::var_string& out, const char*& p )
 	{
-		return ExpandTemplates( ReadLName( p ) );
+		const char* name = ReadLName( p );
+		
+		ExpandTemplates( out, plus::string( name, p ) );
 	}
 	
-	std::string Unmangler::ReadQualifiedName( const char*& p )
+	void Unmangler::ReadQualifiedName( plus::var_string& out, const char*& p )
 	{
 		int count = *p++ - '0';
 		
-		std::string result;
+		ReadQualName( out, p );
 		
-		while ( count-- )
+		while ( --count )
 		{
-			result = join( "::", result, ReadQualName( p ) );
+			out += "::";
+			
+			ReadQualName( out, p );
 		}
-		
-		return result;
 	}
 	
-	std::string Unmangler::ReadFunctionType( const char*& p )
+	void Unmangler::ReadFunctionType( plus::var_string& out, const char*& p )
 	{
-		std::string params;
-		std::string return_type;
+		plus::var_string params;
 		
 		while ( *p != '\0' )
 		{
@@ -441,37 +463,52 @@ namespace recall
 			
 			if ( *p == '_' )
 			{
-				return_type = ReadType( ++p ) + " ";
+				ReadType( out, ++p );
+				
+				out += " ";
 				
 				break;
 			}
 			
-			params = join( ", ", params, ReadType( p ) );
+			if ( !params.empty() )
+			{
+				params += ", ";
+			}
+			
+			ReadType( params, p );
 		}
 		
-		return return_type + "( " + params + " )";
+		out += "( ";
+		out += params;
+		out += " )";
 	}
 	
-	std::string Unmangler::ReadIndirectType( const char*& p )
+	void Unmangler::ReadIndirectType( plus::var_string& out, const char*& p )
 	{
-		std::string result;
+		plus::var_string result;
 		
 		switch ( *p )
 		{
 			case 'R':
-				result = "&" + result;
+				result = "&";
 				++p;
 				
 				break;
 			
 			case 'P':
-				result = "*" + result;
+				result = "*";
 				++p;
 				
 				break;
 			
 			case 'M':
-				result = "::(" + ReadType( ++p ) + ")*" + result;
+				{
+					result = "::(";
+					
+					ReadType( result, ++p );
+					
+					result += ")*";
+				}
 				
 				break;
 			
@@ -479,55 +516,75 @@ namespace recall
 				break;
 		}
 		
-		return ReadType( p ) + result;
+		ReadType( out, p );
+		
+		out += result;
 	}
 	
-	std::string Unmangler::ReadQualifiedType( const char*& p )
+	void Unmangler::ReadQualifiedType( plus::var_string& out, const char*& p )
 	{
-		std::string result;
+		bool is_const = *p == 'C';
 		
-		if ( *p == 'C' )
+		if ( is_const )
 		{
-			result = " const";
-			
 			++p;
 		}
 		
-		if ( *p == 'V' )
+		bool is_volatile = *p == 'V';
+		
+		if ( is_volatile )
 		{
-			result = " volatile" + result;
-			
 			++p;
 		}
 		
-		return ReadType( p ) + result;
+		ReadType( out, p );
+		
+		if ( is_volatile )
+		{
+			out += " volatile";
+		}
+		
+		if ( is_const )
+		{
+			out += " const";
+		}
 	}
 	
-	std::string Unmangler::ReadType( const char*& p )
+	void Unmangler::ReadType( plus::var_string& out, const char*& p )
 	{
 		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
 		{
-			return ReadBasicType( p );
+			ReadBasicType( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'C'  ||  *p == 'V' )
 		{
-			return ReadQualifiedType( p );
+			ReadQualifiedType( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'R'  ||  *p == 'P'  ||  *p == 'M' )
 		{
-			return ReadIndirectType( p );
+			ReadIndirectType( out, p );
+			
+			return;
 		}
 		
 		if ( std::isdigit( *p ) )
 		{
-			return ReadQualName( p );
+			ReadQualName( out, p );
+			
+			return;
 		}
 		
 		if ( *p == 'Q' )
 		{
-			return ReadQualifiedName( ++p );
+			ReadQualifiedName( out, ++p );
+			
+			return;
 		}
 		
 		if ( *p == 'A' )
@@ -537,7 +594,9 @@ namespace recall
 		
 		if ( *p == 'F' )
 		{
-			return ReadFunctionType( ++p );
+			ReadFunctionType( out, ++p );
+			
+			return;
 		}
 		
 		throw demangle_failed();
@@ -545,7 +604,7 @@ namespace recall
 	
 	struct NotSpecial {};
 	
-	std::string Unmangler::ReadSpecialName( const char*& p )
+	void Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 	{
 		const char* q = p;
 		
@@ -561,10 +620,10 @@ namespace recall
 			throw NotSpecial();
 		}
 		
-		std::string name( p, double_underscore );
+		plus::string name( p, double_underscore );
 		
-		if ( name == "__ct" )  return p = double_underscore, "";
-		if ( name == "__dt" )  return p = double_underscore, "~";
+		if ( name == "__ct" )  { p = double_underscore;/*out += "";*/ return; }
+		if ( name == "__dt" )  { p = double_underscore;  out += "~";  return; }
 		
 		if ( name == "_vtbl"     )  throw demangle_failed();
 		if ( name == "_rttivtbl" )  throw demangle_failed();
@@ -581,63 +640,71 @@ namespace recall
 			{
 				p += 2;
 				
-				return ReadConversion( p );
+				ReadConversion( out, p );
+				
+				return;
 			}
 			
-			return ReadOperator( p, double_underscore );
+			out += ReadOperator( p, double_underscore );
+			
+			return;
 		}
 		
 		throw NotSpecial();
 	}
 	
-	std::string Unmangler::ReadIdentifier( const char*& p )
+	void Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
 	{
 		const char* params = FindTemplateParameters( p );
 		
 		const char* double_underscore = std::strstr( p + 1, "__" );
 		
-		if ( double_underscore == NULL )
-		{
-			double_underscore = p + std::strlen( p );
-		}
+		const char* id_end = double_underscore ? double_underscore
+		                                       : p + std::strlen( p );
 		
-		if ( params != NULL  &&  params < double_underscore )
+		if ( params != NULL  &&  params < id_end )
 		{
-			std::string identifier( p, params );
+			out.append( p, params );
 			
 			p = params;
 			
-			return identifier + ReadTemplateParameters( p );
+			ReadTemplateParameters( out, p );
+			
+			return;
 		}
 		
-		std::string result( p, double_underscore );
+		out.append( p, id_end );
 		
-		p = double_underscore;
-		
-		return result;
+		p = id_end;
 	}
 	
-	std::string Unmangler::ReadEntityName( const char*& p )
+	void Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
 	{
 		if ( std::strcmp( p, "__end__catch" ) == 0 )
 		{
 			p += STRLEN( "__end__catch" );
 			
-			return "__end__catch";
+			out += "__end__catch";
+			
+			return;
 		}
 		
 		if ( std::strcmp( p, "__throw_bad_alloc__3stdFv" ) == 0 )
 		{
 			p += STRLEN( "__throw_bad_alloc__3stdFv" );
 			
-			return "std::__throw_bad_alloc( void )";
+			out += "std::__throw_bad_alloc( void )";
+			
+			return;
 		}
 		
 		if ( *p == '_' )
 		{
 			try
 			{
-				return ReadSpecialName( p );
+				ReadSpecialName( out, p );
+				
+				return;
 			}
 			catch ( const NotSpecial& )
 			{
@@ -645,68 +712,80 @@ namespace recall
 			}
 		}
 		
-		return ReadIdentifier( p );
+		ReadIdentifier( out, p );
 	}
 	
-	std::string Unmangler::ReadSymbol( const char*& p )
+	void Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 	{
 		if ( p[0] == '.' )
 		{
 			++p;
 		}
 		
-		std::string function_name = ReadEntityName( p );
+		plus::var_string function_name;
+		
+		ReadEntityName( function_name, p );
 		
 		if ( *p == '\0' )
 		{
-			return function_name;
+			out += function_name;
+			
+			return;
 		}
 		
-		std::string class_name;
+		bool has_class_name = false;
 		
 		p += 2;
 		
 		if ( std::isdigit( *p ) )
 		{
-			class_name = ReadQualName( p );
+			ReadQualName( out, p );
+			
+			has_class_name = true;
 		}
 		else if ( p[0] == 'Q' )
 		{
-			class_name = ReadQualifiedName( ++p );
+			ReadQualifiedName( out, ++p );
+			
+			has_class_name = true;
 		}
 		
 		if ( function_name.empty()  ||  function_name == "~" )
 		{
-			// Set the name for a constructor or destructor
-			function_name += LastName( class_name );
+			// The class name was the last thing appended
+			function_name += LastName( out );
 		}
 		
-		if ( !class_name.empty() )
+		if ( has_class_name )
 		{
-			function_name = class_name + "::" + function_name;
+			out += "::";
 		}
 		
-		return function_name + ReadType( p );
+		out += function_name;
+		
+		ReadType( out, p );
 	}
 	
 	
-	std::string demangle_MWC68K( const std::string& name )
+	void demangle_MWC68K( plus::var_string& result, const plus::string& name )
 	{
 		const char* p = name.c_str();
 		
-		return MWC68K_Unmangler().ReadSymbol( p );
+		MWC68K_Unmangler().ReadSymbol( result, p );
 	}
 	
-	std::string demangle_MWCPPC( const std::string& name )
+	void demangle_MWCPPC( plus::var_string& result, const plus::string& name )
 	{
 		if ( name[0] != '.' )
 		{
-			return name;
+			result = name;
+			
+			return;
 		}
 		
 		const char* p = name.c_str();
 		
-		return MWCPPC_Unmangler().ReadSymbol( p );
+		MWCPPC_Unmangler().ReadSymbol( result, p );
 	}
 	
 }

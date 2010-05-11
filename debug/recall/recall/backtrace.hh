@@ -7,18 +7,25 @@
 #define RECALL_BACKTRACE_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Recall
 #include "recall/stack_crawl.hh"
 
 
+namespace plus
+{
+	
+	class var_string;
+	
+}
+
 namespace recall
 {
 	
-	std::string make_report_from_stack_crawl( std::vector< frame_data >::const_iterator  begin,
-	                                          std::vector< frame_data >::const_iterator  end );
+	void make_report_from_stack_crawl( plus::var_string&                          result,
+	                                   std::vector< frame_data >::const_iterator  begin,
+	                                   std::vector< frame_data >::const_iterator  end );
 	
 	class debugging_context
 	{
