@@ -61,7 +61,7 @@ namespace recall
 	}
 	
 	
-	std::string get_symbol_string( const macsbug_symbol* symbol )
+	const char* get_symbol_string( const macsbug_symbol* symbol )
 	{
 		const unsigned char* p = symbol->bytes;
 		
@@ -69,7 +69,11 @@ namespace recall
 		
 		const uint8_t length = has_long_name ? *++p : *p & 0x1f;
 		
-		return std::string( (const char*) p + 1, length );
+		const char* name = (const char*) p + 1;
+		
+		const char next = name[ length ];  // should be NUL
+		
+		return name;
 	}
 	
 }
