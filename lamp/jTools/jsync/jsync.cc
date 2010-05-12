@@ -216,6 +216,11 @@ namespace tool
 		}
 	}
 	
+	static void recursively_copy( p7::fd_t olddirfd, const plus::string& name, p7::fd_t newdirfd )
+	{
+		recursively_copy( olddirfd, name.c_str(), newdirfd );
+	}
+	
 	typedef std::pair< p7::fd_t, p7::fd_t > pair_of_fds;
 	
 	static void recursively_copy_into( const char*         name,
@@ -504,6 +509,15 @@ namespace tool
 		{
 			std::printf( "### Add conflict in %s (file vs. directory)\n", subpath );
 		}
+	}
+	
+	static void recursively_sync( p7::fd_t             a_dirfd,
+	                              p7::fd_t             b_dirfd,
+	                              p7::fd_t             c_dirfd,
+	                              const plus::string&  subpath,
+	                              const plus::string&  filename )
+	{
+		recursively_sync( a_dirfd, b_dirfd, c_dirfd, subpath.c_str(), filename.c_str() );
 	}
 	
 	template < class In, class Out, class Pred >
@@ -824,7 +838,7 @@ namespace tool
 		
 		plus::string subpath_dir = plus::concat( subpath, strlen( subpath ), STR_LEN( "/" ) );
 		
-		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir );
+		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir.c_str() );
 	}
 	
 	
