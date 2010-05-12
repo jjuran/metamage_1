@@ -80,7 +80,7 @@ namespace tool
 				str += " ";
 			}
 			
-			str += appendage;
+			str.append( appendage.data(), appendage.size() );
 		}
 		
 		return str;
