@@ -9,8 +9,8 @@
 // Standard C++
 #include <string>
 
-// plus
-#include "plus/make_string.hh"
+// iota
+#include "iota/convert_string.hh"
 
 // UseEdit
 #include "UseEdit/Window.hh"
@@ -38,7 +38,7 @@ namespace UseEdit
 			
 			std::string GetName() const
 			{
-				return plus::make_string( Nitrogen::GetWTitle( GetWindowRef() ) );
+				return iota::convert_string< std::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
 			}
 	};
 	

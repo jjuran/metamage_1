@@ -17,6 +17,7 @@
 #include "sys/stat.h"
 
 // Iota
+#include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
 // MoreFiles
@@ -163,7 +164,7 @@ namespace Genie
 		{
 			try
 			{
-				nucleus::string comment = N::FSpDTGetComment( item );
+				std::string comment = iota::convert_string< std::string >( N::FSpDTGetComment( item ) );
 				
 				if ( comment.size() > 31 )
 				{

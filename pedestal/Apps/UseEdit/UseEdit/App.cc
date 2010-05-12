@@ -3,6 +3,9 @@
  *	======
  */
 
+// iota
+#include "iota/convert_string.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -216,7 +219,7 @@ namespace UseEdit
 			
 			const Document& document = gDocuments.Documents().GetDocumentByID( id );
 			
-			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( document.GetName() );
+			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
 		
 		// Count

@@ -15,7 +15,8 @@
 // POSIX
 #include <unistd.h>
 
-// Iota
+// iota
+#include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
 // Debug
@@ -97,7 +98,7 @@ namespace tool
 		
 		try
 		{
-			result = p7::slurp( file );
+			result = iota::convert_string< nucleus::string >( p7::slurp( file ) );
 		}
 		catch ( const p7::errno_t& err )
 		{
