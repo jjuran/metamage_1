@@ -10,6 +10,9 @@
 // Standard C
 #include <string.h>
 
+// plus
+#include "plus/string.hh"
+
 
 namespace plus
 {
@@ -37,6 +40,10 @@ namespace plus
 		assign( buffer, sizeof buffer, s, strlen( s ) );
 	}
 	
+	exception::exception( const string& s )
+	{
+		assign( buffer, sizeof buffer, s.data(), s.size() );
+	}
 	
 }
 

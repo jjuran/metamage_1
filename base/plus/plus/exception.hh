@@ -15,6 +15,9 @@
 namespace plus
 {
 	
+	class string;
+	
+	
 	class exception : public std::exception
 	{
 		private:
@@ -23,6 +26,8 @@ namespace plus
 		public:
 			exception( const char* s, unsigned length );
 			exception( const char* s );
+			
+			exception( const string& s );
 			
 			const char* what() const throw()  { return buffer; }
 	};
