@@ -24,7 +24,7 @@ namespace tool
 	
 	#define RUN_TEST( condition, i )  run_test( condition, STR_LEN( "ok " #i "\n" ) )
 	
-	static void run_test( bool condition, const char* ok, std::size_t ok_length )
+	static void run_test( bool condition, const char* ok, size_t ok_length )
 	{
 		if ( !condition )
 		{
