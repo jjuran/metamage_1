@@ -93,12 +93,7 @@ namespace plus
 			char& front()  { return begin()[  0 ]; }
 			char& back ()  { return end  ()[ -1 ]; }
 			
-			char& operator[]( unsigned long long  i )  { return mutable_data()[ i ]; }
-			char& operator[](          long long  i )  { return mutable_data()[ i ]; }
-			char& operator[]( unsigned long       i )  { return mutable_data()[ i ]; }
-			char& operator[](          long       i )  { return mutable_data()[ i ]; }
-			char& operator[]( unsigned int        i )  { return mutable_data()[ i ]; }
-			char& operator[](          int        i )  { return mutable_data()[ i ]; }
+			char& operator[]( size_type i )  { return mutable_data()[ i ]; }
 			
 			var_string& assign( const char*    p,
 			                    size_type      length,

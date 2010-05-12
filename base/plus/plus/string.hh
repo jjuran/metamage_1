@@ -119,14 +119,14 @@ namespace plus
 			
 			const char* c_str() const  { return data(); }
 			
-			operator const char*() const  { return c_str(); }
-			
 			const char* begin() const  { return data(); }
 			
 			const char* end() const;
 			
 			const char& front() const  { return begin()[  0 ]; }
 			const char& back () const  { return end  ()[ -1 ]; }
+			
+			const char& operator[]( size_type i ) const  { return data()[ i ]; }
 			
 			string& assign( const char*    p,
 			                size_type      length,
