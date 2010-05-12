@@ -10,14 +10,8 @@
 #ifndef POSEVEN_FUNCTIONS_PWRITE_HH
 #define POSEVEN_FUNCTIONS_PWRITE_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include <unistd.h>
-
-// plus
-#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -32,12 +26,8 @@ namespace poseven
 		return throw_posix_result( ::pwrite( fd, buffer, n_bytes, offset ) );
 	}
 	
-	inline ssize_t pwrite( fd_t fd, const plus::string& string, off_t offset )
-	{
-		return pwrite( fd, string.data(), string.length(), offset );
-	}
-	
-	inline ssize_t pwrite( fd_t fd, const std::string& string, off_t offset )
+	template < class String >
+	inline ssize_t pwrite( fd_t fd, const String& string, off_t offset )
 	{
 		return pwrite( fd, string.data(), string.length(), offset );
 	}
