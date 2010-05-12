@@ -102,6 +102,12 @@ namespace poseven
 		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
 	}
 	
+	template < class String >
+	inline directory_contents_container directory_contents( const String& dir_path )
+	{
+		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
+	}
+	
 }
 
 #endif

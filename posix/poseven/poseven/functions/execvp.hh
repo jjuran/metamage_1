@@ -18,6 +18,9 @@
 #include <errno.h>
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 
 namespace poseven
 {
@@ -32,6 +35,12 @@ namespace poseven
 	inline void execvp( char const *const *argv )
 	{
 		execvp( argv[ 0 ], argv );
+	}
+	
+	template < class String >
+	inline void execvp( const String& path, char const *const *argv )
+	{
+		execvp( iota::get_string_c_str( path ), argv );
 	}
 	
 }

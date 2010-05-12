@@ -17,6 +17,9 @@
 // POSIX
 #include <stdio.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -27,6 +30,12 @@ namespace poseven
 	inline void rename( const char* from, const char* to )
 	{
 		throw_posix_result( ::rename( from, to ) );
+	}
+	
+	template < class String1, class String2 >
+	inline void rename( const String1& from, const String2& to )
+	{
+		rename( iota::get_string_c_str( from ), iota::get_string_c_str( to ) );
 	}
 	
 }

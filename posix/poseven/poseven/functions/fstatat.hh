@@ -17,6 +17,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/functions/stat.hh"
 #include "poseven/types/at_flags_t.hh"
@@ -56,6 +59,23 @@ namespace poseven
 		throw_posix_result( ::fstatat( dirfd, path, &sb, flags ) );
 		
 		return sb;
+	}
+	
+	template < class String >
+	inline bool fstatat( fd_t           dirfd,
+	                     const String&  path,
+	                     struct stat&   sb,
+	                     at_flags_t     flags = at_flags_t() )
+	{
+		return fstatat( dirfd, iota::get_string_c_str( path ), sb, flags );
+	}
+	
+	template < class String >
+	inline struct ::stat fstatat( fd_t           dirfd,
+	                              const String&  path,
+	                              at_flags_t     flags = at_flags_t() )
+	{
+		return fstatat( dirfd, iota::get_string_c_str( path ), flags );
 	}
 	
 }

@@ -17,6 +17,9 @@
 // POSIX
 #include <utime.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -39,6 +42,25 @@ namespace poseven
 		utimbuf time_buffer = { 0, mod_time };
 		
 		utime( path, time_buffer );
+	}
+	
+	
+	template < class String >
+	inline void utime( const String& path )
+	{
+		utime( iota::get_string_c_str( path ) );
+	}
+	
+	template < class String >
+	inline void utime( const String& path, const utimbuf& time_buffer )
+	{
+		utime( iota::get_string_c_str( path ), time_buffer );
+	}
+	
+	template < class String >
+	inline void utime( const String& path, const time_t& mod_time )
+	{
+		utime( iota::get_string_c_str( path ), mod_time );
 	}
 	
 }

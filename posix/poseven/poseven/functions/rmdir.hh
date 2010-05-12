@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -23,6 +26,12 @@ namespace poseven
 	inline void rmdir( const char* path )
 	{
 		throw_posix_result( ::rmdir( path ) );
+	}
+	
+	template < class String >
+	inline void rmdir( const String& path )
+	{
+		rmdir( iota::get_string_c_str( path ) );
 	}
 	
 }

@@ -14,6 +14,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/at_flags_t.hh"
 #include "poseven/types/errno_t.hh"
@@ -27,6 +30,12 @@ namespace poseven
 	                      at_flags_t   flags = at_flags_t() )
 	{
 		throw_posix_result( ::unlinkat( dirfd, path, flags ) );
+	}
+	
+	template < class String >
+	inline void unlinkat( const String& path )
+	{
+		unlinkat( iota::get_string_c_str( path ) );
 	}
 	
 }

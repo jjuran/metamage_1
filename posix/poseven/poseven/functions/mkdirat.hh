@@ -17,6 +17,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
@@ -28,6 +31,12 @@ namespace poseven
 	inline void mkdirat( fd_t dirfd, const char* path, mode_t mode = _777 )
 	{
 		throw_posix_result( ::mkdirat( dirfd, path, mode ) );
+	}
+	
+	template < class String >
+	inline void mkdirat( const String& path, mode_t mode = _777 )
+	{
+		mkdirat( iota::get_string_c_str( path ), mode );
 	}
 	
 }

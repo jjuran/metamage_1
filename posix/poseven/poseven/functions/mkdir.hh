@@ -17,6 +17,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
@@ -28,6 +31,12 @@ namespace poseven
 	inline void mkdir( const char* path, mode_t mode = _777 )
 	{
 		throw_posix_result( ::mkdir( path, mode ) );
+	}
+	
+	template < class String >
+	inline void mkdir( const String& path, mode_t mode = _777 )
+	{
+		mkdir( iota::get_string_c_str( path ), mode );
 	}
 	
 }

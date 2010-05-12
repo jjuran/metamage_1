@@ -17,6 +17,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -27,6 +30,12 @@ namespace poseven
 	inline void unlink( const char* path )
 	{
 		throw_posix_result( ::unlink( path ) );
+	}
+	
+	template < class String >
+	inline void unlink( const String& path )
+	{
+		unlink( iota::get_string_c_str( path ) );
 	}
 	
 }

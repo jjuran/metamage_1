@@ -17,6 +17,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -48,6 +51,19 @@ namespace poseven
 		throw_posix_result( ::stat( pathname, &sb ) );
 		
 		return sb;
+	}
+	
+	template < class String >
+	inline bool stat( const String&  path,
+	                  struct stat&   sb )
+	{
+		return stat( iota::get_string_c_str( path ), sb );
+	}
+	
+	template < class String >
+	inline struct ::stat stat( const String& path )
+	{
+		return stat( iota::get_string_c_str( path ) );
 	}
 	
 }

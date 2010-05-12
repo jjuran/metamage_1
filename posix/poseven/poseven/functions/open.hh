@@ -17,6 +17,9 @@
 // POSIX
 #include <fcntl.h>
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/functions/close.hh"
 #include "poseven/types/mode_t.hh"
@@ -27,6 +30,14 @@ namespace poseven
 {
 	
 	nucleus::owned< fd_t > open( const char* name, open_flags_t oflag, mode_t mode = _666 );
+	
+	template < class String >
+	inline nucleus::owned< fd_t >
+	//
+	open( const String& path, open_flags_t flags, mode_t mode = _666 )
+	{
+		return open( iota::get_string_c_str( path ), flags, mode );
+	}
 	
 }
 

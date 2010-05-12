@@ -14,6 +14,9 @@
 #ifndef POSEVEN_FUNCTIONS_EXECV_HH
 #define POSEVEN_FUNCTIONS_EXECV_HH
 
+// iota
+#include "iota/strings.hh"
+
 // POSIX
 #include <errno.h>
 #include <unistd.h>
@@ -32,6 +35,12 @@ namespace poseven
 	inline void execv( char const *const *argv )
 	{
 		execv( argv[ 0 ], argv );
+	}
+	
+	template < class String >
+	inline void execv( const String& path, char const *const *argv )
+	{
+		execv( iota::get_string_c_str( path ), argv );
 	}
 	
 }

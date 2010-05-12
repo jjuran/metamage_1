@@ -14,6 +14,9 @@
 #ifndef POSEVEN_FUNCTIONS_CHMOD_HH
 #define POSEVEN_FUNCTIONS_CHMOD_HH
 
+// iota
+#include "iota/strings.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
@@ -25,6 +28,12 @@ namespace poseven
 	inline void chmod( const char* pathname, mode_t mode )
 	{
 		throw_posix_result( ::chmod( pathname, mode ) );
+	}
+	
+	template < class String >
+	inline void chmod( const String& path, mode_t mode )
+	{
+		chmod( iota::get_string_c_str( path ), mode );
 	}
 	
 }
