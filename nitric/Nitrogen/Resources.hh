@@ -18,6 +18,9 @@
 #include <Resources.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
@@ -162,14 +165,18 @@ namespace Nitrogen
 	Handle GetNamedResource ( ResType type, ConstStr255Param name );
 	Handle Get1NamedResource( ResType type, ConstStr255Param name );
 	
-	inline Handle GetNamedResource( ResType type, const std::string& name )
+	template < class String >
+	inline Handle GetNamedResource( ResType type, const String& name )
 	{
-		return GetNamedResource( type, Str255( name ) );
+		return GetNamedResource( type, Str255( iota::get_string_data( name ),
+		                                       iota::get_string_size( name ) ) );
 	}
 	
-	inline Handle Get1NamedResource( ResType type, const std::string& name )
+	template < class String >
+	inline Handle Get1NamedResource( ResType type, const String& name )
 	{
-		return Get1NamedResource( type, Str255( name ) );
+		return Get1NamedResource( type, Str255( iota::get_string_data( name ),
+		                                        iota::get_string_size( name ) ) );
 	}
 	
 	void MacLoadResource( Handle r );

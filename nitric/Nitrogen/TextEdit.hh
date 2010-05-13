@@ -22,6 +22,9 @@
 // Standard C++
 #include <string>
 
+// iota
+#include "iota/string_traits.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -92,9 +95,12 @@ namespace Nitrogen
 		::TESetText( text, length, hTE );
 	}
 	
-	inline void TESetText( const std::string& text, TEHandle hTE )
+	template < class String >
+	inline void TESetText( const String& text, TEHandle hTE )
 	{
-		TESetText( text.data(), text.size(), hTE );
+		TESetText( iota::get_string_data( text ),
+		           iota::get_string_size( text ),
+		           hTE );
 	}
 	
 	using ::TEGetText;
@@ -133,9 +139,12 @@ namespace Nitrogen
 		::TEInsert( text, length, hTE );
 	}
 	
-	inline void TEInsert( const std::string& text, TEHandle hTE )
+	template < class String >
+	inline void TEInsert( const String& text, TEHandle hTE )
 	{
-		TEInsert( text.data(), text.size(), hTE );
+		TEInsert( iota::get_string_data( text ),
+		          iota::get_string_size( text ),
+		          hTE );
 	}
 	
 	inline void TESetAlignment( Justification just, TEHandle hTE )
@@ -156,11 +165,15 @@ namespace Nitrogen
 		::TETextBox( text, length, &box, just );
 	}
 	
-	inline void TETextBox( const std::string&  text,
-	                       const Rect&         box,
-	                       Justification       just = teFlushLeft )
+	template < class String >
+	inline void TETextBox( const String&  text,
+	                       const Rect&    box,
+	                       Justification  just = teFlushLeft )
 	{
-		TETextBox( text.data(), text.size(), box, just );
+		TETextBox( iota::get_string_data( text ),
+		           iota::get_string_size( text ),
+		           box,
+		           just );
 	}
 	
 	using ::TEScroll;

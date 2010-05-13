@@ -22,11 +22,6 @@ namespace Nitrogen
 		return nucleus::owned< DriverRefNum >::seize( DriverRefNum( result ) );
 	}
 	
-	nucleus::owned< DriverRefNum > OpenDriver( const std::string& name )
-	{
-		return OpenDriver( Str255( name ) );
-	}
-	
 	void CloseDriver( nucleus::owned< DriverRefNum > driverRefNum )
 	{
 		ThrowOSStatus( ::CloseDriver( driverRefNum.release() ) );

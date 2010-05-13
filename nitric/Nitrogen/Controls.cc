@@ -87,11 +87,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void SetControlTitle( ControlRef control, const std::string& title )
-	{
-		::SetControlTitle( control, Str255( title ) );
-	}
-	
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id )
      {
       ControlRef result;

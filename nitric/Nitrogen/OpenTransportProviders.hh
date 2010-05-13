@@ -27,6 +27,9 @@
 #include <string>
 #include <vector>
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/initialize.hh"
@@ -161,9 +164,10 @@ namespace Nitrogen
 	
 	InetHost OTInetStringToHost( const char* str );
 	
-	inline InetHost OTInetStringToHost( const std::string& str )
+	template < class String >
+	inline InetHost OTInetStringToHost( const String& str )
 	{
-		return OTInetStringToHost( str.c_str() );
+		return OTInetStringToHost( iota::get_string_c_str( str ) );
 	}
 	
 	std::string OTInetHostToString( InetHost host );

@@ -47,19 +47,7 @@ namespace Nitrogen
          throw CFURLCreateData_Failed();
       return nucleus::owned<CFDataRef>::seize( result );
      }
-
-   nucleus::owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
-                                         const std::string& string,
-                                         CFStringEncoding   encoding,
-                                         CFURLRef           baseURL )
-     {
-      return CFURLCreateWithBytes( allocator,
-                                   reinterpret_cast<const UInt8 *>( string.data() ),
-                                   string.size(),
-                                   encoding,
-                                   baseURL );
-     }
-
+	
    nucleus::owned<CFURLRef> CFURLCreateWithString( CFAllocatorRef   allocator,
                                           CFStringRef      URLString,
                                           CFURLRef         baseURL )

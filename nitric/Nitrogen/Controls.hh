@@ -22,6 +22,9 @@
 #include "Carbonate/Controls.hh"
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/make.hh"
@@ -197,7 +200,14 @@ namespace Nitrogen
 	
 	// 1947
 	using ::SetControlTitle;
-	void SetControlTitle( ControlRef control, const std::string& title );
+	
+	template < class String >
+	inline void SetControlTitle( ControlRef control, const String& title )
+	{
+		::SetControlTitle( control,
+		                   Str255( iota::get_string_data( title ),
+		                           iota::get_string_size( title ) ) );
+	}
 	
 	// 2006, 2018, 2032, 2044, 2058, 2070
 	using ::GetControlValue;

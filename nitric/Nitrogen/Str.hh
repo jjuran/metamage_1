@@ -20,6 +20,9 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
@@ -36,32 +39,13 @@ namespace Nitrogen
 	                         unsigned char *destination,
 	                         unsigned char destinationLength );
 	
-	inline void CopyToPascalString( const unsigned char *source,
-	                                unsigned char *destination,
-	                                unsigned char destinationLength )
+	template < class String >
+	inline  void CopyToPascalString( const String&   source,
+	                                 unsigned char*  destination,
+	                                 unsigned char   destinationLength )
 	{
-		CopyToPascalString( reinterpret_cast< const char* >( source + 1 ),
-		                    source[ 0 ],
-		                    destination,
-		                    destinationLength );
-	}
-	
-	inline void CopyToPascalString( const char *source,
-	                                unsigned char *destination,
-	                                unsigned char destinationLength )
-	{
-		CopyToPascalString( source,
-		                    std::strlen( source ),
-		                    destination,
-		                    destinationLength );
-	}
-	
-	inline  void CopyToPascalString( const std::string& source,
-	                                 unsigned char *destination,
-	                                 unsigned char destinationLength )
-	{
-		CopyToPascalString( source.data(),
-		                    source.length(),
+		CopyToPascalString( iota::get_string_data( source ),
+		                    iota::get_string_size( source ),
 		                    destination,
 		                    destinationLength );
 	}
@@ -74,14 +58,13 @@ namespace Nitrogen
 		
 		public:
 			Str()                                                    { string[ 0 ] = 0; }
-			Str( const unsigned char* s )                            { CopyToPascalString( s, string, length ); }
-			Str( const char* s )                                     { CopyToPascalString( s, string, length ); }
 			Str( const char* s, std::size_t slen )                   { CopyToPascalString( s, slen, string, length ); }
-			Str( const std::string& s )                              { CopyToPascalString( s, string, length ); }
 			
-			Str& operator=( const unsigned char* s )                 { CopyToPascalString( s, string, length ); return *this; } 
-			Str& operator=( const char* s )                          { CopyToPascalString( s, string, length ); return *this; } 
-			Str& operator=( const std::string& s )                   { CopyToPascalString( s, string, length ); return *this; } 
+			template < class String >
+			Str( const String& s )                                   { CopyToPascalString( s, string, length ); }
+			
+			template < class String >
+			Str& operator=( const String& s )                        { CopyToPascalString( s, string, length ); return *this; } 
 			
 			operator unsigned char*()                                { return string; }
 			operator const unsigned char *() const                   { return string; }
@@ -93,6 +76,21 @@ namespace Nitrogen
 	typedef Str<  31 >  Str31;
 	typedef Str<  27 >  Str27;
 	typedef Str<  15 >  Str15;
+	
+}
+
+namespace iota
+{
+	
+	template < unsigned char length >
+	struct string_data< Nitrogen::Str< length > > : string_data< const unsigned char* >
+	{
+	};
+	
+	template < unsigned char length >
+	struct string_size< Nitrogen::Str< length > > : string_size< const unsigned char* >
+	{
+	};
 	
 }
 

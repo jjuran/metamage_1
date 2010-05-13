@@ -18,6 +18,9 @@
 #include <Lists.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // Nitrogen
 #ifndef NITROGEN_EVENTS_HH
 #include "Nitrogen/Events.hh"
@@ -117,9 +120,14 @@ namespace Nitrogen
 	
 	// 702
 	using ::LAddToCell;
-	inline void LAddToCell( const std::string& data, Cell cell, ListHandle lHandle )
+	
+	template < class String >
+	inline void LAddToCell( const String& data, Cell cell, ListHandle lHandle )
 	{
-		::LAddToCell( data.data(), data.size(), cell, lHandle );
+		::LAddToCell( iota::get_string_data( data ),
+		              iota::get_string_size( data ),
+		              cell,
+		              lHandle );
 	}
 	
 	// 718
@@ -133,9 +141,14 @@ namespace Nitrogen
 	
 	// 763
 	using ::LSetCell;
-	inline void LSetCell( const std::string& data, Cell cell, ListHandle lHandle )
+	
+	template < class String >
+	inline void LSetCell( const String& data, Cell cell, ListHandle lHandle )
 	{
-		::LSetCell( data.data(), data.size(), cell, lHandle );
+		::LSetCell( iota::get_string_data( data ),
+		            iota::get_string_size( data ),
+		            cell,
+		            lHandle );
 	}
 	
 	// 779

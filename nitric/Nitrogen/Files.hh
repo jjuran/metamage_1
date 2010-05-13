@@ -23,6 +23,10 @@
 #ifndef __FILES__
 #include <Files.h>
 #endif
+
+// iota
+#include "iota/string_traits.hh"
+
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif
@@ -581,9 +585,25 @@ namespace Nitrogen
 	
 	void PBDTSetCommentSync( DTPBRec& pb );
 	
-	void DTSetComment( DTPBRec& pb, const std::string& comment );
+	void DTSetComment( DTPBRec& pb, const char* comment, unsigned length );
 	
-	void FSpDTSetComment( const FSSpec& file, const std::string& comment );
+	template < class String >
+	void DTSetComment( DTPBRec& pb, const String& comment )
+	{
+		DTSetComment( pb,
+		              iota::get_string_data( comment ),
+		              iota::get_string_size( comment ) );
+	}
+	
+	void FSpDTSetComment( const FSSpec& file, const char* comment, unsigned length );
+	
+	template < class String >
+	void FSpDTSetComment( const FSSpec& file, const String& comment )
+	{
+		FSpDTSetComment( file,
+		                 iota::get_string_data( comment ),
+		                 iota::get_string_size( comment ) );
+	}
 	
 	// PBDTRemoveCommentSync
 	
@@ -675,9 +695,11 @@ namespace Nitrogen
 	
 	void FSpRename( const FSSpec& item, ConstStr255Param newName );
 	
-	inline void FSpRename( const FSSpec& item, const std::string& newName )
+	template < class String >
+	inline void FSpRename( const FSSpec& item, const String& newName )
 	{
-		FSpRename( item, Str255( newName ) );
+		FSpRename( item, Str255( iota::get_string_data( newName ),
+		                         iota::get_string_size( newName ) ) );
 	}
 	
 	// dest is the directory to move source *into*, not the actual new location of source.
@@ -1836,14 +1858,20 @@ namespace Nitrogen
      };
    
    FSPathMakeRef_Result FSPathMakeRef( const UInt8 *path );
-   FSPathMakeRef_Result FSPathMakeRef( const std::string& path );
-  }
+	
+	template < class String >
+	inline FSPathMakeRef_Result FSPathMakeRef( const String& path )
+	{
+		return FSPathMakeRef( reinterpret_cast< const UInt8* >( iota::get_string_c_str( path ) ) );
+	}
+	
+}
 
 namespace nucleus
   {   
-   template <> struct converter< Nitrogen::FSRef, std::string >: public std::unary_function< std::string, Nitrogen::FSRef >
+   template < class String > struct converter< Nitrogen::FSRef, String >: public std::unary_function< String, Nitrogen::FSRef >
      {
-      Nitrogen::FSRef operator()( const std::string& path ) const
+      Nitrogen::FSRef operator()( const String& path ) const
         {
          return Nitrogen::FSPathMakeRef( path );
         }

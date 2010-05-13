@@ -16,6 +16,9 @@
 #include <CFURL.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
@@ -62,13 +65,22 @@ namespace Nitrogen
      {
       return Nitrogen::CFURLCreateWithBytes( kCFAllocatorDefault, URLBytes, length, encoding, baseURL );
      }
-
-   nucleus::owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
-                                         const std::string& URLBytes,
-                                         CFStringEncoding   encoding,
-                                         CFURLRef           baseURL = 0 );
-
-   inline nucleus::owned<CFURLRef> CFURLCreateWithBytes( const std::string& URLBytes,
+	
+	template < class String >
+	inline nucleus::owned< CFURLRef > CFURLCreateWithBytes( CFAllocatorRef    allocator,
+	                                                        const String&     string,
+	                                                        CFStringEncoding  encoding,
+	                                                        CFURLRef          baseURL )
+	{
+		return CFURLCreateWithBytes( allocator,
+		                             reinterpret_cast< const UInt8* >( iota::get_string_data( string ) ),
+		                             iota::get_string_size( string ),
+		                             encoding,
+		                             baseURL );
+    }
+	
+	template < class String >
+	inline nucleus::owned< CFURLRef > CFURLCreateWithBytes( const String&     URLBytes,
                                                 CFStringEncoding   encoding,
                                                 CFURLRef           baseURL = 0 )
      {

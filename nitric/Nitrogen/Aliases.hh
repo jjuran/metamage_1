@@ -18,6 +18,9 @@
 #include <Aliases.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
@@ -73,13 +76,22 @@ namespace Nitrogen
 	nucleus::owned< AliasHandle > NewAlias( CFDataRef theData );
 	
 	// 127
-	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
-	                                                           ConstStr32Param     zoneName,
-	                                                           ConstStr31Param     serverName );
+	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const char*      fullPath,
+	                                                           unsigned         length,
+	                                                           ConstStr32Param  zoneName,
+	                                                           ConstStr31Param  serverName );
 	
-	inline nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string& fullPath )
+	template < class String >
+	inline nucleus::owned< AliasHandle >
+	//
+	NewAliasMinimalFromFullPath( const String&    fullPath,
+	                             ConstStr32Param  zoneName   = "\p",
+	                             ConstStr31Param  serverName = "\p" )
 	{
-		return NewAliasMinimalFromFullPath( fullPath, "\p", "\p" );
+		return NewAliasMinimalFromFullPath( iota::get_string_data( fullPath ),
+		                                    iota::get_string_size( fullPath ),
+		                                    zoneName,
+		                                    serverName );
 	}
 	
 	struct ResolveAlias_Result

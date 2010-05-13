@@ -17,6 +17,10 @@
 #ifndef __FONTS__
 #include <Fonts.h>
 #endif
+
+// iota
+#include "iota/string_traits.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
@@ -38,7 +42,13 @@ namespace Nitrogen
   {
 	
 	FontID GetFNum( ConstStr255Param name );
-	FontID GetFNum( const std::string& name );
+	
+	template < class String >
+	FontID GetFNum( const String& name )
+	{
+		return GetFNum( Str255( iota::get_string_data( name ),
+		                        iota::get_string_size( name ) ) );
+	}
 	
   }
 

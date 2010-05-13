@@ -333,19 +333,19 @@ namespace Nitrogen
 		ThrowOSStatus( ::PBDTSetCommentSync( &pb ) );
 	}
 	
-	void DTSetComment( DTPBRec& pb, const std::string& comment )
+	void DTSetComment( DTPBRec& pb, const char* comment, unsigned length )
 	{
-		pb.ioDTBuffer = const_cast< char* >( comment.data() );
-		pb.ioDTReqCount = comment.size();
+		pb.ioDTBuffer   = const_cast< char* >( comment );
+		pb.ioDTReqCount = length;
 		
 		PBDTSetCommentSync( pb );
 	}
 	
-	void FSpDTSetComment( const FSSpec& file, const std::string& comment )
+	void FSpDTSetComment( const FSSpec& file, const char* comment, unsigned length )
 	{
 		DTPBRec pb;
 		
-		return DTSetComment( FSpDTGetPath( file, pb ), comment );
+		return DTSetComment( FSpDTGetPath( file, pb ), comment, length );
 	}
 	
 	void PBDTGetCommentSync( DTPBRec& pb )
@@ -1311,11 +1311,6 @@ Return Value
       ThrowOSStatus( ::FSPathMakeRef( path, &result.ref, &isDirectory ) );
       result.isDirectory = isDirectory;
       return result;
-     }
-   
-   FSPathMakeRef_Result FSPathMakeRef( const std::string& path )
-     {
-      return FSPathMakeRef( reinterpret_cast< const UInt8* >( path.c_str() ) );
      }
    
    void RegisterFileManagerErrors()

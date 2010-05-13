@@ -98,12 +98,26 @@ namespace io
 			return Nitrogen::FSpMake_FSDirSpec( dir ) / name;
 		}
 		
-		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const std::string& name )
+		template < unsigned char n >
+		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const Nitrogen::Str< n > & name )
+		{
+			return dir / static_cast< const unsigned char* >( name );
+		}
+		
+		template < unsigned char n >
+		inline FSSpec operator/( const FSSpec& dir, const Nitrogen::Str< n > & name )
+		{
+			return dir / static_cast< const unsigned char* >( name );
+		}
+		
+		template < class String >
+		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const String& name )
 		{
 			return dir / Nitrogen::Str63( name );
 		}
 		
-		inline FSSpec operator/( const FSSpec& dir, const std::string& name )
+		template < class String >
+		inline FSSpec operator/( const FSSpec& dir, const String& name )
 		{
 			return dir / Nitrogen::Str63( name );
 		}

@@ -24,10 +24,5 @@ namespace Nitrogen
 		return FontID( fontNum );
 	}
 	
-	FontID GetFNum( const std::string& name )
-	{
-		return GetFNum( Str255( name ) );
-	}
-	
 }
 

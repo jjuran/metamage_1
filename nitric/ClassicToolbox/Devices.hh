@@ -11,6 +11,9 @@
 #include <Devices.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 
@@ -66,7 +69,17 @@ namespace Nitrogen
 	
 	// 1158
 	nucleus::owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
-	nucleus::owned< DriverRefNum > MacOpenDriver( const std::string& name );
+	
+#if CALL_NOT_IN_CARBON
+	
+	template < class String >
+	inline nucleus::owned< DriverRefNum > MacOpenDriver( const String& name )
+	{
+		return MacOpenDriver( Str255( iota::get_string_data( name ),
+		                              iota::get_string_size( name ) ) );
+	}
+	
+#endif
 	
 	// 1175
 	void MacCloseDriver( nucleus::owned< DriverRefNum > driverRefNum );

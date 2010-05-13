@@ -115,9 +115,13 @@ namespace nucleus
 	
 	template <>  struct maker< PPCXTIAddress >
 	{
-		PPCXTIAddress operator()( const std::string& address ) const
+		template < class String >
+		PPCXTIAddress operator()( const String& address ) const
 		{
-			if ( address.size() > kMaxPPCXTIAddress )
+			const char*        address_data = iota::get_string_data( address );
+			const std::size_t  address_size = iota::get_string_size( address );
+			
+			if ( address_size > kMaxPPCXTIAddress )
 			{
 				// FIXME:  Should throw or something
 			}
@@ -130,9 +134,9 @@ namespace nucleus
 			           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
 			           '\0' );
 			
-			std::copy( address.begin(), 
-			           address.begin() + std::min< std::size_t >( address.size(),
-			                                                      kMaxPPCXTIAddress ), 
+			std::copy( address_data, 
+			           address_data + std::min< std::size_t >( address_size,
+			                                                   kMaxPPCXTIAddress ), 
 			           xtiAddr.fAddress );
 			
 			return xtiAddr;

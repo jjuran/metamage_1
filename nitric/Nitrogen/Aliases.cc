@@ -67,13 +67,14 @@ namespace Nitrogen
 	}
 
 
-	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
-	                                                           ConstStr32Param     zoneName,
-	                                                           ConstStr31Param     serverName )
+	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const char*      fullPath,
+	                                                           unsigned         length,
+	                                                           ConstStr32Param  zoneName,
+	                                                           ConstStr31Param  serverName )
 	{
 		::AliasHandle result;
-		ThrowOSStatus( ::NewAliasMinimalFromFullPath( fullPath.size(),
-		                                              fullPath.data(),
+		ThrowOSStatus( ::NewAliasMinimalFromFullPath( length,
+		                                              fullPath,
 		                                              zoneName,
 		                                              serverName,
 		                                              &result ) );

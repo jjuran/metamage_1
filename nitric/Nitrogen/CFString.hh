@@ -15,6 +15,10 @@
 #ifndef __CFSTRING__
 #include <CFString.h>
 #endif
+
+// iota
+#include "iota/string_traits.hh"
+
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
@@ -136,12 +140,13 @@ namespace Nitrogen {
                                                 isExternalRepresentation );
      }
 
-   inline nucleus::owned< CFStringRef > CFStringCreateWithBytes( const std::string& string,
-                                                                 CFStringEncoding   encoding,
-                                                                 bool               isExternalRepresentation )
+   template < class String >
+   inline nucleus::owned< CFStringRef > CFStringCreateWithBytes( const String&     string,
+                                                                 CFStringEncoding  encoding,
+                                                                 bool              isExternalRepresentation )
      {
-      return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8 * >( string.data() ),
-                                                nucleus::convert<CFIndex>( string.size() ),
+      return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8* >( iota::get_string_data( string ) ),
+                                                nucleus::convert< CFIndex      >( iota::get_string_size( string ) ),
                                                 encoding,
                                                 isExternalRepresentation );
      }
