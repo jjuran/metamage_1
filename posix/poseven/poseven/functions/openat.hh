@@ -34,9 +34,9 @@ namespace poseven
 	template < class String >
 	inline nucleus::owned< fd_t >
 	//
-	open( fd_t dirfd, const String& path, open_flags_t flags, mode_t mode = _666 )
+	openat( fd_t dirfd, const String& path, open_flags_t flags, mode_t mode = _666 )
 	{
-		return open( dirfd, iota::get_string_c_str( path ), flags, mode );
+		return openat( dirfd, iota::get_string_c_str( path ), flags, mode );
 	}
 	
 }
