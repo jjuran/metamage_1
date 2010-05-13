@@ -51,9 +51,90 @@ namespace iota
 	
 	
 	template < class String >
+	struct string_data
+	{
+		static const char* get( const String& s )
+		{
+			return s.data();
+		}
+	};
+	
+	template <>
+	struct string_data< const char* > : string_c_str< const char* >
+	{
+	};
+	
+	template <>
+	struct string_data< char* > : string_c_str< const char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_data< const char[n] > : string_c_str< const char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_data< char[n] > : string_c_str< const char* >
+	{
+	};
+	
+#endif
+	
+	
+	template < class String >
+	struct string_size
+	{
+		static typename String::size_type get( const String& s )
+		{
+			return s.length();
+		}
+	};
+	
+	template <>
+	struct string_size< const char* >
+	{
+		static unsigned long get( const char* );
+	};
+	
+	template <>
+	struct string_size< char* > : string_size< const char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_size< const char[n] > : string_size< const char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_size< char[n] > : string_size< const char* >
+	{
+	};
+	
+#endif
+	
+	
+	template < class String >
 	inline const char* get_string_c_str( const String& s )
 	{
 		return string_c_str< String >::get( s );
+	}
+	
+	template < class String >
+	inline const char* get_string_data( const String& s )
+	{
+		return string_data< String >::get( s );
+	}
+	
+	template < class String >
+	inline unsigned long get_string_size( const String& s )
+	{
+		return string_size< String >::get( s );
 	}
 	
 }
