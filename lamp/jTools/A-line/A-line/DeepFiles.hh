@@ -55,7 +55,7 @@ namespace tool
 	template < class FileSpec, class Filter >
 	DeepFileSearch< FileSpec, Filter >& DeepFileSearch< FileSpec, Filter >::SearchItem( FileSpec item )
 	{
-		struct stat sb = p7::lstat( item.c_str() );
+		struct stat sb = p7::lstat( item );
 		
 		if ( S_ISREG( sb.st_mode ) )
 		{

@@ -204,7 +204,7 @@ namespace tool
 	
 	static void UpdateInputStamp( const TaskPtr& task, const std::string& input_pathname )
 	{
-		task->UpdateInputStamp( p7::stat( input_pathname.c_str() ).st_mtime );
+		task->UpdateInputStamp( p7::stat( input_pathname ).st_mtime );
 	}
 	
 	static std::string diagnostics_file_path( const std::string&  dir_path,
