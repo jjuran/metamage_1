@@ -119,6 +119,67 @@ namespace iota
 #endif
 	
 	
+#if defined( __MACOS__ )  ||  defined( __APPLE__ )
+	
+	template <>
+	struct string_data< const unsigned char* >
+	{
+		static const char* get( const unsigned char* s )
+		{
+			return (const char*) s + 1;
+		}
+	};
+	
+	template <>
+	struct string_data< unsigned char* > : string_data< const unsigned char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_data< const unsigned char[n] > : string_data< const unsigned char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_data< unsigned char[n] > : string_data< const unsigned char* >
+	{
+	};
+	
+#endif
+	
+	
+	template <>
+	struct string_size< const unsigned char* >
+	{
+		static unsigned long get( const unsigned char* s )
+		{
+			return s[0];
+		}
+	};
+	
+	template <>
+	struct string_size< unsigned char* > : string_size< const unsigned char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_size< const unsigned char[n] > : string_size< const unsigned char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_size< unsigned char[n] > : string_size< const unsigned char* >
+	{
+	};
+	
+#endif
+	
+#endif
+	
 	template < class String >
 	inline const char* get_string_c_str( const String& s )
 	{
