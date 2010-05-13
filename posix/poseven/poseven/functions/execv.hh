@@ -15,7 +15,7 @@
 #define POSEVEN_FUNCTIONS_EXECV_HH
 
 // iota
-#include "iota/strings.hh"
+#include "iota/string_traits.hh"
 
 // POSIX
 #include <errno.h>

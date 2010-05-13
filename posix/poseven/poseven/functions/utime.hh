@@ -18,7 +18,7 @@
 #include <utime.h>
 
 // iota
-#include "iota/strings.hh"
+#include "iota/string_traits.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

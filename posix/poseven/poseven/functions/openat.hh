@@ -18,7 +18,7 @@
 #include <fcntl.h>
 
 // iota
-#include "iota/strings.hh"
+#include "iota/string_traits.hh"
 
 // poseven
 #include "poseven/functions/close.hh"

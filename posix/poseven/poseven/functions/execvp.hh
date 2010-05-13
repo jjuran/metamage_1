@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 // iota
-#include "iota/strings.hh"
+#include "iota/string_traits.hh"
 
 
 namespace poseven

@@ -15,7 +15,7 @@
 #define POSEVEN_FUNCTIONS_CHMOD_HH
 
 // iota
-#include "iota/strings.hh"
+#include "iota/string_traits.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
