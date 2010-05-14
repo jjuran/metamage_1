@@ -15,6 +15,9 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/string_traits.hh"
+
 // Io
 #include "io/io.hh"
 #include "io/files.hh"
@@ -127,19 +130,12 @@ namespace io
 	namespace path_descent_operators
 	{
 		
-		inline std::string operator/( const std::string& path, const std::string& name )
+		template < class String >
+		inline std::string operator/( const std::string& path, const String& name )
 		{
-			return path_descent( path, name.data(), name.size() );
-		}
-		
-		inline std::string operator/( const std::string& path, const char* name )
-		{
-			return path_descent( path, name, std::strlen( name ) );
-		}
-		
-		inline std::string operator/( const char* path, const std::string& name )
-		{
-			return operator/( std::string( path ), name );
+			return path_descent( path,
+			                     iota::get_string_data( name ),
+			                     iota::get_string_size( name ) );
 		}
 		
 	}
