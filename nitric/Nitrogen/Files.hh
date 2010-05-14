@@ -609,9 +609,9 @@ namespace Nitrogen
 	
 	void PBDTGetCommentSync( DTPBRec& pb );
 	
-	std::string DTGetComment( DTPBRec& pb );
+	nucleus::string DTGetComment( DTPBRec& pb );
 	
-	std::string FSpDTGetComment( const FSSpec& file );
+	nucleus::string FSpDTGetComment( const FSSpec& file );
 	
 	// PBDTFlushSync
 	// PBDTResetSync
@@ -1847,7 +1847,7 @@ namespace Nitrogen
       FSRefMakePath( ref, path, size );
      }
 
-   std::string FSRefMakePath( const FSRef& ref );
+   nucleus::string FSRefMakePath( const FSRef& ref );
    
    struct FSPathMakeRef_Result
      {
@@ -1877,9 +1877,9 @@ namespace nucleus
         }
      };
 
-   template <> struct converter< std::string, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, std::string >
+   template <> struct converter< nucleus::string, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, nucleus::string >
      {
-      std::string operator()( const Nitrogen::FSRef& ref ) const
+      nucleus::string operator()( const Nitrogen::FSRef& ref ) const
         {
          return Nitrogen::FSRefMakePath( ref );
         }

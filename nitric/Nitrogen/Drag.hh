@@ -114,8 +114,8 @@ namespace Nitrogen
    
    template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public nucleus::POD_scribe< HFSFlavor > {};
    template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public nucleus::POD_scribe< PromiseHFSFlavor > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public nucleus::string_scribe< std::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public nucleus::string_scribe< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public nucleus::string_scribe< nucleus::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public nucleus::string_scribe< nucleus::string > {};
    template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public nucleus::empty_scribe {};
    template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public nucleus::empty_scribe {};
    

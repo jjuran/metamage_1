@@ -31,6 +31,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/string.hh"
 
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
@@ -60,8 +61,6 @@
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
-
-#include <string>
 
 
 #ifdef AEPutKeyPtr
@@ -248,7 +247,7 @@ namespace Nitrogen
 	
 	template < DescType > struct DescType_Traits;
 	
-	template<> struct DescType_Traits< typeChar > : public nucleus::string_scribe< std::string > {};
+	template<> struct DescType_Traits< typeChar > : public nucleus::string_scribe< nucleus::mutable_string > {};
 	
 	template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 	
@@ -307,6 +306,13 @@ namespace Nitrogen
 	                               Char_DescType_Traits< Char >
 	{
 	};
+	
+	template <>
+	struct Char_AEKeyword_Traits< char > : nucleus::string_scribe< nucleus::mutable_string >,
+	                                       Char_DescType_Traits< char >
+	{
+	};
+	
 	
 	template < class POD, class Integer >
 	struct Integer_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, Integer >,

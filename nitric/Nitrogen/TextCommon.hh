@@ -19,6 +19,7 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/make.hh"
+#include "nucleus/string.hh"
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
@@ -186,11 +187,11 @@ namespace Nitrogen
    
    struct GetTextEncodingName_ResultWithString
      {
-      std::string  oEncodingName;
-      RegionCode   oActualRegion;
-      TextEncoding oActualEncoding;
+      nucleus::mutable_string  oEncodingName;
+      RegionCode               oActualRegion;
+      TextEncoding             oActualEncoding;
       
-      operator const std::string&() const    { return oEncodingName; }
+      operator const nucleus::string&() const    { return oEncodingName; }
      };
 
    GetTextEncodingName_ResultWithString GetTextEncodingName( TextEncoding             iEncoding,

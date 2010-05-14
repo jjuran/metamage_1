@@ -326,12 +326,13 @@ namespace Nitrogen
 	template <>
 	struct ResType_Traits< kTextResourceType >
 	{
-		typedef       std::string   Result;
-		typedef const std::string&  Parameter;
+		typedef       nucleus::string   Result;
+		typedef const nucleus::string&  Parameter;
 		
 		static Result MakeFromHandle( Handle h )
 		{
-			std::string result;
+			nucleus::mutable_string result;
+			
 			result.resize( GetHandleSize( h ) );
 			
 			std::copy( *h.Get(),

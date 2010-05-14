@@ -38,7 +38,6 @@
 #include "Nitrogen/MacTypes.hh"
 #endif
 
-#include <string>
 
 namespace Nitrogen
   {

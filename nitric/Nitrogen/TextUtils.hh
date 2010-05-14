@@ -19,9 +19,6 @@
 #include <TextUtils.h>
 #endif
 
-// Standard C++
-#include <string>
-
 // Nitrogen
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
@@ -49,10 +46,10 @@ namespace Nitrogen
 	
 	inline Str255 c2pstrcpy( const char* src )  { return Str255( src ); }
 	
-	std::string p2cstrcpy( ConstStr255Param src );
+	nucleus::string p2cstrcpy( ConstStr255Param src );
 	
-	inline std::string CopyPascalStringToC( ConstStr255Param src )  { return p2cstrcpy( src ); }
-	inline Str255      CopyCStringToPascal( const char*      src )  { return c2pstrcpy( src ); }
+	inline nucleus::string CopyPascalStringToC( ConstStr255Param src )  { return p2cstrcpy( src ); }
+	inline Str255          CopyCStringToPascal( const char*      src )  { return c2pstrcpy( src ); }
 	
 }
 

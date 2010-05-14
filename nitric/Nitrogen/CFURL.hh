@@ -29,7 +29,6 @@
 #include "Nitrogen/Files.hh"
 #endif
 
-#include <string>
 
 namespace Nitrogen
   {

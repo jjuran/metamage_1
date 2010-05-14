@@ -55,9 +55,9 @@ namespace Nitrogen
 		::LSize( width, height, list );
 	}
 	
-	std::string LGetCell( Cell cell, ListHandle lHandle )
+	nucleus::string LGetCell( Cell cell, ListHandle lHandle )
 	{
-		std::string s;
+		nucleus::mutable_string s;
 		short length = LGetCellDataLocation( cell, lHandle ).len;
 		s.resize( length );
 		

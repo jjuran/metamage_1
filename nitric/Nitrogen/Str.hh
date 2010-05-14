@@ -14,9 +14,6 @@
 #ifndef NITROGEN_STR_HH
 #define NITROGEN_STR_HH
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
 
@@ -26,6 +23,9 @@
 // nucleus
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
+#include "nucleus/string.hh"
 #endif
 
 
@@ -98,9 +98,9 @@ namespace nucleus
 {
 	
 	template <>
-	struct converter< std::string, const unsigned char * > : public std::unary_function< const unsigned char *, std::string >
+	struct converter< nucleus::string, const unsigned char * > : public std::unary_function< const unsigned char *, nucleus::string >
 	{
-		std::string operator()( const unsigned char *input ) const;
+		nucleus::string operator()( const unsigned char *input ) const;
 	};
 	
 	template <>
@@ -122,15 +122,15 @@ namespace nucleus
 	template < unsigned char length >
 	struct convert_input_traits<       Nitrogen::Str< length > > : convert_input_traits< const unsigned char* > {};
 	
-	// Convert StringHandle to std::string
+	// Convert StringHandle to nucleus::string
 	template <>
-	struct converter< std::string, unsigned char ** >: public std::unary_function< unsigned char **, std::string >
+	struct converter< nucleus::string, unsigned char ** >: public std::unary_function< unsigned char **, nucleus::string >
 	{
-		std::string operator()( unsigned char **input ) const
+		nucleus::string operator()( unsigned char **input ) const
 		{
 			// We don't need to lock the handle because we copy it to the stack
 			// before touching the heap, after which point we work from the copy.
-			return convert< std::string >( Nitrogen::Str255( *input ) );
+			return convert< nucleus::string >( Nitrogen::Str255( *input ) );
 		}
 	};
 	
