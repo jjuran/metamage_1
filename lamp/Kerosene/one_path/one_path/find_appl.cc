@@ -7,14 +7,19 @@
 
 #include "one_path/find_appl.hh"
 
+// Extended API Set Part 2
+#include "extended-api-set/part-2.h"
+
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // poseven
+#include "poseven/functions/fdopendir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/readlinkat.hh"
+#include "poseven/sequences/directory_contents.hh"
 
 
 namespace tool
@@ -48,11 +53,23 @@ namespace tool
 		
 		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
 		
-		for ( int i = 1;  ;  ++i )
+		const p7::fd_t dir_fd = vol_list;
+		
+		n::owned< p7::dir_t > vol_list_dir = p7::fdopendir( vol_list );
+		
+		typedef p7::directory_contents_container directory_container;
+		
+		typedef directory_container::const_iterator const_iterator;
+		
+		directory_container contents = p7::directory_contents( vol_list_dir );
+		
+		const_iterator end = contents.end();
+		
+		for ( const_iterator it = contents.begin();  it != end;  ++it )
 		{
-			const char *name = iota::inscribe_decimal( i );
+			const char* name = *it;
 			
-			n::owned< p7::fd_t > list_i = p7::openat( vol_list, name, p7::o_rdonly | p7::o_directory );
+			n::owned< p7::fd_t > list_i = p7::openat( dir_fd, name, p7::o_rdonly | p7::o_directory );
 			
 			try
 			{
@@ -66,6 +83,8 @@ namespace tool
 				}
 			}
 		}
+		
+		throw p7::errno_t( ENOENT );
 	}
 	
 }
