@@ -159,6 +159,8 @@ namespace recall
 		
 		plus::var_string demangled_name;
 		
+		result.demangled_name.swap( demangled_name );
+		
 		filter_symbol( demangled_name );
 		
 		result.demangled_name.swap( demangled_name );
