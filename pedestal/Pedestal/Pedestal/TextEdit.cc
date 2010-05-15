@@ -364,6 +364,7 @@ namespace Pedestal
 					return;
 				}
 				
+				te.selStart =
 				te.selEnd += 1;
 				
 				c = kBackspaceCharCode;
