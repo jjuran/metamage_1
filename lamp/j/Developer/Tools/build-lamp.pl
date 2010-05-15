@@ -147,7 +147,7 @@ my %fsmap =
 			# Standard
 			\ qw( clear env time touch ),
 			# Common
-			\ qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient ),
 			# Modem-related scripts
@@ -173,6 +173,10 @@ my %fsmap =
 		],
 		lib =>
 		{
+			'git-core' =>
+			{
+				'git-upload-pack' => \ 'git/upload-pack',
+			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
 		sbin => [ \ qw( superd inetd httpd ttyd ) ],
