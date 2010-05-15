@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <functional>
 #include <list>
-#include <string>
 #include <vector>
 
 // Standard C/C++

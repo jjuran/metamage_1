@@ -6,7 +6,6 @@
 #include "CompileDriver/ProjectCatalog.hh"
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Iota

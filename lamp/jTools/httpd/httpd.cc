@@ -5,6 +5,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 

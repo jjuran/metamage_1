@@ -7,6 +7,9 @@
 #include <list>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // plus
 #include "plus/var_string.hh"
 

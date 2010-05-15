@@ -13,7 +13,6 @@
 
 // Standard C++
 #include <functional>
-#include <string>
 
 // Nitrogen
 #include "Nitrogen/Sound.hh"

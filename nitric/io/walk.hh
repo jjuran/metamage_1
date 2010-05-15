@@ -16,7 +16,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 
 // Io
 #ifndef IO_FILES_HH

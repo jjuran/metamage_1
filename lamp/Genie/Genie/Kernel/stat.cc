@@ -6,9 +6,6 @@
 // Standard C/C++
 #include <cstring>
 
-// Standard C++
-#include <string>
-
 // POSIX
 //#include "stdlib.h"
 #include "sys/stat.h"

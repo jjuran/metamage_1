@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_MEMORYFILE_HH
 #define GENIE_IO_MEMORYFILE_HH
 
-// Standard C++
-#include <string>
-
 // POSIX
 #include "sys/types.h"
 

@@ -3,9 +3,6 @@
  *	=====
  */
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstdio>
 #include <cstdlib>

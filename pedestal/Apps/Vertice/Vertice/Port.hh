@@ -7,7 +7,6 @@
 #define VERTICE_PORT_HH
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Vertice

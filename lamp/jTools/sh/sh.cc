@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <string>
 #include <vector>
 
 // Standard C

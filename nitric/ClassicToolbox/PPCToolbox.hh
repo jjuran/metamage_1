@@ -16,7 +16,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <string>
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"

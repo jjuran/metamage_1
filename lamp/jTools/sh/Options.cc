@@ -7,7 +7,6 @@
 // Standard C++
 #include <algorithm>
 #include <set>
-#include <string>
 
 // Standard C/C++
 #include <cstring>

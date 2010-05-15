@@ -5,9 +5,6 @@
 
 #include "Genie/FS/StatFile.hh"
 
-// Standard C++
-#include <string>
-
 // Standard C/C++
 #include <cstring>
 

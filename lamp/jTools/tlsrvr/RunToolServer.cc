@@ -13,9 +13,6 @@
 #include <Sound.h>
 #endif
 
-// Standard C++
-#include <string>
-
 // Iota
 #include "iota/strings.hh"
 
