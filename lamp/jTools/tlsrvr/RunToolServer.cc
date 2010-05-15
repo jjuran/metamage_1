@@ -109,7 +109,9 @@ namespace tool
 		
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
+		script += "Set CommandStatus {Status}" "\r";
 		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
+		script += "Exit {CommandStatus}" "\r";
 		
 		io::spew_file< n::string_scribe< plus::string > >( scriptFile, script );
 	}
