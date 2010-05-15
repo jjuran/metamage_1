@@ -314,6 +314,8 @@ sub create_node
 	
 	#print "create_node( '$path', '$dir', '$param' )\n";
 	
+	$path .= "/$dir"  unless $dir eq '.';
+	
 	my $ref = ref $param or return install_script( $param, $path );
 	
 	if ( $ref eq "SCALAR" )
@@ -322,8 +324,6 @@ sub create_node
 		
 		return;
 	}
-	
-	$path .= "/$dir"  unless $dir eq '.';
 	
 	if ( $ref eq "CODE" )
 	{
