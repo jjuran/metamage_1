@@ -19,6 +19,10 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY  0
+#endif
+
 #ifndef O_CLOEXEC
 #define O_CLOEXEC  0
 #endif
