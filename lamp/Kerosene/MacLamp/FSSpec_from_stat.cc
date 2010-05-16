@@ -30,6 +30,8 @@ int FSSpec_from_stat( const struct stat& stat_buffer, FSSpec& result )
 	const FSVolumeRefNum vRefNum = -stat_buffer.st_dev;
 	const FSDirID        parID   = stat_buffer.st_rdev;
 	
+#ifdef __LAMP__
+	
 	const unsigned name_length = stat_buffer.st_name[0];
 	
 	if ( vRefNum == 0  ||  name_length == 0 )
@@ -50,6 +52,8 @@ int FSSpec_from_stat( const struct stat& stat_buffer, FSSpec& result )
 	result.parID   = parID;
 	
 	memcpy( result.name, stat_buffer.st_name, 1 + name_length );
+	
+#endif
 	
 	return 0;
 }
