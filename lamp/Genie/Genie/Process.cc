@@ -234,6 +234,8 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
+#ifdef __LAMP__
+	
 #if TARGET_CPU_68K
 
 	static asm void SaveRegisters( SavedRegisters* saved )
@@ -360,6 +362,20 @@ namespace Genie
 		// jump to system call
 		mtctr	r0
 		bctr
+	}
+	
+#endif
+	
+#else  // #ifdef __LAMP__
+	
+	// Dummy declarations so we compile on OS X
+	
+	static void SaveRegisters( SavedRegisters* saved )
+	{
+	}
+	
+	static void DispatchSystemCall( ... )
+	{
 	}
 	
 #endif
