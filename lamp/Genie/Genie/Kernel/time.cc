@@ -26,6 +26,11 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef NANOSLEEP_DOZE
+#define NANOSLEEP_DOZE  (-1)
+#endif
+
+
 namespace Genie
 {
 	
