@@ -25,7 +25,7 @@ namespace io
 			return result;
 		}
 		
-		if ( last_slash == result.size() - 1 )
+		while ( last_slash == result.size() - 1 )
 		{
 			result.resize( last_slash );
 			
