@@ -48,6 +48,10 @@
 #define O_CLOEXEC  0
 #endif
 
+#ifndef DUP_DUP2
+#define DUP_DUP2  (-1)
+#endif
+
 
 namespace Genie
 {
