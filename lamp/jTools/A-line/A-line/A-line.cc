@@ -626,6 +626,14 @@ namespace tool
 		
 		char const *const *freeArgs = o::free_arguments();
 		
+	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
+		
+		// Developer Tools 5247 (Xcode 2.2) complains if this is not set
+		// (root cause:  it defaults to 10.1)
+		setenv( "MACOSX_DEPLOYMENT_TARGET", "10.2", 0 );
+		
+	#endif
+		
 		Platform targetPlatform = arch | runtime | macAPI;
 		
 		AddPendingSubproject( UserSrcTreePath() );
