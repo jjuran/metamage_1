@@ -23,6 +23,15 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef SOCK_CLOEXEC
+#define SOCK_CLOEXEC  0
+#endif
+
+#ifndef SOCK_NONBLOCK
+#define SOCK_NONBLOCK  0
+#endif
+
+
 namespace Genie
 {
 	
