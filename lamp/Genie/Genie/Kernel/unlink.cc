@@ -15,6 +15,15 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef AT_REMOVEANY
+#define AT_REMOVEANY  0
+#endif
+
+#ifndef AT_REMOVEDIR
+#define AT_REMOVEDIR  0
+#endif
+
+
 namespace Genie
 {
 	
