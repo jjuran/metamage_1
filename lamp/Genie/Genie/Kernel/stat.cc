@@ -23,6 +23,11 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef AT_SYMLINK_NOFOLLOW
+#define AT_SYMLINK_NOFOLLOW  0
+#endif
+
+
 namespace Genie
 {
 	
