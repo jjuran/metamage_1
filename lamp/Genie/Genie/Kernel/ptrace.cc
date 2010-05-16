@@ -26,6 +26,8 @@ namespace Genie
 	{
 		SystemCallFrame frame( "ptrace" );
 		
+	#ifdef __LAMP__
+		
 		Process& current = frame.Caller();
 		
 		try
@@ -126,6 +128,8 @@ namespace Genie
 		{
 			return frame.SetErrnoFromException();
 		}
+		
+	#endif
 		
 		return 0;
 	}
