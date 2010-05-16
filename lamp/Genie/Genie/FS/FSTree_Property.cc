@@ -15,6 +15,11 @@
 #include "Genie/IO/PropertyFile.hh"
 
 
+#ifndef O_BINARY
+#define O_BINARY  0
+#endif
+
+
 namespace Genie
 {
 	
