@@ -20,6 +20,10 @@ extern "C" {
 
 #ifndef __linux__
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY  0
+#endif
+
 #define AT_FDCWD  (-100)
 
 #ifndef AT_REMOVEDIR
