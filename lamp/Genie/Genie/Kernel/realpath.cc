@@ -26,6 +26,11 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef REALPATH_MAC
+#define REALPATH_MAC  0
+#endif
+
+
 namespace Genie
 {
 	
