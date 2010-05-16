@@ -15,6 +15,11 @@
 #include "Genie/Process.hh"
 
 
+#ifndef AT_FDCWD
+#define AT_FDCWD  (-100)
+#endif
+
+
 namespace Genie
 {
 	
