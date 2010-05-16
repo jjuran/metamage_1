@@ -958,7 +958,7 @@ namespace Genie
 	                                         void* _6,
 	                                         void* _7 )
 	{
-		itsReexecArgs[0] = f;
+		itsReexecArgs[0] = (void*) f;
 		itsReexecArgs[1] = _1;
 		itsReexecArgs[2] = _2;
 		itsReexecArgs[3] = _3;
