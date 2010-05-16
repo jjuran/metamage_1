@@ -111,7 +111,12 @@ namespace Genie
 			case gestaltCPU750FX:   name = "750FX";  break;
 			case gestaltCPU970:     name = "G5";     break;
 			case gestaltCPU970FX:   name = "970FX";  break;
+			
+		#ifdef __MACOS__
+			
 			case gestaltCPU970MP:   name = "970MP";  break;
+			
+		#endif
 			
 			default:
 				return iota::inscribe_decimal( code );
