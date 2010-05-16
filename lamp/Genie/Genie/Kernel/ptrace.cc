@@ -6,8 +6,11 @@
 // POSIX
 #include "errno.h"
 #include "signal.h"
-#include "sys/ptrace.h"
+#include "sys/types.h"
 #include "unistd.h"
+
+// Conventional
+#include "sys/ptrace.h"
 
 // Genie
 #include "Genie/Process.hh"
