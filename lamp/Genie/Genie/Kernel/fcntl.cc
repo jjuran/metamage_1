@@ -19,6 +19,11 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef O_CLOEXEC
+#define O_CLOEXEC  0
+#endif
+
+
 namespace Genie
 {
 	

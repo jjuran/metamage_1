@@ -44,6 +44,10 @@
 #define SIGSTKFLT  (-1)
 #endif
 
+#ifndef O_CLOEXEC
+#define O_CLOEXEC  0
+#endif
+
 
 namespace Genie
 {
