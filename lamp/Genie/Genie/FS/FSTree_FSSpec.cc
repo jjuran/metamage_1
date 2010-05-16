@@ -81,6 +81,19 @@
 #include "Genie/Utilities/AsyncIO.hh"
 
 
+#ifndef UTIME_ARCHIVE
+#define UTIME_ARCHIVE  0x40000000
+#endif
+
+#ifndef UTIME_NOW
+#define UTIME_NOW   ((1 << 30) - 1)
+#endif
+
+#ifndef UTIME_OMIT
+#define UTIME_OMIT  ((1 << 30) - 2)
+#endif
+
+
 namespace Genie
 {
 	
