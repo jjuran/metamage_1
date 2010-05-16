@@ -49,6 +49,12 @@ namespace Genie
 		
 	#endif
 	
+	#ifdef __i386__
+		
+		#define HARDWARE_CLASS "x86"
+		
+	#endif
+	
 	// Genie relies on CFM or classic 68K, so don't compile for Intel (below)
 	
 	
