@@ -23,6 +23,10 @@
 #define O_CLOEXEC  0
 #endif
 
+#ifndef F_DUPFD_CLOEXEC
+#define F_DUPFD_CLOEXEC  F_DUPFD
+#endif
+
 
 namespace Genie
 {
