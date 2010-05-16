@@ -61,6 +61,12 @@ struct _vfork_pad
 	double fpr[ 1 - 14 + 31 ];  // 18
 
 #endif
+	
+#if !defined( __MC68K__ )  &&  !defined( __POWERPC__ )
+	
+	void* fp;  // dummy fp so client code compiles on x86
+	
+#endif
 };
 
 #endif
