@@ -17,6 +17,11 @@
 #include "Genie/Process/AsyncYield.hh"
 
 
+#ifndef O_MAC_ASYNC
+#define O_MAC_ASYNC  0
+#endif
+
+
 namespace Genie
 {
 	
