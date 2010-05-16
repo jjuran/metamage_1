@@ -735,7 +735,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_DirSpec::Parent() const
 	{
-		if ( itsDirSpec.dirID == fsRtDirID )
+		if ( itsDirSpec.dirID == N::fsRtDirID )
 		{
 			return Get_sys_mac_vol_N( itsDirSpec.vRefNum );
 		}
