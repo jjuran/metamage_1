@@ -384,16 +384,16 @@ namespace Genie
 	
 #endif
 	
-	static std::vector< const char* > UnflattenedArgVector( const plus::string& flat )
+	static std::vector< char* > UnflattenedArgVector( plus::var_string& flat )
 	{
-		std::vector< const char* > result;
+		std::vector< char* > result;
 		
-		const char* begin = &*flat.begin();
-		const char* end   = &*flat.end();
+		char* begin = &*flat.begin();
+		char* end   = &*flat.end();
 		
 		while ( begin < end )
 		{
-			const char* null = std::find( begin, end, '\0' );
+			char* null = std::find( begin, end, '\0' );
 			
 			ASSERT( null != end );
 			

@@ -86,7 +86,7 @@ namespace Genie
 		public:
 			void Assign( char const *const *argv );
 			
-			const plus::string& Data() const  { return itsStorage; }
+			plus::var_string& Data()  { return itsStorage; }
 	};
 	
 	struct Parameters
@@ -94,8 +94,8 @@ namespace Genie
 			FlatArgVector itsCmdLine;
 			FlatArgVector itsEnviron;
 			
-			std::vector< const char* > itsArgV;
-			std::vector< const char* > itsEnvP;
+			std::vector< char* > itsArgV;
+			std::vector< char* > itsEnvP;
 	};
 	
 	class Process : public SignalReceiver,
