@@ -40,6 +40,11 @@
 #include "Genie/SystemCalls.hh"
 
 
+#ifndef SIGSTKFLT
+#define SIGSTKFLT  (-1)
+#endif
+
+
 namespace Genie
 {
 	

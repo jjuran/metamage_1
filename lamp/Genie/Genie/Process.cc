@@ -67,6 +67,10 @@
 #include "Genie/Utilities/AsyncIO.hh"
 
 
+#ifndef SIGSTKFLT
+#define SIGSTKFLT  (-1)
+#endif
+
 #if defined(__MWERKS__) && defined(__csignal__)
 	#undef SIGABRT
 	#undef SIGFPE
