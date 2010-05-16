@@ -1354,6 +1354,8 @@ namespace Genie
 		N::FSDirID  id;
 	};
 	
+#ifdef __MACOS__
+	
 	struct IterateIntoCache_CInfoPBRec : CInfoPBRec
 	{
 		NameAndID      items[ kMaxItems ];
@@ -1661,6 +1663,8 @@ namespace Genie
 		return FSTreeFromFSSpec( result, true );
 	}
 	
+#endif
+	
 	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
 	{
 		if ( begin == end )
@@ -1670,10 +1674,12 @@ namespace Genie
 		
 		ASSERT( begin < end );
 		
+	#ifdef __MACOS__
 		if (     TARGET_CPU_68K
 		     ||  !itIsOnServer
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  RunningInClassic::Test() )
+	#endif
 		{
 			// Special handling required for
 			// * dot, dotdot, colons, and long names
@@ -1682,7 +1688,11 @@ namespace Genie
 			return FSTree::ResolvePath( begin, end );
 		}
 		
+	#ifdef __MACOS__
+		
 		return ResolvePath_HFS( itsFileSpec, begin, end );
+		
+	#endif
 	}
 	
 	void FSTree_HFS::FinishCreation() const
