@@ -27,6 +27,10 @@ namespace Pedestal
 		TextSelection() : start(), end()
 		{
 		}
+		
+		bool defined() const  { return int( start ) >= 0; }
+		
+		void undefine()  { start = unsigned( -1 ); }
 	};
 	
 	inline bool operator==( const TextSelection& a, const TextSelection& b )

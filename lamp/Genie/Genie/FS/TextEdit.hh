@@ -105,7 +105,7 @@ namespace Genie
 				itsKeyDown( keyDown ),
 				itsUserCommand( cmdHook )
 			{
-				itsSelectionPriorToSearch.start = -1;
+				itsSelectionPriorToSearch.undefine();
 			}
 			
 			void Install( const Rect& bounds );

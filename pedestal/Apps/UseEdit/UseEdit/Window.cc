@@ -68,7 +68,7 @@ namespace UseEdit
 		public:
 			TextEdit( const Rect& bounds )
 			{
-				itsSelectionPriorToSearch.start = -1;
+				itsSelectionPriorToSearch.undefine();
 				
 				Install( bounds );
 			}

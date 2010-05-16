@@ -61,7 +61,7 @@ namespace Pedestal
 		TextSelection current = GetCurrentSelection();
 		TextSelection prior   = GetPriorSelection();
 		
-		if ( prior.start < 0 )
+		if ( !prior.defined() )
 		{
 			return;
 		}
