@@ -103,7 +103,7 @@ my %fsmap =
 			# Build tools
 			\ qw( A-line ar cpres ld mpwrez mwcc strip vers ),
 			# Debugging
-			\ qw( d68k ),
+			\ qw( d68k demangle ),
 			# Source management
 			\ qw( jsync ),
 			# Exceptions
