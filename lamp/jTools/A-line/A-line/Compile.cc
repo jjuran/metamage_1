@@ -561,7 +561,14 @@ namespace tool
 		
 		if ( target_info.platform & apiMacCarbon )
 		{
-			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
+			if ( target_info.platform & runtimeMachO )
+			{
+				options.DEFINE_MACRO_VALUE( "MAC_OS_X_VERSION_MIN_REQUIRED", MAC_OS_X_VERSION_10_2 );
+			}
+			else
+			{
+				options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
+			}
 		}
 		else if ( target_info.platform & apiMacBlue )
 		{
