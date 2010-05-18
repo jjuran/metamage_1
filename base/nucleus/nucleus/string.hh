@@ -14,7 +14,7 @@
 
 #ifdef NUCLEUS_STRING_HEADER
 #include NUCLEUS_STRING_HEADER
-#elif defined( __ALINE__ )
+#elif defined( __LAMP__ )
 #include "plus/var_string.hh"
 #else
 #include <string>
@@ -27,7 +27,7 @@ namespace nucleus
 	
 	typedef NUCLEUS_STRING_TYPE string;
 	
-#elif defined( __ALINE__ )
+#elif defined( __LAMP__ )
 	
 	typedef plus::string string;
 	
@@ -45,7 +45,7 @@ namespace nucleus
 	
 	typedef NUCLEUS_STRING_TYPE mutable_string;
 	
-#elif defined( __ALINE__ )
+#elif defined( __LAMP__ )
 	
 	typedef plus::var_string mutable_string;
 	
