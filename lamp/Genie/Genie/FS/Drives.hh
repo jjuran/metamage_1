@@ -7,7 +7,8 @@
 #define GENIE_FILESYSTEM_DRIVES_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Functions/FlushVol.hh"
+#include "Mac/Files/Functions/UnmountVol.hh"
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -18,11 +19,11 @@
 namespace Genie
 {
 	
-	template < void (*f)(Nitrogen::FSVolumeRefNum) >
+	template < void (*f)(Mac::FSVolumeRefNum) >
 	class Volume_Action
 	{
 		private:
-			typedef Nitrogen::FSVolumeRefNum Key;
+			typedef Mac::FSVolumeRefNum Key;
 			
 			Key itsKey;
 		
@@ -37,8 +38,8 @@ namespace Genie
 			}
 	};
 	
-	typedef Volume_Action< Nitrogen::FlushVol   > Volume_Flush;
-	typedef Volume_Action< Nitrogen::UnmountVol > Volume_Unmount;
+	typedef Volume_Action< Mac::FlushVol   > Volume_Flush;
+	typedef Volume_Action< Mac::UnmountVol > Volume_Unmount;
 	
 #if !TARGET_API_MAC_CARBON
 	
