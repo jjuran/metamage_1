@@ -104,28 +104,6 @@ namespace Nitrogen
 	}
 	
 	
-	void UnmountVol( ConstStr63Param volName )
-	{
-		ThrowOSStatus( ::UnmountVol( volName, 0 ) );
-	}
-	
-	void UnmountVol( FSVolumeRefNum vRefNum )
-	{
-		ThrowOSStatus( ::UnmountVol( NULL, vRefNum ) );
-	}
-	
-	
-	void FlushVol( ConstStr63Param volName )
-	{
-		ThrowOSStatus( ::FlushVol( volName, 0 ) );
-	}
-	
-	void FlushVol( FSVolumeRefNum vRefNum )
-	{
-		ThrowOSStatus( ::FlushVol( NULL, vRefNum ) );
-	}
-	
-	
 	void FSClose( nucleus::owned< FSFileRefNum > fileRefNum )
 	{
 		ThrowOSStatus( ::FSClose( fileRefNum.release() ) );

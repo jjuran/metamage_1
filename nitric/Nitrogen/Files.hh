@@ -28,6 +28,8 @@
 #include "iota/string_traits.hh"
 
 // Nitrogen
+#include "Mac/Files/Functions/FlushVol.hh"
+#include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
@@ -342,17 +344,8 @@ namespace Nitrogen
 	void PBHOpenRFSync ( HParamBlockRec& pb );
 	void PBHOpenRFAsync( HParamBlockRec& pb );
 	
-	void UnmountVol( ConstStr63Param volName = NULL );
-	
-	void UnmountVol( FSVolumeRefNum vRefNum );
-	
-	//void UnmountVol( FSDriveIndex drive );
-	
-	void FlushVol( ConstStr63Param volName = NULL );
-	
-	void FlushVol( FSVolumeRefNum vRefNum );
-	
-	//void FlushVol( FSDriveIndex drive );
+	using Mac::UnmountVol;
+	using Mac::FlushVol;
 	
 	// HSetVol
 	
