@@ -27,6 +27,9 @@
 // iota
 #include "iota/string_traits.hh"
 
+// Nitrogen
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif
@@ -105,10 +108,7 @@ namespace Nitrogen
 		kFSNodeID_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
-	enum FSVolumeRefNum
-	{
-		kFSVolumeRefNum_Max = nucleus::enumeration_traits< ::FSVolumeRefNum >::max
-	};
+	using Mac::FSVolumeRefNum;
 	
 	enum FSSharingFlags
 	{
