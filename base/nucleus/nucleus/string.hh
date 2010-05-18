@@ -41,7 +41,7 @@ namespace nucleus
 	
 	typedef NUCLEUS_MUTABLE_STRING_TYPE mutable_string;
 	
-#elif defined NUCLEUS_STRING_TYPE
+#elif defined( NUCLEUS_STRING_TYPE )
 	
 	typedef NUCLEUS_STRING_TYPE mutable_string;
 	
