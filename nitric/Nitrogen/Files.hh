@@ -28,6 +28,7 @@
 #include "iota/string_traits.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
@@ -88,13 +89,9 @@ namespace Nitrogen
 	};
 	
 	
-	enum FSDirID
-	{
-		fsRtParID = ::fsRtParID,
-		fsRtDirID = ::fsRtDirID,
-		
-		kFSDirID_Max = nucleus::enumeration_traits< UInt32 >::max
-	};
+	using Mac::FSDirID;
+	using Mac::fsRtParID;
+	using Mac::fsRtDirID;
 	
 	enum FSNodeFlags
 	{
