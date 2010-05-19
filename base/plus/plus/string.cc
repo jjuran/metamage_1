@@ -348,10 +348,10 @@ namespace plus
 			}
 		}
 		
-		assign( its_alloc.pointer, its_alloc.length );
+		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
 	}
 	
-	string& string::assign( const char* p, size_type length )
+	string& string::assign( const char* p, size_type length, size_type capacity )
 	{
 		if ( length )
 		{
@@ -362,9 +362,13 @@ namespace plus
 		
 		if ( empty() )
 		{
-			char* new_pointer = reallocate( length );
+			capacity = std::max( length, capacity );
+			
+			char* new_pointer = reallocate( capacity );
 			
 			memcpy( new_pointer, p, length );
+			
+			set_length( length );
 		}
 		else
 		{
@@ -374,7 +378,7 @@ namespace plus
 			
 			string temp;
 			
-			temp.assign( p, length );
+			temp.assign( p, length, capacity );
 			
 			swap( temp );
 		}
