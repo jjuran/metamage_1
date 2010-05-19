@@ -11,21 +11,14 @@
 // plus
 #include "plus/string.hh"
 
-// Nucleus
-//#include "Nucleus/Convert.h"
-
 // MacFeatures
 #include "MacFeatures/Features.hh"
-
-// Genie
-//#include "Genie/Process.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	using MacFeatures::Has_OSXSystem;
@@ -36,24 +29,6 @@ namespace Genie
 		static bool runningOSX = Has_OSXSystem();
 		
 		return N::OSType( runningOSX ? '!Rch' : 'R*ch' );
-		
-		/*
-		if ( const char* macEditorSignature = CurrentProcess().GetEnv( "MAC_EDITOR_SIGNATURE" ) )
-		{
-			try
-			{
-				return N::OSType( NN::Convert< N::FourCharCode, std::string >( macEditorSignature ).Get() );
-			}
-			catch ( ... )
-			{
-				// Probably not four characters long
-			}
-		}
-		
-		const N::OSType sigSimpleText = N::OSType( 'ttxt' );
-		
-		return sigSimpleText;
-		*/
 	}
 	
 	
