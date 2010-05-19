@@ -31,6 +31,7 @@
 #include "Mac/Files/Functions/FlushVol.hh"
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSIOPerm.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
@@ -145,22 +146,17 @@ namespace Nitrogen
 		kFSForkRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
-	enum FSIOPermssn
-	{
-		fsCurPerm    = ::fsCurPerm,
-		fsRdPerm     = ::fsRdPerm,
-		fsWrPerm     = ::fsWrPerm,
-		fsRdWrPerm   = ::fsRdWrPerm,
-		fsRdWrShPerm = ::fsRdWrShPerm,
-		fsRdDenyPerm = ::fsRdDenyPerm,
-		fsWrDenyPerm = ::fsWrDenyPerm,
-		
-		kFSIOPermssn_Max = nucleus::enumeration_traits< SInt8 >::max
-	};
+	using Mac::FSIOPerm;
+	using Mac::FSIOPermssn;
+	using Mac::FSIOPermissions;
 	
-	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
-	
-	typedef FSIOPermssn FSIOPermissions;
+	using Mac::fsCurPerm;
+	using Mac::fsRdPerm;
+	using Mac::fsWrPerm;
+	using Mac::fsRdWrPerm;
+	using Mac::fsRdWrShPerm;
+	using Mac::fsRdDenyPerm;
+	using Mac::fsWrDenyPerm;
 	
 	enum FSIOPosMode
 	{
