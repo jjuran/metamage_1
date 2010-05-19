@@ -34,7 +34,6 @@ namespace MacBinaryDecoder
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	

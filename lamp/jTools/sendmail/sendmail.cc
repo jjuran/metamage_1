@@ -60,7 +60,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace n = nucleus;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
