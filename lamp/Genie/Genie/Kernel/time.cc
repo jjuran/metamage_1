@@ -11,6 +11,7 @@
 #include "sys/time.h"
 
 // Nitrogen
+#include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/OSUtils.hh"
 #include "Nitrogen/Timer.hh"
 

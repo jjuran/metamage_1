@@ -17,17 +17,16 @@
 #ifndef __OSUTILS__
 #include <OSUtils.h>
 #endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_DATETIMEUTILS_HH
-#include "Nitrogen/DateTimeUtils.hh"
-#endif
+
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
+
+// Nitrogen
+#if TARGET_RT_MAC_MACHO
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
+#endif
 #endif
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"

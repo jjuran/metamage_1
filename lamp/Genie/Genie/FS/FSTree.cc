@@ -16,6 +16,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/OSUtils.hh"
 #include "Nitrogen/Threads.hh"
 
