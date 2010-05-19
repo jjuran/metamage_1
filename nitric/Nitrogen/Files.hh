@@ -32,6 +32,7 @@
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Files/Types/FSSignature.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
@@ -70,27 +71,9 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( FileManager );
 	
 	
-	struct FileSignature
-	{
-		OSType creator;
-		OSType type;
-		
-		FileSignature() : creator(), type()
-		{
-		}
-		
-		FileSignature( OSType creator,
-		               OSType type ) : creator( creator ),
-		                               type   ( type    )
-		{
-		}
-		
-		FileSignature( const FInfo& fInfo ) : creator( OSType( fInfo.fdCreator ) ),
-		                                      type   ( OSType( fInfo.fdType    ) )
-		{
-		}
-	};
+	using Mac::FSSignature;
 	
+	typedef FSSignature FileSignature;
 	
 	using Mac::FSDirID;
 	using Mac::fsRtParID;
