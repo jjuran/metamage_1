@@ -330,9 +330,9 @@ namespace Nitrogen
 	}
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
-	                                           UniCharCount    forkNameLength, 
-	                                           const UniChar*  forkName, 
-	                                           FSIOPermssn     permissions )
+	                                                    UniCharCount    forkNameLength, 
+	                                                    const UniChar*  forkName, 
+	                                                    FSIOPermssn     permissions )
 	{
 		::ResFileRefNum refNum;
 		ThrowOSStatus( ::FSOpenResourceFile( &ref,
@@ -345,8 +345,8 @@ namespace Nitrogen
 	}
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref, 
-	                                           const UniString&  forkName, 
-	                                           FSIOPermssn       permissions )
+	                                                    const UniString&  forkName, 
+	                                                    FSIOPermssn       permissions )
 	{
 		return FSOpenResourceFile( ref,
 		                           forkName.size(),
