@@ -63,7 +63,7 @@ namespace tool
 		
 		const char* file = args[0];
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( file ), N::fsRdWrPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( file ), Mac::fsRdWrPerm );
 		
 		N::Handle handle = N::Get1Resource( resType, resID );
 		

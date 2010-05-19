@@ -66,7 +66,7 @@ namespace Genie
 	{
 		const TopOfResourceChain top = GetTop();
 		
-		itsResFile = N::FSpOpenResFile( resFile, N::fsRdWrPerm ).release();
+		itsResFile = N::FSpOpenResFile( resFile, Mac::fsRdWrPerm ).release();
 		
 		const bool map_reused = GetTop() == top;
 		

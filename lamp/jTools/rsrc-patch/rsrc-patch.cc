@@ -87,7 +87,7 @@ namespace tool
 		
 		gResFile.reset();  // next line resets only if resolve and open succeed
 		
-		gResFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( param ), N::fsRdWrPerm );
+		gResFile = N::FSpOpenResFile( Div::ResolvePathToFSSpec( param ), Mac::fsRdWrPerm );
 	}
 	
 	static void LoadOptor( const char* )

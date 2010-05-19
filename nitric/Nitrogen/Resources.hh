@@ -29,18 +29,21 @@
 #include "nucleus/flag_ops.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Files/Types/FSSignature.hh"
 #include "Mac/Resources/Functions/ResError.hh"
 #include "Mac/Resources/Types/ResID.hh"
+#include "Mac/Resources/Types/ResType.hh"
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
+#include "Mac/Script/Types/ScriptCode.hh"
+#include "Mac/Toolbox/Types/OSType.hh"
+#include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
 
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 
@@ -269,16 +272,16 @@ namespace Nitrogen
 	// HCreateResFile -- not implemented; use FSpCreateResFile
 	
 	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
-	                                                FSIOPermssn    permissions );
+	                                                Mac::FSIOPerm  permissions );
 	
 	void FSpCreateResFile( const FSSpec&  spec,
 	                       OSType         creator   = OSType( 'RSED' ),
 	                       OSType         type      = OSType( 'rsrc' ),
 	                       ScriptCode     scriptTag = smSystemScript );
 	
-	inline void FSpCreateResFile( const FSSpec&         spec,
-	                              const FileSignature&  signature,
-	                              ScriptCode            scriptTag = smSystemScript )
+	inline void FSpCreateResFile( const FSSpec&            spec,
+	                              const Mac::FSSignature&  signature,
+	                              ScriptCode               scriptTag = smSystemScript )
 	{
 		FSpCreateResFile( spec, signature.creator, signature.type, scriptTag );
 	}
@@ -299,11 +302,18 @@ namespace Nitrogen
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
 	                                                    const UniChar*  forkName,
-	                                                    FSIOPermssn     permissions );
+	                                                    Mac::FSIOPerm   permissions );
 	
+	template < class UniString >
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
 	                                                    const UniString&  forkName,
-	                                                    FSIOPermssn       permissions );
+	                                                    Mac::FSIOPerm     permissions )
+	{
+		return FSOpenResourceFile( ref,
+		                           iota::get_string_size( forkName ),
+		                           iota::get_string_data( forkName ),
+		                           permissions );
+	}
 	
 	// FSCreateResFile
 	// FSResourceFileAlreadyOpen
@@ -430,7 +440,7 @@ namespace Nitrogen
 	};
 	
 	template <>
-	struct ResType_Traits< kVersionResType > : VariableLengthPOD_ResType_Traits< VersRec, SizeOf_VersRec > {};
+	struct ResType_Traits< Mac::kVersionResType > : VariableLengthPOD_ResType_Traits< VersRec, Mac::SizeOf_VersRec > {};
 	
 	
 	template < ResType type >

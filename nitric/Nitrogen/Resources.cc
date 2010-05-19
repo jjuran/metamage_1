@@ -310,7 +310,7 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, FSIOPermssn permissions )
+	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, Mac::FSIOPerm permissions )
 	{
 		ResFileRefNum refNum = ResFileRefNum( ::FSpOpenResFile( &spec, permissions ) );
 		
@@ -332,7 +332,7 @@ namespace Nitrogen
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
 	                                                    UniCharCount    forkNameLength, 
 	                                                    const UniChar*  forkName, 
-	                                                    FSIOPermssn     permissions )
+	                                                    Mac::FSIOPerm   permissions )
 	{
 		::ResFileRefNum refNum;
 		ThrowOSStatus( ::FSOpenResourceFile( &ref,
@@ -342,16 +342,6 @@ namespace Nitrogen
 		                                     &refNum ) );
 		
 		return nucleus::owned< ResFileRefNum >::seize( ResFileRefNum( refNum ) );
-	}
-	
-	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref, 
-	                                                    const UniString&  forkName, 
-	                                                    FSIOPermssn       permissions )
-	{
-		return FSOpenResourceFile( ref,
-		                           forkName.size(),
-		                           forkName.data(),
-		                           permissions );
 	}
 	
 	void RegisterResourceManagerErrors()

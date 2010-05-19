@@ -12,6 +12,9 @@
 // iota
 #include "iota/quad.hh"
 
+// Nitrogen
+#include "Mac/Resources/Types/ResType.hh"
+
 // ClassicToolbox
 #if CALL_NOT_IN_CARBON
 #include "ClassicToolbox/Devices.hh"
@@ -78,7 +81,7 @@ namespace Pedestal
 	}
 	
 	
-	static const N::ResType kDeskAccessoryResourceType = N::ResType( 'DRVR' );
+	static const Mac::ResType kDeskAccessoryResourceType = Mac::ResType( 'DRVR' );
 	
 	void PopulateAppleMenu( N::MenuID menuID )
 	{
