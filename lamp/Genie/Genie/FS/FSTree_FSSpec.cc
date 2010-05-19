@@ -1259,9 +1259,11 @@ namespace Genie
 			{
 				p7::throw_errno( EEXIST );
 			}
-			else
+			else if ( Name().length() <= 31 )
 			{
-				const plus::string& name = Name();
+				// Long names are case-sensitive due to hashing
+				
+				const plus::string name = K::MacFilenameFromUnixFilename( Name() );
 				
 				const bool equal = std::equal( name.begin(),
 				                               name.end(),
@@ -1269,9 +1271,7 @@ namespace Genie
 				
 				if ( !equal )
 				{
-					plus::string new_mac_name = K::MacFilenameFromUnixFilename( name );
-					
-					N::FSpRename( itsFileSpec, new_mac_name );
+					N::FSpRename( itsFileSpec, name );
 				}
 			}
 		}
