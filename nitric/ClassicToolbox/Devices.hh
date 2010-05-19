@@ -72,6 +72,12 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
+	template < unsigned char n >
+	inline nucleus::owned< DriverRefNum > MacOpenDriver( const Str< n >& name )
+	{
+		return MacOpenDriver( name + 0 );
+	}
+	
 	template < class String >
 	inline nucleus::owned< DriverRefNum > MacOpenDriver( const String& name )
 	{

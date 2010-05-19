@@ -201,6 +201,12 @@ namespace Nitrogen
 	// 1947
 	using ::SetControlTitle;
 	
+	template < unsigned char n >
+	inline void SetControlTitle( ControlRef control, const Str< n >& title )
+	{
+		::SetControlTitle( control, title + 0 );
+	}
+	
 	template < class String >
 	inline void SetControlTitle( ControlRef control, const String& title )
 	{

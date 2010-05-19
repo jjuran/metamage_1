@@ -43,6 +43,12 @@ namespace Nitrogen
 	
 	FontID GetFNum( ConstStr255Param name );
 	
+	template < unsigned char n >
+	FontID GetFNum( const Str< n >& name )
+	{
+		return GetFNum( name + 0 );
+	}
+	
 	template < class String >
 	FontID GetFNum( const String& name )
 	{

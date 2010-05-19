@@ -695,6 +695,12 @@ namespace Nitrogen
 	
 	void FSpRename( const FSSpec& item, ConstStr255Param newName );
 	
+	template < unsigned char n >
+	inline void FSpRename( const FSSpec& item, const Str< n >& newName )
+	{
+		FSpRename( item, newName + 0 );
+	}
+	
 	template < class String >
 	inline void FSpRename( const FSSpec& item, const String& newName )
 	{

@@ -165,6 +165,18 @@ namespace Nitrogen
 	Handle GetNamedResource ( ResType type, ConstStr255Param name );
 	Handle Get1NamedResource( ResType type, ConstStr255Param name );
 	
+	template < unsigned char n >
+	inline Handle GetNamedResource( ResType type, const Str< n >& name )
+	{
+		return GetNamedResource( type, name + 0 );
+	}
+	
+	template < unsigned char n >
+	inline Handle Get1NamedResource( ResType type, const Str< n >& name )
+	{
+		return Get1NamedResource( type, name + 0 );
+	}
+	
 	template < class String >
 	inline Handle GetNamedResource( ResType type, const String& name )
 	{
