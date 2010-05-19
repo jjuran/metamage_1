@@ -25,15 +25,6 @@
 // Nitrogen
 #include "Mac/Events/Types/EventKind.hh"
 
-#ifndef NITROGEN_OSUTILS_HH
-#include "Nitrogen/OSUtils.hh"
-#endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
 
 namespace Nitrogen
 {
