@@ -20,6 +20,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Nitrogen
+#include "Nitrogen/ATSTypes.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 

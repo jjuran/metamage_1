@@ -23,38 +23,18 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/linked_list_sequence.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
+// Nitrogen
 #ifndef NITROGEN_ALIASES_HH
 #include "Nitrogen/Aliases.hh"
-#endif
-#ifndef NITROGEN_APPLEEVENTS_HH
-#include "Nitrogen/AppleEvents.hh"
-#endif
-#ifndef NITROGEN_DRAG_HH
-#include "Nitrogen/Drag.hh"
-#endif
-#ifndef NITROGEN_EVENTS_HH
-#include "Nitrogen/Events.hh"
-#endif
-#ifndef NITROGEN_MENUS_HH
-#include "Nitrogen/Menus.hh"
-#endif
-#ifndef NITROGEN_QDOFFSCREEN_HH
-#include "Nitrogen/QDOffscreen.hh"
-#endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
-#endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-#include "Nitrogen/TextCommon.hh"
 #endif
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
+#endif
+#ifndef NITROGEN_REFCON_HH
+#include "Nitrogen/RefCon.hh"
 #endif
 
 

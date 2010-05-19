@@ -13,6 +13,7 @@
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/OSUtils.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"

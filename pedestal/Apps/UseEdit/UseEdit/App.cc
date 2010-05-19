@@ -12,6 +12,7 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AERegistry.hh"
+#include "Nitrogen/Processes.hh"
 
 // Iteration
 #include "Iteration/AEDescListItemDatas.h"

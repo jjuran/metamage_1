@@ -21,6 +21,9 @@
 #include <TSMTE.h>
 #endif
 
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
+#endif
 #ifndef NITROGEN_CONTROLS_HH
 #include "Nitrogen/Controls.hh"
 #endif

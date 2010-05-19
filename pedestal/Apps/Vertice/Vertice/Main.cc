@@ -5,6 +5,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/AppleEvents.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
