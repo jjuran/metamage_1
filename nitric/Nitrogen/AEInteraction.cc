@@ -13,6 +13,9 @@
 
 #include "Nitrogen/AEInteraction.hh"
 
+// Nitrogen
+#include "Nitrogen/Processes.hh"
+
 
 namespace Nitrogen
 {

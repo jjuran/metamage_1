@@ -33,6 +33,7 @@
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AERegistry.hh"
 #include "Nitrogen/Folders.hh"
+#include "Nitrogen/Processes.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

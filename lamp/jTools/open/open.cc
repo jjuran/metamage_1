@@ -18,6 +18,7 @@
 #include "Nitrogen/AERegistry.hh"
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
+#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Str.hh"
 
 // Io: MacFiles

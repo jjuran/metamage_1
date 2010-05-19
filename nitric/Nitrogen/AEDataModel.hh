@@ -48,9 +48,6 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NITROGEN_PROCESSES_HH
-#include "Nitrogen/Processes.hh"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
