@@ -162,7 +162,7 @@ namespace Genie
 		return N::OSType( '\?\?\?\?' );
 	}
 	
-	N::FileSignature PickFileSignatureForName( const plus::string& name )
+	Mac::FSSignature PickFileSignatureForName( const plus::string& name )
 	{
 		std::size_t dot = name.find_last_of( "." );
 		
@@ -174,13 +174,13 @@ namespace Genie
 			{
 				N::OSType type = N::OSType( it->type );
 				
-				N::FileSignature signature( GetCreatorForType( type ), type );
+				Mac::FSSignature signature( GetCreatorForType( type ), type );
 				
 				return signature;
 			}
 		}
 		
-		return N::FileSignature( TextFileCreator(), N::OSType( 'TEXT' ) );
+		return Mac::FSSignature( TextFileCreator(), N::OSType( 'TEXT' ) );
 	}
 	
 }

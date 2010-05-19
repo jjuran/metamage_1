@@ -7,7 +7,11 @@
 #define GENIE_FILESIGNATURE_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSSignature.hh"
+
+#ifndef NITROGEN_MACTYPES_HH
+#include "Nitrogen/MacTypes.hh"
+#endif
 
 
 namespace plus
@@ -27,7 +31,7 @@ namespace Genie
 		return Nitrogen::OSType( gTextFileCreator );
 	}
 	
-	Nitrogen::FileSignature PickFileSignatureForName( const plus::string& name );
+	Mac::FSSignature PickFileSignatureForName( const plus::string& name );
 	
 }
 
