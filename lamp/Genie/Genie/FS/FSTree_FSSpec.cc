@@ -27,6 +27,12 @@
 // plus
 #include "plus/var_string.hh"
 
+// nucleus
+#include "nucleus/scribe.hh"
+
+// io
+#include "io/slurp.hh"
+
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/DateTimeUtils.hh"
@@ -1165,6 +1171,13 @@ namespace Genie
 		if ( !IsLink() )
 		{
 			p7::throw_errno( EINVAL );
+		}
+		
+		const plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
+		
+		if ( !target.empty() )
+		{
+			return target;
 		}
 		
 		return ResolveLink()->Pathname();
