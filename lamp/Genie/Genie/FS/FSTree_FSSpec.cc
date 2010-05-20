@@ -724,6 +724,12 @@ namespace Genie
 		return io::directory_exists( itsFileSpec );
 	}
 	
+	static inline bool is_osx_symlink( const FInfo& fInfo )
+	{
+		return    fInfo.fdCreator == Mac::kSymLinkCreator
+		       && fInfo.fdType    == Mac::kSymLinkFileType;
+	}
+	
 	bool FSTree_HFS::IsLink() const
 	{
 		CInfoPBRec paramBlock;
@@ -743,9 +749,11 @@ namespace Genie
 				return hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
 			}
 			
-			const bool isAlias = hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+			const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
 			
-			return isAlias;
+			const bool is_alias = fInfo.fdFlags & kIsAlias;
+			
+			return is_alias  ||  is_osx_symlink( fInfo );
 		}
 		
 		return false;

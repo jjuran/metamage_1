@@ -74,6 +74,12 @@ namespace Genie
 		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
 	}
 	
+	static inline bool is_osx_symlink( const FInfo& fInfo )
+	{
+		return    fInfo.fdCreator == Mac::kSymLinkCreator
+		       && fInfo.fdType    == Mac::kSymLinkFileType;
+	}
+	
 	static mode_t GetItemMode( const HFileInfo& hFileInfo )
 	{
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
@@ -85,7 +91,7 @@ namespace Genie
 		
 		const bool is_alias = fInfo.fdFlags & kIsAlias;
 		
-		const bool is_link = is_alias;
+		const bool is_link = is_alias  ||  is_osx_symlink( fInfo );
 		
 		if ( is_link )
 		{
