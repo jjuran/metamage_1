@@ -32,6 +32,7 @@
 
 // io
 #include "io/slurp.hh"
+#include "io/spew.hh"
 
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
@@ -1369,28 +1370,45 @@ namespace Genie
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
-		// Target pathname is resolved relative to the location of the link file
-		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent, FileIsOnServer( linkSpec ) ) );
+		UInt16 extra_Finder_flags = kIsShared;
 		
-		// Do not resolve links -- if the target of this link is another symlink, so be it
-		
-		FSSpec targetSpec = GetFSSpecFromFSTree( target );
-		
-		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
-		
-		N::FSpCreateResFile( linkSpec, signature );
-		
-		n::owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
+		try
+		{
+			// Target path is resolved relative to the location of the link file
+			// This throws if a nonterminal path component is missing
+			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent, FileIsOnServer( linkSpec ) ) );
+			
+			// Do not resolve links -- if the target of this link is another symlink, so be it
+			
+			FSSpec targetSpec = GetFSSpecFromFSTree( target );
+			
+			// This throws if the target doesn't exist
+			N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
+			
+			// Aliases get special creator and type
+			N::FSpCreateResFile( linkSpec, signature );
+			
+			n::owned< AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
+			
+			n::owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
+			
+			(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
+			
+			extra_Finder_flags |= kIsAlias;
+		}
+		catch ( const N::OSStatus& err )
+		{
+			// Non-aliases get creator and type for OS X symlinks
+			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
+		}
 		
 		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
 		
-		linkFInfo.fdFlags |= kIsAlias;
+		linkFInfo.fdFlags |= extra_Finder_flags;
 		
 		N::FSpSetFInfo( linkSpec, linkFInfo );
 		
-		n::owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
-		
-		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
+		io::spew_file< n::string_scribe< plus::string > >( linkSpec, targetPath );
 	}
 	
 	void FSTree_HFS::SymLink( const plus::string& target ) const
