@@ -154,6 +154,19 @@ namespace nucleus
 	};
 	
 	
+	template < class Disposer >
+	struct disposer_size
+	{
+		struct derived : Disposer
+		{
+			int x;
+		};
+		
+		// If zero, the disposer is stateless
+		static const std::size_t value = sizeof (derived) - sizeof (int);
+	};
+	
+	
 	template < class Resource, class Disposer >
 	class disposable_resource : private Disposer
 	{
@@ -202,7 +215,11 @@ namespace nucleus
 			{
 				using std::swap;
 				
-				swap( disposer(),   r.disposer()   );
+				if ( disposer_size< Disposer >::value != 0 )
+				{
+					swap( disposer(), r.disposer() );
+				}
+				
 				swap( its_resource, r.its_resource );
 			}
 			
