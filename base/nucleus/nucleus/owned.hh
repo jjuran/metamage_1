@@ -270,7 +270,7 @@ namespace nucleus
 		public:                                       
 			owned()                 : its_body()  {}
 			owned( owned& s )       : its_body()  { swap( s ); }
-			owned( transfer s )     : its_body()  { std::swap( its_body, *s ); }
+			owned( transfer s )     : its_body()  { its_body.swap( *s ); }
 			
 			template< class R >
 			owned( owned< R, Disposer >& s ) : its_body( s.release_body() )
