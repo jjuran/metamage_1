@@ -1204,11 +1204,32 @@ namespace Genie
 				return FSRoot();
 			}
 		}
-		else if ( cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias )
+		else
 		{
-			FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
+			const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
 			
-			return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
+			const bool is_alias = fInfo.fdFlags & kIsAlias;
+			
+			if ( is_alias  ||  is_osx_symlink( fInfo ) )
+			{
+				const plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
+				
+				if ( !target.empty() )
+				{
+					return ResolvePathname( target, Parent() );
+				}
+				else if ( is_alias )
+				{
+					FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
+					
+					return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
+				}
+				else
+				{
+					// empty 'slnk' file
+					throw p7::errno_t( EIO );
+				}
+			}
 		}
 		
 		return Self();
