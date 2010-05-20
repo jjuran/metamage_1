@@ -76,15 +76,23 @@ namespace Genie
 	
 	static mode_t GetItemMode( const HFileInfo& hFileInfo )
 	{
-		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
+		{
+			return S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+		}
 		
-		bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+		const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
 		
-		mode_t mode = isDir   ? S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR
-		            : isAlias ? S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR
-		            :           S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );
+		const bool is_alias = fInfo.fdFlags & kIsAlias;
 		
-		return mode;
+		const bool is_link = is_alias;
+		
+		if ( is_link )
+		{
+			return S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR;
+		}
+		
+		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
 	}
 	
 	void Stat_HFS( bool                      async,
