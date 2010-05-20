@@ -360,6 +360,13 @@ namespace nucleus
 			}
 	};
 	
+	template < class Resource, class Disposer >
+	inline void swap( owned< Resource, Disposer >&  a,
+	                  owned< Resource, Disposer >&  b )
+	{
+		a.swap( b );
+	}
+	
 	
 	template < class Resource, class Disposer >
 	struct convert_input_traits< owned< Resource, Disposer > >
