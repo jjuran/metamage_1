@@ -22,32 +22,8 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_EVENTS_HH
-#include "Nitrogen/Events.hh"
-#endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
-#endif
 #ifndef NITROGEN_FONTS_HH
 #include "Nitrogen/Fonts.hh"
-#endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-#include "Nitrogen/TextCommon.hh"
-#endif
-#ifndef NITROGEN_PROCESSES_HH
-#include "Nitrogen/Processes.hh"
-#endif
-#ifndef NITROGEN_APPLEEVENTS_HH
-#include "Nitrogen/AppleEvents.hh"
-#endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
-#ifndef NITROGEN_CFUUID_HH
-#include "Nitrogen/CFUUID.hh"
 #endif
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
