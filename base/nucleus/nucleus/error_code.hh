@@ -89,8 +89,18 @@
 #ifndef NUCLEUS_ERRORCODE_HH
 #define NUCLEUS_ERRORCODE_HH
 
+#ifndef NUCLEUS_RICH_ERRORCODES
+  #if defined( __MWERKS__ )
+	 #define NUCLEUS_RICH_ERRORCODES 0
+  #else
+	 #define NUCLEUS_RICH_ERRORCODES 1
+  #endif
+#endif
+
 // Standard C++
+#if NUCLEUS_RICH_ERRORCODES
 #include <map>
+#endif
 
 // Debug
 #if TARGET_CONFIG_DEBUGGING  &&  !defined( NUCLEUS_DEBUGGING_CONTEXT )
@@ -101,14 +111,6 @@
 // Nucleus
 #include "nucleus/convert.hh"
 
-
-#ifndef NUCLEUS_RICH_ERRORCODES
-  #if defined( __MWERKS__ )
-	 #define NUCLEUS_RICH_ERRORCODES 0
-  #else
-	 #define NUCLEUS_RICH_ERRORCODES 1
-  #endif
-#endif
 
 #if NUCLEUS_RICH_ERRORCODES
 	
@@ -176,6 +178,8 @@ namespace nucleus
 	}
 
 	
+#if NUCLEUS_RICH_ERRORCODES
+	
 	template < class ErrorClass >
 	class error_code_thrower
 	{
@@ -227,13 +231,18 @@ namespace nucleus
 		return global_error_code_thrower;
 	}
 	
+#endif
+	
 	template < class ErrorClass, typename error_class_traits< ErrorClass >::error_number number >
 	inline void register_error_code()
 	{
-		if ( NUCLEUS_RICH_ERRORCODES )
+	#if NUCLEUS_RICH_ERRORCODES
+		
 		{
 			the_global_error_code_thrower< ErrorClass >().template register_error< number >();
 		}
+		
+	#endif
 	}
 	
 	template < class ErrorClass >

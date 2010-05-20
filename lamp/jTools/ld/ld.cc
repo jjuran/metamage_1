@@ -5,6 +5,7 @@
 
 // Standard C++
 #include <list>
+#include <map>
 #include <vector>
 
 // Standard C

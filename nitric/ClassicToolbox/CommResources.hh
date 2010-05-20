@@ -6,6 +6,9 @@
 #ifndef CLASSICTOOLBOX_COMMRESOURCES_HH
 #define CLASSICTOOLBOX_COMMRESOURCES_HH
 
+// Standard C++
+#include <map>
+
 // Mac OS
 #ifndef __COMMRESOURCES__
 #include <CommResources.h>

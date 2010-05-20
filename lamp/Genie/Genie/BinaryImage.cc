@@ -5,6 +5,9 @@
 
 #include "Genie/BinaryImage.hh"
 
+// Standard C++
+#include <map>
+
 // Debug
 #include "debug/assert.hh"
 
