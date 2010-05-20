@@ -39,7 +39,9 @@ namespace Vertice
 			
 			void Swap( Frame& other )
 			{
-				std::swap( itsModels, other.itsModels );
+				using std::swap;
+				
+				swap( itsModels, other.itsModels );
 			}
 	};
 	

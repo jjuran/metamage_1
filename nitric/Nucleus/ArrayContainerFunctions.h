@@ -59,8 +59,9 @@ namespace Nucleus
      {
       Element *p = ArrayBegin( a );
       Element *q = ArrayBegin( b );
+      using std::swap;
       while ( p != ArrayEnd( a ) )
-         std::swap( *p++, *q++ );
+         swap( *p++, *q++ );
      }
    
    template < class Element, std::size_t size >

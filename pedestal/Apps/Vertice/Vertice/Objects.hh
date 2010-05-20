@@ -100,7 +100,9 @@ namespace Vertice
 		public:
 			void Swap( PointMesh& other )
 			{
-				std::swap( itsPoints, other.itsPoints );
+				using std::swap;
+				
+				swap( itsPoints, other.itsPoints );
 			}
 			
 			typedef V::Point3D::Type point_type;
@@ -189,7 +191,9 @@ namespace Vertice
 			{
 				itsMesh.Swap( other.itsMesh );
 				
-				std::swap( itsPolygons, other.itsPolygons );
+				using std::swap;
+				
+				swap( itsPolygons, other.itsPolygons );
 			}
 			
 			PointMesh const& Mesh() const  { return itsMesh; }

@@ -198,7 +198,9 @@ namespace tool
 					throw p7::exit_failure;
 				}
 				
-				std::swap( param, hereDoc );
+				using std::swap;
+				
+				swap( param, hereDoc );
 			}
 			
 			//op &= kIOMask;

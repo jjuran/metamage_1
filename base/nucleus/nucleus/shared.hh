@@ -159,8 +159,10 @@ namespace nucleus
 			
 			void swap( shared& s )
 			{
-				std::swap( its_body,  s.its_body  );
-				std::swap( its_share, s.its_share );
+				using std::swap;
+				
+				swap( its_body,  s.its_body  );
+				swap( its_share, s.its_share );
 			}
 			
 			const resource_type& get() const       { return its_body.get(); }

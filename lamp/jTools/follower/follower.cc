@@ -78,7 +78,9 @@ namespace tool
 			
 			p7::ftruncate( p7::stdout_fileno, output.size() );
 			
-			std::swap( output, previous );
+			using std::swap;
+			
+			swap( output, previous );
 		}
 		
 		nanosleep( &time, NULL );

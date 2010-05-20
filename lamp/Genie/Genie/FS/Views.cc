@@ -39,8 +39,10 @@ namespace Genie
 	{
 		itsDelegate.swap( other.itsDelegate );
 		
-		std::swap( itsFactory,   other.itsFactory   );
-		std::swap( itsWindowKey, other.itsWindowKey );
+		using std::swap;
+		
+		swap( itsFactory,   other.itsFactory   );
+		swap( itsWindowKey, other.itsWindowKey );
 	}
 	
 	typedef std::map< plus::string, ViewParameters > ViewParametersSubMap;

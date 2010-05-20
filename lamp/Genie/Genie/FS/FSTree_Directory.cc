@@ -57,7 +57,9 @@ namespace Genie
 		
 		FSTreeCachePtr cachePtr( newCache );
 		
-		std::swap( cache, *newCache );
+		using std::swap;
+		
+		swap( cache, *newCache );
 		
 		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
 	}

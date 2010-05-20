@@ -279,7 +279,9 @@ namespace tool
 	{
 		std::vector< plus::string > subprojects;
 		
-		std::swap( subprojects, Subprojects() );
+		using std::swap;
+		
+		swap( subprojects, Subprojects() );
 		
 		std::for_each( subprojects.begin(),
 		               subprojects.end(),

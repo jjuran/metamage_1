@@ -200,8 +200,10 @@ namespace nucleus
 			
 			void swap( disposable_resource& r )
 			{
-				std::swap( disposer(),   r.disposer()   );
-				std::swap( its_resource, r.its_resource );
+				using std::swap;
+				
+				swap( disposer(),   r.disposer()   );
+				swap( its_resource, r.its_resource );
 			}
 			
 			disposer_type const& disposer() const      { return *this; }

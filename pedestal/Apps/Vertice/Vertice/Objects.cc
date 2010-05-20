@@ -27,8 +27,10 @@ namespace Vertice
 	
 	void ImageTile::Swap( ImageTile& other )
 	{
-		std::swap( itsWidth,  other.itsWidth  );
-		std::swap( itsValues, other.itsValues );
+		using std::swap;
+		
+		swap( itsWidth,  other.itsWidth  );
+		swap( itsValues, other.itsValues );
 	}
 	
 	
@@ -183,20 +185,24 @@ namespace Vertice
 	
 	void MeshPolygon::Swap( MeshPolygon& other )
 	{
-		std::swap( itsVertices,        other.itsVertices        );
-		std::swap( itsMapPoints   [0], other.itsMapPoints   [0] );
-		std::swap( itsMapPoints   [1], other.itsMapPoints   [1] );
-		std::swap( itsMapPoints   [2], other.itsMapPoints   [2] );
-		std::swap( itsSavedOffsets[0], other.itsSavedOffsets[0] );
-		std::swap( itsSavedOffsets[1], other.itsSavedOffsets[1] );
-		std::swap( itsSavedOffsets[2], other.itsSavedOffsets[2] );
-		std::swap( itsColor,           other.itsColor           );
-		std::swap( itsImageTile,       other.itsImageTile       );
+		using std::swap;
+		
+		swap( itsVertices,        other.itsVertices        );
+		swap( itsMapPoints   [0], other.itsMapPoints   [0] );
+		swap( itsMapPoints   [1], other.itsMapPoints   [1] );
+		swap( itsMapPoints   [2], other.itsMapPoints   [2] );
+		swap( itsSavedOffsets[0], other.itsSavedOffsets[0] );
+		swap( itsSavedOffsets[1], other.itsSavedOffsets[1] );
+		swap( itsSavedOffsets[2], other.itsSavedOffsets[2] );
+		swap( itsColor,           other.itsColor           );
+		swap( itsImageTile,       other.itsImageTile       );
 	}
 	
 	void MeshPolygon::SwapVertexOffsets( std::vector< Offset >& vertexOffsets )
 	{
-		std::swap( itsVertices, vertexOffsets );
+		using std::swap;
+		
+		swap( itsVertices, vertexOffsets );
 	}
 	
 	

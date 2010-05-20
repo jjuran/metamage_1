@@ -294,7 +294,9 @@ namespace tool
 			{
 				p7::ftruncate( p7::stdout_fileno, output.size() );
 				
-				std::swap( output, previous );
+				using std::swap;
+				
+				swap( output, previous );
 				
 				p7::lseek( p7::stdout_fileno, 0 );
 			}

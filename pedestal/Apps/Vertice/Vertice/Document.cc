@@ -316,11 +316,13 @@ namespace Vertice
 		
 		if ( scanned < 3 )
 		{
-			std::swap( its1U, its2U );
+			using std::swap;
+			
+			swap( its1U, its2U );
 			
 			if ( scanned == 2 )
 			{
-				std::swap( its1V, its2V );
+				swap( its1V, its2V );
 			}
 		}
 	}

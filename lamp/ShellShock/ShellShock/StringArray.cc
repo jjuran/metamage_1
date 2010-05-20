@@ -162,8 +162,10 @@ namespace ShellShock
 	
 	void StringArray::Swap( StringArray& other )
 	{
-		std::swap( strings, other.strings );
-		std::swap( array,   other.array   );
+		using std::swap;
+		
+		swap( strings, other.strings );
+		swap( array,   other.array   );
 	}
 	
 }

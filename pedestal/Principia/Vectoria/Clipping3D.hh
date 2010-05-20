@@ -98,7 +98,9 @@ namespace Vectoria
 			newPoints.push_back( pt );
 		}
 		
-		std::swap( points, newPoints );
+		using std::swap;
+		
+		swap( points, newPoints );
 	}
 	
 }

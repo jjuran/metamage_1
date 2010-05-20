@@ -925,7 +925,9 @@ namespace Genie
 		
 		newParameters->itsEnviron.Assign( envp );
 		
-		std::swap( itsParameters, newParameters );
+		using std::swap;
+		
+		swap( itsParameters, newParameters );
 		
 		itsProgramFile = context.executable;
 		
@@ -959,7 +961,7 @@ namespace Genie
 		
 		// Save the binary image that we're running from and set the new one.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		std::swap( itsOldMainEntry, itsMainEntry );
+		swap( itsOldMainEntry, itsMainEntry );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
@@ -1143,7 +1145,9 @@ namespace Genie
 		
 		ASSERT( itsCleanupHandler == NULL );
 		
-		std::swap( itsCleanupHandler, parent.itsCleanupHandler );
+		using std::swap;
+		
+		swap( itsCleanupHandler, parent.itsCleanupHandler );
 		
 		parent.Exit( exit_status );
 	}
