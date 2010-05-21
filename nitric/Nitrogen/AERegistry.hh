@@ -20,14 +20,15 @@
 #ifndef __CARBONEVENTS__
 #include <CarbonEvents.h>
 #endif
+
+// Nitrogen
+#include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
 #ifndef NITROGEN_AEOBJECTS_HH
 #include "Nitrogen/AEObjects.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
 #endif
 
 
@@ -209,7 +210,7 @@ namespace Nitrogen
       return sizeof( array ) - sizeof( array.fRange ) + array.fNumOfRanges * sizeof( TextRange );
      }
    
-   template<> struct DescType_Traits< typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        SizeOf_VersRec        > {};
+   template<> struct DescType_Traits< typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        Mac::SizeOf_VersRec   > {};
    template<> struct DescType_Traits< typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    SizeOf_OffsetArray    > {};
    template<> struct DescType_Traits< typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, SizeOf_TextRangeArray > {};
   }
