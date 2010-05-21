@@ -28,6 +28,9 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
+// Nitrogen
+#include "Mac/Resources/Types/ResID.hh"
+
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
@@ -53,10 +56,7 @@ namespace Nitrogen
 		kResFileRefNum_Max = nucleus::enumeration_traits< ::ResFileRefNum >::max
 	};
 	
-	enum ResID
-	{
-		kResID_Max = nucleus::enumeration_traits< ::ResID >::max
-	};
+	using Mac::ResID;
 	
 	typedef ResID ResourceID;
 	
