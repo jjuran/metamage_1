@@ -87,25 +87,25 @@ InvokeUnicodeToTextFallbackUPP(
 namespace nucleus
   {
 //	Do these need to take pointers???? [ No - they are already pointers ]
-	template <> struct disposer< Nitrogen::TextToUnicodeInfo >: public std::unary_function< Nitrogen::TextToUnicodeInfo, void >
+	template <> struct disposer< TextToUnicodeInfo >: public std::unary_function< TextToUnicodeInfo, void >
 		{
-		void operator()( Nitrogen::TextToUnicodeInfo ttui ) const
+		void operator()( TextToUnicodeInfo ttui ) const
 			{
 				(void) ::DisposeTextToUnicodeInfo ( &ttui );
 			}
 		};
 
-	template <> struct disposer< Nitrogen::UnicodeToTextInfo >: public std::unary_function< Nitrogen::UnicodeToTextInfo, void >
+	template <> struct disposer< UnicodeToTextInfo >: public std::unary_function< UnicodeToTextInfo, void >
 		{
-		void operator()( Nitrogen::UnicodeToTextInfo utti ) const
+		void operator()( UnicodeToTextInfo utti ) const
 			{
 				(void) ::DisposeUnicodeToTextInfo ( &utti );
 			}
 		};
 
-	template <> struct disposer< Nitrogen::UnicodeToTextRunInfo >: public std::unary_function< Nitrogen::UnicodeToTextRunInfo, void >
+	template <> struct disposer< UnicodeToTextRunInfo >: public std::unary_function< UnicodeToTextRunInfo, void >
 		{
-		void operator()( Nitrogen::UnicodeToTextRunInfo uttri ) const
+		void operator()( UnicodeToTextRunInfo uttri ) const
 			{
 				(void) ::DisposeUnicodeToTextRunInfo ( &uttri );
 			}

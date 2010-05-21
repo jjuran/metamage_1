@@ -28,9 +28,9 @@ namespace Nitrogen
   }
 
 namespace nucleus {
-   template <> struct disposer< Nitrogen::CGDataProviderRef >: public std::unary_function< Nitrogen::CGDataProviderRef, void >
+   template <> struct disposer< CGDataProviderRef >: public std::unary_function< CGDataProviderRef, void >
      {
-      void operator()( Nitrogen::CGDataProviderRef image ) const
+      void operator()( CGDataProviderRef image ) const
         {
          ::CGDataProviderRelease ( image );
         }

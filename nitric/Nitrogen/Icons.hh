@@ -154,9 +154,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< Nitrogen::CIconHandle > : public std::unary_function< Nitrogen::CIconHandle, void >
+	template <> struct disposer< CIconHandle > : public std::unary_function< CIconHandle, void >
 	{
-		void operator()( Nitrogen::CIconHandle h ) const
+		void operator()( CIconHandle h ) const
 		{
 			//NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
 			
@@ -238,9 +238,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::IconRef >: public std::unary_function< Nitrogen::IconRef, void >
+   template <> struct disposer< IconRef >: public std::unary_function< IconRef, void >
      {
-      void operator()( Nitrogen::IconRef i ) const
+      void operator()( IconRef i ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
          

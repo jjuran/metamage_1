@@ -43,7 +43,7 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer_traits< Nitrogen::CFURLRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< CFURLRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
@@ -238,14 +238,14 @@ namespace Nitrogen
 
 namespace nucleus
   {
-  template <> struct converter< Nitrogen::FSRef, Nitrogen::CFURLRef >: public std::unary_function< Nitrogen::CFURLRef, Nitrogen::FSRef >
+  template <> struct converter< FSRef, CFURLRef >: public std::unary_function< CFURLRef, FSRef >
      {
-      Nitrogen::FSRef operator()( Nitrogen::CFURLRef url ) const;
+      FSRef operator()( CFURLRef url ) const;
      };
 
-   template <> struct converter< nucleus::owned<Nitrogen::CFURLRef>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, nucleus::owned<Nitrogen::CFURLRef> >
+   template <> struct converter< nucleus::owned<CFURLRef>, FSRef >: public std::unary_function< FSRef, nucleus::owned<CFURLRef> >
      {
-      nucleus::owned<Nitrogen::CFURLRef> operator()( const Nitrogen::FSRef& ref ) const
+      nucleus::owned<CFURLRef> operator()( const FSRef& ref ) const
         {
          return Nitrogen::CFURLCreateFromFSRef( ref );
         }

@@ -77,18 +77,18 @@ namespace nucleus
 {
 	
 	template <>
-	struct maker< Nitrogen::SerShk >
+	struct maker< SerShk >
 	{
-		Nitrogen::SerShk operator()( Byte           fXOn = 0,
-		                             Byte           fCTS = 0,
-		                             unsigned char  xOn  = 0,
-		                             unsigned char  xOff = 0,
-		                             Byte           errs = 0,
-		                             Byte           evts = 0,
-		                             Byte           fInX = 0,
-		                             Byte           fDTR = 0 ) const
+		SerShk operator()( Byte           fXOn = 0,
+		                   Byte           fCTS = 0,
+		                   unsigned char  xOn  = 0,
+		                   unsigned char  xOff = 0,
+		                   Byte           errs = 0,
+		                   Byte           evts = 0,
+		                   Byte           fInX = 0,
+		                   Byte           fDTR = 0 ) const
 		{
-			Nitrogen::SerShk result;
+			SerShk result;
 			
 			result.fXOn = fXOn;
 			result.fCTS = fCTS;

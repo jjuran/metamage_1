@@ -89,20 +89,20 @@ namespace nucleus
 	struct disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >
 	{
 		private:
-			shared< Nitrogen::ComponentInstance > itsComponent;
+			shared< ComponentInstance > itsComponent;
 		
 		public:
 			disposer()
 			{
 			}
 			
-			disposer( const shared< Nitrogen::ComponentInstance >& component )
+			disposer( const shared< ComponentInstance >& component )
 			:
 				itsComponent( component )
 			{
 			}
 			
-			const shared< Nitrogen::ComponentInstance >& Component() const
+			const shared< ComponentInstance >& Component() const
 			{
 				return itsComponent;
 			}

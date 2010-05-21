@@ -62,7 +62,7 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer_traits< Nitrogen::AliasHandle > : disposer_traits< Nitrogen::Handle >  {};
+   template <> struct disposer_traits< AliasHandle > : disposer_traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen
@@ -128,9 +128,9 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template <> struct converter< nucleus::owned<Nitrogen::AliasHandle>, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, nucleus::owned<Nitrogen::AliasHandle> >
+   template <> struct converter< nucleus::owned< AliasHandle >, FSRef >: public std::unary_function< FSRef, nucleus::owned< AliasHandle > >
      {
-      nucleus::owned<Nitrogen::AliasHandle> operator()( const Nitrogen::FSRef& ref ) const
+      nucleus::owned< AliasHandle > operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSNewAlias( ref );
         }
@@ -181,9 +181,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< Nitrogen::FSRef, Nitrogen::AliasHandle >: public std::unary_function< Nitrogen::AliasHandle, Nitrogen::FSRef >
+   template <> struct converter< FSRef, AliasHandle >: public std::unary_function< AliasHandle, FSRef >
      {
-      Nitrogen::FSRef operator()( Nitrogen::AliasHandle alias ) const
+      FSRef operator()( AliasHandle alias ) const
         {
          return Nitrogen::FSResolveAlias( alias );
         }

@@ -130,9 +130,9 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template <> struct disposer< Nitrogen::MenuRef >: public std::unary_function< Nitrogen::MenuRef, void >
+   template <> struct disposer< MenuRef >: public std::unary_function< MenuRef, void >
      {
-      void operator()( Nitrogen::MenuRef m ) const
+      void operator()( MenuRef m ) const
         {
          ::DisposeMenu( m );
         }

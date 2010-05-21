@@ -52,9 +52,9 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< Nitrogen::CRMIconHandle > : public std::unary_function< Nitrogen::CRMIconHandle, void >
+	template <> struct disposer< CRMIconHandle > : public std::unary_function< CRMIconHandle, void >
 	{
-		void operator()( Nitrogen::CRMIconHandle deviceIcon ) const
+		void operator()( CRMIconHandle deviceIcon ) const
 		{
 			Nitrogen::IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
 			
@@ -67,11 +67,11 @@ namespace nucleus
 	{
 		void operator()( Nitrogen::CRMSerialPtr crmSerial ) const
 		{
-			disposer< Nitrogen::Handle        >()( crmSerial->inputDriverName  );
-			disposer< Nitrogen::Handle        >()( crmSerial->outputDriverName );
-			disposer< Nitrogen::Handle        >()( crmSerial->name             );
-			disposer< Nitrogen::CRMIconHandle >()( crmSerial->deviceIcon       );
-			disposer< Nitrogen::Ptr           >()( crmSerial                   );
+			disposer< Nitrogen::Handle >()( crmSerial->inputDriverName  );
+			disposer< Nitrogen::Handle >()( crmSerial->outputDriverName );
+			disposer< Nitrogen::Handle >()( crmSerial->name             );
+			disposer< CRMIconHandle    >()( crmSerial->deviceIcon       );
+			disposer< Nitrogen::Ptr    >()( crmSerial                   );
 		}
 	};
 	

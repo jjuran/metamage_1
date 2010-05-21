@@ -121,7 +121,7 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer_traits< Nitrogen::InetSvcRef > : disposer_traits< Nitrogen::ProviderRef > {};
+	template <> struct disposer_traits< InetSvcRef > : disposer_traits< ProviderRef > {};
 	
 }
 
@@ -144,11 +144,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct initializer< Nitrogen::InetAddress >
+	struct initializer< InetAddress >
 	{
-		Nitrogen::InetAddress& operator()( Nitrogen::InetAddress&  addr,
-		                                   Nitrogen::InetPort      port,
-		                                   Nitrogen::InetHost      host )
+		InetAddress& operator()( InetAddress&        addr,
+		                         Nitrogen::InetPort  port,
+		                         Nitrogen::InetHost  host )
 		{
 			return Nitrogen::OTInitInetAddress( addr, port, host );
 		}

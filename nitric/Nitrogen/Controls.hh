@@ -54,9 +54,9 @@ namespace nucleus
   {
    // Not actually used, since controls are owned by the parent window
    
-   template <> struct disposer< Nitrogen::ControlRef >: public std::unary_function< Nitrogen::ControlRef, void >
+   template <> struct disposer< ControlRef >: public std::unary_function< ControlRef, void >
      {
-      void operator()( Nitrogen::ControlRef c ) const
+      void operator()( ControlRef c ) const
         {
          ::DisposeControl( c );
         }
@@ -228,11 +228,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct maker< Nitrogen::ControlID >
+   struct maker< ControlID >
      {
-      Nitrogen::ControlID operator()( Nitrogen::OSType signature, SInt32 id ) const
+      ControlID operator()( Nitrogen::OSType signature, SInt32 id ) const
         {
-         Nitrogen::ControlID result;
+         ControlID result;
          result.signature = signature;
          result.id = id;
          return result;

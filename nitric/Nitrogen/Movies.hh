@@ -69,9 +69,9 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::Movie > : public std::unary_function< Nitrogen::Movie, void >
+	struct disposer< Movie > : public std::unary_function< Movie, void >
 	{
-		void operator()( Nitrogen::Movie movie ) const
+		void operator()( Movie movie ) const
 		{
 			::DisposeMovie( movie );
 		}

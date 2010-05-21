@@ -119,8 +119,8 @@ namespace Nitrogen {
 }
 
 namespace nucleus {
-   template <> struct disposer_traits< Nitrogen::CFStringRef >   : disposer_traits< Nitrogen::CFTypeRef > {};
-   template <> struct disposer_traits< Nitrogen::CFAllocatorRef >: disposer_traits< Nitrogen::CFTypeRef > {};
+   template <> struct disposer_traits< CFStringRef >   : disposer_traits< Nitrogen::CFTypeRef > {};
+   template <> struct disposer_traits< CFAllocatorRef >: disposer_traits< Nitrogen::CFTypeRef > {};
 }
 
 namespace Nitrogen {

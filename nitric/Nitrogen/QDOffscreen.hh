@@ -49,8 +49,8 @@ namespace nucleus
 	template <>
 	struct maker< Nitrogen::GWorld_Context >
 	{
-		Nitrogen::GWorld_Context operator()( Nitrogen::GWorldPtr  port,
-		                                     Nitrogen::GDHandle   gdh = NULL ) const
+		Nitrogen::GWorld_Context operator()( GWorldPtr  port,
+		                                     GDHandle   gdh = NULL ) const
 		{
 			Nitrogen::GWorld_Context result;
 			

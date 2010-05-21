@@ -39,9 +39,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::IBNibRef >: public std::unary_function< Nitrogen::IBNibRef, void >
+   template <> struct disposer< IBNibRef >: public std::unary_function< IBNibRef, void >
      {
-      void operator()( Nitrogen::IBNibRef n ) const
+      void operator()( IBNibRef n ) const
         {
          ::DisposeNibReference( n );
         }

@@ -57,7 +57,7 @@ namespace Nitrogen
    }
 
 namespace nucleus {
-   template <> struct disposer_traits< Nitrogen::CFMutableStringRef >: disposer_traits< Nitrogen::CFTypeRef > {};
+   template <> struct disposer_traits< CFMutableStringRef >: disposer_traits< Nitrogen::CFTypeRef > {};
    }
    
 namespace Nitrogen {
@@ -157,73 +157,73 @@ namespace Nitrogen {
 namespace nucleus
   {
    template <>
-   struct converter< Nitrogen::UniString, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, Nitrogen::UniString >
+   struct converter< Nitrogen::UniString, CFStringRef >: public std::unary_function< CFStringRef, Nitrogen::UniString >
      {
-      Nitrogen::UniString operator()( const Nitrogen::CFStringRef& in ) const
+      Nitrogen::UniString operator()( const CFStringRef& in ) const
         {
          return Nitrogen::CFStringGetCharacters( in );
         }
      };
    
    template <>
-   struct converter< nucleus::owned<Nitrogen::CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, nucleus::owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, nucleus::owned<CFStringRef> >
      {
-      nucleus::owned<Nitrogen::CFStringRef> operator()( const Nitrogen::UniString& in ) const
+      nucleus::owned<CFStringRef> operator()( const Nitrogen::UniString& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in );
         }
      };
    
    template <>
-   struct converter< nucleus::owned<Nitrogen::CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, nucleus::owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, nucleus::owned<CFStringRef> >
      {
       private:
-         Nitrogen::CFStringEncoding encoding;
+         CFStringEncoding encoding;
       
       public:
-         converter( Nitrogen::CFStringEncoding e )
+         converter( CFStringEncoding e )
            : encoding( e )
            {}
          
-         nucleus::owned<Nitrogen::CFStringRef> operator()( ConstStr255Param in ) const
+         nucleus::owned<CFStringRef> operator()( ConstStr255Param in ) const
            {
             return Nitrogen::CFStringCreateWithPascalString( in, encoding );
            }
      };
    
    template <>
-   struct converter< nucleus::owned<Nitrogen::CFStringRef>, const char * >: public std::unary_function< const char *, nucleus::owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<CFStringRef>, const char * >: public std::unary_function< const char *, nucleus::owned<CFStringRef> >
      {
       private:
-         Nitrogen::CFStringEncoding encoding;
+         CFStringEncoding encoding;
       
       public:
-         converter( Nitrogen::CFStringEncoding e )
+         converter( CFStringEncoding e )
            : encoding( e )
            {}
          
-         nucleus::owned<Nitrogen::CFStringRef> operator()( const char *in ) const
+         nucleus::owned<CFStringRef> operator()( const char *in ) const
            {
             return Nitrogen::CFStringCreateWithCString( in, encoding );
            }
      };
    
    template <>
-   struct converter< nucleus::owned<Nitrogen::CFStringRef>, double >: public std::unary_function< double, nucleus::owned<Nitrogen::CFStringRef> >
+   struct converter< nucleus::owned<CFStringRef>, double >: public std::unary_function< double, nucleus::owned<CFStringRef> >
      {
-      nucleus::owned<Nitrogen::CFStringRef> operator()( const double& in ) const
+      nucleus::owned<CFStringRef> operator()( const double& in ) const
         {
          CFStringRef result = ::CFStringCreateWithFormat( kCFAllocatorDefault, 0, CFSTR("%g"), in );
          if ( result == 0 )
             throw Nitrogen::CFStringCreateWithFormat_Failed();
-         return nucleus::owned<Nitrogen::CFStringRef>::seize( result );
+         return nucleus::owned<CFStringRef>::seize( result );
         }
      };
    
    template <>
-   struct converter< double, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, double >
+   struct converter< double, CFStringRef >: public std::unary_function< CFStringRef, double >
      {
-      double operator()( const Nitrogen::CFStringRef& in ) const
+      double operator()( const CFStringRef& in ) const
         {
          return Nitrogen::CFStringGetDoubleValue( in );
         }

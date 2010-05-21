@@ -240,7 +240,7 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct maker< Nitrogen::Point >
+   struct maker< Point >
      {
       Point operator()( short v, short h ) const
         {
@@ -257,7 +257,7 @@ namespace nucleus
      };
 
    template <>
-   struct maker< Nitrogen::Rect >
+   struct maker< Rect >
      {
       Rect operator()( short top, short left, short bottom, short right ) const
         {

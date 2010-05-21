@@ -78,11 +78,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct maker< Nitrogen::TextEncodingRun >
+   struct maker< TextEncodingRun >
      {
-      Nitrogen::TextEncodingRun operator()( ByteOffset offset, Nitrogen::TextEncoding textEncoding ) const
+      TextEncodingRun operator()( ByteOffset offset, TextEncoding textEncoding ) const
         {
-         Nitrogen::TextEncodingRun result;
+         TextEncodingRun result;
          result.offset = offset;
          result.textEncoding = textEncoding;
          return result;
@@ -90,11 +90,11 @@ namespace nucleus
      };
 
    template <>
-   struct maker< Nitrogen::ScriptCodeRun >
+   struct maker< ScriptCodeRun >
      {
-      Nitrogen::ScriptCodeRun operator()( ByteOffset offset, Nitrogen::ScriptCode script ) const
+      ScriptCodeRun operator()( ByteOffset offset, ScriptCode script ) const
         {
-         Nitrogen::ScriptCodeRun result;
+         ScriptCodeRun result;
          result.offset = offset;
          result.script = script;
          return result;

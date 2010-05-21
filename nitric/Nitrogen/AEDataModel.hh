@@ -442,11 +442,12 @@ namespace nucleus
 {
 	
 	template <>
-	struct maker< Nitrogen::AEDesc >
+	struct maker< AEDesc >
 	{
-		Nitrogen::AEDesc operator()() const
+		AEDesc operator()() const
 		{
-			Nitrogen::AEDesc result = { typeNull, NULL };
+			AEDesc result = { typeNull, NULL };
+			
 			return result;
 		}
 	};
@@ -478,10 +479,10 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >
+	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< AEDesc, void >
 	{
 		// parameter can't be const
-		void operator()( Nitrogen::AEDesc desc ) const
+		void operator()( AEDesc desc ) const
 		{
 			// AEDisposeDesc() is documented as only ever returning noErr,
 			// but we check anyway to be future-proof.
@@ -514,10 +515,10 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Token > : public std::unary_function< Nitrogen::AEDesc, void >
+	struct disposer< Nitrogen::AEDesc_Token > : public std::unary_function< AEDesc, void >
 	{
 		// parameter can't be const
-		void operator()( Nitrogen::AEDesc desc ) const
+		void operator()( AEDesc desc ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
 			
@@ -547,19 +548,19 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEKeyDesc > : public std::unary_function< Nitrogen::AEKeyDesc, void >
+	struct disposer< AEKeyDesc > : public std::unary_function< AEKeyDesc, void >
 	{
 		// parameter can't be const
-		void operator()( Nitrogen::AEKeyDesc keyDesc ) const
+		void operator()( AEKeyDesc keyDesc ) const
 		{
 			disposer< Nitrogen::AEDesc_Data >()( keyDesc.descContent );
 		}
 	};
 	
 	template <>
-	struct default_value_traits< Nitrogen::AEKeyDesc >
+	struct default_value_traits< AEKeyDesc >
 	{
-		typedef Nitrogen::AEKeyDesc Resource;
+		typedef AEKeyDesc Resource;
 		
 		static Resource value()
 		{
@@ -572,7 +573,7 @@ namespace nucleus
 	};
 	
 	template <>
-	struct aliveness_traits< Nitrogen::AEKeyDesc, disposer< Nitrogen::AEKeyDesc > >
+	struct aliveness_traits< AEKeyDesc, disposer< AEKeyDesc > >
 	{
 		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
 	};
@@ -583,11 +584,12 @@ namespace nucleus
 {
 	
 	template <>
-	struct maker< Nitrogen::AEKeyDesc >
+	struct maker< AEKeyDesc >
 	{
-		Nitrogen::AEKeyDesc operator()() const
+		AEKeyDesc operator()() const
 		{
-			Nitrogen::AEKeyDesc result = { Nitrogen::AEKeyword(), make< Nitrogen::AEDesc >() };
+			AEKeyDesc result = { Nitrogen::AEKeyword(), make< AEDesc >() };
+			
 			return result;
 		}
 	};

@@ -43,25 +43,25 @@ namespace nucleus
   {
    // Should these go through CFTypeRef's disposer?
    
-   template <> struct disposer< Nitrogen::SecIdentityRef >: public std::unary_function< Nitrogen::SecIdentityRef, void >
+   template <> struct disposer< SecIdentityRef >: public std::unary_function< SecIdentityRef, void >
      {
-      void operator()( Nitrogen::SecIdentityRef kc ) const
+      void operator()( SecIdentityRef kc ) const
         {
          (void) ::CFRelease ( kc );
         }
      };
 
-   template <> struct disposer< Nitrogen::SecCertificateRef >: public std::unary_function< Nitrogen::SecCertificateRef, void >
+   template <> struct disposer< SecCertificateRef >: public std::unary_function< SecCertificateRef, void >
      {
-      void operator()( Nitrogen::SecCertificateRef kci ) const
+      void operator()( SecCertificateRef kci ) const
         {
          (void) ::CFRelease ( kci );
         }
      };
 
-   template <> struct disposer< Nitrogen::SecKeyRef >: public std::unary_function< Nitrogen::SecKeyRef, void >
+   template <> struct disposer< SecKeyRef >: public std::unary_function< SecKeyRef, void >
      {
-      void operator()( Nitrogen::SecKeyRef kcs ) const
+      void operator()( SecKeyRef kcs ) const
         {
          (void) ::CFRelease ( kcs );
         }

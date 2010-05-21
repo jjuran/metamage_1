@@ -80,25 +80,25 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< Nitrogen::RgnHandle > : public std::unary_function< Nitrogen::RgnHandle, void >
+	template <> struct disposer< RgnHandle > : public std::unary_function< RgnHandle, void >
 	{
-		void operator()( Nitrogen::RgnHandle h ) const
+		void operator()( RgnHandle h ) const
 		{
 			::DisposeRgn( h );
 		}
 	};
 	
-	template <> struct disposer< Nitrogen::PicHandle > : public std::unary_function< Nitrogen::PicHandle, void >
+	template <> struct disposer< PicHandle > : public std::unary_function< PicHandle, void >
 	{
-		void operator()( Nitrogen::PicHandle h ) const
+		void operator()( PicHandle h ) const
 		{
 			::KillPicture( h );
 		}
 	};
 	
-	template <> struct disposer< Nitrogen::PolyHandle > : public std::unary_function< Nitrogen::PolyHandle, void >
+	template <> struct disposer< PolyHandle > : public std::unary_function< PolyHandle, void >
 	{
-		void operator()( Nitrogen::PolyHandle h ) const
+		void operator()( PolyHandle h ) const
 		{
 			::KillPoly( h );
 		}
@@ -123,7 +123,7 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< Nitrogen::CTabHandle > : public std::unary_function< Nitrogen::CTabHandle, void >
+	template <> struct disposer< CTabHandle > : public std::unary_function< CTabHandle, void >
 	{
 		void operator()( CTabHandle h ) const
 		{
@@ -182,54 +182,54 @@ namespace nucleus
 	*/
 	
 	
-	template <> struct disposer< Nitrogen::PixPatHandle > : public std::unary_function< Nitrogen::PixPatHandle, void >
+	template <> struct disposer< PixPatHandle > : public std::unary_function< PixPatHandle, void >
 	{
-		void operator()( Nitrogen::PixPatHandle h ) const
+		void operator()( PixPatHandle h ) const
 		{
 			::DisposePixPat( h );
 		}
 	};
 	
-	template <> struct disposer< Nitrogen::CCrsrHandle > : public std::unary_function< Nitrogen::CCrsrHandle, void >
+	template <> struct disposer< CCrsrHandle > : public std::unary_function< CCrsrHandle, void >
 	{
-		void operator()( Nitrogen::CCrsrHandle h ) const
+		void operator()( CCrsrHandle h ) const
 		{
 			::DisposeCCursor( h );
 		}
 	};
 	
 	
-	template <> struct disposer< Nitrogen::GDHandle > : public std::unary_function< Nitrogen::GDHandle, void >
+	template <> struct disposer< GDHandle > : public std::unary_function< GDHandle, void >
 	{
-		void operator()( Nitrogen::GDHandle h ) const
+		void operator()( GDHandle h ) const
 		{
 			::DisposeGDevice( h );
 		}
 	};
 	
 	
-	template <> struct disposer_traits< Nitrogen::CGrafPtr >
+	template <> struct disposer_traits< CGrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > type;
+		typedef Nitrogen::Detail::PortDisposer< CGrafPtr > type;
 	};
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
-	template <> struct disposer_traits< Nitrogen::GrafPtr >
+	template <> struct disposer_traits< GrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< Nitrogen::GrafPtr > type;
+		typedef Nitrogen::Detail::PortDisposer< GrafPtr > type;
 	};
 	
 #endif
 	
 	template <>
-	struct maker< Nitrogen::RGBColor >
+	struct maker< RGBColor >
 	{
-		Nitrogen::RGBColor operator()( unsigned short  red,
-		                               unsigned short  green,
-		                               unsigned short  blue ) const
+		RGBColor operator()( unsigned short  red,
+		                     unsigned short  green,
+		                     unsigned short  blue ) const
 		{
-			Nitrogen::RGBColor result;
+			RGBColor result;
 			
 			result.red   = red;
 			result.green = green;
@@ -238,12 +238,12 @@ namespace nucleus
 			return result;
 		}
 		
-		Nitrogen::RGBColor operator()( unsigned short gray ) const
+		RGBColor operator()( unsigned short gray ) const
 		{
 			return operator()( gray, gray, gray );
 		}
 		
-		Nitrogen::RGBColor operator()() const
+		RGBColor operator()() const
 		{
 			return operator()( 0, 0, 0 );
 		}
@@ -861,43 +861,43 @@ namespace nucleus
 	#pragma mark -
 	#pragma mark ¥ Operators ¥
 	
-	inline Nitrogen::Point operator-( Nitrogen::Point pt )
+	inline Point operator-( Point pt )
 	{
 		return Nitrogen::SetPt( -pt.h,
 		                        -pt.v );
 	}
 	
-	inline Nitrogen::Point operator+( Nitrogen::Point a, Nitrogen::Point b )
+	inline Point operator+( Point a, Point b )
 	{
 		return Nitrogen::AddPt( a, b );
 	}
 	
-	inline Nitrogen::Point operator-( Nitrogen::Point a, Nitrogen::Point b )
+	inline Point operator-( Point a, Point b )
 	{
 		return Nitrogen::SubPt( a, b );
 	}
 	
 	template < class Factor >
-	Nitrogen::Point operator*( Nitrogen::Point pt, Factor f )
+	Point operator*( Point pt, Factor f )
 	{
 		return Nitrogen::SetPt( pt.h * f,
 		                        pt.v * f );
 	}
 	
 	template < class Divisor >
-	Nitrogen::Point operator/( Nitrogen::Point pt, Divisor d )
+	Point operator/( Point pt, Divisor d )
 	{
 		return Nitrogen::SetPt( pt.h / d, 
 		                        pt.v / d );
 	}
 	
 	
-	inline Nitrogen::Rect operator+( Nitrogen::Rect r, Nitrogen::Point pt )
+	inline Rect operator+( Rect r, Point pt )
 	{
 		return Nitrogen::MacOffsetRect( r, pt );
 	}
 	
-	inline Nitrogen::Rect operator-( Nitrogen::Rect r, Nitrogen::Point pt )
+	inline Rect operator-( Rect r, Point pt )
 	{
 		return Nitrogen::MacOffsetRect( r, -pt );
 	}

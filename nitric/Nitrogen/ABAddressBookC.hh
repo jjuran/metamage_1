@@ -70,49 +70,49 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::ABRecordRef >: public std::unary_function< Nitrogen::ABRecordRef, void >
+   template <> struct disposer< ABRecordRef >: public std::unary_function< ABRecordRef, void >
      {
-      void operator()( Nitrogen::ABRecordRef rec ) const
+      void operator()( ABRecordRef rec ) const
         {
          ::CFRelease ( rec );
         }
      };
 
-   template <> struct disposer< Nitrogen::ABPersonRef >: public std::unary_function< Nitrogen::ABPersonRef, void >
+   template <> struct disposer< ABPersonRef >: public std::unary_function< ABPersonRef, void >
      {
-      void operator()( Nitrogen::ABPersonRef pers ) const
+      void operator()( ABPersonRef pers ) const
         {
          ::CFRelease ( pers );
         }
      };
 
-   template <> struct disposer< Nitrogen::ABSearchElementRef >: public std::unary_function< Nitrogen::ABSearchElementRef, void >
+   template <> struct disposer< ABSearchElementRef >: public std::unary_function< ABSearchElementRef, void >
      {
-      void operator()( Nitrogen::ABSearchElementRef se ) const
+      void operator()( ABSearchElementRef se ) const
         {
          ::CFRelease ( se );
         }
      };
 
-   template <> struct disposer< Nitrogen::ABGroupRef >: public std::unary_function< Nitrogen::ABGroupRef, void >
+   template <> struct disposer< ABGroupRef >: public std::unary_function< ABGroupRef, void >
      {
-      void operator()( Nitrogen::ABGroupRef gr ) const
+      void operator()( ABGroupRef gr ) const
         {
          ::CFRelease ( gr );
         }
      };
 
-   template <> struct disposer< Nitrogen::ABMultiValueRef >: public std::unary_function< Nitrogen::ABMultiValueRef, void >
+   template <> struct disposer< ABMultiValueRef >: public std::unary_function< ABMultiValueRef, void >
      {
-      void operator()( Nitrogen::ABMultiValueRef mv ) const
+      void operator()( ABMultiValueRef mv ) const
         {
          ::CFRelease ( mv );
         }
      };
 
-   template <> struct disposer< Nitrogen::ABMutableMultiValueRef >: public std::unary_function< Nitrogen::ABMutableMultiValueRef, void >
+   template <> struct disposer< ABMutableMultiValueRef >: public std::unary_function< ABMutableMultiValueRef, void >
      {
-      void operator()( Nitrogen::ABMutableMultiValueRef mv ) const
+      void operator()( ABMutableMultiValueRef mv ) const
         {
          ::CFRelease ( mv );
         }

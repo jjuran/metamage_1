@@ -29,7 +29,7 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer_traits< Nitrogen::CFNumberRef > : disposer_traits<Nitrogen::CFTypeRef>  {};
+   template <> struct disposer_traits< CFNumberRef > : disposer_traits<Nitrogen::CFTypeRef>  {};
   }
 
 namespace Nitrogen
@@ -151,29 +151,29 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template<> struct converter<          char,      Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<          char      >  {};
-   template<> struct converter<   signed char,      Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed char      >  {};
-   template<> struct converter<   signed short,     Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed short     >  {};
-   template<> struct converter<   signed int,       Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed int       >  {};
-   template<> struct converter<   signed long,      Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed long      >  {};
-   template<> struct converter<   signed long long, Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed long long >  {};
-   template<> struct converter< unsigned char,      Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned char      >  {};
-   template<> struct converter< unsigned short,     Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned short     >  {};
-   template<> struct converter< unsigned int,       Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned int       >  {};
-   template<> struct converter< unsigned long,      Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned long      >  {};
-   template<> struct converter< unsigned long long, Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned long long >  {};
-   template<> struct converter<          float,     Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<          float     >  {};
-   template<> struct converter<          double,    Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<          double    >  {};
-   template<> struct converter<     long double,    Nitrogen::CFNumberRef > : Nitrogen::ConverterFromCFNumber<     long double    >  {};
+   template<> struct converter<          char,      CFNumberRef > : Nitrogen::ConverterFromCFNumber<          char      >  {};
+   template<> struct converter<   signed char,      CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed char      >  {};
+   template<> struct converter<   signed short,     CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed short     >  {};
+   template<> struct converter<   signed int,       CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed int       >  {};
+   template<> struct converter<   signed long,      CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed long      >  {};
+   template<> struct converter<   signed long long, CFNumberRef > : Nitrogen::ConverterFromCFNumber<   signed long long >  {};
+   template<> struct converter< unsigned char,      CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned char      >  {};
+   template<> struct converter< unsigned short,     CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned short     >  {};
+   template<> struct converter< unsigned int,       CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned int       >  {};
+   template<> struct converter< unsigned long,      CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned long      >  {};
+   template<> struct converter< unsigned long long, CFNumberRef > : Nitrogen::ConverterFromCFNumber< unsigned long long >  {};
+   template<> struct converter<          float,     CFNumberRef > : Nitrogen::ConverterFromCFNumber<          float     >  {};
+   template<> struct converter<          double,    CFNumberRef > : Nitrogen::ConverterFromCFNumber<          double    >  {};
+   template<> struct converter<     long double,    CFNumberRef > : Nitrogen::ConverterFromCFNumber<     long double    >  {};
   }
 
 namespace Nitrogen
   {
 
    template < class NumericType >
-   struct ConverterToCFNumber: public std::unary_function< NumericType, nucleus::owned<Nitrogen::CFNumberRef> >
+   struct ConverterToCFNumber: public std::unary_function< NumericType, nucleus::owned<CFNumberRef> >
      {
-      nucleus::owned<Nitrogen::CFNumberRef> operator()( const NumericType& in )
+      nucleus::owned<CFNumberRef> operator()( const NumericType& in )
         {
          return CFNumberCreate( in );
         }
@@ -183,20 +183,20 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,          char      > : Nitrogen::ConverterToCFNumber<          char      >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,   signed char      > : Nitrogen::ConverterToCFNumber<   signed char      >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,   signed short     > : Nitrogen::ConverterToCFNumber<   signed short     >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,   signed int       > : Nitrogen::ConverterToCFNumber<   signed int       >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,   signed long      > : Nitrogen::ConverterToCFNumber<   signed long      >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,   signed long long > : Nitrogen::ConverterToCFNumber<   signed long long >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>, unsigned char      > : Nitrogen::ConverterToCFNumber< unsigned char      >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>, unsigned short     > : Nitrogen::ConverterToCFNumber< unsigned short     >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>, unsigned int       > : Nitrogen::ConverterToCFNumber< unsigned int       >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>, unsigned long      > : Nitrogen::ConverterToCFNumber< unsigned long      >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>, unsigned long long > : Nitrogen::ConverterToCFNumber< unsigned long long >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,          float     > : Nitrogen::ConverterToCFNumber<          float     >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,          double    > : Nitrogen::ConverterToCFNumber<          double    >  {};
-   template<> struct converter< nucleus::owned<Nitrogen::CFNumberRef>,     long double    > : Nitrogen::ConverterToCFNumber<     long double    >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,          char      > : Nitrogen::ConverterToCFNumber<          char      >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,   signed char      > : Nitrogen::ConverterToCFNumber<   signed char      >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,   signed short     > : Nitrogen::ConverterToCFNumber<   signed short     >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,   signed int       > : Nitrogen::ConverterToCFNumber<   signed int       >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,   signed long      > : Nitrogen::ConverterToCFNumber<   signed long      >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,   signed long long > : Nitrogen::ConverterToCFNumber<   signed long long >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>, unsigned char      > : Nitrogen::ConverterToCFNumber< unsigned char      >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>, unsigned short     > : Nitrogen::ConverterToCFNumber< unsigned short     >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>, unsigned int       > : Nitrogen::ConverterToCFNumber< unsigned int       >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>, unsigned long      > : Nitrogen::ConverterToCFNumber< unsigned long      >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>, unsigned long long > : Nitrogen::ConverterToCFNumber< unsigned long long >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,          float     > : Nitrogen::ConverterToCFNumber<          float     >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,          double    > : Nitrogen::ConverterToCFNumber<          double    >  {};
+   template<> struct converter< nucleus::owned<CFNumberRef>,     long double    > : Nitrogen::ConverterToCFNumber<     long double    >  {};
   }
 
 #endif

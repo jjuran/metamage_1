@@ -41,25 +41,25 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::KCRef >: public std::unary_function< Nitrogen::KCRef, void >
+   template <> struct disposer< KCRef >: public std::unary_function< KCRef, void >
      {
-      void operator()( Nitrogen::KCRef kc ) const
+      void operator()( KCRef kc ) const
         {
          (void) ::KCReleaseKeychain ( &kc );
         }
      };
 
-   template <> struct disposer< Nitrogen::KCItemRef >: public std::unary_function< Nitrogen::KCItemRef, void >
+   template <> struct disposer< KCItemRef >: public std::unary_function< KCItemRef, void >
      {
-      void operator()( Nitrogen::KCItemRef kci ) const
+      void operator()( KCItemRef kci ) const
         {
          (void) ::KCReleaseItem ( &kci );
         }
      };
 
-   template <> struct disposer< Nitrogen::KCSearchRef >: public std::unary_function< Nitrogen::KCSearchRef, void >
+   template <> struct disposer< KCSearchRef >: public std::unary_function< KCSearchRef, void >
      {
-      void operator()( Nitrogen::KCSearchRef kcs ) const
+      void operator()( KCSearchRef kcs ) const
         {
          (void) ::KCReleaseSearch ( &kcs );
         }

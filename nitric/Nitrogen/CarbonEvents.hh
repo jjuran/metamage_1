@@ -436,9 +436,9 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< Nitrogen::EventRef >: public std::unary_function< Nitrogen::EventRef, void >
+   struct disposer< EventRef >: public std::unary_function< EventRef, void >
      {
-      void operator()( Nitrogen::EventRef toDispose ) const
+      void operator()( EventRef toDispose ) const
         {
          ::ReleaseEvent( toDispose );
         }
@@ -664,11 +664,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct maker< Nitrogen::HICommand >
+   struct maker< HICommand >
      {
-      Nitrogen::HICommand operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
+      HICommand operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
         {
-         Nitrogen::HICommand result;
+         HICommand result;
          result.attributes = attributes;
          result.commandID = commandID;
          result.menu.menuRef = menuRef;
@@ -704,11 +704,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct maker< Nitrogen::HICommandExtended >
+   struct maker< HICommandExtended >
      {
-      Nitrogen::HICommandExtended operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
+      HICommandExtended operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
         {
-         Nitrogen::HICommandExtended result;
+         HICommandExtended result;
          result.attributes = attributes;
          result.commandID = commandID;
          result.source.menu.menuRef = menuRef;
@@ -1325,7 +1325,7 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< Nitrogen::EventHandlerRef >: public std::unary_function< Nitrogen::EventHandlerRef, void >
+   struct disposer< EventHandlerRef >: public std::unary_function< EventHandlerRef, void >
      {
       void operator()( EventHandlerRef toDispose ) const
         {
@@ -2553,9 +2553,9 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< Nitrogen::EventHotKeyRef >: public std::unary_function< Nitrogen::EventHotKeyRef, void >
+   struct disposer< EventHotKeyRef >: public std::unary_function< EventHotKeyRef, void >
      {
-      void operator()( Nitrogen::EventHotKeyRef toDispose ) const
+      void operator()( EventHotKeyRef toDispose ) const
         {
          ::UnregisterEventHotKey( toDispose );
         }

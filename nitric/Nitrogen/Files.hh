@@ -268,43 +268,43 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< owned<Nitrogen::CFStringRef>, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, owned<Nitrogen::CFStringRef> >
+   template <> struct converter< owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, owned<CFStringRef> >
      {
-      owned<Nitrogen::CFStringRef> operator()( const Nitrogen::HFSUniStr255& in ) const
+      owned<CFStringRef> operator()( const HFSUniStr255& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in.unicode, in.length );
         }
      };
    
-   template <> struct converter< Nitrogen::HFSUniStr255, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, Nitrogen::HFSUniStr255 >
+   template <> struct converter< HFSUniStr255, CFStringRef >: public std::unary_function< CFStringRef, HFSUniStr255 >
      {
-      Nitrogen::HFSUniStr255 operator()( Nitrogen::CFStringRef in ) const
+      HFSUniStr255 operator()( CFStringRef in ) const
         {
          CFIndex length = Nitrogen::CFStringGetLength( in );
          if ( length > 255 )
             throw Nitrogen::StringTooLong();
-         Nitrogen::HFSUniStr255 result;
+         HFSUniStr255 result;
          result.length = UInt16( length );
          Nitrogen::CFStringGetCharacters( in, CFRangeMake( 0, length ), result.unicode );
          return result;
         }
      };
 
-   template <> struct converter< Nitrogen::UniString, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, Nitrogen::UniString >
+   template <> struct converter< Nitrogen::UniString, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Nitrogen::UniString >
      {
-      Nitrogen::UniString operator()( const Nitrogen::HFSUniStr255& in ) const
+      Nitrogen::UniString operator()( const HFSUniStr255& in ) const
         {
          return Nitrogen::UniString( in.unicode, in.unicode+in.length );
         }
      };
   
-   template <> struct converter< Nitrogen::HFSUniStr255, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, Nitrogen::HFSUniStr255 >
+   template <> struct converter< HFSUniStr255, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, HFSUniStr255 >
      {
-      Nitrogen::HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
+      HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
         {
          if ( in.size() > 255 )
             throw Nitrogen::StringTooLong();
-         Nitrogen::HFSUniStr255 result;
+         HFSUniStr255 result;
          result.length = UInt16( in.size() );
          std::copy( in.begin(), in.end(), result.unicode );
          return result;
@@ -455,13 +455,13 @@ namespace nucleus
 	};
 	
 	template <>
-	struct initializer< Nitrogen::CInfoPBRec >
+	struct initializer< CInfoPBRec >
 	{
-		Nitrogen::CInfoPBRec& operator()( Nitrogen::CInfoPBRec&     pb,
-		                                  Nitrogen::FSVolumeRefNum  vRefNum,
-		                                  Nitrogen::FSDirID         dirID,
-		                                  StringPtr                 name,
-		                                  SInt16                    index );
+		CInfoPBRec& operator()( CInfoPBRec&               pb,
+		                        Nitrogen::FSVolumeRefNum  vRefNum,
+		                        Nitrogen::FSDirID         dirID,
+		                        StringPtr                 name,
+		                        SInt16                    index );
 	};
 	
 }
@@ -635,17 +635,17 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct converter< Nitrogen::FSSpec, Nitrogen::FSDirSpec >: public std::unary_function< Nitrogen::FSDirSpec, Nitrogen::FSSpec >
+	template <> struct converter< FSSpec, Nitrogen::FSDirSpec >: public std::unary_function< Nitrogen::FSDirSpec, FSSpec >
 	{
-		Nitrogen::FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
+		FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
 		{
 			return Nitrogen::FSMakeFSSpec( dir );
 		}
 	};
 	
-	template <> struct converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSDirSpec >
+	template <> struct converter< Nitrogen::FSDirSpec, FSSpec >: public std::unary_function< FSSpec, Nitrogen::FSDirSpec >
 	{
-		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const
+		Nitrogen::FSDirSpec operator()( const FSSpec& dir ) const
 		{
 			return Nitrogen::FSpMake_FSDirSpec( dir );
 		}
@@ -731,9 +731,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< Nitrogen::FSRef, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSRef >
+   template <> struct converter< FSRef, FSSpec >: public std::unary_function< FSSpec, FSRef >
      {
-      Nitrogen::FSRef operator()( const Nitrogen::FSSpec& spec ) const
+       FSRef operator()( const FSSpec& spec ) const
         {
          return Nitrogen::FSpMakeFSRef( spec );
         }
@@ -1031,17 +1031,17 @@ namespace Nitrogen
 
 namespace nucleus
 {   
-   template <> struct converter< Nitrogen::FSSpec, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nitrogen::FSSpec >
+   template <> struct converter< FSSpec, FSRef >: public std::unary_function< FSRef, FSSpec >
      {
-      Nitrogen::FSSpec operator()( const Nitrogen::FSRef& ref ) const
+      FSSpec operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSMakeFSSpec( ref );
         }
      };
 	
-	template <> struct converter< Nitrogen::FSDirSpec, Nitrogen::FSRef > : public std::unary_function< Nitrogen::FSRef, Nitrogen::FSDirSpec >
+	template <> struct converter< Nitrogen::FSDirSpec, FSRef > : public std::unary_function< FSRef, Nitrogen::FSDirSpec >
 	{
-		Nitrogen::FSDirSpec operator()( const Nitrogen::FSRef& ref ) const
+		Nitrogen::FSDirSpec operator()( const FSRef& ref ) const
 		{
 			return Nitrogen::FSpMake_FSDirSpec( Nitrogen::FSMakeFSSpec( ref ) );
 		}
@@ -1072,9 +1072,9 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >
+   template <> struct disposer<FSIterator>: public std::unary_function< FSIterator, void >
      {
-      void operator()( Nitrogen::FSIterator iterator ) const
+      void operator()( FSIterator iterator ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
@@ -1875,17 +1875,17 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template < class String > struct converter< Nitrogen::FSRef, String >: public std::unary_function< String, Nitrogen::FSRef >
+   template < class String > struct converter< FSRef, String >: public std::unary_function< String, FSRef >
      {
-      Nitrogen::FSRef operator()( const String& path ) const
+      FSRef operator()( const String& path ) const
         {
          return Nitrogen::FSPathMakeRef( path );
         }
      };
 
-   template <> struct converter< nucleus::string, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, nucleus::string >
+   template <> struct converter< nucleus::string, FSRef >: public std::unary_function< FSRef, nucleus::string >
      {
-      nucleus::string operator()( const Nitrogen::FSRef& ref ) const
+      nucleus::string operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSRefMakePath( ref );
         }

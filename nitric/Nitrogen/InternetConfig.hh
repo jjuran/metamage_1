@@ -93,9 +93,9 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >
+	template <> struct disposer< ICInstance > : public std::unary_function< ICInstance, void >
 	{
-		void operator()( Nitrogen::ICInstance instance ) const
+		void operator()( ICInstance instance ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::InternetConfig );
 			
@@ -103,14 +103,14 @@ namespace nucleus
 		}
 	};
 	
-	template <>  struct disposer_traits< Nitrogen::ICFontRecordHandle   > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICCharTableHandle    > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICAppSpecHandle      > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICAppSpecListHandle  > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICFileSpecHandle     > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICMapEntryHandle     > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICServiceEntryHandle > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< Nitrogen::ICServicesHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICFontRecordHandle   > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICCharTableHandle    > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICAppSpecHandle      > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICAppSpecListHandle  > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICFileSpecHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICMapEntryHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICServiceEntryHandle > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_traits< ICServicesHandle     > : disposer_traits< Nitrogen::Handle >  {};
 	
 }
 

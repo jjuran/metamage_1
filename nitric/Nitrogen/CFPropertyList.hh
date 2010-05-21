@@ -110,7 +110,7 @@ namespace nucleus
      {
       bool operator()( const ::CFPropertyListRef& in ) const
         {
-         return convert< bool >( Nitrogen::CFCast<Nitrogen::CFBooleanRef>( in ) );
+         return convert< bool >( Nitrogen::CFCast<CFBooleanRef>( in ) );
         }
      };
 
@@ -119,7 +119,7 @@ namespace nucleus
      {
       nucleus::owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
         {
-         return nucleus::owned<Nitrogen::CFPropertyListRef>( convert< nucleus::owned<Nitrogen::CFBooleanRef> >( in ) );
+         return nucleus::owned<Nitrogen::CFPropertyListRef>( convert< nucleus::owned<CFBooleanRef> >( in ) );
          // The explicit conversion to nucleus::owned<CFPropertyListRef> is a workaround 
          // for a bug in gcc 3.1 20020420; it rejects the implicit conversion.
         }

@@ -181,27 +181,27 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::OTConfigurationRef > : public std::unary_function< Nitrogen::OTConfigurationRef, void >
+	struct disposer< OTConfigurationRef > : public std::unary_function< OTConfigurationRef, void >
 	{
-		void operator()( Nitrogen::OTConfigurationRef config ) const
+		void operator()( OTConfigurationRef config ) const
 		{
 			::OTDestroyConfiguration( config );
 		}
 	};
 	
 	template <>
-	struct disposer< Nitrogen::OTClientContextPtr > : public std::unary_function< Nitrogen::OTClientContextPtr, void >
+	struct disposer< OTClientContextPtr > : public std::unary_function< OTClientContextPtr, void >
 	{
-		void operator()( Nitrogen::OTClientContextPtr context ) const
+		void operator()( OTClientContextPtr context ) const
 		{
 			::CloseOpenTransportInContext( context );
 		}
 	};
 	
 	template <>
-	struct disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >
+	struct disposer< ProviderRef > : public std::unary_function< ProviderRef, void >
 	{
-		void operator()( Nitrogen::ProviderRef provider ) const
+		void operator()( ProviderRef provider ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OpenTransport );
 			
@@ -209,7 +209,7 @@ namespace nucleus
 		}
 	};
 
-	template <> struct disposer_traits< Nitrogen::EndpointRef > : disposer_traits< Nitrogen::ProviderRef > {};
+	template <> struct disposer_traits< EndpointRef > : disposer_traits< ProviderRef > {};
 	
 }
 

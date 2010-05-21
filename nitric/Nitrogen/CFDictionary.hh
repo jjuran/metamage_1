@@ -30,8 +30,8 @@ namespace Nitrogen
    }
 
 namespace nucleus {
-   template <> struct disposer_traits< Nitrogen::CFDictionaryRef >       : disposer_traits< Nitrogen::CFTypeRef >  {};
-   template <> struct disposer_traits< Nitrogen::CFMutableDictionaryRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< CFDictionaryRef >       : disposer_traits< Nitrogen::CFTypeRef >  {};
+   template <> struct disposer_traits< CFMutableDictionaryRef >: disposer_traits< Nitrogen::CFTypeRef >  {};
    }
 
 namespace Nitrogen {

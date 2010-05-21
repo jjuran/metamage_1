@@ -64,9 +64,9 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::VBLTaskPtr > : public std::unary_function< Nitrogen::VBLTaskPtr, void >
+	struct disposer< VBLTaskPtr > : public std::unary_function< VBLTaskPtr, void >
 	{
-		void operator()( Nitrogen::VBLTaskPtr vblTaskPtr ) const
+		void operator()( VBLTaskPtr vblTaskPtr ) const
 		{
 			const QElemPtr qElem = (QElemPtr) vblTaskPtr;
 			

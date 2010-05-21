@@ -69,18 +69,18 @@ namespace nucleus
 {
 	
 	template <>
-	struct maker< Nitrogen::ProcessSerialNumber >
+	struct maker< ProcessSerialNumber >
 	{
-		Nitrogen::ProcessSerialNumber operator()( unsigned long high, unsigned long low ) const
+		ProcessSerialNumber operator()( unsigned long high, unsigned long low ) const
 		{
-			Nitrogen::ProcessSerialNumber result;
+			ProcessSerialNumber result;
 			result.highLongOfPSN = high;
 			result.lowLongOfPSN  = low;
 			return result;
 		}
 
 		template < unsigned long k >
-		Nitrogen::ProcessSerialNumber operator()( Nitrogen::LowLongOfPSN< k > ) const
+		ProcessSerialNumber operator()( Nitrogen::LowLongOfPSN< k > ) const
 		{
 			::ProcessSerialNumber result = { 0, k };
 			return result;
@@ -115,9 +115,9 @@ namespace nucleus
 {
 	
 	template <>
-	struct initializer< Nitrogen::ProcessInfoRec >
+	struct initializer< ProcessInfoRec >
 	{
-		ProcessInfoRec& operator()( Nitrogen::ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
+		ProcessInfoRec& operator()( ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
 		{
 			processInfo.processInfoLength = sizeof processInfo;
 			processInfo.processName       = NULL;
@@ -128,11 +128,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct maker< Nitrogen::ProcessInfoRec >
+	struct maker< ProcessInfoRec >
 	{
-		Nitrogen::ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
+		ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
 		{
-			Nitrogen::ProcessInfoRec result;
+			ProcessInfoRec result;
 			
 			return nucleus::initialize( result, appSpec );
 		}
