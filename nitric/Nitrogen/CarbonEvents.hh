@@ -18,6 +18,9 @@
 #include <CarbonEvents.h>
 #endif
 
+// iota
+#include "iota/distance.hh"
+
 // nucleus
 #include "nucleus/array_singleton.hh"
 #include "nucleus/enumeration_traits.hh"
@@ -535,7 +538,7 @@ namespace Nitrogen
 				Nitrogen::SetEventParameter( myEvent,
 				                             myName,
 				                             myType,
-				                             Detail::Distance( begin, end ),
+				                             iota::distance( begin, end ),
 				                             begin );
 			}
 	};
@@ -605,7 +608,7 @@ namespace Nitrogen
 				GetEventParameter( myEvent,
 				                   myName,
 				                   desiredType,
-				                   Detail::Distance( begin, end ),
+				                   iota::distance( begin, end ),
 				                   begin );
 			}
 	};

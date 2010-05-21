@@ -25,6 +25,9 @@
 #include "Carbonate/AEDataModel.hh"
 #endif
 
+// iota
+#include "iota/distance.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -1515,7 +1518,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				theDesc = AECoercePtr( fromType, begin, Detail::Distance( begin, end ), toType );
+				theDesc = AECoercePtr( fromType, begin, iota::distance( begin, end ), toType );
 			}
 	};
 	
@@ -1550,7 +1553,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				theDesc = AECreateDesc< AEDesc_Type >( theType, begin, Detail::Distance( begin, end ) );
+				theDesc = AECreateDesc< AEDesc_Type >( theType, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1591,7 +1594,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutPtr( theList, theIndex, theType, begin, Detail::Distance( begin, end ) );
+				AEPutPtr( theList, theIndex, theType, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1648,7 +1651,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetNthPtr( theList, theIndex, type, begin, Detail::Distance( begin, end ) );
+				AEGetNthPtr( theList, theIndex, type, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1678,7 +1681,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutKeyPtr( theRecord, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEPutKeyPtr( theRecord, theKeyword, theType, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1772,7 +1775,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetKeyPtr( theRecord, theKeyword, type, begin, Detail::Distance( begin, end ) );
+				AEGetKeyPtr( theRecord, theKeyword, type, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1810,7 +1813,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutParamPtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEPutParamPtr( theAppleEvent, theKeyword, theType, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1884,7 +1887,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetParamPtr( theAppleEvent, theKeyword, type, begin, Detail::Distance( begin, end ) );
+				AEGetParamPtr( theAppleEvent, theKeyword, type, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1922,7 +1925,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutAttributePtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEPutAttributePtr( theAppleEvent, theKeyword, theType, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -1996,7 +1999,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetAttributePtr( theAppleEvent, theKeyword, type, begin, Detail::Distance( begin, end ) );
+				AEGetAttributePtr( theAppleEvent, theKeyword, type, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -2030,7 +2033,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetDescData( theDesc, begin, Detail::Distance( begin, end ) );
+				AEGetDescData( theDesc, begin, iota::distance( begin, end ) );
 			}
 	};
 	
@@ -2068,7 +2071,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEReplaceDescData( theType, begin, Detail::Distance( begin, end ), theDesc );
+				AEReplaceDescData( theType, begin, iota::distance( begin, end ), theDesc );
 			}
 	};
 	

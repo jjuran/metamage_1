@@ -17,6 +17,11 @@
 #ifndef __DRAG__
 #include <Drag.h>
 #endif
+
+// iota
+#include "iota/distance.hh"
+
+// Nitrogen
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
@@ -167,12 +172,6 @@ namespace Nitrogen
          FlavorType  type;
          FlavorFlags flags;
       
-         static UInt32 Distance( const void *begin, const void *end )
-           {
-            return static_cast< UInt32 >(   static_cast< const char * >( end   )
-                                          - static_cast< const char * >( begin ) );
-           }
-         
       public:
          AddDragItemFlavor_Putter( DragRef     theDrag,
                                    DragItemRef theItemRef,
@@ -186,7 +185,7 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::AddDragItemFlavor( drag, item, type, begin, Distance( begin, end ), flags );
+            Nitrogen::AddDragItemFlavor( drag, item, type, begin, iota::distance( begin, end ), flags );
            }
      };
    
@@ -221,12 +220,6 @@ namespace Nitrogen
          FlavorType  type;
          UInt32      offset;
          
-         static UInt32 Distance( const void *begin, const void *end )
-           {
-            return static_cast< UInt32 >(   static_cast< const char * >( end   )
-                                          - static_cast< const char * >( begin ) );
-           }
-         
       public:
          SetDragItemFlavorData_Putter( DragRef     theDrag,
                                        DragItemRef theItemRef,
@@ -240,7 +233,7 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, Distance( begin, end ), offset );
+            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
            }
      };
 
@@ -303,12 +296,6 @@ namespace Nitrogen
          FlavorType  type;
          UInt32      offset;
          
-         static UInt32 Distance( void *begin, void *end )
-           {
-            return static_cast< UInt32 >(   static_cast< const char * >( end   )
-                                          - static_cast< const char * >( begin ) );
-           }
-         
       public:
          GetFlavorData_Getter( DragRef     theDrag,
                                DragItemRef theItemRef,
@@ -327,7 +314,7 @@ namespace Nitrogen
          
          void operator()( void *begin, void *end ) const
            {
-            Nitrogen::GetFlavorData( drag, item, type, begin, Distance( begin, end ), offset );
+            Nitrogen::GetFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
            }
      };
 

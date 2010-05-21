@@ -20,6 +20,7 @@
 #endif
 
 // iota
+#include "iota/distance.hh"
 #include "iota/string_traits.hh"
 
 // Debug
@@ -241,7 +242,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				TESetText( begin, Detail::Distance( begin, end ), itsTE );
+				TESetText( begin, iota::distance( begin, end ), itsTE );
 			}
 	};
 	
@@ -266,7 +267,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				TEGetText( begin, Detail::Distance( begin, end ), itsTE );
+				TEGetText( begin, iota::distance( begin, end ), itsTE );
 			}
 	};
 	
@@ -282,7 +283,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				TEInsert( begin, Detail::Distance( begin, end ), itsTE );
+				TEInsert( begin, iota::distance( begin, end ), itsTE );
 			}
 	};
 	

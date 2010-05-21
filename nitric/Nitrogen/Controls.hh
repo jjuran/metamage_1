@@ -23,6 +23,7 @@
 #endif
 
 // iota
+#include "iota/distance.hh"
 #include "iota/string_traits.hh"
 
 // nucleus
@@ -338,7 +339,7 @@ namespace Nitrogen
 				Nitrogen::SetControlData( itsControl,
 				                          itsPart,
 				                          itsTagName,
-				                          Detail::Distance( begin, end ),
+				                          iota::distance( begin, end ),
 				                          begin );
 			}
 	};
@@ -401,7 +402,7 @@ namespace Nitrogen
 				GetControlData( itsControl,
 				                itsPart,
 				                Nitrogen::ControlDataTag( tagName ),
-				                Detail::Distance( begin, end ),
+				                iota::distance( begin, end ),
 				                begin );
 			}
 	};
