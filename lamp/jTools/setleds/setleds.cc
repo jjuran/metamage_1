@@ -3,6 +3,9 @@
  *	==========
  */
 
+// Standard C++
+#include <algorithm>
+
 // Standard C/C++
 #include <cstdio>
 #include <cstdlib>

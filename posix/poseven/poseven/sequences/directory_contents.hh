@@ -14,6 +14,9 @@
 #ifndef POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 #define POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 
+// Standard C++
+#include <iterator>
+
 // Nucleus
 #include "nucleus/shared.hh"
 
