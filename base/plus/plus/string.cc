@@ -133,7 +133,7 @@ namespace plus
 			// fall through
 			
 			case ~delete_basic:
-				delete pointer;
+				::operator delete( (void*) pointer );
 				break;
 			
 			default:
