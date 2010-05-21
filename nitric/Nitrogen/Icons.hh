@@ -24,14 +24,11 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
-#endif
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NITROGEN_CODEFRAGMENTS_HH
-#include "Nitrogen/CodeFragments.hh"
+#ifndef NITROGEN_RESOURCES_HH
+#include "Nitrogen/Resources.hh"
 #endif
 
 

@@ -18,6 +18,7 @@
 
 // Nitrogen
 #include "Nitrogen/Events.hh"
+#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Sound.hh"
 #include "Nitrogen/TextEdit.hh"
 

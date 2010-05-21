@@ -33,6 +33,9 @@
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif
+#ifndef NITROGEN_QUICKDRAW_HH
+#include "Nitrogen/Quickdraw.hh"
+#endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
 #endif

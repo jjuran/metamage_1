@@ -13,6 +13,7 @@
 #include "iota/strings.hh"
 
 // Nitrogen
+#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Sound.hh"
 
 // Genie
