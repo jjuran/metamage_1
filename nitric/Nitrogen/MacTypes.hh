@@ -28,6 +28,9 @@
 #include "nucleus/overloaded_math.hh"
 #include "nucleus/scribe.hh"
 
+// Nitrogen
+#include "Mac/Resources/Types/ResType.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -166,12 +169,8 @@ namespace Nitrogen
 		kOSType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
-	enum ResType
-	{
-		kVersionResType = 'vers',
-		
-		kResType_Max = nucleus::enumeration_traits< ::ResType >::max
-	};
+	using Mac::ResType;
+	using Mac::kVersionResType;
 	
 	typedef bool Boolean;
 	
