@@ -112,8 +112,8 @@
 #ifndef NUCLEUS_OWNED_HH
 #define NUCLEUS_OWNED_HH
 
-// Standard C++
-#include <algorithm>
+// iota
+#include "iota/swap.hh"
 
 // Nucleus
 #include "nucleus/convert.hh"
@@ -213,7 +213,7 @@ namespace nucleus
 			
 			void swap( disposable_resource& r )
 			{
-				using std::swap;
+				using iota::swap;
 				
 				if ( disposer_size< Disposer >::value != 0 )
 				{

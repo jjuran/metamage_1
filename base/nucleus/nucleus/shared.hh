@@ -159,7 +159,7 @@ namespace nucleus
 			
 			void swap( shared& s )
 			{
-				using std::swap;
+				using iota::swap;
 				
 				swap( its_body,  s.its_body  );
 				swap( its_share, s.its_share );
