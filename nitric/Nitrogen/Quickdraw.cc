@@ -16,6 +16,7 @@
 // Nitrogen
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Resources.hh"
 
 #if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
 #include "Nitrogen/CGDirectDisplay.hh"
@@ -71,7 +72,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void MacSetCursor( ResID id )
+	void MacSetCursor( Mac::ResID id )
 	{
 		MacSetCursor( MacGetCursor( id ) );
 	}
@@ -282,7 +283,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::QDError() );
 	}
 	
-	CursHandle MacGetCursor( ResID id )
+	CursHandle MacGetCursor( Mac::ResID id )
 	{
 		return CheckResource( ::MacGetCursor( id ) );
 	}

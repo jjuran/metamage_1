@@ -20,13 +20,19 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/owned.hh"
+#include "nucleus/saved.hh"
 
+// Nitrogen
+#include "Mac/Resources/Types/ResID.hh"
+
+#ifndef NITROGEN_MACTYPES_HH
+#include "Nitrogen/MacTypes.hh"
+#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
 #endif
 
 namespace Nitrogen
@@ -37,12 +43,12 @@ namespace Nitrogen
 	
 	// Constants of types defined elsewhere
 	
-	static const ResID sysPatListID = ResID( ::sysPatListID );
+	static const Mac::ResID sysPatListID = Mac::ResID( ::sysPatListID );
 	
-	static const ResID iBeamCursor = ResID( ::iBeamCursor );
-	static const ResID crossCursor = ResID( ::crossCursor );
-	static const ResID plusCursor  = ResID( ::plusCursor  );
-	static const ResID watchCursor = ResID( ::watchCursor );
+	static const Mac::ResID iBeamCursor = Mac::ResID( ::iBeamCursor );
+	static const Mac::ResID crossCursor = Mac::ResID( ::crossCursor );
+	static const Mac::ResID plusCursor  = Mac::ResID( ::plusCursor  );
+	static const Mac::ResID watchCursor = Mac::ResID( ::watchCursor );
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
@@ -329,7 +335,7 @@ namespace Nitrogen
 	
 	inline void MacSetCursor( const Cursor& cursor )  { ::MacSetCursor( &cursor ); }
 	inline void MacSetCursor( CursHandle    cursor )  { ::MacSetCursor( *cursor ); }
-	void MacSetCursor( ResID id );  // calls GetCursor()
+	void MacSetCursor( Mac::ResID id );  // calls GetCursor()
 	
 	using ::HideCursor;
 	using ::MacShowCursor;
@@ -593,7 +599,7 @@ namespace Nitrogen
 	using ::PenPixPat;
 	using ::BackPixPat;
 	
-	PixPatHandle GetPixPat( ResID patID );
+	PixPatHandle GetPixPat( Mac::ResID patID );
 	
 	// MakeRGBPat
 	// FillCRect
@@ -661,17 +667,17 @@ namespace Nitrogen
 	// DeviceLoop
 	// GetMaskTable
 	
-	PatHandle GetPattern( ResID patternID );
+	PatHandle GetPattern( Mac::ResID patternID );
 	
-	CursHandle MacGetCursor( ResID cursorID );
+	CursHandle MacGetCursor( Mac::ResID cursorID );
 	
-	PicHandle GetPicture( ResID pictureID );
+	PicHandle GetPicture( Mac::ResID pictureID );
 	
 	// DeltaPoint
 	// ShieldCursor
 	// ScreenRes
 	
-	Pattern GetIndPattern( ResID patternListID, short index );
+	Pattern GetIndPattern( Mac::ResID patternListID, short index );
 	
 	// PackBits
 	// UnpackBits
