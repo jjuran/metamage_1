@@ -3,7 +3,7 @@
  *	======================
  */
 
-#if !TARGET_API_MAC_CARBON
+#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
 #include "Genie/FS/FSTree_sys_mac_unit.hh"
 
