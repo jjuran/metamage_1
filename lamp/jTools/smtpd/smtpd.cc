@@ -174,12 +174,12 @@ namespace tool
 	
 	static plus::string GetForwardPath( const plus::string& rcptLine )
 	{
-		return rcptLine.substr( std::strlen( "RCPT TO:" ), rcptLine.npos );
+		return rcptLine.substr( STRLEN( "RCPT TO:" ), rcptLine.npos );
 	}
 	
 	static plus::string GetReversePath( const plus::string& fromLine )
 	{
-		return fromLine.substr( std::strlen( "MAIL FROM:" ), fromLine.npos );
+		return fromLine.substr( STRLEN( "MAIL FROM:" ), fromLine.npos );
 	}
 	
 	static void CreateOneLiner( const FSSpec& file, const plus::string& line )
