@@ -24,20 +24,11 @@
 #include "nucleus/index_until_error_sequence.hh"
 
 // Nitrogen
-#ifndef NITROGEN_COMPONENTS_HH
-#include "Nitrogen/Components.hh"
-#endif
-#ifndef NITROGEN_DIALOGS_HH
-//#include "Nitrogen/Dialogs.hh"
-#endif
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
 #endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
