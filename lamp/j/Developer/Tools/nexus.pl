@@ -232,6 +232,16 @@ sub auto
 	
 	print "\r";
 	
+	system "open /Volumes/Nexus/Applications/MPW";
+	
+	sleep 0.1 until readlink "$nexus/../dt/appls/MPSX/latest";
+	
+	my $script = 'tell app "Finder" to close the window of alias "Nexus:Applications:MPW:"';
+	
+	system "osascript", "-e", $script, "-e", '""';
+	
+	print "\r";
+	
 	print "Done." . (" " x 50);
 	print "\n";
 	
