@@ -23,7 +23,7 @@ namespace Nitrogen
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
-	                                   ResID              theProc,
+	                                   Mac::ResID         theProc,
 	                                   WindowRef          theWindow,
 	                                   bool               drawIt,
 	                                   bool               hasGrow,

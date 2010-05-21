@@ -21,12 +21,15 @@
 // iota
 #include "iota/string_traits.hh"
 
+// nucleus
+#include "nucleus/owned.hh"
+#include "nucleus/string.hh"
+
 // Nitrogen
+#include "Mac/Resources/Types/ResID.hh"
+
 #ifndef NITROGEN_EVENTS_HH
 #include "Nitrogen/Events.hh"
-#endif
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
 #endif
 
 
@@ -67,7 +70,7 @@ namespace Nitrogen
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
-	                                   ResID              theProc,
+	                                   Mac::ResID         theProc,
 	                                   WindowRef          theWindow,
 	                                   bool               drawIt,
 	                                   bool               hasGrow,
