@@ -19,11 +19,8 @@
 #endif
 
 // nucleus
+#include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
-
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
 
 
 namespace Nitrogen

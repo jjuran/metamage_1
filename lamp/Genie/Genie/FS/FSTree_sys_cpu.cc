@@ -13,6 +13,7 @@
 
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
