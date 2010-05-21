@@ -755,7 +755,7 @@ namespace plus
 		
 		a_n = std::min( a_n, a_size - a_pos );
 		
-		b_n = std::min( b_n, strlen( b ) );
+		b_n = std::min< size_type >( b_n, strlen( b ) );
 		
 		return string_compare( data(), size(), b, b_n );
 	}
