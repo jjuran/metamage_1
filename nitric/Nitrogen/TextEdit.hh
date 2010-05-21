@@ -14,6 +14,9 @@
 #ifndef NITROGEN_TEXTEDIT_HH
 #define NITROGEN_TEXTEDIT_HH
 
+// Standard C/C++
+#include <cstring>
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
@@ -110,7 +113,7 @@ namespace Nitrogen
 	{
 		::Handle h = hTE[0]->hText;
 		
-		std::copy( *h, *h + length, (char*) text );
+		std::memcpy( text, *h, length );
 	}
 	
 	using ::TEIdle;

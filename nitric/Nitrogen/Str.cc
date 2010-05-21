@@ -13,8 +13,8 @@
 
 #include "Nitrogen/Str.hh"
 
-// Standard C++
-#include <algorithm>
+// Standard C/C++
+#include <cstring>
 
 
 namespace Nitrogen
@@ -32,9 +32,7 @@ namespace Nitrogen
 		
 		destination[ 0 ] = static_cast< unsigned char >( sourceLength );
 		
-		std::copy( source,
-		           source + sourceLength,
-		           reinterpret_cast< char * >( destination + 1 ) );
+		std::memcpy( destination + 1, source, sourceLength );
      }
      
 }

@@ -14,6 +14,9 @@
 #ifndef NITROGEN_RESOURCES_HH
 #define NITROGEN_RESOURCES_HH
 
+// Standard C/C++
+#include <cstring>
+
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -349,22 +352,24 @@ namespace Nitrogen
 		
 		static Result MakeFromHandle( Handle h )
 		{
+			const std::size_t size = GetHandleSize( h );
+			
 			nucleus::mutable_string result;
 			
-			result.resize( GetHandleSize( h ) );
+			result.resize( size );
 			
-			std::copy( *h.Get(),
-			           *h.Get() + result.size(),
-			           result.begin() );
+			std::memcpy( &result[ 0 ], *h, size );
 			
 			return result;
 		}
 		
 		static nucleus::owned< Handle > MakeIntoHandle( Parameter text )
 		{
-			nucleus::owned< Handle > result = NewHandle( text.size() );
+			const std::size_t size = text.size();
 			
-			std::copy( text.begin(), text.end(), *result.get().Get() );
+			nucleus::owned< Handle > result = NewHandle( size );
+			
+			std::memcpy( *result.get(), text.data(), size );
 			
 			return result;
 		}
@@ -416,9 +421,7 @@ namespace Nitrogen
 			
 			nucleus::owned< Handle > result = NewHandle( size );
 			
-			const char* const begin = reinterpret_cast< const char* >( &pod );
-			
-			std::copy( begin, begin + size, *result.get() );
+			std::memcpy( *result.get(), &pod, size );
 			
 			return result;
 		}
