@@ -39,7 +39,7 @@ namespace Nitrogen
 		MemError();
 	}
 	
-	StringHandle GetString( ResID stringID )
+	StringHandle GetString( Mac::ResID stringID )
 	{
 		StringHandle result = ::GetString( stringID );
 		
@@ -48,7 +48,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Str255 GetIndString( ResID resID, UInt16 index )
+	Str255 GetIndString( Mac::ResID resID, UInt16 index )
 	{
 		::Str255 str;
 		::GetIndString( str, resID, index );

@@ -20,8 +20,10 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
+#include "Mac/Resources/Types/ResID.hh"
+
+#ifndef NITROGEN_MACMEMORY_HH
+#include "Nitrogen/MacMemory.hh"
 #endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
@@ -40,9 +42,9 @@ namespace Nitrogen
 	
 	void SetString( StringHandle string, ConstStr255Param newStr );
 	
-	StringHandle GetString( ResID stringID );
+	StringHandle GetString( Mac::ResID stringID );
 	
-	Str255 GetIndString( ResID resID, UInt16 index );
+	Str255 GetIndString( Mac::ResID resID, UInt16 index );
 	
 	inline Str255 c2pstrcpy( const char* src )  { return Str255( src ); }
 	
