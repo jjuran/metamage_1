@@ -9,6 +9,7 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
+#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
 
 

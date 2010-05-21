@@ -31,13 +31,11 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 
