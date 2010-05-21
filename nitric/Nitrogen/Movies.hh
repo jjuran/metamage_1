@@ -20,17 +20,16 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
+#include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Resources/Types/ResID.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
 #endif
 
 
@@ -125,12 +124,12 @@ namespace Nitrogen
 	// ...
 	
 	nucleus::owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
-	                                                 FSIOPermssn    permission );
+	                                                 Mac::FSIOPerm  permission );
 	
 	// DeleteMovieFile
 	
 	nucleus::owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
-	                                          ResID            resID,
+	                                          Mac::ResID       resID,
 	                                          NewMovieFlags    flags );
 	
 	// ...

@@ -40,7 +40,7 @@ namespace Nitrogen
 	
 	
 	nucleus::owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
-	                                                 FSIOPermssn    permission )
+	                                                 Mac::FSIOPerm  permission )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::OpenMovieFile( &file, &result, permission ) );
@@ -49,7 +49,7 @@ namespace Nitrogen
 	}
 	
 	nucleus::owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
-	                                          ResID            resID,
+	                                          Mac::ResID       resID,
 	                                          NewMovieFlags    flags )
 	{
 		Movie result;
