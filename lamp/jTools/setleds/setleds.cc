@@ -5,6 +5,13 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
 
 // iota
 #include "iota/decimal.hh"
