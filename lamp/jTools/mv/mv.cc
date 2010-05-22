@@ -23,7 +23,7 @@
 #pragma exceptions off
 
 
-static const char* basename( const char* path )
+static const char* Basename( const char* path )
 {
 	const char* slash = std::strrchr( path, '/' );
 	
@@ -37,7 +37,7 @@ static const char* basename( const char* path )
 
 static int move_into_dir( const char* old_path, int new_dirfd )
 {
-	const char* name = basename( old_path );
+	const char* name = Basename( old_path );
 	
 	return ::renameat( AT_FDCWD, old_path, new_dirfd, name );
 }
