@@ -14,9 +14,6 @@
 #include <Script.h>
 #endif
 
-// Standard C++
-#include <algorithm>
-
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
@@ -114,52 +111,21 @@ namespace nucleus
 	
 	template <>  struct maker< PPCXTIAddress >
 	{
+		PPCXTIAddress operator()( const char* address_data, std::size_t address_size ) const;
+		
 		template < class String >
 		PPCXTIAddress operator()( const String& address ) const
 		{
 			const char*        address_data = iota::get_string_data( address );
 			const std::size_t  address_size = iota::get_string_size( address );
 			
-			if ( address_size > kMaxPPCXTIAddress )
-			{
-				// FIXME:  Should throw or something
-			}
-			
-			PPCXTIAddress xtiAddr;
-			
-			xtiAddr.fAddressType = kDNSAddrType;
-			
-			std::fill( xtiAddr.fAddress,
-			           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
-			           '\0' );
-			
-			std::copy( address_data, 
-			           address_data + std::min< std::size_t >( address_size,
-			                                                   kMaxPPCXTIAddress ), 
-			           xtiAddr.fAddress );
-			
-			return xtiAddr;
+			return operator()( address_data, address_size );
 		}
 	};
 	
 	template <>  struct maker< PPCAddrRec >
 	{
-		PPCAddrRec operator()( const PPCXTIAddress& xtiAddr ) const
-		{
-			const UInt8* terminator = std::find( xtiAddr.fAddress,
-			                                     xtiAddr.fAddress + kMaxPPCXTIAddress,
-			                                     '\0' );
-			
-			PPCAddrRec xti;
-			
-			xti.Reserved[0] = 0;
-			xti.Reserved[1] = 0;
-			xti.Reserved[2] = 0;
-			xti.xtiAddrLen = sizeof (::PPCXTIAddressType) + (terminator + 1 - xtiAddr.fAddress);
-			xti.xtiAddr = xtiAddr;
-			
-			return xti;
-		}
+		PPCAddrRec operator()( const PPCXTIAddress& xtiAddr ) const;
 	};
 	
 	template <>  struct maker< LocationNameRec >

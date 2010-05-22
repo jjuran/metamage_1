@@ -8,6 +8,9 @@
 
 #include "ClassicToolbox/PPCToolbox.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Mac OS
 #ifndef __MACERRORS__
 #include <MacErrors.h>
@@ -41,6 +44,58 @@ namespace Nitrogen
 #pragma force_active reset
 #endif
 	
+}
+
+namespace nucleus
+{
+	
+	template <>
+	PPCXTIAddress maker< PPCXTIAddress >::operator()( const char* address_data,
+	                                                  std::size_t address_size ) const
+	{
+		if ( address_size > kMaxPPCXTIAddress )
+		{
+			// FIXME:  Should throw or something
+		}
+		
+		PPCXTIAddress xtiAddr;
+		
+		xtiAddr.fAddressType = kDNSAddrType;
+		
+		std::fill( xtiAddr.fAddress,
+				   xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
+				   '\0' );
+		
+		std::copy( address_data, 
+				   address_data + std::min< std::size_t >( address_size,
+														   kMaxPPCXTIAddress ), 
+				   xtiAddr.fAddress );
+		
+		return xtiAddr;
+	}
+	
+	template <>
+	PPCAddrRec maker< PPCAddrRec >::operator()( const PPCXTIAddress& xtiAddr ) const
+	{
+		const UInt8* terminator = std::find( xtiAddr.fAddress,
+		                                     xtiAddr.fAddress + kMaxPPCXTIAddress,
+		                                     '\0' );
+		
+		PPCAddrRec xti;
+		
+		xti.Reserved[0] = 0;
+		xti.Reserved[1] = 0;
+		xti.Reserved[2] = 0;
+		xti.xtiAddrLen = sizeof (::PPCXTIAddressType) + (terminator + 1 - xtiAddr.fAddress);
+		xti.xtiAddr = xtiAddr;
+		
+		return xti;
+	}
+	
+}
+
+namespace Nitrogen
+{
 	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )
 	{
