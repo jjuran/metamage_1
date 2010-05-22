@@ -86,8 +86,8 @@ namespace UseEdit
 	class DocumentsOwner
 	{
 		private:
-			DocumentContainer                                  itsDocuments;
-			boost::shared_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
+			DocumentContainer                                     itsDocuments;
+			boost::intrusive_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
 			
 			void StoreNewDocument( Document* doc );
 		

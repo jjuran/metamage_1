@@ -49,8 +49,8 @@ namespace Pedestal
 		};
 		
 		private:
-			WindowStorage                            itsWindows;
-			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
+			WindowStorage                               itsWindows;
+			boost::intrusive_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
 			WindowsOwner() : itsCloseHandler( new CloseHandler( itsWindows ) )

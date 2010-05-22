@@ -274,11 +274,11 @@ namespace Genie
 		
 		boost::shared_ptr< Ped::Window > window( new Window( key, context ) );
 		
-		boost::shared_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
+		boost::intrusive_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
 		window->SetCloseHandler( closeHandler );
 		
-		boost::shared_ptr< Ped::WindowResizeHandler > resizeHandler( new WindowResizeHandler( key ) );
+		boost::intrusive_ptr< Ped::WindowResizeHandler > resizeHandler( new WindowResizeHandler( key ) );
 		
 		window->SetResizeHandler( resizeHandler );
 		

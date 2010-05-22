@@ -9,8 +9,11 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// plus
+#include "plus/ref_count.hh"
+
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
@@ -101,13 +104,13 @@ namespace Pedestal
 	void InvalidateWindowGrowBox( Nitrogen::WindowRef window );
 	
 	
-	class WindowCloseHandler
+	class WindowCloseHandler : public plus::ref_count< WindowCloseHandler >
 	{
 		public:
 			virtual void operator()( Nitrogen::WindowRef window ) const = 0;
 	};
 	
-	class WindowResizeHandler
+	class WindowResizeHandler : public plus::ref_count< WindowResizeHandler >
 	{
 		public:
 			virtual void operator()( Nitrogen::WindowRef window, short h, short v ) const = 0;
@@ -116,8 +119,8 @@ namespace Pedestal
 	class Window
 	{
 		private:
-			boost::shared_ptr< WindowCloseHandler  > itsCloseHandler;
-			boost::shared_ptr< WindowResizeHandler > itsResizeHandler;
+			boost::intrusive_ptr< WindowCloseHandler  > itsCloseHandler;
+			boost::intrusive_ptr< WindowResizeHandler > itsResizeHandler;
 			
 			nucleus::owned< Nitrogen::WindowRef > itsWindowRef;
 			
@@ -130,12 +133,12 @@ namespace Pedestal
 			
 			Nitrogen::WindowRef Get() const  { return itsWindowRef; }
 			
-			void SetCloseHandler( const boost::shared_ptr< WindowCloseHandler >& handler )
+			void SetCloseHandler( const boost::intrusive_ptr< WindowCloseHandler >& handler )
 			{
 				itsCloseHandler = handler;
 			}
 			
-			void SetResizeHandler( const boost::shared_ptr< WindowResizeHandler >& handler )
+			void SetResizeHandler( const boost::intrusive_ptr< WindowResizeHandler >& handler )
 			{
 				itsResizeHandler = handler;
 			}
