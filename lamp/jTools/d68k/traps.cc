@@ -7,6 +7,9 @@
 
 #include "traps.hh"
 
+// C99
+#include <stdint.h>
+
 // iota
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
