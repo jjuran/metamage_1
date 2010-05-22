@@ -35,6 +35,7 @@
 #include "Mac/Files/Types/FSIOPerm.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSSignature.hh"
+#include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
@@ -100,12 +101,7 @@ namespace Nitrogen
 	typedef FSSharingFlags FSIOFileAttributes;
 	typedef FSSharingFlags FSIOFlAttrib;
 	
-	enum FSUserPrivileges
-	{
-		kFSUserPrivileges_Max = nucleus::enumeration_traits< UInt8 >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( FSUserPrivileges )
+	using Mac::FSUserPrivileges;
 	
 	typedef FSUserPrivileges FSIOACUser;
 	
