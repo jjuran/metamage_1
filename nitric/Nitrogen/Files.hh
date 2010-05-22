@@ -33,6 +33,7 @@
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSSignature.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
@@ -94,12 +95,7 @@ namespace Nitrogen
 	
 	using Mac::FSVolumeRefNum;
 	
-	enum FSSharingFlags
-	{
-		kFSSharingFlags_Max = nucleus::enumeration_traits< UInt8 >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( FSSharingFlags )
+	using Mac::FSSharingFlags;
 	
 	typedef FSSharingFlags FSIOFileAttributes;
 	typedef FSSharingFlags FSIOFlAttrib;
