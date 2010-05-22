@@ -6,6 +6,9 @@
 // Standard C++
 #include <string>
 
+// Standard C
+#include <string.h>
+
 // POSIX
 #include <fcntl.h>
 #include <sys/socket.h>
