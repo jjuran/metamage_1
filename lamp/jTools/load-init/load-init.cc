@@ -12,6 +12,9 @@
 #include <functional>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // iota
 #include "iota/decimal.hh"
 #include "iota/quad.hh"

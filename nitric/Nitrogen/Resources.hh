@@ -277,14 +277,14 @@ namespace Nitrogen
 	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
 	                                                Mac::FSIOPerm  permissions );
 	
-	void FSpCreateResFile( const FSSpec&  spec,
-	                       OSType         creator   = OSType( 'RSED' ),
-	                       OSType         type      = OSType( 'rsrc' ),
-	                       ScriptCode     scriptTag = smSystemScript );
+	void FSpCreateResFile( const FSSpec&    spec,
+	                       Mac::OSType      creator   = Mac::OSType( 'RSED' ),
+	                       Mac::OSType      type      = Mac::OSType( 'rsrc' ),
+	                       Mac::ScriptCode  scriptTag = Mac::smSystemScript );
 	
 	inline void FSpCreateResFile( const FSSpec&            spec,
 	                              const Mac::FSSignature&  signature,
-	                              ScriptCode               scriptTag = smSystemScript )
+	                              Mac::ScriptCode          scriptTag = Mac::smSystemScript )
 	{
 		FSpCreateResFile( spec, signature.creator, signature.type, scriptTag );
 	}

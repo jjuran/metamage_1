@@ -14,16 +14,11 @@
 #include "nucleus/enumeration_traits.hh"
 
 // Nitrogen
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
+#include "Mac/Toolbox/Types/OSType.hh"
 
 
 namespace Mac
 {
-	
-	using Nitrogen::OSType;
-	
 	
 	struct FSSignature
 	{

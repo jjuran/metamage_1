@@ -319,10 +319,10 @@ namespace Nitrogen
 		return nucleus::owned< ResFileRefNum >::seize( refNum );
 	}
 	
-	void FSpCreateResFile( const FSSpec&  spec,
-	                       OSType         creator,
-	                       OSType         type,
-	                       ScriptCode     scriptTag )
+	void FSpCreateResFile( const FSSpec&    spec,
+	                       Mac::OSType      creator,
+	                       Mac::OSType      type,
+	                       Mac::ScriptCode  scriptTag )
 	{
 		::FSpCreateResFile( &spec, creator, type, scriptTag );
 		
