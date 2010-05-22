@@ -54,15 +54,15 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
+		const bool symbolic = argc > 1  &&  std::strcmp( argv[ 1 ], "-s" ) == 0;
+		
 		// Check for sufficient number of args
-		if ( argc < 3 )
+		if ( argc < 3 + symbolic )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln [-s] target [link]\n" ) );
 			
 			return 2;
 		}
-		
-		const bool symbolic = std::strcmp( argv[ 1 ], "-s" ) == 0;
 		
 		const char* target = argv[ 1 + symbolic ];
 		const char* loc    = argv[ 2 + symbolic ];
