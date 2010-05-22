@@ -69,9 +69,9 @@ namespace Genie
 	class SerialDeviceHandle : public DeviceHandle
 	{
 		private:
-			n::shared< N::DriverRefNum >  itsOutputRefNum;
-			n::shared< N::DriverRefNum >  itsInputRefNum;
-			bool                          itIsPassive;
+			n::shared< Mac::DriverRefNum >  itsOutputRefNum;
+			n::shared< Mac::DriverRefNum >  itsInputRefNum;
+			bool                            itIsPassive;
 		
 		protected:
 			bool IsShared() const  { return !itsOutputRefNum.sole(); }
@@ -204,7 +204,7 @@ namespace Genie
 		return SerialPortsAreArbitrated() || !DriverIsOpen( driverName );
 	}
 	
-	static n::owned< N::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
+	static n::owned< Mac::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
 	{
 		if ( !SerialDriverMayBeOpened( driverName ) )
 		{

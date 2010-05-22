@@ -14,30 +14,30 @@
 namespace Nitrogen
 {
 	
-	nucleus::owned< DriverRefNum > OpenDriver( ConstStr255Param name )
+	nucleus::owned< Mac::DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::OpenDriver( name, &result ) );
 		
-		return nucleus::owned< DriverRefNum >::seize( DriverRefNum( result ) );
+		return nucleus::owned< Mac::DriverRefNum >::seize( Mac::DriverRefNum( result ) );
 	}
 	
-	void CloseDriver( nucleus::owned< DriverRefNum > driverRefNum )
+	void CloseDriver( nucleus::owned< Mac::DriverRefNum > driverRefNum )
 	{
 		ThrowOSStatus( ::CloseDriver( driverRefNum.release() ) );
 	}
 	
-	void KillIO( DriverRefNum driverRefNum )
+	void KillIO( Mac::DriverRefNum driverRefNum )
 	{
 		ThrowOSStatus( ::KillIO( driverRefNum ) );
 	}
 	
-	void Control( DriverRefNum driverRefNum, CSCode csCode, const void* csParamPtr )
+	void Control( Mac::DriverRefNum driverRefNum, CSCode csCode, const void* csParamPtr )
 	{
 		ThrowOSStatus( ::Control( driverRefNum, csCode, csParamPtr ) );
 	}
 	
-	void Status( DriverRefNum driverRefNum, CSCode csCode, void* csParamPtr )
+	void Status( Mac::DriverRefNum driverRefNum, CSCode csCode, void* csParamPtr )
 	{
 		ThrowOSStatus( ::Status( driverRefNum, csCode, csParamPtr ) );
 	}
@@ -54,7 +54,7 @@ namespace Nitrogen
 		::OpenDeskAcc( deskAccName );
 	}
 	
-	int Read( DriverRefNum driverRefNum, char* data, std::size_t byteCount )
+	int Read( Mac::DriverRefNum driverRefNum, char* data, std::size_t byteCount )
 	{
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;
@@ -71,7 +71,7 @@ namespace Nitrogen
 		return io.ioActCount;
 	}
 	
-	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount )
+	int Write( Mac::DriverRefNum driverRefNum, const char* data, std::size_t byteCount )
 	{
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;

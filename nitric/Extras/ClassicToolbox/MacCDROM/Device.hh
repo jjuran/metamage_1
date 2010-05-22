@@ -11,6 +11,9 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 
+// Nitrogen
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_HH
 #include "ClassicToolbox/Devices.hh"
@@ -34,13 +37,13 @@ namespace MacCDROM
 	
 	struct CDROMDrive
 	{
-		N::DriverRefNum    dRefNum;
-		N::FSVolumeRefNum  vRefNum;
+		Mac::DriverRefNum    dRefNum;
+		Mac::FSVolumeRefNum  vRefNum;
 		
 		CDROMDrive()  {}
 		
-		CDROMDrive( N::DriverRefNum    d,
-		            N::FSVolumeRefNum  v = N::FSVolumeRefNum( 1 ) )  // index
+		CDROMDrive( Mac::DriverRefNum    d,
+		            Mac::FSVolumeRefNum  v = Mac::FSVolumeRefNum( 1 ) )  // index
 		:
 			dRefNum( d ),
 			vRefNum( v )
@@ -53,7 +56,7 @@ namespace MacCDROM
 	#pragma mark -
 	#pragma mark ¥ Open ¥
 	
-	N::DriverRefNum OpenCDROMDriver();
+	Mac::DriverRefNum OpenCDROMDriver();
 	
 	#pragma mark -
 	#pragma mark ¥ Special CD-ROM Control Calls ¥

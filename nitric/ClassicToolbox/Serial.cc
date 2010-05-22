@@ -5,6 +5,9 @@
 
 #include "ClassicToolbox/Serial.hh"
 
+// Standard C++
+#include <algorithm>
+
 
 namespace Nitrogen
 {
@@ -42,14 +45,14 @@ namespace Nitrogen
 		return ptr;
 	}
 	
-	std::size_t SerGetBuf( DriverRefNum inputDriverRefNum )
+	std::size_t SerGetBuf( Mac::DriverRefNum inputDriverRefNum )
 	{
 		long count;
 		ThrowOSStatus( ::SerGetBuf( inputDriverRefNum, &count ) );
 		return count;
 	}
 	
-	void SerSetBuf( DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize )
+	void SerSetBuf( Mac::DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize )
 	{
 		const std::size_t maxSize = 32767;
 		
@@ -58,34 +61,34 @@ namespace Nitrogen
 		                            std::min( bufSize, maxSize ) ) );
 	}
 	
-	SerStaRec SerStatus( DriverRefNum outputDriverRefNum )
+	SerStaRec SerStatus( Mac::DriverRefNum outputDriverRefNum )
 	{
 		SerStaRec serStatus;
 		ThrowOSStatus( ::SerStatus( outputDriverRefNum, &serStatus ) );
 		return serStatus;
 	}
 	
-	void SerReset( DriverRefNum outputDriverRefNum, SerConfig serConfig )
+	void SerReset( Mac::DriverRefNum outputDriverRefNum, SerConfig serConfig )
 	{
 		ThrowOSStatus( ::SerReset( outputDriverRefNum, serConfig ) );
 	}
 	
-	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk )
+	void SerHShake( Mac::DriverRefNum outputDriverRefNum, const SerShk& serShk )
 	{
 		Control< kSERDHandshake >( outputDriverRefNum, serShk );
 	}
 	
-	void AssertDTR( DriverRefNum outputDriverRefNum )
+	void AssertDTR( Mac::DriverRefNum outputDriverRefNum )
 	{
 		Control< kSERDAssertDTR >( outputDriverRefNum );
 	}
 	
-	void NegateDTR( DriverRefNum outputDriverRefNum )
+	void NegateDTR( Mac::DriverRefNum outputDriverRefNum )
 	{
 		Control< kSERDNegateDTR >( outputDriverRefNum );
 	}
 	
-	void ClearXOFF( DriverRefNum outputDriverRefNum )
+	void ClearXOFF( Mac::DriverRefNum outputDriverRefNum )
 	{
 		Control< kSERDClearXOffFlag >( outputDriverRefNum );
 	}

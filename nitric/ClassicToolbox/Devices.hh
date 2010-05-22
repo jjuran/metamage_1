@@ -16,10 +16,17 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
+#include "Mac/Devices/Types/DriverRefNum.hh"
+
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
+#endif
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 
@@ -40,12 +47,12 @@ namespace nucleus
 	
 #if CALL_NOT_IN_CARBON
 	
-	template <> struct disposer< Nitrogen::DriverRefNum >
+	template <> struct disposer< Mac::DriverRefNum >
 	{
-		typedef Nitrogen::DriverRefNum  argument_type;
-		typedef void                    result_type;
+		typedef Mac::DriverRefNum  argument_type;
+		typedef void               result_type;
 		
-		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
+		void operator()( Mac::DriverRefNum driverRefNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( DeviceManager );
 			
@@ -71,18 +78,18 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 1158
-	nucleus::owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
+	nucleus::owned< Mac::DriverRefNum > MacOpenDriver( ConstStr255Param name );
 	
 #if CALL_NOT_IN_CARBON
 	
 	template < unsigned char n >
-	inline nucleus::owned< DriverRefNum > MacOpenDriver( const Str< n >& name )
+	inline nucleus::owned< Mac::DriverRefNum > MacOpenDriver( const Str< n >& name )
 	{
 		return MacOpenDriver( name + 0 );
 	}
 	
 	template < class String >
-	inline nucleus::owned< DriverRefNum > MacOpenDriver( const String& name )
+	inline nucleus::owned< Mac::DriverRefNum > MacOpenDriver( const String& name )
 	{
 		return MacOpenDriver( Str255( iota::get_string_data( name ),
 		                              iota::get_string_size( name ) ) );
@@ -91,22 +98,22 @@ namespace Nitrogen
 #endif
 	
 	// 1175
-	void MacCloseDriver( nucleus::owned< DriverRefNum > driverRefNum );
+	void MacCloseDriver( nucleus::owned< Mac::DriverRefNum > driverRefNum );
 	
 	// 1190
-	void Control( DriverRefNum       driverRefNum,
+	void Control( Mac::DriverRefNum  driverRefNum,
 	              ControlStatusCode  csCode,
 	              const void*        csParamPtr );
 	
 	template < ControlStatusCode csCode >
-	void Control( DriverRefNum                                        driverRefNum,
+	void Control( Mac::DriverRefNum                                   driverRefNum,
 	              typename Control_Default< csCode >::parameter_type  csParam )
 	{
 		Control( driverRefNum, ControlStatusCode( csCode ), &csParam );
 	}
 	
 	template < ControlStatusCode csCode >
-	void Control( DriverRefNum driverRefNum )
+	void Control( Mac::DriverRefNum driverRefNum )
 	{
 		Control( driverRefNum,
 		         ControlStatusCode( csCode ),
@@ -114,19 +121,19 @@ namespace Nitrogen
 	}
 	
 	// 1205
-	void Status( DriverRefNum       driverRefNum,
+	void Status( Mac::DriverRefNum  driverRefNum,
 	             ControlStatusCode  csCode,
 	             void*              csParamPtr );
 	
 	// 1220
-	void KillIO( DriverRefNum driverRefNum );
+	void KillIO( Mac::DriverRefNum driverRefNum );
 	
 	void PBControlSync( ParamBlockRec& paramBlock );
 	
 	void OpenDeskAcc( ConstStr255Param deskAccName );
 	
-	int Read ( DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
-	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
+	int Read ( Mac::DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
+	int Write( Mac::DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
 	
 }
 

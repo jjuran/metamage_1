@@ -18,7 +18,7 @@ namespace MacCDROM
 	
 #if CALL_NOT_IN_CARBON
 	
-	N::DriverRefNum OpenCDROMDriver()
+	Mac::DriverRefNum OpenCDROMDriver()
 	{
 		// We definitely don't want to close the driver.
 		// The question is, do we really need to open it at all, or could we

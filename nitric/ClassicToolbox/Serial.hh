@@ -15,6 +15,7 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/make.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_HH
@@ -122,26 +123,26 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 261
-	void SerReset( DriverRefNum outputDriverRefNum, SerConfig serConfig );
+	void SerReset( Mac::DriverRefNum outputDriverRefNum, SerConfig serConfig );
 	
 	// 275
-	void SerSetBuf( DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize );
+	void SerSetBuf( Mac::DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize );
 	
 	// 290
-	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk = nucleus::make< SerShk >() );
+	void SerHShake( Mac::DriverRefNum outputDriverRefNum, const SerShk& serShk = nucleus::make< SerShk >() );
 	
 	// 328
-	std::size_t SerGetBuf( DriverRefNum inputDriverRefNum );
+	std::size_t SerGetBuf( Mac::DriverRefNum inputDriverRefNum );
 	
 	// 342
-	SerStaRec SerStatus( DriverRefNum outputDriverRefNum );
+	SerStaRec SerStatus( Mac::DriverRefNum outputDriverRefNum );
 	
-	void AssertDTR( DriverRefNum outputDriverRefNum );
-	void NegateDTR( DriverRefNum outputDriverRefNum );
-	void ClearXOFF( DriverRefNum outputDriverRefNum );
+	void AssertDTR( Mac::DriverRefNum outputDriverRefNum );
+	void NegateDTR( Mac::DriverRefNum outputDriverRefNum );
+	void ClearXOFF( Mac::DriverRefNum outputDriverRefNum );
 	
-	int Read ( DriverRefNum inputDriverRefNum,        char* data, std::size_t byteCount );
-	int Write( DriverRefNum outputDriverRefNum, const char* data, std::size_t byteCount );
+	int Read ( Mac::DriverRefNum inputDriverRefNum,        char* data, std::size_t byteCount );
+	int Write( Mac::DriverRefNum outputDriverRefNum, const char* data, std::size_t byteCount );
 	
 }
 
