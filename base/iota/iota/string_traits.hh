@@ -13,9 +13,41 @@ namespace iota
 {
 	
 	template < class String >
+	struct string_const_pointer
+	{
+		typedef typename String::const_pointer type;
+	};
+	
+	template <>
+	struct string_const_pointer< const char* >
+	{
+		typedef const char* type;
+	};
+	
+	template <>
+	struct string_const_pointer< char* > : string_const_pointer< const char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_const_pointer< const char[n] > : string_const_pointer< const char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_const_pointer< char[n] > : string_const_pointer< const char* >
+	{
+	};
+	
+#endif
+	
+	
+	template < class String >
 	struct string_c_str
 	{
-		static const char* get( const String& s )
+		static typename String::const_pointer get( const String& s )
 		{
 			return s.c_str();
 		}
@@ -53,7 +85,7 @@ namespace iota
 	template < class String >
 	struct string_data
 	{
-		static const char* get( const String& s )
+		static typename String::const_pointer get( const String& s )
 		{
 			return s.data();
 		}
@@ -122,6 +154,30 @@ namespace iota
 #if defined( __MACOS__ )  ||  defined( __APPLE__ )
 	
 	template <>
+	struct string_const_pointer< const unsigned char* > : string_const_pointer< const char* >
+	{
+	};
+	
+	template <>
+	struct string_const_pointer< unsigned char* > : string_const_pointer< const char* >
+	{
+	};
+	
+	template < unsigned n >
+	struct string_const_pointer< const unsigned char[n] > : string_const_pointer< const char* >
+	{
+	};
+	
+#ifndef __MWERKS__
+	
+	template < unsigned n >
+	struct string_const_pointer< unsigned char[n] > : string_const_pointer< const char* >
+	{
+	};
+	
+#endif
+	
+	template <>
 	struct string_data< const unsigned char* >
 	{
 		static const char* get( const unsigned char* s )
@@ -181,13 +237,17 @@ namespace iota
 #endif
 	
 	template < class String >
-	inline const char* get_string_c_str( const String& s )
+	inline typename string_const_pointer< String >::type
+	//
+	get_string_c_str( const String& s )
 	{
 		return string_c_str< String >::get( s );
 	}
 	
 	template < class String >
-	inline const char* get_string_data( const String& s )
+	inline typename string_const_pointer< String >::type
+	//
+	get_string_data( const String& s )
 	{
 		return string_data< String >::get( s );
 	}

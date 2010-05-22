@@ -83,6 +83,11 @@ namespace iota
 {
 	
 	template < unsigned char length >
+	struct string_const_pointer< Nitrogen::Str< length > > : string_const_pointer< const char* >
+	{
+	};
+	
+	template < unsigned char length >
 	struct string_data< Nitrogen::Str< length > > : string_data< const unsigned char* >
 	{
 	};
