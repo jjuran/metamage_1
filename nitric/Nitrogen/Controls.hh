@@ -24,13 +24,20 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/make.hh"
 
-#ifndef NITROGEN_MACWINDOWS_HH
-#include "Nitrogen/MacWindows.hh"
-#endif
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
+#endif
+#ifndef NITROGEN_REFCON_HH
+#include "Nitrogen/RefCon.hh"
+#endif
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
+#endif
+#ifndef NITROGEN_UPP_HH
+#include "Nitrogen/UPP.hh"
 #endif
 
 
@@ -159,11 +166,7 @@ namespace Nitrogen
 		::UpdateControls( window, region );
 	}
 	
-	inline void UpdateControls( WindowRef window )
-	{
-		::UpdateControls( window,
-		                  GetPortVisibleRegion( GetWindowPort( window ) ) );
-	}
+	void UpdateControls( WindowRef window );
 	
 	// 1711
 	ControlPartCode TrackControl( ControlRef        theControl,

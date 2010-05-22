@@ -8,6 +8,9 @@
 // nucleus
 #include "nucleus/saved.hh"
 
+// Nitrogen
+#include "Nitrogen/Quickdraw.hh"
+
 // Pedestal
 #include "Pedestal/Scrollbar.hh"
 

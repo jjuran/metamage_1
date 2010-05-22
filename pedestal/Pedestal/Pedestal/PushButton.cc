@@ -12,6 +12,7 @@
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/MacWindows.hh"
 
 
 namespace Pedestal

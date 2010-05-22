@@ -14,6 +14,7 @@
 #include "Nitrogen/Controls.hh"
 
 // Nitrogen
+#include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/OSStatus.hh"
 
 
@@ -66,6 +67,12 @@ namespace Nitrogen
 	void HiliteControl( ControlRef control, ControlPartCode hiliteState )
 	{
 		::HiliteControl( control, hiliteState );
+	}
+	
+	void UpdateControls( WindowRef window )
+	{
+		::UpdateControls( window,
+		                  GetPortVisibleRegion( GetWindowPort( window ) ) );
 	}
 	
 	ControlPartCode TrackControl( ControlRef        theControl,
