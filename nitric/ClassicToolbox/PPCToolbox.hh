@@ -10,22 +10,15 @@
 #ifndef __PPCTOOLBOX__
 #include <PPCToolbox.h>
 #endif
-#ifndef __SCRIPT__
-#include <Script.h>
-#endif
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
+#include "nucleus/make.hh"
 
 // Nitrogen
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
-#endif
-
-// Nitrogen Extras / ClassicToolbox
-#ifndef CLASSICTOOLBOX_APPLETALK_HH
-#include "ClassicToolbox/AppleTalk.hh"
 #endif
 
 
@@ -172,19 +165,8 @@ namespace nucleus
 	
 	template <>  struct maker< PPCPortRec >
 	{
-		PPCPortRec operator()( ConstStr32Param name, ConstStr32Param portTypeStr = "\p=" ) const
-		{
-			PPCPortRec port;
-			
-			port.nameScript = smSystemScript;  // FIXME
-			
-			Nitrogen::CopyToPascalString( name,        port.name,          32 );
-			Nitrogen::CopyToPascalString( portTypeStr, port.u.portTypeStr, 32 );
-			
-			port.portKindSelector = ppcByString;
-			
-			return port;
-		}
+		PPCPortRec operator()( ConstStr32Param  name,
+		                       ConstStr32Param  portTypeStr = "\p" "=" ) const;
 	};
 	
 	template <>  struct maker< IPCListPortsPBRec >

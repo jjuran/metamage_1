@@ -15,6 +15,9 @@
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
+#ifndef __SCRIPT__
+#include <Script.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
@@ -90,6 +93,21 @@ namespace nucleus
 		xti.xtiAddr = xtiAddr;
 		
 		return xti;
+	}
+	
+	template <>
+	PPCPortRec maker< PPCPortRec >::operator()( ConstStr32Param name, ConstStr32Param portTypeStr ) const
+	{
+		PPCPortRec port;
+		
+		port.nameScript = smSystemScript;  // FIXME
+		
+		Nitrogen::CopyToPascalString( name,        port.name,          32 );
+		Nitrogen::CopyToPascalString( portTypeStr, port.u.portTypeStr, 32 );
+		
+		port.portKindSelector = ppcByString;
+		
+		return port;
 	}
 	
 }
