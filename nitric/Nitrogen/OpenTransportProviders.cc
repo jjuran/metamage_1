@@ -107,15 +107,14 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void OTInetMailExchange( InetSvcRef                        ref,
-	                         char*                             name,
-	                         std::vector< InetMailExchange >&  mx )
+	UInt16 OTInetMailExchange( InetSvcRef         ref,
+	                           char*              name,
+	                           UInt16             num,
+	                           InetMailExchange*  mx )
 	{
-		UInt16 num = mx.size();
+		ThrowOSStatus( ::OTInetMailExchange( ref, name, &num, mx ) );
 		
-		ThrowOSStatus( ::OTInetMailExchange( ref, name, &num, &mx.front() ) );
-		
-		mx.resize( num );
+		return num;
 	}
 	
 }

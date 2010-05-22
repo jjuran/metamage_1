@@ -23,9 +23,6 @@
 #include <OpenTransportProviders.h>
 #endif
 
-// Standard C++
-#include <vector>
-
 // iota
 #include "iota/string_traits.hh"
 
@@ -201,9 +198,20 @@ namespace Nitrogen
 	
 	// OTInetSysInfo
 	
-	void OTInetMailExchange( InetSvcRef                        ref,
-	                         char*                             name,
-	                         std::vector< InetMailExchange >&  mx );
+	UInt16 OTInetMailExchange( InetSvcRef         ref,
+	                           char*              name,
+	                           UInt16             num,
+	                           InetMailExchange*  mx );
+	
+	template < class Vector >
+	inline void OTInetMailExchange( InetSvcRef  ref,
+	                                char*       name,
+	                                Vector&     mx )
+	{
+		const UInt16 num = OTInetMailExchange( ref, name, mx.size(), &mx.front() );
+		
+		mx.resize( num );
+	}
 	
 }
 
