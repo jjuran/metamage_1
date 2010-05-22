@@ -25,8 +25,8 @@
 #ifndef NITROGEN_CFDATA_HH
 #include "Nitrogen/CFData.hh"
 #endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
+#ifndef NITROGEN_CFSTRING_HH
+#include "Nitrogen/CFString.hh"
 #endif
 
 
