@@ -30,6 +30,7 @@
 
 // Nitrogen
 #include "Mac/Resources/Types/ResType.hh"
+#include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
@@ -162,12 +163,8 @@ namespace Nitrogen
 		kRegionCode_Max = nucleus::enumeration_traits< ::RegionCode >::max
 	};
 	
-	enum OSType
-	{
-		kUnknownType = ::kUnknownType,
-		
-		kOSType_Max = nucleus::enumeration_traits< ::OSType >::max
-	};
+	using Mac::OSType;
+	using Mac::kUnknownType;
 	
 	using Mac::ResType;
 	using Mac::kVersionResType;
