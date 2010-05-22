@@ -304,7 +304,7 @@ namespace UseEdit
 		return *it->second.get();
 	}
 	
-	void DocumentContainer::StoreNewElement( const boost::shared_ptr< Document >& document )
+	void DocumentContainer::StoreNewElement( const boost::intrusive_ptr< Document >& document )
 	{
 		itsMap[ document->GetWindowRef() ] = document;
 	}
@@ -374,7 +374,7 @@ namespace UseEdit
 	
 	void DocumentsOwner::StoreNewDocument( Document* doc )
 	{
-		boost::shared_ptr< Document > document( doc );
+		boost::intrusive_ptr< Document > document( doc );
 		
 		document->GetWindow().SetCloseHandler( itsCloseHandler );
 		
