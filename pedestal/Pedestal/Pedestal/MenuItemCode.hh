@@ -10,7 +10,7 @@
 namespace Pedestal
 {
 	
-	typedef OSType MenuItemCode;
+	typedef unsigned long MenuItemCode;  // like OSType
 	
 }
 

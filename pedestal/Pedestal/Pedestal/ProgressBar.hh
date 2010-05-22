@@ -6,6 +6,12 @@
 #ifndef PEDESTAL_PROGRESSBAR_HH
 #define PEDESTAL_PROGRESSBAR_HH
 
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// Pedestal
 #include "Pedestal/View.hh"
 
 

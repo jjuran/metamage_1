@@ -7,8 +7,8 @@
 #define PEDESTAL_VIEW_HH
 
 // Mac OS
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
 #endif
 
 // Debug
@@ -21,11 +21,26 @@
 #include "Pedestal/MenuItemCode.hh"
 
 
-struct EventRecord;
+struct EventRecord;      // Events.h
+struct MacRegion;        // Quickdraw.h
+struct OpaqueRgnHandle;  // Quickdraw.h
+struct Rect;             // Quickdraw.h
 
 
 namespace Pedestal
 {
+	
+	// same as ::RgnHandle but without the include
+	
+#if !OPAQUE_TOOLBOX_STRUCTS
+	
+	typedef MacRegion** RgnHandle;
+	
+#else
+	
+	typedef OpaqueRgnHandle* RgnHandle;
+	
+#endif
 	
 	class Quasimode;
 	
