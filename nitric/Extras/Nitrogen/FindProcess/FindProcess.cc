@@ -21,10 +21,10 @@ namespace NitrogenExtras
 	class Process_HasSignature
 	{
 		private:
-			N::OSType itsSignature;
+			Mac::OSType itsSignature;
 		
 		public:
-			Process_HasSignature( N::OSType signature )
+			Process_HasSignature( Mac::OSType signature )
 			:
 				itsSignature( signature )
 			{
@@ -76,7 +76,7 @@ namespace NitrogenExtras
 		return psn;
 	}
 	
-	ProcessSerialNumber FindProcess( N::OSType signature )
+	ProcessSerialNumber FindProcess( Mac::OSType signature )
 	{
 		return FindProcess( Process_HasSignature( signature ) );
 	}
