@@ -30,6 +30,7 @@
 
 // Nitrogen
 #include "Mac/Resources/Types/ResType.hh"
+#include "Mac/Script/Types/ScriptCode.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
@@ -142,12 +143,8 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
 	
-	enum ScriptCode
-	{
-		smSystemScript = ::smSystemScript,
-		
-		kScriptCode_Max = nucleus::enumeration_traits< ::ScriptCode >::max
-	};
+	using Mac::ScriptCode;
+	using Mac::smSystemScript;
 	
 	enum LangCode
 	{
