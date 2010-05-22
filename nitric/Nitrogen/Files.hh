@@ -28,6 +28,7 @@
 #include "iota/string_traits.hh"
 
 // Nitrogen
+#include "Mac/Devices/Types/DriverRefNum.hh"
 #include "Mac/Files/Functions/FlushVol.hh"
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
@@ -189,13 +190,10 @@ namespace Nitrogen
 	
 	typedef FSFileSystemID IOFSID;
 	
-	enum DriverReferenceNumber
-	{
-		kDriverReferenceNumber_Max = nucleus::enumeration_traits< SInt16 >::max
-	};
+	using Mac::DriverRefNum;
 	
-	typedef DriverReferenceNumber DRefNum;
-	typedef DriverReferenceNumber DriverRefNum;
+	typedef DriverRefNum DRefNum;
+	typedef DriverRefNum DriverReferenceNumber;
 	
 	enum HFSCatalogNodeID
 	{
