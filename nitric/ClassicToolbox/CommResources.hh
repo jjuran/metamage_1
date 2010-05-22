@@ -6,9 +6,6 @@
 #ifndef CLASSICTOOLBOX_COMMRESOURCES_HH
 #define CLASSICTOOLBOX_COMMRESOURCES_HH
 
-// Standard C++
-#include <map>
-
 // Mac OS
 #ifndef __COMMRESOURCES__
 #include <CommResources.h>
@@ -83,49 +80,17 @@ namespace Nitrogen
 		}
 	};
 	
-	class CRMAttributesDisposer
-	{
-		public:
-			typedef void (*DisposerType)( CRMAttributes );
-		
-		private:
-			typedef std::map< CRMDeviceType, DisposerType >  Map;
-			
-			Map map;
-			
-			// not implemented:
-			CRMAttributesDisposer( const CRMAttributesDisposer& );
-			CRMAttributesDisposer& operator=( const CRMAttributesDisposer& );
-			
-			template < class T >
-			struct AdaptDisposer
-			{
-				static void ForCRMAttributes( CRMAttributes crmAttributes )
-				{
-					nucleus::disposer< T >()( reinterpret_cast< T >( crmAttributes ) );
-				}
-			};
-		
-		public:
-			CRMAttributesDisposer()  {}
-			
-			template < CRMDeviceType crmDeviceType >
-			void Register()
-			{
-				typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
-				
-				map[ crmDeviceType ] = AdaptDisposer< Type >::ForCRMAttributes;
-			}
-			
-			void Dispose( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes );
-	};
+	typedef void (*CRMAttributes_Disposer)( CRMAttributes );
 	
-	CRMAttributesDisposer& TheGlobalCRMAttributesDisposer();
+	void Register_CRMAttributes_Disposer( CRMDeviceType           crmDeviceType,
+	                                      CRMAttributes_Disposer  disposer );
 	
 	template < CRMDeviceType crmDeviceType >
 	void RegisterCRMAttributesDisposer()
 	{
-		TheGlobalCRMAttributesDisposer().template Register< crmDeviceType >();
+		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
+		
+		Register_CRMAttributes_Disposer( crmDeviceType, AdaptDisposer< Type >::ForCRMAttributes );
 	}
 	
 	void DisposeCRMAttributes( CRMDeviceType  crmDeviceType,

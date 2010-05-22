@@ -5,6 +5,9 @@
 
 #include "ClassicToolbox/CommResources.hh"
 
+// Standard C++
+#include <map>
+
 
 namespace Nitrogen
 {
@@ -31,25 +34,27 @@ namespace Nitrogen
 #endif
 	
 	
-	void CRMAttributesDisposer::Dispose( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )
-	{
-		Map::const_iterator found = map.find( crmDeviceType );
-		if ( found != map.end() )
-		{
-			return found->second( crmAttributes );
-		}
-		// FIXME:  Assert
-	}
+	typedef std::map< CRMDeviceType, CRMAttributes_Disposer >  CRMAttributes_Disposer_Map;
 	
-	CRMAttributesDisposer& TheGlobalCRMAttributesDisposer()
+	CRMAttributes_Disposer_Map gCRMAttributes_Disposer_Map;
+	
+	
+	void Register_CRMAttributes_Disposer( CRMDeviceType           crmDeviceType,
+	                                      CRMAttributes_Disposer  disposer )
 	{
-		static CRMAttributesDisposer theGlobalCRMAttributesDisposer;
-		return theGlobalCRMAttributesDisposer;
+		gCRMAttributes_Disposer_Map[ crmDeviceType ] = disposer;
 	}
 	
 	void DisposeCRMAttributes( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )
 	{
-		TheGlobalCRMAttributesDisposer().Dispose( crmDeviceType, crmAttributes );
+		CRMAttributes_Disposer_Map::const_iterator it = gCRMAttributes_Disposer_Map.find( crmDeviceType );
+		
+		if ( it != gCRMAttributes_Disposer_Map.end() )
+		{
+			return it->second( crmAttributes );
+		}
+		
+		// FIXME:  Assert
 	}
 	
 	void InitCRM()
