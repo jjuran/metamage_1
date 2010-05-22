@@ -32,8 +32,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< CGImageRef >: public std::unary_function< CGImageRef, void >
+   template <> struct disposer< CGImageRef >
      {
+      typedef CGImageRef  argument_type;
+      typedef void        result_type;
+      
       void operator()( CGImageRef image ) const
         {
          ::CGImageRelease( image );

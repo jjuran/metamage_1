@@ -47,8 +47,11 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< ListHandle > : public std::unary_function< ListHandle, void >
+	template <> struct disposer< ListHandle >
 	{
+		typedef ListHandle  argument_type;
+		typedef void        result_type;
+		
 		void operator()( ListHandle list ) const
 		{
 			::LDispose( list );

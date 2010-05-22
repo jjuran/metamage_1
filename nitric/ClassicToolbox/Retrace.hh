@@ -64,8 +64,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< VBLTaskPtr > : public std::unary_function< VBLTaskPtr, void >
+	struct disposer< VBLTaskPtr >
 	{
+		typedef VBLTaskPtr  argument_type;
+		typedef void        result_type;
+		
 		void operator()( VBLTaskPtr vblTaskPtr ) const
 		{
 			const QElemPtr qElem = (QElemPtr) vblTaskPtr;
@@ -75,8 +78,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::SlotVBLTask > : public std::unary_function< Nitrogen::SlotVBLTask, void >
+	struct disposer< Nitrogen::SlotVBLTask >
 	{
+		typedef Nitrogen::SlotVBLTask  argument_type;
+		typedef void                   result_type;
+		
 		void operator()( Nitrogen::SlotVBLTask slotVBLTask ) const
 		{
 			const QElemPtr qElem = (QElemPtr) slotVBLTask.task;

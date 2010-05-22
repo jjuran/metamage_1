@@ -40,8 +40,11 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-   template <> struct disposer< ABPickerRef >: public std::unary_function< ABPickerRef, void >
+   template <> struct disposer< ABPickerRef >
      {
+      typedef ABPickerRef  argument_type;
+      typedef void         result_type;
+      
       void operator()( ABPickerRef pick ) const
         {
 //       Nucleus::OnlyOnce<Nitrogen::RegisterAddressBookErrors>();	// Why is this here?

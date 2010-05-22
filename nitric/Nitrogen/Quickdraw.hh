@@ -80,24 +80,33 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< RgnHandle > : public std::unary_function< RgnHandle, void >
+	template <> struct disposer< RgnHandle >
 	{
+		typedef RgnHandle  argument_type;
+		typedef void       result_type;
+		
 		void operator()( RgnHandle h ) const
 		{
 			::DisposeRgn( h );
 		}
 	};
 	
-	template <> struct disposer< PicHandle > : public std::unary_function< PicHandle, void >
+	template <> struct disposer< PicHandle >
 	{
+		typedef PicHandle  argument_type;
+		typedef void       result_type;
+		
 		void operator()( PicHandle h ) const
 		{
 			::KillPicture( h );
 		}
 	};
 	
-	template <> struct disposer< PolyHandle > : public std::unary_function< PolyHandle, void >
+	template <> struct disposer< PolyHandle >
 	{
+		typedef PolyHandle  argument_type;
+		typedef void        result_type;
+		
 		void operator()( PolyHandle h ) const
 		{
 			::KillPoly( h );
@@ -123,8 +132,11 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< CTabHandle > : public std::unary_function< CTabHandle, void >
+	template <> struct disposer< CTabHandle >
 	{
+		typedef CTabHandle  argument_type;
+		typedef void        result_type;
+		
 		void operator()( CTabHandle h ) const
 		{
 			::DisposeCTable( h );
@@ -147,8 +159,11 @@ namespace Nitrogen
 	{
 		
 		template < class Port >
-		class PortDisposer : public std::unary_function< Port, void >
+		class PortDisposer
 		{
+			typedef Port  argument_type;
+			typedef void  result_type;
+			
 			private:
 				typedef pascal void (*Dispose)( Port );
 				
@@ -172,8 +187,11 @@ namespace nucleus
 {
 	
 	/*
-	template <> struct disposer< PixMapHandle > : public std::unary_function< PixMapHandle, void >
+	template <> struct disposer< PixMapHandle >
 	{
+		typedef PixMapHandle  argument_type;
+		typedef void          result_type;
+		
 		void operator()( PixMapHandle h ) const
 		{
 			::DisposePixMap( h );
@@ -182,16 +200,22 @@ namespace nucleus
 	*/
 	
 	
-	template <> struct disposer< PixPatHandle > : public std::unary_function< PixPatHandle, void >
+	template <> struct disposer< PixPatHandle >
 	{
+		typedef PixPatHandle  argument_type;
+		typedef void          result_type;
+		
 		void operator()( PixPatHandle h ) const
 		{
 			::DisposePixPat( h );
 		}
 	};
 	
-	template <> struct disposer< CCrsrHandle > : public std::unary_function< CCrsrHandle, void >
+	template <> struct disposer< CCrsrHandle >
 	{
+		typedef CCrsrHandle  argument_type;
+		typedef void         result_type;
+		
 		void operator()( CCrsrHandle h ) const
 		{
 			::DisposeCCursor( h );
@@ -199,8 +223,11 @@ namespace nucleus
 	};
 	
 	
-	template <> struct disposer< GDHandle > : public std::unary_function< GDHandle, void >
+	template <> struct disposer< GDHandle >
 	{
+		typedef GDHandle  argument_type;
+		typedef void      result_type;
+		
 		void operator()( GDHandle h ) const
 		{
 			::DisposeGDevice( h );

@@ -43,24 +43,33 @@ namespace nucleus
   {
    // Should these go through CFTypeRef's disposer?
    
-   template <> struct disposer< SecIdentityRef >: public std::unary_function< SecIdentityRef, void >
+   template <> struct disposer< SecIdentityRef >
      {
+      typedef SecIdentityRef  argument_type;
+      typedef void            result_type;
+      
       void operator()( SecIdentityRef kc ) const
         {
          (void) ::CFRelease ( kc );
         }
      };
 
-   template <> struct disposer< SecCertificateRef >: public std::unary_function< SecCertificateRef, void >
+   template <> struct disposer< SecCertificateRef >
      {
+      typedef SecCertificateRef  argument_type;
+      typedef void               result_type;
+      
       void operator()( SecCertificateRef kci ) const
         {
          (void) ::CFRelease ( kci );
         }
      };
 
-   template <> struct disposer< SecKeyRef >: public std::unary_function< SecKeyRef, void >
+   template <> struct disposer< SecKeyRef >
      {
+      typedef SecKeyRef  argument_type;
+      typedef void       result_type;
+      
       void operator()( SecKeyRef kcs ) const
         {
          (void) ::CFRelease ( kcs );

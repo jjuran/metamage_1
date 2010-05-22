@@ -83,16 +83,22 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-	template <> struct disposer< NavDialogRef >: public std::unary_function< NavDialogRef, void >
+	template <> struct disposer< NavDialogRef >
 		{
+		typedef NavDialogRef  argument_type;
+		typedef void          result_type;
+		
 		void operator()( NavDialogRef nav ) const
 			{
 				::NavDialogDispose ( nav );
 			}
 		};
 /*
-	template <> struct disposer< NavReplyRecord >: public std::unary_function< NavReplyRecord, void >
+	template <> struct disposer< NavReplyRecord >
 		{
+		typedef NavReplyRecord  argument_type;
+		typedef void            result_type;
+		
 		void operator()( NavReplyRecord &nav ) const
 			{
 				::NavDisposeReply ( &nav );

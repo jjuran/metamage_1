@@ -40,8 +40,11 @@ namespace nucleus
 	
 #if CALL_NOT_IN_CARBON
 	
-	template <> struct disposer< Nitrogen::DriverRefNum > : public std::unary_function< Nitrogen::DriverRefNum, void >
+	template <> struct disposer< Nitrogen::DriverRefNum >
 	{
+		typedef Nitrogen::DriverRefNum  argument_type;
+		typedef void                    result_type;
+		
 		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( DeviceManager );

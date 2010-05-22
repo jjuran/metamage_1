@@ -54,8 +54,11 @@ namespace nucleus
   {
    // Not actually used, since controls are owned by the parent window
    
-   template <> struct disposer< ControlRef >: public std::unary_function< ControlRef, void >
+   template <> struct disposer< ControlRef >
      {
+      typedef ControlRef  argument_type;
+      typedef void        result_type;
+      
       void operator()( ControlRef c ) const
         {
          ::DisposeControl( c );

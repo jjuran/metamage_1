@@ -66,8 +66,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< ComponentInstance > : public std::unary_function< ComponentInstance, void >
+	struct disposer< ComponentInstance >
 	{
+		typedef ComponentInstance  argument_type;
+		typedef void               result_type;
+		
 		void operator()( ComponentInstance component ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ComponentManager );

@@ -181,8 +181,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< OTConfigurationRef > : public std::unary_function< OTConfigurationRef, void >
+	struct disposer< OTConfigurationRef >
 	{
+		typedef OTConfigurationRef  argument_type;
+		typedef void                result_type;
+		
 		void operator()( OTConfigurationRef config ) const
 		{
 			::OTDestroyConfiguration( config );
@@ -190,8 +193,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< OTClientContextPtr > : public std::unary_function< OTClientContextPtr, void >
+	struct disposer< OTClientContextPtr >
 	{
+		typedef OTClientContextPtr  argument_type;
+		typedef void                result_type;
+		
 		void operator()( OTClientContextPtr context ) const
 		{
 			::CloseOpenTransportInContext( context );
@@ -199,8 +205,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< ProviderRef > : public std::unary_function< ProviderRef, void >
+	struct disposer< ProviderRef >
 	{
+		typedef ProviderRef  argument_type;
+		typedef void         result_type;
+		
 		void operator()( ProviderRef provider ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OpenTransport );

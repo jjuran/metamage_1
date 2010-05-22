@@ -268,16 +268,22 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, owned<CFStringRef> >
+   template <> struct converter< owned<CFStringRef>, HFSUniStr255 >
      {
+      typedef HFSUniStr255          argument_type;
+      typedef owned< CFStringRef >  result_type;
+      
       owned<CFStringRef> operator()( const HFSUniStr255& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in.unicode, in.length );
         }
      };
    
-   template <> struct converter< HFSUniStr255, CFStringRef >: public std::unary_function< CFStringRef, HFSUniStr255 >
+   template <> struct converter< HFSUniStr255, CFStringRef >
      {
+      typedef CFStringRef   argument_type;
+      typedef HFSUniStr255  result_type;
+      
       HFSUniStr255 operator()( CFStringRef in ) const
         {
          CFIndex length = Nitrogen::CFStringGetLength( in );
@@ -290,16 +296,22 @@ namespace nucleus
         }
      };
 
-   template <> struct converter< Nitrogen::UniString, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Nitrogen::UniString >
+   template <> struct converter< Nitrogen::UniString, HFSUniStr255 >
      {
+      typedef HFSUniStr255         argument_type;
+      typedef Nitrogen::UniString  result_type;
+      
       Nitrogen::UniString operator()( const HFSUniStr255& in ) const
         {
          return Nitrogen::UniString( in.unicode, in.unicode+in.length );
         }
      };
   
-   template <> struct converter< HFSUniStr255, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, HFSUniStr255 >
+   template <> struct converter< HFSUniStr255, Nitrogen::UniString >
      {
+      typedef Nitrogen::UniString  argument_type;
+      typedef HFSUniStr255         result_type;
+      
       HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
         {
          if ( in.size() > 255 )
@@ -311,8 +323,11 @@ namespace nucleus
         }
      };
 	
-	template <> struct disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >
+	template <> struct disposer< Nitrogen::FSFileRefNum >
 	{
+		typedef Nitrogen::FSFileRefNum  argument_type;
+		typedef void                    result_type;
+		
 		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
@@ -635,16 +650,22 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct converter< FSSpec, Nitrogen::FSDirSpec >: public std::unary_function< Nitrogen::FSDirSpec, FSSpec >
+	template <> struct converter< FSSpec, Nitrogen::FSDirSpec >
 	{
+		typedef Nitrogen::FSDirSpec  argument_type;
+		typedef FSSpec               result_type;
+		
 		FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
 		{
 			return Nitrogen::FSMakeFSSpec( dir );
 		}
 	};
 	
-	template <> struct converter< Nitrogen::FSDirSpec, FSSpec >: public std::unary_function< FSSpec, Nitrogen::FSDirSpec >
+	template <> struct converter< Nitrogen::FSDirSpec, FSSpec >
 	{
+		typedef FSSpec               argument_type;
+		typedef Nitrogen::FSDirSpec  result_type;
+		
 		Nitrogen::FSDirSpec operator()( const FSSpec& dir ) const
 		{
 			return Nitrogen::FSpMake_FSDirSpec( dir );
@@ -731,8 +752,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< FSRef, FSSpec >: public std::unary_function< FSSpec, FSRef >
+   template <> struct converter< FSRef, FSSpec >
      {
+       typedef FSSpec  argument_type;
+       typedef FSRef   result_type;
+       
        FSRef operator()( const FSSpec& spec ) const
         {
          return Nitrogen::FSpMakeFSRef( spec );
@@ -1031,16 +1055,22 @@ namespace Nitrogen
 
 namespace nucleus
 {   
-   template <> struct converter< FSSpec, FSRef >: public std::unary_function< FSRef, FSSpec >
+   template <> struct converter< FSSpec, FSRef >
      {
+      typedef FSRef   argument_type;
+      typedef FSSpec  result_type;
+      
       FSSpec operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSMakeFSSpec( ref );
         }
      };
 	
-	template <> struct converter< Nitrogen::FSDirSpec, FSRef > : public std::unary_function< FSRef, Nitrogen::FSDirSpec >
+	template <> struct converter< Nitrogen::FSDirSpec, FSRef >
 	{
+		typedef FSRef                argument_type;
+		typedef Nitrogen::FSDirSpec  result_type;
+		
 		Nitrogen::FSDirSpec operator()( const FSRef& ref ) const
 		{
 			return Nitrogen::FSpMake_FSDirSpec( Nitrogen::FSMakeFSSpec( ref ) );
@@ -1072,8 +1102,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<FSIterator>: public std::unary_function< FSIterator, void >
+   template <> struct disposer< FSIterator >
      {
+      typedef FSIterator  argument_type;
+      typedef void        result_type;
+      
       void operator()( FSIterator iterator ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
@@ -1286,8 +1319,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >
+   template <> struct disposer< Nitrogen::FSForkRef >
      {
+      typedef Nitrogen::FSForkRef  argument_type;
+      typedef void                 result_type;
+      
       void operator()( const Nitrogen::FSForkRef& fork ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
@@ -1325,8 +1361,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >
+   template <> struct disposer< Nitrogen::FSForkRefNum >
      {
+      typedef Nitrogen::FSForkRefNum  argument_type;
+      typedef void                    result_type;
+      
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
@@ -1875,16 +1914,22 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template < class String > struct converter< FSRef, String >: public std::unary_function< String, FSRef >
+   template < class String > struct converter< FSRef, String >
      {
+      typedef String  argument_type;
+      typedef FSRef   result_type;
+      
       FSRef operator()( const String& path ) const
         {
          return Nitrogen::FSPathMakeRef( path );
         }
      };
 
-   template <> struct converter< nucleus::string, FSRef >: public std::unary_function< FSRef, nucleus::string >
+   template <> struct converter< nucleus::string, FSRef >
      {
+      typedef FSRef            argument_type;
+      typedef nucleus::string  result_type;
+      
       nucleus::string operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSRefMakePath( ref );

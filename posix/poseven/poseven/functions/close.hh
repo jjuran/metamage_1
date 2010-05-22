@@ -29,8 +29,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >
+	struct disposer< poseven::fd_t >
 	{
+		typedef poseven::fd_t  argument_type;
+		typedef void           result_type;
+		
 		void operator()( poseven::fd_t fd ) const
 		{
 			poseven::handle_destruction_posix_result( ::close( fd ) );

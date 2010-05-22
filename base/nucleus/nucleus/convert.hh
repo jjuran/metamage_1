@@ -59,16 +59,16 @@
 #ifndef NUCLEUS_CONVERT_HH
 #define NUCLEUS_CONVERT_HH
 
-// Standard C++
-#include <functional>
-
 
 namespace nucleus
 {
 	
 	template < class Output, class Input >
-	struct converter: public std::unary_function< Input, Output >
+	struct converter
 	{
+		typedef Input   argument_type;
+		typedef Output  result_type;
+		
 		Output operator()( const Input& in ) const      { return Output( in ); }
 	};
 	

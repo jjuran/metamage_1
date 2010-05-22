@@ -120,8 +120,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct converter< LongDateTime, LongDateRec > : public std::unary_function< LongDateRec, LongDateTime >
+	struct converter< LongDateTime, LongDateRec >
 	{
+		typedef LongDateRec   argument_type;
+		typedef LongDateTime  result_type;
+		
 		LongDateTime operator()( const LongDateRec& input ) const
 		{
 			return Nitrogen::LongDateToSeconds( input );
@@ -129,8 +132,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct converter< LongDateRec, LongDateTime > : public std::unary_function< LongDateTime, LongDateRec >
+	struct converter< LongDateRec, LongDateTime >
 	{
+		typedef LongDateTime  argument_type;
+		typedef LongDateRec   result_type;
+		
 		LongDateRec operator()( const LongDateTime& input ) const
 		{
 			return Nitrogen::LongSecondsToDate( input );
@@ -138,8 +144,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct converter< Nitrogen::DateTime, DateTimeRec > : public std::unary_function< DateTimeRec, Nitrogen::DateTime >
+	struct converter< Nitrogen::DateTime, DateTimeRec >
 	{
+		typedef DateTimeRec         argument_type;
+		typedef Nitrogen::DateTime  result_type;
+		
 		Nitrogen::DateTime operator()( const DateTimeRec& input ) const
 		{
 			return Nitrogen::DateToSeconds( input );
@@ -147,8 +156,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct converter< DateTimeRec, Nitrogen::DateTime > : public std::unary_function< Nitrogen::DateTime, DateTimeRec >
+	struct converter< DateTimeRec, Nitrogen::DateTime >
 	{
+		typedef Nitrogen::DateTime  argument_type;
+		typedef DateTimeRec         result_type;
+		
 		DateTimeRec operator()( const Nitrogen::DateTime& input ) const
 		{
 			return Nitrogen::SecondsToDate( input );

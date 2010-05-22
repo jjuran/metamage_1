@@ -436,8 +436,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< EventRef >: public std::unary_function< EventRef, void >
+   struct disposer< EventRef >
      {
+      typedef EventRef  argument_type;
+      typedef void      result_type;
+      
       void operator()( EventRef toDispose ) const
         {
          ::ReleaseEvent( toDispose );
@@ -1325,8 +1328,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< EventHandlerRef >: public std::unary_function< EventHandlerRef, void >
+   struct disposer< EventHandlerRef >
      {
+      typedef EventHandlerRef  argument_type;
+      typedef void             result_type;
+      
       void operator()( EventHandlerRef toDispose ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::CarbonEventManager );
@@ -2553,8 +2559,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct disposer< EventHotKeyRef >: public std::unary_function< EventHotKeyRef, void >
+   struct disposer< EventHotKeyRef >
      {
+      typedef EventHotKeyRef  argument_type;
+      typedef void            result_type;
+      
       void operator()( EventHotKeyRef toDispose ) const
         {
          ::UnregisterEventHotKey( toDispose );

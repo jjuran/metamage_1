@@ -479,8 +479,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Data > : public std::unary_function< AEDesc, void >
+	struct disposer< Nitrogen::AEDesc_Data >
 	{
+		typedef AEDesc  argument_type;
+		typedef void    result_type;
+		
 		// parameter can't be const
 		void operator()( AEDesc desc ) const
 		{
@@ -515,8 +518,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Token > : public std::unary_function< AEDesc, void >
+	struct disposer< Nitrogen::AEDesc_Token >
 	{
+		typedef AEDesc  argument_type;
+		typedef void    result_type;
+		
 		// parameter can't be const
 		void operator()( AEDesc desc ) const
 		{
@@ -548,8 +554,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< AEKeyDesc > : public std::unary_function< AEKeyDesc, void >
+	struct disposer< AEKeyDesc >
 	{
+		typedef AEKeyDesc  argument_type;
+		typedef void       result_type;
+		
 		// parameter can't be const
 		void operator()( AEKeyDesc keyDesc ) const
 		{
@@ -745,8 +754,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::AECoercionHandler > : public std::unary_function< Nitrogen::AECoercionHandler, void >
+	struct disposer< Nitrogen::AECoercionHandler >
 	{
+		typedef Nitrogen::AECoercionHandler  argument_type;
+		typedef void                         result_type;
+		
 		void operator()( const Nitrogen::AECoercionHandler& installation ) const
 		{
 			::Nitrogen::HandleDestructionOSStatus( ::AERemoveCoercionHandler( installation.fromType,

@@ -131,8 +131,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< DragRef >: public std::unary_function< DragRef, void >
+   template <> struct disposer< DragRef >
      {
+      typedef DragRef  argument_type;
+      typedef void     result_type;
+      
       void operator()( DragRef i ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::DragManager );

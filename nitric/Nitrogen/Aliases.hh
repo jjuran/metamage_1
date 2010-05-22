@@ -128,8 +128,11 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template <> struct converter< nucleus::owned< AliasHandle >, FSRef >: public std::unary_function< FSRef, nucleus::owned< AliasHandle > >
+   template <> struct converter< nucleus::owned< AliasHandle >, FSRef >
      {
+      typedef FSRef                          argument_type;
+      typedef nucleus::owned< AliasHandle >  result_type;
+      
       nucleus::owned< AliasHandle > operator()( const FSRef& ref ) const
         {
          return Nitrogen::FSNewAlias( ref );
@@ -181,8 +184,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct converter< FSRef, AliasHandle >: public std::unary_function< AliasHandle, FSRef >
+   template <> struct converter< FSRef, AliasHandle >
      {
+      typedef AliasHandle  argument_type;
+      typedef FSRef        result_type;
+      
       FSRef operator()( AliasHandle alias ) const
         {
          return Nitrogen::FSResolveAlias( alias );

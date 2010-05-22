@@ -93,8 +93,11 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< ICInstance > : public std::unary_function< ICInstance, void >
+	template <> struct disposer< ICInstance >
 	{
+		typedef ICInstance  argument_type;
+		typedef void        result_type;
+		
 		void operator()( ICInstance instance ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::InternetConfig );

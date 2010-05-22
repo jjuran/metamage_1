@@ -404,8 +404,10 @@ namespace nucleus
 	
 	template < class UPP_Details >
 	struct disposer< Nitrogen::UPP< UPP_Details > >
-	         : public std::unary_function< Nitrogen::UPP< UPP_Details >, void >
-	{      
+	{
+		typedef Nitrogen::UPP< UPP_Details >  argument_type;
+		typedef void                          result_type;
+		
 		void operator()( Nitrogen::UPP< UPP_Details > upp ) const
 		{
 			UPP_Details::Dispose( upp );
@@ -414,8 +416,10 @@ namespace nucleus
 	
 	template < class UPP_Details >
 	struct disposer< Nitrogen::GlueUPP< UPP_Details > >
-	         : public std::unary_function< Nitrogen::GlueUPP< UPP_Details >, void >
-	{      
+	{
+		typedef Nitrogen::GlueUPP< UPP_Details >  argument_type;
+		typedef void                              result_type;
+		
 		void operator()( Nitrogen::GlueUPP< UPP_Details > upp ) const
 		{
 			// Do nothing; glue UPPs aren't dynamically allocated

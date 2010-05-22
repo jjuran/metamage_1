@@ -86,8 +86,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::OSAID > : public std::unary_function< Nitrogen::OSAID, void >
+	struct disposer< Nitrogen::OSAID >
 	{
+		typedef Nitrogen::OSAID  argument_type;
+		typedef void             result_type;
+		
 		private:
 			shared< ComponentInstance > itsComponent;
 		

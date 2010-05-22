@@ -157,8 +157,11 @@ namespace Nitrogen {
 namespace nucleus
   {
    template <>
-   struct converter< Nitrogen::UniString, CFStringRef >: public std::unary_function< CFStringRef, Nitrogen::UniString >
+   struct converter< Nitrogen::UniString, CFStringRef >
      {
+      typedef CFStringRef          argument_type;
+      typedef Nitrogen::UniString  result_type;
+      
       Nitrogen::UniString operator()( const CFStringRef& in ) const
         {
          return Nitrogen::CFStringGetCharacters( in );
@@ -166,8 +169,11 @@ namespace nucleus
      };
    
    template <>
-   struct converter< nucleus::owned<CFStringRef>, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, nucleus::owned<CFStringRef> >
+   struct converter< nucleus::owned< CFStringRef >, Nitrogen::UniString >
      {
+      typedef Nitrogen::UniString            argument_type;
+      typedef nucleus::owned< CFStringRef >  result_type;
+      
       nucleus::owned<CFStringRef> operator()( const Nitrogen::UniString& in ) const
         {
          return Nitrogen::CFStringCreateWithCharacters( in );
@@ -175,8 +181,11 @@ namespace nucleus
      };
    
    template <>
-   struct converter< nucleus::owned<CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, nucleus::owned<CFStringRef> >
+   struct converter< nucleus::owned< CFStringRef >, ConstStr255Param >
      {
+      typedef ConstStr255Param               argument_type;
+      typedef nucleus::owned< CFStringRef >  result_type;
+      
       private:
          CFStringEncoding encoding;
       
@@ -192,8 +201,11 @@ namespace nucleus
      };
    
    template <>
-   struct converter< nucleus::owned<CFStringRef>, const char * >: public std::unary_function< const char *, nucleus::owned<CFStringRef> >
+   struct converter< nucleus::owned< CFStringRef >, const char* >
      {
+      typedef const char*                    argument_type;
+      typedef nucleus::owned< CFStringRef >  result_type;
+      
       private:
          CFStringEncoding encoding;
       
@@ -209,8 +221,11 @@ namespace nucleus
      };
    
    template <>
-   struct converter< nucleus::owned<CFStringRef>, double >: public std::unary_function< double, nucleus::owned<CFStringRef> >
+   struct converter< nucleus::owned< CFStringRef >, double >
      {
+      typedef double                         argument_type;
+      typedef nucleus::owned< CFStringRef >  result_type;
+      
       nucleus::owned<CFStringRef> operator()( const double& in ) const
         {
          CFStringRef result = ::CFStringCreateWithFormat( kCFAllocatorDefault, 0, CFSTR("%g"), in );
@@ -221,8 +236,11 @@ namespace nucleus
      };
    
    template <>
-   struct converter< double, CFStringRef >: public std::unary_function< CFStringRef, double >
+   struct converter< double, CFStringRef >
      {
+      typedef CFStringRef  argument_type;
+      typedef double       result_type;
+      
       double operator()( const CFStringRef& in ) const
         {
          return Nitrogen::CFStringGetDoubleValue( in );

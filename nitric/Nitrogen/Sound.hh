@@ -174,8 +174,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >
+	struct disposer< Nitrogen::SoundInputRefNum >
 	{
+		typedef Nitrogen::SoundInputRefNum  argument_type;
+		typedef void                        result_type;
+		
 		void operator()( Nitrogen::SoundInputRefNum refNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::SoundManager );
@@ -217,8 +220,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::SPBGetDeviceInfo_VariableLengthArray > : public std::unary_function< Nitrogen::SPBGetDeviceInfo_VariableLengthArray, void >
+	struct disposer< Nitrogen::SPBGetDeviceInfo_VariableLengthArray >
 	{
+		typedef Nitrogen::SPBGetDeviceInfo_VariableLengthArray  argument_type;
+		typedef void                                            result_type;
+		
 		void operator()( const Nitrogen::SPBGetDeviceInfo_VariableLengthArray& array ) const
 		{
 			disposer< Nitrogen::Handle >()( array.data );
@@ -419,8 +425,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::SPB_IndexedDevice > : public std::unary_function< Nitrogen::SPB_IndexedDevice, void >
+	struct disposer< Nitrogen::SPB_IndexedDevice >
 	{
+		typedef Nitrogen::SPB_IndexedDevice  argument_type;
+		typedef void                         result_type;
+		
 		void operator()( const Nitrogen::SPB_IndexedDevice& device ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::SoundManager );

@@ -73,8 +73,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< Nitrogen::Ptr > : public std::unary_function< Nitrogen::Ptr, void >
+	template <> struct disposer< Nitrogen::Ptr >
 	{
+		typedef Nitrogen::Ptr  argument_type;
+		typedef void           result_type;
+		
 		void operator()( Nitrogen::Ptr ptr ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
@@ -118,8 +121,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::Handle>: public std::unary_function< Nitrogen::Handle, void >
+   template <> struct disposer<Nitrogen::Handle>
      {
+      typedef Nitrogen::Handle  argument_type;
+      typedef void              result_type;
+      
       void operator()( Nitrogen::Handle h ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );

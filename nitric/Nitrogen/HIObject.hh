@@ -60,8 +60,11 @@ namespace nucleus
 //	marshall sez: Dang! - we have to have our own disposer because we don't have "HIObjectGetTypeID"
 //	template <> struct disposer_traits< HIObjectRef > : disposer_traits<CFTypeRef>  {};
 //	template <> struct CFType_Traits< HIObjectRef > : Basic_CFType_Traits< CFDateRef, ::HIObjectGetTypeID > {};  }
-	template <> struct disposer< HIObjectRef >: public std::unary_function< HIObjectRef, void >
+	template <> struct disposer< HIObjectRef >
 		{
+		typedef HIObjectRef  argument_type;
+		typedef void         result_type;
+		
 		void operator()( HIObjectRef hi ) const
 			{
 				::CFRelease ( hi );
@@ -81,8 +84,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< HIObjectClassRef >: public std::unary_function< HIObjectClassRef, void >
+   template <> struct disposer< HIObjectClassRef >
 		{
+		typedef HIObjectClassRef  argument_type;
+		typedef void              result_type;
+		
 		void operator()( HIObjectClassRef hi ) const
 			{
 				(void) ::HIObjectUnregisterClass ( hi );

@@ -18,8 +18,11 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	struct WindowCloser : public std::unary_function< WindowRef, void >
+	struct WindowCloser
 	{
+		typedef WindowRef  argument_type;
+		typedef void       result_type;
+		
 		void operator()( WindowRef window ) const
 		{
 			::CloseWindow( window );

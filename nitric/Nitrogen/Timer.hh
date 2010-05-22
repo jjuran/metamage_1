@@ -42,8 +42,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< TMTaskPtr > : public std::unary_function< TMTaskPtr, void >
+	struct disposer< TMTaskPtr >
 	{
+		typedef TMTaskPtr  argument_type;
+		typedef void       result_type;
+		
 		void operator()( TMTaskPtr tmTaskPtr ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::TimeManager );

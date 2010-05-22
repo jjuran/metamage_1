@@ -69,8 +69,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Movie > : public std::unary_function< Movie, void >
+	struct disposer< Movie >
 	{
+		typedef Movie  argument_type;
+		typedef void   result_type;
+		
 		void operator()( Movie movie ) const
 		{
 			::DisposeMovie( movie );
@@ -78,8 +81,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >
+	struct disposer< Nitrogen::MovieFileRefNum >
 	{
+		typedef Nitrogen::MovieFileRefNum  argument_type;
+		typedef void                       result_type;
+		
 		void operator()( Nitrogen::MovieFileRefNum refNum ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
@@ -89,8 +95,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >
+	struct disposer< Nitrogen::FullScreenContextPtr >
 	{
+		typedef Nitrogen::FullScreenContextPtr  argument_type;
+		typedef void                            result_type;
+		
 		void operator()( Nitrogen::FullScreenContextPtr context ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );

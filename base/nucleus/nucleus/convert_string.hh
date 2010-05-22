@@ -72,12 +72,11 @@ namespace nucleus
 	template < class Char, class Traits, class Allocator >
 	struct converter< std::basic_string< Char, Traits, Allocator >,
 	                  std::basic_string< Char, Traits, Allocator > >
-	: public std::unary_function< std::basic_string< Char, Traits, Allocator >,
-	                              std::basic_string< Char, Traits, Allocator > >
 	{
-		typedef std::basic_string< Char, Traits, Allocator > String;
+		typedef std::basic_string< Char, Traits, Allocator >  argument_type;
+		typedef std::basic_string< Char, Traits, Allocator >  result_type;
 		
-		const String& operator()( const String& input ) const
+		const result_type& operator()( const argument_type& input ) const
 		{
 			return input;
 		}
@@ -88,8 +87,10 @@ namespace nucleus
 	           class Allocator,
 	           class Input >
 	struct converter< std::basic_string< CharT, Traits, Allocator >, Input >
-	           : public std::unary_function< Input, std::basic_string< CharT, Traits, Allocator > >
 	{
+		typedef Input                                          argument_type;
+		typedef std::basic_string< CharT, Traits, Allocator >  result_type;
+		
 		std::basic_string< CharT, Traits, Allocator > operator()( const Input& input ) const
 		{
 			std::basic_ostringstream< CharT, Traits, Allocator > stream;
@@ -107,8 +108,10 @@ namespace nucleus
 	           class Traits,
 	           class Allocator >
 	struct converter< Output, std::basic_string< CharT, Traits, Allocator > >
-	         : public std::unary_function< std::basic_string< CharT, Traits, Allocator >, Output >
 	{
+		typedef std::basic_string< CharT, Traits, Allocator >  argument_type;
+		typedef Output                                         result_type;
+		
 		Output operator()( const std::basic_string< CharT, Traits, Allocator >& input ) const
 		{
 			std::basic_istringstream< CharT, Traits, Allocator > stream( input );

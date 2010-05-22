@@ -11,9 +11,6 @@
 #include <CRMSerialDevices.h>
 #endif
 
-// Standard C++
-#include <functional>
-
 // Nitrogen
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
@@ -52,8 +49,11 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer< CRMIconHandle > : public std::unary_function< CRMIconHandle, void >
+	template <> struct disposer< CRMIconHandle >
 	{
+		typedef CRMIconHandle  argument_type;
+		typedef void           result_type;
+		
 		void operator()( CRMIconHandle deviceIcon ) const
 		{
 			Nitrogen::IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
@@ -63,8 +63,11 @@ namespace nucleus
 		}
 	};
 	
-	template <> struct disposer< Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, void >
+	template <> struct disposer< Nitrogen::CRMSerialPtr >
 	{
+		typedef Nitrogen::CRMSerialPtr  argument_type;
+		typedef void                    result_type;
+		
 		void operator()( Nitrogen::CRMSerialPtr crmSerial ) const
 		{
 			disposer< Nitrogen::Handle >()( crmSerial->inputDriverName  );

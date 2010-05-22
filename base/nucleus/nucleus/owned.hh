@@ -163,7 +163,7 @@ namespace nucleus
 		};
 		
 		// If zero, the disposer is stateless
-		static const std::size_t value = sizeof (derived) - sizeof (int);
+		static const unsigned long value = sizeof (derived) - sizeof (int);
 	};
 	
 	
@@ -407,8 +407,11 @@ namespace nucleus
 	// This is for arrays.  The whole class is templated because array
 	// conversions are bad.
 	template < class T >
-	struct dispose_with_array_delete : public std::unary_function< T*, void >
+	struct dispose_with_array_delete
 	{
+		typedef T*    argument_type;
+		typedef void  result_type;
+		
 		void operator()( T *p ) const
 		{
 			delete[] p;

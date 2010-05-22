@@ -34,8 +34,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< CGDirectDisplayID > : public std::unary_function< CGDirectDisplayID, void >
+	template <> struct disposer< CGDirectDisplayID >
 	{
+		typedef CGDirectDisplayID  argument_type;
+		typedef void               result_type;
+		
 		void operator()( CGDirectDisplayID display ) const
 		{
 			::CGDisplayRelease( display );

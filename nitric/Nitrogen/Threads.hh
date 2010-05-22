@@ -95,8 +95,11 @@ namespace Nitrogen
 namespace nucleus
   {
 	template <>
-	struct disposer< Nitrogen::ThreadID > : public std::unary_function< Nitrogen::ThreadID, void >
+	struct disposer< Nitrogen::ThreadID >
 	{
+		typedef ThreadID  argument_type;
+		typedef void      result_type;
+		
 		void operator()( Nitrogen::ThreadID thread ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ThreadManager );
@@ -112,12 +115,15 @@ namespace Nitrogen
 	namespace Detail
 	{
 		
-		class ThreadDisposer : public std::unary_function< ThreadID, void >
+		class ThreadDisposer
 		{
 			private:
 				bool recycleThread;
 			
 			public:
+				typedef ThreadID  argument_type;
+				typedef void      result_type;
+				
 				ThreadDisposer( bool recycleThread = false ) : recycleThread( recycleThread )  {}
 				
 				void operator()( ThreadID thread ) const

@@ -106,8 +106,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< Nitrogen::MenuID >: public std::unary_function< Nitrogen::MenuID, void >
+   template <> struct disposer< Nitrogen::MenuID >
      {
+      typedef Nitrogen::MenuID  argument_type;
+      typedef void              result_type;
+      
       void operator()( Nitrogen::MenuID id ) const
         {
          ::DeleteMenu( id );
@@ -130,8 +133,11 @@ namespace Nitrogen
 
 namespace nucleus
   {   
-   template <> struct disposer< MenuRef >: public std::unary_function< MenuRef, void >
+   template <> struct disposer< MenuRef >
      {
+      typedef MenuRef  argument_type;
+      typedef void     result_type;
+      
       void operator()( MenuRef m ) const
         {
          ::DisposeMenu( m );

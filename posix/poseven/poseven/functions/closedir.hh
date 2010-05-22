@@ -29,8 +29,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >
+	struct disposer< poseven::dir_t >
 	{
+		typedef poseven::dir_t  argument_type;
+		typedef void            result_type;
+		
 		void operator()( poseven::dir_t dir ) const
 		{
 			poseven::handle_destruction_posix_result( ::closedir( dir ) );

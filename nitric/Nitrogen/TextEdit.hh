@@ -64,8 +64,11 @@ namespace Nitrogen
 namespace nucleus
 {
 	template <>
-	struct disposer< TEHandle > : public std::unary_function< TEHandle, void >
+	struct disposer< TEHandle >
 	{
+		typedef TEHandle  argument_type;
+		typedef void      result_type;
+		
 		void operator()( TEHandle teH ) const
 		{
 			::TEDispose( teH );

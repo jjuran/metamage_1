@@ -69,8 +69,11 @@ typedef SecTrustResultType SecTrustUserSetting;
 
 namespace nucleus
   {
-   template <> struct disposer< SecTrustRef >: public std::unary_function< SecTrustRef, void >
+   template <> struct disposer< SecTrustRef >
      {
+      typedef SecTrustRef  argument_type;
+      typedef void         result_type;
+      
       void operator()( SecTrustRef kc ) const
         {
          (void) ::CFRelease ( kc );

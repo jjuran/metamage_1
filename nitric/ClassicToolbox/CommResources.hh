@@ -72,11 +72,12 @@ namespace Nitrogen
 	}
 	
 	template < CRMDeviceType crmDeviceType >
-	struct CRMAttributes_Getter : public std::unary_function< CRMRecPtr, typename CRMAttributes_Traits< crmDeviceType >::Type >
+	struct CRMAttributes_Getter
 	{
-		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
+		typedef CRMRecPtr                                             argument_type;
+		typedef typename CRMAttributes_Traits< crmDeviceType >::Type  result_type;
 		
-		Type operator()( CRMRecPtr crmRec ) const
+		result_type operator()( CRMRecPtr crmRec ) const
 		{
 			return GetCRMAttributes< crmDeviceType >( crmRec );
 		}
@@ -139,16 +140,22 @@ namespace nucleus
 	#pragma mark ¥ Specializations ¥
 	
 	template < Nitrogen::CRMDeviceType crmDeviceType >
-	struct disposer< Nitrogen::CRMAttributes > : public std::unary_function< Nitrogen::CRMAttributes, void >
+	struct disposer< Nitrogen::CRMAttributes >
 	{
+		typedef Nitrogen::CRMAttributes  argument_type;
+		typedef void                     result_type;
+		
 		void operator()( Nitrogen::CRMAttributes crmAttributes ) const
 		{
 			Nitrogen::DisposeCRMAttributes( crmDeviceType, crmAttributes );
 		}
 	};
 	
-	template <> struct disposer< CRMRecPtr > : public std::unary_function< CRMRecPtr, void >
+	template <> struct disposer< CRMRecPtr >
 	{
+		typedef CRMRecPtr  argument_type;
+		typedef void       result_type;
+		
 		void operator()( CRMRecPtr crmRec ) const
 		{
 			Nitrogen::DisposeCRMAttributes
@@ -166,8 +173,11 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	struct CRMRemover : public std::unary_function< CRMRecPtr, void >
+	struct CRMRemover
 	{
+		typedef CRMRecPtr  argument_type;
+		typedef void       result_type;
+		
 		void operator()( CRMRecPtr crmRec ) const
 		{
 			::Nitrogen::HandleDestructionOSStatus( ::CRMRemove( crmRec ) );

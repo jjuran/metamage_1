@@ -154,8 +154,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< CIconHandle > : public std::unary_function< CIconHandle, void >
+	template <> struct disposer< CIconHandle >
 	{
+		typedef CIconHandle  argument_type;
+		typedef void         result_type;
+		
 		void operator()( CIconHandle h ) const
 		{
 			//NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
@@ -198,8 +201,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <> struct disposer< Nitrogen::IconSuiteRef > : public std::unary_function< Nitrogen::IconSuiteRef, void >
+	template <> struct disposer< Nitrogen::IconSuiteRef >
 	{
+		typedef Nitrogen::IconSuiteRef  argument_type;
+		typedef void                    result_type;
+		
 		// DisposeIconSuite() takes a Boolean argument that tells it whether to
 		// dispose the individual icon data associated with the icon suite.
 		// It will not dispose resource handles, regardless of the value passed.
@@ -220,8 +226,11 @@ namespace nucleus
 namespace Nitrogen
   {
 	
-	struct DisposeIconSuiteButNotData : public std::unary_function< IconSuiteRef, void >
+	struct DisposeIconSuiteButNotData
 	{
+		typedef IconSuiteRef  argument_type;
+		typedef void          result_type;
+		
 		enum { disposeData = false };
 		
 		void operator()( IconSuiteRef i ) const
@@ -238,8 +247,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< IconRef >: public std::unary_function< IconRef, void >
+   template <> struct disposer< IconRef >
      {
+      typedef IconRef  argument_type;
+      typedef void     result_type;
+      
       void operator()( IconRef i ) const
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );

@@ -32,8 +32,11 @@ namespace nucleus
 		/* I don't know how to safely do bounds checking when the radices aren't equal. --LL */
 	
 	template < class Output, class Input >
-	struct numeric_converter< Output, Input, true >: public std::unary_function< Input, Output >
+	struct numeric_converter< Output, Input, true >
 	{
+		typedef Input   argument_type;
+		typedef Output  result_type;
+		
 		Output operator()( const Input& input )
 		{
 			const Input in = ( !std::numeric_limits< Input >::is_integer && std::numeric_limits< Output >::is_integer )

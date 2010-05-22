@@ -138,8 +138,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< CFragConnectionID > : public std::unary_function< CFragConnectionID, void >
+	struct disposer< CFragConnectionID >
 	{
+		typedef CFragConnectionID  argument_type;
+		typedef void               result_type;
+		
 		void operator()( CFragConnectionID connID ) const
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::CodeFragmentManager );

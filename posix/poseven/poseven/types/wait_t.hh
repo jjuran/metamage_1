@@ -78,8 +78,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct converter< poseven::exit_t, poseven::wait_t > : public std::unary_function< poseven::wait_t, poseven::exit_t >
+	struct converter< poseven::exit_t, poseven::wait_t >
 	{
+		typedef poseven::wait_t  argument_type;
+		typedef poseven::exit_t  result_type;
+		
 		poseven::exit_t operator()( poseven::wait_t status ) const
 		{
 			using namespace poseven;

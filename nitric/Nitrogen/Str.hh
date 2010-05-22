@@ -103,8 +103,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct converter< nucleus::string, const unsigned char * > : public std::unary_function< const unsigned char *, nucleus::string >
+	struct converter< nucleus::string, const unsigned char * >
 	{
+		typedef const unsigned char*  argument_type;
+		typedef nucleus::string       result_type;
+		
 		nucleus::string operator()( const unsigned char *input ) const;
 	};
 	
@@ -129,8 +132,11 @@ namespace nucleus
 	
 	// Convert StringHandle to nucleus::string
 	template <>
-	struct converter< nucleus::string, unsigned char ** >: public std::unary_function< unsigned char **, nucleus::string >
+	struct converter< nucleus::string, unsigned char ** >
 	{
+		typedef unsigned char**  argument_type;
+		typedef nucleus::string  result_type;
+		
 		nucleus::string operator()( unsigned char **input ) const
 		{
 			// We don't need to lock the handle because we copy it to the stack

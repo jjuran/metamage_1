@@ -45,8 +45,11 @@ namespace GrafX
 namespace nucleus
 {
 	
-	template <> struct converter< GrafX::Color, ::RGBColor >: public std::unary_function< ::RGBColor, GrafX::Color >
+	template <> struct converter< GrafX::Color, ::RGBColor >
 	{
+		typedef ::RGBColor    argument_type;
+		typedef GrafX::Color  result_type;
+		
 		GrafX::Color operator()( const ::RGBColor& color ) const
 		{
 			using GrafX::gMaxIntensity;
@@ -57,8 +60,11 @@ namespace nucleus
 		}
 	};
 	
-	template <> struct converter< ::RGBColor, GrafX::Color >: public std::unary_function< GrafX::Color, ::RGBColor >
+	template <> struct converter< ::RGBColor, GrafX::Color >
 	{
+		typedef GrafX::Color  argument_type;
+		typedef ::RGBColor    result_type;
+		
 		::RGBColor operator()( const GrafX::Color& color ) const
 		{
 			using GrafX::gMaxIntensity;

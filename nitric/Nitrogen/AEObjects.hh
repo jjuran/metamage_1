@@ -288,8 +288,11 @@ namespace nucleus
 {
 	
 	template <>
-	struct disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >
+	struct disposer< Nitrogen::OSLAccessor >
 	{
+		typedef Nitrogen::OSLAccessor  argument_type;
+		typedef void                   result_type;
+		
 		void operator()( const Nitrogen::OSLAccessor& installation ) const
 		{
 			::Nitrogen::HandleDestructionOSStatus

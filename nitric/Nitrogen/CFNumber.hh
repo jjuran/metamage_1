@@ -140,8 +140,11 @@ namespace Nitrogen
 
 
    template < class NumericType >
-   struct ConverterFromCFNumber: public std::unary_function< CFNumberRef, NumericType >
+   struct ConverterFromCFNumber
      {
+      typedef CFNumberRef  argument_type;
+      typedef NumericType  result_type;
+      
       bool operator()( const CFNumberRef& in ) const
         {
          return Nitrogen::CFNumberGetValue< NumericType >( in );
@@ -171,8 +174,11 @@ namespace Nitrogen
   {
 
    template < class NumericType >
-   struct ConverterToCFNumber: public std::unary_function< NumericType, nucleus::owned<CFNumberRef> >
+   struct ConverterToCFNumber
      {
+      typedef NumericType                    argument_type;
+      typedef nucleus::owned< CFNumberRef >  result_type;
+      
       nucleus::owned<CFNumberRef> operator()( const NumericType& in )
         {
          return CFNumberCreate( in );

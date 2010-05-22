@@ -82,8 +82,11 @@ namespace Nitrogen
 }
 
 namespace nucleus {
-   template <> struct disposer<Nitrogen::CFTypeRef>: public std::unary_function< Nitrogen::CFTypeRef, void >
+   template <> struct disposer<Nitrogen::CFTypeRef>
      {
+      typedef Nitrogen::CFTypeRef  argument_type;
+      typedef void                 result_type;
+      
       void operator()( Nitrogen::CFTypeRef cf ) const
         {
          ::CFRelease( cf );

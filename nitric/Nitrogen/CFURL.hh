@@ -238,13 +238,19 @@ namespace Nitrogen
 
 namespace nucleus
   {
-  template <> struct converter< FSRef, CFURLRef >: public std::unary_function< CFURLRef, FSRef >
+  template <> struct converter< FSRef, CFURLRef >
      {
+      typedef CFURLRef  argument_type;
+      typedef FSRef     result_type;
+      
       FSRef operator()( CFURLRef url ) const;
      };
 
-   template <> struct converter< nucleus::owned<CFURLRef>, FSRef >: public std::unary_function< FSRef, nucleus::owned<CFURLRef> >
+   template <> struct converter< nucleus::owned< CFURLRef >, FSRef >
      {
+      typedef FSRef                       argument_type;
+      typedef nucleus::owned< CFURLRef >  result_type;
+      
       nucleus::owned<CFURLRef> operator()( const FSRef& ref ) const
         {
          return Nitrogen::CFURLCreateFromFSRef( ref );

@@ -106,8 +106,11 @@ namespace Nitrogen
 namespace nucleus
   {
    template <>
-   struct converter< bool, Nitrogen::CFPropertyListRef >: public std::unary_function< Nitrogen::CFPropertyListRef, bool >
+   struct converter< bool, Nitrogen::CFPropertyListRef >
      {
+      typedef Nitrogen::CFPropertyListRef  argument_type;
+      typedef bool                         result_type;
+      
       bool operator()( const ::CFPropertyListRef& in ) const
         {
          return convert< bool >( Nitrogen::CFCast<CFBooleanRef>( in ) );
@@ -115,8 +118,11 @@ namespace nucleus
      };
 
    template <>
-   struct converter< nucleus::owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, nucleus::owned<Nitrogen::CFPropertyListRef> >
+   struct converter< nucleus::owned<Nitrogen::CFPropertyListRef>, bool >
      {
+      typedef bool                                           argument_type;
+      typedef nucleus::owned< Nitrogen::CFPropertyListRef >  result_type;
+      
       nucleus::owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
         {
          return nucleus::owned<Nitrogen::CFPropertyListRef>( convert< nucleus::owned<CFBooleanRef> >( in ) );

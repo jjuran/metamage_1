@@ -258,8 +258,11 @@ namespace Nitrogen
 
 namespace nucleus
   {
-   template <> struct disposer< WindowRef >: public std::unary_function< WindowRef, void >
+   template <> struct disposer< WindowRef >
      {
+      typedef WindowRef  argument_type;
+      typedef void       result_type;
+      
       void operator()( WindowRef w ) const
         {
          ::DisposeWindow( w );

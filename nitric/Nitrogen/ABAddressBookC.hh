@@ -70,48 +70,66 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-   template <> struct disposer< ABRecordRef >: public std::unary_function< ABRecordRef, void >
+   template <> struct disposer< ABRecordRef >
      {
+      typedef ABRecordRef  argument_type;
+      typedef void         result_type;
+      
       void operator()( ABRecordRef rec ) const
         {
          ::CFRelease ( rec );
         }
      };
 
-   template <> struct disposer< ABPersonRef >: public std::unary_function< ABPersonRef, void >
+   template <> struct disposer< ABPersonRef >
      {
+      typedef ABPersonRef  argument_type;
+      typedef void         result_type;
+      
       void operator()( ABPersonRef pers ) const
         {
          ::CFRelease ( pers );
         }
      };
 
-   template <> struct disposer< ABSearchElementRef >: public std::unary_function< ABSearchElementRef, void >
+   template <> struct disposer< ABSearchElementRef >
      {
+      typedef ABSearchElementRef  argument_type;
+      typedef void                result_type;
+      
       void operator()( ABSearchElementRef se ) const
         {
          ::CFRelease ( se );
         }
      };
 
-   template <> struct disposer< ABGroupRef >: public std::unary_function< ABGroupRef, void >
+   template <> struct disposer< ABGroupRef >
      {
+      typedef ABGroupRef  argument_type;
+      typedef void        result_type;
+      
       void operator()( ABGroupRef gr ) const
         {
          ::CFRelease ( gr );
         }
      };
 
-   template <> struct disposer< ABMultiValueRef >: public std::unary_function< ABMultiValueRef, void >
+   template <> struct disposer< ABMultiValueRef >
      {
+      typedef ABMultiValueRef  argument_type;
+      typedef void             result_type;
+      
       void operator()( ABMultiValueRef mv ) const
         {
          ::CFRelease ( mv );
         }
      };
 
-   template <> struct disposer< ABMutableMultiValueRef >: public std::unary_function< ABMutableMultiValueRef, void >
+   template <> struct disposer< ABMutableMultiValueRef >
      {
+      typedef ABMutableMultiValueRef  argument_type;
+      typedef void                    result_type;
+      
       void operator()( ABMutableMultiValueRef mv ) const
         {
          ::CFRelease ( mv );
