@@ -53,6 +53,9 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ResourceManager );
 	
 	
+	using Mac::ResType;
+	
+	
 	enum ResFileRefNum
 	{
 		kResFileNotOpened = ::kResFileNotOpened,

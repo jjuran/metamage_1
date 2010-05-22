@@ -149,7 +149,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
-   nucleus::owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
+   nucleus::owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, Mac::OSType creator, Mac::OSType iconType )
      {
       IconRef result;
       ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
@@ -165,12 +165,12 @@ namespace Nitrogen
                                         IconLabel( label ) );
      }
 
-   nucleus::owned<IconRef> GetIconRef( OSType creator, OSType iconType )
+   nucleus::owned<IconRef> GetIconRef( Mac::OSType creator, Mac::OSType iconType )
      {
       return GetIconRef( kOnSystemDisk, creator, iconType );
      }
 
-   nucleus::owned<IconRef> GetIconRef( OSType iconType )
+   nucleus::owned<IconRef> GetIconRef( Mac::OSType iconType )
      {
       return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
      }
@@ -231,16 +231,16 @@ namespace Nitrogen
                                         IconLabel( label ) );
      }
 
-   nucleus::owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
+   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::OSType creator, Mac::OSType iconType, const FSRef& iconFile )
      {
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromFSRef( creator, iconType, &iconFile, &result ) );
       return nucleus::owned<IconRef>::seize( result );
      }
 
-   nucleus::owned<IconRef> RegisterIconRefFromIconFile( OSType creator,
-                                                        OSType iconType,
-                                                        const FSSpec& iconFile )
+   nucleus::owned<IconRef> RegisterIconRefFromIconFile( Mac::OSType    creator,
+                                                        Mac::OSType    iconType,
+                                                        const FSSpec&  iconFile )
 	  {
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromIconFile( creator, iconType, &iconFile, &result ) );

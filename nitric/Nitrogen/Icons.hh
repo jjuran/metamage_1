@@ -18,15 +18,19 @@
 #include <Icons.h>
 #endif
 
+// iota
+#include "iota/string_traits.hh"
+
 // nucleus
 #include "nucleus/resource_transfer.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
+// Nitrogen
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSSharingFlags.hh"
+#include "Mac/Files/Types/FSUserPrivileges.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Mac/Toolbox/Types/OSType.hh"
+
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
 #endif
@@ -95,7 +99,7 @@ namespace Nitrogen
 	
 	// ...
 	
-	static const OSType kSystemIconsCreator = OSType( ::kSystemIconsCreator );
+	static const Mac::OSType kSystemIconsCreator = Mac::OSType( ::kSystemIconsCreator );
 	
 	// ResType 'ICON'
 	struct PlainIcon
@@ -388,17 +392,19 @@ namespace Nitrogen
 
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
 
-   nucleus::owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType );
-
-   nucleus::owned<IconRef> GetIconRef( OSType creator, OSType iconType );
-
-   nucleus::owned<IconRef> GetIconRef( OSType iconType );
-
-	nucleus::owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
-	                                     FSDirID parentFolderID,
-	                                     FSDirID folderID,
-	                                     FSIOFileAttributes attributes,
-	                                     FSUserPrivileges accessPrivileges );
+	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum  vRefNum,
+	                                      Mac::OSType          creator,
+	                                      Mac::OSType          iconType );
+	
+	nucleus::owned< IconRef > GetIconRef( Mac::OSType creator, Mac::OSType iconType );
+	
+	nucleus::owned< IconRef > GetIconRef( Mac::OSType iconType );
+	
+	nucleus::owned<IconRef> GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
+	                                              Mac::FSDirID             parentFolderID,
+	                                              Mac::FSDirID             folderID,
+	                                              Mac::FSIOFileAttributes  attributes,
+	                                              Mac::FSUserPrivileges    accessPrivileges );
 
    typedef GetIconRefFromFile_Result GetIconRefFromFileInfo_Result;
    
@@ -428,6 +434,7 @@ namespace Nitrogen
       return GetIconRefFromFileInfo( inRef, 0, 0, inUsageFlags );
      }
 
+   template < class UniString >
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const UniString&       inFileName,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
@@ -435,20 +442,21 @@ namespace Nitrogen
                                                                 IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
-                                     inFileName.size(),
-                                     inFileName.empty() ? 0 : &*inFileName.begin(),
+                                     iota::get_string_size( inFileName ),
+                                     iota::get_string_data( inFileName ),
                                      inWhichInfo,
                                      inCatalogInfo,
                                      inUsageFlags );
      }
 
+   template < class UniString >
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const UniString&       inFileName,
                                                                 IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
-                                     inFileName.size(),
-                                     inFileName.empty() ? 0 : &*inFileName.begin(),
+                                     iota::get_string_size( inFileName ),
+                                     iota::get_string_data( inFileName ),
                                      inUsageFlags );
      }
 
@@ -479,7 +487,7 @@ namespace Nitrogen
 	// RegisterIconRefFromIconFamily
 	// RegisterIconRefFromResource
 	
-   nucleus::owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile );
+   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::OSType creator, Mac::OSType iconType, const FSRef& iconFile );
 	
 	// UnregisterIconRef
 	// UpdateIconRef
@@ -492,13 +500,13 @@ namespace Nitrogen
 	// ... Flushing IconRef data
 	// ... Controling custom icons
 	
-	nucleus::owned< IconRef > RegisterIconRefFromIconFile( OSType creator,
-	                                              OSType iconType,
-	                                              const FSSpec& iconFile );
+	nucleus::owned< IconRef > RegisterIconRefFromIconFile( Mac::OSType    creator,
+	                                                       Mac::OSType    iconType,
+	                                                       const FSSpec&  iconFile );
 
    inline nucleus::owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType( 0 ), iconFile );
+      return RegisterIconRefFromIconFile( kSystemIconsCreator, Mac::OSType( 0 ), iconFile );
      }
 	
 	// ReadIconFile
