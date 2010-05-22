@@ -759,6 +759,8 @@ Return Value
       return result;
      }
 
+#ifndef __LAMP__
+
    namespace
      {
       class BulkInfoVectors
@@ -843,6 +845,8 @@ Return Value
       
       vectors.resize( actualObjects );
      }
+
+#endif
 
    FSCatalogSearch_Result FSCatalogSearch( FSIterator            iterator,
                                            const FSSearchParams& searchCriteria,

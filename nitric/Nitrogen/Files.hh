@@ -47,7 +47,9 @@
 #include "Nitrogen/Devices.hh"
 #include "Nitrogen/UPP.hh"
 
+#ifndef __LAMP__
 #include <vector>
+#endif
 
 
 #undef PBGetCatInfo
@@ -1210,13 +1212,17 @@ namespace Nitrogen
                                                      FSSpec *            specs = 0,
                                                      HFSUniStr255 *      names = 0 );
    
+#ifndef __LAMP__
+   
    void FSGetCatalogInfoBulk( FSIterator                  iterator,
                               FSCatalogInfoBitmap         whichInfo,
                               std::vector<FSCatalogInfo> *catalogInfos,
                               std::vector<FSRef>         *refs = 0,
                               std::vector<FSSpec>        *specs = 0,
                               std::vector<HFSUniStr255>  *names = 0 );
-                              
+
+#endif
+
 #if 0  
    template < ::FSCatalogInfoBitmap whichInfo >
    class FSCatalogInfo_ContainerSpecifics
