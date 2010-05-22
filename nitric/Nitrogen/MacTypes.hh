@@ -32,6 +32,7 @@
 #include "Mac/Resources/Types/ResType.hh"
 #include "Mac/Script/Types/ScriptCode.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
+#include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
@@ -47,19 +48,7 @@ namespace Nitrogen
 	
 	using ::VersRec;
 	
-	inline std::size_t SizeOf_VersRec( const VersRec& version )
-	{
-		UInt8 shortVersionLength = version.shortVersion[ 0 ];
-		
-		// The long version string immediately follows the short version string.
-		const UInt8* longVersion = version.shortVersion + 1 + shortVersionLength;
-		UInt8 longVersionLength  = longVersion[ 0 ];
-		
-		return sizeof (::NumVersion)
-		     + sizeof (SInt16)
-		     + 1 + shortVersionLength
-		     + 1 + longVersionLength;
-	}
+	using Mac::SizeOf_VersRec;
 	
    using ::UInt8;
    using ::SInt8;
