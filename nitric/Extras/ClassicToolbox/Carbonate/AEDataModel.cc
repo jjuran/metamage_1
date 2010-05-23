@@ -1,27 +1,19 @@
 // Carbonate/AEDataModel.cc
 
-
-#ifndef __AEDATAMODEL__
-#include <AEDataModel.h>
-#endif
+#ifdef __MC68K__
 
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
-
-#if !TARGET_API_MAC_CARBON
-
-#if ACCESSOR_CALLS_ARE_FUNCTIONS
-// Compile the Carbon accessors as extern pascal functions.
-#define CARBONATE_LINKAGE pascal
-#include "Carbonate/AEDataModel.hh"
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
 #endif
+
+#include "Carbonate/AEDataModel.hh"
 
 // These functions are always declared in the headers and are always extern.
 
 // The comments in AEDataModel.h are wrong -- these functions ARE in CarbonAccessors.o.
-
-#if TARGET_CPU_68K
 
 extern "C" Boolean AECheckIsRecord( const AEDesc* desc )
 {
@@ -46,7 +38,96 @@ extern "C" OSStatus AEUnflattenDesc( Ptr buffer, AEDesc* result )
 	return paramErr;
 }
 
-#endif
+
+/*
+	These functions are declared either in Universal Interfaces (if ACCESSOR_CALLS_ARE_FUNCTIONS) or
+	Carbonate otherwise.  They're implemented in CarbonAccessors.o for PPC.
+*/
+
+pascal OSErr AEGetDescData( const AEDesc*  desc,
+                            void*          dataPtr,
+                            Size           maximumSize )
+{
+	if ( desc->dataHandle == NULL )
+	{
+		return noErr;
+	}
+	
+	if ( *desc->dataHandle == NULL )
+	{
+		return noErr;
+	}
+	
+	Size handleSize = GetHandleSize( desc->dataHandle );
+	
+	if ( handleSize < maximumSize )
+	{
+		maximumSize = handleSize;
+	}
+	
+	::BlockMoveData( *desc->dataHandle, dataPtr, maximumSize );
+	
+	return noErr;
+}
+
+pascal Size AEGetDescDataSize( const AEDesc* desc )
+{
+	if ( desc->descriptorType == typeNull )
+	{
+		return 0;
+	}
+	
+	return GetHandleSize( desc->dataHandle );
+}
+
+pascal OSErr AEReplaceDescData( DescType     typeCode,
+                                const void*  dataPtr,
+                                Size         dataSize,
+                                AEDesc*      desc )
+{
+	bool typeIsNull = typeCode == typeNull;
+	
+	bool descWasNull = desc->dataHandle == NULL;
+	
+	if ( !descWasNull  &&  *desc->dataHandle == NULL )
+	{
+		// empty handle
+		DisposeHandle( desc->dataHandle );
+		
+		descWasNull = true;
+	}
+	
+	if ( !descWasNull && !typeIsNull )
+	{
+		// Replace the data.  Resize the handle, copy the data, and set the type.
+		SetHandleSize( desc->dataHandle, dataSize );
+		
+		if ( MemError() != noErr )
+		{
+			return MemError();
+		}
+		
+		::BlockMoveData( dataPtr, *desc->dataHandle, dataSize );
+		
+		desc->descriptorType = typeCode;
+	}
+	else if ( descWasNull && !typeIsNull )
+	{
+		// Create a new descriptor record.
+		return AECreateDesc( typeCode, dataPtr, dataSize, desc );
+	}
+	else if ( !descWasNull )
+	{
+		// Delete the existing descriptor record.
+		return ::AEDisposeDesc( desc );
+	}
+	else
+	{
+		// Replace null with null == do nothing.
+	}
+	
+	return noErr;
+}
 
 #endif
 
