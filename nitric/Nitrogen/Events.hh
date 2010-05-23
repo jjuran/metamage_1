@@ -18,10 +18,6 @@
 #include <Events.h>
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#include "Carbonate/Events.hh"
-#endif
-
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
