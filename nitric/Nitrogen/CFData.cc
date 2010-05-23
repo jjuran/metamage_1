@@ -24,14 +24,6 @@ namespace Nitrogen
       return nucleus::owned<CFDataRef>::seize( result );
      }
    
-   nucleus::owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
-                                  const std::vector<UInt8>& bytes )
-     {
-      return Nitrogen::CFDataCreate( allocator,
-                                     bytes.empty() ? 0 : &*bytes.begin(),
-                                     nucleus::convert<CFIndex>( bytes.size() ) );
-     }
-   
    nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
                                                  const UInt8 *  bytes,
                                                  CFIndex        length,
@@ -43,14 +35,6 @@ namespace Nitrogen
       return nucleus::owned<CFDataRef>::seize( result );
      }
    
-   nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
-                                                 std::vector<UInt8>& bytes )
-     {
-      return Nitrogen::CFDataCreateWithBytesNoCopy( allocator,
-                                                    bytes.empty() ? 0 : &*bytes.begin(),
-                                                    nucleus::convert<CFIndex>( bytes.size() ) );
-     }
-
    nucleus::owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
                                       CFDataRef        theData )
      {
@@ -79,38 +63,4 @@ namespace Nitrogen
       return nucleus::owned<CFMutableDataRef>::seize( result );
      }
    
-   std::vector<UInt8> CFDataGetBytes( CFDataRef theData,
-                                      CFRange   range )
-     {
-      typedef std::vector<UInt8> Vector;
-      Vector result( nucleus::convert<Vector::size_type>( range.length ) );
-      if ( !result.empty() )
-         CFDataGetBytes( theData, range, &*result.begin() );
-      return result;
-     }
-   
-   std::vector<UInt8> CFDataGetBytes( CFDataRef theData )
-     {
-      return CFDataGetBytes( theData, CFRangeMake( 0, CFDataGetLength( theData ) ) );
-     }
-   
-   void CFDataAppendBytes( CFMutableDataRef          theData,
-                           const std::vector<UInt8>& bytes )
-     {
-      if ( !bytes.empty() )
-         CFDataAppendBytes( theData,
-                            &*bytes.begin(),
-                            nucleus::convert<CFIndex>( bytes.size() ) );
-     }
-
-
-   void CFDataReplaceBytes( CFMutableDataRef          theData,
-                            CFRange                   range,
-                            const std::vector<UInt8>& newBytes )
-     {
-      CFDataReplaceBytes( theData,
-                          range,
-                          newBytes.empty() ? 0 : &*newBytes.begin(),
-                          nucleus::convert<CFIndex>( newBytes.size() ) );
-     }
   }

@@ -3,7 +3,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2004 by Lisa Lippincott and Marshall Clow.
+// Written 2003-2010 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -19,7 +19,6 @@
 #include "Nitrogen/CFBase.hh"
 #endif
 
-#include <vector>
 
 namespace Nitrogen
   {
@@ -66,10 +65,17 @@ namespace Nitrogen {
       return Nitrogen::CFDataCreate( kCFAllocatorDefault, bytes, length );
      }
    
-   nucleus::owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
-                                  const std::vector<UInt8>& bytes );
-   
-   inline nucleus::owned<CFDataRef> CFDataCreate( const std::vector<UInt8>& bytes )
+	template < class Data >
+	inline nucleus::owned< CFDataRef > CFDataCreate( CFAllocatorRef  allocator,
+	                                                 const Data&     bytes )
+	{
+		return Nitrogen::CFDataCreate( allocator,
+		                               &bytes[ 0 ],
+		                               bytes.size() );
+	}
+	
+	template < class Data >
+	inline nucleus::owned< CFDataRef > CFDataCreate( const Data& bytes )
      {
       return Nitrogen::CFDataCreate( kCFAllocatorDefault, bytes );
      }
@@ -105,10 +111,17 @@ namespace Nitrogen {
       return Nitrogen::CFDataCreateWithBytesNoCopy( kCFAllocatorDefault, bytes, length, bytesDeallocator );
      }
 
-   nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
-                                                 std::vector<UInt8>& bytes );
-
-   inline nucleus::owned<CFDataRef> CFDataCreateWithBytesNoCopy( std::vector<UInt8>& bytes )
+	template < class Data >
+	inline nucleus::owned< CFDataRef > CFDataCreateWithBytesNoCopy( CFAllocatorRef  allocator,
+	                                                                Data&           bytes )
+	{
+		return Nitrogen::CFDataCreateWithBytesNoCopy( allocator,
+		                                              &bytes[ 0 ],
+		                                              bytes.size() );
+	}
+	
+	template < class Data >
+	inline nucleus::owned< CFDataRef > CFDataCreateWithBytesNoCopy( Data& bytes )
      {
       return Nitrogen::CFDataCreateWithBytesNoCopy( kCFAllocatorDefault, bytes );
      }
@@ -158,10 +171,25 @@ namespace Nitrogen {
 
    using ::CFDataGetBytes;
    
-   std::vector<UInt8> CFDataGetBytes( CFDataRef theData,
-                                      CFRange   range );
-   
-   std::vector<UInt8> CFDataGetBytes( CFDataRef theData );
+	template < class Data >  // originally std::vector< UInt8 >
+	Data CFDataGetBytes( CFDataRef  theData,
+	                     CFRange    range )
+	{
+		Data result( range.length );
+		
+		if ( !result.empty() )
+		{
+			CFDataGetBytes( theData, range, &result[ 0 ] );
+		}
+		
+		return result;
+	}
+	
+	template < class Data >
+	Data CFDataGetBytes( CFDataRef theData )
+	{
+		return CFDataGetBytes< Data >( theData, CFRangeMake( 0, CFDataGetLength( theData ) ) );
+	}
    
    using ::CFDataSetLength;
    using ::CFDataIncreaseLength;
@@ -174,9 +202,18 @@ namespace Nitrogen {
      {
       ::CFDataAppendBytes( theData, bytes, length );
      }
-
-   void CFDataAppendBytes( CFMutableDataRef          theData,
-                           const std::vector<UInt8>& bytes );
+	
+	template < class Data >
+	inline void CFDataAppendBytes( CFMutableDataRef  theData,
+	                               const Data& bytes )
+	{
+		if ( !bytes.empty() )
+		{
+			CFDataAppendBytes( theData,
+			                   &bytes[ 0 ],
+			                   bytes.size() );
+		}
+	}
 
 
    using ::CFDataReplaceBytes;
@@ -188,10 +225,17 @@ namespace Nitrogen {
      {
       ::CFDataReplaceBytes( theData, range, newBytes, newLength );
      }
-
-   void CFDataReplaceBytes( CFMutableDataRef          theData,
-                            CFRange                   range,
-                            const std::vector<UInt8>& newBytes );
+	
+	template < class Data >
+	inline void CFDataReplaceBytes( CFMutableDataRef  theData,
+	                                CFRange           range,
+	                                const Data&       newBytes )
+	{
+		CFDataReplaceBytes( theData,
+		                    range,
+		                    &newBytes[ 0 ],
+		                    newBytes.size() );
+	}
 
    using ::CFDataDeleteBytes;
   }
