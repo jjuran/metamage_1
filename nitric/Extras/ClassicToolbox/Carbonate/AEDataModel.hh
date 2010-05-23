@@ -38,12 +38,12 @@ CARBONATE_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
 {
 	if ( desc->dataHandle == NULL )
 	{
-		return paramErr;
+		return noErr;
 	}
 	
 	if ( *desc->dataHandle == NULL )
 	{
-		return nilHandleErr;
+		return noErr;
 	}
 	
 	Size handleSize = GetHandleSize( desc->dataHandle );
