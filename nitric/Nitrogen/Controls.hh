@@ -18,10 +18,6 @@
 #include <Controls.h>
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#include "Carbonate/Controls.hh"
-#endif
-
 // iota
 #include "iota/distance.hh"
 #include "iota/string_traits.hh"

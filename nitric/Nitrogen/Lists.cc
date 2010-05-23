@@ -13,11 +13,6 @@
 
 #include "Nitrogen/Lists.hh"
 
-// Carbonate
-#if !TARGET_API_MAC_CARBON
-#include "Carbonate/Lists.hh"
-#endif
-
 // Nitrogen
 #include "Nitrogen/Controls.hh"
 

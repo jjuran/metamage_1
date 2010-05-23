@@ -18,10 +18,6 @@
 #include <DateTimeUtils.h>
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#include "Carbonate/DateTimeUtils.hh"
-#endif
-
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif

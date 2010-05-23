@@ -21,10 +21,6 @@
 #include <Events.h>
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#include "Carbonate/AEDataModel.hh"
-#endif
-
 // iota
 #include "iota/distance.hh"
 
