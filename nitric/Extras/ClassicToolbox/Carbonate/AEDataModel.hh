@@ -38,12 +38,12 @@ CARBONATE_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
 {
 	if ( desc->dataHandle == NULL )
 	{
-		return paramErr;
+		return noErr;
 	}
 	
 	if ( *desc->dataHandle == NULL )
 	{
-		return nilHandleErr;
+		return noErr;
 	}
 	
 	Size handleSize = GetHandleSize( desc->dataHandle );
@@ -60,6 +60,11 @@ CARBONATE_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
 
 CARBONATE_LINKAGE Size AEGetDescDataSize( const AEDesc* desc )
 {
+	if ( desc->descriptorType == typeNull )
+	{
+		return 0;
+	}
+	
 	return GetHandleSize( desc->dataHandle );
 }
 
@@ -69,17 +74,18 @@ CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
                                            AEDesc*      desc )
 {
 	bool typeIsNull = typeCode == typeNull;
-	bool ptrIsNull  = dataPtr  == NULL;
-	
-	// The parameters must be consistently null or non-null.
-	if ( typeIsNull != ptrIsNull )
-	{
-		return paramErr;
-	}
 	
 	bool descWasNull = desc->dataHandle == NULL;
 	
-	if ( !descWasNull && !ptrIsNull )
+	if ( !descWasNull  &&  *desc->dataHandle == NULL )
+	{
+		// empty handle
+		DisposeHandle( desc->dataHandle );
+		
+		descWasNull = true;
+	}
+	
+	if ( !descWasNull && !typeIsNull )
 	{
 		// Replace the data.  Resize the handle, copy the data, and set the type.
 		SetHandleSize( desc->dataHandle, dataSize );
@@ -93,7 +99,7 @@ CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
 		
 		desc->descriptorType = typeCode;
 	}
-	else if ( descWasNull && !ptrIsNull )
+	else if ( descWasNull && !typeIsNull )
 	{
 		// Create a new descriptor record.
 		return AECreateDesc( typeCode, dataPtr, dataSize, desc );
