@@ -74,17 +74,10 @@ CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
                                            AEDesc*      desc )
 {
 	bool typeIsNull = typeCode == typeNull;
-	bool ptrIsNull  = dataPtr  == NULL;
-	
-	// The parameters must be consistently null or non-null.
-	if ( typeIsNull != ptrIsNull )
-	{
-		return paramErr;
-	}
 	
 	bool descWasNull = desc->dataHandle == NULL;
 	
-	if ( !descWasNull && !ptrIsNull )
+	if ( !descWasNull && !typeIsNull )
 	{
 		// Replace the data.  Resize the handle, copy the data, and set the type.
 		SetHandleSize( desc->dataHandle, dataSize );
@@ -98,7 +91,7 @@ CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
 		
 		desc->descriptorType = typeCode;
 	}
-	else if ( descWasNull && !ptrIsNull )
+	else if ( descWasNull && !typeIsNull )
 	{
 		// Create a new descriptor record.
 		return AECreateDesc( typeCode, dataPtr, dataSize, desc );
