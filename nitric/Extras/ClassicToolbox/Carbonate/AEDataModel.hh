@@ -60,6 +60,11 @@ CARBONATE_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
 
 CARBONATE_LINKAGE Size AEGetDescDataSize( const AEDesc* desc )
 {
+	if ( desc->descriptorType == typeNull )
+	{
+		return 0;
+	}
+	
 	return GetHandleSize( desc->dataHandle );
 }
 
