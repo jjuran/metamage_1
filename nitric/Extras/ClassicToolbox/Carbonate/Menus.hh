@@ -1,4 +1,10 @@
-// Carbonate/Menus.hh
+/*
+	Carbonate/Menus.hh
+	------------------
+	
+	Joshua Juran
+*/
+
 
 #ifndef CARBONATE_MENUS_HH
 #define CARBONATE_MENUS_HH
@@ -7,8 +13,8 @@
 #include <Menus.h>
 #endif
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 #if TARGET_API_MAC_CARBON
 #error Configuration error:  This file is for classic only
@@ -33,12 +39,13 @@ inline pascal void MacCheckMenuItem( MenuRef menu, short item, Boolean checked )
 
 #endif
 
-
-// We need these definitions under the following conditions:
-// 1. Accessors are functions on 68K (no CarbonAccessors.o), for compiling
-// 2. Accessors are not functions, for including
-
-// CARBONATE_LINKAGE is only defined (to 'pascal') if we're compiling.
+/*
+	We need these definitions under the following conditions:
+	1. Accessors are not functions, for including
+	2. Accessors are functions on 68K (no CarbonAccessors.o), for compiling
+	
+	CARBONATE_LINKAGE is only defined (to 'pascal') if we're compiling.
+*/
 
 #if defined(CARBONATE_LINKAGE) && ACCESSOR_CALLS_ARE_FUNCTIONS && TARGET_CPU_68K || !defined(CARBONATE_LINKAGE) && !ACCESSOR_CALLS_ARE_FUNCTIONS
 
@@ -83,9 +90,9 @@ CARBONATE_LINKAGE void SetMenuHeight( MenuRef menu, SInt16 height )
 
 CARBONATE_LINKAGE void SetMenuTitle( MenuRef menu, ConstStr255Param title )
 {
-	std::copy( title,
-	           title + 1 + title[0],
-	           menu[0]->menuData );
+	memcpy( menu[0]->menuData,
+	        title,
+	        1 + title[0] );
 }
 
 #undef CARBONATE_LINKAGE

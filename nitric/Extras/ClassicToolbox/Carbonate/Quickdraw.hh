@@ -1,4 +1,10 @@
-// Carbonate/Quickdraw.hh
+/*
+	Carbonate/Quickdraw.hh
+	----------------------
+	
+	Joshua Juran
+*/
+
 
 #ifndef CARBONATE_QUICKDRAW_HH
 #define CARBONATE_QUICKDRAW_HH
@@ -11,11 +17,13 @@
 #error Configuration error:  This file is for classic only
 #endif
 
-// We need these definitions under the following conditions:
-// 1. Accessors are functions on 68K (no CarbonAccessors.o), for compiling
-// 2. Accessors are not functions, for including
-
-// CARBONATE_LINKAGE is only defined (to 'pascal') if we're compiling.
+/*
+	We need these definitions under the following conditions:
+	1. Accessors are not functions, for including
+	2. Accessors are functions on 68K (no CarbonAccessors.o), for compiling
+	
+	CARBONATE_LINKAGE is only defined (to 'pascal') if we're compiling.
+*/
 
 #if defined(CARBONATE_LINKAGE) && ACCESSOR_CALLS_ARE_FUNCTIONS && TARGET_CPU_68K || !defined(CARBONATE_LINKAGE) && !ACCESSOR_CALLS_ARE_FUNCTIONS
 
@@ -30,7 +38,7 @@ CARBONATE_LINKAGE PixMapHandle GetPortPixMap( CGrafPtr port )
 
 CARBONATE_LINKAGE BitMap* GetPortBitMapForCopyBits( CGrafPtr cport )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
+	GrafPtr port = (GrafPtr) cport;  /* reinterpret_cast */
 	
 	return &port->portBits;
 }
@@ -60,7 +68,7 @@ CARBONATE_LINKAGE RGBColor* GetPortOpColor( CGrafPtr port, RGBColor* color )
 {
 	Handle h = port->grafVars;
 	
-	GVarHandle grafVars = reinterpret_cast< GVarHandle >( h );
+	GVarHandle grafVars = (GVarHandle) h;  /* reinterpret_cast */
 	
 	*color = grafVars[0]->rgbOpColor;
 	
@@ -71,7 +79,7 @@ CARBONATE_LINKAGE RGBColor* GetPortHiliteColor( CGrafPtr port, RGBColor* color )
 {
 	Handle h = port->grafVars;
 	
-	GVarHandle grafVars = reinterpret_cast< GVarHandle >( h );
+	GVarHandle grafVars = (GVarHandle) h;  /* reinterpret_cast */
 	
 	*color = grafVars[0]->rgbHiliteColor;
 	
@@ -192,11 +200,11 @@ CARBONATE_LINKAGE Boolean IsPortPolyBeingDefined( CGrafPtr port )
 	return port->polySave != NULL;
 }
 
-// IsPortOffscreen
+/* IsPortOffscreen */
 
 CARBONATE_LINKAGE Boolean IsPortColor( CGrafPtr port )
 {
-	// Taken from QISA/MoreIsBetter/MoreQuickDraw.cp
+	/* Taken from QISA/MoreIsBetter/MoreQuickDraw.cp */
 	return port->portVersion < 0;
 }
 
@@ -210,8 +218,10 @@ CARBONATE_LINKAGE Boolean IsPortClipRegionEmpty( CGrafPtr port )
 	return EmptyRgn( port->clipRgn );
 }
 
-// SectRegionWithPortClipRegion
-// SectRegionWithPortVisibleRegion
+/*
+	SectRegionWithPortClipRegion
+	SectRegionWithPortVisibleRegion
+*/
 
 CARBONATE_LINKAGE Handle SwapPortPicSaveHandle( CGrafPtr port, Handle newHandle )
 {
@@ -240,9 +250,11 @@ CARBONATE_LINKAGE Handle SwapPortRegionSaveHandle( CGrafPtr port, Handle newHand
 	return oldHandle;
 }
 
-// SetPortBounds
-// SetPortOpColor
-// SetPortGrafProcs
+/*
+	SetPortBounds
+	SetPortOpColor
+	SetPortGrafProcs
+*/
 
 CARBONATE_LINKAGE void SetPortTextFont( CGrafPtr port, short txFont )
 {
@@ -274,9 +286,11 @@ CARBONATE_LINKAGE void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )
 	MacCopyRgn( clipRgn, port->clipRgn );
 }
 
-// SetPortPenPixPat
-// SetPortFillPixPat
-// SetPortBackPixPat
+/*
+	SetPortPenPixPat
+	SetPortFillPixPat
+	SetPortBackPixPat
+*/
 
 CARBONATE_LINKAGE void SetPortPenSize( CGrafPtr port, Point penSize )
 {
@@ -300,7 +314,7 @@ CARBONATE_LINKAGE Rect* GetPixBounds( PixMapHandle pixMap, Rect* bounds )
 	return bounds;
 }
 
-// GetPixDepth
+/* GetPixDepth */
 
 CARBONATE_LINKAGE long GetQDGlobalsRandomSeed()
 {
@@ -358,7 +372,7 @@ CARBONATE_LINKAGE Pattern* GetQDGlobalsWhite( Pattern* result )
 
 CARBONATE_LINKAGE CGrafPtr GetQDGlobalsThePort()
 {
-	return reinterpret_cast< CGrafPtr >( qd.thePort );
+	return (CGrafPtr) qd.thePort;  /* reinterpret_cast */
 }
 
 CARBONATE_LINKAGE void SetQDGlobalsRandomSeed( long randomSeed )
@@ -378,17 +392,18 @@ CARBONATE_LINKAGE Rect* GetRegionBounds( RgnHandle region, Rect* bounds )
 	return bounds;
 }
 
-// IsRegionRectangular
+/* IsRegionRectangular */
 
 CARBONATE_LINKAGE CGrafPtr CreateNewPort()
 {
 	Ptr portMem = NewPtr( sizeof (CGrafPort) );
 	
-	if ( portMem == NULL )  return NULL;
+	CGrafPtr port = (CGrafPtr) portMem;  /* reinterpret_cast */
 	
-	CGrafPtr port = reinterpret_cast< CGrafPtr >( portMem );
-	
-	OpenCPort( port );
+	if ( port != NULL )
+	{
+		OpenCPort( port );
+	}
 	
 	return port;
 }
@@ -397,10 +412,10 @@ CARBONATE_LINKAGE void DisposePort( CGrafPtr port )
 {
 	CloseCPort( port );
 	
-	DisposePtr( reinterpret_cast< Ptr >( port ) );
+	DisposePtr( (Ptr) port );  /* reinterpret_cast */
 }
 
-// SetQDError
+/* SetQDError */
 
 #undef CARBONATE_LINKAGE
 

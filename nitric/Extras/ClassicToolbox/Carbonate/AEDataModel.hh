@@ -1,4 +1,9 @@
-// Carbonate/AEDataModel.hh
+/*
+	Carbonate/AEDataModel.hh
+	------------------------
+	
+	Joshua Juran
+*/
 
 #ifndef CARBONUNITS_AEDATAMODEL_HH
 #define CARBONUNITS_AEDATAMODEL_HH
