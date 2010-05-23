@@ -77,6 +77,14 @@ CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
 	
 	bool descWasNull = desc->dataHandle == NULL;
 	
+	if ( !descWasNull  &&  *desc->dataHandle == NULL )
+	{
+		// empty handle
+		DisposeHandle( desc->dataHandle );
+		
+		descWasNull = true;
+	}
+	
 	if ( !descWasNull && !typeIsNull )
 	{
 		// Replace the data.  Resize the handle, copy the data, and set the type.
