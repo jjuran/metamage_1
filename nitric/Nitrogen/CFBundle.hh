@@ -24,9 +24,6 @@
 #ifndef NITROGEN_CFDICTIONARY_HH
 #include "Nitrogen/CFDictionary.hh"
 #endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
 #ifndef NITROGEN_CFURL_HH
 #include "Nitrogen/CFURL.hh"
 #endif
