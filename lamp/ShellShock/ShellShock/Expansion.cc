@@ -19,16 +19,12 @@
 #include "debug/assert.hh"
 
 // plus
+#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
-
-// ShellShock
-#include "ShellShock/PointerToFunction.h"
 
 
 namespace ShellShock
 {
-	
-	namespace N = Nitrogen;
 	
 	static bool IsAShellQuoteChar( char c )
 	{
@@ -828,7 +824,7 @@ namespace ShellShock
 									(
 										std::bind1st
 										(
-											N::PtrFun( ParameterExpansion ),
+											plus::ptr_fun( ParameterExpansion ),
 											&dictionary
 										),
 										Apply( TildeExpansion,
