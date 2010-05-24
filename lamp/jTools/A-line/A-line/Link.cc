@@ -27,6 +27,7 @@
 #include "poseven/functions/pread.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/types/exit_t.hh"
 
 // pfiles
 #include "pfiles/common.hh"
@@ -582,9 +583,24 @@ namespace tool
 		
 		if ( exports_static_lib )
 		{
-			project.set_static_lib_task( lib_task );
-			
-			lib_task->AddDependent( rmdir_diagnostics_task );
+			if ( non_empty_lib )
+			{
+				project.set_static_lib_task( lib_task );
+				
+				lib_task->AddDependent( rmdir_diagnostics_task );
+			}
+			else
+			{
+				plus::var_string message = "\n" "# error: library project '";
+				
+				message += project.Name();
+				
+				message += "' has no source files\n";
+				
+				p7::write( p7::stderr_fileno, message );
+				
+				throw p7::exit_failure;
+			}
 			
 			return;
 		}
