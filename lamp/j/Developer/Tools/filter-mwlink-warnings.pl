@@ -68,9 +68,12 @@ qw
 (
 	:KSIOUXConsole.cc
 	Abort.cc
+	Genie/Abort.cpp
 	KSIOUXConsole.cc
 	dlmalloc.c
+	dlmalloc.cpp
 	readonly-environ.cc
+	readonly-environ.cpp
 	stacked-environ.lib
 	syscalls.c
 	Kerosene-Library.lib
