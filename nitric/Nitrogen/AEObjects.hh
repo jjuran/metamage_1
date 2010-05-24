@@ -117,7 +117,6 @@ namespace Nitrogen
 	
 	template <> struct DescType_Map_Traits< typeObjectClass     > { static const DescType result = typeType; };
 	template <> struct DescType_Map_Traits< typePropertyID      > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal > { static const DescType result = typeType; };
 	
 	template <> struct AEKeyword_Traits< keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
 	template <> struct AEKeyword_Traits< keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
