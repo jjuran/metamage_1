@@ -66,12 +66,12 @@ CARBONATE_LINKAGE Handle GetControlDataHandle( ControlRef control )
 
 CARBONATE_LINKAGE MenuRef GetControlPopupMenuHandle( ControlRef control )
 {
-	return ((popupPrivateData*) *control[0]->contrlData )->mHandle;  /* reinterpret_cast */
+	return ((struct popupPrivateData*) *control[0]->contrlData )->mHandle;  /* reinterpret_cast */
 }
 
 CARBONATE_LINKAGE short GetControlPopupMenuID( ControlRef control )
 {
-	return ((popupPrivateData*) *control[0]->contrlData )->mID;  /* reinterpret_cast */
+	return ((struct popupPrivateData*) *control[0]->contrlData )->mID;  /* reinterpret_cast */
 }
 
 CARBONATE_LINKAGE void SetControlDataHandle( ControlRef control, Handle dataHandle )
@@ -86,12 +86,12 @@ CARBONATE_LINKAGE void SetControlBounds( ControlRef control, const Rect* bounds 
 
 CARBONATE_LINKAGE void SetControlPopupMenuHandle( ControlRef control, MenuRef popupMenu )
 {
-	((popupPrivateData*) *control[0]->contrlData )->mHandle = popupMenu;  /* reinterpret_cast */
+	((struct popupPrivateData*) *control[0]->contrlData )->mHandle = popupMenu;  /* reinterpret_cast */
 }
 
 CARBONATE_LINKAGE void SetControlPopupMenuID( ControlRef control, short menuID )
 {
-	((popupPrivateData*) *control[0]->contrlData )->mID = menuID;  /* reinterpret_cast */
+	((struct popupPrivateData*) *control[0]->contrlData )->mID = menuID;  /* reinterpret_cast */
 }
 
 #undef CARBONATE_LINKAGE
