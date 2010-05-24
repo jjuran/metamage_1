@@ -8,6 +8,9 @@
 #ifndef MACCDROM_AUDIO_HH
 #define MACCDROM_AUDIO_HH
 
+// Standard C++
+#include <vector>
+
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
