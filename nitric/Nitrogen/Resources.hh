@@ -29,6 +29,7 @@
 #include "nucleus/flag_ops.hh"
 
 // Nitrogen
+#include "Mac/Resources/Functions/ResError.hh"
 #include "Mac/Resources/Types/ResID.hh"
 
 #ifndef NITROGEN_FILES_HH
@@ -141,7 +142,7 @@ namespace Nitrogen
 	
 	void CloseResFile( nucleus::owned< ResFileRefNum > resFileRefNum );
 	
-	void ResError();
+	using Mac::ResError;
 	
 	ResFileRefNum CurResFile();
 	

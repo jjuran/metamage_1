@@ -61,11 +61,6 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	void ResError()
-	{
-		ThrowOSStatus( ::ResError() );
-	}
-	
 	ResFileRefNum CurResFile()
 	{
 		ResFileRefNum refNum = ResFileRefNum( ::CurResFile() );
