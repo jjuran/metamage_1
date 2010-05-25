@@ -32,6 +32,7 @@
 #include "Mac/Files/Functions/FlushVol.hh"
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSSignature.hh"
@@ -374,57 +375,12 @@ namespace Nitrogen
 	
 	// GetVRefNum
 	
-	struct FSDirSpec
-	{
-		FSVolumeRefNum  vRefNum;
-		FSDirID         dirID;
-		
-		FSDirSpec() : vRefNum(), dirID()
-		{
-		}
-	};
-	
-	inline bool operator==( const FSDirSpec& a, const FSDirSpec& b )
-	{
-		return a.vRefNum == b.vRefNum
-		    && a.dirID   == b.dirID;
-	}
-	
-	inline bool operator!=( const FSDirSpec& a, const FSDirSpec& b )
-	{
-		return !( a == b );
-	}
+	using Mac::FSDirSpec;
 	
   }
 
 namespace nucleus
 {
-	
-	template <>
-	struct maker< Nitrogen::FSDirSpec >
-	{
-		Nitrogen::FSDirSpec operator()( Nitrogen::FSVolumeRefNum  vRefNum,
-		                                Nitrogen::FSDirID         dirID ) const
-		{
-			Nitrogen::FSDirSpec result;
-			
-			result.vRefNum = vRefNum;
-			result.dirID   = dirID;
-			
-			return result;
-		}
-		
-		Nitrogen::FSDirSpec operator()( const ::DirInfo& dirInfo ) const
-		{
-			return operator()( Nitrogen::FSVolumeRefNum( dirInfo.ioVRefNum ),
-			                   Nitrogen::FSDirID       ( dirInfo.ioDrDirID ) );
-		}
-		
-		Nitrogen::FSDirSpec operator()( const ::CInfoPBRec& cInfo ) const
-		{
-			return operator()( cInfo.dirInfo );
-		}
-	};
 	
 	template <>
 	struct initializer< CInfoPBRec >
