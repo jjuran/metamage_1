@@ -43,17 +43,6 @@ namespace Nitrogen
 #endif
 	
 	
-	Handle CheckResource( Handle r )
-	{
-		if ( NULL == r.Get ())
-		{
-			ResError();
-			throw ResNotFound();
-		}
-		
-		return r;
-	}
-	
 	void CloseResFile( nucleus::owned< ResFileRefNum > resFileRefNum )
 	{
 		::CloseResFile( resFileRefNum.release() );

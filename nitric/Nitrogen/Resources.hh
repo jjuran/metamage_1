@@ -31,6 +31,7 @@
 // Nitrogen
 #include "Mac/Resources/Functions/ResError.hh"
 #include "Mac/Resources/Types/ResID.hh"
+#include "Mac/Resources/Utilities/Checked_Resource.hh"
 
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
@@ -129,12 +130,12 @@ namespace nucleus
 namespace Nitrogen
   {
 	
-	Handle CheckResource( Handle r );
+	inline Handle CheckResource( Handle r )  { return Mac::Checked_Resource( r ); }
 	
 	template < class T >
 	inline T** CheckResource( T** r )
 	{
-		return Handle_Cast< T >( CheckResource( Handle( r ) ) );
+		return (T**) Mac::Checked_Resource( (::Handle) r );  // reinterpret_cast x2, const_cast
 	}
 	
 	// InitResources
