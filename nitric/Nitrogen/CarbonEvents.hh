@@ -14,6 +14,9 @@
 #ifndef NITROGEN_CARBONEVENTS_HH
 #define NITROGEN_CARBONEVENTS_HH
 
+#ifndef __APPEARANCE__
+#include <Appearance.h>
+#endif
 #ifndef __CARBONEVENTS__
 #include <CarbonEvents.h>
 #endif
@@ -40,9 +43,6 @@
 #endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
-#endif
-#ifndef NITROGEN_APPEARANCE_HH
-#include "Nitrogen/Appearance.hh"
 #endif
 #ifndef NITROGEN_SCRAP_HH
 #include "Nitrogen/Scrap.hh"

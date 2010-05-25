@@ -20,9 +20,6 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NITROGEN_MIXEDMODE_HH
-#include "Nitrogen/MixedMode.hh"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif

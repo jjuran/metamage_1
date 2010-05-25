@@ -32,9 +32,6 @@
 #ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
 #endif
-#ifndef NITROGEN_COLLECTIONS_HH
-#include "Nitrogen/Collections.hh"
-#endif
 #ifndef NITROGEN_DRAG_HH
 #include "Nitrogen/Drag.hh"
 #endif
@@ -43,9 +40,6 @@
 #endif
 #ifndef NITROGEN_MENUS_HH
 #include "Nitrogen/Menus.hh"
-#endif
-#ifndef NITROGEN_MIXEDMODE_HH
-#include "Nitrogen/MixedMode.hh"
 #endif
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffscreen.hh"

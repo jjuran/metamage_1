@@ -27,9 +27,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NITROGEN_MIXEDMODE_HH
-#include "Nitrogen/MixedMode.hh"
-#endif
 
 
 namespace Nitrogen

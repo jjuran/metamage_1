@@ -17,9 +17,10 @@
 #ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
 #endif
-#ifndef NITROGEN_TSMTE_HH
-#include "Nitrogen/TSMTE.hh"
+#ifndef __TSMTE__
+#include <TSMTE.h>
 #endif
+
 #ifndef NITROGEN_CONTROLS_HH
 #include "Nitrogen/Controls.hh"
 #endif

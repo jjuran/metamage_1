@@ -33,9 +33,6 @@
 #ifndef NITROGEN_CODEFRAGMENTS_HH
 #include "Nitrogen/CodeFragments.hh"
 #endif
-#ifndef NITROGEN_CGCONTEXT_HH
-#include "Nitrogen/CGContext.hh"
-#endif
 
 
 namespace Nitrogen

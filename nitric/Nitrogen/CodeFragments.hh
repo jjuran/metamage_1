@@ -26,9 +26,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NITROGEN_MULTIPROCESSING_HH
-#include "Nitrogen/Multiprocessing.hh"
-#endif
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
 #endif

@@ -43,9 +43,6 @@
 #ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
 #endif
-#ifndef NITROGEN_COLLECTIONS_HH
-#include "Nitrogen/Collections.hh"
-#endif
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif

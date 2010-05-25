@@ -15,9 +15,6 @@
 #ifndef CGDATAPROVIDER_H_
 #include <CGDataProvider.h>
 #endif
-#ifndef NITROGEN_CGBASE_HH
-#include "Nitrogen/CGBase.hh"
-#endif
 #ifndef NITROGEN_CFURL_HH
 #include "Nitrogen/CFURL.hh"
 #endif

@@ -33,10 +33,6 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-// Needed for smSystemScript
-#ifndef NITROGEN_SCRIPT_HH
-#include "Nitrogen/Script.hh"
-#endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
