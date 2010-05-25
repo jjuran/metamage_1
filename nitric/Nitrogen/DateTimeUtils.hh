@@ -18,9 +18,10 @@
 #include <DateTimeUtils.h>
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
+// nucleus
+#include "nucleus/convert.hh"
+#include "nucleus/enumeration_traits.hh"
+
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
