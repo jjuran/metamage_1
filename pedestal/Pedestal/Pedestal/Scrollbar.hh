@@ -6,8 +6,13 @@
 #ifndef PEDESTAL_SCROLLBAR_HH
 #define PEDESTAL_SCROLLBAR_HH
 
+// Mac OS
+#ifndef __CONTROLS__
+#include <Controls.h>
+#endif
+
 // Nitrogen
-#include "Nitrogen/Controls.hh"
+#include "Nitrogen/RefCon.hh"
 
 
 namespace Pedestal
@@ -16,14 +21,14 @@ namespace Pedestal
 	class Scrollbar
 	{
 		private:
-			Nitrogen::ControlRef itsControl;
+			ControlRef itsControl;
 		
 		public:
 			Scrollbar() : itsControl()
 			{
 			}
 			
-			Nitrogen::ControlRef Get() const  { return itsControl; }
+			ControlRef Get() const  { return itsControl; }
 			
 			void Create( const Rect& bounds, Nitrogen::RefCon refCon );
 			
