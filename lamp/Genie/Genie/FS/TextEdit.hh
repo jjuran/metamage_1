@@ -9,6 +9,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// Nitrogen
+#include "Nitrogen/TextEdit.hh"
+
 // Pedestal
 #include "Pedestal/TextEdit.hh"
 
@@ -72,7 +75,7 @@ namespace Genie
 			KeyDown_Hook      itsKeyDown;
 			UserCommand_Hook  itsUserCommand;
 			
-			nucleus::owned< Nitrogen::TEHandle >  itsTE;
+			nucleus::owned< TEHandle >  itsTE;
 			
 			Pedestal::TextSelection  itsSelectionPriorToSearch;
 			

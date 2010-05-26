@@ -6,9 +6,6 @@
 #ifndef PEDESTAL_TEXTEDIT_HH
 #define PEDESTAL_TEXTEDIT_HH
 
-// Nitrogen
-#include "Nitrogen/TextEdit.hh"
-
 // Pedestal
 #include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/IncrementalSearch.hh"
@@ -16,8 +13,13 @@
 #include "Pedestal/Scroller_beta.hh"
 
 
+struct TERec;
+
+
 namespace Pedestal
 {
+	
+	typedef TERec** TEHandle;
 	
 	class NotEnoughSpaceForTEKey;
 	class NotEnoughSpaceForTEPaste;

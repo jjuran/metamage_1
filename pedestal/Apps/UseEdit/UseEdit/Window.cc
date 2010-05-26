@@ -5,6 +5,9 @@
 
 #include "UseEdit/Window.hh"
 
+// Nitrogen
+#include "Nitrogen/TextEdit.hh"
+
 // Pedestal
 #include "Pedestal/Frame.hh"
 #include "Pedestal/Scrollbar.hh"
