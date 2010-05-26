@@ -5,6 +5,9 @@
 
 #include "Pedestal/Control.hh"
 
+// Nitrogen
+#include "Nitrogen/Controls.hh"
+
 
 namespace Pedestal
 {

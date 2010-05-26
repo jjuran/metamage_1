@@ -6,8 +6,9 @@
 #ifndef PEDESTAL_CONTROL_HH
 #define PEDESTAL_CONTROL_HH
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
+#ifndef __CONTROLS__
+#include <Controls.h>
+#endif
 
 
 namespace Pedestal
