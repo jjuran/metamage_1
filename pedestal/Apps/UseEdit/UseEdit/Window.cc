@@ -74,7 +74,7 @@ namespace UseEdit
 	class TextEdit : public Ped::TextEdit, public Ped::ScrollerAPI
 	{
 		private:
-			n::owned< N::TEHandle >  itsTE;
+			n::owned< TEHandle >  itsTE;
 			
 			Ped::TextSelection  itsSelectionPriorToSearch;
 		
