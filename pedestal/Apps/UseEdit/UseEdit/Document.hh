@@ -35,7 +35,7 @@ namespace UseEdit
 			Pedestal::Window const& GetWindow() const  { return *itsWindow.get(); }
 			Pedestal::Window      & GetWindow()        { return *itsWindow.get(); }
 			
-			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
+			WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
 			plus::string GetName() const
 			{

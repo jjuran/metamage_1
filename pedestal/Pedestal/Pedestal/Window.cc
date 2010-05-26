@@ -41,7 +41,7 @@ namespace Pedestal
 		}
 	}
 	
-	void SetWindowSize( Nitrogen::WindowRef window, Point size )
+	void SetWindowSize( WindowRef window, Point size )
 	{
 		n::saved< N::Port > savePort;
 		
@@ -135,7 +135,7 @@ namespace Pedestal
 	{
 	}
 	
-	void Window::Resize( Nitrogen::WindowRef window, short h, short v )
+	void Window::Resize( WindowRef window, short h, short v )
 	{
 		InvalidateWindowGrowBox( window );  // assume grow box present on resize
 		

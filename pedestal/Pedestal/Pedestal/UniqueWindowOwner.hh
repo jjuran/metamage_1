@@ -31,7 +31,7 @@ namespace Pedestal
 				{
 				}
 				
-				void operator()( Nitrogen::WindowRef window ) const
+				void operator()( WindowRef window ) const
 				{
 					// assert( itsStorage.get() );
 					// assert( itsStorage->Get() == window );

@@ -286,7 +286,7 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToDrag( const EventRecord& event, N::WindowRef window )
+	static void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
 		Rect before = N::GetPortBounds( N::GetWindowPort( window ) );
 		
@@ -354,7 +354,7 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToGrow( const EventRecord& event, N::WindowRef window )
+	static void RespondToGrow( const EventRecord& event, WindowRef window )
 	{
 		Rect sizeRect = { 30, 50, 10000, 10000 };
 		
@@ -369,7 +369,7 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToGoAway( const EventRecord& event, N::WindowRef window )
+	static void RespondToGoAway( const EventRecord& event, WindowRef window )
 	{
 		if ( N::TrackGoAway( window, event.where ) )
 		{
@@ -626,7 +626,7 @@ namespace Pedestal
 		}
 	}
 	
-	static void GiveIdleTimeToWindow( N::WindowRef windowRef, const EventRecord& event )
+	static void GiveIdleTimeToWindow( WindowRef windowRef, const EventRecord& event )
 	{
 		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
@@ -639,7 +639,7 @@ namespace Pedestal
 		n::saved< N::Port > savePort;
 		
 		// FIXME:  Use window iterator
-		for ( N::WindowRef window = N::FrontWindow();
+		for ( WindowRef window = N::FrontWindow();
 		      window != NULL;
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
@@ -981,7 +981,7 @@ namespace Pedestal
 		switch ( code )
 		{
 			case 'clos':
-				if ( N::WindowRef window = N::FrontWindow() )
+				if ( WindowRef window = N::FrontWindow() )
 				{
 					if ( Window* base = N::GetWRefCon( window ) )
 					{

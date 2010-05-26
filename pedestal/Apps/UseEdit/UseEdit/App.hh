@@ -98,7 +98,7 @@ namespace UseEdit
 			DocumentsOwner();
 			~DocumentsOwner();
 			
-			void CloseDocument( Nitrogen::WindowRef window );
+			void CloseDocument( WindowRef window );
 			
 			DocumentContainer& Documents()  { return itsDocuments; }
 			

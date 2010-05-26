@@ -26,16 +26,16 @@
 namespace Pedestal
 {
 	
-	void ResizeWindow( Nitrogen::WindowRef window, Point newSize );
+	void ResizeWindow( WindowRef window, Point newSize );
 	
 	
-	Point GetWindowSize( Nitrogen::WindowRef window );
+	Point GetWindowSize( WindowRef window );
 	
-	void SetWindowSize( Nitrogen::WindowRef window, Point size );
+	void SetWindowSize( WindowRef window, Point size );
 	
-	Point GetWindowPosition( Nitrogen::WindowRef window );
+	Point GetWindowPosition( WindowRef window );
 	
-	inline void SetWindowPosition( Nitrogen::WindowRef window, Point position )
+	inline void SetWindowPosition( WindowRef window, Point position )
 	{
 		Nitrogen::MoveWindow( window, position );
 	}
@@ -46,14 +46,14 @@ namespace Pedestal
 		ConstStr255Param           title;
 		bool                       visible;
 		Nitrogen::WindowDefProcID  procID;
-		Nitrogen::WindowRef        behind;
+		WindowRef                  behind;
 		bool                       goAwayFlag;
 		
 		NewWindowContext( const Rect&                bounds,
 			              ConstStr255Param           title,
 			              bool                       visible    = true,
 			              Nitrogen::WindowDefProcID  procID     = Nitrogen::documentProc,
-			              Nitrogen::WindowRef        behind     = kFirstWindowOfClass,
+			              WindowRef                  behind     = kFirstWindowOfClass,
 			              bool                       goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
@@ -68,7 +68,7 @@ namespace Pedestal
 		NewWindowContext( const Rect&          bounds,
 			              ConstStr255Param     title,
 			              bool                 visible,
-			              Nitrogen::WindowRef  behind,
+			              WindowRef            behind,
 			              bool                 goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
@@ -81,16 +81,16 @@ namespace Pedestal
 		}
 	};
 	
-	nucleus::owned< Nitrogen::WindowRef > CreateWindow( const Rect&                bounds,
-	                                                    ConstStr255Param           title,
-	                                                    bool                       visible,
-	                                                    Nitrogen::WindowDefProcID  procID,
-	                                                    Nitrogen::WindowRef        behind,
-	                                                    bool                       goAwayFlag,
-	                                                    Nitrogen::RefCon           refCon );
+	nucleus::owned< WindowRef > CreateWindow( const Rect&                bounds,
+	                                          ConstStr255Param           title,
+	                                          bool                       visible,
+	                                          Nitrogen::WindowDefProcID  procID,
+	                                          WindowRef                  behind,
+	                                          bool                       goAwayFlag,
+	                                          Nitrogen::RefCon           refCon );
 	
-	inline nucleus::owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                                           Nitrogen::RefCon         refCon )
+	inline nucleus::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
+	                                                 Nitrogen::RefCon         refCon )
 	{
 		return CreateWindow( context.bounds,
 		                     context.title,
@@ -101,19 +101,19 @@ namespace Pedestal
 		                     refCon );
 	}
 	
-	void InvalidateWindowGrowBox( Nitrogen::WindowRef window );
+	void InvalidateWindowGrowBox( WindowRef window );
 	
 	
 	class WindowCloseHandler : public plus::ref_count< WindowCloseHandler >
 	{
 		public:
-			virtual void operator()( Nitrogen::WindowRef window ) const = 0;
+			virtual void operator()( WindowRef window ) const = 0;
 	};
 	
 	class WindowResizeHandler : public plus::ref_count< WindowResizeHandler >
 	{
 		public:
-			virtual void operator()( Nitrogen::WindowRef window, short h, short v ) const = 0;
+			virtual void operator()( WindowRef window, short h, short v ) const = 0;
 	};
 	
 	class Window : public plus::ref_count< Window >
@@ -122,7 +122,7 @@ namespace Pedestal
 			boost::intrusive_ptr< WindowCloseHandler  > itsCloseHandler;
 			boost::intrusive_ptr< WindowResizeHandler > itsResizeHandler;
 			
-			nucleus::owned< Nitrogen::WindowRef > itsWindowRef;
+			nucleus::owned< WindowRef > itsWindowRef;
 			
 			Nitrogen::WindowDefProcID itsDefProcID;
 		
@@ -131,7 +131,7 @@ namespace Pedestal
 			
 			~Window();
 			
-			Nitrogen::WindowRef Get() const  { return itsWindowRef; }
+			WindowRef Get() const  { return itsWindowRef; }
 			
 			void SetCloseHandler( const boost::intrusive_ptr< WindowCloseHandler >& handler )
 			{
@@ -143,9 +143,9 @@ namespace Pedestal
 				itsResizeHandler = handler;
 			}
 			
-			void Close( Nitrogen::WindowRef window )  { return (*itsCloseHandler)( window ); }
+			void Close( WindowRef window )  { return (*itsCloseHandler)( window ); }
 			
-			void Resize( Nitrogen::WindowRef window, short h, short v );
+			void Resize( WindowRef window, short h, short v );
 			
 			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			

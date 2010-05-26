@@ -67,7 +67,7 @@ namespace UseEdit
 			switch ( N::DescType( token.get().descriptorType ) )
 			{
 				case typeDocument:
-					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
+					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
 					{
 						if ( Ped::Window* base = N::GetWRefCon( window ) )
 						{
@@ -352,7 +352,7 @@ namespace UseEdit
 	class DocumentCloseHandler : public Ped::WindowCloseHandler
 	{
 		public:
-			void operator()( N::WindowRef window ) const
+			void operator()( WindowRef window ) const
 			{
 				gDocuments.CloseDocument( window );
 			}
@@ -368,7 +368,7 @@ namespace UseEdit
 	{
 	}
 	
-	void DocumentsOwner::CloseDocument( N::WindowRef window )
+	void DocumentsOwner::CloseDocument( WindowRef window )
 	{
 		itsDocuments.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
 	}
