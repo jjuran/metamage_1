@@ -20,7 +20,7 @@
 
 #if !defined( __LAMP__ ) && !defined( __linux__ )
 
-static int get_path( int dirfd, const char* path, char* buffer )
+static int get_path( int dirfd, const char* path, char* buffer, bool creating = false )
 {
 	ssize_t result = 0;
 	
@@ -39,9 +39,16 @@ static int get_path( int dirfd, const char* path, char* buffer )
 		
 		if ( result == 0 )
 		{
+			const bool made_dir = creating  &&  0 == mkdir( path, 0000 );  // so realpath() doesn't fail
+			
 			result = realpath( path, buffer ) ? 1 : -1;
 			
 			saved_errno = errno;
+			
+			if ( made_dir )
+			{
+				rmdir( path );
+			}
 		}
 		
 		fchdir( saved_cwd );
@@ -116,7 +123,7 @@ int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath
 		oldpath = old_pathname;
 	}
 	
-	int got_new = get_path( newdirfd, newpath, new_pathname );
+	int got_new = get_path( newdirfd, newpath, new_pathname, true );
 	
 	if ( got_new < 0 )
 	{
@@ -241,7 +248,7 @@ int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpa
 		oldpath = old_pathname;
 	}
 	
-	int got_new = get_path( newdirfd, newpath, new_pathname );
+	int got_new = get_path( newdirfd, newpath, new_pathname, true );
 	
 	if ( got_new < 0 )
 	{
@@ -259,7 +266,7 @@ int symlinkat( const char* target, int newdirfd, const char* newpath )
 {
 	char new_pathname[ PATH_MAX ];
 	
-	int got_new = get_path( newdirfd, newpath, new_pathname );
+	int got_new = get_path( newdirfd, newpath, new_pathname, true );
 	
 	if ( got_new < 0 )
 	{
