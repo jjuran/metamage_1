@@ -29,6 +29,9 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/object_parameter_traits.hh"
 
+// Nitrogen
+#include "Carbon/CarbonEvents/Types/EventKind.hh"
+
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
@@ -233,13 +236,11 @@ namespace Nitrogen
 		kEventClass_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
 	
-	enum CarbonEventKind
-	{
-		kCarbonEventKind_Max = nucleus::enumeration_traits< UInt32 >::max
-	};
-	
-   // This conflicts with Events.h
-   //typedef CarbonEventKind     EventKind;
+	typedef Carbon::EventKind CarbonEventKind;
+	// using Carbon::EventKind;  // This conflicts with Mac::EventKind
+	using Carbon::kEventProcessCommand;
+	using Carbon::kEventCommandUpdateStatus;
+   
    
    using ::EventTypeSpec;
 
@@ -758,9 +759,6 @@ namespace Nitrogen
   {
 	
 	static const EventClass kEventClassCommand = EventClass( ::kEventClassCommand );
-	
-	static const CarbonEventKind kEventProcessCommand      = CarbonEventKind( ::kEventProcessCommand      );
-	static const CarbonEventKind kEventCommandUpdateStatus = CarbonEventKind( ::kEventCommandUpdateStatus );
 	
 	
 /* ... */
