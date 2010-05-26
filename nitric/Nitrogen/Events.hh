@@ -22,6 +22,9 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
 
+// Nitrogen
+#include "Mac/Events/Types/EventKind.hh"
+
 #ifndef NITROGEN_OSUTILS_HH
 #include "Nitrogen/OSUtils.hh"
 #endif
@@ -35,22 +38,18 @@
 namespace Nitrogen
 {
 	
-	enum EventKind
-	{
-		nullEvent       = ::nullEvent,
-		mouseDown       = ::mouseDown,
-		mouseUp         = ::mouseUp,
-		keyDown         = ::keyDown,
-		keyUp           = ::keyUp,
-		autoKey         = ::autoKey,
-		updateEvt       = ::updateEvt,
-		diskEvt         = ::diskEvt,
-		activateEvt     = ::activateEvt,
-		osEvt           = ::osEvt,
-		kHighLevelEvent = ::kHighLevelEvent,
-		
-		kEventKind_Max = nucleus::enumeration_traits< ::EventKind >::max
-	};
+	using Mac::EventKind;
+	using Mac::nullEvent;
+	using Mac::mouseDown;
+	using Mac::mouseUp;
+	using Mac::keyDown;
+	using Mac::keyUp;
+	using Mac::autoKey;
+	using Mac::updateEvt;
+	using Mac::diskEvt;
+	using Mac::activateEvt;
+	using Mac::osEvt;
+	using Mac::kHighLevelEvent;
 	
 	
 	enum EventMask
