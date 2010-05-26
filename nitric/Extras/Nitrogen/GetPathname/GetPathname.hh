@@ -10,17 +10,15 @@
 #include "plus/string.hh"
 
 // Nitrogen
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
+#include "Mac/Files/Types/FSDirSpec.hh"
 
 
-plus::string GetMacPathname( const Nitrogen::FSDirSpec& dir  );
-plus::string GetMacPathname( const FSSpec&              file );
+plus::string GetMacPathname( const Mac::FSDirSpec&  dir  );
+plus::string GetMacPathname( const FSSpec&          file );
 
 
-plus::string GetPOSIXPathname( const Nitrogen::FSDirSpec& dir  );
-plus::string GetPOSIXPathname( const FSSpec&              file );
+plus::string GetPOSIXPathname( const Mac::FSDirSpec&  dir  );
+plus::string GetPOSIXPathname( const FSSpec&          file );
 
 #endif
 
