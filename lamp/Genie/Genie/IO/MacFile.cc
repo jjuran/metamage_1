@@ -5,6 +5,9 @@
 
 #include "Genie/IO/MacFile.hh"
 
+// Nitrogen
+#include "Nitrogen/Files.hh"
+
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
