@@ -7,7 +7,8 @@
 #define GENIE_FILESYSTEM_FSSPEC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -19,22 +20,22 @@ struct FSSpec;
 namespace Genie
 {
 	
-	bool VolumeIsOnServer( Nitrogen::FSVolumeRefNum vRefNum );
+	bool VolumeIsOnServer( Mac::FSVolumeRefNum vRefNum );
 	
 	inline bool FileIsOnServer( const FSSpec& file )
 	{
-		return VolumeIsOnServer( Nitrogen::FSVolumeRefNum( file.vRefNum ) );
+		return VolumeIsOnServer( Mac::FSVolumeRefNum( file.vRefNum ) );
 	}
 	
-	Nitrogen::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo );
+	Mac::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo );
 	
-	Nitrogen::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
+	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
 	
 	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file );
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer );
 	
-	FSTreePtr FSTreeFromFSDirSpec( const Nitrogen::FSDirSpec& dir, bool onServer );
+	FSTreePtr FSTreeFromFSDirSpec( const Mac::FSDirSpec& dir, bool onServer );
 	
 }
 

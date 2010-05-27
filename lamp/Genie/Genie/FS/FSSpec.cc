@@ -5,6 +5,11 @@
 
 #include "Genie/FS/FSSpec.hh"
 
+// Nitrogen
+#include "Mac/Files/Types/FSDirID.hh"
+
+#include "Nitrogen/OSStatus.hh"
+
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
 
@@ -16,7 +21,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	bool VolumeIsOnServer( N::FSVolumeRefNum vRefNum )
+	bool VolumeIsOnServer( Mac::FSVolumeRefNum vRefNum )
 	{
 		GetVolParmsInfoBuffer parmsInfo = { 0 };
 		
@@ -33,7 +38,7 @@ namespace Genie
 		return parmsInfo.vMServerAdr != 0;
 	}
 	
-	N::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
+	Mac::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
@@ -43,13 +48,13 @@ namespace Genie
 			N::ThrowOSStatus( errFSNotAFolder );
 		}
 		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );
-		const N::FSDirID        dirID   = N::FSDirID       ( cInfo.dirInfo.ioDrDirID );
+		const Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );
+		const Mac::FSDirID        dirID   = Mac::FSDirID       ( cInfo.dirInfo.ioDrDirID );
 		
-		return n::make< N::FSDirSpec >( vRefNum, dirID );
+		return n::make< Mac::FSDirSpec >( vRefNum, dirID );
 	}
 	
-	N::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
+	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
 	{
 		CInfoPBRec cInfo = { 0 };
 		
