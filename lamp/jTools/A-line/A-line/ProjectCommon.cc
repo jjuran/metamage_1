@@ -6,9 +6,7 @@
 #include "A-line/ProjectCommon.hh"
 
 // C++
-#include <algorithm>
 #include <map>
-#include <vector>
 
 // A-line
 #include "A-line/Exceptions.hh"

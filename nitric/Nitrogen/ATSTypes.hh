@@ -21,13 +21,6 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
-
 
 namespace Nitrogen
 {

@@ -13,9 +13,6 @@
 
 #include "Nitrogen/TextUtils.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 

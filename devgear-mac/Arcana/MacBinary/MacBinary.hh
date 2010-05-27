@@ -7,7 +7,6 @@
 #define MACBINARY_HH
 
 // Standard C++
-#include <list>
 #include <vector>
 
 // nucleus

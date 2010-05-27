@@ -26,9 +26,6 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/string.hh"
 
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif

@@ -29,9 +29,6 @@
 #include "nucleus/string.hh"
 
 // Nitrogen
-#ifndef NITROGEN_EVENTS_HH
-#include "Nitrogen/Events.hh"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif

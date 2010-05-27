@@ -8,7 +8,6 @@
 #include "Genie/Utilities/GetAppFile.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/Processes.hh"
 
 

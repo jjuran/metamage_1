@@ -14,9 +14,6 @@
 #ifndef IO_WALK_HH
 #define IO_WALK_HH
 
-// Standard C++
-#include <algorithm>
-
 // Io
 #ifndef IO_FILES_HH
 #include "io/files.hh"
