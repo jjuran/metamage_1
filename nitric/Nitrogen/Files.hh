@@ -33,6 +33,7 @@
 #include "Mac/Files/Functions/UnmountVol.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
 #include "Mac/Files/Types/FSIOPosMode.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
@@ -114,10 +115,7 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIteratorFlags )
 	
-	enum FSFileRefNum
-	{
-		kFSFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
-	};
+	using Mac::FSFileRefNum;
 	
 	enum FSForkRefNum
 	{
@@ -284,19 +282,6 @@ namespace nucleus
          return result;
         }
      };
-	
-	template <> struct disposer< Nitrogen::FSFileRefNum >
-	{
-		typedef Nitrogen::FSFileRefNum  argument_type;
-		typedef void                    result_type;
-		
-		void operator()( Nitrogen::FSFileRefNum file ) const
-		{
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::FSClose( file ) );
-		}
-	};
   }
 
 namespace Nitrogen
