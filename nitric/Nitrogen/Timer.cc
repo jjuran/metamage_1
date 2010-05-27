@@ -61,14 +61,6 @@ namespace Nitrogen
 		ThrowOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr.release() ) ) );
 	}
 	
-	UnsignedWide Microseconds()
-	{
-		::UnsignedWide result;
-		::Microseconds( &result );
-		
-		return *reinterpret_cast< UnsignedWide* >( &result );
-	}
-	
 	void RegisterTimeManagerErrors()
 	{
 	//	RegisterOSStatus< /* no errors defined */ >();

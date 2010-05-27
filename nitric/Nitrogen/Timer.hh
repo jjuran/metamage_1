@@ -23,7 +23,8 @@
 #include "nucleus/errors_registered.hh"
 
 // Nitrogen
-#include "Nitrogen/MacTypes.hh"
+#include "Mac/Timer/Functions/Microseconds.hh"
+
 #include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/UPP.hh"
 
@@ -105,7 +106,7 @@ namespace Nitrogen
 	
 	// ...
 	
-	UnsignedWide Microseconds();
+	using Mac::Microseconds;
 	
 	inline nucleus::owned< TimerUPP > NewTimerUPP( TimerProcPtr p )
 	{
