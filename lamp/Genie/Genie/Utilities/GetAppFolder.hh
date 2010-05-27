@@ -9,13 +9,13 @@
 #define GENIE_UTILITIES_GETAPPFOLDER_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
 
 
 namespace Genie
 {
 	
-	Nitrogen::FSDirSpec GetAppFolder();
+	Mac::FSDirSpec GetAppFolder();
 	
 }
 

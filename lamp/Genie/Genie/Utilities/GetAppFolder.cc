@@ -17,10 +17,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	N::FSDirSpec GetAppFolder()
+	Mac::FSDirSpec GetAppFolder()
 	{
 		const FSSpec appFile = GetAppFile();
 		
