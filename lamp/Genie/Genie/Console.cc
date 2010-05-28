@@ -16,7 +16,7 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		const boost::shared_ptr< Process >& external = NewProcess( parent );
+		const boost::intrusive_ptr< Process >& external = NewProcess( parent );
 		
 		char const *const argv[] = { programPath, NULL };
 		

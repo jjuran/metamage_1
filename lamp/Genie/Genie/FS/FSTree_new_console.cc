@@ -48,7 +48,7 @@ namespace Genie
 		
 		Process& parent = GetProcess( 1 );
 		
-		const boost::shared_ptr< Process >& process = NewProcess( parent );
+		const boost::intrusive_ptr< Process >& process = NewProcess( parent );
 		
 		FileDescriptorMap& files = process->FileDescriptors();
 		

@@ -166,7 +166,7 @@ namespace Genie
 	
 	Process& GetInitProcess()
 	{
-		static const boost::shared_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
+		static const boost::intrusive_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
 		
 		return *init;
 	}
@@ -1491,22 +1491,22 @@ namespace Genie
 		
 	}
 	
-	const boost::shared_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
+	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
 	{
 		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
 		pid_t pid = 1;
 		
-		boost::shared_ptr< Process > process( new Process( Process::RootProcess() ) );
+		boost::intrusive_ptr< Process > process( new Process( Process::RootProcess() ) );
 		
 		return itsMap[ pid ] = process;
 	}
 	
-	const boost::shared_ptr< Process >& ProcessList::NewProcess( Process& parent )
+	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process& parent )
 	{
 		pid_t pid = ++itsLastPID;
 		
-		boost::shared_ptr< Process > process( new Process( parent, pid ) );
+		boost::intrusive_ptr< Process > process( new Process( parent, pid ) );
 		
 		return itsMap[ pid ] = process;
 	}
