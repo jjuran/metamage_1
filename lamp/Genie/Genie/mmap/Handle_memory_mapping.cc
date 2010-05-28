@@ -9,11 +9,10 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
-	Handle_memory_mapping::Handle_memory_mapping( n::owned< N::Handle > h )
+	Handle_memory_mapping::Handle_memory_mapping( nucleus::owned< N::Handle > h )
 	:
 		its_handle( h )
 	{

@@ -6,17 +6,20 @@
 #ifndef GENIE_IO_BASE_HH
 #define GENIE_IO_BASE_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // boost
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
 {
-	
-	class memory_mapping;
 	
 	enum
 	{
@@ -73,7 +76,7 @@ namespace Genie
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual boost::shared_ptr< memory_mapping > Map( size_t length, off_t offset );
+			virtual boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
 			
 	};
 	

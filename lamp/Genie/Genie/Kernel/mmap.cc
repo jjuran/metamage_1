@@ -15,6 +15,7 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
@@ -36,10 +37,10 @@ namespace Genie
 		
 		try
 		{
-			typedef boost::shared_ptr< memory_mapping >  shared_ptr;
-			typedef void*                                addr_t;
+			typedef boost::intrusive_ptr< memory_mapping >  intrusive_ptr;
+			typedef void*                                   addr_t;
 			
-			const shared_ptr memory = GetFileHandle( fd )->Map( len, off );
+			const intrusive_ptr memory = GetFileHandle( fd )->Map( len, off );
 			
 			const addr_t address = frame.Caller().add_memory_mapping( memory );
 			

@@ -10,16 +10,19 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
+
+// plus
+#include "plus/ref_count.hh"
 
 
 namespace Genie
 {
 	
-	class memory_mapping
+	class memory_mapping : public plus::ref_count< memory_mapping >
 	{
 		public:
-			typedef boost::shared_ptr< memory_mapping > shared_ptr;
+			typedef boost::intrusive_ptr< memory_mapping > intrusive_ptr;
 			
 			typedef void* addr_t;
 			
@@ -29,9 +32,9 @@ namespace Genie
 	};
 	
 	
-	inline memory_mapping::shared_ptr seize_ptr( memory_mapping* map )
+	inline memory_mapping::intrusive_ptr seize_ptr( memory_mapping* map )
 	{
-		return memory_mapping::shared_ptr( map );
+		return memory_mapping::intrusive_ptr( map );
 	}
 	
 }
