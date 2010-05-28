@@ -44,8 +44,8 @@ namespace Genie
 			const bool close_on_exec = type & SOCK_CLOEXEC;
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
-			boost::shared_ptr< Conduit > east( new Conduit );
-			boost::shared_ptr< Conduit > west( new Conduit );
+			boost::intrusive_ptr< Conduit > east( new Conduit );
+			boost::intrusive_ptr< Conduit > west( new Conduit );
 			
 			boost::shared_ptr< IOHandle > san_jose = NewPairedSocket( west, east, nonblocking );
 			boost::shared_ptr< IOHandle > new_york = NewPairedSocket( east, west, nonblocking );

@@ -9,6 +9,9 @@
 // Standard C++
 #include <list>
 
+// plus
+#include "plus/ref_count.hh"
+
 
 namespace Genie
 {
@@ -41,7 +44,7 @@ namespace Genie
 			std::size_t Read ( char* buffer, std::size_t max_bytes );
 	};
 	
-	class Conduit
+	class Conduit : public plus::ref_count< Conduit >
 	{
 		private:
 			std::list< Page > itsPages;

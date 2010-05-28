@@ -10,7 +10,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Genie
 #include "Genie/IO/Conduit.hh"
@@ -23,17 +23,17 @@ namespace Genie
 	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
-			TerminalID                     itsID;
-			boost::shared_ptr< IOHandle >  itsTerminal;
-			boost::shared_ptr< Conduit >   itsInput;
-			boost::shared_ptr< Conduit >   itsOutput;
+			TerminalID                       itsID;
+			boost::shared_ptr< IOHandle >    itsTerminal;
+			boost::intrusive_ptr< Conduit >  itsInput;
+			boost::intrusive_ptr< Conduit >  itsOutput;
 			
 			IOHandle* Next() const;
 		
 		public:
-			PseudoTTYHandle( std::size_t                   id,
-			                 boost::shared_ptr< Conduit >  input,
-			                 boost::shared_ptr< Conduit >  output );
+			PseudoTTYHandle( std::size_t                      id,
+			                 boost::intrusive_ptr< Conduit >  input,
+			                 boost::intrusive_ptr< Conduit >  output );
 			
 			~PseudoTTYHandle();
 			

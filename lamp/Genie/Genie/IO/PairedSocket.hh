@@ -10,7 +10,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -22,9 +22,9 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle >
 	//
-	NewPairedSocket( const boost::shared_ptr< Conduit >&  input,
-	                 const boost::shared_ptr< Conduit >&  output,
-	                 bool                                 nonblocking );
+	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
+	                 const boost::intrusive_ptr< Conduit >&  output,
+	                 bool                                    nonblocking );
 	
 }
 

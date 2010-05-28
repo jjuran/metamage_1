@@ -13,7 +13,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Genie
 #include "Genie/IO/Conduit.hh"
@@ -26,11 +26,11 @@ namespace Genie
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeInHandle( const boost::shared_ptr< Conduit >&  conduit,
-			              bool                                 nonblocking )
+			PipeInHandle( const boost::intrusive_ptr< Conduit >&  conduit,
+			              bool                                    nonblocking )
 			:
 				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
 				                          : O_WRONLY ),
@@ -57,11 +57,11 @@ namespace Genie
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( const boost::shared_ptr< Conduit >&  conduit,
-			               bool                                 nonblocking )
+			PipeOutHandle( const boost::intrusive_ptr< Conduit >&  conduit,
+			               bool                                    nonblocking )
 			:
 				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
 				                          : O_RDONLY ),

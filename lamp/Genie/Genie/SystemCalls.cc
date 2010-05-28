@@ -337,14 +337,14 @@ namespace Genie
 	
 	static inline boost::shared_ptr< IOHandle >
 	//
-	NewPipeReader( const boost::shared_ptr< Conduit >& conduit, bool nonblocking )
+	NewPipeReader( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
 		return seize_ptr( new PipeOutHandle( conduit, nonblocking ) );
 	}
 	
 	static inline boost::shared_ptr< IOHandle >
 	//
-	NewPipeWriter( const boost::shared_ptr< Conduit >& conduit, bool nonblocking )
+	NewPipeWriter( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
 		return seize_ptr( new PipeInHandle( conduit, nonblocking ) );
 	}
@@ -363,7 +363,7 @@ namespace Genie
 			int reader = LowestUnusedFileDescriptor( 3 );
 			int writer = LowestUnusedFileDescriptor( reader + 1 );
 			
-			boost::shared_ptr< Conduit > conduit( new Conduit );
+			boost::intrusive_ptr< Conduit > conduit( new Conduit );
 			
 			boost::shared_ptr< IOHandle > pipeIn ( NewPipeWriter( conduit, nonblocking ) );
 			boost::shared_ptr< IOHandle > pipeOut( NewPipeReader( conduit, nonblocking ) );
