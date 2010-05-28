@@ -5,6 +5,9 @@
 
 #include "Genie/Exec/GetMainEntry.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Debug
 #include "debug/assert.hh"
 

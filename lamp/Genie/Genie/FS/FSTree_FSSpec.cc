@@ -55,6 +55,7 @@
 // Genie
 #include "Genie/MacFilenameFromUnixFilename.hh"
 #include "Genie/Exec/GetMainEntry.hh"
+#include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"

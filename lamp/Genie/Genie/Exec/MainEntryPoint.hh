@@ -10,11 +10,14 @@
 #include "iota/argv.hh"
 #include "iota/environ.hh"
 
+// plus
+#include "plus/ref_count.hh"
+
 
 namespace Genie
 {
 	
-	class MainEntryPoint
+	class MainEntryPoint : public plus::ref_count< MainEntryPoint >
 	{
 		public:
 			virtual ~MainEntryPoint();
