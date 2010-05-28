@@ -10,6 +10,7 @@
 
 // Pedestal
 #include "Pedestal/CurrentFocus.hh"
+#include "Pedestal/Quasimode.hh"
 
 
 namespace Pedestal
@@ -36,9 +37,9 @@ namespace Pedestal
 		}
 	}
 	
-	boost::shared_ptr< Quasimode > View::EnterShiftSpaceQuasimode( const EventRecord& )
+	boost::intrusive_ptr< Quasimode > View::EnterShiftSpaceQuasimode( const EventRecord& )
 	{
-		return boost::shared_ptr< Quasimode >();
+		return boost::intrusive_ptr< Quasimode >();
 	}
 	
 }

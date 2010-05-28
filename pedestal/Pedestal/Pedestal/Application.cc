@@ -155,7 +155,7 @@ namespace Pedestal
 	
 	static UInt32 gShiftSpaceQuasimodeMask = 0;
 	
-	static boost::shared_ptr< Quasimode > gQuasimode;
+	static boost::intrusive_ptr< Quasimode > gQuasimode;
 	
 	
 	static inline void DebugBeep()

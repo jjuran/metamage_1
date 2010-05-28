@@ -15,6 +15,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
+#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Pedestal
@@ -61,7 +62,7 @@ namespace Pedestal
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			
-			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
+			virtual boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
 			
 			virtual void Draw( const Rect& bounds, bool erasing );
 			

@@ -12,6 +12,7 @@
 #endif
 
 // Pedestal
+#include "Pedestal/Quasimode.hh"
 #include "Pedestal/View.hh"
 
 
@@ -53,7 +54,7 @@ namespace Pedestal
 				return Subview().HitTest( event );
 			}
 			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
+			boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
 			{
 				return Subview().EnterShiftSpaceQuasimode( event );
 			}
