@@ -19,6 +19,7 @@
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Threads.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

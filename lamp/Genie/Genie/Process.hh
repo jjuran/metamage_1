@@ -21,8 +21,11 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
+// nucleus
+#include "nucleus/owned.hh"
+
 // Nitrogen
-#include "Nitrogen/Threads.hh"
+#include "Mac/Threads/Types/ThreadID.hh"
 
 // Genie
 #include "Genie/Exec/MainEntry.hh"
@@ -154,7 +157,7 @@ namespace Genie
 			
 			void* itsReexecArgs[8];
 			
-			nucleus::owned< Nitrogen::ThreadID > itsThread;
+			nucleus::owned< Mac::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
 			
@@ -245,11 +248,11 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.get() == Nitrogen::kNoThreadID; }
+			bool Forked() const  { return itsThread.get() == Mac::kNoThreadID; }
 			
 			bool Forking() const  { return itsForkedChildPID != 0; }
 			
-			Nitrogen::ThreadID GetThread() const;
+			Mac::ThreadID GetThread() const;
 			
 			void Exec( const char*         path,
 			           const char* const   argv[],
