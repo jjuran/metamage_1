@@ -9,6 +9,15 @@
 // POSIX
 #include <sys/stat.h>
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
+// plus
+#include "plus/ref_count.hh"
+
 // Nitrogen
 #include "Nitrogen/Icons.hh"
 
@@ -19,7 +28,7 @@
 namespace Genie
 {
 	
-	class IconData
+	class IconData : public plus::ref_count< IconData >
 	{
 		private:
 			typedef void (*Deleter)( void* );
@@ -68,12 +77,12 @@ namespace Genie
 	class FSTree_Icon_data : public FSTree
 	{
 		private:
-			boost::shared_ptr< IconData > itsData;
+			boost::intrusive_ptr< IconData > itsData;
 		
 		public:
-			FSTree_Icon_data( const FSTreePtr&                      parent,
-			                  const plus::string&                   name,
-			                  const boost::shared_ptr< IconData >&  data );
+			FSTree_Icon_data( const FSTreePtr&                         parent,
+			                  const plus::string&                      name,
+			                  const boost::intrusive_ptr< IconData >&  data );
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			

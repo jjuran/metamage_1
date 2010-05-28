@@ -35,12 +35,12 @@ namespace Genie
 	
 	struct Icon_Parameters
 	{
-		boost::shared_ptr< IconData >  data;
-		Nitrogen::IconAlignmentType    align;
-		Nitrogen::IconTransformType    xform;
-		char                           label;
-		bool                           selected;
-		bool                           disabling;
+		boost::intrusive_ptr< IconData >  data;
+		Nitrogen::IconAlignmentType       align;
+		Nitrogen::IconTransformType       xform;
+		char                              label;
+		bool                              selected;
+		bool                              disabling;
 		
 		Icon_Parameters() : align(), xform(), label(), selected(), disabling()
 		{
@@ -158,11 +158,11 @@ namespace Genie
 	static FSTreePtr Data_Factory( const FSTreePtr&     parent,
 	                               const plus::string&  name )
 	{
-		boost::shared_ptr< IconData >& data = gIconMap[ parent.get() ].data;
+		boost::intrusive_ptr< IconData >& data = gIconMap[ parent.get() ].data;
 		
 		if ( data.get() == NULL )
 		{
-			data = boost::shared_ptr< IconData >( new IconData );
+			data = boost::intrusive_ptr< IconData >( new IconData );
 		}
 		
 		return seize_ptr( new FSTree_Icon_data( parent, name, data ) );
