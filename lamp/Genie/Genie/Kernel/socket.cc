@@ -35,15 +35,6 @@
 namespace Genie
 {
 	
-	static inline boost::shared_ptr< IOHandle >
-	//
-	NewPairedSocket( const boost::shared_ptr< Conduit >&  input,
-	                 const boost::shared_ptr< Conduit >&  output,
-	                 bool                                 nonblocking )
-	{
-		return seize_ptr( new PairedSocket( input, output, nonblocking ) );
-	}
-	
 	static int socketpair( int domain, int type, int protocol, int fds[2] )
 	{
 		SystemCallFrame frame( "socketpair" );
