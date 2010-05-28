@@ -116,7 +116,7 @@ namespace Pedestal
 			virtual void operator()( Nitrogen::WindowRef window, short h, short v ) const = 0;
 	};
 	
-	class Window
+	class Window : public plus::ref_count< Window >
 	{
 		private:
 			boost::intrusive_ptr< WindowCloseHandler  > itsCloseHandler;

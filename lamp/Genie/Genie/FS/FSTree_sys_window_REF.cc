@@ -69,8 +69,8 @@ namespace Genie
 		bool                itIsVisible;
 		bool                itHasCloseBox;
 		
-		boost::shared_ptr< Ped::Window >  itsWindow;
 		boost::shared_ptr< Ped::View >  itsSubview;
+		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		
 		plus::string itsGesturePaths[ n_gestures ];
 		
@@ -151,7 +151,7 @@ namespace Genie
 		return false;
 	}
 	
-	static void Destroy_Window( boost::shared_ptr< Ped::Window >& window, const FSTree* key )
+	static void Destroy_Window( boost::intrusive_ptr< Ped::Window >& window, const FSTree* key )
 	{
 		if ( window.get() )
 		{
@@ -272,7 +272,7 @@ namespace Genie
 		                               kFirstWindowOfClass,
 		                               params.itHasCloseBox );
 		
-		boost::shared_ptr< Ped::Window > window( new Window( key, context ) );
+		boost::intrusive_ptr< Ped::Window > window( new Window( key, context ) );
 		
 		boost::intrusive_ptr< Ped::WindowCloseHandler > closeHandler( new UserWindowCloseHandler( key ) );
 		
@@ -423,7 +423,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			const boost::shared_ptr< Ped::Window >& window = it->second.itsWindow;
+			const boost::intrusive_ptr< Ped::Window >& window = it->second.itsWindow;
 			
 			if ( window.get() != NULL )
 			{
