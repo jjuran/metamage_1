@@ -221,7 +221,7 @@ DEFINE_STUB_FF( fdatasync )
 
 DEFINE_STUB_FF( nanosleep )
 
-DEFINE_STUB_FF( poll )
+//DEFINE_STUB_FF( poll )
 
 DEFINE_STUB_FF( pread )
 DEFINE_STUB_FF( pwrite )
