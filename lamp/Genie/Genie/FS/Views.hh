@@ -32,7 +32,7 @@ namespace Genie
 	void RemoveAllViewParameters( const FSTree* parent );
 	
 	
-	typedef boost::shared_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
+	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
 	
 	const FSTree* GetViewWindowKey( const FSTree* view );
@@ -96,7 +96,7 @@ namespace Genie
 	class FSTree_View : public FSTree
 	{
 		private:
-			typedef boost::shared_ptr< Pedestal::View >& (*ViewGetter)( const FSTree* );
+			typedef boost::intrusive_ptr< Pedestal::View >& (*ViewGetter)( const FSTree* );
 			
 			ViewGetter itsGetter;
 			
@@ -130,7 +130,7 @@ namespace Genie
 			
 			FSIteratorPtr Iterate() const;
 			
-			virtual boost::shared_ptr< Pedestal::View >& Get() const
+			virtual boost::intrusive_ptr< Pedestal::View >& Get() const
 			{
 				ASSERT( itsGetter != NULL );
 				

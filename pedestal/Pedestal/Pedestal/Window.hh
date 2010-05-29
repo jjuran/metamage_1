@@ -147,10 +147,9 @@ namespace Pedestal
 			
 			void Resize( Nitrogen::WindowRef window, short h, short v );
 			
-			virtual boost::shared_ptr< View >& GetView() = 0;
+			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			
-			void SetView( boost::shared_ptr< View > const& view )  { GetView() = view; }
-			void SetView( std::auto_ptr    < View >        view )  { GetView() = view; }
+			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 			
 			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
 			

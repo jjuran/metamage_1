@@ -323,7 +323,7 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		typedef TextEdit_Scroller View;
 		

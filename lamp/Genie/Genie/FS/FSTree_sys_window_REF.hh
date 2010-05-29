@@ -26,8 +26,8 @@ namespace Genie
 	
 	bool InvalidateWindow( const FSTree* key );
 	
-	void InstallViewInWindow    ( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
-	void UninstallViewFromWindow( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key );
+	void InstallViewInWindow    ( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
+	void UninstallViewFromWindow( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
 	
 }
 

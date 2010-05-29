@@ -33,7 +33,7 @@ namespace Genie
 	
 	struct BasicScrollerParameters
 	{
-		boost::shared_ptr< Ped::View >  itsSubview;
+		boost::intrusive_ptr< Ped::View >  itsSubview;
 		
 		BasicScrollerParameters() : itsSubview( Ped::EmptyView::Get() )
 		{
@@ -66,7 +66,7 @@ namespace Genie
 	
 	Ped::View& BasicScroller::Subview()
 	{
-		boost::shared_ptr< Ped::View >& subview = gBasicScrollerParametersMap[ GetKey() ].itsSubview;
+		boost::intrusive_ptr< Ped::View >& subview = gBasicScrollerParametersMap[ GetKey() ].itsSubview;
 		
 		if ( subview.get() == NULL )
 		{
@@ -122,7 +122,7 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return seize_ptr( new BasicScroller( delegate ) );
 	}
@@ -139,7 +139,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gBasicScrollerParametersMap[ key ].itsSubview;
 		}

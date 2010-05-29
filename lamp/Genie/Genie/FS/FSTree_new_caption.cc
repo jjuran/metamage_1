@@ -106,7 +106,7 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return seize_ptr( new Caption( delegate ) );
 	}

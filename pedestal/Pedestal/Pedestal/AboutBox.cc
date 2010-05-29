@@ -42,7 +42,7 @@ namespace Pedestal
 		
 		std::auto_ptr< Window > window( new UserWindow( context ) );
 		
-		window->SetView( std::auto_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
+		window->SetView( boost::intrusive_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
 		
 		return window;
 	}

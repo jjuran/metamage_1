@@ -69,8 +69,8 @@ namespace Genie
 		bool                itIsVisible;
 		bool                itHasCloseBox;
 		
-		boost::shared_ptr< Ped::View >  itsSubview;
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
+		boost::intrusive_ptr< Ped::View   >  itsSubview;
 		
 		plus::string itsGesturePaths[ n_gestures ];
 		
@@ -124,10 +124,10 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< Ped::View >& GetView();
+			boost::intrusive_ptr< Ped::View >& GetView();
 	};
 	
-	boost::shared_ptr< Ped::View >& Window::GetView()
+	boost::intrusive_ptr< Ped::View >& Window::GetView()
 	{
 		return gWindowParametersMap[ itsKey ].itsSubview;
 	}
@@ -446,7 +446,7 @@ namespace Genie
 		return false;
 	}
 	
-	void InstallViewInWindow( const boost::shared_ptr< Ped::View >& view, const FSTree* key )
+	void InstallViewInWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( N::WindowRef window = GetWindowRef( key ) )
 		{
@@ -465,7 +465,7 @@ namespace Genie
 		}
 	}
 	
-	void UninstallViewFromWindow( const boost::shared_ptr< Pedestal::View >& view, const FSTree* key )
+	void UninstallViewFromWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( N::WindowRef window = GetWindowRef( key ) )
 		{
@@ -691,7 +691,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gWindowParametersMap[ key ].itsSubview;
 		}

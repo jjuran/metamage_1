@@ -16,7 +16,7 @@ namespace Pedestal
 	class EmptyView : public View
 	{
 		public:
-			static const boost::shared_ptr< View >& Get();
+			static const boost::intrusive_ptr< View >& Get();
 	};
 	
 }

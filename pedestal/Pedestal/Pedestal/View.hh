@@ -14,9 +14,11 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// plus
+#include "plus/ref_count.hh"
+
 // Boost
 #include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
@@ -45,7 +47,7 @@ namespace Pedestal
 	
 	class Quasimode;
 	
-	class View
+	class View : public plus::ref_count< View >
 	{
 		public:
 			struct Initializer {};
@@ -84,9 +86,9 @@ namespace Pedestal
 	};
 	
 	
-	inline boost::shared_ptr< View > seize_ptr( View* view )
+	inline boost::intrusive_ptr< View > seize_ptr( View* view )
 	{
-		return boost::shared_ptr< View >( view );
+		return boost::intrusive_ptr< View >( view );
 	}
 	
 }
