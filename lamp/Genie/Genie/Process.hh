@@ -91,7 +91,7 @@ namespace Genie
 			plus::var_string& Data()  { return itsStorage; }
 	};
 	
-	struct Parameters
+	struct Parameters : plus::ref_count< Parameters >
 	{
 			FlatArgVector itsCmdLine;
 			FlatArgVector itsEnviron;
@@ -149,7 +149,7 @@ namespace Genie
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
-			boost::shared_ptr< Parameters > itsParameters;
+			boost::intrusive_ptr< Parameters > itsParameters;
 			
 			void* itsReexecArgs[8];
 			

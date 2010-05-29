@@ -680,9 +680,9 @@ namespace Genie
 		return pgrp;
 	}
 	
-	static inline boost::shared_ptr< Parameters > RootProcessParameters()
+	static inline boost::intrusive_ptr< Parameters > RootProcessParameters()
 	{
-		boost::shared_ptr< Parameters > result( new Parameters );
+		boost::intrusive_ptr< Parameters > result( new Parameters );
 		
 		char const *const argv[] = { "init", NULL };
 		
@@ -919,7 +919,7 @@ namespace Genie
 		ResetSignalHandlers();
 		
 		// Members of argv and envp could be living in itsParameters
-		boost::shared_ptr< Parameters > newParameters( new Parameters );
+		boost::intrusive_ptr< Parameters > newParameters( new Parameters );
 		
 		newParameters->itsCmdLine.Assign( &context.argVector.front() );
 		
