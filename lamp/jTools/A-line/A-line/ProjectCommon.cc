@@ -21,7 +21,7 @@ namespace tool
 {
 	
 	// A map from project name to project data
-	typedef std::map< plus::string, boost::shared_ptr< Project > > ProjectMap;
+	typedef std::map< plus::string, Project* > ProjectMap;
 	
 	// A map from platform to project map
 	typedef std::map< Platform, ProjectMap > ProjectPlatformMap;
@@ -47,24 +47,25 @@ namespace tool
 			const ProjectConfig& config = GetProjectConfig( project_name, platform );
 			
 			// Take a reference (auto-vivifying)
-			boost::shared_ptr< Project >& project_ptr = map[ project_name ];
+			Project*& project_ptr = map[ project_name ];
 			
-			project_ptr.reset( new Project( project_name,
-			                                platform,
-			                                config.get_project_dir(),
-			                                config.get_config_data() ) );
+			// This gets leaked, but we would have stored it until exit anyway
+			project_ptr = new Project( project_name,
+			                           platform,
+			                           config.get_project_dir(),
+			                           config.get_config_data() );
 			
-			return *project_ptr.get();
+			return *project_ptr;
 		}
 		
-		if ( it->second.get() == NULL )
+		if ( it->second == NULL )
 		{
 			// Project entry exists but is NULL -- probably trying to load itself
 			
 			throw circular_dependency( project_name );
 		}
 		
-		return *it->second.get();
+		return *it->second;
 	}
 	
 }
