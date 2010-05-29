@@ -1,19 +1,22 @@
-
-#include "postgres.h"
-
-#include "poll_compat.h"
-
-#ifdef PLPROXY_POLL_COMPAT
-
 /*
  * Emulate poll() with select()
  */
 
+#include <errno.h>
+#include <sys/poll.h>
 #include <sys/time.h>
-
-#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
-#endif
+
+
+enum bool
+{
+	false,
+	true
+};
+
+typedef enum bool bool;
+
+typedef unsigned char* uint8;
 
 /*
  * dynamic buffer for fd_set to avoid depending on FD_SETSIZE
@@ -138,6 +141,4 @@ err_inval:
 	errno = EINVAL;
 	return -1;
 }
-
-#endif /* PLPROXY_POLL_COMPAT */
 
