@@ -175,7 +175,7 @@ my %fsmap =
 		{
 			'git-core' =>
 			{
-				'git-upload-pack' => \ 'git/upload-pack',
+				map { ("git-$_" => \ "git/$_") } qw( upload-pack )
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
