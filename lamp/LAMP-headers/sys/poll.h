@@ -64,7 +64,7 @@ typedef unsigned int	nfds_t;
 #define INFTIM		(-1)
 
 #ifndef _KERNEL
-#include <ctype.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 int   poll(struct pollfd[], nfds_t, int);
