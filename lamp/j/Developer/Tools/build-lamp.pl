@@ -181,6 +181,13 @@ my %fsmap =
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
 		sbin => [ \ qw( superd inetd httpd ttyd ) ],
+		share =>
+		{
+			'git-core' =>
+			{
+				templates => [],
+			},
+		},
 	},
 	var =>
 	{
