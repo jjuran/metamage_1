@@ -259,7 +259,7 @@ sub copy_file
 {
 	my ( $src, $dest ) = @_;
 	
-	-f $src or die "### Missing file $src for copy\n";
+	-f $src || readlink $src or die "### Missing file $src for copy\n";
 	
 	verbose_system( 'cp', $src, $dest );
 	
@@ -287,9 +287,11 @@ sub install_script
 	
 	my $file = "$source_tree/$path_from_root/$name";
 	
-	-f $file or die "### Missing static file /$path_from_root/$name\n";
+	-f $file || readlink $file or die "### Missing static file /$path_from_root/$name\n";
 	
 	copy_file( $file, $install_path );
+	
+	return if readlink $file;
 	
 	open( my $fh, '<', $file );
 	
