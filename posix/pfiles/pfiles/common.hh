@@ -26,10 +26,10 @@
 // poseven
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/lseek.hh"
+#include "poseven/functions/lstat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/rmdir.hh"
-#include "poseven/functions/stat.hh"
 #include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/sequences/directory_contents.hh"
@@ -146,7 +146,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return poseven::stat( item, sb );
+		return poseven::lstat( item, sb );
 	}
 	
 	inline bool item_exists( const plus::string& item, overload = overload() )
@@ -170,7 +170,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return poseven::stat( item, sb ) && item_is_file( sb );
+		return poseven::lstat( item, sb ) && !item_is_directory( sb );
 	}
 	
 	inline bool file_exists( const plus::string& item, overload = overload() )
@@ -183,7 +183,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return poseven::stat( item, sb ) && item_is_directory( sb );
+		return poseven::lstat( item, sb ) && item_is_directory( sb );
 	}
 	
 	inline bool directory_exists( const plus::string& item, overload = overload() )
