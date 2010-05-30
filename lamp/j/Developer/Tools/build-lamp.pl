@@ -175,6 +175,7 @@ my %fsmap =
 		{
 			'git-core' =>
 			{
+				"git-receive-pack" => sub { symlink "../../bin/git", $_[0] },
 				map { ("git-$_" => \ "git/$_") } qw( daemon upload-pack )
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
