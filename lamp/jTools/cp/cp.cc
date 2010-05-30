@@ -105,7 +105,7 @@ namespace tool
 			const char* sourcePath = argv[1];
 			const char* destPath   = argv[2];
 			
-			if ( -1 == stat( sourcePath, &sb ) )
+			if ( -1 == lstat( sourcePath, &sb ) )
 			{
 				std::fprintf( stderr, "cp: cannot stat `%s': %s\n", sourcePath, strerror( errno ) );
 				
