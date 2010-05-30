@@ -912,7 +912,13 @@ namespace tool
 		
 		jsync_path += ".jsync";
 		
-		if ( !io::directory_exists( jsync_path ) )
+		struct ::stat jsync_stat;
+		
+		const bool jsync_exists = p7::stat( jsync_path, jsync_stat );
+		
+		const bool jsync_is_dir = jsync_exists  &&  p7::s_isdir( jsync_stat );
+		
+		if ( !jsync_is_dir )
 		{
 			std::fprintf( stderr, "jsync: no such sync path '%s'\n"
 			                      "(No such directory %s)\n",path,
