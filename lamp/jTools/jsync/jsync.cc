@@ -46,7 +46,10 @@ static int futimens( int fd, const struct timespec times[2] );
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/read.hh"
+#include "poseven/functions/readlinkat.hh"
 #include "poseven/functions/stat.hh"
+#include "poseven/functions/symlinkat.hh"
+#include "poseven/functions/unlinkat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/sequences/directory_contents.hh"
 #include "poseven/types/exit_t.hh"
@@ -195,6 +198,20 @@ namespace tool
 		p7::close( out );
 	}
 	
+	static void copy_symlink( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
+	{
+		const plus::string target = p7::readlinkat( olddirfd, name );
+		
+		int unlinked = ::unlinkat( newdirfd, name, 0 );
+		
+		if ( unlinked < 0  &&  errno != ENOENT )
+		{
+			p7::throw_errno( errno );
+		}
+		
+		p7::symlinkat( target, newdirfd, name );
+	}
+	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd );
 	
 	static void recursively_copy( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
@@ -210,7 +227,11 @@ namespace tool
 				copy_file( olddirfd, name, newdirfd );
 			}
 		}
-		else if ( !S_ISLNK( stat_buffer.st_mode ) )
+		else if ( S_ISLNK( stat_buffer.st_mode ) )
+		{
+			copy_symlink( olddirfd, name, newdirfd );
+		}
+		else
 		{
 			recursively_copy_directory( olddirfd, name, newdirfd );
 		}
@@ -485,7 +506,80 @@ namespace tool
 			}
 			else
 			{
-				sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_exists );
+				const bool a_is_link = a_exists && S_ISLNK( a_stat.st_mode );
+				const bool b_is_link = b_exists && S_ISLNK( b_stat.st_mode );
+				const bool c_is_link = c_exists && S_ISLNK( c_stat.st_mode );
+				
+				if ( !a_is_link  &&  !c_is_link )
+				{
+					if ( b_is_link )
+					{
+						p7::unlinkat( b_dirfd, filename );
+						
+						(void) p7::openat( b_dirfd, filename, p7::o_wronly | p7::o_creat, p7::_666 );
+					}
+					
+					sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_exists );
+				}
+				else if ( a_is_link  &&  c_is_link )
+				{
+					const plus::string a_target = p7::readlinkat( a_dirfd, filename );
+					const plus::string c_target = p7::readlinkat( c_dirfd, filename );
+					
+					const plus::string b_target = b_is_link ? p7::readlinkat( b_dirfd, filename ) : plus::string();
+					
+					if ( a_target == c_target )
+					{
+						if ( b_target != a_target )
+						{
+							std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
+							
+							if ( !global_dry_run )
+							{
+								if ( b_exists )
+								{
+									p7::unlinkat( b_dirfd, filename );
+								}
+								
+								p7::symlinkat( a_target, b_dirfd, filename );
+							}
+						}
+					}
+					else if ( b_target == c_target )
+					{
+						std::printf( "%s %s\n", globally_up ? "<---" : "|---", subpath );
+						
+						if ( globally_up  &&  !global_dry_run )
+						{
+							p7::unlinkat( c_dirfd, filename );
+							p7::symlinkat( a_target, c_dirfd, filename );
+							
+							p7::unlinkat( b_dirfd, filename );
+							p7::symlinkat( a_target, b_dirfd, filename );
+						}
+					}
+					else if ( b_target == a_target )
+					{
+						std::printf( "%s %s\n", globally_down ? "--->" : "---|", subpath );
+						
+						if ( globally_down  &&  !global_dry_run )
+						{
+							p7::unlinkat( a_dirfd, filename );
+							p7::symlinkat( c_target, a_dirfd, filename );
+							
+							p7::unlinkat( b_dirfd, filename );
+							p7::symlinkat( c_target, b_dirfd, filename );
+						}
+					}
+					else
+					{
+						std::printf( "### %s %s\n", subpath, "symlink conflict" );
+					}	
+				}
+				else
+				{
+					std::printf( "### %s %s\n", subpath, "symlink conversion" );
+				}
 			}
 		}
 		else if ( b_exists )
