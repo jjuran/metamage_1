@@ -185,7 +185,10 @@ my %fsmap =
 		{
 			'git-core' =>
 			{
-				templates => [],
+				templates =>
+				{
+					info => [qw( exclude )],
+				},
 			},
 		},
 	},
