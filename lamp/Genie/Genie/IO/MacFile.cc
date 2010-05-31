@@ -77,23 +77,33 @@ namespace Genie
 		return result;
 	}
 	
-	static void ToggleBinaryFileSignature( const FSSpec& file, bool to_binary )
+	static bool ToggleBinaryFileSignature( FInfo& fInfo, bool to_binary )
 	{
 		const ::OSType creators[] = { TextFileCreator(), '\?\?\?\?' };
 		const ::OSType types   [] = { 'TEXT',            '\?\?\?\?' };
-		
-		FInfo fInfo = N::FSpGetFInfo( file );
 		
 		if ( fInfo.fdType == types[ !to_binary ] )
 		{
 			fInfo.fdCreator = creators[ to_binary ];
 			fInfo.fdType    = types   [ to_binary ];
 			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	static void ToggleBinaryFileSignature( const FSSpec& file, bool to_binary )
+	{
+		FInfo fInfo = N::FSpGetFInfo( file );
+		
+		if ( ToggleBinaryFileSignature( fInfo, to_binary ) )
+		{
 			N::FSpSetFInfo( file, fInfo );
 		}
 	}
 	
-	static void CheckFileSignature( const FSSpec& file, const char* data, size_t n_bytes )
+	static bool is_binary_data( const char* data, size_t n_bytes )
 	{
 		// bitmap of which control characters make a file 'binary' (i.e. non-text)
 		
@@ -136,8 +146,6 @@ namespace Genie
 		
 		const char* end = data + std::min( n_bytes, enough_bytes );
 		
-		bool is_binary = false;
-		
 		for ( const char* p = data;  p < end;  ++p )
 		{
 			const char c = *p;
@@ -145,17 +153,19 @@ namespace Genie
 			if ( c < 32  &&  1 << c & mask )
 			{
 				// Control character found.
-				// Set type/creator for a 'binary' file.
 				
-				is_binary = true;
-				
-				break;
+				return true;
 			}
 		}
 		
+		return false;
+	}
+	
+	static void CheckFileSignature( const FSSpec& file, const char* data, size_t n_bytes )
+	{
 		try
 		{
-			ToggleBinaryFileSignature( file, is_binary );
+			ToggleBinaryFileSignature( file, is_binary_data( data, n_bytes ) );
 		}
 		catch ( ... )
 		{
