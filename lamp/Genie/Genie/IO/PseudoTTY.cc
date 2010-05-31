@@ -26,9 +26,9 @@ namespace Genie
 	
 	static inline boost::shared_ptr< IOHandle >
 	//
-	NewPseudoTTY( TerminalID                           id,
-	              const boost::shared_ptr< Conduit >&  input,
-	              const boost::shared_ptr< Conduit >&  output )
+	NewPseudoTTY( TerminalID                              id,
+	              const boost::intrusive_ptr< Conduit >&  input,
+	              const boost::intrusive_ptr< Conduit >&  output )
 	{
 		return seize_ptr( new PseudoTTYHandle( id, input, output ) );
 	}
@@ -38,8 +38,8 @@ namespace Genie
 	{
 		static TerminalID index = 0;
 		
-		boost::shared_ptr< Conduit > incoming( new Conduit );
-		boost::shared_ptr< Conduit > outgoing( new Conduit );
+		boost::intrusive_ptr< Conduit > incoming( new Conduit );
+		boost::intrusive_ptr< Conduit > outgoing( new Conduit );
 		
 		boost::shared_ptr< IOHandle > master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		boost::shared_ptr< IOHandle > slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
@@ -67,9 +67,9 @@ namespace Genie
 		return result;
 	}
 	
-	PseudoTTYHandle::PseudoTTYHandle( std::size_t                   id,
-			                          boost::shared_ptr< Conduit >  input,
-			                          boost::shared_ptr< Conduit >  output )
+	PseudoTTYHandle::PseudoTTYHandle( std::size_t                      id,
+			                          boost::intrusive_ptr< Conduit >  input,
+			                          boost::intrusive_ptr< Conduit >  output )
 	: TTYHandle( O_RDWR ),
 	  itsID( id ),
 	  itsTerminal( NewTerminal( make_devpts( id ) ) ),

@@ -33,7 +33,7 @@ namespace Genie
 		bool  itHasVertical;
 		bool  itHasHorizontal;
 		
-		boost::shared_ptr< Ped::View >  itsSubview;
+		boost::intrusive_ptr< Ped::View >  itsSubview;
 		
 		plus::string  itsTargetPath;
 		
@@ -255,7 +255,7 @@ namespace Genie
 	
 	Ped::View& ScrollFrame::Subview()
 	{
-		boost::shared_ptr< Ped::View >& subview = gScrollFrameParametersMap[ itsKey ].itsSubview;
+		boost::intrusive_ptr< Ped::View >& subview = gScrollFrameParametersMap[ itsKey ].itsSubview;
 		
 		if ( subview.get() == NULL )
 		{
@@ -265,7 +265,7 @@ namespace Genie
 		return *subview;
 	}
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return seize_ptr( new ScrollFrame( delegate ) );
 	}
@@ -343,7 +343,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gScrollFrameParametersMap[ key ].itsSubview;
 		}

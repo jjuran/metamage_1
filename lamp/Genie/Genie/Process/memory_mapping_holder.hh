@@ -13,7 +13,10 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
+
+// Genie
+#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
@@ -25,11 +28,11 @@ namespace Genie
 	class memory_mapping_holder
 	{
 		private:
-			typedef boost::shared_ptr< memory_mapping > shared_ptr;
+			typedef boost::intrusive_ptr< memory_mapping > intrusive_ptr;
 			
 			typedef void* addr_t;
 			
-			typedef std::map< addr_t, shared_ptr > map;
+			typedef std::map< addr_t, intrusive_ptr > map;
 			
 			map its_mappings;
 		
@@ -40,7 +43,7 @@ namespace Genie
 			
 			memory_mapping_holder( const memory_mapping_holder& other );
 			
-			addr_t add_memory_mapping( const shared_ptr& mapping );
+			addr_t add_memory_mapping( const intrusive_ptr& mapping );
 			
 			void remove_memory_mapping( addr_t key );
 			

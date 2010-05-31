@@ -13,9 +13,11 @@
 #include "debug/boost_assert.hh"
 
 // plus
+#include "plus/ref_count.hh"
 #include "plus/var_string.hh"
 
 // Boost
+#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Nitrogen
@@ -89,7 +91,7 @@ namespace Genie
 			plus::var_string& Data()  { return itsStorage; }
 	};
 	
-	struct Parameters
+	struct Parameters : plus::ref_count< Parameters >
 	{
 			FlatArgVector itsCmdLine;
 			FlatArgVector itsEnviron;
@@ -98,7 +100,8 @@ namespace Genie
 			std::vector< char* > itsEnvP;
 	};
 	
-	class Process : public SignalReceiver,
+	class Process : public plus::ref_count< Process >,
+	                public SignalReceiver,
 	                public vfork_context,
 	                public memory_mapping_holder,
 	                public TraceTarget
@@ -146,7 +149,7 @@ namespace Genie
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
-			boost::shared_ptr< Parameters > itsParameters;
+			boost::intrusive_ptr< Parameters > itsParameters;
 			
 			void* itsReexecArgs[8];
 			
@@ -274,10 +277,10 @@ namespace Genie
 	class ProcessList
 	{
 		public:
-			typedef std::map< pid_t, boost::shared_ptr< Process > >  Map;
-			typedef Map::value_type                                  value_type;
-			typedef Map::const_iterator                              const_iterator;
-			typedef Map::iterator                                    iterator;
+			typedef std::map< pid_t, boost::intrusive_ptr< Process > >  Map;
+			typedef Map::value_type                                     value_type;
+			typedef Map::const_iterator                                 const_iterator;
+			typedef Map::iterator                                       iterator;
 		
 		private:
 			Map    itsMap;
@@ -288,8 +291,8 @@ namespace Genie
 			
 			~ProcessList();
 			
-			const boost::shared_ptr< Process >& NewProcess( Process::RootProcess );
-			const boost::shared_ptr< Process >& NewProcess( Process& parent );
+			const boost::intrusive_ptr< Process >& NewProcess( Process::RootProcess );
+			const boost::intrusive_ptr< Process >& NewProcess( Process& parent );
 			
 			void RemoveProcess( pid_t pid );
 			
@@ -311,7 +314,7 @@ namespace Genie
 	
 	ProcessList& GetProcessList();
 	
-	inline const boost::shared_ptr< Process >& NewProcess( Process& parent )
+	inline const boost::intrusive_ptr< Process >& NewProcess( Process& parent )
 	{
 		return GetProcessList().NewProcess( parent );
 	}

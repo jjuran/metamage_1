@@ -44,7 +44,7 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
-			boost::shared_ptr< memory_mapping > Map( size_t length, off_t offset );
+			boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
 	};
 	
 }

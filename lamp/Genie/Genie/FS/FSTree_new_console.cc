@@ -48,7 +48,7 @@ namespace Genie
 		
 		Process& parent = GetProcess( 1 );
 		
-		const boost::shared_ptr< Process >& process = NewProcess( parent );
+		const boost::intrusive_ptr< Process >& process = NewProcess( parent );
 		
 		FileDescriptorMap& files = process->FileDescriptors();
 		
@@ -323,7 +323,7 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		typedef TextEdit_Scroller View;
 		

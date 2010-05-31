@@ -53,10 +53,7 @@ namespace Pedestal
 				return Subview().HitTest( event );
 			}
 			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
-			{
-				return Subview().EnterShiftSpaceQuasimode( event );
-			}
+			boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event );
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
 			

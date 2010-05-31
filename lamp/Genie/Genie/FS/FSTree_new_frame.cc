@@ -94,7 +94,7 @@ namespace Genie
 		int    outline_curvature;
 		bool   bounds_changed;
 		
-		boost::shared_ptr< Ped::View >  itsSubview;
+		boost::intrusive_ptr< Ped::View >  itsSubview;
 		
 		FrameParameters() : padding( 0 ),
 		                    outline_width(),
@@ -261,7 +261,7 @@ namespace Genie
 	
 	Ped::View& Frame::Subview()
 	{
-		boost::shared_ptr< Ped::View >& subview = gFrameParametersMap[ itsKey ].itsSubview;
+		boost::intrusive_ptr< Ped::View >& subview = gFrameParametersMap[ itsKey ].itsSubview;
 		
 		if ( subview.get() == NULL )
 		{
@@ -271,7 +271,7 @@ namespace Genie
 		return *subview;
 	}
 	
-	static boost::shared_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
 		return seize_ptr( new Frame( delegate ) );
 	}
@@ -337,7 +337,7 @@ namespace Genie
 			return gFrameParametersMap[ view ].outline_curvature;
 		}
 		
-		boost::shared_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
 		{
 			return gFrameParametersMap[ key ].itsSubview;
 		}

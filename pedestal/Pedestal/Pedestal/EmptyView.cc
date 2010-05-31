@@ -9,9 +9,9 @@
 namespace Pedestal
 {
 	
-	const boost::shared_ptr< View >& EmptyView::Get()
+	const boost::intrusive_ptr< View >& EmptyView::Get()
 	{
-		static boost::shared_ptr< View > empty = seize_ptr( new EmptyView );
+		static boost::intrusive_ptr< View > empty = seize_ptr( new EmptyView );
 		
 		return empty;
 	}

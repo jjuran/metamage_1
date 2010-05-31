@@ -172,8 +172,8 @@ namespace Genie
 		}
 	}
 	
-	static boost::shared_ptr< Ped::View > MakeView( const FSTree*        parent,
-	                                                const plus::string&  name )
+	static boost::intrusive_ptr< Ped::View > MakeView( const FSTree*        parent,
+	                                                   const plus::string&  name )
 	{
 		if ( const ViewParameters* params = FindView( parent, name ) )
 		{
@@ -187,7 +187,7 @@ namespace Genie
 			return factory( delegate );
 		}
 		
-		return boost::shared_ptr< Pedestal::View >();
+		return boost::intrusive_ptr< Ped::View >();
 	}
 	
 	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const plus::string& name )
@@ -306,7 +306,7 @@ namespace Genie
 			
 			AddViewWindowKey( parent, name, windowKey );
 			
-			boost::shared_ptr< Ped::View > view = MakeView( parent, name );
+			boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
 			
 			Get() = view;
 			

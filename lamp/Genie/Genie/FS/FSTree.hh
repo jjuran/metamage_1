@@ -13,10 +13,12 @@
 #include "debug/boost_assert.hh"
 
 // plus
+#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // boost
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Genie
@@ -40,7 +42,8 @@ namespace Genie
 	class FSIterator;
 	
 	typedef boost::shared_ptr< FSTree const > FSTreePtr;
-	typedef boost::shared_ptr< FSIterator   > FSIteratorPtr;
+	
+	typedef boost::intrusive_ptr< FSIterator > FSIteratorPtr;
 	
 	
 	extern const FSTreePtr null_FSTreePtr;
@@ -69,7 +72,7 @@ namespace Genie
 		~FSNode();
 	};
 	
-	class FSIterator
+	class FSIterator : public plus::ref_count< FSIterator >
 	{
 		public:
 			virtual ~FSIterator();

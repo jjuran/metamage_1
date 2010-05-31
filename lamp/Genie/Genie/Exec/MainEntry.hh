@@ -10,7 +10,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 
 namespace Genie
@@ -18,7 +18,7 @@ namespace Genie
 	
 	class MainEntryPoint;
 	
-	typedef boost::shared_ptr< MainEntryPoint > MainEntry;
+	typedef boost::intrusive_ptr< MainEntryPoint > MainEntry;
 	
 }
 

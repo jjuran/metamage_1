@@ -13,7 +13,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // MacFiles
 #include "MacFiles/Classic.hh"
@@ -53,7 +53,7 @@ namespace UseEdit
 	class DocumentContainer
 	{
 		private:
-			typedef std::map< ::WindowRef, boost::shared_ptr< Document > > Map;
+			typedef std::map< ::WindowRef, boost::intrusive_ptr< Document > > Map;
 			
 			Map itsMap;
 			
@@ -68,7 +68,7 @@ namespace UseEdit
 			const Document& GetDocumentByIndex( std::size_t index ) const;
 			const Document& GetDocumentByID   ( UInt32      id    ) const;
 			
-			void StoreNewElement( const boost::shared_ptr< Document >& document );
+			void StoreNewElement( const boost::intrusive_ptr< Document >& document );
 			
 			size_t CountElements() const  { return itsMap.size(); }
 			
@@ -86,8 +86,8 @@ namespace UseEdit
 	class DocumentsOwner
 	{
 		private:
-			DocumentContainer                                  itsDocuments;
-			boost::shared_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
+			DocumentContainer                                     itsDocuments;
+			boost::intrusive_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
 			
 			void StoreNewDocument( Document* doc );
 		

@@ -41,9 +41,9 @@ namespace Pedestal
 		};
 		
 		private:
-			std::auto_ptr< Window >                  itsWindow;
-			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
-			Factory                                  itsFactory;
+			std::auto_ptr< Window >                     itsWindow;
+			boost::intrusive_ptr< WindowCloseHandler >  itsCloseHandler;
+			Factory                                     itsFactory;
 		
 		public:
 			UniqueWindowOwner( Factory f )

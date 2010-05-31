@@ -10,6 +10,7 @@
 #include "iota/convert_string.hh"
 
 // plus
+#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // UseEdit
@@ -19,7 +20,7 @@
 namespace UseEdit
 {
 	
-	class Document
+	class Document : public plus::ref_count< Document >
 	{
 		private:
 			std::auto_ptr< Pedestal::Window >  itsWindow;

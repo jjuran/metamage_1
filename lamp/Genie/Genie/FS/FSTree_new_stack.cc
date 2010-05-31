@@ -53,8 +53,8 @@ namespace Genie
 	
 	struct Named_Subview
 	{
-		plus::string                    name;
-		boost::shared_ptr< Ped::View >  view;
+		plus::string                       name;
+		boost::intrusive_ptr< Ped::View >  view;
 		
 		Named_Subview()
 		{
@@ -132,7 +132,7 @@ namespace Genie
 	};
 	
 	
-	boost::shared_ptr< Ped::View > StackFactory( const FSTree* delegate )
+	boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
 	{
 		return seize_ptr( new Stack( delegate ) );
 	}
@@ -150,7 +150,7 @@ namespace Genie
 			
 			void Delete() const;
 			
-			boost::shared_ptr< Pedestal::View >& Get() const
+			boost::intrusive_ptr< Ped::View >& Get() const
 			{
 				Stack_Parameters& params = gStack_Parameters_Map[ ParentRef().get() ];
 				

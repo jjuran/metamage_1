@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< Pedestal::View > StackFactory( const FSTree* delegate );
+	boost::intrusive_ptr< Pedestal::View > StackFactory( const FSTree* delegate );
 	
 	
 	class FSTree_new_stack : public FSTree_new_View

@@ -5,6 +5,9 @@
 
 #include "Pedestal/Stack.hh"
 
+// Pedestal
+#include "Pedestal/Quasimode.hh"
+
 
 namespace Pedestal
 {
@@ -201,7 +204,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	boost::shared_ptr< Quasimode >
+	boost::intrusive_ptr< Quasimode >
 	//
 	Stack::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
@@ -211,7 +214,7 @@ namespace Pedestal
 		{
 			View& view = GetNthView( i );
 			
-			if ( boost::shared_ptr< Quasimode > mode = view.EnterShiftSpaceQuasimode( event ) )
+			if ( boost::intrusive_ptr< Quasimode > mode = view.EnterShiftSpaceQuasimode( event ) )
 			{
 				return mode;
 			}

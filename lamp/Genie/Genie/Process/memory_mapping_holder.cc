@@ -18,7 +18,7 @@ namespace Genie
 	{
 	}
 	
-	void* memory_mapping_holder::add_memory_mapping( const shared_ptr& mapping )
+	void* memory_mapping_holder::add_memory_mapping( const intrusive_ptr& mapping )
 	{
 		void* key = mapping->get_address();
 		

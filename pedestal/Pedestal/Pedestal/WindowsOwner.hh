@@ -13,7 +13,7 @@
 #include "debug/boost_assert.hh"
 
 // Boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // Pedestal
 #include "Pedestal/Window.hh"
@@ -25,7 +25,7 @@ namespace Pedestal
 	// A collection of windows of the same type.  Requests to close are always accepted.
 	class WindowsOwner
 	{
-		typedef std::map< ::WindowRef, boost::shared_ptr< Window > > WindowStorage;
+		typedef std::map< ::WindowRef, boost::intrusive_ptr< Window > > WindowStorage;
 		
 		class CloseHandler : public WindowCloseHandler
 		{
@@ -49,15 +49,15 @@ namespace Pedestal
 		};
 		
 		private:
-			WindowStorage                            itsWindows;
-			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
+			WindowStorage                               itsWindows;
+			boost::intrusive_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
 			WindowsOwner() : itsCloseHandler( new CloseHandler( itsWindows ) )
 			{
 			}
 			
-			void AddWindow( const boost::shared_ptr< Window >& window )
+			void AddWindow( const boost::intrusive_ptr< Window >& window )
 			{
 				window->SetCloseHandler( itsCloseHandler );
 				

@@ -393,9 +393,9 @@ namespace UseEdit
 		return N::OffsetRect(rect, hMargin / 2, mbarHeight + vMargin / 3);
 	}
 	
-	static inline std::auto_ptr< Ped::View > MakeView()
+	static inline boost::intrusive_ptr< Ped::View > MakeView()
 	{
-		std::auto_ptr< Ped::View > view( new ScrollFrame() );
+		boost::intrusive_ptr< Ped::View > view( new ScrollFrame() );
 		
 		return view;
 	}

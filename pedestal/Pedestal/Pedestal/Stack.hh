@@ -33,7 +33,7 @@ namespace Pedestal
 			
 			bool HitTest( const EventRecord& event );
 			
-			boost::shared_ptr< Quasimode >
+			boost::intrusive_ptr< Quasimode >
 			//
 			EnterShiftSpaceQuasimode( const EventRecord& event );
 			

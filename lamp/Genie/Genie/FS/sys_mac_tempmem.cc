@@ -37,10 +37,10 @@ namespace Genie
 			{
 			}
 			
-			memory_mapping::shared_ptr Map( size_t length, off_t offset );
+			memory_mapping::intrusive_ptr Map( size_t length, off_t offset );
 	};
 	
-	memory_mapping::shared_ptr TempMem_IOHandle::Map( size_t length, off_t offset )
+	memory_mapping::intrusive_ptr TempMem_IOHandle::Map( size_t length, off_t offset )
 	{
 		if ( offset != 0 )
 		{

@@ -63,7 +63,7 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	memory_mapping::shared_ptr MemoryFileHandle::Map( size_t length, off_t offset )
+	memory_mapping::intrusive_ptr MemoryFileHandle::Map( size_t length, off_t offset )
 	{
 		if ( offset + length > itsSize )
 		{

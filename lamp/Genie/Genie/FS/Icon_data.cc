@@ -323,12 +323,12 @@ namespace Genie
 	class IconDataFileHandle : public VirtualFileHandle< RegularFileHandle >
 	{
 		private:
-			boost::shared_ptr< IconData > itsData;
+			boost::intrusive_ptr< IconData > itsData;
 		
 		public:
-			IconDataFileHandle( const FSTreePtr&                      file,
-			                    OpenFlags                             flags,
-			                    const boost::shared_ptr< IconData >&  data )
+			IconDataFileHandle( const FSTreePtr&                         file,
+			                    OpenFlags                                flags,
+			                    const boost::intrusive_ptr< IconData >&  data )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),
 				itsData( data )
@@ -346,12 +346,12 @@ namespace Genie
 	class IconDataWriterHandle : public VirtualFileHandle< StreamHandle >
 	{
 		private:
-			boost::shared_ptr< IconData > itsData;
+			boost::intrusive_ptr< IconData > itsData;
 		
 		public:
-			IconDataWriterHandle( const FSTreePtr&                      file,
-			                      OpenFlags                             flags,
-			                      const boost::shared_ptr< IconData >&  data )
+			IconDataWriterHandle( const FSTreePtr&                         file,
+			                      OpenFlags                                flags,
+			                      const boost::intrusive_ptr< IconData >&  data )
 			:
 				VirtualFileHandle< StreamHandle >( file, flags ),
 				itsData( data )
@@ -433,9 +433,9 @@ namespace Genie
 	}
 	
 	
-	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                      parent,
-	                                    const plus::string&                   name,
-	                                    const boost::shared_ptr< IconData >&  data )
+	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                         parent,
+	                                    const plus::string&                      name,
+	                                    const boost::intrusive_ptr< IconData >&  data )
 	:
 		FSTree( parent, name ),
 		itsData( data )

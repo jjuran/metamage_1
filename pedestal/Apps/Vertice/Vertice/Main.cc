@@ -53,7 +53,7 @@ namespace Vertice
 	{
 		Window* doc = new Window( file.name );
 		
-		boost::shared_ptr< Ped::Window > document( doc );
+		boost::intrusive_ptr< Ped::Window > document( doc );
 		
 		AddWindow( document );
 		
