@@ -35,7 +35,7 @@ namespace Genie
 	
 	const FSIteratorPtr& DirHandle::Iterator()
 	{
-		if ( itsIterator == NULL )
+		if ( itsIterator.get() == NULL )
 		{
 			itsIterator = itsDir->Iterate();
 		}

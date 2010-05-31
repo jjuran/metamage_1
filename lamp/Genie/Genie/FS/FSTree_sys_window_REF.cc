@@ -233,7 +233,7 @@ namespace Genie
 	{
 		const FSTree* key = that->ParentRef().get();
 		
-		return gWindowParametersMap[ key ].itsWindow != NULL;
+		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
 	}
 	
 	static void CreateUserWindow( const FSTree* key )
