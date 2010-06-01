@@ -24,12 +24,14 @@ namespace Genie
 	using MacFeatures::Has_OSXSystem;
 	
 	
-	N::OSType TextFileCreator()
+	enum
 	{
-		static bool runningOSX = Has_OSXSystem();
-		
-		return N::OSType( runningOSX ? '!Rch' : 'R*ch' );
-	}
+		sigBBEdit       = 'R*ch',
+		sigTextWrangler = '!Rch'
+	};
+	
+	::OSType gTextFileCreator = Has_OSXSystem() ? sigTextWrangler
+	                                            : sigBBEdit;
 	
 	
 	struct ExtensionToTypeRecord
