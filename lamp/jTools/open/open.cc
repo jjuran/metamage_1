@@ -25,6 +25,8 @@
 #include "MacFiles/Classic.hh"
 
 // poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/types/errno_t.hh"
 
 // FindProcess
@@ -51,12 +53,7 @@ namespace tool
 	
 	enum
 	{
-		sigFinder       = 'MACS',
-		sigBBEdit       = 'R*ch',
-		sigTextWrangler = '!Rch',
-		
-		// FIXME
-		sigGoodTextEditor = TARGET_API_MAC_CARBON ? sigTextWrangler : sigBBEdit
+		sigFinder = 'MACS'
 	};
 	
 	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
@@ -143,6 +140,23 @@ namespace tool
 		o::alias_option( "--edit", "-t" );
 	}
 	
+	static N::OSType DefaultTextFileCreator()
+	{
+	#ifdef __LAMP__
+		
+		const char* path = "/sys/type/text/DEFAULT";
+		
+		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly | p7::o_binary ) );
+		
+		return N::OSType( iota::decode_quad( code.data() ) );
+		
+	#else
+		
+		return N::OSType( 'ttxt' );  // for OS X
+		
+	#endif
+	}
+	
 	static N::OSType SignatureOfAppForOpening()
 	{
 		if ( gOpenInEditor )
@@ -161,10 +175,9 @@ namespace tool
 				// Treat a malformed quad value the same as no value.  Move on.
 			}
 			
-			// No MAC_EDITOR_SIGNATURE; default to BBEdit/TextWrangler.
-			// FIXME:  We could be smarter about this...
+			// No MAC_EDITOR_SIGNATURE; use the Lamp default.
 			
-			return N::OSType( sigGoodTextEditor );
+			return DefaultTextFileCreator();
 		}
 		
 		if ( gAppSigToOpenIn != NULL )
