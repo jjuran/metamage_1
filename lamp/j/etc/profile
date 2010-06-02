@@ -1,11 +1,20 @@
 # Genie shell profile
 
-# Change to your preference
-export MAC_EDITOR_SIGNATURE='R*ch'  # BBEdit
+# Lamp uses the value in /sys/type/text/DEFAULT as the creator code of text
+# files it creates.
+#
+# `open -t` checks $MAC_EDITOR_SIGNATURE first, and if not defined falls back
+# on /sys/type/text/DEFAULT.
+#
+# You should set a text editor which can handle large files with LF newlines
+# (which excludes SimpleText on both counts).
+#
+# Lamp defaults to BBEdit ('R*ch') for natively-booted classic Mac OS and
+# TextWrangler ('!Rch') for Mac OS X, including Classic.
 
-#export MAC_EDITOR_SIGNATURE='!Rch'  # TextWrangler
-#export MAC_EDITOR_SIGNATURE='CWIE'  # CodeWarrior IDE
-#export MAC_EDITOR_SIGNATURE='ttxt'  # SimpleText
+#echo 'R*ch' > /sys/type/text/DEFAULT  # BBEdit
+#echo '!Rch' > /sys/type/text/DEFAULT  # TextWrangler
+#echo 'CWIE' > /sys/type/text/DEFAULT  # CodeWarrior IDE
 
 # You don't need these except for development, although some are still useful
 PATH=$PATH:/Developer/Tools
