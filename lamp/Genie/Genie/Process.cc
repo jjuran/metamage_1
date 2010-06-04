@@ -61,7 +61,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/Process/Entry.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -437,11 +436,7 @@ namespace Genie
 			iota::argp_t argv = &params.itsArgV[0];
 			iota::envp_t envp = &params.itsEnvP[0];
 			
-			// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
-			// Pass envp in ToolScratch + 4 to initialize environ
-			SetUpToolScratch( &DispatchSystemCall, envp );
-			
-			exit_status = itsMainEntry->Invoke( argc, argv );
+			exit_status = itsMainEntry->Invoke( argc, argv, envp, &DispatchSystemCall );
 			
 			// Not reached by regular tools, since they call exit()
 		}

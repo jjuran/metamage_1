@@ -16,7 +16,6 @@
 
 // Genie
 #include "Genie/Exec/MainEntryPoint.hh"
-#include "Genie/Process/Entry.hh"
 
 
 namespace Genie
@@ -45,15 +44,13 @@ namespace Genie
 				ASSERT( itsEntry != NULL );
 			}
 			
-			int Invoke( int argc, iota::argv_t argv )
+			int Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher )
 			{
 				ASSERT( itsEntry != NULL );
 				
-				ToolScratchGlobals& toolScratch = GetToolScratchGlobals();
-				
 				Extended_Entry entry = (Extended_Entry) itsEntry;
 				
-				return entry( argc, argv, toolScratch.envp, toolScratch.dispatcher );
+				return entry( argc, argv, envp, dispatcher );
 			}
 	};
 	
@@ -108,10 +105,10 @@ namespace Genie
 			{
 			}
 			
-			int Invoke( int argc, iota::argv_t argv );
+			int Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher );
 	};
 	
-	int CFMPluginMain::Invoke( int argc, iota::argv_t argv )
+	int CFMPluginMain::Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher )
 	{
 		Extended_Entry lamp_main = NULL;
 		
@@ -124,9 +121,7 @@ namespace Genie
 		
 		ASSERT( lamp_main != NULL );
 		
-		ToolScratchGlobals& toolScratch = GetToolScratchGlobals();
-		
-		return lamp_main( argc, argv, toolScratch.envp, toolScratch.dispatcher );
+		return lamp_main( argc, argv, envp, dispatcher );
 	}
 	
 	
