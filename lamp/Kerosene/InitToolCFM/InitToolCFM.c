@@ -4,9 +4,6 @@
  */
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -21,7 +18,7 @@ extern pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock );
 
 extern void _set_dispatcher( void* address );
 
-// Initialize environ from ToolScratch
+// Initialize environ from envp
 extern const void* _initialize_environ( char **envp );
 
 // Call InitProc() to set references to cleanup proc and errno
@@ -29,7 +26,7 @@ extern void InitializeCallbacks();
 
 
 // Call main() and exit()
-extern void _lamp_main( int argc, char** argv, char** envp );
+extern void _lamp_main( int argc, char** argv, char** envp, void* dispatcher );
 extern int        main( int argc, char** argv );
 
 extern void exit( int );
@@ -41,13 +38,11 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 }
 
 
-void _lamp_main( int argc, char** argv, char** envp )
+void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
 {
-	void **const toolScratch = (void**) LMGetToolScratch();
+	_set_dispatcher( dispatcher );
 	
-	_set_dispatcher( toolScratch[ 0 ] );
-	
-	_initialize_environ( (char**) toolScratch[ 1 ] );
+	_initialize_environ( envp );
 	
 	InitializeCallbacks();
 	
