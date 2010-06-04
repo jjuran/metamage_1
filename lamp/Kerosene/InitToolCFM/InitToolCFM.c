@@ -7,9 +7,6 @@
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
-#ifndef __MACERRORS__
-#include <MacErrors.h>
-#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -40,6 +37,12 @@ extern void exit( int );
 
 pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 {
+	return noErr;
+}
+
+
+void _lamp_main( int argc, char** argv, char** envp )
+{
 	void **const toolScratch = (void**) LMGetToolScratch();
 	
 	_set_dispatcher( toolScratch[ 0 ] );
@@ -48,12 +51,8 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 	
 	InitializeCallbacks();
 	
-	return __initialize( initBlock );
-}
-
-
-void _lamp_main( int argc, char** argv, char** envp )
-{
+	__initialize( NULL );
+	
 	exit( main( argc, argv ) );
 }
 
