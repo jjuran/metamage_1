@@ -54,8 +54,6 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 
 void _lamp_main( int argc, char** argv, char** envp )
 {
-	const int status = main( argc, argv );
-	
-	exit( status );
+	exit( main( argc, argv ) );
 }
 
