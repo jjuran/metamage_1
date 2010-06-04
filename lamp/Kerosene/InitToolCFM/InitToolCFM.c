@@ -38,8 +38,6 @@ extern int        main( int argc, char** argv );
 extern void exit( int );
 
 
-#pragma export on
-
 pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 {
 	void **const toolScratch = (void**) LMGetToolScratch();
@@ -52,8 +50,6 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 	
 	return __initialize( initBlock );
 }
-
-#pragma export reset
 
 
 void _lamp_main( int argc, char** argv, char** envp )
