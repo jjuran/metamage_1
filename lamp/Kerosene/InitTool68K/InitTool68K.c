@@ -5,12 +5,7 @@
 
 #ifdef __MC68K__
 
-// Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
-
-extern void InitializeTool();
+extern void InitializeTool( void* return_address, int argc, char** argv, char** envp, void* dispatcher );
 
 extern void _set_dispatcher( void* address );
 
@@ -29,14 +24,12 @@ extern void exit( int );
 
 #pragma force_active on
 
-void InitializeTool()
+void InitializeTool( void* return_address, int argc, char** argv, char** envp, void* dispatcher )
 {
-	void **const toolScratch = (void**) LMGetToolScratch();
+	_set_dispatcher( dispatcher );
 	
-	_set_dispatcher( toolScratch[ 0 ] );
+	_initialize_environ( envp );
 	
-	_initialize_environ( (char**) toolScratch[ 1 ] );
-		
 	InitializeCallbacks();
 }
 
