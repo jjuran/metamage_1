@@ -12,6 +12,9 @@
 // Lamp
 #include "lamp/environ_stack.h"
 
+// getenv
+#include "getenv.cc.hh"
+
 
 extern "C" char **environ;
 
@@ -33,29 +36,6 @@ void _pop_environ()
 {
 }
 
-
-char* getenv( const char* name )
-{
-	if ( environ != NULL )
-	{
-		for ( char** env = environ;  *env != NULL;  ++env )
-		{
-			const char* var = *env;
-			
-			if ( char* eq = strchr( var, '=' ) )
-			{
-				const size_t name_length = eq - var;
-				
-				if ( memcmp( name, var, name_length ) == 0  &&  name[ name_length ] == '\0' )
-				{
-					return eq + 1;
-				}
-			}
-		}
-	}
-	
-	return NULL;
-}
 
 int setenv( const char* name, const char* value, int overwriting )
 {
