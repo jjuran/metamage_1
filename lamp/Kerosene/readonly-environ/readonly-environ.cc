@@ -6,7 +6,6 @@
 */
 
 // Standard C
-#include "errno.h"
 #include "stdlib.h"
 
 // Lamp
@@ -37,31 +36,26 @@ void _pop_environ()
 }
 
 
+extern "C" int mutable_environment_is_unimplemented();
+
+
 int setenv( const char* name, const char* value, int overwriting )
 {
-	errno = ENOSYS;
-	
-	return -1;
+	return mutable_environment_is_unimplemented();
 }
 
 int putenv( char* string )
 {
-	errno = ENOSYS;
-	
-	return -1;
+	return mutable_environment_is_unimplemented();
 }
 
 int unsetenv( const char* name )
 {
-	errno = ENOSYS;
-	
-	return -1;
+	return mutable_environment_is_unimplemented();
 }
 
 int clearenv()
 {
-	errno = ENOSYS;
-	
-	return -1;
+	return mutable_environment_is_unimplemented();
 }
 
