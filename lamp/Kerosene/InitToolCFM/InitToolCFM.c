@@ -46,10 +46,7 @@ pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
 	
 	_set_dispatcher( toolScratch[ 0 ] );
 	
-	if ( _initialize_environ( (char**) toolScratch[ 1 ] ) == NULL )
-	{
-		return memFullErr;
-	}
+	_initialize_environ( (char**) toolScratch[ 1 ] );
 	
 	InitializeCallbacks();
 	
