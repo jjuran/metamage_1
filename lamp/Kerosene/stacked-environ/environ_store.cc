@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 
-iota::environ_t environ = NULL;
+char** environ = NULL;
 
 
 namespace kerosene
@@ -139,7 +139,7 @@ namespace kerosene
 		return next;
 	}
 	
-	environ_store::environ_store( environ_store* next, iota::environ_t envp )
+	environ_store::environ_store( environ_store* next, char** envp )
 	:
 		its_next( next )
 	{

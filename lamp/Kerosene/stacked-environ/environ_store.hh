@@ -10,9 +10,6 @@
 #include <set>
 #include <vector>
 
-// Iota
-#include "iota/environ.hh"
-
 
 namespace kerosene
 {
@@ -40,7 +37,7 @@ namespace kerosene
 			void reset();
 		
 		public:
-			environ_store( environ_store* next, iota::environ_t envp );
+			environ_store( environ_store* next, char** envp );
 			
 			~environ_store();
 			
