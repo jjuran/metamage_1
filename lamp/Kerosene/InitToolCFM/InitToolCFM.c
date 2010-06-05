@@ -12,9 +12,6 @@
 extern pascal OSErr __initialize( const struct CFragInitBlock* initBlock );
 extern pascal void  __terminate ();
 
-// Lamp runtime
-extern pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock );
-
 
 extern void _set_dispatcher( void* address );
 
@@ -30,12 +27,6 @@ extern void _lamp_main( int argc, char** argv, char** envp, void* dispatcher );
 extern int        main( int argc, char** argv );
 
 extern void exit( int );
-
-
-pascal OSErr _initialize_lamp( const struct CFragInitBlock* initBlock )
-{
-	return noErr;
-}
 
 
 void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
