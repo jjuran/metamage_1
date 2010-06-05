@@ -9,8 +9,7 @@ extern void InitializeTool( void* return_address, int argc, char** argv, char** 
 
 extern void _set_dispatcher( void* address );
 
-// Initialize environ from ToolScratch
-extern const void* _initialize_environ( char **envp );
+extern char** environ;
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -28,7 +27,7 @@ void InitializeTool( void* return_address, int argc, char** argv, char** envp, v
 {
 	_set_dispatcher( dispatcher );
 	
-	_initialize_environ( envp );
+	environ = envp;
 	
 	InitializeCallbacks();
 }

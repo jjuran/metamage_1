@@ -20,13 +20,6 @@ extern "C" char **environ;
 char **environ = NULL;
 
 
-extern "C" const void* _initialize_environ( char **envp );
-
-const void* _initialize_environ( char **envp )
-{
-	return environ = envp;
-}
-
 void _push_environ()
 {
 }

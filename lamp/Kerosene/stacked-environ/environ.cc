@@ -39,13 +39,6 @@ static environ_store& get_envp()
 	return *global_environ_top;
 }
 
-extern "C" const void* _initialize_environ( char** envp );
-
-const void* _initialize_environ( char** envp )
-{
-	return environ = envp;
-}
-
 void _push_environ()
 {
 	++global_vfork_level;

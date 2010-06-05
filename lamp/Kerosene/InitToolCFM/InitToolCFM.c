@@ -15,8 +15,7 @@ extern pascal void  __terminate ();
 
 extern void _set_dispatcher( void* address );
 
-// Initialize environ from envp
-extern const void* _initialize_environ( char **envp );
+extern char** environ;
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -33,7 +32,7 @@ void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
 {
 	_set_dispatcher( dispatcher );
 	
-	_initialize_environ( envp );
+	environ = envp;
 	
 	InitializeCallbacks();
 	
