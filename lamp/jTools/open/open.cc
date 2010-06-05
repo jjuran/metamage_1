@@ -56,6 +56,10 @@ namespace tool
 		sigFinder = 'MACS'
 	};
 	
+	
+	static bool gActivate = false;
+	
+	
 	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
 	{
 		return macPathname ? N::FSMakeFSSpec         ( N::Str255( pathname ) ) 
@@ -107,8 +111,21 @@ namespace tool
 	static void OpenItemsWithRunningApp( const N::AEDescList_Data&   items,
 	                                     const ProcessSerialNumber&  psn )
 	{
+		if ( gActivate )
+		{
+			N::SetFrontProcess( psn );
+		}
+		
 		N::AESend( MakeOpenDocsEvent( items, psn ),
 		           N::kAENoReply | N::kAECanInteract );
+		
+		if ( gActivate )
+		{
+			while ( !N::SameProcess( psn, N::GetFrontProcess() ) )
+			{
+				sleep( 0 );
+			}
+		}
 	}
 	
 	static void LaunchApplicationWithDocsToOpen( const FSSpec&              app,
@@ -134,10 +151,13 @@ namespace tool
 		o::bind_option_to_variable( "--sig",  gAppSigToOpenIn  );
 		o::bind_option_to_variable( "--mac",  gUseMacPathnames );
 		o::bind_option_to_variable( "--edit", gOpenInEditor    );
+		o::bind_option_to_variable( "--actv", gActivate        );
 		
 		o::alias_option( "--app",  "-a" );
 		o::alias_option( "--edit", "-e" );
 		o::alias_option( "--edit", "-t" );
+		
+		o::alias_option( "--actv", "--activate" );
 	}
 	
 	static N::OSType DefaultTextFileCreator()
