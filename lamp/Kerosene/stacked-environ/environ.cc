@@ -13,6 +13,12 @@
 // Kerosene
 #include "environ_store.hh"
 
+// getenv
+static char* _getenv( const char* name );
+#define getenv _getenv
+#include "getenv.cc.hh"
+#undef getenv
+
 
 using kerosene::environ_store;
 
@@ -37,19 +43,7 @@ extern "C" const void* _initialize_environ( char** envp );
 
 const void* _initialize_environ( char** envp )
 {
-	try
-	{
-		static environ_store gEnviron( NULL, envp );
-		
-		global_environ_top = &gEnviron;
-		
-		global_environ_level = 1;
-	}
-	catch ( ... )
-	{
-	}
-	
-	return global_environ_top;  // NULL if bad_alloc
+	return environ = envp;
 }
 
 void _push_environ()
@@ -70,7 +64,8 @@ void _pop_environ()
 
 char* getenv( const char* name )
 {
-	return global_environ_top->get( name );
+	return global_environ_top ? global_environ_top->get( name )
+	                          : _getenv( name );
 }
 
 int setenv( const char* name, const char* value, int overwriting )
