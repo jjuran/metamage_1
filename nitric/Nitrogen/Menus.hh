@@ -25,6 +25,7 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
+#include "Mac/Menus/Types/MenuID.hh"
 #include "Mac/Resources/Types/ResID.hh"
 #include "Mac/Resources/Types/ResType.hh"
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
@@ -77,26 +78,9 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
 	
-	enum MenuID
-	{
-		kMenuID_Max = nucleus::enumeration_traits< ::MenuID >::max
-	};
+	using Mac::MenuID;
 	
 }
-
-namespace nucleus
-  {
-   template <> struct disposer< Nitrogen::MenuID >
-     {
-      typedef Nitrogen::MenuID  argument_type;
-      typedef void              result_type;
-      
-      void operator()( Nitrogen::MenuID id ) const
-        {
-         ::DeleteMenu( id );
-        }
-     };
-  }
 
 namespace Nitrogen
   {
