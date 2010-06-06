@@ -8,6 +8,7 @@
 
 // Standard C++
 #include <map>
+#include <vector>
 
 // Debug
 #include "debug/boost_assert.hh"

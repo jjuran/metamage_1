@@ -9,6 +9,11 @@
 #include "recall/stack_frame.hh"
 
 
+#ifndef NULL
+#define NULL  0L
+#endif
+
+
 namespace recall
 {
 	
@@ -93,18 +98,16 @@ namespace recall
 	
 	
 	template < class StackFrame >
-	static void crawl_stack( unsigned                     level,
-	                         const StackFrame            *frame,
-	                         std::vector< frame_data >&   result )
+	static unsigned crawl_stack( const StackFrame*  frame,
+	                             frame_data*        result,
+	                             unsigned           capacity )
 	{
 	next:
 		
-		if ( frame == NULL  ||  level > 63 )
+		if ( frame == NULL  ||  capacity == 0 )
 		{
-			return;
+			return capacity;
 		}
-		
-		++level;
 		
 		typedef switch_frame_traits< StackFrame > traits;
 		
@@ -112,18 +115,20 @@ namespace recall
 		{
 			if ( typename traits::next_frame_type next = traits::check( frame ) )
 			{
-				crawl_stack( level, next, result );
+				crawl_stack( next, result, capacity );
 				
-				return;
+				return capacity;
 			}
 		}
 		
-		result.push_back( frame_data( (stack_frame_pointer) frame,
-		                              frame->return_address ) );
+		*result++ = frame_data( (stack_frame_pointer) frame,
+		                        frame->return_address );
+		
+		--capacity;
 		
 		if ( frame->next < frame )
 		{
-			return;
+			return capacity;
 		}
 		
 		
@@ -132,19 +137,16 @@ namespace recall
 		goto next;
 	}
 	
-	void make_stack_crawl( std::vector< frame_data >&  result,
-	                       stack_frame_pointer         top )
+	unsigned make_stack_crawl( frame_data*          result,
+	                           unsigned             capacity,
+	                           stack_frame_pointer  top )
 	{
 		const stack_frame* top_frame = top ? (const stack_frame*) top
 		                                   : get_top_frame();
 		
-		try
-		{
-			crawl_stack( 0, top_frame, result );
-		}
-		catch ( const std::bad_alloc& )
-		{
-		}
+		return capacity - crawl_stack( top_frame, result, capacity );
+		
+		return 0;
 	}
 	
 }

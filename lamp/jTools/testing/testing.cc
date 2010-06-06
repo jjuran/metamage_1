@@ -1140,7 +1140,9 @@ static int TestUnmangle( int argc, iota::argv_t argv )
 }
 
 
-static std::vector< recall::frame_data > gStackCrawl;
+static recall::frame_data gStackCrawl[ 64 ];
+
+static unsigned n_stack_frames;
 
 class ThingThatSavesStackCrawlDuringDestruction
 {
@@ -1149,7 +1151,7 @@ class ThingThatSavesStackCrawlDuringDestruction
 		{
 			try
 			{
-				recall::make_stack_crawl( gStackCrawl );
+				n_stack_frames = recall::make_stack_crawl( gStackCrawl, sizeof gStackCrawl );
 			}
 			catch ( ... )
 			{
@@ -1174,12 +1176,12 @@ static int TestUnwind( int argc, iota::argv_t argv )
 	{
 	}
 	
-	recall::make_report_from_stack_crawl( report, gStackCrawl.begin(), gStackCrawl.end() );
+	recall::make_report_from_stack_crawl( report, gStackCrawl, gStackCrawl + n_stack_frames );
 	
 	report += "\n";
 	
 	
-	gStackCrawl.clear();
+	n_stack_frames = 0;
 	
 	try
 	{
@@ -1191,7 +1193,7 @@ static int TestUnwind( int argc, iota::argv_t argv )
 	{
 	}
 	
-	recall::make_report_from_stack_crawl( report, gStackCrawl.begin(), gStackCrawl.end() );
+	recall::make_report_from_stack_crawl( report, gStackCrawl, gStackCrawl + n_stack_frames );
 	
 	report += "\n";
 	

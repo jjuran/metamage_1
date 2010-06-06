@@ -8,6 +8,7 @@
 // Standard C++
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 // Standard C
 #include <string.h>
@@ -232,9 +233,9 @@ namespace recall
 		result += "\n";
 	}
 	
-	void make_report_from_stack_crawl( plus::var_string&                          result,
-	                                   std::vector< frame_data >::const_iterator  begin,
-	                                   std::vector< frame_data >::const_iterator  end )
+	void make_report_from_stack_crawl( plus::var_string&  result,
+	                                   const frame_data*  begin,
+	                                   const frame_data*  end )
 	{
 		std::vector< call_info > call_chain;
 		
@@ -250,7 +251,7 @@ namespace recall
 	
 	debugging_context::debugging_context()
 	{
-		make_stack_crawl( its_stack_crawl );
+		its_n_frames = make_stack_crawl( its_stack_crawl, frame_capacity );
 	}
 	
 }

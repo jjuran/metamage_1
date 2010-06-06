@@ -84,12 +84,14 @@ static void DumpBacktrace()
 {
 	using namespace recall;
 	
-	std::vector< frame_data > stackCrawl;
+	const unsigned frame_capacity = 64;
 	
-	make_stack_crawl( stackCrawl );
+	frame_data stack_crawl[ frame_capacity ];
 	
-	std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
-	std::vector< frame_data >::const_iterator end   = stackCrawl.end();
+	const unsigned n_frames = make_stack_crawl( stack_crawl, frame_capacity );
+	
+	const frame_data* begin = stack_crawl;
+	const frame_data* end   = stack_crawl + n_frames;
 	
 	++begin;  // skip DumpBacktrace( void )
 	

@@ -6,9 +6,6 @@
 #ifndef RECALL_STACKCRAWL_HH
 #define RECALL_STACKCRAWL_HH
 
-// Standard C++
-#include <vector>
-
 // recall
 #include "recall/return_address.hh"
 
@@ -73,8 +70,9 @@ namespace recall
 	
 	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip = 0 );
 	
-	void make_stack_crawl( std::vector< frame_data >&  result,
-	                       stack_frame_pointer         top = NULL );
+	unsigned make_stack_crawl( frame_data*          result,
+	                           unsigned             capacity,
+	                           stack_frame_pointer  top = 0L );  // NULL
 	
 }
 

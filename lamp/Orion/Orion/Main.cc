@@ -48,21 +48,22 @@ namespace Orion
 		}
 		catch ( const debugging_context& debugging )
 		{
-			const std::vector< frame_data >& stackCrawl = debugging.get_stack_crawl();
+			const unsigned size = debugging.get_stack_crawl_size();
 			
-			if ( stackCrawl.size() < 2 )
+			if ( size < 2 )
 			{
 				return;
 			}
 			
-			std::vector< frame_data >::const_iterator begin = stackCrawl.begin();
-			std::vector< frame_data >::const_iterator end   = stackCrawl.end();
+			const frame_data* begin = debugging.get_stack_crawl_data();
+			
+			const frame_data* end = begin + size;
 			
 			++begin;  // skip recall::debugging_context::debugging_context( void )
 			
 			if ( begin->frame_pointer < stack_bottom_limit )
 			{
-				std::vector< frame_data >::const_iterator last = end - 1;
+				const frame_data* last = end - 1;
 				
 				while ( last->frame_pointer >= stack_bottom_limit )
 				{
