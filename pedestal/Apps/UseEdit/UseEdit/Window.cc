@@ -5,6 +5,9 @@
 
 #include "UseEdit/Window.hh"
 
+// plus
+#include "plus/string.hh"
+
 // Nitrogen
 #include "Nitrogen/TextEdit.hh"
 

@@ -5,11 +5,17 @@
 
 #include "Pedestal/IncrementalSearch.hh"
 
+// Standard C++
+#include <vector>
+
 // Standard C/C++
 #include <cctype>
 
 // Debug
 #include "debug/assert.hh"
+
+// plus
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/Events.hh"
@@ -205,6 +211,25 @@ namespace Pedestal
 		
 		return c;
 	}
+	
+	
+	class IncrementalSearchQuasimode : public Quasimode
+	{
+		private:
+			IncrementalSearchEditor&      itsView;
+			bool                          itSearchesBackward;
+			unsigned short                itsModifierMask;
+			TextSelection                 itsSavedSelection;
+			std::vector< TextSelection >  itsMatches;
+			plus::var_string              itsPattern;
+		
+		public:
+			IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );
+			
+			~IncrementalSearchQuasimode();
+			
+			bool KeyDown( const EventRecord& event );
+	};
 	
 	
 	IncrementalSearchQuasimode::IncrementalSearchQuasimode( IncrementalSearchEditor&  editor,

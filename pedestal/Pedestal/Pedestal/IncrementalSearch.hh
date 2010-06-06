@@ -6,15 +6,22 @@
 #ifndef PEDESTAL_INCREMENTALSEARCH_HH
 #define PEDESTAL_INCREMENTALSEARCH_HH
 
-// Standard C++
-#include <vector>
+// Debug
+#include "debug/boost_assert.hh"
 
-// plus
-#include "plus/var_string.hh"
+// Boost
+#include <boost/intrusive_ptr.hpp>
 
 // Pedestal
 #include "Pedestal/Quasimode.hh"
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace Pedestal
 {
@@ -88,24 +95,6 @@ namespace Pedestal
 	
 	
 	const plus::string& GetLastSearchPattern();
-	
-	class IncrementalSearchQuasimode : public Quasimode
-	{
-		private:
-			IncrementalSearchEditor&      itsView;
-			bool                          itSearchesBackward;
-			unsigned short                itsModifierMask;
-			TextSelection                 itsSavedSelection;
-			std::vector< TextSelection >  itsMatches;
-			plus::var_string              itsPattern;
-		
-		public:
-			IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );
-			
-			~IncrementalSearchQuasimode();
-			
-			bool KeyDown( const EventRecord& event );
-	};
 	
 	boost::intrusive_ptr< Quasimode >
 	//

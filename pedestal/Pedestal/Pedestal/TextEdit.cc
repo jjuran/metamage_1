@@ -564,7 +564,7 @@ namespace Pedestal
 		
 		const bool backward = event.modifiers & shiftKey;
 		
-		return New_IncrementalSearchQuasimode( new IncrementalSearchQuasimode( *this, backward ) );
+		return New_IncrementalSearchQuasimode( *this, backward );
 	}
 	
 	
