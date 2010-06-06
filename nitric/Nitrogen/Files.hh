@@ -34,6 +34,7 @@
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSDirSpec.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Files/Types/FSIOPosMode.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSSignature.hh"
 #include "Mac/Files/Types/FSUserPrivileges.hh"
@@ -135,19 +136,13 @@ namespace Nitrogen
 	using Mac::fsRdDenyPerm;
 	using Mac::fsWrDenyPerm;
 	
-	enum FSIOPosMode
-	{
-		fsAtMark    = ::fsAtMark,
-		fsFromStart = ::fsFromStart,
-		fsFromLEOF  = ::fsFromLEOF,
-		fsFromMark  = ::fsFromMark,
-		
-		kFSIOPosMode_Max = nucleus::enumeration_traits< UInt16 >::max
-	};
+	using Mac::FSIOPosMode;
+	using Mac::FSIOPositioningMode;
 	
-	NUCLEUS_DEFINE_FLAG_OPS( FSIOPosMode )
-	
-	typedef FSIOPosMode FSIOPositioningMode;
+	using Mac::fsAtMark;
+	using Mac::fsFromStart;
+	using Mac::fsFromLEOF;
+	using Mac::fsFromMark;
 	
 	enum FSAllocationFlags
 	{
