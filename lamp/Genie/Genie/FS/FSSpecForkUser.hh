@@ -10,7 +10,8 @@
 #include "nucleus/shared.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
+#include "Mac/Files/Types/FSIOPerm.hh"
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -19,9 +20,9 @@
 namespace Genie
 {
 	
-	typedef nucleus::owned< Nitrogen::FSFileRefNum > (*ForkOpener)( const FSSpec&, Nitrogen::FSIOPermissions );
+	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const nucleus::shared< Nitrogen::FSFileRefNum >&, OpenFlags );
+	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, OpenFlags );
 	
 	boost::shared_ptr< IOHandle >
 	//
