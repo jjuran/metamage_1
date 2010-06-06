@@ -15,6 +15,8 @@
 // Nitrogen
 #include "Mac/Resources/Types/ResType.hh"
 
+#include "Nitrogen/Menus.hh"
+
 // ClassicToolbox
 #if CALL_NOT_IN_CARBON
 #include "ClassicToolbox/Devices.hh"

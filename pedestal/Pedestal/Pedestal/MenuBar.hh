@@ -7,7 +7,7 @@
 #define PEDESTAL_MENUBAR_HH
 
 // Nitrogen
-#include "Nitrogen/Menus.hh"
+#include "Mac/Menus/Types/MenuID.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
@@ -16,11 +16,11 @@
 namespace Pedestal
 {
 	
-	void AddMenu( Nitrogen::MenuID menuID );
+	void AddMenu( Mac::MenuID menuID );
 	
-	void PopulateAppleMenu( Nitrogen::MenuID menuID );
+	void PopulateAppleMenu( Mac::MenuID menuID );
 	
-	MenuItemCode HandleMenuItem( Nitrogen::MenuID menuID, SInt16 item );
+	MenuItemCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
 	
 }
 
