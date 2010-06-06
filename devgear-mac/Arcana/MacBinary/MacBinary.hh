@@ -10,11 +10,13 @@
 #include <list>
 #include <vector>
 
-// plus
-#include "plus/string.hh"
+// nucleus
+#include "nucleus/owned.hh"
+#include "nucleus/string.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
 
 
 namespace MacBinary
@@ -42,7 +44,7 @@ namespace MacBinary
 		private:
 			struct Frame
 			{
-				Nitrogen::FSDirSpec      destDir;
+				Mac::FSDirSpec           destDir;
 				FSSpec                   file;
 				UInt32                   modificationDate;
 				nucleus::mutable_string  comment;
@@ -60,13 +62,13 @@ namespace MacBinary
 			UInt16    itsSecondaryHeaderLength;
 			UInt16    itsCommentLength;
 			
-			nucleus::owned< Nitrogen::FSFileRefNum > itsDataFork;
-			nucleus::owned< Nitrogen::FSFileRefNum > itsResourceFork;
+			nucleus::owned< Mac::FSFileRefNum > itsDataFork;
+			nucleus::owned< Mac::FSFileRefNum > itsResourceFork;
 			
 			void DecodeHeader( const char* header );
 			
 		public:
-			Decoder( const Nitrogen::FSDirSpec& destination );
+			Decoder( const Mac::FSDirSpec& destination );
 			
 			int Write( const char* data, ByteCount byteCount );
 	};

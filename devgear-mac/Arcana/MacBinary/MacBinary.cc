@@ -37,6 +37,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 
 // FSContents
