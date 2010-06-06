@@ -7,8 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <vector>
 
 // Standard C
 #include <string.h>
@@ -195,9 +193,9 @@ namespace recall
 		result += "\n";
 	}
 	
-	static void make_report_from_call_chain( plus::var_string&                         result,
-	                                         std::vector< call_info >::const_iterator  begin,
-	                                         std::vector< call_info >::const_iterator  end )
+	void make_report_from_stack_crawl( plus::var_string&  result,
+	                                   const frame_data*  begin,
+	                                   const frame_data*  end )
 	{
 		const unsigned n_frames = end - begin;
 		
@@ -211,7 +209,7 @@ namespace recall
 		unsigned offset = 0;
 		
 		// It's important to use < instead of != if we might skip past the end
-		for ( std::vector< call_info >::const_iterator it = begin;  it < end;  ++it, ++offset )
+		for ( const frame_data* it = begin;  it < end;  ++it, ++offset )
 		{
 			const unsigned magnitude = iota::decimal_magnitude( offset );
 			
@@ -225,28 +223,12 @@ namespace recall
 			
 			iota::fill_unsigned_decimal( offset, &result[ size ], magnitude );
 			
-			const call_info& info = *it;
+			const call_info info = get_call_info_from_return_address( *it );
 			
 			make_report_for_call( result, info );
 		}
 		
 		result += "\n";
-	}
-	
-	void make_report_from_stack_crawl( plus::var_string&  result,
-	                                   const frame_data*  begin,
-	                                   const frame_data*  end )
-	{
-		std::vector< call_info > call_chain;
-		
-		call_chain.resize( end - begin );
-		
-		std::transform( begin,
-		                end,
-		                call_chain.begin(),
-		                std::ptr_fun( get_call_info_from_return_address ) );
-		
-		make_report_from_call_chain( result, call_chain.begin(), call_chain.end() );
 	}
 	
 	debugging_context::debugging_context()
