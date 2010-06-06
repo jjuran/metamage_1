@@ -6,8 +6,11 @@
 #ifndef PEDESTAL_LISTVIEW_HH
 #define PEDESTAL_LISTVIEW_HH
 
+// nucleus
+#include "nucleus/owned.hh"
+
 // Nitrogen
-#include "Nitrogen/Lists.hh"
+#include "Mac/Lists/Types/ListHandle.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -36,7 +39,7 @@ namespace Pedestal
 			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			void Activate( bool activating )  { Nitrogen::LActivate( activating, itsList ); }
+			void Activate( bool activating )  { ::LActivate( activating, itsList ); }
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
