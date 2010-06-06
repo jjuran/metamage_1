@@ -24,8 +24,7 @@ extern void InitializeCallbacks();
 extern void _lamp_main( int argc, char** argv, char** envp );
 extern int        main( int argc, char** argv );
 
-extern void  exit( int );
-extern void _exit( int );
+extern void exit( int );
 
 
 #pragma force_active on
@@ -36,10 +35,7 @@ void InitializeTool()
 	
 	_set_dispatcher( toolScratch[ 0 ] );
 	
-	if ( _initialize_environ( (char**) toolScratch[ 1 ] ) == 0L )
-	{
-		_exit( 127 );
-	}
+	_initialize_environ( (char**) toolScratch[ 1 ] );
 		
 	InitializeCallbacks();
 }
