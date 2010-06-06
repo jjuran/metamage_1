@@ -38,14 +38,14 @@ namespace Vertice
 			
 			void DrawPixel( int x, int y );
 			
-			Rect                                   itsBounds;  // port coordinates
-			Scene                                  itsScene;
-			Port                                   itsPort;
-			Frame                                  itsFrame;
-			Vectoria::XMatrix                      itsScreen2Port;
-			std::size_t                            itsSelectedContext;
-			nucleus::owned< Nitrogen::GWorldPtr >  itsGWorld;
-			AnaglyphMode                           itsAnaglyphMode;
+			Rect                         itsBounds;  // port coordinates
+			Scene                        itsScene;
+			Port                         itsPort;
+			Frame                        itsFrame;
+			Vectoria::XMatrix            itsScreen2Port;
+			std::size_t                  itsSelectedContext;
+			nucleus::owned< GWorldPtr >  itsGWorld;
+			AnaglyphMode                 itsAnaglyphMode;
 		
 		public:
 			PortView( const Rect& bounds );

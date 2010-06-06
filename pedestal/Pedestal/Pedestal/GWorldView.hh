@@ -19,13 +19,13 @@ namespace Pedestal
 	class GWorldView : public View
 	{
 		private:
-			Rect                                   itsBounds;
-			nucleus::owned< Nitrogen::GWorldPtr >  itsGWorld;
+			Rect                         itsBounds;
+			nucleus::owned< GWorldPtr >  itsGWorld;
 		
 		public:
 			GWorldView( const Rect& bounds );
 			
-			Nitrogen::GWorldPtr Get() const  { return itsGWorld.get(); }
+			GWorldPtr Get() const  { return itsGWorld.get(); }
 			
 			const Rect& Bounds() const  { return itsBounds; }
 			
