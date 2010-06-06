@@ -6,6 +6,9 @@
 #ifndef USEEDIT_WINDOW_HH
 #define USEEDIT_WINDOW_HH
 
+// Standard C++
+#include <memory>
+
 // Pedestal
 #include "Pedestal/Window.hh"
 

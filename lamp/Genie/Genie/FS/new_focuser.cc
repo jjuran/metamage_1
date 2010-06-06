@@ -7,6 +7,9 @@
 
 #include "Genie/FS/new_focuser.hh"
 
+// Nitrogen
+#include "Nitrogen/MacWindows.hh"
+
 // Pedestal
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/View.hh"

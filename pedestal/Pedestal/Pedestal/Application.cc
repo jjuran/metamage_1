@@ -33,6 +33,7 @@
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Gestalt.hh"
 #include "Nitrogen/MacErrors.hh"
+#include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Sound.hh"

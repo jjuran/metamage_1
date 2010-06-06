@@ -15,8 +15,14 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// nucleus
+#include "nucleus/owned.hh"
+
 // Nitrogen
-#include "Nitrogen/MacWindows.hh"
+#include "Mac/Windows/Types/WindowDefProcID.hh"
+#include "Mac/Windows/Types/WindowRef.hh"
+
+#include "Nitrogen/RefCon.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
@@ -37,24 +43,24 @@ namespace Pedestal
 	
 	inline void SetWindowPosition( WindowRef window, Point position )
 	{
-		Nitrogen::MoveWindow( window, position );
+		::MoveWindow( window, position.h, position.v, false );
 	}
 	
 	struct NewWindowContext
 	{
-		const Rect&                bounds;
-		ConstStr255Param           title;
-		bool                       visible;
-		Nitrogen::WindowDefProcID  procID;
-		WindowRef                  behind;
-		bool                       goAwayFlag;
+		const Rect&           bounds;
+		ConstStr255Param      title;
+		bool                  visible;
+		Mac::WindowDefProcID  procID;
+		WindowRef             behind;
+		bool                  goAwayFlag;
 		
-		NewWindowContext( const Rect&                bounds,
-			              ConstStr255Param           title,
-			              bool                       visible    = true,
-			              Nitrogen::WindowDefProcID  procID     = Nitrogen::documentProc,
-			              WindowRef                  behind     = kFirstWindowOfClass,
-			              bool                       goAwayFlag = true )
+		NewWindowContext( const Rect&           bounds,
+			              ConstStr255Param      title,
+			              bool                  visible    = true,
+			              Mac::WindowDefProcID  procID     = Mac::documentProc,
+			              WindowRef             behind     = kFirstWindowOfClass,
+			              bool                  goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
 			title     ( title      ),
@@ -74,20 +80,20 @@ namespace Pedestal
 			bounds    ( bounds     ),
 			title     ( title      ),
 			visible   ( visible    ),
-			procID    ( Nitrogen::documentProc ),
+			procID    ( Mac::documentProc ),
 			behind    ( behind     ),
 			goAwayFlag( goAwayFlag )
 		{
 		}
 	};
 	
-	nucleus::owned< WindowRef > CreateWindow( const Rect&                bounds,
-	                                          ConstStr255Param           title,
-	                                          bool                       visible,
-	                                          Nitrogen::WindowDefProcID  procID,
-	                                          WindowRef                  behind,
-	                                          bool                       goAwayFlag,
-	                                          Nitrogen::RefCon           refCon );
+	nucleus::owned< WindowRef > CreateWindow( const Rect&           bounds,
+	                                          ConstStr255Param      title,
+	                                          bool                  visible,
+	                                          Mac::WindowDefProcID  procID,
+	                                          WindowRef             behind,
+	                                          bool                  goAwayFlag,
+	                                          Nitrogen::RefCon      refCon );
 	
 	inline nucleus::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
 	                                                 Nitrogen::RefCon         refCon )
@@ -124,7 +130,7 @@ namespace Pedestal
 			
 			nucleus::owned< WindowRef > itsWindowRef;
 			
-			Nitrogen::WindowDefProcID itsDefProcID;
+			Mac::WindowDefProcID itsDefProcID;
 		
 		public:
 			Window( const NewWindowContext& context );

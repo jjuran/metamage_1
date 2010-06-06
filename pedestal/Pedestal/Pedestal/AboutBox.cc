@@ -38,7 +38,7 @@ namespace Pedestal
 		                             300,
 		                             200 );
 		
-		NewWindowContext context( bounds, "\p" "Pedestal", true, N::noGrowDocProc );
+		NewWindowContext context( bounds, "\p" "Pedestal", true, Mac::noGrowDocProc );
 		
 		std::auto_ptr< Window > window( new UserWindow( context ) );
 		

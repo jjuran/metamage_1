@@ -14,6 +14,9 @@
 // Io
 #include "io/slurp.hh"
 
+// Nitrogen
+#include "Nitrogen/MacWindows.hh"
+
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"

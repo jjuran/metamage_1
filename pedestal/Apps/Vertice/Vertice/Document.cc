@@ -24,6 +24,9 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
+// Nitrogen
+#include "Nitrogen/MacWindows.hh"
+
 // Nitrogen Extras
 #include "FSReader.hh"
 

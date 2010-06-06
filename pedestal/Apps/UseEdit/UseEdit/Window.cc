@@ -9,6 +9,7 @@
 #include "plus/string.hh"
 
 // Nitrogen
+#include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/TextEdit.hh"
 
 // Pedestal

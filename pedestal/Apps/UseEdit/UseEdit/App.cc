@@ -12,6 +12,7 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AERegistry.hh"
+#include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Processes.hh"
 
 // Iteration
