@@ -303,6 +303,14 @@ namespace Pedestal
 		return true;
 	}
 	
+	boost::intrusive_ptr< Quasimode >
+	//
+	New_IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward )
+	{
+		return boost::intrusive_ptr< Quasimode >( new IncrementalSearchQuasimode( editor, backward ) );
+	}
+	
+	
 	bool Try_RepeatSearch( IncrementalSearchEditor& editor, const EventRecord& event )
 	{
 		const char c = event.message & charCodeMask;

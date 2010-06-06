@@ -107,6 +107,10 @@ namespace Pedestal
 			bool KeyDown( const EventRecord& event );
 	};
 	
+	boost::intrusive_ptr< Quasimode >
+	//
+	New_IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );
+	
 	bool Try_RepeatSearch( IncrementalSearchEditor& editor, const EventRecord& event );
 	
 }

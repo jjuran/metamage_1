@@ -564,9 +564,7 @@ namespace Pedestal
 		
 		const bool backward = event.modifiers & shiftKey;
 		
-		boost::intrusive_ptr< Quasimode > mode( new IncrementalSearchQuasimode( *this, backward ) );
-		
-		return mode;
+		return New_IncrementalSearchQuasimode( new IncrementalSearchQuasimode( *this, backward ) );
 	}
 	
 	
