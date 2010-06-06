@@ -5,6 +5,9 @@
 
 #include "Genie/Utilities/GetWorkstationName.hh"
 
+// Nitrogen
+#include "Nitrogen/CFBase.hh"
+
 // MacFeatures
 #include "MacFeatures/Features.hh"
 
@@ -16,6 +19,7 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -34,9 +38,9 @@ namespace Genie
 		
 		if ( CSCopyMachineName != kUnresolvedCFragSymbolAddress )
 		{
-			if ( CFStringRef userName = CSCopyMachineName() )
+			if ( CFStringRef name = CSCopyMachineName() )
 			{
-				return CFStringGetStdString( userName );
+				return CFStringGetStdString( n::owned< CFStringRef >::seize( name ) );
 			}
 		}
 		

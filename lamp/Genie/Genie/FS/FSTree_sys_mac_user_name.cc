@@ -13,6 +13,9 @@
 #include <CFString.h>
 #endif
 
+// Nitrogen
+#include "Nitrogen/CFBase.hh"
+
 // MacFeatures
 #include "MacFeatures/Features.hh"
 
@@ -24,6 +27,7 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -63,9 +67,9 @@ namespace Genie
 			return GetStringResource( -16096 );
 		}
 		
-		if ( CFStringRef userName = CSCopyUserName_CFM( false ) )
+		if ( CFStringRef name = CSCopyUserName_CFM( false ) )
 		{
-			return CFStringGetStdString( userName );
+			return CFStringGetStdString( n::owned< CFStringRef >::seize( name ) );
 		}
 		
 		return "";
