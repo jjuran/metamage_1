@@ -117,12 +117,11 @@
 
 // Nucleus
 #include "nucleus/convert.hh"
+#include "nucleus/disposer.hh"
 
 
 namespace nucleus
 {
-	
-	template < class Resource > struct disposer;
 	
 	template < class Resource >
 	struct disposer_traits
