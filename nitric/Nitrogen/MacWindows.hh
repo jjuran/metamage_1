@@ -24,6 +24,8 @@
 #include "nucleus/linked_list_sequence.hh"
 
 // Nitrogen
+#include "Mac/Windows/Types/WindowDefProcID.hh"
+
 #ifndef NITROGEN_ALIASES_HH
 #include "Nitrogen/Aliases.hh"
 #endif
@@ -64,19 +66,16 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	enum WindowDefProcID
-	{
-		documentProc    = ::documentProc,
-		dBoxProc        = ::dBoxProc,
-		plainDBox       = ::plainDBox,
-		altDBoxProc     = ::altDBoxProc,
-		noGrowDocProc   = ::noGrowDocProc,
-		movableDBoxProc = ::movableDBoxProc,
-		zoomDocProc     = ::zoomDocProc,
-		zoomNoGrow      = ::zoomNoGrow,
-		
-		kWindowDefProcID_Max = nucleus::enumeration_traits< ::SInt16 >::max
-	};
+	using Mac::WindowDefProcID;
+	
+	using Mac::documentProc;
+	using Mac::dBoxProc;
+	using Mac::plainDBox;
+	using Mac::altDBoxProc;
+	using Mac::noGrowDocProc;
+	using Mac::movableDBoxProc;
+	using Mac::zoomDocProc;
+	using Mac::zoomNoGrow;
 	
 	enum WindowKind
 	{
