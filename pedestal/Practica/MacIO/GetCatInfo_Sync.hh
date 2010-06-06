@@ -7,7 +7,10 @@
 #define MACIO_GETCATINFOSYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Nitrogen/Str.hh"
 
 // MacIO
 #include "MacIO/ThrowOSStatus.hh"
@@ -19,25 +22,25 @@ namespace MacIO
 	template < class Policy >
 	typename Policy::Result
 	//
-	GetCatInfo( CInfoPBRec&               pb,
-	            Nitrogen::FSVolumeRefNum  vRefNum,
-	            Nitrogen::FSDirID         dirID,
-	            unsigned char*            name,
-	            SInt16                    index = 0 );
+	GetCatInfo( CInfoPBRec&          pb,
+	            Mac::FSVolumeRefNum  vRefNum,
+	            Mac::FSDirID         dirID,
+	            unsigned char*       name,
+	            SInt16               index = 0 );
 	
 	template <>
-	void GetCatInfo< Throw_All >( CInfoPBRec&               pb,
-	                              Nitrogen::FSVolumeRefNum  vRefNum,
-	                              Nitrogen::FSDirID         dirID,
-	                              unsigned char*            name,
-	                              SInt16                    index );
+	void GetCatInfo< Throw_All >( CInfoPBRec&          pb,
+	                              Mac::FSVolumeRefNum  vRefNum,
+	                              Mac::FSDirID         dirID,
+	                              unsigned char*       name,
+	                              SInt16               index );
 	
 	template <>
-	bool GetCatInfo< Return_FNF >( CInfoPBRec&               pb,
-	                               Nitrogen::FSVolumeRefNum  vRefNum,
-	                               Nitrogen::FSDirID         dirID,
-	                               unsigned char*            name,
-	                               SInt16                    index );
+	bool GetCatInfo< Return_FNF >( CInfoPBRec&          pb,
+	                               Mac::FSVolumeRefNum  vRefNum,
+	                               Mac::FSDirID         dirID,
+	                               unsigned char*       name,
+	                               SInt16               index );
 	
 	
 	template < class Policy >
@@ -50,8 +53,8 @@ namespace MacIO
 		Nitrogen::Str255 name = item.name;
 		
 		return GetCatInfo< Policy >( pb,
-		                             Nitrogen::FSVolumeRefNum( item.vRefNum ),
-		                             Nitrogen::FSDirID       ( item.parID   ),
+		                             Mac::FSVolumeRefNum( item.vRefNum ),
+		                             Mac::FSDirID       ( item.parID   ),
 		                             name );
 	}
 	
@@ -59,9 +62,9 @@ namespace MacIO
 	typename Policy::Result
 	inline 
 	//
-	GetCatInfo( CInfoPBRec&               pb,
-	            Nitrogen::FSVolumeRefNum  vRefNum,
-	            Nitrogen::FSDirID         dirID )
+	GetCatInfo( CInfoPBRec&          pb,
+	            Mac::FSVolumeRefNum  vRefNum,
+	            Mac::FSDirID         dirID )
 	{
 		return GetCatInfo< Policy >( pb,
 		                             vRefNum,
@@ -74,8 +77,8 @@ namespace MacIO
 	typename Policy::Result
 	inline 
 	//
-	GetCatInfo( CInfoPBRec&                 pb,
-	            const Nitrogen::FSDirSpec&  dir )
+	GetCatInfo( CInfoPBRec&            pb,
+	            const Mac::FSDirSpec&  dir )
 	{
 		return GetCatInfo< Policy >( pb,
 		                             dir.vRefNum,

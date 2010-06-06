@@ -7,14 +7,15 @@
 #define MACIO_INITIOPARAM_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
+#include "Mac/Files/Types/FSIOPosMode.hh"
 
 
 namespace MacIO
 {
 	
-	using Nitrogen::FSFileRefNum;
-	using Nitrogen::FSIOPosMode;
+	using Mac::FSFileRefNum;
+	using Mac::FSIOPosMode;
 	
 	
 	inline void Init_PB_For_ReadWrite( ParamBlockRec&  pb,

@@ -7,7 +7,8 @@
 #define MACIO_FSWRITEASYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
+#include "Mac/Files/Types/FSIOPosMode.hh"
 
 // MacIO
 #include "MacIO/Async.hh"
@@ -19,8 +20,8 @@
 namespace MacIO
 {
 	
-	using Nitrogen::FSFileRefNum;
-	using Nitrogen::FSIOPosMode;
+	using Mac::FSFileRefNum;
+	using Mac::FSIOPosMode;
 	
 	
 	template < class Callback >

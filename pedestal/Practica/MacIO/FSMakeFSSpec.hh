@@ -7,14 +7,15 @@
 #define MACIO_FSMAKEFSSPEC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 
 namespace MacIO
 {
 	
-	using Nitrogen::FSVolumeRefNum;
-	using Nitrogen::FSDirID;
+	using Mac::FSVolumeRefNum;
+	using Mac::FSDirID;
 	
 	
 	inline void Init_PB_For_MakeFSSpec( HParamBlockRec&       pb,

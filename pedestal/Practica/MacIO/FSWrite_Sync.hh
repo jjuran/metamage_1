@@ -7,14 +7,15 @@
 #define MACIO_FSWRITESYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
+#include "Mac/Files/Types/FSIOPosMode.hh"
 
 
 namespace MacIO
 {
 	
-	using Nitrogen::FSFileRefNum;
-	using Nitrogen::FSIOPosMode;
+	using Mac::FSFileRefNum;
+	using Mac::FSIOPosMode;
 	
 	
 	SInt32 FSWrite( FSFileRefNum   file,

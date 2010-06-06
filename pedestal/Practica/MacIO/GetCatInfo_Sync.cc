@@ -5,6 +5,9 @@
 
 #include "MacIO/GetCatInfo_Sync.hh"
 
+// Nitrogen
+#include "Nitrogen/Files.hh"
+
 // MacIO
 #include "MacIO/Routines.hh"
 #include "MacIO/Sync.hh"

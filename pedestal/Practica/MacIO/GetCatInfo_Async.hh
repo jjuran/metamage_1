@@ -7,7 +7,8 @@
 #define MACIO_GETCATINFOASYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 // MacIO
 #include "MacIO/ThrowOSStatus.hh"
@@ -16,8 +17,8 @@
 namespace MacIO
 {
 	
-	using Nitrogen::FSVolumeRefNum;
-	using Nitrogen::FSDirID;
+	using Mac::FSVolumeRefNum;
+	using Mac::FSDirID;
 	
 	
 	template < class Policy, class Callback >
