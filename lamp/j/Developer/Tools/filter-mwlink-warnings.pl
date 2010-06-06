@@ -60,6 +60,7 @@ my @loser_libs =
 (
 	'MSL C.PPC.Lib',
 	'MSL C.Carbon.Lib',
+	'MSL-fixup.lib',
 	'ControlsLib',
 	'Apple;Carbon;Networking',
 );
@@ -72,6 +73,8 @@ qw
 	KSIOUXConsole.cc
 	dlmalloc.c
 	dlmalloc.cpp
+	nomalloc.c
+	nomalloc.cpp
 	readonly-environ.cc
 	readonly-environ.cpp
 	stacked-environ.lib
