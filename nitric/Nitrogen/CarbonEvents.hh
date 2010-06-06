@@ -20,6 +20,9 @@
 #ifndef __CARBONEVENTS__
 #include <CarbonEvents.h>
 #endif
+#ifndef __SCRAP__
+#include <Scrap.h>
+#endif
 
 // iota
 #include "iota/distance.hh"
@@ -47,14 +50,8 @@
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
 #endif
-#ifndef NITROGEN_SCRAP_HH
-#include "Nitrogen/Scrap.hh"
-#endif
 #ifndef NITROGEN_AEREGISTRY_HH
 #include "Nitrogen/AERegistry.hh"
-#endif
-#ifndef NITROGEN_MENUS_HH
-#include "Nitrogen/Menus.hh"
 #endif
 
 #include <vector>
