@@ -26,6 +26,7 @@
 #include "nucleus/string.hh"
 
 // Nitrogen
+#include "Mac/Lists/Types/ListHandle.hh"
 #include "Mac/Resources/Types/ResID.hh"
 
 #ifndef NITROGEN_EVENTS_HH
@@ -44,27 +45,6 @@ namespace Nitrogen
 	using ::ListRec;
 	using ::ListPtr;
 	using ::ListHandle;
-	
-}
-
-namespace nucleus
-{
-	
-	template <> struct disposer< ListHandle >
-	{
-		typedef ListHandle  argument_type;
-		typedef void        result_type;
-		
-		void operator()( ListHandle list ) const
-		{
-			::LDispose( list );
-		}
-	};
-	
-}
-
-namespace Nitrogen
-{
 	
 	// 436
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
