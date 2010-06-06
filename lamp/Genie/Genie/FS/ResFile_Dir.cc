@@ -300,7 +300,7 @@ namespace Genie
 		const N::ResType  type = GetType();
 		const N::ResID    id   = GetID  ();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		const N::Handle r = N::Get1Resource( type, id );
 		
@@ -319,7 +319,7 @@ namespace Genie
 		const N::ResType  type = GetType();
 		const N::ResID    id   = GetID  ();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		n::owned< N::Handle > h;
 		
@@ -393,7 +393,7 @@ namespace Genie
 	{
 		const N::ResType type = GetType();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		const short n_rsrcs = N::Count1Resources( type );
 		
@@ -514,7 +514,7 @@ namespace Genie
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, N::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		const short n_types = N::Count1Types();
 		

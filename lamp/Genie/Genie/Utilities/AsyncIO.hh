@@ -6,8 +6,18 @@
 #ifndef GENIE_ASYNCIO_HH
 #define GENIE_ASYNCIO_HH
 
+// nucleus
+#include "nucleus/owned.hh"
+
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSFileRefNum.hh"
+#include "Mac/Files/Types/FSIOPerm.hh"
+#include "Mac/Files/Types/FSIOPosMode.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+
+#include "Nitrogen/Str.hh"
 
 // MacIO
 #include "MacIO/EOF_Policy.hh"
@@ -29,21 +39,21 @@ namespace Genie
 	typedef MacIO::Return_FNF  FNF_Returns;
 	
 	
-	SInt32 FSRead( MacIO::EOF_Policy       policy,
-	               Nitrogen::FSFileRefNum  file,
-	               Nitrogen::FSIOPosMode   positionMode,
-	               SInt32                  positionOffset,
-	               SInt32                  requestCount,
-	               void *                  buffer,
-	               bool                    async );
+	SInt32 FSRead( MacIO::EOF_Policy  policy,
+	               Mac::FSFileRefNum  file,
+	               Mac::FSIOPosMode   positionMode,
+	               SInt32             positionOffset,
+	               SInt32             requestCount,
+	               void *             buffer,
+	               bool               async );
 	
 	
-	SInt32 FSWrite( Nitrogen::FSFileRefNum  file,
-	                Nitrogen::FSIOPosMode   positionMode,
-	                SInt32                  positionOffset,
-	                SInt32                  requestCount,
-	                const void *            buffer,
-	                bool                    async );
+	SInt32 FSWrite( Mac::FSFileRefNum  file,
+	                Mac::FSIOPosMode   positionMode,
+	                SInt32             positionOffset,
+	                SInt32             requestCount,
+	                const void *       buffer,
+	                bool               async );
 	
 	
 	// FSpGetCatInfo
@@ -52,28 +62,28 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&               pb,
-	               bool                      async,
-	               Nitrogen::FSVolumeRefNum  vRefNum,
-	               Nitrogen::FSDirID         dirID,
-	               unsigned char*            name,
-	               SInt16                    index = 0 );
+	FSpGetCatInfo( CInfoPBRec&          pb,
+	               bool                 async,
+	               Mac::FSVolumeRefNum  vRefNum,
+	               Mac::FSDirID         dirID,
+	               unsigned char*       name,
+	               SInt16               index = 0 );
 	
 	template <>
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&               pb,
-	                                  bool                      async,
-	                                  Nitrogen::FSVolumeRefNum  vRefNum,
-	                                  Nitrogen::FSDirID         dirID,
-	                                  unsigned char*            name,
-	                                  SInt16                    index );
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&          pb,
+	                                  bool                 async,
+	                                  Mac::FSVolumeRefNum  vRefNum,
+	                                  Mac::FSDirID         dirID,
+	                                  unsigned char*       name,
+	                                  SInt16               index );
 	
 	template <>
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&               pb,
-	                                   bool                      async,
-	                                   Nitrogen::FSVolumeRefNum  vRefNum,
-	                                   Nitrogen::FSDirID         dirID,
-	                                   unsigned char*            name,
-	                                   SInt16                    index );
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&          pb,
+	                                   bool                 async,
+	                                   Mac::FSVolumeRefNum  vRefNum,
+	                                   Mac::FSDirID         dirID,
+	                                   unsigned char*       name,
+	                                   SInt16               index );
 	
 	template < class Policy >
 	typename Policy::Result
@@ -87,8 +97,8 @@ namespace Genie
 		
 		return FSpGetCatInfo< Policy >( pb,
 		                                async,
-		                                Nitrogen::FSVolumeRefNum( item.vRefNum ),
-		                                Nitrogen::FSDirID       ( item.parID   ),
+		                                Mac::FSVolumeRefNum( item.vRefNum ),
+		                                Mac::FSDirID       ( item.parID   ),
 		                                name );
 	}
 	
@@ -96,10 +106,10 @@ namespace Genie
 	typename Policy::Result
 	inline 
 	//
-	FSpGetCatInfo( CInfoPBRec&               pb,
-	               bool                      async,
-	               Nitrogen::FSVolumeRefNum  vRefNum,
-	               Nitrogen::FSDirID         dirID )
+	FSpGetCatInfo( CInfoPBRec&          pb,
+	               bool                 async,
+	               Mac::FSVolumeRefNum  vRefNum,
+	               Mac::FSDirID         dirID )
 	{
 		return FSpGetCatInfo< Policy >( pb,
 		                                async,
@@ -113,9 +123,9 @@ namespace Genie
 	typename Policy::Result
 	inline 
 	//
-	FSpGetCatInfo( CInfoPBRec&                 pb,
-	               bool                        async,
-	               const Nitrogen::FSDirSpec&  dir )
+	FSpGetCatInfo( CInfoPBRec&            pb,
+	               bool                   async,
+	               const Mac::FSDirSpec&  dir )
 	{
 		return FSpGetCatInfo< Policy >( pb,
 		                                async,
@@ -128,38 +138,38 @@ namespace Genie
 	// ------------
 	
 	template < class Policy >
-	FSSpec FSMakeFSSpec( Nitrogen::FSVolumeRefNum  vRefNum,
-	                     Nitrogen::FSDirID         dirID,
-	                     const unsigned char*      name );
+	FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
+	                     Mac::FSDirID          dirID,
+	                     const unsigned char*  name );
 	
 	template <>
-	FSSpec FSMakeFSSpec< FNF_Throws >( Nitrogen::FSVolumeRefNum  vRefNum,
-	                                   Nitrogen::FSDirID         dirID,
-	                                   const unsigned char*      name );
+	FSSpec FSMakeFSSpec< FNF_Throws >( Mac::FSVolumeRefNum   vRefNum,
+	                                   Mac::FSDirID          dirID,
+	                                   const unsigned char*  name );
 	
 	template <>
-	FSSpec FSMakeFSSpec< FNF_Returns >( Nitrogen::FSVolumeRefNum  vRefNum,
-	                                    Nitrogen::FSDirID         dirID,
-	                                    const unsigned char*      name );
+	FSSpec FSMakeFSSpec< FNF_Returns >( Mac::FSVolumeRefNum   vRefNum,
+	                                    Mac::FSDirID          dirID,
+	                                    const unsigned char*  name );
 	
 	template < class Policy >
-	inline FSSpec FSMakeFSSpec( const Nitrogen::FSDirSpec&  dir,
-	                            const unsigned char*        name )
+	inline FSSpec FSMakeFSSpec( const Mac::FSDirSpec&  dir,
+	                            const unsigned char*   name )
 	{
 		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
 	}
 	
 	
-	nucleus::owned< Nitrogen::FSFileRefNum >
+	nucleus::owned< Mac::FSFileRefNum >
 	//
-	FSpOpenDF( const FSSpec&          spec,
-	           Nitrogen::FSIOPermssn  permissions );
+	FSpOpenDF( const FSSpec&  spec,
+	           Mac::FSIOPerm  permissions );
 	
 	
-	nucleus::owned< Nitrogen::FSFileRefNum >
+	nucleus::owned< Mac::FSFileRefNum >
 	//
-	FSpOpenRF( const FSSpec&          spec,
-	           Nitrogen::FSIOPermssn  permissions );
+	FSpOpenRF( const FSSpec&  spec,
+	           Mac::FSIOPerm  permissions );
 	
 }
 

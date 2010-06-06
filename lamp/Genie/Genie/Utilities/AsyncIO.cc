@@ -32,7 +32,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -52,8 +51,8 @@ namespace Genie
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
 	
 	SInt32 FSRead( MacIO::EOF_Policy  policy,
-	               N::FSFileRefNum    file,
-	               N::FSIOPosMode     positionMode,
+	               Mac::FSFileRefNum  file,
+	               Mac::FSIOPosMode   positionMode,
 	               SInt32             positionOffset,
 	               SInt32             requestCount,
 	               void              *buffer,
@@ -76,12 +75,12 @@ namespace Genie
 	}
 	
 	
-	SInt32 FSWrite( N::FSFileRefNum  file,
-	                N::FSIOPosMode   positionMode,
-	                SInt32           positionOffset,
-	                SInt32           requestCount,
-	                const void *     buffer,
-	                bool             async )
+	SInt32 FSWrite( Mac::FSFileRefNum  file,
+	                Mac::FSIOPosMode   positionMode,
+	                SInt32             positionOffset,
+	                SInt32             requestCount,
+	                const void *       buffer,
+	                bool               async )
 	{
 		return async ? MacIO::FSWrite( file,
 		                               positionMode,
@@ -101,12 +100,12 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&        pb,
-	               bool               async,
-	               N::FSVolumeRefNum  vRefNum,
-	               N::FSDirID         dirID,
-	               unsigned char*     name,
-	               SInt16             index )
+	FSpGetCatInfo( CInfoPBRec&          pb,
+	               bool                 async,
+	               Mac::FSVolumeRefNum  vRefNum,
+	               Mac::FSDirID         dirID,
+	               unsigned char*       name,
+	               SInt16               index )
 	{
 		Str255 dummyName = "\p";
 		
@@ -149,25 +148,25 @@ namespace Genie
 	}
 	
 	template
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&        pb,
-	                                  bool               async,
-	                                  N::FSVolumeRefNum  vRefNum,
-	                                  N::FSDirID         dirID,
-	                                  unsigned char*     name,
-	                                  SInt16             index );
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&          pb,
+	                                  bool                 async,
+	                                  Mac::FSVolumeRefNum  vRefNum,
+	                                  Mac::FSDirID         dirID,
+	                                  unsigned char*       name,
+	                                  SInt16               index );
 	
 	template
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&        pb,
-	                                   bool               async,
-	                                   N::FSVolumeRefNum  vRefNum,
-	                                   N::FSDirID         dirID,
-	                                   unsigned char*     name,
-	                                   SInt16             index );
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&          pb,
+	                                   bool                 async,
+	                                   Mac::FSVolumeRefNum  vRefNum,
+	                                   Mac::FSDirID         dirID,
+	                                   unsigned char*       name,
+	                                   SInt16               index );
 	
 	
 	template < class Policy >
-	FSSpec FSMakeFSSpec( N::FSVolumeRefNum     vRefNum,
-	                     N::FSDirID            dirID,
+	FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
+	                     Mac::FSDirID          dirID,
 	                     const unsigned char*  name )
 	{
 		return MacIO::FSMakeFSSpec< Policy >( vRefNum,
@@ -178,28 +177,28 @@ namespace Genie
 	}
 	
 	template
-	FSSpec FSMakeFSSpec< FNF_Throws >( N::FSVolumeRefNum     vRefNum,
-	                                   N::FSDirID            dirID,
+	FSSpec FSMakeFSSpec< FNF_Throws >( Mac::FSVolumeRefNum   vRefNum,
+	                                   Mac::FSDirID          dirID,
 	                                   const unsigned char*  name );
 	
 	template
-	FSSpec FSMakeFSSpec< FNF_Returns >( N::FSVolumeRefNum     vRefNum,
-	                                    N::FSDirID            dirID,
+	FSSpec FSMakeFSSpec< FNF_Returns >( Mac::FSVolumeRefNum   vRefNum,
+	                                    Mac::FSDirID          dirID,
 	                                    const unsigned char*  name );
 	
 	
-	n::owned< N::FSFileRefNum >
+	n::owned< Mac::FSFileRefNum >
 	//
-	FSpOpenDF( const FSSpec&   spec,
-	           N::FSIOPermssn  permissions )
+	FSpOpenDF( const FSSpec&  spec,
+	           Mac::FSIOPerm  permissions )
 	{
 		return MacIO::FSpOpenDF( spec, permissions, CALLBACK, gWakeUp );
 	}
 	
-	n::owned< N::FSFileRefNum >
+	n::owned< Mac::FSFileRefNum >
 	//
-	FSpOpenRF( const FSSpec&   spec,
-	           N::FSIOPermssn  permissions )
+	FSpOpenRF( const FSSpec&  spec,
+	           Mac::FSIOPerm  permissions )
 	{
 		return MacIO::FSpOpenRF( spec, permissions, CALLBACK, gWakeUp );
 	}
