@@ -6,9 +6,6 @@
 #ifndef USEEDIT_DOCUMENT_HH
 #define USEEDIT_DOCUMENT_HH
 
-// iota
-#include "iota/convert_string.hh"
-
 // plus
 #include "plus/ref_count.hh"
 #include "plus/string.hh"
@@ -37,10 +34,7 @@ namespace UseEdit
 			
 			WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
-			plus::string GetName() const
-			{
-				return iota::convert_string< plus::string >( Nitrogen::GetWTitle( GetWindowRef() ) );
-			}
+			plus::string GetName() const;
 	};
 	
 }

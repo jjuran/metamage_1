@@ -5,6 +5,9 @@
 
 #include "UseEdit/Document.hh"
 
+// iota
+#include "iota/convert_string.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -79,6 +82,11 @@ namespace UseEdit
 		                               GetFilenameAsCFString( file ) );
 		
 		LoadText( *itsWindow, ReadFileData( file ) );
+	}
+	
+	plus::string Document::GetName() const
+	{
+		return iota::convert_string< plus::string >( N::GetWTitle( GetWindowRef() ) );
 	}
 	
 }
