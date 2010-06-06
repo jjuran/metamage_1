@@ -25,6 +25,7 @@
 
 // Nitrogen
 #include "Mac/Windows/Types/WindowDefProcID.hh"
+#include "Mac/Windows/Types/WindowRef.hh"
 
 #ifndef NITROGEN_ALIASES_HH
 #include "Nitrogen/Aliases.hh"
@@ -229,24 +230,6 @@ namespace Nitrogen
 	#pragma mark ¥ Specializations ¥
 	
   }
-
-#if OPAQUE_TOOLBOX_STRUCTS
-
-namespace nucleus
-  {
-   template <> struct disposer< WindowRef >
-     {
-      typedef WindowRef  argument_type;
-      typedef void       result_type;
-      
-      void operator()( WindowRef w ) const
-        {
-         ::DisposeWindow( w );
-        }
-     };
-  }
-
-#endif
 
 namespace Nitrogen
   {
