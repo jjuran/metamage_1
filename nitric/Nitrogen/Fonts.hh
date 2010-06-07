@@ -21,20 +21,11 @@
 // iota
 #include "iota/string_traits.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
 #ifndef NITROGEN_ATSTYPES_HH
 #include "Nitrogen/ATSTypes.hh"
 #endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
-#endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-#include "Nitrogen/TextCommon.hh"
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 
