@@ -9,7 +9,8 @@
 #include "iota/decimal.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -22,12 +23,12 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return Mac::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
-	static N::FSVolumeRefNum GetKey( const FSTree* that )
+	static Mac::FSVolumeRefNum GetKey( const FSTree* that )
 	{
 		return GetKeyFromParent( that->ParentRef()->ParentRef() );
 	}
@@ -164,7 +165,7 @@ namespace Genie
 	static void GetVolParmsInfo( GetVolParmsInfoBuffer&  parmsInfo,
 	                             const FSTree*           that )
 	{
-		const N::FSVolumeRefNum vRefNum = GetKey( that );
+		const Mac::FSVolumeRefNum vRefNum = GetKey( that );
 		
 		memset( &parmsInfo, '\0', sizeof parmsInfo );
 		
@@ -194,7 +195,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property
 	{
-		typedef N::FSVolumeRefNum Key;
+		typedef Mac::FSVolumeRefNum Key;
 		
 		static plus::string Read( const FSTree* that, bool binary )
 		{
