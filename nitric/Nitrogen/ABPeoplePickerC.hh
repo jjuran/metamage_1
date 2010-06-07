@@ -24,10 +24,6 @@
 #include "Nitrogen/CFArray.hh"
 #endif
 
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
-
 #ifndef NITROGEN_ADDRESSBOOKC_HH
 #include "Nitrogen/ABAddressBookC.hh"
 #endif

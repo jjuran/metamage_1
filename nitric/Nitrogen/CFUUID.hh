@@ -18,9 +18,6 @@
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
 
 namespace Nitrogen
   {

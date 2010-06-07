@@ -24,9 +24,6 @@
 #ifndef NITROGEN_CFPROPERTYLIST_HH
 #include "Nitrogen/CFPropertyList.hh"
 #endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
 
 
 namespace Nitrogen
