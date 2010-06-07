@@ -20,13 +20,20 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
+#include "nucleus/owned.hh"
+
+// Nitrogen
+#include "Mac/Resources/Types/ResID.hh"
+#include "Mac/Resources/Types/ResType.hh"
+#include "Mac/Resources/Utilities/Checked_Resource.hh"
 
 #ifndef NITROGEN_FONTS_HH
 #include "Nitrogen/Fonts.hh"
 #endif
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 #ifdef GetMenuRef
@@ -150,12 +157,12 @@ namespace Nitrogen
    
 	inline MenuRef CheckResource( MenuRef menu )
 	{
-		CheckResource( reinterpret_cast< ::Handle >( menu ) );
+		Mac::Checked_Resource( reinterpret_cast< ::Handle >( menu ) );
 		return menu;
 	}
 	
    // 1563
-   inline MenuRef MacGetMenu( ResID resourceID )             { return CheckResource( ::MacGetMenu( resourceID ) ); }
+   inline MenuRef MacGetMenu( Mac::ResID resID )  { return CheckResource( ::MacGetMenu( resID ) ); }
    
    // 1578
    inline void DisposeMenu( nucleus::owned<MenuRef> /* theMenu */ )          {}
@@ -195,10 +202,10 @@ namespace Nitrogen
    using ::MacAppendMenu;
    
    // 2241
-   inline void InsertResMenu( MenuRef menu, ResType type, SInt16 afterItem )  { ::InsertResMenu( menu, type, afterItem ); }
+   inline void InsertResMenu( MenuRef menu, Mac::ResType type, SInt16 afterItem )  { ::InsertResMenu( menu, type, afterItem ); }
    
    // 2256
-   inline void AppendResMenu( MenuRef menu, ResType type )  { ::AppendResMenu( menu, type ); }
+   inline void AppendResMenu( MenuRef menu, Mac::ResType type )  { ::AppendResMenu( menu, type ); }
    
    // 2270
    inline void MacInsertMenuItem( MenuRef menu, ConstStr255Param itemString, SInt16 afterItem )  { ::MacInsertMenuItem( menu, itemString, afterItem ); }
