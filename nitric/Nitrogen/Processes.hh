@@ -26,20 +26,8 @@
 #include "nucleus/initialize.hh"
 #include "nucleus/make.hh"
 
-#ifndef NITROGEN_CFSTRING_HH
-//#include "Nitrogen/CFString.hh"
-#endif
-#ifndef NITROGEN_EVENTS_HH
-//#include "Nitrogen/Events.hh"
-#endif
-#ifndef NITROGEN_FILES_HH
-//#include "Nitrogen/Files.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-//#include "Nitrogen/TextCommon.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 

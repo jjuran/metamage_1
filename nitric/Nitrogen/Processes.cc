@@ -14,7 +14,6 @@
 #include "Nitrogen/Processes.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/OSStatus.hh"
 
 
