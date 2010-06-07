@@ -6,6 +6,9 @@
 #ifndef MACBINARYDECODER_HH
 #define MACBINARYDECODER_HH
 
+// Nitrogen
+#include "Nitrogen/AppleEvents.hh"
+
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"

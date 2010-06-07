@@ -29,9 +29,7 @@
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NITROGEN_APPLEEVENTS_HH
-#include "Nitrogen/AppleEvents.hh"
-#endif
+
 
 namespace Nitrogen
 {

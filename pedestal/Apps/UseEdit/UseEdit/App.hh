@@ -15,6 +15,9 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// Nitrogen
+#include "Nitrogen/AppleEvents.hh"
+
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
