@@ -22,15 +22,6 @@
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
-#ifndef NITROGEN_CFARRAY_HH
-#include "Nitrogen/CFArray.hh"
-#endif
-#ifndef NITROGEN_CFDATA_HH
-#include "Nitrogen/CFData.hh"
-#endif
-#ifndef NITROGEN_CFDICTIONARY_HH
-#include "Nitrogen/CFDictionary.hh"
-#endif
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
