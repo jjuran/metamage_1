@@ -9,8 +9,11 @@
 // plus
 #include "plus/var_string.hh"
 
+// nucleus
+#include "nucleus/owned.hh"
+
 // Nitrogen
-#include "Nitrogen/TextEdit.hh"
+#include "Mac/TextEdit/Types/TEHandle.hh"
 
 // Pedestal
 #include "Pedestal/TextEdit.hh"
