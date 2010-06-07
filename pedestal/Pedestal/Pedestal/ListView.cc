@@ -7,6 +7,7 @@
 
 // Nitrogen
 #include "Nitrogen/Controls.hh"
+#include "Nitrogen/Events.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"

@@ -29,10 +29,6 @@
 #include "Mac/Lists/Types/ListHandle.hh"
 #include "Mac/Resources/Types/ResID.hh"
 
-#ifndef NITROGEN_EVENTS_HH
-#include "Nitrogen/Events.hh"
-#endif
-
 
 namespace Nitrogen
 {
