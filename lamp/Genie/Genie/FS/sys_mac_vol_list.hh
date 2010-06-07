@@ -9,7 +9,7 @@
 #define GENIE_FS_SYSMACVOLLIST_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -20,7 +20,7 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const plus::string& name );
 	
-	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );
+	FSTreePtr Get_sys_mac_vol_N( Mac::FSVolumeRefNum vRefNum );
 	
 }
 
