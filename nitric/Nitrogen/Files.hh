@@ -50,9 +50,6 @@
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-#include "Nitrogen/TextCommon.hh"
-#endif
 
 #include "Nitrogen/Devices.hh"
 #include "Nitrogen/UPP.hh"

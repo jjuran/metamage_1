@@ -20,6 +20,7 @@
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
+#include "Nitrogen/TextCommon.hh"
 
 
 namespace Nitrogen
