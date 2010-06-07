@@ -17,24 +17,23 @@
 #ifndef __FOLDERS__
 #include <Folders.h>
 #endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
+
+// Nitrogen
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
+
 
 namespace Nitrogen
   {
 	
-	static const FSVolumeRefNum kOnSystemDisk      = FSVolumeRefNum( ::kOnSystemDisk      );
-	static const FSVolumeRefNum kOnAppropriateDisk = FSVolumeRefNum( ::kOnAppropriateDisk );
+	static const Mac::FSVolumeRefNum kOnSystemDisk      = Mac::FSVolumeRefNum( ::kOnSystemDisk      );
+	static const Mac::FSVolumeRefNum kOnAppropriateDisk = Mac::FSVolumeRefNum( ::kOnAppropriateDisk );
 	
-	static const FSVolumeRefNum kSystemDomain  = FSVolumeRefNum( ::kSystemDomain  );
-	static const FSVolumeRefNum kLocalDomain   = FSVolumeRefNum( ::kLocalDomain   );
-	static const FSVolumeRefNum kNetworkDomain = FSVolumeRefNum( ::kNetworkDomain );
-	static const FSVolumeRefNum kUserDomain    = FSVolumeRefNum( ::kUserDomain    );
-	static const FSVolumeRefNum kClassicDomain = FSVolumeRefNum( ::kClassicDomain );
+	static const Mac::FSVolumeRefNum kSystemDomain  = Mac::FSVolumeRefNum( ::kSystemDomain  );
+	static const Mac::FSVolumeRefNum kLocalDomain   = Mac::FSVolumeRefNum( ::kLocalDomain   );
+	static const Mac::FSVolumeRefNum kNetworkDomain = Mac::FSVolumeRefNum( ::kNetworkDomain );
+	static const Mac::FSVolumeRefNum kUserDomain    = Mac::FSVolumeRefNum( ::kUserDomain    );
+	static const Mac::FSVolumeRefNum kClassicDomain = Mac::FSVolumeRefNum( ::kClassicDomain );
 	
 	enum FolderType
 	{
@@ -184,14 +183,14 @@ namespace Nitrogen
 	};
 
 	
-	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
+	Mac::FSDirSpec FindFolder( Mac::FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 	
-	inline FSDirSpec FindFolder( FolderType folderType, bool createFolder )
+	inline Mac::FSDirSpec FindFolder( FolderType folderType, bool createFolder )
 	{
 		return FindFolder( kOnAppropriateDisk, folderType, createFolder );
 	}
 	
-   FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
+   FSRef FSFindFolder( Mac::FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 
    inline FSRef FSFindFolder( FolderType folderType, bool createFolder )
      {

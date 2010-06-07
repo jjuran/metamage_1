@@ -13,13 +13,16 @@
 
 #include "Nitrogen/Folders.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
   {
    
-	FSDirSpec FindFolder( FSVolumeRefNum  vRefNum,
-	                      FolderType      folderType,
-	                      bool            createFolder )
+	Mac::FSDirSpec FindFolder( Mac::FSVolumeRefNum  vRefNum,
+	                           FolderType           folderType,
+	                           bool                 createFolder )
 	{
 		::FSVolumeRefNum outVRefNum;
 		SInt32 dirID;
@@ -30,10 +33,10 @@ namespace Nitrogen
 		                             &outVRefNum,
 		                             &dirID ) );
 		
-		return nucleus::make< FSDirSpec >( FSVolumeRefNum( outVRefNum ), FSDirID( dirID ) );
+		return nucleus::make< Mac::FSDirSpec >( Mac::FSVolumeRefNum( outVRefNum ), Mac::FSDirID( dirID ) );
 	}
 	
-   FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder )
+   FSRef FSFindFolder( Mac::FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder )
      {
       FSRef result;
       ThrowOSStatus( ::FSFindFolder( vRefNum, folderType, createFolder, &result ) );

@@ -149,7 +149,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
-   nucleus::owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, Mac::OSType creator, Mac::OSType iconType )
+   nucleus::owned<IconRef> GetIconRef( Mac::FSVolumeRefNum vRefNum, Mac::OSType creator, Mac::OSType iconType )
      {
       IconRef result;
       ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
@@ -175,11 +175,11 @@ namespace Nitrogen
       return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
      }
 
-	nucleus::owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
-	                                     FSDirID parentFolderID,
-	                                     FSDirID folderID,
-	                                     FSIOFileAttributes attributes,
-	                                     FSUserPrivileges accessPrivileges )
+	nucleus::owned< IconRef > GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
+	                                                Mac::FSDirID             parentFolderID,
+	                                                Mac::FSDirID             folderID,
+	                                                Mac::FSIOFileAttributes  attributes,
+	                                                Mac::FSUserPrivileges    accessPrivileges )
      {
       IconRef result;
       ThrowOSStatus( ::GetIconRefFromFolder( vRefNum,
