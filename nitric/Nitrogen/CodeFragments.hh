@@ -17,19 +17,22 @@
 #ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
 #endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-#ifndef NITROGEN_CFBUNDLE_HH
-#include "Nitrogen/CFBundle.hh"
-#endif
-#ifndef NITROGEN_FILES_HH
-#include "Nitrogen/Files.hh"
-#endif
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
-#endif
 
+// nucleus
+#include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
+#include "nucleus/flag_ops.hh"
+#include "nucleus/owned.hh"
+
+// Nitrogen
+#include "Mac/Resources/Types/ResID.hh"
+
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
+#endif
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
+#endif
 
 #ifdef CFragHasFileLocation
 #undef CFragHasFileLocation
@@ -56,7 +59,7 @@ namespace Nitrogen
 	
 	static const ResType kCFragResourceType = ResType( ::kCFragResourceType );
 	
-	static const ResID kCFragResourceID = ResID( ::kCFragResourceID );
+	static const Mac::ResID kCFragResourceID = Mac::ResID( ::kCFragResourceID );
 	
 	enum CFragArchitecture
 	{
