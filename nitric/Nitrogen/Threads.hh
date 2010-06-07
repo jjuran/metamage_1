@@ -30,6 +30,8 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
+#include "Mac/Threads/Types/ThreadID.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -65,14 +67,11 @@ namespace Nitrogen
 		kThreadStyle_Max = nucleus::enumeration_traits< ::ThreadStyle >::max
 	};
 	
-	enum ThreadID
-	{
-		kNoThreadID          = ::kNoThreadID,
-		kCurrentThreadID     = ::kCurrentThreadID,
-		kApplicationThreadID = ::kApplicationThreadID,
-		
-		kThreadID_Max = nucleus::enumeration_traits< ::ThreadID >::max
-	};
+	using Mac::ThreadID;
+	
+	using Mac::kNoThreadID;
+	using Mac::kCurrentThreadID;
+	using Mac::kApplicationThreadID;
 	
 	enum ThreadOptions
 	{
@@ -91,23 +90,6 @@ namespace Nitrogen
 	
 	// ...
 	
-  }
-
-namespace nucleus
-  {
-	template <>
-	struct disposer< Nitrogen::ThreadID >
-	{
-		typedef ThreadID  argument_type;
-		typedef void      result_type;
-		
-		void operator()( Nitrogen::ThreadID thread ) const
-		{
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ThreadManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
-		}
-	};
   }
 
 namespace Nitrogen
