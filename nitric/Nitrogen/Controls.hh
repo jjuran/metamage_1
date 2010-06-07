@@ -26,10 +26,11 @@
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/errors_registered.hh"
 #include "nucleus/make.hh"
+#include "nucleus/scribe.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
+// Nitrogen
+#include "Mac/Toolbox/Types/OSType.hh"
+
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
 #endif
@@ -236,7 +237,7 @@ namespace nucleus
    template <>
    struct maker< ControlID >
      {
-      ControlID operator()( Nitrogen::OSType signature, SInt32 id ) const
+      ControlID operator()( Mac::OSType signature, SInt32 id ) const
         {
          ControlID result;
          result.signature = signature;
@@ -277,7 +278,7 @@ namespace Nitrogen
    
    // 2245
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );
-   ControlRef GetControlByID( WindowRef inWindow, OSType signature, SInt32 id );  // To be removed; use Make.
+   ControlRef GetControlByID( WindowRef inWindow, Mac::OSType signature, SInt32 id );  // To be removed; use Make.
 
 	// 2491
 	void SetControlAction( ControlRef control, ControlActionUPP actionProc );
@@ -319,7 +320,7 @@ namespace Nitrogen
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ControlDataTag    inTagName,
-                        Size              inSize,
+                        std::size_t       inSize,
                         const void *      inData );
 
 	class SetControlData_Putter
@@ -367,16 +368,16 @@ namespace Nitrogen
      }
 
 	// 2852
-   Size GetControlData( ControlRef        inControl,
-                        ControlPartCode   inPart,
-                        ControlDataTag    inTagName,
-                        Size              inBufferSize,
-                        void *            inBuffer );
-
-   Size GetControlData( ControlRef        inControl,
-                        ControlPartCode   inPart,
-                        ControlDataTag    inTagName );
-   
+	std::size_t GetControlData( ControlRef       inControl,
+	                            ControlPartCode  inPart,
+	                            ControlDataTag   inTagName,
+	                            std::size_t      inBufferSize,
+	                            void *           inBuffer );
+	
+	std::size_t GetControlData( ControlRef       inControl,
+	                            ControlPartCode  inPart,
+	                            ControlDataTag   inTagName );
+	   
 	template < ::ResType tagName >
 	class GetControlData_Getter
 	{
