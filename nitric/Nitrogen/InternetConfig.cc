@@ -42,7 +42,7 @@ namespace Nitrogen
 #endif
 	
 	
-	nucleus::owned< ICInstance > ICStart( OSType signature )
+	nucleus::owned< ICInstance > ICStart( Mac::OSType signature )
 	{
 		::ICInstance instance;
 		
