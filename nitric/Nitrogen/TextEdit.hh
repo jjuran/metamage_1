@@ -34,6 +34,8 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
+#include "Mac/TextEdit/Types/TEHandle.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -60,21 +62,6 @@ namespace Nitrogen
 	using ::TEHandle;
 	using ::CharsHandle;  // identical to ::Handle
 	
-}
-
-namespace nucleus
-{
-	template <>
-	struct disposer< TEHandle >
-	{
-		typedef TEHandle  argument_type;
-		typedef void      result_type;
-		
-		void operator()( TEHandle teH ) const
-		{
-			::TEDispose( teH );
-		}
-	};
 }
 
 namespace Nitrogen
