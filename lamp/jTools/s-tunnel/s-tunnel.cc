@@ -252,9 +252,9 @@ namespace tool
 		int connected = connect( client_socket, (const sockaddr*)&gRemoteAddress, sizeof (sockaddr_in) );
 		int unblocked = setnonblocking( client_socket );
 		
-		SSL_METHOD* mySSLMethod  = SSLv3_client_method();
-		SSL_CTX*    mySSLContext = SSL_CTX_new( mySSLMethod  );
-		SSL*        mySSLSession = SSL_new    ( mySSLContext );
+		SSL_METHOD const*  mySSLMethod  = SSLv3_client_method();
+		SSL_CTX*           mySSLContext = SSL_CTX_new( mySSLMethod  );
+		SSL*               mySSLSession = SSL_new    ( mySSLContext );
 		
 		SSL_set_fd( mySSLSession, client_socket );
 		
