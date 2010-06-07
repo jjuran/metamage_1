@@ -53,7 +53,7 @@ namespace Nitrogen
 	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
 	                                      void*           threadParam,
-	                                      Size            stackSize,
+	                                      std::size_t     stackSize,
 	                                      ThreadOptions   options,
 	                                      void**          threadResult )
 	{
@@ -101,7 +101,7 @@ namespace Nitrogen
 	
 	void CreateThreadPool( ThreadStyle  threadStyle,
 	                       std::size_t  numToCreate,
-	                       Size         stackSize )
+	                       std::size_t  stackSize )
 	{
 		ThrowOSStatus( ::CreateThreadPool( threadStyle, numToCreate, stackSize ) );
 	}
@@ -115,7 +115,7 @@ namespace Nitrogen
 	}
 	
 	std::size_t GetSpecificFreeThreadCount( ThreadStyle  threadStyle,
-	                                        Size         stackSize )
+	                                        std::size_t  stackSize )
 	{
 		SInt16 result;
 		ThrowOSStatus( ::GetSpecificFreeThreadCount( threadStyle, stackSize, &result ) );
@@ -123,7 +123,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Size GetDefaultThreadStackSize( ThreadStyle threadStyle )
+	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle )
 	{
 		::Size result;
 		ThrowOSStatus( ::GetDefaultThreadStackSize( threadStyle, &result ) );

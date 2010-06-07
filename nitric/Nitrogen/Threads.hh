@@ -14,6 +14,9 @@
 #ifndef NITROGEN_THREADS_HH
 #define NITROGEN_THREADS_HH
 
+// Standard C/C++
+#include <cstddef>
+
 // Mac OS
 #ifndef __THREADS__
 #include <Threads.h>
@@ -24,11 +27,9 @@
 #include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/object_parameter_traits.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -258,7 +259,7 @@ namespace Nitrogen
 	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
 	                                      void*           threadParam,
-	                                      Size            stackSize,
+	                                      std::size_t     stackSize,
 	                                      ThreadOptions   options,
 	                                      void**          threadResult = NULL );
 	
@@ -267,7 +268,7 @@ namespace Nitrogen
 	template < ::ThreadEntryProcPtr threadEntry >
 	inline nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                             void*           threadParam,
-	                                             Size            stackSize,
+	                                             std::size_t     stackSize,
 	                                             ThreadOptions   options,
 	                                             void**          threadResult = NULL )
 	{
@@ -287,7 +288,7 @@ namespace Nitrogen
 	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Param          param,
-	           Size           stackSize = Size( 0 ),
+	           std::size_t    stackSize = std::size_t( 0 ),
 	           ThreadOptions  options   = ThreadOptions(),
 	           Result*        result    = NULL )
 	{
@@ -309,7 +310,7 @@ namespace Nitrogen
 	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
 	           Param          param,
-	           Size           stackSize = Size( 0 ),
+	           std::size_t    stackSize = std::size_t( 0 ),
 	           ThreadOptions  options   = ThreadOptions() )
 	{
 		void*  threadParam  = const_cast< void* >( nucleus::object_parameter_traits< Param  >::convert_to_pointer( param ) );
@@ -328,7 +329,7 @@ namespace Nitrogen
 	           typename ThreadEntry_Traits< void, Result >::ProcPtr threadEntry >
 	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
-	           Size           stackSize = Size( 0 ),
+	           std::size_t    stackSize = std::size_t( 0 ),
 	           ThreadOptions  options   = ThreadOptions(),
 	           Result*        result    = NULL )
 	{
@@ -347,7 +348,7 @@ namespace Nitrogen
 	template < typename ThreadEntry_Traits< void, void >::ProcPtr threadEntry >
 	inline nucleus::owned< ThreadID >
 	NewThread( ThreadStyle    threadStyle,
-	           Size           stackSize = Size( 0 ),
+	           std::size_t    stackSize = std::size_t( 0 ),
 	           ThreadOptions  options   = ThreadOptions() )
 	{
 		return NewThread< ThreadEntry< void,
@@ -377,14 +378,14 @@ namespace Nitrogen
 	
 	void CreateThreadPool( ThreadStyle  threadStyle,
 	                       std::size_t  numToCreate,
-	                       Size         stackSize );
+	                       std::size_t  stackSize );
 	
 	std::size_t GetFreeThreadCount( ThreadStyle threadStyle );
 	
 	std::size_t GetSpecificFreeThreadCount( ThreadStyle  threadStyle,
-	                                        Size         stackSize );
+	                                        std::size_t  stackSize );
 	
-	Size GetDefaultThreadStackSize( ThreadStyle threadStyle );
+	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle );
 	
 	std::size_t ThreadCurrentStackSpace( ThreadID thread );
 	

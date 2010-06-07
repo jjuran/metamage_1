@@ -5,6 +5,9 @@
 
 #include "Genie/IO/OTSocket.hh"
 
+// Standard C/C++
+#include <cstdio>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
