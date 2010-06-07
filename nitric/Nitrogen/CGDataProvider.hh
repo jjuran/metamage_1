@@ -15,9 +15,10 @@
 #ifndef CGDATAPROVIDER_H_
 #include <CGDataProvider.h>
 #endif
-#ifndef NITROGEN_CFURL_HH
-#include "Nitrogen/CFURL.hh"
-#endif
+
+// nucleus
+#include "nucleus/owned.hh"
+
 
 namespace Nitrogen
   {
