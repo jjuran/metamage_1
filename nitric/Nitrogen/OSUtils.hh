@@ -24,8 +24,8 @@
 
 // Nitrogen
 #if TARGET_RT_MAC_MACHO
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
+#ifndef NITROGEN_CFBASE_HH
+#include "Nitrogen/CFBase.hh"
 #endif
 #endif
 #ifndef NITROGEN_UPP_HH

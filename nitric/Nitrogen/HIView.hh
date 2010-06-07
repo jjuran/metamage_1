@@ -26,8 +26,8 @@
 #include "Nitrogen/MacTypes.hh"
 #endif
 
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
+#ifndef NITROGEN_CFBase_HH
+#include "Nitrogen/CFBase.hh"
 #endif
 
 #ifndef NITROGEN_OSSTATUS_HH

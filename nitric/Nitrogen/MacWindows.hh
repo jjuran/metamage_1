@@ -33,8 +33,8 @@
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
+#ifndef NITROGEN_CFBASE_HH
+#include "Nitrogen/CFBase.hh"
 #endif
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
