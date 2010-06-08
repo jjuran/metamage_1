@@ -6,7 +6,7 @@
 #include "Genie/FS/FSTree_sys_window.hh"
 
 // Standard C++
-#include <map>
+#include <set>
 
 // Iota
 #include "iota/strings.hh"
@@ -30,7 +30,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef std::map< const FSTree*, boost::weak_ptr< const FSTree > > WindowMap;
+	typedef std::set< const FSTree* > WindowMap;
 	
 	static WindowMap gWindowMap;
 	
@@ -48,12 +48,12 @@ namespace Genie
 			it = gWindowMap.find( key );
 		}
 		
-		if ( !canonical  ||  it == gWindowMap.end()  ||  it->second.expired() )
+		if ( !canonical  ||  it == gWindowMap.end() )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return it->second.lock();
+		return (*it)->shared_from_this();
 	}
 	
 	static void window_iterate( FSTreeCache& cache )
@@ -62,25 +62,14 @@ namespace Genie
 		
 		for ( WindowMap::const_iterator it = gWindowMap.begin();  it != end;  ++it )
 		{
-			if ( it->second.expired() )
-			{
-				continue;
-			}
+			const FSTree* window = *it;
 			
-			ino_t inode = (ino_t) it->first;  // coerce pointer to integer
-			
-			FSTreePtr window = it->second.lock();
+			ino_t inode = (ino_t) window;  // coerce pointer to integer
 			
 			FSNode node( inode, window->Name() );
 			
 			cache.push_back( node );
 		}
-	}
-	
-	
-	static void AddWindow( const FSTreePtr& member )
-	{
-		gWindowMap[ member.get() ] = member;
 	}
 	
 	void RemoveWindow( const FSTree* window )
@@ -103,7 +92,7 @@ namespace Genie
 		
 		FSTreePtr window = Premapped_Factory< sys_window_REF_Mappings, &RemoveWindow >( parent, "/" );
 		
-		AddWindow( window );
+		gWindowMap.insert( window.get() );
 		
 		return window;
 	}
