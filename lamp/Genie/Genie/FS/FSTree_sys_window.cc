@@ -53,7 +53,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return (*it)->shared_from_this();
+		return FSTreePtr( *it );
 	}
 	
 	static void window_iterate( FSTreeCache& cache )

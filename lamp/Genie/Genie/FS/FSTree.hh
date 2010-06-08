@@ -17,7 +17,6 @@
 #include "plus/string.hh"
 
 // boost
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -41,7 +40,7 @@ namespace Genie
 	class FSTree;
 	class FSIterator;
 	
-	typedef boost::shared_ptr< FSTree const > FSTreePtr;
+	typedef boost::intrusive_ptr< FSTree const > FSTreePtr;
 	
 	typedef boost::intrusive_ptr< FSIterator > FSIteratorPtr;
 	
@@ -89,7 +88,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree : public boost::enable_shared_from_this< FSTree >
+	class FSTree : public plus::ref_count< FSTree >
 	{
 		private:
 			FSTreePtr     itsParent;
@@ -118,7 +117,7 @@ namespace Genie
 			
 			plus::string Pathname() const;
 			
-			FSTreePtr Self() const  { return shared_from_this(); }
+			FSTreePtr Self() const  { return FSTreePtr( this ); }
 			
 			virtual FSTreePtr Parent() const;
 			

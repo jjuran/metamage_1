@@ -42,7 +42,7 @@ namespace Genie
 		
 		try
 		{
-			destination->Attach( shared_from_this() );
+			destination->Attach( FSTreePtr( this ) );
 		}
 		catch ( ... )
 		{
