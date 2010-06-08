@@ -220,10 +220,7 @@ namespace Genie
 				
 				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 				
-				if ( !terminal.GetProcessGroup().expired() )
-				{
-					SendSignalToProcessGroup( SIGWINCH, *terminal.GetProcessGroup().lock() );
-				}
+				send_signal_to_foreground_process_group_of_terminal( SIGWINCH, terminal );
 			}
 		}
 	}

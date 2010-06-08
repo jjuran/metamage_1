@@ -67,6 +67,8 @@ namespace Genie
 		static int GetError( IOHandle& )  { return ENOTTY; }
 	};
 	
+	void send_signal_to_foreground_process_group_of_terminal( int signo, const TerminalHandle& h );
+	
 }
 
 #endif

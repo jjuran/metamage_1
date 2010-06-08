@@ -161,7 +161,7 @@ namespace Genie
 		
 		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 		
-		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
+		send_signal_to_foreground_process_group_of_terminal( signo, terminal );
 	}
 	
 	static bool Try_Control_Character( TextEdit& that, const EventRecord& event )

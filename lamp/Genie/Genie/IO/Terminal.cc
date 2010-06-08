@@ -119,9 +119,14 @@ namespace Genie
 			tty->Disconnect();
 		}
 		
-		if ( !GetProcessGroup().expired() )
+		send_signal_to_foreground_process_group_of_terminal( SIGHUP, *this );
+	}
+	
+	void send_signal_to_foreground_process_group_of_terminal( int signo, const TerminalHandle& h )
+	{
+		if ( !h.GetProcessGroup().expired() )
 		{
-			SendSignalToProcessGroup( SIGHUP, *GetProcessGroup().lock() );
+			SendSignalToProcessGroup( signo, *h.GetProcessGroup().lock() );
 		}
 	}
 	
