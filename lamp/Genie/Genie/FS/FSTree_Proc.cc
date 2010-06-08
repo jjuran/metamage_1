@@ -409,14 +409,7 @@ namespace Genie
 					
 					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 					
-					const boost::weak_ptr< ProcessGroup >& group = terminal.GetProcessGroup();
-					
-					tpgid = 0x7fffffff;
-					
-					if ( !group.expired() )
-					{
-						tpgid = group.lock()->ID();
-					}
+					tpgid = terminal.getpgrp();
 				}
 				
 				plus::var_string result;

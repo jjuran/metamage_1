@@ -276,6 +276,8 @@ namespace Genie
 			bool HandlePendingSignals( Interruptibility interrupting );
 	};
 	
+	boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
+	
 	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
 	
 	class ProcessList
@@ -323,7 +325,7 @@ namespace Genie
 		return GetProcessList().NewProcess( parent );
 	}
 	
-	void SendSignalToProcessGroup( int sig, const ProcessGroup& group );
+	void SendSignalToProcessGroup( int sig, pid_t pgid );
 	
 	Process& CurrentProcess();
 	

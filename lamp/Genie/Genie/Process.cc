@@ -152,15 +152,18 @@ namespace Genie
 	}
 	
 	
-	void SendSignalToProcessGroup( int sig, const ProcessGroup& group )
+	void SendSignalToProcessGroup( int sig, pid_t pgid )
 	{
 		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.GetProcessGroup().get() == &group )
+			if ( ProcessGroup* pgrp = proc.GetProcessGroup().get() )
 			{
-				proc.Raise( sig );
+				if ( pgrp->ID() == pgid )
+				{
+					proc.Raise( sig );
+				}
 			}
 		}
 	}
@@ -645,7 +648,7 @@ namespace Genie
 		return NewProcessGroup( pgid, NewSession( pgid ) );
 	}
 	
-	static boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
 	{
 		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{

@@ -53,6 +53,8 @@ namespace Genie
 			{
 			}
 			
+			~ProcessGroup();
+			
 			int ID() const  { return itsID; }
 			
 			int GetSID() const  { return itsSession->ID(); }

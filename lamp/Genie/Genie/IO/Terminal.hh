@@ -12,7 +12,6 @@
 
 // Genie
 #include "Genie/IO/Base.hh"
-#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -20,13 +19,16 @@ namespace Genie
 	
 	typedef std::size_t TerminalID;
 	
+	const pid_t no_pgid = 0x7fffffff;
+	
+	
 	class TerminalHandle : public IOHandle
 	{
 		private:
-			const plus::string               itsTTYName;
-			boost::shared_ptr< IOHandle >    itsTTY;
-			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
-			bool                             itIsDisconnected;
+			const plus::string             itsTTYName;
+			boost::shared_ptr< IOHandle >  itsTTY;
+			pid_t                          its_process_group_id;
+			bool                           itIsDisconnected;
 			
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
@@ -34,8 +36,9 @@ namespace Genie
 			TerminalHandle( const plus::string& ttyName )
 			:
 				IOHandle( O_RDWR ),
-				itsTTYName      ( ttyName ),
-				itIsDisconnected( false   )
+				itsTTYName          ( ttyName ),
+				its_process_group_id( no_pgid ),
+				itIsDisconnected    ( false   )
 			{
 			}
 			
@@ -47,9 +50,9 @@ namespace Genie
 			
 			FSTreePtr GetFile();
 			
-			const boost::weak_ptr< ProcessGroup >& GetProcessGroup() const  { return itsForegroundProcessGroup; }
+			pid_t getpgrp() const  { return its_process_group_id; }
 			
-			void SetProcessGroup( const boost::weak_ptr< ProcessGroup >& pgrp )  { itsForegroundProcessGroup = pgrp; }
+			void setpgrp( pid_t pgid )  { its_process_group_id = pgid; }
 			
 			void IOCtl( unsigned long request, int* argp );
 			

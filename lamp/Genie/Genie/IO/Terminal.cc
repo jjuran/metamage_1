@@ -18,6 +18,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
+#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -57,8 +58,7 @@ namespace Genie
 				
 				CheckControllingTerminal( current, *this );
 				
-				*argp = !GetProcessGroup().expired() ? GetProcessGroup().lock()->ID()
-				                                     : 0x7fffffff;
+				*argp = its_process_group_id;
 				
 				break;
 			
@@ -70,12 +70,12 @@ namespace Genie
 				{
 					// If the terminal has an existing foreground process group,
 					// it must be in the same session as the calling process.
-					if ( GetProcessGroup().expired()  ||  GetProcessGroup().lock()->GetSession().get() == process_session.get() )
+					if ( its_process_group_id == no_pgid  ||  FindProcessGroup( its_process_group_id )->GetSession().get() == process_session.get() )
 					{
 						// This must be the caller's controlling terminal.
 						if ( process_session->GetControllingTerminal().get() == this )
 						{
-							SetProcessGroup( GetProcessGroupInSession( *argp, process_session ) );
+							setpgrp( GetProcessGroupInSession( *argp, process_session )->ID() );
 						}
 					}
 					
@@ -99,7 +99,7 @@ namespace Genie
 				
 				// Check that we're not the controlling tty of another session
 				
-				SetProcessGroup( current.GetProcessGroup() );
+				this->setpgrp( current.GetPGID() );
 				
 				process_session->SetControllingTerminal( shared_from_this() );
 				break;
@@ -124,9 +124,9 @@ namespace Genie
 	
 	void send_signal_to_foreground_process_group_of_terminal( int signo, const TerminalHandle& h )
 	{
-		if ( !h.GetProcessGroup().expired() )
+		if ( h.getpgrp() != no_pgid )
 		{
-			SendSignalToProcessGroup( signo, *h.GetProcessGroup().lock() );
+			SendSignalToProcessGroup( signo, h.getpgrp() );
 		}
 	}
 	
