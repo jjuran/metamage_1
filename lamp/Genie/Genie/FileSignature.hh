@@ -20,7 +20,12 @@ namespace plus
 namespace Genie
 {
 	
-	Nitrogen::OSType TextFileCreator();
+	extern ::OSType gTextFileCreator;
+	
+	inline Nitrogen::OSType TextFileCreator()
+	{
+		return Nitrogen::OSType( gTextFileCreator );
+	}
 	
 	Nitrogen::FileSignature PickFileSignatureForName( const plus::string& name );
 	

@@ -1,5 +1,4 @@
 #!/bin/sh
 
-open --mac --sig $MAC_EDITOR_SIGNATURE $1
-activate $MAC_EDITOR_SIGNATURE
+open -t --activate --mac $1
 

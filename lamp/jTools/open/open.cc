@@ -25,6 +25,8 @@
 #include "MacFiles/Classic.hh"
 
 // poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/types/errno_t.hh"
 
 // FindProcess
@@ -51,13 +53,12 @@ namespace tool
 	
 	enum
 	{
-		sigFinder       = 'MACS',
-		sigBBEdit       = 'R*ch',
-		sigTextWrangler = '!Rch',
-		
-		// FIXME
-		sigGoodTextEditor = TARGET_API_MAC_CARBON ? sigTextWrangler : sigBBEdit
+		sigFinder = 'MACS'
 	};
+	
+	
+	static bool gActivate = false;
+	
 	
 	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
 	{
@@ -110,8 +111,21 @@ namespace tool
 	static void OpenItemsWithRunningApp( const N::AEDescList_Data&   items,
 	                                     const ProcessSerialNumber&  psn )
 	{
+		if ( gActivate )
+		{
+			N::SetFrontProcess( psn );
+		}
+		
 		N::AESend( MakeOpenDocsEvent( items, psn ),
 		           N::kAENoReply | N::kAECanInteract );
+		
+		if ( gActivate )
+		{
+			while ( !N::SameProcess( psn, N::GetFrontProcess() ) )
+			{
+				sleep( 0 );
+			}
+		}
 	}
 	
 	static void LaunchApplicationWithDocsToOpen( const FSSpec&              app,
@@ -137,10 +151,30 @@ namespace tool
 		o::bind_option_to_variable( "--sig",  gAppSigToOpenIn  );
 		o::bind_option_to_variable( "--mac",  gUseMacPathnames );
 		o::bind_option_to_variable( "--edit", gOpenInEditor    );
+		o::bind_option_to_variable( "--actv", gActivate        );
 		
 		o::alias_option( "--app",  "-a" );
 		o::alias_option( "--edit", "-e" );
 		o::alias_option( "--edit", "-t" );
+		
+		o::alias_option( "--actv", "--activate" );
+	}
+	
+	static N::OSType DefaultTextFileCreator()
+	{
+	#ifdef __LAMP__
+		
+		const char* path = "/sys/type/text/DEFAULT";
+		
+		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly | p7::o_binary ) );
+		
+		return N::OSType( iota::decode_quad( code.data() ) );
+		
+	#else
+		
+		return N::OSType( 'ttxt' );  // for OS X
+		
+	#endif
 	}
 	
 	static N::OSType SignatureOfAppForOpening()
@@ -161,10 +195,9 @@ namespace tool
 				// Treat a malformed quad value the same as no value.  Move on.
 			}
 			
-			// No MAC_EDITOR_SIGNATURE; default to BBEdit/TextWrangler.
-			// FIXME:  We could be smarter about this...
+			// No MAC_EDITOR_SIGNATURE; use the Lamp default.
 			
-			return N::OSType( sigGoodTextEditor );
+			return DefaultTextFileCreator();
 		}
 		
 		if ( gAppSigToOpenIn != NULL )

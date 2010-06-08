@@ -23,6 +23,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
+#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Str.hh"
 
 #if CALL_NOT_IN_CARBON
@@ -110,13 +111,18 @@ namespace tool
 	
 #endif
 	
-	static n::owned< N::AEAddressDesc > SelectAddress( N::OSType    sig,
+	static n::owned< N::AEAddressDesc > SelectAddress( bool         front,
+	                                                   N::OSType    sig,
 	                                                   const char*  app,
 	                                                   const char*  machine,
 	                                                   const char*  host,
 	                                                   const char*  url )
 	{
-		if ( sig != N::OSType( kUnknownType ) )
+		if ( front )
+		{
+			return N::AECreateDesc< N::typeProcessSerialNumber >( N::GetFrontProcess() );
+		}
+		else if ( sig != N::OSType( kUnknownType ) )
 		{
 			return N::AECreateDesc< N::typeApplSignature >( sig );
 		}
@@ -142,6 +148,8 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
+		bool front = false;
+		
 		const char*  url     = "";
 		const char*  host    = NULL;
 		const char*  machine = NULL;
@@ -149,12 +157,14 @@ namespace tool
 		
 		const char* sig = "\?\?\?\?";
 		
+		o::bind_option_to_variable( "-F", front   );
 		o::bind_option_to_variable( "-u", url     );
 		o::bind_option_to_variable( "-h", host    );
 		o::bind_option_to_variable( "-m", machine );
 		o::bind_option_to_variable( "-a", app     );
 		o::bind_option_to_variable( "-s", sig     );
 		
+		o::alias_option( "-F", "--front"     );
 		o::alias_option( "-u", "--url"       );
 		o::alias_option( "-h", "--host"      );
 		o::alias_option( "-m", "--machine"   );
@@ -213,7 +223,7 @@ namespace tool
 		
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,
-		                            SelectAddress( sigCode, app, machine, host, url ),
+		                            SelectAddress( front, sigCode, app, machine, host, url ),
 		                            argBuild,
 		                            NULL ),
 		           N::kAENoReply | N::kAECanInteract );
