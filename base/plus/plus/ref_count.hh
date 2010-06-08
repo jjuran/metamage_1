@@ -15,7 +15,7 @@ namespace plus
 	class ref_count_base
 	{
 		private:
-			unsigned long its_n;
+			mutable unsigned long its_n;
 			
 			// Non-copyable
 			ref_count_base           ( const ref_count_base& );
@@ -27,13 +27,13 @@ namespace plus
 			{
 			}
 			
-			unsigned long release()
+			unsigned long release() const
 			{
 				return --its_n;
 			}
 		
 		private:
-			friend void intrusive_ptr_add_ref( ref_count_base* count )
+			friend void intrusive_ptr_add_ref( const ref_count_base* count )
 			{
 				++count->its_n;
 			}
@@ -44,12 +44,12 @@ namespace plus
 	{
 		private:
 			// Hide the protected release() from view
-			unsigned long release()
+			unsigned long release() const
 			{
 				return ref_count_base::release();
 			}
 			
-			friend void intrusive_ptr_release( Derived* derived )
+			friend void intrusive_ptr_release( const Derived* derived )
 			{
 				if ( derived->release() == 0 )
 				{
