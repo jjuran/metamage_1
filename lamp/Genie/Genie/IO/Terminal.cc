@@ -49,7 +49,7 @@ namespace Genie
 	{
 		Process& current = CurrentProcess();
 		
-		const boost::shared_ptr< Session >& process_session = current.GetProcessGroup()->GetSession();
+		const boost::intrusive_ptr< Session >& process_session = current.GetProcessGroup()->GetSession();
 		
 		switch ( request )
 		{

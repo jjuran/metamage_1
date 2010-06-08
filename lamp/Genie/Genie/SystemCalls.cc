@@ -509,7 +509,7 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			const boost::shared_ptr< Session >& session = target.GetProcessGroup()->GetSession();
+			const boost::intrusive_ptr< Session >& session = target.GetProcessGroup()->GetSession();
 			
 			target.SetProcessGroup( GetProcessGroupInSession( pgid, session ) );
 			
@@ -522,9 +522,9 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< Session > NewSession( pid_t sid )
+	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
 	{
-		return boost::shared_ptr< Session >( new Session( sid ) );
+		return boost::intrusive_ptr< Session >( new Session( sid ) );
 	}
 	
 	static pid_t setsid()

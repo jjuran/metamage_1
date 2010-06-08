@@ -122,7 +122,7 @@ namespace Genie
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			
-			boost::shared_ptr< ProcessGroup > itsProcessGroup;
+			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
 			
 			int* itsErrno;
 			
@@ -200,9 +200,9 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
+			const boost::intrusive_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
-			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
+			void SetProcessGroup( const boost::intrusive_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
 			
 			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
@@ -276,9 +276,9 @@ namespace Genie
 			bool HandlePendingSignals( Interruptibility interrupting );
 	};
 	
-	boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
+	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
 	
-	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session );
 	
 	class ProcessList
 	{

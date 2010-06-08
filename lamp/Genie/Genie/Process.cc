@@ -633,22 +633,22 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< Session > NewSession( pid_t sid )
+	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
 	{
-		return boost::shared_ptr< Session >( new Session( sid ) );
+		return boost::intrusive_ptr< Session >( new Session( sid ) );
 	}
 	
-	static boost::shared_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::shared_ptr< Session >& session )
+	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::intrusive_ptr< Session >& session )
 	{
-		return boost::shared_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
+		return boost::intrusive_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
 	}
 	
-	static boost::shared_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
+	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
 	{
 		return NewProcessGroup( pgid, NewSession( pgid ) );
 	}
 	
-	boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
 	{
 		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
@@ -660,12 +660,12 @@ namespace Genie
 			}
 		}
 		
-		return boost::shared_ptr< ProcessGroup >();
+		return boost::intrusive_ptr< ProcessGroup >();
 	}
 	
-	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session )
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session )
 	{
-		boost::shared_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
+		boost::intrusive_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
 		
 		if ( pgrp.get() == NULL )
 		{
