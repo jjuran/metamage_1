@@ -170,7 +170,9 @@ namespace Genie
 			
 			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
-				DeleteDelegate( jt->second.itsDelegate );
+				ViewParameters& params = jt->second;
+				
+				DeleteDelegate( params.itsDelegate );
 			}
 		}
 	}
