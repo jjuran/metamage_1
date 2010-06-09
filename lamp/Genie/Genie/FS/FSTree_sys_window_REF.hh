@@ -22,6 +22,8 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_window_REF_Mappings[];
 	
+	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view );
+	
 	void RemoveUserWindow( const FSTree* key );
 	
 	bool InvalidateWindow( const FSTree* key );

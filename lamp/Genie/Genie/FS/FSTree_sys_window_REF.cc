@@ -310,6 +310,18 @@ namespace Genie
 		RemoveAllViewParameters( key );
 	}
 	
+	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view )
+	{
+		WindowParametersMap::iterator it = gWindowParametersMap.find( window_key );
+		
+		if ( it != gWindowParametersMap.end() )
+		{
+			WindowParameters& params = it->second;
+			
+			// ...
+		}
+	}
+	
 	
 	class FSTree_sys_window_REF_Property : public FSTree_Property
 	{
