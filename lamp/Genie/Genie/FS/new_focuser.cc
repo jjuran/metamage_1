@@ -16,7 +16,9 @@
 #include "Pedestal/Window.hh"
 
 // Genie
+#include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/Views.hh"
 
 
@@ -30,19 +32,27 @@ namespace Genie
 	{
 		private:
 			const FSTree* itsKey;
-			
-			Ped::View* itsSavedFocus;
 		
 		public:
-			Focuser( const FSTree* key ) : itsKey( key ), itsSavedFocus()
+			Focuser( const FSTree* key ) : itsKey( key )
 			{
 			}
+			
+			Ped::View* GetFocus() const;
 			
 			void Activate( bool activating );
 			
 			bool MouseDown( const EventRecord& event )  { return false; }
 			bool KeyDown( const EventRecord& event );
 	};
+	
+	
+	Ped::View* Focuser::GetFocus() const
+	{
+		const FSTree* focus = GetWindowFocus( GetViewWindowKey( itsKey ) );
+			
+		return get_focusable_view( focus );
+	}
 	
 	
 	static Ped::View& RootView()
@@ -92,11 +102,9 @@ namespace Genie
 		return next;
 	}
 	
-	static void SwitchFocus( bool backward = false )
+	static void SwitchFocus( Ped::View* current, bool backward = false )
 	{
 		Ped::View& root = RootView();
-		
-		Ped::View* current = Ped::Get_Focus();
 		
 		// Input to AdvanceFocus() is either the current focus or NULL
 		
@@ -160,18 +168,18 @@ namespace Genie
 	{
 		if ( activating )
 		{
-			Ped::Set_Focus( AutoFocus( itsSavedFocus ) );
+			Ped::Set_Focus( AutoFocus( GetFocus() ) );
 		}
 		else
 		{
-			itsSavedFocus = Ped::Get_Focus();
-			
 			Ped::Reset_Focus();
 		}
 	}
 	
 	bool Focuser::KeyDown( const EventRecord& event )
 	{
+		Ped::View* focus = GetFocus();
+		
 		const short disqualifyingModifiers = controlKey | rightControlKey
 		                                   | optionKey  | rightOptionKey
 		                                   | cmdKey;
@@ -184,12 +192,12 @@ namespace Genie
 		{
 			const bool shift = event.modifiers & (shiftKey | rightShiftKey);
 			
-			SwitchFocus( shift );
+			SwitchFocus( focus, shift );
 			
 			return true;
 		}
 		
-		if ( Ped::View* focus = Ped::Get_Focus() )
+		if ( focus != NULL )
 		{
 			return focus->KeyDown( event );
 		}
