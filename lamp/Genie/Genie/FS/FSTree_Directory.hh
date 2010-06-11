@@ -86,7 +86,6 @@ namespace Genie
 			void Map( const Mapping& mapping );
 			
 			void AddMappings( const Mapping* begin );
-			void AddMappings( const Mapping* begin, const Mapping* end );
 			
 			void Delete() const;
 			

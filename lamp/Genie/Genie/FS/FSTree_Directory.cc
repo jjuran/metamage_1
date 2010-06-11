@@ -102,15 +102,6 @@ namespace Genie
 		}
 	}
 	
-	void FSTree_Premapped::AddMappings( const Mapping*  begin,
-	                                    const Mapping*  end )
-	{
-		for ( const Mapping* it = begin;  it != end;  ++it )
-		{
-			Map( *it );
-		}
-	}
-	
 	void FSTree_Premapped::Delete() const
 	{
 		if ( itsDestructor )
