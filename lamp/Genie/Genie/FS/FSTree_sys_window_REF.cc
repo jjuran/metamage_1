@@ -36,6 +36,7 @@
 #include "Pedestal/Window.hh"
 
 // Genie
+#include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -451,6 +452,32 @@ namespace Genie
 		return NULL;
 	}
 	
+	static void FocusViewInWindow( Ped::View& view, const FSTree* window_key )
+	{
+		if ( N::WindowRef window = GetWindowRef( window_key ) )
+		{
+			if ( window == FrontWindow() )
+			{
+				SetWindowPort_Scope scope( window );
+				
+				view.Focus();
+			}
+		}
+	}
+	
+	static void BlurViewInWindow( Ped::View& view, const FSTree* window_key )
+	{
+		if ( N::WindowRef window = GetWindowRef( window_key ) )
+		{
+			if ( window == FrontWindow() )
+			{
+				SetWindowPort_Scope scope( window );
+				
+				view.Blur();
+			}
+		}
+	}
+	
 	bool InvalidateWindow( const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
@@ -511,6 +538,10 @@ namespace Genie
 			
 			bool IsLink() const  { return Exists(); }
 			
+			void Delete() const;
+			
+			void SymLink( const plus::string& target ) const;
+			
 			plus::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
@@ -519,6 +550,38 @@ namespace Genie
 	bool FSTree_sys_window_REF_focus::Exists() const
 	{
 		return gWindowParametersMap[ WindowKey() ].itsFocus != NULL;
+	}
+	
+	void FSTree_sys_window_REF_focus::Delete() const
+	{
+		const FSTree* focus_file = gWindowParametersMap[ WindowKey() ].itsFocus;
+		
+		if ( Ped::View* focus_view = get_focusable_view( focus_file ) )
+		{
+			BlurViewInWindow( *focus_view, WindowKey() );
+		}
+		
+		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
+	}
+	
+	void FSTree_sys_window_REF_focus::SymLink( const plus::string& target ) const
+	{
+		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( "." );
+		
+		Ped::View* target_view = get_focusable_view( targeted_file.get() );
+		
+		if ( target_view == NULL )
+		{
+			// The target either doesn't exist or isn't a focusable view
+			throw p7::errno_t( EINVAL );
+		}
+		
+		// symlinkat() won't call us if the file exists
+		ASSERT( gWindowParametersMap[ WindowKey() ].itsFocus == NULL );
+		
+		FocusViewInWindow( *target_view, WindowKey() );
+		
+		gWindowParametersMap[ WindowKey() ].itsFocus = targeted_file.get();
 	}
 	
 	plus::string FSTree_sys_window_REF_focus::ReadLink() const
