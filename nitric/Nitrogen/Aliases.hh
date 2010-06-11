@@ -26,9 +26,9 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/string.hh"
 
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
-#endif
+// Nitrogen
+#include "Mac/Aliases/Types/AliasHandle.hh"
+
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
 #endif
@@ -55,11 +55,6 @@ namespace Nitrogen
 	NUCLEUS_DEFINE_FLAG_OPS( MountFlags )
 	
    using ::AliasHandle;
-  }
-
-namespace nucleus
-  {
-   template <> struct disposer_traits< AliasHandle > : disposer_traits< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen
