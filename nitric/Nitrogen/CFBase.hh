@@ -24,6 +24,10 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/owned.hh"
 
+// Nitrogen
+#include "Carbon/CF/Types/CFTypeRef.hh"
+
+
 namespace Nitrogen
   {
 	
@@ -32,8 +36,6 @@ namespace Nitrogen
 		kCFTypeID_Max = nucleus::enumeration_traits< ::CFTypeID >::max
 	};
 	
-   template < class T > struct CFType_Traits;
-   
    template < class CF, ::CFTypeID (*getTypeID)() >
    struct Basic_CFType_Traits
      {
@@ -53,46 +55,8 @@ namespace Nitrogen
 //   template <> struct CFType_Traits< ::CFXMLTreeRef        >: Basic_CFType_Traits< ::CFXMLTreeRef,        ::CFXMLTreeGetTypeID        > {};
 //   template <> struct CFType_Traits< ::CFXMLParserRef      >: Basic_CFType_Traits< ::CFXMLParserRef,      ::CFXMLParserGetTypeID      > {};
 
-   class CFTypeRef
-     {
-      private:
-         ::CFTypeRef value;
-      
-      public:
-         CFTypeRef()                               : value( 0 ) {}
-         CFTypeRef( ::CFTypeRef v )                : value( v ) {}
+	using Carbon::CFTypeRef;
 
-         template < class T >
-         CFTypeRef( T* v )                         : value( CFType_Traits< T* >::ConvertToCFTypeRef( v ) )    {}
-         
-         static CFTypeRef Make( ::CFTypeRef v )                                    { return CFTypeRef( v ); }
-         ::CFTypeRef Get() const                                                   { return value; }
-         operator ::CFTypeRef() const                                              { return value; }
-      
-         friend bool operator==( const CFTypeRef& a, const CFTypeRef& b )          { return a.Get() == b.Get(); }
-         friend bool operator!=( const CFTypeRef& a, const CFTypeRef& b )          { return a.Get() != b.Get(); }
-         
-         friend bool operator==( const CFTypeRef& a, const ::CFTypeRef& b )        { return a.Get() == b; }
-         friend bool operator!=( const CFTypeRef& a, const ::CFTypeRef& b )        { return a.Get() != b; }
-
-         friend bool operator==( const ::CFTypeRef& a, const CFTypeRef& b )        { return a == b.Get(); }
-         friend bool operator!=( const ::CFTypeRef& a, const CFTypeRef& b )        { return a != b.Get(); }
-     };
-
-}
-
-namespace nucleus {
-   template <> struct disposer<Nitrogen::CFTypeRef>
-     {
-      typedef Nitrogen::CFTypeRef  argument_type;
-      typedef void                 result_type;
-      
-      void operator()( Nitrogen::CFTypeRef cf ) const
-        {
-         ::CFRelease( cf );
-        }
-     };
-   
 }
 
 namespace Nitrogen {
