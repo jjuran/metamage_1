@@ -62,6 +62,8 @@ namespace Genie
 				Function     f;
 				bool         needs_check;
 			};
+			
+			static const Mapping empty_mappings[];
 		
 		private:
 			typedef std::map< plus::string, const Mapping* > Mappings;

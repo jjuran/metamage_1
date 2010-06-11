@@ -79,6 +79,11 @@ namespace Genie
 	}
 	
 	
+	const FSTree_Premapped::Mapping
+	//
+	FSTree_Premapped::empty_mappings[] = { { NULL, NULL } };
+	
+	
 	FSTree_Premapped::~FSTree_Premapped()
 	{
 		if ( itsDestructor )
