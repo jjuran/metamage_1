@@ -124,9 +124,8 @@ namespace nucleus
 {
 	
 	template < class Resource >
-	struct disposer_traits
+	struct disposer_traits : disposer_class< Resource >
 	{
-		typedef disposer< Resource > type;
 	};
 	
 	template < class Resource >

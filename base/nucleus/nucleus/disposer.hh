@@ -13,6 +13,12 @@ namespace nucleus
 	
 	template < class Resource > struct disposer;
 	
+	template < class Resource >
+	struct disposer_class
+	{
+		typedef disposer< Resource > type;
+	};
+	
 }
 
 #endif
