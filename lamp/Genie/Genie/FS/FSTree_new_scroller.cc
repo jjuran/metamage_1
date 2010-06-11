@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_scroller.hh"
 
+// Standard C++
+#include <map>
+
 // nucleus
 #include "nucleus/saved.hh"
 

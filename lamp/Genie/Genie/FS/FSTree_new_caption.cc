@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_caption.hh"
 
+// Standard C++
+#include <map>
+
 // POSIX
 #include <fcntl.h>
 

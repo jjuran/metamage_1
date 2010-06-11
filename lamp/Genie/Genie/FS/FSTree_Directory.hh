@@ -7,7 +7,6 @@
 #define GENIE_FILESYSTEM_FSTREE_DIRECTORY_HH
 
 // Standard C++
-#include <map>
 #include <vector>
 
 // POSIX

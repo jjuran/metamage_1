@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_button.hh"
 
+// Standard C++
+#include <map>
+
 // plus
 #include "plus/make_string.hh"
 

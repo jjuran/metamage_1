@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_icon.hh"
 
+// Standard C++
+#include <map>
+
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 

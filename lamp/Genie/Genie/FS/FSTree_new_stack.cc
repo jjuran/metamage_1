@@ -6,6 +6,7 @@
 #include "Genie/FS/FSTree_new_stack.hh"
 
 // Standard C++
+#include <map>
 #include <vector>
 
 // Debug

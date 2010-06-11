@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_scrollframe.hh"
 
+// Standard C++
+#include <map>
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Scrollbar.hh"
