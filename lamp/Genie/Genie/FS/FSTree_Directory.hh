@@ -66,7 +66,7 @@ namespace Genie
 			static const Mapping empty_mappings[];
 		
 		private:
-			typedef std::map< plus::string, const Mapping* > Mappings;
+			typedef const Mapping* Mappings;
 			
 			typedef void (*Destructor)( const FSTree* );
 			
@@ -76,16 +76,16 @@ namespace Genie
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  Destructor           dtor = NULL )
+			                  Mappings             mappings = empty_mappings,
+			                  Destructor           dtor     = NULL )
 			:
 				FSTree_Directory( parent, name ),
+				itsMappings( mappings ),
 				itsDestructor( dtor )
 			{
 			}
 			
 			~FSTree_Premapped();
-			
-			void AddMappings( const Mapping* begin );
 			
 			void Delete() const;
 			

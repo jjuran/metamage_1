@@ -107,18 +107,6 @@ namespace Genie
 		}
 	}
 	
-	void FSTree_Premapped::AddMappings( const Mapping* array )
-	{
-		while ( array->name != NULL )
-		{
-			const Mapping& mapping = *array;
-			
-			itsMappings[ mapping.name ] = &mapping;
-			
-			++array;
-		}
-	}
-	
 	void FSTree_Premapped::Delete() const
 	{
 		if ( itsDestructor )
@@ -129,31 +117,27 @@ namespace Genie
 	
 	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		Mappings::const_iterator it = itsMappings.find( name );
-		
-		if ( it == itsMappings.end() )
+		if ( const Mapping* it = find_mapping( itsMappings, name ) )
 		{
-			return FSNull();
+			const Function& f = it->f;
+			
+			return f( (parent ? parent : this)->Self(), name );
 		}
 		
-		const Function& f = it->second->f;
-		
-		return f( (parent ? parent : this)->Self(), name );
+		return FSNull();
 	}
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		typedef Mappings::const_iterator Iter;
-		
-		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
+		for ( const Mapping* it = itsMappings;  it->name != NULL;  ++it )
 		{
-			const plus::string& name = it->first;
+			const plus::string& name = it->name;
 			
-			const Function& f = it->second->f;
+			const Function& f = it->f;
 			
 			try
 			{
-				if ( it->second->needs_check )
+				if ( it->needs_check )
 				{
 					FSTreePtr file = f( Self(), name );
 					
@@ -179,15 +163,7 @@ namespace Genie
 	                             const FSTree_Premapped::Mapping    mappings[],
 	                             void                             (*dtor)(const FSTree*) )
 	{
-		FSTree_Premapped* premapped = new FSTree_Premapped( parent, name, dtor );
-		
-		const FSTree* raw_ptr = premapped;
-		
-		FSTreePtr result( raw_ptr );
-		
-		premapped->AddMappings( mappings );
-		
-		return result;
+		return FSTreePtr( new FSTree_Premapped( parent, name, mappings, dtor ) );
 	}
 	
 }
