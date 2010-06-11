@@ -25,6 +25,9 @@
 #include "nucleus/owned.hh"
 #include "nucleus/saved.hh"
 
+// Nitrogen
+#include "Mac/Memory/Types/Handle.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -91,51 +94,13 @@ namespace nucleus
 
 namespace Nitrogen
   {
-   class Handle
-     {
-      private:
-         typedef void *const *InternalType;
-         
-         InternalType handle;
-      
-      public:
-         Handle()                      : handle( 0 )  {}
-         
-         template < class T >
-         Handle( T **theHandle )       : handle( reinterpret_cast<InternalType>( theHandle ) ) {}
-         
-         template < class T >
-         Handle( T *const *theHandle ) : handle( reinterpret_cast<InternalType>( theHandle ) ) {}
-         
-         ::Handle Get() const          { return reinterpret_cast< ::Handle >( const_cast< void** >( handle ) ); }
-         operator ::Handle() const     { return Get(); }
-         
-         void *operator*() const       { return *handle; }
-         
-         friend bool operator==( Handle a, Handle b )    { return a.Get() == b.Get(); }
-         friend bool operator!=( Handle a, Handle b )    { return a.Get() != b.Get(); }
-     };
+   using Mac::Handle;
    
    using ::StringHandle;
   }
 
 namespace nucleus
   {
-   template <> struct disposer<Nitrogen::Handle>
-     {
-      typedef Nitrogen::Handle  argument_type;
-      typedef void              result_type;
-      
-      void operator()( Nitrogen::Handle h ) const
-        {
-         NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
-         
-         ::DisposeHandle( h );
-         
-         ::Nitrogen::HandleDestructionOSStatus( ::MemError() );
-        }
-     };
-   
 	template <>  struct disposer_traits< StringHandle > : disposer_traits< Nitrogen::Handle >  {};
   }
 
