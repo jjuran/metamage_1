@@ -84,6 +84,21 @@ namespace Genie
 	FSTree_Premapped::empty_mappings[] = { { NULL, NULL } };
 	
 	
+	static const FSTree_Premapped::Mapping*
+	//
+	find_mapping( const FSTree_Premapped::Mapping* mappings, const plus::string& name )
+	{
+		for ( const FSTree_Premapped::Mapping* it = mappings;  it->name;  ++it )
+		{
+			if ( it->name == name )
+			{
+				return it;
+			}
+		}
+		
+		return NULL;
+	}
+	
 	FSTree_Premapped::~FSTree_Premapped()
 	{
 		if ( itsDestructor )
