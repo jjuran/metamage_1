@@ -24,12 +24,10 @@
 #include "nucleus/linked_list_sequence.hh"
 
 // Nitrogen
+#include "Mac/Aliases/Types/AliasHandle.hh"
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #include "Mac/Windows/Types/WindowRef.hh"
 
-#ifndef NITROGEN_ALIASES_HH
-#include "Nitrogen/Aliases.hh"
-#endif
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif

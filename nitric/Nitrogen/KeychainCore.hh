@@ -18,13 +18,16 @@
 #include <KeychainCore.h>
 #endif
 
+// nucleus
+#include "nucleus/owned.hh"
+
+// Nitrogen
+#include "Mac/Aliases/Types/AliasHandle.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
 
-#ifndef NITROGEN_ALIASES_HH
-#include "Nitrogen/Aliases.hh"
-#endif
 
 namespace Nitrogen {
 
