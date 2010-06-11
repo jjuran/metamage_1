@@ -536,6 +536,20 @@ namespace Genie
 		throw p7::errno_t( ENOENT );
 	}
 	
+	const FSTree* GetWindowFocus( const FSTree* window )
+	{
+		WindowParametersMap::iterator it = gWindowParametersMap.find( window );
+		
+		if ( it != gWindowParametersMap.end() )
+		{
+			WindowParameters& params = it->second;
+			
+			return params.itsFocus;
+		}
+		
+		return NULL;
+	}
+	
 	void SetWindowFocus( const FSTree* window, const FSTree* focus )
 	{
 		gWindowParametersMap[ window ].itsFocus = focus;
