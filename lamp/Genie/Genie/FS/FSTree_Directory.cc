@@ -87,16 +87,13 @@ namespace Genie
 		}
 	}
 	
-	void FSTree_Premapped::Map( const Mapping& mapping )
-	{
-		itsMappings[ mapping.name ] = &mapping;
-	}
-	
 	void FSTree_Premapped::AddMappings( const Mapping* array )
 	{
 		while ( array->name != NULL )
 		{
-			Map( *array );
+			const Mapping& mapping = *array;
+			
+			itsMappings[ mapping.name ] = &mapping;
 			
 			++array;
 		}

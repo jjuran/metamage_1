@@ -83,8 +83,6 @@ namespace Genie
 			
 			~FSTree_Premapped();
 			
-			void Map( const Mapping& mapping );
-			
 			void AddMappings( const Mapping* begin );
 			
 			void Delete() const;
