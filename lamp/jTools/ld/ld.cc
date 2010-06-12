@@ -35,6 +35,8 @@
 #include "pfiles/common.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
+
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -580,7 +582,7 @@ namespace tool
 					gFileType    = store_string( type    );
 					gFileCreator = store_string( creator );
 					
-					N::OSType typeCode = N::OSType( iota::decode_quad( type.data() ) );
+					Mac::FSType typeCode = Mac::FSType( iota::decode_quad( type.data() ) );
 					
 					switch ( typeCode )
 					{
