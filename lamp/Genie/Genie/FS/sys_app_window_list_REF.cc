@@ -111,12 +111,12 @@ namespace Genie
 	
 	struct Access_WindowTitle : serialization_for_Str255
 	{
-		static N::Str255 Get( N::WindowRef window )
+		static N::Str255 Get( WindowRef window )
 		{
 			return N::GetWTitle( window );
 		}
 		
-		static void Set( N::WindowRef window, ConstStr255Param title )
+		static void Set( WindowRef window, ConstStr255Param title )
 		{
 			N::SetWTitle( window, title );
 		}
@@ -124,12 +124,12 @@ namespace Genie
 	
 	struct Access_WindowPosition : serialization_via_scribe< Point_Scribe< ',' > >
 	{
-		static Point Get( N::WindowRef window )
+		static Point Get( WindowRef window )
 		{
 			return Ped::GetWindowPosition( window );
 		}
 		
-		static void Set( N::WindowRef window, Point position )
+		static void Set( WindowRef window, Point position )
 		{
 			Ped::SetWindowPosition( window, position );
 		}
@@ -137,12 +137,12 @@ namespace Genie
 	
 	struct Access_WindowSize : serialization_via_scribe< Point_Scribe< 'x' > >
 	{
-		static Point Get( N::WindowRef window )
+		static Point Get( WindowRef window )
 		{
 			return Ped::GetWindowSize( window );
 		}
 		
-		static void Set( N::WindowRef window, Point size )
+		static void Set( WindowRef window, Point size )
 		{
 			Ped::SetWindowSize( window, size );
 		}
@@ -150,12 +150,12 @@ namespace Genie
 	
 	struct Access_WindowVisible : serialization_via_scribe< Boolean_Scribe >
 	{
-		static bool Get( N::WindowRef window )
+		static bool Get( WindowRef window )
 		{
 			return N::IsWindowVisible( window );
 		}
 		
-		static void Set( N::WindowRef window, bool visible )
+		static void Set( WindowRef window, bool visible )
 		{
 			if ( visible )
 			{
@@ -170,11 +170,11 @@ namespace Genie
 	
 	struct Access_WindowZOrder : serialization_via_scribe< Integer_Scribe< unsigned > >
 	{
-		static unsigned Get( N::WindowRef window )
+		static unsigned Get( WindowRef window )
 		{
 			unsigned z = 0;
 			
-			for ( N::WindowRef it = N::GetWindowList();  it != window;  ++z, it = N::GetNextWindow( it ) )
+			for ( WindowRef it = N::GetWindowList();  it != window;  ++z, it = N::GetNextWindow( it ) )
 			{
 				if ( it == NULL )
 				{
@@ -317,12 +317,12 @@ namespace Genie
 	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
 	struct Access_WindowColor : serialization_via_scribe< RGBColor_Scribe >
 	{
-		static RGBColor Get( N::WindowRef window )
+		static RGBColor Get( WindowRef window )
 		{
 			return GetColor( N::GetWindowPort( window ) );
 		}
 		
-		static void Set( N::WindowRef window, const RGBColor& color )
+		static void Set( WindowRef window, const RGBColor& color )
 		{
 			n::saved< N::Port > savePort;
 			
@@ -336,12 +336,12 @@ namespace Genie
 	
 	struct Access_WindowTextFont : serialization_via_scribe< Integer_Scribe< short > >
 	{
-		static short Get( N::WindowRef window )
+		static short Get( WindowRef window )
 		{
 			return N::GetPortTextFont( N::GetWindowPort( window ) );
 		}
 		
-		static void Set( N::WindowRef window, short fontID )
+		static void Set( WindowRef window, short fontID )
 		{
 			n::saved< N::Port > savePort;
 			
@@ -355,12 +355,12 @@ namespace Genie
 	
 	struct Access_WindowTextSize : serialization_via_scribe< Integer_Scribe< short > >
 	{
-		static short Get( N::WindowRef window )
+		static short Get( WindowRef window )
 		{
 			return N::GetPortTextSize( N::GetWindowPort( window ) );
 		}
 		
-		static void Set( N::WindowRef window, short size )
+		static void Set( WindowRef window, short size )
 		{
 			n::saved< N::Port > savePort;
 			
@@ -375,7 +375,7 @@ namespace Genie
 	class Select_Trigger
 	{
 		private:
-			typedef N::WindowRef Key;
+			typedef WindowRef Key;
 			
 			Key itsKey;
 		
@@ -391,12 +391,12 @@ namespace Genie
 	};
 	
 	
-	static N::WindowRef GetKeyFromParent( const FSTreePtr& parent )
+	static WindowRef GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return (N::WindowRef) plus::decode_32_bit_hex( parent->Name() );
+		return (WindowRef) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
-	static N::WindowRef GetKey( const FSTree* that )
+	static WindowRef GetKey( const FSTree* that )
 	{
 		return GetKeyFromParent( that->ParentRef() );
 	}
@@ -404,7 +404,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_window_list_REF_Property
 	{
-		typedef N::WindowRef Key;
+		typedef WindowRef Key;
 		
 		static plus::string Read( const FSTree* that, bool binary )
 		{
@@ -436,7 +436,7 @@ namespace Genie
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
 	                                  const plus::string&  name )
 	{
-		N::WindowRef key = GetKeyFromParent( parent );
+		WindowRef key = GetKeyFromParent( parent );
 		
 		return seize_ptr( new Trigger( parent, name, key ) );
 	}

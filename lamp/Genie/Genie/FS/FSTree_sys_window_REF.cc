@@ -191,7 +191,7 @@ namespace Genie
 			{
 			}
 			
-			void operator()( N::WindowRef ) const  { CloseUserWindow( itsKey ); }
+			void operator()( WindowRef ) const  { CloseUserWindow( itsKey ); }
 	};
 	
 	class WindowResizeHandler : public Ped::WindowResizeHandler
@@ -204,10 +204,10 @@ namespace Genie
 			{
 			}
 			
-			void operator()( N::WindowRef window, short h, short v ) const;
+			void operator()( WindowRef window, short h, short v ) const;
 	};
 	
-	void WindowResizeHandler::operator()( N::WindowRef window, short h, short v ) const
+	void WindowResizeHandler::operator()( WindowRef window, short h, short v ) const
 	{
 		N::SizeWindow( window, h, v, true );
 		
@@ -395,13 +395,13 @@ namespace Genie
 			{
 			}
 			
-			SetWindowPort_Scope( N::WindowRef window )
+			SetWindowPort_Scope( WindowRef window )
 			{
 				N::SetPortWindowPort( window );
 			}
 	};
 	
-	static void InvalidateWindowRef( N::WindowRef window )
+	static void InvalidateWindowRef( WindowRef window )
 	{
 		ASSERT( window != NULL );
 		
@@ -417,7 +417,7 @@ namespace Genie
 		Ped::ScheduleImmediateEventCheck();
 	}
 	
-	static N::WindowRef GetWindowRef( const FSTree* key )
+	static WindowRef GetWindowRef( const FSTree* key )
 	{
 		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
 		
@@ -436,7 +436,7 @@ namespace Genie
 	
 	bool InvalidateWindow( const FSTree* key )
 	{
-		if ( N::WindowRef window = GetWindowRef( key ) )
+		if ( WindowRef window = GetWindowRef( key ) )
 		{
 			InvalidateWindowRef( window );
 			
@@ -448,7 +448,7 @@ namespace Genie
 	
 	void InstallViewInWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
-		if ( N::WindowRef window = GetWindowRef( key ) )
+		if ( WindowRef window = GetWindowRef( key ) )
 		{
 			SetWindowPort_Scope scope( window );
 			
@@ -467,7 +467,7 @@ namespace Genie
 	
 	void UninstallViewFromWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
-		if ( N::WindowRef window = GetWindowRef( key ) )
+		if ( WindowRef window = GetWindowRef( key ) )
 		{
 			SetWindowPort_Scope scope( window );
 			
@@ -523,7 +523,7 @@ namespace Genie
 	
 	plus::string FSTree_sys_window_REF_ref::ReadLink() const
 	{
-		N::WindowRef windowPtr = GetWindowRef( WindowKey() );
+		WindowRef windowPtr = GetWindowRef( WindowKey() );
 		
 		if ( windowPtr == NULL )
 		{

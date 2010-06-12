@@ -25,7 +25,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	void ResizeWindow( N::WindowRef window, Point newSize )
+	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		if ( Window* base = N::GetWRefCon( window ) )
 		{
@@ -54,7 +54,7 @@ namespace Pedestal
 	}
 	
 	
-	Point GetWindowSize( N::WindowRef window )
+	Point GetWindowSize( WindowRef window )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 		
@@ -66,7 +66,7 @@ namespace Pedestal
 		return result;
 	}
 	
-	Point GetWindowPosition( N::WindowRef window )
+	Point GetWindowPosition( WindowRef window )
 	{
 		n::saved< N::Port > savedPort;
 		
@@ -80,21 +80,21 @@ namespace Pedestal
 	}
 	
 	
-	n::owned< N::WindowRef > CreateWindow( const Rect&         bounds,
-	                                       ConstStr255Param    title,
-	                                       bool                visible,
-	                                       N::WindowDefProcID  procID,
-	                                       N::WindowRef        behind,
-	                                       bool                goAwayFlag,
-	                                       N::RefCon           refCon )
+	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
+	                                    ConstStr255Param    title,
+	                                    bool                visible,
+	                                    N::WindowDefProcID  procID,
+	                                    WindowRef           behind,
+	                                    bool                goAwayFlag,
+	                                    N::RefCon           refCon )
 	{
-		n::owned< N::WindowRef > window = N::NewCWindow( bounds,
-		                                                 title,
-		                                                 visible,
-		                                                 procID,
-		                                                 behind,
-		                                                 goAwayFlag,
-		                                                 refCon );
+		n::owned< WindowRef > window = N::NewCWindow( bounds,
+		                                              title,
+		                                              visible,
+		                                              procID,
+		                                              behind,
+		                                              goAwayFlag,
+		                                              refCon );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
@@ -102,7 +102,7 @@ namespace Pedestal
 		return window;
 	}
 	
-	static Rect GrowBoxBounds( N::WindowRef window )
+	static Rect GrowBoxBounds( WindowRef window )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 		
@@ -112,7 +112,7 @@ namespace Pedestal
 		return bounds;
 	}
 	
-	static void DrawWindow( N::WindowRef window )
+	static void DrawWindow( WindowRef window )
 	{
 		n::saved< N::Clip > savedClip;
 		
@@ -121,7 +121,7 @@ namespace Pedestal
 		N::DrawGrowIcon( window );
 	}
 	
-	void InvalidateWindowGrowBox( N::WindowRef window )
+	void InvalidateWindowGrowBox( WindowRef window )
 	{
 		N::InvalRect( GrowBoxBounds( window ) );
 	}
