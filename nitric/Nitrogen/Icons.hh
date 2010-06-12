@@ -29,6 +29,7 @@
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Mac/Icons/Types/IconRef.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_RESOURCES_HH
@@ -241,22 +242,6 @@ namespace Nitrogen
 	
    using ::IconRef;
 	
-  }
-
-namespace nucleus
-  {
-   template <> struct disposer< IconRef >
-     {
-      typedef IconRef  argument_type;
-      typedef void     result_type;
-      
-      void operator()( IconRef i ) const
-        {
-         NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
-         
-         ::Nitrogen::HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
-        }
-     };
   }
 
 namespace Nitrogen
