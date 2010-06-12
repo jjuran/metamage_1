@@ -31,18 +31,8 @@
 namespace Nitrogen
   {
 	
-	enum CFTypeID
-	{
-		kCFTypeID_Max = nucleus::enumeration_traits< ::CFTypeID >::max
-	};
+	using Carbon::CFTypeID;
 	
-   template < class CF, ::CFTypeID (*getTypeID)() >
-   struct Basic_CFType_Traits
-     {
-      static CFTypeID ID()                                    { return CFTypeID( getTypeID() ); }
-      static ::CFTypeRef ConvertToCFTypeRef( CF value )       { return value; }
-     };
-   
 // These declarations should be scattered to the appropriate files:
 //   template <> struct CFType_Traits< ::CFBagRef            >: Basic_CFType_Traits< ::CFBagRef,            ::CFBagGetTypeID            > {};
 //   template <> struct CFType_Traits< ::CFSetRef            >: Basic_CFType_Traits< ::CFSetRef,            ::CFSetGetTypeID            > {};
@@ -80,14 +70,6 @@ namespace Nitrogen {
 	
    using ::CFStringRef;
    using ::CFAllocatorRef;
-   
-   template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
-   template <> struct CFType_Traits< CFAllocatorRef >: Basic_CFType_Traits< CFAllocatorRef, ::CFAllocatorGetTypeID > {};
-}
-
-namespace nucleus {
-   template <> struct disposer_traits< CFStringRef >   : disposer_traits< Nitrogen::CFTypeRef > {};
-   template <> struct disposer_traits< CFAllocatorRef >: disposer_traits< Nitrogen::CFTypeRef > {};
 }
 
 namespace Nitrogen {

@@ -25,7 +25,20 @@ namespace Nitrogen
 namespace Carbon
 {
 	
+	enum CFTypeID
+	{
+		kCFTypeID_Max = nucleus::enumeration_traits< ::CFTypeID >::max
+	};
+	
+	
 	using Nitrogen::CFType_Traits;
+	
+	template < class CF, ::CFTypeID (*getTypeID)() >
+	struct Basic_CFType_Traits
+	{
+		static CFTypeID ID()                                 { return CFTypeID( getTypeID() ); }
+		static ::CFTypeRef ConvertToCFTypeRef( CF value )    { return value; }
+	};
 	
 	
 	class CFTypeRef
@@ -56,6 +69,16 @@ namespace Carbon
 	
 }
 
+namespace Nitrogen
+{
+	
+	using Carbon::Basic_CFType_Traits;
+	
+	template <> struct CFType_Traits< CFStringRef    > : Basic_CFType_Traits< CFStringRef,    ::CFStringGetTypeID    > {};
+	template <> struct CFType_Traits< CFAllocatorRef > : Basic_CFType_Traits< CFAllocatorRef, ::CFAllocatorGetTypeID > {};
+	
+}
+
 namespace nucleus
 {
 	
@@ -69,6 +92,9 @@ namespace nucleus
 			::CFRelease( cf );
 		}
 	};
+	
+	template <> struct disposer_class< CFStringRef >   : disposer_class< Carbon::CFTypeRef > {};
+	template <> struct disposer_class< CFAllocatorRef >: disposer_class< Carbon::CFTypeRef > {};
 	
 }
 
