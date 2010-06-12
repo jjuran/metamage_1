@@ -26,17 +26,18 @@
 // Nitrogen
 #include "Carbon/CF/Types/CFTypeRef.hh"
 #include "Mac/Aliases/Types/AliasHandle.hh"
+#include "Mac/Icons/Types/IconRef.hh"
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #include "Mac/Windows/Types/WindowRef.hh"
 
-#ifndef NITROGEN_ICONS_HH
-#include "Nitrogen/Icons.hh"
-#endif
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
 #endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
+#endif
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 

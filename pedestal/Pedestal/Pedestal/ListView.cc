@@ -95,7 +95,7 @@ namespace Pedestal
 		itsList = N::LNew( AdjustedListBounds( bounds, scrollHoriz, scrollVert ),
 		                   N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
 		                   N::SetPt( 0, 0 ),
-		                   N::ResID( 0 ),
+		                   Mac::ResID( 0 ),
 		                   N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
 		                   drawIt,
 		                   hasGrow,
