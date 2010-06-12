@@ -27,6 +27,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/stringify.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"

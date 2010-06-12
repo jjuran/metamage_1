@@ -21,6 +21,7 @@
 #include "Genie/Exec/GetMainEntry.hh"
 #include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_sys_app.hh"
 #include "Genie/FS/FSTree_sys_cpu.hh"
 #include "Genie/FS/FSTree_sys_mac.hh"

@@ -19,6 +19,7 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Name_OSType.hh"
 #include "Genie/IO/RegularFile.hh"

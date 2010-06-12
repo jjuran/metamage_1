@@ -22,6 +22,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"

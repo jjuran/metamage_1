@@ -26,6 +26,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"

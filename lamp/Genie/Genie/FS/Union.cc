@@ -10,6 +10,9 @@
 // Standard C++
 #include <set>
 
+// Genie
+#include "Genie/FS/FSTreeCache.hh"
+
 
 namespace Genie
 {

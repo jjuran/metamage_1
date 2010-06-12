@@ -25,6 +25,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/Name_OSType.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 

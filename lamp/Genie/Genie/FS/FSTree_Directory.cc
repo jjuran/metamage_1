@@ -11,6 +11,7 @@
 #include <iterator>
 
 // Genie
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
 
 
