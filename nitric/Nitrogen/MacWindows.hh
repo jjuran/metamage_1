@@ -24,15 +24,13 @@
 #include "nucleus/linked_list_sequence.hh"
 
 // Nitrogen
+#include "Carbon/CF/Types/CFTypeRef.hh"
 #include "Mac/Aliases/Types/AliasHandle.hh"
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #include "Mac/Windows/Types/WindowRef.hh"
 
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
-#endif
-#ifndef NITROGEN_CFBASE_HH
-#include "Nitrogen/CFBase.hh"
 #endif
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
