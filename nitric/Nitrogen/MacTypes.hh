@@ -31,6 +31,7 @@
 // Nitrogen
 #include "Mac/Resources/Types/ResType.hh"
 #include "Mac/Script/Types/LangCode.hh"
+#include "Mac/Script/Types/RegionCode.hh"
 #include "Mac/Script/Types/ScriptCode.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
@@ -139,12 +140,8 @@ namespace Nitrogen
 	using Mac::LangCode;
 	using Mac::langUnspecified;
 	
-	enum RegionCode
-	{
-		verUS = ::verUS,
-		
-		kRegionCode_Max = nucleus::enumeration_traits< ::RegionCode >::max
-	};
+	using Mac::RegionCode;
+	using Mac::verUS;
 	
 	using Mac::OSType;
 	using Mac::kUnknownType;
