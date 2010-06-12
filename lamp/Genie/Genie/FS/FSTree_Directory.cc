@@ -46,10 +46,10 @@ namespace Genie
 	
 	FSIteratorPtr FSTree_Directory::Iterate() const
 	{
-		FSTreeCache cache( 2 );
+		FSTreeCache cache;
 		
-		cache[0] = FSNode( Inode(),       "."  ); 
-		cache[1] = FSNode( ParentInode(), ".." );
+		cache.push_back( FSNode( Inode(),       "."  ) );
+		cache.push_back( FSNode( ParentInode(), ".." ) );
 		
 		IterateIntoCache( cache );
 		
