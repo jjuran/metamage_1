@@ -19,13 +19,17 @@
 // nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/make.hh"
+#include "nucleus/owned.hh"
 #include "nucleus/string.hh"
 
 // Nitrogen
 #include "Mac/Memory/Types/Handle.hh"
+#include "Mac/Script/Types/LangCode.hh"
+#include "Mac/Script/Types/RegionCode.hh"
+#include "Mac/Script/Types/ScriptCode.hh"
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 
@@ -38,6 +42,9 @@ namespace Nitrogen
 			TextEncodingConversionManagerErrorsRegistrationDependency();
 	};
 	
+	using Mac::LangCode;
+	using Mac::RegionCode;
+	using Mac::ScriptCode;
    
    static const LangCode kTextLanguageDontCare = LangCode( ::kTextLanguageDontCare );
    static const RegionCode kTextRegionDontCare = RegionCode( ::kTextRegionDontCare );
@@ -272,8 +279,14 @@ namespace Nitrogen
                                           UniCharCount       textLength,
                                           UCCharPropertyType propType );
 
+   template < class UniString >
    UCCharPropertyValue UCGetCharProperty( const UniString&   text,
-                                          UCCharPropertyType propType );
+                                          UCCharPropertyType propType )
+	{
+		return UCGetCharProperty( text.data(),
+		                          text.size(),
+		                          propType );
+	}
    
    template < ::UCCharPropertyType propType >
    struct UCGetCharProperty_Traits;
@@ -289,7 +302,7 @@ namespace Nitrogen
       return UCGetCharProperty( charPtr, textLength, propType );
      }
    
-   template < ::UCCharPropertyType propType >
+   template < ::UCCharPropertyType propType, class UniString >
    typename UCGetCharProperty_Traits<propType>::Result UCGetCharProperty( const UniString& text )
      {
       return UCGetCharProperty( text, propType );

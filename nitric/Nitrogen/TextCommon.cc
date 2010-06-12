@@ -157,14 +157,6 @@ namespace Nitrogen
       return UCCharPropertyValue( result );
      }
 
-   UCCharPropertyValue UCGetCharProperty( const UniString&   text,
-                                          UCCharPropertyType propType )
-     {
-      return UCGetCharProperty( text.empty() ? 0 : &*text.begin(),
-                                text.size(),
-                                propType );
-     }
-
    void RegisterTextEncodingConversionManagerErrors()
      {
       RegisterOSStatus< kTextUnsupportedEncodingErr   >();
