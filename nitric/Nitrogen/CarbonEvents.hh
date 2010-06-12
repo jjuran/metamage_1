@@ -54,7 +54,6 @@
 #include "Nitrogen/AERegistry.hh"
 #endif
 
-#include <vector>
 
 /* CarbonEvents.h has some nasty macros which get in our way; replace them
    with the equivalent inline functions. */
@@ -478,12 +477,12 @@ namespace Nitrogen
       return ReceiveNextEvent<inPullEvent>( inNumTypes, inList, inTimeout );
      }
 
-   template < bool inPullEvent >
+   template < bool inPullEvent, class EventTypeSpec_List >
    typename ReceiveNextEvent_Traits< inPullEvent >::Result
-   ReceiveNextEvent( const std::vector<EventTypeSpec>& inList,
-                     EventTimeout                      inTimeout = kEventDurationForever )
+   ReceiveNextEvent( const EventTypeSpec_List&  inList,
+                     EventTimeout               inTimeout = kEventDurationForever )
      {
-      return ReceiveNextEvent<inPullEvent>( inList.size(), inList.empty() ? 0 : &inList.front(), inTimeout );
+      return ReceiveNextEvent<inPullEvent>( inList.size(), &inList.front(), inTimeout );
      }
 
    nucleus::owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
