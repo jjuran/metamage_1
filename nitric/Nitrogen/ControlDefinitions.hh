@@ -21,6 +21,9 @@
 #include <TSMTE.h>
 #endif
 
+// Nitrogen
+#include "Carbon/CF/Types/CFTypeRef.hh"
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif

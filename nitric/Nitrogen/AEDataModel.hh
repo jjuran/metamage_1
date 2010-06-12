@@ -32,6 +32,9 @@
 #include "nucleus/flag_ops.hh"
 #include "nucleus/string.hh"
 
+// Nitrogen
+#include "Mac/Aliases/Types/AliasHandle.hh"
+
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
 #endif
@@ -39,9 +42,6 @@
 #include "Nitrogen/DescType.hh"
 #endif
 
-#ifndef NITROGEN_ALIASES_HH
-#include "Nitrogen/Aliases.hh"
-#endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
 #endif
