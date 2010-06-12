@@ -29,6 +29,7 @@
 #include "nucleus/scribe.hh"
 
 // Nitrogen
+#include "Mac/Controls/Types/ControlProcID.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_REFCON_HH
@@ -131,10 +132,7 @@ namespace Nitrogen
 		userUPP( theControl, partCode );
 	}
 	
-	enum ControlProcID
-	{
-		kControlProcID_Max = nucleus::enumeration_traits< SInt16 >::max
-	};
+	using Mac::ControlProcID;
 	
 	// 972
 	ControlRef NewControl( WindowRef         owningWindow,
