@@ -297,11 +297,15 @@ namespace Nitrogen
 	struct Enum_DescType_Traits  { static const DescType descType = typeEnumerated; };
 	
 	
+	template < class Char > struct Char_AEKeyword_Traits;
+	
+	/*
 	template < class Char >
 	struct Char_AEKeyword_Traits : nucleus::string_scribe< std::basic_string< Char > >,
 	                               Char_DescType_Traits< Char >
 	{
 	};
+	*/
 	
 	template <>
 	struct Char_AEKeyword_Traits< char > : nucleus::string_scribe< nucleus::mutable_string >,
