@@ -23,6 +23,7 @@
 
 // Nitrogen
 #include "Carbon/CF/Types/CFTypeRef.hh"
+#include "Mac/Controls/Types/ControlPartCode.hh"
 #include "Mac/Controls/Types/ControlProcID.hh"
 
 #ifndef NITROGEN_AEDATAMODEL_HH
@@ -41,30 +42,30 @@ namespace Nitrogen
 	using Mac::scrollBarProc;
 	using Mac::popupMenuProc;
 	
-	static const ControlPartCode kControlLabelPart              = ControlPartCode( ::kControlLabelPart              );
-	static const ControlPartCode kControlMenuPart               = ControlPartCode( ::kControlMenuPart               );
-	static const ControlPartCode kControlTrianglePart           = ControlPartCode( ::kControlTrianglePart           );
-	static const ControlPartCode kControlEditTextPart           = ControlPartCode( ::kControlEditTextPart           );
-	static const ControlPartCode kControlPicturePart            = ControlPartCode( ::kControlPicturePart            );
-	static const ControlPartCode kControlIconPart               = ControlPartCode( ::kControlIconPart               );
-	static const ControlPartCode kControlClockPart              = ControlPartCode( ::kControlClockPart              );
-	static const ControlPartCode kControlListBoxPart            = ControlPartCode( ::kControlListBoxPart            );
-	static const ControlPartCode kControlListBoxDoubleClickPart = ControlPartCode( ::kControlListBoxDoubleClickPart );
-	static const ControlPartCode kControlImageWellPart          = ControlPartCode( ::kControlImageWellPart          );
-	static const ControlPartCode kControlRadioGroupPart         = ControlPartCode( ::kControlRadioGroupPart         );
-	static const ControlPartCode kControlButtonPart             = ControlPartCode( ::kControlButtonPart             );
-	static const ControlPartCode kControlCheckBoxPart           = ControlPartCode( ::kControlCheckBoxPart           );
-	static const ControlPartCode kControlRadioButtonPart        = ControlPartCode( ::kControlRadioButtonPart        );
-	static const ControlPartCode kControlUpButtonPart           = ControlPartCode( ::kControlUpButtonPart           );
-	static const ControlPartCode kControlDownButtonPart         = ControlPartCode( ::kControlDownButtonPart         );
-	static const ControlPartCode kControlPageUpPart             = ControlPartCode( ::kControlPageUpPart             );
-	static const ControlPartCode kControlPageDownPart           = ControlPartCode( ::kControlPageDownPart           );
-	static const ControlPartCode kControlClockHourDayPart       = ControlPartCode( ::kControlClockHourDayPart       );
-	static const ControlPartCode kControlClockMinuteMonthPart   = ControlPartCode( ::kControlClockMinuteMonthPart   );
-	static const ControlPartCode kControlClockSecondYearPart    = ControlPartCode( ::kControlClockSecondYearPart    );
-	static const ControlPartCode kControlClockAMPMPart          = ControlPartCode( ::kControlClockAMPMPart          );
-	static const ControlPartCode kControlDataBrowserPart        = ControlPartCode( ::kControlDataBrowserPart        );
-	static const ControlPartCode kControlDataBrowserDraggedPart = ControlPartCode( ::kControlDataBrowserDraggedPart );
+	using Mac::kControlLabelPart;
+	using Mac::kControlMenuPart;
+	using Mac::kControlTrianglePart;
+	using Mac::kControlEditTextPart;
+	using Mac::kControlPicturePart;
+	using Mac::kControlIconPart;
+	using Mac::kControlClockPart;
+	using Mac::kControlListBoxPart;
+	using Mac::kControlListBoxDoubleClickPart;
+	using Mac::kControlImageWellPart;
+	using Mac::kControlRadioGroupPart;
+	using Mac::kControlButtonPart;
+	using Mac::kControlCheckBoxPart;
+	using Mac::kControlRadioButtonPart;
+	using Mac::kControlUpButtonPart;
+	using Mac::kControlDownButtonPart;
+	using Mac::kControlPageUpPart;
+	using Mac::kControlPageDownPart;
+	using Mac::kControlClockHourDayPart;
+	using Mac::kControlClockMinuteMonthPart;
+	using Mac::kControlClockSecondYearPart;
+	using Mac::kControlClockAMPMPart;
+	using Mac::kControlDataBrowserPart;
+	using Mac::kControlDataBrowserDraggedPart;
 	
 	
 	static const ControlDataTag kControlBevelButtonContentTag                  = ControlDataTag( ::kControlBevelButtonContentTag                  );
