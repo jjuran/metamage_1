@@ -29,6 +29,7 @@
 #include "nucleus/scribe.hh"
 
 // Nitrogen
+#include "Mac/Controls/Types/ControlPartCode.hh"
 #include "Mac/Controls/Types/ControlProcID.hh"
 #include "Mac/Toolbox/Types/OSType.hh"
 
@@ -78,17 +79,12 @@ namespace nucleus
 namespace Nitrogen
   {
 	
-	enum ControlPartCode
-	{
-		kControlNoPart        = ::kControlNoPart,
-		kControlIndicatorPart = ::kControlIndicatorPart,
-		kControlDisabledPart  = ::kControlDisabledPart,
-		kControlInactivePart  = ::kControlInactivePart,
-		
-		kControlEntireControl = ::kControlEntireControl,
-		
-		kControlPartCode_Max = nucleus::enumeration_traits< ::ControlPartCode >::max
-	};
+	using Mac::ControlPartCode;
+	using Mac::kControlNoPart;
+	using Mac::kControlIndicatorPart;
+	using Mac::kControlDisabledPart;
+	using Mac::kControlInactivePart;
+	using Mac::kControlEntireControl;
 	
 	struct ControlActionUPP_Details : Basic_UPP_Details< ::ControlActionUPP,
 	                                                     ::ControlActionProcPtr,
