@@ -21,12 +21,13 @@
 #include "nucleus/make.hh"
 #include "nucleus/string.hh"
 
+// Nitrogen
+#include "Mac/Memory/Types/Handle.hh"
+
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
 #endif
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
-#endif
+
 
 namespace Nitrogen
   {
@@ -199,7 +200,7 @@ namespace Nitrogen
                                                              RegionCode               iPreferredRegion,
                                                              TextEncoding             iPreferredEncoding );
 
-   nucleus::owned< TECInfoHandle, nucleus::disposer<Handle> > TECGetInfo();
+   nucleus::owned< TECInfoHandle, nucleus::disposer< Mac::Handle > > TECGetInfo();
 
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                  LangCode         iTextLanguageID = kTextLanguageDontCare,

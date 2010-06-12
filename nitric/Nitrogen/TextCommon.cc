@@ -99,11 +99,11 @@ namespace Nitrogen
       return result;
      }
 
-   nucleus::owned< TECInfoHandle, nucleus::disposer<Handle> > TECGetInfo()
+   nucleus::owned< TECInfoHandle, nucleus::disposer< Mac::Handle > > TECGetInfo()
      {
       ::TECInfoHandle result;
       ThrowOSStatus( ::TECGetInfo( &result ) );
-      return nucleus::owned< TECInfoHandle, nucleus::disposer<Handle> >::seize( result );
+      return nucleus::owned< TECInfoHandle, nucleus::disposer< Mac::Handle > >::seize( result );
      }
    
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode iTextScriptID,
