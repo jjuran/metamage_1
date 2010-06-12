@@ -13,9 +13,6 @@
 
 #include "Nitrogen/Lists.hh"
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
-
 
 namespace Nitrogen
 {
