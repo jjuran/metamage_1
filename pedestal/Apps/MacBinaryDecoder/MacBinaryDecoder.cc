@@ -3,15 +3,12 @@
  *	===================
  */
 
-// Mac OS
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
-
 // Debug
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AERegistry.hh"
 
@@ -67,7 +64,7 @@ namespace MacBinaryDecoder
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
 			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-			::SysBeep( 30 );
+			Mac::SysBeep();
 		}
 	}
 	

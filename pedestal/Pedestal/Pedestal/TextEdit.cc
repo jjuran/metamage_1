@@ -17,9 +17,10 @@
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/Sound.hh"
 #include "Nitrogen/TextEdit.hh"
 
 // Pedestal
@@ -285,7 +286,7 @@ namespace Pedestal
 				
 				case kUpArrowCharCode:
 				case kDownArrowCharCode:
-					::SysBeep( 30 );  // May move memory
+					Mac::SysBeep();  // May move memory
 					break;
 			}
 		}
@@ -513,7 +514,7 @@ namespace Pedestal
 			{
 				lastBeep = event.when;
 				
-				N::SysBeep();
+				Mac::SysBeep();
 			}
 			
 			// do nothing
@@ -696,7 +697,7 @@ namespace Pedestal
 			case 'cut ':
 				if ( IsSecret() )
 				{
-					::SysBeep( 30 );
+					Mac::SysBeep();
 					
 					break;
 				}
@@ -710,7 +711,7 @@ namespace Pedestal
 			case 'copy':
 				if ( IsSecret() )
 				{
-					::SysBeep( 30 );
+					Mac::SysBeep();
 					
 					break;
 				}

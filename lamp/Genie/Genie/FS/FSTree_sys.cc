@@ -12,7 +12,7 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Nitrogen/Sound.hh"
+#include "Mac/Sound/Functions/SysBeep.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -136,7 +136,7 @@ namespace Genie
 		
 		int main_beep()
 		{
-			N::SysBeep();
+			Mac::SysBeep();
 			
 			return 0;
 		}

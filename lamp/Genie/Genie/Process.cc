@@ -5,6 +5,11 @@
 
 #include "Genie/Process.hh"
 
+// Mac OS
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // Standard C
 #include <errno.h>
 #include <signal.h>
@@ -29,9 +34,10 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/OSStatus.hh"
-#include "Nitrogen/Sound.hh"
 #include "Nitrogen/Threads.hh"
 #include "Nitrogen/Timer.hh"
 
@@ -234,9 +240,9 @@ namespace Genie
 		}
 		else
 		{
-			N::SysBeep();
-			N::SysBeep();
-			N::SysBeep();
+			Mac::SysBeep();
+			Mac::SysBeep();
+			Mac::SysBeep();
 		}
 		
 		::ExitToShell();  // not messing around
@@ -863,7 +869,7 @@ namespace Genie
 		}
 	}
 	
-	static N::Size DefaultThreadStackSize()
+	static std::size_t DefaultThreadStackSize()
 	{
 		::Size size = 0;
 		
@@ -938,11 +944,11 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const N::Size defaultStackSize = DefaultThreadStackSize();
+		const std::size_t defaultStackSize = DefaultThreadStackSize();
 		
-		const N::Size minimumStackSize = 64 * 1024;
+		const std::size_t minimumStackSize = 64 * 1024;
 		
-		const N::Size stackSize = std::max( defaultStackSize, minimumStackSize );
+		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
 		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
@@ -1004,11 +1010,11 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const N::Size defaultStackSize = DefaultThreadStackSize();
+		const std::size_t defaultStackSize = DefaultThreadStackSize();
 		
-		const N::Size minimumStackSize = 64 * 1024;
+		const std::size_t minimumStackSize = 64 * 1024;
 		
-		const N::Size stackSize = std::max( defaultStackSize, minimumStackSize );
+		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
 		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
@@ -1517,7 +1523,7 @@ namespace Genie
 		
 		if ( it == itsMap.end() )
 		{
-			N::SysBeep();
+			Mac::SysBeep();
 		}
 		else
 		{

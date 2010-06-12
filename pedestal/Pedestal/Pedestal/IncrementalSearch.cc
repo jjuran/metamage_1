@@ -18,9 +18,10 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Resources.hh"
-#include "Nitrogen/Sound.hh"
 
 
 namespace Pedestal
@@ -282,7 +283,7 @@ namespace Pedestal
 					
 					itsView.SetCurrentSelection( itsSavedSelection );
 					
-					N::SysBeep( 30 );
+					Mac::SysBeep();
 				}
 			}
 		}
@@ -290,7 +291,7 @@ namespace Pedestal
 		{
 			if ( itsPattern.empty() )
 			{
-				N::SysBeep();
+				Mac::SysBeep();
 			}
 			else
 			{
@@ -317,7 +318,7 @@ namespace Pedestal
 			{
 				itsView.SetCurrentSelection( itsSavedSelection );
 				
-				N::SysBeep();
+				Mac::SysBeep();
 			}
 			else
 			{
@@ -348,7 +349,7 @@ namespace Pedestal
 		{
 			if ( shifted == bothShiftKeys )
 			{
-				N::SysBeep();
+				Mac::SysBeep();
 				
 				return true;
 			}
@@ -363,7 +364,7 @@ namespace Pedestal
 			
 			if ( match == -1 )
 			{
-				N::SysBeep();
+				Mac::SysBeep();
 			}
 			else
 			{

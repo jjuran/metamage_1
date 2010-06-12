@@ -31,6 +31,8 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Controls.hh"
@@ -41,7 +43,7 @@
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/Sound.hh"
+#include "Nitrogen/Resources.hh"
 #include "Nitrogen/Threads.hh"
 
 #if !TARGET_API_MAC_CARBON
@@ -168,7 +170,7 @@ namespace Pedestal
 	
 	static inline void DebugBeep()
 	{
-		N::SysBeep();
+		Mac::SysBeep();
 	}
 	
 	enum
@@ -482,7 +484,7 @@ namespace Pedestal
 			}
 		}
 		
-		N::SysBeep();
+		Mac::SysBeep();
 	}
 	
 	static void DispatchKey( const EventRecord& event )

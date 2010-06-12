@@ -6,6 +6,7 @@
 #include "Vertice/Port.hh"
 
 // Standard C
+#include <math.h>
 #include <stddef.h>
 
 // Standard C/C++
@@ -15,7 +16,7 @@
 #include <functional>
 
 // Nitrogen
-#include "Nitrogen/Sound.hh"
+#include "Mac/Sound/Functions/SysBeep.hh"
 
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
@@ -30,8 +31,6 @@
 
 namespace Vertice
 {
-	
-	namespace N = Nitrogen;
 	
 	/*
 	RGB::Color Tile::Color( const Point2D& pt ) const
@@ -58,7 +57,8 @@ namespace Vertice
 		
 		if ( contextIndex == 0 )
 		{
-			N::SysBeep();
+			Mac::SysBeep();
+			
 			return;
 		}
 		

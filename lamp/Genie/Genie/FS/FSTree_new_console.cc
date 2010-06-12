@@ -5,6 +5,11 @@
 
 #include "Genie/FS/FSTree_new_console.hh"
 
+// Mac OS
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
+
 // POSIX
 #include <sys/ttycom.h>
 
@@ -13,8 +18,9 @@
 #include "iota/strings.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/Sound.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -127,7 +133,7 @@ namespace Genie
 				
 				case 'cut ':
 				case 'clea':
-					::SysBeep( 30 );
+					Mac::SysBeep();
 					
 					handled = true;
 					break;
@@ -209,7 +215,7 @@ namespace Genie
 					}
 					else
 					{
-						N::SysBeep();
+						Mac::SysBeep();
 					}
 					
 					break;
@@ -576,7 +582,7 @@ namespace Genie
 			switch ( c )
 			{
 				case 0x07:
-					::SysBeep( 30 );
+					Mac::SysBeep();
 					break;
 				
 				case '\r':
