@@ -23,6 +23,7 @@
 
 // Nitrogen
 #include "Nitrogen/ATSTypes.hh"
+#include "Nitrogen/Quickdraw.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"

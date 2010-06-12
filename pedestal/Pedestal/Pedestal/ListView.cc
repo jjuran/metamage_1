@@ -9,6 +9,7 @@
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Lists.hh"
+#include "Nitrogen/Quickdraw.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"

@@ -18,6 +18,7 @@
 
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Pedestal

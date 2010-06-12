@@ -14,6 +14,7 @@
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.hh"
 #include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
 #include "MacFeatures/Features.hh"

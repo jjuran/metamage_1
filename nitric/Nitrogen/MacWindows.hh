@@ -20,8 +20,10 @@
 
 // nucleus
 #include "nucleus/enumeration_traits.hh"
+#include "nucleus/errors_registered.hh"
 #include "nucleus/flag_ops.hh"
 #include "nucleus/linked_list_sequence.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
 #include "Carbon/CF/Types/CFTypeRef.hh"
@@ -30,8 +32,8 @@
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #include "Mac/Windows/Types/WindowRef.hh"
 
-#ifndef NITROGEN_QUICKDRAW_HH
-#include "Nitrogen/Quickdraw.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
@@ -500,7 +502,12 @@ namespace Nitrogen
 		
 		operator long () const  { return grew; }
 		
-		operator Point() const  { return SetPt( grew & 0xffff, grew >> 16 ); }
+		operator Point() const
+		{
+			Point point = { grew >> 16, grew & 0xffff };
+			
+			return point;
+		}
 	};
 	
 	// 4598

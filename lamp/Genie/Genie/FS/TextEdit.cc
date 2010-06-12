@@ -18,6 +18,7 @@
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
 
 // Pedestal

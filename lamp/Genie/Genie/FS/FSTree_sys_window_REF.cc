@@ -18,6 +18,9 @@
 // nucleus
 #include "nucleus/saved.hh"
 
+// Nitrogen
+#include "Nitrogen/Quickdraw.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 

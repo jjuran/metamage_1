@@ -39,6 +39,7 @@
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Processes.hh"
+#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Sound.hh"
 #include "Nitrogen/Threads.hh"
 

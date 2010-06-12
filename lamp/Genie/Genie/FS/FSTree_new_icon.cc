@@ -8,6 +8,9 @@
 // Standard C++
 #include <map>
 
+// Nitrogen
+#include "Nitrogen/Quickdraw.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 

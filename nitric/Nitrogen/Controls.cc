@@ -16,6 +16,7 @@
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/OSStatus.hh"
+#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Nitrogen
