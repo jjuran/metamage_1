@@ -1471,8 +1471,6 @@ namespace Genie
 			
 			n_items += pb.n_items;
 			
-			cache.reserve( cache.size() + pb.n_items );
-			
 			for ( UInt16 j = 0;  j != pb.n_items;  ++j )
 			{
 				const ino_t inode = pb.items[ j ].id;  // file or dir ID for inode
