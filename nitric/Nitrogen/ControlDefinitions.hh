@@ -23,6 +23,7 @@
 
 // Nitrogen
 #include "Carbon/CF/Types/CFTypeRef.hh"
+#include "Mac/Controls/Types/ControlProcID.hh"
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
@@ -34,11 +35,11 @@
 namespace Nitrogen
   {
 	
-	static const ControlProcID pushButProc   = ControlProcID( ::pushButProc   );
-	static const ControlProcID checkBoxProc  = ControlProcID( ::checkBoxProc  );
-	static const ControlProcID radioButProc  = ControlProcID( ::radioButProc  );
-	static const ControlProcID scrollBarProc = ControlProcID( ::scrollBarProc );
-	static const ControlProcID popupMenuProc = ControlProcID( ::popupMenuProc );
+	using Mac::pushButProc;
+	using Mac::checkBoxProc;
+	using Mac::radioButProc;
+	using Mac::scrollBarProc;
+	using Mac::popupMenuProc;
 	
 	static const ControlPartCode kControlLabelPart              = ControlPartCode( ::kControlLabelPart              );
 	static const ControlPartCode kControlMenuPart               = ControlPartCode( ::kControlMenuPart               );
@@ -236,9 +237,8 @@ namespace Nitrogen
 
    template<> struct ControlData_Traits< kControlEditUnicodeTextPostUpdateProcTag       >: nucleus::POD_scribe    < EditUnicodePostUpdateUPP      > {};
 	
-	
-	static const ControlProcID kControlScrollBarProc     = ControlProcID( ::kControlScrollBarProc     );
-	static const ControlProcID kControlScrollBarLiveProc = ControlProcID( ::kControlScrollBarLiveProc );
+	using Mac::kControlScrollBarProc;
+	using Mac::kControlScrollBarLiveProc;
 	
   }
 
