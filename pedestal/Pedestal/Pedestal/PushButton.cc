@@ -5,6 +5,9 @@
 
 #include "Pedestal/PushButton.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Mac OS
 #ifndef __FONTS__
 #include <Fonts.h>

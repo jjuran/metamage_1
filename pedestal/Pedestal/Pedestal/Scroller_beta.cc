@@ -5,6 +5,9 @@
 
 #include "Pedestal/Scroller_beta.hh"
 
+// Standard C++
+#include <algorithm>
+
 // nucleus
 #include "nucleus/saved.hh"
 

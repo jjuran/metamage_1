@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Name_OSType.hh"
 
+// Standard C++
+#include <algorithm>
+
 // iota
 #include "iota/hexidecimal.hh"
 #include "iota/quad.hh"

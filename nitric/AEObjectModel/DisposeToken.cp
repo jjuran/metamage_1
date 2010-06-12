@@ -7,6 +7,9 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/pointer_to_function.hh"
 

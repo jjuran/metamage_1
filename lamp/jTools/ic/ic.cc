@@ -3,6 +3,13 @@
  *	=====
  */
 
+// Standard C++
+#include <algorithm>
+#include <functional>
+
+// Standard C/C++
+#include <cstdio>
+
 // Debug
 #include "debug/assert.hh"
 

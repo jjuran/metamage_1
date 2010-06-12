@@ -5,10 +5,14 @@
 
 #include "UseEdit/Window.hh"
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/string.hh"
 
 // Nitrogen
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/TextEdit.hh"

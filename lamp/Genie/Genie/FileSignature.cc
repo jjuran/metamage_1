@@ -5,6 +5,9 @@
 
 #include "Genie/FileSignature.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Standard C
 #include <string.h>
 

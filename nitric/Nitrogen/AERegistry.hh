@@ -30,6 +30,9 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #include "Nitrogen/AEObjects.hh"
 #endif
+#ifndef NITROGEN_UTFSTRINGS_HH
+#include "Nitrogen/UTFStrings.hh"
+#endif
 
 
 namespace Nitrogen

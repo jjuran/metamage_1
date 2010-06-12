@@ -25,8 +25,8 @@
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+#ifndef NITROGEN_UTFSTRINGS_HH
+#include "Nitrogen/UTFStrings.hh"
 #endif
 
 

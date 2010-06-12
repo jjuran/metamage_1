@@ -7,6 +7,9 @@
 #include "AEObjectModel/AEObjectModel.h"
 #endif
 
+// Standard C++
+#include <algorithm>
+
 // Nitrogen
 #ifndef NITROGEN_ASREGISTRY_HH
 #include "Nitrogen/ASRegistry.hh"
