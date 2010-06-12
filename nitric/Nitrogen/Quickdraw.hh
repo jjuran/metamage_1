@@ -26,6 +26,7 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
+#include "Mac/Quickdraw/Utilities/Port_Disposer.hh"
 #include "Mac/Resources/Types/ResID.hh"
 
 #ifndef NITROGEN_MACTYPES_HH
@@ -161,32 +162,6 @@ namespace Nitrogen
 	using ::GDHandle;
 	using ::CGrafPtr;
 	
-	namespace Detail
-	{
-		
-		template < class Port >
-		class PortDisposer
-		{
-			typedef Port  argument_type;
-			typedef void  result_type;
-			
-			private:
-				typedef pascal void (*Dispose)( Port );
-				
-				Dispose dispose;
-			
-			public:
-				PortDisposer() : dispose( NULL )  {}
-				PortDisposer( Dispose d ) : dispose( d )  {}
-				
-				void operator()( Port port ) const
-				{
-					if ( dispose )  dispose( port );
-				}
-		};
-		
-	}
-	
 }
 
 namespace nucleus
@@ -243,14 +218,14 @@ namespace nucleus
 	
 	template <> struct disposer_traits< CGrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< CGrafPtr > type;
+		typedef Mac::Port_Disposer< CGrafPtr > type;
 	};
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
 	template <> struct disposer_traits< GrafPtr >
 	{
-		typedef Nitrogen::Detail::PortDisposer< GrafPtr > type;
+		typedef Mac::Port_Disposer< GrafPtr > type;
 	};
 	
 #endif
