@@ -42,12 +42,11 @@
 #include "Mac/Files/Types/FSType.hh"
 #include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Mac/Script/Types/ScriptCode.hh"
+#include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
 #endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
@@ -557,11 +556,11 @@ namespace Nitrogen
 	FSSpec FSpCreate( const FSSpec&    file, 
 	                  Mac::FSCreator   creator, 
 	                  Mac::FSType      type, 
-	                  ScriptCode     scriptTag = smSystemScript );
+	                  Mac::ScriptCode  scriptTag = Mac::smSystemScript );
 	
 	inline FSSpec FSpCreate( const FSSpec&         file,
 	                         const FileSignature&  signature,
-	                         ScriptCode            scriptTag = smSystemScript )
+	                         Mac::ScriptCode       scriptTag = Mac::smSystemScript )
 	{
 		return FSpCreate( file, signature.creator, signature.type, scriptTag );
 	}

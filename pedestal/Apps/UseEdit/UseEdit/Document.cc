@@ -14,6 +14,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// nucleus
+#include "nucleus/scribe.hh"
+
 // Io
 #include "io/slurp.hh"
 
