@@ -20,7 +20,7 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
@@ -117,7 +117,7 @@ namespace Pedestal
 				
 				short scrollDistance = 1;
 				
-				if ( part == N::kControlPageUpPart  ||  part == N::kControlPageDownPart )
+				if ( part == Mac::kControlPageUpPart  ||  part == Mac::kControlPageDownPart )
 				{
 					const short viewLength = vertical ? scroller->ViewHeight()
 					                                  : scroller->ViewWidth ();
@@ -127,7 +127,7 @@ namespace Pedestal
 					scrollDistance = pageDistance;
 				}
 				
-				if ( part == N::kControlUpButtonPart  ||  part == N::kControlPageUpPart )
+				if ( part == Mac::kControlUpButtonPart  ||  part == Mac::kControlPageUpPart )
 				{
 					scrollDistance = -scrollDistance;
 				}

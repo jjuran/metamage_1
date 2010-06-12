@@ -15,7 +15,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/OSUtils.hh"
 
 // Pedestal
@@ -150,7 +150,7 @@ namespace Genie
 		{
 			params.pseudoclicked = false;
 			
-			N::HiliteControl( Get(), N::kControlButtonPart );
+			N::HiliteControl( Get(), Mac::kControlButtonPart );
 			
 			QDFlushPortBuffer();
 			

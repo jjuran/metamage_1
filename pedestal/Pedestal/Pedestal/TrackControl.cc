@@ -5,8 +5,11 @@
 
 #include "Pedestal/TrackControl.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/Controls.hh"
 
 
 namespace Pedestal

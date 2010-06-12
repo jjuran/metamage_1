@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.hh"
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
 
@@ -33,8 +33,8 @@ namespace Pedestal
 	{
 		const bool liveScrolling = Has_AppearanceManager();
 		
-		return liveScrolling ? N::kControlScrollBarLiveProc
-		                     : N::scrollBarProc;
+		return liveScrolling ? Mac::kControlScrollBarLiveProc
+		                     : Mac::scrollBarProc;
 	}
 	
 	
