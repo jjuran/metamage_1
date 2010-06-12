@@ -14,7 +14,9 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/ControlDefinitions.hh"
+#include "Mac/Controls/Types/ControlPartCode.hh"
+
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacWindows.hh"
 
 
@@ -36,7 +38,7 @@ namespace Pedestal
 		                      0,
 		                      0,
 		                      1,
-		                      N::pushButProc,
+		                      Mac::pushButProc,
 		                      refCon );
 	}
 	
