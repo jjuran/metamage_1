@@ -33,6 +33,7 @@
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AppleEvents.hh"
+#include "Nitrogen/Controls.hh"
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Gestalt.hh"
 #include "Nitrogen/MacErrors.hh"

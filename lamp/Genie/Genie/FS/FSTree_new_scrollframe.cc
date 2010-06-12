@@ -8,6 +8,9 @@
 // Standard C++
 #include <map>
 
+// Nitrogen
+#include "Nitrogen/Controls.hh"
+
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Scrollbar.hh"
