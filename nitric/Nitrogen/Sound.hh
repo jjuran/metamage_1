@@ -24,6 +24,8 @@
 #include "nucleus/index_until_error_sequence.hh"
 
 // Nitrogen
+#include "Mac/Sound/Functions/SysBeep.hh"
+
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif
@@ -321,7 +323,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
-	inline void SysBeep( short duration = 30 )  { ::SysBeep( duration ); }
+	inline void SysBeep( short duration )  { ::SysBeep( duration ); }
 	
 	// SndDoCommand
 	// SndDoImmediate
