@@ -1176,6 +1176,11 @@ namespace Nitrogen
 	                   UniCharCount    forkNameLength,
 	                   const UniChar*  forkName );
 	
+	inline void FSCreateFork( const FSRef& ref )
+	{
+		FSCreateFork( ref, 0, NULL );
+	}
+	
 	template < class UniString >
 	void FSCreateFork( const FSRef&      ref,
 	                   const UniString&  forkName )
@@ -1186,6 +1191,11 @@ namespace Nitrogen
 	void FSDeleteFork( const FSRef&    ref,
 	                   UniCharCount    forkNameLength,
 	                   const UniChar*  forkName );
+	
+	inline void FSDeleteFork( const FSRef& ref )
+	{
+		FSDeleteFork( ref, 0, NULL );
+	}
 	
 	template < class UniString >
 	void FSDeleteFork( const FSRef&      ref,
@@ -1230,6 +1240,12 @@ namespace Nitrogen
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions );
 
+	inline nucleus::owned< FSForkRefNum > FSOpenFork( const FSRef&  ref,
+	                                                  FSIOPerm      perm )
+	{
+		return FSOpenFork( ref, 0, NULL , perm );
+	}
+	
    template < class UniString >
    nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                             const UniString forkName,

@@ -307,6 +307,16 @@ namespace Nitrogen
 	                                                    const UniChar*  forkName,
 	                                                    Mac::FSIOPerm   permissions );
 	
+	
+	inline nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&   ref,
+	                                                           Mac::FSIOPerm  permissions )
+	{
+		return FSOpenResourceFile( ref,
+		                           0,
+		                           NULL,
+		                           permissions );
+	}
+	
 	template < class UniString >
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
 	                                                    const UniString&  forkName,
