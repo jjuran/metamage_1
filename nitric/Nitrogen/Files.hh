@@ -668,9 +668,13 @@ namespace Nitrogen
       return FSMakeFSRefUnicode( parentRef, name.length, name.unicode, textEncodingHint );
      }
 
+   template < class UniString >
    FSRef FSMakeFSRefUnicode( const FSRef&     parentRef,
                              const UniString& name,
-                             TextEncoding     textEncodingHint );
+                             TextEncoding     textEncodingHint )
+	{
+		return FSMakeFSRefUnicode( parentRef, name.size(), name.data(), textEncodingHint );
+	}
    
    bool FSCompareFSRefs( const FSRef& ref1, const FSRef& ref2 );
 
@@ -724,13 +728,21 @@ namespace Nitrogen
                                                    UniCharCount   nameLength,
                                                    const UniChar *name );
 
+   template < class UniString >
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    const UniString&     name,
                                                    FSCatalogInfoBitmap  whichInfo,
-                                                   const FSCatalogInfo& catalogInfo );
+                                                   const FSCatalogInfo& catalogInfo )
+	{
+		return FSCreateFileUnicode( parentRef, name.size(), name.data(), whichInfo, catalogInfo );
+	}
 
+   template < class UniString >
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&     parentRef,
-                                                   const UniString& name );
+                                                   const UniString& name )
+	{
+		return FSCreateFileUnicode( parentRef, name.size(), name.data() );
+	}
    
    typedef FSRefSpecDirID FSCreateDirectoryUnicode_Result;
    
@@ -750,13 +762,21 @@ namespace Nitrogen
       return FSCreateDirectoryUnicode( parentRef, name.length, name.unicode );
      }
    
+   template < class UniString >
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&         parentRef,
                                                              const UniString&     name,
                                                              FSCatalogInfoBitmap  whichInfo,
-                                                             const FSCatalogInfo& catalogInfo );
+                                                             const FSCatalogInfo& catalogInfo )
+	{
+		return FSCreateDirectoryUnicode( parentRef, name.size(), name.data(), whichInfo, catalogInfo );
+	}
 
+   template < class UniString >
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&     parentRef,
-                                                             const UniString& name );
+                                                             const UniString& name )
+	{
+		return FSCreateDirectoryUnicode( parentRef, name.size(), name.data() );
+	}
 
    void FSDeleteObject( const FSRef& ref );
 
@@ -769,9 +789,13 @@ namespace Nitrogen
                          const UniChar *name,
                          TextEncoding   textEncodingHint );
 
+   template < class UniString >
    void FSRenameUnicode( FSRef&            ref,
                          const UniString&  name,
-                         TextEncoding      textEncodingHint );
+                         TextEncoding      textEncodingHint )
+	{
+		FSRenameUnicode( ref, name.size(), name.data(), textEncodingHint );
+	}
 
    struct FSGetCatalogInfo_Result
      {
@@ -1179,15 +1203,23 @@ namespace Nitrogen
 	                   UniCharCount    forkNameLength,
 	                   const UniChar*  forkName );
 	
+	template < class UniString >
 	void FSCreateFork( const FSRef&      ref,
-	                   const UniString&  forkName );
+	                   const UniString&  forkName )
+	{
+		FSCreateFork( ref, forkName.size(), forkName.data() );
+	}
 
 	void FSDeleteFork( const FSRef&    ref,
 	                   UniCharCount    forkNameLength,
 	                   const UniChar*  forkName );
 	
+	template < class UniString >
 	void FSDeleteFork( const FSRef&      ref,
-	                   const UniString&  forkName );
+	                   const UniString&  forkName )
+	{
+		FSDeleteFork( ref, forkName.size(), forkName.data() );
+	}
 	
    struct FSIterateForks_Result
      {
@@ -1225,9 +1257,13 @@ namespace Nitrogen
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions );
 
+   template < class UniString >
    nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                             const UniString forkName,
-                                            FSIOPermssn     permissions );
+                                            FSIOPermssn     permissions )
+	{
+		return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
+	}
 
 	ByteCount FSReadFork( FSForkRefNum    fork,
 	                      FSIOPosMode     positionMode,

@@ -490,13 +490,6 @@ namespace Nitrogen
       return result;
      }
 
-   FSRef FSMakeFSRefUnicode( const FSRef& parentRef,
-                             const UniString& name,
-                             TextEncoding textEncodingHint )
-     {
-      return FSMakeFSRefUnicode( parentRef, name.size(), name.data(), textEncodingHint );
-     }
-   
 /*
 Return Value
 	A result code. See “File Manager Result Codes”. 
@@ -558,21 +551,6 @@ Return Value
      }
 
 
-   FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
-                                                   const UniString&     name,
-                                                   FSCatalogInfoBitmap  whichInfo,
-                                                   const FSCatalogInfo& catalogInfo )
-     {
-      return FSCreateFileUnicode( parentRef, name.size(), name.data(), whichInfo, catalogInfo );
-     }
-
-
-   FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&     parentRef,
-                                                   const UniString& name )
-     {
-      return FSCreateFileUnicode( parentRef, name.size(), name.data() );
-     }
-
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&         parentRef,
                                                              UniCharCount         nameLength,
                                                              const UniChar *      name,
@@ -612,21 +590,6 @@ Return Value
      }
 
 
-   FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&         parentRef,
-                                                             const UniString&     name,
-                                                             FSCatalogInfoBitmap  whichInfo,
-                                                             const FSCatalogInfo& catalogInfo )
-     {
-      return FSCreateDirectoryUnicode( parentRef, name.size(), name.data(), whichInfo, catalogInfo );
-     }
-
-
-   FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&     parentRef,
-                                                             const UniString& name )
-     {
-      return FSCreateDirectoryUnicode( parentRef, name.size(), name.data() );
-     }
-
    void FSDeleteObject( const FSRef& ref )
      {
       ThrowOSStatus( ::FSDeleteObject( &ref ) );
@@ -652,13 +615,6 @@ Return Value
       FSRef newRef;
       ThrowOSStatus( ::FSRenameUnicode( &ref, nameLength, name, textEncodingHint, &newRef ) );
       ref = newRef;
-     }
-
-   void FSRenameUnicode( FSRef& ref,
-                         const UniString&          name,
-                         TextEncoding              textEncodingHint )
-     {
-      FSRenameUnicode( ref, name.size(), name.data(), textEncodingHint );
      }
 
    void FSGetCatalogInfo( const FSRef&        ref,
@@ -868,23 +824,11 @@ Return Value
       ThrowOSStatus( ::FSCreateFork( &ref, forkNameLength, forkName ) );
      }
 
-	void FSCreateFork( const FSRef&      ref,
-	                   const UniString&  forkName )
-     {
-      FSCreateFork( ref, forkName.size(), forkName.data() );
-     }
-	
 	void FSDeleteFork( const FSRef&    ref,
 	                   UniCharCount    forkNameLength,
 	                   const UniChar*  forkName )
 	{
 		ThrowOSStatus( ::FSDeleteFork( &ref, forkNameLength, forkName ) );
-	}
-	
-	void FSDeleteFork( const FSRef&      ref,
-	                   const UniString&  forkName )
-	{
-		FSDeleteFork( ref, forkName.size(), forkName.data() );
 	}
 	
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
@@ -911,13 +855,6 @@ Return Value
       return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
 
-   nucleus::owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
-                                            const UniString forkName,
-                                            FSIOPermssn     permissions )
-     {
-      return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
-     }
-	
 	ByteCount FSReadFork( FSForkRefNum    fork,
 	                      FSIOPosMode     positionMode,
 	                      SInt64          positionOffset,
