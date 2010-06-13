@@ -25,6 +25,9 @@ namespace Genie
 	namespace Ag = Silver;
 	
 	
+	extern class Process* gCurrentProcess;  // defined in Process.cc
+	
+	
 	static void BusError()
 	{
 		DeliverFatalSignal( SIGSEGV );
@@ -51,8 +54,6 @@ namespace Genie
 	}
 	
 #if TARGET_CPU_68K
-	
-	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
@@ -199,6 +200,11 @@ namespace Genie
 		if ( exception->theKind == kTraceException )
 		{
 			return -1;  // handled by debugger
+		}
+		
+		if ( gCurrentProcess == NULL )
+		{
+			return -1;
 		}
 		
 		const TVector* handler = NULL;
