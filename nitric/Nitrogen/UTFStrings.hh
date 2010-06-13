@@ -11,15 +11,25 @@
 #define NITROGEN_UTFSTRINGS_HH
 
 // Standard C++
+#include <algorithm>
 #include <string>
 
 // Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
 
 // nucleus
+#include "nucleus/convert.hh"
 #include "nucleus/scribe.hh"
+
+// Nitrogen
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
+#endif
 
 
 namespace Nitrogen
@@ -72,6 +82,44 @@ namespace Nitrogen
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+	};
+	
+}
+
+namespace nucleus
+{
+	
+	template <> struct converter< Nitrogen::UniString, HFSUniStr255 >
+	{
+		typedef HFSUniStr255         argument_type;
+		typedef Nitrogen::UniString  result_type;
+		
+		Nitrogen::UniString operator()( const HFSUniStr255& in ) const
+		{
+			return Nitrogen::UniString( in.unicode, in.unicode+in.length );
+		}
+	};
+	
+	template <> struct converter< HFSUniStr255, Nitrogen::UniString >
+	{
+		typedef Nitrogen::UniString  argument_type;
+		typedef HFSUniStr255         result_type;
+		
+		HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
+		{
+			if ( in.size() > 255 )
+			{
+				throw Nitrogen::StringTooLong();
+			}
+			
+			HFSUniStr255 result;
+			
+			result.length = UInt16( in.size() );
+			
+			std::copy( in.begin(), in.end(), result.unicode );
+			
+			return result;
+		}
 	};
 	
 }

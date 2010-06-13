@@ -252,33 +252,6 @@ namespace nucleus
          return result;
         }
      };
-
-   template <> struct converter< Nitrogen::UniString, HFSUniStr255 >
-     {
-      typedef HFSUniStr255         argument_type;
-      typedef Nitrogen::UniString  result_type;
-      
-      Nitrogen::UniString operator()( const HFSUniStr255& in ) const
-        {
-         return Nitrogen::UniString( in.unicode, in.unicode+in.length );
-        }
-     };
-  
-   template <> struct converter< HFSUniStr255, Nitrogen::UniString >
-     {
-      typedef Nitrogen::UniString  argument_type;
-      typedef HFSUniStr255         result_type;
-      
-      HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
-        {
-         if ( in.size() > 255 )
-            throw Nitrogen::StringTooLong();
-         HFSUniStr255 result;
-         result.length = UInt16( in.size() );
-         std::copy( in.begin(), in.end(), result.unicode );
-         return result;
-        }
-     };
   }
 
 namespace Nitrogen
