@@ -1239,6 +1239,13 @@ namespace Nitrogen
 	void FSCreateFork( const FSRef&      ref,
 	                   const UniString&  forkName );
 
+	void FSDeleteFork( const FSRef&    ref,
+	                   UniCharCount    forkNameLength,
+	                   const UniChar*  forkName );
+	
+	void FSDeleteFork( const FSRef&      ref,
+	                   const UniString&  forkName );
+	
    void FSDeleteFork( const FSForkRef& fork );
    
    struct FSIterateForks_Result

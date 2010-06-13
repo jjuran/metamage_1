@@ -873,13 +873,23 @@ Return Value
      {
       FSCreateFork( ref, forkName.size(), forkName.data() );
      }
-                                  
+	
+	void FSDeleteFork( const FSRef&    ref,
+	                   UniCharCount    forkNameLength,
+	                   const UniChar*  forkName )
+	{
+		ThrowOSStatus( ::FSDeleteFork( &ref, forkNameLength, forkName ) );
+	}
+	
+	void FSDeleteFork( const FSRef&      ref,
+	                   const UniString&  forkName )
+	{
+		FSDeleteFork( ref, forkName.size(), forkName.data() );
+	}
+	
    void FSDeleteFork( const FSForkRef& fork )
      {
-      OSStatus error = ::FSDeleteFork( &fork.File(),
-                                       fork.Name().size(),
-                                       fork.Name().data() );
-      ThrowOSStatus( error );
+		FSDeleteFork( fork.File(), fork.Name() );
      }
 
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
