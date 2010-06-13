@@ -170,11 +170,16 @@ namespace tool
 			
 			FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
 			
-			N::UniString name( dest.name + 1, dest.name + 1 + dest.name[0] );
+			
+			HFSUniStr255 name = { dest.name[ 0 ] };
+			
+			std::copy( dest.name + 1,
+			           dest.name + 1 + dest.name[ 0 ],
+			           name.unicode );
 			
 			N::ThrowOSStatus( ::FSCreateResourceFile( &parent_ref,
-			                                          name.size(),
-			                                          name.data(),
+			                                          name.length,
+			                                          name.unicode,
 			                                          FSCatalogInfoBitmap(),
 			                                          NULL,
 			                                          0,
