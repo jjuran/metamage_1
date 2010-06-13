@@ -6,6 +6,7 @@
 #include "Genie/BinaryImage.hh"
 
 // Standard C++
+#include <algorithm>
 #include <map>
 
 // Debug

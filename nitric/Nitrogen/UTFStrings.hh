@@ -27,6 +27,9 @@
 #include "nucleus/scribe.hh"
 
 // Nitrogen
+#ifndef NITROGEN_CFSTRING_HH
+#include "Nitrogen/CFString.hh"
+#endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
@@ -88,6 +91,30 @@ namespace Nitrogen
 
 namespace nucleus
 {
+	
+	template <>
+	struct converter< Nitrogen::UniString, CFStringRef >
+	{
+		typedef CFStringRef          argument_type;
+		typedef Nitrogen::UniString  result_type;
+		
+		Nitrogen::UniString operator()( const CFStringRef& in ) const
+		{
+			return Nitrogen::CFStringGetCharacters< Nitrogen::UniString >( in );
+		}
+	};
+	
+	template <>
+	struct converter< nucleus::owned< CFStringRef >, Nitrogen::UniString >
+	{
+		typedef Nitrogen::UniString            argument_type;
+		typedef nucleus::owned< CFStringRef >  result_type;
+		
+		nucleus::owned< CFStringRef > operator()( const Nitrogen::UniString& in ) const
+		{
+			return Nitrogen::CFStringCreateWithCharacters( in );
+		}
+	};
 	
 	template <> struct converter< Nitrogen::UniString, HFSUniStr255 >
 	{

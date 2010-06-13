@@ -16,6 +16,9 @@
 #include <CFURL.h>
 #endif
 
+// Standard C/C++
+#include <cstddef>
+
 // iota
 #include "iota/string_traits.hh"
 

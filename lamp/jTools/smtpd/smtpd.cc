@@ -10,6 +10,7 @@
 #include <vector>
 
 // Standard C/C++
+#include <cstdio>
 #include <cstdlib>
 
 // POSIX
@@ -31,6 +32,7 @@
 #include "text_input/get_line_from_feed.hh"
 
 // nucleus
+#include "nucleus/scribe.hh"
 #include "nucleus/shared.hh"
 
 // Io

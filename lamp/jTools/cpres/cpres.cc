@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C/C++
+#include <cstdio>
+
 // plus
 #include "plus/make_string.hh"
 

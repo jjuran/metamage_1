@@ -7,6 +7,9 @@
 
 #include "GetPathname.hh"
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/var_string.hh"
 

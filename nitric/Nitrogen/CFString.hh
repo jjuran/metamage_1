@@ -25,9 +25,6 @@
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
-#ifndef NITROGEN_UTFSTRINGS_HH
-#include "Nitrogen/UTFStrings.hh"
-#endif
 
 
 namespace Nitrogen
@@ -114,8 +111,33 @@ namespace Nitrogen {
       ::CFStringGetCharacters( theString, range, buffer );
      }
    
-   UniString CFStringGetCharacters( CFStringRef theString, CFRange range );
-   UniString CFStringGetCharacters( CFStringRef theString );
+	template < class UniString >
+	UniString CFStringGetCharacters( CFStringRef string, CFRange range )
+	{
+		if ( const UniChar* characters = CFStringGetCharactersPtr( string ) )
+		{
+			return UniString( characters + range.location, range.length );
+		}
+		
+		UniString result( range.length, UniChar() );
+		
+		if ( range.length > 0 )
+		{
+			Nitrogen::CFStringGetCharacters( string,
+			                                 range,
+			                                 &result[ 0 ] );
+		}
+		
+		return result;
+	}
+   
+   template < class UniString >
+   UniString CFStringGetCharacters( CFStringRef string )
+	{
+		return CFStringGetCharacters< UniString >( string,
+		                                           CFRangeMake( 0,
+		                                                        Nitrogen::CFStringGetLength( string ) ) );
+	}
    
    class CFStringCreateWithBytes_Failed {};
    
@@ -154,30 +176,6 @@ namespace Nitrogen {
 
 namespace nucleus
   {
-   template <>
-   struct converter< Nitrogen::UniString, CFStringRef >
-     {
-      typedef CFStringRef          argument_type;
-      typedef Nitrogen::UniString  result_type;
-      
-      Nitrogen::UniString operator()( const CFStringRef& in ) const
-        {
-         return Nitrogen::CFStringGetCharacters( in );
-        }
-     };
-   
-   template <>
-   struct converter< nucleus::owned< CFStringRef >, Nitrogen::UniString >
-     {
-      typedef Nitrogen::UniString            argument_type;
-      typedef nucleus::owned< CFStringRef >  result_type;
-      
-      nucleus::owned<CFStringRef> operator()( const Nitrogen::UniString& in ) const
-        {
-         return Nitrogen::CFStringCreateWithCharacters( in );
-        }
-     };
-   
    template <>
    struct converter< nucleus::owned< CFStringRef >, ConstStr255Param >
      {

@@ -9,6 +9,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <cstdio>
 
 // Mac OS
 #ifndef __OPENTRANSPORT__

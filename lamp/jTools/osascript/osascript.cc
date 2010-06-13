@@ -8,6 +8,9 @@
 #include <numeric>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include <string.h>
 

@@ -5,6 +5,9 @@
 
 #include "UseEdit/Document.hh"
 
+// Standard C++
+#include <algorithm>
+
 // iota
 #include "iota/convert_string.hh"
 

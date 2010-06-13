@@ -3,6 +3,9 @@
  *	=======
  */
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>

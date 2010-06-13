@@ -50,23 +50,6 @@ namespace Nitrogen
       return nucleus::owned<CFStringRef>::seize( result );
      }
 
-   UniString CFStringGetCharacters( CFStringRef theString, CFRange range )
-     {
-      if ( const UniChar *characters = CFStringGetCharactersPtr(theString) )
-         return UniString( characters + range.location,
-                           characters + range.location + range.length );
-      
-      // Since &*result.begin() is undefined for empty strings:
-      if ( range.length == 0 )
-         return UniString();
-      
-      UniString result( nucleus::convert<UniString::size_type>( range.length ), UniChar() );
-      Nitrogen::CFStringGetCharacters( theString,
-                                       range,
-                                       &*result.begin() );
-      return result;
-     }
-
    nucleus::owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
                                                  const UInt8 *      bytes,
                                                  CFIndex            numBytes,
@@ -82,10 +65,5 @@ namespace Nitrogen
          throw CFStringCreateWithBytes_Failed();
       
       return nucleus::owned<CFStringRef>::seize( result );
-     }
-   
-   UniString CFStringGetCharacters( CFStringRef theString )
-     {
-      return CFStringGetCharacters( theString, CFRangeMake( 0, Nitrogen::CFStringGetLength( theString ) ) );
      }
   }
