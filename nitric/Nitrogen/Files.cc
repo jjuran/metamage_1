@@ -861,18 +861,17 @@ Return Value
       return result;
      }
 
-   FSForkRef FSCreateFork( const FSRef&   ref,
-                           UniCharCount   forkNameLength,
-                           const UniChar *forkName )
+	void FSCreateFork( const FSRef&    ref,
+	                   UniCharCount    forkNameLength,
+	                   const UniChar*  forkName )
      {
       ThrowOSStatus( ::FSCreateFork( &ref, forkNameLength, forkName ) );
-      return FSForkRef( ref, forkNameLength, forkName );
      }
 
-   FSForkRef FSCreateFork( const FSRef&     ref,
-                           const UniString& forkName )
+	void FSCreateFork( const FSRef&      ref,
+	                   const UniString&  forkName )
      {
-      return FSCreateFork( ref, forkName.size(), forkName.data() );
+      FSCreateFork( ref, forkName.size(), forkName.data() );
      }
                                   
    void FSDeleteFork( const FSForkRef& fork )

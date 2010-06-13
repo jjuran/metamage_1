@@ -1232,12 +1232,12 @@ namespace nucleus
 namespace Nitrogen
   {
 
-   FSForkRef FSCreateFork( const FSRef&   ref,
-                           UniCharCount   forkNameLength,
-                           const UniChar *forkName );
-
-   FSForkRef FSCreateFork( const FSRef&     ref,
-                           const UniString& forkName );
+	void FSCreateFork( const FSRef&    ref,
+	                   UniCharCount    forkNameLength,
+	                   const UniChar*  forkName );
+	
+	void FSCreateFork( const FSRef&      ref,
+	                   const UniString&  forkName );
 
    void FSDeleteFork( const FSForkRef& fork );
    
