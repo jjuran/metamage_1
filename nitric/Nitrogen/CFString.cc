@@ -50,14 +50,6 @@ namespace Nitrogen
       return nucleus::owned<CFStringRef>::seize( result );
      }
 
-   inline nucleus::owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
-                                                           const UniString& string )
-     {
-      return Nitrogen::CFStringCreateWithCharacters( alloc,
-                                                     string.data(),
-                                                     nucleus::convert<CFIndex>( string.size() ) );
-     }
-
    UniString CFStringGetCharacters( CFStringRef theString, CFRange range )
      {
       if ( const UniChar *characters = CFStringGetCharactersPtr(theString) )

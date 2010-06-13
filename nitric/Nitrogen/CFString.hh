@@ -87,9 +87,16 @@ namespace Nitrogen {
       return Nitrogen::CFStringCreateWithCharacters( kCFAllocatorDefault, chars, numChars );
      }
 
+   template < class UniString >
    nucleus::owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
-                                                             const UniString& string );
+                                                             const UniString& string )
+	{
+		return Nitrogen::CFStringCreateWithCharacters( alloc,
+		                                               string.data(),
+		                                               string.size() );
+	}
 
+   template < class UniString >
    inline nucleus::owned<CFStringRef> CFStringCreateWithCharacters( const UniString& string )
      {
       return Nitrogen::CFStringCreateWithCharacters( kCFAllocatorDefault, string );
