@@ -3,11 +3,8 @@
  *	=======
  */
 
-// C Standard Library
+// Standard C
 #include <stdlib.h>
-#include <string.h>
-
-// C Standard Library
 #include <string.h>
 
 // iota
