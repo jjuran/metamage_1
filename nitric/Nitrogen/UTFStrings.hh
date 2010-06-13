@@ -15,6 +15,9 @@
 #include <string>
 
 // Mac OS
+#ifndef __AEREGISTRY__
+#include <AERegistry.h>
+#endif
 #ifndef __FILES__
 #include <Files.h>
 #endif
@@ -27,6 +30,9 @@
 #include "nucleus/scribe.hh"
 
 // Nitrogen
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
+#endif
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
 #endif
@@ -86,6 +92,8 @@ namespace Nitrogen
 		static const bool hasStaticSize = false;
 		struct Buffer {};
 	};
+	
+	template <> struct DescType_Traits< typeUnicodeText > : UnicodeFlattener< UniChar > {};
 	
 }
 

@@ -30,9 +30,6 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #include "Nitrogen/AEObjects.hh"
 #endif
-#ifndef NITROGEN_UTFSTRINGS_HH
-#include "Nitrogen/UTFStrings.hh"
-#endif
 
 
 namespace Nitrogen
@@ -197,8 +194,6 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeComponentInstance         >: nucleus::POD_scribe< ComponentInstance         > {};
    template<> struct DescType_Traits< typeEventRef                  >: nucleus::POD_scribe< EventRef                  > {};
 
-   template<> struct DescType_Traits< typeUnicodeText >: UnicodeFlattener< UniChar > {};
-	
    using ::OffsetArray;
 
    inline std::size_t SizeOf_OffsetArray( const OffsetArray& array )

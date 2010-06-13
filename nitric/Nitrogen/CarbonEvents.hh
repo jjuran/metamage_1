@@ -53,6 +53,9 @@
 #ifndef NITROGEN_AEREGISTRY_HH
 #include "Nitrogen/AERegistry.hh"
 #endif
+#ifndef NITROGEN_UTFSTRINGS_HH
+#include "Nitrogen/UTFStrings.hh"
+#endif
 
 
 /* CarbonEvents.h has some nasty macros which get in our way; replace them
