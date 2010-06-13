@@ -43,7 +43,7 @@ namespace tool
 	{
 		FSRef fileref = N::FSpMakeFSRef( filespec );
 		
-		return N::FSOpenResourceFile( fileref, N::UniString(), perm );
+		return N::FSOpenResourceFile( fileref, perm );
 	}
 	
 	static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,

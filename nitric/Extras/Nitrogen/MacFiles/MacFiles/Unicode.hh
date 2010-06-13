@@ -147,22 +147,22 @@ namespace io
 	
 	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file, overload = overload() )
 	{
-		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
+		return Nitrogen::FSOpenFork( file, Nitrogen::fsRdPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
 	{
-		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
+		return Nitrogen::FSOpenFork( file, Nitrogen::fsWrPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSForkRefNum > open_for_io( const FSRef& file, overload = overload() )
 	{
-		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
+		return Nitrogen::FSOpenFork( file, Nitrogen::fsRdWrPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSForkRefNum > open_truncated( const FSRef& file, overload = overload() )
 	{
-		nucleus::owned< Nitrogen::FSForkRefNum > result = Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
+		nucleus::owned< Nitrogen::FSForkRefNum > result = Nitrogen::FSOpenFork( file, Nitrogen::fsRdWrPerm );
 		
 		Nitrogen::FSSetForkSize( result, Nitrogen::fsFromStart, 0 );
 		
