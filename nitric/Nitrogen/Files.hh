@@ -1170,63 +1170,6 @@ namespace Nitrogen
                                            FSSpec *              specs,
                                            HFSUniStr255 *        names );
 
-   class FSForkRef
-     {
-      private:
-         FSRef file;
-         UniString name;
-      
-      public:
-         FSForkRef()
-           : file(),
-             name()
-           {}
-         
-         FSForkRef( const FSRef& theFile, const UniString& theName )
-           : file( theFile ),
-             name( theName )
-           {}
-         
-         FSForkRef( const FSRef& f, UniCharCount nameLength, const UniChar *theName )
-           : file( f ),
-             name( theName, theName+nameLength )
-           {}
-         
-         const FSRef& File() const            { return file; }
-         const UniString& Name() const    { return name; }
-     };
-   
-   using Nucleus::operator==;
-   
-   inline bool operator==( const FSForkRef& a, const FSForkRef& b )
-     {
-      //using Nucleus::operator==;
-      return a.Name() == b.Name() && a.File() == b.File();
-     }
-   
-   inline bool operator!=( const FSForkRef& a, const FSForkRef& b )
-     {
-      return !( a == b );
-     }
-   
-  }
-
-namespace nucleus
-  {
-   template <> struct disposer< Nitrogen::FSForkRef >
-     {
-      typedef Nitrogen::FSForkRef  argument_type;
-      typedef void                 result_type;
-      
-      void operator()( const Nitrogen::FSForkRef& fork ) const
-        {
-         NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
-         
-         ::Nitrogen::HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
-                                                                fork.Name().size(),
-                                                                fork.Name().data() ) );
-        }
-     };
   }
 
 namespace Nitrogen
@@ -1246,8 +1189,6 @@ namespace Nitrogen
 	void FSDeleteFork( const FSRef&      ref,
 	                   const UniString&  forkName );
 	
-   void FSDeleteFork( const FSForkRef& fork );
-   
    struct FSIterateForks_Result
      {
       HFSUniStr255 forkName;
@@ -1288,9 +1229,6 @@ namespace Nitrogen
                                             const UniString forkName,
                                             FSIOPermssn     permissions );
 
-   nucleus::owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
-                                            FSIOPermssn      permissions );
-	
 	ByteCount FSReadFork( FSForkRefNum    fork,
 	                      FSIOPosMode     positionMode,
 	                      SInt64          positionOffset,

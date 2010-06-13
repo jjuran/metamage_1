@@ -887,11 +887,6 @@ Return Value
 		FSDeleteFork( ref, forkName.size(), forkName.data() );
 	}
 	
-   void FSDeleteFork( const FSForkRef& fork )
-     {
-		FSDeleteFork( fork.File(), fork.Name() );
-     }
-
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
                                          CatPositionRec& forkIterator )
      {
@@ -921,12 +916,6 @@ Return Value
                                             FSIOPermssn     permissions )
      {
       return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
-     }
-
-   nucleus::owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
-                                            FSIOPermssn      permissions )
-     {
-      return FSOpenFork( fork.File(), fork.Name(), permissions );
      }
 	
 	ByteCount FSReadFork( FSForkRefNum    fork,
