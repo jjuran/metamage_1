@@ -15,11 +15,6 @@
 namespace Nitrogen
 {
 	
-	// Deprecated addressing modes under Carbon
-	static const DescType typeSessionID    = DescType( ::typeSessionID    );
-	static const DescType typeTargetID     = DescType( ::typeTargetID     );
-	static const DescType typeDispatcherID = DescType( ::typeDispatcherID );
-	
 	// TargetID is defined for Carbon, but typeTargetID is not.
 	
 	template <> struct DescType_Traits< typeTargetID > : nucleus::POD_scribe< TargetID > {};

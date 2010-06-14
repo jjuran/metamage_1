@@ -79,6 +79,15 @@ namespace Nitrogen
 		typeApplicationURL         = ::typeApplicationURL,
 		typeNull                   = ::typeNull,
 		
+	#if CALL_NOT_IN_CARBON
+		
+		// Deprecated addressing modes under Carbon
+		typeSessionID    = ::typeSessionID,
+		typeTargetID     = ::typeTargetID,
+		typeDispatcherID = ::typeDispatcherID,
+		
+	#endif
+		
 		// AEObjects
 		// ---------
 		
