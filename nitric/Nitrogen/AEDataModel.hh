@@ -21,6 +21,12 @@
 #include <Events.h>
 #endif
 
+#if CALL_NOT_IN_CARBON
+#ifndef __EPPC__
+#include <EPPC.h>
+#endif
+#endif
+
 // iota
 #include "iota/distance.hh"
 
@@ -248,6 +254,13 @@ namespace Nitrogen
 	template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 	
 	template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
+	
+#if CALL_NOT_IN_CARBON
+	
+	// TargetID is defined for Carbon, but typeTargetID is not.
+	template<> struct DescType_Traits< typeTargetID > : nucleus::POD_scribe< TargetID > {};
+	
+#endif
 	
 	template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
 	template<> struct DescType_Traits< typeSInt16 >                 : nucleus::POD_scribe< SInt16 >      {};
