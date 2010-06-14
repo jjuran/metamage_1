@@ -29,7 +29,6 @@
 #if CALL_NOT_IN_CARBON
 
 // ClassicToolbox
-#include "ClassicToolbox/AEDataModel.hh"
 #include "ClassicToolbox/AppleTalk.hh"
 #include "ClassicToolbox/EPPC.hh"
 #include "ClassicToolbox/PPCToolbox.hh"
