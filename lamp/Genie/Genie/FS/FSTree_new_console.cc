@@ -36,6 +36,7 @@
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -92,7 +93,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, ConsoleParameters > ConsoleParametersMap;
+	typedef simple_map< const FSTree*, ConsoleParameters > ConsoleParametersMap;
 	
 	static ConsoleParametersMap gConsoleParametersMap;
 	

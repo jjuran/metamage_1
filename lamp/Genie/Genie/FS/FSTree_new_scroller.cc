@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_scroller.hh"
 
-// Standard C++
-#include <map>
-
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -27,6 +24,7 @@
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -46,7 +44,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, BasicScrollerParameters > BasicScrollerParametersMap;
+	typedef simple_map< const FSTree*, BasicScrollerParameters > BasicScrollerParametersMap;
 	
 	static BasicScrollerParametersMap  gBasicScrollerParametersMap;
 	

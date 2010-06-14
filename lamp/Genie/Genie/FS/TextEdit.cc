@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <map>
 
 // Iota
 #include "iota/decimal.hh"
@@ -29,6 +28,7 @@
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -39,7 +39,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, TextEditParameters > TextEditParametersMap;
+	typedef simple_map< const FSTree*, TextEditParameters > TextEditParametersMap;
 	
 	static TextEditParametersMap gTextEditParametersMap;
 	
@@ -67,7 +67,7 @@ namespace Genie
 			return NULL;
 		}
 		
-		return &it->second;
+		return it;
 	}
 	
 	TextEditParameters& TextEditParameters::Get( const FSTree* key )

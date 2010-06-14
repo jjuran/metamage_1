@@ -5,8 +5,8 @@
 
 #include "Genie/FS/ScrollerBase.hh"
 
-// Standard C++
-#include <map>
+// Genie
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -15,7 +15,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, ScrollerParameters > ScrollerParametersMap;
+	typedef simple_map< const FSTree*, ScrollerParameters > ScrollerParametersMap;
 	
 	static ScrollerParametersMap gScrollerParametersMap;
 	
@@ -26,7 +26,7 @@ namespace Genie
 		
 		if ( it != gScrollerParametersMap.end() )
 		{
-			return &it->second;
+			return it;
 		}
 		
 		return NULL;

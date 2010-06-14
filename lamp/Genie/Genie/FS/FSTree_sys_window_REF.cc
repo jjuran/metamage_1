@@ -43,6 +43,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -93,7 +94,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, WindowParameters > WindowParametersMap;
+	typedef simple_map< const FSTree*, WindowParameters > WindowParametersMap;
 	
 	static WindowParametersMap gWindowParametersMap;
 	
@@ -173,7 +174,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			WindowParameters& params = it->second;
+			WindowParameters& params = *it;
 			
 			if ( !Disconnect_Window_Terminal( params.itsTerminal ) )
 			{
@@ -218,7 +219,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			WindowParameters& params = it->second;
+			WindowParameters& params = *it;
 			
 			if ( !params.itsTerminal.expired() )
 			{
@@ -248,7 +249,7 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
-		WindowParameters& params = it->second;
+		WindowParameters& params = *it;
 		
 		ConstStr255Param title = params.itsTitle;
 		
@@ -301,7 +302,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			WindowParameters& params = it->second;
+			WindowParameters& params = *it;
 			
 			Disconnect_Window_Terminal( params.itsTerminal );
 			
@@ -319,7 +320,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			WindowParameters& params = it->second;
+			WindowParameters& params = *it;
 			
 			if ( params.itsFocus == view )
 			{
@@ -441,7 +442,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			const boost::intrusive_ptr< Ped::Window >& window = it->second.itsWindow;
+			const boost::intrusive_ptr< Ped::Window >& window = it->itsWindow;
 			
 			if ( window.get() != NULL )
 			{
@@ -605,7 +606,7 @@ namespace Genie
 		
 		if ( it != gWindowParametersMap.end() )
 		{
-			WindowParameters& params = it->second;
+			WindowParameters& params = *it;
 			
 			return params.itsFocus;
 		}
@@ -849,7 +850,7 @@ namespace Genie
 			throw FSTree_Property::Undefined();
 		}
 		
-		return it->second;
+		return *it;
 	}
 	
 	

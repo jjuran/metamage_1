@@ -6,7 +6,6 @@
 #include "Genie/FS/FSTree_new_stack.hh"
 
 // Standard C++
-#include <map>
 #include <vector>
 
 // Debug
@@ -18,6 +17,7 @@
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 /*
@@ -111,7 +111,7 @@ namespace Genie
 		return v.back();
 	}
 	
-	typedef std::map< const FSTree*, Stack_Parameters > Stack_Parameters_Map;
+	typedef simple_map< const FSTree*, Stack_Parameters > Stack_Parameters_Map;
 	
 	static Stack_Parameters_Map gStack_Parameters_Map;
 	

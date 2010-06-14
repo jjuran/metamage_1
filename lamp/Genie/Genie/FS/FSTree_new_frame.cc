@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_frame.hh"
 
-// Standard C++
-#include <map>
-
 // POSIX
 #include <fcntl.h>
 
@@ -27,6 +24,7 @@
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/Scribes.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -109,7 +107,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, FrameParameters > FrameParametersMap;
+	typedef simple_map< const FSTree*, FrameParameters > FrameParametersMap;
 	
 	static FrameParametersMap gFrameParametersMap;
 	
@@ -161,7 +159,7 @@ namespace Genie
 		
 		if ( it != gFrameParametersMap.end() )
 		{
-			return it->second.padding;
+			return it->padding;
 		}
 		
 		return 0;

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_button.hh"
 
-// Standard C++
-#include <map>
-
 // plus
 #include "plus/make_string.hh"
 
@@ -30,6 +27,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -59,7 +57,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, Button_Parameters > ButtonMap;
+	typedef simple_map< const FSTree*, Button_Parameters > ButtonMap;
 	
 	static ButtonMap gButtonMap;
 	
@@ -86,7 +84,7 @@ namespace Genie
 		
 		if ( it != gButtonMap.end() )
 		{
-			++it->second.seed;
+			++it->seed;
 		}
 	}
 	
@@ -239,8 +237,8 @@ namespace Genie
 		ButtonMap::const_iterator it = gButtonMap.find( view );
 		
 		const bool readable =    it == gButtonMap.end()
-		                      || !it->second.installed
-		                      || it->second.seed != itsSeed;
+		                      || !it->installed
+		                      || it->seed != itsSeed;
 		
 		return readable * kPollRead | kPollWrite;
 	}
@@ -253,12 +251,12 @@ namespace Genie
 		
 		ButtonMap::const_iterator it = gButtonMap.find( view );
 		
-		if ( it == gButtonMap.end()  ||  !it->second.installed )
+		if ( it == gButtonMap.end()  ||  !it->installed )
 		{
 			p7::throw_errno( ECONNRESET );
 		}
 		
-		const Button_Parameters& params = it->second;
+		const Button_Parameters& params = *it;
 		
 		if ( params.seed == itsSeed )
 		{
@@ -303,7 +301,7 @@ namespace Genie
 		
 		ButtonMap::const_iterator it = gButtonMap.find( view );
 		
-		if ( it == gButtonMap.end()  ||  !it->second.installed )
+		if ( it == gButtonMap.end()  ||  !it->installed )
 		{
 			p7::throw_errno( ECONNREFUSED );
 		}

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_caption.hh"
 
-// Standard C++
-#include <map>
-
 // POSIX
 #include <fcntl.h>
 
@@ -24,6 +21,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -43,7 +41,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, CaptionParameters > CaptionParametersMap;
+	typedef simple_map< const FSTree*, CaptionParameters > CaptionParametersMap;
 	
 	static CaptionParametersMap gCaptionParametersMap;
 	
@@ -77,7 +75,7 @@ namespace Genie
 		
 		if ( it != gCaptionParametersMap.end() )
 		{
-			result = it->second.itsText;
+			result = it->itsText;
 		}
 		
 		std::replace( result.begin(), result.end(), '\n', '\r' );
@@ -91,7 +89,7 @@ namespace Genie
 		
 		if ( it != gCaptionParametersMap.end() )
 		{
-			return it->second.itIsWrapped;
+			return it->itIsWrapped;
 		}
 		
 		return true;
@@ -103,7 +101,7 @@ namespace Genie
 		
 		if ( it != gCaptionParametersMap.end() )
 		{
-			return !itIsActive && it->second.disabling;
+			return !itIsActive && it->disabling;
 		}
 		
 		return false;

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_icon.hh"
 
-// Standard C++
-#include <map>
-
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
@@ -23,6 +20,7 @@
 #include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/Icon_data.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Nitrogen
@@ -53,7 +51,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, Icon_Parameters > IconMap;
+	typedef simple_map< const FSTree*, Icon_Parameters > IconMap;
 	
 	static IconMap gIconMap;
 	

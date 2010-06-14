@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_list.hh"
 
-// Standard C++
-#include <map>
-
 // POSIX
 #include <fcntl.h>
 
@@ -26,6 +23,7 @@
 #include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -49,7 +47,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, ListParameters > ListParameterMap;
+	typedef simple_map< const FSTree*, ListParameters > ListParameterMap;
 	
 	static ListParameterMap gListParameterMap;
 	

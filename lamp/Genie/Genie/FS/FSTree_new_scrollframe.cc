@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_new_scrollframe.hh"
 
-// Standard C++
-#include <map>
-
 // Nitrogen
 #include "Nitrogen/Controls.hh"
 
@@ -25,6 +22,7 @@
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -52,7 +50,7 @@ namespace Genie
 		}
 	};
 	
-	typedef std::map< const FSTree*, ScrollFrameParameters > ScrollFrameParametersMap;
+	typedef simple_map< const FSTree*, ScrollFrameParameters > ScrollFrameParametersMap;
 	
 	static ScrollFrameParametersMap gScrollFrameParametersMap;
 	
@@ -80,7 +78,7 @@ namespace Genie
 		
 		if ( it != gScrollFrameParametersMap.end() )
 		{
-			Ped::ScrollerAPI* proxy = &it->second.itsTargetProxy;
+			Ped::ScrollerAPI* proxy = &it->itsTargetProxy;
 			
 			return proxy;
 		}
@@ -103,7 +101,7 @@ namespace Genie
 		
 		if ( it != gScrollFrameParametersMap.end() )
 		{
-			if ( Ped::ScrollerAPI* proxy = &it->second.itsTargetProxy )
+			if ( Ped::ScrollerAPI* proxy = &it->itsTargetProxy )
 			{
 				int clientLength = vertical ? proxy->ClientHeight() : proxy->ClientWidth();
 				int viewLength   = vertical ? proxy->ViewHeight  () : proxy->ViewWidth  ();

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/Views.hh"
 
-// Standard C++
-#include <map>
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -16,6 +13,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_sys_window_REF.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -50,7 +48,7 @@ namespace Genie
 	
 	typedef std::map< plus::string, ViewParameters > ViewParametersSubMap;
 	
-	typedef std::map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
+	typedef simple_map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	
@@ -61,7 +59,7 @@ namespace Genie
 		
 		if ( the_submap != gViewParametersMap.end() )
 		{
-			const ViewParametersSubMap& submap = the_submap->second;
+			const ViewParametersSubMap& submap = *the_submap;
 			
 			ViewParametersSubMap::const_iterator it = submap.find( name );
 			
@@ -134,7 +132,7 @@ namespace Genie
 		
 		if ( it != gViewParametersMap.end() )
 		{
-			ViewParametersSubMap& submap = it->second;
+			ViewParametersSubMap& submap = *it;
 			
 			ViewParametersSubMap::iterator jt = submap.find( name );
 			
@@ -166,7 +164,7 @@ namespace Genie
 		{
 			ViewParametersSubMap temp;
 			
-			temp.swap( it->second );
+			temp.swap( *it );
 			
 			gViewParametersMap.erase( it );
 			
