@@ -11,7 +11,7 @@
 #include <iterator>
 
 // Genie
-#include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/FS/FSTree_Null.hh"
 
 
@@ -29,7 +29,13 @@ namespace Genie
 		public:
 			FSIterator_Cache( const FSTreeCachePtr& cache ) : contents( cache ), nextOffset( 0 )  {}
 			
-			FSNode Get() const  { return nextOffset < contents->size() ? contents->at( nextOffset ) : FSNode(); }
+			FSNode Get() const
+			{
+				const FSTreeCache_Impl* impl = static_cast< const FSTreeCache_Impl* >( contents.get() );
+				
+				return nextOffset < impl->size() ? impl->at( nextOffset )
+				                                 : FSNode();
+			}
 			
 			void Advance()  { ++nextOffset; }
 			
@@ -47,14 +53,14 @@ namespace Genie
 	
 	FSIteratorPtr FSTree_Directory::Iterate() const
 	{
-		FSTreeCache cache;
+		FSTreeCache_Impl cache;
 		
 		cache.push_back( FSNode( Inode(),       "."  ) );
 		cache.push_back( FSNode( ParentInode(), ".." ) );
 		
 		IterateIntoCache( cache );
 		
-		FSTreeCache* newCache = new FSTreeCache();
+		FSTreeCache_Impl* newCache = new FSTreeCache_Impl();
 		
 		FSTreeCachePtr cachePtr( newCache );
 		
