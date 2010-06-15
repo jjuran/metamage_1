@@ -463,25 +463,25 @@ namespace Genie
 	
 	namespace
 	{
-		
-		void ProcessThreadEntry( Process* process )
+	
+	void ProcessThreadEntry( Process* process )
+	{
+		try
 		{
-			try
-			{
-				process->InitThread();
-				
-				int exit_status = process->Run();
-				
-				process->Exit( exit_status );
-				
-				// Not reached
-			}
-			catch ( ... )
-			{
-				abort();
-			}
+			process->InitThread();
+			
+			int exit_status = process->Run();
+			
+			process->Exit( exit_status );
+			
+			// Not reached
 		}
-		
+		catch ( ... )
+		{
+			abort();
+		}
+	}
+	
 	}
 	
 	
