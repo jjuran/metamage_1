@@ -464,8 +464,12 @@ namespace Genie
 	namespace
 	{
 	
-	void ProcessThreadEntry( Process* process )
+	pascal void* ProcessThreadEntry( void* param )
 	{
+		Process* process = reinterpret_cast< Process* >( param );
+		
+		N::Terminate_ThreadStack();
+		
 		try
 		{
 			process->InitThread();
@@ -480,6 +484,10 @@ namespace Genie
 		{
 			abort();
 		}
+		
+		// Not reached
+		
+		return NULL;
 	}
 	
 	}
