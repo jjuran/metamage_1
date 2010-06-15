@@ -240,18 +240,18 @@ namespace Nitrogen
 	
 	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
-	                                      void*           threadParam,
-	                                      std::size_t     stackSize,
-	                                      ThreadOptions   options,
+	                                      void*           threadParam  = NULL,
+	                                      std::size_t     stackSize    = std::size_t( 0 ),
+	                                      ThreadOptions   options      = ThreadOptions(),
 	                                      void**          threadResult = NULL );
 	
 	// Level 1, creates static UPP
 	
 	template < ::ThreadEntryProcPtr threadEntry >
 	inline nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                                             void*           threadParam,
-	                                             std::size_t     stackSize,
-	                                             ThreadOptions   options,
+	                                             void*           threadParam  = NULL,
+	                                             std::size_t     stackSize    = std::size_t( 0 ),
+	                                             ThreadOptions   options      = ThreadOptions(),
 	                                             void**          threadResult = NULL )
 	{
 		return NewThread( threadStyle,
