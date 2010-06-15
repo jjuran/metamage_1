@@ -419,8 +419,6 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		itsStackBottomPtr = recall::get_stack_frame_pointer();
-		
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
 		
@@ -461,11 +459,42 @@ namespace Genie
 		return exit_status;
 	}
 	
+	
+	recall::stack_frame_pointer Init_Thread();
+	
+#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
+	
+	asm recall::stack_frame_pointer Init_Thread()
+	{
+		lwz r4,0(sp)
+		li  r0,0
+		lwz r3,0(r4)
+		stw r0,0(r3)
+	}
+	
+#elif TARGET_CPU_68K
+	
+	asm recall::stack_frame_pointer Init_Thread()
+	{
+		MOVEA.L (A6),A0
+		RTS
+	}
+	
+#else
+	
+	inline recall::stack_frame_pointer Init_Thread()
+	{
+		return NULL;
+	}
+	
+#endif
+	
+	
 	pascal void* Process::ThreadEntry( void* param )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		N::Terminate_ThreadStack();
+		process->itsStackBottomPtr = Init_Thread();
 		
 		try
 		{
