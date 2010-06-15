@@ -181,6 +181,8 @@ namespace Genie
 			
 			~Process();
 			
+			static pascal void* ThreadEntry( void* param );
+			
 			int Run();
 			
 			const plus::string& GetCmdLine() const  { return itsParameters->itsCmdLine.Data(); }

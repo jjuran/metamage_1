@@ -461,10 +461,7 @@ namespace Genie
 		return exit_status;
 	}
 	
-	namespace
-	{
-	
-	pascal void* ProcessThreadEntry( void* param )
+	pascal void* Process::ThreadEntry( void* param )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
@@ -488,8 +485,6 @@ namespace Genie
 		// Not reached
 		
 		return NULL;
-	}
-	
 	}
 	
 	
@@ -959,9 +954,7 @@ namespace Genie
 		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
-		                                                            this,
-		                                                            stackSize );
+		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
 		if ( itsCleanupHandler != NULL )
 		{
@@ -1025,9 +1018,7 @@ namespace Genie
 		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
-		                                                            this,
-		                                                            stackSize );
+		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
