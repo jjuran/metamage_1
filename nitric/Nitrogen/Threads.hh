@@ -369,7 +369,14 @@ namespace Nitrogen
 	
 	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle );
 	
-	std::size_t ThreadCurrentStackSpace( ThreadID thread );
+	inline std::size_t ThreadCurrentStackSpace( ThreadID thread )
+	{
+		UInt32 result;
+		
+		ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
+		
+		return result;
+	}
 	
 	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*              threadResult,
