@@ -29,6 +29,10 @@
 // #endif
 
 
+// Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
+#include "Mac/Files/Types/FSType.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -99,14 +103,14 @@ namespace Nitrogen {
 		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
-	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator, CFStringRef inExtension ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( Mac::FSType inType, Mac::FSCreator inCreator, CFStringRef inExtension ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForTypeInfo ( inType, inCreator, inExtension, &result ));
 		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 	
 //	Helpful special cases
-	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( OSType inType, OSType inCreator ) {
+	inline nucleus::owned<CFStringRef> LSCopyKindStringForTypeInfo ( Mac::FSType inType, Mac::FSCreator inCreator ) {
 		CFStringRef result;
 		ThrowOSStatus ( ::LSCopyKindStringForTypeInfo ( inType, inCreator, NULL, &result ));
 		return nucleus::owned<CFStringRef>::seize ( result );
@@ -145,18 +149,18 @@ namespace Nitrogen {
 
 
 	template <typename T>
-	T LSGetApplicationForInfo ( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
+	T LSGetApplicationForInfo ( Mac::FSType inType, Mac::FSCreator inCreator, LSRolesMask inRoleMask );
 	
-//	FSRef			LSGetApplicationForInfo < FSRef > 			( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
-//	nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask );
+//	FSRef			LSGetApplicationForInfo < FSRef > 			( Mac::FSType inType, Mac::FSCreator inCreator, LSRolesMask inRoleMask );
+//	nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( Mac::FSType inType, Mac::FSCreator inCreator, LSRolesMask inRoleMask );
 
-	template <> inline FSRef LSGetApplicationForInfo < FSRef > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask ) {
+	template <> inline FSRef LSGetApplicationForInfo < FSRef > ( Mac::FSType inType, Mac::FSCreator inCreator, LSRolesMask inRoleMask ) {
 		FSRef retVal;
 		ThrowOSStatus ( ::LSGetApplicationForInfo ( inType, inCreator, NULL, inRoleMask, &retVal, NULL ));
 		return retVal;
 		}
 
-	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inType, OSType inCreator, LSRolesMask inRoleMask ) {
+	template <> inline nucleus::owned<CFURLRef> LSGetApplicationForInfo < nucleus::owned<CFURLRef> > ( Mac::FSType inType, Mac::FSCreator inCreator, LSRolesMask inRoleMask ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSGetApplicationForInfo ( inType, inCreator, NULL, inRoleMask, NULL, &result ));
 		return nucleus::owned<CFURLRef>::seize ( result );
@@ -225,18 +229,18 @@ namespace Nitrogen {
 
 
 	template <typename T>
-	T LSFindApplicationForInfo ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
+	T LSFindApplicationForInfo ( Mac::FSCreator inCreator, CFStringRef inBundleID, CFStringRef inName );
 	
-//	FSRef			LSFindApplicationForInfo < FSRef > 			 ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
-//	nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName );
+//	FSRef			LSFindApplicationForInfo < FSRef > 			 ( Mac::FSCreator inCreator, CFStringRef inBundleID, CFStringRef inName );
+//	nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( Mac::FSCreator inCreator, CFStringRef inBundleID, CFStringRef inName );
 
-	template <> inline FSRef LSFindApplicationForInfo < FSRef > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName ) {
+	template <> inline FSRef LSFindApplicationForInfo < FSRef > ( Mac::FSCreator inCreator, CFStringRef inBundleID, CFStringRef inName ) {
 		FSRef retVal;
 		ThrowOSStatus ( ::LSFindApplicationForInfo ( inCreator, inBundleID, inName, &retVal, NULL ));
 		return retVal;		
 		}
 	
-	template <> inline nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( OSType inCreator, CFStringRef inBundleID, CFStringRef inName ) {
+	template <> inline nucleus::owned<CFURLRef> LSFindApplicationForInfo < nucleus::owned<CFURLRef> > ( Mac::FSCreator inCreator, CFStringRef inBundleID, CFStringRef inName ) {
 		CFURLRef result;
 		ThrowOSStatus ( ::LSFindApplicationForInfo ( inCreator, inBundleID, inName, NULL, &result ));
 		return nucleus::owned<CFURLRef>::seize ( result );
