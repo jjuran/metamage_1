@@ -26,6 +26,9 @@
 // #include <CoreServices/CoreServices.h>
 // #endif
 
+// Nitrogen
+#include "Mac/Files/Types/FSType.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -117,7 +120,7 @@ namespace Nitrogen {
 
 	struct UTCreateStringForOSType_Failed {};
 	
-	inline nucleus::owned<CFStringRef> UTCreateStringForOSType ( OSType inOSType ) {
+	inline nucleus::owned<CFStringRef> UTCreateStringForOSType ( Mac::FSType inOSType ) {
 		CFStringRef result = ::UTCreateStringForOSType ( inOSType );
 //  Result:
 //    a new CFString representing the OSType, or NULL if the argument
@@ -129,12 +132,12 @@ namespace Nitrogen {
 
 	struct UTGetOSTypeFromString_Failed {};
 
-	inline OSType UTGetOSTypeFromString ( CFStringRef inString ) {
-		OSType retVal = OSType( ::UTGetOSTypeFromString ( inString ) );
+	inline Mac::FSType UTGetOSTypeFromString ( CFStringRef inString ) {
+		Mac::FSType retVal = Mac::FSType( ::UTGetOSTypeFromString ( inString ) );
 //  Result:
 //    the OSType value encoded in the string, or 0 if the string is not
 //    a valid encoding of an OSType
-		if ( retVal == OSType() )
+		if ( retVal == Mac::FSType() )
 			throw UTGetOSTypeFromString_Failed ();
 		return retVal;
 		}
