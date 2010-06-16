@@ -21,6 +21,10 @@
 // nucleus
 #include "nucleus/owned.hh"
 
+// Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
+#include "Mac/Files/Types/FSType.hh"
+
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -337,8 +341,8 @@ NavTranslateFile(
 
 	inline nucleus::owned<NavDialogRef> NavCreatePutFileDialog (
 			const NavDialogCreationOptions *  inOptions, /* Can be NULL */
-			OSType                            inFileType,
-			OSType                            inFileCreator,
+			Mac::FSType                       inFileType,
+			Mac::FSCreator                    inFileCreator,
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
