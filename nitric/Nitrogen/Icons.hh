@@ -25,12 +25,13 @@
 #include "nucleus/resource_transfer.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
+#include "Mac/Files/Types/FSType.hh"
 #include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 #include "Mac/Icons/Types/IconRef.hh"
-#include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"
@@ -100,7 +101,7 @@ namespace Nitrogen
 	
 	// ...
 	
-	static const Mac::OSType kSystemIconsCreator = Mac::OSType( ::kSystemIconsCreator );
+	static const Mac::FSCreator kSystemIconsCreator = Mac::FSCreator( ::kSystemIconsCreator );
 	
 	// ResType 'ICON'
 	struct PlainIcon
@@ -378,12 +379,12 @@ namespace Nitrogen
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
 
 	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum  vRefNum,
-	                                      Mac::OSType          creator,
-	                                      Mac::OSType          iconType );
+	                                      Mac::FSCreator       creator,
+	                                      Mac::FSType          iconType );
 	
-	nucleus::owned< IconRef > GetIconRef( Mac::OSType creator, Mac::OSType iconType );
+	nucleus::owned< IconRef > GetIconRef( Mac::FSCreator creator, Mac::FSType iconType );
 	
-	nucleus::owned< IconRef > GetIconRef( Mac::OSType iconType );
+	nucleus::owned< IconRef > GetIconRef( Mac::FSType iconType );
 	
 	nucleus::owned<IconRef> GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
 	                                              Mac::FSDirID             parentFolderID,
@@ -472,7 +473,7 @@ namespace Nitrogen
 	// RegisterIconRefFromIconFamily
 	// RegisterIconRefFromResource
 	
-   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::OSType creator, Mac::OSType iconType, const FSRef& iconFile );
+   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::FSCreator creator, Mac::FSType iconType, const FSRef& iconFile );
 	
 	// UnregisterIconRef
 	// UpdateIconRef
@@ -485,13 +486,13 @@ namespace Nitrogen
 	// ... Flushing IconRef data
 	// ... Controling custom icons
 	
-	nucleus::owned< IconRef > RegisterIconRefFromIconFile( Mac::OSType    creator,
-	                                                       Mac::OSType    iconType,
-	                                                       const FSSpec&  iconFile );
+	nucleus::owned< IconRef > RegisterIconRefFromIconFile( Mac::FSCreator  creator,
+	                                                       Mac::FSType     iconType,
+	                                                       const FSSpec&   iconFile );
 
    inline nucleus::owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, Mac::OSType( 0 ), iconFile );
+      return RegisterIconRefFromIconFile( kSystemIconsCreator, Mac::FSType( 0 ), iconFile );
      }
 	
 	// ReadIconFile
