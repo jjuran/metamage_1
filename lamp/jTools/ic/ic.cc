@@ -156,7 +156,7 @@ namespace tool
 		std::printf( "v%d: %s - %s: %s\n", version, extension, creatorAppName, MIMEType );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		N::OSType signature = N::OSType( 'Poof' );
 		

@@ -283,7 +283,7 @@ namespace tool
 		return addr;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const char* remote_host;
 		

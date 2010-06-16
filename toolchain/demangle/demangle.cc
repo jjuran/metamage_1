@@ -36,7 +36,7 @@ namespace tool
 		p7::write( p7::stdout_fileno, demangled );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		while ( *++argv != NULL )
 		{

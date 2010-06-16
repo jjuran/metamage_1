@@ -121,7 +121,7 @@ namespace tool
 		gInfoMutators.push_back( &setter );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		o::bind_option_trigger_with_param( "-c", std::ptr_fun( CreatorOptor ) );
 		o::bind_option_trigger_with_param( "-t", std::ptr_fun( TypeOptor    ) );

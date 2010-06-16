@@ -269,7 +269,7 @@ namespace tool
 	}
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > inlineScriptPieces;
 		

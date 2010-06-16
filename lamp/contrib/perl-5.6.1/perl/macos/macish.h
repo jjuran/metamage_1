@@ -10,7 +10,7 @@ Author	:	Matthias Neeracher
 
 #include <ConditionalMacros.h>
 
-#include "iota/environ.hh"
+extern char** environ;
 
 /* For now we get compiler this way, until we can
    find a better way */

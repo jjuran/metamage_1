@@ -25,7 +25,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	typedef int (*Extended_Entry)( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher );
+	typedef int (*Extended_Entry)( int argc, char** argv, char** envp, Dispatcher dispatcher );
 	
 	
 	class AddressMain : public MainEntryPoint
@@ -44,7 +44,7 @@ namespace Genie
 				ASSERT( itsEntry != NULL );
 			}
 			
-			int Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher )
+			int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher )
 			{
 				ASSERT( itsEntry != NULL );
 				
@@ -105,10 +105,10 @@ namespace Genie
 			{
 			}
 			
-			int Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher );
+			int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher );
 	};
 	
-	int CFMPluginMain::Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher )
+	int CFMPluginMain::Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher )
 	{
 		Extended_Entry lamp_main = NULL;
 		

@@ -196,7 +196,7 @@ namespace tool
 	}
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		global_SysErrs_dot_err_fd = p7::open( Find_SysErrsDotErr(), p7::o_rdonly ).release();
 		

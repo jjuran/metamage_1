@@ -39,7 +39,7 @@ namespace tool
 		return pathname;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const char* sleep_arg = NULL;
 		

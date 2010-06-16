@@ -34,7 +34,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static void ServiceClient( p7::fd_t client, iota::argv_t argv )
+	static void ServiceClient( p7::fd_t client, char** argv )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -51,7 +51,7 @@ namespace tool
 		}
 	}
 	
-	static void WaitForClients( p7::fd_t listener, iota::argv_t argv )
+	static void WaitForClients( p7::fd_t listener, char** argv )
 	{
 		while ( true )
 		{
@@ -62,7 +62,7 @@ namespace tool
 		}
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc <= 2 )
 		{

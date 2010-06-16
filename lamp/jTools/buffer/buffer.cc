@@ -100,7 +100,7 @@ namespace tool
 		p7::_exit( p7::exit_success );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool should_wait = false;
 		

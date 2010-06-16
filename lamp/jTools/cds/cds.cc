@@ -247,7 +247,7 @@ namespace tool
 		return EXIT_FAILURE;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc <= 1 )
 		{
@@ -285,7 +285,7 @@ namespace tool
 	
 #else
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		p7::write( p7::stderr_fileno, STR_LEN( "cds: Sorry, no Carbon support!\n" ) );
 		

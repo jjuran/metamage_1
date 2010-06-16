@@ -96,7 +96,7 @@ namespace tool
 		return command;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool escapeForMPW = false;
 		bool switchLayers = false;

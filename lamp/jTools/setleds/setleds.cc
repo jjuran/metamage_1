@@ -123,7 +123,7 @@ namespace tool
 	#endif
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -135,7 +135,7 @@ namespace tool
 		
 		int count = N::CountADBs();
 		
-		for ( iota::argp_t argp = argv + 1;  *argp != NULL;  ++argp )
+		for ( char** argp = argv + 1;  *argp != NULL;  ++argp )
 		{
 			const char* arg = *argp;
 			

@@ -33,7 +33,7 @@ namespace Orion
 	
 	namespace p7 = poseven;
 	
-	extern "C" int main( int argc, iota::argv_t argv );
+	extern "C" int main( int argc, char** argv );
 	
 	
 	static void ShowDebuggingContext( const void* stack_bottom_limit )
@@ -89,7 +89,7 @@ namespace Orion
 	}
 	
 	
-	int main( int argc, iota::argv_t argv )
+	int main( int argc, char** argv )
 	{
 		const void* stackBottom = recall::get_stack_frame_pointer();
 		

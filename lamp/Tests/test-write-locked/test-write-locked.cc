@@ -46,7 +46,7 @@ namespace tool
 		p7::write( fd, STR_LEN( TEST_STRING ) );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		p7::write( p7::stdout_fileno, STR_LEN( "1..3\n" ) );
 		

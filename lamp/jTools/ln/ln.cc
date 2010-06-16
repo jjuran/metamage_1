@@ -52,7 +52,7 @@ namespace tool
 	}
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const bool symbolic = argc > 1  &&  std::strcmp( argv[ 1 ], "-s" ) == 0;
 		

@@ -6,10 +6,6 @@
 #ifndef GENIE_MAINENTRYPOINT_HH
 #define GENIE_MAINENTRYPOINT_HH
 
-// Iota
-#include "iota/argv.hh"
-#include "iota/environ.hh"
-
 // plus
 #include "plus/ref_count.hh"
 
@@ -25,7 +21,7 @@ namespace Genie
 		public:
 			virtual ~MainEntryPoint();
 			
-			virtual int Invoke( int argc, iota::argv_t argv, iota::envp_t envp, Dispatcher dispatcher ) = 0;
+			virtual int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher ) = 0;
 	};
 	
 }

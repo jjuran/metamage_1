@@ -5,9 +5,6 @@
 #ifndef BUILTINS_HH
 #define BUILTINS_HH
 
-// Iota
-#include "iota/argv.hh"
-
 // plus
 #include "plus/string.hh"
 
@@ -25,7 +22,7 @@ namespace plus
 namespace tool
 {
 	
-	typedef poseven::exit_t (*Builtin)( int argc, iota::argv_t argv );
+	typedef poseven::exit_t (*Builtin)( int argc, char** argv );
 	
 	void AssignShellVariable( const char* name, const char* value );
 	

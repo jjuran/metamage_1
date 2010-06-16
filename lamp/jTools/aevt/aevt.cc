@@ -145,7 +145,7 @@ namespace tool
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
 	// shell$ aevt -s hhgg aevt quit
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool front = false;
 		

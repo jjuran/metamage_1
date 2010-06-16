@@ -127,7 +127,7 @@ namespace p7 = poseven;
 namespace Div = Divergence;
 
 
-static int TestUnit( int argc, iota::argv_t argv )
+static int TestUnit( int argc, char** argv )
 {
 	Test::SampleTester tester;
 	
@@ -140,7 +140,7 @@ static int TestUnit( int argc, iota::argv_t argv )
 	return (status + 2) % 3;  // 0 => passed, 1 => failed, 2 => missed
 }
 
-static int TestAssert( int argc, iota::argv_t argv )
+static int TestAssert( int argc, char** argv )
 {
 	ASSERT( "This" == "a test" );
 	//TEST_ASSERT( "This" == "a test" );
@@ -148,7 +148,7 @@ static int TestAssert( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestMap( int argc, iota::argv_t argv )
+static int TestMap( int argc, char** argv )
 {
 	std::vector< plus::string > foo;
 	
@@ -310,7 +310,7 @@ TEST( Vector )
 	TEST_ASSERT( V::MagnitudeSquared( v2 ) == 25 );
 }
 
-static int TestVectoria( int argc, iota::argv_t argv )
+static int TestVectoria( int argc, char** argv )
 {
 	namespace V = Vectoria;
 	
@@ -402,7 +402,7 @@ static bool TestAFPServer( const char* serverName )
 
 #endif  // #if !TARGET_API_MAC_CARBON
 
-static int TestAFP( int argc, iota::argv_t argv )
+static int TestAFP( int argc, char** argv )
 {
 	const char* server = argv[ 2 ];
 	
@@ -429,7 +429,7 @@ static int TestAFP( int argc, iota::argv_t argv )
 }
 
 
-static int TestDate( int argc, iota::argv_t argv )
+static int TestDate( int argc, char** argv )
 {
 	std::printf( "DateTime == %.8x\n", N::GetDateTime() );
 	
@@ -513,7 +513,7 @@ static short CalcCRC(register const unsigned char *dataBuf, register long size)
 	return crc;
 }
 
-static int TestCRC16( int argc, iota::argv_t argv )
+static int TestCRC16( int argc, char** argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -531,7 +531,7 @@ static int TestCRC16( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestCRC32( int argc, iota::argv_t argv )
+static int TestCRC32( int argc, char** argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -580,7 +580,7 @@ TEST( MD5 )
 	                                                           "5678901234567890" ) );
 }
 
-static int TestMD5( int argc, iota::argv_t argv )
+static int TestMD5( int argc, char** argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -593,7 +593,7 @@ static int TestMD5( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestOADC( int argc, iota::argv_t argv )
+static int TestOADC( int argc, char** argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -622,7 +622,7 @@ static void print_string( ConstStr255Param str )
 	p7::write( p7::stdout_fileno, output );
 }
 
-static int TestSoundInput( int argc, iota::argv_t argv )
+static int TestSoundInput( int argc, char** argv )
 {
 	std::for_each( N::SoundInputDevice_Names().begin(),
 	               N::SoundInputDevice_Names().end(),
@@ -652,7 +652,7 @@ static void PrintString( std::string s )
 }
 */
 
-static int TestAE( int argc, iota::argv_t argv )
+static int TestAE( int argc, char** argv )
 {
 	//if (argc < 3)  return 1;
 	n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
@@ -740,7 +740,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	}
 }
 
-static int TestServices( int argc, iota::argv_t argv )
+static int TestServices( int argc, char** argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -771,7 +771,7 @@ static void WriteToNull( int foo )
 	*null = foo;
 }
 
-static int TestNull( int argc, iota::argv_t argv )
+static int TestNull( int argc, char** argv )
 {
 	int foo = ReadFromNull();
 	
@@ -816,7 +816,7 @@ static int TestNull( int argc, iota::argv_t argv )
 		return result;
 	}
 	
-static int TestGMFShared( int argc, iota::argv_t argv )
+static int TestGMFShared( int argc, char** argv )
 {
 #if TARGET_RT_MAC_CFM
 	
@@ -849,7 +849,7 @@ static int TestGMFShared( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestStrError( int argc, iota::argv_t argv )
+static int TestStrError( int argc, char** argv )
 {
 	errno = 0;
 	
@@ -865,7 +865,7 @@ static int TestStrError( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestThrow( int argc, iota::argv_t argv )
+static int TestThrow( int argc, char** argv )
 {
 	if ( argc < 3 )  return 1;
 	
@@ -879,7 +879,7 @@ static int TestThrow( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestReadLoc( int argc, iota::argv_t argv )
+static int TestReadLoc( int argc, char** argv )
 {
 	//if ( argc < 3 )  return 1;
 	
@@ -975,7 +975,7 @@ static inline void MoveWindowTo( p7::fd_t pos_fd, Point point )
 	p7::write( pos_fd, (const char*) &point, sizeof point );
 }
 
-static int TestPath( int argc, iota::argv_t argv )
+static int TestPath( int argc, char** argv )
 {
 	if ( argc < 3 )
 	{
@@ -1066,7 +1066,7 @@ void TestMangling( Foo::Bar_i_ )
 	TestMangling( bar );
 }
 
-static int TestMangling( int argc, iota::argv_t argv )
+static int TestMangling( int argc, char** argv )
 {
 	Foo::Bar_i_ bar_i_;
 	
@@ -1086,7 +1086,7 @@ static pascal void MyCallback()
 
 typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );
 
-static int TestCallback( int argc, iota::argv_t argv )
+static int TestCallback( int argc, char** argv )
 {
 	if ( argc <= 2 )
 	{
@@ -1116,7 +1116,7 @@ static int TestCallback( int argc, iota::argv_t argv )
 
 
 
-static int TestUnmangle( int argc, iota::argv_t argv )
+static int TestUnmangle( int argc, char** argv )
 {
 	if ( argc <= 2 )
 	{
@@ -1164,7 +1164,7 @@ static void Throw()
 	p7::throw_errno( ENOENT );
 }
 
-static int TestUnwind( int argc, iota::argv_t argv )
+static int TestUnwind( int argc, char** argv )
 {
 	plus::var_string report;
 	
@@ -1203,7 +1203,7 @@ static int TestUnwind( int argc, iota::argv_t argv )
 }
 
 
-static int TestForkAndStop( int argc, iota::argv_t argv )
+static int TestForkAndStop( int argc, char** argv )
 {
 	pid_t pid = vfork();
 	
@@ -1226,7 +1226,7 @@ static int TestForkAndStop( int argc, iota::argv_t argv )
 	return 0;
 }
 
-static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
+static int TestDefaultThreadStackSize( int argc, char** argv )
 {
 	Size size = 0;
 	
@@ -1275,7 +1275,7 @@ static void CheckObjects( int trial )
 	}
 }
 
-static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
+static int TestNucleusOwnedShared( int argc, char** argv )
 {
 	{
 		n::owned< Object* > foo = n::owned< Object* >::seize( new Object );
@@ -1344,7 +1344,7 @@ static int TestNucleusOwnedShared( int argc, iota::argv_t argv )
 	return 0;
 }
 
-typedef int (*MainProcPtr)( int argc, iota::argv_t argv );
+typedef int (*MainProcPtr)( int argc, char** argv );
 
 struct command_t
 {
@@ -1427,7 +1427,7 @@ static const command_t* find_command( const char* name )
 namespace tool
 {
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		plus::var_string message;
 		

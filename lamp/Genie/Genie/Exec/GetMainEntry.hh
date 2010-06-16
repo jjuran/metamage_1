@@ -6,9 +6,6 @@
 #ifndef GENIE_GETMAINENTRY_HH
 #define GENIE_GETMAINENTRY_HH
 
-// Iota
-#include "iota/argv.hh"
-
 // Genie
 #include "Genie/BinaryImage.hh"
 #include "Genie/Exec/MainEntry.hh"
@@ -17,8 +14,8 @@
 namespace Genie
 {
 	
-	typedef int (*Trivial_Entry )(                             );
-	typedef int (*Standard_Entry)( int argc, iota::argv_t argv );
+	typedef int (*Trivial_Entry )(                       );
+	typedef int (*Standard_Entry)( int argc, char** argv );
 	
 	
 	MainEntry GetMainEntryFromAddress( Trivial_Entry  address );

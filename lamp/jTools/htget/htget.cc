@@ -116,7 +116,7 @@ namespace tool
 		p7::pump( http_server, document_destination );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool sendHEADRequest = false;
 		bool dumpHeader      = false;

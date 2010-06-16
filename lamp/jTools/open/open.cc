@@ -297,7 +297,7 @@ namespace tool
 		LaunchApplicationWithDocsToOpen( appFile, items );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		DefineOptions();
 		

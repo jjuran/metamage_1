@@ -20,7 +20,7 @@ namespace tool
 	
 	namespace p7 = poseven;
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		// Check for correct number of args
 		if ( argc != 2 )

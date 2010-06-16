@@ -55,7 +55,7 @@ namespace tool
 		return p7::in_addr_t( addr.s_addr );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc != 3 )
 		{

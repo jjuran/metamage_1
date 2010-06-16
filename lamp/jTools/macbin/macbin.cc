@@ -126,7 +126,7 @@ namespace tool
 		return plus::concat( name, length, extension, STRLEN( ".mbin" ) );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const char* encode_target = NULL;
 		const char* decode_target = NULL;

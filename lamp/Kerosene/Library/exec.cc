@@ -16,11 +16,13 @@
 #include "unistd.h"
 
 // Iota
-#include "iota/environ.hh"
 #include "iota/strings.hh"
 
 
 #pragma exceptions off
+
+
+extern "C" char** environ;
 
 
 static inline void inscribe_decimal( int x, char* s )

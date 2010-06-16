@@ -122,7 +122,7 @@ namespace tool
 		}
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		p7::pid_t sid = p7::setsid();  // New session
 		

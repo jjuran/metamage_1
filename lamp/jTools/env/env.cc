@@ -12,19 +12,18 @@
 // POSIX
 #include <unistd.h>
 
-// Iota
-#include "iota/argv.hh"
-#include "iota/environ.hh"
-
 // plus
 #include "plus/var_string.hh"
+
+
+extern "C" char** environ;
 
 
 static void DumpEnvironment()
 {
 	plus::var_string output;
 	
-	for ( iota::envp_t envp = environ;  *envp != NULL;  ++envp )
+	for ( char** envp = environ;  *envp != NULL;  ++envp )
 	{
 		output += *envp;
 		output += "\n";

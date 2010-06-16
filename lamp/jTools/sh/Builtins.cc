@@ -24,7 +24,6 @@
 
 // Iota
 #include "iota/decimal.hh"
-#include "iota/environ.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -38,6 +37,9 @@
 #include "PositionalParameters.hh"
 #include "Execution.hh"
 #include "ReadExecuteLoop.hh"
+
+
+extern "C" char** environ;
 
 
 namespace tool
@@ -113,7 +115,7 @@ namespace tool
 	
 	// Builtins.  argc is guaranteed to be positive.
 	
-	static p7::exit_t Builtin_CD( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_CD( int argc, char** argv )
 	{
 		const char* dir = argv[1];
 		
@@ -147,7 +149,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Alias( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Alias( int argc, char** argv )
 	{
 		if ( argc == 1 )
 		{
@@ -184,7 +186,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Echo( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Echo( int argc, char** argv )
 	{
 		if ( argc > 1 )
 		{
@@ -201,7 +203,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Exit( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Exit( int argc, char** argv )
 	{
 		int exitStatus = 0;
 		
@@ -216,12 +218,12 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Export( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Export( int argc, char** argv )
 	{
 		if ( argc == 1 )
 		{
 			// $ export
-			iota::envp_t envp = environ;
+			char** envp = environ;
 			
 			while ( *envp != NULL )
 			{
@@ -231,7 +233,7 @@ namespace tool
 		}
 		else if ( argc == 2 )
 		{
-			iota::arg_t const arg1 = argv[ 1 ];
+			const char* const arg1 = argv[ 1 ];
 			
 			if ( const char* eq = std::strchr( arg1, '=' ) )
 			{
@@ -270,7 +272,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
+	static p7::exit_t Builtin_PWD( int argc, char** argv )
 	{
 		plus::var_string cwd;
 		
@@ -286,7 +288,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Set( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Set( int argc, char** argv )
 	{
 		if ( argc == 1 )
 		{
@@ -317,7 +319,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Unalias( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Unalias( int argc, char** argv )
 	{
 		while ( --argc )
 		{
@@ -327,7 +329,7 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Unset( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Unset( int argc, char** argv )
 	{
 		while ( --argc )
 		{
@@ -361,7 +363,7 @@ namespace tool
 			}
 	};
 	
-	static p7::exit_t BuiltinDot( int argc, iota::argv_t argv )
+	static p7::exit_t BuiltinDot( int argc, char** argv )
 	{
 		if ( argc < 2 )
 		{

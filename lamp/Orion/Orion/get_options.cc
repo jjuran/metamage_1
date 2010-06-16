@@ -153,7 +153,7 @@ namespace orion
 	static option_map_t      global_option_map;
 	static binding_vector_t  global_bindings;
 	
-	static std::vector< iota::arg_t > global_free_arguments;
+	static std::vector< char* > global_free_arguments;
 	
 	
 	static void skip_hyphen( const char*& p )
@@ -231,7 +231,7 @@ namespace orion
 	}
 	
 	
-	static void SetOption( const plus::string& name, iota::argp_t& it )
+	static void SetOption( const plus::string& name, char**& it )
 	{
 		const option_binding& binding = find_option( name );
 		
@@ -271,19 +271,19 @@ namespace orion
 		global_bindings.clear();
 	}
 	
-	void get_options( int argc, iota::argp_t argv )
+	void get_options( int argc, char** argv )
 	{
 		if ( global_option_map.find( "--help" ) == global_option_map.end() )
 		{
 			bind_option_trigger( "--help", std::ptr_fun( default_help ) );
 		}
 		
-		iota::argp_t begin = argv + 1;  // Skip the command
-		iota::argp_t end = argv + argc;
+		char** begin = argv + 1;  // Skip the command
+		char** end = argv + argc;
 		
-		for ( iota::argp_t it = begin;  it != end;  ++it )
+		for ( char** it = begin;  it != end;  ++it )
 		{
-			iota::arg_t token = *it;
+			char* token = *it;
 			
 			if ( token[ 0 ] == '-' )
 			{
@@ -369,7 +369,7 @@ namespace orion
 		global_free_arguments.push_back( NULL );
 	}
 	
-	iota::argp_t free_arguments()
+	char** free_arguments()
 	{
 		return &global_free_arguments[0];
 	}

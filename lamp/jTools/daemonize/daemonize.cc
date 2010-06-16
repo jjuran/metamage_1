@@ -11,7 +11,6 @@
 #include <signal.h>
 
 // iota
-#include "iota/argv.hh"
 #include "iota/strings.hh"
 
 // Lamp
@@ -43,7 +42,7 @@ namespace tool
 		return 2;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool keep_cwd    = false;
 		bool keep_stdin  = false;

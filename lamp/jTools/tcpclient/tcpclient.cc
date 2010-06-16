@@ -71,7 +71,7 @@ namespace tool
 		p7::dup2( tcp_in, tcp_out );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc < 4 )
 		{
@@ -83,7 +83,7 @@ namespace tool
 		const char* hostname = argv[1];
 		const char* port_str = argv[2];
 		
-		iota::argp_t program_argv = argv + 3;
+		char** program_argv = argv + 3;
 		
 		Connect( hostname, port_str );
 		

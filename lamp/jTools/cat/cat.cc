@@ -39,18 +39,18 @@ namespace tool
 		return pathname;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
-		iota::arg_t argv0 = argv[0];
+		const char* argv0 = argv[0];
 		
-		iota::argp_t args = argv + 1;
+		const char *const * args = argv + 1;
 		
 		// Check for sufficient number of args
 		if ( *args == NULL )
 		{
-			static iota::const_argv_t default_args = { "-", NULL };
+			static const char *const default_args[] = { "-", NULL };
 			
-			args = (iota::argp_t) default_args;
+			args = default_args;
 		}
 		
 		// Print each file in turn.  Return whether any errors occurred.

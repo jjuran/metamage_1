@@ -53,7 +53,7 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static int LoadInit( const char* type, const char* id, iota::argv_t args )
+	static int LoadInit( const char* type, const char* id, const char *const * args )
 	{
 		if ( strlen( type ) != sizeof 'quad' )
 		{
@@ -111,7 +111,7 @@ namespace tool
 		return EXIT_SUCCESS;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const char* type = "INIT";
 		const char* id   = "0";
@@ -121,7 +121,7 @@ namespace tool
 		
 		o::get_options( argc, argv );
 		
-		iota::argp_t freeArgs = o::free_arguments();
+		const char *const * freeArgs = o::free_arguments();
 		
 		const size_t n_args = o::free_argument_count();
 		

@@ -28,7 +28,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		struct timeval tv_a = { 0 };
 		struct timeval tv_b = { 0 };

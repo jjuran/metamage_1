@@ -85,7 +85,7 @@ namespace tool
 		md5_hex( result, engine.GetResult() );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		int fail = 0;
 		

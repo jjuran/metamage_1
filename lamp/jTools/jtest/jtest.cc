@@ -473,7 +473,7 @@ namespace tool
 	#define O_CLOEXEC 0
 	#endif
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		const char* jtest = argv[0];
 		

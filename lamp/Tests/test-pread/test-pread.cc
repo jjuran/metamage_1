@@ -108,7 +108,7 @@ namespace tool
 		p7::unlink( tmp_file_path );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		p7::write( p7::stdout_fileno, STR_LEN( "1..7\n" ) );
 		

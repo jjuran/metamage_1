@@ -251,7 +251,7 @@ namespace tool
 		return output;
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		bool monitor = false;
 		

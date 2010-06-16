@@ -36,7 +36,7 @@ namespace tool
 		closedir( iter );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc > 1 )
 		{

@@ -27,9 +27,6 @@
 // Standard C++
 #include <vector>
 
-// Iota
-#include "iota/argv.hh"
-
 
 namespace orion
 {
@@ -204,9 +201,9 @@ namespace orion
 		add_binding( id, binding );
 	}
 	
-	void get_options( int argc, iota::argp_t argv );
+	void get_options( int argc, char** argv );
 	
-	iota::argp_t free_arguments();
+	char** free_arguments();
 	
 	std::size_t free_argument_count();
 	

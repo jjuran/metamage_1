@@ -443,9 +443,9 @@ namespace Genie
 			params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
 			params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
 			
-			int          argc = params.itsArgV.size() - 1;  // don't count trailing NULL
-			iota::argp_t argv = &params.itsArgV[0];
-			iota::envp_t envp = &params.itsEnvP[0];
+			int    argc = params.itsArgV.size() - 1;  // don't count trailing NULL
+			char** argv = &params.itsArgV[0];
+			char** envp = &params.itsEnvP[0];
 			
 			exit_status = itsMainEntry->Invoke( argc, argv, envp, &DispatchSystemCall );
 			

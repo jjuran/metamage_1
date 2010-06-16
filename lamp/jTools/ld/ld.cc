@@ -421,7 +421,7 @@ namespace tool
 		check_object_file( p7::open( path, p7::o_rdonly ) );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > command_args;
 		

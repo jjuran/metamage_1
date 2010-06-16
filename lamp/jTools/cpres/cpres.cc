@@ -125,7 +125,7 @@ namespace tool
 	}
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		o::bind_option_to_variable( "--data", globally_using_data_fork );
 		

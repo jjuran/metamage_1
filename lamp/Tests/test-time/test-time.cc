@@ -60,7 +60,7 @@ namespace tool
 	}
 	
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		p7::write( p7::stdout_fileno, STR_LEN( "1..50\n" ) );
 		

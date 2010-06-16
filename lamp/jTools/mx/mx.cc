@@ -38,7 +38,7 @@ namespace tool
 		//Io::Out << mx.exchange << " A " << ip << "\n";
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		if ( argc < 2 )  return 1;
 		

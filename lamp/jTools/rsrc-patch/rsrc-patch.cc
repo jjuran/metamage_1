@@ -182,7 +182,7 @@ namespace tool
 		Write( decoded_hex( param ) );
 	}
 	
-	int Main( int argc, iota::argv_t argv )
+	int Main( int argc, char** argv )
 	{
 		o::bind_option_to_variable( "--type", gResType );
 		o::bind_option_to_variable( "--id",   gResID   );
