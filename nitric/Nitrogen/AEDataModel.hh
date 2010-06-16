@@ -40,6 +40,7 @@
 
 // Nitrogen
 #include "Mac/Aliases/Types/AliasHandle.hh"
+#include "Mac/Files/Types/FSCreator.hh"
 
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
@@ -284,7 +285,7 @@ namespace Nitrogen
 	template<> struct DescType_Traits< typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
 	template<> struct DescType_Traits< typeFSRef >                  : nucleus::POD_scribe< FSRef >                            {};
 	template<> struct DescType_Traits< typeKeyword >                : nucleus::converting_POD_scribe< AEKeyword, ::AEKeyword > {};
-	template<> struct DescType_Traits< typeApplSignature >          : nucleus::converting_POD_scribe< OSType, ::OSType >       {};
+	template<> struct DescType_Traits< typeApplSignature >          : nucleus::converting_POD_scribe< Mac::FSCreator, ::OSType > {};
 	template<> struct DescType_Traits< typeQDRectangle >            : nucleus::POD_scribe< Rect >                             {};
 	template<> struct DescType_Traits< typeProcessSerialNumber >    : nucleus::POD_scribe< ProcessSerialNumber >              {};
 	template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};

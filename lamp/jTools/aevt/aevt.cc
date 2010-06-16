@@ -110,18 +110,18 @@ namespace tool
 	
 #endif
 	
-	static n::owned< N::AEAddressDesc > SelectAddress( bool         front,
-	                                                   N::OSType    sig,
-	                                                   const char*  app,
-	                                                   const char*  machine,
-	                                                   const char*  host,
-	                                                   const char*  url )
+	static n::owned< N::AEAddressDesc > SelectAddress( bool            front,
+	                                                   Mac::FSCreator  sig,
+	                                                   const char*     app,
+	                                                   const char*     machine,
+	                                                   const char*     host,
+	                                                   const char*     url )
 	{
 		if ( front )
 		{
 			return N::AECreateDesc< N::typeProcessSerialNumber >( N::GetFrontProcess() );
 		}
-		else if ( sig != N::OSType( kUnknownType ) )
+		else if ( sig != Mac::kUnknownFSCreator )
 		{
 			return N::AECreateDesc< N::typeApplSignature >( sig );
 		}
@@ -215,7 +215,7 @@ namespace tool
 			return 1;
 		}
 		
-		N::OSType sigCode = decode_quad< N::OSType >( sig );
+		Mac::FSCreator sigCode = decode_quad< Mac::FSCreator >( sig );
 		
 		N::AEEventClass eventClass = decode_quad< N::AEEventClass >( argEventClass );
 		N::AEEventID    eventID    = decode_quad< N::AEEventID    >( argEventID    );
