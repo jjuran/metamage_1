@@ -19,7 +19,8 @@
 #endif
 
 // Nitrogen
-#include "Mac/Toolbox/Types/OSType.hh"
+#include "Mac/Files/Types/FSCreator.hh"
+#include "Mac/Files/Types/FSType.hh"
 
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
@@ -66,8 +67,8 @@ namespace Nitrogen
 		kICProfileID_Max = nucleus::enumeration_traits< ::ICProfileID >::max
 	};
 	
-	static const Mac::OSType kICFileType = Mac::OSType( ::kICFileType );
-	static const Mac::OSType kICCreator  = Mac::OSType( ::kICCreator  );
+	static const Mac::FSType     kICFileType = Mac::FSType   ( ::kICFileType );
+	static const Mac::FSCreator  kICCreator  = Mac::FSCreator( ::kICCreator  );
 	
 	static const AEEventClass kInternetEventClass = AEEventClass( ::kInternetEventClass );
 	
@@ -122,7 +123,7 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	nucleus::owned< ICInstance > ICStart( Mac::OSType signature );
+	nucleus::owned< ICInstance > ICStart( Mac::FSCreator signature );
 	
 	void ICStop( nucleus::owned< ICInstance >& instance );
 	

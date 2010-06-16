@@ -21,7 +21,8 @@
 #include "nucleus/shared.hh"
 
 // Nitrogen
-#include "Nitrogen/MacTypes.hh"
+#include "Mac/Files/Types/FSCreator.hh"
+
 #include "Nitrogen/InternetConfig.hh"
 
 // Orion
@@ -158,7 +159,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		N::OSType signature = N::OSType( 'Poof' );
+		Mac::FSCreator signature = Mac::FSCreator( 'Poof' );
 		
 		n::owned< N::ICInstance > ic = N::ICStart( signature );
 		
