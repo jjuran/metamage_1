@@ -126,11 +126,6 @@ namespace recall
 		
 		--capacity;
 		
-		if ( frame->next < frame )
-		{
-			return capacity;
-		}
-		
 		
 		frame = frame->next;
 		
