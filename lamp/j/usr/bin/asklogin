@@ -1,0 +1,116 @@
+#!/bin/sh
+
+set -e
+
+test -z "$3" || echo usage: asklogin [icon-id] text
+test -z "$3"
+
+iconid=128
+text="$1"
+test -z "$2" || iconid="$1"
+test -z "$2" || text="$2"
+
+test -n "$text" || text="Enter username and password:"
+
+cd /new/window
+
+echo 5 > procid
+
+echo Login   > title
+echo 300,150 > size
+
+ln /new/stack view
+
+ln /new/focuser view/.focuser
+
+ln /new/frame view/icon
+
+echo 32 > view/icon/width
+echo 32 > view/icon/height
+echo 13 > view/icon/.margin-top
+echo 23 > view/icon/.margin-left
+echo 23 > view/icon/.margin-right
+
+ln /new/icon view/icon/v
+
+ln /new/frame view/main
+
+echo 13 > view/main/.margin-top
+echo 13 > view/main/.margin-right
+echo 103 > view/main/.margin-bottom
+echo 78 > view/main/.margin-left
+
+ln /new/caption view/main/v
+
+ln /new/frame view/user
+
+echo 16 > view/user/height
+echo 13 > view/user/.margin-right
+echo 81 > view/user/.margin-bottom
+echo 78 > view/user/.margin-left
+echo 1 > view/user/.outline-width
+echo 2 > view/user/padding
+
+ln /new/textedit view/user/v
+
+ln /new/frame view/pass
+
+echo 16 > view/pass/height
+echo 13 > view/pass/.margin-right
+echo 49 > view/pass/.margin-bottom
+echo 78 > view/pass/.margin-left
+echo 1 > view/pass/.outline-width
+echo 2 > view/pass/padding
+
+ln /new/textedit view/pass/v
+
+ln /new/frame view/ok
+
+echo 58 > view/ok/width
+echo 20 > view/ok/height
+echo 13 > view/ok/.margin-right
+echo 13 > view/ok/.margin-bottom
+
+echo 3 > view/ok/.outline-width
+echo 1 > view/ok/.outline-offset
+echo 16 > view/ok/.outline-curvature
+
+ln /new/button view/ok/v
+
+ln /new/frame view/cancel
+
+echo 58 > view/cancel/width
+echo 20 > view/cancel/height
+echo 84 > view/cancel/.margin-right
+echo 13 > view/cancel/.margin-bottom
+
+ln /new/button view/cancel/v
+
+echo $iconid > view/icon/v/data
+echo 1 > view/icon/v/disabling
+
+echo $text > view/main/v/text
+echo 1     > view/main/v/disabling
+
+echo 1 > view/user/v/singular
+echo 1 > view/pass/v/singular
+echo 1 > view/pass/v/secret
+
+echo Cancel > view/cancel/v/title
+
+ln -s view/ok/v/click accept
+ln -s view/cancel/v/click cancel
+
+ln /new/defaultkeys view
+
+#echo 1 > view/ok/v/disabled
+
+touch ref
+
+echo 0 > ref/text-font
+#echo ddd > ref/back-color
+
+perl -e 'LOOP: $_ = `select -1 -rview/{ok,cancel}/v/socket` or exit 2; /cancel/ && exit 1; readlink( "focus" ) =~ m{/view/user/v$} and unlink "focus" and symlink "view/pass/v", "focus" and goto LOOP'
+
+cat view/user/v/text && echo && cat view/pass/v/text && echo
+
