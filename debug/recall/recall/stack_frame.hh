@@ -103,9 +103,9 @@ namespace recall
 		return (const stack_frame_x86*) get_ebp();
 	}
 	
-	inline const stack_frame_x86* get_top_frame()
+	static const stack_frame_x86* get_top_frame()
 	{
-		return get_frame_pointer();
+		__asm__( "mov  %ebp,%eax" );
 	}
 	
 #endif
