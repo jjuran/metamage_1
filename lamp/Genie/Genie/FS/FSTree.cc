@@ -76,10 +76,10 @@ namespace Genie
 		
 		FSTreePtr tree = Parent();
 		
-		if ( tree.get() == NULL )
+		if ( tree.get() == this  &&  !pathname.empty() )
 		{
-			// Anonymous files have null parents.
-			goto name_only;
+			// Anonymous files have null parents (but so does root)
+			return pathname;
 		}
 		
 		while ( true )
@@ -97,8 +97,6 @@ namespace Genie
 			
 			tree = tree->Parent();
 		}
-		
-	name_only:
 		
 		return pathname;
 	}
