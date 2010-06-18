@@ -30,7 +30,13 @@ namespace Genie
 		{
 		}
 		
+		void swap( FileDescriptor& other );
 	};
+	
+	inline void swap( FileDescriptor& a, FileDescriptor& b )
+	{
+		a.swap( b );
+	}
 	
 }
 
