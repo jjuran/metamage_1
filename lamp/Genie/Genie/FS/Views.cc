@@ -55,9 +55,7 @@ namespace Genie
 	
 	static const ViewParameters* FindView( const FSTree* parent, const plus::string& name )
 	{
-		ViewParametersMap::const_iterator the_submap = gViewParametersMap.find( parent );
-		
-		if ( the_submap != gViewParametersMap.end() )
+		if ( const ViewParametersSubMap* the_submap = gViewParametersMap.find( parent ) )
 		{
 			const ViewParametersSubMap& submap = *the_submap;
 			
@@ -128,9 +126,7 @@ namespace Genie
 	
 	static void RemoveViewParameters( const FSTree* parent, const plus::string& name )
 	{
-		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
-		
-		if ( it != gViewParametersMap.end() )
+		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
 		{
 			ViewParametersSubMap& submap = *it;
 			
@@ -158,9 +154,7 @@ namespace Genie
 	
 	void RemoveAllViewParameters( const FSTree* parent )
 	{
-		ViewParametersMap::iterator it = gViewParametersMap.find( parent );
-		
-		if ( it != gViewParametersMap.end() )
+		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
 		{
 			ViewParametersSubMap temp;
 			

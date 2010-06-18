@@ -74,9 +74,7 @@ namespace Genie
 		
 		const FSTree* scrollFrame = userData->key;
 		
-		ScrollFrameParametersMap::iterator it = gScrollFrameParametersMap.find( scrollFrame );
-		
-		if ( it != gScrollFrameParametersMap.end() )
+		if ( ScrollFrameParameters* it = gScrollFrameParametersMap.find( scrollFrame ) )
 		{
 			Ped::ScrollerAPI* proxy = &it->itsTargetProxy;
 			
@@ -97,9 +95,7 @@ namespace Genie
 		
 		const FSTree* scrollFrame = userData->key;
 		
-		ScrollFrameParametersMap::iterator it = gScrollFrameParametersMap.find( scrollFrame );
-		
-		if ( it != gScrollFrameParametersMap.end() )
+		if ( ScrollFrameParameters* it = gScrollFrameParametersMap.find( scrollFrame ) )
 		{
 			if ( Ped::ScrollerAPI* proxy = &it->itsTargetProxy )
 			{

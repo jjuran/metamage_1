@@ -80,9 +80,7 @@ namespace Genie
 		
 		const FSTree* button = userData->key;
 		
-		ButtonMap::iterator it = gButtonMap.find( button );
-		
-		if ( it != gButtonMap.end() )
+		if ( Button_Parameters* it = gButtonMap.find( button ) )
 		{
 			++it->seed;
 		}
@@ -234,9 +232,9 @@ namespace Genie
 	{
 		const FSTree* view = GetFile()->ParentRef().get();
 		
-		ButtonMap::const_iterator it = gButtonMap.find( view );
+		Button_Parameters* it = gButtonMap.find( view );
 		
-		const bool readable =    it == gButtonMap.end()
+		const bool readable =    it == NULL
 		                      || !it->installed
 		                      || it->seed != itsSeed;
 		
@@ -249,9 +247,9 @@ namespace Genie
 		
 	retry:
 		
-		ButtonMap::const_iterator it = gButtonMap.find( view );
+		const Button_Parameters* it = gButtonMap.find( view );
 		
-		if ( it == gButtonMap.end()  ||  !it->installed )
+		if ( it == NULL  ||  !it->installed )
 		{
 			p7::throw_errno( ECONNRESET );
 		}
@@ -299,9 +297,9 @@ namespace Genie
 	{
 		const FSTree* view = ParentRef().get();
 		
-		ButtonMap::const_iterator it = gButtonMap.find( view );
+		const Button_Parameters* it = gButtonMap.find( view );
 		
-		if ( it == gButtonMap.end()  ||  !it->installed )
+		if ( it == NULL  ||  !it->installed )
 		{
 			p7::throw_errno( ECONNREFUSED );
 		}

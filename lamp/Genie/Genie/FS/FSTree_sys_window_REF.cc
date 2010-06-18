@@ -170,9 +170,7 @@ namespace Genie
 	
 	static void CloseUserWindow( const FSTree* key )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -215,9 +213,7 @@ namespace Genie
 	{
 		N::SizeWindow( window, h, v, true );
 		
-		WindowParametersMap::iterator it = gWindowParametersMap.find( itsKey );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( itsKey ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -242,9 +238,9 @@ namespace Genie
 	
 	static void CreateUserWindow( const FSTree* key )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
+		WindowParameters* it = gWindowParametersMap.find( key );
 		
-		if ( it == gWindowParametersMap.end() )
+		if ( it == NULL )
 		{
 			p7::throw_errno( EPERM );
 		}
@@ -298,9 +294,7 @@ namespace Genie
 	
 	void RemoveUserWindow( const FSTree* key )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -316,9 +310,7 @@ namespace Genie
 	
 	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( window_key );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( window_key ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -438,9 +430,7 @@ namespace Genie
 	
 	static WindowRef GetWindowRef( const FSTree* key )
 	{
-		WindowParametersMap::const_iterator it = gWindowParametersMap.find( key );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
 			const boost::intrusive_ptr< Ped::Window >& window = it->itsWindow;
 			
@@ -602,9 +592,7 @@ namespace Genie
 	
 	const FSTree* GetWindowFocus( const FSTree* window )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( window );
-		
-		if ( it != gWindowParametersMap.end() )
+		if ( WindowParameters* it = gWindowParametersMap.find( window ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -843,9 +831,9 @@ namespace Genie
 	
 	static WindowParameters& Find( const FSTree* key )
 	{
-		WindowParametersMap::iterator it = gWindowParametersMap.find( key );
+		WindowParameters* it = gWindowParametersMap.find( key );
 		
-		if ( it == gWindowParametersMap.end() )
+		if ( it == NULL )
 		{
 			throw FSTree_Property::Undefined();
 		}

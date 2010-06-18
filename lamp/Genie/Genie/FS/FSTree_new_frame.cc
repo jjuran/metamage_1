@@ -155,9 +155,7 @@ namespace Genie
 	
 	short Frame::Padding() const
 	{
-		FrameParametersMap::const_iterator it = gFrameParametersMap.find( itsKey );
-		
-		if ( it != gFrameParametersMap.end() )
+		if ( FrameParameters* it = gFrameParametersMap.find( itsKey ) )
 		{
 			return it->padding;
 		}

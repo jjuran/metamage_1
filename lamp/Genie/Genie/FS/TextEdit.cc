@@ -60,14 +60,7 @@ namespace Genie
 	
 	TextEditParameters* TextEditParameters::Find( const FSTree* key )
 	{
-		TextEditParametersMap::iterator it = gTextEditParametersMap.find( key );
-		
-		if ( it == gTextEditParametersMap.end() )
-		{
-			return NULL;
-		}
-		
-		return it;
+		return gTextEditParametersMap.find( key );
 	}
 	
 	TextEditParameters& TextEditParameters::Get( const FSTree* key )

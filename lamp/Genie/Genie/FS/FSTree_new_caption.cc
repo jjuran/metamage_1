@@ -71,9 +71,7 @@ namespace Genie
 	{
 		plus::var_string result;
 		
-		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
-		
-		if ( it != gCaptionParametersMap.end() )
+		if ( CaptionParameters* it = gCaptionParametersMap.find( itsKey ) )
 		{
 			result = it->itsText;
 		}
@@ -85,9 +83,7 @@ namespace Genie
 	
 	bool Caption::Wrapped() const
 	{
-		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
-		
-		if ( it != gCaptionParametersMap.end() )
+		if ( CaptionParameters* it = gCaptionParametersMap.find( itsKey ) )
 		{
 			return it->itIsWrapped;
 		}
@@ -97,9 +93,7 @@ namespace Genie
 	
 	bool Caption::Disabled() const
 	{
-		CaptionParametersMap::const_iterator it = gCaptionParametersMap.find( itsKey );
-		
-		if ( it != gCaptionParametersMap.end() )
+		if ( CaptionParameters* it = gCaptionParametersMap.find( itsKey ) )
 		{
 			return !itIsActive && it->disabling;
 		}

@@ -62,9 +62,6 @@ namespace Genie
 			{
 			}
 			
-			const_iterator end() const  { return NULL; }
-			iterator       end()        { return NULL; }
-			
 			Data& get  ( Key key )  { return *(Data*) map_base::get  ( key, &map_allocate< Data > ); }
 			Data* find ( Key key )  { return  (Data*) map_base::find ( key ); }
 			void  erase( Key key )  {                 map_base::erase( key ); }

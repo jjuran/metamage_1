@@ -22,14 +22,7 @@ namespace Genie
 	
 	ScrollerParameters* ScrollerParameters::Find( const FSTree* key )
 	{
-		ScrollerParametersMap::iterator it = gScrollerParametersMap.find( key );
-		
-		if ( it != gScrollerParametersMap.end() )
-		{
-			return it;
-		}
-		
-		return NULL;
+		return gScrollerParametersMap.find( key );
 	}
 	
 	ScrollerParameters& ScrollerParameters::Get( const FSTree* key )
