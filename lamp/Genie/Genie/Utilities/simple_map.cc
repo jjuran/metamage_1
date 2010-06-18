@@ -38,6 +38,35 @@ namespace Genie
 			}
 	};
 	
+	map_base::map_base( const map_base& other, duplicator duplicate )
+	:
+		its_map(),
+		its_deallocator( other.its_deallocator )
+	{
+		if ( other.its_map )
+		{
+			map_base temp( its_deallocator );
+			
+			temp.its_map = new simple_map_impl;
+			
+			std::map< Key, void* >& map       =  temp.its_map->map;
+			std::map< Key, void* >& other_map = other.its_map->map;
+			
+			typedef std::map< Key, void* >::const_iterator Iter;
+			
+			for ( Iter it = other_map.begin();  it != other_map.end();  ++it )
+			{
+				void*& slot = map[ it->first ];
+				
+				slot = duplicate( it->second );
+			}
+			
+			using std::swap;
+			
+			swap( its_map, temp.its_map );
+		}
+	}
+	
 	void map_base::clear()
 	{
 		if ( its_map == NULL )

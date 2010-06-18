@@ -17,6 +17,7 @@ namespace Genie
 		private:
 			typedef const void*  Key;
 			typedef void*      (*allocator)();
+			typedef void*      (*duplicator)( void* );
 			typedef void       (*deallocator)( void* );
 			
 			simple_map_impl*  its_map;
@@ -29,6 +30,8 @@ namespace Genie
 			map_base( deallocator d ) : its_map(), its_deallocator( d )
 			{
 			}
+			
+			map_base( const map_base& other, duplicator d );
 			
 			~map_base();
 			
@@ -47,6 +50,12 @@ namespace Genie
 	}
 	
 	template < class Data >
+	void* map_duplicate( void* data )
+	{
+		return new Data( *static_cast< Data* >( data ) );
+	}
+	
+	template < class Data >
 	void map_deallocate( void* data )
 	{
 		delete static_cast< Data* >( data );
@@ -60,6 +69,10 @@ namespace Genie
 			typedef       Data*       iterator;
 			
 			simple_map() : map_base( &map_deallocate< Data > )
+			{
+			}
+			
+			simple_map( const simple_map& other ) : map_base( other, &map_duplicate< Data > )
 			{
 			}
 			
