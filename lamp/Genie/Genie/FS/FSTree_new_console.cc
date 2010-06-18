@@ -24,7 +24,7 @@
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/FSTree_sys_window_REF.hh"

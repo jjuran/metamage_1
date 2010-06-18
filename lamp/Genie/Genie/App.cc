@@ -14,7 +14,7 @@
 // Genie
 #include "Genie/Console.hh"
 #include "Genie/ReplyHandler.hh"
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 
 
 namespace Genie

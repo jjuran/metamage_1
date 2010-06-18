@@ -10,7 +10,7 @@
 #include "signal.h"
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 

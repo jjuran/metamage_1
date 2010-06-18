@@ -66,6 +66,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/IO/Base.hh"
+#include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
@@ -130,14 +131,6 @@ namespace Genie
 	}
 	
 	
-	ProcessList& GetProcessList()
-	{
-		static ProcessList theProcessList;
-		
-		return theProcessList;
-	}
-	
-	
 	void FlatArgVector::Assign( char const *const *argv )
 	{
 		itsStorage.clear();
@@ -172,13 +165,6 @@ namespace Genie
 				}
 			}
 		}
-	}
-	
-	Process& GetInitProcess()
-	{
-		static const boost::intrusive_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
-		
-		return *init;
 	}
 	
 	Process& GetProcess( pid_t pid )
@@ -1476,102 +1462,6 @@ namespace Genie
 		}
 		
 		return DeliverPendingSignals( interrupting );
-	}
-	
-	ProcessList::ProcessList() : itsLastPID( 1 )
-	{
-	}
-	
-	ProcessList::~ProcessList()
-	{
-	}
-	
-	static void ReapProcesses()
-	{
-		std::vector< pid_t > hitlist;
-		
-		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			pid_t pid = proc.GetPID();
-			
-			if ( proc.GetLifeStage() == kProcessReleased )
-			{
-				hitlist.push_back( pid );
-			}
-		}
-		
-		for ( std::vector< pid_t >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
-		{
-			pid_t pid = *it;
-			
-			GetProcessList().RemoveProcess( pid );
-		}
-	}
-	
-	namespace
-	{
-		
-		void ReaperThreadEntry()
-		{
-			while ( true )
-			{
-				ReapProcesses();
-				
-				N::YieldToAnyThread();
-			}
-		}
-		
-	}
-	
-	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
-	{
-		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
-		
-		pid_t pid = 1;
-		
-		boost::intrusive_ptr< Process > process( new Process( Process::RootProcess() ) );
-		
-		return itsMap[ pid ] = process;
-	}
-	
-	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process& parent )
-	{
-		pid_t pid = ++itsLastPID;
-		
-		boost::intrusive_ptr< Process > process( new Process( parent, pid ) );
-		
-		return itsMap[ pid ] = process;
-	}
-	
-	void ProcessList::RemoveProcess( pid_t pid )
-	{
-		iterator it = itsMap.find( pid );
-		
-		if ( it == itsMap.end() )
-		{
-			Mac::SysBeep();
-		}
-		else
-		{
-			itsMap.erase( it );
-		}
-	}
-	
-	void ProcessList::KillAll()
-	{
-		for ( Map::iterator it = itsMap.begin();  it != itsMap.end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			proc.Raise( SIGKILL );
-		}
-		
-		while ( itsMap.size() > 1 )
-		{
-			N::YieldToAnyThread();
-		}
 	}
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.

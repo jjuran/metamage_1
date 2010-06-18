@@ -32,7 +32,7 @@
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 

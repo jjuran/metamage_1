@@ -6,7 +6,7 @@
 #include "Genie/Console.hh"
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 
 
 namespace Genie
