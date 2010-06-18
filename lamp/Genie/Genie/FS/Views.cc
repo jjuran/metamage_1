@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Views.hh"
 
+// Standard C++
+#include <map>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

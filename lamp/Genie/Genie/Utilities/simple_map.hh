@@ -6,12 +6,11 @@
 #ifndef GENIE_UTILITIES_SIMPLEMAP_HH
 #define GENIE_UTILITIES_SIMPLEMAP_HH
 
-// Standard C++
-#include <map>
-
 
 namespace Genie
 {
+	
+	struct simple_map_impl;
 	
 	class map_base
 	{
@@ -20,14 +19,14 @@ namespace Genie
 			typedef void*      (*allocator)();
 			typedef void       (*deallocator)( void* );
 			
-			std::map< Key, void* > its_map;
-			deallocator            its_deallocator;
+			simple_map_impl*  its_map;
+			deallocator       its_deallocator;
 			
 			map_base           ( const map_base& );
 			map_base& operator=( const map_base& );
 		
 		public:
-			map_base( deallocator d ) : its_deallocator( d )
+			map_base( deallocator d ) : its_map(), its_deallocator( d )
 			{
 			}
 			

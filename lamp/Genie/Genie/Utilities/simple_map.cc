@@ -7,10 +7,16 @@
 
 // Standard C++
 #include <algorithm>
+#include <map>
 
 
 namespace Genie
 {
+	
+	struct simple_map_impl
+	{
+		std::map< const void*, void* > map;
+	};
 	
 	class map_destroyer
 	{
@@ -34,14 +40,30 @@ namespace Genie
 	
 	map_base::~map_base()
 	{
-		std::for_each( its_map.begin(),
-		               its_map.end(),
+		if ( its_map == NULL )
+		{
+			return;
+		}
+		
+		std::map< Key, void* >& map = its_map->map;
+		
+		std::for_each( map.begin(),
+		               map.end(),
 		               map_destroyer( its_deallocator ) );
+		
+		delete its_map;
 	}
 	
 	void* map_base::get( Key key, allocator a )
 	{
-		void*& result = its_map[ key ];
+		if ( its_map == NULL )
+		{
+			its_map = new simple_map_impl;
+		}
+		
+		std::map< Key, void* >& map = its_map->map;
+		
+		void*& result = map[ key ];
 		
 		if ( result == NULL )
 		{
@@ -53,11 +75,16 @@ namespace Genie
 	
 	void* map_base::find( Key key )
 	{
-		std::map< Key, void* >::iterator it = its_map.find( key );
-		
-		if ( it != its_map.end() )
+		if ( its_map )
 		{
-			return it->second;
+			const std::map< Key, void* >& map = its_map->map;
+			
+			std::map< Key, void* >::const_iterator it = map.find( key );
+			
+			if ( it != map.end() )
+			{
+				return it->second;
+			}
 		}
 		
 		return NULL;
@@ -65,7 +92,10 @@ namespace Genie
 	
 	void map_base::erase( Key key )
 	{
-		its_map.erase( key );
+		if ( its_map )
+		{
+			its_map->map.erase( key );
+		}
 	}
 	
 }
