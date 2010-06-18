@@ -37,7 +37,15 @@ namespace Genie
 	}
 	
 	
-	ProcessList::ProcessList() : itsLastPID( 1 )
+	static pid_t global_last_pid = 0;
+	
+	static pid_t next_pid()
+	{
+		return ++global_last_pid;
+	}
+	
+	
+	ProcessList::ProcessList()
 	{
 	}
 	
@@ -79,7 +87,7 @@ namespace Genie
 	{
 		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
-		pid_t pid = 1;
+		const pid_t pid = next_pid();
 		
 		boost::intrusive_ptr< Process > process( new Process( Process::RootProcess() ) );
 		
@@ -88,7 +96,7 @@ namespace Genie
 	
 	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process& parent )
 	{
-		pid_t pid = ++itsLastPID;
+		const pid_t pid = next_pid();
 		
 		boost::intrusive_ptr< Process > process( new Process( parent, pid ) );
 		

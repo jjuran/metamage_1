@@ -35,7 +35,6 @@ namespace Genie
 		
 		private:
 			Map    itsMap;
-			pid_t  itsLastPID;
 		
 		public:
 			ProcessList();
