@@ -240,18 +240,32 @@ namespace Nitrogen
 	
 	nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                                      ThreadEntryTPP  threadEntry,
-	                                      void*           threadParam,
-	                                      std::size_t     stackSize,
-	                                      ThreadOptions   options,
+	                                      void*           threadParam  = NULL,
+	                                      std::size_t     stackSize    = std::size_t( 0 ),
+	                                      ThreadOptions   options      = ThreadOptions(),
 	                                      void**          threadResult = NULL );
+	
+	inline nucleus::owned< ThreadID > NewThread( ThreadEntryTPP  threadEntry,
+	                                             void*           threadParam  = NULL,
+	                                             std::size_t     stackSize    = std::size_t( 0 ),
+	                                             ThreadOptions   options      = ThreadOptions(),
+	                                             void**          threadResult = NULL )
+	{
+		return NewThread( kCooperativeThread,
+		                  threadEntry,
+		                  threadParam,
+		                  stackSize,
+		                  options,
+		                  threadResult );
+	}
 	
 	// Level 1, creates static UPP
 	
 	template < ::ThreadEntryProcPtr threadEntry >
-	inline nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                                             void*           threadParam,
-	                                             std::size_t     stackSize,
-	                                             ThreadOptions   options,
+	inline nucleus::owned< ThreadID > NewThread( ThreadStyle     threadStyle  = kCooperativeThread,
+	                                             void*           threadParam  = NULL,
+	                                             std::size_t     stackSize    = std::size_t( 0 ),
+	                                             ThreadOptions   options      = ThreadOptions(),
 	                                             void**          threadResult = NULL )
 	{
 		return NewThread( threadStyle,
@@ -260,6 +274,19 @@ namespace Nitrogen
 		                  stackSize,
 		                  options,
 		                  threadResult );
+	}
+	
+	template < ::ThreadEntryProcPtr threadEntry >
+	inline nucleus::owned< ThreadID > NewThread( void*           threadParam,
+	                                             std::size_t     stackSize    = std::size_t( 0 ),
+	                                             ThreadOptions   options      = ThreadOptions(),
+	                                             void**          threadResult = NULL )
+	{
+		return NewThread< threadEntry >( kCooperativeThread,
+		                                 threadParam,
+		                                 stackSize,
+		                                 options,
+		                                 threadResult );
 	}
 	
 	// Level 2, customizes param and result types
@@ -286,6 +313,24 @@ namespace Nitrogen
 		                                                         threadResult );
 	}
 	
+	template < class Param,
+	           class Result,
+	           typename ThreadEntry_Traits< Param, Result >::ProcPtr threadEntry >
+	inline nucleus::owned< ThreadID >
+	NewThread( Param          param,
+	           std::size_t    stackSize = std::size_t( 0 ),
+	           ThreadOptions  options   = ThreadOptions(),
+	           Result*        result    = NULL )
+	{
+		return NewThread< ThreadEntry< Param,
+		                               Result,
+		                               threadEntry >::Adapter >( kCooperativeThread,
+		                                                         param,
+		                                                         stackSize,
+		                                                         options,
+		                                                         result );
+	}
+	
 	// No result
 	template < class Param,
 	           typename ThreadEntry_Traits< Param, void >::ProcPtr threadEntry >
@@ -306,14 +351,29 @@ namespace Nitrogen
 		                                                         NULL );
 	}
 	
+	template < class Param,
+	           typename ThreadEntry_Traits< Param, void >::ProcPtr threadEntry >
+	inline nucleus::owned< ThreadID >
+	NewThread( Param          param,
+	           std::size_t    stackSize = std::size_t( 0 ),
+	           ThreadOptions  options   = ThreadOptions() )
+	{
+		return NewThread< ThreadEntry< Param,
+		                               void,
+		                               threadEntry >::Adapter >( kCooperativeThread,
+		                                                         param,
+		                                                         stackSize,
+		                                                         options );
+	}
+	
 	// No param
 	template < class Result,
 	           typename ThreadEntry_Traits< void, Result >::ProcPtr threadEntry >
 	inline nucleus::owned< ThreadID >
-	NewThread( ThreadStyle    threadStyle,
-	           std::size_t    stackSize = std::size_t( 0 ),
-	           ThreadOptions  options   = ThreadOptions(),
-	           Result*        result    = NULL )
+	NewThread( ThreadStyle    threadStyle = kCooperativeThread,
+	           std::size_t    stackSize   = std::size_t( 0 ),
+	           ThreadOptions  options     = ThreadOptions(),
+	           Result*        result      = NULL )
 	{
 		void** threadResult = reinterpret_cast< void** >( result );
 		
@@ -329,9 +389,9 @@ namespace Nitrogen
 	// No result or param
 	template < typename ThreadEntry_Traits< void, void >::ProcPtr threadEntry >
 	inline nucleus::owned< ThreadID >
-	NewThread( ThreadStyle    threadStyle,
-	           std::size_t    stackSize = std::size_t( 0 ),
-	           ThreadOptions  options   = ThreadOptions() )
+	NewThread( ThreadStyle    threadStyle = kCooperativeThread,
+	           std::size_t    stackSize   = std::size_t( 0 ),
+	           ThreadOptions  options     = ThreadOptions() )
 	{
 		return NewThread< ThreadEntry< void,
 		                               void,
@@ -369,7 +429,14 @@ namespace Nitrogen
 	
 	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle );
 	
-	std::size_t ThreadCurrentStackSpace( ThreadID thread );
+	inline std::size_t ThreadCurrentStackSpace( ThreadID thread )
+	{
+		UInt32 result;
+		
+		ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
+		
+		return result;
+	}
 	
 	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*              threadResult,

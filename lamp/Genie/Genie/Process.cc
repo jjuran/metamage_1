@@ -419,8 +419,6 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		itsStackBottomPtr = recall::get_stack_frame_pointer();
-		
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
 		
@@ -461,27 +459,61 @@ namespace Genie
 		return exit_status;
 	}
 	
-	namespace
+	
+	recall::stack_frame_pointer Init_Thread();
+	
+#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
+	
+	asm recall::stack_frame_pointer Init_Thread()
 	{
+		lwz r4,0(sp)
+		li  r0,0
+		lwz r3,0(r4)
+		stw r0,0(r3)
+	}
+	
+#elif TARGET_CPU_68K
+	
+	asm recall::stack_frame_pointer Init_Thread()
+	{
+		MOVEA.L (A6),A0
+		RTS
+	}
+	
+#else
+	
+	inline recall::stack_frame_pointer Init_Thread()
+	{
+		return NULL;
+	}
+	
+#endif
+	
+	
+	pascal void* Process::ThreadEntry( void* param )
+	{
+		Process* process = reinterpret_cast< Process* >( param );
 		
-		void ProcessThreadEntry( Process* process )
+		process->itsStackBottomPtr = Init_Thread();
+		
+		try
 		{
-			try
-			{
-				process->InitThread();
-				
-				int exit_status = process->Run();
-				
-				process->Exit( exit_status );
-				
-				// Not reached
-			}
-			catch ( ... )
-			{
-				abort();
-			}
+			process->InitThread();
+			
+			int exit_status = process->Run();
+			
+			process->Exit( exit_status );
+			
+			// Not reached
+		}
+		catch ( ... )
+		{
+			abort();
 		}
 		
+		// Not reached
+		
+		return NULL;
 	}
 	
 	
@@ -951,9 +983,7 @@ namespace Genie
 		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
-		                                                            this,
-		                                                            stackSize );
+		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
 		if ( itsCleanupHandler != NULL )
 		{
@@ -1017,9 +1047,7 @@ namespace Genie
 		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
-		                                                            this,
-		                                                            stackSize );
+		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );

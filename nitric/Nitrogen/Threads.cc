@@ -131,14 +131,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	std::size_t ThreadCurrentStackSpace( ThreadID thread )
-	{
-		UInt32 result;
-		ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
-		
-		return result;
-	}
-	
 	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*                       threadResult,
 	                    bool                        recycleThread )
