@@ -84,6 +84,11 @@ namespace Genie
 			next = root.AdvanceFocus( NULL );
 		}
 		
+		if ( next != NULL )
+		{
+			next->Focus();
+		}
+		
 		return next;
 	}
 	

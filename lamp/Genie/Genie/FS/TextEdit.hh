@@ -95,6 +95,8 @@ namespace Genie
 			
 			void SetActive( bool activating );
 			
+			void Focus();
+			
 			void Insert_Key( char c );
 			
 			void Delete();

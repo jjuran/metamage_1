@@ -25,6 +25,7 @@
 #include "Pedestal/Clipboard.hh"
 
 // Genie
+#include "Genie/FS/FSTree_sys_window_REF.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
 
@@ -310,6 +311,15 @@ namespace Genie
 		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		
 		params.itIsActive = activating;
+	}
+	
+	void TextEdit::Focus()
+	{
+		Ped::TextEdit::Focus();
+		
+		const FSTree* windowKey = GetViewWindowKey( itsKey );
+		
+		SetWindowFocus( windowKey, itsKey );
 	}
 	
 	void TextEdit::Insert_Key( char c )

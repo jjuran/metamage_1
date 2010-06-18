@@ -151,6 +151,8 @@ namespace Genie
 					gViewParametersMap.erase( it );
 				}
 				
+				NotifyWindowOfViewLoss( temp.itsWindowKey, temp.itsDelegate.get() );
+				
 				DeleteDelegate( temp.itsDelegate );
 			}
 		}
@@ -170,7 +172,11 @@ namespace Genie
 			
 			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
-				DeleteDelegate( jt->second.itsDelegate );
+				ViewParameters& params = jt->second;
+				
+				NotifyWindowOfViewLoss( params.itsWindowKey, params.itsDelegate.get() );
+				
+				DeleteDelegate( params.itsDelegate );
 			}
 		}
 	}
