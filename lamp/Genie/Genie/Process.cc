@@ -847,27 +847,19 @@ namespace Genie
 		return process->itsThread.get();
 	}
 	
+	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )
+	{
+		if ( desc.closeOnExec  &&  fd != *(int*) keep )
+		{
+			desc.handle.reset();
+		}
+	}
+	
 	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors, int keep_fd = -1 )
 	{
 		// Close file descriptors with close-on-exec flag.
-		typedef FileDescriptorMap::iterator FDIter;
 		
-		std::vector< int > toClose;
-		
-		for ( FDIter it = fileDescriptors.begin();  it != fileDescriptors.end();  ++it )
-		{
-			if ( it->first != keep_fd  &&  it->second.closeOnExec )
-			{
-				toClose.push_back( it->first );
-			}
-		}
-		
-		typedef std::vector< int >::const_iterator ToCloseIter;
-		
-		for ( ToCloseIter it = toClose.begin();  it != toClose.end();  ++it )
-		{
-			fileDescriptors.erase( *it );
-		}
+		fileDescriptors.for_each( &close_fd_on_exec, &keep_fd );
 	}
 	
 	static void CheckProgramFile( const FSTreePtr& programFile )

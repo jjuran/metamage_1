@@ -97,31 +97,22 @@ namespace Genie
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	class fdmap_IteratorConverter
+	static void iterate_one_fd( void* param, int fd, const FileDescriptor& )
 	{
-		public:
-			FSNode operator()( const FileDescriptorMap::value_type& value ) const
-			{
-				const int key = value.first;
-				
-				const ino_t inode = key;
-				
-				plus::string name = iota::inscribe_decimal( key );
-				
-				return FSNode( inode, name );
-			}
-	};
+		const ino_t inode = fd;
+		
+		plus::string name = iota::inscribe_decimal( fd );
+		
+		FSTreeCache& cache = *(FSTreeCache*) param;
+		
+		cache.push_back( FSNode( inode, name ) );
+	}
 	
 	void FSTree_PID_fd::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		fdmap_IteratorConverter converter;
-		
 		const Sequence& sequence = ItemSequence();
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		sequence.for_each( &iterate_one_fd, &cache );
 	}
 	
 	
@@ -605,7 +596,7 @@ namespace Genie
 		
 		const Sequence& sequence = ItemSequence();
 		
-		if ( sequence.find( key ) == sequence.end() )
+		if ( !sequence.contains( key ) )
 		{
 			poseven::throw_errno( ENOENT );
 		}
@@ -618,14 +609,12 @@ namespace Genie
 	{
 		FileDescriptorMap& files = GetProcess( pid ).FileDescriptors();
 		
-		FileDescriptorMap::const_iterator it = files.find( fd );
-		
-		if ( it == files.end() )
+		if ( !files.contains( fd ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return it->second.handle;
+		return files.at( fd ).handle;
 	}
 	
 	off_t FSTree_PID_fd_N::GetEOF() const

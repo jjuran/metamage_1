@@ -83,12 +83,7 @@ namespace Genie
 					     || FD_ISSET( i, writefds  )
 					     || FD_ISSET( i, exceptfds ) )
 					{
-						if ( !files.count( i ) )
-						{
-							return frame.SetErrno( EBADF );
-						}
-						
-						StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ i ].handle );
+						StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files.at( i ).handle );
 						
 						unsigned int poll = stream.Poll();
 						

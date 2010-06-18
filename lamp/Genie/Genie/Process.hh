@@ -7,7 +7,6 @@
 #define GENIE_PROCESS_HH
 
 // Standard C++
-#include <map>
 #include <vector>
 
 // Debug
@@ -29,7 +28,6 @@
 
 // Genie
 #include "Genie/Exec/MainEntry.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/Process/memory_mapping_holder.hh"
 #include "Genie/Process/SavedRegisters.hh"
@@ -37,12 +35,13 @@
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/Process/vfork_context.hh"
 #include "Genie/ProcessGroup.hh"
+#include "Genie/task/fd_table.hh"
 
 
 namespace Genie
 {
 	
-	typedef std::map< int, FileDescriptor > FileDescriptorMap;
+	typedef fd_table FileDescriptorMap;
 	
 	class NotExecutableError {};
 	

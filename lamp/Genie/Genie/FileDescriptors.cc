@@ -25,33 +25,14 @@ namespace Genie
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		while ( files.find( fd ) != files.end() )
-		{
-			++fd;
-		}
-		
-		return fd;
-	}
-	
-	static FileDescriptorMap::iterator FindFDIterator( int fd )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		FileDescriptorMap::iterator it = files.find( fd );
-		
-		if ( it == files.end() )
-		{
-			p7::throw_errno( EBADF );
-		}
-		
-		return it;
+		return files.first_unused( fd );
 	}
 	
 	void CloseFileDescriptor( int fd )
 	{
-		FileDescriptorMap::iterator it = FindFDIterator( fd );
+		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		CurrentProcess().FileDescriptors().erase( it );
+		return files.close( fd );
 	}
 	
 	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
@@ -83,9 +64,9 @@ namespace Genie
 	
 	FileDescriptor& GetFileDescriptor( int fd )
 	{
-		FileDescriptorMap::iterator it = FindFDIterator( fd );
+		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		return it->second;
+		return files.at( fd );
 	}
 	
 	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd )
