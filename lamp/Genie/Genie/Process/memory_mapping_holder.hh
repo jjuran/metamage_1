@@ -6,9 +6,6 @@
 #ifndef GENIE_PROCESS_MEMORYMAPPINGHOLDER_HH
 #define GENIE_PROCESS_MEMORYMAPPINGHOLDER_HH
 
-// Standard C++
-#include <map>
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -17,6 +14,7 @@
 
 // Genie
 #include "Genie/mmap/memory_mapping.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -32,7 +30,7 @@ namespace Genie
 			
 			typedef void* addr_t;
 			
-			typedef std::map< addr_t, intrusive_ptr > map;
+			typedef simple_map< addr_t, intrusive_ptr > map;
 			
 			map its_mappings;
 		
