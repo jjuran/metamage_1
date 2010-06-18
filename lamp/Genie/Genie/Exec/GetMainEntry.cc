@@ -13,6 +13,7 @@
 
 // Nitrogen
 #include "Nitrogen/CodeFragments.hh"
+#include "Nitrogen/MacMemory.hh"
 
 // Genie
 #include "Genie/Exec/MainEntryPoint.hh"
