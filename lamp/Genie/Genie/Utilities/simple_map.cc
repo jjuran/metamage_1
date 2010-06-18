@@ -94,7 +94,18 @@ namespace Genie
 	{
 		if ( its_map )
 		{
-			its_map->map.erase( key );
+			typedef std::map< Key, void* >::iterator Iter;
+			
+			std::map< Key, void* >& map = its_map->map;
+			
+			Iter it = map.find( key );
+			
+			if ( it != map.end() )
+			{
+				its_deallocator( it->second );
+				
+				map.erase( it );
+			}
 		}
 	}
 	
