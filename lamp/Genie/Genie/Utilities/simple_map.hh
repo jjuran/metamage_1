@@ -36,6 +36,8 @@ namespace Genie
 			void* get( Key key, allocator a );
 			
 			void erase( Key key );
+			
+			void clear();
 	};
 	
 	template < class Data >
@@ -64,6 +66,8 @@ namespace Genie
 			Data& get  ( Key key )  { return *(Data*) map_base::get  ( key, &map_allocate< Data > ); }
 			Data* find ( Key key )  { return  (Data*) map_base::find ( key ); }
 			void  erase( Key key )  {                 map_base::erase( key ); }
+			
+			void clear()  { map_base::clear(); }
 			
 			Data& operator[]( Key key )  { return get( key ); }
 	};

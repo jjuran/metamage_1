@@ -38,7 +38,7 @@ namespace Genie
 			}
 	};
 	
-	map_base::~map_base()
+	void map_base::clear()
 	{
 		if ( its_map == NULL )
 		{
@@ -50,6 +50,13 @@ namespace Genie
 		std::for_each( map.begin(),
 		               map.end(),
 		               map_destroyer( its_deallocator ) );
+		
+		map.clear();
+	}
+	
+	map_base::~map_base()
+	{
+		clear();
 		
 		delete its_map;
 	}
