@@ -6,7 +6,7 @@
 #include "Genie/ProcessList.hh"
 
 // Standard C++
-#include <map>
+#include <vector>
 
 // Standard C
 #include <signal.h>
@@ -15,8 +15,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 #include "Nitrogen/Threads.hh"
 #include "Nitrogen/Timer.hh"
 
@@ -29,48 +27,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class ProcessList
-	{
-		public:
-			typedef std::map< pid_t, boost::intrusive_ptr< Process > >  Map;
-			typedef Map::value_type                                     value_type;
-			typedef Map::const_iterator                                 const_iterator;
-			typedef Map::iterator                                       iterator;
-		
-		private:
-			Map    itsMap;
-		
-		public:
-			ProcessList();
-			
-			~ProcessList();
-			
-			const boost::intrusive_ptr< Process >& NewProcess( Process::RootProcess );
-			const boost::intrusive_ptr< Process >& NewProcess( Process& parent );
-			
-			void RemoveProcess( pid_t pid );
-			
-			Map const& GetMap() const  { return itsMap; }
-			Map      & GetMap()        { return itsMap; }
-			
-			const_iterator begin() const  { return itsMap.begin(); }
-			const_iterator end  () const  { return itsMap.end  (); }
-			
-			iterator begin()  { return itsMap.begin(); }
-			iterator end  ()  { return itsMap.end  (); }
-	};
+	typedef std::vector< boost::intrusive_ptr< Process > > Process_Table;
 	
-	static ProcessList theProcessList;
-	
-	static inline ProcessList& GetProcessList()
-	{
-		return theProcessList;
-	}
-	
-	const boost::intrusive_ptr< Process >& NewProcess( Process& parent )
-	{
-		return GetProcessList().NewProcess( parent );
-	}
+	static Process_Table global_processes;
 	
 	
 	const size_t max_n_tasks = 1024;
@@ -79,71 +38,41 @@ namespace Genie
 	
 	static pid_t next_pid()
 	{
-		if ( ++global_last_pid >= max_n_tasks )
+		if ( ++global_last_pid >= global_processes.size() )
 		{
 			global_last_pid = 1;
 		}
 		
 		pid_t last = global_last_pid - 1;
 		
-		ProcessList::iterator begin = GetProcessList().GetMap().find( global_last_pid );
-		ProcessList::iterator end   = GetProcessList().end();
+		Process_Table::iterator begin = global_processes.begin();
+		Process_Table::iterator end   = global_processes.end();
 		
-		if ( begin == end )
+		Process_Table::iterator it = std::find( begin + global_last_pid,
+		                                        end,
+		                                        Process_Table::value_type() );
+		
+		if ( it == end )
 		{
-			return global_last_pid;
-		}
-		
-	rescan:
-		
-		for ( ProcessList::iterator it = begin;  it != end;  ++it )
-		{
-			Process& proc = *it->second;
+			it = std::find( begin,
+			                begin + global_last_pid,
+			                Process_Table::value_type() );
 			
-			const pid_t pid = proc.GetPID();
-			
-			++last;
-			
-			if ( pid != last )
-			{
-				return global_last_pid = last;
-			}
-		}
-		
-		if ( ++last >= max_n_tasks )
-		{
-			if ( begin !=  GetProcessList().begin() )
-			{
-				end   = begin;
-				begin = GetProcessList().begin();
-				
-				last = 0;
-				
-				goto rescan;
-			}
-			else
+			if ( it == begin + global_last_pid )
 			{
 				p7::throw_errno( EAGAIN );
 			}
 		}
 		
-		return global_last_pid = last;
+		return global_last_pid = it - begin;
 	}
 	
-	
-	ProcessList::ProcessList()
-	{
-	}
-	
-	ProcessList::~ProcessList()
-	{
-	}
 	
 	static void* reap_process( void*, pid_t pid, Process& process )
 	{
 		if ( process.GetLifeStage() == kProcessReleased )
 		{
-			GetProcessList().RemoveProcess( pid );
+			boost::intrusive_ptr< Process >().swap( global_processes[ pid ] );
 		}
 		
 		return NULL;
@@ -164,43 +93,33 @@ namespace Genie
 		
 	}
 	
-	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process::RootProcess )
+	static const boost::intrusive_ptr< Process >& NewProcess( Process::RootProcess )
 	{
 		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
+		
+		ASSERT( global_processes.empty() );
+		
+		global_processes.resize( max_n_tasks );
 		
 		const pid_t pid = next_pid();
 		
 		boost::intrusive_ptr< Process > process( new Process( Process::RootProcess() ) );
 		
-		return itsMap[ pid ] = process;
+		return global_processes[ pid ] = process;
 	}
 	
-	const boost::intrusive_ptr< Process >& ProcessList::NewProcess( Process& parent )
+	const boost::intrusive_ptr< Process >& NewProcess( Process& parent )
 	{
 		const pid_t pid = next_pid();
 		
 		boost::intrusive_ptr< Process > process( new Process( parent, pid ) );
 		
-		return itsMap[ pid ] = process;
-	}
-	
-	void ProcessList::RemoveProcess( pid_t pid )
-	{
-		iterator it = itsMap.find( pid );
-		
-		if ( it == itsMap.end() )
-		{
-			Mac::SysBeep();
-		}
-		else
-		{
-			itsMap.erase( it );
-		}
+		return global_processes[ pid ] = process;
 	}
 	
 	Process& GetInitProcess()
 	{
-		static const boost::intrusive_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
+		static const boost::intrusive_ptr< Process >& init = NewProcess( Process::RootProcess() );
 		
 		return *init;
 	}
@@ -214,29 +133,25 @@ namespace Genie
 	
 	void kill_all_processes()
 	{
-		for_each_process( &kill_process );
-		
-		while ( GetProcessList().GetMap().size() > 1 )
-		{
-			N::YieldToAnyThread();
-		}
+		Process_Table().swap( global_processes );
 	}
 	
 	
 	bool process_exists( pid_t pid )
 	{
-		return GetProcessList().GetMap().count( pid );
+		return pid < global_processes.size()  &&  global_processes[ pid ].get();
 	}
 	
 	void* for_each_process( void* (*f)( void*, pid_t, Process& ), void* param )
 	{
-		ProcessList::iterator end = GetProcessList().end();
+		Process_Table::iterator begin = global_processes.begin();
+		Process_Table::iterator end   = global_processes.end();
 		
-		for ( ProcessList::iterator it = GetProcessList().begin();  it != end;  ++it )
+		for ( Process_Table::iterator it = begin;  it != end;  ++it )
 		{
-			if ( Process* process = it->second.get() )
+			if ( Process* process = it->get() )
 			{
-				if ( void* result = f( param, it->first, *process ) )
+				if ( void* result = f( param, it - begin, *process ) )
 				{
 					return result;
 				}
@@ -260,7 +175,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			GetProcessList().RemoveProcess( external->GetPID() );
+			global_processes.at( external->GetPID() ).reset();
 		}
 		
 		parent.ResumeAfterFork();
