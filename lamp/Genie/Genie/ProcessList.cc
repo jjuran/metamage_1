@@ -5,9 +5,6 @@
 
 #include "Genie/ProcessList.hh"
 
-// Standard C++
-#include <vector>
-
 // Standard C
 #include <signal.h>
 
@@ -50,8 +47,6 @@ namespace Genie
 	
 	static void ReapProcesses()
 	{
-		std::vector< pid_t > hitlist;
-		
 		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
@@ -60,15 +55,8 @@ namespace Genie
 			
 			if ( proc.GetLifeStage() == kProcessReleased )
 			{
-				hitlist.push_back( pid );
+				GetProcessList().RemoveProcess( pid );
 			}
-		}
-		
-		for ( std::vector< pid_t >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
-		{
-			pid_t pid = *it;
-			
-			GetProcessList().RemoveProcess( pid );
 		}
 	}
 	
