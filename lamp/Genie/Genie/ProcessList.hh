@@ -71,6 +71,8 @@ namespace Genie
 	
 	Process& GetInitProcess();
 	
+	bool process_exists( pid_t pid );
+	
 }
 
 #endif

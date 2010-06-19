@@ -187,5 +187,10 @@ namespace Genie
 	}
 	
 	
+	bool process_exists( pid_t pid )
+	{
+		return GetProcessList().GetMap().count( pid );
+	}
+	
 }
 

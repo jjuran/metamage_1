@@ -203,12 +203,6 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping proc_PID_Mappings[];
 	
-	template < class Key, class Value >
-	static inline bool map_contains( const std::map< Key, Value >& map, const Key& key )
-	{
-		return map.find( key ) != map.end();
-	}
-	
 	struct valid_name_of_pid
 	{
 		typedef canonical_positive_integer well_formed_name;
@@ -216,8 +210,7 @@ namespace Genie
 		static bool applies( const plus::string& name )
 		{
 			return    well_formed_name::applies( name )
-			       && map_contains( GetProcessList().GetMap(),
-			                        int( iota::parse_unsigned_decimal( name.c_str() ) ) );
+			       && process_exists( iota::parse_unsigned_decimal( name.c_str() ) );
 		}
 	};
 	
