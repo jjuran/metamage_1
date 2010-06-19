@@ -207,5 +207,25 @@ namespace Genie
 		return NULL;
 	}
 	
+	void spawn_process( const char* program_path )
+	{
+		Process& parent = GetInitProcess();
+		
+		const boost::intrusive_ptr< Process >& external = NewProcess( parent );
+		
+		char const *const argv[] = { program_path, NULL };
+		
+		try
+		{
+			(void) external->Exec( program_path, argv, NULL );
+		}
+		catch ( ... )
+		{
+			GetProcessList().RemoveProcess( external->GetPID() );
+		}
+		
+		parent.ResumeAfterFork();
+	}
+	
 }
 

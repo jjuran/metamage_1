@@ -12,7 +12,6 @@
 #include "Pedestal/Commands.hh"
 
 // Genie
-#include "Genie/Console.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/ProcessList.hh"
 
@@ -116,8 +115,7 @@ namespace Genie
 	
 	void TerminalsOwner::NewWindow()
 	{
-		//ConsoleProcess* terminal = new ConsoleProcess;
-		SpawnNewConsole();
+		spawn_process( "/bin/jgetty" );
 	}
 	
 	void TerminalsOwner::OpenDocument( const FSSpec& docFile )
