@@ -72,13 +72,6 @@ namespace Genie
 		return GetProcessList().NewProcess( parent );
 	}
 	
-	Process& GetInitProcess()
-	{
-		static const boost::intrusive_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
-		
-		return *init;
-	}
-	
 	
 	const size_t max_n_tasks = 1024;
 	
@@ -203,6 +196,13 @@ namespace Genie
 		{
 			itsMap.erase( it );
 		}
+	}
+	
+	Process& GetInitProcess()
+	{
+		static const boost::intrusive_ptr< Process >& init = GetProcessList().NewProcess( Process::RootProcess() );
+		
+		return *init;
 	}
 	
 	static void* kill_process( void*, pid_t, Process& process )
