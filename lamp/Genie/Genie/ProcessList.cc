@@ -192,5 +192,23 @@ namespace Genie
 		return GetProcessList().GetMap().count( pid );
 	}
 	
+	void* for_each_process( void* (*f)( void*, pid_t, Process& ), void* param )
+	{
+		ProcessList::iterator end = GetProcessList().end();
+		
+		for ( ProcessList::iterator it = GetProcessList().begin();  it != end;  ++it )
+		{
+			if ( Process* process = it->second.get() )
+			{
+				if ( void* result = f( param, it->first, *process ) )
+				{
+					return result;
+				}
+			}
+		}
+		
+		return NULL;
+	}
+	
 }
 

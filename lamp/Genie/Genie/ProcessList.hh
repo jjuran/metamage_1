@@ -73,6 +73,8 @@ namespace Genie
 	
 	bool process_exists( pid_t pid );
 	
+	void* for_each_process( void* (*)( void*, pid_t, Process& ), void* = NULL );
+	
 }
 
 #endif
