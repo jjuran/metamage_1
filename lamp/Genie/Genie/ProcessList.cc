@@ -8,6 +8,9 @@
 // Standard C
 #include <signal.h>
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -20,6 +23,7 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	ProcessList& GetProcessList()
@@ -37,11 +41,61 @@ namespace Genie
 	}
 	
 	
+	const size_t max_n_tasks = 1024;
+	
 	static pid_t global_last_pid = 0;
 	
 	static pid_t next_pid()
 	{
-		return ++global_last_pid;
+		if ( ++global_last_pid >= max_n_tasks )
+		{
+			global_last_pid = 1;
+		}
+		
+		pid_t last = global_last_pid - 1;
+		
+		ProcessList::iterator begin = GetProcessList().GetMap().find( global_last_pid );
+		ProcessList::iterator end   = GetProcessList().end();
+		
+		if ( begin == end )
+		{
+			return global_last_pid;
+		}
+		
+	rescan:
+		
+		for ( ProcessList::iterator it = begin;  it != end;  ++it )
+		{
+			Process& proc = *it->second;
+			
+			const pid_t pid = proc.GetPID();
+			
+			++last;
+			
+			if ( pid != last )
+			{
+				return global_last_pid = last;
+			}
+		}
+		
+		if ( ++last >= max_n_tasks )
+		{
+			if ( begin !=  GetProcessList().begin() )
+			{
+				end   = begin;
+				begin = GetProcessList().begin();
+				
+				last = 0;
+				
+				goto rescan;
+			}
+			else
+			{
+				p7::throw_errno( EAGAIN );
+			}
+		}
+		
+		return global_last_pid = last;
 	}
 	
 	
