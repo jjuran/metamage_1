@@ -46,8 +46,6 @@ namespace Genie
 			
 			void RemoveProcess( pid_t pid );
 			
-			void KillAll();
-			
 			Map const& GetMap() const  { return itsMap; }
 			Map      & GetMap()        { return itsMap; }
 			
@@ -76,6 +74,8 @@ namespace Genie
 	void* for_each_process( void* (*)( void*, pid_t, Process& ), void* = NULL );
 	
 	void spawn_process( const char* program_path );
+	
+	void kill_all_processes();
 	
 }
 

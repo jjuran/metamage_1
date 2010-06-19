@@ -45,7 +45,7 @@ namespace Genie
 			static void AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app );
 			
 			App();
-			~App()  { GetProcessList().KillAll(); }
+			~App()  { kill_all_processes(); }
 			
 			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
 			void CreateSystemConsole();

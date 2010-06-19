@@ -173,11 +173,11 @@ namespace Genie
 		return NULL;
 	}
 	
-	void ProcessList::KillAll()
+	void kill_all_processes()
 	{
 		for_each_process( &kill_process );
 		
-		while ( itsMap.size() > 1 )
+		while ( GetProcessList().GetMap().size() > 1 )
 		{
 			N::YieldToAnyThread();
 		}
