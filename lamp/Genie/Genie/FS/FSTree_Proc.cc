@@ -229,31 +229,22 @@ namespace Genie
 		return Premapped_Factory< proc_PID_Mappings >( parent, name );
 	}
 	
-	class proc_IteratorConverter
+	static void* iterate_one_process( void* param, pid_t pid, Process& )
 	{
-		public:
-			FSNode operator()( const ProcessList::Map::value_type& value ) const
-			{
-				const int key = value.first;
-				
-				const ino_t inode = key;
-				
-				plus::string name = iota::inscribe_decimal( key );
-				
-				return FSNode( inode, name );
-			}
-	};
+		const ino_t inode = pid;
+		
+		plus::string name = iota::inscribe_decimal( pid );
+		
+		FSTreeCache& cache = *(FSTreeCache*) param;
+		
+		cache.push_back( FSNode( inode, name ) );
+		
+		return NULL;
+	}
 	
 	static void proc_iterate( FSTreeCache& cache )
 	{
-		proc_IteratorConverter converter;
-		
-		const ProcessList::Map& sequence = GetProcessList().GetMap();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		for_each_process( &iterate_one_process, &cache );
 	}
 	
 	// Process states

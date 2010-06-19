@@ -107,19 +107,14 @@ namespace Genie
 	{
 	}
 	
-	static void ReapProcesses()
+	static void* reap_process( void*, pid_t pid, Process& process )
 	{
-		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
+		if ( process.GetLifeStage() == kProcessReleased )
 		{
-			Process& proc = *it->second;
-			
-			pid_t pid = proc.GetPID();
-			
-			if ( proc.GetLifeStage() == kProcessReleased )
-			{
-				GetProcessList().RemoveProcess( pid );
-			}
+			GetProcessList().RemoveProcess( pid );
 		}
+		
+		return NULL;
 	}
 	
 	namespace
@@ -129,7 +124,7 @@ namespace Genie
 		{
 			while ( true )
 			{
-				ReapProcesses();
+				for_each_process( &reap_process );
 				
 				N::YieldToAnyThread();
 			}
@@ -171,14 +166,16 @@ namespace Genie
 		}
 	}
 	
+	static void* kill_process( void*, pid_t, Process& process )
+	{
+		process.Raise( SIGKILL );
+		
+		return NULL;
+	}
+	
 	void ProcessList::KillAll()
 	{
-		for ( Map::iterator it = itsMap.begin();  it != itsMap.end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			proc.Raise( SIGKILL );
-		}
+		for_each_process( &kill_process );
 		
 		while ( itsMap.size() > 1 )
 		{

@@ -24,42 +24,54 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	struct wait_param
+	{
+		pid_t  ppid;
+		pid_t  pgid;
+		bool   match_untraced;
+		bool   has_children;
+	};
+	
+	static void* check_process( void* param, pid_t pid, Process& process )
+	{
+		wait_param& pb = *(wait_param*) param;
+		
+		const bool is_child     =                   process.GetPPID() == pb.ppid;
+		const bool pgid_matches = pb.pgid == 0  ||  process.GetPGID() == pb.pgid;
+		
+		const bool terminated   = process.GetLifeStage() == kProcessZombie;
+		
+		const bool stopped      = process.GetSchedule() == kProcessStopped;
+		
+		const bool traced       = process.IsBeingTraced();
+		
+		if ( is_child && pgid_matches )
+		{
+			if ( terminated  ||  stopped && (traced || pb.match_untraced) )
+			{
+				return &process;
+			}
+			
+			pb.has_children = true;
+		}
+		
+		return NULL;
+	}
+	
 	static Process* CheckAny( pid_t ppid, pid_t pid, bool match_untraced )
 	{
 		pid_t pgid = pid == -1 ? 0
 		           : pid ==  0 ? CurrentProcess().GetPGID()
 		           :             -pid;
 		
-		bool hasAnyChildren = false;
+		wait_param param = { ppid, pgid, match_untraced, false };
 		
-		typedef GenieProcessTable::iterator iterator;
-		
-		// FIXME:  Replace with find_if
-		for ( iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
+		if ( Process* process = (Process*) for_each_process( &check_process, &param ) )
 		{
-			Process& proc = *it->second;
-			
-			bool is_child     =                proc.GetPPID() == ppid;
-			bool pgid_matches = pgid == 0  ||  proc.GetPGID() == pgid;
-			
-			bool terminated   = proc.GetLifeStage() == kProcessZombie;
-			
-			bool stopped      = proc.GetSchedule() == kProcessStopped;
-			
-			bool traced       = proc.IsBeingTraced();
-			
-			if ( is_child && pgid_matches )
-			{
-				if ( terminated  ||  stopped && (traced || match_untraced) )
-				{
-					return &proc;
-				}
-				
-				hasAnyChildren = true;
-			}
+			return process;
 		}
 		
-		if ( !hasAnyChildren )
+		if ( !param.has_children )
 		{
 			p7::throw_errno( ECHILD );
 		}

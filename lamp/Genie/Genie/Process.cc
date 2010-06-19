@@ -151,20 +151,29 @@ namespace Genie
 	}
 	
 	
+	struct signal_param
+	{
+		pid_t  pgid;
+		int    signo;
+	};
+	
+	static void* signal_process_in_group( void* param, pid_t, Process& process )
+	{
+		signal_param& pb = *(signal_param*) param;
+		
+		if ( process.GetPGID() == pb.pgid )
+		{
+			process.Raise( pb.signo );
+		}
+		
+		return NULL;
+	}
+	
 	void SendSignalToProcessGroup( int sig, pid_t pgid )
 	{
-		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			if ( ProcessGroup* pgrp = proc.GetProcessGroup().get() )
-			{
-				if ( pgrp->ID() == pgid )
-				{
-					proc.Raise( sig );
-				}
-			}
-		}
+		signal_param param = { pgid, sig };
+		
+		for_each_process( &signal_process_in_group, &param );
 	}
 	
 	Process& GetProcess( pid_t pid )
@@ -177,16 +186,23 @@ namespace Genie
 		throw p7::errno_t( ESRCH );
 	}
 	
+	static void* find_pid( void* param, pid_t pid, Process& process )
+	{
+		return *(pid_t*) param == pid ? &process
+		                              : NULL;
+	}
+	
 	Process* FindProcess( pid_t pid )
 	{
-		ProcessList::iterator it = GetProcessList().GetMap().find( pid );
-		
-		if ( it == GetProcessList().end()  ||  it->second->GetLifeStage() == kProcessReleased )
+		if ( Process* result = (Process*) for_each_process( &find_pid, &pid ) )
 		{
-			return NULL;
+			if ( result->GetLifeStage() != kProcessReleased )
+			{
+				return result;
+			}
 		}
 		
-		return it->second.get();
+		return NULL;
 	}
 	
 	void DeliverFatalSignal( int signo )
@@ -672,19 +688,25 @@ namespace Genie
 		return NewProcessGroup( pgid, NewSession( pgid ) );
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	static void* find_process_group( void* param, pid_t, Process& process )
 	{
-		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
+		const pid_t pgid = *(pid_t*) param;
+		
+		if ( process.GetPGID() == pgid )
 		{
-			Process& proc = *it->second;
-			
-			if ( proc.GetPGID() == pgid )
-			{
-				return proc.GetProcessGroup();
-			}
+			return process.GetProcessGroup().get();
 		}
 		
-		return boost::intrusive_ptr< ProcessGroup >();
+		return NULL;
+	}
+	
+	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	{
+		void* result = for_each_process( &find_process_group, &pgid );
+		
+		ProcessGroup* group = (ProcessGroup*) result;
+		
+		return boost::intrusive_ptr< ProcessGroup >( group );
 	}
 	
 	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session )
@@ -1164,6 +1186,29 @@ namespace Genie
 		parent.Exit( exit_status );
 	}
 	
+	struct notify_param
+	{
+		pid_t  pid;
+		bool   is_session_leader;
+	};
+	
+	void* Process::notify_process( void* param, pid_t, Process& process )
+	{
+		const notify_param& pb = *(notify_param*) param;
+		
+		if ( pb.is_session_leader  &&  process.GetSID() == pb.pid )
+		{
+			process.Raise( SIGHUP );
+		}
+		
+		if ( process.GetPPID() == pb.pid )
+		{
+			process.Orphan();
+		}
+		
+		return NULL;
+	}
+	
 	// This function doesn't return if the process is current and not forked.
 	void Process::Terminate()
 	{
@@ -1203,22 +1248,9 @@ namespace Genie
 			Release();
 		}
 		
-		typedef ProcessList::Map::const_iterator const_iterator;
+		notify_param param = { pid, isSessionLeader };
 		
-		for ( const_iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
-		{
-			Process& proc = *( *it ).second;
-			
-			if ( isSessionLeader  &&  proc.GetSID() == pid )
-			{
-				proc.Raise( SIGHUP );
-			}
-			
-			if ( proc.GetPPID() == pid )
-			{
-				proc.Orphan();
-			}
-		}
+		for_each_process( &notify_process, &param );
 		
 		Ped::AdjustSleepForActivity();
 		
