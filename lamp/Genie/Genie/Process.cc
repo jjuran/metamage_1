@@ -1296,6 +1296,8 @@ namespace Genie
 		
 		itsPPID = 0;  // Don't match PPID comparisons
 		itsLifeStage = kProcessReleased;
+		
+		notify_reaper();
 	}
 	
 	void Process::Suspend()

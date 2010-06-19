@@ -32,6 +32,8 @@ namespace Genie
 	
 	void spawn_process( const char* program_path );
 	
+	void notify_reaper();
+	
 	void kill_all_processes();
 	
 }

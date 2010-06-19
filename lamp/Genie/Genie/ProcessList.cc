@@ -68,6 +68,13 @@ namespace Genie
 	}
 	
 	
+	static bool reaper_must_run = false;
+	
+	void notify_reaper()
+	{
+		reaper_must_run = true;
+	}
+	
 	static void* reap_process( void*, pid_t pid, Process& process )
 	{
 		if ( process.GetLifeStage() == kProcessReleased )
@@ -85,7 +92,12 @@ namespace Genie
 		{
 			while ( true )
 			{
-				for_each_process( &reap_process );
+				if ( reaper_must_run )
+				{
+					reaper_must_run = false;
+					
+					for_each_process( &reap_process );
+				}
 				
 				N::YieldToAnyThread();
 			}
