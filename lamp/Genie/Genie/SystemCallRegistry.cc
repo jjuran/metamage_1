@@ -7,6 +7,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <vector>
 
 // Genie
 #include "Genie/Dispatch/UnimplementedSystemCall.hh"
@@ -14,6 +15,8 @@
 
 namespace Genie
 {
+	
+	typedef std::vector< SystemCall > SystemCallRegistry;
 	
 	SystemCall* gSystemCallArray = NULL;
 	
@@ -58,11 +61,6 @@ namespace Genie
 		}
 		
 		registry[ index ] = SystemCall( func, name );
-	}
-	
-	const SystemCallRegistry& GetSystemCallRegistry()
-	{
-		return TheSystemCallRegistry();
 	}
 	
 	const SystemCall* GetSystemCall( syscall_number_t index )

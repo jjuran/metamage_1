@@ -6,9 +6,6 @@
 #ifndef GENIE_SYSTEMCALLREGISTRY_HH
 #define GENIE_SYSTEMCALLREGISTRY_HH
 
-// Standard C++
-#include <vector>
-
 // Lamp
 #include "lamp/syscalls.h"
 
@@ -55,10 +52,6 @@ namespace Genie
 	extern SystemCall* gSystemCallArray;
 	
 	extern syscall_number_t gLastSystemCall;
-	
-	typedef std::vector< SystemCall > SystemCallRegistry;
-	
-	const SystemCallRegistry& GetSystemCallRegistry();
 	
 	const SystemCall* GetSystemCall( syscall_number_t index );
 	

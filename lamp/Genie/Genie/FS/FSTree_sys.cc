@@ -107,10 +107,8 @@ namespace Genie
 	{
 		syscall_IteratorConverter converter;
 		
-		const SystemCallRegistry& sequence = GetSystemCallRegistry();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
+		std::transform( gSystemCallArray,
+		                gSystemCallArray + gLastSystemCall,
 		                std::back_inserter( cache ),
 		                converter );
 	}
