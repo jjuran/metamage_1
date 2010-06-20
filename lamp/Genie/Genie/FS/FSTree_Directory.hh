@@ -56,7 +56,6 @@ namespace Genie
 			{
 				const char*  name;
 				Function     f;
-				bool         needs_check;
 			};
 			
 			static const Mapping empty_mappings[];
