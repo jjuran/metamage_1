@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_DIRECTORY_HH
 #define GENIE_FILESYSTEM_FSTREE_DIRECTORY_HH
 
-// Standard C++
-#include <vector>
-
 // POSIX
 #include <sys/stat.h>
 

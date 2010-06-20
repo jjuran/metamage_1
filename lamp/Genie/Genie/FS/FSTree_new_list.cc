@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_list.hh"
 
+// Standard C++
+#include <vector>
+
 // POSIX
 #include <fcntl.h>
 
