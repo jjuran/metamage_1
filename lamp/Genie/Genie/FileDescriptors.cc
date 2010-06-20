@@ -12,6 +12,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FileDescriptor.hh"
 #include "Genie/Process.hh"
 
 

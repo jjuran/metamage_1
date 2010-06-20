@@ -14,6 +14,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"

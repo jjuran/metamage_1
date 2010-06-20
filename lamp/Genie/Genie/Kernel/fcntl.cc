@@ -10,6 +10,7 @@
 #include "fcntl.h"
 
 // Genie
+#include "Genie/FileDescriptor.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"

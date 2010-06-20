@@ -13,6 +13,7 @@
 #include "OSErrno/OSErrno.hh"
 
 // Genie
+#include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"

@@ -9,8 +9,6 @@
 // plus
 #include "plus/ref_count.hh"
 
-// Genie
-#include "Genie/FileDescriptor.hh"
 
 namespace Genie
 {
