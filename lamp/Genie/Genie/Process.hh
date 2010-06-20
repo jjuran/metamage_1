@@ -170,6 +170,8 @@ namespace Genie
 			void Terminate();
 			void Terminate( int wait_status );
 			
+			static void* notify_process( void* param, pid_t, Process& process );
+			
 			void Orphan();
 		
 		public:

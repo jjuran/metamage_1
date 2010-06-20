@@ -203,12 +203,6 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping proc_PID_Mappings[];
 	
-	template < class Key, class Value >
-	static inline bool map_contains( const std::map< Key, Value >& map, const Key& key )
-	{
-		return map.find( key ) != map.end();
-	}
-	
 	struct valid_name_of_pid
 	{
 		typedef canonical_positive_integer well_formed_name;
@@ -216,8 +210,7 @@ namespace Genie
 		static bool applies( const plus::string& name )
 		{
 			return    well_formed_name::applies( name )
-			       && map_contains( GetProcessList().GetMap(),
-			                        int( iota::parse_unsigned_decimal( name.c_str() ) ) );
+			       && process_exists( iota::parse_unsigned_decimal( name.c_str() ) );
 		}
 	};
 	
@@ -236,31 +229,22 @@ namespace Genie
 		return Premapped_Factory< proc_PID_Mappings >( parent, name );
 	}
 	
-	class proc_IteratorConverter
+	static void* iterate_one_process( void* param, pid_t pid, Process& )
 	{
-		public:
-			FSNode operator()( const ProcessList::Map::value_type& value ) const
-			{
-				const int key = value.first;
-				
-				const ino_t inode = key;
-				
-				plus::string name = iota::inscribe_decimal( key );
-				
-				return FSNode( inode, name );
-			}
-	};
+		const ino_t inode = pid;
+		
+		plus::string name = iota::inscribe_decimal( pid );
+		
+		FSTreeCache& cache = *(FSTreeCache*) param;
+		
+		cache.push_back( FSNode( inode, name ) );
+		
+		return NULL;
+	}
 	
 	static void proc_iterate( FSTreeCache& cache )
 	{
-		proc_IteratorConverter converter;
-		
-		const ProcessList::Map& sequence = GetProcessList().GetMap();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		for_each_process( &iterate_one_process, &cache );
 	}
 	
 	// Process states

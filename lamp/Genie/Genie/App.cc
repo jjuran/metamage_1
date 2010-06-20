@@ -12,7 +12,6 @@
 #include "Pedestal/Commands.hh"
 
 // Genie
-#include "Genie/Console.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/ProcessList.hh"
 
@@ -46,7 +45,7 @@ namespace Genie
 			static void AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app );
 			
 			App();
-			~App()  { GetProcessList().KillAll(); }
+			~App()  { kill_all_processes(); }
 			
 			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
 			void CreateSystemConsole();
@@ -116,8 +115,7 @@ namespace Genie
 	
 	void TerminalsOwner::NewWindow()
 	{
-		//ConsoleProcess* terminal = new ConsoleProcess;
-		SpawnNewConsole();
+		spawn_process( "/bin/jgetty" );
 	}
 	
 	void TerminalsOwner::OpenDocument( const FSSpec& docFile )

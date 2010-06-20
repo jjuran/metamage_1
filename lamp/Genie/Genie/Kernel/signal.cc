@@ -38,35 +38,44 @@ namespace Genie
 		return CurrentProcess().SetErrno( ESRCH );
 	}
 	
-	static int kill_pgid( pid_t pgid, int signo )
+	struct kill_param
 	{
-		bool killed_any = false;
-		
-		Process& current = CurrentProcess();
-		
-		typedef GenieProcessTable::iterator iterator;
-		
-		for ( iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
+		pid_t  id;
+		int    signo;
+		bool   killed_any;
+	};
+	
+	static void* kill_process_in_group( void* param, pid_t pid, Process& process )
+	{
+		if ( process.GetLifeStage() != kProcessReleased )
 		{
-			Process& proc = *it->second;
+			kill_param& pb = *(kill_param*) param;
 			
-			if ( proc.GetLifeStage() == kProcessReleased )
+			const pid_t id = pb.id;
+			
+			const bool matches = id < 0 ? pid != -id
+			                            : process.GetPGID() == id;
+			
+			if ( matches )
 			{
-				continue;
-			}
-			
-			bool pgid_matches = pgid == 0 ? &proc          != &current
-			                              : proc.GetPGID() == pgid;
-			
-			if ( pgid_matches )
-			{
-				send_signal( proc, signo );
+				send_signal( process, pb.signo );
 				
-				killed_any = true;
+				pb.killed_any = true;
 			}
 		}
 		
-		return killed_any ? 0 : current.SetErrno( ESRCH );
+		return NULL;
+	}
+	
+	static int kill_pgid( pid_t pgid, int signo )
+	{
+		Process& current = CurrentProcess();
+		
+		kill_param param = { pgid ? pgid : -current.GetPID(), signo, false };
+		
+		for_each_process( &kill_process_in_group, &param );
+		
+		return param.killed_any ? 0 : current.SetErrno( ESRCH );
 		
 	}
 	
