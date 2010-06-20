@@ -749,7 +749,7 @@ namespace Genie
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot()->ChangeToDirectory() ),
-		itsFileDescriptors    ( FileDescriptorMap() ),
+		itsFileDescriptors    ( fd_table::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
@@ -769,9 +769,11 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		itsFileDescriptors[ 0 ] =
-		itsFileDescriptors[ 1 ] =
-		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
+		fd_table& fds = *itsFileDescriptors;
+		
+		fds[ 0 ] =
+		fds[ 1 ] =
+		fds[ 2 ] = GetSimpleDeviceHandle( "null" );
 		
 		InstallExceptionHandlers();
 	}
@@ -790,7 +792,7 @@ namespace Genie
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.itsCWD ),
-		itsFileDescriptors    ( parent.FileDescriptors() ),
+		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
@@ -950,7 +952,7 @@ namespace Genie
 		
 		clear_memory_mappings();
 		
-		CloseMarkedFileDescriptors( itsFileDescriptors, script_fd );
+		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
 		
 		ClearPendingSignals();
 		
@@ -1030,7 +1032,7 @@ namespace Genie
 		
 		clear_memory_mappings();
 		
-		CloseMarkedFileDescriptors( itsFileDescriptors );
+		CloseMarkedFileDescriptors( *itsFileDescriptors );
 		
 		ClearPendingSignals();
 		
@@ -1224,7 +1226,7 @@ namespace Genie
 		clear_memory_mappings();
 		
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
-		itsFileDescriptors.clear();
+		itsFileDescriptors.reset();
 		
 		itsCWD.reset();
 		

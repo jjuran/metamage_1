@@ -136,7 +136,7 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > itsCWD;
 			
-			FileDescriptorMap itsFileDescriptors;
+			boost::intrusive_ptr< fd_table > itsFileDescriptors;
 			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
@@ -235,7 +235,7 @@ namespace Genie
 			
 			const FSTreePtr& ProgramFile() const  { return itsProgramFile; }
 			
-			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
+			fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
 			unsigned int SetAlarm( unsigned int seconds );
 			
