@@ -439,7 +439,7 @@ namespace Genie
 		}
 		else
 		{
-			Parameters& params = *itsParameters;
+			Parameters& params = its_memory_data->parameters;
 			
 			params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
 			params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
@@ -727,13 +727,13 @@ namespace Genie
 		return pgrp;
 	}
 	
-	static inline boost::intrusive_ptr< Parameters > RootProcessParameters()
+	static inline boost::intrusive_ptr< memory_data > root_memory_data()
 	{
-		boost::intrusive_ptr< Parameters > result( new Parameters );
+		boost::intrusive_ptr< memory_data > result( new memory_data );
 		
 		char const *const argv[] = { "init", NULL };
 		
-		result->itsCmdLine.Assign( argv );
+		result->parameters.itsCmdLine.Assign( argv );
 		
 		return result;
 	}
@@ -757,7 +757,7 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( FSRoot() ),
-		itsParameters         ( RootProcessParameters() ),
+		its_memory_data       ( root_memory_data() ),
 		itsCleanupHandler     (),
 		itMayDumpCore         ()
 	{
@@ -801,7 +801,7 @@ namespace Genie
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( parent.itsProgramFile ),
 		itsMainEntry          ( parent.itsMainEntry ),
-		itsParameters         ( parent.itsParameters ),
+		its_memory_data       ( parent.its_memory_data ),
 		itsCleanupHandler     (),
 		itMayDumpCore         ( true )
 	{
@@ -959,16 +959,16 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		// Members of argv and envp could be living in itsParameters
-		boost::intrusive_ptr< Parameters > newParameters( new Parameters );
+		// Members of argv and envp could be living in its_memory_data
+		boost::intrusive_ptr< memory_data > new_memory_data( new memory_data );
 		
-		newParameters->itsCmdLine.Assign( &context.argVector.front() );
+		new_memory_data->parameters.itsCmdLine.Assign( &context.argVector.front() );
 		
-		newParameters->itsEnviron.Assign( envp );
+		new_memory_data->parameters.itsEnviron.Assign( envp );
 		
 		using std::swap;
 		
-		swap( itsParameters, newParameters );
+		swap( its_memory_data, new_memory_data );
 		
 		itsProgramFile = context.executable;
 		

@@ -103,6 +103,11 @@ namespace Genie
 			std::vector< char* > itsEnvP;
 	};
 	
+	struct memory_data : plus::ref_count< memory_data >
+	{
+		Parameters parameters;
+	};
+	
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
 	                public vfork_context,
@@ -152,7 +157,7 @@ namespace Genie
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
-			boost::intrusive_ptr< Parameters > itsParameters;
+			boost::intrusive_ptr< memory_data > its_memory_data;
 			
 			void* itsReexecArgs[8];
 			
@@ -186,7 +191,7 @@ namespace Genie
 			
 			int Run();
 			
-			const plus::string& GetCmdLine() const  { return itsParameters->itsCmdLine.Data(); }
+			const plus::string& GetCmdLine() const  { return its_memory_data->parameters.itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
