@@ -227,7 +227,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< proc_PID_Mappings >( parent, name );
+		return Premapped_Factory< proc_PID_Mappings >( parent, name, NULL );
 	}
 	
 	static void* iterate_one_process( void* param, pid_t pid, Process& )
@@ -485,7 +485,8 @@ namespace Genie
 	};
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
@@ -497,7 +498,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name )
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		typedef proc_PID_Property< Accessor > Property;
 		
@@ -507,7 +509,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr fd_Factory( const FSTreePtr&     parent,
-	                             const plus::string&  name )
+	                             const plus::string&  name,
+	                             const void*          args )
 	{
 		const pid_t key = GetKeyFromParent( parent );
 		
@@ -516,7 +519,8 @@ namespace Genie
 	
 	template < class LinkResolver >
 	FSTreePtr Link_Factory( const FSTreePtr&     parent,
-	                        const plus::string&  name )
+	                        const plus::string&  name,
+	                        const void*          args )
 	{
 		return seize_ptr( new FSTree_PID_Link< LinkResolver >( parent, name ) );
 	}
@@ -551,7 +555,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr core_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return seize_ptr( new FSTree_proc_PID_core( parent, name ) );
 	}
@@ -629,7 +634,9 @@ namespace Genie
 		return GetFDHandle( itsPID, itsFD )->GetFile();
 	}
 	
-	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_proc( const FSTreePtr&     parent,
+	                           const plus::string&  name,
+	                           const void*          args )
 	{
 		return new_basic_directory( parent, name, proc_lookup, proc_iterate );
 	}

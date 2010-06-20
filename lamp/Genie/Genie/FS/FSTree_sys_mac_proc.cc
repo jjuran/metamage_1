@@ -146,7 +146,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_proc_PSN_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_proc_PSN_Mappings >( parent, name, NULL );
 	}
 	
 	class psn_IteratorConverter
@@ -221,7 +221,8 @@ namespace Genie
 	
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -229,7 +230,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
-	                                     const plus::string&  name )
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
@@ -243,7 +245,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_proc( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_proc( const FSTreePtr&     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}

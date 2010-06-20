@@ -434,7 +434,8 @@ namespace Genie
 	
 	template < class Trigger >
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
-	                                  const plus::string&  name )
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		WindowRef key = GetKeyFromParent( parent );
 		
@@ -443,7 +444,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Const_Property_Factory( const FSTreePtr&     parent,
-	                                         const plus::string&  name )
+	                                         const plus::string&  name,
+	                                         const void*          args )
 	{
 		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		
@@ -455,7 +457,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_app_window_list_REF_Property< Accessor > Property;
 		

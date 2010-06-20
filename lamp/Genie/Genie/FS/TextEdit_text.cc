@@ -148,7 +148,9 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( result );
 	}
 	
-	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return seize_ptr( new FSTree_TextEdit_text( parent, name ) );
 	}

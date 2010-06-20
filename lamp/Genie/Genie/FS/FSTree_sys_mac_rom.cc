@@ -90,7 +90,9 @@ namespace Genie
 	#endif
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_mac_rom( parent, name ) );
 	}

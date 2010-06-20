@@ -920,7 +920,8 @@ namespace Genie
 	
 	template < Variability variability, class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_window_REF_Property( parent,
 		                                                      name,

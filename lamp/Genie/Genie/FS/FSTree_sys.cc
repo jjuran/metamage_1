@@ -112,7 +112,9 @@ namespace Genie
 		                converter );
 	}
 	
-	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr&     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
 	{
 		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}
@@ -142,7 +144,8 @@ namespace Genie
 	
 	template < int (*main)() >
 	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
-	                                     const plus::string&  name )
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}

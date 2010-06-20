@@ -100,7 +100,9 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetUserHomeFolder(), false );
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr&     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_mac_user_home( parent, name ) );
 	}

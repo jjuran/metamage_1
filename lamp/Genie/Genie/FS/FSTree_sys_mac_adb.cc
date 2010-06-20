@@ -91,7 +91,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_adb_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_adb_N_Mappings >( parent, name, NULL );
 	}
 	
 	class adb_IteratorConverter
@@ -200,7 +200,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -208,7 +209,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name )
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -224,7 +226,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, adb_lookup, adb_iterate );
 	}

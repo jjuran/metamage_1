@@ -166,14 +166,16 @@ namespace Genie
 	
 	
 	static FSTreePtr dev_fd_Factory( const FSTreePtr&     parent,
-	                                 const plus::string&  name )
+	                                 const plus::string&  name,
+	                                 const void*          args )
 	{
 		return FSTreePtr( New_FSTree_SymbolicLink( parent, name, "/proc/self/fd" ) );
 	}
 	
 	template < class Opener >
 	static FSTreePtr BasicDevice_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name )
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return seize_ptr( new FSTree_BasicDevice( parent,
 		                                          name,
@@ -182,7 +184,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
-	                                       const plus::string&  name )
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return seize_ptr( new FSTree_SimpleDevice( parent, name ) );
 	}

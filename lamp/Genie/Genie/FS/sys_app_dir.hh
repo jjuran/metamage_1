@@ -15,7 +15,9 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr& parent, const plus::string& name );
+	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args );
 	
 }
 

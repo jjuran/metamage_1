@@ -13,7 +13,9 @@
 namespace Genie
 {
 	
-	FSTreePtr New_defaultkeys( const FSTreePtr& parent, const plus::string& name );
+	FSTreePtr New_defaultkeys( const FSTreePtr&     parent,
+	                           const plus::string&  name,
+	                           const void*          args );
 	
 }
 

@@ -108,7 +108,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_crsr_Property< Accessor > Property;
 		

@@ -35,7 +35,9 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetAppFolder(), false );
 	}
 	
-	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		return seize_ptr( new FSTree_sys_app_dir( parent, name ) );
 	}

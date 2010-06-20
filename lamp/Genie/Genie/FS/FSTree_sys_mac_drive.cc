@@ -69,7 +69,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_drive_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_drive_N_Mappings >( parent, name, NULL );
 	}
 	
 	class drive_IteratorConverter
@@ -109,7 +109,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Link_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -205,7 +206,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_drive_N_Property< Accessor > Property;
 		
@@ -216,7 +218,8 @@ namespace Genie
 	
 	template < class Trigger >
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
-	                                  const plus::string&  name )
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -239,7 +242,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return new_basic_directory( parent, name, drive_lookup, drive_iterate );
 	}

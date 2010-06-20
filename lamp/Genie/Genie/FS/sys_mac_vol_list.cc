@@ -177,7 +177,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name, NULL );
 	}
 	
 	class vol_IteratorConverter
@@ -479,7 +479,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_vol_N_Property< Accessor > Property;
 		
@@ -501,7 +502,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Volume_Name_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name )
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		typedef sys_mac_vol_N_name Property;
 		
@@ -518,7 +520,8 @@ namespace Genie
 	
 	template < class Trigger >
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
-	                                  const plus::string&  name )
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -526,7 +529,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -536,7 +540,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,
-	                                     const plus::string&  name )
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -555,7 +560,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name )
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -575,7 +581,8 @@ namespace Genie
 	
 	template < N::FolderType type >
 	static FSTreePtr Folder_Link_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name )
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
@@ -626,7 +633,9 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, vol_lookup, vol_iterate );
 	}
@@ -637,7 +646,7 @@ namespace Genie
 		
 		const plus::string name = iota::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name, NULL );
 	}
 	
 }

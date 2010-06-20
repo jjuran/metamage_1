@@ -18,7 +18,9 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr& parent, const plus::string& name );
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args );
 	
 	FSTreePtr Get_sys_mac_vol_N( Mac::FSVolumeRefNum vRefNum );
 	

@@ -665,13 +665,15 @@ namespace Genie
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
-	                            const plus::string&  name )
+	                            const plus::string&  name,
+	                            const void*          args )
 	{
 		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
 	}
 	
 	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
-	                              const plus::string&  name )
+	                              const plus::string&  name,
+	                              const void*          args )
 	{
 		return seize_ptr( new FSTree_Volumes( parent, name ) );
 	}
@@ -685,7 +687,7 @@ namespace Genie
 		
 		if ( u != NULL )
 		{
-			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "" );
+			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "", NULL );
 			FSTreePtr bottom = seize_ptr( new FSTree_Root() );
 			
 			u->SetTop   ( top    );

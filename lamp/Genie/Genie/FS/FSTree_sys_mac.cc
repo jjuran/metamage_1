@@ -38,7 +38,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -47,7 +48,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name )
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,

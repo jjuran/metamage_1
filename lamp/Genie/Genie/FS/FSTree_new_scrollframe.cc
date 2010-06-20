@@ -363,7 +363,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -383,7 +384,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr&     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return seize_ptr( new FSTree_new_View( parent,
 		                                       name,

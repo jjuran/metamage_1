@@ -208,7 +208,9 @@ namespace Genie
 		                converter );
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTreePtr&     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}

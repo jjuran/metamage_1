@@ -108,7 +108,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_gdev_list_H_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_gdev_list_H_Mappings >( parent, name, NULL );
 	}
 	
 	class gdev_IteratorConverter
@@ -183,7 +183,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_gdev_list_N_Property< Accessor > Property;
 		
@@ -193,7 +194,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name )
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		N::GDHandle key = GetKeyFromParent( parent );
 		
@@ -211,7 +213,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr&     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		return new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
 	}

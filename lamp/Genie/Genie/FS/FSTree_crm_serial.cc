@@ -82,7 +82,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_crm_serial_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_crm_serial_N_Mappings >( parent, name, NULL );
 	}
 	
 	class crm_IteratorConverter
@@ -184,7 +184,8 @@ namespace Genie
 	
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -192,7 +193,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Input_Factory( const FSTreePtr&     parent,
-	                                const plus::string&  name )
+	                                const plus::string&  name,
+	                                const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -200,7 +202,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Output_Factory( const FSTreePtr&     parent,
-	                                 const plus::string&  name )
+	                                 const plus::string&  name,
+	                                 const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -209,7 +212,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr Icon_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name )
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -226,7 +230,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTreePtr&     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
 	{
 		return new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}

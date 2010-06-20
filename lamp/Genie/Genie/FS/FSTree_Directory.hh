@@ -50,12 +50,15 @@ namespace Genie
 	class FSTree_Premapped : public FSTree_Directory
 	{
 		public:
-			typedef FSTreePtr (*Function)( const FSTreePtr&, const plus::string& );
+			typedef FSTreePtr (*Function)( const FSTreePtr&,
+			                               const plus::string&,
+			                               const void* );
 			
 			struct Mapping
 			{
 				const char*  name;
 				Function     f;
+				const void*  args;
 			};
 			
 			static const Mapping empty_mappings[];
@@ -91,7 +94,9 @@ namespace Genie
 	
 	
 	template < class FSTree_Type >
-	FSTreePtr Basic_Factory( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr Basic_Factory( const FSTreePtr&     parent,
+	                         const plus::string&  name,
+	                         const void*          args )
 	{
 		return seize_ptr( new FSTree_Type( parent, name ) );
 	}
@@ -102,13 +107,17 @@ namespace Genie
 	                             void                             (*dtor)(const FSTree*) = NULL );
 	
 	template < const FSTree_Premapped::Mapping mappings[] >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const plus::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return Premapped_Factory( parent, name, mappings );
 	}
 	
 	template < const FSTree_Premapped::Mapping mappings[], void (*dtor)(const FSTree*) >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr& parent, const plus::string& name )
+	inline FSTreePtr Premapped_Factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return Premapped_Factory( parent, name, mappings, dtor );
 	}

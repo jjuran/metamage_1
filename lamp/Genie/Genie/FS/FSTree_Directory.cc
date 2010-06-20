@@ -128,7 +128,7 @@ namespace Genie
 		{
 			const Function& f = it->f;
 			
-			return f( (parent ? parent : this)->Self(), name );
+			return f( (parent ? parent : this)->Self(), name, it->args );
 		}
 		
 		return FSNull();
@@ -144,7 +144,7 @@ namespace Genie
 			
 			try
 			{
-				FSTreePtr file = f( Self(), name );
+				FSTreePtr file = f( Self(), name, it->args );
 				
 				if ( !file->Exists() )
 				{

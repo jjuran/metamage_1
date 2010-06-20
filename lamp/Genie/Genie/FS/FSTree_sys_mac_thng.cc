@@ -208,7 +208,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_thng_REF_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_thng_REF_Mappings >( parent, name, NULL );
 	}
 	
 	class thng_IteratorConverter
@@ -362,7 +362,8 @@ namespace Genie
 	}
 	
 	static FSTreePtr IconSuite_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name )
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		const Component comp = GetKeyFromParent( parent );
 		
@@ -391,7 +392,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name )
+	                                    const plus::string&  name,
+	                                    const void*          args )
 	{
 		return New_FSTree_Generated( parent,
 		                             name,
@@ -400,7 +402,8 @@ namespace Genie
 	
 	template < class Property >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_FSTree_Property( parent,
 		                            name,
@@ -423,7 +426,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr&     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new_basic_directory( parent, name, thng_lookup, thng_iterate );
 	}

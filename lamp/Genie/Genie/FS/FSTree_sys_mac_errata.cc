@@ -126,7 +126,8 @@ namespace Genie
 	
 	template < class Erratum >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_errata_Property< Erratum > Property;
 		

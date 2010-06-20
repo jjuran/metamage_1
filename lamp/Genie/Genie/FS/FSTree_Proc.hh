@@ -13,7 +13,9 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_proc( const FSTreePtr& parent, const plus::string& name );
+	FSTreePtr New_FSTree_proc( const FSTreePtr&     parent,
+	                           const plus::string&  name,
+	                           const void*          args );
 	
 }
 

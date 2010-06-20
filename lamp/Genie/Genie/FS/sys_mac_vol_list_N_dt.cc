@@ -186,7 +186,9 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr&     parent,
+	                                                            const plus::string&  name,
+	                                                            const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
@@ -211,7 +213,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_vol_list_N_dt_appls_QUAD_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_vol_list_N_dt_appls_QUAD_Mappings >( parent, name, NULL );
 	}
 	
 	static void appl_iterate( FSTreeCache& cache )
@@ -306,12 +308,16 @@ namespace Genie
 		// Can't enumerate
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr&     parent,
+	                                                  const plus::string&  name,
+	                                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_lookup, appl_iterate );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr&     parent,
+	                                                  const plus::string&  name,
+	                                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, icon_lookup, icon_iterate );
 	}

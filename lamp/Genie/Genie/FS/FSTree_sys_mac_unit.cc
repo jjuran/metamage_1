@@ -286,7 +286,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name );
+		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name, NULL );
 	}
 	
 	class unit_IteratorConverter
@@ -319,7 +319,8 @@ namespace Genie
 	
 	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name )
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		typedef sys_mac_unit_N_Property< Accessor > Property;
 		
@@ -338,7 +339,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr& parent, const plus::string& name )
+	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr&     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}
