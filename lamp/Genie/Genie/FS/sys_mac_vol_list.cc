@@ -595,14 +595,14 @@ namespace Genie
 		
 		{ "sig", &Property_Factory< GetVolumeSignature > },
 		
-		{ "drive",  &Drive_Link_Factory,  true },
-		{ "driver", &Driver_Link_Factory, true },
+		{ "drive",  &Drive_Link_Factory  },
+		{ "driver", &Driver_Link_Factory },
 		
 		{ "fsid", &Property_Factory< GetVolumeFSID > },
 		
-		{ "writes", &Property_Factory< GetVolumeWriteCount >, true },
-		{ "files",  &Property_Factory< GetVolumeFileCount  >, true },
-		{ "dirs",   &Property_Factory< GetVolumeDirCount   >, true },
+		{ "writes", &Property_Factory< GetVolumeWriteCount > },
+		{ "files",  &Property_Factory< GetVolumeFileCount  > },
+		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
 		
 		{ "dt",    &Premapped_Factory< sys_mac_vol_list_N_dt_Mappings > },
 		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },

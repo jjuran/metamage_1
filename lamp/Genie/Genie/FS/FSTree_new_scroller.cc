@@ -169,7 +169,7 @@ namespace Genie
 		{ "x", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::HOffset > > },
 		{ "y", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::VOffset > > },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
+		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		
 		{ NULL, NULL }
 	};

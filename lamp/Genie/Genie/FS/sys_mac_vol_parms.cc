@@ -219,16 +219,16 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_parms_Mappings[] =
 	{
-		{ "attrib",   &Parms_Property_Factory< GetVolumeParmsAttrib   >       },
-		{ "handle",   &Parms_Property_Factory< GetVolumeParmsHandle   >, true },
-		{ "server",   &Parms_Property_Factory< GetVolumeParmsServer   >, true },
+		{ "attrib",   &Parms_Property_Factory< GetVolumeParmsAttrib   > },
+		{ "handle",   &Parms_Property_Factory< GetVolumeParmsHandle   > },
+		{ "server",   &Parms_Property_Factory< GetVolumeParmsServer   > },
 		
-		{ "grade",    &Parms_Property_Factory< GetVolumeParmsGrade    >, true },
-		{ "priv",     &Parms_Property_Factory< GetVolumeParmsPrivID   >, true },
+		{ "grade",    &Parms_Property_Factory< GetVolumeParmsGrade    > },
+		{ "priv",     &Parms_Property_Factory< GetVolumeParmsPrivID   > },
 		
-		{ "extended", &Parms_Property_Factory< GetVolumeParmsExtended >, true },
+		{ "extended", &Parms_Property_Factory< GetVolumeParmsExtended > },
 		
-		{ "device",   &Parms_Property_Factory< GetVolumeParmsDeviceID >, true },
+		{ "device",   &Parms_Property_Factory< GetVolumeParmsDeviceID > },
 		
 		{ NULL, NULL }
 		

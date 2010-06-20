@@ -376,9 +376,9 @@ namespace Genie
 		{ "horizontal", &Property_Factory< View_Property< Boolean_Scribe, Horizontal > > },
 		{ "vertical",   &Property_Factory< View_Property< Boolean_Scribe, Vertical   > > },
 		
-		{ "target", &Basic_Factory< FSTree_ScrollFrame_target >, true },
+		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
+		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		
 		{ NULL, NULL }
 	};

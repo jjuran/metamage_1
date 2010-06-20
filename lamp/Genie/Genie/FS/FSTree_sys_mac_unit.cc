@@ -332,8 +332,8 @@ namespace Genie
 	{
 		{ "flags", &Property_Factory< GetDriverFlags > },
 		{ "name",  &Property_Factory< DriverName  > },
-		{ "slot",  &Property_Factory< GetDriverSlot  >, true },
-		{ "base",  &Property_Factory< GetDriverBase  >, true },
+		{ "slot",  &Property_Factory< GetDriverSlot  > },
+		{ "base",  &Property_Factory< GetDriverBase  > },
 		
 		{ NULL, NULL }
 	};

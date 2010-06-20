@@ -183,7 +183,7 @@ namespace Genie
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "ram",  &Basic_Factory< sys_mac_vol_ram  >, true },
+		{ "ram",  &Basic_Factory< sys_mac_vol_ram  > },
 		
 	#endif
 		

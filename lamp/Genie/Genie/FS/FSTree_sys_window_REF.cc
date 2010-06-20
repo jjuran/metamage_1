@@ -934,14 +934,14 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
-		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref >, true },
+		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref > },
 		
-		{ "view",   &Basic_Factory< FSTree_X_view< GetView > >, true },
+		{ "view",   &Basic_Factory< FSTree_X_view< GetView > > },
 		
-		{ "focus",  &Basic_Factory< FSTree_sys_window_REF_focus >, true },
+		{ "focus",  &Basic_Factory< FSTree_sys_window_REF_focus > },
 		
-		{ "accept", &Basic_Factory< FSTree_Window_Gesture >, true },
-		{ "cancel", &Basic_Factory< FSTree_Window_Gesture >, true },
+		{ "accept", &Basic_Factory< FSTree_Window_Gesture > },
+		{ "cancel", &Basic_Factory< FSTree_Window_Gesture > },
 		
 		{ "tty",    &Basic_Factory< FSTree_sys_window_REF_tty > },
 		

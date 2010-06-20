@@ -69,7 +69,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_app_window_Mappings[] =
 	{
-		{ "front", &Basic_Factory< sys_app_window_front >, true },
+		{ "front", &Basic_Factory< sys_app_window_front > },
 		
 		{ "list", &New_FSTree_sys_app_window_list },
 		
