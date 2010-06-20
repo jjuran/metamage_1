@@ -12,6 +12,20 @@
 namespace plus
 {
 	
+	template < class T > struct destroyer
+	{
+		static void apply( T* x )
+		{
+			delete x;
+		}
+	};
+	
+	template < class T >
+	inline void destroy( T* x )
+	{
+		destroyer< T >::apply( x );
+	}
+	
 	class ref_count_base
 	{
 		private:
@@ -53,7 +67,7 @@ namespace plus
 			{
 				if ( derived->release() == 0 )
 				{
-					delete derived;
+					destroy( derived );
 				}
 			}
 		
