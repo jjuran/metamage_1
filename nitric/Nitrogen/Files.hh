@@ -31,6 +31,7 @@
 #include "Mac/Devices/Types/DriverRefNum.hh"
 #include "Mac/Files/Functions/FlushVol.hh"
 #include "Mac/Files/Functions/UnmountVol.hh"
+#include "Mac/Files/Types/FSCreator.hh"
 #include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSDirSpec.hh"
 #include "Mac/Files/Types/FSFileRefNum.hh"
@@ -38,6 +39,7 @@
 #include "Mac/Files/Types/FSIOPosMode.hh"
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #include "Mac/Files/Types/FSSignature.hh"
+#include "Mac/Files/Types/FSType.hh"
 #include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 
@@ -459,7 +461,7 @@ namespace Nitrogen
 	
 	void PBDTGetAPPLSync( DTPBRec& pb );
 	
-	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
+	FSSpec DTGetAPPL( Mac::FSCreator signature, FSVolumeRefNum vRefNum );
 	
 	void PBDTSetCommentSync( DTPBRec& pb );
 	
@@ -552,9 +554,9 @@ namespace Nitrogen
 	                                          FSIOPermssn     permissions );
 	
 	
-	FSSpec FSpCreate( const FSSpec&  file, 
-	                  OSType         creator, 
-	                  OSType         type, 
+	FSSpec FSpCreate( const FSSpec&    file, 
+	                  Mac::FSCreator   creator, 
+	                  Mac::FSType      type, 
 	                  ScriptCode     scriptTag = smSystemScript );
 	
 	inline FSSpec FSpCreate( const FSSpec&         file,
@@ -1805,7 +1807,7 @@ namespace Nitrogen
 {
 	
 	template < class VolumeIter >
-	FSSpec DTGetAPPL( OSType signature, VolumeIter begin, VolumeIter end )
+	FSSpec DTGetAPPL( Mac::FSCreator signature, VolumeIter begin, VolumeIter end )
 	{
 		for ( ;  begin != end;  ++begin )
 		{
@@ -1836,7 +1838,7 @@ namespace Nitrogen
 		return FSSpec();
 	}
 	
-	inline FSSpec DTGetAPPL( OSType signature )
+	inline FSSpec DTGetAPPL( Mac::FSCreator signature )
 	{
 		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
 	}

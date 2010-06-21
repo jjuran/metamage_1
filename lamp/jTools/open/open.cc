@@ -14,6 +14,8 @@
 #include "iota/quad.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
+
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AERegistry.hh"
 #include "Nitrogen/Aliases.hh"
@@ -160,7 +162,7 @@ namespace tool
 		o::alias_option( "--actv", "--activate" );
 	}
 	
-	static N::OSType DefaultTextFileCreator()
+	static Mac::FSCreator DefaultTextFileCreator()
 	{
 	#ifdef __LAMP__
 		
@@ -168,16 +170,16 @@ namespace tool
 		
 		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly | p7::o_binary ) );
 		
-		return N::OSType( iota::decode_quad( code.data() ) );
+		return Mac::FSCreator( iota::decode_quad( code.data() ) );
 		
 	#else
 		
-		return N::OSType( 'ttxt' );  // for OS X
+		return Mac::FSCreator( 'ttxt' );  // for OS X
 		
 	#endif
 	}
 	
-	static N::OSType SignatureOfAppForOpening()
+	static Mac::FSCreator SignatureOfAppForOpening()
 	{
 		if ( gOpenInEditor )
 		{
@@ -189,7 +191,7 @@ namespace tool
 			{
 				if ( strlen( macEditorSignature ) == sizeof 'quad' )
 				{
-					return N::OSType( iota::decode_quad( macEditorSignature ) );
+					return Mac::FSCreator( iota::decode_quad( macEditorSignature ) );
 				}
 				
 				// Treat a malformed quad value the same as no value.  Move on.
@@ -209,12 +211,12 @@ namespace tool
 				N::ThrowOSStatus( paramErr );
 			}
 			
-			return N::OSType( iota::decode_quad( gAppSigToOpenIn ) );
+			return Mac::FSCreator( iota::decode_quad( gAppSigToOpenIn ) );
 		}
 		
 		// Otherwise, give everything to the Finder.
 		
-		return N::OSType( sigFinder );
+		return Mac::FSCreator( sigFinder );
 	}
 	
 	static void OpenItemsUsingOptions( const N::AEDescList_Data& items )
@@ -269,7 +271,7 @@ namespace tool
 			// Look up by signature.
 			
 			// Pick a signature
-			N::OSType signature = SignatureOfAppForOpening();
+			Mac::FSCreator signature = SignatureOfAppForOpening();
 			
 			try
 			{

@@ -786,8 +786,8 @@ namespace MacBinary
 		}
 		else
 		{
-			N::FSpCreate( itsFrame.file, N::OSType( h.Get< kFileCreator >() ),
-								         N::OSType( h.Get< kFileType    >() ) );
+			N::FSpCreate( itsFrame.file, Mac::FSCreator( h.Get< kFileCreator >() ),
+								         Mac::FSType   ( h.Get< kFileType    >() ) );
 		}
 		
 		CInfoPBRec pb;

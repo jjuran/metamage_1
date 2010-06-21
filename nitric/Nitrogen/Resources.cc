@@ -320,8 +320,8 @@ namespace Nitrogen
 	}
 	
 	void FSpCreateResFile( const FSSpec&    spec,
-	                       Mac::OSType      creator,
-	                       Mac::OSType      type,
+	                       Mac::FSCreator   creator,
+	                       Mac::FSType      type,
 	                       Mac::ScriptCode  scriptTag )
 	{
 		::FSpCreateResFile( &spec, creator, type, scriptTag );

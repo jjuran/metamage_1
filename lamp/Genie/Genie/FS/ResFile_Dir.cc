@@ -500,8 +500,8 @@ namespace Genie
 		}
 		
 		N::FSpCreateResFile( itsFileSpec,
-		                     N::OSType( creator ),
-		                     N::OSType( type    ),
+		                     Mac::FSCreator( creator ),
+		                     Mac::FSType   ( type    ),
 		                     N::smSystemScript );
 	}
 	

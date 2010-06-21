@@ -14,7 +14,8 @@
 #include "nucleus/enumeration_traits.hh"
 
 // Nitrogen
-#include "Mac/Toolbox/Types/OSType.hh"
+#include "Mac/Files/Types/FSCreator.hh"
+#include "Mac/Files/Types/FSType.hh"
 
 
 namespace Mac
@@ -22,21 +23,21 @@ namespace Mac
 	
 	struct FSSignature
 	{
-		OSType creator;
-		OSType type;
+		FSCreator  creator;
+		FSType     type;
 		
 		FSSignature() : creator(), type()
 		{
 		}
 		
-		FSSignature( OSType c,
-		             OSType t ) : creator( c ),
-		                          type   ( t )
+		FSSignature( FSCreator  c,
+		             FSType     t ) : creator( c ),
+		                              type   ( t )
 		{
 		}
 		
-		FSSignature( const FInfo& fInfo ) : creator( OSType( fInfo.fdCreator ) ),
-		                                    type   ( OSType( fInfo.fdType    ) )
+		FSSignature( const FInfo& fInfo ) : creator( FSCreator( fInfo.fdCreator ) ),
+		                                    type   ( FSType   ( fInfo.fdType    ) )
 		{
 		}
 	};

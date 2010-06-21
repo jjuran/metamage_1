@@ -29,7 +29,7 @@ namespace Nitrogen
 {
 	
 	static FSSpec DTGetAPPL( FSVolumeRefNum  vRefNum,
-	                         OSType          signature,
+	                         Mac::FSCreator  signature,
 	                         short           index = 0 )
 	{
 		DTPBRec pb;
@@ -144,7 +144,7 @@ namespace Genie
 		
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
 		
-		const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ) );
+		const FSSpec file = N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ) );
 		
 		const bool onServer = VolumeIsOnServer( vRefNum );
 		
@@ -163,7 +163,7 @@ namespace Genie
 		
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x3_grandparent->Name().c_str() ) );
 		
-		const FSSpec file = N::DTGetAPPL( vRefNum, N::OSType( creator ), index );
+		const FSSpec file = N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 		
 		const bool onServer = VolumeIsOnServer( vRefNum );
 		

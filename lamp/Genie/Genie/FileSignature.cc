@@ -155,14 +155,14 @@ namespace Genie
 	}
 	
 	
-	static N::OSType GetCreatorForType( N::OSType type )
+	static Mac::FSCreator GetCreatorForType( Mac::FSType type )
 	{
 		if ( const FileSignature* it = FindFileSignature( type ) )
 		{
-			return N::OSType( it->creator );
+			return Mac::FSCreator( it->creator );
 		}
 		
-		return N::OSType( '\?\?\?\?' );
+		return Mac::kUnknownFSCreator;  // '????'
 	}
 	
 	Mac::FSSignature PickFileSignatureForName( const plus::string& name )
@@ -175,7 +175,7 @@ namespace Genie
 			
 			if ( const ExtensionToTypeRecord* it = FindExtensionToTypeRecord( extension ) )
 			{
-				N::OSType type = N::OSType( it->type );
+				Mac::FSType type = Mac::FSType( it->type );
 				
 				Mac::FSSignature signature( GetCreatorForType( type ), type );
 				
@@ -183,7 +183,7 @@ namespace Genie
 			}
 		}
 		
-		return Mac::FSSignature( TextFileCreator(), N::OSType( 'TEXT' ) );
+		return Mac::FSSignature( TextFileCreator(), Mac::FSType( 'TEXT' ) );
 	}
 	
 }

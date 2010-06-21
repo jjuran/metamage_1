@@ -26,9 +26,9 @@ namespace Genie
 	
 	extern ::OSType gTextFileCreator;
 	
-	inline Nitrogen::OSType TextFileCreator()
+	inline Mac::FSCreator TextFileCreator()
 	{
-		return Nitrogen::OSType( gTextFileCreator );
+		return Mac::FSCreator( gTextFileCreator );
 	}
 	
 	Mac::FSSignature PickFileSignatureForName( const plus::string& name );

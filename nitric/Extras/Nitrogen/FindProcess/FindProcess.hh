@@ -14,13 +14,13 @@
 #endif
 
 // Nitrogen
-#include "Mac/Toolbox/Types/OSType.hh"
+#include "Mac/Files/Types/FSCreator.hh"
 
 
 namespace NitrogenExtras
 {
 	
-	ProcessSerialNumber FindProcess( Mac::OSType signature );
+	ProcessSerialNumber FindProcess( Mac::FSCreator signature );
 	
 	ProcessSerialNumber FindProcess( const FSSpec& appFile );
 	

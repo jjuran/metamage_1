@@ -7,13 +7,13 @@
 #define TLSRVR_TOOLSERVER_HH
 
 // Nitrogen
-#include "Nitrogen/MacTypes.hh"
+#include "Mac/Files/Types/FSCreator.hh"
 
 
 namespace tool
 {
 	
-	static const Nitrogen::OSType sigToolServer = Nitrogen::OSType( 'MPSX' );
+	static const Mac::FSCreator sigToolServer = Mac::FSCreator( 'MPSX' );
 	
 	static const char* sEscapedQuote = "'¶''";
 	

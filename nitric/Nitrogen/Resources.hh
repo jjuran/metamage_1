@@ -29,14 +29,15 @@
 #include "nucleus/flag_ops.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSCreator.hh"
 #include "Mac/Files/Types/FSIOPerm.hh"
 #include "Mac/Files/Types/FSSignature.hh"
+#include "Mac/Files/Types/FSType.hh"
 #include "Mac/Resources/Functions/ResError.hh"
 #include "Mac/Resources/Types/ResID.hh"
 #include "Mac/Resources/Types/ResType.hh"
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
 #include "Mac/Script/Types/ScriptCode.hh"
-#include "Mac/Toolbox/Types/OSType.hh"
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
 
 #ifndef NITROGEN_MACMEMORY_HH
@@ -278,8 +279,8 @@ namespace Nitrogen
 	                                                Mac::FSIOPerm  permissions );
 	
 	void FSpCreateResFile( const FSSpec&    spec,
-	                       Mac::OSType      creator   = Mac::OSType( 'RSED' ),
-	                       Mac::OSType      type      = Mac::OSType( 'rsrc' ),
+	                       Mac::FSCreator   creator   = Mac::FSCreator( 'RSED' ),
+	                       Mac::FSType      type      = Mac::FSType   ( 'rsrc' ),
 	                       Mac::ScriptCode  scriptTag = Mac::smSystemScript );
 	
 	inline void FSpCreateResFile( const FSSpec&            spec,

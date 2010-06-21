@@ -1180,8 +1180,8 @@ namespace Genie
 	{
 		if ( io::directory_exists( item ) )
 		{
-			return N::FileSignature( N::OSType( 'MACS'                    ),
-			                         N::OSType( kContainerFolderAliasType ) );
+			return N::FileSignature( Mac::FSCreator( 'MACS'                    ),
+			                         Mac::FSType   ( kContainerFolderAliasType ) );
 		}
 		
 		FInfo fInfo = N::FSpGetFInfo( item );

@@ -283,7 +283,7 @@ namespace Nitrogen
 		ThrowOSStatus( err );
 	}
 	
-	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum )
+	FSSpec DTGetAPPL( Mac::FSCreator signature, FSVolumeRefNum vRefNum )
 	{
 		DTPBRec pb;
 		
@@ -418,7 +418,10 @@ namespace Nitrogen
 		return nucleus::owned< FSFileRefNum >::seize( FSFileRefNum( result ) );
 	}
 	
-	FSSpec FSpCreate( const FSSpec& file, OSType creator, OSType type, ScriptCode scriptTag )
+	FSSpec FSpCreate( const FSSpec&    file,
+	                  Mac::FSCreator   creator,
+	                  Mac::FSType      type,
+	                  Mac::ScriptCode  scriptTag )
 	{
 		ThrowOSStatus( ::FSpCreate( &file, creator, type, scriptTag ) );
 		return file;

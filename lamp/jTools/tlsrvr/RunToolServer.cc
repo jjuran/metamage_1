@@ -296,7 +296,7 @@ namespace tool
 			io::delete_file( item );
 		}
 		
-		N::FSpCreate( item, N::OSType( 'R*ch' ), N::OSType( 'TEXT' ) );
+		N::FSpCreate( item, Mac::FSCreator( 'R*ch' ), Mac::FSType( 'TEXT' ) );
 		
 		return item;
 	}

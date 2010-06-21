@@ -190,8 +190,8 @@ namespace tool
 		plus::string output = line + "\n";
 		
 		io::spew_file< scribe >( N::FSpCreate( file,
-		                                       N::OSType( 'R*ch' ),
-		                                       N::OSType( 'TEXT' ) ),
+		                                       Mac::FSCreator( 'R*ch' ),
+		                                       Mac::FSType   ( 'TEXT' ) ),
 		                         output );
 	}
 	
@@ -229,8 +229,8 @@ namespace tool
 	:
 		dir( n::owned< N::FSDirSpec, N::RecursiveFSDeleter >::seize( N::FSpDirCreate( dirLoc ) ) ), 
 		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
-		                                         N::OSType( 'R*ch' ),
-		                                         N::OSType( 'TEXT' ) ) ) )
+		                                         Mac::FSCreator( 'R*ch' ),
+		                                         Mac::FSType   ( 'TEXT' ) ) ) )
 	{
 		//
 	}
