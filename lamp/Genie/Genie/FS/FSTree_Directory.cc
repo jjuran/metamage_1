@@ -144,14 +144,11 @@ namespace Genie
 			
 			try
 			{
-				if ( it->needs_check )
+				FSTreePtr file = f( Self(), name );
+				
+				if ( !file->Exists() )
 				{
-					FSTreePtr file = f( Self(), name );
-					
-					if ( !file->Exists() )
-					{
-						continue;
-					}
+					continue;
 				}
 				
 				ino_t inode = 0;

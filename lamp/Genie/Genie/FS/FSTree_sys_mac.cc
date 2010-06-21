@@ -87,7 +87,7 @@ namespace Genie
 		{ "name", &Property_Factory< sys_mac_name > },
 		{ "keys", &Generated_Factory< sys_mac_keys > },
 		
-		{ "rom", &New_FSTree_sys_mac_rom, true },
+		{ "rom", &New_FSTree_sys_mac_rom },
 		
 		{ NULL, NULL }
 		

@@ -383,7 +383,7 @@ namespace Genie
 		{ ".outline-offset",    &Property_Factory< Frame_Property< Int_Scribe, Outline_Offset    > > },
 		{ ".outline-curvature", &Property_Factory< Frame_Property< Int_Scribe, Outline_Curvature > > },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > >, true },
+		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		
 		{ NULL, NULL }
 	};

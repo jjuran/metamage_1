@@ -414,11 +414,11 @@ namespace Genie
 		{ "manufacturer", &Property_Factory< sys_mac_thng_REF_code< ComponentDescription_Manufacturer > > },
 		
 		{ "name",         &Property_Factory< sys_mac_thng_REF_name > },
-		{ "info",         &Property_Factory< sys_mac_thng_REF_info >, true },
+		{ "info",         &Property_Factory< sys_mac_thng_REF_info > },
 		
-		{ "icon",         &Generated_Factory< sys_mac_thng_REF_icon  >, true },
+		{ "icon",         &Generated_Factory< sys_mac_thng_REF_icon  > },
 		
-		{ "suite",        &IconSuite_Factory, true },
+		{ "suite",        &IconSuite_Factory },
 		
 		{ NULL, NULL }
 	};
