@@ -180,17 +180,6 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 	}
 	
-	static inline plus::string stringify( const char* string )
-	{
-		return string;
-	}
-	
-	static inline plus::string stringify( int i )
-	{
-		return iota::inscribe_decimal( i );
-	}
-	
-	static plus::string stringify( ::Handle );
 	
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property
