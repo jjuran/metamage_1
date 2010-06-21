@@ -378,8 +378,10 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_mac_vol_N_Property
+	struct sys_mac_vol_N_Property : readonly_property
 	{
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
 		typedef N::FSVolumeRefNum Key;
 		
 		static typename Accessor::result_type Get( const FSTree* that )
@@ -408,6 +410,8 @@ namespace Genie
 	
 	struct sys_mac_vol_N_name : sys_mac_vol_N_Property< GetVolumeName >
 	{
+		static const bool can_set = true;
+		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const N::FSVolumeRefNum vRefNum = GetKey( that );
@@ -446,21 +450,6 @@ namespace Genie
 			}
 	};
 	
-	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_vol_N_Property< Accessor > Property;
-		
-		FSTreePtr result = New_FSTree_Property( parent,
-		                                        name,
-		                                        Accessor::fixed_size,
-		                                        &Property::get );
-		
-		return result;
-	}
 	
 	static FSTreePtr Volume_Name_Factory( const FSTreePtr&     parent,
 	                                      const plus::string&  name,
@@ -553,27 +542,29 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Property< prop > >::value
+	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ "name", &Volume_Name_Factory },
 		
-		{ "block-size",  &Property_Factory< GetVolumeBlockSize      > },
-		{ "blocks",      &Property_Factory< GetVolumeBlockCount     > },
-		{ "blocks-free", &Property_Factory< GetVolumeFreeBlockCount > },
+		{ "block-size",  PROPERTY( GetVolumeBlockSize      ) },
+		{ "blocks",      PROPERTY( GetVolumeBlockCount     ) },
+		{ "blocks-free", PROPERTY( GetVolumeFreeBlockCount ) },
 		
-		{ "capacity",  &Property_Factory< GetVolumeCapacity  > },
-		{ "freespace", &Property_Factory< GetVolumeFreeSpace > },
+		{ "capacity",  PROPERTY( GetVolumeCapacity  ) },
+		{ "freespace", PROPERTY( GetVolumeFreeSpace ) },
 		
-		{ "sig", &Property_Factory< GetVolumeSignature > },
+		{ "sig", PROPERTY( GetVolumeSignature ) },
 		
 		{ "drive",  &Drive_Link_Factory  },
 		{ "driver", &Driver_Link_Factory },
 		
-		{ "fsid", &Property_Factory< GetVolumeFSID > },
+		{ "fsid", PROPERTY( GetVolumeFSID ) },
 		
-		{ "writes", &Property_Factory< GetVolumeWriteCount > },
-		{ "files",  &Property_Factory< GetVolumeFileCount  > },
-		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
+		{ "writes", PROPERTY( GetVolumeWriteCount ) },
+		{ "files",  PROPERTY( GetVolumeFileCount  ) },
+		{ "dirs",   PROPERTY( GetVolumeDirCount   ) },
 		
 		{ "dt",    PREMAPPED( sys_mac_vol_list_N_dt_Mappings ) },
 		{ "parms", PREMAPPED( sys_mac_vol_N_parms_Mappings   ) },

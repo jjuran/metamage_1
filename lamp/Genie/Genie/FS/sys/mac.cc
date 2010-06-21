@@ -39,16 +39,6 @@ namespace Genie
 {
 	
 	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
-	
-	template < class Property >
 	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
@@ -59,6 +49,8 @@ namespace Genie
 	}
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
@@ -91,7 +83,7 @@ namespace Genie
 		
 		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		
-		{ "name", &Property_Factory< sys_mac_name > },
+		{ "name", PROPERTY( sys_mac_name ) },
 		{ "keys", &Generated_Factory< sys_mac_keys > },
 		
 		{ "rom", &New_FSTree_sys_mac_rom },

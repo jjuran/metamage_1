@@ -180,8 +180,10 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_mac_drive_N_Property
+	struct sys_mac_drive_N_Property : readonly_property
 	{
+		static const size_t fixed_size = Accessor::fixed_size;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const DrvQEl& el = FindDrive( that );
@@ -191,18 +193,6 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
-	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_drive_N_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
 	
 	template < class Trigger >
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
@@ -214,13 +204,15 @@ namespace Genie
 		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
+	
 	const FSTree_Premapped::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
 		
-		{ "flags", &Property_Factory< GetDriveFlags > },
-		{ "fsid",  &Property_Factory< GetDriveFSID  > },
-		{ "size",  &Property_Factory< GetDriveSize  > },
+		{ "flags", PROPERTY( GetDriveFlags ) },
+		{ "fsid",  PROPERTY( GetDriveFSID  ) },
+		{ "size",  PROPERTY( GetDriveSize  ) },
 		
 		{ "flush",  &Trigger_Factory< Trigger< Volume_Flush   > > },
 		{ "umount", &Trigger_Factory< Trigger< Volume_Unmount > > },

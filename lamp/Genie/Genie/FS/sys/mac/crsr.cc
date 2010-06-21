@@ -102,8 +102,10 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_crsr_Property
+	struct sys_mac_crsr_Property : readwrite_property
 	{
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
 		typedef typename Accessor::result_type result_type;
 		
 		static CursorDevicePtr GetCursorDevice( const FSTree* that )
@@ -144,23 +146,12 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_crsr_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_crsr_Property< prop > >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_crsr_Mappings[] =
 	{
-		{ "location", &Property_Factory< GetCursorLocation > },
+		{ "location", PROPERTY( GetCursorLocation ) },
 		
 		{ NULL, NULL }
 	};

@@ -261,8 +261,10 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_thng_REF_code
+	struct sys_mac_thng_REF_code : readonly_property
 	{
+		static const size_t fixed_size = sizeof (::OSType);
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
@@ -297,7 +299,7 @@ namespace Genie
 		return plus::make_string( result );
 	}
 	
-	struct sys_mac_thng_REF_name
+	struct sys_mac_thng_REF_name : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -311,7 +313,7 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_thng_REF_info
+	struct sys_mac_thng_REF_info : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -399,24 +401,16 @@ namespace Genie
 		                             &Property::Get );
 	}
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[] =
 	{
-		{ "type",         &Property_Factory< sys_mac_thng_REF_code< ComponentDescription_Type         > > },
-		{ "subtype",      &Property_Factory< sys_mac_thng_REF_code< ComponentDescription_SubType      > > },
-		{ "manufacturer", &Property_Factory< sys_mac_thng_REF_code< ComponentDescription_Manufacturer > > },
+		{ "type",         PROPERTY( sys_mac_thng_REF_code< ComponentDescription_Type         > ) },
+		{ "subtype",      PROPERTY( sys_mac_thng_REF_code< ComponentDescription_SubType      > ) },
+		{ "manufacturer", PROPERTY( sys_mac_thng_REF_code< ComponentDescription_Manufacturer > ) },
 		
-		{ "name",         &Property_Factory< sys_mac_thng_REF_name > },
-		{ "info",         &Property_Factory< sys_mac_thng_REF_info > },
+		{ "name",         PROPERTY( sys_mac_thng_REF_name ) },
+		{ "info",         PROPERTY( sys_mac_thng_REF_info ) },
 		
 		{ "icon",         &Generated_Factory< sys_mac_thng_REF_icon  > },
 		

@@ -13,21 +13,13 @@
 namespace Genie
 {
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_time_Mappings[] =
 	{
-		{ ".dls+gmt-delta", &Property_Factory< sys_mac_time_dlsgmtdelta > },
-		{ "dls",            &Property_Factory< sys_mac_time_dls         > },
-		{ "gmt-delta",      &Property_Factory< sys_mac_time_gmtdelta    > },
+		{ ".dls+gmt-delta", PROPERTY( sys_mac_time_dlsgmtdelta ) },
+		{ "dls",            PROPERTY( sys_mac_time_dls         ) },
+		{ "gmt-delta",      PROPERTY( sys_mac_time_gmtdelta    ) },
 		
 		{ NULL, NULL }
 		

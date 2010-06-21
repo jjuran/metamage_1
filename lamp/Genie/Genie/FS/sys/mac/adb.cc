@@ -123,12 +123,14 @@ namespace Genie
 		                converter );
 	}
 	
-	class sys_mac_adb_N_type
+	class sys_mac_adb_N_type : public readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
 		
 		public:
+			static const size_t fixed_size = 2;
+			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
@@ -139,12 +141,14 @@ namespace Genie
 			}
 	};
 	
-	class sys_mac_adb_N_origin
+	class sys_mac_adb_N_origin : public readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
 		
 		public:
+			static const size_t fixed_size = 1;
+			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
@@ -198,16 +202,6 @@ namespace Genie
 	};
 	
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
-	
 	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
@@ -217,10 +211,12 @@ namespace Genie
 		                             &sys_mac_adb_N_registers::Read );
 	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
 	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =
 	{
-		{ "type",      &Property_Factory< sys_mac_adb_N_type   > },
-		{ "origin",    &Property_Factory< sys_mac_adb_N_origin > },
+		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
+		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },
 		{ "registers", &Registers_Factory                        },
 		
 		{ NULL, NULL }

@@ -39,13 +39,8 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_event_post_key
+	struct sys_mac_event_post_key : writeonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
-		{
-			throw FSTree_Property::Undefined();
-		}
-		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			for ( const char* p = begin;  p != end;  ++p )
@@ -60,22 +55,13 @@ namespace Genie
 		}
 	};
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_event_post_Mappings[] =
 	{
 		{ "click", &Basic_Factory< Trigger< sys_mac_event_post_click > > },
 		
-		{ "key",   &Property_Factory< sys_mac_event_post_key   > },
+		{ "key",   PROPERTY( sys_mac_event_post_key ) },
 		
 		{ NULL, NULL }
 	};

@@ -7,23 +7,16 @@
 #define GENIE_FS_SYS_MAC_THREAD_DEFAULTSTACKSIZE_HH
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/property.hh"
 
-
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace Genie
 {
 	
-	class FSTree;
-	
-	struct sys_mac_thread_defaultstacksize
+	struct sys_mac_thread_defaultstacksize : readonly_property
 	{
+		static const std::size_t fixed_size = 4;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary );
 	};
 	
