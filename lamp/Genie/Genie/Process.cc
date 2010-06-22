@@ -10,6 +10,9 @@
 #include <Processes.h>
 #endif
 
+// Standard C++
+#include <vector>
+
 // Standard C
 #include <errno.h>
 #include <signal.h>
@@ -129,26 +132,6 @@ namespace Genie
 		}
 		
 		return *gCurrentProcess;
-	}
-	
-	
-	void FlatArgVector::Assign( char const *const *argv )
-	{
-		itsStorage.clear();
-		
-		// Check for NULL environ
-		
-		if ( argv == NULL )
-		{
-			return;
-		}
-		
-		while ( *argv )
-		{
-			const char* p = *argv++;
-			
-			itsStorage.append( p, std::strlen( p ) + 1 );  // include trailing NUL
-		}
 	}
 	
 	
@@ -397,29 +380,6 @@ namespace Genie
 	
 #endif
 	
-	static std::vector< char* > UnflattenedArgVector( plus::var_string& flat )
-	{
-		std::vector< char* > result;
-		
-		char* begin = &*flat.begin();
-		char* end   = &*flat.end();
-		
-		while ( begin < end )
-		{
-			char* null = std::find( begin, end, '\0' );
-			
-			ASSERT( null != end );
-			
-			result.push_back( begin );
-			
-			begin = null + 1;
-		}
-		
-		result.push_back( NULL );
-		
-		return result;
-	}
-	
 	int Process::Run()
 	{
 		// Accumulate any system time between start and entry to main()
@@ -439,14 +399,9 @@ namespace Genie
 		}
 		else
 		{
-			Parameters& params = its_memory_data->parameters;
-			
-			params.itsArgV = UnflattenedArgVector( params.itsCmdLine.Data() );
-			params.itsEnvP = UnflattenedArgVector( params.itsEnviron.Data() );
-			
-			int    argc = params.itsArgV.size() - 1;  // don't count trailing NULL
-			char** argv = &params.itsArgV[0];
-			char** envp = &params.itsEnvP[0];
+			int    argc = its_memory_data->get_argc();
+			char** argv = its_memory_data->get_argv();
+			char** envp = its_memory_data->get_envp();
 			
 			exit_status = itsMainEntry->Invoke( argc, argv, envp, &DispatchSystemCall );
 			
@@ -729,11 +684,12 @@ namespace Genie
 	
 	static inline boost::intrusive_ptr< memory_data > root_memory_data()
 	{
-		boost::intrusive_ptr< memory_data > result( new memory_data );
+		boost::intrusive_ptr< memory_data > result( memory_data::create() );
 		
 		char const *const argv[] = { "init", NULL };
 		
-		result->parameters.itsCmdLine.Assign( argv );
+		result->set_argv( argv );
+		result->set_envp( NULL );
 		
 		return result;
 	}
@@ -960,11 +916,11 @@ namespace Genie
 		ResetSignalHandlers();
 		
 		// Members of argv and envp could be living in its_memory_data
-		boost::intrusive_ptr< memory_data > new_memory_data( new memory_data );
+		boost::intrusive_ptr< memory_data > new_memory_data( memory_data::create() );
 		
-		new_memory_data->parameters.itsCmdLine.Assign( &context.argVector.front() );
+		new_memory_data->set_argv( &context.argVector.front() );
 		
-		new_memory_data->parameters.itsEnviron.Assign( envp );
+		new_memory_data->set_envp( envp );
 		
 		using std::swap;
 		

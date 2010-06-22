@@ -6,9 +6,6 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Standard C++
-#include <vector>
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -36,6 +33,7 @@
 #include "Genie/Process/vfork_context.hh"
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
+#include "Genie/task/memory_data.hh"
 
 
 namespace Genie
@@ -82,31 +80,6 @@ namespace Genie
 	                                void* _5,
 	                                void* _6,
 	                                void* _7 );
-	
-	class FlatArgVector
-	{
-		private:
-			plus::var_string itsStorage;
-		
-		public:
-			void Assign( char const *const *argv );
-			
-			plus::var_string& Data()  { return itsStorage; }
-	};
-	
-	struct Parameters : plus::ref_count< Parameters >
-	{
-			FlatArgVector itsCmdLine;
-			FlatArgVector itsEnviron;
-			
-			std::vector< char* > itsArgV;
-			std::vector< char* > itsEnvP;
-	};
-	
-	struct memory_data : plus::ref_count< memory_data >
-	{
-		Parameters parameters;
-	};
 	
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
@@ -191,7 +164,7 @@ namespace Genie
 			
 			int Run();
 			
-			const plus::string& GetCmdLine() const  { return its_memory_data->parameters.itsCmdLine.Data(); }
+			const plus::string& GetCmdLine() const  { return its_memory_data->get_cmdline(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
