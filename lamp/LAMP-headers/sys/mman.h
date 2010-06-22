@@ -76,6 +76,8 @@
 #define	MAP_ANON	0x1000	/* allocated from memory, swap space */
 #define	MAP_FLAGMASK	0x17f7
 
+#define MAP_ANONYMOUS  MAP_ANON
+
 /*
  * Advice to madvise
  */
