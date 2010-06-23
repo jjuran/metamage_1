@@ -36,6 +36,9 @@
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
+// MacFeatures
+#include "MacFeatures/Features.hh"
+
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -77,6 +80,7 @@
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
 #include "Genie/IO/MacFile.hh"
+#include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -869,6 +873,19 @@ namespace Genie
 		OSErr unlockErr = ::FSpRstFLock( &fileSpec );
 		
 		OSErr deleteErr = ::FSpDelete( &fileSpec );
+		
+		if ( MacFeatures::Is_Running_OSXNative()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
+		{
+			// If we're on OS X and the file was busy, try the native unlink().
+			
+			const FSRef fsRef = N::FSpMakeFSRef( fileSpec );
+			
+			const nucleus::string path = N::FSRefMakePath( fsRef );
+			
+			p7::throw_posix_result( native_unlink( path.c_str() ) );
+			
+			return;
+		}
 		
 		// Unfortunately, fBsyErr can mean different things.
 		// Here we assume it means a directory is not empty.
