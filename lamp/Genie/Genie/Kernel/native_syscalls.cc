@@ -42,6 +42,34 @@ namespace Genie
 		return *_error();
 	}
 	
+	int native_symlink( const char* target_path, const char* link_path )
+	{
+		typedef int (*symlink_proc)( const char*, const char* );
+		
+		try
+		{
+			(void) get_errno();  // Make sure loading __error() doesn't clobber errno
+			
+			symlink_proc _symlink = (symlink_proc) get_native_syscall( CFSTR( "symlink" ) );
+			
+			int result = _symlink( target_path, link_path );
+			
+			if ( result < 0 )
+			{
+				errno = get_errno();
+			}
+			
+			return result;
+		}
+		catch ( ... )
+		{
+		}
+		
+		errno = ENOSYS;
+		
+		return -1;
+	}
+	
 	int native_unlink( const char* path )
 	{
 		typedef int (*unlink_proc)( const char* );

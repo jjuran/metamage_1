@@ -10,6 +10,8 @@
 namespace Genie
 {
 	
+	int native_symlink( const char* target_path, const char* link_path );
+	
 	int native_unlink( const char* path );
 	
 }

@@ -1196,6 +1196,51 @@ namespace Genie
 		return MacRoman_string;
 	}
 	
+	static plus::string UTF8_from_CFString( CFStringRef string )
+	{
+		const CFIndex length = CFStringGetLength( string );
+		
+		const CFRange range = CFRangeMake( 0, length );
+		
+		CFIndex n_bytes = 0;
+		
+		(void) CFStringGetBytes( string,
+								 range,
+								 kCFStringEncodingUTF8,
+								 UInt8( 0 ),
+								 false,
+								 NULL,
+								 0,
+								 &n_bytes );
+		
+		plus::var_string UTF8_string;
+		
+		UTF8_string.resize( n_bytes );
+		
+		(void) CFStringGetBytes( string,
+								 range,
+								 kCFStringEncodingUTF8,
+								 UInt8( 0 ),
+								 false,
+								 (UInt8*) &UTF8_string[ 0 ],
+								 n_bytes,
+								 &n_bytes );
+		
+		return UTF8_string;
+	}
+	
+	static plus::string UTF8_from_MacRoman( const char* MacRoman_string )
+	{
+		return UTF8_from_CFString( N::CFStringCreateWithCString( MacRoman_string,
+		                                                         kCFStringEncodingMacRoman ) );
+	}
+	
+	static plus::string UTF8_from_MacRoman( const unsigned char* MacRoman_string )
+	{
+		return UTF8_from_CFString( N::CFStringCreateWithPascalString( MacRoman_string,
+		                                                              kCFStringEncodingMacRoman ) );
+	}
+	
 	plus::string FSTree_HFS::ReadLink() const
 	{
 		if ( !IsLink() )
@@ -1295,9 +1340,32 @@ namespace Genie
 		return N::FileSignature( fInfo );
 	}
 	
+	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
+	{
+		FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( link_spec ) );
+		
+		FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
+		
+		nucleus::mutable_string path = N::FSRefMakePath( parent_ref );
+		
+		path += '/';
+		
+		path += UTF8_from_MacRoman( link_spec.name );
+		
+		p7::throw_posix_result( native_symlink( UTF8_from_MacRoman( target_path ).c_str(),
+		                                        path.c_str() ) );
+	}
+	
 	static void CreateSymLink( const FSTreePtr& linkFile, const plus::string& targetPath )
 	{
 		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
+		
+		if ( MacFeatures::Is_Running_OSXNative() )
+		{
+			create_native_symlink( linkSpec, targetPath.c_str() );
+			
+			return;
+		}
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
