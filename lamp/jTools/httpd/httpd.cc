@@ -439,7 +439,7 @@ namespace tool
 		{
 			bool is_dir = false;
 			
-			if ( io::directory_exists( pathname ) )
+			if ( p7::s_isdir( p7::stat( pathname ) ) )
 			{
 				if ( *(pathname.end() - 1) != '/' )
 				{
