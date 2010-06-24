@@ -21,6 +21,9 @@ namespace Mac
 	{
 		kUnknownFSCreator = ::kUnknownType,
 		
+		kHFSPlusCreator = 'hfs+',  // for hard links
+		kSymLinkCreator = 'rhap',
+		
 		kFSCreator_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	

@@ -21,6 +21,9 @@ namespace Mac
 	{
 		kUnknownFSType = ::kUnknownType,
 		
+		kHardLinkFileType = 'hlnk',
+		kSymLinkFileType  = 'slnk',
+		
 		kFSType_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
