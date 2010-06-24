@@ -1414,6 +1414,8 @@ namespace Genie
 	void FSTree_HFS::SymLink( const plus::string& target ) const
 	{
 		CreateSymLink( Self(), target );
+		
+		FinishCreation();
 	}
 	
 	void FSTree_HFS::CreateFile() const
