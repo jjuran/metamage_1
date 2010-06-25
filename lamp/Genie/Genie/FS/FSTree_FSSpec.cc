@@ -1166,6 +1166,36 @@ namespace Genie
 		N::SetEOF( N::FSpOpenDF( GetFSSpec(), N::fsWrPerm ), length );
 	}
 	
+	static plus::string MacRoman_from_UTF8( const plus::string& UTF8_string )
+	{
+		n::owned< CFStringRef > string = N::CFStringCreateWithCString( UTF8_string.c_str(),
+		                                                               kCFStringEncodingUTF8 );
+		
+		const CFIndex length = CFStringGetLength( string );
+		
+		plus::var_string MacRoman_string;
+		
+		MacRoman_string.resize( length );  // MacRoman is one-byte-per-character
+		
+		CFIndex n_bytes = 0;
+		
+		(void) CFStringGetBytes( string,
+								 CFRangeMake( 0, length ),
+								 kCFStringEncodingMacRoman,
+								 UInt8( 0 ),
+								 false,
+								 (UInt8*) &MacRoman_string[ 0 ],
+								 length,
+								 &n_bytes );
+		
+		if ( n_bytes != length )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		return MacRoman_string;
+	}
+	
 	plus::string FSTree_HFS::ReadLink() const
 	{
 		if ( !IsLink() )
@@ -1177,6 +1207,18 @@ namespace Genie
 		
 		if ( !target.empty() )
 		{
+			if ( TARGET_API_MAC_CARBON )
+			{
+				const FInfo fInfo = N::FSpGetFInfo( itsFileSpec );
+				
+				const bool is_MacRoman = fInfo.fdFlags & kIsShared;
+				
+				if ( !is_MacRoman )
+				{
+					return MacRoman_from_UTF8( target );
+				}
+			}
+			
 			return target;
 		}
 		
@@ -1212,10 +1254,15 @@ namespace Genie
 			
 			if ( is_alias  ||  is_osx_symlink( fInfo ) )
 			{
-				const plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
+				plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
 				
 				if ( !target.empty() )
 				{
+					if ( TARGET_API_MAC_CARBON  &&  !( fInfo.fdFlags & kIsShared ) )
+					{
+						target = MacRoman_from_UTF8( target );
+					}
+					
 					return ResolvePathname( target, Parent() );
 				}
 				else if ( is_alias )
