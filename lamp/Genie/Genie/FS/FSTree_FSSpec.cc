@@ -1197,7 +1197,7 @@ namespace Genie
 		return MacRoman_string;
 	}
 	
-	static plus::string UTF8_from_CFString( CFStringRef string )
+	static nucleus::string UTF8_from_CFString( CFStringRef string )
 	{
 		const CFIndex length = CFStringGetLength( string );
 		
@@ -1214,7 +1214,7 @@ namespace Genie
 								 0,
 								 &n_bytes );
 		
-		plus::var_string UTF8_string;
+		nucleus::mutable_string UTF8_string;
 		
 		UTF8_string.resize( n_bytes );
 		
@@ -1230,13 +1230,13 @@ namespace Genie
 		return UTF8_string;
 	}
 	
-	static plus::string UTF8_from_MacRoman( const char* MacRoman_string )
+	static nucleus::string UTF8_from_MacRoman( const char* MacRoman_string )
 	{
 		return UTF8_from_CFString( N::CFStringCreateWithCString( MacRoman_string,
 		                                                         kCFStringEncodingMacRoman ) );
 	}
 	
-	static plus::string UTF8_from_MacRoman( const unsigned char* MacRoman_string )
+	static nucleus::string UTF8_from_MacRoman( const unsigned char* MacRoman_string )
 	{
 		return UTF8_from_CFString( N::CFStringCreateWithPascalString( MacRoman_string,
 		                                                              kCFStringEncodingMacRoman ) );
