@@ -15,6 +15,7 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/mmap/map_anonymous.hh"
 #include "Genie/mmap/memory_mapping.hh"
 
 
@@ -35,12 +36,15 @@ namespace Genie
 			frame.SetErrno( EINVAL );
 		}
 		
+		const bool anonymous = flags & MAP_ANON;
+		
 		try
 		{
 			typedef boost::intrusive_ptr< memory_mapping >  intrusive_ptr;
 			typedef void*                                   addr_t;
 			
-			const intrusive_ptr memory = GetFileHandle( fd )->Map( len, off );
+			const intrusive_ptr memory = anonymous ? map_anonymous( len )
+			                                       : GetFileHandle( fd )->Map( len, off );
 			
 			const addr_t address = frame.Caller().add_memory_mapping( memory );
 			
