@@ -46,7 +46,7 @@ namespace Genie
 			const intrusive_ptr memory = anonymous ? map_anonymous( len )
 			                                       : GetFileHandle( fd )->Map( len, off );
 			
-			const addr_t address = frame.Caller().add_memory_mapping( memory );
+			const addr_t address = frame.Caller().add_memory_mapping( memory.get() );
 			
 			return address;
 		}

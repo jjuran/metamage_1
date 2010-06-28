@@ -26,7 +26,6 @@
 // Genie
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/Process/memory_mapping_holder.hh"
 #include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
@@ -84,7 +83,6 @@ namespace Genie
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
 	                public vfork_context,
-	                public memory_mapping_holder,
 	                public TraceTarget
 	{
 		public:
@@ -165,6 +163,18 @@ namespace Genie
 			int Run();
 			
 			const plus::string& GetCmdLine() const  { return its_memory_data->get_cmdline(); }
+			
+			typedef void* addr_t;
+			
+			addr_t add_memory_mapping( const memory_mapping* mapping )
+			{
+				return its_memory_data->add_memory_mapping( mapping );
+			}
+			
+			void remove_memory_mapping( addr_t key )
+			{
+				its_memory_data->remove_memory_mapping( key );
+			}
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			

@@ -14,6 +14,8 @@
 namespace Genie
 {
 	
+	class memory_mapping;
+	
 	class memory_data;
 	
 	void destroy( const memory_data* x );
@@ -46,6 +48,14 @@ namespace Genie
 			
 			char** get_argv();
 			char** get_envp();
+			
+			typedef void* addr_t;
+			
+			addr_t add_memory_mapping( const memory_mapping* mapping );
+			
+			void remove_memory_mapping( addr_t key );
+			
+			void clear_memory_mappings();
 	};
 	
 	inline void swap( memory_data& a, memory_data& b )

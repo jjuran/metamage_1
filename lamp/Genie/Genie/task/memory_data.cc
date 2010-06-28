@@ -13,9 +13,17 @@
 
 // debug
 #include "debug/assert.hh"
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
 
 // plus
 #include "plus/var_string.hh"
+
+// Genie
+#include "Genie/mmap/memory_mapping.hh"
+#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -62,7 +70,10 @@ namespace Genie
 	class memory_data_impl : public memory_data
 	{
 		public:
-			program_parameters its_parameters;
+			typedef simple_map< addr_t, boost::intrusive_ptr< const memory_mapping > > mmap_map;
+			
+			program_parameters  its_parameters;
+			mmap_map            its_memory_mappings;
 		
 		public:
 			memory_data_impl()
@@ -76,7 +87,8 @@ namespace Genie
 	
 	void memory_data_impl::swap( memory_data_impl& other )
 	{
-		Genie::swap( its_parameters, other.its_parameters );
+		Genie::swap( its_parameters,      other.its_parameters      );
+		Genie::swap( its_memory_mappings, other.its_memory_mappings );
 	}
 	
 	inline void swap( memory_data_impl& a, memory_data_impl& b )
@@ -175,6 +187,27 @@ namespace Genie
 	char** memory_data::get_envp()
 	{
 		return &impl_cast( this )->its_parameters.its_envp[ 0 ];
+	}
+	
+	void* memory_data::add_memory_mapping( const memory_mapping* mapping )
+	{
+		ASSERT( mapping != NULL );
+		
+		void* key = mapping->get_address();
+		
+		impl_cast( this )->its_memory_mappings[ key ] = mapping;
+		
+		return key;
+	}
+	
+	void memory_data::remove_memory_mapping( addr_t key )
+	{
+		impl_cast( this )->its_memory_mappings.erase( key );
+	}
+	
+	void memory_data::clear_memory_mappings()
+	{
+		impl_cast( this )->its_memory_mappings.clear();
 	}
 	
 }

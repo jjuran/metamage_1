@@ -738,7 +738,6 @@ namespace Genie
 	Process::Process( Process& parent, pid_t pid ) 
 	:
 		SignalReceiver        ( parent ),
-		memory_mapping_holder ( parent ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
@@ -907,7 +906,7 @@ namespace Genie
 			}
 		}
 		
-		clear_memory_mappings();
+		its_memory_data->clear_memory_mappings();
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
 		
@@ -987,7 +986,7 @@ namespace Genie
 		// Declare this first so it goes out of scope last
 		n::owned< N::ThreadID > looseThread;
 		
-		clear_memory_mappings();
+		its_memory_data->clear_memory_mappings();
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors );
 		
@@ -1180,7 +1179,7 @@ namespace Genie
 		
 		bool isSessionLeader = pid == sid;
 		
-		clear_memory_mappings();
+		its_memory_data->clear_memory_mappings();
 		
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.reset();
