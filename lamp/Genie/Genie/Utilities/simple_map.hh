@@ -6,6 +6,9 @@
 #ifndef GENIE_UTILITIES_SIMPLEMAP_HH
 #define GENIE_UTILITIES_SIMPLEMAP_HH
 
+// iota
+#include "iota/swap.hh"
+
 
 namespace Genie
 {
@@ -41,7 +44,20 @@ namespace Genie
 			void erase( Key key );
 			
 			void clear();
+			
+			void swap( map_base& x )
+			{
+				using iota::swap;
+				
+				swap( its_map,         x.its_map         );
+				swap( its_deallocator, x.its_deallocator );
+			}
 	};
+	
+	inline void swap( map_base& a, map_base& b )
+	{
+		a.swap( b );
+	}
 	
 	template < class Data >
 	void* map_allocate()
@@ -83,7 +99,18 @@ namespace Genie
 			void clear()  { map_base::clear(); }
 			
 			Data& operator[]( Key key )  { return get( key ); }
+			
+			void swap( simple_map& x )
+			{
+				map_base::swap( x );
+			}
 	};
+	
+	template < class Key, class Data >
+	inline void swap( simple_map< Key, Data >& a, simple_map< Key, Data >& b )
+	{
+		a.swap( b );
+	}
 	
 }
 
