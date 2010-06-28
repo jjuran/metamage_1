@@ -80,7 +80,23 @@ namespace Genie
 			{
 			}
 			
-			memory_data_impl( const memory_data_impl& x );
+			memory_data_impl( const memory_data_impl& x )
+			{
+				/*
+					Don't copy its_parameters -- it exists only to store data
+					that argv and initial environ point to.
+					
+					For vfork(), environ is reallocated in userspace upon
+					modification, and argv is simply not handled -- modifying
+					argv in a vforked child modifies it in the parent -- which
+					is POSIX-conformant since anything between vfork() and exec
+					is undefined behavior.
+					
+					For fork(), we'll need to multiplex all memory belonging to
+					the process, including argv/envp pointers and string data
+					and private mmap regions.
+				*/
+			}
 			
 			void swap( memory_data_impl& other );
 	};
