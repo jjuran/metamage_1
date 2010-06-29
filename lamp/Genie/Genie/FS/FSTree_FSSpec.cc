@@ -458,7 +458,7 @@ namespace Genie
 	{
 		const N::FSDirSpec& root = GetJDirectory();
 		
-		Stat_HFS( false, &sb, root.vRefNum, root.dirID );
+		FSTreeFromFSDirSpec( root, false )->Stat( sb );
 	}
 	
 	void FSTree_Root::SetTimes() const
@@ -768,7 +768,7 @@ namespace Genie
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
-		StatFile( itIsOnServer, GetFSSpec(), &sb, false );
+		Stat_HFS( itIsOnServer, &sb, itsCInfo, itsFileSpec.name, false );
 		
 		const N::FSDirSpec& root = GetJDirectory();
 		
