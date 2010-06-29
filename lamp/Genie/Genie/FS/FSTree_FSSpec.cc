@@ -482,8 +482,9 @@ namespace Genie
 	class FSTree_HFS : public FSTree_Directory
 	{
 		private:
-			FSSpec  itsFileSpec;
-			bool    itIsOnServer;
+			FSSpec      itsFileSpec;
+			CInfoPBRec  itsCInfo;
+			bool        itIsOnServer;
 		
 		public:
 			FSTree_HFS( const FSSpec&        file,
@@ -558,6 +559,12 @@ namespace Genie
 		itIsOnServer    ( onServer                         )
 	{
 		// we override Parent()
+		
+		const bool exists = FSpGetCatInfo< FNF_Returns >( itsCInfo,
+		                                                  itIsOnServer,
+		                                                  itsFileSpec );
+		
+		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
 	}
 	
 	
