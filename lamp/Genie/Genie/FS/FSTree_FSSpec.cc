@@ -684,17 +684,21 @@ namespace Genie
 	
 	bool FSTree_HFS::Exists() const
 	{
-		return io::item_exists( itsFileSpec );
+		return itsCInfo.hFileInfo.ioResult == noErr;
 	}
 	
 	bool FSTree_HFS::IsFile() const
 	{
-		return io::file_exists( itsFileSpec );
+		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
+		
+		return hFileInfo.ioResult == noErr  &&  !(hFileInfo.ioFlAttrib & kioFlAttribDirMask);
 	}
 	
 	bool FSTree_HFS::IsDirectory() const
 	{
-		return io::directory_exists( itsFileSpec );
+		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
+		
+		return hFileInfo.ioResult == noErr  &&  hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 	}
 	
 	static inline bool is_osx_symlink( const FInfo& fInfo )
@@ -705,14 +709,12 @@ namespace Genie
 	
 	bool FSTree_HFS::IsLink() const
 	{
-		CInfoPBRec paramBlock;
+		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( paramBlock, itIsOnServer, itsFileSpec );
+		const bool exists = hFileInfo.ioResult == noErr;
 		
 		if ( exists )
 		{
-			const HFileInfo& hFileInfo = paramBlock.hFileInfo;
-			
 			const bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 			
 			if ( isDir )
@@ -1062,11 +1064,9 @@ namespace Genie
 	
 	off_t FSTree_HFS::GetEOF() const
 	{
-		CInfoPBRec paramBlock;
+		N::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
 		
-		FSpGetCatInfo< FNF_Throws >( paramBlock, itIsOnServer, GetFSSpec() );
-		
-		return paramBlock.hFileInfo.ioFlLgLen;
+		return itsCInfo.hFileInfo.ioFlLgLen;
 	}
 	
 	void FSTree_HFS::SetEOF( off_t length ) const
@@ -1093,19 +1093,19 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
-		CInfoPBRec cInfo = { 0 };
+		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, itIsOnServer, GetFSSpec() );
+		const bool exists = hFileInfo.ioResult == noErr;
 		
 		if ( !exists )
 		{
 			//return Self();
 		}
-		else if ( const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask )
+		else if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
 			const N::FSDirSpec& root = GetJDirectory();
 			
-			const DirInfo& dirInfo = cInfo.dirInfo;
+			const DirInfo& dirInfo = itsCInfo.dirInfo;
 			
 			if ( dirInfo.ioVRefNum == root.vRefNum  &&  dirInfo.ioDrDirID == root.dirID )
 			{
@@ -1114,7 +1114,7 @@ namespace Genie
 		}
 		else
 		{
-			const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+			const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
 			
 			const bool is_alias = fInfo.fdFlags & kIsAlias;
 			
@@ -1371,7 +1371,9 @@ namespace Genie
 			return Get_ResFileDir_FSTree( itsFileSpec, itIsOnServer );
 		}
 		
-		N::FSDirSpec dir = Dir_From_FSSpec( itsFileSpec );
+		N::ThrowOSStatus( itsCInfo.dirInfo.ioResult );
+		
+		N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
 		return FSTreePtr_From_Lookup( dir, itIsOnServer, name, parent );
 	}
@@ -1527,9 +1529,11 @@ namespace Genie
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
+		N::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
+		
 		IterateIntoCache_CInfoPBRec cInfo;
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo, itIsOnServer, GetFSSpec() );
+		static_cast< CInfoPBRec& >( cInfo ) = itsCInfo;
 		
 		IterateFilesIntoCache( cInfo, cache );
 	}
