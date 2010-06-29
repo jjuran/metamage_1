@@ -1253,16 +1253,7 @@ namespace Genie
 		
 		if ( creating )
 		{
-			CInfoPBRec cInfo = { 0 };
-			
-			N::Str255 actualName = itsFileSpec.name;
-			
-			const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo,
-			                                                  itIsOnServer,
-			                                                  N::FSVolumeRefNum( itsFileSpec.vRefNum ),
-			                                                  N::FSDirID       ( itsFileSpec.parID   ),
-			                                                  actualName,
-			                                                  0 );
+			const bool exists = itsCInfo.hFileInfo.ioResult == noErr;
 			
 			if ( !exists )
 			{
@@ -1282,7 +1273,7 @@ namespace Genie
 				
 				const bool equal = std::equal( name.begin(),
 				                               name.end(),
-				                               (const char*) (actualName + 1) );
+				                               (const char*) (itsFileSpec.name + 1) );
 				
 				if ( !equal )
 				{
