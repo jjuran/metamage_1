@@ -27,7 +27,7 @@
 #include "TimeOff/TimeOff.hh"
 
 // Genie
-#include "Genie/IO/Directory.hh"
+#include "Genie/IO/VirtualDirectory.hh"
 
 
 namespace Genie
@@ -301,7 +301,7 @@ namespace Genie
 			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		return seize_ptr( new DirHandle( Self() ) );
+		return seize_ptr( new VirtualDirHandle( Self() ) );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree::ChangeToDirectory() const

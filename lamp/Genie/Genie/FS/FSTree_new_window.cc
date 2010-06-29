@@ -6,14 +6,14 @@
 #include "Genie/FS/FSTree_new_window.hh"
 
 // Genie
-#include "Genie/IO/Directory.hh"
+#include "Genie/IO/VirtualDirectory.hh"
 #include "Genie/FS/FSTree_sys_window.hh"
 
 
 namespace Genie
 {
 	
-	class OpenWindowHandle : public DirHandle
+	class OpenWindowHandle : public VirtualDirHandle
 	{
 		public:
 			OpenWindowHandle( const FSTreePtr& tree );
@@ -21,7 +21,7 @@ namespace Genie
 			~OpenWindowHandle();
 	};
 	
-	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : DirHandle( tree )
+	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : VirtualDirHandle( tree )
 	{
 	}
 	
