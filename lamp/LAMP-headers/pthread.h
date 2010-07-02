@@ -1,306 +1,272 @@
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-// % Project	:	GUSI				-	Grand Unified Socket Interface                    
-// % File		:	GUSIPThread.nw		-	Pthreads wrappers                           
-// % Author	:	Matthias Neeracher                                           
-// % Language	:	C++                                                        
-// %                                                                       
-// % $Log$
-// % Revision 1.1  2005-11-06 13:32:36  jax
-// % Sync with local source.
-// %
-// % Revision 1.1  2005/07/21 05:55:02  jjuran
-// % Added from GUSI.
-// %                                              
-// % Revision 1.15  2002/09/03 05:13:56  neeri                             
-// % Reengineered signal handling to properly handle handlers that longjmp() [GUSI Bug #564063]
-// %                                                                       
-// % Revision 1.14  2001/01/17 08:55:16  neeri                             
-// % Detect and return ETIMEDOUT condition                                 
-// %                                                                       
-// % Revision 1.13  2000/10/29 20:31:53  neeri                             
-// % Releasing 2.1.3                                                       
-// %                                                                       
-// % Revision 1.12  2000/05/23 07:16:35  neeri                             
-// % Improve formatting, make data types opaque, tune mutexes              
-// %                                                                       
-// % Revision 1.11  2000/03/06 06:10:00  neeri                             
-// % Reorganize Yield()                                                    
-// %                                                                       
-// % Revision 1.10  2000/01/17 01:40:31  neeri                             
-// % Correct macro spelling, update references                             
-// %                                                                       
-// % Revision 1.9  1999/11/15 07:20:19  neeri                              
-// % Safe context setup                                                    
-// %                                                                       
-// % Revision 1.8  1999/09/09 07:22:15  neeri                              
-// % Add support for mutex and cond attribute creation/destruction         
-// %                                                                       
-// % Revision 1.7  1999/08/26 05:45:07  neeri                              
-// % Fixes for literate edition of source code                             
-// %                                                                       
-// % Revision 1.6  1999/07/07 04:17:42  neeri                              
-// % Final tweaks for 2.0b3                                                
-// %                                                                       
-// % Revision 1.5  1999/06/30 07:42:07  neeri                              
-// % Getting ready to release 2.0b3                                        
-// %                                                                       
-// % Revision 1.4  1999/05/30 03:06:55  neeri                              
-// % MPW compiler compatibility, recursive mutex locks                     
-// %                                                                       
-// % Revision 1.3  1999/03/17 09:05:12  neeri                              
-// % Added GUSITimer, expanded docs                                        
-// %                                                                       
-// % Revision 1.2  1998/08/01 21:32:10  neeri                              
-// % About ready for 2.0a1                                                 
-// %                                                                       
-// % Revision 1.1  1998/01/25 21:02:51  neeri                              
-// % Engine implemented, except for signals & scheduling                   
-// %                                                                       
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-//                                                                         
-// \chapter{Pthreads Wrappers}                                             
-//                                                                         
-// As opposed to POSIX.1, with which I think I'm reasonable competent by now,
-// I have little practical experience, let alone in-depth familiarity with 
-// Pthreads, so I'm going by what I learned from                           
-//                                                                         
-// \begin{itemize}                                                         
-// \item Reading \emph{B.~Nicols, D.~Buttlar, and J.~Proulx Farrell,       
-//       ``Pthreads Programming'', O'Reilly \& Associates} and             
-// 	  \emph{D.~Butenhof, ``Programming with POSIX Threads'', Addison Wesley}.
-// 	                                                                       
-// \item Taking a few glimpses at Chris Provenzano's pthreads implementation.
-// \item Reading the news:comp.programming.threads newsgroup.              
-// \end{itemize}                                                           
-//                                                                         
-// If you believe that I've misunderstood Pthreads in my implementation, feel free
-// to contact me.                                                          
-//                                                                         
-// As opposed to most other modules, the header files we're generating here don't
-// have GUSI in its name.                                                  
-//                                                                         
-// <pthread.h>=                                                            
+/*
+ * Copyright (C) 2008 The Android Open Source Project
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
 #ifndef _PTHREAD_H_
 #define _PTHREAD_H_
 
-#include <sys/cdefs.h>
+#include <time.h>
+#include <signal.h>
+#include <sched.h>
+#include <limits.h>
 #include <sys/types.h>
-#include <sys/time.h>
 
-__BEGIN_DECLS
-// \section{Definition of Pthread data types}                              
-//                                                                         
-// I used to be fairly cavalier about exposing internal GUSI data structures, 
-// on second thought this was not a good idea. To keep C happy, we define  
-// [[struct]] wrappers for what ultimately will mostly be classes.         
-//                                                                         
-// <Pthread data types>=                                                   
-typedef struct GUSIPThread *	pthread_t;
-// A [[pthread_attr_t]] collects thread creation attributes. This is implemented
-// as a pointer so it's easier to change the size of the underlying data structure.
-//                                                                         
-// <Pthread data types>=                                                   
-typedef struct GUSIPThreadAttr	* pthread_attr_t;
-// A [[pthread_key_t]] is a key to look up thread specific data.           
-//                                                                         
-// <Pthread data types>=                                                   
-typedef struct GUSIPThreadKey *	pthread_key_t;
-// A [[pthread_once_t]] registers whether some routine has run once. It must always
-// be statically initialized to [[PTHREAD_ONCE_INIT]] (Although in our implementation,
-// it doesn't matter).                                                     
-//                                                                         
-// <Pthread data types>=                                                   
-typedef char	pthread_once_t;
+/*
+ * Types
+ */
+typedef struct
+{
+    int volatile value;
+} pthread_mutex_t;
+
+#define  PTHREAD_MUTEX_INITIALIZER             {0}
+#define  PTHREAD_RECURSIVE_MUTEX_INITIALIZER   {0x4000}
+#define  PTHREAD_ERRORCHECK_MUTEX_INITIALIZER  {0x8000}
 
 enum {
-	PTHREAD_ONCE_INIT = 0
+    PTHREAD_MUTEX_NORMAL = 0,
+    PTHREAD_MUTEX_RECURSIVE = 1,
+    PTHREAD_MUTEX_ERRORCHECK = 2,
+
+    PTHREAD_MUTEX_ERRORCHECK_NP = PTHREAD_MUTEX_ERRORCHECK,
+    PTHREAD_MUTEX_RECURSIVE_NP  = PTHREAD_MUTEX_RECURSIVE,
+
+    PTHREAD_MUTEX_DEFAULT = PTHREAD_MUTEX_NORMAL
 };
-// A [[pthread_mutex_t]] is a mutual exclusion variable, implemented as a pointer
-// to a [[GUSIContextQueue]]. For initialization convenience, a 0 value means 
-// an unlocked mutex. No attributes are supported so far.                  
-//                                                                         
-// <Pthread data types>=                                                   
-typedef struct GUSIPThreadMutex * 	pthread_mutex_t;
-typedef void *						pthread_mutexattr_t;
 
-#define	PTHREAD_MUTEX_INITIALIZER	0
-// A [[pthread_cond_t]] is a condition variable, which looks rather similar
-// to a mutex, but has different semantics. No attributes are supported so far.
-//                                                                         
-// <Pthread data types>=                                                   
-typedef struct GUSIPThreadCond * 	pthread_cond_t;
-typedef void *			   			pthread_condattr_t;
 
-#define PTHREAD_COND_INITIALIZER	0
-// [[pthread_attr_init]] initializes an attribute object with the          
-// default values.                                                         
-//                                                                         
-// <Pthread function declarations>=                                        
+
+typedef struct
+{
+    int volatile value;
+} pthread_cond_t;
+
+typedef struct
+{
+    uint32_t flags;
+    void * stack_base;
+    size_t stack_size;
+    size_t guard_size;
+    int32_t sched_policy;
+    int32_t sched_priority;
+} pthread_attr_t;
+
+typedef long pthread_mutexattr_t;
+typedef long pthread_condattr_t;
+
+typedef int pthread_key_t;
+typedef long pthread_t;
+
+typedef volatile int  pthread_once_t;
+
+/*
+ * Defines
+ */
+#define PTHREAD_COND_INITIALIZER  {0}
+
+#define PTHREAD_STACK_MIN (2 * PAGE_SIZE)
+
+#define PTHREAD_CREATE_DETACHED  0x00000001
+#define PTHREAD_CREATE_JOINABLE  0x00000000
+
+#define PTHREAD_ONCE_INIT    0
+
+#define PTHREAD_PROCESS_PRIVATE  0
+#define PTHREAD_PROCESS_SHARED   1
+
+#define PTHREAD_SCOPE_SYSTEM     0
+#define PTHREAD_SCOPE_PROCESS    1
+
+/*
+ * Prototypes
+ */
+#if __cplusplus
+extern "C" {
+#endif
+
 int pthread_attr_init(pthread_attr_t * attr);
-// [[pthread_attr_destroy]] destroys an attribute object.                  
-//                                                                         
-// <Pthread function declarations>=                                        
 int pthread_attr_destroy(pthread_attr_t * attr);
-// The detach state defines whether a thread will be defined joinable or   
-// detached.                                                               
-//                                                                         
-// <Pthread function declarations>=                                        
-enum {
-	PTHREAD_CREATE_JOINABLE,
-	PTHREAD_CREATE_DETACHED
-};
 
-int pthread_attr_getdetachstate(const pthread_attr_t * attr, int * state);
 int pthread_attr_setdetachstate(pthread_attr_t * attr, int state);
-// The stack size defines how much stack space will be allocated. Stack overflows
-// typically lead to utterly nasty crashes.                                
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_attr_getstacksize(const pthread_attr_t * attr, size_t * size);
-int pthread_attr_setstacksize(pthread_attr_t * attr, size_t size);
-// \section{Creation and Destruction of PThreads}                          
-//                                                                         
-// First, we define wrapper to map the different calling conventions of Pthreads 
-// and Macintosh threads.                                                  
-//                                                                         
-// <Pthread function declarations>=                                        
-__BEGIN_DECLS
-typedef void * (*GUSIPThreadProc)(void *);
-__END_DECLS
-// [[pthread_create]] stuffs the arguments in a [[CreateArg]] and creates the
-// context.                                                                
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_create(
-		pthread_t * thread, 
-		const pthread_attr_t * attr, GUSIPThreadProc proc, void * arg);
-// A thread can either be detached, in which case it will just go away after it's 
-// done, or it can be joinable, in which case it will wait for [[pthread_join]]
-// to be called.                                                           
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_detach(pthread_t thread);
-// [[pthread_join]] waits for the thread to die and optionally returns its last
-// words.                                                                  
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_join(pthread_t thread, void **value);
-// [[pthread_exit]] ends the existence of a thread.                        
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_exit(void *value);
-// \section{Pthread thread specific data}                                  
-//                                                                         
-// Thread specific data offers a possibility to quickly look up a value that may be 
-// different for every thread.                                             
-//                                                                         
-// [[pthread_key_create]] creates an unique key visible to all threads in a 
-// process.                                                                
-//                                                                         
-// <Pthread function declarations>=                                        
-__BEGIN_DECLS
-typedef void (*GUSIPThreadKeyDestructor)(void *);
-__END_DECLS
+int pthread_attr_getdetachstate(pthread_attr_t const * attr, int * state);
 
-int pthread_key_create(pthread_key_t * key, GUSIPThreadKeyDestructor destructor);
-// [[pthread_key_delete]] deletes a key, but does not call any destructors.
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_key_delete(pthread_key_t key);
-// [[pthread_getspecific]] returns the thread specific value for a key.    
-//                                                                         
-// <Pthread function declarations>=                                        
-void * pthread_getspecific(pthread_key_t key);
-// [[pthread_setspecific]] sets a new thread specific value for a key.     
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_setspecific(pthread_key_t key, void * value);
-// \section{Synchronization mechanisms of PThreads}                        
-//                                                                         
-// Since we're only dealing with cooperative threads, all synchronization  
-// mechanisms can be implemented using means that might look naive to a student
-// of computer science, but that actually work perfectly well in our case. 
-//                                                                         
-// We currently don't support mutex and condition variable attributes. To minimize
-// the amount of code changes necessary inclients, we support creating and destroying
-// them, at least.                                                         
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_mutexattr_init(pthread_mutexattr_t * attr);
-int pthread_mutexattr_destroy(pthread_mutexattr_t * attr);
-// <Pthread function declarations>=                                        
-int pthread_mutex_init(pthread_mutex_t * mutex, const pthread_mutexattr_t *);
-int pthread_mutex_destroy(pthread_mutex_t * mutex);
-// Lock may create the queue if it was allocated statically. Mutexes are implemented
-// as a queue of context, with the frontmost context holding the lock. Simple enough,
-// isn't it?                                                               
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_mutex_lock(pthread_mutex_t * mutex);
-// Strangely enough, [[pthread_mutex_trylock]] is much more of a problem if we want 
-// to maintain a semblance of scheduling fairness. In particular, we need the [[Yield]]
-// in case somebody checks a mutex in a loop with no other yield point.    
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_mutex_trylock(pthread_mutex_t * mutex);
-// Unlocking pops us off the queue and wakes up the new lock owner.        
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_mutex_unlock(pthread_mutex_t * mutex);
-// On to condition variable attributes, which we don't really support either.
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_condattr_init(pthread_condattr_t * attr);
-int pthread_condattr_destroy(pthread_condattr_t * attr);
-// Condition variables in some respects work very similar to mutexes.      
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_cond_init(pthread_cond_t * cond, const pthread_condattr_t *);
-int pthread_cond_destroy(pthread_cond_t * cond);
-// [[pthread_cond_wait]] releases the mutex, sleeps on the condition variable,
-// and reacquires the mutex.                                               
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_cond_wait(pthread_cond_t * cond, pthread_mutex_t * mutex);
-// [[pthread_cond_timedwait]] adds a timeout value (But it still could block
-// indefinitely trying to reacquire the mutex). Note that the timeout specifies
-// an absolute wakeup time, not an interval. We nest this in a separate function
-// to guarantee that the timer is always destructed properly.              
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_cond_timedwait(
-		pthread_cond_t * cond, pthread_mutex_t * mutex, 
-		const struct timespec * patience);
-// [[pthread_cond_signal]] wakes up a context from the queue. Since we typically
-// still hold the associated mutex, it would be a bad idea (though not a disastrous
-// one) to put a yield in here.                                            
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_cond_signal(pthread_cond_t * cond);
-// [[pthread_cond_broadcast]] wakes up a the entire queue (but only one context
-// will get the mutex).                                                    
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_cond_broadcast(pthread_cond_t * cond);
-// \section{Pthread varia}                                                 
-//                                                                         
-// [[pthread_self]] returns the current thread.                            
-//                                                                         
-// <Pthread function declarations>=                                        
+int pthread_attr_setschedpolicy(pthread_attr_t * attr, int policy);
+int pthread_attr_getschedpolicy(pthread_attr_t const * attr, int * policy);
+
+int pthread_attr_setschedparam(pthread_attr_t * attr, struct sched_param const * param);
+int pthread_attr_getschedparam(pthread_attr_t const * attr, struct sched_param * param);
+
+int pthread_attr_setstacksize(pthread_attr_t * attr, size_t stack_size);
+int pthread_attr_getstacksize(pthread_attr_t const * attr, size_t * stack_size);
+
+int pthread_attr_setstackaddr(pthread_attr_t * attr, void * stackaddr);
+int pthread_attr_getstackaddr(pthread_attr_t const * attr, void ** stackaddr);
+
+int pthread_attr_setstack(pthread_attr_t * attr, void * stackaddr, size_t stack_size);
+int pthread_attr_getstack(pthread_attr_t const * attr, void ** stackaddr, size_t * stack_size);
+
+int pthread_attr_setguardsize(pthread_attr_t * attr, size_t guard_size);
+int pthread_attr_getguardsize(pthread_attr_t const * attr, size_t * guard_size);
+
+int pthread_attr_setscope(pthread_attr_t *attr, int  scope);
+int pthread_attr_getscope(pthread_attr_t const *attr);
+
+int pthread_getattr_np(pthread_t thid, pthread_attr_t * attr);
+
+int pthread_create(pthread_t *thread, pthread_attr_t const * attr,
+                   void *(*start_routine)(void *), void * arg);
+void pthread_exit(void * retval);
+int pthread_join(pthread_t thid, void ** ret_val);
+int pthread_detach(pthread_t  thid);
+
 pthread_t pthread_self(void);
-// [[pthread_equal]] compares two thread handles.                          
-//                                                                         
-// <Pthread function declarations>=                                        
-int pthread_equal(pthread_t t1, pthread_t t2);
-// [[pthread_once]] calls a routines, guaranteeing that it will be called exactly
-// once per process.                                                       
-//                                                                         
-// <Pthread function declarations>=                                        
-__BEGIN_DECLS
-typedef void (*GUSIPThreadOnceProc)(void);
-__END_DECLS
+int pthread_equal(pthread_t one, pthread_t two);
 
-int pthread_once(pthread_once_t * once_block, GUSIPThreadOnceProc proc);
-__END_DECLS
+int pthread_getschedparam(pthread_t thid, int * policy,
+                          struct sched_param * param);
+int pthread_setschedparam(pthread_t thid, int poilcy,
+                          struct sched_param const * param);
 
-#endif /* _PTHREAD_H_ */
+int pthread_mutexattr_init(pthread_mutexattr_t *attr);
+int pthread_mutexattr_destroy(pthread_mutexattr_t *attr);
+int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type);
+int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);
+int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared);
+int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
+
+int pthread_mutex_init(pthread_mutex_t *mutex,
+                       const pthread_mutexattr_t *attr);
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+int pthread_mutex_trylock(pthread_mutex_t *mutex);
+int pthread_mutex_timedlock(pthread_mutex_t *mutex, struct timespec*  ts);
+
+int pthread_cond_init(pthread_cond_t *cond,
+                      const pthread_condattr_t *attr);
+int pthread_cond_destroy(pthread_cond_t *cond);
+int pthread_cond_broadcast(pthread_cond_t *cond);
+int pthread_cond_signal(pthread_cond_t *cond);
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait(pthread_cond_t *cond,
+                           pthread_mutex_t * mutex,
+                           const struct timespec *abstime);
+
+/* BIONIC: same as pthread_cond_timedwait, except the 'abstime' given refers
+ *         to the CLOCK_MONOTONIC clock instead, to avoid any problems when
+ *         the wall-clock time is changed brutally
+ */
+int pthread_cond_timedwait_monotonic_np(pthread_cond_t         *cond,
+                                        pthread_mutex_t        *mutex,
+                                        const struct timespec  *abstime);
+
+/* BIONIC: DEPRECATED. same as pthread_cond_timedwait_monotonic_np()
+ * unfortunately pthread_cond_timedwait_monotonic has shipped already
+ */
+int pthread_cond_timedwait_monotonic(pthread_cond_t         *cond,
+                                     pthread_mutex_t        *mutex,
+                                     const struct timespec  *abstime);
+
+#define HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC 1
+
+/* BIONIC: same as pthread_cond_timedwait, except the 'reltime' given refers
+ *         is relative to the current time.
+ */
+int pthread_cond_timedwait_relative_np(pthread_cond_t         *cond,
+                                     pthread_mutex_t        *mutex,
+                                     const struct timespec  *reltime);
+
+#define HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE 1
+
+
+
+int pthread_cond_timeout_np(pthread_cond_t *cond,
+                            pthread_mutex_t * mutex,
+                            unsigned msecs);
+
+/* same as pthread_mutex_lock(), but will wait up to 'msecs' milli-seconds
+ * before returning. same return values than pthread_mutex_trylock though, i.e.
+ * returns EBUSY if the lock could not be acquired after the timeout
+ * expired.
+ */
+int pthread_mutex_lock_timeout_np(pthread_mutex_t *mutex, unsigned msecs);
+
+int pthread_key_create(pthread_key_t *key, void (*destructor_function)(void *));
+int pthread_key_delete (pthread_key_t);
+int pthread_setspecific(pthread_key_t key, const void *value);
+void *pthread_getspecific(pthread_key_t key);
+
+int pthread_kill(pthread_t tid, int sig);
+int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset);
+
+int pthread_getcpuclockid(pthread_t  tid, clockid_t  *clockid);
+
+int pthread_once(pthread_once_t  *once_control, void (*init_routine)(void));
+
+int pthread_setname_np(pthread_t thid, const char *thname);
+
+typedef void  (*__pthread_cleanup_func_t)(void*);
+
+typedef struct __pthread_cleanup_t {
+    struct __pthread_cleanup_t*   __cleanup_prev;
+    __pthread_cleanup_func_t      __cleanup_routine;
+    void*                         __cleanup_arg;
+} __pthread_cleanup_t;
+
+extern void  __pthread_cleanup_push(__pthread_cleanup_t*      c,
+                                    __pthread_cleanup_func_t  routine,
+                                    void*                     arg);
+
+extern void  __pthread_cleanup_pop(__pthread_cleanup_t*  c,
+                                   int                   execute);
+
+/* Believe or not, the definitions of pthread_cleanup_push and
+ * pthread_cleanup_pop below are correct. Posix states that these
+ * can be implemented as macros that might introduce opening and
+ * closing braces, and that using setjmp/longjmp/return/break/continue
+ * between them results in undefined behaviour.
+ *
+ * And indeed, GLibc and other C libraries use a similar definition
+ */
+#define  pthread_cleanup_push(routine, arg)                      \
+    do {                                                         \
+        __pthread_cleanup_t  __cleanup;                          \
+        __pthread_cleanup_push( &__cleanup, (routine), (arg) );  \
+
+#define  pthread_cleanup_pop(execute)                  \
+        __pthread_cleanup_pop( &__cleanup, (execute)); \
+    } while (0);
+
+#if __cplusplus
+} /* extern "C" */
+#endif
+
+/************ TO FIX ************/
+
+#define LONG_LONG_MAX __LONG_LONG_MAX__
+#define LONG_LONG_MIN (-__LONG_LONG_MAX__ - 1)
+
+#endif // _PTHREAD_H_
