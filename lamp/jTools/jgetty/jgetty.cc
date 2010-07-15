@@ -61,10 +61,10 @@ int main( int argc, char const *const argv[] )
 	
 	p7::spew( "size", STR_LEN( "503x272" "\n" ) );
 	
-	p7::utime( "ref" );
+	p7::utime( "window" );
 	
-	p7::spew( "ref/text-font", STR_LEN( "4" "\n" ) );
-	p7::spew( "ref/text-size", STR_LEN( "9" "\n" ) );
+	p7::spew( "window/text-font", STR_LEN( "4" "\n" ) );
+	p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
 	
 	p7::link( "/new/scrollframe", "view"     );
 	p7::link( "/new/frame",       "view/v"   );

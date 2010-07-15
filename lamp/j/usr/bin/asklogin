@@ -105,10 +105,10 @@ ln /new/defaultkeys view
 
 #echo 1 > view/ok/v/disabled
 
-touch ref
+touch window
 
-echo 0 > ref/text-font
-#echo ddd > ref/back-color
+echo 0 > window/text-font
+#echo ddd > window/back-color
 
 perl -e 'LOOP: $_ = `select -1 -rview/{ok,cancel}/v/socket` or exit 2; /cancel/ && exit 1; readlink( "focus" ) =~ m{/view/user/v$} and unlink "focus" and symlink "view/pass/v", "focus" and goto LOOP'
 

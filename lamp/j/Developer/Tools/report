@@ -7,10 +7,10 @@ echo Diagnostics > title
 echo 700x400 > size
 echo 10,50 > pos
 
-touch ref
+touch window
 
-echo 4 > ref/text-font
-echo 9 > ref/text-size
+echo 4 > window/text-font
+echo 9 > window/text-size
 
 ln /new/scrollframe  view
 ln /new/frame        view/v

@@ -371,7 +371,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		return "ref/" + Name();
+		return "window/" + Name();
 	}
 	
 	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
@@ -935,7 +935,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
-		{ "ref",    &Basic_Factory< FSTree_sys_window_REF_ref > },
+		{ "window",    &Basic_Factory< FSTree_sys_window_REF_ref > },
 		
 		{ "view",   &Basic_Factory< FSTree_X_view< GetView > > },
 		

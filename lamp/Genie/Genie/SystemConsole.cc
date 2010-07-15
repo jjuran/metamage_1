@@ -30,7 +30,7 @@ namespace Genie
 	{
 		FSTreePtr window = window_dir->GetFile();
 		
-		FSTreePtr ref = ResolveRelativePath( STR_LEN( "ref" ),  window );
+		FSTreePtr ref = ResolveRelativePath( STR_LEN( "window" ),  window );
 		
 		if ( ref->Exists() )
 		{
