@@ -37,7 +37,7 @@ namespace tool
 	
 	static const char* getcwd()
 	{
-		static char buffer[] = "/sys/window/abcd3210";
+		static char buffer[] = "/sys/port/abcd3210";
 		
 		if ( ::getcwd( buffer, sizeof buffer ) == NULL )
 		{

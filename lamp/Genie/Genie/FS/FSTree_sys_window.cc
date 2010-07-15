@@ -82,7 +82,7 @@ namespace Genie
 	
 	static const FSTreePtr& SysWindow()
 	{
-		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/sys/window" ) );
+		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/sys/port" ) );
 		
 		return sys_window;
 	}

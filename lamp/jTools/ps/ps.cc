@@ -160,9 +160,9 @@ namespace tool
 		pid_t sid   = iota::parse_unsigned_decimal( p_sid   );
 		pid_t tpgid = iota::parse_unsigned_decimal( p_tpgid );
 		
-		if ( term_string.length() == STRLEN( "/sys/window/12345678/tty" ) )
+		if ( term_string.length() == STRLEN( "/sys/port/12345678/tty" ) )
 		{
-			term_string.assign( term_string.data() + STRLEN( "/sys/window/" ),
+			term_string.assign( term_string.data() + STRLEN( "/sys/port/" ),
 			                    STRLEN( "1234567" ) );
 		}
 		else if ( term_string.length() > STRLEN( "/dev/" ) )
