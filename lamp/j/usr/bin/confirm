@@ -10,7 +10,7 @@ text="$1"
 test -z "$2" || iconid="$1"
 test -z "$2" || text="$2"
 
-cd /new/window
+cd /new/port
 
 echo 5 > procid
 

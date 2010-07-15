@@ -48,7 +48,7 @@ namespace tool
 	
 	static void make_window( const char* title )
 	{
-		p7::chdir( "/new/window" );
+		p7::chdir( "/new/port" );
 		
 		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
 		          title,

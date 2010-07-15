@@ -52,7 +52,7 @@ namespace tool
 
 int main( int argc, char const *const argv[] )
 {
-	p7::chdir( "/new/window" );
+	p7::chdir( "/new/port" );
 	
 	setenv( "WINDOW", tool::getcwd(), true );
 	

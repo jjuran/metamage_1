@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /new/window
+cd /new/port
 
 echo 0 > vis
 echo 10,47 > pos

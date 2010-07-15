@@ -66,7 +66,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/window" ) )->ChangeToDirectory();
+		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/port" ) )->ChangeToDirectory();
 		
 		MakeWindow( gWindow );
 		
