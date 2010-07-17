@@ -10,7 +10,7 @@ text="$1"
 test -z "$2" || iconid="$1"
 test -z "$2" || text="$2"
 
-cd /new/window
+cd /new/port
 
 echo 5 > procid
 
@@ -84,10 +84,10 @@ ln -s view/cancel/v/click cancel
 
 ln /new/defaultkeys view
 
-touch ref
+touch window
 
-echo 0 > ref/text-font
-#echo ddd > ref/back-color
+echo 0 > window/text-font
+#echo ddd > window/back-color
 
 select -1 -rview/{ok,cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat view/entry/v/text && echo
 

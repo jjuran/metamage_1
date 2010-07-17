@@ -21,7 +21,7 @@
 
 
 /*
-	cd /new/window
+	cd /new/port
 	ln /new/stack view
 	ln /new/color view/background
 	ln /new/frame view

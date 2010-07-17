@@ -30,7 +30,7 @@ namespace Genie
 	{
 		FSTreePtr window = window_dir->GetFile();
 		
-		FSTreePtr ref = ResolveRelativePath( STR_LEN( "ref" ),  window );
+		FSTreePtr ref = ResolveRelativePath( STR_LEN( "window" ),  window );
 		
 		if ( ref->Exists() )
 		{
@@ -66,7 +66,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/window" ) )->ChangeToDirectory();
+		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/port" ) )->ChangeToDirectory();
 		
 		MakeWindow( gWindow );
 		
