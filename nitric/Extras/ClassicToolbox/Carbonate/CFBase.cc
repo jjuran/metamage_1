@@ -17,6 +17,10 @@
 #endif
 */
 
+
+const CFAllocatorRef kCFAllocatorDefault = NULL;
+
+
 CFTypeRef CFRetain( CFTypeRef cf )
 {
 	CFObject* object = CFType_Cast< CFObject* >( cf );
