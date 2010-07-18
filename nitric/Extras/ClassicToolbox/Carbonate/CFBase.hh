@@ -17,6 +17,8 @@ struct CFObject
 	ItemCount retainCount;
 	
 	CFObject() : retainCount( 1 )  {}
+	
+	virtual ~CFObject()  {}
 };
 
 template < class CFType >
