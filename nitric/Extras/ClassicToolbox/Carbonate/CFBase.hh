@@ -22,7 +22,7 @@ struct CFObject
 };
 
 template < class CFType >
-CFType CFType_Cast( CFTypeRef cf )
+inline CFType CFType_Cast( CFTypeRef cf )
 {
 	return static_cast< CFType >( const_cast< void* >( cf ) );
 }
