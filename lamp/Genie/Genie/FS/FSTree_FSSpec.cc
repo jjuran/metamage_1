@@ -1078,19 +1078,7 @@ namespace Genie
 		
 		if ( !target.empty() )
 		{
-			if ( TARGET_API_MAC_CARBON )
-			{
-				const FInfo fInfo = N::FSpGetFInfo( itsFileSpec );
-				
-				const bool is_MacRoman = fInfo.fdFlags & kIsShared;
-				
-				if ( !is_MacRoman )
-				{
-					return plus::mac_from_utf8( target );
-				}
-			}
-			
-			return target;
+			return plus::mac_from_utf8( target );
 		}
 		
 		return ResolveLink()->Pathname();
@@ -1129,10 +1117,7 @@ namespace Genie
 				
 				if ( !target.empty() )
 				{
-					if ( TARGET_API_MAC_CARBON  &&  !( fInfo.fdFlags & kIsShared ) )
-					{
-						target = plus::mac_from_utf8( target );
-					}
+					target = plus::mac_from_utf8( target );
 					
 					return ResolvePathname( target, Parent() );
 				}
@@ -1195,9 +1180,9 @@ namespace Genie
 			return;
 		}
 		
-		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
+		const plus::string utf8_target_path = plus::utf8_from_mac( targetPath );
 		
-		UInt16 extra_Finder_flags = kIsShared;
+		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
 		try
 		{
@@ -1221,7 +1206,11 @@ namespace Genie
 			
 			(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
 			
-			extra_Finder_flags |= kIsAlias;
+			FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
+			
+			linkFInfo.fdFlags |= kIsAlias;
+			
+			N::FSpSetFInfo( linkSpec, linkFInfo );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -1229,13 +1218,7 @@ namespace Genie
 			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
 		
-		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
-		
-		linkFInfo.fdFlags |= extra_Finder_flags;
-		
-		N::FSpSetFInfo( linkSpec, linkFInfo );
-		
-		io::spew_file< n::string_scribe< plus::string > >( linkSpec, targetPath );
+		io::spew_file< n::string_scribe< plus::string > >( linkSpec, utf8_target_path );
 	}
 	
 	void FSTree_HFS::SymLink( const plus::string& target ) const
