@@ -49,6 +49,8 @@ struct __CFString : CFObject
 	{
 	}
 	
+	__CFString( const __CFString& x );
+	
 	__CFString( const char* p, UInt32 n );
 	
 	__CFString( const char* p, UInt32 n, CFStringEncoding e );
@@ -65,6 +67,17 @@ __CFString::__CFString( const char* p, UInt32 n )
 	n_chars( n ),
 	codes( p )
 {
+}
+
+__CFString::__CFString( const __CFString& x )
+:
+	encoding( x.encoding ),
+	n_bytes( x.n_bytes ),
+	n_chars( x.n_chars )
+{
+	raw_data = ::operator new( n_bytes );
+	
+	memcpy( raw_data, x.raw_data, n_bytes );
 }
 
 __CFString::__CFString( const char* p, UInt32 n, CFStringEncoding e )
