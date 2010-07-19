@@ -29,6 +29,8 @@ typedef unsigned (*Unicode_putter)( chars::unichar_t uc, char* p, const char* en
 
 class invalid_UTF8_data {};
 
+const CFStringEncoding kCFString_constant = kCFStringEncodingASCII | 0x80000000;
+
 
 struct __CFString : CFObject
 {
@@ -47,12 +49,23 @@ struct __CFString : CFObject
 	{
 	}
 	
+	__CFString( const char* p, UInt32 n );
+	
 	__CFString( const char* p, UInt32 n, CFStringEncoding e );
 	
 	__CFString( const UTF16Char* u, UInt32 n_chars );
 	
 	~__CFString();
 };
+
+__CFString::__CFString( const char* p, UInt32 n )
+:
+	encoding( kCFString_constant ),
+	n_bytes( n ),
+	n_chars( n ),
+	codes( p )
+{
+}
 
 __CFString::__CFString( const char* p, UInt32 n, CFStringEncoding e )
 :
@@ -72,7 +85,10 @@ __CFString::__CFString( const char* p, UInt32 n, CFStringEncoding e )
 
 __CFString::~__CFString()
 {
-	::operator delete( raw_data );
+	if ( encoding != kCFString_constant )
+	{
+		::operator delete( raw_data );
+	}
 }
 
 CFStringRef CFStringCreateWithPascalString( CFAllocatorRef    alloc,
