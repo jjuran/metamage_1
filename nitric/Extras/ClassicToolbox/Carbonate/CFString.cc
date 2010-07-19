@@ -17,6 +17,7 @@
 
 // Carbonate
 #include "Carbonate/CFString_UTF8.hh"
+#include "Carbonate/CFString_UTF16.hh"
 
 #if !TARGET_API_MAC_CARBON
 
@@ -41,8 +42,9 @@ struct __CFString : CFObject
 	
 	union
 	{
-		const char*  codes;
-		void*        raw_data;
+		const char*       codes;
+		const UTF16Char*  utf16;
+		void*             raw_data;
 	};
 	
 	__CFString() : encoding(), n_bytes(), n_chars(), codes()
@@ -94,6 +96,17 @@ __CFString::__CFString( const char* p, UInt32 n, CFStringEncoding e )
 	raw_data = ::operator new( n_bytes );
 	
 	memcpy( raw_data, p, n_bytes );
+}
+
+__CFString::__CFString( const UTF16Char* u, UInt32 n )
+:
+	encoding( kCFStringEncodingUnicode ),
+	n_bytes( n * 2 ),
+	n_chars( count_UTF16_chars( u, u + n ) )
+{
+	raw_data = ::operator new( n_bytes );
+	
+	memcpy( raw_data, u, n_bytes );
 }
 
 __CFString::~__CFString()
@@ -178,6 +191,10 @@ CFIndex CFStringGetBytes( CFStringRef       string,
 			getter = &chars::get_next_code_point_from_utf8;
 			break;
 		
+		case kCFStringEncodingUnicode:
+			getter = &get_next_code_point_from_UTF16;
+			break;
+		
 		default:
 			return 0;
 	}
@@ -204,6 +221,10 @@ CFIndex CFStringGetBytes( CFStringRef       string,
 		
 		case kCFStringEncodingUTF8:
 			putter = &put_code_point_into_UTF8;
+			break;
+		
+		case kCFStringEncodingUnicode:
+			putter = &put_code_point_into_UTF16;
 			break;
 		
 		default:
