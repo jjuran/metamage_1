@@ -175,7 +175,7 @@ namespace Genie
 	
 	static plus::string GetUnixName( const FSSpec& item )
 	{
-		return colons_from_slashes( get_long_name( item ) );
+		return plus::utf8_from_mac( colons_from_slashes( get_long_name( item ) ) );
 	}
 	
 	static N::FSVolumeRefNum GetVRefNum( N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
@@ -692,7 +692,7 @@ namespace Genie
 		
 		if ( !target.empty() )
 		{
-			return plus::mac_from_utf8( target );
+			return target;
 		}
 		
 		return ResolveLink()->Pathname();
@@ -731,8 +731,6 @@ namespace Genie
 				
 				if ( !target.empty() )
 				{
-					target = plus::mac_from_utf8( target );
-					
 					return ResolvePathname( target, Parent() );
 				}
 				else if ( is_alias )
@@ -779,7 +777,7 @@ namespace Genie
 		
 		path.append( utf8_link_name.data(), utf8_link_name.size() );
 		
-		p7::throw_posix_result( native_symlink( plus::utf8_from_mac( target_path ).c_str(),
+		p7::throw_posix_result( native_symlink( target_path,
 		                                        path.c_str() ) );
 	}
 	
@@ -793,8 +791,6 @@ namespace Genie
 			
 			return;
 		}
-		
-		const plus::string utf8_target_path = plus::utf8_from_mac( targetPath );
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
@@ -832,7 +828,7 @@ namespace Genie
 			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
 		
-		io::spew_file< n::string_scribe< plus::string > >( linkSpec, utf8_target_path );
+		io::spew_file< n::string_scribe< plus::string > >( linkSpec, targetPath );
 	}
 	
 	void FSTree_HFS::SymLink( const plus::string& target ) const
@@ -874,11 +870,13 @@ namespace Genie
 			}
 			else
 			{
-				if ( Name().length() <= 31 )
+				const plus::string name_MacRoman = plus::mac_from_utf8( Name() );
+				
+				if ( name_MacRoman.size() <= 31 )
 				{
 					// Long names are case-sensitive due to hashing
 					
-					const plus::string name = slashes_from_colons( Name() );
+					const plus::string name = slashes_from_colons( name_MacRoman );
 					
 					const bool equal = std::equal( name.begin(),
 					                               name.end(),
@@ -944,7 +942,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		N::Str31 macName = hashed_long_name( slashes_from_colons( name ) );
+		N::Str31 macName = hashed_long_name( slashes_from_colons( plus::mac_from_utf8( name ) ) );
 		
 		CInfoPBRec cInfo;
 		
@@ -1134,9 +1132,18 @@ namespace Genie
 		volatile bool  done;
 	};
 	
+	static inline bool char_is_special( char c )
+	{
+		return c == ':'  ||  c & 0x80;
+	}
+	
 	static bool name_is_special( const char* begin, const char* end )
 	{
 		const unsigned name_length = end - begin;
+		
+		// This is the UTF-8-encoded length, which will be longer than the
+		// MacRoman length in the presence of non-ASCII characters, but those
+		// are special anyway.
 		
 		if ( name_length > 31 )
 		{
@@ -1151,7 +1158,7 @@ namespace Genie
 				return true;
 			}
 		}
-		else if ( std::find( begin, end, ':' ) != end )
+		else if ( std::find_if( begin, end, std::ptr_fun( char_is_special ) ) != end )
 		{
 			return true;
 		}
@@ -1304,7 +1311,7 @@ namespace Genie
 	
 	void FSTree_HFS::FinishCreation() const
 	{
-		SetLongName( itsFileSpec, slashes_from_colons( Name() ) );
+		SetLongName( itsFileSpec, slashes_from_colons( plus::mac_from_utf8( Name() ) ) );
 	}
 	
 }

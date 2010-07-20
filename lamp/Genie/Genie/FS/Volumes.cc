@@ -11,6 +11,7 @@
 #endif
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/make_string.hh"
 #include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
@@ -109,8 +110,8 @@ namespace Genie
 	
 	FSTreePtr FSTree_Volumes_Link::ResolveLink() const
 	{
-		// Convert ':' to '/'
-		plus::var_string mac_name = slashes_from_colons( Name() );
+		// Convert UTF-8 to MacRoman, ':' to '/'
+		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( Name() ) );
 		
 		mac_name += ":";
 		
@@ -150,7 +151,7 @@ namespace Genie
 			
 			const ino_t inode = -pb.volumeParam.ioVRefNum;
 			
-			const plus::string name = colons_from_slashes( mac_name );
+			const plus::string name = plus::utf8_from_mac( colons_from_slashes( mac_name ) );
 			
 			cache.push_back( FSNode( inode, name ) );
 		}
