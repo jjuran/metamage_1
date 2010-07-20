@@ -32,5 +32,26 @@ namespace chars
 		return 0;
 	}
 	
+	unsigned put_code_point_into_extended_ascii( unichar_t              uc,
+	                                             char*                  p,
+	                                             const unicode_mapping  map[] )
+	{
+		char c = uc;
+		
+		if ( uc >= 0x80 )
+		{
+			c = extended_ascii_from_unicode( uc, map );
+			
+			if ( c == 0 )
+			{
+				return 0;
+			}
+		}
+		
+		*p = c;
+		
+		return 1;
+	}
+	
 }
 

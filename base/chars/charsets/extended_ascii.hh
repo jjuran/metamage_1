@@ -37,6 +37,10 @@ namespace chars
 	char extended_ascii_from_unicode( unichar_t              uc,
 	                                  const unicode_mapping  map[] );
 	
+	unsigned put_code_point_into_extended_ascii( unichar_t              uc,
+	                                             char*                  p,
+	                                             const unicode_mapping  map[] );
+	
 }
 
 #endif
