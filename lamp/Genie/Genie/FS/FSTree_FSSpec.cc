@@ -25,6 +25,7 @@
 #include "debug/assert.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // nucleus
@@ -1066,81 +1067,6 @@ namespace Genie
 		N::SetEOF( N::FSpOpenDF( GetFSSpec(), N::fsWrPerm ), length );
 	}
 	
-	static plus::string MacRoman_from_UTF8( const plus::string& UTF8_string )
-	{
-		n::owned< CFStringRef > string = N::CFStringCreateWithCString( UTF8_string.c_str(),
-		                                                               kCFStringEncodingUTF8 );
-		
-		const CFIndex length = CFStringGetLength( string );
-		
-		plus::var_string MacRoman_string;
-		
-		MacRoman_string.resize( length );  // MacRoman is one-byte-per-character
-		
-		CFIndex n_bytes = 0;
-		
-		(void) CFStringGetBytes( string,
-								 CFRangeMake( 0, length ),
-								 kCFStringEncodingMacRoman,
-								 UInt8( 0 ),
-								 false,
-								 (UInt8*) &MacRoman_string[ 0 ],
-								 length,
-								 &n_bytes );
-		
-		if ( n_bytes != length )
-		{
-			p7::throw_errno( EINVAL );
-		}
-		
-		return MacRoman_string;
-	}
-	
-	static nucleus::string UTF8_from_CFString( CFStringRef string )
-	{
-		const CFIndex length = CFStringGetLength( string );
-		
-		const CFRange range = CFRangeMake( 0, length );
-		
-		CFIndex n_bytes = 0;
-		
-		(void) CFStringGetBytes( string,
-								 range,
-								 kCFStringEncodingUTF8,
-								 UInt8( 0 ),
-								 false,
-								 NULL,
-								 0,
-								 &n_bytes );
-		
-		nucleus::mutable_string UTF8_string;
-		
-		UTF8_string.resize( n_bytes );
-		
-		(void) CFStringGetBytes( string,
-								 range,
-								 kCFStringEncodingUTF8,
-								 UInt8( 0 ),
-								 false,
-								 (UInt8*) &UTF8_string[ 0 ],
-								 n_bytes,
-								 &n_bytes );
-		
-		return UTF8_string;
-	}
-	
-	static nucleus::string UTF8_from_MacRoman( const char* MacRoman_string )
-	{
-		return UTF8_from_CFString( N::CFStringCreateWithCString( MacRoman_string,
-		                                                         kCFStringEncodingMacRoman ) );
-	}
-	
-	static nucleus::string UTF8_from_MacRoman( const unsigned char* MacRoman_string )
-	{
-		return UTF8_from_CFString( N::CFStringCreateWithPascalString( MacRoman_string,
-		                                                              kCFStringEncodingMacRoman ) );
-	}
-	
 	plus::string FSTree_HFS::ReadLink() const
 	{
 		if ( !IsLink() )
@@ -1160,7 +1086,7 @@ namespace Genie
 				
 				if ( !is_MacRoman )
 				{
-					return MacRoman_from_UTF8( target );
+					return plus::mac_from_utf8( target );
 				}
 			}
 			
@@ -1205,7 +1131,7 @@ namespace Genie
 				{
 					if ( TARGET_API_MAC_CARBON  &&  !( fInfo.fdFlags & kIsShared ) )
 					{
-						target = MacRoman_from_UTF8( target );
+						target = plus::mac_from_utf8( target );
 					}
 					
 					return ResolvePathname( target, Parent() );
@@ -1242,6 +1168,8 @@ namespace Genie
 	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
 	{
+		plus::string utf8_link_name = plus::utf8_from_mac( link_spec.name );
+		
 		FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( link_spec ) );
 		
 		FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
@@ -1250,9 +1178,9 @@ namespace Genie
 		
 		path += '/';
 		
-		path += UTF8_from_MacRoman( link_spec.name );
+		path.append( utf8_link_name.data(), utf8_link_name.size() );
 		
-		p7::throw_posix_result( native_symlink( UTF8_from_MacRoman( target_path ).c_str(),
+		p7::throw_posix_result( native_symlink( plus::utf8_from_mac( target_path ).c_str(),
 		                                        path.c_str() ) );
 	}
 	
