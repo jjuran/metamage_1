@@ -12,6 +12,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Lamp
+#include "lamp/fork_and_exit.h"
+
 // poseven
 #include "poseven/extras/spew.hh"
 #include "poseven/functions/chdir.hh"
@@ -86,6 +89,13 @@ int main( int argc, char const *const argv[] )
 	if ( tty.get() > p7::stderr_fileno )
 	{
 		p7::close( tty );
+	}
+	
+	if ( getsid( 0 ) != 1 )
+	{
+		// Ensure that the caller doesn't wait for us
+		// (Also ensures we are not a process group leader)
+		fork_and_exit( 0 );
 	}
 	
 	p7::pid_t sid = p7::setsid();  // New session
