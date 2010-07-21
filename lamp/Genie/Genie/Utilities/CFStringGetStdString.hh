@@ -18,7 +18,8 @@
 namespace Genie
 {
 	
-	plus::string CFStringGetStdString( CFStringRef string );
+	plus::string CFStringGetStdString( CFStringRef       string,
+	                                   CFStringEncoding  encoding = 0 );
 	
 }
 

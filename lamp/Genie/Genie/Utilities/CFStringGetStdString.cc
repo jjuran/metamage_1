@@ -13,39 +13,40 @@
 // plus
 #include "plus/var_string.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	plus::string CFStringGetStdString( CFStringRef string )
+	plus::string CFStringGetStdString( CFStringRef       string,
+	                                   CFStringEncoding  encoding )
 	{
 		CFIndex length = CFStringGetLength( string );
 		
-		plus::var_string result;
-		
-		result.resize( length );
+		CFRange range = CFRangeMake( 0, length );
 		
 		CFIndex usedBufLen = 0;
 		
-		CFIndex nConverted = CFStringGetBytes( string,
-		                                       CFRangeMake( 0, length ),
-		                                       kCFStringEncodingMacRoman,
-		                                       '\0',
-		                                       false,
-		                                       (UInt8*) &result[0],
-		                                       length,
-		                                       &usedBufLen );
+		(void) CFStringGetBytes( string,
+		                         range,
+		                         encoding,
+		                         '\0',
+		                         false,
+		                         NULL,
+		                         0,
+		                         &usedBufLen );
 		
-		if ( usedBufLen != length )
-		{
-			N::ThrowOSStatus( paramErr );
-		}
+		plus::var_string result;
+		
+		char* p = result.reset( usedBufLen );
+		
+		(void) CFStringGetBytes( string,
+		                         range,
+		                         encoding,
+		                         '\0',
+		                         false,
+		                         (UInt8*) p,
+		                         usedBufLen,
+		                         &usedBufLen );
 		
 		return result;
 	}
