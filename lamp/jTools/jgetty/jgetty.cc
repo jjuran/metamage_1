@@ -7,6 +7,7 @@
 #include <cstring>
 
 // Standard C
+#include <signal.h>
 #include "stdlib.h"
 
 // Iota
@@ -99,6 +100,12 @@ int main( int argc, char const *const argv[] )
 	}
 	
 	p7::pid_t sid = p7::setsid();  // New session
+	
+	// Restore default SIGHUP handling in case we were invoked from daemonize
+	
+	struct sigaction action = { SIG_DFL, 0, 0 };
+	
+	sigaction( SIGHUP, &action, NULL );
 	
 	p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
 	
