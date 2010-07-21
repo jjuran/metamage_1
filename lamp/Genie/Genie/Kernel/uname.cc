@@ -96,7 +96,7 @@ namespace Genie
 		{
 			const char c = *p;
 			
-			if ( !isalnum( c ) )
+			if ( c & 0x80  ||  !isalnum( c ) )
 			{
 				*p = '-';
 			}
