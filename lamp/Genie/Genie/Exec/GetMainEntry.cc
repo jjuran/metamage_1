@@ -29,7 +29,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	typedef int (*Extended_Entry)( int argc, char** argv, char** envp, Dispatcher dispatcher );
+	typedef int (*Extended_Entry)( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
 	
 	
 	class AddressMain : public MainEntryPoint
@@ -54,7 +54,7 @@ namespace Genie
 				
 				Extended_Entry entry = (Extended_Entry) itsEntry;
 				
-				return entry( argc, argv, envp, pb->dispatcher );
+				return entry( argc, argv, envp, pb );
 			}
 	};
 	
@@ -125,7 +125,7 @@ namespace Genie
 		
 		ASSERT( lamp_main != NULL );
 		
-		return lamp_main( argc, argv, envp, pb->dispatcher );
+		return lamp_main( argc, argv, envp, pb );
 	}
 	
 	
