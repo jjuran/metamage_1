@@ -308,11 +308,9 @@ namespace tool
 		const UInt32 jmp    = 0x4efa0000;
 		const UInt32 jsr    = 0x4eba0000;
 		
-		if ( initToolOffset == 0 )
+		if ( true )
 		{
-			// Full tools have InitializeTool(), so we're micro or nano
-			
-			// Don't call __InitCode__() for microtools or nanotools
+			// Don't call __InitCode__() in any case
 			initCodeOffset = 0;
 		}
 		
