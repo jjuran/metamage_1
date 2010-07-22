@@ -71,10 +71,6 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
-	typedef void (*CleanupHandlerProc)();
-	
-	typedef CleanupHandlerProc CleanupHandler;
-	
 	typedef int (*Reexec_Function)( void* _1,
 	                                void* _2,
 	                                void* _3,
@@ -176,14 +172,10 @@ namespace Genie
 				its_memory_data->remove_memory_mapping( key );
 			}
 			
-			void SetCleanupHandler( CleanupHandlerProc cleanup )  { its_pb.cleanup = cleanup; }
-			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
-			
-			void SetErrnoPtr( int* address )  { its_pb.errno_var = address; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

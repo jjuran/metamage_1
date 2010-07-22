@@ -118,19 +118,6 @@ namespace Genie
 	
 	
 	#pragma mark -
-	#pragma mark ¥ Genie ¥
-	
-	static void InitProc( CleanupHandlerProc cleanup, int* errno_addr )
-	{
-		Process& current = CurrentProcess();
-		
-		current.SetCleanupHandler( cleanup );
-		
-		current.SetErrnoPtr( errno_addr );
-	}
-	
-	
-	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
 	static unsigned int alarm( unsigned int seconds )
@@ -740,8 +727,6 @@ namespace Genie
 	}
 	
 	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( InitProc  );
 	
 	REGISTER_SYSTEM_CALL( alarm     );
 	REGISTER_SYSTEM_CALL( chdir     );
