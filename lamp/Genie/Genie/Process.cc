@@ -794,6 +794,8 @@ namespace Genie
 		parent.SuspendForFork( itsPID );
 		
 		gCurrentProcess = this;
+		
+		global_parameter_block.current_user = &its_pb;
 	}
 	
 	Process::~Process()
@@ -1240,6 +1242,8 @@ namespace Genie
 			
 			gCurrentProcess = NULL;
 			
+			global_parameter_block.current_user = NULL;
+			
 			// Unforked process' thread dies here
 		}
 	}
@@ -1285,11 +1289,15 @@ namespace Genie
 		SuspendTimer();
 		
 		gCurrentProcess = NULL;
+		
+		global_parameter_block.current_user = NULL;
 	}
 	
 	void Process::Resume()
 	{
 		gCurrentProcess = this;
+		
+		global_parameter_block.current_user = &its_pb;
 		
 		itsStackFramePtr = NULL;  // We don't track this while running
 		
