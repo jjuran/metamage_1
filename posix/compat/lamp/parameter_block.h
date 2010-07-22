@@ -11,6 +11,10 @@ struct _lamp_user_parameter_block
 {
 	const void* stack_bottom;
 	const void* stack_limit;
+	
+	int* errno_var;
+	
+	void (*cleanup)();
 };
 
 typedef struct _lamp_user_parameter_block _lamp_user_parameter_block;
