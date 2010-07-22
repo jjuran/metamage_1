@@ -1,11 +1,17 @@
-/*	=============
- *	InitTool68K.c
- *	=============
- */
+/*
+	fulltool.c
+	----------
+*/
 
+
+// MSL Runtime
 #ifdef __MC68K__
-
 extern void __InitCode__();
+#define INITIALIZE()  __InitCode__()
+#else
+extern pascal short __initialize( const void* initBlock );
+#define INITIALIZE()  __initialize( 0 )  /* NULL */
+#endif
 
 extern void _set_dispatcher( void* address );
 
@@ -31,12 +37,10 @@ void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
 	
 	InitializeCallbacks();
 	
-	__InitCode__();
+	INITIALIZE();
 	
 	exit( main( argc, argv ) );
 }
 
 #pragma force_active reset
-
-#endif
 
