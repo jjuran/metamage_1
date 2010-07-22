@@ -34,9 +34,7 @@ void InitializeTool( void* return_address, int argc, char** argv, char** envp, v
 
 void _lamp_main( int argc, char** argv, char** envp )
 {
-	const int status = main( argc, argv );
-	
-	exit( status );
+	exit( main( argc, argv ) );
 }
 
 #pragma force_active reset
