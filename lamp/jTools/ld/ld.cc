@@ -308,6 +308,14 @@ namespace tool
 		const UInt32 jmp    = 0x4efa0000;
 		const UInt32 jsr    = 0x4eba0000;
 		
+		if ( initToolOffset == 0 )
+		{
+			// Full tools have InitializeTool(), so we're micro or nano
+			
+			// Don't call __InitCode__() for microtools or nanotools
+			initCodeOffset = 0;
+		}
+		
 		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
 		UInt32* const setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
 		UInt32* const loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
