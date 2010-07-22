@@ -452,7 +452,7 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->itsStackBottomPtr = Init_Thread();
+		process->its_pb.stack_bottom = Init_Thread();
 		
 		try
 		{
@@ -694,14 +694,21 @@ namespace Genie
 		return result;
 	}
 	
+	static inline _lamp_user_parameter_block user_pb_for_init()
+	{
+		_lamp_user_parameter_block pb = { NULL };
+		
+		return pb;
+	}
+	
 	Process::Process( RootProcess ) 
 	:
+		its_pb                ( user_pb_for_init() ),
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
-		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -738,12 +745,12 @@ namespace Genie
 	Process::Process( Process& parent, pid_t pid ) 
 	:
 		SignalReceiver        ( parent ),
+		its_pb                ( parent.its_pb ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
-		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
