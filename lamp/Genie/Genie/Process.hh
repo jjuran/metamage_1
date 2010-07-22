@@ -136,8 +136,6 @@ namespace Genie
 			
 			nucleus::owned< Mac::ThreadID > itsThread;
 			
-			CleanupHandler itsCleanupHandler;
-			
 			bool itMayDumpCore;
 		
 		private:
@@ -178,7 +176,7 @@ namespace Genie
 				its_memory_data->remove_memory_mapping( key );
 			}
 			
-			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
+			void SetCleanupHandler( CleanupHandlerProc cleanup )  { its_pb.cleanup = cleanup; }
 			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			
