@@ -300,19 +300,10 @@ namespace tool
 	static const char* gFileType    = NULL;
 	static const char* gFileCreator = NULL;
 	
-	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset,
-	                                                UInt32 initCodeOffset,
-	                                                UInt32 lampMainOffset )
+	static void Patch68KStartupCode( ::Handle code, UInt32 lampMainOffset )
 	{
 		const UInt32 nopnop = 0x4e714e71;
 		const UInt32 jmp    = 0x4efa0000;
-		const UInt32 jsr    = 0x4eba0000;
-		
-		if ( true )
-		{
-			// Don't call __InitCode__() in any case
-			initCodeOffset = 0;
-		}
 		
 		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
 		UInt32* const setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
@@ -326,20 +317,18 @@ namespace tool
 		*setCurrentA4  = *loadStartToA0 + 4;
 		*loadStartToA0 = *moveAndStrip;
 		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = initToolOffset ? jsr | (initToolOffset - 28 - 2) : nopnop;
-		*restoreRegs   = initCodeOffset ? jsr | (initCodeOffset - 32 - 2) : nopnop;
-		*jmpToMain     = lampMainOffset ? jmp | (lampMainOffset - 36 - 2) : *jmpToMain;
+		*setupMainRsrc = lampMainOffset ? jmp | (lampMainOffset - 28 - 2) : *jmpToMain + 8;
+		*restoreRegs   = nopnop;
+		*jmpToMain     = nopnop;
 	}
 	
 	static void Patch68KStartup( const FSSpec& file )
 	{
-		const unsigned long inittool = get_code_offset( "InitializeTool" );
-		const unsigned long initcode = get_code_offset( "__InitCode__"   );
-		const unsigned long lampmain = get_code_offset( "_lamp_main"     );
+		const unsigned long lampmain = get_code_offset( "_lamp_main" );
 		
-		if ( inittool > 0x7fff )
+		if ( lampmain > 0x7fff )
 		{
-			std::fprintf( stderr, "ld: InitTool() offset 0x%.8x is out of range for 16-bit reference\n", inittool );
+			std::fprintf( stderr, "ld: _lamp_main() offset 0x%.8x is out of range for 16-bit reference\n", lampmain );
 			
 			N::FSpDelete( file );
 			
@@ -353,7 +342,7 @@ namespace tool
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
-		Patch68KStartupCode( code.Get(), inittool, initcode, lampmain );
+		Patch68KStartupCode( code.Get(), lampmain );
 		
 		N::ChangedResource( code );
 		
