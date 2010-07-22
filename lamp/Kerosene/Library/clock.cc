@@ -3,13 +3,12 @@
 	--------
 */
 
-// Mac OS
-#ifndef __TIMER__
-#include <Timer.h>
-#endif
-
 // Standard C
 #include "time.h"
+
+// Lamp
+#include "lamp/parameter_block.h"
+#include "tool-runtime/parameter_block.h"
 
 
 #pragma exceptions off
@@ -17,10 +16,6 @@
 
 clock_t clock( void )
 {
-	UnsignedWide result;
-	
-	::Microseconds( &result );
-	
-	return result.lo;
+	return global_system_params->microsecond_timer();
 }
 
