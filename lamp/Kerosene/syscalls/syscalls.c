@@ -128,7 +128,7 @@ extern int syscall( int number, ... );
 	
 #endif
 
-DEFINE_STUB_7F( InitProc )
+
 DEFINE_STUB_7F( _exit )
 DEFINE_STUB_7F( vfork_start )
 DEFINE_STUB_7F( read  )
