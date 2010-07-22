@@ -10,18 +10,21 @@
 #include "plus/ref_count.hh"
 
 
+struct _lamp_system_parameter_block;
+
+
 namespace Genie
 {
-	
-	typedef void (*Dispatcher)( ... );
-	
 	
 	class MainEntryPoint : public plus::ref_count< MainEntryPoint >
 	{
 		public:
 			virtual ~MainEntryPoint();
 			
-			virtual int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher ) = 0;
+			virtual int Invoke( int                            argc,
+			                    char**                         argv,
+			                    char**                         envp,
+			                    _lamp_system_parameter_block*  pb ) = 0;
 	};
 	
 }

@@ -122,6 +122,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	static void DispatchSystemCall( ... );
+	
+	static _lamp_system_parameter_block global_parameter_block =
+	{
+		NULL,  // current user
+		
+		sizeof (_lamp_system_parameter_block),
+		sizeof (_lamp_user_parameter_block),
+		
+		&DispatchSystemCall
+	};
+	
 	Process* gCurrentProcess;  // extern, declared in Faults.cc
 	
 	Process& CurrentProcess()
@@ -403,7 +415,10 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			exit_status = itsMainEntry->Invoke( argc, argv, envp, &DispatchSystemCall );
+			exit_status = itsMainEntry->Invoke( argc,
+			                                    argv,
+			                                    envp,
+			                                    &global_parameter_block );
 			
 			// Not reached by regular tools, since they call exit()
 		}
