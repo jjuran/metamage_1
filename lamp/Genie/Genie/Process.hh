@@ -104,8 +104,6 @@ namespace Genie
 			
 			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
 			
-			int* itsErrno;
-			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
@@ -187,7 +185,7 @@ namespace Genie
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
 			
-			void SetErrnoPtr( int* address )  { itsErrno = address; }
+			void SetErrnoPtr( int* address )  { its_pb.errno_var = address; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

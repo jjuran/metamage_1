@@ -741,7 +741,6 @@ namespace Genie
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
-		itsErrno              ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -783,7 +782,6 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
-		itsErrno              ( parent.itsErrno ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -1063,9 +1061,9 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( itsErrno != NULL )
+		if ( its_pb.errno_var != NULL )
 		{
-			*itsErrno = errorNumber;
+			*its_pb.errno_var = errorNumber;
 		}
 		
 		return errorNumber == 0 ? 0 : -1;
