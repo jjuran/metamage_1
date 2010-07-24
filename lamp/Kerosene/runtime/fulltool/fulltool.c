@@ -1,17 +1,17 @@
-/*	=============
- *	InitToolCFM.c
- *	=============
- */
+/*
+	fulltool.c
+	----------
+*/
 
-// Mac OS
-#ifndef __MACTYPES__
-#include <MacTypes.h>
-#endif
 
 // MSL Runtime
-extern pascal OSErr __initialize( const struct CFragInitBlock* initBlock );
-extern pascal void  __terminate ();
-
+#ifdef __MC68K__
+extern void __InitCode__();
+#define INITIALIZE()  __InitCode__()
+#else
+extern pascal short __initialize( const void* initBlock );
+#define INITIALIZE()  __initialize( 0 )  /* NULL */
+#endif
 
 extern void _set_dispatcher( void* address );
 
@@ -20,13 +20,14 @@ extern char** environ;
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
 
-
 // Call main() and exit()
 extern void _lamp_main( int argc, char** argv, char** envp, void* dispatcher );
 extern int        main( int argc, char** argv );
 
 extern void exit( int );
 
+
+#pragma force_active on
 
 void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
 {
@@ -36,8 +37,10 @@ void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
 	
 	InitializeCallbacks();
 	
-	__initialize( NULL );
+	INITIALIZE();
 	
 	exit( main( argc, argv ) );
 }
+
+#pragma force_active reset
 

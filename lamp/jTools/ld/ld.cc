@@ -308,11 +308,9 @@ namespace tool
 		const UInt32 jmp    = 0x4efa0000;
 		const UInt32 jsr    = 0x4eba0000;
 		
-		if ( initToolOffset == 0 )
+		if ( true )
 		{
-			// Full tools have InitializeTool(), so we're micro or nano
-			
-			// Don't call __InitCode__() for microtools or nanotools
+			// Don't call __InitCode__() in any case
 			initCodeOffset = 0;
 		}
 		
@@ -521,13 +519,14 @@ namespace tool
 							
 							const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
 							
-							// Link Orion and InitTool first, if present.
-							// This hack is necessary on 68K to ensure that main()
-							// and InitTool() reside within the first 32K, accessible
-							// by JMP or JSR from the startup code.
+							// Link Orion and fulltool first, if present.
+							// This hack is necessary on 68K to ensure that
+							// main() and _lamp_main() reside within the
+							// first 32K, accessible by JMP or JSR from the
+							// startup code.
 							
 							const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
-							                       || std::strcmp( lib_name, "InitTool" ) == 0;
+							                       || std::strcmp( lib_name, "fulltool" ) == 0;
 							
 							command_args.insert( ( expedited ? command_args.begin()
 							                                 : command_args.end() ),
