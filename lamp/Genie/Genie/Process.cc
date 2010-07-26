@@ -36,6 +36,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// Recall
+#include "recall/stack_frame.hh"
+
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -469,11 +472,20 @@ namespace Genie
 #endif
 	
 	
+	static void* measure_stack_limit()
+	{
+		const unsigned extra_stack = TARGET_CPU_68K * 10;
+		
+		return   (char*) recall::get_frame_pointer()
+		       - (N::ThreadCurrentStackSpace( N::GetCurrentThread() ) + extra_stack);
+	}
+	
 	pascal void* Process::ThreadEntry( void* param )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
 		process->its_pb.stack_bottom = Init_Thread();
+		process->its_pb.stack_limit  = measure_stack_limit();
 		
 		try
 		{
