@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Lamp
+#include "lamp/parameter_block.h"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -26,7 +29,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	typedef int (*Extended_Entry)( int argc, char** argv, char** envp, Dispatcher dispatcher );
+	typedef int (*Extended_Entry)( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
 	
 	
 	class AddressMain : public MainEntryPoint
@@ -45,13 +48,13 @@ namespace Genie
 				ASSERT( itsEntry != NULL );
 			}
 			
-			int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher )
+			int Invoke( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb )
 			{
 				ASSERT( itsEntry != NULL );
 				
 				Extended_Entry entry = (Extended_Entry) itsEntry;
 				
-				return entry( argc, argv, envp, dispatcher );
+				return entry( argc, argv, envp, pb );
 			}
 	};
 	
@@ -106,10 +109,10 @@ namespace Genie
 			{
 			}
 			
-			int Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher );
+			int Invoke( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
 	};
 	
-	int CFMPluginMain::Invoke( int argc, char** argv, char** envp, Dispatcher dispatcher )
+	int CFMPluginMain::Invoke( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb )
 	{
 		Extended_Entry lamp_main = NULL;
 		
@@ -122,7 +125,7 @@ namespace Genie
 		
 		ASSERT( lamp_main != NULL );
 		
-		return lamp_main( argc, argv, envp, dispatcher );
+		return lamp_main( argc, argv, envp, pb );
 	}
 	
 	

@@ -3,6 +3,8 @@
 	----------
 */
 
+// Lamp
+#include "lamp/parameter_block.h"
 
 // MSL Runtime
 #ifdef __MC68K__
@@ -21,7 +23,7 @@ extern char** environ;
 extern void InitializeCallbacks();
 
 // Call main() and exit()
-extern void _lamp_main( int argc, char** argv, char** envp, void* dispatcher );
+extern void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
 extern int        main( int argc, char** argv );
 
 extern void exit( int );
@@ -29,9 +31,9 @@ extern void exit( int );
 
 #pragma force_active on
 
-void _lamp_main( int argc, char** argv, char** envp, void* dispatcher )
+void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb )
 {
-	_set_dispatcher( dispatcher );
+	_set_dispatcher( pb->dispatcher );
 	
 	environ = envp;
 	

@@ -6,6 +6,9 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
+// Lamp
+#include "lamp/parameter_block.h"
+
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -93,6 +96,8 @@ namespace Genie
 			};
 		
 		private:
+			_lamp_user_parameter_block its_pb;
+			
 			pid_t itsPPID;
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
@@ -101,7 +106,6 @@ namespace Genie
 			
 			int* itsErrno;
 			
-			recall::stack_frame_pointer itsStackBottomPtr;
 			recall::stack_frame_pointer itsStackFramePtr;
 			
 			SavedRegisters itsSavedRegisters;

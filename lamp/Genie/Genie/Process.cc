@@ -122,6 +122,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	static void DispatchSystemCall( ... );
+	
+	static _lamp_system_parameter_block global_parameter_block =
+	{
+		NULL,  // current user
+		
+		sizeof (_lamp_system_parameter_block),
+		sizeof (_lamp_user_parameter_block),
+		
+		&DispatchSystemCall
+	};
+	
 	Process* gCurrentProcess;  // extern, declared in Faults.cc
 	
 	Process& CurrentProcess()
@@ -403,7 +415,10 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			exit_status = itsMainEntry->Invoke( argc, argv, envp, &DispatchSystemCall );
+			exit_status = itsMainEntry->Invoke( argc,
+			                                    argv,
+			                                    envp,
+			                                    &global_parameter_block );
 			
 			// Not reached by regular tools, since they call exit()
 		}
@@ -452,7 +467,7 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->itsStackBottomPtr = Init_Thread();
+		process->its_pb.stack_bottom = Init_Thread();
 		
 		try
 		{
@@ -694,14 +709,21 @@ namespace Genie
 		return result;
 	}
 	
+	static inline _lamp_user_parameter_block user_pb_for_init()
+	{
+		_lamp_user_parameter_block pb = { NULL };
+		
+		return pb;
+	}
+	
 	Process::Process( RootProcess ) 
 	:
+		its_pb                ( user_pb_for_init() ),
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
-		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -738,12 +760,12 @@ namespace Genie
 	Process::Process( Process& parent, pid_t pid ) 
 	:
 		SignalReceiver        ( parent ),
+		its_pb                ( parent.its_pb ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
-		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
