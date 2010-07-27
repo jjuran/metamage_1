@@ -22,10 +22,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	DirHandle::DirHandle( const FSTreePtr& tree )
+	DirHandle::DirHandle()
 	:
-		IOHandle( O_RDONLY ),
-		itsDir( tree )
+		IOHandle( O_RDONLY )
 	{
 	}
 	
@@ -37,7 +36,7 @@ namespace Genie
 	{
 		if ( itsIterator.get() == NULL )
 		{
-			itsIterator = itsDir->Iterate();
+			itsIterator = GetFile()->Iterate();
 		}
 		
 		return itsIterator;

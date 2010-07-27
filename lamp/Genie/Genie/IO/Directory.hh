@@ -21,20 +21,19 @@ namespace Genie
 	class DirHandle : public IOHandle
 	{
 		private:
-			FSTreePtr      itsDir;
 			FSIteratorPtr  itsIterator;
 		
 		private:
 			const FSIteratorPtr& Iterator();
 		
 		public:
-			DirHandle( const FSTreePtr& tree );
+			DirHandle();
 			
 			~DirHandle();
 			
 			bool IsDirectory() const  { return true; }
 			
-			FSTreePtr GetFile()  { return itsDir; }
+			virtual FSTreePtr GetFile() = 0;
 			
 			off_t Seek( off_t offset, int whence );
 			

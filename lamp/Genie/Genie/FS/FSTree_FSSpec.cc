@@ -86,6 +86,7 @@
 #include "Genie/FS/Union.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
+#include "Genie/IO/MacDirectory.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -573,6 +574,8 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
 			MainEntry GetMainEntry() const;
+			
+			boost::shared_ptr< IOHandle > OpenDirectory() const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -1504,6 +1507,17 @@ namespace Genie
 	MainEntry FSTree_HFS::GetMainEntry() const
 	{
 		return GetMainEntryFromFile( GetFSSpec() );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_HFS::OpenDirectory() const
+	{
+		if ( !IsDirectory() )
+		{
+			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
+		}
+		
+		return seize_ptr( new MacDirHandle( N::FSpMake_FSDirSpec( itsFileSpec ),
+		                                    itIsOnServer ) );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
