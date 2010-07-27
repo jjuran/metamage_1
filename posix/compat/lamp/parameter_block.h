@@ -1,6 +1,10 @@
 #ifndef LAMP_PARAMETERBLOCK_H
 #define LAMP_PARAMETERBLOCK_H
 
+// Standard C
+#include <stdint.h>
+
+// POSIX
 #include <sys/types.h>
 
 #ifdef __cplusplus
