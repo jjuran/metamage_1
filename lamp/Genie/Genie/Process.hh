@@ -71,10 +71,6 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
-	typedef void (*CleanupHandlerProc)();
-	
-	typedef CleanupHandlerProc CleanupHandler;
-	
 	typedef int (*Reexec_Function)( void* _1,
 	                                void* _2,
 	                                void* _3,
@@ -103,8 +99,6 @@ namespace Genie
 			pid_t itsForkedChildPID;
 			
 			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
-			
-			int* itsErrno;
 			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
@@ -137,8 +131,6 @@ namespace Genie
 			void* itsReexecArgs[8];
 			
 			nucleus::owned< Mac::ThreadID > itsThread;
-			
-			CleanupHandler itsCleanupHandler;
 			
 			bool itMayDumpCore;
 		
@@ -180,14 +172,10 @@ namespace Genie
 				its_memory_data->remove_memory_mapping( key );
 			}
 			
-			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
-			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
-			
-			void SetErrnoPtr( int* address )  { itsErrno = address; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

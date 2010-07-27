@@ -35,19 +35,6 @@
 #pragma exceptions off
 
 
-typedef void (*CleanupHandler)();
-
-extern "C" void InitProc( CleanupHandler, int* );
-
-extern "C" void InitializeCallbacks();
-
-extern "C" void _MSL_cleanup();
-
-void InitializeCallbacks()
-{
-	InitProc( &_MSL_cleanup, &errno );
-}
-
 const char* sys_errlist[] =
 {
 /*  0 */	"No error",

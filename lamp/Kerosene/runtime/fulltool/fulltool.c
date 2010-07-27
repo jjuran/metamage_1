@@ -20,8 +20,9 @@ extern void _set_dispatcher( void* address );
 
 extern char** environ;
 
-// Call InitProc() to set references to cleanup proc and errno
-extern void InitializeCallbacks();
+extern int errno;
+
+extern void _MSL_cleanup();
 
 // Call main() and exit()
 extern void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
@@ -41,7 +42,8 @@ void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_bloc
 	global_system_params = pb;
 	global_user_params   = pb->current_user;
 	
-	InitializeCallbacks();
+	global_user_params->errno_var = &errno;
+	global_user_params->cleanup   = &_MSL_cleanup;
 	
 	INITIALIZE();
 	

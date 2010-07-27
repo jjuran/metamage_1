@@ -734,6 +734,15 @@ namespace Genie
 		return pb;
 	}
 	
+	static inline _lamp_user_parameter_block copy_user_pb( const _lamp_user_parameter_block& pb )
+	{
+		_lamp_user_parameter_block result = pb;
+		
+		result.cleanup = NULL;
+		
+		return result;
+	}
+	
 	Process::Process( RootProcess ) 
 	:
 		its_pb                ( user_pb_for_init() ),
@@ -741,7 +750,6 @@ namespace Genie
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
-		itsErrno              ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -754,7 +762,6 @@ namespace Genie
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( FSRoot() ),
 		its_memory_data       ( root_memory_data() ),
-		itsCleanupHandler     (),
 		itMayDumpCore         ()
 	{
 		itsReexecArgs[0] =
@@ -778,12 +785,11 @@ namespace Genie
 	Process::Process( Process& parent, pid_t pid ) 
 	:
 		SignalReceiver        ( parent ),
-		its_pb                ( parent.its_pb ),
+		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
-		itsErrno              ( parent.itsErrno ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -797,7 +803,6 @@ namespace Genie
 		itsProgramFile        ( parent.itsProgramFile ),
 		itsMainEntry          ( parent.itsMainEntry ),
 		its_memory_data       ( parent.its_memory_data ),
-		itsCleanupHandler     (),
 		itMayDumpCore         ( true )
 	{
 		itsReexecArgs[0] =
@@ -985,11 +990,11 @@ namespace Genie
 		// Create the new thread
 		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
-		if ( itsCleanupHandler != NULL )
+		if ( its_pb.cleanup != NULL )
 		{
-			itsCleanupHandler();
+			its_pb.cleanup();
 			
-			itsCleanupHandler = NULL;
+			its_pb.cleanup = NULL;
 		}
 		
 		// Make the new thread belong to this process and save the old one
@@ -1063,9 +1068,9 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( itsErrno != NULL )
+		if ( its_pb.errno_var != NULL )
 		{
-			*itsErrno = errorNumber;
+			*its_pb.errno_var = errorNumber;
 		}
 		
 		return errorNumber == 0 ? 0 : -1;
@@ -1177,11 +1182,11 @@ namespace Genie
 		
 		itsThread = parent.itsThread;
 		
-		ASSERT( itsCleanupHandler == NULL );
+		ASSERT( its_pb.cleanup == NULL );
 		
 		using std::swap;
 		
-		swap( itsCleanupHandler, parent.itsCleanupHandler );
+		swap( its_pb.cleanup, parent.its_pb.cleanup );
 		
 		parent.Exit( exit_status );
 	}
@@ -1230,9 +1235,9 @@ namespace Genie
 		
 		itsProcessGroup.reset();
 		
-		if ( itsCleanupHandler != NULL )
+		if ( its_pb.cleanup != NULL )
 		{
-			itsCleanupHandler();
+			its_pb.cleanup();
 		}
 		
 		itsLifeStage = kProcessZombie;
