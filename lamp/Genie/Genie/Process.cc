@@ -124,6 +124,11 @@ namespace Genie
 	
 	static void DispatchSystemCall( ... );
 	
+	static uint64_t microseconds()
+	{
+		return N::Microseconds();
+	}
+	
 	static _lamp_system_parameter_block global_parameter_block =
 	{
 		NULL,  // current user
@@ -131,7 +136,8 @@ namespace Genie
 		sizeof (_lamp_system_parameter_block),
 		sizeof (_lamp_user_parameter_block),
 		
-		&DispatchSystemCall
+		&DispatchSystemCall,
+		&microseconds
 	};
 	
 	Process* gCurrentProcess;  // extern, declared in Faults.cc

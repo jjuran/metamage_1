@@ -23,6 +23,8 @@ struct _lamp_system_parameter_block
 	const size_t user_block_length;
 	
 	void (*const dispatcher)( ... );
+	
+	uint64_t (*const microsecond_timer)();
 };
 
 typedef struct _lamp_system_parameter_block _lamp_system_parameter_block;
