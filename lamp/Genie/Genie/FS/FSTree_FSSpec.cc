@@ -1379,11 +1379,13 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		const plus::string macName = K::MacFilenameFromUnixFilename( name );
+		N::Str31 macName = K::MacFilenameFromUnixFilename( name );
 		
-		const FSSpec item = dir / macName;
+		CInfoPBRec cInfo;
 		
-		return seize_ptr( new FSTree_HFS( item, onServer, name, parent ) );
+		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
+		
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name, parent ) );
 	}
 	
 	FSTreePtr FSTree_Root::Lookup_Child( const plus::string& name, const FSTree* parent ) const
