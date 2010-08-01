@@ -167,8 +167,11 @@ namespace tool
 				
 				try
 				{
-					struct stat link_stat = p7::fstatat( include_fd, dir_name );
+					struct ::stat link_stat;
 					
+					const bool target_exists = p7::fstatat( include_fd, dir_name, link_stat );
+					
+					if ( target_exists )
 					if ( memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
 					{
 						// They stat the same.  Assume that one is a symlink.
@@ -176,10 +179,12 @@ namespace tool
 						continue;
 					}
 					
-					link_stat = p7::fstatat( include_fd,
-					                         dir_name,
-					                         p7::at_symlink_nofollow );
+					const bool link_exists = p7::fstatat( include_fd,
+					                                      dir_name,
+					                                      link_stat,
+					                                      p7::at_symlink_nofollow );
 					
+					if ( link_exists )
 					if ( S_ISLNK( link_stat.st_mode ) )
 					{
 						// Stale symlink.
