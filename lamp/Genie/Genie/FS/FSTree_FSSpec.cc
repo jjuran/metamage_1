@@ -679,7 +679,22 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
 	{
-		return FSTreeFromFSSpec( MacIO::FSMakeFSSpec< FNF_Throws >( dir, NULL ), onServer );
+		N::Str31 mac_name = "\p";
+		
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo,
+		                             onServer,
+		                             dir.vRefNum,
+		                             dir.dirID,
+		                             mac_name,
+		                             0 );
+		
+		const FSSpec fsspec = FSMakeFSSpec( cInfo );
+		
+		const plus::string name = MakeName( fsspec );
+		
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
