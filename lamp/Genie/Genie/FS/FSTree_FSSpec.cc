@@ -1785,7 +1785,9 @@ namespace Genie
 				
 				const N::FSVolumeRefNum key = Traits::KeyFromName( Name() );
 				
-				return FSTreeFromFSSpec( Traits::FSSpecFromKey( key ), VolumeIsOnServer( key ) );
+				const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
+				
+				return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( key ) );
 			}
 	};
 	
