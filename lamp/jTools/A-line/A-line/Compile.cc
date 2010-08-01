@@ -165,41 +165,31 @@ namespace tool
 				// Source dir must exist (or it would have been culled)
 				struct ::stat dir_stat = p7::stat( dir_pathname );
 				
-				try
+				struct ::stat link_stat;
+				
+				const bool target_exists = p7::fstatat( include_fd, dir_name, link_stat );
+				
+				if ( target_exists  &&  memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
 				{
-					struct ::stat link_stat;
+					// They stat the same.  Assume that one is a symlink.
 					
-					const bool target_exists = p7::fstatat( include_fd, dir_name, link_stat );
-					
-					if ( target_exists )
-					if ( memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
-					{
-						// They stat the same.  Assume that one is a symlink.
-						
-						continue;
-					}
-					
-					const bool link_exists = p7::fstatat( include_fd,
-					                                      dir_name,
-					                                      link_stat,
-					                                      p7::at_symlink_nofollow );
-					
-					if ( link_exists )
-					if ( S_ISLNK( link_stat.st_mode ) )
-					{
-						// Stale symlink.
-						
-						p7::unlinkat( include_fd, dir_name );
-					}
+					continue;
 				}
-				catch ( const p7::errno_t& err )
+				
+				const bool link_exists = p7::fstatat( include_fd,
+				                                      dir_name,
+				                                      link_stat,
+				                                      p7::at_symlink_nofollow );
+				
+				if ( link_exists  &&  S_ISLNK( link_stat.st_mode ) )
 				{
-					if ( err != ENOENT )
-					{
-						throw;
-					}
+					// Stale symlink.
 					
-					// No symlink present yet, create one below
+					p7::unlinkat( include_fd, dir_name );
+				}
+				else
+				{
+					// symlinkat() will throw EEXIST if a non-link is present
 				}
 				
 				p7::symlinkat( dir_pathname, include_fd, dir_name );
