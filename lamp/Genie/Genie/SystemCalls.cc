@@ -91,7 +91,9 @@ namespace Genie
 		
 		const size_t space = N::ThreadCurrentStackSpace( N::GetCurrentThread() );
 		
-		if ( space < 8192 )
+		// space will be 0 if we're not on a Thread Manager stack
+		
+		if ( space != 0  &&  space < 8192 )
 		{
 			DeliverFatalSignal( SIGSTKFLT );
 		}
