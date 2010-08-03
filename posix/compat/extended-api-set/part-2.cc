@@ -79,35 +79,16 @@ DIR *fdopendir( int fd )
 
 int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 {
-	int saved_cwd;
+	_temporary_cwd cwd( dirfd, path );
 	
-	int result = 0;
-	
-	const bool need_chdir = path[0] != '/';
-	
-	if ( need_chdir )
+	if ( int failed = cwd.failed() )
 	{
-		saved_cwd = open( ".", O_RDONLY );
-		
-		result = fchdir( dirfd );
-		
-		if ( result == -1 )
-		{
-			return result;
-		}
+		return failed;
 	}
 	
 	const bool follow = (flags & AT_SYMLINK_NOFOLLOW) == 0;
 	
-	result = follow ? stat( path, sb ) : lstat( path, sb );
-	
-	if ( need_chdir )
-	{
-		fchdir( saved_cwd );
-		close ( saved_cwd );
-	}
-	
-	return result;
+	return follow ? stat( path, sb ) : lstat( path, sb );
 }
 
 int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
@@ -153,95 +134,38 @@ int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath
 
 int mkdirat( int dirfd, const char* path, mode_t mode )
 {
-	int saved_cwd;
+	_temporary_cwd cwd( dirfd, path );
 	
-	int result = 0;
-	
-	const bool need_chdir = path[0] != '/';
-	
-	if ( need_chdir )
+	if ( int failed = cwd.failed() )
 	{
-		saved_cwd = open( ".", O_RDONLY );
-		
-		result = fchdir( dirfd );
-		
-		if ( result == -1 )
-		{
-			return result;
-		}
+		return failed;
 	}
 	
-	result = mkdir( path, mode );
-	
-	if ( need_chdir )
-	{
-		fchdir( saved_cwd );
-		close ( saved_cwd );
-	}
-	
-	return result;
+	return mkdir( path, mode );
 }
 
 int openat( int dirfd, const char* path, int flags, mode_t mode )
 {
-	int saved_cwd;
+	_temporary_cwd cwd( dirfd, path );
 	
-	int result = 0;
-	
-	const bool need_chdir = path[0] != '/';
-	
-	if ( need_chdir )
+	if ( int failed = cwd.failed() )
 	{
-		saved_cwd = open( ".", O_RDONLY );
-		
-		result = fchdir( dirfd );
-		
-		if ( result == -1 )
-		{
-			return result;
-		}
+		return failed;
 	}
 	
-	result = open( path, flags, mode );
-	
-	if ( need_chdir )
-	{
-		fchdir( saved_cwd );
-		close ( saved_cwd );
-	}
-	
-	return result;
+	return open( path, flags, mode );
 }
 
 ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
 {
-	int saved_cwd;
+	_temporary_cwd cwd( dirfd, path );
 	
-	int result = 0;
-	
-	const bool need_chdir = path[0] != '/';
-	
-	if ( need_chdir )
+	if ( int failed = cwd.failed() )
 	{
-		saved_cwd = open( ".", O_RDONLY );
-		
-		result = fchdir( dirfd );
-		
-		if ( result == -1 )
-		{
-			return result;
-		}
+		return failed;
 	}
 	
-	result = readlink( path, buffer, buffer_size );
-	
-	if ( need_chdir )
-	{
-		fchdir( saved_cwd );
-		close ( saved_cwd );
-	}
-	
-	return result;
+	return readlink( path, buffer, buffer_size );
 }
 
 int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
