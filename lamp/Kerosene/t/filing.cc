@@ -16,12 +16,15 @@
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
 
+// iota
+#include "iota/strings.hh"
+
 // tap-out
 #include "tap/check.hh"
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 5 + 6 + 7 + 4;
+static const unsigned n_tests = 5 + 6 + 7 + 4 + 20;
 
 
 using tap::ok_if;
@@ -175,6 +178,62 @@ static void t_mkdirat()
 	(void) rmdir( "baz" );
 }
 
+#define EQUAL( p, n, s )  ( n == STRLEN( s )  &&  memcmp( p, STR_LEN( s ) ) == 0 )
+
+static void symlink_readlink_unlink()
+{
+	char buffer[ 4096 ];
+	
+	ssize_t n = 0;
+	
+	struct ::stat sb;
+	
+	CHECK( mkdir( "foo", 0755 ) );
+	
+	ok_if( readlink( "foo",              buffer, sizeof buffer ) == -1  &&  errno == EINVAL  );
+	ok_if( readlink( "loop-de-loop/foo", buffer, sizeof buffer ) == -1  &&  errno == ELOOP   );
+	ok_if( readlink( "bar/foo",          buffer, sizeof buffer ) == -1  &&  errno == ENOENT  );
+	ok_if( readlink( "bar",              buffer, sizeof buffer ) == -1  &&  errno == ENOENT, "readlink( non ) -> ENOENT"  );
+	ok_if( readlink( "/dev/foo",         buffer, sizeof buffer ) == -1  &&  errno == ENOENT, "readlink( non ) -> ENOENT"  );
+	ok_if( readlink( "",                 buffer, sizeof buffer ) == -1  &&  errno == ENOENT  );
+	ok_if( readlink( "/bin/sh/foo",      buffer, sizeof buffer ) == -1  &&  errno == ENOTDIR );
+	
+	n = CHECK( readlink( "loop-de-loop", buffer, sizeof buffer ) );
+	
+	ok_if( EQUAL( buffer, n, "loop-de-loop" ) );
+	
+	ok_if( symlink( "_", "foo"          ) == -1  &&  errno == EEXIST );
+	ok_if( symlink( "_", "loop-de-loop" ) == -1  &&  errno == EEXIST );
+	ok_if( symlink( "_", "/dev/null"    ) == -1  &&  errno == EEXIST );
+	
+	CHECK( symlinkat( "1", AT_FDCWD, "one" ) );
+	
+	CHECK( fstatat( AT_FDCWD, TMP_DIR_ "one", &sb, AT_SYMLINK_NOFOLLOW ) );
+	
+	ok_if( S_ISLNK( sb.st_mode ) );
+	
+	ok_if( fstatat( AT_FDCWD, TMP_DIR_ "one", &sb, 0 ) == -1  &&  errno == ENOENT );
+	
+	n = CHECK( readlinkat( -1, TMP_DIR_ "one", buffer, sizeof buffer ) );
+	
+	ok_if( EQUAL( buffer, n, "1" ) );
+	
+	ok_if( unlinkat( AT_FDCWD, "one", AT_REMOVEDIR ) == -1  &&  errno == ENOTDIR );
+	
+	ok_if( unlinkat( AT_FDCWD, "one", 0 ) == 0 );
+	
+	ok_if( fstatat( AT_FDCWD, TMP_DIR_ "one", &sb, AT_SYMLINK_NOFOLLOW ) == -1  &&  errno == ENOENT );
+	
+	ok_if( unlinkat( AT_FDCWD, "foo", 0 ) == -1  &&  errno == EPERM, "unlinkat( dir ) -> EPERM" );
+	
+	ok_if( unlinkat( AT_FDCWD, "foo", AT_REMOVEDIR ) == 0 );
+	
+	ok_if( !exists( "foo" ) );
+	
+	(void) unlink( "one" );
+	(void) rmdir( "foo" );
+}
+
 static void cleanup()
 {
 	(void) unlink( "loop-de-loop" );
@@ -194,6 +253,8 @@ int main( int argc, char** argv )
 	mkdir_errs();
 	
 	t_mkdirat();
+	
+	symlink_readlink_unlink();
 	
 	cleanup();
 	
