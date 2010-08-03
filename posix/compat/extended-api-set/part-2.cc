@@ -92,33 +92,8 @@ int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	return follow ? stat( path, sb ) : lstat( path, sb );
 }
 
-int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
+static int link_with_flags( const char* oldpath, const char* newpath, int flags )
 {
-	char old_pathname[ PATH_MAX ];
-	char new_pathname[ PATH_MAX ];
-	
-	int got_old = get_path( olddirfd, oldpath, old_pathname );
-	
-	if ( got_old < 0 )
-	{
-		return got_old;
-	}
-	else if ( got_old )
-	{
-		oldpath = old_pathname;
-	}
-	
-	int got_new = get_path( newdirfd, newpath, new_pathname, true );
-	
-	if ( got_new < 0 )
-	{
-		return got_new;
-	}
-	else if ( got_new )
-	{
-		newpath = new_pathname;
-	}
-	
 	const bool follow = flags & AT_SYMLINK_FOLLOW;
 	
 	struct ::stat sb;
@@ -131,6 +106,11 @@ int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath
 	}
 	
 	return link( oldpath, newpath );
+}
+
+int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
+{
+	return _dual_path_at( &link_with_flags, olddirfd, oldpath, newdirfd, newpath, flags );
 }
 
 int mkdirat( int dirfd, const char* path, mode_t mode )
@@ -171,32 +151,7 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 
 int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
 {
-	char old_pathname[ PATH_MAX ];
-	char new_pathname[ PATH_MAX ];
-	
-	int got_old = get_path( olddirfd, oldpath, old_pathname );
-	
-	if ( got_old < 0 )
-	{
-		return got_old;
-	}
-	else if ( got_old )
-	{
-		oldpath = old_pathname;
-	}
-	
-	int got_new = get_path( newdirfd, newpath, new_pathname, true );
-	
-	if ( got_new < 0 )
-	{
-		return got_new;
-	}
-	else if ( got_new )
-	{
-		newpath = new_pathname;
-	}
-	
-	return rename( oldpath, newpath );
+	return _dual_path_at( (dual_path_filing_op) &rename, olddirfd, oldpath, newdirfd, newpath );
 }
 
 int symlinkat( const char* target, int newdirfd, const char* newpath )
