@@ -17,6 +17,9 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 
+// Extended API Set, part 2
+#include "extended-api-set/temporary_cwd.hh"
+
 
 #if !defined( __LAMP__ ) && !defined( __linux__ )
 
