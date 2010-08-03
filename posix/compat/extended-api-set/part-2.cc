@@ -200,17 +200,11 @@ int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpa
 
 int symlinkat( const char* target, int newdirfd, const char* newpath )
 {
-	char new_pathname[ PATH_MAX ];
+	_temporary_cwd cwd( newdirfd, newpath );
 	
-	int got_new = get_path( newdirfd, newpath, new_pathname, true );
-	
-	if ( got_new < 0 )
+	if ( int failed = cwd.failed() )
 	{
-		return got_new;
-	}
-	else if ( got_new )
-	{
-		newpath = new_pathname;
+		return failed;
 	}
 	
 	return symlink( target, newpath );
@@ -218,17 +212,11 @@ int symlinkat( const char* target, int newdirfd, const char* newpath )
 
 int unlinkat( int dirfd, const char* path, int flags )
 {
-	char pathname[ PATH_MAX ];
+	_temporary_cwd cwd( dirfd, path );
 	
-	int got = get_path( dirfd, path, pathname );
-	
-	if ( got < 0 )
+	if ( int failed = cwd.failed() )
 	{
-		return got;
-	}
-	else if ( got )
-	{
-		path = pathname;
+		return failed;
 	}
 	
 	const bool removedir = flags & AT_REMOVEDIR;
