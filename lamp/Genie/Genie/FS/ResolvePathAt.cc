@@ -8,6 +8,9 @@
 // POSIX
 #include "fcntl.h"
 
+// POSeven
+#include "poseven/types/errno_t.hh"
+
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -23,6 +26,9 @@
 namespace Genie
 {
 	
+	namespace p7 = poseven;
+	
+	
 	static FSTreePtr GetDirFile( int fd )
 	{
 		return GetFileHandleWithCast< DirHandle >( fd ).GetFile();
@@ -30,7 +36,12 @@ namespace Genie
 	
 	FSTreePtr ResolvePathAt( int dirfd, const plus::string& path )
 	{
-		const bool absolute = !path.empty() && path[0] == '/';
+		if ( path.empty() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		const bool absolute = path[0] == '/';
 		
 		return ResolvePathname( path,   absolute          ? null_FSTreePtr
 		                              : dirfd == AT_FDCWD ? CurrentProcess().GetCWD()
