@@ -24,47 +24,6 @@
 
 #if !defined( __LAMP__ ) && !defined( __linux__ )
 
-static int get_path( int dirfd, const char* path, char* buffer, bool creating = false )
-{
-	ssize_t result = 0;
-	
-	if ( dirfd != AT_FDCWD  &&  path[0] != '/' )
-	{
-		int saved_cwd = open( ".", O_RDONLY );
-		
-		if ( saved_cwd < 0 )
-		{
-			return saved_cwd;
-		}
-		
-		result = fchdir( dirfd );
-		
-		int saved_errno = errno;
-		
-		if ( result == 0 )
-		{
-			const bool made_dir = creating  &&  0 == mkdir( path, 0000 );  // so realpath() doesn't fail
-			
-			result = realpath( path, buffer ) ? 1 : -1;
-			
-			saved_errno = errno;
-			
-			if ( made_dir )
-			{
-				rmdir( path );
-			}
-		}
-		
-		fchdir( saved_cwd );
-		
-		close( saved_cwd );
-		
-		errno = saved_errno;
-	}
-	
-	return result;
-}
-
 DIR *fdopendir( int fd )
 {
 	char path[] = "/dev/fd/1234567890";
