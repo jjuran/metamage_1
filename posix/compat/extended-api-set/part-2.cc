@@ -18,6 +18,7 @@
 #include <sys/time.h>
 
 // Extended API Set, part 2
+#include "extended-api-set/dual_path_at.hh"
 #include "extended-api-set/temporary_cwd.hh"
 
 
