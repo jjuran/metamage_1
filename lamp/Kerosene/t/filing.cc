@@ -24,7 +24,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13;
+static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13 + 4;
 
 
 using tap::ok_if;
@@ -280,6 +280,50 @@ static void t_renameat()
 	(void) rmdir( "bar" );
 }
 
+static void linkat_t()
+{
+#ifdef __LAMP__
+	
+	// skipped
+	ok_if( true );
+	ok_if( true );
+	ok_if( true );
+	ok_if( true );
+	
+	return;
+	
+#endif
+	
+	create( "foo" );
+	
+	CHECK( symlink( "foo", "bar" ) );
+	
+	int linked = linkat( AT_FDCWD, "bar", AT_FDCWD, "baz", 0 );
+	
+	if ( linked == 0 )
+	{
+		ok_if( true, "linkat() links symlinks" );
+		
+		ok_if( is_lnk( "baz" ) );
+		
+		(void) unlink( "baz" );
+	}
+	else
+	{
+		ok_if( errno == ENOSYS, "linkat() doesn't link symlinks" );
+		
+		ok_if( true );  // skipped
+	}
+	
+	ok_if( linkat( AT_FDCWD, "bar", AT_FDCWD, "baz", AT_SYMLINK_FOLLOW ) == 0 );
+	
+	ok_if( is_reg( "baz" ) );
+	
+	(void) unlink( "baz" );
+	(void) unlink( "bar" );
+	(void) unlink( "foo" );
+}
+
 static void cleanup()
 {
 	(void) unlink( "loop-de-loop" );
@@ -303,6 +347,8 @@ int main( int argc, char** argv )
 	symlink_readlink_unlink();
 	
 	t_renameat();
+	
+	linkat_t();
 	
 	cleanup();
 	
