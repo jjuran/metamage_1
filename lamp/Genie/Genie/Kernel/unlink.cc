@@ -46,7 +46,7 @@ namespace Genie
 			}
 			else
 			{
-				return frame.SetErrno( remove_dir ? ENOTDIR : EISDIR );
+				return frame.SetErrno( remove_dir ? ENOTDIR : EPERM );
 			}
 		}
 		catch ( ... )
