@@ -45,22 +45,10 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			struct ::stat location_status;
-			
-			try
+			if ( link->Exists() )
 			{
-				// Stat the location.  Throws ENOENT if nonexistent.
-				link->Stat( location_status );
-				
-				// The new location also exists; bail.
 				return frame.SetErrno( EEXIST );
 			}
-			catch ( const p7::errno_t& errnum )
-			{
-				if ( errnum != ENOENT )  throw;
-			}
-			
-			// If we got here, link is a valid location.
 			
 			link->SymLink( target_path );
 		}
