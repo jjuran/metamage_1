@@ -78,9 +78,9 @@ namespace Genie
 	
 	// Whereas readlink() returns the number of bytes copied (which leaves you
 	// uninformed of the actual data size, unless the buffer length exceeds it,
-	// *even the buffer is (just) large enough*), and readlinkat() tells you
+	// *even if the buffer is (just) large enough*), and readlinkat() tells you
 	// nothing at all (other than that it succeeded) unless you preload the
-	// buffer entirely with null bytes, readlinkat_k() always returns the data
+	// buffer entirely with null bytes, _readlinkat() always returns the data
 	// size in some form if it returns data at all.
 	
 	// Like readlink() and readlinkat(), _readlinkat() will copy as much data as
