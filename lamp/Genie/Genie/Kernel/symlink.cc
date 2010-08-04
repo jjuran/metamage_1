@@ -6,21 +6,6 @@
 // Standard C
 #include <errno.h>
 
-// POSIX
-#include "sys/stat.h"
-#include "unistd.h"
-
-// Mac OS
-#ifndef __MACERRORS__
-#include <MacErrors.h>
-#endif
-
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
@@ -30,10 +15,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	namespace p7 = poseven;
-	
 	
 	static int symlinkat( const char* target_path, int newdirfd, const char* newpath )
 	{
