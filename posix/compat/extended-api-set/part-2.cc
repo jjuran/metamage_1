@@ -134,7 +134,16 @@ int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath
 		newpath = new_pathname;
 	}
 	
-	const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
+	const bool follow = flags & AT_SYMLINK_FOLLOW;
+	
+	struct ::stat sb;
+	
+	if ( !follow  &&  lstat( oldpath, &sb ) == 0  &&  S_ISLNK( sb.st_mode ) )
+	{
+		errno = ENOSYS;
+		
+		return -1;
+	}
 	
 	return link( oldpath, newpath );
 }
