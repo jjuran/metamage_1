@@ -24,7 +24,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 5 + 6 + 7 + 4 + 20;
+static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13;
 
 
 using tap::ok_if;
@@ -234,6 +234,52 @@ static void symlink_readlink_unlink()
 	(void) rmdir( "foo" );
 }
 
+static void t_renameat()
+{
+	CHECK( mkdir( "foo", 0755 ) );
+	CHECK( mkdir( "bar", 0755 ) );
+	
+	int foo_fd = CHECK( open( "foo", O_RDONLY | O_DIRECTORY, 0 ) );
+	int bar_fd = CHECK( open( "bar", O_RDONLY | O_DIRECTORY, 0 ) );
+	
+	create( "a" );
+	
+	ok_if( rename( "a", "foo" ) == -1  &&  errno == EISDIR  );
+	ok_if( rename( "foo", "a" ) == -1  &&  errno == ENOTDIR );
+	
+	ok_if( rename( "a", "a" ) == 0 );
+	
+	ok_if( exists( "a" ) );
+	
+	ok_if( renameat( AT_FDCWD, "a", foo_fd, "a" ) == 0, "renameat( AT_FDCWD, x, dirfd, x )" );
+	
+	ok_if( exists( "foo/a" ) );
+	
+	(void) rename( "a", "foo/a" );
+	
+	ok_if( renameat( foo_fd, "a", bar_fd, "a" ) == 0, "renameat( dirfd, x, dirfd, x ) # TODO" );
+	
+	ok_if( exists( "bar/a" ) );
+	
+	(void) rename( "foo/a", "bar/a" );
+	
+	ok_if( rename( "foo", "bar" ) == -1  &&  (errno == EEXIST || errno == ENOTEMPTY) );
+	
+	ok_if( rename( "bar", "foo" ) == 0 );
+	
+	ok_if( exists( "foo" )  &&  !exists( "bar" ) );
+	
+	ok_if( unlinkat( foo_fd, "a", 0 ) == -1  &&  errno == ENOENT );
+	
+	ok_if( unlinkat( bar_fd, "a", 0 ) == 0 );
+	
+	close( foo_fd );
+	close( bar_fd );
+	
+	(void) rmdir( "foo" );
+	(void) rmdir( "bar" );
+}
+
 static void cleanup()
 {
 	(void) unlink( "loop-de-loop" );
@@ -255,6 +301,8 @@ int main( int argc, char** argv )
 	t_mkdirat();
 	
 	symlink_readlink_unlink();
+	
+	t_renameat();
 	
 	cleanup();
 	
