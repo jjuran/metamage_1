@@ -111,6 +111,7 @@ struct stat
 			 (m & 0170000) == 0140000)	/* fifo or socket */
 
 #define AT_FDCWD  (-100)
+#define AT_SYMLINK_FOLLOW       2
 #define AT_SYMLINK_NOFOLLOW  4096
 
 #define UTIME_ARCHIVE  0x40000000

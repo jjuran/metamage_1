@@ -30,6 +30,10 @@ extern "C" {
 #define AT_REMOVEDIR  1
 #endif
 
+#ifndef AT_SYMLINK_FOLLOW
+#define AT_SYMLINK_FOLLOW  2
+#endif
+
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW  4096
 #endif
