@@ -58,6 +58,8 @@ static void SetVariables()
 	
 	setenv( "PATH", path, 0 );
 	
+	chdir( "/sys/mac/user/home" );
+	
 	char path_buffer[ 4096 ];
 	
 	ssize_t size = _readlink( "/sys/mac/user/home", path_buffer, sizeof path_buffer - 1 );
