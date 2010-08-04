@@ -1000,7 +1000,14 @@ namespace Genie
 				if ( !same_file )
 				{
 					// Delete existing dest file
-					N::FSpDelete( destFileSpec );
+					OSErr err = ::FSpDelete( &destFileSpec );
+					
+					if ( destIsDir  &&  err == fBsyErr )
+					{
+						p7::throw_errno( ENOTEMPTY );
+					}
+					
+					N::ThrowOSStatus( err );
 				}
 				
 				// Overwrite actual name with requested name
