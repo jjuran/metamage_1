@@ -1016,6 +1016,12 @@ namespace Genie
 		return errorNumber == 0 ? 0 : -1;
 	}
 	
+	const plus::string& Process::GetCmdLine() const
+	{
+		return its_memory_data.get() ? its_memory_data.get()->get_cmdline()
+		                             : plus::string::null;
+	}
+	
 	pid_t Process::GetPGID() const
 	{
 		return itsProcessGroup.get() ? itsProcessGroup->ID() : 0;

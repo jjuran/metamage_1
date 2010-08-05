@@ -169,7 +169,7 @@ namespace Genie
 			
 			int Run();
 			
-			const plus::string& GetCmdLine() const  { return its_memory_data->get_cmdline(); }
+			const plus::string& GetCmdLine() const;
 			
 			typedef void* addr_t;
 			
