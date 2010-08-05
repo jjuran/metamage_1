@@ -262,7 +262,7 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		throw p7::errno_t( EINVAL );
+		return Self();
 	}
 	
 	void FSTree::SymLink( const plus::string& target ) const
