@@ -7,15 +7,14 @@
 
 #include "extended-api-set/part-2.h"
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <errno.h>
+#include <stdio.h>
 
 // POSIX
-#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 
 // Extended API Set, part 2
 #include "extended-api-set/dual_path_at.hh"
@@ -28,7 +27,7 @@ DIR *fdopendir( int fd )
 {
 	char path[] = "/dev/fd/1234567890";
 	
-	std::sprintf( path + sizeof "/dev/fd/" - 1, "%d", fd );
+	sprintf( path + sizeof "/dev/fd/" - 1, "%d", fd );
 	
 	DIR* dir = opendir( path );
 	
