@@ -49,22 +49,10 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			struct ::stat location_status;
-			
-			try
+			if ( newFile->Exists() )
 			{
-				// Stat the location.  Throws ENOENT if nonexistent.
-				newFile->Stat( location_status );
-				
-				// The new location also exists; bail.
 				return frame.SetErrno( EEXIST );
 			}
-			catch ( const p7::errno_t& errnum )
-			{
-				if ( errnum != ENOENT )  throw;
-			}
-			
-			// If we got here, newFile is a valid location.
 			
 			oldFile->HardLink( newFile );
 		}
