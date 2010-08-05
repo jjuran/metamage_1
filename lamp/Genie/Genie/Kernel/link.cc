@@ -16,8 +16,14 @@
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
+
+
+#ifndef AT_SYMLINK_FOLLOW
+#define AT_SYMLINK_FOLLOW  0
+#endif
 
 
 namespace Genie
@@ -32,7 +38,10 @@ namespace Genie
 		
 		FSTreePtr oldFile = ResolvePathAt( olddirfd, oldpath );
 		
-		// Resolve links?  POSIX says yes, but Linux doesn't.
+		if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
+		{
+			ResolveLinks_InPlace( oldFile );
+		}
 		
 		try
 		{
