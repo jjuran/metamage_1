@@ -953,8 +953,6 @@ namespace Genie
 			}
 		}
 		
-		its_memory_data->clear_memory_mappings();
-		
 		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
 		
 		ClearPendingSignals();
@@ -1032,8 +1030,6 @@ namespace Genie
 		
 		// Declare this first so it goes out of scope last
 		n::owned< N::ThreadID > looseThread;
-		
-		its_memory_data->clear_memory_mappings();
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors );
 		
@@ -1225,8 +1221,6 @@ namespace Genie
 		pid_t sid  = GetSID();
 		
 		bool isSessionLeader = pid == sid;
-		
-		its_memory_data->clear_memory_mappings();
 		
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.reset();
