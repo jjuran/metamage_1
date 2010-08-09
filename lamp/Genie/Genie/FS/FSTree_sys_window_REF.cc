@@ -381,7 +381,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property::Open( OpenFlags flags ) const
 	{
-		const bool writing = (flags & O_ACCMODE) + 1 & FWRITE;
+		const bool writing = (flags & O_ACCMODE) + 1 - O_RDONLY  &  FWRITE;
 		
 		if ( writing  &&  !itIsMutable  &&  HasWindow( this ) )
 		{
