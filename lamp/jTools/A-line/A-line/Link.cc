@@ -164,9 +164,9 @@ namespace tool
 		{
 			plus::var_string actual;
 			
-			actual.resize( size );
+			char* p = actual.reset( size );
 			
-			if ( p7::pread( fd, &actual[0], size, 0 ) == size )
+			if ( p7::pread( fd, p, size, 0 ) == size )
 			{
 				return actual == desired;
 			}

@@ -55,9 +55,9 @@ namespace poseven
 		
 		while ( size > result.size() )
 		{
-			result.resize( size );
+			char* p = result.reset( size );
 			
-			size = _realpath( pathname, &result[0], result.size() );
+			size = _realpath( pathname, p, result.size() );
 			
 			if ( size == -1 )
 			{
