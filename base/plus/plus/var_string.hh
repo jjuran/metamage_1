@@ -215,9 +215,9 @@ namespace plus
 			
 			void replace( char* p, char* q, const char *i, const char *j );
 			
-			string& operator+=( const string& s )  { return append( s ); }
-			string& operator+=( const char*   s )  { return append( s ); }
-			string& operator+=( char          c )  { return append( 1, c ); }
+			var_string& operator+=( const string& s )  { return append( s ); }
+			var_string& operator+=( const char*   s )  { return append( s ); }
+			var_string& operator+=( char          c )  { return append( 1, c ); }
 	};
 	
 }
