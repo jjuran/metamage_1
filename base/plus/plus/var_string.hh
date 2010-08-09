@@ -149,6 +149,8 @@ namespace plus
 				return *this;
 			}
 			
+			char* reset( size_type n = 0 )  { return reallocate( n ); }
+			
 			var_string& erase( size_type pos = 0, size_type n = npos );
 			
 			char* erase( char* p, char* q );
