@@ -220,13 +220,15 @@ namespace tool
 		
 		contents.resize( file_size );
 		
-		io::read( fileH, &contents[0], file_size );
+		char* p = &contents[ 0 ];
 		
-		const plus::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
-		                                                                     contents.end(),
-		                                                                     std::ptr_fun( IsControlChar ) );
+		io::read( fileH, p, file_size );
 		
-		const std::size_t length_of_first_line = end_of_first_line - contents.begin();
+		const char* end_of_first_line = std::find_if( p,
+		                                              p + file_size,
+		                                              std::ptr_fun( IsControlChar ) );
+		
+		const std::size_t length_of_first_line = end_of_first_line - p;
 		
 		contents.resize( length_of_first_line );
 		
