@@ -214,11 +214,13 @@ namespace tool
 	template < class Stream >
 	static plus::string ReadOneLinerFromStream( Stream fileH )
 	{
+		const size_t file_size = io::get_file_size( fileH );
+		
 		plus::var_string contents;
 		
-		contents.resize( io::get_file_size( fileH ) );
+		contents.resize( file_size );
 		
-		io::read( fileH, &contents[0], contents.size() );
+		io::read( fileH, &contents[0], file_size );
 		
 		const plus::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
 		                                                                     contents.end(),
