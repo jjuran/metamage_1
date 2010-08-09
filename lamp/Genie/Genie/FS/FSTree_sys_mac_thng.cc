@@ -348,9 +348,9 @@ namespace Genie
 			
 			plus::var_string result;
 			
-			result.resize( size );
+			char* p = result.reset( size );
 			
-			std::memcpy( &result[0], *icon.get().Get(), size );
+			std::memcpy( p, *icon.get().Get(), size );
 			
 			return result;
 		}

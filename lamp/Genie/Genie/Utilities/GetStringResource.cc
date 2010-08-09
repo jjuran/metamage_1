@@ -5,8 +5,8 @@
 
 #include "Genie/Utilities/GetStringResource.hh"
 
-// Standard C/++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 // plus
 #include "plus/var_string.hh"
@@ -31,9 +31,9 @@ namespace Genie
 		
 		plus::var_string result;
 		
-		result.resize( length );
+		char* p = result.reset( length );
 		
-		std::copy( begin, begin + length, result.begin() );
+		memcpy( p, begin, length );
 		
 		return result;
 	}

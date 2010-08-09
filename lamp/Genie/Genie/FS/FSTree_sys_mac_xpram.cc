@@ -63,9 +63,9 @@ namespace Nitrogen
 	{
 		plus::var_string xpram;
 		
-		xpram.resize( length );
+		char* p = xpram.reset( length );
 		
-		::ReadXPRam( &xpram[0], length, offset );
+		::ReadXPRam( p, length, offset );
 		
 		return xpram;
 	}
