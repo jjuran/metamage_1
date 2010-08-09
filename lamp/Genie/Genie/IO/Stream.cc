@@ -117,11 +117,8 @@ namespace Genie
 		if ( bytesRead > 0 )
 		{
 			// slide unread data in peek buffer to beginning
-			std::copy( itsPeekBuffer.begin() + bytesRead,
-			           itsPeekBuffer.end(),
-			           itsPeekBuffer.begin() );
-			
-			itsPeekBuffer.resize( itsPeekBuffer.size() - bytesRead );
+			itsPeekBuffer.erase( itsPeekBuffer.begin(),
+			                     itsPeekBuffer.begin() + bytesRead );
 			
 			// adjust request size
 			byteCount -= bytesRead;
