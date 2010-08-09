@@ -218,9 +218,7 @@ namespace tool
 		
 		plus::var_string contents;
 		
-		contents.resize( file_size );
-		
-		char* p = &contents[ 0 ];
+		char* p = contents.reset( file_size );
 		
 		io::read( fileH, p, file_size );
 		
