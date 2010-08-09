@@ -151,6 +151,11 @@ namespace Genie
 		
 		std::vector< plus::string >& strings = params.itsStrings;
 		
+		if ( GetFlags() & O_TRUNC )
+		{
+			strings.clear();
+		}
+		
 		const char* end = buffer + byteCount;
 		
 		const char* p = buffer;
