@@ -30,9 +30,9 @@ namespace poseven
 		
 		while ( true )
 		{
-			result.resize( buffer_length );
+			char* p = result.reset( buffer_length );
 			
-			size = throw_posix_result( ::readlinkat( dirfd, path, &result[0], buffer_length ) );
+			size = throw_posix_result( ::readlinkat( dirfd, path, p, buffer_length ) );
 			
 			if ( size != buffer_length )
 			{
