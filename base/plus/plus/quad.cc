@@ -21,9 +21,9 @@ namespace plus
 	{
 		var_string result;
 		
-		result.resize( sizeof 'quad' );
+		char* p = result.reset( sizeof 'quad' );
 		
-		iota::encode_quad( q, &result[0] );
+		iota::encode_quad( q, p );
 		
 		return result;
 	}
