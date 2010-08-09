@@ -19,8 +19,8 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
-// Traditional
-#include <alloca.h>
+// Lamp
+#include "lamp/alloca.h"
 
 // iota
 #include "iota/decimal.hh"
@@ -47,7 +47,7 @@ static int killall( const char* name_to_kill, int sig )
 	
 	const size_t buffer_size = name_len + 1;
 	
-	char* buffer = (char*) alloca( buffer_size );
+	char* buffer = (char*) checked_alloca( buffer_size );
 	
 	const char* proc_dir = "/proc";
 	

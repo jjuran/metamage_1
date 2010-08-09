@@ -16,6 +16,9 @@
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
 
+// Lamp
+#include "lamp/alloca.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -98,7 +101,7 @@ namespace tool
 					
 					const size_t path_size = dir_len + 1 + loc_len;
 					
-					char* buffer = (char*) alloca( path_size + 1 );
+					char* buffer = (char*) checked_alloca( path_size + 1 );
 					
 					memcpy( buffer,               dir_path, dir_len );
 					memcpy( buffer + dir_len,     STR_LEN( "/" )    );

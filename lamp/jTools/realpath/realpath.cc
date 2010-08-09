@@ -9,8 +9,8 @@
 // POSIX
 #include <unistd.h>
 
-// Historical
-#include <alloca.h>
+// Lamp
+#include "lamp/alloca.h"
 
 // Iota
 #include "iota/strings.hh"
@@ -40,7 +40,7 @@ int main( int argc, char const *const argv[] )
 	
 	{
 		// Allocate a buffer on the stack
-		char *buffer = (char*) alloca( buffer_size );
+		char* buffer = (char*) checked_alloca( buffer_size );
 		
 		ssize_t actual_size = _realpath( pathname, buffer, buffer_size - 1 );
 		
