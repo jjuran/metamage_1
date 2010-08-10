@@ -24,6 +24,16 @@ namespace Genie
 		static void Read( plus::var_string& result, const FSTree* that, bool binary );
 	};
 	
+	struct sys_mac_time_dls
+	{
+		static void Read( plus::var_string& out, const FSTree* that, bool binary );
+	};
+	
+	struct sys_mac_time_gmtdelta
+	{
+		static void Read( plus::var_string& out, const FSTree* that, bool binary );
+	};
+	
 }
 
 #endif

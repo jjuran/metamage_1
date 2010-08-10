@@ -26,6 +26,8 @@ namespace Genie
 	const FSTree_Premapped::Mapping sys_mac_time_Mappings[] =
 	{
 		{ ".dls+gmt-delta", &Property_Factory< sys_mac_time_dlsgmtdelta > },
+		{ "dls",            &Property_Factory< sys_mac_time_dls         > },
+		{ "gmt-delta",      &Property_Factory< sys_mac_time_gmtdelta    > },
 		
 		{ NULL, NULL }
 		
