@@ -7,8 +7,9 @@
 #include "errno.h"
 #include "time.h"
 
-// TimeOff
-#include "TimeOff/TimeOff.hh"
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
 
 
 #pragma exceptions off
@@ -116,6 +117,35 @@ struct tm* gmtime( const time_t* time_p )
 	return gmtime_r( time_p, &static_tm );
 }
 
+static long get_dls_gmtdelta_field()
+{
+	const char* pathname = "/sys/mac/time/.dls+gmt-delta";
+	
+	int fd = open( pathname, O_RDONLY | O_BINARY );
+	
+	if ( fd < 0 )
+	{
+		return -1;
+	}
+	
+	long result;
+	
+	ssize_t n_read = read( fd, &result, sizeof result );
+	
+	const int saved_errno = errno;
+	
+	close( fd );
+	
+	errno = saved_errno;
+	
+	if ( n_read != sizeof result )
+	{
+		return -1;
+	}
+	
+	return result;
+}
+
 struct tm* localtime_r( const time_t* time_p, struct tm* result )
 {
 	if ( time_p == NULL )
@@ -123,16 +153,24 @@ struct tm* localtime_r( const time_t* time_p, struct tm* result )
 		return NULL;
 	}
 	
-	long gmtDeltaField = TimeOff::GetGMTDeltaField();
+	const long raw_field = get_dls_gmtdelta_field();
 	
-	time_t adjusted_time = *time_p + TimeOff::GetGMTDeltaFromField( gmtDeltaField );
+	if ( raw_field == -1 )
+	{
+		return NULL;
+	}
+	
+	// Mask off DLS byte, and sign extend if negative
+	const long delta = (raw_field & 0x00FFFFFF) | (raw_field & 0x00800000) * 0xFF << 1;
+	
+	time_t adjusted_time = *time_p + delta;
 	
 	if ( gmtime_r( &adjusted_time, result ) == NULL )
 	{
 		return NULL;
 	}
 	
-	result->tm_isdst = TimeOff::GetDLSFromGMTDeltaField( gmtDeltaField );
+	result->tm_isdst = (raw_field & 0x80000000) != 0;
 	
 	return result;
 }
