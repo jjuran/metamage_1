@@ -528,7 +528,7 @@ int dup2( int oldfd, int newfd )
 
 int link( const char* oldpath, const char* newpath )
 {
-	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, 0 );
+	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, AT_SYMLINK_FOLLOW );
 }
 
 int readlink( const char *path, char *buffer, size_t buffer_size )
