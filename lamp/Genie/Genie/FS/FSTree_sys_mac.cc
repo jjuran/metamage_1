@@ -28,6 +28,7 @@
 #include "Genie/FS/FSTree_sys_mac_unit.hh"
 #include "Genie/FS/FSTree_sys_mac_xpram.hh"
 #endif
+#include "Genie/FS/sys/mac/time.hh"
 #include "Genie/FS/FSTree_sys_mac_user.hh"
 #include "Genie/FS/sys_mac_vol.hh"
 //#include "Genie/FS/FSTree_sys_mac_window.hh"
@@ -81,6 +82,7 @@ namespace Genie
 		{ "event",   &Premapped_Factory< sys_mac_event_Mappings   > },
 		{ "gdev",    &Premapped_Factory< sys_mac_gdev_Mappings    > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
+		{ "time",    &Premapped_Factory< sys_mac_time_Mappings    > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		{ "vol",     &Premapped_Factory< sys_mac_vol_Mappings     > },
 		
