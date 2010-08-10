@@ -79,7 +79,6 @@ namespace tool
 				}
 				catch ( ... )
 				{
-					p7::write( p7::stderr_fileno, STR_LEN( "Bad compiler!\n" ) );
 				}
 			}
 		}
