@@ -63,7 +63,20 @@ namespace Genie
 		{
 			ResolveLinks_InPlace( result );
 			
-			while ( *++begin == '/' ) continue;
+			ASSERT( *begin == '/' );
+			
+			if ( result->IsFile() )
+			{
+				if ( ++begin == end  ||  *begin == '/' )
+				{
+					// "file/" or "file//..."
+					p7::throw_errno( ENOTDIR );
+				}
+			}
+			else
+			{
+				while ( ++begin < end  &&  *begin == '/' ) continue;
+			}
 			
 			if ( begin < end )
 			{
