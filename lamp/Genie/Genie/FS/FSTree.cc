@@ -326,20 +326,15 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolvePath( const char*& begin, const char* end ) const
 	{
-		if ( begin == end )
-		{
-			return Self();
-		}
-		
 		ASSERT( begin < end );
+		
+		ASSERT( begin[0] != '/' );
 		
 		const char* slash = std::find( begin, end, '/' );
 		
-		const bool done = slash == end;
-		
 		plus::string name( begin, slash );
 		
-		begin = slash + !done;
+		begin = slash;
 		
 		return Lookup( name );
 	}
