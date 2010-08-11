@@ -1682,11 +1682,6 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
 	{
-		if ( begin == end )
-		{
-			return Self();
-		}
-		
 		ASSERT( begin < end );
 		
 	#ifdef __MACOS__
