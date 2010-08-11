@@ -332,11 +332,9 @@ namespace Genie
 		
 		const char* slash = std::find( begin, end, '/' );
 		
-		const bool done = slash == end;
-		
 		plus::string name( begin, slash );
 		
-		begin = slash + !done;
+		begin = slash;
 		
 		return Lookup( name );
 	}
