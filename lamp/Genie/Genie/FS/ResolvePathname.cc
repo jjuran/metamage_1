@@ -63,7 +63,12 @@ namespace Genie
 		{
 			ResolveLinks_InPlace( result );
 			
-			result = result->ResolvePath( begin, end );
+			while ( *++begin == '/' ) continue;
+			
+			if ( begin < end )
+			{
+				result = result->ResolvePath( begin, end );
+			}
 		}
 		
 		return result;

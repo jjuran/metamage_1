@@ -328,6 +328,8 @@ namespace Genie
 	{
 		ASSERT( begin < end );
 		
+		ASSERT( begin[0] != '/' );
+		
 		const char* slash = std::find( begin, end, '/' );
 		
 		const bool done = slash == end;
