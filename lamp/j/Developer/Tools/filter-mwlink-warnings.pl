@@ -71,6 +71,7 @@ qw
 	Abort.cc
 	Genie/Abort.cpp
 	KSIOUXConsole.cc
+	OTInetMailExchange.cc
 	dlmalloc.c
 	dlmalloc.cpp
 	nomalloc.c
