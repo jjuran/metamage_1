@@ -101,34 +101,29 @@ namespace Genie
 		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
 	}
 	
-	void Stat_HFS( bool                      async,
-	               struct ::stat*            sb,
-	               Nitrogen::FSVolumeRefNum  vRefNum,
-	               Nitrogen::FSDirID         dirID,
-	               const unsigned char*      name,
-	               bool                      is_rsrc_fork )
+	void Stat_HFS( bool                  async,
+	               struct ::stat*        sb,
+	               const CInfoPBRec&     cInfo,
+	               const unsigned char*  name,
+	               bool                  is_rsrc_fork )
 	{
 		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
-		N::Str255 name_copy = name != NULL ? name : "\p";
-		
-		CInfoPBRec cInfo = { 0 };
-		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, async, vRefNum, dirID, name_copy );
-		
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		const bool exists = hFileInfo.ioResult == noErr;
 		
 		sb->st_dev = -hFileInfo.ioVRefNum;  // inverted vRefNum (positive integer) for device
 		sb->st_rdev = hFileInfo.ioFlParID;  // dir ID of parent
 		
-		if ( name_copy[0] > 31 )
+		if ( name[0] > 31 )
 		{
 			throw N::StringTooLong();
 		}
 		
 	#ifdef __LAMP__
 		
-		std::memcpy( sb->st_name, name_copy, 1 + name_copy[0] );
+		std::memcpy( sb->st_name, name, 1 + name[0] );
 		
 	#endif
 		
@@ -138,7 +133,7 @@ namespace Genie
 			// would make life hell if we had set a breakpoint there, and (b)
 			// lets us pass partial results back before throwing.
 			
-			sb->st_rdev = dirID;
+			sb->st_rdev = hFileInfo.ioDirID;
 			
 			throw p7::errno_t( ENOENT );
 		}

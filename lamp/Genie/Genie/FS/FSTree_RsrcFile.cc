@@ -56,7 +56,13 @@ namespace Genie
 	
 	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
 	{
-		StatFile( itIsOnServer, itsFileSpec, &sb, true );
+		CInfoPBRec cInfo = { 0 };
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo,
+		                             itIsOnServer,
+		                             itsFileSpec );
+		
+		Stat_HFS( itIsOnServer, &sb, cInfo, itsFileSpec.name, true );
 	}
 	
 }
