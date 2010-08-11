@@ -116,6 +116,8 @@ namespace Genie
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
+			bool IsFile() const  { return false; }
+			
 			bool IsDirectory() const  { return Exists(); }
 			
 			bool Exists() const;
