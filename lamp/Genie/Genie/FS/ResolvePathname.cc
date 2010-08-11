@@ -48,9 +48,16 @@ namespace Genie
 	                               std::size_t       length,
 	                               const FSTreePtr&  current )
 	{
+		if ( length == 0 )
+		{
+			return current;
+		}
+		
 		FSTreePtr result = current;
 		
 		const char* end = begin + length;
+		
+		result = result->ResolvePath( begin, end );
 		
 		while ( begin < end )
 		{
