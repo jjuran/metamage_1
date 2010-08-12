@@ -45,7 +45,7 @@ namespace tool
 		}
 		catch ( const p7::errno_t& err )
 		{
-			if ( err != ENOENT  &&  err != EINVAL )
+			if ( err != ENOTDIR  &&  err != ENOENT  &&  err != EINVAL )
 			{
 				throw;
 			}

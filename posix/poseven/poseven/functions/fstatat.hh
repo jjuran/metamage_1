@@ -39,7 +39,7 @@ namespace poseven
 		
 		if ( status == -1 )
 		{
-			if ( errno == ENOENT )
+			if ( errno == ENOENT  ||  errno == ENOTDIR )
 			{
 				return false;
 			}

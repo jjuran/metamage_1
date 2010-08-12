@@ -316,7 +316,7 @@ namespace Genie
 	
 	FSTreePtr FSTree::Lookup( const plus::string& name, const FSTree* parent ) const
 	{
-		throw p7::errno_t( ENOENT );
+		throw p7::errno_t( ENOTDIR );
 	}
 	
 	FSIteratorPtr FSTree::Iterate() const
