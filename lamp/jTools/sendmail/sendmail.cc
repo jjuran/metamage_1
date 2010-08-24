@@ -214,17 +214,19 @@ namespace tool
 	template < class Stream >
 	static plus::string ReadOneLinerFromStream( Stream fileH )
 	{
+		const size_t file_size = io::get_file_size( fileH );
+		
 		plus::var_string contents;
 		
-		contents.resize( io::get_file_size( fileH ) );
+		char* p = contents.reset( file_size );
 		
-		io::read( fileH, &contents[0], contents.size() );
+		io::read( fileH, p, file_size );
 		
-		const plus::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
-		                                                                     contents.end(),
-		                                                                     std::ptr_fun( IsControlChar ) );
+		const char* end_of_first_line = std::find_if( p,
+		                                              p + file_size,
+		                                              std::ptr_fun( IsControlChar ) );
 		
-		const std::size_t length_of_first_line = end_of_first_line - contents.begin();
+		const std::size_t length_of_first_line = end_of_first_line - p;
 		
 		contents.resize( length_of_first_line );
 		

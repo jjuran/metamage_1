@@ -183,14 +183,14 @@ namespace Genie
 				
 				plus::var_string name;
 				
-				name.resize( !valid + 8 );
+				char* p = name.reset( !valid + 8 );
 				
 				if ( !valid )
 				{
-					name[0] = '.';
+					p[0] = '.';
 				}
 				
-				iota::encode_32_bit_hex( (unsigned) selector, &name[ !valid ] );
+				iota::encode_32_bit_hex( (unsigned) selector, &p[ !valid ] );
 				
 				return FSNode( inode, name );
 			}

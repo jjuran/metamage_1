@@ -123,9 +123,7 @@ namespace tool
 		
 		plus::var_string result;
 		
-		result.resize( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
-		
-		char* p = &result[0];
+		char* p = result.reset( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
 		iota::fill_unsigned_decimal( date.year,  p,     4 );
 		iota::fill_unsigned_decimal( date.month, &p[4], 2 );

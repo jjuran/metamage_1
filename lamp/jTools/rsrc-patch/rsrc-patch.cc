@@ -66,15 +66,15 @@ namespace tool
 		
 		// FIXME:  Verify the hex data.
 		
-		result.resize( strlen( hex_codes ) / 2 );
+		char* p = result.reset( strlen( hex_codes ) / 2 );
 		
 		for ( std::size_t i = 0;  i < result.size();  ++i )
 		{
 			const char high = hex_codes[ i * 2     ];
 			const char low  = hex_codes[ i * 2 + 1 ];
 			
-			result[ i ] = iota::decoded_hex_digit( high ) << 4
-			            | iota::decoded_hex_digit( low  );
+			p[ i ] = iota::decoded_hex_digit( high ) << 4
+			       | iota::decoded_hex_digit( low  );
 		}
 		
 		return result;

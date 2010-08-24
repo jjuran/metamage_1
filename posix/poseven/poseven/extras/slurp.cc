@@ -26,9 +26,9 @@ namespace poseven
 		
 		plus::var_string result;
 		
-		result.resize( size );
+		char* p = result.reset( size );
 		
-		const ssize_t n_read = read_all( fd, &result[0], size );
+		const ssize_t n_read = read_all( fd, p, size );
 		
 		result.resize( n_read );
 		

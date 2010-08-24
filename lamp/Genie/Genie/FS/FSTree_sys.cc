@@ -45,11 +45,11 @@ namespace Genie
 		{
 			plus::var_string name;
 			
-			name.resize( sizeof '.' + sizeof (unsigned) * 2 );  // 9
+			char* p = name.reset( sizeof '.' + sizeof (unsigned) * 2 );  // 9
 			
-			name[0] = '.';
+			p[0] = '.';
 			
-			iota::encode_32_bit_hex( (unsigned) key, &name[1] );
+			iota::encode_32_bit_hex( (unsigned) key, &p[1] );
 			
 			return name;
 		}

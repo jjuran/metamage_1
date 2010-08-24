@@ -276,11 +276,11 @@ namespace tool
 	{
 		plus::var_string cwd;
 		
-		cwd.resize( 256 );
+		char* p = cwd.reset( 256 );
 		
-		while ( getcwd( &cwd[ 0 ], cwd.size() ) == NULL )
+		while ( getcwd( p, cwd.size() ) == NULL )
 		{
-			cwd.resize( cwd.size() * 2 );
+			p = cwd.reset( cwd.size() * 2 );
 		}
 		
 		std::printf( "%s\n", cwd.c_str() );

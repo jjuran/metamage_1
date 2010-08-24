@@ -43,16 +43,16 @@ namespace Genie
 		
 		const size_t more = extended ? eight + sizeof '-' : 0;
 		
-		name.resize( more + eight );
+		char* p = name.reset( more + eight );
 		
 		if ( extended )
 		{
-			iota::encode_32_bit_hex( psn.highLongOfPSN, &name[0] );
+			iota::encode_32_bit_hex( psn.highLongOfPSN, p );
 			
-			name[ eight ] = '-';
+			p[ eight ] = '-';
 		}
 		
-		iota::encode_32_bit_hex( psn.lowLongOfPSN, &name[ more ] );
+		iota::encode_32_bit_hex( psn.lowLongOfPSN, &p[ more ] );
 		
 		return name;
 	}

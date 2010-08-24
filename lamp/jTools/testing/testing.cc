@@ -552,12 +552,12 @@ static MD5::Result MD5String( const char* text )
 	{
 		plus::var_string result;
 		
-		result.resize( sizeof md5.data * 2 );
+		char* p = result.reset( sizeof md5.data * 2 );
 		
 		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
 		{
-			result[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
-			result[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
+			p[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
+			p[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
 		}
 		
 		return result;

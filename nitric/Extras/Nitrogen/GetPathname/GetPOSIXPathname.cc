@@ -31,11 +31,11 @@ static plus::string GetPOSIXPathname_Internal( const FSSpec& file )
 	
 	plus::var_string filename;
 	
-	filename.resize( name[0] );
+	char* p = filename.reset( name[0] );
 	
 	std::replace_copy( &name[ 1           ],
 					   &name[ 1 + name[0] ],
-					   filename.begin(),
+					   p,
 					   '/',
 					   ':' );
 	
