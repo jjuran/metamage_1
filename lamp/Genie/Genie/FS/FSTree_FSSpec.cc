@@ -487,6 +487,11 @@ namespace Genie
 			bool        itIsOnServer;
 		
 		public:
+			FSTree_HFS( const CInfoPBRec&    cInfo,
+			            bool                 onServer,
+			            const plus::string&  name,
+			            const FSTree*        parent = NULL );
+			
 			FSTree_HFS( const FSSpec&        file,
 			            bool                 onServer,
 			            const plus::string&  name = plus::string(),
@@ -547,6 +552,42 @@ namespace Genie
 			
 			void FinishCreation() const;
 	};
+	
+	static FSSpec FSMakeFSSpec( const CInfoPBRec& cInfo )
+	{
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		const bool exists = hFileInfo.ioResult == noErr;
+		
+		const FSVolumeRefNum vRefNum = hFileInfo.ioVRefNum;
+		
+		const UInt32 parID = exists ? hFileInfo.ioFlParID
+		                            : hFileInfo.ioDirID;
+		
+		FSSpec result = { vRefNum, parID };
+		
+		memcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
+		
+		return result;
+	}
+	
+	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
+	                        bool                 onServer,
+	                        const plus::string&  name,
+	                        const FSTree*        parent )
+	:
+		FSTree_Directory( parent ? parent->Self() : null_FSTreePtr,
+		                  name ),
+		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
+		itsCInfo        ( cInfo                 ),
+		itIsOnServer    ( onServer              )
+	{
+		// we override Parent()
+		
+		ASSERT( !name.empty() );
+		
+		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
+	}
 	
 	FSTree_HFS::FSTree_HFS( const FSSpec&        file,
 	                        bool                 onServer,
