@@ -16,8 +16,6 @@ extern char** environ;
 
 extern int errno;
 
-extern void _MSL_cleanup();
-
 // Call main() and return
 extern int _lamp_main( int argc, char **argv, char **envp, _lamp_system_parameter_block* pb );
 extern int       main( int argc, char **argv );
@@ -34,7 +32,7 @@ int _lamp_main( int argc, char **argv, char **envp, _lamp_system_parameter_block
 	global_user_params   = pb->current_user;
 	
 	global_user_params->errno_var = &errno;
-	global_user_params->cleanup   = &_MSL_cleanup;
+//	global_user_params->cleanup   = NULL;
 	
 	return main( argc, argv );
 }
