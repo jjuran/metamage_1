@@ -487,6 +487,11 @@ namespace Genie
 			bool        itIsOnServer;
 		
 		public:
+			FSTree_HFS( const CInfoPBRec&    cInfo,
+			            bool                 onServer,
+			            const plus::string&  name,
+			            const FSTree*        parent = NULL );
+			
 			FSTree_HFS( const FSSpec&        file,
 			            bool                 onServer,
 			            const plus::string&  name = plus::string(),
@@ -547,6 +552,42 @@ namespace Genie
 			
 			void FinishCreation() const;
 	};
+	
+	static FSSpec FSMakeFSSpec( const CInfoPBRec& cInfo )
+	{
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		const bool exists = hFileInfo.ioResult == noErr;
+		
+		const FSVolumeRefNum vRefNum = hFileInfo.ioVRefNum;
+		
+		const UInt32 parID = exists ? hFileInfo.ioFlParID
+		                            : hFileInfo.ioDirID;
+		
+		FSSpec result = { vRefNum, parID };
+		
+		memcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
+		
+		return result;
+	}
+	
+	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
+	                        bool                 onServer,
+	                        const plus::string&  name,
+	                        const FSTree*        parent )
+	:
+		FSTree_Directory( parent ? parent->Self() : null_FSTreePtr,
+		                  name ),
+		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
+		itsCInfo        ( cInfo                 ),
+		itIsOnServer    ( onServer              )
+	{
+		// we override Parent()
+		
+		ASSERT( !name.empty() );
+		
+		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
+	}
 	
 	FSTree_HFS::FSTree_HFS( const FSSpec&        file,
 	                        bool                 onServer,
@@ -638,7 +679,22 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
 	{
-		return FSTreeFromFSSpec( MacIO::FSMakeFSSpec< FNF_Throws >( dir, NULL ), onServer );
+		N::Str31 mac_name = "\p";
+		
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo,
+		                             onServer,
+		                             dir.vRefNum,
+		                             dir.dirID,
+		                             mac_name,
+		                             0 );
+		
+		const FSSpec fsspec = FSMakeFSSpec( cInfo );
+		
+		const plus::string name = MakeName( fsspec );
+		
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
@@ -1338,11 +1394,13 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		const plus::string macName = K::MacFilenameFromUnixFilename( name );
+		N::Str31 macName = K::MacFilenameFromUnixFilename( name );
 		
-		const FSSpec item = dir / macName;
+		CInfoPBRec cInfo;
 		
-		return seize_ptr( new FSTree_HFS( item, onServer, name, parent ) );
+		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
+		
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name, parent ) );
 	}
 	
 	FSTreePtr FSTree_Root::Lookup_Child( const plus::string& name, const FSTree* parent ) const
@@ -1727,7 +1785,9 @@ namespace Genie
 				
 				const N::FSVolumeRefNum key = Traits::KeyFromName( Name() );
 				
-				return FSTreeFromFSSpec( Traits::FSSpecFromKey( key ), VolumeIsOnServer( key ) );
+				const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
+				
+				return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( key ) );
 			}
 	};
 	

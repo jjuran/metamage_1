@@ -534,9 +534,9 @@ namespace Genie
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		FSSpec volume = MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
+		const Mac::FSDirSpec volume = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
 		
-		return FSTreeFromFSSpec( volume, VolumeIsOnServer( key ) );
+		return FSTreeFromFSDirSpec( volume, VolumeIsOnServer( key ) );
 	}
 	
 	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,
