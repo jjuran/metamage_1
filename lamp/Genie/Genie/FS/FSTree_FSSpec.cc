@@ -76,13 +76,11 @@
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Root_Overlay.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/FS/Union.hh"
 #include "Genie/FS/Users.hh"
-#include "Genie/FS/Volumes.hh"
 #include "Genie/IO/MacDirectory.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
@@ -148,24 +146,6 @@ namespace Genie
 	}
 	
 	
-	static plus::string MacFromUnixName( const plus::string& name )
-	{
-		//ASSERT( name != "."  );
-		//ASSERT( name != ".." );
-		
-		plus::var_string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   ':',
-		                   '/' );
-		
-		return result;
-	}
-	
 	static plus::string UnixFromMacName( ConstStr255Param name )
 	{
 		plus::var_string result;
@@ -219,21 +199,6 @@ namespace Genie
 		pb.volumeParam.ioVRefNum  = vRefNum;
 		pb.volumeParam.ioNamePtr  = NULL;
 		pb.volumeParam.ioVolIndex = 0;  // use ioVRefNum only
-		
-		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
-		
-		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
-	}
-	
-	static N::FSVolumeRefNum GetVRefNum( const plus::string& name )
-	{
-		N::Str255 name_copy = name;
-		
-		HParamBlockRec pb;
-		
-		pb.volumeParam.ioVRefNum  = 0;
-		pb.volumeParam.ioNamePtr  = name_copy;
-		pb.volumeParam.ioVolIndex = -1;  // use use ioNamePtr/ioVRefNum combination
 		
 		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 		
@@ -564,24 +529,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes : public FSTree_Directory
-	{
-		public:
-			FSTree_Volumes( const FSTreePtr&     parent,
-			                const plus::string&  name )
-			:
-				FSTree_Directory( parent, name )
-			{
-			}
-			
-			ino_t Inode() const  { return fsRtParID; }
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
 	{
 		return seize_ptr( new FSTree_HFS( item, onServer ) );
@@ -612,13 +559,6 @@ namespace Genie
 	                            const void*          args )
 	{
 		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
-	}
-	
-	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
-	                              const plus::string&  name,
-	                              const void*          args )
-	{
-		return seize_ptr( new FSTree_Volumes( parent, name ) );
 	}
 	
 	
@@ -1668,69 +1608,6 @@ namespace Genie
 	void FSTree_HFS::FinishCreation() const
 	{
 		SetLongName( itsFileSpec, Name() );
-	}
-	
-	
-	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_Volumes_Link( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
-	FSTreePtr FSTree_Volumes_Link::ResolveLink() const
-	{
-		// Convert ':' to '/'
-		plus::var_string mac_name = MacFromUnixName( Name() );
-		
-		mac_name += ":";
-		
-		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
-		
-		const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( vRefNum, Mac::fsRtDirID );
-		
-		return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( vRefNum ) );
-	}
-	
-	
-	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		return seize_ptr( new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name ) );
-	}
-	
-	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		for ( int i = 1;  true;  ++i )
-		{
-			Str27 mac_name = "\p";
-			
-			HParamBlockRec pb;
-			
-			pb.volumeParam.ioNamePtr  = mac_name;
-			pb.volumeParam.ioVRefNum  = 0;
-			pb.volumeParam.ioVolIndex = i;
-			
-			const OSErr err = ::PBHGetVInfoSync( &pb );
-			
-			if ( err == nsvErr )
-			{
-				break;
-			}
-			
-			N::ThrowOSStatus( err );
-			
-			const ino_t inode = -pb.volumeParam.ioVRefNum;
-			
-			const plus::string name = UnixFromMacName( mac_name );
-			
-			cache.push_back( FSNode( inode, name ) );
-		}
 	}
 	
 }
