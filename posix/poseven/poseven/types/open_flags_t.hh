@@ -85,6 +85,12 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef O_XATTR
+		
+		o_xattr = O_XATTR,
+		
+	#endif
+		
 		open_flags_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
