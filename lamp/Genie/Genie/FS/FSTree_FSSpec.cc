@@ -1377,8 +1377,9 @@ namespace Genie
 			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		return seize_ptr( new MacDirHandle( N::FSpMake_FSDirSpec( itsFileSpec ),
-		                                    itIsOnServer ) );
+		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
+		
+		return seize_ptr( new MacDirHandle( dir, itIsOnServer ) );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
