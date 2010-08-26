@@ -45,8 +45,8 @@ namespace Genie
 		
 		ref->SetTimes();
 		
-		Spew( ResolveRelativePath( STR_LEN( "text-font" ), ref ), STR_LEN( "4" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "text-size" ), ref ), STR_LEN( "9" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), window ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), window ), STR_LEN( "9" "\n" ) );
 		
 		ResolveAbsolutePath( STR_LEN( "/new/scrollframe" ) )->HardLink( view );
 		
