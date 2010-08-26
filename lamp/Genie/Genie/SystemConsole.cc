@@ -82,7 +82,17 @@ namespace Genie
 	
 	int WriteToSystemConsole( const char* data, unsigned byteCount )
 	{
-		return Append( GetConsoleText(), data, byteCount );
+		try
+		{
+			return Append( GetConsoleText(), data, byteCount );
+		}
+		catch ( ... )
+		{
+		}
+		
+		errno = EIO;
+		
+		return -1;
 	}
 	
 }
