@@ -26,6 +26,7 @@ namespace OSErrno
 		{
 			case eofErr         :  result = 0;             break;
 			case nsvErr         :  // fall through
+			case resNotFound    :  // fall through
 			case afpItemNotFound:  // fall through
 			case fnfErr         :  result = ENOENT;        break;
 			case ioErr          :  result = EIO;           break;
