@@ -28,6 +28,8 @@ namespace iota
 	}
 	
 	
+	unsigned short decode_16_bit_hex( const char* s );
+	
 	unsigned decode_32_bit_hex( const char* s );
 	
 	void encode_16_bit_hex( unsigned short x, char* s );

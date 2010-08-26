@@ -28,6 +28,16 @@ namespace iota
 	};
 	
 	
+	unsigned short decode_16_bit_hex( const char* s )
+	{
+		const unsigned x = decoded_hex_digit( s[ 0 ] ) << 12
+		                 | decoded_hex_digit( s[ 1 ] ) <<  8
+		                 | decoded_hex_digit( s[ 2 ] ) <<  4
+		                 | decoded_hex_digit( s[ 3 ] ) <<  0;
+		
+		return x;
+	}
+	
 	unsigned decode_32_bit_hex( const char* s )
 	{
 		const unsigned x = decoded_hex_digit( s[ 0 ] ) << 28
