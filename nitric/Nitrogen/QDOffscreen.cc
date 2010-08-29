@@ -83,7 +83,7 @@ namespace Nitrogen
 		
 		if ( result & gwFlagErr )
 		{
-			ThrowOSStatus( ::QDError() );
+			ThrowOSStatus( ::OSStatus( result ) );
 		}
 		
 		if ( gWorldPtr != offscreenGWorld.get() )
