@@ -11,6 +11,7 @@
 #include "Genie/FS/FSTree_new_console.hh"
 #include "Genie/FS/new_defaultkeys.hh"
 #include "Genie/FS/new_focuser.hh"
+#include "Genie/FS/new/gworld.hh"
 #include "Genie/FS/new/port.hh"
 #include "Genie/FS/FSTree_new_frame.hh"
 #include "Genie/FS/FSTree_new_icon.hh"
@@ -32,6 +33,7 @@ namespace Genie
 		{ "defaultkeys",  &New_defaultkeys                    },
 		{ "focuser",      &New_focuser                        },
 		{ "frame",        &New_FSTree_new_frame               },
+		{ "gworld",       &New_FSTree_new_gworld              },
 		{ "icon",         &New_FSTree_new_icon                },
 		{ "list",         &New_FSTree_new_list                },
 		{ "scroller",     &New_FSTree_new_scroller            },
