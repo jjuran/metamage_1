@@ -10,7 +10,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
-#include "Genie/FS/FSTree_sys_mac_event.hh"
+#include "Genie/FS/sys/mac/event.hh"
 #include "Genie/FS/FSTree_sys_mac_gdev.hh"
 #include "Genie/FS/FSTree_sys_mac_gestalt.hh"
 #include "Genie/FS/FSTree_sys_mac_keys.hh"

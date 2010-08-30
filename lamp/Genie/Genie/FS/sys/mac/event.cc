@@ -1,9 +1,9 @@
-/*	=======================
- *	FSTree_sys_mac_event.cc
- *	=======================
- */
+/*
+	Genie/FS/sys/mac/event.cc
+	-------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_event.hh"
+#include "Genie/FS/sys/mac/event.hh"
 
 // Genie
 #include "Genie/FS/FSTree_event_post.hh"
