@@ -1,9 +1,9 @@
-/*	=========================
- *	FSTree_sys_mac_machine.cc
- *	=========================
- */
+/*
+	Genie/FS/sys/mac/machine.cc
+	---------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_machine.hh"
+#include "Genie/FS/sys/mac/machine.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

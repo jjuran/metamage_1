@@ -14,7 +14,7 @@
 #include "Genie/FS/sys/mac/gdev.hh"
 #include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/sys/mac/keys.hh"
-#include "Genie/FS/FSTree_sys_mac_machine.hh"
+#include "Genie/FS/sys/mac/machine.hh"
 #include "Genie/FS/FSTree_sys_mac_name.hh"
 #include "Genie/FS/FSTree_sys_mac_proc.hh"
 #include "Genie/FS/FSTree_sys_mac_rom.hh"
