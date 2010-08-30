@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_sys_mac_thng.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/thng.cc
+	------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_thng.hh"
+#include "Genie/FS/sys/mac/thng.hh"
 
 // Standard C++
 #include <algorithm>

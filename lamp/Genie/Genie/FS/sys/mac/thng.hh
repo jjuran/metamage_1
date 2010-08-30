@@ -1,10 +1,10 @@
-/*	======================
- *	FSTree_sys_mac_thng.hh
- *	======================
- */
+/*
+	Genie/FS/sys/mac/thng.hh
+	------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACTHNG_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACTHNG_HH
+#ifndef GENIE_FS_SYS_MAC_THNG_HH
+#define GENIE_FS_SYS_MAC_THNG_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
