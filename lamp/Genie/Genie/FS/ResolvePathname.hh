@@ -43,7 +43,14 @@ namespace Genie
 		
 		ASSERT( *begin == '/' );
 		
-		return ResolveRelativePath( begin + 1, length - 1, FSRoot() );
+		const char* end = begin + length;
+		
+		while ( *++begin == '/' ) continue;
+		
+		length = end - begin;
+		
+		return length == 0 ? FSRoot()
+		                   : ResolveRelativePath( begin, length, FSRoot() );
 	}
 	
 	inline FSTreePtr ResolveAbsolutePath( const plus::string& path )
