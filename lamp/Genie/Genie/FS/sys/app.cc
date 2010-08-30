@@ -1,9 +1,9 @@
-/*	=================
- *	FSTree_sys_app.cc
- *	=================
- */
+/*
+	Genie/FS/sys/app.cc
+	-------------------
+*/
 
-#include "Genie/FS/FSTree_sys_app.hh"
+#include "Genie/FS/sys/app.hh"
 
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
