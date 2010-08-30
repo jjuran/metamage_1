@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_sys_mac_name.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/name.cc
+	------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_name.hh"
+#include "Genie/FS/sys/mac/name.hh"
 
 // Genie
 #include "Genie/Utilities/GetWorkstationName.hh"

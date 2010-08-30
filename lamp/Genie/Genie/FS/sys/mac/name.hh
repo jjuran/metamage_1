@@ -1,10 +1,10 @@
-/*	======================
- *	FSTree_sys_mac_name.hh
- *	======================
- */
+/*
+	Genie/FS/sys/mac/name.hh
+	------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACNAME_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACNAME_HH
+#ifndef GENIE_FS_SYS_MAC_NAME_HH
+#define GENIE_FS_SYS_MAC_NAME_HH
 
 // plus
 #include "plus/string.hh"
