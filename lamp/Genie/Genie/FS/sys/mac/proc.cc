@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_sys_mac_proc.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/proc.cc
+	------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_proc.hh"
+#include "Genie/FS/sys/mac/proc.hh"
 
 // iota
 #include "iota/hexidecimal.hh"

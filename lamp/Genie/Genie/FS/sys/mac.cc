@@ -16,7 +16,7 @@
 #include "Genie/FS/sys/mac/keys.hh"
 #include "Genie/FS/sys/mac/machine.hh"
 #include "Genie/FS/sys/mac/name.hh"
-#include "Genie/FS/FSTree_sys_mac_proc.hh"
+#include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/FSTree_sys_mac_rom.hh"
 #include "Genie/FS/sys_mac_tempmem.hh"
 #include "Genie/FS/FSTree_sys_mac_thng.hh"
