@@ -11,6 +11,7 @@
 #include "Genie/FS/FSTree_new_console.hh"
 #include "Genie/FS/new_defaultkeys.hh"
 #include "Genie/FS/new_focuser.hh"
+#include "Genie/FS/new/port.hh"
 #include "Genie/FS/FSTree_new_frame.hh"
 #include "Genie/FS/FSTree_new_icon.hh"
 #include "Genie/FS/FSTree_new_list.hh"
@@ -18,7 +19,6 @@
 #include "Genie/FS/FSTree_new_scrollframe.hh"
 #include "Genie/FS/FSTree_new_stack.hh"
 #include "Genie/FS/FSTree_new_textedit.hh"
-#include "Genie/FS/FSTree_new_window.hh"
 
 
 namespace Genie
