@@ -1,11 +1,9 @@
 /*
-	sys_mac_gdev_list.cc
-	--------------------
-	
-	Joshua Juran
+	Genie/FS/sys/mac/gdev/list.cc
+	-----------------------------
 */
 
-#include "Genie/FS/sys_mac_gdev_list.hh"
+#include "Genie/FS/sys/mac/gdev/list.hh"
 
 // iota
 #include "iota/decimal.hh"

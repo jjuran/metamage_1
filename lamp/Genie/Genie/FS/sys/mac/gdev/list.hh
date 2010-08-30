@@ -1,12 +1,10 @@
 /*
-	sys_mac_gdev_list.hh
-	--------------------
-	
-	Joshua Juran
+	Genie/FS/sys/mac/gdev/list.hh
+	-----------------------------
 */
 
-#ifndef GENIE_FS_SYSMACGDEVLIST_HH
-#define GENIE_FS_SYSMACGDEVLIST_HH
+#ifndef GENIE_FS_SYS_MAC_GDEV_LIST_HH
+#define GENIE_FS_SYS_MAC_GDEV_LIST_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
