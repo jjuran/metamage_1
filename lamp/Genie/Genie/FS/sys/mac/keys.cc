@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_sys_mac_keys.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/keys.cc
+	------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_keys.hh"
+#include "Genie/FS/sys/mac/keys.hh"
 
 // plus
 #include "plus/var_string.hh"
