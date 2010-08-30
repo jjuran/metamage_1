@@ -11,7 +11,7 @@
 #include "Genie/FS/FSTree_Dev.hh"
 #include "Genie/FS/FSTree_Proc.hh"
 #include "Genie/FS/FSTree_new.hh"
-#include "Genie/FS/FSTree_sys.hh"
+#include "Genie/FS/sys.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
 

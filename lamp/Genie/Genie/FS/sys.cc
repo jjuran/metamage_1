@@ -1,9 +1,9 @@
-/*	=============
- *	FSTree_sys.cc
- *	=============
- */
+/*
+	Genie/FS/sys.cc
+	---------------
+*/
 
-#include "Genie/FS/FSTree_sys.hh"
+#include "Genie/FS/sys.hh"
 
 // iota
 #include "iota/hexidecimal.hh"

@@ -1,10 +1,10 @@
-/*	=============
- *	FSTree_sys.hh
- *	=============
- */
+/*
+	Genie/FS/sys.hh
+	---------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREE_SYS_HH
-#define GENIE_FILESYSTEM_FSTREE_SYS_HH
+#ifndef GENIE_FS_SYS_HH
+#define GENIE_FS_SYS_HH
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
