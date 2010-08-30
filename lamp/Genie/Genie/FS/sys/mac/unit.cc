@@ -1,11 +1,11 @@
-/*	======================
- *	FSTree_sys_mac_unit.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/unit.cc
+	------------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_unit.hh"
+#include "Genie/FS/sys/mac/unit.hh"
 
 // Standard C
 #include <ctype.h>

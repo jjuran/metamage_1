@@ -1,10 +1,10 @@
-/*	======================
- *	FSTree_sys_mac_unit.hh
- *	======================
- */
+/*
+	Genie/FS/sys/mac/unit.hh
+	------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACUNIT_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACUNIT_HH
+#ifndef GENIE_FS_SYS_MAC_UNIT_HH
+#define GENIE_FS_SYS_MAC_UNIT_HH
 
 // Mac OS
 #ifndef __LOWMEM__
