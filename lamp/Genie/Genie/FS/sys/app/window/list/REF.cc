@@ -1,9 +1,9 @@
-/*	==========================
- *	sys_app_window_list_REF.cc
- *	==========================
- */
+/*
+	Genie/FS/sys/app/window/list/REF.hh
+	-----------------------------------
+*/
 
-#include "Genie/FS/sys_app_window_list_REF.hh"
+#include "Genie/FS/sys/app/window/list/REF.hh"
 
 // Standard C/C++
 #include <cstdio>
