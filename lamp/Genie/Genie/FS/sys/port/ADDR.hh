@@ -1,10 +1,10 @@
-/*	========================
- *	FSTree_sys_window_REF.hh
- *	========================
- */
+/*
+	Genie/FS/sys/port/ADDR.hh
+	-------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSWINDOWREF_HH
-#define GENIE_FILESYSTEM_FSTREESYSWINDOWREF_HH
+#ifndef GENIE_FS_SYS_PORT_ADDR_HH
+#define GENIE_FS_SYS_PORT_ADDR_HH
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
