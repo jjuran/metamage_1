@@ -1,9 +1,9 @@
-/*	===========================
- *	FSTree_sys_mac_machine_id.cc
- *	===========================
- */
+/*
+	Genie/FS/sys/mac/machine/id.cc
+	------------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_machine_id.hh"
+#include "Genie/FS/sys/mac/machine/id.hh"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
