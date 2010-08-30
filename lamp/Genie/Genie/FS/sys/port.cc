@@ -87,7 +87,7 @@ namespace Genie
 		return sys_window;
 	}
 	
-	FSTreePtr NewWindow()
+	FSTreePtr new_port()
 	{
 		const FSTreePtr& parent = SysWindow();
 		

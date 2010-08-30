@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	FSTreePtr NewWindow();
+	FSTreePtr new_port();
 	
 	void remove_port( const FSTree* port );
 	
