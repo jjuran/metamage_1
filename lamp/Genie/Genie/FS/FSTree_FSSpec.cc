@@ -1457,9 +1457,11 @@ namespace Genie
 		
 		N::CopyToPascalString( cInfo.name, result.name, sizeof result.name - 1 );
 		
+		const plus::string name = MakeName( result );
+		
 		// This code path is only used on servers.
 		
-		return FSTreeFromFSSpec( result, true );
+		return seize_ptr( new FSTree_HFS( cInfo, true, name ) );
 	}
 	
 #endif
