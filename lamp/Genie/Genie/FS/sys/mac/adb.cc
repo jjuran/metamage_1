@@ -1,11 +1,11 @@
-/*	=====================
- *	FSTree_sys_mac_adb.cc
- *	=====================
- */
+/*
+	Genie/FS/sys/mac/adb.cc
+	-----------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_adb.hh"
+#include "Genie/FS/sys/mac/adb.hh"
 
 // Standard C
 #include <ctype.h>

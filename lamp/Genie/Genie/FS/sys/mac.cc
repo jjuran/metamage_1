@@ -21,7 +21,7 @@
 #include "Genie/FS/sys_mac_tempmem.hh"
 #include "Genie/FS/FSTree_sys_mac_thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-#include "Genie/FS/FSTree_sys_mac_adb.hh"
+#include "Genie/FS/sys/mac/adb.hh"
 #include "Genie/FS/FSTree_sys_mac_crm.hh"
 #include "Genie/FS/FSTree_sys_mac_crsr.hh"
 #include "Genie/FS/FSTree_sys_mac_drive.hh"

@@ -1,10 +1,10 @@
-/*	=====================
- *	FSTree_sys_mac_adb.hh
- *	=====================
- */
+/*
+	Genie/FS/sys/mac/adb.hh
+	-----------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACADB_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACADB_HH
+#ifndef GENIE_FS_SYS_MAC_ADB_HH
+#define GENIE_FS_SYS_MAC_ADB_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
