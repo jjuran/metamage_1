@@ -1,11 +1,9 @@
 /*
-	sys_mac_vol.cc
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/mac/vol.cc
+	-----------------------
 */
 
-#include "Genie/FS/sys_mac_vol.hh"
+#include "Genie/FS/sys/mac/vol.hh"
 
 // Mac OS
 #ifndef __LOWMEM__

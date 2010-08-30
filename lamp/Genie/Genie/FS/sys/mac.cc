@@ -30,7 +30,7 @@
 #endif
 #include "Genie/FS/sys/mac/time.hh"
 #include "Genie/FS/sys/mac/user.hh"
-#include "Genie/FS/sys_mac_vol.hh"
+#include "Genie/FS/sys/mac/vol.hh"
 //#include "Genie/FS/FSTree_sys_mac_window.hh"
 
 
