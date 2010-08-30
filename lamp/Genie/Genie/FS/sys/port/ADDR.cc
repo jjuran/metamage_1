@@ -324,18 +324,18 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_Property : public FSTree_Property
+	class FSTree_sys_port_ADDR_Property : public FSTree_Property
 	{
 		private:
 			bool itIsMutable;  // can this be changed after window is created?
 		
 		public:
-			FSTree_sys_window_REF_Property( const FSTreePtr&     parent,
-			                                const plus::string&  name,
-			                                size_t               fixed_size,
-			                                ReadHook             readHook,
-			                                WriteHook            writeHook,
-			                                bool                 mutability )
+			FSTree_sys_port_ADDR_Property( const FSTreePtr&     parent,
+			                               const plus::string&  name,
+			                               size_t               fixed_size,
+			                               ReadHook             readHook,
+			                               WriteHook            writeHook,
+			                               bool                 mutability )
 			:
 				FSTree_Property( parent,
 				                 name,
@@ -357,7 +357,7 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	mode_t FSTree_sys_window_REF_Property::FilePermMode() const
+	mode_t FSTree_sys_port_ADDR_Property::FilePermMode() const
 	{
 		const bool has_window = HasWindow( this );
 		
@@ -366,7 +366,7 @@ namespace Genie
 		       :               S_IRUSR;                     // fixed attribute
 	}
 	
-	plus::string FSTree_sys_window_REF_Property::ReadLink() const
+	plus::string FSTree_sys_port_ADDR_Property::ReadLink() const
 	{
 		if ( !IsLink() )
 		{
@@ -376,12 +376,12 @@ namespace Genie
 		return "window/" + Name();
 	}
 	
-	FSTreePtr FSTree_sys_window_REF_Property::ResolveLink() const
+	FSTreePtr FSTree_sys_port_ADDR_Property::ResolveLink() const
 	{
 		return ResolveRelativePath( ReadLink(), ParentRef() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_sys_window_REF_Property::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree_sys_port_ADDR_Property::Open( OpenFlags flags ) const
 	{
 		const bool writing = (flags & O_ACCMODE) + 1 - O_RDONLY  &  FWRITE;
 		
@@ -515,11 +515,11 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_focus : public FSTree
+	class FSTree_sys_port_ADDR_focus : public FSTree
 	{
 		public:
-			FSTree_sys_window_REF_focus( const FSTreePtr&     parent,
-			                             const plus::string&  name )
+			FSTree_sys_port_ADDR_focus( const FSTreePtr&     parent,
+			                            const plus::string&  name )
 			:
 				FSTree( parent, name )
 			{
@@ -540,12 +540,12 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
-	bool FSTree_sys_window_REF_focus::Exists() const
+	bool FSTree_sys_port_ADDR_focus::Exists() const
 	{
 		return gWindowParametersMap[ WindowKey() ].itsFocus != NULL;
 	}
 	
-	void FSTree_sys_window_REF_focus::Delete() const
+	void FSTree_sys_port_ADDR_focus::Delete() const
 	{
 		const FSTree* focus_file = gWindowParametersMap[ WindowKey() ].itsFocus;
 		
@@ -557,7 +557,7 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
 	}
 	
-	void FSTree_sys_window_REF_focus::SymLink( const plus::string& target ) const
+	void FSTree_sys_port_ADDR_focus::SymLink( const plus::string& target ) const
 	{
 		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( "." );
 		
@@ -577,12 +577,12 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsFocus = targeted_file.get();
 	}
 	
-	plus::string FSTree_sys_window_REF_focus::ReadLink() const
+	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
 	{
 		return ResolveLink()->Pathname();  // FIXME:  Use relative path
 	}
 	
-	FSTreePtr FSTree_sys_window_REF_focus::ResolveLink() const
+	FSTreePtr FSTree_sys_port_ADDR_focus::ResolveLink() const
 	{
 		if ( const FSTree* focus = gWindowParametersMap[ WindowKey() ].itsFocus )
 		{
@@ -610,11 +610,11 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_ref : public FSTree_ReadableSymLink
+	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
 	{
 		public:
-			FSTree_sys_window_REF_ref( const FSTreePtr&     parent,
-			                           const plus::string&  name )
+			FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
+			                             const plus::string&  name )
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
@@ -634,7 +634,7 @@ namespace Genie
 	};
 	
 	
-	void FSTree_sys_window_REF_ref::SetTimes() const
+	void FSTree_sys_port_ADDR_window::SetTimes() const
 	{
 		const FSTree* key = WindowKey();
 		
@@ -644,7 +644,7 @@ namespace Genie
 		}
 	}
 	
-	void FSTree_sys_window_REF_ref::Delete() const
+	void FSTree_sys_port_ADDR_window::Delete() const
 	{
 		const FSTree* key = WindowKey();
 		
@@ -653,7 +653,7 @@ namespace Genie
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
-	plus::string FSTree_sys_window_REF_ref::ReadLink() const
+	plus::string FSTree_sys_port_ADDR_window::ReadLink() const
 	{
 		WindowRef windowPtr = GetWindowRef( WindowKey() );
 		
@@ -672,11 +672,11 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_window_REF_tty : public FSTree
+	class FSTree_sys_port_ADDR_tty : public FSTree
 	{
 		public:
-			FSTree_sys_window_REF_tty( const FSTreePtr&     parent,
-			                           const plus::string&  name )
+			FSTree_sys_port_ADDR_tty( const FSTreePtr&     parent,
+			                          const plus::string&  name )
 			:
 				FSTree( parent, name )
 			{
@@ -692,7 +692,7 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	void FSTree_sys_window_REF_tty::Attach( const FSTreePtr& target ) const
+	void FSTree_sys_port_ADDR_tty::Attach( const FSTreePtr& target ) const
 	{
 		gWindowParametersMap[ WindowKey() ].itsTTYDelegate = target;
 	}
@@ -706,7 +706,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle >
 	//
-	FSTree_sys_window_REF_tty::Open( OpenFlags flags ) const
+	FSTree_sys_port_ADDR_tty::Open( OpenFlags flags ) const
 	{
 		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
 		
@@ -929,12 +929,12 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_window_REF_Property( parent,
-		                                                      name,
-		                                                      Property::fixed_size,
-		                                                      &Property::Get,
-		                                                      &Property::Set,
-		                                                      variability ) );
+		return seize_ptr( new FSTree_sys_port_ADDR_Property( parent,
+		                                                     name,
+		                                                     Property::fixed_size,
+		                                                     &Property::Get,
+		                                                     &Property::Set,
+		                                                     variability ) );
 	}
 	
 	using plus::serialize_bool;
@@ -943,16 +943,16 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[] =
 	{
-		{ "window",    &Basic_Factory< FSTree_sys_window_REF_ref > },
+		{ "window", &Basic_Factory< FSTree_sys_port_ADDR_window > },
 		
 		{ "view",   &Basic_Factory< FSTree_X_view< GetView > > },
 		
-		{ "focus",  &Basic_Factory< FSTree_sys_window_REF_focus > },
+		{ "focus",  &Basic_Factory< FSTree_sys_port_ADDR_focus > },
 		
 		{ "accept", &Basic_Factory< FSTree_Window_Gesture > },
 		{ "cancel", &Basic_Factory< FSTree_Window_Gesture > },
 		
-		{ "tty",    &Basic_Factory< FSTree_sys_window_REF_tty > },
+		{ "tty",    &Basic_Factory< FSTree_sys_port_ADDR_tty > },
 		
 		{ "title",  &Property_Factory< kAttrVariable, Window_Title > },
 		{ "pos",    &Property_Factory< kAttrVariable, Window_Property< serialize_Point,  &Origin   > > },
