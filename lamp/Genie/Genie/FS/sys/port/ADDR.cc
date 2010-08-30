@@ -941,7 +941,7 @@ namespace Genie
 	
 	typedef plus::serialize_unsigned< N::WindowDefProcID > serialize_ProcID;
 	
-	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
+	const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[] =
 	{
 		{ "window",    &Basic_Factory< FSTree_sys_window_REF_ref > },
 		
