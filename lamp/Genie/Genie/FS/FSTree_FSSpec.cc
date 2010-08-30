@@ -270,11 +270,6 @@ namespace Genie
 			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
-			FSTree_HFS( const FSSpec&        file,
-			            bool                 onServer,
-			            const plus::string&  name,
-			            const FSTree*        parent = NULL );
-			
 			bool Exists() const;
 			bool IsFile() const;
 			bool IsDirectory() const;
@@ -367,27 +362,6 @@ namespace Genie
 		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
 	}
 	
-	FSTree_HFS::FSTree_HFS( const FSSpec&        file,
-	                        bool                 onServer,
-	                        const plus::string&  name,
-	                        const FSTree*        parent )
-	:
-		FSTree_Directory( parent       ? parent->Self()    : null_FSTreePtr,
-		                  name ),
-		itsFileSpec     ( file                             ),
-		itIsOnServer    ( onServer                         )
-	{
-		// we override Parent()
-		
-		ASSERT( !name.empty() );
-		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( itsCInfo,
-		                                                  itIsOnServer,
-		                                                  itsFileSpec );
-		
-		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
-	}
-	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -436,9 +410,15 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
 	{
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Returns >( cInfo,
+		                              onServer,
+		                              item );
+		
 		const plus::string name = MakeName( item );
 		
-		return seize_ptr( new FSTree_HFS( item, onServer, name ) );
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
