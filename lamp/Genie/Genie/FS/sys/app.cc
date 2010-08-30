@@ -13,7 +13,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
-#include "Genie/FS/sys_app_window.hh"
+#include "Genie/FS/sys/app/window.hh"
 #include "Genie/FS/Scribes.hh"
 
 
