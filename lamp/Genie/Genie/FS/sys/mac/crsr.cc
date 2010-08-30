@@ -1,11 +1,11 @@
-/*	======================
- *	FSTree_sys_mac_crsr.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/crsr.cc
+	------------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_crsr.hh"
+#include "Genie/FS/sys/mac/crsr.hh"
 
 // Mac OS
 #ifndef __CURSORDEVICES__
