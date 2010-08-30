@@ -1,11 +1,9 @@
 /*
-	sys_mac_vol_list_N_dt.cc
-	------------------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/mac/vol/list/N/dt.cc
+	---------------------------------
 */
 
-#include "Genie/FS/sys_mac_vol_list_N_dt.hh"
+#include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 
 // iota
 #include "iota/decimal.hh"
