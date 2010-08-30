@@ -15,7 +15,7 @@ namespace Genie
 	
 	FSTreePtr NewWindow();
 	
-	void RemoveWindow( const FSTree* window );
+	void remove_port( const FSTree* port );
 	
 	
 	FSTreePtr New_FSTree_sys_window( const FSTreePtr&     parent,

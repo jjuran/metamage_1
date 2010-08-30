@@ -27,7 +27,7 @@ namespace Genie
 	
 	OpenWindowHandle::~OpenWindowHandle()
 	{
-		RemoveWindow( GetFile().get() );
+		remove_port( GetFile().get() );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
