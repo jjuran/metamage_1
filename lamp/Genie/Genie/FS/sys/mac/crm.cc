@@ -1,11 +1,11 @@
-/*	=====================
- *	FSTree_sys_mac_crm.cc
- *	=====================
- */
+/*
+	Genie/FS/sys/mac/crm.cc
+	-----------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_crm.hh"
+#include "Genie/FS/sys/mac/crm.hh"
 
 // Genie
 #include "Genie/FS/FSTree_crm_serial.hh"
