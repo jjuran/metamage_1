@@ -272,7 +272,7 @@ namespace Genie
 			
 			FSTree_HFS( const FSSpec&        file,
 			            bool                 onServer,
-			            const plus::string&  name = plus::string(),
+			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
 			bool Exists() const;
@@ -373,11 +373,13 @@ namespace Genie
 	                        const FSTree*        parent )
 	:
 		FSTree_Directory( parent       ? parent->Self()    : null_FSTreePtr,
-		                  name.empty() ? MakeName ( file ) : name ),
+		                  name ),
 		itsFileSpec     ( file                             ),
 		itIsOnServer    ( onServer                         )
 	{
 		// we override Parent()
+		
+		ASSERT( !name.empty() );
 		
 		const bool exists = FSpGetCatInfo< FNF_Returns >( itsCInfo,
 		                                                  itIsOnServer,
@@ -434,7 +436,9 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
 	{
-		return seize_ptr( new FSTree_HFS( item, onServer ) );
+		const plus::string name = MakeName( item );
+		
+		return seize_ptr( new FSTree_HFS( item, onServer, name ) );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
