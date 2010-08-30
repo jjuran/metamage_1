@@ -1,9 +1,9 @@
-/*	========================
- *	FSTree_sys_mac_errata.cc
- *	========================
- */
+/*
+	Genie/FS/sys/mac/errata.cc
+	--------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_errata.hh"
+#include "Genie/FS/sys/mac/errata.hh"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
