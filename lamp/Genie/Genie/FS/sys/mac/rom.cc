@@ -1,9 +1,9 @@
-/*	=====================
- *	FSTree_sys_mac_rom.cc
- *	=====================
- */
+/*
+	Genie/FS/sys/mac/rom.cc
+	-----------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_rom.hh"
+#include "Genie/FS/sys/mac/rom.hh"
 
 // POSIX
 #include "sys/stat.h"

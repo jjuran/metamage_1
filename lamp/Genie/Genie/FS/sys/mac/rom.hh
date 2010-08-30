@@ -1,10 +1,10 @@
-/*	=====================
- *	FSTree_sys_mac_rom.hh
- *	=====================
- */
+/*
+	Genie/FS/sys/mac/rom.hh
+	-----------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACROM_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACROM_HH
+#ifndef GENIE_FS_SYS_MAC_ROM_HH
+#define GENIE_FS_SYS_MAC_ROM_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

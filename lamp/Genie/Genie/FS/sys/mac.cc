@@ -17,7 +17,7 @@
 #include "Genie/FS/sys/mac/machine.hh"
 #include "Genie/FS/sys/mac/name.hh"
 #include "Genie/FS/sys/mac/proc.hh"
-#include "Genie/FS/FSTree_sys_mac_rom.hh"
+#include "Genie/FS/sys/mac/rom.hh"
 #include "Genie/FS/sys_mac_tempmem.hh"
 #include "Genie/FS/FSTree_sys_mac_thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
