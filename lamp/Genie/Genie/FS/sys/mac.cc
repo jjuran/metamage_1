@@ -12,7 +12,7 @@
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/event.hh"
 #include "Genie/FS/sys/mac/gdev.hh"
-#include "Genie/FS/FSTree_sys_mac_gestalt.hh"
+#include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/FSTree_sys_mac_keys.hh"
 #include "Genie/FS/FSTree_sys_mac_machine.hh"
 #include "Genie/FS/FSTree_sys_mac_name.hh"

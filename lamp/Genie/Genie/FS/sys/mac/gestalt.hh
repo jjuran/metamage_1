@@ -1,10 +1,10 @@
-/*	=========================
- *	FSTree_sys_mac_gestalt.hh
- *	=========================
- */
+/*
+	Genie/FS/sys/mac/gestalt.hh
+	---------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACGESTALT_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACGESTALT_HH
+#ifndef GENIE_FS_SYS_MAC_GESTALT_HH
+#define GENIE_FS_SYS_MAC_GESTALT_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

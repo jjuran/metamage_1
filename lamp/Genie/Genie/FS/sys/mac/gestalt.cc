@@ -1,9 +1,9 @@
-/*	=========================
- *	FSTree_sys_mac_gestalt.cc
- *	=========================
- */
+/*
+	Genie/FS/sys/mac/gestalt.cc
+	---------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_gestalt.hh"
+#include "Genie/FS/sys/mac/gestalt.hh"
 
 // Mac OS
 #ifndef __MACERRORS__
