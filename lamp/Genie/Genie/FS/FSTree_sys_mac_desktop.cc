@@ -10,7 +10,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Scribes.hh"
+#include "Genie/FS/stringify_qd.hh"
 
 
 namespace Genie
@@ -21,9 +21,9 @@ namespace Genie
 	
 	struct GetScreenBounds
 	{
-		typedef const Rect& Result;
+		typedef stringify_Rect stringify;
 		
-		typedef Rect_Scribe Scribe;
+		typedef const Rect& Result;
 		
 		static Result Get( const BitMap& screenBits )
 		{
@@ -33,9 +33,9 @@ namespace Genie
 	
 	struct GetScreenSize
 	{
-		typedef Point Result;
+		typedef stringify_Point stringify;
 		
-		typedef Point_Scribe< 'x' > Scribe;
+		typedef Point Result;
 		
 		static Result Get( const BitMap& screenBits )
 		{
@@ -57,7 +57,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( screenBits );
 			
-			return Freeze< typename Accessor::Scribe >( data, binary );
+			return Accessor::stringify::apply( data, binary );
 		}
 	};
 	

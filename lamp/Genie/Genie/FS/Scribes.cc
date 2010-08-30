@@ -55,26 +55,5 @@ namespace Genie
 		return result;
 	}
 	
-	plus::string Rect_Scribe::Encode( const Rect& r )
-	{
-		plus::var_string result;
-		
-		result += iota::inscribe_decimal( r.left );
-		
-		result += ",";
-		
-		result += iota::inscribe_decimal( r.top );
-		
-		result += "-";
-		
-		result += iota::inscribe_decimal( r.right );
-		
-		result += ",";
-		
-		result += iota::inscribe_decimal( r.bottom );
-		
-		return result;
-	}
-	
 }
 
