@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_sys_mac_gdev.cc
- *	======================
- */
+/*
+	Genie/FS/sys/mac/gdev.cc
+	------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_gdev.hh"
+#include "Genie/FS/sys/mac/gdev.hh"
 
 // Mac OS
 #ifndef __QUICKDRAW__
