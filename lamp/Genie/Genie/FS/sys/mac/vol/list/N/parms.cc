@@ -1,9 +1,9 @@
-/*	====================
- *	sys_mac_vol_parms.cc
- *	====================
- */
+/*
+	Genie/FS/sys/mac/vol/list/N/parms.cc
+	------------------------------------
+*/
 
-#include "Genie/FS/sys_mac_vol_parms.hh"
+#include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 
 // Iota
 #include "iota/decimal.hh"
