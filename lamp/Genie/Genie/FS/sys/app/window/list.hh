@@ -1,10 +1,10 @@
-/*	======================
- *	sys_app_window_list.hh
- *	======================
- */
+/*
+	Genie/FS/sys/app/window/list.hh
+	-------------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_SYS_APP_WINDOW_LIST_HH
-#define GENIE_FILESYSTEM_SYS_APP_WINDOW_LIST_HH
+#ifndef GENIE_FS_SYS_APP_WINDOW_LIST_HH
+#define GENIE_FS_SYS_APP_WINDOW_LIST_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

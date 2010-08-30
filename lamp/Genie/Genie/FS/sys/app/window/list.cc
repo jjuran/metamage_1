@@ -1,9 +1,9 @@
-/*	======================
- *	sys_app_window_list.cc
- *	======================
- */
+/*
+	Genie/FS/sys/app/window/list.cc
+	-------------------------------
+*/
 
-#include "Genie/FS/sys_app_window_list.hh"
+#include "Genie/FS/sys/app/window/list.hh"
 
 // Standard C++
 #include <algorithm>
