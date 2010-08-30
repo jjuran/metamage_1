@@ -1,11 +1,11 @@
-/*	=======================
- *	FSTree_sys_mac_xpram.cc
- *	=======================
- */
+/*
+	Genie/FS/sys/mac/xpram.cc
+	-------------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_xpram.hh"
+#include "Genie/FS/sys/mac/xpram.hh"
 
 // Mac OS
 #ifndef __MIXEDMODE__

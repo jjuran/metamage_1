@@ -1,10 +1,10 @@
-/*	=======================
- *	FSTree_sys_mac_xpram.hh
- *	=======================
- */
+/*
+	Genie/FS/sys/mac/xpram.hh
+	-------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACXPRAM_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACXPRAM_HH
+#ifndef GENIE_FS_SYS_MAC_XPRAM_HH
+#define GENIE_FS_SYS_MAC_XPRAM_HH
 
 // plus
 #include "plus/string.hh"
