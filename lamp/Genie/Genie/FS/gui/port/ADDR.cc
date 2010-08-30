@@ -170,7 +170,7 @@ namespace Genie
 	{
 		if ( window.get() )
 		{
-			UninstallViewFromWindow( window->GetView(), key );
+			uninstall_view_from_port( window->GetView(), key );
 			
 			window.reset();
 		}
@@ -416,7 +416,7 @@ namespace Genie
 		return false;
 	}
 	
-	void InstallViewInWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void install_view_in_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -435,7 +435,7 @@ namespace Genie
 		}
 	}
 	
-	void UninstallViewFromWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void uninstall_view_from_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{

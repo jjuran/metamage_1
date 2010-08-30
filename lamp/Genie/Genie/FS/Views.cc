@@ -338,7 +338,7 @@ namespace Genie
 		{
 			const FSTree* windowKey = GetViewWindowKey( this );
 			
-			UninstallViewFromWindow( Get(), windowKey );
+			uninstall_view_from_port( Get(), windowKey );
 			
 			Get() = Ped::EmptyView::Get();
 			
@@ -377,7 +377,7 @@ namespace Genie
 			Get() = view;
 			
 			// Install and invalidate if window exists
-			InstallViewInWindow( view, windowKey );
+			install_view_in_port( view, windowKey );
 		}
 		else
 		{
