@@ -1,12 +1,10 @@
 /*
-	sys_app_dir.hh
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/app/dir.hh
+	-----------------------
 */
 
-#ifndef GENIE_FS_SYSAPPDIR_HH
-#define GENIE_FS_SYSAPPDIR_HH
+#ifndef GENIE_FS_SYS_APP_DIR_HH
+#define GENIE_FS_SYS_APP_DIR_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
