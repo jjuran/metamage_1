@@ -1,9 +1,9 @@
-/*	=========================
- *	FSTree_sys_mac_desktop.cc
- *	=========================
- */
+/*
+	Genie/FS/sys/mac/desktop.cc
+	---------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_desktop.hh"
+#include "Genie/FS/sys/mac/desktop.hh"
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
