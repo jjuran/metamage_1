@@ -98,9 +98,9 @@ namespace Genie
 		return window;
 	}
 	
-	FSTreePtr New_FSTree_sys_window( const FSTreePtr&     parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	FSTreePtr New_sys_port( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          args )
 	{
 		return new_basic_directory( parent, name, window_lookup, window_iterate );
 	}

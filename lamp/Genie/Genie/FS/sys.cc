@@ -182,7 +182,7 @@ namespace Genie
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
 		{ "type",   &Premapped_Factory< sys_type_Mappings   > },
 		
-		{ "port",   &New_FSTree_sys_window },
+		{ "port",   &New_sys_port },
 		
 		{ NULL, NULL }
 	};
