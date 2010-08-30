@@ -1,12 +1,10 @@
 /*
-	sys_mac_vol_list.hh
-	-------------------
-	
-	Joshua Juran
+	Genie/FS/sys/mac/vol/list.hh
+	----------------------------
 */
 
-#ifndef GENIE_FS_SYSMACVOLLIST_HH
-#define GENIE_FS_SYSMACVOLLIST_HH
+#ifndef GENIE_FS_SYS_MAC_VOL_LIST_HH
+#define GENIE_FS_SYS_MAC_VOL_LIST_HH
 
 // Nitrogen
 #include "Mac/Files/Types/FSVolumeRefNum.hh"

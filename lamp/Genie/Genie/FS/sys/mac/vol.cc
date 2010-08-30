@@ -25,7 +25,7 @@
 
 // Genie
 #include "Genie/FS/ReadableSymLink.hh"
-#include "Genie/FS/sys_mac_vol_list.hh"
+#include "Genie/FS/sys/mac/vol/list.hh"
 
 
 namespace Genie

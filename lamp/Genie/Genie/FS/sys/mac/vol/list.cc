@@ -1,11 +1,9 @@
 /*
-	sys_mac_vol_list.cc
-	-------------------
-	
-	Joshua Juran
+	Genie/FS/sys/mac/vol/list.cc
+	----------------------------
 */
 
-#include "Genie/FS/sys_mac_vol_list.hh"
+#include "Genie/FS/sys/mac/vol/list.hh"
 
 // Iota
 #include "iota/decimal.hh"
