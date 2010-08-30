@@ -10,7 +10,6 @@
 
 // POSIX
 #include "fcntl.h"
-#include "utime.h"
 #include "sys/stat.h"
 
 // Iota
@@ -37,7 +36,6 @@
 
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
-#include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -53,9 +51,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// TimeOff
-#include "TimeOff/TimeOff.hh"
 
 // Arcana / MD5
 #include "MD5/MD5.hh"
@@ -73,6 +68,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
+#include "Genie/FS/HFS/SetFileTimes.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
@@ -85,19 +81,6 @@
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-
-
-#ifndef UTIME_ARCHIVE
-#define UTIME_ARCHIVE  0x40000000
-#endif
-
-#ifndef UTIME_NOW
-#define UTIME_NOW   ((1 << 30) - 1)
-#endif
-
-#ifndef UTIME_OMIT
-#define UTIME_OMIT  ((1 << 30) - 2)
-#endif
 
 
 namespace Genie
@@ -203,86 +186,6 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 		
 		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
-	}
-	
-	
-	static void SetFileTimes( N::FSVolumeRefNum     vRefNum,
-	                          N::FSDirID            dirID,
-	                          const unsigned char*  name )
-	{
-		UInt32 modTime = N::GetDateTime();
-		
-		N::Str63 name_copy = name;
-		
-		CInfoPBRec paramBlock;
-		
-		MacIO::GetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
-		
-		paramBlock.hFileInfo.ioDirID = dirID;
-		
-		paramBlock.hFileInfo.ioFlMdDat = modTime;
-		
-		N::PBSetCatInfoSync( paramBlock );
-	}
-	
-	static void update_time( UInt32& date, const timespec& time, UInt32& now )
-	{
-		const long nsec = time.tv_nsec & ~UTIME_ARCHIVE;
-		
-		if ( nsec == UTIME_OMIT )
-		{
-			return;
-		}
-		
-		if ( nsec == UTIME_NOW )
-		{
-			if ( now == 0 )
-			{
-				now = N::GetDateTime();
-			}
-			
-			date = now;
-		}
-		else
-		{
-			using namespace TimeOff;
-			
-			date = time.tv_sec + MacToUnixTimeDifference();
-		}
-	}
-	
-	static void SetFileTimes( N::FSVolumeRefNum       vRefNum,
-	                          N::FSDirID              dirID,
-	                          const unsigned char    *name,
-	                          const struct timespec   times[2] )
-	{
-		const timespec& atime = times[0];
-		const timespec& mtime = times[1];
-		
-		const bool atime_is_backup = atime.tv_nsec & UTIME_ARCHIVE;
-		
-		using namespace TimeOff;
-		
-		N::Str63 name_copy = name;
-		
-		CInfoPBRec paramBlock;
-		
-		MacIO::GetCatInfo< FNF_Throws >( paramBlock, vRefNum, dirID, name_copy );
-		
-		paramBlock.hFileInfo.ioDirID = dirID;
-		
-		UInt32 now = 0;
-		
-		//paramBlock.hFileInfo.ioFlCrDat
-		
-		update_time( paramBlock.hFileInfo.ioFlMdDat, mtime, now );
-		
-		if ( atime_is_backup )
-		{
-			update_time( paramBlock.hFileInfo.ioFlBkDat, atime, now );
-		}
-		
-		N::PBSetCatInfoSync( paramBlock );
 	}
 	
 	
