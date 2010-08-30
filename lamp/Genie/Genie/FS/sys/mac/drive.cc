@@ -1,11 +1,11 @@
-/*	=======================
- *	FSTree_sys_mac_drive.cc
- *	=======================
- */
+/*
+	Genie/FS/sys/mac/drive.cc
+	-------------------------
+*/
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 
-#include "Genie/FS/FSTree_sys_mac_drive.hh"
+#include "Genie/FS/sys/mac/drive.hh"
 
 // Iota
 #include "iota/decimal.hh"
