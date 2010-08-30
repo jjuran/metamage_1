@@ -1,9 +1,9 @@
-/*	===========================
- *	FSTree_sys_mac_user_name.cc
- *	===========================
- */
+/*
+	Genie/FS/sys/mac/user/name.hh
+	-----------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_user_name.hh"
+#include "Genie/FS/sys/mac/user/name.hh"
 
 // Mac OS
 #ifndef __CFBUNDLE__
