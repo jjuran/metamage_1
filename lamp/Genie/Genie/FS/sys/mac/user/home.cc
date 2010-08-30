@@ -1,9 +1,9 @@
-/*	===========================
- *	FSTree_sys_mac_user_home.cc
- *	===========================
- */
+/*
+	Genie/FS/sys/mac/user/home.cc
+	-----------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_user_home.hh"
+#include "Genie/FS/sys/mac/user/home.hh"
 
 // Nitrogen
 #include "Nitrogen/Folders.hh"

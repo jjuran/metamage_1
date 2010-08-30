@@ -7,7 +7,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_sys_mac_user_home.hh"
+#include "Genie/FS/sys/mac/user/home.hh"
 #include "Genie/FS/FSTree_sys_mac_user_name.hh"
 
 

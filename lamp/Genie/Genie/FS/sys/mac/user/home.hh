@@ -1,10 +1,10 @@
-/*	===========================
- *	FSTree_sys_mac_user_home.hh
- *	===========================
- */
+/*
+	Genie/FS/sys/mac/user/home.hh
+	-----------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACUSERHOME_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACUSERHOME_HH
+#ifndef GENIE_FS_SYS_MAC_USER_HOME_HH
+#define GENIE_FS_SYS_MAC_USER_HOME_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
