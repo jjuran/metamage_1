@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResolvePathname.hh"
 
+// Debug
+#include "debug/assert.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -85,6 +88,23 @@ namespace Genie
 		}
 		
 		return result;
+	}
+	
+	FSTreePtr ResolveAbsolutePath( const char*  begin,
+	                               std::size_t  length )
+	{
+		ASSERT( length != 0 );
+		
+		ASSERT( *begin == '/' );
+		
+		const char* end = begin + length;
+		
+		while ( *++begin == '/' ) continue;
+		
+		length = end - begin;
+		
+		return length == 0 ? FSRoot()
+		                   : ResolveRelativePath( begin, length, FSRoot() );
 	}
 	
 }
