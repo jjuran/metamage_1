@@ -1,11 +1,9 @@
 /*
-	sys_app_dir.cc
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/app/dir.cc
+	-----------------------
 */
 
-#include "Genie/FS/sys_app_dir.hh"
+#include "Genie/FS/sys/app/dir.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"

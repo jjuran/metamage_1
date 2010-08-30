@@ -1,9 +1,9 @@
-/*	=================
- *	sys_app_window.cc
- *	=================
- */
+/*
+	Genie/FS/sys/app/window.cc
+	--------------------------
+*/
 
-#include "Genie/FS/sys_app_window.hh"
+#include "Genie/FS/sys/app/window.hh"
 
 // Mac OS
 #ifndef __MACWINDOWS__
@@ -21,7 +21,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/FS/sys_app_window_list.hh"
+#include "Genie/FS/sys/app/window/list.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 
 

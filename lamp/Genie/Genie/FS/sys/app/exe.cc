@@ -1,11 +1,9 @@
 /*
-	sys_app_exe.cc
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/app/exe.cc
+	-----------------------
 */
 
-#include "Genie/FS/sys_app_exe.hh"
+#include "Genie/FS/sys/app/exe.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"

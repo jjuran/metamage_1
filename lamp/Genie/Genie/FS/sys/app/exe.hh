@@ -1,12 +1,10 @@
 /*
-	sys_app_dir.hh
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	Genie/FS/sys/app/exe.hh
+	-----------------------
 */
 
-#ifndef GENIE_FS_SYSAPPDIR_HH
-#define GENIE_FS_SYSAPPDIR_HH
+#ifndef GENIE_FS_SYS_APP_EXE_HH
+#define GENIE_FS_SYS_APP_EXE_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -15,7 +13,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_exe( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  const void*          args );
 	

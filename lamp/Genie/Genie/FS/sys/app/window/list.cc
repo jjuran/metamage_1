@@ -1,9 +1,9 @@
-/*	======================
- *	sys_app_window_list.cc
- *	======================
- */
+/*
+	Genie/FS/sys/app/window/list.cc
+	-------------------------------
+*/
 
-#include "Genie/FS/sys_app_window_list.hh"
+#include "Genie/FS/sys/app/window/list.hh"
 
 // Standard C++
 #include <algorithm>
@@ -20,7 +20,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/sys_app_window_list_REF.hh"
+#include "Genie/FS/sys/app/window/list/REF.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 #include "Genie/Utilities/WindowList_contains.hh"
 
