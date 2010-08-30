@@ -1,9 +1,9 @@
-/*	====================
- *	FSTree_event_post.cc
- *	====================
- */
+/*
+	Genie/FS/sys/mac/event/post.cc
+	------------------------------
+*/
 
-#include "Genie/FS/FSTree_event_post.hh"
+#include "Genie/FS/sys/mac/event/post.hh"
 
 // Nitrogen
 #include "Nitrogen/Events.hh"
