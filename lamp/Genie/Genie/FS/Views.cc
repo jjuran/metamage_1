@@ -263,7 +263,7 @@ namespace Genie
 	{
 		const FSTree* windowKey = GetViewWindowKey( view );
 		
-		return InvalidateWindow( windowKey );
+		return invalidate_port_WindowRef( windowKey );
 	}
 	
 	

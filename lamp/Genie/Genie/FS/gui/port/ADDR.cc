@@ -404,7 +404,7 @@ namespace Genie
 		}
 	}
 	
-	bool InvalidateWindow( const FSTree* key )
+	bool invalidate_port_WindowRef( const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -587,7 +587,7 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		InvalidateWindow( key );
+		invalidate_port_WindowRef( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const
