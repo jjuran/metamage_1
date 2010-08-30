@@ -178,7 +178,7 @@ namespace Genie
 					gViewParametersMap.erase( it );
 				}
 				
-				NotifyWindowOfViewLoss( temp.itsWindowKey, temp.itsDelegate.get() );
+				notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
 				
 				DeleteDelegate( temp.itsDelegate );
 			}
@@ -202,7 +202,7 @@ namespace Genie
 			{
 				ViewParameters& params = jt->second;
 				
-				NotifyWindowOfViewLoss( params.itsWindowKey, params.itsDelegate.get() );
+				notify_port_of_view_loss( params.itsWindowKey, params.itsDelegate.get() );
 				
 				DeleteDelegate( params.itsDelegate );
 			}

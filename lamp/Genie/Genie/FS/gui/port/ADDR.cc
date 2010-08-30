@@ -314,9 +314,9 @@ namespace Genie
 		RemoveAllViewParameters( key );
 	}
 	
-	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view )
+	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view )
 	{
-		if ( WindowParameters* it = gWindowParametersMap.find( window_key ) )
+		if ( WindowParameters* it = gWindowParametersMap.find( port_key ) )
 		{
 			WindowParameters& params = *it;
 			

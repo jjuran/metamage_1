@@ -22,7 +22,7 @@ namespace Genie
 	
 	extern const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[];
 	
-	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view );
+	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view );
 	
 	void RemoveUserWindow( const FSTree* key );
 	
