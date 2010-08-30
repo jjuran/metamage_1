@@ -75,7 +75,7 @@ namespace Genie
 	
 	void remove_port( const FSTree* port )
 	{
-		RemoveUserWindow( port );
+		remove_window_and_views_from_port( port );
 		
 		gWindowMap.erase( port );
 	}

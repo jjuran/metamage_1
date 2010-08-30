@@ -298,7 +298,7 @@ namespace Genie
 		params.itsSubview->Activate( true );
 	}
 	
-	void RemoveUserWindow( const FSTree* key )
+	void remove_window_and_views_from_port( const FSTree* key )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{

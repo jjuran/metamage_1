@@ -24,7 +24,7 @@ namespace Genie
 	
 	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view );
 	
-	void RemoveUserWindow( const FSTree* key );
+	void remove_window_and_views_from_port( const FSTree* key );
 	
 	bool invalidate_port_WindowRef( const FSTree* key );
 	
