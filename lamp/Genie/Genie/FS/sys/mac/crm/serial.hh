@@ -1,10 +1,10 @@
-/*	====================
- *	FSTree_crm_serial.hh
- *	====================
- */
+/*
+	Genie/FS/sys/mac/crm/serial.hh
+	------------------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREESYSMACCRMSERIAL_HH
-#define GENIE_FILESYSTEM_FSTREESYSMACCRMSERIAL_HH
+#ifndef GENIE_FS_SYS_MAC_CRM_SERIAL_HH
+#define GENIE_FS_SYS_MAC_CRM_SERIAL_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
