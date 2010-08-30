@@ -7,7 +7,7 @@
 #define GENIE_FILESYSTEM_FSTREESYSMACCRSR_HH
 
 // Genie
-#include "Genie/FS/FSTree_sys_mac.hh"
+#include "Genie/FS/FSTree_Directory.hh"
 
 
 namespace Genie
