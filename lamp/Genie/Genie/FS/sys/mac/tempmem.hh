@@ -1,10 +1,10 @@
-/*	==================
- *	sys_mac_tempmem.hh
- *	==================
- */
+/*
+	Genie/FS/sys/mac/tempmem.hh
+	---------------------------
+*/
 
-#ifndef GENIE_FS_SYSMACTEMPMEM_HH
-#define GENIE_FS_SYSMACTEMPMEM_HH
+#ifndef GENIE_FS_SYS_MAC_TEMPMEM_HH
+#define GENIE_FS_SYS_MAC_TEMPMEM_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

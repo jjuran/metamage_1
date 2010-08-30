@@ -1,9 +1,9 @@
-/*	==================
- *	sys_mac_tempmem.cc
- *	==================
- */
+/*
+	Genie/FS/sys/mac/tempmem.cc
+	---------------------------
+*/
 
-#include "Genie/FS/sys_mac_tempmem.hh"
+#include "Genie/FS/sys/mac/tempmem.hh"
 
 // POSIX
 #include <sys/stat.h>
