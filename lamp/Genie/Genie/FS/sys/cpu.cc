@@ -1,9 +1,9 @@
-/*	=================
- *	FSTree_sys_cpu.cc
- *	=================
- */
+/*
+	Genie/FS/sys/cpu.cc
+	-------------------
+*/
 
-#include "Genie/FS/FSTree_sys_cpu.hh"
+#include "Genie/FS/sys/cpu.hh"
 
 // Iota
 #include "iota/decimal.hh"
