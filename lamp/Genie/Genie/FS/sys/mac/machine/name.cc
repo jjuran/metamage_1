@@ -1,9 +1,9 @@
-/*	==============================
- *	FSTree_sys_mac_machine_name.cc
- *	==============================
- */
+/*
+	Genie/FS/sys/mac/machine/name.cc
+	--------------------------------
+*/
 
-#include "Genie/FS/FSTree_sys_mac_machine_name.hh"
+#include "Genie/FS/sys/mac/machine/name.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
