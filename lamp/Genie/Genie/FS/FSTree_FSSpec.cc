@@ -412,69 +412,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Root : public FSTree_Directory
-	{
-		public:
-			FSTree_Root();
-			
-			bool IsFile     () const  { return false; }
-			bool IsDirectory() const  { return true;  }
-			
-			ino_t ParentInode() const  { return Inode(); }
-			
-			void Stat( struct ::stat& sb ) const;
-			
-			void SetTimes() const;
-			
-			void SetTimes( const struct timespec times[2] ) const;
-			
-			ino_t Inode() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	FSTree_Root::FSTree_Root()
-	:
-		FSTree_Directory( null_FSTreePtr, "" )
-	{
-	}
-	
-	ino_t FSTree_Root::Inode() const
-	{
-		struct ::stat sb;
-		
-		Stat( sb );
-		
-		return sb.st_ino;
-	}
-	
-	void FSTree_Root::Stat( struct ::stat& sb ) const
-	{
-		const N::FSDirSpec& root = GetJDirectory();
-		
-		FSTreeFromFSDirSpec( root, false )->Stat( sb );
-	}
-	
-	void FSTree_Root::SetTimes() const
-	{
-		const N::FSDirSpec& root = GetJDirectory();
-		
-		SetFileTimes( root.vRefNum, root.dirID, NULL );
-	}
-	
-	void FSTree_Root::SetTimes( const struct timespec times[2] ) const
-	{
-		const N::FSDirSpec& root = GetJDirectory();
-		
-		SetFileTimes( root.vRefNum,
-		              root.dirID,
-		              NULL,
-		              times );
-	}
-	
-	
 	class FSTree_HFS : public FSTree_Directory
 	{
 		private:
@@ -717,7 +654,7 @@ namespace Genie
 		if ( u != NULL )
 		{
 			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "", NULL );
-			FSTreePtr bottom = seize_ptr( new FSTree_Root() );
+			FSTreePtr bottom = FSTreeFromFSDirSpec( GetJDirectory(), false );
 			
 			u->SetTop   ( top    );
 			u->SetBottom( bottom );
@@ -1400,11 +1337,6 @@ namespace Genie
 		return seize_ptr( new FSTree_HFS( cInfo, onServer, name, parent ) );
 	}
 	
-	FSTreePtr FSTree_Root::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		return FSTreePtr_From_Lookup( GetJDirectory(), false, name, parent );
-	}
-	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( name == "rsrc"  &&  IsFile() )
@@ -1557,20 +1489,6 @@ namespace Genie
 			
 			N::ThrowOSStatus( pb.dirInfo.ioResult );
 		}
-	}
-	
-	void FSTree_Root::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		IterateIntoCache_CInfoPBRec cInfo;
-		
-		const N::FSDirSpec& root = GetJDirectory();
-		
-		cInfo.dirInfo.ioNamePtr   = NULL;
-		cInfo.dirInfo.ioVRefNum   = root.vRefNum;
-		cInfo.dirInfo.ioDrDirID   = root.dirID;
-		cInfo.dirInfo.ioFDirIndex = -1;
-		
-		IterateFilesIntoCache( cInfo, cache );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
