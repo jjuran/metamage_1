@@ -13,11 +13,11 @@
 namespace Genie
 {
 	
-	class FSTree_new_window : public FSTree
+	class FSTree_new_port : public FSTree
 	{
 		public:
-			FSTree_new_window( const FSTreePtr&     parent,
-			                   const plus::string&  name )
+			FSTree_new_port( const FSTreePtr&     parent,
+			                 const plus::string&  name )
 			:
 				FSTree( parent, name )
 			{

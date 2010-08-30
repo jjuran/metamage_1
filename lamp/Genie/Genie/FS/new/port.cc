@@ -30,7 +30,7 @@ namespace Genie
 		remove_port( GetFile().get() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
+	boost::shared_ptr< IOHandle > FSTree_new_port::ChangeToDirectory() const
 	{
 		FSTreePtr dir = new_port();
 		
