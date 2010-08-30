@@ -526,9 +526,9 @@ namespace Genie
 		throw p7::errno_t( ENOENT );
 	}
 	
-	const FSTree* GetWindowFocus( const FSTree* window )
+	const FSTree* get_port_focus( const FSTree* port )
 	{
-		if ( WindowParameters* it = gWindowParametersMap.find( window ) )
+		if ( WindowParameters* it = gWindowParametersMap.find( port ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -538,9 +538,9 @@ namespace Genie
 		return NULL;
 	}
 	
-	void SetWindowFocus( const FSTree* window, const FSTree* focus )
+	void set_port_focus( const FSTree* port, const FSTree* focus )
 	{
-		gWindowParametersMap[ window ].itsFocus = focus;
+		gWindowParametersMap[ port ].itsFocus = focus;
 	}
 	
 	

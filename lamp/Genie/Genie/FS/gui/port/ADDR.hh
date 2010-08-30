@@ -31,9 +31,9 @@ namespace Genie
 	void install_view_in_port    ( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
 	void uninstall_view_from_port( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
 	
-	const FSTree* GetWindowFocus( const FSTree* window );
+	const FSTree* get_port_focus( const FSTree* port );
 	
-	void SetWindowFocus( const FSTree* window, const FSTree* focus );
+	void set_port_focus( const FSTree* port, const FSTree* focus );
 	
 }
 
