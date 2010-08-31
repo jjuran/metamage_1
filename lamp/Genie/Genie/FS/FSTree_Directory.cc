@@ -5,11 +5,6 @@
 
 #include "Genie/FS/FSTree_Directory.hh"
 
-// Standard C++
-#include <algorithm>
-#include <functional>
-#include <iterator>
-
 // Genie
 #include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/FS/FSTree_Null.hh"
@@ -63,8 +58,6 @@ namespace Genie
 		FSTreeCache_Impl* newCache = new FSTreeCache_Impl();
 		
 		FSTreeCachePtr cachePtr( newCache );
-		
-		using std::swap;
 		
 		swap( cache, *newCache );
 		
