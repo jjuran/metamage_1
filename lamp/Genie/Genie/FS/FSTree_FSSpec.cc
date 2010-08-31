@@ -647,6 +647,8 @@ namespace Genie
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
+		const N::FSDirSpec& j_dir = GetJDirectory();
+		
 		FSTree_Union* u = NULL;
 		
 		static FSTreePtr result = seize_ptr( u = new FSTree_Union( null_FSTreePtr, "" ) );
@@ -654,7 +656,7 @@ namespace Genie
 		if ( u != NULL )
 		{
 			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "", NULL );
-			FSTreePtr bottom = FSTreeFromFSDirSpec( GetJDirectory(), false );
+			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir, false );
 			
 			u->SetTop   ( top    );
 			u->SetBottom( bottom );
