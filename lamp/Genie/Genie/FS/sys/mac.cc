@@ -31,7 +31,6 @@
 #include "Genie/FS/sys/mac/time.hh"
 #include "Genie/FS/sys/mac/user.hh"
 #include "Genie/FS/sys/mac/vol.hh"
-//#include "Genie/FS/FSTree_sys_mac_window.hh"
 
 
 namespace Genie
@@ -62,7 +61,6 @@ namespace Genie
 		{ "proc",    &New_FSTree_sys_mac_proc    },
 		{ "tempmem", &New_FSTree_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng    },
-		//{ "window", &Basic_Factory< FSTree_sys_mac_window > },
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		
