@@ -294,5 +294,14 @@ namespace Genie
 	
 #endif
 	
+#if TARGET_CPU_X86
+	
+	void InstallExceptionHandlers()
+	{
+		// do nothing
+	}
+	
+#endif
+	
 }
 
