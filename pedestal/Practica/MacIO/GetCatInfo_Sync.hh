@@ -28,20 +28,6 @@ namespace MacIO
 	            unsigned char*       name,
 	            SInt16               index = 0 );
 	
-	template <>
-	void GetCatInfo< Throw_All >( CInfoPBRec&          pb,
-	                              Mac::FSVolumeRefNum  vRefNum,
-	                              Mac::FSDirID         dirID,
-	                              unsigned char*       name,
-	                              SInt16               index );
-	
-	template <>
-	bool GetCatInfo< Return_FNF >( CInfoPBRec&          pb,
-	                               Mac::FSVolumeRefNum  vRefNum,
-	                               Mac::FSDirID         dirID,
-	                               unsigned char*       name,
-	                               SInt16               index );
-	
 	
 	template < class Policy >
 	typename Policy::Result

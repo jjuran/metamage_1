@@ -69,22 +69,6 @@ namespace Genie
 	               unsigned char*       name,
 	               SInt16               index = 0 );
 	
-	template <>
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&          pb,
-	                                  bool                 async,
-	                                  Mac::FSVolumeRefNum  vRefNum,
-	                                  Mac::FSDirID         dirID,
-	                                  unsigned char*       name,
-	                                  SInt16               index );
-	
-	template <>
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&          pb,
-	                                   bool                 async,
-	                                   Mac::FSVolumeRefNum  vRefNum,
-	                                   Mac::FSDirID         dirID,
-	                                   unsigned char*       name,
-	                                   SInt16               index );
-	
 	template < class Policy >
 	typename Policy::Result
 	inline 
@@ -141,16 +125,6 @@ namespace Genie
 	FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
 	                     Mac::FSDirID          dirID,
 	                     const unsigned char*  name );
-	
-	template <>
-	FSSpec FSMakeFSSpec< FNF_Throws >( Mac::FSVolumeRefNum   vRefNum,
-	                                   Mac::FSDirID          dirID,
-	                                   const unsigned char*  name );
-	
-	template <>
-	FSSpec FSMakeFSSpec< FNF_Returns >( Mac::FSVolumeRefNum   vRefNum,
-	                                    Mac::FSDirID          dirID,
-	                                    const unsigned char*  name );
 	
 	template < class Policy >
 	inline FSSpec FSMakeFSSpec( const Mac::FSDirSpec&  dir,

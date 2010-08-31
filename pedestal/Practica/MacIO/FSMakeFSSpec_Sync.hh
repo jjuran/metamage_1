@@ -25,16 +25,6 @@ namespace MacIO
 	                     FSDirID               dirID,
 	                     const unsigned char  *name );
 	
-	template <>
-	FSSpec FSMakeFSSpec< Throw_All >( FSVolumeRefNum        vRefNum,
-	                                  FSDirID               dirID,
-	                                  const unsigned char  *name );
-	
-	template <>
-	FSSpec FSMakeFSSpec< Return_FNF >( FSVolumeRefNum        vRefNum,
-	                                   FSDirID               dirID,
-	                                   const unsigned char  *name );
-	
 	template < class Policy >
 	inline FSSpec FSMakeFSSpec( const Nitrogen::FSDirSpec&  dir,
 	                            const unsigned char*        name )
