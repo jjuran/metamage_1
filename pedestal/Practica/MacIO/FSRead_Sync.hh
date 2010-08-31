@@ -17,23 +17,19 @@
 namespace MacIO
 {
 	
-	using Mac::FSFileRefNum;
-	using Mac::FSIOPosMode;
-	
-	
-	SInt32 FSRead( EOF_Policy    policy,
-	               FSFileRefNum  file,
-	               FSIOPosMode   positionMode,
-	               SInt32        positionOffset,
-	               SInt32        requestCount,
-	               void *        buffer );
+	SInt32 FSRead( EOF_Policy         policy,
+	               Mac::FSFileRefNum  file,
+	               Mac::FSIOPosMode   positionMode,
+	               SInt32             positionOffset,
+	               SInt32             requestCount,
+	               void *             buffer );
 	
 	template < EOF_Policy policy >
-	inline SInt32 FSRead( FSFileRefNum  file,
-	                      FSIOPosMode   positionMode,
-	                      SInt32        positionOffset,
-	                      SInt32        requestCount,
-	                      void *        buffer )
+	inline SInt32 FSRead( Mac::FSFileRefNum  file,
+	                      Mac::FSIOPosMode   positionMode,
+	                      SInt32             positionOffset,
+	                      SInt32             requestCount,
+	                      void *             buffer )
 	{
 		return FSRead( policy,
 		               file,

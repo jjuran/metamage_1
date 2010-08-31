@@ -14,16 +14,12 @@
 namespace MacIO
 {
 	
-	using Mac::FSFileRefNum;
-	using Mac::FSIOPosMode;
-	
-	
-	inline void Init_PB_For_ReadWrite( ParamBlockRec&  pb,
-	                                   FSFileRefNum    file,
-	                                   FSIOPosMode     positionMode,
-	                                   SInt32          positionOffset,
-	                                   SInt32          requestCount,
-	                                   const void *    buffer )
+	inline void Init_PB_For_ReadWrite( ParamBlockRec&     pb,
+	                                   Mac::FSFileRefNum  file,
+	                                   Mac::FSIOPosMode   positionMode,
+	                                   SInt32             positionOffset,
+	                                   SInt32             requestCount,
+	                                   const void *       buffer )
 	{
 		IOParam& io = pb.ioParam;
 		

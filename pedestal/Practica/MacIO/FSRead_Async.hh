@@ -21,14 +21,10 @@
 namespace MacIO
 {
 	
-	using Mac::FSFileRefNum;
-	using Mac::FSIOPosMode;
-	
-	
 	template < class Callback >
 	inline SInt32 FSRead( EOF_Policy         policy,
-	                      FSFileRefNum       file,
-	                      FSIOPosMode        positionMode,
+	                      Mac::FSFileRefNum  file,
+	                      Mac::FSIOPosMode   positionMode,
 	                      SInt32             positionOffset,
 	                      SInt32             requestCount,
 	                      void *             buffer,
@@ -59,7 +55,7 @@ namespace MacIO
 	// Default position mode
 	template < class Callback >
 	inline SInt32 FSRead( EOF_Policy         policy,
-	                      FSFileRefNum       file,
+	                      Mac::FSFileRefNum  file,
 	                      SInt32             requestCount,
 	                      void *             buffer,
 	                      Callback           callback,

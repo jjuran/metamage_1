@@ -15,11 +15,11 @@
 namespace MacIO
 {
 	
-	SInt32 FSWrite( FSFileRefNum   file,
-	                FSIOPosMode    positionMode,
-	                SInt32         positionOffset,
-	                SInt32         requestCount,
-	                const void    *buffer )
+	SInt32 FSWrite( Mac::FSFileRefNum  file,
+	                Mac::FSIOPosMode   positionMode,
+	                SInt32             positionOffset,
+	                SInt32             requestCount,
+	                const void *       buffer )
 	{
 		ParamBlockRec pb;
 		

@@ -17,8 +17,8 @@ namespace MacIO
 {
 	
 	template < class Policy, class Callback >
-	inline FSSpec FSMakeFSSpec( FSVolumeRefNum        vRefNum,
-	                            FSDirID               dirID,
+	inline FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
+	                            Mac::FSDirID          dirID,
 	                            const unsigned char*  name,
 	                            Callback              callback,
 	                            ::IOCompletionUPP     completion = NULL )

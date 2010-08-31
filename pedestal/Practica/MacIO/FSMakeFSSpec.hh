@@ -14,13 +14,9 @@
 namespace MacIO
 {
 	
-	using Mac::FSVolumeRefNum;
-	using Mac::FSDirID;
-	
-	
 	inline void Init_PB_For_MakeFSSpec( HParamBlockRec&       pb,
-	                                    FSVolumeRefNum        vRefNum,
-	                                    FSDirID               dirID,
+	                                    Mac::FSVolumeRefNum   vRefNum,
+	                                    Mac::FSDirID          dirID,
 	                                    const unsigned char  *name,
 	                                    FSSpec&               result )
 	{

@@ -17,20 +17,16 @@
 namespace MacIO
 {
 	
-	using Mac::FSVolumeRefNum;
-	using Mac::FSDirID;
-	
-	
 	template < class Policy, class Callback >
 	inline typename Policy::Result
 	//
-	GetCatInfo( CInfoPBRec&        pb,
-	            FSVolumeRefNum     vRefNum,
-	            FSDirID            dirID,
-	            unsigned char*     name,
-	            SInt16             index,
-	            Callback           callback,
-	            ::IOCompletionUPP  completion = NULL )
+	GetCatInfo( CInfoPBRec&          pb,
+	            Mac::FSVolumeRefNum  vRefNum,
+	            Mac::FSDirID         dirID,
+	            unsigned char*       name,
+	            SInt16               index,
+	            Callback             callback,
+	            ::IOCompletionUPP    completion = NULL )
 	{
 		nucleus::initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		

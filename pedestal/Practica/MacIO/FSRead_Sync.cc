@@ -18,12 +18,12 @@ namespace MacIO
 	namespace N = Nitrogen;
 	
 	
-	SInt32 FSRead( EOF_Policy    policy,
-	               FSFileRefNum  file,
-	               FSIOPosMode   positionMode,
-	               SInt32        positionOffset,
-	               SInt32        requestCount,
-	               void *        buffer )
+	SInt32 FSRead( EOF_Policy         policy,
+	               Mac::FSFileRefNum  file,
+	               Mac::FSIOPosMode   positionMode,
+	               SInt32             positionOffset,
+	               SInt32             requestCount,
+	               void *             buffer )
 	{
 		ParamBlockRec pb;
 		
