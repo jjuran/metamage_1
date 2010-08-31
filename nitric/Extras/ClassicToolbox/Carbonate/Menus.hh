@@ -29,12 +29,12 @@ inline pascal UInt16 CountMenuItems( MenuRef menu )
 
 inline pascal void SetMenuFlashCount( short count )
 {
-	return SetMenuFlash( count );
+	SetMenuFlash( count );
 }
 
 inline pascal void MacCheckMenuItem( MenuRef menu, short item, Boolean checked )
 {
-	return CheckItem( menu, item, checked );
+	CheckItem( menu, item, checked );
 }
 
 #endif
