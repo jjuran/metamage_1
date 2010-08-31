@@ -6,4 +6,4 @@
 	MoreFiles/MoreDesktopMgr.c
 	MoreFiles/MoreFiles.c
 	MoreFiles/MoreFilesExtras.c
-#	MoreFiles/Search.c
+	MoreFiles/Search.c
