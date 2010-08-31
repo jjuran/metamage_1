@@ -1491,16 +1491,24 @@ namespace Genie
 		}
 	}
 	
+#endif
+	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
 		N::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
+		
+	#ifdef __MACOS__
 		
 		IterateIntoCache_CInfoPBRec cInfo;
 		
 		static_cast< CInfoPBRec& >( cInfo ) = itsCInfo;
 		
 		IterateFilesIntoCache( cInfo, cache );
+		
+	#endif
 	}
+	
+#ifdef __MACOS__
 	
 	struct ResolvePath_CInfoPBRec : CInfoPBRec
 	{
