@@ -7,7 +7,9 @@
 #define MACIO_FSMAKEFSSPECSYNC_HH
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSDirID.hh"
+#include "Mac/Files/Types/FSDirSpec.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 // MacIO
 #include "MacIO/ThrowOSStatus.hh"
@@ -16,18 +18,14 @@
 namespace MacIO
 {
 	
-	using Nitrogen::FSVolumeRefNum;
-	using Nitrogen::FSDirID;
-	
-	
 	template < class Policy >
-	FSSpec FSMakeFSSpec( FSVolumeRefNum        vRefNum,
-	                     FSDirID               dirID,
+	FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
+	                     Mac::FSDirID          dirID,
 	                     const unsigned char  *name );
 	
 	template < class Policy >
-	inline FSSpec FSMakeFSSpec( const Nitrogen::FSDirSpec&  dir,
-	                            const unsigned char*        name )
+	inline FSSpec FSMakeFSSpec( const Mac::FSDirSpec&  dir,
+	                            const unsigned char*   name )
 	{
 		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
 	}
