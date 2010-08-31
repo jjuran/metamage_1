@@ -42,7 +42,10 @@ namespace Genie
 	
 	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		itsIterate( cache );
+		if ( itsIterate != NULL )
+		{
+			itsIterate( cache );
+		}
 	}
 	
 	
