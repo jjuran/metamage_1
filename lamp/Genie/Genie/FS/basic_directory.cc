@@ -29,11 +29,21 @@ namespace Genie
 			{
 			}
 			
+			mode_t FilePermMode() const;
+			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
+	
+	mode_t basic_directory::FilePermMode() const
+	{
+		const mode_t perm = itsIterate ? S_IRUSR | 0 | S_IXUSR
+		                               :               S_IXUSR;
+		
+		return perm;
+	}
 	
 	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
