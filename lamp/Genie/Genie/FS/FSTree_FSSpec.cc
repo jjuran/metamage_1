@@ -30,6 +30,7 @@
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
+#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
 
 // Io: MacFiles
@@ -235,6 +236,16 @@ namespace Genie
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
 		Mac::FSDirID        dirID   = Mac::FSDirID       ();
+		
+		if ( TARGET_RT_MAC_MACHO )
+		{
+			const FSRef location = N::GetProcessBundleLocation( N::CurrentProcess() );
+			
+			const FSSpec locationSpec = N::FSMakeFSSpec( location );
+			
+			vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
+			dirID   = Mac::FSDirID       ( locationSpec.parID   );
+		}
 		
 		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
 		                                                      vRefNum,
