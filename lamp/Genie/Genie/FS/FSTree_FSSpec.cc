@@ -382,16 +382,6 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static FSSpec FSSpecFromKey( const Key& key )
-		{
-			return MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, "\p" );
-		}
-		
-		static plus::string NameFromKey( const Key& key )
-		{
-			return UnixFromMacName( FSSpecFromKey( key ).name );
-		}
-		
 		static Key KeyFromName( const plus::string& name )
 		{
 			Key key = GetVRefNum( MacFromUnixName( name ) + ":" );
@@ -1722,29 +1712,33 @@ namespace Genie
 		return seize_ptr( new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name ) );
 	}
 	
-	class volumes_IteratorConverter
-	{
-		public:
-			FSNode operator()( N::FSVolumeRefNum key ) const
-			{
-				const ino_t inode = -key;
-				
-				plus::string name = Volume_KeyName_Traits::NameFromKey( key );
-				
-				return FSNode( inode, name );
-			}
-	};
-	
 	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		volumes_IteratorConverter converter;
-		
-		N::Volume_Container sequence = N::Volumes();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		for ( int i = 1;  true;  ++i )
+		{
+			Str27 mac_name = "\p";
+			
+			HParamBlockRec pb;
+			
+			pb.volumeParam.ioNamePtr  = mac_name;
+			pb.volumeParam.ioVRefNum  = 0;
+			pb.volumeParam.ioVolIndex = i;
+			
+			const OSErr err = ::PBHGetVInfoSync( &pb );
+			
+			if ( err == nsvErr )
+			{
+				break;
+			}
+			
+			N::ThrowOSStatus( err );
+			
+			const ino_t inode = -pb.volumeParam.ioVRefNum;
+			
+			const plus::string name = UnixFromMacName( mac_name );
+			
+			cache.push_back( FSNode( inode, name ) );
+		}
 	}
 	
 }
