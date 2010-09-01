@@ -9,6 +9,11 @@
 #include "MacCDROM/Audio.hh"
 #endif
 
+// iota
+#ifdef __GNUC__
+#include "iota/dummy.hh"
+#endif
+
 // Debug
 #include "debug/assert.hh"
 
