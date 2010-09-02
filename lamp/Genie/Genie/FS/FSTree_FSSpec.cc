@@ -378,19 +378,6 @@ namespace Genie
 	}
 	
 	
-	struct Volume_KeyName_Traits
-	{
-		typedef N::FSVolumeRefNum Key;
-		
-		static Key KeyFromName( const plus::string& name )
-		{
-			Key key = GetVRefNum( MacFromUnixName( name ) + ":" );
-			
-			return key;
-		}
-	};
-	
-	
 	static plus::string MakeName( const FSSpec& fileSpec )
 	{
 		if ( fileSpec.parID == fsRtParID )
@@ -1696,9 +1683,7 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const
 			{
-				typedef Volume_KeyName_Traits Traits;
-				
-				const N::FSVolumeRefNum key = Traits::KeyFromName( Name() );
+				const N::FSVolumeRefNum key = GetVRefNum( MacFromUnixName( Name() ) + ":" );
 				
 				const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
 				
