@@ -1681,15 +1681,22 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr ResolveLink() const
-			{
-				const N::FSVolumeRefNum key = GetVRefNum( MacFromUnixName( Name() ) + ":" );
-				
-				const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
-				
-				return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( key ) );
-			}
+			FSTreePtr ResolveLink() const;
 	};
+	
+	FSTreePtr FSTree_Volumes_Link::ResolveLink() const
+	{
+		// Convert ':' to '/'
+		plus::var_string mac_name = MacFromUnixName( Name() );
+		
+		mac_name += ":";
+		
+		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
+		
+		const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( vRefNum, Mac::fsRtDirID );
+		
+		return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( vRefNum ) );
+	}
 	
 	
 	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
