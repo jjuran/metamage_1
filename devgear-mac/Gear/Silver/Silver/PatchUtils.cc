@@ -13,6 +13,11 @@
 #include <Patches.h>
 #endif
 
+// iota
+#ifdef __GNUC__
+#include "iota/dummy.hh"
+#endif
+
 
 #pragma exceptions off
 

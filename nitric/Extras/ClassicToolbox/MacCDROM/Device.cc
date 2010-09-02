@@ -9,6 +9,11 @@
 #include "MacCDROM/Device.hh"
 #endif
 
+// iota
+#ifdef __GNUC__
+#include "iota/dummy.hh"
+#endif
+
 // MacCDROM
 #include "MacCDROM/AppleCD.hh"
 
