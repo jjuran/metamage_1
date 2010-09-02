@@ -701,9 +701,13 @@ namespace tool
 		}
 	}
 	
-	static void decode_Bit_op( unsigned short op )
+	static void decode_Bit_op( unsigned short op, bool dynamic )
 	{
-		char format[] = "Bfoo     #%#x,%s" "\n";
+		char dynamic_format[] = "Bfoo     D%d,%s"  "\n";
+		char static_format [] = "Bfoo     #%#x,%s" "\n";
+		
+		char* format = dynamic ? dynamic_format
+		                       : static_format;
 		
 		const char* name = bit_ops[ op >> 6 & 0x3 ];
 		
@@ -713,13 +717,14 @@ namespace tool
 		
 		const short mode_reg = op & 0x3f;
 		
-		const unsigned immediate_data = read_word();
+		const int data = dynamic ? op >> 9       // data register
+		                         : read_word();  // immediate data
 		
 		const short immediate_size = 1;
 		
 		const plus::string ea = read_ea( mode_reg, immediate_size );
 		
-		printf( format, immediate_data, ea.c_str() );
+		printf( format, data, ea.c_str() );
 	}
 	
 #pragma mark -
@@ -1174,6 +1179,15 @@ namespace tool
 	
 	static void decode_0_line( unsigned short op )
 	{
+		if ( op & 0x0100 )
+		{
+			// MOVEP
+			
+			decode_Bit_op( op, true );  // BTST/BCHG/BCLR/BSET dynamic
+			
+			return;
+		}
+		
 		switch ( op >> 8 & 0xf )
 		{
 			case 0x0:  // ORI
@@ -1185,13 +1199,9 @@ namespace tool
 				decode_Immediate( op );
 				break;
 			
-			case 0x8:  // BTST/BCHG/BCLR/BSET
-				decode_Bit_op( op );
+			case 0x8:  // BTST/BCHG/BCLR/BSET static
+				decode_Bit_op( op, false );
 				break;
-			
-			case 0x1:  // MOVEP
-				
-				//break;
 			
 			case 0xe:  // MOVES
 				
