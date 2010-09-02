@@ -23,7 +23,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Scribes.hh"
+#include "Genie/FS/serialize_qd.hh"
 
 
 namespace Nitrogen
@@ -49,15 +49,9 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct GetCursorLocation
+	struct GetCursorLocation : serialize_Point
 	{
-		typedef Point Result;
-		typedef Point Value;
-		typedef Point Param;
-		
-		typedef Point_Scribe< ',' > Scribe;
-		
-		static Result Get( const CursorDevice& device )
+		static Point Get( const CursorDevice& device )
 		{
 			if ( device.whichCursor == NULL )
 			{
@@ -69,7 +63,7 @@ namespace Genie
 			return data.where;
 		}
 		
-		static void Set( CursorDevicePtr device, Param location )
+		static void Set( CursorDevicePtr device, const Point& location )
 		{
 			N::CursorDeviceMoveTo( device, location.h, location.v );
 		}
@@ -78,6 +72,8 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_crsr_Property
 	{
+		typedef typename Accessor::result_type result_type;
+		
 		static CursorDevicePtr GetCursorDevice( const FSTree* that )
 		{
 			CursorDevicePtr device = N::CursorDeviceNextDevice();
@@ -94,16 +90,16 @@ namespace Genie
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
-			const typename Accessor::Result data = Accessor::Get( *device );
+			const result_type data = Accessor::Get( *device );
 			
-			result = Freeze< Accessor::Scribe >( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
-			const typename Accessor::Value data = Vivify< Accessor::Scribe >( begin, end, binary );
+			const result_type data = Accessor::reconstruct::apply( begin, end, binary );
 			
 			Accessor::Set( device, data );
 		}
