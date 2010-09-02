@@ -10,24 +10,21 @@
 #endif
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/serialize.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
 #include "Genie/FS/sys/app/window.hh"
-#include "Genie/FS/Scribes.hh"
 
 
 namespace Genie
 {
 	
-	struct GetFreeMem
+	struct GetFreeMem : plus::serialize_unsigned< long >
 	{
-		typedef long Result;
-		
-		static Result Get()
+		static long Get()
 		{
 			return ::FreeMem();
 		}
@@ -35,11 +32,9 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	struct GetHeapSize
+	struct GetHeapSize : plus::serialize_unsigned< long >
 	{
-		typedef long Result;
-		
-		static Result Get()
+		static long Get()
 		{
 			THz zone = ::ApplicationZone();
 			
@@ -52,9 +47,13 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_Property
 	{
+		typedef typename Accessor::result_type result_type;
+		
 		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = Freeze< Integer_Scribe< long > >( Accessor::Get(), binary );
+			const result_type data = Accessor::Get();
+			
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
@@ -67,7 +66,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            sizeof (typename Accessor::Result),
+		                            sizeof (typename Accessor::result_type),
 		                            &Property::Read );
 	}
 	
