@@ -1335,6 +1335,16 @@ namespace tool
 				}
 				else if ( (op & 0x00c0) == 0x0040 )
 				{
+					if ( const bool is_bkpt = (op & 0xFFF8) == 0x4848 )
+					{
+						// BKPT
+						const unsigned short vector = op & 0x7;
+						
+						printf( "BKPT     #%d" "\n", vector );
+						
+						break;
+					}
+					
 					// PEA
 					const plus::string ea = read_ea( source, 0 );
 					
