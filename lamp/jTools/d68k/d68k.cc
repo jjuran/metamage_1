@@ -649,13 +649,43 @@ namespace tool
 #pragma mark -
 #pragma mark ** Line 0 **
 	
+	static void decode_compare( unsigned short op )
+	{
+		const bool compare_and_swap = op & 0x0800;
+		
+		const short size_index = (op >> 9 & 0x3) - compare_and_swap;
+		
+		if ( unsigned( size_index & 0x3 ) == 0x3 )
+		{
+			throw illegal_instruction();
+		}
+		
+		const short mode_reg = op & 0x3f;
+		
+		const bool is_cas2 = mode_reg == 0x3c;
+		
+		const unsigned short ext1 =           read_word();
+		const unsigned short ext2 = is_cas2 ? read_word() : 0;
+		
+		const bool is_chk2 = ext1 & 0x0800;
+		
+		const char* op_name = compare_and_swap ? is_cas2 ? "CAS2"
+		                                                 : "CAS "
+		                                       : is_chk2 ? "CHK2"
+		                                                 : "CMP2";
+		
+		printf( "%s     ...\n", op_name );
+	}
+	
 	static void decode_Immediate( unsigned short op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
 		if ( size_index == 3 )
 		{
-			throw illegal_instruction();
+			decode_compare( op );
+			
+			return;
 		}
 		
 		const char* format = "%s%s%s#%#x,%s" "\n";
@@ -1196,7 +1226,7 @@ namespace tool
 			case 0x6:  // ADDI
 			case 0xa:  // EORI
 			case 0xc:  // CMPI
-				decode_Immediate( op );
+				decode_Immediate( op );  // also CMP2/CHK2/CAS/CAS2
 				break;
 			
 			case 0x8:  // BTST/BCHG/BCLR/BSET static
