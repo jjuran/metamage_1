@@ -1,0 +1,502 @@
+#!/usr/bin/perl
+
+#use warnings FATAL => 'all';
+#use strict;
+
+sub hostname
+{
+	substr `hostname -s`, 0, -1;
+}
+
+sub tempdir
+{
+	if ( -d "/sys/mac/vol/list" )
+	{
+		if ( my $ramdisk = `ram-disks -1` )
+		{
+			return "$ramdisk/mnt/tmp";
+		}
+	}
+	
+	return "/tmp";
+}
+
+sub rootdir
+{
+	if ( my $root = $ENV{NEXUS_ROOT} )
+	{
+		return $root;
+	}
+	
+	my $extfs = "/Volumes/Unix";
+	
+	if ( -d $extfs )
+	{
+		return $extfs;
+	}
+}
+
+my $HOST = hostname();
+my $TEMP = tempdir();
+my $ROOT = rootdir() or die "NEXUS_ROOT is unset\n";
+
+my @SETTEXT = qw( SetFile -c R*ch -t TEXT );
+
+my $cmd = shift or exit;
+
+my $nexus_dir = "$ROOT/nexus";
+
+my $host_dir = "$nexus_dir/$HOST";
+
+my $in_dir      = "$host_dir/in";
+my $jobs_dir    = "$host_dir/jobs";
+my $results_dir = "$host_dir/results";
+
+sub make_dir
+{
+	my ( $path ) = @_;
+	
+	-d $path or mkdir $path or die "$path: $!\n";
+}
+
+sub slurp
+{
+	my ( $path ) = @_;
+	
+	open my $f, "<", $path or die "$path: $!\n";
+	
+	return wantarray ? map { substr $_, 0, -1 } <$f>
+	                 : join "",                 <$f>;
+}
+
+sub splat
+{
+	my ( $path, $content ) = @_;
+	
+	open my $f, ">", $path  or die "open $path: $!\n";
+	print   $f $content     or die "write $path: $!\n";
+	close   $f              or die "close $path: $!\n";
+	
+	return;
+}
+
+sub touch
+{
+	my ( $path ) = @_;
+	
+	# Not supported in perl 5.6
+	# utime undef, undef, $path;
+	
+	splat( $path, "" );
+	
+	return;
+}
+
+sub copy_file
+{
+	my ( $from, $to ) = @_;
+	
+	system( '/bin/cp', $from, $to ) == 0 or die "cp $from $to: $?\n";
+}
+
+sub textify
+{
+	my ( $path ) = @_;
+	
+	system( @SETTEXT, $path ) == 0 or die "SetFile $path: $?\n";
+}
+
+sub for_each_in_dir
+{
+	my ( $path, $f ) = @_;
+	
+	opendir my $dir, $path or die "opendir $path: $!\n";
+	
+	my @result;
+	
+	while ( my $file = readdir $dir )
+	{
+		push @result, $f->( "$file" )  unless $file =~ m{^ \. }x;
+	}
+	
+	return @result;
+}
+
+sub print_dir
+{
+	my ( $path ) = @_;
+	
+	for_each_in_dir( $path, sub { print "$_\n" for shift; return; } );
+}
+
+sub head_of_dir
+{
+	my ( $path ) = @_;
+	
+	opendir my $dir, $path or die "opendir $path: $!\n";
+	
+	while ( my $file = readdir $dir )
+	{
+		return "$file"  unless $file =~ m{^ \. }x;
+	}
+	
+	return;
+}
+
+sub nexus_init
+{
+	-d $ROOT or die "$ROOT: not found\n";
+	
+	make_dir( $nexus_dir   );
+	make_dir( $host_dir    );
+	make_dir( $results_dir );
+	make_dir( $jobs_dir    );
+	make_dir( $in_dir      );
+	
+	return;
+}
+
+sub nexus_path
+{
+	return $host_dir;
+}
+
+sub nexus_new
+{
+	my ( @argv ) = @_;
+	
+	my $program = join "\n", @argv, "";
+	
+	my $date = `date +"%Y%m%d_%H%M%S"`;
+	
+	chop $date;
+	
+	my $stamp = $date;
+	
+	my $n = 0;
+	
+	while ( -d "$jobs_dir/$stamp" )
+	{
+		$stamp = join ".", $date, ++$n;
+	}
+	
+	my $job_dir = "$jobs_dir/$stamp";
+	
+	mkdir $job_dir or die "$job_dir: $!\n";
+	
+	my $run_file = "$job_dir/command.run";
+	
+	splat( $run_file, $program );
+	
+	textify( $run_file );
+	
+	my $return = "$job_dir/return";
+	
+	symlink "../../../$HOST/results", $return or die "$return: $!\n";
+	
+	return $stamp;
+}
+
+sub nexus_send
+{
+	my ( $peername, @argv ) = @_;
+	
+	defined $peername or die "send requires peer name\n";
+	
+	my $peer_dir = "$nexus_dir/$peername";
+	
+	-d $peer_dir or die "No such host '$peername' available\n";
+	
+	my $name = shift @argv or die "send requires 'new' or job name\n";
+	
+	my $new = $name eq 'new';
+	
+	if ( $new )
+	{
+		$name = nexus_new( @argv );
+	}
+	else
+	{
+		my $job_dir = "$jobs_dir/$name";
+		
+		-d $job_dir or die "$job_dir: not found\n";
+	}
+	
+	my $peer_in = "$peer_dir/in/$name";
+	
+	symlink "../../$HOST/jobs/$name", $peer_in or die "symlink $peer_in: $!\n";
+	
+	if ( $new )
+	{
+		return $name;
+	}
+	
+	return;
+}
+
+sub nexus_accept
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "accept requires 'next' or a job name\n";
+	
+	my $next = $job_name eq 'next';
+	
+	if ( $next )
+	{
+		$job_name = head_of_dir( "$host_dir/in" ) or exit 5;
+	}
+	
+	my $in_dir = "$host_dir/in/$job_name";
+	
+	-d $in_dir or die "accept $job_name: not found\n";
+	
+	rename "$in_dir", "$host_dir/jobs/$job_name" or die "rename $in_dir: $!\n";
+	
+	if ( $next )
+	{
+		return $job_name;
+	}
+	
+	return;
+}
+
+sub nexus_run
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "run requires 'next' or a job name\n";
+	
+	my $next = $job_name eq 'next';
+	
+	if ( $next )
+	{
+		$job_name = head_of_dir( "$host_dir/jobs" ) or exit 5;
+	}
+	
+	my $job_dir = "$host_dir/jobs/$job_name";
+	
+	-d $job_dir or die "run $job_name: not found\n";
+	
+	my $run_file = "$job_dir/command.run";
+	
+	-f $run_file or die "run $run_file: not found\n";
+	
+	die "unsafe to run $job_name\n"  if grep { m{ [^\w/.-] }x } $job_dir, $TEMP;
+	
+	my $argv = join " ", slurp( $run_file );
+	
+	my @inputs = slurp( "$job_dir/INPUT"  )  if -f "$job_dir/INPUT";
+	
+	my $tmp = "$TEMP/$job_name";
+	
+	make_dir( $TEMP );
+	
+	mkdir( $tmp ) or die "mkdir: $tmp: $!\n";
+	
+	symlink ".", "$tmp/lib";
+	
+	copy_file( "$job_dir/$_", "$tmp/$_" )  foreach @inputs;
+	
+	my $run_cmd = "cd $tmp; run $run_file > $job_dir/stdout 2> $job_dir/stderr";
+	
+	my $status = system $run_cmd;
+	
+	unlink map { "$tmp/$_" } @inputs;
+	
+	unlink "$tmp/lib";
+	
+	if ( $status == 0 )
+	{
+		touch( "$job_dir/SUCCESS" );
+		
+		my $copy_it = sub
+		{
+			$_ = shift;
+			
+			copy_file( "$tmp/$_", "$job_dir/$_" );
+			
+			return;
+		};
+		
+		for_each_in_dir( $tmp, $copy_it );
+	}
+	elsif ( my $exit = $status >> 8 )
+	{
+		splat( "$job_dir/FAILURE", $exit );
+	}
+	elsif ( my $signal = $status & 0x7F )
+	{
+		splat( "$job_dir/SIGNAL", $signal );
+		
+		if ( $status & 0x80 )
+		{
+			touch( "$job_dir/CORE" );
+		}
+	}
+	
+	touch( "$job_dir/DONE" );
+	
+	unlink for_each_in_dir( $tmp, sub { "$tmp/$_[0]" } );
+	
+	rmdir $tmp;
+	
+	if ( $next )
+	{
+		return $job_name;
+	}
+	
+	return;
+}
+
+sub nexus_return
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "return requires 'next' or a job name\n";
+	
+	my $next = $job_name eq 'next';
+	
+	if ( $next )
+	{
+		$job_name = head_of_dir( "$host_dir/jobs" ) or exit 5;
+	}
+	
+	my $job_dir = "$host_dir/jobs/$job_name";
+	
+	-d $job_dir or die "return $job_name: not found\n";
+	
+	my $returned = "$job_dir/return/$job_name";
+	
+	rename "$job_dir", $returned or die "rename $job_dir: $!\n";
+	
+	if ( $next )
+	{
+		return $job_name;
+	}
+	
+	return;
+}
+
+sub nexus_do
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "do requires 'next' or a job name\n";
+	
+	my $result = nexus_accept( $job_name );
+	
+	if ( defined $result )
+	{
+		$job_name = $result;
+		
+		print "$job_name\n";
+	}
+	
+	nexus_run   ( $job_name );
+	nexus_return( $job_name );
+	
+	return;
+}
+
+sub nexus_loop
+{
+	for ( ;; )
+	{
+		my $delay = 0;
+		
+		until ( defined head_of_dir( "$host_dir/in" ) )
+		{
+			$delay += $delay < 10;
+			
+			sleep $delay / 4;
+		}
+		
+		nexus_do( 'next' );
+	}
+}
+
+sub nexus_wait
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "wait requires a job name\n";
+	
+	my $job_dir = "$host_dir/jobs/$job_name";
+	
+	-d $job_dir or die "wait $job_name: not found\n";
+	
+	my $results = "$host_dir/results/$job_name";
+	
+	my $delay = 0;
+	
+	sleep( $delay += $delay < 10 ) until -d $results;
+	
+	return;
+}
+
+my @filenames =
+qw( CORE DONE FAILURE INPUT SIGNAL SUCCESS stdout stderr return command.run );
+
+sub nexus_delete
+{
+	my ( $job_name ) = @_;
+	
+	defined $job_name or die "delete requires a job name\n";
+	
+	my $job_dir = "$host_dir/jobs/$job_name";
+	
+	-d $job_dir or die "delete $job_name: not found\n";
+	
+	my $unlinked = unlink "$job_dir";  # in case it's a symlink
+	
+	if ( !$unlinked )
+	{
+		unlink for map { "$job_dir/$_" } @filenames;
+		
+		rmdir $job_dir;
+	}
+	
+	unlink "$host_dir/in/$job_name";
+	unlink "$host_dir/results/$job_name";
+	
+	return;
+}
+
+sub nexus_call
+{
+	my $job_name = nexus_send( @_ ) || $_[1];
+	
+	nexus_wait( $job_name );
+	
+	my $job_dir = "$host_dir/jobs/$job_name";
+	
+	system "cat $job_dir/stdout";
+	system "cat $job_dir/stderr >&2";
+	
+	return;
+}
+
+my %cmds =
+(
+	do     => \&nexus_do,
+	new    => \&nexus_new,
+	run    => \&nexus_run,
+	call   => \&nexus_call,
+	init   => \&nexus_init,
+	loop   => \&nexus_loop,
+	path   => \&nexus_path,
+	send   => \&nexus_send,
+	wait   => \&nexus_wait,
+	accept => \&nexus_accept,
+	delete => \&nexus_delete,
+	return => \&nexus_return,
+);
+
+$cmds{help} = sub { print join( " ", sort keys %cmds ), "\n"; return; };
+
+my $proc = $cmds{$cmd} or die "Unrecognized command '$cmd'\n";
+
+my $result = $proc->( @ARGV );
+
+print "$result\n"  if defined $result;
