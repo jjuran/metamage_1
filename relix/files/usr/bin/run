@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+#use warnings FATAL => 'all';
+#use strict;
+
+my $run_file = shift or exit;
+
+open my $run, "<", $run_file or die "run: $run_file: $!\n";
+
+my @argv = map { substr $_, 0, -1 } <$run>;
+
+exec @argv;
+
