@@ -11,6 +11,9 @@
 #include <numeric>
 #include <vector>
 
+// Standard C
+#include <stdlib.h>
+
 // Iota
 #include "iota/strings.hh"
 
@@ -573,6 +576,16 @@ namespace tool
 		}
 	}
 	
+	static const char* ar_name()
+	{
+		if ( const char* ar = getenv( "AR" ) )
+		{
+			return ar;
+		}
+		
+		return "ar";
+	}
+	
 	template < class Iter >
 	static TaskPtr make_link_task( const Command&       link_command,
 	                               const plus::string&  output_path,
@@ -612,8 +625,8 @@ namespace tool
 	{
 		Command link_command;
 		
-		link_command.push_back( "ar"  );
-		link_command.push_back( "rcs" );
+		link_command.push_back( ar_name() );
+		link_command.push_back( "rcs"    );
 		
 		return make_link_task( link_command,
 		                       output_pathname,

@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <functional>
 
+// Standard C
+#include <stdlib.h>
+
 
 namespace tool
 {
@@ -33,11 +36,21 @@ namespace tool
 	
 	const char* CommandGenerator::UnixCompilerName() const
 	{
+		if ( const char* cc = getenv( "CC" ) )
+		{
+			return cc;
+		}
+		
 		return gnu ? "cc" : "mwcc";
 	}
 	
 	const char* CommandGenerator::LinkerName() const
 	{
+		if ( const char* ld = getenv( "LD" ) )
+		{
+			return ld;
+		}
+		
 		return gnu ? "c++" : "ld";
 	}
 	
