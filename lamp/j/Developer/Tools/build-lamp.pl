@@ -135,7 +135,7 @@ my %fsmap =
 			# aevt wrappers
 			qw( File Line activate quit ),
 			# Misc scripts
-			qw( build-lamp.pl filter-mwlink-warnings.pl nexus.pl report run-tests strip-all ),
+			qw( build-lamp.pl filter-mwlink-warnings.pl ramdisk.pl report run-tests strip-all ),
 		],
 	},
 	bin =>

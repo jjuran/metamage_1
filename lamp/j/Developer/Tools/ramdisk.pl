@@ -147,7 +147,7 @@ sub transfer
 	}
 }
 
-sub nexus
+sub check
 {
 	my $ramdisk = readlink "/sys/mac/vol/ram";
 	
@@ -163,15 +163,15 @@ sub nexus
 
 sub auto
 {
-	my $nexus = readlink "/Volumes/Nexus";
+	my $ram = readlink "/Volumes/Ram";
 	
-	if ( defined $nexus )
+	if ( defined $ram )
 	{
-		print "Nexus found at $nexus\n";
+		print "Ram found at $ram\n";
 	}
 	else
 	{
-		print "Nexus volume not found.\n";
+		print "Ram volume not found.\n";
 		
 		if ( my $ramdisk = readlink "/sys/mac/vol/ram" )
 		{
@@ -181,11 +181,11 @@ sub auto
 			
 			print "RAM disk '$name' found at /sys/mac/vol/$ramdisk\n";
 			
-			write_file( "/sys/mac/vol/ram/name", "Nexus\n" );
+			write_file( "/sys/mac/vol/ram/name", "Ram\n" );
 			
-			print "Renamed RAM disk volume to 'Nexus'.\n";
+			print "Renamed RAM disk volume to 'Ram'.\n";
 			
-			$nexus = "/sys/mac/vol/ram/mnt";
+			$ram = "/sys/mac/vol/ram/mnt";
 		}
 		else
 		{
@@ -214,11 +214,11 @@ sub auto
 	
 	print "Interfaces&Libraries found at $intfs_libs.\n";
 	
-	-d "$nexus/tmp" or mkdir "$nexus/tmp" or die "mkdir: $nexus/tmp: $!\n";
+	-d "$ram/tmp" or mkdir "$ram/tmp" or die "mkdir: $ram/tmp: $!\n";
 	
 	open $copier, "| copier" or die "Can't run the copier: $!\n";
 	
-	transfer( $dev_apps, "$nexus/tmp/Applications", \%xfer );
+	transfer( $dev_apps, "$ram/tmp/Applications", \%xfer );
 	
 	local $| = 1;
 	
@@ -228,15 +228,15 @@ sub auto
 	
 	close $copier or die "Error closing the copier: $?\n";
 	
-	rename "$nexus/tmp/Applications", "$nexus/Applications" or die "Can't move Applications out of tmp: $!\n";
+	rename "$ram/tmp/Applications", "$ram/Applications" or die "Can't move Applications out of tmp: $!\n";
 	
 	print "\r";
 	
-	system "open /Volumes/Nexus/Applications/MPW";
+	system "open /Volumes/Ram/Applications/MPW";
 	
-	sleep 0.1 until readlink "$nexus/../dt/appls/MPSX/latest";
+	sleep 0.1 until readlink "$ram/../dt/appls/MPSX/latest";
 	
-	my $script = 'tell app "Finder" to close the window of alias "Nexus:Applications:MPW:"';
+	my $script = 'tell app "Finder" to close the window of alias "Ram:Applications:MPW:"';
 	
 	system "osascript", "-e", $script, "-e", '""';
 	
@@ -255,7 +255,7 @@ $command = "" if !defined $command;
 
 my %handler_for =
 (
-	""   => sub { nexus },
+	""   => sub { check },
 	auto => sub { auto  },
 );
 
