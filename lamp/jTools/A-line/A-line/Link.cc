@@ -216,18 +216,23 @@ namespace tool
 	
 	class LinkingTask : public CommandTask
 	{
+		private:
+			const char* its_caption;
+		
 		public:
 			template < class Iter >
 			LinkingTask( const Command&       command,
 			             const plus::string&  output,
 			             Iter                 input_begin,
 			             Iter                 input_end,
-			             const plus::string&  diagnostics )
+			             const plus::string&  diagnostics,
+			             const char*          caption )
 			: CommandTask( command,
 			               output,
 			               diagnostics_file_path( diagnostics, output ),
 			               &*input_begin,
-			               &*input_end )
+			               &*input_end ),
+				its_caption( caption )
 			{
 			}
 			
@@ -238,7 +243,7 @@ namespace tool
 	{
 		plus::string output_filename = io::get_filename( OutputPath() );
 		
-		ExecuteCommand( shared_from_this(), "LINK  " + output_filename, get_command(), get_diagnostics_file_path().c_str() );
+		ExecuteCommand( shared_from_this(), its_caption + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
 	
 	static plus::string BundleResourceFileRelativePath( const plus::string& linkName )
@@ -418,26 +423,30 @@ namespace tool
 	                               const plus::string&  output_path,
 	                               Iter                 begin,
 	                               Iter                 end,
-	                               const plus::string&  diagnostics_dir )
+	                               const plus::string&  diagnostics_dir,
+	                               const char*          caption = "LINK  " )
 	{
 		return seize_ptr( new LinkingTask( link_command,
 		                                   output_path,
 		                                   begin,
 		                                   end,
-		                                   diagnostics_dir ) );
+		                                   diagnostics_dir,
+		                                   caption ) );
 	}
 	
 	template < class Container >
 	static inline TaskPtr make_link_task( const Command&       link_command,
 	                                      const plus::string&  output_path,
 	                                      const Container&     input,
-	                                      const plus::string&  diagnostics_dir )
+	                                      const plus::string&  diagnostics_dir,
+	                                      const char*          caption = "LINK  " )
 	{
 		return seize_ptr( new LinkingTask( link_command,
 		                                   output_path,
 		                                   input.begin(),
 		                                   input.end(),
-		                                   diagnostics_dir ) );
+		                                   diagnostics_dir,
+		                                   caption ) );
 	}
 	
 	template < class Iter >
@@ -455,7 +464,8 @@ namespace tool
 		                       output_pathname,
 		                       begin,
 		                       end,
-		                       diagnostics_dir );
+		                       diagnostics_dir,
+		                       "AR    " );
 	}
 	
 	
