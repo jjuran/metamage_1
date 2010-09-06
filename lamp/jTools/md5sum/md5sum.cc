@@ -109,7 +109,7 @@ namespace tool
 					{ (void*) STR_LEN( "\n"            ) }
 				};
 				
-				(void) writev( STDERR_FILENO, output_message, sizeof output_message / sizeof output_message[0] );
+				(void) writev( STDOUT_FILENO, output_message, sizeof output_message / sizeof output_message[0] );
 			}
 			catch ( ... )
 			{
