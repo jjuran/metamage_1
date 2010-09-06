@@ -28,10 +28,10 @@ static void SetVariables()
 	#define ENV_HOSTTYPE "i386"
 	#endif
 	
-	#if TARGET_RT_MAC_CFM
-	#define ENV_MAC_RUNTIME "cfm"
-	#elif TARGET_RT_MAC_MACHO
+	#if defined( __MACH__ )
 	#define ENV_MAC_RUNTIME "mach-o"
+	#elif defined( __POWERPC__ ) || defined( __CFM68K__ )
+	#define ENV_MAC_RUNTIME "cfm"
 	#else
 	#define ENV_MAC_RUNTIME "rsrc"
 	#endif
