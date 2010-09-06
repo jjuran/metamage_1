@@ -1476,6 +1476,11 @@ namespace Genie
 			
 			const char* begin = cInfo.begin;
 			
+			while ( begin < cInfo.end  &&  begin[0] == '/' )
+			{
+				++begin;
+			}
+			
 			if ( begin == cInfo.end )
 			{
 				goto done;
@@ -1509,7 +1514,7 @@ namespace Genie
 			
 			std::copy( begin, slash, &cInfo.name[1] );
 			
-			cInfo.begin = slash + (slash != cInfo.end);
+			cInfo.begin = slash;
 			
 			OSErr err = ::PBGetCatInfoAsync( &cInfo );
 			
