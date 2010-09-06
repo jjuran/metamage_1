@@ -30,4 +30,15 @@ namespace tool
 		return command;
 	}
 	
+	
+	const char* CommandGenerator::UnixCompilerName() const
+	{
+		return gnu ? "cc" : "mwcc";
+	}
+	
+	const char* CommandGenerator::LinkerName() const
+	{
+		return gnu ? "c++" : "ld";
+	}
+	
 }

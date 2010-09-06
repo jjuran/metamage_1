@@ -78,18 +78,14 @@ namespace tool
 			gnu   ( target.toolchain == toolchainGNU   )
 		{}
 		
-		const char* UnixCompilerName() const  { return gnu ? "cc" : "mwcc"; }
+		const char* UnixCompilerName() const;
 		
 		Command CompilerName() const
 		{
 			return MakeCommand( UnixCompilerName(), "-c" );
 		}
 		
-		const char* LinkerName() const
-		{
-			return gnu ? "c++"
-			           : "ld";
-		}
+		const char* LinkerName() const;
 		
 		Command TargetArchitecture() const
 		{
