@@ -324,7 +324,7 @@ namespace tool
 						break;
 				}
 			}
-			else if ( std::strchr( arg, '/' ) )
+			else
 			{
 				command_args.push_back( store_mac_path_from_posix_path( arg ) );
 			}
