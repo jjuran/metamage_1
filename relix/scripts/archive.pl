@@ -224,6 +224,8 @@ my %fsmap =
 			qw( gestalt ),
 			# Perl scripts
 			qw( grep head printenv strings tee tr wc ),
+			# cluster tools
+			qw( nexus run ),
 			# Varyx scripts
 			{
 				copy_vx( 'arcsign' ),
