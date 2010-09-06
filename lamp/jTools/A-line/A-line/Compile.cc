@@ -607,6 +607,27 @@ namespace tool
 	}
 	
 	
+	static
+	TaskPtr add_cc_compile_tasks( const Project&          project,
+	                              const CompilerOptions&  cc_options,
+	                              const plus::string&     source_path,
+	                              const plus::string&     output_path,
+	                              const plus::string&     diagnostics_dir_path,
+	                              const TaskPtr&          precompile_task )
+	{
+		TaskPtr cc_task = seize_ptr( new CompilingTask( project,
+		                                                cc_options,
+		                                                source_path,
+		                                                output_path,
+		                                                diagnostics_dir_path,
+		                                                "CC    ",
+		                                                &MakeCompileCommand ) );
+		
+		precompile_task->AddDependent( cc_task );
+		
+		return cc_task;
+	}
+	
 	class ToolTaskMaker
 	{
 		private:
@@ -625,17 +646,12 @@ namespace tool
 			
 			TaskPtr operator()( const plus::string& source_pathname, const plus::string& object_pathname )
 			{
-				const char* caption = "CC    ";
-				
-				TaskPtr task = seize_ptr( new CompilingTask( its_project,
-				                                             its_options,
-				                                             source_pathname,
-				                                             object_pathname,
-				                                             ProjectDiagnosticsDirPath( its_project.Name() ),
-				                                             caption,
-				                                             &MakeCompileCommand ) );
-				
-				its_precompile_task->AddDependent( task );
+				TaskPtr task = add_cc_compile_tasks( its_project,
+				                                     its_options,
+				                                     source_pathname,
+				                                     object_pathname,
+				                                     ProjectDiagnosticsDirPath( its_project.Name() ),
+				                                     its_precompile_task );
 				
 				return task;
 			}
@@ -770,17 +786,12 @@ namespace tool
 			
 			const plus::string& output_path = *the_object;
 			
-			const char* caption = "CC    ";
-			
-			TaskPtr task = seize_ptr( new CompilingTask( project,
-			                                             options,
-			                                             source_pathname,
-			                                             output_path,
-			                                             diagnostics_dir_path,
-			                                             caption,
-			                                             &MakeCompileCommand ) );
-			
-			precompile_task->AddDependent( task );
+			TaskPtr task = add_cc_compile_tasks( project,
+			                                     options,
+			                                     source_pathname,
+			                                     output_path,
+			                                     diagnostics_dir_path,
+			                                     precompile_task );
 			
 			task->AddDependent( source_dependency );
 		}
