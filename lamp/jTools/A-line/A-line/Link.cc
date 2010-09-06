@@ -217,18 +217,6 @@ namespace tool
 	class LinkingTask : public CommandTask
 	{
 		public:
-			LinkingTask( const Command&                      command,
-			             const plus::string&                 output,
-			             const std::vector< plus::string >&  input,
-			             const plus::string&                 diagnostics )
-			: CommandTask( command,
-			               output,
-			               diagnostics_file_path( diagnostics, output ),
-			               &*input.begin(),
-			               &*input.end  () )
-			{
-			}
-			
 			template < class Iter >
 			LinkingTask( const Command&       command,
 			             const plus::string&  output,
@@ -426,6 +414,33 @@ namespace tool
 	}
 	
 	template < class Iter >
+	static TaskPtr make_link_task( const Command&       link_command,
+	                               const plus::string&  output_path,
+	                               Iter                 begin,
+	                               Iter                 end,
+	                               const plus::string&  diagnostics_dir )
+	{
+		return seize_ptr( new LinkingTask( link_command,
+		                                   output_path,
+		                                   begin,
+		                                   end,
+		                                   diagnostics_dir ) );
+	}
+	
+	template < class Container >
+	static inline TaskPtr make_link_task( const Command&       link_command,
+	                                      const plus::string&  output_path,
+	                                      const Container&     input,
+	                                      const plus::string&  diagnostics_dir )
+	{
+		return seize_ptr( new LinkingTask( link_command,
+		                                   output_path,
+		                                   input.begin(),
+		                                   input.end(),
+		                                   diagnostics_dir ) );
+	}
+	
+	template < class Iter >
 	static TaskPtr MakeStaticLibTask( const plus::string&  output_pathname,
 	                                  Iter                 begin,
 	                                  Iter                 end,
@@ -436,11 +451,11 @@ namespace tool
 		link_command.push_back( "ar"  );
 		link_command.push_back( "rcs" );
 		
-		return seize_ptr( new LinkingTask( link_command,
-		                                   output_pathname,
-		                                   begin,
-		                                   end,
-		                                   diagnostics_dir ) );
+		return make_link_task( link_command,
+		                       output_pathname,
+		                       begin,
+		                       end,
+		                       diagnostics_dir );
 	}
 	
 	
@@ -764,10 +779,10 @@ namespace tool
 				
 				link_input_arguments.front() = objectFile;
 				
-				TaskPtr link_tool_task = seize_ptr( new LinkingTask( command,
-				                                                     linkOutput,
-				                                                     link_input_arguments,
-				                                                     diagnosticsDir ) );
+				TaskPtr link_tool_task = make_link_task( command,
+				                                         linkOutput,
+				                                         link_input_arguments,
+				                                         diagnosticsDir );
 				
 				(*the_task)->AddDependent( link_tool_task );
 				
@@ -827,10 +842,10 @@ namespace tool
 			
 			plus::string outFile = exeDir / linkName;
 			
-			TaskPtr link_task = seize_ptr( new LinkingTask( command,
-			                                                outFile,
-			                                                link_input_arguments,
-			                                                diagnosticsDir ) );
+			TaskPtr link_task = make_link_task( command,
+			                                    outFile,
+			                                    link_input_arguments,
+			                                    diagnosticsDir );
 			
 			link_dependency_task->AddDependent( link_task );
 			
