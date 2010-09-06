@@ -1490,14 +1490,6 @@ namespace Genie
 			
 			if ( !is_dir )
 			{
-				const bool is_alias = cInfo.hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
-				
-				if ( !is_alias )
-				{
-					// I wanted a dir but you gave me a file.  You creep.
-					cInfo.dirInfo.ioResult = errFSNotAFolder;
-				}
-				
 				goto done;
 			}
 			
@@ -1592,6 +1584,7 @@ namespace Genie
 	#ifdef __MACOS__
 		if (     TARGET_CPU_68K
 		     ||  !itIsOnServer
+		     ||  !IsDirectory()
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  RunningInClassic::Test() )
 	#endif
