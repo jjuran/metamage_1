@@ -283,16 +283,24 @@ namespace tool
 	{
 		Command rezCommand;
 		
-		if ( TargetingLamp( itIsTargetingLamp ) )
-		{
-			rezCommand.push_back( "mpwrez" );
-		}
-		else
+		// Use OS X's Rez on OS X, even if we're targeting Lamp
+		const bool use_OSX_Rez = TARGET_RT_MAC_MACHO;
+		
+		if ( use_OSX_Rez )
 		{
 			rezCommand.push_back( "/Developer/Tools/Rez" );
 			rezCommand.push_back( "-i" );
 			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
-			rezCommand.push_back( "-useDF" );
+			
+			if ( !TargetingLamp( itIsTargetingLamp ) )
+			{
+				// ... but only use the data fork for OS X apps
+				rezCommand.push_back( "-useDF" );
+			}
+		}
+		else
+		{
+			rezCommand.push_back( "mpwrez" );
 		}
 		
 		rezCommand.push_back( "Types.r" );
