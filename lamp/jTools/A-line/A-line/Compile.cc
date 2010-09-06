@@ -634,7 +634,7 @@ namespace tool
 			
 			TaskPtr operator()( const plus::string& source_pathname, const plus::string& object_pathname )
 			{
-				const char* caption = "Compiling: ";
+				const char* caption = "CC    ";
 				
 				TaskPtr task = seize_ptr( new CompilingTask( its_project,
 				                                             its_options,
@@ -729,7 +729,7 @@ namespace tool
 				                                                prefix_source_pathname,
 				                                                pchImage,
 				                                                diagnostics_dir_path,
-				                                                "Precompiling: ",
+				                                                "PCH   ",
 				                                                &MakeCompileCommand ) );
 				
 				project.set_precompile_task( precompile_task );
@@ -779,7 +779,7 @@ namespace tool
 			
 			const plus::string& output_path = *the_object;
 			
-			const char* caption = "Compiling: ";
+			const char* caption = "CC    ";
 			
 			TaskPtr task = seize_ptr( new CompilingTask( project,
 			                                             options,
