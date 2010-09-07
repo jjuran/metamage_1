@@ -203,6 +203,8 @@ namespace tool
 	
 	static unsigned short global_last_op = 0xFFFFFFFF;
 	
+	static unsigned global_last_CMPI_operand = 0;
+	
 	static size_t global_last_branch_target = 0;
 	static size_t global_last_pc_relative_target = 0;
 	static size_t global_successor_of_last_exit = 0;
@@ -211,6 +213,22 @@ namespace tool
 	
 	static std::vector< size_t > global_entry_points;
 	static std::vector< size_t > global_exit_points;
+	
+	
+	static const unsigned short indexed_jump_code[] =
+	{
+		//0xd040,  // ADD.W    D0,D0
+		
+		//0x303b,  // MOVE.W   (6,PC,D0.W),D0
+		//0x0006,
+		
+		0x4efb,  // JMP      (2,PC,D0.W)
+		0x0002
+	};
+	
+	static int indexed_jump_state = 0;
+	
+	static bool at_indexed_jump = false;
 	
 	
 	static const unsigned short lswtch_code[] =
@@ -366,6 +384,23 @@ namespace tool
 			p += sizeof (unsigned short);
 			
 			global_bytes_read += sizeof (unsigned short);
+			
+			if ( !at_indexed_jump )
+			{
+				if ( result == indexed_jump_code[ indexed_jump_state ] )
+				{
+					if ( ++indexed_jump_state == sizeof indexed_jump_code / sizeof indexed_jump_code[0] )
+					{
+						at_indexed_jump = true;
+						
+						indexed_jump_state = 0;
+					}
+				}
+				else
+				{
+					indexed_jump_state = 0;
+				}
+			}
 			
 			if ( lswtch_offset == 0 )
 			{
@@ -767,6 +802,12 @@ namespace tool
 				immediate_data = immediate_data << 16 | read_word();
 			}
 			
+			if ( (op >> 9 & 0x7) == 6 )
+			{
+				// needed for index jumps
+				global_last_CMPI_operand = immediate_data;
+			}
+			
 			const plus::string ea = read_ea( mode_reg, immediate_size );
 			
 			printf( format, name, qualifier, space, immediate_data, ea.c_str() );
@@ -958,6 +999,20 @@ namespace tool
 		printf( COMMENT "%#.6x", pc_relative_target );
 	}
 	
+	static void decode_jump_table()
+	{
+		printf( "; indexed jump table\n" );
+		
+		const size_t jump_table = global_bytes_read;
+		
+		int n_jumps = global_last_CMPI_operand;
+		
+		while ( n_jumps-- >= 0 )
+		{
+			printf( "; goto $%.6x\n", jump_table + read_word() );
+		}
+	}
+	
 	static void decode_switch_table()
 	{
 		printf( "; __lswtch__ table\n" );
@@ -1024,7 +1079,21 @@ namespace tool
 		
 		if ( jump )
 		{
-			global_successor_of_last_exit = global_bytes_read;
+			if ( at_indexed_jump )
+			{
+				const bool fpu_selector = global_last_op == 0xc0fc;
+				
+				if ( !fpu_selector )
+				{
+					decode_jump_table();
+				}
+				
+				at_indexed_jump = false;
+			}
+			else
+			{
+				global_successor_of_last_exit = global_bytes_read;
+			}
 		}
 		else if ( lswtch_offset  &&  global_last_absolute_addr_from_ea == lswtch_offset )
 		{
