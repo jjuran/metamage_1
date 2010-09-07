@@ -211,6 +211,33 @@ namespace tool
 	static std::vector< size_t > global_exit_points;
 	
 	
+	static const unsigned short lswtch_code[] =
+	{
+		0x205f,
+		0x2248,
+		0xd2d8,
+		0xb098,
+		0x6c02,
+		0x4ed1,
+		0xb098,
+		0x6f02,
+		0x4ed1,
+		0x3218,
+		0xb098,
+		0x6604,
+		0xd0d0,
+		0x4ed0,
+		0x5448,
+		0x51c9,
+		0xfff4,
+		0x4ed1
+	};
+	
+	static int lswtch_state = 0;
+	
+	static size_t lswtch_offset = 0;
+	
+	
 	static void add_branch_target( size_t address )
 	{
 		typedef std::vector< size_t >::iterator iterator;
@@ -337,6 +364,21 @@ namespace tool
 			p += sizeof (unsigned short);
 			
 			global_bytes_read += sizeof (unsigned short);
+			
+			if ( lswtch_offset == 0 )
+			{
+				if ( const bool match = result == lswtch_code[ lswtch_state ] )
+				{
+					if ( ++lswtch_state == sizeof lswtch_code / sizeof lswtch_code[0] )
+					{
+						lswtch_offset = global_bytes_read - sizeof lswtch_code;
+					}
+				}
+				else
+				{
+					lswtch_state = 0;
+				}
+			}
 		}
 		
 		return result;
@@ -385,6 +427,7 @@ namespace tool
 		return 0;
 	}
 	
+	static unsigned global_last_absolute_addr_from_ea  = 0;
 	static unsigned global_last_immediate_data_from_ea = 0;
 	
 	static plus::string read_ea( short mode_reg, short immediate_size )
@@ -591,28 +634,12 @@ namespace tool
 			{
 				case 0:
 				case 1:
-					result += "0x";
-					append_hex( result, extension, 2 );
-					
-					if ( reg == 1 )
-					{
-						append_hex( result, read_word(), 2 );
-					}
+					immediate_size = reg + 1 << 1;
 					
 					break;
 				
 				case 4:
-					result += "#0x";
-					
-					unsigned immediate_data;
-					
-					immediate_data = immediate_size == 1 ? extension & 0xff
-					               : immediate_size == 2 ? extension
-					               :                       extension << 16 | read_word();
-					
-					append_hex( result, immediate_data, immediate_size );
-					
-					global_last_immediate_data_from_ea = immediate_data;
+					result += "#";
 					
 					break;
 				
@@ -620,6 +647,19 @@ namespace tool
 					throw illegal_operand();
 					break;
 			}
+			
+			unsigned& marker = reg <= 1 ? global_last_absolute_addr_from_ea
+			                            : global_last_immediate_data_from_ea;
+			
+			result += "0x";
+			
+			const unsigned data = immediate_size == 1 ? extension & 0xff
+			                    : immediate_size == 2 ? extension
+			                    :                       extension << 16 | read_word();
+			
+			marker = data;
+			
+			append_hex( result, data, immediate_size );
 		}
 		
 		return result;
@@ -916,6 +956,40 @@ namespace tool
 		printf( COMMENT "%#.6x", pc_relative_target );
 	}
 	
+	static void decode_switch_table()
+	{
+		printf( "; __lswtch__ table\n" );
+		
+		const size_t table_start = global_bytes_read;
+		
+		const size_t default_case = table_start + read_word();
+		
+		printf( "; default:  goto $%.6x\n", default_case );
+		
+		const unsigned min = read_long();
+		
+		printf( "; min: %#x, %d\n", min, min );
+		
+		const unsigned max = read_long();
+		
+		printf( "; max: %#x, %d\n", max, max );
+		
+		int n = read_word();
+		
+		while ( n-- >= 0 )
+		{
+			const unsigned value = read_long();
+			
+			size_t target = global_bytes_read;
+			
+			const unsigned short offset = read_word();
+			
+			target += offset;
+			
+			printf( "; case %#x, %d:  goto $%.6x\n", value, value, target );
+		}
+	}
+	
 	static void decode_Jump( unsigned short op )
 	{
 		const unsigned short source = op & 0x3f;
@@ -949,6 +1023,10 @@ namespace tool
 		if ( jump )
 		{
 			global_successor_of_last_exit = global_bytes_read;
+		}
+		else if ( lswtch_offset  &&  global_last_absolute_addr_from_ea == lswtch_offset )
+		{
+			decode_switch_table();
 		}
 	}
 	
