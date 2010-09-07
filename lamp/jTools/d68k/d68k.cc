@@ -2074,26 +2074,90 @@ namespace tool
 	};
 	
 	
-	static bool name_assumed( unsigned short word )
+	static const uint32_t name_validity[] =
+	{
+		0,  // no control chars
+		
+		            1 << (' ' & 31) |  // 0x20
+		            1 << ('%' & 31) |  // 0x25
+		            1 << ('.' & 31) |  // 0x2e
+		(1 << 10) - 1 << ('0' & 31),   // 0x30 - 0x39
+		
+		(1 << 26) - 1 << ('A' & 31) |  // 0x41 - 0x5A
+		            1 << ('_' & 31),   // 0x5f
+		
+		(1 << 26) - 1 << ('a' & 31)    // 0x61 - 0x7A
+	};
+	
+	static inline bool valid_name_char( unsigned char c )
+	{
+		return name_validity[ c >> 5 & 0x3 ] & 1 << (c & 0x1f);
+	}
+	
+	static const char* get_name( unsigned short word )
 	{
 		const unsigned short byte_0 = word >> 8;
 		const unsigned short byte_1 = word & 0xff;
 		
-		if ( const bool long_name = byte_0 == 0x80 )
+		if ( byte_0 < 0x80 )
 		{
-			return true;
+			return NULL;
 		}
 		
-		const bool name_allowed = (byte_0 & 0xe0) == 0x80;
+		static char name[ 256 ];
 		
-		if ( !name_allowed )
+		char* p = name;
+		
+		size_t length = 0;
+		
+		const bool try_fixed = false;
+		
+		if ( const bool is_fixed_length = byte_0 >= (0x80 | 0x20) )
 		{
-			return false;
+			if ( !valid_name_char( byte_0 )  ||  !valid_name_char( byte_1 ) )
+			{
+				return NULL;
+			}
+			
+			const bool is_method = byte_1 & 0x80;
+			
+			*p++ = byte_0 & 0x7f;
+			*p++ = byte_1 & 0x7f;
+			
+			length = 8 + 8 * is_method - 2;
+		}
+		else if ( const size_t length_byte = byte_0 & 0x1f )
+		{
+			if ( !valid_name_char( byte_1 ) )
+			{
+				return NULL;
+			}
+			
+			*p++ = byte_1;
+			
+			length = length_byte - 1;
+		}
+		else
+		{
+			length = byte_1;
 		}
 		
-		//return byte_1 >= 0x20  &&  byte_1 < 0x7f;
+		(void) read_word();
 		
-		return byte_1 == '_'  ||  isalpha( byte_1 );
+		for ( p[ length ] = '\0';  length > 1;  length -= 2 )
+		{
+			const unsigned short pair = read_word();
+			
+			*p++ = pair >> 8;
+			*p++ = pair & 0xff;
+		}
+		
+		if ( length )
+		{
+			*p++ = read_word() >> 8;
+		}
+		
+		return name;
 	}
 	
 	static void decode_one()
@@ -2104,43 +2168,8 @@ namespace tool
 			
 			const unsigned short word_0 = peek_word();
 			
-			if ( name_assumed( word_0 ) )
+			if ( const char* name = get_name( word_0 ) )
 			{
-				const unsigned short byte_0 = word_0 >> 8;
-				const unsigned short byte_1 = word_0 & 0xff;
-				
-				const bool long_name = byte_0 == 0x80;
-				
-				const short length = long_name ? byte_1
-				                               : byte_0 & 0x1f;
-				
-				char name[ 256 ];
-				
-				if ( !long_name )
-				{
-					name[0] = byte_1;
-				}
-				
-				int i = long_name ? 0 : 1;
-				
-				(void) read_word();
-				
-				while ( i < length )
-				{
-					const unsigned short word = read_word();
-					
-					name[ i++ ] = word >> 8;
-					
-					if ( i == length )
-					{
-						break;
-					}
-					
-					name[ i++ ] = word & 0xff;
-				}
-				
-				name[ i ] = '\0';
-				
 				printf( "; ^^^ %s\n\n", name );
 				
 				(void) read_word();
