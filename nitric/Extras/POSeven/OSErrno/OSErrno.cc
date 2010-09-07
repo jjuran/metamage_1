@@ -32,6 +32,7 @@ namespace OSErrno
 			case ioErr          :  result = EIO;           break;
 			case fnOpnErr       :  // fall through
 			case rfNumErr       :  result = EBADF;         break;
+			case kOTOutOfMemoryErr:// fall through
 			case memFullErr     :  result = ENOMEM;        break;
 			case permErr        :  // fall through
 			case portInUse      :  result = EACCES;        break;
