@@ -201,6 +201,8 @@ namespace tool
 	
 	static size_t global_pc = 0;
 	
+	static unsigned short global_last_op = 0xFFFFFFFF;
+	
 	static size_t global_last_branch_target = 0;
 	static size_t global_last_pc_relative_target = 0;
 	static size_t global_successor_of_last_exit = 0;
@@ -1285,8 +1287,68 @@ namespace tool
 #pragma mark -
 #pragma mark ** High-order **
 	
+	static bool decode_data( unsigned short op )
+	{
+		switch ( global_last_op )
+		{
+			case 0x4e75:  // RTS
+			case 0xa9f4:  // _ExitToShell
+				if ( op < 256 )
+				{
+					break;
+				}
+				else
+				{
+					// fall through
+				}
+			
+			default:
+				return false;
+		}
+		
+		if ( op == 0  &&  peek_word() == 0 )
+		{
+			(void) read_word();
+			
+			printf( "DC.L     0x00000000\n" );
+		}
+		else if ( op != 0 )
+		{
+			printf( "DC.W     %#.4x  ; %d bytes of data\n", op, op );
+			
+			int n_words = (op + 1) / 2;
+			
+			while ( --n_words >= 0 )
+			{
+				const size_t bytes_read = global_bytes_read;
+				
+				if ( n_words-- )
+				{
+					printf( "%.6x:  DC.L     %#.8x\n", bytes_read, read_long() );
+				}
+				else
+				{
+					printf( "%.6x:  DC.W     %#.4x\n", bytes_read, read_word() );
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+		printf( "\n" );
+		
+		return true;
+	}
+	
 	static void decode_0_line( unsigned short op )
 	{
+		if ( const bool data = decode_data( op ) )
+		{
+			return;
+		}
+		
 		if ( op & 0x0100 )
 		{
 			// MOVEP
@@ -1896,6 +1958,11 @@ namespace tool
 		{
 			decode_default( op );
 		}
+		
+		if ( op == 0xa9f4 )
+		{
+			global_successor_of_last_exit = global_bytes_read;
+		}
 	}
 	
 	static void decode_F_line( unsigned short op )
@@ -2027,6 +2094,8 @@ namespace tool
 			try
 			{
 				decode( word );
+				
+				global_last_op = word;
 				
 				return;
 			}
