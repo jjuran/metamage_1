@@ -231,7 +231,7 @@ namespace plus
 		return *this;
 	}
 	
-	string::size_type string::length() const
+	string::size_type string::size() const
 	{
 		const int margin = its_small_name[ max_offset ];
 		

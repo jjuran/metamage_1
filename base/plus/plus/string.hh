@@ -109,11 +109,11 @@ namespace plus
 				return max;
 			}
 			
-			bool empty() const  { return length() == 0; }
+			bool empty() const  { return size() == 0; }
 			
-			size_type length() const;
+			size_type size() const;
 			
-			size_type size() const  { return length(); }
+			size_type length() const  { return size(); }
 			
 			size_type capacity() const;
 			
