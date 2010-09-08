@@ -81,9 +81,9 @@ namespace tool
 		                                N::kOSAGenericScriptingComponentSubtype );
 	}
 	
-	static nucleus::string ReadUntilEOF( p7::fd_t stream )
+	static plus::string ReadUntilEOF( p7::fd_t stream )
 	{
-		nucleus::mutable_string result;
+		plus::var_string result;
 		
 		const std::size_t block_size = 4096;
 		
@@ -99,11 +99,11 @@ namespace tool
 	
 	static nucleus::string ReadFileData( const char* file )
 	{
-		nucleus::mutable_string result;
+		plus::string slurped;
 		
 		try
 		{
-			result = iota::convert_string< nucleus::string >( p7::slurp( file ) );
+			slurped = p7::slurp( file );
 		}
 		catch ( const p7::errno_t& err )
 		{
@@ -112,8 +112,10 @@ namespace tool
 				throw;	
 			}
 			
-			result = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
+			slurped = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
 		}
+		
+		nucleus::mutable_string result = iota::convert_string< nucleus::string >( slurped );
 		
 		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
 		{
