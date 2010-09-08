@@ -270,11 +270,6 @@ namespace Genie
 			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
-			FSTree_HFS( const FSSpec&        file,
-			            bool                 onServer,
-			            const plus::string&  name = plus::string(),
-			            const FSTree*        parent = NULL );
-			
 			bool Exists() const;
 			bool IsFile() const;
 			bool IsDirectory() const;
@@ -367,25 +362,6 @@ namespace Genie
 		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
 	}
 	
-	FSTree_HFS::FSTree_HFS( const FSSpec&        file,
-	                        bool                 onServer,
-	                        const plus::string&  name,
-	                        const FSTree*        parent )
-	:
-		FSTree_Directory( parent       ? parent->Self()    : null_FSTreePtr,
-		                  name.empty() ? MakeName ( file ) : name ),
-		itsFileSpec     ( file                             ),
-		itIsOnServer    ( onServer                         )
-	{
-		// we override Parent()
-		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( itsCInfo,
-		                                                  itIsOnServer,
-		                                                  itsFileSpec );
-		
-		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
-	}
-	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -434,7 +410,15 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
 	{
-		return seize_ptr( new FSTree_HFS( item, onServer ) );
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Returns >( cInfo,
+		                              onServer,
+		                              item );
+		
+		const plus::string name = MakeName( item );
+		
+		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
@@ -1473,9 +1457,11 @@ namespace Genie
 		
 		N::CopyToPascalString( cInfo.name, result.name, sizeof result.name - 1 );
 		
+		const plus::string name = MakeName( result );
+		
 		// This code path is only used on servers.
 		
-		return FSTreeFromFSSpec( result, true );
+		return seize_ptr( new FSTree_HFS( cInfo, true, name ) );
 	}
 	
 #endif
