@@ -116,6 +116,15 @@ namespace tool
 			slurped = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
 		}
 		
+		try
+		{
+			slurped = plus::mac_from_utf8( slurped );
+		}
+		catch ( ... )
+		{
+			// Invalid UTF-8, probably MacRoman
+		}
+		
 		nucleus::mutable_string result = iota::convert_string< nucleus::string >( slurped );
 		
 		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
