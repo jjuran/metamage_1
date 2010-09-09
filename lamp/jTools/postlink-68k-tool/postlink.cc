@@ -17,11 +17,11 @@
 #include "iota/strings.hh"
 
 // poseven
+#include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
 // Divergence
@@ -74,7 +74,7 @@ namespace tool
 		return true;
 	}
 	
-	static bool Patch68KStartup( const FSSpec& file )
+	static bool Patch68KStartup( const char* path, const FSSpec& file )
 	{
 		const unsigned long lampmain = get_code_offset( "_lamp_main" );
 		
@@ -82,7 +82,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "ld: _lamp_main() offset 0x%.8x is out of range for 16-bit reference\n", lampmain );
 			
-			N::FSpDelete( file );
+			p7::unlink( path );
 			
 			throw p7::exit_failure;
 		}
@@ -90,7 +90,7 @@ namespace tool
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdWrPerm );
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
@@ -153,7 +153,7 @@ namespace tool
 			return 0;
 		}
 		
-		const bool patched = Patch68KStartup( target_filespec );
+		const bool patched = Patch68KStartup( target_path, target_filespec );
 		
 		if ( !patched )
 		{
