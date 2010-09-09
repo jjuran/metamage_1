@@ -304,7 +304,7 @@ namespace tool
 	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		return store_string( mac_pathname_from_path( pathname ) );
+		return store_string( mac_pathname_from_path( pathname, true ) );
 	}
 	
 	
@@ -732,7 +732,7 @@ namespace tool
 			}
 		}
 		
-		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname );
+		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname, true );
 		
 		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
 		

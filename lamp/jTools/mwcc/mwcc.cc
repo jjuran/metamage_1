@@ -118,7 +118,7 @@ namespace tool
 	
 	static inline plus::string MacPathFromPOSIXPath( const char* path )
 	{
-		return mac_pathname_from_path( path );
+		return mac_pathname_from_path( path, true );
 	}
 	
 	static const plus::string& MacPathForCWD()

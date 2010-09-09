@@ -53,7 +53,7 @@ namespace tool
 	{
 		static std::list< plus::string > static_string_storage;
 		
-		static_string_storage.push_back( mac_pathname_from_path( pathname ) );
+		static_string_storage.push_back( mac_pathname_from_path( pathname, true ) );
 		
 		return static_string_storage.back().c_str();
 	}
