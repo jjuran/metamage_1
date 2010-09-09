@@ -12,6 +12,9 @@
 // Lamp
 #include "lamp/_realpathat.h"
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -72,6 +75,11 @@ namespace Genie
 			
 			plus::string resolved = is_mac ? mac_pathname_from_file( file )
 			                               : file->Pathname();
+			
+			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
+			{
+				resolved = plus::utf8_from_mac( resolved );
+			}
 			
 			const bool too_big = resolved.size() > buffer_size;
 			
