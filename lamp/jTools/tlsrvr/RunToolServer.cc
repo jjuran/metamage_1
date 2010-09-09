@@ -23,6 +23,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 
@@ -320,7 +321,7 @@ namespace tool
 	{
 		std::replace( text.begin(), text.end(), '\r', '\n' );
 		
-		p7::write( fd, text );
+		p7::write( fd, plus::utf8_from_mac( text ) );
 	}
 	
 	static void dump_file( const char* path, p7::fd_t fd )

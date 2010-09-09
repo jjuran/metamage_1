@@ -13,6 +13,7 @@
 #include "iota/decimal.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -87,6 +88,8 @@ namespace tool
 			plus::string word = plus::string( *it,
 			                                  strlen( *it ),
 			                                  plus::delete_never );
+			
+			word = plus::mac_from_utf8( word );
 			
 			command += needToEscape ? QuoteForMPW( word ) : word;
 			
