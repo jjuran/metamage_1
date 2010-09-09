@@ -29,6 +29,7 @@
 #include "poseven/functions/read.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
+#include "poseven/types/exit_t.hh"
 #include "poseven/types/fd_t.hh"
 
 // pfiles
@@ -579,7 +580,7 @@ namespace tool
 					{
 						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
 						
-						N::ThrowOSStatus( eofErr );
+						throw p7::exit_failure;
 					}
 					
 					plus::string type   ( pkgInfo.data(),     4 );
