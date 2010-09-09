@@ -132,19 +132,24 @@ namespace Genie
 	};
 	
 	
+	static FSSpec DTGetAPPL( const FSTreePtr& appls_quad, short index = 0 )
+	{
+		const ::OSType creator = iota::decode_quad( appls_quad->Name().c_str() );
+		
+		const FSTreePtr& great_x2_grandparent = appls_quad->ParentRef()->ParentRef()->ParentRef();
+		
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
+		
+		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
+	}
+	
 	FSTreePtr dt_appls_QUAD_latest::ResolveLink() const
 	{
 		const FSTreePtr& parent = ParentRef();
 		
-		const ::OSType creator = iota::decode_quad( parent->Name().c_str() );
+		const FSSpec file = DTGetAPPL( parent );
 		
-		const FSTreePtr& great_x2_grandparent = parent->ParentRef()->ParentRef()->ParentRef();
-		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
-		
-		const FSSpec file = N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ) );
-		
-		const bool onServer = VolumeIsOnServer( vRefNum );
+		const bool onServer = VolumeIsOnServer( N::FSVolumeRefNum( file.vRefNum ) );
 		
 		return FSTreeFromFSSpec( file, onServer );
 	}
@@ -155,15 +160,9 @@ namespace Genie
 		
 		const FSTreePtr& grandparent = ParentRef()->ParentRef();
 		
-		const ::OSType creator = iota::decode_quad( grandparent->Name().c_str() );
+		const FSSpec file = DTGetAPPL( grandparent, index );
 		
-		const FSTreePtr& great_x3_grandparent = grandparent->ParentRef()->ParentRef()->ParentRef();
-		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x3_grandparent->Name().c_str() ) );
-		
-		const FSSpec file = N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
-		
-		const bool onServer = VolumeIsOnServer( vRefNum );
+		const bool onServer = VolumeIsOnServer( N::FSVolumeRefNum( file.vRefNum ) );
 		
 		return FSTreeFromFSSpec( file, onServer );
 	}
