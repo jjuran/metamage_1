@@ -16,11 +16,8 @@
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+// mac_pathname
+#include "mac_pathname_from_path.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -30,7 +27,6 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	
 	
 	template < class Iter >
@@ -53,19 +49,11 @@ namespace tool
 	}
 	
 	
-	static plus::string MacPathFromPOSIXPath( const char* pathname )
-	{
-		FSSpec item = Div::ResolvePathToFSSpec( pathname );
-		
-		return GetMacPathname( item );
-	}
-	
-	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
 		static std::list< plus::string > static_string_storage;
 		
-		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		static_string_storage.push_back( mac_pathname_from_path( pathname ) );
 		
 		return static_string_storage.back().c_str();
 	}
