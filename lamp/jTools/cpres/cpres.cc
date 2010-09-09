@@ -67,14 +67,14 @@ namespace tool
 	}
 	
 	
-	static int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
+	static int TryResCopy( const char*       source_path,
+	                       const FSSpec&     source,
+	                       N::ResFileRefNum  destRes )
 	{
 		if ( io::directory_exists( source ) )
 		{
-			plus::string name = plus::make_string( source.name );
-			
 			// Source item is a directory.
-			std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
+			std::fprintf( stderr, "cpres: %s: omitting directory\n", source_path );
 			
 			return 1;
 		}
@@ -200,11 +200,13 @@ namespace tool
 		// Try to copy each file.  Return whether any errors occurred.
 		for ( int index = 0;  index < n_args - 1;  ++index )
 		{
+			const char* source_path = freeArgs[ index ];
+			
 			try
 			{
-				FSSpec source = Div::ResolvePathToFSSpec( freeArgs[ index ] );
+				FSSpec source = Div::ResolvePathToFSSpec( source_path );
 				
-				fail += TryResCopy( source, resFileH );
+				fail += TryResCopy( source_path, source, resFileH );
 			}
 			catch ( const N::OSStatus& err )
 			{
@@ -213,7 +215,7 @@ namespace tool
 				plus::string destName = plus::make_string( dest.name );
 				
 				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
-				                                err.Get(),      freeArgs[ index ],
+				                                err.Get(),      source_path,
 				                                                      destName.c_str() );
 			}
 		}
