@@ -35,10 +35,6 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// Nitrogen
-#include "Nitrogen/Files.hh"
-#include "Nitrogen/Resources.hh"
-
 // GetPathname
 #include "GetPathname.hh"
 
@@ -54,15 +50,10 @@
 // one_path
 #include "one_path/find_InterfacesAndLibraries.hh"
 
-// ld
-#include "link_map.hh"
-
 
 namespace tool
 {
 	
-	namespace N = Nitrogen;
-	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
 	namespace Div = Divergence;
@@ -312,55 +303,6 @@ namespace tool
 	
 	static const char* gFileType    = NULL;
 	static const char* gFileCreator = NULL;
-	
-	static void Patch68KStartupCode( ::Handle code, UInt32 lampMainOffset )
-	{
-		const UInt32 nopnop = 0x4e714e71;
-		const UInt32 jmp    = 0x4efa0000;
-		
-		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
-		UInt32* const setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
-		UInt32* const loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
-		UInt32* const moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
-		UInt32* const setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
-		UInt32* const restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
-		UInt32* const jmpToMain     = reinterpret_cast< UInt32* >( *code + 36 );
-		
-		*saveRegisters = *setCurrentA4  + 4;
-		*setCurrentA4  = *loadStartToA0 + 4;
-		*loadStartToA0 = *moveAndStrip;
-		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = lampMainOffset ? jmp | (lampMainOffset - 28 - 2) : *jmpToMain + 8;
-		*restoreRegs   = nopnop;
-		*jmpToMain     = nopnop;
-	}
-	
-	static void Patch68KStartup( const FSSpec& file )
-	{
-		const unsigned long lampmain = get_code_offset( "_lamp_main" );
-		
-		if ( lampmain > 0x7fff )
-		{
-			std::fprintf( stderr, "ld: _lamp_main() offset 0x%.8x is out of range for 16-bit reference\n", lampmain );
-			
-			N::FSpDelete( file );
-			
-			throw p7::exit_failure;
-		}
-		
-		N::ResType  resType = N::ResType( 'Wish' );
-		N::ResID    resID   = N::ResID  ( 0      );
-		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
-		
-		N::Handle code = N::Get1Resource( resType, resID );
-		
-		Patch68KStartupCode( code.Get(), lampmain );
-		
-		N::ChangedResource( code );
-		
-		N::WriteResource( code );
-	}
 	
 	static const char* store_string( const plus::string& string )
 	{
@@ -871,14 +813,11 @@ namespace tool
 			return exit_status;
 		}
 		
-		if ( arch == arch_m68k )
-		{
-			record_symbolics( output_pathname, strlen( output_pathname ) );
-		}
-		
 		if ( arch == arch_m68k  &&  gProductType == kProductTool )
 		{
-			Patch68KStartup( output_filespec );
+			const char *const postlink_argv[] = { "postlink-68k-tool", output_pathname, NULL };
+			
+			p7::execvp( postlink_argv );
 		}
 		
 		return exit_status;

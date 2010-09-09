@@ -1,8 +1,6 @@
 /*
 	link_map.hh
 	-----------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef LD_LINKMAP_HH
@@ -17,7 +15,7 @@ namespace tool
 	
 	uint32_t get_code_offset( const char* name );
 	
-	void record_symbolics( const char* output_path, unsigned path_size );
+	void read_link_map( const char* link_map_path );
 	
 }
 

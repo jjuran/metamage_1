@@ -1,8 +1,6 @@
 /*
 	link_map.cc
 	-----------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #include "link_map.hh"
@@ -15,9 +13,6 @@
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
-// plus
-#include "plus/concat.hh"
-
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -25,7 +20,6 @@
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/open.hh"
-#include "poseven/functions/write.hh"
 
 
 namespace tool
@@ -103,7 +97,7 @@ namespace tool
 		global_name_data += '\0';
 	}
 	
-	static void read_link_map( p7::fd_t fd )
+	static void read_link_map_fd( p7::fd_t fd )
 	{
 		text_input::feed feed;
 		
@@ -154,17 +148,9 @@ namespace tool
 		return 0;
 	}
 	
-	void record_symbolics( const char* output_path, unsigned path_size )
+	void read_link_map( const char* link_map_path )
 	{
-	#ifndef __LAMP__
-		
-		return;  // No path-based resource access
-		
-	#endif
-		
-		const plus::string linkmap_path = plus::concat( output_path, path_size, STR_LEN( ".map" ) );
-		
-		read_link_map( p7::open( linkmap_path, p7::o_rdonly ) );
+		read_link_map_fd( p7::open( link_map_path, p7::o_rdonly ) );
 	}
 	
 }
