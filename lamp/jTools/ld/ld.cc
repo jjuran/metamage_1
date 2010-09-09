@@ -232,7 +232,21 @@ namespace tool
 	{
 		arch_none,
 		arch_m68k,
-		arch_ppc
+		arch_ppc,
+		
+	#if __MC68K__
+		
+		arch_default = arch_m68k
+		
+	#elif __POWERPC__
+		
+		arch_default = arch_ppc
+		
+	#else
+		
+		arch_default = arch_none
+		
+	#endif
 	};
 	
 	static Architecture read_arch( const char* arch )
@@ -422,9 +436,7 @@ namespace tool
 	{
 		std::vector< const char* > command_args;
 		
-		Architecture arch = TARGET_CPU_68K ? arch_m68k
-		                  : TARGET_CPU_PPC ? arch_ppc
-		                  :                  arch_none;
+		Architecture arch = arch_default;
 		
 		const char* output_pathname = NULL;
 		
