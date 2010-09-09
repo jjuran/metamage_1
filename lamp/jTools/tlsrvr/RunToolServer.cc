@@ -112,7 +112,8 @@ namespace tool
 		plus::var_string script;
 		
 		script += DirectoryCommandForMPW();
-		script += command + "\r";
+		script += command;
+		script += "\r";
 		script += "Set CommandStatus {Status}" "\r";
 		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
 		script += "Exit {CommandStatus}" "\r";
