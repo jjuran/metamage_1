@@ -9,7 +9,12 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
+
+// Lamp
+#include "lamp/_realpathat.h"
+
+// plus
+#include "plus/mac_utf8.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -31,7 +36,7 @@
 namespace p7 = poseven;
 
 
-plus::string mac_pathname_from_path( const char* path )
+plus::string mac_pathname_from_path( const char* path, bool utf8 )
 {
 #ifdef __APPLE__
 	
@@ -40,7 +45,14 @@ plus::string mac_pathname_from_path( const char* path )
 	
 	try
 	{
-		return GetMacPathname( Div::ResolvePathToFSSpec( path ) );
+		plus::string mac_path = GetMacPathname( Div::ResolvePathToFSSpec( path ) );
+		
+		if ( utf8 )
+		{
+			mac_path = plus::utf8_from_mac( mac_path );
+		}
+		
+		return mac_path;
 	}
 	catch ( const N::OSStatus& err )
 	{
@@ -58,7 +70,9 @@ plus::string mac_pathname_from_path( const char* path )
 	
 	char buffer[ 4096 ];
 	
-	ssize_t size = _realpathat( AT_FDCWD, path, buffer, sizeof buffer, REALPATH_MAC );
+	const int flags = REALPATH_OUTPUT_HFS | utf8 * REALPATH_OUTPUT_UTF8;
+	
+	ssize_t size = _realpathat( AT_FDCWD, path, buffer, sizeof buffer, flags );
 	
 	if ( size < 0 )
 	{
@@ -69,4 +83,4 @@ plus::string mac_pathname_from_path( const char* path )
 	
 #endif
 }
-	
+
