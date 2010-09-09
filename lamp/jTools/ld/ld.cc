@@ -29,14 +29,13 @@
 #include "poseven/functions/read.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/waitpid.hh"
+#include "poseven/types/exit_t.hh"
 #include "poseven/types/fd_t.hh"
 
 // pfiles
 #include "pfiles/common.hh"
 
 // Nitrogen
-#include "Mac/Files/Types/FSCreator.hh"
-
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -232,7 +231,21 @@ namespace tool
 	{
 		arch_none,
 		arch_m68k,
-		arch_ppc
+		arch_ppc,
+		
+	#if __MC68K__
+		
+		arch_default = arch_m68k
+		
+	#elif __POWERPC__
+		
+		arch_default = arch_ppc
+		
+	#else
+		
+		arch_default = arch_none
+		
+	#endif
 	};
 	
 	static Architecture read_arch( const char* arch )
@@ -422,9 +435,7 @@ namespace tool
 	{
 		std::vector< const char* > command_args;
 		
-		Architecture arch = TARGET_CPU_68K ? arch_m68k
-		                  : TARGET_CPU_PPC ? arch_ppc
-		                  :                  arch_none;
+		Architecture arch = arch_default;
 		
 		const char* output_pathname = NULL;
 		
@@ -569,7 +580,7 @@ namespace tool
 					{
 						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
 						
-						N::ThrowOSStatus( eofErr );
+						throw p7::exit_failure;
 					}
 					
 					plus::string type   ( pkgInfo.data(),     4 );
@@ -578,7 +589,7 @@ namespace tool
 					gFileType    = store_string( type    );
 					gFileCreator = store_string( creator );
 					
-					Mac::FSType typeCode = Mac::FSType( iota::decode_quad( type.data() ) );
+					const uint32_t typeCode = iota::decode_quad( type.data() );
 					
 					switch ( typeCode )
 					{
@@ -612,16 +623,7 @@ namespace tool
 					}
 				}
 				
-				plus::string library_pathname;
-				
-				if ( !is_pathname )
-				{
-					library_pathname = FindSystemLibrary( arg );
-					
-					arg = library_pathname.c_str();
-				}
-				
-				command_args.push_back( StoreMacPathFromPOSIXPath( arg ) );
+				command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
 			}
 		}
 		
