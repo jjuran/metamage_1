@@ -6,6 +6,9 @@
 // Standard C/C++
 #include <cctype>
 
+// Standard C
+#include <string.h>
+
 // iota
 #include "iota/decimal.hh"
 
@@ -35,9 +38,9 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static plus::string QuoteForMPW( const char* str )
+	static plus::string QuoteForMPW( const plus::string& str )
 	{
-		const char* p = str;
+		const char* p = str.c_str();
 		const char* q = p;
 		
 		bool needsQuoting = false;
@@ -66,7 +69,7 @@ namespace tool
 		
 		if ( !needsQuoting )
 		{
-			return plus::string( str, p - str, plus::delete_never );
+			return str;
 		}
 		
 		result += "'";
@@ -81,9 +84,11 @@ namespace tool
 		
 		for ( char const *const *it = begin;  it < end;  ++it )
 		{
-			const char* word = *it;
+			plus::string word = plus::string( *it,
+			                                  strlen( *it ),
+			                                  plus::delete_never );
 			
-			command += needToEscape ? QuoteForMPW( word ).c_str() : word;
+			command += needToEscape ? QuoteForMPW( word ) : word;
 			
 			command += " ";
 		}
