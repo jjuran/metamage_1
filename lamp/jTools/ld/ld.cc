@@ -35,11 +35,8 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+// mac_pathname
+#include "mac_pathname_from_path.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -56,7 +53,6 @@ namespace tool
 	
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
-	namespace Div = Divergence;
 	
 	
 	using namespace io::path_descent_operators;
@@ -254,13 +250,6 @@ namespace tool
 		return arch_none;
 	}
 	
-	static plus::string MacPathFromPOSIXPath( const char* pathname )
-	{
-		FSSpec item = Div::ResolvePathToFSSpec( pathname );
-		
-		return GetMacPathname( item );
-	}
-	
 	std::vector< const char* > gLibraryDirs;
 	
 	static void RememberLibraryDir( const char* pathname )
@@ -315,7 +304,7 @@ namespace tool
 	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		return store_string( MacPathFromPOSIXPath( pathname ) );
+		return store_string( mac_pathname_from_path( pathname ) );
 	}
 	
 	
@@ -746,9 +735,7 @@ namespace tool
 			}
 		}
 		
-		FSSpec output_filespec = Div::ResolvePathToFSSpec( output_pathname );
-		
-		plus::string output_mac_pathname = GetMacPathname( output_filespec );
+		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname );
 		
 		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
 		
