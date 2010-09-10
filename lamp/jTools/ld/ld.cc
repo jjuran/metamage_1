@@ -483,6 +483,24 @@ namespace tool
 		}
 	}
 	
+	static void do_plus_option( const char* arg, std::vector< const char* >& command_args )
+	{
+		if ( const char* equals = std::strchr( arg, '=' ) )
+		{
+			plus::var_string option( arg, equals );
+			
+			option[0] = '-';
+			
+			command_args.push_back( store_string( option ) );
+			
+			command_args.push_back( equals + 1 );
+		}
+		else
+		{
+			// error
+		}
+	}
+	
 	static bool do_special_case_arg( const char* arg )
 	{
 		plus::string filename = io::get_filename( arg );
@@ -547,20 +565,7 @@ namespace tool
 			}
 			else if ( arg[0] == '+' )
 			{
-				if ( const char* equals = std::strchr( arg, '=' ) )
-				{
-					plus::var_string option( arg, equals );
-					
-					option[0] = '-';
-					
-					command_args.push_back( store_string( option ) );
-					
-					command_args.push_back( equals + 1 );
-				}
-				else
-				{
-					// error
-				}
+				do_plus_option( arg, command_args );
 			}
 			else
 			{
