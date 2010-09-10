@@ -7,8 +7,13 @@
 #include <errno.h>
 
 // POSIX
-#include <unistd.h>
 #include <sys/stat.h>
+
+// Lamp
+#include "lamp/_realpathat.h"
+
+// plus
+#include "plus/mac_utf8.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -24,11 +29,6 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
-
-
-#ifndef REALPATH_MAC
-#define REALPATH_MAC  0
-#endif
 
 
 namespace Genie
@@ -71,10 +71,15 @@ namespace Genie
 			
 			ResolveLinks_InPlace( file );
 			
-			const bool is_mac = flags & REALPATH_MAC;
+			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			
 			plus::string resolved = is_mac ? mac_pathname_from_file( file )
 			                               : file->Pathname();
+			
+			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
+			{
+				resolved = plus::utf8_from_mac( resolved );
+			}
 			
 			const bool too_big = resolved.size() > buffer_size;
 			
