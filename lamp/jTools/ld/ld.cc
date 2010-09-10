@@ -553,6 +553,32 @@ namespace tool
 		return true;
 	}
 	
+	static void do_bare_argument( const char* arg, std::vector< const char* >& command_args )
+	{
+		const bool needs_link = do_special_case_arg( arg );
+		
+		if ( !needs_link )
+		{
+			return;
+		}
+		
+		const bool is_pathname = std::strchr( arg, '/' ) != NULL;
+		
+		if ( is_pathname  &&  gFirstObjectFilePath == NULL )
+		{
+			const size_t length = strlen( arg );
+			
+			const int base_length = length - STRLEN( ".o" );
+			
+			if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
+			{
+				gFirstObjectFilePath = arg;
+			}
+		}
+		
+		command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > command_args;
@@ -569,28 +595,7 @@ namespace tool
 			}
 			else
 			{
-				const bool needs_link = do_special_case_arg( arg );
-				
-				if ( !needs_link )
-				{
-					continue;
-				}
-				
-				const bool is_pathname = std::strchr( arg, '/' ) != NULL;
-				
-				if ( is_pathname  &&  gFirstObjectFilePath == NULL )
-				{
-					const size_t length = strlen( arg );
-					
-					const int base_length = length - STRLEN( ".o" );
-					
-					if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
-					{
-						gFirstObjectFilePath = arg;
-					}
-				}
-				
-				command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
+				do_bare_argument( arg, command_args );
 			}
 		}
 		
