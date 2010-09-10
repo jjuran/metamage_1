@@ -20,6 +20,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/string.hh"
 
 // poseven
@@ -514,8 +515,8 @@ namespace tool
 			plus::string type   ( pkgInfo.data(),     4 );
 			plus::string creator( pkgInfo.data() + 4, 4 );
 			
-			gFileType    = store_string( type    );
-			gFileCreator = store_string( creator );
+			gFileType    = store_string( plus::utf8_from_mac( type    ) );
+			gFileCreator = store_string( plus::utf8_from_mac( creator ) );
 			
 			const uint32_t typeCode = iota::decode_quad( type.data() );
 			
