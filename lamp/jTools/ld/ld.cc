@@ -483,6 +483,58 @@ namespace tool
 		}
 	}
 	
+	static bool do_special_case_arg( const char* arg )
+	{
+		plus::string filename = io::get_filename( arg );
+		
+		if ( filename == "CarbonLib" )
+		{
+			gMacAPI = kMacAPICarbon;
+		}
+		else if ( filename == "InterfaceLib" )
+		{
+			gMacAPI = kMacAPIBlue;
+		}
+		else if ( filename == "PkgInfo" )
+		{
+			plus::string pkgInfo = p7::slurp( arg );
+			
+			if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
+			{
+				std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
+				
+				throw p7::exit_failure;
+			}
+			
+			plus::string type   ( pkgInfo.data(),     4 );
+			plus::string creator( pkgInfo.data() + 4, 4 );
+			
+			gFileType    = store_string( type    );
+			gFileCreator = store_string( creator );
+			
+			const uint32_t typeCode = iota::decode_quad( type.data() );
+			
+			switch ( typeCode )
+			{
+				case 'APPL':
+					gProductType = kProductApp;
+					break;
+				
+				case 'INIT':
+				case 'DRVR':
+					gProductType = kProductCodeResource;
+					break;
+				
+				default:
+					std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
+			}
+			
+			return false;  // Not a library
+		}
+		
+		return true;
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > command_args;
@@ -512,50 +564,10 @@ namespace tool
 			}
 			else
 			{
-				plus::string filename = io::get_filename( arg );
+				const bool needs_link = do_special_case_arg( arg );
 				
-				if ( filename == "CarbonLib" )
+				if ( !needs_link )
 				{
-					gMacAPI = kMacAPICarbon;
-				}
-				else if ( filename == "InterfaceLib" )
-				{
-					gMacAPI = kMacAPIBlue;
-				}
-				else if ( filename == "PkgInfo" )
-				{
-					plus::string pkgInfo = p7::slurp( arg );
-					
-					if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
-					{
-						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
-						
-						throw p7::exit_failure;
-					}
-					
-					plus::string type   ( pkgInfo.data(),     4 );
-					plus::string creator( pkgInfo.data() + 4, 4 );
-					
-					gFileType    = store_string( type    );
-					gFileCreator = store_string( creator );
-					
-					const uint32_t typeCode = iota::decode_quad( type.data() );
-					
-					switch ( typeCode )
-					{
-						case 'APPL':
-							gProductType = kProductApp;
-							break;
-						
-						case 'INIT':
-						case 'DRVR':
-							gProductType = kProductCodeResource;
-							break;
-						
-						default:
-							std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
-					}
-					
 					continue;
 				}
 				
