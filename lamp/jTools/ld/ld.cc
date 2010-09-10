@@ -373,199 +373,229 @@ namespace tool
 		check_object_file( p7::open( path, p7::o_rdonly ) );
 	}
 	
+	
+	static Architecture arch = arch_default;
+	
+	static const char* output_pathname = NULL;
+	
+	static bool debug   = true;
+	static bool dry_run = false;
+	static bool verbose = false;
+	
+	static void do_hyphen_option( char**& argv, std::vector< const char* >& command_args )
+	{
+		const char* arg = argv[0];
+		
+		switch ( arg[ 1 ] )
+		{
+			case 'n':
+				dry_run = true;
+				break;
+			
+			case 'v':
+				verbose = true;
+				break;
+			
+			case 'a':
+				if ( std::strcmp( arg + 1, "arch" ) == 0 )
+				{
+					arch = read_arch( *++argv );
+				}
+				
+				break;
+			
+			case 'd':
+				if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
+				{
+					gProductType = kProductSharedLib;
+				}
+				
+				break;
+			
+			case 's':
+				if ( arg[2] == '\0' )
+				{
+					debug = false;
+				}
+				
+				break;
+			
+			case 'w':
+				if ( arg[2] == 'i'  &&  arg[3] == '\0' )
+				{
+					command_args.push_back( arg );
+				}
+				
+				break;
+			
+			case 'r':
+				if ( arg[2] == 't'  &&  arg[3] == '\0' )
+				{
+					command_args.push_back(    arg  );
+					command_args.push_back( *++argv );
+				}
+				
+				break;
+			
+			case 'o':
+				if ( arg[2] == '\0' )
+				{
+					output_pathname = *++argv;
+				}
+				else if ( std::strcmp( arg + 1, "object" ) == 0 )
+				{
+					gProductType = kProductCodeResource;
+				}
+				
+				break;
+			
+			case 'l':
+				// new block
+				{
+					const char* lib_name = arg + 2;  // skip "-l"
+					
+					plus::string library_pathname = FindLibrary( lib_name );
+					
+					const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
+					
+					// Link Orion and fulltool first, if present.
+					// This hack is necessary on 68K to ensure that
+					// main() and _lamp_main() reside within the
+					// first 32K, accessible by JMP or JSR from the
+					// startup code.
+					
+					const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
+					                       || std::strcmp( lib_name, "fulltool" ) == 0;
+					
+					command_args.insert( ( expedited ? command_args.begin()
+					                                 : command_args.end() ),
+					                       mac_pathname );
+				}
+				
+				break;
+			
+			case 'L':
+				RememberLibraryDir( arg + 2 );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	static void do_plus_option( const char* arg, std::vector< const char* >& command_args )
+	{
+		if ( const char* equals = std::strchr( arg, '=' ) )
+		{
+			plus::var_string option( arg, equals );
+			
+			option[0] = '-';
+			
+			command_args.push_back( store_string( option ) );
+			
+			command_args.push_back( equals + 1 );
+		}
+		else
+		{
+			// error
+		}
+	}
+	
+	static bool do_special_case_arg( const char* arg )
+	{
+		plus::string filename = io::get_filename( arg );
+		
+		if ( filename == "CarbonLib" )
+		{
+			gMacAPI = kMacAPICarbon;
+		}
+		else if ( filename == "InterfaceLib" )
+		{
+			gMacAPI = kMacAPIBlue;
+		}
+		else if ( filename == "PkgInfo" )
+		{
+			plus::string pkgInfo = p7::slurp( arg );
+			
+			if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
+			{
+				std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
+				
+				throw p7::exit_failure;
+			}
+			
+			plus::string type   ( pkgInfo.data(),     4 );
+			plus::string creator( pkgInfo.data() + 4, 4 );
+			
+			gFileType    = store_string( type    );
+			gFileCreator = store_string( creator );
+			
+			const uint32_t typeCode = iota::decode_quad( type.data() );
+			
+			switch ( typeCode )
+			{
+				case 'APPL':
+					gProductType = kProductApp;
+					break;
+				
+				case 'INIT':
+				case 'DRVR':
+					gProductType = kProductCodeResource;
+					break;
+				
+				default:
+					std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
+			}
+			
+			return false;  // Not a library
+		}
+		
+		return true;
+	}
+	
+	static void do_bare_argument( const char* arg, std::vector< const char* >& command_args )
+	{
+		const bool needs_link = do_special_case_arg( arg );
+		
+		if ( !needs_link )
+		{
+			return;
+		}
+		
+		const bool is_pathname = std::strchr( arg, '/' ) != NULL;
+		
+		if ( is_pathname  &&  gFirstObjectFilePath == NULL )
+		{
+			const size_t length = strlen( arg );
+			
+			const int base_length = length - STRLEN( ".o" );
+			
+			if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
+			{
+				gFirstObjectFilePath = arg;
+			}
+		}
+		
+		command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > command_args;
-		
-		Architecture arch = arch_default;
-		
-		const char* output_pathname = NULL;
-		
-		bool debug = true;
-		bool dry_run = false;
-		bool verbose = false;
 		
 		while ( const char* arg = *++argv )
 		{
 			if ( arg[0] == '-' )
 			{
-				switch ( arg[1] )
-				{
-					case 'n':
-						dry_run = true;
-						break;
-					
-					case 'v':
-						verbose = true;
-						break;
-					
-					case 'a':
-						if ( std::strcmp( arg + 1, "arch" ) == 0 )
-						{
-							arch = read_arch( *++argv );
-						}
-						
-						break;
-					
-					case 'd':
-						if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
-						{
-							gProductType = kProductSharedLib;
-						}
-						
-						break;
-					
-					case 's':
-						if ( arg[2] == '\0' )
-						{
-							debug = false;
-						}
-						
-						break;
-					
-					case 'w':
-						if ( arg[2] == 'i'  &&  arg[3] == '\0' )
-						{
-							command_args.push_back( arg );
-						}
-						
-						break;
-					
-					case 'r':
-						if ( arg[2] == 't'  &&  arg[3] == '\0' )
-						{
-							command_args.push_back(    arg  );
-							command_args.push_back( *++argv );
-						}
-						
-						break;
-					
-					case 'o':
-						if ( arg[2] == '\0' )
-						{
-							output_pathname = *++argv;
-						}
-						else if ( std::strcmp( arg + 1, "object" ) == 0 )
-						{
-							gProductType = kProductCodeResource;
-						}
-						
-						break;
-					
-					case 'l':
-						// new block
-						{
-							const char* lib_name = arg + 2;  // skip "-l"
-							
-							plus::string library_pathname = FindLibrary( lib_name );
-							
-							const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
-							
-							// Link Orion and fulltool first, if present.
-							// This hack is necessary on 68K to ensure that
-							// main() and _lamp_main() reside within the
-							// first 32K, accessible by JMP or JSR from the
-							// startup code.
-							
-							const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
-							                       || std::strcmp( lib_name, "fulltool" ) == 0;
-							
-							command_args.insert( ( expedited ? command_args.begin()
-							                                 : command_args.end() ),
-							                       mac_pathname );
-						}
-						
-						break;
-					
-					case 'L':
-						RememberLibraryDir( arg + 2 );
-						break;
-					
-					default:
-						break;
-				}
+				do_hyphen_option( argv, command_args );
 			}
 			else if ( arg[0] == '+' )
 			{
-				if ( const char* equals = std::strchr( arg, '=' ) )
-				{
-					plus::var_string option( arg, equals );
-					
-					option[0] = '-';
-					
-					command_args.push_back( store_string( option ) );
-					
-					command_args.push_back( equals + 1 );
-				}
-				else
-				{
-					// error
-				}
+				do_plus_option( arg, command_args );
 			}
 			else
 			{
-				plus::string filename = io::get_filename( arg );
-				
-				if ( filename == "CarbonLib" )
-				{
-					gMacAPI = kMacAPICarbon;
-				}
-				else if ( filename == "InterfaceLib" )
-				{
-					gMacAPI = kMacAPIBlue;
-				}
-				else if ( filename == "PkgInfo" )
-				{
-					plus::string pkgInfo = p7::slurp( arg );
-					
-					if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
-					{
-						std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
-						
-						throw p7::exit_failure;
-					}
-					
-					plus::string type   ( pkgInfo.data(),     4 );
-					plus::string creator( pkgInfo.data() + 4, 4 );
-					
-					gFileType    = store_string( type    );
-					gFileCreator = store_string( creator );
-					
-					const uint32_t typeCode = iota::decode_quad( type.data() );
-					
-					switch ( typeCode )
-					{
-						case 'APPL':
-							gProductType = kProductApp;
-							break;
-						
-						case 'INIT':
-						case 'DRVR':
-							gProductType = kProductCodeResource;
-							break;
-						
-						default:
-							std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
-					}
-					
-					continue;
-				}
-				
-				const bool is_pathname = std::strchr( arg, '/' ) != NULL;
-				
-				if ( is_pathname  &&  gFirstObjectFilePath == NULL )
-				{
-					const size_t length = strlen( arg );
-					
-					const int base_length = length - STRLEN( ".o" );
-					
-					if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
-					{
-						gFirstObjectFilePath = arg;
-					}
-				}
-				
-				command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
+				do_bare_argument( arg, command_args );
 			}
 		}
 		
