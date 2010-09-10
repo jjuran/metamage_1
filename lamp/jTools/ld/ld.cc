@@ -373,117 +373,125 @@ namespace tool
 		check_object_file( p7::open( path, p7::o_rdonly ) );
 	}
 	
+	
+	static Architecture arch = arch_default;
+	
+	static const char* output_pathname = NULL;
+	
+	static bool debug   = true;
+	static bool dry_run = false;
+	static bool verbose = false;
+	
+	static void do_hyphen_option( char**& argv, std::vector< const char* >& command_args )
+	{
+		const char* arg = argv[0];
+		
+		switch ( arg[ 1 ] )
+		{
+			case 'n':
+				dry_run = true;
+				break;
+			
+			case 'v':
+				verbose = true;
+				break;
+			
+			case 'a':
+				if ( std::strcmp( arg + 1, "arch" ) == 0 )
+				{
+					arch = read_arch( *++argv );
+				}
+				
+				break;
+			
+			case 'd':
+				if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
+				{
+					gProductType = kProductSharedLib;
+				}
+				
+				break;
+			
+			case 's':
+				if ( arg[2] == '\0' )
+				{
+					debug = false;
+				}
+				
+				break;
+			
+			case 'w':
+				if ( arg[2] == 'i'  &&  arg[3] == '\0' )
+				{
+					command_args.push_back( arg );
+				}
+				
+				break;
+			
+			case 'r':
+				if ( arg[2] == 't'  &&  arg[3] == '\0' )
+				{
+					command_args.push_back(    arg  );
+					command_args.push_back( *++argv );
+				}
+				
+				break;
+			
+			case 'o':
+				if ( arg[2] == '\0' )
+				{
+					output_pathname = *++argv;
+				}
+				else if ( std::strcmp( arg + 1, "object" ) == 0 )
+				{
+					gProductType = kProductCodeResource;
+				}
+				
+				break;
+			
+			case 'l':
+				// new block
+				{
+					const char* lib_name = arg + 2;  // skip "-l"
+					
+					plus::string library_pathname = FindLibrary( lib_name );
+					
+					const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
+					
+					// Link Orion and fulltool first, if present.
+					// This hack is necessary on 68K to ensure that
+					// main() and _lamp_main() reside within the
+					// first 32K, accessible by JMP or JSR from the
+					// startup code.
+					
+					const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
+					                       || std::strcmp( lib_name, "fulltool" ) == 0;
+					
+					command_args.insert( ( expedited ? command_args.begin()
+					                                 : command_args.end() ),
+					                       mac_pathname );
+				}
+				
+				break;
+			
+			case 'L':
+				RememberLibraryDir( arg + 2 );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		std::vector< const char* > command_args;
-		
-		Architecture arch = arch_default;
-		
-		const char* output_pathname = NULL;
-		
-		bool debug = true;
-		bool dry_run = false;
-		bool verbose = false;
 		
 		while ( const char* arg = *++argv )
 		{
 			if ( arg[0] == '-' )
 			{
-				switch ( arg[1] )
-				{
-					case 'n':
-						dry_run = true;
-						break;
-					
-					case 'v':
-						verbose = true;
-						break;
-					
-					case 'a':
-						if ( std::strcmp( arg + 1, "arch" ) == 0 )
-						{
-							arch = read_arch( *++argv );
-						}
-						
-						break;
-					
-					case 'd':
-						if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
-						{
-							gProductType = kProductSharedLib;
-						}
-						
-						break;
-					
-					case 's':
-						if ( arg[2] == '\0' )
-						{
-							debug = false;
-						}
-						
-						break;
-					
-					case 'w':
-						if ( arg[2] == 'i'  &&  arg[3] == '\0' )
-						{
-							command_args.push_back( arg );
-						}
-						
-						break;
-					
-					case 'r':
-						if ( arg[2] == 't'  &&  arg[3] == '\0' )
-						{
-							command_args.push_back(    arg  );
-							command_args.push_back( *++argv );
-						}
-						
-						break;
-					
-					case 'o':
-						if ( arg[2] == '\0' )
-						{
-							output_pathname = *++argv;
-						}
-						else if ( std::strcmp( arg + 1, "object" ) == 0 )
-						{
-							gProductType = kProductCodeResource;
-						}
-						
-						break;
-					
-					case 'l':
-						// new block
-						{
-							const char* lib_name = arg + 2;  // skip "-l"
-							
-							plus::string library_pathname = FindLibrary( lib_name );
-							
-							const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
-							
-							// Link Orion and fulltool first, if present.
-							// This hack is necessary on 68K to ensure that
-							// main() and _lamp_main() reside within the
-							// first 32K, accessible by JMP or JSR from the
-							// startup code.
-							
-							const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
-							                       || std::strcmp( lib_name, "fulltool" ) == 0;
-							
-							command_args.insert( ( expedited ? command_args.begin()
-							                                 : command_args.end() ),
-							                       mac_pathname );
-						}
-						
-						break;
-					
-					case 'L':
-						RememberLibraryDir( arg + 2 );
-						break;
-					
-					default:
-						break;
-				}
+				do_hyphen_option( argv, command_args );
 			}
 			else if ( arg[0] == '+' )
 			{
