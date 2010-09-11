@@ -24,7 +24,11 @@ extern int       main( int argc, char **argv );
 
 int _lamp_main( int argc, char **argv, char **envp, _lamp_system_parameter_block* pb )
 {
+#ifndef __MC68K__
+	
 	_set_dispatcher( pb->dispatcher );
+	
+#endif
 	
 	environ = envp;
 	
