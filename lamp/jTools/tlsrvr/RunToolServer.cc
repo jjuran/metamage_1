@@ -121,16 +121,7 @@ namespace tool
 		io::spew_file< n::string_scribe< plus::string > >( scriptFile, script );
 	}
 	
-	static inline void WriteInputFile( const FSSpec& file )
-	{
-		// Prepare stdin file
-		//n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
-		
-		// FIXME:  Needs to be implemented
-	}
-	
 	static nucleus::string MakeToolServerScript( const FSSpec&  scriptFile,
-	                                             const FSSpec&  inFile,
 	                                             const FSSpec&  outFile,
 	                                             const FSSpec&  errFile )
 	{
@@ -139,7 +130,7 @@ namespace tool
 		script << "Set Exit 0;";
 		
 		script << q( GetMacPathname( scriptFile ) );
-		script << "<" << q( GetMacPathname( inFile ) );
+		script << "< Dev:Null";
 		
 		plus::string outPath = GetMacPathname( outFile );
 		plus::string errPath = GetMacPathname( errFile );
@@ -280,7 +271,6 @@ namespace tool
 	enum
 	{
 		kScriptFile,
-		kInputFile,
 		kOutputFile,
 		kErrorFile
 	};
@@ -302,7 +292,7 @@ namespace tool
 		return item;
 	}
 	
-	const int n_files = 4;
+	const int n_files = 3;
 	
 	static FSSpec gTempFiles[ n_files ];
 	
@@ -313,7 +303,6 @@ namespace tool
 		//  * Write the command to a file (which we'll invoke by its filename)
 		// so we don't have to quote the command.
 		//  * Create temp files to store I/O.
-		//  * Write all input to temp file.
 		//  * Run the script with I/O redirected.
 		//  * Dump the stored output to stdout and stderr.
 		
@@ -328,7 +317,6 @@ namespace tool
 		static char const* filenames[ n_files ] =
 		{
 			".tlsrvr-script", 
-			".tlsrvr-stdin", 
 			".tlsrvr-stdout", 
 			".tlsrvr-stderr"
 		};
@@ -348,10 +336,7 @@ namespace tool
 		
 		WriteCommandFile( command, files[ kScriptFile ] );
 		
-		WriteInputFile( files[ kInputFile ] );
-		
 		nucleus::string script = MakeToolServerScript( files[ kScriptFile ],
-		                                               files[ kInputFile  ],
 		                                               files[ kOutputFile ],
 		                                               files[ kErrorFile  ] );
 		
