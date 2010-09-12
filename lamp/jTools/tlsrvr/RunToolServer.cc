@@ -106,9 +106,8 @@ namespace tool
 		}
 	}
 	
-	static void WriteCommandFile( const plus::string& command, const FSSpec& scriptFile )
+	static plus::string make_script_from_command( const plus::string& command )
 	{
-		// Write the command into a file.
 		plus::var_string script;
 		
 		script += DirectoryCommandForMPW();
@@ -117,6 +116,13 @@ namespace tool
 		script += "Set CommandStatus {Status}" "\r";
 		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
 		script += "Exit {CommandStatus}" "\r";
+		
+		return script;
+	}
+	
+	static void WriteCommandFile( const plus::string& command, const FSSpec& scriptFile )
+	{
+		plus::string script = make_script_from_command( command );
 		
 		io::spew_file< n::string_scribe< plus::string > >( scriptFile, script );
 	}
