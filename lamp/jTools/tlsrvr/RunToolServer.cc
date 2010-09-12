@@ -302,7 +302,9 @@ namespace tool
 		return item;
 	}
 	
-	static FSSpec gTempFiles[ 4 ];
+	const int n_files = 4;
+	
+	static FSSpec gTempFiles[ n_files ];
 	
 	static nucleus::string SetUpScript( const plus::string& command )
 	{
@@ -323,7 +325,7 @@ namespace tool
 		
 		N::FSDirSpec tempItems = N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( "/tmp" ) );
 		
-		static char const* filenames[ 4 ] =
+		static char const* filenames[ n_files ] =
 		{
 			".tlsrvr-script", 
 			".tlsrvr-stdin", 
@@ -331,16 +333,16 @@ namespace tool
 			".tlsrvr-stderr"
 		};
 		
-		static FSSpec files[ 4 ];
+		static FSSpec files[ n_files ];
 		
 		std::transform( filenames,
-		                filenames + 4,
+		                filenames + n_files,
 		                files,
 		                std::bind1st( plus::ptr_fun( DirLookup ),
 		                              tempItems ) );
 		
 		std::transform( files,
-		                files + 4,
+		                files + n_files,
 		                gTempFiles,
 		                plus::ptr_fun( NewTempFile ) );
 		
@@ -513,7 +515,7 @@ namespace tool
 		
 		// Delete temp files
 		std::for_each( gTempFiles,
-		               gTempFiles + 4,
+		               gTempFiles + n_files,
 		               plus::ptr_fun( &N::FSpDelete ) );
 		
 		return result;
