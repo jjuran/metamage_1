@@ -16,7 +16,7 @@ extern int syscall( int number, ... );
 		TRAP  #0
 	}
 	
-	#define DEFINE_STUB_7F( name )    \
+	#define DEFINE_SYSCALL_7F( name ) \
 		extern void name();           \
 		asm void name()               \
 		{                             \
@@ -24,15 +24,13 @@ extern int syscall( int number, ... );
 			TRAP  #0               ;  \
 		}
 	
-	#define DEFINE_STUB( name )       \
+	#define DEFINE_SYSCALL( name )    \
 		extern void name();           \
 		asm void name()               \
 		{                             \
 			MOVE.W #__NR_##name,D0 ;  \
 			TRAP  #0               ;  \
 		}
-	
-	#define DEFINE_STUB_FF( name )  DEFINE_STUB( name )
 	
 	
 	// syscalls

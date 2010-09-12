@@ -59,7 +59,7 @@ void _set_dispatcher( void* address )
 		b   _ppc_system_call
 	}
 	
-	#define DEFINE_STUB( name )   \
+	#define DEFINE_SYSCALL( name )\
 		extern void name();       \
 		asm void name()           \
 		{                         \
@@ -67,8 +67,7 @@ void _set_dispatcher( void* address )
 			b _ppc_system_call ;  \
 		}
 	
-	#define DEFINE_STUB_7F( name )  DEFINE_STUB( name )
-	#define DEFINE_STUB_FF( name )  DEFINE_STUB( name )
+	#define DEFINE_SYSCALL_7F( name )  DEFINE_SYSCALL( name )
 	
 	
 	// syscalls
