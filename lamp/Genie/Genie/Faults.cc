@@ -18,6 +18,9 @@
 #include "Silver/Procs.hh"
 #include "Silver/Traps.hh"
 
+// Genie
+#include "Genie/Dispatch/system_call.68k.hh"
+
 
 namespace Genie
 {
@@ -106,6 +109,25 @@ namespace Genie
 		PrivilegeViolation
 	};
 	
+	
+	static void* saved_trap_0_handler = NULL;
+	
+	static asm void trap_0_exception_handler()
+	{
+		TST.L	gCurrentProcess
+		BNE		recover
+		
+		MOVEA.L	saved_trap_0_handler,A0  // get the handler address
+		
+		JMP		(A0)
+		
+	recover:
+		LEA		dispatch_68k_system_call,A0
+		MOVE.L	A0,2(SP)  // set the stacked PC to the dispatcher
+		
+		RTE
+	}
+	
 	static const unsigned n_vectors = sizeof gExceptionUserHandlerTable / sizeof (void*);
 	
 	static void* gExceptionVectorTable[ n_vectors ];
@@ -123,6 +145,10 @@ namespace Genie
 				system_vectors[ i ] = &GenericExceptionHandler;
 			}
 		}
+		
+		saved_trap_0_handler = system_vectors[ 32 ];
+		
+		system_vectors[ 32 ] = trap_0_exception_handler;
 	}
 	
 	static void remove_68k_exception_handlers()
@@ -136,6 +162,8 @@ namespace Genie
 				system_vectors[ i ] = gExceptionVectorTable[ i ];
 			}
 		}
+		
+		system_vectors[ 32 ] = saved_trap_0_handler;
 	}
 	
 	

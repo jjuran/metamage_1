@@ -24,25 +24,12 @@ extern int syscall( int number, ... );
 	
 	static void SystemCall();
 	
-	static asm void SystemCall_FF()
-	{
-		ANDI.W  #0x00FF,D0
-		
-		entry static SystemCall
-		
-		MOVEA.L		global_dispatcher,A0	;  // load the dispatcher's address
-											;  // syscall index already on stack
-		JMP			(A0)					;  // jump to dispatcher
-		
-		// Not reached
-	}
-	
 	asm int syscall( int number, ... )
 	{
 		MOVE.L  4(SP), D0    // copy system call number to d0
 		MOVE.L  (SP)+, (SP)  // overwrite it with the return address, and pop
 		
-		BRA     SystemCall
+		TRAP  #0
 	}
 	
 	#define DEFINE_STUB_7F( name )    \
@@ -50,23 +37,18 @@ extern int syscall( int number, ... );
 		asm void name()               \
 		{                             \
 			MOVEQ #__NR_##name,D0  ;  \
-			BRA SystemCall         ;  \
+			TRAP  #0               ;  \
 		}
 	
 	#define DEFINE_STUB_FF( name )    \
-		extern void name();           \
-		asm void name()               \
-		{                             \
-			MOVEQ #__NR_##name,D0  ;  \
-			BRA SystemCall_FF      ;  \
-		}
+			DEFINE_STUB( name )
 	
 	#define DEFINE_STUB( name )       \
 		extern void name();           \
 		asm void name()               \
 		{                             \
 			MOVE.W #__NR_##name,D0 ;  \
-			BRA SystemCall         ;  \
+			TRAP  #0               ;  \
 		}
 	
 #endif

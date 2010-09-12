@@ -67,6 +67,7 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/Faults.hh"
@@ -139,7 +140,9 @@ namespace Genie
 		sizeof (_lamp_system_parameter_block),
 		sizeof (_lamp_user_parameter_block),
 		
-		&DispatchSystemCall,
+		TARGET_CPU_68K ? &dispatch_68k_system_call
+		               : &DispatchSystemCall,
+		
 		&microseconds
 	};
 	
@@ -324,26 +327,6 @@ namespace Genie
 		blr
 	}
 
-#endif
-	
-#if TARGET_CPU_68K
-	
-	static asm void DispatchSystemCall( ... )
-	{
-		// D0 contains the system call number
-		
-		CMP.W	gLastSystemCall,D0
-		BLT		in_range
-		
-		MOVE.W	gLastSystemCall,D0
-		
-	in_range:
-		MOVEA.L	gSystemCallArray,A0
-		MOVEA.L	(A0,D0.W*8),A0
-		
-		JMP		(A0)
-	}
-	
 #endif
 	
 #if TARGET_CPU_PPC
