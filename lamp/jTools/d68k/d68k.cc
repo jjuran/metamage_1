@@ -1356,7 +1356,30 @@ namespace tool
 #pragma mark -
 #pragma mark ** High-order **
 	
-	static bool decode_data( unsigned short op )
+	static void decode_data( unsigned short op )
+	{
+		printf( "%.6x:  DC.W     %#.4x  ; %d bytes of data\n", global_bytes_read - 2, op, op );
+		
+		int n_words = (op + 1) / 2;
+		
+		while ( --n_words >= 0 )
+		{
+			const size_t bytes_read = global_bytes_read;
+			
+			if ( n_words-- )
+			{
+				printf( "%.6x:  DC.L     %#.8x\n", bytes_read, read_long() );
+			}
+			else
+			{
+				printf( "%.6x:  DC.W     %#.4x\n", bytes_read, read_word() );
+			}
+		}
+		
+		printf( "\n" );
+	}
+	
+	static bool decoded_data( unsigned short op )
 	{
 		switch ( global_last_op )
 		{
@@ -1379,41 +1402,23 @@ namespace tool
 		{
 			(void) read_word();
 			
-			printf( "DC.L     0x00000000\n" );
+			printf( "DC.L     0x00000000\n\n" );
 		}
 		else if ( op != 0 )
 		{
-			printf( "DC.W     %#.4x  ; %d bytes of data\n", op, op );
-			
-			int n_words = (op + 1) / 2;
-			
-			while ( --n_words >= 0 )
-			{
-				const size_t bytes_read = global_bytes_read;
-				
-				if ( n_words-- )
-				{
-					printf( "%.6x:  DC.L     %#.8x\n", bytes_read, read_long() );
-				}
-				else
-				{
-					printf( "%.6x:  DC.W     %#.4x\n", bytes_read, read_word() );
-				}
-			}
+			decode_data( op );
 		}
 		else
 		{
 			return false;
 		}
 		
-		printf( "\n" );
-		
 		return true;
 	}
 	
 	static void decode_0_line( unsigned short op )
 	{
-		if ( const bool data = decode_data( op ) )
+		if ( const bool data = decoded_data( op ) )
 		{
 			return;
 		}
@@ -2172,7 +2177,7 @@ namespace tool
 			{
 				printf( "; ^^^ %s\n\n", name );
 				
-				(void) read_word();
+				decode_data( read_word() );
 				
 				return;
 			}
