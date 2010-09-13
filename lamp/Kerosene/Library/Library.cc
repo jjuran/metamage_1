@@ -410,7 +410,7 @@ FILE* fdopen( int fd, const char* type )
 	{
 		case 'w':
 		case 'a':
-			if ( (flags + 1 & FWRITE) == 0 )
+			if ( (flags + 1 - O_RDONLY & FWRITE) == 0 )
 			{
 				errno = EACCES;
 				
