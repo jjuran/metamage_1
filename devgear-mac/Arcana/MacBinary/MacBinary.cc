@@ -550,24 +550,6 @@ namespace MacBinary
 		h.Set< kCRC >();
 	}
 	
-	static void MakeHeader( const HFileInfo& pb, Header& h )
-	{
-		MakePartialHeaderForItem( pb, h );
-		
-		bool isDir = io::item_is_directory( pb );
-		
-		if ( isDir )
-		{
-		}
-		else
-		{
-			h.Set< kDataForkLength     >( pb.ioFlLgLen  );
-			h.Set< kResourceForkLength >( pb.ioFlRLgLen );
-		}
-		
-		h.Set< kCRC >();
-	}
-	
 	union HeaderBlock
 	{
 		Header h;
