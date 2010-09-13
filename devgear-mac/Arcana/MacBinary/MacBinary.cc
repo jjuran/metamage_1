@@ -578,9 +578,25 @@ namespace MacBinary
 	
 	static void EncodeFile( const FSSpec& file, HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
+		nucleus::mutable_string comment;
+		
+		try
+		{
+			comment = N::FSpDTGetComment( file );
+			
+			comment.resize( PaddedLength( comment.size(), kMacBinaryBlockSize ) );
+		}
+		catch ( ... )
+		{
+		}
+		
+		const size_t comment_size = comment.size();
+		
 		HeaderBlock u;
 		
 		MakeFileHeader( hFileInfo, u.h );
+		
+		u.h.Set< kGetInfoCommentLength >( comment_size );
 		
 		blockWrite( output, u.block.data, sizeof u.block );
 		
@@ -594,16 +610,10 @@ namespace MacBinary
 			ReadWrite( N::FSpOpenRF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlRLgLen );
 		}
 		
-		try
+		if ( comment_size > 0 )
 		{
-			nucleus::mutable_string comment = N::FSpDTGetComment( file );
-			
-			comment.resize( PaddedLength( comment.size(), kMacBinaryBlockSize ) );
-			
-			blockWrite( output, comment.data(), comment.size() );
+			blockWrite( output, comment.data(), comment_size );
 		}
-		catch ( ... ) {}
-		
 	}
 	
 	static void EncodeFolder( CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
