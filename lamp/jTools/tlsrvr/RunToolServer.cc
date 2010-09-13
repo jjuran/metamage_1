@@ -26,26 +26,22 @@
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 
-// Io
-#include "io/slurp.hh"
-#include "io/spew.hh"
-
 // poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/extras/spew.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
+// mac_pathname
+#include "mac_pathname_from_path.hh"
+
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AERegistry.hh"
-#include "Nitrogen/Folders.hh"
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/Processes.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
-// GetPathname
-#include "GetPathname.hh"
 
 // FindProcess
 #include "FindProcess.hh"
@@ -65,10 +61,6 @@ namespace tool
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace NX = NitrogenExtras;
-	
-	//using namespace Nucleus::Operators;
-	
-	using namespace io::path_descent_operators;
 	
 	
 	static plus::string q( const plus::string& str )
@@ -96,52 +88,47 @@ namespace tool
 	{
 		try
 		{
-			FSSpec cwd = Div::ResolvePathToFSSpec( "." );
+			plus::var_string directory_cmd = "Directory '";
 			
-			return "Directory " + q( GetMacPathname( cwd ) ) + "\r";
+			directory_cmd += mac_pathname_from_path( "." );
+			
+			directory_cmd += "'" "\r";
+			
+			return directory_cmd;
 		}
 		catch ( ... )
 		{
-			return "Echo 'Warning:  Current directory not convertible to FSSpec, ignoring'\r";
+			return "Echo 'Warning: Can't set non-Mac directory as default'\r";
 		}
 	}
 	
-	static void WriteCommandFile( const plus::string& command, const FSSpec& scriptFile )
+	static plus::string make_script_from_command( const plus::string& command )
 	{
-		// Write the command into a file.
 		plus::var_string script;
 		
 		script += DirectoryCommandForMPW();
-		script += command + "\r";
+		script += command;
+		script += "\r";
 		script += "Set CommandStatus {Status}" "\r";
 		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
 		script += "Exit {CommandStatus}" "\r";
 		
-		io::spew_file< n::string_scribe< plus::string > >( scriptFile, script );
+		return script;
 	}
 	
-	static inline void WriteInputFile( const FSSpec& file )
-	{
-		// Prepare stdin file
-		//n::owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
-		
-		// FIXME:  Needs to be implemented
-	}
-	
-	static nucleus::string MakeToolServerScript( const FSSpec&  scriptFile,
-	                                             const FSSpec&  inFile,
-	                                             const FSSpec&  outFile,
-	                                             const FSSpec&  errFile )
+	static nucleus::string MakeToolServerScript( const char*  script_path,
+	                                             const char*  out_path,
+	                                             const char*  err_path )
 	{
 		nucleus::mutable_string script;
 		
 		script << "Set Exit 0;";
 		
-		script << q( GetMacPathname( scriptFile ) );
-		script << "<" << q( GetMacPathname( inFile ) );
+		script << q( mac_pathname_from_path( script_path ) );
+		script << "< Dev:Null";
 		
-		plus::string outPath = GetMacPathname( outFile );
-		plus::string errPath = GetMacPathname( errFile );
+		plus::string outPath = mac_pathname_from_path( out_path );
+		plus::string errPath = mac_pathname_from_path( err_path );
 		// FIXME:  This is case-sensitive
 		//bool identicalOutputAndError = outPath == errPath;
 		bool identicalOutputAndError = false;
@@ -279,29 +266,25 @@ namespace tool
 	enum
 	{
 		kScriptFile,
-		kInputFile,
 		kOutputFile,
 		kErrorFile
 	};
 	
-	static inline FSSpec DirLookup( const N::FSDirSpec& dir, const nucleus::string& name )
+	static void make_temp_file( const char* path )
 	{
-		return dir / name;
+		(void) p7::open( path,
+		                 p7::o_wronly | p7::o_creat | p7::o_trunc,
+		                 p7::_666 );
 	}
 	
-	static FSSpec NewTempFile( const FSSpec& item )
-	{
-		if ( io::file_exists( item ) )
-		{
-			io::delete_file( item );
-		}
-		
-		N::FSpCreate( item, Mac::FSCreator( 'R*ch' ), Mac::FSType( 'TEXT' ) );
-		
-		return item;
-	}
+	const int n_files = 3;
 	
-	static FSSpec gTempFiles[ 4 ];
+	static char const* temp_file_paths[ n_files ] =
+	{
+		"/tmp/.tlsrvr-" "script", 
+		"/tmp/.tlsrvr-" "stdout", 
+		"/tmp/.tlsrvr-" "stderr"
+	};
 	
 	static nucleus::string SetUpScript( const plus::string& command )
 	{
@@ -310,47 +293,25 @@ namespace tool
 		//  * Write the command to a file (which we'll invoke by its filename)
 		// so we don't have to quote the command.
 		//  * Create temp files to store I/O.
-		//  * Write all input to temp file.
 		//  * Run the script with I/O redirected.
 		//  * Dump the stored output to stdout and stderr.
 		
 		// It's okay if command has the fancy quotes, because we don't actually
 		// refer to it in the Apple event itself.
 		
-		// This breaks in SheepShaver running 8.5, at least for me.
-		//N::FSDirSpec tempItems = N::FindFolder( kTemporaryFolderType, kCreateFolder );
+		std::for_each( temp_file_paths,
+		               temp_file_paths + n_files,
+		               plus::ptr_fun( make_temp_file ) );
 		
-		N::FSDirSpec tempItems = N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( "/tmp" ) );
+		plus::string inner_script = make_script_from_command( command );
 		
-		static char const* filenames[ 4 ] =
-		{
-			".tlsrvr-script", 
-			".tlsrvr-stdin", 
-			".tlsrvr-stdout", 
-			".tlsrvr-stderr"
-		};
+		p7::spew( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
+		          inner_script.data(),
+		          inner_script.size() );
 		
-		static FSSpec files[ 4 ];
-		
-		std::transform( filenames,
-		                filenames + 4,
-		                files,
-		                std::bind1st( plus::ptr_fun( DirLookup ),
-		                              tempItems ) );
-		
-		std::transform( files,
-		                files + 4,
-		                gTempFiles,
-		                plus::ptr_fun( NewTempFile ) );
-		
-		WriteCommandFile( command, files[ kScriptFile ] );
-		
-		WriteInputFile( files[ kInputFile ] );
-		
-		nucleus::string script = MakeToolServerScript( files[ kScriptFile ],
-		                                               files[ kInputFile  ],
-		                                               files[ kOutputFile ],
-		                                               files[ kErrorFile  ] );
+		nucleus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
+		                                               temp_file_paths[ kOutputFile ],
+		                                               temp_file_paths[ kErrorFile  ] );
 		
 		return script;
 	}
@@ -362,14 +323,9 @@ namespace tool
 		p7::write( fd, text );
 	}
 	
-	static plus::string Slurp( const FSSpec& file )
+	static void dump_file( const char* path, p7::fd_t fd )
 	{
-		return io::slurp_file< n::string_scribe< plus::var_string > >( file );
-	}
-	
-	static void DumpFile( const FSSpec& file, p7::fd_t fd )
-	{
-		plus::var_string text = Slurp( file );
+		plus::var_string text = p7::slurp( path );
 		
 		ConvertAndDumpMacText( text, fd );
 	}
@@ -481,7 +437,7 @@ namespace tool
 			return 128;
 		}
 		
-		plus::var_string errors = Slurp( gTempFiles[ kErrorFile ] );
+		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
@@ -508,12 +464,12 @@ namespace tool
 		
 		ConvertAndDumpMacText( errors, p7::stderr_fileno );
 		
-		DumpFile( gTempFiles[ kOutputFile ], p7::stdout_fileno );
+		dump_file( temp_file_paths[ kOutputFile ], p7::stdout_fileno );
 		
 		// Delete temp files
-		std::for_each( gTempFiles,
-		               gTempFiles + 4,
-		               plus::ptr_fun( &N::FSpDelete ) );
+		std::for_each( temp_file_paths,
+		               temp_file_paths + n_files,
+		               plus::ptr_fun( ::unlink ) );
 		
 		return result;
 	}
