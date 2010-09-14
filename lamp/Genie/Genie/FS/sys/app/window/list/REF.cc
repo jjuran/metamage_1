@@ -13,7 +13,10 @@
 #include "iota/hexidecimal.hh"
 
 // plus
+#include "plus/deconstruct.hh"
 #include "plus/hexidecimal.hh"
+#include "plus/reconstruct.hh"
+#include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
 // nucleus
@@ -34,8 +37,9 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Scribes.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/serialize_Str255.hh"
+#include "Genie/FS/serialize_qd.hh"
 #include "Genie/Utilities/WindowList_contains.hh"
 
 
@@ -74,43 +78,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	template < class scribe >
-	struct serialization_via_scribe
-	{
-		typedef scribe Scribe;
-		
-		typedef typename Scribe::Value value_type;
-		
-		static const size_t fixed_size = sizeof (value_type);
-		
-		static plus::string freeze( const value_type& value, bool binary )
-		{
-			return Freeze< Scribe >( value, binary );
-		}
-		
-		static value_type vivify( const char* begin, const char* end, bool binary )
-		{
-			return Vivify< Scribe >( begin, end, binary );
-		}
-	};
-	
-	struct serialization_for_Str255
-	{
-		static const size_t fixed_size = 0;
-		
-		static plus::string freeze( ConstStr255Param param, bool binary )
-		{
-			return plus::string( (const char*) &param[1], param[0] );
-		}
-		
-		static N::Str255 vivify( const char* begin, const char* end, bool binary )
-		{
-			return N::Str255( begin, end - begin );
-		}
-	};
-	
-	
-	struct Access_WindowTitle : serialization_for_Str255
+	struct Access_WindowTitle : serialize_Str255_contents
 	{
 		static N::Str255 Get( WindowRef window )
 		{
@@ -123,7 +91,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowPosition : serialization_via_scribe< Point_Scribe< ',' > >
+	struct Access_WindowPosition : serialize_Point
 	{
 		static Point Get( WindowRef window )
 		{
@@ -136,7 +104,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowSize : serialization_via_scribe< Point_Scribe< 'x' > >
+	struct Access_WindowSize : serialize_Point
 	{
 		static Point Get( WindowRef window )
 		{
@@ -149,7 +117,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowVisible : serialization_via_scribe< Boolean_Scribe >
+	struct Access_WindowVisible : plus::serialize_bool
 	{
 		static bool Get( WindowRef window )
 		{
@@ -169,7 +137,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowZOrder : serialization_via_scribe< Integer_Scribe< unsigned > >
+	struct Access_WindowZOrder : plus::serialize_unsigned< unsigned >
 	{
 		static unsigned Get( WindowRef window )
 		{
@@ -300,23 +268,33 @@ namespace Genie
 		return encoded;
 	}
 	
-	struct RGBColor_Scribe
+	struct stringify_RGBColor
 	{
-		typedef RGBColor Value;
-		
-		static plus::string Encode( const RGBColor& value )
+		static void apply( plus::var_string& out, const RGBColor& color )
 		{
-			return WriteColor( value );
+			out = WriteColor( color );
 		}
-		
-		static RGBColor Decode( const char* begin, const char* end )
+	};
+	
+	struct vivify_RGBColor
+	{
+		static RGBColor apply( const char* begin, const char* end )
 		{
 			return ReadColor( begin, end );
 		}
 	};
 	
+	struct serialize_RGBColor : plus::serialize_POD< RGBColor >
+	{
+		typedef stringify_RGBColor  stringify;
+		typedef vivify_RGBColor     vivify;
+		
+		typedef plus::deconstruct< freeze, stringify >       deconstruct;
+		typedef plus::reconstruct< RGBColor, thaw, vivify >  reconstruct;
+	};
+	
 	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
-	struct Access_WindowColor : serialization_via_scribe< RGBColor_Scribe >
+	struct Access_WindowColor : serialize_RGBColor
 	{
 		static RGBColor Get( WindowRef window )
 		{
@@ -335,7 +313,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowTextFont : serialization_via_scribe< Integer_Scribe< short > >
+	struct Access_WindowTextFont : plus::serialize_unsigned< short >
 	{
 		static short Get( WindowRef window )
 		{
@@ -354,7 +332,7 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowTextSize : serialization_via_scribe< Integer_Scribe< short > >
+	struct Access_WindowTextSize : plus::serialize_unsigned< short >
 	{
 		static short Get( WindowRef window )
 		{
@@ -403,7 +381,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Property
+	struct sys_app_window_list_REF_Property : Accessor
 	{
 		typedef WindowRef Key;
 		
@@ -416,7 +394,11 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			result = Accessor::freeze( Accessor::Get( key ), binary );
+			typedef typename Accessor::result_type result_type;
+			
+			const result_type data = Accessor::Get( key );
+			
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
@@ -428,7 +410,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			Accessor::Set( key, Accessor::vivify( begin, end, binary ) );
+			Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
 		}
 	};
 	
