@@ -9,6 +9,7 @@
 #include <fcntl.h>
 
 // plus
+#include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
 // Pedestal
@@ -249,8 +250,8 @@ namespace Genie
 	{
 		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
-		{ "wrapped",   &Property_Factory< View_Property< Boolean_Scribe, Wrapped   > > },
-		{ "disabling", &Property_Factory< View_Property< Boolean_Scribe, Disabling > > },
+		{ "wrapped",   &Property_Factory< View_Property< plus::serialize_bool, Wrapped   > > },
+		{ "disabling", &Property_Factory< View_Property< plus::serialize_bool, Disabling > > },
 		
 		{ NULL, NULL }
 	};

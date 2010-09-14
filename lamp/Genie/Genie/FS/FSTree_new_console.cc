@@ -17,6 +17,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -737,8 +740,8 @@ namespace Genie
 	}
 	
 	
-	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
-	struct Console_View_Property : public View_Property< Scribe, Access >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	struct Console_View_Property : public View_Property< Serialize, Access >
 	{
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
@@ -746,7 +749,7 @@ namespace Genie
 			
 			TextEditParameters::Get( view ).itHasChangedAttributes = true;
 			
-			View_Property< Scribe, Access >::Set( that, begin, end, binary );
+			View_Property< Serialize, Access >::Set( that, begin, end, binary );
 		}
 	};
 	
@@ -780,17 +783,17 @@ namespace Genie
 		
 		{ "selection", &Property_Factory< Selection_Property > },
 		
-		{ "active", &Const_Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Active > > },
+		{ "active", &Const_Property_Factory< View_Property< plus::serialize_bool, TextEditParameters::Active > > },
 		
-		//{ "wrapped", &Property_Factory< View_Property< Boolean_Scribe, TextEditParameters::Wrapped > > },
+		//{ "wrapped", &Property_Factory< View_Property< plus::serialize_bool, TextEditParameters::Wrapped > > },
 		
 		// unlocked-text
 		
-		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Width  > > },
-		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Height > > },
+		{ "width",  &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Width  > > },
+		{ "height", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Height > > },
 		
-		{ "x", &Property_Factory< Console_View_Property< Integer_Scribe< int >, ScrollerParameters::HOffset > > },
-		{ "y", &Property_Factory< Console_View_Property< Integer_Scribe< int >, ScrollerParameters::VOffset > > },
+		{ "x", &Property_Factory< Console_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset > > },
+		{ "y", &Property_Factory< Console_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset > > },
 		
 		{ NULL, NULL }
 	};

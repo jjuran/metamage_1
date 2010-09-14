@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_scroller.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -164,11 +167,11 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "width",  &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Width  > > },
-		{ "height", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::Height > > },
+		{ "width",  &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Width  > > },
+		{ "height", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Height > > },
 		
-		{ "x", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::HOffset > > },
-		{ "y", &Property_Factory< View_Property< Integer_Scribe< int >, ScrollerParameters::VOffset > > },
+		{ "x", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset > > },
+		{ "y", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset > > },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		

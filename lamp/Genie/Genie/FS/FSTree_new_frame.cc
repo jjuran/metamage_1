@@ -12,6 +12,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
@@ -49,26 +52,24 @@ namespace Genie
 		}
 	};
 	
-	struct Value_Scribe
+	struct stringify_Value
 	{
-		typedef Genie::Value Value;
-		
-		static plus::string Encode( const Value& value );
-		
-		static Value Decode( const char* begin, const char* end );
+		static void apply( plus::var_string& out, const Value& value );
 	};
 	
-	plus::string Value_Scribe::Encode( const Value& value )
+	void stringify_Value::apply( plus::var_string& out, const Value& value )
 	{
-		if ( value.flags == 0  &&  value.number == 0 )
-		{
-			return "auto";
-		}
+		const bool is_auto = value.flags == 0  &&  value.number == 0;
 		
-		return Int_Scribe::Encode( value.number );
+		out = is_auto ? "auto" : iota::inscribe_decimal( value.number );
 	}
 	
-	Value Value_Scribe::Decode( const char* begin, const char* end )
+	struct vivify_Value
+	{
+		static Value apply( const char* begin, const char* end );
+	};
+	
+	Value vivify_Value::apply( const char* begin, const char* end )
 	{
 		if ( std::memcmp( begin, STR_LEN( "auto" ) + 1 ) == 0 )
 		{
@@ -78,6 +79,14 @@ namespace Genie
 		return Value( 1, iota::parse_decimal( begin ) );
 	}
 	
+	struct serialize_Value : plus::serialize_POD< Value >
+	{
+		typedef stringify_Value  stringify;
+		typedef vivify_Value     vivify;
+		
+		typedef plus::deconstruct< freeze, stringify >    deconstruct;
+		typedef plus::reconstruct< Value, thaw, vivify >  reconstruct;
+	};
 	
 	struct FrameParameters
 	{
@@ -355,12 +364,12 @@ namespace Genie
 		                            &Property::Set );
 	}
 	
-	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
-	struct Frame_Property : View_Property< Scribe, Access >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	struct Frame_Property : View_Property< Serialize, Access >
 	{
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			View_Property< Scribe, Access >::Set( that, begin, end, binary );
+			View_Property< Serialize, Access >::Set( that, begin, end, binary );
 			
 			const FSTree* view = GetViewKey( that );
 			
@@ -370,19 +379,19 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "width",  &Property_Factory< Frame_Property< Value_Scribe, Width  > > },
-		{ "height", &Property_Factory< Frame_Property< Value_Scribe, Height > > },
+		{ "width",  &Property_Factory< Frame_Property< serialize_Value, Width  > > },
+		{ "height", &Property_Factory< Frame_Property< serialize_Value, Height > > },
 		
-		{ ".margin-top",    &Property_Factory< Frame_Property< Value_Scribe, Margin_Top    > > },
-		{ ".margin-right",  &Property_Factory< Frame_Property< Value_Scribe, Margin_Right  > > },
-		{ ".margin-bottom", &Property_Factory< Frame_Property< Value_Scribe, Margin_Bottom > > },
-		{ ".margin-left",   &Property_Factory< Frame_Property< Value_Scribe, Margin_Left   > > },
+		{ ".margin-top",    &Property_Factory< Frame_Property< serialize_Value, Margin_Top    > > },
+		{ ".margin-right",  &Property_Factory< Frame_Property< serialize_Value, Margin_Right  > > },
+		{ ".margin-bottom", &Property_Factory< Frame_Property< serialize_Value, Margin_Bottom > > },
+		{ ".margin-left",   &Property_Factory< Frame_Property< serialize_Value, Margin_Left   > > },
 		
-		{ "padding", &Property_Factory< Frame_Property< Int_Scribe, Padding > > },
+		{ "padding", &Property_Factory< Frame_Property< plus::serialize_int< int >, Padding > > },
 		
-		{ ".outline-width",     &Property_Factory< Frame_Property< Int_Scribe, Outline_Width     > > },
-		{ ".outline-offset",    &Property_Factory< Frame_Property< Int_Scribe, Outline_Offset    > > },
-		{ ".outline-curvature", &Property_Factory< Frame_Property< Int_Scribe, Outline_Curvature > > },
+		{ ".outline-width",     &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Width     > > },
+		{ ".outline-offset",    &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Offset    > > },
+		{ ".outline-curvature", &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Curvature > > },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		

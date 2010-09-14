@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_icon.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
@@ -188,11 +191,11 @@ namespace Genie
 	{
 		{ "data", &Data_Factory },
 		
-		{ "align", &Property_Factory< View_Property< Integer_Scribe< N::IconAlignmentType >, Alignment > > },
-		{ "xform", &Property_Factory< View_Property< Integer_Scribe< N::IconTransformType >, Transform > > },
-		{ "label", &Property_Factory< View_Property< Integer_Scribe< char >, Label > > },
-		{ "selected",  &Property_Factory< View_Property< Boolean_Scribe, Selected  > > },
-		{ "disabling", &Property_Factory< View_Property< Boolean_Scribe, Disabling > > },
+		{ "align", &Property_Factory< View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment > > },
+		{ "xform", &Property_Factory< View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform > > },
+		{ "label", &Property_Factory< View_Property< plus::serialize_unsigned< char >, Label > > },
+		{ "selected",  &Property_Factory< View_Property< plus::serialize_bool, Selected  > > },
+		{ "disabling", &Property_Factory< View_Property< plus::serialize_bool, Disabling > > },
 		
 		{ NULL, NULL }
 	};

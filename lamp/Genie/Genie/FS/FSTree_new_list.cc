@@ -12,6 +12,7 @@
 #include <fcntl.h>
 
 // plus
+#include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -292,12 +293,12 @@ namespace Genie
 		                            &Property::Set );
 	}
 	
-	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
-	struct List_Property : View_Property< Scribe, Access >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	struct List_Property : View_Property< Serialize, Access >
 	{
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			View_Property< Scribe, Access >::Set( that, begin, end, binary );
+			View_Property< Serialize, Access >::Set( that, begin, end, binary );
 			
 			const FSTree* view = GetViewKey( that );
 			
@@ -309,7 +310,7 @@ namespace Genie
 	{
 		{ "data", &Basic_Factory< FSTree_List_data > },
 		
-		{ "overlap", &Property_Factory< List_Property< Boolean_Scribe, Overlap > > },
+		{ "overlap", &Property_Factory< List_Property< plus::serialize_bool, Overlap > > },
 		
 		{ NULL, NULL }
 	};
