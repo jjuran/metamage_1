@@ -14,6 +14,7 @@
 
 // plus
 #include "plus/make_string.hh"
+#include "plus/serialize.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -41,6 +42,7 @@
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/serialize_qd.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -861,14 +863,18 @@ namespace Genie
 		}
 	};
 	
-	template < class Scribe, typename Scribe::Value& (*Access)( WindowParameters& ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
 	struct Window_Property
 	{
-		static const bool fixed_size = sizeof (typename Scribe::Value);
+		static const std::size_t fixed_size = Serialize::fixed_size;
 		
 		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
+			typedef typename Serialize::result_type result_type;
+			
+			const result_type& value = Access( Find( GetViewKey( that ) ) );
+			
+			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
@@ -877,7 +883,7 @@ namespace Genie
 			
 			WindowParameters& params = gWindowParametersMap[ view ];
 			
-			Access( params ) = Vivify< Scribe >( begin, end, binary );
+			Access( params ) = Serialize::reconstruct::apply( begin, end, binary );
 		}
 	};
 	
@@ -931,7 +937,9 @@ namespace Genie
 		                                                      variability ) );
 	}
 	
-	typedef Integer_Scribe< N::WindowDefProcID >  ProcID_Scribe;
+	using plus::serialize_bool;
+	
+	typedef plus::serialize_unsigned< N::WindowDefProcID > serialize_ProcID;
 	
 	const FSTree_Premapped::Mapping sys_window_REF_Mappings[] =
 	{
@@ -947,11 +955,11 @@ namespace Genie
 		{ "tty",    &Basic_Factory< FSTree_sys_window_REF_tty > },
 		
 		{ "title",  &Property_Factory< kAttrVariable, Window_Title > },
-		{ "pos",    &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< ',' >, &Origin   > > },
-		{ "size",   &Property_Factory< kAttrVariable, Window_Property< Point_Scribe< 'x' >, &Size     > > },
-		{ "vis",    &Property_Factory< kAttrVariable, Window_Property< Boolean_Scribe,      &Visible  > > },
-		{ "procid", &Property_Factory< kAttrConstant, Window_Property< ProcID_Scribe,       &ProcID   > > },
-		{ "goaway", &Property_Factory< kAttrConstant, Window_Property< Boolean_Scribe,      &CloseBox > > },
+		{ "pos",    &Property_Factory< kAttrVariable, Window_Property< serialize_Point,  &Origin   > > },
+		{ "size",   &Property_Factory< kAttrVariable, Window_Property< serialize_Point,  &Size     > > },
+		{ "vis",    &Property_Factory< kAttrVariable, Window_Property< serialize_bool,   &Visible  > > },
+		{ "procid", &Property_Factory< kAttrConstant, Window_Property< serialize_ProcID, &ProcID   > > },
+		{ "goaway", &Property_Factory< kAttrConstant, Window_Property< serialize_bool,   &CloseBox > > },
 		
 		{ NULL, NULL }
 	};
