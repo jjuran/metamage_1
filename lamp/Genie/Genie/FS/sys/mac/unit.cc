@@ -243,27 +243,23 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_unit_N_Property
 	{
-		private:
-			typedef UnitNumber Key;
-		
-		public:
-			static plus::string Read( const FSTree* that, bool binary )
+		static plus::string Read( const FSTree* that, bool binary )
+		{
+			UnitNumber key = GetKey( that );
+			
+			if ( !is_valid_unit_number( key ) )
 			{
-				Key key = GetKey( that );
-				
-				if ( !is_valid_unit_number( key ) )
-				{
-					throw FSTree_Property::Undefined();
-				}
-				
-				AuxDCEHandle dceHandle = GetUTableBase()[ key ];
-				
-				const typename Accessor::Result data = Accessor::Get( dceHandle );
-				
-				plus::string result = Accessor::stringify::apply( data, binary );
-				
-				return result;
+				throw FSTree_Property::Undefined();
 			}
+			
+			AuxDCEHandle dceHandle = GetUTableBase()[ key ];
+			
+			const typename Accessor::Result data = Accessor::Get( dceHandle );
+			
+			plus::string result = Accessor::stringify::apply( data, binary );
+			
+			return result;
+		}
 	};
 	
 	
