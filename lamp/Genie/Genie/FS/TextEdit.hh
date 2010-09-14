@@ -58,7 +58,7 @@ namespace Genie
 	
 	struct Selection_Property
 	{
-		static plus::string Get( const FSTree* that, bool binary );
+		static void Get( plus::var_string& result, const FSTree* that, bool binary );
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary );
 	};

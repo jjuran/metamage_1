@@ -243,7 +243,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_unit_N_Property
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			UnitNumber key = GetKey( that );
 			
@@ -256,9 +256,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( dceHandle );
 			
-			plus::string result = Accessor::stringify::apply( data, binary );
-			
-			return result;
+			result = Accessor::stringify::apply( data, binary );
 		}
 	};
 	

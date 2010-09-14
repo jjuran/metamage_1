@@ -9,6 +9,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Folders.hh"
@@ -424,13 +427,11 @@ namespace Genie
 			return data;
 		}
 		
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const typename Accessor::Result data = Get( that );
 			
-			plus::string result = Accessor::stringify::apply( data, binary );
-			
-			return result;
+			result = Accessor::stringify::apply( data, binary );
 		}
 	};
 	

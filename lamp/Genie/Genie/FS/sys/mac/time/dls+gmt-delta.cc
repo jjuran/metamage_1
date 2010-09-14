@@ -12,6 +12,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/var_string.hh"
 
 
 namespace Genie
@@ -28,16 +29,16 @@ namespace Genie
 		return raw_value;
 	}
 	
-	plus::string sys_mac_time_dlsgmtdelta::Read( const FSTree* that, bool binary )
+	void sys_mac_time_dlsgmtdelta::Read( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const long field = GetGMTDeltaField();
 		
 		if ( binary )
 		{
-			return plus::string( (const char*) &field, sizeof field );
+			result.assign( (const char*) &field, sizeof field );
 		}
 		
-		return plus::encode_32_bit_hex( field );
+		plus::encode_32_bit_hex( result, field );
 	}
 	
 }

@@ -74,13 +74,13 @@ namespace Genie
 	}
 	
 	
-	plus::string Selection_Property::Get( const FSTree* that, bool binary )
+	void Selection_Property::Get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		
 		const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
 		
-		plus::var_string result = iota::inscribe_decimal( selection.start );
+		result = iota::inscribe_decimal( selection.start );
 		
 		if ( selection.end != selection.start )
 		{
@@ -88,8 +88,6 @@ namespace Genie
 			
 			result += iota::inscribe_decimal( selection.end );
 		}
-		
-		return result;
 	}
 	
 	void Selection_Property::Set( const FSTree* that, const char* begin, const char* end, bool binary )

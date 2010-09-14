@@ -264,13 +264,13 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_thng_REF_code
 	{
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
 			const ComponentDescription desc = N::GetComponentInfo( comp );
 			
-			return plus::encode_quad( Accessor::Get( desc ) );
+			result = plus::encode_quad( Accessor::Get( desc ) );
 		}
 	};
 	
@@ -300,7 +300,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_name
 	{
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -308,13 +308,13 @@ namespace Genie
 			
 			(void) N::GetComponentInfo( comp, name );
 			
-			return string_from_stringhandle( name );
+			result = string_from_stringhandle( name );
 		}
 	};
 	
 	struct sys_mac_thng_REF_info
 	{
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -322,7 +322,7 @@ namespace Genie
 			
 			(void) N::GetComponentInfo( comp, N::Handle(), info );
 			
-			return string_from_stringhandle( info );
+			result = string_from_stringhandle( info );
 		}
 	};
 	

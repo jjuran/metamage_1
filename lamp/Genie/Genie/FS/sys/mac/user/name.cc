@@ -13,6 +13,9 @@
 #include <CFString.h>
 #endif
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/CFBase.hh"
 
@@ -75,9 +78,9 @@ namespace Genie
 		return "";
 	}
 	
-	plus::string sys_mac_user_name::Read( const FSTree* that, bool binary )
+	void sys_mac_user_name::Read( plus::var_string& result, const FSTree* that, bool binary )
 	{
-		return GetUserName();
+		result = GetUserName();
 	}
 	
 }

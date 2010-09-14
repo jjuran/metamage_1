@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/name.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Genie
 #include "Genie/Utilities/GetWorkstationName.hh"
 
@@ -12,9 +15,9 @@
 namespace Genie
 {
 	
-	plus::string sys_mac_name::Read( const FSTree* that, bool binary )
+	void sys_mac_name::Read( plus::var_string& result, const FSTree* that, bool binary )
 	{
-		return GetWorkstationName();
+		result = GetWorkstationName();
 	}
 	
 }

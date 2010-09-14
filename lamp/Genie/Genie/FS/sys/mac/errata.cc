@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/errata.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 
@@ -118,9 +121,9 @@ namespace Genie
 	template < class Erratum >
 	struct sys_mac_errata_Property
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return Freeze< Boolean_Scribe >( Erratum::Test(), binary );
+			result = Freeze< Boolean_Scribe >( Erratum::Test(), binary );
 		}
 	};
 	

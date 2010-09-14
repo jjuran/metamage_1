@@ -14,6 +14,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/var_string.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -406,7 +407,7 @@ namespace Genie
 	{
 		typedef WindowRef Key;
 		
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -415,7 +416,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			return Accessor::freeze( Accessor::Get( key ), binary );
+			result = Accessor::freeze( Accessor::Get( key ), binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )

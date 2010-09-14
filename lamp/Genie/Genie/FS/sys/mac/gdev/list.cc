@@ -12,6 +12,7 @@
 // plus
 #include "plus/contains.hh"
 #include "plus/hexidecimal.hh"
+#include "plus/var_string.hh"
 
 // nucleus
 #include "nucleus/linked_list_sequence.hh"
@@ -169,13 +170,13 @@ namespace Genie
 	{
 		typedef N::GDHandle Key;
 		
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
 			const typename Accessor::Result data = Accessor::Get( key );
 			
-			return Accessor::stringify::apply( data, binary );
+			result = Accessor::stringify::apply( data, binary );
 		}
 	};
 	

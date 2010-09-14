@@ -188,9 +188,9 @@ namespace Genie
 	
 	struct Button_Title
 	{
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
+			result = plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )

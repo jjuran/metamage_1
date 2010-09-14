@@ -9,6 +9,9 @@
 #include <MacMemory.h>
 #endif
 
+// plus
+#include "plus/var_string.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/app/dir.hh"
@@ -49,9 +52,9 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_Property
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return Freeze< Integer_Scribe< long > >( Accessor::Get(), binary );
+			result = Freeze< Integer_Scribe< long > >( Accessor::Get(), binary );
 		}
 	};
 	

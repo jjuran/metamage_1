@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/desktop.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
@@ -51,13 +54,13 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
 			const typename Accessor::Result data = Accessor::Get( screenBits );
 			
-			return Accessor::stringify::apply( data, binary );
+			result = Accessor::stringify::apply( data, binary );
 		}
 	};
 	

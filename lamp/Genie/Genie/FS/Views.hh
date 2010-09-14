@@ -12,6 +12,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Scribes.hh"
@@ -46,9 +49,9 @@ namespace Genie
 	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
 	struct View_Property
 	{
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return Freeze< Scribe >( Access( GetViewKey( that ) ), binary );
+			result = Freeze< Scribe >( Access( GetViewKey( that ) ), binary );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )

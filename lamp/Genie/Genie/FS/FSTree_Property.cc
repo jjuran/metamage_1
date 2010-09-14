@@ -35,7 +35,9 @@ namespace Genie
 				// Binary is probably more efficient, but only slightly so
 				const bool binary_vs_text = true;
 				
-				(void) itsReadHook( this, binary_vs_text );
+				plus::var_string data;
+				
+				itsReadHook( data, this, binary_vs_text );
 				
 				return true;
 			}
@@ -54,13 +56,13 @@ namespace Genie
 			return itsSize;
 		}
 		
-		plus::string data;
+		plus::var_string data;
 		
 		try
 		{
 			const bool binary = true;  // Return binary length
 			
-			data = itsReadHook( this, binary );
+			itsReadHook( data, this, binary );
 		}
 		catch ( const Undefined& )
 		{
@@ -102,7 +104,7 @@ namespace Genie
 		{
 			const bool binary = flags & O_BINARY;
 			
-			data = itsReadHook( this, binary );
+			itsReadHook( data, this, binary );
 			
 			if ( !binary )
 			{

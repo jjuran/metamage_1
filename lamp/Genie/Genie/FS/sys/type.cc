@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/quad.hh"
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -27,9 +28,9 @@ namespace Genie
 	
 	struct sys_type_text_wildcard
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return plus::encode_quad( gTextFileCreator );
+			result = plus::encode_quad( gTextFileCreator );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )

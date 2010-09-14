@@ -11,6 +11,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -174,9 +177,9 @@ namespace Genie
 	template < class Accessor >
 	struct sys_cpu_Property
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return Accessor::Get();
+			result = Accessor::Get();
 		}
 	};
 	

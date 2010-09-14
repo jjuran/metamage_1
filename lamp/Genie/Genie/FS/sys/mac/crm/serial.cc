@@ -132,25 +132,25 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_name
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return GetSelectedString( that, &CRMSerialRecord::name );
+			result = GetSelectedString( that, &CRMSerialRecord::name );
 		}
 	};
 	
 	struct sys_mac_crm_serial_N_input
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return GetSelectedString( that, &CRMSerialRecord::inputDriverName );
+			result = GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
 	};
 	
 	struct sys_mac_crm_serial_N_output
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return GetSelectedString( that, &CRMSerialRecord::outputDriverName );
+			result = GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
 	};
 	

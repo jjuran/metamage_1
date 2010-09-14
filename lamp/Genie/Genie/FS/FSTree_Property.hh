@@ -13,10 +13,19 @@
 #include "Genie/FS/FSTree.hh"
 
 
+namespace plus
+{
+	
+	class var_string;	
+	
+}
+
 namespace Genie
 {
 	
-	typedef plus::string (*Property_ReadHook)( const FSTree* that, bool binary );
+	typedef void (*Property_ReadHook)( plus::var_string&  out,
+	                                   const FSTree*      that,
+	                                   bool               binary );
 	
 	typedef void (*Property_WriteHook)( const FSTree  *that,
 	                                    const char    *begin,

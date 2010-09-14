@@ -846,9 +846,9 @@ namespace Genie
 	{
 		static const bool fixed_size = 0;
 		
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return plus::make_string( Find( GetViewKey( that ) ).itsTitle );
+			result = plus::make_string( Find( GetViewKey( that ) ).itsTitle );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
@@ -866,9 +866,9 @@ namespace Genie
 	{
 		static const bool fixed_size = sizeof (typename Scribe::Value);
 		
-		static plus::string Get( const FSTree* that, bool binary )
+		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			return Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
+			result = Freeze< Scribe >( Access( Find( GetViewKey( that ) ) ), binary );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )

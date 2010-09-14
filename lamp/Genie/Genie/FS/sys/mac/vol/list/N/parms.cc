@@ -8,6 +8,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -186,7 +189,7 @@ namespace Genie
 	{
 		typedef Mac::FSVolumeRefNum Key;
 		
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
@@ -194,9 +197,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( parmsInfo );
 			
-			plus::string result = Accessor::stringify::apply( data, binary );
-			
-			return result;
+			result = Accessor::stringify::apply( data, binary );
 		}
 	};
 	

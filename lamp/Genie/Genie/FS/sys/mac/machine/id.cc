@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/machine/id.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 
@@ -25,11 +28,11 @@ namespace Genie
 		return id;
 	}
 	
-	plus::string sys_mac_machine_id::Read( const FSTree* that, bool binary )
+	void sys_mac_machine_id::Read( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const UInt32 id = GetMachineID();
 		
-		return Freeze< Int_Scribe >( id, binary );
+		result = Freeze< Int_Scribe >( id, binary );
 	}
 	
 }

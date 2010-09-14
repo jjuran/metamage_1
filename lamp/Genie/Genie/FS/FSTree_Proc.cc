@@ -476,11 +476,11 @@ namespace Genie
 	
 	struct proc_PID_name
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			pid_t pid = GetKey( that );
 			
-			return GetProcess( pid ).ProgramName();
+			result = GetProcess( pid ).ProgramName();
 		}
 	};
 	

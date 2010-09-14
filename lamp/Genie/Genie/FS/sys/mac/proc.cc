@@ -181,7 +181,7 @@ namespace Genie
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static plus::string Read( const FSTree* that, bool binary )
+			static void Read( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -195,7 +195,7 @@ namespace Genie
 				
 				N::GetProcessInformation( key, processInfo );
 				
-				return plus::make_string( name );
+				result = plus::make_string( name );
 			}
 	};
 	

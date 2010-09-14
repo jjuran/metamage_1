@@ -41,7 +41,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_key
 	{
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			throw FSTree_Property::Undefined();
 		}

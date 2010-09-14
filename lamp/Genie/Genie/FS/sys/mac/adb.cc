@@ -125,17 +125,13 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static plus::string Read( const FSTree* that, bool binary )
+			static void Read( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
 				ADBDataBlock data = N::GetADBInfo( key );
 				
-				plus::var_string result;
-				
 				append_hex_encoded_byte( result, data.devType );
-				
-				return result;
 			}
 	};
 	
@@ -145,7 +141,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static plus::string Read( const FSTree* that, bool binary )
+			static void Read( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -153,7 +149,7 @@ namespace Genie
 				
 				char c = '0' + data.origADBAddr;
 				
-				return plus::string( 1, c );
+				result = c;
 			}
 	};
 	

@@ -12,6 +12,9 @@
 #include <CursorDevices.h>
 #endif
 
+// plus
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -87,13 +90,13 @@ namespace Genie
 			return device;
 		}
 		
-		static plus::string Read( const FSTree* that, bool binary )
+		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
 			const typename Accessor::Result data = Accessor::Get( *device );
 			
-			return Freeze< Accessor::Scribe >( data, binary );
+			result = Freeze< Accessor::Scribe >( data, binary );
 		}
 		
 		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
