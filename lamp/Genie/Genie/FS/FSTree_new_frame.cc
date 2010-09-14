@@ -9,6 +9,7 @@
 #include <fcntl.h>
 
 // Iota
+#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // Nitrogen
@@ -21,7 +22,6 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Scribes.hh"
 #include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -75,7 +75,7 @@ namespace Genie
 			return Value();
 		}
 		
-		return Value( 1, Int_Scribe::Decode( begin, end ) );
+		return Value( 1, iota::parse_decimal( begin ) );
 	}
 	
 	
