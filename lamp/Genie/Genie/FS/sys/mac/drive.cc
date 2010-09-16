@@ -10,6 +10,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -22,7 +25,6 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/stringify.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -132,24 +134,16 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, target );
 	}
 	
-	struct GetDriveFlags
+	struct GetDriveFlags : plus::serialize_hex< UInt32 >
 	{
-		typedef UInt32 Result;
-		
-		typedef stringify_32_bit_hex stringify;
-		
-		static Result Get( const DrvQEl& drive )
+		static UInt32 Get( const DrvQEl& drive )
 		{
-			return ((const Result*) &drive)[-1];
+			return ((const UInt32*) &drive)[-1];
 		}
 	};
 	
-	struct GetDriveSize
+	struct GetDriveSize : plus::serialize_unsigned< UInt32 >
 	{
-		typedef UInt32 Result;
-		
-		typedef stringify_unsigned stringify;
-		
 		static UInt32 Get( const DrvQEl& drive )
 		{
 			UInt32 size = drive.dQDrvSz;
@@ -163,12 +157,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetDriveFSID
+	struct GetDriveFSID : plus::serialize_int< SInt16 >
 	{
-		typedef SInt16 Result;
-		
-		typedef stringify_short stringify;
-		
 		static SInt16 Get( const DrvQEl& drive )
 		{
 			return drive.dQFSID;
@@ -196,9 +186,9 @@ namespace Genie
 		{
 			const DrvQEl& el = FindDrive( that );
 			
-			const typename Accessor::Result data = Accessor::Get( el );
+			const typename Accessor::result_type data = Accessor::Get( el );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
