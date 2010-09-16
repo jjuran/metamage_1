@@ -9,6 +9,10 @@
 #include "iota/decimal.hh"
 
 // plus
+#include "plus/deconstruct.hh"
+#include "plus/freeze.hh"
+#include "plus/serialize.hh"
+#include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -17,7 +21,6 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/stringify.hh"
 
 
 namespace Genie
@@ -37,29 +40,17 @@ namespace Genie
 	}
 	
 	
-	struct GetVolumeParmsAttrib
+	struct GetVolumeParmsAttrib : plus::serialize_hex< UInt32 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef UInt32 Result;
-		
-		typedef stringify_32_bit_hex stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			return parmsInfo.vMAttrib;
 		}
 	};
 	
-	struct GetVolumeParmsHandle
+	struct GetVolumeParmsHandle : plus::serialize_pointer
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef ::Handle Result;
-		
-		typedef stringify_pointer stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static ::Handle Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
@@ -70,15 +61,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsServer
+	struct GetVolumeParmsServer : plus::serialize_hex< UInt32 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef UInt32 Result;
-		
-		typedef stringify_32_bit_hex stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
@@ -89,15 +74,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsGrade
+	struct GetVolumeParmsGrade : plus::serialize_int< SInt32 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef SInt32 Result;
-		
-		typedef stringify_int stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static SInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
@@ -108,15 +87,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsPrivID
+	struct GetVolumeParmsPrivID : plus::serialize_int< SInt16 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef SInt16 Result;
-		
-		typedef stringify_short stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static SInt16 Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
@@ -127,15 +100,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsExtended
+	struct GetVolumeParmsExtended : plus::serialize_hex< UInt32 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef UInt32 Result;
-		
-		typedef stringify_32_bit_hex stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
@@ -146,15 +113,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsDeviceID
+	struct GetVolumeParmsDeviceID : plus::serialize_c_string_contents
 	{
-		static const bool alwaysStringified = true;
-		
-		typedef const char* Result;
-		
-		typedef stringify_string stringify;
-		
-		static Result Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static const char* Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 4  ||  parmsInfo.vMDeviceID == NULL )
 			{
@@ -195,9 +156,9 @@ namespace Genie
 			
 			GetVolParmsInfo( parmsInfo, that );
 			
-			const typename Accessor::Result data = Accessor::Get( parmsInfo );
+			const typename Accessor::result_type data = Accessor::Get( parmsInfo );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
@@ -209,13 +170,9 @@ namespace Genie
 	{
 		typedef sys_mac_vol_N_Parms_Property< Accessor > Property;
 		
-		const bool fixed = !Accessor::alwaysStringified;
-		
-		const size_t size = fixed ? sizeof (typename Accessor::Result) : 0;
-		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            size,
+		                            Accessor::fixed_size,
 		                            &Property::Read );
 	}
 	
