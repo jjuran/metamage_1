@@ -20,7 +20,7 @@
 namespace Genie
 {
 	
-	static void append_Point( plus::var_string& out, const Point& pt )
+	void stringify_Point::apply( plus::var_string& out, const Point& pt )
 	{
 		out += iota::inscribe_decimal( pt.h );
 		
@@ -29,38 +29,15 @@ namespace Genie
 		out += iota::inscribe_decimal( pt.v );
 	}
 	
-	plus::string stringify_Point::apply( const Point& pt, bool binary )
+	void stringify_Rect::apply( plus::var_string& out, const Rect& rect )
 	{
-		if ( binary )
-		{
-			return plus::string( (const char*) &pt, sizeof pt );
-		}
-		
-		plus::var_string result;
-		
-		append_Point( result, pt );
-		
-		return result;
-	}
-	
-	plus::string stringify_Rect::apply( const Rect& rect, bool binary )
-	{
-		if ( binary )
-		{
-			return plus::string( (const char*) &rect, sizeof rect );
-		}
-		
 		const Point* points = (const Point*) &rect;  // reinterpret_cast
 		
-		plus::var_string result;
+		stringify_Point::apply( out, points[0] );  // top left
 		
-		append_Point( result, points[0] );  // top left
+		out += ':';
 		
-		result += ':';
-		
-		append_Point( result, points[1] );  // bottom right
-		
-		return result;
+		stringify_Point::apply( out, points[1] );  // bottom right
 	}
 	
 }

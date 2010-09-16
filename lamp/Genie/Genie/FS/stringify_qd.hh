@@ -6,25 +6,29 @@
 #ifndef GENIE_FS_STRINGIFYQD_HH
 #define GENIE_FS_STRINGIFYQD_HH
 
-// plus
-#include "plus/string.hh"
-
 // #include <MacTypes.h>
 struct Point;
 struct Rect;
 
+
+namespace plus
+{
+	
+	class var_string;
+	
+}
 
 namespace Genie
 {
 	
 	struct stringify_Point
 	{
-		static plus::string apply( const Point& pt, bool binary );
+		static void apply( plus::var_string& out, const Point& pt );
 	};
 	
 	struct stringify_Rect
 	{
-		static plus::string apply( const Rect& rect, bool binary );
+		static void apply( plus::var_string& out, const Rect& rect );
 	};
 	
 }

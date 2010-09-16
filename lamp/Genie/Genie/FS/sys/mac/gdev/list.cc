@@ -27,7 +27,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/stringify_qd.hh"
+#include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
@@ -136,10 +136,8 @@ namespace Genie
 	}
 	
 	
-	struct GetGDBounds
+	struct GetGDBounds : serialize_Rect
 	{
-		typedef stringify_Rect stringify;
-		
 		typedef const Rect& Result;
 		
 		static Result Get( N::GDHandle gdevice )
@@ -148,10 +146,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetGDSize
+	struct GetGDSize : serialize_Point
 	{
-		typedef stringify_Point stringify;
-		
 		typedef Point Result;
 		
 		static Result Get( N::GDHandle gdevice )
@@ -176,7 +172,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( key );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
