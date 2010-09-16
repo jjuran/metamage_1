@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_new_scrollframe.hh"
 
+// plus
+#include "plus/serialize.hh"
+
 // Nitrogen
 #include "Nitrogen/Controls.hh"
 
@@ -374,8 +377,8 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "horizontal", &Property_Factory< View_Property< Boolean_Scribe, Horizontal > > },
-		{ "vertical",   &Property_Factory< View_Property< Boolean_Scribe, Vertical   > > },
+		{ "horizontal", &Property_Factory< View_Property< plus::serialize_bool, Horizontal > > },
+		{ "vertical",   &Property_Factory< View_Property< plus::serialize_bool, Vertical   > > },
 		
 		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
 		

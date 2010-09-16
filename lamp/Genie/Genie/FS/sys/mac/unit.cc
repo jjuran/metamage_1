@@ -15,6 +15,7 @@
 
 // plus
 #include "plus/contains.hh"
+#include "plus/serialize.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -29,7 +30,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/stringify.hh"
+#include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -136,15 +137,9 @@ namespace Genie
 	}
 	
 	
-	struct GetDriverFlags
+	struct GetDriverFlags : plus::serialize_hex< short >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef short Result;
-		
-		typedef stringify_16_bit_hex stringify;
-		
-		static Result Get( AuxDCEHandle dceHandle )
+		static short Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -183,30 +178,20 @@ namespace Genie
 		return N::Str255( name );
 	}
 	
-	struct DriverName
+	struct DriverName : serialize_Str255_contents
 	{
-		static const bool alwaysStringified = true;
-		
-		typedef N::Str255 Result;
-		
-		typedef stringify_pascal_string stringify;
-		
-		static Result Get( AuxDCEHandle dceHandle )
+		static N::Str255 Get( AuxDCEHandle dceHandle )
 		{
 			return GetDriverName( dceHandle );
 		}
 	};
 	
-	struct GetDriverSlot
+	struct GetDriverSlot : plus::serialize_int< char >
 	{
-		static const bool alwaysStringified = false;
+		// dCtlSlot is defined as 'char', but int is more debugger-friendly
+		typedef int result_type;
 		
-		// dCtlSlot is defined as 'char', but we want integer conversion
-		typedef UInt16 Result;
-		
-		typedef stringify_short stringify;
-		
-		static Result Get( AuxDCEHandle dceHandle )
+		static int Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -219,15 +204,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetDriverBase
+	struct GetDriverBase : plus::serialize_hex< UInt32 >
 	{
-		static const bool alwaysStringified = false;
-		
-		typedef long Result;
-		
-		typedef stringify_32_bit_hex stringify;
-		
-		static Result Get( AuxDCEHandle dceHandle )
+		static UInt32 Get( AuxDCEHandle dceHandle )
 		{
 			ASSERT( dceHandle != NULL );
 			
@@ -254,9 +233,9 @@ namespace Genie
 			
 			AuxDCEHandle dceHandle = GetUTableBase()[ key ];
 			
-			const typename Accessor::Result data = Accessor::Get( dceHandle );
+			const typename Accessor::result_type data = Accessor::Get( dceHandle );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	

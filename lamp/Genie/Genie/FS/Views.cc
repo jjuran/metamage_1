@@ -5,6 +5,10 @@
 
 #include "Genie/FS/Views.hh"
 
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
+
 // Standard C++
 #include <map>
 

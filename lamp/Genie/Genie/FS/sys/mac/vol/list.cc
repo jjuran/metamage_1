@@ -10,6 +10,10 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/deconstruct.hh"
+#include "plus/freeze.hh"
+#include "plus/serialize.hh"
+#include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -31,9 +35,9 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
-#include "Genie/FS/stringify.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -211,100 +215,75 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
-		static const bool alwaysStringified = false;
-		
 		static const bool neverZero = false;
 	};
 	
-	struct GetVolumeName : Volume_Accessor_Defaults
+	struct GetVolumeName : Volume_Accessor_Defaults,
+	                       serialize_Str255_contents
 	{
 		static const bool needsName = true;
 		
-		static const bool alwaysStringified = true;
-		
-		typedef const unsigned char* Result;
-		
-		typedef stringify_pascal_string stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static const unsigned char* Get( const XVolumeParam& volume )
 		{
 			return volume.ioNamePtr;
 		}
 	};
 	
-	struct GetVolumeBlockCount : Volume_Accessor_Defaults
+	struct GetVolumeBlockCount : Volume_Accessor_Defaults,
+	                             plus::serialize_unsigned< UInt32 >
 	{
-		typedef UInt32 Result;  // will break on 16TB volumes
+		// will break on 16TB volumes
 		
-		typedef stringify_unsigned stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static UInt32 Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes / volume.ioVAlBlkSiz
 			                           : GetTotalBlocks( volume );
 		}
 	};
 	
-	struct GetVolumeBlockSize : Volume_Accessor_Defaults
+	struct GetVolumeBlockSize : Volume_Accessor_Defaults,
+	                            plus::serialize_unsigned< UInt32 >
 	{
-		typedef UInt32 Result;
-		
-		typedef stringify_unsigned stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static UInt32 Get( const XVolumeParam& volume )
 		{
 			return volume.ioVAlBlkSiz;
 		}
 	};
 	
-	struct GetVolumeFreeBlockCount : Volume_Accessor_Defaults
+	struct GetVolumeFreeBlockCount : Volume_Accessor_Defaults,
+	                                 plus::serialize_unsigned< UInt32 >
 	{
-		typedef UInt32 Result;
-		
-		typedef stringify_unsigned stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static UInt32 Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes / volume.ioVAlBlkSiz
 			                           : GetFreeBlocks( volume );
 		}
 	};
 	
-	struct GetVolumeCapacity : Volume_Accessor_Defaults
+	struct GetVolumeCapacity : Volume_Accessor_Defaults,
+	                           plus::serialize_unsigned< UInt64 >
 	{
-		typedef UInt64 Result;
-		
-		typedef stringify_unsigned_wide stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static UInt64 Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes
 			                           : GetTotalBlocks( volume ) * volume.ioVAlBlkSiz;
 		}
 	};
 	
-	struct GetVolumeFreeSpace : Volume_Accessor_Defaults
+	struct GetVolumeFreeSpace : Volume_Accessor_Defaults,
+	                            plus::serialize_unsigned< UInt64 >
 	{
-		typedef UInt64 Result;
-		
-		typedef stringify_unsigned_wide stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static UInt64 Get( const XVolumeParam& volume )
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes
 			                           : GetFreeBlocks( volume ) * volume.ioVAlBlkSiz;
 		}
 	};
 	
-	struct GetVolumeSignature : Volume_Accessor_Defaults
+	struct GetVolumeSignature : Volume_Accessor_Defaults,
+	                            plus::serialize_c_string_contents
 	{
-		static const bool alwaysStringified = true;
-		
-		typedef const char* Result;
-		
-		typedef stringify_string stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static const char* Get( const XVolumeParam& volume )
 		{
 			static char sigWord[] = "ab";
 			
@@ -315,55 +294,43 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeFSID : Volume_Accessor_Defaults
+	struct GetVolumeFSID : Volume_Accessor_Defaults,
+	                       plus::serialize_int< SInt16 >
 	{
-		typedef SInt16 Result;
-		
-		typedef stringify_short stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static SInt16 Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFSID;
 		}
 	};
 	
-	struct GetVolumeWriteCount : Volume_Accessor_Defaults
+	struct GetVolumeWriteCount : Volume_Accessor_Defaults,
+	                             plus::serialize_int< SInt32 >
 	{
 		static const bool neverZero = true;
 		
-		typedef SInt32 Result;
-		
-		typedef stringify_int stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static SInt32 Get( const XVolumeParam& volume )
 		{
 			return volume.ioVWrCnt;
 		}
 	};
 	
-	struct GetVolumeFileCount : Volume_Accessor_Defaults
+	struct GetVolumeFileCount : Volume_Accessor_Defaults,
+	                            plus::serialize_int< SInt32 >
 	{
 		static const bool neverZero = true;
 		
-		typedef SInt32 Result;
-		
-		typedef stringify_int stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static SInt32 Get( const XVolumeParam& volume )
 		{
 			return volume.ioVFilCnt;
 		}
 	};
 	
-	struct GetVolumeDirCount : Volume_Accessor_Defaults
+	struct GetVolumeDirCount : Volume_Accessor_Defaults,
+	                           plus::serialize_int< SInt32 >
 	{
 		static const bool neverZero = true;
 		
-		typedef SInt32 Result;
-		
-		typedef stringify_int stringify;
-		
-		static Result Get( const XVolumeParam& volume )
+		static SInt32 Get( const XVolumeParam& volume )
 		{
 			return volume.ioVDirCnt;
 		}
@@ -414,7 +381,7 @@ namespace Genie
 	{
 		typedef N::FSVolumeRefNum Key;
 		
-		static typename Accessor::Result Get( const FSTree* that )
+		static typename Accessor::result_type Get( const FSTree* that )
 		{
 			XVolumeParam pb;
 			
@@ -422,16 +389,14 @@ namespace Genie
 			
 			GetVolInfo( pb, that, Accessor::needsName ? name : NULL );
 			
-			const typename Accessor::Result data = Accessor::Get( pb );
-			
-			return data;
+			return Accessor::Get( pb );
 		}
 		
 		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			const typename Accessor::Result data = Get( that );
+			const typename Accessor::result_type data = Get( that );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
@@ -483,13 +448,9 @@ namespace Genie
 	{
 		typedef sys_mac_vol_N_Property< Accessor > Property;
 		
-		const bool fixed = !Accessor::alwaysStringified;
-		
-		const size_t size = fixed ? sizeof (typename Accessor::Result) : 0;
-		
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
-		                                        size,
+		                                        Accessor::fixed_size,
 		                                        &Property::Read );
 		
 		if ( Accessor::neverZero  &&  Property::Get( result.get() ) == 0 )

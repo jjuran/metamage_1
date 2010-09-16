@@ -6,6 +6,7 @@
 #include "Genie/FS/sys/mac/errata.hh"
 
 // plus
+#include "plus/deconstruct_bool.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -13,7 +14,6 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Scribes.hh"
 #include "Genie/Utilities/GetMachineName.hh"
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
@@ -123,7 +123,7 @@ namespace Genie
 	{
 		static void Read( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = Freeze< Boolean_Scribe >( Erratum::Test(), binary );
+			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
 		}
 	};
 	

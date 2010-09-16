@@ -17,10 +17,16 @@
 
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
-#include "Genie/FS/Scribes.hh"
 
 
 struct Rect;
+
+namespace plus
+{
+	
+	class var_string;
+	
+}
 
 namespace Pedestal
 {
@@ -46,19 +52,23 @@ namespace Genie
 	inline const FSTree* GetViewKey( const FSTree* that )  { return that->ParentRef().get(); }
 	
 	
-	template < class Scribe, typename Scribe::Value& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct View_Property
 	{
 		static void Get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = Freeze< Scribe >( Access( GetViewKey( that ) ), binary );
+			typedef typename Serialize::result_type result_type;
+			
+			const result_type& value = Access( GetViewKey( that ) );
+			
+			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
-			Access( view ) = Vivify< Scribe >( begin, end, binary );
+			Access( view ) = Serialize::reconstruct::apply( begin, end, binary );
 			
 			InvalidateWindowForView( view );
 		}

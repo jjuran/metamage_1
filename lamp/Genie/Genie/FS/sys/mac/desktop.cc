@@ -13,7 +13,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/stringify_qd.hh"
+#include "Genie/FS/serialize_qd.hh"
 
 
 namespace Genie
@@ -22,10 +22,8 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct GetScreenBounds
+	struct GetScreenBounds : serialize_Rect
 	{
-		typedef stringify_Rect stringify;
-		
 		typedef const Rect& Result;
 		
 		static Result Get( const BitMap& screenBits )
@@ -34,10 +32,8 @@ namespace Genie
 		}
 	};
 	
-	struct GetScreenSize
+	struct GetScreenSize : serialize_Point
 	{
-		typedef stringify_Point stringify;
-		
 		typedef Point Result;
 		
 		static Result Get( const BitMap& screenBits )
@@ -60,7 +56,7 @@ namespace Genie
 			
 			const typename Accessor::Result data = Accessor::Get( screenBits );
 			
-			result = Accessor::stringify::apply( data, binary );
+			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
 	
