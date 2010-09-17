@@ -61,6 +61,12 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef O_SEARCH
+		
+		o_search = O_SEARCH,
+		
+	#endif
+		
 	#ifdef O_DIRECTORY
 		
 		o_directory = O_DIRECTORY,

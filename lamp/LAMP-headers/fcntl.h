@@ -41,7 +41,8 @@ extern "C" {
 	
 	#define O_BINARY	0x8000  // matches WinCE
 	
-	#define O_EXEC  0x00040000
+	#define O_EXEC    0x00040000
+	#define O_SEARCH  0x00040000
 	
 	#define O_CLOEXEC  0x00080000
 	
