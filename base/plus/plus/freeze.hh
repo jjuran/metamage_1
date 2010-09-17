@@ -16,21 +16,19 @@
 namespace plus
 {
 	
+	template < class POD >
 	struct freeze_pod
 	{
-		template < class POD >
 		static const char* get_data( const POD& pod )
 		{
 			return (const char*) &pod;  // reinterpret_cast
 		}
 		
-		template < class POD >
 		static std::size_t get_size( const POD& pod )
 		{
 			return sizeof pod;
 		}
 		
-		template < class POD >
 		static void apply( var_string& out, const POD& pod )
 		{
 			out.append( get_data( pod ), sizeof pod );

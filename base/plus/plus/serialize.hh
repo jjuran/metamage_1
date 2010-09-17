@@ -29,8 +29,8 @@ namespace plus
 		
 		static const std::size_t fixed_size = sizeof (POD);
 		
-		typedef freeze_pod       freeze;
-		typedef thaw_pod< POD >  thaw;
+		typedef freeze_pod< POD >  freeze;
+		typedef thaw_pod  < POD >  thaw;
 	};
 	
 	struct serialize_bool : serialize_POD< bool >
