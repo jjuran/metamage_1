@@ -6,9 +6,7 @@
 #include "Genie/FS/sys/mac/machine/id.hh"
 
 // plus
-#include "plus/deconstruct.hh"
-#include "plus/freeze.hh"
-#include "plus/stringify.hh"
+#include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -21,10 +19,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	using plus::stringify_unsigned;
-	using plus::freeze_pod;
-	
-	typedef plus::deconstruct< stringify_unsigned, freeze_pod > deconstruct_id;
+	typedef plus::serialize_unsigned< UInt32 >::deconstruct deconstruct_id;
 	
 	
 	static inline UInt32 GetMachineID()
