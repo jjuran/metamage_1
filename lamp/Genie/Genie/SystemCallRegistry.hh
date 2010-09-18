@@ -26,7 +26,7 @@ namespace Genie
 	// Register system calls
 	
 	#define REGISTER_SYSTEM_CALL(call)  \
-		SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
+		::Genie::SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
 	
 	void RegisterSystemCall( syscall_number_t index, const char* name, void* func );
 	
