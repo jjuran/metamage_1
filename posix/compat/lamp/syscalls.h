@@ -2,8 +2,7 @@
 #define	LAMP_SYSCALLS_H
 
 
-#define __NR_InitProc                    0
-//#define __NR_restart_syscall             0
+#define __NR_restart_syscall             0
 #define __NR__exit                       1
 #define __NR_fork                        2
 #define __NR_read                        3
