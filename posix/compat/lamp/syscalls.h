@@ -122,7 +122,7 @@
 #define __NR_AESendBlocking            117  // ipc
 #define __NR_fsync                     118
 // 119
-// 120
+#define __NR__lamp_clone               120  // clone
 #define __NR__OTInetMailExchange       121  // setdomainname
 // 122
 // 123
