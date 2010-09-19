@@ -859,7 +859,16 @@ namespace Genie
 		
 		// suspend parent for vfork
 		
-		SuspendForFork( itsForkedChildPID );
+		itsForkedChildPID = child.GetPID();
+		
+		itsInterdependence = kProcessForking;
+		itsSchedule        = kProcessFrozen;
+		
+		itsStackFramePtr = get_vfork_frame_pointer();
+		
+		SaveRegisters( &itsSavedRegisters );
+		
+		Suspend();
 		
 		// activate child
 		
@@ -1099,20 +1108,6 @@ namespace Genie
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
 		itsCWD = newCWD->ChangeToDirectory();
-	}
-	
-	void Process::SuspendForFork( pid_t childPID )
-	{
-		itsForkedChildPID = childPID;
-		
-		itsInterdependence = kProcessForking;
-		itsSchedule        = kProcessFrozen;
-		
-		itsStackFramePtr = get_vfork_frame_pointer();
-		
-		SaveRegisters( &itsSavedRegisters );
-		
-		Suspend();
 	}
 	
 	void Process::ResumeAfterFork()
