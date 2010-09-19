@@ -777,9 +777,9 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
-		its_fs_info           ( duplicate( *parent.its_fs_info ) ),
-		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
-		its_signal_handlers   ( duplicate( *parent.its_signal_handlers ) ),
+		its_fs_info           ( parent.its_fs_info ),
+		itsFileDescriptors    ( parent.itsFileDescriptors ),
+		its_signal_handlers   ( parent.its_signal_handlers ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
@@ -802,6 +802,21 @@ namespace Genie
 	
 	Process::~Process()
 	{
+	}
+	
+	void Process::unshare_fs_info()
+	{
+		its_fs_info = duplicate( *its_fs_info );
+	}
+	
+	void Process::unshare_files()
+	{
+		itsFileDescriptors = duplicate( *itsFileDescriptors );
+	}
+	
+	void Process::unshare_signal_handlers()
+	{
+		its_signal_handlers = duplicate( *its_signal_handlers );
 	}
 	
 	unsigned int Process::SetAlarm( unsigned int seconds )
@@ -858,6 +873,10 @@ namespace Genie
 		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( *this );
 		
 		Process& child = *child_ptr;
+		
+		child.unshare_fs_info();
+		child.unshare_files();
+		child.unshare_signal_handlers();
 		
 		// suspend parent for vfork
 		

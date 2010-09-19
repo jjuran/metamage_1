@@ -167,6 +167,10 @@ namespace Genie
 			
 			~Process();
 			
+			void unshare_fs_info();
+			void unshare_files();
+			void unshare_signal_handlers();
+			
 			static pascal void* ThreadEntry( void* param );
 			
 			int Run();
