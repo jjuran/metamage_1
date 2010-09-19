@@ -796,12 +796,6 @@ namespace Genie
 		itsReexecArgs[5] =
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
-		
-		parent.SuspendForFork( itsPID );
-		
-		gCurrentProcess = this;
-		
-		global_parameter_block.current_user = &its_pb;
 	}
 	
 	Process::~Process()
@@ -855,6 +849,26 @@ namespace Genie
 		}
 		
 		return process->itsThread.get();
+	}
+	
+	Process& Process::vfork()
+	{
+		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( *this );
+		
+		Process& child = *child_ptr;
+		
+		// suspend parent for vfork
+		
+		SuspendForFork( itsForkedChildPID );
+		
+		// activate child
+		
+		gCurrentProcess = &child;
+		
+		global_parameter_block.current_user = &child.its_pb;
+		
+		return child;
+		
 	}
 	
 	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )

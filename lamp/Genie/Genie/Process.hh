@@ -234,6 +234,8 @@ namespace Genie
 			
 			Mac::ThreadID GetThread() const;
 			
+			Process& vfork();
+			
 			void Exec( const char*         path,
 			           const char* const   argv[],
 			           const char* const*  envp );

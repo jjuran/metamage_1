@@ -28,7 +28,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/ProcessList.hh"
+#include "Genie/Process.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -60,9 +60,9 @@ namespace Genie
 		
 		Process& parent = GetProcess( 1 );
 		
-		const boost::intrusive_ptr< Process >& process = NewProcess( parent );
+		Process& process = parent.vfork();
 		
-		fd_table& files = process->FileDescriptors();
+		fd_table& files = process.FileDescriptors();
 		
 		files[ 0 ] =
 		files[ 1 ] =
@@ -70,11 +70,11 @@ namespace Genie
 		
 		try
 		{
-			process->Exec( "/bin/sh", argv, envp );
+			process.Exec( "/bin/sh", argv, envp );
 		}
 		catch ( ... )
 		{
-			process->Exit( 127 );
+			process.Exit( 127 );
 		}
 		
 		parent.ResumeAfterFork();
