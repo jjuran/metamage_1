@@ -35,6 +35,7 @@
 #include "Genie/Process/vfork_context.hh"
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
+#include "Genie/task/fs_info.hh"
 #include "Genie/task/memory_data.hh"
 
 
@@ -106,7 +107,7 @@ namespace Genie
 			
 			plus::string itsName;
 			
-			boost::shared_ptr< IOHandle > itsCWD;
+			boost::intrusive_ptr< fs_info > its_fs_info;
 			
 			boost::intrusive_ptr< fd_table > itsFileDescriptors;
 			
