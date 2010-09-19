@@ -765,11 +765,11 @@ namespace Genie
 		InstallExceptionHandlers();
 	}
 	
-	Process::Process( Process& parent, pid_t pid ) 
+	Process::Process( Process& parent, pid_t pid, pid_t ppid ) 
 	:
 		SignalReceiver        ( parent ),
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
-		itsPPID               ( parent.GetPID() ),
+		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
