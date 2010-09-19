@@ -41,8 +41,6 @@
 namespace Genie
 {
 	
-	typedef fd_table FileDescriptorMap;
-	
 	class NotExecutableError {};
 	
 	

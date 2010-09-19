@@ -348,7 +348,7 @@ namespace Genie
 			const bool close_on_exec = flags & O_CLOEXEC;
 			const bool nonblocking   = flags & O_NONBLOCK;
 			
-			FileDescriptorMap& files = frame.Caller().FileDescriptors();
+			fd_table& files = frame.Caller().FileDescriptors();
 			
 			int reader = LowestUnusedFileDescriptor( 3 );
 			int writer = LowestUnusedFileDescriptor( reader + 1 );

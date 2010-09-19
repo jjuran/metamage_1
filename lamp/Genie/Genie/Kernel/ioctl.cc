@@ -27,7 +27,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "ioctl" );
 		
-		FileDescriptorMap& files = frame.Caller().FileDescriptors();
+		fd_table& files = frame.Caller().FileDescriptors();
 		
 		try
 		{

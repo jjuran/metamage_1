@@ -24,14 +24,14 @@ namespace Genie
 	
 	int LowestUnusedFileDescriptor( int fd )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.first_unused( fd );
 	}
 	
 	void CloseFileDescriptor( int fd )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.close( fd );
 	}
@@ -58,14 +58,14 @@ namespace Genie
 			p7::throw_errno( EBADF );
 		}
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		fd_table& files = CurrentProcess().FileDescriptors();
 		
 		(files[ fd ] = handle).closeOnExec = close_on_exec;
 	}
 	
 	FileDescriptor& GetFileDescriptor( int fd )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.at( fd );
 	}

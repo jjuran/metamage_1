@@ -865,7 +865,7 @@ namespace Genie
 		}
 	}
 	
-	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors, int keep_fd = -1 )
+	static void CloseMarkedFileDescriptors( fd_table& fileDescriptors, int keep_fd = -1 )
 	{
 		// Close file descriptors with close-on-exec flag.
 		

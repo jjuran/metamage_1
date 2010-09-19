@@ -62,7 +62,7 @@ namespace Genie
 		
 		const boost::intrusive_ptr< Process >& process = NewProcess( parent );
 		
-		FileDescriptorMap& files = process->FileDescriptors();
+		fd_table& files = process->FileDescriptors();
 		
 		files[ 0 ] =
 		files[ 1 ] =

@@ -74,7 +74,7 @@ namespace Genie
 	class FSTree_PID_fd : public FSTree_Directory
 	{
 		private:
-			typedef FileDescriptorMap  Sequence;
+			typedef fd_table  Sequence;
 			
 			pid_t its_pid;
 		
@@ -597,7 +597,7 @@ namespace Genie
 	
 	static const boost::shared_ptr< IOHandle >& GetFDHandle( pid_t pid, int fd )
 	{
-		FileDescriptorMap& files = GetProcess( pid ).FileDescriptors();
+		fd_table& files = GetProcess( pid ).FileDescriptors();
 		
 		if ( !files.contains( fd ) )
 		{
