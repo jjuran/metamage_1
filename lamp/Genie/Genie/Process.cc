@@ -779,7 +779,7 @@ namespace Genie
 		itsCWD                ( parent.itsCWD ),
 		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
 		itsLifeStage          ( kProcessStarting ),
-		itsInterdependence    ( kProcessForked ),
+		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
@@ -871,6 +871,8 @@ namespace Genie
 		Suspend();
 		
 		// activate child
+		
+		child.itsInterdependence = kProcessForked;
 		
 		gCurrentProcess = &child;
 		
