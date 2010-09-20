@@ -1206,6 +1206,34 @@ namespace Genie
 		return NULL;
 	}
 	
+	void Process::ResetSignalHandlers()
+	{
+		its_signal_handlers->reset_handlers();
+	}
+	
+	const struct sigaction& Process::GetSignalAction( int signo ) const
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		return its_signal_handlers->get( signo - 1 );
+	}
+	
+	void Process::SetSignalAction( int signo, const struct sigaction& action )
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		its_signal_handlers->set( signo - 1, action );
+	}
+	
+	void Process::ResetSignalAction( int signo )
+	{
+		const struct sigaction default_sigaction = { SIG_DFL, 0, 0 };
+		
+		SetSignalAction( signo, default_sigaction );
+	}
+	
 	bool Process::WaitsForChildren() const
 	{
 		const struct sigaction& chld = GetSignalAction( SIGCHLD );

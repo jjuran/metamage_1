@@ -16,13 +16,6 @@
 namespace Genie
 {
 	
-	enum Interruptibility
-	{
-		kInterruptNever,
-		kInterruptUnlessRestarting,
-		kInterruptAlways
-	};
-	
 	inline sigset_t sigset_from_signo( int signo )
 	{
 		return 1 << signo - 1;
@@ -31,8 +24,6 @@ namespace Genie
 	class SignalReceiver : public TimeKeeper
 	{
 		private:
-			struct sigaction itsActions[ NSIG ];
-			
 			sigset_t  itsPendingSignals;
 			sigset_t  itsBlockedSignals;
 		
@@ -42,14 +33,6 @@ namespace Genie
 			SignalReceiver( const SignalReceiver& other );
 			
 			void ClearPendingSignals()  { itsPendingSignals = 0; }
-			
-			void ResetSignalHandlers();
-			
-			const struct sigaction& GetSignalAction( int signo ) const;
-			
-			void SetSignalAction( int signo, const struct sigaction& action );
-			
-			void ResetSignalAction( int signo );
 			
 			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
 			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }

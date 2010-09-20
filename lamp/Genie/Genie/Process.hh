@@ -71,6 +71,13 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
+	enum Interruptibility
+	{
+		kInterruptNever,
+		kInterruptUnlessRestarting,
+		kInterruptAlways
+	};
+	
 	typedef int (*Reexec_Function)( void* _1,
 	                                void* _2,
 	                                void* _3,
@@ -223,6 +230,14 @@ namespace Genie
 			fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
 			unsigned int SetAlarm( unsigned int seconds );
+			
+			void ResetSignalHandlers();
+			
+			const struct sigaction& GetSignalAction( int signo ) const;
+			
+			void SetSignalAction( int signo, const struct sigaction& action );
+			
+			void ResetSignalAction( int signo );
 			
 			void DeliverSignal( int signal );
 			
