@@ -64,8 +64,6 @@ namespace Genie
 			
 			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
 			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
-			
-			bool DeliverPendingSignals( Interruptibility interrupting );
 	};
 	
 }

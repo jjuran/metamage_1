@@ -138,6 +138,8 @@ namespace Genie
 			void Resume();
 			void Pause( ProcessSchedule newSchedule );
 			
+			bool DeliverPendingSignals( Interruptibility interrupting );
+			
 			void Terminate();
 			void Terminate( int wait_status );
 			

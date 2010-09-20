@@ -1489,6 +1489,86 @@ namespace Genie
 		return DeliverPendingSignals( interrupting );
 	}
 	
+	bool Process::DeliverPendingSignals( Interruptibility interrupting )
+	{
+		bool signal_delivered = false;
+		bool return_eintr = false;
+		
+		for ( int signo = 1;  GetPendingSignals() && signo < NSIG;  ++signo )
+		{
+			const struct sigaction& action = GetSignalAction( signo );
+			
+			const sigset_t signo_mask = 1 << signo - 1;
+			
+			if ( ~GetBlockedSignals() & GetPendingSignals() & signo_mask )
+			{
+				sigset_t signal_mask = action.sa_mask;
+				
+				if ( !(action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
+				{
+					signal_mask |= signo_mask;
+				}
+				
+				typedef void (*signal_handler_t)(int);
+				
+				const signal_handler_t handler = action.sa_handler;
+				
+				ASSERT( handler != SIG_IGN );
+				ASSERT( handler != SIG_DFL );
+				
+				ClearPendingSignalSet( signo_mask );
+				
+				BlockSignals( signal_mask );
+				
+				// (a) Account for time spent in signal handler as user time
+				// (b) System time is accrued in the event of [sig]longjmp()
+				LeaveSystemCall();
+				
+				handler( signo );
+				
+				EnterSystemCall( "*SIGNAL HANDLED*" );
+				
+				UnblockSignals( signal_mask );
+				
+				signal_delivered = true;
+				
+				/*
+					kInterruptUnlessRestarting == 1
+					
+					interrupting   interrupting - kInterruptUnlessRestarting
+					------------   -----------------------------------------
+					0 (never)      -1
+					1 (unless)     0
+					2 (always)     1
+					
+					interrupting                restartable   relation   interrupt
+					------------                -----------   --------   ---------
+					kInterruptAlways            x             x <= 1     true
+					kInterruptUnlessRestarting  false         0 <= 0     true
+					kInterruptUnlessRestarting  true          1 <= 0     false
+					kInterruptNever,            x             x <= -1    false
+				*/
+				
+				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
+				{
+					return_eintr = true;
+				}
+				
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
+				{
+					ResetSignalAction( signo );
+				}
+			}
+		}
+		
+		if ( return_eintr )
+		{
+			p7::throw_errno( EINTR );
+		}
+		
+		return signal_delivered;
+	}
+	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
 	void Process::Stop()
 	{
