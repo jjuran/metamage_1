@@ -1204,6 +1204,25 @@ namespace Genie
 		return NULL;
 	}
 	
+	bool Process::WaitsForChildren() const
+	{
+		const struct sigaction& chld = GetSignalAction( SIGCHLD );
+		
+		enum
+		{
+			sa_nocldwait
+			
+		#ifdef SA_NOCLDWAIT
+			
+			= SA_NOCLDWAIT
+			
+		#endif
+			
+		};
+		
+		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
+	}
+	
 	// This function doesn't return if the process is current and not forked.
 	void Process::Terminate()
 	{

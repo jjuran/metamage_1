@@ -140,6 +140,8 @@ namespace Genie
 			
 			bool DeliverPendingSignals( Interruptibility interrupting );
 			
+			bool WaitsForChildren() const;
+			
 			void Terminate();
 			void Terminate( int wait_status );
 			

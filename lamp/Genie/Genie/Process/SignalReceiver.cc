@@ -74,24 +74,5 @@ namespace Genie
 		itsActions[ signo - 1 ] = default_sigaction;
 	}
 	
-	bool SignalReceiver::WaitsForChildren() const
-	{
-		const struct sigaction& chld = GetSignalAction( SIGCHLD );
-		
-		enum
-		{
-			sa_nocldwait
-			
-		#ifdef SA_NOCLDWAIT
-			
-			= SA_NOCLDWAIT
-			
-		#endif
-			
-		};
-		
-		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
-	}
-	
 }
 
