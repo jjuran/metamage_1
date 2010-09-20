@@ -85,7 +85,7 @@ namespace Genie
 	
 	bool SignalReceiver::WaitsForChildren() const
 	{
-		const struct sigaction& chld = itsActions[ SIGCHLD - 1 ];
+		const struct sigaction& chld = GetSignalAction( SIGCHLD );
 		
 		enum
 		{
