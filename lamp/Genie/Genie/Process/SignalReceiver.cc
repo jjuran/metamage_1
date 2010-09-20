@@ -107,13 +107,13 @@ namespace Genie
 		bool signal_delivered = false;
 		bool return_eintr = false;
 		
-		for ( int signo = 1;  itsPendingSignals && signo < NSIG;  ++signo )
+		for ( int signo = 1;  GetPendingSignals() && signo < NSIG;  ++signo )
 		{
-			const struct sigaction& action = itsActions[ signo - 1 ];
+			const struct sigaction& action = GetSignalAction( signo );
 			
 			const sigset_t signo_mask = 1 << signo - 1;
 			
-			if ( ~itsBlockedSignals & itsPendingSignals & signo_mask )
+			if ( ~GetBlockedSignals() & GetPendingSignals() & signo_mask )
 			{
 				sigset_t signal_mask = action.sa_mask;
 				
@@ -129,9 +129,9 @@ namespace Genie
 				ASSERT( handler != SIG_IGN );
 				ASSERT( handler != SIG_DFL );
 				
-				itsPendingSignals &= ~signo_mask;
+				ClearPendingSignalSet( signo_mask );
 				
-				itsBlockedSignals |= signal_mask;
+				BlockSignals( signal_mask );
 				
 				// (a) Account for time spent in signal handler as user time
 				// (b) System time is accrued in the event of [sig]longjmp()
@@ -141,7 +141,7 @@ namespace Genie
 				
 				EnterSystemCall( "*SIGNAL HANDLED*" );
 				
-				itsBlockedSignals &= ~signal_mask;
+				UnblockSignals( signal_mask );
 				
 				signal_delivered = true;
 				
