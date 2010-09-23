@@ -17,6 +17,9 @@
 #include <DiskInit.h>
 #endif
 #endif
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
 #ifndef __TOOLUTILS__
 #include <ToolUtils.h>
 #endif
@@ -845,6 +848,17 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
+	static inline bool Has_ThreadManager()
+	{
+		long result = 0;
+		
+		const OSErr err = ::Gestalt( gestaltThreadMgrAttr, &result );
+		
+		return err == noErr  &&  result & (1 << gestaltThreadMgrPresent);
+	}
+	
+	static const bool has_ThreadManager = Has_ThreadManager();
+	
 	static void EventLoop()
 	{
 		// Use two levels of looping.
@@ -862,7 +876,10 @@ namespace Pedestal
 					
 					CheckKeyboard();
 					
-					N::YieldToAnyThread();
+					if ( has_ThreadManager )
+					{
+						N::YieldToAnyThread();
+					}
 					
 					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
 					{
