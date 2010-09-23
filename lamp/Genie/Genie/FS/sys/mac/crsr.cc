@@ -11,6 +11,9 @@
 #ifndef __CURSORDEVICES__
 #include <CursorDevices.h>
 #endif
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
 
 // plus
 #include "plus/var_string.hh"
@@ -21,9 +24,23 @@
 // ClassicToolbox
 //#include "ClassicToolbox/CursorDevices.h"
 
+// MacFeatures
+#include "MacFeatures/CursorDevices.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
+
+
+#if TARGET_CPU_68K
+
+short CrsrNew_CrsrCouple : 0x8ce;
+
+#else
+
+static short CrsrNew_CrsrCouple;
+
+#endif
 
 
 namespace Nitrogen
@@ -51,20 +68,35 @@ namespace Genie
 	
 	struct GetCursorLocation : serialize_Point
 	{
-		static Point Get( const CursorDevice& device )
+		static Point Get( const CursorDevice* device )
 		{
-			if ( device.whichCursor == NULL )
+			if ( TARGET_CPU_68K  &&  device == NULL )
+			{
+				return ::LMGetRawMouseLocation();
+			}
+			
+			if ( device->whichCursor == NULL )
 			{
 				throw FSTree_Property::Undefined();
 			}
 			
-			const CursorData& data = *device.whichCursor;
+			const CursorData& data = *device->whichCursor;
 			
 			return data.where;
 		}
 		
 		static void Set( CursorDevicePtr device, const Point& location )
 		{
+			if ( TARGET_CPU_68K  &&  device == NULL )
+			{
+				::LMSetRawMouseLocation( location );
+				::LMSetMouseTemp       ( location );
+				
+				CrsrNew_CrsrCouple = -1;
+				
+				return;
+			}
+			
 			N::CursorDeviceMoveTo( device, location.h, location.v );
 		}
 	};
@@ -76,6 +108,13 @@ namespace Genie
 		
 		static CursorDevicePtr GetCursorDevice( const FSTree* that )
 		{
+			static const bool has_CDM = MacFeatures::Has_CursorDevices();
+			
+			if ( !has_CDM )
+			{
+				return NULL;
+			}
+			
 			CursorDevicePtr device = N::CursorDeviceNextDevice();
 			
 			if ( device == NULL )
@@ -90,7 +129,7 @@ namespace Genie
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
-			const result_type data = Accessor::Get( *device );
+			const result_type data = Accessor::Get( device );
 			
 			Accessor::deconstruct::apply( result, data, binary );
 		}
