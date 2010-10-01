@@ -936,8 +936,9 @@ namespace MacBinary
 				// Clear flags
 				UInt16 flagsToClear = kIsOnDesk;
 				
-				if ( !itIsFolder )
+				if ( itsFrameStack.empty() )
 				{
+					// Let Finder init the top-level item
 					flagsToClear |= kHasBeenInited;
 				}
 				
