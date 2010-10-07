@@ -13,6 +13,8 @@ static void PrivilegedInstructionTest()
 {
 	asm
 	{
+		machine 68020
+		
 		MOVEC	VBR,A0
 	}
 }
