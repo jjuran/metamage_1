@@ -25,7 +25,13 @@ namespace Genie
 		
 	in_range:
 		MOVEA.L	gSystemCallArray,A0
+		
+	#if __MC68020__
 		MOVEA.L	(A0,D0.W*8),A0
+	#else
+		LSL.W	#3,D0
+		MOVEA.L	(A0,D0.W),A0
+	#endif
 		
 		JMP		(A0)
 	}
