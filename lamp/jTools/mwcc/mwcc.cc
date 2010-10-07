@@ -84,6 +84,7 @@ namespace tool
 	
 	static bool rtti = true;
 	static bool cfm = false;
+	static bool mc68020 = false;
 	static bool a4 = false;
 	static bool traceback = false;
 	
@@ -100,6 +101,10 @@ namespace tool
 		else if ( flag == "-mCFM" )
 		{
 			cfm = true;
+		}
+		else if ( flag == "-m68020" )
+		{
+			mc68020 = true;
 		}
 		else if ( flag == "-mA4-globals" )
 		{
@@ -349,7 +354,12 @@ namespace tool
 			
 			case arch_m68k:
 				command.push_back( "MWC68K"   );
-				command.push_back( "-mc68020" );
+				
+				if ( mc68020 )
+				{
+					command.push_back( "-mc68020" );
+				}
+				
 				command.push_back( "-model"   );
 				command.push_back( cfm ? "CFMflatdf" : "far" );
 				
