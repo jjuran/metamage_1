@@ -31,6 +31,15 @@ namespace Pedestal
 		return N::InsetRect( bounds, 1, 1 );
 	}
 	
+	static void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
+	{
+		N::RGBForeColor( color );
+		
+		N::PaintRect( bounds );
+		
+		N::RGBForeColor( gBlack );
+	}
+	
 	static void PaintProgress( const Rect& insetBounds )
 	{
 		N::RGBForeColor( gDarkGrey );
