@@ -257,19 +257,9 @@ namespace Genie
 		TextEditParameters::Get( itsKey ).itIsAtBottom = IsScrolledToBottom( params );
 	}
 	
-	static void DrawQuasimodeFrame( Rect frame )
-	{
-		N::FrameRect( frame );
-	}
-	
-	static void DrawQuasimodeFrame()
-	{
-		DrawQuasimodeFrame( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-	}
-	
 	void TextEdit::BeginQuasimode()
 	{
-		DrawQuasimodeFrame();
+		N::FrameRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
 	void TextEdit::EndQuasimode()
