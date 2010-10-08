@@ -20,6 +20,9 @@
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
 
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.hh"
+
 // Pedestal
 #include "Pedestal/Clipboard.hh"
 
@@ -264,9 +267,6 @@ namespace Genie
 		DrawQuasimodeFrame( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
-	static const RGBColor gRGBBlack = {     0,     0,     0 };
-	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
-	
 	void TextEdit::BeginQuasimode()
 	{
 		DrawQuasimodeFrame();
@@ -274,11 +274,7 @@ namespace Genie
 	
 	void TextEdit::EndQuasimode()
 	{
-		N::RGBForeColor( gRGBWhite );
-		
-		DrawQuasimodeFrame();
-		
-		N::RGBForeColor( gRGBBlack );
+		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
 	Ped::TextSelection TextEdit::GetPriorSelection() const
