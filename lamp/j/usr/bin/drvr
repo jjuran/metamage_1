@@ -11,10 +11,12 @@ if ( !-d $unit )
 
 chdir $unit or die "chdir: $!\n";
 
-my @units = glob '*';
+opendir my $dir, "." or die "opendir: $!\n";
 
-foreach my $num ( @units )
+foreach my $num ( readdir( $dir ) )
 {
+	$num =~ m{^ [0-9] }x or next;
+	
 	open( my $in, '<', "$num/name" ) or next;
 	
 	my $name = <$in>;
