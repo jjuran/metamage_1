@@ -13,15 +13,15 @@ chdir $unit or die "chdir: $!\n";
 
 my @units = glob '*';
 
-foreach ( @units )
+foreach my $num ( @units )
 {
-	open( my $in, '<', "$_/name" ) or next;
+	open( my $in, '<', "$num/name" ) or next;
 	
 	my $name = <$in>;
 	
 	$name =~ /\S/ or next;
 	
-	print "$_: $name";
+	print "$num: $name";
 	
 	close( $in );
 }
