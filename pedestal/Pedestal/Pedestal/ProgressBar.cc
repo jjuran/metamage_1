@@ -42,22 +42,14 @@ namespace Pedestal
 	
 	static void PaintProgress( const Rect& insetBounds )
 	{
-		N::RGBForeColor( gDarkGrey );
-		
-		N::PaintRect( insetBounds );
-		
-		N::RGBForeColor( gBlack );
+		PaintRect_In_Color( insetBounds, gDarkGrey );
 	}
 	
 	static void EraseProgress( const Rect& insetBounds )
 	{
 		//N::EraseRect( insetBounds );
 		
-		N::RGBForeColor( gSkyBlue );
-		
-		N::PaintRect( insetBounds );
-		
-		N::RGBForeColor( gBlack );
+		PaintRect_In_Color( insetBounds, gSkyBlue );
 	}
 	
 	ProgressBar::ProgressBar( const Rect& bounds )
