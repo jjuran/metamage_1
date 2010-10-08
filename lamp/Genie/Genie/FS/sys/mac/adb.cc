@@ -22,6 +22,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.hh"
 
+// MacFeatures
+#include "MacFeatures/ADB.hh"
+
 // Arcana
 #include "ADB/Protocol.hh"
 
@@ -37,6 +40,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
@@ -226,6 +230,11 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
+		if ( !MacFeatures::Has_ADB() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return new_basic_directory( parent, name, adb_lookup, adb_iterate );
 	}
 	
