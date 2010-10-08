@@ -32,6 +32,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Pedestal
 #include "Pedestal/Window.hh"
 
@@ -298,11 +301,21 @@ namespace Genie
 	{
 		static RGBColor Get( WindowRef window )
 		{
+			if ( !MacFeatures::Has_ColorQuickdraw() )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
 			return GetColor( N::GetWindowPort( window ) );
 		}
 		
 		static void Set( WindowRef window, const RGBColor& color )
 		{
+			if ( !MacFeatures::Has_ColorQuickdraw() )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
 			n::saved< N::Port > savePort;
 			
 			N::SetPortWindowPort( window );
