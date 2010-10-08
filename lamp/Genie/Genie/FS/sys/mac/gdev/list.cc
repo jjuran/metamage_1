@@ -23,6 +23,9 @@
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
@@ -72,6 +75,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
@@ -212,6 +216,11 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
+		if ( !MacFeatures::Has_ColorQuickdraw() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
 	}
 	

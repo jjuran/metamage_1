@@ -20,6 +20,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Genie
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
@@ -27,6 +30,9 @@
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	class sys_mac_gdev_main : public FSTree_ReadableSymLink
 	{
@@ -36,6 +42,10 @@ namespace Genie
 			:
 				FSTree_ReadableSymLink( parent, name )
 			{
+				if ( !MacFeatures::Has_ColorQuickdraw() )
+				{
+					p7::throw_errno( ENOENT );
+				}
 			}
 			
 			plus::string ReadLink() const;
