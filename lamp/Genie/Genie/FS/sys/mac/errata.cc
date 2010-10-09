@@ -12,6 +12,9 @@
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 
+// MacFeatures
+#include "MacFeatures/BlueBoxed.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/Utilities/GetMachineName.hh"
@@ -37,10 +40,11 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	bool RunningInClassic::Test()
+	struct RunningInClassic
 	{
-		return N::Gestalt_Bit< N::gestaltMacOSCompatibilityBoxAttr, gestaltMacOSCompatibilityBoxPresent >();
-	}
+		static bool Test()  { return MacFeatures::Is_BlueBoxed(); }
+	};
+	
 	
 	struct FlakeyRadeonChip
 	{

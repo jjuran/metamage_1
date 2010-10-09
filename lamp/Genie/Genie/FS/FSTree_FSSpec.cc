@@ -43,6 +43,7 @@
 #include "MacFiles/Classic.hh"
 
 // MacFeatures
+#include "MacFeatures/BlueBoxed.hh"
 #include "MacFeatures/Features.hh"
 
 // MacIO
@@ -1235,7 +1236,7 @@ namespace Genie
 		
 		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
 		
-		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !RunningInClassic::Test();
+		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !MacFeatures::Is_BlueBoxed();
 		
 		if ( async )
 		{
@@ -1475,7 +1476,7 @@ namespace Genie
 		     ||  !itIsOnServer
 		     ||  !IsDirectory()
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
-		     ||  RunningInClassic::Test() )
+		     ||  MacFeatures::Is_BlueBoxed() )
 	#endif
 		{
 			// Special handling required for

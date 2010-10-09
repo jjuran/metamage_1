@@ -13,12 +13,6 @@
 namespace Genie
 {
 	
-	struct RunningInClassic
-	{
-		static bool Test();
-	};
-	
-	
 	extern const FSTree_Premapped::Mapping sys_mac_errata_Mappings[];
 	
 }
