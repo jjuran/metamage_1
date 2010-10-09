@@ -5,11 +5,19 @@
 
 #include "Genie/FS/FSTree_dev_gestalt.hh"
 
+// Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 // Iota
 #include "iota/strings.hh"
 
-// Nitrogen
-#include "Nitrogen/Gestalt.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
@@ -19,7 +27,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	class GestaltDeviceHandle : public DeviceHandle
@@ -39,9 +47,19 @@ namespace Genie
 	
 	void GestaltDeviceHandle::IOCtl( unsigned long request, int* argp )
 	{
-		N::GestaltSelector selector = N::GestaltSelector( request );
+		long value;
 		
-		long value = N::Gestalt( selector );
+		const OSErr err = ::Gestalt( request, &value );
+		
+		switch ( err )
+		{
+			case noErr:
+				break;
+			
+			default:  // shouldn't happen
+			case gestaltUndefSelectorErr:  p7::throw_errno( EINVAL );
+			case gestaltUnknownErr      :  p7::throw_errno( ENXIO  );
+		}
 		
 		if ( argp != NULL )
 		{
