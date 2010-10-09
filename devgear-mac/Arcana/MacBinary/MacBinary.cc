@@ -1,29 +1,31 @@
-/*	============
- *	MacBinary.cc
- *	============
- */
+/*
+	MacBinary.cc
+	------------
+*/
 
-// MacBinary III has a purported "signature" of 'mBIN'.
-// According to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
-// a MacBinary III decoder is supposed to conclude, based only on the presence
-// of this signature (which is at byte offset 102, not early enough to be
-// considered a magic number, and which consists entirely of printable
-// characters), that a file is a MacBinary III envelope.
-// This is broken -- according to that test, THIS file is valid MacBinary III!
-
-// Consequently, I'm operating under the assumption that MacBinary III files
-// will continue to be valid MacBinary II files, and applying the MacBinary II
-// validity tests even in the presence of the MacBinary III signature.
-// This will only break under the following condition:
-// A future version of MacBinary (say, MacBinary 4) creates files that are valid
-// MacBinary III but invalid MacBinary II, which necessitates failing the
-// MacBinary II validity tests.  However, given the forward compatibility means
-// built into MacBinary II, this is *extremely* unlikely -- the secondary header
-// field allows for considerable expansion, and in the event that's insufficient,
-// the minimum version field is sufficient to ward off compliant decoders.
-// Therefore, there is no technically sound reason to create files that are valid
-// MacBinary III but invalid MacBinary II.  Concordantly, neither is there a
-// technically sound reason *not* to apply the MacBinary II validity tests.
+/*
+	Valid MacBinary III archives carry a purported "signature" of 'mBIN'.
+	According to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
+	a MacBinary III decoder is supposed to conclude, based only on the presence
+	of this signature (which is at byte offset 102, not early enough to be
+	considered a magic number, and which consists entirely of printable
+	characters), that a file is a MacBinary III envelope.
+	This is broken -- according to that test, THIS file is valid MacBinary III!
+	
+	Consequently, I'm operating under the assumption that MacBinary III files
+	will continue to be valid MacBinary II files, and applying the MacBinary II
+	validity tests even in the presence of the MacBinary III signature.
+	This will only break under the following condition:
+	A future version of MacBinary (say, MacBinary 4) creates files that are valid
+	MacBinary III but invalid MacBinary II, which necessitates failing the
+	MacBinary II validity tests.  However, given the forward compatibility means
+	built into MacBinary II, this is *extremely* unlikely -- the secondary header
+	field allows for considerable expansion, and in the event that's insufficient,
+	the minimum version field is sufficient to ward off compliant decoders.
+	Therefore, there is no technically sound reason to create files that are valid
+	MacBinary III but invalid MacBinary II.  Concordantly, neither is there a
+	technically sound reason *not* to apply the MacBinary II validity tests.
+*/
 
 #include "MacBinary.hh"
 

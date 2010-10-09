@@ -1,7 +1,7 @@
-/*	============
- *	MacBinary.hh
- *	============
- */
+/*
+	MacBinary.hh
+	------------
+*/
 
 #ifndef MACBINARY_HH
 #define MACBINARY_HH
