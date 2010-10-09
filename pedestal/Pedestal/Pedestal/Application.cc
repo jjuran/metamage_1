@@ -49,6 +49,9 @@
 #include "Nitrogen/Resources.hh"
 #include "Nitrogen/Threads.hh"
 
+// MacFeatures
+#include "MacFeatures/Threads.hh"
+
 #if !TARGET_API_MAC_CARBON
 
 // Arcana
@@ -848,16 +851,7 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
-	static inline bool Has_ThreadManager()
-	{
-		long result = 0;
-		
-		const OSErr err = ::Gestalt( gestaltThreadMgrAttr, &result );
-		
-		return err == noErr  &&  result & (1 << gestaltThreadMgrPresent);
-	}
-	
-	static const bool has_ThreadManager = Has_ThreadManager();
+	static const bool has_ThreadManager = MacFeatures::Has_Threads();
 	
 	static void EventLoop()
 	{
