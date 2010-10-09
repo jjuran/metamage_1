@@ -8,12 +8,14 @@
 // Nitrogen
 #include "Nitrogen/Gestalt.hh"
 
+// MacFeatures
+#include "MacFeatures/SystemVersion.hh"
+
 
 namespace Nitrogen
 {
 	
 	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
-	static const Gestalt_Selector gestaltSystemVersion             = Gestalt_Selector( ::gestaltSystemVersion             );
 	
 }
 
@@ -22,11 +24,6 @@ namespace MacFeatures
 	
 	namespace N = Nitrogen;
 	
-	
-	UInt32 SystemVersion()
-	{
-		return N::Gestalt( N::gestaltSystemVersion );
-	}
 	
 #if !TARGET_RT_MAC_MACHO
 	
@@ -50,7 +47,7 @@ namespace MacFeatures
 	
 	bool Has_OSXSystem()
 	{
-		const UInt32 sysv = SystemVersion();
+		const unsigned sysv = SystemVersion();
 		
 		if ( TARGET_API_MAC_CARBON  &&  sysv >= 0x1000 )
 		{

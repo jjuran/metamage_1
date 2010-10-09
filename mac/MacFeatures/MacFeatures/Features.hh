@@ -7,15 +7,13 @@
 #define MACFEATURES_FEATURES_HH
 
 // Mac OS
-#ifndef __MACTYPES__
-#include <MacTypes.h>
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
 #endif
 
 
 namespace MacFeatures
 {
-	
-	UInt32 SystemVersion();
 	
 	bool Is_Running_InClassic();
 	
