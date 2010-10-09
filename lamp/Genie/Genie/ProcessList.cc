@@ -18,6 +18,9 @@
 #include "Nitrogen/Threads.hh"
 #include "Nitrogen/Timer.hh"
 
+// MacFeatures
+#include "MacFeatures/Threads.hh"
+
 
 namespace Genie
 {
@@ -107,6 +110,13 @@ namespace Genie
 	
 	static const boost::intrusive_ptr< Process >& NewProcess( Process::RootProcess )
 	{
+		static const bool has_ThreadManager = MacFeatures::Has_Threads();
+		
+		if ( !has_ThreadManager )
+		{
+			p7::throw_errno( ENOSYS );
+		}
+		
 		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
 		ASSERT( global_processes.empty() );
