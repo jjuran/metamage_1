@@ -5,34 +5,13 @@
 
 #include "MacFeatures/Features.hh"
 
-// Nitrogen
-#include "Nitrogen/Gestalt.hh"
-
 // MacFeatures
+#include "MacFeatures/BlueBoxed.hh"
 #include "MacFeatures/SystemVersion.hh"
 
 
-namespace Nitrogen
-{
-	
-	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
-	
-}
-
 namespace MacFeatures
 {
-	
-	namespace N = Nitrogen;
-	
-	
-#if !TARGET_RT_MAC_MACHO
-	
-	bool Is_Running_InClassic()
-	{
-		return N::Gestalt( N::gestaltMacOSCompatibilityBoxAttr, 0 ) & gestaltMacOSCompatibilityBoxPresent;
-	}
-	
-#endif
 	
 #if !TARGET_RT_MAC_MACHO  &&  TARGET_API_MAC_CARBON
 	
@@ -59,7 +38,7 @@ namespace MacFeatures
 			return false;
 		}
 		
-		return Is_Running_InClassic();
+		return Is_BlueBoxed();
 	}
 	
 #endif

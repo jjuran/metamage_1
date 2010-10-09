@@ -15,22 +15,10 @@
 namespace MacFeatures
 {
 	
-	bool Is_Running_InClassic();
-	
 	bool Is_Running_OSXNative();
 	
 	bool Has_OSXSystem();
 	
-	
-#if TARGET_RT_MAC_MACHO
-	
-	inline bool Is_Running_InClassic()
-	{
-		// Mach-O is definitely not in Classic.  But everything else could be.
-		return false;
-	}
-	
-#endif
 	
 #if TARGET_RT_MAC_MACHO  ||  !TARGET_API_MAC_CARBON
 	
