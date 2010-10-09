@@ -34,6 +34,7 @@ namespace OSErrno
 			case rfNumErr       :  result = EBADF;         break;
 			case kOTOutOfMemoryErr:// fall through
 			case memFullErr     :  result = ENOMEM;        break;
+			case opWrErr        :  // fall through
 			case permErr        :  // fall through
 			case portInUse      :  result = EACCES;        break;
 			case userCanceledErr:  result = ECANCELED;     break;
