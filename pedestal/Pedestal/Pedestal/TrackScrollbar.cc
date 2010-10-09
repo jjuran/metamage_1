@@ -24,7 +24,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
-#include "MacFeatures/Features.hh"
+#include "MacFeatures/Appearance.hh"
 
 // Pedestal
 #include "Pedestal/Scroller_beta.hh"
@@ -35,9 +35,6 @@ namespace Pedestal
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	
-	
-	using MacFeatures::Has_AppearanceManager;
 	
 	
 	static short SetClippedControlValue( ControlRef control, short value )
@@ -162,7 +159,7 @@ namespace Pedestal
 			case kControlIndicatorPart:
 				// The user clicked on the indicator
 				
-				if ( !Has_AppearanceManager() )
+				if ( !MacFeatures::Has_Appearance() )
 				{
 					// Classic scrolling, handled specially.
 					

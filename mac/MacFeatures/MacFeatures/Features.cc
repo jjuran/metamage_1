@@ -12,7 +12,6 @@
 namespace Nitrogen
 {
 	
-	static const Gestalt_Selector gestaltAppearanceAttr            = Gestalt_Selector( ::gestaltAppearanceAttr            );
 	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
 	static const Gestalt_Selector gestaltSystemVersion             = Gestalt_Selector( ::gestaltSystemVersion             );
 	
@@ -28,15 +27,6 @@ namespace MacFeatures
 	{
 		return N::Gestalt( N::gestaltSystemVersion );
 	}
-	
-#if !TARGET_API_MAC_CARBON
-	
-	bool Has_AppearanceManager()
-	{
-		return N::Gestalt( N::gestaltAppearanceAttr, 0 );
-	}
-	
-#endif
 	
 #if !TARGET_RT_MAC_MACHO
 	

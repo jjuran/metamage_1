@@ -17,7 +17,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
-#include "MacFeatures/Features.hh"
+#include "MacFeatures/Appearance.hh"
 
 
 namespace Pedestal
@@ -26,12 +26,9 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	using MacFeatures::Has_AppearanceManager;
-	
-	
 	static inline N::ControlProcID GetControlProcIDForScrollbar()
 	{
-		const bool liveScrolling = Has_AppearanceManager();
+		const bool liveScrolling = MacFeatures::Has_Appearance();
 		
 		return liveScrolling ? Mac::kControlScrollBarLiveProc
 		                     : Mac::scrollBarProc;

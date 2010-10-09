@@ -17,24 +17,12 @@ namespace MacFeatures
 	
 	UInt32 SystemVersion();
 	
-	bool Has_AppearanceManager();
-	
 	bool Is_Running_InClassic();
 	
 	bool Is_Running_OSXNative();
 	
 	bool Has_OSXSystem();
 	
-	
-#if TARGET_API_MAC_CARBON
-	
-	inline bool Has_AppearanceManager()
-	{
-		// Carbon implies 8.1 or later; 8.0 or later implies Appearance.
-		return true;
-	}
-	
-#endif
 	
 #if TARGET_RT_MAC_MACHO
 	
