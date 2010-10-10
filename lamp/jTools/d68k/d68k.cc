@@ -37,7 +37,7 @@
 /*
 	A 68K disassembler.
 	
-	Line 0:  missing MOVEP and MOVES
+	Line 0:  missing MOVES
 	Line 1:  complete  (MOVE.B)
 	Line 2:  complete  (MOVE.L)
 	Line 3:  complete  (MOVE.W)
@@ -1416,6 +1416,54 @@ namespace tool
 		return true;
 	}
 	
+	static void decode_MOVEP( unsigned short op )
+	{
+		const bool store_to_mem = op & 0x80;
+		const bool long_mode    = op & 0x40;
+		
+		const unsigned short data_reg = op >> 9 & 0x7;
+		const unsigned short addr_reg = op >> 0 & 0x7;
+		
+		const unsigned short displacement = read_word();
+		
+		const char register_operand[ STRLEN( "Dx" ) ] = { 'D', '0' + data_reg };
+		
+		plus::var_string memory_operand = "(";
+		
+		memory_operand += gear::inscribe_decimal( displacement );
+		
+		memory_operand += ",A";
+		
+		memory_operand += '0' + addr_reg;
+		
+		memory_operand += ')';
+		
+		plus::var_string out = "MOVEP.";
+		
+		out += size_codes[ long_mode + 1 ];
+		
+		out += "  ";
+		
+		if ( store_to_mem )
+		{
+			out.append( register_operand, sizeof register_operand );
+			
+			out += ',';
+			
+			out += memory_operand;
+		}
+		else
+		{
+			out += memory_operand;
+			
+			out += ',';
+			
+			out.append( register_operand, sizeof register_operand );
+		}
+		
+		printf( "%s\n", out.c_str() );
+	}
+	
 	static void decode_0_line( unsigned short op )
 	{
 		if ( const bool data = decoded_data( op ) )
@@ -1425,7 +1473,12 @@ namespace tool
 		
 		if ( op & 0x0100 )
 		{
-			// MOVEP
+			if ( (op & 0x0038) == 0x0008 )
+			{
+				decode_MOVEP( op );
+				
+				return;
+			}
 			
 			decode_Bit_op( op, true );  // BTST/BCHG/BCLR/BSET dynamic
 			
