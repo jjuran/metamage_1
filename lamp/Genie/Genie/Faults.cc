@@ -51,6 +51,16 @@ namespace Genie
 		DeliverFatalSignal( SIGFPE );
 	}
 	
+	static void integer_range_check()
+	{
+		DeliverFatalSignal( SIGFPE );
+	}
+	
+	static void integer_overflow()
+	{
+		DeliverFatalSignal( SIGFPE );
+	}
+	
 	static void PrivilegeViolation()
 	{
 		DeliverFatalSignal( SIGILL );
@@ -104,8 +114,8 @@ namespace Genie
 		AddressError,
 		IllegalInstruction,
 		DivisionByZero,
-		NULL,  // 6, CHK
-		NULL,  // 7, TRAPV
+		integer_range_check,
+		integer_overflow,
 		PrivilegeViolation
 	};
 	
