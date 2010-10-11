@@ -5,7 +5,11 @@
 
 #include "Pedestal/AboutBox.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Pedestal
+#include "Pedestal/EmptyView.hh"
 #include "Pedestal/GeneratedGraphic.hh"
 #include "Pedestal/GraphicView.hh"
 #include "Pedestal/UniqueWindowOwner.hh"
@@ -42,7 +46,14 @@ namespace Pedestal
 		
 		std::auto_ptr< Window > window( new UserWindow( context ) );
 		
-		window->SetView( boost::intrusive_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
+		if ( MacFeatures::Has_ColorQuickdraw() )
+		{
+			window->SetView( boost::intrusive_ptr< View >( new AboutBoxView( AboutFunction() ) ) );
+		}
+		else
+		{
+			window->SetView( boost::intrusive_ptr< View >( new EmptyView() ) );
+		}
 		
 		return window;
 	}

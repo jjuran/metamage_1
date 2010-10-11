@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 
 namespace Pedestal
 {
@@ -42,14 +45,26 @@ namespace Pedestal
 	
 	static void PaintProgress( const Rect& insetBounds )
 	{
-		PaintRect_In_Color( insetBounds, gDarkGrey );
+		if ( const bool has_color_QD = MacFeatures::Has_ColorQuickdraw() )
+		{
+			PaintRect_In_Color( insetBounds, gDarkGrey );
+		}
+		else
+		{
+			N::PaintRect( insetBounds );
+		}
 	}
 	
 	static void EraseProgress( const Rect& insetBounds )
 	{
-		//N::EraseRect( insetBounds );
-		
-		PaintRect_In_Color( insetBounds, gSkyBlue );
+		if ( const bool has_color_QD = MacFeatures::Has_ColorQuickdraw() )
+		{
+			PaintRect_In_Color( insetBounds, gSkyBlue );
+		}
+		else
+		{
+			N::EraseRect( insetBounds );
+		}
 	}
 	
 	ProgressBar::ProgressBar( const Rect& bounds )

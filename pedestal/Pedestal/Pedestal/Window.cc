@@ -14,6 +14,9 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Pedestal
 #include "Pedestal/View.hh"
 
@@ -23,6 +26,20 @@ namespace Pedestal
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	
+	
+	typedef n::owned< WindowRef > (*NewWindow_f)( const Rect&         bounds,
+	                                              ConstStr255Param    title,
+	                                              bool                visible,
+	                                              N::WindowDefProcID  procID,
+	                                              WindowRef           behind,
+	                                              bool                goAwayFlag,
+	                                              N::RefCon           refCon );
+	
+	using MacFeatures::Has_ColorQuickdraw;
+	
+	static const NewWindow_f NewWindow = Has_ColorQuickdraw() ? &N::NewCWindow
+	                                                          : &N::NewWindow;
 	
 	
 	void ResizeWindow( WindowRef window, Point newSize )
@@ -88,13 +105,16 @@ namespace Pedestal
 	                                    bool                goAwayFlag,
 	                                    N::RefCon           refCon )
 	{
-		n::owned< WindowRef > window = N::NewCWindow( bounds,
-		                                              title,
-		                                              visible,
-		                                              procID,
-		                                              behind,
-		                                              goAwayFlag,
-		                                              refCon );
+		
+		
+		
+		n::owned< WindowRef > window = NewWindow( bounds,
+		                                          title,
+		                                          visible,
+		                                          procID,
+		                                          behind,
+		                                          goAwayFlag,
+		                                          refCon );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
