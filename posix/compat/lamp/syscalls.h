@@ -65,7 +65,7 @@
 #define __NR_umask                      60
 #define __NR_chroot                     61
 #define __NR_ustat                      62
-#define __NR_dup2                       63
+#define __NR_fork_and_exit              63  // dup2
 #define __NR_getppid                    64
 // 65
 #define __NR_setsid                     66
@@ -198,8 +198,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-#define __NR_fork_and_exit             273
 
 #define __NR_pump                      274
 
