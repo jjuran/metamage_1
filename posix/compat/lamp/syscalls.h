@@ -43,8 +43,8 @@
 #define __NR_renameat                   38  // rename
 #define __NR_mkdirat                    39  // mkdir
 //#define __NR_rmdir                      40
-#define __NR_dup                        41
-#define __NR_pipe                       42
+#define __NR_dup3                       41  // dup
+#define __NR_pipe2                      42  // pipe
 #define __NR_times                      43
 #define __NR_prof                       44
 #define __NR_brk                        45
@@ -201,9 +201,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-#define __NR_dup3                      330
-#define __NR_pipe2                     331
 
 #define __NR_preadv                    333
 #define __NR_pwritev                   334
