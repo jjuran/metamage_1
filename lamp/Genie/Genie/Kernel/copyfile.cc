@@ -37,15 +37,9 @@ namespace Genie
 		return 0;
 	}
 	
-	static int copyfile( const char* src, const char* dest )
-	{
-		return copyfileat( -100, src, -100, dest, 0 );
-	}
-	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( copyfileat );
-	REGISTER_SYSTEM_CALL( copyfile   );
 	
 	#pragma force_active reset
 	
