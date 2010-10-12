@@ -307,14 +307,6 @@ namespace Genie
 	}
 	
 	
-	static int mknod( const char* /*path*/, mode_t /*mode*/, dev_t /*dev*/ )
-	{
-		SystemCallFrame frame( "mknod" );
-		
-		return frame.SetErrno( EINVAL );
-	}
-	
-	
 	static int pause()
 	{
 		SystemCallFrame frame( "pause" );
@@ -740,7 +732,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( getppid   );
 	REGISTER_SYSTEM_CALL( getsid    );
 	REGISTER_SYSTEM_CALL( lseek     );
-	REGISTER_SYSTEM_CALL( mknod     );
 	REGISTER_SYSTEM_CALL( pause     );
 	REGISTER_SYSTEM_CALL( pipe2     );
 	//REGISTER_SYSTEM_CALL( peek );
