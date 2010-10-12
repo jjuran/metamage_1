@@ -119,11 +119,11 @@
 // 114
 // 115
 // 116
-// 117
+#define __NR_AESendBlocking            117  // ipc
 #define __NR_fsync                     118
 // 119
 // 120
-// 121
+#define __NR__OTInetMailExchange       121  // setdomainname
 // 122
 // 123
 // 124
@@ -201,10 +201,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-
-#define __NR_AESendBlocking            277
-#define __NR__OTInetMailExchange       278
 
 #define __NR_dup3                      330
 #define __NR_pipe2                     331
