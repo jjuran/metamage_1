@@ -7,20 +7,20 @@
 #define __NR_fork                        2
 #define __NR_read                        3
 #define __NR_write                       4
-#define __NR_open                        5
+#define __NR_openat                      5  // open
 #define __NR_close                       6
 #define __NR_waitpid                     7
 #define __NR_vfork_start                 8  // creat
-#define __NR_link                        9
-#define __NR_unlink                     10
+#define __NR_linkat                      9  // link
+#define __NR_unlinkat                   10  // unlink
 #define __NR_execve                     11
 #define __NR_chdir                      12
 #define __NR_time                       13
-#define __NR_mknod                      14
-#define __NR_chmod                      15
-#define __NR_lchown                     16
+#define __NR_mknodat                    14  // mknod
+#define __NR_fchmodat                   15  // chmod
+#define __NR_fchownat                   16  // lchown
 #define __NR_reexec                     17
-//#define __NR_getcwd                     18
+#define __NR_fstatat                    18  // stat
 #define __NR_lseek                      19
 #define __NR_getpid                     20
 #define __NR_mount                      21
@@ -32,17 +32,17 @@
 #define __NR_alarm                      27
 #define __NR_fstat                      28
 #define __NR_pause                      29
-#define __NR_utime                      30
+#define __NR_utimensat                  30  // utime
 // 31
 // 32
-#define __NR_access                     33
+#define __NR_faccessat                  33  // access
 #define __NR_nice                       34
 #define __NR_ftime                      35
 #define __NR_sync                       36
 #define __NR_kill                       37
-#define __NR_rename                     38
-#define __NR_mkdir                      39
-#define __NR_rmdir                      40
+#define __NR_renameat                   38  // rename
+#define __NR_mkdirat                    39  // mkdir
+//#define __NR_rmdir                      40
 #define __NR_dup                        41
 #define __NR_pipe                       42
 #define __NR_times                      43
@@ -85,7 +85,7 @@
 // 80
 // 81
 #define __NR_select                     82
-#define __NR_symlink                    83
+#define __NR_symlinkat                  83  // symlink
 // 84
 #define __NR__readlinkat                85
 #define __NR__realpathat                86
@@ -183,20 +183,6 @@
 
 // ...
 
-#define __NR_openat                    240
-#define __NR_mkdirat                   241
-#define __NR_mknodat                   242
-#define __NR_fchownat                  243
-//#define __NR_futimesat                 244
-#define __NR_fstatat                   245
-#define __NR_unlinkat                  246
-#define __NR_renameat                  247
-#define __NR_linkat                    248
-#define __NR_symlinkat                 249
-//#define __NR_readlinkat                250
-#define __NR_fchmodat                  251
-#define __NR_faccessat                 252
-
 #define __NR_copyfileat                253
 #define __NR_updateat                  254
 
@@ -227,8 +213,6 @@
 
 #define __NR_AESendBlocking            277
 #define __NR__OTInetMailExchange       278
-
-#define __NR_utimensat                 320
 
 #define __NR_dup3                      330
 #define __NR_pipe2                     331
