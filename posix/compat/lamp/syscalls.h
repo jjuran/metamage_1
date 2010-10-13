@@ -30,7 +30,7 @@
 #define __NR_stime                      25
 #define __NR_ptrace                     26
 #define __NR_alarm                      27
-//#define __NR_fstat                      28
+#define __NR_fstat                      28
 #define __NR_pause                      29
 #define __NR_utime                      30
 // 31
@@ -110,7 +110,7 @@
 #define __NR_getitimer                 105
 #define __NR_stat                      106
 #define __NR_lstat                     107
-#define __NR_fstat                     108
+//#define __NR_fstat                     108
 // 109
 // 110
 // 111
