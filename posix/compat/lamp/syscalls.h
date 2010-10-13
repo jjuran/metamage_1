@@ -183,21 +183,21 @@
 
 // ...
 
-#define __NR_socketpair                257
-#define __NR_socket                    258
-#define __NR_bind                      259
-#define __NR_listen                    260
-#define __NR_accept                    261
-#define __NR_connect                   262
-#define __NR_shutdown                  263
-#define __NR_getsockname               264
-#define __NR_getpeername               265
-#define __NR_getsockopt                266
-#define __NR_setsockopt                267
-#define __NR_send                      268
-#define __NR_recv                      269
-#define __NR_sendto                    270
-#define __NR_recvfrom                  271
+#define __NR_socketpair                191
+#define __NR_socket                    192
+#define __NR_bind                      193
+#define __NR_listen                    194
+#define __NR_accept                    195
+#define __NR_connect                   196
+#define __NR_shutdown                  197
+#define __NR_getsockname               198
+#define __NR_getpeername               199
+#define __NR_getsockopt                200
+#define __NR_setsockopt                201
+#define __NR_send                      202
+#define __NR_recv                      203
+#define __NR_sendto                    204
+#define __NR_recvfrom                  205
 
 #define __NR_gethostbyname             272
 
