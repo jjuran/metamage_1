@@ -736,7 +736,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		itsCWD                ( FSRoot()->ChangeToDirectory() ),
+		its_fs_info           ( fs_info::create( FSRoot()->ChangeToDirectory() ) ),
 		itsFileDescriptors    ( fd_table::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -776,7 +776,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
-		itsCWD                ( parent.itsCWD ),
+		its_fs_info           ( duplicate( *parent.its_fs_info ) ),
 		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -1104,12 +1104,12 @@ namespace Genie
 	
 	FSTreePtr Process::GetCWD() const
 	{
-		return itsCWD->GetFile();
+		return its_fs_info->getcwd()->GetFile();
 	}
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		itsCWD = newCWD->ChangeToDirectory();
+		its_fs_info->chdir( newCWD->ChangeToDirectory() );
 	}
 	
 	void Process::ResumeAfterFork()
@@ -1219,7 +1219,7 @@ namespace Genie
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.reset();
 		
-		itsCWD.reset();
+		its_fs_info.reset();
 		
 		itsProcessGroup.reset();
 		
