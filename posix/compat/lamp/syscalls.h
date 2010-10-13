@@ -58,7 +58,7 @@
 // 53
 #define __NR_ioctl                      54
 #define __NR_fcntl                      55
-// 56
+#define __NR_ttypair                    56  // mpx
 #define __NR_setpgid                    57
 // 58
 #define __NR_uname                      59
@@ -201,8 +201,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-#define __NR_ttypair                   275
 
 
 #define __NR_AESendBlocking            277
