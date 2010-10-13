@@ -225,8 +225,6 @@
 
 #define __NR_ttypair                   275
 
-#define __NR_copyfile                  276
-
 
 #define __NR_AESendBlocking            277
 #define __NR__OTInetMailExchange       278

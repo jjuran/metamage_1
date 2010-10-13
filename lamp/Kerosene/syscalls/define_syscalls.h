@@ -145,8 +145,6 @@ DEFINE_SYSCALL( pump )
 
 DEFINE_SYSCALL( ttypair )
 
-DEFINE_SYSCALL( copyfile )
-
 DEFINE_SYSCALL( AESendBlocking )
 DEFINE_SYSCALL( _OTInetMailExchange )
 
