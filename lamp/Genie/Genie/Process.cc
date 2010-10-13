@@ -779,7 +779,7 @@ namespace Genie
 		itsCWD                ( parent.itsCWD ),
 		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
 		itsLifeStage          ( kProcessStarting ),
-		itsInterdependence    ( kProcessForked ),
+		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
@@ -796,12 +796,6 @@ namespace Genie
 		itsReexecArgs[5] =
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
-		
-		parent.SuspendForFork( itsPID );
-		
-		gCurrentProcess = this;
-		
-		global_parameter_block.current_user = &its_pb;
 	}
 	
 	Process::~Process()
@@ -855,6 +849,37 @@ namespace Genie
 		}
 		
 		return process->itsThread.get();
+	}
+	
+	Process& Process::vfork()
+	{
+		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( *this );
+		
+		Process& child = *child_ptr;
+		
+		// suspend parent for vfork
+		
+		itsForkedChildPID = child.GetPID();
+		
+		itsInterdependence = kProcessForking;
+		itsSchedule        = kProcessFrozen;
+		
+		itsStackFramePtr = get_vfork_frame_pointer();
+		
+		SaveRegisters( &itsSavedRegisters );
+		
+		Suspend();
+		
+		// activate child
+		
+		child.itsInterdependence = kProcessForked;
+		
+		gCurrentProcess = &child;
+		
+		global_parameter_block.current_user = &child.its_pb;
+		
+		return child;
+		
 	}
 	
 	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )
@@ -1085,20 +1110,6 @@ namespace Genie
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
 		itsCWD = newCWD->ChangeToDirectory();
-	}
-	
-	void Process::SuspendForFork( pid_t childPID )
-	{
-		itsForkedChildPID = childPID;
-		
-		itsInterdependence = kProcessForking;
-		itsSchedule        = kProcessFrozen;
-		
-		itsStackFramePtr = get_vfork_frame_pointer();
-		
-		SaveRegisters( &itsSavedRegisters );
-		
-		Suspend();
 	}
 	
 	void Process::ResumeAfterFork()

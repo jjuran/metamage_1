@@ -187,17 +187,17 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		const boost::intrusive_ptr< Process >& external = NewProcess( parent );
+		Process& external = parent.vfork();
 		
 		char const *const argv[] = { program_path, NULL };
 		
 		try
 		{
-			(void) external->Exec( program_path, argv, NULL );
+			(void) external.Exec( program_path, argv, NULL );
 		}
 		catch ( ... )
 		{
-			global_processes.at( external->GetPID() ).reset();
+			global_processes.at( external.GetPID() ).reset();
 		}
 		
 		parent.ResumeAfterFork();

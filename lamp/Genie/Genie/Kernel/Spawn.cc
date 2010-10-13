@@ -7,20 +7,13 @@
 #include "unistd.h"
 
 // Genie
-#include "Genie/ProcessList.hh"
+#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
 
 namespace Genie
 {
-	
-	static inline Process& SpawnFrom( Process& parent )
-	{
-		const boost::intrusive_ptr< Process >& child = NewProcess( parent );
-		
-		return *child;
-	}
 	
 	static int vfork_start( const _vfork_pad* pad )
 	{
@@ -30,7 +23,7 @@ namespace Genie
 		
 		try
 		{
-			Process& child = SpawnFrom( frame.Caller() );
+			Process& child = frame.Caller().vfork();
 		}
 		catch ( ... )
 		{
@@ -47,7 +40,7 @@ namespace Genie
 		
 		try
 		{
-			Process& child = SpawnFrom( frame.Caller() );
+			Process& child = frame.Caller().vfork();
 			
 			child.UsurpParent( exit_status );
 		}
