@@ -108,8 +108,8 @@
 // 103
 #define __NR_setitimer                 104
 #define __NR_getitimer                 105
-#define __NR_stat                      106
-#define __NR_lstat                     107
+#define __NR_copyfileat                106  // stat
+#define __NR_updateat                  107  // lstat
 //#define __NR_fstat                     108
 // 109
 // 110
@@ -182,9 +182,6 @@
 #define __NR_vfork                     190
 
 // ...
-
-#define __NR_copyfileat                253
-#define __NR_updateat                  254
 
 #define __NR_socketpair                257
 #define __NR_socket                    258
