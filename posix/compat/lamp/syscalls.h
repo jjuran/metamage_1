@@ -179,6 +179,9 @@
 
 // ...
 
+#define __NR_pump                      187  // sendfile
+// 188  // getpmsg
+// 189  // putpmsg
 #define __NR_vfork                     190
 
 // ...
@@ -198,8 +201,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-#define __NR_pump                      274
 
 #define __NR_ttypair                   275
 
