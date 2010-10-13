@@ -87,7 +87,7 @@
 #define __NR_select                     82
 #define __NR_symlinkat                  83  // symlink
 // 84
-#define __NR__readlinkat                85
+#define __NR__readlinkat                85  // readlink
 #define __NR__realpathat                86
 // 87
 // 88
