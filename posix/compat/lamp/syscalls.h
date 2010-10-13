@@ -111,7 +111,7 @@
 #define __NR_copyfileat                106  // stat
 #define __NR_updateat                  107  // lstat
 //#define __NR_fstat                     108
-// 109
+#define __NR_gethostbyname             109  // uname
 // 110
 // 111
 // 112
@@ -198,8 +198,6 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
-
-#define __NR_gethostbyname             272
 
 #define __NR_fork_and_exit             273
 
