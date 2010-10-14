@@ -36,6 +36,7 @@
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
+#include "Genie/task/signal_handlers.hh"
 #include "Genie/task/memory_data.hh"
 
 
@@ -68,6 +69,13 @@ namespace Genie
 		kProcessStopped,
 		kProcessFrozen,
 		kProcessUnscheduled
+	};
+	
+	enum Interruptibility
+	{
+		kInterruptNever,
+		kInterruptUnlessRestarting,
+		kInterruptAlways
 	};
 	
 	typedef int (*Reexec_Function)( void* _1,
@@ -111,6 +119,8 @@ namespace Genie
 			
 			boost::intrusive_ptr< fd_table > itsFileDescriptors;
 			
+			boost::intrusive_ptr< signal_handlers > its_signal_handlers;
+			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
 			ProcessSchedule         itsSchedule;
@@ -137,6 +147,10 @@ namespace Genie
 			void Suspend();
 			void Resume();
 			void Pause( ProcessSchedule newSchedule );
+			
+			bool DeliverPendingSignals( Interruptibility interrupting );
+			
+			bool WaitsForChildren() const;
 			
 			void Terminate();
 			void Terminate( int wait_status );
@@ -216,6 +230,14 @@ namespace Genie
 			fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
 			unsigned int SetAlarm( unsigned int seconds );
+			
+			void ResetSignalHandlers();
+			
+			const struct sigaction& GetSignalAction( int signo ) const;
+			
+			void SetSignalAction( int signo, const struct sigaction& action );
+			
+			void ResetSignalAction( int signo );
 			
 			void DeliverSignal( int signal );
 			

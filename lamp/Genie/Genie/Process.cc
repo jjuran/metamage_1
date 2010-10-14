@@ -738,6 +738,7 @@ namespace Genie
 		itsName               ( "init" ),
 		its_fs_info           ( fs_info::create( FSRoot()->ChangeToDirectory() ) ),
 		itsFileDescriptors    ( fd_table::create() ),
+		its_signal_handlers   ( signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
@@ -778,6 +779,7 @@ namespace Genie
 		itsName               ( parent.ProgramName() ),
 		its_fs_info           ( duplicate( *parent.its_fs_info ) ),
 		itsFileDescriptors    ( duplicate( *parent.itsFileDescriptors ) ),
+		its_signal_handlers   ( duplicate( *parent.its_signal_handlers ) ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
@@ -1204,6 +1206,53 @@ namespace Genie
 		return NULL;
 	}
 	
+	void Process::ResetSignalHandlers()
+	{
+		its_signal_handlers->reset_handlers();
+	}
+	
+	const struct sigaction& Process::GetSignalAction( int signo ) const
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		return its_signal_handlers->get( signo - 1 );
+	}
+	
+	void Process::SetSignalAction( int signo, const struct sigaction& action )
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		its_signal_handlers->set( signo - 1, action );
+	}
+	
+	void Process::ResetSignalAction( int signo )
+	{
+		const struct sigaction default_sigaction = { SIG_DFL, 0, 0 };
+		
+		SetSignalAction( signo, default_sigaction );
+	}
+	
+	bool Process::WaitsForChildren() const
+	{
+		const struct sigaction& chld = GetSignalAction( SIGCHLD );
+		
+		enum
+		{
+			sa_nocldwait
+			
+		#ifdef SA_NOCLDWAIT
+			
+			= SA_NOCLDWAIT
+			
+		#endif
+			
+		};
+		
+		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
+	}
+	
 	// This function doesn't return if the process is current and not forked.
 	void Process::Terminate()
 	{
@@ -1487,6 +1536,86 @@ namespace Genie
 		}
 		
 		return DeliverPendingSignals( interrupting );
+	}
+	
+	bool Process::DeliverPendingSignals( Interruptibility interrupting )
+	{
+		bool signal_delivered = false;
+		bool return_eintr = false;
+		
+		for ( int signo = 1;  GetPendingSignals() && signo < NSIG;  ++signo )
+		{
+			const struct sigaction& action = GetSignalAction( signo );
+			
+			const sigset_t signo_mask = 1 << signo - 1;
+			
+			if ( ~GetBlockedSignals() & GetPendingSignals() & signo_mask )
+			{
+				sigset_t signal_mask = action.sa_mask;
+				
+				if ( !(action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
+				{
+					signal_mask |= signo_mask;
+				}
+				
+				typedef void (*signal_handler_t)(int);
+				
+				const signal_handler_t handler = action.sa_handler;
+				
+				ASSERT( handler != SIG_IGN );
+				ASSERT( handler != SIG_DFL );
+				
+				ClearPendingSignalSet( signo_mask );
+				
+				BlockSignals( signal_mask );
+				
+				// (a) Account for time spent in signal handler as user time
+				// (b) System time is accrued in the event of [sig]longjmp()
+				LeaveSystemCall();
+				
+				handler( signo );
+				
+				EnterSystemCall( "*SIGNAL HANDLED*" );
+				
+				UnblockSignals( signal_mask );
+				
+				signal_delivered = true;
+				
+				/*
+					kInterruptUnlessRestarting == 1
+					
+					interrupting   interrupting - kInterruptUnlessRestarting
+					------------   -----------------------------------------
+					0 (never)      -1
+					1 (unless)     0
+					2 (always)     1
+					
+					interrupting                restartable   relation   interrupt
+					------------                -----------   --------   ---------
+					kInterruptAlways            x             x <= 1     true
+					kInterruptUnlessRestarting  false         0 <= 0     true
+					kInterruptUnlessRestarting  true          1 <= 0     false
+					kInterruptNever,            x             x <= -1    false
+				*/
+				
+				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
+				{
+					return_eintr = true;
+				}
+				
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
+				{
+					ResetSignalAction( signo );
+				}
+			}
+		}
+		
+		if ( return_eintr )
+		{
+			p7::throw_errno( EINTR );
+		}
+		
+		return signal_delivered;
 	}
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
