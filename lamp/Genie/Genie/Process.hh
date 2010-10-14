@@ -36,6 +36,7 @@
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
+#include "Genie/task/signal_handlers.hh"
 #include "Genie/task/memory_data.hh"
 
 
@@ -110,6 +111,8 @@ namespace Genie
 			boost::intrusive_ptr< fs_info > its_fs_info;
 			
 			boost::intrusive_ptr< fd_table > itsFileDescriptors;
+			
+			boost::intrusive_ptr< signal_handlers > its_signal_handlers;
 			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
