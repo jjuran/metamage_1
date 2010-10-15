@@ -83,6 +83,15 @@ namespace tool
 	static bool globally_locking_files = false;
 	
 	
+	static mode_t get_mode( p7::fd_t dir_fd, const char* path )
+	{
+		struct stat sb;
+		
+		const bool exists = p7::fstatat( dir_fd, path, sb, p7::at_symlink_nofollow );
+		
+		return exists ? sb.st_mode : 0;
+	}
+	
 	static inline n::shared< p7::dir_t > fdopendir_shared( n::owned< p7::fd_t > dirfd )
 	{
 		n::owned< p7::dir_t > dir = p7::fdopendir( dirfd );
@@ -462,21 +471,19 @@ namespace tool
 	                              const char*  subpath,
 	                              const char*  filename )
 	{
-		struct stat a_stat, b_stat, c_stat;
+		const mode_t a_mode = get_mode( a_dirfd, filename );
+		const mode_t b_mode = get_mode( b_dirfd, filename );
+		const mode_t c_mode = get_mode( c_dirfd, filename );
 		
-		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat, p7::at_symlink_nofollow );
-		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat, p7::at_symlink_nofollow );
-		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat, p7::at_symlink_nofollow );
+		const bool a_is_dir = S_ISDIR( a_mode );
+		const bool b_is_dir = S_ISDIR( b_mode );
+		const bool c_is_dir = S_ISDIR( c_mode );
 		
-		const bool a_is_dir = a_exists && S_ISDIR( a_stat.st_mode );
-		const bool b_is_dir = b_exists && S_ISDIR( b_stat.st_mode );
-		const bool c_is_dir = c_exists && S_ISDIR( c_stat.st_mode );
-		
-		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_exists || a_is_dir == b_is_dir) )
+		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_mode || a_is_dir == b_is_dir) )
 		{
 			if ( a_is_dir )
 			{
-				if ( !b_exists )
+				if ( !b_mode )
 				{
 					p7::mkdirat( b_dirfd, filename );
 				}
@@ -487,9 +494,9 @@ namespace tool
 			}
 			else
 			{
-				const bool a_is_link = a_exists && S_ISLNK( a_stat.st_mode );
-				const bool b_is_link = b_exists && S_ISLNK( b_stat.st_mode );
-				const bool c_is_link = c_exists && S_ISLNK( c_stat.st_mode );
+				const bool a_is_link = S_ISLNK( a_mode );
+				const bool b_is_link = S_ISLNK( b_mode );
+				const bool c_is_link = S_ISLNK( c_mode );
 				
 				if ( !a_is_link  &&  !c_is_link )
 				{
@@ -500,7 +507,7 @@ namespace tool
 						(void) p7::openat( b_dirfd, filename, p7::o_wronly | p7::o_creat, p7::_666 );
 					}
 					
-					sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_exists );
+					sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_mode );
 				}
 				else if ( a_is_link  &&  c_is_link )
 				{
@@ -513,11 +520,11 @@ namespace tool
 					{
 						if ( b_target != a_target )
 						{
-							std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
+							std::printf( "%s %s\n", b_mode ? "----" : "+--+", subpath );
 							
 							if ( !global_dry_run )
 							{
-								if ( b_exists )
+								if ( b_mode )
 								{
 									p7::unlinkat( b_dirfd, filename );
 								}
@@ -563,7 +570,7 @@ namespace tool
 				}
 			}
 		}
-		else if ( b_exists )
+		else if ( b_mode )
 		{
 			// file vs. directory
 			if ( a_is_dir != b_is_dir )
