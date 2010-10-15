@@ -17,6 +17,9 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
+// Lamp
+#include "lamp/recurse.hh"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -212,7 +215,7 @@ namespace tool
 		}
 		else
 		{
-			recursively_copy_directory( olddirfd, name, newdirfd );
+			lamp::recurse( &recursively_copy_directory, olddirfd, name, newdirfd );
 		}
 	}
 	
@@ -602,7 +605,17 @@ namespace tool
 	                              const plus::string&  subpath,
 	                              const plus::string&  filename )
 	{
-		recursively_sync( a_dirfd, b_dirfd, c_dirfd, subpath.c_str(), filename.c_str() );
+		void (*f)( p7::fd_t,
+		           p7::fd_t,
+		           p7::fd_t,
+		           const char*,
+		           const char* ) = &recursively_sync;
+		
+		lamp::recurse( f, a_dirfd,
+		                  b_dirfd,
+		                  c_dirfd,
+		                  subpath.c_str(),
+		                  filename.c_str() );
 	}
 	
 	template < class In, class Out, class Pred >
