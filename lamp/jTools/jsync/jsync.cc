@@ -266,9 +266,10 @@ namespace tool
 	{
 		const std::size_t buffer_size = 4096;
 		
-		char a_buffer[ buffer_size ];
-		char b_buffer[ buffer_size ];
-		char c_buffer[ buffer_size ];
+		// Avoid large local allocations to prevent stack overruns
+		static char a_buffer[ buffer_size ];
+		static char b_buffer[ buffer_size ];
+		static char c_buffer[ buffer_size ];
 		
 		while ( a_matches_b || b_matches_c || c_matches_a )
 		{
