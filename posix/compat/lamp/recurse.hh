@@ -102,7 +102,7 @@ inline R recurse( R (*f)( F_1 ), A1 a1 )
 	return restack( size, f, T1::convert( a1 ) );
 }
 
-template < class R, class F_1, class F_2, class A1, class A2 >
+template < class R, class F_1, class A1, class F_2, class A2 >
 inline R recurse( R (*f)( F_1, F_2 ), A1 a1, A2 a2 )
 {
 	if ( stack_is_sufficient() )
