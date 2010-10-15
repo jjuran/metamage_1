@@ -125,7 +125,7 @@ inline R recurse( R (*f)( F_1, F_2 ), A1 a1, A2 a2 )
 	                    + sizeof (T_2);
 	
 	return restack( size, f, T1::convert( a1 ),
-	                         T1::convert( a2 ) );
+	                         T2::convert( a2 ) );
 }
 
 }
