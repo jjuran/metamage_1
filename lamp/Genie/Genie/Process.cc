@@ -67,6 +67,7 @@
 #include "vfs/primitives/stat.hh"
 
 // Genie
+#include "Genie/config/mini.hh"
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
@@ -807,7 +808,7 @@ namespace Genie
 	
 	static std::size_t ThreadStackSize()
 	{
-		const ::Size minimumStackSize = 64 * 1024;
+		const ::Size minimumStackSize = (CONFIG_MINI ? 32 : 64) * 1024;
 		
 		::Size size = 0;
 		
