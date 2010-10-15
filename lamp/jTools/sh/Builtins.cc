@@ -395,40 +395,39 @@ namespace tool
 		return n::convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
 	}
 	
-	typedef std::map< plus::string, Builtin > BuiltinMap;
-	
-	static BuiltinMap MakeBuiltins()
+	struct builtin_t
 	{
-		BuiltinMap builtins;
-		
-		builtins[ "alias"   ] = Builtin_Alias;
-		builtins[ "cd"      ] = Builtin_CD;
-		builtins[ "echo"    ] = Builtin_Echo;
-		builtins[ "exit"    ] = Builtin_Exit;
-		builtins[ "export"  ] = Builtin_Export;
-		builtins[ "pwd"     ] = Builtin_PWD;
-		builtins[ "set"     ] = Builtin_Set;
-		builtins[ "unalias" ] = Builtin_Unalias;
-		builtins[ "unset"   ] = Builtin_Unset;
-		builtins[ "."       ] = BuiltinDot;
-		
-		return builtins;
+		const char*    name;
+		const Builtin  code;
+	};
+	
+	static inline bool operator==( const builtin_t& b, const plus::string& s )
+	{
+		return b.name == s;
 	}
+	
+	static const builtin_t builtins[] =
+	{
+		{ "alias",   Builtin_Alias   },
+		{ "cd",      Builtin_CD      },
+		{ "echo",    Builtin_Echo    },
+		{ "exit",    Builtin_Exit    },
+		{ "export",  Builtin_Export  },
+		{ "pwd",     Builtin_PWD     },
+		{ "set",     Builtin_Set     },
+		{ "unalias", Builtin_Unalias },
+		{ "unset",   Builtin_Unset   },
+		{ ".",       BuiltinDot      }
+	};
 	
 	Builtin FindBuiltin( const plus::string& name )
 	{
-		static BuiltinMap sBuiltins = MakeBuiltins();
+		const builtin_t* begin = builtins;
+		const builtin_t* end   = begin + sizeof builtins / sizeof builtins[0];
 		
-		BuiltinMap::const_iterator found = sBuiltins.find( name );
+		const builtin_t* it = std::find( begin, end, name );
 		
-		if ( found != sBuiltins.end() )
-		{
-			return found->second;
-		}
-		else
-		{
-			return NULL;
-		}
+		return it != end ? it->code : NULL;
 	}
 	
 }
