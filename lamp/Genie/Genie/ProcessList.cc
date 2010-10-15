@@ -23,6 +23,9 @@
 // MacFeatures
 #include "MacFeatures/Threads.hh"
 
+// Genie
+#include "Genie/config/mini.hh"
+
 
 namespace Genie
 {
@@ -37,7 +40,7 @@ namespace Genie
 	static Process_Table global_processes;
 	
 	
-	const size_t max_n_tasks = 1024;
+	const size_t max_n_tasks = CONFIG_MINI ? 128 : 1024;
 	
 	static pid_t global_last_pid = 0;
 	
