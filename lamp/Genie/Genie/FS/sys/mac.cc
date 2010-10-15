@@ -20,6 +20,7 @@
 #include "Genie/FS/sys/mac/rom.hh"
 #include "Genie/FS/sys/mac/tempmem.hh"
 #include "Genie/FS/sys/mac/thng.hh"
+#include "Genie/FS/sys/mac/thread.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/adb.hh"
 #include "Genie/FS/sys/mac/crm.hh"
@@ -80,6 +81,7 @@ namespace Genie
 		{ "event",   &Premapped_Factory< sys_mac_event_Mappings   > },
 		{ "gdev",    &Premapped_Factory< sys_mac_gdev_Mappings    > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
+		{ "thread",  &Premapped_Factory< sys_mac_thread_Mappings  > },
 		{ "time",    &Premapped_Factory< sys_mac_time_Mappings    > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		{ "vol",     &Premapped_Factory< sys_mac_vol_Mappings     > },
