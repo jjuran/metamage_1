@@ -86,6 +86,8 @@ namespace Genie
 	                                void* _6,
 	                                void* _7 );
 	
+	typedef int (*Clone_Function)( void* arg );
+	
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
 	                public vfork_context,
@@ -273,6 +275,8 @@ namespace Genie
 			                                void* _5,
 			                                void* _6,
 			                                void* _7 );
+			
+			nucleus::owned< Mac::ThreadID > SpawnThread( Clone_Function f, void* arg );
 			
 			void InitThread();
 			
