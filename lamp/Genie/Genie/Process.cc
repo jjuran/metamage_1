@@ -1048,8 +1048,10 @@ namespace Genie
 	                                         void* _6,
 	                                         void* _7 )
 	{
-		itsReexecArgs[0] = (void*) f;
-		itsReexecArgs[1] = _1;
+		n::owned< N::ThreadID > looseThread = SpawnThread( (Clone_Function) f, _1 );
+		
+	//	itsReexecArgs[0] = (void*) f;
+	//	itsReexecArgs[1] = _1;
 		itsReexecArgs[2] = _2;
 		itsReexecArgs[3] = _3;
 		itsReexecArgs[4] = _4;
@@ -1057,18 +1059,25 @@ namespace Genie
 		itsReexecArgs[6] = _6;
 		itsReexecArgs[7] = _7;
 		
-		// Declare this first so it goes out of scope last
-		n::owned< N::ThreadID > looseThread;
-		
 		CloseMarkedFileDescriptors( *itsFileDescriptors );
+		
+		Suspend();
+	}
+	
+	n::owned< N::ThreadID > Process::SpawnThread( Clone_Function f, void* arg )
+	{
+		itsReexecArgs[0] = (void*) f;
+		itsReexecArgs[1] = arg;
+		itsReexecArgs[2] = 
+		itsReexecArgs[3] =
+		itsReexecArgs[4] =
+		itsReexecArgs[5] =
+		itsReexecArgs[6] =
+		itsReexecArgs[7] = NULL;
 		
 		ClearPendingSignals();
 		
 		ResetSignalHandlers();
-		
-		// We always spawn a new thread for the exec'ed process.
-		// If we've forked, then the thread is null, but if not, it's the
-		// current thread -- be careful!
 		
 		const std::size_t defaultStackSize = DefaultThreadStackSize();
 		
@@ -1077,7 +1086,7 @@ namespace Genie
 		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		n::owned< N::ThreadID > looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
@@ -1088,7 +1097,7 @@ namespace Genie
 		
 		Ped::AdjustSleepForActivity();
 		
-		Suspend();
+		return looseThread;
 	}
 	
 	int Process::SetErrno( int errorNumber )
