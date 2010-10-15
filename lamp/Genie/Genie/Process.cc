@@ -935,14 +935,16 @@ namespace Genie
 		}
 	}
 	
-	static std::size_t DefaultThreadStackSize()
+	static std::size_t ThreadStackSize()
 	{
+		const ::Size minimumStackSize = 64 * 1024;
+		
 		::Size size = 0;
 		
 		// Jaguar returns paramErr
 		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
 		
-		return size;
+		return std::max( size, minimumStackSize );
 	}
 	
 	void Process::Exec( const char*         path,
@@ -1008,11 +1010,7 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const std::size_t defaultStackSize = DefaultThreadStackSize();
-		
-		const std::size_t minimumStackSize = 64 * 1024;
-		
-		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
+		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
 		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
@@ -1079,11 +1077,7 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		const std::size_t defaultStackSize = DefaultThreadStackSize();
-		
-		const std::size_t minimumStackSize = 64 * 1024;
-		
-		const std::size_t stackSize = std::max( defaultStackSize, minimumStackSize );
+		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
 		n::owned< N::ThreadID > looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
