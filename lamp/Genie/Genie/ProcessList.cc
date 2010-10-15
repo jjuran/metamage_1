@@ -130,11 +130,11 @@ namespace Genie
 		return global_processes[ pid ] = process;
 	}
 	
-	const boost::intrusive_ptr< Process >& NewProcess( Process& parent )
+	const boost::intrusive_ptr< Process >& NewProcess( Process& parent, pid_t ppid )
 	{
 		const pid_t pid = next_pid();
 		
-		boost::intrusive_ptr< Process > process( new Process( parent, pid ) );
+		boost::intrusive_ptr< Process > process( new Process( parent, pid, ppid ) );
 		
 		return global_processes[ pid ] = process;
 	}
