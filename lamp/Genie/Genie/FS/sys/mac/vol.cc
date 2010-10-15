@@ -50,7 +50,7 @@ namespace Genie
 	
 	plus::string sys_mac_vol_boot::ReadLink() const
 	{
-		const N::FSDirSpec system_folder = N::FindFolder( N::kOnAppropriateDisk,
+		const N::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
 		                                                  N::kSystemFolderType,
 		                                                  false );
 		
