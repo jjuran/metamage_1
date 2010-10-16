@@ -59,10 +59,10 @@ namespace Pedestal
 	}
 	
 	
-	static UniqueWindowOwner gAboutBox( &NewAboutBox );
-	
 	void ShowAboutBox()
 	{
+		static UniqueWindowOwner gAboutBox( &NewAboutBox );
+		
 		gAboutBox.Show();
 	}
 	
