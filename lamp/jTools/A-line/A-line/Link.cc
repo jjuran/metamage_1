@@ -295,6 +295,8 @@ namespace tool
 			rezCommand.push_back( "-useDF" );
 		}
 		
+		rezCommand.push_back( "Types.r" );
+		
 		rezCommand.push_back( "-i" );
 		
 		rezCommand.push_back( itsIncludeDirPathname.c_str() );
