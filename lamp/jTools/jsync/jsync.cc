@@ -31,6 +31,7 @@
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/dirfd.hh"
+#include "poseven/functions/dup.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/fdopendir.hh"
 #include "poseven/functions/fstat.hh"
@@ -90,13 +91,6 @@ namespace tool
 		const bool exists = p7::fstatat( dir_fd, path, sb, p7::at_symlink_nofollow );
 		
 		return exists ? sb.st_mode : 0;
-	}
-	
-	static inline n::shared< p7::dir_t > fdopendir_shared( n::owned< p7::fd_t > dirfd )
-	{
-		n::owned< p7::dir_t > dir = p7::fdopendir( dirfd );
-		
-		return dir;
 	}
 	
 	static inline n::owned< p7::fd_t > open_dir( p7::fd_t dirfd, const char* path )
@@ -237,18 +231,21 @@ namespace tool
 		recursively_copy( dirs.first, name, dirs.second );
 	}
 	
+	static p7::directory_contents_container dirfd_contents( p7::fd_t fd )
+	{
+		return p7::directory_contents_container( p7::fdopendir( p7::dup( fd ) ) );
+	}
+	
 	static void recursively_copy_directory_contents( n::owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		n::shared< p7::dir_t > olddir = fdopendir_shared( olddirfd );
-		
-		directory_container contents = p7::directory_contents( olddir );
+		directory_container contents = dirfd_contents( olddirfd );
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind2nd( plus::ptr_fun( recursively_copy_into ),
-		                             std::make_pair( p7::dirfd( olddir ), newdirfd ) ) );
+		                             std::make_pair( olddirfd.get(), newdirfd ) ) );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
@@ -706,13 +703,9 @@ namespace tool
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		n::shared< p7::dir_t > a_dir = fdopendir_shared( a_dirfd );
-		n::shared< p7::dir_t > b_dir = fdopendir_shared( b_dirfd );
-		n::shared< p7::dir_t > c_dir = fdopendir_shared( c_dirfd );
-		
-		directory_container a_contents = p7::directory_contents( a_dir );
-		directory_container b_contents = p7::directory_contents( b_dir );
-		directory_container c_contents = p7::directory_contents( c_dir );
+		directory_container a_contents = dirfd_contents( a_dirfd );
+		directory_container b_contents = dirfd_contents( b_dirfd );
+		directory_container c_contents = dirfd_contents( c_dirfd );
 		
 		std::vector< plus::string > a;
 		std::vector< plus::string > b;
@@ -790,11 +783,11 @@ namespace tool
 			{
 				globally_locking_files = false;
 				
-				recursively_copy( p7::dirfd( a_dir ), filename, p7::dirfd( c_dir ) );
+				recursively_copy( a_dirfd, filename, c_dirfd );
 				
 				globally_locking_files = true;
 				
-				recursively_copy( p7::dirfd( a_dir ), filename, p7::dirfd( b_dir ) );
+				recursively_copy( a_dirfd, filename, b_dirfd );
 			}
 		}
 		
@@ -810,11 +803,11 @@ namespace tool
 			{
 				globally_locking_files = false;
 				
-				recursively_copy( p7::dirfd( c_dir ), filename, p7::dirfd( a_dir ) );
+				recursively_copy( c_dirfd, filename, a_dirfd );
 				
 				globally_locking_files = true;
 				
-				recursively_copy( p7::dirfd( c_dir ), filename, p7::dirfd( b_dir ) );
+				recursively_copy( c_dirfd, filename, b_dirfd );
 			}
 		}
 		
@@ -824,9 +817,9 @@ namespace tool
 			
 			std::printf( "++++ %s%s\n", path, filename.c_str() );
 			
-			recursively_sync( p7::dirfd( a_dir ),
-			                  p7::dirfd( b_dir ),
-			                  p7::dirfd( c_dir ), subpath + filename, filename );
+			recursively_sync( a_dirfd,
+			                  b_dirfd,
+			                  c_dirfd, subpath + filename, filename );
 		}
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
@@ -889,9 +882,9 @@ namespace tool
 		{
 			const plus::string& filename = *it;
 			
-			recursively_sync( p7::dirfd( a_dir ),
-			                  p7::dirfd( b_dir ),
-			                  p7::dirfd( c_dir ), subpath + filename, filename );
+			recursively_sync( a_dirfd,
+			                  b_dirfd,
+			                  c_dirfd, subpath + filename, filename );
 		}
 		
 		// added/nil:  simple add -- just do it
