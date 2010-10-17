@@ -696,6 +696,20 @@ namespace tool
 		std::copy( b_begin, b_end, b_only );
 	}
 	
+	template < class Sequence >
+	static void compare_sequences( const Sequence& a,
+	                               const Sequence& b,
+	                               Sequence& a_only,
+	                               Sequence& b_only,
+	                               Sequence& both )
+	{
+		compare_sequences( a.begin(), a.end(),
+		                   b.begin(), b.end(),
+		                   std::back_inserter( a_only ),
+		                   std::back_inserter( b_only ),
+		                   std::back_inserter( both ) );
+	}
+	
 	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
 	                                                 n::owned< p7::fd_t >  b_dirfd,
 	                                                 n::owned< p7::fd_t >  c_dirfd,
@@ -727,17 +741,17 @@ namespace tool
 		std::vector< plus::string > c_removed;
 		std::vector< plus::string > c_static;
 		
-		compare_sequences( a.begin(), a.end(),
-		                   b.begin(), b.end(),
-		                   std::back_inserter( a_added   ),
-		                   std::back_inserter( a_removed ),
-		                   std::back_inserter( a_static  ) );
+		compare_sequences( a,
+		                   b,
+		                   a_added,
+		                   a_removed,
+		                   a_static );
 		
-		compare_sequences( c.begin(), c.end(),
-		                   b.begin(), b.end(),
-		                   std::back_inserter( c_added   ),
-		                   std::back_inserter( c_removed ),
-		                   std::back_inserter( c_static  ) );
+		compare_sequences( c,
+		                   b,
+		                   c_added,
+		                   c_removed,
+		                   c_static );
 		
 		std::vector< plus::string > a_created;
 		std::vector< plus::string > c_created;
@@ -749,17 +763,17 @@ namespace tool
 		
 		std::vector< plus::string > mutually_static;
 		
-		compare_sequences( a_added.begin(), a_added.end(),
-		                   c_added.begin(), c_added.end(),
-		                   std::back_inserter( a_created ),
-		                   std::back_inserter( c_created ),
-		                   std::back_inserter( mutually_added ) );
+		compare_sequences( a_added,
+		                   c_added,
+		                   a_created,
+		                   c_created,
+		                   mutually_added );
 		
-		compare_sequences( a_removed.begin(), a_removed.end(),
-		                   c_removed.begin(), c_removed.end(),
-		                   std::back_inserter( a_deleted ),
-		                   std::back_inserter( c_deleted ),
-		                   std::back_inserter( mutually_deleted ) );
+		compare_sequences( a_removed,
+		                   c_removed,
+		                   a_deleted,
+		                   c_deleted,
+		                   mutually_deleted );
 		
 		compare_sequences( a_static.begin(), a_static.end(),
 		                   c_static.begin(), c_static.end(),
