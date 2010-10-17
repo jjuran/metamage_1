@@ -710,6 +710,15 @@ namespace tool
 		                   std::back_inserter( both ) );
 	}
 	
+	template < class Source, class Dest >
+	static void copy_unless_filtered( const Source& source, Dest& dest )
+	{
+		copy_unless( source.begin(),
+		             source.end(),
+		             std::back_inserter( dest ),
+		             std::ptr_fun( filter_item ) );
+	}
+	
 	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
 	                                                 n::owned< p7::fd_t >  b_dirfd,
 	                                                 n::owned< p7::fd_t >  c_dirfd,
@@ -725,9 +734,9 @@ namespace tool
 		std::vector< plus::string > b;
 		std::vector< plus::string > c;
 		
-		copy_unless( a_contents.begin(), a_contents.end(), std::back_inserter( a ), std::ptr_fun( filter_item ) );
-		copy_unless( b_contents.begin(), b_contents.end(), std::back_inserter( b ), std::ptr_fun( filter_item ) );
-		copy_unless( c_contents.begin(), c_contents.end(), std::back_inserter( c ), std::ptr_fun( filter_item ) );
+		copy_unless_filtered( a_contents, a );
+		copy_unless_filtered( b_contents, b );
+		copy_unless_filtered( c_contents, c );
 		
 		std::sort( a.begin(), a.end() );
 		std::sort( b.begin(), b.end() );
