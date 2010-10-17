@@ -725,6 +725,11 @@ namespace tool
 		std::sort( sequence.begin(), sequence.end() );
 	}
 	
+	static void recursively_delete( const plus::string& path )
+	{
+		io::recursively_delete( path );
+	}
+	
 	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
 	                                                 n::owned< p7::fd_t >  b_dirfd,
 	                                                 n::owned< p7::fd_t >  c_dirfd,
@@ -866,8 +871,8 @@ namespace tool
 				plus::string b_path = global_base_root   / child_subpath;
 				plus::string c_path = global_remote_root / child_subpath;
 				
-				io::recursively_delete( c_path );
-				io::recursively_delete( b_path );
+				recursively_delete( c_path );
+				recursively_delete( b_path );
 			}
 		}
 		
@@ -886,8 +891,8 @@ namespace tool
 				plus::string a_path = global_local_root / child_subpath;
 				plus::string b_path = global_base_root  / child_subpath;
 				
-				io::recursively_delete( a_path );
-				io::recursively_delete( b_path );
+				recursively_delete( a_path );
+				recursively_delete( b_path );
 			}
 		}
 		
@@ -903,7 +908,7 @@ namespace tool
 			{
 				plus::string b_path = global_base_root / child_subpath;
 				
-				io::recursively_delete( b_path );
+				recursively_delete( b_path );
 			}
 		}
 		
