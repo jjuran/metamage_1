@@ -122,9 +122,15 @@ namespace tool
 			return 0;
 		}
 		
+		bool macRoman_output = false;
+		
 		bool forced = false;
 		
+		o::bind_option_to_variable( "-m", macRoman_output );
+		
 		o::bind_option_to_variable( "-f", forced );
+		
+		o::alias_option( "-m", "--mac" );
 		
 		o::get_options( argc, argv );
 		
@@ -214,7 +220,7 @@ namespace tool
 					p7::perror( "warning", path, "contains Unicode characters absent in MacRoman" );
 				}
 				
-				if ( is_MacRoman )
+				if ( is_MacRoman != macRoman_output )
 				{
 					int pipe_ends[ 2 ];
 					
@@ -229,7 +235,10 @@ namespace tool
 						close( pipe_ends[0] );
 						close( pipe_ends[1] );
 						
-						const char* args[] = { "mac2utf8", NULL };
+						const char* filter = macRoman_output ? "utf82mac"
+						                                     : "mac2utf8";
+						
+						const char* args[] = { filter, NULL };
 						
 						p7::execvp( args );
 					}
