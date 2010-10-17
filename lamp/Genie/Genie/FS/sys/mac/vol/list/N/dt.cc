@@ -7,7 +7,6 @@
 
 // iota
 #include "iota/decimal.hh"
-#include "iota/quad.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -19,6 +18,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/quad_name.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -134,7 +134,7 @@ namespace Genie
 	
 	static FSSpec DTGetAPPL( const FSTreePtr& appls_quad, short index = 0 )
 	{
-		const ::OSType creator = iota::decode_quad( appls_quad->Name().c_str() );
+		const ::OSType creator = parse_quad_name( appls_quad->Name() );
 		
 		const FSTreePtr& great_x2_grandparent = appls_quad->ParentRef()->ParentRef()->ParentRef();
 		
@@ -227,8 +227,8 @@ namespace Genie
 		
 		const short selector = iota::parse_unsigned_decimal( that->Name().c_str() );
 		
-		const ::OSType type    = iota::decode_quad( parent ->Name().c_str() );
-		const ::OSType creator = iota::decode_quad( gparent->Name().c_str() );
+		const ::OSType type    = parse_quad_name( parent ->Name() );
+		const ::OSType creator = parse_quad_name( gparent->Name() );
 		
 		const short vRefNum = -iota::parse_unsigned_decimal( gggparent->Name().c_str() );
 		
