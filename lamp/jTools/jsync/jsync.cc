@@ -619,7 +619,7 @@ namespace tool
 	}
 	
 	template < class In, class Out, class Pred >
-	Out copy_if( In begin, In end, Out result, Pred f )
+	static Out copy_if( In begin, In end, Out result, Pred f )
 	{
 		while ( begin != end )
 		{
