@@ -719,6 +719,12 @@ namespace tool
 		             std::ptr_fun( filter_item ) );
 	}
 	
+	template < class Sequence >
+	static void sort( Sequence& sequence )
+	{
+		std::sort( sequence.begin(), sequence.end() );
+	}
+	
 	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
 	                                                 n::owned< p7::fd_t >  b_dirfd,
 	                                                 n::owned< p7::fd_t >  c_dirfd,
@@ -738,9 +744,9 @@ namespace tool
 		copy_unless_filtered( b_contents, b );
 		copy_unless_filtered( c_contents, c );
 		
-		std::sort( a.begin(), a.end() );
-		std::sort( b.begin(), b.end() );
-		std::sort( c.begin(), c.end() );
+		sort( a );
+		sort( b );
+		sort( c );
 		
 		std::vector< plus::string > a_added;
 		std::vector< plus::string > a_removed;
