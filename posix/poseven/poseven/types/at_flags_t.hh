@@ -14,6 +14,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// Extended API Set Part 2
+#include "extended-api-set/part-2.h"
+
 // Nucleus
 #include "nucleus/enumeration_traits.hh"
 #include "nucleus/flag_ops.hh"
