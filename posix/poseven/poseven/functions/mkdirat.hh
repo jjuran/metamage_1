@@ -14,24 +14,18 @@
 #ifndef POSEVEN_FUNCTIONS_MKDIRAT_HH
 #define POSEVEN_FUNCTIONS_MKDIRAT_HH
 
-// POSIX
-#include <sys/stat.h>
-
 // iota
 #include "iota/string_traits.hh"
 
 // poseven
-#include "poseven/types/errno_t.hh"
+#include "poseven/types/fd_t.hh"
 #include "poseven/types/mode_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void mkdirat( fd_t dirfd, const char* path, mode_t mode = _777 )
-	{
-		throw_posix_result( ::mkdirat( dirfd, path, mode ) );
-	}
+	void mkdirat( fd_t dirfd, const char* path, mode_t mode = _777 );
 	
 	template < class String >
 	inline void mkdirat( const String& path, mode_t mode = _777 )
