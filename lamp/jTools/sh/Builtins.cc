@@ -11,7 +11,6 @@
 #include <set>
 
 // Standard C/C++
-#include <cstdio>
 #include <cstring>
 
 // Standard C
@@ -24,6 +23,10 @@
 
 // Iota
 #include "iota/decimal.hh"
+#include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -31,6 +34,7 @@
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"
+#include "poseven/functions/write.hh"
 
 // sh
 #include "Options.hh"
@@ -61,7 +65,13 @@ namespace tool
 		const plus::string& name  = var.first;
 		const plus::string& value = var.second;
 		
-		std::printf( "%s='%s'\n", name.c_str(), value.c_str() );
+		plus::var_string variable = name;
+		
+		variable += "='";
+		variable +=    value;
+		variable +=        "'\n";
+		
+		p7::write( p7::stdout_fileno, variable );
 	}
 	
 	static void PrintAlias( const StringMap::value_type& var )
@@ -69,7 +79,14 @@ namespace tool
 		const plus::string& name  = var.first;
 		const plus::string& value = var.second;
 		
-		std::printf( "alias %s='%s'\n", name.c_str(), value.c_str() );
+		plus::var_string alias = "alias ";
+		
+		alias += name;
+		alias +=    "='";
+		alias +=       value;
+		alias +=           "'\n";
+		
+		p7::write( p7::stdout_fileno, alias );
 	}
 	
 	
@@ -135,7 +152,7 @@ namespace tool
 		
 		if ( changed < 0 )
 		{
-			std::fprintf( stderr, "cd: %s: %s\n", dir, std::strerror( errno ) );
+			more::perror( "cd", dir );
 			
 			return p7::exit_failure;
 		}
@@ -188,17 +205,22 @@ namespace tool
 	
 	static p7::exit_t Builtin_Echo( int argc, char** argv )
 	{
+		plus::var_string line;
+		
 		if ( argc > 1 )
 		{
-			std::printf( "%s", argv[1] );
+			line = argv[1];
 			
 			for ( short i = 2; i < argc; i++ )
 			{
-				std::printf( " %s", argv[i] );
+				line += " ";
+				line += argv[i];
 			}
 		}
 		
-		std::printf( "\n" );
+		line += '\n';
+		
+		p7::write( p7::stdout_fileno, line );
 		
 		return p7::exit_success;
 	}
@@ -227,7 +249,14 @@ namespace tool
 			
 			while ( *envp != NULL )
 			{
-				std::printf( "export %s\n", *envp );
+				// Can't use the name 'export' in Metrowerks C++
+				plus::var_string export_ = "export ";
+				
+				export_ += *envp;
+				export_ += '\n';
+				
+				p7::write( p7::stdout_fileno, export_ );
+				
 				++envp;
 			}
 		}
@@ -283,7 +312,11 @@ namespace tool
 			p = cwd.reset( cwd.size() * 2 );
 		}
 		
-		std::printf( "%s\n", cwd.c_str() );
+		cwd.resize( strlen( cwd.c_str() ) );
+		
+		cwd += '\n';
+		
+		p7::write( p7::stdout_fileno, cwd );
 		
 		return p7::exit_success;
 	}
@@ -367,7 +400,7 @@ namespace tool
 	{
 		if ( argc < 2 )
 		{
-			std::fprintf( stderr, "%s\n", "sh: .: filename argument required" );
+			p7::write( p7::stderr_fileno, STR_LEN( "sh: .: filename argument required\n" ) );
 			
 			return p7::exit_t( 2 );
 		}

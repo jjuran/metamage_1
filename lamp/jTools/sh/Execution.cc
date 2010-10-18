@@ -10,7 +10,6 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdio>
 #include <cstring>
 
 // Standard C
@@ -25,6 +24,9 @@
 // Iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// more-posix
+#include "more/perror.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -413,7 +415,7 @@ namespace tool
 		}
 		catch ( const p7::errno_t& errnum )
 		{
-			std::fprintf( stderr, "sh: %s: %s\n", param, strerror( errnum ) );
+			more::perror( "sh", param, errnum );
 			
 			throw;
 		}
@@ -434,7 +436,7 @@ namespace tool
 		
 		const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
 		
-		std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
+		more::perror( "sh", file, error_msg );
 		
 		_exit( errno == ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
@@ -906,7 +908,7 @@ namespace tool
 		{
 			int signo = p7::wtermsig( status );
 			
-			std::fprintf( stderr, "%s\n", strsignal( signo ) );
+			more::perror( strsignal( signo ), 0 );
 		}
 		
 		return status;
