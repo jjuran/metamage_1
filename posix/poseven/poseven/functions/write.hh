@@ -15,20 +15,16 @@
 #define POSEVEN_FUNCTIONS_WRITE_HH
 
 // POSIX
-#include <unistd.h>
+#include <sys/types.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline ssize_t write( fd_t fd, const char* buffer, size_t bytes_requested )
-	{
-		return throw_posix_result( ::write( fd, buffer, bytes_requested ) );
-	}
+	ssize_t write( fd_t fd, const char* buffer, size_t bytes_requested );
 	
 	template < class String >
 	inline ssize_t write( fd_t fd, const String& string )
