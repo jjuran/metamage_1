@@ -21,7 +21,19 @@ namespace poseven
 	
 	ssize_t write_some( fd_t fd, const char* buffer, size_t n_bytes );
 	
+	template < class String >
+	inline ssize_t write_some( fd_t fd, const String& string )
+	{
+		return write_some( fd, string.data(), string.length() );
+	}
+	
 	ssize_t write_all( fd_t fd, const char* buffer, size_t n_bytes );
+	
+	template < class String >
+	inline ssize_t write_all( fd_t fd, const String& string )
+	{
+		return write_all( fd, string.data(), string.length() );
+	}
 	
 }
 
