@@ -37,6 +37,9 @@
 #ifndef	_UTIME_H_
 #define	_UTIME_H_
 
+#include <time.h>
+
+
 struct utimbuf {
 	time_t actime;		/* Access time */
 	time_t modtime;		/* Modification time */
