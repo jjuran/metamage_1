@@ -22,6 +22,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include <sys/wait.h>
 
 // Iota
 #include "iota/strings.hh"
