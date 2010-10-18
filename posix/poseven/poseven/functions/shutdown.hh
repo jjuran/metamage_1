@@ -18,7 +18,6 @@
 #include <sys/socket.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
@@ -34,10 +33,7 @@ namespace poseven
 		shut_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
-	inline void shutdown( fd_t fd, shut_t how )
-	{
-		throw_posix_result( ::shutdown( fd, how ) );
-	}
+	void shutdown( fd_t fd, shut_t how );
 	
 }
 
