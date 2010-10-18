@@ -130,23 +130,134 @@ namespace tool
 		return NULL;
 	}
 	
+	static const char* get_home()
+	{
+		if ( const char* home = getenv( "HOME" ) )
+		{
+			return home;
+		}
+		
+		return "/";
+	}
+	
+	static plus::string get_cwd()
+	{
+		plus::var_string cwd;
+		
+		const size_t buffer_size = 4096;
+		
+		ssize_t got = _getcwd( cwd.reset( buffer_size ), buffer_size );
+		
+		p7::throw_posix_result( got );
+		
+		cwd.resize( got );
+		
+		return cwd;
+	}
+	
+	static plus::string change_pwd( const char* old_pwd, const char* path )
+	{
+		plus::var_string new_pwd;
+		
+		if ( path[0] != '/' )
+		{
+			new_pwd = old_pwd;
+		}
+		
+		const char* end = path + strlen( path );
+		
+		const char* p = path;
+		
+		while ( p < end )
+		{
+			const char* slash = std::find( p, end, '/' );
+			
+			const size_t length = slash - p;
+			
+			if ( length == 0 )
+			{
+				++p;
+			}
+			else
+			{
+				if ( p[0] == '.' )
+				{
+					switch ( length )
+					{
+						case 2:
+							if ( p[1] != '.' )
+							{
+								break;
+							}
+							
+							if ( !new_pwd.empty() )
+							{
+								new_pwd.resize( new_pwd.find_last_of( "/" ) );
+							}
+						
+						case 1:
+							p += length;
+							
+							continue;
+						
+						default:
+							break;
+					}
+				}
+				
+				new_pwd += '/';
+				new_pwd.append( p, length );
+				
+				p += length;
+			}
+		}
+		
+		if ( new_pwd.empty() )
+		{
+			new_pwd = '/';
+		}
+		
+		return new_pwd;
+	}
+	
+	static bool get_physical( char**& args )
+	{
+		bool physical = false;
+		
+		while ( *++args != NULL )
+		{
+			const char* arg = *args;
+			
+			if ( arg[0] == '-' )
+			{
+				if ( arg[1] == 'P' )
+				{
+					physical = true;
+				}
+				
+				if ( arg[1] == 'L' )
+				{
+					physical = false;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+		
+		return physical;
+	}
+	
 	// Builtins.  argc is guaranteed to be positive.
 	
 	static p7::exit_t Builtin_CD( int argc, char** argv )
 	{
-		const char* dir = argv[1];
+		char** args = argv;
 		
-		if ( argc == 1 )
-		{
-			if ( const char* home = getenv( "HOME" ) )
-			{
-				dir = home;
-			}
-			else
-			{
-				dir = "/";
-			}
-		}
+		const bool physical = get_physical( args );
+		
+		const char* dir = *args ? *args : get_home();
 		
 		int changed = chdir( dir );
 		
@@ -157,11 +268,25 @@ namespace tool
 			return p7::exit_failure;
 		}
 		
-		// Apparently setenv() breaks something.
-		//setenv( "OLDPWD", getenv( "PWD" ), 1 );
+		const char* old_pwd = getenv( "PWD" );
 		
-		// FIXME:  This should be full pathname.
-		//setenv( "PWD", argv[ 1 ], 1 );
+		if ( old_pwd != NULL )
+		{
+			if ( old_pwd[0] != '/' )
+			{
+				old_pwd = NULL;
+			}
+			else
+			{
+				setenv( "OLDPWD", old_pwd, 1 );
+			}
+		}
+		
+		const bool use_cwd = physical  ||  old_pwd == NULL;
+		
+		plus::string new_pwd = use_cwd ? get_cwd() : change_pwd( old_pwd, dir );
+		
+		setenv( "PWD", new_pwd.c_str(), 1 );
 		
 		return p7::exit_success;
 	}
@@ -303,16 +428,34 @@ namespace tool
 	
 	static p7::exit_t Builtin_PWD( int argc, char** argv )
 	{
+		char** args = argv;
+		
+		const bool physical = get_physical( args );
+		
 		plus::var_string cwd;
 		
-		char* p = cwd.reset( 256 );
-		
-		while ( getcwd( p, cwd.size() ) == NULL )
+		if ( !physical )
 		{
-			p = cwd.reset( cwd.size() * 2 );
+			if ( const char* pwd = getenv( "PWD" ) )
+			{
+				if ( pwd[0] == '/' )
+				{
+					cwd = pwd;
+				}
+			}
 		}
 		
-		cwd.resize( strlen( cwd.c_str() ) );
+		if ( cwd.empty() )
+		{
+			char* p = cwd.reset( 256 );
+			
+			while ( getcwd( p, cwd.size() ) == NULL )
+			{
+				p = cwd.reset( cwd.size() * 2 );
+			}
+			
+			cwd.resize( strlen( cwd.c_str() ) );
+		}
 		
 		cwd += '\n';
 		

@@ -156,6 +156,8 @@ namespace tool
 			start_monitoring();
 		}
 		
+		ExecuteCmdLine( "cd ." );  // prime $PWD
+		
 		if ( *freeArgs != NULL )
 		{
 			gArgZero = gParameters[ 0 ];
