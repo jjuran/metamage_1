@@ -14,23 +14,14 @@
 #ifndef POSEVEN_FUNCTIONS_SYMLINK_HH
 #define POSEVEN_FUNCTIONS_SYMLINK_HH
 
-// POSIX
-#include <unistd.h>
-
 // iota
 #include "iota/string_traits.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void symlink( const char* from, const char* to )
-	{
-		throw_posix_result( ::symlink( from, to ) );
-	}
+	void symlink( const char* from, const char* to );
 	
 	template < class String1, class String2 >
 	inline void symlink( const String1& from, const String2& to )
