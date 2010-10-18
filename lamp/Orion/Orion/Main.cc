@@ -25,6 +25,7 @@
 // poseven
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/types/errno_t.hh"
 #include "poseven/types/exit_t.hh"
 
 

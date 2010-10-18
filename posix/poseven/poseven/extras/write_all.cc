@@ -10,6 +10,7 @@
 
 // poseven
 #include "poseven/functions/write.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace poseven

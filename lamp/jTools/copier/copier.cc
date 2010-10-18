@@ -22,6 +22,7 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace p7 = poseven;

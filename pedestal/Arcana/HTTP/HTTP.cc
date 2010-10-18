@@ -23,6 +23,7 @@
 // poseven
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/read.hh"
+#include "poseven/types/errno_t.hh"
 
 
 namespace p7 = poseven;
