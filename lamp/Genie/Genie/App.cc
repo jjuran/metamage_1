@@ -11,7 +11,6 @@
 #include "Pedestal/Commands.hh"
 
 // Genie
-#include "Genie/AboutBox.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/ProcessList.hh"
 
@@ -54,7 +53,7 @@ namespace Genie
 	
 	static bool About( Ped::CommandCode )
 	{
-		ShowAboutBox();
+		spawn_process( "/sbin/about" );
 		
 		return true;
 	}
