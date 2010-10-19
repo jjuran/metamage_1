@@ -650,8 +650,6 @@ namespace tool
 				{
 					command.push_back( "-xm"      );
 					command.push_back( "s"        );
-					command.push_back( "-export"  );
-					command.push_back( "sym=_lamp_main" );
 				}
 				else if ( arch == arch_m68k )
 				{
@@ -665,8 +663,6 @@ namespace tool
 				{
 					command.push_back( "-xm"      );
 					command.push_back( "s"        );
-					command.push_back( "-export"  );
-					command.push_back( "sym=_lamp_main" );
 					
 					// MWLinkPPC gets pissy if a shlb is larger than the default size,
 					// even though the size is meaningless since this isn't an app.
