@@ -25,6 +25,7 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
+#include "Mac/CodeFragments/Types/CFragConnectionID.hh"
 #include "Mac/Resources/Types/ResID.hh"
 
 #ifndef NITROGEN_OSSTATUS_HH
@@ -131,30 +132,6 @@ namespace Nitrogen
 		
 		kCFragSymbolClass_Max = nucleus::enumeration_traits< ::CFragSymbolClass >::max
 	};
-	
-}
-
-namespace nucleus
-{
-	
-	template <>
-	struct disposer< CFragConnectionID >
-	{
-		typedef CFragConnectionID  argument_type;
-		typedef void               result_type;
-		
-		void operator()( CFragConnectionID connID ) const
-		{
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::CodeFragmentManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::CloseConnection( &connID ) );
-		}
-	};
-	
-}
-
-namespace Nitrogen
-{
 	
 	// Opaque pointer type
 	typedef struct SymbolAddress* SymbolAddressPtr;
