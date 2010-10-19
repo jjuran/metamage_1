@@ -29,7 +29,6 @@
 // Genie
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/Process/vfork_context.hh"
@@ -110,8 +109,6 @@ namespace Genie
 			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
 			
 			recall::stack_frame_pointer itsStackFramePtr;
-			
-			SavedRegisters itsSavedRegisters;
 			
 			UInt64 itsAlarmClock;
 			
@@ -205,8 +202,6 @@ namespace Genie
 			const boost::intrusive_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
 			void SetProcessGroup( const boost::intrusive_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
-			
-			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			

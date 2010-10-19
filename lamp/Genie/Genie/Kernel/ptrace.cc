@@ -14,7 +14,6 @@
 
 // Genie
 #include "Genie/Process.hh"
-#include "Genie/Process/SavedRegisters.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -95,7 +94,7 @@ namespace Genie
 						return frame.SetErrno( EFAULT );
 					}
 					
-					*(SavedRegisters*) addr = target.GetSavedRegisters();
+					return frame.SetErrno( ENOSYS );
 					
 					break;
 				
