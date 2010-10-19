@@ -69,7 +69,6 @@
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
@@ -334,10 +333,12 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			exit_status = its_exec_handle->Invoke( argc,
-			                                       argv,
-			                                       envp,
-			                                       &global_parameter_block );
+			lamp_entry lamp_main = its_exec_handle->get_main_entry_point();
+			
+			exit_status = lamp_main( argc,
+			                         argv,
+			                         envp,
+			                         &global_parameter_block );
 			
 			// Not reached by regular tools, since they call exit()
 		}

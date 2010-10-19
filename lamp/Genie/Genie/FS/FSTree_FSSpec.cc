@@ -60,9 +60,9 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/code/executable_file.hh"
+#include "Genie/code/prepare_executable.hh"
 #include "Genie/MacFilenameFromUnixFilename.hh"
-#include "Genie/Exec/GetMainEntry.hh"
-#include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
@@ -1098,16 +1098,11 @@ namespace Genie
 		                          &New_DataForkHandle );
 	}
 	
-	static inline MainEntry GetMainEntryFromFile( const FSSpec& file )
-	{
-		BinaryImage image = GetBinaryImage( file );
-		
-		return GetMainEntryFromBinaryImage( image );
-	}
-	
 	shared_exec_handle FSTree_HFS::GetExecutable() const
 	{
-		return GetMainEntryFromFile( GetFSSpec() );
+		execution_unit unit = load_executable_file( GetFSSpec() );
+		
+		return prepare_executable( unit );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::OpenDirectory() const

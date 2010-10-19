@@ -21,7 +21,7 @@
 #include <boost/shared_ptr.hpp>
 
 // Genie
-#include "Genie/Exec/MainEntry.hh"
+#include "Genie/code/shared_exec_handle.hh"
 
 // time.h
 struct timespec;

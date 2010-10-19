@@ -27,7 +27,7 @@
 #include "Mac/Threads/Types/ThreadID.hh"
 
 // Genie
-#include "Genie/Exec/MainEntry.hh"
+#include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
