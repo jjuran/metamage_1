@@ -47,7 +47,6 @@ namespace Genie
 			~App()  { kill_all_processes(); }
 			
 			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
-			void CreateSystemConsole();
 	};
 	
 	
@@ -76,8 +75,6 @@ namespace Genie
 	{
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
-		
-		CreateSystemConsole();
 	}
 	
 	void App::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app )
@@ -99,17 +96,6 @@ namespace Genie
 			
 			gTerminals.OpenDocument( fss );
 		}
-	}
-	
-	void App::CreateSystemConsole()
-	{
-		/*
-		PedWindow* window = new PedWindow;
-		mySystemConsole = window;
-		GenieSystemConsole().Build(*window);
-		
-		SetCurrentOutputStream(window);
-		*/
 	}
 	
 	void TerminalsOwner::NewWindow()
