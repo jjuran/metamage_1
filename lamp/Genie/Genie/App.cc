@@ -4,14 +4,16 @@
  */
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/AppleEvents.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
+// Nitrogen Extras / AEFramework
+#include "AEFramework/AEFramework.h"
+
 // Genie
-#include "Genie/ReplyHandler.hh"
 #include "Genie/ProcessList.hh"
 
 
@@ -22,11 +24,24 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	struct Reply_AppleEvent
+	{
+		static void Handler( N::AppleEvent const&  event,
+		                     N::AppleEvent&        reply )
+		{
+			N::ReceiveReply( event );
+		}
+		
+		static void Install_Handler()
+		{
+			N::AEInstallEventHandler< Handler >( N::kCoreEventClass,
+			                                     N::kAEAnswer ).release();
+		}
+	};
+	
+	
 	class App : public Ped::Application
 	{
-		private:
-			GenieHandlerReply myReplyEventHandler;
-		
 		public:
 			App();
 			~App()  { kill_all_processes(); }
@@ -51,6 +66,8 @@ namespace Genie
 	{
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
+		
+		Reply_AppleEvent::Install_Handler();
 	}
 	
 }
