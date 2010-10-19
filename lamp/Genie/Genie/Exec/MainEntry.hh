@@ -18,7 +18,7 @@ namespace Genie
 	
 	class MainEntryPoint;
 	
-	typedef boost::intrusive_ptr< MainEntryPoint > MainEntry;
+	typedef boost::intrusive_ptr< MainEntryPoint > MainEntry, shared_exec_handle;
 	
 }
 

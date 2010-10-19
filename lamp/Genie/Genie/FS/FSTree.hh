@@ -156,7 +156,7 @@ namespace Genie
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
-			virtual MainEntry GetMainEntry() const;
+			virtual shared_exec_handle GetExecutable() const;
 			
 			// Directory methods
 			

@@ -62,7 +62,7 @@ namespace Genie
 	class FSTree_sys_kernel_bin_EXE : public FSTree
 	{
 		private:
-			MainEntry itsMainEntry;
+			shared_exec_handle its_exec_handle;
 		
 		public:
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
@@ -70,13 +70,16 @@ namespace Genie
 			                           Trivial_Entry        main )
 			:
 				FSTree( parent, name ),
-				itsMainEntry( GetMainEntryFromAddress( main ) )
+				its_exec_handle( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
 			
-			MainEntry GetMainEntry() const  { return itsMainEntry; }
+			shared_exec_handle GetExecutable() const
+			{
+				return its_exec_handle;
+			}
 	};
 	
 	

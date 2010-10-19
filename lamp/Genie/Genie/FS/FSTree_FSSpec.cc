@@ -309,7 +309,7 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
-			MainEntry GetMainEntry() const;
+			shared_exec_handle GetExecutable() const;
 			
 			boost::shared_ptr< IOHandle > OpenDirectory() const;
 			
@@ -1105,7 +1105,7 @@ namespace Genie
 		return GetMainEntryFromBinaryImage( image );
 	}
 	
-	MainEntry FSTree_HFS::GetMainEntry() const
+	shared_exec_handle FSTree_HFS::GetExecutable() const
 	{
 		return GetMainEntryFromFile( GetFSSpec() );
 	}
