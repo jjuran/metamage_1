@@ -7,7 +7,6 @@
 
 // Standard C++ library
 #include <algorithm>
-#include <map>
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -64,37 +63,29 @@ namespace Genie
 		{ NULL,      NULL,     NULL         }
 	};
 	
-	typedef std::map< plus::string, const DeviceIOSpec* > DeviceIOMap;
-	
-	static DeviceIOMap BuildDeviceMap()
+	static inline bool operator==( const DeviceIOSpec& device, const plus::string& s )
 	{
-		DeviceIOMap result;
-		
-		for ( DeviceIOSpec* dev = gDeviceIOSpecs;  dev->name != NULL;  ++dev )
-		{
-			result[ dev->name ] = dev;
-		}
-		
-		return result;
+		return device.name == s;
 	}
 	
-	static DeviceIOMap& DeviceMap()
+	static const DeviceIOSpec* FindDevice( const plus::string& name )
 	{
-		static DeviceIOMap gDeviceMap = BuildDeviceMap();
+		const DeviceIOSpec* begin = gDeviceIOSpecs;
+		const DeviceIOSpec* end   = begin + sizeof gDeviceIOSpecs / sizeof gDeviceIOSpecs[0];
 		
-		return gDeviceMap;
+		const DeviceIOSpec* it = std::find( begin, end, name );
+		
+		return it != end ? it : NULL;
 	}
 	
 	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const plus::string& path )
 	{
-		DeviceIOMap::const_iterator found = DeviceMap().find( path );
-		
-		if ( found == DeviceMap().end() )
+		if ( const DeviceIOSpec* device = FindDevice( path ) )
 		{
-			p7::throw_errno( ENOENT );
+			return seize_ptr( new SimpleDeviceHandle( *device ) );
 		}
 		
-		return seize_ptr( new SimpleDeviceHandle( *found->second ) );
+		throw p7::errno_t( ENOENT );
 	}
 	
 }
