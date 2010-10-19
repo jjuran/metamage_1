@@ -22,15 +22,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class TerminalsOwner
-	{
-		public:
-			void NewWindow();
-	};
-	
-	static TerminalsOwner gTerminals;
-	
-	
 	class App : public Ped::Application
 	{
 		private:
@@ -51,7 +42,7 @@ namespace Genie
 	
 	static bool NewDocument( Ped::CommandCode )
 	{
-		gTerminals.NewWindow();
+		spawn_process( "/bin/jgetty" );
 		
 		return true;
 	}
@@ -60,11 +51,6 @@ namespace Genie
 	{
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
-	}
-	
-	void TerminalsOwner::NewWindow()
-	{
-		spawn_process( "/bin/jgetty" );
 	}
 	
 }
