@@ -158,7 +158,7 @@ my %fsmap =
 			bootstrap => [qw( upgrade-lamp check-perl-lib.pl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
-	sbin => [qw( install-usr-lib-perl upgrade )],
+	sbin => [qw( about install-usr-lib-perl upgrade )],
 	tmp => [],
 	usr =>
 	{

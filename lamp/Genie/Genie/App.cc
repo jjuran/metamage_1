@@ -8,10 +8,10 @@
 
 // Pedestal
 #include "Pedestal/Application.hh"
-#include "Pedestal/AboutBox.hh"
 #include "Pedestal/Commands.hh"
 
 // Genie
+#include "Genie/AboutBox.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/ProcessList.hh"
 
@@ -54,7 +54,7 @@ namespace Genie
 	
 	static bool About( Ped::CommandCode )
 	{
-		Ped::ShowAboutBox();
+		ShowAboutBox();
 		
 		return true;
 	}

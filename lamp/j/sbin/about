@@ -1,0 +1,55 @@
+#!/bin/sh
+
+export APPLET=about
+
+/usr/bin/touch /app/$APPLET/window/select 2> /dev/null  &&  exit  ||  /bin/true
+
+rm /app/$APPLET 2> /dev/null
+
+iconid=128
+
+cd -P /new/port
+
+echo 0 > vis
+echo 300,68 > size
+echo About Lamp > title
+
+echo > procid 4
+
+/usr/bin/touch window
+
+echo 0 > window/text-font
+
+/bin/ln /new/stack view
+/bin/ln /new/frame view/icon
+
+echo 32 > view/icon/width
+echo 32 > view/icon/height
+echo 13 > view/icon/.margin-top
+echo 23 > view/icon/.margin-left
+echo 23 > view/icon/.margin-right
+
+/bin/ln /new/icon view/icon/v
+
+echo $iconid > view/icon/v/data
+
+/bin/ln /new/frame view/main
+
+echo 13 > view/main/.margin-top
+echo 13 > view/main/.margin-right
+echo 78 > view/main/.margin-left
+
+/bin/ln /new/caption view/main/v
+
+echo >  view/main/v/text "Lamp (Lamp ain't Mac POSIX)"
+echo >> view/main/v/text "by Joshua Juran"
+
+echo 1 > view/icon/v/disabling
+echo 1 > view/main/v/disabling
+
+/usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle
+
+echo 1 > vis
+
+/bin/ln -s $PWD /app/$APPLET
+
