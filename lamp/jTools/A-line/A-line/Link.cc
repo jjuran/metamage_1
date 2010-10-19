@@ -297,6 +297,10 @@ namespace tool
 				// ... but only use the data fork for OS X apps
 				rezCommand.push_back( "-useDF" );
 			}
+			
+			rezCommand.push_back( "-d" );
+			
+			rezCommand.push_back( "aeut_RezTemplateVersion=1" );
 		}
 		else
 		{
