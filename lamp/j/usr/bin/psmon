@@ -1,6 +1,12 @@
 #!/bin/sh
 
-cd /new/port
+export APPLET=psmon
+
+/usr/bin/touch /app/$APPLET/window/select 2> /dev/null  &&  exit  ||  /bin/true
+
+rm /app/$APPLET 2> /dev/null
+
+cd -P /new/port
 
 echo 0 > vis
 echo 10,47 > pos
@@ -24,4 +30,6 @@ echo 0 > view/v/wrapped
 daemonize --cwd --stdout --ctty=tty -- ps --wide --sleep=0.2 > view/v/text
 
 echo 1 > vis
+
+/bin/ln -s $PWD /app/$APPLET
 
