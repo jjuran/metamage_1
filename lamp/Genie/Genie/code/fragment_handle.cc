@@ -5,6 +5,9 @@
 
 #include "Genie/code/fragment_handle.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/CodeFragments.hh"
 #include "Nitrogen/MacMemory.hh"
@@ -15,21 +18,31 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
-	static n::owned< CFragConnectionID > connect( const Mac::Handle  h )
+	static n::owned< CFragConnectionID > connect( const Mac::Handle  h,
+	                                              lamp_entry*        main )
 	{
 		const std::size_t size = N::GetHandleSize( h );
 		
-		return N::GetMemFragment< N::kPrivateCFragCopy >( *h, size );
+		return N::GetMemFragment< N::kPrivateCFragCopy >( *h,
+		                                                  size,
+		                                                  NULL,
+		                                                  main );
 	}
 	
 	
 	fragment_handle::fragment_handle( const execution_unit& exec )
 	:
 		loaded_handle( exec ),
-		its_fragment_connection( connect( exec.get() ) )
+		its_lamp_main(),
+		its_fragment_connection( connect( exec.get(), &its_lamp_main ) )
 	{
+		if ( its_lamp_main == NULL )
+		{
+			p7::throw_errno( ENOEXEC );
+		}
 	}
 	
 	fragment_handle::~fragment_handle()
@@ -38,13 +51,7 @@ namespace Genie
 	
 	lamp_entry fragment_handle::get_main_entry_point() const
 	{
-		const unsigned char* symbol_name = "\p" "_lamp_main";
-		
-		lamp_entry entry = NULL;
-		
-		N::FindSymbol( its_fragment_connection, symbol_name, &entry );
-		
-		return entry;
+		return its_lamp_main;
 	}
 	
 }
