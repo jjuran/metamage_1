@@ -26,7 +26,6 @@
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Name_OSType.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
@@ -278,7 +277,7 @@ namespace Genie
 	{
 		N::Str255 result;
 		
-		if ( N::Size size = N::GetHandleSize( h ) )
+		if ( std::size_t size = N::GetHandleSize( h ) )
 		{
 			unsigned const char* str = (StringPtr) *h.Get();
 			
@@ -339,7 +338,7 @@ namespace Genie
 			
 			(void) N::GetComponentInfo( comp, N::Handle(), N::Handle(), icon );
 			
-			N::Size size = N::GetHandleSize( icon );
+			std::size_t size = N::GetHandleSize( icon );
 			
 			if ( size == 0 )
 			{
@@ -376,7 +375,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const N::Size size = N::GetHandleSize( Handle( h ) );
+		const std::size_t size = N::GetHandleSize( Handle( h ) );
 		
 		const char* begin = *h;
 		const char* end   = begin + size;
