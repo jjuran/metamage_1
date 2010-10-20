@@ -132,7 +132,6 @@ namespace Genie
 			FSTreePtr itsProgramFile;
 			
 			shared_exec_handle  its_exec_handle;
-			shared_exec_handle  its_old_exec_handle;
 			
 			boost::intrusive_ptr< memory_data > its_memory_data;
 			

@@ -767,8 +767,6 @@ namespace Genie
 	{
 		Resume();
 		
-		its_old_exec_handle.reset();
-		
 		if ( IsBeingTraced() )
 		{
 			// This stops the thread immediately.
@@ -929,8 +927,7 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		// Really the new main entry.  We'll swap later.
-		its_old_exec_handle = itsProgramFile->GetExecutable();
+		shared_exec_handle executable = itsProgramFile->GetExecutable();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -952,8 +949,12 @@ namespace Genie
 		itsThread.swap( looseThread );
 		
 		// Save the binary image that we're running from and set the new one.
-		// We can't use stack storage because we run the risk of the thread terminating.
-		swap( its_old_exec_handle, its_exec_handle );
+		swap( executable, its_exec_handle );
+		
+		// Lose the current executable.  If we're not vforked and the
+		// execution unit isn't cached, it's now gone.  But that's okay
+		// since the thread terminates in execve().
+		executable.reset();
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
