@@ -5,12 +5,14 @@
 
 #include "Genie/FS/sys/mac/errata.hh"
 
+// Mac OS
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
 // plus
 #include "plus/deconstruct_bool.hh"
 #include "plus/var_string.hh"
-
-// Nitrogen
-#include "Nitrogen/Gestalt.hh"
 
 // MacFeatures
 #include "MacFeatures/BlueBoxed.hh"
@@ -28,8 +30,6 @@
 
 namespace Genie
 {
-	namespace N = Nitrogen;
-	
 	
 	struct RunningInClassic
 	{
@@ -76,6 +76,8 @@ namespace Genie
 	bool RunningInSheepShaver::Test()
 	{
 	#if !TARGET_API_MAC_CARBON
+		
+		namespace N = Nitrogen;
 		
 		N::UnitTableDrivers_Container drivers = N::UnitTableDrivers();
 		
