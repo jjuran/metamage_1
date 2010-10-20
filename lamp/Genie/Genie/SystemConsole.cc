@@ -26,27 +26,27 @@ namespace Genie
 		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND ).get() )->Write( buffer, length );
 	}
 	
-	static void MakeWindow( const boost::shared_ptr< IOHandle >& window_dir )
+	static void MakeWindow( const boost::shared_ptr< IOHandle >& port_dir )
 	{
-		FSTreePtr window = window_dir->GetFile();
+		FSTreePtr port = port_dir->GetFile();
 		
-		FSTreePtr ref = ResolveRelativePath( STR_LEN( "window" ),  window );
+		FSTreePtr window = ResolveRelativePath( STR_LEN( "window" ),  port );
 		
-		if ( ref->Exists() )
+		if ( window->Exists() )
 		{
 			return;
 		}
 		
-		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), window );
+		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), port );
 		
-		Spew( ResolveRelativePath( STR_LEN( "title" ), window ), STR_LEN( "System Console" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "title" ), port ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( ResolveRelativePath( STR_LEN( "size" ),  window ), STR_LEN( "495x272" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "size" ),  port ), STR_LEN( "495x272" "\n" ) );
 		
-		ref->SetTimes();
+		window->SetTimes();
 		
-		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), window ), STR_LEN( "4" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), window ), STR_LEN( "9" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), port ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), port ), STR_LEN( "9" "\n" ) );
 		
 		ResolveAbsolutePath( STR_LEN( "/new/scrollframe" ) )->HardLink( view );
 		
@@ -66,11 +66,11 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > gWindow = ResolveAbsolutePath( STR_LEN( "/new/port" ) )->ChangeToDirectory();
+		static boost::shared_ptr< IOHandle > the_port = ResolveAbsolutePath( STR_LEN( "/new/port" ) )->ChangeToDirectory();
 		
-		MakeWindow( gWindow );
+		MakeWindow( the_port );
 		
-		return gWindow->GetFile();
+		return the_port->GetFile();
 	}
 	
 	static FSTreePtr GetConsoleText()

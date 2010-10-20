@@ -73,11 +73,11 @@ namespace Genie
 		}
 	}
 	
-	void RemoveWindow( const FSTree* window )
+	void remove_port( const FSTree* port )
 	{
-		RemoveUserWindow( window );
+		RemoveUserWindow( port );
 		
-		gWindowMap.erase( window );
+		gWindowMap.erase( port );
 	}
 	
 	static const FSTreePtr& SysWindow()
@@ -87,20 +87,20 @@ namespace Genie
 		return sys_window;
 	}
 	
-	FSTreePtr NewWindow()
+	FSTreePtr new_port()
 	{
 		const FSTreePtr& parent = SysWindow();
 		
-		FSTreePtr window = Premapped_Factory< sys_window_REF_Mappings, &RemoveWindow >( parent, "/", NULL );
+		FSTreePtr window = Premapped_Factory< sys_port_ADDR_Mappings, &remove_port >( parent, "/", NULL );
 		
 		gWindowMap.insert( window.get() );
 		
 		return window;
 	}
 	
-	FSTreePtr New_FSTree_sys_window( const FSTreePtr&     parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	FSTreePtr New_sys_port( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          args )
 	{
 		return new_basic_directory( parent, name, window_lookup, window_iterate );
 	}

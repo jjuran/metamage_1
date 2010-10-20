@@ -20,7 +20,7 @@ namespace Pedestal
 namespace Genie
 {
 	
-	extern const FSTree_Premapped::Mapping sys_window_REF_Mappings[];
+	extern const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[];
 	
 	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view );
 	

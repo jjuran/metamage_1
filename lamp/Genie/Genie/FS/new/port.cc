@@ -27,12 +27,12 @@ namespace Genie
 	
 	OpenWindowHandle::~OpenWindowHandle()
 	{
-		RemoveWindow( GetFile().get() );
+		remove_port( GetFile().get() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_new_window::ChangeToDirectory() const
+	boost::shared_ptr< IOHandle > FSTree_new_port::ChangeToDirectory() const
 	{
-		FSTreePtr dir = NewWindow();
+		FSTreePtr dir = new_port();
 		
 		return seize_ptr( new OpenWindowHandle( dir ) );
 	}
