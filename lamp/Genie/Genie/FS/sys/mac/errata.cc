@@ -26,15 +26,6 @@
 #endif
 
 
-namespace Nitrogen
-{
-	
-	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
-	
-	template <> struct GestaltDefault< gestaltMacOSCompatibilityBoxAttr > : GestaltAttrDefaults {};
-	
-}
-
 namespace Genie
 {
 	namespace N = Nitrogen;
