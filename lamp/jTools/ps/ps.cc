@@ -157,8 +157,10 @@ namespace tool
 		
 		if ( term_string.length() == STRLEN( "/sys/port/12345678/tty" ) )
 		{
-			term_string.assign( term_string.data() + STRLEN( "/sys/port/" ),
-			                    STRLEN( "1234567" ) );
+			const char* address = term_string.data()
+			                    + STRLEN( "/sys/port/" );
+			
+			term_string.assign( address, STRLEN( "12345678" ) );
 		}
 		else if ( term_string.length() > STRLEN( "/dev/" ) )
 		{
@@ -181,7 +183,7 @@ namespace tool
 		
 		report += " ";
 		
-		report += right_padded( term_string, 7 );
+		report += right_padded( term_string, 8 );
 		
 		report += " ";
 		
@@ -222,7 +224,7 @@ namespace tool
 	
 	static plus::string ps()
 	{
-		plus::var_string output = "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n";
+		plus::var_string output = "  PID TERM     STAT   PPID   PGID    SID  COMMAND\n";
 		
 		DIR* iter = opendir( "/proc" );
 		
