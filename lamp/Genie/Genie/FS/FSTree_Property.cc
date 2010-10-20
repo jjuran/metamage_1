@@ -148,5 +148,18 @@ namespace Genie
 		                                       writeHook ) );
 	}
 	
+	FSTreePtr new_property( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          params_ )
+	{
+		const property_params& params = *(const property_params*) params_;
+		
+		return seize_ptr( new FSTree_Property( parent,
+		                                       name,
+		                                       params.size,
+		                                       params.get,
+		                                       params.set ) );
+	}
+	
 }
 
