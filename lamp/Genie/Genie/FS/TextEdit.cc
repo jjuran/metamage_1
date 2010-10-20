@@ -77,7 +77,7 @@ namespace Genie
 	}
 	
 	
-	void Selection_Property::Get( plus::var_string& result, const FSTree* that, bool binary )
+	void Selection_Property::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		
@@ -93,7 +93,7 @@ namespace Genie
 		}
 	}
 	
-	void Selection_Property::Set( const FSTree* that, const char* begin, const char* end, bool binary )
+	void Selection_Property::set( const FSTree* that, const char* begin, const char* end, bool binary )
 	{
 		const FSTree* view = GetViewKey( that );
 		

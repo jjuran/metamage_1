@@ -173,8 +173,8 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
-		                            &Property::Set );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	template < class Property >
@@ -184,7 +184,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
+		                            &Property::get,
 		                            NULL );
 	}
 	

@@ -183,8 +183,8 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
-		                            &Property::Set );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =

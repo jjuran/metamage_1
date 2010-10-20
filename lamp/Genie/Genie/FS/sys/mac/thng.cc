@@ -263,7 +263,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_thng_REF_code
 	{
-		static void Get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -299,7 +299,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_name
 	{
-		static void Get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -313,7 +313,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_info
 	{
-		static void Get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const Component comp = GetKey( that );
 			
@@ -406,7 +406,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[] =

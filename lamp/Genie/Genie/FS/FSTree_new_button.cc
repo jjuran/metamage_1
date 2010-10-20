@@ -188,12 +188,12 @@ namespace Genie
 	
 	struct Button_Title
 	{
-		static void Get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
 		}
 		
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
@@ -336,8 +336,8 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
-		                            &Property::Set );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
