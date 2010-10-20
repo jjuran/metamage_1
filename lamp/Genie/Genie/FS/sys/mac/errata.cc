@@ -37,20 +37,6 @@ namespace Genie
 	};
 	
 	
-	struct FlakeyRadeonChip
-	{
-		static bool Test()
-		{
-			const N::Gestalt_Selector gestalt_ATi3 = N::Gestalt_Selector( 'ATi3' );
-			const N::Gestalt_Selector gestalt_ATI6 = N::Gestalt_Selector( 'ATI6' );
-			
-			const bool has_ATi3 = N::Gestalt( gestalt_ATi3, 0 );
-			const bool has_ATI6 = N::Gestalt( gestalt_ATI6, 0 );
-			
-			return has_ATi3 && has_ATI6;
-		}
-	};
-	
 	struct RunningInRosetta
 	{
 		static bool Test()
@@ -136,7 +122,6 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_errata_Mappings[] =
 	{
-		{ "text-on-black-freakout",   &Property_Factory< FlakeyRadeonChip      > },
 		{ "async-io-race",            &Property_Factory< RunningInClassic      > },
 		{ "fatal-powerpc-exceptions", &Property_Factory< RunningInWeakEmulator > },
 		
