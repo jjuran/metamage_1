@@ -143,22 +143,23 @@ namespace Genie
 		
 	}
 	
-	template < int (*main)() >
 	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
+		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, (Trivial_Entry) args ) );
 	}
+	
+	#define EXEC( main )  &Executable_Factory, (const void*) &main
 	
 	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];
 	
 	const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[] =
 	{
-		{ "true",  &Executable_Factory< main_true  > },
-		{ "false", &Executable_Factory< main_false > },
+		{ "true",  EXEC( main_true  ) },
+		{ "false", EXEC( main_false ) },
 		
-		{ "beep", &Executable_Factory< main_beep > },
+		{ "beep",  EXEC( main_beep  ) },
 		
 		{ NULL, NULL }
 	};
