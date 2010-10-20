@@ -353,17 +353,6 @@ namespace Genie
 	}
 	
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
-	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct Frame_Property : View_Property< Serialize, Access >
 	{
@@ -377,21 +366,24 @@ namespace Genie
 		}
 	};
 	
+	#define PROPERTY_VALUE( access )  &new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
+	#define PROPERTY_INT(   access )  &new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "width",  &Property_Factory< Frame_Property< serialize_Value, Width  > > },
-		{ "height", &Property_Factory< Frame_Property< serialize_Value, Height > > },
+		{ "width",  PROPERTY_VALUE( Width  ) },
+		{ "height", PROPERTY_VALUE( Height ) },
 		
-		{ ".margin-top",    &Property_Factory< Frame_Property< serialize_Value, Margin_Top    > > },
-		{ ".margin-right",  &Property_Factory< Frame_Property< serialize_Value, Margin_Right  > > },
-		{ ".margin-bottom", &Property_Factory< Frame_Property< serialize_Value, Margin_Bottom > > },
-		{ ".margin-left",   &Property_Factory< Frame_Property< serialize_Value, Margin_Left   > > },
+		{ ".margin-top",    PROPERTY_VALUE( Margin_Top    ) },
+		{ ".margin-right",  PROPERTY_VALUE( Margin_Right  ) },
+		{ ".margin-bottom", PROPERTY_VALUE( Margin_Bottom ) },
+		{ ".margin-left",   PROPERTY_VALUE( Margin_Left   ) },
 		
-		{ "padding", &Property_Factory< Frame_Property< plus::serialize_int< int >, Padding > > },
+		{ "padding", PROPERTY_INT( Padding ) },
 		
-		{ ".outline-width",     &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Width     > > },
-		{ ".outline-offset",    &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Offset    > > },
-		{ ".outline-curvature", &Property_Factory< Frame_Property< plus::serialize_int< int >, Outline_Curvature > > },
+		{ ".outline-width",     PROPERTY_INT( Outline_Width     ) },
+		{ ".outline-offset",    PROPERTY_INT( Outline_Offset    ) },
+		{ ".outline-curvature", PROPERTY_INT( Outline_Curvature ) },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		

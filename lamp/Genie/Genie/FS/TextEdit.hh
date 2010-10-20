@@ -19,6 +19,7 @@
 #include "Pedestal/TextEdit.hh"
 
 // Genie
+#include "Genie/FS/property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 
 
@@ -56,7 +57,7 @@ namespace Genie
 	};
 	
 	
-	struct Selection_Property
+	struct Selection_Property : readwrite_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary );
 		

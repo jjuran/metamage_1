@@ -186,7 +186,7 @@ namespace Genie
 	}
 	
 	
-	struct Button_Title
+	struct Button_Title : readwrite_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -329,20 +329,11 @@ namespace Genie
 	};
 	
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "title", &Property_Factory< Button_Title > },
+		{ "title", PROPERTY( Button_Title ) },
 		
 		{ "click", &Basic_Factory< Button_click_Trigger > },
 		

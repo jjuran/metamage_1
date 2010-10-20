@@ -154,24 +154,21 @@ namespace Genie
 	}
 	
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
+	
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "width",  &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Width  > > },
-		{ "height", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Height > > },
+		{ "width",  PROPERTY( Width_Property  ) },
+		{ "height", PROPERTY( Height_Property ) },
 		
-		{ "x", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset > > },
-		{ "y", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset > > },
+		{ "x", PROPERTY( HOffset_Property ) },
+		{ "y", PROPERTY( VOffset_Property ) },
 		
 		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
 		

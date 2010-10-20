@@ -364,21 +364,15 @@ namespace Genie
 	}
 	
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
+	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "horizontal", &Property_Factory< View_Property< plus::serialize_bool, Horizontal > > },
-		{ "vertical",   &Property_Factory< View_Property< plus::serialize_bool, Vertical   > > },
+		{ "horizontal", PROPERTY( Horizontal_Property ) },
+		{ "vertical",   PROPERTY( Vertical_Property   ) },
 		
 		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
 		

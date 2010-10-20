@@ -235,23 +235,17 @@ namespace Genie
 		
 	}
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	typedef View_Property< plus::serialize_bool, Wrapped   > Wrapped_Property;
+	typedef View_Property< plus::serialize_bool, Disabling > Disabling_Property;
+	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "text", &Basic_Factory< FSTree_Caption_text > },
 		
-		{ "wrapped",   &Property_Factory< View_Property< plus::serialize_bool, Wrapped   > > },
-		{ "disabling", &Property_Factory< View_Property< plus::serialize_bool, Disabling > > },
+		{ "wrapped",   PROPERTY( Wrapped_Property   ) },
+		{ "disabling", PROPERTY( Disabling_Property ) },
 		
 		{ NULL, NULL }
 	};

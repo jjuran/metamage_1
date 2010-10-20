@@ -440,8 +440,12 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct PixMap_Property
+	struct PixMap_Property : readwrite_property
 	{
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
+		static const bool can_set = Accessor::is_mutable;
+		
 		typedef typename Accessor::result_type result_type;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
@@ -467,26 +471,14 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef PixMap_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            Accessor::is_mutable ? &Property::set
-		                                                 : NULL );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< PixMap_Property< prop > >::value
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "rowBytes", &Property_Factory< PixMap_rowBytes > },
+		{ "rowBytes", PROPERTY( PixMap_rowBytes ) },
 		
-		{ "bounds", &Property_Factory< PixMap_bounds > },
-		{ "depth",  &Property_Factory< PixMap_depth  > },
+		{ "bounds", PROPERTY( PixMap_bounds ) },
+		{ "depth",  PROPERTY( PixMap_depth  ) },
 		
 		{ "pixels", &Basic_Factory< FSTree_Pixels > },
 		

@@ -166,27 +166,21 @@ namespace Genie
 		}
 	};
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
 	
-	template < class Property >
-	static FSTreePtr Const_Property_Factory( const FSTreePtr&     parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            NULL );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
+	
+	typedef TextInvalidating_View_Property< plus::serialize_bool, TextEditParameters::Secret >  Secret_Property;
+	
+	typedef View_Property< plus::serialize_bool, TextEditParameters::Singular >  Singular_Property;
+	typedef View_Property< plus::serialize_bool, TextEditParameters::Wrapped  >  Wrapped_Property;
+	
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
+	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
+	
+	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
+	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
@@ -196,23 +190,23 @@ namespace Genie
 		
 		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
 		
-		{ "selection", &Property_Factory< Selection_Property > },
+		{ "selection", PROPERTY( Selection_Property ) },
 		
-		{ "active", &Const_Property_Factory< View_Property< plus::serialize_bool, TextEditParameters::Active > > },
+		{ "active", PROPERTY( Active_Property ) },
 		
-		{ "secret", &Property_Factory< TextInvalidating_View_Property< plus::serialize_bool, TextEditParameters::Secret > > },
+		{ "secret", PROPERTY( Secret_Property ) },
 		
-		{ "singular", &Property_Factory< View_Property< plus::serialize_bool, TextEditParameters::Singular > > },
+		{ "singular", PROPERTY( Singular_Property ) },
 		
-		//{ "wrapped", &Property_Factory< View_Property< plus::serialize_bool, TextEditParameters::Wrapped > > },
+		//{ "wrapped", PROPERTY( Wrapped_Property ) },
 		
 		// unlocked-text
 		
-		{ "width",  &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Width  > > },
-		{ "height", &Property_Factory< View_Property< plus::serialize_int< int >, ScrollerParameters::Height > > },
+		{ "width",  PROPERTY( Width_Property  ) },
+		{ "height", PROPERTY( Height_Property ) },
 		
-		{ "x", &Property_Factory< TE_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset > > },
-		{ "y", &Property_Factory< TE_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset > > },
+		{ "x", PROPERTY( HOffset_Property ) },
+		{ "y", PROPERTY( VOffset_Property ) },
 		
 		{ NULL, NULL }
 	};

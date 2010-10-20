@@ -282,17 +282,6 @@ namespace Genie
 		
 	}
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
-	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct List_Property : View_Property< Serialize, Access >
 	{
@@ -306,11 +295,16 @@ namespace Genie
 		}
 	};
 	
+	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "data", &Basic_Factory< FSTree_List_data > },
 		
-		{ "overlap", &Property_Factory< List_Property< plus::serialize_bool, Overlap > > },
+		{ "overlap", PROPERTY( Overlap_Property ) },
 		
 		{ NULL, NULL }
 	};
