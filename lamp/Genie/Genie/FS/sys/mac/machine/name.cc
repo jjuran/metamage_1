@@ -21,7 +21,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void sys_mac_machine_name::Read( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_machine_name::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const unsigned char* name = GetMachineName();
 		

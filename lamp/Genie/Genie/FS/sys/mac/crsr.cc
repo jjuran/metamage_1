@@ -125,7 +125,7 @@ namespace Genie
 			return device;
 		}
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -134,7 +134,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -153,8 +153,8 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read,
-		                            &Property::Write );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	

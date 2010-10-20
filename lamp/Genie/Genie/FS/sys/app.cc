@@ -50,7 +50,7 @@ namespace Genie
 	{
 		typedef typename Accessor::result_type result_type;
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const result_type data = Accessor::Get();
 			
@@ -68,7 +68,7 @@ namespace Genie
 		return New_FSTree_Property( parent,
 		                            name,
 		                            sizeof (typename Accessor::result_type),
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	

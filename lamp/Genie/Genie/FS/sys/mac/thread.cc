@@ -24,7 +24,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_thread_Mappings[] =
 	{
-		{ "default-stack-size", &Property_Factory, (void*) &sys_mac_thread_defaultstacksize::Read },
+		{ "default-stack-size", &Property_Factory, (void*) &sys_mac_thread_defaultstacksize::get },
 		
 		{ NULL, NULL }
 		

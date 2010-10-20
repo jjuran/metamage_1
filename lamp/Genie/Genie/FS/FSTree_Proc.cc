@@ -476,7 +476,7 @@ namespace Genie
 	
 	struct proc_PID_name
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			pid_t pid = GetKey( that );
 			
@@ -491,7 +491,7 @@ namespace Genie
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
 		                                        0,
-		                                        &proc_PID_name::Read );
+		                                        &proc_PID_name::get );
 		
 		return result;
 	}

@@ -177,7 +177,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_cpu_Property
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = Accessor::Get();
 		}
@@ -192,7 +192,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_cpu_Mappings[] =

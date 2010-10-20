@@ -132,7 +132,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_name
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::name );
 		}
@@ -140,7 +140,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_input
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
@@ -148,7 +148,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_output
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
@@ -189,7 +189,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &sys_mac_crm_serial_N_name::Read );
+		                            &sys_mac_crm_serial_N_name::get );
 	}
 	
 	static FSTreePtr Input_Factory( const FSTreePtr&     parent,
@@ -198,7 +198,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &sys_mac_crm_serial_N_input::Read );
+		                            &sys_mac_crm_serial_N_input::get );
 	}
 	
 	static FSTreePtr Output_Factory( const FSTreePtr&     parent,
@@ -207,7 +207,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &sys_mac_crm_serial_N_output::Read );
+		                            &sys_mac_crm_serial_N_output::get );
 
 	}
 	

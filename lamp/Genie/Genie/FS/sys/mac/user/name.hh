@@ -21,7 +21,7 @@ namespace Genie
 	
 	struct sys_mac_user_name
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const FSTree* that, bool binary );
 	};
 	
 }

@@ -29,12 +29,12 @@ namespace Genie
 	
 	struct sys_type_text_wildcard
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = plus::encode_quad( gTextFileCreator );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const size_t length = end - begin;
 			
@@ -55,8 +55,8 @@ namespace Genie
 		return New_FSTree_Property( parent,
 		                            name,
 		                            sizeof gTextFileCreator,
-		                            &Property::Read,
-		                            &Property::Write );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	extern const FSTree_Premapped::Mapping sys_type_text_Mappings[] =

@@ -21,7 +21,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_machine_Mappings[] =

@@ -24,7 +24,7 @@ namespace Genie
 	
 	struct sys_mac_thread_defaultstacksize
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const FSTree* that, bool binary );
 	};
 	
 }

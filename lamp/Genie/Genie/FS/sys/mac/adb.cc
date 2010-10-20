@@ -129,7 +129,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static void Read( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -145,7 +145,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static void Read( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -205,7 +205,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,

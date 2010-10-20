@@ -45,7 +45,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	template < class Property >

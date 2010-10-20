@@ -170,7 +170,7 @@ namespace Genie
 	{
 		typedef N::GDHandle Key;
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -189,7 +189,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,

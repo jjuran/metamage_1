@@ -41,12 +41,12 @@ namespace Genie
 	
 	struct sys_mac_event_post_key
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			throw FSTree_Property::Undefined();
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			for ( const char* p = begin;  p != end;  ++p )
 			{
@@ -67,8 +67,8 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read,
-		                            &Property::Write );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_event_post_Mappings[] =

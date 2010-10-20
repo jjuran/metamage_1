@@ -28,7 +28,7 @@ namespace Genie
 		return size;
 	}
 	
-	void sys_mac_thread_defaultstacksize::Read( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_thread_defaultstacksize::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		typedef plus::serialize_unsigned< std::size_t > serialize;
 		

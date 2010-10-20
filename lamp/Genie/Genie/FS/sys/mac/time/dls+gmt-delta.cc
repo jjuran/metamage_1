@@ -33,7 +33,7 @@ namespace Genie
 		return raw_value;
 	}
 	
-	void sys_mac_time_dlsgmtdelta::Read( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_time_dlsgmtdelta::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		const long field = GetGMTDeltaField();
 		
@@ -45,7 +45,7 @@ namespace Genie
 		plus::encode_32_bit_hex( result, field );
 	}
 	
-	void sys_mac_time_dls::Read( plus::var_string& out, const FSTree* that, bool binary )
+	void sys_mac_time_dls::get( plus::var_string& out, const FSTree* that, bool binary )
 	{
 		const unsigned long raw_value = GetGMTDeltaField();
 		
@@ -60,7 +60,7 @@ namespace Genie
 		out += iota::encoded_hex_char( dls >> 0 );
 	}
 	
-	void sys_mac_time_gmtdelta::Read( plus::var_string& out, const FSTree* that, bool binary )
+	void sys_mac_time_gmtdelta::get( plus::var_string& out, const FSTree* that, bool binary )
 	{
 		const long raw_value = GetGMTDeltaField();
 		

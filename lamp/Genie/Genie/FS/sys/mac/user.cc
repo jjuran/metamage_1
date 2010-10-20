@@ -20,7 +20,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &sys_mac_user_name::Read );
+		                            &sys_mac_user_name::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_user_Mappings[] =
