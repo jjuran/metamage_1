@@ -844,7 +844,7 @@ namespace Genie
 	}
 	
 	
-	struct Window_Title
+	struct Window_Title : readwrite_property
 	{
 		static const bool fixed_size = 0;
 		
@@ -864,7 +864,7 @@ namespace Genie
 	};
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
-	struct Window_Property
+	struct Window_Property : readwrite_property
 	{
 		static const std::size_t fixed_size = Serialize::fixed_size;
 		
@@ -924,22 +924,55 @@ namespace Genie
 		kAttrVariable
 	};
 	
-	template < Variability variability, class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return seize_ptr( new FSTree_sys_port_ADDR_Property( parent,
-		                                                     name,
-		                                                     Property::fixed_size,
-		                                                     &Property::get,
-		                                                     &Property::set,
-		                                                     variability ) );
-	}
-	
 	using plus::serialize_bool;
 	
 	typedef plus::serialize_unsigned< N::WindowDefProcID > serialize_ProcID;
+	
+	
+	struct port_property_params
+	{
+		const property_params  _;
+		const bool             is_mutable;
+	};
+	
+	template < class Property, bool variable >
+	struct port_property_params_factory
+	{
+		static const port_property_params value;
+	};
+	
+	template < class Property, bool variable >
+	const port_property_params port_property_params_factory< Property, variable >::value =
+	{
+		{
+			Property::fixed_size,
+			Property::can_get ? &Property::get : 0,  // NULL
+			Property::can_set ? &Property::set : 0   // NULL
+		},
+		variable
+	};
+	
+	static FSTreePtr new_port_property( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          params_ )
+	{
+		const port_property_params& params = *(const port_property_params*) params_;
+		
+		return seize_ptr( new FSTree_sys_port_ADDR_Property( parent,
+		                                                     name,
+		                                                     params._.size,
+		                                                     params._.get,
+		                                                     params._.set,
+		                                                     params.is_mutable ) );
+	}
+	
+	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
+	
+	typedef Window_Property< serialize_Point,  &Origin   >  Origin_Property;
+	typedef Window_Property< serialize_Point,  &Size     >  Size_Property;
+	typedef Window_Property< serialize_bool,   &Visible  >  Visible_Property;
+	typedef Window_Property< serialize_ProcID, &ProcID   >  ProcID_Property;
+	typedef Window_Property< serialize_bool,   &CloseBox >  CloseBox_Property;
 	
 	const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[] =
 	{
@@ -954,12 +987,12 @@ namespace Genie
 		
 		{ "tty",    &Basic_Factory< FSTree_sys_port_ADDR_tty > },
 		
-		{ "title",  &Property_Factory< kAttrVariable, Window_Title > },
-		{ "pos",    &Property_Factory< kAttrVariable, Window_Property< serialize_Point,  &Origin   > > },
-		{ "size",   &Property_Factory< kAttrVariable, Window_Property< serialize_Point,  &Size     > > },
-		{ "vis",    &Property_Factory< kAttrVariable, Window_Property< serialize_bool,   &Visible  > > },
-		{ "procid", &Property_Factory< kAttrConstant, Window_Property< serialize_ProcID, &ProcID   > > },
-		{ "goaway", &Property_Factory< kAttrConstant, Window_Property< serialize_bool,   &CloseBox > > },
+		{ "title",  PROPERTY( kAttrVariable, Window_Title      ) },
+		{ "pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
+		{ "size",   PROPERTY( kAttrVariable, Size_Property     ) },
+		{ "vis",    PROPERTY( kAttrVariable, Visible_Property  ) },
+		{ "procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
+		{ "goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
 		
 		{ NULL, NULL }
 	};
