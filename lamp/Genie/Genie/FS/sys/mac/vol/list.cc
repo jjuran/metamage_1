@@ -397,6 +397,11 @@ namespace Genie
 		{
 			const typename Accessor::result_type data = Get( that );
 			
+			if ( Accessor::neverZero  &&  data == 0 )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 	};
@@ -453,11 +458,6 @@ namespace Genie
 		                                        name,
 		                                        Accessor::fixed_size,
 		                                        &Property::get );
-		
-		if ( Accessor::neverZero  &&  Property::Get( result.get() ) == 0 )
-		{
-			p7::throw_errno( ENOENT );
-		}
 		
 		return result;
 	}
