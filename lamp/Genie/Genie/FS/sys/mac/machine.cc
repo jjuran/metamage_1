@@ -14,20 +14,12 @@
 namespace Genie
 {
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_machine_Mappings[] =
 	{
-		{ "id",   &Property_Factory< sys_mac_machine_id   > },
-		{ "name", &Property_Factory< sys_mac_machine_name > },
+		{ "id",   PROPERTY( sys_mac_machine_id   ) },
+		{ "name", PROPERTY( sys_mac_machine_name ) },
 		
 		{ NULL, NULL }
 	};

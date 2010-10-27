@@ -394,8 +394,10 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Property : Accessor
+	struct sys_app_window_list_REF_Property : readwrite_property
 	{
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
 		typedef WindowRef Key;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
@@ -423,7 +425,7 @@ namespace Genie
 				p7::throw_errno( EIO );
 			}
 			
-			Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
+			Accessor::Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
 		}
 	};
 	
@@ -451,32 +453,23 @@ namespace Genie
 		                            &Property::get );
 	}
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_app_window_list_REF_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            Accessor::fixed_size,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_app_window_list_REF_Property< prop > >::value
+	
+	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
+	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
 	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =
 	{
-		{ "title", &Property_Factory< Access_WindowTitle    > },
-		{ "pos",   &Property_Factory< Access_WindowPosition > },
-		{ "size",  &Property_Factory< Access_WindowSize     > },
-		{ "vis",   &Property_Factory< Access_WindowVisible  > },
+		{ "title", PROPERTY( Access_WindowTitle    ) },
+		{ "pos",   PROPERTY( Access_WindowPosition ) },
+		{ "size",  PROPERTY( Access_WindowSize     ) },
+		{ "vis",   PROPERTY( Access_WindowVisible  ) },
 		
-		{ "text-font",  &Property_Factory< Access_WindowTextFont > },
-		{ "text-size",  &Property_Factory< Access_WindowTextSize > },
+		{ "text-font",  PROPERTY( Access_WindowTextFont ) },
+		{ "text-size",  PROPERTY( Access_WindowTextSize ) },
 		
-		{ "back-color", &Property_Factory< Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > > },
-		{ "fore-color", &Property_Factory< Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > > },
+		{ "back-color", PROPERTY( Access_WindowBackColor ) },
+		{ "fore-color", PROPERTY( Access_WindowForeColor ) },
 		
 		{ "select", &Trigger_Factory< Trigger< Select_Trigger > > },
 		

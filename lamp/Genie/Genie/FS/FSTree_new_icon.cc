@@ -176,26 +176,26 @@ namespace Genie
 		return seize_ptr( new FSTree_Icon_data( parent, name, data ) );
 	}
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	typedef View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment >  Alignment_Property;
+	typedef View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform >  Transform_Property;
+	
+	typedef View_Property< plus::serialize_unsigned< char >, Label >  Label_Property;
+	
+	typedef View_Property< plus::serialize_bool, Selected  >  Selected_Property;
+	typedef View_Property< plus::serialize_bool, Disabling >  Disabling_Property;
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "data", &Data_Factory },
 		
-		{ "align", &Property_Factory< View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment > > },
-		{ "xform", &Property_Factory< View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform > > },
-		{ "label", &Property_Factory< View_Property< plus::serialize_unsigned< char >, Label > > },
-		{ "selected",  &Property_Factory< View_Property< plus::serialize_bool, Selected  > > },
-		{ "disabling", &Property_Factory< View_Property< plus::serialize_bool, Disabling > > },
+		{ "align",     PROPERTY( Alignment_Property ) },
+		{ "xform",     PROPERTY( Transform_Property ) },
+		{ "label",     PROPERTY( Label_Property     ) },
+		{ "selected",  PROPERTY( Selected_Property  ) },
+		{ "disabling", PROPERTY( Disabling_Property ) },
 		
 		{ NULL, NULL }
 	};

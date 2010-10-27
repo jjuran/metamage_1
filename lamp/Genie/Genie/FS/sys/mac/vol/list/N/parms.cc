@@ -146,8 +146,10 @@ namespace Genie
 	
 	
 	template < class Accessor >
-	struct sys_mac_vol_N_Parms_Property
+	struct sys_mac_vol_N_Parms_Property : readonly_property
 	{
+		static const size_t fixed_size = Accessor::fixed_size;
+		
 		typedef Mac::FSVolumeRefNum Key;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
@@ -163,31 +165,20 @@ namespace Genie
 	};
 	
 	
-	template < class Accessor >
-	static FSTreePtr Parms_Property_Factory( const FSTreePtr&     parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
-	{
-		typedef sys_mac_vol_N_Parms_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            Accessor::fixed_size,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_parms_Mappings[] =
 	{
-		{ "attrib",   &Parms_Property_Factory< GetVolumeParmsAttrib   > },
-		{ "handle",   &Parms_Property_Factory< GetVolumeParmsHandle   > },
-		{ "server",   &Parms_Property_Factory< GetVolumeParmsServer   > },
+		{ "attrib",   PROPERTY( GetVolumeParmsAttrib   ) },
+		{ "handle",   PROPERTY( GetVolumeParmsHandle   ) },
+		{ "server",   PROPERTY( GetVolumeParmsServer   ) },
 		
-		{ "grade",    &Parms_Property_Factory< GetVolumeParmsGrade    > },
-		{ "priv",     &Parms_Property_Factory< GetVolumeParmsPrivID   > },
+		{ "grade",    PROPERTY( GetVolumeParmsGrade    ) },
+		{ "priv",     PROPERTY( GetVolumeParmsPrivID   ) },
 		
-		{ "extended", &Parms_Property_Factory< GetVolumeParmsExtended > },
+		{ "extended", PROPERTY( GetVolumeParmsExtended ) },
 		
-		{ "device",   &Parms_Property_Factory< GetVolumeParmsDeviceID > },
+		{ "device",   PROPERTY( GetVolumeParmsDeviceID ) },
 		
 		{ NULL, NULL }
 		

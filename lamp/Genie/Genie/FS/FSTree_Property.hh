@@ -11,26 +11,15 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/property.hh"
 
-
-namespace plus
-{
-	
-	class var_string;	
-	
-}
 
 namespace Genie
 {
 	
-	typedef void (*Property_ReadHook)( plus::var_string&  out,
-	                                   const FSTree*      that,
-	                                   bool               binary );
+	typedef property_get_hook Property_ReadHook;
+	typedef property_set_hook Property_WriteHook;
 	
-	typedef void (*Property_WriteHook)( const FSTree  *that,
-	                                    const char    *begin,
-	                                    const char    *end,
-	                                    bool           binary );
 	
 	class FSTree_Property : public FSTree
 	{
@@ -90,6 +79,13 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent, name, 0, readHook, writeHook );
 	}
+	
+	
+	// Can be used in premapped directory maps
+	
+	FSTreePtr new_property( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          params );
 	
 }
 

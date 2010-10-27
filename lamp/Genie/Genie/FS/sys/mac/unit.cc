@@ -271,8 +271,10 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_unit_N_Property
+	struct sys_mac_unit_N_Property : readonly_property
 	{
+		static const size_t fixed_size = Accessor::fixed_size;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			UnitNumber key = GetKey( that );
@@ -341,27 +343,17 @@ namespace Genie
 	}
 	
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_unit_N_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_unit_N_Mappings[] =
 	{
-		{ "flags", &Property_Factory< GetDriverFlags > },
-		{ "name",  &Property_Factory< DriverName  > },
-		{ "slot",  &Property_Factory< GetDriverSlot  > },
-		{ "id",    &Property_Factory< GetDriverSlotId  > },
-		{ "base",  &Property_Factory< GetDriverBase  > },
-		{ "owner", &Property_Factory< GetDriverOwner  > },
-		{ "extdev", &Property_Factory< GetDriverExternalDeviceID  > },
+		{ "flags",  PROPERTY( GetDriverFlags            ) },
+		{ "name",   PROPERTY( DriverName                ) },
+		{ "slot",   PROPERTY( GetDriverSlot             ) },
+		{ "id",     PROPERTY( GetDriverSlotId           ) },
+		{ "base",   PROPERTY( GetDriverBase             ) },
+		{ "owner",  PROPERTY( GetDriverOwner            ) },
+		{ "extdev", PROPERTY( GetDriverExternalDeviceID ) },
 		
 		{ NULL, NULL }
 	};

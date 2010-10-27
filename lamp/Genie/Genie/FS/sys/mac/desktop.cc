@@ -48,8 +48,10 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_desktop_Property
+	struct sys_mac_desktop_Property : readonly_property
 	{
+		static const size_t fixed_size = Accessor::fixed_size;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
@@ -60,22 +62,12 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_desktop_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_desktop_Property< prop > >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_desktop_Mappings[] =
 	{
-		{ "bounds", &Property_Factory< GetScreenBounds > },
-		{ "size",   &Property_Factory< GetScreenSize   > },
+		{ "bounds", PROPERTY( GetScreenBounds ) },
+		{ "size",   PROPERTY( GetScreenSize   ) },
 		
 		{ NULL, NULL }
 	};

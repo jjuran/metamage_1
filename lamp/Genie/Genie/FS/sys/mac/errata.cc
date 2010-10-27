@@ -102,30 +102,22 @@ namespace Genie
 	
 	
 	template < class Erratum >
-	struct sys_mac_errata_Property
+	struct sys_mac_errata_Property : readonly_property
 	{
+		static const std::size_t fixed_size = 1;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
 		}
 	};
 	
-	template < class Erratum >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_mac_errata_Property< Erratum > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_errata_Mappings[] =
 	{
-		{ "async-io-race",            &Property_Factory< RunningInClassic      > },
-		{ "fatal-powerpc-exceptions", &Property_Factory< RunningInWeakEmulator > },
+		{ "async-io-race",            PROPERTY( sys_mac_errata_Property< RunningInClassic      > ) },
+		{ "fatal-powerpc-exceptions", PROPERTY( sys_mac_errata_Property< RunningInWeakEmulator > ) },
 		
 		{ NULL, NULL }
 	};

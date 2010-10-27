@@ -16,17 +16,11 @@
 #include "plus/var_string.hh"
 
 // Genie
+#include "Genie/FS/property.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 
 
 struct Rect;
-
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace Pedestal
 {
@@ -53,7 +47,20 @@ namespace Genie
 	
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
-	struct View_Property
+	struct Const_View_Property : readonly_property
+	{
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		{
+			typedef typename Serialize::result_type result_type;
+			
+			const result_type& value = Access( GetViewKey( that ) );
+			
+			Serialize::deconstruct::apply( result, value, binary );
+		}
+	};
+	
+	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	struct View_Property : readwrite_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
