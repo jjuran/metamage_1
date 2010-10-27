@@ -444,7 +444,7 @@ namespace Genie
 	{
 		typedef typename Accessor::result_type result_type;
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			PixMapHandle pix = get_pixmap( that );
 			
@@ -453,7 +453,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = that->ParentRef().get();
 			
@@ -476,8 +476,8 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read,
-		                            Accessor::is_mutable ? &Property::Write
+		                            &Property::get,
+		                            Accessor::is_mutable ? &Property::set
 		                                                 : NULL );
 	}
 	

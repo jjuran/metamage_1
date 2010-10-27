@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	void sys_mac_name::Read( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_name::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		result = GetWorkstationName();
 	}

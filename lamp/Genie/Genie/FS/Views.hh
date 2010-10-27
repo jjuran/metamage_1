@@ -55,7 +55,7 @@ namespace Genie
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct View_Property
 	{
-		static void Get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -64,7 +64,7 @@ namespace Genie
 			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			

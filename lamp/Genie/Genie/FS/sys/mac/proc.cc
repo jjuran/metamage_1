@@ -181,7 +181,7 @@ namespace Genie
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static void Read( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
 				Key key = GetKey( that );
 				
@@ -226,7 +226,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &sys_mac_proc_PSN_name::Read );
+		                            &sys_mac_proc_PSN_name::get );
 	}
 	
 	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,

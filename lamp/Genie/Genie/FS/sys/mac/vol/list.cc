@@ -393,7 +393,7 @@ namespace Genie
 			return Accessor::Get( pb );
 		}
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const typename Accessor::result_type data = Get( that );
 			
@@ -403,7 +403,7 @@ namespace Genie
 	
 	struct sys_mac_vol_N_name : sys_mac_vol_N_Property< GetVolumeName >
 	{
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const N::FSVolumeRefNum vRefNum = GetKey( that );
 			
@@ -452,7 +452,7 @@ namespace Genie
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
 		                                        Accessor::fixed_size,
-		                                        &Property::Read );
+		                                        &Property::get );
 		
 		if ( Accessor::neverZero  &&  Property::Get( result.get() ) == 0 )
 		{
@@ -473,8 +473,8 @@ namespace Genie
 		FSTreePtr result = New_FSTree_Property( parent,
 		                                        name,
 		                                        size,
-		                                        &Property::Read,
-		                                        &Property::Write );
+		                                        &Property::get,
+		                                        &Property::set );
 		
 		return result;
 	}

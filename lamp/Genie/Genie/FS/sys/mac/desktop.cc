@@ -50,7 +50,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_desktop_Property
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
@@ -69,7 +69,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_desktop_Mappings[] =

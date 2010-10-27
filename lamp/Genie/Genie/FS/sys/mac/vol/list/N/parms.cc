@@ -150,7 +150,7 @@ namespace Genie
 	{
 		typedef Mac::FSVolumeRefNum Key;
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
@@ -173,7 +173,7 @@ namespace Genie
 		return New_FSTree_Property( parent,
 		                            name,
 		                            Accessor::fixed_size,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_parms_Mappings[] =

@@ -78,7 +78,7 @@ namespace Genie
 		return "";
 	}
 	
-	void sys_mac_user_name::Read( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_user_name::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
 		result = GetUserName();
 	}

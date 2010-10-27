@@ -398,7 +398,7 @@ namespace Genie
 	{
 		typedef WindowRef Key;
 		
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -414,7 +414,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void Write( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			Key key = GetKey( that );
 			
@@ -448,7 +448,7 @@ namespace Genie
 		return New_FSTree_Property( parent,
 		                            name,
 		                            Accessor::fixed_size,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	template < class Accessor >
@@ -461,8 +461,8 @@ namespace Genie
 		return New_FSTree_Property( parent,
 		                            name,
 		                            Accessor::fixed_size,
-		                            &Property::Read,
-		                            &Property::Write );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =

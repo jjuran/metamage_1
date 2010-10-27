@@ -104,7 +104,7 @@ namespace Genie
 	template < class Erratum >
 	struct sys_mac_errata_Property
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
 		}
@@ -119,7 +119,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	const FSTree_Premapped::Mapping sys_mac_errata_Mappings[] =

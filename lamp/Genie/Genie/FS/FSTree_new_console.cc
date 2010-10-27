@@ -743,13 +743,13 @@ namespace Genie
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct Console_View_Property : public View_Property< Serialize, Access >
 	{
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
 			const FSTree* view = GetViewKey( that );
 			
 			TextEditParameters::Get( view ).itHasChangedAttributes = true;
 			
-			View_Property< Serialize, Access >::Set( that, begin, end, binary );
+			View_Property< Serialize, Access >::set( that, begin, end, binary );
 		}
 	};
 	
@@ -760,8 +760,8 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
-		                            &Property::Set );
+		                            &Property::get,
+		                            &Property::set );
 	}
 	
 	template < class Property >
@@ -771,7 +771,7 @@ namespace Genie
 	{
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Get,
+		                            &Property::get,
 		                            NULL );
 	}
 	

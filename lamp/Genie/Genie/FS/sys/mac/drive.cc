@@ -182,7 +182,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_drive_N_Property
 	{
-		static void Read( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			const DrvQEl& el = FindDrive( that );
 			
@@ -201,7 +201,7 @@ namespace Genie
 		
 		return New_FSTree_Property( parent,
 		                            name,
-		                            &Property::Read );
+		                            &Property::get );
 	}
 	
 	template < class Trigger >
