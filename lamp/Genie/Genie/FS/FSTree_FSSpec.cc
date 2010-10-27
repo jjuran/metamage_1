@@ -460,7 +460,7 @@ namespace Genie
 		
 		if ( u != NULL )
 		{
-			FSTreePtr top    = Premapped_Factory< Root_Overlay_Mappings >( null_FSTreePtr, "", NULL );
+			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, "", Root_Overlay_Mappings );
 			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir, false );
 			
 			u->SetTop   ( top    );

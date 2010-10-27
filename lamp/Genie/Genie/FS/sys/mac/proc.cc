@@ -146,7 +146,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_proc_PSN_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, sys_mac_proc_PSN_Mappings );
 	}
 	
 	class psn_IteratorConverter

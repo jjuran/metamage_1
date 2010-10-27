@@ -227,7 +227,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< proc_PID_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, proc_PID_Mappings );
 	}
 	
 	static void* iterate_one_process( void* param, pid_t pid, Process& )

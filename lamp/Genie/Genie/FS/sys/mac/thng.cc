@@ -207,7 +207,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_thng_REF_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, sys_mac_thng_REF_Mappings );
 	}
 	
 	class thng_IteratorConverter

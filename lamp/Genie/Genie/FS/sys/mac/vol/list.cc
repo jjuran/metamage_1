@@ -182,7 +182,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
 	}
 	
 	class vol_IteratorConverter
@@ -606,7 +606,7 @@ namespace Genie
 		
 		const plus::string name = iota::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory< sys_mac_vol_N_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
 	}
 	
 }

@@ -310,7 +310,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory< sys_mac_unit_N_Mappings >( parent, name, NULL );
+		return Premapped_Factory( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
 	class unit_IteratorConverter
