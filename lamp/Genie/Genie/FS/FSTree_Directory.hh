@@ -106,22 +106,6 @@ namespace Genie
 	                             const FSTree_Premapped::Mapping    mappings[],
 	                             void                             (*dtor)(const FSTree*) = NULL );
 	
-	template < const FSTree_Premapped::Mapping mappings[] >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return Premapped_Factory( parent, name, mappings );
-	}
-	
-	template < const FSTree_Premapped::Mapping mappings[], void (*dtor)(const FSTree*) >
-	inline FSTreePtr Premapped_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return Premapped_Factory( parent, name, mappings, dtor );
-	}
-	
 }
 
 #endif
