@@ -22,6 +22,7 @@
 #include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
@@ -163,11 +164,13 @@ namespace Genie
 	};
 	
 	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
 	extern const FSTree_Premapped::Mapping sys_kernel_Mappings[];
 	
 	const FSTree_Premapped::Mapping sys_kernel_Mappings[] =
 	{
-		{ "bin",     &Premapped_Factory< sys_kernel_bin_Mappings > },
+		{ "bin",     PREMAPPED( sys_kernel_bin_Mappings ) },
 		
 		{ "syscall", &New_sys_kernel_syscall },
 		
@@ -176,11 +179,11 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_Mappings[] =
 	{
-		{ "app",    &Premapped_Factory< sys_app_Mappings    > },
-		{ "cpu",    &Premapped_Factory< sys_cpu_Mappings    > },
-		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
-		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
-		{ "type",   &Premapped_Factory< sys_type_Mappings   > },
+		{ "app",    PREMAPPED( sys_app_Mappings    ) },
+		{ "cpu",    PREMAPPED( sys_cpu_Mappings    ) },
+		{ "kernel", PREMAPPED( sys_kernel_Mappings ) },
+		{ "mac",    PREMAPPED( sys_mac_Mappings    ) },
+		{ "type",   PREMAPPED( sys_type_Mappings   ) },
 		
 		{ "port",   &New_sys_port },
 		
