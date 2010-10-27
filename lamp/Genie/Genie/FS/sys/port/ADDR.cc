@@ -43,6 +43,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
+#include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -978,7 +979,7 @@ namespace Genie
 	{
 		{ "window", &Basic_Factory< FSTree_sys_port_ADDR_window > },
 		
-		{ "view",   &Basic_Factory< FSTree_X_view< GetView > > },
+		{ "view",   &subview_factory, (const void*) &GetView },
 		
 		{ "focus",  &Basic_Factory< FSTree_sys_port_ADDR_focus > },
 		

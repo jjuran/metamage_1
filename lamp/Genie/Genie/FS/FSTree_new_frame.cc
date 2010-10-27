@@ -25,6 +25,7 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/subview.hh"
 #include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -385,7 +386,7 @@ namespace Genie
 		{ ".outline-offset",    PROPERTY_INT( Outline_Offset    ) },
 		{ ".outline-curvature", PROPERTY_INT( Outline_Curvature ) },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
+		{ "v", &subview_factory, (const void*) &GetView },
 		
 		{ NULL, NULL }
 	};

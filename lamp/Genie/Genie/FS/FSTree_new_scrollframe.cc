@@ -22,6 +22,7 @@
 #include "Genie/FS/FSTree_new_scroller.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
+#include "Genie/FS/subview.hh"
 #include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
@@ -376,7 +377,7 @@ namespace Genie
 		
 		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
+		{ "v", &subview_factory, (const void*) &GetView },
 		
 		{ NULL, NULL }
 	};

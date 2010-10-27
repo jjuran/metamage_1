@@ -25,6 +25,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ScrollerBase.hh"
+#include "Genie/FS/subview.hh"
 #include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -170,7 +171,7 @@ namespace Genie
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },
 		
-		{ "v", &Basic_Factory< FSTree_X_view< GetView > > },
+		{ "v", &subview_factory, (const void*) &GetView },
 		
 		{ NULL, NULL }
 	};
