@@ -33,6 +33,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/premapped.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/serialize_Str255.hh"
@@ -549,6 +550,9 @@ namespace Genie
 		return seize_ptr( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
+	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ "name", &Volume_Name_Factory },
@@ -571,8 +575,8 @@ namespace Genie
 		{ "files",  &Property_Factory< GetVolumeFileCount  > },
 		{ "dirs",   &Property_Factory< GetVolumeDirCount   > },
 		
-		{ "dt",    &Premapped_Factory< sys_mac_vol_list_N_dt_Mappings > },
-		{ "parms", &Premapped_Factory< sys_mac_vol_N_parms_Mappings > },
+		{ "dt",    PREMAPPED( sys_mac_vol_list_N_dt_Mappings ) },
+		{ "parms", PREMAPPED( sys_mac_vol_N_parms_Mappings   ) },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
