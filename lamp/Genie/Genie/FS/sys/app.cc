@@ -14,6 +14,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
 #include "Genie/FS/sys/app/window.hh"
@@ -70,6 +71,9 @@ namespace Genie
 		                            &Property::Read );
 	}
 	
+	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
 	const FSTree_Premapped::Mapping sys_app_Mappings[] =
 	{
 		{ "dir",   &New_FSTree_sys_app_dir },
@@ -83,7 +87,7 @@ namespace Genie
 		
 	#endif
 		
-		{ "window", &Premapped_Factory< sys_app_window_Mappings > },
+		{ "window", PREMAPPED( sys_app_window_Mappings ) },
 		
 		{ NULL, NULL }
 		

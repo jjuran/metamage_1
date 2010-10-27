@@ -8,6 +8,7 @@
 // Genie
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/event.hh"
@@ -57,6 +58,8 @@ namespace Genie
 		                             &Property::Read );
 	}
 	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
 	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
 	{
 		{ "proc",    &New_FSTree_sys_mac_proc    },
@@ -65,8 +68,8 @@ namespace Genie
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		
-		{ "crm",  &Premapped_Factory< sys_mac_crm_Mappings  > },
-		{ "crsr", &Premapped_Factory< sys_mac_crsr_Mappings > },
+		{ "crm",  PREMAPPED( sys_mac_crm_Mappings  ) },
+		{ "crsr", PREMAPPED( sys_mac_crsr_Mappings ) },
 		
 		{ "adb",   &New_FSTree_sys_mac_adb   },
 		{ "drive", &New_FSTree_sys_mac_drive },
@@ -76,15 +79,15 @@ namespace Genie
 		
 	#endif
 		
-		{ "desktop", &Premapped_Factory< sys_mac_desktop_Mappings > },
-		{ "errata",  &Premapped_Factory< sys_mac_errata_Mappings  > },
-		{ "event",   &Premapped_Factory< sys_mac_event_Mappings   > },
-		{ "gdev",    &Premapped_Factory< sys_mac_gdev_Mappings    > },
-		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
-		{ "thread",  &Premapped_Factory< sys_mac_thread_Mappings  > },
-		{ "time",    &Premapped_Factory< sys_mac_time_Mappings    > },
-		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
-		{ "vol",     &Premapped_Factory< sys_mac_vol_Mappings     > },
+		{ "desktop", PREMAPPED( sys_mac_desktop_Mappings ) },
+		{ "errata",  PREMAPPED( sys_mac_errata_Mappings  ) },
+		{ "event",   PREMAPPED( sys_mac_event_Mappings   ) },
+		{ "gdev",    PREMAPPED( sys_mac_gdev_Mappings    ) },
+		{ "machine", PREMAPPED( sys_mac_machine_Mappings ) },
+		{ "thread",  PREMAPPED( sys_mac_thread_Mappings  ) },
+		{ "time",    PREMAPPED( sys_mac_time_Mappings    ) },
+		{ "user",    PREMAPPED( sys_mac_user_Mappings    ) },
+		{ "vol",     PREMAPPED( sys_mac_vol_Mappings     ) },
 		
 		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		

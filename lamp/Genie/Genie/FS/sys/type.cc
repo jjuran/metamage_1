@@ -18,6 +18,7 @@
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/premapped.hh"
 
 
 namespace Genie
@@ -65,9 +66,11 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
 	const FSTree_Premapped::Mapping sys_type_Mappings[] =
 	{
-		{ "text", &Premapped_Factory< sys_type_text_Mappings > },
+		{ "text", PREMAPPED( sys_type_text_Mappings ) },
 		
 		{ NULL, NULL }
 		

@@ -12,6 +12,7 @@
 #include "Genie/FS/FSTree_Dev.hh"
 #include "Genie/FS/FSTree_Proc.hh"
 #include "Genie/FS/FSTree_new.hh"
+#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
@@ -19,6 +20,8 @@
 
 namespace Genie
 {
+	
+	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
 	const FSTree_Premapped::Mapping Root_Overlay_Mappings[] =
 	{
@@ -28,9 +31,9 @@ namespace Genie
 		{ "app",  &New_FSTree_app  },
 		{ "proc", &New_FSTree_proc },
 		
-		{ "dev", &Premapped_Factory< dev_Mappings > },
-		{ "new", &Premapped_Factory< new_Mappings > },
-		{ "sys", &Premapped_Factory< sys_Mappings > },
+		{ "dev", PREMAPPED( dev_Mappings ) },
+		{ "new", PREMAPPED( new_Mappings ) },
+		{ "sys", PREMAPPED( sys_Mappings ) },
 		
 		{ NULL, NULL }
 	};
