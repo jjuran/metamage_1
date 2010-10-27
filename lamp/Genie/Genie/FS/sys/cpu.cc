@@ -175,7 +175,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_cpu_Property
+	struct sys_cpu_Property : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -183,26 +183,16 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_cpu_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &Property::get );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_cpu_Mappings[] =
 	{
-		{ "family", &Property_Factory< GetCPUFamily > },
-		{ "type",   &Property_Factory< GetCPUType   > },
+		{ "family", PROPERTY( sys_cpu_Property< GetCPUFamily > ) },
+		{ "type",   PROPERTY( sys_cpu_Property< GetCPUType   > ) },
 		
 	#if TARGET_CPU_68K
 		
-		{ "mode", &Property_Factory< GetPrivilegeMode > },
+		{ "mode", PROPERTY( sys_cpu_Property< GetPrivilegeMode > ) },
 		
 	#endif
 		
