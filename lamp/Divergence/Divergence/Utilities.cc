@@ -9,6 +9,7 @@
 
 // poseven
 #include "poseven/functions/stat.hh"
+#include "poseven/types/errno_t.hh"
 
 #if TARGET_RT_MAC_MACHO
 	#include "Nitrogen/Files.hh"
