@@ -27,8 +27,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct sys_type_text_wildcard
+	struct sys_type_text_wildcard : readwrite_property
 	{
+		static const size_t fixed_size = sizeof gTextFileCreator;
+		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
 			result = plus::encode_quad( gTextFileCreator );
@@ -47,21 +49,11 @@ namespace Genie
 		}
 	};
 	
-	template < class Property >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            sizeof gTextFileCreator,
-		                            &Property::get,
-		                            &Property::set );
-	}
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	extern const FSTree_Premapped::Mapping sys_type_text_Mappings[] =
 	{
-		{ "DEFAULT", &Property_Factory< sys_type_text_wildcard > },
+		{ "DEFAULT", PROPERTY( sys_type_text_wildcard ) },
 		
 		{ NULL, NULL }
 	};
