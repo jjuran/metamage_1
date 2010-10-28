@@ -36,12 +36,7 @@
 #define	_STRING_H_
 
 #include <sys/cdefs.h>
-#include <machine/_types.h>
-
-#ifndef	_SIZE_T_DEFINED_
-#define	_SIZE_T_DEFINED_
-typedef	__size_t	size_t;
-#endif
+#include <sys/types.h>
 
 #ifndef	NULL
 #ifdef 	__GNUG__
@@ -117,7 +112,7 @@ size_t	 strlcat(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 size_t	 strlcpy(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
-void	 strmode(int, char *);
+void	 strmode(mode_t, char *);
 char	*strsep(char **, const char *);
 const char	*strsignal(int);
 #endif 
