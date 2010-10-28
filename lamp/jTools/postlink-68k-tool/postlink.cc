@@ -8,18 +8,12 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
-
-// Lamp
-#include "lamp/alloca.h"
 
 // iota
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/functions/unlink.hh"
 #include "poseven/functions/write.hh"
-#include "poseven/types/exit_t.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.hh"
@@ -30,9 +24,6 @@
 // Orion
 #include "Orion/get_options.hh"
 #include "Orion/Main.hh"
-
-// postlink
-#include "link_map.hh"
 
 
 namespace tool
@@ -45,7 +36,7 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static bool Patch68KStartupCode( ::Handle code, UInt32 lampMainOffset )
+	static bool Patch68KStartupCode( ::Handle code )
 	{
 		const UInt32 nopnop = 0x4e714e71;
 		const UInt32 jmp    = 0x4efa0000;
@@ -67,26 +58,15 @@ namespace tool
 		*setCurrentA4  = *loadStartToA0 + 4;
 		*loadStartToA0 = *moveAndStrip;
 		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = lampMainOffset ? jmp | (lampMainOffset - 28 - 2) : *jmpToMain + 8;
+		*setupMainRsrc = *jmpToMain + 8;
 		*restoreRegs   = nopnop;
 		*jmpToMain     = nopnop;
 		
 		return true;
 	}
 	
-	static bool Patch68KStartup( const char* path, const FSSpec& file )
+	static bool Patch68KStartup( const FSSpec& file )
 	{
-		const unsigned long lampmain = get_code_offset( "_lamp_main" );
-		
-		if ( lampmain > 0x7fff )
-		{
-			std::fprintf( stderr, "ld: _lamp_main() offset 0x%.8x is out of range for 16-bit reference\n", lampmain );
-			
-			p7::unlink( path );
-			
-			throw p7::exit_failure;
-		}
-		
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
@@ -94,7 +74,7 @@ namespace tool
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
-		const bool patched = Patch68KStartupCode( code.Get(), lampmain );
+		const bool patched = Patch68KStartupCode( code.Get() );
 		
 		N::ChangedResource( code );
 		
@@ -114,8 +94,6 @@ namespace tool
 		o::bind_option_to_variable( "-n", dry_run );
 		o::bind_option_to_variable( "-v", verbose );
 		
-		o::bind_option_to_variable( "--map", link_map_path );
-		
 		o::get_options( argc, argv );
 		
 		char const *const *free_args = o::free_arguments();
@@ -131,21 +109,6 @@ namespace tool
 		
 		const char* target_path = free_args[ 0 ];
 		
-		if ( link_map_path == NULL )
-		{
-			size_t target_path_len = strlen( target_path );
-			
-			char* stack = (char*) checked_alloca( target_path_len + sizeof ".map" );
-			
-			memcpy( stack, target_path, target_path_len );
-			
-			memcpy( stack + target_path_len, STR_LEN( ".map" ) + 1 );
-			
-			link_map_path = stack;
-		}
-		
-		read_link_map( link_map_path );
-		
 		FSSpec target_filespec = Div::ResolvePathToFSSpec( target_path );
 		
 		if ( dry_run )
@@ -153,7 +116,7 @@ namespace tool
 			return 0;
 		}
 		
-		const bool patched = Patch68KStartup( target_path, target_filespec );
+		const bool patched = Patch68KStartup( target_filespec );
 		
 		if ( !patched )
 		{
