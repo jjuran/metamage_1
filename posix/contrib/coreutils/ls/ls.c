@@ -1054,8 +1054,8 @@ static size_t required_mon_width;
 static size_t
 abmon_init (void)
 {
-#ifdef HAVE_NL_LANGINFO
   required_mon_width = MAX_MON_WIDTH;
+#ifdef HAVE_NL_LANGINFO
   size_t curr_max_width;
   do
     {
