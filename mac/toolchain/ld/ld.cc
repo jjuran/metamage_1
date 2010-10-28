@@ -81,6 +81,7 @@ namespace tool
 	
 	static MacAPI gMacAPI = kMacAPINone;
 	
+	static bool gPCrel  = false;
 	static bool gCFM68K = false;
 	
 	static const char* gFirstObjectFilePath = NULL;
@@ -360,6 +361,14 @@ namespace tool
 				
 				break;
 			
+			case 'm':
+				if ( strcmp( arg + 2, "pcrel" ) == 0 )
+				{
+					gPCrel = true;
+				}
+				
+				break;
+			
 			case 'S':
 				if ( arg[2] == '\0' )
 				{
@@ -581,8 +590,12 @@ namespace tool
 			
 			case arch_m68k:
 				command.push_back( "MWLink68K" );
-				command.push_back( "-model"    );
-				command.push_back( gCFM68K ? "CFMflatdf" : "far" );
+				
+				if ( ! gPCrel )
+				{
+					command.push_back( "-model" );
+					command.push_back( gCFM68K ? "CFMflatdf" : "far" );
+				}
 				break;
 			
 			case arch_ppc:
@@ -595,7 +608,12 @@ namespace tool
 			case kProductCodeResource:
 				command.push_back( "-xm"        );
 				command.push_back( "c"          );
-				command.push_back( "-rsrcfar"   );
+				
+				if ( ! gPCrel )
+				{
+					command.push_back( "-rsrcfar" );
+				}
+				
 				command.push_back( "-rsrcflags" );
 				command.push_back( "system"     );  // FIXME: Not all code rsrc are system
 				break;
@@ -622,7 +640,12 @@ namespace tool
 				{
 					command.push_back( "-xm"      );
 					command.push_back( "c"        );
-					command.push_back( "-rsrcfar" );
+					
+					if ( ! gPCrel )
+					{
+						command.push_back( "-rsrcfar" );
+					}
+					
 					command.push_back( "-rt"      );
 					command.push_back( "Tool=0"   );
 				}
