@@ -57,7 +57,6 @@
 #include <pwd.h>
 #include <getopt.h>
 #include <signal.h>
-#include <selinux/selinux.h>
 #include <wchar.h>
 
 #if HAVE_LANGINFO_CODESET
@@ -78,7 +77,6 @@
 #include "system.h"
 #include <fnmatch.h>
 
-#include "acl.h"
 #include "argmatch.h"
 #include "dev-ino.h"
 #include "error.h"
@@ -198,9 +196,6 @@ struct fileinfo
     /* For symbolic link and long listing, st_mode of file linked to, otherwise
        zero.  */
     mode_t linkmode;
-
-    /* SELinux security context.  */
-    security_context_t scontext;
 
     bool stat_ok;
 
@@ -345,7 +340,6 @@ static struct pending *pending_dirs;
 
 static struct timespec current_time;
 
-static bool print_scontext;
 static char UNKNOWN_SECURITY_CONTEXT[] = "?";
 
 /* Whether any of the files has an ACL.  This affects the width of the
@@ -1356,7 +1350,6 @@ main (int argc, char **argv)
 
   format_needs_stat = sort_type == sort_time || sort_type == sort_size
     || format == long_format
-    || print_scontext
     || print_block_size;
   format_needs_type = (! format_needs_stat
                        && (recursive
@@ -1558,7 +1551,6 @@ decode_switches (int argc, char **argv)
   ignore_mode = IGNORE_DEFAULT;
   ignore_patterns = NULL;
   hide_patterns = NULL;
-  print_scontext = false;
 
   /* FIXME: put this in a function.  */
   {
@@ -1937,10 +1929,6 @@ decode_switches (int argc, char **argv)
         case SI_OPTION:
           human_output_opts = human_autoscale | human_SI;
           file_output_block_size = output_block_size = 1;
-          break;
-
-        case 'Z':
-          print_scontext = true;
           break;
 
         case_GETOPT_HELP_CHAR;
@@ -2690,8 +2678,6 @@ clear_files (void)
       struct fileinfo *f = sorted_file[i];
       free (f->name);
       free (f->linkname);
-      if (f->scontext != UNKNOWN_SECURITY_CONTEXT)
-        freecon (f->scontext);
     }
 
   cwd_n_used = 0;
@@ -2842,35 +2828,11 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
           && print_with_color && is_colored (C_CAP))
         f->has_capability = has_capability (absolute_name);
 
-      if (format == long_format || print_scontext)
+      if (format == long_format)
         {
           bool have_selinux = false;
           bool have_acl = false;
-          int attr_len = (do_deref
-                          ?  getfilecon (absolute_name, &f->scontext)
-                          : lgetfilecon (absolute_name, &f->scontext));
-          err = (attr_len < 0);
-
-          if (err == 0)
-            have_selinux = ! STREQ ("unlabeled", f->scontext);
-          else
-            {
-              f->scontext = UNKNOWN_SECURITY_CONTEXT;
-
-              /* When requesting security context information, don't make
-                 ls fail just because the file (even a command line argument)
-                 isn't on the right type of file system.  I.e., a getfilecon
-                 failure isn't in the same class as a stat failure.  */
-              if (errno == ENOTSUP || errno == EOPNOTSUPP || errno == ENODATA)
-                err = 0;
-            }
-
-          if (err == 0 && format == long_format)
-            {
-              int n = file_has_acl (absolute_name, &f->stat);
-              err = (n < 0);
-              have_acl = (0 < n);
-            }
+          err = 0;
 
           f->acl_type = (!have_selinux && !have_acl
                          ? ACL_T_NONE
@@ -2965,13 +2927,6 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
               if (author_width < len)
                 author_width = len;
             }
-        }
-
-      if (print_scontext)
-        {
-          int len = strlen (f->scontext);
-          if (scontext_width < len)
-            scontext_width = len;
         }
 
       if (format == long_format)
@@ -3699,7 +3654,7 @@ print_long_format (const struct fileinfo *f)
 
   DIRED_INDENT ();
 
-  if (print_owner || print_group || print_author || print_scontext)
+  if (print_owner || print_group || print_author)
     {
       DIRED_FPUTS (buf, stdout, p - buf);
 
@@ -3711,9 +3666,6 @@ print_long_format (const struct fileinfo *f)
 
       if (print_author)
         format_user (f->stat.st_author, author_width, f->stat_ok);
-
-      if (print_scontext)
-        format_user_or_group (f->scontext, 0, scontext_width);
 
       p = buf;
     }
@@ -4062,9 +4014,6 @@ print_file_name_and_frills (const struct fileinfo *f, size_t start_col)
             : human_readable (ST_NBLOCKS (f->stat), buf, human_output_opts,
                               ST_NBLOCKSIZE, output_block_size));
 
-  if (print_scontext)
-    printf ("%*s ", format == with_commas ? 0 : scontext_width, f->scontext);
-
   width = print_name_with_quoting (f, false, NULL, start_col);
 
   if (indicator_style != none)
@@ -4267,9 +4216,6 @@ length_of_file_name_and_frills (const struct fileinfo *f)
                                             human_output_opts, ST_NBLOCKSIZE,
                                             output_block_size))
                 : block_size_width);
-
-  if (print_scontext)
-    len += 1 + (format == with_commas ? strlen (f->scontext) : scontext_width);
 
   quote_name (NULL, f->name, filename_quoting_options, &name_width);
   len += name_width;
