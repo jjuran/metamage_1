@@ -3473,8 +3473,7 @@ align_nstrftime (char *buf, size_t size, char const *fmt, struct tm const *tm,
           strcpy (pfmt, pb + 2);
         }
     }
-  size_t ret = nstrftime (buf, size, nfmt, tm, __utc, __ns);
-  return ret;
+  return nstrftime (buf, size, nfmt, tm, __utc, __ns);
 }
 
 /* Return the expected number of columns in a long-format time stamp,
@@ -3624,6 +3623,7 @@ print_long_format (const struct fileinfo *f)
   char *p;
   struct timespec when_timespec;
   struct tm *when_local;
+  size_t w;
 
   /* Compute the mode string, except remove the trailing space if no
      file in this directory has an ACL or SELinux security context.  */
@@ -3810,7 +3810,7 @@ print_long_format (const struct fileinfo *f)
     }
 
   DIRED_FPUTS (buf, stdout, p - buf);
-  size_t w = print_name_with_quoting (f, false, &dired_obstack, p - buf);
+  w = print_name_with_quoting (f, false, &dired_obstack, p - buf);
 
   if (f->filetype == symbolic_link)
     {
@@ -4005,10 +4005,12 @@ print_name_with_quoting (const struct fileinfo *f,
         && (print_color_indicator (f, symlink_target)
             || is_colored (C_NORM)));
 
+  size_t width;
+
   if (stack)
     PUSH_CURRENT_DIRED_POS (stack);
 
-  size_t width = quote_name (stdout, name, filename_quoting_options, NULL);
+  width = quote_name (stdout, name, filename_quoting_options, NULL);
   dired_pos += width;
 
   if (stack)
@@ -4046,6 +4048,7 @@ static size_t
 print_file_name_and_frills (const struct fileinfo *f, size_t start_col)
 {
   char buf[MAX (LONGEST_HUMAN_READABLE + 1, INT_BUFSIZE_BOUND (uintmax_t))];
+  size_t width;
 
   set_normal_color ();
 
@@ -4062,7 +4065,7 @@ print_file_name_and_frills (const struct fileinfo *f, size_t start_col)
   if (print_scontext)
     printf ("%*s ", format == with_commas ? 0 : scontext_width, f->scontext);
 
-  size_t width = print_name_with_quoting (f, false, NULL, start_col);
+  width = print_name_with_quoting (f, false, NULL, start_col);
 
   if (indicator_style != none)
     width += print_type_indicator (f->stat_ok, f->stat.st_mode, f->filetype);
