@@ -141,11 +141,11 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		\ qw( cat cp echo false hostname kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
+		\ qw( cat cp echo false hostname kill ln login ls mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
 		\ qw( jgetty ),
 		# Perl scripts
-		qw( chmod date ls test ),
+		qw( chmod date test ),
 	],
 	etc =>
 	[
