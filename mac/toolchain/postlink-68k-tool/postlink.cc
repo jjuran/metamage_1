@@ -112,6 +112,13 @@ namespace tool
 		UInt32* const restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
 		UInt32* const jmpToMain     = reinterpret_cast< UInt32* >( *code + 36 );
 		
+		const bool is_far = *moveAndStrip == 0x2008A055;
+		
+		if ( ! is_far )
+		{
+			return true;
+		}
+		
 		if ( *jmpToMain == nopnop )
 		{
 			return false;
