@@ -88,7 +88,7 @@ enum Platform
 	platformMac  = 1 << 10,
 	platformUnix = 1 << 11,
 	
-	model_near = 1 << 12,
+	model_near = 1 << 12,  // affects addressing modes, not data sizes
 	
 	runtime_A4_near = runtimeA4CodeResource | model_near,
 	runtime_A5_near = runtimeA5CodeSegments | model_near,
