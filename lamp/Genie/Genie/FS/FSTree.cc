@@ -288,7 +288,7 @@ namespace Genie
 		throw p7::errno_t( ENOENT );  // Assume read attempt if no mode
 	}
 	
-	MainEntry FSTree::GetMainEntry() const
+	shared_exec_handle FSTree::GetExecutable() const
 	{
 		throw p7::errno_t( ENOEXEC );
 	}

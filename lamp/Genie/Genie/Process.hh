@@ -27,7 +27,7 @@
 #include "Mac/Threads/Types/ThreadID.hh"
 
 // Genie
-#include "Genie/Exec/MainEntry.hh"
+#include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
@@ -131,8 +131,8 @@ namespace Genie
 		private:
 			FSTreePtr itsProgramFile;
 			
-			MainEntry itsMainEntry;
-			MainEntry itsOldMainEntry;
+			shared_exec_handle  its_exec_handle;
+			shared_exec_handle  its_old_exec_handle;
 			
 			boost::intrusive_ptr< memory_data > its_memory_data;
 			

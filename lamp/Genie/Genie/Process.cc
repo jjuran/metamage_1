@@ -69,7 +69,6 @@
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/Exec/MainEntryPoint.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
@@ -334,10 +333,12 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			exit_status = itsMainEntry->Invoke( argc,
-			                                    argv,
-			                                    envp,
-			                                    &global_parameter_block );
+			lamp_entry lamp_main = its_exec_handle->get_main_entry_point();
+			
+			exit_status = lamp_main( argc,
+			                         argv,
+			                         envp,
+			                         &global_parameter_block );
 			
 			// Not reached by regular tools, since they call exit()
 		}
@@ -346,7 +347,7 @@ namespace Genie
 		EnterSystemCall( "*RETURN*" );
 		
 		// For code fragments, static destruction occurs here.
-		itsMainEntry.reset();
+		its_exec_handle.reset();
 		
 		return exit_status;
 	}
@@ -713,7 +714,7 @@ namespace Genie
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itsProgramFile        ( parent.itsProgramFile ),
-		itsMainEntry          ( parent.itsMainEntry ),
+		its_exec_handle       ( parent.its_exec_handle ),
 		its_memory_data       ( parent.its_memory_data ),
 		itMayDumpCore         ( true )
 	{
@@ -766,7 +767,7 @@ namespace Genie
 	{
 		Resume();
 		
-		itsOldMainEntry.reset();
+		its_old_exec_handle.reset();
 		
 		if ( IsBeingTraced() )
 		{
@@ -929,7 +930,7 @@ namespace Genie
 		itsProgramFile = context.executable;
 		
 		// Really the new main entry.  We'll swap later.
-		itsOldMainEntry = itsProgramFile->GetMainEntry();
+		its_old_exec_handle = itsProgramFile->GetExecutable();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -952,7 +953,7 @@ namespace Genie
 		
 		// Save the binary image that we're running from and set the new one.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		swap( itsOldMainEntry, itsMainEntry );
+		swap( its_old_exec_handle, its_exec_handle );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;

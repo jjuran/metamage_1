@@ -18,8 +18,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/Exec/GetMainEntry.hh"
-#include "Genie/Exec/MainEntryPoint.hh"
+#include "Genie/code/fixed_address.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/premapped.hh"
@@ -62,21 +61,24 @@ namespace Genie
 	class FSTree_sys_kernel_bin_EXE : public FSTree
 	{
 		private:
-			MainEntry itsMainEntry;
+			shared_exec_handle its_exec_handle;
 		
 		public:
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
 			                           const plus::string&  name,
-			                           Trivial_Entry        main )
+			                           lamp_entry           main )
 			:
 				FSTree( parent, name ),
-				itsMainEntry( GetMainEntryFromAddress( main ) )
+				its_exec_handle( new fixed_address( main ) )
 			{
 			}
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
 			
-			MainEntry GetMainEntry() const  { return itsMainEntry; }
+			shared_exec_handle GetExecutable() const
+			{
+				return its_exec_handle;
+			}
 	};
 	
 	
@@ -147,7 +149,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, (Trivial_Entry) args ) );
+		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, (lamp_entry) args ) );
 	}
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main
