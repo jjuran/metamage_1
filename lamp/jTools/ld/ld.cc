@@ -685,6 +685,9 @@ namespace tool
 					command.push_back( store_string( output_name ) );
 				}
 				
+				command.push_back( "-main"      );
+				command.push_back( "_lamp_main" );
+				
 				gFileType    = "Wish";
 				gFileCreator = "Poof";
 				
