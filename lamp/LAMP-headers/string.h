@@ -115,7 +115,11 @@ size_t	 strlcpy(char *, const char *, size_t)
 void	 strmode(mode_t, char *);
 char	*strsep(char **, const char *);
 const char	*strsignal(int);
-#endif 
+#endif
+
+/* GNU extensions */
+void* mempcpy( void* dest, const void* src, size_t n );
+char* stpcpy( char* dest, const char* src );
 __END_DECLS
 
 #endif /* _STRING_H_ */
