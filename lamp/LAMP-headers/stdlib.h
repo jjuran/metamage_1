@@ -216,11 +216,7 @@ int	 unsetenv(const char *);
 #endif
 
 #if __BSD_VISIBLE
-#if defined(alloca) && (alloca == __builtin_alloca) && (__GNUC__ < 2)
-void  *alloca(int);     /* built-in for gcc */
-#elif defined(__MWERKS__)
 #include <alloca.h>
-#endif
 
 char	*getbsize(int *, long *);
 char	*cgetcap(char *, const char *, int);
