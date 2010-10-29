@@ -335,10 +335,30 @@ namespace Genie
 			
 			lamp_entry lamp_main = its_exec_handle->get_main_entry_point();
 			
+		#ifdef __MC68K__
+			
+			long saved_a4;
+			
+			asm
+			{
+				MOVE.L  A4,saved_a4
+			}
+			
+		#endif
+			
 			exit_status = lamp_main( argc,
 			                         argv,
 			                         envp,
 			                         &global_parameter_block );
+			
+		#ifdef __MC68K__
+			
+			asm
+			{
+				MOVEA.L saved_a4,A4
+			}
+			
+		#endif
 			
 			// Not reached by regular tools, since they call exit()
 		}
