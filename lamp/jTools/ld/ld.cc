@@ -827,7 +827,7 @@ namespace tool
 			return exit_status;
 		}
 		
-		if ( arch == arch_m68k  &&  gProductType == kProductTool )
+		if ( arch == arch_m68k  &&  !gCFM68K  &&  gProductType == kProductTool )
 		{
 			const char *const postlink_argv[] = { "postlink-68k-tool", output_pathname, NULL };
 			
