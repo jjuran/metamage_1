@@ -20,7 +20,7 @@
 #ifndef _FNMATCH_H
 #define _FNMATCH_H      1
 
-/* The definition of _GL_ARG_NONNULL is copied here.  */
+#define _GL_ARG_NONNULL( x )  /**/
 
 #ifdef __cplusplus
 extern "C" {
