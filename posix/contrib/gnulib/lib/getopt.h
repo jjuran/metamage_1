@@ -18,62 +18,14 @@
 
 #ifndef _GL_GETOPT_H
 
-#if __GNUC__ >= 3
-@PRAGMA_SYSTEM_HEADER@
-#endif
-@PRAGMA_COLUMNS@
-
 /* The include_next requires a split double-inclusion guard.  We must
    also inform the replacement unistd.h to not recursively use
    <getopt.h>; our definitions will be present soon enough.  */
-#if @HAVE_GETOPT_H@
-# define _GL_SYSTEM_GETOPT
-# @INCLUDE_NEXT@ @NEXT_GETOPT_H@
-# undef _GL_SYSTEM_GETOPT
-#endif
 
 #ifndef _GL_GETOPT_H
 
 #ifndef __need_getopt
 # define _GL_GETOPT_H 1
-#endif
-
-/* Standalone applications should #define __GETOPT_PREFIX to an
-   identifier that prefixes the external functions and variables
-   defined in this header.  When this happens, include the
-   headers that might declare getopt so that they will not cause
-   confusion if included after this file (if the system had <getopt.h>,
-   we have already included it).  Then systematically rename
-   identifiers so that they do not collide with the system functions
-   and variables.  Renaming avoids problems with some compilers and
-   linkers.  */
-#if defined __GETOPT_PREFIX && !defined __need_getopt
-# if !@HAVE_GETOPT_H@
-#  include <stdlib.h>
-#  include <stdio.h>
-#  include <unistd.h>
-# endif
-# undef __need_getopt
-# undef getopt
-# undef getopt_long
-# undef getopt_long_only
-# undef optarg
-# undef opterr
-# undef optind
-# undef optopt
-# undef option
-# define __GETOPT_CONCAT(x, y) x ## y
-# define __GETOPT_XCONCAT(x, y) __GETOPT_CONCAT (x, y)
-# define __GETOPT_ID(y) __GETOPT_XCONCAT (__GETOPT_PREFIX, y)
-# define getopt __GETOPT_ID (getopt)
-# define getopt_long __GETOPT_ID (getopt_long)
-# define getopt_long_only __GETOPT_ID (getopt_long_only)
-# define optarg __GETOPT_ID (optarg)
-# define opterr __GETOPT_ID (opterr)
-# define optind __GETOPT_ID (optind)
-# define optopt __GETOPT_ID (optopt)
-# define option __GETOPT_ID (option)
-# define _getopt_internal __GETOPT_ID (getopt_internal)
 #endif
 
 /* Standalone applications get correct prototypes for getopt_long and
@@ -122,7 +74,7 @@
 # endif
 #endif
 
-/* The definition of _GL_ARG_NONNULL is copied here.  */
+#define _GL_ARG_NONNULL( x )  /**/
 
 #ifdef __cplusplus
 extern "C" {
