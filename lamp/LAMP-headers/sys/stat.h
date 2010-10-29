@@ -91,6 +91,14 @@ struct stat
 #define	S_IWOTH	0000002			/* W for other */
 #define	S_IXOTH	0000001			/* X for other */
 
+#define S_IRUGO  0000444
+#define S_IWUGO  0000222
+#define S_IXUGO  0000111
+
+#define S_ISUID  0004000
+#define S_ISGID  0002000
+#define S_ISVTX  0001000
+
 #define	S_IFMT	 0170000		/* type of file mask */
 #define	S_IFIFO	 0010000		/* named pipe (fifo) */
 #define	S_IFCHR	 0020000		/* character special */
