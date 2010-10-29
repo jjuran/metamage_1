@@ -125,7 +125,3 @@
 #define	ENOLCK		77		/* No locks available */
 #define	ENOSYS		78		/* Function not implemented */
 
-#ifndef _POSIX_SOURCE
-#define ELOOK		67		/* Internal mapping for kOTLookErr, don't return to client */ 
-#define	ELAST		78		/* Must be equal largest errno */
-#endif /* _POSIX_SOURCE */
