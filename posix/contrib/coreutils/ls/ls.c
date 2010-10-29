@@ -1635,7 +1635,10 @@ decode_switches (int argc, char **argv)
 
   {
     char const *p = getenv ("TABSIZE");
+    /* Don't use tabs by default */
+    /*
     tabsize = 8;
+    */
     if (p)
       {
         unsigned long int tmp_ulong;
