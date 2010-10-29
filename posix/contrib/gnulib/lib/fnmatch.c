@@ -170,7 +170,7 @@ static int posixly_correct;
 # endif
 # define MEMCHR(S, C, N) memchr (S, C, N)
 # define STRCOLL(S1, S2) strcoll (S1, S2)
-# include "fnmatch_loop.c"
+# include "fnmatch_loop.c.h"
 
 
 # if HANDLE_MULTIBYTE
