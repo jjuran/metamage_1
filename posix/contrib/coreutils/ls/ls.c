@@ -1259,7 +1259,6 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   initialize_exit_failure (LS_FAILURE);
-  atexit (close_stdout);
 
   assert (ARRAY_CARDINALITY (color_indicator) + 1
           == ARRAY_CARDINALITY (indicator_name));
