@@ -471,11 +471,11 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
           break;
 
         default:
-          /* If we have a multibyte sequence, copy it until we reach
-             its end, find an error, or come back to the initial shift
-             state.  For C-like styles, if the sequence has
-             unprintable characters, escape the whole sequence, since
-             we can't easily escape single characters within it.  */
+          if ( c & 0x80 )
+          {
+            /* Assume valid UTF-8; assume printable */
+            break;
+          }
           {
             /* Length of multibyte sequence found so far.  */
             size_t m;
@@ -486,64 +486,6 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
               {
                 m = 1;
                 printable = isprint (c) != 0;
-              }
-            else
-              {
-                mbstate_t mbstate;
-                memset (&mbstate, 0, sizeof mbstate);
-
-                m = 0;
-                printable = true;
-                if (argsize == SIZE_MAX)
-                  argsize = strlen (arg);
-
-                do
-                  {
-                    wchar_t w;
-                    size_t bytes = mbrtowc (&w, &arg[i + m],
-                                            argsize - (i + m), &mbstate);
-                    if (bytes == 0)
-                      break;
-                    else if (bytes == (size_t) -1)
-                      {
-                        printable = false;
-                        break;
-                      }
-                    else if (bytes == (size_t) -2)
-                      {
-                        printable = false;
-                        while (i + m < argsize && arg[i + m])
-                          m++;
-                        break;
-                      }
-                    else
-                      {
-                        /* Work around a bug with older shells that "see" a '\'
-                           that is really the 2nd byte of a multibyte character.
-                           In practice the problem is limited to ASCII
-                           chars >= '@' that are shell special chars.  */
-                        if ('[' == 0x5b && elide_outer_quotes
-                            && quoting_style == shell_always_quoting_style)
-                          {
-                            size_t j;
-                            for (j = 1; j < bytes; j++)
-                              switch (arg[i + m + j])
-                                {
-                                case '[': case '\\': case '^':
-                                case '`': case '|':
-                                  goto force_outer_quoting_style;
-
-                                default:
-                                  break;
-                                }
-                          }
-
-                        if (! iswprint (w))
-                          printable = false;
-                        m += bytes;
-                      }
-                  }
-                while (! mbsinit (&mbstate));
               }
 
             if (1 < m || (backslash_escapes && ! printable))
