@@ -1932,7 +1932,9 @@ decode_switches (int argc, char **argv)
 
         case_GETOPT_HELP_CHAR;
 
+        /*
         case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
+        */
 
         default:
           usage (LS_FAILURE);
