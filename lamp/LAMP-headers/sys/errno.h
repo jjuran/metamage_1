@@ -122,6 +122,24 @@
 #define	EHOSTUNREACH	65		/* No route to host */
 #define	ENOTEMPTY	66		/* Directory not empty */
 
+#define EPROCLIM         67  /* Too many processes */
+#define EUSERS           68  /* Too many users */
+#define EDQUOT           69  /* Disc quota exceeded */
+
+#define ESTALE           70  /* Stale NFS file handle */
+#define EREMOTE          71  /* Too many levels of remote in path */
+#define EBADRPC          72  /* RPC struct is bad */
+#define ERPCMISMATCH     73  /* RPC version wrong */
+#define EPROGUNAVAIL     74  /* RPC prog. not avail */
+#define EPROGMISMATCH    75  /* Program version wrong */
+#define EPROCUNAVAIL     76  /* Bad procedure for program */
+
 #define	ENOLCK		77		/* No locks available */
 #define	ENOSYS		78		/* Function not implemented */
+
+#define EFTYPE           79  /* Inappropriate file type or format */
+#define EAUTH            80  /* Authentication error */
+#define ENEEDAUTH        81  /* Need authenticator */
+
+#define EOVERFLOW        84  /* Value too large to be stored in data type */
 
