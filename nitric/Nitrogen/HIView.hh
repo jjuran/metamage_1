@@ -26,7 +26,7 @@
 #include "Nitrogen/MacTypes.hh"
 #endif
 
-#ifndef NITROGEN_CFBase_HH
+#ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
 
