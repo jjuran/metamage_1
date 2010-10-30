@@ -7,7 +7,9 @@
 #define PEDESTAL_GWORLDVIEW_HH
 
 // Nitrogen
+#ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffScreen.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"

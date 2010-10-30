@@ -12,8 +12,12 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
+#endif
+#ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"
