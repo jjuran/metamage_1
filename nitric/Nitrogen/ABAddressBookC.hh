@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef NITROGEN_ADDRESSBOOKC_HH
-#define NITROGEN_ADDRESSBOOKC_HH
+#ifndef NITROGEN_ABADDRESSBOOKC_HH
+#define NITROGEN_ABADDRESSBOOKC_HH
 
 #ifndef __MACH__
 #error "These routines are only directly callable from MachO"
