@@ -7,7 +7,9 @@
 #define MACBINARYDECODER_HH
 
 // Nitrogen
+#ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
+#endif
 
 // MacFiles
 #include "MacFiles/Classic.hh"

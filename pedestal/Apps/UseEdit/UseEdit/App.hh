@@ -16,7 +16,9 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Nitrogen
+#ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
+#endif
 
 // MacFiles
 #include "MacFiles/Classic.hh"
