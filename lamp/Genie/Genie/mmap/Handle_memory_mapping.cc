@@ -5,6 +5,11 @@
 
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
+// Nitrogen
+#ifndef NITROGEN_MACMEMORY_HH
+#include "Nitrogen/MacMemory.hh"
+#endif
+
 
 namespace Genie
 {

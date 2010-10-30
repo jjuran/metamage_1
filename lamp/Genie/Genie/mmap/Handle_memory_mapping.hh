@@ -6,9 +6,14 @@
 #ifndef GENIE_MMAP_HANDLEMEMORYMAPPING_HH
 #define GENIE_MMAP_HANDLEMEMORYMAPPING_HH
 
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
+
 // Nitrogen
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
+#ifndef MAC_MEMORY_TYPES_HANDLE_HH
+#include "Mac/Memory/Types/Handle.hh"
 #endif
 
 // Genie
@@ -21,12 +26,12 @@ namespace Genie
 	class Handle_memory_mapping : public memory_mapping
 	{
 		private:
-			nucleus::owned< Nitrogen::Handle > its_handle;
+			nucleus::owned< Mac::Handle > its_handle;
 			
 			addr_t get_address() const  { return *its_handle.get(); }
 		
 		public:
-			Handle_memory_mapping( nucleus::owned< Nitrogen::Handle > h );
+			Handle_memory_mapping( nucleus::owned< Mac::Handle > h );
 	};
 	
 }
