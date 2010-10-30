@@ -12,9 +12,15 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_STR_HH

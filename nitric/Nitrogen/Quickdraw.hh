@@ -19,15 +19,29 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
+#ifndef NUCLEUS_SAVED_HH
 #include "nucleus/saved.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_QUICKDRAW_UTILITIES_PORTDISPOSER_HH
 #include "Mac/Quickdraw/Utilities/Port_Disposer.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESID_HH
 #include "Mac/Resources/Types/ResID.hh"
+#endif
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"

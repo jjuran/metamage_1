@@ -28,12 +28,20 @@
 #include "iota/distance.hh"
 
 // nucleus
+#ifndef NUCLEUS_ARRAYSINGLETON_HH
 #include "nucleus/array_singleton.hh"
+#endif
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_HH
 #include "nucleus/object_parameter_traits.hh"
+#endif
 
 // Nitrogen
+#ifndef CARBON_CARBONEVENTS_TYPES_EVENTKIND_HH
 #include "Carbon/CarbonEvents/Types/EventKind.hh"
+#endif
 
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"

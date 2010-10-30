@@ -25,20 +25,44 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPERM_HH
 #include "Mac/Files/Types/FSIOPerm.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSSIGNATURE_HH
 #include "Mac/Files/Types/FSSignature.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSTYPE_HH
 #include "Mac/Files/Types/FSType.hh"
+#endif
+#ifndef MAC_RESOURCES_FUNCTIONS_RESERROR_HH
 #include "Mac/Resources/Functions/ResError.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESID_HH
 #include "Mac/Resources/Types/ResID.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESTYPE_HH
 #include "Mac/Resources/Types/ResType.hh"
+#endif
+#ifndef MAC_RESOURCES_UTILITIES_CHECKEDRESOURCE_HH
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_SCRIPTCODE_HH
 #include "Mac/Script/Types/ScriptCode.hh"
+#endif
+#ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
+#endif
 
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"

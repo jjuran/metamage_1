@@ -15,7 +15,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_RESOURCES_FUNCTIONS_RESERROR_HH
 #include "Mac/Resources/Functions/ResError.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"

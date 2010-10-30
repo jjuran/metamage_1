@@ -15,10 +15,18 @@
 #define NITROGEN_FILES_HH
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_INDEXUNTILERRORSEQUENCE_HH
 #include "nucleus/index_until_error_sequence.hh"
+#endif
+#ifndef NUCLEUS_INITIALIZE_HH
 #include "nucleus/initialize.hh"
+#endif
 
 #ifndef __FILES__
 #include <Files.h>
@@ -28,21 +36,51 @@
 #include "iota/string_traits.hh"
 
 // Nitrogen
+#ifndef MAC_DEVICES_TYPES_DRIVERREFNUM_HH
 #include "Mac/Devices/Types/DriverRefNum.hh"
+#endif
+#ifndef MAC_FILES_FUNCTIONS_FLUSHVOL_HH
 #include "Mac/Files/Functions/FlushVol.hh"
+#endif
+#ifndef MAC_FILES_FUNCTIONS_UNMOUNTVOL_HH
 #include "Mac/Files/Functions/UnmountVol.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
 #include "Mac/Files/Types/FSDirSpec.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPERM_HH
 #include "Mac/Files/Types/FSIOPerm.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPOSMODE_HH
 #include "Mac/Files/Types/FSIOPosMode.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSSHARINGFLAGS_HH
 #include "Mac/Files/Types/FSSharingFlags.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSSIGNATURE_HH
 #include "Mac/Files/Types/FSSignature.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSTYPE_HH
 #include "Mac/Files/Types/FSType.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSUSERPRIVILEGES_HH
 #include "Mac/Files/Types/FSUserPrivileges.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_SCRIPTCODE_HH
 #include "Mac/Script/Types/ScriptCode.hh"
+#endif
 
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
@@ -51,8 +89,12 @@
 #include "Nitrogen/Str.hh"
 #endif
 
+#ifndef NITROGEN_DEVICES_HH
 #include "Nitrogen/Devices.hh"
+#endif
+#ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
+#endif
 
 #ifndef __LAMP__
 #include <vector>

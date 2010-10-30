@@ -22,16 +22,32 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_RESOURCETRANSFER_HH
 #include "nucleus/resource_transfer.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSSHARINGFLAGS_HH
 #include "Mac/Files/Types/FSSharingFlags.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSTYPE_HH
 #include "Mac/Files/Types/FSType.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSUSERPRIVILEGES_HH
 #include "Mac/Files/Types/FSUserPrivileges.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
+#ifndef MAC_ICONS_TYPES_ICONREF_HH
 #include "Mac/Icons/Types/IconRef.hh"
+#endif
 
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"

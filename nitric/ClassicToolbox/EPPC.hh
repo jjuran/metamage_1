@@ -9,7 +9,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
 
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_PPCTOOLBOX_HH

@@ -19,12 +19,20 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_INDEXUNTILERRORSEQUENCE_HH
 #include "nucleus/index_until_error_sequence.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_SOUND_FUNCTIONS_SYSBEEP_HH
 #include "Mac/Sound/Functions/SysBeep.hh"
+#endif
 
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"

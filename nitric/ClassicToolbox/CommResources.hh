@@ -12,9 +12,15 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_HH
 #include "nucleus/advance_until_done_sequence.hh"
+#endif
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH

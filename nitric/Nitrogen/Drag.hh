@@ -22,11 +22,21 @@
 #include "iota/distance.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH

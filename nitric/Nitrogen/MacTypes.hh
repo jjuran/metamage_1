@@ -22,19 +22,41 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
+#endif
+#ifndef NUCLEUS_OVERLOADEDMATH_HH
 #include "nucleus/overloaded_math.hh"
+#endif
+#ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_RESOURCES_TYPES_RESTYPE_HH
 #include "Mac/Resources/Types/ResType.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_LANGCODE_HH
 #include "Mac/Script/Types/LangCode.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_REGIONCODE_HH
 #include "Mac/Script/Types/RegionCode.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_SCRIPTCODE_HH
 #include "Mac/Script/Types/ScriptCode.hh"
+#endif
+#ifndef MAC_TOOLBOX_TYPES_OSTYPE_HH
 #include "Mac/Toolbox/Types/OSType.hh"
+#endif
+#ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"

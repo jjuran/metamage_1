@@ -20,7 +20,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_RESOURCES_TYPES_RESID_HH
 #include "Mac/Resources/Types/ResID.hh"
+#endif
 
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"

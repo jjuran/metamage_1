@@ -19,8 +19,12 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"

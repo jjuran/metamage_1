@@ -16,12 +16,20 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_INDEXEDSEQUENCE_HH
 #include "nucleus/indexed_sequence.hh"
+#endif
 
 // Nitrogen
+#ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
+#endif
 
 
 namespace Nitrogen

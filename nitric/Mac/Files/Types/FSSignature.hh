@@ -11,11 +11,17 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSTYPE_HH
 #include "Mac/Files/Types/FSType.hh"
+#endif
 
 
 namespace Mac

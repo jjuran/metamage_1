@@ -20,13 +20,21 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_TIMER_FUNCTIONS_MICROSECONDS_HH
 #include "Mac/Timer/Functions/Microseconds.hh"
+#endif
 
+#ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
+#endif
+#ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
+#endif
 
 
 namespace Nitrogen

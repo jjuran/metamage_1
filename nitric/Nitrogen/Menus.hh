@@ -19,16 +19,32 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_MENUS_TYPES_MENUID_HH
 #include "Mac/Menus/Types/MenuID.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESID_HH
 #include "Mac/Resources/Types/ResID.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESTYPE_HH
 #include "Mac/Resources/Types/ResType.hh"
+#endif
+#ifndef MAC_RESOURCES_UTILITIES_CHECKEDRESOURCE_HH
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
+#endif
 
 #ifndef NITROGEN_FONTS_HH
 #include "Nitrogen/Fonts.hh"

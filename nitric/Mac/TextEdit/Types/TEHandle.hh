@@ -12,7 +12,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_DISPOSER_HH
 #include "nucleus/disposer.hh"
+#endif
 
 
 namespace nucleus

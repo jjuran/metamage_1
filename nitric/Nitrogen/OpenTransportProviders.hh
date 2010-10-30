@@ -27,9 +27,15 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_INITIALIZE_HH
 #include "nucleus/initialize.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_OPENTRANSPORT_HH

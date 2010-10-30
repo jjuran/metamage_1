@@ -32,7 +32,9 @@
 #include <OSA.h>
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 
 namespace Nitrogen

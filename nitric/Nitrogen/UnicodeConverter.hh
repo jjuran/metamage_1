@@ -20,7 +20,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 #ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
