@@ -7,8 +7,12 @@
 #define MACIO_INITIOPARAM_HH
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPOSMODE_HH
 #include "Mac/Files/Types/FSIOPosMode.hh"
+#endif
 
 
 namespace MacIO

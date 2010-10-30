@@ -7,7 +7,9 @@
 #define MACIO_FSPOPENASYNC_HH
 
 // Nitrogen
+#ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
+#endif
 
 // MacIO
 #include "MacIO/Async.hh"

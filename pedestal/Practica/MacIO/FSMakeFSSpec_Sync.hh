@@ -7,9 +7,15 @@
 #define MACIO_FSMAKEFSSPECSYNC_HH
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
 #include "Mac/Files/Types/FSDirSpec.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
 
 // MacIO
 #include "MacIO/ThrowOSStatus.hh"

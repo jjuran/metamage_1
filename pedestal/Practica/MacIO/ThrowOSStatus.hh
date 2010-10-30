@@ -7,7 +7,9 @@
 #define MACIO_THROWOSSTATUS_HH
 
 // Nitrogen
+#ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
+#endif
 
 
 namespace MacIO

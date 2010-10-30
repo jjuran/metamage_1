@@ -15,7 +15,9 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
+#endif
 
 // Vectoria
 #include "Vectoria/TriColor.hh"

@@ -7,7 +7,9 @@
 #define CFMLATEIMPORTER_HH
 
 // Nitrogen
+#ifndef NITROGEN_CODEFRAGMENTS_HH
 #include "Nitrogen/CodeFragments.hh"
+#endif
 
 
 namespace CFMLateImporter
