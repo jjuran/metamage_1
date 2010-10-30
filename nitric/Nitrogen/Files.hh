@@ -43,7 +43,6 @@
 #include "Mac/Files/Types/FSUserPrivileges.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 #include "Mac/Script/Types/ScriptCode.hh"
-#include "Mac/Toolbox/Types/OSType.hh"
 
 #ifndef NITROGEN_CFSTRING_HH
 #include "Nitrogen/CFString.hh"
