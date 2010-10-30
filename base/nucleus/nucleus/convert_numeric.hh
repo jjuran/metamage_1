@@ -10,9 +10,13 @@
 #ifndef NUCLEUS_CONVERTNUMERIC_HH
 #define NUCLEUS_CONVERTNUMERIC_HH
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_OVERLOADEDMATH_HH
 #include "nucleus/overloaded_math.hh"
+#endif
 
 // Standard C++
 #include <limits>

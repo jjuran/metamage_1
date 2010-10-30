@@ -10,8 +10,10 @@
 #ifndef NUCLEUS_SHARED_HH
 #define NUCLEUS_SHARED_HH
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 
 namespace nucleus

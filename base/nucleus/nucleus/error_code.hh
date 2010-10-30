@@ -108,8 +108,10 @@
 #define NUCLEUS_DEBUGGING_CONTEXT  ::recall::debugging_context
 #endif
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
 
 
 #if NUCLEUS_RICH_ERRORCODES

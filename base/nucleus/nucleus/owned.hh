@@ -115,9 +115,13 @@
 // iota
 #include "iota/swap.hh"
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_DISPOSER_HH
 #include "nucleus/disposer.hh"
+#endif
 
 
 namespace nucleus
