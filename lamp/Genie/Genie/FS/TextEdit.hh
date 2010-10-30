@@ -10,10 +10,14 @@
 #include "plus/var_string.hh"
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_TEXTEDIT_TYPES_TEHANDLE_HH
 #include "Mac/TextEdit/Types/TEHandle.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/TextEdit.hh"

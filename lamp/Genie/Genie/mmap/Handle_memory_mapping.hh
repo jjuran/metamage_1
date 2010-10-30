@@ -7,7 +7,9 @@
 #define GENIE_MMAP_HANDLEMEMORYMAPPING_HH
 
 // Nitrogen
+#ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
+#endif
 
 // Genie
 #include "Genie/mmap/memory_mapping.hh"

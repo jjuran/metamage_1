@@ -15,8 +15,12 @@
 #include <sys/socket.h>
 
 // Nitrogen
+#ifndef NITROGEN_OPENTRANSPORT_HH
 #include "Nitrogen/OpenTransport.hh"
+#endif
+#ifndef NITROGEN_OPENTRANSPORTPROVIDERS_HH
 #include "Nitrogen/OpenTransportProviders.hh"
+#endif
 
 // Genie
 #include "Genie/IO/SocketStream.hh"

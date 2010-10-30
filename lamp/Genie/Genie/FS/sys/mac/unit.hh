@@ -12,7 +12,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_HH
 #include "nucleus/advance_until_done_sequence.hh"
+#endif
 
 // ClassicToolbox
 #include "ClassicToolbox/Devices.hh"

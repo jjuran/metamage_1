@@ -13,7 +13,9 @@
 #include "plus/stringify.hh"
 
 // Nitrogen
+#ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
+#endif
 
 
 namespace Genie
