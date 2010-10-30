@@ -11,7 +11,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_MEMORY_TYPES_HANDLE_HH
 #include "Mac/Memory/Types/Handle.hh"
+#endif
 
 
 namespace nucleus

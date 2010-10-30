@@ -10,7 +10,9 @@
 #include "plus/string.hh"
 
 // Nitrogen
+#ifndef NITROGEN_MACTYPES_HH
 #include "Nitrogen/MacTypes.hh"
+#endif
 
 
 namespace Genie

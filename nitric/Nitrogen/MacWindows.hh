@@ -19,18 +19,38 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_LINKEDLISTSEQUENCE_HH
 #include "nucleus/linked_list_sequence.hh"
+#endif
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef CARBON_CF_TYPES_CFTYPEREF_HH
 #include "Carbon/CF/Types/CFTypeRef.hh"
+#endif
+#ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
+#endif
+#ifndef MAC_ICONS_TYPES_ICONREF_HH
 #include "Mac/Icons/Types/IconRef.hh"
+#endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
 #include "Mac/Windows/Types/WindowDefProcID.hh"
+#endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #include "Mac/Windows/Types/WindowRef.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"

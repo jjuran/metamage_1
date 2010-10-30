@@ -7,7 +7,9 @@
 #define PEDESTAL_GENERATEDGRAPHIC_HH
 
 // Nitrogen
+#ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/Graphic.hh"

@@ -14,7 +14,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
 
 
 namespace NitrogenExtras

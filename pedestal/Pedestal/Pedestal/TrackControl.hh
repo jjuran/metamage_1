@@ -7,7 +7,9 @@
 #define PEDESTAL_TRACKCONTROL_HH
 
 // Nitrogen
+#ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
 #include "Mac/Controls/Types/ControlPartCode.hh"
+#endif
 
 
 namespace Pedestal

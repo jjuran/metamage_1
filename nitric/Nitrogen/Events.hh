@@ -19,11 +19,17 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_EVENTS_TYPES_EVENTKIND_HH
 #include "Mac/Events/Types/EventKind.hh"
+#endif
 
 
 namespace Nitrogen

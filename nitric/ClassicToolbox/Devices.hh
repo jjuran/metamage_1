@@ -15,12 +15,20 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_DEVICES_TYPES_DRIVERREFNUM_HH
 #include "Mac/Devices/Types/DriverRefNum.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"

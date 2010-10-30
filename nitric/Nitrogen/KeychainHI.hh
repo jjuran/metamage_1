@@ -19,7 +19,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 #ifndef NITROGEN_KEYCHAINCORE_HH
 #include "Nitrogen/KeychainCore.hh"

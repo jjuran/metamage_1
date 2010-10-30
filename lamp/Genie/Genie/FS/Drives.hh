@@ -7,8 +7,12 @@
 #define GENIE_FILESYSTEM_DRIVES_HH
 
 // Nitrogen
+#ifndef MAC_FILES_FUNCTIONS_FLUSHVOL_HH
 #include "Mac/Files/Functions/FlushVol.hh"
+#endif
+#ifndef MAC_FILES_FUNCTIONS_UNMOUNTVOL_HH
 #include "Mac/Files/Functions/UnmountVol.hh"
+#endif
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON

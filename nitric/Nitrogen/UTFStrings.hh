@@ -26,8 +26,12 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_HH

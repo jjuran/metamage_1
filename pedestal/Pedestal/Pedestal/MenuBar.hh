@@ -7,7 +7,9 @@
 #define PEDESTAL_MENUBAR_HH
 
 // Nitrogen
+#ifndef MAC_MENUS_TYPES_MENUID_HH
 #include "Mac/Menus/Types/MenuID.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"

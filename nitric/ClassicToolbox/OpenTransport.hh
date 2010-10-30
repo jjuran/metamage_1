@@ -10,7 +10,9 @@
 #include "Nostalgia/OpenTransport.hh"
 
 // Nitrogen
+#ifndef NITROGEN_OPENTRANSPORT_HH
 #include "Nitrogen/OpenTransport.hh"
+#endif
 
 
 namespace Nitrogen

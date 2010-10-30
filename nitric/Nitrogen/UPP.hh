@@ -20,7 +20,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 
 namespace Nitrogen

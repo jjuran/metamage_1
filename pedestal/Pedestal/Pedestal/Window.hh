@@ -16,13 +16,21 @@
 #include <boost/intrusive_ptr.hpp>
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
 #include "Mac/Windows/Types/WindowDefProcID.hh"
+#endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #include "Mac/Windows/Types/WindowRef.hh"
+#endif
 
+#ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"

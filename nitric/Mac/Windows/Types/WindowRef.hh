@@ -11,11 +11,15 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_DISPOSER_HH
 #include "nucleus/disposer.hh"
+#endif
 
 // Nitrogen
 #if !OPAQUE_TOOLBOX_STRUCTS
+#ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
+#endif
 #endif
 
 

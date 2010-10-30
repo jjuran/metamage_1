@@ -23,15 +23,29 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
+#endif
+#ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
 #include "Mac/Controls/Types/ControlPartCode.hh"
+#endif
+#ifndef MAC_CONTROLS_TYPES_CONTROLPROCID_HH
 #include "Mac/Controls/Types/ControlProcID.hh"
+#endif
+#ifndef MAC_TOOLBOX_TYPES_OSTYPE_HH
 #include "Mac/Toolbox/Types/OSType.hh"
+#endif
 
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"

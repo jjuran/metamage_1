@@ -22,9 +22,15 @@
 #endif
 
 // Nitrogen
+#ifndef CARBON_CF_TYPES_CFTYPEREF_HH
 #include "Carbon/CF/Types/CFTypeRef.hh"
+#endif
+#ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
 #include "Mac/Controls/Types/ControlPartCode.hh"
+#endif
+#ifndef MAC_CONTROLS_TYPES_CONTROLPROCID_HH
 #include "Mac/Controls/Types/ControlProcID.hh"
+#endif
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"

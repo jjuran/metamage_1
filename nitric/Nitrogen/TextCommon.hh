@@ -17,16 +17,32 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
+#endif
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_MEMORY_TYPES_HANDLE_HH
 #include "Mac/Memory/Types/Handle.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_LANGCODE_HH
 #include "Mac/Script/Types/LangCode.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_REGIONCODE_HH
 #include "Mac/Script/Types/RegionCode.hh"
+#endif
+#ifndef MAC_SCRIPT_TYPES_SCRIPTCODE_HH
 #include "Mac/Script/Types/ScriptCode.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"

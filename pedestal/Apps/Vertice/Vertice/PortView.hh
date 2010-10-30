@@ -7,7 +7,9 @@
 #define VERTICE_PORTVIEW_HH
 
 // Nitrogen
+#ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffscreen.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"

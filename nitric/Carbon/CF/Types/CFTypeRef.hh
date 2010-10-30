@@ -11,8 +11,12 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_DISPOSER_HH
 #include "nucleus/disposer.hh"
+#endif
 
 
 namespace Nitrogen

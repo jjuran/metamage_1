@@ -12,7 +12,9 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
+#endif
 
 
 namespace Pedestal

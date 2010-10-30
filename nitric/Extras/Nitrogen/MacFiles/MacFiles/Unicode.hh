@@ -19,8 +19,12 @@
 #include "io/files.hh"
 
 // Nitrogen
+#ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
+#endif
+#ifndef NITROGEN_TEXTCOMMON_HH
 #include "Nitrogen/TextCommon.hh"
+#endif
 
 
 namespace Nitrogen

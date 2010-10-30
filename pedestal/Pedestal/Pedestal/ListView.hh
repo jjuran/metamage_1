@@ -7,10 +7,14 @@
 #define PEDESTAL_LISTVIEW_HH
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_LISTS_TYPES_LISTHANDLE_HH
 #include "Mac/Lists/Types/ListHandle.hh"
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"

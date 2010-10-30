@@ -7,10 +7,19 @@
 #define MACIO_GETCATINFOSYNC_HH
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
 #include "Mac/Files/Types/FSDirSpec.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
+
+#ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
+#endif
 
 // MacIO
 #include "MacIO/ThrowOSStatus.hh"

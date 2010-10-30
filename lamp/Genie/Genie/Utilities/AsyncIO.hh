@@ -7,17 +7,33 @@
 #define GENIE_ASYNCIO_HH
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
 #include "Mac/Files/Types/FSDirSpec.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPERM_HH
 #include "Mac/Files/Types/FSIOPerm.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSIOPOSMODE_HH
 #include "Mac/Files/Types/FSIOPosMode.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
 
+#ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
+#endif
 
 // MacIO
 #include "MacIO/EOF_Policy.hh"

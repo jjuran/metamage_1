@@ -22,12 +22,20 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
+#endif
 
 #ifndef NITROGEN_RESOURCES_HH
 #include "Nitrogen/Resources.hh"

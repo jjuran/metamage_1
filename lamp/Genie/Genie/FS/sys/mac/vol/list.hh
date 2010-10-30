@@ -7,7 +7,9 @@
 #define GENIE_FS_SYS_MAC_VOL_LIST_HH
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#endif
 
 // Genie
 #include "Genie/FS/FSTree.hh"

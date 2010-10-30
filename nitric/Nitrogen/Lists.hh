@@ -22,12 +22,20 @@
 #include "iota/string_traits.hh"
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
+#ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_LISTS_TYPES_LISTHANDLE_HH
 #include "Mac/Lists/Types/ListHandle.hh"
+#endif
+#ifndef MAC_RESOURCES_TYPES_RESID_HH
 #include "Mac/Resources/Types/ResID.hh"
+#endif
 
 
 namespace Nitrogen

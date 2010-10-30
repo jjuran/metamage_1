@@ -7,7 +7,9 @@
 #define ITERATION_AEDESCLISTITEMDATAS_H
 
 // nucleus
+#ifndef NUCLEUS_INDEXEDVALUESEQUENCE_HH
 #include "nucleus/indexed_value_sequence.hh"
+#endif
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"

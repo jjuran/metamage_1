@@ -11,7 +11,9 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
 #ifndef CARBON_CF_TYPES_CFTYPEREF_HH

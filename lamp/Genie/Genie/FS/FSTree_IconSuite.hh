@@ -7,10 +7,14 @@
 #define GENIE_FILESYSTEM_FSTREE_ICONSUITE_HH
 
 // nucleus
+#ifndef NUCLEUS_SHARED_HH
 #include "nucleus/shared.hh"
+#endif
 
 // Nitrogen
+#ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
+#endif
 
 // Genie
 #include "Genie/FS/FSTree.hh"

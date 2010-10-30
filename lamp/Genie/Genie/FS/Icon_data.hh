@@ -19,7 +19,9 @@
 #include "plus/ref_count.hh"
 
 // Nitrogen
+#ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
+#endif
 
 // Genie
 #include "Genie/FS/FSTree.hh"

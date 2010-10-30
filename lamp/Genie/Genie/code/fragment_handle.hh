@@ -7,10 +7,14 @@
 #define GENIE_CODE_FRAGMENTHANDLE_HH
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_CODEFRAGMENTS_TYPES_CFRAGCONNECTIONID_HH
 #include "Mac/CodeFragments/Types/CFragConnectionID.hh"
+#endif
 
 // Genie
 #include "Genie/code/loaded_handle.hh"

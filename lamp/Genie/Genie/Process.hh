@@ -21,10 +21,14 @@
 #include <boost/shared_ptr.hpp>
 
 // nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // Nitrogen
+#ifndef MAC_THREADS_TYPES_THREADID_HH
 #include "Mac/Threads/Types/ThreadID.hh"
+#endif
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"

@@ -22,7 +22,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
+#endif
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"

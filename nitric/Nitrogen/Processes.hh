@@ -19,12 +19,24 @@
 #endif
 
 // nucleus
+#ifndef NUCLEUS_ADVANCEUNTILERRORSEQUENCE_HH
 #include "nucleus/advance_until_error_sequence.hh"
+#endif
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
+#ifndef NUCLEUS_INITIALIZE_HH
 #include "nucleus/initialize.hh"
+#endif
+#ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
+#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
