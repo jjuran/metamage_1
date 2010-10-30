@@ -10,7 +10,9 @@
 #include "plus/string.hh"
 
 // Nitrogen
+#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
 #include "Mac/Files/Types/FSDirSpec.hh"
+#endif
 
 
 plus::string GetMacPathname( const Mac::FSDirSpec&  dir  );
