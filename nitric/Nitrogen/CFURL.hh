@@ -22,16 +22,28 @@
 // iota
 #include "iota/string_traits.hh"
 
+// Nitrogen
+#ifndef CARBON_CF_TYPES_CFMUTABLESTRINGREF_HH
+#include "Carbon/CF/Types/CFMutableStringRef.hh"
+#endif
+#ifndef CARBON_CF_TYPES_CFSTRINGENCODING_HH
+#include "Carbon/CF/Types/CFStringEncoding.hh"
+#endif
+
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
 #ifndef NITROGEN_CFDATA_HH
 #include "Nitrogen/CFData.hh"
 #endif
-#ifndef NITROGEN_CFSTRING_HH
-#include "Nitrogen/CFString.hh"
-#endif
 
+
+namespace Nitrogen
+{
+	
+	using Carbon::CFStringEncoding;
+	
+}
 
 namespace Nitrogen
   {
