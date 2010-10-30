@@ -20,6 +20,9 @@
 #include "iota/string_traits.hh"
 
 // Nitrogen
+#ifndef CARBON_CF_TYPES_CFMUTABLESTRINGREF_HH
+#include "Carbon/CF/Types/CFMutableStringRef.hh"
+#endif
 #ifndef CARBON_CF_TYPES_CFSTRINGENCODING_HH
 #include "Carbon/CF/Types/CFStringEncoding.hh"
 #endif
@@ -43,16 +46,12 @@ namespace Nitrogen
    inline void CFShow( const CFStringRef s )        { ::CFShow( s ); }
 
    using ::CFMutableStringRef;
-   template <> struct CFType_Traits< CFMutableStringRef >: Basic_CFType_Traits< CFMutableStringRef, ::CFStringGetTypeID > {};
+   
    inline void CFShow( const CFMutableStringRef s )        { ::CFShow( s ); }
 
 	using Carbon::CFStringEncoding;
    }
 
-namespace nucleus {
-   template <> struct disposer_traits< CFMutableStringRef >: disposer_traits< Nitrogen::CFTypeRef > {};
-   }
-   
 namespace Nitrogen {
    using ::CFStringGetTypeID;
    
