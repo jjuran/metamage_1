@@ -127,7 +127,7 @@ namespace Genie
 			}
 	};
 	
-	static void gdev_iterate( FSTreeCache& cache )
+	static void gdev_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		gdev_IteratorConverter converter;
 		

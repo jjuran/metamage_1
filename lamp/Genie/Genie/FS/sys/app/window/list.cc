@@ -66,7 +66,7 @@ namespace Genie
 			}
 	};
 	
-	static void WindowRef_iterate( FSTreeCache& cache )
+	static void WindowRef_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		window_IteratorConverter converter;
 		

@@ -54,7 +54,7 @@ namespace Genie
 	{
 		if ( itsIterate != NULL )
 		{
-			itsIterate( cache );
+			itsIterate( Self(), Name(), cache );
 		}
 	}
 	

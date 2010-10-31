@@ -100,7 +100,7 @@ namespace Genie
 			}
 	};
 	
-	static void serial_iterate( FSTreeCache& cache )
+	static void serial_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		crm_IteratorConverter converter;
 		

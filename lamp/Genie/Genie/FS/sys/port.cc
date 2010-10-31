@@ -57,7 +57,7 @@ namespace Genie
 		return FSTreePtr( *it );
 	}
 	
-	static void window_iterate( FSTreeCache& cache )
+	static void window_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		WindowMap::const_iterator end = gWindowMap.end();
 		

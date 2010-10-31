@@ -330,7 +330,7 @@ namespace Genie
 			}
 	};
 	
-	static void unit_iterate( FSTreeCache& cache )
+	static void unit_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		unit_IteratorConverter converter;
 		

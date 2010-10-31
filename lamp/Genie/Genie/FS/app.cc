@@ -124,7 +124,7 @@ namespace Genie
 		return new unused_app_slot( parent, name );
 	}
 	
-	static void app_iterate( FSTreeCache& cache )
+	static void app_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		typedef app_map::iterator iterator;
 		

@@ -223,7 +223,7 @@ namespace Genie
 			}
 	};
 	
-	static void thng_iterate( FSTreeCache& cache )
+	static void thng_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
 	{
 		thng_IteratorConverter converter;
 		
