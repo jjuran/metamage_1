@@ -453,23 +453,25 @@ namespace Genie
 		                            &Property::get );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_app_window_list_REF_Property< prop > >::value
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
 	
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
 	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =
 	{
-		{ "title", PROPERTY( Access_WindowTitle    ) },
-		{ "pos",   PROPERTY( Access_WindowPosition ) },
-		{ "size",  PROPERTY( Access_WindowSize     ) },
-		{ "vis",   PROPERTY( Access_WindowVisible  ) },
+		{ "title", PROPERTY_ACCESS( Access_WindowTitle    ) },
+		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
+		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
+		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
 		
-		{ "text-font",  PROPERTY( Access_WindowTextFont ) },
-		{ "text-size",  PROPERTY( Access_WindowTextSize ) },
+		{ "text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
+		{ "text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
 		
-		{ "back-color", PROPERTY( Access_WindowBackColor ) },
-		{ "fore-color", PROPERTY( Access_WindowForeColor ) },
+		{ "back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
+		{ "fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
 		
 		{ "select", &Trigger_Factory< Trigger< Select_Trigger > > },
 		
