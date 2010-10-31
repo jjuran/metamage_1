@@ -43,6 +43,7 @@
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/Utilities/WindowList_contains.hh"
 
 
@@ -452,12 +453,16 @@ namespace Genie
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
 	
+	typedef sys_app_window_list_REF_Property< Access_WindowTitle > window_title;
+	
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
 	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =
 	{
-		{ "title", PROPERTY_ACCESS( Access_WindowTitle    ) },
+		{ ".mac-title", PROPERTY(                     window_title   ) },
+		{      "title", PROPERTY( utf8_text_property< window_title > ) },
+		
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
 		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
