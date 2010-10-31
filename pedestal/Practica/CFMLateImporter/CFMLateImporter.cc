@@ -8,6 +8,11 @@
 // CFMLateImport
 #include "CFMLateImport.h"
 
+// Nitrogen
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
+#endif
+
 // CFMLateImporter
 #include "CFMLateImporter/SavedCFragInitBlock.h"
 

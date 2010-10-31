@@ -6,9 +6,14 @@
 #ifndef CFMLATEIMPORTER_HH
 #define CFMLATEIMPORTER_HH
 
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
+
 // Nitrogen
-#ifndef NITROGEN_CODEFRAGMENTS_HH
-#include "Nitrogen/CodeFragments.hh"
+#ifndef MAC_CODEFRAGMENTS_TYPES_CFRAGCONNECTIONID_HH
+#include "Mac/CodeFragments/Types/CFragConnectionID.hh"
 #endif
 
 
