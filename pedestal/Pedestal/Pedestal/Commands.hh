@@ -8,18 +8,12 @@
 #ifndef PEDESTAL_COMMANDS_HH
 #define PEDESTAL_COMMANDS_HH
 
+// Pedestal
+#include "Pedestal/CommandCode.hh"
+
 
 namespace Pedestal
 {
-	
-	enum CommandCode
-	{
-		kCmdAbout = 'abou',
-		kCmdNew   = 'new ',
-		
-		kCommandCode_Max = 0xffffffff
-	};
-	
 	
 	typedef bool (*CommandHandler)( CommandCode code );
 	
