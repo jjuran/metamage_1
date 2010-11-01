@@ -27,6 +27,9 @@
 // Nitrogen
 #include "Nitrogen/Str.hh"
 
+// Pedestal
+#include "Pedestal/MenuItemCommands.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_Str255.hh"
@@ -38,6 +41,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
 	struct menu_item_text : serialize_Str255_contents
@@ -54,6 +58,21 @@ namespace Genie
 		static void Set( MenuRef menu, UInt16 index, ConstStr255Param title )
 		{
 			::SetMenuItemText( menu, index, title );
+		}
+	};
+	
+	struct menu_item_cmd : plus::serialize_hex< ::OSType >
+	{
+		static Ped::CommandCode Get( MenuRef menu, UInt16 index )
+		{
+			return Ped::GetMenuItemCommandCode( Mac::MenuID( GetMenuID( menu ) ), index );
+		}
+		
+		static void Set( MenuRef menu, UInt16 index, ::OSType code )
+		{
+			Ped::SetMenuItemCommandCode( Mac::MenuID( GetMenuID( menu ) ),
+			                             index,
+			                             Ped::CommandCode( code ) );
 		}
 	};
 	
@@ -155,6 +174,7 @@ namespace Genie
 		
 		{ "mark", PROPERTY_ACCESS( menu_item_mark ) },
 		{ "key",  PROPERTY_ACCESS( menu_item_key  ) },
+		{ "cmd",  PROPERTY_ACCESS( menu_item_cmd  ) },
 		
 		{ NULL, NULL }
 	};
