@@ -41,6 +41,7 @@
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -531,7 +532,9 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
-		{ "name", PROPERTY( sys_mac_vol_N_name ) },
+		{ ".mac-name", PROPERTY( sys_mac_vol_N_name ) },
+		
+		{ "name", PROPERTY( utf8_text_property< sys_mac_vol_N_name > ) },
 		
 		{ "block-size",  PROPERTY_ACCESS( GetVolumeBlockSize      ) },
 		{ "blocks",      PROPERTY_ACCESS( GetVolumeBlockCount     ) },
