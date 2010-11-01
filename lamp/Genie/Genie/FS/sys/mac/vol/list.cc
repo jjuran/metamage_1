@@ -451,23 +451,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Volume_Name_Factory( const FSTreePtr&     parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
-	{
-		typedef sys_mac_vol_N_name Property;
-		
-		const size_t size = 0;
-		
-		FSTreePtr result = New_FSTree_Property( parent,
-		                                        name,
-		                                        size,
-		                                        &Property::get,
-		                                        &Property::set );
-		
-		return result;
-	}
-	
 	template < class Trigger >
 	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
@@ -548,7 +531,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
-		{ "name", &Volume_Name_Factory },
+		{ "name", PROPERTY( sys_mac_vol_N_name ) },
 		
 		{ "block-size",  PROPERTY_ACCESS( GetVolumeBlockSize      ) },
 		{ "blocks",      PROPERTY_ACCESS( GetVolumeBlockCount     ) },
