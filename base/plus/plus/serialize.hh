@@ -90,10 +90,13 @@ namespace plus
 	struct serialize_hex : serialize_POD< Int >
 	{
 		typedef typename hex_stringifier< sizeof (Int) >::type  stringify;
+		typedef typename hex_vivifier   < sizeof (Int) >::type  vivify;
 		
 		typedef typename serialize_POD< Int >::freeze  freeze;
+		typedef typename serialize_POD< Int >::thaw    thaw;
 		
 		typedef deconstruct< freeze, stringify >  deconstruct;
+		typedef reconstruct< Int, thaw, vivify >  reconstruct;
 	};
 	
 	struct serialize_pointer : serialize_POD< const void* >
