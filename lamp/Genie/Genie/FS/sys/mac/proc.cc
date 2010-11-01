@@ -175,7 +175,7 @@ namespace Genie
 	}
 	
 	
-	class sys_mac_proc_PSN_name
+	class sys_mac_proc_PSN_name : public readonly_property
 	{
 		private:
 			typedef ProcessSerialNumber Key;
@@ -220,15 +220,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &sys_mac_proc_PSN_name::get );
-	}
-	
 	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
 	                                     const plus::string&  name,
 	                                     const void*          args )
@@ -236,9 +227,11 @@ namespace Genie
 		return seize_ptr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
 	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
 	const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[] =
 	{
-		{ "name", &Name_Factory },
+		{ "name", PROPERTY( sys_mac_proc_PSN_name ) },
 		
 		{ "exe", &Executable_Factory },
 		
