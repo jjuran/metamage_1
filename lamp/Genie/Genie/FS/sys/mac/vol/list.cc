@@ -542,29 +542,31 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Property< prop > >::value
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ "name", &Volume_Name_Factory },
 		
-		{ "block-size",  PROPERTY( GetVolumeBlockSize      ) },
-		{ "blocks",      PROPERTY( GetVolumeBlockCount     ) },
-		{ "blocks-free", PROPERTY( GetVolumeFreeBlockCount ) },
+		{ "block-size",  PROPERTY_ACCESS( GetVolumeBlockSize      ) },
+		{ "blocks",      PROPERTY_ACCESS( GetVolumeBlockCount     ) },
+		{ "blocks-free", PROPERTY_ACCESS( GetVolumeFreeBlockCount ) },
 		
-		{ "capacity",  PROPERTY( GetVolumeCapacity  ) },
-		{ "freespace", PROPERTY( GetVolumeFreeSpace ) },
+		{ "capacity",  PROPERTY_ACCESS( GetVolumeCapacity  ) },
+		{ "freespace", PROPERTY_ACCESS( GetVolumeFreeSpace ) },
 		
-		{ "sig", PROPERTY( GetVolumeSignature ) },
+		{ "sig", PROPERTY_ACCESS( GetVolumeSignature ) },
 		
 		{ "drive",  &Drive_Link_Factory  },
 		{ "driver", &Driver_Link_Factory },
 		
-		{ "fsid", PROPERTY( GetVolumeFSID ) },
+		{ "fsid", PROPERTY_ACCESS( GetVolumeFSID ) },
 		
-		{ "writes", PROPERTY( GetVolumeWriteCount ) },
-		{ "files",  PROPERTY( GetVolumeFileCount  ) },
-		{ "dirs",   PROPERTY( GetVolumeDirCount   ) },
+		{ "writes", PROPERTY_ACCESS( GetVolumeWriteCount ) },
+		{ "files",  PROPERTY_ACCESS( GetVolumeFileCount  ) },
+		{ "dirs",   PROPERTY_ACCESS( GetVolumeDirCount   ) },
 		
 		{ "dt",    PREMAPPED( sys_mac_vol_list_N_dt_Mappings ) },
 		{ "parms", PREMAPPED( sys_mac_vol_N_parms_Mappings   ) },
