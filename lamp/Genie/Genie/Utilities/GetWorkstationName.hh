@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	plus::string GetWorkstationName();
+	plus::string GetWorkstationName( bool convert_to_UTF8 );
 	
 }
 

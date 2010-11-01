@@ -80,7 +80,7 @@ namespace Genie
 		
 		try
 		{
-			nodename = GetWorkstationName();
+			nodename = GetWorkstationName( false );
 		}
 		catch ( ... )
 		{
