@@ -27,9 +27,6 @@
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 
-// pfiles
-#include "pfiles/common.hh"
-
 // Orion
 #include "Orion/get_options.hh"
 #include "Orion/Main.hh"
@@ -104,8 +101,6 @@ namespace tool
 	
 	static plus::string report_process( const plus::string& pid_name )
 	{
-		using namespace io::path_descent_operators;
-		
 		n::owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
 		
 		char buffer[ 4096 ];
