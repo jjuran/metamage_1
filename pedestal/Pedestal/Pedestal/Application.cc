@@ -708,13 +708,13 @@ namespace Pedestal
 			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
 		}
 		
-		AddMenu( N::GetMenuID( appleMenu ) );
-		AddMenu( N::GetMenuID( fileMenu  ) );
-		AddMenu( N::GetMenuID( editMenu  ) );
+		AddMenu( appleMenu );
+		AddMenu( fileMenu  );
+		AddMenu( editMenu  );
 		
 		if ( !TARGET_API_MAC_CARBON )
 		{
-			PopulateAppleMenu( N::GetMenuID( appleMenu ) );
+			PopulateAppleMenu( appleMenu );
 		}
 		
 		N::InvalMenuBar();

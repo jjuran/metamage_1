@@ -75,9 +75,9 @@ namespace Pedestal
 		}
 	}
 	
-	void AddMenu( N::MenuID menuID )
+	void AddMenu( MenuRef menu )
 	{
-		MenuRef menu = N::GetMenuRef( menuID );
+		const Mac::MenuID menuID = N::GetMenuID( menu );
 		
 		ExtractCmdCodes( menu, gMenus[ menuID ] );
 	}
@@ -85,11 +85,11 @@ namespace Pedestal
 	
 	static const Mac::ResType kDeskAccessoryResourceType = Mac::ResType( 'DRVR' );
 	
-	void PopulateAppleMenu( N::MenuID menuID )
+	void PopulateAppleMenu( MenuRef menu )
 	{
-		gAppleMenuID = menuID;
+		gAppleMenuID = N::GetMenuID( menu );
 		
-		N::AppendResMenu( N::GetMenuRef( menuID ), kDeskAccessoryResourceType );
+		N::AppendResMenu( menu, kDeskAccessoryResourceType );
 	}
 	
 	CommandCode HandleMenuItem( N::MenuID menuID, SInt16 item )
