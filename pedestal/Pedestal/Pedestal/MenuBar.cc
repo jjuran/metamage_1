@@ -5,10 +5,6 @@
 
 #include "Pedestal/MenuBar.hh"
 
-// Standard C++
-#include <map>
-#include <vector>
-
 // iota
 #include "iota/quad.hh"
 
@@ -22,6 +18,9 @@
 #include "ClassicToolbox/Devices.hh"
 #endif
 
+// Pedestal
+#include "Pedestal/MenuItemCommands.hh"
+
 
 namespace Pedestal
 {
@@ -29,12 +28,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	typedef std::map< N::MenuID, std::vector< CommandCode > > Menus;
-	
-	
 	static N::MenuID gAppleMenuID = N::MenuID();
-	
-	static Menus gMenus;
 	
 	
 	static CommandCode TakeCodeFromItemText( Str255 ioItemText )
@@ -65,21 +59,18 @@ namespace Pedestal
 		return code;
 	}
 	
-	static void ExtractCmdCodes( MenuRef menu, std::vector< CommandCode >& outCodes )
-	{
-		short count = N::CountMenuItems( menu );
-		outCodes.resize( 1 + count );  // slot 0 is unused
-		for ( short i = count;  i > 0;  i-- )
-		{
-			outCodes[ i ] = ExtractItemCmdCode( menu, i );
-		}
-	}
-	
 	void AddMenu( MenuRef menu )
 	{
 		const Mac::MenuID menuID = N::GetMenuID( menu );
 		
-		ExtractCmdCodes( menu, gMenus[ menuID ] );
+		const UInt16 count = N::CountMenuItems( menu );
+		
+		for ( int i = count;  i > 0;  i-- )
+		{
+			const CommandCode code = ExtractItemCmdCode( menu, i );
+			
+			SetMenuItemCommandCode( menuID, i, code );
+		}
 	}
 	
 	
@@ -94,28 +85,19 @@ namespace Pedestal
 	
 	CommandCode HandleMenuItem( N::MenuID menuID, SInt16 item )
 	{
-		Menus::const_iterator it = gMenus.find( menuID );
-		
-		if ( it != gMenus.end() )
+		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
 		{
-			const std::vector< CommandCode >& commands = it->second;
-			
-			if ( item < commands.size() )
-			{
-				CommandCode code = commands[ item ];
-				
-				return code;
-			}
-			
-		#if CALL_NOT_IN_CARBON
-			
-			else if ( menuID == gAppleMenuID )
-			{
-				N::OpenDeskAcc( N::GetMenuItemText( N::GetMenuRef( menuID ), item ) );
-			}
-			
-		#endif
+			return code;
 		}
+		
+	#if CALL_NOT_IN_CARBON
+		
+		if ( menuID == gAppleMenuID )
+		{
+			N::OpenDeskAcc( N::GetMenuItemText( N::GetMenuRef( menuID ), item ) );
+		}
+		
+	#endif
 		
 		return kCmdNone;
 	}
