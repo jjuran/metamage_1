@@ -8,6 +8,7 @@
 
 // iota
 #include "iota/decimal.hh"
+#include "iota/hexidecimal.hh"
 
 
 namespace plus
@@ -43,6 +44,48 @@ namespace plus
 		{
 			return Int( iota::parse_unsigned_decimal( begin ) );
 		}
+	};
+	
+	struct vivify_8_bit_hex
+	{
+		static unsigned char apply( const char* begin, const char* end )
+		{
+			return iota::decode_8_bit_hex( begin );
+		}
+	};
+	
+	struct vivify_16_bit_hex
+	{
+		static unsigned short apply( const char* begin, const char* end )
+		{
+			return iota::decode_16_bit_hex( begin );
+		}
+	};
+	
+	struct vivify_32_bit_hex
+	{
+		static unsigned apply( const char* begin, const char* end )
+		{
+			return iota::decode_32_bit_hex( begin );
+		}
+	};
+	
+	
+	template < int size > struct hex_vivifier;
+	
+	template <> struct hex_vivifier< 1 >
+	{
+		typedef vivify_8_bit_hex type;
+	};
+	
+	template <> struct hex_vivifier< 2 >
+	{
+		typedef vivify_16_bit_hex type;
+	};
+	
+	template <> struct hex_vivifier< 4 >
+	{
+		typedef vivify_32_bit_hex type;
 	};
 	
 }
