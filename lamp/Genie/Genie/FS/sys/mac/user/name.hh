@@ -22,6 +22,11 @@ namespace Genie
 	
 	class FSTree;
 	
+	struct sys_mac_user_macname : readonly_property
+	{
+		static void get( plus::var_string& result, const FSTree* that, bool binary );
+	};
+	
 	struct sys_mac_user_name : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary );

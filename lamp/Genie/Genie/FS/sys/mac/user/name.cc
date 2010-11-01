@@ -63,7 +63,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static plus::string GetUserName()
+	static plus::string GetUserName( bool convert_to_UTF8 )
 	{
 		if ( !Is_Running_OSXNative() )
 		{
@@ -72,15 +72,23 @@ namespace Genie
 		
 		if ( CFStringRef name = CSCopyUserName_CFM( false ) )
 		{
-			return CFStringGetStdString( n::owned< CFStringRef >::seize( name ) );
+			CFStringEncoding encoding = convert_to_UTF8 ? kCFStringEncodingUTF8
+			                                            : kCFStringEncodingMacRoman;
+			
+			return CFStringGetStdString( n::owned< CFStringRef >::seize( name ), encoding );
 		}
 		
 		return "";
 	}
 	
+	void sys_mac_user_macname::get( plus::var_string& result, const FSTree* that, bool binary )
+	{
+		result = GetUserName( false );
+	}
+	
 	void sys_mac_user_name::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
-		result = GetUserName();
+		result = GetUserName( true );
 	}
 	
 }
