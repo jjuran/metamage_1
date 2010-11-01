@@ -29,7 +29,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	typedef std::map< N::MenuID, std::vector< MenuItemCode > > Menus;
+	typedef std::map< N::MenuID, std::vector< CommandCode > > Menus;
 	
 	
 	static N::MenuID gAppleMenuID = N::MenuID();
@@ -37,27 +37,27 @@ namespace Pedestal
 	static Menus gMenus;
 	
 	
-	static MenuItemCode TakeCodeFromItemText( Str255 ioItemText )
+	static CommandCode TakeCodeFromItemText( Str255 ioItemText )
 	{
 		int len = ioItemText[ 0 ];
 		
-		if ( len < 7 )  return 0;
+		if ( len < 7 )  return kCmdNone;
 		
-		if ( ioItemText[ len     ] != ']' )  return 0;
-		if ( ioItemText[ len - 5 ] != '[' )  return 0;
-		
-		MenuItemCode code = iota::decode_quad( &ioItemText[ len - 4 ] );
+		if ( ioItemText[ len     ] != ']' )  return kCmdNone;
+		if ( ioItemText[ len - 5 ] != '[' )  return kCmdNone;
 		
 		ioItemText[ 0 ] -= 7;
 		
-		return code;
+		return CommandCode( iota::decode_quad( &ioItemText[ len - 4 ] ) );
 	}
 	
-	static MenuItemCode ExtractItemCmdCode( MenuRef menu, short item )
+	static CommandCode ExtractItemCmdCode( MenuRef menu, short item )
 	{
 		N::Str255 itemText = N::GetMenuItemText( menu, item );
-		MenuItemCode code = TakeCodeFromItemText( itemText );
-		if ( code != 0 )
+		
+		CommandCode code = TakeCodeFromItemText( itemText );
+		
+		if ( code != kCmdNone )
 		{
 			N::SetMenuItemText( menu, item, itemText );
 		}
@@ -65,7 +65,7 @@ namespace Pedestal
 		return code;
 	}
 	
-	static void ExtractCmdCodes( MenuRef menu, std::vector< MenuItemCode >& outCodes )
+	static void ExtractCmdCodes( MenuRef menu, std::vector< CommandCode >& outCodes )
 	{
 		short count = N::CountMenuItems( menu );
 		outCodes.resize( 1 + count );  // slot 0 is unused
@@ -92,17 +92,17 @@ namespace Pedestal
 		N::AppendResMenu( N::GetMenuRef( menuID ), kDeskAccessoryResourceType );
 	}
 	
-	MenuItemCode HandleMenuItem( N::MenuID menuID, SInt16 item )
+	CommandCode HandleMenuItem( N::MenuID menuID, SInt16 item )
 	{
 		Menus::const_iterator it = gMenus.find( menuID );
 		
 		if ( it != gMenus.end() )
 		{
-			const std::vector< MenuItemCode >& commands = it->second;
+			const std::vector< CommandCode >& commands = it->second;
 			
 			if ( item < commands.size() )
 			{
-				MenuItemCode code = commands[ item ];
+				CommandCode code = commands[ item ];
 				
 				return code;
 			}
@@ -117,7 +117,7 @@ namespace Pedestal
 		#endif
 		}
 		
-		return 0;
+		return kCmdNone;
 	}
 	
 }

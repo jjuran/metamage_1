@@ -7,9 +7,9 @@
 #define PEDESTAL_TEXTEDIT_HH
 
 // Pedestal
+#include "Pedestal/CommandCode.hh"
 #include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/IncrementalSearch.hh"
-#include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/Scroller_beta.hh"
 
 
@@ -82,7 +82,7 @@ namespace Pedestal
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
-			bool UserCommand( MenuItemCode code );
+			bool UserCommand( CommandCode code );
 			
 			TextSelection GetCurrentSelection() const;
 			

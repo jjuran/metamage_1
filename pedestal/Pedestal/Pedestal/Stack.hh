@@ -45,7 +45,7 @@ namespace Pedestal
 			
 			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
 			
-			bool UserCommand( MenuItemCode code );
+			bool UserCommand( CommandCode code );
 	};
 	
 }

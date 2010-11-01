@@ -33,7 +33,6 @@
 #endif
 
 // Pedestal
-#include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/View.hh"
 
 

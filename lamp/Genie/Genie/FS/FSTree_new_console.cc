@@ -102,7 +102,7 @@ namespace Genie
 	static ConsoleParametersMap gConsoleParametersMap;
 	
 	
-	static bool Console_UserCommand_Hook( TextEdit& that, Ped::MenuItemCode code )
+	static bool Console_UserCommand_Hook( TextEdit& that, Ped::CommandCode code )
 	{
 		bool handled = false;
 		

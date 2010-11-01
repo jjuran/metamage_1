@@ -187,7 +187,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	bool Stack::UserCommand( MenuItemCode code )
+	bool Stack::UserCommand( CommandCode code )
 	{
 		const unsigned count = ViewCount();
 		

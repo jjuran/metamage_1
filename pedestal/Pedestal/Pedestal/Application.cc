@@ -195,7 +195,7 @@ namespace Pedestal
 	
 	static bool DoCommand( CommandCode code );
 	
-	static bool DispatchMenuItem( MenuItemCode code )
+	static bool DispatchMenuItem( CommandCode code )
 	{
 		bool handled = false;
 		
@@ -984,7 +984,7 @@ namespace Pedestal
 		
 		AtEnd< UnhighlightMenus > unhighlightMenus;
 		
-		if ( MenuItemCode code = HandleMenuItem( menuID, item ) )
+		if ( CommandCode code = HandleMenuItem( menuID, item ) )
 		{
 			DispatchMenuItem( code );
 		}

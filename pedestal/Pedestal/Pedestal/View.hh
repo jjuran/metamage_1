@@ -21,7 +21,7 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Pedestal
-#include "Pedestal/MenuItemCode.hh"
+#include "Pedestal/CommandCode.hh"
 
 
 struct EventRecord;      // Events.h
@@ -82,7 +82,7 @@ namespace Pedestal
 			virtual bool SetCursor( const EventRecord&  event,
 			                        RgnHandle           mouseRgn  )  { return false; }
 			
-			virtual bool UserCommand( MenuItemCode code  )  { return false; }
+			virtual bool UserCommand( CommandCode code  )  { return false; }
 	};
 	
 	

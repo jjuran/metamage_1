@@ -131,7 +131,7 @@ namespace Pedestal
 		return result;
 	}
 	
-	bool ScrollFrame::UserCommand( MenuItemCode code )
+	bool ScrollFrame::UserCommand( CommandCode code )
 	{
 		const bool result = Subview().UserCommand( code );
 		

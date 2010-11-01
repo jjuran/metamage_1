@@ -63,7 +63,7 @@ namespace Vertice
 			bool MouseDown( const EventRecord& event );
 			bool KeyDown( const EventRecord& event );
 			bool KeyDown( char c );
-			bool DoCommand( Pedestal::MenuItemCode code )  { return false; }
+			bool DoCommand( Pedestal::CommandCode code )  { return false; }
 			void Resize( short width, short height );
 			void Paint();
 			void Redraw();

@@ -76,7 +76,7 @@ namespace Genie
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			
-			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::MenuItemCode );
+			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::CommandCode );
 			
 			Key itsKey;
 			
@@ -126,7 +126,7 @@ namespace Genie
 			
 			bool KeyDown( const EventRecord& event );
 			
-			bool UserCommand( Pedestal::MenuItemCode code );
+			bool UserCommand( Pedestal::CommandCode code );
 			
 			const FSTree* GetKey() const  { return itsKey; }
 			
@@ -153,7 +153,7 @@ namespace Genie
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			
-			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::MenuItemCode );
+			typedef bool (*UserCommand_Hook)( TextEdit&, Pedestal::CommandCode );
 			
 			TextEdit_Scroller( Key               key,
 			                   KeyDown_Hook      keyDown = NULL,

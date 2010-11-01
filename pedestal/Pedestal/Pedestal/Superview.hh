@@ -77,7 +77,7 @@ namespace Pedestal
 				return false;
 			}
 			
-			bool UserCommand( MenuItemCode code )  { return Subview().UserCommand( code ); }
+			bool UserCommand( CommandCode code )  { return Subview().UserCommand( code ); }
 	};
 	
 }

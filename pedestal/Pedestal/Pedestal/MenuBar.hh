@@ -12,7 +12,7 @@
 #endif
 
 // Pedestal
-#include "Pedestal/MenuItemCode.hh"
+#include "Pedestal/CommandCode.hh"
 
 
 namespace Pedestal
@@ -22,7 +22,7 @@ namespace Pedestal
 	
 	void PopulateAppleMenu( Mac::MenuID menuID );
 	
-	MenuItemCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
+	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
 	
 }
 

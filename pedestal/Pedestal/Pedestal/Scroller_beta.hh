@@ -57,7 +57,7 @@ namespace Pedestal
 			
 			bool KeyDown( const EventRecord& event );
 			
-			bool UserCommand( MenuItemCode code );
+			bool UserCommand( CommandCode code );
 	};
 	
 }

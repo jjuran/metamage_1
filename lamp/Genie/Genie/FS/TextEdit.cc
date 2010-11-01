@@ -206,7 +206,7 @@ namespace Genie
 		                          : Ped::TextEdit::KeyDown( event );
 	}
 	
-	bool TextEdit::UserCommand( Ped::MenuItemCode code )
+	bool TextEdit::UserCommand( Ped::CommandCode code )
 	{
 		Update_TE_From_Model( itsTE, itsKey );
 		

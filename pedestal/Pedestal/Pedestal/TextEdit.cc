@@ -681,7 +681,7 @@ namespace Pedestal
 		N::TEUpdate( bounds, hTE );
 	}
 	
-	bool TextEdit::UserCommand( MenuItemCode code )
+	bool TextEdit::UserCommand( CommandCode code )
 	{
 		TEHandle hTE = Get();
 		
