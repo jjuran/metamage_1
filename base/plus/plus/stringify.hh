@@ -52,6 +52,14 @@ namespace plus
 		}
 	};
 	
+	struct stringify_8_bit_hex
+	{
+		static void apply( var_string& out, unsigned char x )
+		{
+			encode_8_bit_hex( out, x );
+		}
+	};
+	
 	struct stringify_16_bit_hex
 	{
 		static void apply( var_string& out, unsigned short x )
@@ -114,6 +122,11 @@ namespace plus
 	
 	
 	template < int size > struct hex_stringifier;
+	
+	template <> struct hex_stringifier< 1 >
+	{
+		typedef stringify_8_bit_hex type;
+	};
 	
 	template <> struct hex_stringifier< 2 >
 	{
