@@ -14,6 +14,16 @@
 namespace plus
 {
 	
+	struct vivify_char
+	{
+		typedef char result_type;
+		
+		static char apply( const char* begin, const char* end )
+		{
+			return begin != end ? *begin : '\0';
+		}
+	};
+	
 	struct vivify_bool
 	{
 		typedef bool result_type;
