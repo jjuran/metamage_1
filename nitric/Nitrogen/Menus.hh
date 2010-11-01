@@ -33,6 +33,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_MENUS_TYPES_MENUCOMMAND_HH
+#include "Mac/Menus/Types/MenuCommand.hh"
+#endif
 #ifndef MAC_MENUS_TYPES_MENUID_HH
 #include "Mac/Menus/Types/MenuID.hh"
 #endif
@@ -103,10 +106,7 @@ namespace Nitrogen
 
    using ::MenuItemIndex;
    
-	enum MenuCommand
-	{
-		kMenuCommand_Max = nucleus::enumeration_traits< ::MenuCommand >::max
-	};
+	using Mac::MenuCommand;
    
    using ::MenuRef;
   }
