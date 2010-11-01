@@ -20,6 +20,17 @@
 namespace plus
 {
 	
+	struct stringify_char
+	{
+		static void apply( var_string& out, char x )
+		{
+			if ( x )
+			{
+				out += x;
+			}
+		}
+	};
+	
 	struct stringify_bool
 	{
 		static void apply( var_string& out, bool x )
