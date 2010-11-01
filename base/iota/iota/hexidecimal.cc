@@ -28,6 +28,14 @@ namespace iota
 	};
 	
 	
+	unsigned char decode_8_bit_hex( const char* s )
+	{
+		const unsigned x = decoded_hex_digit( s[ 0 ] ) <<  4
+		                 | decoded_hex_digit( s[ 1 ] ) <<  0;
+		
+		return x;
+	}
+	
 	unsigned short decode_16_bit_hex( const char* s )
 	{
 		const unsigned x = decoded_hex_digit( s[ 0 ] ) << 12
@@ -50,6 +58,12 @@ namespace iota
 		                 | decoded_hex_digit( s[ 7 ] ) <<  0;
 		
 		return x;
+	}
+	
+	void encode_8_bit_hex( unsigned char x, char* s )
+	{
+		s[ 0 ] = encoded_hex_char( x >>  4 );
+		s[ 1 ] = encoded_hex_char( x >>  0 );
 	}
 	
 	void encode_16_bit_hex( unsigned short x, char* s )
