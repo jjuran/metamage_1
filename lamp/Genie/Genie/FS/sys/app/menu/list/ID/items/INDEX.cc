@@ -18,6 +18,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -53,6 +54,40 @@ namespace Genie
 		static void Set( MenuRef menu, UInt16 index, ConstStr255Param title )
 		{
 			::SetMenuItemText( menu, index, title );
+		}
+	};
+	
+	struct menu_item_mark : plus::serialize_hex< char >
+	{
+		static char Get( MenuRef menu, UInt16 index )
+		{
+			CharParameter result;
+			
+			::GetItemMark( menu, index, &result );
+			
+			return result;
+		}
+		
+		static void Set( MenuRef menu, UInt16 index, char mark )
+		{
+			::SetItemMark( menu, index, mark );
+		}
+	};
+	
+	struct menu_item_key : plus::serialize_char
+	{
+		static char Get( MenuRef menu, UInt16 index )
+		{
+			CharParameter result;
+			
+			::GetItemCmd( menu, index, &result );
+			
+			return result;
+		}
+		
+		static void Set( MenuRef menu, UInt16 index, char cmd )
+		{
+			::SetItemCmd( menu, index, cmd );
 		}
 	};
 	
@@ -108,6 +143,8 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
+	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_menu_list_ID_items_INDEX_Property< access > )
+	
 	typedef sys_app_menu_list_ID_items_INDEX_Property< menu_item_text > sys_app_menu_list_ID_items_INDEX_text;
 	
 	const FSTree_Premapped::Mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
@@ -115,6 +152,9 @@ namespace Genie
 		{ ".mac-text", PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		
 		{ "text", PROPERTY( utf8_text_property< sys_app_menu_list_ID_items_INDEX_text > ) },
+		
+		{ "mark", PROPERTY_ACCESS( menu_item_mark ) },
+		{ "key",  PROPERTY_ACCESS( menu_item_key  ) },
 		
 		{ NULL, NULL }
 	};
