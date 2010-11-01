@@ -56,7 +56,7 @@ namespace plus
 	{
 		static void apply( var_string& out, unsigned short x )
 		{
-			out += encode_16_bit_hex( x );
+			encode_16_bit_hex( out, x );
 		}
 	};
 	
@@ -64,7 +64,7 @@ namespace plus
 	{
 		static void apply( var_string& out, unsigned x )
 		{
-			out += encode_32_bit_hex( x );
+			encode_32_bit_hex( out, x );
 		}
 	};
 	
