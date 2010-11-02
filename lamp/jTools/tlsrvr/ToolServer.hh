@@ -17,7 +17,7 @@ namespace tool
 	
 	static const Mac::FSCreator sigToolServer = Mac::FSCreator( 'MPSX' );
 	
-	static const char* sEscapedQuote = "'¶''";
+	static const char* sEscapedQuote = "'\xB6''";  // little delta
 	
 }
 
