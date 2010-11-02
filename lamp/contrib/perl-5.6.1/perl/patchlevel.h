@@ -1,4 +1,5 @@
 #ifndef __PATCHLEVEL_H_INCLUDED__
+#define __PATCHLEVEL_H_INCLUDED__
 
 /* do not adjust the whitespace! Configure expects the numbers to be
  * exactly on the third column */
@@ -29,7 +30,6 @@
    does not adequately test for this.   A.D.  Jan 13, 2000
 */
 
-#define __PATCHLEVEL_H_INCLUDED__
 #endif
 
 /*
