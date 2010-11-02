@@ -9,7 +9,9 @@
 #endif
 
 // poseven
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
 
 
 namespace OSErrno
