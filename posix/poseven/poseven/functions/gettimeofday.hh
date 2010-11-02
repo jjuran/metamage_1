@@ -11,20 +11,13 @@
 #define POSEVEN_FUNCTIONS_GETTIMEOFDAY_HH
 
 // POSIX
-#include <time.h>
 #include <sys/time.h>
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void gettimeofday( struct timeval& tv )
-	{
-		throw_posix_result( ::gettimeofday( &tv, NULL ) );
-	}
+	void gettimeofday( struct timeval& tv );
 	
 	inline struct timeval gettimeofday()
 	{
