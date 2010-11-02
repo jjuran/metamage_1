@@ -14,10 +14,6 @@
 #ifndef POSEVEN_FUNCTIONS_EXECVP_HH
 #define POSEVEN_FUNCTIONS_EXECVP_HH
 
-// POSIX
-#include <errno.h>
-#include <unistd.h>
-
 // iota
 #include "iota/string_traits.hh"
 
@@ -25,12 +21,7 @@
 namespace poseven
 {
 	
-	inline void execvp( const char* path, char const *const *argv )
-	{
-		(void) ::execvp( path, (char**) argv );
-		
-		::_exit( errno == ENOENT ? 127 : 126 );
-	}
+	void execvp( const char* path, char const *const *argv );
 	
 	inline void execvp( char const *const *argv )
 	{
