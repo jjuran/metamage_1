@@ -27,7 +27,7 @@ namespace poseven
 {
 	
 	template < address_family af >
-	inline void connect( fd_t sock, const typename sockaddr_traits< af >::address_type& server_address )
+	void connect( fd_t sock, const typename sockaddr_traits< af >::address_type& server_address )
 	{
 		throw_posix_result( ::connect( sock,
 		                               (const sockaddr*) &server_address,
