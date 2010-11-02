@@ -15,7 +15,9 @@
 #define POSEVEN_FUNCTIONS_DUP2_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
 
 
 namespace poseven

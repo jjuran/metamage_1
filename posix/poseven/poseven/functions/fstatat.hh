@@ -21,8 +21,12 @@
 #include "iota/string_traits.hh"
 
 // poseven
+#ifndef POSEVEN_TYPES_ATFLAGS_T_HH
 #include "poseven/types/at_flags_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
 
 
 namespace poseven

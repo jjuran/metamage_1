@@ -14,8 +14,10 @@
 #ifndef POSEVEN_TYPES_EXIT_T_HH
 #define POSEVEN_TYPES_EXIT_T_HH
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 
 namespace poseven

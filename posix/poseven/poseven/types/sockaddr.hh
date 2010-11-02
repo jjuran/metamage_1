@@ -17,8 +17,10 @@
 // POSIX
 #include <sys/socket.h>
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 
 namespace poseven

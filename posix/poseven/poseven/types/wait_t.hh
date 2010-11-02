@@ -14,13 +14,21 @@
 #ifndef POSEVEN_TYPES_WAIT_T_HH
 #define POSEVEN_TYPES_WAIT_T_HH
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
+#endif
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_TYPES_EXIT_T_HH
 #include "poseven/types/exit_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_PID_T_HH
 #include "poseven/types/pid_t.hh"
+#endif
 
 
 namespace poseven

@@ -18,10 +18,14 @@
 #include <iterator>
 
 // Nucleus
+#ifndef NUCLEUS_SHARED_HH
 #include "nucleus/shared.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_OPENDIR_HH
 #include "poseven/functions/opendir.hh"
+#endif
 
 
 namespace poseven

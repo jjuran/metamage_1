@@ -15,11 +15,21 @@
 #define POSEVEN_BUNDLES_INET_HH
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_ACCEPT_HH
 #include "poseven/functions/accept.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_BIND_HH
 #include "poseven/functions/bind.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_CONNECT_HH
 #include "poseven/functions/connect.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_SOCKET_HH
 #include "poseven/functions/socket.hh"
+#endif
+#ifndef POSEVEN_TYPES_SOCKADDRIN_HH
 #include "poseven/types/sockaddr_in.hh"
+#endif
 
 
 namespace poseven

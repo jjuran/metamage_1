@@ -18,9 +18,15 @@
 #include <unistd.h>
 
 // poseven
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_SOCKADDR_HH
 #include "poseven/types/sockaddr.hh"
+#endif
 
 
 namespace poseven
