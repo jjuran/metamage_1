@@ -10,6 +10,9 @@
 // Standard C
 #include <stdlib.h>
 
+// POSIX
+#include <sys/ttycom.h>
+
 // Iota
 #include "iota/decimal.hh"
 

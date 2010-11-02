@@ -3,6 +3,9 @@
  *	=======
  */
 
+// POSIX
+#include <sys/ttycom.h>
+
 // poseven
 #include "poseven/functions/clearenv.hh"
 #include "poseven/functions/ioctl.hh"

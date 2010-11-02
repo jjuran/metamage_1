@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <signal.h>
 
+// POSIX
+#include <sys/ttycom.h>
+
 // iota
 #include "iota/strings.hh"
 

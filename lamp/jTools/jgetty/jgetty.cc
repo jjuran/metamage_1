@@ -10,6 +10,9 @@
 #include <signal.h>
 #include "stdlib.h"
 
+// POSIX
+#include <sys/ttycom.h>
+
 // Iota
 #include "iota/strings.hh"
 
