@@ -13,7 +13,7 @@
 
 #ifdef __MACH__
 
-#ifndef NITROGEN_ADDRESSBOOKC_HH
+#ifndef NITROGEN_ABADDRESSBOOKC_HH
 #include "Nitrogen/ABAddressBookC.hh"
 #endif
 
