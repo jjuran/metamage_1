@@ -34,9 +34,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( PPCToolbox );
 	
 	
-	#pragma mark -
-	#pragma mark ¥ Types ¥
-	
 	using ::PPCXTIAddress;
 	using ::PPCAddrRec;
 	using ::LocationNameRec;
@@ -97,16 +94,10 @@ namespace Nitrogen
 		kPPCXTIAddressType_Max = nucleus::enumeration_traits< SInt16 >::max
 	};
 	
-	#pragma mark -
-	#pragma mark ¥ Typed constants ¥
-	
 }
 
 namespace nucleus
 {
-	
-	#pragma mark -
-	#pragma mark ¥ Specializations ¥
 	
 	template <>  struct maker< PPCXTIAddress >
 	{

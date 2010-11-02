@@ -82,9 +82,6 @@ namespace Nitrogen
 		static inline void* DefaultParam()  { return NULL; }
 	};
 	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
-	
 	// 1158
 	nucleus::owned< Mac::DriverRefNum > MacOpenDriver( ConstStr255Param name );
 	

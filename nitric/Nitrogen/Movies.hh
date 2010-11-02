@@ -124,9 +124,6 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
-	
 	inline void EnterMovies()  { ThrowOSStatus( ::EnterMovies() ); }
 	
 	using ::ExitMovies;

@@ -20,9 +20,6 @@
 namespace Nitrogen
 {
 	
-	#pragma mark -
-	#pragma mark ¥ AccessProperty ¥
-	
 	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               AEObjectClass        containerClass );

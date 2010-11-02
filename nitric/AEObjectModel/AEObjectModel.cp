@@ -127,9 +127,6 @@ namespace Nitrogen
 		return 0;
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ OSL Object Callbacks ¥
-	
 	pascal OSErr OSLCompare( ::DescType     op,
 	                         const AEDesc*  obj1,
 	                         const AEDesc*  obj2,
