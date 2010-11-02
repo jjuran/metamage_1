@@ -119,9 +119,6 @@ namespace Genie
 	}
 	
 	
-	#pragma mark -
-	#pragma mark ¥ unistd ¥
-	
 	static unsigned int alarm( unsigned int seconds )
 	{
 		SystemCallFrame frame( "alarm" );
