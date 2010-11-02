@@ -20,22 +20,13 @@
 // iota
 #include "iota/string_traits.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 
 namespace poseven
 {
 	
-	inline void utime( const char* path )
-	{
-		throw_posix_result( ::utime( path, NULL ) );
-	}
+	void utime( const char* path );
 	
-	inline void utime( const char* path, const utimbuf& time_buffer )
-	{
-		throw_posix_result( ::utime( path, &time_buffer ) );
-	}
+	void utime( const char* path, const utimbuf& time_buffer );
 	
 	inline void utime( const char* path, const time_t& mod_time )
 	{

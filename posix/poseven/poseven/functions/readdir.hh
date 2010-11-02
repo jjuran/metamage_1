@@ -16,23 +16,12 @@
 
 // poseven
 #include "poseven/types/dir_t.hh"
-#include "poseven/types/errno_t.hh"
 
 
 namespace poseven
 {
 	
-	inline const dirent& readdir( dir_t dir )
-	{
-		const dirent* entry = ::readdir( dir );
-		
-		if ( entry == NULL )
-		{
-			throw_errno( errno );
-		}
-		
-		return *entry;
-	}
+	const dirent& readdir( dir_t dir );
 	
 }
 

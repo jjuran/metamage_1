@@ -22,7 +22,6 @@
 
 // poseven
 #include "poseven/functions/close.hh"
-#include "poseven/types/errno_t.hh"
 
 
 namespace poseven
@@ -68,13 +67,8 @@ namespace poseven
 	
 	NUCLEUS_DEFINE_FLAG_OPS( socket_type )
 	
-	inline nucleus::owned< fd_t > socket( protocol_family  domain,
-	                                      socket_type      type )
-	{
-		const int fd = throw_posix_result( ::socket( domain, type, 0 ) );
-		
-		return nucleus::owned< fd_t >::seize( fd_t( fd ) );
-	}
+	nucleus::owned< fd_t > socket( protocol_family  domain,
+	                               socket_type      type );
 	
 }
 

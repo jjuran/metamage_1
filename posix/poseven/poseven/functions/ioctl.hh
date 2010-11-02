@@ -14,21 +14,14 @@
 #ifndef POSEVEN_FUNCTIONS_IOCTL_HH
 #define POSEVEN_FUNCTIONS_IOCTL_HH
 
-// POSIX
-#include <sys/ioctl.h>
-
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void ioctl( fd_t fd, unsigned long command, void* argp )
-	{
-		throw_posix_result( ::ioctl( fd, command, argp ) );
-	}
+	void ioctl( fd_t fd, unsigned long command, void* argp );
 	
 }
 

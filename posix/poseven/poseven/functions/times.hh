@@ -13,17 +13,11 @@
 // POSIX
 #include <sys/times.h>
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 
 namespace poseven
 {
 	
-	inline void times( struct tms& time_set )
-	{
-		throw_posix_result( ::times( &time_set ) );
-	}
+	void times( struct tms& time_set );
 	
 	inline struct tms times()
 	{

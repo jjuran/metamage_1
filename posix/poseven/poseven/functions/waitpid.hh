@@ -14,21 +14,14 @@
 #ifndef POSEVEN_FUNCTIONS_WAITPID_HH
 #define POSEVEN_FUNCTIONS_WAITPID_HH
 
-// POSIX
-#include <sys/wait.h>
-
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/wait_t.hh"
 
 
 namespace poseven
 {
 	
-	inline pid_t waitpid( pid_t pid, wait_t& status, int options = 0 )
-	{
-		return pid_t( throw_posix_result( ::waitpid( pid, (int*) &status, options ) ) );
-	}
+	pid_t waitpid( pid_t pid, wait_t& status, int options = 0 );
 	
 	inline wait_result waitpid( pid_t pid, int options = 0 )
 	{

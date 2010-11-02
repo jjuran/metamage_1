@@ -45,10 +45,7 @@ namespace nucleus
 namespace poseven
 {
 	
-	inline void close( nucleus::owned< fd_t > fd )
-	{
-		throw_posix_result( ::close( fd.release() ) );
-	}
+	void close( nucleus::owned< fd_t > fd );
 	
 }
 

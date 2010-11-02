@@ -11,20 +11,16 @@
 #define POSEVEN_FUNCTIONS_PREAD_HH
 
 // POSIX
-#include <unistd.h>
+#include <sys/types.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline ssize_t pread( fd_t fd, char* buffer, size_t n_bytes, off_t offset )
-	{
-		return throw_posix_result( ::pread( fd, buffer, n_bytes, offset ) );
-	}
+	ssize_t pread( fd_t fd, char* buffer, size_t n_bytes, off_t offset );
 	
 }
 

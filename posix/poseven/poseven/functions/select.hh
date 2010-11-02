@@ -17,22 +17,15 @@
 // POSIX
 #include <unistd.h>
 
-// poseven
-#include "poseven/types/errno_t.hh"
-#include "poseven/types/fd_t.hh"
-
 
 namespace poseven
 {
 	
-	inline unsigned select( unsigned   n_fds,
-	                        fd_set    *r  = NULL,
-	                        fd_set    *w  = NULL,
-	                        fd_set    *x  = NULL,
-	                        timeval   *tv = NULL )
-	{
-		return throw_posix_result( ::select( n_fds, r, w, x, tv ) );
-	}
+	unsigned select( unsigned   n_fds,
+	                 fd_set    *r  = NULL,
+	                 fd_set    *w  = NULL,
+	                 fd_set    *x  = NULL,
+	                 timeval   *tv = NULL );
 	
 	inline void select( timeval& tv )
 	{

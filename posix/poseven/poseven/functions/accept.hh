@@ -14,12 +14,8 @@
 #ifndef POSEVEN_FUNCTIONS_ACCEPT_HH
 #define POSEVEN_FUNCTIONS_ACCEPT_HH
 
-// POSIX
-#include <unistd.h>
-
 // poseven
 #include "poseven/functions/close.hh"
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 #include "poseven/types/sockaddr.hh"
 
@@ -27,25 +23,13 @@
 namespace poseven
 {
 	
-	namespace detail
-	{
-		
-		inline nucleus::owned< fd_t > accept( fd_t        listener,
-		                                      sockaddr*   address,
-		                                      socklen_t*  length )
-		{
-			int result = throw_posix_result( ::accept( listener,
-			                                           address,
-			                                           length ) );
-			
-			return nucleus::owned< fd_t >::seize( fd_t( result ) );
-		}
-		
-	}
+	nucleus::owned< fd_t > accept( fd_t        listener,
+	                               sockaddr*   address,
+	                               socklen_t*  length );
 	
 	inline nucleus::owned< fd_t > accept( fd_t listener )
 	{
-		return detail::accept( listener, NULL, NULL );
+		return accept( listener, NULL, NULL );
 	}
 	
 	template < address_family af >
@@ -59,7 +43,7 @@ namespace poseven
 		
 		socklen_t length = sizeof (address_type);
 		
-		return detail::accept( listener, (sockaddr*) &client_address, &length );
+		return accept( listener, (sockaddr*) &client_address, &length );
 	}
 	
 }

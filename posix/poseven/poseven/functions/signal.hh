@@ -38,10 +38,7 @@ namespace poseven
 		return result;
 	}
 	
-	inline void signal( signo_t signo, signal_handler_t handler )
-	{
-		throw_posix_result( ::signal( signo, handler ) );
-	}
+	void signal( signo_t signo, signal_handler_t handler );
 	
 }
 

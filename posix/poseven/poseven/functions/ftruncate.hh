@@ -15,20 +15,16 @@
 #define POSEVEN_FUNCTIONS_FTRUNCATE_HH
 
 // POSIX
-#include <unistd.h>
+#include <sys/types.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void ftruncate( fd_t fd, off_t offset )
-	{
-		throw_posix_result( ::ftruncate( fd, offset ) );
-	}
+	void ftruncate( fd_t fd, off_t offset );
 	
 }
 

@@ -15,17 +15,13 @@
 #define POSEVEN_FUNCTIONS_SETSID_HH
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/pid_t.hh"
 
 
 namespace poseven
 {
 	
-	inline pid_t setsid()
-	{
-		return pid_t( throw_posix_result( ::setsid() ) );
-	}
+	pid_t setsid();
 	
 }
 

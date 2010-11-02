@@ -21,45 +21,21 @@
 #include "iota/string_traits.hh"
 
 // poseven
-#include "poseven/functions/stat.hh"
 #include "poseven/types/at_flags_t.hh"
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline bool fstatat( fd_t           dirfd,
-	                     const char    *path,
-	                     struct stat&   sb,
-	                     at_flags_t     flags = at_flags_t() )
-	{
-		int status = ::fstatat( dirfd, path, &sb, flags );
-		
-		if ( status == -1 )
-		{
-			if ( errno == ENOENT  ||  errno == ENOTDIR )
-			{
-				return false;
-			}
-			
-			throw_errno( errno );
-		}
-		
-		return true;
-	}
+	bool fstatat( fd_t           dirfd,
+	              const char    *path,
+	              struct stat&   sb,
+	              at_flags_t     flags = at_flags_t() );
 	
-	inline struct stat fstatat( fd_t         dirfd,
-	                            const char  *path,
-	                            at_flags_t   flags = at_flags_t() )
-	{
-		struct stat sb;
-		
-		throw_posix_result( ::fstatat( dirfd, path, &sb, flags ) );
-		
-		return sb;
-	}
+	struct stat fstatat( fd_t         dirfd,
+	                     const char  *path,
+	                     at_flags_t   flags = at_flags_t() );
 	
 	template < class String >
 	inline bool fstatat( fd_t           dirfd,

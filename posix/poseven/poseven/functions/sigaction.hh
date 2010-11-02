@@ -15,7 +15,6 @@
 #define POSEVEN_FUNCTIONS_SIGACTION_HH
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/signo_t.hh"
 
 
@@ -29,18 +28,12 @@ namespace poseven
 	static const sigaction_handler_t sig_err = SIG_ERR;
 	
 	
-	inline void sigaction( signo_t                  signo,
-	                       struct sigaction const&  new_action,
-	                       struct sigaction      &  old_action )
-	{
-		throw_posix_result( ::sigaction( signo, &new_action, &old_action ) );
-	}
+	void sigaction( signo_t                  signo,
+	                struct sigaction const&  new_action,
+	                struct sigaction      &  old_action );
 	
-	inline void sigaction( signo_t                  signo,
-	                       const struct sigaction&  new_action )
-	{
-		throw_posix_result( ::sigaction( signo, &new_action, NULL ) );
-	}
+	void sigaction( signo_t                  signo,
+	                const struct sigaction&  new_action );
 	
 	inline void sigaction( signo_t              signo,
 	                       sigaction_handler_t  handler )

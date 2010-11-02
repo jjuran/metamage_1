@@ -14,23 +14,14 @@
 #ifndef POSEVEN_FUNCTIONS_CHDIR_HH
 #define POSEVEN_FUNCTIONS_CHDIR_HH
 
-// POSIX
-#include <unistd.h>
-
 // iota
 #include "iota/string_traits.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void chdir( const char* path )
-	{
-		throw_posix_result( ::chdir( path ) );
-	}
+	void chdir( const char* path );
 	
 	template < class String >
 	inline void chdir( const String& path )

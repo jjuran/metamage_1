@@ -18,21 +18,13 @@
 #include <sys/stat.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline struct stat fstat( fd_t fd )
-	{
-		struct stat stat_buffer;
-		
-		throw_posix_result( ::fstat( fd, &stat_buffer ) );
-		
-		return stat_buffer;
-	}
+	struct stat fstat( fd_t fd );
 	
 }
 

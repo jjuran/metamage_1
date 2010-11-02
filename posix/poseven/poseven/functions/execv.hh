@@ -17,20 +17,11 @@
 // iota
 #include "iota/string_traits.hh"
 
-// POSIX
-#include <errno.h>
-#include <unistd.h>
-
 
 namespace poseven
 {
 	
-	inline void execv( const char* pathname, char const *const *argv )
-	{
-		(void) ::execv( pathname, (char**) argv );
-		
-		::_exit( errno == ENOENT ? 127 : 126 );
-	}
+	void execv( const char* pathname, char const *const *argv );
 	
 	inline void execv( char const *const *argv )
 	{
