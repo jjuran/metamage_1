@@ -24,17 +24,7 @@
 namespace poseven
 {
 	
-	inline nucleus::owned< dir_t > opendir( const char* pathname )
-	{
-		DIR* handle = ::opendir( pathname );
-		
-		if ( handle == NULL )
-		{
-			throw_errno( errno );
-		}
-		
-		return nucleus::owned< dir_t >::seize( handle );
-	}
+	nucleus::owned< dir_t > opendir( const char* pathname );
 	
 	template < class String >
 	inline nucleus::owned< dir_t > opendir( const String& path )
