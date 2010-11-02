@@ -1,10 +1,7 @@
-// unlink.hh
-// ---------
-
-// Written 2007 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
+/*
+	rmdir.hh
+	--------
+*/
 
 
 #ifndef POSEVEN_FUNCTIONS_RMDIR_HH
