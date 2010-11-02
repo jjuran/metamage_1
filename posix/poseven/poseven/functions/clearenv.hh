@@ -14,20 +14,11 @@
 #ifndef POSEVEN_FUNCTIONS_CLEARENV_HH
 #define POSEVEN_FUNCTIONS_CLEARENV_HH
 
-// Standard C
-#include <stdlib.h>
-
-// poseven
-#include "poseven/types/errno_t.hh"
-
 
 namespace poseven
 {
 	
-	inline void clearenv()
-	{
-		(void) throw_posix_result( ::clearenv() );
-	}
+	void clearenv();
 	
 }
 
