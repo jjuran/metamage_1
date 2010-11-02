@@ -45,10 +45,7 @@ namespace nucleus
 namespace poseven
 {
 	
-	inline void closedir( nucleus::owned< dir_t > dir )
-	{
-		throw_posix_result( ::closedir( dir.release() ) );
-	}
+	void closedir( nucleus::owned< dir_t > dir );
 	
 }
 
