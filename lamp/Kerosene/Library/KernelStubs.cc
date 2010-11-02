@@ -14,9 +14,6 @@
 #pragma export on
 #endif
 	
-	#pragma mark -
-	#pragma mark ¥ netdb ¥
-	
 	void endhostent()
 	{
 	}

@@ -12,9 +12,6 @@
 #include <netdb.h>
 
 
-	#pragma mark -
-	#pragma mark ¥ arpa/inet ¥
-	
 	int inet_aton( const char* name, struct in_addr* out_addr )
 	{
 		return -1;
@@ -38,9 +35,6 @@
 	{
 		return "hstrerror() is unimplemented";
 	}
-	
-	#pragma mark -
-	#pragma mark ¥ netdb ¥
 	
 	extern "C" { int h_errno; }
 	
