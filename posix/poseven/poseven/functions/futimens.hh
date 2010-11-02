@@ -14,17 +14,13 @@
 #include <sys/stat.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void futimens( fd_t fd, const timespec times[2] )
-	{
-		throw_posix_result( ::futimens( fd, times ) );
-	}
+	void futimens( fd_t fd, const timespec times[2] );
 	
 #ifdef UTIME_OMIT
 	
