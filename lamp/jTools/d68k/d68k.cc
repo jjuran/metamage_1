@@ -645,7 +645,7 @@ namespace tool
 	};
 	
 #pragma mark -
-#pragma mark ¥ Line 0 ¥
+#pragma mark ** Line 0 **
 	
 	static void decode_Immediate( unsigned short op )
 	{
@@ -721,7 +721,7 @@ namespace tool
 	}
 	
 #pragma mark -
-#pragma mark ¥ Line 1-3 ¥
+#pragma mark ** Line 1-3 **
 	
 	static void decode_MOVE( unsigned short op, short size_index )
 	{
@@ -789,7 +789,7 @@ namespace tool
 	}
 	
 #pragma mark -
-#pragma mark ¥ Line 4 ¥
+#pragma mark ** Line 4 **
 	
 	static const str_len unary_ops[] =
 	{
@@ -1168,7 +1168,7 @@ namespace tool
 	}
 	
 #pragma mark -
-#pragma mark ¥ High-order ¥
+#pragma mark ** High-order **
 	
 	static void decode_0_line( unsigned short op )
 	{
