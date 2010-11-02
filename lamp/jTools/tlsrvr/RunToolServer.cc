@@ -134,12 +134,12 @@ namespace tool
 		bool identicalOutputAndError = false;
 		if ( identicalOutputAndError )
 		{
-			script << "·" << q( outPath );
+			script << "\xB7" << q( outPath );  // sum symbol
 		}
 		else
 		{
-			script << ">" << q( outPath );
-			script << "³" << q( errPath );
+			script << ">"    << q( outPath );
+			script << "\xB3" << q( errPath );  // greater-than-or-equal-to
 		}
 		
 		return script;
