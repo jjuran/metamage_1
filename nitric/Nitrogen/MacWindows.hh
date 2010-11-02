@@ -655,9 +655,12 @@ namespace Nitrogen
    /* ... */
    
 #if TARGET_RT_MAC_MACHO
-/*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
-/* ¥ Window Toolbars -- Tool bars are Mach-O only                                       */
-/*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
+
+// Tool bars are Mach-O only
+
+#pragma mark -
+#pragma mark ** Window Toolbars **
+#pragma mark -
 
 	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
