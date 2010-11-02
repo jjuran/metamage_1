@@ -24,7 +24,7 @@ namespace poseven
 {
 	
 	template < address_family af >
-	inline void bind( fd_t fd, const typename sockaddr_traits< af >::address_type& address )
+	void bind( fd_t fd, const typename sockaddr_traits< af >::address_type& address )
 	{
 		throw_posix_result( ::bind( fd,
 		                            (const sockaddr*) &address,
