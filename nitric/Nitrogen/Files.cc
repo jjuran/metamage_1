@@ -495,7 +495,7 @@ namespace Nitrogen
 
 /*
 Return Value
-	A result code. See “File Manager Result Codes”. 
+	A result code. See "File Manager Result Codes".
 	If the two FSRef structures refer to the same file or directory, then noErr is returned. 
 	If they refer to objects on different volumes, then diffVolErr is returned. 
 	If they refer to different files or directories on the same volume, then errFSRefsDifferent is returned. 
