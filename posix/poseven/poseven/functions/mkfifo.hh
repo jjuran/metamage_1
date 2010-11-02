@@ -18,17 +18,13 @@
 #include "iota/string_traits.hh"
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void mkfifo( const char* pathname, mode_t mode )
-	{
-		throw_posix_result( ::mkfifo( pathname, mode ) );
-	}
+	void mkfifo( const char* pathname, mode_t mode );
 	
 	template < class String >
 	inline void mkfifo( const String& path, mode_t mode )
