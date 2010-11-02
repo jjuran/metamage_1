@@ -74,7 +74,7 @@ namespace Kerosene
 			
 			macName.assign( unixName.begin(), unixName.begin() + shortened_base_length );
 			
-			macName += '¥';
+			macName += 0xA5;  // bullet
 			
 			for ( int i = 0;  i != hash_length;  ++i )
 			{
