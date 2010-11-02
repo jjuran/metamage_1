@@ -18,7 +18,6 @@
 #include <unistd.h>
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/fd_t.hh"
 
 
@@ -34,14 +33,11 @@ namespace poseven
 		seek_t_max = nucleus::enumeration_traits< int >::max
 	};
 	
-	inline off_t lseek( fd_t fd, off_t offset, seek_t whence = seek_set )
-	{
-		return throw_posix_result( ::lseek( fd, offset, whence ) );
-	}
+	off_t lseek( fd_t fd, off_t offset, seek_t whence = seek_set );
 	
 	inline off_t lseek( fd_t fd )
 	{
-		return throw_posix_result( ::lseek( fd, 0, seek_cur ) );
+		return lseek( fd, 0, seek_cur );
 	}
 	
 }
