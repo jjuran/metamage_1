@@ -21,17 +21,13 @@
 #include "iota/string_traits.hh"
 
 // poseven
-#include "poseven/types/errno_t.hh"
 #include "poseven/types/mode_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void mkdir( const char* path, mode_t mode = _777 )
-	{
-		throw_posix_result( ::mkdir( path, mode ) );
-	}
+	void mkdir( const char* path, mode_t mode = _777 );
 	
 	template < class String >
 	inline void mkdir( const String& path, mode_t mode = _777 )
