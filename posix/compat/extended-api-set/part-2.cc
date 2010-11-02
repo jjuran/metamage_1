@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 
 // Extended API Set, part 2
 #include "extended-api-set/dual_path_at.hh"
@@ -48,6 +49,17 @@ int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	const bool follow = (flags & AT_SYMLINK_NOFOLLOW) == 0;
 	
 	return follow ? stat( path, sb ) : lstat( path, sb );
+}
+
+int futimens( int fd, const struct timespec times[2] )
+{
+	const struct timespec& mtime = times[1];
+	
+	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
+	
+	struct timeval tvs[2] = { tv, tv };
+	
+	return futimes( fd, tvs );
 }
 
 static int link_with_flags( const char* oldpath, const char* newpath, int flags )

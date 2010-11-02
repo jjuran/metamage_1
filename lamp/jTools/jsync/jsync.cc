@@ -13,7 +13,6 @@
 
 // POSIX
 #include <errno.h>
-#include <sys/time.h>
 
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
@@ -28,10 +27,6 @@
 
 // Io
 #include "io/walk.hh"
-
-#ifdef __APPLE__
-static int futimens( int fd, const struct timespec times[2] );
-#endif
 
 // poseven
 #include "poseven/extras/pump.hh"
@@ -61,21 +56,6 @@ static int futimens( int fd, const struct timespec times[2] );
 #include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
-
-#ifdef __APPLE__
-
-static inline int futimens( int fd, const struct timespec times[2] )
-{
-	const struct timespec& mtime = times[1];
-	
-	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
-	
-	struct timeval tvs[2] = { tv, tv };
-	
-	return futimes( fd, tvs );
-}
-
-#endif
 
 namespace tool
 {
