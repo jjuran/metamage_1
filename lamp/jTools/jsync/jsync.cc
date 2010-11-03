@@ -205,18 +205,16 @@ namespace tool
 	
 	static void recursively_copy( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
 	{
-		struct ::stat stat_buffer = { 0 };
+		const mode_t mode = get_mode( olddirfd, name );
 		
-		p7::fstatat( olddirfd, name, stat_buffer, p7::at_symlink_nofollow );
-		
-		if ( S_ISREG( stat_buffer.st_mode ) )
+		if ( S_ISREG( mode ) )
 		{
 			if ( !filter_item( name ) )
 			{
 				copy_file( olddirfd, name, newdirfd );
 			}
 		}
-		else if ( S_ISLNK( stat_buffer.st_mode ) )
+		else if ( S_ISLNK( mode ) )
 		{
 			copy_symlink( olddirfd, name, newdirfd );
 		}
