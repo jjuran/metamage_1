@@ -89,6 +89,12 @@ namespace poseven
 			{
 			}
 			
+			directory_contents_container( nucleus::owned< dir_t > dir );
+			
+			directory_contents_container( const directory_contents_container& other );
+			
+			~directory_contents_container();
+			
 			const_iterator begin() const                    { return const_iterator( itsDirHandle ); }
 			const_iterator end() const                      { return const_iterator(              ); }
 			
@@ -107,13 +113,13 @@ namespace poseven
 	
 	inline directory_contents_container directory_contents( const char* dir_path )
 	{
-		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
+		return directory_contents_container( opendir( dir_path ) );
 	}
 	
 	template < class String >
 	inline directory_contents_container directory_contents( const String& dir_path )
 	{
-		return directory_contents_container( nucleus::shared< dir_t >( opendir( dir_path ) ) );
+		return directory_contents_container( opendir( dir_path ) );
 	}
 	
 }
