@@ -89,6 +89,10 @@ namespace poseven
 			{
 			}
 			
+			directory_contents_container( const directory_contents_container& other );
+			
+			~directory_contents_container();
+			
 			const_iterator begin() const                    { return const_iterator( itsDirHandle ); }
 			const_iterator end() const                      { return const_iterator(              ); }
 			

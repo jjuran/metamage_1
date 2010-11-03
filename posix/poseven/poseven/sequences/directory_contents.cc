@@ -19,6 +19,16 @@
 namespace poseven
 {
 	
+	directory_contents_container::directory_contents_container( const directory_contents_container& other )
+	:
+		itsDirHandle( other.itsDirHandle )
+	{
+	}
+	
+	directory_contents_container::~directory_contents_container()
+	{
+	}
+	
 	static inline bool name_is_dots( const char* name )
 	{
 		return name[0] == '.'  &&  ( name[ 1 + (name[1] == '.') ] == '\0' );
