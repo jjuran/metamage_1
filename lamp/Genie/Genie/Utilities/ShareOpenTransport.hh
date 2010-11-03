@@ -6,26 +6,32 @@
 #ifndef SHAREOPENTRANSPORT_HH
 #define SHAREOPENTRANSPORT_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/shared_ptr.hpp>
-
 
 namespace Genie
 {
 	
-	class OpenTransport;
+	void InitOpenTransport_Shared();
+	
+	void CloseOpenTransport_Shared();
+	
 	
 	class OpenTransportShare
 	{
-		private:
-			boost::shared_ptr< OpenTransport > itsShare;
-		
 		public:
-			OpenTransportShare();
-			~OpenTransportShare();
+			OpenTransportShare()
+			{
+				InitOpenTransport_Shared();
+			}
+			
+			OpenTransportShare( const OpenTransportShare& )
+			{
+				InitOpenTransport_Shared();
+			}
+			
+			~OpenTransportShare()
+			{
+				CloseOpenTransport_Shared();
+			}
 	};
 	
 	

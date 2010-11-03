@@ -5,12 +5,6 @@
 
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
-// Boost
-#include <boost/weak_ptr.hpp>
-
-// Debug
-#include "debug/assert.hh"
-
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
 
@@ -21,61 +15,25 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	class OpenTransport
+	static unsigned OpenTransport_refcount = 0;
+	
+	
+	void InitOpenTransport_Shared()
 	{
-		private:
-			// Non-copyable
-			OpenTransport           ( const OpenTransport& );
-			OpenTransport& operator=( const OpenTransport& );
-			
-			// Enforce singularity
-			static bool itIsInitialized;
-		
-		public:
-			OpenTransport()
-			{
-				ASSERT( !itIsInitialized );
-				
-				N::InitOpenTransport();
-				
-				itIsInitialized = true;
-			}
-			
-			~OpenTransport()
-			{
-				ASSERT( itIsInitialized );
-				
-				N::CloseOpenTransport();
-				
-				itIsInitialized = false;
-			}
-	};
-	
-	bool OpenTransport::itIsInitialized = false;
-	
-	
-	static boost::shared_ptr< OpenTransport > GetSharedOpenTransport()
-	{
-		static boost::weak_ptr< OpenTransport > gOpenTransport;
-		
-		if ( gOpenTransport.expired() )
+		if ( OpenTransport_refcount == 0 )
 		{
-			boost::shared_ptr< OpenTransport > sharedOpenTransport( new OpenTransport() );
-			
-			gOpenTransport = sharedOpenTransport;
-			
-			return sharedOpenTransport;
+			N::InitOpenTransport();
 		}
 		
-		return boost::shared_ptr< OpenTransport >( gOpenTransport );
+		++OpenTransport_refcount;
 	}
 	
-	OpenTransportShare::OpenTransportShare() : itsShare( GetSharedOpenTransport() )
+	void CloseOpenTransport_Shared()
 	{
-	}
-	
-	OpenTransportShare::~OpenTransportShare()
-	{
+		if ( --OpenTransport_refcount == 0 )
+		{
+			N::CloseOpenTransport();
+		}
 	}
 	
 }
