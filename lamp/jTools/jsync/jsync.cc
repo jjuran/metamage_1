@@ -339,15 +339,12 @@ namespace tool
 		
 		n::owned< p7::fd_t > b_fd;
 		
-		struct stat a_stat = p7::fstat( a_fd );
-		struct stat c_stat = p7::fstat( c_fd );
+		const time_t a_time = p7::fstat( a_fd ).st_mtime;
+		const time_t c_time = p7::fstat( c_fd ).st_mtime;
 		
 		if ( b_exists )
 		{
 			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
-			
-			time_t a_time = a_stat.st_mtime;
-			time_t c_time = c_stat.st_mtime;
 			
 			const struct stat b_stat = p7::fstat( b_fd );
 			
@@ -375,7 +372,7 @@ namespace tool
 		
 		if ( a_matches_b && b_matches_c )
 		{
-			store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
+			store_modification_dates( b_fd, a_time, c_time );
 			
 			return;
 		}
@@ -450,7 +447,7 @@ namespace tool
 		
 		p7::pump( a_fd, &from_offset, b_fd );
 		
-		store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
+		store_modification_dates( b_fd, a_time, c_time );
 		
 		if ( b_exists )
 		{
