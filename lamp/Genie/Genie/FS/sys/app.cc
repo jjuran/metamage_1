@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/premapped.hh"
+#include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
 #include "Genie/FS/sys/app/window.hh"
@@ -69,6 +70,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_app_Mappings[] =
 	{
+		{ "cmd",   &New_FSTree_sys_app_cmd },
+		
 		{ "dir",   &New_FSTree_sys_app_dir },
 		{ "exe",   &New_FSTree_sys_app_exe },
 		
