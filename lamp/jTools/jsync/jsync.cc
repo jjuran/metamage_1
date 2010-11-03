@@ -22,7 +22,6 @@
 
 // plus
 #include "plus/concat.hh"
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 
 // Io
@@ -225,11 +224,25 @@ namespace tool
 	
 	typedef std::pair< p7::fd_t, p7::fd_t > pair_of_fds;
 	
-	static void recursively_copy_into( const char*         name,
-	                                   const pair_of_fds&  dirs )
+	class recursive_copier
 	{
-		recursively_copy( dirs.first, name, dirs.second );
-	}
+		private:
+			p7::fd_t  old_dirfd;
+			p7::fd_t  new_dirfd;
+		
+		public:
+			recursive_copier( p7::fd_t old_fd, p7::fd_t new_fd )
+			:
+				old_dirfd( old_fd ),
+				new_dirfd( new_fd )
+			{
+			}
+			
+			void operator()( const char* name )
+			{
+				recursively_copy( old_dirfd, name, new_dirfd );
+			}
+	};
 	
 	static p7::directory_contents_container dirfd_contents( p7::fd_t fd )
 	{
@@ -244,8 +257,7 @@ namespace tool
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               std::bind2nd( plus::ptr_fun( recursively_copy_into ),
-		                             std::make_pair( olddirfd, newdirfd ) ) );
+		               recursive_copier( olddirfd, newdirfd ) );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
