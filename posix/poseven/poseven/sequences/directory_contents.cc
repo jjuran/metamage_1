@@ -19,6 +19,12 @@
 namespace poseven
 {
 	
+	directory_contents_container::directory_contents_container( nucleus::owned< dir_t > dir )
+	:
+		itsDirHandle( dir )
+	{
+	}
+	
 	directory_contents_container::directory_contents_container( const directory_contents_container& other )
 	:
 		itsDirHandle( other.itsDirHandle )

@@ -89,6 +89,8 @@ namespace poseven
 			{
 			}
 			
+			directory_contents_container( nucleus::owned< dir_t > dir );
+			
 			directory_contents_container( const directory_contents_container& other );
 			
 			~directory_contents_container();
