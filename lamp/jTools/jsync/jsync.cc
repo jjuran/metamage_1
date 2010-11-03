@@ -236,7 +236,7 @@ namespace tool
 		return p7::directory_contents_container( p7::fdopendir( p7::dup( fd ) ) );
 	}
 	
-	static void recursively_copy_directory_contents( n::owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
+	static void recursively_copy_directory_contents( p7::fd_t olddirfd, p7::fd_t newdirfd )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -245,7 +245,7 @@ namespace tool
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind2nd( plus::ptr_fun( recursively_copy_into ),
-		                             std::make_pair( olddirfd.get(), newdirfd ) ) );
+		                             std::make_pair( olddirfd, newdirfd ) ) );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
@@ -452,10 +452,10 @@ namespace tool
 		}
 	}
 	
-	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
-	                                          n::owned< p7::fd_t >  b_dirfd,
-	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const char*           subpath );
+	static void recursively_sync_directories( p7::fd_t     a_dirfd,
+	                                          p7::fd_t     b_dirfd,
+	                                          p7::fd_t     c_dirfd,
+	                                          const char*  subpath );
 	
 	static void recursively_sync( p7::fd_t     a_dirfd,
 	                              p7::fd_t     b_dirfd,
@@ -730,10 +730,10 @@ namespace tool
 		io::recursively_delete( path );
 	}
 	
-	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
-	                                                 n::owned< p7::fd_t >  b_dirfd,
-	                                                 n::owned< p7::fd_t >  c_dirfd,
-	                                                 const char*           subpath )
+	static void recursively_sync_directory_contents( p7::fd_t     a_dirfd,
+	                                                 p7::fd_t     b_dirfd,
+	                                                 p7::fd_t     c_dirfd,
+	                                                 const char*  subpath )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -928,10 +928,10 @@ namespace tool
 		// deleted/deleted:  mutual delete -- just do it
 	}
 	
-	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
-	                                          n::owned< p7::fd_t >  b_dirfd,
-	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const char*           subpath )
+	static void recursively_sync_directories( p7::fd_t     a_dirfd,
+	                                          p7::fd_t     b_dirfd,
+	                                          p7::fd_t     c_dirfd,
+	                                          const char*  subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		
