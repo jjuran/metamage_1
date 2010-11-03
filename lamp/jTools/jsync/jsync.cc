@@ -452,6 +452,12 @@ namespace tool
 		}
 	}
 	
+	static void relink( const plus::string& target, p7::fd_t dir_fd, const char* filename )
+	{
+		p7::unlinkat (         dir_fd, filename );
+		p7::symlinkat( target, dir_fd, filename );
+	}
+	
 	static void recursively_sync_directories( p7::fd_t     a_dirfd,
 	                                          p7::fd_t     b_dirfd,
 	                                          p7::fd_t     c_dirfd,
@@ -531,11 +537,8 @@ namespace tool
 						
 						if ( globally_up  &&  !global_dry_run )
 						{
-							p7::unlinkat( c_dirfd, filename );
-							p7::symlinkat( a_target, c_dirfd, filename );
-							
-							p7::unlinkat( b_dirfd, filename );
-							p7::symlinkat( a_target, b_dirfd, filename );
+							relink( a_target, c_dirfd, filename );
+							relink( a_target, b_dirfd, filename );
 						}
 					}
 					else if ( b_target == a_target )
@@ -544,11 +547,8 @@ namespace tool
 						
 						if ( globally_down  &&  !global_dry_run )
 						{
-							p7::unlinkat( a_dirfd, filename );
-							p7::symlinkat( c_target, a_dirfd, filename );
-							
-							p7::unlinkat( b_dirfd, filename );
-							p7::symlinkat( c_target, b_dirfd, filename );
+							relink( c_target, a_dirfd, filename );
+							relink( c_target, b_dirfd, filename );
 						}
 					}
 					else
