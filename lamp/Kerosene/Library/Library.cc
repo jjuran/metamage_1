@@ -151,7 +151,7 @@ void std::perror( const char* s )
 }
 
 #pragma mark -
-#pragma mark ¥ signal ¥
+#pragma mark ** signal **
 
 typedef void (*signal_handler_t)(int);
 
@@ -178,7 +178,7 @@ signal_handler_t signal( int signo, signal_handler_t func )
 }
 
 #pragma mark -
-#pragma mark ¥ stdlib ¥
+#pragma mark ** stdlib **
 
 void abort()
 {
@@ -269,7 +269,7 @@ int system( const char* command )
 }
 
 #pragma mark -
-#pragma mark ¥ fcntl ¥
+#pragma mark ** fcntl **
 
 int creat( const char* path, mode_t mode )
 {
@@ -282,7 +282,7 @@ int open( const char* path, int flags, mode_t mode )
 }
 
 #pragma mark -
-#pragma mark ¥ grp ¥
+#pragma mark ** grp **
 
 struct group* getgrnam( const char *name )
 {
@@ -292,7 +292,7 @@ struct group* getgrnam( const char *name )
 }
 
 #pragma mark -
-#pragma mark ¥ pwd ¥
+#pragma mark ** pwd **
 
 struct passwd* getpwnam( const char* name )
 {
@@ -324,7 +324,7 @@ struct passwd* getpwuid( uid_t uid )
 }
 
 #pragma mark -
-#pragma mark ¥ setjmp ¥
+#pragma mark ** setjmp **
 
 #ifdef __POWERPC__
 
@@ -388,7 +388,7 @@ void siglongjmp( sigjmp_buf env, int val )
 }
 
 #pragma mark -
-#pragma mark ¥ stdio ¥
+#pragma mark ** stdio **
 
 int fileno( FILE *stream )
 {
@@ -445,7 +445,7 @@ int symlink( const char* oldpath, const char* newpath )
 }
 
 #pragma mark -
-#pragma mark ¥ sys/stat ¥
+#pragma mark ** sys/stat **
 
 int mkfifoat( int dirfd, const char* path, mode_t mode )
 {
@@ -494,7 +494,7 @@ int futimens( int fd, const timespec times[2] )
 }
 
 #pragma mark -
-#pragma mark ¥ sys/wait ¥
+#pragma mark ** sys/wait **
 
 int wait( int* stat )
 {
@@ -504,7 +504,7 @@ int wait( int* stat )
 }
 
 #pragma mark -
-#pragma mark ¥ unistd ¥
+#pragma mark ** unistd **
 
 int access( const char* path, int mode )
 {

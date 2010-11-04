@@ -96,9 +96,6 @@ namespace Nitrogen
 	using ::ADBSetInfoBlock;
 	using ::ADBOpBlock;
 	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
-	
 	using ::ADBReInit;
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum );

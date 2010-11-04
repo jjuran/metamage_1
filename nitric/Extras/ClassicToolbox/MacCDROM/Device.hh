@@ -58,12 +58,12 @@ namespace MacCDROM
 #if CALL_NOT_IN_CARBON
 	
 	#pragma mark -
-	#pragma mark ¥ Open ¥
+	#pragma mark ** Open **
 	
 	Mac::DriverRefNum OpenCDROMDriver();
 	
 	#pragma mark -
-	#pragma mark ¥ Special CD-ROM Control Calls ¥
+	#pragma mark ** Special CD-ROM Control Calls **
 	
 	// csCode 70
 	void SetPowerMode( const CDROMDrive& drive, CDROMPowerLevel powerLevel );
@@ -84,7 +84,7 @@ namespace MacCDROM
 	void Quiescence( const CDROMDrive& drive, bool enableQuiescence );
 	
 	#pragma mark -
-	#pragma mark ¥ Supported Status Calls ¥
+	#pragma mark ** Supported Status Calls **
 	
 	// csCode 8
 	// DriveStatus

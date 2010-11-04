@@ -127,9 +127,6 @@ namespace Nitrogen
 	template <>  struct Control_Default< kSERDNegateDTR     > : Control_NullParamDefaults  {};
 	template <>  struct Control_Default< kSERDClearXOffFlag > : Control_NullParamDefaults  {};
 	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
-	
 	// 261
 	void SerReset( Mac::DriverRefNum outputDriverRefNum, SerConfig serConfig );
 	

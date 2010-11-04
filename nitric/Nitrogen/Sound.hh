@@ -328,9 +328,6 @@ namespace Nitrogen
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleSizeAvailable > : InfoData_Traits< UInt16** >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleRateAvailable > : InfoData_Traits< ::UnsignedFixed** >  {};
 	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
-	
 	inline void SysBeep( short duration )  { ::SysBeep( duration ); }
 	
 	// SndDoCommand

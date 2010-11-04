@@ -136,9 +136,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( OpenTransport );
 	
-	#pragma mark -
-	#pragma mark ¥ Types ¥
-	
 	enum OTSequence
 	{
 		kOTSequence_Max = nucleus::enumeration_traits< ::OTSequence >::max
@@ -230,9 +227,6 @@ namespace nucleus
 
 namespace Nitrogen
 {	
-	
-	#pragma mark -
-	#pragma mark ¥ Routines ¥
 	
 	inline OTResult ThrowOTResult( OTResult result )
 	{

@@ -16,9 +16,6 @@
 namespace Nitrogen
 {
 	
-	#pragma mark -
-	#pragma mark ¥ SetData ¥
-	
 	void SetData( const AEDesc_Token& obj, const AEDesc_Data& data );
 	
 	template < ::DescType tokenType > struct SetData_Traits;

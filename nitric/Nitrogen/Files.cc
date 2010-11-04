@@ -238,9 +238,6 @@ namespace Nitrogen
 		return info;
 	}
 	
-#pragma mark -
-#pragma mark ¥ Desktop Manager ¥
-	
 	// Desktop Manager
 	// ---------------
 	

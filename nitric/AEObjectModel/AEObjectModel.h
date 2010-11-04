@@ -26,9 +26,6 @@ namespace Nitrogen
 	UInt32 ComputeAbsoluteIndex( const AEDesc_Data&  keyData,
 	                             std::size_t         count );
 	
-	#pragma mark -
-	#pragma mark ¥ OSL Object Callbacks ¥
-	
 	pascal OSErr OSLCompare( ::DescType     op,
 	                         const AEDesc*  obj1,
 	                         const AEDesc*  obj2,

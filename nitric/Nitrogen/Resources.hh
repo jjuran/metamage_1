@@ -380,7 +380,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ ResType_Traits ¥
+	#pragma mark ** ResType_Traits **
 	#pragma mark -
 	
 	template < ResType resType >

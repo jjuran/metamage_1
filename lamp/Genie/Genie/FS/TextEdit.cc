@@ -333,7 +333,7 @@ namespace Genie
 		
 		params.itsText.insert( params.itsText.begin() + offset, unix_char );
 		
-		N::TEKey( params.itIsSecret ? '¥' : c, hTE );
+		N::TEKey( params.itIsSecret ? 0xA5 : c, hTE );  // bullet
 		
 		params.itsSelection.start =
 		params.itsSelection.end   = offset + 1;
@@ -423,7 +423,7 @@ namespace Genie
 		if ( secret )
 		{
 			// Fill the TE scrap with bullets temporarily
-			memset( *scrapHandle, '¥', scrapLength );
+			memset( *scrapHandle, 0xA5, scrapLength );  // bullet
 		}
 		
 		::TEPaste( hTE );
@@ -516,9 +516,11 @@ namespace Genie
 			
 			if ( secret )
 			{
+				// fill with bullets
+				
 				std::fill( text + params.itsValidLength,
 				           text + te.teLength,
-				           '¥' );
+				           0xA5 );
 			}
 			else
 			{

@@ -163,7 +163,7 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ IP address encoding ¥
+	#pragma mark ** IP address encoding **
 	
 	InetHost OTInetStringToHost( const char* str );
 	
@@ -181,7 +181,7 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ DNR ¥
+	#pragma mark ** DNR **
 	
 	nucleus::owned< InetSvcRef > OTOpenInternetServicesInContext( nucleus::owned< OTConfigurationRef >  cfig,
 	                                                              OTClientContextPtr                    clientContext = NULL );
