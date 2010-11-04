@@ -6,7 +6,9 @@
 #define EXECUTION_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_WAIT_T_HH
 #include "poseven/types/wait_t.hh"
+#endif
 
 
 namespace plus

@@ -15,12 +15,20 @@
 #include "plus/string.hh"
 
 // Io
+#ifndef IO_FILES_HH
 #include "io/files.hh"
+#endif
+#ifndef IO_WALK_HH
 #include "io/walk.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_LSTAT_HH
 #include "poseven/functions/lstat.hh"
+#endif
+#ifndef POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 #include "poseven/sequences/directory_contents.hh"
+#endif
 
 // pfiles
 #include "pfiles/common.hh"
