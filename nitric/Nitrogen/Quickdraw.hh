@@ -66,7 +66,7 @@ namespace Nitrogen
 	static const Mac::ResID watchCursor = Mac::ResID( ::watchCursor );
 	
 	#pragma mark -
-	#pragma mark ¥ Types ¥
+	#pragma mark ** Types **
 	
 	enum TransferMode
 	{
@@ -277,7 +277,7 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ Routines ¥
+	#pragma mark ** Routines **
 	
 	// InitGraf
 	// OpenPort
@@ -784,7 +784,7 @@ namespace Nitrogen
 	// LowMem accessors
 	
 	#pragma mark -
-	#pragma mark ¥ Pseudoreferences ¥
+	#pragma mark ** Pseudoreferences **
 	
 	class Port
 	{
@@ -881,7 +881,7 @@ namespace nucleus
 	};
 	
 	#pragma mark -
-	#pragma mark ¥ Operators ¥
+	#pragma mark ** Operators **
 	
 	inline Point operator-( Point pt )
 	{

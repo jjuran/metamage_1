@@ -46,7 +46,7 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ Constant types ¥
+	#pragma mark ** Constant types **
 	
 	enum AERelativeDescriptor
 	{
@@ -141,7 +141,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ Callbacks ¥
+	#pragma mark ** Callbacks **
 	
 	struct OSLAccessorUPP_Details: Basic_UPP_Details< ::OSLAccessorUPP,
 	                                                  ::OSLAccessorProcPtr,
@@ -247,7 +247,7 @@ namespace Nitrogen
 #endif
 	
 	#pragma mark -
-	#pragma mark ¥ Object Accessors ¥
+	#pragma mark ** Object Accessors **
 	
 	struct OSLAccessor
 	{
@@ -391,7 +391,7 @@ namespace Nitrogen
 	                                                     const AEDesc_Data&   keyData );
 	
 	#pragma mark -
-	#pragma mark ¥ Token routines ¥
+	#pragma mark ** Token routines **
 	
 	inline void AEDisposeToken( nucleus::owned< AEDesc_Token > )
 	{

@@ -147,7 +147,7 @@ namespace Nitrogen
    /* ... */
    
    #pragma mark -
-   #pragma mark ¥ Menu Manipulation ¥
+   #pragma mark ** Menu Manipulation **
    
    class NewMenu_Failed {};
    
@@ -196,7 +196,7 @@ namespace Nitrogen
    /* ... */
    
    #pragma mark -
-   #pragma mark ¥ Menu Item Insertion ¥
+   #pragma mark ** Menu Item Insertion **
    
    // 2224
    using ::MacAppendMenu;
@@ -234,7 +234,7 @@ namespace Nitrogen
    using ::DisableMenuItem;
 
    #pragma mark -
-   #pragma mark ¥ Menu Bar ¥
+   #pragma mark ** Menu Bar **
    
    using ::GetMBarHeight;
    using ::MacDrawMenuBar;
@@ -251,14 +251,14 @@ namespace Nitrogen
    /* ... */
 
    #pragma mark -
-   #pragma mark ¥ Menu Item Accessors ¥
+   #pragma mark ** Menu Item Accessors **
    
    using ::SetMenuItemText;
    
    Str255 GetMenuItemText( MenuRef menu, SInt16 item );
    
    #pragma mark -
-   #pragma mark ¥ Attributes ¥
+   #pragma mark ** Attributes **
    
    // 4315
    void ChangeMenuItemAttributes( MenuRef            menu,

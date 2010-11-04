@@ -43,7 +43,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ Types ¥
+	#pragma mark ** Types **
 	
 	using ::CRMRec;
 	using ::CRMRecPtr;
@@ -62,7 +62,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ CRM attributes ¥
+	#pragma mark ** CRM attributes **
 	
 	template < CRMDeviceType crmDeviceType >  struct CRMAttributes_Traits;
 	
@@ -108,7 +108,7 @@ namespace nucleus
 {
 	
 	#pragma mark -
-	#pragma mark ¥ Specializations ¥
+	#pragma mark ** Specializations **
 	
 	template < Nitrogen::CRMDeviceType crmDeviceType >
 	struct disposer< Nitrogen::CRMAttributes >
@@ -156,7 +156,7 @@ namespace Nitrogen
 	};
 	
 	#pragma mark -
-	#pragma mark ¥ CRM routines ¥
+	#pragma mark ** CRM routines **
 	
 	void InitCRM();
 	
@@ -200,7 +200,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ Paraphernalia ¥
+	#pragma mark ** Paraphernalia **
 	
 	class CRMResource_Container_Specifics
 	{

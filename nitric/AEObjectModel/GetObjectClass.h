@@ -23,7 +23,7 @@ namespace Nitrogen
 	AEObjectClass GetObjectClass( const AEDesc_Token& obj );
 	
 	#pragma mark -
-	#pragma mark ¥ ObjectClassMap ¥
+	#pragma mark ** ObjectClassMap **
 	
 	template < DescType tokenType > struct ObjectClass_Traits;
 	
@@ -76,7 +76,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ ObjectClassGetter ¥
+	#pragma mark ** ObjectClassGetter **
 	
 	template < DescType tokenType > struct GetObjectClass_Traits;
 	

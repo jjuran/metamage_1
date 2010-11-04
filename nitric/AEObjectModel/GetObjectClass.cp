@@ -41,7 +41,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ ObjectClassMap ¥
+	#pragma mark ** ObjectClassMap **
 	
 	ObjectClassMap::ObjectClassMap()
 	{
@@ -68,7 +68,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ ObjectClassGetter ¥
+	#pragma mark ** ObjectClassGetter **
 	
 	ObjectClassGetter::ObjectClassGetter()
 	{

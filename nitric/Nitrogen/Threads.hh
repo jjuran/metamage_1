@@ -58,7 +58,7 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ThreadManager );
 	
 	#pragma mark -
-	#pragma mark ¥ Types and constants ¥
+	#pragma mark ** Types and constants **
 	
 	enum ThreadState
 	{
@@ -132,7 +132,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ ThreadEntryUPP ¥
+	#pragma mark ** ThreadEntryUPP **
 	
 	struct ThreadEntryUPP_Details : Basic_UPP_Details< ::ThreadEntryUPP,
 	                                                   ::ThreadEntryProcPtr,
@@ -246,7 +246,7 @@ namespace Nitrogen
 	};
 	
 	#pragma mark -
-	#pragma mark ¥ NewThread ¥
+	#pragma mark ** NewThread **
 	
 	// Level 0, returns nucleus::owned< ThreadID >
 	

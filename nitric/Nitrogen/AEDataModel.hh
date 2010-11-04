@@ -178,7 +178,7 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleEventManager );
 	
 	#pragma mark -
-	#pragma mark ¥ DescType ¥
+	#pragma mark ** DescType **
 	
 	// Constants used creating an AppleEvent
 	
@@ -256,7 +256,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ DescType_Traits ¥
+	#pragma mark ** DescType_Traits **
 	
 	template < DescType > struct DescType_Traits;
 	
@@ -371,7 +371,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ AEDesc ¥
+	#pragma mark ** AEDesc **
 	
 	using ::AEDesc;
 	using ::AEDescList;
@@ -634,7 +634,7 @@ namespace Nitrogen
 {
 	
 	#pragma mark -
-	#pragma mark ¥ Coercions ¥
+	#pragma mark ** Coercions **
 	
 	struct AECoerceDescUPP_Details: Basic_UPP_Details< ::AECoerceDescUPP,
 	                                                   ::AECoerceDescProcPtr,
@@ -956,7 +956,7 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Data > AECoerceDesc( const AEDesc& desc, DescType toType );
 	
 	#pragma mark -
-	#pragma mark ¥ AEDescs ¥
+	#pragma mark ** AEDescs **
 	
 	namespace Detail
 	{
@@ -1157,7 +1157,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ AEDescLists ¥
+	#pragma mark ** AEDescLists **
 	
 	template < class AEDesc_Type >
 	inline nucleus::owned< AEDesc_Type > AECreateList( const void*  factoringPtr,
@@ -1298,7 +1298,7 @@ namespace Nitrogen
 	void AEDeleteItem( nucleus::owned< AEDescList_Data >& listDesc, long index );
 	
 	#pragma mark -
-	#pragma mark ¥ AERecords ¥
+	#pragma mark ** AERecords **
 	
 	inline bool AECheckIsRecord( const AEDesc& theDesc )
 	{
@@ -1400,7 +1400,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ AppleEvents ¥
+	#pragma mark ** AppleEvents **
 	
 	nucleus::owned< AppleEvent > AECreateAppleEvent( AEEventClass          eventClass,
 	                                                 AEEventID             eventID,
@@ -1478,7 +1478,7 @@ namespace Nitrogen
 	                                            AEKeyword          keyword );
 	
 	#pragma mark -
-	#pragma mark ¥ Opaque data ¥
+	#pragma mark ** Opaque data **
 	
 	void AEGetDescData( const AEDesc&  desc,
 	                    void*          dataPtr,
@@ -1501,7 +1501,7 @@ namespace Nitrogen
 	
 	
 	#pragma mark -
-	#pragma mark ¥ AEEventHandlerUPP ¥
+	#pragma mark ** AEEventHandlerUPP **
 	
 	struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
 	                                                     ::AEEventHandlerProcPtr,
@@ -1533,7 +1533,7 @@ namespace Nitrogen
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ Powered by DescType_Traits ¥
+	#pragma mark ** Powered by DescType_Traits **
 	
 	class AECoercePtr_Putter
 	{

@@ -166,7 +166,7 @@ namespace MacCDROM
 #if CALL_NOT_IN_CARBON
 	
 	#pragma mark -
-	#pragma mark ¥ Audio track Control Calls ¥
+	#pragma mark ** Audio track Control Calls **
 	
 	// csCode 100
 	CDROMTableOfContents ReadTOC( const CDROMDrive& drive );
@@ -264,7 +264,7 @@ namespace MacCDROM
 	// ReadAllSubCodes
 	
 	#pragma mark -
-	#pragma mark ¥ Audio track list Control Calls ¥
+	#pragma mark ** Audio track list Control Calls **
 	
 	// csCode 122
 	// SetTrackList

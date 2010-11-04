@@ -84,7 +84,7 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( WindowManager );
 	
 	#pragma mark -
-	#pragma mark ¥ Types ¥
+	#pragma mark ** Types **
 	
 	using Mac::WindowDefProcID;
 	
@@ -246,7 +246,7 @@ namespace Nitrogen
    /* ... */
    
 	#pragma mark -
-	#pragma mark ¥ Specializations ¥
+	#pragma mark ** Specializations **
 	
   }
 
@@ -256,7 +256,7 @@ namespace Nitrogen
    /* ... */
 
 	#pragma mark -
-	#pragma mark ¥ Routines ¥
+	#pragma mark ** Routines **
 	
 	// GetNewCWindow
 	
