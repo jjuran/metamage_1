@@ -183,17 +183,50 @@ namespace Genie
 		return NULL;
 	}
 	
-	void spawn_process( const char* program_path )
+	void spawn_process( const plus::string& program_args )
 	{
+		plus::var_string arg_string = program_args;
+		
+		std::vector< const char* > args;
+		
+		const char* program_args_data = program_args.c_str();
+		
+		if ( const char* first_space = strchr( program_args_data, ' ' ) )
+		{
+			// Don't copy-on-write unless we have to
+			
+			char* p = arg_string.begin();
+			
+			char* space = p + (first_space - program_args_data);
+			
+			do
+			{
+				args.push_back( p );
+				
+				p = space;
+				
+				*p++ = '\0';
+			}
+			while (( space = strchr( p, ' ' ) ));
+			
+			args.push_back( p );
+		}
+		else
+		{
+			args.push_back( program_args_data );
+		}
+		
+		args.push_back( NULL );
+		
+		char const *const *argv = &args[ 0 ];
+		
 		Process& parent = GetInitProcess();
 		
 		Process& external = parent.vfork();
 		
-		char const *const argv[] = { program_path, NULL };
-		
 		try
 		{
-			(void) external.Exec( program_path, argv, NULL );
+			(void) external.Exec( argv[ 0 ], argv, NULL );
 		}
 		catch ( ... )
 		{

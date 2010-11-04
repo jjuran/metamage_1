@@ -30,7 +30,7 @@ namespace Genie
 	
 	void* for_each_process( void* (*)( void*, pid_t, Process& ), void* = NULL );
 	
-	void spawn_process( const char* program_path );
+	void spawn_process( const plus::string& program_args );
 	
 	void notify_reaper();
 	
