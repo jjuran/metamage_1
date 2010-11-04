@@ -129,11 +129,6 @@ namespace Genie
 		return false;
 	}
 	
-	bool FSTree::IsAnonymous() const
-	{
-		return false;
-	}
-	
 	FSTreePtr FSTree::Parent() const
 	{
 		return itsParent.get() ? itsParent : Self();

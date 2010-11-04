@@ -109,7 +109,6 @@ namespace Genie
 			virtual bool IsDirectory() const;
 			virtual bool IsLink() const;
 			virtual bool IsPipe() const;
-			virtual bool IsAnonymous() const;
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			

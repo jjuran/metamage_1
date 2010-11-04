@@ -48,8 +48,7 @@ namespace Genie
 			{
 			}
 			
-			bool IsPipe()      const  { return true; }
-			bool IsAnonymous() const  { return true; }
+			bool IsPipe() const  { return true; }
 			
 			plus::string Pathname() const  { return Name(); }
 			
