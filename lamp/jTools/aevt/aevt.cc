@@ -142,9 +142,6 @@ namespace tool
 		return n::owned< N::AEAddressDesc >();
 	}
 	
-	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
-	// shell$ aevt -s hhgg aevt quit
-	
 	int Main( int argc, char** argv )
 	{
 		bool front = false;
@@ -184,7 +181,6 @@ namespace tool
 			p7::write( p7::stderr_fileno, STR_LEN(
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
 				"Examples: aevt -s hhgg aevt quit\n"
-				"          aevt -m 'Headless Mac' -a Genie |gan Exec \"'----':[“shutdown -h”]\"\n"
 				"          aevt -s 'R*ch' misc slct \"'----':obj{want:type(clin), form:indx, seld:42,\n"
 				"               from:obj{want:type(cwin), form:indx, seld:1, from:null()}}\"\n" ) );
 			
