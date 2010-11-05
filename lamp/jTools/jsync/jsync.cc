@@ -22,7 +22,6 @@
 
 // plus
 #include "plus/concat.hh"
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 
 // Io
@@ -31,6 +30,7 @@
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/dirfd.hh"
+#include "poseven/functions/dup.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/fdopendir.hh"
 #include "poseven/functions/fstat.hh"
@@ -83,11 +83,13 @@ namespace tool
 	static bool globally_locking_files = false;
 	
 	
-	static inline n::shared< p7::dir_t > fdopendir_shared( n::owned< p7::fd_t > dirfd )
+	static mode_t get_mode( p7::fd_t dir_fd, const char* path )
 	{
-		n::owned< p7::dir_t > dir = p7::fdopendir( dirfd );
+		struct stat sb;
 		
-		return dir;
+		const bool exists = p7::fstatat( dir_fd, path, sb, p7::at_symlink_nofollow );
+		
+		return exists ? sb.st_mode : 0;
 	}
 	
 	static inline n::owned< p7::fd_t > open_dir( p7::fd_t dirfd, const char* path )
@@ -196,18 +198,16 @@ namespace tool
 	
 	static void recursively_copy( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
 	{
-		struct ::stat stat_buffer = { 0 };
+		const mode_t mode = get_mode( olddirfd, name );
 		
-		p7::fstatat( olddirfd, name, stat_buffer, p7::at_symlink_nofollow );
-		
-		if ( S_ISREG( stat_buffer.st_mode ) )
+		if ( S_ISREG( mode ) )
 		{
 			if ( !filter_item( name ) )
 			{
 				copy_file( olddirfd, name, newdirfd );
 			}
 		}
-		else if ( S_ISLNK( stat_buffer.st_mode ) )
+		else if ( S_ISLNK( mode ) )
 		{
 			copy_symlink( olddirfd, name, newdirfd );
 		}
@@ -224,24 +224,40 @@ namespace tool
 	
 	typedef std::pair< p7::fd_t, p7::fd_t > pair_of_fds;
 	
-	static void recursively_copy_into( const char*         name,
-	                                   const pair_of_fds&  dirs )
+	class recursive_copier
 	{
-		recursively_copy( dirs.first, name, dirs.second );
+		private:
+			p7::fd_t  old_dirfd;
+			p7::fd_t  new_dirfd;
+		
+		public:
+			recursive_copier( p7::fd_t old_fd, p7::fd_t new_fd )
+			:
+				old_dirfd( old_fd ),
+				new_dirfd( new_fd )
+			{
+			}
+			
+			void operator()( const char* name )
+			{
+				recursively_copy( old_dirfd, name, new_dirfd );
+			}
+	};
+	
+	static p7::directory_contents_container dirfd_contents( p7::fd_t fd )
+	{
+		return p7::directory_contents_container( p7::fdopendir( p7::dup( fd ) ) );
 	}
 	
-	static void recursively_copy_directory_contents( n::owned< p7::fd_t > olddirfd, p7::fd_t newdirfd )
+	static void recursively_copy_directory_contents( p7::fd_t olddirfd, p7::fd_t newdirfd )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		n::shared< p7::dir_t > olddir = fdopendir_shared( olddirfd );
-		
-		directory_container contents = p7::directory_contents( olddir );
+		directory_container contents = dirfd_contents( olddirfd );
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               std::bind2nd( plus::ptr_fun( recursively_copy_into ),
-		                             std::make_pair( p7::dirfd( olddir ), newdirfd ) ) );
+		               recursive_copier( olddirfd, newdirfd ) );
 	}
 	
 	static void recursively_copy_directory( p7::fd_t olddirfd, const char* name, p7::fd_t newdirfd )
@@ -266,9 +282,10 @@ namespace tool
 	{
 		const std::size_t buffer_size = 4096;
 		
-		char a_buffer[ buffer_size ];
-		char b_buffer[ buffer_size ];
-		char c_buffer[ buffer_size ];
+		// Avoid large local allocations to prevent stack overruns
+		static char a_buffer[ buffer_size ];
+		static char b_buffer[ buffer_size ];
+		static char c_buffer[ buffer_size ];
 		
 		while ( a_matches_b || b_matches_c || c_matches_a )
 		{
@@ -331,15 +348,12 @@ namespace tool
 		
 		n::owned< p7::fd_t > b_fd;
 		
-		struct stat a_stat = p7::fstat( a_fd );
-		struct stat c_stat = p7::fstat( c_fd );
+		const time_t a_time = p7::fstat( a_fd ).st_mtime;
+		const time_t c_time = p7::fstat( c_fd ).st_mtime;
 		
 		if ( b_exists )
 		{
 			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
-			
-			time_t a_time = a_stat.st_mtime;
-			time_t c_time = c_stat.st_mtime;
 			
 			const struct stat b_stat = p7::fstat( b_fd );
 			
@@ -367,7 +381,7 @@ namespace tool
 		
 		if ( a_matches_b && b_matches_c )
 		{
-			store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
+			store_modification_dates( b_fd, a_time, c_time );
 			
 			return;
 		}
@@ -442,7 +456,7 @@ namespace tool
 		
 		p7::pump( a_fd, &from_offset, b_fd );
 		
-		store_modification_dates( b_fd, a_stat.st_mtime, c_stat.st_mtime );
+		store_modification_dates( b_fd, a_time, c_time );
 		
 		if ( b_exists )
 		{
@@ -450,10 +464,16 @@ namespace tool
 		}
 	}
 	
-	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
-	                                          n::owned< p7::fd_t >  b_dirfd,
-	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const char*           subpath );
+	static void relink( const plus::string& target, p7::fd_t dir_fd, const char* filename )
+	{
+		p7::unlinkat (         dir_fd, filename );
+		p7::symlinkat( target, dir_fd, filename );
+	}
+	
+	static void recursively_sync_directories( p7::fd_t     a_dirfd,
+	                                          p7::fd_t     b_dirfd,
+	                                          p7::fd_t     c_dirfd,
+	                                          const char*  subpath );
 	
 	static void recursively_sync( p7::fd_t     a_dirfd,
 	                              p7::fd_t     b_dirfd,
@@ -461,21 +481,19 @@ namespace tool
 	                              const char*  subpath,
 	                              const char*  filename )
 	{
-		struct stat a_stat, b_stat, c_stat;
+		const mode_t a_mode = get_mode( a_dirfd, filename );
+		const mode_t b_mode = get_mode( b_dirfd, filename );
+		const mode_t c_mode = get_mode( c_dirfd, filename );
 		
-		const bool a_exists = p7::fstatat( a_dirfd, filename, a_stat, p7::at_symlink_nofollow );
-		const bool b_exists = p7::fstatat( b_dirfd, filename, b_stat, p7::at_symlink_nofollow );
-		const bool c_exists = p7::fstatat( c_dirfd, filename, c_stat, p7::at_symlink_nofollow );
+		const bool a_is_dir = S_ISDIR( a_mode );
+		const bool b_is_dir = S_ISDIR( b_mode );
+		const bool c_is_dir = S_ISDIR( c_mode );
 		
-		const bool a_is_dir = a_exists && S_ISDIR( a_stat.st_mode );
-		const bool b_is_dir = b_exists && S_ISDIR( b_stat.st_mode );
-		const bool c_is_dir = c_exists && S_ISDIR( c_stat.st_mode );
-		
-		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_exists || a_is_dir == b_is_dir) )
+		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_mode || a_is_dir == b_is_dir) )
 		{
 			if ( a_is_dir )
 			{
-				if ( !b_exists )
+				if ( !b_mode )
 				{
 					p7::mkdirat( b_dirfd, filename );
 				}
@@ -486,9 +504,9 @@ namespace tool
 			}
 			else
 			{
-				const bool a_is_link = a_exists && S_ISLNK( a_stat.st_mode );
-				const bool b_is_link = b_exists && S_ISLNK( b_stat.st_mode );
-				const bool c_is_link = c_exists && S_ISLNK( c_stat.st_mode );
+				const bool a_is_link = S_ISLNK( a_mode );
+				const bool b_is_link = S_ISLNK( b_mode );
+				const bool c_is_link = S_ISLNK( c_mode );
 				
 				if ( !a_is_link  &&  !c_is_link )
 				{
@@ -499,7 +517,7 @@ namespace tool
 						(void) p7::openat( b_dirfd, filename, p7::o_wronly | p7::o_creat, p7::_666 );
 					}
 					
-					sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_exists );
+					sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, filename, b_mode );
 				}
 				else if ( a_is_link  &&  c_is_link )
 				{
@@ -512,11 +530,11 @@ namespace tool
 					{
 						if ( b_target != a_target )
 						{
-							std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
+							std::printf( "%s %s\n", b_mode ? "----" : "+--+", subpath );
 							
 							if ( !global_dry_run )
 							{
-								if ( b_exists )
+								if ( b_mode )
 								{
 									p7::unlinkat( b_dirfd, filename );
 								}
@@ -531,11 +549,8 @@ namespace tool
 						
 						if ( globally_up  &&  !global_dry_run )
 						{
-							p7::unlinkat( c_dirfd, filename );
-							p7::symlinkat( a_target, c_dirfd, filename );
-							
-							p7::unlinkat( b_dirfd, filename );
-							p7::symlinkat( a_target, b_dirfd, filename );
+							relink( a_target, c_dirfd, filename );
+							relink( a_target, b_dirfd, filename );
 						}
 					}
 					else if ( b_target == a_target )
@@ -544,11 +559,8 @@ namespace tool
 						
 						if ( globally_down  &&  !global_dry_run )
 						{
-							p7::unlinkat( a_dirfd, filename );
-							p7::symlinkat( c_target, a_dirfd, filename );
-							
-							p7::unlinkat( b_dirfd, filename );
-							p7::symlinkat( c_target, b_dirfd, filename );
+							relink( c_target, a_dirfd, filename );
+							relink( c_target, b_dirfd, filename );
 						}
 					}
 					else
@@ -562,7 +574,7 @@ namespace tool
 				}
 			}
 		}
-		else if ( b_exists )
+		else if ( b_mode )
 		{
 			// file vs. directory
 			if ( a_is_dir != b_is_dir )
@@ -696,32 +708,62 @@ namespace tool
 		std::copy( b_begin, b_end, b_only );
 	}
 	
-	static void recursively_sync_directory_contents( n::owned< p7::fd_t >  a_dirfd,
-	                                                 n::owned< p7::fd_t >  b_dirfd,
-	                                                 n::owned< p7::fd_t >  c_dirfd,
-	                                                 const char*           subpath )
+	template < class Sequence >
+	static void compare_sequences( const Sequence& a,
+	                               const Sequence& b,
+	                               Sequence& a_only,
+	                               Sequence& b_only,
+	                               Sequence& both )
+	{
+		compare_sequences( a.begin(), a.end(),
+		                   b.begin(), b.end(),
+		                   std::back_inserter( a_only ),
+		                   std::back_inserter( b_only ),
+		                   std::back_inserter( both ) );
+	}
+	
+	template < class Source, class Dest >
+	static void copy_unless_filtered( const Source& source, Dest& dest )
+	{
+		copy_unless( source.begin(),
+		             source.end(),
+		             std::back_inserter( dest ),
+		             std::ptr_fun( filter_item ) );
+	}
+	
+	template < class Sequence >
+	static void sort( Sequence& sequence )
+	{
+		std::sort( sequence.begin(), sequence.end() );
+	}
+	
+	static void recursively_delete( const plus::string& path )
+	{
+		io::recursively_delete( path );
+	}
+	
+	static void recursively_sync_directory_contents( p7::fd_t     a_dirfd,
+	                                                 p7::fd_t     b_dirfd,
+	                                                 p7::fd_t     c_dirfd,
+	                                                 const char*  subpath )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
-		n::shared< p7::dir_t > a_dir = fdopendir_shared( a_dirfd );
-		n::shared< p7::dir_t > b_dir = fdopendir_shared( b_dirfd );
-		n::shared< p7::dir_t > c_dir = fdopendir_shared( c_dirfd );
-		
-		directory_container a_contents = p7::directory_contents( a_dir );
-		directory_container b_contents = p7::directory_contents( b_dir );
-		directory_container c_contents = p7::directory_contents( c_dir );
+		directory_container a_contents = dirfd_contents( a_dirfd );
+		directory_container b_contents = dirfd_contents( b_dirfd );
+		directory_container c_contents = dirfd_contents( c_dirfd );
 		
 		std::vector< plus::string > a;
 		std::vector< plus::string > b;
 		std::vector< plus::string > c;
 		
-		copy_unless( a_contents.begin(), a_contents.end(), std::back_inserter( a ), std::ptr_fun( filter_item ) );
-		copy_unless( b_contents.begin(), b_contents.end(), std::back_inserter( b ), std::ptr_fun( filter_item ) );
-		copy_unless( c_contents.begin(), c_contents.end(), std::back_inserter( c ), std::ptr_fun( filter_item ) );
+		copy_unless_filtered( a_contents, a );
+		copy_unless_filtered( b_contents, b );
+		copy_unless_filtered( c_contents, c );
 		
-		std::sort( a.begin(), a.end() );
-		std::sort( b.begin(), b.end() );
-		std::sort( c.begin(), c.end() );
+		sort( a );
+		sort( b );
+		sort( c );
 		
 		std::vector< plus::string > a_added;
 		std::vector< plus::string > a_removed;
@@ -731,17 +773,17 @@ namespace tool
 		std::vector< plus::string > c_removed;
 		std::vector< plus::string > c_static;
 		
-		compare_sequences( a.begin(), a.end(),
-		                   b.begin(), b.end(),
-		                   std::back_inserter( a_added   ),
-		                   std::back_inserter( a_removed ),
-		                   std::back_inserter( a_static  ) );
+		compare_sequences( a,
+		                   b,
+		                   a_added,
+		                   a_removed,
+		                   a_static );
 		
-		compare_sequences( c.begin(), c.end(),
-		                   b.begin(), b.end(),
-		                   std::back_inserter( c_added   ),
-		                   std::back_inserter( c_removed ),
-		                   std::back_inserter( c_static  ) );
+		compare_sequences( c,
+		                   b,
+		                   c_added,
+		                   c_removed,
+		                   c_static );
 		
 		std::vector< plus::string > a_created;
 		std::vector< plus::string > c_created;
@@ -753,17 +795,17 @@ namespace tool
 		
 		std::vector< plus::string > mutually_static;
 		
-		compare_sequences( a_added.begin(), a_added.end(),
-		                   c_added.begin(), c_added.end(),
-		                   std::back_inserter( a_created ),
-		                   std::back_inserter( c_created ),
-		                   std::back_inserter( mutually_added ) );
+		compare_sequences( a_added,
+		                   c_added,
+		                   a_created,
+		                   c_created,
+		                   mutually_added );
 		
-		compare_sequences( a_removed.begin(), a_removed.end(),
-		                   c_removed.begin(), c_removed.end(),
-		                   std::back_inserter( a_deleted ),
-		                   std::back_inserter( c_deleted ),
-		                   std::back_inserter( mutually_deleted ) );
+		compare_sequences( a_removed,
+		                   c_removed,
+		                   a_deleted,
+		                   c_deleted,
+		                   mutually_deleted );
 		
 		compare_sequences( a_static.begin(), a_static.end(),
 		                   c_static.begin(), c_static.end(),
@@ -787,11 +829,11 @@ namespace tool
 			{
 				globally_locking_files = false;
 				
-				recursively_copy( p7::dirfd( a_dir ), filename, p7::dirfd( c_dir ) );
+				recursively_copy( a_dirfd, filename, c_dirfd );
 				
 				globally_locking_files = true;
 				
-				recursively_copy( p7::dirfd( a_dir ), filename, p7::dirfd( b_dir ) );
+				recursively_copy( a_dirfd, filename, b_dirfd );
 			}
 		}
 		
@@ -807,11 +849,11 @@ namespace tool
 			{
 				globally_locking_files = false;
 				
-				recursively_copy( p7::dirfd( c_dir ), filename, p7::dirfd( a_dir ) );
+				recursively_copy( c_dirfd, filename, a_dirfd );
 				
 				globally_locking_files = true;
 				
-				recursively_copy( p7::dirfd( c_dir ), filename, p7::dirfd( b_dir ) );
+				recursively_copy( c_dirfd, filename, b_dirfd );
 			}
 		}
 		
@@ -821,9 +863,9 @@ namespace tool
 			
 			std::printf( "++++ %s%s\n", path, filename.c_str() );
 			
-			recursively_sync( p7::dirfd( a_dir ),
-			                  p7::dirfd( b_dir ),
-			                  p7::dirfd( c_dir ), subpath + filename, filename );
+			recursively_sync( a_dirfd,
+			                  b_dirfd,
+			                  c_dirfd, subpath + filename, filename );
 		}
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
@@ -841,8 +883,8 @@ namespace tool
 				plus::string b_path = global_base_root   / child_subpath;
 				plus::string c_path = global_remote_root / child_subpath;
 				
-				io::recursively_delete( c_path );
-				io::recursively_delete( b_path );
+				recursively_delete( c_path );
+				recursively_delete( b_path );
 			}
 		}
 		
@@ -861,8 +903,8 @@ namespace tool
 				plus::string a_path = global_local_root / child_subpath;
 				plus::string b_path = global_base_root  / child_subpath;
 				
-				io::recursively_delete( a_path );
-				io::recursively_delete( b_path );
+				recursively_delete( a_path );
+				recursively_delete( b_path );
 			}
 		}
 		
@@ -878,7 +920,7 @@ namespace tool
 			{
 				plus::string b_path = global_base_root / child_subpath;
 				
-				io::recursively_delete( b_path );
+				recursively_delete( b_path );
 			}
 		}
 		
@@ -886,9 +928,9 @@ namespace tool
 		{
 			const plus::string& filename = *it;
 			
-			recursively_sync( p7::dirfd( a_dir ),
-			                  p7::dirfd( b_dir ),
-			                  p7::dirfd( c_dir ), subpath + filename, filename );
+			recursively_sync( a_dirfd,
+			                  b_dirfd,
+			                  c_dirfd, subpath + filename, filename );
 		}
 		
 		// added/nil:  simple add -- just do it
@@ -898,10 +940,10 @@ namespace tool
 		// deleted/deleted:  mutual delete -- just do it
 	}
 	
-	static void recursively_sync_directories( n::owned< p7::fd_t >  a_dirfd,
-	                                          n::owned< p7::fd_t >  b_dirfd,
-	                                          n::owned< p7::fd_t >  c_dirfd,
-	                                          const char*           subpath )
+	static void recursively_sync_directories( p7::fd_t     a_dirfd,
+	                                          p7::fd_t     b_dirfd,
+	                                          p7::fd_t     c_dirfd,
+	                                          const char*  subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		
