@@ -29,7 +29,6 @@
 
 // poseven
 #include "poseven/extras/pump.hh"
-#include "poseven/functions/dirfd.hh"
 #include "poseven/functions/dup.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/fdopendir.hh"
