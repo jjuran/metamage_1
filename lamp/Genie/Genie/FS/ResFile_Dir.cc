@@ -8,6 +8,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // nucleus
 #include "nucleus/shared.hh"
 
@@ -21,7 +24,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
-#include "Genie/FS/Name_OSType.hh"
+#include "Genie/FS/quad_name.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
@@ -98,7 +101,7 @@ namespace Genie
 	{
 		FSTreePtr file = GetFile();
 		
-		const ::OSType osType = OSType_KeyName_Traits::KeyFromName( file->ParentRef()->Name() );
+		const ::OSType osType = parse_quad_name( file->ParentRef()->Name() );
 		
 		const N::ResType type = N::ResType( osType );
 		
@@ -172,7 +175,7 @@ namespace Genie
 	
 	N::ResType FSTree_RsrcFile_Type_ID::GetType() const
 	{
-		const ::OSType type = OSType_KeyName_Traits::KeyFromName( ParentRef()->Name() );
+		const ::OSType type = parse_quad_name( ParentRef()->Name() );
 		
 		return N::ResType( type );
 	}
@@ -278,7 +281,7 @@ namespace Genie
 	
 	N::ResType FSTree_RsrcFile_Type::GetType() const
 	{
-		const ::OSType type = OSType_KeyName_Traits::KeyFromName( Name() );
+		const ::OSType type = parse_quad_name( Name() );
 		
 		return N::ResType( type );
 	}
@@ -402,13 +405,13 @@ namespace Genie
 		N::FSpCreateResFile( itsFileSpec,
 		                     Mac::FSCreator( creator ),
 		                     Mac::FSType   ( type    ),
-		                     N::smSystemScript );
+		                     Mac::smSystemScript );
 	}
 	
 	FSTreePtr FSTree_ResFileDir::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		// Throws if conversion to OSType fails.
-		(void) OSType_KeyName_Traits::KeyFromName( name );
+		(void) parse_quad_name( name );
 		
 		return seize_ptr( new FSTree_RsrcFile_Type( (parent ? parent : this)->Self(), name, itsFileSpec ) );
 	}
@@ -423,7 +426,9 @@ namespace Genie
 		{
 			const ::ResType type = N::Get1IndType( i );
 			
-			plus::string name = OSType_KeyName_Traits::NameFromKey( N::OSType( type ) );
+			plus::var_string name;
+			
+			inscribe_quad_name( name, type );
 			
 			const FSNode node( i, name );
 			

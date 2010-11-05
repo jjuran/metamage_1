@@ -10,9 +10,6 @@
 #include <MacErrors.h>
 #endif
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // plus
 #include "plus/var_string.hh"
 
@@ -26,8 +23,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/Name_OSType.hh"
-#include "Genie/Utilities/canonical_32_bit_hex.hh"
+#include "Genie/FS/quad_name.hh"
 
 
 namespace Nitrogen
@@ -152,12 +148,16 @@ namespace Genie
 	
 	static inline bool is_valid_Gestalt_Selector_name( const plus::string& name )
 	{
-		if ( !canonical_32_bit_hex::applies( name ) )
+		quad_t decoded;
+		
+		try
+		{
+			decoded = parse_quad_name( name.data(), name.size() );
+		}
+		catch ( ... )
 		{
 			return false;
 		}
-		
-		const unsigned decoded = iota::decode_32_bit_hex( name.c_str() );
 		
 		return is_valid_Gestalt_Selector( N::Gestalt_Selector( decoded ) );
 	}
@@ -183,14 +183,12 @@ namespace Genie
 				
 				plus::var_string name;
 				
-				char* p = name.reset( !valid + 8 );
-				
 				if ( !valid )
 				{
-					p[0] = '.';
+					name += '.';
 				}
 				
-				iota::encode_32_bit_hex( (unsigned) selector, &p[ !valid ] );
+				inscribe_quad_name( name, selector );
 				
 				return FSNode( inode, name );
 			}
