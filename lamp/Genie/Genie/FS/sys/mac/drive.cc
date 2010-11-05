@@ -87,7 +87,7 @@ namespace Genie
 			}
 	};
 	
-	static void drive_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void drive_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		drive_IteratorConverter converter;
 		

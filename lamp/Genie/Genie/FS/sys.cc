@@ -105,7 +105,7 @@ namespace Genie
 			}
 	};
 	
-	static void syscall_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void syscall_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		syscall_IteratorConverter converter;
 		

@@ -243,7 +243,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static void proc_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void proc_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		for_each_process( &iterate_one_process, &cache );
 	}

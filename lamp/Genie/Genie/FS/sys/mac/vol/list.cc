@@ -199,7 +199,7 @@ namespace Genie
 			}
 	};
 	
-	static void vol_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void vol_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		vol_IteratorConverter converter;
 		

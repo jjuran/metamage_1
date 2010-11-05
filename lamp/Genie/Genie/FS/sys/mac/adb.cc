@@ -111,7 +111,7 @@ namespace Genie
 			}
 	};
 	
-	static void adb_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void adb_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		adb_IteratorConverter converter;
 		

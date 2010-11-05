@@ -196,7 +196,7 @@ namespace Genie
 			}
 	};
 	
-	static void gestalt_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void gestalt_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		gestalt_IteratorConverter converter;
 		

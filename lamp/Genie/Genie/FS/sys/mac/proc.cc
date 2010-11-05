@@ -162,7 +162,7 @@ namespace Genie
 			}
 	};
 	
-	static void psn_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void psn_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		psn_IteratorConverter converter;
 		

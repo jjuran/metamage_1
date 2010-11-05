@@ -178,7 +178,7 @@ namespace Genie
 		return seize_ptr( new dt_appls_QUAD_list_N( parent, name ) );
 	}
 	
-	static void appl_QUAD_list_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		// Can't enumerate
 	}
@@ -213,7 +213,7 @@ namespace Genie
 		return Premapped_Factory( parent, name, sys_mac_vol_list_N_dt_appls_QUAD_Mappings );
 	}
 	
-	static void appl_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void appl_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		// Can't enumerate
 	}
@@ -270,7 +270,7 @@ namespace Genie
 		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
 	}
 	
-	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		// Can't enumerate
 	}
@@ -285,7 +285,7 @@ namespace Genie
 		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
 	}
 	
-	static void icon_QUAD_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void icon_QUAD_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		// Can't enumerate
 	}
@@ -300,7 +300,7 @@ namespace Genie
 		return new_basic_directory( parent, name, icon_QUAD_lookup, icon_QUAD_iterate );
 	}
 	
-	static void icon_iterate( const FSTreePtr& parent, const plus::string& name, FSTreeCache& cache )
+	static void icon_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
 		// Can't enumerate
 	}
