@@ -6,10 +6,6 @@
 // Standard C/C++
 #include <cstdio>
 
-// Standard C++
-#include <functional>
-#include <vector>
-
 // POSIX
 #include <errno.h>
 #include <fcntl.h>

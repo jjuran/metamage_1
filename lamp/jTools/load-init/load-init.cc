@@ -8,10 +8,6 @@
 #include <MixedMode.h>
 #endif
 
-// Standard C++
-#include <functional>
-#include <vector>
-
 // Standard C/C++
 #include <cstdio>
 
