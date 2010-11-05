@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <functional>
 #include <vector>
 
 #include "MD5/MD5.hh"
