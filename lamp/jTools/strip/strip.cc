@@ -63,9 +63,9 @@ static int strip( const char* path )
 		return 1;
 	}
 	
-	unlinkat( res_fd, "SymC/0", 0 );
-	unlinkat( res_fd, "SymN/0", 0 );
-	unlinkat( res_fd, "Name/0", 0 );
+	unlinkat( res_fd, "0000.SymC", 0 );
+	unlinkat( res_fd, "0000.SymN", 0 );
+	unlinkat( res_fd, "0000.Name", 0 );
 	
 	close( res_fd );
 	

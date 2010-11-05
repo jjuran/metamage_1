@@ -298,7 +298,7 @@ sub copy_file
 	
 	if ( defined $vers_2_data  &&  -d "$dest/$name/res" )
 	{
-		open my $out, ">", "$dest/$name/res/vers/2" or die "$dest/$name/res/vers/2: $!\n";
+		open my $out, ">", "$dest/$name/res/0002.vers" or die "$dest/$name/res/0002.vers: $!\n";
 		
 		print $out $vers_2_data;
 		
