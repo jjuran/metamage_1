@@ -203,12 +203,21 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr appl_lookup( const FSTreePtr& parent, const plus::string& name )
+	static void validate_quad_name( const plus::string& name )
 	{
-		if ( name.length() != sizeof 'quad' )
+		try
+		{
+			(void) parse_quad_name( name );
+		}
+		catch ( const invalid_quad_name& )
 		{
 			p7::throw_errno( ENOENT );
 		}
+	}
+	
+	static FSTreePtr appl_lookup( const FSTreePtr& parent, const plus::string& name )
+	{
+		validate_quad_name( name );
 		
 		return Premapped_Factory( parent, name, sys_mac_vol_list_N_dt_appls_QUAD_Mappings );
 	}
@@ -277,10 +286,7 @@ namespace Genie
 	
 	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		if ( name.length() != sizeof 'quad' )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
 	}
@@ -292,10 +298,7 @@ namespace Genie
 	
 	static FSTreePtr icon_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		if ( name.length() != sizeof 'quad' )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_lookup, icon_QUAD_iterate );
 	}
