@@ -16,7 +16,9 @@
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON
+#ifndef CLASSICTOOLBOX_FILES_HH
 #include "ClassicToolbox/Files.hh"
+#endif
 #endif
 
 

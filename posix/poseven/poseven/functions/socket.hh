@@ -18,10 +18,14 @@
 #include <sys/socket.h>
 
 // Nucleus
+#ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_CLOSE_HH
 #include "poseven/functions/close.hh"
+#endif
 
 
 namespace poseven

@@ -13,7 +13,9 @@
 #include <functional>
 
 // poseven
+#ifndef POSEVEN_EXTRAS_READALL_HH
 #include "poseven/extras/read_all.hh"
+#endif
 
 
 namespace poseven

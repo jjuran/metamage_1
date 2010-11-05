@@ -19,20 +19,44 @@
 #include "plus/var_string.hh"
 
 // Io
+#ifndef IO_IO_HH
 #include "io/io.hh"
+#endif
+#ifndef IO_FILES_HH
 #include "io/files.hh"
+#endif
+#ifndef IO_WALK_HH
 #include "io/walk.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_FSTAT_HH
 #include "poseven/functions/fstat.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_LSEEK_HH
 #include "poseven/functions/lseek.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_LSTAT_HH
 #include "poseven/functions/lstat.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_OPEN_HH
 #include "poseven/functions/open.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_READ_HH
 #include "poseven/functions/read.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_RMDIR_HH
 #include "poseven/functions/rmdir.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_UNLINK_HH
 #include "poseven/functions/unlink.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_WRITE_HH
 #include "poseven/functions/write.hh"
+#endif
+#ifndef POSEVEN_SEQUENCES_DIRECTORYCONTENTS_HH
 #include "poseven/sequences/directory_contents.hh"
+#endif
 
 
 namespace poseven

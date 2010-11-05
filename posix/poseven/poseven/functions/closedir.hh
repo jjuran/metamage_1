@@ -17,12 +17,18 @@
 // POSIX
 #include <dirent.h>
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
+#endif
 
 // poseven
+#ifndef POSEVEN_TYPES_DIR_T_HH
 #include "poseven/types/dir_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
 
 
 namespace nucleus

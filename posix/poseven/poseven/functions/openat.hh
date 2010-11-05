@@ -21,9 +21,15 @@
 #include "iota/string_traits.hh"
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_CLOSE_HH
 #include "poseven/functions/close.hh"
+#endif
+#ifndef POSEVEN_TYPES_MODE_T_HH
 #include "poseven/types/mode_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_OPENFLAGS_T_HH
 #include "poseven/types/open_flags_t.hh"
+#endif
 
 
 namespace poseven

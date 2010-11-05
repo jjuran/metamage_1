@@ -15,8 +15,12 @@
 #define POSEVEN_FUNCTIONS_SIGNAL_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_SIGNO_T_HH
 #include "poseven/types/signo_t.hh"
+#endif
 
 
 namespace poseven

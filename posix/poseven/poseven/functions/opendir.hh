@@ -18,7 +18,9 @@
 #include "iota/string_traits.hh"
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_CLOSEDIR_HH
 #include "poseven/functions/closedir.hh"
+#endif
 
 
 namespace poseven

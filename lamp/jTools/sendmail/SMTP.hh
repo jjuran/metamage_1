@@ -14,8 +14,12 @@
 #include "text_input/get_line_from_feed.hh"
 
 // poseven
+#ifndef POSEVEN_EXTRAS_FDREADER_HH
 #include "poseven/extras/fd_reader.hh"
+#endif
+#ifndef POSEVEN_FUNCTIONS_WRITE_HH
 #include "poseven/functions/write.hh"
+#endif
 
 
 namespace SMTP

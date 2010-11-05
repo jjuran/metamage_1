@@ -6,8 +6,12 @@
 #define READEXECUTELOOP_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_WAIT_T_HH
 #include "poseven/types/wait_t.hh"
+#endif
 
 
 namespace tool

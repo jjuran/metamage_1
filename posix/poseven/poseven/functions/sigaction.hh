@@ -15,7 +15,9 @@
 #define POSEVEN_FUNCTIONS_SIGACTION_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_SIGNO_T_HH
 #include "poseven/types/signo_t.hh"
+#endif
 
 
 namespace poseven

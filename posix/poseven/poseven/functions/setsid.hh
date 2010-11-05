@@ -15,7 +15,9 @@
 #define POSEVEN_FUNCTIONS_SETSID_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_PID_T_HH
 #include "poseven/types/pid_t.hh"
+#endif
 
 
 namespace poseven

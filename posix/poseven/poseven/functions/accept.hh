@@ -15,9 +15,15 @@
 #define POSEVEN_FUNCTIONS_ACCEPT_HH
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_CLOSE_HH
 #include "poseven/functions/close.hh"
+#endif
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_SOCKADDR_HH
 #include "poseven/types/sockaddr.hh"
+#endif
 
 
 namespace poseven

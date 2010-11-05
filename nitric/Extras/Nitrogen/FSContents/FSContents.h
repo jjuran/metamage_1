@@ -7,13 +7,19 @@
 #define FSCONTENTS_H
 
 // Io
+#ifndef IO_WALK_HH
 #include "io/walk.hh"
+#endif
 
 // nucleus
+#ifndef NUCLEUS_INDEXEDVALUESEQUENCE_HH
 #include "nucleus/indexed_value_sequence.hh"
+#endif
 
 // Nitrogen
+#ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
+#endif
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"

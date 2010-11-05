@@ -18,8 +18,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Nucleus
+// nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
 
 
 namespace poseven

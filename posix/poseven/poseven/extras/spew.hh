@@ -13,7 +13,9 @@
 #include "plus/string.hh"
 
 // poseven
+#ifndef POSEVEN_EXTRAS_WRITEALL_HH
 #include "poseven/extras/write_all.hh"
+#endif
 
 
 namespace poseven

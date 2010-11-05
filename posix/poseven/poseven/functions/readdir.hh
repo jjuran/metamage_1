@@ -15,7 +15,9 @@
 #define POSEVEN_FUNCTIONS_READDIR_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_DIR_T_HH
 #include "poseven/types/dir_t.hh"
+#endif
 
 
 namespace poseven

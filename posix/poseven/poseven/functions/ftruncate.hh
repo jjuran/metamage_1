@@ -18,7 +18,9 @@
 #include <sys/types.h>
 
 // poseven
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
 
 
 namespace poseven

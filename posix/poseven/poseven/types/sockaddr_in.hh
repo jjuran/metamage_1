@@ -15,9 +15,15 @@
 #define POSEVEN_TYPES_SOCKADDR_IN_HH
 
 // poseven
+#ifndef POSEVEN_TYPES_INADDR_T_HH
 #include "poseven/types/in_addr_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_INPORT_T_HH
 #include "poseven/types/in_port_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_SOCKADDR_HH
 #include "poseven/types/sockaddr.hh"
+#endif
 
 
 namespace poseven

@@ -7,7 +7,9 @@
 #define ADBPROTOCOL_HH
 
 // ClassicToolbox
+#ifndef CLASSICTOOLBOX_DESKBUS_HH
 #include "ClassicToolbox/DeskBus.hh"
+#endif
 
 
 static const std::size_t kMaxADBRegisterLength = 8;

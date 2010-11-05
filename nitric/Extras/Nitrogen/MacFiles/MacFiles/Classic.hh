@@ -15,8 +15,12 @@
 #define MACFILES_CLASSIC_HH
 
 // Io
+#ifndef IO_IO_HH
 #include "io/io.hh"
+#endif
+#ifndef IO_FILES_HH
 #include "io/files.hh"
+#endif
 
 // Nitrogen
 #ifndef NITROGEN_FILES_HH

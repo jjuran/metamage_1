@@ -18,7 +18,9 @@
 #include <unistd.h>
 
 // poseven
+#ifndef POSEVEN_TYPES_EXIT_T_HH
 #include "poseven/types/exit_t.hh"
+#endif
 
 
 namespace poseven

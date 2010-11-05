@@ -18,8 +18,12 @@
 #include "debug/assert.hh"
 
 // poseven
+#ifndef POSEVEN_TYPES_DIR_T_HH
 #include "poseven/types/dir_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
 
 
 #ifdef dirfd

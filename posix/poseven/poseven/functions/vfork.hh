@@ -18,8 +18,12 @@
 #include <unistd.h>
 
 // poseven
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_PID_T_HH
 #include "poseven/types/pid_t.hh"
+#endif
 
 
 namespace poseven

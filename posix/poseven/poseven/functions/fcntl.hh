@@ -18,13 +18,27 @@
 #include <fcntl.h>
 
 // poseven
+#ifndef POSEVEN_FUNCTIONS_CLOSE_HH
 #include "poseven/functions/close.hh"
+#endif
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
 #include "poseven/types/errno_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FCNTLCMD_T_HH
 #include "poseven/types/fcntl_cmd_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FCNTLFDFLAGS_T_HH
 #include "poseven/types/fcntl_fd_flags_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_OPENFLAGS_T_HH
 #include "poseven/types/open_flags_t.hh"
+#endif
+#ifndef POSEVEN_TYPES_PID_T_HH
 #include "poseven/types/pid_t.hh"
+#endif
 
 
 namespace poseven

@@ -17,7 +17,9 @@
 #endif
 
 // ClassicToolbox
+#ifndef CLASSICTOOLBOX_DEVICES_HH
 #include "ClassicToolbox/Devices.hh"
+#endif
 
 // Genie
 #include "Genie/FS/FSTree.hh"
