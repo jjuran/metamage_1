@@ -6,11 +6,7 @@
 #include "Orion/Main.hh"
 
 // Standard C++
-#include <algorithm>
-#include <functional>
-
-// Standard C/C++
-#include <cstring>
+#include <exception>
 
 // Standard C
 #include <errno.h>
@@ -121,7 +117,7 @@ namespace Orion
 			ShowDebuggingContext( stackBottom );
 		}
 		
-		return EXIT_FAILURE;
+		return 1;  // EXIT_FAILURE
 	}
 	
 }

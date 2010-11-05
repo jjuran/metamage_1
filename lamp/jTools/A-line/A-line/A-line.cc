@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <map>
 #include <numeric>
 #include <vector>

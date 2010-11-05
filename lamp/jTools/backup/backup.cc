@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <functional>
 #include <vector>
 
 // Standard C
@@ -14,9 +13,6 @@
 
 // Iota
 #include "iota/strings.hh"
-
-// MoreFunctional
-#include "PointerToFunction.hh"
 
 // Io
 #include "io/walk.hh"

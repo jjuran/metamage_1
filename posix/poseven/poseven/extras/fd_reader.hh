@@ -9,9 +9,6 @@
 #ifndef POSEVEN_EXTRAS_FDREADER_HH
 #define POSEVEN_EXTRAS_FDREADER_HH
 
-// Standard C++
-#include <functional>
-
 // poseven
 #ifndef POSEVEN_EXTRAS_READALL_HH
 #include "poseven/extras/read_all.hh"
@@ -21,12 +18,16 @@
 namespace poseven
 {
 	
-	class fd_reader : public std::binary_function< char*, size_t, ssize_t >
+	class fd_reader
 	{
 		private:
 			fd_t its_fd;
 		
 		public:
+			typedef char*    first_argument_type;
+			typedef size_t   second_argument_type;
+			typedef ssize_t  result_type;
+			
 			fd_reader( fd_t fd ) : its_fd( fd )
 			{
 			}
