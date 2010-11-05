@@ -12,9 +12,6 @@
 #ifndef FSREADER_HH
 #define FSREADER_HH
 
-// Standard C++
-#include <functional>
-
 // Nitrogen
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
@@ -24,17 +21,21 @@
 namespace Nitrogen
 {
 	
-	class FSReader : public std::binary_function< char*, size_t, Size >
+	class FSReader
 	{
 		private:
 			FSFileRefNum its_fRefNum;
 		
 		public:
+			typedef char*        first_argument_type;
+			typedef std::size_t  second_argument_type;
+			typedef std::size_t  result_type;
+			
 			FSReader( FSFileRefNum fRefNum ) : its_fRefNum( fRefNum )
 			{
 			}
 			
-			Size operator()( char* buffer, size_t length ) const
+			std::size_t operator()( char* buffer, std::size_t length ) const
 			{
 				return FSRead( its_fRefNum, length, buffer, ThrowEOF_Never() );
 			}
