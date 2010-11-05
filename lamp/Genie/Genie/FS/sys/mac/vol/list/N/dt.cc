@@ -17,6 +17,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/quad_name.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
@@ -180,7 +181,21 @@ namespace Genie
 	
 	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
-		// Can't enumerate
+		const FSTreePtr& grandparent = parent->ParentRef();
+		
+		for ( short index = 1;  ;  ++index )
+		{
+			try
+			{
+				(void) DTGetAPPL( grandparent, index );
+			}
+			catch ( ... )
+			{
+				break;
+			}
+			
+			cache.push_back( FSNode( index, iota::inscribe_unsigned_decimal( index ) ) );
+		}
 	}
 	
 	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr&     parent,
@@ -281,7 +296,36 @@ namespace Genie
 	
 	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
-		// Can't enumerate
+		const FSTreePtr&   gparent = parent ->ParentRef();
+		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
+		
+		const ::OSType type    = parse_quad_name( parent ->Name() );
+		const ::OSType creator = parse_quad_name( gparent->Name() );
+		
+		const short vRefNum = -iota::parse_unsigned_decimal( gggparent->Name().c_str() );
+		
+		DTPBRec pb;
+		
+		N::PBDTGetPath( N::FSVolumeRefNum( vRefNum ), pb );
+		
+		for ( short selector = 1;  ;  ++selector )
+		{
+			pb.ioTagInfo     = 0;
+			pb.ioDTBuffer    = NULL;
+			pb.ioDTReqCount  = 0;
+			pb.ioIconType    = selector;
+			pb.ioFileCreator = creator;
+			pb.ioFileType    = type;
+			
+			const OSErr err = ::PBDTGetIconSync( &pb );
+			
+			if ( err != noErr )
+			{
+				break;
+			}
+			
+			cache.push_back( FSNode( selector, iota::inscribe_unsigned_decimal( selector ) ) );
+		}
 	}
 	
 	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
