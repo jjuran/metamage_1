@@ -296,9 +296,9 @@ sub copy_file
 	
 	my ( $name ) = $src =~ m{/([^/]*)$};
 	
-	if ( defined $vers_2_data  &&  -d "$dest/$name/res" )
+	if ( defined $vers_2_data  &&  -d "$dest/$name/r" )
 	{
-		open my $out, ">", "$dest/$name/res/0002.vers" or die "$dest/$name/res/0002.vers: $!\n";
+		open my $out, ">", "$dest/$name/r/0002.vers" or die "$dest/$name/r/0002.vers: $!\n";
 		
 		print $out $vers_2_data;
 		

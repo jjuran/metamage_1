@@ -1146,7 +1146,7 @@ namespace Genie
 			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
 		}
 		
-		if ( name == "res"  &&  IsFile() )
+		if ( name == "r"  &&  IsFile() )
 		{
 			return Get_ResFileDir_FSTree( itsFileSpec, itIsOnServer );
 		}
