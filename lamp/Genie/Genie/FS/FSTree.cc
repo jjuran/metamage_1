@@ -155,15 +155,6 @@ namespace Genie
 		return Parent()->Inode();
 	}
 	
-	mode_t FSTree::FileTypeMode() const
-	{
-		mode_t type = IsDirectory() ? S_IFDIR
-		            : IsLink()      ? S_IFLNK
-		            :                 itsMode & S_IFMT;
-		
-		return type;
-	}
-	
 	mode_t FSTree::FilePermMode() const
 	{
 		mode_t perm = IsDirectory() ? S_IRUSR | S_IWUSR | S_IXUSR
@@ -184,9 +175,13 @@ namespace Genie
 		
 		time_t now = N::GetDateTime() - timeDiff;
 		
+		const mode_t type = IsDirectory() ? S_IFDIR
+		                  : IsLink()      ? S_IFLNK
+		                  :                 itsMode & S_IFMT;
+		
 		sb.st_ino = Inode();
 		
-		sb.st_mode = FileTypeMode() | FilePermMode();
+		sb.st_mode = type | FilePermMode();
 		
 		sb.st_nlink = 1;
 		
