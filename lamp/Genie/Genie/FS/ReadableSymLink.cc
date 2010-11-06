@@ -14,6 +14,13 @@
 namespace Genie
 {
 	
+	FSTree_ReadableSymLink::FSTree_ReadableSymLink( const FSTreePtr&     parent,
+	                                                const plus::string&  name )
+	:
+		FSTree( parent, name )
+	{
+	}
+	
 	FSTreePtr FSTree_ReadableSymLink::ResolveLink() const
 	{
 		return ResolvePathname( ReadLink(), ParentRef() );

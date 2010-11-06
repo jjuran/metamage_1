@@ -18,6 +18,15 @@
 namespace Genie
 {
 	
+	FSTree_Dynamic_N::FSTree_Dynamic_N( const FSTreePtr&      parent,
+	                                    const plus::string&   name,
+	                                    DynamicElementGetter  getter )
+	:
+		FSTree( parent, name ),
+		itsGetter( getter )
+	{
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_Dynamic_N::Open( OpenFlags flags ) const
 	{
 		const unsigned id = iota::parse_unsigned_decimal( Name().c_str() );

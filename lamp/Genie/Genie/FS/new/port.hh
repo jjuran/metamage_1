@@ -17,11 +17,7 @@ namespace Genie
 	{
 		public:
 			FSTree_new_port( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			                 const plus::string&  name );
 			
 			bool IsDirectory() const  { return true; }
 			

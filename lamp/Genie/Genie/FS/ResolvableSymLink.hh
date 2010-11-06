@@ -17,11 +17,7 @@ namespace Genie
 	{
 		public:
 			FSTree_ResolvableSymLink( const FSTreePtr&     parent,
-			                          const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			                          const plus::string&  name );
 			
 			bool IsLink() const  { return true; }
 			

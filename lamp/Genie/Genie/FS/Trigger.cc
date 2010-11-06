@@ -16,6 +16,13 @@
 namespace Genie
 {
 	
+	Trigger_Base::Trigger_Base( const FSTreePtr&     parent,
+	                            const plus::string&  name )
+	:
+		FSTree( parent, name )
+	{
+	}
+	
 	mode_t Trigger_Base::FileTypeMode() const
 	{
 		return S_IFCHR;

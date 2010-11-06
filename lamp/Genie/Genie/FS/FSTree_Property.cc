@@ -26,6 +26,19 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  size_t               size,
+	                                  ReadHook             readHook,
+	                                  WriteHook            writeHook )
+	:
+		FSTree( parent, name ),
+		itsSize( size ),
+		itsReadHook ( readHook  ),
+		itsWriteHook( writeHook )
+	{
+	}
+	
 	bool FSTree_Property::Exists() const
 	{
 		if ( itsReadHook != NULL )

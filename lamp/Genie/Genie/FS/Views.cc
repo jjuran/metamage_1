@@ -238,6 +238,19 @@ namespace Genie
 	}
 	
 	
+	FSTree_new_View::FSTree_new_View( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  ViewFactory          factory,
+	                                  Mappings             mappings,
+	                                  Destructor           dtor )
+	:
+		FSTree( parent, name ),
+		itsFactory( factory ),
+		itsMappings( mappings ),
+		itsDestructor( dtor )
+	{
+	}
+	
 	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&     parent,
 	                                           const plus::string&  name ) const
 	{
@@ -261,6 +274,15 @@ namespace Genie
 		target->CreateDirectory( 0 );  // mode is ignored
 	}
 	
+	
+	FSTree_View::FSTree_View( const FSTreePtr&     parent,
+	                          const plus::string&  name,
+	                          ViewGetter           get )
+	:
+		FSTree( parent, name ),
+		itsGetter( get )
+	{
+	}
 	
 	bool FSTree_View::Exists() const
 	{

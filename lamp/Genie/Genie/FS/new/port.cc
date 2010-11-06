@@ -13,6 +13,13 @@
 namespace Genie
 {
 	
+	FSTree_new_port::FSTree_new_port( const FSTreePtr&     parent,
+	                                  const plus::string&  name )
+	:
+		FSTree( parent, name )
+	{
+	}
+	
 	class OpenWindowHandle : public VirtualDirHandle
 	{
 		public:

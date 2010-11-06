@@ -23,11 +23,7 @@ namespace Genie
 	{
 		public:
 			FSTree_Directory( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			                  const plus::string&  name );
 			
 			~FSTree_Directory();
 			

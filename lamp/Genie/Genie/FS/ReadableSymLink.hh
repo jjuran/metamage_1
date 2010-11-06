@@ -19,11 +19,7 @@ namespace Genie
 	{
 		public:
 			FSTree_ReadableSymLink( const FSTreePtr&     parent,
-			                        const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			                        const plus::string&  name );
 			
 			bool IsLink() const  { return true; }
 			

@@ -17,11 +17,7 @@ namespace Genie
 	{
 		public:
 			Trigger_Base( const FSTreePtr&     parent,
-			              const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			              const plus::string&  name );
 			
 			virtual void Invoke() const = 0;
 			
