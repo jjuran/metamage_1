@@ -5,6 +5,9 @@
 
 #include "Genie/FS/file-tests.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 
 namespace Genie
 {
@@ -31,7 +34,7 @@ namespace Genie
 	
 	bool is_fifo( const FSTreePtr& file )
 	{
-		return file->IsPipe();
+		return S_ISFIFO( file->FileMode() );
 	}
 	
 }
