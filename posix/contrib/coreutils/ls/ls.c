@@ -1034,56 +1034,6 @@ dired_dump_obstack (const char *prefix, struct obstack *os)
     }
 }
 
-/* Read the abbreviated month names from the locale, to align them
-   and to determine the max width of the field and to truncate names
-   greater than our max allowed.
-   Note even though this handles multibyte locales correctly
-   it's not restricted to them as single byte locales can have
-   variable width abbreviated months and also precomputing/caching
-   the names was seen to increase the performance of ls significantly.  */
-
-/* max number of display cells to use */
-enum { MAX_MON_WIDTH = 5 };
-/* In the unlikely event that the abmon[] storage is not big enough
-   an error message will be displayed, and we revert to using
-   unmodified abbreviated month names from the locale database.  */
-static char abmon[12][MAX_MON_WIDTH * 2 * MB_LEN_MAX + 1];
-/* minimum width needed to align %b, 0 => don't use precomputed values.  */
-static size_t required_mon_width;
-
-static size_t
-abmon_init (void)
-{
-  required_mon_width = MAX_MON_WIDTH;
-#ifdef HAVE_NL_LANGINFO
-  size_t curr_max_width;
-  do
-    {
-      curr_max_width = required_mon_width;
-      required_mon_width = 0;
-      for (int i = 0; i < 12; i++)
-        {
-          size_t width = curr_max_width;
-
-          size_t req = mbsalign (nl_langinfo (ABMON_1 + i),
-                                 abmon[i], sizeof (abmon[i]),
-                                 &width, MBS_ALIGN_LEFT, 0);
-
-          if (req == (size_t) -1 || req >= sizeof (abmon[i]))
-            {
-              required_mon_width = 0; /* ignore precomputed strings.  */
-              return required_mon_width;
-            }
-
-          required_mon_width = MAX (required_mon_width, width);
-        }
-    }
-  while (curr_max_width > required_mon_width);
-#endif
-
-  return required_mon_width;
-}
-
 static size_t
 dev_ino_hash (void const *x, size_t table_size)
 {
@@ -2068,10 +2018,6 @@ decode_switches (int argc, char **argv)
                     dcgettext (NULL, long_time_format[i], LC_TIME);
               }
           }
-      /* Note we leave %5b etc. alone so user widths/flags are honored.  */
-      if (strstr (long_time_format[0],"%b") || strstr (long_time_format[1],"%b"))
-        if (!abmon_init ())
-          error (0, 0, _("error initializing month strings"));
     }
 
   return optind;
@@ -3436,31 +3382,11 @@ print_current_files (void)
     }
 }
 
-/* Replace the first %b with precomputed aligned month names.
-   Note on glibc-2.7 at least, this speeds up the whole `ls -lU`
-   process by around 17%, compared to letting strftime() handle the %b.  */
-
 static size_t
 align_nstrftime (char *buf, size_t size, char const *fmt, struct tm const *tm,
                  int __utc, int __ns)
 {
   const char *nfmt = fmt;
-  /* In the unlikely event that rpl_fmt below is not large enough,
-     the replacement is not done.  A malloc here slows ls down by 2%  */
-  char rpl_fmt[sizeof (abmon[0]) + 100];
-  const char *pb;
-  if (required_mon_width && (pb = strstr (fmt, "%b")))
-    {
-      if (strlen (fmt) < (sizeof (rpl_fmt) - sizeof (abmon[0]) + 2))
-        {
-          char *pfmt = rpl_fmt;
-          nfmt = rpl_fmt;
-
-          pfmt = mempcpy (pfmt, fmt, pb - fmt);
-          pfmt = stpcpy (pfmt, abmon[tm->tm_mon]);
-          strcpy (pfmt, pb + 2);
-        }
-    }
   return nstrftime (buf, size, nfmt, tm, __utc, __ns);
 }
 
