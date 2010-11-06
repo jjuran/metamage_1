@@ -159,8 +159,7 @@ namespace Genie
 	{
 		mode_t type = IsDirectory() ? S_IFDIR
 		            : IsLink()      ? S_IFLNK
-		            : IsPipe()      ? S_IFIFO
-		            :                 S_IFREG;
+		            :                 itsMode & S_IFMT;
 		
 		return type;
 	}
@@ -169,8 +168,7 @@ namespace Genie
 	{
 		mode_t perm = IsDirectory() ? S_IRUSR | S_IWUSR | S_IXUSR
 		            : IsLink()      ? S_IRUSR | S_IWUSR | S_IXUSR
-		            : IsPipe()      ? S_IRUSR | S_IWUSR
-		            :                 S_IRUSR;
+		            :                 itsMode & 07777;
 		
 		return perm;
 	}
