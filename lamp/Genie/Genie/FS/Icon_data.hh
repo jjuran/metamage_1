@@ -86,8 +86,6 @@ namespace Genie
 			                  const plus::string&                      name,
 			                  const boost::intrusive_ptr< IconData >&  data );
 			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-			
 			off_t GetEOF() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;

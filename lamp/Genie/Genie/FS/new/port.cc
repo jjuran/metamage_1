@@ -5,6 +5,9 @@
 
 #include "Genie/FS/new/port.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/sys/port.hh"
 #include "Genie/IO/VirtualDirectory.hh"
@@ -16,7 +19,7 @@ namespace Genie
 	FSTree_new_port::FSTree_new_port( const FSTreePtr&     parent,
 	                                  const plus::string&  name )
 	:
-		FSTree( parent, name )
+		FSTree( parent, name, S_IFDIR | 0100 )
 	{
 	}
 	

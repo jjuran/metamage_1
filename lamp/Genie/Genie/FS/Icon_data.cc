@@ -437,7 +437,7 @@ namespace Genie
 	                                    const plus::string&                      name,
 	                                    const boost::intrusive_ptr< IconData >&  data )
 	:
-		FSTree( parent, name ),
+		FSTree( parent, name, S_IFREG | 0600 ),
 		itsData( data )
 	{
 		ASSERT( data.get() != NULL );

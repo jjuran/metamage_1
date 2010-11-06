@@ -68,12 +68,10 @@ namespace Genie
 			                           const plus::string&  name,
 			                           lamp_entry           main )
 			:
-				FSTree( parent, name ),
+				FSTree( parent, name, S_IFREG | 0500 ),
 				its_exec_handle( new fixed_address( main ) )
 			{
 			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
 			
 			shared_exec_handle GetExecutable() const
 			{

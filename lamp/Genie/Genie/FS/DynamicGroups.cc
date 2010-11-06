@@ -5,6 +5,9 @@
 
 #include "Genie/FS/DynamicGroups.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // iota
 #include "iota/decimal.hh"
 
@@ -22,7 +25,7 @@ namespace Genie
 	                                    const plus::string&   name,
 	                                    DynamicElementGetter  getter )
 	:
-		FSTree( parent, name ),
+		FSTree( parent, name, S_IFCHR | 0600 ),
 		itsGetter( getter )
 	{
 	}

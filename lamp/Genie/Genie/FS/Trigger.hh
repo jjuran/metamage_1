@@ -6,6 +6,9 @@
 #ifndef GENIE_FILESYSTEM_TRIGGER_HH
 #define GENIE_FILESYSTEM_TRIGGER_HH
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 
@@ -20,9 +23,6 @@ namespace Genie
 			              const plus::string&  name );
 			
 			virtual void Invoke() const = 0;
-			
-			mode_t FileTypeMode() const;
-			mode_t FilePermMode() const  { return 0200; }
 			
 			void SetTimes() const  { Invoke(); }
 			

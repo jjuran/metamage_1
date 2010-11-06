@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Base.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // iota
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
@@ -43,12 +46,12 @@ namespace Genie
 		public:
 			FSTree_IOHandle( const boost::shared_ptr< IOHandle >& handle )
 			:
-				FSTree( null_FSTreePtr, IOName( handle.get(), true ) ),
+				FSTree( null_FSTreePtr,
+				        IOName( handle.get(), true ),
+				        S_IFIFO | 0400 ),
 				itsHandle( handle )
 			{
 			}
-			
-			bool IsPipe() const  { return true; }
 			
 			plus::string Pathname() const  { return Name(); }
 			

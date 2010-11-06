@@ -21,8 +21,6 @@ namespace Genie
 			FSTree_ReadableSymLink( const FSTreePtr&     parent,
 			                        const plus::string&  name );
 			
-			bool IsLink() const  { return true; }
-			
 			FSTreePtr ResolveLink() const;
 	};
 	
