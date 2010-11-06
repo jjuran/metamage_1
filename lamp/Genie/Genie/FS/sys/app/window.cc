@@ -22,7 +22,7 @@
 
 // Genie
 #include "Genie/FS/sys/app/window/list.hh"
-#include "Genie/FS/ReadableSymLink.hh"
+#include "Genie/FS/SymbolicLink.hh"
 
 
 namespace Genie
@@ -31,24 +31,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class sys_app_window_front : public FSTree_ReadableSymLink
-	{
-		public:
-			sys_app_window_front( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree_ReadableSymLink( parent, name )
-			{
-			}
-			
-			bool Exists() const  { return ::FrontWindow() != NULL; }
-			
-			bool IsLink() const  { return Exists(); }
-			
-			plus::string ReadLink() const;
-	};
-	
-	plus::string sys_app_window_front::ReadLink() const
+	static plus::string sys_app_window_front_ReadLink()
 	{
 		const WindowRef windowPtr = ::FrontWindow();
 		
@@ -67,9 +50,16 @@ namespace Genie
 	}
 	
 	
+	static FSTreePtr new_front( const FSTreePtr&     parent,
+	                            const plus::string&  name,
+	                            const void*          args )
+	{
+		return New_FSTree_SymbolicLink( parent, name, sys_app_window_front_ReadLink() );
+	}
+	
 	const FSTree_Premapped::Mapping sys_app_window_Mappings[] =
 	{
-		{ "front", &Basic_Factory< sys_app_window_front > },
+		{ "front", &new_front },
 		
 		{ "list", &New_FSTree_sys_app_window_list },
 		
