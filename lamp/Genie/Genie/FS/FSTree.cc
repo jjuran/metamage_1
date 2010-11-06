@@ -48,7 +48,7 @@ namespace Genie
 	{
 	}
 	
-	FSTree::FSTree() : itsParent(), itsName()
+	FSTree::FSTree() : itsParent(), itsName(), itsMode()
 	{
 	}
 	
@@ -62,7 +62,19 @@ namespace Genie
 	:
 		itsParent( parent ),
 		itsName  ( name[0] == '/' ? NameFromPtr( this )
-		                          : name )
+		                          : name ),
+		itsMode  ( S_IFREG | S_IRUSR )  // reasonable default
+	{
+	}
+	
+	FSTree::FSTree( const FSTreePtr&     parent,
+	                const plus::string&  name,
+	                mode_t               mode )
+	:
+		itsParent( parent ),
+		itsName  ( name[0] == '/' ? NameFromPtr( this )
+		                          : name ),
+		itsMode  ( mode )
 	{
 	}
 	
