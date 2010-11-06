@@ -1148,7 +1148,7 @@ namespace Genie
 		
 		if ( name == "r"  &&  IsFile() )
 		{
-			return Get_ResFileDir_FSTree( itsFileSpec, itIsOnServer );
+			return Get_ResFileDir_FSTree( Self(), "r", itsFileSpec );
 		}
 		
 		N::ThrowOSStatus( itsCInfo.dirInfo.ioResult );

@@ -32,9 +32,11 @@ namespace Genie
 			FSSpec  itsFileSpec;
 		
 		public:
-			FSTree_ResFileDir( const FSSpec& file, bool onServer )
+			FSTree_ResFileDir( const FSTreePtr&     parent,
+			                   const plus::string&  name,
+			                   const FSSpec&        file )
 			:
-				FSTree_Directory( FSTreeFromFSSpec( file, onServer ), "rsrc" ),
+				FSTree_Directory( parent, name ),
 				itsFileSpec( file )
 			{
 			}
@@ -134,9 +136,11 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSSpec& file, bool onServer )
+	FSTreePtr Get_ResFileDir_FSTree( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const FSSpec&        file )
 	{
-		return seize_ptr( new FSTree_ResFileDir( file, onServer ) );
+		return seize_ptr( new FSTree_ResFileDir( parent, name, file ) );
 	}
 	
 }

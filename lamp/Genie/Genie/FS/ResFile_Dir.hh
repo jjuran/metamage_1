@@ -16,7 +16,9 @@ struct FSSpec;
 namespace Genie
 {
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSSpec& file, bool onServer );
+	FSTreePtr Get_ResFileDir_FSTree( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const FSSpec&        file );
 	
 }
 
