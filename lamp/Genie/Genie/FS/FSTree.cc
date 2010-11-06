@@ -322,6 +322,20 @@ namespace Genie
 	
 	FSTreePtr FSTree::Lookup( const plus::string& name, const FSTree* parent ) const
 	{
+		if ( name == "." )
+		{
+			return Self();
+		}
+		else if ( name == ".." )
+		{
+			return Parent();
+		}
+		
+		return Lookup_Child( name, parent );
+	}
+	
+	FSTreePtr FSTree::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	{
 		throw p7::errno_t( ENOTDIR );
 	}
 	
