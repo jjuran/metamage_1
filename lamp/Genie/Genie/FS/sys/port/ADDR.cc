@@ -44,6 +44,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
@@ -235,11 +236,16 @@ namespace Genie
 	}
 	
 	
-	static bool HasWindow( const FSTree* that )
+	static bool port_has_window( const FSTreePtr& port )
 	{
-		const FSTree* key = that->ParentRef().get();
+		const FSTree* key = port.get();
 		
 		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
+	}
+	
+	static bool HasWindow( const FSTree* that )
+	{
+		return port_has_window( that->ParentRef() );
 	}
 	
 	static void CreateUserWindow( const FSTree* key )
@@ -325,77 +331,6 @@ namespace Genie
 				params.itsFocus = NULL;
 			}
 		}
-	}
-	
-	
-	class FSTree_sys_port_ADDR_Property : public FSTree_Property
-	{
-		private:
-			bool itIsMutable;  // can this be changed after window is created?
-		
-		public:
-			FSTree_sys_port_ADDR_Property( const FSTreePtr&     parent,
-			                               const plus::string&  name,
-			                               size_t               fixed_size,
-			                               ReadHook             readHook,
-			                               WriteHook            writeHook,
-			                               bool                 mutability )
-			:
-				FSTree_Property( parent,
-				                 name,
-				                 fixed_size,
-				                 readHook,
-				                 writeHook ),
-				itIsMutable( mutability )
-			{
-			}
-			
-			bool IsLink() const  { return itIsMutable && HasWindow( this ); }
-			
-			mode_t FilePermMode() const;
-			
-			plus::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const;
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	mode_t FSTree_sys_port_ADDR_Property::FilePermMode() const
-	{
-		const bool has_window = HasWindow( this );
-		
-		return   !has_window ? S_IRUSR | S_IWUSR            // params are r/w
-		       : itIsMutable ? S_IRUSR | S_IWUSR | S_IXUSR  // symlink
-		       :               S_IRUSR;                     // fixed attribute
-	}
-	
-	plus::string FSTree_sys_port_ADDR_Property::ReadLink() const
-	{
-		if ( !IsLink() )
-		{
-			p7::throw_errno( EINVAL );
-		}
-		
-		return "window/" + Name();
-	}
-	
-	FSTreePtr FSTree_sys_port_ADDR_Property::ResolveLink() const
-	{
-		return ResolveRelativePath( ReadLink(), ParentRef() );
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_sys_port_ADDR_Property::Open( OpenFlags flags ) const
-	{
-		const bool writing = (flags & O_ACCMODE) + 1 - O_RDONLY  &  FWRITE;
-		
-		if ( writing  &&  !itIsMutable  &&  HasWindow( this ) )
-		{
-			// Attempt to open for writing a fixed attribute, like proc ID
-			p7::throw_errno( EACCES );
-		}
-		
-		return FSTree_Property::Open( flags );
 	}
 	
 	
@@ -955,12 +890,22 @@ namespace Genie
 	{
 		const port_property_params& params = *(const port_property_params*) params_;
 		
-		return seize_ptr( new FSTree_sys_port_ADDR_Property( parent,
-		                                                     name,
-		                                                     params._.size,
-		                                                     params._.get,
-		                                                     params._.set,
-		                                                     params.is_mutable ) );
+		const bool has_window = port_has_window( parent );
+		
+		const bool is_link = has_window  &&  params.is_mutable;
+		
+		typedef FSTree* T;
+		
+		T tree = is_link ? T( new FSTree_SymbolicLink( parent,
+		                                               name,
+		                                               "window/" + name ) )
+		                 : T( new FSTree_Property( parent,
+		                                           name,
+		                                           params._.size,
+		                                           params._.get,
+		                                           params._.set ) );
+		
+		return seize_ptr( tree );
 	}
 	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
