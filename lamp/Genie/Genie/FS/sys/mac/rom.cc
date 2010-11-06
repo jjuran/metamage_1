@@ -9,15 +9,15 @@
 #include "sys/stat.h"
 
 // Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
-
-// Nitrogen
-#include "Nitrogen/Gestalt.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -29,16 +29,21 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
-	static UInt32 GetROMSize()
+	static UInt32 get_ROM_size()
 	{
-		static UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
+		SInt32 rom_size;
 		
-		return romSize;
+		const OSErr err = ::Gestalt( gestaltROMSize, &rom_size );
+		
+		return err == noErr ? rom_size : 0;
 	}
+	
+	
+	static const UInt32 global_rom_size = get_ROM_size();
+	
 	
 	class FSTree_sys_mac_rom : public FSTree
 	{
@@ -54,11 +59,7 @@ namespace Genie
 			
 			bool Exists() const
 			{
-				SInt32 result = 0;
-				
-				OSErr err = ::Gestalt( gestaltROMSize, &result );
-				
-				return err == noErr;
+				return global_rom_size != 0;
 			}
 			
 		#endif
@@ -67,7 +68,7 @@ namespace Genie
 			
 			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }
 			
-			off_t GetEOF() const  { return GetROMSize(); }
+			off_t GetEOF() const  { return global_rom_size; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
