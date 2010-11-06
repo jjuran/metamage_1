@@ -7,6 +7,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -26,22 +27,32 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static mode_t get_property_filemode( property_get_hook  get_hook,
+	                                     property_set_hook  set_hook,
+	                                     const FSTree*      parent );
+	
 	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  size_t               size,
 	                                  ReadHook             readHook,
 	                                  WriteHook            writeHook )
 	:
-		FSTree( parent, name ),
+		FSTree( parent,
+		        name,
+		        get_property_filemode( readHook, writeHook, parent.get() ) ),
 		itsSize( size ),
 		itsReadHook ( readHook  ),
 		itsWriteHook( writeHook )
 	{
 	}
 	
-	bool FSTree_Property::Exists() const
+	static mode_t get_property_filemode( property_get_hook  get_hook,
+	                                     property_set_hook  set_hook,
+	                                     const FSTree*      parent )
 	{
-		if ( itsReadHook != NULL )
+		mode_t result = S_IFREG | (set_hook ? S_IWUSR : 0);
+		
+		if ( get_hook != NULL )
 		{
 			try
 			{
@@ -50,16 +61,17 @@ namespace Genie
 				
 				plus::var_string data;
 				
-				itsReadHook( data, ParentRef().get(), binary_vs_text );
+				get_hook( data, parent, binary_vs_text );
 				
-				return true;
+				result |= S_IRUSR;
 			}
 			catch ( ... )
 			{
+				return 0;  // failed read => nonexistent
 			}
 		}
 		
-		return false;
+		return result;
 	}
 	
 	off_t FSTree_Property::GetEOF() const

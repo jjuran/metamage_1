@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_PROPERTY_HH
 #define GENIE_FILESYSTEM_FSTREE_PROPERTY_HH
 
-// POSIX
-#include <sys/stat.h>
-
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
@@ -40,14 +37,6 @@ namespace Genie
 			                 size_t               size,
 			                 ReadHook             readHook,
 			                 WriteHook            writeHook = NULL );
-			
-			bool Exists() const;
-			
-			mode_t FilePermMode() const
-			{
-				return (itsReadHook  ? S_IRUSR : 0)
-				     | (itsWriteHook ? S_IWUSR : 0);
-			}
 			
 			off_t GetEOF() const;
 			
