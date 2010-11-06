@@ -112,6 +112,8 @@ namespace Genie
 			
 			const plus::string& Name() const  { return itsName; }
 			
+			mode_t FileMode() const  { return itsMode; }
+			
 			plus::string Pathname() const;
 			
 			FSTreePtr Self() const  { return FSTreePtr( this ); }
