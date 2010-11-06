@@ -26,14 +26,12 @@ namespace Genie
 	{
 		private:
 			FSSpec  itsFileSpec;
-			bool    itIsOnServer;
 		
 		public:
 			FSTree_ResFileDir( const FSSpec& file, bool onServer )
 			:
 				FSTree_Directory( FSTreeFromFSSpec( file, onServer ), "rsrc" ),
-				itsFileSpec( file ),
-				itIsOnServer( onServer )
+				itsFileSpec( file )
 			{
 			}
 			
