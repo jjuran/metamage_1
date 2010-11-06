@@ -51,22 +51,12 @@ namespace Genie
 			FSTree_sys_mac_rom( const FSTreePtr&     parent,
 			                    const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent,
+				        name,
+				        S_IFREG * (!TARGET_API_MAC_CARBON  ||  global_rom_size)
+				      | S_IRUSR *  !TARGET_API_MAC_CARBON )
 			{
 			}
-			
-		#if TARGET_API_MAC_CARBON
-			
-			bool Exists() const
-			{
-				return global_rom_size != 0;
-			}
-			
-		#endif
-			
-			mode_t FileTypeMode() const  { return S_IFREG; }
-			
-			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }
 			
 			off_t GetEOF() const  { return global_rom_size; }
 			
