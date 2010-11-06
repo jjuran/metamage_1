@@ -6,6 +6,7 @@
 #include "Genie/IO/Base.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
 // iota
@@ -17,6 +18,11 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
+
+
+#ifndef O_EXEC
+#define O_EXEC  0
+#endif
 
 
 namespace Genie
@@ -38,6 +44,16 @@ namespace Genie
 		return name;
 	}
 	
+	static inline mode_t permmode_from_openflags( OpenFlags flags )
+	{
+		// Not portable, but works in Lamp
+		const bool reading = flags & O_RDONLY;
+		const bool writing = flags & O_WRONLY;
+		const bool execing = flags & O_EXEC;
+		
+		return reading * 0400 | writing * 0200 | execing * 0100;
+	}
+	
 	class FSTree_IOHandle : public FSTree
 	{
 		private:
@@ -48,7 +64,7 @@ namespace Genie
 			:
 				FSTree( null_FSTreePtr,
 				        IOName( handle.get(), true ),
-				        S_IFIFO | 0400 ),
+				        S_IFIFO | permmode_from_openflags( handle->GetFlags() ) ),
 				itsHandle( handle )
 			{
 			}
