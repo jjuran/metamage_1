@@ -8,6 +8,7 @@
 
 // Genie
 #include "Genie/current_process.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -24,7 +25,7 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			if ( link->Exists() )
+			if ( exists( link ) )
 			{
 				return set_errno( EEXIST );
 			}
@@ -65,9 +66,9 @@ namespace Genie
 			
 			// Do not resolve links -- we want the target even if it's another symlink
 			
-			if ( !link->IsLink() )
+			if ( !is_symlink( link ) )
 			{
-				return set_errno( link->Exists() ? EINVAL : ENOENT );
+				return set_errno( exists( link ) ? EINVAL : ENOENT );
 			}
 			
 			plus::string linkPath = link->ReadLink();

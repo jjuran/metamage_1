@@ -9,6 +9,7 @@
 #include "iota/strings.hh"
 
 // Genie
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 
@@ -32,7 +33,7 @@ namespace Genie
 		
 		FSTreePtr window = ResolveRelativePath( STR_LEN( "window" ),  port );
 		
-		if ( window->Exists() )
+		if ( exists( window ) )
 		{
 			return;
 		}

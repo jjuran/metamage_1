@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
@@ -96,7 +97,7 @@ namespace Genie
 		{
 			FSTreePtr port = ResolveAbsolutePath( target );
 			
-			if ( port->Exists() )
+			if ( exists( port ) )
 			{
 				return true;
 			}

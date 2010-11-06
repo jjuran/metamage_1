@@ -11,6 +11,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Genie
+#include "Genie/FS/file-tests.hh"
+
 
 namespace Genie
 {
@@ -20,7 +23,7 @@ namespace Genie
 	
 	bool ResolveLink_InPlace( FSTreePtr& file )
 	{
-		if ( file->IsLink() )
+		if ( is_symlink( file ) )
 		{
 			file = file->ResolveLink();
 			
@@ -68,7 +71,7 @@ namespace Genie
 			
 			ASSERT( *begin == '/' );
 			
-			if ( result->IsFile() )
+			if ( is_file( result ) )
 			{
 				if ( ++begin == end  ||  *begin == '/' )
 				{

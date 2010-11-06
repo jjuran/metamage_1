@@ -65,6 +65,7 @@
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
 #include "Genie/FileSignature.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTreeCache.hh"

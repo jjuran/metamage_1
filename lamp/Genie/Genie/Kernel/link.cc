@@ -15,6 +15,7 @@
 
 // Genie
 #include "Genie/current_process.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -47,7 +48,7 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			if ( newFile->Exists() )
+			if ( exists( newFile ) )
 			{
 				return set_errno( EEXIST );
 			}

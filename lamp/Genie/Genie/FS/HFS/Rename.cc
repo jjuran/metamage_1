@@ -31,6 +31,7 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
@@ -144,10 +145,10 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		bool destExists = destFile->Exists();
+		bool destExists = exists( destFile );
 		
 		bool srcIsDir  = io::directory_exists( srcFileSpec );
-		bool destIsDir = destFile->IsDirectory();
+		bool destIsDir = is_directory( destFile );
 		
 		if ( destExists  &&  srcIsDir != destIsDir )
 		{
