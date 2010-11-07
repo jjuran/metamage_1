@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResFile_Dir.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Nitrogen/Resources.hh"
 
@@ -20,6 +23,7 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	class FSTree_ResFileDir : public FSTree_Directory
@@ -116,6 +120,11 @@ namespace Genie
 	
 	FSTreePtr FSTree_ResFileDir::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
+		if ( !Exists() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return Get_RsrcFile_FSTree( (parent ? parent : this)->Self(), name, itsFileSpec );
 	}
 	
