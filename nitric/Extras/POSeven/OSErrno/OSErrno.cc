@@ -24,7 +24,6 @@ namespace OSErrno
 		
 		switch ( error.Get() )
 		{
-			case eofErr         :  result = 0;             break;
 			case nsvErr         :  // fall through
 			case resNotFound    :  // fall through
 			case afpItemNotFound:  // fall through
