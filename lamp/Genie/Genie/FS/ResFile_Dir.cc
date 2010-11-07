@@ -37,6 +37,8 @@ namespace Genie
 			
 			bool Exists() const;
 			
+			bool IsDirectory() const  { return Exists(); }
+			
 			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
@@ -60,7 +62,7 @@ namespace Genie
 		{
 			const OSErr err = ::ResError();
 			
-			if ( err != resFNotFound )
+			if ( err != eofErr )
 			{
 				N::ThrowOSStatus( err );
 			}
