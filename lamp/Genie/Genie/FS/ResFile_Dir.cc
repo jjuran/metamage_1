@@ -9,6 +9,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
 // Genie
@@ -44,6 +45,8 @@ namespace Genie
 			bool Exists() const;
 			
 			bool IsDirectory() const  { return Exists(); }
+			
+			void Delete() const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -90,6 +93,18 @@ namespace Genie
 		return cInfo.hFileInfo.ioFlLgLen == 0  &&  !contains( (char*) &name[ 1 ],
 		                                                      1 + name[0],
 		                                                      '.' );
+	}
+	
+	void FSTree_ResFileDir::Delete() const
+	{
+		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( itsFileSpec, Mac::fsRdWrPerm );
+		
+		if ( N::GetEOF( resource_fork ) > 286 )
+		{
+			p7::throw_errno( ENOTEMPTY );
+		}
+		
+		N::SetEOF( resource_fork, 0 );
 	}
 	
 	void FSTree_ResFileDir::CreateDirectory( mode_t mode ) const
