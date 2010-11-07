@@ -48,11 +48,11 @@ static int strip( const char* path )
 	
 	size_t length = strlen( path );
 	
-	char* res_path = (char*) alloca( length + STRLEN( "/res" ) + 1 );
+	char* res_path = (char*) alloca( length + STRLEN( "/r" ) + 1 );
 	
 	memcpy( res_path, path, length );
 	
-	memcpy( res_path + length, STR_LEN( "/res" ) + 1 );
+	memcpy( res_path + length, STR_LEN( "/r" ) + 1 );
 	
 	int res_fd = open( res_path, O_RDONLY | O_DIRECTORY );
 	
@@ -63,9 +63,9 @@ static int strip( const char* path )
 		return 1;
 	}
 	
-	unlinkat( res_fd, "SymC/0", 0 );
-	unlinkat( res_fd, "SymN/0", 0 );
-	unlinkat( res_fd, "Name/0", 0 );
+	unlinkat( res_fd, "0000.SymC", 0 );
+	unlinkat( res_fd, "0000.SymN", 0 );
+	unlinkat( res_fd, "0000.Name", 0 );
 	
 	close( res_fd );
 	
