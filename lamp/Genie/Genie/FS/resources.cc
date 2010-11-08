@@ -213,6 +213,8 @@ namespace Genie
 	{
 		private:
 			FSSpec itsFileSpec;
+			
+			N::GetResInfo_Result its_resinfo;
 		
 		public:
 			FSTree_Rsrc_File( const FSTreePtr&     parent,
@@ -220,7 +222,8 @@ namespace Genie
 			                  const FSSpec&        file )
 			:
 				FSTree( parent, name ),
-				itsFileSpec( file )
+				itsFileSpec( file ),
+				its_resinfo( GetResInfo_from_name( name ) )
 			{
 			}
 			
@@ -234,22 +237,18 @@ namespace Genie
 	
 	void FSTree_Rsrc_File::Delete() const
 	{
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( Name() );
-		
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
-		const N::Handle r = N::Get1Resource( resInfo.type, resInfo.id );
+		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
 		
 		(void) N::RemoveResource( r );
 	}
 	
 	off_t FSTree_Rsrc_File::GetEOF() const
 	{
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( Name() );
-		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
-		const N::Handle r = N::Get1Resource( resInfo.type, resInfo.id );
+		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
 		
 		return N::GetHandleSize( r );
 	}
@@ -270,15 +269,13 @@ namespace Genie
 		const bool creating  = flags & O_CREAT;
 		const bool excluding = flags & O_EXCL;
 		
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( Name() );
-		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		n::owned< N::Handle > h;
 		
 		try
 		{
-			const N::Handle r = N::Get1Resource( resInfo.type, resInfo.id );
+			const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
 			
 			if ( excluding )
 			{
