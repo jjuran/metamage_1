@@ -228,7 +228,8 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 	};
 	
 	void FSTree_Rsrc_File::Delete() const
@@ -251,6 +252,13 @@ namespace Genie
 		const N::Handle r = N::Get1Resource( resInfo.type, resInfo.id );
 		
 		return N::GetHandleSize( r );
+	}
+	
+	boost::shared_ptr< IOHandle >
+	//
+	FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
+	{
+		return Open( flags );
 	}
 	
 	boost::shared_ptr< IOHandle >
