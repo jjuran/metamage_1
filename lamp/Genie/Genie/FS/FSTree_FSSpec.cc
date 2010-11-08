@@ -727,7 +727,7 @@ namespace Genie
 	
 	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
 	{
-		struct ::stat stat_buffer;
+		struct ::stat stat_buffer = { 0 };
 		
 		try
 		{
