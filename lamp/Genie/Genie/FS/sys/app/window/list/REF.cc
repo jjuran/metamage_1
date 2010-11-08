@@ -394,7 +394,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Property : readwrite_property
+	struct sys_app_window_list_REF_Const_Property : readonly_property
 	{
 		static const std::size_t fixed_size = Accessor::fixed_size;
 		
@@ -415,6 +415,16 @@ namespace Genie
 			
 			Accessor::deconstruct::apply( result, data, binary );
 		}
+	};
+	
+	template < class Accessor >
+	struct sys_app_window_list_REF_Property : sys_app_window_list_REF_Const_Property< Accessor >
+	{
+		static const bool can_set = true;
+		
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
+		typedef WindowRef Key;
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
@@ -440,20 +450,10 @@ namespace Genie
 		return seize_ptr( new Trigger( parent, name, key ) );
 	}
 	
-	template < class Accessor >
-	static FSTreePtr Const_Property_Factory( const FSTreePtr&     parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
-	{
-		typedef sys_app_window_list_REF_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            Accessor::fixed_size,
-		                            &Property::get );
-	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
 	
@@ -475,7 +475,7 @@ namespace Genie
 		
 		{ "select", &Trigger_Factory< Trigger< Select_Trigger > > },
 		
-		{ "z", &Const_Property_Factory< Access_WindowZOrder > },
+		{ "z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
 		
 		{ NULL, NULL }
 	};
