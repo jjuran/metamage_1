@@ -473,7 +473,7 @@ namespace Genie
 		}
 	};
 	
-	struct proc_PID_name
+	struct proc_PID_name : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -482,18 +482,6 @@ namespace Genie
 			result = GetProcess( pid ).ProgramName();
 		}
 	};
-	
-	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		FSTreePtr result = New_FSTree_Property( parent,
-		                                        name,
-		                                        0,
-		                                        &proc_PID_name::get );
-		
-		return result;
-	}
 	
 	template < class Accessor >
 	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
@@ -560,6 +548,8 @@ namespace Genie
 		return seize_ptr( new FSTree_proc_PID_core( parent, name ) );
 	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
 	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
@@ -568,7 +558,7 @@ namespace Genie
 		{ "exe",  &Link_Factory< ResolveLink_exe  > },
 		{ "root", &Link_Factory< ResolveLink_root > },
 		
-		{ "name", &Name_Factory },
+		{ "name", PROPERTY( proc_PID_name ) },
 		
 		{ "cmdline", &Generated_Factory< proc_PID_cmdline > },
 		{ "stat",    &Generated_Factory< proc_PID_stat    > },
