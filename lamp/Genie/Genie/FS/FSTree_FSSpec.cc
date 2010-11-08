@@ -69,6 +69,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
+#include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
@@ -714,14 +715,6 @@ namespace Genie
 		N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, destFile.name ) );
 		
 		lockBypass.SetFile( destFile );
-	}
-	
-	static void SetLongName( const FSSpec& item, const plus::string& name )
-	{
-		if ( name.length() > 31 )
-		{
-			N::FSpDTSetComment( item, name );
-		}
 	}
 	
 	
