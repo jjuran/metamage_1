@@ -46,8 +46,10 @@ namespace Genie
 #endif
 	
 	template < class Accessor >
-	struct sys_app_Property
+	struct sys_app_Property : readonly_property
 	{
+		static const std::size_t fixed_size = Accessor::fixed_size;
+		
 		typedef typename Accessor::result_type result_type;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
@@ -58,32 +60,23 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Property_Factory( const FSTreePtr&     parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
-	{
-		typedef sys_app_Property< Accessor > Property;
-		
-		return New_FSTree_Property( parent,
-		                            name,
-		                            sizeof (typename Accessor::result_type),
-		                            &Property::get );
-	}
-	
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
+	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_Property< access > )
 	
 	const FSTree_Premapped::Mapping sys_app_Mappings[] =
 	{
 		{ "dir",   &New_FSTree_sys_app_dir },
 		{ "exe",   &New_FSTree_sys_app_exe },
 		
-		{ "freemem", &Property_Factory< GetFreeMem > },
+		{ "freemem", PROPERTY_ACCESS( GetFreeMem ) },
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "heapsize", &Property_Factory< GetHeapSize > },
+		{ "heapsize", PROPERTY_ACCESS( GetHeapSize ) },
 		
 	#endif
 		
