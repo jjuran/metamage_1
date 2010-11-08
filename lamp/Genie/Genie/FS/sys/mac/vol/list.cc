@@ -72,11 +72,6 @@ namespace Genie
 		return GetKeyFromParent( parent.get() );
 	}
 	
-	static N::FSVolumeRefNum GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
 	
 #if TARGET_API_MAC_CARBON
 	
@@ -419,7 +414,7 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const N::FSVolumeRefNum vRefNum = GetKey( that );
+			const N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 			
 			N::Str27 name( begin, end - begin );
 			

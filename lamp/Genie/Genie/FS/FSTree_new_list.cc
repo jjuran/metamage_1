@@ -289,9 +289,7 @@ namespace Genie
 		{
 			View_Property< Serialize, Access >::set( that, begin, end, binary );
 			
-			const FSTree* view = GetViewKey( that );
-			
-			gListParameterMap[ view ].bounds_changed = true;
+			gListParameterMap[ that ].bounds_changed = true;
 		}
 	};
 	

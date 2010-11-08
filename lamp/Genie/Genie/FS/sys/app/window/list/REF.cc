@@ -388,11 +388,6 @@ namespace Genie
 		return (WindowRef) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
-	static WindowRef GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	template < class Accessor >
 	struct sys_app_window_list_REF_Const_Property : readonly_property
 	{
@@ -428,7 +423,7 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			Key key = GetKey( that );
+			Key key = GetKeyFromParent( that );
 			
 			if ( !WindowList_contains( key ) )
 			{

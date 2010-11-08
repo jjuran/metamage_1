@@ -459,15 +459,13 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = that->ParentRef().get();
-			
-			GWorld_Parameters& params = gGWorldMap[ view ];
+			GWorld_Parameters& params = gGWorldMap[ that ];
 			
 			const result_type data = Accessor::reconstruct::apply( begin, end, binary );
 			
 			Accessor::Set( params, data );
 			
-			InvalidateWindowForView( view );
+			InvalidateWindowForView( that );
 		}
 	};
 	

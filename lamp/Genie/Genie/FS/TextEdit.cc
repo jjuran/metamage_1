@@ -93,9 +93,7 @@ namespace Genie
 	
 	void Selection_Property::set( const FSTree* that, const char* begin, const char* end, bool binary )
 	{
-		const FSTree* view = GetViewKey( that );
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
+		TextEditParameters& params = TextEditParameters::Get( that );
 		
 		std::size_t length = params.itsText.length();
 		
@@ -136,7 +134,7 @@ namespace Genie
 		
 		params.itHasChangedAttributes = true;
 		
-		InvalidateWindowForView( view );
+		InvalidateWindowForView( that );
 	}
 	
 	

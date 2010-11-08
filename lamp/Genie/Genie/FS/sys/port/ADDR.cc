@@ -856,9 +856,7 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
-			
-			WindowParameters& params = gWindowParametersMap[ view ];
+			WindowParameters& params = gWindowParametersMap[ that ];
 			
 			params.itsTitle = N::Str255( begin, end - begin );
 		}
@@ -880,9 +878,7 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
-			
-			WindowParameters& params = gWindowParametersMap[ view ];
+			WindowParameters& params = gWindowParametersMap[ that ];
 			
 			Access( params ) = Serialize::reconstruct::apply( begin, end, binary );
 		}

@@ -49,7 +49,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		itsWriteHook( GetFile().get(), buffer, buffer + length, itIsBinary );
+		itsWriteHook( GetFile()->ParentRef().get(), buffer, buffer + length, itIsBinary );
 		
 		return byteCount;
 	}

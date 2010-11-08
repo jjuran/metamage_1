@@ -73,11 +73,9 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
+			Access( that ) = Serialize::reconstruct::apply( begin, end, binary );
 			
-			Access( view ) = Serialize::reconstruct::apply( begin, end, binary );
-			
-			InvalidateWindowForView( view );
+			InvalidateWindowForView( that );
 		}
 	};
 	

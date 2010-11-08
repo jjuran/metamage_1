@@ -195,15 +195,13 @@ namespace Genie
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
-			
-			Button_Parameters& params = gButtonMap[ view ];
+			Button_Parameters& params = gButtonMap[ that ];
 			
 			params.title = N::Str255( begin, end - begin );
 			
 			params.title_changed = true;
 			
-			InvalidateWindowForView( view );
+			InvalidateWindowForView( that );
 		}
 	};
 	

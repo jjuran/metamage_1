@@ -145,9 +145,7 @@ namespace Genie
 	{
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
-			
-			TextEditParameters::Get( view ).itHasChangedAttributes = true;
+			TextEditParameters::Get( that ).itHasChangedAttributes = true;
 			
 			View_Property< Serialize, Access >::Set( that, begin, end, binary );
 		}
@@ -158,9 +156,7 @@ namespace Genie
 	{
 		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
 		{
-			const FSTree* view = GetViewKey( that );
-			
-			TextEditParameters::Get( view ).itsValidLength = 0;
+			TextEditParameters::Get( that ).itsValidLength = 0;
 			
 			View_Property< Serialize, Access >::Set( that, begin, end, binary );
 		}
