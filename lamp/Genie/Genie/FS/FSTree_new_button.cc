@@ -190,7 +190,7 @@ namespace Genie
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = plus::make_string( gButtonMap[ GetViewKey( that ) ].title );
+			result = plus::make_string( gButtonMap[ that ].title );
 		}
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )

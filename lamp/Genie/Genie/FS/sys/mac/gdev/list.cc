@@ -78,14 +78,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static N::GDHandle GetKeyFromParent( const FSTreePtr& parent )
+	static N::GDHandle GetKeyFromParent( const FSTree* parent )
 	{
 		return (N::GDHandle) plus::decode_32_bit_hex( parent->Name() );
-	}
-	
-	static N::GDHandle GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
 	}
 	
 	
@@ -174,7 +169,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			Key key = GetKey( that );
+			Key key = GetKeyFromParent( that );
 			
 			const typename Accessor::Result data = Accessor::Get( key );
 			
@@ -186,7 +181,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		N::GDHandle key = GetKeyFromParent( parent );
+		N::GDHandle key = GetKeyFromParent( parent.get() );
 		
 		plus::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		

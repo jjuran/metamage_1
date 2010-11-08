@@ -43,14 +43,14 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static inline N::ADBAddress GetKeyFromParent( const FSTreePtr& parent )
+	static inline N::ADBAddress GetKeyFromParent( const FSTree* parent )
 	{
 		return N::ADBAddress( iota::decoded_hex_digit( parent->Name()[0] ) );
 	}
 	
 	static N::ADBAddress GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( that->ParentRef().get() );
 	}
 	
 	
@@ -133,7 +133,7 @@ namespace Genie
 			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
-				Key key = GetKey( that );
+				Key key = GetKeyFromParent( that );
 				
 				ADBDataBlock data = N::GetADBInfo( key );
 				
@@ -151,7 +151,7 @@ namespace Genie
 			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
-				Key key = GetKey( that );
+				Key key = GetKeyFromParent( that );
 				
 				ADBDataBlock data = N::GetADBInfo( key );
 				

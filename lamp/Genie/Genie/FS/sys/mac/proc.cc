@@ -97,14 +97,9 @@ namespace Genie
 	}
 	
 	
-	static ProcessSerialNumber GetKeyFromParent( const FSTreePtr& parent )
+	static ProcessSerialNumber GetKeyFromParent( const FSTree* parent )
 	{
 		return decoded_ProcessSerialNumber( parent->Name() );
-	}
-	
-	static ProcessSerialNumber GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
 	}
 	
 	
@@ -183,7 +178,7 @@ namespace Genie
 		public:
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
-				Key key = GetKey( that );
+				Key key = GetKeyFromParent( that );
 				
 				Str255 name;
 				
@@ -211,7 +206,7 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const
 			{
-				ProcessSerialNumber psn = GetKeyFromParent( ParentRef() );
+				ProcessSerialNumber psn = GetKeyFromParent( ParentRef().get() );
 				
 				const FSSpec file = N::GetProcessAppSpec( psn );
 				

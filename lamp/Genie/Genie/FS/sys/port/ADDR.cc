@@ -851,7 +851,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = plus::make_string( Find( GetViewKey( that ) ).itsTitle );
+			result = plus::make_string( Find( that ).itsTitle );
 		}
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
@@ -873,7 +873,7 @@ namespace Genie
 		{
 			typedef typename Serialize::result_type result_type;
 			
-			const result_type& value = Access( Find( GetViewKey( that ) ) );
+			const result_type& value = Access( Find( that ) );
 			
 			Serialize::deconstruct::apply( result, value, binary );
 		}

@@ -383,14 +383,14 @@ namespace Genie
 	};
 	
 	
-	static WindowRef GetKeyFromParent( const FSTreePtr& parent )
+	static WindowRef GetKeyFromParent( const FSTree* parent )
 	{
 		return (WindowRef) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static WindowRef GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( that->ParentRef().get() );
 	}
 	
 	template < class Accessor >
@@ -402,7 +402,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			Key key = GetKey( that );
+			Key key = GetKeyFromParent( that );
 			
 			if ( !WindowList_contains( key ) )
 			{
@@ -445,7 +445,7 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		WindowRef key = GetKeyFromParent( parent );
+		WindowRef key = GetKeyFromParent( parent.get() );
 		
 		return seize_ptr( new Trigger( parent, name, key ) );
 	}

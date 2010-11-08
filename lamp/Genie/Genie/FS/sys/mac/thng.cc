@@ -156,14 +156,14 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static Component GetKeyFromParent( const FSTreePtr& parent )
+	static Component GetKeyFromParent( const FSTree* parent )
 	{
 		return (Component) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	static Component GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( that->ParentRef().get() );
 	}
 	
 	
@@ -267,7 +267,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			const Component comp = GetKey( that );
+			const Component comp = GetKeyFromParent( that );
 			
 			const ComponentDescription desc = N::GetComponentInfo( comp );
 			
@@ -303,7 +303,7 @@ namespace Genie
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			const Component comp = GetKey( that );
+			const Component comp = GetKeyFromParent( that );
 			
 			n::owned< N::Handle > name = N::NewHandle( 0 );
 			
@@ -317,7 +317,7 @@ namespace Genie
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			const Component comp = GetKey( that );
+			const Component comp = GetKeyFromParent( that );
 			
 			n::owned< N::Handle > info = N::NewHandle( 0 );
 			
@@ -366,7 +366,7 @@ namespace Genie
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{
-		const Component comp = GetKeyFromParent( parent );
+		const Component comp = GetKeyFromParent( parent.get() );
 		
 		n::shared< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
 		

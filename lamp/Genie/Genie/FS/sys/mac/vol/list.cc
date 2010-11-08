@@ -62,9 +62,14 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
 		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+	}
+	
+	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return GetKeyFromParent( parent.get() );
 	}
 	
 	static N::FSVolumeRefNum GetKey( const FSTree* that )
@@ -365,7 +370,7 @@ namespace Genie
 	
 	static void GetVolInfo( XVolumeParam& pb, const FSTree* that, StringPtr name )
 	{
-		const N::FSVolumeRefNum vRefNum = GetKey( that );
+		const N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 		
 		if ( Has_PBXGetVolInfo() )
 		{

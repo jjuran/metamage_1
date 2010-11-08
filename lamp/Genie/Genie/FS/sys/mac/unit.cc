@@ -117,7 +117,7 @@ namespace Genie
 	
 	static UnitNumber GetKey( const FSTree* that )
 	{
-		return UnitNumber( decode_unit_number::apply( that->ParentRef()->Name() ) );
+		return UnitNumber( decode_unit_number::apply( that->Name() ) );
 	}
 	
 	

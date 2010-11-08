@@ -53,7 +53,7 @@ namespace Genie
 		{
 			typedef typename Serialize::result_type result_type;
 			
-			const result_type& value = Access( GetViewKey( that ) );
+			const result_type& value = Access( that );
 			
 			Serialize::deconstruct::apply( result, value, binary );
 		}
@@ -66,7 +66,7 @@ namespace Genie
 		{
 			typedef typename Serialize::result_type result_type;
 			
-			const result_type& value = Access( GetViewKey( that ) );
+			const result_type& value = Access( that );
 			
 			Serialize::deconstruct::apply( result, value, binary );
 		}

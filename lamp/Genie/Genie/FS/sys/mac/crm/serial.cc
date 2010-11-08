@@ -32,14 +32,14 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static inline N::CRMDeviceID GetKeyFromParent( const FSTreePtr& parent )
+	static inline N::CRMDeviceID GetKeyFromParent( const FSTree* parent )
 	{
 		return N::CRMDeviceID( iota::parse_decimal( parent->Name().c_str() ) );
 	}
 	
 	static N::CRMDeviceID GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( that->ParentRef().get() );
 	}
 	
 	
@@ -117,7 +117,7 @@ namespace Genie
 	
 	static plus::string GetSelectedString( const FSTree* that, StringSelector selector )
 	{
-		N::CRMDeviceID key = GetKey( that );
+		N::CRMDeviceID key = GetKeyFromParent( that );
 		
 		N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 		

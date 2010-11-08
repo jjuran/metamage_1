@@ -79,9 +79,7 @@ namespace Genie
 	
 	void Selection_Property::get( plus::var_string& result, const FSTree* that, bool binary )
 	{
-		const FSTree* view = GetViewKey( that );
-		
-		const Ped::TextSelection& selection = TextEditParameters::Get( view ).itsSelection;
+		const Ped::TextSelection& selection = TextEditParameters::Get( that ).itsSelection;
 		
 		result = iota::inscribe_decimal( selection.start );
 		

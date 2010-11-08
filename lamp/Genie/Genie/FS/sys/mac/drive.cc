@@ -100,14 +100,14 @@ namespace Genie
 	}
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
 		return N::FSVolumeRefNum( iota::parse_decimal( parent->Name().c_str() ) );
 	}
 	
-	static N::FSVolumeRefNum GetKey( const FSTree* that )
+	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( parent.get() );
 	}
 	
 	static FSTreePtr Link_Factory( const FSTreePtr&     parent,
@@ -167,7 +167,7 @@ namespace Genie
 	
 	static const DrvQEl& FindDrive( const FSTree* that )
 	{
-		N::FSVolumeRefNum vRefNum = GetKey( that );
+		N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 		
 		const DrvQEl* el = FindDrive( vRefNum );
 		

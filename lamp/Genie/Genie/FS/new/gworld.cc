@@ -422,9 +422,9 @@ namespace Genie
 		params.gworld = temp;
 	}
 	
-	static n::shared< GWorldPtr >& get_gworldptr( const FSTreePtr& node )
+	static n::shared< GWorldPtr >& get_gworldptr( const FSTree* node )
 	{
-		GWorld_Parameters* it = gGWorldMap.find( node.get() );
+		GWorld_Parameters* it = gGWorldMap.find( node );
 		
 		if ( it == NULL )
 		{
@@ -436,7 +436,7 @@ namespace Genie
 	
 	static PixMapHandle get_pixmap( const FSTree* that )
 	{
-		return ::GetGWorldPixMap( get_gworldptr( that->ParentRef() ).get() );
+		return ::GetGWorldPixMap( get_gworldptr( that ).get() );
 	}
 	
 	template < class Accessor >

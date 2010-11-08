@@ -44,9 +44,14 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static pid_t GetKeyFromParent( const FSTreePtr& parent )
+	static pid_t GetKeyFromParent( const FSTree* parent )
 	{
 		return pid_t( iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+	}
+	
+	static inline pid_t GetKeyFromParent( const FSTreePtr& parent )
+	{
+		return GetKeyFromParent( parent.get() );
 	}
 	
 	static pid_t GetKey( const FSTree* that )
@@ -477,7 +482,7 @@ namespace Genie
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			pid_t pid = GetKey( that );
+			pid_t pid = GetKeyFromParent( that );
 			
 			result = GetProcess( pid ).ProgramName();
 		}

@@ -37,7 +37,7 @@ namespace Genie
 				
 				plus::var_string data;
 				
-				itsReadHook( data, this, binary_vs_text );
+				itsReadHook( data, ParentRef().get(), binary_vs_text );
 				
 				return true;
 			}
@@ -62,7 +62,7 @@ namespace Genie
 		{
 			const bool binary = true;  // Return binary length
 			
-			itsReadHook( data, this, binary );
+			itsReadHook( data, ParentRef().get(), binary );
 		}
 		catch ( const Undefined& )
 		{
@@ -104,7 +104,7 @@ namespace Genie
 		{
 			const bool binary = flags & O_BINARY;
 			
-			itsReadHook( data, this, binary );
+			itsReadHook( data, ParentRef().get(), binary );
 			
 			if ( !binary )
 			{
