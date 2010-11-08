@@ -66,20 +66,6 @@ namespace Genie
 			IOHandle* OpenForWrite( OpenFlags flags ) const;
 	};
 	
-	FSTreePtr New_FSTree_Property( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               size_t               size,
-	                               Property_ReadHook    readHook,
-	                               Property_WriteHook   writeHook = NULL );
-	
-	inline FSTreePtr New_FSTree_Property( const FSTreePtr&     parent,
-	                                      const plus::string&  name,
-	                                      Property_ReadHook    readHook,
-	                                      Property_WriteHook   writeHook = NULL )
-	{
-		return New_FSTree_Property( parent, name, 0, readHook, writeHook );
-	}
-	
 	
 	// Can be used in premapped directory maps
 	

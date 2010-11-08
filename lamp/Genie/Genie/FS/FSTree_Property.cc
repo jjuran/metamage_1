@@ -135,19 +135,6 @@ namespace Genie
 		                                     binary );
 	}
 	
-	FSTreePtr New_FSTree_Property( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               size_t               size,
-	                               Property_ReadHook    readHook,
-	                               Property_WriteHook   writeHook )
-	{
-		return seize_ptr( new FSTree_Property( parent,
-		                                       name,
-		                                       size,
-		                                       readHook,
-		                                       writeHook ) );
-	}
-	
 	FSTreePtr new_property( const FSTreePtr&     parent,
 	                        const plus::string&  name,
 	                        const void*          params_ )
