@@ -159,11 +159,11 @@ namespace Genie
 		}
 	}
 	
-	static N::Handle GetOrAddResource( N::ResType type, N::ResID id )
+	static N::Handle GetOrAddResource( const N::GetResInfo_Result& resinfo )
 	{
 		try
 		{
-			return N::Get1Resource( type, id );
+			return N::Get1Resource( resinfo.type, resinfo.id );
 		}
 		catch ( const Mac::OSStatus& err )
 		{
@@ -172,7 +172,7 @@ namespace Genie
 				throw;
 			}
 			
-			return N::AddResource( N::NewHandle( 0 ), type, id, NULL );
+			return N::AddResource( N::NewHandle( 0 ), resinfo );
 		}
 	}
 	
@@ -184,7 +184,7 @@ namespace Genie
 		
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
-		const N::Handle r = GetOrAddResource( resInfo.type, resInfo.id );
+		const N::Handle r = GetOrAddResource( resInfo );
 		
 		const size_t size = GetEOF();
 		
