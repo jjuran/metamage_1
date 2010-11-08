@@ -130,7 +130,7 @@ namespace Genie
 	
 	// These are necessary because CW Pro 6 doesn't support pointer-to-member template parameters.
 	
-	struct sys_mac_crm_serial_N_name
+	struct sys_mac_crm_serial_N_name : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -138,7 +138,7 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_crm_serial_N_input
+	struct sys_mac_crm_serial_N_input : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -146,7 +146,7 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_crm_serial_N_output
+	struct sys_mac_crm_serial_N_output : readonly_property
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -183,34 +183,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &sys_mac_crm_serial_N_name::get );
-	}
-	
-	static FSTreePtr Input_Factory( const FSTreePtr&     parent,
-	                                const plus::string&  name,
-	                                const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &sys_mac_crm_serial_N_input::get );
-	}
-	
-	static FSTreePtr Output_Factory( const FSTreePtr&     parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
-	{
-		return New_FSTree_Property( parent,
-		                            name,
-		                            &sys_mac_crm_serial_N_output::get );
-
-	}
-	
 	static FSTreePtr Icon_Factory( const FSTreePtr&     parent,
 	                               const plus::string&  name,
 	                               const void*          args )
@@ -220,12 +192,15 @@ namespace Genie
 		                             &sys_mac_crm_serial_N_icon::Read );
 	}
 	
+	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	
 	const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[] =
 	{
-		{ "name",   &Name_Factory   },
-		{ "input",  &Input_Factory  },
-		{ "output", &Output_Factory },
-		{ "icon",   &Icon_Factory   },
+		{ "name",   PROPERTY( sys_mac_crm_serial_N_name   ) },
+		{ "input",  PROPERTY( sys_mac_crm_serial_N_input  ) },
+		{ "output", PROPERTY( sys_mac_crm_serial_N_output ) },
+		
+		{ "icon",   &Icon_Factory },
 		
 		{ NULL, NULL }
 	};
