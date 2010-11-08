@@ -8,6 +8,9 @@
 // Standard C
 #include <ctype.h>
 
+// POSIX
+#include <sys/stat.h>
+
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -222,6 +225,27 @@ namespace Genie
 	}
 	
 	
+	class FSTree_Unrsrc_File : public FSTree
+	{
+		private:
+			FSSpec itsFileSpec;
+			
+			N::GetResInfo_Result its_resinfo;
+		
+		public:
+			FSTree_Unrsrc_File( const FSTreePtr&     parent,
+			                    const plus::string&  name,
+			                    const FSSpec&        file )
+			:
+				FSTree( parent, name, 0 ),
+				itsFileSpec( file ),
+				its_resinfo( GetResInfo_from_name( name ) )
+			{
+			}
+			
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+	};
+	
 	class FSTree_Rsrc_File : public FSTree
 	{
 		private:
@@ -234,7 +258,7 @@ namespace Genie
 			                  const plus::string&  name,
 			                  const FSSpec&        file )
 			:
-				FSTree( parent, name ),
+				FSTree( parent, name, S_IFREG | 0400 ),  // FIXME:  Check perms
 				itsFileSpec( file ),
 				its_resinfo( GetResInfo_from_name( name ) )
 			{
@@ -246,6 +270,13 @@ namespace Genie
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
+	
+	static bool has_resource( const FSSpec& file, const N::GetResInfo_Result& resinfo )
+	{
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
+		
+		return ::Get1Resource( resinfo.type, resinfo.id ) != NULL;
+	}
 	
 	void FSTree_Rsrc_File::Delete() const
 	{
@@ -265,43 +296,47 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
+	IOPtr FSTree_Unrsrc_File::Open( OpenFlags flags, mode_t mode ) const
+	{
+		const bool writing = flags + (1 - O_RDONLY) & 2;
+		
+		const bool creating = flags & O_CREAT;
+		
+		if ( !creating )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		{
+			RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+			
+			(void) N::AddResource( N::NewHandle( 0 ), its_resinfo );
+		}
+		
+		n::owned< N::Handle > h = N::NewHandle( 0 );
+		
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
+		                           : new Handle_IOHandle( Self(), flags, h );
+		
+		return result;
+	}
+	
 	IOPtr FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
-		const bool creating  = flags & O_CREAT;
 		const bool excluding = flags & O_EXCL;
+		
+		if ( excluding )
+		{
+			p7::throw_errno( EEXIST );
+		}
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
-		n::owned< N::Handle > h;
+		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
 		
-		try
-		{
-			const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
-			
-			if ( excluding )
-			{
-				p7::throw_errno( EEXIST );
-			}
-			
-			h = N::DetachResource( r );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( !creating  ||  err != resNotFound )
-			{
-				throw;
-			}
-			
-			resFile.reset();
-			
-			RdWr_OpenResFile_Scope openResFile( itsFileSpec );
-			
-			(void) N::AddResource( N::NewHandle( 0 ), its_resinfo );
-			
-			h = N::NewHandle( 0 );
-		}
+		n::owned< N::Handle > h = N::DetachResource( r );
 		
 		IOHandle* result = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
 		                           : new Handle_IOHandle( Self(), flags, h );
@@ -313,7 +348,14 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const FSSpec&        file )
 	{
-		return new FSTree_Rsrc_File( parent, name, file );
+		const N::GetResInfo_Result resinfo = GetResInfo_from_name( name );
+		
+		const bool exists = has_resource( file, resinfo );
+		
+		typedef const FSTree* T;
+		
+		return exists ? T( new FSTree_Rsrc_File  ( parent, name, file ) )
+		              : T( new FSTree_Unrsrc_File( parent, name, file ) );
 	}
 }
 
