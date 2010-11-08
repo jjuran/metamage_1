@@ -258,6 +258,8 @@ namespace Genie
 	
 	static void rsrc_file_remove( const FSTree* node );
 	
+	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
+	
 	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
 	
 	static off_t rsrc_file_geteof( const FSTree* node );
@@ -275,7 +277,7 @@ namespace Genie
 		NULL,
 		NULL,
 		&rsrc_file_remove,
-		NULL,
+		&rsrc_file_rename,
 		&rsrc_file_data_methods
 	};
 	
@@ -298,6 +300,44 @@ namespace Genie
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		(void) N::RemoveResource( r );
+	}
+	
+	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
+	{
+		if ( destination->owner() != that->owner() )
+		{
+			p7::throw_errno( EXDEV );
+		}
+		
+		const plus::string& new_name = destination->name();
+		
+		const ResSpec old_resSpec = GetResSpec_from_name( that->name() );
+		
+		const ResSpec new_resSpec = GetResSpec_from_name( new_name );
+		
+		if ( old_resSpec.type != new_resSpec.type )
+		{
+			p7::throw_errno( EXDEV );
+		}
+		
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
+		
+		RdWr_OpenResFile_Scope openResFile( fileSpec );
+		
+		::SetResLoad( false );
+		
+		if ( const Handle r = ::Get1Resource( new_resSpec.type, new_resSpec.id ) )
+		{
+			::RemoveResource( r );
+		}
+		
+		::SetResLoad( true );
+		
+		const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
+		
+		const N::GetResInfo_Result resInfo = N::GetResInfo( r );
+		
+		N::SetResInfo( r, new_resSpec.id, resInfo.name );
 	}
 	
 	static off_t rsrc_file_geteof( const FSTree* node )
