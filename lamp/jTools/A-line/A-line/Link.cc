@@ -35,6 +35,7 @@
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
+#include "A-line/derived_filename.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
@@ -500,47 +501,12 @@ namespace tool
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				// The last dot in the source path.
-				// There should definitely be a dot in the filename, or the file
-				// wouldn't be compiled in the first place.
-				const size_t dot = source_path.find_last_of( '.' );
-				
-				// The sentinel is a double slash inserted in the full pathname
-				// to mark the project directory -- the portion following the
-				// mark is the project-relative path.
-				const size_t sentinel = source_path.find( "//" );
-				
-				ASSERT( sentinel < dot );
-				
-				// Offset of project-relative path within the source pathname.
-				const size_t path_offset = sentinel + STRLEN( "//" );
-				
-				// Length of result before ".o" is appended:
-				const size_t truncated_length = its_objects_dir.size()
-				                              + 1
-				                              + dot - path_offset;
-				
 				plus::var_string result;
-				
-				result.reserve( truncated_length + STRLEN( ".o" ) );
 				
 				result += its_objects_dir;
 				result += '/';
-				
-				const size_t filename_offset = result.size();
-				
-				// Allocate space for the truncated filename
-				result.resize( truncated_length );
-				
-				// Copy the project-relative path, minus extension, replacing
-				// path separators with ':'
-				std::replace_copy( &source_path[ path_offset ],
-				                   &source_path[ dot         ],
-				                   &result[ filename_offset ],
-				                   '/',
-				                   ':' );
-				
-				result.append( STR_LEN( ".o" ) );
+				result += derived_filename( source_path );
+				result += ".o";
 				
 				return result;
 			}
