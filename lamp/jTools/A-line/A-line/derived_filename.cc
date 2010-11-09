@@ -23,33 +23,32 @@ namespace tool
 	
 	plus::string derived_filename( const plus::string& source_path )
 	{
-		// The last dot in the source path.
-		// There should definitely be a dot in the filename, or the file
-		// wouldn't be compiled in the first place.
-		const std::size_t dot = source_path.find_last_of( '.' );
+		const char* source_data = source_path.data();
+		
+		const std::size_t source_size = source_path.size();
 		
 		// The sentinel is a double slash inserted in the full pathname
 		// to mark the project directory -- the portion following the
 		// mark is the project-relative path.
 		const std::size_t sentinel = source_path.find( "//" );
 		
-		ASSERT( sentinel < dot );
+		ASSERT( ~sentinel );
 		
 		// Offset of project-relative path within the source pathname.
 		const std::size_t path_offset = sentinel + STRLEN( "//" );
 		
-		// Length of resulting filename before extension is appended:
-		const std::size_t truncated_length = dot - path_offset;
+		// Length of project-relative path:
+		const std::size_t subpath_length = source_size - path_offset;
 		
 		plus::var_string result;
 		
 		// Allocate space for the truncated filename
-		result.resize( truncated_length );
+		result.resize( subpath_length );
 		
 		// Copy the project-relative path, minus extension, replacing
 		// path separators with ':'
-		std::replace_copy( &source_path[ path_offset ],
-		                   &source_path[ dot         ],
+		std::replace_copy( &source_data[ path_offset ],
+		                   &source_data[ source_size ],
 		                   &result[ 0 ],
 		                   '/',
 		                   ':' );

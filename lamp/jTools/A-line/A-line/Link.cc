@@ -760,6 +760,9 @@ namespace tool
 				
 				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
 				
+				// truncate ".c" or ".cc"
+				linkOutput.resize( linkOutput.find_last_of( "." ) );
+				
 				link_input_arguments.front() = objectFile;
 				
 				TaskPtr link_tool_task = make_link_task( command,
