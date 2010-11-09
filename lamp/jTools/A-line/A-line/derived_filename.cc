@@ -57,5 +57,25 @@ namespace tool
 		return result;
 	}
 	
+	plus::string derived_pathname( const plus::string&  dir,
+	                               const plus::string&  source_path,
+	                               const char*          extension )
+	{
+		ASSERT( !dir.empty() );
+		
+		plus::var_string result;
+		
+		result += dir;
+		
+		if ( dir.back() != '/' )
+		{
+			result += '/';
+		}
+		
+		result += derived_filename( source_path );
+		result += extension;
+		
+		return result;
+	}
 }
 

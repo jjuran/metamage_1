@@ -495,20 +495,13 @@ namespace tool
 				its_objects_dir( objects )
 			{
 				ASSERT( !its_objects_dir.empty() );
-				
-				ASSERT( *(its_objects_dir.end() - 1) != '/' );
 			}
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				plus::var_string result;
+				const char* extension = ".o";
 				
-				result += its_objects_dir;
-				result += '/';
-				result += derived_filename( source_path );
-				result += ".o";
-				
-				return result;
+				return derived_pathname( its_objects_dir, source_path, extension );
 			}
 	};
 	

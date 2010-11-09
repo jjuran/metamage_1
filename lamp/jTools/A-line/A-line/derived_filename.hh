@@ -15,6 +15,10 @@ namespace tool
 	
 	plus::string derived_filename( const plus::string& source_path );
 	
+	plus::string derived_pathname( const plus::string&  dir,
+	                               const plus::string&  source_path,
+	                               const char*          extension );
+	
 }
 
 #endif
