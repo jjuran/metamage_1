@@ -61,6 +61,7 @@
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
 #include "A-line/CompilerOptions.hh"
+#include "A-line/derived_filename.hh"
 #include "A-line/Includes.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
@@ -436,11 +437,11 @@ namespace tool
 			
 			if ( MoreRecent( output_stat.st_mtime ) )
 			{
-				plus::string source_filename = io::get_filename( its_source_pathname );
-				
 				plus::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
 				
-				plus::string dependencies_pathname = dependencies_dir / source_filename + ".d";
+				plus::string dependencies_pathname = derived_pathname( dependencies_dir,
+				                                                       its_source_pathname,
+				                                                       ".d" );
 				
 				struct stat dependencies_stat;
 				
