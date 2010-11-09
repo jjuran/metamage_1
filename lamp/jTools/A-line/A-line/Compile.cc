@@ -86,7 +86,7 @@ namespace tool
 	static plus::string diagnostics_file_path( const plus::string&  dir_path,
 	                                           const plus::string&  target_path )
 	{
-		return dir_path / io::get_filename( target_path ) + ".txt";
+		return derived_pathname( dir_path, target_path, ".txt" );
 	}
 	
 	class CompilingTask : public FileTask
