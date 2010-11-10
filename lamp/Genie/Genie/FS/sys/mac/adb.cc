@@ -180,25 +180,21 @@ namespace Genie
 		result += '\n';
 	}
 	
-	class sys_mac_adb_N_registers
+	struct sys_mac_adb_N_registers
 	{
-		private:
-			typedef N::ADBAddress Key;
-		
-		public:
-			static plus::string Read( const FSTree* that )
-			{
-				Key key = GetKey( that );
-				
-				plus::var_string output;
-				
-				WriteADBRegister( key, 0, output );
-				WriteADBRegister( key, 1, output );
-				WriteADBRegister( key, 2, output );
-				WriteADBRegister( key, 3, output );
-				
-				return output;
-			}
+		static plus::string Read( const FSTree* that )
+		{
+			N::ADBAddress key = GetKey( that );
+			
+			plus::var_string output;
+			
+			WriteADBRegister( key, 0, output );
+			WriteADBRegister( key, 1, output );
+			WriteADBRegister( key, 2, output );
+			WriteADBRegister( key, 3, output );
+			
+			return output;
+		}
 	};
 	
 	
