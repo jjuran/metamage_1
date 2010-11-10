@@ -194,6 +194,8 @@ namespace Genie
 	}
 	
 	
+	static bool has_pixels( const FSTree* view );
+	
 	class FSTree_Pixels : public FSTree
 	{
 		private:
@@ -203,24 +205,22 @@ namespace Genie
 			FSTree_Pixels( const FSTreePtr&     parent,
 			               const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent,
+				        name,
+				        has_pixels( parent.get() ) * (S_IFREG | 0600) )
 			{
 			}
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			bool Exists() const;
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			off_t GetEOF() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	bool FSTree_Pixels::Exists() const
+	static bool has_pixels( const FSTree* view )
 	{
-		if ( GWorldPtr gworld = gGWorldMap[ ParentKey() ].gworld.get() )
+		if ( GWorldPtr gworld = gGWorldMap[ view ].gworld.get() )
 		{
 			return ::GetGWorldPixMap( gworld ) != NULL;
 		}
