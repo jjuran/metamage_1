@@ -155,31 +155,27 @@ namespace Genie
 	};
 	
 	
-	class sys_mac_crm_serial_N_icon
+	struct sys_mac_crm_serial_N_icon
 	{
-		private:
-			typedef N::CRMDeviceID Key;
-		
-		public:
-			static plus::string Read( const FSTree* that )
-			{
-				Key key = GetKey( that );
-				
-				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
-				
-				N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
-				
-				CRMIconHandle iconHandle = serialPtr->deviceIcon;
-				
-				CRMIconRecord icon = **iconHandle;
-				
-				// 32-bit * 32-bit = 1024 bits = 128 bytes, x2 = 256 bytes
-				const std::size_t maskedIconSize = sizeof icon.oldIcon + sizeof icon.oldMask;
-				
-				plus::string iconData( (const char*) &icon.oldIcon, maskedIconSize );
-				
-				return iconData;
-			}
+		static plus::string Read( const FSTree* that )
+		{
+			N::CRMDeviceID key = GetKey( that );
+			
+			N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
+			
+			N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
+			
+			CRMIconHandle iconHandle = serialPtr->deviceIcon;
+			
+			CRMIconRecord icon = **iconHandle;
+			
+			// 32-bit * 32-bit = 1024 bits = 128 bytes, x2 = 256 bytes
+			const std::size_t maskedIconSize = sizeof icon.oldIcon + sizeof icon.oldMask;
+			
+			plus::string iconData( (const char*) &icon.oldIcon, maskedIconSize );
+			
+			return iconData;
+		}
 	};
 	
 	
