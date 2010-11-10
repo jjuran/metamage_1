@@ -21,9 +21,6 @@ namespace Genie
 	class FSTree_Null : public FSTree
 	{
 		public:
-			bool Exists() const  { return false; }
-			bool IsFile() const  { return false; }
-			
 			FSTreePtr Parent() const;
 	};
 	
