@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// Debug
+#include "debug/assert.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -36,6 +39,7 @@ namespace Genie
 				FSTree( parent, name ),
 				itsReadHook( readHook )
 			{
+				ASSERT( readHook != NULL );
 			}
 			
 			bool Exists() const;
@@ -48,17 +52,14 @@ namespace Genie
 	
 	bool FSTree_Generated::Exists() const
 	{
-		if ( itsReadHook != NULL )
+		try
 		{
-			try
-			{
-				(void) itsReadHook( this );
-				
-				return true;
-			}
-			catch ( ... )
-			{
-			}
+			(void) itsReadHook( this );
+			
+			return true;
+		}
+		catch ( ... )
+		{
 		}
 		
 		return false;
@@ -66,11 +67,6 @@ namespace Genie
 	
 	off_t FSTree_Generated::GetEOF() const
 	{
-		if ( itsReadHook == NULL )
-		{
-			p7::throw_errno( EACCES );
-		}
-		
 		const plus::string data = itsReadHook( this );
 		
 		return data.size();
@@ -81,11 +77,6 @@ namespace Genie
 		if ( flags != O_RDONLY )
 		{
 			throw p7::errno_t( EINVAL );
-		}
-		
-		if ( itsReadHook == NULL )
-		{
-			p7::throw_errno( EACCES );
 		}
 		
 		plus::string data = itsReadHook( this );
