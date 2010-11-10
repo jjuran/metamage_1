@@ -7,6 +7,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // Debug
 #include "debug/assert.hh"
@@ -29,20 +30,17 @@ namespace Genie
 		private:
 			typedef Generated_ReadHook ReadHook;
 			
-			ReadHook itsReadHook;
+			plus::string its_data;
 		
 		public:
 			FSTree_Generated( const FSTreePtr&     parent,
 			                  const plus::string&  name,
 			                  ReadHook             readHook )
 			:
-				FSTree( parent, name ),
-				itsReadHook( readHook )
+				FSTree( parent, name, S_IFREG | 0400 ),
+				its_data( readHook( parent.get(), name ) )
 			{
-				ASSERT( readHook != NULL );
 			}
-			
-			bool Exists() const;
 			
 			off_t GetEOF() const;
 			
@@ -50,26 +48,9 @@ namespace Genie
 	};
 	
 	
-	bool FSTree_Generated::Exists() const
-	{
-		try
-		{
-			(void) itsReadHook( ParentRef().get(), Name() );
-			
-			return true;
-		}
-		catch ( ... )
-		{
-		}
-		
-		return false;
-	}
-	
 	off_t FSTree_Generated::GetEOF() const
 	{
-		const plus::string data = itsReadHook( ParentRef().get(), Name() );
-		
-		return data.size();
+		return its_data.size();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_Generated::Open( OpenFlags flags ) const
@@ -79,11 +60,9 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		plus::string data = itsReadHook( ParentRef().get(), Name() );
-		
 		return seize_ptr( new PropertyReaderFileHandle( Self(),
 		                                                flags,
-		                                                data ) );
+		                                                its_data ) );
 	}
 	
 	FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
