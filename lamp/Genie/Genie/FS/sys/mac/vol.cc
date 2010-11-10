@@ -24,7 +24,7 @@
 #include "Nitrogen/Folders.hh"
 
 // Genie
-#include "Genie/FS/ReadableSymLink.hh"
+#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 
 
@@ -35,49 +35,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class sys_mac_vol_boot : public FSTree_ReadableSymLink
-	{
-		public:
-			sys_mac_vol_boot( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree_ReadableSymLink( parent, name )
-			{
-			}
-			
-			plus::string ReadLink() const;
-	};
-	
-	plus::string sys_mac_vol_boot::ReadLink() const
+	static Mac::FSVolumeRefNum find_boot_disk()
 	{
 		const N::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
 		                                                  N::kSystemFolderType,
 		                                                  false );
 		
-		const N::FSVolumeRefNum vRefNum = system_folder.vRefNum;
-		
-		plus::var_string result = "list/";
-		
-		result += iota::inscribe_decimal( -vRefNum );
-		
-		return result;
+		return system_folder.vRefNum;
 	}
 	
-	
-	class sys_mac_vol_ram : public FSTree_ReadableSymLink
-	{
-		public:
-			sys_mac_vol_ram( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree_ReadableSymLink( parent, name )
-			{
-			}
-			
-			bool Exists() const;
-			
-			plus::string ReadLink() const;
-	};
 	
 	struct volume_is_ram_disk
 	{
@@ -151,14 +117,16 @@ namespace Genie
 		return it != sequence.end() ? *it : N::FSVolumeRefNum( 0 );
 	}
 	
-	bool sys_mac_vol_ram::Exists() const
-	{
-		return find_ram_disk();
-	}
 	
-	plus::string sys_mac_vol_ram::ReadLink() const
+	static FSTreePtr new_volume_link( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
-		const SInt16 vRefNum = find_ram_disk();
+		typedef Mac::FSVolumeRefNum (*Function)();
+		
+		Function f = (Function) args;
+		
+		const SInt16 vRefNum = f();
 		
 		if ( vRefNum == 0 )
 		{
@@ -169,19 +137,19 @@ namespace Genie
 		
 		result += iota::inscribe_decimal( -vRefNum );
 		
-		return result;
+		return new FSTree_SymbolicLink( parent, name, result );
+		
 	}
-	
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_Mappings[] =
 	{
 		{ "list", &New_FSTree_sys_mac_vol },
 		
-		{ "boot", &Basic_Factory< sys_mac_vol_boot > },
+		{ "boot", &new_volume_link, (void*) &find_boot_disk },
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "ram",  &Basic_Factory< sys_mac_vol_ram  > },
+		{ "ram",  &new_volume_link, (void*) &find_ram_disk },
 		
 	#endif
 		
