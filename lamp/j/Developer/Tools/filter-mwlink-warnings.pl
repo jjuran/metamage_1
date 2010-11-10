@@ -69,15 +69,16 @@ qw
 (
 	:KSIOUXConsole.cc
 	Abort.cc
-	Genie/Abort.cpp
+	Genie/Abort.cc.cpp
 	KSIOUXConsole.cc
 	OTInetMailExchange.cc
+	OTInetMailExchange.cc.cpp
 	dlmalloc.c
-	dlmalloc.cpp
+	dlmalloc.c.cpp
 	nomalloc.c
-	nomalloc.cpp
+	nomalloc.c.cpp
 	readonly-environ.cc
-	readonly-environ.cpp
+	readonly-environ.cc.cpp
 	stacked-environ.lib
 	syscalls.c
 	Kerosene-Library.lib
