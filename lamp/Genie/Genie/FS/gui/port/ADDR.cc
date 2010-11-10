@@ -242,11 +242,6 @@ namespace Genie
 		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
 	}
 	
-	static bool HasWindow( const FSTree* that )
-	{
-		return port_has_window( that->ParentRef() );
-	}
-	
 	static void CreateUserWindow( const FSTree* key )
 	{
 		WindowParameters* it = gWindowParametersMap.find( key );
@@ -549,6 +544,25 @@ namespace Genie
 	}
 	
 	
+	class FSTree_sys_port_ADDR_Unwindow : public FSTree
+	{
+		public:
+			FSTree_sys_port_ADDR_Unwindow( const FSTreePtr&     parent,
+			                               const plus::string&  name )
+			:
+				FSTree( parent, name, 0 )
+			{
+			}
+			
+			void SetTimes() const;
+	};
+	
+	void FSTree_sys_port_ADDR_Unwindow::SetTimes() const
+	{
+		CreateUserWindow( ParentRef().get() );
+	}
+	
+	
 	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
 	{
 		public:
@@ -560,10 +574,6 @@ namespace Genie
 			}
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			bool Exists() const  { return HasWindow( this ); }
-			
-			bool IsLink() const  { return Exists(); }
 			
 			void SetTimes() const;
 			
@@ -577,10 +587,7 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		if ( !InvalidateWindow( key ) )
-		{
-			CreateUserWindow( key );
-		}
+		InvalidateWindow( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const
@@ -884,6 +891,18 @@ namespace Genie
 		variable
 	};
 	
+	static FSTreePtr new_window( const FSTreePtr&     parent,
+	                             const plus::string&  name,
+	                             const void*          args )
+	{
+		const bool exists = port_has_window( parent );
+		
+		typedef FSTree* T;
+		
+		return exists ? T( new FSTree_sys_port_ADDR_window  ( parent, name ) )
+		              : T( new FSTree_sys_port_ADDR_Unwindow( parent, name ) );
+	}
+	
 	static FSTreePtr new_focus( const FSTreePtr&     parent,
 	                            const plus::string&  name,
 	                            const void*          args )
@@ -930,7 +949,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[] =
 	{
-		{ "window", &Basic_Factory< FSTree_sys_port_ADDR_window > },
+		{ "window", &new_window },
 		
 		{ "view",   &subview_factory, (const void*) &GetView },
 		
