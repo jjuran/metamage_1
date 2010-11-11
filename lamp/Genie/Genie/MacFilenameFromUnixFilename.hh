@@ -10,13 +10,6 @@
 #include "plus/string.hh"
 
 
-namespace Genie
-{
-	
-	plus::string hashed_long_name( const plus::string& long_name );
-	
-}
-
 namespace Kerosene
 {
 	
