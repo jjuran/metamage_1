@@ -25,6 +25,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
 // nucleus
@@ -62,13 +63,13 @@
 // Genie
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
-#include "Genie/MacFilenameFromUnixFilename.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
+#include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
@@ -92,7 +93,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace K = Kerosene;
 	namespace Ped = Pedestal;
 	
 	
@@ -132,6 +132,17 @@ namespace Genie
 	}
 	
 	
+	static inline plus::string colons_from_slashes( const plus::string& mac_name )
+	{
+		return plus::replaced_string( mac_name, '/', ':' );
+	}
+	
+	static inline plus::string slashes_from_colons( const plus::string& unix_name )
+	{
+		return plus::replaced_string( unix_name, ':', '/' );
+	}
+	
+	
 	static plus::string UnixFromMacName( ConstStr255Param name )
 	{
 		plus::var_string result;
@@ -158,7 +169,7 @@ namespace Genie
 				
 				if ( comment.size() > 31 )
 				{
-					plus::string hashed = K::MacFilenameFromUnixFilename( comment );
+					plus::string hashed = slashes_from_colons( hashed_long_name( comment ) );
 					
 					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
 					
@@ -660,7 +671,7 @@ namespace Genie
 		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
 		parent.dirID   = N::FSDirID       ( stat_buffer.st_rdev );
 		
-		return parent / K::MacFilenameFromUnixFilename( file->Name() );
+		return parent / slashes_from_colons( hashed_long_name( file->Name() ) );
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -876,7 +887,7 @@ namespace Genie
 			{
 				// Long names are case-sensitive due to hashing
 				
-				const plus::string name = K::MacFilenameFromUnixFilename( Name() );
+				const plus::string name = slashes_from_colons( Name() );
 				
 				const bool equal = std::equal( name.begin(),
 				                               name.end(),
@@ -941,7 +952,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		N::Str31 macName = K::MacFilenameFromUnixFilename( name );
+		N::Str31 macName = slashes_from_colons( hashed_long_name( name ) );
 		
 		CInfoPBRec cInfo;
 		

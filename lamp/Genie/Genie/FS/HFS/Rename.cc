@@ -14,6 +14,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/replaced_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -27,8 +30,8 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/MacFilenameFromUnixFilename.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -38,7 +41,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace K = Kerosene;
 	
 	
 	static bool NamesAreSame( ConstStr63Param a, ConstStr63Param b )
@@ -102,6 +104,13 @@ namespace Genie
 		
 		lockBypass.SetFile( destFile );
 	}
+	
+	
+	static inline plus::string slashes_from_colons( const plus::string& unix_name )
+	{
+		return plus::replaced_string( unix_name, ':', '/' );
+	}
+	
 	
 	static void MoveAndRename( const FSSpec& srcFile, const FSSpec& destFile )
 	{
@@ -190,7 +199,7 @@ namespace Genie
 				
 				// Overwrite actual name with requested name
 				
-				plus::string requested_name = K::MacFilenameFromUnixFilename( destName );
+				plus::string requested_name = slashes_from_colons( hashed_long_name( destName ) );
 				
 				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
 			}
