@@ -21,7 +21,7 @@
 #include "MD5/MD5.hh"
 
 
-namespace Kerosene
+namespace Genie
 {
 	
 	static char base32_encode( unsigned x )
@@ -29,7 +29,7 @@ namespace Kerosene
 		return ( x < 10 ? '0' : 'a' - 10 ) + x;
 	}
 	
-	plus::string MacFilenameFromUnixFilename( const plus::string& unixName )
+	plus::string hashed_long_name( const plus::string& unixName )
 	{
 		const std::size_t max_length = 31;
 		
@@ -88,6 +88,18 @@ namespace Kerosene
 			
 			macName.append( base_end, end );
 		}
+		
+		return macName;
+	}
+	
+}
+
+namespace Kerosene
+{
+	
+	plus::string MacFilenameFromUnixFilename( const plus::string& unixName )
+	{
+		plus::var_string macName = Genie::hashed_long_name( unixName );
 		
 		std::replace( macName.begin(), macName.end(), ':', '/' );
 		
