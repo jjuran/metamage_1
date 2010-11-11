@@ -739,7 +739,7 @@ namespace tool
 		command.push_back( "-o" );
 		command.push_back( output_mac_pathname.c_str() );
 		
-		command.push_back( arch == arch_ppc ? "-map" : "-mapide" );
+		command.push_back( "-map" );
 		command.push_back( linkmap_mac_pathname.c_str() );
 		
 		command.push_back( "-cmap" );
