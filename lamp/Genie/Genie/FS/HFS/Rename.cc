@@ -163,7 +163,7 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const plus::string& destName = destFile->Name();
+		const plus::string& destName = slashes_from_colons( destFile->Name() );
 		
 		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
 		                          && std::equal( destName.begin(),
@@ -199,7 +199,7 @@ namespace Genie
 				
 				// Overwrite actual name with requested name
 				
-				plus::string requested_name = slashes_from_colons( hashed_long_name( destName ) );
+				plus::string requested_name = hashed_long_name( destName );
 				
 				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
 			}

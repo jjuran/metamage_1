@@ -25,6 +25,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/make_string.hh"
 #include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
@@ -143,23 +144,7 @@ namespace Genie
 	}
 	
 	
-	static plus::string UnixFromMacName( ConstStr255Param name )
-	{
-		plus::var_string result;
-		
-		result.resize( name[0] );
-		
-		std::replace_copy( &name[ 1           ],
-		                   &name[ 1 + name[0] ],
-		                   result.begin(),
-		                   '/',
-		                   ':' );
-		
-		return result;
-	}
-	
-	
-	static plus::string GetUnixName( const FSSpec& item )
+	static plus::string get_long_name( const FSSpec& item )
 	{
 		if ( item.name[0] == 31 )
 		{
@@ -169,7 +154,7 @@ namespace Genie
 				
 				if ( comment.size() > 31 )
 				{
-					plus::string hashed = slashes_from_colons( hashed_long_name( comment ) );
+					plus::string hashed = hashed_long_name( comment );
 					
 					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
 					
@@ -185,9 +170,13 @@ namespace Genie
 			}
 		}
 		
-		return UnixFromMacName( item.name );
+		return plus::make_string( item.name );
 	}
 	
+	static plus::string GetUnixName( const FSSpec& item )
+	{
+		return colons_from_slashes( get_long_name( item ) );
+	}
 	
 	static N::FSVolumeRefNum GetVRefNum( N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
 	{
@@ -671,7 +660,7 @@ namespace Genie
 		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
 		parent.dirID   = N::FSDirID       ( stat_buffer.st_rdev );
 		
-		return parent / slashes_from_colons( hashed_long_name( file->Name() ) );
+		return parent / hashed_long_name( slashes_from_colons( file->Name() ) );
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -952,7 +941,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
-		N::Str31 macName = slashes_from_colons( hashed_long_name( name ) );
+		N::Str31 macName = hashed_long_name( slashes_from_colons( name ) );
 		
 		CInfoPBRec cInfo;
 		
@@ -1312,7 +1301,7 @@ namespace Genie
 	
 	void FSTree_HFS::FinishCreation() const
 	{
-		SetLongName( itsFileSpec, Name() );
+		SetLongName( itsFileSpec, slashes_from_colons( Name() ) );
 	}
 	
 }
