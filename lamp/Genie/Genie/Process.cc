@@ -68,6 +68,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
+#include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -139,7 +140,8 @@ namespace Genie
 		sizeof (_lamp_system_parameter_block),
 		sizeof (_lamp_user_parameter_block),
 		
-		TARGET_CPU_68K ? &dispatch_68k_system_call
+		TARGET_CPU_68K ? &dispatch_68k_system_call :
+		TARGET_CPU_PPC ? &dispatch_ppc_system_call
 		               : &DispatchSystemCall,
 		
 		&microseconds
@@ -257,50 +259,7 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-#ifdef __LAMP__
-	
-#if TARGET_CPU_PPC
-	
-	enum { kSystemCallSize = sizeof (SystemCall) };
-	
-	static asm void DispatchSystemCall( ... )
-	{
-		nofralloc
-		
-		// r11 contains the requested system call number
-		// r3-r10 are up to 8 arguments
-		
-		// r12.last = gLastSystemCall;
-		lwz		r12,gLastSystemCall
-		lwz		r12,0(r12)
-		
-		// if ( r11.index > r12.last )
-		cmpl	cr0,r11,r12
-		blt+	cr0,in_range
-		// r11.index = r12.last;
-		mr		r11,r12
-		
-	in_range:
-		// r12.array = gSystemCallArray;
-		lwz		r12,gSystemCallArray
-		lwz		r12,0(r12)
-		
-		// r12.f = r12.array[ r11.index ].function
-		mulli	r11,r11,kSystemCallSize
-		add		r12,r12,r11
-		lwz		r12,0(r12)
-		
-		// load system call address for local jump
-		lwz		r0,0(r12)
-		
-		// jump to system call
-		mtctr	r0
-		bctr
-	}
-	
-#endif
-	
-#else  // #ifdef __LAMP__
+#ifndef __LAMP__
 	
 	// Dummy declaration so we compile on OS X
 	
