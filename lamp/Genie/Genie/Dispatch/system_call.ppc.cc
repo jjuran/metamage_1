@@ -53,6 +53,9 @@ namespace Genie
 		
 		// deallocate our stack frame
 		addi	SP,SP,64
+		
+		// restore RTOC
+		lwz		RTOC,20(SP)
 	}
 	
 #endif
