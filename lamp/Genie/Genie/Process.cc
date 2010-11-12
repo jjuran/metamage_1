@@ -132,7 +132,9 @@ namespace Genie
 		return N::Microseconds();
 	}
 	
-	static _lamp_system_parameter_block global_parameter_block =
+	extern "C" _lamp_system_parameter_block global_parameter_block;
+	
+	_lamp_system_parameter_block global_parameter_block =
 	{
 		NULL,  // current user
 		
