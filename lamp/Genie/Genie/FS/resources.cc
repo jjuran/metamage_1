@@ -291,6 +291,12 @@ namespace Genie
 				throw;
 			}
 			
+			resFile.reset();
+			
+			RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+			
+			(void) N::AddResource( N::NewHandle( 0 ), its_resinfo );
+			
 			h = N::NewHandle( 0 );
 		}
 		
