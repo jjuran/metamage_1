@@ -90,6 +90,7 @@ DEFINE_SYSCALL_7F( fsync )
 
 DEFINE_SYSCALL_7F( _lamp_clone )
 DEFINE_SYSCALL_7F( _OTInetMailExchange )
+DEFINE_SYSCALL_7F( unshare )
 
 DEFINE_SYSCALL_7F( sigprocmask )
 

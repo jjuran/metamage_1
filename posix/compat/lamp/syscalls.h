@@ -124,7 +124,7 @@
 // 119
 #define __NR__lamp_clone               120  // clone
 #define __NR__OTInetMailExchange       121  // setdomainname
-// 122
+#define __NR_unshare                   122  // uname
 // 123
 // 124
 // 125
