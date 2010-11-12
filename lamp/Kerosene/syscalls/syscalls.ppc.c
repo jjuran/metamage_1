@@ -23,22 +23,9 @@ void _set_dispatcher( void* address )
 	{
 		nofralloc
 		
-		mflr	r0						// get caller's return address
-		stw		r0,8(SP)				// store it in caller's stack frame
-		
-		stwu	SP,-64(SP)				// allocate our own stack frame
-		
 		lwz		r12,global_dispatcher	// load dispatcher T-vector
 		
-		bl		__ptr_glue				// cross-TOC call
-		nop								// synchronize pipeline
-		lwz		RTOC,20(SP)				// restore our RTOC
-		
-		addi	SP,SP,64				// deallocate our stack frame
-		
-		lwz		r0,8(SP)				// reload caller's return address
-		mtlr	r0						// load it into the link register
-		blr								// return
+		b		__ptr_glue				// cross-TOC call
 	}
 	
 	asm int syscall( int number, ... )
