@@ -284,8 +284,16 @@ namespace tool
 	{
 		Command rezCommand;
 		
+	#ifdef __APPLE__
+		
 		// Use OS X's Rez on OS X, even if we're targeting Lamp
-		const bool use_OSX_Rez = TARGET_RT_MAC_MACHO;
+		const bool use_OSX_Rez = true;
+		
+	#else
+		
+		const bool use_OSX_Rez = false;
+		
+	#endif
 		
 		if ( use_OSX_Rez )
 		{
