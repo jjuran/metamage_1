@@ -126,8 +126,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static void DispatchSystemCall( ... );
-	
 	static uint64_t microseconds()
 	{
 		return N::Microseconds();
@@ -142,7 +140,7 @@ namespace Genie
 		
 		TARGET_CPU_68K ? &dispatch_68k_system_call :
 		TARGET_CPU_PPC ? &dispatch_ppc_system_call
-		               : &DispatchSystemCall,
+		               : NULL,
 		
 		&microseconds
 	};
@@ -259,15 +257,6 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-#ifndef __LAMP__
-	
-	// Dummy declaration so we compile on OS X
-	
-	static void DispatchSystemCall( ... )
-	{
-	}
-	
-#endif
 	
 	int Process::Run()
 	{
