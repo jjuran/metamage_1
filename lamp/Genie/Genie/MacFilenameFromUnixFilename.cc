@@ -29,21 +29,21 @@ namespace Genie
 		return ( x < 10 ? '0' : 'a' - 10 ) + x;
 	}
 	
-	plus::string hashed_long_name( const plus::string& unixName )
+	plus::string hashed_long_name( const plus::string& long_name )
 	{
 		const std::size_t max_length = 31;
 		
-		const std::size_t long_length = unixName.length();
+		const std::size_t long_length = long_name.length();
 		
-		plus::var_string macName;
+		plus::var_string hashed_name;
 		
 		if ( long_length <= max_length )
 		{
-			macName = unixName;
+			hashed_name = long_name;
 		}
 		else
 		{
-			const char* begin = unixName.data();
+			const char* begin = long_name.data();
 			const char* end   = begin + long_length;
 			
 			const char* dot = iota::find_last_match( begin, end, '.' );
@@ -77,19 +77,19 @@ namespace Genie
 			
 			MD5::Result hash = MD5::Digest_Bytes( begin, long_length );
 			
-			macName.assign( begin, shortened_base_length );
+			hashed_name.assign( begin, shortened_base_length );
 			
-			macName += 0xA5;  // bullet
+			hashed_name += 0xA5;  // bullet
 			
 			for ( int i = 0;  i != hash_length;  ++i )
 			{
-				macName += base32_encode( hash.data[ i ] >> 3 );
+				hashed_name += base32_encode( hash.data[ i ] >> 3 );
 			}
 			
-			macName.append( base_end, end );
+			hashed_name.append( base_end, end );
 		}
 		
-		return macName;
+		return hashed_name;
 	}
 	
 }
