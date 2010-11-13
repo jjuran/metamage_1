@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 // POSIX
-#include <sys/ttycom.h>
+#include <sys/ioctl.h>
 
 // Iota
 #include "iota/decimal.hh"
