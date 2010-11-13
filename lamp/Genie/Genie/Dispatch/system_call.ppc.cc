@@ -18,7 +18,8 @@ namespace Genie
 	
 	asm void dispatch_ppc_system_call( ... )
 	{
-		nofralloc
+		// allocate a stack frame
+		stwu	SP,-64(SP)
 		
 		// r11 contains the requested system call number
 		// r3-r10 are up to 8 arguments
@@ -48,7 +49,13 @@ namespace Genie
 		
 		// jump to system call
 		mtctr	r0
-		bctr
+		bctrl
+		
+		// deallocate our stack frame
+		addi	SP,SP,64
+		
+		// restore RTOC
+		lwz		RTOC,20(SP)
 	}
 	
 #endif
