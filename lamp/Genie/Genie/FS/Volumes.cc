@@ -5,15 +5,14 @@
 
 #include "Genie/FS/Volumes.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Mac OS
 #ifndef __FILES__
 #include <Files.h>
 #endif
 
 // plus
+#include "plus/make_string.hh"
+#include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -37,34 +36,19 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static plus::string MacFromUnixName( const plus::string& name )
+	static inline plus::string slashes_from_colons( const plus::string& unix_name )
 	{
-		plus::var_string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   ':',
-		                   '/' );
-		
-		return result;
+		return plus::replaced_string( unix_name, ':', '/' );
 	}
 	
-	static plus::string UnixFromMacName( ConstStr255Param name )
+	static inline plus::string colons_from_slashes( const plus::string& mac_name )
 	{
-		plus::var_string result;
-		
-		result.resize( name[0] );
-		
-		std::replace_copy( &name[ 1           ],
-		                   &name[ 1 + name[0] ],
-		                   result.begin(),
-		                   '/',
-		                   ':' );
-		
-		return result;
+		return plus::replaced_string( mac_name, '/', ':' );
+	}
+	
+	static inline plus::string colons_from_slashes( const unsigned char* mac_name )
+	{
+		return colons_from_slashes( plus::make_string( mac_name ) );
 	}
 	
 	
@@ -126,7 +110,7 @@ namespace Genie
 	FSTreePtr FSTree_Volumes_Link::ResolveLink() const
 	{
 		// Convert ':' to '/'
-		plus::var_string mac_name = MacFromUnixName( Name() );
+		plus::var_string mac_name = slashes_from_colons( Name() );
 		
 		mac_name += ":";
 		
@@ -166,7 +150,7 @@ namespace Genie
 			
 			const ino_t inode = -pb.volumeParam.ioVRefNum;
 			
-			const plus::string name = UnixFromMacName( mac_name );
+			const plus::string name = colons_from_slashes( mac_name );
 			
 			cache.push_back( FSNode( inode, name ) );
 		}
