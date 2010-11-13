@@ -11,7 +11,7 @@
 #include <signal.h>
 
 // POSIX
-#include <sys/ttycom.h>
+#include <termios.h>
 
 // iota
 #include "iota/strings.hh"
@@ -93,7 +93,11 @@ namespace tool
 			
 			stdio = p7::open( ctty, p7::o_rdwr );
 			
+		#ifdef TIOCSCTTY
+			
 			p7::ioctl( stdio.get(), TIOCSCTTY, NULL );
+			
+		#endif
 		}
 		else
 		{
