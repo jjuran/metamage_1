@@ -30,9 +30,11 @@ namespace Kerosene
 	{
 		const std::size_t max_length = 31;
 		
+		const std::size_t long_length = unixName.length();
+		
 		plus::var_string macName;
 		
-		if ( unixName.length() <= max_length )
+		if ( long_length <= max_length )
 		{
 			macName = unixName;
 		}
@@ -55,22 +57,22 @@ namespace Kerosene
 			                                 - inserted_length;        // -7
 			                                                           // == 16
 			
-			if ( !has_dot  ||  unixName.size() - dot > extension_limit )
+			if ( !has_dot  ||  long_length - dot > extension_limit )
 			{
 				// Set the end of the base to end of string if there's no dot,
 				// or if the extension (including the dot) exceeds the limit.
-				dot = unixName.size();
+				dot = long_length;
 			}
 			
 			const std::size_t base_length = dot;
 			
-			const std::size_t replaced_length = unixName.size() - max_length + inserted_length;
+			const std::size_t replaced_length = long_length - max_length + inserted_length;
 			
 			const std::size_t shortened_base_length = base_length - replaced_length;
 			
 			ASSERT( shortened_base_length >= minimum_remaining_base );
 			
-			MD5::Result hash = MD5::Digest_Bytes( unixName.data(), unixName.size() );
+			MD5::Result hash = MD5::Digest_Bytes( unixName.data(), long_length );
 			
 			macName.assign( unixName.begin(), unixName.begin() + shortened_base_length );
 			
