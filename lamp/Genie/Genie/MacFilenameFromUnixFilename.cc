@@ -40,6 +40,9 @@ namespace Kerosene
 		}
 		else
 		{
+			const char* begin = unixName.data();
+			const char* end   = begin + long_length;
+			
 			std::size_t dot = unixName.find_last_of( "." );
 			
 			const bool has_dot = dot != unixName.npos;
@@ -72,9 +75,9 @@ namespace Kerosene
 			
 			ASSERT( shortened_base_length >= minimum_remaining_base );
 			
-			MD5::Result hash = MD5::Digest_Bytes( unixName.data(), long_length );
+			MD5::Result hash = MD5::Digest_Bytes( begin, long_length );
 			
-			macName.assign( unixName.begin(), unixName.begin() + shortened_base_length );
+			macName.assign( begin, shortened_base_length );
 			
 			macName += 0xA5;  // bullet
 			
@@ -85,7 +88,7 @@ namespace Kerosene
 			
 			if ( has_dot )
 			{
-				macName.append( unixName.begin() + dot, unixName.end() );
+				macName.append( begin + dot, end );
 			}
 		}
 		
