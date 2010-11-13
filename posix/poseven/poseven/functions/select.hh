@@ -15,21 +15,21 @@
 #define POSEVEN_FUNCTIONS_SELECT_HH
 
 // POSIX
-#include <unistd.h>
+#include <sys/select.h>
 
 
 namespace poseven
 {
 	
 	unsigned select( unsigned   n_fds,
-	                 fd_set    *r  = NULL,
-	                 fd_set    *w  = NULL,
-	                 fd_set    *x  = NULL,
-	                 timeval   *tv = NULL );
+	                 fd_set    *r  = 0,
+	                 fd_set    *w  = 0,
+	                 fd_set    *x  = 0,
+	                 timeval   *tv = 0 );  // NULL
 	
 	inline void select( timeval& tv )
 	{
-		(void) select( 0, NULL, NULL, NULL, &tv );
+		(void) select( 0, 0, 0, 0, &tv );  // NULL
 	}
 	
 }
