@@ -19,6 +19,12 @@ struct _lamp_user_parameter_block
 	int* errno_var;
 	
 	void (*cleanup)();
+	
+#ifdef __MC68K__
+	
+	void* globals;
+	
+#endif
 };
 
 typedef struct _lamp_user_parameter_block _lamp_user_parameter_block;

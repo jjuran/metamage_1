@@ -78,6 +78,7 @@
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
+#include "Genie/userland.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -131,7 +132,9 @@ namespace Genie
 		return N::Microseconds();
 	}
 	
-	static _lamp_system_parameter_block global_parameter_block =
+	extern "C" _lamp_system_parameter_block global_parameter_block;
+	
+	_lamp_system_parameter_block global_parameter_block =
 	{
 		NULL,  // current user
 		
@@ -283,30 +286,14 @@ namespace Genie
 			
 			lamp_entry lamp_main = its_exec_handle->get_main_entry_point();
 			
-		#ifdef __MC68K__
-			
-			long saved_a4;
-			
-			asm
-			{
-				MOVE.L  A4,saved_a4
-			}
-			
-		#endif
+			ENTER_USERMAIN();
 			
 			exit_status = lamp_main( argc,
 			                         argv,
 			                         envp,
 			                         &global_parameter_block );
 			
-		#ifdef __MC68K__
-			
-			asm
-			{
-				MOVEA.L saved_a4,A4
-			}
-			
-		#endif
+			EXIT_USERMAIN();
 			
 			// Not reached by regular tools, since they call exit()
 		}
@@ -908,7 +895,11 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
+			ENTER_USERLAND();
+			
 			its_pb.cleanup();
+			
+			EXIT_USERLAND();
 			
 			its_pb.cleanup = NULL;
 		}
@@ -1191,7 +1182,11 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
+			ENTER_USERLAND();
+			
 			its_pb.cleanup();
+			
+			EXIT_USERLAND();
 		}
 		
 		itsLifeStage = kProcessZombie;
@@ -1488,7 +1483,11 @@ namespace Genie
 				// (b) System time is accrued in the event of [sig]longjmp()
 				LeaveSystemCall();
 				
+				ENTER_USERLAND();
+				
 				handler( signo );
+				
+				EXIT_USERLAND();
 				
 				EnterSystemCall( "*SIGNAL HANDLED*" );
 				

@@ -7,6 +7,16 @@
 #include "lamp/parameter_block.h"
 #include "tool-runtime/parameter_block.h"
 
+
+#ifdef __MC68K__
+
+	static inline asm void* GetA4()
+	{
+		MOVEA.L A4,A0
+	}
+
+#endif
+
 // MSL Runtime
 #ifdef __MC68K__
 extern void __InitCode__();
@@ -48,6 +58,12 @@ void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_bloc
 	
 	global_user_params->errno_var = &errno;
 	global_user_params->cleanup   = &_MSL_cleanup;
+	
+#ifdef __MC68K__
+	
+	global_user_params->globals = GetA4();
+	
+#endif
 	
 	INITIALIZE();
 	
