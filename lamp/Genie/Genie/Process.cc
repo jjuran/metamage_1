@@ -78,6 +78,7 @@
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
+#include "Genie/userland.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -908,7 +909,11 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
+			ENTER_USERLAND();
+			
 			its_pb.cleanup();
+			
+			EXIT_USERLAND();
 			
 			its_pb.cleanup = NULL;
 		}
@@ -1191,7 +1196,11 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
+			ENTER_USERLAND();
+			
 			its_pb.cleanup();
+			
+			EXIT_USERLAND();
 		}
 		
 		itsLifeStage = kProcessZombie;
@@ -1488,7 +1497,11 @@ namespace Genie
 				// (b) System time is accrued in the event of [sig]longjmp()
 				LeaveSystemCall();
 				
+				ENTER_USERLAND();
+				
 				handler( signo );
+				
+				EXIT_USERLAND();
 				
 				EnterSystemCall( "*SIGNAL HANDLED*" );
 				
