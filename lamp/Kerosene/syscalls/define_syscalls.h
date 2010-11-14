@@ -72,7 +72,7 @@ DEFINE_SYSCALL_7F( symlinkat )
 DEFINE_SYSCALL_7F( _realpathat )
 DEFINE_SYSCALL_7F( _readlinkat )
 
-DEFINE_SYSCALL_7F( mmap )
+DEFINE_SYSCALL_7F( _lamp_mmap )
 DEFINE_SYSCALL_7F( munmap )
 DEFINE_SYSCALL_7F( truncate )
 DEFINE_SYSCALL_7F( ftruncate )

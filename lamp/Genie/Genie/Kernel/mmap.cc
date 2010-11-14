@@ -22,7 +22,7 @@
 namespace Genie
 {
 	
-	static void* mmap( void *addr, size_t len, int prot, int flags, int fd, off_t off )
+	static long _lamp_mmap( void *addr, size_t len, int prot, int flags, int fd, off_t off )
 	{
 		SystemCallFrame frame( "mmap" );
 		
@@ -48,14 +48,14 @@ namespace Genie
 			
 			const addr_t address = frame.Caller().add_memory_mapping( memory.get() );
 			
-			return address;
+			return (long) address;
 		}
 		catch ( ... )
 		{
 			frame.SetErrnoFromException();
 		}
 		
-		return MAP_FAILED;
+		return (long) MAP_FAILED;
 	}
 	
 	static int munmap( void *addr, size_t len )
@@ -81,8 +81,8 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( mmap   );
-	REGISTER_SYSTEM_CALL( munmap );
+	REGISTER_SYSTEM_CALL( _lamp_mmap );
+	REGISTER_SYSTEM_CALL( munmap     );
 	
 	#pragma force_active reset
 	

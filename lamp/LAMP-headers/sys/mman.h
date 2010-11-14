@@ -117,7 +117,22 @@
 
 __BEGIN_DECLS
 /* Some of these int's should probably be size_t's */
-void *	mmap(void *, size_t, int, int, int, off_t);
+
+/*
+	System calls must return integers, not pointers, so that all results
+	will be in the same register on 68K (D0, not A0).
+*/
+long _lamp_mmap( void*, size_t, int, int, int, off_t );
+
+#ifdef __cplusplus
+inline void* mmap( void* addr, size_t len, int prot, int flags, int fd, off_t off )
+{
+	return (void*) _lamp_mmap( addr, len, prot, flags, fd, off );
+}
+#else
+#define mmap( addr, len, prot, flags, fd, off )  ((void*) _lamp_mmap( addr, len, prot, flags, fd, off ))
+#endif
+
 int	mprotect(void *, size_t, int);
 int	munmap(void *, size_t);
 int	msync(void *, size_t, int);
