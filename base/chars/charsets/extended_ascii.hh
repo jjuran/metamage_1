@@ -34,12 +34,25 @@ namespace chars
 		                : table[ c & 0x7F ];
 	}
 	
+	template < const unsigned short table[] >
+	inline unichar_t get_next_code_point_from_extended_ascii( const char*& p, const char* end )
+	{
+		return unicode_from_extended_ascii( *p++, table );
+	}
+	
+	
 	char extended_ascii_from_unicode( unichar_t              uc,
 	                                  const unicode_mapping  map[] );
 	
 	unsigned put_code_point_into_extended_ascii( unichar_t              uc,
 	                                             char*                  p,
 	                                             const unicode_mapping  map[] );
+	
+	template < const unicode_mapping map[] >
+	inline unsigned put_code_point_into_extended_ascii( unichar_t uc, char* p, const char* end )
+	{
+		return put_code_point_into_extended_ascii( uc, p, map );
+	}
 	
 }
 
