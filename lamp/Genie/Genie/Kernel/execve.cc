@@ -66,7 +66,7 @@ namespace Genie
 		{
 			if ( err == resNotFound )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
 			plus::string errMsg = "\n";
@@ -86,11 +86,11 @@ namespace Genie
 				std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
 			}
 			
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		// Not reached

@@ -30,7 +30,7 @@ int unshare( int flags )
 	if ( flags & ~supported_clone_flags )
 	{
 		// unsupported flag
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	const bool unshare_fs    = flags & CLONE_FS;
@@ -39,7 +39,7 @@ int unshare( int flags )
 	
 	if ( unshare_newns )
 	{
-		return frame.SetErrno( EPERM );
+		return set_errno( EPERM );
 	}
 	
 	try
@@ -58,7 +58,7 @@ int unshare( int flags )
 	}
 	catch ( ... )
 	{
-		return frame.SetErrnoFromException();
+		return set_errno_from_exception();
 	}
 	
 	return 0;

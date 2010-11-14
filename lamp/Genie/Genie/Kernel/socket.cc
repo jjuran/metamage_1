@@ -15,6 +15,7 @@
 #include "sys/socket.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
@@ -61,7 +62,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -87,7 +88,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return fd;
@@ -106,7 +107,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -125,7 +126,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -143,7 +144,7 @@ namespace Genie
 			if ( addrlen == NULL  &&  addr != NULL )
 			{
 				// If you pass the address buffer you must indicate the size
-				frame.SetErrno( EINVAL );
+				set_errno( EINVAL );
 			}
 			
 			sockaddr dummy_addr;
@@ -171,7 +172,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -192,7 +193,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -215,7 +216,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -238,7 +239,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -270,7 +271,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

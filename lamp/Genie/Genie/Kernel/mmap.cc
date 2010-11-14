@@ -29,12 +29,12 @@ namespace Genie
 		
 		if ( len == 0 )
 		{
-			frame.SetErrno( EINVAL );
+			set_errno( EINVAL );
 		}
 		
 		if ( flags & MAP_FIXED )
 		{
-			frame.SetErrno( EINVAL );
+			set_errno( EINVAL );
 		}
 		
 		const bool anonymous = flags & MAP_ANON;
@@ -53,7 +53,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			frame.SetErrnoFromException();
+			set_errno_from_exception();
 		}
 		
 		return (long) MAP_FAILED;
@@ -65,7 +65,7 @@ namespace Genie
 		
 		if ( len == 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -74,7 +74,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

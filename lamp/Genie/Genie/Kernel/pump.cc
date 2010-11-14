@@ -10,6 +10,7 @@
 #include "debug/assert.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
@@ -84,7 +85,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			frame.SetErrnoFromException();
+			set_errno_from_exception();
 			
 			if ( bytes_pumped == 0 )
 			{

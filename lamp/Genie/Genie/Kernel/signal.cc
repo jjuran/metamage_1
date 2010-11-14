@@ -93,7 +93,7 @@ namespace Genie
 		
 		if ( signo < 0  ||  signo >= NSIG )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		Process& current = current_process();
@@ -110,7 +110,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -123,7 +123,7 @@ namespace Genie
 		
 		if ( signo <= 0  ||  signo >= NSIG )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		Process& current = current_process();
@@ -137,14 +137,14 @@ namespace Genie
 		{
 			if ( signo == SIGKILL  ||  signo == SIGSTOP )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
 		#ifdef SA_SIGINFO
 			
 			if ( action->sa_flags & SA_SIGINFO )
 			{
-				return frame.SetErrno( ENOTSUP );
+				return set_errno( ENOTSUP );
 			}
 			
 		#endif
@@ -197,7 +197,7 @@ namespace Genie
 					break;
 				
 				default:
-					return frame.SetErrno( EINVAL );
+					return set_errno( EINVAL );
 			}
 		}
 		

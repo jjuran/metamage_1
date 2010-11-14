@@ -117,7 +117,7 @@ namespace Genie
 		{
 			if ( pathname == NULL )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
 			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD() );
@@ -130,7 +130,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -145,7 +145,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -166,7 +166,7 @@ namespace Genie
 		if ( flags & ~O_CLOEXEC )
 		{
 			// Invalid flags
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		const bool close_on_exec = flags & O_CLOEXEC;
@@ -179,12 +179,12 @@ namespace Genie
 			
 			if ( oldfd == newfd  &&  !dup2_semantics )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return newfd;
@@ -220,7 +220,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -254,7 +254,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -279,10 +279,10 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
-		return frame.SetErrno( ESPIPE );
+		return set_errno( ESPIPE );
 	}
 	
 	
@@ -292,7 +292,7 @@ namespace Genie
 		
 		current_process().Raise( SIGSTOP );  // Sleep, until...
 		
-		return frame.SetErrno( EINTR );
+		return set_errno( EINTR );
 	}
 	
 	
@@ -337,7 +337,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -366,7 +366,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -377,7 +377,7 @@ namespace Genie
 		
 		if ( offset < 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -392,7 +392,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -411,7 +411,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -477,7 +477,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -504,7 +504,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -523,7 +523,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -547,7 +547,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -579,7 +579,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -592,7 +592,7 @@ namespace Genie
 		
 		if ( offset < 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -607,7 +607,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -627,7 +627,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -666,7 +666,7 @@ namespace Genie
 		
 		if ( !valid )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -695,7 +695,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	

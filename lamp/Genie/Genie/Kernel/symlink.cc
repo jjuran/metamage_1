@@ -7,6 +7,7 @@
 #include <errno.h>
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -28,14 +29,14 @@ namespace Genie
 			
 			if ( link->Exists() )
 			{
-				return frame.SetErrno( EEXIST );
+				return set_errno( EEXIST );
 			}
 			
 			link->SymLink( target_path );
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -71,7 +72,7 @@ namespace Genie
 			
 			if ( !link->IsLink() )
 			{
-				return frame.SetErrno( link->Exists() ? EINVAL : ENOENT );
+				return set_errno( link->Exists() ? EINVAL : ENOENT );
 			}
 			
 			plus::string linkPath = link->ReadLink();
@@ -94,7 +95,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	

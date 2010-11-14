@@ -7,6 +7,7 @@
 #include "sys/stat.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -66,7 +67,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
