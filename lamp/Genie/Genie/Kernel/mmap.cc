@@ -26,12 +26,12 @@ namespace Genie
 	{
 		if ( len == 0 )
 		{
-			set_errno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		if ( flags & MAP_FIXED )
 		{
-			set_errno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		const bool anonymous = flags & MAP_ANON;
