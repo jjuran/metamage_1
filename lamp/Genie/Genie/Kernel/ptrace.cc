@@ -13,6 +13,7 @@
 #include "sys/ptrace.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -27,7 +28,7 @@ namespace Genie
 		
 	#ifdef __LAMP__
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		try
 		{

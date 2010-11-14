@@ -10,6 +10,7 @@
 #include "sys/mman.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -46,7 +47,7 @@ namespace Genie
 			const intrusive_ptr memory = anonymous ? map_anonymous( len )
 			                                       : GetFileHandle( fd )->Map( len, off );
 			
-			const addr_t address = frame.Caller().add_memory_mapping( memory.get() );
+			const addr_t address = current_process().add_memory_mapping( memory.get() );
 			
 			return (long) address;
 		}
@@ -69,7 +70,7 @@ namespace Genie
 		
 		try
 		{
-			frame.Caller().remove_memory_mapping( addr );
+			current_process().remove_memory_mapping( addr );
 		}
 		catch ( ... )
 		{

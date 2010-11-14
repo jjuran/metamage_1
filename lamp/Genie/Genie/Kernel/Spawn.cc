@@ -7,6 +7,7 @@
 #include "unistd.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -19,11 +20,11 @@ namespace Genie
 	{
 		SystemCallFrame frame( "vfork_start" );
 		
-		frame.Caller().set_resume_handler( pad );
+		current_process().set_resume_handler( pad );
 		
 		try
 		{
-			Process& child = frame.Caller().vfork();
+			Process& child = current_process().vfork();
 		}
 		catch ( ... )
 		{
@@ -40,7 +41,7 @@ namespace Genie
 		
 		try
 		{
-			Process& child = frame.Caller().vfork();
+			Process& child = current_process().vfork();
 			
 			child.UsurpParent( exit_status );
 		}

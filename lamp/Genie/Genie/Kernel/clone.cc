@@ -10,6 +10,7 @@
 #include "lamp/sched.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -73,7 +74,7 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 	{
 		using namespace Genie;
 		
-		Process& caller = frame.Caller();
+		Process& caller = current_process();
 		
 		const pid_t ppid = share_parent ? caller.GetPPID()
 		                                : caller.GetPID();

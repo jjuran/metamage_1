@@ -20,6 +20,7 @@
 #include "Nitrogen/CodeFragments.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -42,7 +43,7 @@ namespace Genie
 		
 		try
 		{
-			Process& current( frame.Caller() );
+			Process& current = current_process();
 			
 			bool forked = current.Forked();
 			

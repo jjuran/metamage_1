@@ -14,6 +14,7 @@
 #include "AEFramework/AEFramework.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -44,7 +45,7 @@ namespace Genie
 			N::ExpectReply( returnID, &reply );
 			
 			// Sleep until the reply is delivered
-			frame.Caller().Raise( SIGSTOP );
+			current_process().Raise( SIGSTOP );
 		}
 		catch ( const N::OSStatus& err )
 		{

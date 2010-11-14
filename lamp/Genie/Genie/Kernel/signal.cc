@@ -10,6 +10,7 @@
 #include "signal.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -95,7 +96,7 @@ namespace Genie
 			return frame.SetErrno( EINVAL );
 		}
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		try
 		{
@@ -125,7 +126,7 @@ namespace Genie
 			return frame.SetErrno( EINVAL );
 		}
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		if ( oldaction != NULL )
 		{
@@ -161,7 +162,7 @@ namespace Genie
 		
 		if ( oldset != NULL )
 		{
-			*oldset = frame.Caller().GetBlockedSignals();
+			*oldset = current_process().GetBlockedSignals();
 		}
 		
 		return 0;
@@ -172,7 +173,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sigprocmask" );
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		if ( oldset != NULL )
 		{
@@ -208,7 +209,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sigsuspend" );
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		sigset_t previous = current.GetBlockedSignals();
 		

@@ -10,9 +10,13 @@
 #include "lamp/sched.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
+
+
+using namespace Genie;
 
 
 static const int supported_clone_flags = CLONE_FS
@@ -40,9 +44,7 @@ int unshare( int flags )
 	
 	try
 	{
-		using namespace Genie;
-		
-		Process& caller = frame.Caller();
+		Process& caller = current_process();
 		
 		if ( unshare_fs )
 		{

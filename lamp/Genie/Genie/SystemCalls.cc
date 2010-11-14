@@ -105,7 +105,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "alarm" );
 		
-		return frame.Caller().SetAlarm( seconds );
+		return current_process().SetAlarm( seconds );
 	}
 	
 	
@@ -120,11 +120,11 @@ namespace Genie
 				return frame.SetErrno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, frame.Caller().GetCWD() );
+			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( newCWD );
 			
-			frame.Caller().ChangeDirectory( newCWD );
+			current_process().ChangeDirectory( newCWD );
 			
 			return 0;
 		}
@@ -197,7 +197,7 @@ namespace Genie
 		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
 		SystemCallFrame frame( "_exit" );
 		
-		Process& current( frame.Caller() );
+		Process& current = current_process();
 		
 		current.Exit( status );  // doesn't return unless forked
 		
@@ -213,7 +213,7 @@ namespace Genie
 		
 		try
 		{
-			Process& proc = pid == 0 ? frame.Caller()
+			Process& proc = pid == 0 ? current_process()
 			                         : GetProcess( pid );
 			
 			return proc.GetPGID();
@@ -229,7 +229,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getpid" );
 		
-		return frame.Caller().GetPID();
+		return current_process().GetPID();
 	}
 	
 	
@@ -237,7 +237,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getppid" );
 		
-		return frame.Caller().GetPPID();
+		return current_process().GetPPID();
 	}
 	
 	
@@ -247,7 +247,7 @@ namespace Genie
 		
 		try
 		{
-			Process& proc = pid == 0 ? frame.Caller()
+			Process& proc = pid == 0 ? current_process()
 			                         : GetProcess( pid );
 			
 			return proc.GetSID();
@@ -290,7 +290,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pause" );
 		
-		frame.Caller().Raise( SIGSTOP );  // Sleep, until...
+		current_process().Raise( SIGSTOP );  // Sleep, until...
 		
 		return frame.SetErrno( EINTR );
 	}
@@ -427,7 +427,7 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 			}
 			
-			Process& current = frame.Caller();
+			Process& current = current_process();
 			
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
@@ -493,7 +493,7 @@ namespace Genie
 		
 		try
 		{
-			Process& current( frame.Caller() );
+			Process& current = current_process();
 			
 			int pid = current.GetPID();
 			
@@ -515,7 +515,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, frame.Caller().GetCWD() );
+			FSTreePtr file = ResolvePathname( path, current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( file );
 			
