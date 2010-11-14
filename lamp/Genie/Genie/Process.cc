@@ -299,7 +299,7 @@ namespace Genie
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
-		EnterSystemCall( "*RETURN*" );
+		EnterSystemCall();
 		
 		// For code fragments, static destruction occurs here.
 		its_exec_handle.reset();
@@ -1485,7 +1485,7 @@ namespace Genie
 				
 				call_signal_handler( handler, signo );
 				
-				EnterSystemCall( "*SIGNAL HANDLED*" );
+				EnterSystemCall();
 				
 				UnblockSignals( signal_mask );
 				

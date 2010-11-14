@@ -87,7 +87,7 @@ namespace Genie
 	                                                       itsName  ( name ),
 	                                                       itsErrno ( 0 )
 	{
-		itsCaller.EnterSystemCall( name );
+		itsCaller.EnterSystemCall();
 		
 		const size_t space = N::ThreadCurrentStackSpace( N::GetCurrentThread() );
 		

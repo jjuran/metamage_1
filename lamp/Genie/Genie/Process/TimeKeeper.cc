@@ -40,7 +40,7 @@ namespace Genie
 		checkpoint = now;
 	}
 	
-	void TimeKeeper::EnterSystemCall( const char* name )
+	void TimeKeeper::EnterSystemCall()
 	{
 		UpdateClock( itsTimes.user, itsLastTimerCheckpoint );
 		

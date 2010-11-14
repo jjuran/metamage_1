@@ -45,7 +45,7 @@ namespace Genie
 			
 			void AccumulateChildTimes( const Times& times );
 			
-			void EnterSystemCall( const char* name );
+			void EnterSystemCall();
 			
 			void LeaveSystemCall();
 			
