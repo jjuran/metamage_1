@@ -7,7 +7,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -15,8 +14,6 @@ namespace Genie
 	
 	static int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
 	{
-		SystemCallFrame frame( "renameat" );
-		
 		try
 		{
 			FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );

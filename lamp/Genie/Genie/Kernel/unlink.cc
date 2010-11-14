@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef AT_REMOVEANY
@@ -30,8 +29,6 @@ namespace Genie
 	
 	static int unlinkat( int dirfd, const char* path, int flags )
 	{
-		SystemCallFrame frame( "unlinkat" );
-		
 		try
 		{
 			FSTreePtr file = ResolvePathAt( dirfd, path );

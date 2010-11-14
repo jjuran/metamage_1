@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -34,8 +33,6 @@ namespace Genie
 	
 	static clock_t times( struct tms* tp )
 	{
-		SystemCallFrame frame( "times" );
-		
 		if ( tp != NULL )
 		{
 			const Times& clocks = current_process().GetTimes();

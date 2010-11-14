@@ -17,7 +17,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -28,8 +27,6 @@ namespace Genie
 	
 	static OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 	{
-		SystemCallFrame frame( "AESendBlocking" );
-		
 		try
 		{
 			N::AppleEvent const& appleEvent = static_cast< const N::AppleEvent& >( *appleEventPtr );

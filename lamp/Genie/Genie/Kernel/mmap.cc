@@ -14,7 +14,6 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/mmap/map_anonymous.hh"
 #include "Genie/mmap/memory_mapping.hh"
@@ -25,8 +24,6 @@ namespace Genie
 	
 	static long _lamp_mmap( void *addr, size_t len, int prot, int flags, int fd, off_t off )
 	{
-		SystemCallFrame frame( "mmap" );
-		
 		if ( len == 0 )
 		{
 			set_errno( EINVAL );
@@ -61,8 +58,6 @@ namespace Genie
 	
 	static int munmap( void *addr, size_t len )
 	{
-		SystemCallFrame frame( "munmap" );
-		
 		if ( len == 0 )
 		{
 			return set_errno( EINVAL );

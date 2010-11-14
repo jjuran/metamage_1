@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 #include "Genie/IO/Stream.hh"
 
 
@@ -40,8 +39,6 @@ namespace Genie
 	
 	static int fdatasync( int fd )
 	{
-		SystemCallFrame frame( "fdatasync" );
-		
 		try
 		{
 			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( false );
@@ -56,8 +53,6 @@ namespace Genie
 	
 	static int fsync( int fd )
 	{
-		SystemCallFrame frame( "fsync" );
-		
 		try
 		{
 			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( true );
@@ -72,8 +67,6 @@ namespace Genie
 	
 	static void sync()
 	{
-		SystemCallFrame frame( "sync" );
-		
 		try
 		{
 			FlushAll();

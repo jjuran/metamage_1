@@ -25,7 +25,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef NANOSLEEP_DOZE
@@ -65,8 +64,6 @@ namespace Genie
 	
 	static int gettimeofday( struct timeval* tv, struct timezone* tz )
 	{
-		SystemCallFrame frame( "gettimeofday" );
-		
 		if ( tv != NULL )
 		{
 			UInt64 now = N::Microseconds() + gStartTime.diff;
@@ -102,8 +99,6 @@ namespace Genie
 	
 	static int nanosleep( const struct timespec* requested, struct timespec* remaining )
 	{
-		SystemCallFrame frame( "nanosleep" );
-		
 		if ( requested == NULL )
 		{
 			return set_errno( EFAULT );

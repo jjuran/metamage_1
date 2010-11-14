@@ -10,7 +10,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -24,8 +23,6 @@ namespace Genie
 	                                      void* _6,
 	                                      void* _7 )
 	{
-		SystemCallFrame frame( "reexec" );
-		
 		try
 		{
 			Process& current = current_process();

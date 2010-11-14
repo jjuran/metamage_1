@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 using namespace Genie;
@@ -25,8 +24,6 @@ static const int supported_clone_flags = CLONE_FS
 
 int unshare( int flags )
 {
-	Genie::SystemCallFrame frame( "unshare" );
-	
 	if ( flags & ~supported_clone_flags )
 	{
 		// unsupported flag

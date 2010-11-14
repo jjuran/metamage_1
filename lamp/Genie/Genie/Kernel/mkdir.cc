@@ -10,7 +10,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -18,8 +17,6 @@ namespace Genie
 	
 	static int mkdirat( int dirfd, const char* path, mode_t mode )
 	{
-		SystemCallFrame frame( "mkdir" );
-		
 		try
 		{
 			FSTreePtr location = ResolvePathAt( dirfd, path );

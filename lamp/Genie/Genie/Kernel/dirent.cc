@@ -10,9 +10,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #undef dirfd
@@ -23,8 +21,6 @@ namespace Genie
 	
 	static int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
 	{
-		SystemCallFrame frame( "getdents" );
-		
 		try
 		{
 			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );

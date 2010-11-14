@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 static const int supported_clone_flags = CLONE_VM
@@ -25,8 +24,6 @@ static const int supported_clone_flags = CLONE_VM
 
 int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg )
 {
-	Genie::SystemCallFrame frame( "_lamp_clone" );
-	
 	using namespace Genie;
 	
 	if ( flags & ~supported_clone_flags )

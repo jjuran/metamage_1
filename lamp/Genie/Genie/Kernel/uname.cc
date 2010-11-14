@@ -24,7 +24,6 @@
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 #include "Genie/Utilities/GetWorkstationName.hh"
 
 
@@ -77,8 +76,6 @@ namespace Genie
 	
 	static int uname( struct utsname *uts )
 	{
-		SystemCallFrame frame( "uname" );
-		
 		plus::var_string nodename;
 		
 		try

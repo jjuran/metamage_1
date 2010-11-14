@@ -21,7 +21,6 @@
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef SOCK_CLOEXEC
@@ -38,8 +37,6 @@ namespace Genie
 	
 	static int socketpair( int domain, int type, int protocol, int fds[2] )
 	{
-		SystemCallFrame frame( "socketpair" );
-		
 		try
 		{
 			const bool close_on_exec = type & SOCK_CLOEXEC;
@@ -71,8 +68,6 @@ namespace Genie
 	
 	static int socket( int domain, int type, int protocol )
 	{
-		SystemCallFrame frame( "socket" );
-		
 		int fd = LowestUnusedFileDescriptor();
 		
 		// Assume domain is PF_INET, type is SOCK_STREAM, and protocol is INET_TCP
@@ -97,8 +92,6 @@ namespace Genie
 	
 	static int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	{
-		SystemCallFrame frame( "bind" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -116,8 +109,6 @@ namespace Genie
 	
 	static int listen( int fd, int backlog )
 	{
-		SystemCallFrame frame( "listen" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -135,8 +126,6 @@ namespace Genie
 	
 	static int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 	{
-		SystemCallFrame frame( "accept" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
@@ -181,8 +170,6 @@ namespace Genie
 	
 	static int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
-		SystemCallFrame frame( "connect" );
-		
 		// Assume sin_family is AF_INET
 		
 		try
@@ -202,8 +189,6 @@ namespace Genie
 	
 	static int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
-		SystemCallFrame frame( "getsockname" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -225,8 +210,6 @@ namespace Genie
 	
 	static int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
-		SystemCallFrame frame( "getpeername" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -248,8 +231,6 @@ namespace Genie
 	
 	static int shutdown( int fd, int how )
 	{
-		SystemCallFrame frame( "shutdown" );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );

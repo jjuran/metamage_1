@@ -16,7 +16,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -113,8 +112,6 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		SystemCallFrame frame( "waitpid" );
-		
 		Process& caller = current_process();
 		
 		pid_t ppid = caller.GetPID();

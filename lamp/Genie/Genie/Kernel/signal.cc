@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -83,8 +82,6 @@ namespace Genie
 	
 	static int kill( pid_t pid, int signo )
 	{
-		SystemCallFrame frame( "kill" );
-		
 		if ( pid == 1  &&  signo == 0 )
 		{
 			// Optimize for canonical 'yield' idiom.
@@ -119,8 +116,6 @@ namespace Genie
 	
 	static int sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
 	{
-		SystemCallFrame frame( "sigaction" );
-		
 		if ( signo <= 0  ||  signo >= NSIG )
 		{
 			return set_errno( EINVAL );
@@ -158,8 +153,6 @@ namespace Genie
 	
 	static int sigpending( sigset_t* oldset )
 	{
-		SystemCallFrame frame( "sigpending" );
-		
 		if ( oldset != NULL )
 		{
 			*oldset = current_process().GetBlockedSignals();
@@ -171,8 +164,6 @@ namespace Genie
 	
 	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
 	{
-		SystemCallFrame frame( "sigprocmask" );
-		
 		Process& current = current_process();
 		
 		if ( oldset != NULL )
@@ -207,8 +198,6 @@ namespace Genie
 	
 	static int sigsuspend( const sigset_t* sigmask )
 	{
-		SystemCallFrame frame( "sigsuspend" );
-		
 		Process& current = current_process();
 		
 		sigset_t previous = current.GetBlockedSignals();

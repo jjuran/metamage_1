@@ -16,7 +16,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -24,8 +23,6 @@ namespace Genie
 	
 	static int ptrace( int request, pid_t pid, void* addr, int data )
 	{
-		SystemCallFrame frame( "ptrace" );
-		
 	#ifdef __LAMP__
 		
 		Process& current = current_process();

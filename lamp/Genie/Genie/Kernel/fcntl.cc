@@ -16,9 +16,7 @@
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef O_DIRECTORY
@@ -39,8 +37,6 @@ namespace Genie
 	
 	static int openat( int dirfd, const char* path, int flags, mode_t mode )
 	{
-		SystemCallFrame frame( "openat" );
-		
 		try
 		{
 			int fd = LowestUnusedFileDescriptor();
@@ -90,8 +86,6 @@ namespace Genie
 	
 	static int fcntl( int filedes, int cmd, int param )
 	{
-		SystemCallFrame frame( "fcntl" );
-		
 		try
 		{
 			if ( const bool dup = (cmd | O_CLOEXEC) == F_DUPFD_CLOEXEC )

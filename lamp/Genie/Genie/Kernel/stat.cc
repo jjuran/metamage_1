@@ -18,7 +18,6 @@
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef AT_SYMLINK_NOFOLLOW
@@ -31,8 +30,6 @@ namespace Genie
 	
 	static int faccessat( int dirfd, const char* path, int mode, int flags )
 	{
-		SystemCallFrame frame( "faccessat" );
-		
 		try
 		{
 			FSTreePtr file = ResolvePathAt( dirfd, path );
@@ -60,8 +57,6 @@ namespace Genie
 	
 	static int fchmodat( int dirfd, const char* path, mode_t mode, int flags )
 	{
-		SystemCallFrame frame( "fchmodat" );
-		
 		try
 		{
 			FSTreePtr file = ResolvePathAt( dirfd, path );
@@ -83,8 +78,6 @@ namespace Genie
 	
 	static int fchmod( int fd, mode_t mode )
 	{
-		SystemCallFrame frame( "fchmod" );
-		
 		try
 		{
 			GetFileHandle( fd )->GetFile()->ChangeMode( mode );
@@ -100,8 +93,6 @@ namespace Genie
 	
 	static int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	{
-		SystemCallFrame frame( "fstatat" );
-		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		sb->st_size = off_t( -1 );
@@ -133,8 +124,6 @@ namespace Genie
 	
 	static int fstat( int fd, struct stat* sb )
 	{
-		SystemCallFrame frame( "fstat" );
-		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		sb->st_size = off_t( -1 );

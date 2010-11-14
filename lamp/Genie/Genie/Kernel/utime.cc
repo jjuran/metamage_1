@@ -12,7 +12,6 @@
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef AT_SYMLINK_NOFOLLOW
@@ -42,8 +41,6 @@ namespace Genie
 	
 	static int utimensat( int fd, const char* path, const timespec times[2], int flags )
 	{
-		SystemCallFrame frame( "utimensat" );
-		
 		try
 		{
 			FSTreePtr file = path != NULL ? ResolvePathAt( fd, path )

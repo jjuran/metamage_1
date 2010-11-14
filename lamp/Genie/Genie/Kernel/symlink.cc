@@ -11,7 +11,6 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -19,8 +18,6 @@ namespace Genie
 	
 	static int symlinkat( const char* target_path, int newdirfd, const char* newpath )
 	{
-		SystemCallFrame frame( "symlinkat" );
-		
 		try
 		{
 			FSTreePtr link = ResolvePathAt( newdirfd, newpath );
@@ -62,8 +59,6 @@ namespace Genie
 	
 	static ssize_t _readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags )
 	{
-		SystemCallFrame frame( "_readlinkat" );
-		
 		try
 		{
 			FSTreePtr link = ResolvePathAt( dirfd, path );

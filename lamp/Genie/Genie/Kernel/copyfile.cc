@@ -9,9 +9,7 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -19,8 +17,6 @@ namespace Genie
 	
 	static int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags )
 	{
-		SystemCallFrame frame( "copyfileat" );
-		
 		try
 		{
 			FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );

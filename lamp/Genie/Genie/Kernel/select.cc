@@ -19,7 +19,6 @@
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -33,8 +32,6 @@ namespace Genie
 	                          fd_set*  writefds,
 	                          fd_set*  exceptfds, struct timeval* timeout )
 	{
-		SystemCallFrame frame( "select" );
-		
 		SInt64 remaining_microseconds = 1;
 		UInt64 end_microseconds;
 		

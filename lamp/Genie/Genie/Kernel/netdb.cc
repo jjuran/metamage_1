@@ -18,7 +18,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
 
@@ -75,8 +74,6 @@ namespace Genie
 	
 	static struct hostent* gethostbyname( const char* name )
 	{
-		SystemCallFrame frame( "gethostbyname" );
-		
 		static ::InetHostInfo  info;
 		static struct hostent  host_entry;
 		static ::InetHost*     addr_list[10];
@@ -106,8 +103,6 @@ namespace Genie
 	
 	static OSStatus _OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
 	{
-		SystemCallFrame frame( "_OTInetMailExchange" );
-		
 		try
 		{
 			OpenTransportShare sharedOpenTransport;

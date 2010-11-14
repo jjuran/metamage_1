@@ -10,7 +10,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -18,8 +17,6 @@ namespace Genie
 	
 	static int vfork_start( const _vfork_pad* pad )
 	{
-		SystemCallFrame frame( "vfork_start" );
-		
 		current_process().set_resume_handler( pad );
 		
 		try
@@ -37,8 +34,6 @@ namespace Genie
 	
 	static int fork_and_exit( int exit_status )
 	{
-		SystemCallFrame frame( "fork_and_exit" );
-		
 		try
 		{
 			Process& child = current_process().vfork();

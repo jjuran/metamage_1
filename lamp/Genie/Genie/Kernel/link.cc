@@ -19,7 +19,6 @@
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef AT_SYMLINK_FOLLOW
@@ -35,8 +34,6 @@ namespace Genie
 	
 	static int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
 	{
-		SystemCallFrame frame( "linkat" );
-		
 		FSTreePtr oldFile = ResolvePathAt( olddirfd, oldpath );
 		
 		if ( const bool follow = flags & AT_SYMLINK_FOLLOW )

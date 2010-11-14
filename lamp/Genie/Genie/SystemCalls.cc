@@ -17,16 +17,11 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// OSErrno
-#include "OSErrno/OSErrno.hh"
-
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -37,7 +32,6 @@
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 #ifndef O_CLOEXEC
@@ -52,67 +46,17 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	
-	
-	static p7::errno_t GetErrnoFromException()
-	{
-		try
-		{
-			throw;
-		}
-		catch ( const p7::errno_t& errnum )
-		{
-			return errnum;
-		}
-		catch ( const N::OSStatus& err )
-		{
-			return OSErrno::ErrnoFromOSStatus( err );
-		}
-		catch ( ... )
-		{
-		}
-		
-		return EINVAL;
-	}
-	
-	
-	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() ),
-	                                                       itsName  ( name ),
-	                                                       itsErrno ( 0 )
-	{
-	}
-	
-	SystemCallFrame::~SystemCallFrame()
-	{
-	}
-	
-	int SystemCallFrame::SetErrno( int errorNumber )
-	{
-		itsErrno = errorNumber;
-		
-		return itsCaller.SetErrno( errorNumber );
-	}
-	
-	int SystemCallFrame::SetErrnoFromException()
-	{
-		return SetErrno( GetErrnoFromException() );
-	}
 	
 	
 	static unsigned int alarm( unsigned int seconds )
 	{
-		SystemCallFrame frame( "alarm" );
-		
 		return current_process().SetAlarm( seconds );
 	}
 	
 	
 	static int chdir( const char* pathname )
 	{
-		SystemCallFrame frame( "chdir" );
-		
 		try
 		{
 			if ( pathname == NULL )
@@ -137,8 +81,6 @@ namespace Genie
 	
 	static int close( int fd )
 	{
-		SystemCallFrame frame( "close" );
-		
 		try
 		{
 			CloseFileDescriptor( fd );
@@ -154,8 +96,6 @@ namespace Genie
 	
 	static int dup3( int oldfd, int newfd, int flags )
 	{
-		SystemCallFrame frame( "dup3" );
-		
 		const bool dup2_semantics = flags == DUP_DUP2;
 		
 		if ( dup2_semantics )
@@ -193,9 +133,8 @@ namespace Genie
 	
 	static void _exit( int status )
 	{
-		// The frame doesn't get destructed, but we compensate.
+		// We don't return to the dispatcher, but we compensate.
 		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
-		SystemCallFrame frame( "_exit" );
 		
 		Process& current = current_process();
 		
@@ -209,8 +148,6 @@ namespace Genie
 	
 	static pid_t getpgid( pid_t pid )
 	{
-		SystemCallFrame frame( "getpgid" );
-		
 		try
 		{
 			Process& proc = pid == 0 ? current_process()
@@ -227,24 +164,18 @@ namespace Genie
 	
 	static pid_t getpid()
 	{
-		SystemCallFrame frame( "getpid" );
-		
 		return current_process().GetPID();
 	}
 	
 	
 	static pid_t getppid()
 	{
-		SystemCallFrame frame( "getppid" );
-		
 		return current_process().GetPPID();
 	}
 	
 	
 	static pid_t getsid( pid_t pid )
 	{
-		SystemCallFrame frame( "getsid" );
-		
 		try
 		{
 			Process& proc = pid == 0 ? current_process()
@@ -261,8 +192,6 @@ namespace Genie
 	
 	static off_t lseek( int fd, off_t offset, int whence )
 	{
-		SystemCallFrame frame( "lseek" );
-		
 		try
 		{
 			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( GetFileHandle( fd ).get() ) )
@@ -288,8 +217,6 @@ namespace Genie
 	
 	static int pause()
 	{
-		SystemCallFrame frame( "pause" );
-		
 		current_process().Raise( SIGSTOP );  // Sleep, until...
 		
 		return set_errno( EINTR );
@@ -312,14 +239,10 @@ namespace Genie
 	
 	static int pipe2( int pipefd[ 2 ], int flags )
 	{
-		SystemCallFrame frame( "pipe2" );
-		
 		try
 		{
 			const bool close_on_exec = flags & O_CLOEXEC;
 			const bool nonblocking   = flags & O_NONBLOCK;
-			
-			fd_table& files = frame.Caller().FileDescriptors();
 			
 			int reader = LowestUnusedFileDescriptor( 3 );
 			int writer = LowestUnusedFileDescriptor( reader + 1 );
@@ -346,8 +269,6 @@ namespace Genie
 	
 	static int peek( int fd, const char** buffer, size_t minBytes )
 	{
-		SystemCallFrame frame( "peek" );
-		
 		try
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
@@ -373,8 +294,6 @@ namespace Genie
 	
 	static ssize_t pread( int fd, void* buf, size_t count, off_t offset )
 	{
-		SystemCallFrame frame( "pread" );
-		
 		if ( offset < 0 )
 		{
 			return set_errno( EINVAL );
@@ -398,8 +317,6 @@ namespace Genie
 	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
-		SystemCallFrame frame( "read" );
-		
 		try
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
@@ -418,8 +335,6 @@ namespace Genie
 	
 	static int setpgid( pid_t pid, pid_t pgid )
 	{
-		SystemCallFrame frame( "setpgid" );
-		
 		try
 		{
 			if ( pgid < 0 )
@@ -489,8 +404,6 @@ namespace Genie
 	
 	static pid_t setsid()
 	{
-		SystemCallFrame frame( "setsid" );
-		
 		try
 		{
 			Process& current = current_process();
@@ -511,8 +424,6 @@ namespace Genie
 	
 	static int truncate( const char* path, off_t length )
 	{
-		SystemCallFrame frame( "truncate" );
-		
 		try
 		{
 			FSTreePtr file = ResolvePathname( path, current_process().GetCWD() );
@@ -532,8 +443,6 @@ namespace Genie
 	
 	static int ftruncate( int fd, off_t length )
 	{
-		SystemCallFrame frame( "ftruncate" );
-		
 		try
 		{
 			IOHandle* h = GetFileHandle( fd ).get();
@@ -560,8 +469,6 @@ namespace Genie
 	// I made this up too.
 	static int ttypair( int fds[ 2 ] )
 	{
-		SystemCallFrame frame( "ttypair" );
-		
 		try
 		{
 			boost::shared_ptr< IOHandle > master, slave;
@@ -588,8 +495,6 @@ namespace Genie
 	
 	static ssize_t pwrite( int fd, const void* buf, size_t count, off_t offset )
 	{
-		SystemCallFrame frame( "pwrite" );
-		
 		if ( offset < 0 )
 		{
 			return set_errno( EINVAL );
@@ -613,8 +518,6 @@ namespace Genie
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
-		SystemCallFrame frame( "write" );
-		
 		try
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
@@ -633,8 +536,6 @@ namespace Genie
 	
 	static ssize_t writev( int fd, const struct iovec *iov, int n_iov )
 	{
-		SystemCallFrame frame( "writev" );
-		
 		bool valid = n_iov > 0;
 		
 		if ( valid )

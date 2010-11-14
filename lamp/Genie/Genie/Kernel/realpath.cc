@@ -29,7 +29,6 @@
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -64,8 +63,6 @@ namespace Genie
 	
 	static ssize_t _realpathat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags )
 	{
-		SystemCallFrame frame( "_realpathat" );
-		
 		try
 		{
 			FSTreePtr file = ResolvePathAt( dirfd, path );

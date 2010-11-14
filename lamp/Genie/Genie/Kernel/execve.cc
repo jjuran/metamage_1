@@ -23,7 +23,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -36,10 +35,9 @@ namespace Genie
 	                   const char* const  argv[],
 	                   const char* const  envp[] )
 	{
-		// On a successful exec, the frame doesn't get destructed, but we compensate.
+		// On a successful exec, we don't return to the dispatcher, but we compensate.
 		// Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
 		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
-		SystemCallFrame frame( "execve" );
 		
 		try
 		{

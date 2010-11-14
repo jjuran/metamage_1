@@ -18,7 +18,6 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -26,8 +25,6 @@ namespace Genie
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
-		SystemCallFrame frame( "ioctl" );
-		
 		fd_table& files = current_process().FileDescriptors();
 		
 		try

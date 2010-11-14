@@ -13,7 +13,6 @@
 #include "Genie/current_process.hh"
 //#include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -21,8 +20,6 @@ namespace Genie
 	
 	static int flock( int fd, int operation )
 	{
-		SystemCallFrame frame( "flock" );
-		
 		int non_blocking = operation & LOCK_NB;
 		
 		operation -= non_blocking;
