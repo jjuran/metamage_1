@@ -19,7 +19,6 @@
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
-#include "Nitrogen/Threads.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -40,10 +39,6 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
-
-#ifndef SIGSTKFLT
-#define SIGSTKFLT  (-1)
-#endif
 
 #ifndef O_CLOEXEC
 #define O_CLOEXEC  0
@@ -87,23 +82,10 @@ namespace Genie
 	                                                       itsName  ( name ),
 	                                                       itsErrno ( 0 )
 	{
-		itsCaller.EnterSystemCall();
-		
-		const size_t space = N::ThreadCurrentStackSpace( N::GetCurrentThread() );
-		
-		// space will be 0 if we're not on a Thread Manager stack
-		
-		if ( space != 0  &&  space < 8192 )
-		{
-			DeliverFatalSignal( SIGSTKFLT );
-		}
-		
-		Breathe();
 	}
 	
 	SystemCallFrame::~SystemCallFrame()
 	{
-		itsCaller.LeaveSystemCall();
 	}
 	
 	int SystemCallFrame::SetErrno( int errorNumber )
