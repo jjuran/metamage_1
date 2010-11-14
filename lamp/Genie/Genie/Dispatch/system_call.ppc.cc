@@ -7,6 +7,7 @@
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/Dispatch/kernel_boundary.hh"
 
 
 namespace Genie
@@ -21,8 +22,36 @@ namespace Genie
 		// allocate a stack frame
 		stwu	SP,-64(SP)
 		
+		// save up to 6 parameters
+		stw		r3,32(SP)
+		stw		r4,36(SP)
+		stw		r5,40(SP)
+		stw		r6,44(SP)
+		stw		r7,48(SP)
+		stw		r8,52(SP)
+		
+		// save the system call number
+		stw		r11,56(SP)
+		
+		// load syscall number and params as arguments
+		mr		r3,r11
+		addi	r4,SP,32
+		
+		bl		enter_system_call
+		
+		// restore system call number
+		lwz		r11,56(SP)
+		
+		// restore parameters
+		lwz		r3,32(SP)
+		lwz		r4,36(SP)
+		lwz		r5,40(SP)
+		lwz		r6,44(SP)
+		lwz		r7,48(SP)
+		lwz		r8,52(SP)
+		
 		// r11 contains the requested system call number
-		// r3-r10 are up to 8 arguments
+		// r3-r8 are up to 6 arguments
 		
 		// r12.last = gLastSystemCall;
 		lwz		r12,gLastSystemCall
@@ -35,6 +64,7 @@ namespace Genie
 		mr		r11,r12
 		
 	in_range:
+		
 		// r12.array = gSystemCallArray;
 		lwz		r12,gSystemCallArray
 		lwz		r12,0(r12)
@@ -50,6 +80,14 @@ namespace Genie
 		// jump to system call
 		mtctr	r0
 		bctrl
+		
+		// save result
+		stw		r3,32(SP)
+		
+		bl		leave_system_call
+		
+		// restore result
+		lwz		r3,32(SP)
 		
 		// deallocate our stack frame
 		addi	SP,SP,64
