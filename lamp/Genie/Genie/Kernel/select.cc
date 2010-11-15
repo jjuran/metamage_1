@@ -14,6 +14,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
@@ -47,7 +48,7 @@ namespace Genie
 		
 		try
 		{
-			fd_table& files = frame.Caller().FileDescriptors();
+			fd_table& files = current_process().FileDescriptors();
 			
 			// Output fd sets
 			fd_set rd, wr, ex;
@@ -126,7 +127,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	

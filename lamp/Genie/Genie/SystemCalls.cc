@@ -105,7 +105,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "alarm" );
 		
-		return frame.Caller().SetAlarm( seconds );
+		return current_process().SetAlarm( seconds );
 	}
 	
 	
@@ -117,20 +117,20 @@ namespace Genie
 		{
 			if ( pathname == NULL )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, frame.Caller().GetCWD() );
+			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( newCWD );
 			
-			frame.Caller().ChangeDirectory( newCWD );
+			current_process().ChangeDirectory( newCWD );
 			
 			return 0;
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -145,7 +145,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -166,7 +166,7 @@ namespace Genie
 		if ( flags & ~O_CLOEXEC )
 		{
 			// Invalid flags
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		const bool close_on_exec = flags & O_CLOEXEC;
@@ -179,12 +179,12 @@ namespace Genie
 			
 			if ( oldfd == newfd  &&  !dup2_semantics )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return newfd;
@@ -197,7 +197,7 @@ namespace Genie
 		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
 		SystemCallFrame frame( "_exit" );
 		
-		Process& current( frame.Caller() );
+		Process& current = current_process();
 		
 		current.Exit( status );  // doesn't return unless forked
 		
@@ -213,14 +213,14 @@ namespace Genie
 		
 		try
 		{
-			Process& proc = pid == 0 ? frame.Caller()
+			Process& proc = pid == 0 ? current_process()
 			                         : GetProcess( pid );
 			
 			return proc.GetPGID();
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -229,7 +229,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getpid" );
 		
-		return frame.Caller().GetPID();
+		return current_process().GetPID();
 	}
 	
 	
@@ -237,7 +237,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getppid" );
 		
-		return frame.Caller().GetPPID();
+		return current_process().GetPPID();
 	}
 	
 	
@@ -247,14 +247,14 @@ namespace Genie
 		
 		try
 		{
-			Process& proc = pid == 0 ? frame.Caller()
+			Process& proc = pid == 0 ? current_process()
 			                         : GetProcess( pid );
 			
 			return proc.GetSID();
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -279,10 +279,10 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
-		return frame.SetErrno( ESPIPE );
+		return set_errno( ESPIPE );
 	}
 	
 	
@@ -290,9 +290,9 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pause" );
 		
-		frame.Caller().Raise( SIGSTOP );  // Sleep, until...
+		current_process().Raise( SIGSTOP );  // Sleep, until...
 		
-		return frame.SetErrno( EINTR );
+		return set_errno( EINTR );
 	}
 	
 	
@@ -337,7 +337,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -366,7 +366,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -377,7 +377,7 @@ namespace Genie
 		
 		if ( offset < 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -392,7 +392,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -411,7 +411,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -427,7 +427,7 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 			}
 			
-			Process& current = frame.Caller();
+			Process& current = current_process();
 			
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
@@ -477,7 +477,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -493,7 +493,7 @@ namespace Genie
 		
 		try
 		{
-			Process& current( frame.Caller() );
+			Process& current = current_process();
 			
 			int pid = current.GetPID();
 			
@@ -504,7 +504,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -515,7 +515,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, frame.Caller().GetCWD() );
+			FSTreePtr file = ResolvePathname( path, current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( file );
 			
@@ -523,7 +523,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -547,7 +547,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -579,7 +579,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -592,7 +592,7 @@ namespace Genie
 		
 		if ( offset < 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -607,7 +607,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -627,7 +627,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -666,7 +666,7 @@ namespace Genie
 		
 		if ( !valid )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
@@ -695,7 +695,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	

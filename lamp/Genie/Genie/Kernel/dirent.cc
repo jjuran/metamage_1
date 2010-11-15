@@ -7,6 +7,7 @@
 #include "dirent.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/Process.hh"
@@ -30,14 +31,14 @@ namespace Genie
 			
 			if ( count < sizeof (dirent) )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
 			return dir.ReadDir( *dirp );
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	

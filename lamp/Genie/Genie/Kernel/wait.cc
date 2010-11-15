@@ -13,6 +13,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -114,7 +115,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "waitpid" );
 		
-		Process& caller = frame.Caller();
+		Process& caller = current_process();
 		
 		pid_t ppid = caller.GetPID();
 		
@@ -156,7 +157,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		// Not reached

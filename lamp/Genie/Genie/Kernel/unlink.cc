@@ -10,6 +10,7 @@
 #include "fcntl.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -46,12 +47,12 @@ namespace Genie
 			}
 			else
 			{
-				return frame.SetErrno( remove_dir ? ENOTDIR : EPERM );
+				return set_errno( remove_dir ? ENOTDIR : EPERM );
 			}
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

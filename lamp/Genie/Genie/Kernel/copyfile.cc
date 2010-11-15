@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -31,7 +32,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

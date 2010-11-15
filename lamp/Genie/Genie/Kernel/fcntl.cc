@@ -10,6 +10,7 @@
 #include "fcntl.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
@@ -50,7 +51,7 @@ namespace Genie
 			
 			if ( directory  &&  (flags & O_ACCMODE) != O_RDONLY )
 			{
-				return frame.SetErrno( EISDIR );
+				return set_errno( EISDIR );
 			}
 			
 			if ( const bool following = (flags & O_NOFOLLOW) == 0 )
@@ -59,7 +60,7 @@ namespace Genie
 			}
 			else if ( file->IsLink() )
 			{
-				return frame.SetErrno( ELOOP );
+				return set_errno( ELOOP );
 			}
 			
 			boost::shared_ptr< IOHandle > opened = directory ? file->OpenDirectory()
@@ -83,7 +84,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 	}
 	
@@ -139,10 +140,10 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	#pragma force_active on

@@ -9,10 +9,8 @@
 // POSIX
 #include "sys/file.h"
 
-// poseven
-//#include "Errno.hh"
-
 // Genie
+#include "Genie/current_process.hh"
 //#include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -43,10 +41,10 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	#pragma force_active on

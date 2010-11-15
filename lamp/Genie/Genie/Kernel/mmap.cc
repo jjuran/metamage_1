@@ -10,6 +10,7 @@
 #include "sys/mman.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -28,12 +29,12 @@ namespace Genie
 		
 		if ( len == 0 )
 		{
-			frame.SetErrno( EINVAL );
+			set_errno( EINVAL );
 		}
 		
 		if ( flags & MAP_FIXED )
 		{
-			frame.SetErrno( EINVAL );
+			set_errno( EINVAL );
 		}
 		
 		const bool anonymous = flags & MAP_ANON;
@@ -46,13 +47,13 @@ namespace Genie
 			const intrusive_ptr memory = anonymous ? map_anonymous( len )
 			                                       : GetFileHandle( fd )->Map( len, off );
 			
-			const addr_t address = frame.Caller().add_memory_mapping( memory.get() );
+			const addr_t address = current_process().add_memory_mapping( memory.get() );
 			
 			return (long) address;
 		}
 		catch ( ... )
 		{
-			frame.SetErrnoFromException();
+			set_errno_from_exception();
 		}
 		
 		return (long) MAP_FAILED;
@@ -64,16 +65,16 @@ namespace Genie
 		
 		if ( len == 0 )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
 		try
 		{
-			frame.Caller().remove_memory_mapping( addr );
+			current_process().remove_memory_mapping( addr );
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

@@ -10,6 +10,7 @@
 #include "Nitrogen/Timer.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -37,7 +38,7 @@ namespace Genie
 		
 		if ( tp != NULL )
 		{
-			const Times& clocks = frame.Caller().GetTimes();
+			const Times& clocks = current_process().GetTimes();
 			
 			tp->tms_utime  = clocks.user;
 			tp->tms_stime  = clocks.system;

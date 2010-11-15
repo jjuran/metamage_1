@@ -13,6 +13,7 @@
 #include "sys/ptrace.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -27,7 +28,7 @@ namespace Genie
 		
 	#ifdef __LAMP__
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		try
 		{
@@ -35,7 +36,7 @@ namespace Genie
 			{
 				if ( current.IsBeingTraced() )
 				{
-					return frame.SetErrno( EPERM );
+					return set_errno( EPERM );
 				}
 				
 				current.StartTracing( current.GetPPID() );
@@ -48,7 +49,7 @@ namespace Genie
 			if ( pid == 1 )
 			{
 				// Can't trace init
-				return frame.SetErrno( EPERM );
+				return set_errno( EPERM );
 			}
 			
 			Process& target = GetProcess( pid );
@@ -57,7 +58,7 @@ namespace Genie
 			{
 				if ( target.IsBeingTraced() )
 				{
-					return frame.SetErrno( EPERM );
+					return set_errno( EPERM );
 				}
 				
 				target.StartTracing( current.GetPID() );
@@ -69,7 +70,7 @@ namespace Genie
 			
 			if ( target.GetTracingProcess() != current.GetPID() )
 			{
-				return frame.SetErrno( ESRCH );
+				return set_errno( ESRCH );
 			}
 			
 			if ( request == PTRACE_KILL )
@@ -83,7 +84,7 @@ namespace Genie
 			
 			if ( target.GetSchedule() != kProcessStopped )
 			{
-				return frame.SetErrno( ESRCH );
+				return set_errno( ESRCH );
 			}
 			
 			switch ( request )
@@ -91,10 +92,10 @@ namespace Genie
 				case PTRACE_GETREGS:
 					if ( addr == NULL )
 					{
-						return frame.SetErrno( EFAULT );
+						return set_errno( EFAULT );
 					}
 					
-					return frame.SetErrno( ENOSYS );
+					return set_errno( ENOSYS );
 					
 					break;
 				
@@ -109,7 +110,7 @@ namespace Genie
 					}
 					else
 					{
-						return frame.SetErrno( EIO );
+						return set_errno( EIO );
 					}
 					
 					break;
@@ -120,12 +121,12 @@ namespace Genie
 					break;
 				
 				default:
-					return frame.SetErrno( EINVAL );
+					return set_errno( EINVAL );
 			}
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 	#endif

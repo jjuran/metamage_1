@@ -14,6 +14,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -51,14 +52,14 @@ namespace Genie
 			
 			if ( newFile->Exists() )
 			{
-				return frame.SetErrno( EEXIST );
+				return set_errno( EEXIST );
 			}
 			
 			oldFile->HardLink( newFile );
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;

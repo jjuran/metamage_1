@@ -10,6 +10,7 @@
 #include "lamp/sched.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -26,10 +27,12 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 {
 	Genie::SystemCallFrame frame( "_lamp_clone" );
 	
+	using namespace Genie;
+	
 	if ( flags & ~supported_clone_flags )
 	{
 		// unsupported flag
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	const bool share_vm      = flags & CLONE_VM;
@@ -41,12 +44,12 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 	
 	if ( share_sighand  &&  !share_vm )
 	{
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	if ( clone_thread  &&  !share_sighand )
 	{
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	// CLONE_NEWNS is already not supported, so no conflict with CLONE_FS
@@ -54,26 +57,24 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 	if ( stack_base != NULL  ||  stack_size != 0 )
 	{
 		// Sorry, no custom stacks yet
-		return frame.SetErrno( ENOSYS );
+		return set_errno( ENOSYS );
 	}
 	
 	if ( !share_vm )
 	{
 		// Sorry, no distinct address spaces
-		return frame.SetErrno( ENOSYS );
+		return set_errno( ENOSYS );
 	}
 	
 	if ( clone_thread )
 	{
 		// Can't do thread groups yet
-		return frame.SetErrno( ENOSYS );
+		return set_errno( ENOSYS );
 	}
 	
 	try
 	{
-		using namespace Genie;
-		
-		Process& caller = frame.Caller();
+		Process& caller = current_process();
 		
 		const pid_t ppid = share_parent ? caller.GetPPID()
 		                                : caller.GetPID();
@@ -101,7 +102,7 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 	}
 	catch ( ... )
 	{
-		return frame.SetErrnoFromException();
+		return set_errno_from_exception();
 	}
 	
 	return 0;

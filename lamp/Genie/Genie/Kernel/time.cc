@@ -22,6 +22,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -105,7 +106,7 @@ namespace Genie
 		
 		if ( requested == NULL )
 		{
-			return frame.SetErrno( EFAULT );
+			return set_errno( EFAULT );
 		}
 		
 		const bool dozing = requested->tv_nsec == NANOSLEEP_DOZE;
@@ -153,7 +154,7 @@ namespace Genie
 		{
 			remaining_microseconds = end_microseconds - N::Microseconds();
 			
-			result = frame.SetErrnoFromException();
+			result = set_errno_from_exception();
 		}
 		
 		set_timespec_microseconds( remaining, std::max( remaining_microseconds, 0LL ) );

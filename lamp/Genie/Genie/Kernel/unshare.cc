@@ -10,9 +10,13 @@
 #include "lamp/sched.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
+
+
+using namespace Genie;
 
 
 static const int supported_clone_flags = CLONE_FS
@@ -26,7 +30,7 @@ int unshare( int flags )
 	if ( flags & ~supported_clone_flags )
 	{
 		// unsupported flag
-		return frame.SetErrno( EINVAL );
+		return set_errno( EINVAL );
 	}
 	
 	const bool unshare_fs    = flags & CLONE_FS;
@@ -35,14 +39,12 @@ int unshare( int flags )
 	
 	if ( unshare_newns )
 	{
-		return frame.SetErrno( EPERM );
+		return set_errno( EPERM );
 	}
 	
 	try
 	{
-		using namespace Genie;
-		
-		Process& caller = frame.Caller();
+		Process& caller = current_process();
 		
 		if ( unshare_fs )
 		{
@@ -56,7 +58,7 @@ int unshare( int flags )
 	}
 	catch ( ... )
 	{
-		return frame.SetErrnoFromException();
+		return set_errno_from_exception();
 	}
 	
 	return 0;

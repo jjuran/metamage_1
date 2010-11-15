@@ -10,6 +10,7 @@
 #include "signal.h"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -92,10 +93,10 @@ namespace Genie
 		
 		if ( signo < 0  ||  signo >= NSIG )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		try
 		{
@@ -109,7 +110,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.SetErrnoFromException();
+			return set_errno_from_exception();
 		}
 		
 		return 0;
@@ -122,10 +123,10 @@ namespace Genie
 		
 		if ( signo <= 0  ||  signo >= NSIG )
 		{
-			return frame.SetErrno( EINVAL );
+			return set_errno( EINVAL );
 		}
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		if ( oldaction != NULL )
 		{
@@ -136,14 +137,14 @@ namespace Genie
 		{
 			if ( signo == SIGKILL  ||  signo == SIGSTOP )
 			{
-				return frame.SetErrno( EINVAL );
+				return set_errno( EINVAL );
 			}
 			
 		#ifdef SA_SIGINFO
 			
 			if ( action->sa_flags & SA_SIGINFO )
 			{
-				return frame.SetErrno( ENOTSUP );
+				return set_errno( ENOTSUP );
 			}
 			
 		#endif
@@ -161,7 +162,7 @@ namespace Genie
 		
 		if ( oldset != NULL )
 		{
-			*oldset = frame.Caller().GetBlockedSignals();
+			*oldset = current_process().GetBlockedSignals();
 		}
 		
 		return 0;
@@ -172,7 +173,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sigprocmask" );
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		if ( oldset != NULL )
 		{
@@ -196,7 +197,7 @@ namespace Genie
 					break;
 				
 				default:
-					return frame.SetErrno( EINVAL );
+					return set_errno( EINVAL );
 			}
 		}
 		
@@ -208,7 +209,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sigsuspend" );
 		
-		Process& current = frame.Caller();
+		Process& current = current_process();
 		
 		sigset_t previous = current.GetBlockedSignals();
 		

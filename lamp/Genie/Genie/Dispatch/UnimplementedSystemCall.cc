@@ -9,6 +9,7 @@
 #include <errno.h>
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/SystemCalls.hh"
 
 
@@ -19,7 +20,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "* UNIMPLEMENTED *" );
 		
-		return frame.SetErrno( ENOSYS );
+		return set_errno( ENOSYS );
 	}
 	
 }
