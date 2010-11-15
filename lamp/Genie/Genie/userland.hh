@@ -6,6 +6,9 @@
 #ifndef GENIE_USERLAND_HH
 #define GENIE_USERLAND_HH
 
+// Lamp
+#include "lamp/parameter_block.h"
+
 
 namespace Genie
 {
@@ -24,6 +27,8 @@ namespace Genie
 		EXG A0,A4
 	}
 	
+	void call_signal_handler( void* handler : __a0, int signo : __d0 );
+	
 	#define ENTER_USERMAIN()  void* _saved_a4 = GetA4()
 	#define EXIT_USERMAIN()   (void)            SetA4( _saved_a4 )
 	
@@ -31,6 +36,11 @@ namespace Genie
 	#define EXIT_USERLAND()   (void)            SetA4( _saved_a4 )
 	
 #else
+	
+	inline void call_signal_handler( void (*handler)(int), int signo )
+	{
+		handler( signo );
+	}
 	
 	#define ENTER_USERMAIN()  /**/
 	#define EXIT_USERMAIN()   /**/

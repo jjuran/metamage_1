@@ -1483,11 +1483,7 @@ namespace Genie
 				// (b) System time is accrued in the event of [sig]longjmp()
 				LeaveSystemCall();
 				
-				ENTER_USERLAND();
-				
-				handler( signo );
-				
-				EXIT_USERLAND();
+				call_signal_handler( handler, signo );
 				
 				EnterSystemCall( "*SIGNAL HANDLED*" );
 				
