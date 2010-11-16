@@ -1137,6 +1137,11 @@ namespace Genie
 		ASSERT( signo < NSIG );
 		
 		its_signal_handlers->set( signo - 1, action );
+		
+		if ( action.sa_handler == SIG_IGN )
+		{
+			ClearPendingSignalSet( 1 << signo - 1 );
+		}
 	}
 	
 	void Process::ResetSignalAction( int signo )
