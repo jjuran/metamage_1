@@ -26,7 +26,7 @@ namespace iota
 	
 	
 	template < unsigned base, class Type >
-	inline unsigned pure_magnitude( Type x )
+	unsigned pure_magnitude( Type x )
 	{
 		unsigned result = 0;
 		
@@ -47,7 +47,7 @@ namespace iota
 	}
 	
 	template < unsigned base, class Type >
-	inline void fill_unsigned( Type x, char* begin, char* end )
+	void fill_unsigned( Type x, char* begin, char* end )
 	{
 		for ( char* p = end;  p > begin;  x /= base )
 		{
