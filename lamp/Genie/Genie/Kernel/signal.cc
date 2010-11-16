@@ -155,7 +155,7 @@ namespace Genie
 	{
 		if ( oldset != NULL )
 		{
-			*oldset = current_process().GetBlockedSignals();
+			*oldset = current_process().GetPendingSignals();
 		}
 		
 		return 0;
