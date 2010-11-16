@@ -1314,7 +1314,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( action == SIG_DFL )
+		if ( action == SIG_DFL  &&  !(GetBlockedSignals() & 1 << signo - 1) )
 		{
 			if ( GetPID() == 1 )
 			{
