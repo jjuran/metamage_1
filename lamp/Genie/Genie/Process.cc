@@ -225,9 +225,13 @@ namespace Genie
 			{
 				Process& current = *gCurrentProcess;
 				
+				current.UnblockSignals( 1 << signo - 1 );
+				
 				// first chance -- program can siglongjmp() out of signal handler
 				current.Raise( signo );
 				current.HandlePendingSignals( kInterruptNever );
+				
+				current.UnblockSignals( 1 << signo - 1 );
 				
 				// This should be fatal
 				current.ResetSignalAction( signo );
