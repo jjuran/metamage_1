@@ -9,6 +9,7 @@
 #include <fcntl.h>
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
@@ -33,7 +34,8 @@ namespace Genie
 	
 	struct CaptionParameters
 	{
-		plus::var_string  itsText;
+		plus::var_string  its_mac_text;
+		plus::var_string  its_utf8_text;
 		bool              itIsWrapped;
 		bool              disabling;
 		
@@ -74,7 +76,7 @@ namespace Genie
 		
 		if ( CaptionParameters* it = gCaptionParametersMap.find( itsKey ) )
 		{
-			result = it->itsText;
+			result = it->its_mac_text;
 		}
 		
 		std::replace( result.begin(), result.end(), '\n', '\r' );
@@ -118,7 +120,11 @@ namespace Genie
 	{
 		const FSTree* view = text->ParentRef().get();
 		
-		gCaptionParametersMap[ view ].itsText.resize( length );
+		CaptionParameters& params = gCaptionParametersMap[ view ];
+		
+		params.its_utf8_text.resize( length );
+		
+		params.its_mac_text = plus::mac_from_utf8( params.its_utf8_text );
 		
 		InvalidateWindowForView( view );
 	}
@@ -136,7 +142,7 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].itsText; }
+			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].its_utf8_text; }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -175,7 +181,11 @@ namespace Genie
 	
 	ssize_t CaptionTextFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		plus::var_string& s = String();
+		const FSTree* view = ViewKey();
+		
+		CaptionParameters& params = gCaptionParametersMap[ view ];
+		
+		plus::var_string& s = params.its_utf8_text;
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -186,7 +196,7 @@ namespace Genie
 		           buffer + n_bytes,
 		           s.begin() + offset );
 		
-		const FSTree* view = ViewKey();
+		params.its_mac_text = plus::mac_from_utf8( s );
 		
 		InvalidateWindowForView( view );
 		
@@ -203,16 +213,19 @@ namespace Genie
 			{
 			}
 			
-			plus::var_string& String() const  { return gCaptionParametersMap[ ParentRef().get() ].itsText; }
-			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
-			off_t GetEOF() const  { return String().size(); }
+			off_t GetEOF() const;
 			
 			void SetEOF( off_t length ) const  { CaptionText_SetEOF( this, length ); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
+	
+	off_t FSTree_Caption_text::GetEOF() const
+	{
+		return gCaptionParametersMap[ ParentRef().get() ].its_utf8_text.size();
+	}
 	
 	boost::shared_ptr< IOHandle > FSTree_Caption_text::Open( OpenFlags flags ) const
 	{
