@@ -148,10 +148,24 @@ namespace nucleus
 		}
 	};
 	
+	struct nonzero_pointers_are_live
+	{
+		static bool is_live( const void* r )
+		{
+			return r != 0;
+		}
+	};
+	
 	template < class Resource, class Disposer >
 	struct aliveness_traits
 	{
 		typedef nonzero_values_are_live aliveness_test;
+	};
+	
+	template < class T, class Disposer >
+	struct aliveness_traits< T*, Disposer >
+	{
+		typedef nonzero_pointers_are_live aliveness_test;
 	};
 	
 	
