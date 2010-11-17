@@ -114,6 +114,19 @@ namespace nucleus
                                                                         installation.isSysHandler ) );
         }
      };
+	
+	template < class Disposer >
+	struct aliveness_traits< ::Nitrogen::AEEventHandler, Disposer >
+	{
+		struct aliveness_test
+		{
+			static bool is_live( const ::Nitrogen::AEEventHandler& ae )
+			{
+				return ae.handler != 0;
+			}
+		};
+	};
+	
   }
 
 namespace Nitrogen

@@ -793,6 +793,18 @@ namespace nucleus
 		}
 	};
 	
+	template < class Disposer >
+	struct aliveness_traits< ::Nitrogen::AECoercionHandler, Disposer >
+	{
+		struct aliveness_test
+		{
+			static bool is_live( const ::Nitrogen::AECoercionHandler& coercion )
+			{
+				return coercion.handler != 0;
+			}
+		};
+	};
+	
 }
 
 namespace Nitrogen

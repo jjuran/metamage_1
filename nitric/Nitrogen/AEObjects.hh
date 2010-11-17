@@ -304,6 +304,18 @@ namespace nucleus
 		}
 	};
 	
+	template < class Disposer >
+	struct aliveness_traits< ::Nitrogen::OSLAccessor, Disposer >
+	{
+		struct aliveness_test
+		{
+			static bool is_live( const ::Nitrogen::OSLAccessor& osl )
+			{
+				return osl.accessor != 0;
+			}
+		};
+	};
+	
 }
 
 namespace Nitrogen
