@@ -530,16 +530,9 @@ namespace nucleus
 	template <>
 	struct null_resource< ::Nitrogen::AEDesc_Data >
 	{
-		typedef Nitrogen::AEDesc_Data Resource;
+		static const ::Nitrogen::AEDesc_Data& value;
 		
-		static Resource get()
-		{
-			Resource r;
-			
-			Nitrogen::Initialize_AEDesc( r );
-			
-			return r;
-		}
+		static const ::Nitrogen::AEDesc_Data& get()  { return value; }
 	};
 	
 	template <>
@@ -566,16 +559,9 @@ namespace nucleus
 	template <>
 	struct null_resource< ::Nitrogen::AEDesc_Token >
 	{
-		typedef Nitrogen::AEDesc_Token Resource;
+		static const ::Nitrogen::AEDesc_Token& value;
 		
-		static Resource get()
-		{
-			Resource r;
-			
-			Nitrogen::Initialize_AEDesc( r );
-			
-			return r;
-		}
+		static const ::Nitrogen::AEDesc_Token& get()  { return value; }
 	};
 	
 	template <>
@@ -594,16 +580,9 @@ namespace nucleus
 	template <>
 	struct null_resource< ::AEKeyDesc >
 	{
-		typedef AEKeyDesc Resource;
+		static const ::AEKeyDesc& value;
 		
-		static Resource get()
-		{
-			Resource r;
-			
-			Nitrogen::Initialize_AEDesc( r.descContent );
-			
-			return r;
-		}
+		static const ::AEKeyDesc& get()  { return value; }
 	};
 	
 	template <>

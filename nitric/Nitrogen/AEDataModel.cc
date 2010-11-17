@@ -20,6 +20,21 @@
 #include "Nitrogen/MacErrors.hh"
 
 
+namespace nucleus
+{
+	
+	using ::Nitrogen::AEDesc_Data;
+	using ::Nitrogen::AEDesc_Token;
+	
+	static const AEKeyDesc global_null_AEKeyDesc = { 0, { typeNull, NULL } };
+	
+	const AEDesc_Data&  null_resource< AEDesc_Data  >::value = (AEDesc_Data&)  global_null_AEKeyDesc.descContent;
+	const AEDesc_Token& null_resource< AEDesc_Token >::value = (AEDesc_Token&) global_null_AEKeyDesc.descContent;
+	
+	const AEKeyDesc&    null_resource< AEKeyDesc    >::value = global_null_AEKeyDesc;
+	
+}
+
 namespace Nitrogen
 {
 	
