@@ -133,9 +133,9 @@ namespace nucleus
 	};
 	
 	template < class Resource >
-	struct default_value_traits
+	struct null_resource
 	{
-		static Resource value()  { return Resource(); }
+		static Resource get()  { return Resource(); }
 	};
 	
 	
@@ -200,7 +200,7 @@ namespace nucleus
 			disposable_resource()
 			:
 				disposer_type(),
-				its_resource( default_value_traits< Resource >::value() )
+				its_resource( null_resource< Resource >::get() )
 			{
 			}
 			

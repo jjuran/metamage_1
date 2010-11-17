@@ -528,11 +528,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct default_value_traits< Nitrogen::AEDesc_Data >
+	struct null_resource< ::Nitrogen::AEDesc_Data >
 	{
 		typedef Nitrogen::AEDesc_Data Resource;
 		
-		static Resource value()
+		static Resource get()
 		{
 			Resource r;
 			
@@ -564,11 +564,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct default_value_traits< Nitrogen::AEDesc_Token >
+	struct null_resource< ::Nitrogen::AEDesc_Token >
 	{
 		typedef Nitrogen::AEDesc_Token Resource;
 		
-		static Resource value()
+		static Resource get()
 		{
 			Resource r;
 			
@@ -592,11 +592,11 @@ namespace nucleus
 	};
 	
 	template <>
-	struct default_value_traits< AEKeyDesc >
+	struct null_resource< ::AEKeyDesc >
 	{
 		typedef AEKeyDesc Resource;
 		
-		static Resource value()
+		static Resource get()
 		{
 			Resource r;
 			
