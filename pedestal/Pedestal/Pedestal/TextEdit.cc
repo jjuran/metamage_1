@@ -531,7 +531,7 @@ namespace Pedestal
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
-		const char c =  event.message & charCodeMask;
+		const unsigned char c =  event.message & charCodeMask;
 		
 		if ( Preprocess_Key( event ) )
 		{
