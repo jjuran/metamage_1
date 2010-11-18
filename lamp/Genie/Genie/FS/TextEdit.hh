@@ -37,6 +37,7 @@ namespace Genie
 	{
 		Point                    itsTextDimensions;
 		plus::var_string         its_mac_text;
+		plus::var_string         its_utf8_text;
 		Pedestal::TextSelection  itsSelection;
 		std::size_t              itsValidLength;
 		bool                     itHasChangedAttributes;

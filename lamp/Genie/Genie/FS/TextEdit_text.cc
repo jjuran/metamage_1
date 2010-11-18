@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // Genie
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
@@ -47,9 +50,11 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		if ( length < params.its_mac_text.length() )
+		if ( length < params.its_utf8_text.length() )
 		{
-			params.its_mac_text.resize( length );
+			params.its_utf8_text.resize( length );
+			
+			params.its_mac_text = plus::mac_from_utf8( params.its_utf8_text );
 			
 			params.itsValidLength = params.its_mac_text.length();
 		}
@@ -74,7 +79,7 @@ namespace Genie
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_mac_text.size(); }
+			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_utf8_text.size(); }
 			
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
@@ -95,7 +100,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		const plus::string& s = params.its_mac_text;
+		const plus::string& s = params.its_utf8_text;
 		
 		if ( offset >= s.size() )
 		{
@@ -115,7 +120,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		plus::var_string& s = params.its_mac_text;
+		plus::var_string& s = params.its_utf8_text;
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -128,8 +133,10 @@ namespace Genie
 		
 		if ( offset < params.itsValidLength )
 		{
-			params.itsValidLength = offset;
+			params.itsValidLength = 0;  // temporary hack until we can count UTF-8 chars
 		}
+		
+		params.its_mac_text = plus::mac_from_utf8( s );
 		
 		InvalidateWindowForView( view );
 		
@@ -139,7 +146,7 @@ namespace Genie
 	
 	off_t FSTree_TextEdit_text::GetEOF() const
 	{
-		return TextEditParameters::Get( ParentRef().get() ).its_mac_text.size();
+		return TextEditParameters::Get( ParentRef().get() ).its_utf8_text.size();
 	}
 	
 	void FSTree_TextEdit_text::SetEOF( off_t length ) const

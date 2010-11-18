@@ -18,6 +18,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 
 // Nitrogen
@@ -161,7 +162,7 @@ namespace Genie
 		
 		//command += '\n';
 		
-		RunShellCommand( command );
+		RunShellCommand( plus::utf8_from_mac( command ) );
 	}
 	
 	static void SendSignalToProcessGroupForKey( int signo, const FSTree* key )
@@ -638,6 +639,8 @@ namespace Genie
 			
 			s += saved_input;
 		}
+		
+		params.its_utf8_text = plus::utf8_from_mac( s );
 		
 		if ( params.itsSelection.start >= start_of_input )
 		{
