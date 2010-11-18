@@ -47,11 +47,11 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		if ( length < params.itsText.length() )
+		if ( length < params.its_mac_text.length() )
 		{
-			params.itsText.resize( length );
+			params.its_mac_text.resize( length );
 			
-			params.itsValidLength = params.itsText.length();
+			params.itsValidLength = params.its_mac_text.length();
 		}
 		
 		InvalidateWindowForView( view );
@@ -74,7 +74,7 @@ namespace Genie
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).itsText.size(); }
+			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_mac_text.size(); }
 			
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
@@ -95,7 +95,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		const plus::string& s = params.itsText;
+		const plus::string& s = params.its_mac_text;
 		
 		if ( offset >= s.size() )
 		{
@@ -115,7 +115,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		plus::var_string& s = params.itsText;
+		plus::var_string& s = params.its_mac_text;
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -139,7 +139,7 @@ namespace Genie
 	
 	off_t FSTree_TextEdit_text::GetEOF() const
 	{
-		return TextEditParameters::Get( ParentRef().get() ).itsText.size();
+		return TextEditParameters::Get( ParentRef().get() ).its_mac_text.size();
 	}
 	
 	void FSTree_TextEdit_text::SetEOF( off_t length ) const

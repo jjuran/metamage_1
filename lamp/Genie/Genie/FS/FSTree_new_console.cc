@@ -154,7 +154,7 @@ namespace Genie
 	
 	static void Console_On_EnterKey( TextEditParameters& params )
 	{
-		const plus::string& s = params.itsText;
+		const plus::string& s = params.its_mac_text;
 		
 		plus::string command( s.begin() + params.itsSelection.start,
 		                      s.begin() + params.itsSelection.end );
@@ -201,8 +201,8 @@ namespace Genie
 					break;
 				
 				case 'E':
-					that.Select( params.itsText.size(),
-					             params.itsText.size() );
+					that.Select( params.its_mac_text.size(),
+					             params.its_mac_text.size() );
 					break;
 				
 				case 'C':
@@ -214,7 +214,7 @@ namespace Genie
 					break;
 				
 				case 'D':
-					if ( params.itsText.size() - consoleParams.itsStartOfInput <= 0 )
+					if ( params.its_mac_text.size() - consoleParams.itsStartOfInput <= 0 )
 					{
 						consoleParams.itHasReceivedEOF = true;
 					}
@@ -419,7 +419,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		const plus::string& s = TextEditParameters::Get( view ).itsText;
+		const plus::string& s = TextEditParameters::Get( view ).its_mac_text;
 		
 		const bool readable = params.itsStartOfInput < s.size()  &&  *(s.end() - 1) == '\n'  ||  params.itHasReceivedEOF;
 		
@@ -458,7 +458,7 @@ namespace Genie
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		const plus::string& s = text_params.itsText;
+		const plus::string& s = text_params.its_mac_text;
 		
 		size_t command_size = 0;
 		
@@ -515,7 +515,7 @@ namespace Genie
 		
 		ConsoleParameters& consoleParams = gConsoleParametersMap[ view ];
 		
-		plus::var_string& s = params.itsText;
+		plus::var_string& s = params.its_mac_text;
 		
 		check_for_truncation( s.size(),
 		                      consoleParams.itsStartOfInput,
