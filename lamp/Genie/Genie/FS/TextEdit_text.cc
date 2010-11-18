@@ -47,9 +47,12 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		params.itsValidLength = std::min< size_t >( params.itsText.length(), length );
-		
-		params.itsText.resize( length );
+		if ( length < params.itsText.length() )
+		{
+			params.itsText.resize( length );
+			
+			params.itsValidLength = params.itsText.length();
+		}
 		
 		InvalidateWindowForView( view );
 	}
@@ -123,7 +126,10 @@ namespace Genie
 		           buffer + n_bytes,
 		           s.begin() + offset );
 		
-		params.itsValidLength = std::min< size_t >( params.itsValidLength, offset );
+		if ( offset < params.itsValidLength )
+		{
+			params.itsValidLength = offset;
+		}
 		
 		InvalidateWindowForView( view );
 		
