@@ -155,7 +155,7 @@ namespace Genie
 	{
 		if ( oldset != NULL )
 		{
-			*oldset = current_process().GetBlockedSignals();
+			*oldset = current_process().GetPendingSignals();
 		}
 		
 		return 0;
@@ -173,18 +173,22 @@ namespace Genie
 		
 		if ( set != NULL )
 		{
+			const sigset_t unblockable_mask = 1 << SIGKILL - 1 | 1 << SIGSTOP - 1;
+			
+			const sigset_t filtered_set = *set & ~unblockable_mask;
+			
 			switch ( how )
 			{
 				case SIG_SETMASK:
-					current.SetBlockedSignals( *set );
+					current.SetBlockedSignals( filtered_set );
 					break;
 				
 				case SIG_BLOCK:
-					current.BlockSignals( *set );
+					current.BlockSignals( filtered_set );
 					break;
 				
 				case SIG_UNBLOCK:
-					current.UnblockSignals( *set );
+					current.UnblockSignals( filtered_set );
 					break;
 				
 				default:

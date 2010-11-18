@@ -225,9 +225,13 @@ namespace Genie
 			{
 				Process& current = *gCurrentProcess;
 				
+				current.UnblockSignals( 1 << signo - 1 );
+				
 				// first chance -- program can siglongjmp() out of signal handler
 				current.Raise( signo );
 				current.HandlePendingSignals( kInterruptNever );
+				
+				current.UnblockSignals( 1 << signo - 1 );
 				
 				// This should be fatal
 				current.ResetSignalAction( signo );
@@ -1133,6 +1137,11 @@ namespace Genie
 		ASSERT( signo < NSIG );
 		
 		its_signal_handlers->set( signo - 1, action );
+		
+		if ( action.sa_handler == SIG_IGN )
+		{
+			ClearPendingSignalSet( 1 << signo - 1 );
+		}
 	}
 	
 	void Process::ResetSignalAction( int signo )
@@ -1310,7 +1319,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( action == SIG_DFL )
+		if ( action == SIG_DFL  &&  !(GetBlockedSignals() & 1 << signo - 1) )
 		{
 			if ( GetPID() == 1 )
 			{
