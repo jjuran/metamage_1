@@ -139,20 +139,19 @@ namespace nucleus
 	};
 	
 	
-	class non_default_values_are_live
+	struct nonzero_values_are_live
 	{
-		public:
-			template < class Resource >
-			static bool is_live( const Resource& r )
-			{
-				return r != default_value_traits< Resource >::value();
-			}
+		template < class Resource >
+		static bool is_live( const Resource& r )
+		{
+			return r != 0;
+		}
 	};
 	
 	template < class Resource, class Disposer >
 	struct aliveness_traits
 	{
-		typedef non_default_values_are_live aliveness_test;
+		typedef nonzero_values_are_live aliveness_test;
 	};
 	
 	
