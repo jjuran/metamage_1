@@ -70,50 +70,57 @@ namespace Nitrogen
 	
 	template <> struct AEKeyword_Traits< keyErrorString > : Char_AEKeyword_Traits< char > {};
 	
-   struct AEEventHandler
-     {
-      AEEventClass        theAEEventClass;
-      AEEventID           theAEEventID;
-      AEEventHandlerUPP   handler;
-      RefCon              handlerRefCon;
-      bool                isSysHandler;
-      
-      AEEventHandler();
-      
-      AEEventHandler( AEEventClass      theAEEventClass,
-                      AEEventID         theAEEventID,
-                      AEEventHandlerUPP handler,
-                      RefCon            handlerRefCon = RefCon(),
-                      bool              isSysHandler  = false )
-        : theAEEventClass( theAEEventClass ),
-          theAEEventID( theAEEventID ),
-          handler( handler ),
-          handlerRefCon( handlerRefCon ),
-          isSysHandler( isSysHandler )
-        {}
-     };
-   
-   bool operator==( const AEEventHandler&, const AEEventHandler& );
-   inline bool operator!=( const AEEventHandler& a, const AEEventHandler& b )    { return !( a == b ); }
-   
-  }
+	struct AEEventHandler
+	{
+		AEEventClass       theAEEventClass;
+		AEEventID          theAEEventID;
+		AEEventHandlerUPP  handler;
+		RefCon             handlerRefCon;
+		bool               isSysHandler;
+		
+		AEEventHandler();
+		
+		AEEventHandler( AEEventClass       theAEEventClass,
+		                AEEventID          theAEEventID,
+		                AEEventHandlerUPP  handler,
+		                RefCon             handlerRefCon = RefCon(),
+		                bool               isSysHandler  = false )
+		:
+			theAEEventClass( theAEEventClass ),
+			theAEEventID   ( theAEEventID    ),
+			handler        ( handler         ),
+			handlerRefCon  ( handlerRefCon   ),
+			isSysHandler   ( isSysHandler    )
+		{
+		}
+	};
+	
+	bool operator==( const AEEventHandler&, const AEEventHandler& );
+	
+	inline bool operator!=( const AEEventHandler& a, const AEEventHandler& b )
+	{
+		return !( a == b );
+	}
+	
+}
 
 namespace nucleus
-  {
-   template <>
-   struct disposer< Nitrogen::AEEventHandler >
-     {
-      typedef Nitrogen::AEEventHandler  argument_type;
-      typedef void                      result_type;
-      
-      void operator()( const Nitrogen::AEEventHandler& installation ) const
-        {
-         ::Nitrogen::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-                                                                        installation.theAEEventID,
-                                                                        installation.handler,
-                                                                        installation.isSysHandler ) );
-        }
-     };
+{
+	
+	template <>
+	struct disposer< Nitrogen::AEEventHandler >
+	{
+		typedef Nitrogen::AEEventHandler  argument_type;
+		typedef void                      result_type;
+		
+		void operator()( const Nitrogen::AEEventHandler& installation ) const
+		{
+			::Nitrogen::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
+			                                                               installation.theAEEventID,
+			                                                               installation.handler,
+			                                                               installation.isSysHandler ) );
+		}
+	};
 	
 	template < class Disposer >
 	struct aliveness_traits< ::Nitrogen::AEEventHandler, Disposer >
@@ -127,10 +134,10 @@ namespace nucleus
 		};
 	};
 	
-  }
+}
 
 namespace Nitrogen
-  {
+{
 	
 	//typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
 	
@@ -154,13 +161,13 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
 		                             ::AppleEvent      *  reply,
-		                             long               refCon )
+		                             long                 refCon )
 		{
 			try
 			{
 				handler( static_cast< AppleEvent const& >( *appleEvent ),
 				         static_cast< AppleEvent      & >( *reply      ),
-				         reinterpret_cast< RefConType >( refCon ) );
+				         reinterpret_cast< RefConType >  ( refCon      ) );
 			}
 			catch ( ... )
 			{
@@ -194,44 +201,48 @@ namespace Nitrogen
 	
 	// Level 0
 	
-   nucleus::owned< AEEventHandler >
-   AEInstallEventHandler( const AEEventHandler& );
-   
-   inline nucleus::owned< AEEventHandler >
-   AEInstallEventHandler( AEEventClass       theAEEventClass,
-                          AEEventID          theAEEventID,
-                          AEEventHandlerUPP  handler,
-                          RefCon             handlerRefCon = RefCon(),
-                          Boolean            isSysHandler  = false )
-     {
-      return AEInstallEventHandler( AEEventHandler( theAEEventClass,
-                                                    theAEEventID,
-                                                    handler,
-                                                    handlerRefCon,
-                                                    isSysHandler ) );
-     }
+	nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( const AEEventHandler& );
+	
+	inline nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( AEEventClass       theAEEventClass,
+	                       AEEventID          theAEEventID,
+	                       AEEventHandlerUPP  handler,
+	                       RefCon             handlerRefCon = RefCon(),
+	                       Boolean            isSysHandler  = false )
+	{
+		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
+		                                              theAEEventID,
+		                                              handler,
+		                                              handlerRefCon,
+		                                              isSysHandler ) );
+	}
 	
 	// Level 1
 	
-   template < typename AEEventHandlerUPP::ProcPtr handler >
-   inline nucleus::owned< AEEventHandler >
-   AEInstallEventHandler( AEEventClass       theAEEventClass,
-                          AEEventID          theAEEventID,
-                          RefCon             handlerRefCon = RefCon(),
-                          Boolean            isSysHandler  = false )
-     {
-      return AEInstallEventHandler( AEEventHandler( theAEEventClass,
-                                                    theAEEventID,
-                                                    StaticUPP< AEEventHandlerUPP, handler >(),
-                                                    handlerRefCon,
-                                                    isSysHandler ) );
-     }
+	template < typename AEEventHandlerUPP::ProcPtr handler >
+	inline nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( AEEventClass       theAEEventClass,
+	                       AEEventID          theAEEventID,
+	                       RefCon             handlerRefCon = RefCon(),
+	                       Boolean            isSysHandler  = false )
+	{
+		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
+		                                              theAEEventID,
+		                                              StaticUPP< AEEventHandlerUPP, handler >(),
+		                                              handlerRefCon,
+		                                              isSysHandler ) );
+	}
 	
 	// Level 2, refcon type specified
 	
 	template < class Object,
 	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
 	inline nucleus::owned< AEEventHandler >
+	//
 	AEInstallEventHandler( AEEventClass                                               theAEEventClass,
 	                       AEEventID                                                  theAEEventID,
 	                       typename nucleus::object_parameter_traits< Object >::type  handlerRefCon   = typename nucleus::object_parameter_traits< Object >::type(),
@@ -249,6 +260,7 @@ namespace Nitrogen
 	// With default handlerRefCon but supplied isSysHandler
 	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
 	inline nucleus::owned< AEEventHandler >
+	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
 	                       Boolean       isSysHandler )
@@ -267,6 +279,7 @@ namespace Nitrogen
 	// Same as above, but void parameter is omitted.
 	template < typename AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
 	inline nucleus::owned< AEEventHandler >
+	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
 	                       Boolean       isSysHandler    = false )
@@ -276,13 +289,13 @@ namespace Nitrogen
 		                                               isSysHandler );
 	}
 	
-   void AERemoveEventHandler( nucleus::owned<AEEventHandler> );
-
-   typedef AEEventHandler AEGetEventHandler_Result;
-   
-   AEEventHandler AEGetEventHandler( AEEventClass  theAEEventClass,
-                                     AEEventID     theAEEventID,
-                                     bool          isSysHandler = false );
+	void AERemoveEventHandler( nucleus::owned< AEEventHandler > );
+	
+	typedef AEEventHandler AEGetEventHandler_Result;
+	
+	AEEventHandler AEGetEventHandler( AEEventClass  theAEEventClass,
+	                                  AEEventID     theAEEventID,
+	                                  bool          isSysHandler = false );
 }
 
 #endif
