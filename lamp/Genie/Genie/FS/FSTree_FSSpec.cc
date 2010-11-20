@@ -872,19 +872,22 @@ namespace Genie
 			{
 				p7::throw_errno( EEXIST );
 			}
-			else if ( Name().length() <= 31 )
+			else
 			{
-				// Long names are case-sensitive due to hashing
-				
-				const plus::string name = slashes_from_colons( Name() );
-				
-				const bool equal = std::equal( name.begin(),
-				                               name.end(),
-				                               (const char*) (itsFileSpec.name + 1) );
-				
-				if ( !equal )
+				if ( Name().length() <= 31 )
 				{
-					N::FSpRename( itsFileSpec, name );
+					// Long names are case-sensitive due to hashing
+					
+					const plus::string name = slashes_from_colons( Name() );
+					
+					const bool equal = std::equal( name.begin(),
+					                               name.end(),
+					                               (const char*) (itsFileSpec.name + 1) );
+					
+					if ( !equal )
+					{
+						N::FSpRename( itsFileSpec, name );
+					}
 				}
 			}
 		}

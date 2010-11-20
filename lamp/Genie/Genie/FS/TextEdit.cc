@@ -95,7 +95,7 @@ namespace Genie
 	{
 		TextEditParameters& params = TextEditParameters::Get( that );
 		
-		std::size_t length = params.itsText.length();
+		std::size_t length = params.its_mac_text.length();
 		
 		int start;
 		int s_end;
@@ -151,7 +151,7 @@ namespace Genie
 			params.itsValidLength = start;
 		}
 		
-		params.itsText.erase( params.itsText.begin() + start, params.itsText.begin() + end );
+		params.its_mac_text.erase( params.its_mac_text.begin() + start, params.its_mac_text.begin() + end );
 		
 		params.itsSelection.start =
 		params.itsSelection.end   = start;
@@ -327,7 +327,7 @@ namespace Genie
 		
 		const char unix_char = (c == '\r') ? '\n' : c;
 		
-		params.itsText.insert( params.itsText.begin() + offset, unix_char );
+		params.its_mac_text.insert( params.its_mac_text.begin() + offset, unix_char );
 		
 		N::TEKey( params.itIsSecret ? 0xA5 : c, hTE );  // bullet
 		
@@ -368,8 +368,8 @@ namespace Genie
 		
 		Ped::TextSelection& selection = params.itsSelection;
 		
-		params.itsText.erase( params.itsText.begin() + selection.start,
-		                      params.itsText.begin() + selection.end );
+		params.its_mac_text.erase( params.its_mac_text.begin() + selection.start,
+		                           params.its_mac_text.begin() + selection.end );
 		
 		params.itsValidLength -= selection.end - selection.start;
 		
@@ -398,12 +398,12 @@ namespace Genie
 		
 		const int delta = scrapLength - (end - start);
 		
-		params.itsText.reserve( params.itsText.size() + delta );
+		params.its_mac_text.reserve( params.its_mac_text.size() + delta );
 		
-		params.itsText.replace( params.itsText.begin() + start,
-		                        params.itsText.begin() + end,
-		                        *scrapHandle,
-		                        scrapLength );
+		params.its_mac_text.replace( params.its_mac_text.begin() + start,
+		                             params.its_mac_text.begin() + end,
+		                             *scrapHandle,
+		                             scrapLength );
 		
 		if ( params.itsValidLength > end )
 		{
@@ -430,7 +430,7 @@ namespace Genie
 		if ( secret )
 		{
 			// Restore the TE scrap
-			memcpy( *scrapHandle, &params.itsText[ start ], scrapLength );
+			memcpy( *scrapHandle, &params.its_mac_text[ start ], scrapLength );
 		}
 	}
 	
@@ -498,15 +498,15 @@ namespace Genie
 	{
 		TextEditParameters& params = TextEditParameters::Get( viewKey );
 		
-		if ( params.itsValidLength < params.itsText.length() )
+		if ( params.itsValidLength < params.its_mac_text.length() )
 		{
-			N::SetHandleSize( hTE[0]->hText, params.itsText.length() );
+			N::SetHandleSize( hTE[0]->hText, params.its_mac_text.length() );
 			
 			const bool secret = params.itIsSecret;
 			
 			TERec& te = **hTE;
 			
-			te.teLength = params.itsText.length();
+			te.teLength = params.its_mac_text.length();
 			
 			char* text = *te.hText;
 			
@@ -520,8 +520,8 @@ namespace Genie
 			}
 			else
 			{
-				std::replace_copy( params.itsText.begin() + params.itsValidLength,
-				                   params.itsText.end(),
+				std::replace_copy( params.its_mac_text.begin() + params.itsValidLength,
+				                   params.its_mac_text.end(),
 				                   text + params.itsValidLength,
 				                   '\n',
 				                   '\r' );

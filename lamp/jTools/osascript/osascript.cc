@@ -21,6 +21,9 @@
 #include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -78,9 +81,9 @@ namespace tool
 		                                N::kOSAGenericScriptingComponentSubtype );
 	}
 	
-	static nucleus::string ReadUntilEOF( p7::fd_t stream )
+	static plus::string ReadUntilEOF( p7::fd_t stream )
 	{
-		nucleus::mutable_string result;
+		plus::var_string result;
 		
 		const std::size_t block_size = 4096;
 		
@@ -96,11 +99,11 @@ namespace tool
 	
 	static nucleus::string ReadFileData( const char* file )
 	{
-		nucleus::mutable_string result;
+		plus::string slurped;
 		
 		try
 		{
-			result = iota::convert_string< nucleus::string >( p7::slurp( file ) );
+			slurped = p7::slurp( file );
 		}
 		catch ( const p7::errno_t& err )
 		{
@@ -109,8 +112,10 @@ namespace tool
 				throw;	
 			}
 			
-			result = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
+			slurped = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
 		}
+		
+		nucleus::mutable_string result = iota::convert_string< nucleus::string >( slurped );
 		
 		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
 		{
@@ -230,7 +235,7 @@ namespace tool
 		return total + strlen( s );
 	}
 	
-	static nucleus::string JoinScriptPieces( const std::vector< const char* >& pieces )
+	static plus::string JoinScriptPieces( const std::vector< const char* >& pieces )
 	{
 		ASSERT( !pieces.empty() );
 		
@@ -244,11 +249,11 @@ namespace tool
 		                                            pieces.size(),  // add 1 byte for each CR
 		                                            std::ptr_fun( total_string_size ) );
 		
-		nucleus::mutable_string result;
+		plus::var_string result;
 		
 		result.resize( total_length );
 		
-		nucleus::mutable_string::iterator there = result.begin();
+		plus::var_string::iterator there = result.begin();
 		
 		typedef std::vector< const char* >::const_iterator Iter;
 		
@@ -297,7 +302,11 @@ namespace tool
 		
 		if ( !inlineScriptPieces.empty() )
 		{
-			script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
+			plus::string joined_script = JoinScriptPieces( inlineScriptPieces );
+			
+			nucleus::string converted_string = iota::convert_string< nucleus::string >( joined_script );
+			
+			script = CompileSource( N::AECreateDesc< N::typeChar >( converted_string ), getsCWDProperty );
 		}
 		else
 		{

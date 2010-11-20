@@ -36,7 +36,7 @@ namespace Genie
 	struct TextEditParameters
 	{
 		Point                    itsTextDimensions;
-		plus::var_string         itsText;
+		plus::var_string         its_mac_text;
 		Pedestal::TextSelection  itsSelection;
 		std::size_t              itsValidLength;
 		bool                     itHasChangedAttributes;
