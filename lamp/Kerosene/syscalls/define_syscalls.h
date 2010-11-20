@@ -83,7 +83,7 @@ DEFINE_SYSCALL_7F( getitimer )
 DEFINE_SYSCALL_7F( copyfileat )
 DEFINE_SYSCALL_7F( updateat )
 //DEFINE_SYSCALL_7F( fstat )
-DEFINE_SYSCALL_7F( gethostbyname )
+DEFINE_SYSCALL_7F( _OTInetStringToAddress )
 
 DEFINE_SYSCALL_7F( AESendBlocking )
 DEFINE_SYSCALL_7F( fsync )

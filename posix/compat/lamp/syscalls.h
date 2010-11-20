@@ -111,7 +111,7 @@
 #define __NR_copyfileat                106  // stat
 #define __NR_updateat                  107  // lstat
 //#define __NR_fstat                     108
-#define __NR_gethostbyname             109  // uname
+#define __NR__OTInetStringToAddress    109  // uname
 // 110
 // 111
 // 112

@@ -72,33 +72,20 @@ namespace Genie
 	}
 	
 	
-	static struct hostent* gethostbyname( const char* name )
+	static OSStatus _OTInetStringToAddress( char* name, struct InetHostInfo* result )
 	{
-		static ::InetHostInfo  info;
-		static struct hostent  host_entry;
-		static ::InetHost*     addr_list[10];
-		
 		try
 		{
 			OpenTransportShare sharedOpenTransport;
 			
-			info = N::OTInetStringToAddress( InternetServices(),
-			                                 (char*) name );
+			return ::OTInetStringToAddress( InternetServices(),
+			                                name,
+			                                result );
 		}
 		catch ( ... )
 		{
-			return NULL;
+			return set_errno_from_exception();
 		}
-		
-		addr_list[0] = &info.addrs[0];
-		
-		host_entry.h_name      = info.name;
-		host_entry.h_aliases   = NULL;
-		host_entry.h_addrtype  = AF_INET;
-		host_entry.h_length    = sizeof (::InetHost);
-		host_entry.h_addr_list = reinterpret_cast< char** >( addr_list );
-		
-		return &host_entry;
 	}
 	
 	static OSStatus _OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
@@ -120,7 +107,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( gethostbyname );
+	REGISTER_SYSTEM_CALL( _OTInetStringToAddress );
 	
 #if !TARGET_API_MAC_CARBON
 	
