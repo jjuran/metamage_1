@@ -5,6 +5,9 @@
 
 #include "Genie/Utilities/GetWorkstationName.hh"
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // Nitrogen
 #include "Nitrogen/CFBase.hh"
 
@@ -29,18 +32,28 @@ namespace Genie
 	static const void* kUnresolvedCFragSymbolAddress = NULL;
 	
 	
-	plus::string GetWorkstationName()
+	plus::string GetWorkstationName( bool convert_to_UTF8 )
 	{
 		if ( !Is_Running_OSXNative() )
 		{
-			return GetStringResource( -16413 );
+			plus::string result = GetStringResource( -16413 );
+			
+			if ( convert_to_UTF8 )
+			{
+				result = plus::utf8_from_mac( result );
+			}
+			
+			return result;
 		}
 		
 		if ( CSCopyMachineName != kUnresolvedCFragSymbolAddress )
 		{
 			if ( CFStringRef name = CSCopyMachineName() )
 			{
-				return CFStringGetStdString( n::owned< CFStringRef >::seize( name ) );
+				CFStringEncoding encoding = convert_to_UTF8 ? kCFStringEncodingUTF8
+				                                            : kCFStringEncodingMacRoman;
+				
+				return CFStringGetStdString( n::owned< CFStringRef >::seize( name ), encoding );
 			}
 		}
 		

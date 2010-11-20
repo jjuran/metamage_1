@@ -24,6 +24,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -331,7 +332,9 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "title", PROPERTY( Button_Title ) },
+		{ ".mac-title", PROPERTY( Button_Title ) },
+		
+		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
 		
 		{ "click", &Basic_Factory< Button_click_Trigger > },
 		

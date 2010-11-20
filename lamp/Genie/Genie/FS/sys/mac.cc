@@ -9,6 +9,7 @@
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/premapped.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/event.hh"
@@ -85,7 +86,9 @@ namespace Genie
 		
 		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		
-		{ "name", PROPERTY( sys_mac_name ) },
+		{ ".mac-name", PROPERTY(                     sys_mac_name   ) },
+		{      "name", PROPERTY( utf8_text_property< sys_mac_name > ) },
+		
 		{ "keys", &Generated_Factory< sys_mac_keys > },
 		
 		{ "rom", &New_FSTree_sys_mac_rom },

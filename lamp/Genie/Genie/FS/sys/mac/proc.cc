@@ -24,6 +24,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Genie
@@ -226,7 +227,9 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_proc_PSN_Mappings[] =
 	{
-		{ "name", PROPERTY( sys_mac_proc_PSN_name ) },
+		{ ".mac-name", PROPERTY( sys_mac_proc_PSN_name ) },
+		
+		{ "name", PROPERTY( utf8_text_property< sys_mac_proc_PSN_name > ) },
 		
 		{ "exe", &Executable_Factory },
 		

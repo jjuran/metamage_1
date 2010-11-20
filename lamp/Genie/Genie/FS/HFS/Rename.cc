@@ -15,6 +15,7 @@
 #include "debug/assert.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/replaced_string.hh"
 
 // poseven
@@ -163,7 +164,7 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const plus::string& destName = slashes_from_colons( destFile->Name() );
+		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile->Name() ) );
 		
 		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
 		                          && std::equal( destName.begin(),

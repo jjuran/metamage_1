@@ -11,6 +11,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -152,6 +155,8 @@ namespace Genie
 		}
 		
 		params.its_mac_text.erase( params.its_mac_text.begin() + start, params.its_mac_text.begin() + end );
+		
+		params.its_utf8_text = plus::utf8_from_mac( params.its_mac_text );
 		
 		params.itsSelection.start =
 		params.itsSelection.end   = start;
@@ -329,6 +334,9 @@ namespace Genie
 		
 		params.its_mac_text.insert( params.its_mac_text.begin() + offset, unix_char );
 		
+		// FIXME:  Optimize UTF-8 conversion
+		params.its_utf8_text = plus::utf8_from_mac( params.its_mac_text );
+		
 		N::TEKey( params.itIsSecret ? 0xA5 : c, hTE );  // bullet
 		
 		params.itsSelection.start =
@@ -371,6 +379,8 @@ namespace Genie
 		params.its_mac_text.erase( params.its_mac_text.begin() + selection.start,
 		                           params.its_mac_text.begin() + selection.end );
 		
+		params.its_utf8_text = plus::utf8_from_mac( params.its_mac_text );
+		
 		params.itsValidLength -= selection.end - selection.start;
 		
 		selection.end = selection.start;
@@ -404,6 +414,8 @@ namespace Genie
 		                             params.its_mac_text.begin() + end,
 		                             *scrapHandle,
 		                             scrapLength );
+		
+		params.its_utf8_text = plus::utf8_from_mac( params.its_mac_text );
 		
 		if ( params.itsValidLength > end )
 		{

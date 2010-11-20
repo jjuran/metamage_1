@@ -67,7 +67,7 @@ namespace tool
 	{
 		static std::list< plus::string > static_string_storage;
 		
-		static_string_storage.push_back( mac_pathname_from_path( pathname ) );
+		static_string_storage.push_back( mac_pathname_from_path( pathname, true ) );
 		
 		return static_string_storage.back().c_str();
 	}
@@ -185,7 +185,7 @@ namespace tool
 		
 		const char* first_input_path = argv[ 3 ];
 		
-		plus::string output_mac_pathname = mac_pathname_from_path( output_path );
+		plus::string output_mac_pathname = mac_pathname_from_path( output_path, true );
 		
 		mw::cpu_architecture arch = mw::cpu_unknown;
 		

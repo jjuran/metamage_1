@@ -20,6 +20,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/string.hh"
 
 // poseven
@@ -304,7 +305,7 @@ namespace tool
 	
 	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		return store_string( mac_pathname_from_path( pathname ) );
+		return store_string( mac_pathname_from_path( pathname, true ) );
 	}
 	
 	
@@ -514,8 +515,8 @@ namespace tool
 			plus::string type   ( pkgInfo.data(),     4 );
 			plus::string creator( pkgInfo.data() + 4, 4 );
 			
-			gFileType    = store_string( type    );
-			gFileCreator = store_string( creator );
+			gFileType    = store_string( plus::utf8_from_mac( type    ) );
+			gFileCreator = store_string( plus::utf8_from_mac( creator ) );
 			
 			const uint32_t typeCode = iota::decode_quad( type.data() );
 			
@@ -732,7 +733,7 @@ namespace tool
 			}
 		}
 		
-		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname );
+		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname, true );
 		
 		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
 		

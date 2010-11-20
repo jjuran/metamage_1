@@ -17,7 +17,14 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// chars
+#include "charsets/extended_ascii.hh"
+#include "charsets/MacRoman.hh"
+#include "conv/mac_utf8.hh"
+#include "encoding/utf8.hh"
+
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 
 // Nitrogen
@@ -161,7 +168,7 @@ namespace Genie
 		
 		//command += '\n';
 		
-		RunShellCommand( command );
+		RunShellCommand( plus::utf8_from_mac( command ) );
 	}
 	
 	static void SendSignalToProcessGroupForKey( int signo, const FSTree* key )
@@ -495,16 +502,25 @@ namespace Genie
 		
 		ASSERT( params.itsStartOfInput < s.size() );
 		
-		byteCount = std::min( byteCount, command_size );
+		const char* begin = s.begin() + params.itsStartOfInput;
+		const char* input = begin;
 		
-		std::copy( s.begin() + params.itsStartOfInput,
-		           s.begin() + params.itsStartOfInput + byteCount,
-		           buffer );
+		byteCount = conv::utf8_from_mac( buffer, byteCount, &input, command_size );
+		
+		command_size = input - begin;
 		
 		params.itsStartOfOutput = 
-		params.itsStartOfInput += byteCount;
+		params.itsStartOfInput += command_size;
 		
 		return byteCount;
+	}
+	
+	static inline char MacRoman_from_unicode( chars::unichar_t uc )
+	{
+		using chars::extended_ascii_from_unicode;
+		using chars::MacRoman_encoder_map;
+		
+		return extended_ascii_from_unicode( uc, MacRoman_encoder_map );
 	}
 	
 	ssize_t ConsoleTTYHandle::SysWrite( const char* buffer, std::size_t byteCount )
@@ -523,6 +539,8 @@ namespace Genie
 		                      params.itsSelection );
 		
 		const size_t max_TextEdit_size = 30000;
+		
+		// byteCount is for UTF-8, so non-ASCII chars may cause an early cut
 		
 		if ( s.size() + byteCount > max_TextEdit_size )
 		{
@@ -580,9 +598,31 @@ namespace Genie
 		
 		char* start_of_last_line = NULL;
 		
-		for ( int i = 0;  i < byteCount;  ++i )
+		const char* buffer_end = buffer + byteCount;
+		
+		const char* mark = buffer;
+		
+		while ( mark < buffer_end )
 		{
-			char c = buffer[ i ];
+			const chars::unichar_t uc = chars::get_next_code_point_from_utf8( mark, buffer_end );
+			
+			char c = uc;
+			
+			if ( !~uc )
+			{
+				c = 0xC1;  // inverted exclamation mark
+				
+				++mark;
+			}
+			else if ( uc >= 0x80 )
+			{
+				c = MacRoman_from_unicode( uc );
+				
+				if ( c == '\0' )
+				{
+					c = 0xC0;  // inverted question mark
+				}
+			}
 			
 			switch ( c )
 			{
@@ -638,6 +678,8 @@ namespace Genie
 			
 			s += saved_input;
 		}
+		
+		params.its_utf8_text = plus::utf8_from_mac( s );
 		
 		if ( params.itsSelection.start >= start_of_input )
 		{

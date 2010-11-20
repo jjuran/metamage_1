@@ -22,6 +22,7 @@
 #include "iota/strings.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // Debug
@@ -113,6 +114,15 @@ namespace tool
 			}
 			
 			slurped = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
+		}
+		
+		try
+		{
+			slurped = plus::mac_from_utf8( slurped );
+		}
+		catch ( ... )
+		{
+			// Invalid UTF-8, probably MacRoman
 		}
 		
 		nucleus::mutable_string result = iota::convert_string< nucleus::string >( slurped );
@@ -304,6 +314,8 @@ namespace tool
 		{
 			plus::string joined_script = JoinScriptPieces( inlineScriptPieces );
 			
+			joined_script = plus::mac_from_utf8( joined_script );
+			
 			nucleus::string converted_string = iota::convert_string< nucleus::string >( joined_script );
 			
 			script = CompileSource( N::AECreateDesc< N::typeChar >( converted_string ), getsCWDProperty );
@@ -355,7 +367,11 @@ namespace tool
 					output += "\n";
 				}
 				
-				p7::write( p7::stdout_fileno, output );
+				plus::string converted = iota::convert_string< plus::string >( output );
+				
+				plus::string utf8_output = plus::utf8_from_mac( converted );
+				
+				p7::write( p7::stdout_fileno, utf8_output );
 			}
 		}
 		catch ( const N::OSStatus& err )
