@@ -28,6 +28,16 @@ struct hostent* gethostbyname( const char* name )
 	
 	if ( err != noErr )
 	{
+		switch ( err )
+		{
+			case kOTBadNameErr:  h_errno = HOST_NOT_FOUND;  break;
+			case kOTNoDataErr:   h_errno = TRY_AGAIN;       break;
+			
+			default:
+				h_errno = NO_RECOVERY;  // ???
+				break;
+		}
+		
 		return NULL;
 	}
 	
