@@ -177,7 +177,7 @@ my %fsmap =
 			# Modem-related scripts
 			qw( cidlistener cidmon mcmd ),
 			# Text translation
-			\ qw( cr2lf lf2cr lf2crlf mac2utf8 mread stripcr striplf utf82mac ),
+			\ qw( c cr2lf lf2cr lf2crlf mac2utf8 mread stripcr striplf utf82mac ),
 			# Local editor
 			\ qw( local-edit-client ),
 			# Apps
