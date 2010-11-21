@@ -31,14 +31,12 @@
 
 #include <string.h>
 
-typedef unsigned char u_char;
-
 /*
  * This array is designed for mapping upper and lower case letter
  * together for a case independent comparison.  The mappings are
  * based upon ascii character sequences.
  */
-static const u_char charmap[] = {
+static const unsigned char charmap[] = {
 	'\000', '\001', '\002', '\003', '\004', '\005', '\006', '\007',
 	'\010', '\011', '\012', '\013', '\014', '\015', '\016', '\017',
 	'\020', '\021', '\022', '\023', '\024', '\025', '\026', '\027',
@@ -76,9 +74,9 @@ static const u_char charmap[] = {
 int
 strcasecmp(const char *s1, const char *s2)
 {
-	const u_char *cm = charmap;
-	const u_char *us1 = (const u_char *)s1;
-	const u_char *us2 = (const u_char *)s2;
+	const unsigned char *cm = charmap;
+	const unsigned char *us1 = (const unsigned char *)s1;
+	const unsigned char *us2 = (const unsigned char *)s2;
 
 	while (cm[*us1] == cm[*us2++])
 		if (*us1++ == '\0')
@@ -90,9 +88,9 @@ int
 strncasecmp(const char *s1, const char *s2, size_t n)
 {
 	if (n != 0) {
-		const u_char *cm = charmap;
-		const u_char *us1 = (const u_char *)s1;
-		const u_char *us2 = (const u_char *)s2;
+		const unsigned char *cm = charmap;
+		const unsigned char *us1 = (const unsigned char *)s1;
+		const unsigned char *us2 = (const unsigned char *)s2;
 
 		do {
 			if (cm[*us1] != cm[*us2++])
