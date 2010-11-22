@@ -128,11 +128,6 @@ namespace nucleus
 {
 	
 	template < class Resource >
-	struct disposer_traits : disposer_class< Resource >
-	{
-	};
-	
-	template < class Resource >
 	struct null_resource
 	{
 		static Resource get()  { return Resource(); }
@@ -281,7 +276,7 @@ namespace nucleus
 	
 	
 	template < class Resource,
-	           class Disposer = typename disposer_traits< Resource >::type >
+	           class Disposer = typename disposer_class< Resource >::type >
 	class owned
 	{
 		private:

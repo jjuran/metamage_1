@@ -93,7 +93,7 @@ namespace nucleus
 	};
 
 	template < class Resource,
-	           class Disposer = typename disposer_traits< Resource >::type >
+	           class Disposer = typename disposer_class< Resource >::type >
 	class shared: private shared_access_hack
 	{
 		private:

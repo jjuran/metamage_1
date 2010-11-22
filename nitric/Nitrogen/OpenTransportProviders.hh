@@ -124,7 +124,7 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer_traits< InetSvcRef > : disposer_traits< ProviderRef > {};
+	template <> struct disposer_class< InetSvcRef > : disposer_class< ProviderRef > {};
 	
 }
 

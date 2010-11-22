@@ -230,14 +230,14 @@ namespace nucleus
 	};
 	
 	
-	template <> struct disposer_traits< CGrafPtr >
+	template <> struct disposer_class< CGrafPtr >
 	{
 		typedef Mac::Port_Disposer< CGrafPtr > type;
 	};
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
-	template <> struct disposer_traits< GrafPtr >
+	template <> struct disposer_class< GrafPtr >
 	{
 		typedef Mac::Port_Disposer< GrafPtr > type;
 	};

@@ -156,9 +156,9 @@ namespace Nitrogen
 
 namespace nucleus
    {
-	template <> struct disposer_traits< Nitrogen::PlainIconHandle  > : disposer_traits< Nitrogen::Handle > {};
-	template <> struct disposer_traits< Nitrogen::MaskedIconHandle > : disposer_traits< Nitrogen::Handle > {};
-	template <> struct disposer_traits< Nitrogen::SmallIconHandle  > : disposer_traits< Nitrogen::Handle > {};
+	template <> struct disposer_class< Nitrogen::PlainIconHandle  > : disposer_class< Nitrogen::Handle > {};
+	template <> struct disposer_class< Nitrogen::MaskedIconHandle > : disposer_class< Nitrogen::Handle > {};
+	template <> struct disposer_class< Nitrogen::SmallIconHandle  > : disposer_class< Nitrogen::Handle > {};
   }
 
 namespace Nitrogen

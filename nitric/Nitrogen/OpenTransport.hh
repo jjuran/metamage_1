@@ -221,7 +221,7 @@ namespace nucleus
 		}
 	};
 
-	template <> struct disposer_traits< EndpointRef > : disposer_traits< ProviderRef > {};
+	template <> struct disposer_class< EndpointRef > : disposer_class< ProviderRef > {};
 	
 }
 

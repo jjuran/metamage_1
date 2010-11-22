@@ -58,7 +58,7 @@ namespace Nitrogen {
 namespace nucleus
   {
 //	marshall sez: Dang! - we have to have our own disposer because we don't have "HIObjectGetTypeID"
-//	template <> struct disposer_traits< HIObjectRef > : disposer_traits<CFTypeRef>  {};
+//	template <> struct disposer_class< HIObjectRef > : disposer_class<CFTypeRef>  {};
 //	template <> struct CFType_Traits< HIObjectRef > : Basic_CFType_Traits< CFDateRef, ::HIObjectGetTypeID > {};  }
 	template <> struct disposer< HIObjectRef >
 		{

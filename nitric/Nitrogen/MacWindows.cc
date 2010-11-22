@@ -44,7 +44,7 @@ namespace Nitrogen
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	static       nucleus::disposer_traits< WindowRef >::type gDisposeWindow;
+	static       nucleus::disposer_class< WindowRef >::type gDisposeWindow;
 	
 #else
 	
@@ -61,7 +61,7 @@ namespace Nitrogen
 	#endif
 	}
 	
-	static const nucleus::disposer_traits< WindowRef >::type gDisposeWindow( &Function::DisposeWindow );
+	static const nucleus::disposer_class< WindowRef >::type gDisposeWindow( &Function::DisposeWindow );
 	
 #endif
 	

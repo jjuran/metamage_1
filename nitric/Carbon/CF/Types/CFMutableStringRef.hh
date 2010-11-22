@@ -31,7 +31,7 @@ namespace Nitrogen
 namespace nucleus
 {
 	
-	template <> struct disposer_traits< CFMutableStringRef > : disposer_traits< Carbon::CFTypeRef > {};
+	template <> struct disposer_class< CFMutableStringRef > : disposer_class< Carbon::CFTypeRef > {};
 	
 }
 

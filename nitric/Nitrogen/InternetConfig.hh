@@ -113,14 +113,14 @@ namespace nucleus
 		}
 	};
 	
-	template <>  struct disposer_traits< ICFontRecordHandle   > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICCharTableHandle    > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICAppSpecHandle      > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICAppSpecListHandle  > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICFileSpecHandle     > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICMapEntryHandle     > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICServiceEntryHandle > : disposer_traits< Nitrogen::Handle >  {};
-	template <>  struct disposer_traits< ICServicesHandle     > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICFontRecordHandle   > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICCharTableHandle    > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICAppSpecHandle      > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICAppSpecListHandle  > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICFileSpecHandle     > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICMapEntryHandle     > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICServiceEntryHandle > : disposer_class< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< ICServicesHandle     > : disposer_class< Nitrogen::Handle >  {};
 	
 }
 

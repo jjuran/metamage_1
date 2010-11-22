@@ -113,7 +113,7 @@ namespace Nitrogen
 
 namespace nucleus
   {
-	template <>  struct disposer_traits< StringHandle > : disposer_traits< Nitrogen::Handle >  {};
+	template <>  struct disposer_class< StringHandle > : disposer_class< Nitrogen::Handle >  {};
   }
 
 namespace Nitrogen
