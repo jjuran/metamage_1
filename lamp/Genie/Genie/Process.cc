@@ -925,6 +925,11 @@ namespace Genie
 		
 		Ped::AdjustSleepForActivity();
 		
+		if ( gCurrentProcess != this )
+		{
+			return;
+		}
+		
 		Suspend();
 	}
 	
@@ -948,6 +953,11 @@ namespace Genie
 		itsReexecArgs[7] = _7;
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors );
+		
+		if ( gCurrentProcess != this )
+		{
+			return;
+		}
 		
 		Suspend();
 	}
