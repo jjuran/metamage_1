@@ -217,42 +217,23 @@ namespace Genie
 	
 	void DeliverFatalSignal( int signo )
 	{
-		bool caught_exception = false;
+		typedef void (*signal_handler_t)(int);
 		
 		if ( gCurrentProcess != NULL )
 		{
-			try
+			signal_handler_t handler = gCurrentProcess->GetSignalAction( signo ).sa_handler;
+			
+			if ( handler != SIG_DFL  &&  handler != SIG_IGN )
 			{
-				Process& current = *gCurrentProcess;
-				
-				current.UnblockSignals( 1 << signo - 1 );
-				
-				// first chance -- program can siglongjmp() out of signal handler
-				current.Raise( signo );
-				current.HandlePendingSignals( kInterruptNever );
-				
-				current.UnblockSignals( 1 << signo - 1 );
-				
-				// This should be fatal
-				current.ResetSignalAction( signo );
-				current.Raise( signo );
-				current.HandlePendingSignals( kInterruptNever );
+				call_signal_handler( handler, signo );
 			}
-			catch ( ... )
-			{
-				caught_exception = true;
-			}
+			
+			gCurrentProcess->Terminate( signo | 0x80 );
 		}
-		
-		// Either we're in the main thread, or signal handling failed.  Bail.
 		
 		if ( TARGET_CONFIG_DEBUGGING )
 		{
-			const unsigned char* message = !gCurrentProcess ? "\p" "Fatal condition occurred on main thread"
-			                             : caught_exception ? "\p" "Exception caught trying to deliver fatal signal"
-			                             :                    "\p" "Invalid return from delivering fatal signal";
-			
-			::DebugStr( message );
+			::DebugStr( "\p" "Fatal condition occurred on main thread" );
 		}
 		else
 		{
