@@ -133,16 +133,13 @@ namespace Genie
 	
 	static void _exit( int status )
 	{
-		// We don't return to the dispatcher, but we compensate.
-		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
+		// We don't return to the dispatcher, but Terminate() compensates.
 		
 		Process& current = current_process();
 		
-		current.Exit( status );  // doesn't return unless forked
+		current.Exit( status );  // doesn't return
 		
-		ASSERT( current.Forked() );
-		
-		GetProcess( current.GetPPID() ).ResumeAfterFork();  // doesn't return
+		ASSERT( false && "Process::Exit() doesn't return" );
 	}
 	
 	

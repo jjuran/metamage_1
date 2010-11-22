@@ -830,11 +830,39 @@ namespace Genie
 		return std::max( size, minimumStackSize );
 	}
 	
+	class thing_that_may_resume_after_vfork
+	{
+		private:
+			pid_t its_ppid;
+		
+		public:
+			thing_that_may_resume_after_vfork() : its_ppid( 0 )
+			{
+			}
+			
+			void enable( pid_t ppid )
+			{
+				its_ppid = ppid;
+			}
+			
+			~thing_that_may_resume_after_vfork();
+	};
+	
+	thing_that_may_resume_after_vfork::~thing_that_may_resume_after_vfork()
+	{
+		if ( its_ppid )
+		{
+			GetProcess( its_ppid ).ResumeAfterFork();
+		}
+	}
+	
 	void Process::Exec( const char*         path,
 	                    const char* const   argv[],
 	                    const char* const*  envp )
 	{
 		// Declare this first so it goes out of scope last
+		thing_that_may_resume_after_vfork resume;
+		
 		n::owned< N::ThreadID > looseThread;
 		
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
@@ -931,6 +959,11 @@ namespace Genie
 		}
 		
 		Suspend();
+		
+		if ( looseThread.get() == N::kNoThreadID )
+		{
+			resume.enable( itsPPID );
+		}
 	}
 	
 	void Process::Reexec( Reexec_Function f, void* _1,
@@ -941,6 +974,8 @@ namespace Genie
 	                                         void* _6,
 	                                         void* _7 )
 	{
+		thing_that_may_resume_after_vfork resume;
+		
 		n::owned< N::ThreadID > looseThread = SpawnThread( (Clone_Function) f, _1 );
 		
 	//	itsReexecArgs[0] = (void*) f;
@@ -960,6 +995,11 @@ namespace Genie
 		}
 		
 		Suspend();
+		
+		if ( looseThread.get() == N::kNoThreadID )
+		{
+			resume.enable( itsPPID );
+		}
 	}
 	
 	n::owned< N::ThreadID > Process::SpawnThread( Clone_Function f, void* arg )
@@ -1046,7 +1086,7 @@ namespace Genie
 		using recall::get_stack_frame_pointer;
 		
 		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(   );
-		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 2 );
+		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 4 );
 		
 		// Stack grows down
 		const bool stack_fault = stack_fp > vfork_fp;
@@ -1178,7 +1218,7 @@ namespace Genie
 		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
 	}
 	
-	// This function doesn't return if the process is current and not forked.
+	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
 		itsLifeStage = kProcessTerminating;
@@ -1242,9 +1282,11 @@ namespace Genie
 		itsThread.reset();
 		
 		// We get here if this is a vforked child, or fork_and_exit().
+		
+		GetProcess( itsPPID ).ResumeAfterFork();  // Calls longjmp()
 	}
 	
-	// This function doesn't return if the process is current and not forked.
+	// This function doesn't return if the process is current.
 	void Process::Terminate( int wait_status )
 	{
 		itsResult = wait_status;
@@ -1252,7 +1294,7 @@ namespace Genie
 		Terminate();
 	}
 	
-	// This function doesn't return if the process is current and not forked.
+	// This function doesn't return if the process is current.
 	void Process::Exit( int exit_status )
 	{
 		itsResult = (exit_status & 0xFF) << 8;
@@ -1453,17 +1495,6 @@ namespace Genie
 			if ( itMayDumpCore && WCOREDUMP( itsResult ) )
 			{
 				DumpBacktrace();
-			}
-			
-			if ( itsInterdependence == kProcessForked )
-			{
-				Process& parent( GetProcess( itsPPID ) );
-				
-				Terminate();
-				
-				parent.ResumeAfterFork();  // Calls longjmp()
-				
-				// Not reached
 			}
 			
 			Terminate();  // Kills the thread
