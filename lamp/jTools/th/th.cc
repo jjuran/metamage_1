@@ -113,7 +113,15 @@ namespace tool
 		
 		int closed = close( pipe_ends[1] );
 		
-		(void) p7::wait();
+		p7::wait_t wait_status = p7::wait();
+		
+		if ( wait_status != 0 )
+		{
+			// FIXME
+			p7::write( p7::stdout_fileno, STR_LEN( "ERROR running test\n" ) );
+			
+			exit( 1 );
+		}
 		
 		TestResults results;
 		
