@@ -1255,7 +1255,9 @@ namespace Genie
 	// This function doesn't return if the process is current and not forked.
 	void Process::Exit( int exit_status )
 	{
-		Terminate( (exit_status & 0xFF) << 8 );
+		itsResult = (exit_status & 0xFF) << 8;
+		
+		Terminate();
 	}
 	
 	void Process::Orphan()
