@@ -122,7 +122,7 @@ namespace tool
 		
 		const plus::string* plan = get_line_from_feed( feed, reader );
 		
-		if ( plan == NULL  ||  memcmp( plan->c_str(), STR_LEN( "1.." ) + 1 ) != 0 )
+		if ( plan == NULL  ||  memcmp( plan->c_str(), STR_LEN( "1.." ) ) != 0 )
 		{
 			return results;
 		}
