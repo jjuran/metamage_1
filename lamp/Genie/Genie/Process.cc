@@ -1291,6 +1291,11 @@ namespace Genie
 	{
 		itsResult = wait_status;
 		
+		if ( WCOREDUMP( wait_status )  &&  itMayDumpCore )
+		{
+			DumpBacktrace();
+		}
+		
 		Terminate();
 	}
 	
@@ -1492,10 +1497,6 @@ namespace Genie
 		if ( itsResult != 0 )
 		{
 			// Fatal signal received.  Terminate.
-			if ( itMayDumpCore && WCOREDUMP( itsResult ) )
-			{
-				DumpBacktrace();
-			}
 			
 			Terminate();  // Kills the thread
 			
