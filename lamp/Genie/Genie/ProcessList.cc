@@ -187,7 +187,11 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		Process& child = parent.vfork();
+		Process& child = *NewProcess( parent, 1 );
+		
+		child.unshare_fs_info();
+		child.unshare_files();
+		child.unshare_signal_handlers();
 		
 		try
 		{
@@ -197,8 +201,6 @@ namespace Genie
 		{
 			global_processes.at( child.GetPID() ).reset();
 		}
-		
-		parent.ResumeAfterFork();
 	}
 	
 	void spawn_process( const plus::string& program_args )
