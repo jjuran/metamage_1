@@ -69,12 +69,6 @@ namespace Genie
 		
 		Process& process = parent.vfork();
 		
-		fd_table& files = process.FileDescriptors();
-		
-		files[ 0 ] =
-		files[ 1 ] =
-		files[ 2 ] = GetSimpleDeviceHandle( "console" );
-		
 		try
 		{
 			process.Exec( "/bin/sh", argv, envp );
