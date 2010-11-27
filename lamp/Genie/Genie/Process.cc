@@ -1082,8 +1082,6 @@ namespace Genie
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;
 		
-		itsPPID = 1;  // temporary hack to avoid improper SIGHUP
-		
 		itsThread = parent.itsThread;
 		
 		ASSERT( its_pb.cleanup == NULL );
