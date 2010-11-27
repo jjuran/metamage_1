@@ -36,9 +36,7 @@ namespace Genie
 	{
 		try
 		{
-			Process& child = current_process().vfork();
-			
-			child.UsurpParent( exit_status );
+			current_process().fork_and_exit( exit_status );
 		}
 		catch ( ... )
 		{

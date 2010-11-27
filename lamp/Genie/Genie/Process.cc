@@ -1117,22 +1117,15 @@ namespace Genie
 		resume_vfork( child );
 	}
 	
-	void Process::UsurpParent( int exit_status )
+	void Process::fork_and_exit( int exit_status )
 	{
-		Process& child = *this;
+		Process& parent = *this;
 		
-		Process& parent = GetProcess( GetPPID() );
+		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( parent );
 		
-		ASSERT( itsLifeStage == kProcessStarting );
-		
-		ASSERT( parent.itsInterdependence == kProcessForking );
-		ASSERT(        itsInterdependence == kProcessForked  );
-		
-		ASSERT( parent.itsSchedule == kProcessFrozen );
+		Process& child = *child_ptr;
 		
 		child.itsLifeStage       = kProcessLive;
-		child.itsInterdependence = kProcessIndependent;
-		child.itsSchedule        = kProcessRunning;
 		
 		child.itsThread = parent.itsThread;
 		
@@ -1143,6 +1136,8 @@ namespace Genie
 		swap( child.its_pb.cleanup, parent.its_pb.cleanup );
 		
 		parent.Exit( exit_status );
+		
+		child.Resume();
 	}
 	
 	struct notify_param
@@ -1285,7 +1280,10 @@ namespace Genie
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
-		GetProcess( itsPPID ).ResumeAfterFork();  // Calls longjmp()
+		if ( itsInterdependence == kProcessForked )
+		{
+			GetProcess( itsPPID ).ResumeAfterFork();  // Calls longjmp()
+		}
 	}
 	
 	// This function doesn't return if the process is current.

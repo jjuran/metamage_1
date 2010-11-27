@@ -249,7 +249,7 @@ namespace Genie
 			
 			void ResumeAfterFork();
 			
-			void UsurpParent( int exit_status );
+			void fork_and_exit( int exit_status );
 			
 			void Exit( int exit_status );
 		
