@@ -647,8 +647,8 @@ namespace Genie
 		fd_table& fds = *itsFileDescriptors;
 		
 		fds[ 0 ] =
-		fds[ 1 ] =
-		fds[ 2 ] = GetSimpleDeviceHandle( "null" );
+		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
+		fds[ 2 ] = GetSimpleDeviceHandle( "console" );
 		
 		InstallExceptionHandlers();
 	}
