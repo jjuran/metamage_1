@@ -35,7 +35,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/Process.hh"
+#include "Genie/ProcessList.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -65,20 +65,7 @@ namespace Genie
 		
 		argv[2] = command.c_str();
 		
-		Process& parent = GetProcess( 1 );
-		
-		Process& process = parent.vfork();
-		
-		try
-		{
-			process.Exec( "/bin/sh", argv, envp );
-		}
-		catch ( ... )
-		{
-			process.Exit( 127 );
-		}
-		
-		parent.ResumeAfterFork();
+		spawn_process( "/bin/sh", argv, envp );
 	}
 	
 	
