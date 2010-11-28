@@ -183,6 +183,24 @@ namespace Genie
 		return NULL;
 	}
 	
+	void spawn_process( const char* path, const char* const* argv, const char* const* envp )
+	{
+		Process& parent = GetInitProcess();
+		
+		Process& child = parent.vfork();
+		
+		try
+		{
+			(void) child.Exec( path, argv, envp );
+		}
+		catch ( ... )
+		{
+			global_processes.at( child.GetPID() ).reset();
+		}
+		
+		parent.ResumeAfterFork();
+	}
+	
 	void spawn_process( const plus::string& program_args )
 	{
 		plus::var_string arg_string = program_args;
@@ -220,20 +238,7 @@ namespace Genie
 		
 		char const *const *argv = &args[ 0 ];
 		
-		Process& parent = GetInitProcess();
-		
-		Process& external = parent.vfork();
-		
-		try
-		{
-			(void) external.Exec( argv[ 0 ], argv, NULL );
-		}
-		catch ( ... )
-		{
-			global_processes.at( external.GetPID() ).reset();
-		}
-		
-		parent.ResumeAfterFork();
+		spawn_process( argv[ 0 ], argv, NULL );
 	}
 	
 }
