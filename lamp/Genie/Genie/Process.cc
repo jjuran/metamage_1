@@ -1119,6 +1119,8 @@ namespace Genie
 	
 	void Process::UsurpParent( int exit_status )
 	{
+		Process& child = *this;
+		
 		Process& parent = GetProcess( GetPPID() );
 		
 		ASSERT( itsLifeStage == kProcessStarting );
@@ -1128,17 +1130,17 @@ namespace Genie
 		
 		ASSERT( parent.itsSchedule == kProcessFrozen );
 		
-		itsLifeStage       = kProcessLive;
-		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessRunning;
+		child.itsLifeStage       = kProcessLive;
+		child.itsInterdependence = kProcessIndependent;
+		child.itsSchedule        = kProcessRunning;
 		
-		itsThread = parent.itsThread;
+		child.itsThread = parent.itsThread;
 		
-		ASSERT( its_pb.cleanup == NULL );
+		ASSERT( child.its_pb.cleanup == NULL );
 		
 		using std::swap;
 		
-		swap( its_pb.cleanup, parent.its_pb.cleanup );
+		swap( child.its_pb.cleanup, parent.its_pb.cleanup );
 		
 		parent.Exit( exit_status );
 	}
