@@ -1215,16 +1215,23 @@ namespace Genie
 		
 		Ped::AdjustSleepForActivity();
 		
-		if ( !Forked() )
+		if ( gCurrentProcess != this )
 		{
-			n::owned< N::ThreadID > savedThreadID = itsThread;
-			
-			gCurrentProcess = NULL;
-			
-			global_parameter_block.current_user = NULL;
-			
-			// Unforked process' thread dies here
+			return;
 		}
+		
+		Suspend();
+		
+		/*
+			For a vforked process (with null thread) this does nothing.
+			Otherwise, reset() is safe because it swaps with a temporary
+			before destroying the thread (so the copy that doesn't get
+			nulled out when the thread terminates is on the stack).
+		*/
+		
+		itsThread.reset();
+		
+		// We get here if this is a vforked child, or fork_and_exit().
 	}
 	
 	// This function doesn't return if the process is current and not forked.
