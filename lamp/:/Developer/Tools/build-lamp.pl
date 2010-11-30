@@ -60,7 +60,7 @@ my $tmp_dir = tmpdir();
 my $unique_dir_name = "$timestamp.$$";
 my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
-my $source_tree     = "$lamp_source_dir/j";
+my $source_tree     = "$lamp_source_dir/:";
 my $build_tree      = "$user_builds_dir/$build_area";
 my $build_output    = "$build_tree/bin";
 my $lamp_builds_dir = "$user_lamp_dir/Builds";
@@ -318,7 +318,7 @@ sub install_script
 	
 	my $path_from_root = $install_path;
 	
-	$path_from_root =~ s{^ .* /j/ }{}x;
+	$path_from_root =~ s{^ .* /:/ }{}x;
 	
 	my $file = "$source_tree/$path_from_root/$name";
 	
@@ -435,7 +435,7 @@ mkdir $lamp_dist;
 
 install_program( 'Genie', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, 'j' => \%fsmap );
+create_node( $lamp_dist, ':' => \%fsmap );
 
 print "Archiving...\n";
 

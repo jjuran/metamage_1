@@ -192,7 +192,7 @@ namespace Genie
 	}
 	
 	
-	static const unsigned char* const_root_directory_name = "\p" "j";
+	static const unsigned char* const_root_directory_name = "\p" "/";
 	
 	static N::FSDirSpec FindJDirectory()
 	{
