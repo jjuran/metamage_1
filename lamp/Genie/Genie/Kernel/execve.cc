@@ -48,16 +48,6 @@ namespace Genie
 			// Start a new thread with the child's process context
 			current.Exec( path, argv, envp );
 			
-			// If we didn't fork, we're now toast.
-			
-			// A non-forked exec kills its own thread and doesn't return
-			ASSERT( forked );
-			
-			// Hope nothing bad happened while we thought we were still the child
-			
-			// Have the parent longjmp() back into vfork() and resume
-			GetProcess( current.GetPPID() ).ResumeAfterFork();
-			
 			// Not reached
 		}
 		catch ( const N::OSStatus& err )
