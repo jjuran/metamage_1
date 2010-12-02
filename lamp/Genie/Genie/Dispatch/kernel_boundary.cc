@@ -44,9 +44,11 @@ namespace Genie
 		Breathe();
 	}
 	
-	void leave_system_call( int result )
+	bool leave_system_call( int result )
 	{
 		gCurrentProcess->LeaveSystemCall();
+		
+		return false;
 	}
 	
 }
