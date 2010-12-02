@@ -1456,11 +1456,11 @@ namespace Genie
 	}
 	
 	// This function doesn't return if the process receives a fatal signal.
-	bool Process::HandlePendingSignals( Interruptibility interrupting )
+	void Process::HandlePendingSignals( Interruptibility interrupting )
 	{
 		if ( itsLifeStage > kProcessLive )
 		{
-			return false;  // Don't try to handle signals in terminated processes
+			return;  // Don't try to handle signals in terminated processes
 		}
 		
 		if ( itsAlarmClock )
@@ -1484,12 +1484,11 @@ namespace Genie
 			// Not reached
 		}
 		
-		return DeliverPendingSignals( interrupting );
+		DeliverPendingSignals( interrupting );
 	}
 	
-	bool Process::DeliverPendingSignals( Interruptibility interrupting )
+	void Process::DeliverPendingSignals( Interruptibility interrupting )
 	{
-		bool signal_delivered = false;
 		bool return_eintr = false;
 		
 		for ( int signo = 1;  GetPendingSignals() && signo < NSIG;  ++signo )
@@ -1528,8 +1527,6 @@ namespace Genie
 				
 				UnblockSignals( signal_mask );
 				
-				signal_delivered = true;
-				
 				/*
 					kInterruptUnlessRestarting == 1
 					
@@ -1563,8 +1560,6 @@ namespace Genie
 		{
 			p7::throw_errno( EINTR );
 		}
-		
-		return signal_delivered;
 	}
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.

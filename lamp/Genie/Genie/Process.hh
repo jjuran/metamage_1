@@ -150,7 +150,7 @@ namespace Genie
 			void Resume();
 			void Pause( ProcessSchedule newSchedule );
 			
-			bool DeliverPendingSignals( Interruptibility interrupting );
+			void DeliverPendingSignals( Interruptibility interrupting );
 			
 			bool WaitsForChildren() const;
 			
@@ -284,7 +284,7 @@ namespace Genie
 			void Stop();
 			void Continue();
 			
-			bool HandlePendingSignals( Interruptibility interrupting );
+			void HandlePendingSignals( Interruptibility interrupting );
 	};
 	
 	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
