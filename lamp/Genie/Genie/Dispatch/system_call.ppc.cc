@@ -33,8 +33,11 @@ namespace Genie
 		// save the system call number
 		stw		r11,56(SP)
 		
+	restart:
+		
 		// load syscall number and params as arguments
-		mr		r3,r11
+	//	mr		r3,r11
+		lwz		r3,56(SP)
 		addi	r4,SP,32
 		
 		bl		enter_system_call
@@ -85,6 +88,10 @@ namespace Genie
 		stw		r3,24(SP)
 		
 		bl		leave_system_call
+		
+		cmpi	cr0,r3,0
+		
+		bne-	cr0,restart
 		
 		// restore result
 		lwz		r3,24(SP)
