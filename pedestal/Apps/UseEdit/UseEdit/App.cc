@@ -3,6 +3,9 @@
  *	======
  */
 
+// Standard C++
+#include <algorithm>
+
 // iota
 #include "iota/convert_string.hh"
 
@@ -11,7 +14,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AERegistry.hh"
+#include "Nitrogen/CarbonEvents.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Processes.hh"
 
@@ -44,12 +47,47 @@ namespace UseEdit
 	
 	static const N::DescType typeDocument = N::DescType( 'Doc ' );
 	
+}
+
+namespace Nitrogen
+{
+	
+	template <> struct DescType_Traits< UseEdit::typeDocument > : DescType_Traits< typeWindowRef > {};
+	
+}
+
+namespace UseEdit
+{
 	
 	static DocumentContainer gDocuments;
 	
 	
 	static void StoreNewDocument( Document* doc );
 	
+	
+	static void CloseDocument( WindowRef window )
+	{
+		if ( Ped::Window* base = N::GetWRefCon( window ) )
+		{
+			base->Close( window );
+		}
+	}
+	
+	struct DocumentCloser
+	{
+		void operator()( WindowRef window ) const
+		{
+			CloseDocument( window );
+		}
+	};
+	
+	template < class Container >
+	static void CloseDocuments( const Container& container )
+	{
+		std::for_each( container.begin(),
+		               container.end(),
+		               DocumentCloser() );
+	}
 	
 	// Apple event handlers
 	
@@ -66,11 +104,12 @@ namespace UseEdit
 				case typeDocument:
 					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
 					{
-						if ( Ped::Window* base = N::GetWRefCon( window ) )
-						{
-							base->Close( window );
-						}
+						CloseDocument( window );
 					}
+					break;
+				
+				case N::typeAEList:
+					CloseDocuments( N::AEDescList_ItemDataValues< typeDocument >( token ) );
 					break;
 				
 				default:
