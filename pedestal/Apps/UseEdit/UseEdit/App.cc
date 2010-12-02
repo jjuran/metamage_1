@@ -51,19 +51,15 @@ namespace UseEdit
 	static DocumentsOwner gDocuments;
 	
 	
-	namespace
+	// Apple event handlers
+	
+	struct Close_AppleEvent
 	{
-		
-		// Apple event handlers
-		
-		void HandleCloseAppleEvent( const N::AppleEvent&  appleEvent,
-		                            N::AppleEvent&        reply,
-		                            App*                  app )
+		static void Handler( N::AppleEvent const&  event,
+		                     N::AppleEvent&        reply )
 		{
-			ASSERT( app != NULL );
-			
-			n::owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
-		                                                                      N::keyDirectObject ) );
+			n::owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
+			                                                                     N::keyDirectObject ) );
 			
 			switch ( N::DescType( token.get().descriptorType ) )
 			{
@@ -83,14 +79,20 @@ namespace UseEdit
 			}
 		}
 		
-		void HandleCountAppleEvent( const N::AppleEvent&  appleEvent,
-		                            N::AppleEvent&        reply,
-		                            App*                  app )
+		static void Install_Handler()
 		{
-			ASSERT( app != NULL );
-			
-			n::owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( appleEvent,
-		                                                                             N::keyDirectObject );
+			N::AEInstallEventHandler< Handler >( N::kAECoreSuite,
+			                                     N::kAEClose ).release();
+		}
+	};
+	
+	struct Count_AppleEvent
+	{
+		static void Handler( N::AppleEvent const&  event,
+		                     N::AppleEvent&        reply )
+		{
+			n::owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( event,
+			                                                                            N::keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
 			
@@ -101,7 +103,7 @@ namespace UseEdit
 			N::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
 			// The kind of thing we're counting, e.g. 'file'
-			N::AEObjectClass desiredClass = N::AEGetParamPtr< N::keyAEObjectClass >( appleEvent );
+			N::AEObjectClass desiredClass = N::AEGetParamPtr< N::keyAEObjectClass >( event );
 			
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
@@ -110,28 +112,40 @@ namespace UseEdit
 			                   N::AECreateDesc< N::typeUInt32 >( count ) );
 		}
 		
-		void HandleGetDataAppleEvent( const N::AppleEvent&  appleEvent,
-		                              N::AppleEvent&        reply,
-		                              App*                  app )
+		static void Install_Handler()
 		{
-			ASSERT( app != NULL );
-			
+			N::AEInstallEventHandler< Handler >( N::kAECoreSuite,
+			                                     N::kAECountElements ).release();
+		}
+	};
+	
+	struct GetData_AppleEvent
+	{
+		static void Handler( N::AppleEvent const&  event,
+		                     N::AppleEvent&        reply )
+		{
 			N::AEPutParamDesc( reply,
 			                   N::keyDirectObject,
-			                   N::GetData( N::AEResolve( N::AEGetParamDesc( appleEvent,
+			                   N::GetData( N::AEResolve( N::AEGetParamDesc( event,
 			                                                                N::keyDirectObject ) ) ) );
 		}
 		
-		void HandleOpenDocumentsAppleEvent( const N::AppleEvent&  appleEvent,
-											N::AppleEvent&        reply,
-											App*                  app )
+		static void Install_Handler()
 		{
-			ASSERT( app != NULL );
-			
+			N::AEInstallEventHandler< Handler >( N::kAECoreSuite,
+			                                     N::kAEGetData ).release();
+		}
+	};
+	
+	struct OpenDocuments_AppleEvent
+	{
+		static void Handler( N::AppleEvent const&  event,
+		                     N::AppleEvent&        reply )
+		{
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( event,
 			                                                            N::keyDirectObject,
 			                                                            N::typeAEList );
 			
@@ -143,8 +157,17 @@ namespace UseEdit
 				
 				gDocuments.OpenDocument( fileSpec );
 			}
-			
 		}
+		
+		static void Install_Handler()
+		{
+			N::AEInstallEventHandler< Handler >( N::kCoreEventClass,
+			                                     N::kAEOpenDocuments ).release();
+		}
+	};
+	
+	namespace
+	{
 		
 		// Object accessors
 		
@@ -415,11 +438,6 @@ namespace UseEdit
 	}
 	
 	App::App()
-	: 
-		itsOpenDocsHandler( InstallAppleEventHandler< HandleOpenDocumentsAppleEvent >( N::kCoreEventClass, N::kAEOpenDocuments ) ),
-		itsCloseHandler   ( InstallAppleEventHandler< HandleCloseAppleEvent   >( N::kAECoreSuite, N::kAEClose         ) ),
-		itsCountHandler   ( InstallAppleEventHandler< HandleCountAppleEvent   >( N::kAECoreSuite, N::kAECountElements ) ),
-		itsGetDataHandler ( InstallAppleEventHandler< HandleGetDataAppleEvent >( N::kAECoreSuite, N::kAEGetData       ) )
 	{
 		ASSERT( theApp == NULL );
 		
@@ -427,6 +445,12 @@ namespace UseEdit
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
+		
+		OpenDocuments_AppleEvent::Install_Handler();
+		
+		Close_AppleEvent  ::Install_Handler();
+		Count_AppleEvent  ::Install_Handler();
+		GetData_AppleEvent::Install_Handler();
 		
 		// Initialize the Object Support Library.
 		N::AEObjectInit();

@@ -117,22 +117,6 @@ namespace UseEdit
 	{
 		private:
 			static App* theApp;
-			
-			typedef void (*AEEventHandlerProcPtr)( Nitrogen::AppleEvent const&, Nitrogen::AppleEvent&, App* );
-			
-			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsCloseHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsCountHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsGetDataHandler;
-			
-			template < AEEventHandlerProcPtr proc >
-			inline
-			nucleus::owned< Nitrogen::AEEventHandler >
-			InstallAppleEventHandler( Nitrogen::AEEventClass  eventClass,
-			                          Nitrogen::AEEventID     eventID )
-			{
-				return Nitrogen::AEInstallEventHandler< App*, proc >( eventClass, eventID, this );
-			}
 		
 		public:
 			static App& Get();
