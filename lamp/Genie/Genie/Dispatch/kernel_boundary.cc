@@ -87,6 +87,17 @@ namespace Genie
 	{
 		gCurrentProcess->LeaveSystemCall();
 		
+		if ( the_caught_signal.signo )
+		{
+			const caught_signal signal = the_caught_signal;
+			
+			the_caught_signal.signo = 0;
+			
+			call_signal_handler( signal );
+			
+			return signal.action.sa_flags & SA_RESTART;
+		}
+		
 		return false;
 	}
 	
