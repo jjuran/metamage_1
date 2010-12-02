@@ -11,6 +11,7 @@
 #endif
 
 // Genie
+#include "Genie/caught_signal.hh"
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 
@@ -27,6 +28,29 @@ namespace Genie
 	
 	
 	extern class Process* gCurrentProcess;
+	
+	
+	static void call_signal_handler( const caught_signal& signal )
+	{
+		const sigset_t signo_mask = 1 << signal.signo - 1;
+		
+		sigset_t signal_mask = signal.action.sa_mask;
+		
+		if ( !(signal.action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
+		{
+			signal_mask |= signo_mask;
+		}
+		
+		gCurrentProcess->ClearPendingSignalSet( signo_mask );
+		
+		const sigset_t blocked_signals = gCurrentProcess->GetBlockedSignals();
+		
+		gCurrentProcess->BlockSignals( signal_mask );
+		
+		signal.action.sa_handler( signal.signo );
+		
+		gCurrentProcess->SetBlockedSignals( blocked_signals );
+	}
 	
 	void enter_system_call( long syscall_number, long* params )
 	{
