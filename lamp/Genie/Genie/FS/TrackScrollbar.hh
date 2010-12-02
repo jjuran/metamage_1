@@ -7,7 +7,9 @@
 #define GENIE_FILESYSTEM_TRACKSCROLLBAR_HH
 
 // Pedestal
+#ifndef PEDESTAL_TRACKSCROLLBAR_HH
 #include "Pedestal/TrackScrollbar.hh"
+#endif
 
 
 namespace Genie

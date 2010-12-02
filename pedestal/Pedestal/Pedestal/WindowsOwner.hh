@@ -16,7 +16,9 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Pedestal
+#ifndef PEDESTAL_WINDOW_HH
 #include "Pedestal/Window.hh"
+#endif
 
 
 namespace Pedestal

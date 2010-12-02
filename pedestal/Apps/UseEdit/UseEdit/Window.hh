@@ -10,7 +10,9 @@
 #include <memory>
 
 // Pedestal
+#ifndef PEDESTAL_WINDOW_HH
 #include "Pedestal/Window.hh"
+#endif
 
 
 namespace plus

@@ -7,7 +7,9 @@
 #define PEDESTAL_FRAME_HH
 
 // Pedestal
+#ifndef PEDESTAL_SUPERVIEW_HH
 #include "Pedestal/Superview.hh"
+#endif
 
 
 namespace Pedestal

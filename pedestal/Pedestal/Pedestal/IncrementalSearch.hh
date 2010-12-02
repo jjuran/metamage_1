@@ -13,7 +13,9 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Pedestal
+#ifndef PEDESTAL_QUASIMODE_HH
 #include "Pedestal/Quasimode.hh"
+#endif
 
 
 namespace plus

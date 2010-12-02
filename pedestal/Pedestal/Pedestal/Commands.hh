@@ -9,7 +9,9 @@
 #define PEDESTAL_COMMANDS_HH
 
 // Pedestal
+#ifndef PEDESTAL_COMMANDCODE_HH
 #include "Pedestal/CommandCode.hh"
+#endif
 
 
 namespace Pedestal

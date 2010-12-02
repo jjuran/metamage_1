@@ -7,7 +7,9 @@
 #define GENIE_FILESYSTEM_SCROLLERBASE_HH
 
 // Pedestal
+#ifndef PEDESTAL_SCROLLERBETA_HH
 #include "Pedestal/Scroller_beta.hh"
+#endif
 
 
 namespace Genie

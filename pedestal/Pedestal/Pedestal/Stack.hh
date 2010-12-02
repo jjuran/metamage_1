@@ -6,7 +6,9 @@
 #ifndef PEDESTAL_STACK_HH
 #define PEDESTAL_STACK_HH
 
+#ifndef PEDESTAL_VIEW_HH
 #include "Pedestal/View.hh"
+#endif
 
 
 namespace Pedestal

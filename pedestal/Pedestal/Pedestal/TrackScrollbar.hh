@@ -7,7 +7,9 @@
 #define PEDESTAL_TRACKSCROLLBAR_HH
 
 // Pedestal
+#ifndef PEDESTAL_TRACKCONTROL_HH
 #include "Pedestal/TrackControl.hh"
+#endif
 
 
 namespace Pedestal

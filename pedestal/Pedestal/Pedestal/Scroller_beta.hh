@@ -7,8 +7,12 @@
 #define PEDESTAL_SCROLLERBETA_HH
 
 // Pedestal
+#ifndef PEDESTAL_CUSTOMTECLICKLOOP_HH
 #include "Pedestal/CustomTEClickLoop.hh"
+#endif
+#ifndef PEDESTAL_SUPERVIEW_HH
 #include "Pedestal/Superview.hh"
+#endif
 
 
 namespace Pedestal

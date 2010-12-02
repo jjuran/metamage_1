@@ -12,7 +12,9 @@
 #endif
 
 // Pedestal
+#ifndef PEDESTAL_VIEW_HH
 #include "Pedestal/View.hh"
+#endif
 
 
 namespace Pedestal

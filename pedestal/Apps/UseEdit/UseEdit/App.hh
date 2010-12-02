@@ -25,8 +25,12 @@
 #include "MacFiles/Unicode.hh"
 
 // Pedestal
+#ifndef PEDESTAL_APPLICATION_HH
 #include "Pedestal/Application.hh"
+#endif
+#ifndef PEDESTAL_WINDOW_HH
 #include "Pedestal/Window.hh"
+#endif
 
 
 namespace UseEdit

@@ -12,7 +12,9 @@
 #endif
 
 // Pedestal
+#ifndef PEDESTAL_VIEW_HH
 #include "Pedestal/View.hh"
+#endif
 
 // Vertice
 #include "Vertice/Port.hh"

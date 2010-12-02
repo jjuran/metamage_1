@@ -16,7 +16,9 @@
 #include "MacFiles/Unicode.hh"
 
 // Pedestal
+#ifndef PEDESTAL_APPLICATION_HH
 #include "Pedestal/Application.hh"
+#endif
 
 
 namespace MacBinaryDecoder

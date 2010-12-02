@@ -21,7 +21,9 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Pedestal
+#ifndef PEDESTAL_COMMANDCODE_HH
 #include "Pedestal/CommandCode.hh"
+#endif
 
 
 struct EventRecord;      // Events.h

@@ -7,10 +7,18 @@
 #define PEDESTAL_TEXTEDIT_HH
 
 // Pedestal
+#ifndef PEDESTAL_COMMANDCODE_HH
 #include "Pedestal/CommandCode.hh"
+#endif
+#ifndef PEDESTAL_CUSTOMTECLICKLOOP_HH
 #include "Pedestal/CustomTEClickLoop.hh"
+#endif
+#ifndef PEDESTAL_INCREMENTALSEARCH_HH
 #include "Pedestal/IncrementalSearch.hh"
+#endif
+#ifndef PEDESTAL_SCROLLERBETA_HH
 #include "Pedestal/Scroller_beta.hh"
+#endif
 
 
 struct TERec;

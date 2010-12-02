@@ -20,7 +20,9 @@
 #endif
 
 // Pedestal
+#ifndef PEDESTAL_TEXTEDIT_HH
 #include "Pedestal/TextEdit.hh"
+#endif
 
 // Genie
 #include "Genie/FS/property.hh"

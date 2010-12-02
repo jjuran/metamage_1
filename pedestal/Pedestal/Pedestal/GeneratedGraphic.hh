@@ -12,7 +12,9 @@
 #endif
 
 // Pedestal
+#ifndef PEDESTAL_GRAPHIC_HH
 #include "Pedestal/Graphic.hh"
+#endif
 
 
 namespace Pedestal
