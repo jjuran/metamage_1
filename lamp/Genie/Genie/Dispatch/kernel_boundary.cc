@@ -65,7 +65,18 @@ namespace Genie
 			DeliverFatalSignal( SIGSTKFLT );
 		}
 		
-		Breathe();
+		try
+		{
+			Breathe();
+		}
+		catch ( const caught_signal& signal )
+		{
+			gCurrentProcess->LeaveSystemCall();
+			
+			call_signal_handler( signal );
+			
+			gCurrentProcess->EnterSystemCall();
+		}
 	}
 	
 	bool leave_system_call( int result )
