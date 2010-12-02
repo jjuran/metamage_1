@@ -17,6 +17,7 @@
 #include "OSErrno/OSErrno.hh"
 
 // Genie
+#include "Genie/caught_signal.hh"
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 
@@ -37,6 +38,12 @@ namespace Genie
 		catch ( const p7::errno_t& errnum )
 		{
 			return errnum;
+		}
+		catch ( const caught_signal& signal )
+		{
+			the_caught_signal = signal;
+			
+			return EINTR;
 		}
 		catch ( const N::OSStatus& err )
 		{
