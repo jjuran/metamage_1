@@ -29,8 +29,6 @@ namespace Genie
 			
 			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const = 0;
 			
-			FSIteratorPtr Iterate() const;
-			
 			virtual void IterateIntoCache( FSTreeCache& cache ) const = 0;
 	};
 	

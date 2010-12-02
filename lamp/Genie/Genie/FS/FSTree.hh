@@ -38,6 +38,7 @@ namespace Genie
 	typedef int OpenFlags;
 	
 	class FSTree;
+	class FSTreeCache;
 	class FSIterator;
 	
 	typedef boost::intrusive_ptr< FSTree const > FSTreePtr;
@@ -173,7 +174,9 @@ namespace Genie
 			
 			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
-			virtual FSIteratorPtr Iterate() const;
+			FSIteratorPtr Iterate() const;
+			
+			virtual void IterateIntoCache( FSTreeCache& cache ) const;
 			
 			// Internal methods
 			

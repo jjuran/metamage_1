@@ -27,6 +27,7 @@
 #include "TimeOff/TimeOff.hh"
 
 // Genie
+#include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
 
@@ -38,6 +39,35 @@ namespace Genie
 	
 	
 	const FSTreePtr null_FSTreePtr = FSTreePtr();
+	
+	
+	typedef boost::shared_ptr< const FSTreeCache > FSTreeCachePtr;
+	
+	class FSIterator_Cache : public FSIterator
+	{
+		private:
+			FSTreeCachePtr  contents;
+			std::size_t     nextOffset;
+		
+		public:
+			FSIterator_Cache( const FSTreeCachePtr& cache ) : contents( cache ), nextOffset( 0 )  {}
+			
+			FSNode Get() const
+			{
+				const FSTreeCache_Impl* impl = static_cast< const FSTreeCache_Impl* >( contents.get() );
+				
+				return nextOffset < impl->size() ? impl->at( nextOffset )
+				                                 : FSNode();
+			}
+			
+			void Advance()  { ++nextOffset; }
+			
+			void Rewind()  { nextOffset = 0; }
+			
+			void Seek( off_t index )  { nextOffset = index; }
+			
+			off_t Tell() const  { return nextOffset; }
+	};
 	
 	
 	FSNode::~FSNode()
@@ -334,7 +364,25 @@ namespace Genie
 	
 	FSIteratorPtr FSTree::Iterate() const
 	{
-		throw p7::errno_t( ENOENT );
+		FSTreeCache_Impl cache;
+		
+		cache.push_back( FSNode( Inode(),       "."  ) );
+		cache.push_back( FSNode( ParentInode(), ".." ) );
+		
+		IterateIntoCache( cache );
+		
+		FSTreeCache_Impl* newCache = new FSTreeCache_Impl();
+		
+		FSTreeCachePtr cachePtr( newCache );
+		
+		swap( cache, *newCache );
+		
+		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
+	}
+	
+	void FSTree::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		throw p7::errno_t( ENOTDIR );
 	}
 	
 	FSTreePtr FSTree::ResolvePath( const char*& begin, const char* end ) const
