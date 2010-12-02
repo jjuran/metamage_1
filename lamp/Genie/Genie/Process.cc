@@ -66,6 +66,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
@@ -1490,23 +1491,11 @@ namespace Genie
 				return false;
 			}
 			
-			const struct sigaction action = GetSignalAction( signo );
-			
 			const sigset_t signo_mask = 1 << signo - 1;
 			
 			if ( active_signals & signo_mask )
 			{
-				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
-				{
-					ResetSignalAction( signo );
-				}
-				
-				sigset_t signal_mask = action.sa_mask;
-				
-				if ( !(action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
-				{
-					signal_mask |= signo_mask;
-				}
+				const struct sigaction& action = GetSignalAction( signo );
 				
 				typedef void (*signal_handler_t)(int);
 				
@@ -1515,43 +1504,21 @@ namespace Genie
 				ASSERT( handler != SIG_IGN );
 				ASSERT( handler != SIG_DFL );
 				
-				ClearPendingSignalSet( signo_mask );
-				
-				BlockSignals( signal_mask );
-				
-				// (a) Account for time spent in signal handler as user time
-				// (b) System time is accrued in the event of [sig]longjmp()
-				LeaveSystemCall();
-				
-				call_signal_handler( handler, signo );
-				
-				EnterSystemCall();
-				
-				UnblockSignals( signal_mask );
-				
-				/*
-					kInterruptUnlessRestarting == 1
-					
-					interrupting   interrupting - kInterruptUnlessRestarting
-					------------   -----------------------------------------
-					0 (never)      -1
-					1 (unless)     0
-					2 (always)     1
-					
-					interrupting                restartable   relation   interrupt
-					------------                -----------   --------   ---------
-					kInterruptAlways            x             x <= 1     true
-					kInterruptUnlessRestarting  false         0 <= 0     true
-					kInterruptUnlessRestarting  true          1 <= 0     false
-					kInterruptNever,            x             x <= -1    false
-				*/
-				
 				signal_was_caught = true;
 				
-				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
+				if ( interrupting == kInterruptNever )
 				{
-					return_eintr = true;
+					continue;
 				}
+				
+				const caught_signal caught = { signo, action };
+				
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
+				{
+					ResetSignalAction( signo );
+				}
+				
+				throw caught;
 			}
 		}
 		
