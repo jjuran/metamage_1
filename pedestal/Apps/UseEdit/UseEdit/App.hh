@@ -92,26 +92,6 @@ namespace UseEdit
 			void DeleteElementByID( UInt32 id );
 	};
 	
-	class DocumentsOwner
-	{
-		private:
-			DocumentContainer                                     itsDocuments;
-			boost::intrusive_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
-			
-			void StoreNewDocument( Document* doc );
-		
-		public:
-			DocumentsOwner();
-			~DocumentsOwner();
-			
-			void CloseDocument( WindowRef window );
-			
-			DocumentContainer& Documents()  { return itsDocuments; }
-			
-			void NewWindow();
-			void OpenDocument( const Io_Details::file_spec& file );
-	};
-	
 	
 	class App : public Pedestal::Application
 	{

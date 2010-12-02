@@ -48,7 +48,10 @@ namespace UseEdit
 	static const N::DescType typeDocument = N::DescType( 'Doc ' );
 	
 	
-	static DocumentsOwner gDocuments;
+	static DocumentContainer gDocuments;
+	
+	
+	static void StoreNewDocument( Document* doc );
 	
 	
 	// Apple event handlers
@@ -155,7 +158,7 @@ namespace UseEdit
 			{
 				Io_Details::file_spec fileSpec = *it;
 				
-				gDocuments.OpenDocument( fileSpec );
+				StoreNewDocument( new Document( fileSpec ) );
 			}
 		}
 		
@@ -212,22 +215,20 @@ namespace UseEdit
 		                                             const N::AEDesc_Data&   keyData,
 		                                             N::RefCon )
 		{
-			const DocumentContainer& docs( gDocuments.Documents() );
-			
 			if ( keyForm == N::formUniqueID )
 			{
-				return docs.GetElementByID( N::AEGetDescData< N::typeUInt32 >( keyData ) );
+				return gDocuments.GetElementByID( N::AEGetDescData< N::typeUInt32 >( keyData ) );
 			}
 			
 			if ( keyForm == N::formAbsolutePosition )
 			{
-				std::size_t count = docs.CountElements();
+				std::size_t count = gDocuments.CountElements();
 				
 				UInt32 index = N::ComputeAbsoluteIndex( keyData, count );
 				
 				if ( index > 0 )
 				{
-					return docs.GetElementByIndex( index );
+					return gDocuments.GetElementByIndex( index );
 				}
 				
 				// All documents
@@ -237,7 +238,7 @@ namespace UseEdit
 				{
 					N::AEPutDesc( list,
 					              0,
-					              docs.GetElementByIndex( i ) );
+					              gDocuments.GetElementByIndex( i ) );
 				}
 				
 				return list;
@@ -263,7 +264,7 @@ namespace UseEdit
 		{
 			UInt32 id = N::AEGetDescData< N::typeUInt32 >( containerToken, typeDocument );
 			
-			const Document& document = gDocuments.Documents().GetDocumentByID( id );
+			const Document& document = gDocuments.GetDocumentByID( id );
 			
 			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
@@ -282,7 +283,7 @@ namespace UseEdit
 		                        N::AEObjectClass        containerClass,
 		                        const N::AEDesc_Token&  containerToken )
 		{
-			return gDocuments.Documents().CountElements();
+			return gDocuments.CountElements();
 		}
 		
 		static void Install()
@@ -429,42 +430,20 @@ namespace UseEdit
 		public:
 			void operator()( WindowRef window ) const
 			{
-				gDocuments.CloseDocument( window );
+				gDocuments.DeleteElementByID( (UInt32) window );  // reinterpret_cast
 			}
 	};
 	
+	static boost::intrusive_ptr< Pedestal::WindowCloseHandler > gDocumentCloseHandler = new DocumentCloseHandler;
 	
 	
-	DocumentsOwner::DocumentsOwner() : itsCloseHandler( new DocumentCloseHandler() )
-	{
-	}
-	
-	DocumentsOwner::~DocumentsOwner()
-	{
-	}
-	
-	void DocumentsOwner::CloseDocument( WindowRef window )
-	{
-		itsDocuments.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
-	}
-	
-	void DocumentsOwner::StoreNewDocument( Document* doc )
+	static void StoreNewDocument( Document* doc )
 	{
 		boost::intrusive_ptr< Document > document( doc );
 		
-		document->GetWindow().SetCloseHandler( itsCloseHandler );
+		document->GetWindow().SetCloseHandler( gDocumentCloseHandler );
 		
-		itsDocuments.StoreNewElement( document );
-	}
-	
-	void DocumentsOwner::NewWindow()
-	{
-		StoreNewDocument( new Document );
-	}
-	
-	void DocumentsOwner::OpenDocument( const Io_Details::file_spec& file )
-	{
-		StoreNewDocument( new Document( file ) );
+		gDocuments.StoreNewElement( document );
 	}
 	
 	App& App::Get()
@@ -483,7 +462,7 @@ namespace UseEdit
 	
 	static bool NewDocument( Ped::CommandCode )
 	{
-		gDocuments.NewWindow();
+		StoreNewDocument( new Document );
 		
 		return true;
 	}
