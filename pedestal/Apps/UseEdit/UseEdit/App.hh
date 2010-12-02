@@ -95,12 +95,7 @@ namespace UseEdit
 	
 	class App : public Pedestal::Application
 	{
-		private:
-			static App* theApp;
-		
 		public:
-			static App& Get();
-			
 			App();
 			~App();
 	};

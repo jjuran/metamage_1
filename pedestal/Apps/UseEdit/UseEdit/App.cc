@@ -42,9 +42,6 @@ namespace UseEdit
 	namespace Ped = Pedestal;
 	
 	
-	App* App::theApp = NULL;
-	
-	
 	static const N::DescType typeDocument = N::DescType( 'Doc ' );
 	
 	
@@ -446,13 +443,6 @@ namespace UseEdit
 		gDocuments.StoreNewElement( document );
 	}
 	
-	App& App::Get()
-	{
-		ASSERT( theApp != NULL );
-		
-		return *theApp;
-	}
-	
 	static bool About( Ped::CommandCode )
 	{
 		Ped::ShowAboutBox();
@@ -469,10 +459,6 @@ namespace UseEdit
 	
 	App::App()
 	{
-		ASSERT( theApp == NULL );
-		
-		theApp = this;
-		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
