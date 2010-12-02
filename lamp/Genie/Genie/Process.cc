@@ -1480,8 +1480,6 @@ namespace Genie
 	{
 		bool signal_was_caught = false;
 		
-		bool return_eintr = false;
-		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
 			const sigset_t active_signals = GetPendingSignals() & ~GetBlockedSignals();
@@ -1520,11 +1518,6 @@ namespace Genie
 				
 				throw caught;
 			}
-		}
-		
-		if ( return_eintr )
-		{
-			p7::throw_errno( EINTR );
 		}
 		
 		return signal_was_caught;
