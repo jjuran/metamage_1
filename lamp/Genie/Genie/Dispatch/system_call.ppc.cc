@@ -82,12 +82,12 @@ namespace Genie
 		bctrl
 		
 		// save result
-		stw		r3,32(SP)
+		stw		r3,24(SP)
 		
 		bl		leave_system_call
 		
 		// restore result
-		lwz		r3,32(SP)
+		lwz		r3,24(SP)
 		
 		// deallocate our stack frame
 		addi	SP,SP,64
