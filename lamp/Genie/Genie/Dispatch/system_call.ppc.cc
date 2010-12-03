@@ -23,12 +23,12 @@ namespace Genie
 		stwu	SP,-64(SP)
 		
 		// save up to 6 parameters
-		stw		r3,32(SP)
-		stw		r4,36(SP)
-		stw		r5,40(SP)
-		stw		r6,44(SP)
-		stw		r7,48(SP)
-		stw		r8,52(SP)
+		stw		r5,32(SP)
+		stw		r6,36(SP)
+		stw		r7,40(SP)
+		stw		r8,44(SP)
+		stw		r3,48(SP)
+		stw		r4,52(SP)
 		
 		// save the system call number
 		stw		r11,56(SP)
@@ -43,12 +43,12 @@ namespace Genie
 		lwz		r11,56(SP)
 		
 		// restore parameters
-		lwz		r3,32(SP)
-		lwz		r4,36(SP)
-		lwz		r5,40(SP)
-		lwz		r6,44(SP)
-		lwz		r7,48(SP)
-		lwz		r8,52(SP)
+		lwz		r5,32(SP)
+		lwz		r6,36(SP)
+		lwz		r7,40(SP)
+		lwz		r8,44(SP)
+		lwz		r3,48(SP)
+		lwz		r4,52(SP)
 		
 		// r11 contains the requested system call number
 		// r3-r8 are up to 6 arguments
