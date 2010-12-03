@@ -13,8 +13,6 @@
 namespace Genie
 {
 	
-	extern "C" void* global_parameter_block;
-	
 #ifdef __MC68K__
 	
 	asm void dispatch_68k_system_call( ... )
@@ -32,8 +30,6 @@ namespace Genie
 		
 		MOVE.L	(SP),D0  ; // restore D0
 		
-		UNLK	A6
-		
 		CMP.W	gLastSystemCall,D0
 		BLT		in_range
 		
@@ -49,21 +45,16 @@ namespace Genie
 		MOVEA.L	(A0,D0.W),A0
 	#endif
 		
-		MOVEA.L	(SP),A4  // save the caller's return address to A4
+		MOVE.L	28(A6),-(SP)
+		MOVE.L	24(A6),-(SP)
+		MOVE.L	20(A6),-(SP)
+		MOVE.L	16(A6),-(SP)
+		MOVE.L	12(A6),-(SP)
+		MOVE.L	 8(A6),-(SP)
 		
-		ADDQ	#4,SP
-		PEA		cleanup  // install our own return address
+		JSR		(A0)
 		
-		JMP		(A0)
-		
-	cleanup:
-		MOVE.L	A4,-(SP)  // restore caller's return address
-		
-		MOVEA.L	global_parameter_block,A1  // user pb
-		
-		MOVEA.L	16(A1),A4  // restore A4 from user_pb.globals
-		
-		LINK	A6,#0
+		ADDA.L	#24,SP
 		
 		MOVE.L	D0,-(SP)  // save D0
 		

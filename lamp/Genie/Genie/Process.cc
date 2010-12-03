@@ -1064,10 +1064,12 @@ namespace Genie
 		
 		ASSERT( itsForkedChildPID != 0 );
 		
+		const int depth = 4 + TARGET_CPU_68K;
+		
 		using recall::get_stack_frame_pointer;
 		
-		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(   );
-		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( 4 );
+		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(       );
+		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( depth );
 		
 		// Stack grows down
 		const bool stack_fault = stack_fp > vfork_fp;
