@@ -1201,6 +1201,11 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
+		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
+		{
+			DumpBacktrace();
+		}
+		
 		itsLifeStage = kProcessTerminating;
 		itsSchedule  = kProcessUnscheduled;
 		
@@ -1273,11 +1278,6 @@ namespace Genie
 	void Process::Terminate( int wait_status )
 	{
 		itsResult = wait_status;
-		
-		if ( WCOREDUMP( wait_status )  &&  itMayDumpCore )
-		{
-			DumpBacktrace();
-		}
 		
 		Terminate();
 	}
