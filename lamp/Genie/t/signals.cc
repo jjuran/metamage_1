@@ -9,7 +9,11 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/socket.h>
 #include <sys/wait.h>
+
+// Lamp
+#include "lamp/sched.h"
 
 // iota
 #include "iota/strings.hh"
@@ -19,7 +23,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 1 * 3 + 2 + 1;
+static const unsigned n_tests = 1 * 3 + 2 + 1 + 3;
 
 
 using tap::ok_if;
@@ -29,6 +33,32 @@ using tap::ok_if;
 #define vfork() fork()
 #endif
 
+static pid_t clone( int (*f)(void*), void* param )
+{
+#ifdef __LAMP__
+	
+	return _lamp_clone( f, NULL, 0, CLONE_VM, param );
+	
+#else
+	
+	pid_t child = CHECK( fork() );
+	
+	if ( child == 0 )
+	{
+		_exit( f( param ) );
+	}
+	
+	return child;
+	
+#endif
+}
+
+static volatile sig_atomic_t global_count = 0;
+
+static void increment( int )
+{
+	++global_count;
+}
 
 static void not_handler( int )
 {
@@ -157,6 +187,66 @@ static void ignored_not_pending()
 	ok_if( !is_pending( SIGUSR1 ) );
 }
 
+static ssize_t n_read = -123;
+
+static int read_fd( void* fds_ )
+{
+	int* fds = (int*) fds_;
+	
+	CHECK( close( fds[1] ) );
+	
+	const struct sigaction action = { increment, sigset_t(), SA_RESTART };
+	
+	CHECK( sigaction( SIGUSR1, &action, NULL ) );
+	
+	char buffer[ 8 ];
+	
+	n_read = read( fds[0], buffer, sizeof buffer );
+	
+	CHECK( write( fds[0], n_read < 0 ? "-" : "+", 1 ) );
+	
+	return n_read < 0;
+}
+
+static void restart()
+{
+	unblock_signals();
+	
+	int pair[2];
+	
+	CHECK( socketpair( PF_LOCAL, SOCK_STREAM, 0, pair ) );
+	
+	const pid_t child_pid = CHECK( clone( read_fd, pair ) );
+	
+	CHECK( write( pair[0], "0", 1 ) );
+	
+	sleep( 0 );
+	
+	CHECK( kill( child_pid, SIGUSR1 ) );
+	
+	sleep( 0 );
+	
+	char buffer[ 8 ];
+	
+	ssize_t n_read = CHECK( read( pair[1], buffer, sizeof buffer ) );
+	
+	ok_if( n_read == 1 );
+	
+	CHECK( shutdown( pair[1], SHUT_WR ) );
+	
+	sleep( 0 );
+	
+	n_read = CHECK( read( pair[1], buffer, 1 ) );
+	
+	ok_if( n_read == 1 );
+	
+	ok_if( buffer[0] == '+' );
+	
+	int wait_status = -1;
+	
+	CHECK( waitpid( child_pid, &wait_status, 0 ) );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -168,6 +258,8 @@ int main( int argc, char** argv )
 	
 	discarded_pending();
 	ignored_not_pending();
+	
+	restart();
 	
 	return 0;
 }
