@@ -58,21 +58,34 @@ static void SetVariables()
 	
 	setenv( "PATH", path, 0 );
 	
-	chdir( "/sys/mac/user/home" );
-	
 	char path_buffer[ 4096 ];
 	
-	ssize_t size = _readlink( "/sys/mac/user/home", path_buffer, sizeof path_buffer - 1 );
+	ssize_t size = _readlink( "/sys/mac/user/prefs/MacRelix/Home",
+	                          path_buffer,
+	                          sizeof path_buffer - 1 );
+	
+	const char* home;
 	
 	if ( size < 0 )
 	{
-		more::perror( "login: /sys/mac/user/home" );
+		home = "/home/jr";
 	}
 	else
 	{
 		path_buffer[ size ] = '\0';
 		
-		setenv( "HOME", path_buffer, 0 );
+		home = path_buffer;
+	}
+	
+	int changed = chdir( home );
+	
+	if ( changed < 0 )
+	{
+		more::perror( "login: chdir", home );
+	}
+	else
+	{
+		setenv( "HOME", home, 0 );
 	}
 }
 
