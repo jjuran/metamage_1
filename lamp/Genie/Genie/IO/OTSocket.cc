@@ -194,7 +194,7 @@ namespace Genie
 			// Hack to make sure we don't get starved for events
 			Ped::AdjustSleepForTimer( 4 );
 			
-			Yield( kInterruptAlways );
+			Yield( kInterruptUnlessRestarting );
 		}
 		
 		if ( err_count == kOTLookErr )
