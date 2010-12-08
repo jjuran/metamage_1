@@ -28,28 +28,30 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static pascal void YieldingNotifier( void*        context,
-	                                     OTEventCode  code,
-	                                     OTResult     result,
-	                                     void*        cookie )
+	struct netdb_provider_data
 	{
+		OTEventCode  code;
+		OTResult     result;
+	};
+	
+	static pascal void netdb_notifier( void*        context,
+	                                   OTEventCode  code,
+	                                   OTResult     result,
+	                                   void*        cookie )
+	{
+		netdb_provider_data* data = (netdb_provider_data*) context;
+		
+		if ( data == NULL )
+		{
+			return;
+		}
+		
 		switch ( code )
 		{
-			case kOTSyncIdleEvent:
-				try
-				{
-					Yield( kInterruptNever );  // FIXME
-				}
-				catch ( ... )
-				{
-				}
-				
-				break;
-			
-			case kOTProviderWillClose:
-				break;
-			
-			case kOTProviderIsClosed:
+			case T_DNRSTRINGTOADDRCOMPLETE:
+			case T_DNRMAILEXCHANGECOMPLETE:
+				data->code   = code;
+				data->result = result;
 				break;
 			
 			default:
@@ -58,15 +60,15 @@ namespace Genie
 	}
 	
 	
-	static n::owned< InetSvcRef > InternetServices()
+	static n::owned< InetSvcRef > InternetServices( netdb_provider_data& data )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
+		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( netdb_notifier );
 		
 		n::owned< N::InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
-		N::OTInstallNotifier( provider, gNotifyUPP, NULL );
+		N::OTInstallNotifier( provider, gNotifyUPP, &data );
 		
-		N::OTUseSyncIdleEvents( provider, true );
+		N::OTSetAsynchronous( provider );
 		
 		return provider;
 	}
@@ -78,9 +80,25 @@ namespace Genie
 		{
 			OpenTransportShare sharedOpenTransport;
 			
-			return ::OTInetStringToAddress( InternetServices(),
-			                                name,
-			                                result );
+			netdb_provider_data data = { 0 };
+			
+			n::owned< InetSvcRef > services = InternetServices( data );
+			
+			const OSStatus err = ::OTInetStringToAddress( services,
+			                                              name,
+			                                              result );
+			
+			if ( err != noErr )
+			{
+				return err;
+			}
+			
+			while ( data.code == 0 )
+			{
+				Yield( kInterruptUnlessRestarting );
+			}
+			
+			return data.result;
 		}
 		catch ( ... )
 		{
@@ -94,10 +112,26 @@ namespace Genie
 		{
 			OpenTransportShare sharedOpenTransport;
 			
-			return ::OTInetMailExchange( InternetServices(),
-			                             domain,
-			                             count,
-			                             result );
+			netdb_provider_data data = { 0 };
+			
+			n::owned< InetSvcRef > services = InternetServices( data );
+			
+			const OSStatus err = ::OTInetMailExchange( services,
+			                                           domain,
+			                                           count,
+			                                           result );
+			
+			if ( err != noErr )
+			{
+				return err;
+			}
+			
+			while ( data.code == 0 )
+			{
+				Yield( kInterruptUnlessRestarting );
+			}
+			
+			return data.result;
 		}
 		catch ( ... )
 		{
