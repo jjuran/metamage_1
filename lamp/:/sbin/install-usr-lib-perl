@@ -2,14 +2,9 @@
 
 set -e
 
-test -n "$HOME" || echo "$0: HOME is not defined"
-test -n "$HOME" || exit 1
-test -d "$HOME" || echo "$0: $HOME doesn't exist"
-test -d "$HOME" || exit 1
-
-library="$HOME/Library"
+library="/sys/mac/user/prefs/.."
 support="$library/Application Support"
-lamp="$support/Lamp"
+lamp="$support/MacRelix"
 usr="$lamp/usr"
 lib="$usr/lib"
 
