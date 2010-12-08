@@ -69,7 +69,7 @@ namespace Genie
 		
 		try
 		{
-			Breathe();
+			Breathe( true );
 		}
 		catch ( const caught_signal& signal )
 		{
