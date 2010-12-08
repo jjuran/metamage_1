@@ -242,24 +242,28 @@ namespace Genie
 	
 	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
 	{
-		retry:
+		const char* p = data;
+		
+		std::size_t n_written = 0;
+		
+	retry:
 		
 		try
 		{
-			ssize_t sent = N::OTSnd( itsEndpoint, data, byteCount );
+			const ssize_t sent = N::OTSnd( itsEndpoint,
+			                               data      + n_written,
+			                               byteCount - n_written );
 			
-			if ( sent < byteCount  &&  !IsNonblocking() )
+			n_written += sent;
+			
+			if ( n_written < byteCount  &&  !IsNonblocking() )
 			{
-				data += sent;
-				
-				byteCount -= sent;
-				
 				Yield( kInterruptNever );
 				
 				goto retry;
 			}
 			
-			return sent;
+			return n_written;
 		}
 		catch ( const N::OSStatus& err )
 		{
