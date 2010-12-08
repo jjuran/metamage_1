@@ -4,17 +4,29 @@
 
 -d '/usr/lib/perl' and exit;
 
-if ( defined $ENV{HOME} )
+sub check
 {
-	my $usr_lib_perl = "$ENV{HOME}/Library/Application Support/Lamp/usr/lib/perl";
+	my ( $path ) = @_;
 	
-	if ( -d $usr_lib_perl )
+	if ( -d $path )
 	{
-		symlink( $usr_lib_perl, '/usr/lib/perl' ) or die "symlink: $!\n";
+		symlink( $path, '/usr/lib/perl' ) or die "symlink: $!\n";
 		
 		exit;
 	}
 }
+
+sub check_library
+{
+	my ( $path ) = @_;
+	
+	check( "$path/Application Support/MacRelix/usr/lib/perl" );
+	check( "$path/Application Support/Lamp/usr/lib/perl"     );
+}
+
+check_library( "$ENV{HOME}/Library" )  if defined $ENV{HOME};
+
+check_library( "/sys/mac/user/prefs/.." );
 
 print "Run '/sbin/install-usr-lib-perl' to install the perl library.\n\n"
 
