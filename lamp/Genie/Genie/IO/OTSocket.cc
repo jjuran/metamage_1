@@ -134,7 +134,7 @@ namespace Genie
 	{
 		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
 		{
-			Yield( kInterruptAlways );
+			Yield( kInterruptUnlessRestarting );
 			
 			Listen( itsBacklog );
 			
