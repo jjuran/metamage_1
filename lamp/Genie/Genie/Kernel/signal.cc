@@ -102,9 +102,6 @@ namespace Genie
 			           : pid == -1 ? kill_pgid( 0,                 signo )
 			           :             kill_pgid( -pid,              signo );
 			
-			// In case we signalled ourself
-			current.HandlePendingSignals( kInterruptNever );
-			
 			return result;
 		}
 		catch ( ... )
