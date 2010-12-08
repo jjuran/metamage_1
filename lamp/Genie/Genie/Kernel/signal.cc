@@ -104,13 +104,13 @@ namespace Genie
 			
 			// In case we signalled ourself
 			current.HandlePendingSignals( kInterruptNever );
+			
+			return result;
 		}
 		catch ( ... )
 		{
 			return set_errno_from_exception();
 		}
-		
-		return 0;
 	}
 	
 	
