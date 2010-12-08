@@ -236,7 +236,16 @@ int mkstemp( char* name )
 
 int raise( int sig )
 {
-	return kill( getpid(), sig );
+	const int killed = kill( getpid(), sig );
+	
+	if ( killed < 0 )
+	{
+		// Invalid signal number
+		return killed;
+	}
+	
+	// Allow signals to be delivered
+	return kill( 1, 0 );
 }
 
 int system( const char* command )
