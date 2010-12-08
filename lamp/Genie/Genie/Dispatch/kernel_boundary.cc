@@ -65,6 +65,8 @@ namespace Genie
 			DeliverFatalSignal( SIGSTKFLT );
 		}
 		
+	rebreathe:
+		
 		try
 		{
 			Breathe();
@@ -76,6 +78,8 @@ namespace Genie
 			call_signal_handler( signal );
 			
 			gCurrentProcess->EnterSystemCall();
+			
+			goto rebreathe;
 		}
 	}
 	
