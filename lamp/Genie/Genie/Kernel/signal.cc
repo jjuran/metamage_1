@@ -208,11 +208,18 @@ namespace Genie
 			current.SetBlockedSignals( *sigmask );
 		}
 		
-		current.Raise( SIGSTOP );
+		try
+		{
+			current.Stop();
+		}
+		catch ( ... )
+		{
+			(void) set_errno_from_exception();
+		}
 		
 		current.SetBlockedSignals( previous );
 		
-		return 0;
+		return set_errno( EINTR );
 	}
 	
 	
