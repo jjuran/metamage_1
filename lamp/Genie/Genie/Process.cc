@@ -77,6 +77,7 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
+#include "Genie/signal_traits.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/userland.hh"
@@ -1495,12 +1496,35 @@ namespace Genie
 			{
 				const struct sigaction& action = GetSignalAction( signo );
 				
-				typedef void (*signal_handler_t)(int);
+				if ( action.sa_handler == SIG_IGN )
+				{
+					continue;
+				}
 				
-				const signal_handler_t handler = action.sa_handler;
-				
-				ASSERT( handler != SIG_IGN );
-				ASSERT( handler != SIG_DFL );
+				if ( action.sa_handler == SIG_DFL )
+				{
+					const signal_traits traits = global_signal_traits[ signo ];
+					
+					switch ( traits & signal_default_action_mask )
+					{
+						case signal_discard:
+							break;
+						
+						case signal_terminate:
+							Terminate( signo | traits & signal_core );
+							break;
+						
+						case signal_stop:
+							Stop();
+							break;
+						
+						case signal_continue:
+							Continue();
+							break;
+					}
+					
+					continue;
+				}
 				
 				signal_was_caught = true;
 				
