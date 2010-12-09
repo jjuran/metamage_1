@@ -41,6 +41,7 @@
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
@@ -49,16 +50,16 @@ namespace Genie
 	class OTSocket : public SocketHandle
 	{
 		private:
-			OpenTransportShare                       itsOpenTransport;
-			nucleus::owned< Nitrogen::EndpointRef >  itsEndpoint;
-			int                                      itsBacklog;
-			SocketAddress                            itsSocketAddress;
-			SocketAddress                            itsPeerAddress;
-			bool                                     itIsBound;
-			bool                                     itIsListener;
-			bool                                     itHasSentFIN;
-			bool                                     itHasReceivedFIN;
-			bool                                     itHasReceivedRST;
+			OpenTransportShare       itsOpenTransport;
+			n::owned< EndpointRef >  itsEndpoint;
+			int                      itsBacklog;
+			SocketAddress            itsSocketAddress;
+			SocketAddress            itsPeerAddress;
+			bool                     itIsBound;
+			bool                     itIsListener;
+			bool                     itHasSentFIN;
+			bool                     itHasReceivedFIN;
+			bool                     itHasReceivedRST;
 		
 		public:
 			OTSocket( bool nonblocking = false );
@@ -75,8 +76,6 @@ namespace Genie
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			//void IOCtl( unsigned long request, int* argp );
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			
@@ -142,7 +141,7 @@ namespace Genie
 		}
 	}
 	
-	static void SetUpEndpoint( N::EndpointRef endpoint )
+	static void SetUpEndpoint( EndpointRef endpoint )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
@@ -158,14 +157,16 @@ namespace Genie
 		N::OTUseSyncIdleEvents( endpoint, true );
 	}
 	
-	OTSocket::OTSocket( bool nonblocking ) : SocketHandle( nonblocking ),
-	                                         itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
-	                                         itsBacklog(),
-	                                         itIsBound       ( false ),
-	                                         itIsListener    ( false ),
-	                                         itHasSentFIN    ( false ),
-	                                         itHasReceivedFIN( false ),
-	                                         itHasReceivedRST( false )
+	OTSocket::OTSocket( bool nonblocking )
+	:
+		SocketHandle( nonblocking ),
+		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+		itsBacklog(),
+		itIsBound       ( false ),
+		itIsListener    ( false ),
+		itHasSentFIN    ( false ),
+		itHasReceivedFIN( false ),
+		itHasReceivedRST( false )
 	{
 		SetUpEndpoint( itsEndpoint );
 	}
