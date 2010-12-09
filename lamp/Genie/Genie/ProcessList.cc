@@ -146,13 +146,6 @@ namespace Genie
 		return *init;
 	}
 	
-	static void* kill_process( void*, pid_t, Process& process )
-	{
-		process.Raise( SIGKILL );
-		
-		return NULL;
-	}
-	
 	void kill_all_processes()
 	{
 		Process_Table().swap( global_processes );
