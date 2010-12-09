@@ -242,6 +242,13 @@ namespace Genie
 	
 	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
 	{
+		if ( itHasSentFIN )
+		{
+			CurrentProcess().Raise( SIGPIPE );
+			
+			p7::throw_errno( EPIPE );
+		}
+		
 		const char* p = data;
 		
 		std::size_t n_written = 0;
@@ -290,13 +297,7 @@ namespace Genie
 					case T_DISCONNECT:
 						ReceiveDisconnect();
 						
-						{
-							Process& current = CurrentProcess();
-							
-							current.Raise( SIGPIPE );
-						}
-						
-						p7::throw_errno( EPIPE );
+						p7::throw_errno( ECONNRESET );
 						
 					case T_ORDREL:
 						ReceiveOrderlyDisconnect();
