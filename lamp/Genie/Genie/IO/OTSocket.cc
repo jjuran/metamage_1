@@ -55,10 +55,12 @@ namespace Genie
 	{
 		private:
 			OpenTransportShare       itsOpenTransport;
-			n::owned< EndpointRef >  itsEndpoint;
 			int                      itsBacklog;
 			SocketAddress            itsSocketAddress;
 			SocketAddress            itsPeerAddress;
+		
+		public:
+			n::owned< EndpointRef >  itsEndpoint;
 			bool                     itIsBound;
 			bool                     itIsListener;
 			bool                     itHasSentFIN;
@@ -160,8 +162,8 @@ namespace Genie
 	OTSocket::OTSocket( bool nonblocking )
 	:
 		SocketHandle( nonblocking ),
-		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 		itsBacklog(),
+		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 		itIsBound       ( false ),
 		itIsListener    ( false ),
 		itHasSentFIN    ( false ),
