@@ -177,10 +177,6 @@ namespace Genie
 	
 	OTSocket::~OTSocket()
 	{
-		if ( itIsBound )
-		{
-			(void) ::OTUnbind( itsEndpoint );
-		}
 	}
 	
 	void OTSocket::ReceiveDisconnect()
