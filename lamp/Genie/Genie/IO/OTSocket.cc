@@ -496,5 +496,10 @@ namespace Genie
 		itHasSentFIN = true;
 	}
 	
+	boost::shared_ptr< IOHandle > New_OT_Socket( bool nonblocking )
+	{
+		return seize_ptr( new OTSocket( nonblocking ) );
+	}
+	
 }
 

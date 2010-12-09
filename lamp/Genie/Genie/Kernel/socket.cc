@@ -78,7 +78,7 @@ namespace Genie
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
 			AssignFileDescriptor( fd,
-			                      seize_ptr( new OTSocket( nonblocking ) ),
+			                      New_OT_Socket( nonblocking ),
 			                      close_on_exec );
 		}
 		catch ( ... )

@@ -30,6 +30,8 @@
 namespace Genie
 {
 	
+	boost::shared_ptr< IOHandle > New_OT_Socket( bool nonblocking );
+	
 	class OTSocket : public SocketHandle
 	{
 		private:
