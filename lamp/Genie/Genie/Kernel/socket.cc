@@ -20,6 +20,7 @@
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
+#include "Genie/IO/SocketStream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 

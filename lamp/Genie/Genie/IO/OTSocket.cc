@@ -5,13 +5,23 @@
 
 #include "Genie/IO/OTSocket.hh"
 
+// Mac OS
+#ifndef __OPENTRANSPORTPROVIDERS__
+#include <OpenTransportProviders.h>
+#endif
+
 // Standard C/C++
 #include <cstdio>
+
+// POSIX
+#include <sys/socket.h>
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Nitrogen/OpenTransport.hh"
+#include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
 
 // ClassicToolbox
@@ -24,6 +34,8 @@
 #include "Genie/Process.hh"
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
+#include "Genie/IO/SocketStream.hh"
+#include "Genie/Utilities/ShareOpenTransport.hh"
 
 
 namespace Genie
@@ -32,6 +44,54 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
+	
+	
+	class OTSocket : public SocketHandle
+	{
+		private:
+			OpenTransportShare                       itsOpenTransport;
+			nucleus::owned< Nitrogen::EndpointRef >  itsEndpoint;
+			int                                      itsBacklog;
+			SocketAddress                            itsSocketAddress;
+			SocketAddress                            itsPeerAddress;
+			bool                                     itIsBound;
+			bool                                     itIsListener;
+			bool                                     itHasSentFIN;
+			bool                                     itHasReceivedFIN;
+			bool                                     itHasReceivedRST;
+		
+		public:
+			OTSocket( bool nonblocking = false );
+			
+			~OTSocket();
+			
+			void ReceiveDisconnect();
+			void ReceiveOrderlyDisconnect();
+			
+			bool RepairListener();
+			
+			unsigned int SysPoll();
+			
+			ssize_t SysRead( char* data, std::size_t byteCount );
+			
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			
+			//void IOCtl( unsigned long request, int* argp );
+			
+			void Bind( const sockaddr& local, socklen_t len );
+			
+			void Listen( int backlog );
+			
+			std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len );
+			
+			void Connect( const sockaddr& server, socklen_t len );
+			
+			const SocketAddress& GetSockName() const  { return itsSocketAddress; }
+			const SocketAddress& GetPeerName() const  { return itsPeerAddress;   }
+			
+			void ShutdownReading()  {}
+			void ShutdownWriting();
+	};
 	
 	
 	static pascal void YieldingNotifier( void*        contextPtr,
