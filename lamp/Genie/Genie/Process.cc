@@ -706,13 +706,6 @@ namespace Genie
 	void Process::InitThread()
 	{
 		Resume();
-		
-		if ( IsBeingTraced() )
-		{
-			// This stops the thread immediately.
-			// If we receive a fatal signal while stopped, the thread dies.
-			Stop();
-		}
 	}
 	
 	Nitrogen::ThreadID Process::GetThread() const
@@ -1447,14 +1440,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( IsBeingTraced()  &&  signo != SIGKILL )
-		{
-			Stop();
-		}
-		else
-		{
-			DeliverSignal( signo );
-		}
+		DeliverSignal( signo );
 	}
 	
 	// This function doesn't return if the process receives a fatal signal.
