@@ -59,13 +59,13 @@ namespace Genie
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
 			SInt16                   n_incoming_connections;
-			bool                     itIsBound;
-			bool                     itIsListener;
-			bool                     itIsConnecting;
-			bool                     itIsConnected;
-			bool                     itHasSentFIN;
-			bool                     itHasReceivedFIN;
-			bool                     itHasReceivedRST;
+			bool                     it_is_bound;
+			bool                     it_is_listener;
+			bool                     it_is_connecting;
+			bool                     it_is_connected;
+			bool                     it_has_sent_FIN;
+			bool                     it_has_received_FIN;
+			bool                     it_has_received_RST;
 		
 		public:
 			OTSocket( bool nonblocking = false );
@@ -140,21 +140,21 @@ namespace Genie
 					case T_CONNECT:
 						(void) ::OTRcvConnect( socket->itsEndpoint, NULL );
 						
-						socket->itIsConnecting = false;
-						socket->itIsConnected  = true;
+						socket->it_is_connecting = false;
+						socket->it_is_connected  = true;
 						break;
 					
 					case T_DISCONNECT:
 						(void) ::OTRcvDisconnect( socket->itsEndpoint, NULL );
 						
-						socket->itIsConnecting   = false;
-						socket->itHasReceivedRST = true;
+						socket->it_is_connecting    = false;
+						socket->it_has_received_RST = true;
 						break;
 					
 					case T_ORDREL:
 						(void) ::OTRcvOrderlyDisconnect( socket->itsEndpoint );
 						
-						socket->itHasReceivedFIN = true;
+						socket->it_has_received_FIN = true;
 						
 						break;
 					
@@ -190,13 +190,13 @@ namespace Genie
 		itsBacklog(),
 		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 		n_incoming_connections( 0 ),
-		itIsBound       ( false ),
-		itIsListener    ( false ),
-		itIsConnecting  ( false ),
-		itIsConnected   ( false ),
-		itHasSentFIN    ( false ),
-		itHasReceivedFIN( false ),
-		itHasReceivedRST( false )
+		it_is_bound        ( false ),
+		it_is_listener     ( false ),
+		it_is_connecting   ( false ),
+		it_is_connected    ( false ),
+		it_has_sent_FIN    ( false ),
+		it_has_received_FIN( false ),
+		it_has_received_RST( false )
 	{
 		SetUpEndpoint( itsEndpoint, this );
 	}
@@ -207,7 +207,7 @@ namespace Genie
 	
 	bool OTSocket::RepairListener()
 	{
-		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
+		if ( it_is_listener && ::OTGetEndpointState( itsEndpoint ) == 0 )
 		{
 			try_again( false );
 			
@@ -243,7 +243,7 @@ namespace Genie
 	
 	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( itHasReceivedFIN )
+		if ( it_has_received_FIN )
 		{
 			return 0;
 		}
@@ -257,7 +257,7 @@ namespace Genie
 			{
 				Mac::OTNotifier_Entrance entered( itsEndpoint );
 				
-				if ( itHasReceivedFIN )
+				if ( it_has_received_FIN )
 				{
 					return 0;
 				}
@@ -288,7 +288,7 @@ namespace Genie
 	
 	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( itHasSentFIN )
+		if ( it_has_sent_FIN )
 		{
 			send_signal_to_current_process( SIGPIPE );
 			
@@ -304,7 +304,7 @@ namespace Genie
 		{
 			Mac::OTNotifier_Entrance entered( itsEndpoint );
 			
-			if ( itHasReceivedRST )
+			if ( it_has_received_RST )
 			{
 				p7::throw_errno( ECONNRESET );
 			}
@@ -379,8 +379,8 @@ namespace Genie
 		
 		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
-		itIsBound    = true;
-		itIsListener = true;
+		it_is_bound    = true;
+		it_is_listener = true;
 	}
 	
 	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
@@ -424,11 +424,11 @@ namespace Genie
 	
 	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
-		if ( !itIsBound )
+		if ( !it_is_bound )
 		{
 			N::OTBind( itsEndpoint );
 			
-			itIsBound = true;
+			it_is_bound = true;
 		}
 		
 		TCall sndCall;
@@ -440,23 +440,23 @@ namespace Genie
 		
 		N::OTSetAsynchronous( itsEndpoint );
 		
-		itIsConnecting = true;
+		it_is_connecting = true;
 		
 		OSStatus err = ::OTConnect( itsEndpoint, &sndCall, NULL );
 		
 		if ( err != kOTNoDataErr )
 		{
-			itIsConnecting = false;
+			it_is_connecting = false;
 			
 			N::ThrowOSStatus( err );
 		}
 		
-		while ( itIsConnecting )
+		while ( it_is_connecting )
 		{
 			try_again( false );
 		}
 		
-		if ( itHasReceivedRST )
+		if ( it_has_received_RST )
 		{
 			// FIXME:  We should check the discon info, but for now assume
 			p7::throw_errno( ECONNREFUSED );
@@ -467,7 +467,7 @@ namespace Genie
 	{
 		N::OTSndOrderlyDisconnect( itsEndpoint );
 		
-		itHasSentFIN = true;
+		it_has_sent_FIN = true;
 	}
 	
 	boost::shared_ptr< IOHandle > New_OT_Socket( bool nonblocking )
