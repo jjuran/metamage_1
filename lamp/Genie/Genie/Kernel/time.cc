@@ -22,6 +22,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -150,6 +151,8 @@ namespace Genie
 			remaining_microseconds = end_microseconds - N::Microseconds();
 			
 			result = set_errno_from_exception();
+			
+			prevent_syscall_restart();
 		}
 		
 		set_timespec_microseconds( remaining, std::max( remaining_microseconds, 0LL ) );

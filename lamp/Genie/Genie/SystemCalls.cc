@@ -21,6 +21,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
@@ -227,10 +228,12 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			(void) set_errno_from_exception();
 		}
 		
-		return 0;  // not reached
+		prevent_syscall_restart();
+		
+		return -1;  // EINTR
 	}
 	
 	
