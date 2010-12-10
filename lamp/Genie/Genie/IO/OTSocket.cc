@@ -253,15 +253,10 @@ namespace Genie
 				break;
 			}
 			
-			if ( IsNonblocking() )
-			{
-				break;
-			}
-			
 			// Hack to make sure we don't get starved for events
 			Ped::AdjustSleepForTimer( 4 );
 			
-			try_again( false );
+			try_again( IsNonblocking() );
 		}
 		
 		if ( err_count == kOTLookErr )
@@ -454,9 +449,9 @@ namespace Genie
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
-		while ( !IsNonblocking()  &&  ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
+		while ( ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
 		{
-			try_again( false );
+			try_again( IsNonblocking() );
 		}
 		
 		N::OTListen( itsEndpoint, &call );
