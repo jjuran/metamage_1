@@ -13,6 +13,9 @@
 // Standard C/C++
 #include <cstdio>
 
+// Standard C
+#include <signal.h>
+
 // POSIX
 #include <sys/socket.h>
 
@@ -31,7 +34,6 @@
 #include "Pedestal/Application.hh"
 
 // Genie
-#include "Genie/Process.hh"
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
 #include "Genie/IO/SocketStream.hh"
@@ -309,7 +311,7 @@ namespace Genie
 	{
 		if ( itHasSentFIN )
 		{
-			CurrentProcess().Raise( SIGPIPE );
+			send_signal_to_current_process( SIGPIPE );
 			
 			p7::throw_errno( EPIPE );
 		}

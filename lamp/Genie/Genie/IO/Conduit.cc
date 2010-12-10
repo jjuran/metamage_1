@@ -19,7 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
 
 
@@ -127,9 +127,7 @@ namespace Genie
 		
 		if ( itsEgressHasClosed )
 		{
-			Process& current = CurrentProcess();
-			
-			current.Raise( SIGPIPE );
+			send_signal_to_current_process( SIGPIPE );
 			
 			p7::throw_errno( EPIPE );
 		}
