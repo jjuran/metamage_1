@@ -133,7 +133,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( ptrace );
+	//REGISTER_SYSTEM_CALL( ptrace );
 	
 	#pragma force_active reset
 	
