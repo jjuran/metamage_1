@@ -216,16 +216,21 @@ namespace Genie
 	{
 		try
 		{
-			current_process().Stop();
+			Process& current = current_process();
 			
-			current_process().HandlePendingSignals( kInterruptAlways );
+			while ( true )
+			{
+				current.Stop();
+				
+				current.HandlePendingSignals( kInterruptAlways );
+			}
 		}
 		catch ( ... )
 		{
 			return set_errno_from_exception();
 		}
 		
-		return set_errno( EINTR );
+		return 0;  // not reached
 	}
 	
 	

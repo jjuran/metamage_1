@@ -210,9 +210,12 @@ namespace Genie
 		
 		try
 		{
-			current.Stop();
-			
-			current.HandlePendingSignals( kInterruptAlways );
+			while ( true )
+			{
+				current.Stop();
+				
+				current.HandlePendingSignals( kInterruptAlways );
+			}
 		}
 		catch ( ... )
 		{
@@ -221,7 +224,7 @@ namespace Genie
 		
 		current.SetBlockedSignals( previous );
 		
-		return set_errno( EINTR );
+		return -1;  // EINTR
 	}
 	
 	
