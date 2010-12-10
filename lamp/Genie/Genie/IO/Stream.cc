@@ -134,18 +134,9 @@ namespace Genie
 			return bytesRead;
 		}
 		
-		try
+		if ( bytesRead == 0 )
 		{
-			ssize_t result = SysRead( data, byteCount );
-			
-			bytesRead += result;
-		}
-		catch ( ... )
-		{
-			if ( bytesRead == 0 )
-			{
-				throw;
-			}
+			bytesRead = SysRead( data, byteCount );
 		}
 		
 		return bytesRead;
