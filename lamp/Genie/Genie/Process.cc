@@ -1564,9 +1564,6 @@ namespace Genie
 			ASSERT( N::GetCurrentThread() == thread );
 			
 			Pause( kProcessStopped );
-			
-			// Stoppers (pause, sigsuspend) never restart, but don't throw
-			HandlePendingSignals( kInterruptNever );
 		}
 		else
 		{

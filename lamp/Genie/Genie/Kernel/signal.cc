@@ -211,6 +211,8 @@ namespace Genie
 		try
 		{
 			current.Stop();
+			
+			current.HandlePendingSignals( kInterruptAlways );
 		}
 		catch ( ... )
 		{
