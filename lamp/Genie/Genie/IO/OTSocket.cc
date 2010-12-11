@@ -22,6 +22,8 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -134,7 +136,7 @@ namespace Genie
 	{
 		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
 		{
-			Yield( kInterruptAlways );
+			Yield( kInterruptUnlessRestarting );
 			
 			Listen( itsBacklog );
 			
@@ -194,7 +196,7 @@ namespace Genie
 			// Hack to make sure we don't get starved for events
 			Ped::AdjustSleepForTimer( 4 );
 			
-			Yield( kInterruptAlways );
+			Yield( kInterruptUnlessRestarting );
 		}
 		
 		if ( err_count == kOTLookErr )
@@ -265,9 +267,16 @@ namespace Genie
 			
 			if ( n_written < byteCount  &&  !IsNonblocking() )
 			{
-				Yield( kInterruptNever );
+				yield();
 				
-				goto retry;
+				const bool signal_caught = check_signals( false );
+				
+				if ( !signal_caught )
+				{
+					goto retry;
+				}
+				
+				// Some bytes were written when a signal was caught
 			}
 			
 			return n_written;
@@ -282,7 +291,15 @@ namespace Genie
 				}
 				else
 				{
-					Yield( kInterruptNever );
+					yield();
+					
+					const bool may_throw = n_written == 0;
+					
+					if ( check_signals( may_throw ) )
+					{
+						// Some bytes were written when a signal was caught
+						return n_written;
+					}
 					
 					goto retry;
 				}
