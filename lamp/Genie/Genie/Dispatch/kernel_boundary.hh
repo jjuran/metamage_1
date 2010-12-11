@@ -12,7 +12,7 @@ namespace Genie
 	
 	extern "C" void enter_system_call( long syscall_number, long* params );
 	
-	extern "C" void leave_system_call( int result );
+	extern "C" bool leave_system_call( int result );
 	
 }
 

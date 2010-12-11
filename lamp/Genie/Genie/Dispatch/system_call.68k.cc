@@ -26,6 +26,8 @@ namespace Genie
 		MOVE.L	A1,-(SP)  ; // push the address of the first arg
 		MOVE.L	D0,-(SP)  ; // push the system call number
 		
+	restart:
+		
 		JSR		enter_system_call
 		
 		MOVE.L	(SP),D0  ; // restore D0
@@ -60,7 +62,13 @@ namespace Genie
 		
 		JSR		leave_system_call
 		
+		MOVE.L	D0,D1  // restart the system call?
+		
 		MOVE.L	(SP)+,D0  // restore D0
+		
+		TST.L	D1  // restart the system call?
+		
+		BNE.S	restart
 		
 		UNLK	A6
 		
