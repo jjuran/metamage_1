@@ -1479,13 +1479,20 @@ namespace Genie
 	{
 		bool return_eintr = false;
 		
-		for ( int signo = 1;  GetPendingSignals() && signo < NSIG;  ++signo )
+		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
+			const sigset_t active_signals = GetPendingSignals() & ~GetBlockedSignals();
+			
+			if ( !active_signals )
+			{
+				return;
+			}
+			
 			const struct sigaction& action = GetSignalAction( signo );
 			
 			const sigset_t signo_mask = 1 << signo - 1;
 			
-			if ( ~GetBlockedSignals() & GetPendingSignals() & signo_mask )
+			if ( active_signals & signo_mask )
 			{
 				sigset_t signal_mask = action.sa_mask;
 				
