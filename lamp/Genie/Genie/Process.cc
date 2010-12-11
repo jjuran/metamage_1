@@ -1490,12 +1490,17 @@ namespace Genie
 				return false;
 			}
 			
-			const struct sigaction& action = GetSignalAction( signo );
+			const struct sigaction action = GetSignalAction( signo );
 			
 			const sigset_t signo_mask = 1 << signo - 1;
 			
 			if ( active_signals & signo_mask )
 			{
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
+				{
+					ResetSignalAction( signo );
+				}
+				
 				sigset_t signal_mask = action.sa_mask;
 				
 				if ( !(action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
@@ -1546,11 +1551,6 @@ namespace Genie
 				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
 				{
 					return_eintr = true;
-				}
-				
-				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
-				{
-					ResetSignalAction( signo );
 				}
 			}
 		}
