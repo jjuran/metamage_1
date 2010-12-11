@@ -20,5 +20,10 @@ namespace Genie
 		return current.HandlePendingSignals( may_throw );
 	}
 	
+	void send_signal_to_current_process( int signo )
+	{
+		current_process().Raise( signo );
+	}
+	
 }
 

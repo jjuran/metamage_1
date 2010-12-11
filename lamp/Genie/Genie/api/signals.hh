@@ -12,6 +12,8 @@ namespace Genie
 	
 	bool check_signals( bool may_throw );
 	
+	void send_signal_to_current_process( int signo );
+	
 }
 
 #endif
