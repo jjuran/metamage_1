@@ -17,8 +17,7 @@ namespace Genie
 	{
 		Process& current = current_process();
 		
-		return current.HandlePendingSignals( may_throw ? kInterruptUnlessRestarting
-		                                               : kInterruptNever );
+		return current.HandlePendingSignals( may_throw );
 	}
 	
 }

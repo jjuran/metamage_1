@@ -1384,7 +1384,7 @@ namespace Genie
 	}
 	
 	// This function doesn't return if the process receives a fatal signal.
-	bool Process::HandlePendingSignals( Interruptibility interrupting )
+	bool Process::HandlePendingSignals( bool may_throw )
 	{
 		if ( itsLifeStage > kProcessLive )
 		{
@@ -1412,10 +1412,10 @@ namespace Genie
 			// Not reached
 		}
 		
-		return DeliverPendingSignals( interrupting );
+		return DeliverPendingSignals( may_throw );
 	}
 	
-	bool Process::DeliverPendingSignals( Interruptibility interrupting )
+	bool Process::DeliverPendingSignals( bool may_throw )
 	{
 		bool signal_was_caught = false;
 		
@@ -1466,7 +1466,7 @@ namespace Genie
 				
 				signal_was_caught = true;
 				
-				if ( interrupting == kInterruptNever )
+				if ( !may_throw )
 				{
 					continue;
 				}
@@ -1557,14 +1557,14 @@ namespace Genie
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	void Yield( Interruptibility interrupting )
+	void Yield( bool may_throw )
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
 		gCurrentProcess->Yield();
 		
 		// Doesn't return if we received a fatal signal.
-		gCurrentProcess->HandlePendingSignals( interrupting );
+		gCurrentProcess->HandlePendingSignals( may_throw );
 	}
 	
 	// declared in Process/AsyncYield.hh
@@ -1589,7 +1589,7 @@ namespace Genie
 		ASSERT( gCurrentProcess != NULL );
 		
 		// Check for fatal signals; don't throw EINTR
-		gCurrentProcess->HandlePendingSignals( kInterruptNever );
+		gCurrentProcess->HandlePendingSignals( false );
 		
 		const UInt64 now = N::Microseconds();
 		
@@ -1600,7 +1600,7 @@ namespace Genie
 			gCurrentProcess->Breathe();
 			
 			// Check for fatal signals again
-			gCurrentProcess->HandlePendingSignals( kInterruptNever );
+			gCurrentProcess->HandlePendingSignals( false );
 		}
 	}
 	
@@ -1612,7 +1612,7 @@ namespace Genie
 		}
 		
 		// I/O is restartable
-		Yield( kInterruptUnlessRestarting );
+		Yield( true );
 	}
 	
 }

@@ -69,7 +69,7 @@ namespace Genie
 					Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				}
 				
-				Yield( kInterruptUnlessRestarting );
+				Yield( true );
 				
 				if ( timeout )
 				{

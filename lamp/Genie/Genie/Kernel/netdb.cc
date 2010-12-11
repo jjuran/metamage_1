@@ -95,7 +95,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				Yield( kInterruptUnlessRestarting );
+				Yield( true );
 			}
 			
 			return data.result;
@@ -128,7 +128,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				Yield( kInterruptUnlessRestarting );
+				Yield( true );
 			}
 			
 			return data.result;

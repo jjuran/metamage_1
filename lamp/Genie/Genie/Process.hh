@@ -74,13 +74,6 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
-	enum Interruptibility
-	{
-		kInterruptNever,
-		kInterruptUnlessRestarting,
-		kInterruptAlways
-	};
-	
 	typedef int (*Reexec_Function)( void* _1,
 	                                void* _2,
 	                                void* _3,
@@ -150,7 +143,7 @@ namespace Genie
 			void Resume();
 			void Pause( ProcessSchedule newSchedule );
 			
-			bool DeliverPendingSignals( Interruptibility interrupting );
+			bool DeliverPendingSignals( bool may_throw );
 			
 			bool WaitsForChildren() const;
 			
@@ -284,7 +277,7 @@ namespace Genie
 			void Stop();
 			void Continue();
 			
-			bool HandlePendingSignals( Interruptibility interrupting );
+			bool HandlePendingSignals( bool may_throw );
 	};
 	
 	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
@@ -299,7 +292,7 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
-	void Yield( Interruptibility interrupting );
+	void Yield( bool may_throw );
 	
 	void Breathe();
 	

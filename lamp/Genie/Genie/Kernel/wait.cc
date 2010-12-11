@@ -149,7 +149,7 @@ namespace Genie
 				}
 				
 				// wait is restartable
-				Yield( kInterruptUnlessRestarting );
+				Yield( true );
 			}
 		}
 		catch ( ... )

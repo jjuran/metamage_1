@@ -49,7 +49,7 @@ namespace Genie
 					// Hack to make sure we don't get starved for events
 					Ped::AdjustSleepForTimer( 4 );
 					
-					Yield( kInterruptNever );  // FIXME
+					Yield( false );  // FIXME
 					
 					break;
 				
@@ -136,7 +136,7 @@ namespace Genie
 	{
 		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
 		{
-			Yield( kInterruptUnlessRestarting );
+			Yield( true );
 			
 			Listen( itsBacklog );
 			
@@ -196,7 +196,7 @@ namespace Genie
 			// Hack to make sure we don't get starved for events
 			Ped::AdjustSleepForTimer( 4 );
 			
-			Yield( kInterruptUnlessRestarting );
+			Yield( true );
 		}
 		
 		if ( err_count == kOTLookErr )
@@ -391,7 +391,7 @@ namespace Genie
 		
 		while ( !IsNonblocking()  &&  ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
 		{
-			Yield( kInterruptUnlessRestarting );
+			Yield( true );
 		}
 		
 		N::OTListen( itsEndpoint, &call );
