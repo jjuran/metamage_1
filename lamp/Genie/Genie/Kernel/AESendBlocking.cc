@@ -3,9 +3,6 @@
  *	=================
  */
 
-// Standard C
-#include <signal.h>
-
 // Nitrogen
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/OSStatus.hh"
@@ -42,7 +39,7 @@ namespace Genie
 			N::ExpectReply( returnID, &reply );
 			
 			// Sleep until the reply is delivered
-			current_process().Raise( SIGSTOP );
+			current_process().Stop();
 		}
 		catch ( const N::OSStatus& err )
 		{

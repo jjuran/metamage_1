@@ -214,9 +214,23 @@ namespace Genie
 	
 	static int pause()
 	{
-		current_process().Raise( SIGSTOP );  // Sleep, until...
+		try
+		{
+			Process& current = current_process();
+			
+			while ( true )
+			{
+				current.Stop();
+				
+				current.HandlePendingSignals( kInterruptAlways );
+			}
+		}
+		catch ( ... )
+		{
+			return set_errno_from_exception();
+		}
 		
-		return set_errno( EINTR );
+		return 0;  // not reached
 	}
 	
 	
