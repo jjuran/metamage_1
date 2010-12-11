@@ -77,6 +77,7 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
+#include "Genie/signal_traits.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/userland.hh"
@@ -1351,6 +1352,11 @@ namespace Genie
 	
 	void Process::DeliverSignal( int signo )
 	{
+		if ( GetPID() == 1 )
+		{
+			return;
+		}
+		
 		typedef void (*signal_handler_t)(int);
 		
 		signal_handler_t action = GetSignalAction( signo ).sa_handler;
@@ -1360,76 +1366,9 @@ namespace Genie
 			return;
 		}
 		
-		if ( action == SIG_DFL  &&  !(GetBlockedSignals() & 1 << signo - 1) )
-		{
-			if ( GetPID() == 1 )
-			{
-				return;
-			}
-			
-			switch ( signo )
-			{
-				case SIGQUIT:
-				case SIGILL:
-				case SIGTRAP:
-				case SIGABRT:
-				//case SIGEMT:
-				case SIGFPE:
-				case SIGBUS:
-				case SIGSEGV:
-				case SIGSTKFLT:
-				case SIGSYS:
-					// create core image
-					signo |= 0x80;
-					// fall through
-					//break;
-				case SIGHUP:
-				case SIGINT:
-				case SIGKILL:
-				case SIGPIPE:
-				case SIGALRM:
-				case SIGTERM:
-				case SIGXCPU:
-				case SIGXFSZ:
-				case SIGVTALRM:
-				case SIGPROF:
-				case SIGUSR1:
-				case SIGUSR2:
-					// terminate process
-					itsResult = signo;  // indicates fatal signal
-					Continue();  // Wake the thread if it's stopped so it can die
-					break;
-				
-				case SIGCONT:
-					Continue();
-					break;
-				
-				case SIGURG:
-				case SIGCHLD:
-				case SIGIO:
-				case SIGWINCH:
-				//case SIGINFO:
-					// discard signal
-					break;
-				
-				case SIGSTOP:
-				case SIGTSTP:
-				case SIGTTIN:
-				case SIGTTOU:
-					// stop process
-					Stop();
-					break;
-				default:
-					// bad signal
-					break;
-			}
-		}
-		else
-		{
-			AddPendingSignal( signo );
-			
-			Continue();
-		}
+		AddPendingSignal( signo );
+		
+		Continue();
 	}
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
@@ -1495,12 +1434,35 @@ namespace Genie
 			{
 				const struct sigaction& action = GetSignalAction( signo );
 				
-				typedef void (*signal_handler_t)(int);
+				if ( action.sa_handler == SIG_IGN )
+				{
+					continue;
+				}
 				
-				const signal_handler_t handler = action.sa_handler;
-				
-				ASSERT( handler != SIG_IGN );
-				ASSERT( handler != SIG_DFL );
+				if ( action.sa_handler == SIG_DFL )
+				{
+					const signal_traits traits = global_signal_traits[ signo ];
+					
+					switch ( traits & signal_default_action_mask )
+					{
+						case signal_discard:
+							break;
+						
+						case signal_terminate:
+							Terminate( signo | traits & signal_core );
+							break;
+						
+						case signal_stop:
+							Stop();
+							break;
+						
+						case signal_continue:
+							Continue();
+							break;
+					}
+					
+					continue;
+				}
 				
 				signal_was_caught = true;
 				
