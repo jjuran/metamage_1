@@ -95,10 +95,10 @@ namespace Genie
 	};
 	
 	
-	static pascal void YieldingNotifier( void*        contextPtr,
-	                                     OTEventCode  code,
-	                                     OTResult     result,
-	                                     void*        cookie )
+	static pascal void socket_notifier( void*        context,
+	                                    OTEventCode  code,
+	                                    OTResult     result,
+	                                    void*        cookie )
 	{
 		Ped::WakeUp();
 		
@@ -116,17 +116,11 @@ namespace Genie
 					
 					break;
 				
-				case kOTProviderWillClose:
-					break;
-				
-				case kOTProviderIsClosed:
-					break;
-				
 				default:
 					break;
 			}
 			
-			if ( OTSocket* socket = (OTSocket*) contextPtr )
+			if ( OTSocket* socket = (OTSocket*) context )
 			{
 				switch ( code )
 				{
@@ -147,7 +141,7 @@ namespace Genie
 	
 	static void SetUpEndpoint( EndpointRef endpoint )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
+		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( socket_notifier );
 		
 		// The new endpoint is synchronous and (by default) nonblocking.
 		
