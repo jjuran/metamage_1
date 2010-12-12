@@ -58,6 +58,7 @@ namespace Genie
 		
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
+			SInt16                   n_incoming_connections;
 			bool                     itIsBound;
 			bool                     itIsListener;
 			bool                     itIsConnecting;
@@ -124,6 +125,18 @@ namespace Genie
 			{
 				switch ( code )
 				{
+					case T_LISTEN:
+						if ( TARGET_API_MAC_CARBON )
+						{
+							// Notifiers may be preempted in OS X
+							::OTAtomicAdd16( 1, &socket->n_incoming_connections );
+						}
+						else
+						{
+							++socket->n_incoming_connections;
+						}
+						break;
+					
 					case T_CONNECT:
 						(void) ::OTRcvConnect( socket->itsEndpoint, NULL );
 						
@@ -176,6 +189,7 @@ namespace Genie
 		SocketHandle( nonblocking ),
 		itsBacklog(),
 		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+		n_incoming_connections( 0 ),
 		itIsBound       ( false ),
 		itIsListener    ( false ),
 		itIsConnecting  ( false ),
@@ -382,10 +396,12 @@ namespace Genie
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
-		while ( ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
+		while ( n_incoming_connections == 0 )
 		{
 			try_again( IsNonblocking() );
 		}
+		
+		::OTAtomicAdd16( -1, &n_incoming_connections );
 		
 		N::OTListen( itsEndpoint, &call );
 		
