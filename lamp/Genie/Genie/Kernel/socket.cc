@@ -20,6 +20,7 @@
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
+#include "Genie/IO/SocketStream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -78,7 +79,7 @@ namespace Genie
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
 			AssignFileDescriptor( fd,
-			                      seize_ptr( new OTSocket( nonblocking ) ),
+			                      New_OT_Socket( nonblocking ),
 			                      close_on_exec );
 		}
 		catch ( ... )
