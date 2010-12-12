@@ -270,6 +270,11 @@ namespace HTTP
 		{
 			itHasReachedEndOfInput = true;
 			
+			if ( !itHasReceivedEntireHeader )
+			{
+				throw MalformedHeader();
+			}
+			
 			if ( itsContentLengthIsKnown  &&  itsContentBytesReceived != itsContentLength )
 			{
 				throw IncompleteMessageBody();
