@@ -37,7 +37,7 @@
 #endif
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/api/yield.hh"
 
 
 enum
@@ -134,7 +134,7 @@ namespace Genie
 		
 		while ( !same.expired() )
 		{
-			TryAgainLater( nonblocking );
+			try_again( nonblocking );
 		}
 		
 		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )

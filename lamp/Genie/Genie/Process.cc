@@ -1594,16 +1594,5 @@ namespace Genie
 		return false;
 	}
 	
-	void TryAgainLater( bool isNonblocking )
-	{
-		if ( isNonblocking )
-		{
-			p7::throw_errno( EAGAIN );
-		}
-		
-		// I/O is restartable
-		Yield( true );
-	}
-	
 }
 

@@ -20,6 +20,7 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -84,7 +85,7 @@ namespace Genie
 		// Wait until we have some data or the stream is closed
 		while ( itsPages.empty() && !itsIngressHasClosed )
 		{
-			TryAgainLater( nonblocking );
+			try_again( nonblocking );
 		}
 		
 		// Either a page was written, or input was closed,
@@ -121,7 +122,7 @@ namespace Genie
 	{
 		while ( !IsWritable() )
 		{
-			TryAgainLater( nonblocking );
+			try_again( nonblocking );
 		}
 		
 		if ( itsEgressHasClosed )

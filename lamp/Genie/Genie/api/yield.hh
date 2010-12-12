@@ -12,6 +12,8 @@ namespace Genie
 	
 	void yield();
 	
+	void try_again( bool nonblocking );
+	
 }
 
 #endif

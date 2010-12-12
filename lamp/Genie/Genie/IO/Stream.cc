@@ -15,7 +15,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -51,7 +51,7 @@ namespace Genie
 	
 	void StreamHandle::TryAgainLater() const
 	{
-		Genie::TryAgainLater( IsNonblocking() );
+		try_again( IsNonblocking() );
 	}
 	
 	// Return a reference to the peek buffer with at least minBytes of data in it.
