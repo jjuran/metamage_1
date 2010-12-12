@@ -442,33 +442,37 @@ namespace Genie
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
 		
-		try
+		N::OTSetAsynchronous( itsEndpoint );
+		
+		OSStatus err = ::OTConnect( itsEndpoint, &sndCall, NULL );
+		
+		while ( err == kOTNoDataErr )
 		{
-			N::OTConnect( itsEndpoint, sndCall );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err == kOTLookErr )
-			{
-				OTResult look = N::OTLook( itsEndpoint );
-				
-				switch ( look )
-				{
-					case T_DISCONNECT:
-						N::OTRcvDisconnect( itsEndpoint );
-						
-						// FIXME:  We should check the discon info, but for now assume
-						p7::throw_errno( ECONNREFUSED );
-					
-					default:
-						break;
-				}
-			}
+			try_again( false );
 			
-			throw;
+			err = ::OTRcvConnect( itsEndpoint, NULL );
 		}
 		
-		N::OTSetNonBlocking( itsEndpoint );
+		if ( err == kOTLookErr )
+		{
+			OTResult look = N::OTLook( itsEndpoint );
+			
+			switch ( look )
+			{
+				case T_DISCONNECT:
+					N::OTRcvDisconnect( itsEndpoint );
+					
+					// FIXME:  We should check the discon info, but for now assume
+					p7::throw_errno( ECONNREFUSED );
+				
+				default:
+					break;
+			}
+		}
+		
+		N::ThrowOSStatus( err );
+		
+		
 	}
 	
 	void OTSocket::ShutdownWriting()
