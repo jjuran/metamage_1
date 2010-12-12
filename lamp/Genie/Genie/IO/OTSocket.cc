@@ -108,7 +108,9 @@ namespace Genie
 					// Hack to make sure we don't get starved for events
 					Ped::AdjustSleepForTimer( 4 );
 					
-					Yield( false );  // FIXME
+					yield();
+					
+					(void) check_signals( false );  // FIXME
 					
 					break;
 				
