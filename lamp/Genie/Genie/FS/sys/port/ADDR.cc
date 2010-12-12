@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/port/ADDR.hh"
 
+// Standard C
+#include <signal.h>
+
 // POSIX
 #include <fcntl.h>
 
@@ -45,7 +48,6 @@
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/Process.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
