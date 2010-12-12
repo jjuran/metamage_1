@@ -260,18 +260,6 @@ namespace Genie
 			try_again( IsNonblocking() );
 		}
 		
-		if ( err_count == kOTLookErr )
-		{
-			OTResult look = N::OTLook( itsEndpoint );
-			
-			if ( look == T_ORDREL )
-			{
-				ReceiveOrderlyDisconnect();
-				
-				return 0;
-			}
-		}
-		
 		N::ThrowOSStatus( err_count );
 		
 		if ( byteCount > n_readable_bytes )
@@ -376,11 +364,6 @@ namespace Genie
 						ReceiveDisconnect();
 						
 						p7::throw_errno( ECONNRESET );
-						
-					case T_ORDREL:
-						ReceiveOrderlyDisconnect();
-						
-						goto retry;
 					
 					default:
 						break;
