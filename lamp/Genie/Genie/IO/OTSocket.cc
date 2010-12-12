@@ -10,9 +10,6 @@
 #include <OpenTransportProviders.h>
 #endif
 
-// Standard C/C++
-#include <cstdio>
-
 // Standard C
 #include <signal.h>
 
@@ -72,8 +69,6 @@ namespace Genie
 			
 			~OTSocket();
 			
-			void ReceiveDisconnect();
-			
 			bool RepairListener();
 			
 			unsigned int SysPoll();
@@ -127,6 +122,12 @@ namespace Genie
 			{
 				switch ( code )
 				{
+					case T_DISCONNECT:
+						(void) ::OTRcvDisconnect( socket->itsEndpoint, NULL );
+		
+						socket->itHasReceivedRST = true;
+						break;
+					
 					case T_ORDREL:
 						(void) ::OTRcvOrderlyDisconnect( socket->itsEndpoint );
 						
@@ -176,13 +177,6 @@ namespace Genie
 	
 	OTSocket::~OTSocket()
 	{
-	}
-	
-	void OTSocket::ReceiveDisconnect()
-	{
-		N::OTRcvDisconnect( itsEndpoint );
-		
-		itHasReceivedRST = true;
 	}
 	
 	bool OTSocket::RepairListener()
@@ -281,74 +275,48 @@ namespace Genie
 		
 	retry:
 		
-		try
 		{
+			Mac::OTNotifier_Entrance entered( itsEndpoint );
+			
+			if ( itHasReceivedRST )
+			{
+				p7::throw_errno( ECONNRESET );
+			}
+			
 			const ssize_t sent = N::OTSnd( itsEndpoint,
 			                               data      + n_written,
 			                               byteCount - n_written );
 			
-			n_written += sent;
-			
-			if ( n_written < byteCount  &&  !IsNonblocking() )
+			if ( sent != kOTFlowErr )
 			{
-				yield();
+				N::ThrowOTResult( sent );
 				
-				const bool signal_caught = check_signals( false );
-				
-				if ( !signal_caught )
-				{
-					goto retry;
-				}
-				
-				// Some bytes were written when a signal was caught
+				n_written += sent;
 			}
-			
-			return n_written;
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err == kOTFlowErr )
-			{
-				if ( IsNonblocking() )
-				{
-					p7::throw_errno( EAGAIN );
-				}
-				else
-				{
-					yield();
-					
-					const bool may_throw = n_written == 0;
-					
-					if ( check_signals( may_throw ) )
-					{
-						// Some bytes were written when a signal was caught
-						return n_written;
-					}
-					
-					goto retry;
-				}
-			}
-			
-			if ( err == kOTLookErr )
-			{
-				OTResult look = N::OTLook( itsEndpoint );
-				
-				switch ( look )
-				{
-					case T_DISCONNECT:
-						ReceiveDisconnect();
-						
-						p7::throw_errno( ECONNRESET );
-					
-					default:
-						break;
-				}
-			}
-			
-			throw;
 		}
 		
-		return -1;  // Not reached
+		if ( IsNonblocking() )
+		{
+			if ( n_written == 0 )
+			{
+				p7::throw_errno( EAGAIN );
+			}
+		}
+		else if ( n_written < byteCount )
+		{
+			yield();
+			
+			const bool signal_caught = check_signals( false );
+			
+			if ( !signal_caught )
+			{
+				goto retry;
+			}
+			
+			// Some bytes were written when a signal was caught
+		}
+		
+		return n_written;
 	}
 	
 	void OTSocket::Bind( const sockaddr& local, socklen_t len )
@@ -450,29 +418,20 @@ namespace Genie
 		{
 			try_again( false );
 			
-			err = ::OTRcvConnect( itsEndpoint, NULL );
-		}
-		
-		if ( err == kOTLookErr )
-		{
-			OTResult look = N::OTLook( itsEndpoint );
-			
-			switch ( look )
 			{
-				case T_DISCONNECT:
-					N::OTRcvDisconnect( itsEndpoint );
-					
+				N::OTNotifier_Entrance entered( itsEndpoint );
+				
+				if ( itHasReceivedRST )
+				{
 					// FIXME:  We should check the discon info, but for now assume
 					p7::throw_errno( ECONNREFUSED );
+				}
 				
-				default:
-					break;
+				err = ::OTRcvConnect( itsEndpoint, NULL );
 			}
 		}
 		
 		N::ThrowOSStatus( err );
-		
-		
 	}
 	
 	void OTSocket::ShutdownWriting()
