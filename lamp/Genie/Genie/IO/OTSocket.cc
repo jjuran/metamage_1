@@ -263,28 +263,7 @@ namespace Genie
 			byteCount = n_readable_bytes;
 		}
 		
-		try
-		{
-			return N::OTRcv( itsEndpoint, data, byteCount );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err == kOTLookErr )
-			{
-				OTResult look = N::OTLook( itsEndpoint );
-				
-				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
-			}
-			else
-			{
-				std::fprintf( stderr, "OSStatus %d from OTRcv()\n", err.Get() );
-			}
-			
-			throw;
-		}
-		
-		// Not reached, but MWCPPC 2.4.1 doesn't realize that
-		return 0;
+		return N::OTRcv( itsEndpoint, data, byteCount );
 	}
 	
 	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
