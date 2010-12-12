@@ -1541,17 +1541,6 @@ namespace Genie
 		--itsAsyncOpCount;
 	}
 	
-	// This function doesn't return if we received a fatal signal.
-	void Yield( bool may_throw )
-	{
-		ASSERT( gCurrentProcess != NULL );
-		
-		gCurrentProcess->Yield();
-		
-		// Doesn't return if we received a fatal signal.
-		gCurrentProcess->HandlePendingSignals( may_throw );
-	}
-	
 	// declared in Process/AsyncYield.hh
 	void AsyncYield()
 	{
