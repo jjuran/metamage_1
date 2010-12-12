@@ -46,7 +46,12 @@ namespace Genie
 			
 			while ( const plus::string* peek_buffer = input.Peek( 1 ) )
 			{
-				Breathe();
+				const bool may_throw = bytes_pumped == 0;
+				
+				if ( Breathe( may_throw ) )
+				{
+					return bytes_pumped;
+				}
 				
 				size_t bytes_wanted = std::min( count - bytes_pumped, peek_buffer->size() );
 				
