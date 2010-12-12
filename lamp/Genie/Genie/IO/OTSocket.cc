@@ -23,6 +23,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Mac/OpenTransport/Utilities/OTNotifier_Entrance.hh"
+
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
@@ -236,7 +238,16 @@ namespace Genie
 		
 		while ( true )
 		{
-			err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			{
+				Mac::OTNotifier_Entrance entered( itsEndpoint );
+				
+				if ( itHasReceivedFIN )
+				{
+					return 0;
+				}
+				
+				err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			}
 			
 			if ( err_count != kOTNoDataErr )
 			{
