@@ -296,8 +296,6 @@ namespace Genie
 	
 	bool Breathe( bool may_throw );
 	
-	void TryAgainLater( bool isNonblocking );
-	
 }
 
 #endif
