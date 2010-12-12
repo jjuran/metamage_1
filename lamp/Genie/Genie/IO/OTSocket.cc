@@ -60,6 +60,7 @@ namespace Genie
 			n::owned< EndpointRef >  itsEndpoint;
 			bool                     itIsBound;
 			bool                     itIsListener;
+			bool                     itIsConnecting;
 			bool                     itIsConnected;
 			bool                     itHasSentFIN;
 			bool                     itHasReceivedFIN;
@@ -126,12 +127,14 @@ namespace Genie
 					case T_CONNECT:
 						(void) ::OTRcvConnect( socket->itsEndpoint, NULL );
 						
-						socket->itIsConnected = true;
+						socket->itIsConnecting = false;
+						socket->itIsConnected  = true;
 						break;
 					
 					case T_DISCONNECT:
 						(void) ::OTRcvDisconnect( socket->itsEndpoint, NULL );
-		
+						
+						socket->itIsConnecting   = false;
 						socket->itHasReceivedRST = true;
 						break;
 					
@@ -175,6 +178,7 @@ namespace Genie
 		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 		itIsBound       ( false ),
 		itIsListener    ( false ),
+		itIsConnecting  ( false ),
 		itIsConnected   ( false ),
 		itHasSentFIN    ( false ),
 		itHasReceivedFIN( false ),
@@ -420,22 +424,26 @@ namespace Genie
 		
 		N::OTSetAsynchronous( itsEndpoint );
 		
+		itIsConnecting = true;
+		
 		OSStatus err = ::OTConnect( itsEndpoint, &sndCall, NULL );
 		
 		if ( err != kOTNoDataErr )
 		{
+			itIsConnecting = false;
+			
 			N::ThrowOSStatus( err );
 		}
 		
-		while ( !itIsConnected )
+		while ( itIsConnecting )
 		{
 			try_again( false );
-			
-			if ( itHasReceivedRST )
-			{
-				// FIXME:  We should check the discon info, but for now assume
-				p7::throw_errno( ECONNREFUSED );
-			}
+		}
+		
+		if ( itHasReceivedRST )
+		{
+			// FIXME:  We should check the discon info, but for now assume
+			p7::throw_errno( ECONNREFUSED );
 		}
 	}
 	
