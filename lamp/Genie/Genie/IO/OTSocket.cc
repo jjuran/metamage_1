@@ -73,7 +73,6 @@ namespace Genie
 			~OTSocket();
 			
 			void ReceiveDisconnect();
-			void ReceiveOrderlyDisconnect();
 			
 			bool RepairListener();
 			
@@ -129,7 +128,9 @@ namespace Genie
 				switch ( code )
 				{
 					case T_ORDREL:
-						socket->ReceiveOrderlyDisconnect();
+						(void) ::OTRcvOrderlyDisconnect( socket->itsEndpoint );
+						
+						socket->itHasReceivedFIN = true;
 						
 						break;
 					
@@ -182,13 +183,6 @@ namespace Genie
 		N::OTRcvDisconnect( itsEndpoint );
 		
 		itHasReceivedRST = true;
-	}
-	
-	void OTSocket::ReceiveOrderlyDisconnect()
-	{
-		N::OTRcvOrderlyDisconnect( itsEndpoint );
-		
-		itHasReceivedFIN = true;
 	}
 	
 	bool OTSocket::RepairListener()
