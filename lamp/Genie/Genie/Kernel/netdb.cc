@@ -16,8 +16,8 @@
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
 
@@ -95,7 +95,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				Yield( true );
+				try_again( false );
 			}
 			
 			return data.result;
@@ -128,7 +128,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				Yield( true );
+				try_again( false );
 			}
 			
 			return data.result;

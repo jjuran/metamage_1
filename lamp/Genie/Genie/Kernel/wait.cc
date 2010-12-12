@@ -16,6 +16,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -148,8 +149,7 @@ namespace Genie
 					return 0;
 				}
 				
-				// wait is restartable
-				Yield( true );
+				try_again( false );
 			}
 		}
 		catch ( ... )

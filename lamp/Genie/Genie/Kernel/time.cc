@@ -24,8 +24,8 @@
 // Genie
 #include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/api/yield.hh"
 
 
 #ifndef NANOSLEEP_DOZE
@@ -140,7 +140,7 @@ namespace Genie
 				// anyway.
 				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				
-				Yield( true );
+				try_again( false );
 				
 				remaining_microseconds = end_microseconds - N::Microseconds();
 			}

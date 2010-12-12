@@ -14,6 +14,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/api/yield.hh"
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Stream.hh"
@@ -69,7 +70,7 @@ namespace Genie
 					Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				}
 				
-				Yield( true );
+				try_again( false );
 				
 				if ( timeout )
 				{

@@ -197,7 +197,7 @@ namespace Genie
 	{
 		if ( itIsListener && ::OTGetEndpointState( itsEndpoint ) == 0 )
 		{
-			Yield( true );
+			try_again( false );
 			
 			Listen( itsBacklog );
 			
@@ -257,7 +257,7 @@ namespace Genie
 			// Hack to make sure we don't get starved for events
 			Ped::AdjustSleepForTimer( 4 );
 			
-			Yield( true );
+			try_again( false );
 		}
 		
 		if ( err_count == kOTLookErr )
@@ -452,7 +452,7 @@ namespace Genie
 		
 		while ( !IsNonblocking()  &&  ::OTGetEndpointState( itsEndpoint ) == T_IDLE )
 		{
-			Yield( true );
+			try_again( false );
 		}
 		
 		N::OTListen( itsEndpoint, &call );
