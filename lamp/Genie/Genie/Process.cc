@@ -1485,27 +1485,12 @@ namespace Genie
 		return signal_was_caught;
 	}
 	
-	// Doesn't return if the process was current and receives a fatal signal while stopped.
+	// Stops the process' thread.  Eventually returns.
 	void Process::Stop()
 	{
-		N::ThreadID thread = GetThread();
+		ASSERT( gCurrentProcess == this );
 		
-		ASSERT( thread != N::kNoThreadID );
-		
-		if ( gCurrentProcess == this )
-		{
-			ASSERT( itsSchedule == kProcessRunning );
-			
-			ASSERT( N::GetCurrentThread() == thread );
-			
-			Pause( kProcessStopped );
-		}
-		else
-		{
-			itsSchedule = kProcessStopped;
-			
-			N::SetThreadState( thread, N::kStoppedThreadState );
-		}
+		Pause( kProcessStopped );
 	}
 	
 	void Process::Continue()
