@@ -1584,12 +1584,15 @@ namespace Genie
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	void Breathe()
+	bool Breathe( bool may_throw )
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
-		// Check for fatal signals; don't throw EINTR
-		gCurrentProcess->HandlePendingSignals( false );
+		// Check for fatal signals
+		if ( gCurrentProcess->HandlePendingSignals( may_throw ) )
+		{
+			return true;
+		}
 		
 		const UInt64 now = N::Microseconds();
 		
@@ -1600,8 +1603,10 @@ namespace Genie
 			gCurrentProcess->Breathe();
 			
 			// Check for fatal signals again
-			gCurrentProcess->HandlePendingSignals( false );
+			return gCurrentProcess->HandlePendingSignals( may_throw );
 		}
+		
+		return false;
 	}
 	
 	void TryAgainLater( bool isNonblocking )

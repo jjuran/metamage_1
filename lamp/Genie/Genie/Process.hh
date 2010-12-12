@@ -294,7 +294,7 @@ namespace Genie
 	
 	void Yield( bool may_throw );
 	
-	void Breathe();
+	bool Breathe( bool may_throw = false );
 	
 	void TryAgainLater( bool isNonblocking );
 	
