@@ -207,10 +207,8 @@ namespace Genie
 		
 		// The new endpoint is synchronous and (by default) nonblocking.
 		
-		// The underlying endpoint is always nonblocking for send and recv
-		// and blocking for connect and listen (until we add support)
-		
-		N::OTSetBlocking( endpoint );
+		N::OTSetBlocking    ( endpoint );
+		N::OTSetAsynchronous( endpoint );
 		
 		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
 		
@@ -411,9 +409,6 @@ namespace Genie
 		reqAddr.addr.len = itsSocketAddress.Len();
 		reqAddr.qlen = backlog;
 		
-		N::OTSetBlocking    ( itsEndpoint );
-		N::OTSetAsynchronous( itsEndpoint );
-		
 		OTBind_sync( *this, &reqAddr );
 		
 		it_is_listener = true;
@@ -463,8 +458,6 @@ namespace Genie
 	
 	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
-		N::OTSetAsynchronous( itsEndpoint );
-		
 		if ( !it_is_bound )
 		{
 			OTBind_sync( *this );
