@@ -59,6 +59,7 @@ namespace Genie
 		
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
+			OTResult                 its_result;
 			SInt16                   n_incoming_connections;
 			bool                     it_is_bound;
 			bool                     it_is_listener;
@@ -159,6 +160,16 @@ namespace Genie
 						
 						break;
 					
+					case T_BINDCOMPLETE:
+						socket->its_result = result;
+						
+						if ( result == noErr )
+						{
+							socket->it_is_bound = true;
+						}
+						
+						break;
+					
 					default:
 						break;
 				}
@@ -167,6 +178,22 @@ namespace Genie
 		catch ( ... )
 		{
 		}
+	}
+	
+	static void OTBind_sync( OTSocket&  socket,
+	                         TBind*     reqAddr = NULL,
+	                         TBind*     retAddr = NULL )
+	{
+		socket.its_result = 0;
+		
+		N::OTBind( socket.itsEndpoint, reqAddr, retAddr );
+		
+		while ( socket.its_result == 0  &&  !socket.it_is_bound )
+		{
+			try_again( false );
+		}
+		
+		N::ThrowOTResult( socket.its_result );
 	}
 	
 	static void SetUpEndpoint( EndpointRef endpoint, OTSocket* socket )
@@ -190,6 +217,7 @@ namespace Genie
 		SocketHandle( nonblocking ),
 		itsBacklog(),
 		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+		its_result            ( 0 ),
 		n_incoming_connections( 0 ),
 		it_is_bound        ( false ),
 		it_is_listener     ( false ),
@@ -425,11 +453,11 @@ namespace Genie
 	
 	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
+		N::OTSetAsynchronous( itsEndpoint );
+		
 		if ( !it_is_bound )
 		{
-			N::OTBind( itsEndpoint );
-			
-			it_is_bound = true;
+			OTBind_sync( *this );
 		}
 		
 		TCall sndCall;
@@ -438,8 +466,6 @@ namespace Genie
 		
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
-		
-		N::OTSetAsynchronous( itsEndpoint );
 		
 		it_is_connecting = true;
 		
