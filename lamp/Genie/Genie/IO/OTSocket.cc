@@ -446,7 +446,15 @@ namespace Genie
 		
 		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
 		
-		N::OTSetNonBlocking( handle->itsEndpoint );
+		if ( N::OTIsNonBlocking( handle->itsEndpoint ) )
+		{
+			N::OTSetBlocking( handle->itsEndpoint );
+		}
+		
+		if ( !N::OTIsSynchronous( handle->itsEndpoint ) )
+		{
+			N::OTSetAsynchronous( handle->itsEndpoint );
+		}
 		
 		return newSocket;
 	}
