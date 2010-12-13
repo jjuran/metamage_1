@@ -408,6 +408,9 @@ namespace Genie
 		
 		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
+		N::OTSetBlocking    ( itsEndpoint );
+		N::OTSetAsynchronous( itsEndpoint );
+		
 		it_is_bound    = true;
 		it_is_listener = true;
 	}
@@ -415,8 +418,6 @@ namespace Genie
 	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		RepairListener();
-		
-		N::OTSetNonBlocking( itsEndpoint );
 		
 		TCall call;
 		
@@ -433,8 +434,6 @@ namespace Genie
 		::OTAtomicAdd16( -1, &n_incoming_connections );
 		
 		N::OTListen( itsEndpoint, &call );
-		
-		N::OTSetBlocking( itsEndpoint );
 		
 		len = call.addr.len;
 		
