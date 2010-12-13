@@ -170,6 +170,11 @@ namespace Genie
 						
 						break;
 					
+					case T_ACCEPTCOMPLETE:
+						socket->its_result = result;
+						
+						break;
+					
 					default:
 						break;
 				}
@@ -442,7 +447,16 @@ namespace Genie
 		
 		handle->itsPeerAddress.Assign( client, len );
 		
+		its_result = 1;
+		
 		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
+		
+		while ( its_result > 0 )
+		{
+			try_again( false );
+		}
+		
+		N::ThrowOTResult( its_result );
 		
 		return newSocket;
 	}
