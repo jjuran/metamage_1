@@ -406,12 +406,11 @@ namespace Genie
 		reqAddr.addr.len = itsSocketAddress.Len();
 		reqAddr.qlen = backlog;
 		
-		N::OTBind( itsEndpoint, &reqAddr, NULL );
-		
 		N::OTSetBlocking    ( itsEndpoint );
 		N::OTSetAsynchronous( itsEndpoint );
 		
-		it_is_bound    = true;
+		OTBind_sync( itsEndpoint, &reqAddr, NULL );
+		
 		it_is_listener = true;
 	}
 	
