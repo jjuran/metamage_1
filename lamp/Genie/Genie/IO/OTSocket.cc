@@ -23,6 +23,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Mac/OpenTransport/Utilities/OTNotifier_Entrance.hh"
+
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
@@ -139,7 +141,7 @@ namespace Genie
 		}
 	}
 	
-	static void SetUpEndpoint( EndpointRef endpoint )
+	static void SetUpEndpoint( EndpointRef endpoint, OTSocket* socket )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( socket_notifier );
 		
@@ -150,7 +152,7 @@ namespace Genie
 		
 		N::OTSetBlocking( endpoint );
 		
-		N::OTInstallNotifier( endpoint, gNotifyUPP, NULL );
+		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
 		
 		N::OTUseSyncIdleEvents( endpoint, true );
 	}
@@ -166,7 +168,7 @@ namespace Genie
 		itHasReceivedFIN( false ),
 		itHasReceivedRST( false )
 	{
-		SetUpEndpoint( itsEndpoint );
+		SetUpEndpoint( itsEndpoint, this );
 	}
 	
 	OTSocket::~OTSocket()
@@ -236,7 +238,16 @@ namespace Genie
 		
 		while ( true )
 		{
-			err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			{
+				Mac::OTNotifier_Entrance entered( itsEndpoint );
+				
+				if ( itHasReceivedFIN )
+				{
+					return 0;
+				}
+				
+				err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			}
 			
 			if ( err_count != kOTNoDataErr )
 			{
@@ -247,18 +258,6 @@ namespace Genie
 			Ped::AdjustSleepForTimer( 4 );
 			
 			try_again( IsNonblocking() );
-		}
-		
-		if ( err_count == kOTLookErr )
-		{
-			OTResult look = N::OTLook( itsEndpoint );
-			
-			if ( look == T_ORDREL )
-			{
-				ReceiveOrderlyDisconnect();
-				
-				return 0;
-			}
 		}
 		
 		N::ThrowOSStatus( err_count );
@@ -365,11 +364,6 @@ namespace Genie
 						ReceiveDisconnect();
 						
 						p7::throw_errno( ECONNRESET );
-						
-					case T_ORDREL:
-						ReceiveOrderlyDisconnect();
-						
-						goto retry;
 					
 					default:
 						break;
@@ -410,7 +404,7 @@ namespace Genie
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
 		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
 		
-		SetUpEndpoint( itsEndpoint );
+		SetUpEndpoint( itsEndpoint, this );
 		
 		TBind reqAddr;
 		
