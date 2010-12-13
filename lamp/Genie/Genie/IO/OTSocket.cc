@@ -199,22 +199,25 @@ namespace Genie
 	static OTNotifyUPP gSocketNotifier = ::NewOTNotifyUPP( socket_notifier );
 	
 	
+	static void Complete( OTSocket& socket )
+	{
+		while ( socket.its_result > 0  )
+		{
+			try_again( false );
+		}
+		
+		N::ThrowOTResult( socket.its_result );
+	}
+	
 	static void AsyncOpenEndpoint( const char* config, OTSocket* socket )
 	{
-		socket->its_result = 0;
-		
-		socket->itsEndpoint.reset();
+		socket->its_result = 1;
 		
 		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
 		                        gSocketNotifier,
 		                        socket );
 		
-		while ( socket->its_result == 0  &&  socket->itsEndpoint.get() == NULL )
-		{
-			try_again( false );
-		}
-		
-		N::ThrowOTResult( socket->its_result );
+		Complete( *socket );
 	}
 	
 	OTSocket::OTSocket( bool nonblocking )
@@ -231,7 +234,7 @@ namespace Genie
 		it_has_received_FIN( false ),
 		it_has_received_RST( false )
 	{
-		AsyncOpenEndpoint( "tcp", this ),
+		AsyncOpenEndpoint( "tcp", this );
 	}
 	
 	OTSocket::~OTSocket()
@@ -398,7 +401,7 @@ namespace Genie
 		itsBacklog = backlog;
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
-		AsyncOpenEndpoint( "tilisten,tcp", this ),
+		AsyncOpenEndpoint( "tilisten,tcp", this );
 		
 		TBind reqAddr;
 		
@@ -445,12 +448,7 @@ namespace Genie
 		
 		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
 		
-		while ( its_result > 0 )
-		{
-			try_again( false );
-		}
-		
-		N::ThrowOTResult( its_result );
+		Complete( *this );
 		
 		return newSocket;
 	}
