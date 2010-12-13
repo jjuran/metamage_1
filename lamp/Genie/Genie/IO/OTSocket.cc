@@ -159,6 +159,16 @@ namespace Genie
 						
 						break;
 					
+					case T_OPENCOMPLETE:
+						socket->its_result = result;
+						
+						if ( result == noErr )
+						{
+							socket->itsEndpoint = n::owned< EndpointRef >::seize( (EndpointRef) cookie );
+						}
+						
+						break;
+					
 					default:
 						break;
 				}
@@ -185,23 +195,32 @@ namespace Genie
 		N::ThrowOTResult( socket.its_result );
 	}
 	
-	static void SetUpEndpoint( EndpointRef endpoint, OTSocket* socket )
+	
+	static OTNotifyUPP gSocketNotifier = ::NewOTNotifyUPP( socket_notifier );
+	
+	
+	static void AsyncOpenEndpoint( const char* config, OTSocket* socket )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( socket_notifier );
+		socket->its_result = 0;
 		
-		// The new endpoint is synchronous and (by default) nonblocking.
+		socket->itsEndpoint.reset();
 		
-		N::OTSetBlocking    ( endpoint );
-		N::OTSetAsynchronous( endpoint );
+		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
+		                        gSocketNotifier,
+		                        socket );
 		
-		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
+		while ( socket->its_result == 0  &&  socket->itsEndpoint.get() == NULL )
+		{
+			try_again( false );
+		}
+		
+		N::ThrowOTResult( socket->its_result );
 	}
 	
 	OTSocket::OTSocket( bool nonblocking )
 	:
 		SocketHandle( nonblocking ),
 		itsBacklog(),
-		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 		its_result            ( 0 ),
 		n_incoming_connections( 0 ),
 		it_is_bound        ( false ),
@@ -212,7 +231,7 @@ namespace Genie
 		it_has_received_FIN( false ),
 		it_has_received_RST( false )
 	{
-		SetUpEndpoint( itsEndpoint, this );
+		AsyncOpenEndpoint( "tcp", this ),
 	}
 	
 	OTSocket::~OTSocket()
@@ -379,9 +398,7 @@ namespace Genie
 		itsBacklog = backlog;
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
-		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
-		
-		SetUpEndpoint( itsEndpoint, this );
+		AsyncOpenEndpoint( "tilisten,tcp", this ),
 		
 		TBind reqAddr;
 		
