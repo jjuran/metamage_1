@@ -409,7 +409,7 @@ namespace Genie
 		N::OTSetBlocking    ( itsEndpoint );
 		N::OTSetAsynchronous( itsEndpoint );
 		
-		OTBind_sync( itsEndpoint, &reqAddr, NULL );
+		OTBind_sync( *this, &reqAddr );
 		
 		it_is_listener = true;
 	}
@@ -443,16 +443,6 @@ namespace Genie
 		handle->itsPeerAddress.Assign( client, len );
 		
 		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
-		
-		if ( N::OTIsNonBlocking( handle->itsEndpoint ) )
-		{
-			N::OTSetBlocking( handle->itsEndpoint );
-		}
-		
-		if ( !N::OTIsSynchronous( handle->itsEndpoint ) )
-		{
-			N::OTSetAsynchronous( handle->itsEndpoint );
-		}
 		
 		return newSocket;
 	}
