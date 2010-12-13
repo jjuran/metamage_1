@@ -343,12 +343,6 @@ namespace Genie
 					default:
 						break;
 				}
-				
-				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
-			}
-			else
-			{
-				std::fprintf( stderr, "OSStatus %d from OTSnd()\n", err.Get() );
 			}
 			
 			throw;
