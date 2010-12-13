@@ -107,22 +107,6 @@ namespace Genie
 		
 		try
 		{
-			switch ( code )
-			{
-				case kOTSyncIdleEvent:
-					// Hack to make sure we don't get starved for events
-					Ped::AdjustSleepForTimer( 4 );
-					
-					yield();
-					
-					(void) check_signals( false );  // FIXME
-					
-					break;
-				
-				default:
-					break;
-			}
-			
 			if ( OTSocket* socket = (OTSocket*) context )
 			{
 				switch ( code )
@@ -211,8 +195,6 @@ namespace Genie
 		N::OTSetAsynchronous( endpoint );
 		
 		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
-		
-		N::OTUseSyncIdleEvents( endpoint, true );
 	}
 	
 	OTSocket::OTSocket( bool nonblocking )
