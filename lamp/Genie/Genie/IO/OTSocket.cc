@@ -408,7 +408,7 @@ namespace Genie
 	{
 		if ( itsSocketAddress.Get() == NULL )
 		{
-			N::ThrowOSStatus( kOTOutStateErr );
+			p7::throw_errno( EDESTADDRREQ );
 		}
 		
 		itsBacklog = backlog;
