@@ -31,6 +31,20 @@ inline pascal EndpointRef OTOpenEndpoint( OTConfigurationRef   config,
 	return OTOpenEndpointInContext( config, flags, info, err, NULL );
 }
 
+inline pascal OSStatus OTAsyncOpenEndpoint( OTConfigurationRef  config,
+                                            OTOpenFlags         flags,
+                                            TEndpointInfo*      info,
+                                            OTNotifyUPP         notifier,
+                                            void*               context )
+{
+	return OTAsyncOpenEndpointInContext( config,
+	                                     flags,
+	                                     info,
+	                                     notifier,
+	                                     context,
+	                                     NULL );
+}
+
 #endif
 
 #ifdef __cplusplus
