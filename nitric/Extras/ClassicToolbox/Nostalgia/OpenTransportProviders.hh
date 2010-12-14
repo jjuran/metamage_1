@@ -16,14 +16,14 @@ extern "C" {
 #endif
 
 #if TARGET_API_MAC_CARBON
-	
-	inline pascal InetSvcRef OTOpenInternetServices( OTConfigurationRef   config,
-	                                                 OTOpenFlags          flags,
-	                                                 OSStatus            *err )
-	{
-		return OTOpenInternetServicesInContext( config, flags, err, NULL );
-	}
-	
+
+inline pascal InetSvcRef OTOpenInternetServices( OTConfigurationRef   config,
+                                                 OTOpenFlags          flags,
+                                                 OSStatus            *err )
+{
+	return OTOpenInternetServicesInContext( config, flags, err, NULL );
+}
+
 #endif
 
 #ifdef __cplusplus

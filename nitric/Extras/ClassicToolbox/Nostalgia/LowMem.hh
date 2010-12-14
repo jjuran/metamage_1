@@ -16,12 +16,12 @@ extern "C" {
 #endif
 
 #if TARGET_API_MAC_CARBON
-	
-	inline pascal UInt32 LMGetTicks()
-	{
-		return ::TickCount();
-	}
-	
+
+inline pascal UInt32 LMGetTicks()
+{
+	return ::TickCount();
+}
+
 #endif
 
 #ifdef __cplusplus
