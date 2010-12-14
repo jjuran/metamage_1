@@ -21,10 +21,6 @@ namespace Pedestal
 	};
 	
 	
-	// Callable at interrupt time.
-	// Call from a completion routine to resume synchronous processing.
-	void WakeUp();
-	
 	void AdjustSleepForTimer( unsigned ticksToSleep );
 	
 	void AdjustSleepForActivity();

@@ -22,7 +22,7 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Pedestal
-#include "Pedestal/Application.hh"
+#include "Pedestal/WakeUp.hh"
 
 // Genie
 #include "Genie/FS/sys/mac/errata.hh"

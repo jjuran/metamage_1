@@ -67,6 +67,7 @@
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/SetPort_GetWindow.hh"
+#include "Pedestal/WakeUp.hh"
 #include "Pedestal/Window.hh"
 
 
@@ -100,10 +101,6 @@ namespace Pedestal
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	
-	
-	// Save our PSN so we can wake up at interrupt time.
-	static N::ProcessSerialNumber gPSN = N::GetCurrentProcess();
 	
 	
 	using N::kCoreEventClass;
@@ -815,6 +812,26 @@ namespace Pedestal
 	
 	static bool gIdleNeeded = false;
 	
+	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
+	{
+		gInWaitNextEvent = true;
+		
+		if ( gAsyncEventsReady )
+		{
+			gAsyncEventsReady = false;
+			
+			sleep = 0;
+		}
+		
+		EventRecord event;
+		
+		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
+		
+		gInWaitNextEvent = false;
+		
+		return event;
+	}
+	
 	static EventRecord GetAnEvent()
 	{
 		const UInt32 now = ::LMGetTicks();
@@ -841,7 +858,7 @@ namespace Pedestal
 		
 		gTicksAtNextBusiness = 0xffffffff;
 		
-		EventRecord nextEvent = N::WaitNextEvent( N::everyEvent, ticksToSleep );
+		EventRecord nextEvent = WaitNextEvent( ticksToSleep );
 		
 		if ( ticksToSleep > 0 )
 		{
@@ -1020,29 +1037,6 @@ namespace Pedestal
 		}
 		
 		return true;
-	}
-	
-	void WakeUp()
-	{
-		ProcessSerialNumber psn;
-		
-		OSErr err = ::GetCurrentProcess( &psn );
-		
-		if ( err == noErr )
-		{
-			Boolean same;
-			
-			err = ::SameProcess( &psn, &gPSN, &same );
-			
-			if ( err == noErr  &&  same )
-			{
-				gRunState.activelyBusy = true;
-				
-				return;
-			}
-		}
-		
-		::WakeUpProcess( &gPSN );
 	}
 	
 	void AdjustSleepForTimer( unsigned ticksToSleep )

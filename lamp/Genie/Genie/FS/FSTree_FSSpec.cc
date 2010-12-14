@@ -59,7 +59,7 @@
 #include "MD5/MD5.hh"
 
 // Pedestal
-#include "Pedestal/Application.hh"
+#include "Pedestal/WakeUp.hh"
 
 // Genie
 #include "Genie/code/executable_file.hh"

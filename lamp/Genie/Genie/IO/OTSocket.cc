@@ -31,6 +31,7 @@
 
 // Pedestal
 #include "Pedestal/Application.hh"
+#include "Pedestal/WakeUp.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
