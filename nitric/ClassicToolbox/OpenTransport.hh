@@ -42,6 +42,31 @@ namespace Nitrogen
 		return nucleus::owned< EndpointRef >::seize( result );
 	}
 	
+	inline void
+	//
+	OTAsyncOpenEndpoint( nucleus::owned< OTConfigurationRef >  config,
+	                     TEndpointInfo*                        info,
+	                     OTNotifyUPP                           notifier,
+	                     void*                                 context )
+	{
+		OSStatus err = ::OTAsyncOpenEndpoint( config.release(),
+		                                      OTOpenFlags( 0 ),
+		                                      info,
+		                                      notifier,
+		                                      context );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	inline void
+	//
+	OTAsyncOpenEndpoint( nucleus::owned< OTConfigurationRef >  config,
+	                     OTNotifyUPP                           notifier,
+	                     void*                                 context )
+	{
+		return OTAsyncOpenEndpoint( config, NULL, notifier, context );
+	}
+	
 }
 
 #endif
