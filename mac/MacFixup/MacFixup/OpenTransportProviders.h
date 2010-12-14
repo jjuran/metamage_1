@@ -14,6 +14,15 @@
 #endif
 
 #ifndef __OPENTRANSPORTPROVIDERS__
+#ifdef TCP_NODELAY
+#error <OpenTransportProviders.h> must be included before <netinet/tcp.h>
+#endif
+#ifdef IP_OPTIONS
+#error <OpenTransportProviders.h> must be included before <netinet/in.h>
+#endif
+#ifdef AF_ISDN
+#error <OpenTransportProviders.h> must be included before <sys/socket.h>
+#endif
 #include <CIncludes/OpenTransportProviders.h>
 #endif
 
