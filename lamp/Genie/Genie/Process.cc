@@ -63,9 +63,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Pedestal
-#include "Pedestal/Application.hh"
-
 // Genie
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
@@ -128,7 +125,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
 	
 	
 	static uint64_t microseconds()
@@ -931,8 +927,6 @@ namespace Genie
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
-		Ped::AdjustSleepForActivity();
-		
 		if ( gCurrentProcess != this )
 		{
 			return;
@@ -1008,8 +1002,6 @@ namespace Genie
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
-		
-		Ped::AdjustSleepForActivity();
 		
 		return looseThread;
 	}
@@ -1248,8 +1240,6 @@ namespace Genie
 		notify_param param = { pid, isSessionLeader };
 		
 		for_each_process( &notify_process, &param );
-		
-		Ped::AdjustSleepForActivity();
 		
 		if ( gCurrentProcess != this )
 		{
@@ -1561,8 +1551,6 @@ namespace Genie
 		}
 		else
 		{
-			Ped::AdjustSleepForActivity();
-			
 			gCurrentProcess->AsyncYield();
 		}
 	}
