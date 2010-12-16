@@ -14,6 +14,7 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
+#include "Genie/scheduler.hh"
 #include "Genie/api/signals.hh"
 
 
@@ -37,6 +38,8 @@ namespace Genie
 		
 		if ( now - current.GetTimeOfLastResume() > 20000 )
 		{
+			mark_process_active( current_process().GetPID() );
+			
 			Ped::AdjustSleepForActivity();
 			
 			current.Breathe();
