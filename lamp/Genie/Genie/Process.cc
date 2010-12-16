@@ -78,6 +78,7 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
+#include "Genie/scheduler.hh"
 #include "Genie/signal_traits.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
@@ -1197,6 +1198,8 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
+		mark_process_inactive( GetPID() );
+		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
 			DumpBacktrace();
