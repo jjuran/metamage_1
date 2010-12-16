@@ -1557,31 +1557,5 @@ namespace Genie
 		}
 	}
 	
-	// This function doesn't return if we received a fatal signal.
-	bool Breathe( bool may_throw )
-	{
-		ASSERT( gCurrentProcess != NULL );
-		
-		// Check for fatal signals
-		if ( gCurrentProcess->HandlePendingSignals( may_throw ) )
-		{
-			return true;
-		}
-		
-		const UInt64 now = N::Microseconds();
-		
-		if ( now - gCurrentProcess->GetTimeOfLastResume() > 20000 )
-		{
-			Ped::AdjustSleepForActivity();
-			
-			gCurrentProcess->Breathe();
-			
-			// Check for fatal signals again
-			return gCurrentProcess->HandlePendingSignals( may_throw );
-		}
-		
-		return false;
-	}
-	
 }
 

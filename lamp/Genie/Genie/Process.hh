@@ -292,8 +292,6 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
-	bool Breathe( bool may_throw );
-	
 }
 
 #endif

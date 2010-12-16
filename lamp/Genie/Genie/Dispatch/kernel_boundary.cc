@@ -14,6 +14,7 @@
 #include "Genie/caught_signal.hh"
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
+#include "Genie/api/breathe.hh"
 
 
 #ifndef SIGSTKFLT
@@ -69,7 +70,7 @@ namespace Genie
 		
 		try
 		{
-			Breathe( true );
+			breathe( true );
 		}
 		catch ( const caught_signal& signal )
 		{

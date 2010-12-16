@@ -10,10 +10,10 @@
 #include "debug/assert.hh"
 
 // Genie
+#include "Genie/api/breathe.hh"
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -48,7 +48,7 @@ namespace Genie
 			{
 				const bool may_throw = bytes_pumped == 0;
 				
-				if ( Breathe( may_throw ) )
+				if ( breathe( may_throw ) )
 				{
 					return bytes_pumped;
 				}
