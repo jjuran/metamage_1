@@ -10,6 +10,8 @@
 namespace Pedestal
 {
 	
+	extern bool (*gActivelyBusy_Hook)();
+	
 	class Application
 	{
 		public:

@@ -185,6 +185,13 @@ namespace Pedestal
 	};
 	
 	
+	bool (*gActivelyBusy_Hook)() = NULL;
+	
+	static bool ActivelyBusy()
+	{
+		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : gRunState.activelyBusy;
+	}
+	
 	static void UpdateLastUserEvent()
 	{
 		gTickCountAtLastUserEvent = ::LMGetTicks();
