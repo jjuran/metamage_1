@@ -132,7 +132,6 @@ namespace Pedestal
 		
 		bool inForeground;     // set to true when the app is frontmost
 		bool startupComplete;  // set to true once the app is ready to respond to events
-		bool activelyBusy;     // set to true by active threads, reset in event loop
 		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
 		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
 		
@@ -140,7 +139,6 @@ namespace Pedestal
 		:
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
-			activelyBusy   ( false ),
 			quitRequested  ( false ),
 			endOfEventLoop ( false )
 		{}
@@ -189,7 +187,7 @@ namespace Pedestal
 	
 	static bool ActivelyBusy()
 	{
-		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : gRunState.activelyBusy;
+		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : false;
 	}
 	
 	static void UpdateLastUserEvent()
@@ -880,8 +878,6 @@ namespace Pedestal
 			{
 				while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
 				{
-					gRunState.activelyBusy = false;
-					
 					CheckMouse();
 					
 					CheckKeyboard();
@@ -1046,11 +1042,6 @@ namespace Pedestal
 		{
 			gTicksAtNextBusiness = businessTime;
 		}
-	}
-	
-	void AdjustSleepForActivity()
-	{
-		gRunState.activelyBusy = true;
 	}
 	
 	void ScheduleImmediateEventCheck()
