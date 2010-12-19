@@ -48,6 +48,9 @@
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEDESC_HH
+#include "Mac/AppleEvents/Types/AEDesc.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
 #endif
@@ -405,30 +408,16 @@ namespace Nitrogen
 			}
 	};
 	
-	struct AEDesc_Data : AEDesc
-	{
-	};
+	using Mac::AEDesc_Data;
+	using Mac::AEDescList_Data;
+	using Mac::AERecord_Data;
+	using Mac::AEAddressDesc;
+	using Mac::AppleEvent;
+	using Mac::AEDesc_ObjectSpecifier;
 	
-	typedef AEDesc_Data AEDescList_Data, AERecord_Data;
-	typedef AEDesc_Data AEAddressDesc, AppleEvent;
-	typedef AEDesc_Data AEDesc_ObjectSpecifier;
-	
-	struct AEDesc_Token : AEDesc
-	{
-	};
-	
-	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
-	
-	inline bool operator==( const AEDesc& a, const AEDesc& b )
-	{
-		return    a.descriptorType == b.descriptorType
-		       && a.dataHandle     == b.dataHandle;
-	}
-	
-	inline bool operator!=( const AEDesc& a, const AEDesc& b )
-	{
-		return !( a == b );
-	}
+	using Mac::AEDesc_Token;
+	using Mac::AEDescList_Token;
+	using Mac::AERecord_Token;
 	
 	template < class AEDesc_Type >
 	struct Qualified_AEDesc_Traits
