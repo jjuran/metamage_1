@@ -51,6 +51,9 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
+#include "Mac/AppleEvents/Types/AEEnumeration.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
 #include "Mac/AppleEvents/Types/AEEventClass.hh"
 #endif
@@ -212,13 +215,6 @@ namespace Nitrogen
 	using Mac::AEEventClass;
 	using Mac::AEEventID;
 	
-	enum AEEnumerated
-	{
-		kAEEnumerated_Max = nucleus::enumeration_traits< UInt32 >::max
-	};
-	
-	typedef AEEnumerated AEEnumeration;
-	
 	
 	#pragma mark -
 	#pragma mark ** DescType_Traits **
@@ -254,7 +250,7 @@ namespace Nitrogen
 	
 	template<> struct DescType_Traits< typeEventRecord >            : nucleus::POD_scribe< EventRecord >                      {};
 	template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
-	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< AEEnumerated, UInt32 >   {};
+	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< Mac::AEEnumeration, UInt32 > {};
 	template<> struct DescType_Traits< typeType >                   : nucleus::converting_POD_scribe< DescType, ::DescType >   {};
 	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, SizeOf_AppParameters > {};
 	template<> struct DescType_Traits< typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
