@@ -22,6 +22,7 @@
 #include "poseven/functions/write.hh"
 
 // Nitrogen
+#include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Str.hh"

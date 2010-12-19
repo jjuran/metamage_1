@@ -4,6 +4,7 @@
  */
 
 // Nitrogen
+#include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/OSStatus.hh"
 

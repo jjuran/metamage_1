@@ -14,6 +14,7 @@
 #include "Nitrogen/AEInteraction.hh"
 
 // Nitrogen
+#include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/Processes.hh"
 
 

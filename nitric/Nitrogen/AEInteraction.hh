@@ -20,6 +20,15 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
+#include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
+#include "Mac/AppleEvents/Types/AEEventClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
+#include "Mac/AppleEvents/Types/AEEventID.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AESENDMODE_HH
 #include "Mac/AppleEvents/Types/AESendMode.hh"
 #endif
@@ -27,8 +36,8 @@
 #include "Mac/AppleEvents/Types/AESendPriority.hh"
 #endif
 
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
+#ifndef NITROGEN_UPP_HH
+#include "Nitrogen/UPP.hh"
 #endif
 
 
@@ -55,15 +64,18 @@ namespace Nitrogen
 	
 	using ::AEIdleProcPtr;
 	
-	nucleus::owned< AppleEvent > AESend( const AppleEvent&    appleEvent,
-	                                     Mac::AESendMode      sendMode,
-	                                     Mac::AESendPriority  sendPriority   = Mac::kAENormalPriority,
-	                                     long                 timeOutInTicks = kAEDefaultTimeout,
-	                                     AEIdleUPP            idleProc       = NULL,
-	                                     AEFilterUPP          filterProc     = NULL
-	);
+	nucleus::owned< Mac::AppleEvent >
+	//
+	AESend( const Mac::AppleEvent&  appleEvent,
+	        Mac::AESendMode         sendMode,
+	        Mac::AESendPriority     sendPriority   = Mac::kAENormalPriority,
+	        long                    timeOutInTicks = kAEDefaultTimeout,
+	        AEIdleUPP               idleProc       = NULL,
+	        AEFilterUPP             filterProc     = NULL );
 	
-	nucleus::owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID );
+	nucleus::owned< Mac::AppleEvent >
+	//
+	AESend( Mac::AEEventClass eventClass, Mac::AEEventID eventID );
 	
 	void AEProcessAppleEvent( const EventRecord& event );
 	
@@ -93,11 +105,11 @@ namespace Nitrogen
 	{
 	}
 	
-	inline bool InvokeAEFilterUPP( EventRecord&          theEvent,
-	                               long                  returnID,
-	                               long                  transactionID,
-	                               const AEAddressDesc&  sender,
-	                               AEFilterUPP           userUPP )
+	inline bool InvokeAEFilterUPP( EventRecord&               theEvent,
+	                               long                       returnID,
+	                               long                       transactionID,
+	                               const Mac::AEAddressDesc&  sender,
+	                               AEFilterUPP                userUPP )
 	{
 		return userUPP( &theEvent, returnID, transactionID, &sender );
 	}
