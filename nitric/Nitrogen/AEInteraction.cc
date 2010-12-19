@@ -22,12 +22,12 @@ namespace Nitrogen
 	
 	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )
 	
-	nucleus::owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
-	                                     AESendMode         sendMode,
-	                                     AESendPriority     sendPriority,
-	                                     long               timeOutInTicks,
-	                                     AEIdleUPP          idleProc,
-	                                     AEFilterUPP        filterProc )
+	nucleus::owned< AppleEvent > AESend( const AppleEvent&    appleEvent,
+	                                     AESendMode           sendMode,
+	                                     Mac::AESendPriority  sendPriority,
+	                                     long                 timeOutInTicks,
+	                                     AEIdleUPP            idleProc,
+	                                     AEFilterUPP          filterProc )
 	{
 		AppleEvent reply;
 		

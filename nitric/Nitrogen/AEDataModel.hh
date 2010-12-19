@@ -222,16 +222,6 @@ namespace Nitrogen
 	typedef AEEnumerated AEKeyForm;
 	
 	
-	enum AESendPriority
-	{
-		kAENormalPriority = ::kAENormalPriority,
-		kAEHighPriority   = ::kAEHighPriority,
-		
-		kAESendPriority_Max = nucleus::enumeration_traits< ::AESendPriority >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( AESendPriority )
-	
 	enum AESendMode
 	{
 		kAENoReply               = ::kAENoReply,
