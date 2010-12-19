@@ -51,6 +51,9 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
+#include "Mac/AppleEvents/Types/AEReturnID.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
 #endif
@@ -188,21 +191,10 @@ namespace Nitrogen
 	
 	// Constants used creating an AppleEvent
 	
-	enum AEReturnID
-	{
-		kAutoGenerateReturnID = ::kAutoGenerateReturnID,
-		
-		kAEReturnID_Max = nucleus::enumeration_traits< ::AEReturnID >::max
-	};
+	using Mac::AEReturnID;
+	using Mac::kAutoGenerateReturnID;
 	
-	// The OSA runtime can generate 'long' return IDs greater than 0x7fff.
-	// AECreateAppleEvent() can only ever accept SInt16, but our specialization
-	// of AEGetAttributePtr() needs to use a 32-bit type.
-	
-	enum AEReturnID_32Bit
-	{
-		kAEReturnID_32Bit_Max = nucleus::enumeration_traits< ::SInt32 >::max
-	};
+	using Mac::AEReturnID_32Bit;
 	
 	enum AETransactionID
 	{
