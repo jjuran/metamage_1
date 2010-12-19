@@ -44,28 +44,6 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( thread, replyStorage );
 	}
 	
-	void CancelReply( AEReturnID_32Bit returnID )
-	{
-		gExpectedReplies.erase( returnID );
-	}
-	
-	void CancelRepliesForThread( ThreadID thread )
-	{
-		typedef ExpectedReplies::iterator iterator;
-		
-		for ( iterator it = gExpectedReplies.begin();  it != gExpectedReplies.end();  )
-		{
-			if ( it->second.thread == thread )
-			{
-				gExpectedReplies.erase( it++ );
-			}
-			else
-			{
-				++it;
-			}
-		}
-	}
-	
 	void ReceiveReply( const AppleEvent& reply )
 	{
 		AEReturnID_32Bit returnID = AEGetAttributePtr< keyReturnIDAttr >( reply );

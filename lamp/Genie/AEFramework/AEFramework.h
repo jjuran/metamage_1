@@ -22,10 +22,6 @@ namespace Nitrogen
 	                  AppleEvent        *replyStorage,
 	                  ThreadID           thread = GetCurrentThread() );
 	
-	void CancelReply( AEReturnID_32Bit returnID );
-	
-	void CancelRepliesForThread( ThreadID thread );
-	
 	void ReceiveReply( const AppleEvent& reply );
 	
 }
