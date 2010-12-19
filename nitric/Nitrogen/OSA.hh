@@ -50,8 +50,6 @@ namespace Nitrogen
 	
 	static const ComponentSubType kOSAGenericScriptingComponentSubtype = ComponentSubType( ::kOSAGenericScriptingComponentSubtype );
 	
-	static const AEEventClass kOSASuite = AEEventClass( ::kOSASuite );
-	
 	static const ResType kOSAScriptResourceType = ResType( ::kOSAScriptResourceType );
 	
 	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );

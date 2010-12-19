@@ -74,14 +74,10 @@ namespace Nitrogen
 	static const Mac::FSType     kICFileType = Mac::FSType   ( ::kICFileType );
 	static const Mac::FSCreator  kICCreator  = Mac::FSCreator( ::kICCreator  );
 	
-	static const AEEventClass kInternetEventClass = AEEventClass( ::kInternetEventClass );
-	
 	static const AEEventID kAEGetURL   = AEEventID( ::kAEGetURL   );
 	static const AEEventID kAEFetchURL = AEEventID( ::kAEFetchURL );
 	
 	static const AEKeyword keyAEAttaching = AEKeyword( ::keyAEAttaching );
-	
-	static const AEEventClass kICEditPreferenceEventClass = AEEventClass( ::kICEditPreferenceEventClass );
 	
 	static const AEEventID kICEditPreferenceEvent = AEEventID( ::kICEditPreferenceEvent );
 	

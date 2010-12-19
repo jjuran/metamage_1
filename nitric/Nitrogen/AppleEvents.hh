@@ -35,8 +35,6 @@
 namespace Nitrogen
 {
 	
-	static const AEEventClass kCoreEventClass = AEEventClass( ::kCoreEventClass );
-	
 	static const AEEventID kAEOpenApplication = AEEventID( ::kAEOpenApplication );
 	static const AEEventID kAEOpenDocuments   = AEEventID( ::kAEOpenDocuments   );
 	static const AEEventID kAEPrintDocuments  = AEEventID( ::kAEPrintDocuments  );

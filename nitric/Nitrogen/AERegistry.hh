@@ -50,7 +50,6 @@ namespace Nitrogen
 	static const AEEventID kAEClose = AEEventID( ::kAEClose );
 	// kAECondensed                                           
 	static const AEEventID kAECopy = AEEventID( ::kAECopy );
-	static const AEEventClass kAECoreSuite = AEEventClass( ::kAECoreSuite );
 	static const AEEventID kAECountElements = AEEventID( ::kAECountElements );
 	static const AEEventID kAECreateElement = AEEventID( ::kAECreateElement );
 	static const AEEventID kAECreatePublisher = AEEventID( ::kAECreatePublisher );
@@ -85,7 +84,6 @@ namespace Nitrogen
 	// kAELeftJustified                                       
 	// kAELowercase                                           
 	// kAEMakeObjectsVisible                                  
-	static const AEEventClass kAEMiscStandards = AEEventClass( ::kAEMiscStandards );
 	// kAEModifiable                                          
 	// kAEMove                                                
 	// kAENo                                                  
@@ -115,15 +113,12 @@ namespace Nitrogen
 	// kAEQDOr                                                
 	// kAEQDSubOver                                           
 	// kAEQDSubPin                                            
-	static const AEEventClass kAEQDSupplementalSuite = AEEventClass( ::kAEQDSupplementalSuite );
 	// kAEQDXor                                               
-	static const AEEventClass kAEQuickdrawSuite = AEEventClass( ::kAEQuickdrawSuite );
 	// kAEQuitAll                                             
 	// kAERedo                                                
 	// kAERegular                                             
 	static const AEEventID kAEReopenApplication = AEEventID( ::kAEReopenApplication );
 	// kAEReplace                                             
-	static const AEEventClass kAERequiredSuite = AEEventClass( ::kAERequiredSuite );
 	// kAERestart                                             
 	// kAERevealSelection                                     
 	// kAERevert                                              
@@ -141,8 +136,6 @@ namespace Nitrogen
 	// kAEStrikethrough                                       
 	// kAESubscript                                           
 	// kAESuperscript                                         
-	static const AEEventClass kAETableSuite = AEEventClass( ::kAETableSuite );
-	static const AEEventClass kAETextSuite = AEEventClass( ::kAETextSuite );
 	// kAETransactionTerminated                               
 	// kAEUnderline                                           
 	// kAEUndo                                                

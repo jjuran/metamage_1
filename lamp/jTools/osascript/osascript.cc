@@ -334,7 +334,7 @@ namespace tool
 			script = LoadScriptFile( pathname, getsCWDProperty );
 		}
 		
-		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
 		                                                            N::kAEOpenApplication,
 		                                                            n::make< N::AEAddressDesc >() );
 		

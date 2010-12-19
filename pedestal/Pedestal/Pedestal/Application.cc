@@ -103,7 +103,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	using N::kCoreEventClass;
+	using Mac::kCoreEventClass;
 	using N::kAEQuitApplication;
 	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;

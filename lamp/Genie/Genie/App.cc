@@ -34,7 +34,7 @@ namespace Genie
 		
 		static void Install_Handler()
 		{
-			N::AEInstallEventHandler< Handler >( N::kCoreEventClass,
+			N::AEInstallEventHandler< Handler >( Mac::kCoreEventClass,
 			                                     N::kAEAnswer ).release();
 		}
 	};

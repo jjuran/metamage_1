@@ -36,7 +36,7 @@ namespace MacBinaryDecoder
 	
 	using N::keyDirectObject;
 	using N::typeAEList;
-	using N::kCoreEventClass;
+	using Mac::kCoreEventClass;
 	using N::kAEOpenDocuments;
 	
 	App* App::theApp = NULL;

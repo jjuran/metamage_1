@@ -28,10 +28,6 @@
 namespace Nitrogen
 {
 	
-	static const AEEventClass kASAppleScriptSuite  = AEEventClass( ::kASAppleScriptSuite  );
-	static const AEEventClass kASScriptEditorSuite = AEEventClass( ::kASScriptEditorSuite );
-	static const AEEventClass kASTypeNamesSuite    = AEEventClass( ::kASTypeNamesSuite    );
-	
 	// kGetAETE .. kASLaunchEvent
 	
 	// kASSubroutineEvent

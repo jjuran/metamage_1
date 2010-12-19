@@ -101,7 +101,7 @@ namespace tool
 	static n::owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
 	                                                    const ProcessSerialNumber&  psn )
 	{
-		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
 		                                                              N::kAEOpenDocuments,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		

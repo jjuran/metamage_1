@@ -239,7 +239,7 @@ namespace tool
 	static n::owned< N::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
 	                                                    const nucleus::string&      script )
 	{
-		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
+		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kAEMiscStandards,
 		                                                              N::kAEDoScript,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
