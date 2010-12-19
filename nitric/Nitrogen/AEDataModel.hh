@@ -222,27 +222,6 @@ namespace Nitrogen
 	typedef AEEnumerated AEKeyForm;
 	
 	
-	enum AESendMode
-	{
-		kAENoReply               = ::kAENoReply,
-		kAEQueueReply            = ::kAEQueueReply,
-		kAEWaitReply             = ::kAEWaitReply,
-		kAEDontReconnect         = ::kAEDontReconnect,
-		kAEWantReceipt           = ::kAEWantReceipt,
-		kAENeverInteract         = ::kAENeverInteract,
-		kAECanInteract           = ::kAECanInteract,
-		kAEAlwaysInteract        = ::kAEAlwaysInteract,
-		kAECanSwitchLayer        = ::kAECanSwitchLayer,
-		kAEDontRecord            = ::kAEDontRecord,
-		kAEDontExecute           = ::kAEDontExecute,
-		kAEProcessNonReplyEvents = ::kAEProcessNonReplyEvents,
-		
-		kAESendMode_Max = nucleus::enumeration_traits< ::AESendMode >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( AESendMode )
-	
-	
 	#pragma mark -
 	#pragma mark ** DescType_Traits **
 	

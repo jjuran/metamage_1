@@ -221,7 +221,7 @@ namespace tool
 		                            SelectAddress( front, sigCode, app, machine, host, url ),
 		                            argBuild,
 		                            NULL ),
-		           N::kAENoReply | N::kAECanInteract );
+		           Mac::kAENoReply | Mac::kAECanInteract );
 		
 		return 0;
 	}

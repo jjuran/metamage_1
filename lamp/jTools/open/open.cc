@@ -119,7 +119,7 @@ namespace tool
 		}
 		
 		N::AESend( MakeOpenDocsEvent( items, psn ),
-		           N::kAENoReply | N::kAECanInteract );
+		           Mac::kAENoReply | Mac::kAECanInteract );
 		
 		if ( gActivate )
 		{

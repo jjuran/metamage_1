@@ -20,6 +20,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AESENDMODE_HH
+#include "Mac/AppleEvents/Types/AESendMode.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AESENDPRIORITY_HH
 #include "Mac/AppleEvents/Types/AESendPriority.hh"
 #endif
@@ -53,7 +56,7 @@ namespace Nitrogen
 	using ::AEIdleProcPtr;
 	
 	nucleus::owned< AppleEvent > AESend( const AppleEvent&    appleEvent,
-	                                     AESendMode           sendMode,
+	                                     Mac::AESendMode      sendMode,
 	                                     Mac::AESendPriority  sendPriority   = Mac::kAENormalPriority,
 	                                     long                 timeOutInTicks = kAEDefaultTimeout,
 	                                     AEIdleUPP            idleProc       = NULL,
