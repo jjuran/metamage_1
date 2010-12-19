@@ -28,14 +28,13 @@
 namespace Nitrogen
 {
 	
-	// kGetAETE .. kASLaunchEvent
-	
-	// kASSubroutineEvent
+	// kUpdateAEUT .. kCleanUpAEUT
 	
 	// kASPrepositionalSubroutine
 	
-	// kASStartLogEvent .. kASCommentEvent
-	// kASAdd .. kASContains
+	// kASStartLogEvent .. kASStopLogEvent
+	// kASAdd .. kASPower
+	// kASComesBefore .. kASConcatenate
 	// kASAnd .. keyASArg
 	// kASErrorEventCode .. typeUserRecordFields
 	

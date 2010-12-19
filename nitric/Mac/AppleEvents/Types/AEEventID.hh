@@ -15,6 +15,9 @@
 #ifndef __APPLEEVENTS__
 #include <AppleEvents.h>
 #endif
+#ifndef __ASREGISTRY__
+#include <ASRegistry.h>
+#endif
 #ifndef __INTERNETCONFIG__
 #include <InternetConfig.h>
 #endif
@@ -69,6 +72,24 @@ namespace Mac
 		kAESave              = ::kAESave,
 		kAESelect            = ::kAESelect,
 		kAESetData           = ::kAESetData,
+		
+		// ASRegistry
+		kASCommentEvent    = ::kASCommentEvent,
+		kASLaunchEvent     = ::kASLaunchEvent,
+		kASSubroutineEvent = ::kASSubroutineEvent,
+		
+		kASEqual              = ::kASEqual,
+		kASNotEqual           = ::kASNotEqual,
+		kASGreaterThan        = ::kASGreaterThan,
+		kASGreaterThanOrEqual = ::kASGreaterThanOrEqual,
+		kASLessThan           = ::kASLessThan,
+		kASLessThanOrEqual    = ::kASLessThanOrEqual,
+		kASStartsWith         = ::kASStartsWith,
+		kASEndsWith           = ::kASEndsWith,
+		kASContains           = ::kASContains,
+		
+		kGetAETE = ::kGetAETE,
+		kGetAEUT = ::kGetAEUT,
 		
 		// InternetConfig
 		kAEGetURL              = ::kAEGetURL,
