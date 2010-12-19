@@ -51,6 +51,9 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
+#include "Mac/AppleEvents/Types/AEEventClass.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 #include "Mac/AppleEvents/Types/AEReturnID.hh"
 #endif
@@ -203,10 +206,7 @@ namespace Nitrogen
 		kAETransactionID_Max = nucleus::enumeration_traits< ::AETransactionID >::max
 	};
 	
-	enum AEEventClass
-	{
-		kAEEventClass_Max = nucleus::enumeration_traits< ::AEEventClass >::max
-	};
+	using Mac::AEEventClass;
 	
 	enum AEEventID
 	{
