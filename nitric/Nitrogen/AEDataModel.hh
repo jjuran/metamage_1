@@ -54,6 +54,9 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
 #include "Mac/AppleEvents/Types/AEEventClass.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
+#include "Mac/AppleEvents/Types/AEEventID.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 #include "Mac/AppleEvents/Types/AEReturnID.hh"
 #endif
@@ -207,11 +210,7 @@ namespace Nitrogen
 	};
 	
 	using Mac::AEEventClass;
-	
-	enum AEEventID
-	{
-		kAEEventID_Max = nucleus::enumeration_traits< ::AEEventID >::max
-	};
+	using Mac::AEEventID;
 	
 	enum AEEnumerated
 	{
@@ -359,15 +358,6 @@ namespace Nitrogen
 		
 		return result;
 	}
-	
-	class NonNull_AEDescs_Are_Live
-	{
-		public:
-			static bool is_live( const AEDesc& desc )
-			{
-				return desc.dataHandle != NULL;
-			}
-	};
 	
 	using Mac::AEDesc_Data;
 	using Mac::AEDescList_Data;
