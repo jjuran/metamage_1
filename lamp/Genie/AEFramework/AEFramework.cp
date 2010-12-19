@@ -8,6 +8,11 @@
 // Standard C++
 #include <map>
 
+// Nitrogen
+#ifndef NITROGEN_THREADS_HH
+#include "Nitrogen/Threads.hh"
+#endif
+
 
 namespace Nitrogen
 {
@@ -34,14 +39,13 @@ namespace Nitrogen
 	static ExpectedReplies gExpectedReplies;
 	
 	void ExpectReply( AEReturnID_32Bit   returnID,
-	                  AppleEvent        *replyStorage,
-	                  ThreadID           thread )
+	                  AppleEvent        *replyStorage )
 	{
 		// assert( returnID != 0 );
 		// Can replyStorage be NULL?  If you wanted to know when the reply came back
 		// but didn't care what was in it, then it would make sense.
 		
-		gExpectedReplies[ returnID ] = ExpectedReply( thread, replyStorage );
+		gExpectedReplies[ returnID ] = ExpectedReply( GetCurrentThread(), replyStorage );
 	}
 	
 	void ReceiveReply( const AppleEvent& reply )
