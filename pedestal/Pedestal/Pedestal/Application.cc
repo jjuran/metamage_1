@@ -104,7 +104,7 @@ namespace Pedestal
 	
 	
 	using Mac::kCoreEventClass;
-	using N::kAEQuitApplication;
+	using Mac::kAEQuitApplication;
 	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;

@@ -335,7 +335,7 @@ namespace tool
 		}
 		
 		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
-		                                                            N::kAEOpenApplication,
+		                                                            Mac::kAEOpenApplication,
 		                                                            n::make< N::AEAddressDesc >() );
 		
 		// Add the list, even if there are zero parameters.

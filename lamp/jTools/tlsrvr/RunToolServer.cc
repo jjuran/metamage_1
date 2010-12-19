@@ -240,7 +240,7 @@ namespace tool
 	                                                    const nucleus::string&      script )
 	{
 		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kAEMiscStandards,
-		                                                              N::kAEDoScript,
+		                                                              Mac::kAEDoScript,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
