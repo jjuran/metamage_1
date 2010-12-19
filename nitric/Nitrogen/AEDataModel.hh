@@ -48,8 +48,8 @@
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEDESC_HH
-#include "Mac/AppleEvents/Types/AEDesc.hh"
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
+#include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
@@ -479,38 +479,6 @@ namespace nucleus
 			
 			return result;
 		}
-	};
-	
-	template <>
-	struct disposer< Nitrogen::AEDesc_Data >
-	{
-		typedef AEDesc  argument_type;
-		typedef void    result_type;
-		
-		// parameter can't be const
-		void operator()( AEDesc desc ) const
-		{
-			// AEDisposeDesc() is documented as only ever returning noErr,
-			// but we check anyway to be future-proof.
-			
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
-		}
-	};
-	
-	template <>
-	struct aliveness_traits< Nitrogen::AEDesc_Data, disposer< Nitrogen::AEDesc_Data > >
-	{
-		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
-	};
-	
-	template <>
-	struct null_resource< ::Nitrogen::AEDesc_Data >
-	{
-		static const ::Nitrogen::AEDesc_Data& value;
-		
-		static const ::Nitrogen::AEDesc_Data& get()  { return value; }
 	};
 	
 	template <>
@@ -1114,9 +1082,7 @@ namespace Nitrogen
 	using namespace MetrowerksHack;
 	
 	
-	inline void AEDisposeDesc( nucleus::owned< AEDesc_Data > )
-	{
-	}
+	using Mac::AEDisposeDesc;
 	
 	inline nucleus::owned< AEDesc_Data > AEDuplicateDesc( const AEDesc& original )
 	{
