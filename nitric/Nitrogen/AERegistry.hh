@@ -46,7 +46,6 @@ namespace Nitrogen
 	// kAEBold                                                
 	// kAECentered                                            
 	// kAEChangeView                                          
-	// kAEClone                                               
 	// kAECondensed                                           
 	// kAEDrag                                                
 	// kAEDuplicateSelection                                  
@@ -59,11 +58,8 @@ namespace Nitrogen
 	// kAEFinderEvents                                        
 	// kAEFormulaProtect                                      
 	// kAEFullyJustified                                      
-	// kAEGetClassInfo                                        
-	// kAEGetEventInfo                                        
 	// kAEGetInfoSelection                                    
 	// kAEGetPrivilegeSelection                               
-	// kAEGetSuiteInfo                                        
 	// kAEGrow                                                
 	// kAEHidden                                              
 	// kAEHiQuality                                           
@@ -74,7 +70,6 @@ namespace Nitrogen
 	// kAELowercase                                           
 	// kAEMakeObjectsVisible                                  
 	// kAEModifiable                                          
-	// kAEMove                                                
 	// kAENo                                                  
 	// kAENoArrow                                             
 	// kAENonmodifiable                                       
@@ -108,7 +103,6 @@ namespace Nitrogen
 	// kAERevealSelection                                     
 	// kAERevert                                              
 	// kAERightJustified                                      
-	// kAESave                                                
 	// kAESetPosition                                         
 	// kAEShadow                                              
 	// kAEShowClipboard                                       

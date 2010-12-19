@@ -46,6 +46,7 @@ namespace Mac
 		kAENotifyRecording      = ::kAENotifyRecording,
 		
 		// AERegistry
+		kAEClone             = ::kAEClone,
 		kAEClose             = ::kAEClose,
 		kAECopy              = ::kAECopy,
 		kAECountElements     = ::kAECountElements,
@@ -55,12 +56,17 @@ namespace Mac
 		kAEDelete            = ::kAEDelete,
 		kAEDoObjectsExist    = ::kAEDoObjectsExist,
 		kAEDoScript          = ::kAEDoScript,
+		kAEGetClassInfo      = ::kAEGetClassInfo,
 		kAEGetData           = ::kAEGetData,
 		kAEGetDataSize       = ::kAEGetDataSize,
+		kAEGetEventInfo      = ::kAEGetEventInfo,
+		kAEGetSuiteInfo      = ::kAEGetSuiteInfo,
+		kAEMove              = ::kAEMove,
 		kAEOpen              = ::kAEOpen,
 		kAEPaste             = ::kAEPaste,
 		kAEPrint             = ::kAEPrint,
 		kAEReopenApplication = ::kAEReopenApplication,
+		kAESave              = ::kAESave,
 		kAESelect            = ::kAESelect,
 		kAESetData           = ::kAESetData,
 		
