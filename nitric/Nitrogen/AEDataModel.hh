@@ -218,7 +218,6 @@ namespace Nitrogen
 	};
 	
 	typedef AEEnumerated AEEnumeration;
-	typedef AEEnumerated AEKeyForm;
 	
 	
 	#pragma mark -

@@ -203,7 +203,7 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
 	                                                       AEObjectClass        containerClass,
-	                                                       AEEnumerated         keyForm,
+	                                                       Mac::AEKeyForm       keyForm,
 	                                                       const AEDesc_Data&   keyData,
 	                                                       RefCon )
 	{
@@ -221,12 +221,12 @@ namespace Nitrogen
 	{
 		AEObjectClass       desiredClass;
 		AEObjectClass       containerClass;
-		AEEnumerated        keyForm;
+		Mac::AEKeyForm      keyForm;
 		const AEDesc_Data&  keyData;
 		
 		ObjectAccessContext( AEObjectClass       desiredClass,
 		                     AEObjectClass       containerClass,
-		                     AEEnumerated        keyForm,
+		                     Mac::AEKeyForm      keyForm,
 		                     const AEDesc_Data&  keyData )
 		:
 			desiredClass  ( desiredClass ),
@@ -263,13 +263,13 @@ namespace Nitrogen
 		private:
 			AEObjectClass       itsDesiredClass;
 			AEObjectClass       itsContainerClass;
-			AEEnumerated        itsKeyForm;
+			Mac::AEKeyForm      itsKeyForm;
 			const AEDesc_Data&  itsKeyData;
 		
 		public:
 			ObjectAccessor_Caller( AEObjectClass       desiredClass,
 	                               AEObjectClass       containerClass,
-	                               AEEnumerated        keyForm,
+	                               Mac::AEKeyForm      keyForm,
 	                               const AEDesc_Data&  keyData )
 			:
 				itsDesiredClass  ( desiredClass   ),
@@ -304,7 +304,7 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
-	                                                     AEEnumerated         keyForm,
+	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData,
 	                                                     RefCon )
 	{

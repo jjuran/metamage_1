@@ -23,7 +23,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
 	                                                                  const AEDesc_ObjectSpecifier&  container,
-	                                                                  AEEnumeration                  keyForm,
+	                                                                  Mac::AEKeyForm                 keyForm,
 	                                                                  const AEDesc_Data&             keyData );
 	
 	nucleus::owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType = typeWildCard );

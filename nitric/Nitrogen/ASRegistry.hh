@@ -54,8 +54,6 @@ namespace Nitrogen
 	
 	// kASCurrentApplication
 	
-	static const AEKeyForm formUserPropertyID = AEKeyForm( ::formUserPropertyID );
-	
 	// pASIt .. pASTopLevelScript
 	// kAECase .. enumConsiderations
 	// kAECaseConsiderMask .. enumConsidsAndIgnores
