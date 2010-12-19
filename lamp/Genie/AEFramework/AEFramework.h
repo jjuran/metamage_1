@@ -7,18 +7,21 @@
 #define AEFRAMEWORK_AEFRAMEWORK_H
 
 // Nitrogen
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_AEDESC_HH
+#include "Mac/AppleEvents/Types/AEDesc.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
+#include "Mac/AppleEvents/Types/AEReturnID.hh"
 #endif
 
 
 namespace Nitrogen
 {
 	
-	void ExpectReply( AEReturnID_32Bit   returnID,
-	                  AppleEvent        *replyStorage );
+	void ExpectReply( Mac::AEReturnID_32Bit  returnID,
+	                  Mac::AppleEvent*       replyStorage );
 	
-	void ReceiveReply( const AppleEvent& reply );
+	void ReceiveReply( const Mac::AppleEvent& reply );
 	
 }
 

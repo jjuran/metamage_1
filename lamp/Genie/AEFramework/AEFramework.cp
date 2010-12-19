@@ -9,6 +9,9 @@
 #include <map>
 
 // Nitrogen
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
+#endif
 #ifndef NITROGEN_THREADS_HH
 #include "Nitrogen/Threads.hh"
 #endif
