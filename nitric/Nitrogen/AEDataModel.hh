@@ -48,6 +48,9 @@
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
+#include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
+#endif
 #ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
 #endif
@@ -510,7 +513,7 @@ namespace nucleus
 	template <>
 	struct aliveness_traits< Nitrogen::AEDesc_Data, disposer< Nitrogen::AEDesc_Data > >
 	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
+		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
 	};
 	
 	template <>
@@ -539,7 +542,7 @@ namespace nucleus
 	template <>
 	struct aliveness_traits< Nitrogen::AEDesc_Token, disposer< Nitrogen::AEDesc_Token > >
 	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
+		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
 	};
 	
 	template <>
@@ -574,7 +577,7 @@ namespace nucleus
 	template <>
 	struct aliveness_traits< AEKeyDesc, disposer< AEKeyDesc > >
 	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
+		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
 	};
 	
 }
