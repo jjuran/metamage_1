@@ -92,51 +92,10 @@ namespace UseEdit
 			void DeleteElementByID( UInt32 id );
 	};
 	
-	class DocumentsOwner
-	{
-		private:
-			DocumentContainer                                     itsDocuments;
-			boost::intrusive_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
-			
-			void StoreNewDocument( Document* doc );
-		
-		public:
-			DocumentsOwner();
-			~DocumentsOwner();
-			
-			void CloseDocument( WindowRef window );
-			
-			DocumentContainer& Documents()  { return itsDocuments; }
-			
-			void NewWindow();
-			void OpenDocument( const Io_Details::file_spec& file );
-	};
-	
 	
 	class App : public Pedestal::Application
 	{
-		private:
-			static App* theApp;
-			
-			typedef void (*AEEventHandlerProcPtr)( Nitrogen::AppleEvent const&, Nitrogen::AppleEvent&, App* );
-			
-			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsCloseHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsCountHandler;
-			nucleus::owned< Nitrogen::AEEventHandler > itsGetDataHandler;
-			
-			template < AEEventHandlerProcPtr proc >
-			inline
-			nucleus::owned< Nitrogen::AEEventHandler >
-			InstallAppleEventHandler( Nitrogen::AEEventClass  eventClass,
-			                          Nitrogen::AEEventID     eventID )
-			{
-				return Nitrogen::AEInstallEventHandler< App*, proc >( eventClass, eventID, this );
-			}
-		
 		public:
-			static App& Get();
-			
 			App();
 			~App();
 	};
