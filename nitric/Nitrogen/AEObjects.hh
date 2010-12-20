@@ -24,6 +24,12 @@
 #ifndef __AEOBJECTS__
 #include <AEObjects.h>
 #endif
+
+// Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
+#include "Mac/AppleEvents/Types/AEKeyForm.hh"
+#endif
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
@@ -98,14 +104,6 @@ namespace Nitrogen
 	typedef AEComparisonOperator AECompOperator;
 	
 	
-	static const AEKeyForm formAbsolutePosition = AEKeyForm( ::formAbsolutePosition );
-	static const AEKeyForm formRelativePosition = AEKeyForm( ::formRelativePosition );
-	static const AEKeyForm formTest             = AEKeyForm( ::formTest             );
-	static const AEKeyForm formRange            = AEKeyForm( ::formRange            );
-	static const AEKeyForm formPropertyID       = AEKeyForm( ::formPropertyID       );
-	static const AEKeyForm formName             = AEKeyForm( ::formName             );
-	
-	
 	static const DescType typeObjectClass = DescType( ::typeObjectClass );
 	static const DescType typePropertyID  = DescType( ::typePropertyID  );
 	
@@ -122,7 +120,7 @@ namespace Nitrogen
 	template <> struct AEKeyword_Traits< keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
 	
 	template <> struct AEKeyword_Traits< keyAEDesiredClass > : Type_AEKeyword_Traits< AEObjectClass > {};
-	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< AEKeyForm     > {};
+	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm > {};
 	
 	enum AEResolveCallbackFlags
 	{
@@ -162,7 +160,7 @@ namespace Nitrogen
 	inline void InvokeOSLAccessorUPP( AEObjectClass        desiredClass,
 	                                  const AEDesc_Token&  containerToken,
 	                                  AEObjectClass        containerClass,
-	                                  AEEnumerated         keyForm,
+	                                  Mac::AEKeyForm       keyForm,
 	                                  const AEDesc_Data&   keyData,
 	                                  AEDesc_Token&        value,
 	                                  RefCon               accessorRefcon,
@@ -180,7 +178,7 @@ namespace Nitrogen
 	typedef nucleus::owned< AEDesc_Token > ( *OSLAccessorProcPtr )( AEObjectClass        desiredClass,
 	                                                                const AEDesc_Token&  containerToken,
 	                                                                AEObjectClass        containerClass,
-	                                                                AEEnumerated         keyForm,
+	                                                                Mac::AEKeyForm       keyForm,
 	                                                                const AEDesc_Data&   keyData,
 	                                                                RefCon               accessorRefcon );
 	
@@ -200,7 +198,7 @@ namespace Nitrogen
 				*value = handler( AEObjectClass( desiredClass ),
 				                  static_cast< const AEDesc_Token& >( *containerToken ),
 				                  AEObjectClass( containerClass ),
-				                  AEKeyForm( keyForm ),
+				                  Mac::AEKeyForm( keyForm ),
 				                  static_cast< const AEDesc_Data& >( *keyData ),
 				                  accessorRefcon ).release();
 			}
@@ -399,7 +397,7 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
-	                                                     AEEnumerated         keyForm,
+	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData );
 	
 	#pragma mark -

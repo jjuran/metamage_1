@@ -247,16 +247,16 @@ namespace UseEdit
 		static n::owned< N::AEDesc_Token > Accessor( N::AEObjectClass        desiredClass,
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             N::AEObjectClass        containerClass,
-		                                             N::AEEnumerated         keyForm,
+		                                             Mac::AEKeyForm          keyForm,
 		                                             const N::AEDesc_Data&   keyData,
 		                                             N::RefCon )
 		{
-			if ( keyForm == N::formUniqueID )
+			if ( keyForm == Mac::formUniqueID )
 			{
 				return gDocuments.GetElementByID( N::AEGetDescData< N::typeUInt32 >( keyData ) );
 			}
 			
-			if ( keyForm == N::formAbsolutePosition )
+			if ( keyForm == Mac::formAbsolutePosition )
 			{
 				std::size_t count = gDocuments.CountElements();
 				
@@ -355,7 +355,7 @@ namespace UseEdit
 			
 			return N::AECreateObjectSpecifier( N::cDocument,
 			                                   N::GetRootObjectSpecifier(),
-			                                   N::formUniqueID,
+			                                   Mac::formUniqueID,
 			                                   static_cast< const N::AEDesc_Data& >( keyData ) );
 		}
 		

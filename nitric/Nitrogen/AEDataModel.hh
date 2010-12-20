@@ -48,8 +48,32 @@
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #include "Mac/Aliases/Types/AliasHandle.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
+#include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
+#include "Mac/AppleEvents/Types/AEEnumeration.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
+#include "Mac/AppleEvents/Types/AEEventClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
+#include "Mac/AppleEvents/Types/AEEventID.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
+#include "Mac/AppleEvents/Types/AEReturnID.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AETRANSACTIONID_HH
+#include "Mac/AppleEvents/Types/AETransactionID.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
+#include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
+#endif
 #ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
+#endif
+#ifndef MAC_PROCESSES_UTILITIES_SIZEOFAPPPARAMETERS_HH
+#include "Mac/Processes/Utilities/sizeof_AppParameters.hh"
 #endif
 
 #ifndef NITROGEN_AEKEYWORD_HH
@@ -182,77 +206,16 @@ namespace Nitrogen
 	
 	// Constants used creating an AppleEvent
 	
-	enum AEReturnID
-	{
-		kAutoGenerateReturnID = ::kAutoGenerateReturnID,
-		
-		kAEReturnID_Max = nucleus::enumeration_traits< ::AEReturnID >::max
-	};
+	using Mac::AEReturnID;
+	using Mac::kAutoGenerateReturnID;
 	
-	// The OSA runtime can generate 'long' return IDs greater than 0x7fff.
-	// AECreateAppleEvent() can only ever accept SInt16, but our specialization
-	// of AEGetAttributePtr() needs to use a 32-bit type.
+	using Mac::AEReturnID_32Bit;
 	
-	enum AEReturnID_32Bit
-	{
-		kAEReturnID_32Bit_Max = nucleus::enumeration_traits< ::SInt32 >::max
-	};
+	using Mac::AETransactionID;
+	using Mac::kAnyTransactionID;
 	
-	enum AETransactionID
-	{
-		kAnyTransactionID = ::kAnyTransactionID,
-		
-		kAETransactionID_Max = nucleus::enumeration_traits< ::AETransactionID >::max
-	};
-	
-	enum AEEventClass
-	{
-		kAEEventClass_Max = nucleus::enumeration_traits< ::AEEventClass >::max
-	};
-	
-	enum AEEventID
-	{
-		kAEEventID_Max = nucleus::enumeration_traits< ::AEEventID >::max
-	};
-	
-	enum AEEnumerated
-	{
-		kAEEnumerated_Max = nucleus::enumeration_traits< UInt32 >::max
-	};
-	
-	typedef AEEnumerated AEEnumeration;
-	typedef AEEnumerated AEKeyForm;
-	
-	
-	enum AESendPriority
-	{
-		kAENormalPriority = ::kAENormalPriority,
-		kAEHighPriority   = ::kAEHighPriority,
-		
-		kAESendPriority_Max = nucleus::enumeration_traits< ::AESendPriority >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( AESendPriority )
-	
-	enum AESendMode
-	{
-		kAENoReply               = ::kAENoReply,
-		kAEQueueReply            = ::kAEQueueReply,
-		kAEWaitReply             = ::kAEWaitReply,
-		kAEDontReconnect         = ::kAEDontReconnect,
-		kAEWantReceipt           = ::kAEWantReceipt,
-		kAENeverInteract         = ::kAENeverInteract,
-		kAECanInteract           = ::kAECanInteract,
-		kAEAlwaysInteract        = ::kAEAlwaysInteract,
-		kAECanSwitchLayer        = ::kAECanSwitchLayer,
-		kAEDontRecord            = ::kAEDontRecord,
-		kAEDontExecute           = ::kAEDontExecute,
-		kAEProcessNonReplyEvents = ::kAEProcessNonReplyEvents,
-		
-		kAESendMode_Max = nucleus::enumeration_traits< ::AESendMode >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( AESendMode )
+	using Mac::AEEventClass;
+	using Mac::AEEventID;
 	
 	
 	#pragma mark -
@@ -282,16 +245,11 @@ namespace Nitrogen
 	template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : nucleus::POD_scribe< double >      {};
 	template<> struct DescType_Traits< type128BitFloatingPoint >    : nucleus::POD_scribe< long double > {};
 	
-	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
-	{
-		return sizeof (AppParameters) + appParameters.messageLength;
-	}
-	
 	template<> struct DescType_Traits< typeEventRecord >            : nucleus::POD_scribe< EventRecord >                      {};
 	template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
-	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< AEEnumerated, UInt32 >   {};
+	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< Mac::AEEnumeration, UInt32 > {};
 	template<> struct DescType_Traits< typeType >                   : nucleus::converting_POD_scribe< DescType, ::DescType >   {};
-	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, SizeOf_AppParameters > {};
+	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, Mac::sizeof_AppParameters > {};
 	template<> struct DescType_Traits< typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
 	template<> struct DescType_Traits< typeFSRef >                  : nucleus::POD_scribe< FSRef >                            {};
 	template<> struct DescType_Traits< typeKeyword >                : nucleus::converting_POD_scribe< AEKeyword, ::AEKeyword > {};
@@ -393,39 +351,16 @@ namespace Nitrogen
 		return result;
 	}
 	
-	class NonNull_AEDescs_Are_Live
-	{
-		public:
-			static bool is_live( const AEDesc& desc )
-			{
-				return desc.dataHandle != NULL;
-			}
-	};
+	using Mac::AEDesc_Data;
+	using Mac::AEDescList_Data;
+	using Mac::AERecord_Data;
+	using Mac::AEAddressDesc;
+	using Mac::AppleEvent;
+	using Mac::AEDesc_ObjectSpecifier;
 	
-	struct AEDesc_Data : AEDesc
-	{
-	};
-	
-	typedef AEDesc_Data AEDescList_Data, AERecord_Data;
-	typedef AEDesc_Data AEAddressDesc, AppleEvent;
-	typedef AEDesc_Data AEDesc_ObjectSpecifier;
-	
-	struct AEDesc_Token : AEDesc
-	{
-	};
-	
-	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
-	
-	inline bool operator==( const AEDesc& a, const AEDesc& b )
-	{
-		return    a.descriptorType == b.descriptorType
-		       && a.dataHandle     == b.dataHandle;
-	}
-	
-	inline bool operator!=( const AEDesc& a, const AEDesc& b )
-	{
-		return !( a == b );
-	}
+	using Mac::AEDesc_Token;
+	using Mac::AEDescList_Token;
+	using Mac::AERecord_Token;
 	
 	template < class AEDesc_Type >
 	struct Qualified_AEDesc_Traits
@@ -490,38 +425,6 @@ namespace nucleus
 	};
 	
 	template <>
-	struct disposer< Nitrogen::AEDesc_Data >
-	{
-		typedef AEDesc  argument_type;
-		typedef void    result_type;
-		
-		// parameter can't be const
-		void operator()( AEDesc desc ) const
-		{
-			// AEDisposeDesc() is documented as only ever returning noErr,
-			// but we check anyway to be future-proof.
-			
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
-		}
-	};
-	
-	template <>
-	struct aliveness_traits< Nitrogen::AEDesc_Data, disposer< Nitrogen::AEDesc_Data > >
-	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
-	};
-	
-	template <>
-	struct null_resource< ::Nitrogen::AEDesc_Data >
-	{
-		static const ::Nitrogen::AEDesc_Data& value;
-		
-		static const ::Nitrogen::AEDesc_Data& get()  { return value; }
-	};
-	
-	template <>
 	struct disposer< Nitrogen::AEDesc_Token >
 	{
 		typedef AEDesc  argument_type;
@@ -539,7 +442,7 @@ namespace nucleus
 	template <>
 	struct aliveness_traits< Nitrogen::AEDesc_Token, disposer< Nitrogen::AEDesc_Token > >
 	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
+		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
 	};
 	
 	template <>
@@ -574,7 +477,7 @@ namespace nucleus
 	template <>
 	struct aliveness_traits< AEKeyDesc, disposer< AEKeyDesc > >
 	{
-		typedef Nitrogen::NonNull_AEDescs_Are_Live aliveness_test;
+		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
 	};
 	
 }
@@ -1122,9 +1025,7 @@ namespace Nitrogen
 	using namespace MetrowerksHack;
 	
 	
-	inline void AEDisposeDesc( nucleus::owned< AEDesc_Data > )
-	{
-	}
+	using Mac::AEDisposeDesc;
 	
 	inline nucleus::owned< AEDesc_Data > AEDuplicateDesc( const AEDesc& original )
 	{

@@ -30,7 +30,7 @@ namespace Genie
 			N::AppleEvent      & reply      = static_cast<       N::AppleEvent& >( *replyPtr      );
 			
 			(void) N::AESend( appleEvent,
-			                  N::kAEQueueReply | N::kAECanInteract );
+			                  Mac::kAEQueueReply | Mac::kAECanInteract );
 			
 			// Now that we've sent the event, retrieve the return ID
 			N::AEReturnID_32Bit returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( appleEvent );

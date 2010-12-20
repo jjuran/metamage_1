@@ -14,12 +14,23 @@
 #ifndef NITROGEN_AEINTERACTION_HH
 #define NITROGEN_AEINTERACTION_HH
 
+// Mac OS
 #ifndef __AEINTERACTION__
 #include <AEInteraction.h>
 #endif
+
+// Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AESENDMODE_HH
+#include "Mac/AppleEvents/Types/AESendMode.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AESENDPRIORITY_HH
+#include "Mac/AppleEvents/Types/AESendPriority.hh"
+#endif
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
+
 
 namespace Nitrogen
 {
@@ -44,12 +55,12 @@ namespace Nitrogen
 	
 	using ::AEIdleProcPtr;
 	
-	nucleus::owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
-	                                     AESendMode         sendMode,
-	                                     AESendPriority     sendPriority   = kAENormalPriority,
-	                                     long               timeOutInTicks = kAEDefaultTimeout,
-	                                     AEIdleUPP          idleProc       = NULL,
-	                                     AEFilterUPP        filterProc     = NULL
+	nucleus::owned< AppleEvent > AESend( const AppleEvent&    appleEvent,
+	                                     Mac::AESendMode      sendMode,
+	                                     Mac::AESendPriority  sendPriority   = Mac::kAENormalPriority,
+	                                     long                 timeOutInTicks = kAEDefaultTimeout,
+	                                     AEIdleUPP            idleProc       = NULL,
+	                                     AEFilterUPP          filterProc     = NULL
 	);
 	
 	nucleus::owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID );

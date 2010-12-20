@@ -39,8 +39,6 @@ namespace Nitrogen
 	
 	// enum...
 	
-	static const AEKeyForm formUniqueID = AEKeyForm( ::formUniqueID );
-	
 	// kAEAsk                                                 
 	// kAEBefore                                              
 	// kAEBeginning                                           

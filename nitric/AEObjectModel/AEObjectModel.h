@@ -43,14 +43,14 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
 	                                                       AEObjectClass        containerClass,
-	                                                       AEEnumerated         keyForm,
+	                                                       Mac::AEKeyForm       keyForm,
 	                                                       const AEDesc_Data&   keyData,
 	                                                       RefCon );
 	
 	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
-	                                                     AEEnumerated         keyForm,
+	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData,
 	                                                     RefCon );
 	

@@ -45,16 +45,9 @@ namespace Nitrogen
 	
 	// kDialectBundleResType
 	
-	
-	static const AEEnumeration enumBooleanValues = AEEnumeration( ::enumBooleanValues );
-	
 	// kAETrue .. kAEFalse
 	
-	static const AEEnumeration enumMiscValues = AEEnumeration( ::enumMiscValues );
-	
 	// kASCurrentApplication
-	
-	static const AEKeyForm formUserPropertyID = AEKeyForm( ::formUserPropertyID );
 	
 	// pASIt .. pASTopLevelScript
 	// kAECase .. enumConsiderations

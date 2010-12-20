@@ -142,7 +142,7 @@ namespace Nitrogen
 	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
 	                                                     AEObjectClass        containerClass,
-	                                                     AEEnumerated         keyForm,
+	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData )
 	{
 		AEDesc_Token result;
