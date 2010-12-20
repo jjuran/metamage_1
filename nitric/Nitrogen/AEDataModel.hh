@@ -63,6 +63,9 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 #include "Mac/AppleEvents/Types/AEReturnID.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AETRANSACTIONID_HH
+#include "Mac/AppleEvents/Types/AETransactionID.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
 #endif
@@ -205,12 +208,8 @@ namespace Nitrogen
 	
 	using Mac::AEReturnID_32Bit;
 	
-	enum AETransactionID
-	{
-		kAnyTransactionID = ::kAnyTransactionID,
-		
-		kAETransactionID_Max = nucleus::enumeration_traits< ::AETransactionID >::max
-	};
+	using Mac::AETransactionID;
+	using Mac::kAnyTransactionID;
 	
 	using Mac::AEEventClass;
 	using Mac::AEEventID;
