@@ -144,6 +144,21 @@ namespace Mac
 	// This one is different; N::CFTypeRef is a type defined in Nitrogen; so we use converting_POD_scribe
 	template <> struct DescType_scribe< typeCFTypeRef               > : nucleus::converting_POD_scribe< CFTypeRef, ::CFTypeRef > {};
 	
+#ifdef __MACH__
+	
+	// HIObject
+	// --------
+	
+	template <> struct DescType_scribe< typeHIObjectRef > : nucleus::POD_scribe< HIObjectRef > {};
+	
+	// HIToolbar
+	// --------
+	
+	template <> struct DescType_scribe< typeHIToolbarRef     > : nucleus::POD_scribe< HIToolbarRef     > {};
+	template <> struct DescType_scribe< typeHIToolbarItemRef > : nucleus::POD_scribe< HIToolbarItemRef > {};
+	
+#endif
+	
 }
 
 #endif

@@ -6,6 +6,14 @@
 #ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
 #define MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
 
+// Mac OS X
+#ifdef __MACH__
+#if !defined( __HIOBJECT__ )  ||  !defined( __HITOOLBAR__ )
+#include <Carbon/Carbon.h>
+#endif
+#endif
+
+// Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
@@ -237,6 +245,21 @@ namespace Mac
 		
 		typeScrapRef          = ::typeScrapRef,
 		typeCFMutableArrayRef = ::typeCFMutableArrayRef,
+		
+	#ifdef __MACH__
+		
+		// HIObject
+		// --------
+		
+		typeHIObjectRef = ::typeHIObjectRef,
+		
+		// HIToolbar
+		// --------
+		
+		typeHIToolbarRef     = ::typeHIToolbarRef,
+		typeHIToolbarItemRef = ::typeHIToolbarItemRef,
+		
+	#endif
 		
 		// OSA
 		// ---
