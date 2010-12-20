@@ -393,20 +393,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	class AEDesc_AlivenessTest
-	{
-		public:
-			static bool IsLive( const AEDesc& desc )
-			{
-				return desc.dataHandle != NULL;
-			}
-			
-			static bool IsLive( const AEKeyDesc& keyDesc )
-			{
-				return IsLive( keyDesc.descContent );
-			}
-	};
-	
 	class NonNull_AEDescs_Are_Live
 	{
 		public:
