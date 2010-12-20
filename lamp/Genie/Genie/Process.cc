@@ -670,6 +670,8 @@ namespace Genie
 		itsReexecArgs[5] =
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
+		
+		mark_process_active( pid );
 	}
 	
 	Process::~Process()
