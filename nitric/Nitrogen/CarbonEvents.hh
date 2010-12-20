@@ -767,55 +767,6 @@ namespace Nitrogen
 	
 	static const EventClass kEventClassCommand = EventClass( ::kEventClassCommand );
 	
-	
-/* ... */
-
-   template<> struct DescType_Traits< Mac::typeWindowRef               >: nucleus::POD_scribe< WindowRef               > {};
-   template<> struct DescType_Traits< Mac::typeGrafPtr                 >: nucleus::POD_scribe< CGrafPtr                > {};
-   template<> struct DescType_Traits< Mac::typeGWorldPtr               >: nucleus::POD_scribe< GWorldPtr               > {};
-   template<> struct DescType_Traits< Mac::typeDragRef                 >: nucleus::POD_scribe< DragRef                 > {};
-   template<> struct DescType_Traits< Mac::typeMenuRef                 >: nucleus::POD_scribe< MenuRef                 > {};
-   template<> struct DescType_Traits< Mac::typeControlRef              >: nucleus::POD_scribe< ControlRef              > {};
-   template<> struct DescType_Traits< Mac::typeCollection              >: nucleus::POD_scribe< Collection              > {};
-   template<> struct DescType_Traits< Mac::typeQDRgnHandle             >: nucleus::POD_scribe< RgnHandle               > {};
-   template<> struct DescType_Traits< Mac::typeOSStatus                >: nucleus::POD_scribe< OSStatus                > {};
-   template<> struct DescType_Traits< Mac::typeCFStringRef             >: nucleus::POD_scribe< CFStringRef             > {};
-   template<> struct DescType_Traits< Mac::typeCGContextRef            >: nucleus::POD_scribe< CGContextRef            > {};
-   template<> struct DescType_Traits< Mac::typeHIPoint                 >: nucleus::POD_scribe< HIPoint                 > {};
-
-   template<> struct DescType_Traits< Mac::typeMouseButton             >: nucleus::POD_scribe< EventMouseButton        > {};
-   template<> struct DescType_Traits< Mac::typeMouseWheelAxis          >: nucleus::POD_scribe< EventMouseWheelAxis     > {};
-
-   template<> struct DescType_Traits< Mac::typeEventHotKeyID           >: nucleus::POD_scribe< EventHotKeyID           > {};
-
-   template<> struct DescType_Traits< Mac::typeHICommand               >: nucleus::POD_scribe< HICommand               > {};
-
-   template<> struct DescType_Traits< Mac::typeWindowRegionCode        >: nucleus::POD_scribe< WindowRegionCode        > {};
-   template<> struct DescType_Traits< Mac::typeWindowDefPartCode       >: nucleus::POD_scribe< WindowDefPartCode       > {};
-   template<> struct DescType_Traits< Mac::typeClickActivationResult   >: nucleus::POD_scribe< ClickActivationResult   > {};
-
-   template<> struct DescType_Traits< Mac::typeControlActionUPP        >: nucleus::POD_scribe< ControlActionUPP        > {};
-   template<> struct DescType_Traits< Mac::typeIndicatorDragConstraint >: nucleus::POD_scribe< IndicatorDragConstraint > {};
-   template<> struct DescType_Traits< Mac::typeControlPartCode         >: nucleus::POD_scribe< ControlPartCode         > {};
-
-   template<> struct DescType_Traits< Mac::typeMenuItemIndex           >: nucleus::POD_scribe< MenuItemIndex           > {};
-   template<> struct DescType_Traits< Mac::typeMenuCommand             >: nucleus::POD_scribe< MenuCommand             > {};
-   template<> struct DescType_Traits< Mac::typeMenuTrackingMode        >: nucleus::POD_scribe< MenuTrackingMode        > {};
-   template<> struct DescType_Traits< Mac::typeMenuEventOptions        >: nucleus::POD_scribe< MenuEventOptions        > {};
-   template<> struct DescType_Traits< Mac::typeThemeMenuState          >: nucleus::POD_scribe< ThemeMenuState          > {};
-   template<> struct DescType_Traits< Mac::typeThemeMenuItemType       >: nucleus::POD_scribe< ThemeMenuItemType       > {};
-
-   template<> struct DescType_Traits< Mac::typeTabletPointRec          >: nucleus::POD_scribe< TabletPointRec          > {};
-   template<> struct DescType_Traits< Mac::typeTabletProximityRec      >: nucleus::POD_scribe< TabletProximityRec      > {};
-
-   template<> struct DescType_Traits< Mac::typeScrapRef                >: nucleus::POD_scribe< ScrapRef                > {};
-   template<> struct DescType_Traits< Mac::typeCFMutableArrayRef       >: nucleus::POD_scribe< CFMutableArrayRef       > {};
-
-   template<> struct DescType_Traits< Mac::typeFSVolumeRefNum          >: nucleus::POD_scribe< FSVolumeRefNum          > {};
-
-/*	This one is different; N::CFTypeRef is a type defined in Nitrogen; so we use converting_POD_scribe */
-   template<> struct DescType_Traits< Mac::typeCFTypeRef               >: nucleus::converting_POD_scribe< CFTypeRef, ::CFTypeRef > {};
-
 /* ... */
 
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseLocation      >: Basic_EventParameter_Traits< Mac::typeHIPoint,                 true,  false >{};
