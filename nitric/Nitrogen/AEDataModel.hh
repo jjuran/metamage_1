@@ -72,8 +72,8 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AETRANSACTIONID_HH
 #include "Mac/AppleEvents/Types/AETransactionID.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
-#include "Mac/AppleEvents/Types/DescType.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBE_HH
+#include "Mac/AppleEvents/Types/DescType_scribe.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
@@ -223,7 +223,8 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** DescType_Traits **
 	
-	template < Mac::DescType > struct DescType_Traits;
+	template < Mac::DescType type >
+	struct DescType_Traits : Mac::DescType_scribe< type > {};
 	
 	template<> struct DescType_Traits< Mac::typeChar > : public nucleus::string_scribe< nucleus::mutable_string > {};
 	
