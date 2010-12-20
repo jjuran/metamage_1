@@ -139,10 +139,10 @@ namespace UseEdit
 			n::owned< N::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
 			                                                             : N::AEResolve( containerObjSpec );
 			// The kind of container of the things we're counting, e.g. 'folder'
-			N::AEObjectClass containerClass = N::GetObjectClass( containerToken );
+			Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
 			// The kind of thing we're counting, e.g. 'file'
-			N::AEObjectClass desiredClass = N::AEGetParamPtr< N::keyAEObjectClass >( event );
+			Mac::AEObjectClass desiredClass = N::AEGetParamPtr< N::keyAEObjectClass >( event );
 			
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
@@ -211,7 +211,7 @@ namespace UseEdit
 	{
 		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
-		                                             N::AEObjectClass        containerClass )
+		                                             Mac::AEObjectClass      containerClass )
 		{
 			return N::AECreateDesc< N::typeBoolean, N::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
@@ -226,7 +226,7 @@ namespace UseEdit
 	{
 		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
-		                                             N::AEObjectClass        containerClass )
+		                                             Mac::AEObjectClass      containerClass )
 		{
 			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( "UseEdit" );
 		}
@@ -244,9 +244,9 @@ namespace UseEdit
 	
 	struct Document_Element
 	{
-		static n::owned< N::AEDesc_Token > Accessor( N::AEObjectClass        desiredClass,
+		static n::owned< N::AEDesc_Token > Accessor( Mac::AEObjectClass      desiredClass,
 		                                             const N::AEDesc_Token&  containerToken,
-		                                             N::AEObjectClass        containerClass,
+		                                             Mac::AEObjectClass      containerClass,
 		                                             Mac::AEKeyForm          keyForm,
 		                                             const N::AEDesc_Data&   keyData,
 		                                             N::RefCon )
@@ -288,7 +288,7 @@ namespace UseEdit
 		
 		static void Install_Accessor()
 		{
-			N::AEInstallObjectAccessor< Accessor >( N::cDocument, N::typeNull ).release();
+			N::AEInstallObjectAccessor< Accessor >( Mac::cDocument, N::typeNull ).release();
 		}
 	};
 	
@@ -296,7 +296,7 @@ namespace UseEdit
 	{
 		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
-		                                             N::AEObjectClass        containerClass )
+		                                             Mac::AEObjectClass      containerClass )
 		{
 			UInt32 id = N::AEGetDescData< N::typeUInt32 >( containerToken, typeDocument );
 			
@@ -315,8 +315,8 @@ namespace UseEdit
 	
 	struct Documents_Count
 	{
-		static std::size_t Get( N::AEObjectClass        desiredClass,
-		                        N::AEObjectClass        containerClass,
+		static std::size_t Get( Mac::AEObjectClass      desiredClass,
+		                        Mac::AEObjectClass      containerClass,
 		                        const N::AEDesc_Token&  containerToken )
 		{
 			return gDocuments.CountElements();
@@ -324,7 +324,7 @@ namespace UseEdit
 		
 		static void Install()
 		{
-			N::RegisterCounter( N::cDocument, N::typeNull, Get );
+			N::RegisterCounter( Mac::cDocument, N::typeNull, Get );
 		}
 	};
 	
@@ -353,7 +353,7 @@ namespace UseEdit
 			
 			keyData.descriptorType = typeUInt32;
 			
-			return N::AECreateObjectSpecifier( N::cDocument,
+			return N::AECreateObjectSpecifier( Mac::cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   Mac::formUniqueID,
 			                                   static_cast< const N::AEDesc_Data& >( keyData ) );
@@ -511,11 +511,11 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), N::typeAEList ).release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), N::typeAEList ).release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, N::typeNull  ).release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, typeDocument ).release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, N::typeNull  ).release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, typeDocument ).release();
 		
 		Document_Element::Install_Accessor();
 		

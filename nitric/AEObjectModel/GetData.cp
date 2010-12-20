@@ -34,7 +34,7 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
+	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( Mac::AEObjectClass             objectClass,
 	                                                                  const AEDesc_ObjectSpecifier&  container,
 	                                                                  Mac::AEKeyForm                 keyForm,
 	                                                                  const AEDesc_Data&             keyData )

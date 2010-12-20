@@ -40,16 +40,16 @@ namespace Nitrogen
 	
 	void AESetObjectCallbacks();
 	
-	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( Mac::AEObjectClass   desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
-	                                                       AEObjectClass        containerClass,
+	                                                       Mac::AEObjectClass   containerClass,
 	                                                       Mac::AEKeyForm       keyForm,
 	                                                       const AEDesc_Data&   keyData,
 	                                                       RefCon );
 	
-	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchAccessToList( Mac::AEObjectClass   desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
-	                                                     AEObjectClass        containerClass,
+	                                                     Mac::AEObjectClass   containerClass,
 	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData,
 	                                                     RefCon );

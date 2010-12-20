@@ -23,7 +23,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 	                                               const AEDesc_Token&  containerToken,
-	                                               AEObjectClass        containerClass )
+	                                               Mac::AEObjectClass   containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessProperty( propertyID, containerToken, containerClass );
 	}
@@ -86,7 +86,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
 	                                                                 const AEDesc_Token&  containerToken,
-	                                                                 AEObjectClass        containerClass )
+	                                                                 Mac::AEObjectClass   containerClass )
 	{
 		Callback accessor = FindAccessor( propertyID, DescType( containerToken.descriptorType ) );
 		
@@ -94,7 +94,7 @@ namespace Nitrogen
 	}
 	
 	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessAll( const AEDesc_Token&  containerToken,
-	                                                            AEObjectClass        containerClass )
+	                                                            Mac::AEObjectClass   containerClass )
 	{
 		Map::const_iterator foundType = map.find( DescType( containerToken.descriptorType ) );
 		
@@ -150,7 +150,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
 	                                                    const AEDesc_Token&  /* containerToken */,
-	                                                    AEObjectClass        containerClass )
+	                                                    Mac::AEObjectClass   containerClass )
 	{
 		//return AECreateDesc< typeObjectClass, AEDesc_Token >( containerClass );
 		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::FourCharCode( containerClass ) ) );
@@ -158,7 +158,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,
 	                                                    const AEDesc_Token&  containerToken,
-	                                                    AEObjectClass        containerClass )
+	                                                    Mac::AEObjectClass   containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessAll( containerToken, containerClass );
 	}

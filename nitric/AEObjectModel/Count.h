@@ -16,8 +16,8 @@
 namespace Nitrogen
 {
 	
-	std::size_t Count( AEObjectClass        desiredClass,
-			           AEObjectClass        containerClass,
+	std::size_t Count( Mac::AEObjectClass   desiredClass,
+			           Mac::AEObjectClass   containerClass,
 			           const AEDesc_Token&  containerToken );
 	
 	template < ::DescType desiredClass, ::DescType containerType > struct Count_Traits;
@@ -25,18 +25,18 @@ namespace Nitrogen
 	class Counter
 	{
 		public:
-			typedef std::size_t (*Callback)( AEObjectClass, AEObjectClass, const AEDesc_Token& );
+			typedef std::size_t (*Callback)( Mac::AEObjectClass, Mac::AEObjectClass, const AEDesc_Token& );
 		
 		private:
 			class Key
 			{
 				private:
-					AEObjectClass desiredClass;
-					DescType      containerType;
+					Mac::AEObjectClass  desiredClass;
+					DescType            containerType;
 				
 				public:
 					Key()  {}
-					Key( AEObjectClass desiredClass, DescType containerType )
+					Key( Mac::AEObjectClass desiredClass, DescType containerType )
 					:
 						desiredClass ( desiredClass  ),
 						containerType( containerType )
@@ -60,7 +60,7 @@ namespace Nitrogen
 		public:
 			Counter()  {}
 			
-			void Register( AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
+			void Register( Mac::AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
 			{
 				map[ Key( desiredClass, containerType ) ] = callback;
 			}
@@ -71,14 +71,14 @@ namespace Nitrogen
 				Register( desiredClass, containerType, Count_Traits< desiredClass, containerType >::Count );
 			}
 			
-			std::size_t Count( AEObjectClass        desiredClass,
-			                   AEObjectClass        containerClass,
+			std::size_t Count( Mac::AEObjectClass   desiredClass,
+			                   Mac::AEObjectClass   containerClass,
 			                   const AEDesc_Token&  containerToken );
 	};
 	
 	Counter& TheGlobalCounter();
 	
-	inline void RegisterCounter( AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
+	inline void RegisterCounter( Mac::AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
 	{
 		TheGlobalCounter().Register( desiredClass, containerType, callback );
 	}

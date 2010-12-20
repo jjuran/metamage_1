@@ -20,24 +20,24 @@
 namespace Nitrogen
 {
 	
-	AEObjectClass GetObjectClass( const AEDesc_Token& obj );
+	Mac::AEObjectClass GetObjectClass( const AEDesc_Token& obj );
 	
 	#pragma mark -
 	#pragma mark ** ObjectClassMap **
 	
 	template < DescType tokenType > struct ObjectClass_Traits;
 	
-	template < AEObjectClass objectClass > struct Basic_ObjectClass_Traits
+	template < Mac::AEObjectClass objectClass > struct Basic_ObjectClass_Traits
 	{
-		static AEObjectClass ObjectClass()  { return objectClass; }
+		static Mac::AEObjectClass ObjectClass()  { return objectClass; }
 	};
 	
-	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< cApplication > {};
+	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< Mac::cApplication > {};
 	
 	class ObjectClassMap
 	{
 		private:
-			typedef std::map< DescType, AEObjectClass >  Map;
+			typedef std::map< DescType, Mac::AEObjectClass >  Map;
 			
 			Map map;
 			
@@ -48,7 +48,7 @@ namespace Nitrogen
 		public:
 			ObjectClassMap();
 			
-			void Register( DescType tokenType, AEObjectClass objectClass )
+			void Register( DescType tokenType, Mac::AEObjectClass objectClass )
 			{
 				map[ tokenType ] = objectClass;
 			}
@@ -59,12 +59,12 @@ namespace Nitrogen
 				Register( tokenType, ObjectClass_Traits< tokenType >::ObjectClass() );
 			}
 			
-			AEObjectClass GetObjectClass( DescType tokenType );
+			Mac::AEObjectClass GetObjectClass( DescType tokenType );
 	};
 	
 	ObjectClassMap& TheGlobalObjectClassMap();
 	
-	inline void RegisterObjectClass( DescType tokenType, AEObjectClass objectClass )
+	inline void RegisterObjectClass( DescType tokenType, Mac::AEObjectClass objectClass )
 	{
 		TheGlobalObjectClassMap().Register( tokenType, objectClass );
 	}
@@ -83,7 +83,7 @@ namespace Nitrogen
 	class ObjectClassGetter
 	{
 		public:
-			typedef AEObjectClass (*Callback)( const AEDesc_Token& );
+			typedef Mac::AEObjectClass (*Callback)( const AEDesc_Token& );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -108,7 +108,7 @@ namespace Nitrogen
 				Register( tokenType, GetObjectClass_Traits< tokenType >::GetObjectClass );
 			}
 			
-			AEObjectClass GetObjectClass( const AEDesc_Token& obj );
+			Mac::AEObjectClass GetObjectClass( const AEDesc_Token& obj );
 	};
 	
 	ObjectClassGetter& TheGlobalObjectClassGetter();
