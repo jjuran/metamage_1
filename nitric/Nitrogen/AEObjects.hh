@@ -14,10 +14,6 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #define NITROGEN_AEOBJECTS_HH
 
-#ifndef NITROGEN_AEPROPERTYID_HH
-#include "Nitrogen/AEPropertyID.hh"
-#endif
-
 #ifndef __AEOBJECTS__
 #include <AEObjects.h>
 #endif
@@ -28,6 +24,9 @@
 #endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
 #include "Mac/AppleEvents/Types/AEObjectClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
+#include "Mac/AppleEvents/Types/AEPropertyID.hh"
 #endif
 
 #ifndef NITROGEN_AEDATAMODEL_HH
@@ -109,7 +108,7 @@ namespace Nitrogen
 	
 	
 	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< Mac::AEObjectClass, ::DescType >  {};
-	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< AEPropertyID,  ::AEPropertyID  >  {};
+	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< Mac::AEPropertyID,  ::DescType >  {};
 	
 	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : nucleus::converting_POD_scribe< AEAbsoluteOrdinal,    ::DescType    >  {};
 	

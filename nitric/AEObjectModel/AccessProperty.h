@@ -20,17 +20,17 @@
 namespace Nitrogen
 {
 	
-	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessProperty( Mac::AEPropertyID    propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               Mac::AEObjectClass   containerClass );
 	
 	class PropertyAccessor
 	{
 		public:
-			typedef nucleus::owned< AEDesc_Token > (*Callback)( AEPropertyID, const AEDesc_Token&, Mac::AEObjectClass );
+			typedef nucleus::owned< AEDesc_Token > (*Callback)( Mac::AEPropertyID, const AEDesc_Token&, Mac::AEObjectClass );
 		
 		private:
-			typedef std::map< AEPropertyID, Callback >  PropertyMap;
+			typedef std::map< Mac::AEPropertyID, Callback >  PropertyMap;
 			typedef std::map< DescType, PropertyMap >  Map;
 			
 			Map map;
@@ -42,14 +42,14 @@ namespace Nitrogen
 		public:
 			PropertyAccessor();
 			
-			void Register( AEPropertyID propertyID, DescType containerType, PropertyAccessor::Callback callback )
+			void Register( Mac::AEPropertyID propertyID, DescType containerType, PropertyAccessor::Callback callback )
 			{
 				map[ containerType ][ propertyID ] = callback;
 			}
 			
-			Callback FindAccessor( AEPropertyID  propertyID, DescType tokenType );
+			Callback FindAccessor( Mac::AEPropertyID propertyID, DescType tokenType );
 			
-			nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+			nucleus::owned< AEDesc_Token > AccessProperty( Mac::AEPropertyID    propertyID,
 			                                               const AEDesc_Token&  containerToken,
 			                                               Mac::AEObjectClass   containerClass );
 			
@@ -59,23 +59,23 @@ namespace Nitrogen
 	
 	PropertyAccessor& TheGlobalPropertyAccessor();
 	
-	inline void RegisterPropertyAccessor( AEPropertyID propertyID, DescType containerType, PropertyAccessor::Callback callback )
+	inline void RegisterPropertyAccessor( Mac::AEPropertyID propertyID, DescType containerType, PropertyAccessor::Callback callback )
 	{
 		TheGlobalPropertyAccessor().Register( propertyID, containerType, callback );
 	}
 	
-	nucleus::owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
+	nucleus::owned< AEDesc_Token > AccessClassProperty( Mac::AEPropertyID    propertyID,
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    Mac::AEObjectClass   containerClass );
 	
-	nucleus::owned< AEDesc_Token > AccessAllProperties( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessAllProperties( Mac::AEPropertyID    propertyID,
 	                                                    const AEDesc_Token&  containerToken,
 	                                                    Mac::AEObjectClass   containerClass );
 	
 	inline nucleus::owned< AEDesc_Token > AccessAllProperties( const AEDesc_Token&  containerToken,
 	                                                           Mac::AEObjectClass   containerClass )
 	{
-		return AccessAllProperties( AEPropertyID(), containerToken, containerClass );
+		return AccessAllProperties( Mac::AEPropertyID(), containerToken, containerClass );
 	}
 	
 }

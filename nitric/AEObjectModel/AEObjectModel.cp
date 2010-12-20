@@ -212,7 +212,7 @@ namespace Nitrogen
 			return AccessAllProperties( containerToken, containerClass );
 		}
 		
-		AEPropertyID propertyID = AEGetDescData< typePropertyID >( keyData );
+		Mac::AEPropertyID propertyID = AEGetDescData< typePropertyID >( keyData );
 		
 		return AccessProperty( propertyID, containerToken, containerClass );
 	}

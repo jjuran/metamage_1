@@ -209,7 +209,7 @@ namespace UseEdit
 	
 	struct AppFrontmost_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
+		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
@@ -218,13 +218,13 @@ namespace UseEdit
 		
 		static void Install_Accessor()
 		{
-			N::RegisterPropertyAccessor( N::pIsFrontProcess, N::typeNull, Accessor );
+			N::RegisterPropertyAccessor( Mac::pIsFrontProcess, N::typeNull, Accessor );
 		}
 	};
 	
 	struct AppName_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
+		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
@@ -233,7 +233,7 @@ namespace UseEdit
 		
 		static void Install_Accessor()
 		{
-			N::RegisterPropertyAccessor( N::pName, N::typeNull, Accessor );
+			N::RegisterPropertyAccessor( Mac::pName, N::typeNull, Accessor );
 		}
 	};
 	
@@ -294,7 +294,7 @@ namespace UseEdit
 	
 	struct DocName_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( N::AEPropertyID         propertyID,
+		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
@@ -307,7 +307,7 @@ namespace UseEdit
 		
 		static void Install_Accessor()
 		{
-			N::RegisterPropertyAccessor( N::pName, typeDocument, Accessor );
+			N::RegisterPropertyAccessor( Mac::pName, typeDocument, Accessor );
 		}
 	};
 	

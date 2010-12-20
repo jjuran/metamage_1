@@ -21,7 +21,7 @@
 namespace Nitrogen
 {
 	
-	nucleus::owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > AccessProperty( Mac::AEPropertyID    propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               Mac::AEObjectClass   containerClass )
 	{
@@ -30,12 +30,12 @@ namespace Nitrogen
 	
 	PropertyAccessor::PropertyAccessor()
 	{
-		Register( pClass, typeWildCard, AccessClassProperty );
-		Register( pAll,   typeWildCard, AccessAllProperties );
+		Register( Mac::pClass, typeWildCard, AccessClassProperty );
+		Register( Mac::pAll,   typeWildCard, AccessAllProperties );
 	}
 	
-	PropertyAccessor::Callback PropertyAccessor::FindAccessor( AEPropertyID  propertyID,
-	                                                           DescType      tokenType )
+	PropertyAccessor::Callback PropertyAccessor::FindAccessor( Mac::AEPropertyID  propertyID,
+	                                                           DescType           tokenType )
 	{
 		Map        ::const_iterator foundType;
 		PropertyMap::const_iterator foundProp;
@@ -51,7 +51,7 @@ namespace Nitrogen
 				return foundProp->second;
 			}
 			
-			foundProp = foundType->second.find( AEPropertyID( typeWildCard ) );
+			foundProp = foundType->second.find( Mac::AEPropertyID( typeWildCard ) );
 			
 			if ( foundProp != foundType->second.end() )
 			{
@@ -70,7 +70,7 @@ namespace Nitrogen
 				return foundProp->second;
 			}
 			
-			foundProp = foundType->second.find( AEPropertyID( typeWildCard ) );
+			foundProp = foundType->second.find( Mac::AEPropertyID( typeWildCard ) );
 			
 			if ( foundProp != foundType->second.end() )
 			{
@@ -84,7 +84,7 @@ namespace Nitrogen
 		return NULL;
 	}
 	
-	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
+	nucleus::owned< AEDesc_Token > PropertyAccessor::AccessProperty( Mac::AEPropertyID    propertyID,
 	                                                                 const AEDesc_Token&  containerToken,
 	                                                                 Mac::AEObjectClass   containerClass )
 	{
@@ -109,7 +109,7 @@ namespace Nitrogen
 		      itProp != foundType->second.end();
 		      ++itProp )
 		{
-			AEPropertyID propertyID = itProp->first;
+			Mac::AEPropertyID propertyID = itProp->first;
 			
 			nucleus::owned< AEDesc_Token > propertyToken;
 			
@@ -148,7 +148,7 @@ namespace Nitrogen
 		return theGlobalPropertyAccessor;
 	}
 	
-	nucleus::owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
+	nucleus::owned< AEDesc_Token > AccessClassProperty( Mac::AEPropertyID    propertyID,
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    Mac::AEObjectClass   containerClass )
 	{
@@ -156,7 +156,7 @@ namespace Nitrogen
 		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
-	nucleus::owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,
+	nucleus::owned< AEDesc_Token > AccessAllProperties( Mac::AEPropertyID    propertyID,
 	                                                    const AEDesc_Token&  containerToken,
 	                                                    Mac::AEObjectClass   containerClass )
 	{
