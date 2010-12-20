@@ -22,6 +22,12 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_UTILITIES_SIZEOFOFFSETARRAY_HH
+#include "Mac/AppleEvents/Utilities/sizeof_OffsetArray.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_UTILITIES_SIZEOFTEXTRANGEARRAY_HH
+#include "Mac/AppleEvents/Utilities/sizeof_TextRangeArray.hh"
+#endif
 #ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
 #include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
 #endif
@@ -164,23 +170,9 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeComponentInstance         >: nucleus::POD_scribe< ComponentInstance         > {};
    template<> struct DescType_Traits< typeEventRef                  >: nucleus::POD_scribe< EventRef                  > {};
 
-   using ::OffsetArray;
-
-   inline std::size_t SizeOf_OffsetArray( const OffsetArray& array )
-     {
-      return sizeof( array ) - sizeof( array.fOffset ) + array.fNumOfOffsets * sizeof( long );
-     }
-   
-   using ::TextRangeArray;
-
-   inline std::size_t SizeOf_TextRangeArray( const TextRangeArray& array )
-     {
-      return sizeof( array ) - sizeof( array.fRange ) + array.fNumOfRanges * sizeof( TextRange );
-     }
-   
    template<> struct DescType_Traits< typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        Mac::SizeOf_VersRec   > {};
-   template<> struct DescType_Traits< typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    SizeOf_OffsetArray    > {};
-   template<> struct DescType_Traits< typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, SizeOf_TextRangeArray > {};
+   template<> struct DescType_Traits< typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    Mac::sizeof_OffsetArray    > {};
+   template<> struct DescType_Traits< typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, Mac::sizeof_TextRangeArray > {};
   }
 
 #endif
