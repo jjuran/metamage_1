@@ -158,18 +158,6 @@ namespace Nitrogen
 	
 	template <> struct AEKeyword_Traits< Mac::keyAEObjectClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
 	
-   template<> struct DescType_Traits< Mac::typeFixedPoint                >: nucleus::POD_scribe< FixedPoint                > {};
-   template<> struct DescType_Traits< Mac::typeFixedRectangle            >: nucleus::POD_scribe< FixedRect                 > {};
-   template<> struct DescType_Traits< Mac::typeIntlWritingCode           >: nucleus::POD_scribe< ScriptCode                > {};
-   template<> struct DescType_Traits< Mac::typePtr                       >: nucleus::POD_scribe< void *                    > {};
-   template<> struct DescType_Traits< Mac::typeQDPoint                   >: nucleus::POD_scribe< Point                     > {};
-   template<> struct DescType_Traits< Mac::typeRectangle                 >: nucleus::POD_scribe< Rect                      > {};
-   template<> struct DescType_Traits< Mac::typeRGBColor                  >: nucleus::POD_scribe< RGBColor                  > {};
-   template<> struct DescType_Traits< Mac::typeScript                    >: nucleus::POD_scribe< ScriptCode                > {};
-   template<> struct DescType_Traits< Mac::typeTextRange                 >: nucleus::POD_scribe< TextRange                 > {};
-   template<> struct DescType_Traits< Mac::typeComponentInstance         >: nucleus::POD_scribe< ComponentInstance         > {};
-   template<> struct DescType_Traits< Mac::typeEventRef                  >: nucleus::POD_scribe< EventRef                  > {};
-
    template<> struct DescType_Traits< Mac::typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        Mac::SizeOf_VersRec   > {};
    template<> struct DescType_Traits< Mac::typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    Mac::sizeof_OffsetArray    > {};
    template<> struct DescType_Traits< Mac::typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, Mac::sizeof_TextRangeArray > {};

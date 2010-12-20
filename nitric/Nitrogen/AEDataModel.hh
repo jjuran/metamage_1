@@ -232,33 +232,8 @@ namespace Nitrogen
 	
 	template<> struct DescType_Traits< Mac::typeNull >                   { typedef void Result; };
 	
-#if CALL_NOT_IN_CARBON
-	
-	// TargetID is defined for Carbon, but typeTargetID is not.
-	template<> struct DescType_Traits< Mac::typeTargetID > : nucleus::POD_scribe< TargetID > {};
-	
-#endif
-	
-	template<> struct DescType_Traits< Mac::typeBoolean >                : BooleanFlattener                     {};
-	template<> struct DescType_Traits< Mac::typeSInt16 >                 : nucleus::POD_scribe< SInt16 >      {};
-	template<> struct DescType_Traits< Mac::typeSInt32 >                 : nucleus::POD_scribe< SInt32 >      {};
-	template<> struct DescType_Traits< Mac::typeUInt32 >                 : nucleus::POD_scribe< UInt32 >      {};
-	template<> struct DescType_Traits< Mac::typeSInt64 >                 : nucleus::POD_scribe< SInt64 >      {};
-	template<> struct DescType_Traits< Mac::typeIEEE32BitFloatingPoint > : nucleus::POD_scribe< float >       {};
-	template<> struct DescType_Traits< Mac::typeIEEE64BitFloatingPoint > : nucleus::POD_scribe< double >      {};
-	template<> struct DescType_Traits< Mac::type128BitFloatingPoint >    : nucleus::POD_scribe< long double > {};
-	
-	template<> struct DescType_Traits< Mac::typeEventRecord >            : nucleus::POD_scribe< EventRecord >                      {};
 	template<> struct DescType_Traits< Mac::typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
-	template<> struct DescType_Traits< Mac::typeEnumerated >             : nucleus::converting_POD_scribe< Mac::AEEnumeration, UInt32 > {};
-	template<> struct DescType_Traits< Mac::typeType >                   : nucleus::converting_POD_scribe< Mac::DescType, ::DescType >   {};
 	template<> struct DescType_Traits< Mac::typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, Mac::sizeof_AppParameters > {};
-	template<> struct DescType_Traits< Mac::typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
-	template<> struct DescType_Traits< Mac::typeFSRef >                  : nucleus::POD_scribe< FSRef >                            {};
-	template<> struct DescType_Traits< Mac::typeKeyword >                : nucleus::converting_POD_scribe< Mac::AEKeyword, ::AEKeyword > {};
-	template<> struct DescType_Traits< Mac::typeApplSignature >          : nucleus::converting_POD_scribe< Mac::FSCreator, ::OSType > {};
-	template<> struct DescType_Traits< Mac::typeQDRectangle >            : nucleus::POD_scribe< Rect >                             {};
-	template<> struct DescType_Traits< Mac::typeProcessSerialNumber >    : nucleus::POD_scribe< ProcessSerialNumber >              {};
 	template<> struct DescType_Traits< Mac::typeApplicationURL >         : DescType_Traits< Mac::typeChar >                               {};
 	
 	
