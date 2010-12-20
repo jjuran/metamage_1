@@ -50,16 +50,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** Constant types **
 	
-	enum AERelativeDescriptor
-	{
-		kAENext     = ::kAENext,
-		kAEPrevious = ::kAEPrevious,
-		
-		kAERelativeDescriptor_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
-	
-	typedef AERelativeDescriptor AERelativeOrdinal;
-	
 	enum AELogicalOperator
 	{
 		kAEAND = ::kAEAND,
