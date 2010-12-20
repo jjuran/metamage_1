@@ -10,21 +10,13 @@
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
-#ifndef NITROGEN_THREADS_HH
-#include "Nitrogen/Threads.hh"
-#endif
 
 
 namespace Nitrogen
 {
 	
 	void ExpectReply( AEReturnID_32Bit   returnID,
-	                  AppleEvent        *replyStorage,
-	                  ThreadID           thread = GetCurrentThread() );
-	
-	void CancelReply( AEReturnID_32Bit returnID );
-	
-	void CancelRepliesForThread( ThreadID thread );
+	                  AppleEvent        *replyStorage );
 	
 	void ReceiveReply( const AppleEvent& reply );
 	
