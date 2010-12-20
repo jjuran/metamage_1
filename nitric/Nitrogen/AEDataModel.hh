@@ -43,6 +43,9 @@
 #ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
 #endif
+#ifndef NUCLEUS_VARIABLELENGTHPODSCRIBE_HH
+#include "nucleus/variable_length_POD_scribe.hh"
+#endif
 
 // Nitrogen
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH

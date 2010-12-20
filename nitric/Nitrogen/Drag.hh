@@ -31,6 +31,9 @@
 #ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
 #endif
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
 #ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
 #endif

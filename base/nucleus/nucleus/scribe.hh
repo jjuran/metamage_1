@@ -59,14 +59,6 @@
 	};
 */
 
-// Standard C++
-#include <memory>
-
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
 
 namespace nucleus
 {
@@ -165,74 +157,6 @@ namespace nucleus
 	template < class Converted, class POD >
 	struct converting_POD_scribe : public converting_scribe< Converted, POD_scribe< POD > >
 	{
-	};
-	
-	template < class Ownable >
-	struct seizing_POD_scribe
-	{
-		typedef Ownable Put_Parameter;
-		
-		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
-		{
-			put( &toPut, &toPut + 1 );
-		}
-		
-		typedef ::nucleus::owned< Ownable > Get_Result;
-		
-		template < class Getter >
-		static Get_Result Get( const Getter& get )
-		{
-			Get_Result result;
-			
-			get( &result, &result + 1 );
-			
-			return ::nucleus::owned< Ownable >::seize( result );
-		}
-		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = true;
-		
-		typedef Ownable Buffer;
-	};
-	
-	template < class T, std::size_t (*SizeOf)( const T& ) >
-	struct variable_length_POD_scribe
-	{
-		typedef const T& Put_Parameter;
-		
-		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
-		{
-			const T* begin = &toPut;
-			const std::size_t size = SizeOf( toPut );
-			
-			put( begin, begin + size );
-		}
-		
-		typedef std::auto_ptr< T > Get_Result;
-		
-		template < class Getter >
-		static Get_Result Get( const Getter& get )
-		{
-			const std::size_t size = get.size();
-			
-			Get_Result result = std::auto_ptr< T >( static_cast< T* >( ::operator new( size ) ) );
-			
-			T* begin = result.get();
-			
-			get( begin, begin + size );
-			
-			return result;
-		}
-		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
 	};
 	
 	

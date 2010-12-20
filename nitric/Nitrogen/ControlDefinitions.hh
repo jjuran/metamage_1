@@ -21,6 +21,11 @@
 #include <TSMTE.h>
 #endif
 
+// nucleus
+#ifndef NUCLEUS_SEIZINGPODSCRIBE_HH
+#include "nucleus/seizing_POD_scribe.hh"
+#endif
+
 // Nitrogen
 #ifndef CARBON_CF_TYPES_CFTYPEREF_HH
 #include "Carbon/CF/Types/CFTypeRef.hh"
