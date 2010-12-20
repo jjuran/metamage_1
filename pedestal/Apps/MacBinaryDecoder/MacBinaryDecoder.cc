@@ -35,7 +35,7 @@ namespace MacBinaryDecoder
 	
 	
 	using Mac::keyDirectObject;
-	using N::typeAEList;
+	using Mac::typeAEList;
 	using Mac::kCoreEventClass;
 	using Mac::kAEOpenDocuments;
 	
@@ -84,7 +84,7 @@ namespace MacBinaryDecoder
 			
 			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
 			                                                            keyDirectObject,
-			                                                            typeAEList );
+			                                                            Mac::typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			

@@ -70,7 +70,7 @@ namespace tool
 	
 	static inline n::owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
 	{
-		return N::AECoercePtr< N::typeFSS >( item, N::typeAlias );
+		return N::AECoercePtr< Mac::typeFSS >( item, Mac::typeAlias );
 	}
 	
 	static n::owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
@@ -95,7 +95,7 @@ namespace tool
 		
 		// Older systems don't provide alias->FSSpec coercion, so do it manually.
 		
-		return N::AECreateDesc( N::typeAlias, N::NewAlias( item ) );
+		return N::AECreateDesc( Mac::typeAlias, N::NewAlias( item ) );
 	}
 	
 	static n::owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
@@ -103,7 +103,7 @@ namespace tool
 	{
 		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
 		                                                              Mac::kAEOpenDocuments,
-		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
+		                                                              N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, items );
 		
@@ -134,8 +134,8 @@ namespace tool
 	                                             const N::AEDescList_Data&  items )
 	{
 		std::auto_ptr< AppParameters > appParameters
-			= N::AEGetDescData< N::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
-		                                                                 N::typeAppParameters ) );
+			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
+		                                                                   Mac::typeAppParameters ) );
 		
 		N::LaunchApplication( app, N::LaunchFlags(), appParameters.get() );
 	}

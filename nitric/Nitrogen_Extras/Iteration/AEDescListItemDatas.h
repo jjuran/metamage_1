@@ -19,7 +19,7 @@
 namespace Nitrogen
 {
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	struct AEDescList_ItemData_Specifics
 	{
 		typedef UInt32                                    size_type;
@@ -39,7 +39,7 @@ namespace Nitrogen
 		typedef const AEDescList& context_type;
 	};
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	class AEDescList_ItemDataValue_Container : public nucleus::indexed_value_sequence< AEDescList_ItemData_Specifics< type > >
 	{
 		private:
@@ -57,13 +57,13 @@ namespace Nitrogen
 			}
 	};
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	inline AEDescList_ItemDataValue_Container< type > AEDescList_ItemDataValues( const AEDescList& list )
 	{
 		return AEDescList_ItemDataValue_Container< type >::New( list );
 	}
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	class AEDescList_ItemData_ValueIterator
 	{
 		public:
@@ -95,21 +95,21 @@ namespace Nitrogen
 			friend bool operator!=( const This& a, const This& b )  { return !( a == b ); }
 	};
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	inline AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesBegin( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, 0 );
 	}
 	
-	template < DescType type >
+	template < Mac::DescType type >
 	inline AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesEnd( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, AECountItems( list ) );
 	}
 	
-	template < DescType type, class AEDescList_Type >
+	template < Mac::DescType type, class AEDescList_Type >
 	class AEDescList_ItemData_BackInsertionIterator
 	{
 		private:
@@ -131,7 +131,7 @@ namespace Nitrogen
 			This& operator++(int)  { return *this; }
 	};
 	
-	template < DescType type, class AEDescList_Type >
+	template < Mac::DescType type, class AEDescList_Type >
 	inline AEDescList_ItemData_BackInsertionIterator< type, AEDescList_Type >
 	AEDescList_ItemData_BackInserter( nucleus::owned< AEDescList_Type >& list )
 	{

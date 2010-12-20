@@ -160,7 +160,7 @@ namespace tool
 		
 		return
 		N::OSACompile( scriptingComponent,
-		               N::AECreateDesc< N::typeChar >( cwdProperty ),
+		               N::AECreateDesc< Mac::typeChar >( cwdProperty ),
 		               N::kOSAModeCompileIntoContext );
 	}
 	
@@ -214,7 +214,7 @@ namespace tool
 		                                                          fsRdPerm ) );
 		
 		return N::OSALoad( OpenGenericScriptingComponent(),
-		                   N::AECreateDesc< N::AEDesc_Data >( N::typeOSAGenericStorage,
+		                   N::AECreateDesc< Mac::AEDesc_Data >( Mac::typeOSAGenericStorage,
 		                                    N::Get1Resource( N::kOSAScriptResourceType,
 		                                                     N::ResID( 128 ) ) ) );
 	}
@@ -236,7 +236,7 @@ namespace tool
 		{
 		}
 		
-		return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ), useCWD );
+		return CompileSource( N::AECreateDesc< Mac::typeChar >( ReadFileData( pathname ) ), useCWD );
 	}
 	
 	
@@ -318,7 +318,7 @@ namespace tool
 			
 			nucleus::string converted_string = iota::convert_string< nucleus::string >( joined_script );
 			
-			script = CompileSource( N::AECreateDesc< N::typeChar >( converted_string ), getsCWDProperty );
+			script = CompileSource( N::AECreateDesc< Mac::typeChar >( converted_string ), getsCWDProperty );
 		}
 		else
 		{
@@ -344,7 +344,7 @@ namespace tool
 			
 			for ( const_iterator it = params_begin;  it != params_end;  ++it )
 			{
-				N::AEPutPtr< N::typeChar >( list, 0, *it );
+				N::AEPutPtr< Mac::typeChar >( list, 0, *it );
 			}
 			
 			N::AEPutParamDesc( runEvent, Mac::keyDirectObject, list );
@@ -358,8 +358,8 @@ namespace tool
 			{
 				N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 				
-				nucleus::mutable_string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
-				                                                                                 N::typeChar,
+				nucleus::mutable_string output = N::AEGetDescData< Mac::typeChar >( N::OSADisplay( result,
+				                                                                                 Mac::typeChar,
 				                                                                                 displayFlags ) );
 				
 				if ( *(output.end() - 1) != '\n' )

@@ -153,7 +153,7 @@ namespace Nitrogen
 	                                                    Mac::AEObjectClass   containerClass )
 	{
 		//return AECreateDesc< typeObjectClass, AEDesc_Token >( containerClass );
-		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::FourCharCode( containerClass ) ) );
+		return AECreateDesc< Mac::typeType, AEDesc_Token >( Mac::DescType( containerClass + 0 ) );
 	}
 	
 	nucleus::owned< AEDesc_Token > AccessAllProperties( Mac::AEPropertyID    propertyID,

@@ -38,12 +38,12 @@ namespace UseEdit
 	
 	struct FSSpec_Io_Details : public Nitrogen::FSSpec_Io_Details
 	{
-		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSS;
+		static const Mac::DescType typeFileSpec = Mac::typeFSS;
 	};
 	
 	struct FSRef_Io_Details : public Nitrogen::FSRef_Io_Details
 	{
-		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSRef;
+		static const Mac::DescType typeFileSpec = Mac::typeFSRef;
 	};
 	
 #if TARGET_API_MAC_CARBON

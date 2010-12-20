@@ -45,14 +45,14 @@ namespace UseEdit
 	namespace Ped = Pedestal;
 	
 	
-	static const N::DescType typeDocument = N::DescType( 'Doc ' );
+	static const Mac::DescType typeDocument = Mac::DescType( 'Doc ' );
 	
 }
 
 namespace Nitrogen
 {
 	
-	template <> struct DescType_Traits< UseEdit::typeDocument > : DescType_Traits< typeWindowRef > {};
+	template <> struct DescType_Traits< UseEdit::typeDocument > : DescType_Traits< Mac::typeWindowRef > {};
 	
 }
 
@@ -99,16 +99,16 @@ namespace UseEdit
 			n::owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
 			                                                                     Mac::keyDirectObject ) );
 			
-			switch ( N::DescType( token.get().descriptorType ) )
+			switch ( Mac::DescType( token.get().descriptorType ) )
 			{
 				case typeDocument:
-					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
+					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< Mac::typePtr >( token, typeDocument ) ) )
 					{
 						CloseDocument( window );
 					}
 					break;
 				
-				case N::typeAEList:
+				case Mac::typeAEList:
 					CloseDocuments( N::AEDescList_ItemDataValues< typeDocument >( token ) );
 					break;
 				
@@ -148,7 +148,7 @@ namespace UseEdit
 			
 			N::AEPutParamDesc( reply,
 			                   Mac::keyDirectObject,
-			                   N::AECreateDesc< N::typeUInt32 >( count ) );
+			                   N::AECreateDesc< Mac::typeUInt32 >( count ) );
 		}
 		
 		static void Install_Handler()
@@ -186,7 +186,7 @@ namespace UseEdit
 			
 			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( event,
 			                                                            Mac::keyDirectObject,
-			                                                            N::typeAEList );
+			                                                            Mac::typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
@@ -213,12 +213,12 @@ namespace UseEdit
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
-			return N::AECreateDesc< N::typeBoolean, N::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			return N::AECreateDesc< Mac::typeBoolean, N::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
 		
 		static void Install_Accessor()
 		{
-			N::RegisterPropertyAccessor( Mac::pIsFrontProcess, N::typeNull, Accessor );
+			N::RegisterPropertyAccessor( Mac::pIsFrontProcess, Mac::typeNull, Accessor );
 		}
 	};
 	
@@ -228,18 +228,18 @@ namespace UseEdit
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
-			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( "UseEdit" );
+			return N::AECreateDesc< Mac::typeChar, N::AEDesc_Token >( "UseEdit" );
 		}
 		
 		static void Install_Accessor()
 		{
-			N::RegisterPropertyAccessor( Mac::pName, N::typeNull, Accessor );
+			N::RegisterPropertyAccessor( Mac::pName, Mac::typeNull, Accessor );
 		}
 	};
 	
 	static n::owned< N::AEDesc_Token > TokenForDocument( const Document& document )
 	{
-		return N::AECreateDesc( typeDocument, N::AECreateDesc< N::typePtr, N::AEDesc_Token >( document.GetWindowRef() ) );
+		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, N::AEDesc_Token >( document.GetWindowRef() ) );
 	}
 	
 	struct Document_Element
@@ -253,7 +253,7 @@ namespace UseEdit
 		{
 			if ( keyForm == Mac::formUniqueID )
 			{
-				return gDocuments.GetElementByID( N::AEGetDescData< N::typeUInt32 >( keyData ) );
+				return gDocuments.GetElementByID( N::AEGetDescData< Mac::typeUInt32 >( keyData ) );
 			}
 			
 			if ( keyForm == Mac::formAbsolutePosition )
@@ -288,7 +288,7 @@ namespace UseEdit
 		
 		static void Install_Accessor()
 		{
-			N::AEInstallObjectAccessor< Accessor >( Mac::cDocument, N::typeNull ).release();
+			N::AEInstallObjectAccessor< Accessor >( Mac::cDocument, Mac::typeNull ).release();
 		}
 	};
 	
@@ -298,11 +298,11 @@ namespace UseEdit
 		                                             const N::AEDesc_Token&  containerToken,
 		                                             Mac::AEObjectClass      containerClass )
 		{
-			UInt32 id = N::AEGetDescData< N::typeUInt32 >( containerToken, typeDocument );
+			UInt32 id = N::AEGetDescData< Mac::typeUInt32 >( containerToken, typeDocument );
 			
 			const Document& document = gDocuments.GetDocumentByID( id );
 			
-			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
+			return N::AECreateDesc< Mac::typeChar, N::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
 		
 		static void Install_Accessor()
@@ -324,7 +324,7 @@ namespace UseEdit
 		
 		static void Install()
 		{
-			N::RegisterCounter( Mac::cDocument, N::typeNull, Get );
+			N::RegisterCounter( Mac::cDocument, Mac::typeNull, Get );
 		}
 	};
 	
@@ -333,12 +333,12 @@ namespace UseEdit
 	struct LiteralData_Token
 	{
 		static n::owned< N::AEDesc_Data > Get( const N::AEDesc_Token&  obj,
-		                                       N::DescType             desiredType )
+		                                       Mac::DescType           desiredType )
 		{
 			return N::AEDuplicateDesc( obj );
 		}
 		
-		static void Install_DataGetter( N::DescType type )
+		static void Install_DataGetter( Mac::DescType type )
 		{
 			N::RegisterDataGetter( type, Get );
 		}
@@ -347,7 +347,7 @@ namespace UseEdit
 	struct Document_Token
 	{
 		static n::owned< N::AEDesc_Data > Get( const N::AEDesc_Token&  obj,
-		                                       N::DescType             desiredType )
+		                                       Mac::DescType           desiredType )
 		{
 			N::AEDesc keyData = obj;
 			
@@ -511,11 +511,11 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), N::typeAEList ).release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), Mac::typeAEList ).release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, N::typeNull  ).release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, typeDocument ).release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
 		
 		Document_Element::Install_Accessor();
 		
@@ -524,9 +524,9 @@ namespace UseEdit
 		
 		Documents_Count::Install();
 		
-		LiteralData_Token::Install_DataGetter( N::typeBoolean  );
-		LiteralData_Token::Install_DataGetter( N::typeChar     );
-		LiteralData_Token::Install_DataGetter( N::typeAERecord );
+		LiteralData_Token::Install_DataGetter( Mac::typeBoolean  );
+		LiteralData_Token::Install_DataGetter( Mac::typeChar     );
+		LiteralData_Token::Install_DataGetter( Mac::typeAERecord );
 		
 		Document_Token::Install_DataGetter();
 		

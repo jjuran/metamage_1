@@ -61,7 +61,7 @@ namespace Nitrogen
 		{
 			case typeAbsoluteOrdinal:
 				{
-					AEAbsoluteOrdinal ordinal = AEGetDescData< typeAbsoluteOrdinal >( keyData );
+					AEAbsoluteOrdinal ordinal = AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
 					
 					// Check for 'every' first
 					if ( ordinal == kAEAll )
@@ -101,7 +101,7 @@ namespace Nitrogen
 			
 			case typeSInt32:
 				{
-					SInt32 index = AEGetDescData< typeSInt32 >( keyData );
+					SInt32 index = AEGetDescData< Mac::typeSInt32 >( keyData );
 					
 					if ( index < 0 )
 					{

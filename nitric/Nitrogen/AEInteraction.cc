@@ -46,7 +46,7 @@ namespace Nitrogen
 	{
 		return AESend( AECreateAppleEvent( eventClass,
 				                           eventID,
-				                           AECreateDesc< typeProcessSerialNumber >( CurrentProcess() ) ),
+				                           AECreateDesc< Mac::typeProcessSerialNumber >( CurrentProcess() ) ),
 				       Mac::kAEWaitReply );
 	}
 	
