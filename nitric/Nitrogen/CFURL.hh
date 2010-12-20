@@ -47,9 +47,6 @@ namespace Nitrogen
 
 namespace Nitrogen
   {
-   using ::CFURLPathStyle;
-   using ::CFURLRef;
-   
    using ::CFURLGetTypeID;
    
    template <> struct CFType_Traits< CFURLRef >: Basic_CFType_Traits< CFURLRef, ::CFURLGetTypeID > {};

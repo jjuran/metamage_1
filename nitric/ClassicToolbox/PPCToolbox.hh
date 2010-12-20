@@ -34,13 +34,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( PPCToolbox );
 	
 	
-	using ::PPCXTIAddress;
-	using ::PPCAddrRec;
-	using ::LocationNameRec;
-	using ::PPCPortRec;
-	using ::PortInfoRec;
-	using ::IPCListPortsPBRec;
-	
 	enum PPCServiceType
 	{
 		ppcServiceRealTime = ::ppcServiceRealTime,

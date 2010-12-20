@@ -27,9 +27,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleTalk );
 	
-	
-	using ::EntityName;
-	
 }
 
 namespace nucleus

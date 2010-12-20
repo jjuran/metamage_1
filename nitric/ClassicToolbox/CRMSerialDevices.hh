@@ -28,13 +28,6 @@
 namespace Nitrogen
 {
 	
-	using ::CRMIconRecord;
-	using ::CRMIconPtr;
-	using ::CRMIconHandle;
-	
-	using ::CRMSerialRecord;
-	using ::CRMSerialPtr;
-	
 	static const CRMDeviceType crmSerialDevice = CRMDeviceType( ::crmSerialDevice );
 	
 	template <> struct CRMAttributes_Traits< crmSerialDevice >  { typedef CRMSerialPtr Type; };

@@ -31,9 +31,6 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( VerticalRetraceManager );
 	
 	
-	using ::VBLTask;
-	using ::VBLTaskPtr;
-	
 	struct SlotVBLTask
 	{
 		VBLTask*  task;

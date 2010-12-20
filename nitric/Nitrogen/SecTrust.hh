@@ -32,8 +32,6 @@ namespace Nitrogen {
 
 	void RegisterSecCertificateErrors ();
 	
-	using ::SecTrustRef;
-
 #if 0
 /*!
 	@typedef SecTrustResultType
@@ -64,8 +62,6 @@ typedef enum {
 */
 typedef SecTrustResultType SecTrustUserSetting;
 #endif
-
-	using ::SecTrustRef;
 
   }
 

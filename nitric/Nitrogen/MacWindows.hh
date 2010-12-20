@@ -238,11 +238,6 @@ namespace Nitrogen
 		kWindowRegionCode_Max = nucleus::enumeration_traits< ::WindowRegionCode >::max
 	};
 	
-   using ::GetWindowRegionRec;
-   using ::GetWindowRegionPtr;
-   using ::GetWindowRegionRecPtr;
-   //using ::WindowRef;
-   
    /* ... */
    
 	#pragma mark -

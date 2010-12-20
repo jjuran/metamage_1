@@ -71,7 +71,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ControlManager );
 	
-   using ::ControlRef;
   }
 
 namespace nucleus

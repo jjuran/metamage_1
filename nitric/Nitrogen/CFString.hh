@@ -38,14 +38,11 @@
 namespace Nitrogen
   {
    /* These declararions are in Nitrogen/CFBase.hh:
-      using ::CFStringRef;
       template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
       template <> struct disposer_class< CFStringRef >: disposer_class<CFTypeRef> {};
    */
 
    inline void CFShow( const CFStringRef s )        { ::CFShow( s ); }
-
-   using ::CFMutableStringRef;
    
    inline void CFShow( const CFMutableStringRef s )        { ::CFShow( s ); }
 

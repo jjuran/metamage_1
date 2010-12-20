@@ -98,18 +98,9 @@ namespace Nitrogen
 	NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
 	
 	using Mac::MenuID;
+	using Mac::MenuCommand;
 	
 }
-
-namespace Nitrogen
-  {
-
-   using ::MenuItemIndex;
-   
-	using Mac::MenuCommand;
-   
-   using ::MenuRef;
-  }
 
 namespace nucleus
   {   
@@ -135,9 +126,6 @@ namespace Nitrogen
 	};
    
    NUCLEUS_DEFINE_FLAG_OPS( MenuItemDataFlags )
-   
-   using ::MenuItemDataRec;
-   using ::MenuItemDataPtr;
    
 	enum MenuItemID
 	{

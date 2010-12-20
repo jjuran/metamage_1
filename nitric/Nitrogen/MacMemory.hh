@@ -107,8 +107,6 @@ namespace nucleus
 namespace Nitrogen
   {
    using Mac::Handle;
-   
-   using ::StringHandle;
   }
 
 namespace nucleus

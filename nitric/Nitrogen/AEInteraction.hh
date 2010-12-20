@@ -62,8 +62,6 @@ namespace Nitrogen
 	
 	typedef UPP< AEFilterUPP_Details > AEFilterUPP;
 	
-	using ::AEIdleProcPtr;
-	
 	nucleus::owned< Mac::AppleEvent >
 	//
 	AESend( const Mac::AppleEvent&  appleEvent,

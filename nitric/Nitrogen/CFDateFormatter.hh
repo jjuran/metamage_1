@@ -27,9 +27,6 @@
 #include "Nitrogen/CFDate.hh"	// We need this for the defs for Owned < CFDateRef >
 #endif
 
-namespace Nitrogen {
-	using ::CFDateFormatterRef;
-   }
 
 namespace nucleus
    {

@@ -51,8 +51,6 @@ namespace Nitrogen {
 			HIObjectErrorsRegistrationDependency();
 	};
 	
-	using ::HIObjectRef;
-
   }
 
 namespace nucleus
@@ -70,16 +68,7 @@ namespace nucleus
 				::CFRelease ( hi );
 			}
 		};
-  }
-
-namespace Nitrogen
-  {
 	
-	using ::HIObjectClassRef;
-  }
-
-namespace nucleus
-  {
    template <> struct disposer< HIObjectClassRef >
 		{
 		typedef HIObjectClassRef  argument_type;

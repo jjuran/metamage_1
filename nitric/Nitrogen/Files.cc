@@ -216,8 +216,6 @@ namespace Nitrogen
 	}
 	
 	
-	using ::FileInfo;
-	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
 	{
 		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );

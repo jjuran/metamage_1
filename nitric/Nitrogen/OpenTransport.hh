@@ -173,11 +173,6 @@ namespace Nitrogen
 	
 	// ...
 	
-	using ::OTConfigurationRef;
-	using ::OTClientContextPtr;
-	using ::EndpointRef;		
-    using ::ProviderRef;
-    
 }
 
 namespace nucleus

@@ -82,20 +82,6 @@ namespace Nitrogen
 		kPixelType_Max = nucleus::enumeration_traits< ::PixelType >::max
 	};
 	
-	using ::BitMap;
-	using ::BitMapPtr;
-	using ::BitMapHandle;
-	
-	using ::Cursor;
-	using ::CursPtr;
-	using ::CursHandle;
-	
-	using ::PenState;
-	
-	using ::RgnHandle;
-	using ::PicHandle;
-	using ::PolyHandle;
-	
 }
 
 namespace nucleus
@@ -133,25 +119,6 @@ namespace nucleus
 			::KillPoly( h );
 		}
 	};
-}
-
-namespace Nitrogen
-{
-	
-	using ::GrafPtr;
-	using ::WindowPtr;
-	using ::DialogPtr;
-	
-	using ::WindowRef;
-	
-	using ::RGBColor;
-	
-	using ::CTabHandle;
-	
-}
-
-namespace nucleus
-{
 	
 	template <> struct disposer< CTabHandle >
 	{
@@ -163,23 +130,6 @@ namespace nucleus
 			::DisposeCTable( h );
 		}
 	};
-}
-
-namespace Nitrogen
-{
-	
-	using ::PixMap;
-	using ::PixMapPtr;
-	using ::PixMapHandle;
-	using ::PixPatHandle;
-	using ::CCrsrHandle;
-	using ::GDHandle;
-	using ::CGrafPtr;
-	
-}
-
-namespace nucleus
-{
 	
 	/*
 	template <> struct disposer< PixMapHandle >

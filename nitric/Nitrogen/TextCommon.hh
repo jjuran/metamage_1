@@ -87,8 +87,6 @@ namespace Nitrogen
 		kTextEncodingNameSelector_Max = nucleus::enumeration_traits< ::TextEncodingNameSelector >::max
 	};
 	
-   using ::TextEncodingRun;
-   using ::ScriptCodeRun;
   }
 
 namespace nucleus

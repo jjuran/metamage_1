@@ -33,9 +33,6 @@
 
 namespace Nitrogen
   {
-   using ::LongDateTime;
-   using ::LongDateRec;
-   using ::DateTimeRec;
 	
 	enum DateForm
 	{

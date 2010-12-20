@@ -24,8 +24,6 @@
 
 namespace Nitrogen
   {
-   using ::CFBooleanRef;
-   
    template <> struct CFType_Traits< CFBooleanRef >: Basic_CFType_Traits< CFBooleanRef, ::CFBooleanGetTypeID > {};
   }
 

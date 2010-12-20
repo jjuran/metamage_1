@@ -37,8 +37,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ScrapManager );
 	
-	using ::ScrapRef;
-	
 	ScrapRef GetCurrentScrap();
 	
 	void ClearCurrentScrap();

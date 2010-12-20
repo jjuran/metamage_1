@@ -21,7 +21,6 @@
 
 namespace Nitrogen
   {
-   using ::CFDictionaryRef;
    using ::CFDictionaryGetTypeID;
    template <> struct CFType_Traits< CFDictionaryRef >: Basic_CFType_Traits< CFDictionaryRef, ::CFDictionaryGetTypeID > {};
 

@@ -52,8 +52,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DragManager );
 	
-   
-   using ::DragRef;
 	
 	enum DragItemRef
 	{
@@ -114,9 +112,6 @@ namespace Nitrogen
 	};
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragActions )
-   
-   using ::HFSFlavor;
-   using ::PromiseHFSFlavor;
    
    // FlavorType_Traits havce the same format as Flatteners.
    template < ::FlavorType > struct FlavorType_Traits;

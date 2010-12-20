@@ -64,8 +64,6 @@ namespace Nitrogen
 	static const ResType kComponentResourceType      = ResType( ::kComponentResourceType      );
 	static const ResType kComponentAliasResourceType = ResType( ::kComponentAliasResourceType );
 	
-	using ::ComponentInstance;
-	
 }
 
 namespace nucleus

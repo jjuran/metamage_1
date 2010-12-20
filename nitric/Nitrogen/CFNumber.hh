@@ -21,9 +21,6 @@
 
 namespace Nitrogen
   {
-   using ::CFNumberRef;
-   using ::CFNumberType;
-   
    template <> struct CFType_Traits< CFNumberRef >: Basic_CFType_Traits< CFNumberRef, ::CFNumberGetTypeID > {};
   }
 

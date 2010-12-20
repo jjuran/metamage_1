@@ -77,9 +77,6 @@ namespace Nitrogen
 	static const CSCode kSERDNegateDTR     = CSCode( ::kSERDNegateDTR     );
 	static const CSCode kSERDClearXOffFlag = CSCode( ::kSERDClearXOffFlag );
 	
-	using ::SerStaRec;
-	using ::SerShk;
-	
 }
 
 namespace nucleus

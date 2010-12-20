@@ -92,10 +92,6 @@ namespace Nitrogen
 	
 #endif
 	
-	using ::ADBDataBlock;
-	using ::ADBSetInfoBlock;
-	using ::ADBOpBlock;
-	
 	using ::ADBReInit;
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum );

@@ -257,12 +257,6 @@ namespace Nitrogen
 	
 #endif
 	
-	using ::HFSUniStr255;
-	using ::CInfoPBRec;
-	using ::DirInfo;
-	using ::FSSpec;
-	using ::FSRef;
-	
 }
 
 namespace nucleus

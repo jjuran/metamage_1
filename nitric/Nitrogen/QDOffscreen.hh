@@ -31,8 +31,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( GWorldFlags )
 	
-	using ::GWorldPtr;
-	
 	struct GWorld_Context
 	{
 		GWorldPtr port;

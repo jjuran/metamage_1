@@ -26,9 +26,6 @@
 #include "Nitrogen/CFBase.hh"
 #endif
 
-namespace Nitrogen {
-	using ::CFLocaleRef;
-  }
 
 namespace nucleus
   {

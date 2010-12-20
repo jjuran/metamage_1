@@ -65,9 +65,6 @@ namespace Nitrogen
 		kJustification_Max = nucleus::enumeration_traits< short >::max
 	};
 	
-	using ::TEHandle;
-	using ::CharsHandle;  // identical to ::Handle
-	
 }
 
 namespace Nitrogen

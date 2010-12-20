@@ -117,8 +117,6 @@ namespace Nitrogen
 			operator ::InetHost() const  { return Get(); }
 	};
 	
-	using ::InetSvcRef;
-	
 }
 
 namespace nucleus
@@ -131,13 +129,7 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	using ::InetAddress;
-	
 	typedef nucleus::string InetDomainName;
-	
-	using ::InetHostInfo;
-	using ::InetSysInfo;
-	using ::InetMailExchange;
 	
 	InetAddress& OTInitInetAddress( InetAddress& addr, InetPort port, InetHost host );
 	

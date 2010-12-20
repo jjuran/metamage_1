@@ -24,9 +24,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( HighLevelEventManager );
 	
-	
-	using ::TargetID;
-	
 }
 
 namespace nucleus
@@ -51,11 +48,6 @@ namespace nucleus
 			return make< TargetID >( name, make< LocationNameRec >() );
 		}
 	};
-	
-}
-
-namespace Nitrogen
-{
 	
 }
 

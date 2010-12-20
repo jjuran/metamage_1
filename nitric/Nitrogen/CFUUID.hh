@@ -19,10 +19,6 @@
 #include "Nitrogen/CFBase.hh"
 #endif
 
-namespace Nitrogen
-  {
-   using ::CFUUIDRef;
-  }
 
 namespace nucleus
   {

@@ -248,8 +248,6 @@ namespace Nitrogen
 	using Carbon::kEventProcessCommand;
 	using Carbon::kEventCommandUpdateStatus;
    
-   
-   using ::EventTypeSpec;
 
 	enum MouseTrackingResult
 	{
@@ -428,8 +426,6 @@ namespace Nitrogen
 
 	typedef Mac::DescType EventParamType;
    
-   using ::EventLoopRef;
-   
    using ::GetCurrentEventLoop;
    using ::GetMainEventLoop;
    void RunCurrentEventLoop( EventTimeout inTimeout );
@@ -438,7 +434,6 @@ namespace Nitrogen
    /* This one is awkward: the Carbon headers don't define CFRunLoopRef, but this
       function is documented to return one. */
    using ::GetCFRunLoopFromEventLoop;
-   using ::EventRef;
   }
 
 namespace nucleus
@@ -1242,9 +1237,6 @@ namespace Nitrogen
 /* ... */
 
    
-   using ::EventHandlerRef;
-   using ::EventHandlerCallRef;
-   
    struct EventHandlerUPP_Details: Basic_UPP_Details< ::EventHandlerUPP,
                                                       ::EventHandlerProcPtr,
                                                       ::NewEventHandlerUPP,
@@ -1253,8 +1245,6 @@ namespace Nitrogen
      {};
 
    typedef UPP< EventHandlerUPP_Details > EventHandlerUPP;
-   
-   using ::EventHandlerProcPtr;
    
    inline nucleus::owned<EventHandlerUPP> NewEventHandlerUPP( EventHandlerProcPtr p )
      {
@@ -1269,8 +1259,6 @@ namespace Nitrogen
                                EventRef            inEvent,
                                RefCon              inUserData,
                                EventHandlerUPP     userUPP );
-
-   using ::EventTargetRef;
    
    using ::GetWindowEventTarget;
    using ::GetControlEventTarget;
@@ -2507,9 +2495,6 @@ namespace Nitrogen
    
    /* ... */
 
-   using ::EventHotKeyRef;
-   using ::EventHotKeyID;
-   
   }
 
 namespace nucleus

@@ -25,12 +25,6 @@
 #include "Nitrogen/Quickdraw.hh"
 #endif
 
-namespace Nitrogen
-{
-	
-	using ::CGDirectDisplayID;
-	
-  }
 
 namespace nucleus
   {

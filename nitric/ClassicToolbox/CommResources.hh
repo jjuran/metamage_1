@@ -45,9 +45,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** Types **
 	
-	using ::CRMRec;
-	using ::CRMRecPtr;
-	
 	enum CRMDeviceType
 	{
 		kCRMDeviceType_Max = nucleus::enumeration_traits< long >::max

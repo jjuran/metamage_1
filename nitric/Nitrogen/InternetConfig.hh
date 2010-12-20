@@ -39,9 +39,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( InternetConfig );
 	
-	using ::ICInstance;
-	using ::ICDirSpec;
-	
 	enum ICAttr
 	{
 		kICAttrNoChange     = ::kICAttrNoChange,
@@ -74,14 +71,6 @@ namespace Nitrogen
 	static const Mac::FSType     kICFileType = Mac::FSType   ( ::kICFileType );
 	static const Mac::FSCreator  kICCreator  = Mac::FSCreator( ::kICCreator  );
 	
-	using ::ICFontRecordHandle;
-	using ::ICCharTableHandle;
-	using ::ICAppSpecHandle;
-	using ::ICAppSpecListHandle;
-	using ::ICFileSpecHandle;
-	using ::ICMapEntryHandle;
-	using ::ICServiceEntryHandle;
-	using ::ICServicesHandle;
 }
 
 namespace nucleus

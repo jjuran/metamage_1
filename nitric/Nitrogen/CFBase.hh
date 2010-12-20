@@ -76,8 +76,6 @@ namespace Nitrogen {
 		kCFHashCode_Max = nucleus::enumeration_traits< ::CFHashCode >::max
 	};
 	
-   using ::CFStringRef;
-   using ::CFAllocatorRef;
 }
 
 namespace Nitrogen {

@@ -22,9 +22,6 @@
 
 namespace Nitrogen
   {
-   using ::CFDataRef;
-   using ::CFMutableDataRef;
-   
    template <> struct CFType_Traits< CFDataRef        >: Basic_CFType_Traits< CFDataRef,        ::CFDataGetTypeID > {};
    template <> struct CFType_Traits< CFMutableDataRef >: Basic_CFType_Traits< CFMutableDataRef, ::CFDataGetTypeID > {};
    inline void CFShow( const CFDataRef d )        { ::CFShow( d ); }

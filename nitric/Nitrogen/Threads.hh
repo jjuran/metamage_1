@@ -98,8 +98,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ThreadOptions )
 	
-	using ::SchedulerInfoRec;
-	
 	// ...
 	
   }

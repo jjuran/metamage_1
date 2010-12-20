@@ -21,11 +21,9 @@
 
 namespace Nitrogen
   {
-   using ::CFArrayRef;
    using ::CFArrayGetTypeID;
    template <> struct CFType_Traits< CFArrayRef >: Basic_CFType_Traits< CFArrayRef, ::CFArrayGetTypeID > {};
 
-   using ::CFMutableArrayRef;
    template <> struct CFType_Traits< CFMutableArrayRef >: Basic_CFType_Traits< CFMutableArrayRef, ::CFArrayGetTypeID > {};
 
    inline void CFShow( const CFArrayRef a )        { ::CFShow( a ); }

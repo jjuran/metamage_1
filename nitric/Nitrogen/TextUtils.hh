@@ -35,8 +35,6 @@
 namespace Nitrogen
 {
 	
-	using ::StringHandle;
-	
 	// Munger
 	// I am *not* porting Munger().  There are C++ algorithms to do the same things type-safely.
 	

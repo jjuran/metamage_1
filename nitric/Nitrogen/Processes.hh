@@ -58,9 +58,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( LaunchFlags )
 	
-	using ::ProcessSerialNumber;
-	using ::ProcessInfoRec;
-	
 	template < unsigned long > struct LowLongOfPSN  {};
 	
 }

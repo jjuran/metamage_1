@@ -86,8 +86,6 @@ namespace Nitrogen
 		kCFragArchitecture_Max = nucleus::enumeration_traits< ::CFragArchitecture >::max
 	};
 	
-	using ::CFragVersionNumber;
-	
 	enum CFragUsage
 	{
 		kImportLibraryCFrag   = ::kImportLibraryCFrag,
@@ -115,8 +113,6 @@ namespace Nitrogen
 		
 		kCFragLocatorKind_Max = nucleus::enumeration_traits< ::CFragLocatorKind >::max
 	};
-	
-	using ::CFragConnectionID;
 	
 	enum CFragLoadOptions
 	{

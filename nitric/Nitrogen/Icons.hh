@@ -159,17 +159,8 @@ namespace nucleus
 	template <> struct disposer_class< Nitrogen::PlainIconHandle  > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::MaskedIconHandle > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::SmallIconHandle  > : disposer_class< Nitrogen::Handle > {};
-  }
-
-namespace Nitrogen
-  {
-	// ResType 'cicn'
-	using ::CIconHandle;
 	
-  }
-
-namespace nucleus
-  {
+	// ResType 'cicn'
 	template <> struct disposer< CIconHandle >
 	{
 		typedef CIconHandle  argument_type;
@@ -256,8 +247,6 @@ namespace Nitrogen
 			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
-	
-   using ::IconRef;
 	
   }
 

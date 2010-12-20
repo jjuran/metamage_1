@@ -43,13 +43,6 @@ namespace Nitrogen
 	
 	void RegisterListManagerErrors();
 	
-	using ::Cell;
-	using ::ListBounds;
-	
-	using ::ListRec;
-	using ::ListPtr;
-	using ::ListHandle;
-	
 	// 436
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,

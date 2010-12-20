@@ -30,9 +30,6 @@
 
 namespace Nitrogen
   {
-   using ::CFBundleRef;
-   using ::CFBundleGetTypeID;
-   
    template <> struct CFType_Traits< CFBundleRef >: Basic_CFType_Traits< CFBundleRef, ::CFBundleGetTypeID > {};
 
   }

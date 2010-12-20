@@ -48,9 +48,6 @@ namespace Nitrogen {
 		// Apple hasn't documented any HIShape errors.
 	}
 	
- 	
-	using ::HIShapeRef;
-	using ::HIMutableShapeRef;
   }
 
 namespace nucleus

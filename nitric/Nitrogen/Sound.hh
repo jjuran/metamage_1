@@ -153,8 +153,6 @@ namespace Nitrogen
 	
 	typedef SoundInputDeviceInfoType SoundInputDeviceInformationSelector;
 	
-	using ::SPB;
-	
 	enum SoundInputReferenceNumber
 	{
 		kSoundInputReferenceNumber_Max = nucleus::enumeration_traits< long >::max

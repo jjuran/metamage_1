@@ -22,11 +22,6 @@
 #endif
 
 
-namespace Nitrogen
-  {
-   using ::CGDataProviderRef; 
-  }
-
 namespace nucleus {
    template <> struct disposer< CGDataProviderRef >
      {

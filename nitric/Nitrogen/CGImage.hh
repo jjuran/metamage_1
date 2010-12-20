@@ -19,10 +19,6 @@
 #include "Nitrogen/CGDataProvider.hh"
 #endif
 
-namespace Nitrogen
-  {
-   using ::CGImageRef;
-  }
 
 namespace nucleus
   {

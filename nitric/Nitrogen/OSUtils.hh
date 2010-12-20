@@ -123,11 +123,6 @@ namespace Nitrogen
 		::InvokeDeferredTaskUPP( dtParam, userUPP );
 	}
 	
-	using ::DeferredTask;
-	using ::DeferredTaskPtr;
-	
-	using ::MachineLocation;
-	
 	inline bool IsMetric()  { return ::IsMetric(); }
 	
 	using ::GetSysPPtr;

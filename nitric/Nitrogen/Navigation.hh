@@ -87,8 +87,6 @@ namespace Nitrogen {
 			NavServicesErrorsRegistrationDependency();
 	};
 	
-	using ::NavDialogRef;
-    using ::NavReplyRecord;
   }
 
 namespace nucleus

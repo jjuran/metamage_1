@@ -54,9 +54,6 @@
 #ifndef MAC_TOOLBOX_TYPES_OSTYPE_HH
 #include "Mac/Toolbox/Types/OSType.hh"
 #endif
-#ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
-#include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
-#endif
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
@@ -68,21 +65,6 @@
 
 namespace Nitrogen
   {
-	
-	using ::VersRec;
-	
-	using Mac::SizeOf_VersRec;
-	
-   using ::UInt8;
-   using ::SInt8;
-   using ::UInt16;
-   using ::SInt16;
-   using ::UInt32;
-   using ::SInt32;
-
-   typedef long long                wide;
-   typedef unsigned long long       UnsignedWide;
-	
 	
    // Nitrogen uses floating point types in preference to fixed-point types.
    template < class Floating, int fractionBits, class Integral >
@@ -139,11 +121,6 @@ namespace Nitrogen
      };
    
    
-   using ::Float32;
-   using ::Float64;
-   using ::Float80;
-   using ::Float96;
-   
    typedef ::std::size_t  Size;
 	
 	enum OptionBits
@@ -179,8 +156,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( Style )
 
-   using ::Point;
-   using ::Rect;
   }
 
 namespace nucleus

@@ -303,11 +303,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** AEDesc **
 	
-	using ::AEDesc;
-	using ::AEDescList;
-	using ::AERecord;
-	using ::AEKeyDesc;
-	
 	inline void Initialize_AEDesc( AEDesc& desc )
 	{
 		desc.descriptorType = typeNull;
@@ -1374,8 +1369,6 @@ namespace Nitrogen
 	};
 	
 	typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
-	
-	//using ::AEEventHandlerProcPtr;
 	
 	inline nucleus::owned< AEEventHandlerUPP > NewAEEventHandlerUPP( ::AEEventHandlerProcPtr p )
 	{

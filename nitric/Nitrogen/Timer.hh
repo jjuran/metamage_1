@@ -42,9 +42,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( TimeManager );
 	
-	using ::TMTask;
-	using ::TMTaskPtr;
-	
 }
 
 namespace nucleus
