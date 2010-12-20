@@ -35,21 +35,6 @@
 namespace Nitrogen
 {
 	
-	static const AEEventID kAEOpenApplication = AEEventID( ::kAEOpenApplication );
-	static const AEEventID kAEOpenDocuments   = AEEventID( ::kAEOpenDocuments   );
-	static const AEEventID kAEPrintDocuments  = AEEventID( ::kAEPrintDocuments  );
-	static const AEEventID kAEQuitApplication = AEEventID( ::kAEQuitApplication );
-	static const AEEventID kAEAnswer          = AEEventID( ::kAEAnswer          );
-	static const AEEventID kAEApplicationDied = AEEventID( ::kAEApplicationDied );
-	static const AEEventID kAEShowPreferences = AEEventID( ::kAEShowPreferences );
-	
-	
-	static const AEEventID kAEStartRecording       = AEEventID( ::kAEStartRecording       );
-	static const AEEventID kAEStopRecording        = AEEventID( ::kAEStopRecording        );
-	static const AEEventID kAENotifyStartRecording = AEEventID( ::kAENotifyStartRecording );
-	static const AEEventID kAENotifyStopRecording  = AEEventID( ::kAENotifyStopRecording  );
-	static const AEEventID kAENotifyRecording      = AEEventID( ::kAENotifyRecording      );
-	
 	enum AEEventSource
 	{
 		kAEUnknownSource = ::kAEUnknownSource,

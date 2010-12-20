@@ -46,17 +46,7 @@ namespace Nitrogen
 	// kAEBold                                                
 	// kAECentered                                            
 	// kAEChangeView                                          
-	// kAEClone                                               
-	static const AEEventID kAEClose = AEEventID( ::kAEClose );
 	// kAECondensed                                           
-	static const AEEventID kAECopy = AEEventID( ::kAECopy );
-	static const AEEventID kAECountElements = AEEventID( ::kAECountElements );
-	static const AEEventID kAECreateElement = AEEventID( ::kAECreateElement );
-	static const AEEventID kAECreatePublisher = AEEventID( ::kAECreatePublisher );
-	static const AEEventID kAECut = AEEventID( ::kAECut );
-	static const AEEventID kAEDelete = AEEventID( ::kAEDelete );
-	static const AEEventID kAEDoObjectsExist = AEEventID( ::kAEDoObjectsExist );
-	static const AEEventID kAEDoScript = AEEventID( ::kAEDoScript );
 	// kAEDrag                                                
 	// kAEDuplicateSelection                                  
 	// kAEEditGraphic                                         
@@ -68,13 +58,8 @@ namespace Nitrogen
 	// kAEFinderEvents                                        
 	// kAEFormulaProtect                                      
 	// kAEFullyJustified                                      
-	// kAEGetClassInfo                                        
-	static const AEEventID kAEGetData = AEEventID( ::kAEGetData );
-	static const AEEventID kAEGetDataSize = AEEventID( ::kAEGetDataSize );
-	// kAEGetEventInfo                                        
 	// kAEGetInfoSelection                                    
 	// kAEGetPrivilegeSelection                               
-	// kAEGetSuiteInfo                                        
 	// kAEGrow                                                
 	// kAEHidden                                              
 	// kAEHiQuality                                           
@@ -85,17 +70,13 @@ namespace Nitrogen
 	// kAELowercase                                           
 	// kAEMakeObjectsVisible                                  
 	// kAEModifiable                                          
-	// kAEMove                                                
 	// kAENo                                                  
 	// kAENoArrow                                             
 	// kAENonmodifiable                                       
-	static const AEEventID kAEOpen = AEEventID( ::kAEOpen );
 	// kAEOpenSelection                                       
 	// kAEOutline                                             
 	// kAEPageSetup                                           
-	static const AEEventID kAEPaste = AEEventID( ::kAEPaste );
 	// kAEPlain                                               
-	static const AEEventID kAEPrint = AEEventID( ::kAEPrint );
 	// kAEPrintSelection                                      
 	// kAEPrintWindow                                         
 	// kAEPutAwaySelection                                    
@@ -117,15 +98,11 @@ namespace Nitrogen
 	// kAEQuitAll                                             
 	// kAERedo                                                
 	// kAERegular                                             
-	static const AEEventID kAEReopenApplication = AEEventID( ::kAEReopenApplication );
 	// kAEReplace                                             
 	// kAERestart                                             
 	// kAERevealSelection                                     
 	// kAERevert                                              
 	// kAERightJustified                                      
-	// kAESave                                                
-	static const AEEventID kAESelect = AEEventID( ::kAESelect );
-	static const AEEventID kAESetData = AEEventID( ::kAESetData );
 	// kAESetPosition                                         
 	// kAEShadow                                              
 	// kAEShowClipboard                                       

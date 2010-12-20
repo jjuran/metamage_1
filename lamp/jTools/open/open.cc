@@ -102,7 +102,7 @@ namespace tool
 	                                                    const ProcessSerialNumber&  psn )
 	{
 		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
-		                                                              N::kAEOpenDocuments,
+		                                                              Mac::kAEOpenDocuments,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, N::keyDirectObject, items );

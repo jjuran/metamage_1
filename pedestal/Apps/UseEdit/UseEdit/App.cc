@@ -121,7 +121,7 @@ namespace UseEdit
 		static void Install_Handler()
 		{
 			N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-			                                     N::kAEClose ).release();
+			                                     Mac::kAEClose ).release();
 		}
 	};
 	
@@ -154,7 +154,7 @@ namespace UseEdit
 		static void Install_Handler()
 		{
 			N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-			                                     N::kAECountElements ).release();
+			                                     Mac::kAECountElements ).release();
 		}
 	};
 	
@@ -172,7 +172,7 @@ namespace UseEdit
 		static void Install_Handler()
 		{
 			N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-			                                     N::kAEGetData ).release();
+			                                     Mac::kAEGetData ).release();
 		}
 	};
 	
@@ -201,7 +201,7 @@ namespace UseEdit
 		static void Install_Handler()
 		{
 			N::AEInstallEventHandler< Handler >( Mac::kCoreEventClass,
-			                                     N::kAEOpenDocuments ).release();
+			                                     Mac::kAEOpenDocuments ).release();
 		}
 	};
 	

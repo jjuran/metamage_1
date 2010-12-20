@@ -73,7 +73,7 @@ namespace Vertice
 		myOpenDocsEventHandler
 		(
 			N::AEInstallEventHandler< App*, AppleEventHandler >( Mac::kCoreEventClass,
-			                                                     N::kAEOpenDocuments,
+			                                                     Mac::kAEOpenDocuments,
 			                                                     this ) )
 	//, myOptionsMenu(131)
 	//, myViewMenu(132)
