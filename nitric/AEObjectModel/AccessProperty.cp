@@ -130,7 +130,7 @@ namespace Nitrogen
 			}
 			
 			AEPutKeyDesc( result,
-			              AEKeyword( ::FourCharCode( propertyID ) ),
+			              Mac::AEKeyword( propertyID + 0 ),
 			              propertyToken );
 			
 			// Dispose the token's AEDesc, but don't call the token disposal function.

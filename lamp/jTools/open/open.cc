@@ -105,7 +105,7 @@ namespace tool
 		                                                              Mac::kAEOpenDocuments,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
-		N::AEPutParamDesc( appleEvent, N::keyDirectObject, items );
+		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, items );
 		
 		return appleEvent;
 	}

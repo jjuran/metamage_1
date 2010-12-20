@@ -1,18 +1,10 @@
-// Nitrogen/AEKeyword.hh
-// ---------------------
-//
-// Maintained by Joshua Juran
+/*
+	Mac/AppleEvents/Types/AEKeyword.hh
+	----------------------------------
+*/
 
-// Part of the Nitrogen project.
-//
-// Written 2007 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
-
-
-#ifndef NITROGEN_AEKEYWORD_HH
-#define NITROGEN_AEKEYWORD_HH
+#ifndef MAC_APPLEEVENTS_TYPES_AEKEYWORD_HH
+#define MAC_APPLEEVENTS_TYPES_AEKEYWORD_HH
 
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
@@ -29,7 +21,12 @@
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>
 #endif
+#ifndef __INTERNETCONFIG__
+#include <InternetConfig.h>
+#endif
+#ifndef __OSA__
 #include <OSA.h>
+#endif
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -37,7 +34,7 @@
 #endif
 
 
-namespace Nitrogen
+namespace Mac
 {
 	
 	enum AEKeyword
@@ -237,6 +234,12 @@ namespace Nitrogen
 		keyAppHandledCoercion = ::keyAppHandledCoercion,
 		
 		// keyASPrepositionAt .. keyASPrepositionUntil
+		
+		// InternetConfig
+		// ---
+		
+		keyAEAttaching                 = ::keyAEAttaching,
+		keyICEditPreferenceDestination = ::keyICEditPreferenceDestination,
 		
 		// OSA
 		// ---

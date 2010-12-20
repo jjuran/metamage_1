@@ -156,7 +156,7 @@ namespace Nitrogen
 	// kConnSuite .. eVideoOut
 	// cKeystroke .. eF15Key
 	
-	template <> struct AEKeyword_Traits< keyAEObjectClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
+	template <> struct AEKeyword_Traits< Mac::keyAEObjectClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
 	
    template<> struct DescType_Traits< typeFixedPoint                >: nucleus::POD_scribe< FixedPoint                > {};
    template<> struct DescType_Traits< typeFixedRectangle            >: nucleus::POD_scribe< FixedRect                 > {};

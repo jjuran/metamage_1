@@ -34,7 +34,7 @@ namespace MacBinaryDecoder
 	namespace Ped = Pedestal;
 	
 	
-	using N::keyDirectObject;
+	using Mac::keyDirectObject;
 	using N::typeAEList;
 	using Mac::kCoreEventClass;
 	using Mac::kAEOpenDocuments;

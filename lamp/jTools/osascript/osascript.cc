@@ -60,8 +60,8 @@ namespace tool
 	
 	static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
 	{
-		SInt16                   errorNumber  = N::OSAScriptError< N::kOSAErrorNumber  >( comp );
-		nucleus::mutable_string  errorMessage = N::OSAScriptError< N::kOSAErrorMessage >( comp );
+		SInt16                   errorNumber  = N::OSAScriptError< Mac::kOSAErrorNumber  >( comp );
+		nucleus::mutable_string  errorMessage = N::OSAScriptError< Mac::kOSAErrorMessage >( comp );
 		
 		if ( errorNumber < 0 )
 		{
@@ -347,7 +347,7 @@ namespace tool
 				N::AEPutPtr< N::typeChar >( list, 0, *it );
 			}
 			
-			N::AEPutParamDesc( runEvent, N::keyDirectObject, list );
+			N::AEPutParamDesc( runEvent, Mac::keyDirectObject, list );
 		}
 		
 		try

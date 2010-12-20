@@ -74,10 +74,6 @@ namespace Nitrogen
 	static const Mac::FSType     kICFileType = Mac::FSType   ( ::kICFileType );
 	static const Mac::FSCreator  kICCreator  = Mac::FSCreator( ::kICCreator  );
 	
-	static const AEKeyword keyAEAttaching = AEKeyword( ::keyAEAttaching );
-	
-	static const AEKeyword keyICEditPreferenceDestination = AEKeyword( ::keyICEditPreferenceDestination );
-	
 	using ::ICFontRecordHandle;
 	using ::ICCharTableHandle;
 	using ::ICAppSpecHandle;

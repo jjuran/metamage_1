@@ -115,11 +115,11 @@ namespace Nitrogen
 	template <> struct DescType_Map_Traits< typeObjectClass     > { static const DescType result = typeType; };
 	template <> struct DescType_Map_Traits< typePropertyID      > { static const DescType result = typeType; };
 	
-	template <> struct AEKeyword_Traits< keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
-	template <> struct AEKeyword_Traits< keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
+	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
+	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
 	
-	template <> struct AEKeyword_Traits< keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
-	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm     > {};
+	template <> struct AEKeyword_Traits< Mac::keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
+	template <> struct AEKeyword_Traits< Mac::keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm     > {};
 	
 	enum AEResolveCallbackFlags
 	{

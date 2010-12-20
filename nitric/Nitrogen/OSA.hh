@@ -205,7 +205,7 @@ namespace Nitrogen
 	
 	
 	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              AEKeyword          selector,
+	                                              Mac::AEKeyword     selector,
 	                                              DescType           desiredType );
 	
 	inline void OSADispose( nucleus::owned< OSAID > )
@@ -384,14 +384,14 @@ namespace Nitrogen
 	template < DescType desiredType >
 	inline
 	typename DescType_Traits< desiredType >::Result
-	OSAScriptError( ComponentInstance scriptingComponent, AEKeyword keyword )
+	OSAScriptError( ComponentInstance scriptingComponent, Mac::AEKeyword keyword )
 	{
 		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
 		                                                     keyword,
 		                                                     desiredType ) );
 	}
 	
-	template < AEKeyword key >
+	template < Mac::AEKeyword key >
 	inline
 	typename AEKeyword_Traits< key >::Result
 	OSAScriptError( ComponentInstance scriptingComponent )

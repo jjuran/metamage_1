@@ -115,7 +115,7 @@ namespace Nitrogen
 	
 	
 	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              AEKeyword          selector,
+	                                              Mac::AEKeyword     selector,
 	                                              DescType           desiredType )
 	{
 		AEDesc_Data resultingErrorDescription;

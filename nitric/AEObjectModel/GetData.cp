@@ -41,11 +41,11 @@ namespace Nitrogen
 	{
 		nucleus::owned< AERecord_Data > record = AECreateList( true );
 		
-		AEPutKeyPtr< keyAEDesiredClass >( record, objectClass );
-		AEPutKeyPtr< keyAEKeyForm      >( record, keyForm     );
+		AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
+		AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
 		
-		AEPutKeyDesc( record, keyAEKeyData,   keyData   );
-		AEPutKeyDesc( record, keyAEContainer, container );
+		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
+		AEPutKeyDesc( record, Mac::keyAEContainer, container );
 		
 		return AECoerceDesc( record, typeObjectSpecifier );
 	}

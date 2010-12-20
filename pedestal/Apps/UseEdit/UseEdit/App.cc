@@ -97,7 +97,7 @@ namespace UseEdit
 		                     N::AppleEvent&        reply )
 		{
 			n::owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
-			                                                                     N::keyDirectObject ) );
+			                                                                     Mac::keyDirectObject ) );
 			
 			switch ( N::DescType( token.get().descriptorType ) )
 			{
@@ -131,7 +131,7 @@ namespace UseEdit
 		                     N::AppleEvent&        reply )
 		{
 			n::owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( event,
-			                                                                            N::keyDirectObject );
+			                                                                            Mac::keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
 			
@@ -142,12 +142,12 @@ namespace UseEdit
 			Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
 			// The kind of thing we're counting, e.g. 'file'
-			Mac::AEObjectClass desiredClass = N::AEGetParamPtr< N::keyAEObjectClass >( event );
+			Mac::AEObjectClass desiredClass = N::AEGetParamPtr< Mac::keyAEObjectClass >( event );
 			
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
 			N::AEPutParamDesc( reply,
-			                   N::keyDirectObject,
+			                   Mac::keyDirectObject,
 			                   N::AECreateDesc< N::typeUInt32 >( count ) );
 		}
 		
@@ -164,9 +164,9 @@ namespace UseEdit
 		                     N::AppleEvent&        reply )
 		{
 			N::AEPutParamDesc( reply,
-			                   N::keyDirectObject,
+			                   Mac::keyDirectObject,
 			                   N::GetData( N::AEResolve( N::AEGetParamDesc( event,
-			                                                                N::keyDirectObject ) ) ) );
+			                                                                Mac::keyDirectObject ) ) ) );
 		}
 		
 		static void Install_Handler()
@@ -185,7 +185,7 @@ namespace UseEdit
 			typedef Container::const_iterator const_iterator;
 			
 			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( event,
-			                                                            N::keyDirectObject,
+			                                                            Mac::keyDirectObject,
 			                                                            N::typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );

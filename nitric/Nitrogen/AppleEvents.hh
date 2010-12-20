@@ -40,11 +40,11 @@ namespace Nitrogen
 {
 	
 	// In AppleEvents.h due to dependency on enum AEEventSource.
-	template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< Mac::AEEventSource, SInt16 > {};
+	template <> struct AEKeyword_Traits< Mac::keyEventSourceAttr > : Integer_AEKeyword_Traits< Mac::AEEventSource, SInt16 > {};
 	
-	template <> struct AEKeyword_Traits< keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
+	template <> struct AEKeyword_Traits< Mac::keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
 	
-	template <> struct AEKeyword_Traits< keyErrorString > : Char_AEKeyword_Traits< char > {};
+	template <> struct AEKeyword_Traits< Mac::keyErrorString > : Char_AEKeyword_Traits< char > {};
 	
 	struct AEEventHandler
 	{

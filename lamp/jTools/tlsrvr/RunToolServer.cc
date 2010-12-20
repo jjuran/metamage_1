@@ -173,7 +173,7 @@ namespace tool
 	
 	static long GetResult( const N::AppleEvent& reply )
 	{
-		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
+		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, Mac::AEKeyword( 'stat' ) );
 		
 		if ( stat == -1 )
 		{
@@ -243,7 +243,7 @@ namespace tool
 		                                                              Mac::kAEDoScript,
 		                                                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 		
-		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
+		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
 		
 		return appleEvent;
 	}

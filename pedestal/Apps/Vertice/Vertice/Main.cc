@@ -89,7 +89,7 @@ namespace Vertice
 	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
 		n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                            N::keyDirectObject,
+		                                                            Mac::keyDirectObject,
 		                                                            N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
