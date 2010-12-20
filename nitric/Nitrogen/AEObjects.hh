@@ -37,13 +37,6 @@
 #endif
 
 
-enum
-{
-	typeObjectClass = 'Clas',
-	typePropertyID  = 'Prop'
-};
-
-
 namespace Nitrogen
 {
 	
@@ -79,17 +72,7 @@ namespace Nitrogen
 	typedef AEComparisonOperator AECompOperator;
 	
 	
-	static const Mac::DescType typeObjectClass = Mac::DescType( ::typeObjectClass );
-	static const Mac::DescType typePropertyID  = Mac::DescType( ::typePropertyID  );
-	
-	
-	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< Mac::AEObjectClass, ::DescType >  {};
-	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< Mac::AEPropertyID,  ::DescType >  {};
-	
 	template <> struct DescType_Traits< Mac::typeAbsoluteOrdinal > : nucleus::converting_POD_scribe< Mac::AEAbsoluteOrdinal, ::DescType > {};
-	
-	template <> struct DescType_Map_Traits< typeObjectClass     > { static const Mac::DescType result = Mac::typeType; };
-	template <> struct DescType_Map_Traits< typePropertyID      > { static const Mac::DescType result = Mac::typeType; };
 	
 	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
 	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};

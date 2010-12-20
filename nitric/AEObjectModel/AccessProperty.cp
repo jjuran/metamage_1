@@ -152,7 +152,6 @@ namespace Nitrogen
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    Mac::AEObjectClass   containerClass )
 	{
-		//return AECreateDesc< typeObjectClass, AEDesc_Token >( containerClass );
 		return AECreateDesc< Mac::typeType, AEDesc_Token >( Mac::DescType( containerClass + 0 ) );
 	}
 	
