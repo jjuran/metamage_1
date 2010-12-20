@@ -72,6 +72,9 @@
 #ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
 #endif
+#ifndef MAC_PROCESSES_UTILITIES_SIZEOFAPPPARAMETERS_HH
+#include "Mac/Processes/Utilities/sizeof_AppParameters.hh"
+#endif
 
 #ifndef NITROGEN_AEKEYWORD_HH
 #include "Nitrogen/AEKeyword.hh"
@@ -242,16 +245,11 @@ namespace Nitrogen
 	template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : nucleus::POD_scribe< double >      {};
 	template<> struct DescType_Traits< type128BitFloatingPoint >    : nucleus::POD_scribe< long double > {};
 	
-	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
-	{
-		return sizeof (AppParameters) + appParameters.messageLength;
-	}
-	
 	template<> struct DescType_Traits< typeEventRecord >            : nucleus::POD_scribe< EventRecord >                      {};
 	template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
 	template<> struct DescType_Traits< typeEnumerated >             : nucleus::converting_POD_scribe< Mac::AEEnumeration, UInt32 > {};
 	template<> struct DescType_Traits< typeType >                   : nucleus::converting_POD_scribe< DescType, ::DescType >   {};
-	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, SizeOf_AppParameters > {};
+	template<> struct DescType_Traits< typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, Mac::sizeof_AppParameters > {};
 	template<> struct DescType_Traits< typeFSS >                    : nucleus::POD_scribe< FSSpec >                           {};
 	template<> struct DescType_Traits< typeFSRef >                  : nucleus::POD_scribe< FSRef >                            {};
 	template<> struct DescType_Traits< typeKeyword >                : nucleus::converting_POD_scribe< AEKeyword, ::AEKeyword > {};
