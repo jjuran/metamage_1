@@ -173,26 +173,26 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlBevelButtonTextPlaceTag                >: nucleus::POD_scribe    < ControlButtonTextPlacement    > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuValueTag                >: nucleus::POD_scribe    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuRefTag                  >: nucleus::POD_scribe    < MenuRef                       > {};
-   template<> struct ControlData_Traits< kControlBevelButtonCenterPopupGlyphTag         >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlBevelButtonCenterPopupGlyphTag         >: Mac::Boolean_scribe                                      {};
    template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: nucleus::POD_scribe    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: nucleus::POD_scribe    < ::SInt32                      > {};
-   template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: Mac::Boolean_scribe                                      {};
 //   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: nucleus::POD_scribe    < nucleus::owned<MenuRef>                > {};
    template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: nucleus::POD_scribe    < ThemeButtonKind               > {};
 
    template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: nucleus::POD_scribe    < ::SInt16                      > {};
 
-   template<> struct ControlData_Traits< kControlProgressBarIndeterminateTag            >: BooleanFlattener                                           {};
-   template<> struct ControlData_Traits< kControlProgressBarAnimatingTag                >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlProgressBarIndeterminateTag            >: Mac::Boolean_scribe                                      {};
+   template<> struct ControlData_Traits< kControlProgressBarAnimatingTag                >: Mac::Boolean_scribe                                      {};
 
    template<> struct ControlData_Traits< kControlTabContentRectTag                      >: nucleus::POD_scribe    < Rect                          > {};
-   template<> struct ControlData_Traits< kControlTabEnabledFlagTag                      >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlTabEnabledFlagTag                      >: Mac::Boolean_scribe                                      {};
    template<> struct ControlData_Traits< kControlTabInfoTag                             >: nucleus::POD_scribe    < ControlTabInfoRec             > {};
 
    template<> struct ControlData_Traits< kControlGroupBoxMenuHandleTag                  >: nucleus::POD_scribe    < MenuRef                       > {};
    template<> struct ControlData_Traits< kControlGroupBoxTitleRectTag                   >: nucleus::POD_scribe    < Rect                          > {};
 
-   template<> struct ControlData_Traits< kControlImageWellIsDragDestinationTag          >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlImageWellIsDragDestinationTag          >: Mac::Boolean_scribe                                      {};
 
    template<> struct ControlData_Traits< kControlClockLongDateTag                       >: nucleus::POD_scribe    < LongDateRec                   > {};
 
@@ -211,7 +211,7 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: nucleus::POD_scribe    < ControlEditTextSelectionRec   > {};
    template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits        < Mac::typeChar                 > {};
    template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: nucleus::POD_scribe    < ControlKeyScriptBehavior      > {};
-   template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: Mac::Boolean_scribe                                      {};
    template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits        < Mac::typeChar                 > {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: nucleus::POD_scribe    < ControlEditTextValidationUPP  > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: nucleus::POD_scribe    < TSMTEPreUpdateUPP             > {};
@@ -232,15 +232,15 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlIconResourceIDTag                      >: nucleus::POD_scribe    < ::SInt16                      > {};
 
    template<> struct ControlData_Traits< kControlListBoxListHandleTag                   >: nucleus::POD_scribe    < ListHandle                    > {};
-   template<> struct ControlData_Traits< kControlListBoxDoubleClickTag                  >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlListBoxDoubleClickTag                  >: Mac::Boolean_scribe                                      {};
    template<> struct ControlData_Traits< kControlListBoxLDEFTag                         >: nucleus::POD_scribe    < ::SInt16                      > {};
 
-   template<> struct ControlData_Traits< kControlPushButtonDefaultTag                   >: BooleanFlattener                                           {};
-   template<> struct ControlData_Traits< kControlPushButtonCancelTag                    >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlPushButtonDefaultTag                   >: Mac::Boolean_scribe                                      {};
+   template<> struct ControlData_Traits< kControlPushButtonCancelTag                    >: Mac::Boolean_scribe                                      {};
 
    template<> struct ControlData_Traits< kControlPopupButtonMenuIDTag                   >: nucleus::POD_scribe    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlPopupButtonExtraHeightTag              >: nucleus::POD_scribe    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlPopupButtonCheckCurrentTag             >: BooleanFlattener                                           {};
+   template<> struct ControlData_Traits< kControlPopupButtonCheckCurrentTag             >: Mac::Boolean_scribe                                      {};
 
    template<> struct ControlData_Traits< kControlScrollTextBoxDelayBeforeAutoScrollTag  >: nucleus::POD_scribe    < ::UInt32                      > {};
    template<> struct ControlData_Traits< kControlScrollTextBoxDelayBetweenAutoScrollTag >: nucleus::POD_scribe    < ::UInt32                      > {};

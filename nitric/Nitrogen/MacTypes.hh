@@ -172,8 +172,6 @@ namespace Nitrogen
 	
 	typedef bool Boolean;
 	
-	typedef nucleus::converting_POD_scribe< bool, ::Boolean > BooleanFlattener;
-	
 	enum Style
 	{
 		kStyle_Max = nucleus::enumeration_traits< ::Style >::max
