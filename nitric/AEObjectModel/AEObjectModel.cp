@@ -61,10 +61,10 @@ namespace Nitrogen
 		{
 			case typeAbsoluteOrdinal:
 				{
-					AEAbsoluteOrdinal ordinal = AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
+					Mac::AEAbsoluteOrdinal ordinal = AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
 					
 					// Check for 'every' first
-					if ( ordinal == kAEAll )
+					if ( ordinal == Mac::kAEAll )
 					{
 						return 0;
 					}

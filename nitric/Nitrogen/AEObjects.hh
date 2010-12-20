@@ -19,6 +19,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AEABSOLUTEORDINAL_HH
+#include "Mac/AppleEvents/Types/AEAbsoluteOrdinal.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
@@ -33,12 +36,6 @@
 #include "Nitrogen/AEDataModel.hh"
 #endif
 
-
-// Christopher Nebel personally gave his blessing to these names at WWDC 2006
-typedef DescType AEObjectClass, AEPropertyID;
-
-// These I made up
-typedef DescType AEAbsoluteOrdinal;
 
 enum
 {
@@ -62,17 +59,6 @@ namespace Nitrogen
 	};
 	
 	typedef AERelativeDescriptor AERelativeOrdinal;
-	
-	enum AEAbsoluteOrdinal
-	{
-		kAEFirst  = ::kAEFirst,
-		kAELast   = ::kAELast,
-		kAEMiddle = ::kAEMiddle,
-		kAEAny    = ::kAEAny,
-		kAEAll    = ::kAEAll,
-		
-		kAEAbsoluteOrdinal_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
 	
 	enum AELogicalOperator
 	{
@@ -110,7 +96,7 @@ namespace Nitrogen
 	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< Mac::AEObjectClass, ::DescType >  {};
 	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< Mac::AEPropertyID,  ::DescType >  {};
 	
-	template <> struct DescType_Traits< Mac::typeAbsoluteOrdinal    > : nucleus::converting_POD_scribe< AEAbsoluteOrdinal,    ::DescType    >  {};
+	template <> struct DescType_Traits< Mac::typeAbsoluteOrdinal > : nucleus::converting_POD_scribe< Mac::AEAbsoluteOrdinal, ::DescType > {};
 	
 	template <> struct DescType_Map_Traits< typeObjectClass     > { static const Mac::DescType result = Mac::typeType; };
 	template <> struct DescType_Map_Traits< typePropertyID      > { static const Mac::DescType result = Mac::typeType; };
