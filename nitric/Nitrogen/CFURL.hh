@@ -109,7 +109,7 @@ namespace Nitrogen
    
    inline nucleus::owned<CFDataRef> CFURLCreateData( CFURLRef           url,
                                             CFStringEncoding   encoding,
-                                            Boolean            escapeWhitespace )
+                                            bool               escapeWhitespace )
      {
       return Nitrogen::CFURLCreateData( kCFAllocatorDefault, url, encoding, escapeWhitespace );
      }

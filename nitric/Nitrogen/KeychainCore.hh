@@ -84,7 +84,7 @@ namespace nucleus
 
 namespace Nitrogen
   {
-	inline void KCSetInteractionAllowed ( Boolean state ) {
+	inline void KCSetInteractionAllowed ( bool state ) {
 		(void) KeychainErrorsRegistrationDependency();
 		ThrowOSStatus ( ::KCSetInteractionAllowed ( state ));
 		}

@@ -284,7 +284,7 @@ namespace Nitrogen {
 //	extern Boolean HIToolbarItemIsEnabled(HIToolbarItemRef inItem)
 	using ::HIToolbarItemIsEnabled;
 
-	inline void HIToolbarItemSetEnabled ( HIToolbarItemRef inItem, Boolean inEnabled ) {
+	inline void HIToolbarItemSetEnabled ( HIToolbarItemRef inItem, bool inEnabled ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIToolbarItemSetEnabled ( inItem, inEnabled ));
 		}

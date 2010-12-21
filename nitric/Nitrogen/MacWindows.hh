@@ -674,7 +674,7 @@ namespace Nitrogen
 		return result;
 		}
 
-	inline void ShowHideWindowToolbar ( WindowRef inWindow, Boolean inShow, Boolean inAnimate ) {
+	inline void ShowHideWindowToolbar ( WindowRef inWindow, bool inShow, bool inAnimate ) {
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
 		}

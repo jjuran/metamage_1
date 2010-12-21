@@ -96,7 +96,7 @@ namespace Nitrogen
 //	extern Boolean HIShapeIsRectangular(HIShapeRef inShape)
 	using ::HIShapeIsRectangular;
 
-	inline Boolean HIShapeContainsPoint ( HIShapeRef inShape, const HIPoint &inPoint ) {
+	inline bool HIShapeContainsPoint ( HIShapeRef inShape, const HIPoint &inPoint ) {
 		return ::HIShapeContainsPoint ( inShape, &inPoint );
 		}
 	

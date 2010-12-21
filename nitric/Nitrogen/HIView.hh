@@ -99,7 +99,7 @@ namespace Nitrogen {
 /*  VISIBILITY                                                                  */
 /*==============================================================================*/
 
-	inline void HIViewSetVisible ( HIViewRef inView, Boolean inVisible ) {
+	inline void HIViewSetVisible ( HIViewRef inView, bool inVisible ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIViewSetVisible ( inView, inVisible ));
 		}
@@ -184,7 +184,7 @@ namespace Nitrogen {
 		}
 	
 	inline HIViewRef HIViewGetSubviewHit ( HIViewRef inView, 
-							const HIPoint &inPoint, Boolean inDeep ) {
+							const HIPoint &inPoint, bool inDeep ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIViewGetSubviewHit ( inView, &inPoint, inDeep, &retVal ));
@@ -199,12 +199,12 @@ namespace Nitrogen {
 /*	extern Boolean HIViewGetNeedsDisplay(HIViewRef inView) */
 	using ::HIViewGetNeedsDisplay;
 	
-	inline void HIViewSetNeedsDisplay ( HIViewRef inView, Boolean inNeedsDisplay ) {
+	inline void HIViewSetNeedsDisplay ( HIViewRef inView, bool inNeedsDisplay ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIViewSetNeedsDisplay ( inView, inNeedsDisplay ));
 		}
 	
-	inline void HIViewSetNeedsDisplayInRegion ( HIViewRef inView, RgnHandle inRgn, Boolean inNeedsDisplay ) {
+	inline void HIViewSetNeedsDisplayInRegion ( HIViewRef inView, RgnHandle inRgn, bool inNeedsDisplay ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIViewSetNeedsDisplayInRegion ( inView, inRgn, inNeedsDisplay ));
 		}
@@ -259,7 +259,7 @@ namespace Nitrogen {
 		}
 #endif
 
-	inline void HIViewSetDrawingEnabled ( HIViewRef inView, Boolean inEnabled ) {
+	inline void HIViewSetDrawingEnabled ( HIViewRef inView, bool inEnabled ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIViewSetDrawingEnabled ( inView, inEnabled ));
 		}
@@ -410,7 +410,7 @@ namespace Nitrogen {
 /* HIGrowBoxView                                                                */
 /*==============================================================================*/
 
-	inline void HIGrowBoxViewSetTransparent ( HIViewRef inGrowBoxView, Boolean inTransparent ) {
+	inline void HIGrowBoxViewSetTransparent ( HIViewRef inGrowBoxView, bool inTransparent ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIGrowBoxViewSetTransparent ( inGrowBoxView, inTransparent ));
 		}
@@ -430,7 +430,7 @@ namespace Nitrogen {
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
-	inline void HIScrollViewSetScrollBarAutoHide ( HIViewRef inGrowBoxView, Boolean inAutoHide ) {
+	inline void HIScrollViewSetScrollBarAutoHide ( HIViewRef inGrowBoxView, bool inAutoHide ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIScrollViewSetScrollBarAutoHide ( inGrowBoxView, inAutoHide ));
 		}
@@ -459,7 +459,7 @@ namespace Nitrogen {
 		return nucleus::owned<ControlRef>::seize ( retVal );
 		}
 
-	inline void HIImageViewSetOpaque ( HIViewRef inView, Boolean inOpaque ) {
+	inline void HIImageViewSetOpaque ( HIViewRef inView, bool inOpaque ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIImageViewSetOpaque ( inView, inOpaque ));
 		}
@@ -475,7 +475,7 @@ namespace Nitrogen {
 /*	extern float HIImageViewGetAlpha(HIViewRef inView) */
 	using ::HIImageViewGetAlpha;
 
-	inline void HIImageViewSetScaleToFit ( HIViewRef inView, Boolean inScaleToFit ) {
+	inline void HIImageViewSetScaleToFit ( HIViewRef inView, bool inScaleToFit ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIImageViewSetScaleToFit ( inView, inScaleToFit ));
 		}
@@ -697,7 +697,7 @@ namespace Nitrogen {
 /*	extern HISegmentBehavior HISegmentedViewGetSegmentValue(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
 	using ::HISegmentedViewGetSegmentValue;
 
-	inline void HISegmentedViewSetSegmentEnabled ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, Boolean inEnabled ) {
+	inline void HISegmentedViewSetSegmentEnabled ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, bool inEnabled ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HISegmentedViewSetSegmentEnabled ( inSegmentedView, inSegmentIndexOneBased, inEnabled ));
 		}
@@ -726,7 +726,7 @@ namespace Nitrogen {
 		}
 
 //	Two versions here, one for "auto-width", the other for "explicit width".
-	inline void HISegmentedViewSetSegmentContentWidth ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, Boolean inAutoCalculateWidth ) {
+	inline void HISegmentedViewSetSegmentContentWidth ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, bool inAutoCalculateWidth ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HISegmentedViewSetSegmentContentWidth ( inSegmentedView, inSegmentIndexOneBased, inAutoCalculateWidth, 0.0 ));
 		}
@@ -737,7 +737,7 @@ namespace Nitrogen {
 		}
 
 	struct HISegmentedViewGetSegmentContentWidth_Result {
-		Boolean isAutoCalculated;
+		bool isAutoCalculated;
 		float	segmentWidth;
 		operator float () const { return segmentWidth; }
 		};

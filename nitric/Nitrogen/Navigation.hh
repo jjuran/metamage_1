@@ -492,11 +492,11 @@ NavTranslateFile(
 		ThrowOSStatus ( ::NavDialogSetSaveFileName ( inPutFileDialog, inFileName ));
 		}
 
-	inline Boolean NavDialogGetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog ) {
+	inline bool NavDialogGetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog ) {
 		return ::NavDialogGetSaveFileExtensionHidden ( inPutFileDialog );
 		}
 
-	inline void NavDialogSetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog, Boolean inHidden ) {
+	inline void NavDialogSetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog, bool inHidden ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		ThrowOSStatus ( ::NavDialogSetSaveFileExtensionHidden ( inPutFileDialog, inHidden ));
 		}

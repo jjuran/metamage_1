@@ -182,7 +182,7 @@ namespace Nitrogen
 /*	extern Boolean HIObjectIsAccessibilityIgnored(HIObjectRef inObject) */
 	using ::HIObjectIsAccessibilityIgnored;
 
-	inline void HIObjectSetAccessibilityIgnored ( HIObjectRef inObject, Boolean inIgnored ) {
+	inline void HIObjectSetAccessibilityIgnored ( HIObjectRef inObject, bool inIgnored ) {
 		(void) HIObjectErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
 		}

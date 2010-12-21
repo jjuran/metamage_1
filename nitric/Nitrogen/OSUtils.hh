@@ -182,7 +182,7 @@ namespace Nitrogen
 */
 
 	class CSCopyUserName_Failed {};
-	inline nucleus::owned<CFStringRef> CSCopyUserName ( Boolean useShortName ) {
+	inline nucleus::owned<CFStringRef> CSCopyUserName ( bool useShortName ) {
 		CFStringRef result = ::CSCopyUserName ( useShortName );
 		if ( NULL == result ) throw CSCopyUserName_Failed();
 		return nucleus::owned<CFStringRef>::seize ( result );

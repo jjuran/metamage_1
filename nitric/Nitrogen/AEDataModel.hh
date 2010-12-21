@@ -719,7 +719,7 @@ namespace Nitrogen
 	                          Mac::DescType    toType,
 	                          AECoerceDescUPP  handler,
 	                          RefCon           handlerRefCon = RefCon(),
-	                          Boolean          isSysHandler  = false )
+	                          bool             isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
@@ -734,7 +734,7 @@ namespace Nitrogen
 	                          Mac::DescType   toType,
 	                          AECoercePtrUPP  handler,
 	                          RefCon          handlerRefCon = RefCon(),
-	                          Boolean         isSysHandler  = false )
+	                          bool            isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
@@ -749,7 +749,7 @@ namespace Nitrogen
 	AEInstallCoercionHandler( Mac::DescType  fromType,
 	                          Mac::DescType  toType,
 	                          RefCon         handlerRefCon = RefCon(),
-	                          Boolean        isSysHandler  = false )
+	                          bool           isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
@@ -764,7 +764,7 @@ namespace Nitrogen
 	AEInstallCoercionHandler( Mac::DescType  fromType,
 	                          Mac::DescType  toType,
 	                          RefCon         handlerRefCon = RefCon(),
-	                          Boolean        isSysHandler  = false )
+	                          bool           isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
@@ -779,7 +779,7 @@ namespace Nitrogen
 	AEInstallCoercionHandler( Mac::DescType  fromType,
 	                          Mac::DescType  toType,
 	                          RefCon         handlerRefCon = RefCon(),
-	                          Boolean        isSysHandler  = false )
+	                          bool           isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler< AECoercionHandler_Desc_Callback< handler >::Adapter >( fromType,
 		                                                                                        toType,
@@ -793,7 +793,7 @@ namespace Nitrogen
 	AEInstallCoercionHandler( Mac::DescType  fromType,
 	                          Mac::DescType  toType,
 	                          RefCon         handlerRefCon = RefCon(),
-	                          Boolean        isSysHandler  = false )
+	                          bool           isSysHandler  = false )
 	{
 		return AEInstallCoercionHandler< AECoercionHandler_Ptr_Callback< handler >::Adapter >( fromType,
 		                                                                                       toType,

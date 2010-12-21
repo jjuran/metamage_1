@@ -187,7 +187,7 @@ namespace Nitrogen
 	                       AEEventID          theAEEventID,
 	                       AEEventHandlerUPP  handler,
 	                       RefCon             handlerRefCon = RefCon(),
-	                       Boolean            isSysHandler  = false )
+	                       bool               isSysHandler  = false )
 	{
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
@@ -204,7 +204,7 @@ namespace Nitrogen
 	AEInstallEventHandler( AEEventClass       theAEEventClass,
 	                       AEEventID          theAEEventID,
 	                       RefCon             handlerRefCon = RefCon(),
-	                       Boolean            isSysHandler  = false )
+	                       bool               isSysHandler  = false )
 	{
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
@@ -222,7 +222,7 @@ namespace Nitrogen
 	AEInstallEventHandler( AEEventClass                                               theAEEventClass,
 	                       AEEventID                                                  theAEEventID,
 	                       typename nucleus::object_parameter_traits< Object >::type  handlerRefCon   = typename nucleus::object_parameter_traits< Object >::type(),
-	                       Boolean                                                    isSysHandler    = false )
+	                       bool                                                       isSysHandler    = false )
 	{
 		return AEInstallEventHandler< AEEventHandler_Callback< Object, handler >::Adapter >
 		(
@@ -239,7 +239,7 @@ namespace Nitrogen
 	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
-	                       Boolean       isSysHandler )
+	                       bool          isSysHandler )
 	{
 		typedef typename nucleus::object_parameter_traits< Object >::type ObjectType;
 		
@@ -258,7 +258,7 @@ namespace Nitrogen
 	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
 	                       AEEventID     theAEEventID,
-	                       Boolean       isSysHandler    = false )
+	                       bool          isSysHandler    = false )
 	{
 		return AEInstallEventHandler< void, handler >( theAEEventClass,
 		                                               theAEEventID,

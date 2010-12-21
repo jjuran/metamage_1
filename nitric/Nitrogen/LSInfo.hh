@@ -87,11 +87,11 @@ namespace Nitrogen {
 		return nucleus::owned<CFStringRef>::seize ( result );
 		}
 
-	inline void LSSetExtensionHiddenForRef ( const FSRef &inRef, Boolean inHide ) {
+	inline void LSSetExtensionHiddenForRef ( const FSRef &inRef, bool inHide ) {
 		ThrowOSStatus ( ::LSSetExtensionHiddenForRef ( &inRef, inHide ));
 		}
 	
-	inline void LSSetExtensionHiddenForURL ( CFURLRef inURL, Boolean inHide ) {
+	inline void LSSetExtensionHiddenForURL ( CFURLRef inURL, bool inHide ) {
 		ThrowOSStatus ( ::LSSetExtensionHiddenForURL ( inURL, inHide ));
 		}
 	
@@ -251,23 +251,23 @@ namespace Nitrogen {
 		}
 
 
-	inline Boolean LSCanRefAcceptItem ( const FSRef &inItem, const FSRef &inTarget, LSRolesMask inRoleMask, LSAcceptanceFlags inFlags = kLSAcceptDefault ) {
+	inline bool LSCanRefAcceptItem ( const FSRef &inItem, const FSRef &inTarget, LSRolesMask inRoleMask, LSAcceptanceFlags inFlags = kLSAcceptDefault ) {
 		::Boolean retVal;
 		ThrowOSStatus ( ::LSCanRefAcceptItem ( &inItem, &inTarget, inRoleMask, inFlags, &retVal ));
 		return retVal;
 		}
 			
-	inline Boolean LSCanURLAcceptURL ( CFURLRef inItem, CFURLRef inTarget, LSRolesMask inRoleMask, LSAcceptanceFlags inFlags = kLSAcceptDefault ) {
+	inline bool LSCanURLAcceptURL ( CFURLRef inItem, CFURLRef inTarget, LSRolesMask inRoleMask, LSAcceptanceFlags inFlags = kLSAcceptDefault ) {
 		::Boolean retVal;
 		ThrowOSStatus ( ::LSCanURLAcceptURL ( inItem, inTarget, inRoleMask, inFlags, &retVal ));
 		return retVal;
 		}
 	
-	inline void LSRegisterFSRef ( const FSRef &inRef, Boolean inUpdate ) {
+	inline void LSRegisterFSRef ( const FSRef &inRef, bool inUpdate ) {
 		ThrowOSStatus ( ::LSRegisterFSRef ( &inRef, inUpdate ));
 		}
 
-	inline void LSRegisterURL ( CFURLRef inURL, Boolean inUpdate ) {
+	inline void LSRegisterURL ( CFURLRef inURL, bool inUpdate ) {
 		ThrowOSStatus ( ::LSRegisterURL ( inURL, inUpdate ));
 		}
 

@@ -241,9 +241,9 @@ namespace Nitrogen {
 		}
 
 	struct HIThemeHitTestTrack_Result {
-		Boolean trackWasHit;
+		bool trackWasHit;
 		ControlPartCode trackPartHit;
-		operator Boolean () const  { return trackWasHit; }
+		operator bool() const  { return trackWasHit; }
 		};
 
 //	!!! This is awkward
@@ -314,7 +314,7 @@ namespace Nitrogen {
 		return retVal;
 		}
 
-	inline HIRect HIThemeGetScrollBarTrackRect ( const HIRect &inBounds, const HIScrollBarTrackInfo &inTrackInfo, Boolean inIsHoriz ) {
+	inline HIRect HIThemeGetScrollBarTrackRect ( const HIRect &inBounds, const HIScrollBarTrackInfo &inTrackInfo, bool inIsHoriz ) {
      	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetScrollBarTrackRect ( &inBounds, &inTrackInfo, inIsHoriz, &retVal ));
@@ -322,14 +322,14 @@ namespace Nitrogen {
 		}
 
 	struct HIThemeHitTestScrollBarArrows_Result {
-		Boolean			controlWasHit;
+		bool			controlWasHit;
 		HIRect 			trackBounds;
 		ControlPartCode	partCode;
-		operator Boolean () const  { return controlWasHit; }
+		operator bool() const  { return controlWasHit; }
 		};
 	
 	inline HIThemeHitTestScrollBarArrows_Result HIThemeHitTestScrollBarArrows ( const HIRect &inBounds, 
-					const HIScrollBarTrackInfo &inTrackInfo, Boolean inIsHoriz, const HIPoint &inPtHit ) {
+					const HIScrollBarTrackInfo &inTrackInfo, bool inIsHoriz, const HIPoint &inPtHit ) {
      	(void) HIThemeErrorsRegistrationDependency();
 		HIThemeHitTestScrollBarArrows_Result retVal;
 		::ControlPartCode	partCode;
@@ -387,7 +387,7 @@ namespace Nitrogen {
 
    struct HIThemeGetWindowRegionHit_Result
      {
-      Boolean			 wasAnythingHit;
+      bool               wasAnythingHit;
       ::WindowRegionCode regionHit;
      };
    
@@ -445,7 +445,7 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIThemeDrawHeader ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
-	inline void HIThemeDrawFocusRect ( const HIRect &inRect, Boolean inHasFocus,
+	inline void HIThemeDrawFocusRect ( const HIRect &inRect, bool inHasFocus,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
      	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawFocusRect ( &inRect, inHasFocus, inContext, inOrientation ));

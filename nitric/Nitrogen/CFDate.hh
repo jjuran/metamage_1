@@ -47,11 +47,11 @@ namespace Nitrogen
 		return ::CFDateCompare ( theDate, otherDate, context );
 		}
 
-	inline Boolean CFGregorianDateIsValid ( CFGregorianDate gDate, CFOptionFlags unitFlags ) {
+	inline bool CFGregorianDateIsValid ( CFGregorianDate gDate, CFOptionFlags unitFlags ) {
 		return ::CFGregorianDateIsValid ( gDate, unitFlags );
 		}
 	
-	inline Boolean CFGregorianDateIsValid( CFGregorianDate date, CFGregorianUnitFlags unitFlags = kCFGregorianAllUnits )
+	inline bool CFGregorianDateIsValid( CFGregorianDate date, CFGregorianUnitFlags unitFlags = kCFGregorianAllUnits )
 	{
 		return CFGregorianDateIsValid( date, CFOptionFlags( unitFlags ) );
 	}
