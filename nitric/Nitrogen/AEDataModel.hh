@@ -57,6 +57,9 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
+#include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
 #include "Mac/AppleEvents/Types/AEEnumeration.hh"
 #endif
@@ -392,35 +395,6 @@ namespace nucleus
 			
 			return result;
 		}
-	};
-	
-	template <>
-	struct disposer< Nitrogen::AEDesc_Token >
-	{
-		typedef AEDesc  argument_type;
-		typedef void    result_type;
-		
-		// parameter can't be const
-		void operator()( AEDesc desc ) const
-		{
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
-			
-			::Nitrogen::HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
-		}
-	};
-	
-	template <>
-	struct aliveness_traits< Nitrogen::AEDesc_Token, disposer< Nitrogen::AEDesc_Token > >
-	{
-		typedef Mac::NonNull_AEDescs_Are_Live aliveness_test;
-	};
-	
-	template <>
-	struct null_resource< ::Nitrogen::AEDesc_Token >
-	{
-		static const ::Nitrogen::AEDesc_Token& value;
-		
-		static const ::Nitrogen::AEDesc_Token& get()  { return value; }
 	};
 	
 	template <>

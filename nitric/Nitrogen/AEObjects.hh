@@ -359,13 +359,6 @@ namespace Nitrogen
 	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData );
 	
-	#pragma mark -
-	#pragma mark ** Token routines **
-	
-	inline void AEDisposeToken( nucleus::owned< AEDesc_Token > )
-	{
-	}
-	
 }
 
 #endif
