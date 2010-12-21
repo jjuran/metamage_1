@@ -33,15 +33,15 @@
 #ifndef MAC_SOUND_FUNCTIONS_SYSBEEP_HH
 #include "Mac/Sound/Functions/SysBeep.hh"
 #endif
+#ifndef MAC_TOOLBOX_TYPES_FIXED_HH
+#include "Mac/Toolbox/Types/Fixed.hh"
+#endif
 
 #ifndef NITROGEN_ICONS_HH
 #include "Nitrogen/Icons.hh"
 #endif
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
 #endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
@@ -269,8 +269,8 @@ namespace Nitrogen
 		typedef ::UnsignedFixed GetBuffer;
 		typedef ::UnsignedFixed SetBuffer;
 		
-		static Result    ProcessGetBuffer( const GetBuffer& buffer )  { return UnsignedFixedToDouble( buffer ); }
-		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return DoubleToUnsignedFixed( param  ); }
+		static Result    ProcessGetBuffer( const GetBuffer& buffer )  { return Mac::UnsignedFixedToDouble( buffer ); }
+		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return Mac::DoubleToUnsignedFixed( param  ); }
 	};
 	
 	template < class T >  struct InfoData_Traits< T** >

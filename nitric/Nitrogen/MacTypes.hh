@@ -31,9 +31,6 @@
 #ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
 #endif
-#ifndef NUCLEUS_OVERLOADEDMATH_HH
-#include "nucleus/overloaded_math.hh"
-#endif
 #ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
 #endif
@@ -59,68 +56,10 @@
 #include "Nitrogen/OSStatus.hh"
 #endif
 
-#include <cstddef>
-#include <cmath>
-
 
 namespace Nitrogen
   {
 	
-   // Nitrogen uses floating point types in preference to fixed-point types.
-   template < class Floating, int fractionBits, class Integral >
-   inline Floating FixedToFloatingPoint( Integral in )
-     {
-      return std::ldexp( static_cast<Floating>(in), -fractionBits );
-     }
-
-   template < class Integral, int fractionBits, class Floating >
-   inline Integral FloatingToFixedPoint( Floating in )
-     {
-      return static_cast< Integral >( nucleus::c_std::nearbyint( std::ldexp( in, fractionBits ) ) );
-     }
-   
-   inline double FixedToDouble( ::Fixed in )                   { return FixedToFloatingPoint< double,  16 >( in ); }
-   inline ::Fixed DoubleToFixed( double in )                   { return FloatingToFixedPoint< ::Fixed, 16 >( in ); }
-
-   inline double UnsignedFixedToDouble( ::UnsignedFixed in )   { return FixedToFloatingPoint< double,          16 >( in ); }
-   inline ::UnsignedFixed DoubleToUnsignedFixed( double in )   { return FloatingToFixedPoint< ::UnsignedFixed, 16 >( in ); }
-
-   inline double FractToDouble( ::Fract in )                   { return FixedToFloatingPoint< double,  30 >( in ); }
-   inline ::Fract DoubleToFract( double in )                   { return FloatingToFixedPoint< ::Fract, 30 >( in ); }
-
-   inline double ShortFixedToDouble( ::ShortFixed in )         { return FixedToFloatingPoint< double,       8 >( in ); }
-   inline ::ShortFixed DoubleToShortFixed( double in )         { return FloatingToFixedPoint< ::ShortFixed, 8 >( in ); }
-   
-   struct FixedFlattener
-     {
-      typedef double Put_Parameter;
-      
-      template < class Putter >
-      static void Put( Put_Parameter toPut, Putter put )
-        {
-         const Fixed fixed = DoubleToFixed( toPut );
-         put( &fixed, &fixed + 1 );
-        }
-      
-      typedef double Get_Result;
-      
-      template < class Getter >
-      static Get_Result Get( Getter get )
-        {
-         Fixed fixed;
-         get( &fixed, &fixed + 1 );
-         return FixedToDouble( fixed );
-        }
-      
-      typedef Put_Parameter Parameter;
-      typedef Get_Result    Result;
-      
-      static const bool hasStaticSize = true;
-      
-      typedef ::Fixed Buffer;
-     };
-   
-   
    typedef ::std::size_t  Size;
 	
 	enum OptionBits

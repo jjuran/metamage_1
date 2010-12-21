@@ -40,6 +40,9 @@
 #ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
 #endif
+#ifndef NUCLEUS_MAKE_HH
+#include "nucleus/make.hh"
+#endif
 #ifndef NUCLEUS_STRING_HH
 #include "nucleus/string.hh"
 #endif
@@ -84,12 +87,12 @@
 #ifndef MAC_PROCESSES_UTILITIES_SIZEOFAPPPARAMETERS_HH
 #include "Mac/Processes/Utilities/sizeof_AppParameters.hh"
 #endif
+#ifndef MAC_TOOLBOX_TYPES_FIXED_HH
+#include "Mac/Toolbox/Types/Fixed.hh"
+#endif
 
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
 #endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
@@ -228,7 +231,7 @@ namespace Nitrogen
 	
 	template<> struct DescType_Traits< Mac::typeChar > : public nucleus::string_scribe< nucleus::mutable_string > {};
 	
-	template<> struct DescType_Traits< Mac::typeFixed > : public FixedFlattener {};
+	template<> struct DescType_Traits< Mac::typeFixed > : public Mac::Fixed_scribe {};
 	
 	template<> struct DescType_Traits< Mac::typeNull >                   { typedef void Result; };
 	
