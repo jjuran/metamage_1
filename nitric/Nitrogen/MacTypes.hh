@@ -62,15 +62,6 @@ namespace Nitrogen
 	
    typedef ::std::size_t  Size;
 	
-	enum OptionBits
-	{
-		kNilOptions = ::kNilOptions,
-		
-		kOptionBits_Max = nucleus::enumeration_traits< ::OptionBits >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
-	
 	using Mac::ScriptCode;
 	using Mac::smSystemScript;
 	

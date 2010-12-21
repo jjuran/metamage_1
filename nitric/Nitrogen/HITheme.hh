@@ -22,10 +22,7 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-
+// Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif

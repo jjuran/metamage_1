@@ -25,7 +25,7 @@ namespace Nitrogen {
 //	Returns the length of the converted string (in Bytes)
 	ByteCount ConvertFromTextToUnicode (
 //	Inputs
-			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, OptionBits iControlFlags,
+			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, Mac::OptionBits iControlFlags,
 //	Offsets
 			ItemCount iOffsetCount, const ByteOffset iOffsetArray[], ItemCount *oOffsetCount, ByteOffset oOffsetArray[],
 //	Outputs
@@ -49,7 +49,7 @@ namespace Nitrogen {
 //	A simple case without the offsets
 	ByteCount ConvertFromTextToUnicode (
 //	Inputs
-			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, OptionBits iControlFlags,
+			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, Mac::OptionBits iControlFlags,
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount * oSourceRead, UniChar oUnicodeStr[] ) {
 		ByteCount result;
@@ -62,7 +62,7 @@ namespace Nitrogen {
 
 	ByteCount ConvertFromUnicodeToText ( 
 //	Unicode inputs
-			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], OptionBits iControlFlags,
+			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], Mac::OptionBits iControlFlags,
 //	Offsets
 			ItemCount iOffsetCount, const ByteOffset iOffsetArray[], ItemCount * oOffsetCount, ByteOffset oOffsetArray[],           /* can be NULL */
 //	Outputs
@@ -86,7 +86,7 @@ namespace Nitrogen {
 //	A simple case without the offsets			
 	ByteCount ConvertFromUnicodeToText ( 
 //	Unicode inputs
-			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], OptionBits iControlFlags,
+			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], Mac::OptionBits iControlFlags,
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount *oInputRead, LogicalAddress oOutputStr ) {
 

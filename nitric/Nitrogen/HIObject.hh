@@ -22,8 +22,9 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+// Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
+#include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
 
 #ifndef NITROGEN_CFBASE_HH
@@ -88,7 +89,7 @@ namespace Nitrogen
 	inline nucleus::owned<HIObjectClassRef> HIObjectRegisterSubclass (
 			  CFStringRef            inClassID,
 			  CFStringRef            inBaseClassID,
-			  OptionBits             inOptions,
+			  Mac::OptionBits        inOptions,
 			  EventHandlerUPP        inConstructProc,       /* can be NULL */
 			  UInt32                 inNumEvents,
 			  const EventTypeSpec *  inEventList,
@@ -106,7 +107,7 @@ namespace Nitrogen
 	nucleus::owned<HIObjectClassRef> HIObjectRegisterSubclass(
 			CFStringRef            inClassID,
 			CFStringRef            inBaseClassID,
-			OptionBits             inOptions,
+			Mac::OptionBits        inOptions,
 			UInt32                 inNumEvents,
 			const EventTypeSpec *  inEventList,
 			void *                 inConstructData = 0 ) {
@@ -122,7 +123,7 @@ namespace Nitrogen
 	nucleus::owned<HIObjectClassRef> HIObjectRegisterSubclass (
 			CFStringRef            inClassID,
 			CFStringRef            inBaseClassID,
-			OptionBits             inOptions,
+			Mac::OptionBits        inOptions,
 			UInt32                 inNumEvents,
 			const EventTypeSpec *  inEventList,
 			typename nucleus::object_parameter_traits< Object >::type inUserData = typename nucleus::object_parameter_traits< Object >::type() ) {

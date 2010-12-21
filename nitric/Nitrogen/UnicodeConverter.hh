@@ -24,8 +24,9 @@
 #include "nucleus/owned.hh"
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+// Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
+#include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
 
 #ifndef NITROGEN_TEXTCOMMON_HH
@@ -206,7 +207,7 @@ namespace Nitrogen
 //	Returns the length of the converted string (in Bytes)
 	ByteCount ConvertFromTextToUnicode (
 //	Inputs
-			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, OptionBits iControlFlags,
+			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, Mac::OptionBits iControlFlags,
 //	Offsets
 			ItemCount iOffsetCount, const ByteOffset iOffsetArray[], ItemCount *oOffsetCount, ByteOffset oOffsetArray[],
 //	Outputs
@@ -215,7 +216,7 @@ namespace Nitrogen
 //	A simple case without the offsets
 	ByteCount ConvertFromTextToUnicode (
 //	Inputs
-			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, OptionBits iControlFlags,
+			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, Mac::OptionBits iControlFlags,
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount * oSourceRead, UniChar oUnicodeStr[] );
 
@@ -224,7 +225,7 @@ namespace Nitrogen
 
 	ByteCount ConvertFromUnicodeToText ( 
 //	Unicode inputs
-			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], OptionBits iControlFlags,
+			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], Mac::OptionBits iControlFlags,
 //	Offsets
 			ItemCount iOffsetCount, const ByteOffset iOffsetArray[], ItemCount * oOffsetCount, ByteOffset oOffsetArray[],
 //	Outputs
@@ -233,7 +234,7 @@ namespace Nitrogen
 //	A simple case without the offsets			
 	ByteCount ConvertFromUnicodeToText ( 
 //	Unicode inputs
-			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], OptionBits iControlFlags,
+			UnicodeToTextInfo iUnicodeToTextInfo, ByteCount iUnicodeLen, const UniChar iUnicodeStr[], Mac::OptionBits iControlFlags,
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount *oInputRead, LogicalAddress oOutputStr );
 
@@ -366,7 +367,7 @@ ConvertFromUnicodeToPString(
 #endif
 
 
-	inline ItemCount CountUnicodeMappings ( OptionBits iFilter, ConstUnicodeMappingPtr iFindMapping ) {
+	inline ItemCount CountUnicodeMappings ( Mac::OptionBits iFilter, ConstUnicodeMappingPtr iFindMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		::ItemCount result;
 		ThrowOSStatus ( ::CountUnicodeMappings ( iFilter, iFindMapping, &result ));

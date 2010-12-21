@@ -22,8 +22,9 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+// Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
+#include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
 
 #ifndef NITROGEN_CFBASE_HH
@@ -367,14 +368,14 @@ namespace Nitrogen {
 		return Nitrogen::HIViewFindByID ( HIViewGetRoot ( aWindow ), inID );
 		}
 
-	inline OptionBits HIViewGetAttributes ( HIViewRef inView ) {
+	inline Mac::OptionBits HIViewGetAttributes ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HIViewGetAttributes ( inView, &retVal ));
-		return OptionBits( retVal );
+		return Mac::OptionBits( retVal );
 		}
 
-	inline void HIViewChangeAttributes ( HIViewRef inView, OptionBits inAttrsToSet, OptionBits inAttrsToClear ) {
+	inline void HIViewChangeAttributes ( HIViewRef inView, Mac::OptionBits inAttrsToSet, Mac::OptionBits inAttrsToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIViewChangeAttributes ( inView, inAttrsToSet, inAttrsToClear ));
 		}
@@ -386,7 +387,7 @@ namespace Nitrogen {
 		operator CGImageRef () const  { return image; }
  		};
 	
-	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, OptionBits inOptions = OptionBits() );
+	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, Mac::OptionBits inOptions = Mac::OptionBits() );
 
 	inline void HIViewDrawCGImage ( CGContextRef inContext, const HIRect &inBounds, CGImageRef inImage ) {
      	(void) HIViewErrorsRegistrationDependency();
@@ -423,7 +424,7 @@ namespace Nitrogen {
 /*  HIScrollView                                                                */
 /*==============================================================================*/
 
-	inline nucleus::owned<HIViewRef> HIScrollViewCreate ( OptionBits inOptions ) {
+	inline nucleus::owned<HIViewRef> HIScrollViewCreate ( Mac::OptionBits inOptions ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIScrollViewCreate ( inOptions, &retVal ));
@@ -500,21 +501,21 @@ namespace Nitrogen {
 /*==============================================================================*/
 
 //	Several variations
-	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, OptionBits inAttributes ) {
+	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, NULL, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 	
-	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFArrayRef list, OptionBits inAttributes ) {
+	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, list, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
-	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFStringRef text, CFArrayRef list, OptionBits inAttributes ) {
+	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFStringRef text, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, NULL, list, inAttributes, &retVal ));
@@ -522,7 +523,7 @@ namespace Nitrogen {
 		}
 
 	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFStringRef text, 
-							const ControlFontStyleRec &style, CFArrayRef list, OptionBits inAttributes ) {
+							const ControlFontStyleRec &style, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, &style, list, inAttributes, &retVal ));
@@ -556,16 +557,16 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HIComboBoxRemoveItemAtIndex ( inComboBox, inIndex ));
 		}
 
-	inline void HIComboBoxChangeAttributes ( HIViewRef inComboBox, OptionBits inAttributesToSet, OptionBits inAttributesToClear ) {
+	inline void HIComboBoxChangeAttributes ( HIViewRef inComboBox, Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIComboBoxChangeAttributes ( inComboBox, inAttributesToSet, inAttributesToClear ));
 		}
 
-	inline OptionBits HIComboBoxGetAttributes ( HIViewRef inComboBox ) {
+	inline Mac::OptionBits HIComboBoxGetAttributes ( HIViewRef inComboBox ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HIComboBoxGetAttributes ( inComboBox, &retVal ));
-		return OptionBits( retVal );
+		return Mac::OptionBits( retVal );
 		}
 
 
@@ -573,21 +574,21 @@ namespace Nitrogen {
 /*  HISearchField                                                               */
 /*==============================================================================*/
 
-	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( OptionBits inAttributes ) {
+	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HISearchFieldCreate ( NULL, inAttributes, NULL, NULL, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 	
-	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( const HIRect &inBounds, OptionBits inAttributes ) {
+	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( const HIRect &inBounds, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
 		ThrowOSStatus ( ::HISearchFieldCreate ( &inBounds, inAttributes, NULL, NULL, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
-	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( const HIRect &inBounds, OptionBits inAttributes,
+	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( const HIRect &inBounds, Mac::OptionBits inAttributes,
 							MenuRef inSearchMenu, CFStringRef inDescriptiveText ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
@@ -607,16 +608,16 @@ namespace Nitrogen {
 		return retVal;
 		}
 
-	inline void HISearchFieldChangeAttributes ( HIViewRef inSearchField, OptionBits inAttributesToSet, OptionBits inAttributesToClear ) {
+	inline void HISearchFieldChangeAttributes ( HIViewRef inSearchField, Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HISearchFieldChangeAttributes ( inSearchField, inAttributesToSet, inAttributesToClear ));
 		}
 
-	inline OptionBits HISearchFieldGetAttributes ( HIViewRef inSearchField ) {
+	inline Mac::OptionBits HISearchFieldGetAttributes ( HIViewRef inSearchField ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HISearchFieldGetAttributes ( inSearchField, &retVal ));
-		return OptionBits( retVal );
+		return Mac::OptionBits( retVal );
 		}
 
 	inline void HISearchFieldSetDescriptiveText ( HIViewRef inSearchField, CFStringRef inDescription ) {
@@ -681,7 +682,7 @@ namespace Nitrogen {
 	using ::HISegmentedViewGetSegmentBehavior;
 
 	inline void HISegmentedViewChangeSegmentAttributes ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, 
-					OptionBits inAttributesToSet, OptionBits inAttributesToClear ) {
+					Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HISegmentedViewChangeSegmentAttributes ( inSegmentedView, inSegmentIndexOneBased, inAttributesToSet, inAttributesToClear ));
 		}

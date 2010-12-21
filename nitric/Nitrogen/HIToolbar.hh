@@ -22,12 +22,13 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#ifndef NITROGEN_HIOBJECT_HH
-#include "Nitrogen/HIObject.hh"
+// Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
+#include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
+#ifndef NITROGEN_HIOBJECT_HH
+#include "Nitrogen/HIObject.hh"
 #endif
 
 #ifndef NITROGEN_CFBASE_HH
@@ -81,11 +82,11 @@ namespace Nitrogen {
 		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 
-	inline OptionBits HIToolbarGetAttributes ( HIToolbarRef toolbar ) {
+	inline Mac::OptionBits HIToolbarGetAttributes ( HIToolbarRef toolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarGetAttributes ( toolbar, &result ));
-		return OptionBits( result );
+		return Mac::OptionBits( result );
 		}
 
 	inline void HIToolbarChangeAttributes ( HIToolbarRef inToolbar, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
@@ -172,7 +173,7 @@ namespace Nitrogen {
 /*==========================================================================*/
 	using ::HIToolbarItemRef;
 
-	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
+	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, Mac::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarItemRef result;
 		ThrowOSStatus ( ::HIToolbarItemCreate ( inIdentifier, inOptions, &result ));
@@ -187,11 +188,11 @@ namespace Nitrogen {
 		}
 		
 
-	inline OptionBits HIToolbarItemGetAttributes ( HIToolbarItemRef inItem ) {
+	inline Mac::OptionBits HIToolbarItemGetAttributes ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarItemGetAttributes ( inItem, &result ));
-		return OptionBits( result );
+		return Mac::OptionBits( result );
 		}
 
 	inline void HIToolbarItemChangeAttributes ( HIToolbarItemRef inItem, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
