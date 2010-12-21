@@ -12,6 +12,9 @@
 #ifndef __SCRIPT__
 #include <Script.h>
 #endif
+#ifndef __TEXTCOMMON__
+#include <TextCommon.h>
+#endif
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -25,6 +28,8 @@ namespace Mac
 	enum RegionCode
 	{
 		verUS = ::verUS,
+		
+		kTextRegionDontCare = ::kTextRegionDontCare,
 		
 		kRegionCode_Max = nucleus::enumeration_traits< ::RegionCode >::max
 	};

@@ -58,14 +58,6 @@ namespace Nitrogen
 			TextEncodingConversionManagerErrorsRegistrationDependency();
 	};
 	
-	using Mac::LangCode;
-	using Mac::RegionCode;
-	using Mac::ScriptCode;
-   
-   static const LangCode kTextLanguageDontCare = LangCode( ::kTextLanguageDontCare );
-   static const RegionCode kTextRegionDontCare = RegionCode( ::kTextRegionDontCare );
-   static const ScriptCode kTextScriptDontCare = ScriptCode( ::kTextScriptDontCare );
-   
 	enum TextEncodingBase
 	{
 		kTextEncodingBase_Max = nucleus::enumeration_traits< ::TextEncodingBase >::max
@@ -116,7 +108,7 @@ namespace nucleus
    template <>
    struct maker< ScriptCodeRun >
      {
-      ScriptCodeRun operator()( ByteOffset offset, ScriptCode script ) const
+      ScriptCodeRun operator()( ByteOffset offset, Mac::ScriptCode script ) const
         {
          ScriptCodeRun result;
          result.offset = offset;
@@ -187,14 +179,14 @@ namespace Nitrogen
    
    struct GetTextEncodingName_Result
      {
-      ByteCount    oNameLength;
-      RegionCode   oActualRegion;
-      TextEncoding oActualEncoding;
+      ByteCount        oNameLength;
+      Mac::RegionCode  oActualRegion;
+      TextEncoding     oActualEncoding;
      };
    
    GetTextEncodingName_Result GetTextEncodingName( TextEncoding             iEncoding,
                                                    TextEncodingNameSelector iNamePartSelector,
-                                                   RegionCode               iPreferredRegion,
+                                                   Mac::RegionCode          iPreferredRegion,
                                                    TextEncoding             iPreferredEncoding,
                                                    ByteCount                iOutputBufLen,
                                                    UInt8                   *oEncodingName );
@@ -202,7 +194,7 @@ namespace Nitrogen
    template <ByteCount iOutputBufLen>
    inline GetTextEncodingName_Result GetTextEncodingName( TextEncoding             iEncoding,
                                                           TextEncodingNameSelector iNamePartSelector,
-                                                          RegionCode               iPreferredRegion,
+                                                          Mac::RegionCode          iPreferredRegion,
                                                           TextEncoding             iPreferredEncoding,
                                                           UInt8                    (&oEncodingName)[iOutputBufLen] )
      {
@@ -212,7 +204,7 @@ namespace Nitrogen
    struct GetTextEncodingName_ResultWithString
      {
       nucleus::mutable_string  oEncodingName;
-      RegionCode               oActualRegion;
+      Mac::RegionCode          oActualRegion;
       TextEncoding             oActualEncoding;
       
       operator const nucleus::string&() const    { return oEncodingName; }
@@ -220,65 +212,86 @@ namespace Nitrogen
 
    GetTextEncodingName_ResultWithString GetTextEncodingName( TextEncoding             iEncoding,
                                                              TextEncodingNameSelector iNamePartSelector,
-                                                             RegionCode               iPreferredRegion,
+                                                             Mac::RegionCode          iPreferredRegion,
                                                              TextEncoding             iPreferredEncoding );
 
    nucleus::owned< TECInfoHandle, nucleus::disposer< Mac::Handle > > TECGetInfo();
 
-   TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                 LangCode         iTextLanguageID = kTextLanguageDontCare,
-                                                 RegionCode       iRegionID       = kTextRegionDontCare,
+   TextEncoding UpgradeScriptInfoToTextEncoding( Mac::ScriptCode  iTextScriptID,
+                                                 Mac::LangCode    iTextLanguageID = Mac::kTextLanguageDontCare,
+                                                 Mac::RegionCode  iRegionID       = Mac::kTextRegionDontCare,
                                                  ConstStr255Param iTextFontname   = 0 );
 
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                        RegionCode       iRegionID,
-                                                        ConstStr255Param iTextFontname = 0 )
-     {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, iRegionID, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                        LangCode         iTextLanguageID,
-                                                        ConstStr255Param iTextFontname )
-     {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, iTextLanguageID, kTextRegionDontCare, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                        ConstStr255Param iTextFontname )
-     {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
-                                                        RegionCode       iRegionID       = kTextRegionDontCare,
-                                                        ConstStr255Param iTextFontname   = 0 )
-     {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, iRegionID, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
-                                                        ConstStr255Param iTextFontname )
-     {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, kTextRegionDontCare, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( RegionCode       iRegionID,
-                                                        ConstStr255Param iTextFontname = 0 )
-     {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, iRegionID, iTextFontname );
-     }
-
-   inline TextEncoding UpgradeScriptInfoToTextEncoding( ConstStr255Param iTextFontname )
-     {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
-     }
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::ScriptCode   iTextScriptID,
+	                                                     Mac::RegionCode   iRegionID,
+	                                                     ConstStr255Param  iTextFontname = 0 )
+	{
+		return UpgradeScriptInfoToTextEncoding( iTextScriptID,
+		                                        Mac::kTextLanguageDontCare,
+		                                        iRegionID,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::ScriptCode   iTextScriptID,
+	                                                     Mac::LangCode     iTextLanguageID,
+	                                                     ConstStr255Param  iTextFontname )
+	{
+		return UpgradeScriptInfoToTextEncoding( iTextScriptID,
+		                                        iTextLanguageID,
+		                                        Mac::kTextRegionDontCare,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::ScriptCode   iTextScriptID,
+	                                                     ConstStr255Param  iTextFontname )
+	{
+		return UpgradeScriptInfoToTextEncoding( iTextScriptID,
+		                                        Mac::kTextLanguageDontCare,
+		                                        Mac::kTextRegionDontCare,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::LangCode     iTextLanguageID,
+	                                                     Mac::RegionCode   iRegionID       = Mac::kTextRegionDontCare,
+	                                                     ConstStr255Param  iTextFontname   = 0 )
+	{
+		return UpgradeScriptInfoToTextEncoding( Mac::kTextScriptDontCare,
+		                                        iTextLanguageID,
+		                                        iRegionID,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::LangCode     iTextLanguageID,
+	                                                     ConstStr255Param  iTextFontname )
+	{
+		return UpgradeScriptInfoToTextEncoding( Mac::kTextScriptDontCare,
+		                                        iTextLanguageID,
+		                                        Mac::kTextRegionDontCare,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( Mac::RegionCode   iRegionID,
+	                                                     ConstStr255Param  iTextFontname = 0 )
+	{
+		return UpgradeScriptInfoToTextEncoding( Mac::kTextScriptDontCare,
+		                                        Mac::kTextLanguageDontCare,
+		                                        iRegionID,
+		                                        iTextFontname );
+	}
+	
+	inline TextEncoding UpgradeScriptInfoToTextEncoding( ConstStr255Param iTextFontname )
+	{
+		return UpgradeScriptInfoToTextEncoding( Mac::kTextScriptDontCare,
+		                                        Mac::kTextLanguageDontCare,
+		                                        Mac::kTextRegionDontCare,
+		                                        iTextFontname );
+	}
 
    struct RevertTextEncodingToScriptInfo_Result
      {
-      ScriptCode oTextScriptID;
-      LangCode   oTextLanguageID;
-      Str255     oTextFontname;
+      Mac::ScriptCode  oTextScriptID;
+      Mac::LangCode    oTextLanguageID;
+      Str255           oTextFontname;
      };
    
    RevertTextEncodingToScriptInfo_Result RevertTextEncodingToScriptInfo( TextEncoding iEncoding );

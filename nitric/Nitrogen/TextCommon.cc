@@ -40,7 +40,7 @@ namespace Nitrogen
 	
    GetTextEncodingName_Result GetTextEncodingName( TextEncoding             iEncoding,
                                                    TextEncodingNameSelector iNamePartSelector,
-                                                   RegionCode               iPreferredRegion,
+                                                   Mac::RegionCode          iPreferredRegion,
                                                    TextEncoding             iPreferredEncoding,
                                                    ByteCount                iOutputBufLen,
                                                    UInt8                   *oEncodingName )
@@ -59,8 +59,8 @@ namespace Nitrogen
                                             &oActualEncoding,
                                             oEncodingName ) );
 
-      result.oActualRegion   = RegionCode  ( oActualRegion   );
-      result.oActualEncoding = TextEncoding( oActualEncoding );
+      result.oActualRegion   = Mac::RegionCode( oActualRegion   );
+      result.oActualEncoding = TextEncoding   ( oActualEncoding );
 
       return result;
      }
@@ -68,7 +68,7 @@ namespace Nitrogen
 
    GetTextEncodingName_ResultWithString GetTextEncodingName( TextEncoding             iEncoding,
                                                              TextEncodingNameSelector iNamePartSelector,
-                                                             RegionCode               iPreferredRegion,
+                                                             Mac::RegionCode          iPreferredRegion,
                                                              TextEncoding             iPreferredEncoding )
      {
       GetTextEncodingName_ResultWithString result;
@@ -106,10 +106,10 @@ namespace Nitrogen
       return nucleus::owned< TECInfoHandle, nucleus::disposer< Mac::Handle > >::seize( result );
      }
    
-   TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode iTextScriptID,
-                                                 LangCode iTextLanguageID,
-                                                 RegionCode iRegionID,
-                                                 ConstStr255Param iTextFontname )
+   TextEncoding UpgradeScriptInfoToTextEncoding( Mac::ScriptCode   iTextScriptID,
+                                                 Mac::LangCode     iTextLanguageID,
+                                                 Mac::RegionCode   iRegionID,
+                                                 ConstStr255Param  iTextFontname )
      {
       ::TextEncoding result;
       ThrowOSStatus( ::UpgradeScriptInfoToTextEncoding( iTextScriptID,
@@ -129,8 +129,8 @@ namespace Nitrogen
                                                        &oTextScriptID,
                                                        &oTextLanguageID,
                                                        result.oTextFontname ) );
-      result.oTextScriptID   = ScriptCode( oTextScriptID );
-      result.oTextLanguageID = LangCode( oTextLanguageID );
+      result.oTextScriptID   = Mac::ScriptCode( oTextScriptID );
+      result.oTextLanguageID = Mac::LangCode( oTextLanguageID );
       return result;
      }
 

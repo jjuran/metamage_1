@@ -12,6 +12,9 @@
 #ifndef __SCRIPT__
 #include <Script.h>
 #endif
+#ifndef __TEXTCOMMON__
+#include <TextCommon.h>
+#endif
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -25,6 +28,8 @@ namespace Mac
 	enum ScriptCode
 	{
 		smSystemScript = ::smSystemScript,
+		
+		kTextScriptDontCare = ::kTextScriptDontCare,
 		
 		kScriptCode_Max = nucleus::enumeration_traits< ::ScriptCode >::max
 	};
