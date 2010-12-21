@@ -8,8 +8,15 @@
 
 #include <map>
 
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
+// Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AEDESC_HH
+#include "Mac/AppleEvents/Types/AEDesc.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
+#include "Mac/AppleEvents/Types/AEObjectClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
+#include "Mac/AppleEvents/Types/DescType.hh"
 #endif
 
 

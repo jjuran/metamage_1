@@ -11,6 +11,12 @@
 #include <algorithm>
 
 // Nitrogen
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
+#endif
+#ifndef NITROGEN_AEOBJECTS_HH
+#include "Nitrogen/AEObjects.hh"
+#endif
 #ifndef NITROGEN_ASREGISTRY_HH
 #include "Nitrogen/ASRegistry.hh"
 #endif

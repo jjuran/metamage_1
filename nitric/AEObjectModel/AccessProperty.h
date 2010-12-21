@@ -12,8 +12,26 @@
 #include <AERegistry.h>
 #endif
 
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
+
+// Nitrogen
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
+#include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
+#include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
+#include "Mac/AppleEvents/Types/AEObjectClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
+#include "Mac/AppleEvents/Types/AEPropertyID.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
+#include "Mac/AppleEvents/Types/DescType.hh"
 #endif
 
 

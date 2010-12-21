@@ -7,6 +7,9 @@
 #include "AEObjectModel/GetObjectClass.h"
 #endif
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

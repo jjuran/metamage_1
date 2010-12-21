@@ -13,6 +13,9 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
+#endif
 #ifndef NITROGEN_ASREGISTRY_HH
 #include "Nitrogen/ASRegistry.hh"
 #endif

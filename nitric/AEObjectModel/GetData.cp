@@ -3,9 +3,10 @@
  *	==========
  */
 
-#ifndef AEOBJECTMODEL_GETDATA_H
 #include "AEObjectModel/GetData.h"
-#endif
+
+// Nitrogen
+#include "Nitrogen/AEObjects.hh"
 
 
 namespace Nitrogen
