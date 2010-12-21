@@ -69,14 +69,10 @@ namespace Nitrogen {
 		// Apple hasn't documented any HIToolbar errors.
 	}
 	
-	static const EventParamType typeHIToolbarRef     = EventParamType( ::typeHIToolbarRef     );
-	static const EventParamType typeHIToolbarItemRef = EventParamType( ::typeHIToolbarItemRef );
-	
 /*==========================================================================*/
 /* HITOOLBAR                                                                */
 /*==========================================================================*/
 	using ::HIToolbarRef;
-	template<> struct DescType_Traits< typeHIToolbarRef		>: nucleus::POD_scribe< HIToolbarRef > {};
 
 	inline nucleus::owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
@@ -175,7 +171,6 @@ namespace Nitrogen {
 /* HITOOLBARITEMITEM                                                        */
 /*==========================================================================*/
 	using ::HIToolbarItemRef;
-	template<> struct DescType_Traits< typeHIToolbarItemRef	>: nucleus::POD_scribe< HIToolbarItemRef > {};
 
 	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();

@@ -19,9 +19,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_APPLEEVENTS_TYPES_AEABSOLUTEORDINAL_HH
-#include "Mac/AppleEvents/Types/AEAbsoluteOrdinal.hh"
-#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
@@ -71,8 +68,6 @@ namespace Nitrogen
 	
 	typedef AEComparisonOperator AECompOperator;
 	
-	
-	template <> struct DescType_Traits< Mac::typeAbsoluteOrdinal > : nucleus::converting_POD_scribe< Mac::AEAbsoluteOrdinal, ::DescType > {};
 	
 	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
 	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
