@@ -424,7 +424,7 @@ namespace Nitrogen
 		return file;
 	}
 	
-	FSDirSpec FSpDirCreate( const FSSpec& dir, ScriptCode scriptTag )
+	FSDirSpec FSpDirCreate( const FSSpec& dir, Mac::ScriptCode scriptTag )
 	{
 		SInt32 newDirID;
 		ThrowOSStatus( ::FSpDirCreate( &dir, scriptTag, &newDirID ) );

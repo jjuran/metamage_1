@@ -606,8 +606,8 @@ namespace Nitrogen
 		return FSpCreate( file, signature.creator, signature.type, scriptTag );
 	}
 	
-	FSDirSpec FSpDirCreate( const FSSpec&  dir, 
-	                        ScriptCode     scriptTag = smSystemScript );
+	FSDirSpec FSpDirCreate( const FSSpec&    dir, 
+	                        Mac::ScriptCode  scriptTag = Mac::smSystemScript );
 	
 	void FSpDelete( const FSSpec& item );
 	
