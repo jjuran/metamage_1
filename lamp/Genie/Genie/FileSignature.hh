@@ -11,10 +11,6 @@
 #include "Mac/Files/Types/FSSignature.hh"
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
-
 
 namespace plus
 {

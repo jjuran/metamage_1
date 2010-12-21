@@ -21,9 +21,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	using MacFeatures::Has_OSXSystem;
 	
 	
