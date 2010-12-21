@@ -28,6 +28,9 @@
 #ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
 #endif
+#ifndef NUCLEUS_MAKE_HH
+#include "nucleus/make.hh"
+#endif
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
 #endif
@@ -43,9 +46,6 @@
 #include "Mac/Resources/Types/ResID.hh"
 #endif
 
-#ifndef NITROGEN_MACTYPES_HH
-#include "Nitrogen/MacTypes.hh"
-#endif
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
@@ -304,7 +304,18 @@ namespace Nitrogen
 	// BackColor
 	// ColorBit
 	
-	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return nucleus::make< Rect >( top, left, bottom, right ); }
+	inline Rect Make_Rect( short top, short left, short bottom, short right )
+	{
+		Rect result = { top, left, bottom, right };
+		
+		return result;
+	}
+	
+	inline Rect MacSetRect( short left, short top, short right, short bottom )
+	{
+		return Make_Rect( top, left, bottom, right );
+	}
+	
 	inline Rect MacSetRect( Point topLeft, Point bottomRight )  { return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v ); }
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv );
@@ -468,7 +479,14 @@ namespace Nitrogen
 	
 	inline void FillPoly( PolyHandle poly, const Pattern& pat )  { ::FillPoly( poly, &pat ); }
 	
-	inline Point SetPt( short h, short v )  { return nucleus::make< Point >( v, h ); }
+	inline Point Make_Point( short v, short h )
+	{
+		Point result = { v, h };
+		
+		return result;
+	}
+	
+	inline Point SetPt( short h, short v )  { return Make_Point( v, h ); }
 	
 	Point LocalToGlobal( Point        point );
 	Rect  LocalToGlobal( const Rect&  rect );
