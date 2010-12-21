@@ -261,12 +261,6 @@ namespace Nitrogen
 	template<> struct DescType_Traits< Mac::typeApplicationURL >         : DescType_Traits< Mac::typeChar >                               {};
 	
 	
-	template < Mac::DescType type >
-	struct DescType_Map_Traits
-	{
-		static const Mac::DescType result = type;
-	};
-	
 	template < class Char > struct Char_DescType_Traits;
 	
 	template <> struct Char_DescType_Traits< char >  { static const Mac::DescType descType = Mac::typeChar; };
@@ -1456,7 +1450,7 @@ namespace Nitrogen
 		nucleus::owned< AEDesc_Data > result;
 		
 		DescType_Traits< type >::Put( data,
-		                              AECoercePtr_Putter( DescType_Map_Traits< type >::result,
+		                              AECoercePtr_Putter( type,
 		                                                  toType,
 		                                                  result ) );
 		
@@ -1490,7 +1484,7 @@ namespace Nitrogen
 		nucleus::owned< AEDesc_Type > result;
 		
 		DescType_Traits< type >::Put( data,
-		                              AECreateDesc_Putter< AEDesc_Type >( DescType_Map_Traits< type >::result,
+		                              AECreateDesc_Putter< AEDesc_Type >( type,
 		                                                                  result ) );
 		
 		return result;
@@ -1535,7 +1529,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutPtr_Putter( list,
 		                              index,
-		                              DescType_Map_Traits< type >::result ) );
+		                              type ) );
 	}
 	
 	template < Mac::DescType type >
@@ -1546,7 +1540,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutPtr_Putter( Detail::AEDescEditor< AEDescList_Data >( list ),
 		                                               index,
-		                                               DescType_Map_Traits< type >::result ) );
+		                                               type ) );
 	}
 	
 	
@@ -1589,7 +1583,7 @@ namespace Nitrogen
 	AEGetNthPtr( const AEDescList&  listDesc,
 	             long               index )
 	{
-		return DescType_Traits< type >::Get( AEGetNthPtr_Getter< DescType_Map_Traits< type >::result >( listDesc, index ) );
+		return DescType_Traits< type >::Get( AEGetNthPtr_Getter< type >( listDesc, index ) );
 	}
 	
 	
@@ -1622,7 +1616,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutKeyPtr_Putter( record,
 		                                                  keyword,
-		                                                  DescType_Map_Traits< type >::result ) );
+		                                                  type ) );
 	}
 	
 	template < Mac::DescType type >
@@ -1633,7 +1627,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutKeyPtr_Putter( Detail::AEDescEditor< AERecord_Data >( record ),
 		                                                  keyword,
-		                                                  DescType_Map_Traits< type >::result ) );
+		                                                  type ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1713,7 +1707,7 @@ namespace Nitrogen
 	AEGetKeyPtr( const AERecord&  record,
 	             Mac::AEKeyword   keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetKeyPtr_Getter< DescType_Map_Traits< type >::result >( record, keyword ) );
+		return DescType_Traits< type >::Get( AEGetKeyPtr_Getter< type >( record, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1756,7 +1750,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutParamPtr_Putter( appleEvent,
 		                                                    keyword,
-		                                                    DescType_Map_Traits< type >::result ) );
+		                                                    type ) );
 	}
 	
 	template < Mac::DescType type >
@@ -1767,7 +1761,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutParamPtr_Putter( Detail::AEDescEditor< AppleEvent >( appleEvent ),
 		                                                    keyword,
-		                                                    DescType_Map_Traits< type >::result ) );
+		                                                    type ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1827,7 +1821,7 @@ namespace Nitrogen
 	AEGetParamPtr( const AppleEvent&  appleEvent,
 	               Mac::AEKeyword     keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetParamPtr_Getter< DescType_Map_Traits< type >::result >( appleEvent, keyword ) );
+		return DescType_Traits< type >::Get( AEGetParamPtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1870,7 +1864,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutAttributePtr_Putter( appleEvent,
 		                                                        keyword,
-		                                                        DescType_Map_Traits< type >::result ) );
+		                                                        type ) );
 	}
 	
 	template < Mac::DescType type >
@@ -1881,7 +1875,7 @@ namespace Nitrogen
 		DescType_Traits< type >::Put( data,
 		                              AEPutAttributePtr_Putter( Detail::AEDescEditor< AppleEvent >( appleEvent ),
 		                                                        keyword,
-		                                                        DescType_Map_Traits< type >::result ) );
+		                                                        type ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1943,7 +1937,7 @@ namespace Nitrogen
 	AEGetAttributePtr( const AppleEvent&  appleEvent,
 	                   Mac::AEKeyword     keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetAttributePtr_Getter< DescType_Map_Traits< type >::result >( appleEvent, keyword ) );
+		return DescType_Traits< type >::Get( AEGetAttributePtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1975,7 +1969,7 @@ namespace Nitrogen
 	template < Mac::DescType type >
 	inline typename DescType_Traits< type >::Result
 	AEGetDescData( const AEDesc&  desc,
-	               Mac::DescType  requiredType = DescType_Map_Traits< type >::result )
+	               Mac::DescType  requiredType = type )
 	{
 		ASSERT( requiredType == Mac::typeWildCard || requiredType == desc.descriptorType );
 		
@@ -1987,7 +1981,7 @@ namespace Nitrogen
 	template < Mac::DescType type >
 	inline typename DescType_Traits< type >::Result AECoerceDescData( const AEDesc& desc )
 	{
-		return AEGetDescData< type >( AECoerceDesc( desc, DescType_Map_Traits< type >::result ) );
+		return AEGetDescData< type >( AECoerceDesc( desc, type ) );
 	}
 	
 	
@@ -2015,7 +2009,7 @@ namespace Nitrogen
 	                               AEDesc&                                      result )
 	{
 		DescType_Traits< type >::Put( data,
-		                              AEReplaceDescData_Putter( DescType_Map_Traits< type >::result,
+		                              AEReplaceDescData_Putter( type,
 		                                                        result ) );
 	}
 	
@@ -2024,7 +2018,7 @@ namespace Nitrogen
 	                               nucleus::owned< AEDesc_Data >&               result )
 	{
 		DescType_Traits< type >::Put( data,
-		                              AEReplaceDescData_Putter( DescType_Map_Traits< type >::result,
+		                              AEReplaceDescData_Putter( type,
 		                                                        Detail::AEDescEditor< AEDesc_Data >( result ) ) );
 	}
 	
