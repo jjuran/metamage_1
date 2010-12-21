@@ -50,8 +50,6 @@ namespace Nitrogen
 	
 	static const ComponentSubType kOSAGenericScriptingComponentSubtype = ComponentSubType( ::kOSAGenericScriptingComponentSubtype );
 	
-	static const ResType kOSAScriptResourceType = ResType( ::kOSAScriptResourceType );
-	
 	
 	enum OSAID
 	{

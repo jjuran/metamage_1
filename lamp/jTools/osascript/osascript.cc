@@ -215,7 +215,7 @@ namespace tool
 		
 		return N::OSALoad( OpenGenericScriptingComponent(),
 		                   N::AECreateDesc< Mac::AEDesc_Data >( Mac::typeOSAGenericStorage,
-		                                    N::Get1Resource( N::kOSAScriptResourceType,
+		                                    N::Get1Resource( Mac::kOSAScriptResourceType,
 		                                                     N::ResID( 128 ) ) ) );
 	}
 	

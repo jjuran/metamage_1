@@ -61,9 +61,6 @@ namespace Nitrogen
 		kComponentManufacturer_Max = nucleus::enumeration_traits< ::OSType >::max
 	};
 	
-	static const ResType kComponentResourceType      = ResType( ::kComponentResourceType      );
-	static const ResType kComponentAliasResourceType = ResType( ::kComponentAliasResourceType );
-	
 }
 
 namespace nucleus

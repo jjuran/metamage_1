@@ -51,9 +51,7 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AliasManager );
 	
  	
- 	static const ResType rAliasType = ResType( ::rAliasType );
-   
-	template <> struct ResType_Traits< rAliasType > : Handle_ResType_Traits< AliasRecord > {};
+	template <> struct ResType_Traits< Mac::rAliasType > : Handle_ResType_Traits< AliasRecord > {};
 	
 	enum MountFlags
 	{

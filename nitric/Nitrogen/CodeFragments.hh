@@ -67,8 +67,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CodeFragmentManager );
 	
-	static const ResType kCFragResourceType = ResType( ::kCFragResourceType );
-	
 	static const Mac::ResID kCFragResourceID = Mac::ResID( ::kCFragResourceID );
 	
 	enum CFragArchitecture

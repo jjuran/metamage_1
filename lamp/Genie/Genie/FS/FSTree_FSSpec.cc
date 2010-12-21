@@ -814,7 +814,7 @@ namespace Genie
 			
 			n::owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
 			
-			(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
+			(void) N::AddResource< Mac::rAliasType >( alias, N::ResID( 0 ), "\p" );
 			
 			FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
 			
