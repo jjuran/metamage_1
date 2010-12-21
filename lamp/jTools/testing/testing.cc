@@ -657,9 +657,9 @@ static int TestAE( int argc, char** argv )
 	//if (argc < 3)  return 1;
 	n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
 	
-	N::AEPutPtr< N::typeChar >( list, 0, "foo" );
-	N::AEPutPtr< N::typeChar >( list, 0, "bar" );
-	N::AEPutPtr< N::typeChar >( list, 0, "baz" );
+	N::AEPutPtr< Mac::typeChar >( list, 0, "foo" );
+	N::AEPutPtr< Mac::typeChar >( list, 0, "bar" );
+	N::AEPutPtr< Mac::typeChar >( list, 0, "baz" );
 	
 	/*
 	N::AEDescListItemData_Container< typeChar > listData = N::AEDescListItemDatas< typeChar >( list );
