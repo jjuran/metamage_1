@@ -149,13 +149,6 @@ namespace Nitrogen
 	
 	typedef bool Boolean;
 	
-	enum Style
-	{
-		kStyle_Max = nucleus::enumeration_traits< ::Style >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( Style )
-
   }
 
 namespace nucleus
