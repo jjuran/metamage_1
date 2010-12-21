@@ -29,6 +29,9 @@
 #ifndef __CARBONEVENTS__
 #include <CarbonEvents.h>
 #endif
+#ifndef __OSA__
+#include <OSA.h>
+#endif
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
