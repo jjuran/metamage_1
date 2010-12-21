@@ -14,14 +14,9 @@
 #ifndef NITROGEN_ASREGISTRY_HH
 #define NITROGEN_ASREGISTRY_HH
 
-// Mac OS
-#ifndef __ASREGISTRY__
-#include <ASRegistry.h>
-#endif
-
 // Nitrogen
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
+#include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
 #endif
 
 
@@ -52,10 +47,7 @@ namespace Nitrogen
 	// cWeekday .. kASMagicEndTellEvent
 	
 	// Do we ever need the missing value outside an object accessor?
-	inline nucleus::owned< AEDesc_Token > MissingValue()
-	{
-		return AECreateDesc< Mac::typeType, AEDesc_Token >( Mac::DescType( ::cMissingValue ) );
-	}
+	nucleus::owned< Mac::AEDesc_Token > MissingValue();
 	
 }
 
