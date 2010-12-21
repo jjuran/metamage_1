@@ -119,9 +119,9 @@ namespace Nitrogen
 		return nucleus::owned< OSLAccessor >::seize( toInstall );
 	}
 	
-	OSLAccessor AEGetObjectAccessor( AEObjectClass  desiredClass,
-	                                 DescType       containerType,
-	                                 bool           isSysHandler )
+	OSLAccessor AEGetObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                                 DescType            containerType,
+	                                 bool                isSysHandler )
 	{
 		::OSLAccessorUPP accessor;
 		long accessorRefCon;
@@ -139,9 +139,9 @@ namespace Nitrogen
 		                    isSysHandler );
 	}
 	
-	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > AECallObjectAccessor( Mac::AEObjectClass   desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
-	                                                     AEObjectClass        containerClass,
+	                                                     Mac::AEObjectClass   containerClass,
 	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData )
 	{

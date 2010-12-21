@@ -119,21 +119,21 @@ namespace tool
 	{
 		if ( front )
 		{
-			return N::AECreateDesc< N::typeProcessSerialNumber >( N::GetFrontProcess() );
+			return N::AECreateDesc< Mac::typeProcessSerialNumber >( N::GetFrontProcess() );
 		}
 		else if ( sig != Mac::kUnknownFSCreator )
 		{
-			return N::AECreateDesc< N::typeApplSignature >( sig );
+			return N::AECreateDesc< Mac::typeApplSignature >( sig );
 		}
 		else
 		{
 		#if CALL_NOT_IN_CARBON
 			
-			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
+			return N::AECreateDesc< Mac::typeTargetID >( LocateTarget( app, machine, host ) );
 			
 		#else
 			
-			return N::AECreateDesc< N::typeApplicationURL >( url );
+			return N::AECreateDesc< Mac::typeApplicationURL >( url );
 			
 		#endif
 		}

@@ -948,8 +948,8 @@ namespace Pedestal
 	
 	void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
-		N::AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
-		N::AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
+		Mac::AEEventClass eventClass = N::AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
+		Mac::AEEventID    eventID    = N::AEGetAttributePtr< Mac::keyEventIDAttr    >( appleEvent );
 		
 		static bool firstTime = true;
 		

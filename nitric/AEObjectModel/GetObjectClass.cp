@@ -11,7 +11,7 @@
 namespace Nitrogen
 {
 	
-	AEObjectClass GetObjectClass( const AEDesc_Token& obj )
+	Mac::AEObjectClass GetObjectClass( const AEDesc_Token& obj )
 	{
 		try
 		{
@@ -37,7 +37,7 @@ namespace Nitrogen
 			}
 		}
 		
-		return AEObjectClass( obj.descriptorType );
+		return Mac::AEObjectClass( obj.descriptorType );
 	}
 	
 	#pragma mark -
@@ -48,7 +48,7 @@ namespace Nitrogen
 		Register< typeNull >();
 	}
 	
-	AEObjectClass ObjectClassMap::GetObjectClass( DescType tokenType )
+	Mac::AEObjectClass ObjectClassMap::GetObjectClass( DescType tokenType )
 	{
 		Map::const_iterator found = map.find( tokenType );
 		
@@ -74,14 +74,14 @@ namespace Nitrogen
 	{
 	}
 	
-	AEObjectClass ObjectClassGetter::GetObjectClass( const AEDesc_Token& obj )
+	Mac::AEObjectClass ObjectClassGetter::GetObjectClass( const AEDesc_Token& obj )
 	{
 		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
 		
 		if ( found == map.end() )
 		{
 			//throw ErrAEEventNotHandled();
-			return AEObjectClass( obj.descriptorType );
+			return Mac::AEObjectClass( obj.descriptorType );
 		}
 		
 		return found->second( obj );

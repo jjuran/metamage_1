@@ -89,14 +89,14 @@ namespace Vertice
 	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
 		n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                            N::keyDirectObject,
-		                                                            N::typeAEList );
+		                                                            Mac::keyDirectObject,
+		                                                            Mac::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		
 		for ( int index = 1;  index <= docCount;  index++ )
 		{
-			FSSpec fss = N::AEGetNthPtr< N::typeFSS >( docList, index );
+			FSSpec fss = N::AEGetNthPtr< Mac::typeFSS >( docList, index );
 			
 			OpenDocument( fss );
 		}

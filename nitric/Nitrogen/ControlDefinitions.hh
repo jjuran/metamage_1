@@ -206,13 +206,13 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: nucleus::POD_scribe    < ControlUserPaneFocusUPP       > {};
    template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: nucleus::POD_scribe    < ControlUserPaneBackgroundUPP  > {};
 
-   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits          < typeChar                      > {};
+   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits        < Mac::typeChar                 > {};
    template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: nucleus::POD_scribe    < TEHandle                      > {};
    template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: nucleus::POD_scribe    < ControlEditTextSelectionRec   > {};
-   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits          < typeChar                      > {};
+   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits        < Mac::typeChar                 > {};
    template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: nucleus::POD_scribe    < ControlKeyScriptBehavior      > {};
    template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: BooleanFlattener                                           {};
-   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits          < typeChar                      > {};
+   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits        < Mac::typeChar                 > {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: nucleus::POD_scribe    < ControlEditTextValidationUPP  > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: nucleus::POD_scribe    < TSMTEPreUpdateUPP             > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: nucleus::POD_scribe    < TSMTEPostUpdateUPP            > {};

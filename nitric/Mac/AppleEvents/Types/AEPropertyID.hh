@@ -1,24 +1,14 @@
-// Nitrogen/AEPropertyID.hh
-// ------------------------
-//
-// Maintained by Joshua Juran
+/*
+	Mac/AppleEvents/Types/AEPropertyID.hh
+	-------------------------------------
+*/
 
-// Part of the Nitrogen project.
-//
-// Written 2007 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
+#ifndef MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
+#define MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
 
-
-#ifndef NITROGEN_AEPROPERTYID_HH
-#define NITROGEN_AEPROPERTYID_HH
-
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
-#endif
-#ifndef __ASREGISTRY__
-#include <ASRegistry.h>
 #endif
 
 // nucleus
@@ -27,8 +17,10 @@
 #endif
 
 
-namespace Nitrogen
+namespace Mac
 {
+	
+	// Christopher Nebel personally gave his blessing to this name at WWDC 2006
 	
 	enum AEPropertyID
 	{
@@ -106,9 +98,6 @@ namespace Nitrogen
 		pUserSelection      = ::pUserSelection,
 		pVersion            = ::pVersion,
 		pVisible            = ::pVisible,
-		
-		// ASRegistry
-		// ----------
 		
 		kAEPropertyID_Max = nucleus::enumeration_traits< ::DescType >::max
 	};

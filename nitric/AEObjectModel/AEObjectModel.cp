@@ -61,10 +61,10 @@ namespace Nitrogen
 		{
 			case typeAbsoluteOrdinal:
 				{
-					AEAbsoluteOrdinal ordinal = AEGetDescData< typeAbsoluteOrdinal >( keyData );
+					Mac::AEAbsoluteOrdinal ordinal = AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
 					
 					// Check for 'every' first
-					if ( ordinal == kAEAll )
+					if ( ordinal == Mac::kAEAll )
 					{
 						return 0;
 					}
@@ -101,7 +101,7 @@ namespace Nitrogen
 			
 			case typeSInt32:
 				{
-					SInt32 index = AEGetDescData< typeSInt32 >( keyData );
+					SInt32 index = AEGetDescData< Mac::typeSInt32 >( keyData );
 					
 					if ( index < 0 )
 					{
@@ -153,8 +153,8 @@ namespace Nitrogen
 	{
 		try
 		{
-			*result = Count( AEObjectClass( desiredClass   ),
-			                 AEObjectClass( containerClass ),
+			*result = Count( Mac::AEObjectClass( desiredClass   ),
+			                 Mac::AEObjectClass( containerClass ),
 			                 static_cast< const AEDesc_Token& >( *containerToken ) );
 		}
 		catch ( ... )
@@ -200,9 +200,9 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( Mac::AEObjectClass   desiredClass,
 	                                                       const AEDesc_Token&  containerToken,
-	                                                       AEObjectClass        containerClass,
+	                                                       Mac::AEObjectClass   containerClass,
 	                                                       Mac::AEKeyForm       keyForm,
 	                                                       const AEDesc_Data&   keyData,
 	                                                       RefCon )
@@ -212,20 +212,20 @@ namespace Nitrogen
 			return AccessAllProperties( containerToken, containerClass );
 		}
 		
-		AEPropertyID propertyID = AEGetDescData< typePropertyID >( keyData );
+		Mac::AEPropertyID propertyID = AEGetDescData< typePropertyID >( keyData );
 		
 		return AccessProperty( propertyID, containerToken, containerClass );
 	}
 	
 	struct ObjectAccessContext
 	{
-		AEObjectClass       desiredClass;
-		AEObjectClass       containerClass;
+		Mac::AEObjectClass  desiredClass;
+		Mac::AEObjectClass  containerClass;
 		Mac::AEKeyForm      keyForm;
 		const AEDesc_Data&  keyData;
 		
-		ObjectAccessContext( AEObjectClass       desiredClass,
-		                     AEObjectClass       containerClass,
+		ObjectAccessContext( Mac::AEObjectClass  desiredClass,
+		                     Mac::AEObjectClass  containerClass,
 		                     Mac::AEKeyForm      keyForm,
 		                     const AEDesc_Data&  keyData )
 		:
@@ -261,14 +261,14 @@ namespace Nitrogen
 	class ObjectAccessor_Caller
 	{
 		private:
-			AEObjectClass       itsDesiredClass;
-			AEObjectClass       itsContainerClass;
+			Mac::AEObjectClass  itsDesiredClass;
+			Mac::AEObjectClass  itsContainerClass;
 			Mac::AEKeyForm      itsKeyForm;
 			const AEDesc_Data&  itsKeyData;
 		
 		public:
-			ObjectAccessor_Caller( AEObjectClass       desiredClass,
-	                               AEObjectClass       containerClass,
+			ObjectAccessor_Caller( Mac::AEObjectClass  desiredClass,
+	                               Mac::AEObjectClass  containerClass,
 	                               Mac::AEKeyForm      keyForm,
 	                               const AEDesc_Data&  keyData )
 			:
@@ -301,9 +301,9 @@ namespace Nitrogen
 			}
 	};
 	
-	nucleus::owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > DispatchAccessToList( Mac::AEObjectClass   desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
-	                                                     AEObjectClass        containerClass,
+	                                                     Mac::AEObjectClass   containerClass,
 	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData,
 	                                                     RefCon )

@@ -24,6 +24,10 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTSOURCE_HH
+#include "Mac/AppleEvents/Types/AEEventSource.hh"
+#endif
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
@@ -35,23 +39,12 @@
 namespace Nitrogen
 {
 	
-	enum AEEventSource
-	{
-		kAEUnknownSource = ::kAEUnknownSource,
-		kAEDirectCall    = ::kAEDirectCall,
-		kAESameProcess   = ::kAESameProcess,
-		kAELocalProcess  = ::kAELocalProcess,
-		kAERemoteProcess = ::kAERemoteProcess,
-		
-		kAEEventSource_Max = nucleus::enumeration_traits< ::AEEventSource >::max
-	};
-	
 	// In AppleEvents.h due to dependency on enum AEEventSource.
-	template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< AEEventSource, SInt16 > {};
+	template <> struct AEKeyword_Traits< Mac::keyEventSourceAttr > : Integer_AEKeyword_Traits< Mac::AEEventSource, SInt16 > {};
 	
-	template <> struct AEKeyword_Traits< keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
+	template <> struct AEKeyword_Traits< Mac::keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
 	
-	template <> struct AEKeyword_Traits< keyErrorString > : Char_AEKeyword_Traits< char > {};
+	template <> struct AEKeyword_Traits< Mac::keyErrorString > : Char_AEKeyword_Traits< char > {};
 	
 	struct AEEventHandler
 	{

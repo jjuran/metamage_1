@@ -1,18 +1,10 @@
-// Nitrogen/DescType.hh
-// --------------------
-//
-// Maintained by Joshua Juran
+/*
+	Mac/AppleEvents/Types/DescType.hh
+	---------------------------------
+*/
 
-// Part of the Nitrogen project.
-//
-// Written 2007 by Joshua Juran.
-//
-// This code was written entirely by the above contributor, who places it
-// in the public domain.
-
-
-#ifndef NITROGEN_DESCTYPE_HH
-#define NITROGEN_DESCTYPE_HH
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
+#define MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
 
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
@@ -36,7 +28,7 @@
 #endif
 
 
-namespace Nitrogen
+namespace Mac
 {
 	
 	enum DescType
@@ -245,11 +237,12 @@ namespace Nitrogen
 		
 		typeScrapRef          = ::typeScrapRef,
 		typeCFMutableArrayRef = ::typeCFMutableArrayRef,
-				
+		
 		// OSA
 		// ---
 		
-		typeOSAErrorRange = ::typeOSAErrorRange,
+		typeOSAErrorRange     = ::typeOSAErrorRange,
+		typeOSAGenericStorage = ::typeOSAGenericStorage,
 		
 		kDescType_Max = nucleus::enumeration_traits< ::DescType >::max
 	};

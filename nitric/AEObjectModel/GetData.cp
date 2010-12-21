@@ -11,12 +11,12 @@
 namespace Nitrogen
 {
 	
-	static nucleus::owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, DescType )
+	static nucleus::owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, Mac::DescType )
 	{
 		return GetRootObjectSpecifier();
 	}
 	
-	static nucleus::owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, DescType desiredType )
+	static nucleus::owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, Mac::DescType desiredType )
 	{
 		nucleus::owned< AEDescList_Data > list = AECreateList( false );
 		
@@ -34,36 +34,36 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
+	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( Mac::AEObjectClass             objectClass,
 	                                                                  const AEDesc_ObjectSpecifier&  container,
 	                                                                  Mac::AEKeyForm                 keyForm,
 	                                                                  const AEDesc_Data&             keyData )
 	{
 		nucleus::owned< AERecord_Data > record = AECreateList( true );
 		
-		AEPutKeyPtr< keyAEDesiredClass >( record, objectClass );
-		AEPutKeyPtr< keyAEKeyForm      >( record, keyForm     );
+		AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
+		AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
 		
-		AEPutKeyDesc( record, keyAEKeyData,   keyData   );
-		AEPutKeyDesc( record, keyAEContainer, container );
+		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
+		AEPutKeyDesc( record, Mac::keyAEContainer, container );
 		
-		return AECoerceDesc( record, typeObjectSpecifier );
+		return AECoerceDesc( record, Mac::typeObjectSpecifier );
 	}
 	
-	nucleus::owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType )
+	nucleus::owned< AEDesc_Data > GetData( const AEDesc_Token& obj, Mac::DescType desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );
 	}
 	
 	DataGetter::DataGetter()
 	{
-		Register( typeNull,   GetDataFromAppToken  );
-		Register( typeAEList, GetDataFromTokenList );
+		Register( Mac::typeNull,   GetDataFromAppToken  );
+		Register( Mac::typeAEList, GetDataFromTokenList );
 	}
 	
-	nucleus::owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, DescType desiredType )
+	nucleus::owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, Mac::DescType desiredType )
 	{
-		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
+		Map::const_iterator found = map.find( Mac::DescType( obj.descriptorType ) );
 		
 		if ( found == map.end() )
 		{

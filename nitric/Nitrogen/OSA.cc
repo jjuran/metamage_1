@@ -61,7 +61,7 @@ namespace Nitrogen
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
-	          DescType           desiredType,
+	          Mac::DescType      desiredType,
 	          OSAModeFlags       modeFlags )
 	{
 		AEDesc_Data resultingScriptData;
@@ -99,7 +99,7 @@ namespace Nitrogen
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
-	            DescType           desiredType,
+	            Mac::DescType      desiredType,
 	            OSAModeFlags       modeFlags )
 	{
 		AEDesc_Data resultingText;
@@ -115,8 +115,8 @@ namespace Nitrogen
 	
 	
 	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              AEKeyword          selector,
-	                                              DescType           desiredType )
+	                                              Mac::AEKeyword     selector,
+	                                              Mac::DescType      desiredType )
 	{
 		AEDesc_Data resultingErrorDescription;
 		

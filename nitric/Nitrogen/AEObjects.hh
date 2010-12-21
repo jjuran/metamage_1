@@ -14,32 +14,28 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #define NITROGEN_AEOBJECTS_HH
 
-#ifndef NITROGEN_AEOBJECTCLASS_HH
-#include "Nitrogen/AEObjectClass.hh"
-#endif
-#ifndef NITROGEN_AEPROPERTYID_HH
-#include "Nitrogen/AEPropertyID.hh"
-#endif
-
 #ifndef __AEOBJECTS__
 #include <AEObjects.h>
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AEABSOLUTEORDINAL_HH
+#include "Mac/AppleEvents/Types/AEAbsoluteOrdinal.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
+#include "Mac/AppleEvents/Types/AEObjectClass.hh"
+#endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
+#include "Mac/AppleEvents/Types/AEPropertyID.hh"
 #endif
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
 
-
-// Christopher Nebel personally gave his blessing to these names at WWDC 2006
-typedef DescType AEObjectClass, AEPropertyID;
-
-// These I made up
-typedef DescType AEAbsoluteOrdinal;
 
 enum
 {
@@ -53,27 +49,6 @@ namespace Nitrogen
 	
 	#pragma mark -
 	#pragma mark ** Constant types **
-	
-	enum AERelativeDescriptor
-	{
-		kAENext     = ::kAENext,
-		kAEPrevious = ::kAEPrevious,
-		
-		kAERelativeDescriptor_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
-	
-	typedef AERelativeDescriptor AERelativeOrdinal;
-	
-	enum AEAbsoluteOrdinal
-	{
-		kAEFirst  = ::kAEFirst,
-		kAELast   = ::kAELast,
-		kAEMiddle = ::kAEMiddle,
-		kAEAny    = ::kAEAny,
-		kAEAll    = ::kAEAll,
-		
-		kAEAbsoluteOrdinal_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
 	
 	enum AELogicalOperator
 	{
@@ -104,23 +79,23 @@ namespace Nitrogen
 	typedef AEComparisonOperator AECompOperator;
 	
 	
-	static const DescType typeObjectClass = DescType( ::typeObjectClass );
-	static const DescType typePropertyID  = DescType( ::typePropertyID  );
+	static const Mac::DescType typeObjectClass = Mac::DescType( ::typeObjectClass );
+	static const Mac::DescType typePropertyID  = Mac::DescType( ::typePropertyID  );
 	
 	
-	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< AEObjectClass, ::AEObjectClass >  {};
-	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< AEPropertyID,  ::AEPropertyID  >  {};
+	template <> struct DescType_Traits< typeObjectClass > : nucleus::converting_POD_scribe< Mac::AEObjectClass, ::DescType >  {};
+	template <> struct DescType_Traits< typePropertyID >  : nucleus::converting_POD_scribe< Mac::AEPropertyID,  ::DescType >  {};
 	
-	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : nucleus::converting_POD_scribe< AEAbsoluteOrdinal,    ::DescType    >  {};
+	template <> struct DescType_Traits< Mac::typeAbsoluteOrdinal > : nucleus::converting_POD_scribe< Mac::AEAbsoluteOrdinal, ::DescType > {};
 	
-	template <> struct DescType_Map_Traits< typeObjectClass     > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typePropertyID      > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeObjectClass     > { static const Mac::DescType result = Mac::typeType; };
+	template <> struct DescType_Map_Traits< typePropertyID      > { static const Mac::DescType result = Mac::typeType; };
 	
-	template <> struct AEKeyword_Traits< keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
-	template <> struct AEKeyword_Traits< keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
+	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
+	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
 	
-	template <> struct AEKeyword_Traits< keyAEDesiredClass > : Type_AEKeyword_Traits< AEObjectClass > {};
-	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm > {};
+	template <> struct AEKeyword_Traits< Mac::keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
+	template <> struct AEKeyword_Traits< Mac::keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm     > {};
 	
 	enum AEResolveCallbackFlags
 	{
@@ -157,9 +132,9 @@ namespace Nitrogen
 	
 	inline void DisposeOSLAccessorUPP( nucleus::owned< OSLAccessorUPP > )  {}
 	
-	inline void InvokeOSLAccessorUPP( AEObjectClass        desiredClass,
+	inline void InvokeOSLAccessorUPP( Mac::AEObjectClass   desiredClass,
 	                                  const AEDesc_Token&  containerToken,
-	                                  AEObjectClass        containerClass,
+	                                  Mac::AEObjectClass   containerClass,
 	                                  Mac::AEKeyForm       keyForm,
 	                                  const AEDesc_Data&   keyData,
 	                                  AEDesc_Token&        value,
@@ -175,9 +150,9 @@ namespace Nitrogen
 		                        accessorRefcon ) );
 	}
 	
-	typedef nucleus::owned< AEDesc_Token > ( *OSLAccessorProcPtr )( AEObjectClass        desiredClass,
+	typedef nucleus::owned< AEDesc_Token > ( *OSLAccessorProcPtr )( Mac::AEObjectClass   desiredClass,
 	                                                                const AEDesc_Token&  containerToken,
-	                                                                AEObjectClass        containerClass,
+	                                                                Mac::AEObjectClass   containerClass,
 	                                                                Mac::AEKeyForm       keyForm,
 	                                                                const AEDesc_Data&   keyData,
 	                                                                RefCon               accessorRefcon );
@@ -195,9 +170,9 @@ namespace Nitrogen
 		{
 			try
 			{
-				*value = handler( AEObjectClass( desiredClass ),
+				*value = handler( Mac::AEObjectClass( desiredClass ),
 				                  static_cast< const AEDesc_Token& >( *containerToken ),
-				                  AEObjectClass( containerClass ),
+				                  Mac::AEObjectClass( containerClass ),
 				                  Mac::AEKeyForm( keyForm ),
 				                  static_cast< const AEDesc_Data& >( *keyData ),
 				                  accessorRefcon ).release();
@@ -249,19 +224,19 @@ namespace Nitrogen
 	
 	struct OSLAccessor
 	{
-		AEObjectClass    desiredClass;
-		DescType         containerType;
-		OSLAccessorUPP   accessor;
-		RefCon           accessorRefCon;
-		bool             isSysHandler;
+		Mac::AEObjectClass  desiredClass;
+		DescType            containerType;
+		OSLAccessorUPP      accessor;
+		RefCon              accessorRefCon;
+		bool                isSysHandler;
 		
 		OSLAccessor();
 		
-		OSLAccessor( AEObjectClass  desiredClass,
-		             DescType       containerType,
-		             OSLAccessorUPP accessor,
-		             RefCon         accessorRefCon,
-		             bool           isSysHandler )
+		OSLAccessor( Mac::AEObjectClass  desiredClass,
+		             DescType            containerType,
+		             OSLAccessorUPP      accessor,
+		             RefCon              accessorRefCon,
+		             bool                isSysHandler )
 		: 
 			desiredClass  ( desiredClass   ),
 			containerType ( containerType  ),
@@ -346,11 +321,13 @@ namespace Nitrogen
 	
 	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
-	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
-	                                                              DescType         containerType,
-	                                                              OSLAccessorUPP   accessor,
-	                                                              RefCon           accessorRefCon = RefCon(),
-	                                                              bool             isSysHandler   = false )
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         DescType            containerType,
+	                         OSLAccessorUPP      accessor,
+	                         RefCon              accessorRefCon = RefCon(),
+	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
@@ -360,10 +337,12 @@ namespace Nitrogen
 	}
 	
 	template < typename OSLAccessorUPP::ProcPtr accessor >
-	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
-	                                                              DescType       containerType,
-	                                                              RefCon         accessorRefCon = RefCon(),
-	                                                              bool           isSysHandler   = false )
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         DescType            containerType,
+	                         RefCon              accessorRefCon = RefCon(),
+	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
@@ -373,10 +352,12 @@ namespace Nitrogen
 	}
 	
 	template < OSLAccessorProcPtr accessor >
-	inline nucleus::owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
-	                                                              DescType         containerType,
-	                                                              RefCon           accessorRefCon = RefCon(),
-	                                                              bool             isSysHandler   = false )
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         DescType            containerType,
+	                         RefCon              accessorRefCon = RefCon(),
+	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor< ObjectAccessor_Callback< accessor >::Adapter >
 		(
@@ -390,13 +371,13 @@ namespace Nitrogen
 	inline void AERemoveObjectAccessor( nucleus::owned< OSLAccessor > )  {}
 	
 	typedef OSLAccessor AEGetObjectAccessor_Result;
-	OSLAccessor AEGetObjectAccessor( AEObjectClass    desiredClass,
-	                                 DescType         containerType,
-	                                 bool             isSysHandler );
+	OSLAccessor AEGetObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                                 DescType            containerType,
+	                                 bool                isSysHandler );
 	
-	nucleus::owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
+	nucleus::owned< AEDesc_Token > AECallObjectAccessor( Mac::AEObjectClass   desiredClass,
 	                                                     const AEDesc_Token&  containerToken,
-	                                                     AEObjectClass        containerClass,
+	                                                     Mac::AEObjectClass   containerClass,
 	                                                     Mac::AEKeyForm       keyForm,
 	                                                     const AEDesc_Data&   keyData );
 	

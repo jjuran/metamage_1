@@ -52,8 +52,6 @@ namespace Nitrogen
 	
 	static const ResType kOSAScriptResourceType = ResType( ::kOSAScriptResourceType );
 	
-	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
-	
 	
 	enum OSAID
 	{
@@ -144,13 +142,13 @@ namespace Nitrogen
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
-	          DescType           desiredType = typeOSAGenericStorage,
+	          Mac::DescType      desiredType = Mac::typeOSAGenericStorage,
 	          OSAModeFlags       modeFlags   = kOSAModeNull );
 	
 	inline nucleus::owned< AEDesc_Data >
 	//
 	OSAStore( const nucleus::owned< OSAID >&  script,
-	          DescType                        desiredType = typeOSAGenericStorage,
+	          Mac::DescType                   desiredType = Mac::typeOSAGenericStorage,
 	          OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
 		return OSAStore( script.disposer().Component(),
@@ -188,13 +186,13 @@ namespace Nitrogen
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
-	            DescType           desiredType = typeChar,
+	            Mac::DescType      desiredType = Mac::typeChar,
 	            OSAModeFlags       modeFlags   = OSAModeFlags() );
 	
 	inline nucleus::owned< AEDesc_Data >
 	//
 	OSADisplay( const nucleus::owned< OSAID >&  scriptValue,
-	            DescType                        desiredType = typeChar,
+	            Mac::DescType                   desiredType = Mac::typeChar,
 	            OSAModeFlags                    modeFlags   = OSAModeFlags() )
 	{
 		return OSADisplay( scriptValue.disposer().Component(),
@@ -205,8 +203,8 @@ namespace Nitrogen
 	
 	
 	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              AEKeyword          selector,
-	                                              DescType           desiredType );
+	                                              Mac::AEKeyword     selector,
+	                                              Mac::DescType      desiredType );
 	
 	inline void OSADispose( nucleus::owned< OSAID > )
 	{
@@ -381,17 +379,17 @@ namespace Nitrogen
 	// OSADebuggerDisposeCallFrame
 	// OSADebuggerCountVariables
 	
-	template < DescType desiredType >
+	template < Mac::DescType desiredType >
 	inline
 	typename DescType_Traits< desiredType >::Result
-	OSAScriptError( ComponentInstance scriptingComponent, AEKeyword keyword )
+	OSAScriptError( ComponentInstance scriptingComponent, Mac::AEKeyword keyword )
 	{
 		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
 		                                                     keyword,
 		                                                     desiredType ) );
 	}
 	
-	template < AEKeyword key >
+	template < Mac::AEKeyword key >
 	inline
 	typename AEKeyword_Traits< key >::Result
 	OSAScriptError( ComponentInstance scriptingComponent )
