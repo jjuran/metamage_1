@@ -25,11 +25,6 @@
 #endif
 
 
-enum
-{
-	typeCRMSerialPtr = 'CRMs'
-};
-
 namespace Nitrogen
 {
 	
