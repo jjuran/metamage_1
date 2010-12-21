@@ -102,7 +102,7 @@ namespace Nitrogen
       return result;
      }
 
-   ControlRef GetControlByID( WindowRef inWindow, OSType signature, SInt32 id )
+   ControlRef GetControlByID( WindowRef inWindow, Mac::OSType signature, SInt32 id )
      {
       ControlID controlID;
       controlID.signature = signature;

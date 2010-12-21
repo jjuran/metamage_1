@@ -10,9 +10,10 @@
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
 
-
-#include "Nitrogen/MacTypes.hh"
-
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
 
 //  These are weird ones:
 //  They are some member functions of std::char_traits < UTF16Char > that the linker wants.
