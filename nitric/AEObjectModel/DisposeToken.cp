@@ -22,19 +22,19 @@
 namespace Nitrogen
 {
 	
-	void DisposeToken( nucleus::owned< AEDesc_Data > token )
+	void DisposeToken( nucleus::owned< Mac::AEDesc_Data > token )
 	{
 		return TheGlobalTokenDisposer().DisposeToken( token );
 	}
 	
 	TokenDisposer::TokenDisposer()
 	{
-		Register( typeAEList, DisposeTokenList );
+		Register( Mac::typeAEList, DisposeTokenList );
 	}
 	
-	void TokenDisposer::DisposeToken( nucleus::owned< AEDesc_Data > token )
+	void TokenDisposer::DisposeToken( nucleus::owned< Mac::AEDesc_Data > token )
 	{
-		Map::const_iterator found = map.find( DescType( token.get().descriptorType ) );
+		Map::const_iterator found = map.find( Mac::DescType( token.get().descriptorType ) );
 		if ( found == map.end() )
 		{
 			// If we omitted this, the descriptor would still be disposed
@@ -54,15 +54,15 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
-	static void DisposeTokenFromList( nucleus::owned< AEDesc_Data > token )
+	static void DisposeTokenFromList( nucleus::owned< Mac::AEDesc_Data > token )
 	{
 		// This is basically a call to AEDisposeToken(), but it's for tokens
 		// stored as Owned< AEDesc_Data >.
 		
-		nucleus::disposer< AEDesc_Token >()( token.release() );
+		nucleus::disposer< Mac::AEDesc_Token >()( token.release() );
 	}
 	
-	void DisposeTokenList( nucleus::owned< AEDescList_Data > listOfTokens )
+	void DisposeTokenList( nucleus::owned< Mac::AEDescList_Data > listOfTokens )
 	{
 		// listOfTokens is owned< AEDescList_Data > for this reason:
 		// We're already inside AEDisposeToken() for the list, so

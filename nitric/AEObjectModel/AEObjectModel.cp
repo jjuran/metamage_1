@@ -54,8 +54,8 @@ namespace Nitrogen
 	// etc.  Any index (including zero) that doesn't correspond to an existing element
 	// will cause errAENoSuchObject to be thrown.
 	
-	UInt32 ComputeAbsoluteIndex( const AEDesc_Data&  keyData,
-	                             std::size_t         count )
+	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
+	                             std::size_t              count )
 	{
 		switch ( keyData.descriptorType )
 		{
@@ -135,8 +135,8 @@ namespace Nitrogen
 		try
 		{
 			*result = Compare( AECompOperator( op ),
-			                   static_cast< const AEDesc_Token& >( *obj1 ),
-			                   static_cast< const AEDesc_Token& >( *obj2 ) );
+			                   static_cast< const Mac::AEDesc_Token& >( *obj1 ),
+			                   static_cast< const Mac::AEDesc_Token& >( *obj2 ) );
 		}
 		catch ( ... )
 		{
@@ -155,7 +155,7 @@ namespace Nitrogen
 		{
 			*result = Count( Mac::AEObjectClass( desiredClass   ),
 			                 Mac::AEObjectClass( containerClass ),
-			                 static_cast< const AEDesc_Token& >( *containerToken ) );
+			                 static_cast< const Mac::AEDesc_Token& >( *containerToken ) );
 		}
 		catch ( ... )
 		{
@@ -176,10 +176,10 @@ namespace Nitrogen
 			// The called function is only responsible for disposing the token material,
 			// and the Owned destructor will call AEDisposeDesc() for us.
 			
-			const AEDesc_Data& desc( static_cast< const AEDesc_Data& >( *token ) );
+			const Mac::AEDesc_Data& desc( static_cast< const Mac::AEDesc_Data& >( *token ) );
 			
 			// Atom or list, it will hence be missed.
-			DisposeToken( nucleus::owned< AEDesc_Data >::seize( desc ) );
+			DisposeToken( nucleus::owned< Mac::AEDesc_Data >::seize( desc ) );
 		}
 		catch ( ... )
 		{
@@ -200,12 +200,14 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( Mac::AEObjectClass   desiredClass,
-	                                                       const AEDesc_Token&  containerToken,
-	                                                       Mac::AEObjectClass   containerClass,
-	                                                       Mac::AEKeyForm       keyForm,
-	                                                       const AEDesc_Data&   keyData,
-	                                                       RefCon )
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+	                        const Mac::AEDesc_Token&  containerToken,
+	                        Mac::AEObjectClass        containerClass,
+	                        Mac::AEKeyForm            keyForm,
+	                        const Mac::AEDesc_Data&   keyData,
+	                        RefCon )
 	{
 		if ( keyData.descriptorType == typeAbsoluteOrdinal )
 		{
@@ -219,15 +221,15 @@ namespace Nitrogen
 	
 	struct ObjectAccessContext
 	{
-		Mac::AEObjectClass  desiredClass;
-		Mac::AEObjectClass  containerClass;
-		Mac::AEKeyForm      keyForm;
-		const AEDesc_Data&  keyData;
+		Mac::AEObjectClass       desiredClass;
+		Mac::AEObjectClass       containerClass;
+		Mac::AEKeyForm           keyForm;
+		const Mac::AEDesc_Data&  keyData;
 		
-		ObjectAccessContext( Mac::AEObjectClass  desiredClass,
-		                     Mac::AEObjectClass  containerClass,
-		                     Mac::AEKeyForm      keyForm,
-		                     const AEDesc_Data&  keyData )
+		ObjectAccessContext( Mac::AEObjectClass       desiredClass,
+		                     Mac::AEObjectClass       containerClass,
+		                     Mac::AEKeyForm           keyForm,
+		                     const Mac::AEDesc_Data&  keyData )
 		:
 			desiredClass  ( desiredClass ),
 			containerClass( containerClass ),
@@ -236,8 +238,10 @@ namespace Nitrogen
 		{}
 	};
 	
-	static nucleus::owned< AEDesc_Token > CallObjectAccessor( const AEDesc_Token&         containerToken,
-	                                                          const ObjectAccessContext&  context )
+	static nucleus::owned< Mac::AEDesc_Token >
+	//
+	CallObjectAccessor( const Mac::AEDesc_Token&    containerToken,
+	                    const ObjectAccessContext&  context )
 	{
 		return AECallObjectAccessor( context.desiredClass,
 		                             containerToken,
@@ -246,31 +250,33 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static nucleus::owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc&               containerToken,
-	                                                                     const ObjectAccessContext&  context )
+	static nucleus::owned< Mac::AEDesc_Token >
+	//
+	CallObjectAccessorWithContext( const AEDesc&               containerToken,
+	                               const ObjectAccessContext&  context )
 	{
-		return CallObjectAccessor( AEDesc_Cast< const AEDesc_Token >( containerToken ),
+		return CallObjectAccessor( AEDesc_Cast< const Mac::AEDesc_Token >( containerToken ),
 		                           context );
 	}
 	
-	static inline const AEDesc_Token& AEToken_Cast( const AEDesc& token )
+	static inline const Mac::AEDesc_Token& AEToken_Cast( const AEDesc& token )
 	{
-		return AEDesc_Cast< const AEDesc_Token >( token );
+		return AEDesc_Cast< const Mac::AEDesc_Token >( token );
 	}
 	
 	class ObjectAccessor_Caller
 	{
 		private:
-			Mac::AEObjectClass  itsDesiredClass;
-			Mac::AEObjectClass  itsContainerClass;
-			Mac::AEKeyForm      itsKeyForm;
-			const AEDesc_Data&  itsKeyData;
+			Mac::AEObjectClass       itsDesiredClass;
+			Mac::AEObjectClass       itsContainerClass;
+			Mac::AEKeyForm           itsKeyForm;
+			const Mac::AEDesc_Data&  itsKeyData;
 		
 		public:
-			ObjectAccessor_Caller( Mac::AEObjectClass  desiredClass,
-	                               Mac::AEObjectClass  containerClass,
-	                               Mac::AEKeyForm      keyForm,
-	                               const AEDesc_Data&  keyData )
+			ObjectAccessor_Caller( Mac::AEObjectClass       desiredClass,
+	                               Mac::AEObjectClass       containerClass,
+	                               Mac::AEKeyForm           keyForm,
+	                               const Mac::AEDesc_Data&  keyData )
 			:
 				itsDesiredClass  ( desiredClass   ),
 				itsContainerClass( containerClass ),
@@ -279,7 +285,7 @@ namespace Nitrogen
 			{
 			}
 			
-			nucleus::owned< AEDesc_Token > operator()( const AEDesc& containerToken ) const
+			nucleus::owned< Mac::AEDesc_Token > operator()( const AEDesc& containerToken ) const
 			{
 				try
 				{
@@ -301,14 +307,16 @@ namespace Nitrogen
 			}
 	};
 	
-	nucleus::owned< AEDesc_Token > DispatchAccessToList( Mac::AEObjectClass   desiredClass,
-	                                                     const AEDesc_Token&  containerToken,
-	                                                     Mac::AEObjectClass   containerClass,
-	                                                     Mac::AEKeyForm       keyForm,
-	                                                     const AEDesc_Data&   keyData,
-	                                                     RefCon )
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	DispatchAccessToList( Mac::AEObjectClass        desiredClass,
+	                      const Mac::AEDesc_Token&  containerToken,
+	                      Mac::AEObjectClass        containerClass,
+	                      Mac::AEKeyForm            keyForm,
+	                      const Mac::AEDesc_Data&   keyData,
+	                      RefCon )
 	{
-		nucleus::owned< AEDescList_Token > result = AECreateList< AEDescList_Token >();
+		nucleus::owned< Mac::AEDescList_Token > result = AECreateList< Mac::AEDescList_Token >();
 		
 		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		

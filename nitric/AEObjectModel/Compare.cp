@@ -11,22 +11,22 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator       op,
-	              const AEDesc_Token&  obj1,
-	              const AEDesc_Token&  obj2 )
+	bool Compare( AECompOperator            op,
+	              const Mac::AEDesc_Token&  obj1,
+	              const Mac::AEDesc_Token&  obj2 )
 	{
 		return TheGlobalComparer().Compare( op, obj1, obj2 );
 	}
 	
-	bool Comparer::Compare( AECompOperator       op,
-	                        const AEDesc_Token&  obj1,
-	                        const AEDesc_Token&  obj2 )
+	bool Comparer::Compare( AECompOperator            op,
+	                        const Mac::AEDesc_Token&  obj1,
+	                        const Mac::AEDesc_Token&  obj2 )
 	{
-		Map::const_iterator found = map.find( DescType( obj1.descriptorType ) );
+		Map::const_iterator found = map.find( Mac::DescType( obj1.descriptorType ) );
 		
 		if ( found == map.end() )
 		{
-			found = map.find( DescType( obj2.descriptorType ) );
+			found = map.find( Mac::DescType( obj2.descriptorType ) );
 			
 			if ( found == map.end() )
 			{

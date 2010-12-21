@@ -11,11 +11,11 @@
 namespace Nitrogen
 {
 	
-	Mac::AEObjectClass GetObjectClass( const AEDesc_Token& obj )
+	Mac::AEObjectClass GetObjectClass( const Mac::AEDesc_Token& obj )
 	{
 		try
 		{
-			return TheGlobalObjectClassMap().GetObjectClass( DescType( obj.descriptorType ) );
+			return TheGlobalObjectClassMap().GetObjectClass( Mac::DescType( obj.descriptorType ) );
 		}
 		catch ( const OSStatus& err )
 		{
@@ -45,10 +45,10 @@ namespace Nitrogen
 	
 	ObjectClassMap::ObjectClassMap()
 	{
-		Register< typeNull >();
+		Register< Mac::typeNull >();
 	}
 	
-	Mac::AEObjectClass ObjectClassMap::GetObjectClass( DescType tokenType )
+	Mac::AEObjectClass ObjectClassMap::GetObjectClass( Mac::DescType tokenType )
 	{
 		Map::const_iterator found = map.find( tokenType );
 		
@@ -74,9 +74,9 @@ namespace Nitrogen
 	{
 	}
 	
-	Mac::AEObjectClass ObjectClassGetter::GetObjectClass( const AEDesc_Token& obj )
+	Mac::AEObjectClass ObjectClassGetter::GetObjectClass( const Mac::AEDesc_Token& obj )
 	{
-		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
+		Map::const_iterator found = map.find( Mac::DescType( obj.descriptorType ) );
 		
 		if ( found == map.end() )
 		{

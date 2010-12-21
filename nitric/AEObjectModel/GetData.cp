@@ -11,14 +11,14 @@
 namespace Nitrogen
 {
 	
-	static nucleus::owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, Mac::DescType )
+	static nucleus::owned< Mac::AEDesc_Data > GetDataFromAppToken( const Mac::AEDesc_Token&, Mac::DescType )
 	{
 		return GetRootObjectSpecifier();
 	}
 	
-	static nucleus::owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, Mac::DescType desiredType )
+	static nucleus::owned< Mac::AEDesc_Data > GetDataFromTokenList( const Mac::AEDescList_Token& obj, Mac::DescType desiredType )
 	{
-		nucleus::owned< AEDescList_Data > list = AECreateList( false );
+		nucleus::owned< Mac::AEDescList_Data > list = AECreateList( false );
 		
 		UInt32 count = AECountItems( obj );
 		
@@ -26,7 +26,7 @@ namespace Nitrogen
 		{
 			AEPutDesc( list,
 			           0,
-			           GetData( AEDesc_Cast< const AEDesc_Token >( AEGetNthDesc( obj, i ).get() ),
+			           GetData( AEDesc_Cast< const Mac::AEDesc_Token >( AEGetNthDesc( obj, i ).get() ),
 			                    desiredType ).get() );
 		}
 		
@@ -34,12 +34,14 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( Mac::AEObjectClass             objectClass,
-	                                                                  const AEDesc_ObjectSpecifier&  container,
-	                                                                  Mac::AEKeyForm                 keyForm,
-	                                                                  const AEDesc_Data&             keyData )
+	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
+	//
+	AECreateObjectSpecifier( Mac::AEObjectClass                  objectClass,
+	                         const Mac::AEDesc_ObjectSpecifier&  container,
+	                         Mac::AEKeyForm                      keyForm,
+	                         const Mac::AEDesc_Data&             keyData )
 	{
-		nucleus::owned< AERecord_Data > record = AECreateList( true );
+		nucleus::owned< Mac::AERecord_Data > record = AECreateList( true );
 		
 		AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
 		AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
@@ -50,7 +52,10 @@ namespace Nitrogen
 		return AECoerceDesc( record, Mac::typeObjectSpecifier );
 	}
 	
-	nucleus::owned< AEDesc_Data > GetData( const AEDesc_Token& obj, Mac::DescType desiredType )
+	nucleus::owned< Mac::AEDesc_Data >
+	//
+	GetData( const Mac::AEDesc_Token&  obj,
+	         Mac::DescType             desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );
 	}
@@ -61,7 +66,7 @@ namespace Nitrogen
 		Register( Mac::typeAEList, GetDataFromTokenList );
 	}
 	
-	nucleus::owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, Mac::DescType desiredType )
+	nucleus::owned< Mac::AEDesc_Data > DataGetter::GetData( const Mac::AEDesc_Token& obj, Mac::DescType desiredType )
 	{
 		Map::const_iterator found = map.find( Mac::DescType( obj.descriptorType ) );
 		

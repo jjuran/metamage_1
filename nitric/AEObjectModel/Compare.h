@@ -16,19 +16,19 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator       op,
-			      const AEDesc_Token&  obj1,
-			      const AEDesc_Token&  obj2 );
+	bool Compare( AECompOperator            op,
+			      const Mac::AEDesc_Token&  obj1,
+			      const Mac::AEDesc_Token&  obj2 );
 	
 	template < ::DescType tokenType > struct Compare_Traits;
 	
 	class Comparer
 	{
 		public:
-			typedef bool (*Callback)( AECompOperator, const AEDesc_Token&, const AEDesc_Token& );
+			typedef bool (*Callback)( AECompOperator, const Mac::AEDesc_Token&, const Mac::AEDesc_Token& );
 		
 		private:
-			typedef std::map< DescType, Callback >  Map;
+			typedef std::map< Mac::DescType, Callback >  Map;
 			
 			Map map;
 			
@@ -39,7 +39,7 @@ namespace Nitrogen
 		public:
 			Comparer()  {}
 			
-			void Register( DescType tokenType, Comparer::Callback callback )
+			void Register( Mac::DescType tokenType, Comparer::Callback callback )
 			{
 				map[ tokenType ] = callback;
 			}
@@ -50,14 +50,14 @@ namespace Nitrogen
 				Register( tokenType, Compare_Traits< tokenType >::Compare );
 			}
 			
-			bool Compare( AECompOperator       op,
-			              const AEDesc_Token&  obj1,
-			              const AEDesc_Token&  obj2 );
+			bool Compare( AECompOperator            op,
+			              const Mac::AEDesc_Token&  obj1,
+			              const Mac::AEDesc_Token&  obj2 );
 	};
 	
 	Comparer& TheGlobalComparer();
 	
-	inline void RegisterComparer( DescType tokenType, Comparer::Callback callback )
+	inline void RegisterComparer( Mac::DescType tokenType, Comparer::Callback callback )
 	{
 		TheGlobalComparer().Register( tokenType, callback );
 	}
@@ -73,9 +73,9 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator       op,
-		                     const AEDesc_Token&  obj1,
-		                     const AEDesc_Token&  obj2 )
+		static bool Compare( AECompOperator            op,
+		                     const Mac::AEDesc_Token&  obj1,
+		                     const Mac::AEDesc_Token&  obj2 )
 		{
 			if ( op != AECompOperator( kAEEquals ) )
 			{
@@ -94,9 +94,9 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator       op,
-		                     const AEDesc_Token&  obj1,
-		                     const AEDesc_Token&  obj2 )
+		static bool Compare( AECompOperator            op,
+		                     const Mac::AEDesc_Token&  obj1,
+		                     const Mac::AEDesc_Token&  obj2 )
 		{
 			Result a = AEGetDescData< descType >( obj1 );
 			Result b = AEGetDescData< descType >( obj2 );

@@ -18,13 +18,13 @@
 namespace Nitrogen
 {
 	
-	inline nucleus::owned< AEDesc_Token > GetRootToken()
+	inline nucleus::owned< Mac::AEDesc_Token > GetRootToken()
 	{
-		return AEInitializeDesc< AEDesc_Token >();
+		return AEInitializeDesc< Mac::AEDesc_Token >();
 	}
 	
-	UInt32 ComputeAbsoluteIndex( const AEDesc_Data&  keyData,
-	                             std::size_t         count );
+	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
+	                             std::size_t              count );
 	
 	pascal OSErr OSLCompare( ::DescType     op,
 	                         const AEDesc*  obj1,
@@ -40,19 +40,23 @@ namespace Nitrogen
 	
 	void AESetObjectCallbacks();
 	
-	nucleus::owned< AEDesc_Token > DispatchPropertyAccess( Mac::AEObjectClass   desiredClass,
-	                                                       const AEDesc_Token&  containerToken,
-	                                                       Mac::AEObjectClass   containerClass,
-	                                                       Mac::AEKeyForm       keyForm,
-	                                                       const AEDesc_Data&   keyData,
-	                                                       RefCon );
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+	                        const Mac::AEDesc_Token&  containerToken,
+	                        Mac::AEObjectClass        containerClass,
+	                        Mac::AEKeyForm            keyForm,
+	                        const Mac::AEDesc_Data&   keyData,
+	                        RefCon );
 	
-	nucleus::owned< AEDesc_Token > DispatchAccessToList( Mac::AEObjectClass   desiredClass,
-	                                                     const AEDesc_Token&  containerToken,
-	                                                     Mac::AEObjectClass   containerClass,
-	                                                     Mac::AEKeyForm       keyForm,
-	                                                     const AEDesc_Data&   keyData,
-	                                                     RefCon );
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	DispatchAccessToList( Mac::AEObjectClass        desiredClass,
+	                      const Mac::AEDesc_Token&  containerToken,
+	                      Mac::AEObjectClass        containerClass,
+	                      Mac::AEKeyForm            keyForm,
+	                      const Mac::AEDesc_Data&   keyData,
+	                      RefCon );
 	
 }
 

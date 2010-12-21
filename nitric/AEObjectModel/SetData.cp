@@ -11,7 +11,7 @@
 namespace Nitrogen
 {
 	
-	void SetData( const AEDesc_Token& obj, const AEDesc_Data& data )
+	void SetData( const Mac::AEDesc_Token& obj, const Mac::AEDesc_Data& data )
 	{
 		return TheGlobalDataSetter().SetData( obj, data );
 	}
@@ -20,9 +20,9 @@ namespace Nitrogen
 	{
 	}
 	
-	void DataSetter::SetData( const AEDesc_Token& obj, const AEDesc_Data& data )
+	void DataSetter::SetData( const Mac::AEDesc_Token& obj, const Mac::AEDesc_Data& data )
 	{
-		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
+		Map::const_iterator found = map.find( Mac::DescType( obj.descriptorType ) );
 		
 		if ( found == map.end() )
 		{
