@@ -318,17 +318,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	using Mac::AEDesc_Data;
-	using Mac::AEDescList_Data;
-	using Mac::AERecord_Data;
-	using Mac::AEAddressDesc;
-	using Mac::AppleEvent;
-	using Mac::AEDesc_ObjectSpecifier;
-	
-	using Mac::AEDesc_Token;
-	using Mac::AEDescList_Token;
-	using Mac::AERecord_Token;
-	
 	template < class AEDesc_Type >
 	struct Qualified_AEDesc_Traits
 	{
