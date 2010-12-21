@@ -161,7 +161,7 @@ namespace tool
 	{
 		Mac::FSCreator signature = Mac::FSCreator( 'Poof' );
 		
-		n::owned< N::ICInstance > ic = N::ICStart( signature );
+		n::owned< ICInstance > ic = N::ICStart( signature );
 		
 	#if !TARGET_API_MAC_CARBON
 		

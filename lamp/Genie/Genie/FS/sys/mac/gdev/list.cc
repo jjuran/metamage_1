@@ -78,9 +78,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static N::GDHandle GetKeyFromParent( const FSTree* parent )
+	static GDHandle GetKeyFromParent( const FSTree* parent )
 	{
-		return (N::GDHandle) plus::decode_32_bit_hex( parent->Name() );
+		return (GDHandle) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
 	
@@ -112,7 +112,7 @@ namespace Genie
 	class gdev_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::GDHandle gdH ) const
+			FSNode operator()( GDHandle gdH ) const
 			{
 				const ino_t inode = 0;
 				
@@ -139,7 +139,7 @@ namespace Genie
 	{
 		typedef const Rect& Result;
 		
-		static Result Get( N::GDHandle gdevice )
+		static Result Get( GDHandle gdevice )
 		{
 			return gdevice[0]->gdRect;
 		}
@@ -149,7 +149,7 @@ namespace Genie
 	{
 		typedef Point Result;
 		
-		static Result Get( N::GDHandle gdevice )
+		static Result Get( GDHandle gdevice )
 		{
 			const Rect& bounds = gdevice[0]->gdRect;
 			
@@ -165,7 +165,7 @@ namespace Genie
 	{
 		static const std::size_t fixed_size = Accessor::fixed_size;
 		
-		typedef N::GDHandle Key;
+		typedef GDHandle Key;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
@@ -181,7 +181,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		N::GDHandle key = GetKeyFromParent( parent.get() );
+		GDHandle key = GetKeyFromParent( parent.get() );
 		
 		plus::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		

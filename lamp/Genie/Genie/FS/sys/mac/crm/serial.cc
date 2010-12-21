@@ -43,7 +43,7 @@ namespace Genie
 	}
 	
 	
-	static N::CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
+	static CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
 	{
 		N::CRMResource_Container crmResources = N::CRMResources( N::crmSerialDevice );
 		
@@ -51,7 +51,7 @@ namespace Genie
 		
 		for ( Iter it = crmResources.begin();  it != crmResources.end();  ++it )
 		{
-			N::CRMRecPtr rec = *it;
+			CRMRecPtr rec = *it;
 			
 			if ( rec->crmDeviceID == id )
 			{
@@ -62,7 +62,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static N::CRMSerialPtr CRMRecGetSerial( N::CRMRecPtr crmRec )
+	static CRMSerialPtr CRMRecGetSerial( CRMRecPtr crmRec )
 	{
 		// FIXME:  Throw if device type is wrong
 		return N::GetCRMAttributes< N::crmSerialDevice >( crmRec );
@@ -119,9 +119,9 @@ namespace Genie
 	{
 		N::CRMDeviceID key = GetKeyFromParent( that );
 		
-		N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
+		CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 		
-		N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
+		CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
 		
 		StringHandle h = serialPtr->*selector;
 		
@@ -161,9 +161,9 @@ namespace Genie
 		{
 			N::CRMDeviceID key = GetKey( that );
 			
-			N::CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
+			CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 			
-			N::CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
+			CRMSerialPtr serialPtr = CRMRecGetSerial( crmRec );
 			
 			CRMIconHandle iconHandle = serialPtr->deviceIcon;
 			

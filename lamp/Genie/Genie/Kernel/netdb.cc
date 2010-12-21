@@ -64,7 +64,7 @@ namespace Genie
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( netdb_notifier );
 		
-		n::owned< N::InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
+		n::owned< InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
 		N::OTInstallNotifier( provider, gNotifyUPP, &data );
 		

@@ -952,7 +952,7 @@ namespace Vertice
 		
 		savedGWorld.restore();
 		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
 		n::saved< N::Pixels_State > savedPixelsState( pix );
@@ -1116,7 +1116,7 @@ namespace Vertice
 			}
 		}
 		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
 		n::saved< N::Pixels_State > savedPixelsState( pix );
@@ -1173,7 +1173,7 @@ namespace Vertice
 	
 	void PortView::DrawPixel( int x, int y )
 	{
-		N::SetCPixel( x, y, n::convert< N::RGBColor >( TracePixel( x, y ) ) );
+		N::SetCPixel( x, y, n::convert< RGBColor >( TracePixel( x, y ) ) );
 	}
 	
 	/*
@@ -1455,7 +1455,7 @@ namespace Vertice
 								
 								if ( !gBlitting )
 								{
-									N::RGBColor rgb = n::convert< N::RGBColor >( tweaked );
+									RGBColor rgb = n::convert< RGBColor >( tweaked );
 									
 									N::SetCPixel( iX, iY, rgb );
 								}
@@ -1496,7 +1496,7 @@ namespace Vertice
 		{
 			savedGWorld.restore();
 			
-			N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+			CGrafPtr thePort = N::GetQDGlobalsThePort();
 			
 			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
 			n::saved< N::Pixels_State > savedPixelsState( thePortPix );

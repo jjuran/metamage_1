@@ -58,7 +58,7 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
+	static void ReportAndThrowScriptError( ComponentInstance comp, const char* step )
 	{
 		SInt16                   errorNumber  = N::OSAScriptError< Mac::kOSAErrorNumber  >( comp );
 		nucleus::mutable_string  errorMessage = N::OSAScriptError< Mac::kOSAErrorMessage >( comp );
@@ -76,7 +76,7 @@ namespace tool
 		                      : p7::exit_failure;
 	}
 	
-	static inline n::owned< N::ComponentInstance > OpenGenericScriptingComponent()
+	static inline n::owned< ComponentInstance > OpenGenericScriptingComponent()
 	{
 		return N::OpenDefaultComponent( N::kOSAComponentType,
 		                                N::kOSAGenericScriptingComponentSubtype );
@@ -141,7 +141,7 @@ namespace tool
 		return result;
 	}
 	
-	static n::owned< N::OSAID > MakeCWDContext( const n::shared< N::ComponentInstance >& scriptingComponent )
+	static n::owned< N::OSAID > MakeCWDContext( const n::shared< ComponentInstance >& scriptingComponent )
 	{
 		char stupid_buffer[ 1024 ];
 		char* gotcwd = getcwd( stupid_buffer, 1024 );
@@ -166,7 +166,7 @@ namespace tool
 	
 	static n::owned< N::OSAID > CompileSource( const AEDesc& source, bool useCWD )
 	{
-		n::shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
+		n::shared< ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 		
 		const char* step;
 		

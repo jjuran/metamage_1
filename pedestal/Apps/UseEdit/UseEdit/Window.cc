@@ -117,7 +117,7 @@ namespace UseEdit
 	{
 		ASSERT( itsTE == NULL );
 		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		::TextFont( kFontIDMonaco );
 		

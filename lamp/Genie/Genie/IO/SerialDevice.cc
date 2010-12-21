@@ -228,7 +228,7 @@ namespace Genie
 		using N::noParity;
 		using N::stop10;
 		
-		N::Control< kSERDHandshake >( itsOutputRefNum, n::make< N::SerShk >() );
+		N::Control< kSERDHandshake >( itsOutputRefNum, n::make< SerShk >() );
 		
 		N::SerReset( itsOutputRefNum, baud19200 | data8 | noParity | stop10 );
 	}

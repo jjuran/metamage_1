@@ -58,12 +58,12 @@ namespace nucleus
 		}
 	};
 	
-	template <> struct disposer< Nitrogen::CRMSerialPtr >
+	template <> struct disposer< CRMSerialPtr >
 	{
-		typedef Nitrogen::CRMSerialPtr  argument_type;
-		typedef void                    result_type;
+		typedef CRMSerialPtr  argument_type;
+		typedef void          result_type;
 		
-		void operator()( Nitrogen::CRMSerialPtr crmSerial ) const
+		void operator()( CRMSerialPtr crmSerial ) const
 		{
 			disposer< Nitrogen::Handle >()( crmSerial->inputDriverName  );
 			disposer< Nitrogen::Handle >()( crmSerial->outputDriverName );

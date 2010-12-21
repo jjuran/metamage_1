@@ -450,7 +450,7 @@ namespace Genie
 	
 	static void FocusViewInWindow( Ped::View& view, const FSTree* window_key )
 	{
-		if ( N::WindowRef window = GetWindowRef( window_key ) )
+		if ( WindowRef window = GetWindowRef( window_key ) )
 		{
 			if ( window == FrontWindow() )
 			{
@@ -463,7 +463,7 @@ namespace Genie
 	
 	static void BlurViewInWindow( Ped::View& view, const FSTree* window_key )
 	{
-		if ( N::WindowRef window = GetWindowRef( window_key ) )
+		if ( WindowRef window = GetWindowRef( window_key ) )
 		{
 			if ( window == FrontWindow() )
 			{

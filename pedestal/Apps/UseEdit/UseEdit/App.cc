@@ -349,7 +349,7 @@ namespace UseEdit
 		static n::owned< N::AEDesc_Data > Get( const N::AEDesc_Token&  obj,
 		                                       Mac::DescType           desiredType )
 		{
-			N::AEDesc keyData = obj;
+			AEDesc keyData = obj;
 			
 			keyData.descriptorType = typeUInt32;
 			

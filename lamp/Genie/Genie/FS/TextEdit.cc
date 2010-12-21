@@ -168,7 +168,7 @@ namespace Genie
 		
 		ASSERT( itsTE == NULL );
 		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
 		itsTE = N::TENew( bounds );
 		

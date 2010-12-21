@@ -297,7 +297,7 @@ namespace Genie
 		typedef plus::reconstruct< RGBColor, thaw, vivify >  reconstruct;
 	};
 	
-	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
+	template < RGBColor (*GetColor)(CGrafPtr), void (*SetColor)(const RGBColor&) >
 	struct Access_WindowColor : serialize_RGBColor
 	{
 		static RGBColor Get( WindowRef window )

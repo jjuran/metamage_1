@@ -49,11 +49,11 @@ namespace UseEdit
 		return data;
 	}
 	
-	static n::owned< N::CFStringRef > GetFilenameAsCFString( const FSRef& file )
+	static n::owned< CFStringRef > GetFilenameAsCFString( const FSRef& file )
 	{
 		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
 		
-		return n::convert< n::owned< N::CFStringRef > >( info.outName );
+		return n::convert< n::owned< CFStringRef > >( info.outName );
 	}
 	
 	
