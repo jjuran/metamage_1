@@ -813,7 +813,7 @@ namespace Nitrogen
 	// 444
 	nucleus::owned< AEDesc_Data > AECoercePtr( Mac::DescType  typeCode,
 	                                           const void*    dataPtr,
-	                                           Size           dataSize,
+	                                           std::size_t    dataSize,
 	                                           Mac::DescType  toType );
 	
 	// 461
@@ -851,9 +851,9 @@ namespace Nitrogen
 	struct AEDesc_Info
 	{
 		Mac::DescType  typeCode;
-		Size           dataSize;
+		std::size_t    dataSize;
 		
-		operator Size() const  { return dataSize; }
+		operator std::size_t() const  { return dataSize; }
 	};
 	
 	typedef AEDesc_Info AESizeOfNthItem_Result,
@@ -886,7 +886,7 @@ namespace Nitrogen
 		
 		AEDesc AECreateDesc_Unowned( Mac::DescType  typeCode,
 		                             const void*    dataPtr,
-		                             Size           dataSize );
+		                             std::size_t    dataSize );
 		
 		AEDesc AECreateDesc_Unowned( Mac::DescType typeCode, Handle handle );
 		
@@ -912,7 +912,7 @@ namespace Nitrogen
 	template < class AEDesc_Type >
 	inline nucleus::owned< AEDesc_Type > AECreateDesc( Mac::DescType  typeCode,
 	                                                   const void*    dataPtr,
-	                                                   Size           dataSize )
+	                                                   std::size_t    dataSize )
 	{
 		// AEDesc_Type must be a subclass of AEDesc
 		(void) static_cast< const AEDesc& >( AEDesc_Type() );
@@ -987,7 +987,7 @@ namespace Nitrogen
 		
 		inline nucleus::owned< AEDesc_Data > AECreateDesc( Mac::DescType  typeCode,
 		                                                   const void*    dataPtr,
-		                                                   Size           dataSize )
+		                                                   std::size_t    dataSize )
 		{
 			return Nitrogen::AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
 		}
@@ -1078,13 +1078,13 @@ namespace Nitrogen
 	               long           index,
 	               Mac::DescType  type,
 	               const void*    dataPtr,
-	               Size           dataSize );
+	               std::size_t    dataSize );
 	
 	inline void AEPutPtr( nucleus::owned< AEDescList_Data >&  list,
 	                      long                                index,
 	                      Mac::DescType                       type,
 	                      const void*                         dataPtr,
-	                      Size                                dataSize )
+	                      std::size_t                         dataSize )
 	{
 		AEPutPtr( Detail::AEDescEditor< AEDescList_Data >( list ),
 		          index,
@@ -1126,14 +1126,14 @@ namespace Nitrogen
 	{
 		Mac::AEKeyword  keyword;
 		Mac::DescType   typeCode;
-		Size            actualSize;
+		std::size_t     actualSize;
 	};
 	
 	GetNthPtr_Result AEGetNthPtr( const AEDesc&  listDesc,
 	                              long           index,
 	                              Mac::DescType  desiredType,
 	                              void*          dataPtr,
-	                              Size           maximumSize );
+	                              std::size_t    maximumSize );
 	
 	inline nucleus::owned< AEDesc_Data > AEGetNthDesc( const AEDesc&  listDesc,
 	                                                   long           index,

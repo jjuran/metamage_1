@@ -312,7 +312,7 @@ NavTranslateFile(
 			AEDesc *theObject,
 			OSType        previewDataType	= OSType(),
 			const void *  previewData		= NULL,
-			Size          previewDataSize	= 0 ) {
+			std::size_t   previewDataSize	= 0 ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		ThrowOSStatus ( ::NavCreatePreview ( theObject, previewDataType, previewData, previewDataSize ));
 		}

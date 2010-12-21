@@ -160,7 +160,7 @@ namespace Nitrogen
                            DragItemRef theItemRef,
                            FlavorType  theType,
                            const void *dataPtr,
-                           Size        dataSize,
+                           std::size_t dataSize,
                            FlavorFlags theFlags = FlavorFlags() );
 
    inline void AddDragItemFlavor( DragRef     theDrag,
@@ -215,7 +215,7 @@ namespace Nitrogen
                                DragItemRef  theItemRef,
                                FlavorType   theType,
                                const void  *dataPtr,
-                               Size         dataSize,
+                               std::size_t  dataSize,
                                UInt32       dataOffset = 0 );
 
 
@@ -286,13 +286,13 @@ namespace Nitrogen
 
    FlavorFlags GetFlavorFlags( DragRef theDrag, DragItemRef theItemRef, FlavorType theType );
 
-   Size GetFlavorDataSize( DragRef theDrag, DragItemRef theItemRef, FlavorType theType );
+   std::size_t GetFlavorDataSize( DragRef theDrag, DragItemRef theItemRef, FlavorType theType );
 
-   Size GetFlavorData( DragRef      theDrag,
+   std::size_t GetFlavorData( DragRef      theDrag,
                        DragItemRef  theItemRef,
                        FlavorType   theType,
                        void        *dataPtr,
-                       Size         dataSize,
+                       std::size_t  dataSize,
                        UInt32       dataOffset = 0 );
 
    class GetFlavorData_Getter

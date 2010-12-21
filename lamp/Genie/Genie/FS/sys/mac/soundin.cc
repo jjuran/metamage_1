@@ -140,7 +140,7 @@ namespace Genie
 	{
 		N::Str255 result;
 		
-		if ( N::Size size = N::GetHandleSize( h ) )
+		if ( std::size_t size = N::GetHandleSize( h ) )
 		{
 			unsigned const char* str = (StringPtr) *h.Get();
 			
@@ -182,7 +182,7 @@ namespace Genie
 			
 			N::Handle icon = device.get().deviceIconHandle;
 			
-			const N::Size size = N::GetHandleSize( icon );
+			const std::size_t size = N::GetHandleSize( icon );
 			
 			if ( size == 0 )
 			{

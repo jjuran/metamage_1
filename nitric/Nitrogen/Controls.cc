@@ -128,7 +128,7 @@ namespace Nitrogen
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ControlDataTag    inTagName,
-                        Size              inSize,
+                        std::size_t       inSize,
                         const void *      inData )
      {
       ThrowOSStatus( ::SetControlData( inControl,
@@ -138,10 +138,10 @@ namespace Nitrogen
                                        inData ) );
      }
 
-   Size GetControlData( ControlRef        inControl,
+   std::size_t GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ControlDataTag    inTagName,
-                        Size              inBufferSize,
+                        std::size_t       inBufferSize,
                         void *            inBuffer )
      {
       ::Size outActualSize;
@@ -151,10 +151,10 @@ namespace Nitrogen
                                        static_cast< ::Size >( inBufferSize ),
                                        inBuffer,
                                        &outActualSize ) );
-      return static_cast<Size>( outActualSize );
+      return static_cast< std::size_t >( outActualSize );
      }
 
-   Size GetControlData( ControlRef        inControl,
+   std::size_t GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ControlDataTag    inTagName )
      {

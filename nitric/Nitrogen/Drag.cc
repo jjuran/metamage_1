@@ -55,7 +55,7 @@ namespace Nitrogen
                            DragItemRef theItemRef,
                            FlavorType  theType,
                            const void *dataPtr,
-                           Size        dataSize,
+                           std::size_t dataSize,
                            FlavorFlags theFlags )
      {
       ThrowOSStatus( ::AddDragItemFlavor( theDrag,
@@ -70,7 +70,7 @@ namespace Nitrogen
                                DragItemRef  theItemRef,
                                FlavorType   theType,
                                const void  *dataPtr,
-                               Size         dataSize,
+                               std::size_t  dataSize,
                                UInt32       dataOffset )
      {
       ThrowOSStatus( ::SetDragItemFlavorData( theDrag,
@@ -145,23 +145,23 @@ namespace Nitrogen
       return FlavorFlags( result );
      }
 
-   Size GetFlavorDataSize( DragRef theDrag, DragItemRef theItemRef, FlavorType theType )
+   std::size_t GetFlavorDataSize( DragRef theDrag, DragItemRef theItemRef, FlavorType theType )
      {
       ::Size result;
       ThrowOSStatus( ::GetFlavorDataSize( theDrag, theItemRef, theType, &result ) );
-      return static_cast<Size>( result );
+      return static_cast<std::size_t>( result );
      }
 
-   Size GetFlavorData( DragRef      theDrag,
+   std::size_t GetFlavorData( DragRef      theDrag,
                        DragItemRef  theItemRef,
                        FlavorType   theType,
                        void        *dataPtr,
-                       Size         dataSize,
+                       std::size_t  dataSize,
                        UInt32       dataOffset )
      {
       ::Size result = static_cast< ::Size >( dataSize );
       ThrowOSStatus( ::GetFlavorData( theDrag, theItemRef, theType, dataPtr, &result, dataOffset ) );
-      return static_cast< Size >( result );
+      return static_cast< std::size_t >( result );
      }
 
    Rect GetDragItemBounds( DragRef theDrag, DragItemRef theItemRef )

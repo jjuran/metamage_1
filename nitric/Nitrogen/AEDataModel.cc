@@ -115,7 +115,7 @@ namespace Nitrogen
 	
 	nucleus::owned< AEDesc_Data > AECoercePtr( Mac::DescType  typeCode, 
 	                                           const void*    dataPtr, 
-	                                           Size           dataSize, 
+	                                           std::size_t    dataSize, 
 	                                           Mac::DescType  toType )
 	{
 		// Necessary for OS 9; OS X does this automatically
@@ -171,7 +171,7 @@ namespace Nitrogen
 		
 		AEDesc AECreateDesc_Unowned( Mac::DescType  typeCode,
 		                             const void*    dataPtr,
-		                             Size           dataSize )
+		                             std::size_t    dataSize )
 		{
 			if ( dataPtr == NULL )
 			{
@@ -290,7 +290,7 @@ namespace Nitrogen
 	               long           index, 
 	               Mac::DescType  type, 
 	               const void*    dataPtr, 
-	               Size           dataSize )
+	               std::size_t    dataSize )
 	{
 		ThrowOSStatus( ::AEPutPtr( &list, index, type, dataPtr, dataSize ) );
 	}
@@ -304,7 +304,7 @@ namespace Nitrogen
 	                              long           index,
 	                              Mac::DescType  desiredType,
 	                              void*          dataPtr,
-	                              Size           maximumSize )
+	                              std::size_t    maximumSize )
 	{
 		::AEKeyword keyword;
 		::DescType  typeCode;
