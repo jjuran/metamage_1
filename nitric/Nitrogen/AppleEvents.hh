@@ -121,14 +121,14 @@ namespace Nitrogen
 	struct AEEventHandler_RefCon_Traits
 	{
 		typedef RefConType RefCon;
-		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefConType refCon );
+		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, RefConType refCon );
 	};
 	
 	template <>
 	struct AEEventHandler_RefCon_Traits< void >
 	{
 		typedef void RefCon;
-		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply );
+		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
 	};
 	
 	template < class RefConType,
@@ -141,8 +141,8 @@ namespace Nitrogen
 		{
 			try
 			{
-				handler( static_cast< AppleEvent const& >( *appleEvent ),
-				         static_cast< AppleEvent      & >( *reply      ),
+				handler( static_cast< Mac::AppleEvent const& >( *appleEvent ),
+				         static_cast< Mac::AppleEvent      & >( *reply      ),
 				         reinterpret_cast< RefConType >  ( refCon      ) );
 			}
 			catch ( ... )
@@ -163,8 +163,8 @@ namespace Nitrogen
 		{
 			try
 			{
-				handler( static_cast< AppleEvent const& >( *appleEvent ),
-				         static_cast< AppleEvent      & >( *reply      ) );
+				handler( static_cast< Mac::AppleEvent const& >( *appleEvent ),
+				         static_cast< Mac::AppleEvent      & >( *reply      ) );
 			}
 			catch ( ... )
 			{

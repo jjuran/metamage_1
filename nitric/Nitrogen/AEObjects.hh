@@ -110,14 +110,14 @@ namespace Nitrogen
 	
 	inline void DisposeOSLAccessorUPP( nucleus::owned< OSLAccessorUPP > )  {}
 	
-	inline void InvokeOSLAccessorUPP( Mac::AEObjectClass   desiredClass,
-	                                  const AEDesc_Token&  containerToken,
-	                                  Mac::AEObjectClass   containerClass,
-	                                  Mac::AEKeyForm       keyForm,
-	                                  const AEDesc_Data&   keyData,
-	                                  AEDesc_Token&        value,
-	                                  RefCon               accessorRefcon,
-	                                  OSLAccessorUPP       userUPP )
+	inline void InvokeOSLAccessorUPP( Mac::AEObjectClass        desiredClass,
+	                                  const Mac::AEDesc_Token&  containerToken,
+	                                  Mac::AEObjectClass        containerClass,
+	                                  Mac::AEKeyForm            keyForm,
+	                                  const Mac::AEDesc_Data&   keyData,
+	                                  Mac::AEDesc_Token&        value,
+	                                  RefCon                    accessorRefcon,
+	                                  OSLAccessorUPP            userUPP )
 	{
 		ThrowOSStatus( userUPP( desiredClass,
 		                        &containerToken,
@@ -128,12 +128,14 @@ namespace Nitrogen
 		                        accessorRefcon ) );
 	}
 	
-	typedef nucleus::owned< AEDesc_Token > ( *OSLAccessorProcPtr )( Mac::AEObjectClass   desiredClass,
-	                                                                const AEDesc_Token&  containerToken,
-	                                                                Mac::AEObjectClass   containerClass,
-	                                                                Mac::AEKeyForm       keyForm,
-	                                                                const AEDesc_Data&   keyData,
-	                                                                RefCon               accessorRefcon );
+	typedef nucleus::owned< Mac::AEDesc_Token >
+	        //
+	        ( *OSLAccessorProcPtr )( Mac::AEObjectClass        desiredClass,
+	                                 const Mac::AEDesc_Token&  containerToken,
+	                                 Mac::AEObjectClass        containerClass,
+	                                 Mac::AEKeyForm            keyForm,
+	                                 const Mac::AEDesc_Data&   keyData,
+	                                 RefCon                    accessorRefcon );
 	
 	template < OSLAccessorProcPtr handler >
 	struct ObjectAccessor_Callback
@@ -149,10 +151,10 @@ namespace Nitrogen
 			try
 			{
 				*value = handler( Mac::AEObjectClass( desiredClass ),
-				                  static_cast< const AEDesc_Token& >( *containerToken ),
+				                  static_cast< const Mac::AEDesc_Token& >( *containerToken ),
 				                  Mac::AEObjectClass( containerClass ),
 				                  Mac::AEKeyForm( keyForm ),
-				                  static_cast< const AEDesc_Data& >( *keyData ),
+				                  static_cast< const Mac::AEDesc_Data& >( *keyData ),
 				                  accessorRefcon ).release();
 			}
 			catch ( ... )
@@ -182,18 +184,18 @@ namespace Nitrogen
 	
 	inline void DisposeOSLCompareUPP( nucleus::owned< OSLCompareUPP > )  {}
 	
-	inline void InvokeOSLCompareUPP( AECompOperator       oper,
-	                                 const AEDesc_Token&  obj1,
-	                                 const AEDesc_Token&  obj2,
-	                                 ::Boolean&           result,
-	                                 OSLCompareUPP        userUPP )
+	inline void InvokeOSLCompareUPP( AECompOperator            oper,
+	                                 const Mac::AEDesc_Token&  obj1,
+	                                 const Mac::AEDesc_Token&  obj2,
+	                                 ::Boolean&                result,
+	                                 OSLCompareUPP             userUPP )
 	{
 		ThrowOSStatus( userUPP( oper, &obj1, &obj2, &result ) );
 	}
 	
-	typedef bool ( *OSLCompareProcPtr )( AECompOperator       oper,
-	                                     const AEDesc_Token&  obj1,
-	                                     const AEDesc_Token&  obj2 );
+	typedef bool ( *OSLCompareProcPtr )( AECompOperator            oper,
+	                                     const Mac::AEDesc_Token&  obj1,
+	                                     const Mac::AEDesc_Token&  obj2 );
 	
 #endif
 	
@@ -294,15 +296,17 @@ namespace Nitrogen
 	
 #endif
 	
-	nucleus::owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier,
-	                                          AEResolveCallbackFlags         callbackFlags = AEResolveCallbackFlags() );
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	AEResolve( const Mac::AEDesc_ObjectSpecifier&  objectSpecifier,
+	           AEResolveCallbackFlags              callbackFlags = AEResolveCallbackFlags() );
 	
 	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
 	inline nucleus::owned< OSLAccessor >
 	//
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
-	                         DescType            containerType,
+	                         Mac::DescType       containerType,
 	                         OSLAccessorUPP      accessor,
 	                         RefCon              accessorRefCon = RefCon(),
 	                         bool                isSysHandler   = false )
@@ -318,7 +322,7 @@ namespace Nitrogen
 	inline nucleus::owned< OSLAccessor >
 	//
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
-	                         DescType            containerType,
+	                         Mac::DescType       containerType,
 	                         RefCon              accessorRefCon = RefCon(),
 	                         bool                isSysHandler   = false )
 	{
@@ -333,7 +337,7 @@ namespace Nitrogen
 	inline nucleus::owned< OSLAccessor >
 	//
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
-	                         DescType            containerType,
+	                         Mac::DescType       containerType,
 	                         RefCon              accessorRefCon = RefCon(),
 	                         bool                isSysHandler   = false )
 	{
@@ -350,14 +354,16 @@ namespace Nitrogen
 	
 	typedef OSLAccessor AEGetObjectAccessor_Result;
 	OSLAccessor AEGetObjectAccessor( Mac::AEObjectClass  desiredClass,
-	                                 DescType            containerType,
+	                                 Mac::DescType       containerType,
 	                                 bool                isSysHandler );
 	
-	nucleus::owned< AEDesc_Token > AECallObjectAccessor( Mac::AEObjectClass   desiredClass,
-	                                                     const AEDesc_Token&  containerToken,
-	                                                     Mac::AEObjectClass   containerClass,
-	                                                     Mac::AEKeyForm       keyForm,
-	                                                     const AEDesc_Data&   keyData );
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	AECallObjectAccessor( Mac::AEObjectClass        desiredClass,
+	                      const Mac::AEDesc_Token&  containerToken,
+	                      Mac::AEObjectClass        containerClass,
+	                      Mac::AEKeyForm            keyForm,
+	                      const Mac::AEDesc_Data&   keyData );
 	
 }
 

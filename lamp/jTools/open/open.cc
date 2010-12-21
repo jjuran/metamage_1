@@ -68,12 +68,12 @@ namespace tool
 		                   : Div::ResolvePathToFSSpec(            pathname   );
 	}
 	
-	static inline n::owned< N::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
+	static inline n::owned< Mac::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
 	{
 		return N::AECoercePtr< Mac::typeFSS >( item, Mac::typeAlias );
 	}
 	
-	static n::owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
+	static n::owned< Mac::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
@@ -98,20 +98,20 @@ namespace tool
 		return N::AECreateDesc( Mac::typeAlias, N::NewAlias( item ) );
 	}
 	
-	static n::owned< N::AppleEvent > MakeOpenDocsEvent( const N::AEDescList_Data&   items,
-	                                                    const ProcessSerialNumber&  psn )
+	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
+	                                                      const ProcessSerialNumber&   psn )
 	{
-		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
-		                                                              Mac::kAEOpenDocuments,
-		                                                              N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
+		n::owned< Mac::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
+		                                                                Mac::kAEOpenDocuments,
+		                                                                N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, items );
 		
 		return appleEvent;
 	}
 	
-	static void OpenItemsWithRunningApp( const N::AEDescList_Data&   items,
-	                                     const ProcessSerialNumber&  psn )
+	static void OpenItemsWithRunningApp( const Mac::AEDescList_Data&  items,
+	                                     const ProcessSerialNumber&   psn )
 	{
 		if ( gActivate )
 		{
@@ -130,8 +130,8 @@ namespace tool
 		}
 	}
 	
-	static void LaunchApplicationWithDocsToOpen( const FSSpec&              app,
-	                                             const N::AEDescList_Data&  items )
+	static void LaunchApplicationWithDocsToOpen( const FSSpec&                app,
+	                                             const Mac::AEDescList_Data&  items )
 	{
 		std::auto_ptr< AppParameters > appParameters
 			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
@@ -219,7 +219,7 @@ namespace tool
 		return Mac::FSCreator( sigFinder );
 	}
 	
-	static void OpenItemsUsingOptions( const N::AEDescList_Data& items )
+	static void OpenItemsUsingOptions( const Mac::AEDescList_Data& items )
 	{
 		// we either have a pathname or signature for the app.
 		// if pathname, resolve to FSSpec and check if it's running.
@@ -307,7 +307,7 @@ namespace tool
 		
 		char const *const *free_args = o::free_arguments();
 		
-		n::owned< N::AEDescList_Data > items = N::AECreateList< N::AEDescList_Data >( false );
+		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
 		
 		for ( char const *const *it = free_args;  *it != NULL;  ++it )
 		{

@@ -136,14 +136,14 @@ namespace Nitrogen
 	
 	// OSAStore
 	
-	nucleus::owned< AEDesc_Data >
+	nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
 	          Mac::DescType      desiredType = Mac::typeOSAGenericStorage,
 	          OSAModeFlags       modeFlags   = kOSAModeNull );
 	
-	inline nucleus::owned< AEDesc_Data >
+	inline nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSAStore( const nucleus::owned< OSAID >&  script,
 	          Mac::DescType                   desiredType = Mac::typeOSAGenericStorage,
@@ -180,14 +180,14 @@ namespace Nitrogen
 	
 	// OSADisplay
 	
-	nucleus::owned< AEDesc_Data >
+	nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
 	            Mac::DescType      desiredType = Mac::typeChar,
 	            OSAModeFlags       modeFlags   = OSAModeFlags() );
 	
-	inline nucleus::owned< AEDesc_Data >
+	inline nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSADisplay( const nucleus::owned< OSAID >&  scriptValue,
 	            Mac::DescType                   desiredType = Mac::typeChar,
@@ -200,9 +200,9 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              Mac::AEKeyword     selector,
-	                                              Mac::DescType      desiredType );
+	nucleus::owned< Mac::AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	                                                   Mac::AEKeyword     selector,
+	                                                   Mac::DescType      desiredType );
 	
 	inline void OSADispose( nucleus::owned< OSAID > )
 	{
@@ -213,7 +213,7 @@ namespace Nitrogen
 	// OSASetActiveProc
 	// OSAGetActiveProc
 	
-	nucleus::owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent );
+	nucleus::owned< Mac::AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent );
 	
 	
 	// OSACompile
@@ -292,13 +292,13 @@ namespace Nitrogen
 	nucleus::owned< OSAID >
 	//
 	OSAExecuteEvent( const nucleus::shared< ComponentInstance >&  scriptingComponent,
-	                 const AppleEvent&                            appleEvent,
+	                 const Mac::AppleEvent&                       appleEvent,
 	                 OSAID                                        contextID,
 	                 OSAModeFlags                                 modeFlags = OSAModeFlags() );
 	
 	inline nucleus::owned< OSAID >
 	//
-	OSAExecuteEvent( const AppleEvent&               appleEvent,
+	OSAExecuteEvent( const Mac::AppleEvent&          appleEvent,
 	                 const nucleus::owned< OSAID >&  context,
 	                 OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{
@@ -309,16 +309,16 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AppleEvent >
+	nucleus::owned< Mac::AppleEvent >
 	//
 	OSADoEvent( nucleus::shared< ComponentInstance >  scriptingComponent,
-	            const AppleEvent&                     appleEvent,
+	            const Mac::AppleEvent&                appleEvent,
 	            OSAID                                 contextID,
 	            OSAModeFlags                          modeFlags = OSAModeFlags() );
 	
-	inline nucleus::owned< AppleEvent >
+	inline nucleus::owned< Mac::AppleEvent >
 	//
-	OSADoEvent( const AppleEvent&               appleEvent,
+	OSADoEvent( const Mac::AppleEvent&          appleEvent,
 	            const nucleus::owned< OSAID >&  context,
 	            OSAModeFlags                    modeFlags = OSAModeFlags() )
 	{

@@ -40,13 +40,13 @@ namespace Vertice
 			n::owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
-			static void AppleEventHandler( N::AppleEvent const&  appleEvent,
-			                               N::AppleEvent      &  reply,
-			                               App*                  app );
+			static void AppleEventHandler( Mac::AppleEvent const&  appleEvent,
+			                               Mac::AppleEvent      &  reply,
+			                               App*                    app );
 			
 			App();
 			
-			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
+			void HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
 	};
 	
 	
@@ -81,16 +81,16 @@ namespace Vertice
 		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
-	void App::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app )
+	void App::AppleEventHandler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, App* app )
 	{
 		app->HandleAppleEvent( appleEvent, reply );
 	}
 	
-	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
+	void App::HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
 	{
-		n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                            Mac::keyDirectObject,
-		                                                            Mac::typeAEList );
+		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                              Mac::keyDirectObject,
+		                                                              Mac::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

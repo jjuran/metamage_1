@@ -57,14 +57,14 @@ namespace Nitrogen
 	}
 	
 	
-	nucleus::owned< AEDesc_Data >
+	nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSAStore( ComponentInstance  scriptingComponent,
 	          OSAID              scriptID,
 	          Mac::DescType      desiredType,
 	          OSAModeFlags       modeFlags )
 	{
-		AEDesc_Data resultingScriptData;
+		Mac::AEDesc_Data resultingScriptData;
 		
 		ThrowOSStatus( ::OSAStore( scriptingComponent,
 		                           scriptID,
@@ -72,7 +72,7 @@ namespace Nitrogen
 		                           modeFlags,
 		                           &resultingScriptData ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( resultingScriptData );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( resultingScriptData );
 	}
 	
 	
@@ -95,14 +95,14 @@ namespace Nitrogen
 		                                       scriptingComponent );
 	}
 	
-	nucleus::owned< AEDesc_Data >
+	nucleus::owned< Mac::AEDesc_Data >
 	//
 	OSADisplay( ComponentInstance  scriptingComponent,
 	            OSAID              scriptValueID,
 	            Mac::DescType      desiredType,
 	            OSAModeFlags       modeFlags )
 	{
-		AEDesc_Data resultingText;
+		Mac::AEDesc_Data resultingText;
 		
 		ThrowOSStatus( ::OSADisplay( scriptingComponent,
 		                             scriptValueID,
@@ -110,32 +110,32 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &resultingText ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( resultingText );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( resultingText );
 	}
 	
 	
-	nucleus::owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                              Mac::AEKeyword     selector,
-	                                              Mac::DescType      desiredType )
+	nucleus::owned< Mac::AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	                                                   Mac::AEKeyword     selector,
+	                                                   Mac::DescType      desiredType )
 	{
-		AEDesc_Data resultingErrorDescription;
+		Mac::AEDesc_Data resultingErrorDescription;
 		
 		ThrowOSStatus( ::OSAScriptError( scriptingComponent,
 		                                 selector,
 		                                 desiredType,
 		                                 &resultingErrorDescription ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( resultingErrorDescription );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( resultingErrorDescription );
 	}
 	
-	nucleus::owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent )
+	nucleus::owned< Mac::AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent )
 	{
-		AEDesc_Data resultingScriptingComponentName;
+		Mac::AEDesc_Data resultingScriptingComponentName;
 		
 		ThrowOSStatus( ::OSAScriptingComponentName( scriptingComponent,
 		                                            &resultingScriptingComponentName ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( resultingScriptingComponentName );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( resultingScriptingComponentName );
 	}
 	
 	
@@ -234,7 +234,7 @@ namespace Nitrogen
 	nucleus::owned< OSAID >
 	//
 	OSAExecuteEvent( const nucleus::shared< ComponentInstance >&  scriptingComponent,
-	                 const AppleEvent&                            appleEvent,
+	                 const Mac::AppleEvent&                       appleEvent,
 	                 OSAID                                        contextID,
 	                 OSAModeFlags                                 modeFlags )
 	{

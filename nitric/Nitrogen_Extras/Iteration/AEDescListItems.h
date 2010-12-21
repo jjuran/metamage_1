@@ -21,9 +21,9 @@ namespace Nitrogen
 	
 	struct AEDescList_Item_Specifics
 	{
-		typedef UInt32                         size_type;
-		typedef SInt32                         difference_type;
-		typedef nucleus::owned< AEDesc_Data >  value_type;
+		typedef UInt32                              size_type;
+		typedef SInt32                              difference_type;
+		typedef nucleus::owned< Mac::AEDesc_Data >  value_type;
 		
 		static std::size_t size( const AEDescList& list )
 		{
@@ -50,7 +50,7 @@ namespace Nitrogen
 		public:
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
-			typedef nucleus::owned< AEDesc_Data > value_type;
+			typedef nucleus::owned< Mac::AEDesc_Data > value_type;
 		
 		private:
 			typedef AEDescList_Item_ValueIterator This;

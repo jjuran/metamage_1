@@ -334,13 +334,13 @@ namespace tool
 			script = LoadScriptFile( pathname, getsCWDProperty );
 		}
 		
-		n::owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
-		                                                            Mac::kAEOpenApplication,
-		                                                            n::make< N::AEAddressDesc >() );
+		n::owned< Mac::AppleEvent > runEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
+		                                                              Mac::kAEOpenApplication,
+		                                                              n::make< Mac::AEAddressDesc >() );
 		
 		// Add the list, even if there are zero parameters.
 		{
-			n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >( false );
+			n::owned< Mac::AEDescList_Data > list = N::AECreateList< Mac::AEDescList_Data >( false );
 			
 			for ( const_iterator it = params_begin;  it != params_end;  ++it )
 			{

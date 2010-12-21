@@ -26,8 +26,8 @@ namespace Genie
 	
 	struct Reply_AppleEvent
 	{
-		static void Handler( N::AppleEvent const&  event,
-		                     N::AppleEvent&        reply )
+		static void Handler( Mac::AppleEvent const&  event,
+		                     Mac::AppleEvent&        reply )
 		{
 			N::ReceiveReply( event );
 		}

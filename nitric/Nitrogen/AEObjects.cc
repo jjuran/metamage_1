@@ -98,14 +98,16 @@ namespace Nitrogen
 	
 #endif
 	
-	nucleus::owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier, 
-	                                          AEResolveCallbackFlags         callbackFlags )
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	AEResolve( const Mac::AEDesc_ObjectSpecifier&  objectSpecifier,
+	           AEResolveCallbackFlags              callbackFlags )
 	{
-		AEDesc_Token token;
+		Mac::AEDesc_Token token;
 		
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
 		
-		return nucleus::owned< AEDesc_Token >::seize( token );
+		return nucleus::owned< Mac::AEDesc_Token >::seize( token );
 	}
 	
 	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
@@ -120,7 +122,7 @@ namespace Nitrogen
 	}
 	
 	OSLAccessor AEGetObjectAccessor( Mac::AEObjectClass  desiredClass,
-	                                 DescType            containerType,
+	                                 Mac::DescType       containerType,
 	                                 bool                isSysHandler )
 	{
 		::OSLAccessorUPP accessor;
@@ -139,13 +141,15 @@ namespace Nitrogen
 		                    isSysHandler );
 	}
 	
-	nucleus::owned< AEDesc_Token > AECallObjectAccessor( Mac::AEObjectClass   desiredClass,
-	                                                     const AEDesc_Token&  containerToken,
-	                                                     Mac::AEObjectClass   containerClass,
-	                                                     Mac::AEKeyForm       keyForm,
-	                                                     const AEDesc_Data&   keyData )
+	nucleus::owned< Mac::AEDesc_Token >
+	//
+	AECallObjectAccessor( Mac::AEObjectClass        desiredClass,
+	                      const Mac::AEDesc_Token&  containerToken,
+	                      Mac::AEObjectClass        containerClass,
+	                      Mac::AEKeyForm            keyForm,
+	                      const Mac::AEDesc_Data&   keyData )
 	{
-		AEDesc_Token result;
+		Mac::AEDesc_Token result;
 		
 		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
 		                                       &containerToken,
@@ -154,7 +158,7 @@ namespace Nitrogen
 		                                       &keyData,
 		                                       &result ) );
 		
-		return nucleus::owned< AEDesc_Token >::seize( result );
+		return nucleus::owned< Mac::AEDesc_Token >::seize( result );
 	}
 	
 }

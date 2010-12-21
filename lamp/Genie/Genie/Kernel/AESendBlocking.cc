@@ -27,8 +27,8 @@ namespace Genie
 	{
 		try
 		{
-			N::AppleEvent const& appleEvent = static_cast< const N::AppleEvent& >( *appleEventPtr );
-			N::AppleEvent      & reply      = static_cast<       N::AppleEvent& >( *replyPtr      );
+			Mac::AppleEvent const& appleEvent = static_cast< const Mac::AppleEvent& >( *appleEventPtr );
+			Mac::AppleEvent      & reply      = static_cast<       Mac::AppleEvent& >( *replyPtr      );
 			
 			(void) N::AESend( appleEvent,
 			                  Mac::kAEQueueReply | Mac::kAECanInteract );

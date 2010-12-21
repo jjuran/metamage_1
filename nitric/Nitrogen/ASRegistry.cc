@@ -24,7 +24,7 @@ namespace Nitrogen
 	
 	nucleus::owned< Mac::AEDesc_Token > MissingValue()
 	{
-		return AECreateDesc< Mac::typeType, AEDesc_Token >( Mac::DescType( ::cMissingValue ) );
+		return AECreateDesc< Mac::typeType, Mac::AEDesc_Token >( Mac::DescType( ::cMissingValue ) );
 	}
 	
 }

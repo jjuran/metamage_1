@@ -23,8 +23,8 @@
 namespace nucleus
 {
 	
-	using ::Nitrogen::AEDesc_Data;
-	using ::Nitrogen::AEDesc_Token;
+	using ::Mac::AEDesc_Data;
+	using ::Mac::AEDesc_Token;
 	
 	static const AEKeyDesc global_null_AEKeyDesc = { 0, { typeNull, NULL } };
 	
@@ -113,10 +113,10 @@ namespace Nitrogen
 		                          isSysHandler );
 	}
 	
-	nucleus::owned< AEDesc_Data > AECoercePtr( Mac::DescType  typeCode, 
-	                                           const void*    dataPtr, 
-	                                           std::size_t    dataSize, 
-	                                           Mac::DescType  toType )
+	nucleus::owned< Mac::AEDesc_Data > AECoercePtr( Mac::DescType  typeCode,
+	                                                const void*    dataPtr,
+	                                                std::size_t    dataSize,
+	                                                Mac::DescType  toType )
 	{
 		// Necessary for OS 9; OS X does this automatically
 		if ( toType == Mac::typeWildCard )
@@ -124,7 +124,7 @@ namespace Nitrogen
 			toType = typeCode;
 		}
 		
-		AEDesc_Data result;
+		Mac::AEDesc_Data result;
 		
 		ThrowOSStatus( ::AECoercePtr( typeCode,
 		                              dataPtr,
@@ -132,10 +132,10 @@ namespace Nitrogen
 		                              toType,
 		                              &result ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( result );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
-	nucleus::owned< AEDesc_Data > AECoerceDesc( const AEDesc& desc, Mac::DescType toType )
+	nucleus::owned< Mac::AEDesc_Data > AECoerceDesc( const AEDesc& desc, Mac::DescType toType )
 	{
 		// Necessary for OS 9; OS X does this automatically
 		if ( toType == Mac::typeWildCard )
@@ -143,11 +143,11 @@ namespace Nitrogen
 			toType = Mac::DescType( desc.descriptorType );
 		}
 		
-		AEDesc_Data result;
+		Mac::AEDesc_Data result;
 		
 		ThrowOSStatus( ::AECoerceDesc( &desc, toType, &result ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( result );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
 	// Mac OS X allows AERecord arguments to have any descriptorType.
@@ -346,14 +346,14 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void AEDeleteItem( AEDescList_Data& list, long index )
+	void AEDeleteItem( Mac::AEDescList_Data& list, long index )
 	{
 		ThrowOSStatus( ::AEDeleteItem( &list, index ) );
 	}
 	
-	void AEDeleteItem( nucleus::owned< AEDescList_Data >& list, long index )
+	void AEDeleteItem( nucleus::owned< Mac::AEDescList_Data >& list, long index )
 	{
-		AEDeleteItem( Detail::AEDescEditor< AEDescList_Data >( list ), index );
+		AEDeleteItem( Detail::AEDescEditor< Mac::AEDescList_Data >( list ), index );
 	}
 	
 	void AEPutKeyPtr( AERecord&       record,
@@ -443,13 +443,15 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEDeleteKeyDesc( &record, keyword ) );
 	}
 	
-	nucleus::owned< AppleEvent > AECreateAppleEvent( AEEventClass          eventClass,
-	                                                 AEEventID             eventID,
-	                                                 const AEAddressDesc&  target,
-	                                                 AEReturnID            returnID,
-	                                                 AETransactionID       transactionID )
+	nucleus::owned< Mac::AppleEvent >
+	//
+	AECreateAppleEvent( Mac::AEEventClass          eventClass,
+	                    Mac::AEEventID             eventID,
+	                    const Mac::AEAddressDesc&  target,
+	                    Mac::AEReturnID            returnID,
+	                    Mac::AETransactionID       transactionID )
 	{
-		AppleEvent result;
+		Mac::AppleEvent result;
 		
 		ThrowOSStatus( ::AECreateAppleEvent( eventClass,
 		                                     eventID,
@@ -458,14 +460,14 @@ namespace Nitrogen
 		                                     transactionID,
 		                                     &result ) );
 		
-		return nucleus::owned< AppleEvent >::seize( result );
+		return nucleus::owned< Mac::AppleEvent >::seize( result );
 	}
 	
-	void AEPutParamPtr( AppleEvent&     appleEvent,
-	                    Mac::AEKeyword  keyword,
-	                    Mac::DescType   typeCode,
-	                    const void*     dataPtr,
-	                    std::size_t     dataSize )
+	void AEPutParamPtr( Mac::AppleEvent&  appleEvent,
+	                    Mac::AEKeyword    keyword,
+	                    Mac::DescType     typeCode,
+	                    const void*       dataPtr,
+	                    std::size_t       dataSize )
 	{
 		ThrowOSStatus( ::AEPutParamPtr( &appleEvent,
 		                                keyword,
@@ -474,38 +476,38 @@ namespace Nitrogen
 		                                dataSize ) );
 	}
 	
-	void AEPutParamPtr( nucleus::owned< AppleEvent >&  appleEvent,
-	                    Mac::AEKeyword                 keyword,
-	                    Mac::DescType                  typeCode,
-	                    const void*                    dataPtr,
-	                    std::size_t                    dataSize )
+	void AEPutParamPtr( nucleus::owned< Mac::AppleEvent >&  appleEvent,
+	                    Mac::AEKeyword                      keyword,
+	                    Mac::DescType                       typeCode,
+	                    const void*                         dataPtr,
+	                    std::size_t                         dataSize )
 	{
-		AEPutParamPtr( Detail::AEDescEditor< AppleEvent >( appleEvent ),
+		AEPutParamPtr( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
 		               keyword,
 		               typeCode,
 		               dataPtr,
 		               dataSize );
 	}
 	
-	void AEPutParamDesc( AppleEvent&     appleEvent,
-	                     Mac::AEKeyword  keyword,
-	                     const AEDesc&   desc )
+	void AEPutParamDesc( Mac::AppleEvent&  appleEvent,
+	                     Mac::AEKeyword    keyword,
+	                     const AEDesc&     desc )
 	{
 		ThrowOSStatus( ::AEPutParamDesc( &appleEvent, keyword, &desc ) );
 	}
 	
-	void AEPutParamDesc( nucleus::owned< AppleEvent >&  appleEvent,
-	                     Mac::AEKeyword                 keyword,
-	                     const AEDesc&                  desc )
+	void AEPutParamDesc( nucleus::owned< Mac::AppleEvent >&  appleEvent,
+	                     Mac::AEKeyword                      keyword,
+	                     const AEDesc&                       desc )
 	{
-		AEPutParamDesc( Detail::AEDescEditor< AppleEvent >( appleEvent ), keyword, desc );
+		AEPutParamDesc( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword, desc );
 	}
 	
-	AEGetParamPtr_Result AEGetParamPtr( const AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword     keyword,
-	                                    Mac::DescType      desiredType,
-	                                    void*              dataPtr,
-	                                    std::size_t        maximumSize )
+	AEGetParamPtr_Result AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword          keyword,
+	                                    Mac::DescType           desiredType,
+	                                    void*                   dataPtr,
+	                                    std::size_t             maximumSize )
 	{
 		::DescType typeCode;
 		::Size dataSize;
@@ -526,22 +528,24 @@ namespace Nitrogen
 		return result;
 	}
 	
-	nucleus::owned< AEDesc_Data > AEGetParamDesc( const AppleEvent&  appleEvent,
-	                                              Mac::AEKeyword     keyword,
-	                                              Mac::DescType      desiredType )
+	nucleus::owned< Mac::AEDesc_Data >
+	//
+	AEGetParamDesc( const Mac::AppleEvent&  appleEvent,
+	                Mac::AEKeyword          keyword,
+	                Mac::DescType           desiredType )
 	{
-		AEDesc_Data result;
+		Mac::AEDesc_Data result;
 		
 		ThrowOSStatus( ::AEGetParamDesc( &appleEvent,
 		                                 keyword,
 		                                 desiredType,
 		                                 &result ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( result );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
-	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword     keyword )
+	AESizeOfParam_Result AESizeOfParam( const Mac::AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword          keyword )
 	{
 		::DescType typeCode;
 		::Size dataSize;
@@ -559,22 +563,22 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void AEDeleteParam( AppleEvent& appleEvent, Mac::AEKeyword keyword )
+	void AEDeleteParam( Mac::AppleEvent& appleEvent, Mac::AEKeyword keyword )
 	{
 		ThrowOSStatus( ::AEDeleteParam( &appleEvent, keyword ) );
 	}
 	
-	void AEDeleteParam( nucleus::owned< AppleEvent >&  appleEvent,
-	                    Mac::AEKeyword                 keyword )
+	void AEDeleteParam( nucleus::owned< Mac::AppleEvent >&  appleEvent,
+	                    Mac::AEKeyword                      keyword )
 	{
-		AEDeleteParam( Detail::AEDescEditor< AppleEvent >( appleEvent ), keyword );
+		AEDeleteParam( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword );
 	}
 	
-	void AEPutAttributePtr( AppleEvent&     appleEvent,
-	                        Mac::AEKeyword  keyword,
-	                        Mac::DescType   typeCode,
-	                        const void*     dataPtr,
-	                        std::size_t     dataSize )
+	void AEPutAttributePtr( Mac::AppleEvent&  appleEvent,
+	                        Mac::AEKeyword    keyword,
+	                        Mac::DescType     typeCode,
+	                        const void*       dataPtr,
+	                        std::size_t       dataSize )
 	{
 		ThrowOSStatus( ::AEPutAttributePtr( &appleEvent,
 		                                    keyword,
@@ -583,38 +587,38 @@ namespace Nitrogen
 		                                    dataSize ) );
 	}
 	
-	void AEPutAttributePtr( nucleus::owned< AppleEvent >&  appleEvent,
-	                        Mac::AEKeyword                 keyword,
-	                        Mac::DescType                  typeCode,
-	                        const void*                    dataPtr,
-	                        std::size_t                    dataSize )
+	void AEPutAttributePtr( nucleus::owned< Mac::AppleEvent >&  appleEvent,
+	                        Mac::AEKeyword                      keyword,
+	                        Mac::DescType                       typeCode,
+	                        const void*                         dataPtr,
+	                        std::size_t                         dataSize )
 	{
-		AEPutAttributePtr( Detail::AEDescEditor< AppleEvent >( appleEvent ),
+		AEPutAttributePtr( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
 		                   keyword,
 		                   typeCode,
 		                   dataPtr,
 		                   dataSize );
 	}
 	
-	void AEPutAttributeDesc( AppleEvent&     appleEvent,
-	                         Mac::AEKeyword  keyword,
-	                         const AEDesc&   desc )
+	void AEPutAttributeDesc( Mac::AppleEvent&  appleEvent,
+	                         Mac::AEKeyword    keyword,
+	                         const AEDesc&     desc )
 	{
 		ThrowOSStatus( ::AEPutAttributeDesc( &appleEvent, keyword, &desc ) );
 	}
 	
-	void AEPutAttributeDesc( nucleus::owned< AppleEvent >&  appleEvent,
-	                         Mac::AEKeyword                 keyword,
-	                         const AEDesc&                  desc )
+	void AEPutAttributeDesc( nucleus::owned< Mac::AppleEvent >&  appleEvent,
+	                         Mac::AEKeyword                      keyword,
+	                         const AEDesc&                       desc )
 	{
-		AEPutAttributeDesc( Detail::AEDescEditor< AppleEvent >( appleEvent ), keyword, desc );
+		AEPutAttributeDesc( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword, desc );
 	}
 	
-	AEGetAttributePtr_Result AEGetAttributePtr( const AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword     keyword,
-	                                            Mac::DescType      desiredType,
-	                                            void*              dataPtr,
-	                                            std::size_t        maximumSize )
+	AEGetAttributePtr_Result AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword          keyword,
+	                                            Mac::DescType           desiredType,
+	                                            void*                   dataPtr,
+	                                            std::size_t             maximumSize )
 	{
 		::DescType typeCode;
 		::Size     dataSize;
@@ -635,22 +639,24 @@ namespace Nitrogen
 		return result;
 	}
 	
-	nucleus::owned< AEDesc_Data > AEGetAttributeDesc( const AppleEvent&  appleEvent,
-	                                                  Mac::AEKeyword     keyword,
-	                                                  Mac::DescType      desiredType )
+	nucleus::owned< Mac::AEDesc_Data >
+	//
+	AEGetAttributeDesc( const Mac::AppleEvent&  appleEvent,
+	                    Mac::AEKeyword          keyword,
+	                    Mac::DescType           desiredType )
 	{
-		AEDesc_Data result;
+		Mac::AEDesc_Data result;
 		
 		ThrowOSStatus( ::AEGetAttributeDesc( &appleEvent,
 		                                     keyword,
 		                                     desiredType,
 		                                     &result ) );
 		
-		return nucleus::owned< AEDesc_Data >::seize( result );
+		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
-	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword     keyword )
+	AESizeOfAttribute_Result AESizeOfAttribute( const Mac::AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword          keyword )
 	{
 		::DescType typeCode;
 		::Size dataSize;
@@ -681,12 +687,15 @@ namespace Nitrogen
 		ThrowOSStatus( ::AEReplaceDescData( typeCode, dataPtr, dataSize, &result ) );
 	}
 	
-	void AEReplaceDescData( Mac::DescType                   typeCode,
-	                        const void*                     dataPtr,
-	                        std::size_t                     dataSize,
-	                        nucleus::owned< AEDesc_Data >&  result)
+	void AEReplaceDescData( Mac::DescType                        typeCode,
+	                        const void*                          dataPtr,
+	                        std::size_t                          dataSize,
+	                        nucleus::owned< Mac::AEDesc_Data >&  result )
 	{
-		AEReplaceDescData( typeCode, dataPtr, dataSize, Detail::AEDescEditor< AEDesc_Data >( result ) );
+		AEReplaceDescData( typeCode,
+		                   dataPtr,
+		                   dataSize,
+		                   Detail::AEDescEditor< Mac::AEDesc_Data >( result ) );
 	}
 	
 	void RegisterAppleEventManagerErrors()
@@ -751,11 +760,11 @@ namespace Nitrogen
 				return errAEEventNotHandled;
 			}
 			
-			nucleus::owned< AEDesc_Data > AECoercerOfDescs_N( const AEDesc_Data&  fromDesc,
-			                                                  Mac::DescType       toType,
-			                                                  RefCon              /*refCon*/ )
+			nucleus::owned< Mac::AEDesc_Data > AECoercerOfDescs_N( const Mac::AEDesc_Data&  fromDesc,
+			                                                       Mac::DescType            toType,
+			                                                       RefCon                   refCon )
 			{
-				return nucleus::owned< AEDesc_Data >::seize( fromDesc );
+				return nucleus::owned< Mac::AEDesc_Data >::seize( fromDesc );
 			}
 			
 		}
@@ -770,17 +779,17 @@ namespace Nitrogen
 			return AEInstallCoercionHandler< AECoercerOfDescs_N >( Mac::DescType( 'from' ), Mac::DescType( 'to  ' ) );
 		}
 		
-		static nucleus::string GetTextAttr( const AppleEvent& appleEvent, Mac::AEKeyword keyword )
+		static nucleus::string GetTextAttr( const Mac::AppleEvent& appleEvent, Mac::AEKeyword keyword )
 		{
 			return AEGetAttributePtr< Mac::typeChar >( appleEvent, keyword );
 		}
 		
-		static AEReturnID_32Bit GetReturnID( const AppleEvent& appleEvent )
+		static AEReturnID_32Bit GetReturnID( const Mac::AppleEvent& appleEvent )
 		{
 			return AEGetAttributePtr< Mac::keyReturnIDAttr >( appleEvent );
 		}
 		
-		static AEEventClass GetEventClass( const AppleEvent& appleEvent )
+		static AEEventClass GetEventClass( const Mac::AppleEvent& appleEvent )
 		{
 			return AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
 		}

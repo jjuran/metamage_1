@@ -22,14 +22,14 @@ namespace Nitrogen
 	
 	struct ExpectedReply
 	{
-		ThreadID     thread;
-		AppleEvent*  reply;
+		Mac::ThreadID     thread;
+		Mac::AppleEvent*  reply;
 		
 		ExpectedReply()
 		{
 		}
 		
-		ExpectedReply( ThreadID thread, AppleEvent* reply )
+		ExpectedReply( Mac::ThreadID thread, Mac::AppleEvent* reply )
 		:
 			thread( thread ),
 			reply ( reply  )
@@ -41,8 +41,8 @@ namespace Nitrogen
 	
 	static ExpectedReplies gExpectedReplies;
 	
-	void ExpectReply( AEReturnID_32Bit   returnID,
-	                  AppleEvent        *replyStorage )
+	void ExpectReply( Mac::AEReturnID_32Bit   returnID,
+	                  Mac::AppleEvent        *replyStorage )
 	{
 		// assert( returnID != 0 );
 		// Can replyStorage be NULL?  If you wanted to know when the reply came back
@@ -51,7 +51,7 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( GetCurrentThread(), replyStorage );
 	}
 	
-	void ReceiveReply( const AppleEvent& reply )
+	void ReceiveReply( const Mac::AppleEvent& reply )
 	{
 		AEReturnID_32Bit returnID = AEGetAttributePtr< Mac::keyReturnIDAttr >( reply );
 		
@@ -61,8 +61,8 @@ namespace Nitrogen
 		{
 			try
 			{
-				ThreadID    thread       = found->second.thread;
-				AppleEvent* replyStorage = found->second.reply;
+				Mac::ThreadID    thread       = found->second.thread;
+				Mac::AppleEvent* replyStorage = found->second.reply;
 				
 				// Make sure the thread exists
 				ThreadState threadState = GetThreadState( thread );

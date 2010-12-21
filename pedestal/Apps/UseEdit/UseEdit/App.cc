@@ -93,11 +93,11 @@ namespace UseEdit
 	
 	struct Close_AppleEvent
 	{
-		static void Handler( N::AppleEvent const&  event,
-		                     N::AppleEvent&        reply )
+		static void Handler( Mac::AppleEvent const&  event,
+		                     Mac::AppleEvent&        reply )
 		{
-			n::owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
-			                                                                     Mac::keyDirectObject ) );
+			n::owned< Mac::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
+			                                                                       Mac::keyDirectObject ) );
 			
 			switch ( Mac::DescType( token.get().descriptorType ) )
 			{
@@ -127,17 +127,17 @@ namespace UseEdit
 	
 	struct Count_AppleEvent
 	{
-		static void Handler( N::AppleEvent const&  event,
-		                     N::AppleEvent&        reply )
+		static void Handler( Mac::AppleEvent const&  event,
+		                     Mac::AppleEvent&        reply )
 		{
-			n::owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( event,
-			                                                                            Mac::keyDirectObject );
+			n::owned< Mac::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( event,
+			                                                                              Mac::keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
 			
 			// AEResolve can't handle a null descriptor.
-			n::owned< N::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
-			                                                             : N::AEResolve( containerObjSpec );
+			n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
+			                                                               : N::AEResolve( containerObjSpec );
 			// The kind of container of the things we're counting, e.g. 'folder'
 			Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
@@ -160,8 +160,8 @@ namespace UseEdit
 	
 	struct GetData_AppleEvent
 	{
-		static void Handler( N::AppleEvent const&  event,
-		                     N::AppleEvent&        reply )
+		static void Handler( Mac::AppleEvent const&  event,
+		                     Mac::AppleEvent&        reply )
 		{
 			N::AEPutParamDesc( reply,
 			                   Mac::keyDirectObject,
@@ -178,15 +178,15 @@ namespace UseEdit
 	
 	struct OpenDocuments_AppleEvent
 	{
-		static void Handler( N::AppleEvent const&  event,
-		                     N::AppleEvent&        reply )
+		static void Handler( Mac::AppleEvent const&  event,
+		                     Mac::AppleEvent&        reply )
 		{
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			n::owned< N::AEDescList_Data > docList = N::AEGetParamDesc( event,
-			                                                            Mac::keyDirectObject,
-			                                                            Mac::typeAEList );
+			n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( event,
+			                                                              Mac::keyDirectObject,
+			                                                              Mac::typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
@@ -209,11 +209,11 @@ namespace UseEdit
 	
 	struct AppFrontmost_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
-		                                             const N::AEDesc_Token&  containerToken,
-		                                             Mac::AEObjectClass      containerClass )
+		static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
+		                                               const Mac::AEDesc_Token&  containerToken,
+		                                               Mac::AEObjectClass        containerClass )
 		{
-			return N::AECreateDesc< Mac::typeBoolean, N::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			return N::AECreateDesc< Mac::typeBoolean, Mac::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
 		
 		static void Install_Accessor()
@@ -224,11 +224,11 @@ namespace UseEdit
 	
 	struct AppName_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
-		                                             const N::AEDesc_Token&  containerToken,
-		                                             Mac::AEObjectClass      containerClass )
+		static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
+		                                               const Mac::AEDesc_Token&  containerToken,
+		                                               Mac::AEObjectClass        containerClass )
 		{
-			return N::AECreateDesc< Mac::typeChar, N::AEDesc_Token >( "UseEdit" );
+			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "UseEdit" );
 		}
 		
 		static void Install_Accessor()
@@ -237,19 +237,19 @@ namespace UseEdit
 		}
 	};
 	
-	static n::owned< N::AEDesc_Token > TokenForDocument( const Document& document )
+	static n::owned< Mac::AEDesc_Token > TokenForDocument( const Document& document )
 	{
-		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, N::AEDesc_Token >( document.GetWindowRef() ) );
+		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( document.GetWindowRef() ) );
 	}
 	
 	struct Document_Element
 	{
-		static n::owned< N::AEDesc_Token > Accessor( Mac::AEObjectClass      desiredClass,
-		                                             const N::AEDesc_Token&  containerToken,
-		                                             Mac::AEObjectClass      containerClass,
-		                                             Mac::AEKeyForm          keyForm,
-		                                             const N::AEDesc_Data&   keyData,
-		                                             N::RefCon )
+		static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEObjectClass        desiredClass,
+		                                               const Mac::AEDesc_Token&  containerToken,
+		                                               Mac::AEObjectClass        containerClass,
+		                                               Mac::AEKeyForm            keyForm,
+		                                               const Mac::AEDesc_Data&   keyData,
+		                                               N::RefCon )
 		{
 			if ( keyForm == Mac::formUniqueID )
 			{
@@ -268,7 +268,7 @@ namespace UseEdit
 				}
 				
 				// All documents
-				n::owned< N::AEDescList_Token > list = N::AECreateList< N::AEDescList_Token >( false );
+				n::owned< Mac::AEDescList_Token > list = N::AECreateList< Mac::AEDescList_Token >( false );
 				
 				for ( UInt32 i = 1;  i <= count;  ++i )
 				{
@@ -283,7 +283,7 @@ namespace UseEdit
 			// Unsupported key form
 			N::ThrowOSStatus( errAEEventNotHandled );
 			
-			return n::owned< N::AEDesc_Token >();
+			return n::owned< Mac::AEDesc_Token >();
 		}
 		
 		static void Install_Accessor()
@@ -294,15 +294,15 @@ namespace UseEdit
 	
 	struct DocName_Property
 	{
-		static n::owned< N::AEDesc_Token > Accessor( Mac::AEPropertyID       propertyID,
-		                                             const N::AEDesc_Token&  containerToken,
-		                                             Mac::AEObjectClass      containerClass )
+		static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
+		                                               const Mac::AEDesc_Token&  containerToken,
+		                                               Mac::AEObjectClass        containerClass )
 		{
 			UInt32 id = N::AEGetDescData< Mac::typeUInt32 >( containerToken, typeDocument );
 			
 			const Document& document = gDocuments.GetDocumentByID( id );
 			
-			return N::AECreateDesc< Mac::typeChar, N::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
+			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
 		
 		static void Install_Accessor()
@@ -315,9 +315,9 @@ namespace UseEdit
 	
 	struct Documents_Count
 	{
-		static std::size_t Get( Mac::AEObjectClass      desiredClass,
-		                        Mac::AEObjectClass      containerClass,
-		                        const N::AEDesc_Token&  containerToken )
+		static std::size_t Get( Mac::AEObjectClass        desiredClass,
+		                        Mac::AEObjectClass        containerClass,
+		                        const Mac::AEDesc_Token&  containerToken )
 		{
 			return gDocuments.CountElements();
 		}
@@ -332,8 +332,8 @@ namespace UseEdit
 	
 	struct LiteralData_Token
 	{
-		static n::owned< N::AEDesc_Data > Get( const N::AEDesc_Token&  obj,
-		                                       Mac::DescType           desiredType )
+		static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
+		                                         Mac::DescType             desiredType )
 		{
 			return N::AEDuplicateDesc( obj );
 		}
@@ -346,8 +346,8 @@ namespace UseEdit
 	
 	struct Document_Token
 	{
-		static n::owned< N::AEDesc_Data > Get( const N::AEDesc_Token&  obj,
-		                                       Mac::DescType           desiredType )
+		static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
+		                                         Mac::DescType             desiredType )
 		{
 			AEDesc keyData = obj;
 			
@@ -356,7 +356,7 @@ namespace UseEdit
 			return N::AECreateObjectSpecifier( Mac::cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   Mac::formUniqueID,
-			                                   static_cast< const N::AEDesc_Data& >( keyData ) );
+			                                   static_cast< const Mac::AEDesc_Data& >( keyData ) );
 		}
 		
 		static void Install_DataGetter()
@@ -427,12 +427,12 @@ namespace UseEdit
 		return Find( id ) != itsMap.end();
 	}
 	
-	n::owned< N::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
+	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
 		return TokenForDocument( GetDocumentByIndex( index ) );
 	}
 	
-	n::owned< N::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
+	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
 	{
 		return TokenForDocument( GetDocumentByID( id ) );
 	}

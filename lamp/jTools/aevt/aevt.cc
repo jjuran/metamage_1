@@ -56,13 +56,13 @@ namespace tool
 		return Quad( iota::decode_quad( s ) );
 	}
 	
-	static n::owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
-	                                                  N::AEEventID             eventID,
-	                                                  const N::AEAddressDesc&  address,
-	                                                  const char*              buildString,
-	                                                  va_list                  args,
-	                                                  N::AEReturnID            returnID      = N::kAutoGenerateReturnID,
-	                                                  N::AETransactionID       transactionID = N::kAnyTransactionID )
+	static n::owned< Mac::AppleEvent > BuildAppleEvent( Mac::AEEventClass          eventClass,
+	                                                    Mac::AEEventID             eventID,
+	                                                    const Mac::AEAddressDesc&  address,
+	                                                    const char*                buildString,
+	                                                    va_list                    args,
+	                                                    Mac::AEReturnID            returnID      = Mac::kAutoGenerateReturnID,
+	                                                    Mac::AETransactionID       transactionID = Mac::kAnyTransactionID )
 	{
 		std::size_t addrSize = N::AEGetDescDataSize( address );
 		
@@ -70,7 +70,7 @@ namespace tool
 		
 		N::AEGetDescData( address, &addrData.front(), addrSize );
 		
-		N::AppleEvent appleEvent;
+		Mac::AppleEvent appleEvent;
 		AEBuildError aeErr;
 		
 		N::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
@@ -85,7 +85,7 @@ namespace tool
 		                                        buildString,
 		                                        args ) );
 		
-		return n::owned< N::AppleEvent >::seize( appleEvent );
+		return n::owned< Mac::AppleEvent >::seize( appleEvent );
 	}
 	
 #if CALL_NOT_IN_CARBON
@@ -111,12 +111,12 @@ namespace tool
 	
 #endif
 	
-	static n::owned< N::AEAddressDesc > SelectAddress( bool            front,
-	                                                   Mac::FSCreator  sig,
-	                                                   const char*     app,
-	                                                   const char*     machine,
-	                                                   const char*     host,
-	                                                   const char*     url )
+	static n::owned< Mac::AEAddressDesc > SelectAddress( bool            front,
+	                                                     Mac::FSCreator  sig,
+	                                                     const char*     app,
+	                                                     const char*     machine,
+	                                                     const char*     host,
+	                                                     const char*     url )
 	{
 		if ( front )
 		{
@@ -140,7 +140,7 @@ namespace tool
 		}
 		
 		// Not reached
-		return n::owned< N::AEAddressDesc >();
+		return n::owned< Mac::AEAddressDesc >();
 	}
 	
 	int Main( int argc, char** argv )
@@ -214,8 +214,8 @@ namespace tool
 		
 		Mac::FSCreator sigCode = decode_quad< Mac::FSCreator >( sig );
 		
-		N::AEEventClass eventClass = decode_quad< N::AEEventClass >( argEventClass );
-		N::AEEventID    eventID    = decode_quad< N::AEEventID    >( argEventID    );
+		Mac::AEEventClass eventClass = decode_quad< Mac::AEEventClass >( argEventClass );
+		Mac::AEEventID    eventID    = decode_quad< Mac::AEEventID    >( argEventID    );
 		
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,

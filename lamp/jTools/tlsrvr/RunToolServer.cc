@@ -171,7 +171,7 @@ namespace tool
 	}
 	
 	
-	static long GetResult( const N::AppleEvent& reply )
+	static long GetResult( const Mac::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< Mac::typeSInt32 >( reply, Mac::AEKeyword( 'stat' ) );
 		
@@ -236,25 +236,25 @@ namespace tool
 		throw p7::exit_failure;
 	}
 	
-	static n::owned< N::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
-	                                                    const nucleus::string&      script )
+	static n::owned< Mac::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
+	                                                      const nucleus::string&      script )
 	{
-		n::owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kAEMiscStandards,
-		                                                              Mac::kAEDoScript,
-		                                                              N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
+		n::owned< Mac::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kAEMiscStandards,
+		                                                                Mac::kAEDoScript,
+		                                                                N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
 		
 		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, N::AECreateDesc< Mac::typeChar >( script ) );
 		
 		return appleEvent;
 	}
 	
-	static n::owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
+	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
 	{
-		n::owned< N::AppleEvent > replyEvent = N::AEInitializeDesc< N::AppleEvent >();
+		n::owned< Mac::AppleEvent > replyEvent = N::AEInitializeDesc< Mac::AppleEvent >();
 		
 		// Declare a block to limit the scope of mutableReply
 		{
-			N::Detail::AEDescEditor< N::AppleEvent > mutableReply( replyEvent );
+			N::Detail::AEDescEditor< Mac::AppleEvent > mutableReply( replyEvent );
 			
 			N::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
 			
