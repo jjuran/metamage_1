@@ -562,7 +562,7 @@ namespace Genie
 	
 	void FSTree_sys_port_ADDR_focus::SymLink( const plus::string& target ) const
 	{
-		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( "." );
+		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( "" );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		

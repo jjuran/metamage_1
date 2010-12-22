@@ -349,9 +349,11 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr FSTree_View::Lookup( const plus::string& name, const FSTree* parent ) const
+	FSTreePtr FSTree_View::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return GetViewDelegate( this )->Lookup( name, parent );
+		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
+		
+		return GetViewDelegate( this )->Lookup( real_name, parent );
 	}
 	
 	FSIteratorPtr FSTree_View::Iterate() const

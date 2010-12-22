@@ -134,7 +134,7 @@ namespace Genie
 			
 			void CreateDirectory( mode_t mode ) const;
 			
-			FSTreePtr Lookup( const plus::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			FSIteratorPtr Iterate() const;
 			

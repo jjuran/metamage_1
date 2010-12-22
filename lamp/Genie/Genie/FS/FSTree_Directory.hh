@@ -27,8 +27,6 @@ namespace Genie
 			
 			~FSTree_Directory();
 			
-			FSTreePtr Lookup( const plus::string& name, const FSTree* parent ) const;
-			
 			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const = 0;
 			
 			FSIteratorPtr Iterate() const;

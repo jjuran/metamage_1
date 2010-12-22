@@ -72,20 +72,6 @@ namespace Genie
 		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
 	}
 	
-	FSTreePtr FSTree_Directory::Lookup( const plus::string& name, const FSTree* parent ) const
-	{
-		if ( name == "." )
-		{
-			return Self();
-		}
-		else if ( name == ".." )
-		{
-			return Parent();
-		}
-		
-		return Lookup_Child( name, parent );
-	}
-	
 	
 	const FSTree_Premapped::Mapping
 	//
