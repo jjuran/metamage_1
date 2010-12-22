@@ -46,11 +46,9 @@ namespace Genie
 			FSTree_TextEdit_interlock( const FSTreePtr&     parent,
 			                           const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFREG | 0600 )
 			{
 			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			void SetTimes() const;
 	};

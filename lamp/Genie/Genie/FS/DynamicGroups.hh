@@ -25,15 +25,7 @@ namespace Genie
 		public:
 			FSTree_Dynamic_N( const FSTreePtr&      parent,
 			                  const plus::string&   name,
-			                  DynamicElementGetter  getter )
-			:
-				FSTree( parent, name ),
-				itsGetter( getter )
-			{
-			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			                  DynamicElementGetter  getter );
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};

@@ -41,12 +41,9 @@ namespace Genie
 			FSTree_Device( const FSTreePtr&     parent,
 			               const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFCHR | 0600 )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 	};
 	
 	class FSTree_SimpleDevice : public FSTree_Device
@@ -69,7 +66,6 @@ namespace Genie
 	{
 		private:
 			OpenProc itsOpener;
-			mode_t   itsPermMode;
 		
 		public:
 			FSTree_BasicDevice( const FSTreePtr&     parent,
@@ -77,14 +73,10 @@ namespace Genie
 			                    OpenProc             opener,
 			                    mode_t               perm )
 			:
-				FSTree( parent, name ),
-				itsOpener( opener ),
-				itsPermMode( perm )
+				FSTree( parent, name, S_IFCHR | perm ),
+				itsOpener( opener )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return itsPermMode; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{

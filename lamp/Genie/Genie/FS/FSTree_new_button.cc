@@ -283,11 +283,9 @@ namespace Genie
 			FSTree_Button_socket( const FSTreePtr&     parent,
 	                              const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFREG | 0400 )
 			{
 			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};

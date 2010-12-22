@@ -17,13 +17,7 @@ namespace Genie
 	{
 		public:
 			FSTree_new_port( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
-			
-			bool IsDirectory() const  { return true; }
+			                 const plus::string&  name );
 			
 			boost::shared_ptr< IOHandle > ChangeToDirectory() const;
 	};

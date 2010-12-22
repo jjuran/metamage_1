@@ -186,11 +186,9 @@ namespace Genie
 			FSTree_List_data( const FSTreePtr&     parent,
 			                  const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFREG | 0600 )
 			{
 			}
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			off_t GetEOF() const;
 			

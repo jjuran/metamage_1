@@ -23,19 +23,9 @@ namespace Genie
 	{
 		public:
 			FSTree_Directory( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree( parent, name )
-			{
-			}
+			                  const plus::string&  name );
 			
 			~FSTree_Directory();
-			
-			bool IsFile     () const  { return false; }
-			bool IsDirectory() const  { return true;  }
-			
-			mode_t FileTypeMode() const  { return S_IFDIR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR | S_IXUSR; }
 			
 			FSTreePtr Lookup( const plus::string& name, const FSTree* parent ) const;
 			

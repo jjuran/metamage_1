@@ -681,14 +681,11 @@ namespace Genie
 			FSTree_sys_port_ADDR_tty( const FSTreePtr&     parent,
 			                          const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFCHR | 0600 )
 			{
 			}
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			void Attach( const FSTreePtr& target ) const;
 			

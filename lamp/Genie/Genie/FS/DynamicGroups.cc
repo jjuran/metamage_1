@@ -5,6 +5,9 @@
 
 #include "Genie/FS/DynamicGroups.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // iota
 #include "iota/decimal.hh"
 
@@ -17,6 +20,15 @@
 
 namespace Genie
 {
+	
+	FSTree_Dynamic_N::FSTree_Dynamic_N( const FSTreePtr&      parent,
+	                                    const plus::string&   name,
+	                                    DynamicElementGetter  getter )
+	:
+		FSTree( parent, name, S_IFCHR | 0600 ),
+		itsGetter( getter )
+	{
+	}
 	
 	boost::shared_ptr< IOHandle > FSTree_Dynamic_N::Open( OpenFlags flags ) const
 	{

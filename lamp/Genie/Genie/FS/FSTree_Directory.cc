@@ -43,6 +43,13 @@ namespace Genie
 	};
 	
 	
+	FSTree_Directory::FSTree_Directory( const FSTreePtr&     parent,
+	                                    const plus::string&  name )
+	:
+		FSTree( parent, name, S_IFDIR | 0700 )
+	{
+	}
+	
 	FSTree_Directory::~FSTree_Directory()
 	{
 	}

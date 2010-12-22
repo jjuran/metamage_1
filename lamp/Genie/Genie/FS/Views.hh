@@ -99,14 +99,7 @@ namespace Genie
 			                 const plus::string&  name,
 			                 ViewFactory          factory,
 			                 Mappings             mappings,
-			                 Destructor           dtor )
-			:
-				FSTree( parent, name ),
-				itsFactory( factory ),
-				itsMappings( mappings ),
-				itsDestructor( dtor )
-			{
-			}
+			                 Destructor           dtor );
 			
 			void HardLink( const FSTreePtr& target ) const;
 	};
@@ -125,12 +118,7 @@ namespace Genie
 		public:
 			FSTree_View( const FSTreePtr&     parent,
 			             const plus::string&  name,
-			             ViewGetter           get = NULL )
-			:
-				FSTree( parent, name ),
-				itsGetter( get )
-			{
-			}
+			             ViewGetter           get = NULL );
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			

@@ -59,13 +59,9 @@ namespace Genie
 			FSTree_sys_mac_tempmem( const FSTreePtr&     parent,
 			                        const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFREG | 0 )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFREG; }
-			
-			mode_t FilePermMode() const  { return 0; }
 			
 			off_t GetEOF() const  { return ::TempFreeMem(); }
 			

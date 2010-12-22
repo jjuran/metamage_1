@@ -39,14 +39,7 @@ namespace Genie
 			                 const plus::string&  name,
 			                 size_t               size,
 			                 ReadHook             readHook,
-			                 WriteHook            writeHook = NULL )
-			:
-				FSTree( parent, name ),
-				itsSize( size ),
-				itsReadHook ( readHook  ),
-				itsWriteHook( writeHook )
-			{
-			}
+			                 WriteHook            writeHook = NULL );
 			
 			bool Exists() const;
 			
