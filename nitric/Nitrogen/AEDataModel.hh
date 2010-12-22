@@ -21,12 +21,6 @@
 #include <Events.h>
 #endif
 
-#if CALL_NOT_IN_CARBON
-#ifndef __EPPC__
-#include <EPPC.h>
-#endif
-#endif
-
 // iota
 #include "iota/distance.hh"
 

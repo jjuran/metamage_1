@@ -14,6 +14,12 @@
 #include <Scrap.h>
 #endif
 
+#if !TARGET_API_MAC_CARBON
+#ifndef __EPPC__
+#include <EPPC.h>
+#endif
+#endif
+
 // nucleus
 #ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
