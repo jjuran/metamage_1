@@ -18,7 +18,7 @@ namespace Nitrogen
 	
 	inline nucleus::owned< Mac::AEDesc_ObjectSpecifier > GetRootObjectSpecifier()
 	{
-		return AEInitializeDesc< Mac::AEDesc_Data >();
+		return nucleus::owned< Mac::AEDesc_ObjectSpecifier >();
 	}
 	
 	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
