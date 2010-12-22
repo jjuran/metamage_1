@@ -12,6 +12,7 @@
 // plus
 #include "plus/deconstruct.hh"
 #include "plus/deconstruct_bool.hh"
+#include "plus/deconstruct_char.hh"
 #include "plus/freeze.hh"
 #include "plus/reconstruct.hh"
 #include "plus/stringify.hh"
@@ -31,6 +32,15 @@ namespace plus
 		
 		typedef freeze_pod< POD >  freeze;
 		typedef thaw_pod  < POD >  thaw;
+	};
+	
+	struct serialize_char : serialize_POD< char >
+	{
+		typedef stringify_char  stringify;
+		typedef vivify_char     vivify;
+		
+		typedef deconstruct_char                   deconstruct;
+		typedef reconstruct< char, thaw, vivify >  reconstruct;
 	};
 	
 	struct serialize_bool : serialize_POD< bool >
@@ -80,10 +90,13 @@ namespace plus
 	struct serialize_hex : serialize_POD< Int >
 	{
 		typedef typename hex_stringifier< sizeof (Int) >::type  stringify;
+		typedef typename hex_vivifier   < sizeof (Int) >::type  vivify;
 		
 		typedef typename serialize_POD< Int >::freeze  freeze;
+		typedef typename serialize_POD< Int >::thaw    thaw;
 		
 		typedef deconstruct< freeze, stringify >  deconstruct;
+		typedef reconstruct< Int, thaw, vivify >  reconstruct;
 	};
 	
 	struct serialize_pointer : serialize_POD< const void* >

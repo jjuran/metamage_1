@@ -18,6 +18,7 @@
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
+#include "Genie/FS/sys/app/menu.hh"
 #include "Genie/FS/sys/app/window.hh"
 
 
@@ -83,6 +84,7 @@ namespace Genie
 		
 	#endif
 		
+		{ "menu",   PREMAPPED( sys_app_menu_Mappings   ) },
 		{ "window", PREMAPPED( sys_app_window_Mappings ) },
 		
 		{ NULL, NULL }
