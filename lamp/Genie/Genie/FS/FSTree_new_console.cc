@@ -169,7 +169,18 @@ namespace Genie
 		
 		const char c = event.message & charCodeMask;
 		
-		if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
+		const UInt32 kPrimaryModifiers = cmdKey
+		                               | shiftKey   | rightShiftKey
+		                               | optionKey  | rightOptionKey
+		                               | controlKey | rightControlKey;
+		
+		if ( (event.modifiers & kPrimaryModifiers) == cmdKey  &&  c == '.' )
+		{
+			SendSignalToProcessGroupForKey( SIGINT, that.GetKey() );
+			
+			return true;
+		}
+		else if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
 		{
 			typedef const FSTree* Key;
 			

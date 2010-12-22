@@ -455,7 +455,7 @@ namespace Pedestal
 		// Command-arrow is an editing gesture, not a command.
 		// Command-Delete is also an editing gesture.
 		
-		return c != ' '  &&  !CharIsArrowKey( c )  &&  !CharIsDelete( c );
+		return c != ' '  &&  c != '.'  &&  !CharIsArrowKey( c )  &&  !CharIsDelete( c );
 	}
 	
 	static inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
