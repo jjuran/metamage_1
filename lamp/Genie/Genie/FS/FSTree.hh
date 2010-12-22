@@ -93,12 +93,17 @@ namespace Genie
 		private:
 			FSTreePtr     itsParent;
 			plus::string  itsName;
+			mode_t        itsMode;
 		
 		public:
 			FSTree();
 			
 			FSTree( const FSTreePtr&     parent,
 			        const plus::string&  name );
+			
+			FSTree( const FSTreePtr&     parent,
+			        const plus::string&  name,
+			        mode_t               mode );
 			
 			virtual ~FSTree();
 			

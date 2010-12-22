@@ -48,7 +48,7 @@ namespace Genie
 	{
 	}
 	
-	FSTree::FSTree() : itsParent(), itsName()
+	FSTree::FSTree() : itsParent(), itsName(), itsMode()
 	{
 	}
 	
@@ -62,7 +62,19 @@ namespace Genie
 	:
 		itsParent( parent ),
 		itsName  ( name[0] == '/' ? NameFromPtr( this )
-		                          : name )
+		                          : name ),
+		itsMode  ( S_IFREG | S_IRUSR )  // reasonable default
+	{
+	}
+	
+	FSTree::FSTree( const FSTreePtr&     parent,
+	                const plus::string&  name,
+	                mode_t               mode )
+	:
+		itsParent( parent ),
+		itsName  ( name[0] == '/' ? NameFromPtr( this )
+		                          : name ),
+		itsMode  ( mode )
 	{
 	}
 	
@@ -104,29 +116,28 @@ namespace Genie
 	
 	bool FSTree::Exists() const
 	{
-		// Reasonable default -- most items do or they wouldn't have FSTrees.
-		return true;
+		return itsMode != 0;
 	}
 	
 	bool FSTree::IsFile() const
 	{
-		// Reasonable default -- most virtual dirs are bottlenecked through a superclass
-		return true;
+		// A file as used here is any existing non-directory.
+		return itsMode != 0  &&  !S_ISDIR( itsMode );
 	}
 	
 	bool FSTree::IsDirectory() const
 	{
-		return false;
+		return S_ISDIR( itsMode );
 	}
 	
 	bool FSTree::IsLink() const
 	{
-		return false;
+		return S_ISLNK( itsMode );
 	}
 	
 	bool FSTree::IsPipe() const
 	{
-		return false;
+		return S_ISFIFO( itsMode );
 	}
 	
 	FSTreePtr FSTree::Parent() const

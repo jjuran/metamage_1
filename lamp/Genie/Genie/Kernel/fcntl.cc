@@ -13,6 +13,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -54,7 +55,7 @@ namespace Genie
 			{
 				ResolveLinks_InPlace( file );
 			}
-			else if ( file->IsLink() )
+			else if ( is_symlink( file ) )
 			{
 				return set_errno( ELOOP );
 			}

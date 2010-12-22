@@ -11,6 +11,7 @@
 #include <set>
 
 // Genie
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
 
 
@@ -26,7 +27,7 @@ namespace Genie
 		
 		FSTreePtr child = itsTop->Lookup( name, parent );
 		
-		return child->Exists() ? child : itsBottom->Lookup( name, parent );
+		return exists( child ) ? child : itsBottom->Lookup( name, parent );
 	}
 	
 	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const

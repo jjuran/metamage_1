@@ -13,6 +13,7 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -38,7 +39,7 @@ namespace Genie
 				ResolveLinks_InPlace( file );
 			}
 			
-			if ( !file->Exists() )
+			if ( !exists( file ) )
 			{
 				return set_errno( EACCES );
 			}

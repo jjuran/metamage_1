@@ -6,6 +6,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 
 // Genie
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/FS/FSTree_Null.hh"
 
@@ -139,7 +140,7 @@ namespace Genie
 			{
 				FSTreePtr file = f( Self(), name, it->args );
 				
-				if ( !file->Exists() )
+				if ( !exists( file ) )
 				{
 					continue;
 				}
