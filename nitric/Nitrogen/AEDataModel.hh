@@ -842,9 +842,7 @@ namespace Nitrogen
 		// AEDesc_Type must be a subclass of AEDesc
 		(void) static_cast< const AEDesc& >( AEDesc_Type() );
 		
-		AEDesc desc = AEInitializeDesc();
-		
-		return nucleus::owned< AEDesc_Type >::seize( AEDesc_Cast< AEDesc_Type >( desc ) );
+		return nucleus::owned< AEDesc_Type >();
 	}
 	
 	namespace Detail
