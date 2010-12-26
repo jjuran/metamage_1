@@ -48,6 +48,7 @@ namespace OSErrno
 			case dskFulErr      :  result = ENOSPC;        break;
 			case wPrErr         :  // fall through
 			case vLckdErr       :  result = EROFS;         break;
+			case kOTFlowErr     :  // fall through
 			case kOTNoDataErr   :  result = EAGAIN;        break;
 			case bdNamErr       :  result = ENAMETOOLONG;  break;
 			
