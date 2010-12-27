@@ -550,6 +550,8 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
+	#define GENERATED( gen )  &Generated_Factory< gen >
+	
 	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
@@ -560,9 +562,9 @@ namespace Genie
 		
 		{ "name", PROPERTY( proc_PID_name ) },
 		
-		{ "cmdline", &Generated_Factory< proc_PID_cmdline > },
-		{ "stat",    &Generated_Factory< proc_PID_stat    > },
-		{ "stack",   &Generated_Factory< proc_PID_stack   > },
+		{ "cmdline", GENERATED( proc_PID_cmdline ) },
+		{ "stat",    GENERATED( proc_PID_stat    ) },
+		{ "stack",   GENERATED( proc_PID_stack   ) },
 		
 		{ "core", &core_Factory },
 		
