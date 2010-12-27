@@ -48,11 +48,6 @@ namespace Genie
 		return N::ADBAddress( iota::decoded_hex_digit( parent->Name()[0] ) );
 	}
 	
-	static N::ADBAddress GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static bool ADBAddress_is_valid( N::ADBAddress key )
 	{
@@ -182,9 +177,9 @@ namespace Genie
 	
 	struct sys_mac_adb_N_registers
 	{
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			N::ADBAddress key = GetKey( that );
+			N::ADBAddress key = GetKeyFromParent( parent );
 			
 			plus::var_string output;
 			

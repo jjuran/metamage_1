@@ -54,7 +54,7 @@ namespace Genie
 	{
 		try
 		{
-			(void) itsReadHook( this );
+			(void) itsReadHook( ParentRef().get(), Name() );
 			
 			return true;
 		}
@@ -67,7 +67,7 @@ namespace Genie
 	
 	off_t FSTree_Generated::GetEOF() const
 	{
-		const plus::string data = itsReadHook( this );
+		const plus::string data = itsReadHook( ParentRef().get(), Name() );
 		
 		return data.size();
 	}
@@ -79,7 +79,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		plus::string data = itsReadHook( this );
+		plus::string data = itsReadHook( ParentRef().get(), Name() );
 		
 		return seize_ptr( new PropertyReaderFileHandle( Self(),
 		                                                flags,

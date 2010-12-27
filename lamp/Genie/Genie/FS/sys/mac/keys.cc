@@ -21,7 +21,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	plus::string sys_mac_keys::Read( const FSTree* )
+	plus::string sys_mac_keys::Read( const FSTree* parent, const plus::string& name )
 	{
 		plus::var_string result;
 		

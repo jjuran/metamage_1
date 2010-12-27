@@ -37,11 +37,6 @@ namespace Genie
 		return N::CRMDeviceID( iota::parse_decimal( parent->Name().c_str() ) );
 	}
 	
-	static N::CRMDeviceID GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
 	{
@@ -157,9 +152,9 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_icon
 	{
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			N::CRMDeviceID key = GetKey( that );
+			N::CRMDeviceID key = GetKeyFromParent( parent );
 			
 			CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 			

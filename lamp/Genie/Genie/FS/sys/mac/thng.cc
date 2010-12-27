@@ -161,11 +161,6 @@ namespace Genie
 		return (Component) plus::decode_32_bit_hex( parent->Name() );
 	}
 	
-	static Component GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static bool is_valid_Component_name( const plus::string& name )
 	{
@@ -332,9 +327,9 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_icon
 	{
-		static plus::string Get( const FSTree* that )
+		static plus::string Get( const FSTree* parent, const plus::string& name )
 		{
-			const Component comp = GetKey( that );
+			const Component comp = GetKeyFromParent( parent );
 			
 			n::owned< N::Handle > icon = N::NewHandle( 0 );
 			

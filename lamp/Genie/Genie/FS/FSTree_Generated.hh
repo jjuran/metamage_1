@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	typedef plus::string (*Generated_ReadHook)( const FSTree* that );
+	typedef plus::string (*Generated_ReadHook)( const FSTree* parent, const plus::string& name );
 	
 	FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
 	                                const plus::string&  name,

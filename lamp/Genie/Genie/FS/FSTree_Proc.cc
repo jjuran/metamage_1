@@ -54,11 +54,6 @@ namespace Genie
 		return GetKeyFromParent( parent.get() );
 	}
 	
-	static pid_t GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
 	
 	class FSTree_proc_self : public FSTree_ReadableSymLink
 	{
@@ -470,9 +465,9 @@ namespace Genie
 	{
 		typedef pid_t Key;
 		
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			Key pid = GetKey( that );
+			Key pid = GetKeyFromParent( parent );
 			
 			return Accessor::Get( GetProcess( pid ) );
 		}

@@ -43,11 +43,6 @@ namespace Genie
 		return iota::parse_unsigned_decimal( parent->Name().c_str() );
 	}
 	
-	static UInt16 GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static bool index_is_valid_soundin_device( int i )
 	{
@@ -174,9 +169,9 @@ namespace Genie
 	
 	struct sys_mac_soundin_N_icon
 	{
-		static plus::string Get( const FSTree* that )
+		static plus::string Get( const FSTree* parent, const plus::string& name )
 		{
-			const UInt16 index = GetKey( that );
+			const UInt16 index = GetKeyFromParent( parent );
 			
 			N::SPBGetIndexedDevice_Result device = N::SPBGetIndexedDevice( index );
 			

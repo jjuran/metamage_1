@@ -83,7 +83,7 @@ namespace Genie
 		return N::ReadXPRam();
 	}
 	
-	plus::string sys_mac_xpram::Read( const FSTree* )
+	plus::string sys_mac_xpram::Read( const FSTree* parent, const plus::string& name )
 	{
 		return N::ReadXPRam();
 	}
