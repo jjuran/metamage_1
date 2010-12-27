@@ -72,5 +72,14 @@ namespace Genie
 		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
 	}
 	
+	FSTreePtr new_generated( const FSTreePtr&     parent,
+	                         const plus::string&  name,
+	                         const void*          params )
+	{
+		Generated_ReadHook readHook = (Generated_ReadHook) params;
+		
+		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
+	}
+	
 }
 

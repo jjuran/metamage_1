@@ -19,6 +19,12 @@ namespace Genie
 	                                const plus::string&  name,
 	                                Generated_ReadHook   readHook );
 	
+	// Can be used in premapped directory maps
+	
+	FSTreePtr new_generated( const FSTreePtr&     parent,
+	                         const plus::string&  name,
+	                         const void*          params );
+	
 }
 
 #endif

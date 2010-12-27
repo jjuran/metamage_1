@@ -193,22 +193,14 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &sys_mac_adb_N_registers::Read );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =
 	{
 		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
 		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },
-		{ "registers", &Registers_Factory                        },
+		
+		{ "registers", &new_generated, (void*) &sys_mac_adb_N_registers::Read },
 		
 		{ NULL, NULL }
 	};

@@ -174,15 +174,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Icon_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &sys_mac_crm_serial_N_icon::Read );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[] =
@@ -191,7 +182,7 @@ namespace Genie
 		{ "input",  PROPERTY( sys_mac_crm_serial_N_input  ) },
 		{ "output", PROPERTY( sys_mac_crm_serial_N_output ) },
 		
-		{ "icon",   &Icon_Factory },
+		{ "icon",   &new_generated, (void*) &sys_mac_crm_serial_N_icon::Read },
 		
 		{ NULL, NULL }
 	};

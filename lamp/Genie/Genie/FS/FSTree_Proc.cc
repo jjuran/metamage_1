@@ -483,18 +483,6 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		typedef proc_PID_Property< Accessor > Property;
-		
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &Property::Read );
-	}
-	
 	static FSTreePtr fd_Factory( const FSTreePtr&     parent,
 	                             const plus::string&  name,
 	                             const void*          args )
@@ -550,7 +538,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	#define GENERATED( gen )  &Generated_Factory< gen >
+	#define GENERATED( gen )  &new_generated, (void*) &proc_PID_Property< gen >::Read
 	
 	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
 	{

@@ -386,16 +386,6 @@ namespace Genie
 		return New_FSTree_IconSuite( parent, name, iconSuite );
 	}
 	
-	template < class Property >
-	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &Property::Get );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[] =
@@ -407,7 +397,7 @@ namespace Genie
 		{ "name",         PROPERTY( sys_mac_thng_REF_name ) },
 		{ "info",         PROPERTY( sys_mac_thng_REF_info ) },
 		
-		{ "icon",         &Generated_Factory< sys_mac_thng_REF_icon  > },
+		{ "icon",         &new_generated, (void*) &sys_mac_thng_REF_icon::Get },
 		
 		{ "suite",        &IconSuite_Factory },
 		
