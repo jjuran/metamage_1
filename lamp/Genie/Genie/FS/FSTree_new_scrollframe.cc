@@ -313,7 +313,7 @@ namespace Genie
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
-		params.itsTargetPath = "";
+		params.itsTargetPath.reset();
 		
 		params.itsTargetProxy = ScrollerProxy( NULL );
 		
