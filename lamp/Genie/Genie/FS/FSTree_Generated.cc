@@ -65,13 +65,6 @@ namespace Genie
 		                                                its_data ) );
 	}
 	
-	FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
-	                                const plus::string&  name,
-	                                Generated_ReadHook   readHook )
-	{
-		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
-	}
-	
 	FSTreePtr new_generated( const FSTreePtr&     parent,
 	                         const plus::string&  name,
 	                         const void*          params )

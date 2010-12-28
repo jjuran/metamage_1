@@ -15,15 +15,20 @@ namespace Genie
 	
 	typedef plus::string (*Generated_ReadHook)( const FSTree* parent, const plus::string& name );
 	
-	FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
-	                                const plus::string&  name,
-	                                Generated_ReadHook   readHook );
 	
 	// Can be used in premapped directory maps
 	
 	FSTreePtr new_generated( const FSTreePtr&     parent,
 	                         const plus::string&  name,
 	                         const void*          params );
+	
+	
+	inline FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
+	                                       const plus::string&  name,
+	                                       Generated_ReadHook   get_hook )
+	{
+		return new_generated( parent, name, (void*) get_hook );
+	}
 	
 }
 
