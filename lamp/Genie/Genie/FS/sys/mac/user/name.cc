@@ -78,7 +78,7 @@ namespace Genie
 			return CFStringGetStdString( n::owned< CFStringRef >::seize( name ), encoding );
 		}
 		
-		return "";
+		return plus::string::null;
 	}
 	
 	void sys_mac_user_macname::get( plus::var_string& result, const FSTree* that, bool binary )

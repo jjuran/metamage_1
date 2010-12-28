@@ -324,7 +324,7 @@ namespace Genie
 	{
 		FSTreePtr target = ResolvePathname( target_path, ParentRef() );
 		
-		FSTreePtr delegate = target->Lookup( "" );
+		FSTreePtr delegate = target->Lookup( plus::string::null );
 		
 		const FSTree* view = GetViewKey( this );
 		

@@ -459,11 +459,11 @@ namespace Genie
 		
 		FSTree_Union* u = NULL;
 		
-		static FSTreePtr result = seize_ptr( u = new FSTree_Union( null_FSTreePtr, "" ) );
+		static FSTreePtr result = seize_ptr( u = new FSTree_Union( null_FSTreePtr, plus::string::null ) );
 		
 		if ( u != NULL )
 		{
-			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, "", Root_Overlay_Mappings );
+			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, plus::string::null, Root_Overlay_Mappings );
 			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir, false );
 			
 			u->SetTop   ( top    );

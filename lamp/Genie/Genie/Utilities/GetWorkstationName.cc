@@ -57,7 +57,7 @@ namespace Genie
 			}
 		}
 		
-		return "";
+		return plus::string::null;
 	}
 	
 }

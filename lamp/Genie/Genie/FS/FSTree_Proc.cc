@@ -429,7 +429,7 @@ namespace Genie
 		
 		if ( top == NULL )
 		{
-			return "";
+			return plus::string::null;
 		}
 		
 		const unsigned frame_capacity = 64;
