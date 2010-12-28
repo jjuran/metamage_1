@@ -655,7 +655,7 @@ static void PrintString( std::string s )
 static int TestAE( int argc, char** argv )
 {
 	//if (argc < 3)  return 1;
-	n::owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
+	n::owned< Mac::AEDescList_Data > list = N::AECreateList< Mac::AEDescList_Data >();
 	
 	N::AEPutPtr< Mac::typeChar >( list, 0, "foo" );
 	N::AEPutPtr< Mac::typeChar >( list, 0, "bar" );
