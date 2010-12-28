@@ -28,6 +28,9 @@
 namespace plus
 {
 	
+	const string string::null;
+	
+	
 	static int lexicographical_compare_3way( const char* a, const char* a_end,
 	                                         const char* b, const char* b_end )
 	{
