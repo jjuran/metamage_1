@@ -356,9 +356,9 @@ namespace Genie
 		return GetViewDelegate( this )->Lookup( real_name, parent );
 	}
 	
-	FSIteratorPtr FSTree_View::Iterate() const
+	void FSTree_View::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		return GetViewDelegate( this )->Iterate();
+		GetViewDelegate( this )->IterateIntoCache( cache );
 	}
 	
 }

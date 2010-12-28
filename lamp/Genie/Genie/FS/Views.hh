@@ -136,7 +136,7 @@ namespace Genie
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
-			FSIteratorPtr Iterate() const;
+			void IterateIntoCache( FSTreeCache& cache ) const;
 			
 			virtual boost::intrusive_ptr< Pedestal::View >& Get() const
 			{
