@@ -48,11 +48,6 @@ namespace Genie
 		return N::ADBAddress( iota::decoded_hex_digit( parent->Name()[0] ) );
 	}
 	
-	static N::ADBAddress GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static bool ADBAddress_is_valid( N::ADBAddress key )
 	{
@@ -182,9 +177,9 @@ namespace Genie
 	
 	struct sys_mac_adb_N_registers
 	{
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			N::ADBAddress key = GetKey( that );
+			N::ADBAddress key = GetKeyFromParent( parent );
 			
 			plus::var_string output;
 			
@@ -198,22 +193,14 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Registers_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &sys_mac_adb_N_registers::Read );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =
 	{
 		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
 		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },
-		{ "registers", &Registers_Factory                        },
+		
+		{ "registers", &new_generated, (void*) &sys_mac_adb_N_registers::Read },
 		
 		{ NULL, NULL }
 	};

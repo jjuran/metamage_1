@@ -43,11 +43,6 @@ namespace Genie
 		return iota::parse_unsigned_decimal( parent->Name().c_str() );
 	}
 	
-	static UInt16 GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static bool index_is_valid_soundin_device( int i )
 	{
@@ -174,9 +169,9 @@ namespace Genie
 	
 	struct sys_mac_soundin_N_icon
 	{
-		static plus::string Get( const FSTree* that )
+		static plus::string Get( const FSTree* parent, const plus::string& name )
 		{
-			const UInt16 index = GetKey( that );
+			const UInt16 index = GetKeyFromParent( parent );
 			
 			N::SPBGetIndexedDevice_Result device = N::SPBGetIndexedDevice( index );
 			
@@ -199,23 +194,13 @@ namespace Genie
 		}
 	};
 	
-	template < class Property >
-	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &Property::Get );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_soundin_REF_Mappings[] =
 	{
 		{ "name", PROPERTY( sys_mac_soundin_REF_name ) },
 		
-		{ "icon", &Generated_Factory< sys_mac_soundin_N_icon  > },
+		{ "icon", &new_generated, (void*) &sys_mac_soundin_N_icon::Get },
 		
 		{ NULL, NULL }
 	};

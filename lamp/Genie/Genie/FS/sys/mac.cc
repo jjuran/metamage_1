@@ -40,16 +40,6 @@
 namespace Genie
 {
 	
-	template < class Property >
-	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &Property::Read );
-	}
-	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
@@ -70,7 +60,7 @@ namespace Genie
 		{ "drive", &New_FSTree_sys_mac_drive },
 		{ "unit",  &New_FSTree_sys_mac_unit  },
 		
-		{ "xpram", &Generated_Factory< sys_mac_xpram > },
+		{ "xpram", &new_generated, (void*) &sys_mac_xpram::Read },
 		
 	#endif
 		
@@ -89,7 +79,7 @@ namespace Genie
 		{ ".mac-name", PROPERTY(                     sys_mac_name   ) },
 		{      "name", PROPERTY( utf8_text_property< sys_mac_name > ) },
 		
-		{ "keys", &Generated_Factory< sys_mac_keys > },
+		{ "keys", &new_generated, (void*) &sys_mac_keys::Read },
 		
 		{ "rom", &New_FSTree_sys_mac_rom },
 		

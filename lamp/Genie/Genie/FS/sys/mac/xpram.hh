@@ -25,7 +25,7 @@ namespace Genie
 	
 	struct sys_mac_xpram
 	{
-		static plus::string Read( const FSTree* );
+		static plus::string Read( const FSTree* parent, const plus::string& name );
 	};
 	
 }

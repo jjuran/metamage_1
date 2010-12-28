@@ -37,11 +37,6 @@ namespace Genie
 		return N::CRMDeviceID( iota::parse_decimal( parent->Name().c_str() ) );
 	}
 	
-	static N::CRMDeviceID GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef().get() );
-	}
-	
 	
 	static CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
 	{
@@ -157,9 +152,9 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_icon
 	{
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			N::CRMDeviceID key = GetKey( that );
+			N::CRMDeviceID key = GetKeyFromParent( parent );
 			
 			CRMRecPtr crmRec = GetCRMRecPtrFromID( key );
 			
@@ -179,15 +174,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Icon_Factory( const FSTreePtr&     parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &sys_mac_crm_serial_N_icon::Read );
-	}
-	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
 	const FSTree_Premapped::Mapping sys_mac_crm_serial_N_Mappings[] =
@@ -196,7 +182,7 @@ namespace Genie
 		{ "input",  PROPERTY( sys_mac_crm_serial_N_input  ) },
 		{ "output", PROPERTY( sys_mac_crm_serial_N_output ) },
 		
-		{ "icon",   &Icon_Factory },
+		{ "icon",   &new_generated, (void*) &sys_mac_crm_serial_N_icon::Read },
 		
 		{ NULL, NULL }
 	};

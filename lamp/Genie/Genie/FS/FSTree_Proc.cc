@@ -54,11 +54,6 @@ namespace Genie
 		return GetKeyFromParent( parent.get() );
 	}
 	
-	static pid_t GetKey( const FSTree* that )
-	{
-		return GetKeyFromParent( that->ParentRef() );
-	}
-	
 	
 	class FSTree_proc_self : public FSTree_ReadableSymLink
 	{
@@ -470,9 +465,9 @@ namespace Genie
 	{
 		typedef pid_t Key;
 		
-		static plus::string Read( const FSTree* that )
+		static plus::string Read( const FSTree* parent, const plus::string& name )
 		{
-			Key pid = GetKey( that );
+			Key pid = GetKeyFromParent( parent );
 			
 			return Accessor::Get( GetProcess( pid ) );
 		}
@@ -487,18 +482,6 @@ namespace Genie
 			result = GetProcess( pid ).ProgramName();
 		}
 	};
-	
-	template < class Accessor >
-	static FSTreePtr Generated_Factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		typedef proc_PID_Property< Accessor > Property;
-		
-		return New_FSTree_Generated( parent,
-		                             name,
-		                             &Property::Read );
-	}
 	
 	static FSTreePtr fd_Factory( const FSTreePtr&     parent,
 	                             const plus::string&  name,
@@ -555,6 +538,8 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
+	#define GENERATED( gen )  &new_generated, (void*) &proc_PID_Property< gen >::Read
+	
 	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
@@ -565,9 +550,9 @@ namespace Genie
 		
 		{ "name", PROPERTY( proc_PID_name ) },
 		
-		{ "cmdline", &Generated_Factory< proc_PID_cmdline > },
-		{ "stat",    &Generated_Factory< proc_PID_stat    > },
-		{ "stack",   &Generated_Factory< proc_PID_stack   > },
+		{ "cmdline", GENERATED( proc_PID_cmdline ) },
+		{ "stat",    GENERATED( proc_PID_stat    ) },
+		{ "stack",   GENERATED( proc_PID_stack   ) },
 		
 		{ "core", &core_Factory },
 		

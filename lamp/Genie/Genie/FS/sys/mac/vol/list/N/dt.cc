@@ -238,13 +238,12 @@ namespace Genie
 	}
 	
 	
-	static plus::string generate_dt_icons_QUAD_QUAD_X( const FSTree* that )
+	static plus::string generate_dt_icons_QUAD_QUAD_X( const FSTree* parent, const plus::string& name )
 	{
-		const FSTreePtr&    parent = that   ->ParentRef();
 		const FSTreePtr&   gparent = parent ->ParentRef();
 		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
 		
-		const short selector = iota::parse_unsigned_decimal( that->Name().c_str() );
+		const short selector = iota::parse_unsigned_decimal( name.c_str() );
 		
 		const ::OSType type    = parse_quad_name( parent ->Name() );
 		const ::OSType creator = parse_quad_name( gparent->Name() );
