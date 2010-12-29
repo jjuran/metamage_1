@@ -8,6 +8,9 @@
 // Standard C++
 #include <vector>
 
+// POSIX
+#include <sys/stat.h>
+
 // Debug
 #include "debug/assert.hh"
 
@@ -176,7 +179,7 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Stack : public FSTree_Directory
+	class FSTree_Stack : public FSTree
 	{
 		public:
 			typedef ViewList  Sequence;
@@ -184,7 +187,7 @@ namespace Genie
 			FSTree_Stack( const FSTreePtr&     parent,
 		                  const plus::string&  name)
 			:
-				FSTree_Directory( parent, name )
+				FSTree( parent, name, S_IFDIR | 0700 )
 			{
 			}
 			

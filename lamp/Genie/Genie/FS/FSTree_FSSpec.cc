@@ -69,7 +69,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
@@ -261,7 +260,7 @@ namespace Genie
 	}
 	
 	
-	class FSTree_HFS : public FSTree_Directory
+	class FSTree_HFS : public FSTree
 	{
 		private:
 			FSSpec      itsFileSpec;
@@ -353,8 +352,8 @@ namespace Genie
 	                        const plus::string&  name,
 	                        const FSTree*        parent )
 	:
-		FSTree_Directory( parent ? parent->Self() : null_FSTreePtr,
-		                  name ),
+		FSTree( parent ? parent->Self() : null_FSTreePtr,
+		        name ),
 		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
 		itsCInfo        ( cInfo                 ),
 		itIsOnServer    ( onServer              )

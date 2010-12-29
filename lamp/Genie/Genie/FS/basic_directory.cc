@@ -7,11 +7,14 @@
 
 #include "Genie/FS/basic_directory.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 
 namespace Genie
 {
 	
-	class basic_directory : public FSTree_Directory
+	class basic_directory : public FSTree
 	{
 		private:
 			Lookup_Proc   itsLookup;
@@ -23,7 +26,7 @@ namespace Genie
 			                 Lookup_Proc          lookup,
 			                 Iterate_Proc         iterate )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				itsLookup ( lookup  ),
 				itsIterate( iterate )
 			{

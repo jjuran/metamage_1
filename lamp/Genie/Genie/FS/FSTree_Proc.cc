@@ -71,7 +71,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree_PID_fd : public FSTree_Directory
+	class FSTree_PID_fd : public FSTree
 	{
 		private:
 			typedef fd_table  Sequence;
@@ -83,7 +83,7 @@ namespace Genie
 			               const plus::string&  name,
 			               pid_t                pid )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				its_pid( pid )
 			{
 			}

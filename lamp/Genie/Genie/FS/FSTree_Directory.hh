@@ -33,7 +33,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Premapped : public FSTree_Directory
+	class FSTree_Premapped : public FSTree
 	{
 		public:
 			typedef FSTreePtr (*Function)( const FSTreePtr&,
@@ -63,7 +63,7 @@ namespace Genie
 			                  Mappings             mappings = empty_mappings,
 			                  Destructor           dtor     = NULL )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				itsMappings( mappings ),
 				itsDestructor( dtor )
 			{
