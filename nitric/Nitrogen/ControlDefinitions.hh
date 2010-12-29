@@ -47,38 +47,6 @@
 namespace Nitrogen
   {
 	
-	using Mac::pushButProc;
-	using Mac::checkBoxProc;
-	using Mac::radioButProc;
-	using Mac::scrollBarProc;
-	using Mac::popupMenuProc;
-	
-	using Mac::kControlLabelPart;
-	using Mac::kControlMenuPart;
-	using Mac::kControlTrianglePart;
-	using Mac::kControlEditTextPart;
-	using Mac::kControlPicturePart;
-	using Mac::kControlIconPart;
-	using Mac::kControlClockPart;
-	using Mac::kControlListBoxPart;
-	using Mac::kControlListBoxDoubleClickPart;
-	using Mac::kControlImageWellPart;
-	using Mac::kControlRadioGroupPart;
-	using Mac::kControlButtonPart;
-	using Mac::kControlCheckBoxPart;
-	using Mac::kControlRadioButtonPart;
-	using Mac::kControlUpButtonPart;
-	using Mac::kControlDownButtonPart;
-	using Mac::kControlPageUpPart;
-	using Mac::kControlPageDownPart;
-	using Mac::kControlClockHourDayPart;
-	using Mac::kControlClockMinuteMonthPart;
-	using Mac::kControlClockSecondYearPart;
-	using Mac::kControlClockAMPMPart;
-	using Mac::kControlDataBrowserPart;
-	using Mac::kControlDataBrowserDraggedPart;
-	
-	
 	static const ControlDataTag kControlBevelButtonContentTag                  = ControlDataTag( ::kControlBevelButtonContentTag                  );
 	static const ControlDataTag kControlBevelButtonTransformTag                = ControlDataTag( ::kControlBevelButtonTransformTag                );
 	static const ControlDataTag kControlBevelButtonTextAlignTag                = ControlDataTag( ::kControlBevelButtonTextAlignTag                );
@@ -248,9 +216,6 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlScrollTextBoxContentsTag               >: nucleus::POD_scribe    < ::SInt16                      > {};
 
    template<> struct ControlData_Traits< kControlEditUnicodeTextPostUpdateProcTag       >: nucleus::POD_scribe    < EditUnicodePostUpdateUPP      > {};
-	
-	using Mac::kControlScrollBarProc;
-	using Mac::kControlScrollBarLiveProc;
 	
   }
 
