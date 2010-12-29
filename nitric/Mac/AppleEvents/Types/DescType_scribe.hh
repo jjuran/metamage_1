@@ -46,6 +46,13 @@
 namespace Mac
 {
 	
+	template < DescType descType >
+	struct DescType_
+	{
+		static const DescType value = descType;
+	};
+	
+	
 	template < DescType > struct DescType_scribe;
 	
 	typedef nucleus::converting_POD_scribe< bool, ::Boolean > Boolean_scribe;
