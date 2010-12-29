@@ -53,6 +53,14 @@ namespace Mac
 	};
 	
 	
+	template < class Integer > struct Integer_DescType;
+	
+	template <> struct Integer_DescType< SInt16 > : DescType_< typeSInt16 > {};
+	template <> struct Integer_DescType< SInt32 > : DescType_< typeSInt32 > {};
+	template <> struct Integer_DescType< UInt32 > : DescType_< typeUInt32 > {};
+	template <> struct Integer_DescType< SInt64 > : DescType_< typeSInt64 > {};
+	
+	
 	template < DescType > struct DescType_scribe;
 	
 	typedef nucleus::converting_POD_scribe< bool, ::Boolean > Boolean_scribe;
