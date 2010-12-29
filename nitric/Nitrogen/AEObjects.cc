@@ -13,9 +13,16 @@
 
 #include "Nitrogen/AEObjects.hh"
 
+// nucleus
+#ifndef NUCLEUS_ERRORSREGISTERED_HH
+#include "nucleus/errors_registered.hh"
+#endif
+
 
 namespace Nitrogen
 {
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleEventManager );
 	
 	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )
 	

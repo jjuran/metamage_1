@@ -8,8 +8,13 @@
 
 #include <map>
 
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
+// Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AECOMPOPERATOR_HH
+#include "Mac/AppleEvents/Types/AECompOperator.hh"
+#endif
+
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
 #endif
 
 

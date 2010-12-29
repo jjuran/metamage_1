@@ -51,32 +51,14 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
 #include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
-#include "Mac/AppleEvents/Types/AEEnumeration.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
-#include "Mac/AppleEvents/Types/AEEventClass.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
-#include "Mac/AppleEvents/Types/AEEventID.hh"
-#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYWORDSCRIBE_HH
 #include "Mac/AppleEvents/Types/AEKeyword_scribe.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
-#include "Mac/AppleEvents/Types/AEReturnID.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AETRANSACTIONID_HH
-#include "Mac/AppleEvents/Types/AETransactionID.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBETEXT_HH
 #include "Mac/AppleEvents/Types/DescType_scribe_text.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSCREATOR_HH
-#include "Mac/Files/Types/FSCreator.hh"
 #endif
 #ifndef MAC_PROCESSES_UTILITIES_SIZEOFAPPPARAMETERS_HH
 #include "Mac/Processes/Utilities/sizeof_AppParameters.hh"

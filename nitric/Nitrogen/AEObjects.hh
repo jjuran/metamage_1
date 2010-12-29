@@ -18,25 +18,36 @@
 #include <AEObjects.h>
 #endif
 
+// nucleus
+#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
+#include "nucleus/enumeration_traits.hh"
+#endif
+#ifndef NUCLEUS_FLAGOPS_HH
+#include "nucleus/flag_ops.hh"
+#endif
+
 // Nitrogen
-#ifndef MAC_APPLEEVENTS_TYPES_AECOMPOPERATOR_HH
-#include "Mac/AppleEvents/Types/AECompOperator.hh"
+#ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
+#include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AELOGICALOPERATOR_HH
-#include "Mac/AppleEvents/Types/AELogicalOperator.hh"
-#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
 #include "Mac/AppleEvents/Types/AEObjectClass.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEPROPERTYID_HH
-#include "Mac/AppleEvents/Types/AEPropertyID.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
+#include "Mac/AppleEvents/Types/DescType.hh"
 #endif
 
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
+#endif
+#ifndef NITROGEN_REFCON_HH
+#include "Nitrogen/RefCon.hh"
+#endif
+#ifndef NITROGEN_UPP_HH
+#include "Nitrogen/UPP.hh"
 #endif
 
 

@@ -6,7 +6,7 @@
 #include "AEObjectModel/GetData.h"
 
 // Nitrogen
-#include "Nitrogen/AEObjects.hh"
+#include "Nitrogen/AEDataModel.hh"
 
 
 namespace Nitrogen
