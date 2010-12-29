@@ -140,7 +140,7 @@ namespace Nitrogen
 	{
 		try
 		{
-			*result = Compare( AECompOperator( op ),
+			*result = Compare( Mac::AECompOperator( op ),
 			                   static_cast< const Mac::AEDesc_Token& >( *obj1 ),
 			                   static_cast< const Mac::AEDesc_Token& >( *obj2 ) );
 		}

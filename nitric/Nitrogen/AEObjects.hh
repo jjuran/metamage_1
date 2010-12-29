@@ -19,6 +19,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_AECOMPOPERATOR_HH
+#include "Mac/AppleEvents/Types/AECompOperator.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
@@ -43,25 +46,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** Constant types **
 	
-	enum AEComparisonOperator
-	{
-		kAEBeginsWith        = ::kAEBeginsWith,
-		kAECaseSensEquals    = ::kAECaseSensEquals,
-		kAEContains          = ::kAEContains,
-		kAEEndsWith          = ::kAEEndsWith,
-		kAEEquals            = ::kAEEquals,
-		kAEGreaterThan       = ::kAEGreaterThan,
-		kAEGreaterThanEquals = ::kAEGreaterThanEquals,
-		kAELessThan          = ::kAELessThan,
-		kAELessThanEquals    = ::kAELessThanEquals,
-		
-		kAEComparisonOperator_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
-	
-	typedef AEComparisonOperator AECompOperator;
-	
-	
-	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
+	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< Mac::AECompOperator    > {};
 	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< Mac::AELogicalOperator > {};
 	
 	template <> struct AEKeyword_Traits< Mac::keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};

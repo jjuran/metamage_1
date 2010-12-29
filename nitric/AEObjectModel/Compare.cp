@@ -11,14 +11,14 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator            op,
+	bool Compare( Mac::AECompOperator       op,
 	              const Mac::AEDesc_Token&  obj1,
 	              const Mac::AEDesc_Token&  obj2 )
 	{
 		return TheGlobalComparer().Compare( op, obj1, obj2 );
 	}
 	
-	bool Comparer::Compare( AECompOperator            op,
+	bool Comparer::Compare( Mac::AECompOperator       op,
 	                        const Mac::AEDesc_Token&  obj1,
 	                        const Mac::AEDesc_Token&  obj2 )
 	{
@@ -34,7 +34,7 @@ namespace Nitrogen
 			}
 		}
 		
-		return found->second( AECompOperator( op ), obj1, obj2 );
+		return found->second( Mac::AECompOperator( op ), obj1, obj2 );
 	}
 	
 	Comparer& TheGlobalComparer()

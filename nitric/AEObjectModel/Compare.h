@@ -16,7 +16,7 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator            op,
+	bool Compare( Mac::AECompOperator       op,
 			      const Mac::AEDesc_Token&  obj1,
 			      const Mac::AEDesc_Token&  obj2 );
 	
@@ -25,7 +25,7 @@ namespace Nitrogen
 	class Comparer
 	{
 		public:
-			typedef bool (*Callback)( AECompOperator, const Mac::AEDesc_Token&, const Mac::AEDesc_Token& );
+			typedef bool (*Callback)( Mac::AECompOperator, const Mac::AEDesc_Token&, const Mac::AEDesc_Token& );
 		
 		private:
 			typedef std::map< Mac::DescType, Callback >  Map;
@@ -50,7 +50,7 @@ namespace Nitrogen
 				Register( tokenType, Compare_Traits< tokenType >::Compare );
 			}
 			
-			bool Compare( AECompOperator            op,
+			bool Compare( Mac::AECompOperator       op,
 			              const Mac::AEDesc_Token&  obj1,
 			              const Mac::AEDesc_Token&  obj2 );
 	};
@@ -73,11 +73,11 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator            op,
+		static bool Compare( Mac::AECompOperator       op,
 		                     const Mac::AEDesc_Token&  obj1,
 		                     const Mac::AEDesc_Token&  obj2 )
 		{
-			if ( op != AECompOperator( kAEEquals ) )
+			if ( op != Mac::AECompOperator( kAEEquals ) )
 			{
 				ThrowOSStatus( errAEEventNotHandled );
 			}
@@ -94,7 +94,7 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator            op,
+		static bool Compare( Mac::AECompOperator       op,
 		                     const Mac::AEDesc_Token&  obj1,
 		                     const Mac::AEDesc_Token&  obj2 )
 		{
