@@ -14,6 +14,7 @@
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
+#include "Nitrogen/AEObjects.hh"
 #include "Nitrogen/CarbonEvents.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Processes.hh"

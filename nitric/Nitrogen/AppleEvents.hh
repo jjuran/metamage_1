@@ -24,10 +24,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTSOURCE_HH
-#include "Mac/AppleEvents/Types/AEEventSource.hh"
-#endif
-
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
@@ -38,13 +34,6 @@
 
 namespace Nitrogen
 {
-	
-	// In AppleEvents.h due to dependency on enum AEEventSource.
-	template <> struct AEKeyword_Traits< Mac::keyEventSourceAttr > : Integer_AEKeyword_Traits< Mac::AEEventSource, SInt16 > {};
-	
-	template <> struct AEKeyword_Traits< Mac::keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
-	
-	template <> struct AEKeyword_Traits< Mac::keyErrorString > : Char_AEKeyword_Traits< char > {};
 	
 	struct AEEventHandler
 	{

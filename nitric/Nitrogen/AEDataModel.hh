@@ -60,8 +60,8 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
 #include "Mac/AppleEvents/Types/AEEventID.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEKEYWORD_HH
-#include "Mac/AppleEvents/Types/AEKeyword.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_AEKEYWORDSCRIBE_HH
+#include "Mac/AppleEvents/Types/AEKeyword_scribe.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 #include "Mac/AppleEvents/Types/AEReturnID.hh"
@@ -231,67 +231,11 @@ namespace Nitrogen
 	template<> struct DescType_Traits< Mac::typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, Mac::sizeof_AppParameters > {};
 	
 	
-	template < class Char > struct Char_DescType_Traits;
-	
-	template <> struct Char_DescType_Traits< char >  { static const Mac::DescType descType = Mac::typeChar; };
-	
-	template < class Integer > struct Integer_DescType_Traits;
-	
-	template <> struct Integer_DescType_Traits< SInt16 >  { static const Mac::DescType descType = Mac::typeSInt16; };
-	template <> struct Integer_DescType_Traits< SInt32 >  { static const Mac::DescType descType = Mac::typeSInt32; };
-	template <> struct Integer_DescType_Traits< UInt32 >  { static const Mac::DescType descType = Mac::typeUInt32; };
-	
-	struct Type_DescType_Traits  { static const Mac::DescType descType = Mac::typeType;       };
-	struct Enum_DescType_Traits  { static const Mac::DescType descType = Mac::typeEnumerated; };
-	
-	
-	template < class Char > struct Char_AEKeyword_Traits;
-	
-	/*
-	template < class Char >
-	struct Char_AEKeyword_Traits : nucleus::string_scribe< std::basic_string< Char > >,
-	                               Char_DescType_Traits< Char >
+	template < Mac::AEKeyword key >
+	struct AEKeyword_Traits : Mac::AEKeyword_scribe< key >::type
 	{
+		static const Mac::DescType descType = Mac::AEKeyword_DescType< key >::value;
 	};
-	*/
-	
-	template <>
-	struct Char_AEKeyword_Traits< char > : nucleus::string_scribe< nucleus::mutable_string >,
-	                                       Char_DescType_Traits< char >
-	{
-	};
-	
-	
-	template < class POD, class Integer >
-	struct Integer_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, Integer >,
-	                                  Integer_DescType_Traits< Integer >
-	{
-	};
-	
-	template < class POD >
-	struct Type_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, ::FourCharCode >,
-	                               Type_DescType_Traits
-	{
-	};
-	
-	template < class POD >
-	struct Enum_AEKeyword_Traits : nucleus::converting_POD_scribe< POD, ::FourCharCode >,
-	                               Enum_DescType_Traits
-	{
-	};
-	
-	template < Mac::AEKeyword key > struct AEKeyword_Traits;
-	
-	template <> struct AEKeyword_Traits< Mac::keyTransactionIDAttr > : Integer_AEKeyword_Traits< AETransactionID,  ::AETransactionID > {};
-	template <> struct AEKeyword_Traits< Mac::keyReturnIDAttr      > : Integer_AEKeyword_Traits< AEReturnID_32Bit, ::SInt32          > {};
-	
-	template <> struct AEKeyword_Traits< Mac::keyEventClassAttr > : Type_AEKeyword_Traits< AEEventClass > {};
-	template <> struct AEKeyword_Traits< Mac::keyEventIDAttr    > : Type_AEKeyword_Traits< AEEventID    > {};
-	
-	// In AppleEvents.h due to dependency on enum AEEventSource.
-	//template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< AEEventSource, SInt16 > {};
-	
-	template <> struct AEKeyword_Traits< Mac::keyMissedKeywordAttr > : Type_AEKeyword_Traits< Mac::AEKeyword > {};
 	
 	
 	#pragma mark -

@@ -35,9 +35,6 @@
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
-#endif
 
 
 namespace Nitrogen
@@ -155,8 +152,6 @@ namespace Nitrogen
 	// eScheme .. eurlUnknown
 	// kConnSuite .. eVideoOut
 	// cKeystroke .. eF15Key
-	
-	template <> struct AEKeyword_Traits< Mac::keyAEObjectClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
 	
    template<> struct DescType_Traits< Mac::typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        Mac::SizeOf_VersRec   > {};
    template<> struct DescType_Traits< Mac::typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    Mac::sizeof_OffsetArray    > {};

@@ -36,6 +36,8 @@
 #include "poseven/types/exit_t.hh"
 
 // Nitrogen
+#include "Mac/AppleEvents/Types/AEKeyword_scribe_text.hh"
+
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/OSA.hh"
 #include "Nitrogen/Resources.hh"
