@@ -20,6 +20,11 @@
 #endif
 #endif
 
+// iota
+#ifndef IOTA_TYPE_HH
+#include "iota/type.hh"
+#endif
+
 // nucleus
 #ifndef NUCLEUS_SCRIBE_HH
 #include "nucleus/scribe.hh"
@@ -46,6 +51,9 @@
 namespace Mac
 {
 	
+	using iota::type_;
+	
+	
 	template < DescType descType >
 	struct DescType_
 	{
@@ -59,6 +67,16 @@ namespace Mac
 	template <> struct Integer_DescType< SInt32 > : DescType_< typeSInt32 > {};
 	template <> struct Integer_DescType< UInt32 > : DescType_< typeUInt32 > {};
 	template <> struct Integer_DescType< SInt64 > : DescType_< typeSInt64 > {};
+	
+	
+	template < DescType > struct DescType_integer;
+	
+	template <> struct DescType_integer< typeSInt16 > : type_< SInt16 > {};
+	template <> struct DescType_integer< typeSInt32 > : type_< SInt32 > {};
+	template <> struct DescType_integer< typeUInt32 > : type_< UInt32 > {};
+	
+	template <> struct DescType_integer< typeType       > : type_< ::DescType > {};
+	template <> struct DescType_integer< typeEnumerated > : type_< ::DescType > {};
 	
 	
 	template < DescType > struct DescType_scribe;
