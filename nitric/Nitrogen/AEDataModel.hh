@@ -37,9 +37,6 @@
 #ifndef NUCLEUS_MAKE_HH
 #include "nucleus/make.hh"
 #endif
-#ifndef NUCLEUS_STRING_HH
-#include "nucleus/string.hh"
-#endif
 #ifndef NUCLEUS_VARIABLELENGTHPODSCRIBE_HH
 #include "nucleus/variable_length_POD_scribe.hh"
 #endif
@@ -72,8 +69,8 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AETRANSACTIONID_HH
 #include "Mac/AppleEvents/Types/AETransactionID.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBE_HH
-#include "Mac/AppleEvents/Types/DescType_scribe.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBETEXT_HH
+#include "Mac/AppleEvents/Types/DescType_scribe_text.hh"
 #endif
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #include "Mac/AppleEvents/Utilities/NonNull_AEDescs_Are_Live.hh"
@@ -226,15 +223,12 @@ namespace Nitrogen
 	template < Mac::DescType type >
 	struct DescType_Traits : Mac::DescType_scribe< type > {};
 	
-	template<> struct DescType_Traits< Mac::typeChar > : public nucleus::string_scribe< nucleus::mutable_string > {};
-	
 	template<> struct DescType_Traits< Mac::typeFixed > : public Mac::Fixed_scribe {};
 	
 	template<> struct DescType_Traits< Mac::typeNull >                   { typedef void Result; };
 	
 	template<> struct DescType_Traits< Mac::typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
 	template<> struct DescType_Traits< Mac::typeAppParameters >          : nucleus::variable_length_POD_scribe< AppParameters, Mac::sizeof_AppParameters > {};
-	template<> struct DescType_Traits< Mac::typeApplicationURL >         : DescType_Traits< Mac::typeChar >                               {};
 	
 	
 	template < class Char > struct Char_DescType_Traits;
