@@ -23,6 +23,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/quad_name.hh"
 
 

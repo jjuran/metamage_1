@@ -9,7 +9,7 @@
 #define GENIE_FS_BASICDIRECTORY_HH
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
