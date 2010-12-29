@@ -840,7 +840,7 @@ namespace Pedestal
 		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
 		// at most one tick, and that only if it's been a while since.
 		
-		if ( gRunState.activelyBusy )
+		if ( ActivelyBusy() )
 		{
 			const bool nonzero = now >= gTicksAtLastTrueSleep + gMaxTicksBetweenNonZeroSleeps;
 			
@@ -891,7 +891,7 @@ namespace Pedestal
 						N::YieldToAnyThread();
 					}
 					
-					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
+					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 					{
 						EventRecord event = GetAnEvent();
 						
