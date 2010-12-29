@@ -19,21 +19,7 @@ namespace Genie
 	class FSTreeCache;
 	
 	
-	class FSTree_Directory : public FSTree
-	{
-		public:
-			FSTree_Directory( const FSTreePtr&     parent,
-			                  const plus::string&  name );
-			
-			~FSTree_Directory();
-			
-			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const = 0;
-			
-			virtual void IterateIntoCache( FSTreeCache& cache ) const = 0;
-	};
-	
-	
-	class FSTree_Premapped : public FSTree_Directory
+	class FSTree_Premapped : public FSTree
 	{
 		public:
 			typedef FSTreePtr (*Function)( const FSTreePtr&,
@@ -63,7 +49,7 @@ namespace Genie
 			                  Mappings             mappings = empty_mappings,
 			                  Destructor           dtor     = NULL )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				itsMappings( mappings ),
 				itsDestructor( dtor )
 			{

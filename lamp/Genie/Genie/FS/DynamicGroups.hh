@@ -6,8 +6,11 @@
 #ifndef GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 #define GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie 
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/DynamicGroup.hh"
 
 
@@ -31,7 +34,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree_DynamicGroup_Base : public FSTree_Directory
+	class FSTree_DynamicGroup_Base : public FSTree
 	{
 		public:
 			typedef DynamicGroup Sequence;
@@ -39,7 +42,7 @@ namespace Genie
 			FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
 			                          const plus::string&  name )
 			:
-				FSTree_Directory( parent, name )
+				FSTree( parent, name, S_IFDIR | 0700 )
 			{
 			}
 			

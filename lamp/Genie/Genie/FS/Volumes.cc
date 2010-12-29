@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Volumes.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Mac OS
 #ifndef __FILES__
 #include <Files.h>
@@ -26,7 +29,6 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 
 
@@ -69,13 +71,13 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes : public FSTree_Directory
+	class FSTree_Volumes : public FSTree
 	{
 		public:
 			FSTree_Volumes( const FSTreePtr&     parent,
 			                const plus::string&  name )
 			:
-				FSTree_Directory( parent, name )
+				FSTree( parent, name, S_IFDIR | 0700 )
 			{
 			}
 			

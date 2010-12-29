@@ -32,6 +32,7 @@
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 

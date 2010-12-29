@@ -25,6 +25,7 @@
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
@@ -71,7 +72,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree_PID_fd : public FSTree_Directory
+	class FSTree_PID_fd : public FSTree
 	{
 		private:
 			typedef fd_table  Sequence;
@@ -83,7 +84,7 @@ namespace Genie
 			               const plus::string&  name,
 			               pid_t                pid )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				its_pid( pid )
 			{
 			}

@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResFile_Dir.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -14,7 +17,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -27,7 +29,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_ResFileDir : public FSTree_Directory
+	class FSTree_ResFileDir : public FSTree
 	{
 		private:
 			FSSpec  itsFileSpec;
@@ -37,7 +39,7 @@ namespace Genie
 			                   const plus::string&  name,
 			                   const FSSpec&        file )
 			:
-				FSTree_Directory( parent, name ),
+				FSTree( parent, name, S_IFDIR | 0700 ),
 				itsFileSpec( file )
 			{
 			}
