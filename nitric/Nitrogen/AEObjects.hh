@@ -22,6 +22,9 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AELOGICALOPERATOR_HH
+#include "Mac/AppleEvents/Types/AELogicalOperator.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
 #include "Mac/AppleEvents/Types/AEObjectClass.hh"
 #endif
@@ -39,17 +42,6 @@ namespace Nitrogen
 	
 	#pragma mark -
 	#pragma mark ** Constant types **
-	
-	enum AELogicalOperator
-	{
-		kAEAND = ::kAEAND,
-		kAEOR  = ::kAEOR,
-		kAENOT = ::kAENOT,
-		
-		kAELogicalOperator_Max = nucleus::enumeration_traits< ::DescType >::max
-	};
-	
-	//typedef AELogicalOperator AELogicalDescriptor;
 	
 	enum AEComparisonOperator
 	{
@@ -70,7 +62,7 @@ namespace Nitrogen
 	
 	
 	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
-	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
+	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< Mac::AELogicalOperator > {};
 	
 	template <> struct AEKeyword_Traits< Mac::keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
 	template <> struct AEKeyword_Traits< Mac::keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm     > {};
