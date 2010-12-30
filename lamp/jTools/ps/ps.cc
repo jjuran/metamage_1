@@ -21,9 +21,9 @@
 
 // poseven
 #include "poseven/functions/ftruncate.hh"
-#include "poseven/functions/lseek.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
+#include "poseven/functions/pwrite.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 
@@ -273,6 +273,13 @@ namespace tool
 		
 		const struct timespec minimum = timespec_from_seconds( min_sleep );
 		
+		if ( !monitor )
+		{
+			p7::write( p7::stdout_fileno, ps() );
+			
+			return 0;
+		}
+		
 		plus::string output;
 		plus::string previous;
 		
@@ -282,17 +289,15 @@ namespace tool
 		
 		if ( output != previous )
 		{
-			p7::write( p7::stdout_fileno, output );
-			
 			if ( monitor )
 			{
 				p7::ftruncate( p7::stdout_fileno, output.size() );
 				
+				p7::pwrite( p7::stdout_fileno, output, 0 );
+				
 				using std::swap;
 				
 				swap( output, previous );
-				
-				p7::lseek( p7::stdout_fileno, 0 );
 			}
 		}
 		
