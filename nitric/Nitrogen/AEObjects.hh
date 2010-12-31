@@ -46,12 +46,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** Constant types **
 	
-	template <> struct AEKeyword_Traits< Mac::keyAECompOperator    > : Type_AEKeyword_Traits< Mac::AECompOperator    > {};
-	template <> struct AEKeyword_Traits< Mac::keyAELogicalOperator > : Type_AEKeyword_Traits< Mac::AELogicalOperator > {};
-	
-	template <> struct AEKeyword_Traits< Mac::keyAEDesiredClass > : Type_AEKeyword_Traits< Mac::AEObjectClass > {};
-	template <> struct AEKeyword_Traits< Mac::keyAEKeyForm      > : Enum_AEKeyword_Traits< Mac::AEKeyForm     > {};
-	
 	enum AEResolveCallbackFlags
 	{
 		kAEIDoMinimum           = ::kAEIDoMinimum,
