@@ -199,8 +199,6 @@ namespace Nitrogen
 	template < Mac::DescType type >
 	struct DescType_Traits : Mac::DescType_scribe< type >::type {};
 	
-	template<> struct DescType_Traits< Mac::typeFixed > : public Mac::Fixed_scribe {};
-	
 	template<> struct DescType_Traits< Mac::typeNull >                   { typedef void Result; };
 	
 	template<> struct DescType_Traits< Mac::typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};

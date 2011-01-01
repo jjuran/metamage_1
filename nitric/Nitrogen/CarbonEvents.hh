@@ -42,6 +42,9 @@
 #ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBEDYNAMIC_HH
 #include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBEMATH_HH
+#include "Mac/AppleEvents/Types/DescType_scribe_math.hh"
+#endif
 #ifndef CARBON_CARBONEVENTS_TYPES_EVENTKIND_HH
 #include "Carbon/CarbonEvents/Types/EventKind.hh"
 #endif
