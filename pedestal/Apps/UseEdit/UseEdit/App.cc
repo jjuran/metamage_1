@@ -50,10 +50,10 @@ namespace UseEdit
 	
 }
 
-namespace Nitrogen
+namespace Mac
 {
 	
-	template <> struct DescType_Traits< UseEdit::typeDocument > : DescType_Traits< Mac::typeWindowRef > {};
+	template <> struct DescType_scribe< UseEdit::typeDocument > : DescType_scribe< typeWindowRef > {};
 	
 }
 
