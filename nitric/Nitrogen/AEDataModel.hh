@@ -210,6 +210,8 @@ namespace Nitrogen
 	using Mac::DescType_result;
 	
 	using Mac::AEKeyword_DescType;
+	using Mac::AEKeyword_parameter;
+	using Mac::AEKeyword_result;
 	
 	template < Mac::AEKeyword key >
 	struct AEKeyword_Traits : Mac::AEKeyword_scribe< key >::type
@@ -1487,8 +1489,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutKeyPtr( AERecord&                                    record,
-	                         typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutKeyPtr( AERecord&                                  record,
+	                         typename AEKeyword_parameter< key >::type  data )
 	{
 		AEKeyword_Traits< key >::Put( data,
 		                              AEPutKeyPtr_Putter( record,
@@ -1497,8 +1499,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutKeyPtr( nucleus::owned< Mac::AERecord_Data >&        record,
-	                         typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutKeyPtr( nucleus::owned< Mac::AERecord_Data >&      record,
+	                         typename AEKeyword_parameter< key >::type  data )
 	{
 		AEPutKeyPtr< key >( Detail::AEDescEditor< Mac::AERecord_Data >( record ), data );
 	}
@@ -1507,7 +1509,7 @@ namespace Nitrogen
 	class AEPutKeyPtr_Binding
 	{
 		private:
-			typedef typename AEKeyword_Traits< key >::Parameter Parameter;
+			typedef typename AEKeyword_parameter< key >::type Parameter;
 			
 			Parameter itsData;
 		
@@ -1518,7 +1520,7 @@ namespace Nitrogen
 	};
 	
 	template < Mac::AEKeyword key >
-	inline AEPutKeyPtr_Binding< key > AEPutKeyPtr( typename AEKeyword_Traits< key >::Parameter data )
+	inline AEPutKeyPtr_Binding< key > AEPutKeyPtr( typename AEKeyword_parameter< key >::type data )
 	{
 		return AEPutKeyPtr_Binding< key >( data );
 	}
@@ -1567,7 +1569,7 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline typename AEKeyword_Traits< key >::Result
+	inline typename AEKeyword_result< key >::type
 	AEGetKeyPtr( const AERecord& record )
 	{
 		return AEKeyword_Traits< key >::Get( AEGetKeyPtr_Getter< AEKeyword_DescType< key >::value >( record, key ) );
@@ -1621,8 +1623,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutParamPtr( Mac::AppleEvent&                             appleEvent,
-	                           typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutParamPtr( Mac::AppleEvent&                           appleEvent,
+	                           typename AEKeyword_parameter< key >::type  data )
 	{
 		AEKeyword_Traits< key >::Put( data,
 		                              AEPutParamPtr_Putter( appleEvent,
@@ -1631,8 +1633,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutParamPtr( nucleus::owned< Mac::AppleEvent >&           appleEvent,
-	                           typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutParamPtr( nucleus::owned< Mac::AppleEvent >&         appleEvent,
+	                           typename AEKeyword_parameter< key >::type  data )
 	{
 		AEPutParamPtr< key >( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), data );
 	}
@@ -1684,7 +1686,7 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline typename AEKeyword_Traits< key >::Result
+	inline typename AEKeyword_result< key >::type
 	//
 	AEGetParamPtr( const Mac::AppleEvent& appleEvent )
 	{
@@ -1739,8 +1741,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutAttributePtr( Mac::AppleEvent&                             appleEvent,
-	                               typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutAttributePtr( Mac::AppleEvent&                           appleEvent,
+	                               typename AEKeyword_parameter< key >::type  data )
 	{
 		AEKeyword_Traits< key >::Put( data,
 		                              AEPutAttributePtr_Putter( appleEvent,
@@ -1749,8 +1751,8 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutAttributePtr( nucleus::owned< Mac::AppleEvent >&           appleEvent,
-	                               typename AEKeyword_Traits< key >::Parameter  data )
+	inline void AEPutAttributePtr( nucleus::owned< Mac::AppleEvent >&         appleEvent,
+	                               typename AEKeyword_parameter< key >::type  data )
 	{
 		AEPutAttributePtr< key >( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), data );
 	}
@@ -1802,7 +1804,7 @@ namespace Nitrogen
 	}
 	
 	template < Mac::AEKeyword key >
-	inline typename AEKeyword_Traits< key >::Result
+	inline typename AEKeyword_result< key >::type
 	//
 	AEGetAttributePtr( const Mac::AppleEvent& appleEvent )
 	{

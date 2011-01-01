@@ -389,7 +389,7 @@ namespace Nitrogen
 	
 	template < Mac::AEKeyword key >
 	inline
-	typename AEKeyword_Traits< key >::Result
+	typename AEKeyword_result< key >::type
 	OSAScriptError( ComponentInstance scriptingComponent )
 	{
 		return OSAScriptError< AEKeyword_DescType< key >::value >( scriptingComponent, key );
