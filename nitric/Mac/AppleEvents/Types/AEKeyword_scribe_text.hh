@@ -7,8 +7,8 @@
 #define MAC_APPLEEVENTS_TYPES_AEKEYWORDSCRIBETEXT_HH
 
 // nucleus
-#ifndef NUCLEUS_STRING_HH
-#include "nucleus/string.hh"
+#ifndef NUCLEUS_STRINGSCRIBE_HH
+#include "nucleus/string_scribe.hh"
 #endif
 
 // Nitrogen
@@ -20,12 +20,10 @@
 namespace Mac
 {
 	
-	typedef nucleus::POD_vector_scribe< nucleus::mutable_string > string_scribe;
-	
 	// AppleEvents
 	// -----------
 	
-	template <> struct AEKeyword_scribe< keyErrorString > : type_< string_scribe > {};
+	template <> struct AEKeyword_scribe< keyErrorString > : type_< nucleus::string_scribe > {};
 	
 }
 

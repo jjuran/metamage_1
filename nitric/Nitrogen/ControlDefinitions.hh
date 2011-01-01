@@ -25,6 +25,9 @@
 #ifndef NUCLEUS_SEIZINGPODSCRIBE_HH
 #include "nucleus/seizing_POD_scribe.hh"
 #endif
+#ifndef NUCLEUS_STRINGSCRIBE_HH
+#include "nucleus/string_scribe.hh"
+#endif
 
 // Nitrogen
 #ifndef CARBON_CF_TYPES_CFTYPEREF_HH
@@ -36,13 +39,14 @@
 #ifndef MAC_CONTROLS_TYPES_CONTROLPROCID_HH
 #include "Mac/Controls/Types/ControlProcID.hh"
 #endif
-
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
+#ifndef MAC_TOOLBOX_TYPES_BOOLEAN_HH
+#include "Mac/Toolbox/Types/Boolean.hh"
 #endif
+
 #ifndef NITROGEN_CONTROLS_HH
 #include "Nitrogen/Controls.hh"
 #endif
+
 
 namespace Nitrogen
   {
@@ -174,13 +178,13 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: nucleus::POD_scribe    < ControlUserPaneFocusUPP       > {};
    template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: nucleus::POD_scribe    < ControlUserPaneBackgroundUPP  > {};
 
-   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits        < Mac::typeChar                 > {};
+   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: nucleus::string_scribe                                   {};
    template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: nucleus::POD_scribe    < TEHandle                      > {};
    template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: nucleus::POD_scribe    < ControlEditTextSelectionRec   > {};
-   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits        < Mac::typeChar                 > {};
+   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: nucleus::string_scribe                                   {};
    template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: nucleus::POD_scribe    < ControlKeyScriptBehavior      > {};
    template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: Mac::Boolean_scribe                                      {};
-   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits        < Mac::typeChar                 > {};
+   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: nucleus::string_scribe                                   {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: nucleus::POD_scribe    < ControlEditTextValidationUPP  > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: nucleus::POD_scribe    < TSMTEPreUpdateUPP             > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: nucleus::POD_scribe    < TSMTEPostUpdateUPP            > {};

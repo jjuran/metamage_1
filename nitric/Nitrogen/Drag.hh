@@ -34,11 +34,8 @@
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
 #endif
-#ifndef NUCLEUS_SCRIBE_HH
-#include "nucleus/scribe.hh"
-#endif
-#ifndef NUCLEUS_STRING_HH
-#include "nucleus/string.hh"
+#ifndef NUCLEUS_STRINGSCRIBE_HH
+#include "nucleus/string_scribe.hh"
 #endif
 
 // Nitrogen
@@ -118,8 +115,8 @@ namespace Nitrogen
    
    template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public nucleus::POD_scribe< HFSFlavor > {};
    template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public nucleus::POD_scribe< PromiseHFSFlavor > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public nucleus::POD_vector_scribe< nucleus::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public nucleus::POD_vector_scribe< nucleus::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public nucleus::string_scribe {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public nucleus::string_scribe {};
    template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public nucleus::empty_scribe {};
    template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public nucleus::empty_scribe {};
    
