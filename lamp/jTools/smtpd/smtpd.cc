@@ -183,7 +183,7 @@ namespace tool
 	
 	static void CreateOneLiner( const FSSpec& file, const plus::string& line )
 	{
-		typedef n::string_scribe< plus::string > scribe;
+		typedef n::POD_vector_scribe< plus::string > scribe;
 		
 		plus::string output = line + "\n";
 		

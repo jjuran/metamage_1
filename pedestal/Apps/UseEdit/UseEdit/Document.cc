@@ -38,7 +38,7 @@ namespace UseEdit
 	template < class FileSpec >
 	static plus::string ReadFileData( const FileSpec& file )
 	{
-		plus::var_string data = io::slurp_file< n::string_scribe< plus::var_string > >( file );
+		plus::var_string data = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( file );
 		
 		// Allow LF newlines
 		std::replace( data.begin(),

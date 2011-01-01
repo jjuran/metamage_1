@@ -20,7 +20,7 @@
 namespace Mac
 {
 	
-	typedef nucleus::string_scribe< nucleus::mutable_string > string_scribe;
+	typedef nucleus::POD_vector_scribe< nucleus::mutable_string > string_scribe;
 	
 	// AppleEvents
 	// -----------

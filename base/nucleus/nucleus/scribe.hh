@@ -121,11 +121,6 @@ namespace nucleus
 		struct Buffer {};
 	};
 	
-	template < class T >
-	struct string_scribe: public POD_vector_scribe< T >
-	{
-	};
-	
 	template < class Converted, class BaseFlattener >
 	struct converting_scribe
 	{

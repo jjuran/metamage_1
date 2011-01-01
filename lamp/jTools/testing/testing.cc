@@ -692,7 +692,7 @@ static int TestAE( int argc, char** argv )
 
 static void DoSomethingWithServiceFile( const FSSpec& file )
 {
-	typedef n::string_scribe< plus::var_string > scribe;
+	typedef n::POD_vector_scribe< plus::var_string > scribe;
 	
 	using namespace io::path_descent_operators;
 	

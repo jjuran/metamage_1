@@ -688,7 +688,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
+		const plus::string target = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( itsFileSpec );
 		
 		if ( !target.empty() )
 		{
@@ -727,7 +727,7 @@ namespace Genie
 			
 			if ( is_alias  ||  is_osx_symlink( fInfo ) )
 			{
-				plus::string target = io::slurp_file< n::string_scribe< plus::var_string > >( itsFileSpec );
+				plus::string target = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( itsFileSpec );
 				
 				if ( !target.empty() )
 				{
@@ -828,7 +828,7 @@ namespace Genie
 			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
 		
-		io::spew_file< n::string_scribe< plus::string > >( linkSpec, targetPath );
+		io::spew_file< n::POD_vector_scribe< plus::string > >( linkSpec, targetPath );
 	}
 	
 	void FSTree_HFS::SymLink( const plus::string& target ) const
