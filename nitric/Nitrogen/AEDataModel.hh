@@ -171,6 +171,13 @@ inline OSErr AEDeleteKeyDesc( AppleEvent*  theAppleEvent,
 #endif
 
 
+namespace Mac
+{
+	
+	template <> struct DescType_scribe< typeAlias > : type_< Nitrogen::TypedHandleFlattener< AliasRecord > > {};
+	
+}
+
 namespace Nitrogen
 {
 	
@@ -200,8 +207,6 @@ namespace Nitrogen
 	struct DescType_Traits : Mac::DescType_scribe< type >::type {};
 	
 	template<> struct DescType_Traits< Mac::typeNull >                   { typedef void Result; };
-	
-	template<> struct DescType_Traits< Mac::typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
 	
 	
 	template < Mac::AEKeyword key >
