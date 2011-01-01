@@ -97,7 +97,12 @@ namespace Nitrogen
 		struct Buffer {};
 	};
 	
-	template <> struct DescType_Traits< Mac::typeUnicodeText > : UnicodeFlattener< UniChar > {};
+}
+
+namespace Mac
+{
+	
+	template <> struct DescType_scribe< typeUnicodeText > : type_< Nitrogen::UnicodeFlattener< UniChar > > {};
 	
 }
 
