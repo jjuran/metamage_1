@@ -315,7 +315,7 @@ namespace Nitrogen
    template < ::ResType inTagName >
    struct SetControlData_Traits: public ControlData_Traits<inTagName>
      {
-      typedef typename ControlData_Traits<inTagName>::Parameter InData_Type;
+      typedef typename ControlData_Traits<inTagName>::argument_type InData_Type;
      };
 
    template < ::ResType inTagName >
@@ -418,7 +418,7 @@ namespace Nitrogen
 	};
 	
    template < ::ResType inTagName >
-   inline typename GetControlData_Traits<inTagName>::Result
+   inline typename GetControlData_Traits<inTagName>::result_type
    GetControlData( ControlRef        inControl,
                    ControlPartCode   inPart = kControlEntireControl )
      {

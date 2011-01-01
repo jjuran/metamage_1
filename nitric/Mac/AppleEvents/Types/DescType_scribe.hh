@@ -88,13 +88,13 @@ namespace Mac
 	template < Mac::DescType descType >
 	struct DescType_parameter
 	{
-		typedef typename Mac::DescType_scribe< descType >::type::Parameter type;
+		typedef typename Mac::DescType_scribe< descType >::type::argument_type type;
 	};
 	
 	template < Mac::DescType descType >
 	struct DescType_result
 	{
-		typedef typename Mac::DescType_scribe< descType >::type::Result type;
+		typedef typename Mac::DescType_scribe< descType >::type::result_type type;
 	};
 	
 	
@@ -102,7 +102,7 @@ namespace Mac
 	// -----------
 	
 	// This is not a valid scribe, but the minimum needed by CarbonEvents
-	template <> struct DescType_scribe< typeNull > { struct type { typedef void Result; }; };
+	template <> struct DescType_scribe< typeNull > { struct type { typedef void result_type; }; };
 	
 	template <> struct DescType_scribe< typeBoolean > : type_< Boolean_scribe > {};
 	

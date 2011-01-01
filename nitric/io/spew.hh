@@ -60,7 +60,7 @@ namespace io
 	}
 	
 	template < class Flattener, class Stream >
-	void spew_output( const Stream& output, typename Flattener::Parameter param )
+	void spew_output( const Stream& output, typename Flattener::argument_type param )
 	{
 		spew_putter< io::iostream_traits< Stream > > putter( output );
 		
@@ -74,7 +74,7 @@ namespace io
 	}
 	
 	template < class Flattener, class FileSpec >
-	void spew_file( const FileSpec& file, typename Flattener::Parameter param )
+	void spew_file( const FileSpec& file, typename Flattener::argument_type param )
 	{
 		spew_output< Flattener >( open_truncated( file, overload() ).get(), param );
 	}

@@ -91,13 +91,13 @@ namespace Mac
 	template < Mac::AEKeyword keyword >
 	struct AEKeyword_parameter
 	{
-		typedef typename Mac::AEKeyword_scribe< keyword >::type::Parameter type;
+		typedef typename Mac::AEKeyword_scribe< keyword >::type::argument_type type;
 	};
 	
 	template < Mac::AEKeyword keyword >
 	struct AEKeyword_result
 	{
-		typedef typename Mac::AEKeyword_scribe< keyword >::type::Result type;
+		typedef typename Mac::AEKeyword_scribe< keyword >::type::result_type type;
 	};
 	
 	

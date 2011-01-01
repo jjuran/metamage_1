@@ -62,10 +62,11 @@ namespace Nitrogen
 	template < class UTFChar >
 	struct UnicodeFlattener
 	{
-		typedef const std::basic_string< UTFChar >& Put_Parameter;
+		typedef const std::basic_string< UTFChar >&  argument_type;
+		typedef       std::basic_string< UTFChar >   result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, Putter put )
+		static void Put( argument_type toPut, Putter put )
 		{
 			const UTFChar* begin = &toPut[0];
 			const std::size_t size = toPut.size() * sizeof (UTFChar);
@@ -73,13 +74,12 @@ namespace Nitrogen
 			put( begin, begin + size );
 		}
 		
-		typedef std::basic_string< UTFChar > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter get )
+		static result_type Get( Getter get )
 		{
 			const std::size_t size = get.size();
-			Get_Result result;
+			
+			result_type result;
 			
 			result.resize( size / sizeof (UTFChar) );
 			
@@ -89,9 +89,6 @@ namespace Nitrogen
 			
 			return result;
 		}
-		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};

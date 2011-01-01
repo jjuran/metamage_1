@@ -191,7 +191,7 @@ namespace Nitrogen
    template < ::FlavorType theType >
    struct AddDragItemFlavor_Traits
      {
-      typedef typename FlavorType_Traits< theType >::Put_Parameter Data_Type;
+      typedef typename FlavorType_Traits< theType >::argument_type Data_Type;
      };
    
    template < ::FlavorType theType >
@@ -239,7 +239,7 @@ namespace Nitrogen
    template < ::FlavorType theType >
    struct SetDragItemFlavorData_Traits
      {
-      typedef typename FlavorType_Traits< theType >::Put_Parameter Data_Type;
+      typedef typename FlavorType_Traits< theType >::argument_type Data_Type;
      };
    
    template < ::FlavorType theType >
@@ -320,7 +320,7 @@ namespace Nitrogen
    template < ::FlavorType theType >
    struct GetFlavorData_Traits
      {
-      typedef typename FlavorType_Traits< theType >::Get_Result Result;
+      typedef typename FlavorType_Traits< theType >::result_type Result;
      };
    
    template < ::FlavorType theType >
