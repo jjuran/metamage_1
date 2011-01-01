@@ -10,7 +10,6 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AERegistry.hh"
 
 // Iteration
 #include "Iteration/AEDescListItemDatas.h"

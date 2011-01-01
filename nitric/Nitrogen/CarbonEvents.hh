@@ -39,6 +39,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBEDYNAMIC_HH
+#include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
+#endif
 #ifndef CARBON_CARBONEVENTS_TYPES_EVENTKIND_HH
 #include "Carbon/CarbonEvents/Types/EventKind.hh"
 #endif
@@ -57,9 +60,6 @@
 #endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
-#endif
-#ifndef NITROGEN_AEREGISTRY_HH
-#include "Nitrogen/AERegistry.hh"
 #endif
 #ifndef NITROGEN_UTFSTRINGS_HH
 #include "Nitrogen/UTFStrings.hh"
