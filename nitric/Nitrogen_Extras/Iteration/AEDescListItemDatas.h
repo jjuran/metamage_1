@@ -22,9 +22,9 @@ namespace Nitrogen
 	template < Mac::DescType type >
 	struct AEDescList_ItemData_Specifics
 	{
-		typedef UInt32                                    size_type;
-		typedef SInt32                                    difference_type;
-		typedef typename DescType_Traits< type >::Result  value_type;
+		typedef UInt32                                  size_type;
+		typedef SInt32                                  difference_type;
+		typedef typename DescType_result< type >::type  value_type;
 		
 		static std::size_t size( const AEDescList& list )
 		{
@@ -69,7 +69,7 @@ namespace Nitrogen
 		public:
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
-			typedef typename DescType_Traits< type >::Result Result, value_type;
+			typedef typename DescType_result< type >::type Result, value_type;
 		
 		private:
 			typedef AEDescList_ItemData_ValueIterator< type > This;
@@ -116,7 +116,7 @@ namespace Nitrogen
 			typedef AEDescList_ItemData_BackInsertionIterator< type, AEDescList_Type > This;
 			typedef This Proxy;
 			typedef nucleus::owned< AEDescList_Type > List;
-			typedef typename DescType_Traits< type >::Parameter Parameter;
+			typedef typename DescType_parameter< type >::type Parameter;
 			
 			List& list;
 		

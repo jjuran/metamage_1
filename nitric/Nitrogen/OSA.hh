@@ -379,7 +379,7 @@ namespace Nitrogen
 	
 	template < Mac::DescType desiredType >
 	inline
-	typename DescType_Traits< desiredType >::Result
+	typename DescType_result< desiredType >::type
 	OSAScriptError( ComponentInstance scriptingComponent, Mac::AEKeyword keyword )
 	{
 		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
