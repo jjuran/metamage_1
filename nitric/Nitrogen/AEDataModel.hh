@@ -1843,12 +1843,6 @@ namespace Nitrogen
 		return DescType_Traits< type >::Get( AEGetDescData_Getter( desc ) );
 	}
 	
-	template < Mac::DescType type >
-	inline typename DescType_Traits< type >::Result AECoerceDescData( const AEDesc& desc )
-	{
-		return AEGetDescData< type >( AECoerceDesc( desc, type ) );
-	}
-	
 	
 	class AEReplaceDescData_Putter
 	{
