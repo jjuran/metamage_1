@@ -631,9 +631,7 @@ namespace Nitrogen
    template < EventParamType inDesiredType >
    typename GetEventParameter_Traits<inDesiredType>::Result GetEventParameter( EventRef inEvent, EventParamName inName )
      {
-      typedef DescType_Traits< inDesiredType > Traits;
-      
-      return Traits::Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
+      return DescType_get< inDesiredType >( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
      }
 
    inline EventClass       GetEventClass( EventRef inEvent )     { return EventClass     ( ::GetEventClass( inEvent ) ); }

@@ -210,6 +210,7 @@ namespace Nitrogen
 	using Mac::DescType_result;
 	
 	using Mac::DescType_put;
+	using Mac::DescType_get;
 	
 	using Mac::AEKeyword_DescType;
 	using Mac::AEKeyword_parameter;
@@ -1440,7 +1441,7 @@ namespace Nitrogen
 	AEGetNthPtr( const AEDescList&  listDesc,
 	             long               index )
 	{
-		return DescType_Traits< type >::Get( AEGetNthPtr_Getter< type >( listDesc, index ) );
+		return DescType_get< type >( AEGetNthPtr_Getter< type >( listDesc, index ) );
 	}
 	
 	
@@ -1566,7 +1567,7 @@ namespace Nitrogen
 	AEGetKeyPtr( const AERecord&  record,
 	             Mac::AEKeyword   keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetKeyPtr_Getter< type >( record, keyword ) );
+		return DescType_get< type >( AEGetKeyPtr_Getter< type >( record, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1685,7 +1686,7 @@ namespace Nitrogen
 	AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
 	               Mac::AEKeyword          keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetParamPtr_Getter< type >( appleEvent, keyword ) );
+		return DescType_get< type >( AEGetParamPtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1805,7 +1806,7 @@ namespace Nitrogen
 	AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
 	                   Mac::AEKeyword          keyword )
 	{
-		return DescType_Traits< type >::Get( AEGetAttributePtr_Getter< type >( appleEvent, keyword ) );
+		return DescType_get< type >( AEGetAttributePtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1844,7 +1845,7 @@ namespace Nitrogen
 		
 		(void) requiredType;
 		
-		return DescType_Traits< type >::Get( AEGetDescData_Getter( desc ) );
+		return DescType_get< type >( AEGetDescData_Getter( desc ) );
 	}
 	
 	
