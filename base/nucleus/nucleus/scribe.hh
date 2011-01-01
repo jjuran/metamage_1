@@ -127,31 +127,30 @@ namespace nucleus
 	};
 	
 	template < class Converted, class BaseFlattener >
-	class converting_scribe
+	struct converting_scribe
 	{
-		public:
-			typedef const Converted& Put_Parameter;
-			
-			template < class Putter >
-			static void Put( Put_Parameter toPut, const Putter& put )
-			{
-				BaseFlattener::Put( toPut, put );
-			}
-			
-			typedef Converted Get_Result;
-			
-			template < class Getter >
-			static Get_Result Get( const Getter& get )
-			{
-				return Get_Result( BaseFlattener::Get( get ) );
-			}
-			
-			typedef Put_Parameter Parameter;
-			typedef Get_Result  Result;
+		typedef const Converted& Put_Parameter;
 		
-			static const bool hasStaticSize = BaseFlattener::hasStaticSize;
-			
-			typedef typename BaseFlattener::Buffer Buffer;
+		template < class Putter >
+		static void Put( Put_Parameter toPut, const Putter& put )
+		{
+			BaseFlattener::Put( toPut, put );
+		}
+		
+		typedef Converted Get_Result;
+		
+		template < class Getter >
+		static Get_Result Get( const Getter& get )
+		{
+			return Get_Result( BaseFlattener::Get( get ) );
+		}
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result  Result;
+	
+		static const bool hasStaticSize = BaseFlattener::hasStaticSize;
+		
+		typedef typename BaseFlattener::Buffer Buffer;
 	};
 	
 	template < class Converted, class POD >
