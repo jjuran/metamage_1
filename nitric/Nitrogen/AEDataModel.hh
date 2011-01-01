@@ -203,7 +203,7 @@ namespace Nitrogen
 	#pragma mark ** DescType_Traits **
 	
 	template < Mac::DescType type >
-	struct DescType_Traits : Mac::DescType_scribe< type > {};
+	struct DescType_Traits : Mac::DescType_scribe< type >::type {};
 	
 	template<> struct DescType_Traits< Mac::typeFixed > : public Mac::Fixed_scribe {};
 	

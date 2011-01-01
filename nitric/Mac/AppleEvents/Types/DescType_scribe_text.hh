@@ -23,8 +23,8 @@ namespace Mac
 	// AEDataModel
 	// -----------
 	
-	template <> struct DescType_scribe< typeText           > : nucleus::string_scribe {};
-	template <> struct DescType_scribe< typeApplicationURL > : nucleus::string_scribe {};
+	template <> struct DescType_scribe< typeText           > : type_< nucleus::string_scribe > {};
+	template <> struct DescType_scribe< typeApplicationURL > : type_< nucleus::string_scribe > {};
 	
 }
 
