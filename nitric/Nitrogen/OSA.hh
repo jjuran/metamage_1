@@ -392,7 +392,7 @@ namespace Nitrogen
 	typename AEKeyword_Traits< key >::Result
 	OSAScriptError( ComponentInstance scriptingComponent )
 	{
-		return OSAScriptError< AEKeyword_Traits< key >::descType >( scriptingComponent, key );
+		return OSAScriptError< AEKeyword_DescType< key >::value >( scriptingComponent, key );
 	}
 	
 }
