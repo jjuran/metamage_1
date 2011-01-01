@@ -46,6 +46,9 @@
 #ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
 #endif
+#ifndef MAC_TOOLBOX_TYPES_BOOLEAN_HH
+#include "Mac/Toolbox/Types/Boolean.hh"
+#endif
 
 
 namespace Mac
@@ -80,8 +83,6 @@ namespace Mac
 	
 	
 	template < DescType > struct DescType_scribe;
-	
-	typedef nucleus::converting_POD_scribe< bool, ::Boolean > Boolean_scribe;
 	
 	// AEDataModel
 	// -----------
