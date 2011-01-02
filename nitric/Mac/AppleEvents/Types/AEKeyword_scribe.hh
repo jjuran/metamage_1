@@ -100,6 +100,20 @@ namespace Mac
 		typedef typename Mac::AEKeyword_scribe< keyword >::type::result_type type;
 	};
 	
+	template < AEKeyword keyword, class Putter >
+	inline void AEKeyword_put( typename AEKeyword_parameter< keyword >::type param, const Putter& putter )
+	{
+		AEKeyword_scribe< keyword >::type::Put( param, putter );
+	}
+	
+	template < AEKeyword keyword, class Getter >
+	inline typename AEKeyword_result< keyword >::type
+	//
+	AEKeyword_get( const Getter& getter )
+	{
+		return AEKeyword_scribe< keyword >::type::Get( getter );
+	}
+	
 	
 	// AEDataModel
 	// -----------
