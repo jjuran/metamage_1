@@ -14,6 +14,9 @@
 #ifndef NUCLEUS_SCRIBE_HH
 #define NUCLEUS_SCRIBE_HH
 
+// Standard C/C++
+#include <cstddef>
+
 /*
 	Some interfaces, like AppleEvent descriptors and Carbon Event parameters,
 	move data around in a way that is untyped from a C++ perspective, instead
@@ -86,6 +89,8 @@ namespace nucleus
 		
 		static const bool hasStaticSize = true;
 		typedef T Buffer;
+		
+		static const std::size_t static_size = sizeof (T);
 	};
 	
 	template < class T >
@@ -113,6 +118,8 @@ namespace nucleus
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class Converted, class BaseFlattener >
@@ -136,6 +143,8 @@ namespace nucleus
 		static const bool hasStaticSize = BaseFlattener::hasStaticSize;
 		
 		typedef typename BaseFlattener::Buffer Buffer;
+		
+		static const std::size_t static_size = BaseFlattener::static_size;
 	};
 	
 	template < class Converted, class POD >
@@ -165,6 +174,8 @@ namespace nucleus
 		
 		static const bool hasStaticSize = true;
 		typedef empty Buffer;
+		
+		static const std::size_t static_size = 0;
 	};
 	
 }

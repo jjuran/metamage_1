@@ -53,6 +53,8 @@ namespace nucleus
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 	template <>

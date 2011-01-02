@@ -40,6 +40,8 @@ namespace nucleus
 		static const bool hasStaticSize = true;
 		
 		typedef Ownable Buffer;
+		
+		static const std::size_t static_size = sizeof (Ownable);
 	};
 	
 }

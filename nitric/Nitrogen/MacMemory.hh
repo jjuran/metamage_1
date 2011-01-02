@@ -421,6 +421,8 @@ namespace Nitrogen
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class T >
@@ -446,6 +448,8 @@ namespace Nitrogen
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 	struct HandleFlattener
@@ -499,6 +503,8 @@ namespace Nitrogen
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class T >
@@ -524,6 +530,8 @@ namespace Nitrogen
 		
 		static const bool hasStaticSize = false;
 		struct Buffer {};
+		
+		static const std::size_t static_size = 0;
 	};
 	
 }
