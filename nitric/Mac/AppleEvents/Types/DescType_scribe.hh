@@ -87,6 +87,9 @@ namespace Mac
 	// AEDataModel
 	// -----------
 	
+	// This is not a valid scribe, but the minimum needed by CarbonEvents
+	template <> struct DescType_scribe< typeNull > { struct type { typedef void Result; }; };
+	
 	template <> struct DescType_scribe< typeBoolean > : type_< Boolean_scribe > {};
 	
 	template <> struct DescType_scribe< typeSInt16 >                 : type_< nucleus::POD_scribe< SInt16 >      > {};
