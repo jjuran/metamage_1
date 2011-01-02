@@ -97,6 +97,20 @@ namespace Mac
 		typedef typename Mac::DescType_scribe< descType >::type::result_type type;
 	};
 	
+	template < DescType descType, class Putter >
+	inline void DescType_put( typename DescType_parameter< descType >::type param, Putter putter )
+	{
+		DescType_scribe< descType >::type::Put( param, putter );
+	}
+	
+	template < DescType descType, class Getter >
+	inline typename DescType_result< descType >::type
+	//
+	DescType_get( Getter getter )
+	{
+		return DescType_scribe< descType >::type::Get( getter );
+	}
+	
 	
 	// AEDataModel
 	// -----------
