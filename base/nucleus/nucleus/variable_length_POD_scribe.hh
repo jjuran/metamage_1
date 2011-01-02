@@ -16,10 +16,11 @@ namespace nucleus
 	template < class T, std::size_t (*size_of)( const T& ) >
 	struct variable_length_POD_scribe
 	{
-		typedef const T& Put_Parameter;
+		typedef const T&            argument_type;
+		typedef std::auto_ptr< T >  result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter param, const Putter& putter )
+		static void Put( argument_type param, const Putter& putter )
 		{
 			const T* begin = &param;
 			
@@ -28,14 +29,12 @@ namespace nucleus
 			putter( begin, begin + size );
 		}
 		
-		typedef std::auto_ptr< T > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& getter )
+		static result_type Get( const Getter& getter )
 		{
 			const std::size_t size = getter.size();
 			
-			Get_Result result = std::auto_ptr< T >( static_cast< T* >( ::operator new( size ) ) );
+			result_type result = std::auto_ptr< T >( static_cast< T* >( ::operator new( size ) ) );
 			
 			T* begin = result.get();
 			
@@ -44,11 +43,7 @@ namespace nucleus
 			return result;
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 }

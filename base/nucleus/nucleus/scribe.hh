@@ -14,6 +14,9 @@
 #ifndef NUCLEUS_SCRIBE_HH
 #define NUCLEUS_SCRIBE_HH
 
+// Standard C/C++
+#include <cstddef>
+
 /*
 	Some interfaces, like AppleEvent descriptors and Carbon Event parameters,
 	move data around in a way that is untyped from a C++ perspective, instead
@@ -64,88 +67,94 @@ namespace nucleus
 {
 	
 	template < class T >
+	struct is_nonvoid
+	{
+		static const bool value = true;
+	};
+	
+	template <>
+	struct is_nonvoid< void >
+	{
+		static const bool value = false;
+	};
+	
+	template < class Scribe >
+	struct scribe_has_static_size
+	{
+		static const bool returns_data = is_nonvoid< typename Scribe::result_type >::value;
+		
+		static const bool value = !returns_data  ||  Scribe::static_size != 0;
+	};
+	
+	template < class T >
 	struct POD_scribe
 	{
-		typedef const T& Put_Parameter;
+		typedef const T&  argument_type;
+		typedef       T   result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
+		static void Put( argument_type toPut, const Putter& put )
 		{
 			put( &toPut, &toPut + 1 );
 		}
 		
-		typedef T Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& get )
+		static result_type Get( const Getter& get )
 		{
-			Get_Result result;
+			result_type result;
+			
 			get( &result, &result + 1 );
 			return result;
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = true;
-		typedef T Buffer;
+		static const std::size_t static_size = sizeof (T);
 	};
 	
 	template < class T >
 	struct POD_vector_scribe
 	{
-		typedef const T& Put_Parameter;
+		typedef const T&  argument_type;
+		typedef       T   result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
+		static void Put( argument_type toPut, const Putter& put )
 		{
 			put( &*toPut.begin(), &*toPut.end() );
 		}
 		
-		typedef T Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& get )
+		static result_type Get( const Getter& get )
 		{
-			Get_Result result;
+			result_type result;
+			
 			result.resize( get.size() );
 			
 			get( &*result.begin(), &*result.end() );
 			return result;
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class Converted, class BaseFlattener >
 	struct converting_scribe
 	{
-		typedef const Converted& Put_Parameter;
+		typedef const Converted&  argument_type;
+		typedef       Converted   result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
+		static void Put( argument_type toPut, const Putter& put )
 		{
 			BaseFlattener::Put( toPut, put );
 		}
 		
-		typedef Converted Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& get )
+		static result_type Get( const Getter& get )
 		{
-			return Get_Result( BaseFlattener::Get( get ) );
+			return result_type( BaseFlattener::Get( get ) );
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-	
-		static const bool hasStaticSize = BaseFlattener::hasStaticSize;
-		
-		typedef typename BaseFlattener::Buffer Buffer;
+		static const std::size_t static_size = BaseFlattener::static_size;
 	};
 	
 	template < class Converted, class POD >
@@ -154,33 +163,24 @@ namespace nucleus
 	};
 	
 	
-	struct empty {};
-	
 	struct empty_scribe
 	{
-		typedef empty Put_Parameter;
+		typedef void argument_type;  // can't be used
+		typedef void result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, const Putter& put )
+		static void Put( const Putter& put )
 		{
 			put( 0, 0 );
 		}
 		
-		typedef empty Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& get )
+		static void Get( const Getter& get )
 		{
 			get( 0, 0 );  // So it has a chance to throw
-			
-			return empty();
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = true;
-		typedef empty Buffer;
+		static const std::size_t static_size = 0;
 	};
 	
 }

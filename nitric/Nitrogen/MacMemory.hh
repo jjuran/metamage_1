@@ -393,10 +393,11 @@ namespace Nitrogen
 	
 	struct PtrFlattener
 	{
-		typedef Ptr Put_Parameter;
+		typedef                 Ptr    argument_type;
+		typedef nucleus::owned< Ptr >  result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, Putter put )
+		static void Put( argument_type toPut, Putter put )
 		{
 			const char* begin = toPut;
 			const std::size_t size = GetPtrSize( toPut );
@@ -404,13 +405,12 @@ namespace Nitrogen
 			put( begin, begin + size );
 		}
 		
-		typedef nucleus::owned< Ptr > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter get )
+		static result_type Get( Getter get )
 		{
 			const std::size_t size = get.size();
-			Get_Result result = NewPtr( size );
+			
+			result_type result = NewPtr( size );
 			
 			char* begin = result.get();
 			
@@ -419,48 +419,40 @@ namespace Nitrogen
 			return result;
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class T >
 	struct TypedPtrFlattener
 	{
+		typedef                 T*    argument_type;
+		typedef nucleus::owned< T* >  result_type;
+		
 		typedef T   DataType;
 		typedef T*  PtrType;
 		
-		typedef PtrType Put_Parameter;
-		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, Putter put )
+		static void Put( argument_type toPut, Putter put )
 		{
 			PtrFlattener::Put( Ptr( toPut ), put );
 		}
 		
-		typedef nucleus::owned< PtrType > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter get )
+		static result_type Get( Getter get )
 		{
 			return Ptr_Cast< T >( PtrFlattener::Get( get ) );
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 	struct HandleFlattener
 	{
-		typedef Handle Put_Parameter;
+		typedef                 Handle    argument_type;
+		typedef nucleus::owned< Handle >  result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, Putter put )
+		static void Put( argument_type toPut, Putter put )
 		{
 		#if !TARGET_API_MAC_OSX
 			
@@ -476,13 +468,12 @@ namespace Nitrogen
 			put( begin, begin + size );
 		}
 		
-		typedef nucleus::owned< Handle > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter get )
+		static result_type Get( Getter get )
 		{
 			const std::size_t size = get.size();
-			Get_Result result = NewHandle( size );
+			
+			result_type result = NewHandle( size );
 			
 			if ( !TARGET_API_MAC_OSX )
 			{
@@ -504,40 +495,31 @@ namespace Nitrogen
 			return result;
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 	template < class T >
 	struct TypedHandleFlattener
 	{
+		typedef                 T**    argument_type;
+		typedef nucleus::owned< T** >  result_type;
+		
 		typedef T   DataType;
 		typedef T** HandleType;
 		
-		typedef HandleType Put_Parameter;
-		
 		template < class Putter >
-		static void Put( Put_Parameter toPut, Putter put )
+		static void Put( argument_type toPut, Putter put )
 		{
 			HandleFlattener::Put( Handle( toPut ), put );
 		}
 		
-		typedef nucleus::owned< HandleType > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter get )
+		static result_type Get( Getter get )
 		{
 			return Handle_Cast< T >( HandleFlattener::Get( get ) );
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
+		static const std::size_t static_size = 0;
 	};
 	
 }

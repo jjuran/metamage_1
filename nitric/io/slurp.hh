@@ -48,7 +48,7 @@ namespace io
 	};
 	
 	template < class Flattener, class Stream >
-	typename Flattener::Result slurp_input( const Stream& stream )
+	typename Flattener::result_type slurp_input( const Stream& stream )
 	{
 		slurp_getter< io::iostream_traits< Stream > > getter( stream );
 		
@@ -56,7 +56,7 @@ namespace io
 	}
 	
 	template < class Flattener, class FileSpec >
-	typename Flattener::Result slurp_file( const FileSpec& file )
+	typename Flattener::result_type slurp_file( const FileSpec& file )
 	{
 		return slurp_input< Flattener >( open_for_reading( file, overload() ).get() );
 	}

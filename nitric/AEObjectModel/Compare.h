@@ -76,7 +76,7 @@ namespace Nitrogen
 	template < ::DescType descType >
 	struct BasicComparer
 	{
-		typedef typename DescType_Traits< descType >::Result Result;
+		typedef typename DescType_result< descType >::type Result;
 		
 		static bool Compare( Mac::AECompOperator       op,
 		                     const Mac::AEDesc_Token&  obj1,
@@ -97,7 +97,7 @@ namespace Nitrogen
 	template < ::DescType descType >
 	struct NumericComparer
 	{
-		typedef typename DescType_Traits< descType >::Result Result;
+		typedef typename DescType_result< descType >::type Result;
 		
 		static bool Compare( Mac::AECompOperator       op,
 		                     const Mac::AEDesc_Token&  obj1,

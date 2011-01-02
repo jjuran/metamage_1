@@ -555,7 +555,7 @@ namespace Nitrogen
    template < EventParamType inType >
    struct SetEventParameter_Traits
      {
-      typedef typename DescType_Traits<inType>::Parameter InData_Type;
+      typedef typename DescType_parameter< inType >::type InData_Type;
      };
    
    template < EventParamType inType >
@@ -604,9 +604,11 @@ namespace Nitrogen
 			
 			std::size_t size() const
 			{
-				if ( DescType_Traits< desiredType >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< desiredType >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< desiredType >::Buffer);
+					return scribe::static_size;
 				}
 				
 				return GetEventParameter( myEvent, myName, desiredType ).outActualSize;
@@ -625,7 +627,7 @@ namespace Nitrogen
    template < EventParamType inDesiredType >
    struct GetEventParameter_Traits
      {
-      typedef typename DescType_Traits<inDesiredType>::Result Result;
+      typedef typename DescType_result<inDesiredType>::type Result;
      };
    
    template < EventParamType inDesiredType >
@@ -656,14 +658,14 @@ namespace Nitrogen
       static const EventParamType type = theType;
       static const bool forInput = in;
       static const bool forOutput = out;
-      typedef typename DescType_Traits< type >::Result Type;
+      typedef typename DescType_result< type >::type Type;
      };
  
    template < UInt32 eventClass, UInt32 eventKind >
    struct EventParameter_Traits< eventClass, eventKind, kEventParamUndef >
      {
       static const EventParamType type = Mac::typeNull;
-      typedef typename DescType_Traits< type >::Result Type;
+      typedef typename DescType_result< type >::type Type;
      };
    
    using ::HICommand;
@@ -1443,7 +1445,7 @@ namespace Nitrogen
       template < EventParamType resultType >
       struct EventHandler_ResultGlue
         {
-         typedef typename DescType_Traits< resultType >::Result Result;
+         typedef typename DescType_result< resultType >::type Result;
          
          typedef Result (*Handler)( EventHandlerCallRef, EventRef, void * );
          
@@ -1517,14 +1519,14 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 8 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item6 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item7 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type,
+                                    typename DescType_result< ParameterTypes::item6 >::type,
+                                    typename DescType_result< ParameterTypes::item7 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1548,13 +1550,13 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 7 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item6 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type,
+                                    typename DescType_result< ParameterTypes::item6 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1577,12 +1579,12 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 6 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1604,11 +1606,11 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 5 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1629,10 +1631,10 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 4 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1652,9 +1654,9 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 3 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1673,8 +1675,8 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 2 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1692,7 +1694,7 @@ namespace Nitrogen
       struct EventHandler_ParameterGlue< Result, Object, ParameterTypes, 1 >
         {
          typedef Result (*Handler)( Object,
-                                    typename DescType_Traits< ParameterTypes::item0 >::Result );
+                                    typename DescType_result< ParameterTypes::item0 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1723,14 +1725,14 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 8 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item6 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item7 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type,
+                                    typename DescType_result< ParameterTypes::item6 >::type,
+                                    typename DescType_result< ParameterTypes::item7 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1752,13 +1754,13 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 7 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item6 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type,
+                                    typename DescType_result< ParameterTypes::item6 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1779,12 +1781,12 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 6 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item5 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type,
+                                    typename DescType_result< ParameterTypes::item5 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1804,11 +1806,11 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 5 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item4 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type,
+                                    typename DescType_result< ParameterTypes::item4 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1827,10 +1829,10 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 4 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item3 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type,
+                                    typename DescType_result< ParameterTypes::item3 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1848,9 +1850,9 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 3 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item2 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type,
+                                    typename DescType_result< ParameterTypes::item2 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1867,8 +1869,8 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 2 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result,
-                                    typename DescType_Traits< ParameterTypes::item1 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type,
+                                    typename DescType_result< ParameterTypes::item1 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1884,7 +1886,7 @@ namespace Nitrogen
       template < class Result, class ParameterTypes >
       struct EventHandler_ParameterGlue< Result, void, ParameterTypes, 1 >
         {
-         typedef Result (*Handler)( typename DescType_Traits< ParameterTypes::item0 >::Result );
+         typedef Result (*Handler)( typename DescType_result< ParameterTypes::item0 >::type );
          
          static Result GetParameters( EventHandlerCallRef,
                                       EventRef event,
@@ -1935,10 +1937,10 @@ namespace Nitrogen
                  class Object,
                  class ParameterNames,
                  class ParameterTypes,
-                 typename EventHandler_ParameterGlue< typename DescType_Traits< resultType >::Result, Object, ParameterTypes >::Handler handler >
+                 typename EventHandler_ParameterGlue< typename DescType_result< resultType >::type, Object, ParameterTypes >::Handler handler >
       EventHandlerUPP EventHandler_ParameterGlueUPP()
         {
-         typedef typename DescType_Traits< resultType >::Result Result;
+         typedef typename DescType_result< resultType >::type Result;
          
          return EventHandler_Bound_ResultGlue<
                   resultType,
@@ -2048,7 +2050,7 @@ namespace Nitrogen
         {
          static const EventParamType resultType = EventParameter_Traits< eventClass, eventKind, resultParameter >::type;
          
-         typedef typename DescType_Traits< resultType >::Result Result;
+         typedef typename DescType_result< resultType >::type Result;
          
          typedef typename EventParameter_ListType< eventClass, eventKind, ParameterNames >::Types ParameterTypes;
          

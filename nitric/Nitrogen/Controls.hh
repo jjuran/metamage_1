@@ -315,7 +315,7 @@ namespace Nitrogen
    template < ::ResType inTagName >
    struct SetControlData_Traits: public ControlData_Traits<inTagName>
      {
-      typedef typename ControlData_Traits<inTagName>::Parameter InData_Type;
+      typedef typename ControlData_Traits<inTagName>::argument_type InData_Type;
      };
 
    template < ::ResType inTagName >
@@ -399,9 +399,11 @@ namespace Nitrogen
 			
 			std::size_t size() const
 			{
-				if ( GetControlData_Traits< tagName >::hasStaticSize )
+				typedef GetControlData_Traits< tagName > scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename GetControlData_Traits< tagName >::Buffer);
+					return scribe::static_size;
 				}
 				
 				return GetControlData( itsControl, itsPart, tagName );
@@ -418,7 +420,7 @@ namespace Nitrogen
 	};
 	
    template < ::ResType inTagName >
-   inline typename GetControlData_Traits<inTagName>::Result
+   inline typename GetControlData_Traits<inTagName>::result_type
    GetControlData( ControlRef        inControl,
                    ControlPartCode   inPart = kControlEntireControl )
      {

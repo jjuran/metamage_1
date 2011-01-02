@@ -18,32 +18,26 @@ namespace nucleus
 	template < class Ownable >
 	struct seizing_POD_scribe
 	{
-		typedef Ownable Put_Parameter;
+		typedef                   Ownable    argument_type;
+		typedef ::nucleus::owned< Ownable >  result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter param, const Putter& putter )
+		static void Put( argument_type param, const Putter& putter )
 		{
 			putter( &param, &param + 1 );
 		}
 		
-		typedef ::nucleus::owned< Ownable > Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( const Getter& getter )
+		static result_type Get( const Getter& getter )
 		{
-			Get_Result result;
+			result_type result;
 			
 			getter( &result, &result + 1 );
 			
 			return ::nucleus::owned< Ownable >::seize( result );
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result  Result;
-		
-		static const bool hasStaticSize = true;
-		
-		typedef Ownable Buffer;
+		static const std::size_t static_size = sizeof (Ownable);
 	};
 	
 }

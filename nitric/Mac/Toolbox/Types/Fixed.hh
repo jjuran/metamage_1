@@ -54,20 +54,19 @@ namespace Mac
 	
 	struct Fixed_scribe
 	{
-		typedef double Put_Parameter;
+		typedef double argument_type;
+		typedef double result_type;
 		
 		template < class Putter >
-		static void Put( Put_Parameter param, Putter putter )
+		static void Put( argument_type param, Putter putter )
 		{
 			const Fixed fixed = DoubleToFixed( param );
 			
 			putter( &fixed, &fixed + 1 );
 		}
 		
-		typedef double Get_Result;
-		
 		template < class Getter >
-		static Get_Result Get( Getter getter )
+		static result_type Get( Getter getter )
 		{
 			Fixed fixed;
 			
@@ -76,12 +75,7 @@ namespace Mac
 			return FixedToDouble( fixed );
 		}
 		
-		typedef Put_Parameter Parameter;
-		typedef Get_Result    Result;
-		
-		static const bool hasStaticSize = true;
-		
-		typedef ::Fixed Buffer;
+		static const std::size_t static_size = sizeof (::Fixed);
 	};
 	
 }
