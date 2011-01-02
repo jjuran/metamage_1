@@ -15,7 +15,9 @@
 #ifdef NUCLEUS_STRING_HEADER
 #include NUCLEUS_STRING_HEADER
 #elif defined( __LAMP__ )
+#ifndef PLUS_VARSTRING_HH
 #include "plus/var_string.hh"
+#endif
 #else
 #include <string>
 #endif
