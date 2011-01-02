@@ -419,9 +419,6 @@ namespace Nitrogen
 			return result;
 		}
 		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
-		
 		static const std::size_t static_size = 0;
 	};
 	
@@ -445,9 +442,6 @@ namespace Nitrogen
 		{
 			return Ptr_Cast< T >( PtrFlattener::Get( get ) );
 		}
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
 		
 		static const std::size_t static_size = 0;
 	};
@@ -501,9 +495,6 @@ namespace Nitrogen
 			return result;
 		}
 		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
-		
 		static const std::size_t static_size = 0;
 	};
 	
@@ -527,9 +518,6 @@ namespace Nitrogen
 		{
 			return Handle_Cast< T >( HandleFlattener::Get( get ) );
 		}
-		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
 		
 		static const std::size_t static_size = 0;
 	};

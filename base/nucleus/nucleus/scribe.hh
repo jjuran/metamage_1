@@ -107,9 +107,6 @@ namespace nucleus
 			return result;
 		}
 		
-		static const bool hasStaticSize = true;
-		typedef T Buffer;
-		
 		static const std::size_t static_size = sizeof (T);
 	};
 	
@@ -136,9 +133,6 @@ namespace nucleus
 			return result;
 		}
 		
-		static const bool hasStaticSize = false;
-		struct Buffer {};
-		
 		static const std::size_t static_size = 0;
 	};
 	
@@ -160,10 +154,6 @@ namespace nucleus
 			return result_type( BaseFlattener::Get( get ) );
 		}
 		
-		static const bool hasStaticSize = BaseFlattener::hasStaticSize;
-		
-		typedef typename BaseFlattener::Buffer Buffer;
-		
 		static const std::size_t static_size = BaseFlattener::static_size;
 	};
 	
@@ -172,8 +162,6 @@ namespace nucleus
 	{
 	};
 	
-	
-	struct empty {};
 	
 	struct empty_scribe
 	{
@@ -191,9 +179,6 @@ namespace nucleus
 		{
 			get( 0, 0 );  // So it has a chance to throw
 		}
-		
-		static const bool hasStaticSize = true;
-		typedef empty Buffer;
 		
 		static const std::size_t static_size = 0;
 	};

@@ -37,10 +37,6 @@ namespace nucleus
 			return ::nucleus::owned< Ownable >::seize( result );
 		}
 		
-		static const bool hasStaticSize = true;
-		
-		typedef Ownable Buffer;
-		
 		static const std::size_t static_size = sizeof (Ownable);
 	};
 	

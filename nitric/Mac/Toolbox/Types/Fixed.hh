@@ -75,10 +75,6 @@ namespace Mac
 			return FixedToDouble( fixed );
 		}
 		
-		static const bool hasStaticSize = true;
-		
-		typedef ::Fixed Buffer;
-		
 		static const std::size_t static_size = sizeof (::Fixed);
 	};
 	
