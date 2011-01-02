@@ -84,6 +84,20 @@ namespace Mac
 	
 	template < DescType > struct DescType_scribe;
 	
+	
+	template < Mac::DescType descType >
+	struct DescType_parameter
+	{
+		typedef typename Mac::DescType_scribe< descType >::type::Parameter type;
+	};
+	
+	template < Mac::DescType descType >
+	struct DescType_result
+	{
+		typedef typename Mac::DescType_scribe< descType >::type::Result type;
+	};
+	
+	
 	// AEDataModel
 	// -----------
 	
