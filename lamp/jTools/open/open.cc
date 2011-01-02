@@ -17,7 +17,6 @@
 #include "Mac/Files/Types/FSCreator.hh"
 
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/AERegistry.hh"
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Processes.hh"
@@ -30,6 +29,9 @@
 #include "poseven/extras/slurp.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/types/errno_t.hh"
+
+// Nitrogen
+#include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
 
 // FindProcess
 #include "FindProcess.hh"

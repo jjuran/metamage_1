@@ -14,26 +14,9 @@
 #ifndef NITROGEN_AEREGISTRY_HH
 #define NITROGEN_AEREGISTRY_HH
 
-#ifndef __AEREGISTRY__
-#include <AERegistry.h>
-#endif
-#ifndef __CARBONEVENTS__
-#include <CarbonEvents.h>
-#endif
-
 // Nitrogen
-#ifndef MAC_APPLEEVENTS_UTILITIES_SIZEOFOFFSETARRAY_HH
-#include "Mac/AppleEvents/Utilities/sizeof_OffsetArray.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_UTILITIES_SIZEOFTEXTRANGEARRAY_HH
-#include "Mac/AppleEvents/Utilities/sizeof_TextRangeArray.hh"
-#endif
-#ifndef MAC_TOOLBOX_UTILITIES_SIZEOFVERSREC_HH
-#include "Mac/Toolbox/Utilities/SizeOf_VersRec.hh"
-#endif
-
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBEDYNAMIC_HH
+#include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
 #endif
 
 
@@ -153,9 +136,7 @@ namespace Nitrogen
 	// kConnSuite .. eVideoOut
 	// cKeystroke .. eF15Key
 	
-   template<> struct DescType_Traits< Mac::typeVersion        >: nucleus::variable_length_POD_scribe< VersRec,        Mac::SizeOf_VersRec   > {};
-   template<> struct DescType_Traits< Mac::typeOffsetArray    >: nucleus::variable_length_POD_scribe< OffsetArray,    Mac::sizeof_OffsetArray    > {};
-   template<> struct DescType_Traits< Mac::typeTextRangeArray >: nucleus::variable_length_POD_scribe< TextRangeArray, Mac::sizeof_TextRangeArray > {};
-  }
+}
 
 #endif
+

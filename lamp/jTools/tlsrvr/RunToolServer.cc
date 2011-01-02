@@ -39,8 +39,8 @@
 #include "mac_pathname_from_path.hh"
 
 // Nitrogen
+#include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/AERegistry.hh"
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Processes.hh"
 
