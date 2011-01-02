@@ -1420,9 +1420,11 @@ namespace Nitrogen
 			{
 				AESizeOfNthItem_Result info = AESizeOfNthItem( theList, theIndex );
 				
-				if ( DescType_Traits< type >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< type >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< type >::Buffer);
+					return scribe::static_size;
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1544,9 +1546,11 @@ namespace Nitrogen
 			{
 				AESizeOfKeyDesc_Result info = AESizeOfKeyDesc( theRecord, theKeyword );
 				
-				if ( DescType_Traits< type >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< type >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< type >::Buffer);
+					return scribe::static_size;
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1660,9 +1664,11 @@ namespace Nitrogen
 			{
 				AESizeOfParam_Result info = AESizeOfParam( theAppleEvent, theKeyword );
 				
-				if ( DescType_Traits< type >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< type >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< type >::Buffer);
+					return scribe::static_size;
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1778,9 +1784,11 @@ namespace Nitrogen
 			{
 				AESizeOfAttribute_Result info = AESizeOfAttribute( theAppleEvent, theKeyword );
 				
-				if ( DescType_Traits< type >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< type >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< type >::Buffer);
+					return scribe::static_size;
 				}
 				
 				ASSERT( info.typeCode == type );

@@ -604,9 +604,11 @@ namespace Nitrogen
 			
 			std::size_t size() const
 			{
-				if ( DescType_Traits< desiredType >::hasStaticSize )
+				typedef typename Mac::DescType_scribe< desiredType >::type scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename DescType_Traits< desiredType >::Buffer);
+					return scribe::static_size;
 				}
 				
 				return GetEventParameter( myEvent, myName, desiredType ).outActualSize;

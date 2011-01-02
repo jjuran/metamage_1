@@ -399,9 +399,11 @@ namespace Nitrogen
 			
 			std::size_t size() const
 			{
-				if ( GetControlData_Traits< tagName >::hasStaticSize )
+				typedef GetControlData_Traits< tagName > scribe;
+				
+				if ( nucleus::scribe_has_static_size< scribe >::value )
 				{
-					return sizeof (typename GetControlData_Traits< tagName >::Buffer);
+					return scribe::static_size;
 				}
 				
 				return GetControlData( itsControl, itsPart, tagName );
