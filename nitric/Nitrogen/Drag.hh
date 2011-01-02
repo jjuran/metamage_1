@@ -203,6 +203,14 @@ namespace Nitrogen
       FlavorType_Traits< theType >::Put( data, AddDragItemFlavor_Putter( theDrag, theItemRef, theType, theFlags ) );
      }
 
+   template < ::FlavorType theType >
+   void AddDragItemFlavor( DragRef      theDrag,
+                           DragItemRef  theItemRef,
+                           FlavorFlags  theFlags = FlavorFlags() )
+     {
+      FlavorType_Traits< theType >::Put( AddDragItemFlavor_Putter( theDrag, theItemRef, theType, theFlags ) );
+     }
+
    void SetDragItemFlavorData( DragRef      theDrag,
                                DragItemRef  theItemRef,
                                FlavorType   theType,
@@ -248,6 +256,12 @@ namespace Nitrogen
                                typename SetDragItemFlavorData_Traits<theType>::Data_Type data )
      {
       FlavorType_Traits< theType >::Put( data, SetDragItemFlavorData_Putter( theDrag, theItemRef, theType ) );
+     }
+   
+   template < ::FlavorType theType >
+   void SetDragItemFlavorData( DragRef theDrag, DragItemRef theItemRef )
+     {
+      FlavorType_Traits< theType >::Put( SetDragItemFlavorData_Putter( theDrag, theItemRef, theType ) );
      }
    
    /*  SetDragSendProc... */

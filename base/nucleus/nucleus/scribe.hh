@@ -148,21 +148,19 @@ namespace nucleus
 	
 	struct empty_scribe
 	{
-		typedef empty argument_type;
-		typedef empty result_type;
+		typedef void argument_type;  // can't be used
+		typedef void result_type;
 		
 		template < class Putter >
-		static void Put( argument_type toPut, const Putter& put )
+		static void Put( const Putter& put )
 		{
 			put( 0, 0 );
 		}
 		
 		template < class Getter >
-		static result_type Get( const Getter& get )
+		static void Get( const Getter& get )
 		{
 			get( 0, 0 );  // So it has a chance to throw
-			
-			return empty();
 		}
 		
 		static const bool hasStaticSize = true;
