@@ -563,12 +563,10 @@ namespace Nitrogen
                            EventParamName inName,
                            typename SetEventParameter_Traits<inType>::InData_Type inData )
      {
-      typedef DescType_Traits< inType > Traits;
-      
-      Traits::Put( inData,
-		           SetEventParameter_Putter( inEvent,
-		                                     inName,
-		                                     inType ) );
+      DescType_put< inType >( inData,
+		                      SetEventParameter_Putter( inEvent,
+		                                                inName,
+		                                                inType ) );
       }
 
    struct GetEventParameter_Result
@@ -633,9 +631,7 @@ namespace Nitrogen
    template < EventParamType inDesiredType >
    typename GetEventParameter_Traits<inDesiredType>::Result GetEventParameter( EventRef inEvent, EventParamName inName )
      {
-      typedef DescType_Traits< inDesiredType > Traits;
-      
-      return Traits::Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
+      return DescType_get< inDesiredType >( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
      }
 
    inline EventClass       GetEventClass( EventRef inEvent )     { return EventClass     ( ::GetEventClass( inEvent ) ); }
