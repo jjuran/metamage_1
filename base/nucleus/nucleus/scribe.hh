@@ -67,6 +67,26 @@ namespace nucleus
 {
 	
 	template < class T >
+	struct is_nonvoid
+	{
+		static const bool value = true;
+	};
+	
+	template <>
+	struct is_nonvoid< void >
+	{
+		static const bool value = false;
+	};
+	
+	template < class Scribe >
+	struct scribe_has_static_size
+	{
+		static const bool returns_data = is_nonvoid< typename Scribe::result_type >::value;
+		
+		static const bool value = !returns_data  ||  Scribe::static_size != 0;
+	};
+	
+	template < class T >
 	struct POD_scribe
 	{
 		typedef const T&  argument_type;
