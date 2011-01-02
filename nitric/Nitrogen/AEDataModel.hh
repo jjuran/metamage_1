@@ -203,9 +203,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** DescType_Traits **
 	
-	template < Mac::DescType type >
-	struct DescType_Traits : Mac::DescType_scribe< type >::type {};
-	
 	using Mac::DescType_parameter;
 	using Mac::DescType_result;
 	
@@ -218,11 +215,6 @@ namespace Nitrogen
 	
 	using Mac::AEKeyword_put;
 	using Mac::AEKeyword_get;
-	
-	template < Mac::AEKeyword key >
-	struct AEKeyword_Traits : Mac::AEKeyword_scribe< key >::type
-	{
-	};
 	
 	
 	#pragma mark -
