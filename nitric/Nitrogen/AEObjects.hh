@@ -322,18 +322,34 @@ namespace Nitrogen
 		                                             isSysHandler ) );
 	}
 	
-	template < typename OSLAccessorUPP::ProcPtr accessor >
+	// Level 1
+	
+	template < typename OSLAccessorUPP::ProcPtr accessor, class RefCon >
 	inline nucleus::owned< OSLAccessor >
 	//
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
 	                         Mac::DescType       containerType,
-	                         RefCon              accessorRefCon = RefCon(),
+	                         RefCon              accessorRefCon,
 	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
 		                                             StaticUPP< OSLAccessorUPP, accessor >(),
 		                                             (::SRefCon) accessorRefCon,
+		                                             isSysHandler ) );
+	}
+	
+	template < typename OSLAccessorUPP::ProcPtr accessor >
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         Mac::DescType       containerType,
+	                         bool                isSysHandler   = false )
+	{
+		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
+		                                             containerType,
+		                                             StaticUPP< OSLAccessorUPP, accessor >(),
+		                                             0,
 		                                             isSysHandler ) );
 	}
 	

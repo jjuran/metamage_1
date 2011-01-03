@@ -205,18 +205,32 @@ namespace Nitrogen
 	
 	// Level 1
 	
-	template < typename AEEventHandlerUPP::ProcPtr handler >
+	template < typename AEEventHandlerUPP::ProcPtr handler, class RefCon >
 	inline nucleus::owned< AEEventHandler >
 	//
 	AEInstallEventHandler( AEEventClass       theAEEventClass,
 	                       AEEventID          theAEEventID,
-	                       RefCon             handlerRefCon = RefCon(),
+	                       RefCon             handlerRefCon,
 	                       bool               isSysHandler  = false )
 	{
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              StaticUPP< AEEventHandlerUPP, handler >(),
 		                                              (::SRefCon) handlerRefCon,
+		                                              isSysHandler ) );
+	}
+	
+	template < typename AEEventHandlerUPP::ProcPtr handler >
+	inline nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( AEEventClass       theAEEventClass,
+	                       AEEventID          theAEEventID,
+	                       bool               isSysHandler = false )
+	{
+		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
+		                                              theAEEventID,
+		                                              StaticUPP< AEEventHandlerUPP, handler >(),
+		                                              0,
 		                                              isSysHandler ) );
 	}
 	

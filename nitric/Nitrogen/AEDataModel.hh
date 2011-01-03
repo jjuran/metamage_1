@@ -652,7 +652,9 @@ namespace Nitrogen
 		                                                    isSysHandler ) );
 	}
 	
-	template < typename AECoerceDescUPP::ProcPtr handler >
+	// Level 1
+	
+	template < typename AECoerceDescUPP::ProcPtr handler, class RefCon >
 	nucleus::owned< AECoercionHandler >
 	//
 	AEInstallCoercionHandler( Mac::DescType  fromType,
@@ -667,7 +669,7 @@ namespace Nitrogen
 		                                                    isSysHandler ) );
 	}
 	
-	template < typename AECoercePtrUPP::ProcPtr handler >
+	template < typename AECoercePtrUPP::ProcPtr handler, class RefCon >
 	nucleus::owned< AECoercionHandler >
 	//
 	AEInstallCoercionHandler( Mac::DescType  fromType,
@@ -679,6 +681,34 @@ namespace Nitrogen
 		                                                    toType,
 		                                                    StaticUPP< AECoercePtrUPP, handler >(),
 		                                                    (::SRefCon) handlerRefCon,
+		                                                    isSysHandler ) );
+	}
+	
+	template < typename AECoerceDescUPP::ProcPtr handler >
+	nucleus::owned< AECoercionHandler >
+	//
+	AEInstallCoercionHandler( Mac::DescType  fromType,
+	                          Mac::DescType  toType,
+	                          bool           isSysHandler  = false )
+	{
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    StaticUPP< AECoerceDescUPP, handler >(),
+		                                                    0,
+		                                                    isSysHandler ) );
+	}
+	
+	template < typename AECoercePtrUPP::ProcPtr handler >
+	nucleus::owned< AECoercionHandler >
+	//
+	AEInstallCoercionHandler( Mac::DescType  fromType,
+	                          Mac::DescType  toType,
+	                          bool           isSysHandler  = false )
+	{
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    StaticUPP< AECoercePtrUPP, handler >(),
+		                                                    0,
 		                                                    isSysHandler ) );
 	}
 	
