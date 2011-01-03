@@ -45,7 +45,7 @@ namespace Nitrogen
 		AEEventClass       theAEEventClass;
 		AEEventID          theAEEventID;
 		AEEventHandlerUPP  handler;
-		RefCon             handlerRefCon;
+		::SRefCon          handlerRefCon;
 		bool               isSysHandler;
 		
 		AEEventHandler();
@@ -53,7 +53,7 @@ namespace Nitrogen
 		AEEventHandler( AEEventClass       theAEEventClass,
 		                AEEventID          theAEEventID,
 		                AEEventHandlerUPP  handler,
-		                RefCon             handlerRefCon = RefCon(),
+		                ::SRefCon          handlerRefCon = 0,
 		                bool               isSysHandler  = false )
 		:
 			theAEEventClass( theAEEventClass ),
@@ -178,13 +178,28 @@ namespace Nitrogen
 	AEInstallEventHandler( AEEventClass       theAEEventClass,
 	                       AEEventID          theAEEventID,
 	                       AEEventHandlerUPP  handler,
-	                       RefCon             handlerRefCon = RefCon(),
+	                       long               handlerRefCon = 0,
 	                       bool               isSysHandler  = false )
 	{
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              handler,
-		                                              handlerRefCon,
+		                                              (::SRefCon) handlerRefCon,
+		                                              isSysHandler ) );
+	}
+	
+	inline nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( AEEventClass       theAEEventClass,
+	                       AEEventID          theAEEventID,
+	                       AEEventHandlerUPP  handler,
+	                       void*              handlerRefCon,
+	                       bool               isSysHandler  = false )
+	{
+		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
+		                                              theAEEventID,
+		                                              handler,
+		                                              (::SRefCon) handlerRefCon,
 		                                              isSysHandler ) );
 	}
 	

@@ -194,7 +194,7 @@ namespace Nitrogen
 		Mac::AEObjectClass  desiredClass;
 		DescType            containerType;
 		OSLAccessorUPP      accessor;
-		RefCon              accessorRefCon;
+		::SRefCon           accessorRefCon;
 		bool                isSysHandler;
 		
 		OSLAccessor();
@@ -202,7 +202,7 @@ namespace Nitrogen
 		OSLAccessor( Mac::AEObjectClass  desiredClass,
 		             DescType            containerType,
 		             OSLAccessorUPP      accessor,
-		             RefCon              accessorRefCon,
+		             ::SRefCon           accessorRefCon,
 		             bool                isSysHandler )
 		: 
 			desiredClass  ( desiredClass   ),
@@ -288,6 +288,8 @@ namespace Nitrogen
 	AEResolve( const Mac::AEDesc_ObjectSpecifier&  objectSpecifier,
 	           AEResolveCallbackFlags              callbackFlags = AEResolveCallbackFlags() );
 	
+	// Level 0
+	
 	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
 	inline nucleus::owned< OSLAccessor >
@@ -295,13 +297,28 @@ namespace Nitrogen
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
 	                         Mac::DescType       containerType,
 	                         OSLAccessorUPP      accessor,
-	                         RefCon              accessorRefCon = RefCon(),
+	                         long                accessorRefCon = 0,
 	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
 		                                             accessor,
-		                                             accessorRefCon,
+		                                             (::SRefCon) accessorRefCon,
+		                                             isSysHandler ) );
+	}
+	
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         Mac::DescType       containerType,
+	                         OSLAccessorUPP      accessor,
+	                         void*               accessorRefCon,
+	                         bool                isSysHandler   = false )
+	{
+		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
+		                                             containerType,
+		                                             accessor,
+		                                             (::SRefCon) accessorRefCon,
 		                                             isSysHandler ) );
 	}
 	
