@@ -387,7 +387,7 @@ namespace Nitrogen
 	
 	inline void InvokeAECoerceDescUPP( const Mac::AEDesc_Data&  fromDesc,
 	                                   Mac::DescType            toType,
-	                                   RefCon                   handlerRefCon,
+	                                   ::SRefCon                handlerRefCon,
 	                                   Mac::AEDesc_Data&        toDesc,
 	                                   AECoerceDescUPP          userUPP )
 	{
@@ -401,7 +401,7 @@ namespace Nitrogen
 	                                  const void*        dataPtr,
 	                                  std::size_t        dataSize,
 	                                  Mac::DescType      toType,
-	                                  RefCon             handlerRefCon,
+	                                  ::SRefCon          handlerRefCon,
 	                                  Mac::AEDesc_Data&  toDesc,
 	                                  AECoercePtrUPP     userUPP )
 	{
@@ -1267,7 +1267,7 @@ namespace Nitrogen
 	
 	inline void InvokeAEEventHandlerUPP( const Mac::AppleEvent& theAppleEvent,
 	                                     Mac::AppleEvent& reply,
-	                                     RefCon handlerRefCon,
+	                                     ::SRefCon handlerRefCon,
 	                                     AEEventHandlerUPP userUPP )
 	{
 		ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );

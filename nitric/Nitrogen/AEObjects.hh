@@ -103,7 +103,7 @@ namespace Nitrogen
 	                                  Mac::AEKeyForm            keyForm,
 	                                  const Mac::AEDesc_Data&   keyData,
 	                                  Mac::AEDesc_Token&        value,
-	                                  RefCon                    accessorRefcon,
+	                                  ::SRefCon                 accessorRefcon,
 	                                  OSLAccessorUPP            userUPP )
 	{
 		ThrowOSStatus( userUPP( desiredClass,
