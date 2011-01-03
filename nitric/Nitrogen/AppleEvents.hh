@@ -106,20 +106,20 @@ namespace Nitrogen
 	
 	//typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
 	
-	template < class RefConType >
-	struct AEEventHandler_RefCon_Traits
+	template < class RefCon >
+	struct RefCon_AEEventHandler
 	{
-		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, RefConType refCon );
+		typedef void ( *type )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, RefCon refCon );
 	};
 	
 	template <>
-	struct AEEventHandler_RefCon_Traits< void >
+	struct RefCon_AEEventHandler< void >
 	{
-		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
+		typedef void ( *type )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
 	};
 	
-	template < class RefConType,
-	           typename AEEventHandler_RefCon_Traits< RefConType >::ProcPtr handler >
+	template < class RefCon,
+	           typename RefCon_AEEventHandler< RefCon >::type handler >
 	struct AEEventHandler_Callback
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
@@ -130,7 +130,7 @@ namespace Nitrogen
 			{
 				handler( static_cast< Mac::AppleEvent const& >( *appleEvent ),
 				         static_cast< Mac::AppleEvent      & >( *reply      ),
-				         reinterpret_cast< RefConType >  ( refCon      ) );
+				         reinterpret_cast< RefCon >           ( refCon      ) );
 			}
 			catch ( ... )
 			{
@@ -141,7 +141,7 @@ namespace Nitrogen
 		}
 	};
 	
-	template < AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	template < RefCon_AEEventHandler< void >::type handler >
 	struct AEEventHandler_Callback< void, handler >
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
@@ -203,7 +203,7 @@ namespace Nitrogen
 	// Level 2, refcon type specified
 	
 	template < class Object,
-	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	           typename RefCon_AEEventHandler< Object >::type handler >
 	inline nucleus::owned< AEEventHandler >
 	//
 	AEInstallEventHandler( AEEventClass                                               theAEEventClass,
@@ -221,7 +221,7 @@ namespace Nitrogen
 	}
 	
 	// With default handlerRefCon but supplied isSysHandler
-	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	template < class Object, typename RefCon_AEEventHandler< Object >::type handler >
 	inline nucleus::owned< AEEventHandler >
 	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
@@ -240,7 +240,7 @@ namespace Nitrogen
 	}
 	
 	// Same as above, but void parameter is omitted.
-	template < typename AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	template < typename RefCon_AEEventHandler< void >::type handler >
 	inline nucleus::owned< AEEventHandler >
 	//
 	AEInstallEventHandler( AEEventClass  theAEEventClass,
