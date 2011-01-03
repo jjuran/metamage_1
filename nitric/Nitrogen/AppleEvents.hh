@@ -109,14 +109,12 @@ namespace Nitrogen
 	template < class RefConType >
 	struct AEEventHandler_RefCon_Traits
 	{
-		typedef RefConType RefCon;
 		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, RefConType refCon );
 	};
 	
 	template <>
 	struct AEEventHandler_RefCon_Traits< void >
 	{
-		typedef void RefCon;
 		typedef void ( *ProcPtr )( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
 	};
 	
