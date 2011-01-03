@@ -21,6 +21,11 @@
 #include <Events.h>
 #endif
 
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // iota
 #include "iota/distance.hh"
 
@@ -537,7 +542,7 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( const AEDesc*  fromDesc,
 		                             ::DescType     toType,
-		                             long           refCon,
+		                             ::SRefCon      refCon,
 		                             AEDesc*        result )
 		{
 			try
@@ -562,7 +567,7 @@ namespace Nitrogen
 		                             const void*  dataPtr,
 		                             ::Size       dataSize,
 		                             ::DescType   toType,
-		                             long         refCon,
+		                             ::SRefCon    refCon,
 		                             AEDesc*      result )
 		{
 			try

@@ -18,6 +18,11 @@
 #include <AEObjects.h>
 #endif
 
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
@@ -128,7 +133,7 @@ namespace Nitrogen
 		                             ::DescType     keyForm,
 		                             const AEDesc*  keyData,
 		                             AEDesc*        value,
-		                             long           accessorRefcon )
+		                             ::SRefCon      accessorRefcon )
 		{
 			try
 			{

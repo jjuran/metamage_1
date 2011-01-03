@@ -18,6 +18,11 @@
 #include <AppleEvents.h>
 #endif
 
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // nucleus
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_HH
 #include "nucleus/object_parameter_traits.hh"
@@ -124,7 +129,7 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
 		                             ::AppleEvent      *  reply,
-		                             long                 refCon )
+		                             ::SRefCon            refCon )
 		{
 			try
 			{
@@ -146,7 +151,7 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
 		                             ::AppleEvent      *  reply,
-		                             long )
+		                             ::SRefCon )
 		{
 			try
 			{
