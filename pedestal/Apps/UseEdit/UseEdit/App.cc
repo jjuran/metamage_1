@@ -249,8 +249,7 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass,
 		                                               Mac::AEKeyForm            keyForm,
-		                                               const Mac::AEDesc_Data&   keyData,
-		                                               N::RefCon )
+		                                               const Mac::AEDesc_Data&   keyData )
 		{
 			if ( keyForm == Mac::formUniqueID )
 			{

@@ -57,8 +57,7 @@ namespace Nitrogen
 	                        const Mac::AEDesc_Token&  containerToken,
 	                        Mac::AEObjectClass        containerClass,
 	                        Mac::AEKeyForm            keyForm,
-	                        const Mac::AEDesc_Data&   keyData,
-	                        RefCon );
+	                        const Mac::AEDesc_Data&   keyData );
 	
 	nucleus::owned< Mac::AEDesc_Token >
 	//
@@ -66,8 +65,7 @@ namespace Nitrogen
 	                      const Mac::AEDesc_Token&  containerToken,
 	                      Mac::AEObjectClass        containerClass,
 	                      Mac::AEKeyForm            keyForm,
-	                      const Mac::AEDesc_Data&   keyData,
-	                      RefCon );
+	                      const Mac::AEDesc_Data&   keyData );
 	
 }
 

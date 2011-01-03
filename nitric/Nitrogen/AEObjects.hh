@@ -30,6 +30,9 @@
 #ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
 #endif
+#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_HH
+#include "nucleus/object_parameter_traits.hh"
+#endif
 
 // Nitrogen
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
@@ -47,9 +50,6 @@
 
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
-#endif
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
 #endif
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
@@ -115,16 +115,29 @@ namespace Nitrogen
 		                        accessorRefcon ) );
 	}
 	
-	typedef nucleus::owned< Mac::AEDesc_Token >
-	        //
-	        ( *OSLAccessorProcPtr )( Mac::AEObjectClass        desiredClass,
-	                                 const Mac::AEDesc_Token&  containerToken,
-	                                 Mac::AEObjectClass        containerClass,
-	                                 Mac::AEKeyForm            keyForm,
-	                                 const Mac::AEDesc_Data&   keyData,
-	                                 RefCon                    accessorRefcon );
+	template < class RefCon >
+	struct RefCon_OSLAccessor
+	{
+		typedef nucleus::owned< Mac::AEDesc_Token > ( *type )( Mac::AEObjectClass        desiredClass,
+		                                                       const Mac::AEDesc_Token&  containerToken,
+		                                                       Mac::AEObjectClass        containerClass,
+		                                                       Mac::AEKeyForm            keyForm,
+		                                                       const Mac::AEDesc_Data&   keyData,
+		                                                       RefCon                    accessorRefcon );
+	};
 	
-	template < OSLAccessorProcPtr handler >
+	template <>
+	struct RefCon_OSLAccessor< void >
+	{
+		typedef nucleus::owned< Mac::AEDesc_Token > ( *type )( Mac::AEObjectClass        desiredClass,
+		                                                       const Mac::AEDesc_Token&  containerToken,
+		                                                       Mac::AEObjectClass        containerClass,
+		                                                       Mac::AEKeyForm            keyForm,
+		                                                       const Mac::AEDesc_Data&   keyData );
+	};
+	
+	template < class RefCon,
+	           typename RefCon_OSLAccessor< RefCon >::type handler >
 	struct ObjectAccessor_Callback
 	{
 		static pascal OSErr Adapter( ::DescType     desiredClass,
@@ -142,7 +155,35 @@ namespace Nitrogen
 				                  Mac::AEObjectClass( containerClass ),
 				                  Mac::AEKeyForm( keyForm ),
 				                  static_cast< const Mac::AEDesc_Data& >( *keyData ),
-				                  accessorRefcon ).release();
+				                  reinterpret_cast< RefCon >( accessorRefcon ) ).release();
+			}
+			catch ( ... )
+			{
+				return ConvertTheExceptionToOSStatus( errAEEventFailed );
+			}
+			
+			return noErr;
+		}
+	};
+	
+	template < RefCon_OSLAccessor< void >::type handler >
+	struct ObjectAccessor_Callback< void, handler >
+	{
+		static pascal OSErr Adapter( ::DescType     desiredClass,
+		                             const AEDesc*  containerToken,
+		                             ::DescType     containerClass,
+		                             ::DescType     keyForm,
+		                             const AEDesc*  keyData,
+		                             AEDesc*        value,
+		                             ::SRefCon )
+		{
+			try
+			{
+				*value = handler( Mac::AEObjectClass( desiredClass ),
+				                  static_cast< const Mac::AEDesc_Token& >( *containerToken ),
+				                  Mac::AEObjectClass( containerClass ),
+				                  Mac::AEKeyForm( keyForm ),
+				                  static_cast< const Mac::AEDesc_Data& >( *keyData ) ).release();
 			}
 			catch ( ... )
 			{
@@ -353,21 +394,55 @@ namespace Nitrogen
 		                                             isSysHandler ) );
 	}
 	
-	template < OSLAccessorProcPtr accessor >
+	// Level 2
+	
+	template < class Object,
+	           typename RefCon_OSLAccessor< Object >::type accessor >
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass                                         desiredClass,
+	                         Mac::DescType                                              containerType,
+	                         typename nucleus::object_parameter_traits< Object >::type  accessorRefCon = typename nucleus::object_parameter_traits< Object >::type(),
+	                         bool                                                       isSysHandler   = false )
+	{
+		return AEInstallObjectAccessor< ObjectAccessor_Callback< Object, accessor >::Adapter >
+		(
+			desiredClass,
+			containerType,
+			nucleus::object_parameter_traits< Object >::convert_to_pointer( accessorRefCon ),
+			isSysHandler
+		);
+	}
+	
+	template < class Object,
+	           typename RefCon_OSLAccessor< Object >::type accessor >
 	inline nucleus::owned< OSLAccessor >
 	//
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
 	                         Mac::DescType       containerType,
-	                         RefCon              accessorRefCon = RefCon(),
-	                         bool                isSysHandler   = false )
+	                         bool                isSysHandler )
 	{
-		return AEInstallObjectAccessor< ObjectAccessor_Callback< accessor >::Adapter >
+		typedef typename nucleus::object_parameter_traits< Object >::type object_type;
+		
+		return AEInstallObjectAccessor< ObjectAccessor_Callback< void, accessor >::Adapter >
 		(
-			desiredClass, 
-			containerType, 
-			accessorRefCon, 
+			desiredClass,
+			containerType,
+			nucleus::object_parameter_traits< Object >::convert_to_pointer( object_type() ),
 			isSysHandler
 		);
+	}
+	
+	template < RefCon_OSLAccessor< void >::type accessor >
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         Mac::DescType       containerType,
+	                         bool                isSysHandler   = false )
+	{
+		return AEInstallObjectAccessor< void, accessor >( desiredClass,
+		                                                  containerType,
+		                                                  isSysHandler );
 	}
 	
 	inline void AERemoveObjectAccessor( nucleus::owned< OSLAccessor > )  {}

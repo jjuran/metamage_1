@@ -212,8 +212,7 @@ namespace Nitrogen
 	                        const Mac::AEDesc_Token&  containerToken,
 	                        Mac::AEObjectClass        containerClass,
 	                        Mac::AEKeyForm            keyForm,
-	                        const Mac::AEDesc_Data&   keyData,
-	                        RefCon )
+	                        const Mac::AEDesc_Data&   keyData )
 	{
 		if ( keyData.descriptorType == typeAbsoluteOrdinal )
 		{
@@ -319,8 +318,7 @@ namespace Nitrogen
 	                      const Mac::AEDesc_Token&  containerToken,
 	                      Mac::AEObjectClass        containerClass,
 	                      Mac::AEKeyForm            keyForm,
-	                      const Mac::AEDesc_Data&   keyData,
-	                      RefCon )
+	                      const Mac::AEDesc_Data&   keyData )
 	{
 		nucleus::owned< Mac::AEDescList_Token > result = AECreateList< Mac::AEDescList_Token >();
 		
