@@ -28,12 +28,16 @@
 #ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 
 namespace Nitrogen
 {
 	
 	using Mac::OSStatus;
+	using Mac::ThrowOSStatus;
 	
 	#define DEFINE_OSSTATUS( c_name, new_name )  DEFINE_ERRORCODE( OSStatus, c_name, new_name )
 	
@@ -42,16 +46,6 @@ namespace Nitrogen
      {
       ::nucleus::register_error_code< OSStatus, error >();
      }
-   
-	void ThrowOSStatus_Internal( ::OSStatus );
-   
-	inline void ThrowOSStatus( ::OSStatus err )
-	{
-		if ( err != noErr )
-		{
-			ThrowOSStatus_Internal( err );
-		}
-	}
 	
 	inline void HandleDestructionOSStatus( ::OSStatus err )
 	{
