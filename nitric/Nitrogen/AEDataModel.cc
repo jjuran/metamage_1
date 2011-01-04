@@ -60,59 +60,6 @@ namespace Nitrogen
 #endif
 	
 	
-	AECoercionHandler::AECoercionHandler() : fromType(),
-	                                         toType(),
-	                                         handler(),
-	                                         handlerRefCon(),
-	                                         fromTypeIsDesc(),
-	                                         isSysHandler()
-	{}
-	
-	bool operator==( const AECoercionHandler& a, const AECoercionHandler& b )
-	{
-		return a.handler        == b.handler
-		    && a.handlerRefCon  == b.handlerRefCon
-		    && a.fromType       == b.fromType
-		    && a.toType         == b.toType
-		    && a.fromTypeIsDesc == b.fromTypeIsDesc
-		    && a.isSysHandler   == b.isSysHandler;
-	}
-	
-	nucleus::owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall )
-	{
-		ThrowOSStatus( ::AEInstallCoercionHandler( toInstall.fromType, 
-		                                           toInstall.toType, 
-		                                           toInstall.handler, 
-		                                           toInstall.handlerRefCon, 
-		                                           toInstall.fromTypeIsDesc,
-		                                           toInstall.isSysHandler ) );
-		
-		return nucleus::owned< AECoercionHandler >::seize( toInstall );
-	}
-	
-	AECoercionHandler AEGetCoercionHandler( Mac::DescType  fromType,
-	                                        Mac::DescType  toType,
-	                                        bool           isSysHandler )
-	{
-		::AECoercionHandlerUPP  handler;
-		long                    handlerRefCon;
-		::Boolean               fromTypeIsDesc;
-		
-		ThrowOSStatus( ::AEGetCoercionHandler( fromType,
-		                                       toType,
-		                                       &handler,
-		                                       &handlerRefCon,
-		                                       &fromTypeIsDesc,
-		                                       isSysHandler ) );
-		
-		return AECoercionHandler( fromType,
-		                          toType,
-		                          handler,
-		                          handlerRefCon,
-		                          fromTypeIsDesc,
-		                          isSysHandler );
-	}
-	
 	nucleus::owned< Mac::AEDesc_Data > AECoercePtr( Mac::DescType  typeCode,
 	                                                const void*    dataPtr,
 	                                                std::size_t    dataSize,
@@ -748,24 +695,6 @@ namespace Nitrogen
 	
 	namespace CompileTests
 	{
-		
-		namespace
-		{
-			
-			pascal OSErr AECoercerOfDescs_ProcPtr( const AEDesc*  fromDesc,
-			                                       ::DescType     toType,
-			                                       long           refCon,
-			                                       AEDesc*        result )
-			{
-				return errAEEventNotHandled;
-			}
-			
-		}
-		
-		static nucleus::owned< AECoercionHandler > InstallCoercionHandler_ProcPtr()
-		{
-			return AEInstallCoercionHandler< AECoercerOfDescs_ProcPtr >( Mac::DescType( 'from' ), Mac::DescType( 'to  ' ) );
-		}
 		
 		static nucleus::string GetTextAttr( const Mac::AppleEvent& appleEvent, Mac::AEKeyword keyword )
 		{
