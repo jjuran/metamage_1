@@ -659,19 +659,13 @@ namespace Pedestal
 		}
 	}
 	
-	static void HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
-	
-	namespace
+	struct AppleEvent
 	{
 		
-		void AppleEventHandler( const Mac::AppleEvent&  appleEvent,
-		                        Mac::AppleEvent&        reply,
-		                        Application*            app )
-		{
-			HandleAppleEvent( appleEvent, reply );
-		}
+		static void Handler( const Mac::AppleEvent&  appleEvent,
+		                     Mac::AppleEvent&        reply );
 		
-	}
+	};
 	
 	static MenuRef GetAndInsertMenu( N::ResID resID )
 	{
@@ -688,10 +682,8 @@ namespace Pedestal
 		
 		Init_Memory( 0 );
 		
-		N::AEInstallEventHandler< Application*,
-		                          AppleEventHandler >( kCoreEventClass,
-		                                               N::AEEventID( typeWildCard ),
-		                                               this ).release();
+		N::AEInstallEventHandler< AppleEvent::Handler >( kCoreEventClass,
+		                                                 N::AEEventID( typeWildCard ) ).release();
 		
 		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
@@ -946,7 +938,7 @@ namespace Pedestal
 		return 0;
 	}
 	
-	void HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
+	void AppleEvent::Handler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
 	{
 		Mac::AEEventClass eventClass = N::AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
 		Mac::AEEventID    eventID    = N::AEGetAttributePtr< Mac::keyEventIDAttr    >( appleEvent );
