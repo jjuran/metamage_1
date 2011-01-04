@@ -216,7 +216,7 @@ namespace Nitrogen
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              StaticUPP< AEEventHandlerUPP, handler >(),
-		                                              handlerRefCon,
+		                                              (::SRefCon) handlerRefCon,
 		                                              isSysHandler ) );
 	}
 	

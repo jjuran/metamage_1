@@ -663,7 +663,7 @@ namespace Nitrogen
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
 		                                                    StaticUPP< AECoerceDescUPP, handler >(),
-		                                                    handlerRefCon,
+		                                                    (::SRefCon) handlerRefCon,
 		                                                    isSysHandler ) );
 	}
 	
@@ -678,7 +678,7 @@ namespace Nitrogen
 		return AEInstallCoercionHandler( AECoercionHandler( fromType,
 		                                                    toType,
 		                                                    StaticUPP< AECoercePtrUPP, handler >(),
-		                                                    handlerRefCon,
+		                                                    (::SRefCon) handlerRefCon,
 		                                                    isSysHandler ) );
 	}
 	
