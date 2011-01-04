@@ -63,9 +63,9 @@ namespace Nitrogen
       ::nucleus::register_error_code< OSStatus, error >();
      }
    
-   void ThrowOSStatus_Internal( OSStatus );
+	void ThrowOSStatus_Internal( ::OSStatus );
    
-	inline void ThrowOSStatus( OSStatus err )
+	inline void ThrowOSStatus( ::OSStatus err )
 	{
 		if ( err != noErr )
 		{
@@ -78,7 +78,7 @@ namespace Nitrogen
 		// ignore errors in destructors for now
 	}
 	
-	::OSStatus ConvertTheExceptionToOSStatus( OSStatus defaultValue );
+	::OSStatus ConvertTheExceptionToOSStatus( ::OSStatus defaultValue );
 	
   }
 

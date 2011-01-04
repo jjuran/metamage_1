@@ -15,12 +15,12 @@
 namespace Nitrogen
 {
 	
-	void ThrowOSStatus_Internal( OSStatus error )
+	void ThrowOSStatus_Internal( ::OSStatus error )
 	{
 		nucleus::throw_error_code< OSStatus >( error );
 	}
 	
-	::OSStatus ConvertTheExceptionToOSStatus( OSStatus defaultValue )
+	::OSStatus ConvertTheExceptionToOSStatus( ::OSStatus defaultValue )
 	{
 		try
 		{
