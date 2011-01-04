@@ -171,5 +171,102 @@ namespace Nitrogen
 		return nucleus::owned< Mac::AEDesc_Token >::seize( result );
 	}
 	
+	namespace compile_tests
+	{
+		
+		pascal OSErr ObjectAccessor( ::DescType     desiredClass,
+		                             const AEDesc*  containerToken,
+		                             ::DescType     containerClass,
+		                             ::DescType     keyForm,
+		                             const AEDesc*  keyData,
+		                             AEDesc*        value,
+		                             ::SRefCon      refCon );
+		
+		static void install_ProcPtr()
+		{
+			Mac::AEObjectClass  desiredClass  = Mac::cWindow;
+			Mac::DescType       containerType = Mac::typeNull;
+			bool                isSysHandler  = false;
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  ::SRefCon(),
+			                                                  isSysHandler );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  ::SRefCon() );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  42,
+			                                                  isSysHandler );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  42 );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  &desiredClass,
+			                                                  isSysHandler );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  &install_ProcPtr );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType,
+			                                                  isSysHandler );
+			
+			(void) AEInstallObjectAccessor< ObjectAccessor >( desiredClass,
+			                                                  containerType );
+		}
+		
+		nucleus::owned< Mac::AEDesc_Token >
+		//
+		N_ObjectAccessor( Mac::AEObjectClass        desiredClass,
+		                  const Mac::AEDesc_Token&  containerToken,
+		                  Mac::AEObjectClass        containerClass,
+		                  Mac::AEKeyForm            keyForm,
+		                  const Mac::AEDesc_Data&   keyData );
+		
+		nucleus::owned< Mac::AEDesc_Token >
+		//
+		N_ObjectAccessor_RefCon( Mac::AEObjectClass        desiredClass,
+		                         const Mac::AEDesc_Token&  containerToken,
+		                         Mac::AEObjectClass        containerClass,
+		                         Mac::AEKeyForm            keyForm,
+		                         const Mac::AEDesc_Data&   keyData,
+		                         WindowRef                 refcon );
+		
+		static void install_N_ProcPtr()
+		{
+			Mac::AEObjectClass  desiredClass  = Mac::cWindow;
+			Mac::DescType       containerType = Mac::typeNull;
+			::SRefCon           refCon        = 0;
+			bool                isSysHandler  = false;
+			
+			(void) AEInstallObjectAccessor< WindowRef,
+			                                N_ObjectAccessor_RefCon >( desiredClass,
+			                                                           containerType,
+			                                                           WindowRef(),
+			                                                           isSysHandler );
+			
+			(void) AEInstallObjectAccessor< WindowRef,
+			                                N_ObjectAccessor_RefCon >( desiredClass,
+			                                                           containerType,
+			                                                           WindowRef() );
+			
+			(void) AEInstallObjectAccessor< N_ObjectAccessor >( desiredClass,
+			                                                    containerType,
+			                                                    isSysHandler );
+			
+			(void) AEInstallObjectAccessor< N_ObjectAccessor >( desiredClass,
+			                                                    containerType );
+		}
+		
+	}
+	
 }
 
