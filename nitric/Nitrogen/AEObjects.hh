@@ -18,6 +18,11 @@
 #include <AEObjects.h>
 #endif
 
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
@@ -98,7 +103,7 @@ namespace Nitrogen
 	                                  Mac::AEKeyForm            keyForm,
 	                                  const Mac::AEDesc_Data&   keyData,
 	                                  Mac::AEDesc_Token&        value,
-	                                  RefCon                    accessorRefcon,
+	                                  ::SRefCon                 accessorRefcon,
 	                                  OSLAccessorUPP            userUPP )
 	{
 		ThrowOSStatus( userUPP( desiredClass,
@@ -128,7 +133,7 @@ namespace Nitrogen
 		                             ::DescType     keyForm,
 		                             const AEDesc*  keyData,
 		                             AEDesc*        value,
-		                             long           accessorRefcon )
+		                             ::SRefCon      accessorRefcon )
 		{
 			try
 			{
@@ -189,7 +194,7 @@ namespace Nitrogen
 		Mac::AEObjectClass  desiredClass;
 		DescType            containerType;
 		OSLAccessorUPP      accessor;
-		RefCon              accessorRefCon;
+		::SRefCon           accessorRefCon;
 		bool                isSysHandler;
 		
 		OSLAccessor();
@@ -197,7 +202,7 @@ namespace Nitrogen
 		OSLAccessor( Mac::AEObjectClass  desiredClass,
 		             DescType            containerType,
 		             OSLAccessorUPP      accessor,
-		             RefCon              accessorRefCon,
+		             ::SRefCon           accessorRefCon,
 		             bool                isSysHandler )
 		: 
 			desiredClass  ( desiredClass   ),
@@ -283,6 +288,8 @@ namespace Nitrogen
 	AEResolve( const Mac::AEDesc_ObjectSpecifier&  objectSpecifier,
 	           AEResolveCallbackFlags              callbackFlags = AEResolveCallbackFlags() );
 	
+	// Level 0
+	
 	nucleus::owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
 	inline nucleus::owned< OSLAccessor >
@@ -290,13 +297,28 @@ namespace Nitrogen
 	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
 	                         Mac::DescType       containerType,
 	                         OSLAccessorUPP      accessor,
-	                         RefCon              accessorRefCon = RefCon(),
+	                         long                accessorRefCon = 0,
 	                         bool                isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
 		                                             accessor,
-		                                             accessorRefCon,
+		                                             (::SRefCon) accessorRefCon,
+		                                             isSysHandler ) );
+	}
+	
+	inline nucleus::owned< OSLAccessor >
+	//
+	AEInstallObjectAccessor( Mac::AEObjectClass  desiredClass,
+	                         Mac::DescType       containerType,
+	                         OSLAccessorUPP      accessor,
+	                         void*               accessorRefCon,
+	                         bool                isSysHandler   = false )
+	{
+		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
+		                                             containerType,
+		                                             accessor,
+		                                             (::SRefCon) accessorRefCon,
 		                                             isSysHandler ) );
 	}
 	
@@ -311,7 +333,7 @@ namespace Nitrogen
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
 		                                             StaticUPP< OSLAccessorUPP, accessor >(),
-		                                             accessorRefCon,
+		                                             (::SRefCon) accessorRefCon,
 		                                             isSysHandler ) );
 	}
 	

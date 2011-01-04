@@ -18,6 +18,11 @@
 #include <AppleEvents.h>
 #endif
 
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // nucleus
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_HH
 #include "nucleus/object_parameter_traits.hh"
@@ -40,7 +45,7 @@ namespace Nitrogen
 		AEEventClass       theAEEventClass;
 		AEEventID          theAEEventID;
 		AEEventHandlerUPP  handler;
-		RefCon             handlerRefCon;
+		::SRefCon          handlerRefCon;
 		bool               isSysHandler;
 		
 		AEEventHandler();
@@ -48,7 +53,7 @@ namespace Nitrogen
 		AEEventHandler( AEEventClass       theAEEventClass,
 		                AEEventID          theAEEventID,
 		                AEEventHandlerUPP  handler,
-		                RefCon             handlerRefCon = RefCon(),
+		                ::SRefCon          handlerRefCon = 0,
 		                bool               isSysHandler  = false )
 		:
 			theAEEventClass( theAEEventClass ),
@@ -124,7 +129,7 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
 		                             ::AppleEvent      *  reply,
-		                             long                 refCon )
+		                             ::SRefCon            refCon )
 		{
 			try
 			{
@@ -146,7 +151,7 @@ namespace Nitrogen
 	{
 		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
 		                             ::AppleEvent      *  reply,
-		                             long )
+		                             ::SRefCon )
 		{
 			try
 			{
@@ -173,13 +178,28 @@ namespace Nitrogen
 	AEInstallEventHandler( AEEventClass       theAEEventClass,
 	                       AEEventID          theAEEventID,
 	                       AEEventHandlerUPP  handler,
-	                       RefCon             handlerRefCon = RefCon(),
+	                       long               handlerRefCon = 0,
 	                       bool               isSysHandler  = false )
 	{
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              handler,
-		                                              handlerRefCon,
+		                                              (::SRefCon) handlerRefCon,
+		                                              isSysHandler ) );
+	}
+	
+	inline nucleus::owned< AEEventHandler >
+	//
+	AEInstallEventHandler( AEEventClass       theAEEventClass,
+	                       AEEventID          theAEEventID,
+	                       AEEventHandlerUPP  handler,
+	                       void*              handlerRefCon,
+	                       bool               isSysHandler  = false )
+	{
+		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
+		                                              theAEEventID,
+		                                              handler,
+		                                              (::SRefCon) handlerRefCon,
 		                                              isSysHandler ) );
 	}
 	
@@ -196,7 +216,7 @@ namespace Nitrogen
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              StaticUPP< AEEventHandlerUPP, handler >(),
-		                                              handlerRefCon,
+		                                              (::SRefCon) handlerRefCon,
 		                                              isSysHandler ) );
 	}
 	
