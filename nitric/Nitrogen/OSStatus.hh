@@ -14,46 +14,30 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #define NITROGEN_OSSTATUS_HH
 
+// Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
 
+// nucleus
 #ifndef NUCLEUS_ERRORCODE_HH
 #include "nucleus/error_code.hh"
 #endif
 
+// Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
+
 
 namespace Nitrogen
-  {
-   class OSStatus
-     {
-      private:
-         ::OSStatus status;
-         
-         // Not implemented:
-            OSStatus(          bool      );
-            OSStatus(          char      );
-            OSStatus(   signed char      );
-            OSStatus(   signed long long );
-            OSStatus( unsigned char      );
-            OSStatus( unsigned short     );
-            OSStatus( unsigned int       );
-            OSStatus( unsigned long      );
-            OSStatus( unsigned long long );
-         
-      public:
-         typedef ::OSStatus error_number;
-         
-         OSStatus()                                            : status( noErr )    {}
-         OSStatus( ::OSStatus s )                              : status( s )        {}
-      
-         OSStatus( ::OSErr s )                                 : status( s )        {}
-         OSStatus( signed int s )                              : status( s )        {}
-         
-         static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
-         ::OSStatus Get() const                                { return status; }
-         operator ::OSStatus() const                           { return status; }
-     };
+{
+	
+	using Mac::OSStatus;
+	using Mac::ThrowOSStatus;
 	
 	#define DEFINE_OSSTATUS( c_name, new_name )  DEFINE_ERRORCODE( OSStatus, c_name, new_name )
 	
@@ -62,23 +46,13 @@ namespace Nitrogen
      {
       ::nucleus::register_error_code< OSStatus, error >();
      }
-   
-   void ThrowOSStatus_Internal( OSStatus );
-   
-	inline void ThrowOSStatus( OSStatus err )
-	{
-		if ( err != noErr )
-		{
-			ThrowOSStatus_Internal( err );
-		}
-	}
 	
 	inline void HandleDestructionOSStatus( ::OSStatus err )
 	{
 		// ignore errors in destructors for now
 	}
 	
-	::OSStatus ConvertTheExceptionToOSStatus( OSStatus defaultValue );
+	::OSStatus ConvertTheExceptionToOSStatus( ::OSStatus defaultValue );
 	
   }
 
