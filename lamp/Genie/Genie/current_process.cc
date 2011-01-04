@@ -9,9 +9,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
+#include "Mac/Toolbox/Types/OSStatus.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"
@@ -25,7 +23,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	

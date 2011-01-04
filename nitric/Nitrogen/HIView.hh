@@ -26,13 +26,12 @@
 #ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
 #include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
-#endif
-
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
 #endif
 
 #ifndef NITROGEN_CONTROLS_HH

@@ -18,9 +18,8 @@
 #ifndef MAC_RESOURCES_FUNCTIONS_RESERROR_HH
 #include "Mac/Resources/Functions/ResError.hh"
 #endif
-
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
 
 

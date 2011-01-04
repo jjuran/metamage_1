@@ -21,6 +21,9 @@
 
 #ifdef __APPLE__
 
+// Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 // GetPathname
 #include "GetPathname.hh"
 
@@ -40,7 +43,6 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 {
 #ifdef __APPLE__
 	
-	namespace N = Nitrogen;
 	namespace Div = Divergence;
 	
 	try

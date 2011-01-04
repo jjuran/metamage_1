@@ -18,6 +18,10 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#endif
+
 #include "Nitrogen/Components.hh"
 
 // Genie
@@ -32,6 +36,9 @@
 
 namespace Nitrogen
 {
+	
+	using Mac::ThrowOSStatus;
+	
 	
 	const ComponentDescription& AnyComponentDescription();
 	

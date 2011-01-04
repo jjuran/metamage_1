@@ -6,8 +6,9 @@
 #include "Genie/FS/sys/mac/event/post.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Events.hh"
-#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

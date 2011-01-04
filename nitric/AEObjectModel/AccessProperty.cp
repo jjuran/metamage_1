@@ -13,6 +13,10 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#endif
+
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif

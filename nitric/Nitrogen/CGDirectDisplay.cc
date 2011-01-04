@@ -18,7 +18,7 @@
 #include "Nitrogen/CGDirectDisplay.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Nitrogen

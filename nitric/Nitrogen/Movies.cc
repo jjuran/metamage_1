@@ -13,6 +13,9 @@
 
 #include "Nitrogen/Movies.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

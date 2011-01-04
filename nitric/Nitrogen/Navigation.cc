@@ -13,6 +13,9 @@
 
 #include "Nitrogen/Navigation.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen {
 

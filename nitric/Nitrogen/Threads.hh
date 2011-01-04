@@ -43,10 +43,10 @@
 #ifndef MAC_THREADS_TYPES_THREADID_HH
 #include "Mac/Threads/Types/ThreadID.hh"
 #endif
-
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
+
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif

@@ -9,7 +9,7 @@
 #include "ClassicToolbox/Scrap.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Nitrogen

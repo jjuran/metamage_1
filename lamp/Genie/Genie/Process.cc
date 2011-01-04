@@ -43,7 +43,6 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/Aliases.hh"
-#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Threads.hh"
 #include "Nitrogen/Timer.hh"
 

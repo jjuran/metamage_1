@@ -14,7 +14,7 @@
 #include "Nitrogen/Folders.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Nitrogen

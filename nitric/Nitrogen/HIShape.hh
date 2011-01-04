@@ -22,12 +22,13 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#ifndef NITROGEN_CFBASE_HH
-#include "Nitrogen/CFBase.hh"
+// Nitrogen
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
+#ifndef NITROGEN_CFBASE_HH
+#include "Nitrogen/CFBase.hh"
 #endif
 
 #ifndef NITROGEN_QUICKDRAW_HH

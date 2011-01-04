@@ -4,9 +4,10 @@
  */
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/OSStatus.hh"
 
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"

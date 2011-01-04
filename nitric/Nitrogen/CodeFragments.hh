@@ -22,6 +22,9 @@
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
 #endif
+#ifndef NUCLEUS_ERRORCODE_HH
+#include "nucleus/error_code.hh"
+#endif
 #ifndef NUCLEUS_ERRORSREGISTERED_HH
 #include "nucleus/errors_registered.hh"
 #endif
@@ -40,9 +43,6 @@
 #include "Mac/Resources/Types/ResID.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif

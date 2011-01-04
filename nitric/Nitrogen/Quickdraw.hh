@@ -46,9 +46,6 @@
 #include "Mac/Resources/Types/ResID.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
 
 namespace Nitrogen
 {

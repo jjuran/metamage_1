@@ -13,7 +13,9 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Resources.hh"
 
 // Io: MacFiles

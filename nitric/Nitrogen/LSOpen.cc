@@ -15,6 +15,9 @@
 
 #include "Nitrogen/LSOpen.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen {
 

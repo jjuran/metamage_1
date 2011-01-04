@@ -20,9 +20,6 @@
 // plus
 #include "plus/concat.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 

@@ -19,7 +19,7 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // ClassicToolbox
 //#include "ClassicToolbox/CursorDevices.h"

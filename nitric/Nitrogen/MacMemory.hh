@@ -40,10 +40,6 @@
 #include "Mac/Memory/Types/Handle.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
-
 #include <cstddef>
 
 

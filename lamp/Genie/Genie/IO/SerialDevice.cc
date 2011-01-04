@@ -29,6 +29,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Gestalt.hh"
 
 // ClassicToolbox

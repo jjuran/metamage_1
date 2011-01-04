@@ -52,9 +52,6 @@
 #ifndef NITROGEN_FONTS_HH
 #include "Nitrogen/Fonts.hh"
 #endif
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
 
 #ifdef GetMenuRef
 #undef GetMenuRef

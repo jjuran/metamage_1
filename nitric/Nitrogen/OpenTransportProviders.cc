@@ -13,6 +13,9 @@
 
 #include "Nitrogen/OpenTransportProviders.hh"
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 
 using Nitrogen::DefaultInternetServicesPath;
 

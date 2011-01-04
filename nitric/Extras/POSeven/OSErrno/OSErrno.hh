@@ -3,9 +3,9 @@
 #ifndef OSERRNO_HH
 #define OSERRNO_HH
 
-// Nitrogen
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
 #endif
 
 // poseven

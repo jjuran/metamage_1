@@ -15,8 +15,9 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/Gestalt.hh"
-#include "Nitrogen/OSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"

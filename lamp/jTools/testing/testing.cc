@@ -72,10 +72,12 @@
 #include "io/slurp.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/CodeFragments.hh"
 #include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/MacMemory.hh"
-#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/OSUtils.hh"
 //#include "Nitrogen/Resources.hh"
 #include "Nitrogen/Sound.hh"

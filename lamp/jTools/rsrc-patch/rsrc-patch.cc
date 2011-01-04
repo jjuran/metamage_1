@@ -22,7 +22,9 @@
 #include "poseven/functions/perror.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Resources.hh"
 #include "Nitrogen/Str.hh"
 

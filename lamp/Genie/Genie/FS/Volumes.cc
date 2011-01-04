@@ -22,8 +22,8 @@
 // Nitrogen
 #include "Mac/Files/Types/FSDirSpec.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Str.hh"
 
 // Genie

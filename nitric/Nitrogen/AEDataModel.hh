@@ -65,12 +65,12 @@
 #ifndef MAC_TOOLBOX_TYPES_FIXED_HH
 #include "Mac/Toolbox/Types/Fixed.hh"
 #endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 #ifndef NITROGEN_MACMEMORY_HH
 #include "Nitrogen/MacMemory.hh"
-#endif
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
 #endif
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"

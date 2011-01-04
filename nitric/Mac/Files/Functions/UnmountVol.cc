@@ -6,7 +6,7 @@
 #include "Mac/Files/Functions/UnmountVol.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Mac

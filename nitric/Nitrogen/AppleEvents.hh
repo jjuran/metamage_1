@@ -35,6 +35,9 @@
 #ifndef NITROGEN_AEINTERACTION_HH
 #include "Nitrogen/AEInteraction.hh"
 #endif
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
+#endif
 
 
 namespace Nitrogen

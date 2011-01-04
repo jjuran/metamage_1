@@ -28,6 +28,9 @@
 #ifndef MAC_TOOLBOX_TYPES_OPTIONBITS_HH
 #include "Mac/Toolbox/Types/OptionBits.hh"
 #endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 #ifndef NITROGEN_TEXTCOMMON_HH
 #include "Nitrogen/TextCommon.hh"

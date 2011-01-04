@@ -16,6 +16,9 @@
 // nucleus
 #include "nucleus/saved.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

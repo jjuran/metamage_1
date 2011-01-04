@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

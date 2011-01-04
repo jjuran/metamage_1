@@ -13,6 +13,9 @@
 
 #include "Nitrogen/Timer.hh"
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 
 namespace Nitrogen
 {

@@ -15,9 +15,6 @@
 namespace MacIO
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	SInt32 FSRead( EOF_Policy         policy,
 	               Mac::FSFileRefNum  file,
 	               Mac::FSIOPosMode   positionMode,

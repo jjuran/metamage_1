@@ -16,6 +16,9 @@
 #include <MacErrors.h>
 #endif
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

@@ -38,11 +38,6 @@
 #include "nucleus/string_scribe.hh"
 #endif
 
-// Nitrogen
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
-
 
 namespace Nitrogen
 {

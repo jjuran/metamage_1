@@ -45,6 +45,9 @@
 #ifndef MAC_ICONS_TYPES_ICONREF_HH
 #include "Mac/Icons/Types/IconRef.hh"
 #endif
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #endif
@@ -52,9 +55,6 @@
 #include "Mac/Windows/Types/WindowRef.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
 #ifndef NITROGEN_REFCON_HH
 #include "Nitrogen/RefCon.hh"
 #endif

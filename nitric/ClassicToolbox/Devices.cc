@@ -5,10 +5,13 @@
 
 #include "ClassicToolbox/Devices.hh"
 
-#include "Nitrogen/Quickdraw.hh"
-
 // nucleus
 #include "nucleus/saved.hh"
+
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
+#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Nitrogen

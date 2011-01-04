@@ -44,10 +44,6 @@
 #include "Mac/Script/Types/ScriptCode.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
-
 
 namespace Nitrogen
   {

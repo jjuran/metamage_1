@@ -7,8 +7,7 @@
 
 // Nitrogen
 #include "Mac/Files/Types/FSDirID.hh"
-
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -18,7 +17,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	bool VolumeIsOnServer( Mac::FSVolumeRefNum vRefNum )

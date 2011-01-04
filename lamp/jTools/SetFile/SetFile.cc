@@ -18,8 +18,9 @@
 #include "poseven/functions/perror.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/OSStatus.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

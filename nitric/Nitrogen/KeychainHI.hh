@@ -23,13 +23,15 @@
 #include "nucleus/owned.hh"
 #endif
 
+// Nitrogen
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
+
 #ifndef NITROGEN_KEYCHAINCORE_HH
 #include "Nitrogen/KeychainCore.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
 
 namespace Nitrogen {
 

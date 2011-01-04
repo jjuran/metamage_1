@@ -17,6 +17,8 @@
 #include "plus/make_string.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/CodeFragments.hh"
 
 // Genie

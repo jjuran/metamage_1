@@ -8,7 +8,7 @@
 #endif
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Nitrogen

@@ -17,7 +17,7 @@
 
 // Nitrogen
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -25,9 +25,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{

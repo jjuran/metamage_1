@@ -6,6 +6,8 @@
 #include "Pedestal/Clipboard.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/Scrap.hh"
 #include "Nitrogen/TextEdit.hh"
 

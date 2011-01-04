@@ -19,6 +19,9 @@
 // poseven
 #include "poseven/functions/perror.hh"
 
+// Nitrogen
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
@@ -34,7 +37,6 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace o = orion;
 	

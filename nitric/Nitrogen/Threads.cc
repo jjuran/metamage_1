@@ -13,6 +13,9 @@
 
 #include "Nitrogen/Threads.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

@@ -22,6 +22,7 @@
 
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 #include "Nitrogen/InternetConfig.hh"
 

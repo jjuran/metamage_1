@@ -31,10 +31,6 @@
 #include "Mac/Files/Types/FSType.hh"
 #endif
 
-#ifndef NITROGEN_OSSTATUS_HH
-#include "Nitrogen/OSStatus.hh"
-#endif
-
 #ifndef NITROGEN_CFURL_HH
 #include "Nitrogen/CFURL.hh"
 #endif

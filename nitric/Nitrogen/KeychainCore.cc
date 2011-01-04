@@ -13,6 +13,9 @@
 
 #include "Nitrogen/KeychainCore.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen {
 

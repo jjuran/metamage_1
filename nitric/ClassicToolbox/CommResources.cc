@@ -8,9 +8,15 @@
 // Standard C++
 #include <map>
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 
 namespace Nitrogen
 {
+	
+	using Mac::ThrowOSStatus;
+	
 	
 	// does nothing, but guarantees construction of theRegistration
 	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( CommunicationResourceManager )

@@ -6,7 +6,7 @@
 #include "Mac/Files/Functions/FlushVol.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace Mac

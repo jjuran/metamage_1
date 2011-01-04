@@ -13,6 +13,9 @@
 
 #include "Nitrogen/OpenTransport.hh"
 
+// Nitrogen
+#include "Nitrogen/OSStatus.hh"
+
 
 namespace Nitrogen
 {

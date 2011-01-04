@@ -13,9 +13,6 @@
 
 #include "Nitrogen/UnicodeConverter.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.hh"
-
 
 namespace Nitrogen
 {
