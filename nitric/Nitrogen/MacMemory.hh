@@ -99,7 +99,7 @@ namespace nucleus
 			
 			::DisposePtr( ptr );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::MemError() );
+			(void) ::MemError();
 		}
 	};
   }

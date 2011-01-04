@@ -136,7 +136,7 @@ namespace nucleus
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::DragManager );
          
-         ::Nitrogen::HandleDestructionOSStatus( ::DisposeDrag( i ) );
+         (void) ::DisposeDrag( i );
         }
      };
   }

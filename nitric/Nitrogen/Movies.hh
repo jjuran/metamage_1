@@ -101,7 +101,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::CloseMovieFile( refNum ) );
+			(void) ::CloseMovieFile( refNum );
 		}
 	};
 	
@@ -115,7 +115,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::EndFullScreen( (::Ptr) context, 0 ) );
+			(void) ::EndFullScreen( (::Ptr) context, 0 );
 		}
 	};
 	

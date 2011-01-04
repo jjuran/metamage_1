@@ -123,7 +123,7 @@ namespace Nitrogen
 				{
 					NUCLEUS_REQUIRE_ERRORS( ThreadManager );
 					
-					HandleDestructionOSStatus( ::DisposeThread( thread, NULL, recycleThread ) );
+					(void) ::DisposeThread( thread, NULL, recycleThread );
 				}
 		};
 		

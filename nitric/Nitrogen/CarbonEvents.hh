@@ -1282,7 +1282,7 @@ namespace nucleus
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::CarbonEventManager );
          
-         ::Nitrogen::HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
+         (void) ::RemoveEventHandler( toDispose );
         }
      };
   }

@@ -85,10 +85,10 @@ namespace nucleus
 		
 		void operator()( const Nitrogen::AEEventHandler& installation ) const
 		{
-			::Nitrogen::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-			                                                               installation.theAEEventID,
-			                                                               installation.handler,
-			                                                               installation.isSysHandler ) );
+			(void) ::AERemoveEventHandler( installation.theAEEventClass,
+			                               installation.theAEEventID,
+			                               installation.handler,
+			                               installation.isSysHandler );
 		}
 	};
 	

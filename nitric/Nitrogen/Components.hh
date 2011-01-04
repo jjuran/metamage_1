@@ -76,7 +76,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ComponentManager );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::CloseComponent( component ) );
+			(void) ::CloseComponent( component );
 		}
 	};
 	

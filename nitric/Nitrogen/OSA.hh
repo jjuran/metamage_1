@@ -116,7 +116,7 @@ namespace nucleus
 				
 				ASSERT( itsComponent.get() != ComponentInstance() );
 				
-				::Nitrogen::HandleDestructionOSStatus( ::OSADispose( itsComponent.get(), id ) );
+				(void) ::OSADispose( itsComponent.get(), id );
 			}
 	};
 	

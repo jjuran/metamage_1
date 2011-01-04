@@ -72,7 +72,7 @@ namespace nucleus
 		{
 			const QElemPtr qElem = (QElemPtr) vblTaskPtr;
 			
-			::Nitrogen::HandleDestructionOSStatus( ::VRemove( qElem ) );
+			(void) ::VRemove( qElem );
 		}
 	};
 	
@@ -86,8 +86,7 @@ namespace nucleus
 		{
 			const QElemPtr qElem = (QElemPtr) slotVBLTask.task;
 			
-			::Nitrogen::HandleDestructionOSStatus( ::SlotVRemove( qElem,
-			                                                      slotVBLTask.slot ) );
+			(void) ::SlotVRemove( qElem, slotVBLTask.slot );
 		}
 	};
 	

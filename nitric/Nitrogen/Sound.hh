@@ -182,7 +182,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::SoundManager );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
+			(void) ::SPBCloseDevice( refNum );
 		}
 	};
 	

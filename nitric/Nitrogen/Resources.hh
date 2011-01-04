@@ -133,7 +133,7 @@ namespace Nitrogen
 			
 			::ReleaseResource( r );
 			
-			HandleDestructionOSStatus( ::ResError() );
+			(void) ::ResError();
 		}
 	};
 	
@@ -153,7 +153,7 @@ namespace nucleus
 			
 			::CloseResFile( resFile );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::ResError() );
+			(void) ::ResError();
 		}
 	};
   }

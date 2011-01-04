@@ -275,13 +275,10 @@ namespace nucleus
 		
 		void operator()( const Nitrogen::OSLAccessor& installation ) const
 		{
-			::Nitrogen::HandleDestructionOSStatus
-			(
-				::AERemoveObjectAccessor( installation.desiredClass,
-				                          installation.containerType,
-				                          installation.accessor,
-				                          installation.isSysHandler )
-			);
+			(void) ::AERemoveObjectAccessor( installation.desiredClass,
+			                                 installation.containerType,
+			                                 installation.accessor,
+			                                 installation.isSysHandler );
 		}
 	};
 	

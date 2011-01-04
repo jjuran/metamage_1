@@ -1034,7 +1034,7 @@ namespace nucleus
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
-         ::Nitrogen::HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
+         (void) ::FSCloseIterator( iterator );
         }
      };
   }
@@ -1263,7 +1263,7 @@ namespace nucleus
         {
          NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
          
-         ::Nitrogen::HandleDestructionOSStatus( ::FSCloseFork( fork ) );
+         (void) ::FSCloseFork( fork );
         }
      };
   }

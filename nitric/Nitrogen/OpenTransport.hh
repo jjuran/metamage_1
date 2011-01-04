@@ -212,7 +212,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OpenTransport );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
+			(void) ::OTCloseProvider( provider );
 		}
 	};
 

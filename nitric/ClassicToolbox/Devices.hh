@@ -64,7 +64,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( DeviceManager );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::CloseDriver( driverRefNum ) );
+			(void) ::CloseDriver( driverRefNum );
 		}
 	};
 	

@@ -59,7 +59,7 @@ namespace nucleus
 			
 			const QElemPtr qElem = (QElemPtr) tmTaskPtr;
 			
-			::Nitrogen::HandleDestructionOSStatus( ::RemoveTimeTask( qElem ) );
+			(void) ::RemoveTimeTask( qElem );
 		}
 	};
 	

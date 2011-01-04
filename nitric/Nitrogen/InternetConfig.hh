@@ -85,7 +85,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::InternetConfig );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::ICStop( instance ) );
+			(void) ::ICStop( instance );
 		}
 	};
 	

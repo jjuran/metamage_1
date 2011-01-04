@@ -148,7 +148,7 @@ namespace Nitrogen
 		
 		void operator()( CRMRecPtr crmRec ) const
 		{
-			::Nitrogen::HandleDestructionOSStatus( ::CRMRemove( crmRec ) );
+			(void) ::CRMRemove( crmRec );
 		}
 	};
 	

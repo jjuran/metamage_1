@@ -225,7 +225,7 @@ namespace nucleus
 		{
 			NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
 			
-			::Nitrogen::HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+			(void) ::DisposeIconSuite( i, disposeData );
 		}
 	};
   }
@@ -244,7 +244,7 @@ namespace Nitrogen
 		{
 			NUCLEUS_REQUIRE_ERRORS( IconManager );
 			
-			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+			(void) ::DisposeIconSuite( i, disposeData );
 		}
 	};
 	
