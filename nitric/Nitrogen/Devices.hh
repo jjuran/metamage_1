@@ -70,7 +70,7 @@ namespace Nitrogen
 	// Mac OS semantics
 	struct ThrowEOF_Always
 	{
-		static bool SuppressError( OSStatus err, bool bytesRead )
+		static bool SuppressError( ::OSStatus err, bool bytesRead )
 		{
 			return false;
 		}
@@ -78,7 +78,7 @@ namespace Nitrogen
 	
 	struct ThrowEOF_OnZero
 	{
-		static bool SuppressError( OSStatus err, bool bytesRead )
+		static bool SuppressError( ::OSStatus err, bool bytesRead )
 		{
 			return err == eofErr  &&  bytesRead;
 		}
@@ -87,14 +87,14 @@ namespace Nitrogen
 	// POSIX semantics
 	struct ThrowEOF_Never
 	{
-		static bool SuppressError( OSStatus err, bool bytesRead )
+		static bool SuppressError( ::OSStatus err, bool bytesRead )
 		{
 			return err == eofErr;
 		}
 	};
 	
 	template < class Policy >
-	inline void ThrowReadOSStatus( OSStatus err, bool bytesRead, Policy policy )
+	inline void ThrowReadOSStatus( ::OSStatus err, bool bytesRead, Policy policy )
 	{
 		if ( !policy.SuppressError( err, bytesRead ) )
 		{

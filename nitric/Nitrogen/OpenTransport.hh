@@ -269,7 +269,7 @@ namespace Nitrogen
 	inline bool OTIsAckingSends( ProviderRef ref )  { return ::OTIsAckingSends( ref ); }
 	
 	void OTCancelSynchronousCalls( ProviderRef  ref,
-	                               OSStatus     err );
+	                               ::OSStatus   err );
 	
 	using ::OTIsNonBlocking;
 	using ::OTIsAsynchronous;

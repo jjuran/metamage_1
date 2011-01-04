@@ -391,7 +391,7 @@ namespace Nitrogen
 	{
 		typedef void Result;
 		
-		static void HandleOSStatus( OSStatus err )
+		static void HandleOSStatus( ::OSStatus err )
 		{
 			ThrowOSStatus( err );
 		}
@@ -401,7 +401,7 @@ namespace Nitrogen
 	{
 		typedef bool Result;
 		
-		static bool HandleOSStatus( OSStatus err )
+		static bool HandleOSStatus( ::OSStatus err )
 		{
 			if ( err == fnfErr )
 			{

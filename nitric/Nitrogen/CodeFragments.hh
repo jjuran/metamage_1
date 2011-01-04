@@ -162,7 +162,7 @@ namespace Nitrogen
 		
 	#if !NUCLEUS_RICH_ERRORCODES
 		
-		OSStatusErrMessage( OSStatus err, ConstStr255Param errMessage )
+		OSStatusErrMessage( ::OSStatus err, ConstStr255Param errMessage )
 		:
 			ErrorCode ( err        ),
 			ErrMessage( errMessage )

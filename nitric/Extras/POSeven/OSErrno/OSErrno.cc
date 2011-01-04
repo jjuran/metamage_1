@@ -9,7 +9,7 @@
 namespace OSErrno
 {
 	
-	poseven::errno_t ErrnoFromOSStatus( const Nitrogen::OSStatus& error )
+	poseven::errno_t ErrnoFromOSStatus( ::OSStatus error )
 	{
 		int result = 0;
 		
@@ -22,7 +22,7 @@ namespace OSErrno
 		
 	#endif
 		
-		switch ( error.Get() )
+		switch ( error )
 		{
 			case nsvErr         :  // fall through
 			case resNotFound    :  // fall through

@@ -264,7 +264,7 @@ namespace Nitrogen
 	
 	void PBDTGetAPPLSync( DTPBRec& pb )
 	{
-		OSStatus err = ::PBDTGetAPPLSync( &pb );
+		::OSStatus err = ::PBDTGetAPPLSync( &pb );
 		
 		if ( err == fnfErr )
 		{
@@ -498,7 +498,7 @@ Return Value
 */
    bool FSCompareFSRefs( const FSRef& ref1, const FSRef& ref2 )
      {
-      const OSStatus error = ::FSCompareFSRefs( &ref1, &ref2 );
+      const ::OSStatus error = ::FSCompareFSRefs( &ref1, &ref2 );
       if ( errFSRefsDifferent == error || diffVolErr == error )
          return false;
       ThrowOSStatus( error );
@@ -667,15 +667,15 @@ Return Value
      {
       FSGetCatalogInfoBulk_Result result;
       ::Boolean containerChanged = false;    // Prior to 10.2, FSGetCatalogInfoBulk leaves containerChanged unchanged.
-      OSStatus error = ::FSGetCatalogInfoBulk( iterator,
-                                               maximumObjects,
-                                               &result.actualObjects,
-                                               &containerChanged,
-                                               whichInfo,
-                                               catalogInfos,
-                                               refs,
-                                               specs,
-                                               names );
+      ::OSStatus error = ::FSGetCatalogInfoBulk( iterator,
+                                                 maximumObjects,
+                                                 &result.actualObjects,
+                                                 &containerChanged,
+                                                 whichInfo,
+                                                 catalogInfos,
+                                                 refs,
+                                                 specs,
+                                                 names );
           
       if ( error == errFSNoMoreItems )
          result.noMoreItems = true;
@@ -791,16 +791,16 @@ Return Value
      {
       FSCatalogSearch_Result result;
       ::Boolean containerChanged;
-      OSStatus error = ::FSCatalogSearch( iterator,
-                                          &searchCriteria,
-                                          maximumObjects,
-                                          &result.actualObjects,
-                                          &containerChanged,
-                                          whichInfo,
-                                          catalogInfos,
-                                          refs,
-                                          specs,
-                                          names );
+      ::OSStatus error = ::FSCatalogSearch( iterator,
+                                            &searchCriteria,
+                                            maximumObjects,
+                                            &result.actualObjects,
+                                            &containerChanged,
+                                            whichInfo,
+                                            catalogInfos,
+                                            refs,
+                                            specs,
+                                            names );
       if ( error == errFSNoMoreItems )
          result.noMoreItems = true;
        else
@@ -862,12 +862,12 @@ Return Value
 	{
 		ByteCount actualCount;
 		
-		OSStatus err = ::FSReadFork( fork,
-		                             positionMode,
-		                             positionOffset,
-		                             requestCount,
-		                             buffer,
-		                             &actualCount );
+		::OSStatus err = ::FSReadFork( fork,
+		                               positionMode,
+		                               positionOffset,
+		                               requestCount,
+		                               buffer,
+		                               &actualCount );
 		      
 		if ( err != eofErr )
 		{

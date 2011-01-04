@@ -51,9 +51,9 @@ namespace Nitrogen
 		throw OSStatusErrMessage< ErrorCode >( errMessage );
 	}
 	
-	static void ThrowOSStatusErrMessage( OSStatus status, ConstStr255Param errMessage )
+	static void ThrowOSStatusErrMessage( ::OSStatus status, ConstStr255Param errMessage )
 	{
-		switch ( status.Get ())
+		switch ( status )
 		{
 		#if NUCLEUS_RICH_ERRORCODES
 			

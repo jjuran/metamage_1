@@ -17,7 +17,7 @@
 namespace OSErrno
 {
 	
-	poseven::errno_t ErrnoFromOSStatus( const Nitrogen::OSStatus& error );
+	poseven::errno_t ErrnoFromOSStatus( ::OSStatus error );
 	
 }
 
