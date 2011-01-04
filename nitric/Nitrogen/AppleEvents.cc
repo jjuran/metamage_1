@@ -81,5 +81,33 @@ namespace Nitrogen
 		                       isSysHandler );
 	}
 	
+	namespace compile_tests
+	{
+		
+		pascal OSErr AE_ProcPtr( const AppleEvent*, AppleEvent*, ::SRefCon );
+		
+		void AE_no_refcon( const Mac::AppleEvent&, Mac::AppleEvent& );
+		
+		void AE_WindowRef_refcon( const Mac::AppleEvent&, Mac::AppleEvent&, WindowRef );
+		
+		static void foo()
+		{
+			Mac::AEEventClass aeClass = Mac::AEEventClass();
+			Mac::AEEventID    aeID    = Mac::AEEventID   ();
+			bool isSysHandler         = false;
+			
+			AEInstallEventHandler< AE_ProcPtr >( aeClass, aeID, 0, isSysHandler );
+			
+			AEInstallEventHandler< AE_no_refcon >( aeClass, aeID, isSysHandler );
+			
+			AEInstallEventHandler< AE_no_refcon >( aeClass, aeID );
+			
+			AEInstallEventHandler< WindowRef, AE_WindowRef_refcon >( aeClass, aeID, WindowRef(), isSysHandler );
+			
+			AEInstallEventHandler< WindowRef, AE_WindowRef_refcon >( aeClass, aeID, WindowRef() );
+		}
+		
+	}
+	
 }
 
