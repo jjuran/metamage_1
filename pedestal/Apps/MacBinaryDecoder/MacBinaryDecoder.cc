@@ -38,8 +38,6 @@ namespace MacBinaryDecoder
 	using Mac::kCoreEventClass;
 	using Mac::kAEOpenDocuments;
 	
-	App* App::theApp = NULL;
-	
 	
 	static void Decode( Io_Details::stream input, const N::FSDirSpec& destDir )
 	{
@@ -67,17 +65,21 @@ namespace MacBinaryDecoder
 		}
 	}
 	
+	static void OpenDocument( const Io_Details::file_spec& file )
+	{
+		N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
+		
+		Decode( io::open_for_reading( file ), parent );
+	}
+	
 	namespace
 	{
 		
 		// Apple event handlers
 		
 		void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
-											Mac::AppleEvent&        reply,
-											App*                   app )
+											Mac::AppleEvent&        reply )
 		{
-			ASSERT( app != NULL );
-			
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
@@ -91,20 +93,13 @@ namespace MacBinaryDecoder
 			{
 				Io_Details::file_spec fileSpec = *it;
 				
-				app->OpenDocument( fileSpec );
+				OpenDocument( fileSpec );
 			}
 			
 		}
 		
 	}
 	
-	
-	App& App::Get()
-	{
-		ASSERT( theApp != NULL );
-		
-		return *theApp;
-	}
 	
 	static bool About( Ped::CommandCode )
 	{
@@ -114,27 +109,11 @@ namespace MacBinaryDecoder
 	}
 	
 	App::App()
-	: 
-		itsOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
-		                                                                                          kAEOpenDocuments,
-		                                                                                          this ) )
 	{
-		ASSERT( theApp == NULL );
-		
-		theApp = this;
+		N::AEInstallEventHandler< HandleOpenDocumentsAppleEvent >( kCoreEventClass,
+		                                                           kAEOpenDocuments ).release();
 		
 		SetCommandHandler( Ped::kCmdAbout, &About );
-	}
-	
-	App::~App()
-	{
-	}
-	
-	void App::OpenDocument( const Io_Details::file_spec& file )
-	{
-		N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
-		
-		Decode( io::open_for_reading( file ), parent );
 	}
 	
 }

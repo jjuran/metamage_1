@@ -31,22 +31,15 @@ namespace Vertice
 			void OpenDocument( const FSSpec& file );
 	};
 	
-	class App : public Ped::Application,
-	            public DocumentsOwner
+	static DocumentsOwner gDocuments;
+	
+	class App : public Ped::Application
 	{
-		private:
-			//PedMenu myOptionsMenu;
-			//PedMenu myViewMenu;
-			n::owned< N::AEEventHandler > myOpenDocsEventHandler;
-		
 		public:
 			static void AppleEventHandler( Mac::AppleEvent const&  appleEvent,
-			                               Mac::AppleEvent      &  reply,
-			                               App*                    app );
+			                               Mac::AppleEvent      &  reply );
 			
 			App();
-			
-			void HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply );
 	};
 	
 	
@@ -69,24 +62,14 @@ namespace Vertice
 	}
 	
 	App::App()
-	:
-		myOpenDocsEventHandler
-		(
-			N::AEInstallEventHandler< App*, AppleEventHandler >( Mac::kCoreEventClass,
-			                                                     Mac::kAEOpenDocuments,
-			                                                     this ) )
-	//, myOptionsMenu(131)
-	//, myViewMenu(132)
 	{
+		N::AEInstallEventHandler< AppleEventHandler >( Mac::kCoreEventClass,
+		                                               Mac::kAEOpenDocuments ).release();
+		
 		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
-	void App::AppleEventHandler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply, App* app )
-	{
-		app->HandleAppleEvent( appleEvent, reply );
-	}
-	
-	void App::HandleAppleEvent( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
+	void App::AppleEventHandler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
 	{
 		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
 		                                                              Mac::keyDirectObject,
@@ -98,7 +81,7 @@ namespace Vertice
 		{
 			FSSpec fss = N::AEGetNthPtr< Mac::typeFSS >( docList, index );
 			
-			OpenDocument( fss );
+			gDocuments.OpenDocument( fss );
 		}
 	}
 	
