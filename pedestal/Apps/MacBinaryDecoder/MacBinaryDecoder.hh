@@ -47,18 +47,8 @@ namespace MacBinaryDecoder
 	
 	class App : public Pedestal::Application
 	{
-		private:
-			static App* theApp;
-			
-			nucleus::owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
-		
 		public:
-			static App& Get();
-			
 			App();
-			~App();
-			
-			void OpenDocument( const Io_Details::file_spec& file );
 	};
 	
 }
