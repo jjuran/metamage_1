@@ -760,23 +760,11 @@ namespace Nitrogen
 				return errAEEventNotHandled;
 			}
 			
-			nucleus::owned< Mac::AEDesc_Data > AECoercerOfDescs_N( const Mac::AEDesc_Data&  fromDesc,
-			                                                       Mac::DescType            toType,
-			                                                       RefCon                   refCon )
-			{
-				return nucleus::owned< Mac::AEDesc_Data >::seize( fromDesc );
-			}
-			
 		}
 		
 		static nucleus::owned< AECoercionHandler > InstallCoercionHandler_ProcPtr()
 		{
 			return AEInstallCoercionHandler< AECoercerOfDescs_ProcPtr >( Mac::DescType( 'from' ), Mac::DescType( 'to  ' ) );
-		}
-		
-		static nucleus::owned< AECoercionHandler > InstallCoercionHandler_N()
-		{
-			return AEInstallCoercionHandler< AECoercerOfDescs_N >( Mac::DescType( 'from' ), Mac::DescType( 'to  ' ) );
 		}
 		
 		static nucleus::string GetTextAttr( const Mac::AppleEvent& appleEvent, Mac::AEKeyword keyword )

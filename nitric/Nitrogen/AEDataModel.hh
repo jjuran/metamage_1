@@ -72,9 +72,6 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
-#endif
 #ifndef NITROGEN_UPP_HH
 #include "Nitrogen/UPP.hh"
 #endif
@@ -527,66 +524,6 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	typedef nucleus::owned< Mac::AEDesc_Data > ( *AECoerceDescProcPtr )( const Mac::AEDesc_Data&  fromDesc,
-	                                                                     Mac::DescType            toType,
-	                                                                     RefCon                   refCon );
-	
-	typedef nucleus::owned< Mac::AEDesc_Data > ( *AECoercePtrProcPtr )( Mac::DescType  typeCode,
-	                                                                    const void*    dataPtr,
-	                                                                    std::size_t    datasize,
-	                                                                    Mac::DescType  toType,
-	                                                                    RefCon         refCon );
-	
-	template < AECoerceDescProcPtr handler >
-	struct AECoercionHandler_Desc_Callback
-	{
-		static pascal OSErr Adapter( const AEDesc*  fromDesc,
-		                             ::DescType     toType,
-		                             ::SRefCon      refCon,
-		                             AEDesc*        result )
-		{
-			try
-			{
-				*result = handler( static_cast< const Mac::AEDesc_Data& >( *fromDesc ),
-				                   Mac::DescType( toType ),
-				                   refCon ).release();
-			}
-			catch ( ... )
-			{
-				return ConvertTheExceptionToOSStatus( errAEEventFailed );
-			}
-			
-			return noErr;
-		}
-	};
-	
-	template < AECoercePtrProcPtr handler >
-	struct AECoercionHandler_Ptr_Callback
-	{
-		static pascal OSErr Adapter( ::DescType   typeCode,
-		                             const void*  dataPtr,
-		                             ::Size       dataSize,
-		                             ::DescType   toType,
-		                             ::SRefCon    refCon,
-		                             AEDesc*      result )
-		{
-			try
-			{
-				*result = handler( Mac::DescType( typeCode ),
-				                   dataPtr,
-				                   dataSize,
-				                   Mac::DescType( toType ),
-				                   refCon ).release();
-			}
-			catch ( ... )
-			{
-				return ConvertTheExceptionToOSStatus( errAEEventFailed );
-			}
-			
-			return noErr;
-		}
-	};
-	
 	// Level 0
 	
 	// 388
@@ -710,34 +647,6 @@ namespace Nitrogen
 		                                                    StaticUPP< AECoercePtrUPP, handler >(),
 		                                                    0,
 		                                                    isSysHandler ) );
-	}
-	
-	template < AECoerceDescProcPtr handler >
-	nucleus::owned< AECoercionHandler >
-	//
-	AEInstallCoercionHandler( Mac::DescType  fromType,
-	                          Mac::DescType  toType,
-	                          RefCon         handlerRefCon = RefCon(),
-	                          bool           isSysHandler  = false )
-	{
-		return AEInstallCoercionHandler< AECoercionHandler_Desc_Callback< handler >::Adapter >( fromType,
-		                                                                                        toType,
-		                                                                                        handlerRefCon,
-		                                                                                        isSysHandler );
-	}
-	
-	template < AECoercePtrProcPtr handler >
-	nucleus::owned< AECoercionHandler >
-	//
-	AEInstallCoercionHandler( Mac::DescType  fromType,
-	                          Mac::DescType  toType,
-	                          RefCon         handlerRefCon = RefCon(),
-	                          bool           isSysHandler  = false )
-	{
-		return AEInstallCoercionHandler< AECoercionHandler_Ptr_Callback< handler >::Adapter >( fromType,
-		                                                                                       toType,
-		                                                                                       handlerRefCon,
-		                                                                                       isSysHandler );
 	}
 	
 	// 406
