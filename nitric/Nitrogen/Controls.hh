@@ -159,7 +159,10 @@ namespace Nitrogen
 	inline void DisposeControl( nucleus::owned< ControlRef > )  {}
 	
 	// 1169
-	void HiliteControl( ControlRef control, ControlPartCode hiliteState );
+	inline void HiliteControl( ControlRef control, ControlPartCode hiliteState )
+	{
+		::HiliteControl( control, hiliteState );
+	}
 	
 	// 1183, 1195
 	using ::ShowControl;
@@ -177,9 +180,14 @@ namespace Nitrogen
 	void UpdateControls( WindowRef window );
 	
 	// 1711
-	ControlPartCode TrackControl( ControlRef        theControl,
-	                              Point             startPoint,
-	                              ControlActionUPP  actionProc = NULL );
+	inline ControlPartCode TrackControl( ControlRef        theControl,
+	                                     Point             startPoint,
+	                                     ControlActionUPP  actionProc = NULL )
+	{
+		return ControlPartCode( ::TrackControl( theControl,
+		                                        startPoint,
+		                                        actionProc ) );
+	}
 	
 	template < typename ControlActionUPP::ProcPtr actionProc >
 	inline ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
@@ -288,7 +296,10 @@ namespace Nitrogen
    ControlRef GetControlByID( WindowRef inWindow, Mac::OSType signature, SInt32 id );  // To be removed; use Make.
 
 	// 2491
-	void SetControlAction( ControlRef control, ControlActionUPP actionProc );
+	inline void SetControlAction( ControlRef control, ControlActionUPP actionProc )
+	{
+		::SetControlAction( control, actionProc );
+	}
 	
 	template < typename ControlActionUPP::ProcPtr actionProc >
 	inline void SetControlAction( ControlRef control )
@@ -306,10 +317,16 @@ namespace Nitrogen
 	inline ControlActionUPP GetControlAction( ControlRef control )  { return ::GetControlAction( control ); }
 	
 	// 2520
-	void SetControlReference( ControlRef control, RefCon data );
+	inline void SetControlReference( ControlRef control, RefCon data )
+	{
+		::SetControlReference( control, data );
+	}
 	
 	// 2534
-	RefCon GetControlReference( ControlRef control );
+	inline RefCon GetControlReference( ControlRef control )
+	{
+		return ::GetControlReference( control );
+	}
 	
 
    template < ::ResType inTagName >
@@ -381,10 +398,13 @@ namespace Nitrogen
 	                            std::size_t      inBufferSize,
 	                            void *           inBuffer );
 	
-	std::size_t GetControlData( ControlRef       inControl,
-	                            ControlPartCode  inPart,
-	                            ControlDataTag   inTagName );
-	   
+	inline std::size_t GetControlData( ControlRef       control,
+	                                   ControlPartCode  part,
+	                                   ControlDataTag   tagName )
+	{
+		return GetControlData( control, part, tagName, 0, 0 );
+	}
+	
 	template < ::ResType tagName >
 	class GetControlData_Getter
 	{
@@ -451,10 +471,18 @@ namespace Nitrogen
    bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow );
 
 	// 3395
-	Rect GetControlBounds( ControlRef control );
+	inline Rect GetControlBounds( ControlRef control )
+	{
+		Rect bounds;
+		
+		return *( ::GetControlBounds( control, &bounds ) );
+	}
 	
 	// 3497
-	void SetControlBounds( ControlRef control, const Rect& bounds );
+	inline void SetControlBounds( ControlRef control, const Rect& bounds )
+	{
+		::SetControlBounds( control, &bounds );
+	}
 	
    /* ... */
    

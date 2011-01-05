@@ -68,24 +68,10 @@ namespace Nitrogen
 		                     refCon );
 	}
 	
-	void HiliteControl( ControlRef control, ControlPartCode hiliteState )
-	{
-		::HiliteControl( control, hiliteState );
-	}
-	
 	void UpdateControls( WindowRef window )
 	{
 		::UpdateControls( window,
 		                  GetPortVisibleRegion( GetWindowPort( window ) ) );
-	}
-	
-	ControlPartCode TrackControl( ControlRef        theControl,
-	                              Point             startPoint,
-	                              ControlActionUPP  actionProc )
-	{
-		return ControlPartCode( ::TrackControl( theControl,
-		                                        startPoint,
-		                                        actionProc ) );
 	}
 	
 	FindControl_Result FindControl( Point testPoint, WindowRef theWindow )
@@ -113,21 +99,6 @@ namespace Nitrogen
       return GetControlByID( inWindow, controlID );
      }
 
-	void SetControlAction( ControlRef control, ControlActionUPP actionProc )
-	{
-		::SetControlAction( control, actionProc );
-	}
-	
-	void SetControlReference( ControlRef control, RefCon data )
-	{
-		::SetControlReference( control, data );
-	}
-	
-	RefCon GetControlReference( ControlRef control )
-	{
-		return ::GetControlReference( control );
-	}
-	
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
                         ControlDataTag    inTagName,
@@ -157,13 +128,6 @@ namespace Nitrogen
       return static_cast< std::size_t >( outActualSize );
      }
 
-   std::size_t GetControlData( ControlRef        inControl,
-                        ControlPartCode   inPart,
-                        ControlDataTag    inTagName )
-     {
-      return GetControlData( inControl, inPart, inTagName, 0, 0 );
-     }
-   
    bool HandleControlDragTracking( ControlRef          inControl,
                                    DragTrackingMessage inMessage,
                                    DragReference       inDrag )
@@ -205,17 +169,6 @@ namespace Nitrogen
       return tracks;
      }
 
-	Rect GetControlBounds( ControlRef control )
-	{
-		Rect bounds;
-		return *( ::GetControlBounds( control, &bounds ) );
-	}
-	
-	void SetControlBounds( ControlRef control, const Rect& bounds )
-	{
-		::SetControlBounds( control, &bounds );
-	}
-	
    void RegisterControlManagerErrors()
      {
       RegisterOSStatus< memFullErr                   >();
