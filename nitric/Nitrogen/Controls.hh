@@ -152,7 +152,28 @@ namespace Nitrogen
 	                       short             minimumValue,
 	                       short             maximumValue,
 	                       ControlProcID     procID,
-	                       RefCon            refCon );
+	                       long              refCon );
+	
+	inline ControlRef NewControl( WindowRef         owningWindow,
+	                              const Rect&       boundsRect,
+	                              ConstStr255Param  controlTitle,
+	                              bool              initiallyVisible,
+	                              short             initialValue,
+	                              short             minimumValue,
+	                              short             maximumValue,
+	                              ControlProcID     procID,
+	                              const void*       refCon )
+	{
+		return NewControl( owningWindow,
+		                   boundsRect,
+		                   controlTitle,
+		                   initiallyVisible,
+		                   initialValue,
+		                   minimumValue,
+		                   maximumValue,
+		                   procID,
+		                   (long) refCon );  // reinterpret_cast
+	}
 	
 	// 1007
 	using ::DisposeControl;
