@@ -18,6 +18,9 @@
 #include <MacWindows.h>
 #endif
 
+// MacGlue
+#include "MacGlue/MacGlue.hh"
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
@@ -245,11 +248,34 @@ namespace Nitrogen
 	
   }
 
+namespace MacGlue
+{
+	
+	DECLARE_MAC_GLUE( DisposeWindow );
+	
+}
+
 namespace Nitrogen
   {
 
    /* ... */
-
+	
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	inline nucleus::disposer_class< WindowRef >::type Window_Disposer()
+	{
+		return nucleus::disposer_class< WindowRef >::type();
+	}
+	
+#else
+	
+	inline nucleus::disposer_class< WindowRef >::type Window_Disposer()
+	{
+		return &MacGlue::DisposeWindow;
+	}
+	
+#endif
+	
 	#pragma mark -
 	#pragma mark ** Routines **
 	
