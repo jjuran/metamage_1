@@ -56,7 +56,7 @@ namespace Genie
 		{
 			(void) N::SPBGetIndexedDevice( i );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != siBadSoundInDevice )
 			{

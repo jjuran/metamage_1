@@ -190,7 +190,7 @@ namespace tool
 		{
 			return NX::FindProcess( sigToolServer );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != procNotFound )
 			{
@@ -204,7 +204,7 @@ namespace tool
 			{
 				return launch_ToolServer_from_ramdisk( device );
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				if ( err != afpItemNotFound )
 				{
@@ -217,7 +217,7 @@ namespace tool
 		{
 			return N::LaunchApplication( N::DTGetAPPL( sigToolServer ) );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err == afpItemNotFound )
 			{

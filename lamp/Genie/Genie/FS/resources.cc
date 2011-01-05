@@ -152,7 +152,7 @@ namespace Genie
 		{
 			return N::Get1Resource( type, id );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != resNotFound )
 			{
@@ -284,7 +284,7 @@ namespace Genie
 			
 			h = N::DetachResource( r );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( !creating  ||  err != resNotFound )
 			{

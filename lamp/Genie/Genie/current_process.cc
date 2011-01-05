@@ -45,7 +45,7 @@ namespace Genie
 			
 			return EINTR;
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			return OSErrno::ErrnoFromOSStatus( err );
 		}

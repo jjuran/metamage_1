@@ -181,7 +181,7 @@ namespace Genie
 		{
 			(void) N::GetComponentInfo( component );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != badComponentSelector )
 			{

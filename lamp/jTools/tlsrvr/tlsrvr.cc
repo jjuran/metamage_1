@@ -124,7 +124,7 @@ namespace tool
 		{
 			return RunCommandInToolServer( command, switchLayers );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			plus::var_string status = "OSStatus ";
 			

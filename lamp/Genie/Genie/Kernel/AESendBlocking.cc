@@ -42,7 +42,7 @@ namespace Genie
 			// Sleep until the reply is delivered
 			current_process().Stop();
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			return err;
 		}

@@ -260,7 +260,7 @@ namespace tool
 					printf( "%s\n", path );
 				}
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				try
 				{

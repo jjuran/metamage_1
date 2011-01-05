@@ -54,7 +54,7 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 		
 		return mac_path;
 	}
-	catch ( const N::OSStatus& err )
+	catch ( const Mac::OSStatus& err )
 	{
 		// * Div::ResolvePathToFSSpec() only throws OSStatus on Mach
 		// * GetMacPathname() should only ever throw fnfErr

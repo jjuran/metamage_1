@@ -81,7 +81,7 @@ namespace Genie
 				--code;
 			}
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			code = GetProcCode();
 		}

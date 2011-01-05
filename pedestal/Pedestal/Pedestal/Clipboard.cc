@@ -41,7 +41,7 @@ namespace Pedestal
 			
 			N::TEToScrap();
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			ClearCarbonScrap();
 		}

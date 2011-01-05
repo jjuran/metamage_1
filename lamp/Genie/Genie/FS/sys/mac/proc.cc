@@ -116,7 +116,7 @@ namespace Genie
 		{
 			(void) N::GetProcessInformation( key );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != procNotFound )
 			{

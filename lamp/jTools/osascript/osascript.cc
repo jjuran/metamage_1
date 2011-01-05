@@ -194,7 +194,7 @@ namespace tool
 			                      mode,
 			                      scriptContext );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != errOSAScriptError )
 			{
@@ -376,7 +376,7 @@ namespace tool
 				p7::write( p7::stdout_fileno, utf8_output );
 			}
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != errOSAScriptError )
 			{

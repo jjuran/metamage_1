@@ -128,7 +128,7 @@ namespace Nitrogen
 				                                containerToken,
 				                                containerClass );
 			}
-			catch ( const OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				if ( err != errAENoSuchObject )
 				{

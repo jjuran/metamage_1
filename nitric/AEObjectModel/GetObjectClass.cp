@@ -20,7 +20,7 @@ namespace Nitrogen
 		{
 			return TheGlobalObjectClassMap().GetObjectClass( Mac::DescType( obj.descriptorType ) );
 		}
-		catch ( const OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != errAEEventNotHandled )
 			{
@@ -32,7 +32,7 @@ namespace Nitrogen
 		{
 			return TheGlobalObjectClassGetter().GetObjectClass( obj );
 		}
-		catch ( const OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != errAEEventNotHandled )
 			{

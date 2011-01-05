@@ -107,7 +107,7 @@ namespace tool
 						::RemoveResource( existing );
 					}
 				}
-				catch ( const N::OSStatus& err )
+				catch ( const Mac::OSStatus& err )
 				{
 					if ( err != resNotFound )
 					{
@@ -208,7 +208,7 @@ namespace tool
 				
 				fail += TryResCopy( source_path, source, resFileH );
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				++fail;
 				

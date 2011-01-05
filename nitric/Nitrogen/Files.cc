@@ -1208,7 +1208,7 @@ Return Value
             result.resize( std::strlen( result.c_str() ) );
             return result;
            }
-         catch ( const OSStatus& err )
+         catch ( const Mac::OSStatus& err )
            {
             if ( err != pathTooLongErr  &&  err != buffersTooSmall )
                throw;

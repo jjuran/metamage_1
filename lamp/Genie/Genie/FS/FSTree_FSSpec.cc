@@ -822,7 +822,7 @@ namespace Genie
 			
 			N::FSpSetFInfo( linkSpec, linkFInfo );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			// Non-aliases get creator and type for OS X symlinks
 			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );

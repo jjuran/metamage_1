@@ -50,7 +50,7 @@ namespace Genie
 			
 			// Not reached
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err == resNotFound )
 			{

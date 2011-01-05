@@ -87,7 +87,7 @@ namespace tool
 		{
 			return AECoerce_Alias_From_FSSpec( item );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err != errAECoercionFail )
 			{
@@ -257,7 +257,7 @@ namespace tool
 				// We're done
 				return;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				if ( err != procNotFound )
 				{
@@ -286,7 +286,7 @@ namespace tool
 				// We're done
 				return;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				if ( err != procNotFound )
 				{
@@ -326,7 +326,7 @@ namespace tool
 				
 				N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				std::fprintf( stderr, "open: %s: OSStatus %d\n", pathname, err.Get() );
 			}

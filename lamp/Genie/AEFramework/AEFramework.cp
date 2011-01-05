@@ -78,7 +78,7 @@ namespace Nitrogen
 					*replyStorage = AEDuplicateDesc( reply ).release();
 				}
 			}
-			catch ( const OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				if ( err != threadNotFoundErr )
 				{

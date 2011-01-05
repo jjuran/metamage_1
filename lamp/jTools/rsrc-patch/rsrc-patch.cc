@@ -203,7 +203,7 @@ namespace tool
 		{
 			o::get_options( argc, argv );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			plus::var_string status = "OSStatus ";
 			

@@ -151,7 +151,7 @@ namespace Genie
 				
 				return;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				// No such icon family resource, try a cicn
 			}
@@ -165,7 +165,7 @@ namespace Genie
 				
 				return;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				// No such color icon, try an ICON
 			}
@@ -179,7 +179,7 @@ namespace Genie
 				
 				return;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const Mac::OSStatus& err )
 			{
 				// No such icon, give up
 			}

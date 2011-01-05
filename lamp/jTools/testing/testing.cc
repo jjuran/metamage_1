@@ -1460,7 +1460,7 @@ namespace tool
 		{
 			return sub->proc( argc, argv );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			plus::var_string status = "OSStatus ";
 			
