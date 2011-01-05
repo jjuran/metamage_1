@@ -288,7 +288,26 @@ namespace Nitrogen
 	                                       WindowDefProcID   procID,
 	                                       WindowRef         behind,
 	                                       bool              goAwayFlag,
-	                                       RefCon            refCon );
+	                                       long              refCon );
+	
+	inline nucleus::owned< WindowRef >
+	//
+	NewWindow( const Rect&       bounds,
+	           ConstStr255Param  title,
+	           bool              visible,
+	           WindowDefProcID   procID,
+	           WindowRef         behind,
+	           bool              goAwayFlag,
+	           const void*       refCon )
+	{
+		return NewWindow( bounds,
+		                  title,
+		                  visible,
+		                  procID,
+		                  behind,
+		                  goAwayFlag,
+		                  (long) refCon );  // reinterpret_cast
+	}
 	
 	// GetNewWindow
 	
@@ -299,7 +318,26 @@ namespace Nitrogen
 	                                        WindowDefProcID   procID,
 	                                        WindowRef         behind,
 	                                        bool              goAwayFlag,
-	                                        RefCon            refCon );
+	                                        long              refCon );
+	
+	inline nucleus::owned< WindowRef >
+	//
+	NewCWindow( const Rect&       bounds,
+	            ConstStr255Param  title,
+	            bool              visible,
+	            WindowDefProcID   procID,
+	            WindowRef         behind,
+	            bool              goAwayFlag,
+	            const void*       refCon )
+	{
+		return NewCWindow( bounds,
+		                   title,
+		                   visible,
+		                   procID,
+		                   behind,
+		                   goAwayFlag,
+		                   (long) refCon );  // reinterpret_cast
+	}
 	
 	// 1457
 	inline void DisposeWindow( nucleus::owned< WindowRef > )  {}

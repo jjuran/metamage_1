@@ -51,7 +51,7 @@ namespace Nitrogen
 	                                       WindowDefProcID   procID,
 	                                       WindowRef         behind,
 	                                       bool              goAwayFlag,
-	                                       RefCon            refCon )
+	                                       long              refCon )
 	{
 		return nucleus::owned< WindowRef >::seize( ::NewWindow( NULL,
 		                                                        &bounds,
@@ -69,7 +69,7 @@ namespace Nitrogen
 	                                        WindowDefProcID   procID,
 	                                        WindowRef         behind,
 	                                        bool              goAwayFlag,
-	                                        RefCon            refCon )
+	                                        long              refCon )
 	{
 		return nucleus::owned< WindowRef >::seize( ::NewCWindow( NULL,
 		                                                         &bounds,
