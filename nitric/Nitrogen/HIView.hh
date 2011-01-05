@@ -65,12 +65,12 @@ namespace Nitrogen {
 
 	inline void HIViewAddSubview ( HIViewRef inParent, HIViewRef inNewChild ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewAddSubview ( inParent, inNewChild ));
+		Mac::ThrowOSStatus ( ::HIViewAddSubview ( inParent, inNewChild ));
 		}
 	
 	inline void HIViewRemoveFromSuperview ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewRemoveFromSuperview ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewRemoveFromSuperview ( inView ));
 		}
 	
 /*	extern HIViewRef HIViewGetSuperview(HIViewRef inView) */
@@ -92,7 +92,7 @@ namespace Nitrogen {
 //	!!! waiting to be implemented
 
 	inline void HIViewSetZOrder( HIViewRef inView, HIViewZOrderOp inOp, HIViewRef inOther = NULL ) {
-		ThrowOSStatus ( ::HIViewSetZOrder ( inView, inOp, inOther ));
+		Mac::ThrowOSStatus ( ::HIViewSetZOrder ( inView, inOp, inOther ));
 		}
 	
 
@@ -102,7 +102,7 @@ namespace Nitrogen {
 
 	inline void HIViewSetVisible ( HIViewRef inView, bool inVisible ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetVisible ( inView, inVisible ));
+		Mac::ThrowOSStatus ( ::HIViewSetVisible ( inView, inVisible ));
 		}
 	
 /*	extern Boolean HIViewIsVisible(HIViewRef inView) */
@@ -116,40 +116,40 @@ namespace Nitrogen {
 	inline HIRect HIViewGetBounds ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIRect retVal;
-		ThrowOSStatus ( ::HIViewGetBounds ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetBounds ( inView, &retVal ));
 		return retVal;
 		}
 	
 	inline HIRect HIViewGetFrame ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIRect retVal;
-		ThrowOSStatus ( ::HIViewGetFrame ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetFrame ( inView, &retVal ));
 		return retVal;
 		}
 	
 	inline void HIViewSetFrame ( HIViewRef inView, const HIRect &inRect ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetFrame ( inView, &inRect ));
+		Mac::ThrowOSStatus ( ::HIViewSetFrame ( inView, &inRect ));
 		}
 	
 	inline void HIViewMoveBy ( HIViewRef inView, float inDX, float inDY ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewMoveBy ( inView, inDX, inDY ));
+		Mac::ThrowOSStatus ( ::HIViewMoveBy ( inView, inDX, inDY ));
 		}
 
 	inline void HIViewPlaceInSuperviewAt ( HIViewRef inView, float inX, float inY ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewPlaceInSuperviewAt ( inView, inX, inY ));
+		Mac::ThrowOSStatus ( ::HIViewPlaceInSuperviewAt ( inView, inX, inY ));
 		}
 
 	inline void HIViewReshapeStructure ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewReshapeStructure ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewReshapeStructure ( inView ));
 		}
 
 	inline void HIViewRegionChanged ( HIViewRef inView, ControlPartCode inRegionCode ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewRegionChanged ( inView, inRegionCode ));
+		Mac::ThrowOSStatus ( ::HIViewRegionChanged ( inView, inRegionCode ));
 		}
 
 	
@@ -160,27 +160,27 @@ namespace Nitrogen {
 	inline HIViewRef HIViewGetViewForMouseEvent ( HIViewRef inView, EventRef inEvent ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIViewGetViewForMouseEvent ( inView, inEvent, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetViewForMouseEvent ( inView, inEvent, &retVal ));
 		return retVal;
 		}
 
 	inline void HIViewClick (HIViewRef inView, EventRef inEvent ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewClick ( inView, inEvent ));
+		Mac::ThrowOSStatus ( ::HIViewClick ( inView, inEvent ));
 		}
 	
 	inline ControlPartCode HIViewSimulateClick ( HIViewRef inView, 
 				HIViewPartCode inPartToClick, UInt32 inModifiers ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::ControlPartCode retVal;
-		ThrowOSStatus ( ::HIViewSimulateClick ( inView, inPartToClick, inModifiers, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewSimulateClick ( inView, inPartToClick, inModifiers, &retVal ));
 		return ControlPartCode( retVal );
 		}
 	
 	inline HIViewPartCode HIViewGetPartHit ( HIViewRef inView, const HIPoint &inPoint ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewPartCode retVal;
-		ThrowOSStatus ( ::HIViewGetPartHit ( inView, &inPoint, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetPartHit ( inView, &inPoint, &retVal ));
 		return retVal;
 		}
 	
@@ -188,7 +188,7 @@ namespace Nitrogen {
 							const HIPoint &inPoint, bool inDeep ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIViewGetSubviewHit ( inView, &inPoint, inDeep, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetSubviewHit ( inView, &inPoint, inDeep, &retVal ));
 		return retVal;
 		}
 	
@@ -202,22 +202,22 @@ namespace Nitrogen {
 	
 	inline void HIViewSetNeedsDisplay ( HIViewRef inView, bool inNeedsDisplay ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetNeedsDisplay ( inView, inNeedsDisplay ));
+		Mac::ThrowOSStatus ( ::HIViewSetNeedsDisplay ( inView, inNeedsDisplay ));
 		}
 	
 	inline void HIViewSetNeedsDisplayInRegion ( HIViewRef inView, RgnHandle inRgn, bool inNeedsDisplay ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetNeedsDisplayInRegion ( inView, inRgn, inNeedsDisplay ));
+		Mac::ThrowOSStatus ( ::HIViewSetNeedsDisplayInRegion ( inView, inRgn, inNeedsDisplay ));
 		}
 	
 	inline void HIViewRender ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewRender ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewRender ( inView ));
 		}
 
 	inline void HIViewFlashDirtyArea ( WindowRef inWindow ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewFlashDirtyArea ( inWindow ));
+		Mac::ThrowOSStatus ( ::HIViewFlashDirtyArea ( inWindow ));
 		}
 
 	struct HIViewGetSizeConstraints_Result {
@@ -228,7 +228,7 @@ namespace Nitrogen {
 	inline HIViewGetSizeConstraints_Result HIViewGetSizeConstraints ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewGetSizeConstraints_Result retVal;
-		ThrowOSStatus ( ::HIViewGetSizeConstraints ( inView, &retVal.minSize, &retVal.maxSize ));
+		Mac::ThrowOSStatus ( ::HIViewGetSizeConstraints ( inView, &retVal.minSize, &retVal.maxSize ));
 		return retVal;
 		}
 
@@ -239,30 +239,30 @@ namespace Nitrogen {
 
 	inline void HIViewConvertPoint ( HIPoint &ioPoint, HIViewRef inSourceView, HIViewRef inDestView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewConvertPoint ( &ioPoint, inSourceView, inDestView ));
+		Mac::ThrowOSStatus ( ::HIViewConvertPoint ( &ioPoint, inSourceView, inDestView ));
 		}
 	
 	inline void HIViewConvertRect ( HIRect &ioRect, HIViewRef inSourceView, HIViewRef inDestView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewConvertRect ( &ioRect, inSourceView, inDestView ));
+		Mac::ThrowOSStatus ( ::HIViewConvertRect ( &ioRect, inSourceView, inDestView ));
 		}
 
 	inline void HIViewConvertRegion ( RgnHandle ioRgn, HIViewRef inSourceView, HIViewRef inDestView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewConvertRegion ( ioRgn, inSourceView, inDestView ));
+		Mac::ThrowOSStatus ( ::HIViewConvertRegion ( ioRgn, inSourceView, inDestView ));
 		}
 
 #if 0
 //	Returns a new, converted region. Original region is untouched
 	inline nucleus::owned<RgnHandle> HIViewConvertRegion ( RgnHandle inRgn, HIViewRef inSourceView, HIViewRef inDestView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewConvertRegion ( ioRgn, inSourceView, inDestView ));
+		Mac::ThrowOSStatus ( ::HIViewConvertRegion ( ioRgn, inSourceView, inDestView ));
 		}
 #endif
 
 	inline void HIViewSetDrawingEnabled ( HIViewRef inView, bool inEnabled ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetDrawingEnabled ( inView, inEnabled ));
+		Mac::ThrowOSStatus ( ::HIViewSetDrawingEnabled ( inView, inEnabled ));
 		}
 
 /*	extern Boolean HIViewIsDrawingEnabled(HIViewRef inView) */
@@ -270,18 +270,18 @@ namespace Nitrogen {
 
 	inline void HIViewScrollRect ( HIViewRef inView, const HIRect &inRect, float inDX, float inDY ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewScrollRect ( inView, &inRect, inDX, inDY ));
+		Mac::ThrowOSStatus ( ::HIViewScrollRect ( inView, &inRect, inDX, inDY ));
 		}
 		
 //	Scroll the whole view
 	inline void HIViewScrollRect ( HIViewRef inView, float inDX, float inDY ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewScrollRect ( inView, NULL, inDX, inDY ));
+		Mac::ThrowOSStatus ( ::HIViewScrollRect ( inView, NULL, inDX, inDY ));
 		}
 
 	inline void HIViewSetBoundsOrigin ( HIViewRef inView, float inX, float inY ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetBoundsOrigin ( inView, inX, inY ));
+		Mac::ThrowOSStatus ( ::HIViewSetBoundsOrigin ( inView, inX, inY ));
 		}
 
 
@@ -291,13 +291,13 @@ namespace Nitrogen {
 
 	inline void HIViewAdvanceFocus ( HIViewRef inRootForFocus, EventModifiers inModifiers ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewAdvanceFocus ( inRootForFocus, inModifiers ));
+		Mac::ThrowOSStatus ( ::HIViewAdvanceFocus ( inRootForFocus, inModifiers ));
 		}
 	
 	inline HIViewPartCode HIViewGetFocusPart ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewPartCode retVal;
-		ThrowOSStatus ( ::HIViewGetFocusPart ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetFocusPart ( inView, &retVal ));
 		return retVal;
 		}
 
@@ -306,12 +306,12 @@ namespace Nitrogen {
 
 	inline void HIViewSetNextFocus ( HIViewRef inView, HIViewRef inNextFocus ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetNextFocus ( inView, inNextFocus ));
+		Mac::ThrowOSStatus ( ::HIViewSetNextFocus ( inView, inNextFocus ));
 		}
 	
 	inline void HIViewSetFirstSubViewFocus ( HIViewRef inParent, HIViewRef inSubView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetFirstSubViewFocus ( inParent, inSubView ));
+		Mac::ThrowOSStatus ( ::HIViewSetFirstSubViewFocus ( inParent, inSubView ));
 		}
 	
 
@@ -323,23 +323,23 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		HILayoutInfo retVal;
 		retVal.version = version;
-		ThrowOSStatus ( ::HIViewGetLayoutInfo ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetLayoutInfo ( inView, &retVal ));
 		return retVal;
 		}
 
 	inline void HIViewSetLayoutInfo ( HIViewRef inView, const HILayoutInfo &inLayoutInfo ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSetLayoutInfo ( inView, &inLayoutInfo ));
+		Mac::ThrowOSStatus ( ::HIViewSetLayoutInfo ( inView, &inLayoutInfo ));
 		}
 			
 	inline void HIViewSuspendLayout ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewSuspendLayout ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewSuspendLayout ( inView ));
 		}
 	
 	inline void HIViewResumeLayout ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewResumeLayout ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewResumeLayout ( inView ));
 		}
 
 /*	extern Boolean HIViewIsLayoutActive(HIViewRef inView) */
@@ -347,7 +347,7 @@ namespace Nitrogen {
 	
 	inline void HIViewApplyLayout ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewApplyLayout ( inView ));
+		Mac::ThrowOSStatus ( ::HIViewApplyLayout ( inView ));
 		}
 
 /*==============================================================================*/
@@ -360,7 +360,7 @@ namespace Nitrogen {
 	inline HIViewRef HIViewFindByID ( HIViewRef inStartView, HIViewID inID ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIViewFindByID ( inStartView, inID, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewFindByID ( inStartView, inID, &retVal ));
 		return retVal;
 		}
 
@@ -371,13 +371,13 @@ namespace Nitrogen {
 	inline Mac::OptionBits HIViewGetAttributes ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
-		ThrowOSStatus ( ::HIViewGetAttributes ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetAttributes ( inView, &retVal ));
 		return Mac::OptionBits( retVal );
 		}
 
 	inline void HIViewChangeAttributes ( HIViewRef inView, Mac::OptionBits inAttrsToSet, Mac::OptionBits inAttrsToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewChangeAttributes ( inView, inAttrsToSet, inAttrsToClear ));
+		Mac::ThrowOSStatus ( ::HIViewChangeAttributes ( inView, inAttrsToSet, inAttrsToClear ));
 		}
 
 	struct HIViewCreateOffscreenImage_Result {
@@ -391,19 +391,19 @@ namespace Nitrogen {
 
 	inline void HIViewDrawCGImage ( CGContextRef inContext, const HIRect &inBounds, CGImageRef inImage ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewDrawCGImage ( inContext, &inBounds, inImage ));
+		Mac::ThrowOSStatus ( ::HIViewDrawCGImage ( inContext, &inBounds, inImage ));
 		}
 	
 	inline HIViewFeatures HIViewGetFeatures ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewFeatures retVal;
-		ThrowOSStatus ( ::HIViewGetFeatures ( inView, &retVal ));
+		Mac::ThrowOSStatus ( ::HIViewGetFeatures ( inView, &retVal ));
 		return retVal;
 		}
 
 	inline void HIViewChangeFeatures ( HIViewRef inView, HIViewFeatures inFeaturesToSet, HIViewFeatures inFeaturesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIViewChangeFeatures ( inView, inFeaturesToSet, inFeaturesToClear ));
+		Mac::ThrowOSStatus ( ::HIViewChangeFeatures ( inView, inFeaturesToSet, inFeaturesToClear ));
 		}
 
 
@@ -413,7 +413,7 @@ namespace Nitrogen {
 
 	inline void HIGrowBoxViewSetTransparent ( HIViewRef inGrowBoxView, bool inTransparent ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIGrowBoxViewSetTransparent ( inGrowBoxView, inTransparent ));
+		Mac::ThrowOSStatus ( ::HIGrowBoxViewSetTransparent ( inGrowBoxView, inTransparent ));
 		}
 
 /*	extern Boolean HIGrowBoxViewIsTransparent(HIViewRef inGrowBoxView) */
@@ -427,13 +427,13 @@ namespace Nitrogen {
 	inline nucleus::owned<HIViewRef> HIScrollViewCreate ( Mac::OptionBits inOptions ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIScrollViewCreate ( inOptions, &retVal ));
+		Mac::ThrowOSStatus ( ::HIScrollViewCreate ( inOptions, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
 	inline void HIScrollViewSetScrollBarAutoHide ( HIViewRef inGrowBoxView, bool inAutoHide ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIScrollViewSetScrollBarAutoHide ( inGrowBoxView, inAutoHide ));
+		Mac::ThrowOSStatus ( ::HIScrollViewSetScrollBarAutoHide ( inGrowBoxView, inAutoHide ));
 		}
 
 /*	extern Boolean HIScrollViewGetScrollBarAutoHide(HIViewRef inView) */
@@ -441,7 +441,7 @@ namespace Nitrogen {
 	
 	inline void HIScrollViewNavigate ( HIViewRef inGrowBoxView, HIScrollViewAction inAction ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIScrollViewNavigate ( inGrowBoxView, inAction ));
+		Mac::ThrowOSStatus ( ::HIScrollViewNavigate ( inGrowBoxView, inAction ));
 		}
 
 /*	extern Boolean HIScrollViewCanNavigate(HIViewRef inView, HIScrollViewAction inAction) */
@@ -456,13 +456,13 @@ namespace Nitrogen {
 	inline nucleus::owned<HIViewRef> HIImageViewCreate ( CGImageRef inImage ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIImageViewCreate ( inImage, &retVal ));
+		Mac::ThrowOSStatus ( ::HIImageViewCreate ( inImage, &retVal ));
 		return nucleus::owned<ControlRef>::seize ( retVal );
 		}
 
 	inline void HIImageViewSetOpaque ( HIViewRef inView, bool inOpaque ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIImageViewSetOpaque ( inView, inOpaque ));
+		Mac::ThrowOSStatus ( ::HIImageViewSetOpaque ( inView, inOpaque ));
 		}
 
 /*	extern Boolean HIImageViewIsOpaque(HIViewRef inView) */
@@ -470,7 +470,7 @@ namespace Nitrogen {
 	
 	inline void HIImageViewSetAlpha ( HIViewRef inView, float inAlpha ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIImageViewSetAlpha ( inView, inAlpha ));
+		Mac::ThrowOSStatus ( ::HIImageViewSetAlpha ( inView, inAlpha ));
 		}
 
 /*	extern float HIImageViewGetAlpha(HIViewRef inView) */
@@ -478,7 +478,7 @@ namespace Nitrogen {
 
 	inline void HIImageViewSetScaleToFit ( HIViewRef inView, bool inScaleToFit ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIImageViewSetScaleToFit ( inView, inScaleToFit ));
+		Mac::ThrowOSStatus ( ::HIImageViewSetScaleToFit ( inView, inScaleToFit ));
 		}
 
 /*	extern Boolean HIImageViewGetScaleToFit(HIViewRef inView) */
@@ -487,7 +487,7 @@ namespace Nitrogen {
 
 	inline void HIImageViewSetImage ( HIViewRef inView, CGImageRef inImage ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIImageViewSetImage ( inView, inImage ));
+		Mac::ThrowOSStatus ( ::HIImageViewSetImage ( inView, inImage ));
 		}
 
 	inline nucleus::owned<CGImageRef> HIImageViewCopyImage ( HIViewRef inView ) {
@@ -504,21 +504,21 @@ namespace Nitrogen {
 	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, NULL, inAttributes, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, NULL, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 	
 	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, list, inAttributes, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, NULL, NULL, list, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
 	inline nucleus::owned<HIViewRef> HIComboBoxCreate ( const HIRect &boundsRect, CFStringRef text, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, NULL, list, inAttributes, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, NULL, list, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
@@ -526,7 +526,7 @@ namespace Nitrogen {
 							const ControlFontStyleRec &style, CFArrayRef list, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, &style, list, inAttributes, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxCreate ( &boundsRect, text, &style, list, inAttributes, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
@@ -535,37 +535,37 @@ namespace Nitrogen {
 	
 	inline void HIComboBoxInsertTextItemAtIndex ( HIViewRef inComboBox, CFIndex inIndex, CFStringRef inText ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIComboBoxInsertTextItemAtIndex ( inComboBox, inIndex, inText ));
+		Mac::ThrowOSStatus ( ::HIComboBoxInsertTextItemAtIndex ( inComboBox, inIndex, inText ));
 		}
 
 	inline CFIndex HIComboBoxAppendTextItem ( HIViewRef inComboBox, CFStringRef inText ) {
 		CFIndex retVal;
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIComboBoxAppendTextItem ( inComboBox, inText, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxAppendTextItem ( inComboBox, inText, &retVal ));
 		return retVal;
 		}
 
 	inline nucleus::owned<CFStringRef> HIComboBoxCopyTextItemAtIndex ( HIViewRef inComboBox, CFIndex inIndex ) {
 		CFStringRef retVal;
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIComboBoxCopyTextItemAtIndex ( inComboBox, inIndex, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxCopyTextItemAtIndex ( inComboBox, inIndex, &retVal ));
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
 	inline void HIComboBoxRemoveItemAtIndex ( HIViewRef inComboBox, CFIndex inIndex ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIComboBoxRemoveItemAtIndex ( inComboBox, inIndex ));
+		Mac::ThrowOSStatus ( ::HIComboBoxRemoveItemAtIndex ( inComboBox, inIndex ));
 		}
 
 	inline void HIComboBoxChangeAttributes ( HIViewRef inComboBox, Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIComboBoxChangeAttributes ( inComboBox, inAttributesToSet, inAttributesToClear ));
+		Mac::ThrowOSStatus ( ::HIComboBoxChangeAttributes ( inComboBox, inAttributesToSet, inAttributesToClear ));
 		}
 
 	inline Mac::OptionBits HIComboBoxGetAttributes ( HIViewRef inComboBox ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
-		ThrowOSStatus ( ::HIComboBoxGetAttributes ( inComboBox, &retVal ));
+		Mac::ThrowOSStatus ( ::HIComboBoxGetAttributes ( inComboBox, &retVal ));
 		return Mac::OptionBits( retVal );
 		}
 
@@ -577,14 +577,14 @@ namespace Nitrogen {
 	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HISearchFieldCreate ( NULL, inAttributes, NULL, NULL, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldCreate ( NULL, inAttributes, NULL, NULL, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 	
 	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( const HIRect &inBounds, Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HISearchFieldCreate ( &inBounds, inAttributes, NULL, NULL, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldCreate ( &inBounds, inAttributes, NULL, NULL, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
@@ -592,43 +592,43 @@ namespace Nitrogen {
 							MenuRef inSearchMenu, CFStringRef inDescriptiveText ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HISearchFieldCreate ( &inBounds, inAttributes, inSearchMenu, inDescriptiveText, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldCreate ( &inBounds, inAttributes, inSearchMenu, inDescriptiveText, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
 	inline void HISearchFieldSetSearchMenu ( HIViewRef inSearchField, MenuRef inSearchMenu ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISearchFieldSetSearchMenu ( inSearchField, inSearchMenu ));
+		Mac::ThrowOSStatus ( ::HISearchFieldSetSearchMenu ( inSearchField, inSearchMenu ));
 		}
 
 	inline MenuRef HISearchFieldGetSearchMenu ( HIViewRef inSearchField ) {
      	(void) HIViewErrorsRegistrationDependency();
 		MenuRef retVal;
-		ThrowOSStatus ( ::HISearchFieldGetSearchMenu ( inSearchField, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldGetSearchMenu ( inSearchField, &retVal ));
 		return retVal;
 		}
 
 	inline void HISearchFieldChangeAttributes ( HIViewRef inSearchField, Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISearchFieldChangeAttributes ( inSearchField, inAttributesToSet, inAttributesToClear ));
+		Mac::ThrowOSStatus ( ::HISearchFieldChangeAttributes ( inSearchField, inAttributesToSet, inAttributesToClear ));
 		}
 
 	inline Mac::OptionBits HISearchFieldGetAttributes ( HIViewRef inSearchField ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
-		ThrowOSStatus ( ::HISearchFieldGetAttributes ( inSearchField, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldGetAttributes ( inSearchField, &retVal ));
 		return Mac::OptionBits( retVal );
 		}
 
 	inline void HISearchFieldSetDescriptiveText ( HIViewRef inSearchField, CFStringRef inDescription ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISearchFieldSetDescriptiveText ( inSearchField, inDescription ));
+		Mac::ThrowOSStatus ( ::HISearchFieldSetDescriptiveText ( inSearchField, inDescription ));
 		}
 
 	inline nucleus::owned<CFStringRef> HISearchFieldCopyDescriptiveText ( HIViewRef inSearchField ) {
      	(void) HIViewErrorsRegistrationDependency();
 		CFStringRef retVal;
-		ThrowOSStatus ( ::HISearchFieldCopyDescriptiveText ( inSearchField, &retVal ));
+		Mac::ThrowOSStatus ( ::HISearchFieldCopyDescriptiveText ( inSearchField, &retVal ));
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
@@ -648,7 +648,7 @@ namespace Nitrogen {
 	inline HIViewRef HIMenuGetContentView ( MenuRef inMenu, ThemeMenuType inMenuType ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HIMenuGetContentView ( inMenu, inMenuType, &retVal ));
+		Mac::ThrowOSStatus ( ::HIMenuGetContentView ( inMenu, inMenuType, &retVal ));
 		return retVal;
 		}
 
@@ -660,13 +660,13 @@ namespace Nitrogen {
 	inline nucleus::owned<HIViewRef> HISegmentedViewCreate ( const HIRect &inBounds ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
-		ThrowOSStatus ( ::HISegmentedViewCreate ( &inBounds, &retVal ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewCreate ( &inBounds, &retVal ));
 		return nucleus::owned<HIViewRef>::seize ( retVal );
 		}
 
 	inline void HISegmentedViewSetSegmentCount ( HIViewRef inSegmentedView, UInt32 inSegmentCount ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentCount ( inSegmentedView, inSegmentCount ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentCount ( inSegmentedView, inSegmentCount ));
 		}
 
 /*	extern UInt32 HISegmentedViewGetSegmentCount(HIViewRef inSegmentedView) */
@@ -675,7 +675,7 @@ namespace Nitrogen {
 	inline void HISegmentedViewSetSegmentBehavior ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, 
 													HISegmentBehavior inBehavior ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentBehavior ( inSegmentedView, inSegmentIndexOneBased, inBehavior ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentBehavior ( inSegmentedView, inSegmentIndexOneBased, inBehavior ));
 		}
 
 /*	extern HISegmentBehavior HISegmentedViewGetSegmentBehavior(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
@@ -684,7 +684,7 @@ namespace Nitrogen {
 	inline void HISegmentedViewChangeSegmentAttributes ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, 
 					Mac::OptionBits inAttributesToSet, Mac::OptionBits inAttributesToClear ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewChangeSegmentAttributes ( inSegmentedView, inSegmentIndexOneBased, inAttributesToSet, inAttributesToClear ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewChangeSegmentAttributes ( inSegmentedView, inSegmentIndexOneBased, inAttributesToSet, inAttributesToClear ));
 		}
 
 /*	extern OptionBits HISegmentedViewGetSegmentAttributes(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
@@ -692,7 +692,7 @@ namespace Nitrogen {
 
 	inline void HISegmentedViewSetSegmentValue ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, SInt32 inValue ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentValue ( inSegmentedView, inSegmentIndexOneBased, inValue ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentValue ( inSegmentedView, inSegmentIndexOneBased, inValue ));
 		}
 
 /*	extern HISegmentBehavior HISegmentedViewGetSegmentValue(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
@@ -700,7 +700,7 @@ namespace Nitrogen {
 
 	inline void HISegmentedViewSetSegmentEnabled ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, bool inEnabled ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentEnabled ( inSegmentedView, inSegmentIndexOneBased, inEnabled ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentEnabled ( inSegmentedView, inSegmentIndexOneBased, inEnabled ));
 		}
 
 /*	extern HISegmentBehavior HISegmentedViewIsSegmentEnabled(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
@@ -708,7 +708,7 @@ namespace Nitrogen {
 
 	inline void HISegmentedViewSetSegmentCommand ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, UInt32 inCommand ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentCommand ( inSegmentedView, inSegmentIndexOneBased, inCommand ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentCommand ( inSegmentedView, inSegmentIndexOneBased, inCommand ));
 		}
 
 /*	extern HISegmentBehavior HISegmentedViewGetSegmentCommand(HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased) */
@@ -716,25 +716,25 @@ namespace Nitrogen {
 
 	inline void HISegmentedViewSetSegmentLabel ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, CFStringRef inLabel ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentLabel ( inSegmentedView, inSegmentIndexOneBased, inLabel ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentLabel ( inSegmentedView, inSegmentIndexOneBased, inLabel ));
 		}
 
 	inline nucleus::owned<CFStringRef> HISegmentedViewCopySegmentLabel ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
      	(void) HIViewErrorsRegistrationDependency();
 		CFStringRef retVal;
-		ThrowOSStatus ( ::HISegmentedViewCopySegmentLabel ( inSegmentedView, inSegmentIndexOneBased, &retVal ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewCopySegmentLabel ( inSegmentedView, inSegmentIndexOneBased, &retVal ));
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
 //	Two versions here, one for "auto-width", the other for "explicit width".
 	inline void HISegmentedViewSetSegmentContentWidth ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, bool inAutoCalculateWidth ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentContentWidth ( inSegmentedView, inSegmentIndexOneBased, inAutoCalculateWidth, 0.0 ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentContentWidth ( inSegmentedView, inSegmentIndexOneBased, inAutoCalculateWidth, 0.0 ));
 		}
 
 	inline void HISegmentedViewSetSegmentContentWidth ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, float inWidth ) {
      	(void) HIViewErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HISegmentedViewSetSegmentContentWidth ( inSegmentedView, inSegmentIndexOneBased, false, inWidth ));
+		Mac::ThrowOSStatus ( ::HISegmentedViewSetSegmentContentWidth ( inSegmentedView, inSegmentIndexOneBased, false, inWidth ));
 		}
 
 	struct HISegmentedViewGetSegmentContentWidth_Result {

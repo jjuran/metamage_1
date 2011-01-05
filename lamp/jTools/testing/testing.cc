@@ -342,12 +342,12 @@ namespace Test {
 		pb.parm.Lookup.maxToGet = 1;
 		
 		OSErr err = ::PLookupNameSync((MPPPBPtr)&pb);
-		N::ThrowOSStatus(err);
+		Mac::ThrowOSStatus(err);
 		if (pb.parm.Lookup.numGotten != 1)  throw LookupFailed();
 		
 		AddrBlock addr;
 		err = ::NBPExtract(buf, 1, 1, &entityName, &addr);
-		N::ThrowOSStatus(err);
+		Mac::ThrowOSStatus(err);
 		
 		return addr;
 	}
@@ -362,7 +362,7 @@ namespace Test {
 	{
 		short refNum;
 		OSErr err = ::OpenDriver("\p.XPP", &refNum);
-		N::ThrowOSStatus(err);
+		Mac::ThrowOSStatus(err);
 		
 		ASPOpenPrm pbASP;
 		XPPPrmBlk& pbXPP = (XPPPrmBlk&)pbASP;
@@ -379,7 +379,7 @@ namespace Test {
 		pbXPP.rbPtr = status;
 		
 		err = ::ASPGetStatus((XPPParmBlkPtr)&pbASP, false);
-		N::ThrowOSStatus(err);
+		Mac::ThrowOSStatus(err);
 		
 		return reinterpret_cast<const unsigned char*>(status);
 	}
@@ -873,7 +873,7 @@ static int TestThrow( int argc, char** argv )
 	
 	if ( errnum < 0 )
 	{
-		N::ThrowOSStatus( errnum );
+		Mac::ThrowOSStatus( errnum );
 	}
 	
 	return 0;

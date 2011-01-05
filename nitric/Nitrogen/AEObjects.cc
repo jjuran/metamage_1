@@ -22,6 +22,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleEventManager );
 	
 	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )

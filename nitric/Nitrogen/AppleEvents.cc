@@ -15,6 +15,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	AEEventHandler::AEEventHandler()
 	:
 		theAEEventClass(),

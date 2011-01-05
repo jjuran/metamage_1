@@ -346,7 +346,7 @@ namespace Genie
 		pb.filler2    = 0;
 		pb.ioVolIndex = 0;
 		
-		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
 	static inline void PBHGetVInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
@@ -361,7 +361,7 @@ namespace Genie
 		pb.ioXVersion = 0;
 		pb.ioVolIndex = 0;
 		
-		N::ThrowOSStatus( ::PBXGetVolInfoSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBXGetVolInfoSync( &pb ) );
 	}
 	
 	static void GetVolInfo( XVolumeParam& pb, const FSTree* that, StringPtr name )
@@ -419,7 +419,7 @@ namespace Genie
 			
 			N::Str27 name( begin, end - begin );
 			
-			N::ThrowOSStatus( ::HRename( vRefNum, fsRtDirID, "\p", name ) );
+			Mac::ThrowOSStatus( ::HRename( vRefNum, fsRtDirID, "\p", name ) );
 		}
 	};
 	

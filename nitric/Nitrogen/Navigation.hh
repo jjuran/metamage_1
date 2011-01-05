@@ -298,12 +298,12 @@ NavTranslateFile(
 //	Semantics?? What should happen to the NavReplyRecord here?
 	inline void NavCompleteSave ( NavReplyRecord &reply, NavTranslationOptions howToTranslate ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavCompleteSave ( &reply, howToTranslate ));
+		Mac::ThrowOSStatus ( ::NavCompleteSave ( &reply, howToTranslate ));
 		}
 
 	inline void NavCustomControl ( NavDialogRef dialog, NavCustomControlMessage selector, void *parms ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavCustomControl ( dialog, selector, parms ));
+		Mac::ThrowOSStatus ( ::NavCustomControl ( dialog, selector, parms ));
 		}
 
 	inline void NavCreatePreview (
@@ -312,12 +312,12 @@ NavTranslateFile(
 			const void *  previewData		= NULL,
 			std::size_t   previewDataSize	= 0 ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavCreatePreview ( theObject, previewDataType, previewData, previewDataSize ));
+		Mac::ThrowOSStatus ( ::NavCreatePreview ( theObject, previewDataType, previewData, previewDataSize ));
 		}
 	
 	inline void NavDisposeReply ( NavReplyRecord * reply ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavDisposeReply ( reply ));
+		Mac::ThrowOSStatus ( ::NavDisposeReply ( reply ));
 		}		
 	
 	using ::NavServicesAvailable;
@@ -325,7 +325,7 @@ NavTranslateFile(
 	inline NavDialogCreationOptions NavGetDefaultDialogCreationOptions(void) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogCreationOptions result;
-		ThrowOSStatus ( ::NavGetDefaultDialogCreationOptions ( &result ));
+		Mac::ThrowOSStatus ( ::NavGetDefaultDialogCreationOptions ( &result ));
 		return result;
 		}
 	
@@ -338,7 +338,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateGetFileDialog ( inOptions, inTypeList,
+		Mac::ThrowOSStatus ( ::NavCreateGetFileDialog ( inOptions, inTypeList,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -351,7 +351,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreatePutFileDialog ( inOptions, inFileType, inFileCreator,
+		Mac::ThrowOSStatus ( ::NavCreatePutFileDialog ( inOptions, inFileType, inFileCreator,
 					inEventProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -363,7 +363,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateAskReviewDocumentsDialog ( inOptions, inDocumentCount,
+		Mac::ThrowOSStatus ( ::NavCreateAskReviewDocumentsDialog ( inOptions, inDocumentCount,
 					inEventProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -375,7 +375,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateAskSaveChangesDialog ( inOptions, inAction,
+		Mac::ThrowOSStatus ( ::NavCreateAskSaveChangesDialog ( inOptions, inAction,
 					inEventProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -386,7 +386,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateAskDiscardChangesDialog ( inOptions,
+		Mac::ThrowOSStatus ( ::NavCreateAskDiscardChangesDialog ( inOptions,
 					inEventProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -400,7 +400,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateChooseFileDialog ( inOptions, inTypeList,
+		Mac::ThrowOSStatus ( ::NavCreateChooseFileDialog ( inOptions, inTypeList,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -412,7 +412,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateChooseFolderDialog ( inOptions,
+		Mac::ThrowOSStatus ( ::NavCreateChooseFolderDialog ( inOptions,
 					inEventProc, inFilterProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -424,7 +424,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateChooseVolumeDialog ( inOptions,
+		Mac::ThrowOSStatus ( ::NavCreateChooseVolumeDialog ( inOptions,
 					inEventProc, inFilterProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -437,7 +437,7 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateChooseObjectDialog ( inOptions,
+		Mac::ThrowOSStatus ( ::NavCreateChooseObjectDialog ( inOptions,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
@@ -448,14 +448,14 @@ NavTranslateFile(
 			void *                            inClientData 	= NULL ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavDialogRef result;
-		ThrowOSStatus ( ::NavCreateNewFolderDialog ( inOptions,
+		Mac::ThrowOSStatus ( ::NavCreateNewFolderDialog ( inOptions,
 					inEventProc, inClientData, &result ));
 		return nucleus::owned<NavDialogRef>::seize ( result );
 		}
 
 	inline void NavDialogRun ( NavDialogRef inDialog ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavDialogRun ( inDialog ));
+		Mac::ThrowOSStatus ( ::NavDialogRun ( inDialog ));
 		}
 
 //	Since we don't want people calling NavDialogDispose, we're not 
@@ -471,14 +471,14 @@ NavTranslateFile(
 	inline nucleus::owned<NavReplyRecord> NavDialogGetReply ( NavDialogRef inDialog ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavReplyRecord result;
-		ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
+		Mac::ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
 		return nucleus::owned<NavReplyRecord>::seize ( result );
 		}
 #endif
 	inline NavReplyRecord NavDialogGetReply ( NavDialogRef inDialog ) {
 		(void) NavServicesErrorsRegistrationDependency();
 		NavReplyRecord result;
-		ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
+		Mac::ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
 		return result;
 		}
 
@@ -487,7 +487,7 @@ NavTranslateFile(
 
 	inline void NavDialogSetSaveFileName ( NavDialogRef inPutFileDialog, CFStringRef inFileName ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavDialogSetSaveFileName ( inPutFileDialog, inFileName ));
+		Mac::ThrowOSStatus ( ::NavDialogSetSaveFileName ( inPutFileDialog, inFileName ));
 		}
 
 	inline bool NavDialogGetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog ) {
@@ -496,7 +496,7 @@ NavTranslateFile(
 
 	inline void NavDialogSetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog, bool inHidden ) {
 		(void) NavServicesErrorsRegistrationDependency();
-		ThrowOSStatus ( ::NavDialogSetSaveFileExtensionHidden ( inPutFileDialog, inHidden ));
+		Mac::ThrowOSStatus ( ::NavDialogSetSaveFileExtensionHidden ( inPutFileDialog, inHidden ));
 		}
 
 	}

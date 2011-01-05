@@ -256,7 +256,7 @@ namespace tool
 		{
 			N::Detail::AEDescEditor< Mac::AppleEvent > mutableReply( replyEvent );
 			
-			N::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
+			Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
 			
 			// Reply is available.  End scope to restore the reply.
 		}

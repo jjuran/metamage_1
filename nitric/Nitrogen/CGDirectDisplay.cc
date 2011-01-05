@@ -31,7 +31,7 @@ namespace Nitrogen
 			display = ::CGMainDisplayID();
 		}
 		
-		ThrowOSStatus( ::CGDisplayCapture( display ) );
+		Mac::ThrowOSStatus( ::CGDisplayCapture( display ) );
 		
 		return nucleus::owned< CGDirectDisplayID >::seize( display );
 	}

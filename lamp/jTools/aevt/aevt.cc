@@ -73,17 +73,17 @@ namespace tool
 		Mac::AppleEvent appleEvent;
 		AEBuildError aeErr;
 		
-		N::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
-		                                        eventID,
-		                                        address.descriptorType,
-		                                        &addrData.front(),
-		                                        addrSize,
-		                                        returnID,
-		                                        transactionID,
-		                                        &appleEvent,
-		                                        &aeErr,
-		                                        buildString,
-		                                        args ) );
+		Mac::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
+		                                          eventID,
+		                                          address.descriptorType,
+		                                          &addrData.front(),
+		                                          addrSize,
+		                                          returnID,
+		                                          transactionID,
+		                                          &appleEvent,
+		                                          &aeErr,
+		                                          buildString,
+		                                          args ) );
 		
 		return n::owned< Mac::AppleEvent >::seize( appleEvent );
 	}

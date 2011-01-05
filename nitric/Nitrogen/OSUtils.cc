@@ -49,7 +49,7 @@ namespace Nitrogen
 	
 	void DTInstall( DeferredTask& dtTaskPtr )
 	{
-		ThrowOSStatus( ::DTInstall( &dtTaskPtr ) );
+		Mac::ThrowOSStatus( ::DTInstall( &dtTaskPtr ) );
 	}
 	
 	void RegisterDeferredTaskManagerErrors()

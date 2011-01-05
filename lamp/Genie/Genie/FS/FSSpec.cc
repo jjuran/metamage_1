@@ -33,7 +33,7 @@ namespace Genie
 		io.ioBuffer   = (char *) &parmsInfo;
 		io.ioReqCount = sizeof parmsInfo;
 		
-		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 		
 		return parmsInfo.vMServerAdr != 0;
 	}
@@ -45,7 +45,7 @@ namespace Genie
 		if ( !is_dir )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
-			N::ThrowOSStatus( errFSNotAFolder );
+			Mac::ThrowOSStatus( errFSNotAFolder );
 		}
 		
 		const Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );

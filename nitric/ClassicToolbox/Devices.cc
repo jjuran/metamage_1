@@ -14,6 +14,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	nucleus::owned< Mac::DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
 		SInt16 result;

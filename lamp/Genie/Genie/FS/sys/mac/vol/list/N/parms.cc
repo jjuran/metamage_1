@@ -141,7 +141,7 @@ namespace Genie
 		io.ioBuffer   = (char *) &parmsInfo;
 		io.ioReqCount = sizeof parmsInfo;
 		
-		N::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
 	}
 	
 	

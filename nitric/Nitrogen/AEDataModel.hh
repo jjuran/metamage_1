@@ -933,7 +933,7 @@ namespace Nitrogen
 	                                     ::SRefCon handlerRefCon,
 	                                     AEEventHandlerUPP userUPP )
 	{
-		ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
+		Mac::ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
 	}
 	
 	#pragma mark -

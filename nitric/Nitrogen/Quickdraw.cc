@@ -280,7 +280,7 @@ namespace Nitrogen
 	
 	void QDError()
 	{
-		ThrowOSStatus( ::QDError() );
+		Mac::ThrowOSStatus( ::QDError() );
 	}
 	
 	CursHandle MacGetCursor( Mac::ResID id )

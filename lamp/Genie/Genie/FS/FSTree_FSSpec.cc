@@ -186,7 +186,7 @@ namespace Genie
 		pb.volumeParam.ioNamePtr  = NULL;
 		pb.volumeParam.ioVolIndex = 0;  // use ioVRefNum only
 		
-		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 		
 		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
@@ -375,12 +375,12 @@ namespace Genie
 	{
 		NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
 		
-		N::ThrowOSStatus( ::FSpFileCopy( &source,
-		                                 &destDir,
-		                                 copyName,
-		                                 copyBufferPtr,
-		                                 copyBufferSize,
-		                                 preflight ) );
+		Mac::ThrowOSStatus( ::FSpFileCopy( &source,
+		                                   &destDir,
+		                                   copyName,
+		                                   copyBufferPtr,
+		                                   copyBufferSize,
+		                                   preflight ) );
 	}
 	
 	void FSTree_HFS::CopyFile( const FSTreePtr& destination ) const
@@ -624,7 +624,7 @@ namespace Genie
 			p7::throw_errno( ENOTEMPTY );
 		}
 		
-		N::ThrowOSStatus( deleteErr );
+		Mac::ThrowOSStatus( deleteErr );
 	}
 	
 	void FSTree_HFS::Delete() const
@@ -671,7 +671,7 @@ namespace Genie
 	
 	off_t FSTree_HFS::GetEOF() const
 	{
-		N::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
+		Mac::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
 		
 		return itsCInfo.hFileInfo.ioFlLgLen;
 	}
@@ -963,7 +963,7 @@ namespace Genie
 			return Get_ResFileDir_FSTree( Self(), "r", itsFileSpec );
 		}
 		
-		N::ThrowOSStatus( itsCInfo.dirInfo.ioResult );
+		Mac::ThrowOSStatus( itsCInfo.dirInfo.ioResult );
 		
 		N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
@@ -1101,7 +1101,7 @@ namespace Genie
 				return;
 			}
 			
-			N::ThrowOSStatus( pb.dirInfo.ioResult );
+			Mac::ThrowOSStatus( pb.dirInfo.ioResult );
 		}
 	}
 	
@@ -1109,7 +1109,7 @@ namespace Genie
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		N::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
+		Mac::ThrowOSStatus( itsCInfo.hFileInfo.ioResult );
 		
 	#ifdef __MACOS__
 		
@@ -1265,7 +1265,7 @@ namespace Genie
 		
 		if ( !nonexistent )
 		{
-			N::ThrowOSStatus( dirInfo.ioResult );
+			Mac::ThrowOSStatus( dirInfo.ioResult );
 		}
 		
 		const SInt32 dirID = nonexistent ? dirInfo.ioDrDirID : dirInfo.ioDrParID;

@@ -17,7 +17,12 @@
 #include "Nitrogen/OSStatus.hh"
 
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
+	using Mac::ThrowOSStatus;
+	
+	
 //	RegisterTECManagerErrors is in TextCommon.cc
 	
 	static TextEncodingConversionManagerErrorsRegistrationDependency gTextEncodingConversionManagerErrorsRegistrationDependency;

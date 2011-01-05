@@ -180,15 +180,15 @@ namespace tool
 			           dest.name + 1 + dest.name[ 0 ],
 			           name.unicode );
 			
-			N::ThrowOSStatus( ::FSCreateResourceFile( &parent_ref,
-			                                          name.length,
-			                                          name.unicode,
-			                                          FSCatalogInfoBitmap(),
-			                                          NULL,
-			                                          0,
-			                                          NULL,
-			                                          NULL,
-			                                          NULL ) );
+			Mac::ThrowOSStatus( ::FSCreateResourceFile( &parent_ref,
+			                                            name.length,
+			                                            name.unicode,
+			                                            FSCatalogInfoBitmap(),
+			                                            NULL,
+			                                            0,
+			                                            NULL,
+			                                            NULL,
+			                                            NULL ) );
 		}
 		else
 		{

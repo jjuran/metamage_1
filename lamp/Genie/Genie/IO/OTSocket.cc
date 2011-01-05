@@ -277,7 +277,7 @@ namespace Genie
 			try_again( IsNonblocking() );
 		}
 		
-		N::ThrowOSStatus( err_count );
+		Mac::ThrowOSStatus( err_count );
 		
 		if ( byteCount > n_readable_bytes )
 		{
@@ -449,7 +449,7 @@ namespace Genie
 		{
 			it_is_connecting = false;
 			
-			N::ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 		}
 		
 		while ( it_is_connecting )

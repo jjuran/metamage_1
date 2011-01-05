@@ -73,7 +73,7 @@ namespace Nitrogen
 		
 		if ( found == map.end() )
 		{
-			ThrowOSStatus( errAEEventNotHandled );
+			Mac::ThrowOSStatus( errAEEventNotHandled );
 		}
 		
 		return found->second( obj, desiredType );

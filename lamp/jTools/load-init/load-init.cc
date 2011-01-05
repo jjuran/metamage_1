@@ -53,7 +53,7 @@ namespace tool
 	{
 		if ( strlen( type ) != sizeof 'quad' )
 		{
-			N::ThrowOSStatus( paramErr );
+			Mac::ThrowOSStatus( paramErr );
 		}
 		
 		N::ResType resType = N::ResType( iota::decode_quad( type ) );

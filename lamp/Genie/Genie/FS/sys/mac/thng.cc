@@ -129,11 +129,11 @@ namespace Nitrogen
 	{
 		ComponentDescription result;
 		
-		ThrowOSStatus( ::GetComponentInfo( component,
-		                                   &result,
-		                                   name,
-		                                   info,
-		                                   icon ) );
+		Mac::ThrowOSStatus( ::GetComponentInfo( component,
+		                                        &result,
+		                                        name,
+		                                        info,
+		                                        icon ) );
 		
 		return result;
 	}
@@ -142,7 +142,7 @@ namespace Nitrogen
 	{
 		::IconSuiteRef iconSuite = NULL;
 		
-		ThrowOSStatus( ::GetComponentIconSuite( component, &iconSuite ) );
+		Mac::ThrowOSStatus( ::GetComponentIconSuite( component, &iconSuite ) );
 		
 		return nucleus::owned< IconSuiteRef >::seize( IconSuiteRef( iconSuite ) );
 	}

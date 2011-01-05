@@ -38,7 +38,7 @@ namespace MacIO
 		
 		if ( ok + !!pb.ioParam.ioActCount < policy )
 		{
-			N::ThrowOSStatus( eofErr );
+			Mac::ThrowOSStatus( eofErr );
 		}
 		
 		return pb.ioParam.ioActCount;

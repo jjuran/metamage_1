@@ -101,17 +101,17 @@ namespace tool
 		
 		if ( !gResFile.get() )
 		{
-			N::ThrowOSStatus( resFNotFound );
+			Mac::ThrowOSStatus( resFNotFound );
 		}
 		
 		if ( gResType == NULL  ||  gResID == NULL )
 		{
-			N::ThrowOSStatus( resNotFound );
+			Mac::ThrowOSStatus( resNotFound );
 		}
 		
 		if ( strlen( gResType ) != sizeof (::ResType) )
 		{
-			N::ThrowOSStatus( paramErr );
+			Mac::ThrowOSStatus( paramErr );
 		}
 		
 		N::ResType resType = N::ResType( iota::decode_quad( gResType ) );
@@ -133,7 +133,7 @@ namespace tool
 		
 		if ( mark == end )
 		{
-			N::ThrowOSStatus( paramErr );
+			Mac::ThrowOSStatus( paramErr );
 		}
 		
 		gOffset = mark - begin;
@@ -160,7 +160,7 @@ namespace tool
 	{
 		if ( gOffset + bytes.size() > N::GetHandleSize( gHandle ) )
 		{
-			N::ThrowOSStatus( paramErr );
+			Mac::ThrowOSStatus( paramErr );
 		}
 		
 		char* begin = *gHandle.Get();

@@ -80,7 +80,7 @@ namespace Nitrogen {
 
 	inline nucleus::owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape ) {
 		nucleus::owned<RgnHandle> result = nucleus::owned<RgnHandle>::seize ( NewRgn ());
-		ThrowOSStatus ( ::HIShapeGetAsQDRgn ( inShape, result ));
+		Mac::ThrowOSStatus ( ::HIShapeGetAsQDRgn ( inShape, result ));
 		return result;
 		}
 	

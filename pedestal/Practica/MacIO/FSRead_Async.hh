@@ -50,7 +50,7 @@ namespace MacIO
 		
 		if ( ok + !!pb.ioParam.ioActCount < policy )
 		{
-			Nitrogen::ThrowOSStatus( eofErr );
+			Mac::ThrowOSStatus( eofErr );
 		}
 		
 		return pb.ioParam.ioActCount;

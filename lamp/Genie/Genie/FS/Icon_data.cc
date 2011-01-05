@@ -40,7 +40,7 @@ namespace Nitrogen
 	                            IconTransformType  transform,
 	                            Handle             icon )
 	{
-		ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
+		Mac::ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
 	}
 	
 }
@@ -505,10 +505,10 @@ namespace Genie
 	{
 		n::owned< N::IconSuiteRef > copy = N::NewIconSuite();
 		
-		N::ThrowOSStatus( ::ForEachIconDo( iconSuite,
-		                                   kSelectorAllAvailableData,
-		                                   gCopyIconToSuiteUPP,
-		                                   copy.get().Get() ) );
+		Mac::ThrowOSStatus( ::ForEachIconDo( iconSuite,
+		                                     kSelectorAllAvailableData,
+		                                     gCopyIconToSuiteUPP,
+		                                     copy.get().Get() ) );
 		
 		return copy;
 	}

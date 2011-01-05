@@ -36,7 +36,7 @@ namespace Nitrogen
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 		
 		return nucleus::owned< InetSvcRef >::seize( result );
 	}
@@ -51,7 +51,7 @@ namespace Nitrogen
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 		
 		return nucleus::owned< InetSvcRef >::seize( result );
 	}

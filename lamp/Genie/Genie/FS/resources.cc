@@ -200,7 +200,7 @@ namespace Genie
 		if ( metadata )
 		{
 			// Just flush the whole volume, since we can't be more specific.
-			N::ThrowOSStatus( ::FlushVol( NULL, itsFileSpec.vRefNum ) );
+			Mac::ThrowOSStatus( ::FlushVol( NULL, itsFileSpec.vRefNum ) );
 		}
 		else
 		{

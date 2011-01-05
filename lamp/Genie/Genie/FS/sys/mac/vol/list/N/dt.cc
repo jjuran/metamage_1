@@ -73,7 +73,7 @@ namespace Genie
 		
 		N::PBDTGetPath( vRefNum, pb );
 		
-		N::ThrowOSStatus( ::PBDTGetInfoSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBDTGetInfoSync( &pb ) );
 		
 		const N::FSVolumeRefNum new_vRefNum = N::FSVolumeRefNum( pb.ioVRefNum );
 		const N::FSDirID        new_dirID   = N::FSDirID       ( pb.ioDirID   );
@@ -265,7 +265,7 @@ namespace Genie
 		pb.ioFileCreator = creator;
 		pb.ioFileType    = type;
 		
-		N::ThrowOSStatus( ::PBDTGetIconSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBDTGetIconSync( &pb ) );
 		
 		if ( pb.ioDTActCount > pb.ioDTReqCount )
 		{

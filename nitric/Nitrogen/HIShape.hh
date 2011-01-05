@@ -107,12 +107,12 @@ namespace Nitrogen
 	
 	inline void HIShapeReplacePathInCGContext ( HIShapeRef inShape, CGContextRef inContext ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeReplacePathInCGContext ( inShape, inContext ));
+		Mac::ThrowOSStatus ( ::HIShapeReplacePathInCGContext ( inShape, inContext ));
 		}
 
 	inline void HIShapeSetQDClip ( HIShapeRef inShape, CGrafPtr inPort ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeSetQDClip ( inShape, inPort ));
+		Mac::ThrowOSStatus ( ::HIShapeSetQDClip ( inShape, inPort ));
 		}
 
 /*======================================================================================*/
@@ -127,27 +127,27 @@ namespace Nitrogen
 
 	inline void HIShapeSetEmpty ( HIMutableShapeRef inShape ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeSetEmpty ( inShape ));
+		Mac::ThrowOSStatus ( ::HIShapeSetEmpty ( inShape ));
 		}
 	
 	inline void HIShapeIntersect ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeIntersect ( inShape1, inShape2, outResult ));
+		Mac::ThrowOSStatus ( ::HIShapeIntersect ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeDifference ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeDifference ( inShape1, inShape2, outResult ));
+		Mac::ThrowOSStatus ( ::HIShapeDifference ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeUnion ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeUnion ( inShape1, inShape2, outResult ));
+		Mac::ThrowOSStatus ( ::HIShapeUnion ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeOffset ( HIMutableShapeRef inShape, float inDX, float inDY ) {
      	(void) HIShapeErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIShapeOffset ( inShape, inDX, inDY ));
+		Mac::ThrowOSStatus ( ::HIShapeOffset ( inShape, inDX, inDY ));
 		}
 
 	}

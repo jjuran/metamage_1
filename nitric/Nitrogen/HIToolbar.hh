@@ -78,62 +78,62 @@ namespace Nitrogen {
 	inline nucleus::owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarRef result;
-		ThrowOSStatus ( ::HIToolbarCreate ( inIdentifier, inOptions, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarCreate ( inIdentifier, inOptions, &result ));
 		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 
 	inline Mac::OptionBits HIToolbarGetAttributes ( HIToolbarRef toolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
-		ThrowOSStatus ( ::HIToolbarGetAttributes ( toolbar, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarGetAttributes ( toolbar, &result ));
 		return Mac::OptionBits( result );
 		}
 
 	inline void HIToolbarChangeAttributes ( HIToolbarRef inToolbar, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarChangeAttributes ( inToolbar, inAttrsToSet, inAttrsToClear ));
+		Mac::ThrowOSStatus ( ::HIToolbarChangeAttributes ( inToolbar, inAttrsToSet, inAttrsToClear ));
 		}
 
 	inline HIToolbarDisplayMode HIToolbarGetDisplayMode ( HIToolbarRef toolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarDisplayMode result;
-		ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
 		return result;
 		}
 
 	inline void HIToolbarSetDisplayMode ( HIToolbarRef inToolbar, HIToolbarDisplayMode inDisplayMode ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarSetDisplayMode ( inToolbar, inDisplayMode ));
+		Mac::ThrowOSStatus ( ::HIToolbarSetDisplayMode ( inToolbar, inDisplayMode ));
 		}
 
 	inline HIToolbarDisplaySize HIToolbarGetDisplaySize ( HIToolbarRef toolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarDisplaySize result;
-		ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
 		return result;
 		}
 
 	inline void HIToolbarSetDisplaySize ( HIToolbarRef inToolbar, HIToolbarDisplaySize inSize ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarSetDisplaySize ( inToolbar, inSize ));
+		Mac::ThrowOSStatus ( ::HIToolbarSetDisplaySize ( inToolbar, inSize ));
 		}
 
 	inline nucleus::owned<CFStringRef> HIToolbarCopyIdentifier ( HIToolbarRef inToolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
-		ThrowOSStatus ( ::HIToolbarCopyIdentifier ( inToolbar, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarCopyIdentifier ( inToolbar, &result ));
 		return nucleus::owned<CFStringRef>::seize( result );
 		}
 		
 	inline void HIToolbarSetItemsWithIdentifiers ( HIToolbarRef inToolbar, CFArrayRef inArray ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarSetItemsWithIdentifiers ( inToolbar, inArray ));
+		Mac::ThrowOSStatus ( ::HIToolbarSetItemsWithIdentifiers ( inToolbar, inArray ));
 		}
 
 	inline nucleus::owned<CFArrayRef> HIToolbarCopyItems ( HIToolbarRef inToolbar ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFArrayRef result;
-		ThrowOSStatus ( ::HIToolbarCopyItems ( inToolbar, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarCopyItems ( inToolbar, &result ));
 		return nucleus::owned<CFArrayRef>::seize( result );
 		}
 		
@@ -141,28 +141,28 @@ namespace Nitrogen {
 					 		CFStringRef inIdentifier, CFTypeRef inConfigData = NULL ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarItemRef result;
-		ThrowOSStatus ( ::HIToolbarCreateItemWithIdentifier ( toolbar, inIdentifier, inConfigData, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarCreateItemWithIdentifier ( toolbar, inIdentifier, inConfigData, &result ));
 		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 		
 	inline void HIToolbarInsertItemAtIndex ( HIToolbarRef inToolbar, HIToolbarItemRef inItem, CFIndex inIndex ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarInsertItemAtIndex ( inToolbar, inItem, inIndex ));
+		Mac::ThrowOSStatus ( ::HIToolbarInsertItemAtIndex ( inToolbar, inItem, inIndex ));
 		}
 
 	inline void HIToolbarAppendItem ( HIToolbarRef inToolbar, HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarAppendItem ( inToolbar, inItem ));
+		Mac::ThrowOSStatus ( ::HIToolbarAppendItem ( inToolbar, inItem ));
 		}
 
 	inline void HIToolbarRemoveItemAtIndex ( HIToolbarRef inToolbar, CFIndex inIndex ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarRemoveItemAtIndex ( inToolbar, inIndex ));
+		Mac::ThrowOSStatus ( ::HIToolbarRemoveItemAtIndex ( inToolbar, inIndex ));
 		}
 
 	inline void HIToolbarSetDelegate ( HIToolbarRef inToolbar, HIObjectRef inDelegate ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarSetDelegate ( inToolbar, inDelegate ));
+		Mac::ThrowOSStatus ( ::HIToolbarSetDelegate ( inToolbar, inDelegate ));
 		}
 
 //	extern HIObjectRef HIToolbarGetDelegate(HIToolbarRef inToolbar)
@@ -176,14 +176,14 @@ namespace Nitrogen {
 	inline nucleus::owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, Mac::OptionBits inOptions ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		HIToolbarItemRef result;
-		ThrowOSStatus ( ::HIToolbarItemCreate ( inIdentifier, inOptions, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCreate ( inIdentifier, inOptions, &result ));
 		return nucleus::owned<HIToolbarItemRef>::seize( result );
 		}
 		
 	inline nucleus::owned<CFStringRef> HIToolbarItemCopyIdentifier ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
-		ThrowOSStatus ( ::HIToolbarItemCopyIdentifier ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyIdentifier ( inItem, &result ));
 		return nucleus::owned<CFStringRef>::seize( result );
 		}
 		
@@ -191,91 +191,91 @@ namespace Nitrogen {
 	inline Mac::OptionBits HIToolbarItemGetAttributes ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
-		ThrowOSStatus ( ::HIToolbarItemGetAttributes ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemGetAttributes ( inItem, &result ));
 		return Mac::OptionBits( result );
 		}
 
 	inline void HIToolbarItemChangeAttributes ( HIToolbarItemRef inItem, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemChangeAttributes ( inItem, inAttrsToSet, inAttrsToClear ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemChangeAttributes ( inItem, inAttrsToSet, inAttrsToClear ));
 		}
 
 	inline void HIToolbarItemSetLabel ( HIToolbarItemRef inItem, CFStringRef inLabel ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetLabel ( inItem, inLabel ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetLabel ( inItem, inLabel ));
 		}
 
 	inline nucleus::owned<CFStringRef> HIToolbarItemCopyLabel ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef result;
-		ThrowOSStatus ( ::HIToolbarItemCopyLabel ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyLabel ( inItem, &result ));
 		return nucleus::owned<CFStringRef>::seize( result );
 		}
 
 	inline void HIToolbarItemSetHelpText ( HIToolbarItemRef inItem, CFStringRef inShortText, CFStringRef inLongText = NULL ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetHelpText ( inItem, inShortText, inLongText ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetHelpText ( inItem, inShortText, inLongText ));
 		}
 
 //	!!! This needs some ownership issues resolved
 	inline void HIToolbarItemCopyHelpText ( HIToolbarItemRef inItem, CFStringRef *outShortText, CFStringRef *outLongText ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, outShortText, outLongText ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, outShortText, outLongText ));
 		}
 	
 //	Helper versions
 	inline nucleus::owned<CFStringRef> HIToolbarItemCopyShortHelpText ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef retVal;
-		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, &retVal, NULL ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, &retVal, NULL ));
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
 	inline nucleus::owned<CFStringRef> HIToolbarItemCopyLongHelpText ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CFStringRef retVal;
-		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, NULL, &retVal ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, NULL, &retVal ));
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
 	inline void HIToolbarItemSetCommandID ( HIToolbarItemRef inItem, ::MenuCommand inCommandID ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetCommandID ( inItem, inCommandID ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetCommandID ( inItem, inCommandID ));
 		}
 	
 	inline MenuCommand HIToolbarItemGetCommandID ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::MenuCommand result;
-		ThrowOSStatus ( ::HIToolbarItemGetCommandID ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemGetCommandID ( inItem, &result ));
 		return MenuCommand( result );
 		}
 
 	inline void HIToolbarItemSetIconRef ( HIToolbarItemRef inItem, IconRef inIcon ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetIconRef ( inItem, inIcon ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetIconRef ( inItem, inIcon ));
 		}
 
 	inline void HIToolbarItemSetImage ( HIToolbarItemRef inItem, CGImageRef inImage ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetImage ( inItem, inImage ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetImage ( inItem, inImage ));
 		}
 
 	inline nucleus::owned<CGImageRef> HIToolbarItemCopyImage ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		CGImageRef result;
-		ThrowOSStatus ( ::HIToolbarItemCopyImage ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyImage ( inItem, &result ));
 		return nucleus::owned<CGImageRef>::seize( result );
 		}
 
 	inline void HIToolbarItemSetMenu ( HIToolbarItemRef inItem, MenuRef inMenu ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetMenu ( inItem, inMenu ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetMenu ( inItem, inMenu ));
 		}
 	
 	inline nucleus::owned<MenuRef> HIToolbarItemCopyMenu ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
 		MenuRef result;
-		ThrowOSStatus ( ::HIToolbarItemCopyMenu ( inItem, &result ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemCopyMenu ( inItem, &result ));
 		return nucleus::owned<MenuRef>::seize( result );
 		}
 
@@ -287,12 +287,12 @@ namespace Nitrogen {
 
 	inline void HIToolbarItemSetEnabled ( HIToolbarItemRef inItem, bool inEnabled ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemSetEnabled ( inItem, inEnabled ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemSetEnabled ( inItem, inEnabled ));
 		}
 	
 	inline void HIToolbarItemConfigDataChanged ( HIToolbarItemRef inItem ) {
      	(void) HIToolbarErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIToolbarItemConfigDataChanged ( inItem ));
+		Mac::ThrowOSStatus ( ::HIToolbarItemConfigDataChanged ( inItem ));
 		}
 
 	}

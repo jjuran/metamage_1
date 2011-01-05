@@ -132,7 +132,7 @@ namespace Genie
 		
 		FileLockBypass lockBypass( srcFile );
 		
-		N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, destFile.name ) );
+		Mac::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, destFile.name ) );
 		
 		lockBypass.SetFile( destFile );
 	}
@@ -196,7 +196,7 @@ namespace Genie
 						p7::throw_errno( ENOTEMPTY );
 					}
 					
-					N::ThrowOSStatus( err );
+					Mac::ThrowOSStatus( err );
 				}
 				
 				// Overwrite actual name with requested name

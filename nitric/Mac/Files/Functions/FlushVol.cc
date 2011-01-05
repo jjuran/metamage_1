@@ -14,12 +14,12 @@ namespace Mac
 	
 	void FlushVol( ConstStr63Param volName )
 	{
-		Nitrogen::ThrowOSStatus( ::FlushVol( volName, 0 ) );
+		ThrowOSStatus( ::FlushVol( volName, 0 ) );
 	}
 	
 	void FlushVol( FSVolumeRefNum vRefNum )
 	{
-		Nitrogen::ThrowOSStatus( ::FlushVol( NULL, vRefNum ) );
+		ThrowOSStatus( ::FlushVol( NULL, vRefNum ) );
 	}
 	
 }

@@ -86,7 +86,7 @@ namespace Nitrogen
   {
 	inline void KCSetInteractionAllowed ( bool state ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCSetInteractionAllowed ( state ));
+		Mac::ThrowOSStatus ( ::KCSetInteractionAllowed ( state ));
 		}
 		
 //	Boolean KCIsInteractionAllowed ( void );
@@ -95,21 +95,21 @@ namespace Nitrogen
 	inline nucleus::owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
+		Mac::ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
 	inline nucleus::owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCMakeKCRefFromAlias ( keychainAlias, &result ));
+		Mac::ThrowOSStatus ( ::KCMakeKCRefFromAlias ( keychainAlias, &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
 	inline nucleus::owned<AliasHandle> KCMakeAliasFromKCRef ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
 		AliasHandle	result;
-		ThrowOSStatus ( ::KCMakeAliasFromKCRef ( keychain, &result ));
+		Mac::ThrowOSStatus ( ::KCMakeAliasFromKCRef ( keychain, &result ));
   	    return nucleus::owned<AliasHandle>::seize( result );
 		}
 
@@ -117,26 +117,26 @@ namespace Nitrogen
 	inline nucleus::owned<KCRef> KCGetDefaultKeychain () {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCGetDefaultKeychain ( &result ));
+		Mac::ThrowOSStatus ( ::KCGetDefaultKeychain ( &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 	
 	inline void KCSetDefaultKeychain ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCSetDefaultKeychain ( keychain ));
+		Mac::ThrowOSStatus ( ::KCSetDefaultKeychain ( keychain ));
 		}
 	
 	inline UInt32 KCGetStatus ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
 		UInt32	result;
-		ThrowOSStatus ( ::KCGetStatus ( keychain, &result ));
+		Mac::ThrowOSStatus ( ::KCGetStatus ( keychain, &result ));
   	    return result;
 		}
 	
 	inline nucleus::owned<KCRef> KCGetKeychain ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCGetKeychain ( item, &result ));
+		Mac::ThrowOSStatus ( ::KCGetKeychain ( item, &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 
@@ -162,7 +162,7 @@ KCGetKeychainName(
 	inline nucleus::owned<KCRef> KCGetIndKeychain ( UInt16 idx ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCGetIndKeychain ( idx, &result ));
+		Mac::ThrowOSStatus ( ::KCGetIndKeychain ( idx, &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 
@@ -329,7 +329,7 @@ KCRemoveCallback(KCCallbackUPP callbackProc)                  AVAILABLE_MAC_OS_X
 								UInt32 length, const void *data ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCNewItem ( itemClass, itemCreator, length, data, &result ));
+		Mac::ThrowOSStatus ( ::KCNewItem ( itemClass, itemCreator, length, data, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
@@ -340,7 +340,7 @@ KCRemoveCallback(KCCallbackUPP callbackProc)                  AVAILABLE_MAC_OS_X
 		attr.tag	= tag;
 		attr.length = length;
 		attr.data	= const_cast<void *> ( data );
-		ThrowOSStatus ( ::KCSetAttribute ( item, &attr ));
+		Mac::ThrowOSStatus ( ::KCSetAttribute ( item, &attr ));
 		}
 	
 
@@ -364,19 +364,19 @@ KCGetAttribute(
 
 	inline void KCSetData ( KCItemRef item, UInt32 length, const void *data ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCSetData ( item, length, data ));
+		Mac::ThrowOSStatus ( ::KCSetData ( item, length, data ));
 		}
 
 	inline UInt32 KCGetData ( KCItemRef item, UInt32 maxLength, void *data ) {
 		(void) KeychainErrorsRegistrationDependency();
 		UInt32 result;
-		ThrowOSStatus ( ::KCGetData ( item, maxLength, data, &result ));
+		Mac::ThrowOSStatus ( ::KCGetData ( item, maxLength, data, &result ));
 		return result;
 		}
 
 	inline void KCUpdateItem ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCUpdateItem ( item ));
+		Mac::ThrowOSStatus ( ::KCUpdateItem ( item ));
 		}
 
 //	extern OSStatus KCReleaseItem(KCItemRef * item);
@@ -384,7 +384,7 @@ KCGetAttribute(
 	inline nucleus::owned<KCItemRef> KCCopyItem ( KCItemRef item, KCRef destKeychain ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCCopyItem ( item, destKeychain, &result ));
+		Mac::ThrowOSStatus ( ::KCCopyItem ( item, destKeychain, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
@@ -412,7 +412,7 @@ Marshall sez: this is icky because it returns two things that need to be owned.
 	inline nucleus::owned<KCItemRef> KCFindNextItem ( KCSearchRef search ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCFindNextItem ( search, &result ));
+		Mac::ThrowOSStatus ( ::KCFindNextItem ( search, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 
@@ -421,12 +421,12 @@ Marshall sez: this is icky because it returns two things that need to be owned.
 //	!!! Should this be an nucleus::owned<KCItemRef> ???
 	inline void KCDeleteItem ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCDeleteItem ( item ));
+		Mac::ThrowOSStatus ( ::KCDeleteItem ( item ));
 		}
 
 	inline void KCLock ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCLock ( keychain ));
+		Mac::ThrowOSStatus ( ::KCLock ( keychain ));
 		}
 
 //	KCUnlock is in KeychainHI.h

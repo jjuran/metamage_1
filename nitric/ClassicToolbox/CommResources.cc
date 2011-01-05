@@ -59,7 +59,7 @@ namespace Nitrogen
 	
 	void InitCRM()
 	{
-		ThrowOSStatus( ::InitCRM() );
+		Mac::ThrowOSStatus( ::InitCRM() );
 	}
 	
 	nucleus::owned< CRMRecPtr, CRMRemover > CRMInstall( nucleus::owned< CRMRecPtr > crmRec )
@@ -71,7 +71,7 @@ namespace Nitrogen
 	
 	nucleus::owned< CRMRecPtr > CRMRemove( nucleus::owned< CRMRecPtr, CRMRemover > crmRec )
 	{
-		ThrowOSStatus( ::CRMRemove( crmRec.get() ) );
+		Mac::ThrowOSStatus( ::CRMRemove( crmRec.get() ) );
 		
 		return nucleus::owned< CRMRecPtr >::seize( crmRec.release() );
 	}

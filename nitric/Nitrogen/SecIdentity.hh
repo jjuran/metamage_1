@@ -93,14 +93,14 @@ namespace Nitrogen
 	inline nucleus::owned<SecCertificateRef> SecIdentityCopyCertificate ( SecIdentityRef identityRef ) {
 		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecCertificateRef	result;
-		ThrowOSStatus ( ::SecIdentityCopyCertificate ( identityRef, &result ));
+		Mac::ThrowOSStatus ( ::SecIdentityCopyCertificate ( identityRef, &result ));
   	    return nucleus::owned<SecCertificateRef>::seize( result );
 		}
 
 	inline nucleus::owned<SecKeyRef> SecIdentityCopyPrivateKey ( SecIdentityRef identityRef ) {
 		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecKeyRef	result;
-		ThrowOSStatus ( ::SecIdentityCopyPrivateKey ( identityRef, &result ));
+		Mac::ThrowOSStatus ( ::SecIdentityCopyPrivateKey ( identityRef, &result ));
   	    return nucleus::owned<SecKeyRef>::seize( result );
 		}
 

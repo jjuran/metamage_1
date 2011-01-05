@@ -119,7 +119,7 @@ namespace Nitrogen
 		
 		if ( h == NULL  ||  *h == NULL )
 		{
-			ThrowOSStatus( nilHandleErr );
+			Mac::ThrowOSStatus( nilHandleErr );
 		}
 		
 		return GestaltTable_Container( h );

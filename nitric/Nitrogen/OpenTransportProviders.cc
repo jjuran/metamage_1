@@ -21,6 +21,9 @@ const DefaultInternetServicesPath kDefaultInternetServicesPath = DefaultInternet
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	NUCLEUS_REQUIRE_ERRORS_STATIC( OpenTransport )
 	
 	

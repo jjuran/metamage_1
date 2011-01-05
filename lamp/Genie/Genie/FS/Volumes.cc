@@ -65,7 +65,7 @@ namespace Genie
 		pb.volumeParam.ioNamePtr  = name_copy;
 		pb.volumeParam.ioVolIndex = -1;  // use use ioNamePtr/ioVRefNum combination
 		
-		N::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 		
 		return Mac::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
@@ -149,7 +149,7 @@ namespace Genie
 				break;
 			}
 			
-			N::ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 			
 			const ino_t inode = -pb.volumeParam.ioVRefNum;
 			

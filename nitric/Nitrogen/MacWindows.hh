@@ -440,7 +440,7 @@ namespace Nitrogen
 	{
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
-		ThrowOSStatus( ::SetWindowTitleWithCFString( inWindow, inString ) );
+		Mac::ThrowOSStatus( ::SetWindowTitleWithCFString( inWindow, inString ) );
 	}
 	
 	inline nucleus::owned< CFStringRef > CopyWindowTitleAsCFString( WindowRef inWindow )
@@ -448,7 +448,7 @@ namespace Nitrogen
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		CFStringRef result;
-		ThrowOSStatus( ::CopyWindowTitleAsCFString( inWindow, &result ) );
+		Mac::ThrowOSStatus( ::CopyWindowTitleAsCFString( inWindow, &result ) );
 		
 		return nucleus::owned< CFStringRef >::seize( result );
 	}
@@ -550,7 +550,7 @@ namespace Nitrogen
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		Rect result;
-		ThrowOSStatus( ::GetWindowBounds( inWindow, regionCode, &result ) );
+		Mac::ThrowOSStatus( ::GetWindowBounds( inWindow, regionCode, &result ) );
 		
 		return result;
 	}
@@ -563,7 +563,7 @@ namespace Nitrogen
 	{
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
-		ThrowOSStatus( ::SetWindowBounds( inWindow, regionCode, &globalBounds ) );
+		Mac::ThrowOSStatus( ::SetWindowBounds( inWindow, regionCode, &globalBounds ) );
 	}
 	
 	// RepositionWindow
@@ -659,52 +659,52 @@ namespace Nitrogen
 
 	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
-		ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
+		Mac::ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
 		}
 
 	inline HIToolbarRef GetWindowToolbar ( WindowRef inWindow ) {
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		HIToolbarRef result;
-		ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
+		Mac::ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
 		return result;
 		}
 
 	inline void ShowHideWindowToolbar ( WindowRef inWindow, bool inShow, bool inAnimate ) {
 		NUCLEUS_REQUIRE_ERRORS( WindowManager );
-		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
+		Mac::ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
 		}
 
 //	extern Boolean IsWindowToolbarVisible(WindowRef inWindow);
 	using ::IsWindowToolbarVisible;
 	
 	inline void HIWindowSetProxyFSRef ( WindowRef inWindow, const FSRef &inRef ) {
-		ThrowOSStatus ( ::HIWindowSetProxyFSRef ( inWindow, &inRef ));
+		Mac::ThrowOSStatus ( ::HIWindowSetProxyFSRef ( inWindow, &inRef ));
 		}
 		
 	inline FSRef HIWindowGetProxyFSRef ( WindowRef inWindow ) {
 		::FSRef retVal;
-		ThrowOSStatus ( ::HIWindowGetProxyFSRef ( inWindow, &retVal ));
+		Mac::ThrowOSStatus ( ::HIWindowGetProxyFSRef ( inWindow, &retVal ));
 		return retVal;
 		}
 #endif
 		
 	inline void SetWindowProxyAlias ( WindowRef inWindow, AliasHandle inAlias ) {
-		ThrowOSStatus ( ::SetWindowProxyAlias ( inWindow, inAlias ));
+		Mac::ThrowOSStatus ( ::SetWindowProxyAlias ( inWindow, inAlias ));
 		}
 	
 	inline nucleus::owned<AliasHandle> GetWindowProxyAlias ( WindowRef inWindow ) {
 		AliasHandle result;
-		ThrowOSStatus ( ::GetWindowProxyAlias ( inWindow, &result ));
+		Mac::ThrowOSStatus ( ::GetWindowProxyAlias ( inWindow, &result ));
 		return nucleus::owned<AliasHandle>::seize ( result );
 		}
 
 	inline void SetWindowProxyIcon ( WindowRef inWindow, IconRef icon ) {
-		ThrowOSStatus ( ::SetWindowProxyIcon ( inWindow, icon ));
+		Mac::ThrowOSStatus ( ::SetWindowProxyIcon ( inWindow, icon ));
 		}
 	
 	inline nucleus::owned<IconRef> GetWindowProxyIcon ( WindowRef inWindow ) {
 		IconRef result;
-		ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
+		Mac::ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
 		return nucleus::owned<IconRef>::seize ( result );
 		}
 	

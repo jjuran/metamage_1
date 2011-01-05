@@ -203,13 +203,13 @@ namespace Nitrogen
 	// 1913
 	inline void TEFromScrap()
 	{
-		ThrowOSStatus( ::TEFromScrap() );
+		Mac::ThrowOSStatus( ::TEFromScrap() );
 	}
 	
 	// 1925
 	inline void TEToScrap()
 	{
-		ThrowOSStatus( ::TEToScrap() );
+		Mac::ThrowOSStatus( ::TEToScrap() );
 	}
 	
 	// TESetClickLoop

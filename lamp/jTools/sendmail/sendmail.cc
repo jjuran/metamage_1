@@ -82,7 +82,7 @@ namespace tool
 		
 		if ( at >= emailAddr.size() - 1 )
 		{
-			N::ThrowOSStatus( paramErr );  // bad email address
+			Mac::ThrowOSStatus( paramErr );  // bad email address
 		}
 		
 		return emailAddr.substr( at + 1, emailAddr.find( '>' ) - (at + 1) );

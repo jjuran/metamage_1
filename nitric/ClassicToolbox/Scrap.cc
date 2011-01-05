@@ -17,7 +17,7 @@ namespace Nitrogen
 	
 	void ZeroScrap()
 	{
-		ThrowOSStatus( ::ZeroScrap() );
+		Mac::ThrowOSStatus( ::ZeroScrap() );
 	}
 	
 }

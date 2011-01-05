@@ -23,7 +23,7 @@ namespace Nitrogen
 	{
 		::ResFileRefNum topRefNum = -1;
 		
-		ThrowOSStatus( ::GetTopResourceFile( &topRefNum ) );
+		Mac::ThrowOSStatus( ::GetTopResourceFile( &topRefNum ) );
 		
 		return ResFileRefNum( topRefNum );
 	}

@@ -9,6 +9,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	void Eject( ConstStr63Param volName )
 	{
 		ThrowOSStatus( ::Eject( volName, 0 ) );

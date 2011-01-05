@@ -41,7 +41,7 @@ namespace Nitrogen
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum )
 	{
-		ThrowOSStatus( ::ADBOp( refCon, completion, buffer, commandNum ) );
+		Mac::ThrowOSStatus( ::ADBOp( refCon, completion, buffer, commandNum ) );
 	}
 	
 	
@@ -61,14 +61,14 @@ namespace Nitrogen
 	{
 		ADBDataBlock result;
 		
-		ThrowOSStatus( ::GetADBInfo( &result, adbAttr ) );
+		Mac::ThrowOSStatus( ::GetADBInfo( &result, adbAttr ) );
 		
 		return result;
 	}
 	
 	void SetADBInfo( const ADBSetInfoBlock& info, ADBAddress adbAttr )
 	{
-		ThrowOSStatus( ::SetADBInfo( &info, adbAttr ) );
+		Mac::ThrowOSStatus( ::SetADBInfo( &info, adbAttr ) );
 	}
 	
 	void RegisterADBManagerErrors()

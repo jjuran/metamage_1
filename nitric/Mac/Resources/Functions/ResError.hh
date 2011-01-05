@@ -22,7 +22,7 @@ namespace Mac
 	
 	inline void ResError()
 	{
-		Nitrogen::ThrowOSStatus( ::ResError() );
+		ThrowOSStatus( ::ResError() );
 	}
 	
 }

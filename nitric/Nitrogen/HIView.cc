@@ -17,7 +17,10 @@
 
 
 namespace Nitrogen {
-
+	
+	using Mac::ThrowOSStatus;
+	
+	
 	HIViewErrorsRegistrationDependency::HIViewErrorsRegistrationDependency()
 	{
 		// does nothing, but guarantees construction of theRegistration

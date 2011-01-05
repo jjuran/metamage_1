@@ -210,7 +210,7 @@ namespace tool
 			
 			if ( strlen( gAppSigToOpenIn ) != sizeof 'quad' )
 			{
-				N::ThrowOSStatus( paramErr );
+				Mac::ThrowOSStatus( paramErr );
 			}
 			
 			return Mac::FSCreator( iota::decode_quad( gAppSigToOpenIn ) );

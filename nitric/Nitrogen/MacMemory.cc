@@ -46,7 +46,7 @@ namespace Nitrogen
 	
    void MemError()
      {
-      ThrowOSStatus( ::MemError() );
+      Mac::ThrowOSStatus( ::MemError() );
      }
    
 	nucleus::owned< Handle > NewHandle( std::size_t size )
@@ -95,7 +95,7 @@ namespace Nitrogen
 		
 		const Handle h = ::TempNewHandle( size, &err );
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 		
 		nucleus::owned< Handle > result = nucleus::owned< Handle >::seize( h );
 		

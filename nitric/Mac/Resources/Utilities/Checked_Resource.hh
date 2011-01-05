@@ -33,7 +33,7 @@ namespace Mac
 		{
 			ResError();
 			
-			Nitrogen::ThrowOSStatus( resNotFound );
+			ThrowOSStatus( resNotFound );
 		}
 		
 		return r;

@@ -393,7 +393,7 @@ namespace Nitrogen
 		
 		static void HandleOSStatus( ::OSStatus err )
 		{
-			ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 		}
 	};
 	
@@ -408,7 +408,7 @@ namespace Nitrogen
 				return false;
 			}
 			
-			ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 			
 			return true;
 		}
@@ -1866,7 +1866,7 @@ namespace Nitrogen
 			}
 		}
 		
-		ThrowOSStatus( afpItemNotFound );
+		Mac::ThrowOSStatus( afpItemNotFound );
 		
 		// Not reached
 		return FSSpec();

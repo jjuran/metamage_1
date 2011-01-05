@@ -165,11 +165,11 @@ namespace tool
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		N::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
+		Mac::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
 		
 	#endif
 		
-		N::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
+		Mac::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
 		
 		N::ICMapEntry_Container mappings = N::ICMapEntries( N::Handle_Cast< ICMapEntry >( N::ICFindPrefHandle( ic, kICMapping ) ) );
 		

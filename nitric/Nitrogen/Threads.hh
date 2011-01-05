@@ -443,7 +443,7 @@ namespace Nitrogen
 	{
 		UInt32 result;
 		
-		ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
+		Mac::ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
 		
 		return result;
 	}

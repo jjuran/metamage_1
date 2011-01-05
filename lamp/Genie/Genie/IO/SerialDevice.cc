@@ -157,7 +157,7 @@ namespace Genie
 		
 		if ( total_length > 255 )
 		{
-			N::ThrowOSStatus( bdNamErr );
+			Mac::ThrowOSStatus( bdNamErr );
 		}
 		
 		Str255 result = { total_length, '.' };
@@ -208,7 +208,7 @@ namespace Genie
 	{
 		if ( !SerialDriverMayBeOpened( driverName ) )
 		{
-			N::ThrowOSStatus( portInUse );
+			Mac::ThrowOSStatus( portInUse );
 		}
 		
 		return N::OpenDriver( driverName );

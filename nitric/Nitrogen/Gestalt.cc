@@ -50,7 +50,7 @@ namespace Nitrogen
 	{
 		SInt32 result;
 		
-		ThrowOSStatus( ::Gestalt( selector, &result ) );
+		Mac::ThrowOSStatus( ::Gestalt( selector, &result ) );
 		
 		return result;
 	}
@@ -66,7 +66,7 @@ namespace Nitrogen
 			return defaultValue;
 		}
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 		
 		return result;
 	}

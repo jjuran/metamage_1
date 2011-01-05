@@ -75,7 +75,7 @@ namespace Genie
 			
 			if ( err != eofErr )
 			{
-				N::ThrowOSStatus( err );
+				Mac::ThrowOSStatus( err );
 			}
 		}
 		

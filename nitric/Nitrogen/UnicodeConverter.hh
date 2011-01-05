@@ -131,76 +131,76 @@ namespace Nitrogen
 	inline nucleus::owned<TextToUnicodeInfo> CreateTextToUnicodeInfo ( const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		TextToUnicodeInfo result;
-		ThrowOSStatus ( ::CreateTextToUnicodeInfo ( &iUnicodeMapping, &result ));
+		Mac::ThrowOSStatus ( ::CreateTextToUnicodeInfo ( &iUnicodeMapping, &result ));
 		return nucleus::owned<TextToUnicodeInfo>::seize ( result );
 		}
 	
 	inline nucleus::owned<TextToUnicodeInfo> CreateTextToUnicodeInfoByEncoding ( TextEncoding iEncoding ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		TextToUnicodeInfo result;
-		ThrowOSStatus ( ::CreateTextToUnicodeInfoByEncoding ( iEncoding, &result ));
+		Mac::ThrowOSStatus ( ::CreateTextToUnicodeInfoByEncoding ( iEncoding, &result ));
 		return nucleus::owned<TextToUnicodeInfo>::seize ( result );
 		}
 
 	inline nucleus::owned<UnicodeToTextInfo> CreateUnicodeToTextInfo ( const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextInfo result;
-		ThrowOSStatus ( ::CreateUnicodeToTextInfo ( &iUnicodeMapping, &result ));
+		Mac::ThrowOSStatus ( ::CreateUnicodeToTextInfo ( &iUnicodeMapping, &result ));
 		return nucleus::owned<UnicodeToTextInfo>::seize ( result );
 		}
 	
 	inline nucleus::owned<UnicodeToTextInfo> CreateUnicodeToTextInfoByEncoding ( TextEncoding iEncoding ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextInfo result;
-		ThrowOSStatus ( ::CreateUnicodeToTextInfoByEncoding ( iEncoding, &result ));
+		Mac::ThrowOSStatus ( ::CreateUnicodeToTextInfoByEncoding ( iEncoding, &result ));
 		return nucleus::owned<UnicodeToTextInfo>::seize ( result );
 		}
 
 	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfo ( ItemCount iNumberOfMappings, const UnicodeMapping iUnicodeMappings[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
-		ThrowOSStatus ( ::CreateUnicodeToTextRunInfo ( iNumberOfMappings, iUnicodeMappings, &result ));
+		Mac::ThrowOSStatus ( ::CreateUnicodeToTextRunInfo ( iNumberOfMappings, iUnicodeMappings, &result ));
 		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 	
 	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByEncoding ( ItemCount iNumberOfEncodings, const ::TextEncoding iEncodings[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
-		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByEncoding ( iNumberOfEncodings, iEncodings, &result ));
+		Mac::ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByEncoding ( iNumberOfEncodings, iEncodings, &result ));
 		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 
 	inline nucleus::owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByScriptCode ( ItemCount iNumberOfScriptCodes, const ::ScriptCode iScripts[] ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		UnicodeToTextRunInfo result;
-		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByScriptCode ( iNumberOfScriptCodes, iScripts, &result ));
+		Mac::ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByScriptCode ( iNumberOfScriptCodes, iScripts, &result ));
 		return nucleus::owned<UnicodeToTextRunInfo>::seize ( result );
 		}
 
 //	I think that these two  should possibly return a new info, rather than changing the input
 	inline void ChangeTextToUnicodeInfo ( TextToUnicodeInfo ioTextToUnicodeInfo, const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::ChangeTextToUnicodeInfo ( ioTextToUnicodeInfo, &iUnicodeMapping ));
+		Mac::ThrowOSStatus ( ::ChangeTextToUnicodeInfo ( ioTextToUnicodeInfo, &iUnicodeMapping ));
 		}
 
 	inline void ChangeUnicodeToTextInfo ( UnicodeToTextInfo ioUnicodeToTextInfo, const UnicodeMapping &iUnicodeMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::ChangeUnicodeToTextInfo ( ioUnicodeToTextInfo, &iUnicodeMapping ));
+		Mac::ThrowOSStatus ( ::ChangeUnicodeToTextInfo ( ioUnicodeToTextInfo, &iUnicodeMapping ));
 		}
 
 	inline void DisposeTextToUnicodeInfo ( TextToUnicodeInfo *ioTextToUnicodeInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::DisposeTextToUnicodeInfo ( ioTextToUnicodeInfo ));
+		Mac::ThrowOSStatus ( ::DisposeTextToUnicodeInfo ( ioTextToUnicodeInfo ));
 		}
 	
 	inline void DisposeUnicodeToTextInfo ( UnicodeToTextInfo *ioUnicodeToTextInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::DisposeUnicodeToTextInfo ( ioUnicodeToTextInfo ));
+		Mac::ThrowOSStatus ( ::DisposeUnicodeToTextInfo ( ioUnicodeToTextInfo ));
 		}
 	
 	inline void DisposeUnicodeToTextRunInfo ( UnicodeToTextRunInfo *ioUnicodeToTextRunInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::DisposeUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
+		Mac::ThrowOSStatus ( ::DisposeUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
 		}
 
 
@@ -370,7 +370,7 @@ ConvertFromUnicodeToPString(
 	inline ItemCount CountUnicodeMappings ( Mac::OptionBits iFilter, ConstUnicodeMappingPtr iFindMapping ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
 		::ItemCount result;
-		ThrowOSStatus ( ::CountUnicodeMappings ( iFilter, iFindMapping, &result ));
+		Mac::ThrowOSStatus ( ::CountUnicodeMappings ( iFilter, iFindMapping, &result ));
 		return result;
 		}
 	
@@ -432,17 +432,17 @@ SetFallbackUnicodeToTextRun(
 
 	inline void ResetTextToUnicodeInfo ( TextToUnicodeInfo ioTextToUnicodeInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::ResetTextToUnicodeInfo ( ioTextToUnicodeInfo ));
+		Mac::ThrowOSStatus ( ::ResetTextToUnicodeInfo ( ioTextToUnicodeInfo ));
 		}
 	
 	inline void ResetUnicodeToTextInfo ( UnicodeToTextInfo ioUnicodeToTextInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::ResetUnicodeToTextInfo ( ioUnicodeToTextInfo ));
+		Mac::ThrowOSStatus ( ::ResetUnicodeToTextInfo ( ioUnicodeToTextInfo ));
 		}
 
 	inline void ResetUnicodeToTextRunInfo ( UnicodeToTextRunInfo ioUnicodeToTextRunInfo ) {
 		(void) TextEncodingConversionManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::ResetUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
+		Mac::ThrowOSStatus ( ::ResetUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
 		}
 
   	}

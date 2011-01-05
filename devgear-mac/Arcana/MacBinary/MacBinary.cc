@@ -831,7 +831,7 @@ namespace MacBinary
 		}
 		else if ( byteCount % kMacBinaryBlockSize != 0 )
 		{
-			N::ThrowOSStatus( paramErr );
+			Mac::ThrowOSStatus( paramErr );
 		}
 		
 	Loop:

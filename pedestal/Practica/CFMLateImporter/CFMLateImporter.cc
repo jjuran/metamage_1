@@ -29,11 +29,11 @@ namespace CFMLateImporter
 	{
 		const CFragSystem7InitBlock* initBlock = SavedCFragInitBlock();
 		
-		N::ThrowOSStatus( CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
-		                                        (CFragConnectionID) initBlock->closureID,
-		                                        Initialize_SavedCFragInitBlock,
-		                                        weakLinkedLibraryName,
-		                                        connIDToImport ) );
+		Mac::ThrowOSStatus( CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
+		                                          (CFragConnectionID) initBlock->closureID,
+		                                          Initialize_SavedCFragInitBlock,
+		                                          weakLinkedLibraryName,
+		                                          connIDToImport ) );
 		
 		connIDToImport.release();
 	}

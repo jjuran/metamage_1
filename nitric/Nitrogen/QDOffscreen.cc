@@ -17,6 +17,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	namespace Function
 	{
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM

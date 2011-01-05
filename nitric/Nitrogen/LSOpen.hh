@@ -46,28 +46,28 @@ namespace Nitrogen {
 	inline FSRef LSOpenFSRef ( const FSRef &inRef ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		FSRef	result;
-		ThrowOSStatus ( ::LSOpenFSRef ( &inRef, &result ));
+		Mac::ThrowOSStatus ( ::LSOpenFSRef ( &inRef, &result ));
 		return result;
 		}
 
 	inline nucleus::owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
-		ThrowOSStatus ( ::LSOpenCFURLRef ( inURL, &result ));
+		Mac::ThrowOSStatus ( ::LSOpenCFURLRef ( inURL, &result ));
   	    return nucleus::owned<CFURLRef>::seize( result );
 		}
 
 	inline FSRef LSOpenFromRefSpec ( const LSLaunchFSRefSpec &inLaunchSpec ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		FSRef	result;
-		ThrowOSStatus ( ::LSOpenFromRefSpec ( &inLaunchSpec, &result ));
+		Mac::ThrowOSStatus ( ::LSOpenFromRefSpec ( &inLaunchSpec, &result ));
 		return result;
 		}
 
 	inline nucleus::owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
 		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
-		ThrowOSStatus ( ::LSOpenFromURLSpec ( &inLaunchSpec, &result ));
+		Mac::ThrowOSStatus ( ::LSOpenFromURLSpec ( &inLaunchSpec, &result ));
   	    return nucleus::owned<CFURLRef>::seize( result );
 		}
 	}

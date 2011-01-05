@@ -62,7 +62,7 @@ namespace Genie
 		pb.filler2    = 0;
 		pb.ioVolIndex = 0;
 		
-		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
+		Mac::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
 #if !TARGET_API_MAC_CARBON

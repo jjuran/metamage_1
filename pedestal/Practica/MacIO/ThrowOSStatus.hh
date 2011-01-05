@@ -21,7 +21,7 @@ namespace MacIO
 		
 		static void HandleOSStatus( ::OSStatus err )
 		{
-			Nitrogen::ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 		}
 	};
 	
@@ -37,7 +37,7 @@ namespace MacIO
 				return false;
 			}
 			
-			Nitrogen::ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 			
 			return true;
 		}

@@ -18,8 +18,11 @@
 
 
 namespace Nitrogen
-  {
-   
+{
+	
+	using Mac::ThrowOSStatus;
+	
+	
 	Mac::FSDirSpec FindFolder( Mac::FSVolumeRefNum  vRefNum,
 	                           FolderType           folderType,
 	                           bool                 createFolder )

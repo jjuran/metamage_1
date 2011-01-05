@@ -84,7 +84,7 @@ namespace Nitrogen
 		{
 			if ( op != Mac::AECompOperator( kAEEquals ) )
 			{
-				ThrowOSStatus( errAEEventNotHandled );
+				Mac::ThrowOSStatus( errAEEventNotHandled );
 			}
 			
 			Result a = AEGetDescData< descType >( obj1 );
@@ -127,7 +127,7 @@ namespace Nitrogen
 					break;
 			}
 			
-			ThrowOSStatus( errAEEventNotHandled );
+			Mac::ThrowOSStatus( errAEEventNotHandled );
 		}
 	};
 	

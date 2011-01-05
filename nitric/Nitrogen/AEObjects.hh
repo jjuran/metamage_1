@@ -106,13 +106,13 @@ namespace Nitrogen
 	                                  ::SRefCon                 accessorRefcon,
 	                                  OSLAccessorUPP            userUPP )
 	{
-		ThrowOSStatus( userUPP( desiredClass,
-		                        &containerToken,
-		                        containerClass,
-		                        keyForm,
-		                        &keyData,
-		                        &value,
-		                        accessorRefcon ) );
+		Mac::ThrowOSStatus( userUPP( desiredClass,
+		                             &containerToken,
+		                             containerClass,
+		                             keyForm,
+		                             &keyData,
+		                             &value,
+		                             accessorRefcon ) );
 	}
 	
 	template < class RefCon >
@@ -218,7 +218,7 @@ namespace Nitrogen
 	                                 ::Boolean&                result,
 	                                 OSLCompareUPP             userUPP )
 	{
-		ThrowOSStatus( userUPP( oper, &obj1, &obj2, &result ) );
+		Mac::ThrowOSStatus( userUPP( oper, &obj1, &obj2, &result ) );
 	}
 	
 	typedef bool ( *OSLCompareProcPtr )( AECompOperator            oper,

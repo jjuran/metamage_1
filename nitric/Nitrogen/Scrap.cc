@@ -45,13 +45,15 @@ namespace Nitrogen
 	ScrapRef GetCurrentScrap()
 	{
 		ScrapRef scrap;
-		ThrowOSStatus( ::GetCurrentScrap( &scrap ) );
+		
+		Mac::ThrowOSStatus( ::GetCurrentScrap( &scrap ) );
+		
 		return scrap;
 	}
 	
 	void ClearCurrentScrap()
 	{
-		ThrowOSStatus( ::ClearCurrentScrap() );
+		Mac::ThrowOSStatus( ::ClearCurrentScrap() );
 	}
 	
 	void RegisterScrapManagerErrors()

@@ -124,11 +124,11 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	inline void EnterMovies()  { ThrowOSStatus( ::EnterMovies() ); }
+	inline void EnterMovies()  { Mac::ThrowOSStatus( ::EnterMovies() ); }
 	
 	using ::ExitMovies;
 	
-	inline void GetMoviesError()  { ThrowOSStatus( ::GetMoviesError() ); }
+	inline void GetMoviesError()  { Mac::ThrowOSStatus( ::GetMoviesError() ); }
 	
 	// ...
 	

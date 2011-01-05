@@ -83,7 +83,7 @@ namespace Nitrogen
 			}
 		}
 		
-		ThrowOSStatus( errAEEventNotHandled );
+		Mac::ThrowOSStatus( errAEEventNotHandled );
 		
 		// Not reached
 		return NULL;
@@ -109,7 +109,7 @@ namespace Nitrogen
 		
 		if ( foundType == map.end() )
 		{
-			ThrowOSStatus( errAEEventNotHandled );
+			Mac::ThrowOSStatus( errAEEventNotHandled );
 		}
 		
 		nucleus::owned< Mac::AEDesc_Token > result = AECreateList< Mac::AEDesc_Token >( true );

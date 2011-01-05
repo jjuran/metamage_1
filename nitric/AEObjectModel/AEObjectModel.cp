@@ -79,7 +79,7 @@ namespace Nitrogen
 						// Anything else requires a non-empty list
 						if ( count == 0 )
 						{
-							ThrowOSStatus( errAENoSuchObject );
+							Mac::ThrowOSStatus( errAENoSuchObject );
 						}
 					}
 					
@@ -127,7 +127,7 @@ namespace Nitrogen
 				break;
 		}
 		
-		ThrowOSStatus( errAENoSuchObject );
+		Mac::ThrowOSStatus( errAENoSuchObject );
 		
 		// Not reached
 		return 0;

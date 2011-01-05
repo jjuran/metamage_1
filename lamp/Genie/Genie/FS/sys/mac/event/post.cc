@@ -19,7 +19,7 @@ namespace Nitrogen
 	
 	inline void PostEvent( EventKind eventNum, UInt32 eventMsg )
 	{
-		ThrowOSStatus( ::PostEvent( eventNum, eventMsg ) );
+		Mac::ThrowOSStatus( ::PostEvent( eventNum, eventMsg ) );
 	}
 	
 }

@@ -17,6 +17,9 @@
 namespace Nitrogen
 {
 	
+	using Mac::ThrowOSStatus;
+	
+	
 	// does nothing, but guarantees construction of theRegistration
 	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( DragManager )
 	

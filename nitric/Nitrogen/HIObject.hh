@@ -96,7 +96,7 @@ namespace Nitrogen
 			  void *                 inConstructData = 0 ) {
 		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectClassRef retVal;
-		ThrowOSStatus ( ::HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
+		Mac::ThrowOSStatus ( ::HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
 	  						inConstructProc, inNumEvents, inEventList, inConstructData, &retVal ));
 		return nucleus::owned<HIObjectClassRef>::seize( retVal );
 		}
@@ -136,14 +136,14 @@ namespace Nitrogen
 
 //	inline void HIObjectUnregisterClass ( HIObjectClassRef inClassRef ) {
 //		(void) HIObjectErrorsRegistrationDependency();
-//		ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
+//		Mac::ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
 //		}
 
 
 	inline nucleus::owned<HIObjectRef> HIObjectCreate ( CFStringRef inClassID, EventRef inConstructData ) {
 		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectRef retVal;
-		ThrowOSStatus ( ::HIObjectCreate ( inClassID, inConstructData, &retVal ));
+		Mac::ThrowOSStatus ( ::HIObjectCreate ( inClassID, inConstructData, &retVal ));
   	    return nucleus::owned<HIObjectRef>::seize( retVal );
 		}
 
@@ -165,7 +165,7 @@ namespace Nitrogen
 	inline nucleus::owned<HIObjectRef> HIObjectCreateFromBundle ( CFBundleRef inBundle ) {
 		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectRef retVal;
-		ThrowOSStatus ( ::HIObjectCreateFromBundle ( inBundle, &retVal ));
+		Mac::ThrowOSStatus ( ::HIObjectCreateFromBundle ( inBundle, &retVal ));
   	    return nucleus::owned<HIObjectRef>::seize( retVal );
 		}
 	
@@ -174,7 +174,7 @@ namespace Nitrogen
 
 	inline void HIObjectSetAccessibilityIgnored ( HIObjectRef inObject, bool inIgnored ) {
 		(void) HIObjectErrorsRegistrationDependency();
-		ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
+		Mac::ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
 		}
 	}
 

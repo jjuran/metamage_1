@@ -193,7 +193,7 @@ namespace Nitrogen
    WindowAttributes GetWindowAttributes( WindowRef window )
      {
       ::WindowAttributes result;
-      ThrowOSStatus( ::GetWindowAttributes( window, &result ) );
+      Mac::ThrowOSStatus( ::GetWindowAttributes( window, &result ) );
       return WindowAttributes( result );
      }
 
@@ -201,7 +201,7 @@ namespace Nitrogen
                                  WindowAttributes setTheseAttributes,
                                  WindowAttributes clearTheseAttributes )
      {
-      ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
+      Mac::ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
      }
    
    void RegisterWindowManagerErrors()

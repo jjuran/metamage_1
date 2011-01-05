@@ -18,7 +18,10 @@
 
 
 namespace Nitrogen
-  {
+{
+	
+	using Mac::ThrowOSStatus;
+	
 	
 	TextEncodingConversionManagerErrorsRegistrationDependency::TextEncodingConversionManagerErrorsRegistrationDependency()
 	{

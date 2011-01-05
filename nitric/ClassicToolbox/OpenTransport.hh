@@ -20,7 +20,7 @@ namespace Nitrogen
 	
 	inline void InitOpenTransport()
 	{
-		ThrowOSStatus( ::InitOpenTransport() );
+		Mac::ThrowOSStatus( ::InitOpenTransport() );
 	}
 	
 	using ::CloseOpenTransport;
@@ -37,7 +37,7 @@ namespace Nitrogen
 		                                       info,
 		                                       &err );
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 		
 		return nucleus::owned< EndpointRef >::seize( result );
 	}

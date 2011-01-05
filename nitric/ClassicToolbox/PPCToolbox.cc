@@ -117,7 +117,7 @@ namespace Nitrogen
 	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )
 	{
-		ThrowOSStatus( ::IPCListPortsSync( &pb ) );
+		Mac::ThrowOSStatus( ::IPCListPortsSync( &pb ) );
 	}
 	
 	PortInfoRec IPCListPortsSync( const PPCPortRec& name, const LocationNameRec& location )

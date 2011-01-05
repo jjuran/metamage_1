@@ -69,7 +69,7 @@ namespace Genie
 		pb.ioRefNum  = refNum;
 		pb.ioNamePtr = result.name;
 		
-		N::ThrowOSStatus( ::PBGetFCBInfoSync( &pb ) );
+		Mac::ThrowOSStatus( ::PBGetFCBInfoSync( &pb ) );
 		
 		result.vRefNum = pb.ioFCBVRefNum;
 		result.parID   = pb.ioFCBParID;
@@ -252,7 +252,7 @@ namespace Genie
 			FSSpec file = FSSpecFromFRefNum( itsRefNum );
 			
 			// Just flush the whole volume, since we can't be more specific.
-			N::ThrowOSStatus( ::FlushVol( NULL, file.vRefNum ) );
+			Mac::ThrowOSStatus( ::FlushVol( NULL, file.vRefNum ) );
 		}
 		else
 		{

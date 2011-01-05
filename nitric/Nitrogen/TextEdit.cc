@@ -30,7 +30,7 @@ namespace Nitrogen
 		
 		if ( hTE == NULL )
 		{
-			ThrowOSStatus( memFullErr );
+			Mac::ThrowOSStatus( memFullErr );
 		}
 		
 		return nucleus::owned< TEHandle >::seize( hTE );

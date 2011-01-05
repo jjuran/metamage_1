@@ -39,7 +39,7 @@ namespace Nitrogen {
 				UInt32 passwordLength, const void *passwordData ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCAddAppleSharePassword ( serverSignature, serverAddress, 
+		Mac::ThrowOSStatus ( ::KCAddAppleSharePassword ( serverSignature, serverAddress, 
 				serverName, volumeName, accountName, passwordLength, passwordData, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
@@ -50,7 +50,7 @@ namespace Nitrogen {
 				UInt32 passwordLength, const void *passwordData ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCAddInternetPassword ( serverName, securityDomain, accountName, 
+		Mac::ThrowOSStatus ( ::KCAddInternetPassword ( serverName, securityDomain, accountName, 
 				port, protocol, authType, passwordLength, passwordData, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
@@ -59,31 +59,31 @@ namespace Nitrogen {
 				StringPtr accountName, UInt32 passwordLength, const void *passwordData ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
-		ThrowOSStatus ( ::KCAddGenericPassword ( serviceName, accountName, 
+		Mac::ThrowOSStatus ( ::KCAddGenericPassword ( serviceName, accountName, 
 				passwordLength, passwordData, &result ));
   	    return nucleus::owned<KCItemRef>::seize( result );
 		}
 	
 	inline void KCAddItem ( KCItemRef item ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCAddItem ( item ));
+		Mac::ThrowOSStatus ( ::KCAddItem ( item ));
 		}
 
 	inline void KCUnlock ( KCRef keychain, ConstStr255Param password = NULL ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCUnlock ( keychain, const_cast<StringPtr> ( password )));
+		Mac::ThrowOSStatus ( ::KCUnlock ( keychain, const_cast<StringPtr> ( password )));
 		}
 	
 	inline nucleus::owned<KCRef> KCCreateKeychain ( ConstStr255Param password = NULL ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
-		ThrowOSStatus ( ::KCCreateKeychain ( const_cast<StringPtr> ( password ), &result ));
+		Mac::ThrowOSStatus ( ::KCCreateKeychain ( const_cast<StringPtr> ( password ), &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
 
 	inline void KCChangeSettings ( KCRef keychain ) {
 		(void) KeychainErrorsRegistrationDependency();
-		ThrowOSStatus ( ::KCChangeSettings ( keychain ));
+		Mac::ThrowOSStatus ( ::KCChangeSettings ( keychain ));
 		}
 	}
 

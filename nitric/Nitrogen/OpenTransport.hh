@@ -227,7 +227,7 @@ namespace Nitrogen
 	{
 		if ( result < 0 )
 		{
-			ThrowOSStatus( result );
+			Mac::ThrowOSStatus( result );
 		}
 		
 		return result;

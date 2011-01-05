@@ -48,14 +48,14 @@ namespace Nitrogen
 	
 	inline CursorDevicePtr CursorDeviceNextDevice( CursorDevicePtr device = NULL )
 	{
-		ThrowOSStatus( ::CursorDeviceNextDevice( &device ) );
+		Mac::ThrowOSStatus( ::CursorDeviceNextDevice( &device ) );
 		
 		return device;
 	}
 	
 	inline void CursorDeviceMoveTo( CursorDevicePtr device, long x, long y )
 	{
-		ThrowOSStatus( ::CursorDeviceMoveTo( device, x, y ) );
+		Mac::ThrowOSStatus( ::CursorDeviceMoveTo( device, x, y ) );
 	}
 	
 }

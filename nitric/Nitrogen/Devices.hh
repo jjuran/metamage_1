@@ -98,7 +98,7 @@ namespace Nitrogen
 	{
 		if ( !policy.SuppressError( err, bytesRead ) )
 		{
-			ThrowOSStatus( err );
+			Mac::ThrowOSStatus( err );
 		}
 	}
 	
@@ -127,7 +127,7 @@ namespace Nitrogen
 		
 		Private::FixAsyncResult( err, pb.ioParam.ioResult );
 		
-		ThrowOSStatus( err );
+		Mac::ThrowOSStatus( err );
 	}
 	
 }
