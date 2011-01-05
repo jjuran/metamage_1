@@ -112,19 +112,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void SetWTitle( WindowRef window, ConstStr255Param title )
-	{
-		return ::SetWTitle( window, title );
-	}
-	
-	Str255 GetWTitle( WindowRef window )
-	{
-		::Str255 title;
-		::GetWTitle( window, title );
-		
-		return title;
-	}
-	
 	namespace Detail
 	{
 	
@@ -160,13 +147,6 @@ namespace Nitrogen
 		}
 		
 		return Detail::GrowWindow( window, startPt, unbounded );
-	}
-	
-	void DragWindow( WindowRef    window,
-	                 Point        point,
-	                 const Rect&  dragRect )
-	{
-		::DragWindow( window, point, &dragRect );
 	}
 	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )

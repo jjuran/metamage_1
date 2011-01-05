@@ -431,10 +431,17 @@ namespace Nitrogen
 	using ::DrawGrowIcon;
 	
 	// 4051
-	void SetWTitle( WindowRef window, ConstStr255Param title );
+	using ::SetWTitle;
 	
 	// 4065
-	Str255 GetWTitle( WindowRef window );
+	inline Str255 GetWTitle( WindowRef window )
+	{
+		::Str255 title;
+		
+		::GetWTitle( window, title );
+		
+		return title;
+	}
 	
 	inline void SetWindowTitleWithCFString( WindowRef inWindow, CFStringRef inString )
 	{
@@ -531,7 +538,12 @@ namespace Nitrogen
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt );
 	
 	// 4614
-	void DragWindow( WindowRef window, Point point, const Rect& dragRect );
+	inline void DragWindow( WindowRef    window,
+	                        Point        point,
+	                        const Rect&  dragRect )
+	{
+		::DragWindow( window, point, &dragRect );
+	}
 	
 	// ZoomWindow
 	
