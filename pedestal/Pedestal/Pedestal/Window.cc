@@ -103,7 +103,7 @@ namespace Pedestal
 	                                    N::WindowDefProcID  procID,
 	                                    WindowRef           behind,
 	                                    bool                goAwayFlag,
-	                                    N::RefCon           refCon )
+	                                    const void*         refCon )
 	{
 		
 		
