@@ -54,7 +54,7 @@ namespace Pedestal
 		}
 	}
 	
-	void Scrollbar::Create( const Rect& bounds, N::RefCon refCon )
+	void Scrollbar::Create( const Rect& bounds, const void* refCon )
 	{
 		ASSERT( itsControl == NULL );
 		

@@ -11,11 +11,6 @@
 #include <Controls.h>
 #endif
 
-// Nitrogen
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
-#endif
-
 
 namespace Pedestal
 {
@@ -32,7 +27,7 @@ namespace Pedestal
 			
 			ControlRef Get() const  { return itsControl; }
 			
-			void Create( const Rect& bounds, Nitrogen::RefCon refCon );
+			void Create( const Rect& bounds, const void* refCon );
 			
 			void UpdateBounds( const Rect& bounds );
 			
