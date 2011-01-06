@@ -13,28 +13,25 @@
 
 #include "Nitrogen/QDOffscreen.hh"
 
+// MacGlue
+#include "MacGlue/MacGlue.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
+
+namespace MacGlue
+{
+	
+	DECLARE_MAC_GLUE( DisposeGWorld );
+	
+}
 
 namespace Nitrogen
 {
 	
 	using Mac::ThrowOSStatus;
 	
-	
-	namespace Function
-	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-		
-		static pascal void DisposeGWorld( GWorldPtr world )  { ::DisposeGWorld( world ); }
-		
-	#else
-		
-		using ::DisposeGWorld;
-		
-	#endif
-	}
 	
 	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
@@ -51,7 +48,7 @@ namespace Nitrogen
 		                            aGDevice,
 		                            flags ) );
 		
-		return nucleus::owned< GWorldPtr >::seize( newWorld, &Function::DisposeGWorld );
+		return nucleus::owned< GWorldPtr >::seize( newWorld, &MacGlue::DisposeGWorld );
 	}
 	
 	nucleus::owned< GWorldPtr > NewGWorld( short        pixelDepth,
@@ -96,7 +93,7 @@ namespace Nitrogen
 		{
 			offscreenGWorld.release();
 			
-			offscreenGWorld = nucleus::owned< GWorldPtr >::seize( gWorldPtr, &Function::DisposeGWorld );
+			offscreenGWorld = nucleus::owned< GWorldPtr >::seize( gWorldPtr, &MacGlue::DisposeGWorld );
 		}
 		
 		return result;
