@@ -6,7 +6,7 @@ resource 'MENU' (128, "Apple") {
 	apple,
 	{	/* array: 1 elements */
 		/* [1] */
-		"About Lamp… [abou]", noIcon, noKey, noMark, plain
+		"About MacRelix… [abou]", noIcon, noKey, noMark, plain
 	}
 };
 
