@@ -13,12 +13,22 @@
 
 #include "Nitrogen/MacWindows.hh"
 
+// MacGlue
+#include "MacGlue/MacGlue.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
+
+namespace MacGlue
+{
+	
+	DECLARE_MAC_GLUE( DisposeWindow );
+	
+}
 
 namespace Nitrogen
 {
@@ -51,20 +61,7 @@ namespace Nitrogen
 	
 #else
 	
-	namespace Function
-	{
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-		
-		static pascal void DisposeWindow( WindowRef window )  { ::DisposeWindow( window ); }
-		
-	#else
-		
-		using ::DisposeWindow;
-		
-	#endif
-	}
-	
-	static const nucleus::disposer_class< WindowRef >::type gDisposeWindow( &Function::DisposeWindow );
+	static const nucleus::disposer_class< WindowRef >::type gDisposeWindow( &MacGlue::DisposeWindow );
 	
 #endif
 	
