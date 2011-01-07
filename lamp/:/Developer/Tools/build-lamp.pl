@@ -446,7 +446,7 @@ mkdir $lamp_dist;
 # Genie is a different config than its programs on 68K
 (my $genie_build_tree = $build_tree) =~ s/-Res-/-Code-/;
 
-install_program( 'Genie', "$lamp_dist/", $genie_build_tree );
+install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
 create_node( $lamp_dist, ':' => \%fsmap );
 
