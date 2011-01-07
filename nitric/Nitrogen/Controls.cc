@@ -55,7 +55,7 @@ namespace Nitrogen
 	                       short             minimumValue,
 	                       short             maximumValue,
 	                       ControlProcID     procID,
-	                       RefCon            refCon )
+	                       long              refCon )
 	{
 		return ::NewControl( owningWindow,
 		                     &boundsRect,

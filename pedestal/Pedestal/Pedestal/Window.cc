@@ -5,6 +5,9 @@
 
 #include "Pedestal/Window.hh"
 
+// MacGlue
+#include "MacGlue/MacGlue.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -21,6 +24,14 @@
 #include "Pedestal/View.hh"
 
 
+namespace MacGlue
+{
+	
+	DECLARE_MAC_GLUE( NewWindow  );
+	DECLARE_MAC_GLUE( NewCWindow );
+	
+}
+
 namespace Pedestal
 {
 	
@@ -28,18 +39,19 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	typedef n::owned< WindowRef > (*NewWindow_f)( const Rect&         bounds,
-	                                              ConstStr255Param    title,
-	                                              bool                visible,
-	                                              N::WindowDefProcID  procID,
-	                                              WindowRef           behind,
-	                                              bool                goAwayFlag,
-	                                              N::RefCon           refCon );
+	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
+	                                               const Rect*       bounds,
+	                                               ConstStr255Param  title,
+	                                               Boolean           visible,
+	                                               short             procID,
+	                                               WindowRef         behind,
+	                                               Boolean           goAwayFlag,
+	                                               long              refCon );
 	
 	using MacFeatures::Has_ColorQuickdraw;
 	
-	static const NewWindow_f NewWindow = Has_ColorQuickdraw() ? &N::NewCWindow
-	                                                          : &N::NewWindow;
+	static const NewWindow_ProcPtr gNewWindow = Has_ColorQuickdraw() ? &MacGlue::NewCWindow
+	                                                                 : &MacGlue::NewWindow;
 	
 	
 	void ResizeWindow( WindowRef window, Point newSize )
@@ -103,23 +115,22 @@ namespace Pedestal
 	                                    N::WindowDefProcID  procID,
 	                                    WindowRef           behind,
 	                                    bool                goAwayFlag,
-	                                    N::RefCon           refCon )
+	                                    const void*         refCon )
 	{
 		
-		
-		
-		n::owned< WindowRef > window = NewWindow( bounds,
-		                                          title,
-		                                          visible,
-		                                          procID,
-		                                          behind,
-		                                          goAwayFlag,
-		                                          refCon );
+		WindowRef window = gNewWindow( NULL,
+		                               &bounds,
+		                               title,
+		                               visible,
+		                               procID,
+		                               behind,
+		                               goAwayFlag,
+		                               (long) refCon );  // reinterpret_cast
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
 		
-		return window;
+		return n::owned< WindowRef >::seize( window, N::Window_Disposer() );
 	}
 	
 	static Rect GrowBoxBounds( WindowRef window )

@@ -30,7 +30,7 @@ namespace Pedestal
 	static inline ControlRef NewMacPushButton( WindowRef owningWindow,
 	                                           const Rect& boundsRect,
 	                                           ConstStr255Param title,
-	                                           void* refCon )
+	                                           const void* refCon )
 	{
 		return N::NewControl( owningWindow,
 		                      boundsRect,

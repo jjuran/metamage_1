@@ -13,22 +13,12 @@
 
 #include "Nitrogen/MacWindows.hh"
 
-// MacGlue
-#include "MacGlue/MacGlue.hh"
-
 // nucleus
 #include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
-
-namespace MacGlue
-{
-	
-	DECLARE_MAC_GLUE( DisposeWindow );
-	
-}
 
 namespace Nitrogen
 {
@@ -55,23 +45,13 @@ namespace Nitrogen
 #endif
 	
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
-	static       nucleus::disposer_class< WindowRef >::type gDisposeWindow;
-	
-#else
-	
-	static const nucleus::disposer_class< WindowRef >::type gDisposeWindow( &MacGlue::DisposeWindow );
-	
-#endif
-	
 	nucleus::owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
 	                                       WindowDefProcID   procID,
 	                                       WindowRef         behind,
 	                                       bool              goAwayFlag,
-	                                       RefCon            refCon )
+	                                       long              refCon )
 	{
 		return nucleus::owned< WindowRef >::seize( ::NewWindow( NULL,
 		                                                        &bounds,
@@ -80,7 +60,7 @@ namespace Nitrogen
 		                                                        procID,
 		                                                        behind,
 		                                                        goAwayFlag,
-		                                                        refCon ), gDisposeWindow );
+		                                                        refCon ), Window_Disposer() );
 	}
 	
 	nucleus::owned< WindowRef > NewCWindow( const Rect&       bounds,
@@ -89,7 +69,7 @@ namespace Nitrogen
 	                                        WindowDefProcID   procID,
 	                                        WindowRef         behind,
 	                                        bool              goAwayFlag,
-	                                        RefCon            refCon )
+	                                        long              refCon )
 	{
 		return nucleus::owned< WindowRef >::seize( ::NewCWindow( NULL,
 		                                                         &bounds,
@@ -98,7 +78,7 @@ namespace Nitrogen
 		                                                         procID,
 		                                                         behind,
 		                                                         goAwayFlag,
-		                                                         refCon ), gDisposeWindow );
+		                                                         refCon ), Window_Disposer() );
 	}
 	
 	FindWindow_Result MacFindWindow( Point point )

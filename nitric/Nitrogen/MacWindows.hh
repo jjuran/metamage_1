@@ -18,6 +18,9 @@
 #include <MacWindows.h>
 #endif
 
+// MacGlue
+#include "MacGlue/MacGlue.hh"
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
@@ -245,11 +248,34 @@ namespace Nitrogen
 	
   }
 
+namespace MacGlue
+{
+	
+	DECLARE_MAC_GLUE( DisposeWindow );
+	
+}
+
 namespace Nitrogen
   {
 
    /* ... */
-
+	
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	inline nucleus::disposer_class< WindowRef >::type Window_Disposer()
+	{
+		return nucleus::disposer_class< WindowRef >::type();
+	}
+	
+#else
+	
+	inline nucleus::disposer_class< WindowRef >::type Window_Disposer()
+	{
+		return &MacGlue::DisposeWindow;
+	}
+	
+#endif
+	
 	#pragma mark -
 	#pragma mark ** Routines **
 	
@@ -262,7 +288,26 @@ namespace Nitrogen
 	                                       WindowDefProcID   procID,
 	                                       WindowRef         behind,
 	                                       bool              goAwayFlag,
-	                                       RefCon            refCon );
+	                                       long              refCon );
+	
+	inline nucleus::owned< WindowRef >
+	//
+	NewWindow( const Rect&       bounds,
+	           ConstStr255Param  title,
+	           bool              visible,
+	           WindowDefProcID   procID,
+	           WindowRef         behind,
+	           bool              goAwayFlag,
+	           const void*       refCon )
+	{
+		return NewWindow( bounds,
+		                  title,
+		                  visible,
+		                  procID,
+		                  behind,
+		                  goAwayFlag,
+		                  (long) refCon );  // reinterpret_cast
+	}
 	
 	// GetNewWindow
 	
@@ -273,7 +318,26 @@ namespace Nitrogen
 	                                        WindowDefProcID   procID,
 	                                        WindowRef         behind,
 	                                        bool              goAwayFlag,
-	                                        RefCon            refCon );
+	                                        long              refCon );
+	
+	inline nucleus::owned< WindowRef >
+	//
+	NewCWindow( const Rect&       bounds,
+	            ConstStr255Param  title,
+	            bool              visible,
+	            WindowDefProcID   procID,
+	            WindowRef         behind,
+	            bool              goAwayFlag,
+	            const void*       refCon )
+	{
+		return NewCWindow( bounds,
+		                   title,
+		                   visible,
+		                   procID,
+		                   behind,
+		                   goAwayFlag,
+		                   (long) refCon );  // reinterpret_cast
+	}
 	
 	// 1457
 	inline void DisposeWindow( nucleus::owned< WindowRef > )  {}
@@ -408,7 +472,12 @@ namespace Nitrogen
 	
 	inline void HiliteWindow( WindowRef window, bool hilite )  { ::HiliteWindow( window, hilite ); }
 	
-	inline void SetWRefCon( WindowRef window, RefCon refCon )  { ::SetWRefCon( window, refCon ); }
+	using ::SetWRefCon;
+	
+	inline void SetWRefCon( WindowRef window, const void* refCon )
+	{
+		::SetWRefCon( window, (long) refCon );  // reinterpret_cast
+	}
 	
 	inline RefCon GetWRefCon( WindowRef window )  { return ::GetWRefCon( window ); }
 	

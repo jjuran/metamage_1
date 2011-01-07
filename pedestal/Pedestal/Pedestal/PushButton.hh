@@ -12,9 +12,6 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
-#endif
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
@@ -40,7 +37,7 @@ namespace Pedestal
 			
 			virtual Nitrogen::Str255 Title() const = 0;
 			
-			virtual Nitrogen::RefCon RefCon() const = 0;
+			virtual const void* RefCon() const = 0;
 			
 			ControlRef Get() const  { return itsControl; }
 			

@@ -28,10 +28,6 @@
 #include "Mac/Windows/Types/WindowRef.hh"
 #endif
 
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
-#endif
-
 // Pedestal
 #ifndef PEDESTAL_VIEW_HH
 #include "Pedestal/View.hh"
@@ -102,10 +98,10 @@ namespace Pedestal
 	                                          Mac::WindowDefProcID  procID,
 	                                          WindowRef             behind,
 	                                          bool                  goAwayFlag,
-	                                          Nitrogen::RefCon      refCon );
+	                                          const void*           refCon );
 	
 	inline nucleus::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                                 Nitrogen::RefCon         refCon )
+	                                                 const void*              refCon )
 	{
 		return CreateWindow( context.bounds,
 		                     context.title,

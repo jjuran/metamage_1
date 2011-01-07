@@ -104,7 +104,7 @@ namespace Genie
 			
 			N::Str255 Title() const  { return gButtonMap[ itsUserData.key ].title; }
 			
-			N::RefCon RefCon() const  { return &itsUserData; }
+			const void* RefCon() const  { return &itsUserData; }
 			
 			void Install( const Rect& bounds );
 			

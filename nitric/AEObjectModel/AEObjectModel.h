@@ -21,10 +21,6 @@
 #include "Mac/AppleEvents/Types/AEObjectClass.hh"
 #endif
 
-#ifndef NITROGEN_REFCON_HH
-#include "Nitrogen/RefCon.hh"
-#endif
-
 
 namespace Nitrogen
 {
