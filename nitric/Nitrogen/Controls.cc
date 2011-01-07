@@ -57,15 +57,24 @@ namespace Nitrogen
 	                       ControlProcID     procID,
 	                       long              refCon )
 	{
-		return ::NewControl( owningWindow,
-		                     &boundsRect,
-		                     controlTitle,
-		                     initiallyVisible,
-		                     initialValue,
-		                     minimumValue,
-		                     maximumValue,
-		                     procID,
-		                     refCon );
+		ControlRef control = ::NewControl( owningWindow,
+		                                   &boundsRect,
+		                                   controlTitle,
+		                                   initiallyVisible,
+		                                   initialValue,
+		                                   minimumValue,
+		                                   maximumValue,
+		                                   procID,
+		                                   refCon );
+		
+		if ( control == NULL )
+		{
+			// Assume out of memory
+			
+			ThrowOSStatus( memFullErr );
+		}
+		
+		return control;
 	}
 	
 	void UpdateControls( WindowRef window )
