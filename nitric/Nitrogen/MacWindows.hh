@@ -472,7 +472,12 @@ namespace Nitrogen
 	
 	inline void HiliteWindow( WindowRef window, bool hilite )  { ::HiliteWindow( window, hilite ); }
 	
-	inline void SetWRefCon( WindowRef window, RefCon refCon )  { ::SetWRefCon( window, refCon ); }
+	using ::SetWRefCon;
+	
+	inline void SetWRefCon( WindowRef window, const void* refCon )
+	{
+		::SetWRefCon( window, (long) refCon );  // reinterpret_cast
+	}
 	
 	inline RefCon GetWRefCon( WindowRef window )  { return ::GetWRefCon( window ); }
 	
