@@ -53,14 +53,23 @@ namespace Nitrogen
 	                                       bool              goAwayFlag,
 	                                       long              refCon )
 	{
-		return nucleus::owned< WindowRef >::seize( ::NewWindow( NULL,
-		                                                        &bounds,
-		                                                        title,
-		                                                        visible,
-		                                                        procID,
-		                                                        behind,
-		                                                        goAwayFlag,
-		                                                        refCon ), Window_Disposer() );
+		WindowRef window = ::NewWindow( NULL,
+		                                &bounds,
+		                                title,
+		                                visible,
+		                                procID,
+		                                behind,
+		                                goAwayFlag,
+		                                refCon );
+		
+		if ( window == NULL )
+		{
+			// Assume out of memory
+			
+			ThrowOSStatus( memFullErr );
+		}
+		
+		return nucleus::owned< WindowRef >::seize( window, Window_Disposer() );
 	}
 	
 	nucleus::owned< WindowRef > NewCWindow( const Rect&       bounds,
@@ -71,14 +80,23 @@ namespace Nitrogen
 	                                        bool              goAwayFlag,
 	                                        long              refCon )
 	{
-		return nucleus::owned< WindowRef >::seize( ::NewCWindow( NULL,
-		                                                         &bounds,
-		                                                         title,
-		                                                         visible,
-		                                                         procID,
-		                                                         behind,
-		                                                         goAwayFlag,
-		                                                         refCon ), Window_Disposer() );
+		WindowRef window = ::NewCWindow( NULL,
+		                                 &bounds,
+		                                 title,
+		                                 visible,
+		                                 procID,
+		                                 behind,
+		                                 goAwayFlag,
+		                                 refCon );
+		
+		if ( window == NULL )
+		{
+			// Assume out of memory
+			
+			ThrowOSStatus( memFullErr );
+		}
+		
+		return nucleus::owned< WindowRef >::seize( window, Window_Disposer() );
 	}
 	
 	FindWindow_Result MacFindWindow( Point point )
