@@ -82,7 +82,8 @@ my $vers_2_data;
 
 if ( defined $ENV{BUILD_DATE} )
 {
-	$vers_2_data = `vers "" "Lamp experimental build, $ENV{BUILD_DATE}"`;
+	$vers_1_data = `vers "" "as of $ENV{BUILD_DATE}, by Joshua Juran"`;
+	$vers_2_data = `vers "" "MacRelix experimental snapshot"`;
 }
 
 my %fsmap =
