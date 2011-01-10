@@ -231,9 +231,18 @@ my %fsmap =
 
 sub timestamp
 {
-	my $stamp = `date +"%Y%m%d-%H%M"`;
+	my $stamp;
 	
-	chop $stamp;
+	if ( defined $ENV{BUILD_DATE} )
+	{
+		$stamp = join '-', map { s{\D}{}g; $_ } split " ", $ENV{BUILD_DATE};
+	}
+	else
+	{
+		$stamp = `date +"%Y%m%d-%H%M"`;
+		
+		chop $stamp;
+	}
 	
 	return $stamp;
 }
