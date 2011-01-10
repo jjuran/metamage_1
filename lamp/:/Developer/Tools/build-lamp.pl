@@ -77,6 +77,7 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $lamp_dist\n";
 
+my $vers_1_data;
 my $vers_2_data;
 
 if ( defined $ENV{BUILD_DATE} )
@@ -308,6 +309,15 @@ sub copy_file
 	verbose_system( 'cp', $src, $dest );
 	
 	my ( $name ) = $src =~ m{/([^/]*)$};
+	
+	if ( defined $vers_1_data  &&  -d "$dest/$name/r" )
+	{
+		open my $out, ">", "$dest/$name/r/0001.vers" or die "$dest/$name/r/0001.vers: $!\n";
+		
+		print $out $vers_1_data;
+		
+		close $out;
+	}
 	
 	if ( defined $vers_2_data  &&  -d "$dest/$name/r" )
 	{
