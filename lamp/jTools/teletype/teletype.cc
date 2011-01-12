@@ -1,7 +1,7 @@
-/*	=========
- *	jgetty.cc
- *	=========
- */
+/*
+	teletype.cc
+	-----------
+*/
 
 // Standard C/C++
 #include <cstring>

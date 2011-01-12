@@ -57,7 +57,7 @@ namespace Genie
 	
 	static bool NewDocument( Ped::CommandCode )
 	{
-		spawn_process( "/bin/jgetty" );
+		spawn_process( "/bin/teletype" );
 		
 		return true;
 	}

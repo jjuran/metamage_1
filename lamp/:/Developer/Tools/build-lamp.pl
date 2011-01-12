@@ -143,7 +143,7 @@ my %fsmap =
 		# Standard
 		\ qw( cat cp echo false hostname kill ln login ls mkdir mv ps pwd readlink realpath rm rmdir sh sleep sync true ),
 		# Custom
-		\ qw( jgetty ),
+		\ qw( teletype ),
 		# Perl scripts
 		qw( chmod date test ),
 	],
