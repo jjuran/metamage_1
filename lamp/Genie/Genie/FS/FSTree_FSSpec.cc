@@ -546,9 +546,15 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( itsFileSpec == GetUsersDirectory() / "\p" )
+		try
 		{
-			return FSRoot();
+			if ( itsFileSpec == GetUsersDirectory() / "\p" )
+			{
+				return FSRoot();
+			}
+		}
+		catch ( ... )
+		{
 		}
 		
 		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ),
