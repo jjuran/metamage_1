@@ -127,7 +127,12 @@ int main( int argc, char const *const argv[] )
 		
 		char* login_argv[] = { "/bin/login", NULL };
 		
-		p7::execv( login_argv[0], login_argv );
+		const bool use_login = argc < 2;
+		
+		const char* const* next_argv = use_login ? login_argv
+		                                         : argv + 1;
+		
+		p7::execv( next_argv[0], next_argv );
 	}
 	
 	p7::wait_t wait_status = p7::wait();
