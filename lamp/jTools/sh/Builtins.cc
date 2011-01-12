@@ -350,6 +350,22 @@ namespace tool
 		return p7::exit_success;
 	}
 	
+	static p7::exit_t Builtin_Exec( int argc, char** argv )
+	{
+		p7::exit_t exit_status = p7::exit_success;
+		
+		if ( argc > 1 )
+		{
+			(void) execvp( argv[1], argv + 1 );
+			
+			exit_status = p7::exit_t( errno == ENOENT ? 127 : 126 );
+			
+			more::perror( "exec", argv[1] );
+		}
+		
+		return exit_status;
+	}
+	
 	static p7::exit_t Builtin_Exit( int argc, char** argv )
 	{
 		int exitStatus = 0;
@@ -587,6 +603,7 @@ namespace tool
 		{ "alias",   Builtin_Alias   },
 		{ "cd",      Builtin_CD      },
 		{ "echo",    Builtin_Echo    },
+		{ "exec",    Builtin_Exec    },
 		{ "exit",    Builtin_Exit    },
 		{ "export",  Builtin_Export  },
 		{ "pwd",     Builtin_PWD     },
