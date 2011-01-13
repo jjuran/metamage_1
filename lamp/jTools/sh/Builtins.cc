@@ -140,6 +140,20 @@ namespace tool
 		return "/";
 	}
 	
+#ifndef __LAMP__
+	
+	static inline ssize_t _getcwd( char* buffer, size_t length )
+	{
+		if ( const char* gotcwd = getcwd( buffer, length ) )
+		{
+			return strlen( gotcwd );
+		}
+		
+		return -1;
+	}
+	
+#endif
+	
 	static plus::string get_cwd()
 	{
 		plus::var_string cwd;
