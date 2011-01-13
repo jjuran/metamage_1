@@ -156,7 +156,8 @@ namespace tool
 			start_monitoring();
 		}
 		
-		ExecuteCmdLine( "cd ." );  // prime $PWD
+		// Unset stale PWD and OLDPWD, cd . to prime PWD, export unset OLDPWD
+		ExecuteCmdLine( "unset PWD; unset OLDPWD; cd .; export OLDPWD" );
 		
 		if ( *freeArgs != NULL )
 		{
