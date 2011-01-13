@@ -151,7 +151,7 @@ my %fsmap =
 	],
 	etc =>
 	[
-		qw( inetd.conf motd profile traps ),
+		qw( inetd.conf motd profile startup traps welcome ),
 		{
 			#build_date => sub { verbose_system( "date > '$_[0]'" ) },
 			platform => sub { verbose_system( "echo $config_short_name > $_[0]" ) unless $config_short_name eq 'xxx' },

@@ -68,6 +68,8 @@ namespace Genie
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
 		Reply_AppleEvent::Install_Handler();
+		
+		spawn_process( "/etc/startup" );
 	}
 	
 }
