@@ -111,7 +111,7 @@ namespace tool
 		script += command;
 		script += "\r";
 		script += "Set CommandStatus {Status}" "\r";
-		script += "Directory {MPW}" "\r";  // don't keep the cwd busy
+		script += "Directory \"{MPW}\"" "\r";  // don't keep the cwd busy
 		script += "Exit {CommandStatus}" "\r";
 		
 		return script;
