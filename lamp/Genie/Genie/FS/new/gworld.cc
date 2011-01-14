@@ -292,17 +292,15 @@ namespace Genie
 		
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		
-		const bool locked = ::LockPixels( pix );
-		
-		// Copy to dest
-		N::CopyBits( N::GetPortBitMapForCopyBits( gworld                   ),
-		             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
-		             N::GetPortBounds( gworld ),
-		             bounds,
-		             mode );
-		
-		if ( locked )
+		if ( const bool locked = ::LockPixels( pix ) )
 		{
+			// Copy to dest
+			N::CopyBits( N::GetPortBitMapForCopyBits( gworld                   ),
+			             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
+			             N::GetPortBounds( gworld ),
+			             bounds,
+			             mode );
+			
 			::UnlockPixels( pix );
 		}
 	}
