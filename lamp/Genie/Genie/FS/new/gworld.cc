@@ -325,6 +325,17 @@ namespace Genie
 	}
 	
 	
+	static void UpdateGWorld_from_params( GWorld_Parameters& params )
+	{
+		n::owned< GWorldPtr > temp = params.gworld.unshare();
+		
+		N::UpdateGWorld( temp, params.depth, params.bounds );
+		
+		Erase_GWorld( temp, params.bounds );
+		
+		params.gworld = temp;
+	}
+	
 	struct PixMap_rowBytes : plus::serialize_unsigned< short >
 	{
 		static const bool is_mutable = false;
@@ -390,13 +401,7 @@ namespace Genie
 		
 		params.depth = depth;
 		
-		n::owned< GWorldPtr > temp = params.gworld.unshare();
-		
-		N::UpdateGWorld( temp, depth, params.bounds );
-		
-		Erase_GWorld( temp, params.bounds );
-		
-		params.gworld = temp;
+		UpdateGWorld_from_params( params );
 	}
 	
 	void PixMap_bounds::Set( GWorld_Parameters& params, const Rect& bounds )
@@ -413,13 +418,7 @@ namespace Genie
 		
 		params.bounds = bounds;
 		
-		n::owned< GWorldPtr > temp = params.gworld.unshare();
-		
-		N::UpdateGWorld( temp, params.depth, bounds );
-		
-		Erase_GWorld( temp, params.bounds );
-		
-		params.gworld = temp;
+		UpdateGWorld_from_params( params );
 	}
 	
 	static n::shared< GWorldPtr >& get_gworldptr( const FSTree* node )
