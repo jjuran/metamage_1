@@ -8,12 +8,7 @@ test -n "$HOME" || exit 1
 test -d $HOME || echo "$0: HOME doesn't exist"
 test -d $HOME || exit 1
 
-apps="$HOME/Applications"
-lamp="$apps/Lamp"
-dest="$lamp/$1"
-
-test -d $apps || mkdir $apps;
-test -d $lamp || mkdir $lamp;
+dest="/sys/app/dir/../$1"
 
 test -d $dest && echo You already have $1. && exit || true
 
