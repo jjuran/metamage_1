@@ -327,6 +327,11 @@ namespace Genie
 	
 	static void UpdateGWorld_from_params( GWorld_Parameters& params )
 	{
+		if ( params.gworld.get() == NULL )
+		{
+			return;
+		}
+		
 		n::owned< GWorldPtr > temp = params.gworld.unshare();
 		
 		N::UpdateGWorld( temp, params.depth, params.bounds );
