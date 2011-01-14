@@ -138,7 +138,13 @@ namespace Genie
 				// zero, the error becomes insignificant.
 				// And we keep looping until remaining_microseconds becomes zero
 				// anyway.
-				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
+				
+				const SInt64 remaining_ticks = remaining_microseconds * 60 / 1000000;
+				
+				if ( remaining_ticks < 0x7FFFFFFF )
+				{
+					Ped::AdjustSleepForTimer( remaining_ticks );
+				}
 				
 				try_again( false );
 				
