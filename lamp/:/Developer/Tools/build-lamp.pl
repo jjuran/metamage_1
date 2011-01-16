@@ -67,7 +67,7 @@ my $lamp_builds_dir = "$user_lamp_dir/Builds";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
 
-my $root_name = "lamp-${config_short_name}_$timestamp";
+my $root_name = "relix-${config_short_name}_$timestamp";
 
 my $lamp_dist = "$tmp_subdir/$root_name";
 
@@ -429,7 +429,11 @@ sub make_macball
 	
 	verbose_system 'gzip', $macbin;
 	
-	my $gz = "$macbin.gz";
+	my $gz = "$tree_path.gz";
+	
+	rename( "$macbin.gz", $gz ) or die "$macbin.gz: $!\n";
+	
+	return $gz;
 }
 
 
