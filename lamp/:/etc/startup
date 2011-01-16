@@ -16,5 +16,9 @@
 #echo '!Rch' > /sys/type/text/DEFAULT  # TextWrangler
 #echo 'CWIE' > /sys/type/text/DEFAULT  # CodeWarrior IDE
 
+user_startup=/sys/mac/user/prefs/MacRelix/startup
+
+/bin/test -x $user_startup && $user_startup
+
 exec /bin/teletype /etc/welcome
 
