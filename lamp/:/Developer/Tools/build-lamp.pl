@@ -77,11 +77,13 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $lamp_dist\n";
 
+my $vers_1_data;
 my $vers_2_data;
 
 if ( defined $ENV{BUILD_DATE} )
 {
-	$vers_2_data = `vers "" "Lamp experimental build, $ENV{BUILD_DATE}"`;
+	$vers_1_data = `vers "" "as of $ENV{BUILD_DATE}, by Joshua Juran"`;
+	$vers_2_data = `vers "" "MacRelix experimental snapshot"`;
 }
 
 my %fsmap =
@@ -309,6 +311,15 @@ sub copy_file
 	
 	my ( $name ) = $src =~ m{/([^/]*)$};
 	
+	if ( defined $vers_1_data  &&  -d "$dest/$name/r" )
+	{
+		open my $out, ">", "$dest/$name/r/0001.vers" or die "$dest/$name/r/0001.vers: $!\n";
+		
+		print $out $vers_1_data;
+		
+		close $out;
+	}
+	
 	if ( defined $vers_2_data  &&  -d "$dest/$name/r" )
 	{
 		open my $out, ">", "$dest/$name/r/0002.vers" or die "$dest/$name/r/0002.vers: $!\n";
@@ -446,7 +457,7 @@ mkdir $lamp_dist;
 # Genie is a different config than its programs on 68K
 (my $genie_build_tree = $build_tree) =~ s/-Res-/-Code-/;
 
-install_program( 'Genie', "$lamp_dist/", $genie_build_tree );
+install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
 create_node( $lamp_dist, ':' => \%fsmap );
 

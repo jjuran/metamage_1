@@ -42,9 +42,9 @@ static void SetVariables()
 	#define ENV_MAC_BACKEND "blue"
 	#endif
 	
-	setenv( "HOSTTYPE", ENV_HOSTTYPE               , 0 );
-	setenv( "OSTYPE",                        "lamp", 0 );
-	setenv( "MACHTYPE", ENV_HOSTTYPE "-jtools-lamp", 0 );
+	setenv( "HOSTTYPE", ENV_HOSTTYPE                  , 0 );
+	setenv( "OSTYPE",                       "macrelix", 0 );
+	setenv( "MACHTYPE", ENV_HOSTTYPE "-apple-macrelix", 0 );
 	
 	setenv( "MAC_RUNTIME", ENV_MAC_RUNTIME, 0 );
 	setenv( "MAC_BACKEND", ENV_MAC_BACKEND, 0 );
