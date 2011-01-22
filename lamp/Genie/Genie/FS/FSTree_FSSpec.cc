@@ -61,6 +61,9 @@
 // Pedestal
 #include "Pedestal/WakeUp.hh"
 
+// MacLamp
+#include "FSSpec_from_stat.h"
+
 // Genie
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
@@ -655,18 +658,11 @@ namespace Genie
 			}
 		}
 		
-		if ( stat_buffer.st_dev <= 0 )
-		{
-			// Not FSSpecified
-			p7::throw_errno( EXDEV );
-		}
+		FSSpec spec;
 		
-		N::FSDirSpec parent;
+		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
 		
-		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
-		parent.dirID   = N::FSDirID       ( stat_buffer.st_rdev );
-		
-		return parent / hashed_long_name( slashes_from_colons( file->Name() ) );
+		return spec;
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
