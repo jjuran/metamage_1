@@ -31,6 +31,17 @@
 #include "Orion/Main.hh"
 
 
+#ifndef AT_LINK_ALIAS
+#define AT_LINK_ALIAS  0
+#endif
+
+#if AT_LINK_ALIAS
+#define LN_OPTIONS  "[-s | -a]"
+#else
+#define LN_OPTIONS  "[-s]"
+#endif
+
+
 namespace tool
 {
 	
@@ -57,18 +68,59 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		const bool symbolic = argc > 1  &&  std::strcmp( argv[ 1 ], "-s" ) == 0;
+		bool symbolic = false;
+		bool aliased  = false;
+		
+		const bool has_option = argc > 1  &&  argv[1][0] == '-';
 		
 		// Check for sufficient number of args
-		if ( argc < 3 + symbolic )
+		bool misused = argc < 3 + has_option;
+		
+		if ( has_option  &&  !misused )
 		{
-			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln [-s] target [link]\n" ) );
+			const char c1 = argv[1][1];
+			
+			if ( AT_LINK_ALIAS  &&  c1 == '-' )
+			{
+				if ( strcmp( argv[1] + 3, "alias" ) == 0 )
+				{
+					aliased = true;
+				}
+				else
+				{
+					misused = true;
+				}
+			}
+			else
+			{
+				if ( argv[1][2] != '\0' )
+				{
+					misused = true;
+				}
+				else if ( AT_LINK_ALIAS  &&  c1 == 'a' )
+				{
+					aliased = true;
+				}
+				else if ( c1 == 's' )
+				{
+					symbolic = true;
+				}
+				else
+				{
+					misused = true;
+				}
+			}
+		}
+		
+		if (  misused )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln " LN_OPTIONS " target [link]\n" ) );
 			
 			return 2;
 		}
 		
-		const char* target = argv[ 1 + symbolic ];
-		const char* loc    = argv[ 2 + symbolic ];
+		const char* target = argv[ 1 + has_option ];
+		const char* loc    = argv[ 2 + has_option ];
 		
 		int dirfd = AT_FDCWD;
 		
@@ -133,8 +185,10 @@ namespace tool
 			}
 		}
 		
-		int linked = symbolic ? symlinkat(           target, dirfd, loc    )
-		                      :    linkat( AT_FDCWD, target, dirfd, loc, 0 );
+		const int flags = aliased * (AT_LINK_ALIAS | AT_SYMLINK_FOLLOW);
+		
+		int linked = symbolic ? symlinkat(           target, dirfd, loc        )
+		                      :    linkat( AT_FDCWD, target, dirfd, loc, flags );
 		
 		if ( linked < 0 )
 		{
