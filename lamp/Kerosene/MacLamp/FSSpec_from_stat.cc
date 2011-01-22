@@ -27,14 +27,11 @@ int FSSpec_from_stat( const struct stat& stat_buffer, FSSpec& result )
 {
 	typedef UInt32 FSDirID;
 	
-	const FSVolumeRefNum vRefNum = -stat_buffer.st_dev;
-	const FSDirID        parID   = stat_buffer.st_rdev;
-	
 #ifdef __LAMP__
 	
 	const unsigned name_length = stat_buffer.st_name[0];
 	
-	if ( vRefNum == 0  ||  name_length == 0 )
+	if ( stat_buffer.st_dev <= 0  ||  name_length == 0 )
 	{
 		errno = EXDEV;
 		
@@ -48,8 +45,8 @@ int FSSpec_from_stat( const struct stat& stat_buffer, FSSpec& result )
 		return -1;
 	}
 	
-	result.vRefNum = vRefNum;
-	result.parID   = parID;
+	result.vRefNum = -stat_buffer.st_dev;
+	result.parID   = stat_buffer.st_rdev;
 	
 	memcpy( result.name, stat_buffer.st_name, 1 + name_length );
 	
