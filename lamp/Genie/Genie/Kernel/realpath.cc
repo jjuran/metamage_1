@@ -15,17 +15,12 @@
 // plus
 #include "plus/mac_utf8.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
-// MacLamp
-#include "FSSpec_from_stat.h"
-
 // GetPathname
 #include "GetPathname.hh"
 
 // Genie
 #include "Genie/current_process.hh"
+#include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -34,30 +29,9 @@
 namespace Genie
 {
 	
-	namespace p7 = poseven;
-	
-	
 	static plus::string mac_pathname_from_file( const FSTreePtr& file )
 	{
-		struct ::stat stat_buffer;
-		
-		try
-		{
-			file->Stat( stat_buffer );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ENOENT )
-			{
-				throw;
-			}
-		}
-		
-		FSSpec spec;
-		
-		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
-		
-		return GetMacPathname( spec );
+		return GetMacPathname( GetFSSpecFromFSTree( file ) );
 	}
 	
 	

@@ -61,6 +61,9 @@
 // Pedestal
 #include "Pedestal/WakeUp.hh"
 
+// MacLamp
+#include "FSSpec_from_stat.h"
+
 // Genie
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
@@ -86,6 +89,7 @@
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/CreateAlias.hh"
 
 
 namespace Genie
@@ -655,18 +659,11 @@ namespace Genie
 			}
 		}
 		
-		if ( stat_buffer.st_dev <= 0 )
-		{
-			// Not FSSpecified
-			p7::throw_errno( EXDEV );
-		}
+		FSSpec spec;
 		
-		N::FSDirSpec parent;
+		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
 		
-		parent.vRefNum = N::FSVolumeRefNum( -stat_buffer.st_dev );
-		parent.dirID   = N::FSDirID       ( stat_buffer.st_rdev );
-		
-		return parent / hashed_long_name( slashes_from_colons( file->Name() ) );
+		return spec;
 	}
 	
 	void FSTree_HFS::Rename( const FSTreePtr& destFile ) const
@@ -756,19 +753,6 @@ namespace Genie
 		return Self();
 	}
 	
-	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
-	{
-		if ( io::directory_exists( item ) )
-		{
-			return N::FileSignature( Mac::FSCreator( 'MACS'                    ),
-			                         Mac::FSType   ( kContainerFolderAliasType ) );
-		}
-		
-		FInfo fInfo = N::FSpGetFInfo( item );
-		
-		return N::FileSignature( fInfo );
-	}
-	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
 	{
 		plus::string utf8_link_name = plus::utf8_from_mac( link_spec.name );
@@ -810,23 +794,7 @@ namespace Genie
 			
 			FSSpec targetSpec = GetFSSpecFromFSTree( target );
 			
-			// This throws if the target doesn't exist
-			N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
-			
-			// Aliases get special creator and type
-			N::FSpCreateResFile( linkSpec, signature );
-			
-			n::owned< AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
-			
-			n::owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
-			
-			(void) N::AddResource< Mac::rAliasType >( alias, N::ResID( 0 ), "\p" );
-			
-			FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
-			
-			linkFInfo.fdFlags |= kIsAlias;
-			
-			N::FSpSetFInfo( linkSpec, linkFInfo );
+			CreateAlias( linkSpec, targetSpec );
 		}
 		catch ( const Mac::OSStatus& err )
 		{
