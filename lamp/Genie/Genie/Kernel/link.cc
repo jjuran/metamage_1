@@ -19,6 +19,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -53,7 +54,14 @@ namespace Genie
 				return set_errno( EEXIST );
 			}
 			
-			oldFile->HardLink( newFile );
+			if ( flags & AT_LINK_ALIAS )
+			{
+				make_alias( oldFile, newFile );
+			}
+			else
+			{
+				oldFile->HardLink( newFile );
+			}
 		}
 		catch ( ... )
 		{

@@ -135,6 +135,8 @@ struct stat
 #define AT_SYMLINK_FOLLOW       2
 #define AT_SYMLINK_NOFOLLOW  4096
 
+#define AT_LINK_ALIAS  0x80000000
+
 #define UTIME_ARCHIVE  0x40000000
 
 #define UTIME_NOW   ((1 << 30) - 1)
