@@ -27,6 +27,10 @@
 #define AT_SYMLINK_FOLLOW  0
 #endif
 
+#ifndef AT_LINK_ALIAS
+#define AT_LINK_ALIAS  0
+#endif
+
 
 namespace Genie
 {
