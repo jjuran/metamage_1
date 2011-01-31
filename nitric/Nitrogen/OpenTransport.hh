@@ -284,6 +284,24 @@ namespace Nitrogen
 		return OTOpenEndpointInContext( config, NULL, clientContext );
 	}
 	
+	void
+	//
+	OTAsyncOpenEndpointInContext( nucleus::owned< OTConfigurationRef >  config,
+	                              TEndpointInfo*                        info,
+	                              OTNotifyUPP                           notifier,
+	                              void*                                 context,
+	                              OTClientContextPtr                    clientContext = NULL );
+	
+	inline void
+	//
+	OTAsyncOpenEndpointInContext( nucleus::owned< OTConfigurationRef >  config,
+	                              OTNotifyUPP                           notifier,
+	                              void*                                 context,
+	                              OTClientContextPtr                    clientContext = NULL )
+	{
+		return OTAsyncOpenEndpointInContext( config, NULL, notifier, context, clientContext );
+	}
+	
 	TEndpointInfo OTGetEndpointInfo( EndpointRef ref );
 	
 	OTResult OTGetEndpointState( EndpointRef ref );
