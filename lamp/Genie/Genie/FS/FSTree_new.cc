@@ -11,6 +11,7 @@
 #include "Genie/FS/FSTree_new_console.hh"
 #include "Genie/FS/new_defaultkeys.hh"
 #include "Genie/FS/new_focuser.hh"
+#include "Genie/FS/new/bitmap.hh"
 #include "Genie/FS/new/gworld.hh"
 #include "Genie/FS/new/port.hh"
 #include "Genie/FS/FSTree_new_frame.hh"
@@ -27,6 +28,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping new_Mappings[] =
 	{
+		{ "bitmap",       &New_FSTree_new_bitmap              },
 		{ "button",       &New_FSTree_new_button              },
 		{ "caption",      &New_FSTree_new_caption             },
 		{ "console",      &New_FSTree_new_console             },
