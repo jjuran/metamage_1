@@ -14,6 +14,7 @@
 #endif
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -67,7 +68,14 @@ namespace Genie
 	{
 		if ( !Is_Running_OSXNative() )
 		{
-			return GetStringResource( -16096 );
+			plus::string result = GetStringResource( -16096 );
+			
+			if ( convert_to_UTF8 )
+			{
+				result = plus::utf8_from_mac( result );
+			}
+			
+			return result;
 		}
 		
 		if ( CFStringRef name = CSCopyUserName_CFM( false ) )
