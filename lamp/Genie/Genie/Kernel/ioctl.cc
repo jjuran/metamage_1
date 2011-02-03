@@ -29,9 +29,20 @@ namespace Genie
 		
 		try
 		{
-			IOHandle& io = *files[ filedes ].handle;
+			FileDescriptor& file = files[ filedes ];
 			
-			io.IOCtl( request, argp );
+			if ( request == FIOCLEX )
+			{
+				file.closeOnExec = true;
+			}
+			else if ( request == FIONCLEX )
+			{
+				file.closeOnExec = false;
+			}
+			else
+			{
+				file.handle->IOCtl( request, argp );
+			}
 		}
 		catch ( ... )
 		{
