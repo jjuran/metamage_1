@@ -32,6 +32,7 @@ namespace OSErrno
 			case fnfErr         :  result = ENOENT;        break;
 			case ioErr          :  result = EIO;           break;
 			case fnOpnErr       :  // fall through
+			case wrPermErr      :  // fall through
 			case rfNumErr       :  result = EBADF;         break;
 			case cfragNoClientMemErr:// fall through
 			case kOTOutOfMemoryErr:// fall through
