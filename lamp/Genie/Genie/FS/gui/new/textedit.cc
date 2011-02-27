@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_new_textedit.cc
- *	======================
- */
+/*
+	gui/new/textedit.cc
+	-------------------
+*/
 
-#include "Genie/FS/FSTree_new_textedit.hh"
+#include "Genie/FS/gui/new/textedit.hh"
 
 // plus
 #include "plus/serialize.hh"

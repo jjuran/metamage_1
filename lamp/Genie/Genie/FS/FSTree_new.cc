@@ -6,21 +6,21 @@
 #include "Genie/FS/FSTree_new.hh"
 
 // Genie
-#include "Genie/FS/FSTree_new_button.hh"
-#include "Genie/FS/FSTree_new_caption.hh"
-#include "Genie/FS/FSTree_new_console.hh"
 #include "Genie/FS/gui/new/bitmap.hh"
+#include "Genie/FS/gui/new/button.hh"
+#include "Genie/FS/gui/new/caption.hh"
+#include "Genie/FS/gui/new/console.hh"
 #include "Genie/FS/gui/new/defaultkeys.hh"
 #include "Genie/FS/gui/new/focuser.hh"
+#include "Genie/FS/gui/new/frame.hh"
 #include "Genie/FS/gui/new/gworld.hh"
+#include "Genie/FS/gui/new/icon.hh"
+#include "Genie/FS/gui/new/list.hh"
 #include "Genie/FS/gui/new/port.hh"
-#include "Genie/FS/FSTree_new_frame.hh"
-#include "Genie/FS/FSTree_new_icon.hh"
-#include "Genie/FS/FSTree_new_list.hh"
-#include "Genie/FS/FSTree_new_scroller.hh"
-#include "Genie/FS/FSTree_new_scrollframe.hh"
-#include "Genie/FS/FSTree_new_stack.hh"
-#include "Genie/FS/FSTree_new_textedit.hh"
+#include "Genie/FS/gui/new/scroller.hh"
+#include "Genie/FS/gui/new/scrollframe.hh"
+#include "Genie/FS/gui/new/stack.hh"
+#include "Genie/FS/gui/new/textedit.hh"
 
 
 namespace Genie

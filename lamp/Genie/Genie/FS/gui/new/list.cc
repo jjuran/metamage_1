@@ -1,9 +1,9 @@
-/*	==================
- *	FSTree_new_list.cc
- *	==================
- */
+/*
+	gui/new/list.cc
+	---------------
+*/
 
-#include "Genie/FS/FSTree_new_list.hh"
+#include "Genie/FS/gui/new/list.hh"
 
 // Standard C++
 #include <vector>

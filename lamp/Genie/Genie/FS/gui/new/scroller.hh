@@ -1,10 +1,10 @@
-/*	======================
- *	FSTree_new_scroller.hh
- *	======================
- */
+/*
+	gui/new/scroller.hh
+	-------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREE_NEW_SCROLLER_HH
-#define GENIE_FILESYSTEM_FSTREE_NEW_SCROLLER_HH
+#ifndef GENIE_FS_GUI_NEW_SCROLLER_HH
+#define GENIE_FS_GUI_NEW_SCROLLER_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

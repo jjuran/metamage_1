@@ -1,9 +1,9 @@
-/*	=========================
- *	FSTree_new_scrollframe.cc
- *	=========================
- */
+/*
+	gui/new/scrollframe.cc
+	----------------------
+*/
 
-#include "Genie/FS/FSTree_new_scrollframe.hh"
+#include "Genie/FS/gui/new/scrollframe.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -19,13 +19,13 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/FSTree_new_scroller.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/gui/new/scroller.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 

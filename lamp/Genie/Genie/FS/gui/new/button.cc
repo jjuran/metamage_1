@@ -1,9 +1,9 @@
-/*	====================
- *	FSTree_new_button.cc
- *	====================
- */
+/*
+	gui/new/button.cc
+	-----------------
+*/
 
-#include "Genie/FS/FSTree_new_button.hh"
+#include "Genie/FS/gui/new/button.hh"
 
 // plus
 #include "plus/make_string.hh"

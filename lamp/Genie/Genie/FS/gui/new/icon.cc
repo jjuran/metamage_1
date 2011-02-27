@@ -1,9 +1,9 @@
-/*	==================
- *	FSTree_new_icon.cc
- *	==================
- */
+/*
+	gui/new/icon.cc
+	---------------
+*/
 
-#include "Genie/FS/FSTree_new_icon.hh"
+#include "Genie/FS/gui/new/icon.hh"
 
 // plus
 #include "plus/serialize.hh"

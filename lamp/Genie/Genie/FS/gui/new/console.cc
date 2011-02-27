@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_new_console.cc
- *	======================
- */
+/*
+	gui/new/console.cc
+	------------------
+*/
 
-#include "Genie/FS/FSTree_new_console.hh"
+#include "Genie/FS/gui/new/console.hh"
 
 // Mac OS
 #ifndef __EVENTS__

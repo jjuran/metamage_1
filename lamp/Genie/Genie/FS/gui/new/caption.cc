@@ -1,9 +1,9 @@
-/*	=====================
- *	FSTree_new_caption.cc
- *	=====================
- */
+/*
+	gui/new/caption.cc
+	------------------
+*/
 
-#include "Genie/FS/FSTree_new_caption.hh"
+#include "Genie/FS/gui/new/caption.hh"
 
 // POSIX
 #include <fcntl.h>

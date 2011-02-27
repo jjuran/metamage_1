@@ -1,9 +1,9 @@
-/*	======================
- *	FSTree_new_scroller.cc
- *	======================
- */
+/*
+	gui/new/scroller.cc
+	-------------------
+*/
 
-#include "Genie/FS/FSTree_new_scroller.hh"
+#include "Genie/FS/gui/new/scroller.hh"
 
 // plus
 #include "plus/serialize.hh"

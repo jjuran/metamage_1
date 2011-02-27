@@ -1,9 +1,9 @@
-/*	===================
- *	FSTree_new_frame.cc
- *	===================
- */
+/*
+	gui/new/frame.cc
+	----------------
+*/
 
-#include "Genie/FS/FSTree_new_frame.hh"
+#include "Genie/FS/gui/new/frame.hh"
 
 // POSIX
 #include <fcntl.h>

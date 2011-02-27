@@ -1,10 +1,10 @@
-/*	======================
- *	FSTree_new_textedit.hh
- *	======================
- */
+/*
+	gui/new/textedit.hh
+	-------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREE_NEW_TEXTEDIT_HH
-#define GENIE_FILESYSTEM_FSTREE_NEW_TEXTEDIT_HH
+#ifndef GENIE_FS_GUI_NEW_TEXTEDIT_HH
+#define GENIE_FS_GUI_NEW_TEXTEDIT_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

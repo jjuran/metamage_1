@@ -1,9 +1,9 @@
-/*	===================
- *	FSTree_new_stack.cc
- *	===================
- */
+/*
+	gui/new/stack.cc
+	----------------
+*/
 
-#include "Genie/FS/FSTree_new_stack.hh"
+#include "Genie/FS/gui/new/stack.hh"
 
 // Standard C++
 #include <vector>

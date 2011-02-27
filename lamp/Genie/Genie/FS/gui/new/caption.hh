@@ -1,10 +1,10 @@
-/*	====================
- *	FSTree_new_caption.hh
- *	====================
- */
+/*
+	gui/new/caption.hh
+	------------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREE_NEW_CAPTION_HH
-#define GENIE_FILESYSTEM_FSTREE_NEW_CAPTION_HH
+#ifndef GENIE_FS_GUI_NEW_CAPTION_HH
+#define GENIE_FS_GUI_NEW_CAPTION_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

@@ -1,10 +1,10 @@
-/*	===================
- *	FSTree_new_stack.hh
- *	===================
- */
+/*
+	gui/new/stack.cc
+	----------------
+*/
 
-#ifndef GENIE_FILESYSTEM_FSTREE_NEW_STACK_HH
-#define GENIE_FILESYSTEM_FSTREE_NEW_STACK_HH
+#ifndef GENIE_FS_GUI_NEW_STACK_HH
+#define GENIE_FS_GUI_NEW_STACK_HH
 
 // Genie
 #include "Genie/FS/Views.hh"
