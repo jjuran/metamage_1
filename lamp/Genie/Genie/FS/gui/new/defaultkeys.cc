@@ -1,9 +1,9 @@
-/*	==================
- *	new_defaultkeys.cc
- *	==================
- */
+/*
+	gui/new/defaultkeys.cc
+	----------------------
+*/
 
-#include "Genie/FS/new_defaultkeys.hh"
+#include "Genie/FS/gui/new/defaultkeys.hh"
 
 // Mac OS
 #ifndef __EVENTS__

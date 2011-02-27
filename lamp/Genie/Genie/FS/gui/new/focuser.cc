@@ -1,11 +1,9 @@
 /*
-	new_focuser.cc
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	gui/new/focuser.cc
+	------------------
 */
 
-#include "Genie/FS/new_focuser.hh"
+#include "Genie/FS/gui/new/focuser.hh"
 
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"

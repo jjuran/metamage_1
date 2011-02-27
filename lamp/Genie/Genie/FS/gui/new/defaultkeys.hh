@@ -1,10 +1,10 @@
-/*	==================
- *	new_defaultkeys.hh
- *	==================
- */
+/*
+	gui/new/defaultkeys.hh
+	----------------------
+*/
 
-#ifndef GENIE_FS_NEW_DEFAULTKEYS_HH
-#define GENIE_FS_NEW_DEFAULTKEYS_HH
+#ifndef GENIE_FS_GUI_NEW_DEFAULTKEYS_HH
+#define GENIE_FS_GUI_NEW_DEFAULTKEYS_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"

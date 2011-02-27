@@ -1,12 +1,10 @@
 /*
-	new_focuser.hh
-	--------------
-	
-	Copyright 2009, Joshua Juran
+	gui/new/focuser.hh
+	------------------
 */
 
-#ifndef GENIE_FS_NEW_FOCUSER_HH
-#define GENIE_FS_NEW_FOCUSER_HH
+#ifndef GENIE_FS_GUI_NEW_FOCUSER_HH
+#define GENIE_FS_GUI_NEW_FOCUSER_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
