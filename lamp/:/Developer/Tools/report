@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /new/port
+cd /gui/new/port
 
 echo Diagnostics > title
 
@@ -12,9 +12,9 @@ touch window
 echo 4 > window/text-font
 echo 9 > window/text-size
 
-ln /new/scrollframe  view
-ln /new/frame        view/v
-ln /new/console      view/v/v
+ln /gui/new/scrollframe  view
+ln /gui/new/frame        view/v
+ln /gui/new/console      view/v/v
 
 ln -s v/v view/target
 

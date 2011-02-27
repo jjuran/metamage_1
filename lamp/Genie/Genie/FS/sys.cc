@@ -25,7 +25,6 @@
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
-#include "Genie/FS/sys/port.hh"
 #include "Genie/FS/sys/type.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -185,8 +184,6 @@ namespace Genie
 		{ "kernel", PREMAPPED( sys_kernel_Mappings ) },
 		{ "mac",    PREMAPPED( sys_mac_Mappings    ) },
 		{ "type",   PREMAPPED( sys_type_Mappings   ) },
-		
-		{ "port",   &New_sys_port },
 		
 		{ NULL, NULL }
 	};

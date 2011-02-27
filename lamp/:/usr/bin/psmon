@@ -6,7 +6,7 @@ export APPLET=psmon
 
 /bin/rm /app/$APPLET 2> /dev/null
 
-cd -P /new/port
+cd -P /gui/new/port
 
 echo 0 > vis
 echo 10,47 > pos
@@ -21,8 +21,8 @@ echo 4 > window/text-font
 echo 000 > window/back-color
 echo 0f0 > window/fore-color
 
-/bin/ln /new/frame   view
-/bin/ln /new/caption view/v
+/bin/ln /gui/new/frame   view
+/bin/ln /gui/new/caption view/v
 
 echo 4 > view/padding
 echo 0 > view/v/wrapped

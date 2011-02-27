@@ -155,10 +155,10 @@ namespace tool
 		pid_t sid   = iota::parse_unsigned_decimal( p_sid   );
 		pid_t tpgid = iota::parse_unsigned_decimal( p_tpgid );
 		
-		if ( term_string.length() == STRLEN( "/sys/port/12345678/tty" ) )
+		if ( term_string.length() == STRLEN( "/gui/port/12345678/tty" ) )
 		{
 			const char* address = term_string.data()
-			                    + STRLEN( "/sys/port/" );
+			                    + STRLEN( "/gui/port/" );
 			
 			term_string.assign( address, STRLEN( "12345678" ) );
 		}

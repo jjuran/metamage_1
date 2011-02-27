@@ -11,7 +11,7 @@
 #include "Genie/FS/app.hh"
 #include "Genie/FS/FSTree_Dev.hh"
 #include "Genie/FS/FSTree_Proc.hh"
-#include "Genie/FS/FSTree_new.hh"
+#include "Genie/FS/gui.hh"
 #include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys.hh"
 #include "Genie/FS/Users.hh"
@@ -32,7 +32,7 @@ namespace Genie
 		{ "proc", &New_FSTree_proc },
 		
 		{ "dev", PREMAPPED( dev_Mappings ) },
-		{ "new", PREMAPPED( new_Mappings ) },
+		{ "gui", PREMAPPED( gui_Mappings ) },
 		{ "sys", PREMAPPED( sys_Mappings ) },
 		
 		{ NULL, NULL }
