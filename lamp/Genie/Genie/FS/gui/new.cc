@@ -1,9 +1,9 @@
-/*	=============
- *	FSTree_new.cc
- *	=============
- */
+/*
+	gui/new.cc
+	----------
+*/
 
-#include "Genie/FS/FSTree_new.hh"
+#include "Genie/FS/gui/new.hh"
 
 // Genie
 #include "Genie/FS/gui/new/bitmap.hh"
