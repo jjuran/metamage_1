@@ -1,9 +1,9 @@
 /*
-	Genie/FS/sys/port.cc
+	Genie/FS/gui/port.cc
 	--------------------
 */
 
-#include "Genie/FS/sys/port.hh"
+#include "Genie/FS/gui/port.hh"
 
 // Standard C++
 #include <set>
@@ -20,8 +20,8 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/sys/port/ADDR.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 

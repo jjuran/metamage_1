@@ -1,10 +1,10 @@
 /*
-	Genie/FS/sys/port.hh
+	Genie/FS/gui/port.hh
 	--------------------
 */
 
-#ifndef GENIE_FS_SYS_PORT_HH
-#define GENIE_FS_SYS_PORT_HH
+#ifndef GENIE_FS_GUI_PORT_HH
+#define GENIE_FS_GUI_PORT_HH
 
 // Genie
 #include "Genie/FS/FSTree.hh"
