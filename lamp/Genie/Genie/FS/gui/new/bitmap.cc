@@ -1,9 +1,9 @@
 /*
-	new/bitmap.cc
-	-------------
+	gui/new/bitmap.cc
+	-----------------
 */
 
-#include "Genie/FS/new/bitmap.hh"
+#include "Genie/FS/gui/new/bitmap.hh"
 
 // plus
 #include "plus/serialize.hh"

@@ -1,9 +1,9 @@
 /*
-	new/gworld.cc
-	-------------
+	gui/new/gworld.cc
+	-----------------
 */
 
-#include "Genie/FS/new/gworld.hh"
+#include "Genie/FS/gui/new/gworld.hh"
 
 // plus
 #include "plus/serialize.hh"
