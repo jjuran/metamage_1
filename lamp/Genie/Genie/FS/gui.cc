@@ -8,6 +8,7 @@
 // Genie
 #include "Genie/FS/FSTree_new.hh"
 #include "Genie/FS/premapped.hh"
+#include "Genie/FS/sys/port.hh"
 
 
 namespace Genie
@@ -18,6 +19,8 @@ namespace Genie
 	const FSTree_Premapped::Mapping gui_Mappings[] =
 	{
 		{ "new", PREMAPPED( new_Mappings ) },
+		
+		{ "port", &New_sys_port },
 		
 		{ NULL, NULL }
 	};
