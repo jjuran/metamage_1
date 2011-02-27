@@ -49,15 +49,15 @@ namespace Genie
 		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), port ), STR_LEN( "4" "\n" ) );
 		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), port ), STR_LEN( "9" "\n" ) );
 		
-		ResolveAbsolutePath( STR_LEN( "/new/scrollframe" ) )->HardLink( view );
+		ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) )->HardLink( view );
 		
 		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v" ), view );
 		
-		ResolveAbsolutePath( STR_LEN( "/new/frame" ) )->HardLink( subview );
+		ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) )->HardLink( subview );
 		
 		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v" ), subview );
 		
-		ResolveAbsolutePath( STR_LEN( "/new/textedit" ) )->HardLink( subsubview );
+		ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) )->HardLink( subsubview );
 		
 		ResolveRelativePath( STR_LEN( "target" ), view )->SymLink( "v/v" );
 		
@@ -67,7 +67,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > the_port = ResolveAbsolutePath( STR_LEN( "/new/port" ) )->ChangeToDirectory();
+		static boost::shared_ptr< IOHandle > the_port = ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) )->ChangeToDirectory();
 		
 		MakeWindow( the_port );
 		

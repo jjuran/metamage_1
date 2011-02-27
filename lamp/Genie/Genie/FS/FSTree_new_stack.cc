@@ -24,10 +24,10 @@
 
 
 /*
-	cd /new/port
-	ln /new/stack view
-	ln /new/color view/background
-	ln /new/frame view
+	cd /gui/new/port
+	ln /gui/new/stack view
+	ln /gui/new/color view/background
+	ln /gui/new/frame view
 	ls view
 		frame
 		background

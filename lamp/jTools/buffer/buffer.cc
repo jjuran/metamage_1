@@ -51,7 +51,7 @@ namespace tool
 	
 	static void make_window( const char* title )
 	{
-		p7::chdir( "/new/port" );
+		p7::chdir( "/gui/new/port" );
 		
 		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
 		          title,
@@ -67,10 +67,10 @@ namespace tool
 		p7::spew( "window/text-font", STR_LEN( "4" "\n" ) );
 		p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
 		
-		p7::link( "/new/stack",       "view"          );
-		p7::link( "/new/scrollframe", "view/main"     );
-		p7::link( "/new/frame",       "view/main/v"   );
-		p7::link( "/new/textedit",    "view/main/v/v" );
+		p7::link( "/gui/new/stack",       "view"          );
+		p7::link( "/gui/new/scrollframe", "view/main"     );
+		p7::link( "/gui/new/frame",       "view/main/v"   );
+		p7::link( "/gui/new/textedit",    "view/main/v/v" );
 		
 		p7::symlink( "v/v", "view/main/target" );
 		
@@ -79,7 +79,7 @@ namespace tool
 		
 		p7::symlink( "view/main/v/v/gate", "accept" );
 		
-		p7::link( "/new/defaultkeys", "view/defaultkeys" );
+		p7::link( "/gui/new/defaultkeys", "view/defaultkeys" );
 	}
 	
 	
