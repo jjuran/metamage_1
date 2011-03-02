@@ -9,6 +9,9 @@
 // Standard C++
 #include <vector>
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // Boost
 #include <boost/weak_ptr.hpp>
 
