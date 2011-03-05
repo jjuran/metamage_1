@@ -362,11 +362,7 @@ _END_EXTERNS_
 #define SF_U3		(SF_U2*SF_U1)
 #define SF_U4		(SF_U3*SF_U1)
 
-#if __cplusplus
-#define _SF_(f)		(f)
-#else
-#define _SF_(f)		((Sfio_t*)(f))
-#endif
+#define _SF_ /**/
 #define __sf_putd(f,v)	(_sfputd(_SF_(f),(Sfdouble_t)(v)))
 #define __sf_putl(f,v)	(_sfputl(_SF_(f),(Sflong_t)(v)))
 #define __sf_putu(f,v)	(_sfputu(_SF_(f),(Sfulong_t)(v)))
