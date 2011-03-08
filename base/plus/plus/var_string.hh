@@ -177,10 +177,7 @@ namespace plus
 			
 			void insert( char* p, size_type n, char c );
 			
-			char* insert( char* p, char c )
-			{
-				return &(insert_uninitialized( p, 1 )[0] = c);
-			}
+			char* insert( char* p, char c );
 			
 			var_string& append( const char* p, size_type length );
 			

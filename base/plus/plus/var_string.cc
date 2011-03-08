@@ -279,6 +279,15 @@ namespace plus
 		memset( insert_uninitialized( p, n ), c, n );
 	}
 	
+	char* var_string::insert( char* p, char c )
+	{
+		p = insert_uninitialized( p, 1 );
+		
+		*p = c;
+		
+		return p;
+	}
+	
 	var_string& var_string::append( const char* p, size_type length )
 	{
 		check_size( length );
