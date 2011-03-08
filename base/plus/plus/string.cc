@@ -332,14 +332,8 @@ namespace plus
 			return;  // small string
 		}
 		
-		if ( its_alloc.capacity )
+		if ( _policy == ~delete_shared )
 		{
-			if ( _policy != ~delete_shared )
-			{
-				// Handoff with capacity specified -- we own this
-				return;
-			}
-			
 			const size_t refcount = ((size_t*) its_alloc.pointer)[ -1 ];
 			
 			ASSERT( refcount != 0 );
@@ -349,6 +343,11 @@ namespace plus
 				// Shared with no others
 				return;
 			}
+		}
+		else if ( its_alloc.capacity != 0 )
+		{
+			// Already owned by us
+			return;
 		}
 		
 		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
