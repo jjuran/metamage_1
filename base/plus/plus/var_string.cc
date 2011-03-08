@@ -280,6 +280,8 @@ namespace plus
 		
 		*p = c;
 		
+		copy_on_write( true );
+		
 		return p;
 	}
 	
