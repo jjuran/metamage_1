@@ -119,6 +119,7 @@ namespace plus
 		switch ( _policy )
 		{
 			case ~delete_shared:
+			case ~delete_owned:
 			{
 				pointer -= sizeof (size_t);
 				
@@ -341,6 +342,13 @@ namespace plus
 			if ( refcount == 1 )
 			{
 				// Shared with no others
+				
+				if ( tainting )
+				{
+					// ...and now never will be
+					its_alloc._policy = ~delete_owned;
+				}
+				
 				return const_cast< char* >( its_alloc.pointer );
 			}
 		}
@@ -351,6 +359,11 @@ namespace plus
 		}
 		
 		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
+		
+		if ( tainting  &&  its_alloc._policy == ~delete_shared )
+		{
+			its_alloc._policy = ~delete_owned;
+		}
 		
 		return const_cast< char* >( data() );
 	}
