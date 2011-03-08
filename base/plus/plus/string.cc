@@ -323,7 +323,7 @@ namespace plus
 		return new_pointer;
 	}
 	
-	char* string::copy_on_write()
+	char* string::copy_on_write( bool tainting )
 	{
 		const int _policy = its_alloc._policy;
 		

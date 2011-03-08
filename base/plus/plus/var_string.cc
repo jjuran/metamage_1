@@ -27,14 +27,9 @@
 namespace plus
 {
 	
-	char* var_string::mutable_data()
-	{
-		return copy_on_write();
-	}
-	
 	char* var_string::end()
 	{
-		copy_on_write();
+		copy_on_write( true );
 		
 		return const_cast< char* >( string::end() );
 	}
