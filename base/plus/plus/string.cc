@@ -323,13 +323,13 @@ namespace plus
 		return new_pointer;
 	}
 	
-	void string::copy_on_write()
+	char* string::copy_on_write()
 	{
 		const int _policy = its_alloc._policy;
 		
 		if ( _policy >= 0 )
 		{
-			return;  // small string
+			return its_small_name;  // small string
 		}
 		
 		if ( _policy == ~delete_shared )
@@ -341,16 +341,18 @@ namespace plus
 			if ( refcount == 1 )
 			{
 				// Shared with no others
-				return;
+				return const_cast< char* >( its_alloc.pointer );
 			}
 		}
 		else if ( its_alloc.capacity != 0 )
 		{
 			// Already owned by us
-			return;
+			return const_cast< char* >( its_alloc.pointer );
 		}
 		
 		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
+		
+		return const_cast< char* >( data() );
 	}
 	
 	string& string::assign( const char* p, size_type length, size_type capacity )
