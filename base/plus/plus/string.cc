@@ -179,27 +179,32 @@ namespace plus
 	
 	string::string( const char* p, size_type length )
 	{
-		its_small_name[ max_offset ] = 0;
+		its_small_name[ 0          ] = '\0';
+		its_small_name[ max_offset ] = max_offset;
 		
 		assign( p, length );
 	}
 	
 	string::string( const char* p, const char* q )
 	{
-		its_small_name[ max_offset ] = 0;
+		its_small_name[ 0          ] = '\0';
+		its_small_name[ max_offset ] = max_offset;
 		
 		assign( p, q );
 	}
 	
 	string::string( const char* s )
 	{
-		its_small_name[ max_offset ] = 0;
+		its_small_name[ 0          ] = '\0';
+		its_small_name[ max_offset ] = max_offset;
 		
 		assign( s );
 	}
 	
 	string::string( size_type n, char c )
 	{
+		// An uninitialized 15-char string is acceptable because we're just
+		// going to assign over it anyway, and empties aren't faster here.
 		its_small_name[ max_offset ] = 0;
 		
 		assign( n, c );
@@ -212,14 +217,16 @@ namespace plus
 	
 	string::string( const string& other, size_type pos, size_type n )
 	{
-		its_small_name[ max_offset ] = 0;
+		its_small_name[ 0          ] = '\0';
+		its_small_name[ max_offset ] = max_offset;
 		
 		assign( other, pos, n );
 	}
 	
 	string::string( const string& other )
 	{
-		its_small_name[ max_offset ] = 0;
+		its_small_name[ 0          ] = '\0';
+		its_small_name[ max_offset ] = max_offset;
 		
 		assign( other );
 	}
