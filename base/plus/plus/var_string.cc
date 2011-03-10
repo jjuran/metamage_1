@@ -29,9 +29,7 @@ namespace plus
 	
 	char* var_string::mutable_data()
 	{
-		copy_on_write();
-		
-		return const_cast< char* >( data() );
+		return copy_on_write();
 	}
 	
 	char* var_string::end()
@@ -279,6 +277,15 @@ namespace plus
 	void var_string::insert( char* p, size_type n, char c )
 	{
 		memset( insert_uninitialized( p, n ), c, n );
+	}
+	
+	char* var_string::insert( char* p, char c )
+	{
+		p = insert_uninitialized( p, 1 );
+		
+		*p = c;
+		
+		return p;
 	}
 	
 	var_string& var_string::append( const char* p, size_type length )

@@ -68,7 +68,7 @@ namespace plus
 			
 			void set_length( size_type length );
 			
-			void copy_on_write();
+			char* copy_on_write();
 		
 		public:
 			static const size_type npos = size_type( -1 );
