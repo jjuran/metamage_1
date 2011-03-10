@@ -16,6 +16,7 @@ namespace plus
 	{
 		delete_never,  // propagates, for static storage like argv members
 		delete_shared, // Refcounted delete, for everything by default
+		delete_owned,  // Stored as shared, but can't be shared again
 		delete_none,   // copies will reallocate, for stack-based storage
 		delete_basic   // Standard-issue delete, for caller-supplied handoffs
 	};
@@ -68,7 +69,7 @@ namespace plus
 			
 			void set_length( size_type length );
 			
-			char* copy_on_write();
+			char* copy_on_write( bool tainting );
 		
 		public:
 			static const size_type npos = size_type( -1 );

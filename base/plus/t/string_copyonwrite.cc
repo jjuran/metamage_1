@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 4;
+static const unsigned n_tests = 5;
 
 
 using tap::ok_if;
@@ -36,6 +36,16 @@ static void copyonwrite()
 	ok_if( b.capacity() == 23 );
 	
 	ok_if( b == "0123456789abcdefghij" );
+	
+	plus::var_string c = "it's the end of the world as we know it";
+	
+	char* c_data = c.begin();
+	
+	plus::string foo = c;  // must not be shared
+	
+	*c_data = 'I';
+	
+	ok_if( foo[0] == 'i' );
 }
 
 int main( int argc, const char *const *argv )
