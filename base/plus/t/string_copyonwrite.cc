@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 5;
+static const unsigned n_tests = 4;
 
 
 using tap::ok_if;
@@ -33,7 +33,11 @@ static void copyonwrite()
 	
 	ok_if( b.capacity() >= b.size() );
 	
-	ok_if( b.capacity() == 23 );
+	/*
+		We don't copy on write anymore, so b's initial capacity will be 19,
+		and after expansion might be 36.
+	*/
+	//ok_if( b.capacity() == 23 );
 	
 	ok_if( b == "0123456789abcdefghij" );
 	

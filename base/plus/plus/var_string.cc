@@ -25,11 +25,26 @@
 namespace plus
 {
 	
-	char* var_string::end()
+	var_string& var_string::assign( const move_t& m )
 	{
-		copy_on_write( true );
+		if ( &m.source != this )
+		{
+			/*
+				A buffer that can't be moved (because it's shared) is still
+				handled by copy_on_write(), but to be exception-safe, we'll
+				need to reallocate *before* resetting the source.  For this
+				case, move a copy of the source string.
+			*/
+			
+			string::assign( m.source.movable() ? m
+			                                   : string( m.source ).move() );
+			
+			copy_on_write( true );
+			
+			m.source.reset();
+		}
 		
-		return const_cast< char* >( string::end() );
+		return *this;
 	}
 	
 	char* var_string::erase_unchecked( char* p, size_type n )
@@ -277,8 +292,6 @@ namespace plus
 		p = insert_uninitialized( p, 1 );
 		
 		*p = c;
-		
-		copy_on_write( true );
 		
 		return p;
 	}
