@@ -17,6 +17,11 @@
 // POSIX
 #include <sys/types.h>
 
+// iota
+#ifndef IOTA_STRINGTRAITS_HH
+#include "iota/string_traits.hh"
+#endif
+
 // poseven
 #ifndef POSEVEN_TYPES_FD_T_HH
 #include "poseven/types/fd_t.hh"
@@ -31,7 +36,9 @@ namespace poseven
 	template < class String >
 	inline ssize_t write( fd_t fd, const String& string )
 	{
-		return write( fd, string.data(), string.length() );
+		return write( fd,
+		              iota::get_string_data( string ),
+		              iota::get_string_size( string ) );
 	}
 	
 }

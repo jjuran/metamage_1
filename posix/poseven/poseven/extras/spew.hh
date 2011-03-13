@@ -9,9 +9,6 @@
 #ifndef POSEVEN_EXTRAS_SPEW_HH
 #define POSEVEN_EXTRAS_SPEW_HH
 
-// plus
-#include "plus/string.hh"
-
 // poseven
 #ifndef POSEVEN_EXTRAS_WRITEALL_HH
 #include "poseven/extras/write_all.hh"
@@ -26,13 +23,23 @@ namespace poseven
 		write_all( fd, buffer, length );
 	}
 	
+	template < class String >
+	inline void spew( fd_t fd, const String& string )
+	{
+		spew( fd,
+		      iota::get_string_data( string ),
+		      iota::get_string_size( string ) );
+	}
+	
 	
 	void spew( const char* path, const char* buffer, size_t length );
 	
-	
-	inline void spew( const char* path, const plus::string& stuff )
+	template < class String >
+	inline void spew( const char* path, const String& stuff )
 	{
-		spew( path, stuff.data(), stuff.length() );
+		spew( path,
+		      iota::get_string_data( stuff ),
+		      iota::get_string_size( stuff ) );
 	}
 	
 }
