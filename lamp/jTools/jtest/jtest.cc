@@ -211,7 +211,7 @@ namespace tool
 	}
 	
 	
-	static plus::string PrefixLines( const plus::string text, const char* prefix = "# " )
+	static plus::string PrefixLines( const plus::string& text, const char* prefix = "# " )
 	{
 		plus::var_string result;
 		
