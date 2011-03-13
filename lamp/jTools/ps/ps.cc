@@ -89,8 +89,10 @@ namespace tool
 		return result;
 	}
 	
-	static plus::string report_process( const char* pid_name )
+	static void report_process( plus::var_string& report, const char* pid_name )
 	{
+		const size_t incoming_report_size = report.size();
+		
 		n::owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
 		
 		char buffer[ 4096 ];
@@ -153,8 +155,6 @@ namespace tool
 			stat_string += '+';
 		}
 		
-		plus::var_string report;
-		
 		report += left_padded( pid_name, pid_name + strlen( pid_name ), 5 );
 		
 		report += " ";
@@ -188,14 +188,12 @@ namespace tool
 			report.append( buffer, cmdline_end - 1 );
 		}
 		
-		if ( !globally_wide  &&  report.size() > 80 )
+		if ( !globally_wide  &&  report.size() > incoming_report_size + 80 )
 		{
-			report.resize( 80 );
+			report.resize( incoming_report_size + 80 );
 		}
 		
 		report += "\n";
-		
-		return report;
 	}
 	
 	static plus::string ps()
@@ -211,7 +209,7 @@ namespace tool
 				// A process could exit while we're examining it
 				try
 				{
-					output += report_process( ent->d_name );
+					 report_process( output, ent->d_name );
 				}
 				catch ( ... )
 				{
