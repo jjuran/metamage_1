@@ -89,17 +89,7 @@ namespace tool
 		return result;
 	}
 	
-	static inline plus::string left_padded( const plus::string& word, unsigned length )
-	{
-		return left_padded( &*word.begin(), &*word.end(), length );
-	}
-	
-	static inline plus::string right_padded( const plus::string& word, unsigned length )
-	{
-		return right_padded( &*word.begin(), &*word.end(), length );
-	}
-	
-	static plus::string report_process( const plus::string& pid_name )
+	static plus::string report_process( const char* pid_name )
 	{
 		n::owned< p7::fd_t > proc_pid = p7::openat( g_proc, pid_name, p7::o_rdonly | p7::o_directory );
 		
@@ -114,57 +104,43 @@ namespace tool
 		
 		const char* p_stat = close_paren + 2;
 		
-		const char* space = std::find( p_stat, end, ' ' );
+		const char* q_stat = std::find( p_stat, end, ' ' );
 		
-		plus::var_string stat_string( p_stat, space );
+		plus::var_string stat_string( p_stat, q_stat );
 		
-		const char* p_ppid = space + 1;
+		const char* p_ppid = q_stat + 1;
 		
-		space = std::find( p_ppid, end, ' ' );
+		const char* q_ppid = std::find( p_ppid, end, ' ' );
 		
-		plus::string ppid_string( p_ppid, space );
+		const char* p_pgid = q_ppid + 1;
 		
-		const char* p_pgid = space + 1;
+		const char* q_pgid = std::find( p_pgid, end, ' ' );
 		
-		space = std::find( p_pgid, end, ' ' );
+		const char* p_sid = q_pgid + 1;
 		
-		plus::string pgid_string( p_pgid, space );
+		const char* q_sid = std::find( p_sid, end, ' ' );
 		
-		const char* p_sid = space + 1;
+		const char* p_termname = q_sid + 1;
 		
-		space = std::find( p_sid, end, ' ' );
+		const char* q_termname = std::find( p_termname, end, ' ' );
 		
-		plus::string sid_string( p_sid, space );
+		const char* p_tpgid = q_termname + 1;
 		
-		const char* p_termname = space + 1;
+		pid_t pid = gear::parse_unsigned_decimal( pid_name );
 		
-		space = std::find( p_termname, end, ' ' );
-		
-		plus::var_string term_string( p_termname, space );
-		
-		const char* p_tpgid = space + 1;
-		
-		space = std::find( p_tpgid, end, ' ' );
-		
-		plus::string tpgid_string( p_tpgid, space );
-		
-		pid_t pid = gear::parse_unsigned_decimal( pid_name.c_str() );
-		
-		pid_t ppid  = gear::parse_unsigned_decimal( p_ppid  );
+	//	pid_t ppid  = gear::parse_unsigned_decimal( p_ppid  );
 		pid_t pgid  = gear::parse_unsigned_decimal( p_pgid  );
 		pid_t sid   = gear::parse_unsigned_decimal( p_sid   );
 		pid_t tpgid = gear::parse_unsigned_decimal( p_tpgid );
 		
-		if ( term_string.length() == STRLEN( "/gui/port/12345678/tty" ) )
+		if ( q_termname - p_termname == STRLEN( "/gui/port/12345678/tty" ) )
 		{
-			const char* address = term_string.data()
-			                    + STRLEN( "/gui/port/" );
-			
-			term_string.assign( address, STRLEN( "12345678" ) );
+			p_termname += STRLEN( "/gui/port/"        );
+			q_termname -= STRLEN(              "/tty" );
 		}
-		else if ( term_string.length() > STRLEN( "/dev/" ) )
+		else if ( q_termname - p_termname > STRLEN( "/dev/" ) )
 		{
-			term_string.erase( 0, STRLEN( "/dev/" ) );
+			p_termname += STRLEN( "/dev/" );
 		}
 		
 		if ( pid == sid )
@@ -179,27 +155,27 @@ namespace tool
 		
 		plus::var_string report;
 		
-		report += left_padded( pid_name, 5 );
+		report += left_padded( pid_name, pid_name + strlen( pid_name ), 5 );
 		
 		report += " ";
 		
-		report += right_padded( term_string, 8 );
+		report += right_padded( p_termname, q_termname, 8 );
 		
 		report += " ";
 		
-		report += right_padded( stat_string, 4 );
+		report += right_padded( stat_string.begin(), stat_string.end(), 4 );
 		
 		report += "  ";
 		
-		report += left_padded( ppid_string, 5 );
+		report += left_padded( p_ppid, q_ppid, 5 );
 		
 		report += "  ";
 		
-		report += left_padded( pgid_string, 5 );
+		report += left_padded( p_pgid, q_pgid, 5 );
 		
 		report += "  ";
 		
-		report += left_padded( sid_string, 5 );
+		report += left_padded( p_sid, q_sid, 5 );
 		
 		report += "  ";
 		
