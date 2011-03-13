@@ -150,7 +150,7 @@ namespace plus
 			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
-			void reset()  { reallocate( 0 ); }
+			char* reset( size_type n = 0 )  { return reallocate( n ); }
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			
