@@ -13,9 +13,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // Debug
 #include "debug/assert.hh"
 

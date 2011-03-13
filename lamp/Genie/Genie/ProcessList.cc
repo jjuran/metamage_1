@@ -11,6 +11,9 @@
 // Standard C
 #include <signal.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

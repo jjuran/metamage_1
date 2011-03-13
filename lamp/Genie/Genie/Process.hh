@@ -14,7 +14,6 @@
 
 // plus
 #include "plus/ref_count.hh"
-#include "plus/var_string.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>

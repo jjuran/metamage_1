@@ -30,9 +30,6 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // poseven
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"

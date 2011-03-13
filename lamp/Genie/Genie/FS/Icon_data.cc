@@ -11,9 +11,6 @@
 // Iota
 #include "iota/decimal.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
