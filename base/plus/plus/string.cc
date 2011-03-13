@@ -428,6 +428,25 @@ namespace plus
 		return *this;
 	}
 	
+	string& string::assign( const move_t& m )
+	{
+		if ( &m.source != this )
+		{
+			reset();
+			
+			memcpy( its_longs, m.source.its_longs, buffer_size );
+			
+			m.source.its_small_name[ max_offset ] = 0;
+			
+			if ( _policy() == ~delete_owned )
+			{
+				_policy() = ~delete_shared;
+			}
+		}
+		
+		return *this;
+	}
+	
 	string& string::assign( const string& other, size_type pos, size_type n )
 	{
 		const size_type other_size = other.size();

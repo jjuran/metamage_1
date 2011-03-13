@@ -59,6 +59,10 @@ namespace plus
 			{
 			}
 			
+			var_string( const move_t& m ) : string( m )
+			{
+			}
+			
 			var_string( const string& other, size_type pos, size_type n = npos )
 			:
 				string( other, pos, n )
@@ -77,6 +81,11 @@ namespace plus
 			var_string& operator=( const string& other )
 			{
 				return assign( other );
+			}
+			
+			var_string& operator=( const move_t& m )
+			{
+				return assign( m );
 			}
 			
 			var_string& operator=( const char* s )  { return assign( s ); }
@@ -129,6 +138,13 @@ namespace plus
 			var_string& assign( size_type n, char c )
 			{
 				string::assign( n, c );
+				
+				return *this;
+			}
+			
+			var_string& assign( const move_t& m )
+			{
+				string::assign( m );
 				
 				return *this;
 			}

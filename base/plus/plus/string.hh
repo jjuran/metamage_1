@@ -73,6 +73,15 @@ namespace plus
 			void set_length( size_type length );
 			
 			char* copy_on_write( bool tainting );
+			
+			struct move_t
+			{
+				string& source;
+				
+				move_t( string& s ) : source( s )
+				{
+				}
+			};
 		
 		public:
 			static const size_type npos = size_type( -1 );
@@ -97,10 +106,22 @@ namespace plus
 			
 			~string();
 			
+			string( const move_t& m )
+			{
+				its_small_name[ max_offset ] = 0;
+				
+				assign( m );
+			}
+			
 			string( const string& other, size_type pos, size_type n = npos );
 			
 			string           ( const string& other );
 			string& operator=( const string& other );
+			
+			string& operator=( const move_t& m )
+			{
+				return assign( m );
+			}
 			
 			static size_type max_size()
 			{
@@ -150,6 +171,8 @@ namespace plus
 			
 			string& assign( size_type n, char c );
 			
+			string& assign( const move_t& m );
+			
 			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
@@ -160,6 +183,10 @@ namespace plus
 			string& operator=( char c )  { return assign( 1, c ); }
 			
 			void swap( string& other );
+			
+			move_t move()  { return move_t( *this ); }
+			
+			friend move_t move( string& s )  { return s.move(); }
 			
 			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
 			
