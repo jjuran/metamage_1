@@ -361,7 +361,7 @@ namespace plus
 		}
 		else if ( its_alloc.capacity != 0 )
 		{
-			// Already owned by us
+			// delete_owned or read/write external buffer
 			return const_cast< char* >( its_alloc.pointer );
 		}
 		
