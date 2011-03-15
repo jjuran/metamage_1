@@ -552,7 +552,7 @@ static MD5::Result MD5String( const char* text )
 
 	static plus::string md5_hex( const MD5::Result& md5 )
 	{
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( sizeof md5.data * 2 );
 		

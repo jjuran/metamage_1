@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// plus
-#include "plus/var_string.hh"
-
 // Nitrogen
 #include "Nitrogen/Resources.hh"
 
@@ -29,7 +26,7 @@ namespace Genie
 		
 		const char* begin = *h + 1;
 		
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( length );
 		

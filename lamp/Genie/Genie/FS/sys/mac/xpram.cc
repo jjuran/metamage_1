@@ -15,9 +15,6 @@
 #include <Traps.h>
 #endif
 
-// plus
-#include "plus/var_string.hh"
-
 
 #if TARGET_CPU_68K
 
@@ -61,7 +58,7 @@ namespace Nitrogen
 	
 	inline plus::string ReadXPRam( UInt16 length = 256, UInt16 offset = 0 )
 	{
-		plus::var_string xpram;
+		plus::string xpram;
 		
 		char* p = xpram.reset( length );
 		

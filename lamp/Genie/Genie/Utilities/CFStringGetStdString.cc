@@ -10,9 +10,6 @@
 #include <MacErrors.h>
 #endif
 
-// plus
-#include "plus/var_string.hh"
-
 
 namespace Genie
 {
@@ -35,7 +32,7 @@ namespace Genie
 		                         0,
 		                         &usedBufLen );
 		
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( usedBufLen );
 		

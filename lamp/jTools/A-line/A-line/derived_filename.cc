@@ -40,16 +40,16 @@ namespace tool
 		// Length of project-relative path:
 		const std::size_t subpath_length = source_size - path_offset;
 		
-		plus::var_string result;
+		plus::string result;
 		
 		// Allocate space for the truncated filename
-		result.resize( subpath_length );
+		char* p = result.reset( subpath_length );
 		
 		// Copy the project-relative path, minus extension, replacing
 		// path separators with ':'
 		std::replace_copy( &source_data[ path_offset ],
 		                   &source_data[ source_size ],
-		                   &result[ 0 ],
+		                   p,
 		                   '/',
 		                   ':' );
 		

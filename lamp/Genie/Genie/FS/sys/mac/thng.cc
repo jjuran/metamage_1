@@ -350,7 +350,7 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			plus::var_string result;
+			plus::string result;
 			
 			char* p = result.reset( size );
 			

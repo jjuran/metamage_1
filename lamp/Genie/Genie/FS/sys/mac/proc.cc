@@ -10,7 +10,6 @@
 
 // plus
 #include "plus/make_string.hh"
-#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/Processes.hh"
@@ -39,7 +38,7 @@ namespace Genie
 	{
 		const bool extended = psn.highLongOfPSN != 0;
 		
-		plus::var_string name;
+		plus::string name;
 		
 		const size_t eight = sizeof psn.highLongOfPSN * 2;
 		

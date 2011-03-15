@@ -8,9 +8,6 @@
 // iota
 #include "iota/hexidecimal.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -42,7 +39,7 @@ namespace Genie
 	{
 		if ( key->name == NULL )
 		{
-			plus::var_string name;
+			plus::string name;
 			
 			char* p = name.reset( sizeof '.' + sizeof (unsigned) * 2 );  // 9
 			

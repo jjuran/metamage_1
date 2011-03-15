@@ -523,7 +523,7 @@ namespace tool
 		
 		for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 		{
-			plus::var_string source_dir = *it;
+			const plus::string& source_dir = *it;
 			
 			std::vector< plus::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
 			

@@ -8,7 +8,7 @@
 
 // plus
 #ifndef PLUS_VARSTRING_HH
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 #endif
 
 // nucleus
@@ -19,6 +19,13 @@
 #include "nucleus/string.hh"
 #endif
 
+
+namespace plus
+{
+	
+	class var_string;
+	
+}
 
 namespace nucleus
 {
@@ -42,7 +49,7 @@ namespace nucleus
 		{
 			const std::size_t size = getter.size();
 			
-			plus::var_string result;
+			plus::string result;
 			
 			char* p = result.reset( size );
 			
