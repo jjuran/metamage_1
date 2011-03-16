@@ -15,6 +15,9 @@ namespace conv
 	
 	class utf8_decoding_error {};
 	
+	std::size_t sizeof_utf8_from_mac( const char* begin, const char* end );
+	std::size_t sizeof_mac_from_utf8( const char* begin, const char* end );
+	
 	std::size_t utf8_from_mac( char*         buffer_out,
 	                           std::size_t   length,
 	                           const char**  pp_in,

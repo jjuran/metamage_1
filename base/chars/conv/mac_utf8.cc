@@ -42,6 +42,44 @@ namespace conv
 		return extended_ascii_from_unicode( uc, MacRoman_encoder_map );
 	}
 	
+	std::size_t sizeof_utf8_from_mac( const char* begin, const char* end )
+	{
+		std::size_t size = 0;
+		
+		for ( const char* p = begin;  p < end;  ++p )
+		{
+			const unichar_t uc = unicode_from_MacRoman( *p );
+			
+			size += chars::measure_utf8_bytes_for_unicode( uc );
+		}
+		
+		return size;
+	}
+	
+	std::size_t sizeof_mac_from_utf8( const char* begin, const char* end )
+	{
+		const char* p = begin;
+		
+		std::size_t size = 0;
+		
+		while ( p < end )
+		{
+			++size;
+			
+			const unsigned n_bytes = chars::count_utf8_bytes_in_char( *p );
+			
+			if ( n_bytes == 0 )
+			{
+				// subsequent conversion will throw exception
+				break;
+			}
+			
+			p += n_bytes;
+		}
+		
+		return size;
+	}
+	
 	std::size_t utf8_from_mac( char*         buffer_out,
 	                           std::size_t   length,
 	                           const char**  pp_in,

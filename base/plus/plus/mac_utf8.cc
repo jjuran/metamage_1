@@ -12,8 +12,8 @@
 // chars
 #include "conv/mac_utf8.hh"
 
-// plus
-#include "plus/var_string.hh"
+// Debug
+#include "debug/assert.hh"
 
 
 namespace plus
@@ -28,13 +28,15 @@ namespace plus
 	{
 		const char* end = begin + n;
 		
-		var_string result;
+		const std::size_t measured_size = conv::sizeof_utf8_from_mac( begin, end );
 		
-		char* p = result.reset( n * 3 );
+		string result;
 		
-		result.resize( conv::utf8_from_mac( p, n * 3, begin, n ) );
+		char* p = result.reset( measured_size );
 		
-		result.reserve( 0 );
+		const std::size_t actual_size = conv::utf8_from_mac( p, measured_size, begin, n );
+		
+		ASSERT( actual_size == measured_size );
 		
 		return result;
 	}
@@ -43,13 +45,15 @@ namespace plus
 	{
 		const char* end = begin + n;
 		
-		var_string result;
+		const std::size_t measured_size = conv::sizeof_mac_from_utf8( begin, end );
 		
-		char* p = result.reset( n );
+		string result;
 		
-		result.resize( conv::mac_from_utf8( p, n, begin, n ) );
+		char* p = result.reset( measured_size );
 		
-		result.reserve( 0 );
+		const std::size_t actual_size = conv::mac_from_utf8( p, measured_size, begin, n );
+		
+		ASSERT( actual_size == measured_size );
 		
 		return result;
 	}
