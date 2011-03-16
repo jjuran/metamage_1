@@ -18,7 +18,7 @@ namespace plus
 	{
 		string result;
 		
-		char* p = result.reset( sizeof 'quad' );
+		char* p = result.reset( 4 );  // sizeof 'quad'
 		
 		iota::encode_quad( q, p );
 		
