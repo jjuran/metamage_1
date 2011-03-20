@@ -118,7 +118,6 @@ const char	*strsignal(int);
 #endif
 
 /* GNU extensions */
-void* mempcpy( void* dest, const void* src, size_t n );
 char* stpcpy( char* dest, const char* src );
 __END_DECLS
 
