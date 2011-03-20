@@ -262,9 +262,7 @@ namespace tool
 	{
 		typedef std::vector< const char* >::const_iterator Iter;
 		
-		plus::var_string filename = lib;
-		
-		filename += ".lib";
+		plus::string filename = plus::concat( lib, STR_LEN( ".lib" ) );
 		
 		for ( Iter it = gLibraryDirs.begin();  it != gLibraryDirs.end();  ++it )
 		{
