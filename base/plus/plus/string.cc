@@ -15,6 +15,7 @@
 #include <stdexcept>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // debug
@@ -137,6 +138,10 @@ namespace plus
 			
 			case ~delete_basic:
 				::operator delete( (void*) pointer );
+				break;
+			
+			case ~delete_free:
+				free( (void*) pointer );
 				break;
 			
 			default:
