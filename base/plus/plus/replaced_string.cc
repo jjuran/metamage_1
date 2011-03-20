@@ -11,9 +11,6 @@
 // Standard C
 #include <string.h>
 
-// plus
-#include "plus/var_string.hh"
-
 
 namespace plus
 {
@@ -24,16 +21,23 @@ namespace plus
 	{
 		const char* data = s.c_str();
 		
-		if ( const char* slash = strchr( data, old_char ) )
+		if ( const char* first = strchr( data, old_char ) )
 		{
-			var_string new_string = s;
+			const size_t size = s.size();
 			
-			std::replace( new_string.begin() + (slash - data),
-			              new_string.end(),
-			              old_char,
-			              new_char );
+			string result;
 			
-			return new_string;
+			char* p = result.reset( size );
+			
+			std::copy( data, first, p );
+			
+			std::replace_copy( first,
+			                   data + size,
+			                   p + (first - data),
+			                   old_char,
+			                   new_char );
+			
+			return result;
 		}
 		
 		return s;
