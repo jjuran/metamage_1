@@ -7,8 +7,8 @@
 
 #include "plus/concat.hh"
 
-// plus
-#include "plus/var_string.hh"
+// more-libc
+#include "more/string.h"
 
 
 namespace plus
@@ -17,12 +17,12 @@ namespace plus
 	string concat( const char*  a, string::size_type  a_size,
 	               const char*  b, string::size_type  b_size )
 	{
-		var_string result;
+		string result;
 		
-		result.reserve( a_size + b_size );
+		void* p = result.reset( a_size + b_size );
 		
-		result.append( a, a_size );
-		result.append( b, b_size );
+		p = mempcpy( p, a, a_size );
+		p = mempcpy( p, b, b_size );
 		
 		return result;
 	}
