@@ -963,7 +963,7 @@ namespace tool
 			std::printf( "%s\n", subpath );
 		}
 		
-		plus::string subpath_dir = plus::concat( subpath, strlen( subpath ), STR_LEN( "/" ) );
+		plus::string subpath_dir = plus::concat( subpath, STR_LEN( "/" ) );
 		
 		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir.c_str() );
 	}
