@@ -125,13 +125,14 @@ namespace recall
 		try
 		{
 			demangler_traits< ReturnAddr >::demangle( result, name );
+			
+			return move( result );
 		}
 		catch ( ... )
 		{
-			result = name;
 		}
 		
-		return result;
+		return name;
 	}
 	
 	
