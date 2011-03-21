@@ -428,15 +428,16 @@ namespace tool
 		
 		for ( dir_iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
-			plus::var_string dir = *it;
+			const plus::string& dir = *it;
 			
-			if ( dir[ dir.size() - 1 ] != '/' )
-			{
-				dir += '/';
-			}
+			ASSERT( !dir.empty() );
+			
+			const bool has_trailing_slash = dir.end()[ -1 ] == '/';
+			
+			const char* sentinel = "//" + has_trailing_slash;
 			
 			// dir has trailing slash, add another for sentinel
-			plus::string result = dir + "/" +  relative_path;
+			plus::string result = dir + sentinel + relative_path;
 			
 			if ( io::item_exists( result ) )
 			{
