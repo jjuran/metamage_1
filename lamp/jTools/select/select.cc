@@ -15,7 +15,7 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/functions/open.hh"
@@ -86,9 +86,7 @@ namespace tool
 			
 			const char* name = name_of[ reader ];
 			
-			plus::var_string message = name;
-			
-			message += "\n";
+			const plus::string message = plus::concat( name, STR_LEN( "\n" ) );
 			
 			p7::write( p7::stdout_fileno, message );
 		}
