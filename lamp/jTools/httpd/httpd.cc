@@ -79,6 +79,12 @@ namespace tool
 		return c == '-' ? '_' : std::toupper( c );
 	}
 	
+	static bool eq( const char* a, size_t a_size,
+	                const char* b, size_t b_size )
+	{
+		return a_size == b_size  &&  std::equal( a, a + a_size, b );
+	}
+	
 	static void SetCGIVariables( const HTTP::MessageReceiver& request )
 	{
 		const HTTP::HeaderIndex& index = request.GetHeaderIndex();
@@ -87,26 +93,35 @@ namespace tool
 		
 		for ( HTTP::HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
 		{
-			plus::var_string name( stream + it->field_offset,
-			                       stream + it->colon_offset );
+			const size_t prefix_length = STRLEN( "HTTP_" );
+			
+			const size_t name_length = it->colon_offset - it->field_offset;
+			
+			plus::string name_string;
+			
+			char* p = name_string.reset( prefix_length + name_length );
+			
+			char* name = p + prefix_length;
+			
+			std::transform( stream + it->field_offset,
+			                stream + it->colon_offset,
+			                name,
+			                std::ptr_fun( ToCGI ) );
+			
+			const size_t len = name_length;
+			
+			const bool has_http =  !eq( name, len, STR_LEN( "CONTENT_LENGTH" ) )
+			                    && !eq( name, len, STR_LEN( "CONTENT_TYPE"   ) );
+			
+			if ( has_http )
+			{
+				name = (char*) memcpy( p, STR_LEN( "HTTP_" ) );
+			}
 			
 			plus::string value( stream + it->value_offset,
 			                    stream + it->crlf_offset );
 			
-			std::transform( name.begin(),
-			                name.end(),
-			                name.begin(),
-			                std::ptr_fun( ToCGI ) );
-			
-			if ( name == "CONTENT_TYPE"  ||  name == "CONTENT_LENGTH" )
-			{
-			}
-			else
-			{
-				name = "HTTP_" + name;
-			}
-			
-			setenv( name.c_str(), value.c_str(), 1 );
+			setenv( name, value.c_str(), 1 );
 		}
 	}
 	
