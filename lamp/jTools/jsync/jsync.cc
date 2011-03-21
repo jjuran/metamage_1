@@ -24,7 +24,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/concat.hh"
 #include "plus/var_string.hh"
 
 // Io

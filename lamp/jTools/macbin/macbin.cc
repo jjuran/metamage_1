@@ -18,7 +18,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/concat.hh"
+#include "plus/string.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
