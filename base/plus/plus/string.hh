@@ -65,6 +65,10 @@ namespace plus
 				alloc_state  its_alloc;
 				long         its_longs[ buffer_size_in_longs ];
 			};
+			
+			// The _ is mnemonic for ~
+			char  _policy() const  { return its_small_name[ max_offset ]; }
+			char& _policy()        { return its_small_name[ max_offset ]; }
 		
 		protected:
 			char* reallocate( size_type length );

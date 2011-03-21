@@ -177,7 +177,7 @@ namespace plus
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity;  // may be zero
 		
-		its_alloc._policy = ~policy;
+		_policy() = ~policy;
 	}
 	
 	string::string( const char* p, size_type length )
@@ -215,7 +215,7 @@ namespace plus
 	
 	string::~string()
 	{
-		dispose( its_alloc.pointer, its_alloc._policy );
+		dispose( its_alloc.pointer, _policy() );
 	}
 	
 	string::string( const string& other, size_type pos, size_type n )
@@ -260,8 +260,8 @@ namespace plus
 	
 	const char* string::data() const
 	{
-		return its_alloc._policy < 0 ? its_alloc.pointer
-		                             : its_small_name;
+		return _policy() < 0 ? its_alloc.pointer
+		                     : its_small_name;
 	}
 	
 	const char* string::end() const
@@ -281,13 +281,13 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		dispose( its_alloc.pointer, its_alloc._policy );
+		dispose( its_alloc.pointer, _policy() );
 		
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity;  // may be zero
 		
-		its_alloc._policy = ~policy;
+		_policy() = ~policy;
 		
 		return *this;
 	}
@@ -296,7 +296,7 @@ namespace plus
 	{
 		char const *const old_pointer = its_alloc.pointer;
 		
-		const char old_policy = its_alloc._policy;
+		const char old_policy = _policy();
 		
 		char* new_pointer = NULL;
 		
@@ -317,7 +317,7 @@ namespace plus
 			its_alloc.length   = length;
 			its_alloc.capacity = capacity;
 			
-			its_alloc._policy = ~delete_shared;
+			_policy() = ~delete_shared;
 		}
 		else
 		{
@@ -335,14 +335,12 @@ namespace plus
 	
 	char* string::copy_on_write( bool tainting )
 	{
-		const int _policy = its_alloc._policy;
-		
-		if ( _policy >= 0 )
+		if ( _policy() >= 0 )
 		{
 			return its_small_name;  // small string
 		}
 		
-		if ( _policy == ~delete_shared )
+		if ( _policy() == ~delete_shared )
 		{
 			const size_t refcount = ((size_t*) its_alloc.pointer)[ -1 ];
 			
@@ -355,7 +353,7 @@ namespace plus
 				if ( tainting )
 				{
 					// ...and now never will be
-					its_alloc._policy = ~delete_owned;
+					_policy() = ~delete_owned;
 				}
 				
 				return const_cast< char* >( its_alloc.pointer );
@@ -369,9 +367,9 @@ namespace plus
 		
 		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
 		
-		if ( tainting  &&  its_alloc._policy == ~delete_shared )
+		if ( tainting  &&  _policy() == ~delete_shared )
 		{
-			its_alloc._policy = ~delete_owned;
+			_policy() = ~delete_owned;
 		}
 		
 		return const_cast< char* >( data() );
@@ -446,9 +444,9 @@ namespace plus
 	
 	string& string::assign( const string& other )
 	{
-		if ( other.its_alloc._policy >= ~delete_shared )
+		if ( other._policy() >= ~delete_shared )
 		{
-			if ( other.its_alloc._policy == ~delete_shared )
+			if ( other._policy() == ~delete_shared )
 			{
 				size_t& refcount = ((size_t*) other.its_alloc.pointer)[ -1 ];
 				
@@ -468,7 +466,7 @@ namespace plus
 			// If this is a self-assignment, then *we* are either small, static,
 			// or shared with non-minimal refcount, and dispose() does nothing.
 			
-			dispose( its_alloc.pointer, its_alloc._policy );
+			dispose( its_alloc.pointer, _policy() );
 			
 			std::copy( other.its_longs,
 			           other.its_longs + buffer_size_in_longs,
