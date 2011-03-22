@@ -5,7 +5,7 @@
 
 #ifndef __MC68K__
 
-// more-posix
+// more-libc
 #include "more/string.h"
 
 
