@@ -42,10 +42,9 @@ namespace plus
 			
 			enum
 			{
-				min_small_string_length = 15,
-				buffer_size_in_longs    = min_small_string_length / sizeof (long) + 1,
-				buffer_size             = buffer_size_in_longs * sizeof (long),
-				max_offset              = buffer_size - 1
+				buffer_size_in_longs = 4,  // ptr/len/cap/etc
+				buffer_size          = buffer_size_in_longs * sizeof (long),
+				max_offset           = buffer_size - 1
 			};
 		
 		private:
@@ -54,10 +53,7 @@ namespace plus
 				const char*  pointer;
 				size_type    length;
 				size_type    capacity;
-				char         _12;
-				char         _13;
-				char         _14;
-				char         _policy;  // The _ is mnemonic for ~
+				const void*  misc;
 			};
 			
 			union
@@ -66,6 +62,10 @@ namespace plus
 				alloc_state  its_alloc;
 				long         its_longs[ buffer_size_in_longs ];
 			};
+			
+			// The _ is mnemonic for ~
+			char  _policy() const  { return its_small_name[ max_offset ]; }
+			char& _policy()        { return its_small_name[ max_offset ]; }
 		
 		protected:
 			char* reallocate( size_type length );
