@@ -6,8 +6,8 @@
 #ifndef MORE_STRING_H
 #define MORE_STRING_H
 
-// iota
-#include "iota/size_t.h"
+// more-libc
+#include "more/size.h"
 
 #ifdef __cplusplus
 extern "C" {

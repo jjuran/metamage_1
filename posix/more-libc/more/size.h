@@ -1,10 +1,10 @@
 /*
-	iota/size_t.h
-	-------------
+	more/size.h
+	-----------
 */
 
-#ifndef IOTA_SIZE_T_H
-#define IOTA_SIZE_T_H
+#ifndef MORE_SIZE_H
+#define MORE_SIZE_H
 
 #ifdef __MWERKS__
 	
