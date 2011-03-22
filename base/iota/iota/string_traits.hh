@@ -8,6 +8,9 @@
 #ifndef IOTA_STRINGTRAITS_HH
 #define IOTA_STRINGTRAITS_HH
 
+// Standard C/C++
+#include <cstring>
+
 
 namespace iota
 {
@@ -128,7 +131,10 @@ namespace iota
 	template <>
 	struct string_size< const char* >
 	{
-		static unsigned long get( const char* );
+		static unsigned long get( const char* s )
+		{
+			return std::strlen( s );
+		}
 	};
 	
 	template <>
