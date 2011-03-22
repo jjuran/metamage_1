@@ -124,7 +124,7 @@ namespace iota
 	{
 		static typename String::size_type get( const String& s )
 		{
-			return s.length();
+			return s.size();
 		}
 	};
 	
