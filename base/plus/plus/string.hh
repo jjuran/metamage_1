@@ -20,7 +20,6 @@ namespace plus
 		delete_never,  // propagates, for static storage like argv members
 		delete_shared, // Refcounted delete, for everything by default
 		delete_owned,  // Stored as shared, but can't be shared again
-		delete_none,   // copies will reallocate, for stack-based storage
 		delete_basic   // Standard-issue delete, for caller-supplied handoffs
 	};
 	

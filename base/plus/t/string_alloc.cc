@@ -49,19 +49,6 @@ static void handoff()
 	ok_if( a.data() != b.data() );
 }
 
-static void stack_copy()
-{
-	const char digits[] = "0123456789abcdef";
-	
-	plus::string a( digits, sizeof "0123456789abcdef" - 1, plus::delete_none );
-	
-	ok_if( a.data() == digits );
-	
-	plus::string b = a;
-	
-	ok_if( a.data() != b.data() );
-}
-
 static void static_nocopy()
 {
 	const char* digits = "0123456789abcdef";
@@ -109,8 +96,6 @@ int main( int argc, const char *const *argv )
 	large_copy();
 	
 	handoff();
-	
-	stack_copy();
 	
 	static_nocopy();
 	
