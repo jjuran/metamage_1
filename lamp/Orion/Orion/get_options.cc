@@ -37,7 +37,7 @@
 
 // plus
 #include "plus/exception.hh"
-#include "plus/string.hh"
+#include "plus/var_string.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -251,12 +251,15 @@ namespace orion
 		
 		const Iter end = global_option_map.end();
 		
+		plus::var_string output;
+		
 		for ( Iter it = global_option_map.begin();  it != end;  ++it )
 		{
-			plus::string line = it->first + "\n";
-			
-			p7::write( p7::stdout_fileno, line.data(), line.size() );
+			output += it->first;
+			output += '\n';
 		}
+		
+		p7::write( p7::stdout_fileno, output );
 		
 		exit( EXIT_SUCCESS );
 	}
