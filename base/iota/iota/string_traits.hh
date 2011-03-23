@@ -97,7 +97,7 @@ namespace iota
 	template < class String >
 	struct string_size
 	{
-		static typename String::size_type get( const String& s )
+		static std::size_t get( const String& s )
 		{
 			return s.size();
 		}
@@ -106,7 +106,7 @@ namespace iota
 	template <>
 	struct string_size< const char* >
 	{
-		static unsigned long get( const char* s )
+		static std::size_t get( const char* s )
 		{
 			return std::strlen( s );
 		}
@@ -166,7 +166,7 @@ namespace iota
 	template <>
 	struct string_size< const unsigned char* >
 	{
-		static unsigned long get( const unsigned char* s )
+		static std::size_t get( const unsigned char* s )
 		{
 			return s[0];
 		}
@@ -210,7 +210,7 @@ namespace iota
 	}
 	
 	template < class String >
-	inline unsigned long get_string_size( const String& s )
+	inline std::size_t get_string_size( const String& s )
 	{
 		return string_size< String >::get( s );
 	}
