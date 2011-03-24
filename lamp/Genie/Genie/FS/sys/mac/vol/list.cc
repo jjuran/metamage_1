@@ -490,7 +490,9 @@ namespace Genie
 		
 		plus::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
 		
-		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/drive/" + drive );
+		drive = "/sys/mac/drive/" + drive;
+		
+		return New_FSTree_SymbolicLink( parent, name, drive );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
@@ -510,7 +512,9 @@ namespace Genie
 		
 		plus::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
 		
-		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
+		unit = "/sys/mac/unit/" + unit;
+		
+		return New_FSTree_SymbolicLink( parent, name, unit );
 	}
 	
 	template < N::FolderType type >

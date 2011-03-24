@@ -186,7 +186,9 @@ namespace Genie
 		
 		plus::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
 		
-		return New_FSTree_SymbolicLink( parent, name, "/sys/mac/unit/" + unit );
+		unit = "/sys/mac/unit/" + unit;
+		
+		return New_FSTree_SymbolicLink( parent, name, unit );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
