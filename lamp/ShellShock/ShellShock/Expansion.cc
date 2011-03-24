@@ -761,7 +761,8 @@ namespace ShellShock
 		
 		for ( Iter it = words.begin() + 1;  it < words.end();  ++it )
 		{
-			result += " " + *it;
+			result += " ";
+			result += *it;
 		}
 		
 		return result;

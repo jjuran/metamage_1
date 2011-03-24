@@ -159,7 +159,8 @@ namespace tool
 			
 			void operator()( const plus::string& inNew )
 			{
-				myString += " " + inNew;
+				myString += " ";
+				myString += inNew;
 			}
 		
 		private:

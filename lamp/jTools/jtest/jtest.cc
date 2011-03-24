@@ -186,7 +186,8 @@ namespace tool
 						break;
 					}
 					
-					hereDoc += nextLine + "\n";
+					hereDoc += nextLine;
+					hereDoc += "\n";
 				}
 				
 				const bool premature_EOF = !found_terminator;
@@ -461,7 +462,8 @@ namespace tool
 		
 		if ( !reason.empty() )
 		{
-			result += " # TODO " + reason;
+			result += " # TODO ";
+			result += reason;
 		}
 		
 		result += "\n";
