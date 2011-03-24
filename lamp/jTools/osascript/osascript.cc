@@ -157,7 +157,11 @@ namespace tool
 		
 		nucleus::string cwd( stupid_buffer );
 		
-		nucleus::string cwdProperty = "property gCurrentWorkingDirectory : \"" + cwd + "\"";
+		nucleus::mutable_string cwdProperty;
+		
+		cwdProperty += "property gCurrentWorkingDirectory : \"";
+		cwdProperty += cwd;
+		cwdProperty += "\"";
 		
 		
 		return
