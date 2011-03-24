@@ -20,6 +20,12 @@
 	
 	#include <stddef.h>
 	
+	#ifdef __cplusplus
+		
+		#include <cstddef>
+		
+	#endif
+	
 #endif
 
 #endif
