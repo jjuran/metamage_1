@@ -19,16 +19,23 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
-#include <Traps.h>
 #include <MacErrors.h>
 #include <Devices.h>
 #include <Folders.h>
-#include <FSM.h>
-#include <Gestalt.h>
+#include <HFSVolumes.h>
 #include <TextUtils.h>
 #include <Script.h>
 #include <Math64.h>
+
+#if !TARGET_API_MAC_CARBON
+
+#include <Traps.h>
+#include <FSM.h>
+#include <Gestalt.h>
 #include <CodeFragments.h>
+
+#endif
+
 #include <stddef.h>
 
 #define	__COMPILINGMOREFILES
