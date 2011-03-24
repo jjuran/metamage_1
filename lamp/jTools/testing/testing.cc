@@ -616,22 +616,6 @@ static int TestOADC( int argc, char** argv )
 }
 
 
-static void print_string( ConstStr255Param str )
-{
-	plus::string output = plus::string( str ) + "\n";
-	
-	p7::write( p7::stdout_fileno, output );
-}
-
-static int TestSoundInput( int argc, char** argv )
-{
-	std::for_each( N::SoundInputDevice_Names().begin(),
-	               N::SoundInputDevice_Names().end(),
-	               std::ptr_fun( print_string ) );
-	
-	return 0;
-}
-
 /*
 static std::string Capitalize( std::string s )
 {
@@ -1384,7 +1368,6 @@ static const command_t global_commands[] =
 	{ "null",      TestNull       },
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
-	{ "si",        TestSoundInput },
 	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
 //	{ "svcs",      TestServices   },
