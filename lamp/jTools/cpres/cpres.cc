@@ -7,7 +7,7 @@
 #include <cstdio>
 
 // plus
-#include "plus/make_string.hh"
+#include "plus/string.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -214,7 +214,7 @@ namespace tool
 			{
 				++fail;
 				
-				plus::string destName = plus::make_string( dest.name );
+				plus::string destName( dest.name );
 				
 				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
 				                                err.Get(),      source_path,

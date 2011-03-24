@@ -59,7 +59,6 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/make_string.hh"
 #include "plus/var_string.hh"
 
 // Divergence
@@ -619,7 +618,7 @@ static int TestOADC( int argc, char** argv )
 
 static void print_string( ConstStr255Param str )
 {
-	plus::string output = plus::make_string( str ) + "\n";
+	plus::string output = plus::string( str ) + "\n";
 	
 	p7::write( p7::stdout_fileno, output );
 }

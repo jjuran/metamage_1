@@ -23,7 +23,6 @@
 
 // plus
 #include "plus/hexidecimal.hh"
-#include "plus/make_string.hh"
 #include "plus/var_string.hh"
 
 // poseven
