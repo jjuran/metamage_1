@@ -7,9 +7,6 @@
 
 #include "GetPathname.hh"
 
-// plus
-#include "plus/make_string.hh"
-
 // Nitrogen
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
@@ -21,7 +18,7 @@
 
 static plus::string GetMacPathname_Internal( const FSSpec& file )
 {
-	plus::string filename = plus::make_string( file.name );
+	const plus::string filename( file.name );
 	
 	if ( file.parID == fsRtParID )
 	{

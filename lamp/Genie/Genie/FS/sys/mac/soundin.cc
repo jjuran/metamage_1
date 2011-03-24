@@ -12,7 +12,6 @@
 #include "iota/decimal.hh"
 
 // plus
-#include "plus/make_string.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -153,7 +152,7 @@ namespace Genie
 			}
 		}
 		
-		return plus::make_string( result );
+		return plus::string( result );
 	}
 	
 	struct sys_mac_soundin_REF_name : readonly_property
@@ -164,7 +163,7 @@ namespace Genie
 			
 			const N::Str255 name = N::SPBGetIndexedDevice_Name( index );
 			
-			result = plus::make_string( name );
+			result = name;
 		}
 	};
 	

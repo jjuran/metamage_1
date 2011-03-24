@@ -5,9 +5,6 @@
 
 #include "Genie/FS/gui/new/button.hh"
 
-// plus
-#include "plus/make_string.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -191,7 +188,7 @@ namespace Genie
 	{
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = plus::make_string( gButtonMap[ that ].title );
+			result = gButtonMap[ that ].title;
 		}
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )

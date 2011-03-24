@@ -114,12 +114,26 @@ namespace plus
 			
 			string( const string& other, size_type pos, size_type n = npos );
 			
+			template < class T >
+			explicit string( const T& other )
+			{
+				its_small_name[ max_offset ] = max_offset;  // empty string
+				
+				assign( other );
+			}
+			
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
 			string& operator=( const move_t& m )
 			{
 				return assign( m );
+			}
+			
+			template < class T >
+			string& operator=( const T& other )
+			{
+				return assign( other );
 			}
 			
 			static size_type max_size()
@@ -174,6 +188,13 @@ namespace plus
 			
 			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
+			
+			template < class T >
+			string& assign( const T& other )
+			{
+				return assign( iota::get_string_data( other ),
+				               iota::get_string_size( other ) );
+			}
 			
 			char* reset( size_type n = 0 )  { return reallocate( n ); }
 			

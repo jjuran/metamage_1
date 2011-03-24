@@ -14,7 +14,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/make_string.hh"
+#include "plus/string.hh"
 
 // nucleus
 #include "nucleus/advance_until_done_sequence.hh"
@@ -120,23 +120,23 @@ namespace tool
 		
 		const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
 		
-		result.extension = plus::make_string( p );
+		result.extension = p;
 		
 		p += 1 + p[0];
 		
-		result.creatorAppName = plus::make_string( p );
+		result.creatorAppName = p;
 		
 		p += 1 + p[0];
 		
-		result.postAppName = plus::make_string( p );
+		result.postAppName = p;
 		
 		p += 1 + p[0];
 		
-		result.MIMEType = plus::make_string( p );
+		result.MIMEType = p;
 		
 		p += 1 + p[0];
 		
-		result.entryName = plus::make_string( p );
+		result.entryName = p;
 		
 		return result;
 	}

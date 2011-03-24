@@ -15,7 +15,6 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/make_string.hh"
 #include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
@@ -51,7 +50,7 @@ namespace Genie
 	
 	static inline plus::string colons_from_slashes( const unsigned char* mac_name )
 	{
-		return colons_from_slashes( plus::make_string( mac_name ) );
+		return colons_from_slashes( plus::string( mac_name ) );
 	}
 	
 	

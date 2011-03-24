@@ -8,9 +8,6 @@
 // iota
 #include "iota/hexidecimal.hh"
 
-// plus
-#include "plus/make_string.hh"
-
 // Nitrogen
 #include "Nitrogen/Processes.hh"
 
@@ -191,7 +188,7 @@ namespace Genie
 				
 				N::GetProcessInformation( key, processInfo );
 				
-				result = plus::make_string( name );
+				result = name;
 			}
 	};
 	

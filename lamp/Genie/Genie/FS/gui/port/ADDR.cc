@@ -16,7 +16,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/make_string.hh"
 #include "plus/serialize.hh"
 
 // nucleus
@@ -786,7 +785,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
-			result = plus::make_string( Find( that ).itsTitle );
+			result = Find( that ).itsTitle;
 		}
 		
 		static void set( const FSTree* that, const char* begin, const char* end, bool binary )

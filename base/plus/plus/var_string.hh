@@ -73,6 +73,12 @@ namespace plus
 			{
 			}
 			
+			template < class T >
+			explicit var_string( const T& other )
+			{
+				assign( other );
+			}
+			
 			var_string& operator=( const var_string& other )
 			{
 				return assign( other );
@@ -91,6 +97,12 @@ namespace plus
 			var_string& operator=( const char* s )  { return assign( s ); }
 			
 			var_string& operator=( char c )  { return assign( 1, c ); }
+			
+			template < class T >
+			var_string& operator=( const T& other )
+			{
+				return assign( other );
+			}
 			
 			const char* begin() const  { return string::begin(); }
 			const char* end  () const  { return string::end  (); }
@@ -163,6 +175,13 @@ namespace plus
 				string::assign( other );
 				
 				return *this;
+			}
+			
+			template < class T >
+			var_string& assign( const T& other )
+			{
+				return assign( iota::get_string_data( other ),
+				               iota::get_string_size( other ) );
 			}
 			
 			var_string& erase( size_type pos = 0, size_type n = npos );

@@ -10,7 +10,6 @@
 
 // plus
 #include "plus/hexidecimal.hh"
-#include "plus/make_string.hh"
 #include "plus/quad.hh"
 #include "plus/var_string.hh"
 
@@ -299,7 +298,7 @@ namespace Genie
 			}
 		}
 		
-		return plus::make_string( result );
+		return plus::string( result );
 	}
 	
 	struct sys_mac_thng_REF_name : readonly_property

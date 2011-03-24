@@ -25,7 +25,6 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/make_string.hh"
 #include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
@@ -174,7 +173,7 @@ namespace Genie
 			}
 		}
 		
-		return plus::make_string( item.name );
+		return plus::string( item.name );
 	}
 	
 	static plus::string GetUnixName( const FSSpec& item )

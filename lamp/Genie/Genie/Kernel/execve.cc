@@ -14,7 +14,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/make_string.hh"
+#include "plus/string.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
@@ -67,7 +67,7 @@ namespace Genie
 			}
 			catch ( const N::ErrMessage& msg )
 			{
-				errMsg = ", errMessage: " + plus::make_string( msg.errMessage ) + "\n";
+				errMsg = ", errMessage: " + plus::string( msg.errMessage ) + "\n";
 			}
 			catch ( ... )  {}
 			
