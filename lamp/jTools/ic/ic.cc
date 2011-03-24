@@ -114,6 +114,11 @@ namespace tool
 		plus::string  entryName;
 	};
 	
+	static inline void advance( const unsigned char*& p )
+	{
+		p += 1 + p[0];
+	}
+	
 	static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )
 	{
 		ICMapEntryStrings result;
@@ -122,19 +127,19 @@ namespace tool
 		
 		result.extension = p;
 		
-		p += 1 + p[0];
+		advance( p );
 		
 		result.creatorAppName = p;
 		
-		p += 1 + p[0];
+		advance( p );
 		
 		result.postAppName = p;
 		
-		p += 1 + p[0];
+		advance( p );
 		
 		result.MIMEType = p;
 		
-		p += 1 + p[0];
+		advance( p );
 		
 		result.entryName = p;
 		
