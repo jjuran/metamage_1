@@ -754,10 +754,10 @@ namespace tool
 		io::recursively_delete( path );
 	}
 	
-	static void recursively_sync_directory_contents( p7::fd_t     a_dirfd,
-	                                                 p7::fd_t     b_dirfd,
-	                                                 p7::fd_t     c_dirfd,
-	                                                 const char*  subpath )
+	static void recursively_sync_directory_contents( p7::fd_t             a_dirfd,
+	                                                 p7::fd_t             b_dirfd,
+	                                                 p7::fd_t             c_dirfd,
+	                                                 const plus::string&  subpath )
 	{
 		typedef p7::directory_contents_container directory_container;
 		
@@ -825,7 +825,7 @@ namespace tool
 		                   null_iterator(),
 		                   std::back_inserter( mutually_static ) );
 		
-		const char* path = subpath;
+		const char* path = subpath.c_str();
 		
 		typedef std::vector< plus::string >::const_iterator Iter;
 		
@@ -966,7 +966,7 @@ namespace tool
 		
 		plus::string subpath_dir = plus::concat( subpath, STR_LEN( "/" ) );
 		
-		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir.c_str() );
+		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath_dir );
 	}
 	
 	
@@ -1062,7 +1062,7 @@ namespace tool
 		recursively_sync_directory_contents( open_dir( global_local_root  ),
 		                                     open_dir( global_base_root   ),
 		                                     open_dir( global_remote_root ),
-		                                     "" );
+		                                     plus::string::null );
 		
 		return 0;
 	}
