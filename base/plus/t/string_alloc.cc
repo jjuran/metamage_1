@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 3 + 2 + 2 + 2 + 5;
+static const unsigned n_tests = 3 + 2 + 2 + 5;
 
 
 using tap::ok_if;
