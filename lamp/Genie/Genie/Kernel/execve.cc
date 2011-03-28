@@ -73,7 +73,7 @@ namespace Genie
 			
 			if ( err.Get() != fnfErr )
 			{
-				std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
+				std::printf( "execve: %s: OSStatus %d%s", path, int( err.Get() ), errMsg.c_str() );
 			}
 			
 			return set_errno_from_exception();
