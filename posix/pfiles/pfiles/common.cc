@@ -58,23 +58,20 @@ namespace io
 		return result;
 	}
 	
-	plus::string get_parent_directory_of_directory( const plus::string& pathname, overload )
+	plus::string get_parent_directory_of_directory( plus::var_string pathname, overload )
 	{
-		plus::var_string result = pathname;
+		const bool has_trailing_slash = pathname.back() == '/';
 		
-		if ( *(result.end() - 1) != '/' )
-		{
-			result += '/';
-		}
+		pathname += "/.." + has_trailing_slash;
 		
-		result += "..";
-		
-		return result;
+		return pathname;
 	}
 	
 	plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
 	{
-		if ( *(path.end() - 1) != '/' )
+		const bool has_trailing_slash = path.back() == '/';
+		
+		if ( !has_trailing_slash )
 		{
 			path += '/';
 		}
