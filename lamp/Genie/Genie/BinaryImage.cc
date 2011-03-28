@@ -211,7 +211,16 @@ namespace Genie
 			length = eof - offset;
 		}
 		
-		BinaryImage data = N::NewHandle( length );
+		BinaryImage data;
+		
+		try
+		{
+			data = N::NewHandle( length );
+		}
+		catch ( ... )
+		{
+			data = N::TempNewHandle( length );
+		}
 		
 		N::HLockHi( data );
 		
