@@ -36,19 +36,22 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
+	
 	struct BinaryFileMetadata
 	{
 		UInt32 dataForkLength;
 		UInt32 creationDate;
 		UInt32 modificationDate;
 		UInt32 fileID;
+		UInt32 vRefNum;  // vRefNum is SInt16, but this makes things simple
 		
 		BinaryFileMetadata()  {}
 		
 		BinaryFileMetadata( const HFileInfo& hFileInfo ) : dataForkLength  ( hFileInfo.ioFlLgLen ),
 		                                                   creationDate    ( hFileInfo.ioFlCrDat ),
 		                                                   modificationDate( hFileInfo.ioFlMdDat ),
-		                                                   fileID          ( hFileInfo.ioDirID   )
+		                                                   fileID          ( hFileInfo.ioDirID   ),
+		                                                   vRefNum         ( hFileInfo.ioVRefNum )
 		{
 		}
 		
@@ -57,7 +60,8 @@ namespace Genie
 			return    a.dataForkLength   == b.dataForkLength
 			       && a.creationDate     == b.creationDate
 			       && a.modificationDate == b.modificationDate
-			       && a.fileID           == b.fileID;
+			       && a.fileID           == b.fileID
+			       && a.vRefNum          == b.vRefNum;
 		}
 		
 		friend bool operator!=( const BinaryFileMetadata& a, const BinaryFileMetadata& b )
@@ -72,29 +76,7 @@ namespace Genie
 		BinaryFileMetadata  metadata;
 	};
 	
-	template < class T > static int cmp( const T& a, const T& b )
-	{
-		return   a < b ? -1
-		       : b < a ? +1
-		       :          0;
-	}
-	
-	static int less_PascalStrings( const unsigned char* a, const unsigned char* b )
-	{
-		return std::lexicographical_compare( a + 1, a + 1 + a[0], b + 1, b + 1 + b[0] );
-	}
-	
-	struct less_FSSpecs
-	{
-		bool operator()( const FSSpec& a, const FSSpec& b ) const
-		{
-			return   a.vRefNum != b.vRefNum ? a.vRefNum > b.vRefNum  // -1 before -2
-			       : a.parID   != b.parID   ? a.parID   < b.parID
-			       :                          less_PascalStrings( a.name, b.name );
-		}
-	};
-	
-	typedef std::map< FSSpec, BinaryImageCacheEntry, less_FSSpecs > BinaryImageCache;
+	typedef std::map< UInt32, BinaryImageCacheEntry > BinaryImageCache;
 	
 	static BinaryImageCache gBinaryImageCache;
 	
@@ -300,7 +282,9 @@ namespace Genie
 		
 		BinaryFileMetadata metadata = GetFileMetadata( file );
 		
-		BinaryImageCache::iterator it = gBinaryImageCache.find( file );
+		const UInt32 hash = metadata.vRefNum << 24 ^ metadata.fileID;
+		
+		BinaryImageCache::iterator it = gBinaryImageCache.find( hash );
 		
 		BinaryImageCacheEntry* cacheEntry = NULL;
 		
@@ -342,7 +326,7 @@ namespace Genie
 		}
 		else
 		{
-			cacheEntry = &gBinaryImageCache[ file ];  // insert null cache entry
+			cacheEntry = &gBinaryImageCache[ hash ];  // insert null cache entry
 		}
 		
 		// cacheEntry->image is NULL
