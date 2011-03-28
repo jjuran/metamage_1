@@ -9,8 +9,6 @@
 #include <string.h>
 
 // Standard C/C++
-#include <cctype>
-#include <cstdio>
 #include <cstring>
 
 // Standard C++
@@ -41,6 +39,7 @@
 #include "poseven/functions/close.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/dup2.hh"
+#include "poseven/functions/perror.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
@@ -200,7 +199,17 @@ namespace tool
 	{
 		if ( count > 0 )
 		{
-			std::printf( "%d test%s %s\n", count, count == 1 ? "" : "s", status );
+			plus::var_string output = iota::inscribe_decimal( count );
+			
+			output += " test";
+			
+			output += "s " + (count == 1);
+			
+			output += status;
+			
+			output += '\n';
+			
+			p7::write( p7::stdout_fileno, output );
 		}
 	}
 	
@@ -218,7 +227,7 @@ namespace tool
 			
 			if ( -1 == ::stat( test_file, &sb )  ||  S_ISDIR( sb.st_mode ) && (errno = EISDIR) )
 			{
-				std::fprintf( stderr, "th: %s: %s\n", test_file, std::strerror( errno ) );
+				p7::perror( "th", test_file );
 				
 				return EXIT_FAILURE;
 			}
