@@ -28,9 +28,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/Utilities/AsyncIO.hh"
-
 
 namespace Genie
 {
@@ -321,19 +318,12 @@ namespace Genie
 				
 				N::Handle h = image.get();
 				
-				if ( h == NULL )
-				{
-					// If the handle is NULL, then another process is loading
-					// the image.
-					
-					const bool simultaneous_load_never_occurs = false;
-					
-					ASSERT( simultaneous_load_never_occurs );
-					
-					AsyncYield();
-					
-					goto retry;
-				}
+				/*
+					h could theoretically be NULL here *if* the code loader
+					used async I/O, but it doesn't.
+				*/
+				
+				ASSERT( h != NULL );
 				
 				// Is the handle unpurged?
 				if ( *h )
@@ -360,7 +350,7 @@ namespace Genie
 		BinaryImageCacheEntry newEntry;
 		
 		newEntry.metadata = metadata;
-		newEntry.image    = ReadImageFromFile( file );  // this may async-yield
+		newEntry.image    = ReadImageFromFile( file );
 		
 		// Mark it purgeable for when we later unlock it
 		N::HPurge( newEntry.image );
