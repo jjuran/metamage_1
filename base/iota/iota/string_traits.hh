@@ -18,6 +18,40 @@
 namespace iota
 {
 	
+	// Overloads so Metrowerks C++ will inline them
+	
+	inline const char* get_string_c_str( const char* s )
+	{
+		return s;
+	}
+	
+	inline const char* get_string_data( const char* s )
+	{
+		return s;
+	}
+	
+	inline std::size_t get_string_size( const char* s )
+	{
+		return std::strlen( s );
+	}
+	
+	
+	inline const char* get_string_c_str( char* s )
+	{
+		return s;
+	}
+	
+	inline const char* get_string_data( char* s )
+	{
+		return s;
+	}
+	
+	inline std::size_t get_string_size( char* s )
+	{
+		return std::strlen( s );
+	}
+	
+	
 	template < class String >
 	struct string_c_str
 	{
@@ -135,7 +169,17 @@ namespace iota
 		return get_pascal_string_data( s );
 	}
 	
+	inline const char* get_string_data( unsigned char* s )
+	{
+		return get_pascal_string_data( s );
+	}
+	
 	inline std::size_t get_string_size( const unsigned char* s )
+	{
+		return get_pascal_string_size( s );
+	}
+	
+	inline std::size_t get_string_size( unsigned char* s )
 	{
 		return get_pascal_string_size( s );
 	}
