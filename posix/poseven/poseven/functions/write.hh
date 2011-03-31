@@ -17,9 +17,9 @@
 // POSIX
 #include <sys/types.h>
 
-// iota
-#ifndef IOTA_STRINGTRAITS_HH
-#include "iota/string_traits.hh"
+// plus
+#ifndef PLUS_STRING_HH
+#include "plus/string.hh"
 #endif
 
 // poseven
@@ -33,12 +33,11 @@ namespace poseven
 	
 	ssize_t write( fd_t fd, const char* buffer, size_t bytes_requested );
 	
-	template < class String >
-	inline ssize_t write( fd_t fd, const String& string )
+	inline ssize_t write( fd_t fd, const plus::string& string )
 	{
 		return write( fd,
-		              iota::get_string_data( string ),
-		              iota::get_string_size( string ) );
+		              string.data(),
+		              string.size() );
 	}
 	
 }

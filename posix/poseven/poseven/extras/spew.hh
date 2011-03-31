@@ -23,23 +23,21 @@ namespace poseven
 		write_all( fd, buffer, length );
 	}
 	
-	template < class String >
-	inline void spew( fd_t fd, const String& string )
+	inline void spew( fd_t fd, const plus::string& string )
 	{
 		spew( fd,
-		      iota::get_string_data( string ),
-		      iota::get_string_size( string ) );
+		      string.data(),
+		      string.size() );
 	}
 	
 	
 	void spew( const char* path, const char* buffer, size_t length );
 	
-	template < class String >
-	inline void spew( const char* path, const String& stuff )
+	inline void spew( const char* path, const plus::string& string )
 	{
 		spew( path,
-		      iota::get_string_data( stuff ),
-		      iota::get_string_size( stuff ) );
+		      string.data(),
+		      string.size() );
 	}
 	
 }
