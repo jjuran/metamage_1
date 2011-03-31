@@ -80,6 +80,18 @@ namespace Nitrogen
 	typedef Str<  27 >  Str27;
 	typedef Str<  15 >  Str15;
 	
+	template < unsigned char length >
+	inline const char* get_string_data( const Str< length >& s )
+	{
+		return iota::get_pascal_string_data( s );
+	};
+	
+	template < unsigned char length >
+	inline std::size_t get_string_size( const Str< length >& s )
+	{
+		return iota::get_pascal_string_size( s );
+	};
+	
 }
 
 namespace iota
