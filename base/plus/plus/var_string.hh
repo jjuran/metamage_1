@@ -259,6 +259,16 @@ namespace plus
 			var_string& operator+=( const string& s )  { return append( s ); }
 			var_string& operator+=( const char*   s )  { return append( s ); }
 			var_string& operator+=( char          c )  { return append( 1, c ); }
+			
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			var_string& operator+=( const unsigned char* s )
+			{
+				return append( iota::get_pascal_string_data( s ),
+				               iota::get_pascal_string_size( s ) );
+			}
+			
+		#endif
 	};
 	
 }
