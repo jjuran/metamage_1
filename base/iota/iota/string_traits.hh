@@ -19,13 +19,6 @@ namespace iota
 {
 	
 	template < class String >
-	struct string_const_pointer
-	{
-		typedef const char* type;
-	};
-	
-	
-	template < class String >
 	struct string_c_str
 	{
 		static const char* get( const String& s )
@@ -207,7 +200,7 @@ namespace iota
 #endif
 	
 	template < class String >
-	inline typename string_const_pointer< String >::type
+	inline const char*
 	//
 	get_string_c_str( const String& s )
 	{
@@ -215,7 +208,7 @@ namespace iota
 	}
 	
 	template < class String >
-	inline typename string_const_pointer< String >::type
+	inline const char*
 	//
 	get_string_data( const String& s )
 	{
