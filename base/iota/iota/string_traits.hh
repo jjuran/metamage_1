@@ -11,6 +11,9 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/pascal_string.hh"
+
 
 namespace iota
 {
@@ -132,7 +135,17 @@ namespace iota
 #endif
 	
 	
-#if defined( __MACOS__ )  ||  defined( __APPLE__ )
+#if IOTA_HAS_PASCAL_STRINGS
+	
+	inline const char* get_string_data( const unsigned char* s )
+	{
+		return get_pascal_string_data( s );
+	}
+	
+	inline std::size_t get_string_size( const unsigned char* s )
+	{
+		return get_pascal_string_size( s );
+	}
 	
 	template <>
 	struct string_data< const unsigned char* >
