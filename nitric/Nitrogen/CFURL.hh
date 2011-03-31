@@ -83,9 +83,12 @@ namespace Nitrogen
 	                                                        CFStringEncoding  encoding,
 	                                                        CFURLRef          baseURL )
 	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
 		return CFURLCreateWithBytes( allocator,
-		                             reinterpret_cast< const UInt8* >( iota::get_string_data( string ) ),
-		                             iota::get_string_size( string ),
+		                             reinterpret_cast< const UInt8* >( get_string_data( string ) ),
+		                             get_string_size( string ),
 		                             encoding,
 		                             baseURL );
     }

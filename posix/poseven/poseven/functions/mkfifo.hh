@@ -31,7 +31,9 @@ namespace poseven
 	template < class String >
 	inline void mkfifo( const String& path, mode_t mode )
 	{
-		mkfifo( iota::get_string_c_str( path ), mode );
+		using iota::get_string_c_str;
+		
+		mkfifo( get_string_c_str( path ), mode );
 	}
 	
 }

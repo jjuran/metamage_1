@@ -93,8 +93,11 @@ namespace Nitrogen
 	template < class String >
 	inline nucleus::owned< Mac::DriverRefNum > MacOpenDriver( const String& name )
 	{
-		return MacOpenDriver( Str255( iota::get_string_data( name ),
-		                              iota::get_string_size( name ) ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return MacOpenDriver( Str255( get_string_data( name ),
+		                              get_string_size( name ) ) );
 	}
 	
 #endif

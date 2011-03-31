@@ -31,7 +31,9 @@ namespace poseven
 	template < class String >
 	inline void chmod( const String& path, mode_t mode )
 	{
-		chmod( iota::get_string_c_str( path ), mode );
+		using iota::get_string_c_str;
+		
+		chmod( get_string_c_str( path ), mode );
 	}
 	
 }

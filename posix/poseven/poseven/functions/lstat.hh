@@ -32,13 +32,17 @@ namespace poseven
 	inline bool lstat( const String&  path,
 	                   struct stat&   sb )
 	{
-		return lstat( iota::get_string_c_str( path ), sb );
+		using iota::get_string_c_str;
+		
+		return lstat( get_string_c_str( path ), sb );
 	}
 	
 	template < class String >
 	inline struct ::stat lstat( const String& path )
 	{
-		return lstat( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		return lstat( get_string_c_str( path ) );
 	}
 	
 }

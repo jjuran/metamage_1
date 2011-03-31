@@ -43,8 +43,11 @@ namespace Nitrogen
 	template < class String >
 	FontID GetFNum( const String& name )
 	{
-		return GetFNum( Str255( iota::get_string_data( name ),
-		                        iota::get_string_size( name ) ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return GetFNum( Str255( get_string_data( name ),
+		                        get_string_size( name ) ) );
 	}
 	
   }

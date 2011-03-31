@@ -165,8 +165,11 @@ namespace Nitrogen {
                                                                  CFStringEncoding  encoding,
                                                                  bool              isExternalRepresentation )
      {
-      return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8* >( iota::get_string_data( string ) ),
-                                                nucleus::convert< CFIndex      >( iota::get_string_size( string ) ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+      return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8* >( get_string_data( string ) ),
+                                                nucleus::convert< CFIndex      >( get_string_size( string ) ),
                                                 encoding,
                                                 isExternalRepresentation );
      }

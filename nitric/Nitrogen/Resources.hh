@@ -222,15 +222,21 @@ namespace Nitrogen
 	template < class String >
 	inline Handle GetNamedResource( ResType type, const String& name )
 	{
-		return GetNamedResource( type, Str255( iota::get_string_data( name ),
-		                                       iota::get_string_size( name ) ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return GetNamedResource( type, Str255( get_string_data( name ),
+		                                       get_string_size( name ) ) );
 	}
 	
 	template < class String >
 	inline Handle Get1NamedResource( ResType type, const String& name )
 	{
-		return Get1NamedResource( type, Str255( iota::get_string_data( name ),
-		                                        iota::get_string_size( name ) ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return Get1NamedResource( type, Str255( get_string_data( name ),
+		                                        get_string_size( name ) ) );
 	}
 	
 	void MacLoadResource( Handle r );
@@ -347,9 +353,12 @@ namespace Nitrogen
 	                                                    const UniString&  forkName,
 	                                                    Mac::FSIOPerm     permissions )
 	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
 		return FSOpenResourceFile( ref,
-		                           iota::get_string_size( forkName ),
-		                           iota::get_string_data( forkName ),
+		                           get_string_size( forkName ),
+		                           get_string_data( forkName ),
 		                           permissions );
 	}
 	

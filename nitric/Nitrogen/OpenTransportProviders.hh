@@ -162,7 +162,9 @@ namespace Nitrogen
 	template < class String >
 	inline InetHost OTInetStringToHost( const String& str )
 	{
-		return OTInetStringToHost( iota::get_string_c_str( str ) );
+		using iota::get_string_c_str;
+		
+		return OTInetStringToHost( get_string_c_str( str ) );
 	}
 	
 	nucleus::string OTInetHostToString( InetHost host );

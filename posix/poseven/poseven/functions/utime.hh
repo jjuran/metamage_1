@@ -39,19 +39,25 @@ namespace poseven
 	template < class String >
 	inline void utime( const String& path )
 	{
-		utime( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		utime( get_string_c_str( path ) );
 	}
 	
 	template < class String >
 	inline void utime( const String& path, const utimbuf& time_buffer )
 	{
-		utime( iota::get_string_c_str( path ), time_buffer );
+		using iota::get_string_c_str;
+		
+		utime( get_string_c_str( path ), time_buffer );
 	}
 	
 	template < class String >
 	inline void utime( const String& path, const time_t& mod_time )
 	{
-		utime( iota::get_string_c_str( path ), mod_time );
+		using iota::get_string_c_str;
+		
+		utime( get_string_c_str( path ), mod_time );
 	}
 	
 }

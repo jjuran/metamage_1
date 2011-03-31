@@ -47,7 +47,9 @@ namespace poseven
 	                     struct stat&   sb,
 	                     at_flags_t     flags = at_flags_t() )
 	{
-		return fstatat( dirfd, iota::get_string_c_str( path ), sb, flags );
+		using iota::get_string_c_str;
+		
+		return fstatat( dirfd, get_string_c_str( path ), sb, flags );
 	}
 	
 	template < class String >
@@ -55,7 +57,9 @@ namespace poseven
 	                              const String&  path,
 	                              at_flags_t     flags = at_flags_t() )
 	{
-		return fstatat( dirfd, iota::get_string_c_str( path ), flags );
+		using iota::get_string_c_str;
+		
+		return fstatat( dirfd, get_string_c_str( path ), flags );
 	}
 	
 }

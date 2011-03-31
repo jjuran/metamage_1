@@ -26,7 +26,9 @@ namespace poseven
 	template < class String >
 	inline void unlink( const String& path )
 	{
-		unlink( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		unlink( get_string_c_str( path ) );
 	}
 	
 }

@@ -89,8 +89,11 @@ namespace Nitrogen
 	template < class String >
 	inline void TESetText( const String& text, TEHandle hTE )
 	{
-		TESetText( iota::get_string_data( text ),
-		           iota::get_string_size( text ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		TESetText( get_string_data( text ),
+		           get_string_size( text ),
 		           hTE );
 	}
 	
@@ -133,8 +136,11 @@ namespace Nitrogen
 	template < class String >
 	inline void TEInsert( const String& text, TEHandle hTE )
 	{
-		TEInsert( iota::get_string_data( text ),
-		          iota::get_string_size( text ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		TEInsert( get_string_data( text ),
+		          get_string_size( text ),
 		          hTE );
 	}
 	
@@ -161,8 +167,11 @@ namespace Nitrogen
 	                       const Rect&    box,
 	                       Justification  just = teFlushLeft )
 	{
-		TETextBox( iota::get_string_data( text ),
-		           iota::get_string_size( text ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		TETextBox( get_string_data( text ),
+		           get_string_size( text ),
 		           box,
 		           just );
 	}

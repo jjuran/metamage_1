@@ -107,8 +107,11 @@ namespace Nitrogen
 	template < class String >
 	inline void LAddToCell( const String& data, Cell cell, ListHandle lHandle )
 	{
-		::LAddToCell( iota::get_string_data( data ),
-		              iota::get_string_size( data ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		::LAddToCell( get_string_data( data ),
+		              get_string_size( data ),
 		              cell,
 		              lHandle );
 	}
@@ -128,8 +131,11 @@ namespace Nitrogen
 	template < class String >
 	inline void LSetCell( const String& data, Cell cell, ListHandle lHandle )
 	{
-		::LSetCell( iota::get_string_data( data ),
-		            iota::get_string_size( data ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		::LSetCell( get_string_data( data ),
+		            get_string_size( data ),
 		            cell,
 		            lHandle );
 	}

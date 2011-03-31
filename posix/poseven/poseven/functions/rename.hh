@@ -26,7 +26,9 @@ namespace poseven
 	template < class String1, class String2 >
 	inline void rename( const String1& from, const String2& to )
 	{
-		rename( iota::get_string_c_str( from ), iota::get_string_c_str( to ) );
+		using iota::get_string_c_str;
+		
+		rename( get_string_c_str( from ), get_string_c_str( to ) );
 	}
 	
 }

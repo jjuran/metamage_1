@@ -22,7 +22,9 @@ namespace poseven
 	template < class String >
 	inline void rmdir( const String& path )
 	{
-		rmdir( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		rmdir( get_string_c_str( path ) );
 	}
 	
 }

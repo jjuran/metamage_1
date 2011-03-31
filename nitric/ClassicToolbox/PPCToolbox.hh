@@ -99,8 +99,11 @@ namespace nucleus
 		template < class String >
 		PPCXTIAddress operator()( const String& address ) const
 		{
-			const char*        address_data = iota::get_string_data( address );
-			const std::size_t  address_size = iota::get_string_size( address );
+			using iota::get_string_data;
+			using iota::get_string_size;
+			
+			const char*        address_data = get_string_data( address );
+			const std::size_t  address_size = get_string_size( address );
 			
 			return operator()( address_data, address_size );
 		}

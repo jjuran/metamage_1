@@ -84,8 +84,11 @@ namespace Nitrogen
 	                             ConstStr32Param  zoneName   = "\p",
 	                             ConstStr31Param  serverName = "\p" )
 	{
-		return NewAliasMinimalFromFullPath( iota::get_string_data( fullPath ),
-		                                    iota::get_string_size( fullPath ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return NewAliasMinimalFromFullPath( get_string_data( fullPath ),
+		                                    get_string_size( fullPath ),
 		                                    zoneName,
 		                                    serverName );
 	}

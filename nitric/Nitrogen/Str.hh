@@ -44,8 +44,11 @@ namespace Nitrogen
 	                                 unsigned char*  destination,
 	                                 unsigned char   destinationLength )
 	{
-		CopyToPascalString( iota::get_string_data( source ),
-		                    iota::get_string_size( source ),
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		CopyToPascalString( get_string_data( source ),
+		                    get_string_size( source ),
 		                    destination,
 		                    destinationLength );
 	}

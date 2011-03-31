@@ -507,9 +507,12 @@ namespace Nitrogen
 	template < class String >
 	void DTSetComment( DTPBRec& pb, const String& comment )
 	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
 		DTSetComment( pb,
-		              iota::get_string_data( comment ),
-		              iota::get_string_size( comment ) );
+		              get_string_data( comment ),
+		              get_string_size( comment ) );
 	}
 	
 	void FSpDTSetComment( const FSSpec& file, const char* comment, unsigned length );
@@ -517,9 +520,12 @@ namespace Nitrogen
 	template < class String >
 	void FSpDTSetComment( const FSSpec& file, const String& comment )
 	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
 		FSpDTSetComment( file,
-		                 iota::get_string_data( comment ),
-		                 iota::get_string_size( comment ) );
+		                 get_string_data( comment ),
+		                 get_string_size( comment ) );
 	}
 	
 	// PBDTRemoveCommentSync
@@ -627,8 +633,11 @@ namespace Nitrogen
 	template < class String >
 	inline void FSpRename( const FSSpec& item, const String& newName )
 	{
-		FSpRename( item, Str255( iota::get_string_data( newName ),
-		                         iota::get_string_size( newName ) ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		FSpRename( item, Str255( get_string_data( newName ),
+		                         get_string_size( newName ) ) );
 	}
 	
 	// dest is the directory to move source *into*, not the actual new location of source.
@@ -1810,7 +1819,9 @@ namespace Nitrogen
 	template < class String >
 	inline FSPathMakeRef_Result FSPathMakeRef( const String& path )
 	{
-		return FSPathMakeRef( reinterpret_cast< const UInt8* >( iota::get_string_c_str( path ) ) );
+		using iota::get_string_c_str;
+		
+		return FSPathMakeRef( reinterpret_cast< const UInt8* >( get_string_c_str( path ) ) );
 	}
 	
 }

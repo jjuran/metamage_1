@@ -34,7 +34,9 @@ namespace poseven
 	template < class String >
 	inline void mkdirat( const String& path, mode_t mode = _777 )
 	{
-		mkdirat( iota::get_string_c_str( path ), mode );
+		using iota::get_string_c_str;
+		
+		mkdirat( get_string_c_str( path ), mode );
 	}
 	
 }

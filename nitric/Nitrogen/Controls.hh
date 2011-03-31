@@ -250,9 +250,12 @@ namespace Nitrogen
 	template < class String >
 	inline void SetControlTitle( ControlRef control, const String& title )
 	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
 		::SetControlTitle( control,
-		                   Str255( iota::get_string_data( title ),
-		                           iota::get_string_size( title ) ) );
+		                   Str255( get_string_data( title ),
+		                           get_string_size( title ) ) );
 	}
 	
 	// 2006, 2018, 2032, 2044, 2058, 2070

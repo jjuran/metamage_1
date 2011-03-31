@@ -432,9 +432,12 @@ namespace Nitrogen
                                                                 const FSCatalogInfo&   inCatalogInfo,
                                                                 IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
       return GetIconRefFromFileInfo( inRef,
-                                     iota::get_string_size( inFileName ),
-                                     iota::get_string_data( inFileName ),
+                                     get_string_size( inFileName ),
+                                     get_string_data( inFileName ),
                                      inWhichInfo,
                                      inCatalogInfo,
                                      inUsageFlags );
@@ -445,9 +448,12 @@ namespace Nitrogen
                                                                 const UniString&       inFileName,
                                                                 IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
       return GetIconRefFromFileInfo( inRef,
-                                     iota::get_string_size( inFileName ),
-                                     iota::get_string_data( inFileName ),
+                                     get_string_size( inFileName ),
+                                     get_string_data( inFileName ),
                                      inUsageFlags );
      }
 

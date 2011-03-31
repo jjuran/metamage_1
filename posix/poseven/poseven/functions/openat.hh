@@ -42,7 +42,9 @@ namespace poseven
 	//
 	openat( fd_t dirfd, const String& path, open_flags_t flags, mode_t mode = _666 )
 	{
-		return openat( dirfd, iota::get_string_c_str( path ), flags, mode );
+		using iota::get_string_c_str;
+		
+		return openat( dirfd, get_string_c_str( path ), flags, mode );
 	}
 	
 }

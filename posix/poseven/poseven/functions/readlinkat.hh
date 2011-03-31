@@ -28,7 +28,9 @@ namespace poseven
 	template < class String >
 	inline plus::string readlinkat( fd_t dirfd, const String& path )
 	{
-		return readlinkat( dirfd, iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		return readlinkat( dirfd, get_string_c_str( path ) );
 	}
 	
 }

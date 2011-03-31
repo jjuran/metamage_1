@@ -31,7 +31,9 @@ namespace poseven
 	template < class String >
 	inline nucleus::owned< dir_t > opendir( const String& path )
 	{
-		return opendir( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		return opendir( get_string_c_str( path ) );
 	}
 	
 }

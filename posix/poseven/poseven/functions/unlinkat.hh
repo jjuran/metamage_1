@@ -33,7 +33,9 @@ namespace poseven
 	template < class String >
 	inline void unlinkat( const String& path )
 	{
-		unlinkat( iota::get_string_c_str( path ) );
+		using iota::get_string_c_str;
+		
+		unlinkat( get_string_c_str( path ) );
 	}
 	
 }

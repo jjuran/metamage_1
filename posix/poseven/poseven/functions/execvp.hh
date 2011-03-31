@@ -31,7 +31,9 @@ namespace poseven
 	template < class String >
 	inline void execvp( const String& path, char const *const *argv )
 	{
-		execvp( iota::get_string_c_str( path ), argv );
+		using iota::get_string_c_str;
+		
+		execvp( get_string_c_str( path ), argv );
 	}
 	
 }

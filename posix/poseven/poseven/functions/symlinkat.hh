@@ -29,7 +29,9 @@ namespace poseven
 	template < class String1, class String2 >
 	inline void symlinkat( const String1& from, fd_t dirfd, const String2& to )
 	{
-		symlinkat( iota::get_string_c_str( from ), dirfd, iota::get_string_c_str( to ) );
+		using iota::get_string_c_str;
+		
+		symlinkat( get_string_c_str( from ), dirfd, get_string_c_str( to ) );
 	}
 	
 }
