@@ -58,5 +58,43 @@ namespace io
 		return result;
 	}
 	
+	plus::string get_parent_directory_of_directory( const plus::string& pathname, overload )
+	{
+		plus::var_string result = pathname;
+		
+		if ( *(result.end() - 1) != '/' )
+		{
+			result += '/';
+		}
+		
+		result += "..";
+		
+		return result;
+	}
+	
+	plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
+	{
+		if ( *(path.end() - 1) != '/' )
+		{
+			path += '/';
+		}
+		
+		path.append( name, length );
+		
+		return path;
+	}
+	
+	std::size_t get_file_size( poseven::fd_t stream, overload )
+	{
+		struct stat status = poseven::fstat( stream );
+		
+		if ( !S_ISREG( status.st_mode ) )
+		{
+			poseven::throw_errno( ESPIPE );
+		}
+		
+		return status.st_size;
+	}
+	
 }
 
