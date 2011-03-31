@@ -11,6 +11,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/string/concat.hh"
 
 // Debug
 #include "debug/assert.hh"

@@ -21,6 +21,7 @@
 // plus
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 
 namespace ShellShock

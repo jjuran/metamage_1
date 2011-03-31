@@ -17,6 +17,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/string/concat.hh"
 
 // nucleus
 #include "nucleus/saved.hh"

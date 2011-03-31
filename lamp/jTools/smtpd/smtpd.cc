@@ -26,6 +26,7 @@
 #include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // text-input
 #include "text_input/feed.hh"

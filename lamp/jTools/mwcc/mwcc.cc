@@ -12,6 +12,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"

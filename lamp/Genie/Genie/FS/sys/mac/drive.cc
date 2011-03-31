@@ -12,6 +12,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/string/concat.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

@@ -6,6 +6,9 @@
 #ifndef ARCANA_SMTP_HH
 #define ARCANA_SMTP_HH
 
+// plus
+#include "plus/string/concat.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"

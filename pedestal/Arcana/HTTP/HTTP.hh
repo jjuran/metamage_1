@@ -11,6 +11,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // poseven
 #ifndef POSEVEN_TYPES_FD_T_HH

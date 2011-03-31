@@ -60,6 +60,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
