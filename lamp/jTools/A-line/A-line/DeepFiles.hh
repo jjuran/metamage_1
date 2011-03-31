@@ -43,25 +43,25 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	template < class FileSpec, class Filter >
+	template < class Filter >
 	class DeepFileSearch
 	{
 		private:
 			const Filter& filter;
-			std::vector< FileSpec > result;
+			std::vector< plus::string >  result;
 		
 		public:
 			DeepFileSearch( const Filter& filter ) : filter( filter )  {}
 			
-			operator const std::vector< FileSpec >&() const  { return result; }
+			operator const std::vector< plus::string >&() const  { return result; }
 			
-			DeepFileSearch< FileSpec, Filter >& SearchItem( FileSpec item );
+			DeepFileSearch< Filter >& SearchItem( plus::string item );
 			
-			DeepFileSearch< FileSpec, Filter >& SearchDir( const FileSpec& dir );
+			DeepFileSearch< Filter >& SearchDir( const plus::string& dir );
 	};
 	
-	template < class FileSpec, class Filter >
-	DeepFileSearch< FileSpec, Filter >& DeepFileSearch< FileSpec, Filter >::SearchItem( FileSpec item )
+	template < class Filter >
+	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchItem( plus::string item )
 	{
 		struct stat sb = p7::lstat( item );
 		
@@ -80,18 +80,18 @@ namespace tool
 		return *this;
 	}
 	
-	template < class FileSpec, class Filter >
-	DeepFileSearch< FileSpec, Filter >& DeepFileSearch< FileSpec, Filter >::SearchDir( const FileSpec& dir )
+	template < class Filter >
+	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchDir( const plus::string& dir )
 	{
-		typedef typename io::directory_contents_traits< FileSpec >::container_type directory_container;
+		typedef io::directory_contents_traits< plus::string >::container_type directory_container;
 		
-		typedef FileSpec (*path_descender)(const FileSpec&, const char*);  // FIXME
+		typedef plus::string (*path_descender)(const plus::string&, const char*);  // FIXME
 		
 		directory_container contents = io::directory_contents( dir );
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
+		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< Filter >::SearchItem ),
 		                                             this ),
 		                               std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
 		                                             dir ) ) );
@@ -103,7 +103,7 @@ namespace tool
 	template < class Filter >
 	std::vector< plus::string > DeepFiles( const plus::string& item, const Filter& filter )
 	{
-		return DeepFileSearch< plus::string, Filter >( filter ).SearchItem( item );
+		return DeepFileSearch< Filter >( filter ).SearchItem( item );
 	}
 	
 }
