@@ -26,6 +26,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // text-input
 #include "text_input/feed.hh"

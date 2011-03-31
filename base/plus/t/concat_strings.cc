@@ -7,7 +7,7 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/string.hh"
+#include "plus/string/concat.hh"
 
 // tap-out
 #include "tap/test.hh"

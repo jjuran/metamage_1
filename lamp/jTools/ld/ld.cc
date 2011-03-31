@@ -21,7 +21,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/string.hh"
+#include "plus/string/concat.hh"
 
 // poseven
 #include "poseven/extras/slurp.hh"

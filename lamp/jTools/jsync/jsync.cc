@@ -25,6 +25,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // Io
 #include "io/walk.hh"

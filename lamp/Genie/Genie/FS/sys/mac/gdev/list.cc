@@ -13,6 +13,7 @@
 #include "plus/contains.hh"
 #include "plus/hexidecimal.hh"
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // nucleus
 #include "nucleus/linked_list_sequence.hh"

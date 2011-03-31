@@ -38,6 +38,7 @@
 // plus
 #include "plus/exception.hh"
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // Debug
 #include "debug/assert.hh"

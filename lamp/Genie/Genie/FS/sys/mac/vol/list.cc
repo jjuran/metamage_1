@@ -15,6 +15,7 @@
 #include "plus/serialize.hh"
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"

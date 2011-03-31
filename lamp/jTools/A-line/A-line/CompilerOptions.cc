@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// plus
+#include "plus/string/concat.hh"
+
 // A-line
 #include "A-line/TargetNames.hh"
 

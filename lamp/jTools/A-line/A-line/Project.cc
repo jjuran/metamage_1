@@ -19,6 +19,7 @@
 
 // plus
 #include "plus/pointer_to_function.hh"
+#include "plus/string/concat.hh"
 
 // Debug
 #include "debug/assert.hh"

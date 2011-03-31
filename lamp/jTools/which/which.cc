@@ -16,6 +16,7 @@
 
 // plus
 #include "plus/var_string.hh"
+#include "plus/string/concat.hh"
 
 
 int main( int argc, char const *const argv[] )

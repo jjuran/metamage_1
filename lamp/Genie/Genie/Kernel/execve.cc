@@ -14,7 +14,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/string.hh"
+#include "plus/string/concat.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
