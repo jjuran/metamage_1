@@ -73,11 +73,14 @@ namespace plus
 			{
 			}
 			
-			template < class T >
-			explicit var_string( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			var_string( const unsigned char* other )
 			{
 				assign( other );
 			}
+			
+		#endif
 			
 			var_string& operator=( const var_string& other )
 			{
@@ -98,11 +101,14 @@ namespace plus
 			
 			var_string& operator=( char c )  { return assign( 1, c ); }
 			
-			template < class T >
-			var_string& operator=( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			var_string& operator=( const unsigned char* other )
 			{
 				return assign( other );
 			}
+			
+		#endif
 			
 			const char* begin() const  { return string::begin(); }
 			const char* end  () const  { return string::end  (); }
@@ -177,12 +183,15 @@ namespace plus
 				return *this;
 			}
 			
-			template < class T >
-			var_string& assign( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			var_string& assign( const unsigned char* other )
 			{
-				return assign( iota::get_string_data( other ),
-				               iota::get_string_size( other ) );
+				return assign( iota::get_pascal_string_data( other ),
+				               iota::get_pascal_string_size( other ) );
 			}
+			
+		#endif
 			
 			var_string& erase( size_type pos = 0, size_type n = npos );
 			

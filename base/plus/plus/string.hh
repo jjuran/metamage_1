@@ -9,6 +9,7 @@
 #define PLUS_STRING_HH
 
 // iota
+#include "iota/pascal_string.hh"
 #include "iota/string_traits.hh"
 
 
@@ -114,13 +115,16 @@ namespace plus
 			
 			string( const string& other, size_type pos, size_type n = npos );
 			
-			template < class T >
-			explicit string( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			string( const unsigned char* other )
 			{
 				its_small_name[ max_offset ] = max_offset;  // empty string
 				
 				assign( other );
 			}
+			
+		#endif
 			
 			string           ( const string& other );
 			string& operator=( const string& other );
@@ -130,11 +134,14 @@ namespace plus
 				return assign( m );
 			}
 			
-			template < class T >
-			string& operator=( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			string& operator=( const unsigned char* other )
 			{
 				return assign( other );
 			}
+			
+		#endif
 			
 			static size_type max_size()
 			{
@@ -189,12 +196,15 @@ namespace plus
 			string& assign( const string& other, size_type pos, size_type n = npos );
 			string& assign( const string& other );
 			
-			template < class T >
-			string& assign( const T& other )
+		#if IOTA_HAS_PASCAL_STRINGS
+			
+			string& assign( const unsigned char* other )
 			{
-				return assign( iota::get_string_data( other ),
-				               iota::get_string_size( other ) );
+				return assign( iota::get_pascal_string_data( other ),
+				               iota::get_pascal_string_size( other ) );
 			}
+			
+		#endif
 			
 			char* reset( size_type n = 0 )  { return reallocate( n ); }
 			
