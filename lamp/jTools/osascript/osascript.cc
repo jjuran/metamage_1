@@ -72,7 +72,7 @@ namespace tool
 		
 		errorMessage += "\n";
 		
-		p7::write( p7::stderr_fileno, errorMessage );
+		p7::write( p7::stderr_fileno, errorMessage.data(), errorMessage.size() );
 		
 		throw errorNumber > 0 ? p7::exit_t( errorNumber )
 		                      : p7::exit_failure;
