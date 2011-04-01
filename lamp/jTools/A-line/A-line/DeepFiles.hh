@@ -43,25 +43,26 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	template < class Filter >
+	typedef bool (*deep_file_filter)( const plus::string& );
+	
+	
 	class DeepFileSearch
 	{
 		private:
-			const Filter& filter;
+			deep_file_filter filter;
 			std::vector< plus::string >  result;
 		
 		public:
-			DeepFileSearch( const Filter& filter ) : filter( filter )  {}
+			DeepFileSearch( deep_file_filter filter ) : filter( filter )  {}
 			
 			operator const std::vector< plus::string >&() const  { return result; }
 			
-			DeepFileSearch< Filter >& SearchItem( plus::string item );
+			DeepFileSearch& SearchItem( plus::string item );
 			
-			DeepFileSearch< Filter >& SearchDir( const plus::string& dir );
+			DeepFileSearch& SearchDir( const plus::string& dir );
 	};
 	
-	template < class Filter >
-	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchItem( plus::string item )
+	inline DeepFileSearch& DeepFileSearch::SearchItem( plus::string item )
 	{
 		struct stat sb = p7::lstat( item );
 		
@@ -80,8 +81,7 @@ namespace tool
 		return *this;
 	}
 	
-	template < class Filter >
-	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchDir( const plus::string& dir )
+	inline DeepFileSearch& DeepFileSearch::SearchDir( const plus::string& dir )
 	{
 		typedef io::directory_contents_traits< plus::string >::container_type directory_container;
 		
@@ -91,7 +91,7 @@ namespace tool
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< Filter >::SearchItem ),
+		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch::SearchItem ),
 		                                             this ),
 		                               std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
 		                                             dir ) ) );
@@ -100,10 +100,9 @@ namespace tool
 	}
 	
 	
-	template < class Filter >
-	std::vector< plus::string > DeepFiles( const plus::string& item, const Filter& filter )
+	inline std::vector< plus::string > DeepFiles( const plus::string& item, deep_file_filter filter )
 	{
-		return DeepFileSearch< Filter >( filter ).SearchItem( item );
+		return DeepFileSearch( filter ).SearchItem( item );
 	}
 	
 }
