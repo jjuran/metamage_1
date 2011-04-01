@@ -133,7 +133,7 @@ namespace io
 	{
 		
 		template < class String >
-		inline plus::string operator/( const plus::string& path, const String& name )
+		plus::string operator/( const plus::string& path, const String& name )
 		{
 			return path_descent( path,
 			                     iota::get_string_data( name ),
