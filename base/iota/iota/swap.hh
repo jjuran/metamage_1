@@ -29,7 +29,7 @@ namespace iota
 	// Write out own swap() and save the cost of including <algorithm>
 	
 	template < class T >
-	inline void swap( T& a, T& b )
+	void swap( T& a, T& b )
 	{
 		T temp = a;
 		
