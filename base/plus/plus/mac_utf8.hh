@@ -25,15 +25,21 @@ namespace plus
 	template < class String >
 	inline string utf8_from_mac( const String& mac )
 	{
-		return utf8_from_mac( iota::string_data< String >::get( mac ),
-		                      iota::string_size< String >::get( mac ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return utf8_from_mac( get_string_data( mac ),
+		                      get_string_size( mac ) );
 	}
 	
 	template < class String >
 	inline string mac_from_utf8( const String& utf8 )
 	{
-		return mac_from_utf8( iota::string_data< String >::get( utf8 ),
-		                      iota::string_size< String >::get( utf8 ) );
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		return mac_from_utf8( get_string_data( utf8 ),
+		                      get_string_size( utf8 ) );
 	}
 	
 }
