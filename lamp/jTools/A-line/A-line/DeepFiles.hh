@@ -106,8 +106,6 @@ namespace tool
 		return DeepFileSearch< plus::string, Filter >( filter ).SearchItem( item );
 	}
 	
-	std::vector< plus::string > DeepFiles( const plus::string& item );
-	
 }
 
 #endif
