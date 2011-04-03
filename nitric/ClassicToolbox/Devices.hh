@@ -108,14 +108,14 @@ namespace Nitrogen
 	              const void*        csParamPtr );
 	
 	template < ControlStatusCode csCode >
-	void Control( Mac::DriverRefNum                                   driverRefNum,
-	              typename Control_Default< csCode >::parameter_type  csParam )
+	inline void Control( Mac::DriverRefNum                                   driverRefNum,
+	                     typename Control_Default< csCode >::parameter_type  csParam )
 	{
 		Control( driverRefNum, ControlStatusCode( csCode ), &csParam );
 	}
 	
 	template < ControlStatusCode csCode >
-	void Control( Mac::DriverRefNum driverRefNum )
+	inline void Control( Mac::DriverRefNum driverRefNum )
 	{
 		Control( driverRefNum,
 		         ControlStatusCode( csCode ),
