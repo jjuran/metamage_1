@@ -32,7 +32,7 @@ namespace Genie
 	{
 		if ( --OpenTransport_refcount == 0 )
 		{
-			N::CloseOpenTransport();
+			::CloseOpenTransport();
 		}
 	}
 	

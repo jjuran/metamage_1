@@ -15,17 +15,11 @@
 namespace Nitrogen
 {
 	
-	using ::InitGraf;
-	
 	nucleus::owned< GrafPtr > OpenPort( GrafPtr port );
-	
-	using ::InitPort;
 	
 	inline void ClosePort( nucleus::owned< GrafPtr > )  {}
 	
 	nucleus::owned< CGrafPtr > OpenCPort( CGrafPtr port );
-	
-	using ::InitCPort;
 	
 	inline void CloseCPort( nucleus::owned< CGrafPtr > )  {}
 	

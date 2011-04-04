@@ -23,8 +23,6 @@ namespace Nitrogen
 		Mac::ThrowOSStatus( ::InitOpenTransport() );
 	}
 	
-	using ::CloseOpenTransport;
-	
 	inline nucleus::owned< EndpointRef >
 	//
 	OTOpenEndpoint( nucleus::owned< OTConfigurationRef >  config,

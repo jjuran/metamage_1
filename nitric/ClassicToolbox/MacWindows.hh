@@ -38,9 +38,6 @@ namespace Nitrogen
 	inline void InvalRect( const Rect& r )  { ::InvalRect( &r ); }
 	inline void ValidRect( const Rect& r )  { ::ValidRect( &r ); }
 	
-	using ::InvalRgn;
-	using ::ValidRgn;
-	
 }
 
 #endif
