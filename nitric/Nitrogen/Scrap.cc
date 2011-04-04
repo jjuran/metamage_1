@@ -42,6 +42,15 @@ namespace Nitrogen
 #endif
 	
 	
+#if CALL_NOT_IN_CARBON
+	
+	void ZeroScrap()
+	{
+		Mac::ThrowOSStatus( ::ZeroScrap() );
+	}
+	
+#endif
+	
 	ScrapRef GetCurrentScrap()
 	{
 		ScrapRef scrap;

@@ -11,11 +11,6 @@
 #include "Nitrogen/Scrap.hh"
 #include "Nitrogen/TextEdit.hh"
 
-// ClassicToolbox
-#if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/Scrap.hh"
-#endif
-
 
 namespace Pedestal
 {
