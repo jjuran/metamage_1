@@ -26,14 +26,6 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/replaced_string.hh"
-#include "plus/var_string.hh"
-
-// nucleus
-#include "nucleus/scribe.hh"
-
-// io
-#include "io/slurp.hh"
-#include "io/spew.hh"
 
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
@@ -146,6 +138,30 @@ namespace Genie
 		return plus::replaced_string( unix_name, ':', '/' );
 	}
 	
+	
+	static plus::string SlurpFile( const FSSpec& file )
+	{
+		plus::string result;
+		
+		n::owned< N::FSFileRefNum > input = N::FSpOpenDF( file, N::fsRdPerm );
+		
+		const std::size_t size = N::GetEOF( input );
+		
+		char* p = result.reset( size );
+		
+		const std::size_t bytes_read = N::FSRead( input, size, p, N::ThrowEOF_Always() );
+		
+		return result;
+	}
+	
+	static void SpewFile( const FSSpec& file, const plus::string& contents )
+	{
+		n::owned< N::FSFileRefNum > output = FSpOpenDF( file, N::fsWrPerm );
+		
+		N::SetEOF( output, 0 );
+		
+		N::FSWrite( output, contents.size(), contents.data() );
+	}
 	
 	static plus::string get_long_name( const FSSpec& item )
 	{
@@ -690,7 +706,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const plus::string target = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( itsFileSpec );
+		const plus::string target = SlurpFile( itsFileSpec );
 		
 		if ( !target.empty() )
 		{
@@ -729,7 +745,7 @@ namespace Genie
 			
 			if ( is_alias  ||  is_osx_symlink( fInfo ) )
 			{
-				plus::string target = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( itsFileSpec );
+				plus::string target = SlurpFile( itsFileSpec );
 				
 				if ( !target.empty() )
 				{
@@ -801,7 +817,7 @@ namespace Genie
 			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
 		
-		io::spew_file< n::POD_vector_scribe< plus::string > >( linkSpec, targetPath );
+		SpewFile( linkSpec, targetPath );
 	}
 	
 	void FSTree_HFS::SymLink( const plus::string& target ) const
