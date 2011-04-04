@@ -338,7 +338,7 @@ namespace Mac
 	};
 	
 	template < class NitrogenUPP >
-	inline nucleus::owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
+	nucleus::owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
 	{
 		return nucleus::owned<NitrogenUPP>::seize( NitrogenUPP::Details::Create( function ) );
 	}
