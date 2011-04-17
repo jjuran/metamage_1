@@ -3,15 +3,15 @@
  *	=====
  */
 
-// Standard C
-#include <stdio.h>
-
 // POSIX
 #include <dirent.h>
 
 // iota
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_float.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -268,7 +268,7 @@ namespace tool
 		{
 			monitor = true;
 			
-			int scanned = sscanf( sleep_arg, "%f", &min_sleep );
+			min_sleep = gear::parse_float( sleep_arg );
 		}
 		
 		const struct timespec minimum = timespec_from_seconds( min_sleep );
