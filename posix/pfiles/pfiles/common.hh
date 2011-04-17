@@ -118,33 +118,11 @@ namespace io
 		return get_preceding_directory( pathname );
 	}
 	
-	inline plus::string get_parent_directory_of_directory( const plus::string& pathname, overload = overload() )
-	{
-		plus::var_string result = pathname;
-		
-		if ( *(result.end() - 1) != '/' )
-		{
-			result += '/';
-		}
-		
-		result += "..";
-		
-		return result;
-	}
+	plus::string get_parent_directory_of_directory( plus::var_string pathname, overload = overload() );
 	
 	// Path descent
 	
-	inline plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
-	{
-		if ( *(path.end() - 1) != '/' )
-		{
-			path += '/';
-		}
-		
-		path.append( name, length );
-		
-		return path;
-	}
+	plus::string path_descent( plus::var_string path, const char* name, std::size_t length );
 	
 	inline plus::string path_descent( const plus::string& path, const char* name )
 	{
@@ -155,7 +133,7 @@ namespace io
 	{
 		
 		template < class String >
-		inline plus::string operator/( const plus::string& path, const String& name )
+		plus::string operator/( const plus::string& path, const String& name )
 		{
 			return path_descent( path,
 			                     iota::get_string_data( name ),
@@ -305,17 +283,7 @@ namespace io
 	
 	// Stream operations
 	
-	inline std::size_t get_file_size( poseven::fd_t stream, overload = overload() )
-	{
-		struct stat status = poseven::fstat( stream );
-		
-		if ( !S_ISREG( status.st_mode ) )
-		{
-			poseven::throw_errno( ESPIPE );
-		}
-		
-		return status.st_size;
-	}
+	std::size_t get_file_size( poseven::fd_t stream, overload = overload() );
 	
 	template < class ByteCount >
 	inline ssize_t read( poseven::fd_t fd, char* buffer, ByteCount byteCount, overload = overload() )
