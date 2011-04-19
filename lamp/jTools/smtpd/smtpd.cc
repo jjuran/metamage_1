@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <list>
+#include <memory>
 #include <vector>
 
 // Standard C/C++
@@ -213,8 +214,12 @@ namespace tool
 			n::owned< N::FSFileRefNum > out;
 			unsigned int bytes;
 		
+		private:
+			// non-copyable
+			PartialMessage           ( const PartialMessage& );
+			PartialMessage& operator=( const PartialMessage& );
+		
 		public:
-			PartialMessage()  {}
 			PartialMessage( const FSSpec& dir );
 			
 			N::FSDirSpec Dir() const  { return dir; }
@@ -264,13 +269,15 @@ namespace tool
 	plus::string myHello;
 	plus::string myFrom;
 	std::list< plus::string > myTo;
-	PartialMessage myMessage;
+	
+	static std::auto_ptr< PartialMessage > myMessage;
+	
 	bool dataMode = false;
 	
 	
 	static void QueueMessage()
 	{
-		N::FSDirSpec dir = myMessage.Dir();
+		N::FSDirSpec dir = myMessage->Dir();
 		
 		// Create the Destinations subdirectory.
 		N::FSDirSpec destFolder = N::FSpDirCreate( dir / "Destinations" );
@@ -311,9 +318,7 @@ namespace tool
 		}
 		else if ( word == "DATA" )
 		{
-			PartialMessage msg( QueueDirectory() / MakeMessageName() );
-			
-			myMessage = msg;
+			myMessage.reset( new PartialMessage( QueueDirectory() / MakeMessageName() ) );
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
@@ -352,7 +357,7 @@ namespace tool
 	
 	static void DoData( const plus::string& data )
 	{
-		myMessage.WriteLine( data );
+		myMessage->WriteLine( data );
 		
 		if ( data == "." )
 		{
@@ -365,7 +370,7 @@ namespace tool
 			try
 			{
 				QueueMessage();
-				myMessage.Finished();
+				myMessage->Finished();
 				queued = true;
 			}
 			catch ( ... )
@@ -377,6 +382,8 @@ namespace tool
 			                             : "554 Can't accept message"  "\r\n";
 			
 			p7::write( p7::stdout_fileno, message, std::strlen( message ) );
+			
+			myMessage.reset();
 		}
 		else
 		{
