@@ -284,7 +284,12 @@ namespace Vertice
 		if ( !close_enough( total_deviation, 2 * 3.14159 ) )
 		{
 			//throw Geometry_Error();
+			
+		#ifndef __LAMP__
+			
 			std::fprintf( stderr, "Angular deviation: %f\n", total_deviation );
+			
+		#endif
 			
 			return;
 		}
