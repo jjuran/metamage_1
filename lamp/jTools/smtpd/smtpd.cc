@@ -75,39 +75,6 @@ namespace io
 	
 }
 
-namespace Nitrogen
-{
-	
-	struct RecursiveFSDeleter
-	{
-		void operator()( const FSDirSpec& dir ) const
-		{
-			io::recursively_delete_directory( dir );
-		}
-	};
-	
-	class FSDirSpec_aliveness_test
-	{
-		public:
-			static bool is_live( const FSDirSpec& dir )
-			{
-				return dir.dirID != 0;
-			}
-	};
-	
-}
-
-namespace nucleus
-{
-	
-	template <>
-	struct aliveness_traits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
-	{
-		typedef Nitrogen::FSDirSpec_aliveness_test aliveness_test;
-	};
-	
-}
-
 namespace tool
 {
 	
@@ -210,7 +177,7 @@ namespace tool
 	class PartialMessage
 	{
 		private:
-			n::owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
+			N::FSDirSpec dir;
 			n::owned< N::FSFileRefNum > out;
 			unsigned int bytes;
 		
@@ -222,6 +189,8 @@ namespace tool
 		public:
 			PartialMessage( const FSSpec& dir );
 			
+			~PartialMessage();
+			
 			N::FSDirSpec Dir() const  { return dir; }
 			unsigned int Bytes() const  { return bytes; }
 			void WriteLine( const plus::string& line );
@@ -231,12 +200,20 @@ namespace tool
 	
 	PartialMessage::PartialMessage( const FSSpec& dirLoc )
 	:
-		dir( n::owned< N::FSDirSpec, N::RecursiveFSDeleter >::seize( N::FSpDirCreate( dirLoc ) ) ), 
-		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
+		dir( N::FSpDirCreate( dirLoc ) ),
+		out( io::open_for_writing( N::FSpCreate( dir / "Message",
 		                                         Mac::FSCreator( 'R*ch' ),
 		                                         Mac::FSType   ( 'TEXT' ) ) ) )
 	{
 		//
+	}
+	
+	PartialMessage::~PartialMessage()
+	{
+		if ( dir.dirID != 0 )
+		{
+			io::recursively_delete_directory( dir );
+		}
 	}
 	
 	void PartialMessage::WriteLine( const plus::string& line )
@@ -262,7 +239,7 @@ namespace tool
 	
 	void PartialMessage::Finished()
 	{
-		dir.release();
+		dir.dirID = Mac::FSDirID();  // 0
 	}
 	
 	
