@@ -210,14 +210,12 @@ namespace tool
 		private:
 			n::owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
 			n::owned< N::FSFileRefNum > out;
-			unsigned int bytes;
 		
 		public:
 			PartialMessage()  {}
 			PartialMessage( const FSSpec& dir );
 			
 			N::FSDirSpec Dir() const  { return dir; }
-			unsigned int Bytes() const  { return bytes; }
 			void WriteLine( const plus::string& line );
 			
 			void Finished();
@@ -239,19 +237,6 @@ namespace tool
 		plus::string terminatedLine = line + "\r\n";
 		
 		io::write( out, terminatedLine.data(), terminatedLine.size() );
-		
-		bytes += terminatedLine.size();
-		
-		/*
-		unsigned int kBytes = bytes / 1024;
-		
-		if ( kBytes - lastFlushKBytes >= 4 )
-		{
-			Io::Err << ".";
-			//IO::Flush(out);
-			lastFlushKBytes = kBytes;
-		}
-		*/
 	}
 	
 	void PartialMessage::Finished()
