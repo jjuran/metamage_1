@@ -25,7 +25,6 @@
 // plus
 #include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
-#include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
 // text-input
@@ -122,7 +121,7 @@ namespace tool
 	{
 		DateTimeRec date = N::SecondsToDate( clock );
 		
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
@@ -130,13 +129,13 @@ namespace tool
 		iota::fill_unsigned_decimal( date.month, &p[4], 2 );
 		iota::fill_unsigned_decimal( date.day,   &p[6], 2 );
 		
-		result[8] = '.';
+		p[8] = '.';
 		
 		iota::fill_unsigned_decimal( date.hour,   &p[ 9], 2 );
 		iota::fill_unsigned_decimal( date.minute, &p[11], 2 );
 		iota::fill_unsigned_decimal( date.second, &p[13], 2 );
 		
-		result[15] = '-';
+		p[15] = '-';
 		
 		iota::fill_unsigned_decimal( serial, &p[16], 2 );
 		
