@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <list>
 #include <memory>
 #include <vector>
@@ -27,7 +26,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // text-input
@@ -206,6 +204,25 @@ namespace tool
 	bool dataMode = false;
 	
 	
+	class oneliner_creator
+	{
+		private:
+			const plus::string& its_dir;
+		
+		public:
+			oneliner_creator( const plus::string& dir ) : its_dir( dir )
+			{
+			}
+			
+			void operator()( const plus::string& line );
+	};
+	
+	void oneliner_creator::operator()( const plus::string& line )
+	{
+		CreateOneLiner( its_dir / line,
+		                line );
+	}
+	
 	static void QueueMessage()
 	{
 		const plus::string& dir = myMessage->Dir();
@@ -218,8 +235,7 @@ namespace tool
 		// Create the destination files.
 		std::for_each( myTo.begin(),
 		               myTo.end(),
-		               std::bind1st( plus::ptr_fun( CreateDestinationFile ),
-		                             destinations_dir ) );
+		               oneliner_creator( destinations_dir ) );
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
