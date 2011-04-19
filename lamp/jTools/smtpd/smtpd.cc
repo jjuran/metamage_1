@@ -34,53 +34,27 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
-// nucleus
-#include "nucleus/scribe.hh"
-#include "nucleus/shared.hh"
-
 // Io
 #include "io/io.hh"
-#include "io/spew.hh"
-
-// Nitrogen
-#include "Nitrogen/DateTimeUtils.hh"
-#include "Nitrogen/Folders.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
+#include "poseven/extras/spew.hh"
+#include "poseven/functions/mkdir.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
-// FSContents
-#include "FSContents.h"
+// pfiles
+#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/Main.hh"
 
 
-namespace io
-{
-	
-	inline FSSpec path_descent( const Nitrogen::FSDirSpec& dir, const unsigned char* name )
-	{
-		return Nitrogen::FSMakeFSSpec( dir, name );
-	}
-	
-	inline FSSpec path_descent( const FSSpec& dir, const unsigned char* name )
-	{
-		return path_descent( Nitrogen::FSpMake_FSDirSpec( dir ), name );
-	}
-	
-}
-
 namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
@@ -151,35 +125,30 @@ namespace tool
 		return fromLine.substr( STRLEN( "MAIL FROM:" ), fromLine.npos );
 	}
 	
-	static void CreateOneLiner( const FSSpec& file, const plus::string& line )
+	static void CreateOneLiner( const plus::string& path, const plus::string& line )
 	{
-		typedef n::POD_vector_scribe< plus::string > scribe;
-		
 		plus::string output = line + "\n";
 		
-		io::spew_file< scribe >( N::FSpCreate( file,
-		                                       Mac::FSCreator( 'R*ch' ),
-		                                       Mac::FSType   ( 'TEXT' ) ),
-		                         output );
+		p7::spew( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const plus::string& dest )
+	static void CreateDestinationFile( const plus::string& dest_dir_path, const plus::string& dest )
 	{
-		CreateOneLiner( destFolder / dest.substr( 0, 31 ),
+		CreateOneLiner( dest_dir_path / dest,
 		                dest );
 	}
 	
-	static N::FSDirSpec QueueDirectory()
+	static const char* QueueDirectory()
 	{
-		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		return "/var/spool/mail/queue";
 	}
 	
 	
 	class PartialMessage
 	{
 		private:
-			N::FSDirSpec dir;
-			n::owned< N::FSFileRefNum > out;
+			plus::string          dir;
+			n::owned< p7::fd_t >  out;
 		
 		private:
 			// non-copyable
@@ -187,29 +156,28 @@ namespace tool
 			PartialMessage& operator=( const PartialMessage& );
 		
 		public:
-			PartialMessage( const FSSpec& dir );
+			PartialMessage( const plus::string& dir );
 			
 			~PartialMessage();
 			
-			N::FSDirSpec Dir() const  { return dir; }
+			const plus::string& Dir() const  { return dir; }
 			void WriteLine( const plus::string& line );
 			
 			void Finished();
 	};
 	
-	PartialMessage::PartialMessage( const FSSpec& dirLoc )
+	PartialMessage::PartialMessage( const plus::string& dirLoc )
 	:
-		dir( N::FSpDirCreate( dirLoc ) ),
-		out( io::open_for_writing( N::FSpCreate( dir / "Message",
-		                                         Mac::FSCreator( 'R*ch' ),
-		                                         Mac::FSType   ( 'TEXT' ) ) ) )
+		dir( dirLoc )
 	{
-		//
+		p7::mkdir( dir );
+		
+		out = p7::open( dir / "Message", p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
 	}
 	
 	PartialMessage::~PartialMessage()
 	{
-		if ( dir.dirID != 0 )
+		if ( !dir.empty() )
 		{
 			io::recursively_delete_directory( dir );
 		}
@@ -220,12 +188,12 @@ namespace tool
 		//static unsigned int lastFlushKBytes = 0;
 		plus::string terminatedLine = line + "\r\n";
 		
-		io::write( out, terminatedLine.data(), terminatedLine.size() );
+		p7::write( out, terminatedLine );
 	}
 	
 	void PartialMessage::Finished()
 	{
-		dir.dirID = Mac::FSDirID();  // 0
+		dir.reset();
 	}
 	
 	
@@ -240,16 +208,18 @@ namespace tool
 	
 	static void QueueMessage()
 	{
-		N::FSDirSpec dir = myMessage->Dir();
+		const plus::string& dir = myMessage->Dir();
 		
 		// Create the Destinations subdirectory.
-		N::FSDirSpec destFolder = N::FSpDirCreate( dir / "Destinations" );
+		plus::string destinations_dir = dir / "Destinations";
+		
+		p7::mkdir( destinations_dir );
 		
 		// Create the destination files.
 		std::for_each( myTo.begin(),
 		               myTo.end(),
 		               std::bind1st( plus::ptr_fun( CreateDestinationFile ),
-		                             destFolder ) );
+		                             destinations_dir ) );
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
