@@ -5,13 +5,16 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <list>
+#include <memory>
 #include <vector>
 
 // Standard C/C++
 #include <cstdio>
 #include <cstdlib>
+
+// Standard C
+#include <time.h>
 
 // POSIX
 #include <arpa/inet.h>
@@ -23,120 +26,58 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/functional_extensions.hh"
-#include "plus/pointer_to_function.hh"
-#include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
-// nucleus
-#include "nucleus/scribe.hh"
-#include "nucleus/shared.hh"
-
 // Io
 #include "io/io.hh"
-#include "io/spew.hh"
-
-// Nitrogen
-#include "Nitrogen/DateTimeUtils.hh"
-#include "Nitrogen/Folders.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
+#include "poseven/extras/spew.hh"
+#include "poseven/functions/mkdir.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
-// FSContents
-#include "FSContents.h"
+// pfiles
+#include "pfiles/common.hh"
 
 // Orion
 #include "Orion/Main.hh"
 
 
-namespace io
-{
-	
-	inline FSSpec path_descent( const Nitrogen::FSDirSpec& dir, const unsigned char* name )
-	{
-		return Nitrogen::FSMakeFSSpec( dir, name );
-	}
-	
-	inline FSSpec path_descent( const FSSpec& dir, const unsigned char* name )
-	{
-		return path_descent( Nitrogen::FSpMake_FSDirSpec( dir ), name );
-	}
-	
-}
-
-namespace Nitrogen
-{
-	
-	struct RecursiveFSDeleter
-	{
-		void operator()( const FSDirSpec& dir ) const
-		{
-			io::recursively_delete_directory( dir );
-		}
-	};
-	
-	class FSDirSpec_aliveness_test
-	{
-		public:
-			static bool is_live( const FSDirSpec& dir )
-			{
-				return dir.dirID != 0;
-			}
-	};
-	
-}
-
-namespace nucleus
-{
-	
-	template <>
-	struct aliveness_traits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
-	{
-		typedef Nitrogen::FSDirSpec_aliveness_test aliveness_test;
-	};
-	
-}
-
 namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
 	
 	// E.g. "19840124.183000"
-	static plus::string DateFormattedForFilename( unsigned long clock, int serial )
+	static plus::string DateFormattedForFilename( const time_t& now, int serial )
 	{
-		DateTimeRec date = N::SecondsToDate( clock );
+		const struct tm* t = gmtime( &now );
 		
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
-		iota::fill_unsigned_decimal( date.year,  p,     4 );
-		iota::fill_unsigned_decimal( date.month, &p[4], 2 );
-		iota::fill_unsigned_decimal( date.day,   &p[6], 2 );
+		iota::fill_unsigned_decimal( t->tm_year + 1900, &p[0], 4 );
+		iota::fill_unsigned_decimal( t->tm_mon  +    1, &p[4], 2 );
+		iota::fill_unsigned_decimal( t->tm_mday,        &p[6], 2 );
 		
-		result[8] = '.';
+		p[8] = '.';
 		
-		iota::fill_unsigned_decimal( date.hour,   &p[ 9], 2 );
-		iota::fill_unsigned_decimal( date.minute, &p[11], 2 );
-		iota::fill_unsigned_decimal( date.second, &p[13], 2 );
+		iota::fill_unsigned_decimal( t->tm_hour, &p[ 9], 2 );
+		iota::fill_unsigned_decimal( t->tm_min,  &p[11], 2 );
+		iota::fill_unsigned_decimal( t->tm_sec,  &p[13], 2 );
 		
-		result[15] = '-';
+		p[15] = '-';
 		
 		iota::fill_unsigned_decimal( serial, &p[16], 2 );
 		
@@ -145,10 +86,10 @@ namespace tool
 	
 	static plus::string MakeMessageName()
 	{
-		static unsigned long stamp = N::GetDateTime();
+		static time_t stamp = 0;
 		static int serial = 0;
 		
-		unsigned long now = N::GetDateTime();
+		const time_t now = time( NULL );
 		
 		if ( stamp == now )
 		{
@@ -182,56 +123,62 @@ namespace tool
 		return fromLine.substr( STRLEN( "MAIL FROM:" ), fromLine.npos );
 	}
 	
-	static void CreateOneLiner( const FSSpec& file, const plus::string& line )
+	static void CreateOneLiner( const plus::string& path, const plus::string& line )
 	{
-		typedef n::POD_vector_scribe< plus::string > scribe;
-		
 		plus::string output = line + "\n";
 		
-		io::spew_file< scribe >( N::FSpCreate( file,
-		                                       Mac::FSCreator( 'R*ch' ),
-		                                       Mac::FSType   ( 'TEXT' ) ),
-		                         output );
+		p7::spew( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const plus::string& dest )
+	static void CreateDestinationFile( const plus::string& dest_dir_path, const plus::string& dest )
 	{
-		CreateOneLiner( destFolder / dest.substr( 0, 31 ),
+		CreateOneLiner( dest_dir_path / dest,
 		                dest );
 	}
 	
-	static N::FSDirSpec QueueDirectory()
+	static const char* QueueDirectory()
 	{
-		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		return "/var/spool/mail/queue";
 	}
 	
 	
 	class PartialMessage
 	{
 		private:
-			n::owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
-			n::owned< N::FSFileRefNum > out;
-			unsigned int bytes;
+			plus::string          dir;
+			n::owned< p7::fd_t >  out;
+		
+		private:
+			// non-copyable
+			PartialMessage           ( const PartialMessage& );
+			PartialMessage& operator=( const PartialMessage& );
 		
 		public:
-			PartialMessage()  {}
-			PartialMessage( const FSSpec& dir );
+			PartialMessage( const plus::string& dir );
 			
-			N::FSDirSpec Dir() const  { return dir; }
-			unsigned int Bytes() const  { return bytes; }
+			~PartialMessage();
+			
+			const plus::string& Dir() const  { return dir; }
 			void WriteLine( const plus::string& line );
 			
 			void Finished();
 	};
 	
-	PartialMessage::PartialMessage( const FSSpec& dirLoc )
+	PartialMessage::PartialMessage( const plus::string& dirLoc )
 	:
-		dir( n::owned< N::FSDirSpec, N::RecursiveFSDeleter >::seize( N::FSpDirCreate( dirLoc ) ) ), 
-		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
-		                                         Mac::FSCreator( 'R*ch' ),
-		                                         Mac::FSType   ( 'TEXT' ) ) ) )
+		dir( dirLoc )
 	{
-		//
+		p7::mkdir( dir );
+		
+		out = p7::open( dir / "Message", p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
+	}
+	
+	PartialMessage::~PartialMessage()
+	{
+		if ( !dir.empty() )
+		{
+			io::recursively_delete_directory( dir );
+		}
 	}
 	
 	void PartialMessage::WriteLine( const plus::string& line )
@@ -239,53 +186,61 @@ namespace tool
 		//static unsigned int lastFlushKBytes = 0;
 		plus::string terminatedLine = line + "\r\n";
 		
-		io::write( out, terminatedLine.data(), terminatedLine.size() );
-		
-		bytes += terminatedLine.size();
-		
-		/*
-		unsigned int kBytes = bytes / 1024;
-		
-		if ( kBytes - lastFlushKBytes >= 4 )
-		{
-			Io::Err << ".";
-			//IO::Flush(out);
-			lastFlushKBytes = kBytes;
-		}
-		*/
+		p7::write( out, terminatedLine );
 	}
 	
 	void PartialMessage::Finished()
 	{
-		dir.release();
+		dir.reset();
 	}
 	
 	
 	plus::string myHello;
 	plus::string myFrom;
 	std::list< plus::string > myTo;
-	PartialMessage myMessage;
+	
+	static std::auto_ptr< PartialMessage > myMessage;
+	
 	bool dataMode = false;
 	
 	
+	class oneliner_creator
+	{
+		private:
+			const plus::string& its_dir;
+		
+		public:
+			oneliner_creator( const plus::string& dir ) : its_dir( dir )
+			{
+			}
+			
+			void operator()( const plus::string& line );
+	};
+	
+	void oneliner_creator::operator()( const plus::string& line )
+	{
+		CreateOneLiner( its_dir / line,
+		                line );
+	}
+	
 	static void QueueMessage()
 	{
-		N::FSDirSpec dir = myMessage.Dir();
+		const plus::string& dir = myMessage->Dir();
 		
 		// Create the Destinations subdirectory.
-		N::FSDirSpec destFolder = N::FSpDirCreate( dir / "Destinations" );
+		plus::string destinations_dir = dir / "Destinations";
+		
+		p7::mkdir( destinations_dir );
 		
 		// Create the destination files.
 		std::for_each( myTo.begin(),
 		               myTo.end(),
-		               plus::compose1( std::bind1st( plus::ptr_fun( CreateDestinationFile ),
-		                                             destFolder ),
-		                               plus::ptr_fun( GetForwardPath ) ) );
+		               oneliner_creator( destinations_dir ) );
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
 		CreateOneLiner( dir / "Return-Path", 
-		                GetReversePath( myFrom ) );
+		                myFrom );
 		
 	}
 	
@@ -299,21 +254,19 @@ namespace tool
 		}
 		else if ( word == "MAIL" )
 		{
-			myFrom = command;
+			myFrom = GetReversePath( command );
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "250 Sender ok, probably"  "\r\n" ) );
 		}
 		else if ( word == "RCPT" )
 		{
-			myTo.push_back( command );
+			myTo.push_back( GetForwardPath( command ) );
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "250 Recipient ok, I guess"  "\r\n" ) );
 		}
 		else if ( word == "DATA" )
 		{
-			PartialMessage msg( QueueDirectory() / MakeMessageName() );
-			
-			myMessage = msg;
+			myMessage.reset( new PartialMessage( QueueDirectory() / MakeMessageName() ) );
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
@@ -352,7 +305,7 @@ namespace tool
 	
 	static void DoData( const plus::string& data )
 	{
-		myMessage.WriteLine( data );
+		myMessage->WriteLine( data );
 		
 		if ( data == "." )
 		{
@@ -365,7 +318,7 @@ namespace tool
 			try
 			{
 				QueueMessage();
-				myMessage.Finished();
+				myMessage->Finished();
 				queued = true;
 			}
 			catch ( ... )
@@ -377,6 +330,8 @@ namespace tool
 			                             : "554 Can't accept message"  "\r\n";
 			
 			p7::write( p7::stdout_fileno, message, std::strlen( message ) );
+			
+			myMessage.reset();
 		}
 		else
 		{
