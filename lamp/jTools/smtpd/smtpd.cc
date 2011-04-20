@@ -23,7 +23,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
@@ -262,14 +261,13 @@ namespace tool
 		// Create the destination files.
 		std::for_each( myTo.begin(),
 		               myTo.end(),
-		               plus::compose1( std::bind1st( plus::ptr_fun( CreateDestinationFile ),
-		                                             destFolder ),
-		                               plus::ptr_fun( GetForwardPath ) ) );
+		               std::bind1st( plus::ptr_fun( CreateDestinationFile ),
+		                             destFolder ) );
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
 		CreateOneLiner( dir / "Return-Path", 
-		                GetReversePath( myFrom ) );
+		                myFrom );
 		
 	}
 	
@@ -283,13 +281,13 @@ namespace tool
 		}
 		else if ( word == "MAIL" )
 		{
-			myFrom = command;
+			myFrom = GetReversePath( command );
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "250 Sender ok, probably"  "\r\n" ) );
 		}
 		else if ( word == "RCPT" )
 		{
-			myTo.push_back( command );
+			myTo.push_back( GetForwardPath( command ) );
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "250 Recipient ok, I guess"  "\r\n" ) );
 		}
