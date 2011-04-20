@@ -14,6 +14,9 @@
 #include <cstdio>
 #include <cstdlib>
 
+// Standard C
+#include <time.h>
+
 // POSIX
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -84,23 +87,23 @@ namespace tool
 	
 	
 	// E.g. "19840124.183000"
-	static plus::string DateFormattedForFilename( unsigned long clock, int serial )
+	static plus::string DateFormattedForFilename( const time_t& now, int serial )
 	{
-		DateTimeRec date = N::SecondsToDate( clock );
+		const struct tm* t = gmtime( &now );
 		
 		plus::string result;
 		
 		char* p = result.reset( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
-		iota::fill_unsigned_decimal( date.year,  p,     4 );
-		iota::fill_unsigned_decimal( date.month, &p[4], 2 );
-		iota::fill_unsigned_decimal( date.day,   &p[6], 2 );
+		iota::fill_unsigned_decimal( t->tm_year + 1900, &p[0], 4 );
+		iota::fill_unsigned_decimal( t->tm_mon  +    1, &p[4], 2 );
+		iota::fill_unsigned_decimal( t->tm_mday,        &p[6], 2 );
 		
 		p[8] = '.';
 		
-		iota::fill_unsigned_decimal( date.hour,   &p[ 9], 2 );
-		iota::fill_unsigned_decimal( date.minute, &p[11], 2 );
-		iota::fill_unsigned_decimal( date.second, &p[13], 2 );
+		iota::fill_unsigned_decimal( t->tm_hour, &p[ 9], 2 );
+		iota::fill_unsigned_decimal( t->tm_min,  &p[11], 2 );
+		iota::fill_unsigned_decimal( t->tm_sec,  &p[13], 2 );
 		
 		p[15] = '-';
 		
@@ -111,10 +114,10 @@ namespace tool
 	
 	static plus::string MakeMessageName()
 	{
-		static unsigned long stamp = N::GetDateTime();
+		static time_t stamp = 0;
 		static int serial = 0;
 		
-		unsigned long now = N::GetDateTime();
+		const time_t now = time( NULL );
 		
 		if ( stamp == now )
 		{
