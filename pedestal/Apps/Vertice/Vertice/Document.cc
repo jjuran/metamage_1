@@ -5,13 +5,8 @@
 
 #include "Vertice/Document.hh"
 
-// Standard C
-#include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-
 // Standard C/C++
-#include <cstdlib>
+#include <cstring>
 
 // Standard C++
 #include <algorithm>
@@ -19,6 +14,9 @@
 #include <list>
 #include <map>
 #include <vector>
+
+// gear
+#include "gear/parse_float.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -141,11 +139,40 @@ namespace Vertice
 	};
 	
 	
+	static bool scan_float( const char*& mark, double* f )
+	{
+		const char* saved_mark = mark;
+		
+		*f = gear::parse_float( &mark );
+		
+		return mark != saved_mark;
+	}
+	
+	static int scan_3_floats( const char* mark, double* a, double* b, double* c )
+	{
+		int n = 0;
+		
+		n += scan_float( mark, a );
+		n += scan_float( mark, b );
+		n += scan_float( mark, c );
+		
+		return n;
+	}
+	
+	static int scan_4_floats( const char* mark, double* a, double* b, double* c, double* d )
+	{
+		int n = scan_float( mark, a );
+		
+		n += scan_3_floats( mark, b, c, d );
+		
+		return n;
+	}
+	
 	ColorMatrix Parser::ReadColor( const char* begin, const char* end ) const
 	{
 		double red, green, blue;
 		
-		int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
+		int scanned = scan_3_floats( begin, &red, &green, &blue );
 		
 		if ( scanned == 3 )
 		{
@@ -168,20 +195,16 @@ namespace Vertice
 	{
 		std::vector< double > values;
 		
-		errno = 0;
-		
 		while ( begin < end )
 		{
-			char* p = NULL;
+			const char* saved = begin;
 			
-			double value = std::strtod( begin, &p );
+			double value = gear::parse_float( &begin );
 			
-			if ( errno != 0 )
+			if ( begin == saved )
 			{
 				break;
 			}
-			
-			begin = p;
 			
 			values.push_back( value );
 		}
@@ -315,7 +338,7 @@ namespace Vertice
 		its2U =
 		its2V = 0.0;
 		
-		int scanned = std::sscanf( begin, "%lf %lf %lf %lf", &its1U, &its1V, &its2U, &its2V );
+		int scanned = scan_4_floats( begin, &its1U, &its1V, &its2U, &its2V );
 		
 		if ( scanned < 3 )
 		{
@@ -334,7 +357,7 @@ namespace Vertice
 	{
 		double x, y, z;
 		
-		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
+		int scanned = scan_3_floats( begin, &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
@@ -346,7 +369,7 @@ namespace Vertice
 	{
 		double x, y, z;
 		
-		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
+		int scanned = scan_3_floats( begin, &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
@@ -358,7 +381,7 @@ namespace Vertice
 	{
 		double theta;
 		
-		int scanned = std::sscanf( begin, "%lf", &theta );
+		int scanned = scan_float( begin, &theta );
 		
 		if ( scanned == 1 )
 		{
@@ -370,7 +393,7 @@ namespace Vertice
 	{
 		double phi;
 		
-		int scanned = std::sscanf( begin, "%lf", &phi );
+		int scanned = scan_float( begin, &phi );
 		
 		if ( scanned == 1 )
 		{
@@ -393,7 +416,7 @@ namespace Vertice
 		
 		double x, y, z;
 		
-		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
+		int scanned = scan_3_floats( begin, &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{

@@ -3,8 +3,8 @@
  *	===========
  */
 
-// Standard C/C++
-#include <cstdio>
+// gear
+#include "gear/parse_float.hh"
 
 // poseven
 #include "poseven/extras/slurp.hh"
@@ -57,7 +57,7 @@ namespace tool
 		
 		if ( sleep_arg )
 		{
-			int scanned = std::sscanf( sleep_arg, "%f", &sleep_time );
+			sleep_time = gear::parse_float( sleep_arg );
 		}
 		
 		unsigned long seconds     = sleep_time;

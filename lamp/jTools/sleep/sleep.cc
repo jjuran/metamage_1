@@ -5,7 +5,6 @@
 
 // Standard C/C++
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
 
 // POSIX
@@ -14,6 +13,9 @@
 
 // Iota
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_float.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -29,9 +31,11 @@ int main( int argc, char const *const argv[] )
 		return 2;
 	}
 	
-	float sleep_time = 0.0;
+	const char* sleep_arg = argv[1];
 	
-	if ( int scanned = std::sscanf( argv[1], "%f", &sleep_time ) )
+	const float sleep_time = gear::parse_float( &sleep_arg );
+	
+	if ( const bool parsed = sleep_arg != argv[1] )
 	{
 		const float int_sleep_time = std::floor( sleep_time );
 		

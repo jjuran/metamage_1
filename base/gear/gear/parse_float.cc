@@ -23,6 +23,10 @@ namespace gear
 			++p;
 		}
 		
+		const bool negative = *p == '-';
+		
+		p += negative;
+		
 		while ( std::isdigit( *p ) )
 		{
 			result = result * 10 + (*p - '0');
@@ -40,6 +44,11 @@ namespace gear
 				
 				result += (*p - '0') / divisor;
 			}
+		}
+		
+		if ( negative )
+		{
+			result = -result;
 		}
 		
 		return result;
