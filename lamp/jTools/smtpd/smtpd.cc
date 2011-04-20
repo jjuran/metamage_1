@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <list>
+#include <memory>
 #include <vector>
 
 // Standard C/C++
@@ -69,39 +70,6 @@ namespace io
 	{
 		return path_descent( Nitrogen::FSpMake_FSDirSpec( dir ), name );
 	}
-	
-}
-
-namespace Nitrogen
-{
-	
-	struct RecursiveFSDeleter
-	{
-		void operator()( const FSDirSpec& dir ) const
-		{
-			io::recursively_delete_directory( dir );
-		}
-	};
-	
-	class FSDirSpec_aliveness_test
-	{
-		public:
-			static bool is_live( const FSDirSpec& dir )
-			{
-				return dir.dirID != 0;
-			}
-	};
-	
-}
-
-namespace nucleus
-{
-	
-	template <>
-	struct aliveness_traits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >
-	{
-		typedef Nitrogen::FSDirSpec_aliveness_test aliveness_test;
-	};
 	
 }
 
@@ -207,12 +175,18 @@ namespace tool
 	class PartialMessage
 	{
 		private:
-			n::owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
+			N::FSDirSpec dir;
 			n::owned< N::FSFileRefNum > out;
 		
+		private:
+			// non-copyable
+			PartialMessage           ( const PartialMessage& );
+			PartialMessage& operator=( const PartialMessage& );
+		
 		public:
-			PartialMessage()  {}
 			PartialMessage( const FSSpec& dir );
+			
+			~PartialMessage();
 			
 			N::FSDirSpec Dir() const  { return dir; }
 			void WriteLine( const plus::string& line );
@@ -222,12 +196,20 @@ namespace tool
 	
 	PartialMessage::PartialMessage( const FSSpec& dirLoc )
 	:
-		dir( n::owned< N::FSDirSpec, N::RecursiveFSDeleter >::seize( N::FSpDirCreate( dirLoc ) ) ), 
-		out( io::open_for_writing( N::FSpCreate( dir.get() / "Message",
+		dir( N::FSpDirCreate( dirLoc ) ),
+		out( io::open_for_writing( N::FSpCreate( dir / "Message",
 		                                         Mac::FSCreator( 'R*ch' ),
 		                                         Mac::FSType   ( 'TEXT' ) ) ) )
 	{
 		//
+	}
+	
+	PartialMessage::~PartialMessage()
+	{
+		if ( dir.dirID != 0 )
+		{
+			io::recursively_delete_directory( dir );
+		}
 	}
 	
 	void PartialMessage::WriteLine( const plus::string& line )
@@ -240,20 +222,22 @@ namespace tool
 	
 	void PartialMessage::Finished()
 	{
-		dir.release();
+		dir.dirID = Mac::FSDirID();  // 0
 	}
 	
 	
 	plus::string myHello;
 	plus::string myFrom;
 	std::list< plus::string > myTo;
-	PartialMessage myMessage;
+	
+	static std::auto_ptr< PartialMessage > myMessage;
+	
 	bool dataMode = false;
 	
 	
 	static void QueueMessage()
 	{
-		N::FSDirSpec dir = myMessage.Dir();
+		N::FSDirSpec dir = myMessage->Dir();
 		
 		// Create the Destinations subdirectory.
 		N::FSDirSpec destFolder = N::FSpDirCreate( dir / "Destinations" );
@@ -293,9 +277,7 @@ namespace tool
 		}
 		else if ( word == "DATA" )
 		{
-			PartialMessage msg( QueueDirectory() / MakeMessageName() );
-			
-			myMessage = msg;
+			myMessage.reset( new PartialMessage( QueueDirectory() / MakeMessageName() ) );
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
@@ -334,7 +316,7 @@ namespace tool
 	
 	static void DoData( const plus::string& data )
 	{
-		myMessage.WriteLine( data );
+		myMessage->WriteLine( data );
 		
 		if ( data == "." )
 		{
@@ -347,7 +329,7 @@ namespace tool
 			try
 			{
 				QueueMessage();
-				myMessage.Finished();
+				myMessage->Finished();
 				queued = true;
 			}
 			catch ( ... )
@@ -359,6 +341,8 @@ namespace tool
 			                             : "554 Can't accept message"  "\r\n";
 			
 			p7::write( p7::stdout_fileno, message, std::strlen( message ) );
+			
+			myMessage.reset();
 		}
 		else
 		{
