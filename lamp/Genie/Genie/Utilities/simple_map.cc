@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	typedef std::map< const void*, void* > simple_map_type;
+	typedef std::map< const void*, const void* > simple_map_type;
 	
 	
 	struct simple_map_impl
@@ -59,7 +59,7 @@ namespace Genie
 			
 			for ( Iter it = other_map.begin();  it != other_map.end();  ++it )
 			{
-				void*& slot = map[ it->first ];
+				const void*& slot = map[ it->first ];
 				
 				slot = duplicate( it->second );
 			}
@@ -102,7 +102,7 @@ namespace Genie
 		
 		simple_map_type& map = its_map->map;
 		
-		void*& result = map[ key ];
+		const void*& result = map[ key ];
 		
 		if ( result == NULL )
 		{
