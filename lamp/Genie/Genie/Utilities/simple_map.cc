@@ -13,9 +13,12 @@
 namespace Genie
 {
 	
+	typedef std::map< const void*, void* > simple_map_type;
+	
+	
 	struct simple_map_impl
 	{
-		std::map< const void*, void* > map;
+		simple_map_type map;
 	};
 	
 	class map_destroyer
@@ -23,7 +26,7 @@ namespace Genie
 		private:
 			typedef void (*deallocator)( void* );
 			
-			typedef std::map< const void*, void* >::value_type value_type;
+			typedef simple_map_type::value_type value_type;
 			
 			deallocator its_deallocator;
 		
@@ -49,10 +52,10 @@ namespace Genie
 			
 			temp.its_map = new simple_map_impl;
 			
-			std::map< Key, void* >& map       =  temp.its_map->map;
-			std::map< Key, void* >& other_map = other.its_map->map;
+			simple_map_type& map       =  temp.its_map->map;
+			simple_map_type& other_map = other.its_map->map;
 			
-			typedef std::map< Key, void* >::const_iterator Iter;
+			typedef simple_map_type::const_iterator Iter;
 			
 			for ( Iter it = other_map.begin();  it != other_map.end();  ++it )
 			{
@@ -74,7 +77,7 @@ namespace Genie
 			return;
 		}
 		
-		std::map< Key, void* >& map = its_map->map;
+		simple_map_type& map = its_map->map;
 		
 		std::for_each( map.begin(),
 		               map.end(),
@@ -97,7 +100,7 @@ namespace Genie
 			its_map = new simple_map_impl;
 		}
 		
-		std::map< Key, void* >& map = its_map->map;
+		simple_map_type& map = its_map->map;
 		
 		void*& result = map[ key ];
 		
@@ -113,9 +116,9 @@ namespace Genie
 	{
 		if ( its_map )
 		{
-			const std::map< Key, void* >& map = its_map->map;
+			const simple_map_type& map = its_map->map;
 			
-			std::map< Key, void* >::const_iterator it = map.find( key );
+			simple_map_type::const_iterator it = map.find( key );
 			
 			if ( it != map.end() )
 			{
@@ -130,9 +133,9 @@ namespace Genie
 	{
 		if ( its_map )
 		{
-			typedef std::map< Key, void* >::iterator Iter;
+			typedef simple_map_type::iterator Iter;
 			
-			std::map< Key, void* >& map = its_map->map;
+			simple_map_type& map = its_map->map;
 			
 			Iter it = map.find( key );
 			
