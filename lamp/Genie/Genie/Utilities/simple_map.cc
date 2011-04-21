@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	typedef std::map< const void*, const void* > simple_map_type;
+	typedef std::map< unsigned long, const void* > simple_map_type;
 	
 	
 	struct simple_map_impl
@@ -102,7 +102,7 @@ namespace Genie
 		
 		simple_map_type& map = its_map->map;
 		
-		const void*& result = map[ key ];
+		const void*& result = map[ (unsigned long) key ];
 		
 		if ( result == NULL )
 		{
@@ -118,7 +118,7 @@ namespace Genie
 		{
 			const simple_map_type& map = its_map->map;
 			
-			simple_map_type::const_iterator it = map.find( key );
+			simple_map_type::const_iterator it = map.find( (unsigned long) key );
 			
 			if ( it != map.end() )
 			{
@@ -137,7 +137,7 @@ namespace Genie
 			
 			simple_map_type& map = its_map->map;
 			
-			Iter it = map.find( key );
+			Iter it = map.find( (unsigned long) key );
 			
 			if ( it != map.end() )
 			{
