@@ -17,6 +17,8 @@ sub escape_shell_metachars
 
 my $exe = shift;
 
+$exe = "demangle" if !defined $exe;
+
 die "Bad path '$exe'\n" if !shell_safe( $exe );
 
 my $tests = << "[END]";
