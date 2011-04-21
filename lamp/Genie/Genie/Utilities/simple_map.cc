@@ -24,7 +24,7 @@ namespace Genie
 	class map_destroyer
 	{
 		private:
-			typedef void (*deallocator)( void* );
+			typedef void (*deallocator)( const void* );
 			
 			typedef simple_map_type::value_type value_type;
 			
@@ -93,7 +93,7 @@ namespace Genie
 		delete its_map;
 	}
 	
-	void* map_base::get( Key key, allocator a )
+	const void* map_base::get( Key key, allocator a )
 	{
 		if ( its_map == NULL )
 		{
@@ -112,7 +112,7 @@ namespace Genie
 		return result;
 	}
 	
-	void* map_base::find( Key key )
+	const void* map_base::find( Key key )
 	{
 		if ( its_map )
 		{
