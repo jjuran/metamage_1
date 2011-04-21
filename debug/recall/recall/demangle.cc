@@ -458,7 +458,7 @@ namespace recall
 		
 		while ( *p != '\0' )
 		{
-			if ( *p == '>' )
+			if ( *p == '>'  ||  *p == ',' )
 			{
 				break;
 			}
