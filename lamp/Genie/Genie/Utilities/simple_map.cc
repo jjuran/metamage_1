@@ -13,17 +13,20 @@
 namespace Genie
 {
 	
+	typedef std::map< unsigned long, const void* > simple_map_type;
+	
+	
 	struct simple_map_impl
 	{
-		std::map< const void*, void* > map;
+		simple_map_type map;
 	};
 	
 	class map_destroyer
 	{
 		private:
-			typedef void (*deallocator)( void* );
+			typedef void (*deallocator)( const void* );
 			
-			typedef std::map< const void*, void* >::value_type value_type;
+			typedef simple_map_type::value_type value_type;
 			
 			deallocator its_deallocator;
 		
@@ -49,14 +52,14 @@ namespace Genie
 			
 			temp.its_map = new simple_map_impl;
 			
-			std::map< Key, void* >& map       =  temp.its_map->map;
-			std::map< Key, void* >& other_map = other.its_map->map;
+			simple_map_type& map       =  temp.its_map->map;
+			simple_map_type& other_map = other.its_map->map;
 			
-			typedef std::map< Key, void* >::const_iterator Iter;
+			typedef simple_map_type::const_iterator Iter;
 			
 			for ( Iter it = other_map.begin();  it != other_map.end();  ++it )
 			{
-				void*& slot = map[ it->first ];
+				const void*& slot = map[ it->first ];
 				
 				slot = duplicate( it->second );
 			}
@@ -74,7 +77,7 @@ namespace Genie
 			return;
 		}
 		
-		std::map< Key, void* >& map = its_map->map;
+		simple_map_type& map = its_map->map;
 		
 		std::for_each( map.begin(),
 		               map.end(),
@@ -90,16 +93,16 @@ namespace Genie
 		delete its_map;
 	}
 	
-	void* map_base::get( Key key, allocator a )
+	const void* map_base::get( Key key, allocator a )
 	{
 		if ( its_map == NULL )
 		{
 			its_map = new simple_map_impl;
 		}
 		
-		std::map< Key, void* >& map = its_map->map;
+		simple_map_type& map = its_map->map;
 		
-		void*& result = map[ key ];
+		const void*& result = map[ (unsigned long) key ];
 		
 		if ( result == NULL )
 		{
@@ -109,13 +112,13 @@ namespace Genie
 		return result;
 	}
 	
-	void* map_base::find( Key key )
+	const void* map_base::find( Key key )
 	{
 		if ( its_map )
 		{
-			const std::map< Key, void* >& map = its_map->map;
+			const simple_map_type& map = its_map->map;
 			
-			std::map< Key, void* >::const_iterator it = map.find( key );
+			simple_map_type::const_iterator it = map.find( (unsigned long) key );
 			
 			if ( it != map.end() )
 			{
@@ -130,11 +133,11 @@ namespace Genie
 	{
 		if ( its_map )
 		{
-			typedef std::map< Key, void* >::iterator Iter;
+			typedef simple_map_type::iterator Iter;
 			
-			std::map< Key, void* >& map = its_map->map;
+			simple_map_type& map = its_map->map;
 			
-			Iter it = map.find( key );
+			Iter it = map.find( (unsigned long) key );
 			
 			if ( it != map.end() )
 			{
