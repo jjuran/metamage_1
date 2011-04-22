@@ -26,6 +26,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -63,7 +66,7 @@ static int killall( const char* name_to_kill, int sig )
 	{
 		const char* proc_id = entry->d_name;
 		
-		if ( pid_t pid = iota::parse_unsigned_decimal( proc_id ) )
+		if ( pid_t pid = gear::parse_unsigned_decimal( proc_id ) )
 		{
 			int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
 			
@@ -109,7 +112,7 @@ int main( int argc, char const *const argv[] )
 		bool numeric = std::isdigit( *sig );
 		
 		// FIXME:  Needs error checking instead of silently using 0
-		sig_number = numeric ? iota::parse_unsigned_decimal( sig )
+		sig_number = numeric ? gear::parse_unsigned_decimal( sig )
 		                     : klibc::signal_lookup        ( sig );
 		
 		++argp;

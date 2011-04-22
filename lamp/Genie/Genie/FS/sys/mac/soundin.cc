@@ -11,6 +11,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -40,7 +43,7 @@ namespace Genie
 	
 	static UInt16 GetKeyFromParent( const FSTree* parent )
 	{
-		return iota::parse_unsigned_decimal( parent->Name().c_str() );
+		return gear::parse_unsigned_decimal( parent->Name().c_str() );
 	}
 	
 	
@@ -74,7 +77,7 @@ namespace Genie
 		
 		static bool applies( const plus::string& name )
 		{
-			return well_formed_name::applies( name )  &&  index_is_valid_soundin_device( iota::parse_unsigned_decimal( name.c_str() ) );
+			return well_formed_name::applies( name )  &&  index_is_valid_soundin_device( gear::parse_unsigned_decimal( name.c_str() ) );
 		}
 	};
 	

@@ -11,6 +11,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -112,7 +115,7 @@ namespace Genie
 		}
 		else
 		{
-			start = iota::parse_unsigned_decimal( begin );
+			start = gear::parse_unsigned_decimal( begin );
 			
 			const char* hyphen = std::find( begin, end, '-' );
 			
@@ -122,7 +125,7 @@ namespace Genie
 			
 			s_end = hyphen     == end ? start
 			      : hyphen + 1 == end ? length
-			      :                     iota::parse_unsigned_decimal( hyphen + 1 );
+			      :                     gear::parse_unsigned_decimal( hyphen + 1 );
 			
 			// The selection must not be inverted or exceed the text range.
 			

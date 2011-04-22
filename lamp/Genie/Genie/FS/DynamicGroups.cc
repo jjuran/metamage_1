@@ -11,6 +11,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -32,7 +35,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Dynamic_N::Open( OpenFlags flags ) const
 	{
-		const unsigned id = iota::parse_unsigned_decimal( Name().c_str() );
+		const unsigned id = gear::parse_unsigned_decimal( Name().c_str() );
 		
 		return itsGetter( id );
 	}
@@ -54,7 +57,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		const unsigned id = iota::parse_unsigned_decimal( name.c_str() );
+		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );
 		
 		const DynamicGroup& sequence = ItemSequence();
 		

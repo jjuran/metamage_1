@@ -22,8 +22,10 @@
 #include <sys/wait.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -386,7 +388,7 @@ namespace tool
 		
 		if ( argc > 1 )
 		{
-			exitStatus = iota::parse_unsigned_decimal( argv[ 1 ] );
+			exitStatus = gear::parse_unsigned_decimal( argv[ 1 ] );
 		}
 		
 		throw p7::exit_t( exitStatus );

@@ -7,8 +7,10 @@
 #define PLUS_VIVIFY_HH
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 
 namespace plus
@@ -30,7 +32,7 @@ namespace plus
 		
 		static bool apply( const char* begin, const char* end )
 		{
-			return iota::parse_unsigned_decimal( begin ) != 0;
+			return gear::parse_unsigned_decimal( begin ) != 0;
 		}
 	};
 	
@@ -41,7 +43,7 @@ namespace plus
 		
 		static Int apply( const char* begin, const char* end )
 		{
-			return Int( iota::parse_decimal( begin ) );
+			return Int( gear::parse_decimal( begin ) );
 		}
 	};
 	
@@ -52,7 +54,7 @@ namespace plus
 		
 		static Int apply( const char* begin, const char* end )
 		{
-			return Int( iota::parse_unsigned_decimal( begin ) );
+			return Int( gear::parse_unsigned_decimal( begin ) );
 		}
 	};
 	

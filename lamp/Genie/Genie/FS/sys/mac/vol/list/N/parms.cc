@@ -5,8 +5,8 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 
-// Iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/deconstruct.hh"
@@ -28,7 +28,7 @@ namespace Genie
 	
 	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		return Mac::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static Mac::FSVolumeRefNum GetKey( const FSTree* that )

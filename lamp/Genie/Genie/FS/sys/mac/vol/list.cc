@@ -9,6 +9,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/deconstruct.hh"
 #include "plus/freeze.hh"
@@ -66,7 +69,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
-		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -163,7 +166,7 @@ namespace Genie
 		{
 			if ( well_formed_name::applies( name ) )
 			{
-				const int i = iota::parse_unsigned_decimal( name.c_str() );
+				const int i = gear::parse_unsigned_decimal( name.c_str() );
 				
 				if ( (i & 0xffff8000) == 0 )
 				{

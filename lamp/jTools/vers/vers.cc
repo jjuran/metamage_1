@@ -12,8 +12,8 @@
 // POSIX
 #include <unistd.h>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -42,7 +42,7 @@ static int bad_version( const char* short_version, const char* problem )
 
 static int populate_version_buffer( char *buffer, const char *short_version )
 {
-	const int major = iota::parse_unsigned_decimal( short_version );
+	const int major = gear::parse_unsigned_decimal( short_version );
 	
 	if ( major > 99 )
 	{
@@ -51,7 +51,7 @@ static int populate_version_buffer( char *buffer, const char *short_version )
 	
 	if ( const char* dot_1 = strchr( short_version, '.' ) )
 	{
-		const int minor = iota::parse_unsigned_decimal( dot_1 + 1 );
+		const int minor = gear::parse_unsigned_decimal( dot_1 + 1 );
 		
 		if ( minor > 9 )
 		{
@@ -60,7 +60,7 @@ static int populate_version_buffer( char *buffer, const char *short_version )
 		
 		if ( const char* dot_2 = strchr( dot_1 + 1, '.' ) )
 		{
-			const int buglevel = iota::parse_unsigned_decimal( dot_2 + 1 );
+			const int buglevel = gear::parse_unsigned_decimal( dot_2 + 1 );
 			
 			if ( buglevel > 9 )
 			{
@@ -102,7 +102,7 @@ static int populate_version_buffer( char *buffer, const char *short_version )
 			++p;
 		}
 		
-		int release_number = iota::parse_unsigned_decimal( p );
+		int release_number = gear::parse_unsigned_decimal( p );
 		
 		if ( release_number > 255 )
 		{

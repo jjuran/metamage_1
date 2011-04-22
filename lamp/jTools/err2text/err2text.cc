@@ -11,6 +11,9 @@
 #include "iota/decimal.hh"
 #include "iota/find.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -204,7 +207,7 @@ namespace tool
 		
 		for ( int i = 1;  i < argc;  ++i )
 		{
-			int errnum = iota::parse_decimal( argv[ i ] );
+			int errnum = gear::parse_decimal( argv[ i ] );
 			
 			// look up and print
 			

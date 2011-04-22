@@ -13,6 +13,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/contains.hh"
 #include "plus/serialize.hh"
@@ -112,7 +115,7 @@ namespace Genie
 	{
 		static unsigned apply( const plus::string& name )
 		{
-			return iota::parse_unsigned_decimal( name.c_str() );
+			return gear::parse_unsigned_decimal( name.c_str() );
 		}
 	};
 	

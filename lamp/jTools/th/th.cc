@@ -26,6 +26,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -127,7 +130,7 @@ namespace tool
 			return results;
 		}
 		
-		results.planned = iota::parse_unsigned_decimal( plan->c_str() + 3 );
+		results.planned = gear::parse_unsigned_decimal( plan->c_str() + 3 );
 		
 		unsigned next_test_number = 1;
 		
@@ -169,7 +172,7 @@ namespace tool
 				return results;
 			}
 			
-			if ( iota::parse_unsigned_decimal( number ) != next_test_number++ )
+			if ( gear::parse_unsigned_decimal( number ) != next_test_number++ )
 			{
 				return results;
 			}

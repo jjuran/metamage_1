@@ -10,8 +10,10 @@
 #include <cstring>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"
@@ -70,7 +72,7 @@ namespace tool
 			return 1;
 		}
 		
-		p7::in_port_t port = p7::in_port_t( iota::parse_unsigned_decimal( argv[ 1 ] ) );
+		p7::in_port_t port = p7::in_port_t( gear::parse_unsigned_decimal( argv[ 1 ] ) );
 		
 		const char* command = argv[ 2 ];
 		

@@ -14,8 +14,10 @@
 #include <unistd.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -37,7 +39,7 @@ int main( int argc, char **argv )
 		const bool numeric = std::isdigit( *sig );
 		
 		// FIXME:  Needs error checking instead of silently using 0
-		sig_number = numeric ? iota::parse_unsigned_decimal( sig )
+		sig_number = numeric ? gear::parse_unsigned_decimal( sig )
 		                     : klibc::signal_lookup        ( sig );
 		
 		++argp;
@@ -51,7 +53,7 @@ int main( int argc, char **argv )
 		return 1;
 	}
 	
-	const pid_t pid = iota::parse_decimal( argp[ 1 ] );
+	const pid_t pid = gear::parse_decimal( argp[ 1 ] );
 	
 	const int killed = kill( pid, sig_number );
 	

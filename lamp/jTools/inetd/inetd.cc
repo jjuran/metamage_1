@@ -15,6 +15,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -186,7 +189,7 @@ namespace tool
 		
 		Record result;
 		
-		result.port = iota::parse_unsigned_decimal( tokens[ kPort ].c_str() );
+		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].c_str() );
 		result.path = tokens[ kPath ];
 		
 		std::size_t argc = tokens.size() - kArgv;

@@ -12,6 +12,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/pointer_to_function.hh"
 
@@ -294,8 +297,8 @@ namespace tool
 						
 						plus::string config_pathname( tab2 + 1 );
 						
-						PlatformDemands demands( Platform( iota::parse_unsigned_decimal( requirements.c_str() ) ),
-						                         Platform( iota::parse_unsigned_decimal( prohibitions.c_str() ) ) );
+						PlatformDemands demands( Platform( gear::parse_unsigned_decimal( requirements.c_str() ) ),
+						                         Platform( gear::parse_unsigned_decimal( prohibitions.c_str() ) ) );
 						
 						add_cached_config( project_name, demands, config_pathname );
 					}

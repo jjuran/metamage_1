@@ -10,6 +10,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/serialize.hh"
 #include "plus/string/concat.hh"
@@ -60,7 +63,7 @@ namespace Genie
 	{
 		typedef canonical_positive_integer well_formed_name;
 		
-		return well_formed_name::applies( name )  &&  FindDrive( iota::parse_unsigned_decimal( name.c_str() ) ) != NULL;
+		return well_formed_name::applies( name )  &&  FindDrive( gear::parse_unsigned_decimal( name.c_str() ) ) != NULL;
 	}
 	
 	
@@ -104,7 +107,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
-		return N::FSVolumeRefNum( iota::parse_decimal( parent->Name().c_str() ) );
+		return N::FSVolumeRefNum( gear::parse_decimal( parent->Name().c_str() ) );
 	}
 	
 	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )

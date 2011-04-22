@@ -11,6 +11,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -417,7 +420,7 @@ namespace Genie
 		
 		if ( (GetFlags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
 		{
-			resID = iota::parse_decimal( buffer );
+			resID = gear::parse_decimal( buffer );
 			
 			buffer = (const char*) &resID;
 			

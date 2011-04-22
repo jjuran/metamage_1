@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/exception.hh"
@@ -104,7 +104,7 @@ namespace orion
 			
 			void set( const char* param ) const
 			{
-				its_integer = iota::parse_decimal( param );
+				its_integer = gear::parse_decimal( param );
 			}
 	};
 	

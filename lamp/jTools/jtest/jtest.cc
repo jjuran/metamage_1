@@ -24,6 +24,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
@@ -124,7 +127,7 @@ namespace tool
 	{
 		std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 		
-		int fd_to_redirect = iota::parse_unsigned_decimal( line.substr( 0, end_of_fd - 0 ).c_str() );
+		int fd_to_redirect = gear::parse_unsigned_decimal( line.substr( 0, end_of_fd - 0 ).c_str() );
 		
 		std::size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
 		
@@ -529,7 +532,7 @@ namespace tool
 			
 			if ( line[0] == '?' )
 			{
-				int exit_status = iota::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+				int exit_status = gear::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
 				test.SetExitStatus( exit_status );
 				continue;
 			}

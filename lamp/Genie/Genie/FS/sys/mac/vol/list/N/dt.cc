@@ -8,6 +8,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -63,7 +66,7 @@ namespace Genie
 	{
 		const FSTreePtr& grandparent = parent->ParentRef();
 		
-		return N::FSVolumeRefNum( -iota::parse_unsigned_decimal( grandparent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->Name().c_str() ) );
 	}
 	
 	
@@ -139,7 +142,7 @@ namespace Genie
 		
 		const FSTreePtr& great_x2_grandparent = appls_quad->ParentRef()->ParentRef()->ParentRef();
 		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -iota::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
 		
 		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 	}
@@ -157,7 +160,7 @@ namespace Genie
 	
 	FSTreePtr dt_appls_QUAD_list_N::ResolveLink() const
 	{
-		const short index = iota::parse_unsigned_decimal( Name().c_str() );
+		const short index = gear::parse_unsigned_decimal( Name().c_str() );
 		
 		const FSTreePtr& grandparent = ParentRef()->ParentRef();
 		
@@ -243,12 +246,12 @@ namespace Genie
 		const FSTreePtr&   gparent = parent ->ParentRef();
 		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
 		
-		const short selector = iota::parse_unsigned_decimal( name.c_str() );
+		const short selector = gear::parse_unsigned_decimal( name.c_str() );
 		
 		const ::OSType type    = parse_quad_name( parent ->Name() );
 		const ::OSType creator = parse_quad_name( gparent->Name() );
 		
-		const short vRefNum = -iota::parse_unsigned_decimal( gggparent->Name().c_str() );
+		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
 		
 		DTPBRec pb;
 		
@@ -296,7 +299,7 @@ namespace Genie
 		const ::OSType type    = parse_quad_name( parent ->Name() );
 		const ::OSType creator = parse_quad_name( gparent->Name() );
 		
-		const short vRefNum = -iota::parse_unsigned_decimal( gggparent->Name().c_str() );
+		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
 		
 		DTPBRec pb;
 		

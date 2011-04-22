@@ -25,6 +25,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -220,7 +223,7 @@ namespace tool
 		}
 		else if ( std::isdigit( param[0] ) )
 		{
-			int i = iota::parse_unsigned_decimal( param.c_str() );
+			int i = gear::parse_unsigned_decimal( param.c_str() );
 			
 			if ( i <= gParameterCount )
 			{
@@ -359,7 +362,7 @@ namespace tool
 					break;
 				
 				case Sh::kRedirectInputDuplicate:
-					file = iota::parse_unsigned_decimal( param );  // FIXME:  Probably bad if param isn't an integer
+					file = gear::parse_unsigned_decimal( param );  // FIXME:  Probably bad if param isn't an integer
 					Dup2( file, fd );
 					break;
 				
@@ -403,7 +406,7 @@ namespace tool
 					break;
 				
 				case Sh::kRedirectOutputDuplicate:
-					file = iota::parse_unsigned_decimal( param );  // FIXME:  Probably bad if atoi returns 0
+					file = gear::parse_unsigned_decimal( param );  // FIXME:  Probably bad if atoi returns 0
 					Dup2( file, fd );
 					break;
 				

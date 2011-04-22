@@ -16,6 +16,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -30,7 +33,7 @@ namespace Genie
 	
 	static FSTreePtr menu_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		MenuRef menu = GetMenuRef( iota::parse_decimal( name.c_str() ) );
+		MenuRef menu = GetMenuRef( gear::parse_decimal( name.c_str() ) );
 		
 		if ( menu == NULL )
 		{

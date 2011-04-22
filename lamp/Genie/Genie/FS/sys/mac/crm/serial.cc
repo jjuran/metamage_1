@@ -10,6 +10,9 @@
 // iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -32,7 +35,7 @@ namespace Genie
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTree* parent )
 	{
-		return N::CRMDeviceID( iota::parse_decimal( parent->Name().c_str() ) );
+		return N::CRMDeviceID( gear::parse_decimal( parent->Name().c_str() ) );
 	}
 	
 	
@@ -65,7 +68,7 @@ namespace Genie
 	
 	static FSTreePtr serial_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		const N::CRMDeviceID key = N::CRMDeviceID( iota::parse_decimal( name.c_str() ) );
+		const N::CRMDeviceID key = N::CRMDeviceID( gear::parse_decimal( name.c_str() ) );
 		
 		// We can't just call N::CRMSearch< N::crmSerialDevice >( key ),
 		// because that returns the *next* record.  So, linear search it is.

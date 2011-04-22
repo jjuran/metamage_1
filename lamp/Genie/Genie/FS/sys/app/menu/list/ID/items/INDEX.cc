@@ -13,8 +13,8 @@
 #include <Menus.h>
 #endif
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -113,12 +113,12 @@ namespace Genie
 	
 	static MenuRef get_MenuRef( const FSTree* that )
 	{
-		return GetMenuRef( iota::parse_decimal( that->ParentRef()->ParentRef()->Name().c_str() ) );
+		return GetMenuRef( gear::parse_decimal( that->ParentRef()->ParentRef()->Name().c_str() ) );
 	}
 	
 	static UInt16 get_menu_item_index( const FSTree* that )
 	{
-		return iota::parse_decimal( that->Name().c_str() );
+		return gear::parse_decimal( that->Name().c_str() );
 	}
 	
 	template < class Accessor >

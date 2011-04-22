@@ -13,8 +13,10 @@
 #include <cstring>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -203,7 +205,7 @@ namespace recall
 	
 	static inline unsigned ReadLength( const char*& p )
 	{
-		return iota::parse_unsigned_decimal( &p );
+		return gear::parse_unsigned_decimal( &p );
 	}
 	
 	static const char* ReadLName( const char*& p )
@@ -364,7 +366,7 @@ namespace recall
 		
 		if ( std::isdigit( *p ) )
 		{
-			unsigned x = iota::parse_unsigned_decimal( &p );
+			unsigned x = gear::parse_unsigned_decimal( &p );
 			
 			if ( TemplateParameterListEndsHere( p ) || TemplateParameterFollows( p ) )
 			{

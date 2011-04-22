@@ -8,8 +8,8 @@
 // Standard C
 #include <ctype.h>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 
 namespace Genie
@@ -35,11 +35,11 @@ namespace Genie
 	{
 		Point result;
 		
-		result.h = iota::parse_decimal( &begin );
+		result.h = gear::parse_decimal( &begin );
 		
 		advance_to_decimal( begin, end );
 		
-		result.v = iota::parse_decimal( &begin );
+		result.v = gear::parse_decimal( &begin );
 		
 		return result;
 	}
@@ -48,19 +48,19 @@ namespace Genie
 	{
 		Rect result;
 		
-		result.left = iota::parse_decimal( &begin );
+		result.left = gear::parse_decimal( &begin );
 		
 		advance_to_decimal( begin, end );
 		
-		result.top = iota::parse_decimal( &begin );
+		result.top = gear::parse_decimal( &begin );
 		
 		advance_to_decimal( begin, end );
 		
-		result.right = iota::parse_decimal( &begin );
+		result.right = gear::parse_decimal( &begin );
 		
 		advance_to_decimal( begin, end );
 		
-		result.bottom = iota::parse_decimal( &begin );
+		result.bottom = gear::parse_decimal( &begin );
 		
 		return result;
 	}

@@ -13,8 +13,8 @@
 #include <Menus.h>
 #endif
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -59,7 +59,7 @@ namespace Genie
 	
 	static MenuRef GetKeyFromParent( const FSTree* parent )
 	{
-		return GetMenuRef( iota::parse_decimal( parent->Name().c_str() ) );
+		return GetMenuRef( gear::parse_decimal( parent->Name().c_str() ) );
 	}
 	
 	template < class Accessor >

@@ -47,6 +47,9 @@
 #include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // Recall
 #include "recall/backtrace.hh"
 #include "recall/demangle.hh"
@@ -154,7 +157,7 @@ static int TestMap( int argc, char** argv )
 {
 	std::vector< plus::string > foo;
 	
-	int count = (argc > 2) ? iota::parse_unsigned_decimal( argv[ 2 ] ) : 10000;
+	int count = (argc > 2) ? gear::parse_unsigned_decimal( argv[ 2 ] ) : 10000;
 	
 	for ( int i = 0;  i < count;  ++i )
 	{
@@ -855,7 +858,7 @@ static int TestThrow( int argc, char** argv )
 {
 	if ( argc < 3 )  return 1;
 	
-	int errnum = iota::parse_decimal( argv[2] );
+	int errnum = gear::parse_decimal( argv[2] );
 	
 	if ( errnum < 0 )
 	{
@@ -980,7 +983,7 @@ static int TestPath( int argc, char** argv )
 	n::owned< p7::fd_t > window = p7::open( window_path,
 	                                        p7::o_rdonly | p7::o_directory );
 	
-	int pix = iota::parse_decimal( argv[2] );
+	int pix = gear::parse_decimal( argv[2] );
 	
 	Point location = { 0, 0 };
 	

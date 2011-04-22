@@ -7,8 +7,8 @@
 // Standard C/C++
 #include <cctype>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/parse_decimal.hh"
 
 
 namespace ShellShock
@@ -95,7 +95,7 @@ namespace ShellShock
 		
 		if ( std::isdigit( *q ) )
 		{
-			fd = iota::parse_unsigned_decimal( &q );
+			fd = gear::parse_unsigned_decimal( &q );
 		}
 		
 		unsigned char len = 0;

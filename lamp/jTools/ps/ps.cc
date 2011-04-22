@@ -7,10 +7,10 @@
 #include <dirent.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/parse_decimal.hh"
 #include "gear/parse_float.hh"
 
 // Debug
@@ -148,12 +148,12 @@ namespace tool
 		
 		plus::string tpgid_string( p_tpgid, space );
 		
-		pid_t pid = iota::parse_unsigned_decimal( pid_name.c_str() );
+		pid_t pid = gear::parse_unsigned_decimal( pid_name.c_str() );
 		
-		pid_t ppid  = iota::parse_unsigned_decimal( p_ppid  );
-		pid_t pgid  = iota::parse_unsigned_decimal( p_pgid  );
-		pid_t sid   = iota::parse_unsigned_decimal( p_sid   );
-		pid_t tpgid = iota::parse_unsigned_decimal( p_tpgid );
+		pid_t ppid  = gear::parse_unsigned_decimal( p_ppid  );
+		pid_t pgid  = gear::parse_unsigned_decimal( p_pgid  );
+		pid_t sid   = gear::parse_unsigned_decimal( p_sid   );
+		pid_t tpgid = gear::parse_unsigned_decimal( p_tpgid );
 		
 		if ( term_string.length() == STRLEN( "/gui/port/12345678/tty" ) )
 		{
@@ -230,7 +230,7 @@ namespace tool
 		
 		while ( const dirent* ent = readdir( iter ) )
 		{
-			if ( pid_t pid = iota::parse_unsigned_decimal( ent->d_name ) )
+			if ( pid_t pid = gear::parse_unsigned_decimal( ent->d_name ) )
 			{
 				// A process could exit while we're examining it
 				try

@@ -8,6 +8,9 @@
 // Iota
 #include "iota/decimal.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/contains.hh"
 #include "plus/var_string.hh"
@@ -47,7 +50,7 @@ namespace Genie
 	
 	static pid_t GetKeyFromParent( const FSTree* parent )
 	{
-		return pid_t( iota::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return pid_t( gear::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static inline pid_t GetKeyFromParent( const FSTreePtr& parent )
@@ -212,7 +215,7 @@ namespace Genie
 		static bool applies( const plus::string& name )
 		{
 			return    well_formed_name::applies( name )
-			       && process_exists( iota::parse_unsigned_decimal( name.c_str() ) );
+			       && process_exists( gear::parse_unsigned_decimal( name.c_str() ) );
 		}
 	};
 	
@@ -562,7 +565,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_PID_fd::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		const int key = iota::parse_unsigned_decimal( name.c_str() );
+		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
 		const Sequence& sequence = ItemSequence();
 		

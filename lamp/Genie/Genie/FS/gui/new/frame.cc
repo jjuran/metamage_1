@@ -12,6 +12,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/serialize.hh"
 
@@ -76,7 +79,7 @@ namespace Genie
 			return Value();
 		}
 		
-		return Value( 1, iota::parse_decimal( begin ) );
+		return Value( 1, gear::parse_decimal( begin ) );
 	}
 	
 	struct serialize_Value : plus::serialize_POD< Value >

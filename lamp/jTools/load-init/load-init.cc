@@ -16,6 +16,9 @@
 #include "iota/quad.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -60,7 +63,7 @@ namespace tool
 		
 		N::ResType resType = N::ResType( iota::decode_quad( type ) );
 		
-		N::ResID   resID   = N::ResID( iota::parse_decimal( id ) );
+		N::ResID   resID   = N::ResID( gear::parse_decimal( id ) );
 		
 		const char* file = args[0];
 		

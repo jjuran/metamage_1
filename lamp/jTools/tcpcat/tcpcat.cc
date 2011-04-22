@@ -15,6 +15,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -67,7 +70,7 @@ namespace tool
 		const char* hostname = argv[1];
 		const char* port_str = argv[2];
 		
-		p7::in_port_t port = p7::in_port_t( iota::parse_unsigned_decimal( port_str ) );
+		p7::in_port_t port = p7::in_port_t( gear::parse_unsigned_decimal( port_str ) );
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		

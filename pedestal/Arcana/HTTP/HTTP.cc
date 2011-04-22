@@ -17,6 +17,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -223,7 +226,7 @@ namespace HTTP
 				const char* contentLength = header_stream + contentLengthEntry->value_offset;
 				
 				// Now get the *real* value, as opposed to its textual representation
-				itsContentLength = iota::parse_unsigned_decimal( contentLength );
+				itsContentLength = gear::parse_unsigned_decimal( contentLength );
 				itsContentLengthIsKnown = true;
 			}
 			else
@@ -336,7 +339,7 @@ namespace HTTP
 		
 		if ( const char* p = std::strchr( message.data(), ' ' ) )
 		{
-			return iota::parse_unsigned_decimal( p + 1 );
+			return gear::parse_unsigned_decimal( p + 1 );
 		}
 		
 		return 0;

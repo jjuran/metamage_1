@@ -17,8 +17,10 @@
 #endif
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -175,7 +177,7 @@ namespace tool
 		
 		bool setting = argc >= 2;
 		
-		int leds = setting ? iota::parse_unsigned_decimal( argv[1] ) & kLEDValueMask
+		int leds = setting ? gear::parse_unsigned_decimal( argv[1] ) & kLEDValueMask
 		                   : -1;
 		
 		N::ADBDevice_Container adbs;

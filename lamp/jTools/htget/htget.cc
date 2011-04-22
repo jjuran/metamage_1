@@ -16,6 +16,9 @@
 #include "iota/decimal.hh"
 #include "iota/strings.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/extras/pump.hh"
@@ -204,7 +207,7 @@ namespace tool
 		
 		if ( !portStr.empty() )
 		{
-			port = p7::in_port_t( iota::parse_unsigned_decimal( portStr.c_str() ) );
+			port = p7::in_port_t( gear::parse_unsigned_decimal( portStr.c_str() ) );
 		}
 		
 		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
