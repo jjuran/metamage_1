@@ -27,8 +27,10 @@
 #include <openssl/err.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // poseven
 #include "poseven/functions/perror.hh"
@@ -294,8 +296,8 @@ namespace tool
 		
 		o::get_options( argc, argv );
 		
-		unsigned short remote_port   = iota::parse_decimal( rport );
-		unsigned short listener_port = iota::parse_decimal( lport );
+		unsigned short remote_port   = gear::parse_decimal( rport );
+		unsigned short listener_port = gear::parse_decimal( lport );
 		
 		if ( listener_port == 0 )
 		{

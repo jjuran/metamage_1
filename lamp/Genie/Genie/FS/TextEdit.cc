@@ -8,10 +8,8 @@
 // Standard C++
 #include <algorithm>
 
-// Iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -87,13 +85,13 @@ namespace Genie
 	{
 		const Ped::TextSelection& selection = TextEditParameters::Get( that ).itsSelection;
 		
-		result = iota::inscribe_decimal( selection.start );
+		result = gear::inscribe_decimal( selection.start );
 		
 		if ( selection.end != selection.start )
 		{
 			result += '-';
 			
-			result += iota::inscribe_decimal( selection.end );
+			result += gear::inscribe_decimal( selection.end );
 		}
 	}
 	

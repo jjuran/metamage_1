@@ -5,10 +5,8 @@
 
 #include "Genie/FS/FSTree_Proc.hh"
 
-// Iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -71,7 +69,7 @@ namespace Genie
 			{
 			}
 			
-			plus::string ReadLink() const  { return iota::inscribe_unsigned_decimal( getpid() ); }
+			plus::string ReadLink() const  { return gear::inscribe_unsigned_decimal( getpid() ); }
 	};
 	
 	
@@ -106,7 +104,7 @@ namespace Genie
 	{
 		const ino_t inode = fd;
 		
-		plus::string name = iota::inscribe_decimal( fd );
+		plus::string name = gear::inscribe_decimal( fd );
 		
 		FSTreeCache& cache = *(FSTreeCache*) param;
 		
@@ -238,7 +236,7 @@ namespace Genie
 	{
 		const ino_t inode = pid;
 		
-		plus::string name = iota::inscribe_decimal( pid );
+		plus::string name = gear::inscribe_decimal( pid );
 		
 		FSTreeCache& cache = *(FSTreeCache*) param;
 		
@@ -395,7 +393,7 @@ namespace Genie
 				
 				plus::var_string result;
 				
-				result += iota::inscribe_decimal( pid );
+				result += gear::inscribe_decimal( pid );
 				result += " "
 				          "(";
 				result += process.ProgramName();
@@ -403,15 +401,15 @@ namespace Genie
 				          " ";
 				result += ProcessStateCode( process );
 				result += " ";
-				result += iota::inscribe_decimal( ppid );
+				result += gear::inscribe_decimal( ppid );
 				result += " ";
-				result += iota::inscribe_decimal( pgid );
+				result += gear::inscribe_decimal( pgid );
 				result += " ";
-				result += iota::inscribe_decimal( sid );
+				result += gear::inscribe_decimal( sid );
 				result += " ";
 				result += terminal_name;
 				result += " ";
-				result += iota::inscribe_decimal( tpgid );
+				result += gear::inscribe_decimal( tpgid );
 				result += "\n";
 				
 				return result;

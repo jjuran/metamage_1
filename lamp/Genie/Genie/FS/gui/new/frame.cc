@@ -9,10 +9,10 @@
 #include <fcntl.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -64,7 +64,7 @@ namespace Genie
 	{
 		const bool is_auto = value.flags == 0  &&  value.number == 0;
 		
-		out = is_auto ? "auto" : iota::inscribe_decimal( value.number );
+		out = is_auto ? "auto" : gear::inscribe_decimal( value.number );
 	}
 	
 	struct vivify_Value

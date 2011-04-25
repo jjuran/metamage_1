@@ -6,10 +6,10 @@
 #include "Genie/FS/sys/mac/vol/list.hh"
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -198,7 +198,7 @@ namespace Genie
 			{
 				const ino_t inode = -vRefNum;
 				
-				plus::string name = iota::inscribe_decimal( -vRefNum );
+				plus::string name = gear::inscribe_decimal( -vRefNum );
 				
 				return FSNode( inode, name );
 			}
@@ -492,7 +492,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		plus::string drive = iota::inscribe_decimal( pb.ioVDrvInfo );
+		plus::string drive = gear::inscribe_decimal( pb.ioVDrvInfo );
 		
 		drive = "/sys/mac/drive/" + drive;
 		
@@ -514,7 +514,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		plus::string unit = iota::inscribe_decimal( ~pb.ioVDRefNum );
+		plus::string unit = gear::inscribe_decimal( ~pb.ioVDRefNum );
 		
 		unit = "/sys/mac/unit/" + unit;
 		
@@ -595,7 +595,7 @@ namespace Genie
 	{
 		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol/list" ) );
 		
-		const plus::string name = iota::inscribe_decimal( -vRefNum );
+		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		
 		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
 	}

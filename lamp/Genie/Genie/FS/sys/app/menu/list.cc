@@ -13,10 +13,8 @@
 #include <Menus.h>
 #endif
 
-// iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // poseven
@@ -61,7 +59,7 @@ namespace Genie
 			
 			MenuID id = GetMenuID( menu.menu );
 			
-			cache.push_back( FSNode( id, iota::inscribe_decimal( id ) ) );
+			cache.push_back( FSNode( id, gear::inscribe_decimal( id ) ) );
 		}
 		
 	#endif

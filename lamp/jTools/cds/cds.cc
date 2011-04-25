@@ -4,9 +4,11 @@
  */
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -71,8 +73,8 @@ namespace tool
 		
 		print_field( "Audio status", state );
 		
-		print_field( "Audio play mode", iota::inscribe_decimal( gStatus.playMode & 0x0f ) );
-		print_field( "Track format",    iota::inscribe_decimal( gStatus.control  & 0x0f ) );
+		print_field( "Audio play mode", gear::inscribe_decimal( gStatus.playMode & 0x0f ) );
+		print_field( "Track format",    gear::inscribe_decimal( gStatus.control  & 0x0f ) );
 		
 		char time[] = "mm:ss";
 		
@@ -105,7 +107,7 @@ namespace tool
 			
 			char buffer[] = "Track  n: 0m:0s\n";
 			
-			using iota::fill_unsigned_decimal;
+			using gear::fill_unsigned_decimal;
 			
 			fill_unsigned_decimal( track, buffer, STRLEN( "Track  n" ) );
 			
@@ -132,18 +134,18 @@ namespace tool
 		
 		plus::var_string command = "discid ";
 		
-		command += iota::inscribe_decimal( tracks );
+		command += gear::inscribe_decimal( tracks );
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
 			int offset = CD::TrackStart( gTOC, track );
 			
 			command += " ";
-			command += iota::inscribe_decimal( offset );
+			command += gear::inscribe_decimal( offset );
 		}
 		
 		command += " ";
-		command += iota::inscribe_decimal( CD::DiscLength( gTOC ) / 75 );
+		command += gear::inscribe_decimal( CD::DiscLength( gTOC ) / 75 );
 		command += "\n";
 		
 		p7::write( p7::stdout_fileno, command );

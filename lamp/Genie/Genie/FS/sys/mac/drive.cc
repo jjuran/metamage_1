@@ -7,10 +7,8 @@
 
 #include "Genie/FS/sys/mac/drive.hh"
 
-// Iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -86,7 +84,7 @@ namespace Genie
 			{
 				const ino_t inode = value.dQDrive;
 				
-				plus::string name = iota::inscribe_decimal( value.dQDrive );
+				plus::string name = gear::inscribe_decimal( value.dQDrive );
 				
 				return FSNode( inode, name );
 			}
@@ -132,7 +130,7 @@ namespace Genie
 		
 		UnitNumber unit = ~refNum;
 		
-		plus::string unitNumber = iota::inscribe_decimal( unit );
+		plus::string unitNumber = gear::inscribe_decimal( unit );
 		
 		plus::string target = "/sys/mac/unit/" + unitNumber;
 		

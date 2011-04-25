@@ -9,10 +9,10 @@
 #include <vector>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -255,11 +255,11 @@ namespace tool
 				
 				record += '\t';
 				
-				record += iota::inscribe_decimal( demands.Required  () );
+				record += gear::inscribe_decimal( demands.Required  () );
 				
 				record += '/';
 				
-				record += iota::inscribe_decimal( demands.Prohibited() );
+				record += gear::inscribe_decimal( demands.Prohibited() );
 				
 				record += '\t';
 				

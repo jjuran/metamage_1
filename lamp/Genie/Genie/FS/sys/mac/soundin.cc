@@ -8,10 +8,8 @@
 // Standard C++
 #include <algorithm>
 
-// iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -107,7 +105,7 @@ namespace Genie
 			{
 				const ino_t inode = ++its_index;
 				
-				plus::string name = iota::inscribe_decimal( its_index );
+				plus::string name = gear::inscribe_decimal( its_index );
 				
 				return FSNode( inode, name );
 			}

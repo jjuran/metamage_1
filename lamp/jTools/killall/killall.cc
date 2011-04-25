@@ -23,10 +23,10 @@
 #include "lamp/alloca.h"
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // more-posix
@@ -84,7 +84,7 @@ static int killall( const char* name_to_kill, int sig )
 				}
 				else
 				{
-					more::perror( name_to_kill, iota::inscribe_decimal( pid ) );
+					more::perror( name_to_kill, gear::inscribe_decimal( pid ) );
 				}
 			}
 			

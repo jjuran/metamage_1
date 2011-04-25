@@ -5,10 +5,8 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 
-// iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // poseven
@@ -197,7 +195,7 @@ namespace Genie
 				break;
 			}
 			
-			cache.push_back( FSNode( index, iota::inscribe_unsigned_decimal( index ) ) );
+			cache.push_back( FSNode( index, gear::inscribe_unsigned_decimal( index ) ) );
 		}
 	}
 	
@@ -321,7 +319,7 @@ namespace Genie
 				break;
 			}
 			
-			cache.push_back( FSNode( selector, iota::inscribe_unsigned_decimal( selector ) ) );
+			cache.push_back( FSNode( selector, gear::inscribe_unsigned_decimal( selector ) ) );
 		}
 	}
 	

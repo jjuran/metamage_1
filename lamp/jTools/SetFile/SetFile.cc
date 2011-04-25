@@ -7,10 +7,8 @@
 #include <functional>
 #include <vector>
 
-// iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/quad.hh"
 
 // plus
@@ -147,7 +145,7 @@ namespace tool
 			{
 				plus::var_string status = "OSStatus ";
 				
-				status += iota::inscribe_decimal( err );
+				status += gear::inscribe_decimal( err );
 				
 				const int errnum = OSErrno::ErrnoFromOSStatus( err );
 				

@@ -11,8 +11,10 @@
 #endif
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/hexidecimal.hh"
@@ -72,7 +74,7 @@ namespace Genie
 			out.assign( (const char*) &delta, sizeof delta );
 		}
 		
-		out = iota::inscribe_decimal( delta );
+		out = gear::inscribe_decimal( delta );
 	}
 	
 }

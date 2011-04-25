@@ -17,8 +17,10 @@
 #include <sys/uio.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // tap-out
 #include "tap/check.hh"
@@ -45,9 +47,9 @@ namespace tap
 		
 		const unsigned odd_tests = std::abs( extra_tests );
 		
-		const unsigned magnitude = iota::decimal_magnitude( odd_tests );
+		const unsigned magnitude = gear::decimal_magnitude( odd_tests );
 		
-		const char* tests_str = iota::inscribe_unsigned_decimal( odd_tests );
+		const char* tests_str = gear::inscribe_unsigned_decimal( odd_tests );
 		
 		const bool extra = extra_tests > 0;
 		
@@ -76,7 +78,7 @@ namespace tap
 		
 		char* p_last = plan_string + STRLEN( "1.." );
 		
-		char* p_lf = iota::inscribe_unsigned_decimal_r( tests_planned, p_last );
+		char* p_lf = gear::inscribe_unsigned_decimal_r( tests_planned, p_last );
 		
 		*p_lf = '\n';
 		
@@ -98,9 +100,9 @@ namespace tap
 		
 		const bool not_ok = !ok;
 		
-		const unsigned magnitude = iota::decimal_magnitude( ++global_tests_run );
+		const unsigned magnitude = gear::decimal_magnitude( ++global_tests_run );
 		
-		const char* tests_str = iota::inscribe_unsigned_decimal( global_tests_run );
+		const char* tests_str = gear::inscribe_unsigned_decimal( global_tests_run );
 		
 		const bool has_comment = comment[0] != '\0';
 		

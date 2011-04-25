@@ -14,10 +14,10 @@
 #include <vector>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // Debug
@@ -49,7 +49,7 @@ namespace HTTP
 	
 	plus::string GetContentLengthLine( p7::fd_t message_body )
 	{
-		return HeaderFieldLine( "Content-Length", iota::inscribe_decimal( GetContentLength( message_body ) ) );
+		return HeaderFieldLine( "Content-Length", gear::inscribe_decimal( GetContentLength( message_body ) ) );
 	}
 	
 	

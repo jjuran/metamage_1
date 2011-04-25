@@ -9,8 +9,8 @@
 // Standard C
 #include <string.h>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -130,7 +130,7 @@ namespace tool
 		{
 			plus::var_string status = "OSStatus ";
 			
-			status += iota::inscribe_decimal( err );
+			status += gear::inscribe_decimal( err );
 			
 			p7::perror( "tlsrvr", status, 0 );
 			

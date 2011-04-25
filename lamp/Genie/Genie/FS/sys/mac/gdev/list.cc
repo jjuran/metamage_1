@@ -5,9 +5,8 @@
 
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
-// iota
-#include "iota/decimal.hh"
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/contains.hh"
@@ -185,7 +184,7 @@ namespace Genie
 	{
 		GDHandle key = GetKeyFromParent( parent.get() );
 		
-		plus::string unit = iota::inscribe_decimal( ~key[0]->gdRefNum );
+		plus::string unit = gear::inscribe_decimal( ~key[0]->gdRefNum );
 		
 		unit = "/sys/mac/unit/" + unit;
 		

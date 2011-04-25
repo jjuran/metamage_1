@@ -1,12 +1,12 @@
-/*	===============
- *	iota/decimal.cc
- *	===============
- */
+/*
+	gear/inscribe_decimal.cc
+	------------------------
+*/
 
-#include "iota/decimal.hh"
+#include "gear/inscribe_decimal.hh"
 
 
-namespace iota
+namespace gear
 {
 	
 	char* inscribe_unsigned_decimal( unsigned x )

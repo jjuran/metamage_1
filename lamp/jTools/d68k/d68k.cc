@@ -12,9 +12,11 @@
 #include <string.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -125,7 +127,7 @@ namespace tool
 		
 		s += sign;
 		
-		s += iota::inscribe_decimal( x );
+		s += gear::inscribe_decimal( x );
 	}
 	
 	static inline const char* get_aTrap_name( unsigned short trap_word )
@@ -454,7 +456,7 @@ namespace tool
 				
 				if ( displacement )
 				{
-					result += iota::inscribe_decimal( displacement );
+					result += gear::inscribe_decimal( displacement );
 					
 					result += ",";
 				}
@@ -504,7 +506,7 @@ namespace tool
 			
 			if ( base_displacement )
 			{
-				result += iota::inscribe_decimal( base_displacement );
+				result += gear::inscribe_decimal( base_displacement );
 				
 				needs_comma = true;
 			}

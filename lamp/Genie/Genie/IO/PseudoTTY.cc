@@ -5,8 +5,8 @@
 
 #include "Genie/IO/PseudoTTY.hh"
 
-// Iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -62,7 +62,7 @@ namespace Genie
 	{
 		plus::var_string result = "/dev/pts/";
 		
-		result += iota::inscribe_decimal( id );
+		result += gear::inscribe_decimal( id );
 		
 		return result;
 	}

@@ -1,13 +1,13 @@
-/*	===============
- *	iota/decimal.hh
- *	===============
- */
+/*
+	gear/inscribe_decimal.hh
+	------------------------
+*/
 
-#ifndef IOTA_DECIMAL_HH
-#define IOTA_DECIMAL_HH
+#ifndef GEAR_INSCRIBEDECIMAL_HH
+#define GEAR_INSCRIBEDECIMAL_HH
 
 
-namespace iota
+namespace gear
 {
 	
 	template < unsigned base, class Type >

@@ -14,8 +14,10 @@
 #include <sys/ttycom.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // chars
 #include "charsets/extended_ascii.hh"
@@ -357,7 +359,7 @@ namespace Genie
 	{
 		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/dev/con" ) );
 		
-		plus::string name = iota::inscribe_decimal( id );
+		plus::string name = gear::inscribe_decimal( id );
 		
 		return seize_ptr( new FSTree( parent, name ) );
 	}

@@ -21,10 +21,10 @@
 #include <unistd.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -460,7 +460,7 @@ namespace tool
 		plus::var_string result = test_ok ? "ok" : "not ok";
 		
 		result += " ";
-		result += iota::inscribe_decimal( ++gLastNumber );
+		result += gear::inscribe_decimal( ++gLastNumber );
 		
 		const plus::string& reason = test.GetToDoReason();
 		
@@ -564,7 +564,7 @@ namespace tool
 		
 		plus::var_string header = "1..";
 		
-		header += iota::inscribe_decimal( battery.size() );
+		header += gear::inscribe_decimal( battery.size() );
 		header += "\n";
 		
 		p7::write( p7::stdout_fileno, header );

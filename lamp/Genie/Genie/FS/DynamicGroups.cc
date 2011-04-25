@@ -8,10 +8,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// iota
-#include "iota/decimal.hh"
-
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // poseven
@@ -49,7 +47,7 @@ namespace Genie
 				
 				const ino_t inode = id;
 				
-				const plus::string name = iota::inscribe_unsigned_decimal( id );
+				const plus::string name = gear::inscribe_unsigned_decimal( id );
 				
 				return FSNode( inode, name );
 			}

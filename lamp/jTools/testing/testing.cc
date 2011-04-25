@@ -44,10 +44,10 @@
 #include "unistd.h"
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // Recall
@@ -197,7 +197,7 @@ plus::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& ma
 			
 			int value = matrix.Cell( i, j );
 			
-			result += iota::inscribe_decimal( value );
+			result += gear::inscribe_decimal( value );
 			
 			result += "";
 		}
@@ -1452,7 +1452,7 @@ namespace tool
 		{
 			plus::var_string status = "OSStatus ";
 			
-			status += iota::inscribe_decimal( err );
+			status += gear::inscribe_decimal( err );
 			
 			p7::perror( "testing", status, 0 );
 			

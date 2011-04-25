@@ -21,10 +21,10 @@
 #include <unistd.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -199,7 +199,7 @@ namespace tool
 	{
 		if ( count > 0 )
 		{
-			plus::var_string output = iota::inscribe_decimal( count );
+			plus::var_string output = gear::inscribe_decimal( count );
 			
 			output += " test";
 			
@@ -260,21 +260,21 @@ namespace tool
 				if ( results.unexpected > 0 )
 				{
 					result += ", with ";
-					result += iota::inscribe_decimal( results.unexpected );
+					result += gear::inscribe_decimal( results.unexpected );
 					result += " tests unexpectedly passing";
 				}
 				
 				if ( results.todo > 0 )
 				{
 					result += ", but ";
-					result += iota::inscribe_decimal( results.todo );
+					result += gear::inscribe_decimal( results.todo );
 					result += " tests TODO failed";
 				}
 			}
 			else
 			{
 				result = "FAILED at test ";
-				result += iota::inscribe_decimal( results.failure );
+				result += gear::inscribe_decimal( results.failure );
 			}
 			
 			result += "\n";

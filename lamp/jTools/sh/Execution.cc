@@ -22,10 +22,10 @@
 #include <unistd.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // more-posix
@@ -192,15 +192,15 @@ namespace tool
 		
 		if ( param == "$" )
 		{
-			single_result = iota::inscribe_decimal( getpid() );
+			single_result = gear::inscribe_decimal( getpid() );
 		}
 		else if ( param == "?" )
 		{
-			single_result = iota::inscribe_decimal( n::convert< p7::exit_t >( global_last_wait_status ) );
+			single_result = gear::inscribe_decimal( n::convert< p7::exit_t >( global_last_wait_status ) );
 		}
 		else if ( param == "#" )
 		{
-			single_result = iota::inscribe_decimal( gParameterCount );
+			single_result = gear::inscribe_decimal( gParameterCount );
 		}
 		else if ( double_quoted  &&  param == "*" )
 		{

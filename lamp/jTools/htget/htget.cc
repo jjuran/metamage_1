@@ -13,10 +13,10 @@
 #include <netdb.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // poseven
@@ -96,7 +96,7 @@ namespace tool
 		{
 			plus::var_string message = "Domain name lookup failed: ";
 			
-			message += iota::inscribe_decimal( h_errno );
+			message += gear::inscribe_decimal( h_errno );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );

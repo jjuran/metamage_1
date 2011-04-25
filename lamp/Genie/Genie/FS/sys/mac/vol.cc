@@ -10,8 +10,8 @@
 #include <LowMem.h>
 #endif
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -135,7 +135,7 @@ namespace Genie
 		
 		plus::var_string result = "list/";
 		
-		result += iota::inscribe_decimal( -vRefNum );
+		result += gear::inscribe_decimal( -vRefNum );
 		
 		return new FSTree_SymbolicLink( parent, name, result );
 		

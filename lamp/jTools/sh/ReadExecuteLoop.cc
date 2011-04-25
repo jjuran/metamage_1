@@ -13,8 +13,8 @@
 // POSIX
 #include <sys/ioctl.h>
 
-// Iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -84,8 +84,8 @@ namespace tool
 			           TIOCGWINSZ,
 			           &size );
 			
-			AssignShellVariable( "LINES",   iota::inscribe_decimal( size.ws_row ) );
-			AssignShellVariable( "COLUMNS", iota::inscribe_decimal( size.ws_col ) );
+			AssignShellVariable( "LINES",   gear::inscribe_decimal( size.ws_row ) );
+			AssignShellVariable( "COLUMNS", gear::inscribe_decimal( size.ws_col ) );
 		}
 		catch ( ... )
 		{

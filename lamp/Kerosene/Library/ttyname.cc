@@ -10,8 +10,10 @@
 #include "unistd.h"
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -34,7 +36,7 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	
 	char* begin = pathname + STRLEN( "/dev/fd/" );
 	
-	char* end = iota::inscribe_unsigned_decimal_r( fd, begin );
+	char* end = gear::inscribe_unsigned_decimal_r( fd, begin );
 	
 	*end = '\0';
 	

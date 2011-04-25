@@ -5,8 +5,8 @@
 
 #include "Genie/FS/sys/cpu.hh"
 
-// Iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -50,7 +50,7 @@ namespace Genie
 	
 	static const char* Get68KCPUName( long code )
 	{
-		return iota::inscribe_decimal( 68000 + 10 * code );
+		return gear::inscribe_decimal( 68000 + 10 * code );
 	}
 	
 	struct GetCPUProc
@@ -124,7 +124,7 @@ namespace Genie
 		#endif
 			
 			default:
-				return iota::inscribe_decimal( code );
+				return gear::inscribe_decimal( code );
 		}
 		
 		ASSERT( name != NULL );

@@ -10,8 +10,8 @@
 #include <MacTypes.h>
 #endif
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -22,11 +22,11 @@ namespace Genie
 	
 	void stringify_Point::apply( plus::var_string& out, const Point& pt )
 	{
-		out += iota::inscribe_decimal( pt.h );
+		out += gear::inscribe_decimal( pt.h );
 		
 		out += ',';
 		
-		out += iota::inscribe_decimal( pt.v );
+		out += gear::inscribe_decimal( pt.v );
 	}
 	
 	void stringify_Rect::apply( plus::var_string& out, const Rect& rect )

@@ -16,9 +16,11 @@
 #endif
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -205,14 +207,14 @@ namespace recall
 		const char* spaces = "         ";
 		//                    123456789  // 9 spaces ought to be enough
 		
-		const unsigned nth_magnitude = iota::decimal_magnitude( nth_offset );
+		const unsigned nth_magnitude = gear::decimal_magnitude( nth_offset );
 		
 		unsigned offset = 0;
 		
 		// It's important to use < instead of != if we might skip past the end
 		for ( const frame_data* it = begin;  it < end;  ++it, ++offset )
 		{
-			const unsigned magnitude = iota::decimal_magnitude( offset );
+			const unsigned magnitude = gear::decimal_magnitude( offset );
 			
 			const unsigned n_spaces = nth_magnitude - magnitude;
 			
@@ -222,7 +224,7 @@ namespace recall
 			
 			result.resize( size + magnitude );
 			
-			iota::fill_unsigned_decimal( offset, &result[ size ], magnitude );
+			gear::fill_unsigned_decimal( offset, &result[ size ], magnitude );
 			
 			const call_info info = get_call_info_from_return_address( *it );
 			

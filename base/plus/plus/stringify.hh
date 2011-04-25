@@ -9,8 +9,8 @@
 // Standard C/C++
 #include <cstring>
 
-// iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/hexidecimal.hh"
@@ -43,7 +43,7 @@ namespace plus
 	{
 		static void apply( var_string& out, int x )
 		{
-			out += iota::inscribe_decimal( x );
+			out += gear::inscribe_decimal( x );
 		}
 	};
 	
@@ -51,7 +51,7 @@ namespace plus
 	{
 		static void apply( var_string& out, unsigned x )
 		{
-			out += iota::inscribe_unsigned_decimal( x );
+			out += gear::inscribe_unsigned_decimal( x );
 		}
 	};
 	
@@ -59,7 +59,7 @@ namespace plus
 	{
 		static void apply( var_string& out, unsigned long long x )
 		{
-			out += iota::inscribe_unsigned_wide_decimal( x );
+			out += gear::inscribe_unsigned_wide_decimal( x );
 		}
 	};
 	

@@ -22,8 +22,10 @@
 #include <sys/socket.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // plus
 #include "plus/string/concat.hh"
@@ -67,19 +69,19 @@ namespace tool
 		
 		char* p = result.reset( STRLEN( "YYYYMMDD.hhmmss-nn" ) );
 		
-		iota::fill_unsigned_decimal( t->tm_year + 1900, &p[0], 4 );
-		iota::fill_unsigned_decimal( t->tm_mon  +    1, &p[4], 2 );
-		iota::fill_unsigned_decimal( t->tm_mday,        &p[6], 2 );
+		gear::fill_unsigned_decimal( t->tm_year + 1900, &p[0], 4 );
+		gear::fill_unsigned_decimal( t->tm_mon  +    1, &p[4], 2 );
+		gear::fill_unsigned_decimal( t->tm_mday,        &p[6], 2 );
 		
 		p[8] = '.';
 		
-		iota::fill_unsigned_decimal( t->tm_hour, &p[ 9], 2 );
-		iota::fill_unsigned_decimal( t->tm_min,  &p[11], 2 );
-		iota::fill_unsigned_decimal( t->tm_sec,  &p[13], 2 );
+		gear::fill_unsigned_decimal( t->tm_hour, &p[ 9], 2 );
+		gear::fill_unsigned_decimal( t->tm_min,  &p[11], 2 );
+		gear::fill_unsigned_decimal( t->tm_sec,  &p[13], 2 );
 		
 		p[15] = '-';
 		
-		iota::fill_unsigned_decimal( serial, &p[16], 2 );
+		gear::fill_unsigned_decimal( serial, &p[16], 2 );
 		
 		return result;
 	}

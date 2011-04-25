@@ -8,8 +8,8 @@
 // Standard C++
 #include <algorithm>
 
-// Iota
-#include "iota/decimal.hh"
+// gear
+#include "gear/inscribe_decimal.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -389,7 +389,7 @@ namespace Genie
 			
 			char decimal[ sizeof "-12345\n" ];
 			
-			char* end = iota::inscribe_decimal_r( resID, decimal );
+			char* end = gear::inscribe_decimal_r( resID, decimal );
 			
 			*end++ = '\n';
 			

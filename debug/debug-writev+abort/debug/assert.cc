@@ -13,8 +13,10 @@
 #include <sys/uio.h>
 
 // Iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/inscribe_decimal.hh"
 
 
 namespace debug
@@ -25,11 +27,11 @@ namespace debug
 	                              const char*  file,
 	                              unsigned     line )
 	{
-		const unsigned magnitude = iota::decimal_magnitude( line );
+		const unsigned magnitude = gear::decimal_magnitude( line );
 		
 		char line_buffer[ sizeof "1234567890" ];
 		
-		iota::fill_unsigned_decimal( line, line_buffer, magnitude );
+		gear::fill_unsigned_decimal( line, line_buffer, magnitude );
 		
 		struct iovec iov[] =
 		{
