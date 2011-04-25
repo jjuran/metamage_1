@@ -10,8 +10,8 @@
 // Standard C
 #include <stdlib.h>
 
-// iota
-#include "iota/find.hh"
+// gear
+#include "gear/find.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -42,9 +42,9 @@ namespace tool
 		
 		const char* p = pathname.data();
 		
-		if ( const char* it = iota::find_last_match( p, pathname.size(), '/' ) )
+		if ( const char* it = gear::find_last_match( p, pathname.size(), '/' ) )
 		{
-			if (( it = iota::find_last_match( p, it - p, '/' ) ))
+			if (( it = gear::find_last_match( p, it - p, '/' ) ))
 			{
 				pathname.resize( it + 1 - p );
 				

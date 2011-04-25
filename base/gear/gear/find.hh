@@ -1,15 +1,13 @@
 /*
-	iota/find.hh
+	gear/find.hh
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#ifndef IOTA_FIND_HH
-#define IOTA_FIND_HH
+#ifndef GEAR_FIND_HH
+#define GEAR_FIND_HH
 
 
-namespace iota
+namespace gear
 {
 	
 	const char* find_first_match( const char*  p,

@@ -7,10 +7,8 @@
 #include <algorithm>
 #include <vector>
 
-// iota
-#include "iota/find.hh"
-
 // gear
+#include "gear/find.hh"
 #include "gear/parse_decimal.hh"
 
 // Debug
@@ -70,7 +68,7 @@ namespace tool
 		
 		const char* p = path.data();
 		
-		if ( const char* it = iota::find_last_match( p, path.size(), '/' ) )
+		if ( const char* it = gear::find_last_match( p, path.size(), '/' ) )
 		{
 			path.resize( it + 1 - p );
 			

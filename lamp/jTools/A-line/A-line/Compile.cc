@@ -26,8 +26,10 @@
 #include "extended-api-set/part-2.h"
 
 // iota
-#include "iota/find.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/find.hh"
 
 // plus
 #include "plus/pointer_to_function.hh"
@@ -132,7 +134,7 @@ namespace tool
 	
 	static const char* basename( const char* path, size_t length )
 	{
-		if ( const char* match = iota::find_last_match( path, length, '/' ) )
+		if ( const char* match = gear::find_last_match( path, length, '/' ) )
 		{
 			return match + 1;
 		}

@@ -1,17 +1,15 @@
 /*
-	iota/find.cc
+	gear/find.cc
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#include "iota/find.hh"
+#include "gear/find.hh"
 
 // Standard C
 #include <string.h>
 
 
-namespace iota
+namespace gear
 {
 	
 	static inline bool char_matches( char a, char b )

@@ -8,8 +8,8 @@
 // Standard C/C++
 #include <cstddef>
 
-// iota
-#include "iota/find.hh"
+// gear
+#include "gear/find.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -43,7 +43,7 @@ namespace Genie
 		const char* begin = long_name.data();
 		const char* end   = begin + long_length;
 		
-		const char* dot = iota::find_last_match( begin, end, '.' );
+		const char* dot = gear::find_last_match( begin, end, '.' );
 		
 		const unsigned minimum_remaining_base = 8;
 		
