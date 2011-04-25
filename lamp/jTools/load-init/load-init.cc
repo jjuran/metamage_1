@@ -13,11 +13,11 @@
 
 // iota
 #include "iota/decimal.hh"
-#include "iota/quad.hh"
 #include "iota/strings.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
+#include "gear/quad.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -61,7 +61,7 @@ namespace tool
 			Mac::ThrowOSStatus( paramErr );
 		}
 		
-		N::ResType resType = N::ResType( iota::decode_quad( type ) );
+		N::ResType resType = N::ResType( gear::decode_quad( type ) );
 		
 		N::ResID   resID   = N::ResID( gear::parse_decimal( id ) );
 		

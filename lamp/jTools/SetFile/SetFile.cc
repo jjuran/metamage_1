@@ -9,7 +9,9 @@
 
 // iota
 #include "iota/decimal.hh"
-#include "iota/quad.hh"
+
+// gear
+#include "gear/quad.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -58,7 +60,7 @@ namespace tool
 		public:
 			SignatureSetter( const char* param, OSType FInfo::*field )
 			:
-				itsCode ( iota::decode_quad( param ) ),
+				itsCode ( gear::decode_quad( param ) ),
 				itsField( field                      )
 			{
 			}

@@ -5,8 +5,8 @@
 
 #include "Genie/FS/sys/type.hh"
 
-// iota
-#include "iota/quad.hh"
+// gear
+#include "gear/quad.hh"
 
 // plus
 #include "plus/quad.hh"
@@ -45,7 +45,7 @@ namespace Genie
 				throw p7::errno_t( EINVAL );
 			}
 			
-			gTextFileCreator = iota::decode_quad( begin );
+			gTextFileCreator = gear::decode_quad( begin );
 		}
 	};
 	

@@ -5,8 +5,8 @@
 
 #include "Pedestal/MenuBar.hh"
 
-// iota
-#include "iota/quad.hh"
+// gear
+#include "gear/quad.hh"
 
 // Nitrogen
 #include "Mac/Resources/Types/ResType.hh"
@@ -42,7 +42,7 @@ namespace Pedestal
 		
 		ioItemText[ 0 ] -= 7;
 		
-		return CommandCode( iota::decode_quad( &ioItemText[ len - 4 ] ) );
+		return CommandCode( gear::decode_quad( &ioItemText[ len - 4 ] ) );
 	}
 	
 	static CommandCode ExtractItemCmdCode( MenuRef menu, short item )

@@ -16,8 +16,10 @@
 #include <string.h>
 
 // iota
-#include "iota/quad.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/quad.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -516,7 +518,7 @@ namespace tool
 			gFileType    = store_string( plus::utf8_from_mac( type    ) );
 			gFileCreator = store_string( plus::utf8_from_mac( creator ) );
 			
-			const uint32_t typeCode = iota::decode_quad( type.data() );
+			const uint32_t typeCode = gear::decode_quad( type.data() );
 			
 			switch ( typeCode )
 			{

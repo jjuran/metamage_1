@@ -15,8 +15,10 @@
 #include <string.h>
 
 // iota
-#include "iota/quad.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/quad.hh"
 
 // poseven
 #include "poseven/functions/write.hh"
@@ -53,7 +55,7 @@ namespace tool
 	template < class Quad >
 	static inline Quad decode_quad( const char* s )
 	{
-		return Quad( iota::decode_quad( s ) );
+		return Quad( gear::decode_quad( s ) );
 	}
 	
 	static n::owned< Mac::AppleEvent > BuildAppleEvent( Mac::AEEventClass          eventClass,

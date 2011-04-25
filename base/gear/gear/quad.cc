@@ -1,14 +1,12 @@
 /*
-	iota/quad.hh
+	gear/quad.hh
 	------------
-	
-	Copyright 2009, Joshua Juran
 */
 
-#include "iota/quad.hh"
+#include "gear/quad.hh"
 
 
-namespace iota
+namespace gear
 {
 	
 	unsigned long decode_quad( const unsigned char* s )

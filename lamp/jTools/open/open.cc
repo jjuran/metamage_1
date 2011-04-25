@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// iota
-#include "iota/quad.hh"
+// gear
+#include "gear/quad.hh"
 
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
@@ -172,7 +172,7 @@ namespace tool
 		
 		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly | p7::o_binary ) );
 		
-		return Mac::FSCreator( iota::decode_quad( code.data() ) );
+		return Mac::FSCreator( gear::decode_quad( code.data() ) );
 		
 	#else
 		
@@ -193,7 +193,7 @@ namespace tool
 			{
 				if ( strlen( macEditorSignature ) == sizeof 'quad' )
 				{
-					return Mac::FSCreator( iota::decode_quad( macEditorSignature ) );
+					return Mac::FSCreator( gear::decode_quad( macEditorSignature ) );
 				}
 				
 				// Treat a malformed quad value the same as no value.  Move on.
@@ -213,7 +213,7 @@ namespace tool
 				Mac::ThrowOSStatus( paramErr );
 			}
 			
-			return Mac::FSCreator( iota::decode_quad( gAppSigToOpenIn ) );
+			return Mac::FSCreator( gear::decode_quad( gAppSigToOpenIn ) );
 		}
 		
 		// Otherwise, give everything to the Finder.

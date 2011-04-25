@@ -10,7 +10,9 @@
 
 // iota
 #include "iota/hexidecimal.hh"
-#include "iota/quad.hh"
+
+// gear
+#include "gear/quad.hh"
 
 // plus
 #include "plus/hexidecimal.hh"
@@ -29,7 +31,7 @@ namespace Genie
 		
 		if ( size == 4 )
 		{
-			return iota::decode_quad( name );
+			return gear::decode_quad( name );
 		}
 		
 		char buffer[ 4 ] = { ' ', ' ', ' ', ' ' };
@@ -50,7 +52,7 @@ namespace Genie
 				throw invalid_quad_name();
 		}
 		
-		return iota::decode_quad( buffer );
+		return gear::decode_quad( buffer );
 	}
 	
 	quad_t parse_quad_name( const plus::string& name )

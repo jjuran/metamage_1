@@ -7,8 +7,8 @@
 
 #include "plus/quad.hh"
 
-// iota
-#include "iota/quad.hh"
+// gear
+#include "gear/quad.hh"
 
 
 namespace plus
@@ -20,7 +20,7 @@ namespace plus
 		
 		char* p = result.reset( 4 );  // sizeof 'quad'
 		
-		iota::encode_quad( q, p );
+		gear::encode_quad( q, p );
 		
 		return result;
 	}
