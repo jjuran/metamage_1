@@ -11,7 +11,6 @@
 #include "extended-api-set/part-2.h"
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // poseven

@@ -20,9 +20,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-// Iota
-#include "iota/decimal.hh"
-
 // plus
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"

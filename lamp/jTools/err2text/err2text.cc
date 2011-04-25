@@ -8,7 +8,6 @@
 #include <vector>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/find.hh"
 
 // gear

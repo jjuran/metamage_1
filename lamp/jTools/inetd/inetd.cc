@@ -12,7 +12,6 @@
 #include <sys/wait.h>
 
 // iota
-#include "iota/decimal.hh"
 #include "iota/strings.hh"
 
 // gear
