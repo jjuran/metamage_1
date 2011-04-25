@@ -7,8 +7,8 @@
 
 #include "plus/hexidecimal.hh"
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -29,7 +29,7 @@ namespace plus
 			return 0;
 		}
 		
-		return iota::decode_32_bit_hex( s.data() );
+		return gear::decode_32_bit_hex( s.data() );
 	}
 	
 	void encode_8_bit_hex( var_string& out, unsigned char x )
@@ -38,7 +38,7 @@ namespace plus
 		
 		char buffer[ n_nibbles ];
 		
-		iota::encode_8_bit_hex( x, buffer );
+		gear::encode_8_bit_hex( x, buffer );
 		
 		out.append( buffer, sizeof buffer );
 	}
@@ -49,7 +49,7 @@ namespace plus
 		
 		char buffer[ n_nibbles ];
 		
-		iota::encode_16_bit_hex( x, buffer );
+		gear::encode_16_bit_hex( x, buffer );
 		
 		out.append( buffer, sizeof buffer );
 	}
@@ -60,7 +60,7 @@ namespace plus
 		
 		char buffer[ n_nibbles ];
 		
-		iota::encode_32_bit_hex( x, buffer );
+		gear::encode_32_bit_hex( x, buffer );
 		
 		out.append( buffer, sizeof buffer );
 	}

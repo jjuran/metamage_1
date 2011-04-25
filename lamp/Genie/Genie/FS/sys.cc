@@ -5,8 +5,8 @@
 
 #include "Genie/FS/sys.hh"
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
@@ -45,7 +45,7 @@ namespace Genie
 			
 			p[0] = '.';
 			
-			iota::encode_32_bit_hex( (unsigned) key, &p[1] );
+			gear::encode_32_bit_hex( (unsigned) key, &p[1] );
 			
 			return name;
 		}

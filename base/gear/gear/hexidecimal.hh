@@ -1,13 +1,13 @@
-/*	===================
- *	iota/hexidecimal.hh
- *	===================
- */
+/*
+	gear/hexidecimal.hh
+	-------------------
+*/
 
-#ifndef IOTA_HEXIDECIMAL_HH
-#define IOTA_HEXIDECIMAL_HH
+#ifndef GEAR_HEXIDECIMAL_HH
+#define GEAR_HEXIDECIMAL_HH
 
 
-namespace iota
+namespace gear
 {
 	
 	// (hex-digit & 0x1f) -> numeric nibble

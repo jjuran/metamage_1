@@ -5,8 +5,8 @@
 
 #include "Genie/FS/sys/mac/proc.hh"
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // Nitrogen
 #include "Nitrogen/Processes.hh"
@@ -45,12 +45,12 @@ namespace Genie
 		
 		if ( extended )
 		{
-			iota::encode_32_bit_hex( psn.highLongOfPSN, p );
+			gear::encode_32_bit_hex( psn.highLongOfPSN, p );
 			
 			p[ eight ] = '-';
 		}
 		
-		iota::encode_32_bit_hex( psn.lowLongOfPSN, &p[ more ] );
+		gear::encode_32_bit_hex( psn.lowLongOfPSN, &p[ more ] );
 		
 		return name;
 	}
@@ -72,7 +72,7 @@ namespace Genie
 				return psn;
 			}
 			
-			high = iota::decode_32_bit_hex( begin );
+			high = gear::decode_32_bit_hex( begin );
 			
 			if ( high == 0 )
 			{
@@ -89,7 +89,7 @@ namespace Genie
 		
 		psn.highLongOfPSN = high;
 		
-		psn.lowLongOfPSN = iota::decode_32_bit_hex( begin );
+		psn.lowLongOfPSN = gear::decode_32_bit_hex( begin );
 		
 		return psn;
 	}

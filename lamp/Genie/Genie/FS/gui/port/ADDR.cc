@@ -12,8 +12,10 @@
 #include <fcntl.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -605,7 +607,7 @@ namespace Genie
 		
 		const size_t hex_offset = STRLEN( SYS_APP_WINDOW_LIST );
 		
-		iota::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
+		gear::encode_32_bit_hex( (unsigned) windowPtr, &result[ hex_offset ] );
 		
 		return result;
 	}

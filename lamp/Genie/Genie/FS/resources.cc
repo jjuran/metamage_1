@@ -8,8 +8,8 @@
 // Standard C
 #include <ctype.h>
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/hexidecimal.hh"
@@ -91,7 +91,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const short id = iota::decode_16_bit_hex( begin );
+		const short id = gear::decode_16_bit_hex( begin );
 		
 		begin += 4;
 		

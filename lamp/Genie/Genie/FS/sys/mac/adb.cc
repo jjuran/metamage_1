@@ -10,8 +10,8 @@
 // Standard C
 #include <ctype.h>
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -46,7 +46,7 @@ namespace Genie
 	
 	static inline N::ADBAddress GetKeyFromParent( const FSTree* parent )
 	{
-		return N::ADBAddress( iota::decoded_hex_digit( parent->Name()[0] ) );
+		return N::ADBAddress( gear::decoded_hex_digit( parent->Name()[0] ) );
 	}
 	
 	
@@ -77,7 +77,7 @@ namespace Genie
 			return false;
 		}
 		
-		const unsigned char hex_digit = iota::decoded_hex_digit( name[0] );
+		const unsigned char hex_digit = gear::decoded_hex_digit( name[0] );
 		
 		return ADBAddress_is_valid( N::ADBAddress( hex_digit ) );
 	}
@@ -101,7 +101,7 @@ namespace Genie
 			{
 				const ino_t inode = addr;
 				
-				plus::string name( 1, iota::encoded_hex_char( addr ) );
+				plus::string name( 1, gear::encoded_hex_char( addr ) );
 				
 				return FSNode( inode, name );
 			}

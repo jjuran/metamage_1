@@ -9,8 +9,8 @@
 #include <cstdio>
 #include <cstring>
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/deconstruct.hh"
@@ -161,7 +161,7 @@ namespace Genie
 	
 	static inline UInt16 ReadIntensity_1n( const char* p )
 	{
-		const unsigned char nibble = iota::decoded_hex_digit( p[ 0 ] );
+		const unsigned char nibble = gear::decoded_hex_digit( p[ 0 ] );
 		
 		UInt16 result = nibble << 12
 		              | nibble <<  8
@@ -173,8 +173,8 @@ namespace Genie
 	
 	static inline UInt16 ReadIntensity_2n( const char* p )
 	{
-		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
-		const unsigned char low  = iota::decoded_hex_digit( p[ 1 ] );
+		const unsigned char high = gear::decoded_hex_digit( p[ 0 ] );
+		const unsigned char low  = gear::decoded_hex_digit( p[ 1 ] );
 		
 		UInt16 result = high << 12
 		              | low  <<  8
@@ -186,9 +186,9 @@ namespace Genie
 	
 	static inline UInt16 ReadIntensity_3n( const char* p )
 	{
-		const unsigned char high = iota::decoded_hex_digit( p[ 0 ] );
-		const unsigned char med  = iota::decoded_hex_digit( p[ 1 ] );
-		const unsigned char low  = iota::decoded_hex_digit( p[ 2 ] );
+		const unsigned char high = gear::decoded_hex_digit( p[ 0 ] );
+		const unsigned char med  = gear::decoded_hex_digit( p[ 1 ] );
+		const unsigned char low  = gear::decoded_hex_digit( p[ 2 ] );
 		
 		UInt16 result = high << 12
 		              | med  <<  8
@@ -200,10 +200,10 @@ namespace Genie
 	
 	static UInt16 ReadIntensity_4n( const char* p )
 	{
-		const UInt16 result = iota::decoded_hex_digit( p[ 0 ] ) << 12
-		                    | iota::decoded_hex_digit( p[ 1 ] ) <<  8
-		                    | iota::decoded_hex_digit( p[ 2 ] ) <<  4
-		                    | iota::decoded_hex_digit( p[ 3 ] ) <<  0;
+		const UInt16 result = gear::decoded_hex_digit( p[ 0 ] ) << 12
+		                    | gear::decoded_hex_digit( p[ 1 ] ) <<  8
+		                    | gear::decoded_hex_digit( p[ 2 ] ) <<  4
+		                    | gear::decoded_hex_digit( p[ 3 ] ) <<  0;
 		
 		return result;
 	}

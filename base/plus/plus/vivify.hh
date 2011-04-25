@@ -6,10 +6,8 @@
 #ifndef PLUS_VIVIFY_HH
 #define PLUS_VIVIFY_HH
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/parse_decimal.hh"
 
 
@@ -62,7 +60,7 @@ namespace plus
 	{
 		static unsigned char apply( const char* begin, const char* end )
 		{
-			return iota::decode_8_bit_hex( begin );
+			return gear::decode_8_bit_hex( begin );
 		}
 	};
 	
@@ -70,7 +68,7 @@ namespace plus
 	{
 		static unsigned short apply( const char* begin, const char* end )
 		{
-			return iota::decode_16_bit_hex( begin );
+			return gear::decode_16_bit_hex( begin );
 		}
 	};
 	
@@ -78,7 +76,7 @@ namespace plus
 	{
 		static unsigned apply( const char* begin, const char* end )
 		{
-			return iota::decode_32_bit_hex( begin );
+			return gear::decode_32_bit_hex( begin );
 		}
 	};
 	

@@ -8,10 +8,8 @@
 // Standard C
 #include <ctype.h>
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/quad.hh"
 
 // plus
@@ -26,7 +24,7 @@ namespace Genie
 	{
 		if ( size == 8 )
 		{
-			return iota::decode_32_bit_hex( name );
+			return gear::decode_32_bit_hex( name );
 		}
 		
 		if ( size == 4 )

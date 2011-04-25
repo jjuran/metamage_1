@@ -43,10 +43,8 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
@@ -561,8 +559,8 @@ static MD5::Result MD5String( const char* text )
 		
 		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
 		{
-			p[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
-			p[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
+			p[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
+			p[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
 		}
 		
 		return result;

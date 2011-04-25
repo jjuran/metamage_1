@@ -16,10 +16,10 @@
 #endif
 
 // Iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -187,8 +187,8 @@ namespace recall
 		char* frame_buf  = &result[ old_size + STRLEN( ": [0x"             ) ];
 		char* return_buf = &result[ old_size + STRLEN( ": [0x12345678 <0x" ) ];
 		
-		iota::encode_32_bit_hex( (long) info.frame_pointer,  frame_buf  );
-		iota::encode_32_bit_hex( (long) info.return_address, return_buf );
+		gear::encode_32_bit_hex( (long) info.frame_pointer,  frame_buf  );
+		gear::encode_32_bit_hex( (long) info.return_address, return_buf );
 		
 		strncpy( &*result.end() - STRLEN( "xyz>] " ), info.arch, 3 );
 		

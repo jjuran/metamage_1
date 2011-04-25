@@ -1,12 +1,12 @@
-/*	===================
- *	iota/hexidecimal.cc
- *	===================
- */
+/*
+	gear/hexidecimal.cc
+	-------------------
+*/
 
-#include "iota/hexidecimal.hh"
+#include "gear/hexidecimal.hh"
 
 
-namespace iota
+namespace gear
 {
 	
 	static const unsigned char bad = 0;

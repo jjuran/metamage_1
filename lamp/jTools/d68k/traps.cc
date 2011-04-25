@@ -11,8 +11,10 @@
 #include <stdint.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -41,7 +43,7 @@ namespace tool
 	
 	static uint16_t decode_16_bit_hex( const char* s )
 	{
-		using iota::decoded_hex_digit;
+		using gear::decoded_hex_digit;
 		
 		const uint16_t result = decoded_hex_digit( s[ 0 ] ) << 12
 		                      | decoded_hex_digit( s[ 1 ] ) <<  8

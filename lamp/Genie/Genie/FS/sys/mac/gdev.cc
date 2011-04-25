@@ -11,8 +11,10 @@
 #endif
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -61,7 +63,7 @@ namespace Genie
 		
 		const size_t hex_offset = STRLEN( "list/" );
 		
-		iota::encode_32_bit_hex( (unsigned) gdH, &result[ hex_offset ] );
+		gear::encode_32_bit_hex( (unsigned) gdH, &result[ hex_offset ] );
 		
 		return result;
 	}

@@ -10,8 +10,10 @@
 #include <sys/stat.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -39,7 +41,7 @@ namespace Genie
 		
 		name += ":[12345678]";
 		
-		iota::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
+		gear::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
 		
 		return name;
 	}

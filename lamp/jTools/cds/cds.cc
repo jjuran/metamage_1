@@ -4,10 +4,10 @@
  */
 
 // Iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -126,7 +126,7 @@ namespace tool
 		
 		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
 		
-		iota::encode_32_bit_hex( discID, discid_buf );
+		gear::encode_32_bit_hex( discID, discid_buf );
 		
 		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		

@@ -12,10 +12,10 @@
 #include <string.h>
 
 // Iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
 
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -101,7 +101,7 @@ namespace tool
 	{
 		const unsigned short min_digits = min_bytes * 2;
 		
-		const unsigned short magnitude = iota::hexidecimal_magnitude( x );
+		const unsigned short magnitude = gear::hexidecimal_magnitude( x );
 		
 		const unsigned short even_magnitude = magnitude + (magnitude & 0x1 );
 		
@@ -111,7 +111,7 @@ namespace tool
 		
 		char* buf = &*s.end() - n_bytes;
 		
-		iota::inscribe_n_hex_digits( buf, x, n_bytes );
+		gear::inscribe_n_hex_digits( buf, x, n_bytes );
 	}
 	
 	static void append_signed_decimal( plus::var_string& s, int x )

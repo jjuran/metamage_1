@@ -5,8 +5,8 @@
 
 #include "Genie/FS/append_hex_encoded_byte.hh"
 
-// iota
-#include "iota/hexidecimal.hh"
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -21,8 +21,8 @@ namespace Genie
 		
 		s.resize( size + 2 * sizeof c );
 		
-		s[ size     ] = iota::encoded_hex_char( c >> 4 );
-		s[ size + 1 ] = iota::encoded_hex_char( c >> 0 );
+		s[ size     ] = gear::encoded_hex_char( c >> 4 );
+		s[ size + 1 ] = gear::encoded_hex_char( c >> 0 );
 	}
 	
 }

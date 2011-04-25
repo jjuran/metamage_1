@@ -18,8 +18,10 @@
 #include <sys/socket.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // plus
 #include "plus/hexidecimal.hh"
@@ -313,8 +315,8 @@ namespace tool
 				char high = check_xdigit( *++p );
 				char low  = check_xdigit( *++p );
 				
-				c = iota::decoded_hex_digit( high ) << 4
-				  | iota::decoded_hex_digit( low  );
+				c = gear::decoded_hex_digit( high ) << 4
+				  | gear::decoded_hex_digit( low  );
 			}
 			
 			result += c;

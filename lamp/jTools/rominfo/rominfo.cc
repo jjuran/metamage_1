@@ -11,8 +11,10 @@
 #include <sys/uio.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 
 struct rom_info
@@ -56,14 +58,14 @@ int main( int argc, char **argv )
 	
 	char rom_vers[2] =
 	{
-		iota::encoded_hex_char( info.version >> 4 ),
-		iota::encoded_hex_char( info.version      )
+		gear::encoded_hex_char( info.version >> 4 ),
+		gear::encoded_hex_char( info.version      )
 	};
 	
-	iota::encode_32_bit_hex( (unsigned) rom_base, base_hex );
-	iota::encode_32_bit_hex( (unsigned) rom_size, size_hex );
-	iota::encode_32_bit_hex( info.checksum, checksum );
-	iota::encode_32_bit_hex( info.fortytwo, fortytwo );
+	gear::encode_32_bit_hex( (unsigned) rom_base, base_hex );
+	gear::encode_32_bit_hex( (unsigned) rom_size, size_hex );
+	gear::encode_32_bit_hex( info.checksum, checksum );
+	gear::encode_32_bit_hex( info.fortytwo, fortytwo );
 	
 	struct iovec output[] =
 	{

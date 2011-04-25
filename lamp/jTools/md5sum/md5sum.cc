@@ -13,8 +13,10 @@
 #include <sys/uio.h>
 
 // iota
-#include "iota/hexidecimal.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/hexidecimal.hh"
 
 // poseven
 #include "poseven/functions/open.hh"
@@ -37,8 +39,8 @@ namespace tool
 	{
 		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
 		{
-			result[ i * 2     ] = iota::encoded_hex_char( md5.data[ i ] >> 4 );
-			result[ i * 2 + 1 ] = iota::encoded_hex_char( md5.data[ i ] >> 0 );
+			result[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
+			result[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
 		}
 	}
 	

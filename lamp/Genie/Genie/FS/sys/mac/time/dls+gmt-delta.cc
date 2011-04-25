@@ -10,10 +10,8 @@
 #include <OSUtils.h>
 #endif
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -58,8 +56,8 @@ namespace Genie
 			out.assign( (const char*) &dls, sizeof dls );
 		}
 		
-		out += iota::encoded_hex_char( dls >> 4 );
-		out += iota::encoded_hex_char( dls >> 0 );
+		out += gear::encoded_hex_char( dls >> 4 );
+		out += gear::encoded_hex_char( dls >> 0 );
 	}
 	
 	void sys_mac_time_gmtdelta::get( plus::var_string& out, const FSTree* that, bool binary )

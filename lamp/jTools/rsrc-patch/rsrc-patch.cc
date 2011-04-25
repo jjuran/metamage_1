@@ -10,10 +10,8 @@
 // Standard C
 #include <string.h>
 
-// iota
-#include "iota/hexidecimal.hh"
-
 // gear
+#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 #include "gear/quad.hh"
@@ -78,8 +76,8 @@ namespace tool
 			const char high = hex_codes[ i * 2     ];
 			const char low  = hex_codes[ i * 2 + 1 ];
 			
-			p[ i ] = iota::decoded_hex_digit( high ) << 4
-			       | iota::decoded_hex_digit( low  );
+			p[ i ] = gear::decoded_hex_digit( high ) << 4
+			       | gear::decoded_hex_digit( low  );
 		}
 		
 		return result;
