@@ -78,6 +78,29 @@ namespace Nitrogen
 #endif
 	
 	
+	static inline OSErr FixedAsyncResult( OSErr err, const HParamBlockRec& pb )
+	{
+		if ( TARGET_CPU_68K )
+		{
+			// Only File Manager uses HParamBlockRec, so no check needed
+			return pb.ioParam.ioResult;
+		}
+		
+		return err;
+	}
+	
+	static inline OSErr FixedAsyncResult( OSErr err, const CInfoPBRec& pb )
+	{
+		if ( TARGET_CPU_68K )
+		{
+			// Only File Manager uses HParamBlockRec, so no check needed
+			return pb.hFileInfo.ioResult;
+		}
+		
+		return err;
+	}
+	
+	
 	void PBHOpenDFSync( HParamBlockRec& pb )
 	{
 		ThrowOSStatus( ::PBHOpenDFSync( &pb ) );
@@ -85,11 +108,7 @@ namespace Nitrogen
 	
 	void PBHOpenDFAsync( HParamBlockRec& pb )
 	{
-		OSErr err = ::PBHOpenDFAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.ioParam.ioResult );
-		
-		ThrowOSStatus( err );
+		ThrowOSStatus( FixedAsyncResult( ::PBHOpenDFAsync( &pb ), pb ) );
 	}
 	
 	void PBHOpenRFSync( HParamBlockRec& pb )
@@ -99,11 +118,7 @@ namespace Nitrogen
 	
 	void PBHOpenRFAsync( HParamBlockRec& pb )
 	{
-		OSErr err = ::PBHOpenRFAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.ioParam.ioResult );
-		
-		ThrowOSStatus( err );
+		ThrowOSStatus( FixedAsyncResult( ::PBHOpenRFAsync( &pb ), pb ) );
 	}
 	
 	
@@ -173,20 +188,12 @@ namespace Nitrogen
 	
 	void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy )
 	{
-		OSErr err = ::PBGetCatInfoAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.dirInfo.ioResult );
-		
-		policy.HandleOSStatus( err );
+		policy.HandleOSStatus( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
 	}
 	
 	bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
 	{
-		OSErr err = ::PBGetCatInfoAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.dirInfo.ioResult );
-		
-		return policy.HandleOSStatus( err );
+		return policy.HandleOSStatus( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
 	}
 	
 	

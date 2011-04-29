@@ -36,36 +36,38 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DeviceManager );
 	
 	
-	namespace Private
-	{
+	/*
+		According to Scott Boyd and Jim Luther[1], the result of async
+		calls to the File Manager and PPC Toolbox should be IGNORED
+		entirely, and ioResult alone should be checked, whereas success of
+		a Device Manager call should be determined first by checking the
+		result for noErr, and only then polling ioResult.  Unfortunately,
+		some calls are used by *both* the File Manager and Device Manager,
+		so we distinguish by checking the ioFRefNum field:  Negative values
+		are device drivers and non-negative ones are files.
 		
-		inline void FixAsyncResult( OSErr& err, OSErr result )
+		[1] http://www.mactech.com/articles/develop/issue_13/Luther.html
+		
+		The necessity of substituting the ioResult value for the result of
+		PBGetCatInfoAsync() has been confirmed for non-debug 68K code in
+		System 7.6 -- a memory address is placed in D0.  The problem has
+		not been witnessed in PPC code and almost certainly doesn't exist.
+	*/
+	
+	inline OSErr FixedAsyncResult( OSErr err, const ParamBlockRec& pb )
+	{
+		if ( TARGET_CPU_68K )
 		{
-			// Yes.  This is for real.
-			// Non-debug 68K code in System 7.6 has witnessed a memory address
-			// placed in D0 following a call to PBGetCatInfoAsync().
-			
-			// FIXME:  According to Scott Boyd and Jim Luther[1], the result of
-			// async calls to the File Manager and PPC Toolbox should be IGNORED
-			// entirely, and ioResult alone should be checked, whereas success
-			// of a Device Manager call should be determined first by checking
-			// the result for noErr, and only then polling ioResult.
-			// Unfortunately, some calls are used by *both* the File Manager and
-			// Device Manager, so a correct fix is more involved than simply
-			// changing the code here.
-			
-			// [1] http://www.mactech.com/articles/develop/issue_13/Luther.html
-			
-			// In the meantime, we'll leave this code as it's been, with the
-			// exception of removing its dependency on non-debug mode.
-			
-			if ( TARGET_CPU_68K )
+			// Device drivers have negative refnums; files don't
+			if ( const bool isFile = pb.ioParam.ioRefNum >= 0 )
 			{
-				err = result < 0 ? result : 0;
+				return pb.ioParam.ioResult;
 			}
 		}
 		
+		return err;
 	}
+	
 	
 	// Mac OS semantics
 	struct ThrowEOF_Always
@@ -108,11 +110,7 @@ namespace Nitrogen
 	{
 		NUCLEUS_REQUIRE_ERRORS( DeviceManager );
 		
-		OSErr err = ::PBReadAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.ioParam.ioResult );
-		
-		if ( err != noErr )
+		if ( const OSErr err = FixedAsyncResult( ::PBReadAsync( &pb ), pb ) )
 		{
 			ThrowReadOSStatus( err, pb.ioParam.ioActCount, policy );
 			
@@ -123,11 +121,7 @@ namespace Nitrogen
 	
 	inline void PBWriteAsync( ParamBlockRec& pb )
 	{
-		OSErr err = ::PBWriteAsync( &pb );
-		
-		Private::FixAsyncResult( err, pb.ioParam.ioResult );
-		
-		Mac::ThrowOSStatus( err );
+		Mac::ThrowOSStatus( FixedAsyncResult( ::PBWriteAsync( &pb ), pb ) );
 	}
 	
 }
