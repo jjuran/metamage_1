@@ -317,7 +317,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 	  ordering = REQUIRE_ORDER;
 	  ++optstring;
 	}
-      else if (getenv ("POSIXLY_CORRECT") != NULL)
+      else if (getenv ("POSIXLY_CORRECT"))
 	ordering = REQUIRE_ORDER;
       else
 	ordering = PERMUTE;
