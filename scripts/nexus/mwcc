@@ -1,0 +1,159 @@
+#!/usr/bin/perl
+
+use warnings FATAL => 'all';
+use strict;
+
+my $NEXUS = "nexus";
+my $PEER  = $ENV{NEXUS_PEER} or die "NEXUS_PEER is unset\n";
+
+my %param_expected_for = map { $_ => 1 } qw( -arch -include -o );
+
+my @input_paths;
+
+my $output_path;
+my $output_file;
+
+sub splat
+{
+	my ( $path, $content ) = @_;
+	
+	open my $f, ">", $path  or die "open $path: $!\n";
+	print   $f $content     or die "write $path: $!\n";
+	close   $f              or die "close $path: $!\n";
+	
+	return;
+}
+
+sub basename
+{
+	my ( $path ) = @_;
+	
+	my ( $name ) = $path =~ m{ ( [^/]+ ) $}x;
+	
+	if ( length( $name ) > 31 )
+	{
+		my ( $last ) = $name =~ m{ ( [^:]+ ) $}x;
+		
+		if ( length( $last ) > 31 )
+		{
+			my ( $main, $ext ) = $last =~ m{^ (.*) \. ([^.]*) $}x;
+			
+			$main = substr( $main, 0, 31 - length( $last ) );
+			
+			return "$main.$ext";
+		}
+		
+		return $last;
+	}
+	
+	return $name;
+}
+
+sub escape
+{
+	s{ ( ^~ | [^-.\w/,+@%^~:] ) }{\\$1}xg;
+	
+	$_;
+}
+
+sub copy_file
+{
+	my ( $from, $to ) = @_;
+	
+	system( '/bin/cp', $from, $to ) == 0 or die "cp $from $to: $?\n";
+}
+
+sub textify
+{
+	my ( $path ) = @_;
+	
+	system( qw( SetFile -c R*ch -t TEXT ), $path ) == 0 or die "SetFile $path: $?\n";
+}
+
+my %input;
+
+for ( my $i = 0;  $i < @ARGV;  ++$i )
+{
+	my $arg = $ARGV[ $i ];
+	
+	if ( $arg =~ m{^ - }x )
+	{
+		if ( $param_expected_for{ $arg } )
+		{
+			++$i;
+			
+			if ( $arg eq '-o' )
+			{
+				$output_path = $ARGV[ $i ];
+				$output_file = basename( $output_path );
+				
+				$ARGV[ $i ] = $output_file;
+			}
+		}
+	}
+	else
+	{
+		# input file
+		
+		$ARGV[ $i ] = basename( $arg );
+		
+		$ARGV[ $i ] =~ s{ [.] ii? $}{}x;
+		
+		$input{ $arg } = $ARGV[ $i ];
+	}
+}
+
+my $nexus_path = substr `$NEXUS path`, 0, -1;
+
+my $jobs = "$nexus_path/jobs";
+
+-d $jobs or die "$jobs: not found\n";
+
+my @nexus_new = ( $NEXUS, 'new', 'mwcc', grep { !m{^ -I }x } @ARGV );
+
+my $cmd = join " ", map { escape } @nexus_new;
+
+my $job_name = substr `$cmd`, 0, -1;
+
+my $job = "$jobs/$job_name";
+
+-d $job or die "$job: not found\n";
+
+my @job_files;
+
+foreach my $path ( keys %input )
+{
+	my $name = $input{ $path };
+	
+	copy_file( $path, "$job/$name" );
+	
+	textify( "$job/$name" );
+	
+	push @job_files, "$job/$name";
+}
+
+splat( "$job/INPUT", join "\n", values( %input ), "" );
+
+system $NEXUS, 'call', $PEER, $job_name;
+
+if ( -f "$job/SUCCESS" )
+{
+	copy_file( "$job/$output_file", $output_path )  if defined $output_file;
+	
+	push @job_files, "$job/$output_file";
+	
+	unlink @job_files;
+	
+	system $NEXUS, 'delete', $job_name;
+}
+
+if ( -f "$job/FAILURE" )
+{
+	exit `cat "$job/FAILURE"`;
+}
+
+if ( -f "$job/SIGNAL" )
+{
+	exit 128 + `cat "$job/SIGNAL"`;
+}
+

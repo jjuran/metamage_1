@@ -1,0 +1,160 @@
+#!/usr/bin/perl
+
+use warnings FATAL => 'all';
+use strict;
+
+my $NEXUS = "nexus";
+my $PEER  = $ENV{NEXUS_PEER} or die "NEXUS_PEER is unset\n";
+
+my %param_expected_for = map { $_ => 1 } qw( -arch -rt -o );
+
+my $output_path;
+my $output_file;
+
+my @job_files;
+
+sub splat
+{
+	my ( $path, $content ) = @_;
+	
+	open my $f, ">", $path  or die "open $path: $!\n";
+	print   $f $content     or die "write $path: $!\n";
+	close   $f              or die "close $path: $!\n";
+	
+	return;
+}
+
+sub basename
+{
+	my ( $path ) = @_;
+	
+	my ( $name ) = $path =~ m{ ( [^/]+ ) $}x;
+	
+	$name =~ s{ \.cpp\.o $}{.o}x;
+	
+	my $extra = length( $name ) - 31;
+	
+	return $name  if $extra <= 0;
+	
+	my @parts = split ':', $name;
+	
+	$extra -= length( shift @parts ) + 1  while @parts > 1  &&  length( $parts[0] ) <= $extra;
+	
+	if ( $extra > 0 )
+	{
+		my ( $main, $ext ) = $parts[0] =~ m{^ (.*) ( \. [^.]*)? $}x;
+		
+		$parts[0] = substr( $main, 0, -$extra ) . ($ext || "");
+	}
+	
+	return join ":", @parts;
+}
+
+sub escape
+{
+	s{ ( ^~ | [^-.\w/,+@%^~:] ) }{\\$1}xg;
+	
+	$_;
+}
+
+sub copy_file
+{
+	my ( $from, $to ) = @_;
+	
+	system( '/bin/cp', $from, $to ) == 0 or die "cp $from $to: $?\n";
+}
+
+my %input;
+
+for ( my $i = 0;  $i < @ARGV;  ++$i )
+{
+	my $arg = $ARGV[ $i ];
+	
+	if ( $arg =~ m{^ - }x )
+	{
+		if ( $param_expected_for{ $arg } )
+		{
+			++$i;
+			
+			if ( $arg eq '-o' )
+			{
+				$output_path = $ARGV[ $i ];
+				$output_file = basename( $ARGV[ $i ] );
+				
+				$ARGV[ $i ] = $output_file;
+			}
+		}
+		elsif ( $arg =~ s{^ -l }{}x )
+		{
+			my $path = "lib/$arg.lib";
+			
+			$input{ $path } = $path;
+		}
+	}
+	elsif ( $arg =~ m{ / }x )
+	{
+		# input file
+		
+		$ARGV[ $i ] = "./" . basename( $arg );
+		
+		$input{ $arg } = $ARGV[ $i ];
+	}
+}
+
+my $nexus_path = substr `$NEXUS path`, 0, -1;
+
+my $jobs = "$nexus_path/jobs";
+
+-d $jobs or die "$jobs: not found\n";
+
+my @nexus_new = ( $NEXUS, 'new', 'ld', @ARGV );
+
+my $cmd = join " ", map { escape } @nexus_new;
+
+my $job_name = substr `$cmd`, 0, -1;
+
+my $job = "$jobs/$job_name";
+
+-d $job or die "$job: not found\n";
+
+mkdir "$job/lib" or die "mkdir: $job/lib: $!\n";
+
+foreach my $path ( keys %input )
+{
+	my $name = $input{ $path };
+	
+	copy_file( $path, "$job/$name" );
+	
+	push @job_files, "$job/$name";
+}
+
+splat( "$job/INPUT", join "\n", values %input, "" );
+
+system $NEXUS, 'call', $PEER, $job_name;
+
+if ( -f "$job/SUCCESS" )
+{
+	foreach ( "", ".map" )
+	{
+		copy_file( "$job/$output_file$_", "$output_path$_" )  if -f "$job/$output_file$_";
+	}
+	
+	push @job_files, map { "$job/$output_file$_" } "", ".SYM", ".xSYM", ".map";
+	
+	unlink @job_files;
+	
+	rmdir "$job/lib";
+	
+	system $NEXUS, 'delete', $job_name;
+}
+
+if ( -f "$job/FAILURE" )
+{
+	exit `cat "$job/FAILURE"`;
+}
+
+if ( -f "$job/SIGNAL" )
+{
+	exit 128 + `cat "$job/SIGNAL"`;
+}
+

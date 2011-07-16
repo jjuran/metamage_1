@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+
+use warnings FATAL => 'all';
+use strict;
+
+my $NEXUS = "nexus";
+my $PEER  = $ENV{NEXUS_PEER} or die "NEXUS_PEER is unset\n";
+
+my @input_paths;
+
+my $output_path;
+my $output_file;
+
+sub splat
+{
+	my ( $path, $content ) = @_;
+	
+	open my $f, ">", $path  or die "open $path: $!\n";
+	print   $f $content     or die "write $path: $!\n";
+	close   $f              or die "close $path: $!\n";
+	
+	return;
+}
+
+sub basename
+{
+	my ( $path ) = @_;
+	
+	return ( $path =~ m{ ( [^/]+ ) $}x )[0];
+}
+
+sub escape
+{
+	s{ ( ^~ | [^-.\w/,+@%^~:] ) }{\\$1}xg;
+	
+	$_;
+}
+
+sub copy_file
+{
+	my ( $from, $to ) = @_;
+	
+	system( '/bin/cp', $from, $to ) == 0 or die "cp $from $to: $?\n";
+}
+
+$output_path = $ARGV[ 1 ];
+$output_file = basename( $ARGV[ 1 ] );
+
+$ARGV[ 1 ] = $output_file;
+
+for ( my $i = 2;  $i < @ARGV;  ++$i )
+{
+	# input file
+	
+	push @input_paths, $ARGV[ $i ];
+	
+	$ARGV[ $i ] = ($i - 1) . ".o";
+}
+
+my $nexus_path = substr `$NEXUS path`, 0, -1;
+
+my $jobs = "$nexus_path/jobs";
+
+-d $jobs or die "$jobs: not found\n";
+
+my @nexus_new = ( $NEXUS, 'new', 'ar', @ARGV );
+
+my $cmd = join " ", map { escape } @nexus_new;
+
+my $job_name = substr `$cmd`, 0, -1;
+
+my $job = "$jobs/$job_name";
+
+-d $job or die "$job: not found\n";
+
+my $i = 0;
+
+foreach my $path ( @input_paths )
+{
+	my $name = ++$i . ".o";
+	
+	copy_file( $path, "$job/$name" );
+}
+
+splat( "$job/INPUT", join "\n", (map { "$_.o" } (1 .. scalar @input_paths)), "" );
+
+system $NEXUS, 'call', $PEER, $job_name;
+
+if ( -f "$job/SUCCESS" )
+{
+	copy_file( "$job/$output_file", $output_path )  if defined $output_file;
+	
+	$i = 0;
+	
+	unlink "$job/$output_file", map { "$job/" . ++$i . ".o" } @input_paths;
+	
+	system $NEXUS, 'delete', $job_name;
+}
+
+if ( -f "$job/FAILURE" )
+{
+	exit `cat "$job/FAILURE"`;
+}
+
+if ( -f "$job/SIGNAL" )
+{
+	exit 128 + `cat "$job/SIGNAL"`;
+}
+
