@@ -28,7 +28,6 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
-#include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
@@ -477,36 +476,6 @@ namespace Genie
 	}
 	
 	
-	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
-	// File descriptors refering to the master and slave respectively are returned
-	// in filedes.
-	// I made this up too.
-	static int ttypair( int fds[ 2 ] )
-	{
-		try
-		{
-			boost::shared_ptr< IOHandle > master, slave;
-			
-			GetNewPseudoTTYPair( master, slave );
-			
-			int master_fd = LowestUnusedFileDescriptor( 3 );
-			int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
-			
-			AssignFileDescriptor( master_fd, master );
-			AssignFileDescriptor( slave_fd,  slave  );
-			
-			fds[ 0 ] = master_fd;
-			fds[ 1 ] = slave_fd;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
-	
-	
 	static ssize_t pwrite( int fd, const void* buf, size_t count, off_t offset )
 	{
 		if ( offset < 0 )
@@ -635,7 +604,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( setsid    );
 	REGISTER_SYSTEM_CALL( truncate  );
 	REGISTER_SYSTEM_CALL( ftruncate );
-	REGISTER_SYSTEM_CALL( ttypair   );
 	REGISTER_SYSTEM_CALL( write     );
 	REGISTER_SYSTEM_CALL( writev    );
 	REGISTER_SYSTEM_CALL( pwrite    );
