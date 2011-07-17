@@ -13,9 +13,6 @@
 #include "Genie/SystemCallRegistry.hh"
 
 
-#undef dirfd
-
-
 namespace Genie
 {
 	
