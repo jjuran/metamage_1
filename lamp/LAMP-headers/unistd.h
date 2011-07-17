@@ -69,7 +69,7 @@ int pipe2( int pipefd[2], int flags );
 int faccessat( int dirfd, const char* path, int mode, int flags );
 int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
 int fchownat( int dirfd, const char* path, uid_t owner, gid_t group, int flags );
-int fexecve( int fd, const char *const argv[], const char *const envp[] );
+int fexecve( int fd, char *const argv[], char *const envp[] );
 int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags );
 ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size );
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
@@ -99,9 +99,9 @@ int	 execl(const char *, const char *, ...)
 int	 execle(const char *, const char *, ...);
 int	 execlp(const char *, const char *, ...) 
 	    __attribute__((sentinel));
-int	 execv(const char *, const char * const *);
-int	 execve(const char *, const char * const *, const char * const *);
-int	 execvp(const char *, const char * const *);
+int	 execv(const char *, char * const *);
+int	 execve(const char *, char * const *, char * const *);
+int	 execvp(const char *, char * const *);
 pid_t	 fork(void);
 long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)

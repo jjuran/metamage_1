@@ -48,7 +48,7 @@ static inline void inscribe_decimal( int x, char* s )
 	std::strcpy( s, p );
 }
 
-int fexecve( int fd, const char *const argv[], const char *const envp[] )
+int fexecve( int fd, char *const argv[], char *const envp[] )
 {
 	char path[] = "/dev/fd/9876543210";
 	
@@ -57,7 +57,7 @@ int fexecve( int fd, const char *const argv[], const char *const envp[] )
 	return execve( path, argv, envp );
 }
 
-int execv( const char* path, const char* const* argv )
+int execv( const char* path, char* const* argv )
 {
 	return execve( path, argv, environ );
 }
@@ -141,7 +141,7 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 	return -1;
 }
 
-int execvp( const char* file, const char* const argv[] )
+int execvp( const char* file, char* const argv[] )
 {
 	char path[ 4096 ];
 	
@@ -170,22 +170,22 @@ int execle( const char* path, const char* arg0, ... )
 	{
 	}
 	
-	const char* const* envp = va_arg( va, const char* const* );
+	char* const* envp = va_arg( va, char* const* );
 	
 	va_end( va );
 	
-	const char* const* argv = &arg0;
+	char* const* argv = (char**) &arg0;
 	
 	return execve( path, argv, envp );
 }
 
 int execl( const char* path, const char* arg0, ... )
 {
-	return execv( path, &arg0 );
+	return execv( path, (char**) &arg0 );
 }
 
 int execlp( const char* file, const char* arg0, ... )
 {
-	return execvp( file, &arg0 );
+	return execvp( file, (char**) &arg0 );
 }
 
