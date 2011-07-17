@@ -3,8 +3,8 @@
  *	===========
  */
 
-// POSIX
-#include <unistd.h>
+// Relix
+#include "relix/copyfile.h"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -13,33 +13,30 @@
 #include "Genie/SystemCallRegistry.hh"
 
 
-namespace Genie
+int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags )
 {
+	using namespace Genie;
 	
-	static int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags )
+	try
 	{
-		try
-		{
-			FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );
-			FSTreePtr destFile = ResolvePathAt( newdirfd, newpath );
-			
-			// Do not resolve links
-			
-			srcFile->CopyFile( destFile );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
+		FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );
+		FSTreePtr destFile = ResolvePathAt( newdirfd, newpath );
 		
-		return 0;
+		// Do not resolve links
+		
+		srcFile->CopyFile( destFile );
+	}
+	catch ( ... )
+	{
+		return set_errno_from_exception();
 	}
 	
-	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( copyfileat );
-	
-	#pragma force_active reset
-	
+	return 0;
 }
+
+#pragma force_active on
+
+REGISTER_SYSTEM_CALL( copyfileat );
+
+#pragma force_active reset
 
