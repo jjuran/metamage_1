@@ -29,6 +29,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
+#include "Genie/Utilities/Copy_IconSuite.hh"
 
 
 #ifndef O_BINARY
@@ -473,48 +474,6 @@ namespace Genie
 		}
 		
 		return boost::shared_ptr< IOHandle >( result );
-	}
-	
-	static pascal OSErr CopyIconToSuite( ::ResType type, ::Handle* icon, void* userData )
-	{
-		::IconSuiteRef newSuite = (::IconSuiteRef) userData;
-		
-		::Handle copy = *icon;
-		
-		if ( copy == NULL )
-		{
-			return noErr;
-		}
-		
-		OSErr err = ::HandToHand( &copy );
-		
-		if ( err != noErr )
-		{
-			return err;
-		}
-		
-		err = ::AddIconToSuite( copy, newSuite, type );
-		
-		if ( err != noErr )
-		{
-			::DisposeHandle( copy );
-		}
-		
-		return err;
-	}
-	
-	static ::IconActionUPP gCopyIconToSuiteUPP = ::NewIconActionUPP( &CopyIconToSuite );
-	
-	static n::owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
-	{
-		n::owned< N::IconSuiteRef > copy = N::NewIconSuite();
-		
-		Mac::ThrowOSStatus( ::ForEachIconDo( iconSuite,
-		                                     kSelectorAllAvailableData,
-		                                     gCopyIconToSuiteUPP,
-		                                     copy.get().Get() ) );
-		
-		return copy;
 	}
 	
 	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
