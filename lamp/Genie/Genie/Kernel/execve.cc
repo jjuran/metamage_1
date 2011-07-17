@@ -29,16 +29,15 @@
 #include "Genie/Process.hh"
 
 
-namespace Genie
-{
-
 namespace N = Nitrogen;
 
 
-static int execve( const char*        path,
-                   const char* const  argv[],
-                   const char* const  envp[] )
+int execve( char  const*  path,
+            char* const*  argv,
+            char* const*  envp )
 {
+	using namespace Genie;
+	
 	// On a successful exec, we don't return to the dispatcher, but we compensate.
 	// Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
 	// ResumeAfterFork() calls Resume() and LeaveSystemCall().
@@ -92,5 +91,3 @@ static int execve( const char*        path,
 REGISTER_SYSTEM_CALL( execve );
 
 #pragma force_active reset
-
-}
