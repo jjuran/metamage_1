@@ -30,14 +30,18 @@
 #endif
 
 
-namespace Genie
+#ifndef __MACOS__
+namespace
 {
+#endif
 
 using plus::conduit;
 
 
-static int socketpair( int domain, int type, int protocol, int fds[2] )
+int socketpair( int domain, int type, int protocol, int fds[2] )
 {
+	using namespace Genie;
+	
 	try
 	{
 		const bool close_on_exec = type & SOCK_CLOEXEC;
@@ -67,8 +71,10 @@ static int socketpair( int domain, int type, int protocol, int fds[2] )
 }
 
 
-static int socket( int domain, int type, int protocol )
+int socket( int domain, int type, int protocol )
 {
+	using namespace Genie;
+	
 	int fd = LowestUnusedFileDescriptor();
 	
 	// Assume domain is PF_INET, type is SOCK_STREAM, and protocol is INET_TCP
@@ -91,8 +97,10 @@ static int socket( int domain, int type, int protocol )
 }
 
 
-static int bind( int fd, const struct sockaddr* name, socklen_t namelen )
+int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -108,8 +116,10 @@ static int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 }
 
 
-static int listen( int fd, int backlog )
+int listen( int fd, int backlog )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -125,8 +135,10 @@ static int listen( int fd, int backlog )
 }
 
 
-static int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
+int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
@@ -169,8 +181,10 @@ static int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 }
 
 
-static int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
+int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 {
+	using namespace Genie;
+	
 	// Assume sin_family is AF_INET
 	
 	try
@@ -188,8 +202,10 @@ static int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen 
 }
 
 
-static int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
+int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -209,8 +225,10 @@ static int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 }
 
 
-static int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
+int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -230,8 +248,10 @@ static int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 }
 
 
-static int shutdown( int fd, int how )
+int shutdown( int fd, int how )
 {
+	using namespace Genie;
+	
 	try
 	{
 		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -273,5 +293,7 @@ REGISTER_SYSTEM_CALL( shutdown    );
 
 #pragma force_active reset
 
+#ifndef __MACOS__
 }
+#endif
 
