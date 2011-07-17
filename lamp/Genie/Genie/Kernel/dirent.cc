@@ -13,33 +13,30 @@
 #include "Genie/SystemCallRegistry.hh"
 
 
-namespace Genie
+int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
 {
+	using namespace Genie;
 	
-	static int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
+	try
 	{
-		try
+		DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
+		
+		if ( count < sizeof (dirent) )
 		{
-			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
-			
-			if ( count < sizeof (dirent) )
-			{
-				return set_errno( EINVAL );
-			}
-			
-			return dir.ReadDir( *dirp );
+			return set_errno( EINVAL );
 		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
+		
+		return dir.ReadDir( *dirp );
 	}
-	
-	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( getdents );
-	
-	#pragma force_active reset
-	
+	catch ( ... )
+	{
+		return set_errno_from_exception();
+	}
 }
+
+#pragma force_active on
+
+REGISTER_SYSTEM_CALL( getdents );
+
+#pragma force_active reset
 
