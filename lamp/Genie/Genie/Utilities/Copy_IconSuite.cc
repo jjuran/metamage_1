@@ -13,6 +13,8 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	#pragma exceptions off
+	
 	static pascal OSErr CopyIconToSuite( ::ResType type, ::Handle* icon, void* userData )
 	{
 		::IconSuiteRef newSuite = (::IconSuiteRef) userData;
@@ -42,6 +44,9 @@ namespace Genie
 	}
 	
 	static ::IconActionUPP gCopyIconToSuiteUPP = ::NewIconActionUPP( &CopyIconToSuite );
+	
+	#pragma exceptions reset
+	
 	
 	n::owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
 	{
