@@ -1496,7 +1496,11 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
+		mark_process_inactive( itsPID );
+		
 		Pause( kProcessStopped );
+		
+		mark_process_active( itsPID );
 	}
 	
 	void Process::Continue()
