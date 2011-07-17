@@ -24,6 +24,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/config/mini.hh"
+#include "Genie/config/pts.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
@@ -202,7 +203,12 @@ namespace Genie
 		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
 		{ "con", &dynamic_group_factory, &dynamic_group_element< ConsoleTTYHandle >::extra },
+		
+	#if CONFIG_PTS
+		
 		{ "pts", &dynamic_group_factory, &dynamic_group_element< PseudoTTYHandle  >::extra },
+		
+	#endif
 		
 		{ "fd", &dev_fd_Factory },
 		
