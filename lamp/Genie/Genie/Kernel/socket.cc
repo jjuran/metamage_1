@@ -6,11 +6,6 @@
 // Standard C/C++
 #include <cstring>
 
-// Mac OS
-#ifndef __OPENTRANSPORTPROVIDERS__
-#include <OpenTransportProviders.h>
-#endif
-
 // POSIX
 #include "sys/socket.h"
 
