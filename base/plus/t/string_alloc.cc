@@ -72,21 +72,21 @@ static void static_varcopy()
 	
 	plus::var_string b = a;
 	
-	ok_if( a.data() == b.data() );
+	ok_if( a.data() != b.data() );  // copy now, no COW
 	
 	plus::var_string c = b;
 	
 	const char* c_data = c.data();
 	
-	ok_if( b.data() == c.data() );
+	ok_if( b.data() != c.data() );
 	
 	plus::string d = c;
 	
-	ok_if( c.data() == d.data() );
+	ok_if( c.data() != d.data() );  // var_strings aren't shared
 	
 	c.begin();
 	
-	ok_if( c_data != c.data() );
+	ok_if( c_data == c.data() );
 }
 
 int main( int argc, const char *const *argv )

@@ -16,7 +16,7 @@ namespace plus
 	class var_string : public string
 	{
 		private:
-			char* mutable_data()  { return copy_on_write( false ); }
+			char* mutable_data()  { return const_cast< char* >( string::data() ); }
 			
 			char* embiggen( size_type new_length, size_type new_capacity = 0 );
 			
@@ -37,38 +37,45 @@ namespace plus
 			
 			var_string( const char*    p,
 			            size_type      length,
-			            delete_policy  policy ) : string( p, length, policy )
+			            delete_policy  policy )
 			{
+				assign( p, length, policy );
 			}
 			
-			var_string( const char* p, size_type length ) : string( p, length )
+			var_string( const char* p, size_type length )
 			{
+				assign( p, length );
 			}
 			
-			var_string( const char* p, const char* q ) : string( p, q )
+			var_string( const char* p, const char* q )
 			{
+				assign( p, q );
 			}
 			
-			var_string( const char* s ) : string( s )
+			var_string( const char* s )
 			{
+				assign( s );
 			}
 			
-			var_string( size_type n, char c ) : string( n, c )
+			var_string( size_type n, char c )
 			{
+				assign( n, c );
 			}
 			
 			var_string( const move_t& m ) : string( m )
 			{
 			}
 			
-			var_string( const string& other, size_type pos, size_type n = npos )
+			var_string( const string& other, size_type pos = 0, size_type n = npos )
 			:
 				string( other, pos, n )
 			{
+				assign( other, pos, n );
 			}
 			
-			var_string( const string& other ) : string( other )
+			var_string( const var_string& other )
 			{
+				assign( other );
 			}
 			
 		#if IOTA_HAS_PASCAL_STRINGS
@@ -111,9 +118,8 @@ namespace plus
 			const char* begin() const  { return string::begin(); }
 			const char* end  () const  { return string::end  (); }
 			
-			char* begin()  { return copy_on_write( true ); }
-			
-			char* end();
+			char* begin()  { return const_cast< char* >( string::begin() ); }
+			char* end  ()  { return const_cast< char* >( string::end  () ); }
 			
 			char& front()  { return begin()[  0 ]; }
 			char& back ()  { return end  ()[ -1 ]; }
@@ -127,12 +133,16 @@ namespace plus
 			{
 				string::assign( p, length, policy, capacity );
 				
+				copy_on_write( true );
+				
 				return *this;
 			}
 			
 			var_string& assign( const char* p, size_type length )
 			{
 				string::assign( p, length );
+				
+				copy_on_write( true );
 				
 				return *this;
 			}
@@ -141,12 +151,16 @@ namespace plus
 			{
 				string::assign( p, q );
 				
+				copy_on_write( true );
+				
 				return *this;
 			}
 			
 			var_string& assign( const char* s )
 			{
 				string::assign( s );
+				
+				copy_on_write( true );
 				
 				return *this;
 			}
@@ -155,28 +169,20 @@ namespace plus
 			{
 				string::assign( n, c );
 				
-				return *this;
-			}
-			
-			var_string& assign( const move_t& m )
-			{
-				string::assign( m );
+				copy_on_write( true );
 				
 				return *this;
 			}
 			
-			var_string& assign( const string& other, size_type pos, size_type n = npos )
+			var_string& assign( const move_t& m );
+			
+			var_string& assign( const string& other, size_type pos = 0, size_type n = npos )
 			{
 				// Always allocates, even with pos == 0 and n == npos
 				
 				string::assign( other, pos, n );
 				
-				return *this;
-			}
-			
-			var_string& assign( const string& other )
-			{
-				string::assign( other );
+				copy_on_write( true );
 				
 				return *this;
 			}

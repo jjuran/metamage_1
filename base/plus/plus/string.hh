@@ -160,6 +160,8 @@ namespace plus
 			
 			size_type capacity() const;
 			
+			bool movable() const;
+			
 			const char* data() const;
 			
 			const char* c_str() const  { return data(); }
