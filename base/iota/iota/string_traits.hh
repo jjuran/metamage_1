@@ -18,114 +18,38 @@
 namespace iota
 {
 	
-	template < class String >
-	struct string_c_str
+	// Overloads so Metrowerks C++ will inline them
+	
+	inline const char* get_string_c_str( const char* s )
 	{
-		static const char* get( const String& s )
-		{
-			return s.c_str();
-		}
-	};
+		return s;
+	}
 	
-	template <>
-	struct string_c_str< const char* >
+	inline const char* get_string_data( const char* s )
 	{
-		static const char* get( const char* s )
-		{
-			return s;
-		}
-	};
+		return s;
+	}
 	
-	template <>
-	struct string_c_str< char* > : string_c_str< const char* >
+	inline std::size_t get_string_size( const char* s )
 	{
-	};
+		return std::strlen( s );
+	}
 	
-	template < unsigned n >
-	struct string_c_str< const char[n] > : string_c_str< const char* >
+	
+	inline const char* get_string_c_str( char* s )
 	{
-	};
+		return s;
+	}
 	
-#ifndef __MWERKS__
-	
-	template < unsigned n >
-	struct string_c_str< char[n] > : string_c_str< const char* >
+	inline const char* get_string_data( char* s )
 	{
-	};
+		return s;
+	}
 	
-#endif
-	
-	
-	template < class String >
-	struct string_data
+	inline std::size_t get_string_size( char* s )
 	{
-		static const char* get( const String& s )
-		{
-			return s.data();
-		}
-	};
-	
-	template <>
-	struct string_data< const char* > : string_c_str< const char* >
-	{
-	};
-	
-	template <>
-	struct string_data< char* > : string_c_str< const char* >
-	{
-	};
-	
-	template < unsigned n >
-	struct string_data< const char[n] > : string_c_str< const char* >
-	{
-	};
-	
-#ifndef __MWERKS__
-	
-	template < unsigned n >
-	struct string_data< char[n] > : string_c_str< const char* >
-	{
-	};
-	
-#endif
-	
-	
-	template < class String >
-	struct string_size
-	{
-		static std::size_t get( const String& s )
-		{
-			return s.size();
-		}
-	};
-	
-	template <>
-	struct string_size< const char* >
-	{
-		static std::size_t get( const char* s )
-		{
-			return std::strlen( s );
-		}
-	};
-	
-	template <>
-	struct string_size< char* > : string_size< const char* >
-	{
-	};
-	
-	template < unsigned n >
-	struct string_size< const char[n] > : string_size< const char* >
-	{
-	};
-	
-#ifndef __MWERKS__
-	
-	template < unsigned n >
-	struct string_size< char[n] > : string_size< const char* >
-	{
-	};
-	
-#endif
+		return std::strlen( s );
+	}
 	
 	
 #if IOTA_HAS_PASCAL_STRINGS
@@ -135,67 +59,20 @@ namespace iota
 		return get_pascal_string_data( s );
 	}
 	
+	inline const char* get_string_data( unsigned char* s )
+	{
+		return get_pascal_string_data( s );
+	}
+	
 	inline std::size_t get_string_size( const unsigned char* s )
 	{
 		return get_pascal_string_size( s );
 	}
 	
-	template <>
-	struct string_data< const unsigned char* >
+	inline std::size_t get_string_size( unsigned char* s )
 	{
-		static const char* get( const unsigned char* s )
-		{
-			return (const char*) s + 1;
-		}
-	};
-	
-	template <>
-	struct string_data< unsigned char* > : string_data< const unsigned char* >
-	{
-	};
-	
-	template < unsigned n >
-	struct string_data< const unsigned char[n] > : string_data< const unsigned char* >
-	{
-	};
-	
-#ifndef __MWERKS__
-	
-	template < unsigned n >
-	struct string_data< unsigned char[n] > : string_data< const unsigned char* >
-	{
-	};
-	
-#endif
-	
-	
-	template <>
-	struct string_size< const unsigned char* >
-	{
-		static std::size_t get( const unsigned char* s )
-		{
-			return s[0];
-		}
-	};
-	
-	template <>
-	struct string_size< unsigned char* > : string_size< const unsigned char* >
-	{
-	};
-	
-	template < unsigned n >
-	struct string_size< const unsigned char[n] > : string_size< const unsigned char* >
-	{
-	};
-	
-#ifndef __MWERKS__
-	
-	template < unsigned n >
-	struct string_size< unsigned char[n] > : string_size< const unsigned char* >
-	{
-	};
-	
-#endif
+		return get_pascal_string_size( s );
+	}
 	
 #endif
 	
@@ -204,7 +81,7 @@ namespace iota
 	//
 	get_string_c_str( const String& s )
 	{
-		return string_c_str< String >::get( s );
+		return s.c_str();
 	}
 	
 	template < class String >
@@ -212,13 +89,13 @@ namespace iota
 	//
 	get_string_data( const String& s )
 	{
-		return string_data< String >::get( s );
+		return s.data();
 	}
 	
 	template < class String >
 	inline std::size_t get_string_size( const String& s )
 	{
-		return string_size< String >::get( s );
+		return s.size();
 	}
 	
 }

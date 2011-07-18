@@ -362,6 +362,21 @@ namespace plus
 		a.swap( b );
 	}
 	
+	inline const char* get_string_c_str( const string& s )
+	{
+		return s.c_str();
+	}
+	
+	inline const char* get_string_data( const string& s )
+	{
+		return s.data();
+	}
+	
+	inline std::size_t get_string_size( const string& s )
+	{
+		return s.size();
+	}
+	
 }
 
 #endif
