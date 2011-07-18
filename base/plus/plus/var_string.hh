@@ -1,8 +1,6 @@
 /*
 	var_string.hh
 	-------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef PLUS_VARSTRING_HH

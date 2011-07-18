@@ -2,8 +2,6 @@
 	string.cc
 	---------
 	
-	Copyright 2010, Joshua Juran 
-	
 	Some of the find-related member functions were written using 
 	boost/shmem/containers/string.hpp as a guide.
 */

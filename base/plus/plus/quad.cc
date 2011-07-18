@@ -1,8 +1,6 @@
 /*
 	plus/quad.cc
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #include "plus/quad.hh"

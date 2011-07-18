@@ -1,8 +1,6 @@
 /*
 	plus/hexidecimal.hh
 	-------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef PLUS_HEXIDECIMAL_HH

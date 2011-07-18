@@ -1,8 +1,6 @@
 /*
 	functional_extensions.hh
 	------------------------
-	
-	Joshua Juran
 */
 
 #ifndef PLUS_FUNCTIONALEXTENSIONS_HH

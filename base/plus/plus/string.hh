@@ -1,8 +1,6 @@
 /*
 	string.hh
 	---------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef PLUS_STRING_HH

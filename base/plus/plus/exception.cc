@@ -1,8 +1,6 @@
 /*
 	exception.cc
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #include "plus/exception.hh"

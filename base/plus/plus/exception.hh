@@ -1,8 +1,6 @@
 /*
 	exception.hh
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef PLUS_EXCEPTION_HH

@@ -1,8 +1,6 @@
 /*
 	plus/contains.hh
 	----------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef PLUS_CONTAINS_HH

@@ -1,8 +1,6 @@
 /*
 	ref_count.hh
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef PLUS_REFCOUNT_HH

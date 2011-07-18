@@ -1,8 +1,6 @@
 /*
 	plus/hexidecimal.cc
 	-------------------
-	
-	Copyright 2009-2010, Joshua Juran
 */
 
 #include "plus/hexidecimal.hh"

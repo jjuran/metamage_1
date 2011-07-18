@@ -1,8 +1,6 @@
 /*
 	plus/quad.hh
 	------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef PLUS_QUAD_HH

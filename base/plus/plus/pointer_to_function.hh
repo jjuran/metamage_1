@@ -1,8 +1,6 @@
 /*
 	pointer_to_function.hh
 	----------------------
-	
-	Joshua Juran
 */
 
 #ifndef PLUS_POINTERTOFUNCTION_HH
