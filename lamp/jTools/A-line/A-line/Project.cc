@@ -527,7 +527,7 @@ namespace tool
 		{
 			const plus::string& source_dir = *it;
 			
-			std::vector< plus::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
+			std::vector< plus::string > deepSources = DeepFiles( source_dir, &IsCompilableFilename );
 			
 			if ( !source_only_search )
 			{
