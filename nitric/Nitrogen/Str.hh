@@ -94,21 +94,6 @@ namespace Nitrogen
 	
 }
 
-namespace iota
-{
-	
-	template < unsigned char length >
-	struct string_data< Nitrogen::Str< length > > : string_data< const unsigned char* >
-	{
-	};
-	
-	template < unsigned char length >
-	struct string_size< Nitrogen::Str< length > > : string_size< const unsigned char* >
-	{
-	};
-	
-}
-
 namespace nucleus
 {
 	
