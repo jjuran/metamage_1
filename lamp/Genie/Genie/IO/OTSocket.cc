@@ -59,6 +59,7 @@ namespace Genie
 		
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
+			OTResult                 its_result;
 			SInt16                   n_incoming_connections;
 			bool                     it_is_bound;
 			bool                     it_is_listener;
@@ -106,22 +107,6 @@ namespace Genie
 		
 		try
 		{
-			switch ( code )
-			{
-				case kOTSyncIdleEvent:
-					// Hack to make sure we don't get starved for events
-					Ped::AdjustSleepForTimer( 4 );
-					
-					yield();
-					
-					(void) check_signals( false );  // FIXME
-					
-					break;
-				
-				default:
-					break;
-			}
-			
 			if ( OTSocket* socket = (OTSocket*) context )
 			{
 				switch ( code )
@@ -159,6 +144,31 @@ namespace Genie
 						
 						break;
 					
+					case T_BINDCOMPLETE:
+						socket->its_result = result;
+						
+						if ( result == noErr )
+						{
+							socket->it_is_bound = true;
+						}
+						
+						break;
+					
+					case T_ACCEPTCOMPLETE:
+						socket->its_result = result;
+						
+						break;
+					
+					case T_OPENCOMPLETE:
+						socket->its_result = result;
+						
+						if ( result == noErr )
+						{
+							socket->itsEndpoint = n::owned< EndpointRef >::seize( (EndpointRef) cookie );
+						}
+						
+						break;
+					
 					default:
 						break;
 				}
@@ -169,27 +179,52 @@ namespace Genie
 		}
 	}
 	
-	static void SetUpEndpoint( EndpointRef endpoint, OTSocket* socket )
+	static void OTBind_sync( OTSocket&  socket,
+	                         TBind*     reqAddr = NULL,
+	                         TBind*     retAddr = NULL )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( socket_notifier );
+		socket.its_result = 0;
 		
-		// The new endpoint is synchronous and (by default) nonblocking.
+		N::OTBind( socket.itsEndpoint, reqAddr, retAddr );
 		
-		// The underlying endpoint is always nonblocking for send and recv
-		// and blocking for connect and listen (until we add support)
+		while ( socket.its_result == 0  &&  !socket.it_is_bound )
+		{
+			try_again( false );
+		}
 		
-		N::OTSetBlocking( endpoint );
+		N::ThrowOTResult( socket.its_result );
+	}
+	
+	
+	static OTNotifyUPP gSocketNotifier = ::NewOTNotifyUPP( socket_notifier );
+	
+	
+	static void Complete( OTSocket& socket )
+	{
+		while ( socket.its_result > 0  )
+		{
+			try_again( false );
+		}
 		
-		N::OTInstallNotifier( endpoint, gNotifyUPP, socket );
+		N::ThrowOTResult( socket.its_result );
+	}
+	
+	static void AsyncOpenEndpoint( const char* config, OTSocket* socket )
+	{
+		socket->its_result = 1;
 		
-		N::OTUseSyncIdleEvents( endpoint, true );
+		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
+		                        gSocketNotifier,
+		                        socket );
+		
+		Complete( *socket );
 	}
 	
 	OTSocket::OTSocket( bool nonblocking )
 	:
 		SocketHandle( nonblocking ),
 		itsBacklog(),
-		itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+		its_result            ( 0 ),
 		n_incoming_connections( 0 ),
 		it_is_bound        ( false ),
 		it_is_listener     ( false ),
@@ -199,7 +234,7 @@ namespace Genie
 		it_has_received_FIN( false ),
 		it_has_received_RST( false )
 	{
-		SetUpEndpoint( itsEndpoint, this );
+		AsyncOpenEndpoint( "tcp", this );
 	}
 	
 	OTSocket::~OTSocket()
@@ -366,9 +401,7 @@ namespace Genie
 		itsBacklog = backlog;
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
-		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
-		
-		SetUpEndpoint( itsEndpoint, this );
+		AsyncOpenEndpoint( "tilisten,tcp", this );
 		
 		TBind reqAddr;
 		
@@ -378,17 +411,14 @@ namespace Genie
 		reqAddr.addr.len = itsSocketAddress.Len();
 		reqAddr.qlen = backlog;
 		
-		N::OTBind( itsEndpoint, &reqAddr, NULL );
+		OTBind_sync( *this, &reqAddr );
 		
-		it_is_bound    = true;
 		it_is_listener = true;
 	}
 	
 	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		RepairListener();
-		
-		N::OTSetNonBlocking( itsEndpoint );
 		
 		TCall call;
 		
@@ -406,8 +436,6 @@ namespace Genie
 		
 		N::OTListen( itsEndpoint, &call );
 		
-		N::OTSetBlocking( itsEndpoint );
-		
 		len = call.addr.len;
 		
 		OTSocket* handle = new OTSocket;
@@ -416,9 +444,11 @@ namespace Genie
 		
 		handle->itsPeerAddress.Assign( client, len );
 		
+		its_result = 1;
+		
 		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
 		
-		N::OTSetNonBlocking( handle->itsEndpoint );
+		Complete( *this );
 		
 		return newSocket;
 	}
@@ -427,9 +457,7 @@ namespace Genie
 	{
 		if ( !it_is_bound )
 		{
-			N::OTBind( itsEndpoint );
-			
-			it_is_bound = true;
+			OTBind_sync( *this );
 		}
 		
 		TCall sndCall;
@@ -438,8 +466,6 @@ namespace Genie
 		
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
-		
-		N::OTSetAsynchronous( itsEndpoint );
 		
 		it_is_connecting = true;
 		
