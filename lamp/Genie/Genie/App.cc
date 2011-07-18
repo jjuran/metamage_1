@@ -15,6 +15,7 @@
 
 // Genie
 #include "Genie/ProcessList.hh"
+#include "Genie/scheduler.hh"
 
 
 namespace Genie
@@ -64,6 +65,8 @@ namespace Genie
 	
 	App::App()
 	{
+		Ped::gActivelyBusy_Hook = &is_active;
+		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		

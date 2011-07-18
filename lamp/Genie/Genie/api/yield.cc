@@ -14,6 +14,7 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
+#include "Genie/scheduler.hh"
 #include "Genie/api/signals.hh"
 
 
@@ -25,6 +26,8 @@ namespace Genie
 	
 	void yield()
 	{
+		mark_process_inactive( current_process().GetPID() );
+		
 		current_process().Yield();
 	}
 	

@@ -132,7 +132,6 @@ namespace Pedestal
 		
 		bool inForeground;     // set to true when the app is frontmost
 		bool startupComplete;  // set to true once the app is ready to respond to events
-		bool activelyBusy;     // set to true by active threads, reset in event loop
 		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
 		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
 		
@@ -140,7 +139,6 @@ namespace Pedestal
 		:
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
-			activelyBusy   ( false ),
 			quitRequested  ( false ),
 			endOfEventLoop ( false )
 		{}
@@ -184,6 +182,13 @@ namespace Pedestal
 		//, idDebugMENU = 255  // menu ID = 128
 	};
 	
+	
+	bool (*gActivelyBusy_Hook)() = NULL;
+	
+	static bool ActivelyBusy()
+	{
+		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : false;
+	}
 	
 	static void UpdateLastUserEvent()
 	{
@@ -833,7 +838,7 @@ namespace Pedestal
 		// If we're actively busy (i.e. some thread is in Breathe()), sleep for
 		// at most one tick, and that only if it's been a while since.
 		
-		if ( gRunState.activelyBusy )
+		if ( ActivelyBusy() )
 		{
 			const bool nonzero = now >= gTicksAtLastTrueSleep + gMaxTicksBetweenNonZeroSleeps;
 			
@@ -873,8 +878,6 @@ namespace Pedestal
 			{
 				while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
 				{
-					gRunState.activelyBusy = false;
-					
 					CheckMouse();
 					
 					CheckKeyboard();
@@ -884,7 +887,7 @@ namespace Pedestal
 						N::YieldToAnyThread();
 					}
 					
-					if ( !gRunState.activelyBusy || ReadyToWaitForEvents() )
+					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 					{
 						EventRecord event = GetAnEvent();
 						
@@ -1039,11 +1042,6 @@ namespace Pedestal
 		{
 			gTicksAtNextBusiness = businessTime;
 		}
-	}
-	
-	void AdjustSleepForActivity()
-	{
-		gRunState.activelyBusy = true;
 	}
 	
 	void ScheduleImmediateEventCheck()

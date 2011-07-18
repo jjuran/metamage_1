@@ -63,9 +63,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Pedestal
-#include "Pedestal/Application.hh"
-
 // Genie
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
@@ -78,6 +75,7 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
+#include "Genie/scheduler.hh"
 #include "Genie/signal_traits.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
@@ -127,7 +125,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
 	
 	
 	static uint64_t microseconds()
@@ -669,6 +666,8 @@ namespace Genie
 		itsReexecArgs[5] =
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
+		
+		mark_process_active( pid );
 	}
 	
 	Process::~Process()
@@ -928,8 +927,6 @@ namespace Genie
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
-		Ped::AdjustSleepForActivity();
-		
 		if ( gCurrentProcess != this )
 		{
 			return;
@@ -1005,8 +1002,6 @@ namespace Genie
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
-		
-		Ped::AdjustSleepForActivity();
 		
 		return looseThread;
 	}
@@ -1197,6 +1192,8 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
+		mark_process_inactive( GetPID() );
+		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
 			DumpBacktrace();
@@ -1243,8 +1240,6 @@ namespace Genie
 		notify_param param = { pid, isSessionLeader };
 		
 		for_each_process( &notify_process, &param );
-		
-		Ped::AdjustSleepForActivity();
 		
 		if ( gCurrentProcess != this )
 		{
@@ -1491,7 +1486,11 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
+		mark_process_inactive( itsPID );
+		
 		Pause( kProcessStopped );
+		
+		mark_process_active( itsPID );
 	}
 	
 	void Process::Continue()
@@ -1552,8 +1551,6 @@ namespace Genie
 		}
 		else
 		{
-			Ped::AdjustSleepForActivity();
-			
 			gCurrentProcess->AsyncYield();
 		}
 	}

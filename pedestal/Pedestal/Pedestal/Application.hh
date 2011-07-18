@@ -10,6 +10,8 @@
 namespace Pedestal
 {
 	
+	extern bool (*gActivelyBusy_Hook)();
+	
 	class Application
 	{
 		public:
@@ -22,8 +24,6 @@ namespace Pedestal
 	
 	
 	void AdjustSleepForTimer( unsigned ticksToSleep );
-	
-	void AdjustSleepForActivity();
 	
 	void ScheduleImmediateEventCheck();
 	
