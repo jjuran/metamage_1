@@ -1,8 +1,6 @@
 /*
 	iota/swap.hh
 	------------
-	
-	Joshua Juran
 */
 
 #ifndef IOTA_SWAP_HH

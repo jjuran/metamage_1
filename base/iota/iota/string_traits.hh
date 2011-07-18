@@ -1,8 +1,6 @@
 /*
 	iota/string_traits.hh
 	---------------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef IOTA_STRINGTRAITS_HH

@@ -1,8 +1,6 @@
 /*
 	iota/convert_string.hh
 	----------------------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #ifndef IOTA_CONVERTSTRING_HH

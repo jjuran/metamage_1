@@ -1,8 +1,6 @@
 /*
 	iota/distance.hh
 	----------------
-	
-	Joshua Juran
 */
 
 #ifndef IOTA_DISTANCE_HH
