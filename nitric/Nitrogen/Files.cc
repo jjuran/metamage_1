@@ -297,7 +297,8 @@ namespace Nitrogen
 		
 		PBDTGetPath( pb );
 		
-		Str255 name;  // Stack space is free
+		::Str255 name = "\p";  // Stack space is free
+		
 		pb.ioIndex       = 0;
 		pb.ioFileCreator = signature;
 		pb.ioNamePtr     = name;
