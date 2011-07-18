@@ -87,9 +87,7 @@ namespace recall
 			
 			if ( char* unmangled = abi::__cxa_demangle( mangled_name, NULL, NULL, NULL ) )
 			{
-				result = unmangled;
-				
-				free( unmangled );
+				result.assign( unmangled, strlen( unmangled ), plus::delete_free );
 			}
 		}
 	};
