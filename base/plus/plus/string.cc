@@ -305,8 +305,10 @@ namespace plus
 			return max_offset;
 		}
 		
-		return its_alloc.capacity ? its_alloc.capacity
-		                          : its_alloc.length;
+		const long capacity = its_alloc.capacity;  // negative for substrings
+		
+		return capacity > 0 ? its_alloc.capacity
+		                    : its_alloc.length;
 	}
 	
 	string::size_type string::substr_offset() const
