@@ -67,8 +67,6 @@ namespace plus
 			}
 			
 			var_string( const string& other, size_type pos = 0, size_type n = npos )
-			:
-				string( other, pos, n )
 			{
 				assign( other, pos, n );
 			}
