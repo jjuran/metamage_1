@@ -426,16 +426,16 @@ namespace plus
 					_policy( ~delete_owned );
 				}
 				
-				return const_cast< char* >( its_alloc.pointer );
+				return const_cast< char* >( data() );
 			}
 		}
-		else if ( its_alloc.capacity != 0 )
+		else if ( long( its_alloc.capacity ) > 0 )
 		{
 			// delete_owned or read/write external buffer
 			return const_cast< char* >( its_alloc.pointer );
 		}
 		
-		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
+		assign( data(), its_alloc.length, capacity() );
 		
 		if ( tainting  &&  _policy() == ~delete_shared )
 		{
