@@ -783,6 +783,12 @@ namespace plus
 	}
 	
 	
+	string string::substr( size_type pos, size_type n ) const
+	{
+		return string( *this, pos, n );
+	}
+	
+	
 	int string::compare( const string& b ) const
 	{
 		return string_compare( data(), size(), b.data(), b.size() );
