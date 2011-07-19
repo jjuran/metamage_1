@@ -523,7 +523,7 @@ namespace tool
 			
 			if ( line[0] == '$' )
 			{
-				plus::string command = line.substr( line.find_first_not_of( " \t", 1 ), line.npos );
+				plus::string command = line.substr( line.find_first_not_of( " \t", 1 ) );
 				
 				test.SetCommand( command );
 				
@@ -532,7 +532,8 @@ namespace tool
 			
 			if ( line[0] == '?' )
 			{
-				int exit_status = gear::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+				int exit_status = gear::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ) ).c_str() );
+				
 				test.SetExitStatus( exit_status );
 				continue;
 			}
@@ -553,7 +554,7 @@ namespace tool
 			
 			if ( memcmp( line.c_str(), STR_LEN( "TODO" ) ) == 0 )
 			{
-				test.SetToDoReason( line.substr( 5, line.npos ) );
+				test.SetToDoReason( line.substr( 5 ) );
 				continue;
 			}
 			

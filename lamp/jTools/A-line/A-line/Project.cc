@@ -418,7 +418,7 @@ namespace tool
 		std::size_t lastDot = filename.find_last_of( "." );
 		
 		return    lastDot != plus::string::npos
-		       && IsCompilableExtension( filename.substr( lastDot, plus::string::npos ) )
+		       && IsCompilableExtension( filename.substr( lastDot ) )
 		       && !match_backwards( filename.c_str() + lastDot, STR_LEN( " copy" ) );
 	}
 	

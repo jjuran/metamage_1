@@ -117,12 +117,12 @@ namespace tool
 	
 	static plus::string GetForwardPath( const plus::string& rcptLine )
 	{
-		return rcptLine.substr( STRLEN( "RCPT TO:" ), rcptLine.npos );
+		return rcptLine.substr( STRLEN( "RCPT TO:" ) );
 	}
 	
 	static plus::string GetReversePath( const plus::string& fromLine )
 	{
-		return fromLine.substr( STRLEN( "MAIL FROM:" ), fromLine.npos );
+		return fromLine.substr( STRLEN( "MAIL FROM:" ) );
 	}
 	
 	static void CreateOneLiner( const plus::string& path, const plus::string& line )

@@ -280,7 +280,7 @@ namespace POP3
 						}
 						else
 						{
-							line = line.substr( 1, std::string::npos );
+							line = line.substr( 1 );
 						}
 					}
 				}

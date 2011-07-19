@@ -163,7 +163,7 @@ namespace recall
 	{
 		std::size_t colon = qualified_name.find_last_of( ":" );
 		
-		return qualified_name.substr( colon + 1, qualified_name.npos );
+		return qualified_name.substr( colon + 1 );
 	}
 	
 	static const char* GetBuiltinType( char c )
