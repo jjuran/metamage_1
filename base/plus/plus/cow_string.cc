@@ -83,8 +83,7 @@ namespace plus
 	
 	char* cow_string::embiggen( size_type new_length, size_type new_capacity )
 	{
-		ASSERT( new_length   <= max_size() );
-		ASSERT( new_capacity <= max_size() );
+		// reallocate() will throw if either parameter exceeds max_size()
 		
 		const size_type capacity_ = capacity();
 		const size_type size_     = size();
@@ -134,7 +133,7 @@ namespace plus
 	
 	void cow_string::reserve( size_type new_capacity )
 	{
-		check_size( new_capacity );
+		// embiggen() will throw if new_capacity exceeds max_size()
 		
 		if ( new_capacity < max_offset )
 		{
@@ -146,7 +145,7 @@ namespace plus
 	
 	void cow_string::resize( size_type new_size, char c )
 	{
-		check_size( new_size );
+		// embiggen() will throw if new_size exceeds max_size()
 		
 		const size_type old_size = size();
 		
@@ -160,8 +159,12 @@ namespace plus
 	
 	char* cow_string::insert_uninitialized( char* p, size_type n )
 	{
+		check_size( n );
+		
 		const size_type old_size = size();
 		const size_type new_size = old_size + n;
+		
+		// embiggen() will throw if new_size exceeds max_size()
 		
 		char* begin = const_cast< char* >( data() );
 		char* end   = begin + old_size;
@@ -209,6 +212,8 @@ namespace plus
 	
 	cow_string& cow_string::insert( size_type pos, const char* s, size_type n )
 	{
+		// insert_uninitialized() will throw if n exceeds max_size()
+		
 		if ( pos > size() )
 		{
 			throw std::out_of_range( __func__ );
@@ -228,6 +233,8 @@ namespace plus
 	
 	cow_string& cow_string::insert( size_type pos, size_type n, char c )
 	{
+		// insert_uninitialized() will throw if n exceeds max_size()
+		
 		if ( pos > size() )
 		{
 			throw std::out_of_range( __func__ );
@@ -246,11 +253,15 @@ namespace plus
 		
 		const size_type n = j - i;
 		
+		// insert_uninitialized() will throw if n exceeds max_size()
+		
 		std::copy( i, j, insert_uninitialized( p, n ) );
 	}
 	
 	void cow_string::insert( char* p, size_type n, char c )
 	{
+		// insert_uninitialized() will throw if n exceeds max_size()
+		
 		memset( insert_uninitialized( p, n ), c, n );
 	}
 	
@@ -277,8 +288,11 @@ namespace plus
 		}
 		
 		const size_type old_size = size();
+		const size_type new_size = old_size + length;
 		
-		char* new_pointer = embiggen( old_size + length );
+		// embiggen() will throw if new_size exceeds max_size()
+		
+		char* new_pointer = embiggen( new_size );
 		
 		memcpy( new_pointer + old_size, p, length );
 		
@@ -318,6 +332,10 @@ namespace plus
 	
 	char* cow_string::replace_setup( char* p, size_type m, difference_type delta )
 	{
+		// delta is signed and therefore can't exceed max_size()
+		
+		// insert_uninitialized() will throw if new size exceeds max_size()
+		
 		if ( delta == 0 )
 		{
 			return p;
@@ -363,6 +381,8 @@ namespace plus
 	
 	cow_string& cow_string::replace( size_type pos, size_type m, const char* s, size_type n )
 	{
+		check_size( n );
+		
 		const size_type old_size = size();
 		
 		if ( pos > old_size )
@@ -390,6 +410,8 @@ namespace plus
 	
 	cow_string& cow_string::replace( size_type pos, size_type m, size_type n, char c )
 	{
+		check_size( n );
+		
 		const size_type old_size = size();
 		
 		if ( pos > old_size )
@@ -417,6 +439,8 @@ namespace plus
 	
 	void cow_string::replace( char* p, char* q, const char *i, size_type n )
 	{
+		check_size( n );
+		
 		ASSERT( begin() <= p );
 		
 		ASSERT( q <= end() );
@@ -443,6 +467,8 @@ namespace plus
 	
 	void cow_string::replace( char* p, char* q, size_type n, char c )
 	{
+		check_size( n );
+		
 		ASSERT( begin() <= p );
 		
 		ASSERT( q <= end() );

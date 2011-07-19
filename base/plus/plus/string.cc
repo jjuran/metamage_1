@@ -334,6 +334,8 @@ namespace plus
 	
 	char* string::reallocate( size_type length )
 	{
+		check_size( length );
+		
 		char const *const old_pointer = its_alloc.pointer;
 		
 		const char old_policy = _policy();
@@ -417,6 +419,8 @@ namespace plus
 	
 	string& string::assign( const char* p, size_type length, size_type capacity )
 	{
+		// reallocate() will throw if length or capacity exceeds max_size()
+		
 		if ( length )
 		{
 			ASSERT( p != NULL );
@@ -461,6 +465,8 @@ namespace plus
 	
 	string& string::assign( size_type n, char c )
 	{
+		// reallocate() will throw if n exceeds max_size()
+		
 		char* pointer = reallocate( n );
 		
 		memset( pointer, c, n );
