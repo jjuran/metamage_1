@@ -19,9 +19,6 @@
 #include "plus/string_details.hh"
 
 
-#define LENGTH_ERROR_MESSAGE  "plus::cow_string size can't exceed 0x7fffffff"
-
-
 namespace plus
 {
 	
@@ -133,21 +130,6 @@ namespace plus
 		set_length( new_length );
 		
 		return data;
-	}
-	
-	static void check_size( string::size_type size )
-	{
-		// 2 GB limit on 32-bit platforms
-		
-		if ( size > string::max_size() )
-		{
-			const bool _32bit = sizeof size == 4;
-			
-			const char* message = _32bit ? LENGTH_ERROR_MESSAGE
-			                             : LENGTH_ERROR_MESSAGE "ffffffff";
-			
-			throw std::length_error( message );
-		}
 	}
 	
 	void cow_string::reserve( size_type new_capacity )

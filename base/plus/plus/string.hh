@@ -49,6 +49,8 @@ namespace plus
 				return max;
 			}
 			
+			static void check_size( size_type size );
+			
 			enum
 			{
 				buffer_size_in_longs = 4,  // ptr/len/cap/etc
