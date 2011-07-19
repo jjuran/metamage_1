@@ -306,10 +306,7 @@ namespace plus
 	
 	const char* string::end() const
 	{
-		const int margin = its_small_name[ max_offset ];
-		
-		return margin >= 0 ? its_small_name    + max_offset - margin
-		                   : its_alloc.pointer + its_alloc.length;
+		return begin() + size();
 	}
 	
 	string& string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
