@@ -331,7 +331,20 @@ namespace plus
 			return its_small_name;  // always terminated
 		}
 		
-		return its_alloc.pointer;
+		const char* begin = its_alloc.pointer + substr_offset();
+		
+		if ( !zero_terminator_required  ||  is_c_str() )
+		{
+			return begin;
+		}
+		
+		string& non_const = const_cast< string& >( *this );
+		
+		plus::string temp( begin, its_alloc.length );
+		
+		non_const.swap( temp );
+		
+		return non_const.data();
 	}
 	
 	const char* string::end() const
