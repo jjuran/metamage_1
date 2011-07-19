@@ -547,12 +547,16 @@ namespace plus
 		
 		n = std::min( n, other_size - pos );
 		
-		return assign( other.data() + pos, n );
-	}
-	
-	string& string::assign( const string& other )
-	{
-		if ( other._policy() >= ~delete_shared )
+		const bool small = n < sizeof its_small_name;
+		
+		const bool shallow = !small  &&  other._policy() >= ~delete_shared;
+		
+		/*
+			A shallow copy is made for delete_shared and delete_never when
+			the resulting substring is not a small string.
+		*/
+		
+		if ( shallow )
 		{
 			if ( other._policy() == ~delete_shared )
 			{
@@ -568,10 +572,10 @@ namespace plus
 				++refcount;
 			}
 			
-			// Either it's small, shared, or it occupies static storage.
+			// Either it's shared or it occupies static storage.
 			// Either way, we perform a shallow copy.
 			
-			// If this is a self-assignment, then *we* are either small, static,
+			// If this is a self-assignment, then *we* are either static
 			// or shared with non-minimal refcount, and dispose() does nothing.
 			
 			dispose( its_alloc.pointer, _policy() );
@@ -579,10 +583,19 @@ namespace plus
 			std::copy( other.its_longs,
 			           other.its_longs + buffer_size_in_longs,
 			           its_longs );
+			
+			its_alloc.length = n;
+			
+			if ( pos != 0 )
+			{
+				const long new_offset = substr_offset() + pos;
+				
+				its_alloc.capacity = size_type( -new_offset );
+			}
 		}
 		else
 		{
-			assign( other.data(), other.size() );
+			assign( other.data() + pos, n );
 		}
 		
 		return *this;
