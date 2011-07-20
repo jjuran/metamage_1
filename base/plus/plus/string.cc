@@ -478,7 +478,7 @@ namespace plus
 			throw std::out_of_range( "plus::string" );
 		}
 		
-		n = std::min( n, other.size() - pos );
+		n = std::min( n, other_size - pos );
 		
 		return assign( other.data() + pos, n );
 	}
