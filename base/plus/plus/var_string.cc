@@ -129,6 +129,8 @@ namespace plus
 				memcpy( new_pointer, data(), size() );
 				
 				swap( temp );
+				
+				copy_on_write( true );  // taint the string as unshareable
 			}
 			catch ( ... )
 			{
@@ -143,7 +145,7 @@ namespace plus
 			}
 		}
 		
-		char* data = mutable_data();  // copy on write
+		char* data = mutable_data();
 		
 		set_length( new_length );
 		
