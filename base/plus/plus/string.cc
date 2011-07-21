@@ -190,20 +190,22 @@ namespace plus
 	
 	void string::set_length( size_type length )
 	{
-		char& margin = its_small_name[ max_offset ];
+		char* p;
 		
-		if ( margin < 0 )
-		{
-			its_alloc.length = length;
-		}
-		else
+		if ( is_small() )
 		{
 			ASSERT( length <= max_offset );
 			
-			margin = max_offset - length;
+			its_small_name[ max_offset ] = max_offset - length;
+			
+			p = its_small_name;
 		}
-		
-		char* p = margin < 0 ? (char*) its_alloc.pointer : its_small_name;
+		else
+		{
+			its_alloc.length = length;
+			
+			p = (char*) its_alloc.pointer;
+		}
 		
 		p[ length ] = '\0';
 	}
