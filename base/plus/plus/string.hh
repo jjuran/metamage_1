@@ -165,6 +165,10 @@ namespace plus
 			
 			size_type capacity() const;
 			
+			size_type substr_offset() const  { return 0; }
+			
+			bool is_c_str() const  { return true; }
+			
 			bool movable() const;
 			
 			const char* data() const;
