@@ -165,7 +165,7 @@ namespace plus
 			
 			size_type capacity() const;
 			
-			size_type substr_offset() const  { return 0; }
+			size_type substr_offset() const;
 			
 			bool is_c_str() const  { return end()[0] == '\0'; }
 			
