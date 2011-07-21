@@ -167,7 +167,7 @@ namespace plus
 			
 			size_type substr_offset() const  { return 0; }
 			
-			bool is_c_str() const  { return true; }
+			bool is_c_str() const  { return end()[0] == '\0'; }
 			
 			bool movable() const;
 			
