@@ -291,17 +291,23 @@ namespace plus
 	
 	string::size_type string::capacity() const
 	{
-		const int margin = its_small_name[ max_offset ];
+		if ( is_small() )
+		{
+			return max_offset;
+		}
 		
-		return   margin >= 0        ? max_offset
-		       : its_alloc.capacity ? its_alloc.capacity
-		       :                      its_alloc.length;
+		return its_alloc.capacity ? its_alloc.capacity
+		                          : its_alloc.length;
 	}
 	
 	const char* string::data() const
 	{
-		return _policy() < 0 ? its_alloc.pointer
-		                     : its_small_name;
+		if ( is_small() )
+		{
+			return its_small_name;
+		}
+		
+		return its_alloc.pointer;
 	}
 	
 	const char* string::end() const
@@ -374,9 +380,9 @@ namespace plus
 	
 	char* string::copy_on_write( bool tainting )
 	{
-		if ( _policy() >= 0 )
+		if ( is_small() )
 		{
-			return its_small_name;  // small string
+			return its_small_name;
 		}
 		
 		if ( _policy() == ~delete_shared )

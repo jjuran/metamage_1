@@ -154,6 +154,8 @@ namespace plus
 			
 		#endif
 			
+			bool is_small() const  { return (_policy() & 0xF0) == 0; }
+			
 			bool empty() const  { return size() == 0; }
 			
 			size_type size() const;
