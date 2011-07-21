@@ -285,10 +285,18 @@ namespace plus
 	
 	string::size_type string::size() const
 	{
-		const int margin = its_small_name[ max_offset ];
+		/*
+			For small strings, the margin (stored in the last byte) is the
+			number of bytes by which the string could increase while still
+			fitting in the internal buffer.  Length plus margin equals the
+			maximum length for a small string (either 15 for 32-bit longs,
+			or 31 for 64-bit).
+		*/
 		
-		return margin >= 0 ? max_offset - margin
-		                   : its_alloc.length;
+		const char margin = its_small_name[ max_offset ];
+		
+		return is_small() ? max_offset - margin
+		                  : its_alloc.length;
 	}
 	
 	string::size_type string::capacity() const
