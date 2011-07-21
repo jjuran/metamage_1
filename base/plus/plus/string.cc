@@ -219,7 +219,7 @@ namespace plus
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity;  // may be zero
 		
-		_policy() = ~policy;
+		_policy( ~policy );
 	}
 	
 	string::string( const char* p, size_type length )
@@ -340,7 +340,7 @@ namespace plus
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity;  // may be zero
 		
-		_policy() = ~policy;
+		_policy( ~policy );
 		
 		return *this;
 	}
@@ -372,7 +372,7 @@ namespace plus
 			its_alloc.length   = length;
 			its_alloc.capacity = capacity;
 			
-			_policy() = ~delete_shared;
+			_policy( ~delete_shared );
 		}
 		else
 		{
@@ -408,7 +408,7 @@ namespace plus
 				if ( tainting )
 				{
 					// ...and now never will be
-					_policy() = ~delete_owned;
+					_policy( ~delete_owned );
 				}
 				
 				return const_cast< char* >( its_alloc.pointer );
@@ -424,7 +424,7 @@ namespace plus
 		
 		if ( tainting  &&  _policy() == ~delete_shared )
 		{
-			_policy() = ~delete_owned;
+			_policy( ~delete_owned );
 		}
 		
 		return const_cast< char* >( data() );
@@ -499,7 +499,7 @@ namespace plus
 			
 			if ( _policy() == ~delete_owned )
 			{
-				_policy() = ~delete_shared;
+				_policy( ~delete_shared );
 			}
 		}
 		

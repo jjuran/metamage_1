@@ -75,8 +75,9 @@ namespace plus
 			};
 			
 			// The _ is mnemonic for ~
-			char  _policy() const  { return its_small_name[ max_offset ]; }
-			char& _policy()        { return its_small_name[ max_offset ]; }
+			signed char _policy() const  { return its_small_name[ max_offset ]; }
+			
+			void _policy( char negated )  { its_small_name[ max_offset ] = negated; }
 		
 		protected:
 			char* reallocate( size_type length );
