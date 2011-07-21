@@ -23,6 +23,9 @@
 #include "plus/string_details.hh"
 
 
+#define LENGTH_ERROR_MESSAGE  "plus::string size can't exceed 0x7fffffff"
+
+
 namespace plus
 {
 	
@@ -147,6 +150,21 @@ namespace plus
 		}
 	}
 	
+	
+	void string::check_size( size_type size )
+	{
+		// 2 GB limit on 32-bit platforms
+		
+		if ( size > max_size() )
+		{
+			const bool _32bit = sizeof size == 4;
+			
+			const char* message = _32bit ? LENGTH_ERROR_MESSAGE
+			                             : LENGTH_ERROR_MESSAGE "ffffffff";
+			
+			throw std::length_error( message );
+		}
+	}
 	
 	bool string::movable() const
 	{
@@ -316,6 +334,8 @@ namespace plus
 	
 	char* string::reallocate( size_type length )
 	{
+		check_size( length );
+		
 		char const *const old_pointer = its_alloc.pointer;
 		
 		const char old_policy = _policy();
@@ -399,6 +419,8 @@ namespace plus
 	
 	string& string::assign( const char* p, size_type length, size_type capacity )
 	{
+		// reallocate() will throw if length or capacity exceeds max_size()
+		
 		if ( length )
 		{
 			ASSERT( p != NULL );
@@ -443,6 +465,8 @@ namespace plus
 	
 	string& string::assign( size_type n, char c )
 	{
+		// reallocate() will throw if n exceeds max_size()
+		
 		char* pointer = reallocate( n );
 		
 		memset( pointer, c, n );
