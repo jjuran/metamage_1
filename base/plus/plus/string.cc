@@ -215,6 +215,9 @@ namespace plus
 	                delete_policy  policy,
 	                size_type      capacity )
 	{
+		check_size( length   );
+		check_size( capacity );
+		
 		its_alloc.pointer  = p;
 		its_alloc.length   = length;
 		its_alloc.capacity = capacity;  // may be zero
@@ -340,6 +343,9 @@ namespace plus
 	
 	string& string::assign( const char* p, size_type length, delete_policy policy, size_type capacity )
 	{
+		check_size( length   );
+		check_size( capacity );
+		
 		if ( length )
 		{
 			ASSERT( p != NULL );
