@@ -310,11 +310,24 @@ namespace plus
 		                          : its_alloc.length;
 	}
 	
-	const char* string::data() const
+	string::size_type string::substr_offset() const
 	{
 		if ( is_small() )
 		{
-			return its_small_name;
+			return 0;
+		}
+		
+		const long capacity = its_alloc.capacity;  // negative for substrings
+		
+		return capacity >= 0 ? 0
+		                     : -capacity;
+	}
+	
+	const char* string::data( bool zero_terminator_required ) const
+	{
+		if ( is_small() )
+		{
+			return its_small_name;  // always terminated
 		}
 		
 		return its_alloc.pointer;

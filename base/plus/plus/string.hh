@@ -165,11 +165,15 @@ namespace plus
 			
 			size_type capacity() const;
 			
+			size_type substr_offset() const;
+			
+			bool is_c_str() const  { return end()[0] == '\0'; }
+			
 			bool movable() const;
 			
-			const char* data() const;
+			const char* data( bool zero_terminator_required = false ) const;
 			
-			const char* c_str() const  { return data(); }
+			const char* c_str() const  { return data( true ); }
 			
 			const char* begin() const  { return data(); }
 			
