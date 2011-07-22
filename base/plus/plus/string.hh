@@ -202,8 +202,7 @@ namespace plus
 			
 			string& assign( const move_t& m );
 			
-			string& assign( const string& other, size_type pos, size_type n = npos );
-			string& assign( const string& other );
+			string& assign( const string& other, size_type pos = 0, size_type n = npos );
 			
 		#if IOTA_HAS_PASCAL_STRINGS
 			

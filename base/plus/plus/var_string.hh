@@ -176,8 +176,6 @@ namespace plus
 			
 			var_string& assign( const string& other, size_type pos = 0, size_type n = npos )
 			{
-				// Always allocates, even with pos == 0 and n == npos
-				
 				string::assign( other, pos, n );
 				
 				copy_on_write( true );

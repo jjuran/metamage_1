@@ -190,22 +190,18 @@ namespace plus
 	
 	void string::set_length( size_type length )
 	{
-		char* p;
-		
 		if ( is_small() )
 		{
 			ASSERT( length <= max_offset );
 			
 			its_small_name[ max_offset ] = max_offset - length;
-			
-			p = its_small_name;
 		}
 		else
 		{
 			its_alloc.length = length;
-			
-			p = (char*) its_alloc.pointer;
 		}
+		
+		char* p = const_cast< char* >( data() );
 		
 		p[ length ] = '\0';
 	}
@@ -309,8 +305,10 @@ namespace plus
 			return max_offset;
 		}
 		
-		return its_alloc.capacity ? its_alloc.capacity
-		                          : its_alloc.length;
+		const long capacity = its_alloc.capacity;  // negative for substrings
+		
+		return capacity > 0 ? its_alloc.capacity
+		                    : its_alloc.length;
 	}
 	
 	string::size_type string::substr_offset() const
@@ -333,7 +331,20 @@ namespace plus
 			return its_small_name;  // always terminated
 		}
 		
-		return its_alloc.pointer;
+		const char* begin = its_alloc.pointer + substr_offset();
+		
+		if ( !zero_terminator_required  ||  is_c_str() )
+		{
+			return begin;
+		}
+		
+		string& non_const = const_cast< string& >( *this );
+		
+		plus::string temp( begin, its_alloc.length );
+		
+		non_const.swap( temp );
+		
+		return non_const.data();
 	}
 	
 	const char* string::end() const
@@ -430,16 +441,16 @@ namespace plus
 					_policy( ~delete_owned );
 				}
 				
-				return const_cast< char* >( its_alloc.pointer );
+				return const_cast< char* >( data() );
 			}
 		}
-		else if ( its_alloc.capacity != 0 )
+		else if ( long( its_alloc.capacity ) > 0 )
 		{
 			// delete_owned or read/write external buffer
 			return const_cast< char* >( its_alloc.pointer );
 		}
 		
-		assign( its_alloc.pointer, its_alloc.length, its_alloc.capacity );
+		assign( data(), its_alloc.length, capacity() );
 		
 		if ( tainting  &&  _policy() == ~delete_shared )
 		{
@@ -536,12 +547,16 @@ namespace plus
 		
 		n = std::min( n, other_size - pos );
 		
-		return assign( other.data() + pos, n );
-	}
-	
-	string& string::assign( const string& other )
-	{
-		if ( other._policy() >= ~delete_shared )
+		const bool small = n < sizeof its_small_name;
+		
+		const bool shallow = !small  &&  other._policy() >= ~delete_shared;
+		
+		/*
+			A shallow copy is made for delete_shared and delete_never when
+			the resulting substring is not a small string.
+		*/
+		
+		if ( shallow )
 		{
 			if ( other._policy() == ~delete_shared )
 			{
@@ -557,10 +572,10 @@ namespace plus
 				++refcount;
 			}
 			
-			// Either it's small, shared, or it occupies static storage.
+			// Either it's shared or it occupies static storage.
 			// Either way, we perform a shallow copy.
 			
-			// If this is a self-assignment, then *we* are either small, static,
+			// If this is a self-assignment, then *we* are either static
 			// or shared with non-minimal refcount, and dispose() does nothing.
 			
 			dispose( its_alloc.pointer, _policy() );
@@ -568,10 +583,19 @@ namespace plus
 			std::copy( other.its_longs,
 			           other.its_longs + buffer_size_in_longs,
 			           its_longs );
+			
+			its_alloc.length = n;
+			
+			if ( pos != 0 )
+			{
+				const long new_offset = substr_offset() + pos;
+				
+				its_alloc.capacity = size_type( -new_offset );
+			}
 		}
 		else
 		{
-			assign( other.data(), other.size() );
+			assign( other.data() + pos, n );
 		}
 		
 		return *this;
