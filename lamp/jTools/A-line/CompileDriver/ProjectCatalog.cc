@@ -252,7 +252,11 @@ namespace tool
 				const PlatformDemands&  demands = the_demands->first;
 				const ProjectConfig&    config  = the_demands->second;
 				
-				plus::var_string record = name;
+				plus::var_string record;
+				
+				record.reserve( name.size() + config.get_pathname().size() + 2 * 10 + 4 );
+				
+				record += name;
 				
 				record += '\t';
 				
