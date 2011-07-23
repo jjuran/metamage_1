@@ -538,13 +538,11 @@ namespace tool
 				{
 					plus::string& pathname = *it;
 					
-					plus::var_string mutable_path;
-					
-					mutable_path.swap( pathname );
+					plus::var_string mutable_path = pathname.move();
 					
 					mutable_path.insert( mutable_path.begin() + source_dir.size(), '/' );
 					
-					mutable_path.swap( pathname );
+					pathname = mutable_path.move();
 				}
 			}
 			
