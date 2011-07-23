@@ -197,7 +197,7 @@ namespace tool
 		
 		plus::string dirName = p7::basename( dirPath );
 		
-		if ( dirName.c_str()[0] == '('  &&  *(dirName.end() - 1) == ')' )
+		if ( dirName[0] == '('  &&  dirName.back() == ')' )
 		{
 			return;  // skip "(Guarded)" directories
 		}
