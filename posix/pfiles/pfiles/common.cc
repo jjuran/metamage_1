@@ -7,6 +7,12 @@
 
 #include "pfiles/common.hh"
 
+// more-libc
+#include "more/string.h"
+
+// gear
+#include "gear/find.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -37,18 +43,28 @@ namespace io
 		return result;
 	}
 	
-	plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
+	plus::string path_descent( const plus::string& path, const char* name, std::size_t length )
 	{
 		const bool has_trailing_slash = path.back() == '/';
 		
+		const std::size_t path_size = path.size();
+		
+		const std::size_t size = path_size + !has_trailing_slash + length;
+		
+		plus::string result;
+		
+		char* p = result.reset( size );
+		
+		p = (char*) mempcpy( p, path.data(), path_size );
+		
 		if ( !has_trailing_slash )
 		{
-			path += '/';
+			*p++ = '/';
 		}
 		
-		path.append( name, length );
+		p = (char*) mempcpy( p, name, length );
 		
-		return path;
+		return result;
 	}
 	
 	std::size_t get_file_size( poseven::fd_t stream, overload )

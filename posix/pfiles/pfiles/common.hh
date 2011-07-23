@@ -103,7 +103,7 @@ namespace io
 	
 	// Path descent
 	
-	plus::string path_descent( plus::var_string path, const char* name, std::size_t length );
+	plus::string path_descent( const plus::string& path, const char* name, std::size_t length );
 	
 	inline plus::string path_descent( const plus::string& path, const char* name )
 	{
