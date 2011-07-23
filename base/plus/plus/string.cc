@@ -525,7 +525,11 @@ namespace plus
 			
 			memcpy( its_longs, m.source.its_longs, buffer_size );
 			
-			m.source.its_small_name[ max_offset ] = 0;
+			if ( m.source._policy() < 0 )
+			{
+				// Empty any allocated strings; leave small strings alone
+				m.source._policy( max_offset );
+			}
 			
 			if ( _policy() == ~delete_owned )
 			{
