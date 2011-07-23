@@ -420,7 +420,7 @@ namespace tool
 		
 		return    lastDot != plus::string::npos
 		       && IsCompilableExtension( filename.substr( lastDot ) )
-		       && !match_backwards( filename.c_str() + lastDot, STR_LEN( " copy" ) );
+		       && !match_backwards( filename.data() + lastDot, STR_LEN( " copy" ) );
 	}
 	
 	
