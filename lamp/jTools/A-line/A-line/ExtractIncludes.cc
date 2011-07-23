@@ -39,7 +39,7 @@ namespace tool
 		
 		if ( ~pos  &&  line[ pos ] == '#' )
 		{
-			if ( strncmp( line.c_str() + pos + 1, STR_LEN( "include" ) ) == 0 )
+			if ( memcmp( line.data() + pos + 1, STR_LEN( "include" ) ) == 0 )
 			{
 				try
 				{
