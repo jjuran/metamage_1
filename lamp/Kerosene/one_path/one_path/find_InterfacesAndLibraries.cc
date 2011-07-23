@@ -38,7 +38,7 @@ namespace tool
 		
 		const char* sig_ToolServer = "MPSX";
 		
-		plus::var_string pathname = find_appl( sig_ToolServer );
+		plus::var_string pathname = find_appl( sig_ToolServer ).move();
 		
 		const char* p = pathname.data();
 		
@@ -50,7 +50,7 @@ namespace tool
 				
 				pathname += "Interfaces&Libraries";
 				
-				return pathname;
+				return pathname.move();
 			}
 		}
 		
