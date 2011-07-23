@@ -230,7 +230,7 @@ namespace tool
 		try
 		{
 			plus::string dirPath = pathname[0] == '/' ? pathname
-			                     : pathname[0] == '~' ? home_dir_pathname() / (pathname.c_str() + 2)
+			                     : pathname[0] == '~' ? home_dir_pathname() / pathname.substr( 2 )
 			                     :                      p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
