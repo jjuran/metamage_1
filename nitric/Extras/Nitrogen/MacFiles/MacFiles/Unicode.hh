@@ -62,17 +62,6 @@ namespace io
 	
 	// Get file info
 	
-	inline HFSUniStr255 get_filename( const FSRef& file, overload = overload() )
-	{
-		FSCatalogInfo info;
-		
-		HFSUniStr255 name;
-		
-		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, &name, NULL, NULL );
-		
-		return name;
-	}
-	
 	inline FSRef get_preceding_directory( const FSRef& file, overload = overload() )
 	{
 		FSCatalogInfo info;

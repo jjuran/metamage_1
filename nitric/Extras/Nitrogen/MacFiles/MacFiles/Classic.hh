@@ -65,16 +65,6 @@ namespace io
 	
 	// Get file info
 	
-	inline Nitrogen::Str63 get_filename( const FSSpec& file, overload = overload() )
-	{
-		return file.name;
-	}
-	
-	inline Nitrogen::Str63 get_filename( const Nitrogen::FSDirSpec& dir, overload = overload() )
-	{
-		return get_filename( Nitrogen::FSMakeFSSpec( dir ) );
-	}
-	
 	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file, overload = overload() )
 	{
 		return nucleus::make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( file.vRefNum ),
