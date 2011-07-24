@@ -864,6 +864,32 @@ Return Value
       return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
 
+	ByteCount FSReadFork( FSForkRefNum     fork,
+	                      FSIOPosMode      positionMode,
+	                      SInt64           positionOffset,
+	                      ByteCount        requestCount,
+	                      void *           buffer,
+	                      ThrowEOF_Always  policy )
+	{
+		ByteCount actualCount;
+		
+		::OSStatus err = ::FSReadFork( fork,
+		                               positionMode,
+		                               positionOffset,
+		                               requestCount,
+		                               buffer,
+		                               &actualCount );
+		
+		if ( err == noErr  &&  actualCount != requestCount )
+		{
+			err = eofErr;
+		}
+		
+		ThrowOSStatus( err );
+		
+		return actualCount;
+	}
+	
 	ByteCount FSReadFork( FSForkRefNum    fork,
 	                      FSIOPosMode     positionMode,
 	                      SInt64          positionOffset,

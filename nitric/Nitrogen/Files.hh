@@ -1302,6 +1302,13 @@ namespace Nitrogen
 		return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
 	}
 
+	ByteCount FSReadFork( FSForkRefNum     fork,
+	                      FSIOPosMode      positionMode,
+	                      SInt64           positionOffset,
+	                      ByteCount        requestCount,
+	                      void *           buffer,
+	                      ThrowEOF_Always  policy );
+	
 	ByteCount FSReadFork( FSForkRefNum    fork,
 	                      FSIOPosMode     positionMode,
 	                      SInt64          positionOffset,
@@ -1314,6 +1321,14 @@ namespace Nitrogen
 	                      SInt64       positionOffset,
 	                      ByteCount    requestCount,
 	                      void *       buffer );
+	
+	inline ByteCount FSReadFork( FSForkRefNum     fork,
+	                             ByteCount        requestCount,
+	                             void *           buffer,
+	                             ThrowEOF_Always  policy )
+	{
+		return FSReadFork( fork, fsAtMark, 0, requestCount, buffer, policy );
+	}
 	
 	inline ByteCount FSReadFork( FSForkRefNum    fork,
 	                             ByteCount       requestCount,
