@@ -15,6 +15,8 @@ namespace poseven
 	
 	plus::string basename( const plus::string& path );
 	
+	plus::string basename( const char* path );
+	
 }
 
 #endif
