@@ -11,15 +11,6 @@
 // iota
 #include "iota/convert_string.hh"
 
-// plus
-#include "plus/var_string.hh"
-
-// nucleus
-#include "nucleus/scribe.hh"
-
-// Io
-#include "io/slurp.hh"
-
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
@@ -35,18 +26,42 @@ namespace UseEdit
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
+	
+	static inline SInt32 ReadAll( N::FSFileRefNum input, char* buffer, SInt32 n )
+	{
+		return N::FSRead( input, n, buffer, N::ThrowEOF_Always() );
+	}
+	
+	static inline ByteCount ReadAll( N::FSForkRefNum input, char* buffer, ByteCount n )
+	{
+		return N::FSReadFork( input, n, buffer, N::ThrowEOF_Always() );
+	}
+	
 	template < class FileSpec >
 	static plus::string ReadFileData( const FileSpec& file )
 	{
-		plus::var_string data = io::slurp_file< n::POD_vector_scribe< plus::var_string > >( file );
+		typedef io::filespec_traits< FileSpec > traits;
+		
+		typedef typename traits::stream     stream;
+		typedef typename traits::byte_count byte_count;
+		
+		plus::string result;
+		
+		n::owned< stream > input = io::open_for_reading( file );
+		
+		const std::size_t size = io::get_file_size( input );
+		
+		char* p = result.reset( size );
+		
+		const byte_count bytes_read = ReadAll( input, p, size );
 		
 		// Allow LF newlines
-		std::replace( data.begin(),
-		              data.end(),
+		std::replace( p,
+		              p + size,
 		              '\n',
 		              '\r' );
 		
-		return data;
+		return result;
 	}
 	
 	static n::owned< CFStringRef > GetFilenameAsCFString( const FSRef& file )
