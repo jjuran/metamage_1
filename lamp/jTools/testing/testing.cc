@@ -84,6 +84,7 @@
 
 // poseven
 #include "poseven/extras/slurp.hh"
+#include "poseven/functions/chdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/perror.hh"
@@ -726,19 +727,25 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 	}
 }
 
+#ifdef __APPLE__
+#define SYSTEM_PATH "/System"
+#endif
+
+#ifdef __LAMP__
+#define SYSTEM_PATH "/sys/mac/vol/boot/mnt/System"
+#endif
+
 static int TestServices( int argc, char** argv )
 {
-	//if (argc < 3)  return 1;
+	const char* services_dir = SYSTEM_PATH "/" "Library/Services";
 	
-	/*
-	N::FSDirSpec systemLibraryServices = N::RootDirectory( N::BootVolume() ) << "System"
-	                                                                         << "Library"
-	                                                                         << "Services";
+	p7::chdir( services_dir );
 	
-	std::for_each( N::FSContents( systemLibraryServices ).begin(),
-	               N::FSContents( systemLibraryServices ).end(),
+	p7::directory_contents_container services = p7::directory_contents( "." );
+	
+	std::for_each( services.begin(),
+	               services.end(),
 	               std::ptr_fun( DoSomethingWithServiceFile ) );
-	*/
 	
 	return 0;
 }
@@ -1371,7 +1378,7 @@ static const command_t global_commands[] =
 	{ "path",      TestPath       },
 	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
-//	{ "svcs",      TestServices   },
+	{ "svcs",      TestServices   },
 	{ "throw",     TestThrow      },
 	{ "unit",      TestUnit       },
 	{ "unmangle",  TestUnmangle   },
