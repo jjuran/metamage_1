@@ -69,9 +69,6 @@
 // nucleus
 #include "nucleus/shared.hh"
 
-// Io
-#include "io/slurp.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -86,11 +83,15 @@
 #include "Nitrogen/Timer.hh"
 
 // poseven
+#include "poseven/extras/slurp.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -677,17 +678,15 @@ static int TestAE( int argc, char** argv )
 }
 
 
-static void DoSomethingWithServiceFile( const FSSpec& file )
+static void DoSomethingWithServiceFile( const plus::string& file )
 {
-	typedef n::POD_vector_scribe< plus::var_string > scribe;
-	
 	using namespace io::path_descent_operators;
 	
 	// Find Info.plist
-	FSSpec infoPListFile = N::FSpMake_FSDirSpec( file ) / "Contents" / "Info.plist";
+	plus::string infoPListFile = file / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
-	plus::string infoPList = io::slurp_file< scribe >( infoPListFile );
+	plus::string infoPList = p7::slurp( infoPListFile.c_str() );
 	
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
