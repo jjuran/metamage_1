@@ -49,6 +49,7 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/fstatat.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/open.hh"
@@ -698,7 +699,7 @@ namespace tool
 		{
 			plus::string prefix_source_path = project_providing_prefix->PrecompiledHeaderSource();
 			
-			plus::string prefix_source_filename = io::get_filename( prefix_source_path );
+			plus::string prefix_source_filename = p7::basename( prefix_source_path );
 			
 			plus::string pchImage = get_prefix_image_pathname( project_providing_prefix->Name(),
 			                                                   prefix_source_filename,

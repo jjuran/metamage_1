@@ -28,6 +28,7 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/sequences/directory_contents.hh"
@@ -194,7 +195,7 @@ namespace tool
 			return;
 		}
 		
-		plus::string dirName = io::get_filename( dirPath );
+		plus::string dirName = p7::basename( dirPath );
 		
 		if ( dirName.c_str()[0] == '('  &&  *(dirName.end() - 1) == ')' )
 		{

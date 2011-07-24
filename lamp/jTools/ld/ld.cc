@@ -27,6 +27,7 @@
 
 // poseven
 #include "poseven/extras/slurp.hh"
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
@@ -491,7 +492,7 @@ namespace tool
 	
 	static bool do_special_case_arg( const char* arg )
 	{
-		plus::string filename = io::get_filename( arg );
+		plus::string filename = p7::basename( arg );
 		
 		if ( filename == "CarbonLib" )
 		{
@@ -672,7 +673,7 @@ namespace tool
 					
 					plus::var_string output_name;
 					
-					output_name  = io::get_filename( output_pathname );
+					output_name  = p7::basename( output_pathname );
 					output_name += ' ';
 					output_name += gMacAPINames[ gMacAPI ];
 					

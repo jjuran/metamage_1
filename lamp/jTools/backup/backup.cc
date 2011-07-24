@@ -21,6 +21,7 @@
 #include "poseven/Directory.hh"
 #include "poseven/Pathnames.hh"
 #include "poseven/extras/pump.hh"
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/mkdir.hh"
@@ -64,7 +65,7 @@ namespace tool
 	
 	static bool filter_file( const std::string& path )
 	{
-		std::string filename = io::get_filename( path );
+		std::string filename = p7::basename( path );
 		
 		return filename == "Icon\r"
 		    || filename == ".DS_Store";
@@ -72,7 +73,7 @@ namespace tool
 	
 	static bool filter_directory( const std::string& path )
 	{
-		std::string filename = io::get_filename( path );
+		std::string filename = p7::basename( path );
 		
 		return filename == "CVS"
 		    || filename == "CVSROOT";

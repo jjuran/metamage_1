@@ -23,6 +23,7 @@
 #include "debug/assert.hh"
 
 // poseven
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/pread.hh"
@@ -213,7 +214,7 @@ namespace tool
 	static plus::string diagnostics_file_path( const plus::string&  dir_path,
 	                                           const plus::string&  target_path )
 	{
-		return dir_path / io::get_filename( target_path ) + ".txt";
+		return dir_path / p7::basename( target_path ) + ".txt";
 	}
 	
 	class LinkingTask : public CommandTask
@@ -243,7 +244,7 @@ namespace tool
 	
 	void LinkingTask::Make()
 	{
-		plus::string output_filename = io::get_filename( OutputPath() );
+		plus::string output_filename = p7::basename( OutputPath() );
 		
 		ExecuteCommand( shared_from_this(), its_caption + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
@@ -329,7 +330,7 @@ namespace tool
 		
 		rezCommand.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "REZ   " + io::get_filename( OutputPath() ), rezCommand );
+		ExecuteCommand( shared_from_this(), "REZ   " + p7::basename( OutputPath() ), rezCommand );
 	}
 	
 	void RezzingTask::Return( bool succeeded )
@@ -415,7 +416,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "RSRC  " + io::get_filename( OutputPath() ), command );
+		ExecuteCommand( shared_from_this(), "RSRC  " + p7::basename( OutputPath() ), command );
 	}
 	
 	void ResourceCopyingTask::Return( bool succeeded )
@@ -765,7 +766,7 @@ namespace tool
 			{
 				const plus::string& objectFile = *the_object;
 				
-				plus::var_string linkOutput = outputDir / io::get_filename( objectFile );
+				plus::var_string linkOutput = outputDir / p7::basename( objectFile );
 				
 				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
 				

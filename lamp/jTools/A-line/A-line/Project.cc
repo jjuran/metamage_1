@@ -25,6 +25,7 @@
 #include "debug/assert.hh"
 
 // poseven
+#include "poseven/functions/basename.hh"
 #include "poseven/functions/stat.hh"
 
 // pfiles
@@ -557,7 +558,7 @@ namespace tool
 	{
 		return std::find( tools.begin(),
 		                  tools.end(),
-		                  io::get_filename( source_path ) ) != tools.end();
+		                  p7::basename( source_path ) ) != tools.end();
 	}
 	
 	static std::size_t partition_sources( const std::vector< plus::string >&  tool_filenames,

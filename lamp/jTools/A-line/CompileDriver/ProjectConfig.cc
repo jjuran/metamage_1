@@ -17,6 +17,9 @@
 // plus
 #include "plus/pointer_to_function.hh"
 
+// poseven
+#include "poseven/functions/basename.hh"
+
 // pfiles
 #include "pfiles/common.hh"
 
@@ -201,7 +204,9 @@ namespace tool
 		const_iterator it = conf.find( "name" );
 		
 		plus::string project_name = it != conf.end() ? it->second[ 0 ]
-		                                             : io::get_filename( project_dir );
+		                                             : p7::basename( project_dir );
+		
+		ASSERT( project_name.back() != '/' );
 		
 		it = conf.find( "platform" );
 		
