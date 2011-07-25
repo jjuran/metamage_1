@@ -69,9 +69,6 @@
 // nucleus
 #include "nucleus/shared.hh"
 
-// Io
-#include "io/slurp.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -86,11 +83,16 @@
 #include "Nitrogen/Timer.hh"
 
 // poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/functions/chdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
+
+// pfiles
+#include "pfiles/common.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -677,17 +679,15 @@ static int TestAE( int argc, char** argv )
 }
 
 
-static void DoSomethingWithServiceFile( const FSSpec& file )
+static void DoSomethingWithServiceFile( const plus::string& file )
 {
-	typedef n::POD_vector_scribe< plus::var_string > scribe;
-	
 	using namespace io::path_descent_operators;
 	
 	// Find Info.plist
-	FSSpec infoPListFile = N::FSpMake_FSDirSpec( file ) / "Contents" / "Info.plist";
+	plus::string infoPListFile = file / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
-	plus::string infoPList = io::slurp_file< scribe >( infoPListFile );
+	plus::string infoPList = p7::slurp( infoPListFile.c_str() );
 	
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
@@ -727,19 +727,25 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	}
 }
 
+#ifdef __APPLE__
+#define SYSTEM_PATH "/System"
+#endif
+
+#ifdef __LAMP__
+#define SYSTEM_PATH "/sys/mac/vol/boot/mnt/System"
+#endif
+
 static int TestServices( int argc, char** argv )
 {
-	//if (argc < 3)  return 1;
+	const char* services_dir = SYSTEM_PATH "/" "Library/Services";
 	
-	/*
-	N::FSDirSpec systemLibraryServices = N::RootDirectory( N::BootVolume() ) << "System"
-	                                                                         << "Library"
-	                                                                         << "Services";
+	p7::chdir( services_dir );
 	
-	std::for_each( N::FSContents( systemLibraryServices ).begin(),
-	               N::FSContents( systemLibraryServices ).end(),
+	p7::directory_contents_container services = p7::directory_contents( "." );
+	
+	std::for_each( services.begin(),
+	               services.end(),
 	               std::ptr_fun( DoSomethingWithServiceFile ) );
-	*/
 	
 	return 0;
 }
@@ -1372,7 +1378,7 @@ static const command_t global_commands[] =
 	{ "path",      TestPath       },
 	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
-//	{ "svcs",      TestServices   },
+	{ "svcs",      TestServices   },
 	{ "throw",     TestThrow      },
 	{ "unit",      TestUnit       },
 	{ "unmangle",  TestUnmangle   },
