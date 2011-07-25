@@ -69,6 +69,24 @@ namespace text_input
 		advance_CRLF();
 	}
 	
+	const plus::string* feed::get_line_bare()
+	{
+		prime();
+		
+		const bool complete_line = is_complete_line( its_next_line );
+		
+		it_was_returned = complete_line;
+		
+		if ( complete_line )
+		{
+			its_next_line.resize( its_next_line.size() - 1 );
+			
+			return &its_next_line;
+		}
+		
+		return NULL;
+	}
+	
 	const plus::string* feed::get_line()
 	{
 		prime();
