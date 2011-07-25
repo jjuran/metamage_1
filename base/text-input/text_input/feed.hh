@@ -49,8 +49,6 @@ namespace text_input
 			{
 			}
 			
-			bool buffer_empty();
-			
 			bool empty();
 			
 			bool has_complete_line();

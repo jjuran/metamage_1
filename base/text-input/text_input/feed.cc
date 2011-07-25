@@ -69,17 +69,12 @@ namespace text_input
 		advance_CRLF();
 	}
 	
-	bool feed::buffer_empty()
+	bool feed::empty()
 	{
 		prime();
 		
-		return its_mark == its_data_length;
-	}
-	
-	bool feed::empty()
-	{
 		// Must call buffer_empty() first, since it may populate its_next_line
-		return buffer_empty()  &&  its_next_line.empty();
+		return its_mark == its_data_length  &&  its_next_line.empty();
 	}
 	
 	bool feed::has_complete_line()
