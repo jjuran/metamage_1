@@ -40,7 +40,7 @@ namespace SMTP
 		
 		static void GetResponse( text_input::feed feed, p7::fd_reader& reader )
 		{
-			while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+			while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 			{
 				ResponseCode code = *s;
 				

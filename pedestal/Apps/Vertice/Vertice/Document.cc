@@ -520,11 +520,6 @@ namespace Vertice
 		
 		// We are guaranteed a non-empty line since we didn't return above.
 		
-		if ( end[ -1 ] == '\n' )
-		{
-			--end;
-		}
-		
 		const char* start = cmd_start;
 		
 		const char* stop = std::find( start, end, ' ' );
@@ -570,7 +565,7 @@ namespace Vertice
 		
 		N::FSReader reader( fRefNum );
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
 			const plus::string& line = *s;
 			

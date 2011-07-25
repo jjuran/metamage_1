@@ -63,11 +63,11 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
 			const plus::string& line = *s;
 			
-			if ( line.length() < STRLEN( "A123 _X\n" ) )
+			if ( line.length() < STRLEN( "A123 _X" ) )
 			{
 				break;
 			}
@@ -82,7 +82,7 @@ namespace tool
 			
 			global_name_data.append( trap_name, line_end );
 			
-			*(global_name_data.end() - 1) = '\0';
+			global_name_data += '\0';
 		}
 	}
 	

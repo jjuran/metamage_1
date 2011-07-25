@@ -179,9 +179,9 @@ namespace tool
 				
 				bool found_terminator = false;
 				
-				while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+				while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 				{
-					plus::string nextLine( s->begin(), s->end() - 1 );
+					plus::string nextLine( *s );
 					
 					if ( nextLine == param )
 					{
@@ -509,9 +509,9 @@ namespace tool
 		
 		p7::fd_reader reader = p7::fd_t( fd );
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
-			plus::string line( s->begin(), s->end() - 1 );
+			plus::string line( *s );
 			
 			if ( line.empty() )  continue;
 			

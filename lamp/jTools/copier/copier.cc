@@ -41,7 +41,7 @@ int main( int argc, char const *const argv[] )
 	
 	p7::fd_reader reader( p7::stdin_fileno );
 	
-	while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+	while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 	{
 		const plus::string& line = *s;
 		
@@ -61,7 +61,7 @@ int main( int argc, char const *const argv[] )
 		
 		separator = std::find( dest, end, '\0' );
 		
-		if ( separator + 2 != end )
+		if ( separator + 1 != end )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "copier: malformed line\n" ) );
 			
