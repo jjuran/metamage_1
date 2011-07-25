@@ -75,6 +75,7 @@
 
 #include "Nitrogen/CodeFragments.hh"
 #include "Nitrogen/DateTimeUtils.hh"
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/OSUtils.hh"
 //#include "Nitrogen/Resources.hh"
@@ -99,9 +100,6 @@
 #include "ClassicToolbox/AppleTalk.hh"
 #include "ClassicToolbox/Serial.hh"
 #endif
-
-// FSContents
-#include "FSContents.h"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
