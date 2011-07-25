@@ -1,8 +1,6 @@
 /*
 	text_input/feed.hh
 	------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef TEXTINPUT_FEED_HH

@@ -1,8 +1,6 @@
 /*
 	text_input/feed.cc
 	------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #include "text_input/feed.hh"

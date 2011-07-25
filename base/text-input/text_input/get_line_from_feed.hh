@@ -1,8 +1,6 @@
 /*
 	text_input/get_line_from_feed.hh
 	--------------------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef TEXTINPUT_GETLINEFROMFEED_HH

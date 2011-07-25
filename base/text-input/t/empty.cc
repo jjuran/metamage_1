@@ -1,8 +1,6 @@
 /*
 	t/empty.cc
 	----------
-	
-	Copyright 2009, Joshua Juran
 */
 
 // iota
