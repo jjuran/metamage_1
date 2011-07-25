@@ -123,11 +123,11 @@ namespace tool
 						break;
 					}
 				}
-				
-				if ( prompts )
-				{
-					SendPrompt();
-				}
+			}
+			
+			if ( prompts )
+			{
+				SendPrompt();
 			}
 		}
 		
