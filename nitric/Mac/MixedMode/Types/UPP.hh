@@ -358,8 +358,8 @@ namespace Mac
 		template < ProcPtr procPtr >
 		static UPP Static()
 		{
-			static const nucleus::owned< UPP > upp = procPtr != NULL ? NewUPP< UPP >( procPtr )
-			                                                         : nucleus::owned< UPP >();
+			static const UPPType upp = procPtr != NULL ? Details::Create( procPtr )
+			                                           : NULL;
 			return upp;
 		}
 	};
