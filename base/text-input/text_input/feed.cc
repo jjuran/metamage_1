@@ -8,18 +8,15 @@
 // Standard C
 #include <string.h>
 
+// gear
+#include "gear/find.hh"
+
 // debug
 #include "debug/assert.hh"
 
 
 namespace text_input
 {
-	
-	static inline bool is_complete_line( const plus::string& s )
-	{
-		return !s.empty()  &&  *(s.end() - 1) == '\n';
-	}
-	
 	
 	void feed::advance_CRLF()
 	{
@@ -31,80 +28,74 @@ namespace text_input
 		}
 	}
 	
-	void feed::prime()
+	const plus::string* feed::get_line_bare()
 	{
-		if ( it_was_returned )
-		{
-			its_next_line.resize( 0 );
-			
-			it_was_returned = false;
-		}
-		
-		if ( is_complete_line( its_next_line ) )
-		{
-			return;
-		}
-		
 		const char* begin = &its_buffer[ its_mark        ];
 		const char* end   = &its_buffer[ its_data_length ];
 		
-		const char* p = begin;
+		ASSERT( begin <= end );
 		
-		while ( (p < end)  &&  (*p != '\r')  &&  (*p != '\n') )
+		const char* eol = gear::find_first_match( begin, end, "\p" "\n" "\r" );
+		
+		if ( eol != NULL )
 		{
-			++p;
-		}
-		
-		its_next_line.append( begin, p );
-		
-		if ( p != end )
-		{
-			its_next_line.push_back( '\n' );
+			its_last_line.assign( begin, eol );
 			
-			its_last_end_was_CR = *p++ == '\r';
-		}
-		
-		its_mark = p - its_buffer;
-		
-		advance_CRLF();
-	}
-	
-	const plus::string* feed::get_line_bare()
-	{
-		prime();
-		
-		const bool complete_line = is_complete_line( its_next_line );
-		
-		it_was_returned = complete_line;
-		
-		if ( complete_line )
-		{
-			its_next_line.resize( its_next_line.size() - 1 );
+			its_last_end_was_CR = *eol++ == '\r';
 			
-			return &its_next_line;
+			its_mark += eol - begin;
+			
+			advance_CRLF();
+			
+			if ( !its_next_line.empty() )
+			{
+				its_next_line += its_last_line;
+				
+				its_last_line = its_next_line.move();
+				
+				its_next_line.clear();
+			}
+			
+			return &its_last_line;
 		}
+		
+		its_next_line.append( begin, end );
+		
+		its_mark = its_data_length;
 		
 		return NULL;
 	}
 	
 	const plus::string* feed::get_line()
 	{
-		prime();
+		if ( const plus::string* line = get_line_bare() )
+		{
+			plus::var_string temp = its_last_line.move();
+			
+			temp += '\n';
+			
+			its_last_line = temp.move();
+			
+			return &its_last_line;
+		}
 		
-		const bool complete_line = is_complete_line( its_next_line );
-		
-		it_was_returned = complete_line;
-		
-		return complete_line ? &its_next_line : NULL;
+		return NULL;
 	}
 	
 	const plus::string& feed::get_fragment_ref()
 	{
-		prime();
+		const char* begin = &its_buffer[ its_mark        ];
+		const char* end   = &its_buffer[ its_data_length ];
 		
-		it_was_returned = true;
+		its_next_line.append( begin, end );
 		
-		return its_next_line;
+		its_mark = its_data_length;
+		
+		its_last_line = its_next_line.move();
+		
+		its_next_line.clear();
+		
+		return its_last_line;
 	}
 	
 	const plus::string* feed::get_fragment()

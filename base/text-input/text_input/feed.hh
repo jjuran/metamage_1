@@ -29,22 +29,20 @@ namespace text_input
 			size_type its_data_length;
 			size_type its_mark;
 			
+			plus::string its_last_line;
+			
 			plus::var_string its_next_line;
 			
-			bool it_was_returned;
 			bool its_last_end_was_CR;
 		
 		private:
 			void advance_CRLF();
-			
-			void prime();
 		
 		public:
 			feed()
 			:
 				its_data_length(),
 				its_mark(),
-				it_was_returned(),
 				its_last_end_was_CR()
 			{
 			}
