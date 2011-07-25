@@ -29,15 +29,16 @@ static void newlines()
 	                            "qux\n\r"
 	                            "zee" ) );
 	
-	ok_if( feed.get_line_ref() == "foo\n" );
-	ok_if( feed.get_line_ref() ==    "\n" );
-	ok_if( feed.get_line_ref() == "bar\n" );
-	ok_if( feed.get_line_ref() ==    "\n" );
-	ok_if( feed.get_line_ref() == "baz\n" );
-	ok_if( feed.get_line_ref() == "qux\n" );
-	ok_if( feed.get_line_ref() ==    "\n" );
-	ok_if( feed.get_line_ref() == ""      );
-	ok_if( feed.get_line_ref() == ""      );
+	ok_if( *feed.get_line() == "foo\n" );
+	ok_if( *feed.get_line() ==    "\n" );
+	ok_if( *feed.get_line() == "bar\n" );
+	ok_if( *feed.get_line() ==    "\n" );
+	ok_if( *feed.get_line() == "baz\n" );
+	ok_if( *feed.get_line() == "qux\n" );
+	ok_if( *feed.get_line() ==    "\n" );
+	
+	ok_if( feed.get_line() == NULL );
+	ok_if( feed.get_line() == NULL );
 	
 	ok_if( feed.get_fragment_ref() == "zee" );
 	ok_if( feed.get_fragment_ref() == ""    );

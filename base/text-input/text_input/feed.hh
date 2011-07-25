@@ -56,7 +56,6 @@ namespace text_input
 			bool has_complete_line();
 			
 			const plus::string* get_line();
-			const plus::string& get_line_ref();
 			
 			const plus::string* get_fragment();
 			const plus::string& get_fragment_ref();

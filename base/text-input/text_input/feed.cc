@@ -15,9 +15,6 @@
 namespace text_input
 {
 	
-	static const plus::string the_empty_string = plus::string();
-	
-	
 	static inline bool is_complete_line( const plus::string& s )
 	{
 		return !s.empty()  &&  *(s.end() - 1) == '\n';
@@ -90,13 +87,6 @@ namespace text_input
 		prime();
 		
 		return is_complete_line( its_next_line );
-	}
-	
-	const plus::string& feed::get_line_ref()
-	{
-		plus::string const *const result = get_line();
-		
-		return result ? *result : the_empty_string;
 	}
 	
 	const plus::string* feed::get_line()

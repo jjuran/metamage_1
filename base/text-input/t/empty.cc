@@ -42,9 +42,9 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( !feed.buffer_empty(), "buffer not empty after second blank line" );
 	
-	const plus::string& one = feed.get_line_ref();
+	const plus::string* one = feed.get_line();
 	
-	ok_if( one == "\n", "first line is \\n" );
+	ok_if( one  &&  *one == "\n", "first line is \\n" );
 	
 	ok_if( feed.buffer_empty(), "buffer empty after reading once" );
 	
@@ -52,9 +52,9 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( feed.has_complete_line() );
 	
-	const plus::string& two = feed.get_line_ref();
+	const plus::string* two = feed.get_line();
 	
-	ok_if( two == "\n" );
+	ok_if( two  &&  *two == "\n" );
 	
 	ok_if( feed.buffer_empty() );
 	
