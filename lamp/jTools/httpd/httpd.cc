@@ -534,9 +534,9 @@ namespace tool
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			std::fprintf( stderr, "Connection from %s, port %d\n",
-			                                       inet_ntoa( peer.sin_addr ),
-			                                                peer.sin_port );
+			std::fprintf( stderr, "%s:%d",
+			                       inet_ntoa( peer.sin_addr ),
+			                          peer.sin_port );
 		}
 		
 		HTTP::MessageReceiver request;
