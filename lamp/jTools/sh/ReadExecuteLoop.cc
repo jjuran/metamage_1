@@ -109,12 +109,12 @@ namespace tool
 		
 		const unsigned char* whitespace = "\p"  " "  "\t";
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
 			// Only process non-blank lines
 			if ( gear::find_first_nonmatch( s->data(), s->size(), whitespace ) )
 			{
-				plus::string command( s->begin(), s->end() - 1 );
+				plus::string command( *s );
 				
 				{
 					SetRowsAndColumns();

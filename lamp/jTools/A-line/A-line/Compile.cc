@@ -373,9 +373,9 @@ namespace tool
 		
 		p7::fd_reader reader( input_fd );
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
-			plus::string include_path( s->begin(), s->end() - 1 );
+			plus::string include_path( *s );
 			
 			includes.insert( include_path );
 		}

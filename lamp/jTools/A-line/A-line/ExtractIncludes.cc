@@ -92,9 +92,9 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
-			plus::string line( s->begin(), s->end() - 1 );
+			plus::string line( *s );
 			
 			ExtractInclude( line, result );
 		}

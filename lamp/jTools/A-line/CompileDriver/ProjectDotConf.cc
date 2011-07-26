@@ -87,9 +87,9 @@ namespace tool
 		
 		std::size_t lineCount = 0;
 		
-		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
+		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
-			plus::string text( s->begin(), s->end() - 1 );
+			plus::string text( *s );
 			
 			++lineCount;
 			// Skip blank lines

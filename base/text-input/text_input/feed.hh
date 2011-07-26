@@ -49,6 +49,8 @@ namespace text_input
 			{
 			}
 			
+			const plus::string* get_line_bare();
+			
 			const plus::string* get_line();
 			
 			const plus::string* get_fragment();
