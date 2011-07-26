@@ -94,23 +94,6 @@ namespace io
 	
 	// Get file info
 	
-	plus::string get_filename( const plus::string& pathname );
-	
-	inline plus::string get_filename( const plus::string& pathname, overload )
-	{
-		return get_filename( pathname );
-	}
-	
-	inline plus::string get_filename_string( const plus::string& pathname, overload = overload() )
-	{
-		return get_filename( pathname );
-	}
-	
-	inline plus::string get_filename_string( const char* pathname, overload = overload() )
-	{
-		return get_filename( pathname );
-	}
-	
 	plus::string get_preceding_directory( const plus::string& pathname );
 	
 	inline plus::string get_preceding_directory( const plus::string& pathname, overload )

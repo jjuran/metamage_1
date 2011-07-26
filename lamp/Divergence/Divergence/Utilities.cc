@@ -12,6 +12,7 @@
 #include "poseven/types/errno_t.hh"
 
 #if TARGET_RT_MAC_MACHO
+	#include "poseven/functions/basename.hh"
 	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
 	#include "pfiles/common.hh"
@@ -46,7 +47,7 @@ namespace Divergence
 		
 		FSSpec parent_spec = Nitrogen::FSMakeFSSpec( parent_ref );
 		
-		return parent_spec / io::get_filename( path );
+		return parent_spec / p7::basename( path );
 		
 	#else
 		

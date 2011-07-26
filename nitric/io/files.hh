@@ -14,9 +14,6 @@
 #ifndef IO_FILES_HH
 #define IO_FILES_HH
 
-// plus
-#include "plus/string.hh"
-
 // Io
 #ifndef IO_IO_HH
 #include "io/io.hh"
@@ -36,10 +33,6 @@ namespace io
 		class file_catalog_record  {};
 		
 	}
-	
-	dummy::filename_result get_filename( dummy::file_spec, overload );
-	
-	plus::string get_filename_string( dummy::file_spec );
 	
 	dummy::file_spec get_preceding_directory          ( dummy::file_spec, overload );
 	dummy::file_spec get_parent_directory_of_directory( dummy::file_spec, overload );
