@@ -14,6 +14,7 @@
 #include <sys/ioctl.h>
 
 // gear
+#include "gear/find.hh"
 #include "gear/inscribe_decimal.hh"
 
 // text-input
@@ -106,13 +107,15 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
+		const unsigned char* whitespace = "\p"  " "  "\t";
+		
 		while ( const plus::string* s = get_line_from_feed( feed, reader ) )
 		{
+			// Only process non-blank lines
+			if ( gear::find_first_nonmatch( s->data(), s->size(), whitespace ) )
 			{
 				plus::string command( s->begin(), s->end() - 1 );
 				
-				// Only process non-blank lines
-				if ( command.find_first_not_of( " \t" ) != command.npos )
 				{
 					SetRowsAndColumns();
 					
