@@ -429,6 +429,9 @@ namespace tool
 	{
 		plus::string status_line = request.GetStatusLine();
 		
+		p7::write( p7::stderr_fileno, STR_LEN( "  " ) );
+		p7::write( p7::stderr_fileno, status_line );
+		
 		ParsedRequest parsed = ParseRequest( status_line );
 		
 		plus::string pathname;
@@ -546,6 +549,8 @@ namespace tool
 		request.ReceiveHeader( p7::stdin_fileno );
 		
 		SendResponse( request );
+		
+		p7::write( p7::stderr_fileno, STR_LEN( "\n" ) );
 		
 		return 0;
 	}
