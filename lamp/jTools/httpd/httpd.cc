@@ -427,7 +427,9 @@ namespace tool
 	
 	static void SendResponse( const HTTP::MessageReceiver& request )
 	{
-		ParsedRequest parsed = ParseRequest( request.GetStatusLine() );
+		plus::string status_line = request.GetStatusLine();
+		
+		ParsedRequest parsed = ParseRequest( status_line );
 		
 		plus::string pathname;
 		
