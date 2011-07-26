@@ -20,9 +20,9 @@ namespace tool
 	{
 		switch ( arch )
 		{
-			case arch68K:  return "68K";
-			case archPPC:  return "PPC";
-			case archX86:  return "X86";
+			case arch68K:  return "68k";
+			case archPPC:  return "ppc";
+			case archX86:  return "x86";
 		};
 		
 		std::fprintf( stderr, "Invalid arch: %x\n", arch );
@@ -34,10 +34,10 @@ namespace tool
 	{
 		switch ( rt )
 		{
-			case runtimeA4CodeResource:  return "Res";
-			case runtimeA5CodeSegments:  return "Code";
-			case runtimeCodeFragments:   return "CFM";
-			case runtimeMachO:           return "MachO";
+			case runtimeA4CodeResource:  return "a4";
+			case runtimeA5CodeSegments:  return "a5";
+			case runtimeCodeFragments:   return "cfm";
+			case runtimeMachO:           return "mach";
 		};
 		
 		return "";
@@ -47,9 +47,8 @@ namespace tool
 	{
 		switch ( api )
 		{
-			case apiMacBlue:    return "Blue";
-			case apiMacCarbon:  return "Carbon";
-			default:            return "NA";
+			case apiMacBlue:    return "blue";
+			case apiMacCarbon:  return "carb";
 		};
 		
 		return "";
@@ -59,8 +58,8 @@ namespace tool
 	{
 		switch ( build )
 		{
-			case buildDebug:    return "Debug";
-			case buildRelease:  return "Release";
+			case buildDebug:    return "dbg";
+			case buildRelease:  return "opt";
 		};
 		
 		return "";
