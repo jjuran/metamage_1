@@ -256,11 +256,11 @@ namespace tool
 				
 				record += '\t';
 				
-				record += gear::inscribe_decimal( demands.Required  () );
+				record += gear::inscribe_unsigned_decimal( demands.Required  () );
 				
 				record += '/';
 				
-				record += gear::inscribe_decimal( demands.Prohibited() );
+				record += gear::inscribe_unsigned_decimal( demands.Prohibited() );
 				
 				record += '\t';
 				
