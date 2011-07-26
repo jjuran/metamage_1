@@ -16,6 +16,7 @@
 #include <vector>
 
 // gear
+#include "gear/find.hh"
 #include "gear/parse_float.hh"
 
 // text-input
@@ -508,9 +509,9 @@ namespace Vertice
 	
 	void Parser::ParseLine( const plus::string& line )
 	{
-		std::size_t iCmdStart = line.find_first_not_of( " \t" );
+		const char* cmd_start = gear::find_first_nonmatch( line.data(), line.size(), "\p \t" );
 		
-		if ( iCmdStart == plus::string::npos )
+		if ( cmd_start == NULL )
 		{
 			return;
 		}
@@ -524,7 +525,7 @@ namespace Vertice
 			--end;
 		}
 		
-		const char* start = line.c_str() + iCmdStart;
+		const char* start = cmd_start;
 		
 		const char* stop = std::find( start, end, ' ' );
 		
