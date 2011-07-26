@@ -7,7 +7,6 @@
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 // Standard C
 #include <stdlib.h>
@@ -187,31 +186,45 @@ namespace tool
 		plus::string  version;
 	};
 	
+	class bad_http_request {};
+	
 	static ParsedRequest ParseRequest( const plus::string& request )
 	{
 		// E.g.  "GET / HTTP/1.0"
 		
+		const char* begin = request.data();
+		const char* end   = begin + request.size();
+		
 		ParsedRequest parsed;
 		
 		// Find the first space (which ends the request method)
-		plus::string::size_type end = request.find( ' ' );
+		const char* space = std::find( begin, end, ' ' );
 		
-		parsed.method = request.substr( 0, end - 0 );  // e.g. "GET"
+		if ( space == end )
+		{
+			throw bad_http_request();
+		}
+		
+		parsed.method.assign( request, 0, space - begin );  // e.g. "GET"
 		
 		// The resource starts after the space
-		plus::string::size_type resource = end + 1;
+		const char* resource = space + 1;
 		
 		// and ends with the next space
-		end = request.find( ' ', resource );
+		space = std::find( resource, end, ' ' );
 		
-		parsed.resource = request.substr( resource, end - resource );  // e.g. "/logo.png"
+		if ( space == end )
+		{
+			throw bad_http_request();
+		}
+		
+		parsed.resource.assign( request, resource - begin, space - begin );  // e.g. "/logo.png"
 		
 		// HTTP version string starts after the second space
-		plus::string::size_type version = end + 1;
-		// and runs to the end
-		end = plus::string::npos;
+		const char* version = space + 1;
 		
-		parsed.version = request.substr( version, end - version );  // e.g. "HTTP/1.1"
+		// and runs to the end
+		parsed.version.assign( request, version - begin );  // e.g. "HTTP/1.1"
 		
 		return parsed;
 	}
