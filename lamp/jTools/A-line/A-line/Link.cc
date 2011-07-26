@@ -165,7 +165,7 @@ namespace tool
 		
 		if ( sizes_match )
 		{
-			plus::var_string actual;
+			plus::string actual;
 			
 			char* p = actual.reset( size );
 			

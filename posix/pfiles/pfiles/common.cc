@@ -7,8 +7,11 @@
 
 #include "pfiles/common.hh"
 
-// plus
-#include "plus/var_string.hh"
+// more-libc
+#include "more/string.h"
+
+// gear
+#include "gear/find.hh"
 
 
 namespace io
@@ -16,39 +19,52 @@ namespace io
 	
 	plus::string get_preceding_directory( const plus::string& pathname )
 	{
-		plus::var_string result = pathname;
+		const char* begin = pathname.data();
 		
-		std::size_t last_slash = result.find_last_of( "/" );
+		const std::size_t length = pathname.size();
 		
-		if ( last_slash == result.size() - 1 )
+		if ( length != 0 )
 		{
-			result.resize( last_slash );
+			const char* end = begin + length;
 			
-			last_slash = result.find_last_of( "/" );
+			if ( end[ -1 ] == '/' )
+			{
+				--end;
+			}
+			
+			if ( const char* last_slash = gear::find_last_match( begin, end, '/' ) )
+			{
+				// substring constructor, may share the buffer
+				return plus::string( pathname, 0, last_slash + 1 - begin );
+			}
+			
 		}
 		
-		if ( last_slash == result.npos )
-		{
-			return ".";
-		}
-		
-		result.resize( last_slash + 1 );
-		
-		return result;
+		return ".";
 	}
 	
-	plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
+	plus::string path_descent( const plus::string& path, const char* name, std::size_t length )
 	{
 		const bool has_trailing_slash = path.back() == '/';
 		
+		const std::size_t path_size = path.size();
+		
+		const std::size_t size = path_size + !has_trailing_slash + length;
+		
+		plus::string result;
+		
+		char* p = result.reset( size );
+		
+		p = (char*) mempcpy( p, path.data(), path_size );
+		
 		if ( !has_trailing_slash )
 		{
-			path += '/';
+			*p++ = '/';
 		}
 		
-		path.append( name, length );
+		p = (char*) mempcpy( p, name, length );
 		
-		return path;
+		return result;
 	}
 	
 	std::size_t get_file_size( poseven::fd_t stream, overload )

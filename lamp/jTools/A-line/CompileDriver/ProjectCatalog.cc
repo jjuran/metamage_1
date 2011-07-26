@@ -197,7 +197,7 @@ namespace tool
 		
 		plus::string dirName = p7::basename( dirPath );
 		
-		if ( dirName.c_str()[0] == '('  &&  *(dirName.end() - 1) == ')' )
+		if ( dirName[0] == '('  &&  dirName.back() == ')' )
 		{
 			return;  // skip "(Guarded)" directories
 		}
@@ -252,7 +252,11 @@ namespace tool
 				const PlatformDemands&  demands = the_demands->first;
 				const ProjectConfig&    config  = the_demands->second;
 				
-				plus::var_string record = name;
+				plus::var_string record;
+				
+				record.reserve( name.size() + config.get_pathname().size() + 2 * 10 + 4 );
+				
+				record += name;
 				
 				record += '\t';
 				
@@ -293,13 +297,13 @@ namespace tool
 					{
 						plus::string project_name( begin, tab1 );
 						
-						plus::string requirements( tab1  + 1, slash );
-						plus::string prohibitions( slash + 1, tab2  );
+						const char* requirements = tab1  + 1;
+						const char* prohibitions = slash + 1;
 						
 						plus::string config_pathname( tab2 + 1 );
 						
-						PlatformDemands demands( Platform( gear::parse_unsigned_decimal( requirements.c_str() ) ),
-						                         Platform( gear::parse_unsigned_decimal( prohibitions.c_str() ) ) );
+						PlatformDemands demands( Platform( gear::parse_unsigned_decimal( requirements ) ),
+						                         Platform( gear::parse_unsigned_decimal( prohibitions ) ) );
 						
 						add_cached_config( project_name, demands, config_pathname );
 					}

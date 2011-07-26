@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -62,17 +65,30 @@ namespace tool
 	{
 		ASSERT( !dir.empty() );
 		
-		plus::var_string result;
+		plus::string filename = derived_filename( source_path );
 		
-		result += dir;
+		const bool has_trailing_slash = dir.back() == '/';
 		
-		if ( dir.back() != '/' )
+		const std::size_t dir_size = dir.size();
+		const std::size_t src_size = filename.size();
+		const std::size_t ext_size = std::strlen( extension );
+		
+		const std::size_t size = dir_size + !has_trailing_slash + src_size + ext_size;
+		
+		plus::string result;
+		
+		char* p = result.reset( size );
+		
+		p = (char*) mempcpy( p, dir.data(), dir_size );
+		
+		if ( !has_trailing_slash )
 		{
-			result += '/';
+			*p++ = '/';
 		}
 		
-		result += derived_filename( source_path );
-		result += extension;
+		p = (char*) mempcpy( p, filename.data(), src_size );
+		
+		p = (char*) mempcpy( p, extension, ext_size );
 		
 		return result;
 	}

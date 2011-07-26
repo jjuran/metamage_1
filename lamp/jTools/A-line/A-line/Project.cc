@@ -230,7 +230,7 @@ namespace tool
 		try
 		{
 			plus::string dirPath = pathname[0] == '/' ? pathname
-			                     : pathname[0] == '~' ? home_dir_pathname() / (pathname.c_str() + 2)
+			                     : pathname[0] == '~' ? home_dir_pathname() / pathname.substr( 2 )
 			                     :                      p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
@@ -420,7 +420,7 @@ namespace tool
 		
 		return    lastDot != plus::string::npos
 		       && IsCompilableExtension( filename.substr( lastDot ) )
-		       && !match_backwards( filename.c_str() + lastDot, STR_LEN( " copy" ) );
+		       && !match_backwards( filename.data() + lastDot, STR_LEN( " copy" ) );
 	}
 	
 	

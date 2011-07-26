@@ -87,7 +87,7 @@ namespace tool
 		
 		name += BuildName( build   );
 		
-		return name;
+		return name.move();
 	}
 	
 }

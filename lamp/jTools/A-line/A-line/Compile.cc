@@ -509,9 +509,7 @@ namespace tool
 			source_path += STRLEN( "//" );
 		}
 		
-		plus::var_string full_caption = its_caption;
-		
-		full_caption += source_path;
+		plus::string full_caption = plus::concat( its_caption, source_path );
 		
 		ExecuteCommand( shared_from_this(), full_caption, command, its_diagnostics_file_path.c_str() );
 	}
