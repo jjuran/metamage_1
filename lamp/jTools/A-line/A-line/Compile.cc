@@ -584,11 +584,6 @@ namespace tool
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
 		}
-		
-		if ( target_info.build == buildDemo )
-		{
-			options.DEFINE_MACRO( "BUILD_DEMO" );
-		}
 	}
 	
 	

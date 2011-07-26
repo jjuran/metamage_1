@@ -61,7 +61,6 @@ namespace tool
 		{
 			case buildDebug:    return "Debug";
 			case buildRelease:  return "Release";
-			case buildDemo:     return "Demo";
 		};
 		
 		return "";

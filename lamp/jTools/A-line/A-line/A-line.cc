@@ -600,7 +600,6 @@ namespace tool
 		
 		o::bind_option_to_variable( "-g", buildVariety, buildDebug   );
 		o::bind_option_to_variable( "-R", buildVariety, buildRelease );
-		o::bind_option_to_variable( "-D", buildVariety, buildDemo    );
 		
 		o::alias_option( "-6", "--68k" );
 		o::alias_option( "-P", "--ppc" );
@@ -616,7 +615,6 @@ namespace tool
 		
 		o::alias_option( "-g", "--debug"   );
 		o::alias_option( "-R", "--release" );
-		o::alias_option( "-D", "--demo"    );
 		
 		// Performance
 		

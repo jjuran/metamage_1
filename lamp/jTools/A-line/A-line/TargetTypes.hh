@@ -47,8 +47,7 @@ namespace tool
 	{
 		buildDefault,
 		buildDebug,
-		buildRelease,
-		buildDemo
+		buildRelease
 	};
 	
 }
