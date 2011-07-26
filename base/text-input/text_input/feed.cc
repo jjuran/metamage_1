@@ -69,14 +69,6 @@ namespace text_input
 		advance_CRLF();
 	}
 	
-	bool feed::empty()
-	{
-		prime();
-		
-		// Must call buffer_empty() first, since it may populate its_next_line
-		return its_mark == its_data_length  &&  its_next_line.empty();
-	}
-	
 	const plus::string* feed::get_line()
 	{
 		prime();
