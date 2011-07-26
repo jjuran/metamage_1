@@ -77,16 +77,11 @@ namespace text_input
 		return its_mark == its_data_length  &&  its_next_line.empty();
 	}
 	
-	bool feed::has_complete_line()
+	const plus::string* feed::get_line()
 	{
 		prime();
 		
-		return is_complete_line( its_next_line );
-	}
-	
-	const plus::string* feed::get_line()
-	{
-		const bool complete_line = has_complete_line();
+		const bool complete_line = is_complete_line( its_next_line );
 		
 		it_was_returned = complete_line;
 		

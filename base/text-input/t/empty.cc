@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 11 * 3;
+static const unsigned n_tests = 7 * 3;
 
 
 using tap::ok_if;
@@ -26,13 +26,9 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( feed.empty() );
 	
-	ok_if( !feed.has_complete_line() );
-	
 	feed.accept_input( newline, length );
 	
 	ok_if( !feed.empty(), "not empty after single blank line" );
-	
-	ok_if( feed.has_complete_line(), "has complete line after single blank line" );
 	
 	feed.accept_input( newline, length );
 	
@@ -42,15 +38,11 @@ static void empty( const char* newline, std::size_t length )
 	
 	ok_if( !feed.empty() );
 	
-	ok_if( feed.has_complete_line() );
-	
 	const plus::string* two = feed.get_line();
 	
 	ok_if( two  &&  *two == "\n" );
 	
 	ok_if( feed.empty() );
-	
-	ok_if( !feed.has_complete_line() );
 	
 	const plus::string* three = feed.get_line();
 	
