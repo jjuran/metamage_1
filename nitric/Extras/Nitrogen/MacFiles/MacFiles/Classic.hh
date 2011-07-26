@@ -76,11 +76,6 @@ namespace io
 		return get_preceding_directory( Nitrogen::FSMakeFSSpec( dir ) );
 	}
 	
-	inline Nitrogen::FSDirSpec get_parent_directory_of_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
-	{
-		return get_preceding_directory( dir );
-	}
-	
 	// Path descent
 	
 	namespace path_descent_operators

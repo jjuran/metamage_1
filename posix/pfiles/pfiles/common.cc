@@ -37,15 +37,6 @@ namespace io
 		return result;
 	}
 	
-	plus::string get_parent_directory_of_directory( plus::var_string pathname, overload )
-	{
-		const bool has_trailing_slash = pathname.back() == '/';
-		
-		pathname += "/.." + has_trailing_slash;
-		
-		return pathname;
-	}
-	
 	plus::string path_descent( plus::var_string path, const char* name, std::size_t length )
 	{
 		const bool has_trailing_slash = path.back() == '/';

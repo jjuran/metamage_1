@@ -73,11 +73,6 @@ namespace io
 		return parent;
 	}
 	
-	inline FSRef get_parent_directory_of_directory( const FSRef& dir, overload = overload() )
-	{
-		return get_preceding_directory( dir );
-	}
-	
 	// Path descent
 	
 	namespace path_descent_operators

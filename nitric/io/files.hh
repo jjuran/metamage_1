@@ -34,8 +34,7 @@ namespace io
 		
 	}
 	
-	dummy::file_spec get_preceding_directory          ( dummy::file_spec, overload );
-	dummy::file_spec get_parent_directory_of_directory( dummy::file_spec, overload );
+	dummy::file_spec get_preceding_directory( dummy::file_spec, overload );
 	
 	
 	bool item_is_file     ( dummy::file_catalog_record, overload );
@@ -74,12 +73,6 @@ namespace io
 	inline DirSpec get_preceding_directory( const FileSpec& file )
 	{
 		return get_preceding_directory( file, overload() );
-	}
-	
-	template < class DirSpec >
-	inline DirSpec get_parent_directory_of_directory( const DirSpec& dir )
-	{
-		return get_parent_directory_of_directory( dir, overload() );
 	}
 	
 	template < class FileCatalogRecord >

@@ -101,8 +101,6 @@ namespace io
 		return get_preceding_directory( pathname );
 	}
 	
-	plus::string get_parent_directory_of_directory( plus::var_string pathname, overload = overload() );
-	
 	// Path descent
 	
 	plus::string path_descent( plus::var_string path, const char* name, std::size_t length );
