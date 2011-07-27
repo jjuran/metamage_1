@@ -41,7 +41,7 @@
 	Line 1:  complete  (MOVE.B)
 	Line 2:  complete  (MOVE.L)
 	Line 3:  complete  (MOVE.W)
-	Line 4:  missing MOVEC
+	Line 4:  complete
 	Line 5:  complete  (ADDQ, SUBQ, DBcc)
 	Line 6:  complete  (Bcc)
 	Line 7:  complete  (MOVEQ)
@@ -1281,6 +1281,62 @@ namespace tool
 		printf( format, size_code, source, dest );
 	}
 	
+	static const char* const control_registers_000[] =
+	{
+		"SFC",
+		"DFC",
+		"CACR",
+		"TC",    // 68040
+		"ITT0",  // 68040
+		"ITT1",  // 68040
+		"DTT0",  // 68040
+		"DTT1"   // 68040
+	};
+	
+	static const char* const control_registers_800[] =
+	{
+		"USP",
+		"VBR",
+		"CAAR",   // 68020, 68030
+		"MSP",
+		"ISP",
+		"MMUSR",  // 68040
+		"URP",    // 68040
+		"SRP"     // 68040
+	};
+	
+	static void decode_MOVEC( unsigned short op )
+	{
+		const bool to = op & 0x0001;
+		
+		const unsigned short extension = read_word();
+		
+		const char bank = extension & 0x8000 ? 'A' : 'D';
+		
+		const unsigned short reg = extension >> 12 & 0x7;
+		
+		const unsigned short control = extension & 0x0FFF;
+		
+		if ( control & ~0x0807 )
+		{
+			throw illegal_instruction();
+		}
+		
+		const char* const* register_set = control & 0x0800 ? control_registers_800
+		                                                   : control_registers_000;
+		
+		const char* control_register_name = register_set[ control & 0x7 ];
+		
+		if ( to )
+		{
+			printf( "MOVEC    %c%d,%s" "\n", bank, reg, control_register_name );
+		}
+		else
+		{
+			printf( "MOVEC    %s,%c%d" "\n", control_register_name, bank, reg );
+		}
+	}
+	
 	static void decode_4e_misc( unsigned short op )
 	{
 		switch ( op & 0x0038 )
@@ -1347,6 +1403,12 @@ namespace tool
 				break;
 			
 			case 0x38:
+				if ( (op & 0x000E) == 0x000A )
+				{
+					decode_MOVEC( op );
+					break;
+				}
+				
 			default:
 				decode_default( op );
 				break;
