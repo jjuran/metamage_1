@@ -11,6 +11,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// MacScribe
+#include "quad/quad_name.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -21,7 +24,6 @@
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/quad_name.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 
@@ -31,6 +33,11 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
+	
+	
+	using MacScribe::make_quad_name;
+	using MacScribe::parse_quad_name;
+	using MacScribe::quad_t;
 	
 	
 	typedef std::map< quad_t, plus::string > cmd_map;
@@ -160,7 +167,7 @@ namespace Genie
 			
 			plus::var_string name;
 			
-			inscribe_quad_name( name, it->first );
+			name += make_quad_name( it->first );
 			
 			cache.push_back( FSNode( inode, name ) );
 		}

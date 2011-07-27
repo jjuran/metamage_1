@@ -15,6 +15,9 @@
 #include "plus/hexidecimal.hh"
 #include "plus/var_string.hh"
 
+// MacScribe
+#include "quad/quad_name.hh"
+
 // nucleus
 #include "nucleus/shared.hh"
 
@@ -30,7 +33,6 @@
 
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/quad_name.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -41,6 +43,10 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	using MacScribe::make_quad_name;
+	using MacScribe::parse_quad_name;
 	
 	
 	void iterate_resources( const FSSpec& file, FSTreeCache& cache )
@@ -65,7 +71,7 @@ namespace Genie
 				
 				name += '.';
 				
-				inscribe_quad_name( name, type );
+				name += make_quad_name( type );
 				
 				const FSNode node( info.id, name );
 				

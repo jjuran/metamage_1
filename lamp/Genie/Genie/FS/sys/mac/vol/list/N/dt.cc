@@ -9,6 +9,9 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// MacScribe
+#include "quad/quad_name.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -20,7 +23,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
-#include "Genie/FS/quad_name.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -58,6 +60,10 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	using MacScribe::invalid_quad_name;
+	using MacScribe::parse_quad_name;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )

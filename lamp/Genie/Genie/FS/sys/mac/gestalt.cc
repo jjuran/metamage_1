@@ -13,6 +13,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// MacScribe
+#include "quad/quad_name.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -25,7 +28,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
-#include "Genie/FS/quad_name.hh"
 
 
 namespace Nitrogen
@@ -134,6 +136,11 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	using MacScribe::make_quad_name;
+	using MacScribe::parse_quad_name;
+	using MacScribe::quad_t;
+	
+	
 	static bool is_valid_Gestalt_Selector( N::Gestalt_Selector selector )
 	{
 		try
@@ -190,7 +197,7 @@ namespace Genie
 					name += '.';
 				}
 				
-				inscribe_quad_name( name, selector );
+				name += make_quad_name( selector );
 				
 				return FSNode( inode, name );
 			}
