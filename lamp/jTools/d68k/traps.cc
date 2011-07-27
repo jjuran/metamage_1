@@ -88,9 +88,16 @@ namespace tool
 	
 	static void try_to_read_traps()
 	{
+		const char* traps_file = getenv( "D68K_TRAPS" );
+		
+		if ( traps_file == NULL )
+		{
+			traps_file = "/etc/traps";
+		}
+		
 		try
 		{
-			read_traps( p7::open( "/etc/traps", p7::o_rdonly ) );
+			read_traps( p7::open( traps_file, p7::o_rdonly ) );
 		}
 		catch ( ... )
 		{
