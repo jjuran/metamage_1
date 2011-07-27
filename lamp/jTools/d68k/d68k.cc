@@ -37,7 +37,7 @@
 /*
 	A 68K disassembler.
 	
-	Line 0:  missing MOVEP and MOVES
+	Line 0:  missing MOVES
 	Line 1:  complete  (MOVE.B)
 	Line 2:  complete  (MOVE.L)
 	Line 3:  complete  (MOVE.W)
@@ -201,6 +201,10 @@ namespace tool
 	
 	static size_t global_pc = 0;
 	
+	static unsigned short global_last_op = 0xFFFFFFFF;
+	
+	static unsigned global_last_CMPI_operand = 0;
+	
 	static size_t global_last_branch_target = 0;
 	static size_t global_last_pc_relative_target = 0;
 	static size_t global_successor_of_last_exit = 0;
@@ -209,6 +213,49 @@ namespace tool
 	
 	static std::vector< size_t > global_entry_points;
 	static std::vector< size_t > global_exit_points;
+	
+	
+	static const unsigned short indexed_jump_code[] =
+	{
+		//0xd040,  // ADD.W    D0,D0
+		
+		//0x303b,  // MOVE.W   (6,PC,D0.W),D0
+		//0x0006,
+		
+		0x4efb,  // JMP      (2,PC,D0.W)
+		0x0002
+	};
+	
+	static int indexed_jump_state = 0;
+	
+	static bool at_indexed_jump = false;
+	
+	
+	static const unsigned short lswtch_code[] =
+	{
+		0x205f,
+		0x2248,
+		0xd2d8,
+		0xb098,
+		0x6c02,
+		0x4ed1,
+		0xb098,
+		0x6f02,
+		0x4ed1,
+		0x3218,
+		0xb098,
+		0x6604,
+		0xd0d0,
+		0x4ed0,
+		0x5448,
+		0x51c9,
+		0xfff4,
+		0x4ed1
+	};
+	
+	static int lswtch_state = 0;
+	
+	static size_t lswtch_offset = 0;
 	
 	
 	static void add_branch_target( size_t address )
@@ -337,6 +384,38 @@ namespace tool
 			p += sizeof (unsigned short);
 			
 			global_bytes_read += sizeof (unsigned short);
+			
+			if ( !at_indexed_jump )
+			{
+				if ( result == indexed_jump_code[ indexed_jump_state ] )
+				{
+					if ( ++indexed_jump_state == sizeof indexed_jump_code / sizeof indexed_jump_code[0] )
+					{
+						at_indexed_jump = true;
+						
+						indexed_jump_state = 0;
+					}
+				}
+				else
+				{
+					indexed_jump_state = 0;
+				}
+			}
+			
+			if ( lswtch_offset == 0 )
+			{
+				if ( const bool match = result == lswtch_code[ lswtch_state ] )
+				{
+					if ( ++lswtch_state == sizeof lswtch_code / sizeof lswtch_code[0] )
+					{
+						lswtch_offset = global_bytes_read - sizeof lswtch_code;
+					}
+				}
+				else
+				{
+					lswtch_state = 0;
+				}
+			}
 		}
 		
 		return result;
@@ -385,6 +464,7 @@ namespace tool
 		return 0;
 	}
 	
+	static unsigned global_last_absolute_addr_from_ea  = 0;
 	static unsigned global_last_immediate_data_from_ea = 0;
 	
 	static plus::string read_ea( short mode_reg, short immediate_size )
@@ -591,28 +671,12 @@ namespace tool
 			{
 				case 0:
 				case 1:
-					result += "0x";
-					append_hex( result, extension, 2 );
-					
-					if ( reg == 1 )
-					{
-						append_hex( result, read_word(), 2 );
-					}
+					immediate_size = reg + 1 << 1;
 					
 					break;
 				
 				case 4:
-					result += "#0x";
-					
-					unsigned immediate_data;
-					
-					immediate_data = immediate_size == 1 ? extension & 0xff
-					               : immediate_size == 2 ? extension
-					               :                       extension << 16 | read_word();
-					
-					append_hex( result, immediate_data, immediate_size );
-					
-					global_last_immediate_data_from_ea = immediate_data;
+					result += "#";
 					
 					break;
 				
@@ -620,6 +684,19 @@ namespace tool
 					throw illegal_operand();
 					break;
 			}
+			
+			unsigned& marker = reg <= 1 ? global_last_absolute_addr_from_ea
+			                            : global_last_immediate_data_from_ea;
+			
+			result += "0x";
+			
+			const unsigned data = immediate_size == 1 ? extension & 0xff
+			                    : immediate_size == 2 ? extension
+			                    :                       extension << 16 | read_word();
+			
+			marker = data;
+			
+			append_hex( result, data, immediate_size );
 		}
 		
 		return result;
@@ -649,13 +726,43 @@ namespace tool
 #pragma mark -
 #pragma mark ** Line 0 **
 	
+	static void decode_compare( unsigned short op )
+	{
+		const bool compare_and_swap = op & 0x0800;
+		
+		const short size_index = (op >> 9 & 0x3) - compare_and_swap;
+		
+		if ( unsigned( size_index & 0x3 ) == 0x3 )
+		{
+			throw illegal_instruction();
+		}
+		
+		const short mode_reg = op & 0x3f;
+		
+		const bool is_cas2 = mode_reg == 0x3c;
+		
+		const unsigned short ext1 =           read_word();
+		const unsigned short ext2 = is_cas2 ? read_word() : 0;
+		
+		const bool is_chk2 = ext1 & 0x0800;
+		
+		const char* op_name = compare_and_swap ? is_cas2 ? "CAS2"
+		                                                 : "CAS "
+		                                       : is_chk2 ? "CHK2"
+		                                                 : "CMP2";
+		
+		printf( "%s     ...\n", op_name );
+	}
+	
 	static void decode_Immediate( unsigned short op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
 		if ( size_index == 3 )
 		{
-			throw illegal_instruction();
+			decode_compare( op );
+			
+			return;
 		}
 		
 		const char* format = "%s%s%s#%#x,%s" "\n";
@@ -695,15 +802,25 @@ namespace tool
 				immediate_data = immediate_data << 16 | read_word();
 			}
 			
+			if ( (op >> 9 & 0x7) == 6 )
+			{
+				// needed for index jumps
+				global_last_CMPI_operand = immediate_data;
+			}
+			
 			const plus::string ea = read_ea( mode_reg, immediate_size );
 			
 			printf( format, name, qualifier, space, immediate_data, ea.c_str() );
 		}
 	}
 	
-	static void decode_Bit_op( unsigned short op )
+	static void decode_Bit_op( unsigned short op, bool dynamic )
 	{
-		char format[] = "Bfoo     #%#x,%s" "\n";
+		char dynamic_format[] = "Bfoo     D%d,%s"  "\n";
+		char static_format [] = "Bfoo     #%#x,%s" "\n";
+		
+		char* format = dynamic ? dynamic_format
+		                       : static_format;
 		
 		const char* name = bit_ops[ op >> 6 & 0x3 ];
 		
@@ -713,13 +830,14 @@ namespace tool
 		
 		const short mode_reg = op & 0x3f;
 		
-		const unsigned immediate_data = read_word();
+		const int data = dynamic ? op >> 9       // data register
+		                         : read_word();  // immediate data
 		
 		const short immediate_size = 1;
 		
 		const plus::string ea = read_ea( mode_reg, immediate_size );
 		
-		printf( format, immediate_data, ea.c_str() );
+		printf( format, data, ea.c_str() );
 	}
 	
 #pragma mark -
@@ -881,6 +999,54 @@ namespace tool
 		printf( COMMENT "%#.6x", pc_relative_target );
 	}
 	
+	static void decode_jump_table()
+	{
+		printf( "; indexed jump table\n" );
+		
+		const size_t jump_table = global_bytes_read;
+		
+		int n_jumps = global_last_CMPI_operand;
+		
+		while ( n_jumps-- >= 0 )
+		{
+			printf( "; goto $%.6x\n", jump_table + read_word() );
+		}
+	}
+	
+	static void decode_switch_table()
+	{
+		printf( "; __lswtch__ table\n" );
+		
+		const size_t table_start = global_bytes_read;
+		
+		const size_t default_case = table_start + read_word();
+		
+		printf( "; default:  goto $%.6x\n", default_case );
+		
+		const unsigned min = read_long();
+		
+		printf( "; min: %#x, %d\n", min, min );
+		
+		const unsigned max = read_long();
+		
+		printf( "; max: %#x, %d\n", max, max );
+		
+		int n = read_word();
+		
+		while ( n-- >= 0 )
+		{
+			const unsigned value = read_long();
+			
+			size_t target = global_bytes_read;
+			
+			const unsigned short offset = read_word();
+			
+			target += offset;
+			
+			printf( "; case %#x, %d:  goto $%.6x\n", value, value, target );
+		}
+	}
+	
 	static void decode_Jump( unsigned short op )
 	{
 		const unsigned short source = op & 0x3f;
@@ -913,7 +1079,25 @@ namespace tool
 		
 		if ( jump )
 		{
-			global_successor_of_last_exit = global_bytes_read;
+			if ( at_indexed_jump )
+			{
+				const bool fpu_selector = global_last_op == 0xc0fc;
+				
+				if ( !fpu_selector )
+				{
+					decode_jump_table();
+				}
+				
+				at_indexed_jump = false;
+			}
+			else
+			{
+				global_successor_of_last_exit = global_bytes_read;
+			}
+		}
+		else if ( lswtch_offset  &&  global_last_absolute_addr_from_ea == lswtch_offset )
+		{
+			decode_switch_table();
 		}
 	}
 	
@@ -1172,8 +1356,135 @@ namespace tool
 #pragma mark -
 #pragma mark ** High-order **
 	
+	static void decode_data( unsigned short op )
+	{
+		printf( "%.6x:  DC.W     %#.4x  ; %d bytes of data\n", global_bytes_read - 2, op, op );
+		
+		int n_words = (op + 1) / 2;
+		
+		while ( --n_words >= 0 )
+		{
+			const size_t bytes_read = global_bytes_read;
+			
+			if ( n_words-- )
+			{
+				printf( "%.6x:  DC.L     %#.8x\n", bytes_read, read_long() );
+			}
+			else
+			{
+				printf( "%.6x:  DC.W     %#.4x\n", bytes_read, read_word() );
+			}
+		}
+		
+		printf( "\n" );
+	}
+	
+	static bool decoded_data( unsigned short op )
+	{
+		switch ( global_last_op )
+		{
+			case 0x4e75:  // RTS
+			case 0xa9f4:  // _ExitToShell
+				if ( op < 256 )
+				{
+					break;
+				}
+				else
+				{
+					// fall through
+				}
+			
+			default:
+				return false;
+		}
+		
+		if ( op == 0  &&  peek_word() == 0 )
+		{
+			(void) read_word();
+			
+			printf( "DC.L     0x00000000\n\n" );
+		}
+		else if ( op != 0 )
+		{
+			decode_data( op );
+		}
+		else
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	static void decode_MOVEP( unsigned short op )
+	{
+		const bool store_to_mem = op & 0x80;
+		const bool long_mode    = op & 0x40;
+		
+		const unsigned short data_reg = op >> 9 & 0x7;
+		const unsigned short addr_reg = op >> 0 & 0x7;
+		
+		const unsigned short displacement = read_word();
+		
+		const char register_operand[ STRLEN( "Dx" ) ] = { 'D', '0' + data_reg };
+		
+		plus::var_string memory_operand = "(";
+		
+		memory_operand += gear::inscribe_decimal( displacement );
+		
+		memory_operand += ",A";
+		
+		memory_operand += '0' + addr_reg;
+		
+		memory_operand += ')';
+		
+		plus::var_string out = "MOVEP.";
+		
+		out += size_codes[ long_mode + 1 ];
+		
+		out += "  ";
+		
+		if ( store_to_mem )
+		{
+			out.append( register_operand, sizeof register_operand );
+			
+			out += ',';
+			
+			out += memory_operand;
+		}
+		else
+		{
+			out += memory_operand;
+			
+			out += ',';
+			
+			out.append( register_operand, sizeof register_operand );
+		}
+		
+		printf( "%s\n", out.c_str() );
+	}
+	
 	static void decode_0_line( unsigned short op )
 	{
+		if ( const bool data = decoded_data( op ) )
+		{
+			return;
+		}
+		
+		if ( op & 0x0100 )
+		{
+			if ( (op & 0x0038) == 0x0008 )
+			{
+				decode_MOVEP( op );
+				
+				return;
+			}
+			
+			decode_Bit_op( op, true );  // BTST/BCHG/BCLR/BSET dynamic
+			
+			return;
+		}
+		
 		switch ( op >> 8 & 0xf )
 		{
 			case 0x0:  // ORI
@@ -1182,16 +1493,12 @@ namespace tool
 			case 0x6:  // ADDI
 			case 0xa:  // EORI
 			case 0xc:  // CMPI
-				decode_Immediate( op );
+				decode_Immediate( op );  // also CMP2/CHK2/CAS/CAS2
 				break;
 			
-			case 0x8:  // BTST/BCHG/BCLR/BSET
-				decode_Bit_op( op );
+			case 0x8:  // BTST/BCHG/BCLR/BSET static
+				decode_Bit_op( op, false );
 				break;
-			
-			case 0x1:  // MOVEP
-				
-				//break;
 			
 			case 0xe:  // MOVES
 				
@@ -1295,6 +1602,16 @@ namespace tool
 				}
 				else if ( (op & 0x00c0) == 0x0040 )
 				{
+					if ( const bool is_bkpt = (op & 0xFFF8) == 0x4848 )
+					{
+						// BKPT
+						const unsigned short vector = op & 0x7;
+						
+						printf( "BKPT     #%d" "\n", vector );
+						
+						break;
+					}
+					
 					// PEA
 					const plus::string ea = read_ea( source, 0 );
 					
@@ -1768,6 +2085,11 @@ namespace tool
 		{
 			decode_default( op );
 		}
+		
+		if ( op == 0xa9f4 )
+		{
+			global_successor_of_last_exit = global_bytes_read;
+		}
 	}
 	
 	static void decode_F_line( unsigned short op )
@@ -1810,26 +2132,90 @@ namespace tool
 	};
 	
 	
-	static bool name_assumed( unsigned short word )
+	static const uint32_t name_validity[] =
+	{
+		0,  // no control chars
+		
+		            1 << (' ' & 31) |  // 0x20
+		            1 << ('%' & 31) |  // 0x25
+		            1 << ('.' & 31) |  // 0x2e
+		(1 << 10) - 1 << ('0' & 31),   // 0x30 - 0x39
+		
+		(1 << 26) - 1 << ('A' & 31) |  // 0x41 - 0x5A
+		            1 << ('_' & 31),   // 0x5f
+		
+		(1 << 26) - 1 << ('a' & 31)    // 0x61 - 0x7A
+	};
+	
+	static inline bool valid_name_char( unsigned char c )
+	{
+		return name_validity[ c >> 5 & 0x3 ] & 1 << (c & 0x1f);
+	}
+	
+	static const char* get_name( unsigned short word )
 	{
 		const unsigned short byte_0 = word >> 8;
 		const unsigned short byte_1 = word & 0xff;
 		
-		if ( const bool long_name = byte_0 == 0x80 )
+		if ( byte_0 < 0x80 )
 		{
-			return true;
+			return NULL;
 		}
 		
-		const bool name_allowed = (byte_0 & 0xe0) == 0x80;
+		static char name[ 256 ];
 		
-		if ( !name_allowed )
+		char* p = name;
+		
+		size_t length = 0;
+		
+		const bool try_fixed = false;
+		
+		if ( const bool is_fixed_length = byte_0 >= (0x80 | 0x20) )
 		{
-			return false;
+			if ( !valid_name_char( byte_0 )  ||  !valid_name_char( byte_1 ) )
+			{
+				return NULL;
+			}
+			
+			const bool is_method = byte_1 & 0x80;
+			
+			*p++ = byte_0 & 0x7f;
+			*p++ = byte_1 & 0x7f;
+			
+			length = 8 + 8 * is_method - 2;
+		}
+		else if ( const size_t length_byte = byte_0 & 0x1f )
+		{
+			if ( !valid_name_char( byte_1 ) )
+			{
+				return NULL;
+			}
+			
+			*p++ = byte_1;
+			
+			length = length_byte - 1;
+		}
+		else
+		{
+			length = byte_1;
 		}
 		
-		//return byte_1 >= 0x20  &&  byte_1 < 0x7f;
+		(void) read_word();
 		
-		return byte_1 == '_'  ||  isalpha( byte_1 );
+		for ( p[ length ] = '\0';  length > 1;  length -= 2 )
+		{
+			const unsigned short pair = read_word();
+			
+			*p++ = pair >> 8;
+			*p++ = pair & 0xff;
+		}
+		
+		if ( length )
+		{
+			*p++ = read_word() >> 8;
+		}
+		
+		return name;
 	}
 	
 	static void decode_one()
@@ -1840,46 +2226,11 @@ namespace tool
 			
 			const unsigned short word_0 = peek_word();
 			
-			if ( name_assumed( word_0 ) )
+			if ( const char* name = get_name( word_0 ) )
 			{
-				const unsigned short byte_0 = word_0 >> 8;
-				const unsigned short byte_1 = word_0 & 0xff;
-				
-				const bool long_name = byte_0 == 0x80;
-				
-				const short length = long_name ? byte_1
-				                               : byte_0 & 0x1f;
-				
-				char name[ 256 ];
-				
-				if ( !long_name )
-				{
-					name[0] = byte_1;
-				}
-				
-				int i = long_name ? 0 : 1;
-				
-				(void) read_word();
-				
-				while ( i < length )
-				{
-					const unsigned short word = read_word();
-					
-					name[ i++ ] = word >> 8;
-					
-					if ( i == length )
-					{
-						break;
-					}
-					
-					name[ i++ ] = word & 0xff;
-				}
-				
-				name[ i ] = '\0';
-				
 				printf( "; ^^^ %s\n\n", name );
 				
-				(void) read_word();
+				decode_data( read_word() );
 				
 				return;
 			}
@@ -1899,6 +2250,8 @@ namespace tool
 			try
 			{
 				decode( word );
+				
+				global_last_op = word;
 				
 				return;
 			}
