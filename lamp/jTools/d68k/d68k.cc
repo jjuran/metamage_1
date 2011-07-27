@@ -37,7 +37,7 @@
 /*
 	A 68K disassembler.
 	
-	Line 0:  missing MOVES
+	Line 0:  complete
 	Line 1:  complete  (MOVE.B)
 	Line 2:  complete  (MOVE.L)
 	Line 3:  complete  (MOVE.W)
@@ -1526,6 +1526,39 @@ namespace tool
 		printf( "%s\n", out.c_str() );
 	}
 	
+	static void decode_MOVES( unsigned short op )
+	{
+		const unsigned short extension = read_word();
+		
+		const unsigned short mode_reg = op & 0x3f;
+		
+		const short size_index = op >> 6 & 0x3;
+		
+		if ( size_index == 3 )
+		{
+			throw illegal_instruction();
+		}
+		
+		const char size_code = size_codes[ size_index ];
+		
+		const char bank = extension & 0x8000 ? 'A' : 'D';
+		
+		const unsigned short reg = extension >> 12 & 0x7;
+		
+		const plus::string ea = read_ea( mode_reg, sizes[ size_index ] );
+		
+		const bool to = extension & 0x0800;
+		
+		if ( to )
+		{
+			printf( "MOVES.%c  %c%d,%s\n", size_code, bank, reg, ea.c_str() );
+		}
+		else
+		{
+			printf( "MOVES.%c  %s,%c%d\n", size_code, ea.c_str(), bank, reg );
+		}
+	}
+	
 	static void decode_0_line( unsigned short op )
 	{
 		if ( const bool data = decoded_data( op ) )
@@ -1563,8 +1596,8 @@ namespace tool
 				break;
 			
 			case 0xe:  // MOVES
-				
-				//break;
+				decode_MOVES( op );
+				break;
 			
 			default:
 				decode_default( op );
