@@ -1,7 +1,7 @@
-/*	=========
- *	md5sum.cc
- *	=========
- */
+/*
+	md5sum.cc
+	---------
+*/
 
 // Standard C
 #include <string.h>
