@@ -1,7 +1,7 @@
-/*	==================
- *	Vertice/Objects.hh
- *	==================
- */
+/*
+	Vertice/Objects.hh
+	------------------
+*/
 
 #ifndef VERTICE_OBJECTS_HH
 #define VERTICE_OBJECTS_HH

@@ -1,7 +1,7 @@
-/*	===============
- *	Vertice/Port.cc
- *	===============
- */
+/*
+	Vertice/Port.cc
+	---------------
+*/
 
 #include "Vertice/Port.hh"
 

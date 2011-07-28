@@ -1,7 +1,7 @@
-/*	=========
- *	Window.hh
- *	=========
- */
+/*
+	Window.hh
+	---------
+*/
 
 #ifndef USEEDIT_WINDOW_HH
 #define USEEDIT_WINDOW_HH

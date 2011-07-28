@@ -1,7 +1,7 @@
-/*	==================
- *	Vertice/Objects.cc
- *	==================
- */
+/*
+	Vertice/Objects.cc
+	------------------
+*/
 
 #include "Vertice/Objects.hh"
 

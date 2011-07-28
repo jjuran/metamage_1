@@ -1,7 +1,7 @@
-/*	===================
- *	Vertice/PortView.cc
- *	===================
- */
+/*
+	Vertice/PortView.cc
+	-------------------
+*/
 
 #include "Vertice/PortView.hh"
 

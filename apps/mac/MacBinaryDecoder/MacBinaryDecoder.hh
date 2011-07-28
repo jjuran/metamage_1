@@ -1,7 +1,7 @@
-/*	===================
- *	MacBinaryDecoder.hh
- *	===================
- */
+/*
+	MacBinaryDecoder.hh
+	-------------------
+*/
 
 #ifndef MACBINARYDECODER_HH
 #define MACBINARYDECODER_HH

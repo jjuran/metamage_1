@@ -1,7 +1,7 @@
-/*	===============
- *	Vertice/Main.cc
- *	===============
- */
+/*
+	Vertice/Main.cc
+	---------------
+*/
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"

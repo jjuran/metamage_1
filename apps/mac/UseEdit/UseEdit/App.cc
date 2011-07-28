@@ -1,7 +1,7 @@
-/*	======
- *	App.cc
- *	======
- */
+/*
+	App.cc
+	------
+*/
 
 // Standard C++
 #include <algorithm>

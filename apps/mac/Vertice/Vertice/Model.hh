@@ -1,7 +1,7 @@
-/*	================
- *	Vertice/Model.hh
- *	================
- */
+/*
+	Vertice/Model.hh
+	----------------
+*/
 
 #ifndef VERTICE_MODEL_HH
 #define VERTICE_MODEL_HH

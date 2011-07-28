@@ -1,7 +1,7 @@
-/*	===================
- *	MacBinaryDecoder.cc
- *	===================
- */
+/*
+	MacBinaryDecoder.cc
+	-------------------
+*/
 
 // Debug
 #include "debug/assert.hh"

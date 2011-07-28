@@ -1,7 +1,7 @@
-/*	===========
- *	Document.hh
- *	===========
- */
+/*
+	Document.hh
+	-----------
+*/
 
 #ifndef USEEDIT_DOCUMENT_HH
 #define USEEDIT_DOCUMENT_HH

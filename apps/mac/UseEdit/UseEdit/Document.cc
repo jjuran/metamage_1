@@ -1,7 +1,7 @@
-/*	===========
- *	Document.cc
- *	===========
- */
+/*
+	Document.cc
+	-----------
+*/
 
 #include "UseEdit/Document.hh"
 

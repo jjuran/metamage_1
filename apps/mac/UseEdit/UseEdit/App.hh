@@ -1,7 +1,7 @@
-/*	======
- *	App.hh
- *	======
- */
+/*
+	App.hh
+	------
+*/
 
 #ifndef USEEDIT_APP_HH
 #define USEEDIT_APP_HH

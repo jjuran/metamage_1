@@ -1,7 +1,7 @@
-/*	===================
- *	Vertice/Document.cc
- *	===================
- */
+/*
+	Vertice/Document.cc
+	-------------------
+*/
 
 #include "Vertice/Document.hh"
 

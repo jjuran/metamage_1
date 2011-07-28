@@ -1,7 +1,7 @@
-/*	===================
- *	Vertice/Document.hh
- *	===================
- */
+/*
+	Vertice/Document.hh
+	-------------------
+*/
 
 #ifndef VERTICE_DOCUMENT_HH
 #define VERTICE_DOCUMENT_HH

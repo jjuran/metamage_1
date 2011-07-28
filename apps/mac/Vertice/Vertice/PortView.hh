@@ -1,7 +1,7 @@
-/*	===================
- *	Vertice/PortView.hh
- *	===================
- */
+/*
+	Vertice/PortView.hh
+	-------------------
+*/
 
 #ifndef VERTICE_PORTVIEW_HH
 #define VERTICE_PORTVIEW_HH

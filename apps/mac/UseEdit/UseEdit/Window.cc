@@ -1,7 +1,7 @@
-/*	=========
- *	Window.cc
- *	=========
- */
+/*
+	Window.cc
+	---------
+*/
 
 #include "UseEdit/Window.hh"
 
