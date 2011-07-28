@@ -3,9 +3,6 @@
  *	=========
  */
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <string.h>
 
@@ -35,6 +32,11 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
+	static inline size_t min( size_t a, size_t b )
+	{
+		return a < b ? a : b;
+	}
+	
 	static void md5_hex( char* result, const MD5::Result& md5 )
 	{
 		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
@@ -58,7 +60,7 @@ namespace tool
 			mark = 0;
 		}
 		
-		const size_t bytes_to_copy = std::min( n_bytes_requested, n_bytes_available );
+		const size_t bytes_to_copy = min( n_bytes_requested, n_bytes_available );
 		
 		memcpy( small_buffer, big_buffer + mark, bytes_to_copy );
 		
