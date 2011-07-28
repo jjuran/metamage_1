@@ -5,6 +5,9 @@
 
 #include "traps.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // C99
 #include <stdint.h>
 
