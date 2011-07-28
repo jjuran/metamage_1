@@ -1,7 +1,7 @@
-/*	=========
- *	select.cc
- *	=========
- */
+/*
+	select.cc
+	---------
+*/
 
 // Standard C++
 #include <algorithm>

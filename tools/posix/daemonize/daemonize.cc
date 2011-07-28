@@ -1,7 +1,7 @@
-/*	============
- *	daemonize.cc
- *	============
- */
+/*
+	daemonize.cc
+	------------
+*/
 
 // Standard C/C++
 #include <cstring>
