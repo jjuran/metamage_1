@@ -1,7 +1,7 @@
-/*	========
- *	chain.cc
- *	========
- */
+/*
+	chain.cc
+	--------
+*/
 
 // Standard C
 #include <errno.h>
