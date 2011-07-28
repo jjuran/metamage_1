@@ -1,7 +1,7 @@
-/*	=======
- *	mwcc.cc
- *	=======
- */
+/*
+	mwcc.cc
+	-------
+*/
 
 // Standard C++
 #include <list>

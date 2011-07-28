@@ -1,8 +1,6 @@
 /*
 	demangle.cc
 	-----------
-	
-	Copyright 2010, Joshua Juran
 */
 
 // recall

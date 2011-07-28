@@ -1,7 +1,7 @@
-/*	=====
- *	ld.cc
- *	=====
- */
+/*
+	ld.cc
+	-----
+*/
 
 // Standard C++
 #include <list>

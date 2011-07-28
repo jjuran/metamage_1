@@ -1,7 +1,7 @@
-/*	=========
- *	mpwrez.cc
- *	=========
- */
+/*
+	mpwrez.cc
+	---------
+*/
 
 // Standard C++
 #include <list>

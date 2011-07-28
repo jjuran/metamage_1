@@ -1,8 +1,6 @@
 /*
 	object_file.hh
 	--------------
-	
-	Copyright 2008-2010, Joshua Juran
 */
 
 #ifndef METROWERKS_OBJECTFILE_HH

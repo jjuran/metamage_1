@@ -1,7 +1,7 @@
-/*	=====
- *	ar.cc
- *	=====
- */
+/*
+	ar.cc
+	-----
+*/
 
 // Standard C++
 #include <list>
