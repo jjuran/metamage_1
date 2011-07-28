@@ -1,7 +1,7 @@
-/*	=========
- *	buffer.cc
- *	=========
- */
+/*
+	buffer.cc
+	---------
+*/
 
 // Standard C/C++
 #include <cstddef>
