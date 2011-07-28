@@ -1,7 +1,7 @@
-/*	=======
- *	echo.cc
- *	=======
- */
+/*
+	d68k.cc
+	-------
+*/
 
 // Standard C++
 #include <vector>

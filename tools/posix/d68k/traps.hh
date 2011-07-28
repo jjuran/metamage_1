@@ -1,8 +1,6 @@
 /*
 	traps.hh
 	--------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef D68K_TRAPS_HH

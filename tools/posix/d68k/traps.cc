@@ -1,8 +1,6 @@
 /*
 	traps.cc
 	--------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #include "traps.hh"
