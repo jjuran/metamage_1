@@ -1,7 +1,7 @@
-/*	======
- *	cds.cc
- *	======
- */
+/*
+	cds.cc
+	------
+*/
 
 // Iota
 #include "iota/strings.hh"

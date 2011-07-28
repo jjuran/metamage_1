@@ -1,7 +1,7 @@
-/*	============
- *	osascript.cc
- *	============
- */
+/*
+	osascript.cc
+	------------
+*/
 
 // Standard C++
 #include <functional>

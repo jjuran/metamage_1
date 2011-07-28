@@ -1,7 +1,7 @@
-/*	=======
- *	aevt.cc
- *	=======
- */
+/*
+	aevt.cc
+	-------
+*/
 
 // Mac OS
 #ifndef  __AEHELPERS__

@@ -1,7 +1,7 @@
-/*	=========
- *	macbin.cc
- *	=========
- */
+/*
+	macbin.cc
+	---------
+*/
 
 // Standard C/C++
 #include <cstdio>

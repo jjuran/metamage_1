@@ -1,7 +1,7 @@
-/*	=======
- *	open.cc
- *	=======
- */
+/*
+	open.cc
+	-------
+*/
 
 // Standard C/C++
 #include <cstdio>
