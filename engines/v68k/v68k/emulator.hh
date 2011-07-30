@@ -22,7 +22,7 @@ namespace v68k
 		private:
 			registers regs;
 			
-			memory mem;
+			const memory mem;
 			
 			bool halted;
 			
