@@ -33,13 +33,13 @@ namespace v68k
 	emulator::emulator( uint8_t* mem_base, uint32_t mem_size )
 	:
 		mem( mem_base, mem_size ),
-		halted( true )
+		condition()
 	{
 	}
 	
 	void emulator::double_bus_fault()
 	{
-		halted = true;
+		condition = halted;
 	}
 	
 	void emulator::reset()
@@ -70,12 +70,12 @@ namespace v68k
 			return;
 		}
 		
-		halted = false;
+		condition = normal;
 	}
 	
 	bool emulator::step()
 	{
-		if ( halted )
+		if ( condition != normal )
 		{
 			return false;
 		}
@@ -114,10 +114,10 @@ namespace v68k
 		catch ( ... )
 		{
 			// everything halts the processor for now
-			halted = true;
+			condition = halted;
 		}
 		
-		return !halted;
+		return condition == normal;
 	}
 	
 }

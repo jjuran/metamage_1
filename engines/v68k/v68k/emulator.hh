@@ -17,6 +17,15 @@
 namespace v68k
 {
 	
+	enum processor_condition
+	{
+		startup = 0,
+		
+		halted = -1,
+		
+		normal = 1
+	};
+	
 	class emulator
 	{
 		private:
@@ -24,7 +33,7 @@ namespace v68k
 			
 			const memory mem;
 			
-			bool halted;
+			processor_condition condition;
 			
 			void double_bus_fault();
 			
