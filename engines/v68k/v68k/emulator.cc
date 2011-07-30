@@ -8,7 +8,6 @@
 // v68k
 #include "v68k/decode.hh"
 #include "v68k/endian.hh"
-#include "v68k/fetch.hh"
 #include "v68k/instruction.hh"
 
 
@@ -25,6 +24,12 @@ namespace v68k
 	};
 	
 	
+	static inline uint16_t prefetch_instruction_word( registers& regs, const memory& mem )
+	{
+		return mem.get_instruction_word( regs.pc );
+	}
+	
+	
 	emulator::emulator( uint8_t* mem_base, uint32_t mem_size )
 	:
 		mem( mem_base, mem_size ),
@@ -39,11 +44,24 @@ namespace v68k
 	
 	void emulator::reset()
 	{
-		const reset_vector* v;
-		
 		try
 		{
-			v = (const reset_vector*) mem.translate( 0 );
+			const reset_vector* v = (const reset_vector*) mem.translate( 0 );
+			
+			regs.ttsm = 0 << 2  // clear Trace bits
+					  | 1 << 1  // set Supervisor bit
+					  | 0;      // clear Master bit
+			
+			regs. iii = 7;  // set max Interrupt mask
+			
+			regs.   x = 0;  // clear CCR
+			regs.nzvc = 0;
+			
+			regs.a[7] = longword_from_big( v->isp );
+			regs.pc   = longword_from_big( v->pc  );
+			
+			// prefetch
+			regs.op = prefetch_instruction_word( regs, mem );
 		}
 		catch ( ... )
 		{
@@ -51,18 +69,6 @@ namespace v68k
 			
 			return;
 		}
-		
-		regs.ttsm = 0 << 2  // clear Trace bits
-		          | 1 << 1  // set Supervisor bit
-		          | 0;      // clear Master bit
-		
-		regs. iii = 7;  // set max Interrupt mask
-		
-		regs.   x = 0;  // clear CCR
-		regs.nzvc = 0;
-		
-		regs.a[7] = longword_from_big( v->isp );
-		regs.pc   = longword_from_big( v->pc  );
 		
 		halted = false;
 	}
@@ -76,10 +82,10 @@ namespace v68k
 		
 		try
 		{
-			// fetch
-			regs.op = fetch_instruction_word( regs, mem );
+			// advance pc
+			regs.pc += 2;
 			
-			// decode
+			// decode (prefetched)
 			const instruction* decoded = decode( regs, mem );
 			
 			if ( !decoded )
@@ -101,6 +107,9 @@ namespace v68k
 			
 			// execute
 			decoded->code( regs, mem, params );
+			
+			// prefetch next
+			regs.op = prefetch_instruction_word( regs, mem );
 		}
 		catch ( ... )
 		{
