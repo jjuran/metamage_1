@@ -21,8 +21,8 @@ namespace v68k
 	class memory
 	{
 		private:
-			uint8_t*  base;
-			uint32_t  size;
+			uint8_t* const  base;
+			uint32_t const  size;
 		
 		public:
 			memory( uint8_t* mem_base, uint32_t mem_size );
