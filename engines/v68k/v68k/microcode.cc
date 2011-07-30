@@ -91,6 +91,42 @@ namespace v68k
 		s.condition = processor_condition( bkpt_0 + data );
 	}
 	
+	void microcode_EXT_W( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		uint32_t& Dn = s.regs.d[n];
+		
+		const int8_t byte = Dn;
+		
+		const int16_t word = byte;
+		
+		Dn = (Dn & 0xFFFF0000) | word;
+		
+		s.regs.nzvc = N( word <  0 )
+		            | Z( word == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_EXT_L( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		uint32_t& Dn = s.regs.d[n];
+		
+		const int16_t word = Dn;
+		
+		const int32_t longword = word;
+		
+		Dn = longword;
+		
+		s.regs.nzvc = N( longword <  0 )
+		            | Z( longword == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
 	void microcode_LINK( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];

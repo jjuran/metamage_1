@@ -20,6 +20,9 @@ namespace v68k
 	
 	extern instruction decoded_BKPT;
 	
+	extern instruction decoded_EXT_W;
+	extern instruction decoded_EXT_L;
+	
 	extern instruction decoded_LINK;
 	extern instruction decoded_UNLK;
 	

@@ -27,6 +27,12 @@ namespace v68k
 			return &decoded_BKPT;
 		}
 		
+		if ( (opcode & 0xFFB8) == 0x4880 )
+		{
+			return opcode & 0x0040 ? &decoded_EXT_L
+			                       : &decoded_EXT_W;
+		}
+		
 		return 0;  // NULL
 	}
 	
