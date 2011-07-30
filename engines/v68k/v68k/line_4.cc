@@ -19,7 +19,7 @@ namespace v68k
 	static const instruction* instructions_4e7_low[] =
 	{
 		0,  // RESET
-		0,  // NOP
+		&decoded_NOP,
 		0,  // STOP
 		0,  // RTE
 		0,  // RTD

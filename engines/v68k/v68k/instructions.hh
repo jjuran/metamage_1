@@ -19,6 +19,8 @@ namespace v68k
 	extern instruction decoded_LINK;
 	extern instruction decoded_UNLK;
 	
+	extern instruction decoded_NOP;
+	
 	extern instruction decoded_MOVEQ;
 	
 	extern instruction decoded_EXG;

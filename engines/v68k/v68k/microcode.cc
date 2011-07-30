@@ -114,6 +114,11 @@ namespace v68k
 		sp += 4;
 	}
 	
+	void microcode_NOP( registers& regs, const memory& mem, const uint32_t* params )
+	{
+		// "no operation"
+	}
+	
 	void microcode_MOVEQ( registers& regs, const memory& mem, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];

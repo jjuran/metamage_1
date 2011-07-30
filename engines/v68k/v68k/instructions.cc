@@ -37,6 +37,12 @@ namespace v68k
 		microcode_UNLK
 	};
 	
+	instruction decoded_NOP =
+	{
+		fetches_none,
+		microcode_NOP
+	};
+	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,
