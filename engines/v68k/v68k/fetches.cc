@@ -14,6 +14,11 @@ namespace v68k
 	
 	// General
 	
+	fetcher fetches_none[] =
+	{
+		0  // NULL
+	};
+	
 	fetcher fetches_ANY_minor_register_num[] =
 	{
 		&fetch_minor_register_num,
