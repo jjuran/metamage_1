@@ -101,6 +101,11 @@ namespace v68k
 	{
 		if ( opcode & 0x0100 )
 		{
+			if ( (opcode & 0xFFF8) == 0x49C0 )
+			{
+				return &decoded_EXTB;
+			}
+			
 			return 0;  // NULL
 		}
 		

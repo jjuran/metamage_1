@@ -53,6 +53,13 @@ namespace v68k
 		microcode_EXT_L
 	};
 	
+	instruction decoded_EXTB =
+	{
+		FETCHES_MINOR_REGISTER_NUM,
+		microcode_EXTB,
+		not_before_68020
+	};
+	
 	instruction decoded_LINK =
 	{
 		fetches_LINK,
