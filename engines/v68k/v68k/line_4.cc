@@ -16,6 +16,18 @@
 namespace v68k
 {
 	
+	static const instruction* instructions_4e7_low[] =
+	{
+		0,  // RESET
+		0,  // NOP
+		0,  // STOP
+		0,  // RTE
+		0,  // RTD
+		0,  // RTS
+		0,  // TRAPV
+		0   // RTR
+	};
+	
 	static const instruction* decode_4e( const registers& regs, const memory& mem )
 	{
 		if ( regs.op & 0x0080 )
@@ -55,7 +67,7 @@ namespace v68k
 				case 6:  // 0x4e70 - 0x4e77
 					
 					// RESET, NOP, STOP, RTE, RTD, RTS, TRAPV, RTR
-					break;
+					return instructions_4e7_low[ regs.op & 0x7 ];
 				
 				case 7:  // 0x4e78 - 0x4e7f
 					
