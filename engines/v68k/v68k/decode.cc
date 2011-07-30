@@ -7,7 +7,6 @@
 
 // v68k
 #include "v68k/instructions.hh"
-#include "v68k/memory.hh"
 #include "v68k/registers.hh"
 
 
