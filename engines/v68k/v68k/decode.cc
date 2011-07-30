@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/instructions.hh"
+#include "v68k/line_4.hh"
 #include "v68k/registers.hh"
 
 
@@ -70,7 +71,7 @@ namespace v68k
 		&decode_unimplemented,
 		&decode_unimplemented,
 		
-		&decode_unimplemented,
+		&decode_line_4,
 		&decode_unimplemented,
 		&decode_unimplemented,
 		&decode_line_7,

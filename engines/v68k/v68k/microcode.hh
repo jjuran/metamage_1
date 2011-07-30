@@ -27,6 +27,10 @@ namespace v68k
 	void microcode_MOVEP_to  ( registers& regs, const memory& mem, const uint32_t* params );
 	void microcode_MOVEP_from( registers& regs, const memory& mem, const uint32_t* params );
 	
+	void microcode_LINK( registers& regs, const memory& mem, const uint32_t* params );
+	
+	void microcode_UNLK( registers& regs, const memory& mem, const uint32_t* params );
+	
 	void microcode_MOVEQ( registers& regs, const memory& mem, const uint32_t* params );
 	
 	void microcode_EXG( registers& regs, const memory& mem, const uint32_t* params );

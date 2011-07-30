@@ -31,6 +31,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_LINK[] =
+	{
+		&fetch_minor_register_num,
+		&fetch_word_displacement,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_MOVEQ[] =
 	{
 		&fetch_major_register_num,

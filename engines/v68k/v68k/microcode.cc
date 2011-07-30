@@ -83,6 +83,37 @@ namespace v68k
 		Dx = data;
 	}
 	
+	void microcode_LINK( registers& regs, const memory& mem, const uint32_t* params )
+	{
+		const uint32_t n    = params[0];
+		const int32_t  disp = params[1];
+		
+		uint32_t& An = regs.a[n];
+		uint32_t& sp = regs.a[7];
+		
+		sp -= 4;
+		
+		mem.put_long( sp, An );
+		
+		An = sp;
+		
+		sp += disp;
+	}
+	
+	void microcode_UNLK( registers& regs, const memory& mem, const uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		uint32_t& An = regs.a[n];
+		uint32_t& sp = regs.a[7];
+		
+		sp = An;
+		
+		An = mem.get_long( sp );
+		
+		sp += 4;
+	}
+	
 	void microcode_MOVEQ( registers& regs, const memory& mem, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];

@@ -25,6 +25,18 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_LINK =
+	{
+		fetches_LINK,
+		microcode_LINK
+	};
+	
+	instruction decoded_UNLK =
+	{
+		fetches_ANY_minor_register_num,
+		microcode_UNLK
+	};
+	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,
