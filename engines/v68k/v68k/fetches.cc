@@ -52,6 +52,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_LINK_L[] =
+	{
+		&FETCH_MINOR_REGISTER_NUM,
+		&fetch_longword_displacement,
+		0  // NULL
+	};
+	
 	
 	fetcher fetches_STOP[] =
 	{

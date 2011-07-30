@@ -19,6 +19,8 @@ namespace v68k
 	
 	extern fetcher fetches_MOVEP[];
 	
+	extern fetcher fetches_LINK_L[];
+	
 	extern fetcher fetches_LINK[];
 	
 	extern fetcher fetches_STOP[];

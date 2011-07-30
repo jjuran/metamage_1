@@ -17,6 +17,11 @@ namespace v68k
 	
 	static const instruction* decode_48( uint16_t opcode )
 	{
+		if ( (opcode & 0xFFF8) == 0x4808 )
+		{
+			return &decoded_LINK_L;
+		}
+		
 		if ( (opcode & 0xFFF8) == 0x4848 )
 		{
 			return &decoded_BKPT;

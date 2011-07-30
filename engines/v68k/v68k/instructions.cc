@@ -28,6 +28,13 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_LINK_L =
+	{
+		fetches_LINK_L,
+		microcode_LINK,  // same as LINK
+		not_before_68020
+	};
+	
 	instruction decoded_BKPT =
 	{
 		fetches_data_at_0007,
