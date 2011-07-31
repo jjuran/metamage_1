@@ -24,9 +24,9 @@ namespace v68k
 	};
 	
 	
-	emulator::emulator( uint8_t* mem_base, uint32_t mem_size )
+	emulator::emulator( processor_model model, uint8_t* mem_base, uint32_t mem_size )
 	:
-		processor_state( mem_base, mem_size )
+		processor_state( model, mem_base, mem_size )
 	{
 	}
 	

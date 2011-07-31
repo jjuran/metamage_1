@@ -133,7 +133,7 @@ static void emulator_test()
 	load_data   ( mem );
 	load_code   ( mem );
 	
-	v68k::emulator emu( mem, sizeof mem );
+	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
 	
 	emu.reset();
 	

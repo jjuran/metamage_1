@@ -17,6 +17,15 @@
 namespace v68k
 {
 	
+	enum processor_model
+	{
+		mc68000 = 0,
+		mc68010 = 1,
+		mc68020 = 2,
+		mc68030 = 3,
+		mc68040 = 4
+	};
+	
 	enum processor_condition
 	{
 		startup = 0,
@@ -32,11 +41,13 @@ namespace v68k
 		
 		const memory mem;
 		
+		const processor_model model;
+		
 		processor_condition condition;
 		
 		uint16_t opcode;  // current instruction opcode
 		
-		processor_state( uint8_t* mem_base, uint32_t mem_size );
+		processor_state( processor_model model, uint8_t* mem_base, uint32_t mem_size );
 	};
 	
 }
