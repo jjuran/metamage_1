@@ -147,9 +147,16 @@ namespace v68k
 	{
 		const uint32_t data = params[0];
 		
-		s.set_SR( data );
-		
-		s.condition = stopped;
+		if ( data == 0xFFFF )
+		{
+			s.condition = finished;
+		}
+		else
+		{
+			s.set_SR( data );
+			
+			s.condition = stopped;
+		}
 	}
 	
 	void microcode_MOVEQ( processor_state& s, const uint32_t* params )

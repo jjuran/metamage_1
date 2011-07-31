@@ -44,6 +44,7 @@ namespace v68k
 		
 		bkpt_mask = 0xF8,
 		
+		finished = 2,
 		normal = 1
 	};
 	
