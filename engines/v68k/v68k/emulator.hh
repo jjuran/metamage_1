@@ -26,11 +26,6 @@ namespace v68k
 		public:
 			emulator( uint8_t* mem_base, uint32_t mem_size );
 			
-			const registers& get_registers() const
-			{
-				return regs;
-			}
-			
 			void reset();
 			
 			bool step();
