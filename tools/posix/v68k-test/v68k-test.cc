@@ -82,30 +82,17 @@ static void load_code( uint8_t* mem )
 	
 	code[ i++ ] = big_word( 0xC189 );  // EXG  D0,A1
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
+	code[ i++ ] = big_word( 0x4e61 );  // MOVE A1,USP
 	
-	code[ i++ ] = big_word( 0xC18A );  // EXG  D0,A2
+	code[ i++ ] = big_word( 0x4e6A );  // MOVE USP,A2
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
+	code[ i++ ] = big_word( 0x4e6B );  // MOVE USP,A3
 	
-	code[ i++ ] = big_word( 0xC18B );  // EXG  D0,A3
+	code[ i++ ] = big_word( 0x4e6C );  // MOVE USP,A4
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
+	code[ i++ ] = big_word( 0x4e6D );  // MOVE USP,A5
 	
-	code[ i++ ] = big_word( 0xC18C );  // EXG  D0,A4
-	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
-	
-	code[ i++ ] = big_word( 0xC18D );  // EXG  D0,A5
-	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
-	
-	code[ i++ ] = big_word( 0xC18E );  // EXG  D0,A6
+	code[ i++ ] = big_word( 0x4e6E );  // MOVE USP,A6
 	
 	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1024,A7),D0
 	code[ i++ ] = big_word( 0xFC00 );
