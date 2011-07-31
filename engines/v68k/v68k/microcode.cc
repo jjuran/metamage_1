@@ -117,14 +117,16 @@ namespace v68k
 	{
 		const uint32_t n = params[0];
 		
-		s.regs.usp = s.regs.a[n];
+		// MOVE USP is privileged, so USP is never A7 here
+		s.regs.alt_sp = s.regs.a[n];
 	}
 	
 	void microcode_MOVE_from_USP( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n = params[0];
 		
-		s.regs.a[n] = s.regs.usp;
+		// MOVE USP is privileged, so USP is never A7 here
+		s.regs.a[n] = s.regs.alt_sp;
 	}
 	
 	void microcode_NOP( processor_state& s, const uint32_t* params )
