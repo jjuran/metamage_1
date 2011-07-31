@@ -82,6 +82,15 @@ namespace v68k
 		Dx = data;
 	}
 	
+	void microcode_BKPT( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];  // 3-bit breakpoint vector
+		
+		s.regs.pc -= 2;
+		
+		s.condition = processor_condition( bkpt_0 + data );
+	}
+	
 	void microcode_LINK( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];
