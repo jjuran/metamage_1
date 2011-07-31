@@ -104,7 +104,7 @@ namespace v68k
 			}
 			
 			// execute
-			decoded->code( regs, mem, params );
+			decoded->code( *this, params );
 			
 			// prefetch next
 			prefetch_instruction_word();
