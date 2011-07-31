@@ -28,9 +28,9 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_ANY_minor_register_num[] =
+	fetcher fetches_data_at_0007[] =
 	{
-		&FETCH_MINOR_REGISTER_NUM,
+		&fetch_data_at_0007,
 		0  // NULL
 	};
 	

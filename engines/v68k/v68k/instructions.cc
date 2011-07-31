@@ -10,6 +10,9 @@
 #include "v68k/microcode.hh"
 
 
+#define FETCHES_MINOR_REGISTER_NUM  fetches_data_at_0007
+
+
 namespace v68k
 {
 	
@@ -33,20 +36,20 @@ namespace v68k
 	
 	instruction decoded_UNLK =
 	{
-		fetches_ANY_minor_register_num,
+		FETCHES_MINOR_REGISTER_NUM,
 		microcode_UNLK
 	};
 	
 	instruction decoded_MOVE_to_USP =
 	{
-		fetches_ANY_minor_register_num,
+		FETCHES_MINOR_REGISTER_NUM,
 		microcode_MOVE_to_USP,
 		privileged
 	};
 	
 	instruction decoded_MOVE_from_USP =
 	{
-		fetches_ANY_minor_register_num,
+		FETCHES_MINOR_REGISTER_NUM,
 		microcode_MOVE_from_USP,
 		privileged
 	};
