@@ -109,8 +109,8 @@ static void load_code( uint8_t* mem )
 	code[ i++ ] = big_word( 0x700A );  // MOVEQ  #0A,D0  ; '\n'
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4E72 );  // STOP #2700
-	code[ i++ ] = big_word( 0x2700 );
+	code[ i++ ] = big_word( 0x4E72 );  // STOP #FFFF  ; finish
+	code[ i++ ] = big_word( 0xFFFF );
 }
 
 static void emulator_test()
@@ -144,6 +144,11 @@ step_loop:
 		}
 		
 		goto step_loop;
+	}
+	
+	if ( emu.condition == v68k::finished )
+	{
+		return;
 	}
 	
 	putchar( '\n' );
