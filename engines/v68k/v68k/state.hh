@@ -34,6 +34,8 @@ namespace v68k
 		
 		processor_condition condition;
 		
+		uint16_t opcode;  // current instruction opcode
+		
 		processor_state( uint8_t* mem_base, uint32_t mem_size );
 	};
 	

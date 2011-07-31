@@ -26,8 +26,6 @@ namespace v68k
 		uint8_t  iii;  // .  I2 I1 I0
 		uint8_t    x;  // .  .  .  X
 		uint8_t nzvc;  // N  Z  V  C
-		
-		uint16_t op;  // current instruction
 	};
 	
 }

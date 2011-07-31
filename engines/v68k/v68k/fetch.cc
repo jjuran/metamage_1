@@ -39,41 +39,41 @@ namespace v68k
 	
 	uint32_t fetch_major_register_id( processor_state& s )
 	{
-		return s.regs.op >> 9 & 0x000F;
+		return s.opcode >> 9 & 0x000F;
 	}
 	
 	uint32_t fetch_minor_register_id( processor_state& s )
 	{
-		return s.regs.op & 0x000F;
+		return s.opcode & 0x000F;
 	}
 	
 	
 	uint32_t fetch_major_register_num( processor_state& s )
 	{
-		return s.regs.op >> 9 & 0x0007;
+		return s.opcode >> 9 & 0x0007;
 	}
 	
 	uint32_t fetch_minor_register_num( processor_state& s )
 	{
-		return s.regs.op & 0x0007;
+		return s.opcode & 0x0007;
 	}
 	
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& s )
 	{
-		return s.regs.op >> 6 & 0x0007;
+		return s.opcode >> 6 & 0x0007;
 	}
 	
 	
 	uint32_t fetch_MOVEQ_data( processor_state& s )
 	{
-		return int32_t( int8_t( s.regs.op & 0x00ff ) );
+		return int32_t( int8_t( s.opcode & 0x00ff ) );
 	}
 	
 	
 	uint32_t fetch_EXG_opmode( processor_state& s )
 	{
-		return s.regs.op >> 3 & 0x001f;
+		return s.opcode >> 3 & 0x001f;
 	}
 	
 }

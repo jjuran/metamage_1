@@ -32,7 +32,7 @@ namespace v68k
 	
 	void emulator::prefetch_instruction_word()
 	{
-		regs.op = mem.get_instruction_word( regs.pc );
+		opcode = mem.get_instruction_word( regs.pc );
 	}
 	
 	void emulator::double_bus_fault()
@@ -84,7 +84,7 @@ namespace v68k
 			regs.pc += 2;
 			
 			// decode (prefetched)
-			const instruction* decoded = decode( regs.op );
+			const instruction* decoded = decode( opcode );
 			
 			if ( !decoded )
 			{
