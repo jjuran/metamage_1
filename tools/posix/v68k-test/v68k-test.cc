@@ -23,7 +23,7 @@ using v68k::big_longword;
 
 static void dump( const v68k::emulator& emu )
 {
-	const v68k::registers& regs = emu.get_registers();
+	const v68k::registers& regs = emu.regs;
 	
 	printf( "\n" );
 	
