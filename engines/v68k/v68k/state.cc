@@ -17,6 +17,16 @@ namespace v68k
 	{
 	}
 	
+	uint16_t processor_state::get_SR() const
+	{
+		const uint16_t sr = regs.ttsm << 12
+		                  | regs. iii <<  8
+		                  | regs.   x <<  4
+		                  | regs.nzvc <<  0;
+		
+		return sr;
+	}
+	
 	void processor_state::set_SR( uint16_t new_sr )
 	{
 		// T.S. .III ...X NZVC  (all processors)

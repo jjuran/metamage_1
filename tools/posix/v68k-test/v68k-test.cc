@@ -32,11 +32,6 @@ static void dump( const v68k::emulator& emu )
 		printf( "D%d: %.8x   A%d: %.8x\n", i, regs.d[i], i, regs.a[i] );
 	}
 	
-	uint16_t sr = regs.ttsm << 12
-	            | regs. iii <<  8
-	            | regs.   x <<  4
-	            | regs.nzvc <<  0;
-	
 	printf( "\n" );
 	
 	printf( "Alt SP:  %.8x\n", regs.alt_sp  );
@@ -45,7 +40,7 @@ static void dump( const v68k::emulator& emu )
 	printf( "\n" );
 	
 	printf( "PC: %.8x\n", regs.pc );
-	printf( "SR: %.4x\n", sr );
+	printf( "SR: %.4x\n", emu.get_SR() );
 }
 
 
