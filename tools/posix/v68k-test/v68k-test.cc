@@ -138,6 +138,27 @@ static void emulator_test()
 		continue;
 	}
 	
+	const char* condition;
+	
+	switch ( emu.condition )
+	{
+		using namespace v68k;
+		
+		case halted:
+			condition = "halted";
+			break;
+		
+		case stopped:
+			condition = "stopped";
+			break;
+		
+		default:
+			condition = "???";
+			break;
+	}
+	
+	printf( "Processor %s\n", condition );
+	
 	dump( emu );
 }
 
