@@ -39,7 +39,8 @@ static void dump( const v68k::emulator& emu )
 	
 	printf( "\n" );
 	
-	printf( "USP: %.8x\n", regs.usp );
+	printf( "Alt SP:  %.8x\n", regs.alt_sp  );
+	printf( "Alt SSP: %.8x\n", regs.alt_ssp );
 	
 	printf( "\n" );
 	
