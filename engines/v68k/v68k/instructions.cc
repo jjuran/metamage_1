@@ -28,6 +28,12 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_BKPT =
+	{
+		fetches_data_at_0007,
+		microcode_BKPT
+	};
+	
 	instruction decoded_LINK =
 	{
 		fetches_LINK,

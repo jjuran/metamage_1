@@ -25,6 +25,8 @@ namespace v68k
 	void microcode_MOVEP_to  ( processor_state& state, const uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, const uint32_t* params );
 	
+	void microcode_BKPT( processor_state& state, const uint32_t* params );
+	
 	void microcode_LINK( processor_state& state, const uint32_t* params );
 	
 	void microcode_UNLK( processor_state& state, const uint32_t* params );

@@ -15,6 +15,16 @@
 namespace v68k
 {
 	
+	static const instruction* decode_48( uint16_t opcode )
+	{
+		if ( (opcode & 0xFFF8) == 0x4848 )
+		{
+			return &decoded_BKPT;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* instructions_4e7_low[] =
 	{
 		0,  // RESET
@@ -85,6 +95,9 @@ namespace v68k
 		
 		switch ( opcode & 0xff00 )
 		{
+			case 0x4800:
+				return decode_48( opcode );
+			
 			case 0x4e00:
 				return decode_4e( opcode );
 			
