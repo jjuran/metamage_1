@@ -13,6 +13,8 @@
 namespace v68k
 {
 	
+	extern fetcher fetches_none[];
+	
 	extern fetcher fetches_ANY_minor_register_num[];
 	
 	extern fetcher fetches_MOVEP[];
