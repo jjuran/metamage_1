@@ -18,6 +18,8 @@ namespace v68k
 		uint32_t d[8];  // D0-D7
 		uint32_t a[8];  // A0-A7
 		
+		uint32_t usp;
+		
 		uint32_t pc;
 		
 		uint8_t ttsm;  // T1 T0 S  M

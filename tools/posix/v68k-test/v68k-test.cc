@@ -39,6 +39,10 @@ static void dump( const v68k::emulator& emu )
 	
 	printf( "\n" );
 	
+	printf( "USP: %.8x\n", regs.usp );
+	
+	printf( "\n" );
+	
 	printf( "PC: %.8x\n", regs.pc );
 	printf( "SR: %.4x\n", sr );
 }
