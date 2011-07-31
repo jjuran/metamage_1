@@ -26,14 +26,13 @@ namespace v68k
 	
 	emulator::emulator( uint8_t* mem_base, uint32_t mem_size )
 	:
-		mem( mem_base, mem_size ),
-		condition()
+		processor_state( mem_base, mem_size )
 	{
 	}
 	
 	void emulator::prefetch_instruction_word()
 	{
-		regs.op = mem.get_instruction_word( regs.pc );
+		opcode = mem.get_instruction_word( regs.pc );
 	}
 	
 	void emulator::double_bus_fault()
@@ -85,7 +84,7 @@ namespace v68k
 			regs.pc += 2;
 			
 			// decode (prefetched)
-			const instruction* decoded = decode( regs.op );
+			const instruction* decoded = decode( opcode );
 			
 			if ( !decoded )
 			{
@@ -101,11 +100,11 @@ namespace v68k
 			
 			while ( *fetch != 0 )  // NULL
 			{
-				*p++ = (*fetch++)( regs, mem );
+				*p++ = (*fetch++)( *this );
 			}
 			
 			// execute
-			decoded->code( regs, mem, params );
+			decoded->code( *this, params );
 			
 			// prefetch next
 			prefetch_instruction_word();

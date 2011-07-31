@@ -13,12 +13,10 @@
 namespace v68k
 {
 	
-	struct registers;
-	
-	class memory;
+	struct processor_state;
 	
 	
-	typedef uint32_t (*fetcher)( registers&, const memory& );
+	typedef uint32_t (*fetcher)( processor_state& state );
 	
 }
 

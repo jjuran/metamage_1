@@ -10,43 +10,21 @@
 #include <stdint.h>
 
 // v68k
-#include "v68k/memory.hh"
-#include "v68k/registers.hh"
+#include "v68k/state.hh"
 
 
 namespace v68k
 {
 	
-	enum processor_condition
-	{
-		startup = 0,
-		
-		halted = -1,
-		
-		normal = 1
-	};
-	
-	class emulator
+	class emulator : public processor_state
 	{
 		private:
-			registers regs;
-			
-			const memory mem;
-			
-			processor_condition condition;
-			
 			void prefetch_instruction_word();
 			
 			void double_bus_fault();
-			
 		
 		public:
 			emulator( uint8_t* mem_base, uint32_t mem_size );
-			
-			const registers& get_registers() const
-			{
-				return regs;
-			}
 			
 			void reset();
 			
