@@ -73,49 +73,41 @@ static void load_code( uint8_t* mem )
 	
 	int i = 0;
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1016,A7),D0
-	code[ i++ ] = big_word( 0xFC08 );
+	code[ i++ ] = big_word( 0x7048 );  // MOVEQ  #48,D0  ; 'H'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0xC189 );  // EXG  D0,A1
+	code[ i++ ] = big_word( 0x7065 );  // MOVEQ  #65,D0  ; 'e'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e61 );  // MOVE A1,USP
+	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e6A );  // MOVE USP,A2
+	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e6B );  // MOVE USP,A3
+	code[ i++ ] = big_word( 0x706F );  // MOVEQ  #6F,D0  ; 'o'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e6C );  // MOVE USP,A4
+	code[ i++ ] = big_word( 0x7020 );  // MOVEQ  #20,D0  ; ' '
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e6D );  // MOVE USP,A5
+	code[ i++ ] = big_word( 0x7077 );  // MOVEQ  #77,D0  ; 'w'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x4e6E );  // MOVE USP,A6
+	code[ i++ ] = big_word( 0x706F );  // MOVEQ  #6F,D0  ; 'o'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (-1024,A7),D0
-	code[ i++ ] = big_word( 0xFC00 );
+	code[ i++ ] = big_word( 0x7072 );  // MOVEQ  #72,D0  ; 'r'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x034F );  // MOVEP.L  (-1024,A7),D1
-	code[ i++ ] = big_word( 0xFC00 );
+	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x054F );  // MOVEP.L  (-1024,A7),D2
-	code[ i++ ] = big_word( 0xFC00 );
+	code[ i++ ] = big_word( 0x7064 );  // MOVEQ  #64,D0  ; 'd'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x0b4F );  // MOVEP.L  (-1024,A7),D5
-	code[ i++ ] = big_word( 0xFC00 );
-	
-	code[ i++ ] = big_word( 0x0d4F );  // MOVEP.L  (-1024,A7),D6
-	code[ i++ ] = big_word( 0xFC00 );
-	
-	code[ i++ ] = big_word( 0x0f4F );  // MOVEP.L  (-1024,A7),D7
-	code[ i++ ] = big_word( 0xFC00 );
-	
-	code[ i++ ] = big_word( 0x76FF );  // MOVEQ  #FF,D3
-	code[ i++ ] = big_word( 0x78FF );  // MOVEQ  #FF,D4
-	
-	code[ i++ ] = big_word( 0xC788 );  // EXG  D3,A0
-	code[ i++ ] = big_word( 0xC98F );  // EXG  D4,A7
-	
-	code[ i++ ] = big_word( 0x76FF );  // MOVEQ  #FF,D3
-	code[ i++ ] = big_word( 0x78FF );  // MOVEQ  #FF,D4
+	code[ i++ ] = big_word( 0x700A );  // MOVEQ  #0A,D0  ; '\n'
+	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
 	code[ i++ ] = big_word( 0x4E72 );  // STOP #2700
 	code[ i++ ] = big_word( 0x2700 );
@@ -133,10 +125,28 @@ static void emulator_test()
 	
 	emu.reset();
 	
+step_loop:
+	
 	while ( emu.step() )
 	{
 		continue;
 	}
+	
+	if ( emu.condition == v68k::bkpt_0 )
+	{
+		const uint32_t c = emu.regs.d[0];
+		
+		if ( c <= 0x7F )
+		{
+			putchar( c );
+			
+			emu.acknowledge_breakpoint( 0x4E71 );  // NOP
+		}
+		
+		goto step_loop;
+	}
+	
+	putchar( '\n' );
 	
 	const char* condition;
 	
