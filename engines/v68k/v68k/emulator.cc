@@ -74,6 +74,12 @@ namespace v68k
 	
 	bool emulator::step()
 	{
+		if ( at_breakpoint() )
+		{
+			// Unacknowledged breakpoint traps as illegal instruction
+			condition = halted;
+		}
+		
 		if ( condition != normal )
 		{
 			return false;
