@@ -35,6 +35,8 @@ namespace v68k
 			
 			processor_condition condition;
 			
+			void prefetch_instruction_word();
+			
 			void double_bus_fault();
 			
 		

@@ -24,17 +24,16 @@ namespace v68k
 	};
 	
 	
-	static inline uint16_t prefetch_instruction_word( registers& regs, const memory& mem )
-	{
-		return mem.get_instruction_word( regs.pc );
-	}
-	
-	
 	emulator::emulator( uint8_t* mem_base, uint32_t mem_size )
 	:
 		mem( mem_base, mem_size ),
 		condition()
 	{
+	}
+	
+	void emulator::prefetch_instruction_word()
+	{
+		regs.op = mem.get_instruction_word( regs.pc );
 	}
 	
 	void emulator::double_bus_fault()
@@ -61,7 +60,7 @@ namespace v68k
 			regs.pc   = longword_from_big( v->pc  );
 			
 			// prefetch
-			regs.op = prefetch_instruction_word( regs, mem );
+			prefetch_instruction_word();
 		}
 		catch ( ... )
 		{
@@ -109,7 +108,7 @@ namespace v68k
 			decoded->code( regs, mem, params );
 			
 			// prefetch next
-			regs.op = prefetch_instruction_word( regs, mem );
+			prefetch_instruction_word();
 		}
 		catch ( ... )
 		{
