@@ -114,6 +114,20 @@ namespace v68k
 		sp += 4;
 	}
 	
+	void microcode_MOVE_to_USP( registers& regs, const memory& mem, const uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		regs.usp = regs.a[n];
+	}
+	
+	void microcode_MOVE_from_USP( registers& regs, const memory& mem, const uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		regs.a[n] = regs.usp;
+	}
+	
 	void microcode_NOP( registers& regs, const memory& mem, const uint32_t* params )
 	{
 		// "no operation"

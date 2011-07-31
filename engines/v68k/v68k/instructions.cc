@@ -37,6 +37,20 @@ namespace v68k
 		microcode_UNLK
 	};
 	
+	instruction decoded_MOVE_to_USP =
+	{
+		fetches_ANY_minor_register_num,
+		microcode_MOVE_to_USP,
+		privileged
+	};
+	
+	instruction decoded_MOVE_from_USP =
+	{
+		fetches_ANY_minor_register_num,
+		microcode_MOVE_from_USP,
+		privileged
+	};
+	
 	instruction decoded_NOP =
 	{
 		fetches_none,

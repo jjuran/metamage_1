@@ -56,13 +56,11 @@ namespace v68k
 				
 				case 4:  // 0x4e60 - 0x4e67
 					
-					// MOVE to USP
-					break;
+					return &decoded_MOVE_to_USP;
 				
 				case 5:  // 0x4e68 - 0x4e6f
 					
-					// MOVE from USP
-					break;
+					return &decoded_MOVE_from_USP;
 				
 				case 6:  // 0x4e70 - 0x4e77
 					
