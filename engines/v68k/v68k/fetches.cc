@@ -44,6 +44,13 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_STOP[] =
+	{
+		&fetch_unsigned_word,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_MOVEQ[] =
 	{
 		&fetch_major_register_num,

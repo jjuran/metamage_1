@@ -117,8 +117,8 @@ static void load_code( uint8_t* mem )
 	code[ i++ ] = big_word( 0x76FF );  // MOVEQ  #FF,D3
 	code[ i++ ] = big_word( 0x78FF );  // MOVEQ  #FF,D4
 	
-	code[ i++ ] = big_word( 0x014F );  // MOVEP.L  (0,A7),D0
-	code[ i++ ] = big_word( 0x0000 );
+	code[ i++ ] = big_word( 0x4E72 );  // STOP #2700
+	code[ i++ ] = big_word( 0x2700 );
 }
 
 static void emulator_test()
@@ -137,6 +137,27 @@ static void emulator_test()
 	{
 		continue;
 	}
+	
+	const char* condition;
+	
+	switch ( emu.condition )
+	{
+		using namespace v68k;
+		
+		case halted:
+			condition = "halted";
+			break;
+		
+		case stopped:
+			condition = "stopped";
+			break;
+		
+		default:
+			condition = "???";
+			break;
+	}
+	
+	printf( "Processor %s\n", condition );
 	
 	dump( emu );
 }
