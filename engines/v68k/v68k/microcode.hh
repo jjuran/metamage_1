@@ -31,6 +31,9 @@ namespace v68k
 	
 	void microcode_UNLK( registers& regs, const memory& mem, const uint32_t* params );
 	
+	void microcode_MOVE_to_USP  ( registers& regs, const memory& mem, const uint32_t* params );
+	void microcode_MOVE_from_USP( registers& regs, const memory& mem, const uint32_t* params );
+	
 	void microcode_NOP( registers& regs, const memory& mem, const uint32_t* params );
 	
 	void microcode_MOVEQ( registers& regs, const memory& mem, const uint32_t* params );

@@ -14,10 +14,20 @@
 namespace v68k
 {
 	
+	enum instruction_flags_t
+	{
+		privileged_except_on_68000 = 0x01,
+		privileged                 = 0x02,
+		privilege_mask             = 0x03
+	};
+	
 	struct instruction
 	{
+		typedef instruction_flags_t flags_t;
+		
 		fetcher*   fetch;
 		microcode  code;
+		flags_t    flags;
 	};
 	
 }
