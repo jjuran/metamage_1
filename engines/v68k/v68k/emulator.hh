@@ -34,6 +34,8 @@ namespace v68k
 			{
 				return (condition & bkpt_mask) == bkpt_0;
 			}
+			
+			bool acknowledge_breakpoint( uint16_t new_opcode );
 	};
 	
 }
