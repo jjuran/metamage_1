@@ -146,6 +146,11 @@ step_loop:
 		goto step_loop;
 	}
 	
+	if ( emu.condition == v68k::finished )
+	{
+		return;
+	}
+	
 	putchar( '\n' );
 	
 	const char* condition;
