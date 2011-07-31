@@ -19,7 +19,7 @@ namespace v68k
 	{
 		0,  // RESET
 		&decoded_NOP,
-		0,  // STOP
+		&decoded_STOP,
 		0,  // RTE
 		0,  // RTD
 		0,  // RTS

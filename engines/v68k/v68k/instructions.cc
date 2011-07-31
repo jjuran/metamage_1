@@ -57,6 +57,13 @@ namespace v68k
 		microcode_NOP
 	};
 	
+	instruction decoded_STOP =
+	{
+		fetches_STOP,
+		microcode_STOP,
+		privileged
+	};
+	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,

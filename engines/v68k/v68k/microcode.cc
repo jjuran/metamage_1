@@ -134,6 +134,15 @@ namespace v68k
 		// "no operation"
 	}
 	
+	void microcode_STOP( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_SR( data );
+		
+		s.condition = stopped;
+	}
+	
 	void microcode_MOVEQ( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];

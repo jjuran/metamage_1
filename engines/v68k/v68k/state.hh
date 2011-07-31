@@ -30,7 +30,8 @@ namespace v68k
 	{
 		startup = 0,
 		
-		halted = -1,
+		halted  = -1,  // double bus fault
+		stopped = -2,  // STOP instruction
 		
 		normal = 1
 	};

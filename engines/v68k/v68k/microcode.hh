@@ -34,6 +34,8 @@ namespace v68k
 	
 	void microcode_NOP( processor_state& state, const uint32_t* params );
 	
+	void microcode_STOP( processor_state& state, const uint32_t* params );
+	
 	void microcode_MOVEQ( processor_state& state, const uint32_t* params );
 	
 	void microcode_EXG( processor_state& state, const uint32_t* params );
