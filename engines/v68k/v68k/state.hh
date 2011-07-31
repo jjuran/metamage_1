@@ -48,6 +48,8 @@ namespace v68k
 		uint16_t opcode;  // current instruction opcode
 		
 		processor_state( processor_model model, uint8_t* mem_base, uint32_t mem_size );
+		
+		void set_SR( uint16_t new_sr );
 	};
 	
 }
