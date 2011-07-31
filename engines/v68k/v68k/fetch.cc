@@ -6,75 +6,74 @@
 #include "v68k/fetch.hh"
 
 // v68k
-#include "v68k/memory.hh"
-#include "v68k/registers.hh"
+#include "v68k/state.hh"
 
 
 namespace v68k
 {
 	
-	uint16_t fetch_instruction_word( registers& regs, const memory& mem )
+	uint16_t fetch_instruction_word( processor_state& s )
 	{
-		const uint16_t word = mem.get_instruction_word( regs.pc );
+		const uint16_t word = s.mem.get_instruction_word( s.regs.pc );
 		
-		regs.pc += 2;
+		s.regs.pc += 2;
 		
 		return word;
 	}
 	
 	
-	uint32_t fetch_word_displacement( registers& regs, const memory& mem )
+	uint32_t fetch_word_displacement( processor_state& s )
 	{
-		const int16_t word = fetch_instruction_word( regs, mem );
+		const int16_t word = fetch_instruction_word( s );
 		
 		return int32_t( word );
 	}
 	
-	uint32_t fetch_longword_displacement( registers& regs, const memory& mem )
+	uint32_t fetch_longword_displacement( processor_state& s )
 	{
-		const uint32_t high = fetch_instruction_word( regs, mem );
+		const uint32_t high = fetch_instruction_word( s );
 		
-		return high << 16 | fetch_instruction_word( regs, mem );
+		return high << 16 | fetch_instruction_word( s );
 	}
 	
 	
-	uint32_t fetch_major_register_id( registers& regs, const memory& )
+	uint32_t fetch_major_register_id( processor_state& s )
 	{
-		return regs.op >> 9 & 0x000F;
+		return s.regs.op >> 9 & 0x000F;
 	}
 	
-	uint32_t fetch_minor_register_id( registers& regs, const memory& )
+	uint32_t fetch_minor_register_id( processor_state& s )
 	{
-		return regs.op & 0x000F;
-	}
-	
-	
-	uint32_t fetch_major_register_num( registers& regs, const memory& )
-	{
-		return regs.op >> 9 & 0x0007;
-	}
-	
-	uint32_t fetch_minor_register_num( registers& regs, const memory& )
-	{
-		return regs.op & 0x0007;
+		return s.regs.op & 0x000F;
 	}
 	
 	
-	uint32_t fetch_MOVEP_opmode( registers& regs, const memory& )
+	uint32_t fetch_major_register_num( processor_state& s )
 	{
-		return regs.op >> 6 & 0x0007;
+		return s.regs.op >> 9 & 0x0007;
+	}
+	
+	uint32_t fetch_minor_register_num( processor_state& s )
+	{
+		return s.regs.op & 0x0007;
 	}
 	
 	
-	uint32_t fetch_MOVEQ_data( registers& regs, const memory& )
+	uint32_t fetch_MOVEP_opmode( processor_state& s )
 	{
-		return int32_t( int8_t( regs.op & 0x00ff ) );
+		return s.regs.op >> 6 & 0x0007;
 	}
 	
 	
-	uint32_t fetch_EXG_opmode( registers& regs, const memory& )
+	uint32_t fetch_MOVEQ_data( processor_state& s )
 	{
-		return regs.op >> 3 & 0x001f;
+		return int32_t( int8_t( s.regs.op & 0x00ff ) );
+	}
+	
+	
+	uint32_t fetch_EXG_opmode( processor_state& s )
+	{
+		return s.regs.op >> 3 & 0x001f;
 	}
 	
 }

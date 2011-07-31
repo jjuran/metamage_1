@@ -100,7 +100,7 @@ namespace v68k
 			
 			while ( *fetch != 0 )  // NULL
 			{
-				*p++ = (*fetch++)( regs, mem );
+				*p++ = (*fetch++)( *this );
 			}
 			
 			// execute
