@@ -152,12 +152,28 @@ static void emulator_test()
 			condition = "stopped";
 			break;
 		
+		case bkpt_0:
+		case bkpt_1:
+		case bkpt_2:
+		case bkpt_3:
+		case bkpt_4:
+		case bkpt_5:
+		case bkpt_6:
+		case bkpt_7:
+			condition = NULL;
+			
+			printf( "Breakpoint %d\n", emu.condition - bkpt_0 );
+			break;
+		
 		default:
 			condition = "???";
 			break;
 	}
 	
-	printf( "Processor %s\n", condition );
+	if ( condition )
+	{
+		printf( "Processor %s\n", condition );
+	}
 	
 	dump( emu );
 }
