@@ -7,7 +7,6 @@
 
 // v68k
 #include "v68k/instructions.hh"
-#include "v68k/registers.hh"
 
 
 #pragma exceptions off
@@ -28,17 +27,17 @@ namespace v68k
 		0   // RTR
 	};
 	
-	static const instruction* decode_4e( const registers& regs, const memory& mem )
+	static const instruction* decode_4e( uint16_t opcode )
 	{
-		if ( regs.op & 0x0080 )
+		if ( opcode & 0x0080 )
 		{
 			// JMP, JSR
 			return 0;  // NULL
 		}
 		
-		if ( regs.op & 0x0040 )
+		if ( opcode & 0x0040 )
 		{
-			switch ( regs.op >> 3 & 0x7 )
+			switch ( opcode >> 3 & 0x7 )
 			{
 				case 0:  // 0x4e40 - 0x4e47
 				case 1:  // 0x4e48 - 0x4e4f
@@ -65,7 +64,7 @@ namespace v68k
 				case 6:  // 0x4e70 - 0x4e77
 					
 					// RESET, NOP, STOP, RTE, RTD, RTS, TRAPV, RTR
-					return instructions_4e7_low[ regs.op & 0x7 ];
+					return instructions_4e7_low[ opcode & 0x7 ];
 				
 				case 7:  // 0x4e78 - 0x4e7f
 					
@@ -77,17 +76,17 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	const instruction* decode_line_4( const registers& regs, const memory& mem )
+	const instruction* decode_line_4( uint16_t opcode )
 	{
-		if ( regs.op & 0x0100 )
+		if ( opcode & 0x0100 )
 		{
 			return 0;  // NULL
 		}
 		
-		switch ( regs.op & 0xff00 )
+		switch ( opcode & 0xff00 )
 		{
 			case 0x4e00:
-				return decode_4e( regs, mem );
+				return decode_4e( opcode );
 			
 			default:
 				break;

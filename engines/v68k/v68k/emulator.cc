@@ -86,7 +86,7 @@ namespace v68k
 			regs.pc += 2;
 			
 			// decode (prefetched)
-			const instruction* decoded = decode( regs, mem );
+			const instruction* decoded = decode( regs.op );
 			
 			if ( !decoded )
 			{

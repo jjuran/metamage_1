@@ -8,7 +8,6 @@
 // v68k
 #include "v68k/instructions.hh"
 #include "v68k/line_4.hh"
-#include "v68k/registers.hh"
 
 
 #pragma exceptions off
@@ -17,23 +16,23 @@
 namespace v68k
 {
 	
-	typedef const instruction* (*decoder)( const registers&, const memory& );
+	typedef const instruction* (*decoder)( uint16_t opcode );
 	
 	
-	static const instruction* decode_line_0( const registers& regs, const memory& mem )
+	static const instruction* decode_line_0( uint16_t opcode )
 	{
-		if ( (regs.op & 0xf138) == 0x0108 )
+		if ( (opcode & 0xf138) == 0x0108 )
 		{
-			return regs.op & 0x0080 ? &decoded_MOVEP_to
-			                        : &decoded_MOVEP_from;
+			return opcode & 0x0080 ? &decoded_MOVEP_to
+			                       : &decoded_MOVEP_from;
 		}
 		
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_line_7( const registers& regs, const memory& mem )
+	static const instruction* decode_line_7( uint16_t opcode )
 	{
-		if ( regs.op & 0x0100 )
+		if ( opcode & 0x0100 )
 		{
 			return 0;  // NULL
 		}
@@ -41,11 +40,11 @@ namespace v68k
 		return &decoded_MOVEQ;
 	}
 	
-	static const instruction* decode_line_C( const registers& regs, const memory& mem )
+	static const instruction* decode_line_C( uint16_t opcode )
 	{
-		if ( regs.op & 0x0100 )
+		if ( opcode & 0x0100 )
 		{
-			const uint16_t mode = regs.op >> 3 & 0x001f;
+			const uint16_t mode = opcode >> 3 & 0x001f;
 			
 			switch ( mode )
 			{
@@ -59,7 +58,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_unimplemented( const registers& regs, const memory& mem )
+	static const instruction* decode_unimplemented( uint16_t opcode )
 	{
 		return 0;  // NULL
 	}
@@ -87,9 +86,9 @@ namespace v68k
 		&decode_unimplemented
 	};
 	
-	const instruction* decode( const registers& regs, const memory& mem )
+	const instruction* decode( uint16_t opcode )
 	{
-		return decoder_per_line[ regs.op >> 12 ]( regs, mem );
+		return decoder_per_line[ opcode >> 12 ]( opcode );
 	}
 	
 }
