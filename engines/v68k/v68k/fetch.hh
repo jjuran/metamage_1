@@ -19,6 +19,8 @@ namespace v68k
 	uint16_t fetch_instruction_word( processor_state& state );
 	
 	
+	uint32_t fetch_pc( processor_state& state );
+	
 	uint32_t fetch_unsigned_word( processor_state& state );
 	
 	uint32_t fetch_word_displacement( processor_state& state );
@@ -33,7 +35,7 @@ namespace v68k
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& state );
 	
-	uint32_t fetch_MOVEQ_data( processor_state& state );
+	uint32_t fetch_signed_data_at_00FF( processor_state& state );
 	
 	uint32_t fetch_EXG_opmode( processor_state& state );
 	

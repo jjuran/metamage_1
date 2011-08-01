@@ -99,6 +99,44 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_BRA_S =
+	{
+		fetches_branch_short,
+		microcode_BRA
+	};
+	
+	instruction decoded_BRA =
+	{
+		fetches_branch,
+		microcode_BRA
+	};
+	
+	instruction decoded_BRA_L =
+	{
+		fetches_branch_long,
+		microcode_BRA,
+		not_before_68020
+	};
+	
+	instruction decoded_BSR_S =
+	{
+		fetches_branch_short,
+		microcode_BSR
+	};
+	
+	instruction decoded_BSR =
+	{
+		fetches_branch,
+		microcode_BSR
+	};
+	
+	instruction decoded_BSR_L =
+	{
+		fetches_branch_long,
+		microcode_BSR,
+		not_before_68020
+	};
+	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,

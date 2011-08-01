@@ -22,6 +22,11 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_pc( processor_state& s )
+	{
+		return s.regs.pc;
+	}
+	
 	uint32_t fetch_unsigned_word( processor_state& s )
 	{
 		return fetch_instruction_word( s );
@@ -70,7 +75,7 @@ namespace v68k
 	}
 	
 	
-	uint32_t fetch_MOVEQ_data( processor_state& s )
+	uint32_t fetch_signed_data_at_00FF( processor_state& s )
 	{
 		return int32_t( int8_t( s.opcode & 0x00ff ) );
 	}

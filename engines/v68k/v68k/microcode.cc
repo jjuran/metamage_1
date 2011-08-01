@@ -213,6 +213,28 @@ namespace v68k
 		}
 	}
 	
+	void microcode_BRA( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t pc   = params[0];
+		const int32_t  disp = params[1];
+		
+		s.regs.pc = pc + disp;
+	}
+	
+	void microcode_BSR( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t pc   = params[0];
+		const int32_t  disp = params[1];
+		
+		uint32_t& sp = s.regs.a[7];
+		
+		sp -= 4;
+		
+		s.mem.put_long( sp, s.regs.pc );
+		
+		s.regs.pc = pc + disp;
+	}
+	
 	void microcode_MOVEQ( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];
