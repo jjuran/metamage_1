@@ -19,11 +19,11 @@ namespace v68k
 	
 	enum processor_model
 	{
-		mc68000 = 0,
-		mc68010 = 1,
-		mc68020 = 2,
-		mc68030 = 3,
-		mc68040 = 4
+		mc68000 = 0x00,
+		mc68010 = 0x10,
+		mc68020 = 0x20,
+		mc68030 = 0x30,
+		mc68040 = 0x40
 	};
 	
 	enum processor_condition
