@@ -98,6 +98,11 @@ namespace v68k
 				throw illegal_instruction();
 			}
 			
+			if ( (decoded->flags & not_before_mask) > model )
+			{
+				throw illegal_instruction();
+			}
+			
 			if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
 			{
 				throw privilege_violation();

@@ -18,7 +18,13 @@ namespace v68k
 	{
 		privileged_except_on_68000 = 0x01,
 		privileged                 = 0x02,
-		privilege_mask             = 0x03
+		privilege_mask             = 0x03,
+		
+		not_before_68010 = 0x10,
+		not_before_68020 = 0x20,
+		not_before_68030 = 0x30,
+		not_before_68040 = 0x40,
+		not_before_mask  = 0x70
 	};
 	
 	struct instruction
