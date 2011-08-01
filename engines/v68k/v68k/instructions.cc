@@ -99,6 +99,12 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_RTS =
+	{
+		fetches_none,
+		microcode_RTS
+	};
+	
 	instruction decoded_BRA_S =
 	{
 		fetches_branch_short,

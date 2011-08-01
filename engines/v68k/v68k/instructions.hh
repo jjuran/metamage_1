@@ -35,6 +35,8 @@ namespace v68k
 	
 	extern instruction decoded_STOP;
 	
+	extern instruction decoded_RTS;
+	
 	extern instruction decoded_BRA_S;
 	extern instruction decoded_BRA;
 	extern instruction decoded_BRA_L;

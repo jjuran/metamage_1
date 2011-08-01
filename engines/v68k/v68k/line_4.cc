@@ -43,7 +43,7 @@ namespace v68k
 		&decoded_STOP,
 		0,  // RTE
 		0,  // RTD
-		0,  // RTS
+		&decoded_RTS,
 		0,  // TRAPV
 		0   // RTR
 	};

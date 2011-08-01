@@ -43,6 +43,8 @@ namespace v68k
 	
 	void microcode_STOP( processor_state& state, const uint32_t* params );
 	
+	void microcode_RTS( processor_state& state, const uint32_t* params );
+	
 	void microcode_BRA( processor_state& state, const uint32_t* params );
 	void microcode_BSR( processor_state& state, const uint32_t* params );
 	
