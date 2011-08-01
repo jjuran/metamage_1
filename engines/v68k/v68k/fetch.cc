@@ -22,6 +22,11 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_pc( processor_state& s )
+	{
+		return s.regs.pc;
+	}
+	
 	uint32_t fetch_unsigned_word( processor_state& s )
 	{
 		return fetch_instruction_word( s );

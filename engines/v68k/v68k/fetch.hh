@@ -19,6 +19,8 @@ namespace v68k
 	uint16_t fetch_instruction_word( processor_state& state );
 	
 	
+	uint32_t fetch_pc( processor_state& state );
+	
 	uint32_t fetch_unsigned_word( processor_state& state );
 	
 	uint32_t fetch_word_displacement( processor_state& state );
