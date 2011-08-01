@@ -30,6 +30,62 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const instruction* branch_instructions[] =
+	{
+		&decoded_BRA_S,
+		&decoded_BRA,
+		&decoded_BRA_L,
+		
+		&decoded_BSR_S,
+		&decoded_BSR,
+		&decoded_BSR_L,
+		
+		0,  // &decoded_Bcc_S
+		0,  // &decoded_Bcc
+		0   // &decoded_Bcc_L
+	};
+	
+	static const instruction* decode_line_6( uint16_t opcode )
+	{
+		int size_log2;
+		
+		switch ( opcode & 0x00FF )
+		{
+			default:
+				size_log2 = 0;  // byte
+				break;
+			
+			case 0x00:
+				size_log2 = 1;  // word
+				break;
+			
+			case 0xFF:
+				size_log2 = 2;  // long
+				break;
+		}
+		
+		int selector;
+		
+		switch ( opcode & 0xFF00 )
+		{
+			case 0x6000:
+				selector = 0;  // BRA
+				break;
+			
+			case 0x6100:
+				selector = 1;  // BSR
+				break;
+			
+			default:
+				selector = 2;  // Bcc
+				break;
+		}
+		
+		const int i = selector * 3 + size_log2;
+		
+		return branch_instructions[ i ];
+	}
+	
 	static const instruction* decode_line_7( uint16_t opcode )
 	{
 		if ( opcode & 0x0100 )
@@ -72,7 +128,7 @@ namespace v68k
 		
 		&decode_line_4,
 		&decode_unimplemented,
-		&decode_unimplemented,
+		&decode_line_6,
 		&decode_line_7,
 		
 		&decode_unimplemented,

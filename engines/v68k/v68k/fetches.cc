@@ -67,6 +67,28 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_branch_short[] =
+	{
+		&fetch_pc,
+		&fetch_signed_data_at_00FF,
+		0  // NULL
+	};
+	
+	fetcher fetches_branch[] =
+	{
+		&fetch_pc,
+		&fetch_word_displacement,
+		0  // NULL
+	};
+	
+	fetcher fetches_branch_long[] =
+	{
+		&fetch_pc,
+		&fetch_longword_displacement,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_MOVEQ[] =
 	{
 		&FETCH_MAJOR_REGISTER_NUM,

@@ -25,6 +25,10 @@ namespace v68k
 	
 	extern fetcher fetches_STOP[];
 	
+	extern fetcher fetches_branch_short[];
+	extern fetcher fetches_branch      [];
+	extern fetcher fetches_branch_long [];
+	
 	extern fetcher fetches_MOVEQ[];
 	
 	extern fetcher fetches_EXG[];
