@@ -33,7 +33,7 @@ namespace v68k
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& state );
 	
-	uint32_t fetch_MOVEQ_data( processor_state& state );
+	uint32_t fetch_signed_data_at_00FF( processor_state& state );
 	
 	uint32_t fetch_EXG_opmode( processor_state& state );
 	

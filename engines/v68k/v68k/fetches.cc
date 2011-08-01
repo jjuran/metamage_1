@@ -70,7 +70,7 @@ namespace v68k
 	fetcher fetches_MOVEQ[] =
 	{
 		&FETCH_MAJOR_REGISTER_NUM,
-		&fetch_MOVEQ_data,
+		&fetch_signed_data_at_00FF,
 		0  // NULL
 	};
 	
