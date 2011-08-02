@@ -117,6 +117,18 @@ namespace v68k
 		microcode_RTS
 	};
 	
+	instruction decoded_JSR =
+	{
+		fetches_effective_control_address,
+		microcode_JSR
+	};
+	
+	instruction decoded_JMP =
+	{
+		fetches_effective_control_address,
+		microcode_JMP
+	};
+	
 	instruction decoded_BRA_S =
 	{
 		fetches_branch_short,

@@ -64,7 +64,15 @@ namespace v68k
 	{
 		if ( opcode & 0x0080 )
 		{
-			// JMP, JSR
+			const uint16_t mode = opcode >> 3 & 0x7;
+			const uint16_t n    = opcode >> 0 & 0x7;
+			
+			if ( ea_is_control( mode, n ) )
+			{
+				return opcode & 0x0040 ? &decoded_JMP
+				                       : &decoded_JSR;
+			}
+			
 			return 0;  // NULL
 		}
 		

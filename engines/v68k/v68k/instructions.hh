@@ -41,6 +41,10 @@ namespace v68k
 	
 	extern instruction decoded_RTS;
 	
+	extern instruction decoded_JSR;
+	
+	extern instruction decoded_JMP;
+	
 	extern instruction decoded_BRA_S;
 	extern instruction decoded_BRA;
 	extern instruction decoded_BRA_L;
