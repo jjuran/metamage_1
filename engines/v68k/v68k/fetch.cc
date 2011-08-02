@@ -39,7 +39,7 @@ namespace v68k
 		return int32_t( word );
 	}
 	
-	uint32_t fetch_longword_displacement( processor_state& s )
+	uint32_t fetch_longword( processor_state& s )
 	{
 		const uint32_t high = fetch_instruction_word( s );
 		

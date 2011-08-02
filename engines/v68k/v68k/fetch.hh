@@ -25,7 +25,7 @@ namespace v68k
 	
 	uint32_t fetch_word_displacement( processor_state& state );
 	
-	uint32_t fetch_longword_displacement( processor_state& state );
+	uint32_t fetch_longword( processor_state& state );
 	
 	uint32_t fetch_data_at_1E00( processor_state& state );
 	uint32_t fetch_data_at_000F( processor_state& state );

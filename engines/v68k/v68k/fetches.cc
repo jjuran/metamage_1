@@ -55,7 +55,7 @@ namespace v68k
 	fetcher fetches_LINK_L[] =
 	{
 		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_longword_displacement,
+		&fetch_longword,
 		0  // NULL
 	};
 	
@@ -84,7 +84,7 @@ namespace v68k
 	fetcher fetches_branch_long[] =
 	{
 		&fetch_pc,
-		&fetch_longword_displacement,
+		&fetch_longword,
 		0  // NULL
 	};
 	
