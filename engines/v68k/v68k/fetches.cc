@@ -52,6 +52,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_LEA[] =
+	{
+		&fetch_effective_control_address,
+		FETCH_MAJOR_REGISTER_NUM,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_LINK[] =
 	{
 		&FETCH_MINOR_REGISTER_NUM,

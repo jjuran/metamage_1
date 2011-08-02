@@ -118,6 +118,17 @@ namespace v68k
 				return &decoded_EXTB;
 			}
 			
+			if ( (opcode & 0xF1C0) == 0x41C0 )
+			{
+				const uint16_t mode = opcode >> 3 & 0x7;
+				const uint16_t n    = opcode >> 0 & 0x7;
+				
+				if ( ea_is_control( mode, n ) )
+				{
+					return &decoded_LEA;
+				}
+			}
+			
 			return 0;  // NULL
 		}
 		

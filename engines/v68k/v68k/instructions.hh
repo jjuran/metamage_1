@@ -18,6 +18,8 @@ namespace v68k
 	
 	extern instruction decoded_LINK_L;
 	
+	extern instruction decoded_LEA;
+	
 	extern instruction decoded_BKPT;
 	
 	extern instruction decoded_PEA;

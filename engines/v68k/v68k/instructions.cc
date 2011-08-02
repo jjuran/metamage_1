@@ -35,6 +35,12 @@ namespace v68k
 		not_before_68020
 	};
 	
+	instruction decoded_LEA =
+	{
+		fetches_LEA,
+		microcode_LEA
+	};
+	
 	instruction decoded_BKPT =
 	{
 		fetches_data_at_0007,
