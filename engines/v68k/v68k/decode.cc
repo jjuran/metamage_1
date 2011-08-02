@@ -6,6 +6,7 @@
 #include "v68k/decode.hh"
 
 // v68k
+#include "v68k/ea_types.hh"
 #include "v68k/instructions.hh"
 #include "v68k/line_4.hh"
 
@@ -28,6 +29,49 @@ namespace v68k
 		}
 		
 		return 0;  // NULL
+	}
+	
+	static const instruction* move_instructions[] =
+	{
+		&decoded_MOVE_B_to_Dn,
+		0,  // There is no MOVEA.B
+		&decoded_MOVE_B,
+		
+		&decoded_MOVE_L_to_Dn,
+		&decoded_MOVEA_L,
+		&decoded_MOVE_L,
+		
+		&decoded_MOVE_W_to_Dn,
+		&decoded_MOVEA_W,
+		&decoded_MOVE_W
+	};
+	
+	static const instruction* decode_MOVE( uint16_t opcode )
+	{
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const uint16_t mode2 = opcode >> 6 & 0x7;
+	//	const uint16_t n2    = opcode >> 9 & 0x7;
+		
+		if ( !ea_is_valid( mode, n )  ||  !ea_is_data_alterable( mode2 ) )
+		{
+			return 0;  // NULL
+		}
+		
+		const uint16_t size_code = opcode >> 12 & 0x3;
+		
+		if ( ea_is_address_register( mode )  &&  size_code == 1 )
+		{
+			return 0;  // NULL
+		}
+		
+		const uint16_t dest_code = ea_is_register( mode2 ) ? mode2 & 0x1
+		                                                   : 2;
+		
+		const int i = (size_code - 1) * 3 + dest_code;
+		
+		return move_instructions[ i ];
 	}
 	
 	static const instruction* branch_instructions[] =
@@ -122,9 +166,9 @@ namespace v68k
 	static decoder decoder_per_line[] =
 	{
 		&decode_line_0,
-		&decode_unimplemented,
-		&decode_unimplemented,
-		&decode_unimplemented,
+		&decode_MOVE,
+		&decode_MOVE,
+		&decode_MOVE,
 		
 		&decode_line_4,
 		&decode_unimplemented,

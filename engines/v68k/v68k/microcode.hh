@@ -25,6 +25,17 @@ namespace v68k
 	void microcode_MOVEP_to  ( processor_state& state, const uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, const uint32_t* params );
 	
+	void microcode_MOVE_B_to_Dn( processor_state& state, const uint32_t* params );
+	void microcode_MOVE_B      ( processor_state& state, const uint32_t* params );
+	
+	void microcode_MOVE_L_to_Dn( processor_state& state, const uint32_t* params );
+	void microcode_MOVEA_L     ( processor_state& state, const uint32_t* params );
+	void microcode_MOVE_L      ( processor_state& state, const uint32_t* params );
+	
+	void microcode_MOVE_W_to_Dn( processor_state& state, const uint32_t* params );
+	void microcode_MOVEA_W     ( processor_state& state, const uint32_t* params );
+	void microcode_MOVE_W      ( processor_state& state, const uint32_t* params );
+	
 	void microcode_LEA( processor_state& state, const uint32_t* params );
 	
 	void microcode_BKPT( processor_state& state, const uint32_t* params );

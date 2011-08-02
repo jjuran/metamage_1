@@ -21,6 +21,15 @@ namespace v68k
 	
 	extern fetcher fetches_MOVEP[];
 	
+	extern fetcher fetches_MOVE_B_to_Dn[];
+	extern fetcher fetches_MOVE_B      [];
+	
+	extern fetcher fetches_MOVE_L_to_Rn[];
+	extern fetcher fetches_MOVE_L      [];
+	
+	extern fetcher fetches_MOVE_W_to_Rn[];
+	extern fetcher fetches_MOVE_W      [];
+	
 	extern fetcher fetches_LEA[];
 	
 	extern fetcher fetches_LINK_L[];
