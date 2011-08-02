@@ -221,5 +221,62 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint32_t) );
 	}
 	
+	uint32_t fetch_byte_from_effective_address( processor_state& s )
+	{
+		const uint16_t mode = s.opcode >> 3 & 0x7;
+		const uint16_t n    = s.opcode >> 0 & 0x7;
+		
+		if ( mode == 0 )
+		{
+			// 0
+			return s.regs.d[n];  // Dn
+		}
+		
+		if ( mode == 7  &&  n == 4 )
+		{
+			return fetch_unsigned_word( s ) & 0xFF;
+		}
+		
+		return s.mem.get_byte( fetch_effective_byte_address( s ) );
+	}
+	
+	uint32_t fetch_word_from_effective_address( processor_state& s )
+	{
+		const uint16_t mode = s.opcode >> 3 & 0x7;
+		const uint16_t n    = s.opcode >> 0 & 0x7;
+		
+		if ( (mode & 0x6) == 0 )
+		{
+			// 0 or 1
+			return s.regs.d[ s.opcode & 0xF ];  // Dn or An
+		}
+		
+		if ( mode == 7  &&  n == 4 )
+		{
+			return fetch_unsigned_word( s );
+		}
+		
+		return s.mem.get_word( fetch_effective_word_address( s ) );
+	}
+	
+	uint32_t fetch_long_from_effective_address( processor_state& s )
+	{
+		const uint16_t mode = s.opcode >> 3 & 0x7;
+		const uint16_t n    = s.opcode >> 0 & 0x7;
+		
+		if ( (mode & 0x6) == 0 )
+		{
+			// 0 or 1
+			return s.regs.d[ s.opcode & 0xF ];  // Dn or An
+		}
+		
+		if ( mode == 7  &&  n == 4 )
+		{
+			return fetch_longword( s );
+		}
+		
+		return s.mem.get_long( fetch_effective_long_address( s ) );
+	}
+	
 }
 
