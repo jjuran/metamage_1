@@ -6,6 +6,7 @@
 #include "v68k/line_4.hh"
 
 // v68k
+#include "v68k/ea_types.hh"
 #include "v68k/instructions.hh"
 
 
@@ -25,6 +26,17 @@ namespace v68k
 		if ( (opcode & 0xFFF8) == 0x4848 )
 		{
 			return &decoded_BKPT;
+		}
+		
+		if ( (opcode & 0xFFC0) == 0x4840 )
+		{
+			const uint16_t mode = opcode >> 3 & 0x7;
+			const uint16_t n    = opcode >> 0 & 0x7;
+			
+			if ( ea_is_control( mode, n ) )
+			{
+				return &decoded_PEA;
+			}
 		}
 		
 		if ( (opcode & 0xFFB8) == 0x4880 )

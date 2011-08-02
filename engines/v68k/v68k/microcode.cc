@@ -91,6 +91,17 @@ namespace v68k
 		s.condition = processor_condition( bkpt_0 + data );
 	}
 	
+	void microcode_PEA( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t addr = params[0];
+		
+		uint32_t& sp = s.regs.a[7];
+		
+		sp -= 4;
+		
+		s.mem.put_long( sp, addr );
+	}
+	
 	void microcode_EXT_W( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n = params[0];

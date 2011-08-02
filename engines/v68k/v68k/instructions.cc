@@ -41,6 +41,12 @@ namespace v68k
 		microcode_BKPT
 	};
 	
+	instruction decoded_PEA =
+	{
+		fetches_effective_control_address,
+		microcode_PEA
+	};
+	
 	instruction decoded_EXT_W =
 	{
 		FETCHES_MINOR_REGISTER_NUM,

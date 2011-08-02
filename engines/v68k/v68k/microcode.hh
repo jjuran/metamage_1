@@ -27,6 +27,8 @@ namespace v68k
 	
 	void microcode_BKPT( processor_state& state, const uint32_t* params );
 	
+	void microcode_PEA( processor_state& state, const uint32_t* params );
+	
 	void microcode_EXT_W( processor_state& state, const uint32_t* params );
 	void microcode_EXT_L( processor_state& state, const uint32_t* params );
 	
