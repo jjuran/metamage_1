@@ -84,9 +84,9 @@ namespace v68k
 		&decoded_BSR,
 		&decoded_BSR_L,
 		
-		0,  // &decoded_Bcc_S
-		0,  // &decoded_Bcc
-		0   // &decoded_Bcc_L
+		&decoded_Bcc_S,
+		&decoded_Bcc,
+		&decoded_Bcc_L
 	};
 	
 	static const instruction* decode_line_6( uint16_t opcode )

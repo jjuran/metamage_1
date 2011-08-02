@@ -129,6 +129,7 @@ namespace v68k
 	{
 		&fetch_pc,
 		&fetch_signed_data_at_00FF,
+		&fetch_cc,
 		0  // NULL
 	};
 	
@@ -136,6 +137,7 @@ namespace v68k
 	{
 		&fetch_pc,
 		&fetch_word_displacement,
+		&fetch_cc,
 		0  // NULL
 	};
 	
@@ -143,6 +145,7 @@ namespace v68k
 	{
 		&fetch_pc,
 		&fetch_longword,
+		&fetch_cc,
 		0  // NULL
 	};
 	

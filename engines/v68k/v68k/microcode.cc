@@ -6,6 +6,7 @@
 #include "v68k/microcode.hh"
 
 // v68k
+#include "v68k/conditional.hh"
 #include "v68k/state.hh"
 
 
@@ -402,6 +403,18 @@ namespace v68k
 		s.mem.put_long( sp, s.regs.pc );
 		
 		s.regs.pc = pc + disp;
+	}
+	
+	void microcode_Bcc( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t pc   = params[0];
+		const int32_t  disp = params[1];
+		const uint32_t cc   = params[2];
+		
+		if ( test_conditional( cc, s.regs.nzvc ) )
+		{
+			s.regs.pc = pc + disp;
+		}
 	}
 	
 	void microcode_MOVEQ( processor_state& s, const uint32_t* params )

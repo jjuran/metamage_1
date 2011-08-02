@@ -215,6 +215,25 @@ namespace v68k
 		not_before_68020
 	};
 	
+	instruction decoded_Bcc_S =
+	{
+		fetches_branch_short,
+		microcode_Bcc
+	};
+	
+	instruction decoded_Bcc =
+	{
+		fetches_branch,
+		microcode_Bcc
+	};
+	
+	instruction decoded_Bcc_L =
+	{
+		fetches_branch_long,
+		microcode_Bcc,
+		not_before_68020
+	};
+	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,

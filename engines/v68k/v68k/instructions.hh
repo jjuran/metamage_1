@@ -64,6 +64,10 @@ namespace v68k
 	extern instruction decoded_BSR;
 	extern instruction decoded_BSR_L;
 	
+	extern instruction decoded_Bcc_S;
+	extern instruction decoded_Bcc;
+	extern instruction decoded_Bcc_L;
+	
 	extern instruction decoded_MOVEQ;
 	
 	extern instruction decoded_EXG;
