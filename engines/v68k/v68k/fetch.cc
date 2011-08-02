@@ -68,6 +68,11 @@ namespace v68k
 		return s.opcode & 0x0007;
 	}
 	
+	uint32_t fetch_2nd_ea_register_id( processor_state& s )
+	{
+		return (s.opcode >> 9 & 0x0007) | (s.opcode >> 3 & 1 << 3);
+	}
+	
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& s )
 	{
