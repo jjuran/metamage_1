@@ -73,41 +73,13 @@ static void load_code( uint8_t* mem )
 	code[ i++ ] = big_word( 0x41F8 );  // LEA  (1024).W, A0
 	code[ i++ ] = big_word( 0x0400 );
 	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
+	code[ i++ ] = big_word( 0x6002 );  // BRA.S *+4
+	
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
 	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
+	code[ i++ ] = big_word( 0x66FA );  // BNE.S *-4
 	
 	code[ i++ ] = big_word( 0x4E72 );  // STOP #FFFF  ; finish
 	code[ i++ ] = big_word( 0xFFFF );
