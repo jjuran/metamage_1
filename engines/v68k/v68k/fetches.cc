@@ -6,6 +6,7 @@
 #include "v68k/fetches.hh"
 
 // v68k
+#include "v68k/effective_address.hh"
 #include "v68k/fetch.hh"
 
 
@@ -25,6 +26,12 @@ namespace v68k
 	
 	fetcher fetches_none[] =
 	{
+		0  // NULL
+	};
+	
+	fetcher fetches_effective_control_address[] =
+	{
+		&fetch_effective_control_address,
 		0  // NULL
 	};
 	
