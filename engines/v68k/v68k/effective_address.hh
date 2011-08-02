@@ -18,6 +18,10 @@ namespace v68k
 	
 	uint32_t fetch_effective_control_address( processor_state& state );
 	
+	uint32_t fetch_effective_byte_address( processor_state& state );
+	uint32_t fetch_effective_word_address( processor_state& state );
+	uint32_t fetch_effective_long_address( processor_state& state );
+	
 }
 
 #endif
