@@ -33,6 +33,8 @@ namespace v68k
 	uint32_t fetch_data_at_0E00( processor_state& state );
 	uint32_t fetch_data_at_0007( processor_state& state );
 	
+	uint32_t fetch_2nd_ea_register_id( processor_state& state );
+	
 	uint32_t fetch_MOVEP_opmode( processor_state& state );
 	
 	uint32_t fetch_signed_data_at_00FF( processor_state& state );

@@ -52,6 +52,49 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_MOVE_B_to_Dn[] =
+	{
+		&fetch_byte_from_effective_address,
+		&FETCH_MAJOR_REGISTER_NUM,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_B[] =
+	{
+		&fetch_byte_from_effective_address,
+		&fetch_2nd_effective_byte_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_L_to_Rn[] =
+	{
+		&fetch_long_from_effective_address,
+		&fetch_2nd_ea_register_id,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_L[] =
+	{
+		&fetch_long_from_effective_address,
+		&fetch_2nd_effective_long_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_W_to_Rn[] =
+	{
+		&fetch_word_from_effective_address,
+		&fetch_2nd_ea_register_id,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_W[] =
+	{
+		&fetch_word_from_effective_address,
+		&fetch_2nd_effective_word_address,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_LEA[] =
 	{
 		&fetch_effective_control_address,

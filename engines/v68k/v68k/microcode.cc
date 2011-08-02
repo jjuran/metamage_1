@@ -82,6 +82,125 @@ namespace v68k
 		Dx = data;
 	}
 	
+	void microcode_MOVE_B_to_Dn( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t n    = params[1];
+		
+		uint32_t& Dn = s.regs.d[n];
+		
+		Dn = Dn   & 0xFFFFFF00
+		   | data & 0x000000FF;
+		
+		const int8_t byte = data;
+		
+		s.regs.nzvc = N( byte <  0 )
+		            | Z( byte == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_MOVE_B( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t addr = params[1];
+		
+		s.mem.put_byte( addr, data );
+		
+		const int8_t byte = data;
+		
+		s.regs.nzvc = N( byte <  0 )
+		            | Z( byte == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_MOVE_L_to_Dn( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t n    = params[1];
+		
+		uint32_t& Dn = s.regs.d[n];
+		
+		Dn = Dn   & 0x00000000
+		   | data & 0xFFFFFFFF;
+		
+		const int32_t longword = data;
+		
+		s.regs.nzvc = N( longword <  0 )
+		            | Z( longword == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_MOVEA_L( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t _n   = params[1];
+		
+		uint32_t& An = s.regs.d[_n];
+		
+		An = data;
+	}
+	
+	void microcode_MOVE_L( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t addr = params[1];
+		
+		s.mem.put_long( addr, data );
+		
+		const int32_t longword = data;
+		
+		s.regs.nzvc = N( longword <  0 )
+		            | Z( longword == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_MOVE_W_to_Dn( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t n    = params[1];
+		
+		uint32_t& Dn = s.regs.d[n];
+		
+		Dn = Dn   & 0xFFFF0000
+		   | data & 0x0000FFFF;
+		
+		const int16_t word = data;
+		
+		s.regs.nzvc = N( word <  0 )
+		            | Z( word == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
+	void microcode_MOVEA_W( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t _n   = params[1];
+		
+		uint32_t& An = s.regs.d[_n];
+		
+		An = int32_t( int16_t( data ) );
+	}
+	
+	void microcode_MOVE_W( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		const uint32_t addr = params[1];
+		
+		s.mem.put_word( addr, data );
+		
+		const int16_t word = data;
+		
+		s.regs.nzvc = N( word <  0 )
+		            | Z( word == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
 	void microcode_LEA( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t addr = params[0];

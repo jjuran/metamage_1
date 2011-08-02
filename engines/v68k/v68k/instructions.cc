@@ -28,6 +28,54 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_MOVE_B_to_Dn =
+	{
+		fetches_MOVE_B_to_Dn,
+		microcode_MOVE_B_to_Dn
+	};
+	
+	instruction decoded_MOVE_B =
+	{
+		fetches_MOVE_B,
+		microcode_MOVE_B
+	};
+	
+	instruction decoded_MOVE_L_to_Dn =
+	{
+		fetches_MOVE_L_to_Rn,
+		microcode_MOVE_L_to_Dn
+	};
+	
+	instruction decoded_MOVEA_L =
+	{
+		fetches_MOVE_L_to_Rn,
+		microcode_MOVEA_L
+	};
+	
+	instruction decoded_MOVE_L =
+	{
+		fetches_MOVE_L,
+		microcode_MOVE_L
+	};
+	
+	instruction decoded_MOVE_W_to_Dn =
+	{
+		fetches_MOVE_W_to_Rn,
+		microcode_MOVE_W_to_Dn
+	};
+	
+	instruction decoded_MOVEA_W =
+	{
+		fetches_MOVE_W_to_Rn,
+		microcode_MOVEA_W
+	};
+	
+	instruction decoded_MOVE_W =
+	{
+		fetches_MOVE_W,
+		microcode_MOVE_W
+	};
+	
 	instruction decoded_LINK_L =
 	{
 		fetches_LINK_L,
