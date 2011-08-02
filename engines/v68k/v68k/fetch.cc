@@ -80,6 +80,12 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_cc( processor_state& s )
+	{
+		return s.opcode >> 8 & 0x0F;
+	}
+	
+	
 	uint32_t fetch_signed_data_at_00FF( processor_state& s )
 	{
 		return int32_t( int8_t( s.opcode & 0x00ff ) );
