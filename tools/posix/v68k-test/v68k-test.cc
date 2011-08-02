@@ -5,6 +5,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
@@ -58,13 +59,7 @@ static void load_vectors( uint8_t* mem )
 
 static void load_data( uint8_t* mem )
 {
-	uint32_t* data = (uint32_t*) (mem + data_address);
-	
-	data[0] = big_longword( 0xFF000000 );
-	data[1] = big_longword( 0x0000FF00 );
-	
-	data[2] = big_longword( 0x00000F00 );
-	data[3] = big_longword( 0xF0000000 );
+	strcpy( (char*) mem + data_address, "Hello world\n" );
 }
 
 static void load_code( uint8_t* mem )
@@ -73,40 +68,45 @@ static void load_code( uint8_t* mem )
 	
 	int i = 0;
 	
-	code[ i++ ] = big_word( 0x7048 );  // MOVEQ  #48,D0  ; 'H'
+	code[ i++ ] = big_word( 0x7000 );  // MOVEQ  #00,D0
+	
+	code[ i++ ] = big_word( 0x41F8 );  // LEA  (1024).W, A0
+	code[ i++ ] = big_word( 0x0400 );
+	
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x7065 );  // MOVEQ  #65,D0  ; 'e'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x706F );  // MOVEQ  #6F,D0  ; 'o'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x7020 );  // MOVEQ  #20,D0  ; ' '
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x7077 );  // MOVEQ  #77,D0  ; 'w'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x706F );  // MOVEQ  #6F,D0  ; 'o'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x7072 );  // MOVEQ  #72,D0  ; 'r'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x706C );  // MOVEQ  #6C,D0  ; 'l'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x7064 );  // MOVEQ  #64,D0  ; 'd'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
-	code[ i++ ] = big_word( 0x700A );  // MOVEQ  #0A,D0  ; '\n'
+	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
 	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
 	
 	code[ i++ ] = big_word( 0x4E72 );  // STOP #FFFF  ; finish
