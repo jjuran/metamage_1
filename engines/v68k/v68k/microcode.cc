@@ -35,6 +35,13 @@ namespace v68k
 		
 		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
 		
+		if ( p == 0 )  // NULL
+		{
+			s.bus_error();
+			
+			return;
+		}
+		
 		switch ( doubled )
 		{
 			case true:
@@ -66,6 +73,13 @@ namespace v68k
 		const uint32_t addr = Ay + disp;
 		
 		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
+		
+		if ( p == 0 )  // NULL
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		uint32_t data = doubled ? 0 : Dx & 0xFFFF0000;
 		
