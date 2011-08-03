@@ -124,7 +124,12 @@ namespace v68k
 		const uint32_t data = params[0];
 		const uint32_t addr = params[1];
 		
-		s.mem.put_byte( addr, data );
+		if ( !s.mem.put_byte( addr, data ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		const int8_t byte = data;
 		
@@ -174,7 +179,12 @@ namespace v68k
 			return;
 		}
 		
-		s.mem.put_long( addr, data );
+		if ( !s.mem.put_long( addr, data ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		const int32_t longword = data;
 		
@@ -224,7 +234,12 @@ namespace v68k
 			return;
 		}
 		
-		s.mem.put_word( addr, data );
+		if ( !s.mem.put_word( addr, data ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		const int16_t word = data;
 		
@@ -268,7 +283,10 @@ namespace v68k
 		
 		sp -= 4;
 		
-		s.mem.put_long( sp, addr );
+		if ( !s.mem.put_long( sp, addr ) )
+		{
+			s.bus_error();
+		}
 	}
 	
 	void microcode_EXT_W( processor_state& s, const uint32_t* params )
@@ -342,7 +360,12 @@ namespace v68k
 		
 		sp -= 4;
 		
-		s.mem.put_long( sp, An );
+		if ( !s.mem.put_long( sp, An ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		An = sp;
 		
@@ -438,7 +461,12 @@ namespace v68k
 		
 		sp -= 4;
 		
-		s.mem.put_long( sp, s.regs.pc );
+		if ( !s.mem.put_long( sp, s.regs.pc ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		s.regs.pc = addr;
 	}
@@ -474,7 +502,12 @@ namespace v68k
 		
 		sp -= 4;
 		
-		s.mem.put_long( sp, s.regs.pc );
+		if ( !s.mem.put_long( sp, s.regs.pc ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		s.regs.pc = pc + disp;
 	}
