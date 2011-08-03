@@ -27,7 +27,7 @@ namespace v68k
 		public:
 			memory( uint8_t* mem_base, uint32_t mem_size );
 			
-			uint8_t* translate( uint32_t addr ) const;
+			uint8_t* translate( uint32_t addr, uint32_t length ) const;
 			
 			uint8_t  get_byte( uint32_t addr ) const;
 			uint16_t get_word( uint32_t addr ) const;

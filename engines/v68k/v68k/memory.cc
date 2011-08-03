@@ -103,9 +103,9 @@ namespace v68k
 	}
 	
 	
-	uint8_t* memory::translate( uint32_t addr ) const
+	uint8_t* memory::translate( uint32_t addr, uint32_t length ) const
 	{
-		if ( addr >= size )
+		if ( addr + length > size  ||  addr + length < addr )
 		{
 			throw unmapped_memory_access();
 		}
@@ -116,33 +116,33 @@ namespace v68k
 	
 	uint8_t memory::get_byte( uint32_t addr ) const
 	{
-		return read_byte( translate( addr ) );
+		return read_byte( translate( addr, sizeof (uint8_t) ) );
 	}
 	
 	uint16_t memory::get_word( uint32_t addr ) const
 	{
-		return read_big_word_unaligned( translate( addr ) );
+		return read_big_word_unaligned( translate( addr, sizeof (uint16_t) ) );
 	}
 	
 	uint32_t memory::get_long( uint32_t addr ) const
 	{
-		return read_big_long_unaligned( translate( addr ) );
+		return read_big_long_unaligned( translate( addr, sizeof (uint32_t) ) );
 	}
 	
 	
 	void memory::put_byte( uint32_t addr, uint8_t x ) const
 	{
-		write_byte( translate( addr ), x );
+		write_byte( translate( addr, sizeof (uint8_t) ), x );
 	}
 	
 	void memory::put_word( uint32_t addr, uint16_t x ) const
 	{
-		write_big_word_unaligned( translate( addr ), x );
+		write_big_word_unaligned( translate( addr, sizeof (uint16_t) ), x );
 	}
 	
 	void memory::put_long( uint32_t addr, uint32_t x ) const
 	{
-		write_big_long_unaligned( translate( addr ), x );
+		write_big_long_unaligned( translate( addr, sizeof (uint32_t) ), x );
 	}
 	
 	
@@ -153,7 +153,7 @@ namespace v68k
 			throw odd_memory_address();
 		}
 		
-		return read_big_word_aligned( translate( addr ) );
+		return read_big_word_aligned( translate( addr, sizeof (uint16_t) ) );
 	}
 	
 }

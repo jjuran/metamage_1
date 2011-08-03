@@ -45,7 +45,7 @@ namespace v68k
 	{
 		try
 		{
-			const reset_vector* v = (const reset_vector*) mem.translate( 0 );
+			const reset_vector* v = (const reset_vector*) mem.translate( 0, sizeof (reset_vector) );
 			
 			regs.ttsm = 0 << 2  // clear Trace bits
 					  | 1 << 1  // set Supervisor bit
