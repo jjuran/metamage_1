@@ -99,7 +99,10 @@ namespace v68k
 				for misaligned data accesses.
 			*/
 			
-			address = s.mem.get_long( address );
+			if ( !s.mem.get_long( address, address ) )
+			{
+				return s.bus_error();
+			}
 			
 			const int32_t outer_displacement = read_extended_displacement( s, iis & 0x3 );
 			
@@ -267,7 +270,14 @@ namespace v68k
 			return fetch_unsigned_word( s ) & 0xFF;
 		}
 		
-		return s.mem.get_byte( fetch_effective_byte_address( s ) );
+		uint8_t result;
+		
+		if ( !s.mem.get_byte( fetch_effective_byte_address( s ), result ) )
+		{
+			return s.bus_error();
+		}
+		
+		return result;
 	}
 	
 	uint32_t fetch_word_from_effective_address( processor_state& s )
@@ -293,7 +303,14 @@ namespace v68k
 			return s.address_error();
 		}
 		
-		return s.mem.get_word( addr );
+		uint16_t result;
+		
+		if ( !s.mem.get_word( addr, result ) )
+		{
+			return s.bus_error();
+		}
+		
+		return result;
 	}
 	
 	uint32_t fetch_long_from_effective_address( processor_state& s )
@@ -319,7 +336,14 @@ namespace v68k
 			return s.address_error();
 		}
 		
-		return s.mem.get_long( addr );
+		uint32_t result;
+		
+		if ( !s.mem.get_long( addr, result ) )
+		{
+			return s.bus_error();
+		}
+		
+		return result;
 	}
 	
 }

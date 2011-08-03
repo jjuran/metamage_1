@@ -33,9 +33,9 @@ namespace v68k
 		{
 			address_error();
 		}
-		else
+		else if ( !mem.get_instruction_word( regs.pc, opcode ) )
 		{
-			opcode = mem.get_instruction_word( regs.pc );
+			bus_error();
 		}
 	}
 	

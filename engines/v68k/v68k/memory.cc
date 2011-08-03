@@ -114,19 +114,40 @@ namespace v68k
 	}
 	
 	
-	uint8_t memory::get_byte( uint32_t addr ) const
+	bool memory::get_byte( uint32_t addr, uint8_t & x ) const
 	{
-		return read_byte( translate( addr, sizeof (uint8_t) ) );
+		if ( const uint8_t* p = translate( addr, sizeof (uint8_t) ) )
+		{
+			x = read_byte( p );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
-	uint16_t memory::get_word( uint32_t addr ) const
+	bool memory::get_word( uint32_t addr, uint16_t& x ) const
 	{
-		return read_big_word_unaligned( translate( addr, sizeof (uint16_t) ) );
+		if ( const uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		{
+			x = read_big_word_unaligned( p );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
-	uint32_t memory::get_long( uint32_t addr ) const
+	bool memory::get_long( uint32_t addr, uint32_t& x ) const
 	{
-		return read_big_long_unaligned( translate( addr, sizeof (uint32_t) ) );
+		if ( const uint8_t* p = translate( addr, sizeof (uint32_t) ) )
+		{
+			x = read_big_long_unaligned( p );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	
@@ -167,9 +188,16 @@ namespace v68k
 	}
 	
 	
-	uint16_t memory::get_instruction_word( uint32_t addr ) const
+	bool memory::get_instruction_word( uint32_t addr, uint16_t& next ) const
 	{
-		return read_big_word_aligned( translate( addr, sizeof (uint16_t) ) );
+		if ( const uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		{
+			next = read_big_word_aligned( p );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 }

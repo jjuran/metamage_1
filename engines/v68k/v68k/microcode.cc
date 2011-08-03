@@ -388,7 +388,12 @@ namespace v68k
 			return;
 		}
 		
-		An = s.mem.get_long( sp );
+		if ( !s.mem.get_long( sp, An ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		sp += 4;
 	}
@@ -441,7 +446,12 @@ namespace v68k
 			return;
 		}
 		
-		s.regs.pc = s.mem.get_long( sp );
+		if ( !s.mem.get_long( sp, s.regs.pc ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
 		
 		sp += 4;
 	}
