@@ -107,7 +107,7 @@ namespace v68k
 	{
 		if ( addr + length > size  ||  addr + length < addr )
 		{
-			throw unmapped_memory_access();
+			return 0;  // NULL
 		}
 		
 		return base + addr;

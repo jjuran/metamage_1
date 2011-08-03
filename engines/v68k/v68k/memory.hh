@@ -13,9 +13,6 @@
 namespace v68k
 {
 	
-	class unmapped_memory_access {};
-	
-	
 	class memory
 	{
 		private:
