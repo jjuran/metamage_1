@@ -49,6 +49,25 @@ const uint32_t data_address  = 1024;
 const uint32_t stack_address = 2048;
 const uint32_t code_address  = 2048;
 
+static const uint16_t program[] =
+{
+	0x7000,  // MOVEQ  #00,D0
+	
+	0x41F8,  // LEA  (1024).W, A0
+	0x0400,
+	
+	0x6002,  // BRA.S *+4
+	
+	0x4848,  // BKPT  #0
+	
+	0x1018,  // MOVE.B  (A0)+,D0
+	
+	0x66FA,  // BNE.S *-4
+	
+	0x4E72,  // STOP #FFFF  ; finish
+	0xFFFF
+};
+
 static void load_vectors( uint8_t* mem )
 {
 	uint32_t* vectors = (uint32_t*) mem;
@@ -66,23 +85,10 @@ static void load_code( uint8_t* mem )
 {
 	uint16_t* code = (uint16_t*) (mem + code_address);
 	
-	int i = 0;
-	
-	code[ i++ ] = big_word( 0x7000 );  // MOVEQ  #00,D0
-	
-	code[ i++ ] = big_word( 0x41F8 );  // LEA  (1024).W, A0
-	code[ i++ ] = big_word( 0x0400 );
-	
-	code[ i++ ] = big_word( 0x6002 );  // BRA.S *+4
-	
-	code[ i++ ] = big_word( 0x4848 );  // BKPT  #0
-	
-	code[ i++ ] = big_word( 0x1018 );  // MOVE.B  (A0)+,D0
-	
-	code[ i++ ] = big_word( 0x66FA );  // BNE.S *-4
-	
-	code[ i++ ] = big_word( 0x4E72 );  // STOP #FFFF  ; finish
-	code[ i++ ] = big_word( 0xFFFF );
+	for ( int i = 0;  i < sizeof program / sizeof program[0];  ++i )
+	{
+		*code++ = big_word( program[i] );
+	}
 }
 
 static void emulator_test()
