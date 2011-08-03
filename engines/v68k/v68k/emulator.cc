@@ -88,57 +88,49 @@ namespace v68k
 			return false;
 		}
 		
-		try
+		// advance pc
+		regs.pc += 2;
+		
+		// decode (prefetched)
+		const instruction* decoded = decode( opcode );
+		
+		if ( !decoded )
 		{
-			// advance pc
-			regs.pc += 2;
-			
-			// decode (prefetched)
-			const instruction* decoded = decode( opcode );
-			
-			if ( !decoded )
-			{
-				return illegal_instruction();
-			}
-			
-			if ( (decoded->flags & not_before_mask) > model )
-			{
-				return illegal_instruction();
-			}
-			
-			if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
-			{
-				return privilege_violation();
-			}
-			
-			// prepare
-			fetcher* fetch = decoded->fetch;
-			
-			uint32_t params[ max_params ];
-			
-			uint32_t* p = params;
-			
-			while ( *fetch != 0 )  // NULL
-			{
-				*p++ = (*fetch++)( *this );
-				
-				if ( condition != normal )
-				{
-					return false;
-				}
-			}
-			
-			// execute
-			decoded->code( *this, params );
-			
-			// prefetch next
-			prefetch_instruction_word();
+			return illegal_instruction();
 		}
-		catch ( ... )
+		
+		if ( (decoded->flags & not_before_mask) > model )
 		{
-			// everything halts the processor for now
-			condition = halted;
+			return illegal_instruction();
 		}
+		
+		if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
+		{
+			return privilege_violation();
+		}
+		
+		// prepare
+		fetcher* fetch = decoded->fetch;
+		
+		uint32_t params[ max_params ];
+		
+		uint32_t* p = params;
+		
+		while ( *fetch != 0 )  // NULL
+		{
+			*p++ = (*fetch++)( *this );
+			
+			if ( condition != normal )
+			{
+				return false;
+			}
+		}
+		
+		// execute
+		decoded->code( *this, params );
+		
+		// prefetch next
+		prefetch_instruction_word();
 		
 		return condition == normal;
 	}
