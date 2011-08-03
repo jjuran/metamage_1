@@ -114,6 +114,11 @@ namespace v68k
 			while ( *fetch != 0 )  // NULL
 			{
 				*p++ = (*fetch++)( *this );
+				
+				if ( condition != normal )
+				{
+					return false;
+				}
 			}
 			
 			// execute
