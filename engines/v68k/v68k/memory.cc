@@ -130,19 +130,40 @@ namespace v68k
 	}
 	
 	
-	void memory::put_byte( uint32_t addr, uint8_t x ) const
+	bool memory::put_byte( uint32_t addr, uint8_t x ) const
 	{
-		write_byte( translate( addr, sizeof (uint8_t) ), x );
+		if ( uint8_t* p = translate( addr, sizeof (uint8_t) ) )
+		{
+			write_byte( p, x );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
-	void memory::put_word( uint32_t addr, uint16_t x ) const
+	bool memory::put_word( uint32_t addr, uint16_t x ) const
 	{
-		write_big_word_unaligned( translate( addr, sizeof (uint16_t) ), x );
+		if ( uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		{
+			write_big_word_unaligned( p, x );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
-	void memory::put_long( uint32_t addr, uint32_t x ) const
+	bool memory::put_long( uint32_t addr, uint32_t x ) const
 	{
-		write_big_long_unaligned( translate( addr, sizeof (uint32_t) ), x );
+		if ( uint8_t* p = translate( addr, sizeof (uint32_t) ) )
+		{
+			write_big_long_unaligned( p, x );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	
