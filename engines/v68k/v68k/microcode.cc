@@ -31,21 +31,23 @@ namespace v68k
 		
 		const bool doubled = mode & 0x1;
 		
-		uint32_t addr = Ay + disp;
+		const uint32_t addr = Ay + disp;
+		
+		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
 		
 		switch ( doubled )
 		{
 			case true:
-				s.mem.put_byte( addr,     Dx >> 24 );
-				s.mem.put_byte( addr + 2, Dx >> 16 );
+				p[0] = Dx >> 24;
+				p[2] = Dx >> 16;
 				
-				addr += 4;
+				p += 4;
 				
 				// fall through
 			
 			case false:
-				s.mem.put_byte( addr,     Dx >>  8 );
-				s.mem.put_byte( addr + 2, Dx >>  0 );
+				p[0] = Dx >>  8;
+				p[2] = Dx >>  0;
 		}
 	}
 	
@@ -61,23 +63,25 @@ namespace v68k
 		
 		const bool doubled = mode & 0x1;
 		
-		uint32_t addr = Ay + disp;
+		const uint32_t addr = Ay + disp;
+		
+		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
 		
 		uint32_t data = doubled ? 0 : Dx & 0xFFFF0000;
 		
 		switch ( doubled )
 		{
 			case true:
-				data |= s.mem.get_byte( addr     ) << 24;
-				data |= s.mem.get_byte( addr + 2 ) << 16;
+				data |= p[0] << 24;
+				data |= p[2] << 16;
 				
-				addr += 4;
+				p += 4;
 				
 				// fall through
 			
 			case false:
-				data |= s.mem.get_byte( addr     ) << 8;
-				data |= s.mem.get_byte( addr + 2 ) << 0;
+				data |= p[0] << 8;
+				data |= p[2] << 0;
 		}
 		
 		Dx = data;
