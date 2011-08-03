@@ -14,10 +14,6 @@
 namespace v68k
 {
 	
-	class illegal_instruction {};
-	class privilege_violation {};
-	
-	
 	struct reset_vector
 	{
 		uint32_t isp;
@@ -95,17 +91,17 @@ namespace v68k
 			
 			if ( !decoded )
 			{
-				throw illegal_instruction();
+				return illegal_instruction();
 			}
 			
 			if ( (decoded->flags & not_before_mask) > model )
 			{
-				throw illegal_instruction();
+				return illegal_instruction();
 			}
 			
 			if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
 			{
-				throw privilege_violation();
+				return privilege_violation();
 			}
 			
 			// prepare
