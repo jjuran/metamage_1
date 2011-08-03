@@ -45,16 +45,15 @@ static void dump( const v68k::emulator& emu )
 }
 
 
-const uint32_t data_address  = 1024;
 const uint32_t stack_address = 2048;
 const uint32_t code_address  = 2048;
 
 static const uint16_t program[] =
 {
-	0x7000,  // MOVEQ  #00,D0
+	0x41F8,  // LEA  (???).W,A0
+	0xFFFF,
 	
-	0x41F8,  // LEA  (1024).W, A0
-	0x0400,
+	0x7000,  // MOVEQ  #00,D0
 	
 	0x6002,  // BRA.S *+4
 	
@@ -76,11 +75,6 @@ static void load_vectors( uint8_t* mem )
 	vectors[1] = big_longword( code_address  );  // pc
 }
 
-static void load_data( uint8_t* mem )
-{
-	strcpy( (char*) mem + data_address, "Hello world\n" );
-}
-
 static void load_code( uint8_t* mem )
 {
 	uint16_t* code = (uint16_t*) (mem + code_address);
@@ -91,13 +85,24 @@ static void load_code( uint8_t* mem )
 	}
 }
 
+static void load_data( uint8_t* mem )
+{
+	uint16_t* code = (uint16_t*) (mem + code_address);
+	
+	uint8_t* data = (uint8_t*) code + sizeof program;
+	
+	strcpy( (char*) data, "Hello world\n" );
+	
+	code[1] = big_word( data - mem );
+}
+
 static void emulator_test()
 {
 	uint8_t mem[ 4096 ];
 	
 	load_vectors( mem );
-	load_data   ( mem );
 	load_code   ( mem );
+	load_data   ( mem );
 	
 	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
 	
