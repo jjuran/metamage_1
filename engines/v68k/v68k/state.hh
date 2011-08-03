@@ -65,6 +65,9 @@ namespace v68k
 		uint16_t get_SR() const;
 		
 		void set_SR( uint16_t new_sr );
+		
+		uint32_t bus_error    ()  { condition = halted;  return 0; }
+		uint32_t address_error()  { condition = halted;  return 0; }
 	};
 	
 }
