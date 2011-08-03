@@ -36,6 +36,8 @@ namespace v68k
 	{
 		switch ( condition )
 		{
+			default:  // Not reached
+			
 			case T:  return true;
 			case F:  return false;
 			
