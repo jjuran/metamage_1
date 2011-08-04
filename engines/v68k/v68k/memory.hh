@@ -13,9 +13,6 @@
 namespace v68k
 {
 	
-	class unmapped_memory_access {};
-	
-	
 	class memory
 	{
 		private:
@@ -27,15 +24,15 @@ namespace v68k
 			
 			uint8_t* translate( uint32_t addr, uint32_t length ) const;
 			
-			uint8_t  get_byte( uint32_t addr ) const;
-			uint16_t get_word( uint32_t addr ) const;
-			uint32_t get_long( uint32_t addr ) const;
+			bool get_byte( uint32_t addr, uint8_t & x ) const;
+			bool get_word( uint32_t addr, uint16_t& x ) const;
+			bool get_long( uint32_t addr, uint32_t& x ) const;
 			
-			void put_byte( uint32_t addr, uint8_t  x ) const;
-			void put_word( uint32_t addr, uint16_t x ) const;
-			void put_long( uint32_t addr, uint32_t x ) const;
+			bool put_byte( uint32_t addr, uint8_t  x ) const;
+			bool put_word( uint32_t addr, uint16_t x ) const;
+			bool put_long( uint32_t addr, uint32_t x ) const;
 			
-			uint16_t get_instruction_word( uint32_t addr ) const;
+			bool get_instruction_word( uint32_t addr, uint16_t& next ) const;
 	};
 	
 }

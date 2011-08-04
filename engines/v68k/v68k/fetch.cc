@@ -19,7 +19,12 @@ namespace v68k
 			return s.address_error();
 		}
 		
-		const uint16_t word = s.mem.get_instruction_word( s.regs.pc );
+		uint16_t word;
+		
+		if ( !s.mem.get_instruction_word( s.regs.pc, word ) )
+		{
+			return s.bus_error();
+		}
 		
 		s.regs.pc += 2;
 		
