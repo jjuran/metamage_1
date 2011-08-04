@@ -14,6 +14,11 @@ namespace v68k
 	
 	uint16_t fetch_instruction_word( processor_state& s )
 	{
+		if ( s.regs.pc & 1 )
+		{
+			return s.address_error();
+		}
+		
 		const uint16_t word = s.mem.get_instruction_word( s.regs.pc );
 		
 		s.regs.pc += 2;
