@@ -64,9 +64,9 @@ namespace v68k
 		}
 		
 		regs.ttsm = new_sr >> 12;
-		regs. iii = new_sr >>  8;
-		regs.   x = new_sr >>  4;
-		regs.nzvc = new_sr >>  0;
+		regs. iii = new_sr >>  8 & 0xF;
+		regs.   x = new_sr >>  4 & 0xF;
+		regs.nzvc = new_sr >>  0 & 0xF;
 	}
 	
 }
