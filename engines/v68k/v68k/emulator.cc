@@ -86,9 +86,6 @@ namespace v68k
 			return false;
 		}
 		
-		// advance pc
-		regs.pc += 2;
-		
 		// decode (prefetched)
 		const instruction* decoded = decode( opcode );
 		
@@ -107,7 +104,10 @@ namespace v68k
 			return privilege_violation();
 		}
 		
-		// prepare
+		// advance pc
+		regs.pc += 2;
+		
+		// fetch
 		fetcher* fetch = decoded->fetch;
 		
 		uint32_t params[ max_params ];
