@@ -93,6 +93,12 @@ namespace v68k
 		
 		if ( memory_indirect )
 		{
+			/*
+				Don't check s.badly_aligned_data(), since Memory Indirect mode
+				only occurs on 68020 or later models, which don't take exceptions
+				for misaligned data accesses.
+			*/
+			
 			address = s.mem.get_long( address );
 			
 			const int32_t outer_displacement = read_extended_displacement( s, iis & 0x3 );
@@ -280,7 +286,14 @@ namespace v68k
 			return fetch_unsigned_word( s );
 		}
 		
-		return s.mem.get_word( fetch_effective_word_address( s ) );
+		const uint32_t addr = fetch_effective_word_address( s );
+		
+		if ( s.badly_aligned_data( addr ) )
+		{
+			return s.address_error();
+		}
+		
+		return s.mem.get_word( addr );
 	}
 	
 	uint32_t fetch_long_from_effective_address( processor_state& s )
@@ -299,7 +312,14 @@ namespace v68k
 			return fetch_longword( s );
 		}
 		
-		return s.mem.get_long( fetch_effective_long_address( s ) );
+		const uint32_t addr = fetch_effective_word_address( s );
+		
+		if ( s.badly_aligned_data( addr ) )
+		{
+			return s.address_error();
+		}
+		
+		return s.mem.get_long( addr );
 	}
 	
 }

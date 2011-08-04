@@ -65,6 +65,19 @@ namespace v68k
 		uint16_t get_SR() const;
 		
 		void set_SR( uint16_t new_sr );
+		
+		bool badly_aligned_data( uint32_t addr ) const
+		{
+			/*
+				Return true for odd addresses, but only on the 68000/68010.
+				The inequality evaluates to 1 or 0 for masking the address.
+			*/
+			
+			return (model < mc68020) & addr;
+		}
+		
+		uint32_t bus_error    ()  { condition = halted;  return 0; }
+		uint32_t address_error()  { condition = halted;  return 0; }
 	};
 	
 }

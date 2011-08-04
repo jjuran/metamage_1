@@ -29,7 +29,14 @@ namespace v68k
 	
 	void emulator::prefetch_instruction_word()
 	{
-		opcode = mem.get_instruction_word( regs.pc );
+		if ( regs.pc & 1 )
+		{
+			address_error();
+		}
+		else
+		{
+			opcode = mem.get_instruction_word( regs.pc );
+		}
 	}
 	
 	void emulator::double_bus_fault()
@@ -39,6 +46,8 @@ namespace v68k
 	
 	void emulator::reset()
 	{
+		condition = normal;
+		
 		try
 		{
 			const reset_vector* v = (const reset_vector*) mem.translate( 0, sizeof (reset_vector) );
@@ -64,8 +73,6 @@ namespace v68k
 			
 			return;
 		}
-		
-		condition = normal;
 	}
 	
 	bool emulator::step()
@@ -114,6 +121,11 @@ namespace v68k
 			while ( *fetch != 0 )  // NULL
 			{
 				*p++ = (*fetch++)( *this );
+				
+				if ( condition != normal )
+				{
+					return false;
+				}
 			}
 			
 			// execute

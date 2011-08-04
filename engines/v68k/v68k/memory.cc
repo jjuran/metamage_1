@@ -148,11 +148,6 @@ namespace v68k
 	
 	uint16_t memory::get_instruction_word( uint32_t addr ) const
 	{
-		if ( addr & 1 )
-		{
-			throw odd_memory_address();
-		}
-		
 		return read_big_word_aligned( translate( addr, sizeof (uint16_t) ) );
 	}
 	

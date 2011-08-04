@@ -13,8 +13,6 @@
 namespace v68k
 {
 	
-	class odd_memory_address {};
-	
 	class unmapped_memory_access {};
 	
 	
