@@ -153,6 +153,13 @@ namespace v68k
 		const uint32_t data = params[0];
 		const uint32_t addr = params[1];
 		
+		if ( s.badly_aligned_data( addr ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
 		s.mem.put_long( addr, data );
 		
 		const int32_t longword = data;
@@ -196,6 +203,13 @@ namespace v68k
 		const uint32_t data = params[0];
 		const uint32_t addr = params[1];
 		
+		if ( s.badly_aligned_data( addr ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
 		s.mem.put_word( addr, data );
 		
 		const int16_t word = data;
@@ -230,6 +244,13 @@ namespace v68k
 		const uint32_t addr = params[0];
 		
 		uint32_t& sp = s.regs.a[7];
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
 		
 		sp -= 4;
 		
@@ -298,6 +319,13 @@ namespace v68k
 		uint32_t& An = s.regs.a[n];
 		uint32_t& sp = s.regs.a[7];
 		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
 		sp -= 4;
 		
 		s.mem.put_long( sp, An );
@@ -315,6 +343,13 @@ namespace v68k
 		uint32_t& sp = s.regs.a[7];
 		
 		sp = An;
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
 		
 		An = s.mem.get_long( sp );
 		
@@ -362,6 +397,13 @@ namespace v68k
 	{
 		uint32_t& sp = s.regs.a[7];
 		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
 		s.regs.pc = s.mem.get_long( sp );
 		
 		sp += 4;
@@ -372,6 +414,13 @@ namespace v68k
 		const uint32_t addr = params[0];
 		
 		uint32_t& sp = s.regs.a[7];
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
 		
 		sp -= 4;
 		
@@ -401,6 +450,13 @@ namespace v68k
 		const int32_t  disp = params[1];
 		
 		uint32_t& sp = s.regs.a[7];
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
 		
 		sp -= 4;
 		
