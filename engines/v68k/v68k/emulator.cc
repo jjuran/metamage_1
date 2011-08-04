@@ -48,10 +48,14 @@ namespace v68k
 	{
 		condition = normal;
 		
-		try
+		const reset_vector* v = (const reset_vector*) mem.translate( 0, sizeof (reset_vector) );
+		
+		if ( v == 0 )  // NULL
 		{
-			const reset_vector* v = (const reset_vector*) mem.translate( 0, sizeof (reset_vector) );
-			
+			double_bus_fault();
+		}
+		else
+		{
 			regs.ttsm = 0 << 2  // clear Trace bits
 					  | 1 << 1  // set Supervisor bit
 					  | 0;      // clear Master bit
@@ -66,12 +70,6 @@ namespace v68k
 			
 			// prefetch
 			prefetch_instruction_word();
-		}
-		catch ( ... )
-		{
-			double_bus_fault();
-			
-			return;
 		}
 	}
 	
