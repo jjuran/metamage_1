@@ -27,18 +27,6 @@ namespace v68k
 	{
 	}
 	
-	void emulator::prefetch_instruction_word()
-	{
-		if ( regs.pc & 1 )
-		{
-			address_error();
-		}
-		else if ( !mem.get_instruction_word( regs.pc, opcode ) )
-		{
-			bus_error();
-		}
-	}
-	
 	void emulator::double_bus_fault()
 	{
 		condition = halted;

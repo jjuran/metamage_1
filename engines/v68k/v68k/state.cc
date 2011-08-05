@@ -17,6 +17,18 @@ namespace v68k
 	{
 	}
 	
+	void processor_state::prefetch_instruction_word()
+	{
+		if ( regs.pc & 1 )
+		{
+			address_error();
+		}
+		else if ( !mem.get_instruction_word( regs.pc, opcode ) )
+		{
+			bus_error();
+		}
+	}
+	
 	uint16_t processor_state::get_SR() const
 	{
 		const uint16_t sr = regs.ttsm << 12

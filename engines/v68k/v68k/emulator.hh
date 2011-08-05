@@ -19,8 +19,6 @@ namespace v68k
 	class emulator : public processor_state
 	{
 		private:
-			void prefetch_instruction_word();
-			
 			void double_bus_fault();
 		
 		public:

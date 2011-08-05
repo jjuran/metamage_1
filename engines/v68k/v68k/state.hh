@@ -62,6 +62,8 @@ namespace v68k
 		
 		processor_state( processor_model model, uint8_t* mem_base, uint32_t mem_size );
 		
+		void prefetch_instruction_word();
+		
 		uint16_t get_SR() const;
 		
 		void set_SR( uint16_t new_sr );
