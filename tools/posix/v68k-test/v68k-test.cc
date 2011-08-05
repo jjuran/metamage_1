@@ -77,14 +77,24 @@ static void load_vectors( uint8_t* mem )
 	vectors[1] = big_longword( code_address  );  // pc
 }
 
-static void load_code( uint8_t* mem )
+static void load_code( uint16_t*        dest,
+                       const uint16_t*  begin,
+                       const uint16_t*  end )
 {
-	uint16_t* code = (uint16_t*) (mem + code_address);
-	
-	for ( int i = 0;  i < sizeof program / sizeof program[0];  ++i )
+	while ( begin < end )
 	{
-		*code++ = big_word( program[i] );
+		*dest++ = big_word( *begin++ );
 	}
+}
+
+static inline void load_n_words( uint8_t*         mem,
+                                 uint32_t         offset,
+                                 const uint16_t*  begin,
+                                 size_t           n_words )
+{
+	uint16_t* dest = (uint16_t*) (mem + offset);
+	
+	load_code( dest, begin, begin + n_words );
 }
 
 static void load_data( uint8_t* mem )
@@ -103,7 +113,7 @@ static void emulator_test()
 	uint8_t mem[ 4096 ];
 	
 	load_vectors( mem );
-	load_code   ( mem );
+	load_n_words( mem, code_address, program, sizeof program / 2 );
 	load_data   ( mem );
 	
 	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
