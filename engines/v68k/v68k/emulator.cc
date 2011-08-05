@@ -135,5 +135,19 @@ namespace v68k
 		return true;
 	}
 	
+	bool emulator::illegal_instruction()
+	{
+		take_exception_format_0( 4 * sizeof (uint32_t) );
+		
+		return true;
+	}
+	
+	bool emulator::privilege_violation()
+	{
+		take_exception_format_0( 8 * sizeof (uint32_t) );
+		
+		return true;
+	}
+	
 }
 
