@@ -51,6 +51,8 @@ const uint32_t os_address    = 1024;
 
 static const uint16_t os[] =
 {
+	0x6000,  // BRA  *+1024
+	0x03FE,
 	0x484F   // BKPT  #7
 };
 
@@ -80,7 +82,7 @@ static void load_vectors( uint8_t* mem )
 	memset( vectors, 0xFF, 1024 );
 	
 	vectors[0] = big_longword( stack_address );  // isp
-	vectors[1] = big_longword( code_address  );  // pc
+	vectors[1] = big_longword( os_address    );  // pc
 }
 
 static void load_code( uint16_t*        dest,
