@@ -71,6 +71,8 @@ static void load_vectors( uint8_t* mem )
 {
 	uint32_t* vectors = (uint32_t*) mem;
 	
+	memset( vectors, 0xFF, 1024 );
+	
 	vectors[0] = big_longword( stack_address );  // isp
 	vectors[1] = big_longword( code_address  );  // pc
 }
