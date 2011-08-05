@@ -125,7 +125,7 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_STOP[] =
+	fetcher fetches_unsigned_word[] =
 	{
 		&fetch_unsigned_word,
 		0  // NULL

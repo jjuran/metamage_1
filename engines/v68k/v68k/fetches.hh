@@ -38,7 +38,7 @@ namespace v68k
 	
 	extern fetcher fetches_LINK[];
 	
-	extern fetcher fetches_STOP[];
+	extern fetcher fetches_unsigned_word[];
 	
 	extern fetcher fetches_branch_short[];
 	extern fetcher fetches_branch      [];

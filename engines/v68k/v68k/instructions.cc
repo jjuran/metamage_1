@@ -160,7 +160,7 @@ namespace v68k
 	
 	instruction decoded_STOP =
 	{
-		fetches_STOP,
+		fetches_unsigned_word,
 		microcode_STOP,
 		privileged
 	};
