@@ -45,9 +45,9 @@ static void dump( const v68k::emulator& emu )
 }
 
 
-const uint32_t stack_address = 4096;
-const uint32_t code_address  = 2048;
-const uint32_t os_address    = 1024;
+const uint32_t initial_SSP  = 4096;
+const uint32_t code_address = 2048;
+const uint32_t os_address   = 1024;
 
 static const uint16_t os[] =
 {
@@ -83,8 +83,8 @@ static void load_vectors( uint8_t* mem )
 	
 	memset( vectors, 0xFF, 1024 );
 	
-	vectors[0] = big_longword( stack_address );  // isp
-	vectors[1] = big_longword( os_address    );  // pc
+	vectors[0] = big_longword( initial_SSP );  // isp
+	vectors[1] = big_longword( os_address  );  // pc
 	
 	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
 	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
