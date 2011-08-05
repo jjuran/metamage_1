@@ -45,7 +45,7 @@ static void dump( const v68k::emulator& emu )
 }
 
 
-const uint32_t stack_address = 2048;
+const uint32_t stack_address = 4096;
 const uint32_t code_address  = 2048;
 
 static const uint16_t program[] =
