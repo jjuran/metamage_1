@@ -435,6 +435,56 @@ namespace v68k
 		}
 	}
 	
+	void microcode_RTE( processor_state& s, const uint32_t* params )
+	{
+		uint32_t& sp = s.regs.a[7];
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
+		uint16_t id;
+		
+		if ( !s.mem.get_word( sp + 6, id ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
+		
+		const uint16_t format = id >> 12;
+		
+		if ( format != 0 )
+		{
+			s.format_error();
+			
+			return;
+		}
+		
+		if ( !s.mem.get_long( sp + 2, s.regs.pc ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
+		
+		uint16_t saved_sr;
+		
+		if ( !s.mem.get_word( sp, saved_sr ) )
+		{
+			s.bus_error();
+			
+			return;
+		}
+		
+		sp += 8;  // format 0
+		
+		s.set_SR( saved_sr );
+	}
+	
 	void microcode_RTS( processor_state& s, const uint32_t* params )
 	{
 		uint32_t& sp = s.regs.a[7];

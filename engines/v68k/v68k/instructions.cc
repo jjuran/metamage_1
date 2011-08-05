@@ -159,6 +159,13 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_RTE =
+	{
+		fetches_none,
+		microcode_RTE,
+		privileged
+	};
+	
 	instruction decoded_RTS =
 	{
 		fetches_none,

@@ -58,6 +58,8 @@ namespace v68k
 	
 	void microcode_STOP( processor_state& state, const uint32_t* params );
 	
+	void microcode_RTE( processor_state& state, const uint32_t* params );
+	
 	void microcode_RTS( processor_state& state, const uint32_t* params );
 	
 	void microcode_JSR( processor_state& state, const uint32_t* params );

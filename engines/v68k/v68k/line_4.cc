@@ -53,7 +53,7 @@ namespace v68k
 		0,  // RESET
 		&decoded_NOP,
 		&decoded_STOP,
-		0,  // RTE
+		&decoded_RTE,
 		0,  // RTD
 		&decoded_RTS,
 		0,  // TRAPV
