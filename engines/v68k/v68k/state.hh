@@ -82,6 +82,8 @@ namespace v68k
 		
 		uint32_t bus_error    ()  { condition = halted;  return 0; }
 		uint32_t address_error()  { condition = halted;  return 0; }
+		
+		void format_error()  { condition = halted; }
 	};
 	
 }
