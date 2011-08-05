@@ -47,6 +47,12 @@ static void dump( const v68k::emulator& emu )
 
 const uint32_t stack_address = 4096;
 const uint32_t code_address  = 2048;
+const uint32_t os_address    = 1024;
+
+static const uint16_t os[] =
+{
+	0x484F   // BKPT  #7
+};
 
 static const uint16_t program[] =
 {
@@ -114,6 +120,7 @@ static void emulator_test()
 	
 	load_vectors( mem );
 	load_n_words( mem, code_address, program, sizeof program / 2 );
+	load_n_words( mem, os_address,   os,      sizeof os      / 2 );
 	load_data   ( mem );
 	
 	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
