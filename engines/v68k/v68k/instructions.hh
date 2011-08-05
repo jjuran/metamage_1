@@ -40,6 +40,8 @@ namespace v68k
 	
 	extern instruction decoded_EXTB;
 	
+	extern instruction decoded_TRAP;
+	
 	extern instruction decoded_LINK;
 	extern instruction decoded_UNLK;
 	

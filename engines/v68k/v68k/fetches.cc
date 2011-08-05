@@ -103,6 +103,13 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_TRAP[] =
+	{
+		&fetch_data_at_000F,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_LINK[] =
 	{
 		&FETCH_MINOR_REGISTER_NUM,

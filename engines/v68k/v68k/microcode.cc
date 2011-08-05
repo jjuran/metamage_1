@@ -343,6 +343,13 @@ namespace v68k
 		            | C( 0 );
 	}
 	
+	void microcode_TRAP( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t trap_number = params[0];
+		
+		s.take_exception_format_0( (trap_number + 32) * sizeof (uint32_t) );
+	}
+	
 	void microcode_LINK( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t n    = params[0];

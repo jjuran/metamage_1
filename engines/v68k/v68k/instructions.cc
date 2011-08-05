@@ -120,6 +120,12 @@ namespace v68k
 		not_before_68020
 	};
 	
+	instruction decoded_TRAP =
+	{
+		fetches_TRAP,
+		microcode_TRAP
+	};
+	
 	instruction decoded_LINK =
 	{
 		fetches_LINK,

@@ -83,8 +83,7 @@ namespace v68k
 				case 0:  // 0x4e40 - 0x4e47
 				case 1:  // 0x4e48 - 0x4e4f
 					
-					// TRAP
-					break;
+					return &decoded_TRAP;
 				
 				case 2:  // 0x4e50 - 0x4e57
 					
