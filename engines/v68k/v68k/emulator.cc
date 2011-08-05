@@ -78,7 +78,7 @@ namespace v68k
 		if ( at_breakpoint() )
 		{
 			// Unacknowledged breakpoint traps as illegal instruction
-			condition = halted;
+			return illegal_instruction();
 		}
 		
 		if ( condition != normal )
