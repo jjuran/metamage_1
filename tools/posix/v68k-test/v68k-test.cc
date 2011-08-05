@@ -46,17 +46,33 @@ static void dump( const v68k::emulator& emu )
 
 
 const uint32_t initial_SSP  = 4096;
+const uint32_t initial_USP  = 3072;
 const uint32_t code_address = 2048;
 const uint32_t os_address   = 1024;
 
 static const uint16_t os[] =
 {
-	0x6000,  // BRA  *+1024
-	0x03FE,
-	0x484F   // BKPT  #7
+	0x6006,  // BRA.S  *+8
+	
+	0x484F,  // BKPT  #7
+	
+	0x4E72,  // STOP #FFFF  ; finish
+	0xFFFF,
+	
+	0x027C,  // ANDI #DFFF,SR  ; clear S
+	0xDFFF,
+	
+	0x4FF8,  // LEA  (3072).W,A7
+	initial_USP,
+	
+	0x4EB8,  // JSR  0x0800  ; 2048
+	0x0800,
+	
+	0x4e4F   // TRAP  #15
 };
 
-const uint32_t bkpt_7_addr = os_address + 4;
+const uint32_t bkpt_7_addr = os_address + 2;
+const uint32_t finish_addr = os_address + 4;
 
 static const uint16_t program[] =
 {
@@ -73,8 +89,7 @@ static const uint16_t program[] =
 	
 	0x66FA,  // BNE.S *-4
 	
-	0x4E72,  // STOP #FFFF  ; finish
-	0xFFFF
+	0x4E75   // RTS
 };
 
 static void load_vectors( uint8_t* mem )
@@ -88,6 +103,8 @@ static void load_vectors( uint8_t* mem )
 	
 	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
 	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
+	
+	vectors[47] = big_longword( finish_addr );  // Trap 15
 }
 
 static void load_code( uint16_t*        dest,
