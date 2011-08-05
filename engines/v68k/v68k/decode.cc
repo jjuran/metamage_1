@@ -28,6 +28,17 @@ namespace v68k
 			                       : &decoded_MOVEP_from;
 		}
 		
+		if ( (opcode & 0xff00) == 0x0200 )
+		{
+			// ANDI
+			
+			if ( (opcode & 0xffbf ) == 0x023c )
+			{
+				return opcode & 0x0040 ? &decoded_ANDI_to_SR
+				                       : 0;  // &decoded_ANDI_to_CCR
+			}
+		}
+		
 		return 0;  // NULL
 	}
 	

@@ -28,6 +28,13 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_ANDI_to_SR =
+	{
+		fetches_unsigned_word,
+		microcode_ANDI_to_SR,
+		privileged
+	};
+	
 	instruction decoded_MOVE_B_to_Dn =
 	{
 		fetches_MOVE_B_to_Dn,

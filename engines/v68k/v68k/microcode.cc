@@ -101,6 +101,13 @@ namespace v68k
 		Dx = data;
 	}
 	
+	void microcode_ANDI_to_SR( processor_state& s, const uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_SR( s.get_SR() & data );
+	}
+	
 	void microcode_MOVE_B_to_Dn( processor_state& s, const uint32_t* params )
 	{
 		const uint32_t data = params[0];
