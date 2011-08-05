@@ -35,8 +35,8 @@ namespace v68k
 			
 			bool acknowledge_breakpoint( uint16_t new_opcode );
 			
-			bool illegal_instruction()  { condition = halted;  return false; }
-			bool privilege_violation()  { condition = halted;  return false; }
+			bool illegal_instruction();
+			bool privilege_violation();
 	};
 	
 }

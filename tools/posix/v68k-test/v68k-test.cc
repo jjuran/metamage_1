@@ -56,6 +56,8 @@ static const uint16_t os[] =
 	0x484F   // BKPT  #7
 };
 
+const uint32_t bkpt_7_addr = os_address + 4;
+
 static const uint16_t program[] =
 {
 	0x41F8,  // LEA  (???).W,A0
@@ -83,6 +85,9 @@ static void load_vectors( uint8_t* mem )
 	
 	vectors[0] = big_longword( stack_address );  // isp
 	vectors[1] = big_longword( os_address    );  // pc
+	
+	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
+	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
 }
 
 static void load_code( uint16_t*        dest,

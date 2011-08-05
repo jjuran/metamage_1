@@ -5,6 +5,9 @@
 
 #include "v68k/state.hh"
 
+// v68k
+#include "v68k/endian.hh"
+
 
 namespace v68k
 {
@@ -79,6 +82,48 @@ namespace v68k
 		regs. iii = new_sr >>  8 & 0xF;
 		regs.   x = new_sr >>  4 & 0xF;
 		regs.nzvc = new_sr >>  0 & 0xF;
+	}
+	
+	void processor_state::take_exception_format_0( uint16_t vector_offset )
+	{
+		const uint16_t saved_sr = get_SR();
+		
+		set_SR( saved_sr & 0x3FFF | 0x2000 );  // Clear T1/T0, set S
+		
+		uint32_t& sp = regs.a[7];
+		
+		if ( badly_aligned_data( sp ) )
+		{
+			address_error();
+			
+			return;
+		}
+		
+		const uint32_t size = 8;
+		
+		sp -= size;
+		
+		const bool ok = mem.put_word( sp + 0, saved_sr      )
+		              & mem.put_long( sp + 2, regs.pc       )
+		              & mem.put_word( sp + 6, vector_offset );  // format is 0
+		
+		if ( !ok )
+		{
+			bus_error();
+			
+			return;
+		}
+		
+		uint32_t new_pc;
+		
+		if ( !mem.get_long( vector_offset, regs.pc ) )
+		{
+			bus_error();
+			
+			return;
+		}
+		
+		prefetch_instruction_word();
 	}
 	
 }
