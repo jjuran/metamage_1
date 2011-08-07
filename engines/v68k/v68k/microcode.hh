@@ -25,6 +25,8 @@ namespace v68k
 	void microcode_MOVEP_to  ( processor_state& state, const uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, const uint32_t* params );
 	
+	void microcode_ANDI_to_CCR( processor_state& state, const uint32_t* params );
+	
 	void microcode_ANDI_to_SR( processor_state& state, const uint32_t* params );
 	
 	void microcode_MOVE_B_to_Dn( processor_state& state, const uint32_t* params );

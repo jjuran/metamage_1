@@ -35,7 +35,7 @@ namespace v68k
 			if ( (opcode & 0xffbf ) == 0x023c )
 			{
 				return opcode & 0x0040 ? &decoded_ANDI_to_SR
-				                       : 0;  // &decoded_ANDI_to_CCR
+				                       : &decoded_ANDI_to_CCR;
 			}
 		}
 		

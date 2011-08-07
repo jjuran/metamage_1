@@ -28,6 +28,12 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
+	instruction decoded_ANDI_to_CCR =
+	{
+		fetches_unsigned_word,
+		microcode_ANDI_to_CCR
+	};
+	
 	instruction decoded_ANDI_to_SR =
 	{
 		fetches_unsigned_word,
