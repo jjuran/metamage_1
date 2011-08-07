@@ -64,7 +64,11 @@ namespace v68k
 		
 		void prefetch_instruction_word();
 		
+		uint16_t get_CCR() const;
+		
 		uint16_t get_SR() const;
+		
+		void set_CCR( uint16_t new_sr );
 		
 		void set_SR( uint16_t new_sr );
 		

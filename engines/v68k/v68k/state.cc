@@ -32,6 +32,14 @@ namespace v68k
 		}
 	}
 	
+	uint16_t processor_state::get_CCR() const
+	{
+		const uint16_t ccr = regs.   x <<  4
+		                   | regs.nzvc <<  0;
+		
+		return ccr;
+	}
+	
 	uint16_t processor_state::get_SR() const
 	{
 		const uint16_t sr = regs.ttsm << 12
@@ -40,6 +48,14 @@ namespace v68k
 		                  | regs.nzvc <<  0;
 		
 		return sr;
+	}
+	
+	void processor_state::set_CCR( uint16_t new_ccr )
+	{
+		// ...X NZVC  (all processors)
+		
+		regs.   x = new_ccr >>  4 & 0x1;
+		regs.nzvc = new_ccr >>  0 & 0xF;
 	}
 	
 	void processor_state::set_SR( uint16_t new_sr )
