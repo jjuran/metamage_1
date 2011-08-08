@@ -55,14 +55,7 @@ namespace v68k
 		stores_byte_data
 	};
 	
-	instruction decoded_MOVE_L_to_Dn =
-	{
-		fetches_MOVE_L_to_Rn,
-		microcode_MOVE,
-		stores_long_data|in_register
-	};
-	
-	instruction decoded_MOVEA_L =
+	instruction decoded_MOVE_L_to_Rn =
 	{
 		fetches_MOVE_L_to_Rn,
 		microcode_MOVE,
@@ -76,14 +69,7 @@ namespace v68k
 		stores_long_data
 	};
 	
-	instruction decoded_MOVE_W_to_Dn =
-	{
-		fetches_MOVE_W_to_Rn,
-		microcode_MOVE,
-		stores_word_data|in_register
-	};
-	
-	instruction decoded_MOVEA_W =
+	instruction decoded_MOVE_W_to_Rn =
 	{
 		fetches_MOVE_W_to_Rn,
 		microcode_MOVE,
