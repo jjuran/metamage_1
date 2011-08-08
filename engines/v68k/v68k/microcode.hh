@@ -29,16 +29,7 @@ namespace v68k
 	
 	void microcode_ANDI_to_SR( processor_state& state, uint32_t* params );
 	
-	void microcode_MOVE_B_to_Dn( processor_state& state, uint32_t* params );
-	void microcode_MOVE_B      ( processor_state& state, uint32_t* params );
-	
-	void microcode_MOVE_L_to_Dn( processor_state& state, uint32_t* params );
-	void microcode_MOVEA_L     ( processor_state& state, uint32_t* params );
-	void microcode_MOVE_L      ( processor_state& state, uint32_t* params );
-	
-	void microcode_MOVE_W_to_Dn( processor_state& state, uint32_t* params );
-	void microcode_MOVEA_W     ( processor_state& state, uint32_t* params );
-	void microcode_MOVE_W      ( processor_state& state, uint32_t* params );
+	void microcode_MOVE( processor_state& state, uint32_t* params );
 	
 	void microcode_LEA( processor_state& state, uint32_t* params );
 	
