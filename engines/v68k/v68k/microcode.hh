@@ -67,8 +67,6 @@ namespace v68k
 	void microcode_BSR( processor_state& state, uint32_t* params );
 	void microcode_Bcc( processor_state& state, uint32_t* params );
 	
-	void microcode_MOVEQ( processor_state& state, uint32_t* params );
-	
 	void microcode_EXG( processor_state& state, uint32_t* params );
 	
 }

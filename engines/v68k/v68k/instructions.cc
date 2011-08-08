@@ -257,7 +257,8 @@ namespace v68k
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,
-		microcode_MOVEQ
+		microcode_MOVE,
+		stores_long_data|in_register
 	};
 	
 	instruction decoded_EXG =

@@ -464,21 +464,6 @@ namespace v68k
 		}
 	}
 	
-	void microcode_MOVEQ( processor_state& s, uint32_t* params )
-	{
-		const uint32_t n    = params[0];
-		const int32_t  data = params[1];
-		
-		uint32_t& Dn = s.regs.d[n];
-		
-		Dn = data;
-		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( 0 );
-	}
-	
 	void microcode_EXG( processor_state& s, uint32_t* params )
 	{
 		const uint32_t mode = params[0];
