@@ -28,6 +28,17 @@ namespace v68k
 			                       : &decoded_MOVEP_from;
 		}
 		
+		if ( (opcode & 0xff00) == 0x0000 )
+		{
+			// ORI
+			
+			if ( (opcode & 0xffbf ) == 0x003c )
+			{
+				return opcode & 0x0040 ? &decoded_ORI_to_SR
+				                       : &decoded_ORI_to_CCR;
+			}
+		}
+		
 		if ( (opcode & 0xff00) == 0x0200 )
 		{
 			// ANDI
@@ -36,6 +47,17 @@ namespace v68k
 			{
 				return opcode & 0x0040 ? &decoded_ANDI_to_SR
 				                       : &decoded_ANDI_to_CCR;
+			}
+		}
+		
+		if ( (opcode & 0xff00) == 0x0a00 )
+		{
+			// EORI
+			
+			if ( (opcode & 0xffbf ) == 0x0a3c )
+			{
+				return opcode & 0x0040 ? &decoded_EORI_to_SR
+				                       : &decoded_EORI_to_CCR;
 			}
 		}
 		

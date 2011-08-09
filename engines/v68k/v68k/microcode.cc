@@ -19,6 +19,20 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
+	void microcode_ORI_to_CCR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_CCR( s.get_CCR() | data );
+	}
+	
+	void microcode_ORI_to_SR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_SR( s.get_SR() | data );
+	}
+	
 	void microcode_MOVEP_to( processor_state& s, uint32_t* params )
 	{
 		const uint32_t mode = params[0];
@@ -113,6 +127,20 @@ namespace v68k
 		const uint32_t data = params[0];
 		
 		s.set_SR( s.get_SR() & data );
+	}
+	
+	void microcode_EORI_to_CCR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_CCR( s.get_CCR() ^ data );
+	}
+	
+	void microcode_EORI_to_SR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_SR( s.get_SR() ^ data );
 	}
 	
 	void microcode_MOVE( processor_state& s, uint32_t* params )

@@ -22,12 +22,20 @@ namespace v68k
 	typedef void (*microcode)( processor_state&, uint32_t* );
 	
 	
+	void microcode_ORI_to_CCR( processor_state& state, uint32_t* params );
+	
+	void microcode_ORI_to_SR( processor_state& state, uint32_t* params );
+	
 	void microcode_MOVEP_to  ( processor_state& state, uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, uint32_t* params );
 	
 	void microcode_ANDI_to_CCR( processor_state& state, uint32_t* params );
 	
 	void microcode_ANDI_to_SR( processor_state& state, uint32_t* params );
+	
+	void microcode_EORI_to_CCR( processor_state& state, uint32_t* params );
+	
+	void microcode_EORI_to_SR( processor_state& state, uint32_t* params );
 	
 	void microcode_MOVE( processor_state& state, uint32_t* params );
 	
