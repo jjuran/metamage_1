@@ -102,6 +102,18 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_MOVE_from_SR[] =
+	{
+		&fetch_effective_word_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_MOVE_to_SR[] =
+	{
+		&fetch_word_from_effective_address,
+		0  // NULL
+	};
+	
 	
 	fetcher fetches_TRAP[] =
 	{

@@ -32,6 +32,10 @@ namespace v68k
 	
 	extern fetcher fetches_LEA[];
 	
+	extern fetcher fetches_MOVE_from_SR[];
+	
+	extern fetcher fetches_MOVE_to_SR[];
+	
 	extern fetcher fetches_TRAP[];
 	
 	extern fetcher fetches_LINK_L[];

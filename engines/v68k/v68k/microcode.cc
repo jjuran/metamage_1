@@ -160,6 +160,30 @@ namespace v68k
 		An = addr;
 	}
 	
+	void microcode_MOVE_from_CCR( processor_state& s, uint32_t* params )
+	{
+		params[1] = s.get_CCR();
+	}
+	
+	void microcode_MOVE_from_SR( processor_state& s, uint32_t* params )
+	{
+		params[1] = s.get_SR();
+	}
+	
+	void microcode_MOVE_to_CCR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_CCR( data );
+	}
+	
+	void microcode_MOVE_to_SR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		s.set_SR( data );
+	}
+	
 	void microcode_BKPT( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];  // 3-bit breakpoint vector

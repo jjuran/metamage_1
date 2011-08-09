@@ -116,6 +116,38 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const instruction* decode_MOVE_SR( uint16_t opcode )
+	{
+		// MOVE from/to CCR/SR
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		if ( opcode & 0x0400 )
+		{
+			if ( ea_is_data( mode, n ) )
+			{
+				return opcode & 0x0200 ? &decoded_MOVE_to_SR
+				                       : &decoded_MOVE_to_CCR;
+			}
+		}
+		else
+		{
+			if ( ea_is_data_register( mode, n ) )
+			{
+				return opcode & 0x0200 ? &decoded_MOVE_from_SR_to_Dn
+				                       : &decoded_MOVE_from_CCR_to_Dn;
+			}
+			else if ( ea_is_data_alterable( mode, n ) )
+			{
+				return opcode & 0x0200 ? &decoded_MOVE_from_SR
+				                       : &decoded_MOVE_from_CCR;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	const instruction* decode_line_4( uint16_t opcode )
 	{
 		if ( opcode & 0x0100 )
@@ -149,6 +181,11 @@ namespace v68k
 			
 			default:
 				break;
+		}
+		
+		if ( (opcode & 0x09C0) == 0x00C0 )
+		{
+			return decode_MOVE_SR( opcode );
 		}
 		
 		return 0;  // NULL

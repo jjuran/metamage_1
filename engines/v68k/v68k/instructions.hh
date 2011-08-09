@@ -41,6 +41,16 @@ namespace v68k
 	
 	extern instruction decoded_LEA;
 	
+	extern instruction decoded_MOVE_from_CCR_to_Dn;
+	extern instruction decoded_MOVE_from_CCR;
+	
+	extern instruction decoded_MOVE_from_SR_to_Dn;
+	extern instruction decoded_MOVE_from_SR;
+	
+	extern instruction decoded_MOVE_to_CCR;
+	
+	extern instruction decoded_MOVE_to_SR;
+	
 	extern instruction decoded_BKPT;
 	
 	extern instruction decoded_PEA;
