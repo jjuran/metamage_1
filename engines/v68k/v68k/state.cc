@@ -114,8 +114,6 @@ namespace v68k
 			return;
 		}
 		
-		uint32_t new_pc;
-		
 		if ( !mem.get_long( vector_offset, regs.pc ) )
 		{
 			bus_error();
