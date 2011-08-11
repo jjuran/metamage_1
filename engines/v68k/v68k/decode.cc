@@ -45,15 +45,12 @@ namespace v68k
 	static const instruction* move_instructions[] =
 	{
 		&decoded_MOVE_B_to_Dn,
-		0,  // There is no MOVEA.B
 		&decoded_MOVE_B,
 		
-		&decoded_MOVE_L_to_Dn,
-		&decoded_MOVEA_L,
+		&decoded_MOVE_L_to_Rn,  // includes MOVEA.L
 		&decoded_MOVE_L,
 		
-		&decoded_MOVE_W_to_Dn,
-		&decoded_MOVEA_W,
+		&decoded_MOVE_W_to_Rn,  // includes MOVEA.W
 		&decoded_MOVE_W
 	};
 	
@@ -77,10 +74,9 @@ namespace v68k
 			return 0;  // NULL
 		}
 		
-		const uint16_t dest_code = ea_is_register( mode2 ) ? mode2 & 0x1
-		                                                   : 2;
+		const bool dest_code = !ea_is_register( mode2 );
 		
-		const int i = (size_code - 1) * 3 + dest_code;
+		const int i = (size_code - 1) * 2 + dest_code;
 		
 		return move_instructions[ i ];
 	}

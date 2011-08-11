@@ -44,49 +44,43 @@ namespace v68k
 	instruction decoded_MOVE_B_to_Dn =
 	{
 		fetches_MOVE_B_to_Dn,
-		microcode_MOVE_B_to_Dn
+		microcode_MOVE,
+		stores_byte_data|in_register
 	};
 	
 	instruction decoded_MOVE_B =
 	{
 		fetches_MOVE_B,
-		microcode_MOVE_B
+		microcode_MOVE,
+		stores_byte_data
 	};
 	
-	instruction decoded_MOVE_L_to_Dn =
+	instruction decoded_MOVE_L_to_Rn =
 	{
 		fetches_MOVE_L_to_Rn,
-		microcode_MOVE_L_to_Dn
-	};
-	
-	instruction decoded_MOVEA_L =
-	{
-		fetches_MOVE_L_to_Rn,
-		microcode_MOVEA_L
+		microcode_MOVE,
+		stores_long_data|in_register
 	};
 	
 	instruction decoded_MOVE_L =
 	{
 		fetches_MOVE_L,
-		microcode_MOVE_L
+		microcode_MOVE,
+		stores_long_data
 	};
 	
-	instruction decoded_MOVE_W_to_Dn =
+	instruction decoded_MOVE_W_to_Rn =
 	{
 		fetches_MOVE_W_to_Rn,
-		microcode_MOVE_W_to_Dn
-	};
-	
-	instruction decoded_MOVEA_W =
-	{
-		fetches_MOVE_W_to_Rn,
-		microcode_MOVEA_W
+		microcode_MOVE,
+		stores_word_data|in_register
 	};
 	
 	instruction decoded_MOVE_W =
 	{
 		fetches_MOVE_W,
-		microcode_MOVE_W
+		microcode_MOVE,
+		stores_word_data
 	};
 	
 	instruction decoded_LINK_L =
@@ -263,7 +257,8 @@ namespace v68k
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,
-		microcode_MOVEQ
+		microcode_MOVE,
+		stores_long_data|in_register
 	};
 	
 	instruction decoded_EXG =

@@ -9,6 +9,7 @@
 #include "v68k/decode.hh"
 #include "v68k/endian.hh"
 #include "v68k/instruction.hh"
+#include "v68k/load_store.hh"
 
 
 namespace v68k
@@ -112,8 +113,33 @@ namespace v68k
 			}
 		}
 		
+		// load/store prep
+		
+		const uint32_t saved_param1 = params[1];
+		
+		const bool stores_word_in_memory = (decoded->flags & (stores_word_data|in_register)) == stores_word_data;
+		
+		if ( stores_word_in_memory  &&  badly_aligned_data( params[1] ) )
+		{
+			return address_error();
+		}
+		
+		// load
+		
+		if ( !load( *this, params[1], decoded->flags ) )
+		{
+			return bus_error();
+		}
+		
 		// execute
 		decoded->code( *this, params );
+		
+		// store
+		
+		if ( !store( *this, saved_param1, params[1], decoded->flags ) )
+		{
+			return bus_error();
+		}
 		
 		// prefetch next
 		prefetch_instruction_word();
