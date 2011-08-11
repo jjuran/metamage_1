@@ -135,7 +135,15 @@ namespace v68k
 	{
 		const uint32_t An = s.regs.a[n];
 		
-	//	ASSERT( mode != 3  &&  mode != 4  ||  size != 0 );
+		if ( mode == 3  ||  mode == 4 )
+		{
+		//	ASSERT( size != 0 );
+			
+			if ( size == 1  &&  n == 7 )
+			{
+				size = 2;  // SP is kept word-aligned
+			}
+		}
 		
 		switch ( mode )
 		{
