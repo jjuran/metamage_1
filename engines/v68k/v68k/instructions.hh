@@ -75,6 +75,8 @@ namespace v68k
 	extern instruction decoded_MOVE_to_USP;
 	extern instruction decoded_MOVE_from_USP;
 	
+	extern instruction decoded_RESET;
+	
 	extern instruction decoded_NOP;
 	
 	extern instruction decoded_STOP;

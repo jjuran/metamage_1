@@ -268,6 +268,13 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_RESET =
+	{
+		fetches_none,
+		microcode_NOP,
+		privileged
+	};
+	
 	instruction decoded_NOP =
 	{
 		fetches_none,

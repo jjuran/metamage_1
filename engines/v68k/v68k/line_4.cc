@@ -50,7 +50,7 @@ namespace v68k
 	
 	static const instruction* instructions_4e7_low[] =
 	{
-		0,  // RESET
+		&decoded_RESET,
 		&decoded_NOP,
 		&decoded_STOP,
 		&decoded_RTE,
