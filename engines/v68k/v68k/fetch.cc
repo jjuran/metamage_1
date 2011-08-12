@@ -57,6 +57,21 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_sized_immediate_data( processor_state& s )
+	{
+		const int size_code = s.opcode >> 6 & 0x3;
+		
+	//	ASSERT( size_code != 3 );
+		
+		if ( size_code == 2 )
+		{
+			return fetch_longword( s );
+		}
+		
+		return fetch_instruction_word( s );
+	}
+	
+	
 	uint32_t fetch_data_at_1E00( processor_state& s )
 	{
 		return s.opcode >> 9 & 0x000F;
