@@ -6,6 +6,7 @@
 #include "v68k/fetch.hh"
 
 // v68k
+#include "v68k/effective_address.hh"
 #include "v68k/state.hh"
 
 
@@ -54,6 +55,44 @@ namespace v68k
 		const uint32_t high = fetch_instruction_word( s );
 		
 		return high << 16 | fetch_instruction_word( s );
+	}
+	
+	
+	uint32_t fetch_sized_immediate_data( processor_state& s )
+	{
+		const int size_code = s.opcode >> 6 & 0x3;
+		
+	//	ASSERT( size_code != 3 );
+		
+		if ( size_code == 2 )
+		{
+			return fetch_longword( s );
+		}
+		
+		return fetch_instruction_word( s );
+	}
+	
+	uint32_t fetch_sized_effective_address( processor_state& s )
+	{
+		const int size_code = s.opcode >> 6 & 0x3;
+		
+	//	ASSERT( size_code != 3 );
+		
+		switch ( size_code )
+		{
+			case 0:
+				return fetch_effective_byte_address( s );
+			
+			case 1:
+				return fetch_effective_word_address( s );
+			
+			case 2:
+				return fetch_effective_long_address( s );
+			
+			default:
+				// Not reached
+				return 0;
+		}
 	}
 	
 	

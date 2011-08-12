@@ -35,6 +35,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_immediate[] =
+	{
+		&fetch_sized_immediate_data,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_data_at_0007[] =
 	{
 		&fetch_data_at_0007,
