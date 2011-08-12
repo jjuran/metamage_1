@@ -47,7 +47,7 @@ namespace v68k
 		
 		const uint32_t addr = Ay + disp;
 		
-		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
+		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space() );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -86,7 +86,7 @@ namespace v68k
 		
 		const uint32_t addr = Ay + disp;
 		
-		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1 );
+		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space() );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -215,7 +215,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, addr ) )
+		if ( !s.mem.put_long( sp, addr, s.data_space() ) )
 		{
 			s.bus_error();
 		}
@@ -299,7 +299,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, An ) )
+		if ( !s.mem.put_long( sp, An, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -327,7 +327,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp, An ) )
+		if ( !s.mem.get_long( sp, An, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -387,7 +387,7 @@ namespace v68k
 		
 		uint16_t id;
 		
-		if ( !s.mem.get_word( sp + 6, id ) )
+		if ( !s.mem.get_word( sp + 6, id, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -403,7 +403,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp + 2, s.regs.pc ) )
+		if ( !s.mem.get_long( sp + 2, s.regs.pc, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -412,7 +412,7 @@ namespace v68k
 		
 		uint16_t saved_sr;
 		
-		if ( !s.mem.get_word( sp, saved_sr ) )
+		if ( !s.mem.get_word( sp, saved_sr, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -442,7 +442,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp, s.regs.pc ) )
+		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -473,7 +473,7 @@ namespace v68k
 		
 		uint16_t ccr;
 		
-		if ( !s.mem.get_word( sp, ccr ) )
+		if ( !s.mem.get_word( sp, ccr, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -484,7 +484,7 @@ namespace v68k
 		
 		sp += 2;
 		
-		if ( !s.mem.get_long( sp, s.regs.pc ) )
+		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -509,7 +509,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, s.regs.pc ) )
+		if ( !s.mem.put_long( sp, s.regs.pc, s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -550,7 +550,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, s.regs.pc ) )
+		if ( !s.mem.put_long( sp, s.regs.pc, s.data_space() ) )
 		{
 			s.bus_error();
 			

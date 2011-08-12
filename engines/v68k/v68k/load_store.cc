@@ -43,21 +43,21 @@ namespace v68k
 		switch ( storage_flags )
 		{
 			case stores_byte_data:
-				ok = s.mem.get_byte( param, byte );
+				ok = s.mem.get_byte( param, byte, s.data_space() );
 				
 				param = byte;
 				
 				break;
 			
 			case stores_word_data:
-				ok = s.mem.get_word( param, word );
+				ok = s.mem.get_word( param, word, s.data_space() );
 				
 				param = word;
 				
 				break;
 			
 			case stores_long_data:
-				ok = s.mem.get_long( param, param );
+				ok = s.mem.get_long( param, param, s.data_space() );
 				
 				break;
 			
@@ -130,9 +130,9 @@ namespace v68k
 		
 		switch ( storage_flags )
 		{
-			case stores_byte_data:  return s.mem.put_byte( loc, data );
-			case stores_word_data:  return s.mem.put_word( loc, data );
-			case stores_long_data:  return s.mem.put_long( loc, data );
+			case stores_byte_data:  return s.mem.put_byte( loc, data, s.data_space() );
+			case stores_word_data:  return s.mem.put_word( loc, data, s.data_space() );
+			case stores_long_data:  return s.mem.put_long( loc, data, s.data_space() );
 			
 			default:
 				break;

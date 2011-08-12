@@ -37,9 +37,11 @@ namespace v68k
 	{
 		condition = normal;
 		
-		const reset_vector* v = (const reset_vector*) mem.translate( 0, sizeof (reset_vector) );
+		const uint8_t* zero = mem.translate( 0,
+		                                     sizeof (reset_vector),
+		                                     supervisor_program_space );
 		
-		if ( v == 0 )  // NULL
+		if ( zero == 0 )  // NULL
 		{
 			double_bus_fault();
 		}
@@ -53,6 +55,8 @@ namespace v68k
 			
 			regs.   x = 0;  // clear CCR
 			regs.nzvc = 0;
+			
+			const reset_vector* v = (const reset_vector*) zero;
 			
 			regs.a[7] = longword_from_big( v->isp );
 			regs.pc   = longword_from_big( v->pc  );

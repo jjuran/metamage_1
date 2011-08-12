@@ -103,7 +103,7 @@ namespace v68k
 	}
 	
 	
-	uint8_t* memory::translate( uint32_t addr, uint32_t length ) const
+	uint8_t* memory::translate( uint32_t addr, uint32_t length, function_code_t fc ) const
 	{
 		if ( addr + length > size  ||  addr + length < addr )
 		{
@@ -114,9 +114,9 @@ namespace v68k
 	}
 	
 	
-	bool memory::get_byte( uint32_t addr, uint8_t & x ) const
+	bool memory::get_byte( uint32_t addr, uint8_t& x, function_code_t fc ) const
 	{
-		if ( const uint8_t* p = translate( addr, sizeof (uint8_t) ) )
+		if ( const uint8_t* p = translate( addr, sizeof (uint8_t), fc ) )
 		{
 			x = read_byte( p );
 			
@@ -126,9 +126,9 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::get_word( uint32_t addr, uint16_t& x ) const
+	bool memory::get_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
 	{
-		if ( const uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		if ( const uint8_t* p = translate( addr, sizeof (uint16_t), fc ) )
 		{
 			x = read_big_word_unaligned( p );
 			
@@ -138,9 +138,9 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::get_long( uint32_t addr, uint32_t& x ) const
+	bool memory::get_long( uint32_t addr, uint32_t& x, function_code_t fc ) const
 	{
-		if ( const uint8_t* p = translate( addr, sizeof (uint32_t) ) )
+		if ( const uint8_t* p = translate( addr, sizeof (uint32_t), fc ) )
 		{
 			x = read_big_long_unaligned( p );
 			
@@ -151,9 +151,9 @@ namespace v68k
 	}
 	
 	
-	bool memory::put_byte( uint32_t addr, uint8_t x ) const
+	bool memory::put_byte( uint32_t addr, uint8_t x, function_code_t fc ) const
 	{
-		if ( uint8_t* p = translate( addr, sizeof (uint8_t) ) )
+		if ( uint8_t* p = translate( addr, sizeof (uint8_t), fc ) )
 		{
 			write_byte( p, x );
 			
@@ -163,9 +163,9 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::put_word( uint32_t addr, uint16_t x ) const
+	bool memory::put_word( uint32_t addr, uint16_t x, function_code_t fc ) const
 	{
-		if ( uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		if ( uint8_t* p = translate( addr, sizeof (uint16_t), fc ) )
 		{
 			write_big_word_unaligned( p, x );
 			
@@ -175,9 +175,9 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::put_long( uint32_t addr, uint32_t x ) const
+	bool memory::put_long( uint32_t addr, uint32_t x, function_code_t fc ) const
 	{
-		if ( uint8_t* p = translate( addr, sizeof (uint32_t) ) )
+		if ( uint8_t* p = translate( addr, sizeof (uint32_t), fc ) )
 		{
 			write_big_long_unaligned( p, x );
 			
@@ -188,11 +188,11 @@ namespace v68k
 	}
 	
 	
-	bool memory::get_instruction_word( uint32_t addr, uint16_t& next ) const
+	bool memory::get_instruction_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
 	{
-		if ( const uint8_t* p = translate( addr, sizeof (uint16_t) ) )
+		if ( const uint8_t* p = translate( addr, sizeof (uint16_t), fc ) )
 		{
-			next = read_big_word_aligned( p );
+			x = read_big_word_aligned( p );
 			
 			return true;
 		}

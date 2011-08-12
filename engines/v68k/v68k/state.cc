@@ -26,7 +26,7 @@ namespace v68k
 		{
 			address_error();
 		}
-		else if ( !mem.get_instruction_word( regs.pc, opcode ) )
+		else if ( !mem.get_instruction_word( regs.pc, opcode, program_space() ) )
 		{
 			bus_error();
 		}
@@ -117,16 +117,16 @@ namespace v68k
 		
 		sp -= size;
 		
-		const bool ok = mem.put_word( sp + 0, saved_sr      )
-		              & mem.put_long( sp + 2, regs.pc       )
-		              & mem.put_word( sp + 6, vector_offset );  // format is 0
+		const bool ok = mem.put_word( sp + 0, saved_sr,      data_space() )
+		              & mem.put_long( sp + 2, regs.pc,       data_space() )
+		              & mem.put_word( sp + 6, vector_offset, data_space() );  // format is 0
 		
 		if ( !ok )
 		{
 			return bus_error();
 		}
 		
-		if ( !mem.get_long( vector_offset, regs.pc ) )
+		if ( !mem.get_long( vector_offset, regs.pc, data_space() ) )
 		{
 			return bus_error();
 		}
