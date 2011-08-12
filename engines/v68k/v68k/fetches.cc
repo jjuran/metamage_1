@@ -42,6 +42,12 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_signed_word[] =
+	{
+		&fetch_signed_word,
+		0  // NULL
+	};
+	
 	fetcher fetches_data_at_0007[] =
 	{
 		&fetch_data_at_0007,
