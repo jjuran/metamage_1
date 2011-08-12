@@ -301,6 +301,12 @@ namespace v68k
 		microcode_RTS
 	};
 	
+	instruction decoded_RTR =
+	{
+		fetches_none,
+		microcode_RTR
+	};
+	
 	instruction decoded_JSR =
 	{
 		fetches_effective_control_address,

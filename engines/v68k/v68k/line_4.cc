@@ -57,7 +57,7 @@ namespace v68k
 		0,  // RTD
 		&decoded_RTS,
 		0,  // TRAPV
-		0   // RTR
+		&decoded_RTR
 	};
 	
 	static const instruction* decode_4e( uint16_t opcode )
