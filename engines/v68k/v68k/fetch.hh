@@ -29,6 +29,8 @@ namespace v68k
 	
 	uint32_t fetch_sized_immediate_data( processor_state& state );
 	
+	uint32_t fetch_sized_effective_address( processor_state& state );
+	
 	uint32_t fetch_data_at_1E00( processor_state& state );
 	uint32_t fetch_data_at_000F( processor_state& state );
 	
