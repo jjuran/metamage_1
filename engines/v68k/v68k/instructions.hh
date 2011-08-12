@@ -20,6 +20,13 @@ namespace v68k
 	extern instruction decoded_MOVEP_to;
 	extern instruction decoded_MOVEP_from;
 	
+	extern instruction decoded_ANDI_B_to_Dn;
+	extern instruction decoded_ANDI_B;
+	extern instruction decoded_ANDI_W_to_Dn;
+	extern instruction decoded_ANDI_W;
+	extern instruction decoded_ANDI_L_to_Dn;
+	extern instruction decoded_ANDI_L;
+	
 	extern instruction decoded_ANDI_to_CCR;
 	
 	extern instruction decoded_ANDI_to_SR;

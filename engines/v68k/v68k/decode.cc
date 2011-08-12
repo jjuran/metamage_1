@@ -20,6 +20,18 @@ namespace v68k
 	typedef const instruction* (*decoder)( uint16_t opcode );
 	
 	
+	static const instruction* ANDI_instructions[] =
+	{
+		&decoded_ANDI_B_to_Dn,
+		&decoded_ANDI_B,
+		
+		&decoded_ANDI_W_to_Dn,
+		&decoded_ANDI_W,
+		
+		&decoded_ANDI_L_to_Dn,
+		&decoded_ANDI_L
+	};
+	
 	static const instruction* decode_line_0( uint16_t opcode )
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
@@ -27,6 +39,9 @@ namespace v68k
 			return opcode & 0x0080 ? &decoded_MOVEP_to
 			                       : &decoded_MOVEP_from;
 		}
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
 		
 		if ( (opcode & 0xff00) == 0x0000 )
 		{
@@ -42,6 +57,15 @@ namespace v68k
 		if ( (opcode & 0xff00) == 0x0200 )
 		{
 			// ANDI
+			
+			if ( (opcode & 0x00c0) != 0x00c0  &&  ea_is_data_alterable( mode, n ) )
+			{
+				const int size_code = opcode >> 6 & 0x3;
+				
+				const int i = size_code * 2 + !ea_is_data_register( mode );
+				
+				return ANDI_instructions[ i ];
+			}
 			
 			if ( (opcode & 0xffbf ) == 0x023c )
 			{

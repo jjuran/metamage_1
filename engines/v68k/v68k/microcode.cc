@@ -115,6 +115,13 @@ namespace v68k
 		Dx = data;
 	}
 	
+	void microcode_AND( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] &= data;
+	}
+	
 	void microcode_ANDI_to_CCR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
