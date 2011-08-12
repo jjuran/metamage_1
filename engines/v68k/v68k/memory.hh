@@ -13,6 +13,18 @@
 namespace v68k
 {
 	
+	enum function_code_t
+	{
+		reserved_0,
+		user_data_space,
+		user_program_space,
+		utility_space,  // reserved for user definition
+		reserved_4,
+		supervisor_data_space,
+		supervisor_program_space,
+		cpu_space
+	};
+	
 	class memory
 	{
 		private:
