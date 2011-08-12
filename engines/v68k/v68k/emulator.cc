@@ -80,7 +80,17 @@ namespace v68k
 		
 		if ( !decoded )
 		{
-			return illegal_instruction();
+			switch ( opcode >> 12 )
+			{
+				case 0xA:
+					return line_A_emulator();
+				
+				case 0xF:
+					return line_F_emulator();
+				
+				default:
+					return illegal_instruction();
+			}
 		}
 		
 		if ( (decoded->flags & not_before_mask) > model )
@@ -171,6 +181,20 @@ namespace v68k
 	bool emulator::privilege_violation()
 	{
 		take_exception_format_0( 8 * sizeof (uint32_t) );
+		
+		return true;
+	}
+	
+	bool emulator::line_A_emulator()
+	{
+		take_exception_format_0( 10 * sizeof (uint32_t) );
+		
+		return true;
+	}
+	
+	bool emulator::line_F_emulator()
+	{
+		take_exception_format_0( 11 * sizeof (uint32_t) );
 		
 		return true;
 	}

@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 5 + 4 + 4;
+static const unsigned n_tests = 5 + 4 + 4 + 2 + 2;
 
 
 using v68k::big_word;
@@ -150,6 +150,62 @@ static void trap()
 	ok_if( emu.regs.pc == 2048 );
 }
 
+static void line_A_emulator()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ] = { 0 };
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	vectors[10] = big_longword( 2048 );  // Line A Emulator
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0xA000 );  // unimplemented A-line trap
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	ok_if( emu.step() );  // unimplemented A-line trap
+	
+	ok_if( emu.regs.pc == 2048 );
+}
+
+static void line_F_emulator()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ] = { 0 };
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	vectors[11] = big_longword( 2048 );  // Line F Emulator
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0xF000 );  // unimplemented F-line trap
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	ok_if( emu.step() );  // unimplemented F-line trap
+	
+	ok_if( emu.regs.pc == 2048 );
+}
+
 int main( int argc, char** argv )
 {
 	tap::start( "v68k-exceptions", n_tests );
@@ -159,6 +215,10 @@ int main( int argc, char** argv )
 	privilege_violation();
 	
 	trap();
+	
+	line_A_emulator();
+	
+	line_F_emulator();
 	
 	return 0;
 }

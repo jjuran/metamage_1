@@ -37,6 +37,9 @@ namespace v68k
 			
 			bool illegal_instruction();
 			bool privilege_violation();
+			
+			bool line_A_emulator();
+			bool line_F_emulator();
 	};
 	
 }
