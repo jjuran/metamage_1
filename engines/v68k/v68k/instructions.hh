@@ -83,6 +83,8 @@ namespace v68k
 	
 	extern instruction decoded_RTE;
 	
+	extern instruction decoded_RTD;
+	
 	extern instruction decoded_RTS;
 	
 	extern instruction decoded_RTR;

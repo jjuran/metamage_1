@@ -54,7 +54,7 @@ namespace v68k
 		&decoded_NOP,
 		&decoded_STOP,
 		&decoded_RTE,
-		0,  // RTD
+		&decoded_RTD,
 		&decoded_RTS,
 		0,  // TRAPV
 		&decoded_RTR

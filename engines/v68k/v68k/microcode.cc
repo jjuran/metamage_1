@@ -424,6 +424,13 @@ namespace v68k
 		s.set_SR( saved_sr );
 	}
 	
+	void microcode_RTD( processor_state& s, uint32_t* params )
+	{
+		microcode_RTS( s, params );
+		
+		s.regs.a[7] += params[0];
+	}
+	
 	void microcode_RTS( processor_state& s, uint32_t* params )
 	{
 		uint32_t& sp = s.regs.a[7];

@@ -75,6 +75,8 @@ namespace v68k
 	
 	void microcode_RTE( processor_state& state, uint32_t* params );
 	
+	void microcode_RTD( processor_state& state, uint32_t* params );
+	
 	void microcode_RTS( processor_state& state, uint32_t* params );
 	
 	void microcode_RTR( processor_state& state, uint32_t* params );
