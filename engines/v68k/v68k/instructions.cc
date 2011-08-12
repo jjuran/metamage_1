@@ -126,14 +126,14 @@ namespace v68k
 	{
 		fetches_MOVE_from_SR,
 		microcode_MOVE_from_CCR,
-		stores_word_data|in_register
+		not_before_68010 | stores_word_data|in_register
 	};
 	
 	instruction decoded_MOVE_from_CCR =
 	{
 		fetches_MOVE_from_SR,
 		microcode_MOVE_from_CCR,
-		stores_word_data
+		not_before_68010 | stores_word_data
 	};
 	
 	instruction decoded_MOVE_from_SR_to_Dn =
