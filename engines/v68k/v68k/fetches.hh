@@ -17,6 +17,8 @@ namespace v68k
 	
 	extern fetcher fetches_effective_control_address[];
 	
+	extern fetcher fetches_immediate[];
+	
 	extern fetcher fetches_data_at_0007[];
 	
 	extern fetcher fetches_MOVEP[];
