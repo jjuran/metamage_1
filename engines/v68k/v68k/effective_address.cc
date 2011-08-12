@@ -149,11 +149,9 @@ namespace v68k
 		{
 			case 0:  // Data
 			case 1:  // Address
-				/*
-					Data/Address Register Direct mode isn't supported here,
-					since this function returns a memory address.
-				*/
-				break;
+				// Return a register id for Data/Address Register Direct mode.
+				
+				return mode << 3 | n;
 			
 			case 2:
 				return An;
