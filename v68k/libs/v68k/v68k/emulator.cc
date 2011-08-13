@@ -321,4 +321,55 @@ namespace v68k
 		return true;
 	}
 	
+	bool emulator::interrupt( int level, int vector )
+	{
+	//	ASSERT( level >= 0 );
+	//	ASSERT( level <= 7 );
+	
+	//	ASSERT( vector == 0  ||  vector >= 64 );
+	//	ASSERT( vector < 256 );
+		
+		if ( level > 7  ||  vector >= 256 )
+		{
+			return false;
+		}
+		
+		if ( level <= sr.iii  &&  level != 7 )
+		{
+			return false;
+		}
+		
+		if ( vector == 0 )
+		{
+			vector = 24 + level;  // autovector
+		}
+		else if ( vector < 64 )
+		{
+			return false;
+		}
+		
+		if ( condition == stopped )
+		{
+			condition = normal;
+		}
+		
+		const uint16_t vector_offset = vector * sizeof (uint32_t);
+		
+		if ( bool ok = take_exception( 0, vector_offset ) )
+		{
+			sr.iii = level;
+			
+			if ( sr.ttsm & 0x1 )
+			{
+				sr.ttsm &= ~0x1;  // Clear M
+				
+				ok = take_exception( 1, vector_offset );
+			}
+			
+			return ok;
+		}
+		
+		return false;
+	}
+	
 }

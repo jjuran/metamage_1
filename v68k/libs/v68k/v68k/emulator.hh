@@ -43,6 +43,8 @@ namespace v68k
 			
 			bool line_A_emulator()  { return take_exception( 0, 10 * sizeof (uint32_t) ); }
 			bool line_F_emulator()  { return take_exception( 0, 11 * sizeof (uint32_t) ); }
+		
+			bool interrupt( int level, int vector = 0 );
 	};
 	
 }
