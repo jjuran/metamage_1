@@ -35,11 +35,11 @@ namespace v68k
 			
 			bool acknowledge_breakpoint( uint16_t new_opcode );
 			
-			bool illegal_instruction();
-			bool privilege_violation();
+			bool illegal_instruction()  { return take_exception_format_0( 4 * sizeof (uint32_t) ); }
+			bool privilege_violation()  { return take_exception_format_0( 8 * sizeof (uint32_t) ); }
 			
-			bool line_A_emulator();
-			bool line_F_emulator();
+			bool line_A_emulator()  { return take_exception_format_0( 10 * sizeof (uint32_t) ); }
+			bool line_F_emulator()  { return take_exception_format_0( 11 * sizeof (uint32_t) ); }
 	};
 	
 }
