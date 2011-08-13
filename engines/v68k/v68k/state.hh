@@ -82,7 +82,7 @@ namespace v68k
 			return (model < mc68020) & addr;
 		}
 		
-		void take_exception_format_0( uint16_t vector_offset );
+		bool take_exception_format_0( uint16_t vector_offset );
 		
 		uint32_t bus_error    ()  { condition = halted;  return 0; }
 		uint32_t address_error()  { condition = halted;  return 0; }

@@ -100,7 +100,7 @@ namespace v68k
 		regs.nzvc = new_sr >>  0 & 0xF;
 	}
 	
-	void processor_state::take_exception_format_0( uint16_t vector_offset )
+	bool processor_state::take_exception_format_0( uint16_t vector_offset )
 	{
 		const uint16_t saved_sr = get_SR();
 		
@@ -110,9 +110,7 @@ namespace v68k
 		
 		if ( badly_aligned_data( sp ) )
 		{
-			address_error();
-			
-			return;
+			return address_error();
 		}
 		
 		const uint32_t size = 8;
@@ -125,19 +123,17 @@ namespace v68k
 		
 		if ( !ok )
 		{
-			bus_error();
-			
-			return;
+			return bus_error();
 		}
 		
 		if ( !mem.get_long( vector_offset, regs.pc ) )
 		{
-			bus_error();
-			
-			return;
+			return bus_error();
 		}
 		
 		prefetch_instruction_word();
+		
+		return true;
 	}
 	
 }
