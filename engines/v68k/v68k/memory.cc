@@ -110,6 +110,16 @@ namespace v68k
 			return 0;  // NULL
 		}
 		
+		if ( addr < 1024 )
+		{
+			if ( fc <= user_program_space )
+			{
+				// No user access to system vectors
+				
+				return 0;  // NULL
+			}
+		}
+		
 		return base + addr;
 	}
 	
