@@ -53,8 +53,8 @@ namespace v68k
 			case VC:  return !(nzvc & 0x2);  // !V
 			case VS:  return   nzvc & 0x2;   //  V
 			
-			case PL:  return !(nzvc & 0x4);  // !N
-			case MI:  return   nzvc & 0x4;   //  N
+			case PL:  return !(nzvc & 0x8);  // !N
+			case MI:  return   nzvc & 0x8;   //  N
 			
 			case GE:  return ~(nzvc >> 2 ^ nzvc) & 0x2;  //  N == V
 			case LT:  return  (nzvc >> 2 ^ nzvc) & 0x2;  //  N ^  V
