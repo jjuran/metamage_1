@@ -1,6 +1,6 @@
 /*
-	v68k-test.cc
-	------------
+	v68k-hello.cc
+	-------------
 */
 
 // Standard C
