@@ -84,6 +84,8 @@ namespace v68k
 		
 		bool take_exception_format_0( uint16_t vector_offset );
 		
+		bool take_exception_format_6( uint16_t vector_offset, uint32_t instruction_address );
+		
 		uint32_t bus_error    ()  { condition = halted;  return 0; }
 		uint32_t address_error()  { condition = halted;  return 0; }
 		

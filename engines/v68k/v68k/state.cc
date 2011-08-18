@@ -136,5 +136,44 @@ namespace v68k
 		return true;
 	}
 	
+	bool processor_state::take_exception_format_6( uint16_t vector_offset, uint32_t instruction_address )
+	{
+		const uint16_t saved_sr = get_SR();
+		
+		set_SR( saved_sr & 0x3FFF | 0x2000 );  // Clear T1/T0, set S
+		
+		uint32_t& sp = regs.a[7];
+		
+		if ( badly_aligned_data( sp ) )
+		{
+			return address_error();
+		}
+		
+		const uint32_t size = 12;
+		
+		sp -= size;
+		
+		const uint32_t format_and_offset = 6 << 12 | vector_offset;
+		
+		const bool ok = mem.put_word( sp + 0, saved_sr,            data_space() )
+		              & mem.put_long( sp + 2, regs.pc,             data_space() )
+		              & mem.put_word( sp + 6, format_and_offset,   data_space() )
+		              & mem.put_long( sp + 8, instruction_address, data_space() );
+		
+		if ( !ok )
+		{
+			return bus_error();
+		}
+		
+		if ( !mem.get_long( vector_offset, regs.pc, data_space() ) )
+		{
+			return bus_error();
+		}
+		
+		prefetch_instruction_word();
+		
+		return true;
+	}
+	
 }
 
