@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 5 + 4 + 4 + 2 + 2;
+static const unsigned n_tests = 5 + 6 + 4 + 4 + 2 + 2;
 
 
 using v68k::big_word;
@@ -60,6 +60,50 @@ static void illegal_instruction()
 	ok_if( !emu.step() );  // Breakpoint 0
 	
 	ok_if( emu.step() );  // Illegal Instruction (unacknowledged breakpoint)
+	
+	ok_if( emu.regs.pc == 2048 );
+}
+
+static void trapv()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ] = { 0 };
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	vectors[7] = big_longword( 2048 );  // TRAPV
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0x4E76 );  // TRAPV
+	code[ 1 ] = big_word( 0x4E76 );  // TRAPV
+	code[ 2 ] = big_word( 0x4E76 );  // TRAPV
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	emu.set_CCR( 0x0 );
+	
+	ok_if( emu.step() );  // TRAPV
+	
+	ok_if( emu.regs.pc == 1026 );
+	
+	emu.set_CCR( 0x1D );  // X|N|Z|0|C
+	
+	ok_if( emu.step() );  // TRAPV
+	
+	ok_if( emu.regs.pc == 1028 );
+	
+	emu.set_CCR( 0x2 );  // V
+	
+	ok_if( emu.step() );  // TRAPV
 	
 	ok_if( emu.regs.pc == 2048 );
 }
@@ -211,6 +255,8 @@ int main( int argc, char** argv )
 	tap::start( "v68k-exceptions", n_tests );
 	
 	illegal_instruction();
+	
+	trapv();
 	
 	privilege_violation();
 	
