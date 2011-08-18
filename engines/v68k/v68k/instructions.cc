@@ -308,6 +308,12 @@ namespace v68k
 		microcode_RTS
 	};
 	
+	instruction decoded_TRAPV =
+	{
+		fetches_none,
+		microcode_TRAPV
+	};
+	
 	instruction decoded_RTR =
 	{
 		fetches_none,

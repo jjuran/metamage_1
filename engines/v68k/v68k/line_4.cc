@@ -56,7 +56,7 @@ namespace v68k
 		&decoded_RTE,
 		&decoded_RTD,
 		&decoded_RTS,
-		0,  // TRAPV
+		&decoded_TRAPV,
 		&decoded_RTR
 	};
 	

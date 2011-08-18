@@ -452,6 +452,14 @@ namespace v68k
 		sp += 4;
 	}
 	
+	void microcode_TRAPV( processor_state& s, uint32_t* params )
+	{
+		if ( s.get_CCR() & 0x2 )
+		{
+			s.take_exception_format_6( 7 * sizeof (uint32_t), s.regs.pc - 2 );
+		}
+	}
+	
 	void microcode_RTR( processor_state& s, uint32_t* params )
 	{
 		uint32_t& sp = s.regs.a[7];
