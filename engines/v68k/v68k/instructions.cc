@@ -268,6 +268,13 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_RESET =
+	{
+		fetches_none,
+		microcode_NOP,
+		privileged
+	};
+	
 	instruction decoded_NOP =
 	{
 		fetches_none,
@@ -288,10 +295,29 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_RTD =
+	{
+		fetches_signed_word,
+		microcode_RTD,
+		not_before_68010
+	};
+	
 	instruction decoded_RTS =
 	{
 		fetches_none,
 		microcode_RTS
+	};
+	
+	instruction decoded_TRAPV =
+	{
+		fetches_none,
+		microcode_TRAPV
+	};
+	
+	instruction decoded_RTR =
+	{
+		fetches_none,
+		microcode_RTR
 	};
 	
 	instruction decoded_JSR =

@@ -43,7 +43,7 @@ namespace v68k
 		return fetch_instruction_word( s );
 	}
 	
-	uint32_t fetch_word_displacement( processor_state& s )
+	uint32_t fetch_signed_word( processor_state& s )
 	{
 		const int16_t word = fetch_instruction_word( s );
 		

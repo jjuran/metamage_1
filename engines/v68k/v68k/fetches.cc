@@ -42,6 +42,12 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_signed_word[] =
+	{
+		&fetch_signed_word,
+		0  // NULL
+	};
+	
 	fetcher fetches_data_at_0007[] =
 	{
 		&fetch_data_at_0007,
@@ -54,7 +60,7 @@ namespace v68k
 		&fetch_MOVEP_opmode,
 		&FETCH_MAJOR_REGISTER_NUM,
 		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_word_displacement,
+		&fetch_signed_word,
 		0  // NULL
 	};
 	
@@ -132,7 +138,7 @@ namespace v68k
 	fetcher fetches_LINK[] =
 	{
 		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_word_displacement,
+		&fetch_signed_word,
 		0  // NULL
 	};
 	
@@ -162,7 +168,7 @@ namespace v68k
 	fetcher fetches_branch[] =
 	{
 		&fetch_pc,
-		&fetch_word_displacement,
+		&fetch_signed_word,
 		&fetch_cc,
 		0  // NULL
 	};

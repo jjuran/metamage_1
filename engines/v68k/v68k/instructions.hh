@@ -75,13 +75,21 @@ namespace v68k
 	extern instruction decoded_MOVE_to_USP;
 	extern instruction decoded_MOVE_from_USP;
 	
+	extern instruction decoded_RESET;
+	
 	extern instruction decoded_NOP;
 	
 	extern instruction decoded_STOP;
 	
 	extern instruction decoded_RTE;
 	
+	extern instruction decoded_RTD;
+	
 	extern instruction decoded_RTS;
+	
+	extern instruction decoded_TRAPV;
+	
+	extern instruction decoded_RTR;
 	
 	extern instruction decoded_JSR;
 	

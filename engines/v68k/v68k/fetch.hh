@@ -23,7 +23,7 @@ namespace v68k
 	
 	uint32_t fetch_unsigned_word( processor_state& state );
 	
-	uint32_t fetch_word_displacement( processor_state& state );
+	uint32_t fetch_signed_word( processor_state& state );
 	
 	uint32_t fetch_longword( processor_state& state );
 	

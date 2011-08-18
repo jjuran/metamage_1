@@ -50,14 +50,14 @@ namespace v68k
 	
 	static const instruction* instructions_4e7_low[] =
 	{
-		0,  // RESET
+		&decoded_RESET,
 		&decoded_NOP,
 		&decoded_STOP,
 		&decoded_RTE,
-		0,  // RTD
+		&decoded_RTD,
 		&decoded_RTS,
-		0,  // TRAPV
-		0   // RTR
+		&decoded_TRAPV,
+		&decoded_RTR
 	};
 	
 	static const instruction* decode_4e( uint16_t opcode )
