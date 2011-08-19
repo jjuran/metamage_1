@@ -47,7 +47,7 @@ namespace v68k
 		
 		const uint32_t addr = Ay + disp;
 		
-		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space() );
+		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space(), mem_write );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -86,7 +86,7 @@ namespace v68k
 		
 		const uint32_t addr = Ay + disp;
 		
-		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space() );
+		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space(), mem_read );
 		
 		if ( p == 0 )  // NULL
 		{

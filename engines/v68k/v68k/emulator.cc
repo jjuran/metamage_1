@@ -37,9 +37,15 @@ namespace v68k
 	{
 		condition = normal;
 		
+		/*
+			The reset vector is taken from Supervisor Program Space, but it
+			*is* in fact a read operation, not execution.
+		*/
+		
 		const uint8_t* zero = mem.translate( 0,
 		                                     sizeof (reset_vector),
-		                                     supervisor_program_space );
+		                                     supervisor_program_space,
+		                                     mem_read );
 		
 		if ( zero == 0 )  // NULL
 		{
