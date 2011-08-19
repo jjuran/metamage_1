@@ -25,6 +25,13 @@ namespace v68k
 		cpu_space
 	};
 	
+	enum memory_access_t
+	{
+		mem_exec  = 0x0,
+		mem_read  = 0x1,
+		mem_write = 0x2
+	};
+	
 	class memory
 	{
 		private:
