@@ -91,6 +91,8 @@ namespace v68k
 	
 	void microcode_JSR( processor_state& state, uint32_t* params );
 	
+	void microcode_MOVEC( processor_state& state, uint32_t* params );
+	
 	void microcode_JMP( processor_state& state, uint32_t* params );
 	
 	void microcode_BRA( processor_state& state, uint32_t* params );

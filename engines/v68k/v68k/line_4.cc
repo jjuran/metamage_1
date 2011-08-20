@@ -108,7 +108,11 @@ namespace v68k
 				
 				case 7:  // 0x4e78 - 0x4e7f
 					
-					// MOVEC
+					if ( (opcode & 0x0006) == 0x0002 )
+					{
+						return &decoded_MOVEC;
+					}
+					
 					break;
 			}
 		}
