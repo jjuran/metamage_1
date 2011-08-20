@@ -118,6 +118,13 @@ namespace v68k
 				
 				return 0;  // NULL
 			}
+			
+			if ( access == mem_exec )
+			{
+				// System vectors are not code -- not even the reset vector
+				
+				return 0;  // NULL
+			}
 		}
 		
 		return base + addr;
