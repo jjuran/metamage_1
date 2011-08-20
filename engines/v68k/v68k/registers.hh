@@ -23,6 +23,8 @@ namespace v68k
 		
 		uint32_t pc;
 		
+		uint32_t vbr;
+		
 		uint8_t ttsm;  // T1 T0 S  M
 		uint8_t  iii;  // .  I2 I1 I0
 		uint8_t    x;  // .  .  .  X
