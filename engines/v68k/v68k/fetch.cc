@@ -22,7 +22,7 @@ namespace v68k
 		
 		uint16_t word;
 		
-		if ( !s.mem.get_instruction_word( s.regs.pc, word ) )
+		if ( !s.mem.get_instruction_word( s.regs.pc, word, s.program_space() ) )
 		{
 			return s.bus_error();
 		}

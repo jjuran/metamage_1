@@ -99,7 +99,7 @@ namespace v68k
 				for misaligned data accesses.
 			*/
 			
-			if ( !s.mem.get_long( address, address ) )
+			if ( !s.mem.get_long( address, address, s.data_space() ) )
 			{
 				return s.bus_error();
 			}
@@ -278,7 +278,7 @@ namespace v68k
 		
 		uint8_t result;
 		
-		if ( !s.mem.get_byte( fetch_effective_byte_address( s ), result ) )
+		if ( !s.mem.get_byte( fetch_effective_byte_address( s ), result, s.data_space() ) )
 		{
 			return s.bus_error();
 		}
@@ -311,7 +311,7 @@ namespace v68k
 		
 		uint16_t result;
 		
-		if ( !s.mem.get_word( addr, result ) )
+		if ( !s.mem.get_word( addr, result, s.data_space() ) )
 		{
 			return s.bus_error();
 		}
@@ -344,7 +344,7 @@ namespace v68k
 		
 		uint32_t result;
 		
-		if ( !s.mem.get_long( addr, result ) )
+		if ( !s.mem.get_long( addr, result, s.data_space() ) )
 		{
 			return s.bus_error();
 		}

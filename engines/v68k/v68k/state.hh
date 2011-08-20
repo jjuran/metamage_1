@@ -72,6 +72,18 @@ namespace v68k
 		
 		void set_SR( uint16_t new_sr );
 		
+		function_code_t data_space() const
+		{
+			return regs.ttsm & 0x2 ? supervisor_data_space
+			                       : user_data_space;
+		}
+		
+		function_code_t program_space() const
+		{
+			return regs.ttsm & 0x2 ? supervisor_program_space
+			                       : user_program_space;
+		}
+		
 		bool badly_aligned_data( uint32_t addr ) const
 		{
 			/*
