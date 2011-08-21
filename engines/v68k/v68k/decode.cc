@@ -218,6 +218,16 @@ namespace v68k
 					return &storage;
 				}
 			}
+			else
+			{
+				if ( ea_is_valid( mode, n ) )
+				{
+					storage.fetch = fetches_CMP;
+					storage.code  = microcode_CMP;
+					
+					return &storage;
+				}
+			}
 		}
 		
 		return 0;  // NULL

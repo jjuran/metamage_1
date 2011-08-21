@@ -143,6 +143,23 @@ namespace v68k
 		s.set_SR( s.get_SR() & data );
 	}
 	
+	void microcode_CMP( processor_state& s, uint32_t* params )
+	{
+		const int32_t data = params[0];
+		const int32_t from = params[1];
+		
+		const int32_t diff = from - data;
+		
+		const bool S = data < 0;
+		const bool D = from < 0;
+		const bool R = diff < 0;
+		
+		s.regs.nzvc = N( diff <  0 )
+		            | Z( diff == 0 )
+		            | V( (S == R) & (S != D) )
+		            | C( S & !D | R & !D | S & R );
+	}
+	
 	void microcode_EOR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];

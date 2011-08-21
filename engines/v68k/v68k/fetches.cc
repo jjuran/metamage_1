@@ -204,6 +204,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_CMP[] =
+	{
+		&fetch_sized_data_at_effective_address,
+		&fetch_sized_data_from_major_register,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_EXG[] =
 	{
 		&fetch_EXG_opmode,

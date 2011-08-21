@@ -57,6 +57,8 @@ namespace v68k
 	
 	extern fetcher fetches_MOVEQ[];
 	
+	extern fetcher fetches_CMP[];
+	
 	extern fetcher fetches_EXG[];
 	
 }
