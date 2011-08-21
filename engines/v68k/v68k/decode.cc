@@ -193,9 +193,34 @@ namespace v68k
 		return &decoded_MOVEQ;
 	}
 	
+	static const instruction* AND_instructions[] =
+	{
+		&decoded_AND_B_to_Dn,
+		&decoded_AND_W_to_Dn,
+		&decoded_AND_L_to_Dn,
+		
+		&decoded_AND_B,
+		&decoded_AND_W,
+		&decoded_AND_L
+	};
+	
 	static const instruction* decode_line_C( uint16_t opcode )
 	{
-		if ( opcode & 0x0100 )
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const bool has_0100 = opcode & 0x0100;
+		
+		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
+		{
+			const int i = has_0100 * 3 + size_code;
+			
+			return AND_instructions[ i ];
+		}
+		
+		if ( has_0100 )
 		{
 			const uint16_t mode = opcode >> 3 & 0x001f;
 			

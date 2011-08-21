@@ -396,6 +396,48 @@ namespace v68k
 		stores_long_data|in_register
 	};
 	
+	instruction decoded_AND_B_to_Dn =
+	{
+		fetches_math_to_Dn,
+		microcode_AND,
+		loads_and|stores_byte_data|in_register
+	};
+	
+	instruction decoded_AND_W_to_Dn =
+	{
+		fetches_math_to_Dn,
+		microcode_AND,
+		loads_and|stores_word_data|in_register
+	};
+	
+	instruction decoded_AND_L_to_Dn =
+	{
+		fetches_math_to_Dn,
+		microcode_AND,
+		loads_and|stores_long_data|in_register
+	};
+	
+	instruction decoded_AND_B =
+	{
+		fetches_math,
+		microcode_AND,
+		loads_and|stores_byte_data
+	};
+	
+	instruction decoded_AND_W =
+	{
+		fetches_math,
+		microcode_AND,
+		loads_and|stores_word_data
+	};
+	
+	instruction decoded_AND_L =
+	{
+		fetches_math,
+		microcode_AND,
+		loads_and|stores_long_data
+	};
+	
 	instruction decoded_EXG =
 	{
 		fetches_EXG,

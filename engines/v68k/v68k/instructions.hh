@@ -109,6 +109,13 @@ namespace v68k
 	
 	extern instruction decoded_MOVEQ;
 	
+	extern instruction decoded_AND_B_to_Dn;
+	extern instruction decoded_AND_B;
+	extern instruction decoded_AND_W_to_Dn;
+	extern instruction decoded_AND_W;
+	extern instruction decoded_AND_L_to_Dn;
+	extern instruction decoded_AND_L;
+	
 	extern instruction decoded_EXG;
 	
 }
