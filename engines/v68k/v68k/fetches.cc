@@ -42,6 +42,20 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_math_to_Dn[] =
+	{
+		&fetch_sized_data_at_effective_address,
+		&fetch_data_at_0E00,  // register number
+		0  // NULL
+	};
+	
+	fetcher fetches_math[] =
+	{
+		&fetch_data_at_0E00,  // register number or data
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_signed_word[] =
 	{
 		&fetch_signed_word,
