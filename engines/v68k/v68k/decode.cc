@@ -82,6 +82,16 @@ namespace v68k
 			}
 		}
 		
+		if ( (opcode & 0xff00) == 0x0e00 )
+		{
+			const int size_code = opcode >> 6 & 0x3;
+			
+			if ( size_code != 3  &&  ea_is_memory_alterable( mode ) )
+			{
+				return &decoded_MOVES;
+			}
+		}
+		
 		return 0;  // NULL
 	}
 	

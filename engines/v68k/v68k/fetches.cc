@@ -79,6 +79,15 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_MOVES[] =
+	{
+		&fetch_size_code,
+		&fetch_sized_effective_address,
+		&fetch_unsigned_word,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_MOVE_B_to_Dn[] =
 	{
 		&fetch_byte_from_effective_address,

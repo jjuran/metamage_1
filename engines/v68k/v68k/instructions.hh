@@ -30,6 +30,8 @@ namespace v68k
 	
 	extern instruction decoded_LINK_L;
 	
+	extern instruction decoded_MOVES;
+	
 	extern instruction decoded_MOVE_B_to_Dn;
 	extern instruction decoded_MOVE_B;
 	

@@ -181,6 +181,95 @@ namespace v68k
 		s.set_SR( s.get_SR() ^ data );
 	}
 	
+	void microcode_MOVES( processor_state& s, uint32_t* params )
+	{
+		const uint32_t size_code = params[0];  // 0,1,2
+		const uint32_t addr      = params[1];
+		const uint32_t more      = params[2];
+		
+		const int size = 1 << size_code;  // 1,2,4
+		
+		const uint16_t reg_id = more >> 12;
+		
+		const uint16_t writing = more & 0x0800;
+		
+		const function_code_t fc = function_code_t( writing ? s.regs.dfc : s.regs.sfc );
+		
+		const memory_access_t access = writing ? mem_write : mem_read;
+		
+		uint8_t* p = s.mem.translate( addr, size, fc, access );
+		
+		if ( p == 0 )
+		{
+			s.bus_error();
+			
+			return;
+		}
+		
+		if ( writing )
+		{
+			const uint32_t data = s.regs.d[ reg_id ];
+			
+			switch ( size_code )
+			{
+				case 2:
+					*p++ = data >> 24;
+					*p++ = data >> 16 & 0xFF;
+				case 1:
+					*p++ = data >>  8 & 0xFF;
+				case 0:
+					*p++ = data >>  0 & 0xFF;
+			}
+		}
+		else
+		{
+			uint32_t& reg = s.regs.d[ reg_id ];
+			
+			switch ( size_code )
+			{
+				case 2:
+					reg = p[0] << 24
+					    | p[1] << 16
+					    | p[2] <<  8
+					    | p[3] <<  0;
+					
+					break;
+				
+				case 1:
+					{
+						const uint16_t data = p[0] << 8 | p[1];
+						
+						if ( reg_id & 0x8 )
+						{
+							reg = int32_t( int16_t( data ) );
+						}
+						else
+						{
+							reg &= 0xFFFF0000;
+							
+							reg |= data;
+						}
+					}
+					
+					break;
+				
+				case 0:
+					if ( reg_id & 0x8 )
+					{
+						reg = int32_t( int8_t( p[0] ) );
+					}
+					else
+					{
+						reg &= 0xFFFFFF00;
+						
+						reg |= p[0];
+					}
+					
+					break;
+			}
+		}
+	}
+	
 	void microcode_MOVE( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];

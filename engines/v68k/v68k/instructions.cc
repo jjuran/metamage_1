@@ -67,6 +67,13 @@ namespace v68k
 		privileged
 	};
 	
+	instruction decoded_MOVES =
+	{
+		fetches_MOVES,
+		microcode_MOVES,
+		privileged | not_before_68010
+	};
+	
 	instruction decoded_MOVE_B_to_Dn =
 	{
 		fetches_MOVE_B_to_Dn,
