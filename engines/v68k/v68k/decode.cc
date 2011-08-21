@@ -194,6 +194,35 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const instruction* decode_line_B( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const bool has_0100 = opcode & 0x0100;
+		
+		if ( size_code != 3 )
+		{
+			if ( opcode & 0x0100 )
+			{
+				if ( ea_is_memory_alterable( mode ) )
+				{
+					const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+					
+					storage.fetch = fetches_math;
+					storage.code  = &microcode_EOR;
+					storage.flags = loads_and | stores_data;
+					
+					return &storage;
+				}
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* decode_line_C( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
@@ -251,7 +280,7 @@ namespace v68k
 		&decode_line_8,
 		&decode_unimplemented,
 		&decode_unimplemented,
-		&decode_unimplemented,
+		&decode_line_B,
 		
 		&decode_line_C,
 		&decode_unimplemented,

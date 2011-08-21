@@ -37,6 +37,8 @@ namespace v68k
 	
 	void microcode_ANDI_to_SR( processor_state& state, uint32_t* params );
 	
+	void microcode_EOR( processor_state& state, uint32_t* params );
+	
 	void microcode_EORI_to_CCR( processor_state& state, uint32_t* params );
 	
 	void microcode_EORI_to_SR( processor_state& state, uint32_t* params );

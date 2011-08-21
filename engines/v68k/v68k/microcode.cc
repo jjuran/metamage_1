@@ -143,6 +143,13 @@ namespace v68k
 		s.set_SR( s.get_SR() & data );
 	}
 	
+	void microcode_EOR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] ^= data;
+	}
+	
 	void microcode_EORI_to_CCR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
