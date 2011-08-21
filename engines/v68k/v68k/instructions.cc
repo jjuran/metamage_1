@@ -41,48 +41,6 @@ namespace v68k
 		microcode_MOVEP_from
 	};
 	
-	instruction decoded_ANDI_B_to_Dn =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_byte_data|in_register
-	};
-	
-	instruction decoded_ANDI_B =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_byte_data
-	};
-	
-	instruction decoded_ANDI_W_to_Dn =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_word_data|in_register
-	};
-	
-	instruction decoded_ANDI_W =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_word_data
-	};
-	
-	instruction decoded_ANDI_L_to_Dn =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_long_data|in_register
-	};
-	
-	instruction decoded_ANDI_L =
-	{
-		fetches_immediate,
-		microcode_AND,
-		loads_and|stores_long_data
-	};
-	
 	instruction decoded_ANDI_to_CCR =
 	{
 		fetches_unsigned_word,
@@ -394,48 +352,6 @@ namespace v68k
 		fetches_MOVEQ,
 		microcode_MOVE,
 		stores_long_data|in_register
-	};
-	
-	instruction decoded_AND_B_to_Dn =
-	{
-		fetches_math_to_Dn,
-		microcode_AND,
-		loads_and|stores_byte_data|in_register
-	};
-	
-	instruction decoded_AND_W_to_Dn =
-	{
-		fetches_math_to_Dn,
-		microcode_AND,
-		loads_and|stores_word_data|in_register
-	};
-	
-	instruction decoded_AND_L_to_Dn =
-	{
-		fetches_math_to_Dn,
-		microcode_AND,
-		loads_and|stores_long_data|in_register
-	};
-	
-	instruction decoded_AND_B =
-	{
-		fetches_math,
-		microcode_AND,
-		loads_and|stores_byte_data
-	};
-	
-	instruction decoded_AND_W =
-	{
-		fetches_math,
-		microcode_AND,
-		loads_and|stores_word_data
-	};
-	
-	instruction decoded_AND_L =
-	{
-		fetches_math,
-		microcode_AND,
-		loads_and|stores_long_data
 	};
 	
 	instruction decoded_EXG =

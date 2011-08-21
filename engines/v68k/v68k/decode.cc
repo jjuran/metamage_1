@@ -7,8 +7,10 @@
 
 // v68k
 #include "v68k/ea_types.hh"
+#include "v68k/fetches.hh"
 #include "v68k/instructions.hh"
 #include "v68k/line_4.hh"
+#include "v68k/microcode.hh"
 
 
 #pragma exceptions off
@@ -19,18 +21,6 @@ namespace v68k
 	
 	typedef const instruction* (*decoder)( uint16_t opcode, instruction& storage );
 	
-	
-	static const instruction* ANDI_instructions[] =
-	{
-		&decoded_ANDI_B_to_Dn,
-		&decoded_ANDI_B,
-		
-		&decoded_ANDI_W_to_Dn,
-		&decoded_ANDI_W,
-		
-		&decoded_ANDI_L_to_Dn,
-		&decoded_ANDI_L
-	};
 	
 	static const instruction* decode_line_0( uint16_t opcode, instruction& storage )
 	{
@@ -62,9 +52,16 @@ namespace v68k
 			{
 				const int size_code = opcode >> 6 & 0x3;
 				
-				const int i = size_code * 2 + !ea_is_data_register( mode );
+				const bool to_data = ea_is_data_register( mode );
 				
-				return ANDI_instructions[ i ];
+				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+				const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
+				
+				storage.fetch = fetches_immediate;
+				storage.code  = &microcode_AND;
+				storage.flags = loads_and | stores_data | destination;
+				
+				return &storage;
 			}
 			
 			if ( (opcode & 0xffbf ) == 0x023c )
@@ -193,17 +190,6 @@ namespace v68k
 		return &decoded_MOVEQ;
 	}
 	
-	static const instruction* AND_instructions[] =
-	{
-		&decoded_AND_B_to_Dn,
-		&decoded_AND_W_to_Dn,
-		&decoded_AND_L_to_Dn,
-		
-		&decoded_AND_B,
-		&decoded_AND_W,
-		&decoded_AND_L
-	};
-	
 	static const instruction* decode_line_C( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
@@ -215,9 +201,14 @@ namespace v68k
 		
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
-			const int i = has_0100 * 3 + size_code;
+			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
-			return AND_instructions[ i ];
+			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
+			storage.code  = &microcode_AND;
+			storage.flags = loads_and | stores_data | destination;
+			
+			return &storage;
 		}
 		
 		if ( has_0100 )
