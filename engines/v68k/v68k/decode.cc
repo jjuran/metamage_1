@@ -17,7 +17,7 @@
 namespace v68k
 {
 	
-	typedef const instruction* (*decoder)( uint16_t opcode );
+	typedef const instruction* (*decoder)( uint16_t opcode, instruction& storage );
 	
 	
 	static const instruction* ANDI_instructions[] =
@@ -32,7 +32,7 @@ namespace v68k
 		&decoded_ANDI_L
 	};
 	
-	static const instruction* decode_line_0( uint16_t opcode )
+	static const instruction* decode_line_0( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
 		{
@@ -100,7 +100,7 @@ namespace v68k
 		&decoded_MOVE_W
 	};
 	
-	static const instruction* decode_MOVE( uint16_t opcode )
+	static const instruction* decode_MOVE( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
@@ -142,7 +142,7 @@ namespace v68k
 		&decoded_Bcc_L
 	};
 	
-	static const instruction* decode_line_6( uint16_t opcode )
+	static const instruction* decode_line_6( uint16_t opcode, instruction& storage )
 	{
 		int size_log2;
 		
@@ -183,7 +183,7 @@ namespace v68k
 		return branch_instructions[ i ];
 	}
 	
-	static const instruction* decode_line_7( uint16_t opcode )
+	static const instruction* decode_line_7( uint16_t opcode, instruction& storage )
 	{
 		if ( opcode & 0x0100 )
 		{
@@ -204,7 +204,7 @@ namespace v68k
 		&decoded_AND_L
 	};
 	
-	static const instruction* decode_line_C( uint16_t opcode )
+	static const instruction* decode_line_C( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
@@ -236,7 +236,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_unimplemented( uint16_t opcode )
+	static const instruction* decode_unimplemented( uint16_t opcode, instruction& storage )
 	{
 		return 0;  // NULL
 	}
@@ -264,9 +264,9 @@ namespace v68k
 		&decode_unimplemented
 	};
 	
-	const instruction* decode( uint16_t opcode )
+	const instruction* decode( uint16_t opcode, instruction& storage )
 	{
-		return decoder_per_line[ opcode >> 12 ]( opcode );
+		return decoder_per_line[ opcode >> 12 ]( opcode, storage );
 	}
 	
 }

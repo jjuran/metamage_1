@@ -22,7 +22,9 @@ static void count()
 	
 	for ( int i = 0;  i < 65536;  ++i )
 	{
-		const v68k::instruction* decoded = v68k::decode( i );
+		v68k::instruction storage;
+		
+		const v68k::instruction* decoded = v68k::decode( i, storage );
 		
 		if ( decoded )
 		{

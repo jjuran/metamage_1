@@ -86,7 +86,9 @@ namespace v68k
 		}
 		
 		// decode (prefetched)
-		const instruction* decoded = decode( opcode );
+		instruction storage = { 0 };
+		
+		const instruction* decoded = decode( opcode, storage );
 		
 		if ( !decoded )
 		{

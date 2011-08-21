@@ -148,7 +148,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	const instruction* decode_line_4( uint16_t opcode )
+	const instruction* decode_line_4( uint16_t opcode, instruction& storage )
 	{
 		if ( opcode & 0x0100 )
 		{

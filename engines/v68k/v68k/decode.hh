@@ -16,7 +16,7 @@ namespace v68k
 	struct instruction;
 	
 	
-	const instruction* decode( uint16_t opcode );
+	const instruction* decode( uint16_t opcode, instruction& storage );
 	
 }
 
