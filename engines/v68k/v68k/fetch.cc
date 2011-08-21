@@ -95,6 +95,29 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_sized_data_at_effective_address( processor_state& s )
+	{
+		const int size_code = s.opcode >> 6 & 0x3;
+		
+	//	ASSERT( size_code != 3 );
+		
+		switch ( size_code )
+		{
+			case 0:
+				return fetch_byte_from_effective_address( s );
+			
+			case 1:
+				return fetch_word_from_effective_address( s );
+			
+			case 2:
+				return fetch_long_from_effective_address( s );
+			
+			default:
+				// Not reached
+				return 0;
+		}
+	}
+	
 	
 	uint32_t fetch_data_at_1E00( processor_state& s )
 	{
