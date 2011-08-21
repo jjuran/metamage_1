@@ -170,6 +170,30 @@ namespace v68k
 		return &decoded_MOVEQ;
 	}
 	
+	static const instruction* decode_line_8( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const bool has_0100 = opcode & 0x0100;
+		
+		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
+		{
+			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
+			
+			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
+			storage.code  = &microcode_OR;
+			storage.flags = loads_and | stores_data | destination;
+			
+			return &storage;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* decode_line_C( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
@@ -224,7 +248,7 @@ namespace v68k
 		&decode_line_6,
 		&decode_line_7,
 		
-		&decode_unimplemented,
+		&decode_line_8,
 		&decode_unimplemented,
 		&decode_unimplemented,
 		&decode_unimplemented,

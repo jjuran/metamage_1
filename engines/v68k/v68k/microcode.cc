@@ -19,6 +19,13 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
+	void microcode_OR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] |= data;
+	}
+	
 	void microcode_ORI_to_CCR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];

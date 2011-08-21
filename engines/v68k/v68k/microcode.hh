@@ -22,6 +22,8 @@ namespace v68k
 	typedef void (*microcode)( processor_state&, uint32_t* );
 	
 	
+	void microcode_OR( processor_state& state, uint32_t* params );
+	
 	void microcode_ORI_to_CCR( processor_state& state, uint32_t* params );
 	
 	void microcode_ORI_to_SR( processor_state& state, uint32_t* params );
