@@ -88,18 +88,6 @@ namespace v68k
 	
 	extern instruction decoded_JMP;
 	
-	extern instruction decoded_BRA_S;
-	extern instruction decoded_BRA;
-	extern instruction decoded_BRA_L;
-	
-	extern instruction decoded_BSR_S;
-	extern instruction decoded_BSR;
-	extern instruction decoded_BSR_L;
-	
-	extern instruction decoded_Bcc_S;
-	extern instruction decoded_Bcc;
-	extern instruction decoded_Bcc_L;
-	
 	extern instruction decoded_MOVEQ;
 	
 	extern instruction decoded_EXG;

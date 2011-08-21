@@ -124,60 +124,40 @@ namespace v68k
 		return move_instructions[ i ];
 	}
 	
-	static const instruction* branch_instructions[] =
-	{
-		&decoded_BRA_S,
-		&decoded_BRA,
-		&decoded_BRA_L,
-		
-		&decoded_BSR_S,
-		&decoded_BSR,
-		&decoded_BSR_L,
-		
-		&decoded_Bcc_S,
-		&decoded_Bcc,
-		&decoded_Bcc_L
-	};
-	
 	static const instruction* decode_line_6( uint16_t opcode, instruction& storage )
 	{
-		int size_log2;
-		
 		switch ( opcode & 0x00FF )
 		{
 			default:
-				size_log2 = 0;  // byte
+				storage.fetch = fetches_branch_short;
 				break;
 			
 			case 0x00:
-				size_log2 = 1;  // word
+				storage.fetch = fetches_branch;
 				break;
 			
 			case 0xFF:
-				size_log2 = 2;  // long
+				storage.fetch = fetches_branch_long;
+				storage.flags = not_before_68020;
 				break;
 		}
-		
-		int selector;
 		
 		switch ( opcode & 0xFF00 )
 		{
 			case 0x6000:
-				selector = 0;  // BRA
+				storage.code = &microcode_BRA;
 				break;
 			
 			case 0x6100:
-				selector = 1;  // BSR
+				storage.code = &microcode_BSR;
 				break;
 			
 			default:
-				selector = 2;  // Bcc
+				storage.code = &microcode_Bcc;
 				break;
 		}
 		
-		const int i = selector * 3 + size_log2;
-		
-		return branch_instructions[ i ];
+		return &storage;
 	}
 	
 	static const instruction* decode_line_7( uint16_t opcode, instruction& storage )
