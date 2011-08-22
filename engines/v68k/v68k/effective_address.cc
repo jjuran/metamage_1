@@ -268,7 +268,7 @@ namespace v68k
 		if ( mode == 0 )
 		{
 			// 0
-			return s.regs.d[n];  // Dn
+			return int32_t( int8_t( s.regs.d[n] ) );  // Dn
 		}
 		
 		if ( mode == 7  &&  n == 4 )
@@ -283,7 +283,7 @@ namespace v68k
 			return s.bus_error();
 		}
 		
-		return result;
+		return int32_t( int8_t( result ) );
 	}
 	
 	uint32_t fetch_word_from_effective_address( processor_state& s )
@@ -294,7 +294,7 @@ namespace v68k
 		if ( (mode & 0x6) == 0 )
 		{
 			// 0 or 1
-			return s.regs.d[ s.opcode & 0xF ];  // Dn or An
+			return int32_t( int16_t( s.regs.d[ s.opcode & 0xF ] ) );  // Dn or An
 		}
 		
 		if ( mode == 7  &&  n == 4 )
@@ -316,7 +316,7 @@ namespace v68k
 			return s.bus_error();
 		}
 		
-		return result;
+		return int32_t( int16_t( result ) );
 	}
 	
 	uint32_t fetch_long_from_effective_address( processor_state& s )
