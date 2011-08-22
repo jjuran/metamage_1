@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 6;
+static const unsigned n_tests = 6 + 2;
 
 
 using v68k::big_word;
@@ -88,11 +88,51 @@ static void cmp()
 	ok_if( emu.regs.nzvc == 0x9 );
 }
 
+static void cmpa()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ];
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0xB0C0 );  // CMPA.W  D0,A0
+	code[ 1 ] = big_word( 0xB1C0 );  // CMPA.L  D0,A0
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	emu.regs.nzvc = 0;
+	
+	emu.regs.d[0] = 0x7654abcd;
+	emu.regs.a[0] = 0x7654abcd;
+	
+	
+	emu.step();
+	
+	ok_if( emu.regs.nzvc == 0x1 );
+	
+	
+	emu.step();
+	
+	ok_if( emu.regs.nzvc == 0x4 );
+}
+
 int main( int argc, char** argv )
 {
 	tap::start( "v68k-cmp", n_tests );
 	
 	cmp();
+	
+	cmpa();
 	
 	return 0;
 }
