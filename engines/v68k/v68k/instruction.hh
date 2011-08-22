@@ -30,8 +30,8 @@ namespace v68k
 		stores_byte_data = 0x0100,
 		stores_word_data = 0x0200,
 		stores_long_data = 0x0300,
-		stores_data_mask = 0x0700,
-		in_register      = 0x0800
+		stores_data_mask = 0x0300,
+		in_register      = 0x0400
 	};
 	
 	inline instruction_flags_t operator|( instruction_flags_t a, instruction_flags_t b )
