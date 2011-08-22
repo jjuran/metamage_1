@@ -21,13 +21,6 @@ namespace v68k
 	
 	#pragma mark Line 0
 	
-	void microcode_OR( processor_state& s, uint32_t* params )
-	{
-		const uint32_t data = params[0];
-		
-		params[1] |= data;
-	}
-	
 	void microcode_ORI_to_CCR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
@@ -124,13 +117,6 @@ namespace v68k
 		Dx = data;
 	}
 	
-	void microcode_AND( processor_state& s, uint32_t* params )
-	{
-		const uint32_t data = params[0];
-		
-		params[1] &= data;
-	}
-	
 	void microcode_ANDI_to_CCR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
@@ -143,30 +129,6 @@ namespace v68k
 		const uint32_t data = params[0];
 		
 		s.set_SR( s.get_SR() & data );
-	}
-	
-	void microcode_CMP( processor_state& s, uint32_t* params )
-	{
-		const int32_t data = params[0];
-		const int32_t from = params[1];
-		
-		const int32_t diff = from - data;
-		
-		const bool S = data < 0;
-		const bool D = from < 0;
-		const bool R = diff < 0;
-		
-		s.regs.nzvc = N( diff <  0 )
-		            | Z( diff == 0 )
-		            | V( (S == R) & (S != D) )
-		            | C( S & !D | R & !D | S & R );
-	}
-	
-	void microcode_EOR( processor_state& s, uint32_t* params )
-	{
-		const uint32_t data = params[0];
-		
-		params[1] ^= data;
 	}
 	
 	void microcode_EORI_to_CCR( processor_state& s, uint32_t* params )
@@ -818,7 +780,51 @@ namespace v68k
 	}
 	
 	#pragma mark -
+	#pragma mark Line 8
+	
+	void microcode_OR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] |= data;
+	}
+	
+	#pragma mark -
+	#pragma mark Line B
+	
+	void microcode_CMP( processor_state& s, uint32_t* params )
+	{
+		const int32_t data = params[0];
+		const int32_t from = params[1];
+		
+		const int32_t diff = from - data;
+		
+		const bool S = data < 0;
+		const bool D = from < 0;
+		const bool R = diff < 0;
+		
+		s.regs.nzvc = N( diff <  0 )
+		            | Z( diff == 0 )
+		            | V( (S == R) & (S != D) )
+		            | C( S & !D | R & !D | S & R );
+	}
+	
+	void microcode_EOR( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] ^= data;
+	}
+	
+	#pragma mark -
 	#pragma mark Line C
+	
+	void microcode_AND( processor_state& s, uint32_t* params )
+	{
+		const uint32_t data = params[0];
+		
+		params[1] &= data;
+	}
 	
 	void microcode_EXG( processor_state& s, uint32_t* params )
 	{

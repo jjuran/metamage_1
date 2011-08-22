@@ -25,8 +25,6 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 0
 	
-	void microcode_OR( processor_state& state, uint32_t* params );
-	
 	void microcode_ORI_to_CCR( processor_state& state, uint32_t* params );
 	
 	void microcode_ORI_to_SR( processor_state& state, uint32_t* params );
@@ -34,15 +32,9 @@ namespace v68k
 	void microcode_MOVEP_to  ( processor_state& state, uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, uint32_t* params );
 	
-	void microcode_AND( processor_state& state, uint32_t* params );
-	
 	void microcode_ANDI_to_CCR( processor_state& state, uint32_t* params );
 	
 	void microcode_ANDI_to_SR( processor_state& state, uint32_t* params );
-	
-	void microcode_CMP( processor_state& state, uint32_t* params );
-	
-	void microcode_EOR( processor_state& state, uint32_t* params );
 	
 	void microcode_EORI_to_CCR( processor_state& state, uint32_t* params );
 	
@@ -114,7 +106,21 @@ namespace v68k
 	void microcode_Bcc( processor_state& state, uint32_t* params );
 	
 	#pragma mark -
+	#pragma mark Line 8
+	
+	void microcode_OR( processor_state& state, uint32_t* params );
+	
+	#pragma mark -
+	#pragma mark Line B
+	
+	void microcode_CMP( processor_state& state, uint32_t* params );
+	
+	void microcode_EOR( processor_state& state, uint32_t* params );
+	
+	#pragma mark -
 	#pragma mark Line C
+	
+	void microcode_AND( processor_state& state, uint32_t* params );
 	
 	void microcode_EXG( processor_state& state, uint32_t* params );
 	
