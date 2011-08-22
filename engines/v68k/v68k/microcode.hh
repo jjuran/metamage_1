@@ -45,6 +45,8 @@ namespace v68k
 	
 	void microcode_EORI_to_SR( processor_state& state, uint32_t* params );
 	
+	void microcode_MOVES( processor_state& state, uint32_t* params );
+	
 	void microcode_MOVE( processor_state& state, uint32_t* params );
 	
 	void microcode_LEA( processor_state& state, uint32_t* params );
