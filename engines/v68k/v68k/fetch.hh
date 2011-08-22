@@ -21,6 +21,8 @@ namespace v68k
 	
 	uint32_t fetch_zero( processor_state& state );
 	
+	uint32_t fetch_ones( processor_state& state );
+	
 	uint32_t fetch_pc( processor_state& state );
 	
 	uint32_t fetch_unsigned_word( processor_state& state );
