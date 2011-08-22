@@ -145,6 +145,21 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_CMPA_data_from_major_register( processor_state& s )
+	{
+		const uint16_t n = s.opcode >> 9 & 0x7;
+		
+		const uint32_t data = s.regs.a[n];
+		
+		return s.regs.a[n];
+	}
+	
+	uint32_t fetch_CMPA_data_at_effective_address( processor_state& s )
+	{
+		return s.opcode & 0x0100 ? fetch_long_from_effective_address( s )
+		                         : fetch_word_from_effective_address( s );
+	}
+	
 	
 	uint32_t fetch_data_at_1E00( processor_state& s )
 	{

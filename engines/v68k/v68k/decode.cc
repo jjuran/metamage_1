@@ -203,7 +203,17 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
-		if ( size_code != 3 )
+		if ( size_code == 3 )
+		{
+			if ( ea_is_valid( mode, n ) )
+			{
+				storage.fetch = fetches_CMPA;
+				storage.code  = microcode_CMP;
+				
+				return &storage;
+			}
+		}
+		else
 		{
 			if ( opcode & 0x0100 )
 			{

@@ -211,6 +211,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_CMPA[] =
+	{
+		&fetch_CMPA_data_at_effective_address,
+		&fetch_CMPA_data_from_major_register,
+		0  // NULL
+	};
+	
 	
 	fetcher fetches_EXG[] =
 	{
