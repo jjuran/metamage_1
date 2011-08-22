@@ -111,10 +111,17 @@ namespace v68k
 		
 		const uint32_t data_mask = sign_mask * 2 - 1;
 		
-		s.regs.nzvc = N( (data & sign_mask) != 0 )
-		            | Z( (data & data_mask) == 0 )
-		            | V( 0 )
-		            | C( 0 );
+		if ( flags & and_sets_CCR )
+		{
+			// CCR is already set
+		}
+		else
+		{
+			s.regs.nzvc = N( (data & sign_mask) != 0 )
+			            | Z( (data & data_mask) == 0 )
+			            | V( 0 )
+			            | C( 0 );
+		}
 		
 		if ( flags & in_register )
 		{
