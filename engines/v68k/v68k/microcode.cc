@@ -525,6 +525,120 @@ namespace v68k
 		sp += 4;
 	}
 	
+	enum
+	{
+		only_3_bits = 0x1
+	};
+	
+	static const uint16_t control_register_flags[] =
+	{
+		0x01,  // SFC, 3 bits
+		0x01,  // DFC, 3 bits
+		0,     // CACR
+		0,     // TC
+		0,     // ITT0
+		0,     // ITT1
+		0,     // DTT0
+		0,     // DTT1
+		
+		0x00,  // USP
+		0x00,  // VBR
+		0,     // CAAR
+		0x20,  // MSP, 68020+
+		0x20,  // ISP, 68020+
+		0,     // MMUSR
+		0,     // URP
+		0      // SRP
+	};
+	
+	static inline uint16_t index_of_control_register( uint16_t id )
+	{
+		return id >> 8 | id & ~0x0800;
+	}
+	
+	static uint32_t* get_control_register( processor_state& s, uint16_t control_index )
+	{
+		switch ( control_index )
+		{
+			case 0x0:  // 0x000
+				return &s.regs.sfc;
+			
+			case 0x1:  // 0x001
+				return &s.regs.dfc;
+			
+			case 0x8:  // 0x800
+				// MOVEC is privileged, so alt SP is always USP
+				return &s.regs.alt_sp;
+			
+			case 0x9:  // 0x801
+				return &s.regs.vbr;
+			
+			case 0xB:  // 0x803, MSP
+			case 0xC:  // 0x804, ISP
+				// MOVEC is privileged, so A7 is always SSP
+				return (s.regs.ttsm ^ control_index) & 0x1 ? &s.regs.alt_ssp
+				                                           : &s.regs.a[7];
+			
+			default:
+				break;
+		}
+		
+		return 0;  // NULL
+	}
+	
+	void microcode_MOVEC( processor_state& s, uint32_t* params )
+	{
+		const uint32_t writing   = params[0];
+		const uint32_t registers = params[1];
+		
+		const uint16_t general_id = registers >> 12;
+		const uint16_t control_id = registers & 0x0FFF;
+		
+		const uint32_t* control_register = 0;  // NULL
+		
+		uint16_t flags;
+		
+		const uint16_t control_index = index_of_control_register( control_id );
+		
+		if ( control_index & ~0x000F )
+		{
+			// control index is out of range; ergo, control id is invalid
+		}
+		else if ( const uint32_t* control_register = get_control_register( s, control_index ) )
+		{
+			const uint16_t flags = control_register_flags[ control_index ];
+			
+			if ( s.model < flags )
+			{
+				// This control register doesn't exist on this processor model
+			}
+			else
+			{
+				if ( writing )
+				{
+					uint32_t data = s.regs.d[ general_id ];
+					
+					if ( flags & only_3_bits )
+					{
+						data &= 0x7;
+					}
+				}
+				else
+				{
+					s.regs.d[ general_id ] = *control_register;
+				}
+				
+				return;  // Success
+			}
+		}
+		
+		// Failure
+		
+		s.regs.pc -= 4;
+		
+		s.take_exception_format_0( 4 * sizeof (uint32_t) );  // Illegal Instruction
+	}
+	
 	void microcode_JSR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t addr = params[0];

@@ -278,6 +278,13 @@ namespace v68k
 		microcode_RTR
 	};
 	
+	instruction decoded_MOVEC =
+	{
+		fetches_unsigned_word,
+		microcode_MOVEC,
+		privileged | not_before_68010
+	};
+	
 	instruction decoded_JSR =
 	{
 		fetches_effective_control_address,

@@ -37,6 +37,8 @@ namespace v68k
 	{
 		condition = normal;
 		
+		regs.vbr = 0;
+		
 		/*
 			The reset vector is taken from Supervisor Program Space, but it
 			*is* in fact a read operation, not execution.

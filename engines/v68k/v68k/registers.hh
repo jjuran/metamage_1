@@ -23,6 +23,15 @@ namespace v68k
 		
 		uint32_t pc;
 		
+		/*
+			SFC and DFC are actually 3 bits each, but represented as 32 bits
+			for convenience in MOVEC.
+		*/
+		uint32_t sfc;
+		uint32_t dfc;
+		
+		uint32_t vbr;
+		
 		uint8_t ttsm;  // T1 T0 S  M
 		uint8_t  iii;  // .  I2 I1 I0
 		uint8_t    x;  // .  .  .  X
