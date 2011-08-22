@@ -788,13 +788,10 @@ namespace v68k
 	}
 	
 	#pragma mark -
-	#pragma mark Line B
+	#pragma mark Line 9
 	
-	void microcode_CMP( processor_state& s, uint32_t* params )
+	static int32_t subtract( processor_state& s, int32_t data, int32_t from )
 	{
-		const int32_t data = params[0];
-		const int32_t from = params[1];
-		
 		const int32_t diff = from - data;
 		
 		const bool S = data < 0;
@@ -805,6 +802,31 @@ namespace v68k
 		            | Z( diff == 0 )
 		            | V( (S == R) & (S != D) )
 		            | C( S & !D | R & !D | S & R );
+		
+		return diff;
+	}
+	
+	void microcode_SUB( processor_state& s, uint32_t* params )
+	{
+		const int32_t a = params[0];
+		const int32_t b = params[1];
+		
+		const int32_t diff = subtract( s, a, b );
+		
+		params[1] = diff;
+		
+		s.regs.x = s.regs.nzvc & 0x1;
+	}
+	
+	#pragma mark -
+	#pragma mark Line B
+	
+	void microcode_CMP( processor_state& s, uint32_t* params )
+	{
+		const int32_t a = params[0];
+		const int32_t b = params[1];
+		
+		(void) subtract( s, a, b );
 	}
 	
 	void microcode_EOR( processor_state& s, uint32_t* params )
