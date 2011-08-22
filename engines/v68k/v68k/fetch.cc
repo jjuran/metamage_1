@@ -118,6 +118,33 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_sized_data_from_major_register( processor_state& s )
+	{
+		const uint16_t n = s.opcode >> 9 & 0x7;
+		
+		const uint32_t data = s.regs.d[n];
+		
+		const int size_code = s.opcode >> 6 & 0x3;
+		
+	//	ASSERT( size_code != 3 );
+		
+		switch ( size_code )
+		{
+			case 0:
+				return int32_t( int8_t( data ) );
+			
+			case 1:
+				return int32_t( int16_t( data ) );
+			
+			case 2:
+				return data;
+			
+			default:
+				// Not reached
+				return 0;
+		}
+	}
+	
 	
 	uint32_t fetch_data_at_1E00( processor_state& s )
 	{
