@@ -197,6 +197,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_NOT[] =
+	{
+		&fetch_ones,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_TST[] =
 	{
 		&fetch_zero,

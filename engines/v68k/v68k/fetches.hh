@@ -57,6 +57,8 @@ namespace v68k
 	
 	extern fetcher fetches_CLR[];
 	
+	extern fetcher fetches_NOT[];
+	
 	extern fetcher fetches_TST[];
 	
 	extern fetcher fetches_ADDQ[];
