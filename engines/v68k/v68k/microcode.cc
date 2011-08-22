@@ -19,6 +19,8 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
+	#pragma mark Line 0
+	
 	void microcode_OR( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
@@ -270,12 +272,18 @@ namespace v68k
 		}
 	}
 	
+	#pragma mark -
+	#pragma mark Lines 1-3
+	
 	void microcode_MOVE( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];
 		
 		params[1] = data;
 	}
+	
+	#pragma mark -
+	#pragma mark Line 4
 	
 	void microcode_LEA( processor_state& s, uint32_t* params )
 	{
@@ -760,6 +768,9 @@ namespace v68k
 		s.regs.pc = addr;
 	}
 	
+	#pragma mark -
+	#pragma mark Line 6
+	
 	void microcode_BRA( processor_state& s, uint32_t* params )
 	{
 		const uint32_t pc   = params[0];
@@ -805,6 +816,9 @@ namespace v68k
 			s.regs.pc = pc + disp;
 		}
 	}
+	
+	#pragma mark -
+	#pragma mark Line C
 	
 	void microcode_EXG( processor_state& s, uint32_t* params )
 	{

@@ -22,6 +22,9 @@ namespace v68k
 	typedef void (*microcode)( processor_state&, uint32_t* );
 	
 	
+	#pragma mark -
+	#pragma mark Line 0
+	
 	void microcode_OR( processor_state& state, uint32_t* params );
 	
 	void microcode_ORI_to_CCR( processor_state& state, uint32_t* params );
@@ -47,7 +50,13 @@ namespace v68k
 	
 	void microcode_MOVES( processor_state& state, uint32_t* params );
 	
+	#pragma mark -
+	#pragma mark Lines 1-3
+	
 	void microcode_MOVE( processor_state& state, uint32_t* params );
+	
+	#pragma mark -
+	#pragma mark Line 4
 	
 	void microcode_LEA( processor_state& state, uint32_t* params );
 	
@@ -97,9 +106,15 @@ namespace v68k
 	
 	void microcode_JMP( processor_state& state, uint32_t* params );
 	
+	#pragma mark -
+	#pragma mark Line 6
+	
 	void microcode_BRA( processor_state& state, uint32_t* params );
 	void microcode_BSR( processor_state& state, uint32_t* params );
 	void microcode_Bcc( processor_state& state, uint32_t* params );
+	
+	#pragma mark -
+	#pragma mark Line C
 	
 	void microcode_EXG( processor_state& state, uint32_t* params );
 	
