@@ -9,6 +9,7 @@
 #include "v68k/ea_types.hh"
 #include "v68k/fetches.hh"
 #include "v68k/instructions.hh"
+#include "v68k/microcode.hh"
 
 
 #pragma exceptions off
@@ -153,6 +154,34 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const instruction* decode_unary_op( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const uint16_t selector = opcode >> 9 & 0x7;
+		
+		if ( selector == 5 )
+		{
+			if ( ea_is_valid( mode, n )  &&  (mode != 1 || size_code != 0) )
+			{
+				storage.fetch = fetches_TST;
+				storage.code  = &microcode_CMP;
+				
+				if ( mode == 1  ||  mode == 7  &&  n >= 2 )
+				{
+					storage.flags = not_before_68020;
+				}
+				
+				return &storage;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	const instruction* decode_line_4( uint16_t opcode, instruction& storage )
 	{
 		if ( opcode & 0x0100 )
@@ -201,11 +230,20 @@ namespace v68k
 			case 0x4800:
 				return decode_48( opcode );
 			
+			case 0x4c00:
+				// MULL, DIVL (MOVEM handled above)
+				return 0;  // NULL
+			
 			case 0x4e00:
 				return decode_4e( opcode );
 			
 			default:
 				break;
+		}
+		
+		if ( (opcode & 0x00C0) != 0x00C0 )
+		{
+			return decode_unary_op( opcode, storage );
 		}
 		
 		if ( (opcode & 0x09C0) == 0x00C0 )
