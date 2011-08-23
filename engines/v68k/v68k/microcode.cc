@@ -655,8 +655,6 @@ namespace v68k
 		
 		const uint32_t* control_register = 0;  // NULL
 		
-		uint16_t flags;
-		
 		const uint16_t control_index = index_of_control_register( control_id );
 		
 		if ( control_index & ~0x000F )
