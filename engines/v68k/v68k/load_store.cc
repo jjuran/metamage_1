@@ -28,44 +28,60 @@ namespace v68k
 			return true;
 		}
 		
+		bool ok = true;
+		
+		const bool is_address_register = flags & in_register  &&  param > 7;
+		
 		if ( flags & in_register )
 		{
 			param = s.regs.d[ param ];
+		}
+		else
+		{
+			uint8_t   byte;
+			uint16_t  word;
 			
-			return true;
+			switch ( storage_flags )
+			{
+				case stores_byte_data:
+					ok = s.mem.get_byte( param, byte, s.data_space() );
+					
+					param = byte;
+					
+					break;
+				
+				case stores_word_data:
+					ok = s.mem.get_word( param, word, s.data_space() );
+					
+					param = word;
+					
+					break;
+				
+				case stores_long_data:
+					ok = s.mem.get_long( param, param, s.data_space() );
+					
+					break;
+				
+				default:
+					break;
+			}
 		}
 		
-		bool ok = true;
-		
-		uint8_t   byte;
-		uint16_t  word;
-		
-		switch ( storage_flags )
+		switch ( storage_flags * !is_address_register )
 		{
 			case stores_byte_data:
-				ok = s.mem.get_byte( param, byte, s.data_space() );
-				
-				param = byte;
-				
+				param = int32_t( int8_t( param ) );
 				break;
 			
 			case stores_word_data:
-				ok = s.mem.get_word( param, word, s.data_space() );
-				
-				param = word;
-				
-				break;
-			
-			case stores_long_data:
-				ok = s.mem.get_long( param, param, s.data_space() );
-				
+				param = int32_t( int16_t( param ) );
 				break;
 			
 			default:
 				break;
 		}
 		
-		return true;
+		return ok;
 	}
 	
 	bool store( processor_state& s, uint32_t loc, uint32_t data, int flags )
