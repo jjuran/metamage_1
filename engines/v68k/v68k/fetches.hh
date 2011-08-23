@@ -65,6 +65,9 @@ namespace v68k
 	
 	extern fetcher fetches_EXG[];
 	
+	extern fetcher fetches_ADD_to_Dn[];
+	extern fetcher fetches_ADD      [];
+	
 }
 
 #endif
