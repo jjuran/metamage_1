@@ -4,6 +4,7 @@
 */
 
 // Standard C
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -90,15 +91,24 @@ static const uint16_t program[] =
 	0x41F8,  // LEA  (???).W,A0
 	0xFFFF,
 	
-	0x7000,  // MOVEQ  #00,D0
+	0x4878,  // PEA  (0x000C).W
+	0x000C,
 	
-	0x6002,  // BRA.S *+4
+	0x4850,  // PEA  (A0)
 	
-	0x4848,  // BKPT  #0
+	0x4878,  // PEA  (0x0001).W
+	0x0001,
 	
-	0x1018,  // MOVE.B  (A0)+,D0
+	0x6106,  // BSR.S  *+8
 	
-	0x66FA,  // BNE.S *-4
+	0x4FEF,  // LEA  (12,A7),A7
+	0x000C,
+	
+	0x4E75,  // RTS
+	
+	0x7004,  // MOVEQ  #4,D0  ; write
+	
+	0x484A,  // BKPT  #2
 	
 	0x4E75   // RTS
 };
@@ -149,6 +159,69 @@ static void load_data( uint8_t* mem )
 	code[1] = big_word( data - mem );
 }
 
+static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
+{
+	uint32_t sp = emu.regs.a[7];
+	
+	while ( n > 0 )
+	{
+		sp += 4;
+		
+		if ( !emu.mem.get_long( sp, *out, emu.data_space() ) )
+		{
+			return false;
+		}
+		
+		++out;
+		--n;
+	}
+	
+	return true;
+}
+
+static bool emu_write( v68k::emulator& emu )
+{
+	uint32_t args[3];  // fd, buffer, length
+	
+	if ( !get_stacked_args( emu, args, 3 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	const int fd = int32_t( args[0] );
+	
+	const uint32_t buffer = args[1];
+	
+	const size_t length = args[2];
+	
+	const uint8_t* p = emu.mem.translate( buffer, length, emu.data_space(), v68k::mem_read );
+	
+	if ( p == NULL )
+	{
+		errno = EFAULT;
+	}
+	else
+	{
+		emu.regs.d[0] = write( fd, p, length );
+		emu.regs.d[1] = errno;
+	}
+	
+	return true;
+}
+
+static bool bridge_call( v68k::emulator& emu )
+{
+	const uint16_t call_number = emu.regs.d[0];
+	
+	switch ( call_number )
+	{
+		case 4:  return emu_write( emu );
+		
+		default:
+			return false;
+	}
+}
+
 static void emulator_test()
 {
 	uint8_t mem[ 4096 ];
@@ -169,14 +242,10 @@ step_loop:
 		continue;
 	}
 	
-	if ( emu.condition == v68k::bkpt_0 )
+	if ( emu.condition == v68k::bkpt_2 )
 	{
-		const uint32_t c = emu.regs.d[0];
-		
-		if ( c <= 0x7F )
+		if ( bridge_call( emu ) )
 		{
-			putchar( c );
-			
 			emu.acknowledge_breakpoint( 0x4E71 );  // NOP
 		}
 		
