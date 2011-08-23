@@ -236,5 +236,22 @@ namespace v68k
 		0  // NULL
 	};
 	
+	
+	fetcher fetches_ADD_to_Dn[] =
+	{
+		&fetch_sized_data_at_effective_address,
+		&fetch_data_at_0E00,  // register number
+		&fetch_size_code,
+		0  // NULL
+	};
+	
+	fetcher fetches_ADD[] =
+	{
+		&fetch_data_at_0E00,  // register number or data
+		&fetch_sized_effective_address,
+		&fetch_size_code,
+		0  // NULL
+	};
+	
 }
 

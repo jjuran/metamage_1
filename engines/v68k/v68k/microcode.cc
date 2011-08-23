@@ -844,5 +844,45 @@ namespace v68k
 		Ry = temp;
 	}
 	
+	#pragma mark -
+	#pragma mark Line D
+	
+	void microcode_ADD( processor_state& s, uint32_t* params )
+	{
+		const int32_t a = params[0];
+		const int32_t b = params[1];
+		
+		const uint32_t size_code = params[2];
+		
+		/*
+			     size_code  E  (0, 1,  2)
+			1 << size_code  E  (1, 2,  4)
+			      
+			             n_bytes - 1   E  (0, 1,  3)
+			        8 * (n_bytes - 1)  E  (0, 8, 24)
+			
+			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+		*/
+		
+		const int n_bytes = 1 << size_code;
+		
+		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
+		
+		const int32_t sum = a + b;
+		
+		const bool S = a   & sign_mask;
+		const bool D = b   & sign_mask;
+		const bool R = sum & sign_mask;
+		
+		s.regs.nzvc = N( R )
+		            | Z( sum == 0 )
+		            | V( (S == D) & (S != R) )
+		            | C( S & D | !R & D | S & !R );
+		
+		s.regs.x = s.regs.nzvc & 0x1;
+		
+		params[1] = sum;
+	}
+	
 }
 

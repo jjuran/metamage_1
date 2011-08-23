@@ -124,6 +124,11 @@ namespace v68k
 	
 	void microcode_EXG( processor_state& state, uint32_t* params );
 	
+	#pragma mark -
+	#pragma mark Line D
+	
+	void microcode_ADD( processor_state& state, uint32_t* params );
+	
 }
 
 #endif
