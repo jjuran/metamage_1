@@ -54,12 +54,21 @@ const uint32_t os_address   = 1024;
 
 static const uint16_t os[] =
 {
+	// Jump over handlers
+	
 	0x6006,  // BRA.S  *+8
+	
+	// Illegal Instruction,
+	// Privilege Violation
 	
 	0x484F,  // BKPT  #7
 	
+	// Trap 15
+	
 	0x4E72,  // STOP #FFFF  ; finish
 	0xFFFF,
+	
+	// OS resumes here
 	
 	0x027C,  // ANDI #DFFF,SR  ; clear S
 	0xDFFF,
