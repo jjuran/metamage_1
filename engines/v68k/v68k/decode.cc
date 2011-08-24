@@ -315,6 +315,16 @@ namespace v68k
 			
 			return &storage;
 		}
+		else if ( size_code == 3 )
+		{
+			const instruction_flags_t stores_data = instruction_flags_t( (opcode & 0x0100) + 0x0200 );
+			
+			storage.fetch = fetches_ADDA;
+			storage.code  = &microcode_ADD;
+			storage.flags = loads_and | stores_data | in_register;
+			
+			return &storage;
+		}
 		
 		return 0;  // NULL
 	}
