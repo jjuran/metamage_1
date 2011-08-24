@@ -63,6 +63,11 @@ namespace v68k
 		return s.opcode >> 6 & 0x3;
 	}
 	
+	uint32_t fetch_A_size_code( processor_state& s )
+	{
+		return (s.opcode >> 8 & 0x1) + 1;
+	}
+	
 	uint32_t fetch_sized_immediate_data( processor_state& s )
 	{
 		const int size_code = s.opcode >> 6 & 0x3;
