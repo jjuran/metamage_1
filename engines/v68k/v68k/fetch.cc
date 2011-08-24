@@ -63,6 +63,11 @@ namespace v68k
 		return s.opcode >> 6 & 0x3;
 	}
 	
+	uint32_t fetch_A_size_code( processor_state& s )
+	{
+		return (s.opcode >> 8 & 0x1) + 1;
+	}
+	
 	uint32_t fetch_sized_immediate_data( processor_state& s )
 	{
 		const int size_code = s.opcode >> 6 & 0x3;
@@ -150,7 +155,7 @@ namespace v68k
 		}
 	}
 	
-	uint32_t fetch_CMPA_data_from_major_register( processor_state& s )
+	uint32_t fetch_A_data_from_major_register( processor_state& s )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
@@ -159,7 +164,7 @@ namespace v68k
 		return s.regs.a[n];
 	}
 	
-	uint32_t fetch_CMPA_data_at_effective_address( processor_state& s )
+	uint32_t fetch_A_data_at_effective_address( processor_state& s )
 	{
 		return s.opcode & 0x0100 ? fetch_long_from_effective_address( s )
 		                         : fetch_word_from_effective_address( s );
