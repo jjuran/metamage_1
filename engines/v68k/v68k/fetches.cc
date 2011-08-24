@@ -247,7 +247,7 @@ namespace v68k
 	
 	fetcher fetches_ADD[] =
 	{
-		&fetch_data_at_0E00,  // register number or data
+		&fetch_sized_data_from_major_register,
 		&fetch_sized_effective_address,
 		&fetch_size_code,
 		0  // NULL
