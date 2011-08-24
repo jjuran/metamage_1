@@ -222,8 +222,8 @@ namespace v68k
 	
 	fetcher fetches_CMPA[] =
 	{
-		&fetch_CMPA_data_at_effective_address,
-		&fetch_CMPA_data_from_major_register,
+		&fetch_A_data_at_effective_address,
+		&fetch_A_data_from_major_register,
 		0  // NULL
 	};
 	
