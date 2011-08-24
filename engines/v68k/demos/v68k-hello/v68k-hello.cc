@@ -57,7 +57,7 @@ static const uint16_t os[] =
 {
 	// Jump over handlers
 	
-	0x6006,  // BRA.S  *+8
+	0x6016,  // BRA.S  *+24
 	
 	// Illegal Instruction,
 	// Privilege Violation
@@ -68,6 +68,22 @@ static const uint16_t os[] =
 	
 	0x4E72,  // STOP #FFFF  ; finish
 	0xFFFF,
+	
+	// Trap 0
+	
+	0x41EF,  // LEA  (2,A7),A0
+	0x0002,
+	
+	0x72FE,  // MOVEQ #FE,D1
+	
+	0xD390,  // ADD.L  D1,(A0)
+	
+	0x2050,  // MOVEA.L  (A0),A0
+	
+	0x30BC,  // MOVE.W  #0x484A,(A0)
+	0x484A,
+	
+	0x4E73,  // RTE
 	
 	// OS resumes here
 	
@@ -85,6 +101,7 @@ static const uint16_t os[] =
 
 const uint32_t bkpt_7_addr = os_address + 2;
 const uint32_t finish_addr = os_address + 4;
+const uint32_t trap_0_addr = os_address + 8;
 
 static const uint16_t program[] =
 {
@@ -108,7 +125,7 @@ static const uint16_t program[] =
 	
 	0x7004,  // MOVEQ  #4,D0  ; write
 	
-	0x484A   // BKPT  #2
+	0x4E40   // TRAP  #0
 };
 
 static void load_vectors( uint8_t* mem )
@@ -123,6 +140,7 @@ static void load_vectors( uint8_t* mem )
 	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
 	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
 	
+	vectors[32] = big_longword( trap_0_addr );  // Trap  0
 	vectors[47] = big_longword( finish_addr );  // Trap 15
 }
 
