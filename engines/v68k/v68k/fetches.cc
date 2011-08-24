@@ -245,6 +245,14 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_ADDA[] =
+	{
+		&fetch_A_data_at_effective_address,
+		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
+		&fetch_A_size_code,
+		0  // NULL
+	};
+	
 	fetcher fetches_ADD[] =
 	{
 		&fetch_sized_data_from_major_register,
