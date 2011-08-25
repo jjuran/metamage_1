@@ -108,9 +108,7 @@ static const uint16_t program[] =
 	
 	0x7004,  // MOVEQ  #4,D0  ; write
 	
-	0x484A,  // BKPT  #2
-	
-	0x4E75   // RTS
+	0x484A   // BKPT  #2
 };
 
 static void load_vectors( uint8_t* mem )
@@ -246,7 +244,7 @@ step_loop:
 	{
 		if ( bridge_call( emu ) )
 		{
-			emu.acknowledge_breakpoint( 0x4E71 );  // NOP
+			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
 		}
 		
 		goto step_loop;
