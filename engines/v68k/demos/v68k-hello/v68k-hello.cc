@@ -42,6 +42,8 @@ static void dump( const v68k::emulator& emu )
 	
 	printf( "PC: %.8x\n", regs.pc );
 	printf( "SR: %.4x\n", emu.get_SR() );
+	
+	printf( "\n" );
 }
 
 
