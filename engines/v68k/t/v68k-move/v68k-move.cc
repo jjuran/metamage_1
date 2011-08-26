@@ -133,7 +133,7 @@ static void move()
 	
 	uint32_t x = 0;
 	
-	ok_if( emu.mem.get_long( emu.regs.a[7], x ) );
+	ok_if( emu.mem.get_long( emu.regs.a[7], x, emu.data_space() ) );
 	
 	ok_if( x == 0xCBA98765 );
 	
@@ -146,7 +146,7 @@ static void move()
 	
 	uint8_t byte = 0;
 	
-	ok_if( emu.mem.get_byte( emu.regs.a[7], byte ) );
+	ok_if( emu.mem.get_byte( emu.regs.a[7], byte, emu.data_space() ) );
 	
 	ok_if( byte == 0x00 );
 	
