@@ -58,7 +58,7 @@ static const uint16_t os[] =
 {
 	// Jump over handlers
 	
-	0x6016,  // BRA.S  *+24
+	0x6014,  // BRA.S  *+22
 	
 	// Illegal Instruction,
 	// Privilege Violation
@@ -75,9 +75,7 @@ static const uint16_t os[] =
 	0x41EF,  // LEA  (2,A7),A0
 	0x0002,
 	
-	0x72FE,  // MOVEQ #FE,D1
-	
-	0xD390,  // ADD.L  D1,(A0)
+	0x5590,  // SUBQ.L  #2,(A0)
 	
 	0x2050,  // MOVEA.L  (A0),A0
 	
