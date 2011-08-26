@@ -13,7 +13,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 + 1 + 4 + 2 + 2 + 4 + 4 + 6;
+static const unsigned n_tests = 2 + 1 + 4 + 4 + 2 + 2 + 4 + 4 + 6;
 
 
 using tap::ok_if;
@@ -55,7 +55,7 @@ static void only_8_bytes()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == normal );
+	ok_if( emu.condition == halted );
 	
 	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
@@ -63,11 +63,29 @@ static void only_8_bytes()
 	ok_if( emu.regs.pc   == 0 );
 }
 
+static void only_1026_bytes()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 1026 ] = { 0, 0, 0, 0,  0, 0, 4, 0 };  // PC = 1024
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	ok_if( emu.condition == normal );
+	
+	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
+	
+	ok_if( emu.regs.a[7] ==    0 );
+	ok_if( emu.regs.pc   == 1024 );
+}
+
 static void bad_SP_on_reset()
 {
 	using namespace v68k;
 	
-	uint8_t mem[ 8 ] = { 0xFF, 0xFF, 0xFF, 0xFF };
+	uint8_t mem[ 1026 ] = { 0xFF, 0xFF, 0xFF, 0xFF,  0, 0, 4, 0 };  // PC = 1024
 	
 	emulator emu( mc68000, mem, sizeof mem );
 	
@@ -82,7 +100,7 @@ static void bad_PC_on_reset()
 {
 	using namespace v68k;
 	
-	uint8_t mem[ 8 ] = { 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF };
+	uint8_t mem[ 1026 ] = { 0, 0, 0, 0,  0xFF, 0xFF, 0xFF, 0xFF };
 	
 	emulator emu( mc68000, mem, sizeof mem );
 	
@@ -97,14 +115,16 @@ static void stop_FFFF()
 {
 	using namespace v68k;
 	
-	uint8_t mem[ 16 ] =
+	uint8_t mem[ 1030 ] =
 	{
 		0, 0, 0, 0,
-		0, 0, 0, 8,
-		
-		0x4E, 0x72,
-		0xFF, 0xFF
+		0, 0, 4, 0
 	};
+	
+	mem[1024] = 0x4E;  // STOP  #FFFF
+	mem[1025] = 0x72;
+	mem[1026] = 0xFF;
+	mem[1027] = 0xFF;
 	
 	emulator emu( mc68000, mem, sizeof mem );
 	
@@ -118,21 +138,23 @@ static void stop_FFFF()
 	
 	ok_if( emu.get_SR() == 0x2700 );
 	
-	ok_if( emu.regs.pc == 12 );
+	ok_if( emu.regs.pc == 1028 );
 }
 
 static void stop_2EFF()
 {
 	using namespace v68k;
 	
-	uint8_t mem[ 16 ] =
+	uint8_t mem[ 1030 ] =
 	{
 		0, 0, 0, 0,
-		0, 0, 0, 8,
-		
-		0x4E, 0x72,
-		0x2E, 0xFF
+		0, 0, 4, 0
 	};
+	
+	mem[1024] = 0x4E;  // STOP  #2EFF
+	mem[1025] = 0x72;
+	mem[1026] = 0x2E;
+	mem[1027] = 0xFF;
 	
 	emulator emu( mc68000, mem, sizeof mem );
 	
@@ -144,20 +166,21 @@ static void stop_2EFF()
 	
 	ok_if( emu.get_SR() == 0x261F );
 	
-	ok_if( emu.regs.pc == 12 );
+	ok_if( emu.regs.pc == 1028 );
 }
 
 static void bkpt()
 {
 	using namespace v68k;
 	
-	uint8_t mem[ 12 ] =
+	uint8_t mem[ 1028 ] =
 	{
 		0, 0, 0, 0,
-		0, 0, 0, 8,
-		
-		0x48, 0x48
+		0, 0, 4, 0
 	};
+	
+	mem[1024] = 0x48;  // BKPT  #0
+	mem[1025] = 0x48;
 	
 	emulator emu( mc68000, mem, sizeof mem );
 	
@@ -167,7 +190,7 @@ static void bkpt()
 	
 	ok_if( emu.condition == bkpt_0 );
 	
-	ok_if( emu.regs.pc == 8 );
+	ok_if( emu.regs.pc == 1024 );
 	
 	emu.opcode = 0x484F;
 	
@@ -193,6 +216,8 @@ int main( int argc, char** argv )
 	only_7_bytes();
 	
 	only_8_bytes();
+	
+	only_1026_bytes();
 	
 	bad_SP_on_reset();
 	
