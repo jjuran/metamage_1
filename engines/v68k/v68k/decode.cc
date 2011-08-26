@@ -134,6 +134,46 @@ namespace v68k
 		return move_instructions[ i ];
 	}
 	
+	static const instruction* decode_line_5( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		if ( size_code != 3 )
+		{
+			if ( ea_is_alterable( mode, n ) )
+			{
+				if ( mode == 1 )
+				{
+					if ( size_code == 0 )
+					{
+						return 0;  // NULL
+					}
+					
+					storage.code = opcode & 0x0100 ? &microcode_SUBA : &microcode_ADDA;
+				}
+				else
+				{
+					storage.code = opcode & 0x0100 ? &microcode_SUB : &microcode_ADD;
+				}
+				
+				const bool to_reg = ea_is_register( mode );
+				
+				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+				const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
+				
+				storage.fetch = fetches_ADDQ;
+				storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+				
+				return &storage;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* decode_line_6( uint16_t opcode, instruction& storage )
 	{
 		switch ( opcode & 0x00FF )
@@ -381,7 +421,7 @@ namespace v68k
 		&decode_MOVE,
 		
 		&decode_line_4,
-		&decode_unimplemented,
+		&decode_line_5,
 		&decode_line_6,
 		&decode_line_7,
 		

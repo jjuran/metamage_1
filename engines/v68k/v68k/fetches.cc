@@ -180,6 +180,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_ADDQ[] =
+	{
+		&fetch_ADDQ_data,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_branch_short[] =
 	{
 		&fetch_pc,
