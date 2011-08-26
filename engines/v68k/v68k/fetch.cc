@@ -204,6 +204,12 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_ADDQ_data( processor_state& s )
+	{
+		return ((s.opcode >> 9) - 1 & 0x0007) + 1;
+	}
+	
+	
 	uint32_t fetch_cc( processor_state& s )
 	{
 		return s.opcode >> 8 & 0x0F;
