@@ -320,7 +320,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( (opcode & 0x0100) + 0x0200 );
 			
 			storage.fetch = fetches_ADDA;
-			storage.code  = &microcode_ADD;
+			storage.code  = &microcode_ADDA;
 			storage.flags = loads_and | stores_data | in_register;
 			
 			return &storage;

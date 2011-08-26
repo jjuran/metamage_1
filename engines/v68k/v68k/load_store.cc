@@ -79,12 +79,7 @@ namespace v68k
 		
 		if ( flags & in_register  &&  loc > 7 )
 		{
-			// Address register:  sign-extend and don't touch CCR
-			
-			if ( storage_flags == stores_word_data )
-			{
-				data = int32_t( int16_t( data ) );
-			}
+			// Address register:  don't touch CCR
 			
 			s.regs.d[ loc ] = data;
 			
