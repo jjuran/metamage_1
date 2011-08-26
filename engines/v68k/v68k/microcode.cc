@@ -882,5 +882,15 @@ namespace v68k
 		params[1] = sum;
 	}
 	
+	void microcode_ADDA( processor_state& s, uint32_t* params )
+	{
+		const int32_t a = params[0];
+		const int32_t b = params[1];
+		
+		const int32_t sum = a + b;
+		
+		params[1] = sum;
+	}
+	
 }
 

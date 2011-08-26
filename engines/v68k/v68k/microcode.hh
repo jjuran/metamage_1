@@ -129,6 +129,8 @@ namespace v68k
 	
 	void microcode_ADD( processor_state& state, uint32_t* params );
 	
+	void microcode_ADDA( processor_state& state, uint32_t* params );
+	
 }
 
 #endif
