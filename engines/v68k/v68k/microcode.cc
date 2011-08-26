@@ -818,6 +818,16 @@ namespace v68k
 		s.regs.x = s.regs.nzvc & 0x1;
 	}
 	
+	void microcode_SUBA( processor_state& s, uint32_t* params )
+	{
+		const int32_t a = params[0];
+		const int32_t b = params[1];
+		
+		const int32_t diff = b - a;
+		
+		params[1] = diff;
+	}
+	
 	#pragma mark -
 	#pragma mark Line B
 	

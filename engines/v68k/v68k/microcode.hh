@@ -115,6 +115,8 @@ namespace v68k
 	
 	void microcode_SUB( processor_state& state, uint32_t* params );
 	
+	void microcode_SUBA( processor_state& state, uint32_t* params );
+	
 	#pragma mark -
 	#pragma mark Line B
 	
