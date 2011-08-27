@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/ea_types.hh"
+#include "v68k/fetches.hh"
 #include "v68k/instructions.hh"
 
 
@@ -173,6 +174,26 @@ namespace v68k
 			}
 			
 			return 0;  // NULL
+		}
+		
+		if ( (opcode & 0xFB80) == 0x4880 )
+		{
+			const uint16_t mode = opcode >> 3 & 0x7;
+			const uint16_t n    = opcode >> 0 & 0x7;
+			
+			const bool to_mem = !(opcode & 0x0400);
+			
+			const uint16_t update_mode = 3 + to_mem;  // postinc or predec
+			
+			if ( mode == update_mode  ||  ea_is_control( mode, n )  &&  (ea_is_alterable( mode, n ) || !to_mem ) )
+			{
+				storage.fetch = fetches_MOVEM;
+				
+				storage.code = to_mem ? &microcode_MOVEM_to
+				                      : &microcode_MOVEM_from;
+				
+				return &storage;
+			}
 		}
 		
 		switch ( opcode & 0xff00 )
