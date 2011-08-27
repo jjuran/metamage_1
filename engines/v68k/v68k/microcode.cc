@@ -365,6 +365,101 @@ namespace v68k
 		            | C( 0 );
 	}
 	
+	void microcode_MOVEM_to( processor_state& s, uint32_t* params )
+	{
+		uint32_t addr = params[1];
+		uint16_t mask = params[3];
+		
+		const uint16_t movem_size_code = params[0];
+		const uint16_t update_register = params[2];
+		
+		const uint16_t longword_sized = movem_size_code & 0x1;
+		
+		int32_t increment = 2 << longword_sized;
+		
+		if ( update_register )
+		{
+			increment = -increment;
+		}
+		
+		for ( int r = 0;  mask != 0;  ++r, mask >>= 1 )
+		{
+			if ( mask & 0x1 )
+			{
+				const uint32_t data = s.regs.d[ update_register ? 15 - r : r ];
+				
+				const bool ok = longword_sized ? s.mem.put_long( addr, data, s.data_space() )
+											   : s.mem.put_word( addr, data, s.data_space() );
+				
+				if ( !ok )
+				{
+					s.bus_error();
+					
+					return;
+				}
+				
+				addr += increment;
+			}
+		}
+		
+		if ( update_register )
+		{
+			s.regs.d[ update_register ] = addr - increment;
+		}
+	}
+	
+	void microcode_MOVEM_from( processor_state& s, uint32_t* params )
+	{
+		uint32_t addr = params[1];
+		uint16_t mask = params[3];
+		
+		const uint16_t movem_size_code = params[0];
+		const uint16_t update_register = params[2];
+		
+		const uint16_t longword_sized = movem_size_code & 0x1;
+		
+		const int32_t increment = 2 << longword_sized;
+		
+		for ( int r = 0;  mask != 0;  ++r, mask >>= 1 )
+		{
+			if ( mask & 0x1 )
+			{
+				uint32_t data;
+				
+				bool ok;
+				
+				if ( longword_sized )
+				{
+					ok = s.mem.get_long( addr, data, s.data_space() );
+				}
+				else
+				{
+					uint16_t word;
+					
+					ok = s.mem.get_word( addr, word, s.data_space() );
+					
+					data = int32_t( int16_t( word ) );
+				}
+				
+				if ( !ok )
+				{
+					s.bus_error();
+					
+					return;
+				}
+				
+				s.regs.d[r] = data;
+				
+				addr += increment;
+			}
+		}
+		
+		if ( update_register )
+		{
+			s.regs.d[ update_register ] = addr;
+		}
+	}
+	
 	void microcode_TRAP( processor_state& s, uint32_t* params )
 	{
 		const uint32_t trap_number = params[0];

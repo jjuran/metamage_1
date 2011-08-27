@@ -69,6 +69,9 @@ namespace v68k
 	
 	void microcode_EXTB( processor_state& state, uint32_t* params );
 	
+	void microcode_MOVEM_to  ( processor_state& state, uint32_t* params );
+	void microcode_MOVEM_from( processor_state& state, uint32_t* params );
+	
 	void microcode_TRAP( processor_state& state, uint32_t* params );
 	
 	void microcode_LINK( processor_state& state, uint32_t* params );
