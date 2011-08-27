@@ -212,6 +212,19 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_MOVEM_update( processor_state& s )
+	{
+		const uint16_t mode = s.opcode >> 3 & 0x0007;
+		
+		if ( mode == 3  ||  mode == 4 )
+		{
+			return 0x8 | s.opcode & 0x7;  // register id for An
+		}
+		
+		return 0;
+	}
+	
+	
 	uint32_t fetch_ADDQ_data( processor_state& s )
 	{
 		return ((s.opcode >> 9) - 1 & 0x0007) + 1;

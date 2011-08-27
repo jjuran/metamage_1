@@ -55,6 +55,8 @@ namespace v68k
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& state );
 	
+	uint32_t fetch_MOVEM_update( processor_state& state );
+	
 	uint32_t fetch_ADDQ_data( processor_state& state );
 	
 	uint32_t fetch_cc( processor_state& state );
