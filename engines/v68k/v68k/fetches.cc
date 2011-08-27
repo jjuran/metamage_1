@@ -151,6 +151,16 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_MOVEM[] =
+	{
+		&fetch_size_code,
+		&fetch_MOVEM_sized_effective_address,
+		&fetch_MOVEM_update,
+		&fetch_unsigned_word,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_TRAP[] =
 	{
 		&fetch_data_at_000F,
