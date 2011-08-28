@@ -258,5 +258,14 @@ namespace v68k
 		return s.opcode >> 3 & 0x001f;
 	}
 	
+	
+	uint32_t fetch_bit_shift_count( processor_state& s )
+	{
+		const uint16_t n = s.opcode >> 9 & 0x7;
+		
+		return s.opcode & 0x0020 ? s.regs.d[n] % 64
+		                         : n;
+	}
+	
 }
 
