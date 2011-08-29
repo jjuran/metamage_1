@@ -105,6 +105,14 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_MOVEM_sized_effective_address( processor_state& s )
+	{
+		const int longword_sized = s.opcode >> 6 & 0x1;
+		
+		return longword_sized ? fetch_effective_long_address( s )
+		                      : fetch_effective_word_address( s );
+	}
+	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s )
 	{
 		const int size_code = s.opcode >> 6 & 0x3;
