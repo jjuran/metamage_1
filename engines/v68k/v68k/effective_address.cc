@@ -335,7 +335,7 @@ namespace v68k
 			return fetch_longword( s );
 		}
 		
-		const uint32_t addr = fetch_effective_word_address( s );
+		const uint32_t addr = fetch_effective_long_address( s );
 		
 		if ( s.badly_aligned_data( addr ) )
 		{
