@@ -102,6 +102,11 @@ namespace v68k
 	void microcode_JMP( processor_state& state, uint32_t* params );
 	
 	#pragma mark -
+	#pragma mark Line 5
+	
+	void microcode_Scc( processor_state& state, uint32_t* params );
+	
+	#pragma mark -
 	#pragma mark Line 6
 	
 	void microcode_BRA( processor_state& state, uint32_t* params );

@@ -824,6 +824,16 @@ namespace v68k
 	}
 	
 	#pragma mark -
+	#pragma mark Line 5
+	
+	void microcode_Scc( processor_state& s, uint32_t* params )
+	{
+		const uint16_t cc = params[0];
+		
+		params[1] = int32_t() - test_conditional( cc, s.regs.nzvc );
+	}
+	
+	#pragma mark -
 	#pragma mark Line 6
 	
 	void microcode_BRA( processor_state& s, uint32_t* params )

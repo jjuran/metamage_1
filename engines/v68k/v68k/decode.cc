@@ -170,6 +170,18 @@ namespace v68k
 				return &storage;
 			}
 		}
+		else if ( ea_is_data_alterable( mode, n ) )
+		{
+			const bool to_reg = ea_is_register( mode );
+			
+			const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
+			
+			storage.fetch = fetches_Scc;
+			storage.code  = &microcode_Scc;
+			storage.flags = stores_byte_data | destination | and_sets_CCR;
+			
+			return &storage;
+		}
 		
 		return 0;  // NULL
 	}

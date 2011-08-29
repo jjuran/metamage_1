@@ -57,6 +57,8 @@ namespace v68k
 	
 	extern fetcher fetches_ADDQ[];
 	
+	extern fetcher fetches_Scc[];
+	
 	extern fetcher fetches_branch_short[];
 	extern fetcher fetches_branch      [];
 	extern fetcher fetches_branch_long [];

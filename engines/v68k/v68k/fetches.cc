@@ -198,6 +198,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_Scc[] =
+	{
+		&fetch_cc,
+		&fetch_effective_byte_address,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_branch_short[] =
 	{
 		&fetch_pc,
