@@ -105,6 +105,14 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_MOVEM_sized_effective_address( processor_state& s )
+	{
+		const int longword_sized = s.opcode >> 6 & 0x1;
+		
+		return longword_sized ? fetch_effective_long_address( s )
+		                      : fetch_effective_word_address( s );
+	}
+	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s )
 	{
 		const int size_code = s.opcode >> 6 & 0x3;
@@ -201,6 +209,19 @@ namespace v68k
 	uint32_t fetch_MOVEP_opmode( processor_state& s )
 	{
 		return s.opcode >> 6 & 0x0007;
+	}
+	
+	
+	uint32_t fetch_MOVEM_update( processor_state& s )
+	{
+		const uint16_t mode = s.opcode >> 3 & 0x0007;
+		
+		if ( mode == 3  ||  mode == 4 )
+		{
+			return 0x8 | s.opcode & 0x7;  // register id for An
+		}
+		
+		return 0;
 	}
 	
 	

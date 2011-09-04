@@ -35,6 +35,8 @@ namespace v68k
 	
 	uint32_t fetch_sized_effective_address( processor_state& state );
 	
+	uint32_t fetch_MOVEM_sized_effective_address( processor_state& state );
+	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& state );
 	
 	uint32_t fetch_sized_data_from_major_register( processor_state& state );
@@ -52,6 +54,8 @@ namespace v68k
 	uint32_t fetch_2nd_ea_register_id( processor_state& state );
 	
 	uint32_t fetch_MOVEP_opmode( processor_state& state );
+	
+	uint32_t fetch_MOVEM_update( processor_state& state );
 	
 	uint32_t fetch_ADDQ_data( processor_state& state );
 	

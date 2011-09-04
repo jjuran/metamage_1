@@ -45,6 +45,8 @@ namespace v68k
 	
 	extern fetcher fetches_MOVE_to_SR[];
 	
+	extern fetcher fetches_MOVEM[];
+	
 	extern fetcher fetches_TRAP[];
 	
 	extern fetcher fetches_LINK_L[];
