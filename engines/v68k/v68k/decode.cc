@@ -113,9 +113,9 @@ namespace v68k
 		const uint16_t n    = opcode >> 0 & 0x7;
 		
 		const uint16_t mode2 = opcode >> 6 & 0x7;
-	//	const uint16_t n2    = opcode >> 9 & 0x7;
+		const uint16_t n2    = opcode >> 9 & 0x7;
 		
-		if ( !ea_is_valid( mode, n )  ||  !ea_is_alterable( mode2 ) )
+		if ( !ea_is_valid( mode, n )  ||  !ea_is_alterable( mode2, n2 ) )
 		{
 			return 0;  // NULL
 		}

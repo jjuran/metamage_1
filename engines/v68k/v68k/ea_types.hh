@@ -59,9 +59,9 @@ namespace v68k
 		return mode == 2  ||  mode - 5u <= 1  || mode == 7  &&  n < 4;
 	}
 	
-	inline bool ea_is_alterable( uint16_t mode, uint16_t n = 0 )
+	inline bool ea_is_alterable( uint16_t mode, uint16_t n )
 	{
-		return mode < 7;
+		return mode < 7  ||  n <= 1;
 	}
 	
 	inline bool ea_is_data_alterable( uint16_t mode, uint16_t n = 0 )
