@@ -54,6 +54,9 @@ const uint32_t initial_USP  = 3072;
 const uint32_t code_address = 2048;
 const uint32_t os_address   = 1024;
 
+const uint32_t user_pb_addr   = 3072 +  0;  // 20 bytes
+const uint32_t system_pb_addr = 3072 + 20;  // 20 bytes
+
 static const uint16_t os[] =
 {
 	// Jump over handlers
@@ -91,6 +94,23 @@ static const uint16_t os[] =
 	
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
+	
+	0x21FC,  // MOVE.L  #user_pb_addr,(system_pb_addr).W  ; pb->current_user
+	0x0000,
+	user_pb_addr,
+	system_pb_addr,
+	
+	0x4878,  // PEA  (system_pb_addr).W  ; pb
+	system_pb_addr,
+	
+	0x4878,  // PEA  (0).W  ; envp
+	0x0000,
+	
+	0x4878,  // PEA  (0).W  ; argv
+	0x0000,
+	
+	0x4878,  // PEA  (0).W  ; argc
+	0x0000,
 	
 	0x4EB8,  // JSR  0x0800  ; 2048
 	0x0800,
