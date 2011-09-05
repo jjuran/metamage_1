@@ -5,7 +5,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdio.h>
 #include <string.h>
 
 // POSIX
@@ -21,31 +20,6 @@
 
 using v68k::big_word;
 using v68k::big_longword;
-
-
-static void dump( const v68k::emulator& emu )
-{
-	const v68k::registers& regs = emu.regs;
-	
-	printf( "\n" );
-	
-	for ( int i = 0;  i < 8;  ++i )
-	{
-		printf( "D%d: %.8x   A%d: %.8x\n", i, regs.d[i], i, regs.a[i] );
-	}
-	
-	printf( "\n" );
-	
-	printf( "Alt SP:  %.8x\n", regs.alt_sp  );
-	printf( "Alt SSP: %.8x\n", regs.alt_ssp );
-	
-	printf( "\n" );
-	
-	printf( "PC: %.8x\n", regs.pc );
-	printf( "SR: %.4x\n", emu.get_SR() );
-	
-	printf( "\n" );
-}
 
 
 const uint32_t initial_SSP  = 4096;
@@ -267,52 +241,6 @@ step_loop:
 		
 		goto step_loop;
 	}
-	
-	if ( emu.condition == v68k::finished )
-	{
-		return;
-	}
-	
-	putchar( '\n' );
-	
-	const char* condition;
-	
-	switch ( emu.condition )
-	{
-		using namespace v68k;
-		
-		case halted:
-			condition = "halted";
-			break;
-		
-		case stopped:
-			condition = "stopped";
-			break;
-		
-		case bkpt_0:
-		case bkpt_1:
-		case bkpt_2:
-		case bkpt_3:
-		case bkpt_4:
-		case bkpt_5:
-		case bkpt_6:
-		case bkpt_7:
-			condition = NULL;
-			
-			printf( "Breakpoint %d\n", emu.condition - bkpt_0 );
-			break;
-		
-		default:
-			condition = "???";
-			break;
-	}
-	
-	if ( condition )
-	{
-		printf( "Processor %s\n", condition );
-	}
-	
-	dump( emu );
 }
 
 int main( int argc, char** argv )
