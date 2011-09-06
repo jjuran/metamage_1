@@ -190,6 +190,20 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_CLR[] =
+	{
+		&fetch_zero,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_NOT[] =
+	{
+		&fetch_ones,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_TST[] =
 	{
 		&fetch_zero,

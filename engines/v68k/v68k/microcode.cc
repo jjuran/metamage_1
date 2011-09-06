@@ -257,6 +257,21 @@ namespace v68k
 		An = addr;
 	}
 	
+	void microcode_NEG( processor_state& s, uint32_t* params )
+	{
+		params[0] = params[1];
+		params[1] = 0;
+		
+		microcode_SUB( s, params );
+		
+		const uint8_t C = ~s.regs.nzvc >> 2 & 0x1;  // Set C to !Z
+		
+		s.regs.nzvc = s.regs.nzvc & ~0x1 | C;
+		
+		s.regs.x = C;
+		
+	}
+	
 	void microcode_MOVE_from_CCR( processor_state& s, uint32_t* params )
 	{
 		params[1] = s.get_CCR();

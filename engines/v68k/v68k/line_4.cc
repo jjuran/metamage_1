@@ -178,6 +178,42 @@ namespace v68k
 				return &storage;
 			}
 		}
+		else if ( ea_is_data_alterable( mode, n ) )
+		{
+			const bool in_reg = (opcode >> 3 & 0x7) < 2;
+			
+			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+			const instruction_flags_t destination = instruction_flags_t( in_register * in_reg );
+			
+			storage.flags = stores_data | destination;
+			
+			switch ( selector )
+			{
+				case 0:
+					// NEGX
+					return 0;
+				
+				case 1:
+					storage.fetch = fetches_CLR;
+					storage.code  = &microcode_MOVE;
+					
+					return &storage;
+				
+				case 2:
+					storage.fetch = fetches_CLR;
+					storage.code  = &microcode_NEG;
+					storage.flags = storage.flags | and_sets_CCR;
+					
+					return &storage;
+				
+				case 3:
+					storage.fetch = fetches_NOT;
+					storage.code  = &microcode_EOR;
+					
+					return &storage;
+				
+			}
+		}
 		
 		return 0;  // NULL
 	}
