@@ -33,6 +33,11 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_zero( processor_state& s )
+	{
+		return 0;
+	}
+	
 	uint32_t fetch_pc( processor_state& s )
 	{
 		return s.regs.pc;
