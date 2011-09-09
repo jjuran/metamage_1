@@ -54,11 +54,14 @@ const uint32_t initial_USP  = 3072;
 const uint32_t code_address = 2048;
 const uint32_t os_address   = 1024;
 
+const uint32_t user_pb_addr   = 3072 +  0;  // 20 bytes
+const uint32_t system_pb_addr = 3072 + 20;  // 20 bytes
+
 static const uint16_t os[] =
 {
 	// Jump over handlers
 	
-	0x6014,  // BRA.S  *+22
+	0x601A,  // BRA.S  *+28
 	
 	// Illegal Instruction,
 	// Privilege Violation
@@ -84,6 +87,13 @@ static const uint16_t os[] =
 	
 	0x4E73,  // RTE
 	
+	// Line A Emulator
+	
+	0x54AF,  // ADDQ.L  #2,(2,A7)
+	0x0002,
+	
+	0x4E73,  // RTE
+	
 	// OS resumes here
 	
 	0x027C,  // ANDI #DFFF,SR  ; clear S
@@ -92,15 +102,33 @@ static const uint16_t os[] =
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
 	
+	0x21FC,  // MOVE.L  #user_pb_addr,(system_pb_addr).W  ; pb->current_user
+	0x0000,
+	user_pb_addr,
+	system_pb_addr,
+	
+	0x4878,  // PEA  (system_pb_addr).W  ; pb
+	system_pb_addr,
+	
+	0x4878,  // PEA  (0).W  ; envp
+	0x0000,
+	
+	0x4878,  // PEA  (0).W  ; argv
+	0x0000,
+	
+	0x4878,  // PEA  (0).W  ; argc
+	0x0000,
+	
 	0x4EB8,  // JSR  0x0800  ; 2048
 	0x0800,
 	
 	0x4e4F   // TRAP  #15
 };
 
-const uint32_t bkpt_7_addr = os_address + 2;
-const uint32_t finish_addr = os_address + 4;
-const uint32_t trap_0_addr = os_address + 8;
+const uint32_t bkpt_7_addr = os_address +  2;
+const uint32_t finish_addr = os_address +  4;
+const uint32_t trap_0_addr = os_address +  8;
+const uint32_t line_A_addr = os_address + 22;
 
 static void load_vectors( uint8_t* mem )
 {
@@ -113,6 +141,8 @@ static void load_vectors( uint8_t* mem )
 	
 	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
 	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
+	
+	vectors[10] = big_longword( line_A_addr );  // Line A Emulator
 	
 	vectors[32] = big_longword( trap_0_addr );  // Trap  0
 	vectors[47] = big_longword( finish_addr );  // Trap 15
