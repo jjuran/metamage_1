@@ -148,6 +148,15 @@ namespace v68k
 	
 	void microcode_ADDA( processor_state& state, uint32_t* params );
 	
+	#pragma mark -
+	#pragma mark Line E
+	
+	void microcode_ASR( processor_state& state, uint32_t* params );
+	void microcode_ASL( processor_state& state, uint32_t* params );
+	
+	void microcode_LSR( processor_state& state, uint32_t* params );
+	void microcode_LSL( processor_state& state, uint32_t* params );
+	
 }
 
 #endif

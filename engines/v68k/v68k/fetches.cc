@@ -309,5 +309,14 @@ namespace v68k
 		0  // NULL
 	};
 	
+	
+	fetcher fetches_bit_shift[] =
+	{
+		&fetch_bit_shift_count,
+		&FETCH_MINOR_REGISTER_NUM,
+		&fetch_size_code,
+		0  // NULL
+	};
+	
 }
 

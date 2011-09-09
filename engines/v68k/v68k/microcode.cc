@@ -1044,5 +1044,177 @@ namespace v68k
 		params[1] = sum;
 	}
 	
+	void microcode_ASR( processor_state& s, uint32_t* params )
+	{
+		int32_t data = params[1];
+		
+		const uint16_t count     = params[0];
+		const uint16_t size_code = params[2];
+		
+		/*
+			     size_code  E  (0, 1,  2)
+			1 << size_code  E  (1, 2,  4)
+			      
+			             n_bytes - 1   E  (0, 1,  3)
+			        8 * (n_bytes - 1)  E  (0, 8, 24)
+			
+			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+		*/
+		
+		const int n_bytes = 1 << size_code;
+		
+		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
+		const uint32_t data_mask = (sign_mask << 1) - 1;
+		
+		bool last_bit = 0;
+		
+		for ( int i = count;  i > 0;  --i )
+		{
+			last_bit = data & 0x1;
+			
+			s.regs.x = last_bit;
+			
+			data >>= 1;
+		}
+		
+		s.regs.nzvc = N( data & sign_mask )
+		            | Z( (data & data_mask) == 0 )
+		            | V( 0 )
+		            | C( last_bit );
+		
+		params[1] = data;
+	}
+	
+	void microcode_ASL( processor_state& s, uint32_t* params )
+	{
+		int32_t data = params[1];
+		
+		const uint16_t count     = params[0];
+		const uint16_t size_code = params[2];
+		
+		/*
+			     size_code  E  (0, 1,  2)
+			1 << size_code  E  (1, 2,  4)
+			      
+			             n_bytes - 1   E  (0, 1,  3)
+			        8 * (n_bytes - 1)  E  (0, 8, 24)
+			
+			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+		*/
+		
+		const int n_bytes = 1 << size_code;
+		
+		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
+		const uint32_t data_mask = (sign_mask << 1) - 1;
+		
+		bool last_bit = 0;
+		
+		uint32_t overflow = 0;
+		
+		for ( int i = count;  i > 0;  --i )
+		{
+			overflow |= (data ^ (data << 1)) & sign_mask;
+			
+			last_bit = data & sign_mask;
+			
+			s.regs.x = last_bit;
+			
+			data <<= 1;
+		}
+		
+		s.regs.nzvc = N( data & sign_mask )
+		            | Z( (data & data_mask) == 0 )
+		            | V( overflow )
+		            | C( last_bit );
+		
+		params[1] = data;
+	}
+	
+	void microcode_LSR( processor_state& s, uint32_t* params )
+	{
+		uint32_t data = params[1];
+		
+		const uint16_t count     = params[0];
+		const uint16_t size_code = params[2];
+		
+		/*
+			     size_code  E  (0, 1,  2)
+			1 << size_code  E  (1, 2,  4)
+			      
+			             n_bytes - 1   E  (0, 1,  3)
+			        8 * (n_bytes - 1)  E  (0, 8, 24)
+			
+			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+		*/
+		
+		const int n_bytes = 1 << size_code;
+		
+		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
+		const uint32_t data_mask = (sign_mask << 1) - 1;
+		
+		bool last_bit = 0;
+		
+		if ( count != 0 )
+		{
+			data >>= count - 1;
+			
+			last_bit = data & 0x1;
+			
+			s.regs.x = last_bit;
+			
+			data >>= 1;
+		}
+		
+		s.regs.nzvc = N( data & sign_mask )
+		            | Z( (data & data_mask) == 0 )
+		            | V( 0 )
+		            | C( last_bit );
+		
+		params[1] = data;
+	}
+	
+	void microcode_LSL( processor_state& s, uint32_t* params )
+	{
+		uint32_t data = params[1];
+		
+		const uint16_t count     = params[0];
+		const uint16_t size_code = params[2];
+		
+		/*
+			     size_code  E  (0, 1,  2)
+			1 << size_code  E  (1, 2,  4)
+			      
+			             n_bytes - 1   E  (0, 1,  3)
+			        8 * (n_bytes - 1)  E  (0, 8, 24)
+			
+			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+		*/
+		
+		const int n_bytes = 1 << size_code;
+		
+		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
+		const uint32_t data_mask = (sign_mask << 1) - 1;
+		
+		bool last_bit = 0;
+		
+		if ( count != 0 )
+		{
+			data <<= count - 1;
+			
+			last_bit = data & sign_mask;
+			
+			s.regs.x = last_bit;
+			
+			data <<= 1;
+		}
+		
+		s.regs.nzvc = N( data & sign_mask )
+		            | Z( (data & data_mask) == 0 )
+		            | V( 0 )
+		            | C( last_bit );
+		
+		params[1] = data;
+	}
+	
 }
 

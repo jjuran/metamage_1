@@ -420,6 +420,35 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const microcode bit_shift_microcodes[] =
+	{
+		&microcode_ASR,
+		&microcode_ASL,
+		&microcode_LSR,
+		&microcode_LSL
+	};
+	
+	static const instruction* decode_line_E( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		if ( size_code != 3  &&  (opcode & 0x0010) == 0x0000 )
+		{
+			const int i = (opcode & 0x0008) >> 2 | (opcode & 0x0100) >> 8;
+			
+			storage.code = bit_shift_microcodes[ i ];
+			
+			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+			
+			storage.fetch = fetches_bit_shift;
+			storage.flags = loads_and | stores_data | in_register | and_sets_CCR;
+			
+			return &storage;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* decode_unimplemented( uint16_t opcode, instruction& storage )
 	{
 		return 0;  // NULL
@@ -444,7 +473,7 @@ namespace v68k
 		
 		&decode_line_C,
 		&decode_line_D,
-		&decode_unimplemented,
+		&decode_line_E,
 		&decode_unimplemented
 	};
 	

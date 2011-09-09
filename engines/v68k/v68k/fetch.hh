@@ -69,6 +69,8 @@ namespace v68k
 	
 	uint32_t fetch_EXG_opmode( processor_state& state );
 	
+	uint32_t fetch_bit_shift_count( processor_state& state );
+	
 }
 
 #endif

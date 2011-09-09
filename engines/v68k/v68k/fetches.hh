@@ -81,6 +81,8 @@ namespace v68k
 	extern fetcher fetches_ADDA     [];
 	extern fetcher fetches_ADD      [];
 	
+	extern fetcher fetches_bit_shift[];
+	
 }
 
 #endif
