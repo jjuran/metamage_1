@@ -119,8 +119,8 @@ static const uint16_t os[] =
 	0x4878,  // PEA  (0).W  ; argc
 	0x0000,
 	
-	0x4EB8,  // JSR  0x0800  ; 2048
-	0x0800,
+	0x4EB8,  // JSR  code_address
+	code_address,
 	
 	0x4e4F   // TRAP  #15
 };
