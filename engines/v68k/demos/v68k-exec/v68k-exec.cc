@@ -106,6 +106,9 @@ static const uint16_t os[] =
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
 	
+	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (uint32_t)  ; user_pb->errno_var
+	user_pb_addr + 2 * sizeof (uint32_t),
+	
 	0x21FC,  // MOVE.L  #user_pb_addr,(system_pb_addr).W  ; pb->current_user
 	0x0000,
 	user_pb_addr,
@@ -192,6 +195,32 @@ static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 	return true;
 }
 
+static void set_errno( v68k::emulator& emu )
+{
+	emu.regs.d[1] = errno;
+	
+	const uint32_t errno_ptr_addr = user_pb_addr + 2 * sizeof (uint32_t);
+	
+	uint32_t errno_ptr;
+	
+	if ( emu.mem.get_long( errno_ptr_addr, errno_ptr, emu.data_space() )  &&  errno_ptr != 0 )
+	{
+		emu.mem.put_long( errno_ptr, errno, emu.data_space() );
+	}
+}
+
+static inline bool set_result( v68k::emulator& emu, int result )
+{
+	emu.regs.d[0] = result;
+	
+	if ( result < 0 )
+	{
+		set_errno( emu );
+	}
+	
+	return true;
+}
+
 static bool emu_write( v68k::emulator& emu )
 {
 	uint32_t args[3];  // fd, buffer, length
@@ -209,17 +238,20 @@ static bool emu_write( v68k::emulator& emu )
 	
 	const uint8_t* p = emu.mem.translate( buffer, length, emu.data_space(), v68k::mem_read );
 	
+	int result;
+	
 	if ( p == NULL )
 	{
+		result = -1;
+		
 		errno = EFAULT;
 	}
 	else
 	{
-		emu.regs.d[0] = write( fd, p, length );
-		emu.regs.d[1] = errno;
+		result = write( fd, p, length );
 	}
 	
-	return true;
+	return set_result( emu, result );
 }
 
 static bool bridge_call( v68k::emulator& emu )
