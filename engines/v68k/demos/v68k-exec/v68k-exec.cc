@@ -49,10 +49,14 @@ static void dump( const v68k::emulator& emu )
 }
 
 
+const uint32_t code_max_size = 512;
+
 const uint32_t os_address   = 1024;
 const uint32_t code_address = 2048;
 const uint32_t initial_USP  = 3072;
 const uint32_t initial_SSP  = 4096;
+
+const uint32_t mem_size = 4096;
 
 const uint32_t user_pb_addr   = 3072 +  0;  // 20 bytes
 const uint32_t system_pb_addr = 3072 + 20;  // 20 bytes
@@ -233,7 +237,7 @@ static bool bridge_call( v68k::emulator& emu )
 
 static void emulator_test( const char* path )
 {
-	uint8_t mem[ 4096 ];
+	uint8_t mem[ mem_size ];
 	
 	load_vectors( mem );
 	load_n_words( mem, os_address, os, sizeof os / 2 );
@@ -244,7 +248,7 @@ static void emulator_test( const char* path )
 		
 		if ( fd >= 0 )
 		{
-			int n_read = read( fd, mem + code_address, 512 );
+			int n_read = read( fd, mem + code_address, code_max_size );
 			
 			fprintf( stderr, "Loaded %d bytes from %s\n", n_read, path );
 			
