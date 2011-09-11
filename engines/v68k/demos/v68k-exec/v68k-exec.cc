@@ -49,10 +49,10 @@ static void dump( const v68k::emulator& emu )
 }
 
 
-const uint32_t initial_SSP  = 4096;
-const uint32_t initial_USP  = 3072;
-const uint32_t code_address = 2048;
 const uint32_t os_address   = 1024;
+const uint32_t code_address = 2048;
+const uint32_t initial_USP  = 3072;
+const uint32_t initial_SSP  = 4096;
 
 const uint32_t user_pb_addr   = 3072 +  0;  // 20 bytes
 const uint32_t system_pb_addr = 3072 + 20;  // 20 bytes
