@@ -12,6 +12,15 @@
 #include <unistd.h>
 
 
+#ifdef __LAMP__
+// Relix
+#include "lamp/alloca.h"
+#define ALLOC( x )  signalling_alloca( x )
+#else
+#define ALLOC( x )  std::malloc( x )
+#endif
+
+
 #pragma exceptions off
 
 
@@ -81,7 +90,7 @@ int main( int argc, char** argv )
 	
 	const std::size_t buffer_size = max_dir_length + 1 + max_program_length + 1;
 	
-	char* const buffer = (char*) std::malloc( buffer_size );
+	char* const buffer = (char*) ALLOC( buffer_size );
 	
 	char* end = buffer + buffer_size;
 	
