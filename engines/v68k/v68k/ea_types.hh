@@ -64,9 +64,9 @@ namespace v68k
 		return mode < 7  ||  n <= 1;
 	}
 	
-	inline bool ea_is_data_alterable( uint16_t mode, uint16_t n = 0 )
+	inline bool ea_is_data_alterable( uint16_t mode, uint16_t n )
 	{
-		return mode < 7  &&  mode != 1;
+		return ea_is_alterable( mode, n )  &&  !ea_is_address_register( mode );
 	}
 	
 	inline bool ea_is_memory_alterable( uint16_t mode, uint16_t n = 0 )
