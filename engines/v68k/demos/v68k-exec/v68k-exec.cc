@@ -221,6 +221,39 @@ static inline bool set_result( v68k::emulator& emu, int result )
 	return true;
 }
 
+static bool emu_read( v68k::emulator& emu )
+{
+	uint32_t args[3];  // fd, buffer, length
+	
+	if ( !get_stacked_args( emu, args, 3 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	const int fd = int32_t( args[0] );
+	
+	const uint32_t buffer = args[1];
+	
+	const size_t length = args[2];
+	
+	uint8_t* p = emu.mem.translate( buffer, length, emu.data_space(), v68k::mem_write );
+	
+	int result;
+	
+	if ( p == NULL )
+	{
+		result = -1;
+		
+		errno = EFAULT;
+	}
+	else
+	{
+		result = read( fd, p, length );
+	}
+	
+	return set_result( emu, result );
+}
+
 static bool emu_write( v68k::emulator& emu )
 {
 	uint32_t args[3];  // fd, buffer, length
@@ -260,6 +293,7 @@ static bool bridge_call( v68k::emulator& emu )
 	
 	switch ( call_number )
 	{
+		case 3:  return emu_read ( emu );
 		case 4:  return emu_write( emu );
 		
 		default:
