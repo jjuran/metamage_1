@@ -1,7 +1,7 @@
-/*	========
- *	which.cc
- *	========
- */
+/*
+	which.cc
+	--------
+*/
 
 // Standard C/C++
 #include <cstdlib>
