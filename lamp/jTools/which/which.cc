@@ -1,25 +1,75 @@
-/*	========
- *	which.cc
- *	========
- */
+/*
+	which.cc
+	--------
+*/
 
 // Standard C/C++
 #include <cstdlib>
 #include <cstring>
 
-// Standard C++
-#include <vector>
-
 // POSIX
 #include <sys/stat.h>
 #include <unistd.h>
 
-// plus
-#include "plus/var_string.hh"
-#include "plus/string/concat.hh"
+
+#ifdef __LAMP__
+// Relix
+#include "lamp/alloca.h"
+#define ALLOC( x )  signalling_alloca( x )
+#else
+#define ALLOC( x )  std::malloc( x )
+#endif
 
 
-int main( int argc, char const *const argv[] )
+#pragma exceptions off
+
+
+static std::size_t get_max_dir_length( const char* path )
+{
+	std::size_t result = 0;
+	
+	const char* p = path;
+	
+	while ( *p != '\0' )
+	{
+		const char* q = p;
+		
+		while ( *q != ':'  &&  *q != '\0' )
+		{
+			++q;
+		}
+		
+		const std::size_t len = q - p;
+		
+		if ( len > result )
+		{
+			result = len;
+		}
+		
+		p = q + !!*q;
+	}
+	
+	return result;
+}
+
+static std::size_t get_max_program_length( char** argv )
+{
+	std::size_t result = 0;
+	
+	while ( *++argv != NULL )
+	{
+		const std::size_t len = std::strlen( *argv );
+		
+		if ( len > result )
+		{
+			result = len;
+		}
+	}
+	
+	return result;
+}
+
+int main( int argc, char** argv )
 {
 	// Check for sufficient number of args
 	if ( argc <= 1 )
@@ -34,46 +84,55 @@ int main( int argc, char const *const argv[] )
 		path = "/usr/bin:/bin";
 	}
 	
-	std::vector< plus::string > dirs;
+	const std::size_t max_dir_length = get_max_dir_length( path );
 	
-	for ( const char* p = path;  ;  )
-	{
-		const char* q = std::strchr( p, ':' );
-		
-		if ( q == NULL )
-		{
-			q = std::strchr( p, '\0' );
-		}
-		
-		if ( q > p )
-		{
-			dirs.push_back( plus::string( p, q ) );
-		}
-		
-		if ( *q != ':' )
-		{
-			break;
-		}
-		
-		p = q + 1;
-	}
+	const std::size_t max_program_length = get_max_program_length( argv );
 	
+	const std::size_t buffer_size = max_dir_length + 1 + max_program_length + 1;
+	
+	char* const buffer = (char*) ALLOC( buffer_size );
+	
+	char* end = buffer + buffer_size;
+	
+	*--end = '\0';
 	
 	bool failed = false;
 	
-	for ( const char *const *program = argv + 1;  *program != NULL;  ++program )
+	
+	while ( *++argv != NULL )
 	{
-		typedef std::vector< plus::string >::const_iterator Iter;
+		const char* program = *argv;
+		
+		const std::size_t program_len = std::strlen( program );
+		
+		char* mark = end - program_len;
+		
+		std::memcpy( mark, program, program_len );
+		
+		*--mark = '/';
 		
 		bool found = false;
 		
-		for ( Iter it = dirs.begin();  it != dirs.end();  ++it )
+		const char* p = path;
+		
+		while ( *p != '\0' )
 		{
-			plus::var_string pathname = *it + "/" + *program;
+			const char* q = p;
+			
+			while ( *q != ':'  &&  *q != '\0' )
+			{
+				++q;
+			}
+			
+			const std::size_t dir_len = q - p;
+			
+			char* begin = mark - dir_len;
+			
+			std::memcpy( begin, p, dir_len );
 			
 			struct ::stat sb;
 			
-			int status = ::stat( pathname.c_str(), &sb );
+			int status = ::stat( begin, &sb );
 			
 			int mask = S_IFMT | S_IXUSR;
 			
@@ -81,12 +140,14 @@ int main( int argc, char const *const argv[] )
 			{
 				found = true;
 				
-				pathname += "\n";
+				*end++ = '\n';
 				
-				::write( STDOUT_FILENO, pathname.data(), pathname.length() );
+				::write( STDOUT_FILENO, begin, end - begin );
 				
 				break;
 			}
+			
+			p = q + !!*q;
 		}
 		
 		if ( !found )
