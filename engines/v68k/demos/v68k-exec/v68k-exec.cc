@@ -301,7 +301,7 @@ static bool bridge_call( v68k::emulator& emu )
 	}
 }
 
-static void execute_68k( const char* path )
+static int execute_68k( const char* path )
 {
 	uint8_t mem[ mem_size ];
 	
@@ -345,7 +345,7 @@ step_loop:
 	
 	if ( emu.condition == v68k::finished )
 	{
-		return;
+		return 0;
 	}
 	
 	putchar( '\n' );
@@ -388,13 +388,15 @@ step_loop:
 	}
 	
 	dump( emu );
+	
+	return 1;
 }
 
 int main( int argc, char** argv )
 {
 	if ( const char* path = argv[1] )
 	{
-		execute_68k( path );
+		return execute_68k( path );
 	}
 	
 	return 0;
