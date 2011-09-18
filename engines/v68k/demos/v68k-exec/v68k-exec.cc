@@ -50,15 +50,15 @@ static void dump( const v68k::emulator& emu )
 }
 
 
-const uint32_t args_max_size = 512;
-const uint32_t code_max_size = 4096;
+const uint32_t params_max_size = 4096;
+const uint32_t code_max_size   = 8192;
 
 const uint32_t os_address   = 1024;
-const uint32_t initial_USP  = 3072;
-const uint32_t initial_SSP  = 4096;
-const uint32_t code_address = 4096;
+const uint32_t initial_SSP  = 2048;
+const uint32_t initial_USP  = 4096;
+const uint32_t code_address = 8192;
 
-const uint32_t mem_size = 8192;
+const uint32_t mem_size = 16384;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
@@ -196,7 +196,7 @@ static int execute_68k( int argc, char** argv )
 	
 	uint32_t* args = (uint32_t*) &mem[ args_addr ];
 	
-	uint8_t* args_limit = &mem[ args_addr ] + args_max_size;
+	uint8_t* args_limit = &mem[ params_addr ] + params_max_size;
 	
 	uint8_t* args_data = (uint8_t*) (args + argc);
 	
