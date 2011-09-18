@@ -241,7 +241,7 @@ static int execute_68k( int argc, char** argv )
 		}
 	}
 	
-	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
+	v68k::emulator emu( v68k::mc68000, mem, mem_size );
 	
 	emu.reset();
 	
