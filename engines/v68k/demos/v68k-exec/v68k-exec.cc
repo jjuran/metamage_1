@@ -5,6 +5,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -186,7 +187,14 @@ static int execute_68k( int argc, char** argv )
 {
 	const char* path = argv[1];
 	
-	uint8_t mem[ mem_size ];
+	uint8_t* mem = (uint8_t*) malloc( mem_size );
+	
+	if ( mem == NULL )
+	{
+		fprintf( stderr, "Unable to allocate %d bytes\n", mem_size );
+		
+		return 1;
+	}
 	
 	load_vectors( mem );
 	load_n_words( mem, os_address, os, sizeof os / 2 );
