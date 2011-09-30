@@ -50,6 +50,7 @@ static void dump( const v68k::emulator& emu )
 }
 
 
+const uint32_t args_max_size = 512;
 const uint32_t code_max_size = 4096;
 
 const uint32_t os_address   = 1024;
@@ -61,6 +62,11 @@ const uint32_t mem_size = 8192;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
+
+const uint32_t argc_addr = params_addr + 40;  // 4 bytes
+const uint32_t argv_addr = params_addr + 44;  // 4 bytes
+const uint32_t args_addr = params_addr + 48;
+
 
 static const uint16_t os[] =
 {
@@ -121,11 +127,11 @@ static const uint16_t os[] =
 	0x4878,  // PEA  (0).W  ; envp
 	0x0000,
 	
-	0x4878,  // PEA  (0).W  ; argv
-	0x0000,
+	0x2F38,  // MOVE.L  (argv_addr).W,-(A7)
+	argv_addr,
 	
-	0x4878,  // PEA  (0).W  ; argc
-	0x0000,
+	0x2F38,  // MOVE.L  (argc_addr).W,-(A7)
+	argc_addr,
 	
 	0x4EB8,  // JSR  code_address
 	code_address,
@@ -184,6 +190,42 @@ static int execute_68k( int argc, char** argv )
 	
 	load_vectors( mem );
 	load_n_words( mem, os_address, os, sizeof os / 2 );
+	
+	(uint32_t&) mem[ argc_addr ] = big_longword( argc );
+	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
+	
+	uint32_t* args = (uint32_t*) &mem[ args_addr ];
+	
+	uint8_t* args_limit = &mem[ args_addr ] + args_max_size;
+	
+	uint8_t* args_data = (uint8_t*) (args + argc);
+	
+	if ( args_data >= args_limit )
+	{
+		fprintf( stderr, "Parameter area well exceeded by argv\n" );
+		
+		return 1;
+	}
+	
+	while ( *++argv != NULL )
+	{
+		*args++ = big_longword( args_data - mem );
+		
+		const size_t len = strlen( *argv ) + 1;
+		
+		if ( len > args_limit - args_data )
+		{
+			fprintf( stderr, "Parameter area exceeded by argv\n" );
+			
+			return 1;
+		}
+		
+		memcpy( args_data, *argv, len );
+		
+		args_data += len;
+	}
+	
+	*args = 0;  // trailing NULL of argv
 	
 	if ( path != NULL )
 	{
