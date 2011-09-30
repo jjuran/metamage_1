@@ -176,8 +176,10 @@ static inline void load_n_words( uint8_t*         mem,
 	load_code( dest, begin, begin + n_words );
 }
 
-static int execute_68k( const char* path )
+static int execute_68k( int argc, char** argv )
 {
+	const char* path = argv[1];
+	
 	uint8_t mem[ mem_size ];
 	
 	load_vectors( mem );
@@ -271,7 +273,7 @@ int main( int argc, char** argv )
 {
 	if ( const char* path = argv[1] )
 	{
-		return execute_68k( path );
+		return execute_68k( argc, argv );
 	}
 	
 	return 0;
