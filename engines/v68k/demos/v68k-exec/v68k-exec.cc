@@ -345,7 +345,7 @@ step_loop:
 	
 	if ( emu.condition == v68k::finished )
 	{
-		return 0;
+		return emu.regs.d[0];
 	}
 	
 	putchar( '\n' );
