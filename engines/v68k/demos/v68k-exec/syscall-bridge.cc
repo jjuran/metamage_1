@@ -5,6 +5,7 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
 
 // POSIX
 #include <unistd.h>
@@ -60,6 +61,23 @@ static inline bool set_result( v68k::emulator& emu, int result )
 	}
 	
 	return true;
+}
+
+static bool emu_exit( v68k::emulator& emu )
+{
+	uint32_t args[1];  // status
+	
+	if ( !get_stacked_args( emu, args, 1 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	const int status = int32_t( args[0] );
+	
+	exit( status );
+	
+	// Not reached
+	return false;
 }
 
 static bool emu_read( v68k::emulator& emu )
@@ -134,6 +152,7 @@ bool bridge_call( v68k::emulator& emu )
 	
 	switch ( call_number )
 	{
+		case 1:  return emu_exit ( emu );
 		case 3:  return emu_read ( emu );
 		case 4:  return emu_write( emu );
 		
