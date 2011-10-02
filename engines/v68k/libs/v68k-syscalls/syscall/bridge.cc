@@ -5,6 +5,7 @@
 
 // Standard C
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 
 // POSIX
@@ -158,6 +159,34 @@ static bool emu_getpid( v68k::emulator& emu )
 	return set_result( emu, result );
 }
 
+static bool emu_kill( v68k::emulator& emu )
+{
+	uint32_t args[2];  // pid, sig
+	
+	if ( !get_stacked_args( emu, args, 2 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	const pid_t pid = int32_t( args[0] );
+	const int   sig = int32_t( args[1] );
+	
+	int result = kill( pid, sig );
+	
+	if ( pid != getpid() )
+	{
+		result = -1;
+		
+		errno = EPERM;
+	}
+	else
+	{
+		result = kill( pid, sig );
+	}
+	
+	return set_result( emu, result );
+}
+
 struct iovec_68k
 {
 	uint32_t ptr;
@@ -242,6 +271,7 @@ bool bridge_call( v68k::emulator& emu )
 		case 4:  return emu_write( emu );
 		
 		case 20:  return emu_getpid( emu );
+		case 37:  return emu_kill  ( emu );
 		
 		case 146:  return emu_writev( emu );
 		
