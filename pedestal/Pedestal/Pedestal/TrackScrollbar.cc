@@ -85,59 +85,57 @@ namespace Pedestal
 		}
 	}
 	
-	namespace
+	// Template parameters must have extern linkage
+	void ScrollbarAction( ControlRef control, N::ControlPartCode part );
+	
+	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
+		const short value = N::GetControlValue( control );
 		
-		void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+		const bool vertical = GetUserDataFromScrollbar( control )->vertical;
+		
+		const bool dragged = part == N::kControlIndicatorPart;
+		
+		ScrollerAPI* scroller = RecoverScrollerFromScrollbar( control );
+		
+		short oldValue = value;
+		short newValue = value;
+		
+		if ( dragged )
 		{
-			const short value = N::GetControlValue( control );
+			oldValue = vertical ? scroller->GetVOffset()
+			                    : scroller->GetHOffset();
 			
-			const bool vertical = GetUserDataFromScrollbar( control )->vertical;
+			newValue = value;
+		}
+		else
+		{
+			oldValue = value;
 			
-			const bool dragged = part == N::kControlIndicatorPart;
+			short scrollDistance = 1;
 			
-			ScrollerAPI* scroller = RecoverScrollerFromScrollbar( control );
-			
-			short oldValue = value;
-			short newValue = value;
-			
-			if ( dragged )
+			if ( part == Mac::kControlPageUpPart  ||  part == Mac::kControlPageDownPart )
 			{
-				oldValue = vertical ? scroller->GetVOffset()
-				                    : scroller->GetHOffset();
+				const short viewLength = vertical ? scroller->ViewHeight()
+				                                  : scroller->ViewWidth ();
 				
-				newValue = value;
-			}
-			else
-			{
-				oldValue = value;
+				const short pageDistance = viewLength - 1;
 				
-				short scrollDistance = 1;
-				
-				if ( part == Mac::kControlPageUpPart  ||  part == Mac::kControlPageDownPart )
-				{
-					const short viewLength = vertical ? scroller->ViewHeight()
-					                                  : scroller->ViewWidth ();
-					
-					const short pageDistance = viewLength - 1;
-					
-					scrollDistance = pageDistance;
-				}
-				
-				if ( part == Mac::kControlUpButtonPart  ||  part == Mac::kControlPageUpPart )
-				{
-					scrollDistance = -scrollDistance;
-				}
-				
-				newValue = SetClippedControlValue( control, value + scrollDistance );
+				scrollDistance = pageDistance;
 			}
 			
-			if ( newValue != oldValue )
+			if ( part == Mac::kControlUpButtonPart  ||  part == Mac::kControlPageUpPart )
 			{
-				SetScrollOffset( scroller, vertical, newValue );
+				scrollDistance = -scrollDistance;
 			}
+			
+			newValue = SetClippedControlValue( control, value + scrollDistance );
 		}
 		
+		if ( newValue != oldValue )
+		{
+			SetScrollOffset( scroller, vertical, newValue );
+		}
 	}
 	
 	
