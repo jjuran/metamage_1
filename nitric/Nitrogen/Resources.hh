@@ -448,24 +448,6 @@ namespace Nitrogen
 		}
 	};
 	
-	template < class FinalType >
-	struct POD_ResType_Traits
-	{
-		typedef       FinalType   Result;
-		typedef const FinalType&  Parameter;
-		
-		static Result MakeFromHandle( Handle h )  { return **Handle_Cast< Result >( h ); }
-		
-		static nucleus::owned< Handle > MakeIntoHandle( Parameter pod )
-		{
-			nucleus::owned< Handle > result = NewHandle( sizeof (Result) );
-			
-			**result.get() = pod;
-			
-			return result;
-		}
-	};
-	
 	template < class FinalType, std::size_t (*SizeOf)( const FinalType& ) >
 	struct VariableLengthPOD_ResType_Traits
 	{
