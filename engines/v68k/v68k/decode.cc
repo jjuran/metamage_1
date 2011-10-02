@@ -53,6 +53,18 @@ namespace v68k
 		&decoded_EORI_to_SR
 	};
 	
+	static const microcode immediate_microcodes[] =
+	{
+		&microcode_OR,
+		&microcode_AND,
+		&microcode_SUB,
+		&microcode_ADD,
+		0,  // NULL
+		&microcode_EOR,
+		&microcode_CMP
+	//	0  // NULL
+	};
+	
 	static const instruction* decode_line_0( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
@@ -107,23 +119,33 @@ namespace v68k
 				return ea_is_memory_alterable( mode ) ? &decoded_MOVES
 				                                      : 0;  // NULL
 			}
-		}
-		
-		if ( (opcode & 0xff00) == 0x0200 )
-		{
-			// ANDI
 			
-			if ( size_code != 3  &&  ea_is_data_alterable( mode, n ) )
+			const int selector = (opcode & 0x0E00) >> 9;
+			
+			if ( !ea_is_data( mode, n )  ||  selector != 6  &&  !ea_is_alterable( mode, n ) )
 			{
-				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-				const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
-				
-				storage.fetch = fetches_immediate;
-				storage.code  = &microcode_AND;
-				storage.flags = loads_and | stores_data | destination;
-				
-				return &storage;
+				return 0;  // NULL
 			}
+			
+			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
+			
+			storage.code = immediate_microcodes[ selector ];
+			
+			storage.fetch = fetches_immediate;
+			storage.flags = loads_and | stores_data | destination;
+			
+			if ( selector & 2 )
+			{
+				storage.flags |= and_sets_CCR;
+			}
+			
+			if ( selector == 6  &&  mode == 7  &&  n & 2 )
+			{
+				storage.flags |= not_before_68010;
+			}
+			
+			return &storage;
 		}
 		
 		return 0;  // NULL
