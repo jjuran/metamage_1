@@ -151,6 +151,13 @@ static bool emu_write( v68k::emulator& emu )
 	return set_result( emu, result );
 }
 
+static bool emu_getpid( v68k::emulator& emu )
+{
+	int result = getpid();
+	
+	return set_result( emu, result );
+}
+
 struct iovec_68k
 {
 	uint32_t ptr;
@@ -233,6 +240,8 @@ bool bridge_call( v68k::emulator& emu )
 		case 1:  return emu_exit ( emu );
 		case 3:  return emu_read ( emu );
 		case 4:  return emu_write( emu );
+		
+		case 20:  return emu_getpid( emu );
 		
 		case 146:  return emu_writev( emu );
 		
