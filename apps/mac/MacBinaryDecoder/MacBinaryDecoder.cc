@@ -72,30 +72,29 @@ namespace MacBinaryDecoder
 		Decode( io::open_for_reading( file ), parent );
 	}
 	
-	namespace
+	// Apple event handlers
+	
+	// Template parameters must have extern linkage
+	void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
+	                                    Mac::AppleEvent&        reply );
+	
+	void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
+	                                    Mac::AppleEvent&        reply )
 	{
+		typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
+		typedef Container::const_iterator const_iterator;
 		
-		// Apple event handlers
+		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                              keyDirectObject,
+		                                                              Mac::typeAEList );
 		
-		void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
-											Mac::AppleEvent&        reply )
+		Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
+		
+		for ( const_iterator it = listData.begin();  it != listData.end();  ++it )
 		{
-			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
-			typedef Container::const_iterator const_iterator;
+			Io_Details::file_spec fileSpec = *it;
 			
-			n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-			                                                              keyDirectObject,
-			                                                              Mac::typeAEList );
-			
-			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
-			
-			for ( const_iterator it = listData.begin();  it != listData.end();  ++it )
-			{
-				Io_Details::file_spec fileSpec = *it;
-				
-				OpenDocument( fileSpec );
-			}
-			
+			OpenDocument( fileSpec );
 		}
 		
 	}
