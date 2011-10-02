@@ -35,6 +35,35 @@ namespace v68k
 		s.set_SR( s.get_SR() | data );
 	}
 	
+	void microcode_BCHG( processor_state& s, uint32_t* params )
+	{
+		microcode_BTST( s, params );
+		
+		params[1] ^= 1 << params[0];
+	}
+	
+	void microcode_BCLR( processor_state& s, uint32_t* params )
+	{
+		microcode_BTST( s, params );
+		
+		params[1] &= ~(1 << params[0]);
+	}
+	
+	void microcode_BSET( processor_state& s, uint32_t* params )
+	{
+		microcode_BTST( s, params );
+		
+		params[1] |= 1 << params[0];
+	}
+	
+	void microcode_BTST( processor_state& s, uint32_t* params )
+	{
+		const uint32_t bit = params[0];
+		
+		s.regs.nzvc &= ~0x4;
+		s.regs.nzvc |= (~params[1] >> bit & 0x1) << 2;
+	}
+	
 	void microcode_MOVEP_to( processor_state& s, uint32_t* params )
 	{
 		const uint32_t mode = params[0];
