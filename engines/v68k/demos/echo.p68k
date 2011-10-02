@@ -1,0 +1,57 @@
+# start
+600A
+0000
+57697368
+0000
+0000
+
+# main
+4E560000
+246E000C  # MOVEA.L  (12,A6), A2
+588A      # ADDQ.L   #4, A2
+7201      # MOVEQ    #1, D1
+# [next]
+205A      # MOVEA.L  (A2)+, A0
+2008      # MOVE.L   A0, D0
+6712      # BEQ.S    last
+6134      # BSR.S    strlen
+2F00      # MOVE.L   D0, -(A7)
+2F08      # MOVE.L   A0, -(A7)
+2F01      # MOVE.L   D1, -(A7)
+6118      # BSR.S    write
+43FA0014  # LEA      data + 2, A1
+6116      # BSR.S    write_char
+60E8      # BRA.S    next
+# [last]
+43FA000D  # LEA      data + 3, A1
+610E      # BSR.S    write_char
+7000      # MOVEQ    #0x00, D0
+4E5E
+4E75
+
+# data
+0002
+200A      # " \n"
+
+# write
+7004
+4E40
+
+# write_char
+4E560000
+2F01      # MOVE.L   D1, -(A7)
+2F09      # MOVE.L   A1, -(A7)
+2F01      # MOVE.L   D1, -(A7)
+61F0      # BSR.S    write
+4E5E
+4E75
+
+# D0 strlen( A0 )
+2248      # MOVEA.L  A0, A1
+4A19      # TST.B    (A1)+
+66FC      # BNE.S    [tst]
+5389      # SUBQ     #1, A1
+2009      # MOVE.L   A1, D0
+9088      # SUB.L    A0, D0
+4E75
+
