@@ -100,6 +100,15 @@ namespace v68k
 		
 		const int size_code = opcode >> 6 & 0x3;
 		
+		if ( size_code != 3 )
+		{
+			if ( (opcode & 0xff00) == 0x0e00 )
+			{
+				return ea_is_memory_alterable( mode ) ? &decoded_MOVES
+				                                      : 0;  // NULL
+			}
+		}
+		
 		if ( (opcode & 0xff00) == 0x0200 )
 		{
 			// ANDI
@@ -114,14 +123,6 @@ namespace v68k
 				storage.flags = loads_and | stores_data | destination;
 				
 				return &storage;
-			}
-		}
-		
-		if ( (opcode & 0xff00) == 0x0e00 )
-		{
-			if ( size_code != 3  &&  ea_is_memory_alterable( mode ) )
-			{
-				return &decoded_MOVES;
 			}
 		}
 		
