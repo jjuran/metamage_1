@@ -38,6 +38,21 @@ namespace v68k
 		&microcode_BTST
 	};
 	
+	static const instruction* modify_SR_instructions[] =
+	{
+		&decoded_ORI_to_CCR,
+		&decoded_ORI_to_SR,
+		
+		&decoded_ANDI_to_CCR,
+		&decoded_ANDI_to_SR,
+		
+		0,  // NULL
+		0,  // NULL
+		
+		&decoded_EORI_to_CCR,
+		&decoded_EORI_to_SR
+	};
+	
 	static const instruction* decode_line_0( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
@@ -74,18 +89,16 @@ namespace v68k
 			return &storage;
 		}
 		
-		const int size_code = opcode >> 6 & 0x3;
-		
-		if ( (opcode & 0xff00) == 0x0000 )
+		if ( (opcode & 0x05bf) == 0x003c )
 		{
-			// ORI
+			const int i = (opcode & 0x0040) >> 6
+			            | (opcode & 0x0200) >> 8
+			            | (opcode & 0x0800) >> 9;
 			
-			if ( (opcode & 0xffbf ) == 0x003c )
-			{
-				return opcode & 0x0040 ? &decoded_ORI_to_SR
-				                       : &decoded_ORI_to_CCR;
-			}
+			return modify_SR_instructions[ i ];
 		}
+		
+		const int size_code = opcode >> 6 & 0x3;
 		
 		if ( (opcode & 0xff00) == 0x0200 )
 		{
@@ -101,23 +114,6 @@ namespace v68k
 				storage.flags = loads_and | stores_data | destination;
 				
 				return &storage;
-			}
-			
-			if ( (opcode & 0xffbf ) == 0x023c )
-			{
-				return opcode & 0x0040 ? &decoded_ANDI_to_SR
-				                       : &decoded_ANDI_to_CCR;
-			}
-		}
-		
-		if ( (opcode & 0xff00) == 0x0a00 )
-		{
-			// EORI
-			
-			if ( (opcode & 0xffbf ) == 0x0a3c )
-			{
-				return opcode & 0x0040 ? &decoded_EORI_to_SR
-				                       : &decoded_EORI_to_CCR;
 			}
 		}
 		
