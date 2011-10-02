@@ -49,6 +49,8 @@ namespace v68k
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
 		
+		const bool to_data = ea_is_data_register( mode );
+		
 		if ( opcode & 0x0100  ||  (opcode & 0xff00) == 0x0800 )
 		{
 			// bit ops
@@ -59,8 +61,6 @@ namespace v68k
 			{
 				return 0;  // NULL
 			}
-			
-			const bool to_data = ea_is_data_register( mode );
 			
 			const int j = (opcode & 0x0100) >> 7 | to_data;
 			
@@ -73,6 +73,8 @@ namespace v68k
 			
 			return &storage;
 		}
+		
+		const int size_code = opcode >> 6 & 0x3;
 		
 		if ( (opcode & 0xff00) == 0x0000 )
 		{
@@ -89,12 +91,8 @@ namespace v68k
 		{
 			// ANDI
 			
-			if ( (opcode & 0x00c0) != 0x00c0  &&  ea_is_data_alterable( mode, n ) )
+			if ( size_code != 3  &&  ea_is_data_alterable( mode, n ) )
 			{
-				const int size_code = opcode >> 6 & 0x3;
-				
-				const bool to_data = ea_is_data_register( mode );
-				
 				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 				const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
 				
@@ -125,8 +123,6 @@ namespace v68k
 		
 		if ( (opcode & 0xff00) == 0x0e00 )
 		{
-			const int size_code = opcode >> 6 & 0x3;
-			
 			if ( size_code != 3  &&  ea_is_memory_alterable( mode ) )
 			{
 				return &decoded_MOVES;
