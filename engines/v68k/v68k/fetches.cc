@@ -69,6 +69,36 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_dynamic_bit_op_to_Dn[] =
+	{
+		&fetch_bit_number_from_major_register,
+		&fetch_effective_long_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_dynamic_bit_op[] =
+	{
+		&fetch_bit_number_from_major_register,
+		&fetch_effective_byte_address,
+		0  // NULL
+	};
+	
+	
+	fetcher fetches_static_bit_op_to_Dn[] =
+	{
+		&fetch_unsigned_word,
+		&fetch_effective_long_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_static_bit_op[] =
+	{
+		&fetch_unsigned_word,
+		&fetch_effective_byte_address,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_MOVEP[] =
 	{
 		&fetch_MOVEP_opmode,

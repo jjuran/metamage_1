@@ -26,6 +26,12 @@ namespace v68k
 	
 	extern fetcher fetches_data_at_0007[];
 	
+	extern fetcher fetches_dynamic_bit_op_to_Dn[];
+	extern fetcher fetches_dynamic_bit_op      [];
+	
+	extern fetcher fetches_static_bit_op_to_Dn[];
+	extern fetcher fetches_static_bit_op      [];
+	
 	extern fetcher fetches_MOVEP[];
 	
 	extern fetcher fetches_MOVES[];
