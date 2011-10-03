@@ -25,11 +25,12 @@ namespace v68k
 			return &decoded_LINK_L;
 		}
 		
-		if ( (opcode & 0xFFF8) == 0x4848 )
+		if ( (opcode & 0x00F0) == 0x0040 )
 		{
 			storage.fetch = fetches_data_at_0007;
 			
-			storage.code = microcode_BKPT;
+			storage.code = opcode & 0x0008 ? microcode_BKPT
+			                               : microcode_SWAP;
 			
 			return &storage;
 		}

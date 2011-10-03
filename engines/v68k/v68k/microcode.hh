@@ -67,6 +67,8 @@ namespace v68k
 	
 	void microcode_MOVE_to_SR( processor_state& state, uint32_t* params );
 	
+	void microcode_SWAP( processor_state& state, uint32_t* params );
+	
 	void microcode_BKPT( processor_state& state, uint32_t* params );
 	
 	void microcode_PEA( processor_state& state, uint32_t* params );

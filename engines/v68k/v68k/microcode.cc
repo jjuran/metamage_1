@@ -325,6 +325,16 @@ namespace v68k
 		s.set_SR( data );
 	}
 	
+	void microcode_SWAP( processor_state& s, uint32_t* params )
+	{
+		const uint32_t n = params[0];
+		
+		const uint32_t data = s.regs.d[n];
+		
+		s.regs.d[n] = data << 16
+		            | data >> 16;
+	}
+	
 	void microcode_BKPT( processor_state& s, uint32_t* params )
 	{
 		const uint32_t data = params[0];  // 3-bit breakpoint vector
