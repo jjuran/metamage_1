@@ -40,6 +40,11 @@ namespace v68k
 		return instruction_flags_t( int( a ) | int( b ) );
 	}
 	
+	inline instruction_flags_t& operator|=( instruction_flags_t& a, instruction_flags_t b )
+	{
+		return a = a | b;
+	}
+	
 	struct instruction
 	{
 		typedef instruction_flags_t flags_t;
