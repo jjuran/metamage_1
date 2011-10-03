@@ -173,6 +173,18 @@ namespace v68k
 		}
 	}
 	
+	uint32_t fetch_bit_number_from_major_register( processor_state& s )
+	{
+		const uint16_t n = s.opcode >> 9 & 0x7;
+		
+		const uint32_t data = s.regs.d[n];
+		
+		const uint32_t mask = s.opcode & 0x0038 ?  8 - 1   // memory
+		                                        : 32 - 1;  // data register
+		
+		return data & mask;
+	}
+	
 	uint32_t fetch_A_data_from_major_register( processor_state& s )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;

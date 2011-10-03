@@ -22,6 +22,22 @@ namespace v68k
 	typedef const instruction* (*decoder)( uint16_t opcode, instruction& storage );
 	
 	
+	static fetcher* bit_op_fetchers[] =
+	{
+		fetches_static_bit_op_to_Dn,
+		fetches_static_bit_op,
+		fetches_dynamic_bit_op_to_Dn,
+		fetches_dynamic_bit_op
+	};
+	
+	static const microcode bit_op_microcodes[] =
+	{
+		&microcode_BCHG,
+		&microcode_BCLR,
+		&microcode_BSET,
+		&microcode_BTST
+	};
+	
 	static const instruction* decode_line_0( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
@@ -32,6 +48,31 @@ namespace v68k
 		
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		if ( opcode & 0x0100  ||  (opcode & 0xff00) == 0x0800 )
+		{
+			// bit ops
+			
+			const int i = opcode >> 6 & 0x3;
+			
+			if ( i != 0  &&  !ea_is_alterable( mode, n ) )
+			{
+				return 0;  // NULL
+			}
+			
+			const bool to_data = ea_is_data_register( mode );
+			
+			const int j = (opcode & 0x0100) >> 7 | to_data;
+			
+			const instruction_flags_t stores_data = to_data ? stores_long_data : stores_byte_data;
+			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
+			
+			storage.code  = bit_op_microcodes[ i ];
+			storage.fetch = bit_op_fetchers  [ j ];
+			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+			
+			return &storage;
+		}
 		
 		if ( (opcode & 0xff00) == 0x0000 )
 		{

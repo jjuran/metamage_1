@@ -29,6 +29,11 @@ namespace v68k
 	
 	void microcode_ORI_to_SR( processor_state& state, uint32_t* params );
 	
+	void microcode_BCHG( processor_state& state, uint32_t* params );
+	void microcode_BCLR( processor_state& state, uint32_t* params );
+	void microcode_BSET( processor_state& state, uint32_t* params );
+	void microcode_BTST( processor_state& state, uint32_t* params );
+	
 	void microcode_MOVEP_to  ( processor_state& state, uint32_t* params );
 	void microcode_MOVEP_from( processor_state& state, uint32_t* params );
 	
