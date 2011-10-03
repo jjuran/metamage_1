@@ -185,7 +185,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * in_reg );
 			
-			storage.flags = stores_data | destination;
+			storage.flags = loads_and | stores_data | destination;
 			
 			switch ( selector )
 			{
