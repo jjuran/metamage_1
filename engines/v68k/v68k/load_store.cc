@@ -67,7 +67,7 @@ namespace v68k
 			}
 		}
 		
-		switch ( storage_flags * !is_address_register )
+		switch ( storage_flags & -!is_address_register )
 		{
 			case stores_byte_data:
 				param = int32_t( int8_t( param ) );

@@ -65,7 +65,7 @@ namespace v68k
 		
 		const bool has_extra_bits = model >= mc68020;
 		
-		const uint16_t sr_mask = 0xA71F | 0x5000 * has_extra_bits ;
+		const uint16_t sr_mask = 0xA71F | 0x5000 & -has_extra_bits ;
 		
 		new_sr &= sr_mask;
 		

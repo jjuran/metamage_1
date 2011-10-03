@@ -74,7 +74,7 @@ namespace v68k
 		
 		const uint16_t bd_size = extension >> 4 & 0x3;
 		
-		base_displacement = read_extended_displacement( s, bd_size ) * !base_suppress;
+		base_displacement = read_extended_displacement( s, bd_size ) & -!base_suppress;
 		
 		const bool index_suppress = extension & 0x40;
 		
