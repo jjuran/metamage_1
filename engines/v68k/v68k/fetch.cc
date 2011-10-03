@@ -275,8 +275,14 @@ namespace v68k
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
+		/*
+			The second branch below should be (n + 7) % 8 + 1, but MWC68K calls
+			a generic mod function instead of optimizing it -- unlike the first
+			branch -- so we do it by hand.
+		*/
+		
 		return s.opcode & 0x0020 ? s.regs.d[n] % 64
-		                         : n;
+		                         : (n - 1 & 8 - 1) + 1;
 	}
 	
 }
