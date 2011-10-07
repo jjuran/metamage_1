@@ -103,25 +103,25 @@ namespace v68k
 			return true;
 		}
 		
-		/*
-			      storage_flags >> 8       E  (1, 2,  3)
-			     (storage_flags >> 8) - 1  E  (0, 1,  2)
-			1 << (storage_flags >> 8) - 1  E  (1, 2,  4)
-			      
-			             n_bytes - 1   E  (0, 1,  3)
-			        8 * (n_bytes - 1)  E  (0, 8, 24)
+		uint32_t data_mask;
+		
+		switch ( storage_flags )
+		{
+			case stores_byte_data:
+				data_mask = 0x000000FF;
+				break;
 			
-			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
+			case stores_word_data:
+				data_mask = 0x0000FFFF;
+				break;
 			
-			sign_mask * 2      E  (0x100, 0x10000, 0x00000000)
-			sign_mask * 2 - 1  E  ( 0xFF,  0xFFFF, 0xFFFFFFFF)
-		*/
-		
-		const int n_bytes = 1 << (storage_flags >> 8) - 1;
-		
-		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
-		
-		const uint32_t data_mask = sign_mask * 2 - 1;
+			case stores_long_data:
+				data_mask = 0xFFFFFFFF;
+				break;
+			
+			default:
+				break;
+		}
 		
 		if ( flags & and_sets_CCR )
 		{
@@ -129,6 +129,8 @@ namespace v68k
 		}
 		else
 		{
+			const uint32_t sign_mask = data_mask / 2 + 1;
+			
 			s.regs.nzvc = N( (data & sign_mask) != 0 )
 			            | Z( (data & data_mask) == 0 )
 			            | V( 0 )
