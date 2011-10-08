@@ -52,12 +52,12 @@ static void dump( const v68k::emulator& emu )
 
 
 const uint32_t params_max_size = 4096;
-const uint32_t code_max_size   = 8192;
+const uint32_t code_max_size   = 32768;
 
 const uint32_t os_address   = 1024;
 const uint32_t initial_SSP  = 2048;
-const uint32_t initial_USP  = 4096;
-const uint32_t code_address = 8192;
+const uint32_t initial_USP  = 12288;
+const uint32_t code_address = 12288;
 
 const uint32_t mem_size = code_address + code_max_size;
 
