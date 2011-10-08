@@ -359,13 +359,16 @@ namespace v68k
 		{
 			if ( opcode & 0x0100 )
 			{
-				if ( ea_is_memory_alterable( mode ) )
+				if ( ea_is_data_alterable( mode, n ) )
 				{
-					const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+					const bool to_data = mode == 0;
 					
-					storage.fetch = fetches_math;
+					const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
+					const instruction_flags_t destination = instruction_flags_t( in_register & -to_data );
+					
+					storage.fetch = fetches_EOR;
 					storage.code  = &microcode_EOR;
-					storage.flags = loads_and | stores_data;
+					storage.flags = loads_and | stores_data | destination;
 					
 					return &storage;
 				}

@@ -56,6 +56,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_EOR[] =
+	{
+		&fetch_sized_data_from_major_register,
+		&fetch_sized_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_signed_word[] =
 	{
 		&fetch_signed_word,
