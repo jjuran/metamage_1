@@ -16,19 +16,6 @@
 namespace v68k
 {
 	
-	instruction decoded_ORI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_ORI_to_CCR
-	};
-	
-	instruction decoded_ORI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_ORI_to_SR,
-		privileged
-	};
-	
 	instruction decoded_MOVEP_to =
 	{
 		fetches_MOVEP,
@@ -39,32 +26,6 @@ namespace v68k
 	{
 		fetches_MOVEP,
 		microcode_MOVEP_from
-	};
-	
-	instruction decoded_ANDI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_ANDI_to_CCR
-	};
-	
-	instruction decoded_ANDI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_ANDI_to_SR,
-		privileged
-	};
-	
-	instruction decoded_EORI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_EORI_to_CCR
-	};
-	
-	instruction decoded_EORI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_EORI_to_SR,
-		privileged
 	};
 	
 	instruction decoded_MOVES =
