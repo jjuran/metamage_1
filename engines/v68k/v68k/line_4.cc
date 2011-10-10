@@ -18,7 +18,7 @@
 namespace v68k
 {
 	
-	static const instruction* decode_48( uint16_t opcode )
+	static const instruction* decode_48( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xFFF8) == 0x4808 )
 		{
@@ -62,7 +62,7 @@ namespace v68k
 		&decoded_RTR
 	};
 	
-	static const instruction* decode_4e( uint16_t opcode )
+	static const instruction* decode_4e( uint16_t opcode, instruction& storage )
 	{
 		if ( opcode & 0x0080 )
 		{
@@ -122,7 +122,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_MOVE_SR( uint16_t opcode )
+	static const instruction* decode_MOVE_SR( uint16_t opcode, instruction& storage )
 	{
 		// MOVE from/to CCR/SR
 		
@@ -264,14 +264,14 @@ namespace v68k
 		switch ( opcode & 0xff00 )
 		{
 			case 0x4800:
-				return decode_48( opcode );
+				return decode_48( opcode, storage );
 			
 			case 0x4c00:
 				// MULL, DIVL (MOVEM handled above)
 				return 0;  // NULL
 			
 			case 0x4e00:
-				return decode_4e( opcode );
+				return decode_4e( opcode, storage );
 			
 			default:
 				break;
@@ -284,7 +284,7 @@ namespace v68k
 		
 		if ( (opcode & 0x09C0) == 0x00C0 )
 		{
-			return decode_MOVE_SR( opcode );
+			return decode_MOVE_SR( opcode, storage );
 		}
 		
 		return 0;  // NULL
