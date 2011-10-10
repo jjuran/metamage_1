@@ -43,8 +43,12 @@ namespace v68k
 		
 		if ( (opcode & 0xFFB8) == 0x4880 )
 		{
-			return opcode & 0x0040 ? &decoded_EXT_L
-			                       : &decoded_EXT_W;
+			storage.fetch = fetches_data_at_0007;
+			
+			storage.code = opcode & 0x0040 ? microcode_EXT_L
+			                               : microcode_EXT_W;
+			
+			return &storage;
 		}
 		
 		return 0;  // NULL

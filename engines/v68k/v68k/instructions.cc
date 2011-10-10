@@ -182,18 +182,6 @@ namespace v68k
 		microcode_PEA
 	};
 	
-	instruction decoded_EXT_W =
-	{
-		FETCHES_MINOR_REGISTER_NUM,
-		microcode_EXT_W
-	};
-	
-	instruction decoded_EXT_L =
-	{
-		FETCHES_MINOR_REGISTER_NUM,
-		microcode_EXT_L
-	};
-	
 	instruction decoded_EXTB =
 	{
 		FETCHES_MINOR_REGISTER_NUM,

@@ -57,9 +57,6 @@ namespace v68k
 	
 	extern instruction decoded_PEA;
 	
-	extern instruction decoded_EXT_W;
-	extern instruction decoded_EXT_L;
-	
 	extern instruction decoded_EXTB;
 	
 	extern instruction decoded_TRAP;
