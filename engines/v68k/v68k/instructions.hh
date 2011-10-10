@@ -53,8 +53,6 @@ namespace v68k
 	
 	extern instruction decoded_MOVE_to_SR;
 	
-	extern instruction decoded_BKPT;
-	
 	extern instruction decoded_PEA;
 	
 	extern instruction decoded_EXTB;

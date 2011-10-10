@@ -27,7 +27,11 @@ namespace v68k
 		
 		if ( (opcode & 0xFFF8) == 0x4848 )
 		{
-			return &decoded_BKPT;
+			storage.fetch = fetches_data_at_0007;
+			
+			storage.code = microcode_BKPT;
+			
+			return &storage;
 		}
 		
 		if ( (opcode & 0xFFC0) == 0x4840 )

@@ -170,12 +170,6 @@ namespace v68k
 		privileged
 	};
 	
-	instruction decoded_BKPT =
-	{
-		fetches_data_at_0007,
-		microcode_BKPT
-	};
-	
 	instruction decoded_PEA =
 	{
 		fetches_effective_control_address,
