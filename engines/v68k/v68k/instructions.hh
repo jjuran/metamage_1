@@ -83,10 +83,6 @@ namespace v68k
 	
 	extern instruction decoded_MOVEC;
 	
-	extern instruction decoded_JSR;
-	
-	extern instruction decoded_JMP;
-	
 	extern instruction decoded_MOVEQ;
 	
 	extern instruction decoded_EXG;

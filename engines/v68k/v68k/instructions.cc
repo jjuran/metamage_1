@@ -274,18 +274,6 @@ namespace v68k
 		privileged | not_before_68010
 	};
 	
-	instruction decoded_JSR =
-	{
-		fetches_effective_control_address,
-		microcode_JSR
-	};
-	
-	instruction decoded_JMP =
-	{
-		fetches_effective_control_address,
-		microcode_JMP
-	};
-	
 	instruction decoded_MOVEQ =
 	{
 		fetches_MOVEQ,

@@ -79,8 +79,12 @@ namespace v68k
 			
 			if ( ea_is_control( mode, n ) )
 			{
-				return opcode & 0x0040 ? &decoded_JMP
-				                       : &decoded_JSR;
+				storage.fetch = fetches_effective_control_address;
+				
+				storage.code = opcode & 0x0040 ? microcode_JMP
+				                               : microcode_JSR;
+				
+				return &storage;
 			}
 			
 			return 0;  // NULL
