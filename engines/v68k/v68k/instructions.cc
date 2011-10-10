@@ -16,18 +16,6 @@
 namespace v68k
 {
 	
-	instruction decoded_MOVEP_to =
-	{
-		fetches_MOVEP,
-		microcode_MOVEP_to
-	};
-	
-	instruction decoded_MOVEP_from =
-	{
-		fetches_MOVEP,
-		microcode_MOVEP_from
-	};
-	
 	instruction decoded_MOVES =
 	{
 		fetches_MOVES,

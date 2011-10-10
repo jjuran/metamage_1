@@ -13,9 +13,6 @@
 namespace v68k
 {
 	
-	extern instruction decoded_MOVEP_to;
-	extern instruction decoded_MOVEP_from;
-	
 	extern instruction decoded_LINK_L;
 	
 	extern instruction decoded_MOVES;

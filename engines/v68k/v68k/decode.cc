@@ -69,8 +69,12 @@ namespace v68k
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
 		{
-			return opcode & 0x0080 ? &decoded_MOVEP_to
-			                       : &decoded_MOVEP_from;
+			storage.fetch = fetches_MOVEP;
+			
+			storage.code = opcode & 0x0080 ? microcode_MOVEP_to
+			                               : microcode_MOVEP_from;
+			
+			return &storage;
 		}
 		
 		const uint16_t mode = opcode >> 3 & 0x7;
