@@ -59,7 +59,7 @@ const uint32_t initial_SSP  = 2048;
 const uint32_t initial_USP  = 4096;
 const uint32_t code_address = 8192;
 
-const uint32_t mem_size = 16384;
+const uint32_t mem_size = code_address + code_max_size;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
