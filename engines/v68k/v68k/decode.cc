@@ -38,19 +38,19 @@ namespace v68k
 		&microcode_BTST
 	};
 	
-	static const instruction* modify_SR_instructions[] =
+	static const microcode modify_SR_microcodes[] =
 	{
-		&decoded_ORI_to_CCR,
-		&decoded_ORI_to_SR,
+		&microcode_ORI_to_CCR,
+		&microcode_ORI_to_SR,
 		
-		&decoded_ANDI_to_CCR,
-		&decoded_ANDI_to_SR,
+		&microcode_ANDI_to_CCR,
+		&microcode_ANDI_to_SR,
 		
 		0,  // NULL
 		0,  // NULL
 		
-		&decoded_EORI_to_CCR,
-		&decoded_EORI_to_SR
+		&microcode_EORI_to_CCR,
+		&microcode_EORI_to_SR
 	};
 	
 	static const microcode immediate_microcodes[] =
@@ -69,8 +69,12 @@ namespace v68k
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
 		{
-			return opcode & 0x0080 ? &decoded_MOVEP_to
-			                       : &decoded_MOVEP_from;
+			storage.fetch = fetches_MOVEP;
+			
+			storage.code = opcode & 0x0080 ? microcode_MOVEP_to
+			                               : microcode_MOVEP_from;
+			
+			return &storage;
 		}
 		
 		const uint16_t mode = opcode >> 3 & 0x7;
@@ -103,11 +107,20 @@ namespace v68k
 		
 		if ( (opcode & 0x05bf) == 0x003c )
 		{
+			storage.fetch = fetches_unsigned_word;
+			
+			if ( opcode & 0x0040 )
+			{
+				storage.flags = privileged;
+			}
+			
 			const int i = (opcode & 0x0040) >> 6
 			            | (opcode & 0x0200) >> 8
 			            | (opcode & 0x0800) >> 9;
 			
-			return modify_SR_instructions[ i ];
+			storage.code = modify_SR_microcodes[ i ];
+			
+			return &storage;
 		}
 		
 		const int size_code = opcode >> 6 & 0x3;

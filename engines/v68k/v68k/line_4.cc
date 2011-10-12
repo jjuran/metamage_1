@@ -18,7 +18,7 @@
 namespace v68k
 {
 	
-	static const instruction* decode_48( uint16_t opcode )
+	static const instruction* decode_48( uint16_t opcode, instruction& storage )
 	{
 		if ( (opcode & 0xFFF8) == 0x4808 )
 		{
@@ -27,7 +27,11 @@ namespace v68k
 		
 		if ( (opcode & 0xFFF8) == 0x4848 )
 		{
-			return &decoded_BKPT;
+			storage.fetch = fetches_data_at_0007;
+			
+			storage.code = microcode_BKPT;
+			
+			return &storage;
 		}
 		
 		if ( (opcode & 0xFFC0) == 0x4840 )
@@ -43,8 +47,12 @@ namespace v68k
 		
 		if ( (opcode & 0xFFB8) == 0x4880 )
 		{
-			return opcode & 0x0040 ? &decoded_EXT_L
-			                       : &decoded_EXT_W;
+			storage.fetch = fetches_data_at_0007;
+			
+			storage.code = opcode & 0x0040 ? microcode_EXT_L
+			                               : microcode_EXT_W;
+			
+			return &storage;
 		}
 		
 		return 0;  // NULL
@@ -62,7 +70,7 @@ namespace v68k
 		&decoded_RTR
 	};
 	
-	static const instruction* decode_4e( uint16_t opcode )
+	static const instruction* decode_4e( uint16_t opcode, instruction& storage )
 	{
 		if ( opcode & 0x0080 )
 		{
@@ -71,8 +79,12 @@ namespace v68k
 			
 			if ( ea_is_control( mode, n ) )
 			{
-				return opcode & 0x0040 ? &decoded_JMP
-				                       : &decoded_JSR;
+				storage.fetch = fetches_effective_control_address;
+				
+				storage.code = opcode & 0x0040 ? microcode_JMP
+				                               : microcode_JSR;
+				
+				return &storage;
 			}
 			
 			return 0;  // NULL
@@ -122,7 +134,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_MOVE_SR( uint16_t opcode )
+	static const instruction* decode_MOVE_SR( uint16_t opcode, instruction& storage )
 	{
 		// MOVE from/to CCR/SR
 		
@@ -139,16 +151,22 @@ namespace v68k
 		}
 		else
 		{
+			storage.fetch = fetches_MOVE_from_SR;
+			
+			storage.code = opcode & 0x0200 ? microcode_MOVE_from_SR
+			                               : microcode_MOVE_from_CCR;
+			
+			storage.flags = opcode & 0x0200 ? privileged_except_on_68000
+			                                : not_before_68010;
+			
+			storage.flags |= stores_word_data;
+			
 			if ( ea_is_data_register( mode, n ) )
 			{
-				return opcode & 0x0200 ? &decoded_MOVE_from_SR_to_Dn
-				                       : &decoded_MOVE_from_CCR_to_Dn;
+				storage.flags |= in_register;
 			}
-			else if ( ea_is_data_alterable( mode, n ) )
-			{
-				return opcode & 0x0200 ? &decoded_MOVE_from_SR
-				                       : &decoded_MOVE_from_CCR;
-			}
+			
+			return &storage;
 		}
 		
 		return 0;  // NULL
@@ -264,14 +282,14 @@ namespace v68k
 		switch ( opcode & 0xff00 )
 		{
 			case 0x4800:
-				return decode_48( opcode );
+				return decode_48( opcode, storage );
 			
 			case 0x4c00:
 				// MULL, DIVL (MOVEM handled above)
 				return 0;  // NULL
 			
 			case 0x4e00:
-				return decode_4e( opcode );
+				return decode_4e( opcode, storage );
 			
 			default:
 				break;
@@ -284,7 +302,7 @@ namespace v68k
 		
 		if ( (opcode & 0x09C0) == 0x00C0 )
 		{
-			return decode_MOVE_SR( opcode );
+			return decode_MOVE_SR( opcode, storage );
 		}
 		
 		return 0;  // NULL

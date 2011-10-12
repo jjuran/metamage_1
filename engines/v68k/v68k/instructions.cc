@@ -16,57 +16,6 @@
 namespace v68k
 {
 	
-	instruction decoded_ORI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_ORI_to_CCR
-	};
-	
-	instruction decoded_ORI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_ORI_to_SR,
-		privileged
-	};
-	
-	instruction decoded_MOVEP_to =
-	{
-		fetches_MOVEP,
-		microcode_MOVEP_to
-	};
-	
-	instruction decoded_MOVEP_from =
-	{
-		fetches_MOVEP,
-		microcode_MOVEP_from
-	};
-	
-	instruction decoded_ANDI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_ANDI_to_CCR
-	};
-	
-	instruction decoded_ANDI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_ANDI_to_SR,
-		privileged
-	};
-	
-	instruction decoded_EORI_to_CCR =
-	{
-		fetches_unsigned_word,
-		microcode_EORI_to_CCR
-	};
-	
-	instruction decoded_EORI_to_SR =
-	{
-		fetches_unsigned_word,
-		microcode_EORI_to_SR,
-		privileged
-	};
-	
 	instruction decoded_MOVES =
 	{
 		fetches_MOVES,
@@ -129,34 +78,6 @@ namespace v68k
 		microcode_LEA
 	};
 	
-	instruction decoded_MOVE_from_CCR_to_Dn =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_CCR,
-		not_before_68010 | stores_word_data|in_register
-	};
-	
-	instruction decoded_MOVE_from_CCR =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_CCR,
-		not_before_68010 | stores_word_data
-	};
-	
-	instruction decoded_MOVE_from_SR_to_Dn =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_SR,
-		privileged_except_on_68000 | stores_word_data|in_register
-	};
-	
-	instruction decoded_MOVE_from_SR =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_SR,
-		privileged_except_on_68000 | stores_word_data
-	};
-	
 	instruction decoded_MOVE_to_CCR =
 	{
 		fetches_MOVE_to_SR,
@@ -170,28 +91,10 @@ namespace v68k
 		privileged
 	};
 	
-	instruction decoded_BKPT =
-	{
-		fetches_data_at_0007,
-		microcode_BKPT
-	};
-	
 	instruction decoded_PEA =
 	{
 		fetches_effective_control_address,
 		microcode_PEA
-	};
-	
-	instruction decoded_EXT_W =
-	{
-		FETCHES_MINOR_REGISTER_NUM,
-		microcode_EXT_W
-	};
-	
-	instruction decoded_EXT_L =
-	{
-		FETCHES_MINOR_REGISTER_NUM,
-		microcode_EXT_L
 	};
 	
 	instruction decoded_EXTB =
@@ -290,18 +193,6 @@ namespace v68k
 		fetches_unsigned_word,
 		microcode_MOVEC,
 		privileged | not_before_68010
-	};
-	
-	instruction decoded_JSR =
-	{
-		fetches_effective_control_address,
-		microcode_JSR
-	};
-	
-	instruction decoded_JMP =
-	{
-		fetches_effective_control_address,
-		microcode_JMP
 	};
 	
 	instruction decoded_MOVEQ =

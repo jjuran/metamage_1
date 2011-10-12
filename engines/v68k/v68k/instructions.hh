@@ -13,21 +13,6 @@
 namespace v68k
 {
 	
-	extern instruction decoded_ORI_to_CCR;
-	
-	extern instruction decoded_ORI_to_SR;
-	
-	extern instruction decoded_MOVEP_to;
-	extern instruction decoded_MOVEP_from;
-	
-	extern instruction decoded_ANDI_to_CCR;
-	
-	extern instruction decoded_ANDI_to_SR;
-	
-	extern instruction decoded_EORI_to_CCR;
-	
-	extern instruction decoded_EORI_to_SR;
-	
 	extern instruction decoded_LINK_L;
 	
 	extern instruction decoded_MOVES;
@@ -43,22 +28,11 @@ namespace v68k
 	
 	extern instruction decoded_LEA;
 	
-	extern instruction decoded_MOVE_from_CCR_to_Dn;
-	extern instruction decoded_MOVE_from_CCR;
-	
-	extern instruction decoded_MOVE_from_SR_to_Dn;
-	extern instruction decoded_MOVE_from_SR;
-	
 	extern instruction decoded_MOVE_to_CCR;
 	
 	extern instruction decoded_MOVE_to_SR;
 	
-	extern instruction decoded_BKPT;
-	
 	extern instruction decoded_PEA;
-	
-	extern instruction decoded_EXT_W;
-	extern instruction decoded_EXT_L;
 	
 	extern instruction decoded_EXTB;
 	
@@ -87,10 +61,6 @@ namespace v68k
 	extern instruction decoded_RTR;
 	
 	extern instruction decoded_MOVEC;
-	
-	extern instruction decoded_JSR;
-	
-	extern instruction decoded_JMP;
 	
 	extern instruction decoded_MOVEQ;
 	
