@@ -151,16 +151,22 @@ namespace v68k
 		}
 		else
 		{
+			storage.fetch = fetches_MOVE_from_SR;
+			
+			storage.code = opcode & 0x0200 ? microcode_MOVE_from_SR
+			                               : microcode_MOVE_from_CCR;
+			
+			storage.flags = opcode & 0x0200 ? privileged_except_on_68000
+			                                : not_before_68010;
+			
+			storage.flags |= stores_word_data;
+			
 			if ( ea_is_data_register( mode, n ) )
 			{
-				return opcode & 0x0200 ? &decoded_MOVE_from_SR_to_Dn
-				                       : &decoded_MOVE_from_CCR_to_Dn;
+				storage.flags |= in_register;
 			}
-			else if ( ea_is_data_alterable( mode, n ) )
-			{
-				return opcode & 0x0200 ? &decoded_MOVE_from_SR
-				                       : &decoded_MOVE_from_CCR;
-			}
+			
+			return &storage;
 		}
 		
 		return 0;  // NULL

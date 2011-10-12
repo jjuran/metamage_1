@@ -129,34 +129,6 @@ namespace v68k
 		microcode_LEA
 	};
 	
-	instruction decoded_MOVE_from_CCR_to_Dn =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_CCR,
-		not_before_68010 | stores_word_data|in_register
-	};
-	
-	instruction decoded_MOVE_from_CCR =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_CCR,
-		not_before_68010 | stores_word_data
-	};
-	
-	instruction decoded_MOVE_from_SR_to_Dn =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_SR,
-		privileged_except_on_68000 | stores_word_data|in_register
-	};
-	
-	instruction decoded_MOVE_from_SR =
-	{
-		fetches_MOVE_from_SR,
-		microcode_MOVE_from_SR,
-		privileged_except_on_68000 | stores_word_data
-	};
-	
 	instruction decoded_MOVE_to_CCR =
 	{
 		fetches_MOVE_to_SR,
