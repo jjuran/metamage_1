@@ -315,7 +315,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
-			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
+			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_OR;
 			storage.flags = loads_and | stores_data | destination;
 			
@@ -430,7 +430,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
-			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
+			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_AND;
 			storage.flags = loads_and | stores_data | destination;
 			
