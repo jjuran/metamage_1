@@ -202,29 +202,14 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, 1 << size_code );
 	}
 	
-	uint32_t fetch_2nd_effective_byte_address( processor_state& s, int size_code )
+	uint32_t fetch_2nd_effective_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
 		
-		return fetch_effective_address( s, mode, n, sizeof (uint8_t) );
+		return fetch_effective_address( s, mode, n, 1 << size_code );
 	}
 	
-	uint32_t fetch_2nd_effective_word_address( processor_state& s, int size_code )
-	{
-		const uint16_t mode = s.opcode >> 6 & 0x7;
-		const uint16_t n    = s.opcode >> 9 & 0x7;
-		
-		return fetch_effective_address( s, mode, n, sizeof (uint16_t) );
-	}
-	
-	uint32_t fetch_2nd_effective_long_address( processor_state& s, int size_code )
-	{
-		const uint16_t mode = s.opcode >> 6 & 0x7;
-		const uint16_t n    = s.opcode >> 9 & 0x7;
-		
-		return fetch_effective_address( s, mode, n, sizeof (uint32_t) );
-	}
 	
 	uint32_t fetch_byte_from_effective_address( processor_state& s, int size_code )
 	{

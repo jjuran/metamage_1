@@ -134,7 +134,7 @@ namespace v68k
 	fetcher fetches_MOVE_B[] =
 	{
 		&fetch_byte_from_effective_address,
-		&fetch_2nd_effective_byte_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
@@ -148,7 +148,7 @@ namespace v68k
 	fetcher fetches_MOVE_L[] =
 	{
 		&fetch_long_from_effective_address,
-		&fetch_2nd_effective_long_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
@@ -162,7 +162,7 @@ namespace v68k
 	fetcher fetches_MOVE_W[] =
 	{
 		&fetch_word_from_effective_address,
-		&fetch_2nd_effective_word_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
