@@ -29,7 +29,7 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_effective_control_address[] =
+	fetcher fetches_effective_address[] =
 	{
 		&fetch_effective_address,
 		0  // NULL
@@ -171,12 +171,6 @@ namespace v68k
 	{
 		&fetch_effective_address,
 		FETCH_MAJOR_REGISTER_NUM,
-		0  // NULL
-	};
-	
-	fetcher fetches_MOVE_from_SR[] =
-	{
-		&fetch_effective_address,
 		0  // NULL
 	};
 	

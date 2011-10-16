@@ -88,7 +88,7 @@ namespace v68k
 			
 			if ( ea_is_control( mode, n ) )
 			{
-				storage.fetch = fetches_effective_control_address;
+				storage.fetch = fetches_effective_address;
 				
 				storage.code = opcode & 0x0040 ? microcode_JMP
 				                               : microcode_JSR;
@@ -161,7 +161,7 @@ namespace v68k
 		else
 		{
 			storage.size  = word_sized;
-			storage.fetch = fetches_MOVE_from_SR;
+			storage.fetch = fetches_effective_address;
 			
 			storage.code = opcode & 0x0200 ? microcode_MOVE_from_SR
 			                               : microcode_MOVE_from_CCR;
