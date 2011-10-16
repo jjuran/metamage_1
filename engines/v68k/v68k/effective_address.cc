@@ -194,7 +194,7 @@ namespace v68k
 		return 0;
 	}
 	
-	uint32_t fetch_effective_control_address( processor_state& s )
+	uint32_t fetch_effective_control_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -212,7 +212,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, 0 );
 	}
 	
-	uint32_t fetch_effective_byte_address( processor_state& s )
+	uint32_t fetch_effective_byte_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -220,7 +220,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint8_t) );
 	}
 	
-	uint32_t fetch_effective_word_address( processor_state& s )
+	uint32_t fetch_effective_word_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -228,7 +228,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint16_t) );
 	}
 	
-	uint32_t fetch_effective_long_address( processor_state& s )
+	uint32_t fetch_effective_long_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -236,7 +236,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint32_t) );
 	}
 	
-	uint32_t fetch_2nd_effective_byte_address( processor_state& s )
+	uint32_t fetch_2nd_effective_byte_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
@@ -244,7 +244,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint8_t) );
 	}
 	
-	uint32_t fetch_2nd_effective_word_address( processor_state& s )
+	uint32_t fetch_2nd_effective_word_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
@@ -252,7 +252,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint16_t) );
 	}
 	
-	uint32_t fetch_2nd_effective_long_address( processor_state& s )
+	uint32_t fetch_2nd_effective_long_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
@@ -260,7 +260,7 @@ namespace v68k
 		return fetch_effective_address( s, mode, n, sizeof (uint32_t) );
 	}
 	
-	uint32_t fetch_byte_from_effective_address( processor_state& s )
+	uint32_t fetch_byte_from_effective_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -278,7 +278,7 @@ namespace v68k
 		
 		uint8_t result;
 		
-		if ( !s.mem.get_byte( fetch_effective_byte_address( s ), result, s.data_space() ) )
+		if ( !s.mem.get_byte( fetch_effective_byte_address( s, 0 ), result, s.data_space() ) )
 		{
 			return s.bus_error();
 		}
@@ -286,7 +286,7 @@ namespace v68k
 		return int32_t( int8_t( result ) );
 	}
 	
-	uint32_t fetch_word_from_effective_address( processor_state& s )
+	uint32_t fetch_word_from_effective_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -302,7 +302,7 @@ namespace v68k
 			return fetch_unsigned_word( s );
 		}
 		
-		const uint32_t addr = fetch_effective_word_address( s );
+		const uint32_t addr = fetch_effective_word_address( s, 1 );
 		
 		if ( s.badly_aligned_data( addr ) )
 		{
@@ -319,7 +319,7 @@ namespace v68k
 		return int32_t( int16_t( result ) );
 	}
 	
-	uint32_t fetch_long_from_effective_address( processor_state& s )
+	uint32_t fetch_long_from_effective_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -335,7 +335,7 @@ namespace v68k
 			return fetch_longword( s );
 		}
 		
-		const uint32_t addr = fetch_effective_long_address( s );
+		const uint32_t addr = fetch_effective_long_address( s, 2 );
 		
 		if ( s.badly_aligned_data( addr ) )
 		{

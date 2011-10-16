@@ -16,7 +16,7 @@ namespace v68k
 	struct processor_state;
 	
 	
-	typedef uint32_t (*fetcher)( processor_state& state );
+	typedef uint32_t (*fetcher)( processor_state& state, int size_code );
 	
 }
 
