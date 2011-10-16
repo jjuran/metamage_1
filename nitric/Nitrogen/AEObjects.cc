@@ -184,6 +184,8 @@ namespace Nitrogen
 		
 		static void install_ProcPtr()
 		{
+			return;
+			
 			Mac::AEObjectClass  desiredClass  = Mac::cWindow;
 			Mac::DescType       containerType = Mac::typeNull;
 			bool                isSysHandler  = false;
@@ -242,6 +244,8 @@ namespace Nitrogen
 		
 		static void install_N_ProcPtr()
 		{
+			return;
+			
 			Mac::AEObjectClass  desiredClass  = Mac::cWindow;
 			Mac::DescType       containerType = Mac::typeNull;
 			::SRefCon           refCon        = 0;

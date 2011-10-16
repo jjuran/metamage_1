@@ -263,7 +263,7 @@ namespace Nitrogen
      }
   }
 
-namespace
+namespace Test
 {
 	
 	namespace N = Nitrogen;
