@@ -69,6 +69,7 @@ namespace v68k
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
 		{
+			storage.size  = op_size_in_0040;
 			storage.fetch = fetches_MOVEP;
 			
 			storage.code = opcode & 0x0080 ? microcode_MOVEP_to
@@ -98,6 +99,8 @@ namespace v68k
 			const instruction_flags_t stores_data = to_data ? stores_long_data : stores_byte_data;
 			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
 			
+			storage.size = to_data ? long_sized : byte_sized;
+			
 			storage.code  = bit_op_microcodes[ i ];
 			storage.fetch = bit_op_fetchers  [ j ];
 			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
@@ -107,6 +110,8 @@ namespace v68k
 		
 		if ( (opcode & 0x05bf) == 0x003c )
 		{
+			storage.size = op_size_t( ((opcode & 0x0040) >> 6) + 1 );
+			
 			storage.fetch = fetches_unsigned_word;
 			
 			if ( opcode & 0x0040 )
@@ -142,6 +147,8 @@ namespace v68k
 			
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
+			
+			storage.size = op_size_in_00C0;
 			
 			storage.code = immediate_microcodes[ selector ];
 			
@@ -233,6 +240,7 @@ namespace v68k
 				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 				const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
 				
+				storage.size  = op_size_in_00C0;
 				storage.fetch = fetches_ADDQ;
 				storage.flags = loads_and | stores_data | destination | and_sets_CCR;
 				
@@ -245,6 +253,7 @@ namespace v68k
 			
 			const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
 			
+			storage.size  = byte_sized;
 			storage.fetch = fetches_Scc;
 			storage.code  = &microcode_Scc;
 			storage.flags = stores_byte_data | destination | and_sets_CCR;
@@ -260,14 +269,17 @@ namespace v68k
 		switch ( opcode & 0x00FF )
 		{
 			default:
+				storage.size  = byte_sized;
 				storage.fetch = fetches_branch_short;
 				break;
 			
 			case 0x00:
+				storage.size  = word_sized;
 				storage.fetch = fetches_branch;
 				break;
 			
 			case 0xFF:
+				storage.size  = long_sized;
 				storage.fetch = fetches_branch_long;
 				storage.flags = not_before_68020;
 				break;
@@ -315,6 +327,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
+			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_OR;
 			storage.flags = loads_and | stores_data | destination;
@@ -344,6 +357,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
+			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
 			storage.code  = &microcode_SUB;
 			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
@@ -354,6 +368,7 @@ namespace v68k
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( (opcode & 0x0100) + 0x0200 );
 			
+			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_SUBA;
 			storage.flags = loads_and | stores_data | in_register;
@@ -377,6 +392,7 @@ namespace v68k
 		{
 			if ( ea_is_valid( mode, n ) )
 			{
+				storage.size  = op_size_in_0100;
 				storage.fetch = fetches_CMPA;
 				storage.code  = microcode_CMP;
 				
@@ -385,6 +401,8 @@ namespace v68k
 		}
 		else
 		{
+			storage.size = op_size_in_00C0;
+			
 			if ( opcode & 0x0100 )
 			{
 				if ( ea_is_data_alterable( mode, n ) )
@@ -430,6 +448,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
+			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_AND;
 			storage.flags = loads_and | stores_data | destination;
@@ -472,6 +491,7 @@ namespace v68k
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
+			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
 			storage.code  = &microcode_ADD;
 			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
@@ -482,6 +502,7 @@ namespace v68k
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( (opcode & 0x0100) + 0x0200 );
 			
+			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_ADDA;
 			storage.flags = loads_and | stores_data | in_register;
@@ -512,6 +533,7 @@ namespace v68k
 			
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
 			
+			storage.size  = op_size_in_00C0;
 			storage.fetch = fetches_bit_shift;
 			storage.flags = loads_and | stores_data | in_register | and_sets_CCR;
 			

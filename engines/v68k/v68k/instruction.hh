@@ -51,6 +51,7 @@ namespace v68k
 		
 		fetcher*   fetch;
 		microcode  code;
+		op_size_t  size;
 		flags_t    flags;
 	};
 	

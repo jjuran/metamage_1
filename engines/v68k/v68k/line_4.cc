@@ -32,6 +32,11 @@ namespace v68k
 			storage.code = opcode & 0x0008 ? microcode_BKPT
 			                               : microcode_SWAP;
 			
+			if ( opcode & 0x0008 )
+			{
+				storage.size = long_sized;  // because result is 32 bits
+			}
+			
 			return &storage;
 		}
 		
@@ -52,6 +57,9 @@ namespace v68k
 			
 			storage.code = opcode & 0x0040 ? microcode_EXT_L
 			                               : microcode_EXT_W;
+			
+			storage.size = opcode & 0x0040 ? long_sized
+			                               : word_sized;
 			
 			return &storage;
 		}
@@ -152,6 +160,7 @@ namespace v68k
 		}
 		else
 		{
+			storage.size  = word_sized;
 			storage.fetch = fetches_MOVE_from_SR;
 			
 			storage.code = opcode & 0x0200 ? microcode_MOVE_from_SR
@@ -175,6 +184,8 @@ namespace v68k
 	
 	static const instruction* decode_unary_op( uint16_t opcode, instruction& storage )
 	{
+		storage.size = op_size_in_00C0;
+		
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
 		const uint16_t mode = opcode >> 3 & 0x7;
@@ -271,6 +282,7 @@ namespace v68k
 			
 			if ( mode == update_mode  ||  ea_is_control( mode, n )  &&  (ea_is_alterable( mode, n ) || !to_mem ) )
 			{
+				storage.size  = op_size_in_0040;
 				storage.fetch = fetches_MOVEM;
 				
 				storage.code = to_mem ? &microcode_MOVEM_to

@@ -20,6 +20,7 @@ namespace v68k
 	{
 		fetches_MOVES,
 		microcode_MOVES,
+		op_size_in_00C0,
 		privileged | not_before_68010
 	};
 	
@@ -27,6 +28,7 @@ namespace v68k
 	{
 		fetches_MOVE_B_to_Dn,
 		microcode_MOVE,
+		byte_sized,
 		stores_byte_data|in_register
 	};
 	
@@ -34,6 +36,7 @@ namespace v68k
 	{
 		fetches_MOVE_B,
 		microcode_MOVE,
+		byte_sized,
 		stores_byte_data
 	};
 	
@@ -41,6 +44,7 @@ namespace v68k
 	{
 		fetches_MOVE_L_to_Rn,
 		microcode_MOVE,
+		long_sized,
 		stores_long_data|in_register
 	};
 	
@@ -48,6 +52,7 @@ namespace v68k
 	{
 		fetches_MOVE_L,
 		microcode_MOVE,
+		long_sized,
 		stores_long_data
 	};
 	
@@ -55,6 +60,7 @@ namespace v68k
 	{
 		fetches_MOVE_W_to_Rn,
 		microcode_MOVE,
+		word_sized,
 		stores_word_data|in_register
 	};
 	
@@ -62,6 +68,7 @@ namespace v68k
 	{
 		fetches_MOVE_W,
 		microcode_MOVE,
+		word_sized,
 		stores_word_data
 	};
 	
@@ -69,6 +76,7 @@ namespace v68k
 	{
 		fetches_LINK_L,
 		microcode_LINK,  // same as LINK
+		long_sized,
 		not_before_68020
 	};
 	
@@ -81,13 +89,15 @@ namespace v68k
 	instruction decoded_MOVE_to_CCR =
 	{
 		fetches_MOVE_to_SR,
-		microcode_MOVE_to_CCR
+		microcode_MOVE_to_CCR,
+		word_sized
 	};
 	
 	instruction decoded_MOVE_to_SR =
 	{
 		fetches_MOVE_to_SR,
 		microcode_MOVE_to_SR,
+		word_sized,
 		privileged
 	};
 	
@@ -101,6 +111,7 @@ namespace v68k
 	{
 		FETCHES_MINOR_REGISTER_NUM,
 		microcode_EXTB,
+		long_sized,
 		not_before_68020
 	};
 	
@@ -113,7 +124,8 @@ namespace v68k
 	instruction decoded_LINK =
 	{
 		fetches_LINK,
-		microcode_LINK
+		microcode_LINK,
+		word_sized
 	};
 	
 	instruction decoded_UNLK =
@@ -126,6 +138,7 @@ namespace v68k
 	{
 		FETCHES_MINOR_REGISTER_NUM,
 		microcode_MOVE_to_USP,
+		long_sized,
 		privileged
 	};
 	
@@ -133,6 +146,7 @@ namespace v68k
 	{
 		FETCHES_MINOR_REGISTER_NUM,
 		microcode_MOVE_from_USP,
+		long_sized,
 		privileged
 	};
 	
@@ -140,6 +154,7 @@ namespace v68k
 	{
 		fetches_none,
 		microcode_NOP,
+		unsized,
 		privileged
 	};
 	
@@ -153,6 +168,7 @@ namespace v68k
 	{
 		fetches_unsigned_word,
 		microcode_STOP,
+		word_sized,
 		privileged
 	};
 	
@@ -160,6 +176,7 @@ namespace v68k
 	{
 		fetches_none,
 		microcode_RTE,
+		unsized,
 		privileged
 	};
 	
@@ -167,6 +184,7 @@ namespace v68k
 	{
 		fetches_signed_word,
 		microcode_RTD,
+		word_sized,
 		not_before_68010
 	};
 	
@@ -192,6 +210,7 @@ namespace v68k
 	{
 		fetches_unsigned_word,
 		microcode_MOVEC,
+		long_sized,
 		privileged | not_before_68010
 	};
 	
@@ -199,13 +218,15 @@ namespace v68k
 	{
 		fetches_MOVEQ,
 		microcode_MOVE,
+		long_sized,
 		stores_long_data|in_register
 	};
 	
 	instruction decoded_EXG =
 	{
 		fetches_EXG,
-		microcode_EXG
+		microcode_EXG,
+		long_sized
 	};
 	
 }
