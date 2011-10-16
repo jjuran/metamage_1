@@ -124,13 +124,6 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_MOVE_B_to_Dn[] =
-	{
-		&fetch_byte_from_effective_address,
-		&FETCH_MAJOR_REGISTER_NUM,
-		0  // NULL
-	};
-	
 	fetcher fetches_MOVE_B[] =
 	{
 		&fetch_byte_from_effective_address,
@@ -138,24 +131,10 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_MOVE_L_to_Rn[] =
-	{
-		&fetch_long_from_effective_address,
-		&fetch_2nd_ea_register_id,
-		0  // NULL
-	};
-	
 	fetcher fetches_MOVE_L[] =
 	{
 		&fetch_long_from_effective_address,
 		&fetch_2nd_effective_address,
-		0  // NULL
-	};
-	
-	fetcher fetches_MOVE_W_to_Rn[] =
-	{
-		&fetch_word_from_effective_address,
-		&fetch_2nd_ea_register_id,
 		0  // NULL
 	};
 	
