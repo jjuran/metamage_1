@@ -78,33 +78,6 @@ namespace v68k
 		return fetch_instruction_word( s );
 	}
 	
-	uint32_t fetch_sized_effective_address( processor_state& s, int size_code )
-	{
-		switch ( size_code )
-		{
-			case 0:
-				return fetch_effective_byte_address( s, 0 );
-			
-			case 1:
-				return fetch_effective_word_address( s, 1 );
-			
-			case 2:
-				return fetch_effective_long_address( s, 2 );
-			
-			default:
-				// Not reached
-				return 0;
-		}
-	}
-	
-	uint32_t fetch_MOVEM_sized_effective_address( processor_state& s, int size_code )
-	{
-		const int longword_sized = s.opcode >> 6 & 0x1;
-		
-		return longword_sized ? fetch_effective_long_address( s, 2 )
-		                      : fetch_effective_word_address( s, 1 );
-	}
-	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s, int size_code )
 	{
 		switch ( size_code )
