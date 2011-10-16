@@ -24,9 +24,7 @@ namespace v68k
 	
 	static fetcher* bit_op_fetchers[] =
 	{
-		fetches_static_bit_op_to_Dn,
 		fetches_static_bit_op,
-		fetches_dynamic_bit_op_to_Dn,
 		fetches_dynamic_bit_op
 	};
 	
@@ -94,7 +92,7 @@ namespace v68k
 				return 0;  // NULL
 			}
 			
-			const int j = (opcode & 0x0100) >> 7 | to_data;
+			const int j = (opcode & 0x0100) >> 8;
 			
 			const instruction_flags_t stores_data = to_data ? stores_long_data : stores_byte_data;
 			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
