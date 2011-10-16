@@ -92,6 +92,8 @@ namespace Nitrogen
 		
 		static void foo()
 		{
+			return;
+			
 			Mac::AEEventClass aeClass = Mac::AEEventClass();
 			Mac::AEEventID    aeID    = Mac::AEEventID   ();
 			bool isSysHandler         = false;
