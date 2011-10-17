@@ -141,12 +141,6 @@ namespace v68k
 		return s.regs.a[n];
 	}
 	
-	uint32_t fetch_A_data_at_effective_address( processor_state& s, int size_code )
-	{
-		return s.opcode & 0x0100 ? fetch_long_from_effective_address( s )
-		                         : fetch_word_from_effective_address( s );
-	}
-	
 	
 	uint32_t fetch_data_at_1E00( processor_state& s, int size_code )
 	{

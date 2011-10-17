@@ -305,7 +305,7 @@ namespace v68k
 	
 	fetcher fetches_CMPA[] =
 	{
-		&fetch_A_data_at_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&fetch_A_data_from_major_register,
 		0  // NULL
 	};
@@ -329,7 +329,7 @@ namespace v68k
 	
 	fetcher fetches_ADDA[] =
 	{
-		&fetch_A_data_at_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
 		0  // NULL
 	};
