@@ -127,6 +127,20 @@ namespace v68k
 		
 		op_params pb;
 		
+		pb.size = decoded->size;
+		
+		if ( pb.size > max_actual_size )
+		{
+			const uint16_t size_mask = pb.size;
+			
+			const int bit_offset = pb.size & op_size_shift_mask;
+			
+			// 1 if 0 means byte-sized, 2 if 0 means word-sized
+			const uint32_t index_of_zero = 1 + (pb.size & 1);
+			
+			pb.size = op_size_t( ((opcode & size_mask) >> bit_offset) + index_of_zero );
+		}
+		
 		uint32_t* params = pb.params;
 		
 		uint32_t* p = params;
