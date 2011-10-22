@@ -15,7 +15,7 @@ namespace v68k
 	
 	extern fetcher fetches_none[];
 	
-	extern fetcher fetches_effective_control_address[];
+	extern fetcher fetches_effective_address[];
 	
 	extern fetcher fetches_immediate[];
 	
@@ -48,8 +48,6 @@ namespace v68k
 	extern fetcher fetches_MOVE_W      [];
 	
 	extern fetcher fetches_LEA[];
-	
-	extern fetcher fetches_MOVE_from_SR[];
 	
 	extern fetcher fetches_MOVE_to_SR[];
 	

@@ -103,7 +103,7 @@ namespace v68k
 	
 	instruction decoded_PEA =
 	{
-		fetches_effective_control_address,
+		fetches_effective_address,
 		microcode_PEA
 	};
 	

@@ -29,16 +29,16 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_effective_control_address[] =
+	fetcher fetches_effective_address[] =
 	{
-		&fetch_effective_control_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_immediate[] =
 	{
 		&fetch_sized_immediate_data,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -52,14 +52,14 @@ namespace v68k
 	fetcher fetches_math[] =
 	{
 		&fetch_data_at_0E00,  // register number or data
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_EOR[] =
 	{
 		&fetch_sized_data_from_major_register,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -79,14 +79,14 @@ namespace v68k
 	fetcher fetches_dynamic_bit_op_to_Dn[] =
 	{
 		&fetch_bit_number_from_major_register,
-		&fetch_effective_long_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_dynamic_bit_op[] =
 	{
 		&fetch_bit_number_from_major_register,
-		&fetch_effective_byte_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -94,14 +94,14 @@ namespace v68k
 	fetcher fetches_static_bit_op_to_Dn[] =
 	{
 		&fetch_unsigned_word,
-		&fetch_effective_long_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_static_bit_op[] =
 	{
 		&fetch_unsigned_word,
-		&fetch_effective_byte_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -118,7 +118,7 @@ namespace v68k
 	
 	fetcher fetches_MOVES[] =
 	{
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		&fetch_unsigned_word,
 		0  // NULL
 	};
@@ -134,7 +134,7 @@ namespace v68k
 	fetcher fetches_MOVE_B[] =
 	{
 		&fetch_byte_from_effective_address,
-		&fetch_2nd_effective_byte_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
@@ -148,7 +148,7 @@ namespace v68k
 	fetcher fetches_MOVE_L[] =
 	{
 		&fetch_long_from_effective_address,
-		&fetch_2nd_effective_long_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
@@ -162,21 +162,15 @@ namespace v68k
 	fetcher fetches_MOVE_W[] =
 	{
 		&fetch_word_from_effective_address,
-		&fetch_2nd_effective_word_address,
+		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
 	
 	fetcher fetches_LEA[] =
 	{
-		&fetch_effective_control_address,
+		&fetch_effective_address,
 		FETCH_MAJOR_REGISTER_NUM,
-		0  // NULL
-	};
-	
-	fetcher fetches_MOVE_from_SR[] =
-	{
-		&fetch_effective_word_address,
 		0  // NULL
 	};
 	
@@ -190,7 +184,7 @@ namespace v68k
 	fetcher fetches_MOVEM[] =
 	{
 		&fetch_MOVEM_update,
-		&fetch_MOVEM_sized_effective_address,
+		&fetch_effective_address,
 		&fetch_unsigned_word,
 		0  // NULL
 	};
@@ -228,14 +222,14 @@ namespace v68k
 	fetcher fetches_CLR[] =
 	{
 		&fetch_zero,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_NOT[] =
 	{
 		&fetch_ones,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -250,7 +244,7 @@ namespace v68k
 	fetcher fetches_ADDQ[] =
 	{
 		&fetch_ADDQ_data,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -258,7 +252,7 @@ namespace v68k
 	fetcher fetches_Scc[] =
 	{
 		&fetch_cc,
-		&fetch_effective_byte_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -305,7 +299,7 @@ namespace v68k
 	
 	fetcher fetches_CMPA[] =
 	{
-		&fetch_A_data_at_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&fetch_A_data_from_major_register,
 		0  // NULL
 	};
@@ -329,7 +323,7 @@ namespace v68k
 	
 	fetcher fetches_ADDA[] =
 	{
-		&fetch_A_data_at_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
 		0  // NULL
 	};
@@ -337,7 +331,7 @@ namespace v68k
 	fetcher fetches_ADD[] =
 	{
 		&fetch_sized_data_from_major_register,
-		&fetch_sized_effective_address,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
