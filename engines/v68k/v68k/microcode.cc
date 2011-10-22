@@ -176,8 +176,8 @@ namespace v68k
 	
 	void microcode_MOVES( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[1];
-		const uint32_t more = pb.params[2];
+		const uint32_t addr = pb.params[0];
+		const uint32_t more = pb.params[1];
 		
 		const int size = 1 << pb.size - 1;  // 1,2,4
 		

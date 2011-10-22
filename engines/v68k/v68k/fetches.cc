@@ -118,7 +118,6 @@ namespace v68k
 	
 	fetcher fetches_MOVES[] =
 	{
-		&fetch_zero,
 		&fetch_sized_effective_address,
 		&fetch_unsigned_word,
 		0  // NULL
