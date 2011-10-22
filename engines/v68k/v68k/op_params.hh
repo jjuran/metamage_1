@@ -6,11 +6,19 @@
 #ifndef V68K_OPPARAMS_HH
 #define V68K_OPPARAMS_HH
 
+// C99
+#include <stdint.h>
+
 
 namespace v68k
 {
 	
 	const int max_params = 4;
+	
+	struct op_params
+	{
+		uint32_t params[ max_params ];
+	};
 	
 }
 
