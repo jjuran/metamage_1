@@ -160,7 +160,7 @@ namespace v68k
 		}
 		
 		// execute
-		decoded->code( *this, params );
+		decoded->code( *this, pb );
 		
 		// store
 		
