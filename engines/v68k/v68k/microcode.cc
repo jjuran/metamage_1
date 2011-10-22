@@ -176,11 +176,10 @@ namespace v68k
 	
 	void microcode_MOVES( processor_state& s, op_params& pb )
 	{
-		const uint32_t size_code = pb.params[0];  // 0,1,2
-		const uint32_t addr      = pb.params[1];
-		const uint32_t more      = pb.params[2];
+		const uint32_t addr = pb.params[0];
+		const uint32_t more = pb.params[1];
 		
-		const int size = 1 << size_code;  // 1,2,4
+		const int size = 1 << pb.size - 1;  // 1,2,4
 		
 		const uint16_t reg_id = more >> 12;
 		
@@ -203,14 +202,14 @@ namespace v68k
 		{
 			const uint32_t data = s.regs.d[ reg_id ];
 			
-			switch ( size_code )
+			switch ( pb.size )
 			{
-				case 2:
+				case long_sized:
 					*p++ = data >> 24;
 					*p++ = data >> 16 & 0xFF;
-				case 1:
+				case word_sized:
 					*p++ = data >>  8 & 0xFF;
-				case 0:
+				case byte_sized:
 					*p++ = data >>  0 & 0xFF;
 			}
 		}
@@ -218,9 +217,9 @@ namespace v68k
 		{
 			uint32_t& reg = s.regs.d[ reg_id ];
 			
-			switch ( size_code )
+			switch ( pb.size )
 			{
-				case 2:
+				case long_sized:
 					reg = p[0] << 24
 					    | p[1] << 16
 					    | p[2] <<  8
@@ -228,7 +227,7 @@ namespace v68k
 					
 					break;
 				
-				case 1:
+				case word_sized:
 					{
 						const uint16_t data = p[0] << 8 | p[1];
 						
@@ -246,7 +245,7 @@ namespace v68k
 					
 					break;
 				
-				case 0:
+				case byte_sized:
 					if ( reg_id & 0x8 )
 					{
 						reg = int32_t( int8_t( p[0] ) );
@@ -422,12 +421,11 @@ namespace v68k
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
 		uint32_t addr = pb.params[1];
-		uint16_t mask = pb.params[3];
+		uint16_t mask = pb.params[2];
 		
-		const uint16_t movem_size_code = pb.params[0];
-		const uint16_t update_register = pb.params[2];
+		const uint16_t update_register = pb.params[0];
 		
-		const uint16_t longword_sized = movem_size_code & 0x1;
+		const bool longword_sized = pb.size == long_sized;
 		
 		int32_t increment = 2 << longword_sized;
 		
@@ -465,12 +463,11 @@ namespace v68k
 	void microcode_MOVEM_from( processor_state& s, op_params& pb )
 	{
 		uint32_t addr = pb.params[1];
-		uint16_t mask = pb.params[3];
+		uint16_t mask = pb.params[2];
 		
-		const uint16_t movem_size_code = pb.params[0];
-		const uint16_t update_register = pb.params[2];
+		const uint16_t update_register = pb.params[0];
 		
-		const uint16_t longword_sized = movem_size_code & 0x1;
+		const bool longword_sized = pb.size == long_sized;
 		
 		const int32_t increment = 2 << longword_sized;
 		
@@ -1041,8 +1038,6 @@ namespace v68k
 		const int32_t a = pb.params[0];
 		const int32_t b = pb.params[1];
 		
-		const uint32_t size_code = pb.params[2];
-		
 		/*
 			     size_code  E  (0, 1,  2)
 			1 << size_code  E  (1, 2,  4)
@@ -1053,7 +1048,7 @@ namespace v68k
 			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
 		*/
 		
-		const int n_bytes = 1 << size_code;
+		const int n_bytes = 1 << pb.size - 1;
 		
 		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
 		
@@ -1087,8 +1082,7 @@ namespace v68k
 	{
 		int32_t data = pb.params[1];
 		
-		const uint16_t count     = pb.params[0];
-		const uint16_t size_code = pb.params[2];
+		const uint16_t count = pb.params[0];
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1100,7 +1094,7 @@ namespace v68k
 			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
 		*/
 		
-		const int n_bytes = 1 << size_code;
+		const int n_bytes = 1 << pb.size - 1;
 		
 		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
 		const uint32_t data_mask = (sign_mask << 1) - 1;
@@ -1128,8 +1122,7 @@ namespace v68k
 	{
 		int32_t data = pb.params[1];
 		
-		const uint16_t count     = pb.params[0];
-		const uint16_t size_code = pb.params[2];
+		const uint16_t count = pb.params[0];
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1141,7 +1134,7 @@ namespace v68k
 			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
 		*/
 		
-		const int n_bytes = 1 << size_code;
+		const int n_bytes = 1 << pb.size - 1;
 		
 		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
 		const uint32_t data_mask = (sign_mask << 1) - 1;
@@ -1173,8 +1166,7 @@ namespace v68k
 	{
 		uint32_t data = pb.params[1];
 		
-		const uint16_t count     = pb.params[0];
-		const uint16_t size_code = pb.params[2];
+		const uint16_t count = pb.params[0];
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1186,7 +1178,7 @@ namespace v68k
 			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
 		*/
 		
-		const int n_bytes = 1 << size_code;
+		const int n_bytes = 1 << pb.size - 1;
 		
 		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
 		const uint32_t data_mask = (sign_mask << 1) - 1;
@@ -1216,8 +1208,7 @@ namespace v68k
 	{
 		uint32_t data = pb.params[1];
 		
-		const uint16_t count     = pb.params[0];
-		const uint16_t size_code = pb.params[2];
+		const uint16_t count = pb.params[0];
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1229,7 +1220,7 @@ namespace v68k
 			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
 		*/
 		
-		const int n_bytes = 1 << size_code;
+		const int n_bytes = 1 << pb.size - 1;
 		
 		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
 		const uint32_t data_mask = (sign_mask << 1) - 1;

@@ -31,10 +31,6 @@ namespace v68k
 	
 	uint32_t fetch_longword( processor_state& state );
 	
-	uint32_t fetch_size_code( processor_state& state );
-	
-	uint32_t fetch_A_size_code( processor_state& state );
-	
 	uint32_t fetch_sized_immediate_data( processor_state& state );
 	
 	uint32_t fetch_sized_effective_address( processor_state& state );
