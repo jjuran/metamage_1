@@ -9,14 +9,14 @@
 // C99
 #include <stdint.h>
 
+// v68k
+#include "v68k/op_params.hh"
+
 
 namespace v68k
 {
 	
 	struct processor_state;
-	
-	
-	const int max_params = 4;
 	
 	
 	typedef void (*microcode)( processor_state&, uint32_t* );
