@@ -118,7 +118,7 @@ namespace v68k
 	
 	fetcher fetches_MOVES[] =
 	{
-		&fetch_size_code,
+		&fetch_zero,
 		&fetch_sized_effective_address,
 		&fetch_unsigned_word,
 		0  // NULL
@@ -190,7 +190,7 @@ namespace v68k
 	
 	fetcher fetches_MOVEM[] =
 	{
-		&fetch_size_code,
+		&fetch_zero,
 		&fetch_MOVEM_sized_effective_address,
 		&fetch_MOVEM_update,
 		&fetch_unsigned_word,
@@ -326,7 +326,6 @@ namespace v68k
 	{
 		&fetch_sized_data_at_effective_address,
 		&fetch_data_at_0E00,  // register number
-		&fetch_size_code,
 		0  // NULL
 	};
 	
@@ -334,7 +333,6 @@ namespace v68k
 	{
 		&fetch_A_data_at_effective_address,
 		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
-		&fetch_A_size_code,
 		0  // NULL
 	};
 	
@@ -342,7 +340,6 @@ namespace v68k
 	{
 		&fetch_sized_data_from_major_register,
 		&fetch_sized_effective_address,
-		&fetch_size_code,
 		0  // NULL
 	};
 	
@@ -351,7 +348,6 @@ namespace v68k
 	{
 		&fetch_bit_shift_count,
 		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_size_code,
 		0  // NULL
 	};
 	
