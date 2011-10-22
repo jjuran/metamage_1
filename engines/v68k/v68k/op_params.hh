@@ -34,6 +34,8 @@ namespace v68k
 	
 	struct op_params
 	{
+		op_size_t size;
+		
 		uint32_t params[ max_params ];
 	};
 	
