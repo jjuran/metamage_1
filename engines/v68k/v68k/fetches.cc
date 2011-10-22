@@ -190,9 +190,8 @@ namespace v68k
 	
 	fetcher fetches_MOVEM[] =
 	{
-		&fetch_zero,
-		&fetch_MOVEM_sized_effective_address,
 		&fetch_MOVEM_update,
+		&fetch_MOVEM_sized_effective_address,
 		&fetch_unsigned_word,
 		0  // NULL
 	};
