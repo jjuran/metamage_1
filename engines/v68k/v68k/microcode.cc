@@ -423,10 +423,9 @@ namespace v68k
 		uint32_t addr = pb.params[1];
 		uint16_t mask = pb.params[3];
 		
-		const uint16_t movem_size_code = pb.params[0];
 		const uint16_t update_register = pb.params[2];
 		
-		const uint16_t longword_sized = movem_size_code & 0x1;
+		const bool longword_sized = pb.size == long_sized;
 		
 		int32_t increment = 2 << longword_sized;
 		
@@ -466,10 +465,9 @@ namespace v68k
 		uint32_t addr = pb.params[1];
 		uint16_t mask = pb.params[3];
 		
-		const uint16_t movem_size_code = pb.params[0];
 		const uint16_t update_register = pb.params[2];
 		
-		const uint16_t longword_sized = movem_size_code & 0x1;
+		const bool longword_sized = pb.size == long_sized;
 		
 		const int32_t increment = 2 << longword_sized;
 		
