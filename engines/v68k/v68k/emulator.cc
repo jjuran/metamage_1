@@ -125,7 +125,9 @@ namespace v68k
 		// fetch
 		fetcher* fetch = decoded->fetch;
 		
-		uint32_t params[ max_params ];
+		op_params pb;
+		
+		uint32_t* params = pb.params;
 		
 		uint32_t* p = params;
 		
