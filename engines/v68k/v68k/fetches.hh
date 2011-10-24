@@ -36,9 +36,7 @@ namespace v68k
 	
 	extern fetcher fetches_MOVES[];
 	
-	extern fetcher fetches_MOVE_B[];
-	extern fetcher fetches_MOVE_L[];
-	extern fetcher fetches_MOVE_W[];
+	extern fetcher fetches_MOVE[];
 	
 	extern fetcher fetches_LEA[];
 	

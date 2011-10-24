@@ -110,21 +110,7 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_MOVE_B[] =
-	{
-		&fetch_sized_data_at_effective_address,
-		&fetch_2nd_effective_address,
-		0  // NULL
-	};
-	
-	fetcher fetches_MOVE_L[] =
-	{
-		&fetch_sized_data_at_effective_address,
-		&fetch_2nd_effective_address,
-		0  // NULL
-	};
-	
-	fetcher fetches_MOVE_W[] =
+	fetcher fetches_MOVE[] =
 	{
 		&fetch_sized_data_at_effective_address,
 		&fetch_2nd_effective_address,
