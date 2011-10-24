@@ -112,21 +112,21 @@ namespace v68k
 	
 	fetcher fetches_MOVE_B[] =
 	{
-		&fetch_byte_from_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_MOVE_L[] =
 	{
-		&fetch_long_from_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&fetch_2nd_effective_address,
 		0  // NULL
 	};
 	
 	fetcher fetches_MOVE_W[] =
 	{
-		&fetch_word_from_effective_address,
+		&fetch_sized_data_at_effective_address,
 		&fetch_2nd_effective_address,
 		0  // NULL
 	};
@@ -141,7 +141,7 @@ namespace v68k
 	
 	fetcher fetches_MOVE_to_SR[] =
 	{
-		&fetch_word_from_effective_address,
+		&fetch_sized_data_at_effective_address,
 		0  // NULL
 	};
 	
