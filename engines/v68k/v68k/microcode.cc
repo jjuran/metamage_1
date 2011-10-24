@@ -66,9 +66,9 @@ namespace v68k
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[1];
-		const uint32_t y    = pb.params[2];
-		const int32_t  disp = pb.params[3];
+		const uint32_t x    = pb.params[0];
+		const uint32_t y    = pb.params[1];
+		const int32_t  disp = pb.params[2];
 		
 		const uint32_t Dx = s.regs.d[ x ];
 		const uint32_t Ay = s.regs.a[ y ];
@@ -102,9 +102,9 @@ namespace v68k
 	
 	void microcode_MOVEP_from( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[1];
-		const uint32_t y    = pb.params[2];
-		const int32_t  disp = pb.params[3];
+		const uint32_t x    = pb.params[0];
+		const uint32_t y    = pb.params[1];
+		const int32_t  disp = pb.params[2];
 		
 		uint32_t&      Dx = s.regs.d[ x ];
 		uint32_t const Ay = s.regs.a[ y ];

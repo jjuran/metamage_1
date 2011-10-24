@@ -94,7 +94,6 @@ namespace v68k
 	
 	fetcher fetches_MOVEP[] =
 	{
-		&fetch_zero,
 		&FETCH_MAJOR_REGISTER_NUM,
 		&FETCH_MINOR_REGISTER_NUM,
 		&fetch_signed_word,
