@@ -13,7 +13,7 @@
 namespace v68k
 {
 	
-	const int max_params = 4;
+	const int max_params = 3;
 	
 	enum op_size_t
 	{
