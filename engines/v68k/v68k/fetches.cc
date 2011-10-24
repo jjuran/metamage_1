@@ -102,8 +102,8 @@ namespace v68k
 	
 	fetcher fetches_MOVES[] =
 	{
-		&fetch_effective_address,
 		&fetch_unsigned_word,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
