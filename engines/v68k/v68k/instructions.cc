@@ -208,7 +208,7 @@ namespace v68k
 	
 	instruction decoded_MOVEC =
 	{
-		fetches_unsigned_word,
+		fetches_MOVEC,
 		microcode_MOVEC,
 		long_sized,
 		privileged | not_before_68010
