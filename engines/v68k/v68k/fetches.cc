@@ -190,6 +190,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_MOVEC[] =
+	{
+		&fetch_data_at_0001,
+		&fetch_unsigned_word,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_ADDQ[] =
 	{
 		&fetch_ADDQ_data,
