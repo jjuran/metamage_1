@@ -80,21 +80,82 @@ namespace v68k
 	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s, int size_code )
 	{
+		const uint16_t mode = s.opcode >> 3 & 0x7;
+		const uint16_t n    = s.opcode >> 0 & 0x7;
+		
+		if ( mode == 7  &&  n == 4 )
+		{
+			if ( size_code == 2 )
+			{
+				return fetch_longword( s );
+			}
+			
+			const uint16_t word = fetch_unsigned_word( s );
+			
+			return size_code != 0 ? word : word & 0x00FF;
+		}
+		
+		const uint32_t addr = fetch_effective_address( s, size_code );
+		
+		if ( (mode & 0x6) == 0 )
+		{
+			// 0 or 1
+			
+			const uint32_t data = s.regs.d[ addr ];
+			
+			switch ( size_code )
+			{
+				case 0:  return int32_t( int8_t ( data ) );
+				case 1:  return int32_t( int16_t( data ) );
+				case 2:  return                   data;
+			}
+		}
+		
+		if ( size_code != 0  &&  s.badly_aligned_data( addr ) )
+		{
+			return s.address_error();
+		}
+		
+		uint32_t result;
+		
+		bool ok;
+		
 		switch ( size_code )
 		{
 			case 0:
-				return fetch_byte_from_effective_address( s );
+				uint8_t byte;
+				
+				ok = s.mem.get_byte( addr, byte, s.data_space() );
+				
+				result = int32_t( int8_t( byte ) );
+				
+				break;
 			
 			case 1:
-				return fetch_word_from_effective_address( s );
+				uint16_t word;
+				
+				ok = s.mem.get_word( addr, word, s.data_space() );
+				
+				result = int32_t( int16_t( word ) );
+				
+				break;
 			
 			case 2:
-				return fetch_long_from_effective_address( s );
+				ok = s.mem.get_long( addr, result, s.data_space() );
+				
+				break;
 			
 			default:
 				// Not reached
 				return 0;
 		}
+		
+		if ( !ok )
+		{
+			return s.bus_error();
+		}
+		
+		return result;
 	}
 	
 	uint32_t fetch_sized_data_from_major_register( processor_state& s, int size_code )
