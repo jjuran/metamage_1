@@ -225,12 +225,6 @@ namespace v68k
 	}
 	
 	
-	uint32_t fetch_MOVEP_opmode( processor_state& s, int size_code )
-	{
-		return s.opcode >> 6 & 0x0007;
-	}
-	
-	
 	uint32_t fetch_MOVEM_update( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x0007;

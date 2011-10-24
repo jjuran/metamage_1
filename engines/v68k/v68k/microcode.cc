@@ -66,7 +66,6 @@ namespace v68k
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
-		const uint32_t mode = pb.params[0];
 		const uint32_t x    = pb.params[1];
 		const uint32_t y    = pb.params[2];
 		const int32_t  disp = pb.params[3];
@@ -74,11 +73,9 @@ namespace v68k
 		const uint32_t Dx = s.regs.d[ x ];
 		const uint32_t Ay = s.regs.a[ y ];
 		
-		const bool doubled = mode & 0x1;
-		
 		const uint32_t addr = Ay + disp;
 		
-		uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space(), mem_write );
+		uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_write );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -87,7 +84,7 @@ namespace v68k
 			return;
 		}
 		
-		switch ( doubled )
+		switch ( pb.size == long_sized )
 		{
 			case true:
 				p[0] = Dx >> 24;
@@ -105,7 +102,6 @@ namespace v68k
 	
 	void microcode_MOVEP_from( processor_state& s, op_params& pb )
 	{
-		const uint32_t mode = pb.params[0];
 		const uint32_t x    = pb.params[1];
 		const uint32_t y    = pb.params[2];
 		const int32_t  disp = pb.params[3];
@@ -113,11 +109,9 @@ namespace v68k
 		uint32_t&      Dx = s.regs.d[ x ];
 		uint32_t const Ay = s.regs.a[ y ];
 		
-		const bool doubled = mode & 0x1;
-		
 		const uint32_t addr = Ay + disp;
 		
-		const uint8_t* p = s.mem.translate( addr, (4 << doubled) - 1, s.data_space(), mem_read );
+		const uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_read );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -126,9 +120,9 @@ namespace v68k
 			return;
 		}
 		
-		uint32_t data = doubled ? 0 : Dx & 0xFFFF0000;
+		uint32_t data = pb.size == long_sized ? 0 : Dx & 0xFFFF0000;
 		
-		switch ( doubled )
+		switch ( pb.size == long_sized )
 		{
 			case true:
 				data |= p[0] << 24;
