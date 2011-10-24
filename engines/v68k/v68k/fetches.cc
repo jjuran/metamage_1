@@ -272,8 +272,7 @@ namespace v68k
 	
 	fetcher fetches_EXG[] =
 	{
-		&fetch_EXG_opmode,
-		&FETCH_MAJOR_REGISTER_NUM,
+		&fetch_EXG_first_reg,
 		&FETCH_MINOR_REGISTER_ID,
 		0  // NULL
 	};

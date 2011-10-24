@@ -1014,14 +1014,11 @@ namespace v68k
 	
 	void microcode_EXG( processor_state& s, op_params& pb )
 	{
-		const uint32_t mode = pb.params[0];
-		const uint32_t x    = pb.params[1];  // 3-bit register number
-		const uint32_t y    = pb.params[2];  // 4-bit register id
+		const uint32_t x = pb.params[0];
+		const uint32_t y = pb.params[1];
 		
-		const uint32_t dA = (mode << 3) & mode;  // 0 for D or 8 for A
-		
-		uint32_t& Rx = s.regs.d[ dA + x ];
-		uint32_t& Ry = s.regs.d[      y ];
+		uint32_t& Rx = s.regs.d[ x ];
+		uint32_t& Ry = s.regs.d[ y ];
 		
 		uint32_t temp = Rx;
 		

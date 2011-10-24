@@ -201,9 +201,13 @@ namespace v68k
 	}
 	
 	
-	uint32_t fetch_EXG_opmode( processor_state& s, int size_code )
+	uint32_t fetch_EXG_first_reg( processor_state& s, int size_code )
 	{
-		return s.opcode >> 3 & 0x001f;
+		const uint32_t mode = s.opcode >> 3 & 0x001f;
+		
+		const uint32_t dA = (mode << 3) & mode;  // 0 for D or 8 for A
+		
+		return dA + (s.opcode & 0x0E00) >> 9;
 	}
 	
 	
