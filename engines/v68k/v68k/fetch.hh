@@ -38,6 +38,8 @@ namespace v68k
 	
 	uint32_t fetch_sized_immediate_data( processor_state& state, int size_code );
 	
+	uint32_t fetch_sized_immediate_signed_data( processor_state& state, int size_code );
+	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& state, int size_code );
 	
 	uint32_t fetch_sized_data_from_major_register( processor_state& state, int size_code );

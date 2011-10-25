@@ -95,6 +95,16 @@ namespace v68k
 		return fetch_instruction_word( s );
 	}
 	
+	uint32_t fetch_sized_immediate_signed_data( processor_state& s, int size_code )
+	{
+		if ( size_code == 2 )
+		{
+			return fetch_longword( s );
+		}
+		
+		return fetch_signed_word( s );
+	}
+	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s, int size_code )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
