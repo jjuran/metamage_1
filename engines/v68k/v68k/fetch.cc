@@ -107,9 +107,7 @@ namespace v68k
 				return fetch_longword( s );
 			}
 			
-			const uint16_t word = fetch_unsigned_word( s );
-			
-			return size_code != 0 ? word : word & 0x00FF;
+			return fetch_unsigned_word( s );
 		}
 		
 		const uint32_t addr = fetch_effective_address( s, size_code );
