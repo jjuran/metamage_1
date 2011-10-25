@@ -225,9 +225,13 @@ namespace v68k
 	}
 	
 	
-	uint32_t fetch_MOVEP_opmode( processor_state& s, int size_code )
+	uint32_t fetch_MOVEP_address( processor_state& s, int size_code )
 	{
-		return s.opcode >> 6 & 0x0007;
+		const uint32_t n = s.opcode & 0x7;
+		
+		const int32_t disp = fetch_signed_word( s, size_code );
+		
+		return s.regs.a[n] + disp;
 	}
 	
 	

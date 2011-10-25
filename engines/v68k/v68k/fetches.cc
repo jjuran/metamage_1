@@ -94,10 +94,8 @@ namespace v68k
 	
 	fetcher fetches_MOVEP[] =
 	{
-		&fetch_MOVEP_opmode,
 		&FETCH_MAJOR_REGISTER_NUM,
-		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_signed_word,
+		&fetch_MOVEP_address,
 		0  // NULL
 	};
 	
