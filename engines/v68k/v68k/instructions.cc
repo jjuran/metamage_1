@@ -74,7 +74,7 @@ namespace v68k
 	
 	instruction decoded_LINK_L =
 	{
-		fetches_LINK_L,
+		fetches_LINK,
 		microcode_LINK,  // same as LINK
 		long_sized,
 		not_before_68020
