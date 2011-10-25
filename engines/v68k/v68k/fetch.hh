@@ -47,6 +47,8 @@ namespace v68k
 	uint32_t fetch_data_at_0E00( processor_state& state, int size_code );
 	uint32_t fetch_data_at_0007( processor_state& state, int size_code );
 	
+	uint32_t fetch_data_at_0001( processor_state& state, int size_code );
+	
 	uint32_t fetch_MOVEP_address( processor_state& state, int size_code );
 	
 	uint32_t fetch_MOVEM_update( processor_state& state, int size_code );

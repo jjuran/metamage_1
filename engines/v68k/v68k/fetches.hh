@@ -58,6 +58,8 @@ namespace v68k
 	
 	extern fetcher fetches_TST[];
 	
+	extern fetcher fetches_MOVEC[];
+	
 	extern fetcher fetches_ADDQ[];
 	
 	extern fetcher fetches_Scc[];

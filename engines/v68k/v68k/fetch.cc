@@ -225,6 +225,12 @@ namespace v68k
 	}
 	
 	
+	uint32_t fetch_data_at_0001( processor_state& s, int size_code )
+	{
+		return s.opcode & 0x0001;
+	}
+	
+	
 	uint32_t fetch_MOVEP_address( processor_state& s, int size_code )
 	{
 		const uint32_t n = s.opcode & 0x7;

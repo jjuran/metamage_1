@@ -102,8 +102,8 @@ namespace v68k
 	
 	fetcher fetches_MOVES[] =
 	{
-		&fetch_effective_address,
 		&fetch_unsigned_word,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	
@@ -132,9 +132,9 @@ namespace v68k
 	
 	fetcher fetches_MOVEM[] =
 	{
-		&fetch_MOVEM_update,
-		&fetch_effective_address,
 		&fetch_unsigned_word,
+		&fetch_effective_address,
+		&fetch_MOVEM_update,
 		0  // NULL
 	};
 	
@@ -186,6 +186,14 @@ namespace v68k
 	{
 		&fetch_zero,
 		&fetch_sized_data_at_effective_address,
+		0  // NULL
+	};
+	
+	
+	fetcher fetches_MOVEC[] =
+	{
+		&fetch_data_at_0001,
+		&fetch_unsigned_word,
 		0  // NULL
 	};
 	
