@@ -102,12 +102,7 @@ namespace v68k
 		
 		if ( mode == 7  &&  n == 4 )
 		{
-			if ( size_code == 2 )
-			{
-				return fetch_longword( s );
-			}
-			
-			return fetch_unsigned_word( s );
+			return fetch_sized_immediate_data( s, size_code );
 		}
 		
 		const uint32_t addr = fetch_effective_address( s, size_code );
