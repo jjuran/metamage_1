@@ -152,13 +152,6 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_LINK_L[] =
-	{
-		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_longword,
-		0  // NULL
-	};
-	
 	
 	fetcher fetches_unsigned_word[] =
 	{
@@ -225,14 +218,6 @@ namespace v68k
 	{
 		&fetch_pc,
 		&fetch_sized_immediate_signed_data,
-		&fetch_cc,
-		0  // NULL
-	};
-	
-	fetcher fetches_branch_long[] =
-	{
-		&fetch_pc,
-		&fetch_longword,
 		&fetch_cc,
 		0  // NULL
 	};

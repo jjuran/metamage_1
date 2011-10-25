@@ -46,8 +46,6 @@ namespace v68k
 	
 	extern fetcher fetches_TRAP[];
 	
-	extern fetcher fetches_LINK_L[];
-	
 	extern fetcher fetches_LINK[];
 	
 	extern fetcher fetches_unsigned_word[];
@@ -66,7 +64,6 @@ namespace v68k
 	
 	extern fetcher fetches_branch_short[];
 	extern fetcher fetches_branch      [];
-	extern fetcher fetches_branch_long [];
 	
 	extern fetcher fetches_MOVEQ[];
 	
