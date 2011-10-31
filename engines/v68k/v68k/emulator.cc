@@ -147,7 +147,7 @@ namespace v68k
 		
 		while ( *fetch != 0 )  // NULL
 		{
-			*p++ = (*fetch++)( *this, pb.size - 1 );
+			*p++ = (*fetch++)( *this, pb );
 			
 			if ( condition != normal )
 			{

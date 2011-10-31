@@ -14,6 +14,7 @@ namespace v68k
 {
 	
 	struct processor_state;
+	struct op_params;
 	
 	
 	uint16_t fetch_instruction_word( processor_state& state );
@@ -26,54 +27,54 @@ namespace v68k
 	uint32_t fetch_longword( processor_state& state );
 	
 	
-	uint32_t fetch_effective_address( processor_state& state, int size_code );
+	uint32_t fetch_effective_address( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_2nd_effective_address( processor_state& state, int size_code );
+	uint32_t fetch_2nd_effective_address( processor_state& state, op_params& pb );
 	
 	
-	uint32_t fetch_zero( processor_state& state, int size_code );
+	uint32_t fetch_zero( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_ones( processor_state& state, int size_code );
+	uint32_t fetch_ones( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_pc( processor_state& state, int size_code );
+	uint32_t fetch_pc( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_unsigned_word( processor_state& state, int size_code = 0 );
+	uint32_t fetch_unsigned_word( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_signed_word( processor_state& state, int size_code = 0 );
+	uint32_t fetch_signed_word( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_sized_immediate_data( processor_state& state, int size_code );
+	uint32_t fetch_sized_immediate_data( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_sized_immediate_signed_data( processor_state& state, int size_code );
+	uint32_t fetch_sized_immediate_signed_data( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_sized_data_at_effective_address( processor_state& state, int size_code );
+	uint32_t fetch_sized_data_at_effective_address( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_sized_data_from_major_register( processor_state& state, int size_code );
+	uint32_t fetch_sized_data_from_major_register( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_bit_number_from_major_register( processor_state& state, int size_code );
+	uint32_t fetch_bit_number_from_major_register( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_A_data_from_major_register( processor_state& state, int size_code );
+	uint32_t fetch_A_data_from_major_register( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_data_at_1E00( processor_state& state, int size_code );
-	uint32_t fetch_data_at_000F( processor_state& state, int size_code );
+	uint32_t fetch_data_at_1E00( processor_state& state, op_params& pb );
+	uint32_t fetch_data_at_000F( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_data_at_0E00( processor_state& state, int size_code );
-	uint32_t fetch_data_at_0007( processor_state& state, int size_code );
+	uint32_t fetch_data_at_0E00( processor_state& state, op_params& pb );
+	uint32_t fetch_data_at_0007( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_data_at_0001( processor_state& state, int size_code );
+	uint32_t fetch_data_at_0001( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_MOVEP_address( processor_state& state, int size_code );
+	uint32_t fetch_MOVEP_address( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_MOVEM_update( processor_state& state, int size_code );
+	uint32_t fetch_MOVEM_update( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_ADDQ_data( processor_state& state, int size_code );
+	uint32_t fetch_ADDQ_data( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_cc( processor_state& state, int size_code );
+	uint32_t fetch_cc( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_signed_data_at_00FF( processor_state& state, int size_code );
+	uint32_t fetch_signed_data_at_00FF( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_EXG_first_reg( processor_state& state, int size_code );
+	uint32_t fetch_EXG_first_reg( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_bit_shift_count( processor_state& state, int size_code );
+	uint32_t fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
 }
 
