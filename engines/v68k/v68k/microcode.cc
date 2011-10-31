@@ -260,12 +260,11 @@ namespace v68k
 	
 	void microcode_LEA( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		const uint32_t n    = pb.params[1];
+		const uint32_t n = pb.target;
 		
 		uint32_t& An = s.regs.a[n];
 		
-		An = addr;
+		An = pb.address;
 	}
 	
 	void microcode_CLR( processor_state& s, op_params& pb )
