@@ -434,10 +434,10 @@ namespace v68k
 	
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
-		uint16_t mask = pb.params[0];
-		uint32_t addr = pb.params[1];
+		uint16_t mask = pb.first;
+		uint32_t addr = pb.address;
 		
-		const uint16_t update_register = pb.params[2];
+		const uint32_t update_register = pb.target;
 		
 		const bool longword_sized = pb.size == long_sized;
 		
@@ -476,10 +476,10 @@ namespace v68k
 	
 	void microcode_MOVEM_from( processor_state& s, op_params& pb )
 	{
-		uint16_t mask = pb.params[0];
-		uint32_t addr = pb.params[1];
+		uint16_t mask = pb.first;
+		uint32_t addr = pb.address;
 		
-		const uint16_t update_register = pb.params[2];
+		const uint32_t update_register = pb.target;
 		
 		const bool longword_sized = pb.size == long_sized;
 		
