@@ -1028,8 +1028,9 @@ namespace v68k
 	
 	void microcode_EXG( processor_state& s, op_params& pb )
 	{
-		const uint32_t x = pb.params[0];
-		const uint32_t y = pb.params[1];
+		// Actually, these are swapped.  For "EXG A4,D0", x == 0 and y == 12.
+		const uint32_t x = pb.first;
+		const uint32_t y = pb.second;
 		
 		uint32_t& Rx = s.regs.d[ x ];
 		uint32_t& Ry = s.regs.d[ y ];
