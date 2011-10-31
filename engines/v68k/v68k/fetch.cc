@@ -211,7 +211,7 @@ namespace v68k
 		const uint32_t mask = s.opcode & 0x0038 ?  8 - 1   // memory
 		                                        : 32 - 1;  // data register
 		
-		return data & mask;
+		return pb.first = data & mask;
 	}
 	
 	uint32_t fetch_A_data_from_major_register( processor_state& s, op_params& pb )
