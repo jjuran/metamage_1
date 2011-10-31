@@ -160,8 +160,7 @@ namespace v68k
 	
 	void microcode_MOVES( processor_state& s, op_params& pb )
 	{
-		const uint32_t more = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t more = pb.first;
 		
 		const int size = 1 << pb.size - 1;  // 1,2,4
 		
@@ -173,7 +172,7 @@ namespace v68k
 		
 		const memory_access_t access = writing ? mem_write : mem_read;
 		
-		uint8_t* p = s.mem.translate( addr, size, fc, access );
+		uint8_t* p = s.mem.translate( pb.address, size, fc, access );
 		
 		if ( p == 0 )
 		{
