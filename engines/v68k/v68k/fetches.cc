@@ -6,7 +6,6 @@
 #include "v68k/fetches.hh"
 
 // v68k
-#include "v68k/effective_address.hh"
 #include "v68k/fetch.hh"
 
 

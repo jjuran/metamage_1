@@ -19,6 +19,11 @@ namespace v68k
 	uint16_t fetch_instruction_word( processor_state& state );
 	
 	
+	uint32_t fetch_effective_address( processor_state& state, int size_code );
+	
+	uint32_t fetch_2nd_effective_address( processor_state& state, int size_code );
+	
+	
 	uint32_t fetch_zero( processor_state& state, int size_code );
 	
 	uint32_t fetch_ones( processor_state& state, int size_code );

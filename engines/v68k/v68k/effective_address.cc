@@ -131,7 +131,7 @@ namespace v68k
 		return An -= size;
 	}
 	
-	static uint32_t fetch_effective_address( processor_state& s, uint16_t mode, uint16_t n, int size )
+	uint32_t fetch_effective_address( processor_state& s, uint16_t mode, uint16_t n, int size )
 	{
 		const uint32_t An = s.regs.a[n];
 		
@@ -192,22 +192,6 @@ namespace v68k
 		
 		// Not reached
 		return 0;
-	}
-	
-	uint32_t fetch_effective_address( processor_state& s, int size_code )
-	{
-		const uint16_t mode = s.opcode >> 3 & 0x7;
-		const uint16_t n    = s.opcode >> 0 & 0x7;
-		
-		return fetch_effective_address( s, mode, n, 1 << size_code );
-	}
-	
-	uint32_t fetch_2nd_effective_address( processor_state& s, int size_code )
-	{
-		const uint16_t mode = s.opcode >> 6 & 0x7;
-		const uint16_t n    = s.opcode >> 9 & 0x7;
-		
-		return fetch_effective_address( s, mode, n, 1 << size_code );
 	}
 	
 }

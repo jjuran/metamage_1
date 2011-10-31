@@ -16,9 +16,7 @@ namespace v68k
 	struct processor_state;
 	
 	
-	uint32_t fetch_effective_address( processor_state& state, int size_code );
-	
-	uint32_t fetch_2nd_effective_address( processor_state& state, int size_code );
+	uint32_t fetch_effective_address( processor_state& state, uint16_t mode, uint16_t n, int size );
 	
 }
 
