@@ -18,6 +18,8 @@ namespace v68k
 	
 	uint16_t fetch_instruction_word( processor_state& state );
 	
+	uint32_t fetch_longword( processor_state& state );
+	
 	
 	uint32_t fetch_effective_address( processor_state& state, int size_code );
 	
@@ -33,8 +35,6 @@ namespace v68k
 	uint32_t fetch_unsigned_word( processor_state& state, int size_code = 0 );
 	
 	uint32_t fetch_signed_word( processor_state& state, int size_code = 0 );
-	
-	uint32_t fetch_longword( processor_state& state, int size_code = 0 );
 	
 	uint32_t fetch_sized_immediate_data( processor_state& state, int size_code );
 	
