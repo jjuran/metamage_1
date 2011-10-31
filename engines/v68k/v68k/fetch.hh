@@ -18,6 +18,11 @@ namespace v68k
 	
 	uint16_t fetch_instruction_word( processor_state& state );
 	
+	inline int16_t fetch_instruction_word_signed( processor_state& state )
+	{
+		return fetch_instruction_word( state );
+	}
+	
 	uint32_t fetch_longword( processor_state& state );
 	
 	
