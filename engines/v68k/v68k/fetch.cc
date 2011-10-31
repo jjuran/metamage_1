@@ -265,7 +265,7 @@ namespace v68k
 		
 		const int32_t disp = fetch_instruction_word_signed( s );
 		
-		return s.regs.a[n] + disp;
+		return pb.address = s.regs.a[n] + disp;
 	}
 	
 	
