@@ -345,8 +345,6 @@ namespace v68k
 	
 	void microcode_PEA( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
 		uint32_t& sp = s.regs.a[7];
 		
 		if ( s.badly_aligned_data( sp ) )
@@ -358,7 +356,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, addr, s.data_space() ) )
+		if ( !s.mem.put_long( sp, pb.address, s.data_space() ) )
 		{
 			s.bus_error();
 		}
@@ -854,8 +852,6 @@ namespace v68k
 	
 	void microcode_JSR( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
 		uint32_t& sp = s.regs.a[7];
 		
 		if ( s.badly_aligned_data( sp ) )
@@ -874,14 +870,12 @@ namespace v68k
 			return;
 		}
 		
-		s.regs.pc = addr;
+		s.regs.pc = pb.address;
 	}
 	
 	void microcode_JMP( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
-		s.regs.pc = addr;
+		s.regs.pc = pb.address;
 	}
 	
 	#pragma mark -
