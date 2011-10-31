@@ -39,29 +39,29 @@ namespace v68k
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] ^= 1 << pb.params[0];
+		pb.params[1] = (1 << pb.first) ^ pb.second;
 	}
 	
 	void microcode_BCLR( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] &= ~(1 << pb.params[0]);
+		pb.params[1] = ~(1 << pb.first) & pb.second;
 	}
 	
 	void microcode_BSET( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] |= 1 << pb.params[0];
+		pb.params[1] = (1 << pb.first) | pb.second;
 	}
 	
 	void microcode_BTST( processor_state& s, op_params& pb )
 	{
-		const uint32_t bit = pb.params[0];
+		const uint32_t bit = pb.first;
 		
 		s.regs.nzvc &= ~0x4;
-		s.regs.nzvc |= (~pb.params[1] >> bit & 0x1) << 2;
+		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
