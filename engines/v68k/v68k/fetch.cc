@@ -34,12 +34,19 @@ namespace v68k
 	}
 	
 	
+	static uint32_t set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
+	{
+		const uint32_t ea = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		
+		return (mode <= 1 ? pb.target : pb.address) = ea;
+	}
+	
 	uint32_t fetch_effective_address( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
 		
-		return fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
 	uint32_t fetch_2nd_effective_address( processor_state& s, op_params& pb )
@@ -47,7 +54,7 @@ namespace v68k
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
 		
-		return fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
 	
@@ -116,7 +123,7 @@ namespace v68k
 			return fetch_sized_immediate_data( s, pb );
 		}
 		
-		const uint32_t addr = fetch_effective_address( s, pb );
+		const uint32_t addr = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
 		
 		if ( (mode & 0x6) == 0 )
 		{
