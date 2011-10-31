@@ -66,12 +66,11 @@ namespace v68k
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t x = pb.target;
 		
 		const uint32_t Dx = s.regs.d[ x ];
 		
-		uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_write );
+		uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_write );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -98,12 +97,11 @@ namespace v68k
 	
 	void microcode_MOVEP_from( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t x = pb.target;
 		
 		uint32_t& Dx = s.regs.d[ x ];
 		
-		const uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_read );
+		const uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_read );
 		
 		if ( p == 0 )  // NULL
 		{
