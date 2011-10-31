@@ -231,7 +231,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_000F( processor_state& s, op_params& pb )
 	{
-		return s.opcode & 0x000F;
+		return pb.first = s.opcode & 0x000F;
 	}
 	
 	
@@ -289,7 +289,7 @@ namespace v68k
 	
 	uint32_t fetch_signed_data_at_00FF( processor_state& s, op_params& pb )
 	{
-		return int32_t( int8_t( s.opcode & 0x00ff ) );
+		return pb.first = int32_t( int8_t( s.opcode & 0x00ff ) );
 	}
 	
 	
