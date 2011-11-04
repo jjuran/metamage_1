@@ -141,6 +141,9 @@ namespace v68k
 			pb.size = op_size_t( ((opcode & size_mask) >> bit_offset) + index_of_zero );
 		}
 		
+		pb.target  = uint32_t( -1 );
+		pb.address = regs.pc;
+		
 		uint32_t* params = pb.params;
 		
 		uint32_t* p = params;
