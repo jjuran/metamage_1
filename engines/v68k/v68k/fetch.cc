@@ -242,7 +242,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_0007( processor_state& s, op_params& pb )
 	{
-		return s.opcode & 0x0007;
+		return pb.target = s.opcode & 0x0007;
 	}
 	
 	
