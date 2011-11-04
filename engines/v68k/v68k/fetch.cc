@@ -327,5 +327,10 @@ namespace v68k
 		return pb.second = pb.first;
 	}
 	
+	uint32_t add_first_to_address( processor_state& s, op_params& pb )
+	{
+		return pb.address += int32_t( pb.first );
+	}
+	
 }
 

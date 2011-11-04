@@ -77,6 +77,8 @@ namespace v68k
 	
 	uint32_t assign_first_to_second( processor_state& state, op_params& pb );
 	
+	uint32_t add_first_to_address( processor_state& state, op_params& pb );
+	
 }
 
 #endif

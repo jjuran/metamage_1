@@ -202,6 +202,7 @@ namespace v68k
 	{
 		&fetch_signed_data_at_00FF,
 		&fetch_cc,
+		&add_first_to_address,
 		0  // NULL
 	};
 	
@@ -209,6 +210,7 @@ namespace v68k
 	{
 		&fetch_sized_immediate_signed_data,
 		&fetch_cc,
+		&add_first_to_address,
 		0  // NULL
 	};
 	
