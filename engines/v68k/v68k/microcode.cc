@@ -327,7 +327,7 @@ namespace v68k
 	
 	void microcode_SWAP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		const uint32_t data = s.regs.d[n];
 		
@@ -367,7 +367,7 @@ namespace v68k
 	
 	void microcode_EXT_W( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -385,7 +385,7 @@ namespace v68k
 	
 	void microcode_EXT_L( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -403,7 +403,7 @@ namespace v68k
 	
 	void microcode_EXTB( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -560,7 +560,7 @@ namespace v68k
 	
 	void microcode_UNLK( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& An = s.regs.a[n];
 		uint32_t& sp = s.regs.a[7];
@@ -586,7 +586,7 @@ namespace v68k
 	
 	void microcode_MOVE_to_USP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
 		s.regs.alt_sp = s.regs.a[n];
@@ -594,7 +594,7 @@ namespace v68k
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
 		s.regs.a[n] = s.regs.alt_sp;
