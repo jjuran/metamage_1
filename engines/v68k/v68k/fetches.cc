@@ -200,7 +200,6 @@ namespace v68k
 	
 	fetcher fetches_branch_short[] =
 	{
-		&fetch_pc,
 		&fetch_signed_data_at_00FF,
 		&fetch_cc,
 		0  // NULL
@@ -208,7 +207,6 @@ namespace v68k
 	
 	fetcher fetches_branch[] =
 	{
-		&fetch_pc,
 		&fetch_sized_immediate_signed_data,
 		&fetch_cc,
 		0  // NULL

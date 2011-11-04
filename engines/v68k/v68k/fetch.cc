@@ -68,11 +68,6 @@ namespace v68k
 		return pb.first = 0xFFFFFFFF;
 	}
 	
-	uint32_t fetch_pc( processor_state& s, op_params& pb )
-	{
-		return s.regs.pc;
-	}
-	
 	uint32_t fetch_unsigned_word( processor_state& s, op_params& pb )
 	{
 		return pb.first = fetch_instruction_word( s );

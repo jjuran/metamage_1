@@ -36,8 +36,6 @@ namespace v68k
 	
 	uint32_t fetch_ones( processor_state& state, op_params& pb );
 	
-	uint32_t fetch_pc( processor_state& state, op_params& pb );
-	
 	uint32_t fetch_unsigned_word( processor_state& state, op_params& pb );
 	
 	uint32_t fetch_signed_word( processor_state& state, op_params& pb );
