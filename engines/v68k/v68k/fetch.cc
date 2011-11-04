@@ -283,7 +283,7 @@ namespace v68k
 	
 	uint32_t fetch_cc( processor_state& s, op_params& pb )
 	{
-		return s.opcode >> 8 & 0x0F;
+		return pb.second = s.opcode >> 8 & 0x0F;
 	}
 	
 	
