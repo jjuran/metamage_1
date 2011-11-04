@@ -268,10 +268,10 @@ namespace v68k
 		
 		if ( mode == 3  ||  mode == 4 )
 		{
-			return 0x8 | s.opcode & 0x7;  // register id for An
+			return pb.target = 0x8 | s.opcode & 0x7;  // register id for An
 		}
 		
-		return 0;
+		return pb.target = 0;
 	}
 	
 	
