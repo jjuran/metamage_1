@@ -900,16 +900,14 @@ namespace v68k
 	
 	void microcode_BRA( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const int32_t disp = pb.first;
 		
-		s.regs.pc = pc + disp;
+		s.regs.pc = pb.address + disp;
 	}
 	
 	void microcode_BSR( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const int32_t disp = pb.first;
 		
 		uint32_t& sp = s.regs.a[7];
 		
@@ -929,18 +927,17 @@ namespace v68k
 			return;
 		}
 		
-		s.regs.pc = pc + disp;
+		s.regs.pc = pb.address + disp;
 	}
 	
 	void microcode_Bcc( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
-		const uint32_t cc   = pb.params[2];
+		const int32_t  disp = pb.first;
+		const uint32_t cc   = pb.second;
 		
 		if ( test_conditional( cc, s.regs.nzvc ) )
 		{
-			s.regs.pc = pc + disp;
+			s.regs.pc = pb.address + disp;
 		}
 	}
 	
