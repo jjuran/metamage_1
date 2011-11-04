@@ -48,13 +48,6 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_math[] =
-	{
-		&fetch_data_at_0E00,  // register number or data
-		&fetch_effective_address,
-		0  // NULL
-	};
-	
 	fetcher fetches_EOR[] =
 	{
 		&fetch_sized_data_from_major_register,

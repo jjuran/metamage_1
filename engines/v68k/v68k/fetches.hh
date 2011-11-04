@@ -20,7 +20,6 @@ namespace v68k
 	extern fetcher fetches_immediate[];
 	
 	extern fetcher fetches_math_to_Dn[];
-	extern fetcher fetches_math      [];
 	
 	extern fetcher fetches_EOR[];
 	
