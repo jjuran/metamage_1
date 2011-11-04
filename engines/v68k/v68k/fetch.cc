@@ -226,7 +226,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_1E00( processor_state& s, op_params& pb )
 	{
-		return s.opcode >> 9 & 0x000F;
+		return pb.target = s.opcode >> 9 & 0x000F;
 	}
 	
 	uint32_t fetch_data_at_000F( processor_state& s, op_params& pb )
@@ -237,7 +237,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_0E00( processor_state& s, op_params& pb )
 	{
-		return s.opcode >> 9 & 0x0007;
+		return pb.target = s.opcode >> 9 & 0x0007;
 	}
 	
 	uint32_t fetch_data_at_0007( processor_state& s, op_params& pb )
