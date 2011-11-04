@@ -531,8 +531,8 @@ namespace v68k
 	
 	void microcode_LINK( processor_state& s, op_params& pb )
 	{
-		const uint32_t n    = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const uint32_t n    = pb.target;
+		const int32_t  disp = pb.first;
 		
 		uint32_t& An = s.regs.a[n];
 		uint32_t& sp = s.regs.a[7];
