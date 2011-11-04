@@ -337,7 +337,7 @@ namespace v68k
 	
 	void microcode_BKPT( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];  // 3-bit breakpoint vector
+		const uint32_t data = pb.target;  // 3-bit breakpoint vector
 		
 		s.regs.pc -= 2;
 		
