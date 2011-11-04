@@ -890,7 +890,7 @@ namespace v68k
 	
 	void microcode_Scc( processor_state& s, op_params& pb )
 	{
-		const uint16_t cc = pb.params[0];
+		const uint16_t cc = pb.second;
 		
 		pb.params[1] = int32_t() - test_conditional( cc, s.regs.nzvc );
 	}
