@@ -90,8 +90,8 @@ namespace v68k
 			{
 				storage.fetch = fetches_effective_address;
 				
-				storage.code = opcode & 0x0040 ? microcode_JMP
-				                               : microcode_JSR;
+				storage.code = opcode & 0x0040 ? microcode_BRA
+				                               : microcode_BSR;
 				
 				return &storage;
 			}

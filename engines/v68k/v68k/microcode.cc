@@ -850,34 +850,6 @@ namespace v68k
 		s.take_exception_format_0( 4 * sizeof (uint32_t) );  // Illegal Instruction
 	}
 	
-	void microcode_JSR( processor_state& s, op_params& pb )
-	{
-		uint32_t& sp = s.regs.a[7];
-		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			s.address_error();
-			
-			return;
-		}
-		
-		sp -= 4;
-		
-		if ( !s.mem.put_long( sp, s.regs.pc, s.data_space() ) )
-		{
-			s.bus_error();
-			
-			return;
-		}
-		
-		s.regs.pc = pb.address;
-	}
-	
-	void microcode_JMP( processor_state& s, op_params& pb )
-	{
-		s.regs.pc = pb.address;
-	}
-	
 	#pragma mark -
 	#pragma mark Line 5
 	

@@ -105,11 +105,7 @@ namespace v68k
 	
 	void microcode_RTR( processor_state& state, op_params& pb );
 	
-	void microcode_JSR( processor_state& state, op_params& pb );
-	
 	void microcode_MOVEC( processor_state& state, op_params& pb );
-	
-	void microcode_JMP( processor_state& state, op_params& pb );
 	
 	#pragma mark -
 	#pragma mark Line 5
