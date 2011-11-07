@@ -807,8 +807,8 @@ namespace v68k
 	
 	void microcode_MOVEC( processor_state& s, op_params& pb )
 	{
-		const uint32_t writing   = pb.params[0];
-		const uint32_t registers = pb.params[1];
+		const uint32_t registers = pb.first;
+		const uint32_t writing   = pb.second;
 		
 		const uint16_t general_id = registers >> 12;
 		const uint16_t control_id = registers & 0x0FFF;
