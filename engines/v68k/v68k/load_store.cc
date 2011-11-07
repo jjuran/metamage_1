@@ -85,8 +85,12 @@ namespace v68k
 		return ok;
 	}
 	
-	bool store( processor_state& s, uint32_t loc, uint32_t data, int flags )
+	bool store( processor_state& s, const op_params& pb, int flags )
 	{
+		const uint32_t loc = int32_t( pb.target ) >= 0 ? pb.target : pb.address;
+		
+		uint32_t data = pb.result;
+		
 		const int storage_flags = flags & stores_data_mask;
 		
 		if ( storage_flags == 0 )

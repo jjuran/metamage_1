@@ -160,8 +160,6 @@ namespace v68k
 		
 		// load/store prep
 		
-		const uint32_t saved_param1 = params[1];
-		
 		const bool stores_word_in_memory = (decoded->flags & (stores_word_data|in_register)) == stores_word_data;
 		
 		if ( stores_word_in_memory  &&  badly_aligned_data( pb.address ) )
@@ -181,7 +179,7 @@ namespace v68k
 		
 		// store
 		
-		if ( !store( *this, saved_param1, pb.result, decoded->flags ) )
+		if ( !store( *this, pb, decoded->flags ) )
 		{
 			return bus_error();
 		}
