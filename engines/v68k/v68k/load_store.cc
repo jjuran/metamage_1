@@ -21,8 +21,6 @@ namespace v68k
 	
 	bool load( const processor_state& s, op_params& pb, int flags )
 	{
-		const int storage_flags = flags & stores_data_mask;
-		
 		if ( !(flags & loads_and) )
 		{
 			return true;
@@ -49,23 +47,23 @@ namespace v68k
 			uint8_t   byte;
 			uint16_t  word;
 			
-			switch ( storage_flags )
+			switch ( pb.size )
 			{
-				case stores_byte_data:
+				case byte_sized:
 					ok = s.mem.get_byte( addr, byte, s.data_space() );
 					
 					pb.second = byte;
 					
 					break;
 				
-				case stores_word_data:
+				case word_sized:
 					ok = s.mem.get_word( addr, word, s.data_space() );
 					
 					pb.second = word;
 					
 					break;
 				
-				case stores_long_data:
+				case long_sized:
 					ok = s.mem.get_long( addr, pb.second, s.data_space() );
 					
 					break;
@@ -75,13 +73,13 @@ namespace v68k
 			}
 		}
 		
-		switch ( storage_flags )
+		switch ( pb.size )
 		{
-			case stores_byte_data:
+			case byte_sized:
 				pb.second = int32_t( int8_t( pb.second ) );
 				break;
 			
-			case stores_word_data:
+			case word_sized:
 				pb.second = int32_t( int16_t( pb.second ) );
 				break;
 			
