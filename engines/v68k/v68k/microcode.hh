@@ -54,6 +54,8 @@ namespace v68k
 	
 	void microcode_LEA( processor_state& state, op_params& pb );
 	
+	void microcode_CLR( processor_state& state, op_params& pb );
+	
 	void microcode_NEG( processor_state& state, op_params& pb );
 	
 	void microcode_MOVE_from_CCR( processor_state& state, op_params& pb );
