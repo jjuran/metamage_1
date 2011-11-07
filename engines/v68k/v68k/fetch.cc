@@ -220,7 +220,7 @@ namespace v68k
 		
 		const uint32_t data = s.regs.a[n];
 		
-		return s.regs.a[n];
+		return pb.second = s.regs.a[n];
 	}
 	
 	
