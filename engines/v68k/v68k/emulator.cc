@@ -144,13 +144,9 @@ namespace v68k
 		pb.target  = uint32_t( -1 );
 		pb.address = regs.pc;
 		
-		uint32_t* params = pb.params;
-		
-		uint32_t* p = params;
-		
 		while ( *fetch != 0 )  // NULL
 		{
-			*p++ = (*fetch++)( *this, pb );
+			(*fetch++)( *this, pb );
 			
 			if ( condition != normal )
 			{

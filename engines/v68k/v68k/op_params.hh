@@ -13,8 +13,6 @@
 namespace v68k
 {
 	
-	const int max_params = 3;
-	
 	enum op_size_t
 	{
 		byte_sized = 1,
@@ -42,8 +40,6 @@ namespace v68k
 		uint32_t first;
 		uint32_t second;
 		uint32_t result;
-		
-		uint32_t params[ max_params ];
 	};
 	
 }
