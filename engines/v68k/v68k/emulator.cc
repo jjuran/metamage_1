@@ -164,7 +164,7 @@ namespace v68k
 		
 		const bool stores_word_in_memory = (decoded->flags & (stores_word_data|in_register)) == stores_word_data;
 		
-		if ( stores_word_in_memory  &&  badly_aligned_data( params[1] ) )
+		if ( stores_word_in_memory  &&  badly_aligned_data( pb.address ) )
 		{
 			return address_error();
 		}
