@@ -186,7 +186,7 @@ namespace v68k
 		
 		// store
 		
-		if ( !store( *this, saved_param1, params[1], decoded->flags ) )
+		if ( !store( *this, saved_param1, pb.result, decoded->flags ) )
 		{
 			return bus_error();
 		}

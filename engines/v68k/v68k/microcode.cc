@@ -39,21 +39,21 @@ namespace v68k
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] = (1 << pb.first) ^ pb.second;
+		pb.result = (1 << pb.first) ^ pb.second;
 	}
 	
 	void microcode_BCLR( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] = ~(1 << pb.first) & pb.second;
+		pb.result = ~(1 << pb.first) & pb.second;
 	}
 	
 	void microcode_BSET( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] = (1 << pb.first) | pb.second;
+		pb.result = (1 << pb.first) | pb.second;
 	}
 	
 	void microcode_BTST( processor_state& s, op_params& pb )
@@ -62,6 +62,8 @@ namespace v68k
 		
 		s.regs.nzvc &= ~0x4;
 		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
+		
+		pb.result = pb.second;  // FIXME:  Don't require store to load
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
@@ -250,7 +252,7 @@ namespace v68k
 	
 	void microcode_MOVE( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = pb.first;
+		pb.result = pb.first;
 	}
 	
 	#pragma mark -
@@ -300,12 +302,12 @@ namespace v68k
 	
 	void microcode_MOVE_from_CCR( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = s.get_CCR();
+		pb.result = s.get_CCR();
 	}
 	
 	void microcode_MOVE_from_SR( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = s.get_SR();
+		pb.result = s.get_SR();
 	}
 	
 	void microcode_MOVE_to_CCR( processor_state& s, op_params& pb )
@@ -883,7 +885,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		pb.params[1] = int32_t() - test_conditional( cc, s.regs.nzvc );
+		pb.result = int32_t() - test_conditional( cc, s.regs.nzvc );
 	}
 	
 	#pragma mark -
@@ -937,7 +939,7 @@ namespace v68k
 	
 	void microcode_OR( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = pb.first | pb.second;
+		pb.result = pb.first | pb.second;
 	}
 	
 	#pragma mark -
@@ -966,7 +968,7 @@ namespace v68k
 		
 		const int32_t diff = subtract( s, a, b );
 		
-		pb.params[1] = diff;
+		pb.result = diff;
 		
 		s.regs.x = s.regs.nzvc & 0x1;
 	}
@@ -978,7 +980,7 @@ namespace v68k
 		
 		const int32_t diff = b - a;
 		
-		pb.params[1] = diff;
+		pb.result = diff;
 	}
 	
 	#pragma mark -
@@ -994,7 +996,7 @@ namespace v68k
 	
 	void microcode_EOR( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = pb.first ^ pb.second;
+		pb.result = pb.first ^ pb.second;
 	}
 	
 	#pragma mark -
@@ -1002,7 +1004,7 @@ namespace v68k
 	
 	void microcode_AND( processor_state& s, op_params& pb )
 	{
-		pb.params[1] = pb.first & pb.second;
+		pb.result = pb.first & pb.second;
 	}
 	
 	void microcode_EXG( processor_state& s, op_params& pb )
@@ -1056,7 +1058,7 @@ namespace v68k
 		
 		s.regs.x = s.regs.nzvc & 0x1;
 		
-		pb.params[1] = sum;
+		pb.result = sum;
 	}
 	
 	void microcode_ADDA( processor_state& s, op_params& pb )
@@ -1066,7 +1068,7 @@ namespace v68k
 		
 		const int32_t sum = a + b;
 		
-		pb.params[1] = sum;
+		pb.result = sum;
 	}
 	
 	void microcode_ASR( processor_state& s, op_params& pb )
@@ -1106,7 +1108,7 @@ namespace v68k
 		            | V( 0 )
 		            | C( last_bit );
 		
-		pb.params[1] = data;
+		pb.result = data;
 	}
 	
 	void microcode_ASL( processor_state& s, op_params& pb )
@@ -1150,7 +1152,7 @@ namespace v68k
 		            | V( overflow )
 		            | C( last_bit );
 		
-		pb.params[1] = data;
+		pb.result = data;
 	}
 	
 	void microcode_LSR( processor_state& s, op_params& pb )
@@ -1192,7 +1194,7 @@ namespace v68k
 		            | V( 0 )
 		            | C( last_bit );
 		
-		pb.params[1] = data;
+		pb.result = data;
 	}
 	
 	void microcode_LSL( processor_state& s, op_params& pb )
@@ -1234,7 +1236,7 @@ namespace v68k
 		            | V( 0 )
 		            | C( last_bit );
 		
-		pb.params[1] = data;
+		pb.result = data;
 	}
 	
 }
