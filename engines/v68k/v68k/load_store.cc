@@ -19,8 +19,10 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	bool load( const processor_state& s, uint32_t& param, int flags )
+	bool load( const processor_state& s, op_params& pb, int flags )
 	{
+		uint32_t& param = pb.params[1];
+		
 		const int storage_flags = flags & stores_data_mask;
 		
 		if ( !(flags & loads_and) )

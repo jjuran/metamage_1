@@ -14,9 +14,10 @@ namespace v68k
 {
 	
 	struct processor_state;
+	struct op_params;
 	
 	
-	bool load( const processor_state& s, uint32_t& param, int flags );
+	bool load( const processor_state& s, op_params& pb, int flags );
 	
 	bool store( processor_state& s, uint32_t loc, uint32_t data, int flags );
 	
