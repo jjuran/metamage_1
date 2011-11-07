@@ -21,8 +21,6 @@ namespace v68k
 	
 	bool load( const processor_state& s, op_params& pb, int flags )
 	{
-		uint32_t& param = pb.params[1];
-		
 		const int storage_flags = flags & stores_data_mask;
 		
 		if ( !(flags & loads_and) )
@@ -38,7 +36,7 @@ namespace v68k
 		
 		if ( target >= 0 )
 		{
-			param = s.regs.d[ target ];
+			pb.second = s.regs.d[ target ];
 		}
 		else
 		{
@@ -52,19 +50,19 @@ namespace v68k
 				case stores_byte_data:
 					ok = s.mem.get_byte( addr, byte, s.data_space() );
 					
-					param = byte;
+					pb.second = byte;
 					
 					break;
 				
 				case stores_word_data:
 					ok = s.mem.get_word( addr, word, s.data_space() );
 					
-					param = word;
+					pb.second = word;
 					
 					break;
 				
 				case stores_long_data:
-					ok = s.mem.get_long( addr, param, s.data_space() );
+					ok = s.mem.get_long( addr, pb.second, s.data_space() );
 					
 					break;
 				
@@ -76,11 +74,11 @@ namespace v68k
 		switch ( storage_flags & -!is_address_register )
 		{
 			case stores_byte_data:
-				param = int32_t( int8_t( param ) );
+				pb.second = int32_t( int8_t( pb.second ) );
 				break;
 			
 			case stores_word_data:
-				param = int32_t( int16_t( param ) );
+				pb.second = int32_t( int16_t( pb.second ) );
 				break;
 			
 			default:
