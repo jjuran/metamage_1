@@ -42,27 +42,29 @@ namespace v68k
 		}
 		else
 		{
+			const uint32_t addr = pb.address;
+			
 			uint8_t   byte;
 			uint16_t  word;
 			
 			switch ( storage_flags )
 			{
 				case stores_byte_data:
-					ok = s.mem.get_byte( param, byte, s.data_space() );
+					ok = s.mem.get_byte( addr, byte, s.data_space() );
 					
 					param = byte;
 					
 					break;
 				
 				case stores_word_data:
-					ok = s.mem.get_word( param, word, s.data_space() );
+					ok = s.mem.get_word( addr, word, s.data_space() );
 					
 					param = word;
 					
 					break;
 				
 				case stores_long_data:
-					ok = s.mem.get_long( param, param, s.data_space() );
+					ok = s.mem.get_long( addr, param, s.data_space() );
 					
 					break;
 				
