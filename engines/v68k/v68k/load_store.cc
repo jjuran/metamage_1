@@ -19,13 +19,8 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	bool load( const processor_state& s, op_params& pb, int flags )
+	bool load( const processor_state& s, op_params& pb )
 	{
-		if ( !(flags & loads_and) )
-		{
-			return true;
-		}
-		
 		bool ok = true;
 		
 		const int32_t target = pb.target;

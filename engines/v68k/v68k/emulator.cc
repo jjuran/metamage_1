@@ -171,7 +171,7 @@ namespace v68k
 		
 		// load
 		
-		if ( !load( *this, pb, decoded->flags ) )
+		if ( (decoded->flags & loads_and)  &&  !load( *this, pb ) )
 		{
 			return bus_error();
 		}
