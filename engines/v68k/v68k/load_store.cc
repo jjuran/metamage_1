@@ -109,17 +109,17 @@ namespace v68k
 		
 		uint32_t data_mask;
 		
-		switch ( storage_flags )
+		switch ( pb.size )
 		{
-			case stores_byte_data:
+			case byte_sized:
 				data_mask = 0x000000FF;
 				break;
 			
-			case stores_word_data:
+			case word_sized:
 				data_mask = 0x0000FFFF;
 				break;
 			
-			case stores_long_data:
+			case long_sized:
 				data_mask = 0xFFFFFFFF;
 				break;
 			
@@ -153,11 +153,11 @@ namespace v68k
 		
 		const uint32_t addr = pb.address;
 		
-		switch ( storage_flags )
+		switch ( pb.size )
 		{
-			case stores_byte_data:  return s.mem.put_byte( addr, data, s.data_space() );
-			case stores_word_data:  return s.mem.put_word( addr, data, s.data_space() );
-			case stores_long_data:  return s.mem.put_long( addr, data, s.data_space() );
+			case byte_sized:  return s.mem.put_byte( addr, data, s.data_space() );
+			case word_sized:  return s.mem.put_word( addr, data, s.data_space() );
+			case long_sized:  return s.mem.put_long( addr, data, s.data_space() );
 			
 			default:
 				break;
