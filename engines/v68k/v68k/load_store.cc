@@ -87,8 +87,6 @@ namespace v68k
 	
 	bool store( processor_state& s, const op_params& pb, int flags )
 	{
-		const uint32_t loc = int32_t( pb.target ) >= 0 ? pb.target : pb.address;
-		
 		uint32_t data = pb.result;
 		
 		const int storage_flags = flags & stores_data_mask;
@@ -98,11 +96,13 @@ namespace v68k
 			return true;
 		}
 		
-		if ( flags & in_register  &&  loc > 7 )
+		const int32_t target = pb.target;
+		
+		if ( target > 7 )
 		{
 			// Address register:  don't touch CCR
 			
-			s.regs.d[ loc ] = data;
+			s.regs.d[ target ] = data;
 			
 			return true;
 		}
@@ -141,23 +141,23 @@ namespace v68k
 			            | C( 0 );
 		}
 		
-		if ( flags & in_register )
+		if ( target >= 0 )
 		{
-			// loc is a register id
-			
-			s.regs.d[ loc ] &= ~data_mask;
-			s.regs.d[ loc ] |=  data_mask & data;
+			s.regs.d[ target ] &= ~data_mask;
+			s.regs.d[ target ] |=  data_mask & data;
 			
 			return true;
 		}
 		
-		// loc is an address
+		// destination is a memory address
+		
+		const uint32_t addr = pb.address;
 		
 		switch ( storage_flags )
 		{
-			case stores_byte_data:  return s.mem.put_byte( loc, data, s.data_space() );
-			case stores_word_data:  return s.mem.put_word( loc, data, s.data_space() );
-			case stores_long_data:  return s.mem.put_long( loc, data, s.data_space() );
+			case stores_byte_data:  return s.mem.put_byte( addr, data, s.data_space() );
+			case stores_word_data:  return s.mem.put_word( addr, data, s.data_space() );
+			case stores_long_data:  return s.mem.put_long( addr, data, s.data_space() );
 			
 			default:
 				break;
