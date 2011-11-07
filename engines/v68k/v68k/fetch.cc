@@ -53,12 +53,12 @@ namespace v68k
 	
 	uint32_t fetch_zero( processor_state& s, op_params& pb )
 	{
-		return 0;
+		return pb.first = 0;
 	}
 	
 	uint32_t fetch_ones( processor_state& s, op_params& pb )
 	{
-		return 0xFFFFFFFF;
+		return pb.first = 0xFFFFFFFF;
 	}
 	
 	uint32_t fetch_pc( processor_state& s, op_params& pb )
