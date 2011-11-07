@@ -313,8 +313,10 @@ namespace v68k
 			branch -- so we do it by hand.
 		*/
 		
-		return s.opcode & 0x0020 ? s.regs.d[n] % 64
-		                         : (n - 1 & 8 - 1) + 1;
+		pb.first = s.opcode & 0x0020 ? s.regs.d[n] % 64
+		                             : (n - 1 & 8 - 1) + 1;
+		
+		return pb.first;
 	}
 	
 }
