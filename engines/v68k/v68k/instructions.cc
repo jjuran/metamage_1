@@ -24,14 +24,6 @@ namespace v68k
 		privileged | not_before_68010
 	};
 	
-	instruction decoded_MOVE_B_to_Dn =
-	{
-		fetches_MOVE,
-		microcode_MOVE,
-		byte_sized,
-		stores_byte_data
-	};
-	
 	instruction decoded_MOVE_B =
 	{
 		fetches_MOVE,
@@ -40,28 +32,12 @@ namespace v68k
 		stores_byte_data
 	};
 	
-	instruction decoded_MOVE_L_to_Rn =
-	{
-		fetches_MOVE,
-		microcode_MOVE,
-		long_sized,
-		stores_long_data
-	};
-	
 	instruction decoded_MOVE_L =
 	{
 		fetches_MOVE,
 		microcode_MOVE,
 		long_sized,
 		stores_long_data
-	};
-	
-	instruction decoded_MOVE_W_to_Rn =
-	{
-		fetches_MOVE,
-		microcode_MOVE,
-		word_sized,
-		stores_word_data
 	};
 	
 	instruction decoded_MOVE_W =
