@@ -1003,8 +1003,8 @@ namespace v68k
 	
 	void microcode_CMP( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[2];
-		const int32_t b = pb.params[0];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		(void) subtract( s, a, b );
 	}
