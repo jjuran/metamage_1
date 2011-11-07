@@ -277,7 +277,7 @@ namespace v68k
 	
 	uint32_t fetch_ADDQ_data( processor_state& s, op_params& pb )
 	{
-		return ((s.opcode >> 9) - 1 & 0x0007) + 1;
+		return pb.first = ((s.opcode >> 9) - 1 & 0x0007) + 1;
 	}
 	
 	
