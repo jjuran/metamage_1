@@ -156,10 +156,9 @@ namespace v68k
 		
 		// load/store prep
 		
-		const bool stores_word_in_memory = pb.size != byte_sized  &&  (decoded->flags & stores_data);
-		
-		if ( stores_word_in_memory  &&  badly_aligned_data( pb.address ) )
+		if ( pb.size > byte_sized  &&  badly_aligned_data( pb.address ) )
 		{
+			// pb.address is left set to the PC (which is always even) if unused.
 			return address_error();
 		}
 		
