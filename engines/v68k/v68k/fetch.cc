@@ -248,7 +248,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_0001( processor_state& s, op_params& pb )
 	{
-		return s.opcode & 0x0001;
+		return pb.second = s.opcode & 0x0001;
 	}
 	
 	
