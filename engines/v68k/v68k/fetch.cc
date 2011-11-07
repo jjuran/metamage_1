@@ -126,9 +126,9 @@ namespace v68k
 			
 			switch ( pb.size )
 			{
-				case byte_sized:  return int32_t( int8_t ( data ) );
-				case word_sized:  return int32_t( int16_t( data ) );
-				case long_sized:  return                   data;
+				case byte_sized:  return pb.first = int32_t( int8_t ( data ) );
+				case word_sized:  return pb.first = int32_t( int16_t( data ) );
+				case long_sized:  return pb.first =                   data;
 			}
 		}
 		
@@ -176,7 +176,7 @@ namespace v68k
 			return s.bus_error();
 		}
 		
-		return result;
+		return pb.first = result;
 	}
 	
 	uint32_t fetch_sized_data_from_major_register( processor_state& s, op_params& pb )
