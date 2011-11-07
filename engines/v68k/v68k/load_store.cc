@@ -32,11 +32,15 @@ namespace v68k
 		
 		const int32_t target = pb.target;
 		
-		const bool is_address_register = target > 7;
-		
 		if ( target >= 0 )
 		{
 			pb.second = s.regs.d[ target ];
+			
+			if ( target > 7 )
+			{
+				// address register, don't sign-extend
+				return true;
+			}
 		}
 		else
 		{
@@ -71,7 +75,7 @@ namespace v68k
 			}
 		}
 		
-		switch ( storage_flags & -!is_address_register )
+		switch ( storage_flags )
 		{
 			case stores_byte_data:
 				pb.second = int32_t( int8_t( pb.second ) );
