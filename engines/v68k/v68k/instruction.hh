@@ -31,7 +31,6 @@ namespace v68k
 		stores_word_data = 0x0200,
 		stores_long_data = 0x0300,
 		stores_data_mask = 0x0300,
-		in_register      = 0x0400,
 		and_sets_CCR     = 0x0800
 	};
 	

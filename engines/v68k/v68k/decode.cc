@@ -95,13 +95,12 @@ namespace v68k
 			const int j = (opcode & 0x0100) >> 8;
 			
 			const instruction_flags_t stores_data = to_data ? stores_long_data : stores_byte_data;
-			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
 			
 			storage.size = to_data ? long_sized : byte_sized;
 			
 			storage.code  = bit_op_microcodes[ i ];
 			storage.fetch = bit_op_fetchers  [ j ];
-			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -144,14 +143,13 @@ namespace v68k
 			}
 			
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * to_data );
 			
 			storage.size = op_size_in_00C0;
 			
 			storage.code = immediate_microcodes[ selector ];
 			
 			storage.fetch = fetches_immediate;
-			storage.flags = loads_and | stores_data | destination;
+			storage.flags = loads_and | stores_data;
 			
 			if ( selector & 2 )
 			{
@@ -233,28 +231,21 @@ namespace v68k
 					storage.code = opcode & 0x0100 ? &microcode_SUB : &microcode_ADD;
 				}
 				
-				const bool to_reg = ea_is_register( mode );
-				
 				const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-				const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
 				
 				storage.size  = op_size_in_00C0;
 				storage.fetch = fetches_ADDQ;
-				storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+				storage.flags = loads_and | stores_data | and_sets_CCR;
 				
 				return &storage;
 			}
 		}
 		else if ( ea_is_data_alterable( mode, n ) )
 		{
-			const bool to_reg = ea_is_register( mode );
-			
-			const instruction_flags_t destination = instruction_flags_t( in_register * to_reg );
-			
 			storage.size  = byte_sized;
 			storage.fetch = fetches_Scc;
 			storage.code  = &microcode_Scc;
-			storage.flags = stores_byte_data | destination | and_sets_CCR;
+			storage.flags = stores_byte_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -323,12 +314,11 @@ namespace v68k
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_OR;
-			storage.flags = loads_and | stores_data | destination;
+			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
@@ -353,12 +343,11 @@ namespace v68k
 		if ( is_SUB )
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
 			storage.code  = &microcode_SUB;
-			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -369,7 +358,7 @@ namespace v68k
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_SUBA;
-			storage.flags = loads_and | stores_data | in_register;
+			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
@@ -405,14 +394,11 @@ namespace v68k
 			{
 				if ( ea_is_data_alterable( mode, n ) )
 				{
-					const bool to_data = mode == 0;
-					
 					const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-					const instruction_flags_t destination = instruction_flags_t( in_register & -to_data );
 					
 					storage.fetch = fetches_EOR;
 					storage.code  = &microcode_EOR;
-					storage.flags = loads_and | stores_data | destination;
+					storage.flags = loads_and | stores_data;
 					
 					return &storage;
 				}
@@ -444,12 +430,11 @@ namespace v68k
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
 			storage.code  = &microcode_AND;
-			storage.flags = loads_and | stores_data | destination;
+			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
@@ -487,12 +472,11 @@ namespace v68k
 		if ( is_ADD )
 		{
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * !has_0100 );
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
 			storage.code  = &microcode_ADD;
-			storage.flags = loads_and | stores_data | destination | and_sets_CCR;
+			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -503,7 +487,7 @@ namespace v68k
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_ADDA;
-			storage.flags = loads_and | stores_data | in_register;
+			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
@@ -533,7 +517,7 @@ namespace v68k
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = fetches_bit_shift;
-			storage.flags = loads_and | stores_data | in_register | and_sets_CCR;
+			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}

@@ -171,11 +171,6 @@ namespace v68k
 			
 			storage.flags |= stores_word_data;
 			
-			if ( ea_is_data_register( mode, n ) )
-			{
-				storage.flags |= in_register;
-			}
-			
 			return &storage;
 		}
 		
@@ -210,12 +205,9 @@ namespace v68k
 		}
 		else if ( ea_is_data_alterable( mode, n ) )
 		{
-			const bool in_reg = (opcode >> 3 & 0x7) < 2;
-			
 			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			const instruction_flags_t destination = instruction_flags_t( in_register * in_reg );
 			
-			storage.flags = loads_and | stores_data | destination;
+			storage.flags = loads_and | stores_data;
 			
 			switch ( selector )
 			{

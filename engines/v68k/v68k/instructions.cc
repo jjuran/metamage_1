@@ -29,7 +29,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		byte_sized,
-		stores_byte_data|in_register
+		stores_byte_data
 	};
 	
 	instruction decoded_MOVE_B =
@@ -45,7 +45,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		long_sized,
-		stores_long_data|in_register
+		stores_long_data
 	};
 	
 	instruction decoded_MOVE_L =
@@ -61,7 +61,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		word_sized,
-		stores_word_data|in_register
+		stores_word_data
 	};
 	
 	instruction decoded_MOVE_W =
@@ -219,7 +219,7 @@ namespace v68k
 		fetches_MOVEQ,
 		microcode_MOVE,
 		long_sized,
-		stores_long_data|in_register
+		stores_long_data
 	};
 	
 	instruction decoded_EXG =
