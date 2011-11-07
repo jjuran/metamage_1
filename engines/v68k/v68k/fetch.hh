@@ -76,6 +76,9 @@ namespace v68k
 	
 	uint32_t fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
+	
+	uint32_t assign_first_to_second( processor_state& state, op_params& pb );
+	
 }
 
 #endif

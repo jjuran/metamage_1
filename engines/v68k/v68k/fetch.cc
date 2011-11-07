@@ -326,5 +326,11 @@ namespace v68k
 		return pb.first;
 	}
 	
+	
+	uint32_t assign_first_to_second( processor_state& s, op_params& pb )
+	{
+		return pb.second = pb.first;
+	}
+	
 }
 
