@@ -1083,9 +1083,9 @@ namespace v68k
 	
 	void microcode_ASR( processor_state& s, op_params& pb )
 	{
-		int32_t data = pb.params[1];
+		int32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1123,9 +1123,9 @@ namespace v68k
 	
 	void microcode_ASL( processor_state& s, op_params& pb )
 	{
-		int32_t data = pb.params[1];
+		int32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1167,9 +1167,9 @@ namespace v68k
 	
 	void microcode_LSR( processor_state& s, op_params& pb )
 	{
-		uint32_t data = pb.params[1];
+		uint32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1209,9 +1209,9 @@ namespace v68k
 	
 	void microcode_LSL( processor_state& s, op_params& pb )
 	{
-		uint32_t data = pb.params[1];
+		uint32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
