@@ -198,7 +198,7 @@ namespace v68k
 			if ( ea_is_valid( mode, n )  &&  (mode != 1 || size_code != 0) )
 			{
 				storage.fetch = fetches_TST;
-				storage.code  = &microcode_CMP;
+				storage.code  = &microcode_TST;
 				
 				if ( mode == 1  ||  mode == 7  &&  n >= 2 )
 				{

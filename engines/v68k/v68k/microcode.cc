@@ -422,6 +422,16 @@ namespace v68k
 		            | C( 0 );
 	}
 	
+	void microcode_TST( processor_state& s, op_params& pb )
+	{
+		const int32_t data = pb.params[0];
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
 		uint16_t mask = pb.params[0];

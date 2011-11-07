@@ -169,7 +169,6 @@ namespace v68k
 	
 	fetcher fetches_TST[] =
 	{
-		&fetch_zero,
 		&fetch_sized_data_at_effective_address,
 		0  // NULL
 	};
