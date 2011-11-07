@@ -176,6 +176,11 @@ namespace v68k
 			return bus_error();
 		}
 		
+		if ( decoded->flags & loads_and )
+		{
+			pb.second = params[1];
+		}
+		
 		// execute
 		decoded->code( *this, pb );
 		
