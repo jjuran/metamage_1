@@ -23,14 +23,14 @@ namespace v68k
 	
 	void microcode_ORI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() | data );
 	}
 	
 	void microcode_ORI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() | data );
 	}
@@ -132,28 +132,28 @@ namespace v68k
 	
 	void microcode_ANDI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() & data );
 	}
 	
 	void microcode_ANDI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() & data );
 	}
 	
 	void microcode_EORI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() ^ data );
 	}
 	
 	void microcode_EORI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() ^ data );
 	}
@@ -250,9 +250,7 @@ namespace v68k
 	
 	void microcode_MOVE( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] = data;
+		pb.params[1] = pb.first;
 	}
 	
 	#pragma mark -
@@ -312,14 +310,14 @@ namespace v68k
 	
 	void microcode_MOVE_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( data );
 	}
 	
 	void microcode_MOVE_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( data );
 	}
@@ -418,7 +416,7 @@ namespace v68k
 	
 	void microcode_TST( processor_state& s, op_params& pb )
 	{
-		const int32_t data = pb.params[0];
+		const int32_t data = pb.first;
 		
 		s.regs.nzvc = N( data <  0 )
 		            | Z( data == 0 )
@@ -521,7 +519,7 @@ namespace v68k
 	
 	void microcode_TRAP( processor_state& s, op_params& pb )
 	{
-		const uint32_t trap_number = pb.params[0];
+		const uint32_t trap_number = pb.first;
 		
 		s.take_exception_format_0( (trap_number + 32) * sizeof (uint32_t) );
 	}
@@ -604,7 +602,7 @@ namespace v68k
 	
 	void microcode_STOP( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		if ( data == 0xFFFF )
 		{
@@ -672,7 +670,7 @@ namespace v68k
 	{
 		microcode_RTS( s, pb );
 		
-		s.regs.a[7] += pb.params[0];
+		s.regs.a[7] += pb.first;
 	}
 	
 	void microcode_RTS( processor_state& s, op_params& pb )
