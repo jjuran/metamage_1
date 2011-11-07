@@ -32,11 +32,13 @@ namespace v68k
 		
 		bool ok = true;
 		
-		const bool is_address_register = flags & in_register  &&  param > 7;
+		const int32_t target = pb.target;
 		
-		if ( flags & in_register )
+		const bool is_address_register = target > 7;
+		
+		if ( target >= 0 )
 		{
-			param = s.regs.d[ param ];
+			param = s.regs.d[ target ];
 		}
 		else
 		{
