@@ -288,8 +288,8 @@ namespace v68k
 	
 	void microcode_NEG( processor_state& s, op_params& pb )
 	{
-		pb.params[0] = pb.params[1];
-		pb.params[1] = 0;
+		pb.first  = pb.second;
+		pb.second = 0;
 		
 		microcode_SUB( s, pb );
 		
@@ -975,8 +975,8 @@ namespace v68k
 	
 	void microcode_SUB( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t diff = subtract( s, a, b );
 		
@@ -987,8 +987,8 @@ namespace v68k
 	
 	void microcode_SUBA( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t diff = b - a;
 		
@@ -1044,8 +1044,8 @@ namespace v68k
 	
 	void microcode_ADD( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1079,8 +1079,8 @@ namespace v68k
 	
 	void microcode_ADDA( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t sum = a + b;
 		
