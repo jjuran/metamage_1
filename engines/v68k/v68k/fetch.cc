@@ -188,13 +188,13 @@ namespace v68k
 		switch ( pb.size )
 		{
 			case byte_sized:
-				return int32_t( int8_t( data ) );
+				return pb.first = int32_t( int8_t( data ) );
 			
 			case word_sized:
-				return int32_t( int16_t( data ) );
+				return pb.first = int32_t( int16_t( data ) );
 			
 			case long_sized:
-				return data;
+				return pb.first = data;
 			
 			default:
 				// Not reached
