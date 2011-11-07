@@ -949,9 +949,7 @@ namespace v68k
 	
 	void microcode_OR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] |= data;
+		pb.params[1] = pb.first | pb.second;
 	}
 	
 	#pragma mark -
@@ -1008,9 +1006,7 @@ namespace v68k
 	
 	void microcode_EOR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] ^= data;
+		pb.params[1] = pb.first ^ pb.second;
 	}
 	
 	#pragma mark -
@@ -1018,9 +1014,7 @@ namespace v68k
 	
 	void microcode_AND( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] &= data;
+		pb.params[1] = pb.first & pb.second;
 	}
 	
 	void microcode_EXG( processor_state& s, op_params& pb )
