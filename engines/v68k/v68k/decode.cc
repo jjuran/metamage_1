@@ -301,7 +301,7 @@ namespace v68k
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
 			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
+			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_OR;
 			storage.flags = loads_and | stores_data;
 			
@@ -375,7 +375,7 @@ namespace v68k
 			{
 				if ( ea_is_data_alterable( mode, n ) )
 				{
-					storage.fetch = fetches_EOR;
+					storage.fetch = fetches_math;
 					storage.code  = &microcode_EOR;
 					storage.flags = loads_and | stores_data;
 					
@@ -409,7 +409,7 @@ namespace v68k
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
 			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_EOR : fetches_math_to_Dn;
+			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_AND;
 			storage.flags = loads_and | stores_data;
 			
