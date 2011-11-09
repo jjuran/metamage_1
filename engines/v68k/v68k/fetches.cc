@@ -252,13 +252,6 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_ADD[] =
-	{
-		&fetch_sized_data_from_major_register,
-		&fetch_effective_address,
-		0  // NULL
-	};
-	
 	
 	fetcher fetches_bit_shift[] =
 	{
