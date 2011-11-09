@@ -328,7 +328,7 @@ namespace v68k
 		if ( is_SUB )
 		{
 			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
+			storage.fetch = has_0100 ? fetches_ADD : fetches_math_to_Dn;
 			storage.code  = &microcode_SUB;
 			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
@@ -449,7 +449,7 @@ namespace v68k
 		if ( is_ADD )
 		{
 			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_ADD : fetches_ADD_to_Dn;
+			storage.fetch = has_0100 ? fetches_ADD : fetches_math_to_Dn;
 			storage.code  = &microcode_ADD;
 			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
