@@ -27,10 +27,7 @@ namespace v68k
 		not_before_mask  = 0x70,
 		
 		loads_and        = 0x0080,
-		stores_byte_data = 0x0100,
-		stores_word_data = 0x0200,
-		stores_long_data = 0x0300,
-		stores_data_mask = 0x0300,
+		stores_data      = 0x0100,
 		and_sets_CCR     = 0x0800
 	};
 	

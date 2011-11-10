@@ -169,7 +169,7 @@ namespace v68k
 			storage.flags = opcode & 0x0200 ? privileged_except_on_68000
 			                                : not_before_68010;
 			
-			storage.flags |= stores_word_data;
+			storage.flags |= stores_data;
 			
 			return &storage;
 		}
@@ -205,8 +205,6 @@ namespace v68k
 		}
 		else if ( ea_is_data_alterable( mode, n ) )
 		{
-			const instruction_flags_t stores_data = instruction_flags_t( size_code + 1 << 8 );
-			
 			storage.flags = loads_and | stores_data;
 			
 			switch ( selector )

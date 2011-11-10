@@ -89,9 +89,7 @@ namespace v68k
 	{
 		uint32_t data = pb.result;
 		
-		const int storage_flags = flags & stores_data_mask;
-		
-		if ( storage_flags == 0 )
+		if ( !(flags & stores_data) )
 		{
 			return true;
 		}

@@ -156,7 +156,7 @@ namespace v68k
 		
 		// load/store prep
 		
-		const bool stores_word_in_memory = (decoded->flags & stores_word_data) == stores_word_data;
+		const bool stores_word_in_memory = pb.size != byte_sized  &&  (decoded->flags & stores_data);
 		
 		if ( stores_word_in_memory  &&  badly_aligned_data( pb.address ) )
 		{
