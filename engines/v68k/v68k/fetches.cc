@@ -148,14 +148,7 @@ namespace v68k
 	fetcher fetches_LINK[] =
 	{
 		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_signed_word,
-		0  // NULL
-	};
-	
-	fetcher fetches_LINK_L[] =
-	{
-		&FETCH_MINOR_REGISTER_NUM,
-		&fetch_longword,
+		&fetch_sized_immediate_signed_data,
 		0  // NULL
 	};
 	
@@ -224,15 +217,7 @@ namespace v68k
 	fetcher fetches_branch[] =
 	{
 		&fetch_pc,
-		&fetch_signed_word,
-		&fetch_cc,
-		0  // NULL
-	};
-	
-	fetcher fetches_branch_long[] =
-	{
-		&fetch_pc,
-		&fetch_longword,
+		&fetch_sized_immediate_signed_data,
 		&fetch_cc,
 		0  // NULL
 	};

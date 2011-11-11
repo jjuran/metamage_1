@@ -278,7 +278,7 @@ namespace v68k
 			
 			case 0xFF:
 				storage.size  = long_sized;
-				storage.fetch = fetches_branch_long;
+				storage.fetch = fetches_branch;
 				storage.flags = not_before_68020;
 				break;
 		}
