@@ -64,10 +64,6 @@ namespace v68k
 		
 		if ( flags & and_sets_CCR )
 		{
-			// CCR is already set
-		}
-		else
-		{
 			const int32_t signed_data = sign_extend( data, pb.size );
 			
 			s.regs.nzvc = N( signed_data <  0 )

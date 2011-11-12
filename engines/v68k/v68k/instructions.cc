@@ -29,7 +29,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		byte_sized,
-		stores_data
+		stores_data | and_sets_CCR
 	};
 	
 	instruction decoded_MOVE_L =
@@ -37,7 +37,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		long_sized,
-		stores_data
+		stores_data | and_sets_CCR
 	};
 	
 	instruction decoded_MOVE_W =
@@ -45,7 +45,7 @@ namespace v68k
 		fetches_MOVE,
 		microcode_MOVE,
 		word_sized,
-		stores_data
+		stores_data | and_sets_CCR
 	};
 	
 	instruction decoded_LINK_L =
@@ -88,7 +88,7 @@ namespace v68k
 		FETCHES_MINOR_REGISTER_NUM,
 		microcode_EXTB,
 		long_sized,
-		not_before_68020
+		not_before_68020 | and_sets_CCR
 	};
 	
 	instruction decoded_TRAP =
@@ -195,7 +195,7 @@ namespace v68k
 		fetches_MOVEQ,
 		microcode_MOVE,
 		long_sized,
-		stores_data
+		stores_data | and_sets_CCR
 	};
 	
 	instruction decoded_EXG =
