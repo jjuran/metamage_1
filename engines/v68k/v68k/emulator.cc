@@ -141,13 +141,16 @@ namespace v68k
 			pb.size = op_size_t( ((opcode & size_mask) >> bit_offset) + index_of_zero );
 		}
 		
+		pb.target  = uint32_t( -1 );
+		pb.address = regs.pc;
+		
 		uint32_t* params = pb.params;
 		
 		uint32_t* p = params;
 		
 		while ( *fetch != 0 )  // NULL
 		{
-			*p++ = (*fetch++)( *this, pb.size - 1 );
+			*p++ = (*fetch++)( *this, pb );
 			
 			if ( condition != normal )
 			{
@@ -171,6 +174,11 @@ namespace v68k
 		if ( !load( *this, params[1], decoded->flags ) )
 		{
 			return bus_error();
+		}
+		
+		if ( decoded->flags & loads_and )
+		{
+			pb.second = params[1];
 		}
 		
 		// execute

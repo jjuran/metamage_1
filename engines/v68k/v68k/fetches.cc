@@ -169,7 +169,6 @@ namespace v68k
 	
 	fetcher fetches_TST[] =
 	{
-		&fetch_zero,
 		&fetch_sized_data_at_effective_address,
 		0  // NULL
 	};
@@ -226,8 +225,9 @@ namespace v68k
 	
 	fetcher fetches_CMP[] =
 	{
-		&fetch_sized_data_at_effective_address,
 		&fetch_sized_data_from_major_register,
+		&assign_first_to_second,
+		&fetch_sized_data_at_effective_address,
 		0  // NULL
 	};
 	

@@ -36,6 +36,13 @@ namespace v68k
 	{
 		op_size_t size;
 		
+		uint32_t target;
+		uint32_t address;
+		
+		uint32_t first;
+		uint32_t second;
+		uint32_t result;
+		
 		uint32_t params[ max_params ];
 	};
 	

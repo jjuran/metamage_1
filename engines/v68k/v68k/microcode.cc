@@ -23,14 +23,14 @@ namespace v68k
 	
 	void microcode_ORI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() | data );
 	}
 	
 	void microcode_ORI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() | data );
 	}
@@ -39,39 +39,38 @@ namespace v68k
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] ^= 1 << pb.params[0];
+		pb.params[1] = (1 << pb.first) ^ pb.second;
 	}
 	
 	void microcode_BCLR( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] &= ~(1 << pb.params[0]);
+		pb.params[1] = ~(1 << pb.first) & pb.second;
 	}
 	
 	void microcode_BSET( processor_state& s, op_params& pb )
 	{
 		microcode_BTST( s, pb );
 		
-		pb.params[1] |= 1 << pb.params[0];
+		pb.params[1] = (1 << pb.first) | pb.second;
 	}
 	
 	void microcode_BTST( processor_state& s, op_params& pb )
 	{
-		const uint32_t bit = pb.params[0];
+		const uint32_t bit = pb.first;
 		
 		s.regs.nzvc &= ~0x4;
-		s.regs.nzvc |= (~pb.params[1] >> bit & 0x1) << 2;
+		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t x = pb.target;
 		
 		const uint32_t Dx = s.regs.d[ x ];
 		
-		uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_write );
+		uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_write );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -98,12 +97,11 @@ namespace v68k
 	
 	void microcode_MOVEP_from( processor_state& s, op_params& pb )
 	{
-		const uint32_t x    = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t x = pb.target;
 		
 		uint32_t& Dx = s.regs.d[ x ];
 		
-		const uint8_t* p = s.mem.translate( addr, (1 << pb.size) - 1, s.data_space(), mem_read );
+		const uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_read );
 		
 		if ( p == 0 )  // NULL
 		{
@@ -134,36 +132,35 @@ namespace v68k
 	
 	void microcode_ANDI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() & data );
 	}
 	
 	void microcode_ANDI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() & data );
 	}
 	
 	void microcode_EORI_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( s.get_CCR() ^ data );
 	}
 	
 	void microcode_EORI_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( s.get_SR() ^ data );
 	}
 	
 	void microcode_MOVES( processor_state& s, op_params& pb )
 	{
-		const uint32_t more = pb.params[0];
-		const uint32_t addr = pb.params[1];
+		const uint32_t more = pb.first;
 		
 		const int size = 1 << pb.size - 1;  // 1,2,4
 		
@@ -175,7 +172,7 @@ namespace v68k
 		
 		const memory_access_t access = writing ? mem_write : mem_read;
 		
-		uint8_t* p = s.mem.translate( addr, size, fc, access );
+		uint8_t* p = s.mem.translate( pb.address, size, fc, access );
 		
 		if ( p == 0 )
 		{
@@ -253,9 +250,7 @@ namespace v68k
 	
 	void microcode_MOVE( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] = data;
+		pb.params[1] = pb.first;
 	}
 	
 	#pragma mark -
@@ -263,12 +258,11 @@ namespace v68k
 	
 	void microcode_LEA( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		const uint32_t n    = pb.params[1];
+		const uint32_t n = pb.target;
 		
 		uint32_t& An = s.regs.a[n];
 		
-		An = addr;
+		An = pb.address;
 	}
 	
 	void microcode_CLR( processor_state& s, op_params& pb )
@@ -291,8 +285,8 @@ namespace v68k
 	
 	void microcode_NEG( processor_state& s, op_params& pb )
 	{
-		pb.params[0] = pb.params[1];
-		pb.params[1] = 0;
+		pb.first  = pb.second;
+		pb.second = 0;
 		
 		microcode_SUB( s, pb );
 		
@@ -316,21 +310,21 @@ namespace v68k
 	
 	void microcode_MOVE_to_CCR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_CCR( data );
 	}
 	
 	void microcode_MOVE_to_SR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		s.set_SR( data );
 	}
 	
 	void microcode_SWAP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		const uint32_t data = s.regs.d[n];
 		
@@ -340,7 +334,7 @@ namespace v68k
 	
 	void microcode_BKPT( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];  // 3-bit breakpoint vector
+		const uint32_t data = pb.target;  // 3-bit breakpoint vector
 		
 		s.regs.pc -= 2;
 		
@@ -349,8 +343,6 @@ namespace v68k
 	
 	void microcode_PEA( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
 		uint32_t& sp = s.regs.a[7];
 		
 		if ( s.badly_aligned_data( sp ) )
@@ -362,7 +354,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, addr, s.data_space() ) )
+		if ( !s.mem.put_long( sp, pb.address, s.data_space() ) )
 		{
 			s.bus_error();
 		}
@@ -370,7 +362,7 @@ namespace v68k
 	
 	void microcode_EXT_W( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -388,7 +380,7 @@ namespace v68k
 	
 	void microcode_EXT_L( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -406,7 +398,7 @@ namespace v68k
 	
 	void microcode_EXTB( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& Dn = s.regs.d[n];
 		
@@ -422,12 +414,22 @@ namespace v68k
 		            | C( 0 );
 	}
 	
+	void microcode_TST( processor_state& s, op_params& pb )
+	{
+		const int32_t data = pb.first;
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( 0 );
+	}
+	
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
-		uint16_t mask = pb.params[0];
-		uint32_t addr = pb.params[1];
+		uint16_t mask = pb.first;
+		uint32_t addr = pb.address;
 		
-		const uint16_t update_register = pb.params[2];
+		const uint32_t update_register = pb.target;
 		
 		const bool longword_sized = pb.size == long_sized;
 		
@@ -466,10 +468,10 @@ namespace v68k
 	
 	void microcode_MOVEM_from( processor_state& s, op_params& pb )
 	{
-		uint16_t mask = pb.params[0];
-		uint32_t addr = pb.params[1];
+		uint16_t mask = pb.first;
+		uint32_t addr = pb.address;
 		
-		const uint16_t update_register = pb.params[2];
+		const uint32_t update_register = pb.target;
 		
 		const bool longword_sized = pb.size == long_sized;
 		
@@ -517,15 +519,15 @@ namespace v68k
 	
 	void microcode_TRAP( processor_state& s, op_params& pb )
 	{
-		const uint32_t trap_number = pb.params[0];
+		const uint32_t trap_number = pb.first;
 		
 		s.take_exception_format_0( (trap_number + 32) * sizeof (uint32_t) );
 	}
 	
 	void microcode_LINK( processor_state& s, op_params& pb )
 	{
-		const uint32_t n    = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const uint32_t n    = pb.target;
+		const int32_t  disp = pb.first;
 		
 		uint32_t& An = s.regs.a[n];
 		uint32_t& sp = s.regs.a[7];
@@ -553,7 +555,7 @@ namespace v68k
 	
 	void microcode_UNLK( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		uint32_t& An = s.regs.a[n];
 		uint32_t& sp = s.regs.a[7];
@@ -579,7 +581,7 @@ namespace v68k
 	
 	void microcode_MOVE_to_USP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
 		s.regs.alt_sp = s.regs.a[n];
@@ -587,7 +589,7 @@ namespace v68k
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.params[0];
+		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
 		s.regs.a[n] = s.regs.alt_sp;
@@ -600,7 +602,7 @@ namespace v68k
 	
 	void microcode_STOP( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
+		const uint32_t data = pb.first;
 		
 		if ( data == 0xFFFF )
 		{
@@ -668,7 +670,7 @@ namespace v68k
 	{
 		microcode_RTS( s, pb );
 		
-		s.regs.a[7] += pb.params[0];
+		s.regs.a[7] += pb.first;
 	}
 	
 	void microcode_RTS( processor_state& s, op_params& pb )
@@ -797,8 +799,8 @@ namespace v68k
 	
 	void microcode_MOVEC( processor_state& s, op_params& pb )
 	{
-		const uint32_t writing   = pb.params[0];
-		const uint32_t registers = pb.params[1];
+		const uint32_t registers = pb.first;
+		const uint32_t writing   = pb.second;
 		
 		const uint16_t general_id = registers >> 12;
 		const uint16_t control_id = registers & 0x0FFF;
@@ -848,8 +850,6 @@ namespace v68k
 	
 	void microcode_JSR( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
 		uint32_t& sp = s.regs.a[7];
 		
 		if ( s.badly_aligned_data( sp ) )
@@ -868,14 +868,12 @@ namespace v68k
 			return;
 		}
 		
-		s.regs.pc = addr;
+		s.regs.pc = pb.address;
 	}
 	
 	void microcode_JMP( processor_state& s, op_params& pb )
 	{
-		const uint32_t addr = pb.params[0];
-		
-		s.regs.pc = addr;
+		s.regs.pc = pb.address;
 	}
 	
 	#pragma mark -
@@ -883,7 +881,7 @@ namespace v68k
 	
 	void microcode_Scc( processor_state& s, op_params& pb )
 	{
-		const uint16_t cc = pb.params[0];
+		const uint16_t cc = pb.second;
 		
 		pb.params[1] = int32_t() - test_conditional( cc, s.regs.nzvc );
 	}
@@ -893,16 +891,14 @@ namespace v68k
 	
 	void microcode_BRA( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const int32_t disp = pb.first;
 		
-		s.regs.pc = pc + disp;
+		s.regs.pc = pb.address + disp;
 	}
 	
 	void microcode_BSR( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
+		const int32_t disp = pb.first;
 		
 		uint32_t& sp = s.regs.a[7];
 		
@@ -922,18 +918,17 @@ namespace v68k
 			return;
 		}
 		
-		s.regs.pc = pc + disp;
+		s.regs.pc = pb.address + disp;
 	}
 	
 	void microcode_Bcc( processor_state& s, op_params& pb )
 	{
-		const uint32_t pc   = pb.params[0];
-		const int32_t  disp = pb.params[1];
-		const uint32_t cc   = pb.params[2];
+		const int32_t  disp = pb.first;
+		const uint32_t cc   = pb.second;
 		
 		if ( test_conditional( cc, s.regs.nzvc ) )
 		{
-			s.regs.pc = pc + disp;
+			s.regs.pc = pb.address + disp;
 		}
 	}
 	
@@ -942,9 +937,7 @@ namespace v68k
 	
 	void microcode_OR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] |= data;
+		pb.params[1] = pb.first | pb.second;
 	}
 	
 	#pragma mark -
@@ -968,8 +961,8 @@ namespace v68k
 	
 	void microcode_SUB( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t diff = subtract( s, a, b );
 		
@@ -980,8 +973,8 @@ namespace v68k
 	
 	void microcode_SUBA( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t diff = b - a;
 		
@@ -993,17 +986,15 @@ namespace v68k
 	
 	void microcode_CMP( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		(void) subtract( s, a, b );
 	}
 	
 	void microcode_EOR( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] ^= data;
+		pb.params[1] = pb.first ^ pb.second;
 	}
 	
 	#pragma mark -
@@ -1011,15 +1002,14 @@ namespace v68k
 	
 	void microcode_AND( processor_state& s, op_params& pb )
 	{
-		const uint32_t data = pb.params[0];
-		
-		pb.params[1] &= data;
+		pb.params[1] = pb.first & pb.second;
 	}
 	
 	void microcode_EXG( processor_state& s, op_params& pb )
 	{
-		const uint32_t x = pb.params[0];
-		const uint32_t y = pb.params[1];
+		// Actually, these are swapped.  For "EXG A4,D0", x == 0 and y == 12.
+		const uint32_t x = pb.first;
+		const uint32_t y = pb.second;
 		
 		uint32_t& Rx = s.regs.d[ x ];
 		uint32_t& Ry = s.regs.d[ y ];
@@ -1036,8 +1026,8 @@ namespace v68k
 	
 	void microcode_ADD( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1071,8 +1061,8 @@ namespace v68k
 	
 	void microcode_ADDA( processor_state& s, op_params& pb )
 	{
-		const int32_t a = pb.params[0];
-		const int32_t b = pb.params[1];
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
 		
 		const int32_t sum = a + b;
 		
@@ -1081,9 +1071,9 @@ namespace v68k
 	
 	void microcode_ASR( processor_state& s, op_params& pb )
 	{
-		int32_t data = pb.params[1];
+		int32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1121,9 +1111,9 @@ namespace v68k
 	
 	void microcode_ASL( processor_state& s, op_params& pb )
 	{
-		int32_t data = pb.params[1];
+		int32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1165,9 +1155,9 @@ namespace v68k
 	
 	void microcode_LSR( processor_state& s, op_params& pb )
 	{
-		uint32_t data = pb.params[1];
+		uint32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)
@@ -1207,9 +1197,9 @@ namespace v68k
 	
 	void microcode_LSL( processor_state& s, op_params& pb )
 	{
-		uint32_t data = pb.params[1];
+		uint32_t data = pb.second;
 		
-		const uint16_t count = pb.params[0];
+		const uint16_t count = pb.first;
 		
 		/*
 			     size_code  E  (0, 1,  2)

@@ -21,7 +21,7 @@ namespace v68k
 				return 0;
 			
 			case 2:
-				return fetch_signed_word( s );
+				return fetch_instruction_word_signed( s );
 			
 			case 3:
 				return fetch_longword( s );
@@ -33,7 +33,7 @@ namespace v68k
 	
 	static uint32_t read_ea_displaced_address( processor_state& s, uint32_t address )
 	{
-		return address + fetch_signed_word( s );
+		return address + fetch_instruction_word_signed( s );
 	}
 	
 	static uint32_t read_ea_indexed_address( processor_state& s, uint32_t address )
@@ -172,7 +172,7 @@ namespace v68k
 				switch ( n )
 				{
 					case 0:
-						return fetch_signed_word( s );
+						return fetch_instruction_word_signed( s );
 					
 					case 1:
 						return fetch_longword( s );
