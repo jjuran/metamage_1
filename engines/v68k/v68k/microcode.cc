@@ -304,11 +304,6 @@ namespace v68k
 		const int16_t word = byte;
 		
 		Dn = (Dn & 0xFFFF0000) | word;
-		
-		s.regs.nzvc = N( word <  0 )
-		            | Z( word == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_EXT_L( processor_state& s, op_params& pb )
@@ -322,11 +317,6 @@ namespace v68k
 		const int32_t longword = word;
 		
 		Dn = longword;
-		
-		s.regs.nzvc = N( longword <  0 )
-		            | Z( longword == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_EXTB( processor_state& s, op_params& pb )
@@ -340,11 +330,6 @@ namespace v68k
 		const int32_t longword = byte;
 		
 		Dn = longword;
-		
-		s.regs.nzvc = N( longword <  0 )
-		            | Z( longword == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_TST( processor_state& s, op_params& pb )
