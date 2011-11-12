@@ -324,6 +324,12 @@ namespace v68k
 		pb.address += int32_t( pb.first );
 	}
 	
+	void shift_NEG_operands( processor_state& s, op_params& pb )
+	{
+		pb.first  = pb.second;
+		pb.second = 0;
+	}
+	
 	
 	void read_address_on_68000( processor_state& s, op_params& pb )
 	{

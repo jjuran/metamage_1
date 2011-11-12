@@ -161,6 +161,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_NEG[] =
+	{
+		&fetch_effective_address,
+		&shift_NEG_operands,
+		0  // NULL
+	};
+	
 	fetcher fetches_NOT[] =
 	{
 		&fetch_ones,

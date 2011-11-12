@@ -221,8 +221,8 @@ namespace v68k
 					return &storage;
 				
 				case 2:
-					storage.fetch = fetches_effective_address;
-					storage.code  = &microcode_NEG;
+					storage.fetch = fetches_NEG;
+					storage.code  = &microcode_SUB;
 					storage.flags = storage.flags | and_sets_CCR;
 					
 					return &storage;

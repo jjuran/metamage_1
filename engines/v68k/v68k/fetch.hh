@@ -79,6 +79,8 @@ namespace v68k
 	
 	void add_first_to_address( processor_state& state, op_params& pb );
 	
+	void shift_NEG_operands( processor_state& state, op_params& pb );
+	
 	
 	void read_address_on_68000( processor_state& state, op_params& pb );
 	

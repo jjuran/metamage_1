@@ -267,14 +267,6 @@ namespace v68k
 		An = pb.address;
 	}
 	
-	void microcode_NEG( processor_state& s, op_params& pb )
-	{
-		pb.first  = pb.second;
-		pb.second = 0;
-		
-		microcode_SUB( s, pb );
-	}
-	
 	void microcode_MOVE_from_CCR( processor_state& s, op_params& pb )
 	{
 		pb.result = s.get_CCR();
