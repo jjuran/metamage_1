@@ -267,24 +267,6 @@ namespace v68k
 		An = pb.address;
 	}
 	
-	void microcode_CLR( processor_state& s, op_params& pb )
-	{
-		/*
-			"In the MC68000 and MC68008 a memory location is read before it is
-			cleared."
-				-- M68000 Family Programmer's Reference Manual
-		*/
-		
-		if ( s.model >= mc68010 )
-		{
-			microcode_MOVE( s, pb );
-		}
-		else
-		{
-			microcode_AND( s, pb );
-		}
-	}
-	
 	void microcode_NEG( processor_state& s, op_params& pb )
 	{
 		pb.first  = pb.second;
