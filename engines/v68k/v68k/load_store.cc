@@ -19,46 +19,47 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	bool load( const processor_state& s, uint32_t& param, int flags )
+	bool load( const processor_state& s, op_params& pb )
 	{
-		const int storage_flags = flags & stores_data_mask;
-		
-		if ( !(flags & loads_and) )
-		{
-			return true;
-		}
-		
 		bool ok = true;
 		
-		const bool is_address_register = flags & in_register  &&  param > 7;
+		const int32_t target = pb.target;
 		
-		if ( flags & in_register )
+		if ( target >= 0 )
 		{
-			param = s.regs.d[ param ];
+			pb.second = s.regs.d[ target ];
+			
+			if ( target > 7 )
+			{
+				// address register, don't sign-extend
+				return true;
+			}
 		}
 		else
 		{
+			const uint32_t addr = pb.address;
+			
 			uint8_t   byte;
 			uint16_t  word;
 			
-			switch ( storage_flags )
+			switch ( pb.size )
 			{
-				case stores_byte_data:
-					ok = s.mem.get_byte( param, byte, s.data_space() );
+				case byte_sized:
+					ok = s.mem.get_byte( addr, byte, s.data_space() );
 					
-					param = byte;
-					
-					break;
-				
-				case stores_word_data:
-					ok = s.mem.get_word( param, word, s.data_space() );
-					
-					param = word;
+					pb.second = byte;
 					
 					break;
 				
-				case stores_long_data:
-					ok = s.mem.get_long( param, param, s.data_space() );
+				case word_sized:
+					ok = s.mem.get_word( addr, word, s.data_space() );
+					
+					pb.second = word;
+					
+					break;
+				
+				case long_sized:
+					ok = s.mem.get_long( addr, pb.second, s.data_space() );
 					
 					break;
 				
@@ -67,14 +68,14 @@ namespace v68k
 			}
 		}
 		
-		switch ( storage_flags & -!is_address_register )
+		switch ( pb.size )
 		{
-			case stores_byte_data:
-				param = int32_t( int8_t( param ) );
+			case byte_sized:
+				pb.second = int32_t( int8_t( pb.second ) );
 				break;
 			
-			case stores_word_data:
-				param = int32_t( int16_t( param ) );
+			case word_sized:
+				pb.second = int32_t( int16_t( pb.second ) );
 				break;
 			
 			default:
