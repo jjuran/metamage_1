@@ -17,7 +17,7 @@ namespace v68k
 	struct op_params;
 	
 	
-	typedef uint32_t (*fetcher)( processor_state& state, op_params& pb );
+	typedef void (*fetcher)( processor_state& state, op_params& pb );
 	
 }
 
