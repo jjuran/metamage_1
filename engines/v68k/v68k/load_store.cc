@@ -85,8 +85,10 @@ namespace v68k
 		return ok;
 	}
 	
-	bool store( processor_state& s, uint32_t loc, uint32_t data, int flags )
+	bool store( processor_state& s, const op_params& pb, int flags )
 	{
+		uint32_t data = pb.result;
+		
 		const int storage_flags = flags & stores_data_mask;
 		
 		if ( storage_flags == 0 )
@@ -94,28 +96,30 @@ namespace v68k
 			return true;
 		}
 		
-		if ( flags & in_register  &&  loc > 7 )
+		const int32_t target = pb.target;
+		
+		if ( target > 7 )
 		{
 			// Address register:  don't touch CCR
 			
-			s.regs.d[ loc ] = data;
+			s.regs.d[ target ] = data;
 			
 			return true;
 		}
 		
 		uint32_t data_mask;
 		
-		switch ( storage_flags )
+		switch ( pb.size )
 		{
-			case stores_byte_data:
+			case byte_sized:
 				data_mask = 0x000000FF;
 				break;
 			
-			case stores_word_data:
+			case word_sized:
 				data_mask = 0x0000FFFF;
 				break;
 			
-			case stores_long_data:
+			case long_sized:
 				data_mask = 0xFFFFFFFF;
 				break;
 			
@@ -137,23 +141,23 @@ namespace v68k
 			            | C( 0 );
 		}
 		
-		if ( flags & in_register )
+		if ( target >= 0 )
 		{
-			// loc is a register id
-			
-			s.regs.d[ loc ] &= ~data_mask;
-			s.regs.d[ loc ] |=  data_mask & data;
+			s.regs.d[ target ] &= ~data_mask;
+			s.regs.d[ target ] |=  data_mask & data;
 			
 			return true;
 		}
 		
-		// loc is an address
+		// destination is a memory address
 		
-		switch ( storage_flags )
+		const uint32_t addr = pb.address;
+		
+		switch ( pb.size )
 		{
-			case stores_byte_data:  return s.mem.put_byte( loc, data, s.data_space() );
-			case stores_word_data:  return s.mem.put_word( loc, data, s.data_space() );
-			case stores_long_data:  return s.mem.put_long( loc, data, s.data_space() );
+			case byte_sized:  return s.mem.put_byte( addr, data, s.data_space() );
+			case word_sized:  return s.mem.put_word( addr, data, s.data_space() );
+			case long_sized:  return s.mem.put_long( addr, data, s.data_space() );
 			
 			default:
 				break;
