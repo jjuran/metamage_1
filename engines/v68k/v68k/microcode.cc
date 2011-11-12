@@ -843,22 +843,6 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 9
 	
-	static int32_t subtract( processor_state& s, int32_t data, int32_t from )
-	{
-		const int32_t diff = from - data;
-		
-		const bool S = data < 0;
-		const bool D = from < 0;
-		const bool R = diff < 0;
-		
-		s.regs.nzvc = N( diff <  0 )
-		            | Z( diff == 0 )
-		            | V( (S == R) & (S != D) )
-		            | C( S & !D | R & !D | S & R );
-		
-		return diff;
-	}
-	
 	void microcode_SUB( processor_state& s, op_params& pb )
 	{
 		const int32_t a = pb.first;
