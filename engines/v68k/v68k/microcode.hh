@@ -124,8 +124,6 @@ namespace v68k
 	
 	void microcode_SUB( processor_state& state, op_params& pb );
 	
-	void microcode_SUBA( processor_state& state, op_params& pb );
-	
 	#pragma mark -
 	#pragma mark Line B
 	
@@ -144,8 +142,6 @@ namespace v68k
 	#pragma mark Line D
 	
 	void microcode_ADD( processor_state& state, op_params& pb );
-	
-	void microcode_ADDA( processor_state& state, op_params& pb );
 	
 	#pragma mark -
 	#pragma mark Line E

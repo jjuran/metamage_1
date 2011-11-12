@@ -853,16 +853,6 @@ namespace v68k
 		pb.result = diff;
 	}
 	
-	void microcode_SUBA( processor_state& s, op_params& pb )
-	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
-		
-		const int32_t diff = b - a;
-		
-		pb.result = diff;
-	}
-	
 	#pragma mark -
 	#pragma mark Line B
 	
@@ -905,16 +895,6 @@ namespace v68k
 	#pragma mark Line D
 	
 	void microcode_ADD( processor_state& s, op_params& pb )
-	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
-		
-		const int32_t sum = a + b;
-		
-		pb.result = sum;
-	}
-	
-	void microcode_ADDA( processor_state& s, op_params& pb )
 	{
 		const int32_t a = pb.first;
 		const int32_t b = pb.second;
