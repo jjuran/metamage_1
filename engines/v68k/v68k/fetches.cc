@@ -48,7 +48,7 @@ namespace v68k
 		0  // NULL
 	};
 	
-	fetcher fetches_EOR[] =
+	fetcher fetches_math[] =
 	{
 		&fetch_sized_data_from_major_register,
 		&fetch_effective_address,
@@ -245,24 +245,10 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_ADD_to_Dn[] =
-	{
-		&fetch_sized_data_at_effective_address,
-		&fetch_data_at_0E00,  // register number
-		0  // NULL
-	};
-	
 	fetcher fetches_ADDA[] =
 	{
 		&fetch_sized_data_at_effective_address,
 		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
-		0  // NULL
-	};
-	
-	fetcher fetches_ADD[] =
-	{
-		&fetch_sized_data_from_major_register,
-		&fetch_effective_address,
 		0  // NULL
 	};
 	
