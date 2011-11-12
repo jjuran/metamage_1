@@ -157,6 +157,7 @@ namespace v68k
 	{
 		&fetch_zero,
 		&fetch_effective_address,
+		&read_address_on_68000,
 		0  // NULL
 	};
 	

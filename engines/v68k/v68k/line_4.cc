@@ -216,6 +216,7 @@ namespace v68k
 				case 1:
 					storage.fetch = fetches_CLR;
 					storage.code  = &microcode_MOVE;
+					storage.flags = stores_data;
 					
 					return &storage;
 				
