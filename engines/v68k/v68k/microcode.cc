@@ -291,13 +291,6 @@ namespace v68k
 		pb.second = 0;
 		
 		microcode_SUB( s, pb );
-		
-		const uint8_t C = ~s.regs.nzvc >> 2 & 0x1;  // Set C to !Z
-		
-		s.regs.nzvc = s.regs.nzvc & ~0x1 | C;
-		
-		s.regs.x = C;
-		
 	}
 	
 	void microcode_MOVE_from_CCR( processor_state& s, op_params& pb )
