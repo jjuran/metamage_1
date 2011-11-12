@@ -34,12 +34,19 @@ namespace v68k
 	}
 	
 	
+	static uint32_t set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
+	{
+		const uint32_t ea = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		
+		return (mode <= 1 ? pb.target : pb.address) = ea;
+	}
+	
 	uint32_t fetch_effective_address( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
 		
-		return fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
 	uint32_t fetch_2nd_effective_address( processor_state& s, op_params& pb )
@@ -47,18 +54,18 @@ namespace v68k
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
 		
-		return fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
 	
 	uint32_t fetch_zero( processor_state& s, op_params& pb )
 	{
-		return 0;
+		return pb.first = 0;
 	}
 	
 	uint32_t fetch_ones( processor_state& s, op_params& pb )
 	{
-		return 0xFFFFFFFF;
+		return pb.first = 0xFFFFFFFF;
 	}
 	
 	uint32_t fetch_pc( processor_state& s, op_params& pb )
@@ -68,14 +75,14 @@ namespace v68k
 	
 	uint32_t fetch_unsigned_word( processor_state& s, op_params& pb )
 	{
-		return fetch_instruction_word( s );
+		return pb.first = fetch_instruction_word( s );
 	}
 	
 	uint32_t fetch_signed_word( processor_state& s, op_params& pb )
 	{
 		const int16_t word = fetch_instruction_word( s );
 		
-		return int32_t( word );
+		return pb.first = int32_t( word );
 	}
 	
 	uint32_t fetch_longword( processor_state& s )
@@ -90,20 +97,20 @@ namespace v68k
 	{
 		if ( pb.size == long_sized )
 		{
-			return fetch_longword( s );
+			return pb.first = fetch_longword( s );
 		}
 		
-		return fetch_instruction_word( s );
+		return pb.first = fetch_instruction_word( s );
 	}
 	
 	uint32_t fetch_sized_immediate_signed_data( processor_state& s, op_params& pb )
 	{
 		if ( pb.size == long_sized )
 		{
-			return fetch_longword( s );
+			return pb.first = fetch_longword( s );
 		}
 		
-		return fetch_instruction_word_signed( s );
+		return pb.first = fetch_instruction_word_signed( s );
 	}
 	
 	uint32_t fetch_sized_data_at_effective_address( processor_state& s, op_params& pb )
@@ -116,7 +123,7 @@ namespace v68k
 			return fetch_sized_immediate_data( s, pb );
 		}
 		
-		const uint32_t addr = fetch_effective_address( s, pb );
+		const uint32_t addr = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
 		
 		if ( (mode & 0x6) == 0 )
 		{
@@ -126,9 +133,9 @@ namespace v68k
 			
 			switch ( pb.size )
 			{
-				case byte_sized:  return int32_t( int8_t ( data ) );
-				case word_sized:  return int32_t( int16_t( data ) );
-				case long_sized:  return                   data;
+				case byte_sized:  return pb.first = int32_t( int8_t ( data ) );
+				case word_sized:  return pb.first = int32_t( int16_t( data ) );
+				case long_sized:  return pb.first =                   data;
 			}
 		}
 		
@@ -176,7 +183,7 @@ namespace v68k
 			return s.bus_error();
 		}
 		
-		return result;
+		return pb.first = result;
 	}
 	
 	uint32_t fetch_sized_data_from_major_register( processor_state& s, op_params& pb )
@@ -188,13 +195,13 @@ namespace v68k
 		switch ( pb.size )
 		{
 			case byte_sized:
-				return int32_t( int8_t( data ) );
+				return pb.first = int32_t( int8_t( data ) );
 			
 			case word_sized:
-				return int32_t( int16_t( data ) );
+				return pb.first = int32_t( int16_t( data ) );
 			
 			case long_sized:
-				return data;
+				return pb.first = data;
 			
 			default:
 				// Not reached
@@ -211,7 +218,7 @@ namespace v68k
 		const uint32_t mask = s.opcode & 0x0038 ?  8 - 1   // memory
 		                                        : 32 - 1;  // data register
 		
-		return data & mask;
+		return pb.first = data & mask;
 	}
 	
 	uint32_t fetch_A_data_from_major_register( processor_state& s, op_params& pb )
@@ -220,7 +227,7 @@ namespace v68k
 		
 		const uint32_t data = s.regs.a[n];
 		
-		return s.regs.a[n];
+		return pb.second = s.regs.a[n];
 	}
 	
 	
@@ -231,7 +238,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_000F( processor_state& s, op_params& pb )
 	{
-		return s.opcode & 0x000F;
+		return pb.first = s.opcode & 0x000F;
 	}
 	
 	
@@ -248,7 +255,7 @@ namespace v68k
 	
 	uint32_t fetch_data_at_0001( processor_state& s, op_params& pb )
 	{
-		return s.opcode & 0x0001;
+		return pb.second = s.opcode & 0x0001;
 	}
 	
 	
@@ -258,7 +265,7 @@ namespace v68k
 		
 		const int32_t disp = fetch_instruction_word_signed( s );
 		
-		return s.regs.a[n] + disp;
+		return pb.address = s.regs.a[n] + disp;
 	}
 	
 	
@@ -277,19 +284,19 @@ namespace v68k
 	
 	uint32_t fetch_ADDQ_data( processor_state& s, op_params& pb )
 	{
-		return ((s.opcode >> 9) - 1 & 0x0007) + 1;
+		return pb.first = ((s.opcode >> 9) - 1 & 0x0007) + 1;
 	}
 	
 	
 	uint32_t fetch_cc( processor_state& s, op_params& pb )
 	{
-		return s.opcode >> 8 & 0x0F;
+		return pb.second = s.opcode >> 8 & 0x0F;
 	}
 	
 	
 	uint32_t fetch_signed_data_at_00FF( processor_state& s, op_params& pb )
 	{
-		return int32_t( int8_t( s.opcode & 0x00ff ) );
+		return pb.first = int32_t( int8_t( s.opcode & 0x00ff ) );
 	}
 	
 	
@@ -299,7 +306,7 @@ namespace v68k
 		
 		const uint32_t dA = (mode << 3) & mode;  // 0 for D or 8 for A
 		
-		return dA + (s.opcode & 0x0E00) >> 9;
+		return pb.second = dA + (s.opcode & 0x0E00) >> 9;
 	}
 	
 	
@@ -313,8 +320,10 @@ namespace v68k
 			branch -- so we do it by hand.
 		*/
 		
-		return s.opcode & 0x0020 ? s.regs.d[n] % 64
-		                         : (n - 1 & 8 - 1) + 1;
+		pb.first = s.opcode & 0x0020 ? s.regs.d[n] % 64
+		                             : (n - 1 & 8 - 1) + 1;
+		
+		return pb.first;
 	}
 	
 }
