@@ -114,7 +114,7 @@ namespace v68k
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
 		
-		if ( (mode & 0x6) == 0 )
+		if ( mode <= 1 )
 		{
 			// 0 or 1
 			
