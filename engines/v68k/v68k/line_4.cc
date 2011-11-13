@@ -249,7 +249,30 @@ namespace v68k
 				return &decoded_EXTB;
 			}
 			
-			if ( (opcode & 0xF1C0) == 0x41C0 )
+			if ( (opcode & 0x0040) == 0x0000 )
+			{
+				const uint16_t mode = opcode >> 3 & 0x7;
+				const uint16_t n    = opcode >> 0 & 0x7;
+				
+				if ( ea_is_data( mode, n ) )
+				{
+					if ( opcode & 0x0080 )
+					{
+						storage.size  = word_sized;
+					}
+					else
+					{
+						storage.size  = long_sized;
+						storage.flags = not_before_68020;
+					}
+					
+					storage.fetch = fetches_CMP;
+					storage.code  = microcode_CHK;
+					
+					return &storage;
+				}
+			}
+			else if ( (opcode & 0xF1C0) == 0x41C0 )
 			{
 				const uint16_t mode = opcode >> 3 & 0x7;
 				const uint16_t n    = opcode >> 0 & 0x7;

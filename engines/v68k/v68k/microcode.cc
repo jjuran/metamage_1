@@ -222,6 +222,27 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 4
 	
+	void microcode_CHK( processor_state& s, op_params& pb )
+	{
+		const int32_t bound = pb.first;
+		const int32_t value = pb.second;
+		
+		if ( value < 0 )
+		{
+			s.regs.nzvc = 0x8;  // set N, others undefined
+		}
+		else if ( value > bound )
+		{
+			s.regs.nzvc = 0x0;  // clear N, others undefined
+		}
+		else
+		{
+			return;  // within bounds
+		}
+		
+		s.take_exception_format_6( 6 * sizeof (uint32_t), s.regs.pc - 2 );
+	}
+	
 	void microcode_LEA( processor_state& s, op_params& pb )
 	{
 		const uint32_t n = pb.target;

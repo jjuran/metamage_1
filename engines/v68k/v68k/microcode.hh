@@ -51,6 +51,8 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 4
 	
+	void microcode_CHK( processor_state& state, op_params& pb );
+	
 	void microcode_LEA( processor_state& state, op_params& pb );
 	
 	void microcode_MOVE_from_CCR( processor_state& state, op_params& pb );
