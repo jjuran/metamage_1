@@ -283,47 +283,7 @@ namespace v68k
 				-- M68000 Family Programmer's Reference Manual
 		*/
 		
-		if ( pb.size != byte_sized  &&  s.badly_aligned_data( pb.address ) )
-		{
-			s.address_error();
-			
-			return;
-		}
-		
-		bool ok;
-		
-		switch ( pb.size )
-		{
-			case byte_sized:
-				uint8_t byte;
-				
-				ok = s.mem.get_byte( pb.address, byte, s.data_space() );
-				
-				break;
-			
-			case word_sized:
-				uint16_t word;
-				
-				ok = s.mem.get_word( pb.address, word, s.data_space() );
-				
-				break;
-			
-			case long_sized:
-				uint32_t longword;
-				
-				ok = s.mem.get_long( pb.address, longword, s.data_space() );
-				
-				break;
-			
-			default:
-				// Not reached
-				break;
-		}
-		
-		if ( !ok )
-		{
-			s.bus_error();
-		}
+		(void) s.read_mem( pb.address, pb.size );
 	}
 	
 }
