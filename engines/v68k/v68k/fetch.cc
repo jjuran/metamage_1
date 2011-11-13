@@ -115,60 +115,10 @@ namespace v68k
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
 		
-		if ( mode <= 1 )
-		{
-			// 0 or 1
-			
-			const uint32_t data = s.regs.d[ addr ];
-			
-			pb.first = sign_extend( data, pb.size );
-			
-			return;
-		}
+		const uint32_t data = mode <= 1 ? s.regs.d[ addr ]
+		                                : s.read_mem( addr, pb.size );
 		
-		if ( pb.size != byte_sized  &&  s.badly_aligned_data( addr ) )
-		{
-			s.address_error();
-			
-			return;
-		}
-		
-		bool ok;
-		
-		switch ( pb.size )
-		{
-			case byte_sized:
-				uint8_t byte;
-				
-				ok = s.mem.get_byte( addr, byte, s.data_space() );
-				
-				pb.first = int32_t( int8_t( byte ) );
-				
-				break;
-			
-			case word_sized:
-				uint16_t word;
-				
-				ok = s.mem.get_word( addr, word, s.data_space() );
-				
-				pb.first = int32_t( int16_t( word ) );
-				
-				break;
-			
-			case long_sized:
-				ok = s.mem.get_long( addr, pb.first, s.data_space() );
-				
-				break;
-			
-			default:
-				// Not reached
-				break;
-		}
-		
-		if ( !ok )
-		{
-			s.bus_error();
-		}
+		pb.first = sign_extend( data, pb.size );
 	}
 	
 	void fetch_sized_data_from_major_register( processor_state& s, op_params& pb )
