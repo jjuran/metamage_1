@@ -10,8 +10,33 @@
 #include <stdint.h>
 
 
+#ifndef V68K_LITTLE_ENDIAN
+	#ifdef __BIG_ENDIAN__
+		#define V68K_LITTLE_ENDIAN  0
+	#endif
+	#ifdef __LITTLE_ENDIAN__
+		#define V68K_LITTLE_ENDIAN  1
+	#endif
+#endif
+
+
 namespace v68k
 {
+	
+	inline bool is_little_endian()
+	{
+	#ifdef V68K_LITTLE_ENDIAN
+		
+		return V68K_LITTLE_ENDIAN;
+		
+	#else
+	#warning Endianness unknown at compile time, will check (inefficiently) at runtime.
+	#endif
+		
+		const int x = 1;
+		
+		return *(const char*) &x;
+	}
 	
 	inline uint16_t swap_2_bytes( uint16_t word )
 	{
@@ -29,28 +54,14 @@ namespace v68k
 	
 	inline uint16_t toggle_word_byte_order( uint16_t word )
 	{
-	#ifdef __LITTLE_ENDIAN__
-		
-		return swap_2_bytes( word );
-		
-	#else
-	
-		return word;
-	
-	#endif
+		return is_little_endian() ? swap_2_bytes( word )
+		                          :               word;
 	}
 	
 	inline uint32_t toggle_longword_byte_order( uint32_t longword )
 	{
-	#ifdef __LITTLE_ENDIAN__
-		
-		return swap_4_bytes( longword );
-		
-	#else
-	
-		return longword;
-	
-	#endif
+		return is_little_endian() ? swap_4_bytes( longword )
+		                          :               longword;
 	}
 	
 	
