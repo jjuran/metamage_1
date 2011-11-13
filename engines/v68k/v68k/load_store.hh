@@ -19,7 +19,7 @@ namespace v68k
 	
 	void load( processor_state& s, op_params& pb );
 	
-	bool store( processor_state& s, const op_params& pb, int flags );
+	bool store( processor_state& s, const op_params& pb );
 	
 }
 

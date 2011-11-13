@@ -201,7 +201,7 @@ namespace v68k
 		
 		// store
 		
-		if ( !store( *this, pb, decoded->flags ) )
+		if ( (decoded->flags & stores_data)  &&  !store( *this, pb ) )
 		{
 			return bus_error();
 		}

@@ -42,14 +42,9 @@ namespace v68k
 		pb.second = sign_extend( pb.second, pb.size );
 	}
 	
-	bool store( processor_state& s, const op_params& pb, int flags )
+	bool store( processor_state& s, const op_params& pb )
 	{
 		uint32_t data = pb.result;
-		
-		if ( !(flags & stores_data) )
-		{
-			return true;
-		}
 		
 		const int32_t target = pb.target;
 		
