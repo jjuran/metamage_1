@@ -53,18 +53,16 @@ namespace v68k
 		
 		const int32_t target = pb.target;
 		
-		if ( target > 7 )
-		{
-			// Address register:  don't mask
-			
-			s.regs.d[ target ] = data;
-			
-			return true;
-		}
-		
 		if ( target >= 0 )
 		{
-			s.regs.d[ target ] = update( s.regs.d[ target ], data, pb.size );
+			if ( target <= 7 )
+			{
+				// Mask data registers only
+				
+				data = update( s.regs.d[ target ], data, pb.size );
+			}
+			
+			s.regs.d[ target ] = data;
 			
 			return true;
 		}
