@@ -784,6 +784,33 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 5
 	
+	void microcode_DBcc( processor_state& s, op_params& pb )
+	{
+		const uint16_t cc = pb.second;
+		
+		if ( test_conditional( cc, s.regs.nzvc ) )
+		{
+			return;
+		}
+		
+		const uint32_t n = pb.target;
+		
+		const int16_t counter = s.regs.d[ n ];
+		
+		if ( counter == 0 )
+		{
+			// decrement low word only, which is zero
+			
+			s.regs.d[ n ] += 0x0000FFFF;
+		}
+		else
+		{
+			s.regs.d[ n ] -= 1;  // decrement of non-zero word won't borrow
+			
+			s.regs.pc = pb.address;
+		}
+	}
+	
 	void microcode_Scc( processor_state& s, op_params& pb )
 	{
 		const uint16_t cc = pb.second;

@@ -231,6 +231,14 @@ namespace v68k
 				return &storage;
 			}
 		}
+		else if ( mode == 1 )
+		{
+			storage.size  = word_sized;
+			storage.fetch = fetches_DBcc;
+			storage.code  = &microcode_DBcc;
+			
+			return &storage;
+		}
 		else if ( ea_is_data_alterable( mode, n ) )
 		{
 			storage.size  = byte_sized;

@@ -209,6 +209,15 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_DBcc[] =
+	{
+		&fetch_sized_immediate_signed_data,
+		&fetch_cc,
+		&add_first_to_address,
+		&fetch_data_at_0007,
+		0  // NULL
+	};
+	
 	fetcher fetches_Scc[] =
 	{
 		&fetch_cc,

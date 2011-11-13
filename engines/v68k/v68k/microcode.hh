@@ -105,6 +105,8 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 5
 	
+	void microcode_DBcc( processor_state& state, op_params& pb );
+	
 	void microcode_Scc( processor_state& state, op_params& pb );
 	
 	#pragma mark -
