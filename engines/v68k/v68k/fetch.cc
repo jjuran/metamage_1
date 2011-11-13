@@ -270,20 +270,16 @@ namespace v68k
 		/*
 			This routine does nothing but make a memory read access on a 68000
 			for strict compatibility.  It's needed by CLR.
-		*/
-		
-		if ( s.model >= mc68010 )
-		{
-			return;
-		}
-		
-		/*
+			
 			"In the MC68000 and MC68008 a memory location is read before it is
 			cleared."
 				-- M68000 Family Programmer's Reference Manual
 		*/
 		
-		(void) s.read_mem( pb.address, pb.size );
+		if ( s.model < mc68010 )
+		{
+			(void) s.read_mem( pb.address, pb.size );
+		}
 	}
 	
 }
