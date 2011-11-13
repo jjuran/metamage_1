@@ -11,7 +11,7 @@
 
 
 #ifndef V68K_LITTLE_ENDIAN
-	#ifdef __BIG_ENDIAN__
+	#if defined( __BIG_ENDIAN__ ) || defined( __MC68K__ )
 		#define V68K_LITTLE_ENDIAN  0
 	#endif
 	#ifdef __LITTLE_ENDIAN__
