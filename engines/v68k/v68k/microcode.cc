@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/conditional.hh"
+#include "v68k/macros.hh"
 #include "v68k/state.hh"
 
 
@@ -202,47 +203,26 @@ namespace v68k
 		{
 			uint32_t& reg = s.regs.d[ reg_id ];
 			
+			uint32_t data = 0;
+			
 			switch ( pb.size )
 			{
 				case long_sized:
-					reg = p[0] << 24
-					    | p[1] << 16
-					    | p[2] <<  8
-					    | p[3] <<  0;
-					
-					break;
-				
+					data |= *p++ << 24;
+					data |= *p++ << 16;
 				case word_sized:
-					{
-						const uint16_t data = p[0] << 8 | p[1];
-						
-						if ( reg_id & 0x8 )
-						{
-							reg = int32_t( int16_t( data ) );
-						}
-						else
-						{
-							reg &= 0xFFFF0000;
-							
-							reg |= data;
-						}
-					}
-					
-					break;
-				
+					data |= *p++ <<  8;
 				case byte_sized:
-					if ( reg_id & 0x8 )
-					{
-						reg = int32_t( int8_t( p[0] ) );
-					}
-					else
-					{
-						reg &= 0xFFFFFF00;
-						
-						reg |= p[0];
-					}
-					
-					break;
+					data |= *p++ <<  0;
+			}
+			
+			if ( reg_id & 0x8 )
+			{
+				reg = sign_extend( data, pb.size );
+			}
+			else
+			{
+				reg = update( reg, data, pb.size );
 			}
 		}
 	}

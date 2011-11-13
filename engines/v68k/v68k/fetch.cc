@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/effective_address.hh"
+#include "v68k/macros.hh"
 #include "v68k/op_params.hh"
 #include "v68k/state.hh"
 
@@ -120,12 +121,9 @@ namespace v68k
 			
 			const uint32_t data = s.regs.d[ addr ];
 			
-			switch ( pb.size )
-			{
-				case byte_sized:  pb.first = int32_t( int8_t ( data ) );  return;
-				case word_sized:  pb.first = int32_t( int16_t( data ) );  return;
-				case long_sized:  pb.first =                   data;      return;
-			}
+			pb.first = sign_extend( data, pb.size );
+			
+			return;
 		}
 		
 		if ( pb.size != byte_sized  &&  s.badly_aligned_data( addr ) )
@@ -179,21 +177,7 @@ namespace v68k
 		
 		const uint32_t data = s.regs.d[n];
 		
-		switch ( pb.size )
-		{
-			case byte_sized:
-				pb.first = int32_t( int8_t( data ) );
-			
-			case word_sized:
-				pb.first = int32_t( int16_t( data ) );
-			
-			case long_sized:
-				pb.first = data;
-			
-			default:
-				// Not reached
-				break;
-		}
+		pb.first = sign_extend( data, pb.size );
 	}
 	
 	void fetch_bit_number_from_major_register( processor_state& s, op_params& pb )
