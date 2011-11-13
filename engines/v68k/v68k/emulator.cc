@@ -164,9 +164,14 @@ namespace v68k
 		
 		// load
 		
-		if ( (decoded->flags & loads_and)  &&  !load( *this, pb ) )
+		if ( decoded->flags & loads_and )
 		{
-			return bus_error();
+			load( *this, pb );
+			
+			if ( condition != normal )
+			{
+				return false;
+			}
 		}
 		
 		// execute

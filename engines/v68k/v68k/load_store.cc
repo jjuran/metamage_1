@@ -67,6 +67,11 @@ namespace v68k
 				default:
 					break;
 			}
+			
+			if ( !ok )
+			{
+				return s.bus_error();
+			}
 		}
 		
 		pb.second = sign_extend( pb.second, pb.size );
