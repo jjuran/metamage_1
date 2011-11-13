@@ -20,7 +20,7 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	bool load( const processor_state& s, op_params& pb )
+	bool load( processor_state& s, op_params& pb )
 	{
 		bool ok = true;
 		
