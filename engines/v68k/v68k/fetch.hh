@@ -70,6 +70,8 @@ namespace v68k
 	
 	void fetch_signed_data_at_00FF( processor_state& state, op_params& pb );
 	
+	void fetch_CMPM( processor_state& state, op_params& pb );
+	
 	void fetch_EXG_first_reg( processor_state& state, op_params& pb );
 	
 	void fetch_bit_shift_count( processor_state& state, op_params& pb );

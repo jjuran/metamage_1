@@ -72,6 +72,8 @@ namespace v68k
 	
 	extern fetcher fetches_CMPA[];
 	
+	extern fetcher fetches_CMPM[];
+	
 	extern fetcher fetches_EXG[];
 	
 	extern fetcher fetches_ADDA[];

@@ -388,6 +388,15 @@ namespace v68k
 			
 			if ( opcode & 0x0100 )
 			{
+				if ( mode == 1 )
+				{
+					storage.fetch = fetches_CMPM;
+					storage.code  = microcode_CMP;
+					storage.flags = SUB_CCR_update;
+					
+					return &storage;
+				}
+				
 				if ( ea_is_data_alterable( mode, n ) )
 				{
 					storage.fetch = fetches_math;

@@ -246,6 +246,12 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_CMPM[] =
+	{
+		&fetch_CMPM,
+		0  // NULL
+	};
+	
 	
 	fetcher fetches_EXG[] =
 	{

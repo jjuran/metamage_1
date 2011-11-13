@@ -223,6 +223,21 @@ namespace v68k
 	}
 	
 	
+	void fetch_CMPM( processor_state& s, op_params& pb )
+	{
+		const uint32_t n1 = s.opcode >> 0 & 0x7;
+		const uint32_t n2 = s.opcode >> 9 & 0x7;
+		
+		pb.first  = sign_extend( s.read_mem( s.regs.a[ n1 ], pb.size ), pb.size );
+		pb.second = sign_extend( s.read_mem( s.regs.a[ n2 ], pb.size ), pb.size );
+		
+		const int increment = 1 << pb.size - 1;
+		
+		s.regs.a[ n1 ] += increment;
+		s.regs.a[ n2 ] += increment;
+	}
+	
+	
 	void fetch_EXG_first_reg( processor_state& s, op_params& pb )
 	{
 		const uint32_t mode = s.opcode >> 3 & 0x001f;
