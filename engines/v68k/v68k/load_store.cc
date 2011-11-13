@@ -20,10 +20,8 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	bool load( processor_state& s, op_params& pb )
+	void load( processor_state& s, op_params& pb )
 	{
-		bool ok = true;
-		
 		const int32_t target = pb.target;
 		
 		if ( target >= 0 )
@@ -33,12 +31,14 @@ namespace v68k
 			if ( target > 7 )
 			{
 				// address register, don't sign-extend
-				return true;
+				return;
 			}
 		}
 		else
 		{
 			const uint32_t addr = pb.address;
+			
+			bool ok = true;
 			
 			uint8_t   byte;
 			uint16_t  word;
@@ -70,13 +70,13 @@ namespace v68k
 			
 			if ( !ok )
 			{
-				return s.bus_error();
+				s.bus_error();
+				
+				return;
 			}
 		}
 		
 		pb.second = sign_extend( pb.second, pb.size );
-		
-		return ok;
 	}
 	
 	bool store( processor_state& s, const op_params& pb, int flags )

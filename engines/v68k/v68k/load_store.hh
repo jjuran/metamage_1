@@ -17,7 +17,7 @@ namespace v68k
 	struct op_params;
 	
 	
-	bool load( processor_state& s, op_params& pb );
+	void load( processor_state& s, op_params& pb );
 	
 	bool store( processor_state& s, const op_params& pb, int flags );
 	
