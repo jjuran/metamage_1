@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/instruction.hh"
+#include "v68k/macros.hh"
 #include "v68k/state.hh"
 
 
@@ -68,19 +69,7 @@ namespace v68k
 			}
 		}
 		
-		switch ( pb.size )
-		{
-			case byte_sized:
-				pb.second = int32_t( int8_t( pb.second ) );
-				break;
-			
-			case word_sized:
-				pb.second = int32_t( int16_t( pb.second ) );
-				break;
-			
-			default:
-				break;
-		}
+		pb.second = sign_extend( pb.second, pb.size );
 		
 		return ok;
 	}
