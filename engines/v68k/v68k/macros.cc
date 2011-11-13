@@ -23,5 +23,17 @@ namespace v68k
 		return data;
 	}
 	
+	uint32_t update( uint32_t dest, uint32_t src, op_size_t size )
+	{
+		switch ( size )
+		{
+			default:
+			case long_sized:  return src;
+			case byte_sized:  return dest & 0xFFFFFF00 | uint8_t ( src );
+			case word_sized:  return dest & 0xFFFF0000 | uint16_t( src );
+		}
+		
+	}
+	
 }
 
