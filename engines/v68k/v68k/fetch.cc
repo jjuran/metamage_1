@@ -324,5 +324,67 @@ namespace v68k
 		pb.address += int32_t( pb.first );
 	}
 	
+	
+	void read_address_on_68000( processor_state& s, op_params& pb )
+	{
+		/*
+			This routine does nothing but make a memory read access on a 68000
+			for strict compatibility.  It's needed by CLR.
+		*/
+		
+		if ( s.model >= mc68010 )
+		{
+			return;
+		}
+		
+		/*
+			"In the MC68000 and MC68008 a memory location is read before it is
+			cleared."
+				-- M68000 Family Programmer's Reference Manual
+		*/
+		
+		if ( pb.size != byte_sized  &&  s.badly_aligned_data( pb.address ) )
+		{
+			s.address_error();
+			
+			return;
+		}
+		
+		bool ok;
+		
+		switch ( pb.size )
+		{
+			case byte_sized:
+				uint8_t byte;
+				
+				ok = s.mem.get_byte( pb.address, byte, s.data_space() );
+				
+				break;
+			
+			case word_sized:
+				uint16_t word;
+				
+				ok = s.mem.get_word( pb.address, word, s.data_space() );
+				
+				break;
+			
+			case long_sized:
+				uint32_t longword;
+				
+				ok = s.mem.get_long( pb.address, longword, s.data_space() );
+				
+				break;
+			
+			default:
+				// Not reached
+				break;
+		}
+		
+		if ( !ok )
+		{
+			s.bus_error();
+		}
+	}
+	
 }
 
