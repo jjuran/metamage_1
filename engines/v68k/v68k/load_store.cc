@@ -94,44 +94,23 @@ namespace v68k
 			return true;
 		}
 		
-		uint32_t data_mask;
-		
-		switch ( pb.size )
-		{
-			case byte_sized:
-				data_mask = 0x000000FF;
-				break;
-			
-			case word_sized:
-				data_mask = 0x0000FFFF;
-				break;
-			
-			case long_sized:
-				data_mask = 0xFFFFFFFF;
-				break;
-			
-			default:
-				break;
-		}
-		
 		if ( flags & and_sets_CCR )
 		{
 			// CCR is already set
 		}
 		else
 		{
-			const uint32_t sign_mask = data_mask / 2 + 1;
+			const int32_t signed_data = sign_extend( data, pb.size );
 			
-			s.regs.nzvc = N( (data & sign_mask) != 0 )
-			            | Z( (data & data_mask) == 0 )
+			s.regs.nzvc = N( signed_data <  0 )
+			            | Z( signed_data == 0 )
 			            | V( 0 )
 			            | C( 0 );
 		}
 		
 		if ( target >= 0 )
 		{
-			s.regs.d[ target ] &= ~data_mask;
-			s.regs.d[ target ] |=  data_mask & data;
+			s.regs.d[ target ] = update( s.regs.d[ target ], data, pb.size );
 			
 			return true;
 		}
