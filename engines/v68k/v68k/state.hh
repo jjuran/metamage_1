@@ -11,6 +11,7 @@
 
 // v68k
 #include "v68k/memory.hh"
+#include "v68k/op_params.hh"
 #include "v68k/registers.hh"
 
 
@@ -63,6 +64,8 @@ namespace v68k
 		processor_state( processor_model model, uint8_t* mem_base, uint32_t mem_size );
 		
 		void prefetch_instruction_word();
+		
+		uint32_t read_mem( uint32_t addr, op_size_t size );
 		
 		uint16_t get_CCR() const;
 		
