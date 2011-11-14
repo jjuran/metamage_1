@@ -342,6 +342,12 @@ namespace v68k
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 		}
+		else if ( mode <= 1 )
+		{
+			storage.size  = op_size_in_00C0;
+			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
+			storage.flags = loads_and | stores_data | SUBX_CCR_update;
+		}
 		else
 		{
 			return 0;  // NULL
@@ -472,6 +478,12 @@ namespace v68k
 		{
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
+		}
+		else if ( mode <= 1 )
+		{
+			storage.size  = op_size_in_00C0;
+			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
+			storage.flags = loads_and | stores_data | ADDX_CCR_update;
 		}
 		else
 		{
