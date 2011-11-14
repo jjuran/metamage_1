@@ -172,6 +172,24 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
+	static const instruction* decode_TAS( uint16_t opcode, instruction& storage )
+	{
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		if ( ea_is_data_alterable( mode, n ) )
+		{
+			storage.size  = byte_sized;
+			storage.fetch = fetches_effective_address;
+			storage.code  = &microcode_TAS;
+			storage.flags = loads_and | stores_data;
+			
+			return &storage;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	static const instruction* decode_unary_op( uint16_t opcode, instruction& storage )
 	{
 		storage.size = op_size_in_00C0;
@@ -329,6 +347,11 @@ namespace v68k
 		if ( (opcode & 0x09C0) == 0x00C0 )
 		{
 			return decode_MOVE_SR( opcode, storage );
+		}
+		
+		if ( (opcode & 0x0FC0) == 0x0AC0 )
+		{
+			return decode_TAS( opcode, storage );
 		}
 		
 		return 0;  // NULL

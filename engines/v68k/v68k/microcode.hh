@@ -74,6 +74,8 @@ namespace v68k
 	
 	void microcode_EXTB( processor_state& state, op_params& pb );
 	
+	void microcode_TAS( processor_state& state, op_params& pb );
+	
 	void microcode_MOVEM_to  ( processor_state& state, op_params& pb );
 	void microcode_MOVEM_from( processor_state& state, op_params& pb );
 	
