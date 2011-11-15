@@ -10,6 +10,7 @@
 #include "v68k/endian.hh"
 #include "v68k/instruction.hh"
 #include "v68k/load_store.hh"
+#include "v68k/update_CCR.hh"
 
 
 namespace v68k
@@ -176,6 +177,27 @@ namespace v68k
 		
 		// execute
 		decoded->code( *this, pb );
+		
+		// update CCR
+		
+		typedef instruction_flags_t flags_t;
+		
+		if ( const flags_t ccr_flags = flags_t( decoded->flags & CCR_update_mask ) )
+		{
+			if ( int32_t( pb.target ) <= 7  ||  decoded->flags & CCR_update_An )
+			{
+				// Don't update CCR targeting address registers unless requested
+				
+				const int index = ccr_flags >> CCR_update_shift;
+				
+				the_CCR_updaters[ index ]( *this, pb );
+				
+				if ( decoded->flags & CCR_update_set_X )
+				{
+					regs.x = regs.nzvc & 0x1;
+				}
+			}
+		}
 		
 		// store
 		
