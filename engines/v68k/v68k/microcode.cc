@@ -38,22 +38,16 @@ namespace v68k
 	
 	void microcode_BCHG( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = (1 << pb.first) ^ pb.second;
 	}
 	
 	void microcode_BCLR( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = ~(1 << pb.first) & pb.second;
 	}
 	
 	void microcode_BSET( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = (1 << pb.first) | pb.second;
 	}
 	
