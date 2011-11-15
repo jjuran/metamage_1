@@ -62,7 +62,7 @@ namespace v68k
 			return true;
 		}
 		
-		if ( flags & and_sets_CCR )
+		if ( flags & basic_CCR_update )
 		{
 			const int32_t signed_data = sign_extend( data, pb.size );
 			

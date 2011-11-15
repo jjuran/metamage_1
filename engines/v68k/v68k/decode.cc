@@ -150,14 +150,14 @@ namespace v68k
 			storage.code = immediate_microcodes[ selector ];
 			
 			storage.fetch = fetches_immediate;
-			storage.flags = loads_and | stores_data | and_sets_CCR;
+			storage.flags = loads_and | stores_data | basic_CCR_update;
 			
 			if ( selector & 2 )
 			{
 			}
 			else
 			{
-				storage.flags |= and_sets_CCR;
+				storage.flags |= basic_CCR_update;
 			}
 			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
@@ -311,7 +311,7 @@ namespace v68k
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_OR;
-			storage.flags = loads_and | stores_data | and_sets_CCR;
+			storage.flags = loads_and | stores_data | basic_CCR_update;
 			
 			return &storage;
 		}
@@ -385,7 +385,7 @@ namespace v68k
 				{
 					storage.fetch = fetches_math;
 					storage.code  = &microcode_EOR;
-					storage.flags = loads_and | stores_data | and_sets_CCR;
+					storage.flags = loads_and | stores_data | basic_CCR_update;
 					
 					return &storage;
 				}
@@ -419,7 +419,7 @@ namespace v68k
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_AND;
-			storage.flags = loads_and | stores_data | and_sets_CCR;
+			storage.flags = loads_and | stores_data | basic_CCR_update;
 			
 			return &storage;
 		}

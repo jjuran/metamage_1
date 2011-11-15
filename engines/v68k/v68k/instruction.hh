@@ -28,7 +28,8 @@ namespace v68k
 		
 		loads_and        = 0x0080,
 		stores_data      = 0x0100,
-		and_sets_CCR     = 0x0800
+		
+		basic_CCR_update = 0x0800
 	};
 	
 	inline instruction_flags_t operator|( instruction_flags_t a, instruction_flags_t b )
