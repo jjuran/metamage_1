@@ -196,11 +196,11 @@ namespace v68k
 			{
 				storage.fetch = fetches_TST;
 				storage.code  = &microcode_MOVE;
-				storage.flags = basic_CCR_update;
+				storage.flags = TST_CCR_update;
 				
 				if ( mode == 1  ||  mode == 7  &&  n >= 2 )
 				{
-					storage.flags = not_before_68020 | basic_CCR_update;
+					storage.flags = not_before_68020 | TST_CCR_update;
 				}
 				
 				return &storage;
