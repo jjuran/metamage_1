@@ -98,11 +98,11 @@ namespace v68k
 			
 			storage.code  = bit_op_microcodes[ i ];
 			storage.fetch = bit_op_fetchers  [ j ];
-			storage.flags = loads_and | stores_data;
+			storage.flags = loads_and | stores_data | BTST_CCR_update;
 			
 			if ( storage.code == &microcode_BTST )
 			{
-				storage.flags = loads_and;
+				storage.flags = loads_and | BTST_CCR_update;
 			}
 			
 			return &storage;
