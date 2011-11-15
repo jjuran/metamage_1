@@ -35,13 +35,13 @@ namespace v68k
 		CCR_update_An    = 0x0800,  // Update CCR even for address registers
 		
 		no_CCR_update    = 0x0000,
-		basic_CCR_update = 0x0200,  // N = x < 0, Z = x == 0, V = 0, C = 0
-		BTST_CCR_update  = 0x0300,
+		basic_CCR_update = 0x0400,  // N = x < 0, Z = x == 0, V = 0, C = 0
+		BTST_CCR_update  = 0x0500,
 		ADD_CCR_update   = CCR_update_add | CCR_update_set_X,  // 0x0080, 0
 		SUB_CCR_update   = CCR_update_sub | CCR_update_set_X,  // 0x0180, 1
 		CMP_CCR_update   = CCR_update_sub | CCR_update_An,     // 0x0900, 1
 		
-		TST_CCR_update   = basic_CCR_update | CCR_update_An,   // 0x0A00, 2
+		TST_CCR_update   = basic_CCR_update | CCR_update_An,   // 0x0C00, 4
 		
 		/*
 			Omit flags from the mask, so that the shifted mask result can be

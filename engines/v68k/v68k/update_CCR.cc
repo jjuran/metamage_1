@@ -77,6 +77,8 @@ namespace v68k
 	{
 		&update_CCR_ADD,
 		&update_CCR_SUB,
+		0,  // NULL
+		0,  // NULL
 		&update_CCR_TST,
 		&update_CCR_BTST
 	};
