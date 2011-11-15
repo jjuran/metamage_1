@@ -63,8 +63,6 @@ namespace v68k
 		
 		s.regs.nzvc &= ~0x4;
 		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
-		
-		pb.result = pb.second;  // FIXME:  Don't require store to load
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
