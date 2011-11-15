@@ -26,8 +26,8 @@ namespace v68k
 		not_before_68040 = 0x40,
 		not_before_mask  = 0x70,
 		
-		loads_and        = 0x0080,
-		stores_data      = 0x0100,
+		loads_and        = 0x1000,
+		stores_data      = 0x2000,
 		
 		basic_CCR_update = 0x0800
 	};
