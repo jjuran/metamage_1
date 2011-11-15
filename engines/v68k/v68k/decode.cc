@@ -337,19 +337,19 @@ namespace v68k
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_SUB;
-			
-			return &storage;
 		}
 		else if ( size_code == 3 )
 		{
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_SUBA;
-			
-			return &storage;
+		}
+		else
+		{
+			return 0;  // NULL
 		}
 		
-		return 0;  // NULL
+		return &storage;
 	}
 	
 	static const instruction* decode_line_B( uint16_t opcode, instruction& storage )
@@ -458,19 +458,19 @@ namespace v68k
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_ADD;
-			
-			return &storage;
 		}
 		else if ( size_code == 3 )
 		{
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_ADDA;
-			
-			return &storage;
+		}
+		else
+		{
+			return 0;  // NULL
 		}
 		
-		return 0;  // NULL
+		return &storage;
 	}
 	
 	static const microcode bit_shift_microcodes[] =
