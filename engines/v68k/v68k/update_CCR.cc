@@ -26,6 +26,12 @@ namespace v68k
 		       | Z( data == 0 );
 	}
 	
+	static inline uint8_t ADDX_NZ( int32_t data, uint8_t nzvc )
+	{
+		return + N( data <  0 )
+		       | Z( data == 0 ) & nzvc & 0x4;
+	}
+	
 	static inline uint8_t additive_VC( int32_t a, int32_t b, int32_t c )
 	{
 		const bool S = a < 0;
@@ -57,6 +63,27 @@ namespace v68k
 		            | additive_VC( a, d, b );  // b is the sum
 	}
 	
+	static void update_CCR_ADDX( processor_state& s, const op_params& pb )
+	{
+		const int32_t a = sign_extend( pb.first,  pb.size );
+		const int32_t b = sign_extend( pb.second, pb.size );
+		const int32_t c = sign_extend( pb.result, pb.size );
+		
+		s.regs.nzvc = ADDX_NZ( c, s.regs.nzvc )
+		            | additive_VC( a, b, c );
+	}
+	
+	static void update_CCR_SUBX( processor_state& s, const op_params& pb )
+	{
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
+		
+		const int32_t d = b - a;
+		
+		s.regs.nzvc = ADDX_NZ( d, s.regs.nzvc )
+		            | additive_VC( a, d, b );  // b is the sum
+	}
+	
 	static void update_CCR_TST( processor_state& s, const op_params& pb )
 	{
 		const int32_t data = sign_extend( pb.result, pb.size );
@@ -77,8 +104,8 @@ namespace v68k
 	{
 		&update_CCR_ADD,
 		&update_CCR_SUB,
-		0,  // NULL
-		0,  // NULL
+		&update_CCR_ADDX,
+		&update_CCR_SUBX,
 		&update_CCR_TST,
 		&update_CCR_BTST
 	};
