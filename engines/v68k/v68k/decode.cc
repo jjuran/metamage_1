@@ -330,12 +330,13 @@ namespace v68k
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
+		storage.flags = loads_and | stores_data | and_sets_CCR;
+		
 		if ( is_SUB )
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_SUB;
-			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -344,7 +345,6 @@ namespace v68k
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_SUBA;
-			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
@@ -451,12 +451,13 @@ namespace v68k
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
+		storage.flags = loads_and | stores_data | and_sets_CCR;
+		
 		if ( is_ADD )
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 			storage.code  = &microcode_ADD;
-			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
 			return &storage;
 		}
@@ -465,7 +466,6 @@ namespace v68k
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
 			storage.code  = &microcode_ADDA;
-			storage.flags = loads_and | stores_data;
 			
 			return &storage;
 		}
