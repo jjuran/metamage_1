@@ -59,10 +59,6 @@ namespace v68k
 	
 	void microcode_BTST( processor_state& s, op_params& pb )
 	{
-		const uint32_t bit = pb.first;
-		
-		s.regs.nzvc &= ~0x4;
-		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
