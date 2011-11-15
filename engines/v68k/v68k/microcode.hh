@@ -29,7 +29,6 @@ namespace v68k
 	void microcode_BCHG( processor_state& state, op_params& pb );
 	void microcode_BCLR( processor_state& state, op_params& pb );
 	void microcode_BSET( processor_state& state, op_params& pb );
-	void microcode_BTST( processor_state& state, op_params& pb );
 	
 	void microcode_MOVEP_to  ( processor_state& state, op_params& pb );
 	void microcode_MOVEP_from( processor_state& state, op_params& pb );

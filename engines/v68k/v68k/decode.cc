@@ -33,7 +33,7 @@ namespace v68k
 		&microcode_BCHG,
 		&microcode_BCLR,
 		&microcode_BSET,
-		&microcode_BTST
+		&microcode_NOP
 	};
 	
 	static const microcode modify_SR_microcodes[] =
@@ -100,7 +100,7 @@ namespace v68k
 			storage.fetch = bit_op_fetchers  [ j ];
 			storage.flags = loads_and | stores_data | BTST_CCR_update;
 			
-			if ( storage.code == &microcode_BTST )
+			if ( storage.code == &microcode_NOP )
 			{
 				storage.flags = loads_and | BTST_CCR_update;
 			}

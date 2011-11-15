@@ -51,10 +51,6 @@ namespace v68k
 		pb.result = (1 << pb.first) | pb.second;
 	}
 	
-	void microcode_BTST( processor_state& s, op_params& pb )
-	{
-	}
-	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
 		const uint32_t x = pb.target;
