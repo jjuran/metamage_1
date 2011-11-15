@@ -154,6 +154,8 @@ namespace v68k
 			
 			if ( selector & 2 )
 			{
+				storage.flags |= (selector & 1) ? ADD_CCR_update
+				                                : SUB_CCR_update;
 			}
 			else
 			{
@@ -230,7 +232,8 @@ namespace v68k
 				
 				storage.size  = op_size_in_00C0;
 				storage.fetch = fetches_ADDQ;
-				storage.flags = loads_and | stores_data;
+				storage.flags = opcode & 0x0100 ? loads_and | stores_data | SUB_CCR_update
+				                                : loads_and | stores_data | ADD_CCR_update;
 				
 				return &storage;
 			}
@@ -333,7 +336,7 @@ namespace v68k
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
-		storage.flags = loads_and | stores_data;
+		storage.flags = loads_and | stores_data | SUB_CCR_update;
 		
 		if ( is_SUB )
 		{
@@ -454,7 +457,7 @@ namespace v68k
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
-		storage.flags = loads_and | stores_data;
+		storage.flags = loads_and | stores_data | ADD_CCR_update;
 		
 		if ( is_ADD )
 		{

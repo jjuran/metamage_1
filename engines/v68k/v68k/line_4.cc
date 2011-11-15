@@ -224,7 +224,7 @@ namespace v68k
 				case 2:
 					storage.fetch = fetches_NEG;
 					storage.code  = &microcode_SUB;
-					storage.flags = loads_and | stores_data;
+					storage.flags = loads_and | stores_data | SUB_CCR_update;
 					
 					return &storage;
 				
