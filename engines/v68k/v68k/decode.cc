@@ -100,6 +100,11 @@ namespace v68k
 			storage.fetch = bit_op_fetchers  [ j ];
 			storage.flags = loads_and | stores_data | and_sets_CCR;
 			
+			if ( storage.code == &microcode_BTST )
+			{
+				storage.flags = loads_and;
+			}
+			
 			return &storage;
 		}
 		
