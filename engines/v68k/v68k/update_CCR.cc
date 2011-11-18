@@ -57,6 +57,13 @@ namespace v68k
 		            | additive_VC( a, d, b );  // b is the sum
 	}
 	
+	static void update_CCR_TST( processor_state& s, const op_params& pb )
+	{
+		const int32_t data = sign_extend( pb.result, pb.size );
+		
+		s.regs.nzvc = common_NZ( data );
+	}
+	
 	static void update_CCR_BTST( processor_state& s, const op_params& pb )
 	{
 		const uint32_t bit = pb.first;
@@ -65,16 +72,12 @@ namespace v68k
 		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
-	static void spare_CCR( processor_state& s, const op_params& pb )
-	{
-	}
-	
 	
 	CCR_updater the_CCR_updaters[] =
 	{
 		&update_CCR_ADD,
 		&update_CCR_SUB,
-		&spare_CCR,
+		&update_CCR_TST,
 		&update_CCR_BTST
 	};
 	
