@@ -332,18 +332,6 @@ namespace v68k
 		Dn = longword;
 	}
 	
-	void microcode_TST( processor_state& s, op_params& pb )
-	{
-		const int32_t data = pb.first;
-		
-		pb.result = data;
-		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( 0 );
-	}
-	
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
 		uint16_t mask = pb.first;
