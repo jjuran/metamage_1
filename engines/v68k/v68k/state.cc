@@ -32,6 +32,55 @@ namespace v68k
 		}
 	}
 	
+	uint32_t processor_state::read_mem( uint32_t addr, op_size_t size )
+	{
+		if ( size != byte_sized  &&  badly_aligned_data( addr ) )
+		{
+			return address_error();
+		}
+		
+		uint32_t result;
+		
+		bool ok;
+		
+		switch ( size )
+		{
+			case byte_sized:
+				uint8_t byte;
+				
+				ok = mem.get_byte( addr, byte, data_space() );
+				
+				result = byte;
+				
+				break;
+			
+			case word_sized:
+				uint16_t word;
+				
+				ok = mem.get_word( addr, word, data_space() );
+				
+				result = word;
+				
+				break;
+			
+			case long_sized:
+				ok = mem.get_long( addr, result, data_space() );
+				
+				break;
+			
+			default:
+				// Not reached
+				break;
+		}
+		
+		if ( !ok )
+		{
+			return bus_error();
+		}
+		
+		return result;
+	}
+	
 	uint16_t processor_state::get_CCR() const
 	{
 		const uint16_t ccr = regs.   x <<  4

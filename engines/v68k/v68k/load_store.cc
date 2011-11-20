@@ -36,44 +36,7 @@ namespace v68k
 		}
 		else
 		{
-			const uint32_t addr = pb.address;
-			
-			bool ok = true;
-			
-			uint8_t   byte;
-			uint16_t  word;
-			
-			switch ( pb.size )
-			{
-				case byte_sized:
-					ok = s.mem.get_byte( addr, byte, s.data_space() );
-					
-					pb.second = byte;
-					
-					break;
-				
-				case word_sized:
-					ok = s.mem.get_word( addr, word, s.data_space() );
-					
-					pb.second = word;
-					
-					break;
-				
-				case long_sized:
-					ok = s.mem.get_long( addr, pb.second, s.data_space() );
-					
-					break;
-				
-				default:
-					break;
-			}
-			
-			if ( !ok )
-			{
-				s.bus_error();
-				
-				return;
-			}
+			pb.second = s.read_mem( pb.address, pb.size );
 		}
 		
 		pb.second = sign_extend( pb.second, pb.size );
