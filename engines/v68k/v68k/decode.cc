@@ -302,6 +302,17 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
+		if ( size_code == 3  &&  ea_is_data_alterable( mode, n ) )
+		{
+			storage.size  = long_sized;
+			storage.fetch = fetches_math_to_Dn;
+			storage.code  = has_0100 ? microcode_DIVS
+			                         : microcode_DIVU;
+			storage.flags = loads_and | stores_data | DIV_CCR_update;
+			
+			return &storage;
+		}
+		
 		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
 		{
 			storage.size  = op_size_in_00C0;
