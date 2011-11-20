@@ -815,6 +815,68 @@ namespace v68k
 		pb.result = pb.first | pb.second;
 	}
 	
+	void microcode_DIVS( processor_state& s, op_params& pb )
+	{
+		const int32_t dividend = pb.second;
+		const int16_t divisor  = pb.first;
+		
+		if ( divisor == 0 )
+		{
+			s.take_exception_format_6( 4 * sizeof (uint32_t), pb.address );
+			
+			pb.size = unsized;  // Don't store the result
+			
+			return;
+		}
+		
+		const int32_t quotient_32 = dividend / divisor;
+		
+		const int16_t quotient = quotient_32;
+		
+		if ( quotient != quotient_32 )
+		{
+			pb.size = unsized;  // Don't store the result
+		}
+		else
+		{
+			//const int16_t remainder = dividend % divisor;
+			const int16_t remainder = dividend - quotient * divisor;
+			
+			pb.result = remainder << 16 | uint16_t( quotient );
+		}
+	}
+	
+	void microcode_DIVU( processor_state& s, op_params& pb )
+	{
+		const uint32_t dividend = pb.second;
+		const uint16_t divisor  = pb.first;
+		
+		if ( divisor == 0 )
+		{
+			s.take_exception_format_6( 4 * sizeof (uint32_t), pb.address );
+			
+			pb.size = unsized;  // Don't store the result
+			
+			return;
+		}
+		
+		const uint32_t quotient_32 = dividend / divisor;
+		
+		const uint16_t quotient = quotient_32;
+		
+		if ( quotient != quotient_32 )
+		{
+			pb.size = unsized;  // Don't store the result
+		}
+		else
+		{
+			//const uint16_t remainder = dividend % divisor;
+			const uint16_t remainder = dividend - quotient * divisor;
+			
+			pb.result = remainder << 16 | quotient;
+		}
+	}
+	
 	#pragma mark -
 	#pragma mark Line 9
 	
