@@ -53,6 +53,8 @@ namespace v68k
 	
 	extern fetcher fetches_NEG[];
 	
+	extern fetcher fetches_NEGX[];
+	
 	extern fetcher fetches_NOT[];
 	
 	extern fetcher fetches_TST[];

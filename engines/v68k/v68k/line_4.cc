@@ -207,7 +207,11 @@ namespace v68k
 			{
 				case 0:
 					// NEGX
-					return 0;
+					storage.fetch = fetches_NEGX;
+					storage.code  = &microcode_SUB;
+					storage.flags = stores_data | SUBX_CCR_update;
+					
+					return &storage;
 				
 				case 1:
 					storage.fetch = fetches_CLR;
