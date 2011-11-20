@@ -233,6 +233,20 @@ namespace v68k
 	}
 	
 	
+	void fetch_ADDX_predecrement( processor_state& s, op_params& pb )
+	{
+		const uint32_t i = (s.opcode & 0x000F) >> 0;  // always An
+		const uint32_t j = (s.opcode & 0x1E00) >> 9;  // always An
+		
+		s.regs.d[i] -= 1 << pb.size - 1;
+		s.regs.d[j] -= 1 << pb.size - 1;
+		
+		pb.first = s.read_mem( s.regs.d[i], pb.size );
+		
+		pb.address = s.regs.d[j];
+	}
+	
+	
 	void fetch_bit_shift_count( processor_state& s, op_params& pb )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;

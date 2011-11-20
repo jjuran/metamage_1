@@ -72,6 +72,8 @@ namespace v68k
 	
 	void fetch_EXG_first_reg( processor_state& state, op_params& pb );
 	
+	void fetch_ADDX_predecrement( processor_state& state, op_params& pb );
+	
 	void fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
 	
