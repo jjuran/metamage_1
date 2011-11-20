@@ -136,6 +136,10 @@ namespace v68k
 	
 	void microcode_EXG( processor_state& state, op_params& pb );
 	
+	void microcode_MULS( processor_state& state, op_params& pb );
+	
+	void microcode_MULU( processor_state& state, op_params& pb );
+	
 	#pragma mark -
 	#pragma mark Line D
 	

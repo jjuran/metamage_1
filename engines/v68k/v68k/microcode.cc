@@ -866,6 +866,20 @@ namespace v68k
 		Ry = temp;
 	}
 	
+	void microcode_MULS( processor_state& s, op_params& pb )
+	{
+		pb.result = int16_t( pb.first ) * int16_t( pb.second );
+		
+		pb.size = long_sized;
+	}
+	
+	void microcode_MULU( processor_state& s, op_params& pb )
+	{
+		pb.result = uint16_t( pb.first ) * uint16_t( pb.second );
+		
+		pb.size = long_sized;
+	}
+	
 	#pragma mark -
 	#pragma mark Line D
 	
