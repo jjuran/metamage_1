@@ -351,6 +351,8 @@ namespace v68k
 	{
 		const int32_t data = pb.first;
 		
+		pb.result = data;
+		
 		s.regs.nzvc = N( data <  0 )
 		            | Z( data == 0 )
 		            | V( 0 )
