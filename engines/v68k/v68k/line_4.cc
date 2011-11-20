@@ -61,6 +61,8 @@ namespace v68k
 			storage.size = opcode & 0x0040 ? long_sized
 			                               : word_sized;
 			
+			storage.flags = basic_CCR_update;
+			
 			return &storage;
 		}
 		
@@ -193,11 +195,12 @@ namespace v68k
 			if ( ea_is_valid( mode, n )  &&  (mode != 1 || size_code != 0) )
 			{
 				storage.fetch = fetches_TST;
-				storage.code  = &microcode_TST;
+				storage.code  = &microcode_MOVE;
+				storage.flags = basic_CCR_update;
 				
 				if ( mode == 1  ||  mode == 7  &&  n >= 2 )
 				{
-					storage.flags = not_before_68020;
+					storage.flags = not_before_68020 | basic_CCR_update;
 				}
 				
 				return &storage;
@@ -205,8 +208,6 @@ namespace v68k
 		}
 		else if ( ea_is_data_alterable( mode, n ) )
 		{
-			storage.flags = loads_and | stores_data;
-			
 			switch ( selector )
 			{
 				case 0:
@@ -216,20 +217,21 @@ namespace v68k
 				case 1:
 					storage.fetch = fetches_CLR;
 					storage.code  = &microcode_MOVE;
-					storage.flags = stores_data;
+					storage.flags = stores_data | basic_CCR_update;
 					
 					return &storage;
 				
 				case 2:
 					storage.fetch = fetches_NEG;
 					storage.code  = &microcode_SUB;
-					storage.flags = storage.flags | and_sets_CCR;
+					storage.flags = loads_and | stores_data | SUB_CCR_update;
 					
 					return &storage;
 				
 				case 3:
 					storage.fetch = fetches_NOT;
 					storage.code  = &microcode_EOR;
+					storage.flags = loads_and | stores_data | basic_CCR_update;
 					
 					return &storage;
 				

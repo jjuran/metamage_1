@@ -29,7 +29,6 @@ namespace v68k
 	void microcode_BCHG( processor_state& state, op_params& pb );
 	void microcode_BCLR( processor_state& state, op_params& pb );
 	void microcode_BSET( processor_state& state, op_params& pb );
-	void microcode_BTST( processor_state& state, op_params& pb );
 	
 	void microcode_MOVEP_to  ( processor_state& state, op_params& pb );
 	void microcode_MOVEP_from( processor_state& state, op_params& pb );
@@ -72,8 +71,6 @@ namespace v68k
 	void microcode_EXT_L( processor_state& state, op_params& pb );
 	
 	void microcode_EXTB( processor_state& state, op_params& pb );
-	
-	void microcode_TST( processor_state& state, op_params& pb );
 	
 	void microcode_MOVEM_to  ( processor_state& state, op_params& pb );
 	void microcode_MOVEM_from( processor_state& state, op_params& pb );
@@ -125,8 +122,6 @@ namespace v68k
 	
 	void microcode_SUB( processor_state& state, op_params& pb );
 	
-	void microcode_SUBA( processor_state& state, op_params& pb );
-	
 	#pragma mark -
 	#pragma mark Line B
 	
@@ -145,8 +140,6 @@ namespace v68k
 	#pragma mark Line D
 	
 	void microcode_ADD( processor_state& state, op_params& pb );
-	
-	void microcode_ADDA( processor_state& state, op_params& pb );
 	
 	#pragma mark -
 	#pragma mark Line E

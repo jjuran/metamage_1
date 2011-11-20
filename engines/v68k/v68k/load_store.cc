@@ -55,25 +55,11 @@ namespace v68k
 		
 		if ( target > 7 )
 		{
-			// Address register:  don't touch CCR
+			// Address register:  don't mask
 			
 			s.regs.d[ target ] = data;
 			
 			return true;
-		}
-		
-		if ( flags & and_sets_CCR )
-		{
-			// CCR is already set
-		}
-		else
-		{
-			const int32_t signed_data = sign_extend( data, pb.size );
-			
-			s.regs.nzvc = N( signed_data <  0 )
-			            | Z( signed_data == 0 )
-			            | V( 0 )
-			            | C( 0 );
 		}
 		
 		if ( target >= 0 )

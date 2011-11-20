@@ -26,9 +26,34 @@ namespace v68k
 		not_before_68040 = 0x40,
 		not_before_mask  = 0x70,
 		
-		loads_and        = 0x0080,
-		stores_data      = 0x0100,
-		and_sets_CCR     = 0x0800
+		loads_and        = 0x1000,
+		stores_data      = 0x2000,
+		
+		CCR_update_set_X = 0x0080,  // Assign C to X
+		CCR_update_add   = 0x0000,
+		CCR_update_sub   = 0x0100,
+		CCR_update_An    = 0x0800,  // Update CCR even for address registers
+		
+		no_CCR_update    = 0x0000,
+		basic_CCR_update = 0x0200,  // N = x < 0, Z = x == 0, V = 0, C = 0
+		BTST_CCR_update  = 0x0300,
+		ADD_CCR_update   = CCR_update_add | CCR_update_set_X,  // 0x0080, 0
+		SUB_CCR_update   = CCR_update_sub | CCR_update_set_X,  // 0x0180, 1
+		CMP_CCR_update   = CCR_update_sub | CCR_update_An,     // 0x0900, 1
+		
+		/*
+			Omit flags from the mask, so that the shifted mask result can be
+			used as an array index, except include the set-X flag (which will
+			be shifted off anyway) so that the null case can be distinguished
+			from ADD.
+		*/
+		
+		CCR_update_mask  = 0x0780
+	};
+	
+	enum
+	{
+		CCR_update_shift = 8
 	};
 	
 	inline instruction_flags_t operator|( instruction_flags_t a, instruction_flags_t b )

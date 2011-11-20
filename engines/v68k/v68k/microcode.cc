@@ -38,31 +38,17 @@ namespace v68k
 	
 	void microcode_BCHG( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = (1 << pb.first) ^ pb.second;
 	}
 	
 	void microcode_BCLR( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = ~(1 << pb.first) & pb.second;
 	}
 	
 	void microcode_BSET( processor_state& s, op_params& pb )
 	{
-		microcode_BTST( s, pb );
-		
 		pb.result = (1 << pb.first) | pb.second;
-	}
-	
-	void microcode_BTST( processor_state& s, op_params& pb )
-	{
-		const uint32_t bit = pb.first;
-		
-		s.regs.nzvc &= ~0x4;
-		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
 	void microcode_MOVEP_to( processor_state& s, op_params& pb )
@@ -318,11 +304,6 @@ namespace v68k
 		const int16_t word = byte;
 		
 		Dn = (Dn & 0xFFFF0000) | word;
-		
-		s.regs.nzvc = N( word <  0 )
-		            | Z( word == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_EXT_L( processor_state& s, op_params& pb )
@@ -336,11 +317,6 @@ namespace v68k
 		const int32_t longword = word;
 		
 		Dn = longword;
-		
-		s.regs.nzvc = N( longword <  0 )
-		            | Z( longword == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_EXTB( processor_state& s, op_params& pb )
@@ -354,21 +330,6 @@ namespace v68k
 		const int32_t longword = byte;
 		
 		Dn = longword;
-		
-		s.regs.nzvc = N( longword <  0 )
-		            | Z( longword == 0 )
-		            | V( 0 )
-		            | C( 0 );
-	}
-	
-	void microcode_TST( processor_state& s, op_params& pb )
-	{
-		const int32_t data = pb.first;
-		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( 0 );
 	}
 	
 	void microcode_MOVEM_to( processor_state& s, op_params& pb )
@@ -857,35 +818,7 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line 9
 	
-	static int32_t subtract( processor_state& s, int32_t data, int32_t from )
-	{
-		const int32_t diff = from - data;
-		
-		const bool S = data < 0;
-		const bool D = from < 0;
-		const bool R = diff < 0;
-		
-		s.regs.nzvc = N( diff <  0 )
-		            | Z( diff == 0 )
-		            | V( (S == R) & (S != D) )
-		            | C( S & !D | R & !D | S & R );
-		
-		return diff;
-	}
-	
 	void microcode_SUB( processor_state& s, op_params& pb )
-	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
-		
-		const int32_t diff = subtract( s, a, b );
-		
-		pb.result = diff;
-		
-		s.regs.x = s.regs.nzvc & 0x1;
-	}
-	
-	void microcode_SUBA( processor_state& s, op_params& pb )
 	{
 		const int32_t a = pb.first;
 		const int32_t b = pb.second;
@@ -902,8 +835,6 @@ namespace v68k
 	{
 		const int32_t a = pb.first;
 		const int32_t b = pb.second;
-		
-		(void) subtract( s, a, b );
 	}
 	
 	void microcode_EOR( processor_state& s, op_params& pb )
@@ -939,41 +870,6 @@ namespace v68k
 	#pragma mark Line D
 	
 	void microcode_ADD( processor_state& s, op_params& pb )
-	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
-		
-		/*
-			     size_code  E  (0, 1,  2)
-			1 << size_code  E  (1, 2,  4)
-			      
-			             n_bytes - 1   E  (0, 1,  3)
-			        8 * (n_bytes - 1)  E  (0, 8, 24)
-			
-			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
-		*/
-		
-		const int n_bytes = 1 << pb.size - 1;
-		
-		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
-		
-		const int32_t sum = a + b;
-		
-		const bool S = a   & sign_mask;
-		const bool D = b   & sign_mask;
-		const bool R = sum & sign_mask;
-		
-		s.regs.nzvc = N( R )
-		            | Z( sum == 0 )
-		            | V( (S == D) & (S != R) )
-		            | C( S & D | !R & D | S & !R );
-		
-		s.regs.x = s.regs.nzvc & 0x1;
-		
-		pb.result = sum;
-	}
-	
-	void microcode_ADDA( processor_state& s, op_params& pb )
 	{
 		const int32_t a = pb.first;
 		const int32_t b = pb.second;
