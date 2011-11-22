@@ -20,7 +20,7 @@ namespace v68k
 	
 	static const instruction* decode_48( uint16_t opcode, instruction& storage )
 	{
-		if ( (opcode & 0xFFF8) == 0x4808 )
+		if ( (opcode & 0x00F8) == 0x0008 )
 		{
 			return &decoded_LINK_L;
 		}
@@ -35,7 +35,7 @@ namespace v68k
 			return &storage;
 		}
 		
-		if ( (opcode & 0xFFC0) == 0x4840 )
+		if ( (opcode & 0x00C0) == 0x0040 )
 		{
 			const uint16_t mode = opcode >> 3 & 0x7;
 			const uint16_t n    = opcode >> 0 & 0x7;
@@ -46,7 +46,7 @@ namespace v68k
 			}
 		}
 		
-		if ( (opcode & 0xFFB8) == 0x4880 )
+		if ( (opcode & 0x00B8) == 0x0080 )
 		{
 			storage.fetch = fetches_data_at_0007;
 			
