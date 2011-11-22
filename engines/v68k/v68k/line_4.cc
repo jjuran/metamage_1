@@ -20,6 +20,11 @@ namespace v68k
 	
 	static const instruction* decode_48( uint16_t opcode, instruction& storage )
 	{
+		const uint16_t size_code = opcode >> 6 & 0x3;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
 		if ( (opcode & 0x00F8) == 0x0008 )
 		{
 			return &decoded_LINK_L;
@@ -37,9 +42,6 @@ namespace v68k
 		
 		if ( (opcode & 0x00C0) == 0x0040 )
 		{
-			const uint16_t mode = opcode >> 3 & 0x7;
-			const uint16_t n    = opcode >> 0 & 0x7;
-			
 			if ( ea_is_control( mode, n ) )
 			{
 				return &decoded_PEA;
