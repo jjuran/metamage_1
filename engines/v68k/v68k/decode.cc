@@ -460,6 +460,16 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
+		if ( size_code == 0  &&  mode <= 1 )
+		{
+			storage.size  = byte_sized;
+			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
+			storage.code  = microcode_ABCD;
+			storage.flags = loads_and | stores_data | ADDX_CCR_update;
+			
+			return &storage;
+		}
+		
 		if ( size_code == 3  &&  ea_is_data_alterable( mode, n ) )
 		{
 			storage.size  = word_sized;
