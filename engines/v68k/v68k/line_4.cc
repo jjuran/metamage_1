@@ -25,9 +25,12 @@ namespace v68k
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
 		
-		if ( size_code == 0  &&  mode == 1 )
+		if ( size_code == 0 )
 		{
-			return &decoded_LINK_L;
+			if ( mode == 1 )
+			{
+				return &decoded_LINK_L;
+			}
 		}
 		
 		if ( size_code == 1 )
