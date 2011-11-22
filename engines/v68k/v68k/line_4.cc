@@ -25,38 +25,35 @@ namespace v68k
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
 		
-		if ( (opcode & 0x00F8) == 0x0008 )
+		if ( size_code == 0  &&  mode == 1 )
 		{
 			return &decoded_LINK_L;
 		}
 		
-		if ( (opcode & 0x00F0) == 0x0040 )
+		if ( size_code == 1  &&  mode <= 1 )
 		{
 			storage.fetch = fetches_data_at_0007;
 			
-			storage.code = opcode & 0x0008 ? microcode_BKPT
-			                               : microcode_SWAP;
+			storage.code = mode == 1 ? microcode_BKPT
+			                         : microcode_SWAP;
 			
 			return &storage;
 		}
 		
-		if ( (opcode & 0x00C0) == 0x0040 )
+		if ( size_code == 1  &&  ea_is_control( mode, n ) )
 		{
-			if ( ea_is_control( mode, n ) )
-			{
-				return &decoded_PEA;
-			}
+			return &decoded_PEA;
 		}
 		
-		if ( (opcode & 0x00B8) == 0x0080 )
+		if ( size_code >= 2  &&  mode == 0 )
 		{
 			storage.fetch = fetches_data_at_0007;
 			
-			storage.code = opcode & 0x0040 ? microcode_EXT_L
-			                               : microcode_EXT_W;
+			storage.code = size_code > 2 ? microcode_EXT_L
+			                             : microcode_EXT_W;
 			
-			storage.size = opcode & 0x0040 ? long_sized
-			                               : word_sized;
+			storage.size = size_code > 2 ? long_sized
+			                             : word_sized;
 			
 			storage.flags = basic_CCR_update;
 			
