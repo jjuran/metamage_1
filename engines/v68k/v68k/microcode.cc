@@ -1013,21 +1013,6 @@ namespace v68k
 		
 		const uint16_t count = pb.first;
 		
-		/*
-			     size_code  E  (0, 1,  2)
-			1 << size_code  E  (1, 2,  4)
-			      
-			             n_bytes - 1   E  (0, 1,  3)
-			        8 * (n_bytes - 1)  E  (0, 8, 24)
-			
-			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
-		*/
-		
-		const int n_bytes = 1 << pb.size - 1;
-		
-		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
-		const uint32_t data_mask = (sign_mask << 1) - 1;
-		
 		bool last_bit = 0;
 		
 		for ( int i = count;  i > 0;  --i )
@@ -1039,8 +1024,8 @@ namespace v68k
 			data >>= 1;
 		}
 		
-		s.regs.nzvc = N( data & sign_mask )
-		            | Z( (data & data_mask) == 0 )
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
 		            | V( 0 )
 		            | C( last_bit );
 		
