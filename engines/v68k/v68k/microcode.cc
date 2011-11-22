@@ -1015,13 +1015,22 @@ namespace v68k
 		
 		bool last_bit = 0;
 		
-		for ( int i = count;  i > 0;  --i )
+		if ( count != 0 )
 		{
-			last_bit = data & 0x1;
+			if ( count > 32 )
+			{
+				data = 0;
+			}
+			else
+			{
+				data >>= count - 1;
+				
+				last_bit = data & 0x1;
+				
+				data >>= 1;
+			}
 			
 			s.regs.x = last_bit;
-			
-			data >>= 1;
 		}
 		
 		s.regs.nzvc = N( data <  0 )
