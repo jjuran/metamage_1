@@ -31,6 +31,16 @@ namespace v68k
 			{
 				return &decoded_LINK_L;
 			}
+			
+			if ( ea_is_data_alterable( mode, n ) )
+			{
+				storage.size  = byte_sized;
+				storage.fetch = fetches_NEGX;
+				storage.code  = microcode_SBCD;
+				storage.flags = stores_data | SUBX_CCR_update;
+				
+				return &storage;
+			}
 		}
 		
 		if ( size_code == 1 )
