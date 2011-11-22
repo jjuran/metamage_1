@@ -30,19 +30,22 @@ namespace v68k
 			return &decoded_LINK_L;
 		}
 		
-		if ( size_code == 1  &&  mode <= 1 )
+		if ( size_code == 1 )
 		{
-			storage.fetch = fetches_data_at_0007;
+			if ( mode <= 1 )
+			{
+				storage.fetch = fetches_data_at_0007;
+				
+				storage.code = mode == 1 ? microcode_BKPT
+				                         : microcode_SWAP;
+				
+				return &storage;
+			}
 			
-			storage.code = mode == 1 ? microcode_BKPT
-			                         : microcode_SWAP;
-			
-			return &storage;
-		}
-		
-		if ( size_code == 1  &&  ea_is_control( mode, n ) )
-		{
-			return &decoded_PEA;
+			if ( ea_is_control( mode, n ) )
+			{
+				return &decoded_PEA;
+			}
 		}
 		
 		if ( size_code >= 2  &&  mode == 0 )
