@@ -1043,42 +1043,50 @@ namespace v68k
 	
 	void microcode_ASL( processor_state& s, op_params& pb )
 	{
-		int32_t data = pb.second;
-		
 		const uint16_t count = pb.first;
 		
-		/*
-			     size_code  E  (0, 1,  2)
-			1 << size_code  E  (1, 2,  4)
-			      
-			             n_bytes - 1   E  (0, 1,  3)
-			        8 * (n_bytes - 1)  E  (0, 8, 24)
-			
-			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
-		*/
+		int32_t data = pb.second;
 		
-		const int n_bytes = 1 << pb.size - 1;
-		
-		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
-		const uint32_t data_mask = (sign_mask << 1) - 1;
-		
+		bool overflow = 0;
 		bool last_bit = 0;
 		
-		uint32_t overflow = 0;
-		
-		for ( int i = count;  i > 0;  --i )
+		if ( count != 0 )
 		{
-			overflow |= (data ^ (data << 1)) & sign_mask;
-			
-			last_bit = data & sign_mask;
+			if ( count >= 32 )
+			{
+				overflow = data ^ (data << 1);
+				
+				if ( count == 32 )
+				{
+					last_bit = data & 0x1;
+				}
+				
+				data = 0;
+			}
+			else
+			{
+				// e.g. 0x0000FFFF
+				const uint32_t data_mask = zero_extend( 0xFFFFFFFF, pb.size );
+				
+				// bshift:  0x00003FFF
+				// negate:  0xFFFFC000
+				// extend:  0x0000C000
+				const uint32_t overflow_mask = zero_extend( ~( data_mask >> count ), pb.size );
+				
+				overflow = (data ^ (data << 1)) & overflow_mask;
+				
+				data <<= count - 1;
+				
+				last_bit = sign_extend( data, pb.size ) < 0;
+				
+				data <<= 1;
+			}
 			
 			s.regs.x = last_bit;
-			
-			data <<= 1;
 		}
 		
-		s.regs.nzvc = N( data & sign_mask )
-		            | Z( (data & data_mask) == 0 )
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
 		            | V( overflow )
 		            | C( last_bit );
 		
