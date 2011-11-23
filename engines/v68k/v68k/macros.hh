@@ -16,6 +16,8 @@
 namespace v68k
 {
 	
+	uint32_t zero_extend( uint32_t data, op_size_t size );
+	
 	int32_t sign_extend( int32_t data, op_size_t size );
 	
 	uint32_t update( uint32_t dest, uint32_t src, op_size_t size );
