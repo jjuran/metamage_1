@@ -533,7 +533,11 @@ namespace v68k
 		&microcode_ASR,
 		&microcode_ASL,
 		&microcode_LSR,
-		&microcode_LSL
+		&microcode_LSL,
+		&microcode_ROXR,
+		&microcode_ROXL,
+		&microcode_ROR,
+		&microcode_ROL
 	};
 	
 	static const instruction* decode_line_E( uint16_t opcode, instruction& storage )
@@ -542,24 +546,21 @@ namespace v68k
 		
 		if ( size_code != 3 )
 		{
-			if ( (opcode & 0x0010) == 0x0000 )
-			{
-				const int i = (opcode & 0x0008) >> 2 | (opcode & 0x0100) >> 8;
-				
-				storage.code = bit_shift_microcodes[ i ];
-				
-				storage.size  = op_size_in_00C0;
-				storage.fetch = fetches_bit_shift_Dn;
-				storage.flags = loads_and | stores_data;
-				
-				return &storage;
-			}
+			const int i = (opcode & 0x0018) >> 2 | (opcode & 0x0100) >> 8;
+			
+			storage.code = bit_shift_microcodes[ i ];
+			
+			storage.size  = op_size_in_00C0;
+			storage.fetch = fetches_bit_shift_Dn;
+			storage.flags = loads_and | stores_data;
+			
+			return &storage;
 		}
 		else
 		{
 			const int i = (opcode & 0x0F00) >> 8;
 			
-			if ( i >= 4 )
+			if ( i >= 8 )
 			{
 				return 0;  // NULL
 			}
