@@ -304,10 +304,17 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_bit_shift[] =
+	fetcher fetches_bit_shift_Dn[] =
 	{
 		&fetch_bit_shift_count,
 		&FETCH_MINOR_REGISTER_NUM,
+		0  // NULL
+	};
+	
+	fetcher fetches_bit_shift_mem[] =
+	{
+		&fetch_one,
+		&fetch_effective_address,
 		0  // NULL
 	};
 	

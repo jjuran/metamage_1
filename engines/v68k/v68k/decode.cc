@@ -549,7 +549,7 @@ namespace v68k
 				storage.code = bit_shift_microcodes[ i ];
 				
 				storage.size  = op_size_in_00C0;
-				storage.fetch = fetches_bit_shift;
+				storage.fetch = fetches_bit_shift_Dn;
 				storage.flags = loads_and | stores_data;
 				
 				return &storage;
