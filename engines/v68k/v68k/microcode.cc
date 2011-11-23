@@ -1093,41 +1093,35 @@ namespace v68k
 	
 	void microcode_LSR( processor_state& s, op_params& pb )
 	{
-		uint32_t data = pb.second;
-		
 		const uint16_t count = pb.first;
 		
-		/*
-			     size_code  E  (0, 1,  2)
-			1 << size_code  E  (1, 2,  4)
-			      
-			             n_bytes - 1   E  (0, 1,  3)
-			        8 * (n_bytes - 1)  E  (0, 8, 24)
-			
-			0x80 << 8 * (n_bytes - 1)  E  (0x80, 0x8000, 0x80000000)
-		*/
-		
-		const int n_bytes = 1 << pb.size - 1;
-		
-		const uint32_t sign_mask = 0x80 << 8 * (n_bytes - 1);
-		const uint32_t data_mask = (sign_mask << 1) - 1;
+		int32_t data = pb.second;
 		
 		bool last_bit = 0;
 		
 		if ( count != 0 )
 		{
-			data &= data_mask;
-			
-			data >>= count - 1;
-			
-			last_bit = data & 0x1;
+			if ( count <= 32 )
+			{
+				uint32_t udata = zero_extend( data, pb.size );
+				
+				udata >>= count - 1;
+				
+				last_bit = data & 0x1;
+				
+				udata >>= 1;
+				
+				data = udata;
+			}
+			else
+			{
+				data = 0;
+			}
 			
 			s.regs.x = last_bit;
-			
-			data >>= 1;
 		}
 		
-		s.regs.nzvc = N( data & sign_mask )
+		s.regs.nzvc = N( data <  0 )
 		            | Z( data == 0 )
 		            | V( 0 )
 		            | C( last_bit );
